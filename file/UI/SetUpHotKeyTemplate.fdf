@@ -1,0 +1,117 @@
+
+
+IncludeFile "UI\FrameDef\UI\EscMenuTemplates.fdf",
+
+Frame "EDITBOX" "HotKeyEditBox__Template" 
+{
+    Width 0.03,
+    Height 0.03,
+    EditBorderSize 0.007,
+    EditCursorColor 1.0 1.0 1.0,
+    ControlBackdrop "HotKeyEditBoxBack__Template",
+    // EditSetFocus,
+    EditMaxChars 1, 
+    EditTextOffset 0.0035f 0.,
+    Frame "BACKDROP" "HotKeyEditBoxBack__Template" {
+        BackdropTileBackground,
+        BackdropBackground  "UI\Widgets\BattleNet\bnet-inputbox-back.blp",
+        BackdropCornerFlags "UL|UR|BL|BR|T|L|B|R",
+        BackdropCornerSize  0.016,
+        BackdropBackgroundInsets 0.004 0.004 0.004 0.004,
+        BackdropEdgeFile  "UI\Widgets\BattleNet\bnet-inputbox-border.blp",
+        BackdropBlendAll,
+    }
+}
+
+/*
+Frame "FRAME" "HotKeyEditBoxFrame" 
+{
+    //TabFocusPush,
+    //创建一个聊天输入框
+    Frame "EDITBOX" "HotKeyEditBox1" INHERITS WITHCHILDREN "HotKeyEditBox__Template"
+    {
+        //TabFocusDefault,
+        //TabFocusNext "HotKeyEditBox2",
+    }
+
+    Frame "EDITBOX" "HotKeyEditBox2" INHERITS WITHCHILDREN "HotKeyEditBox__Template"
+    {
+        //TabFocusNext "HotKeyEditBox3",
+        SetPoint LEFT, "HotKeyEditBox1", RIGHT, 0.0, 0.0,
+    }
+
+    Frame "EDITBOX" "HotKeyEditBox3" INHERITS WITHCHILDREN "HotKeyEditBox__Template"
+    {
+        //TabFocusNext "HotKeyEditBox4",
+        SetPoint LEFT, "HotKeyEditBox2", RIGHT, 0.0, 0.0,
+    }
+
+    Frame "EDITBOX" "HotKeyEditBox4" INHERITS WITHCHILDREN "HotKeyEditBox__Template"
+    {
+        //TabFocusNext "HotKeyEditBox5",
+        SetPoint LEFT, "HotKeyEditBox3", RIGHT, 0.0, 0.0,
+    }
+
+    Frame "EDITBOX" "HotKeyEditBox5" INHERITS WITHCHILDREN "HotKeyEditBox__Template"
+    {
+        //TabFocusNext "HotKeyEditBox6",
+        SetPoint TOP, "HotKeyEditBox1", BOTTOM, 0, 0,
+    }
+
+    Frame "EDITBOX" "HotKeyEditBox6" INHERITS WITHCHILDREN "HotKeyEditBox__Template"
+    {
+        //TabFocusNext "HotKeyEditBox7",
+        SetPoint LEFT, "HotKeyEditBox5", RIGHT, 0.0, 0.0,
+    }
+
+    Frame "EDITBOX" "HotKeyEditBox7" INHERITS WITHCHILDREN "HotKeyEditBox__Template"
+    {
+        //TabFocusNext "HotKeyEditBox8",
+        SetPoint LEFT, "HotKeyEditBox6", RIGHT, 0.0, 0.0,
+    }
+
+    Frame "EDITBOX" "HotKeyEditBox8" INHERITS WITHCHILDREN "HotKeyEditBox__Template"
+    {
+        //TabFocusNext "HotKeyEditBox9",
+        SetPoint LEFT, "HotKeyEditBox7", RIGHT, 0.0, 0.0,
+    }
+
+    Frame "EDITBOX" "HotKeyEditBox9" INHERITS WITHCHILDREN "HotKeyEditBox__Template"
+    {
+        //TabFocusNext "HotKeyEditBox10",
+        SetPoint TOP, "HotKeyEditBox5", BOTTOM, 0, 0,
+    }
+
+        Frame "EDITBOX" "HotKeyEditBox10" INHERITS WITHCHILDREN "HotKeyEditBox__Template"
+    {
+        //TabFocusNext "HotKeyEditBox11",
+        SetPoint LEFT, "HotKeyEditBox9", RIGHT, 0.0, 0.0,
+    }
+
+    Frame "EDITBOX" "HotKeyEditBox11" INHERITS WITHCHILDREN "HotKeyEditBox__Template"
+    {
+        //TabFocusNext "HotKeyEditBox12",
+        SetPoint LEFT, "HotKeyEditBox10", RIGHT, 0.0, 0.0,
+    }
+
+    Frame "EDITBOX" "HotKeyEditBox12" INHERITS WITHCHILDREN "HotKeyEditBox__Template"
+    {
+        //TabFocusNext "HotKeySetUpReturnButton",
+        SetPoint LEFT, "HotKeyEditBox11", RIGHT, 0.0, 0.0,
+    }
+
+    Frame "GLUETEXTBUTTON" "HotKeySetUpReturnButton" INHERITS WITHCHILDREN "EscMenuButtonTemplate" {
+    	SetPoint BOTTOM, "EscMenuMainPanel", BOTTOM, 0.0, 0.063,
+        ControlShortcutKey "R",
+        //TabFocusNext "HotKeyEditBox1",
+    	ButtonText "HotKeySetUpReturnButtonText",
+    	Frame "TEXT" "HotKeySetUpReturnButtonText" INHERITS "EscMenuButtonTextTemplate" {
+    	    Text "返回(|CffffffffR|R)",
+    	}
+    }
+
+}/*
+
+
+
+

@@ -1,0 +1,7 @@
+
+UI\GlyphButtonTemplate.fdf
+UI\MapSetUpTemplate.fdf
+UI\SetUpHotKeyTemplate.fdf
+UI\UpdateLogDialog.fdf
+UI\DebugLogDialog.fdf
+UI\CommandButton.fdf

@@ -1,0 +1,92 @@
+
+Frame "TEXT" "ItemButtonCoolDownText" {
+	
+	DecorateFileNames,
+	FrameFont "EscMenuTextFont", 0.015, "OUTLINE",
+	LayerStyle "IGNORETRACKEVENTS",
+	FontFlags "FIXEDCOLOR",
+	FontJustificationH JUSTIFYCENTER,
+	FontJustificationV JUSTIFYMIDDLE,
+	FontColor 1 1 1 1,
+	FontShadowOffset 0.001 -0.001,	
+
+}
+
+Frame "TEXT" "CommandButtonCoolDownText" {
+	
+	DecorateFileNames,
+	FrameFont "EscMenuTextFont", 0.025, "OUTLINE",
+	LayerStyle "IGNORETRACKEVENTS",
+	FontFlags "FIXEDCOLOR",
+	FontJustificationH JUSTIFYCENTER,
+	FontJustificationV JUSTIFYMIDDLE,
+	FontColor 1 1 1 1,
+	FontShadowOffset 0.001 -0.001,	
+
+}
+
+Frame "TEXT" "CommandButtonManaCostText" {
+	
+	DecorateFileNames,
+	FrameFont "EscMenuTextFont", 0.009, "OUTLINE",
+	LayerStyle "IGNORETRACKEVENTS",
+	FontFlags "NOWRAP",
+	FontJustificationH JUSTIFYCENTER,
+	FontJustificationV JUSTIFYMIDDLE,
+	FontColor 0.00 0.65 1.00 1.00,
+	FontShadowOffset 0.001 -0.001,	
+
+}
+
+Frame "BACKDROP" "CommandButtonManaCostBackDrop" {
+
+	Width 0.015,
+	Height 0.015,
+	//BackdropBackground "ui\widgets\console\human\commandbutton\human-button-lvls-overlay.blp",
+	BackdropBlendAll,
+
+}
+
+Frame "TEXT" "CommandButtonUnitCostText" {
+
+	DecorateFileNames,
+	FrameFont "EscMenuTextFont", 0.009, "OUTLINE",
+	LayerStyle "IGNORETRACKEVENTS",
+	FontFlags "NOWRAP",
+	FontJustificationH JUSTIFYCENTER,
+	FontJustificationV JUSTIFYMIDDLE,
+	FontColor 1.00 0.80 0.00 1.00,
+	FontShadowOffset 0.001 -0.001,	
+
+}
+
+Frame "BACKDROP" "CommandButtonUnitCostBackDrop" {
+
+	Width 0.0175,
+	Height 0.015,
+	//BackdropBackground "ui\widgets\console\human\commandbutton\human-button-lvls-overlay.blp",
+	BackdropBlendAll,
+
+}
+
+Frame "TEXT" "CommandButtonHotKeyText" {
+	
+	DecorateFileNames,
+	FrameFont "EscMenuTextFont", 0.010, "OUTLINE",
+	LayerStyle "IGNORETRACKEVENTS",
+	FontFlags "NOWRAP",
+	FontJustificationH JUSTIFYCENTER,
+	FontJustificationV JUSTIFYMIDDLE,
+	FontColor 1.00 1.00 1.00 1.00,
+	FontShadowOffset 0.001 -0.001,	
+
+}
+
+Frame "BACKDROP" "CommandButtonHotKeyBackDrop" {
+
+	Width 0.0125,
+	Height 0.0125,
+	//BackdropBackground "ui\widgets\console\human\commandbutton\human-button-lvls-overlay.blp",
+	BackdropBlendAll,
+
+}

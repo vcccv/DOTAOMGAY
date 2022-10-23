@@ -1,0 +1,12 @@
+
+单位属性奖励
+
+1：对于给单位添加额外属性, 应该使用LodSystem_AddUnitExtraState或LodSystem_ReduceUnitExtraState
+包含四个属性
+// 属性奖励系统的Key
+constant integer STATE_SYSTEM_DAMAGE 		= 'AIat' 攻击力
+constant integer STATE_SYSTEM_ATTACK 		= 'AIsx' 攻击速度
+constant integer STATE_SYSTEM_ARMOUR 		= 'AId1' 防御
+constant integer STATE_SYSTEM_REGEN 		= 'Arel' 生命值恢复
+
+2：增加和魔抗应该使用AddUnitMagicResistance, 如果降低使用负数。恢复增加和更改的魔抗使用ReduceUnitMagicResistance.
