@@ -1,0 +1,5 @@
+[Categories]
+GiantClass=巨人
+UndeadClass=亡灵
+MechanicalClass=机械
+TaurenClass=牛头人

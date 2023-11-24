@@ -1,0 +1,1 @@
+"C:\Work\Warcraft III File\War3MapTool\MapEditor\4_we_WorldEdit v1.2.9c\bin\YDWEConfig.exe" -launchwar3 -loadfile %1
