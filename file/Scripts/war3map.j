@@ -769,18 +769,18 @@ globals
 	boolean NU = true
 	integer BU = 3
 	integer CU = 1
-	location ScourgeCenterMeleeBirthLocatio  = null
-	location ScourgeTopMeleeBirthLocatio     = null
-	location ScourgeBottomMeleeBirthLocatio  = null
-	location ScourgeBottomRangedBirthLocatio = null
-	location ScourgeCenterRangedBirthLocatio = null
-	location ScourgeTopRangedBirthLocatio    = null
-	location MU = null
-	location PU = null
-	location QU = null
-	location SU = null
-	location TU = null
-	location UU = null
+	location ScourgeCenterMeleeBirthLocatio   = null
+	location ScourgeTopMeleeBirthLocatio      = null
+	location ScourgeBottomMeleeBirthLocatio   = null
+	location ScourgeBottomRangedBirthLocatio  = null
+	location ScourgeCenterRangedBirthLocatio  = null
+	location ScourgeTopRangedBirthLocatio     = null
+	location SentinelCenterMeleeBirthLocatio  = null
+	location SentinelBottomMeleeBirthLocatio  = null
+	location SentinelTopMeleeBirthLocatio     = null
+	location SentinelCenterRangedBirthLocatio = null
+	location SentinelBottomRangedBirthLocatio = null
+	location SentinelTopRangedBirthLocatio    = null
 	location WU = null
 	location YU = null
 	unit array Player__Hero
@@ -840,61 +840,61 @@ globals
 	rect gg_rct_ScourgeTopMeleeBirth      = null
 	rect gg_rct_ScourgeRevivalPoint       = null
 	rect gg_rct_SentinelBottomRangedBirth = null
-	rect SY = null
-	rect TY = null
-	rect gg_rct_ScourgeBottomRangedBirth = null
-	rect gg_rct_ScourgeCenterRangedBirth = null
-	rect gg_rct_ScourgeTopRangedBirth = null
-	rect gg_rct_SentinelRevivalPoint = null
-	rect EZ = null
-	rect XZ = null
-	rect OZ = null
+	rect gg_rct_SentinelTopRangedBirth    = null
+	rect gg_rct_SentinelCenterRangedBirth = null
+	rect gg_rct_ScourgeBottomRangedBirth  = null
+	rect gg_rct_ScourgeCenterRangedBirth  = null
+	rect gg_rct_ScourgeTopRangedBirth     = null
+	rect gg_rct_SentinelRevivalPoint      = null
+	rect gg_rct_SentinelBottomMeleeBirth  = null
+	rect gg_rct_SentinelTopMeleeBirth     = null
+	rect gg_rct_SentinelCenterMeleeBirth  = null
 	rect gg_rct_RightBottomRune = null
-	rect F4 = null
-	rect G4 = null
+	rect gg_rct_ScourgeBuyArea = null
+	rect gg_rct_SentinelBuyArea = null
 	rect gg_rct_LeftTopRune = null
 	rect gg_rct_ScourgeAncientCenter  = null
 	rect gg_rct_SentinelAncientCenter = null
-	rect BZ = null
-	rect CZ = null
-	rect DZ = null
-	rect FZ = null
-	rect GZ = null
-	rect HZ = null
-	rect JZ = null
-	rect KZ = null
-	rect LZ = null
-	rect MZ = null
+	rect gg_rct_SentinelCreepCenter3 = null
+	rect gg_rct_ScourgeCreepCenter5 = null
+	rect gg_rct_ScourgeCreepCenter4 = null
+	rect gg_rct_SentinelCreepCenter4 = null
+	rect gg_rct_ScourgeCreepCenter3 = null
+	rect gg_rct_SentinelCreepCenter5 = null
+	rect gg_rct_ScourgeCreepCenter1 = null
+	rect gg_rct_SentinelCreepCenter2 = null
+	rect gg_rct_SentinelTavernCamera = null
+	rect gg_rct_ScourgeTavernCamera = null
 	rect gg_rct_RoshanBirthRect 	 = null // gg_rct_RoshanBirthRect
 	rect gg_rct_ScourgeAncientRange  = null
 	rect gg_rct_SentinelAncientRange = null
-	rect TZ = null
-	rect UZ = null
-	rect WZ = null
-	rect YZ = null
-	rect ZZ = null
-	rect V0 = null
-	rect E0 = null
-	rect X0 = null
-	rect O0 = null
-	rect R0 = null
-	rect I0 = null
-	rect A0 = null
-	rect N0 = null
-	rect B0 = null
+	rect gg_rct_SentinelCreepRange3 = null
+	rect gg_rct_ScourgeCreepRange5 = null
+	rect gg_rct_ScourgeCreepRange4 = null
+	rect gg_rct_SentinelCreepRange4 = null
+	rect gg_rct_ScourgeCreepRange3 = null
+	rect gg_rct_ScourgeCreepRange1 = null
+	rect gg_rct_SentinelCreepRange5 = null
+	rect gg_rct_SentinelCreepRange2 = null
+	rect gg_rct_SentinelFountainOfLifeRange = null
+	rect gg_rct_ScourgeFountainOfLifeRange = null
+	rect gg_rct_ScourgeCreepRange2 = null
+	rect gg_rct_ScourgeCreepCenter2 = null
+	rect gg_rct_SentinelCreepRange1 = null
+	rect gg_rct_SentinelCreepCenter1 = null
 	rect gg_rct_DummyBirthPoint = null
-	rect IA = null
-	rect OA = null
-	rect BA = null
-	rect CA = null
-	rect DA = null
-	rect EA = null
-	rect gg_rct_ScourgeCenterSuperCreepsBirth = null
-	rect gg_rct_ScourgeTopSuperCreepsBirth = null
-	rect gg_rct_ScourgeBottomSuperCreepsBirth = null
-	rect G0 = null
-	rect H0 = null
-	rect J0 = null
+	rect gg_rct_SentinelSpecialTerrain1 = null
+	rect gg_rct_SentinelSpecialTerrain2 = null
+	rect gg_rct_SentinelSpecialTerrain3 = null
+	rect gg_rct_SentinelSpecialTerrain4 = null
+	rect gg_rct_ScourgeSpecialTerrain1 = null
+	rect gg_rct_ScourgeSpecialTerrain2 = null
+	rect gg_rct_ScourgeCenterSuperCreepsBirth  = null
+	rect gg_rct_ScourgeTopSuperCreepsBirth     = null
+	rect gg_rct_ScourgeBottomSuperCreepsBirth  = null
+	rect gg_rct_SentinelBottomSuperCreepsBirth = null
+	rect gg_rct_SentinelCenterSuperCreepsBirth = null
+	rect gg_rct_SentinelTopSuperCreepsBirth    = null
 	boolean ShouSiJuHuaB = true
 	boolean JUHUABIEPAOB = true
 	boolean SHUIZAODEZHUAB = true
@@ -1123,7 +1123,7 @@ globals
 	//rect CS
 	constant playercolor O5 = ConvertPlayerColor(0)
 	constant playercolor R5 = ConvertPlayerColor(6)
-	constant playercolor I5 = ConvertPlayerColor($C)
+	constant playercolor I5 = ConvertPlayerColor(12)
 	constant real HS =-7232
 	constant real ZS =-7136
 	unit A5
@@ -10940,8 +10940,8 @@ function InitObserverPlayer takes nothing returns nothing	//OB是否存在 MW来
 	local integer y = 0
 	local integer i
 	local trigger t = null
-	local location LIX = GetRectCenter(LZ)
-	local location LAX = GetRectCenter(MZ)
+	local location LIX = GetRectCenter(gg_rct_SentinelTavernCamera)
+	local location LAX = GetRectCenter(gg_rct_ScourgeTavernCamera)
 	if GetPlayerState(Sentinels[0], PLAYER_STATE_OBSERVER)!= 0 or GetPlayerState(Scourges[0], PLAYER_STATE_OBSERVER)!= 0 then
 		set MW = true
 		set Sentinels[0]= Player($D)
@@ -13728,7 +13728,7 @@ function U7X takes nothing returns nothing
 	if GetUnitAbilityLevel(WVX,'Aloc')> 0 then
 		set WVX = Player__Hero[GetPlayerId(WEX)]
 	endif
-	if IsPlayerEnemy(WEX, WXX) and WEX != Player($C) then
+	if IsPlayerEnemy(WEX, WXX) and WEX != Player(12) then
 		call UGX(WVX)
 	endif
 	if IT and GetUnitTypeId(U9X)!='H00J' then
@@ -14291,7 +14291,7 @@ function YTX takes nothing returns nothing
 	set t = null
 endfunction
 function YUX takes nothing returns nothing
-	set CT = CreateUnit(Player($C),'n00L', GetRectCenterX(gg_rct_RoshanBirthRect), GetRectCenterY(gg_rct_RoshanBirthRect), 180.)
+	set CT = CreateUnit(Player(12),'n00L', GetRectCenterX(gg_rct_RoshanBirthRect), GetRectCenterY(gg_rct_RoshanBirthRect), 180.)
 	call SetUnitAcquireRange(CT, 150)
 	call YTX()
 	if XEV > 1 then
@@ -14340,7 +14340,7 @@ function YSX takes nothing returns nothing
 	endif
 	call RemoveItem(UnitRemoveItemFromSlot(CT, 0))
 	call RemoveItem(UnitRemoveItemFromSlot(CT, 1))
-	call CreateUnitAtLoc(Player($C),'e01V', GetRectCenter(gg_rct_RoshanBirthRect), 0)
+	call CreateUnitAtLoc(Player(12),'e01V', GetRectCenter(gg_rct_RoshanBirthRect), 0)
 	if(IsSentinelsPlayer(GetOwningPlayer(GetKillingUnit()))) then
 		call StoreDrCacheData("Roshan", 0)
 		call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, CR[GetPlayerId(LocalPlayer)], YOX("|c00ff0000" + GetObjectName('n065')+ "|r", GetObjectName('n065')))
@@ -15156,9 +15156,9 @@ function VRO takes nothing returns boolean
 	set ZO = p
 	set CTV = WUE
 	if IsSentinelsPlayer(p) then
-		call EnumItemsInRect(O0, null, function VOO)
+		call EnumItemsInRect(gg_rct_SentinelFountainOfLifeRange, null, function VOO)
 	else
-		call EnumItemsInRect(R0, null, function VOO)
+		call EnumItemsInRect(gg_rct_ScourgeFountainOfLifeRange, null, function VOO)
 	endif
 	if GetTriggerEvalCount(t)== 3 then
 		call KillUnit(u)
@@ -15181,9 +15181,9 @@ function VIO takes unit trigUnit returns nothing
 	local unit WUE = GetSellingUnit()
 	local player p = GetOwningPlayer(u)
 	if IsSentinelsPlayer(GetOwningPlayer(u)) then
-		call RegionAddRect(r, O0)
+		call RegionAddRect(r, gg_rct_SentinelFountainOfLifeRange)
 	else
-		call RegionAddRect(r, R0)
+		call RegionAddRect(r, gg_rct_ScourgeFountainOfLifeRange)
 	endif
 	if IsUnitInRegion(r, WUE) then
 		set t = CreateTrigger()
@@ -15774,9 +15774,9 @@ function E4O takes unit u returns nothing
 	local region r = CreateRegion()
 	local boolean b = IsMessengerUnit(u) or GetUnitTypeId(u)=='ncop'
 	if IsSentinelsPlayer(GetOwningPlayer(u)) then
-		call RegionAddRect(r, O0)
+		call RegionAddRect(r, gg_rct_SentinelFountainOfLifeRange)
 	else
-		call RegionAddRect(r, R0)
+		call RegionAddRect(r, gg_rct_ScourgeFountainOfLifeRange)
 	endif
 	loop
 	exitwhen i > 5
@@ -17828,9 +17828,9 @@ function R8O takes nothing returns boolean
 	local unit u =(LoadUnitHandle(HY, h, 53))
 	set C4V = u
 	if IsSentinelsPlayer(GetOwningPlayer(C4V)) then
-		call EnumItemsInRect(O0, null, function R7O)
+		call EnumItemsInRect(gg_rct_SentinelFountainOfLifeRange, null, function R7O)
 	else
-		call EnumItemsInRect(R0, null, function R7O)
+		call EnumItemsInRect(gg_rct_ScourgeFountainOfLifeRange, null, function R7O)
 	endif
 	if GetTriggerEvalCount(t)== 2 then
 		call FlushChildHashtable(HY, h)
@@ -17867,9 +17867,9 @@ function G6E takes nothing returns nothing
 	local integer id = GetPlayerId(GetOwningPlayer(u))
 	local region r = CreateRegion()
 	if IsSentinelsPlayer(GetOwningPlayer(u)) then
-		call RegionAddRect(r, O0)
+		call RegionAddRect(r, gg_rct_SentinelFountainOfLifeRange)
 	else
-		call RegionAddRect(r, R0)
+		call RegionAddRect(r, gg_rct_ScourgeFountainOfLifeRange)
 	endif
 	loop
 	exitwhen i > 5
@@ -23557,9 +23557,9 @@ function GMO takes nothing returns nothing
 	endif
 	if GPV == false and GTV == false then
 		if(IU) then
-			call CreateNUnitsAtLoc(BU,'esen', Sentinels[0], QU, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(BU,'esen', Sentinels[0], SentinelTopMeleeBirthLocatio, bj_UNIT_FACING)
 		else
-			call CreateNUnitsAtLoc(BU,'e00V', Sentinels[0], QU, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(BU,'e00V', Sentinels[0], SentinelTopMeleeBirthLocatio, bj_UNIT_FACING)
 		endif
 		if MB then
 			set WC = 2
@@ -23569,17 +23569,17 @@ function GMO takes nothing returns nothing
 	endif
 	if GSV == false then
 		if(AU) then
-			call CreateNUnitsAtLoc(BU,'esen', Sentinels[0], MU, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(BU,'esen', Sentinels[0], SentinelCenterMeleeBirthLocatio, bj_UNIT_FACING)
 		else
-			call CreateNUnitsAtLoc(BU,'e00V', Sentinels[0], MU, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(BU,'e00V', Sentinels[0], SentinelCenterMeleeBirthLocatio, bj_UNIT_FACING)
 		endif
 		call GHO(bj_lastCreatedGroup, 3)
 	endif
 	if GPV == false and GQV == false then
 		if(NU) then
-			call CreateNUnitsAtLoc(BU,'esen', Sentinels[0], PU, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(BU,'esen', Sentinels[0], SentinelBottomMeleeBirthLocatio, bj_UNIT_FACING)
 		else
-			call CreateNUnitsAtLoc(BU,'e00V', Sentinels[0], PU, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(BU,'e00V', Sentinels[0], SentinelBottomMeleeBirthLocatio, bj_UNIT_FACING)
 		endif
 		if MB then
 			set WC = 1
@@ -23589,9 +23589,9 @@ function GMO takes nothing returns nothing
 	endif
 	if GPV == false and GTV == false then
 		if(XU) then
-			call CreateNUnitsAtLoc(CU,'edry', Sentinels[0], UU, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(CU,'edry', Sentinels[0], SentinelTopRangedBirthLocatio, bj_UNIT_FACING)
 		else
-			call CreateNUnitsAtLoc(CU,'e00W', Sentinels[0], UU, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(CU,'e00W', Sentinels[0], SentinelTopRangedBirthLocatio, bj_UNIT_FACING)
 		endif
 		if MB then
 			set WC = 2
@@ -23601,17 +23601,17 @@ function GMO takes nothing returns nothing
 	endif
 	if GSV == false then
 		if(OU) then
-			call CreateNUnitsAtLoc(CU,'edry', Sentinels[0], SU, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(CU,'edry', Sentinels[0], SentinelCenterRangedBirthLocatio, bj_UNIT_FACING)
 		else
-			call CreateNUnitsAtLoc(CU,'e00W', Sentinels[0], SU, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(CU,'e00W', Sentinels[0], SentinelCenterRangedBirthLocatio, bj_UNIT_FACING)
 		endif
 		call GHO(bj_lastCreatedGroup, 3)
 	endif
 	if GPV == false and GQV == false then
 		if(RU) then
-			call CreateNUnitsAtLoc(CU,'edry', Sentinels[0], TU, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(CU,'edry', Sentinels[0], SentinelBottomRangedBirthLocatio, bj_UNIT_FACING)
 		else
-			call CreateNUnitsAtLoc(CU,'e00W', Sentinels[0], TU, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(CU,'e00W', Sentinels[0], SentinelBottomRangedBirthLocatio, bj_UNIT_FACING)
 		endif
 		if MB then
 			set WC = 1
@@ -23622,9 +23622,9 @@ function GMO takes nothing returns nothing
 	if GPO then
 		if GPV == false and GTV == false then
 			if(RU) then
-				call CreateNUnitsAtLoc(CU,'ebal', Sentinels[0], UU, bj_UNIT_FACING)
+				call CreateNUnitsAtLoc(CU,'ebal', Sentinels[0], SentinelTopRangedBirthLocatio, bj_UNIT_FACING)
 			else
-				call CreateNUnitsAtLoc(CU,'e026', Sentinels[0], UU, bj_UNIT_FACING)
+				call CreateNUnitsAtLoc(CU,'e026', Sentinels[0], SentinelTopRangedBirthLocatio, bj_UNIT_FACING)
 			endif
 			if MB then
 				set WC = 2
@@ -23634,17 +23634,17 @@ function GMO takes nothing returns nothing
 		endif
 		if GSV == false then
 			if(OU) then
-				call CreateNUnitsAtLoc(CU,'ebal', Sentinels[0], SU, bj_UNIT_FACING)
+				call CreateNUnitsAtLoc(CU,'ebal', Sentinels[0], SentinelCenterRangedBirthLocatio, bj_UNIT_FACING)
 			else
-				call CreateNUnitsAtLoc(CU,'e026', Sentinels[0], SU, bj_UNIT_FACING)
+				call CreateNUnitsAtLoc(CU,'e026', Sentinels[0], SentinelCenterRangedBirthLocatio, bj_UNIT_FACING)
 			endif
 			call GHO(bj_lastCreatedGroup, 3)
 		endif
 		if GPV == false and GQV == false then
 			if(RU) then
-				call CreateNUnitsAtLoc(CU,'ebal', Sentinels[0], TU, bj_UNIT_FACING)
+				call CreateNUnitsAtLoc(CU,'ebal', Sentinels[0], SentinelBottomRangedBirthLocatio, bj_UNIT_FACING)
 			else
-				call CreateNUnitsAtLoc(CU,'e026', Sentinels[0], TU, bj_UNIT_FACING)
+				call CreateNUnitsAtLoc(CU,'e026', Sentinels[0], SentinelBottomRangedBirthLocatio, bj_UNIT_FACING)
 			endif
 			if MB then
 				set WC = 1
@@ -24201,45 +24201,45 @@ function JEO takes nothing returns boolean
 		call H8O(GetRectCenterX(gg_rct_SentinelAncientCenter), GetRectCenterY(gg_rct_SentinelAncientCenter))
 	endif
 	//endif
-	call GroupEnumUnitsInRect(g, TZ, Condition(function JVO))
+	call GroupEnumUnitsInRect(g, gg_rct_SentinelCreepRange3, Condition(function JVO))
 	if FirstOfGroup(g)== null then
-		call HYO(GetRectCenterX(BZ), GetRectCenterY(BZ))
+		call HYO(GetRectCenterX(gg_rct_SentinelCreepCenter3), GetRectCenterY(gg_rct_SentinelCreepCenter3))
 	endif
-	call GroupEnumUnitsInRect(g, UZ, Condition(function JVO))
+	call GroupEnumUnitsInRect(g, gg_rct_ScourgeCreepRange5, Condition(function JVO))
 	if FirstOfGroup(g)== null then
-		call H_O(GetRectCenterX(CZ), GetRectCenterY(CZ))
+		call H_O(GetRectCenterX(gg_rct_ScourgeCreepCenter5), GetRectCenterY(gg_rct_ScourgeCreepCenter5))
 	endif
-	call GroupEnumUnitsInRect(g, WZ, Condition(function JVO))
+	call GroupEnumUnitsInRect(g, gg_rct_ScourgeCreepRange4, Condition(function JVO))
 	if FirstOfGroup(g)== null then
-		call H6O(GetRectCenterX(DZ), GetRectCenterY(DZ))
+		call H6O(GetRectCenterX(gg_rct_ScourgeCreepCenter4), GetRectCenterY(gg_rct_ScourgeCreepCenter4))
 	endif
-	call GroupEnumUnitsInRect(g, YZ, Condition(function JVO))
+	call GroupEnumUnitsInRect(g, gg_rct_SentinelCreepRange4, Condition(function JVO))
 	if FirstOfGroup(g)== null then
-		call H5O(GetRectCenterX(FZ), GetRectCenterY(FZ))
+		call H5O(GetRectCenterX(gg_rct_SentinelCreepCenter4), GetRectCenterY(gg_rct_SentinelCreepCenter4))
 	endif
-	call GroupEnumUnitsInRect(g, ZZ, Condition(function JVO))
+	call GroupEnumUnitsInRect(g, gg_rct_ScourgeCreepRange3, Condition(function JVO))
 	if FirstOfGroup(g)== null then
-		call H3O(GetRectCenterX(GZ), GetRectCenterY(GZ))
+		call H3O(GetRectCenterX(gg_rct_ScourgeCreepCenter3), GetRectCenterY(gg_rct_ScourgeCreepCenter3))
 	endif
-	call GroupEnumUnitsInRect(g, E0, Condition(function JVO))
+	call GroupEnumUnitsInRect(g, gg_rct_SentinelCreepRange5, Condition(function JVO))
 	if FirstOfGroup(g)== null then
-		call H4O(GetRectCenterX(HZ), GetRectCenterY(HZ))
+		call H4O(GetRectCenterX(gg_rct_SentinelCreepCenter5), GetRectCenterY(gg_rct_SentinelCreepCenter5))
 	endif
-	call GroupEnumUnitsInRect(g, V0, Condition(function JVO))
+	call GroupEnumUnitsInRect(g, gg_rct_ScourgeCreepRange1, Condition(function JVO))
 	if FirstOfGroup(g)== null then
-		call H0O(GetRectCenterX(JZ), GetRectCenterY(JZ))
+		call H0O(GetRectCenterX(gg_rct_ScourgeCreepCenter1), GetRectCenterY(gg_rct_ScourgeCreepCenter1))
 	endif
-	call GroupEnumUnitsInRect(g, X0, Condition(function JVO))
+	call GroupEnumUnitsInRect(g, gg_rct_SentinelCreepRange2, Condition(function JVO))
 	if FirstOfGroup(g)== null then
-		call H1O(GetRectCenterX(KZ), GetRectCenterY(KZ))
+		call H1O(GetRectCenterX(gg_rct_SentinelCreepCenter2), GetRectCenterY(gg_rct_SentinelCreepCenter2))
 	endif
-	call GroupEnumUnitsInRect(g, I0, Condition(function JVO))
+	call GroupEnumUnitsInRect(g, gg_rct_ScourgeCreepRange2, Condition(function JVO))
 	if FirstOfGroup(g)== null then
-		call H2O(GetRectCenterX(A0), GetRectCenterY(A0))
+		call H2O(GetRectCenterX(gg_rct_ScourgeCreepCenter2), GetRectCenterY(gg_rct_ScourgeCreepCenter2))
 	endif
-	call GroupEnumUnitsInRect(g, N0, Condition(function JVO))
+	call GroupEnumUnitsInRect(g, gg_rct_SentinelCreepRange1, Condition(function JVO))
 	if FirstOfGroup(g)== null then
-		call HZO(GetRectCenterX(B0), GetRectCenterY(B0))
+		call HZO(GetRectCenterX(gg_rct_SentinelCreepCenter1), GetRectCenterY(gg_rct_SentinelCreepCenter1))
 	endif
 	call DeallocateGroup(g)
 	set r1 = null
@@ -24278,22 +24278,22 @@ function JXO takes nothing returns nothing
 		endloop
 	endif
 	if JRO == 0 then
-		set x1 = GetRectCenterX(H0)
-		set y1 = GetRectCenterY(H0)
+		set x1 = GetRectCenterX(gg_rct_SentinelCenterSuperCreepsBirth)
+		set y1 = GetRectCenterY(gg_rct_SentinelCenterSuperCreepsBirth)
 		set x2 = GetRectCenterX(gg_rct_ScourgeCenterSuperCreepsBirth)
 		set y2 = GetRectCenterY(gg_rct_ScourgeCenterSuperCreepsBirth)
 		set i = 2
 		set s = "中路"
 	elseif JRO == 1 then
-		set x1 = GetRectCenterX(G0)
-		set y1 = GetRectCenterY(G0)
+		set x1 = GetRectCenterX(gg_rct_SentinelBottomSuperCreepsBirth)
+		set y1 = GetRectCenterY(gg_rct_SentinelBottomSuperCreepsBirth)
 		set x2 = GetRectCenterX(gg_rct_ScourgeBottomSuperCreepsBirth)
 		set y2 = GetRectCenterY(gg_rct_ScourgeBottomSuperCreepsBirth)
 		set i = 3
 		set s = "下路"
 	else
-		set x1 = GetRectCenterX(J0)
-		set y1 = GetRectCenterY(J0)
+		set x1 = GetRectCenterX(gg_rct_SentinelTopSuperCreepsBirth)
+		set y1 = GetRectCenterY(gg_rct_SentinelTopSuperCreepsBirth)
 		set x2 = GetRectCenterX(gg_rct_ScourgeTopSuperCreepsBirth)
 		set y2 = GetRectCenterY(gg_rct_ScourgeTopSuperCreepsBirth)
 		set i = 4
@@ -27395,10 +27395,10 @@ function MKO takes nothing returns nothing
 endfunction
 function CourierFountainCheck takes nothing returns boolean
 	local group g = AllocationGroup(50)
-	call GroupEnumUnitsInRect(g, O0, null)
+	call GroupEnumUnitsInRect(g, gg_rct_SentinelFountainOfLifeRange, null)
 	call ForGroup(g, function MJO)
 	call GroupClear(g)
-	call GroupEnumUnitsInRect(g, R0, null)
+	call GroupEnumUnitsInRect(g, gg_rct_ScourgeFountainOfLifeRange, null)
 	call ForGroup(g, function MKO)
 	call DeallocateGroup(g)
 	set g = null
@@ -28835,7 +28835,7 @@ function SKO takes nothing returns nothing
 		call SetPlayerAlliance(Player(9), Player(1), ALLIANCE_SHARED_CONTROL, true)
 		call SetPlayerAlliance(Player(10), Player(1), ALLIANCE_SHARED_CONTROL, true)
 		call SetPlayerAlliance(Player(11), Player(1), ALLIANCE_SHARED_CONTROL, true)
-		call SetPlayerAlliance(Player($C), Player(1), ALLIANCE_SHARED_CONTROL, true)
+		call SetPlayerAlliance(Player(12), Player(1), ALLIANCE_SHARED_CONTROL, true)
 		call SetPlayerAlliance(Player($D), Player(1), ALLIANCE_SHARED_CONTROL, true)
 		call SetPlayerAlliance(Player($E), Player(1), ALLIANCE_SHARED_CONTROL, true)
 		call SetPlayerAlliance(Player(15), Player(1), ALLIANCE_SHARED_CONTROL, true)
@@ -30882,8 +30882,8 @@ function ZJO takes nothing returns nothing
 	local integer K0X
 	local unit ZPO
 	local integer WWV = GetPlayerId(p)
-	local location LIX = GetRectCenter(LZ)
-	local location LAX = GetRectCenter(MZ)
+	local location LIX = GetRectCenter(gg_rct_SentinelTavernCamera)
+	local location LAX = GetRectCenter(gg_rct_ScourgeTavernCamera)
 	local integer i = 0
 	set Q2 = WWV
 	set bj_groupEnumOwningPlayer = p
@@ -30891,11 +30891,11 @@ function ZJO takes nothing returns nothing
 	if(IsSentinelsPlayer(p)) then
 		set ZKO = 1
 		set ZLO = VWV
-		set ZMO = GetRectCenter(G4)
+		set ZMO = GetRectCenter(gg_rct_SentinelBuyArea)
 	else
 		set ZKO = VYV
 		set ZLO = VZV
-		set ZMO = GetRectCenter(F4)
+		set ZMO = GetRectCenter(gg_rct_ScourgeBuyArea)
 	endif
 	if VT then
 		if(GetRandomInt(1, 2)== 1) then
@@ -31655,7 +31655,7 @@ function Y1O takes nothing returns nothing
 endfunction
 function VER takes nothing returns boolean
 	local integer VXR = GetUnitTypeId(Player__Hero[GetPlayerId(GetTriggerPlayer())])
-	return(VXR =='U008' or VXR =='U007' or VXR =='Hlgr' or VXR =='Eevi' or VXR =='Ekee') and(RectContainsUnit(O0, Player__Hero[GetPlayerId(GetTriggerPlayer())]) or RectContainsUnit(R0, Player__Hero[GetPlayerId(GetTriggerPlayer())]))
+	return(VXR =='U008' or VXR =='U007' or VXR =='Hlgr' or VXR =='Eevi' or VXR =='Ekee') and(RectContainsUnit(gg_rct_SentinelFountainOfLifeRange, Player__Hero[GetPlayerId(GetTriggerPlayer())]) or RectContainsUnit(gg_rct_ScourgeFountainOfLifeRange, Player__Hero[GetPlayerId(GetTriggerPlayer())]))
 endfunction
 function VOR takes nothing returns nothing
 	local unit trigUnit = Player__Hero[GetPlayerId(GetTriggerPlayer())]
@@ -36504,8 +36504,8 @@ function N_R takes nothing returns boolean
 	return false
 endfunction
 function NBR takes nothing returns nothing
-	local location LIX = GetRectCenter(LZ)
-	local location LAX = GetRectCenter(MZ)
+	local location LIX = GetRectCenter(gg_rct_SentinelTavernCamera)
+	local location LAX = GetRectCenter(gg_rct_ScourgeTavernCamera)
 	local integer x = 1
 	local trigger t
 	local integer h
@@ -36729,9 +36729,13 @@ function BVR takes nothing returns nothing
 	local integer K0X
 	local integer X1X
 	local integer BOX
-	local location LIX = GetRectCenter(LZ)
-	local location LAX = GetRectCenter(MZ)
-	if OY then
+	local location LIX = GetRectCenter(gg_rct_SentinelTavernCamera)
+	local location LAX = GetRectCenter(gg_rct_ScourgeTavernCamera)
+	if OY then	
+		call RemoveLocation(LIX)
+		call RemoveLocation(LAX)
+		set LIX = null
+		set LAX = null
 		return
 	endif
 	if IsSentinelsPlayer(Player(BER)) then
@@ -36839,8 +36843,8 @@ function A8R takes nothing returns nothing
 	local integer w
 	local location N1R = GetRectCenter(gg_rct_SentinelRevivalPoint)
 	local location N2R = GetRectCenter(gg_rct_ScourgeRevivalPoint)
-	local location LIX = GetRectCenter(LZ)
-	local location LAX = GetRectCenter(MZ)
+	local location LIX = GetRectCenter(gg_rct_SentinelTavernCamera)
+	local location LAX = GetRectCenter(gg_rct_ScourgeTavernCamera)
 	local integer i
 	set DW = true
 	call KillPlayerAllZoneIndicator(Sentinels[1])
@@ -45723,7 +45727,7 @@ endfunction
 function KME takes nothing returns nothing
 	local real x = GetSpellTargetX()
 	local real y = GetSpellTargetY()
-	if(x != TAR(x) and y != TBR(y)) or RectContainsCoords(IA, x, y) or RectContainsCoords(OA, x, y) or RectContainsCoords(BA, x, y) or RectContainsCoords(CA, x, y) or RectContainsCoords(DA, x, y) or RectContainsCoords(EA, x, y) then
+	if(x != TAR(x) and y != TBR(y)) or RectContainsCoords(gg_rct_SentinelSpecialTerrain1, x, y) or RectContainsCoords(gg_rct_SentinelSpecialTerrain2, x, y) or RectContainsCoords(gg_rct_SentinelSpecialTerrain3, x, y) or RectContainsCoords(gg_rct_SentinelSpecialTerrain4, x, y) or RectContainsCoords(gg_rct_ScourgeSpecialTerrain1, x, y) or RectContainsCoords(gg_rct_ScourgeSpecialTerrain2, x, y) then
 		call EXStopUnit(GetTriggerUnit())
 		call InterfaceErrorForPlayer(GetOwningPlayer(GetTriggerUnit()), "不能在这里释放黑洞")
 	endif
@@ -77935,11 +77939,11 @@ function LBE takes nothing returns nothing
 endfunction
 function PZX takes nothing returns nothing
 	set P_V = CreateRegion()
-	call RegionAddRect(P_V, G4)
-	call RegionAddRect(P_V, O0)
+	call RegionAddRect(P_V, gg_rct_SentinelBuyArea)
+	call RegionAddRect(P_V, gg_rct_SentinelFountainOfLifeRange)
 	set P0V = CreateRegion()
-	call RegionAddRect(P0V, F4)
-	call RegionAddRect(P0V, R0)
+	call RegionAddRect(P0V, gg_rct_ScourgeBuyArea)
+	call RegionAddRect(P0V, gg_rct_ScourgeFountainOfLifeRange)
 endfunction
 function HDA takes unit WUE, unit WWE, real WYE, real WZE, real a2 returns nothing
 	local integer i = 0
@@ -86933,9 +86937,9 @@ function DetectMh takes nothing returns nothing
 endfunction
 function ZSA takes nothing returns nothing
 	local integer i = 1
-	set HO = CreateUnit(Player($C),'hfoo', GetRectMaxX(bj_mapInitialPlayableArea), GetRectMinY(bj_mapInitialPlayableArea), .0)
-	set KO = CreateUnit(Player($C),'hfoo', GetRectMinX(bj_mapInitialPlayableArea)+ 600, GetRectMaxY(bj_mapInitialPlayableArea)-600, .0)
-	set LO = CreateUnit(Player($C),'hfoo', GetRectMaxX(bj_mapInitialPlayableArea), GetRectMinY(bj_mapInitialPlayableArea), .0)
+	set HO = CreateUnit(Player(12),'hfoo', GetRectMaxX(bj_mapInitialPlayableArea), GetRectMinY(bj_mapInitialPlayableArea), .0)
+	set KO = CreateUnit(Player(12),'hfoo', GetRectMinX(bj_mapInitialPlayableArea)+ 600, GetRectMaxY(bj_mapInitialPlayableArea)-600, .0)
+	set LO = CreateUnit(Player(12),'hfoo', GetRectMaxX(bj_mapInitialPlayableArea), GetRectMinY(bj_mapInitialPlayableArea), .0)
 	set PO = CreateTrigger()
 	set QO = CreateTrigger()
 	loop
@@ -91213,7 +91217,7 @@ function createtower_rangeeff takes unit u returns nothing
 	set eff = null
 endfunction
 
-function CreateNeutralsUnitsRefreshRect takes rect r, boolean high returns nothing
+function CreateCreepsRectIndicator takes rect r, boolean high returns nothing
 	local integer h = 896
 	if high then
 		set h = 1024
@@ -91233,16 +91237,16 @@ function SXO takes nothing returns nothing
 	call RemoveUnit(CreateUnit(BW,'u001', GetRectCenterX(gg_rct_ScourgeAncientCenter), GetRectCenterY(gg_rct_ScourgeAncientCenter), 0))
 	call RemoveUnit(CreateUnit(BW,'u001', GetRectCenterX(gg_rct_ScourgeAncientCenter), GetRectCenterY(gg_rct_ScourgeAncientCenter), 0))
 	call RemoveUnit(CreateUnit(BW,'u001', GetRectCenterX(gg_rct_SentinelAncientCenter), GetRectCenterY(gg_rct_SentinelAncientCenter), 0))
-	call RemoveUnit(CreateUnit(BW,'u001', GetRectCenterX(BZ), GetRectCenterY(BZ), 0))
-	call RemoveUnit(CreateUnit(BW,'u001', GetRectCenterX(CZ), GetRectCenterY(CZ), 0))
-	call RemoveUnit(CreateUnit(BW,'u001', GetRectCenterX(DZ), GetRectCenterY(DZ), 0))
-	call RemoveUnit(CreateUnit(BW,'u001', GetRectCenterX(FZ), GetRectCenterY(FZ), 0))
-	call RemoveUnit(CreateUnit(BW,'u001', GetRectCenterX(GZ), GetRectCenterY(GZ), 0))
-	call RemoveUnit(CreateUnit(BW,'u001', GetRectCenterX(HZ), GetRectCenterY(HZ), 0))
-	call RemoveUnit(CreateUnit(BW,'u001', GetRectCenterX(JZ), GetRectCenterY(JZ), 0))
-	call RemoveUnit(CreateUnit(BW,'u001', GetRectCenterX(KZ), GetRectCenterY(KZ), 0))
-	call RemoveUnit(CreateUnit(BW,'u001', GetRectCenterX(A0), GetRectCenterY(A0), 0))
-	call RemoveUnit(CreateUnit(BW,'u001', GetRectCenterX(B0), GetRectCenterY(B0), 0))
+	call RemoveUnit(CreateUnit(BW,'u001', GetRectCenterX(gg_rct_SentinelCreepCenter3), GetRectCenterY(gg_rct_SentinelCreepCenter3), 0))
+	call RemoveUnit(CreateUnit(BW,'u001', GetRectCenterX(gg_rct_ScourgeCreepCenter5), GetRectCenterY(gg_rct_ScourgeCreepCenter5), 0))
+	call RemoveUnit(CreateUnit(BW,'u001', GetRectCenterX(gg_rct_ScourgeCreepCenter4), GetRectCenterY(gg_rct_ScourgeCreepCenter4), 0))
+	call RemoveUnit(CreateUnit(BW,'u001', GetRectCenterX(gg_rct_SentinelCreepCenter4), GetRectCenterY(gg_rct_SentinelCreepCenter4), 0))
+	call RemoveUnit(CreateUnit(BW,'u001', GetRectCenterX(gg_rct_ScourgeCreepCenter3), GetRectCenterY(gg_rct_ScourgeCreepCenter3), 0))
+	call RemoveUnit(CreateUnit(BW,'u001', GetRectCenterX(gg_rct_SentinelCreepCenter5), GetRectCenterY(gg_rct_SentinelCreepCenter5), 0))
+	call RemoveUnit(CreateUnit(BW,'u001', GetRectCenterX(gg_rct_ScourgeCreepCenter1), GetRectCenterY(gg_rct_ScourgeCreepCenter1), 0))
+	call RemoveUnit(CreateUnit(BW,'u001', GetRectCenterX(gg_rct_SentinelCreepCenter2), GetRectCenterY(gg_rct_SentinelCreepCenter2), 0))
+	call RemoveUnit(CreateUnit(BW,'u001', GetRectCenterX(gg_rct_ScourgeCreepCenter2), GetRectCenterY(gg_rct_ScourgeCreepCenter2), 0))
+	call RemoveUnit(CreateUnit(BW,'u001', GetRectCenterX(gg_rct_SentinelCreepCenter1), GetRectCenterY(gg_rct_SentinelCreepCenter1), 0))
 endfunction
 function InitTaverns takes nothing returns nothing
 	local player p = Player(15)
@@ -93935,95 +93939,95 @@ endfunction
 // 初始化矩形区域
 function Init_RectsAndRegions takes nothing returns nothing
 	// 天灾上路
-	set gg_rct_ScourgeTopMeleeBirth          = Rect( 2304.,  5280.,  2752.,  5728. ) // ScourgeTopMeleeBirth
-	set gg_rct_ScourgeTopRangedBirth         = Rect( 2752.,  5408.,  3040.,  5632. ) // ScourgeTopRangedBirth
-	set gg_rct_ScourgeTopSuperCreepsBirth    = Rect( 2336.,  5952.,  2592.,  6240. ) // ScourgeTopSuperCreepsBirth
+	set gg_rct_ScourgeTopMeleeBirth           = Rect(  2304.,  5280.,  2752.,  5728. ) // ScourgeTopMeleeBirth
+	set gg_rct_ScourgeTopRangedBirth          = Rect(  2752.,  5408.,  3040.,  5632. ) // ScourgeTopRangedBirth
+	set gg_rct_ScourgeTopSuperCreepsBirth     = Rect(  2336.,  5952.,  2592.,  6240. ) // ScourgeTopSuperCreepsBirth
 	// 天灾中路
-	set gg_rct_ScourgeCenterMeleeBirth       = Rect( 3616.,  3584.,  3872.,  3872. ) // ScourgeCenterMeleeBirth
-	set gg_rct_ScourgeCenterRangedBirth      = Rect( 4128.,  3776.,  4352.,  4032. ) // ScourgeCenterRangedBirth
-	set gg_rct_ScourgeCenterSuperCreepsBirth = Rect( 3904.,  2976.,  4160.,  3264. ) // ScourgeCenterSuperCreepsBirth
+	set gg_rct_ScourgeCenterMeleeBirth        = Rect(  3616.,  3584.,  3872.,  3872. ) // ScourgeCenterMeleeBirth
+	set gg_rct_ScourgeCenterRangedBirth       = Rect(  4128.,  3776.,  4352.,  4032. ) // ScourgeCenterRangedBirth
+	set gg_rct_ScourgeCenterSuperCreepsBirth  = Rect(  3904.,  2976.,  4160.,  3264. ) // ScourgeCenterSuperCreepsBirth
 	// 天灾下路
-	set gg_rct_ScourgeBottomMeleeBirth       = Rect( 6176.,  3136.,  6400.,  3392. ) // ScourgeBottomMeleeBirth
-	set gg_rct_ScourgeBottomRangedBirth      = Rect( 6048.,  3424.,  6304.,  3776. ) // ScourgeBottomRangedBirth
-	set gg_rct_ScourgeBottomSuperCreepsBirth = Rect( 6304.,  1984.,  6560.,  2272. ) // ScourgeBottomSuperCreeps
-
-	set gg_rct_SentinelBottomRangedBirth     = Rect(-4224.,-6848.,-3968.,-6592.)	// SentinelBottomRangedBirth
-	set SY = Rect(-6304.,-4384.,-6080.,-4224.)  // Sentinel 2
-	set TY = Rect(-4928.,-5760.,-4736.,-5536.)  // Sentinel 3
-
-	set EZ = Rect(-3648.,-6880.,-3424.,-6688.)	// Sentinel 4
-	set XZ = Rect(-6336.,-4224.,-5984.,-3904.)  // Sentinel 5
-	set OZ = Rect(-4896.,-5504.,-4608.,-5184.)	// Sentinel 6
-
-	
-	set G0 = Rect(-3328.,-6912.,-3072.,-6624.) // Sentinel 7
-	set H0 = Rect(-4384.,-4800.,-4128.,-4512.) // Sentinel 8
-	set J0 = Rect(-6432.,-3840.,-6176.,-3552.) // Sentinel 9
-
+	set gg_rct_ScourgeBottomMeleeBirth        = Rect(  6176.,  3136.,  6400.,  3392. ) // ScourgeBottomMeleeBirth
+	set gg_rct_ScourgeBottomRangedBirth       = Rect(  6048.,  3424.,  6304.,  3776. ) // ScourgeBottomRangedBirth
+	set gg_rct_ScourgeBottomSuperCreepsBirth  = Rect(  6304.,  1984.,  6560.,  2272. ) // ScourgeBottomSuperCreeps
+	// 近卫上路
+	set gg_rct_SentinelTopMeleeBirth 		  = Rect( -6336., -4224., -5984., -3904. ) // SentinelTopMeleeBirth
+	set gg_rct_SentinelTopRangedBirth 		  = Rect( -6304., -4384., -6080., -4224. ) // SentinelTopRangedBirth
+	set gg_rct_SentinelTopSuperCreepsBirth    = Rect( -6432., -3840., -6176., -3552. ) // SentinelTopSuperCreepsBirth
+	// 近卫中路
+	set gg_rct_SentinelCenterMeleeBirth       = Rect( -4896., -5504., -4608., -5184. ) // SentinelCenterMeleeBirth
+	set gg_rct_SentinelCenterRangedBirth      = Rect( -4928., -5760., -4736., -5536. ) // SentinelCenterRangedBirth
+	set gg_rct_SentinelCenterSuperCreepsBirth = Rect( -4384., -4800., -4128., -4512. ) // SentinelCenterSuperCreepsBirth
+	// 近卫下路
+	set gg_rct_SentinelBottomMeleeBirth       = Rect( -3648., -6880., -3424., -6688. ) // SentinelBottomMeleeBirth
+	set gg_rct_SentinelBottomRangedBirth      = Rect( -4224., -6848., -3968., -6592. ) // SentinelBottomRangedBirth
+	set gg_rct_SentinelBottomSuperCreepsBirth = Rect( -3328., -6912., -3072., -6624. ) // SentinelBottomSuperCreepsBirth
 	// 复活点
 	set gg_rct_ScourgeRevivalPoint  = Rect(  6176.,  5952.,  6624.,  6240. ) // ScourgeRevivalPoint
 	set gg_rct_SentinelRevivalPoint = Rect( -7040., -6912., -6688., -6656. ) // SentinelRevivalPoint
+	// 其他
+	set gg_rct_LeftTopRune 	   = Rect( -2464.,  1536., -2240.,  1760. )	// LeftTopRune
+	set gg_rct_RightBottomRune = Rect(  2912., -2944.,  3104., -2720. ) // RightBottomRune
+	set gg_rct_RoshanBirthRect = Rect(  4192., -2272.,  4224., -2304. ) // RoshanBirthRect
+	set gg_rct_DummyBirthPoint = Rect(  -480.,  -800.,  -256.,  -512. ) // DummyBirthPoint
+	// 购物区域
+	set gg_rct_ScourgeBuyArea  = Rect(  5696.,  5504.,  7296.,  7392. ) // ScourgeBuyArea
+	set gg_rct_SentinelBuyArea = Rect( -7680., -8032., -6176., -6240. ) // SentinelBuyArea
+	// 泉水区域
+	set gg_rct_SentinelFountainOfLifeRange = Rect( -7936., -7776., -5920., -5760. ) // SentinelFountainOfLifeRange
+	set gg_rct_ScourgeFountainOfLifeRange  = Rect(  5504.,  5184.,  7744.,  7136. ) // ScourgeFountainOfLifeRange
+	// 酒馆镜头区域
+	set gg_rct_SentinelTavernCamera = Rect( -7104.,  6656., -6848.,  6912. ) // SentinelTavernCamera
+	set gg_rct_ScourgeTavernCamera  = Rect( -7104.,  6656., -6880.,  6880. ) // ScourgeTavernCamera
+	// 黑洞特殊区域
+	set gg_rct_ScourgeSpecialTerrain1  = Rect( -8192.,  2016., -6816.,  2880. ) // ScourgeSpecialTerrain1
+	set gg_rct_ScourgeSpecialTerrain2  = Rect(  6880., -3328.,  8000., -2624. ) // ScourgeSpecialTerrain2
+	set gg_rct_SentinelSpecialTerrain1 = Rect( -8192., -3712., -7008., -2144. ) // SentinelSpecialTerrain1
+	set gg_rct_SentinelSpecialTerrain2 = Rect( -3360., -8192., -1472., -7648. ) // SentinelSpecialTerrain2
+	set gg_rct_SentinelSpecialTerrain3 = Rect( -2528., -7840., -1696., -7488. ) // SentinelSpecialTerrain3
+	set gg_rct_SentinelSpecialTerrain4 = Rect( -2336., -7584., -1600., -7456. ) // SentinelSpecialTerrain4
+	// 远古野
+	set gg_rct_ScourgeAncientCenter  = Rect(  4480., -1184.,  4512., -1216. ) // ScourgeAncientCenter
+	set gg_rct_SentinelAncientCenter = Rect( -3328.,  -416., -3104.,   -96. ) // SentinelAncientCenter
+	set gg_rct_ScourgeAncientRange   = Rect(  4000., -1568.,  4768.,  -736. ) // ScourgeAncientRange 4000, -736, 4768, -1568
+	set gg_rct_SentinelAncientRange  = Rect( -3552.,  -768., -2528.,   320. ) // SentinelAncientRange
+	// 近卫野区
+	set gg_rct_SentinelCreepRange1  = Rect( -1728., -4992.,  -768., -3840. ) // SentinelCreepRange1
+	set gg_rct_SentinelCreepCenter1 = Rect( -1152., -4704.,  -960., -4480. ) // SentinelCreepCenter1
+	set gg_rct_SentinelCreepRange2  = Rect( -1024., -3808.,   192., -2752. ) // SentinelCreepRange2
+	set gg_rct_SentinelCreepCenter2 = Rect(  -512., -3648.,  -320., -3520. ) // SentinelCreepCenter2
+	set gg_rct_SentinelCreepRange3  = Rect(  1056., -5216.,  2368., -3744. ) // SentinelCreepRange3
+	set gg_rct_SentinelCreepCenter3 = Rect(  1440., -4096.,  1728., -3872. ) // SentinelCreepCenter3
+	set gg_rct_SentinelCreepRange4  = Rect(  2272., -6080.,  3776., -4928. ) // SentinelCreepRange4
+	set gg_rct_SentinelCreepCenter4 = Rect(  2848., -5088.,  3072., -4928. ) // SentinelCreepCenter4
+	set gg_rct_SentinelCreepRange5  = Rect(  2592., -4800.,  3744., -3328. ) // SentinelCreepRange5
+	set gg_rct_SentinelCreepCenter5 = Rect(  3008., -3776.,  3136., -3648. ) // SentinelCreepCenter5
+	// 天灾野区
+	set gg_rct_ScourgeCreepRange1   = Rect(  416. ,  2624.,  1632.,  3648. ) // ScourgeCreepRange1
+	set gg_rct_ScourgeCreepCenter1  = Rect(  1184.,  2976.,  1280.,  3104. ) // ScourgeCreepCenter1
+	set gg_rct_ScourgeCreepRange2   = Rect(  -800.,  3072.,    64.,  4032. ) // ScourgeCreepRange2
+	set gg_rct_ScourgeCreepCenter2  = Rect(  -384.,  3392.,  -192.,  3520. ) // ScourgeCreepCenter2
+	set gg_rct_ScourgeCreepRange3   = Rect( -1888.,  2208.,  -992.,  3040. ) // ScourgeCreepRange3
+	set gg_rct_ScourgeCreepCenter3  = Rect( -1824.,  2240., -1472.,  2464. ) // ScourgeCreepCenter3
+	set gg_rct_ScourgeCreepRange4   = Rect( -3456.,  3808., -2656.,  4864. ) // ScourgeCreepRange4
+	set gg_rct_ScourgeCreepCenter4  = Rect( -3264.,  4192., -2912.,  4320. ) // ScourgeCreepCenter4
+	set gg_rct_ScourgeCreepRange5   = Rect( -5120.,  3008., -3648.,  4320. ) // ScourgeCreepRange5
+	set gg_rct_ScourgeCreepCenter5  = Rect( -4576.,  3328., -4448.,  3488. ) // ScourgeCreepCenter5
+	// 刷怪矩形区域
+	call CreateCreepsRectIndicator( gg_rct_ScourgeAncientRange , true  ) 
+	call CreateCreepsRectIndicator( gg_rct_SentinelAncientRange, true  ) 
+	call CreateCreepsRectIndicator( gg_rct_ScourgeCreepRange1  , true  ) 
+	call CreateCreepsRectIndicator( gg_rct_ScourgeCreepRange2  , true  ) 
+	call CreateCreepsRectIndicator( gg_rct_ScourgeCreepRange3  , false )
+	call CreateCreepsRectIndicator( gg_rct_ScourgeCreepRange4  , true  ) 
+	call CreateCreepsRectIndicator( gg_rct_ScourgeCreepRange5  , true  ) 
+	call CreateCreepsRectIndicator( gg_rct_SentinelCreepRange1 , false )
+	call CreateCreepsRectIndicator( gg_rct_SentinelCreepRange2 , false )
+	call CreateCreepsRectIndicator( gg_rct_SentinelCreepRange3 , true  ) 
+	call CreateCreepsRectIndicator( gg_rct_SentinelCreepRange4 , true  ) 
+	call CreateCreepsRectIndicator( gg_rct_SentinelCreepRange5 , true  ) 
 
-	set gg_rct_LeftTopRune = Rect(-2464., 1536.,-2240., 1760.)	// LeftTopRune
-	set gg_rct_RightBottomRune = Rect(2912.,-2944., 3104.,-2720.)   // RightBottomRune
-
-	set F4 = Rect(5696., 5504., 7296., 7392.)	// ScourgeFountainOfLife 1
-	set G4 = Rect(-7680.,-8032.,-6176.,-6240.)	// SentinelFountainOfLife 2
-	set BZ = Rect(1440.,-4096., 1728.,-3872.)	// SentinelCreepCenter 5
-	set CZ = Rect(-4576., 3328.,-4448., 3488.)	// ScourgeCreepCenter 5
-	set DZ = Rect(-3264., 4192.,-2912., 4320.)	// ScourgeCreepCenter 4
-	set FZ = Rect(2848.,-5088., 3072.,-4928.)	// SentinelCreepRange 3
-	set GZ = Rect(-1824., 2240.,-1472., 2464.)	// ScourgeCreepCenter 1
-	set HZ = Rect(3008.,-3776., 3136.,-3648.)	// SentinelCreepCenter 1
-	set JZ = Rect(1184., 2976., 1280., 3104.)	// ScourgeCreepCenter 2
-	
-	set KZ = Rect(-512.,-3648.,-320.,-3520.)   // SentinelCreepCenter 2
-	set LZ = Rect(-7104., 6656.,-6848., 6912.) // LeftTop 1
-	set MZ = Rect(-7104., 6656.,-6880., 6880.) // LeftTop 2
-	set gg_rct_RoshanBirthRect = Rect(4192,-2272, 4224,-2304) 	   // gg_rct_RoshanBirthRect
-
-	
-	set gg_rct_ScourgeAncientCenter  = Rect(4480, -1184, 4512,-1216)	 // ScourgeAncientCenter
-	set gg_rct_SentinelAncientCenter = Rect(-3328.,-416.,-3104.,-96.)	 // SentinelAncientCenter
-	set gg_rct_ScourgeAncientRange   = Rect(4000,-1568, 4768,-736) 	     // ScourgeAncientRange 4000, -736, 4768, -1568
-	set gg_rct_SentinelAncientRange  = Rect(-3552.,-768.,-2528., 320.)   // SentinelAncientRange
-
-	set TZ = Rect(1056.,-5216., 2368.,-3744.)  // SentinelCreepRange 5
-	set UZ = Rect(-5120., 3008.,-3648., 4320.) // ScourgeCreepRange 5
-	set WZ = Rect(-3456., 3808.,-2656., 4864.) // ScourgeCreepRange 4
-	set YZ = Rect(2272.,-6080., 3776.,-4928.)  // SentinelCreepRange 3
- 
-	set ZZ = Rect(-1888., 2208.,-992., 3040.)  // ScourgeCreepRange 1
-	set V0 = Rect(416., 2624., 1632., 3648.)   // ScourgeCreepRange 2
-	set E0 = Rect(2592.,-4800., 3744.,-3328.)  // SentinelCreepRange 1
-	set X0 = Rect(-1024.,-3808., 192.,-2752.)  // SentinelCreepRange 2
-	set O0 = Rect(-7936.,-7776.,-5920.,-5760.) // SentinelFountainOfLifeRange
-	set R0 = Rect(5504., 5184., 7744., 7136.)  // ScourgeFountainOfLifeRange
-	set I0 = Rect(-800., 3072., 64., 4032.)    // ScourgeCreepRange 6
-	set A0 = Rect(-384., 3392.,-192., 3520.)   // ScourgeCreepCenter 6
-	set N0 = Rect(-1728.,-4992,-768.,-3840.)   // SentinelCreepRange 6
-	set B0 = Rect(-1152.,-4704.,-960.,-4480.)  // SentinelCreepCenter 6
-	set gg_rct_DummyBirthPoint = Rect(-480.,-800.,-256.,-512.)     // DummyBirthPoint
-	set IA = Rect(-8192.,-3712.,-7008.,-2144.) // SentinelWaterfall 1
-	set OA = Rect(-3360.,-8192.,-1472.,-7648.) // SentinelWaterfall 2
-	set BA = Rect(-2528.,-7840.,-1696.,-7488.) // SentinelWaterfall 3
-	set CA = Rect(-2336.,-7584.,-1600.,-7456.) // SentinelWaterfall 4
-	set DA = Rect(-8192., 2016.,-6816., 2880.) // ScourgeTerrain 1
-	set EA = Rect(6880.,-3328., 8000.,-2624.)  // ScourgeTerrain 2
-	//刷怪矩形区域
-	call CreateNeutralsUnitsRefreshRect(gg_rct_ScourgeAncientRange, true) 
-	call CreateNeutralsUnitsRefreshRect(gg_rct_SentinelAncientRange, true) 
-	call CreateNeutralsUnitsRefreshRect(TZ, true) 
-	call CreateNeutralsUnitsRefreshRect(UZ, true) 
-	call CreateNeutralsUnitsRefreshRect(WZ, true) 
-	call CreateNeutralsUnitsRefreshRect(YZ, true) 
-	call CreateNeutralsUnitsRefreshRect(ZZ, false)
-	call CreateNeutralsUnitsRefreshRect(E0, true) 
-	call CreateNeutralsUnitsRefreshRect(V0, true) 
-	call CreateNeutralsUnitsRefreshRect(X0, false)
-	call CreateNeutralsUnitsRefreshRect(I0, true) 
-	call CreateNeutralsUnitsRefreshRect(N0, false)
-	
+	// 和谐区域
 	set R4 = CreateRegion()
 	call RegionAddRect(R4, Rect(-7968., 5216., -7456., 5920.))
 	call RegionAddRect(R4, Rect(-8064., 2880., -7648., 4512.))
@@ -94200,14 +94204,14 @@ function main takes nothing returns nothing
 	set u = CreateUnit(p,'uC74',-4544., 1152., 270.)
 	set I2 = CreateUnit(p,'u010',-7296., 4416., 270.)
 	set F2 = CreateUnit(p,'u010', 7360.,-4224., 270.)
-	call SetUnitColor(F2, ConvertPlayerColor($C))
-	call SetUnitColor(I2, ConvertPlayerColor($C))
-	call SetUnitColor(A2, ConvertPlayerColor($C))
-	call SetUnitColor(N2, ConvertPlayerColor($C))
+	call SetUnitColor(F2, ConvertPlayerColor(12))
+	call SetUnitColor(I2, ConvertPlayerColor(12))
+	call SetUnitColor(A2, ConvertPlayerColor(12))
+	call SetUnitColor(N2, ConvertPlayerColor(12))
 	set B2 = CreateUnit(p,'n12K',-7373., 4355., 270.)
-	call SetUnitColor(B2, ConvertPlayerColor($C))
+	call SetUnitColor(B2, ConvertPlayerColor(12))
 	set C2 = CreateUnit(p,'n12K', 7439.,-4289., 270.)
-	call SetUnitColor(C2, ConvertPlayerColor($C))
+	call SetUnitColor(C2, ConvertPlayerColor(12))
 	set V2 = CreateUnit(p,'e00D',-6005.1, 5458.6, 212.15)
 	set R2 = CreateUnit(p,'e00B',-561.7,-651.7, 325.6)
 	set O2 = CreateUnit(p,'e00A', 5613.5,-6350.9, 64.)
@@ -94278,7 +94282,7 @@ function main takes nothing returns nothing
 	set Scourges[3]= Player(9)
 	set Scourges[4]= Player(10)
 	set Scourges[5]= Player(11)
-	set BW = Player($C)
+	set BW = Player(12)
 	set UR = CreateGroup()
 	set LT = GetUnitLoc(Z1)
 	set MT = GetUnitLoc(X2)
@@ -94290,18 +94294,18 @@ function main takes nothing returns nothing
 	set KW[3]= PT
 	set KW[4]= TT
 	set KW[5]= LT
-	set ScourgeCenterMeleeBirthLocatio  = GetRectCenter( gg_rct_ScourgeCenterMeleeBirth  ) // ScourgeCenterMeleeBirthLocatio
-	set ScourgeTopMeleeBirthLocatio     = GetRectCenter( gg_rct_ScourgeTopMeleeBirth     ) // ScourgeTopMeleeBirthLocatio
-	set ScourgeBottomMeleeBirthLocatio  = GetRectCenter( gg_rct_ScourgeBottomMeleeBirth  ) // ScourgeBottomMeleeBirthLocatio
-	set ScourgeCenterRangedBirthLocatio = GetRectCenter( gg_rct_ScourgeCenterRangedBirth ) // ScourgeCenterRangedBirthLocatio
-	set ScourgeTopRangedBirthLocatio    = GetRectCenter( gg_rct_ScourgeTopRangedBirth    ) // ScourgeTopRangedBirthLocatio
-	set ScourgeBottomRangedBirthLocatio = GetRectCenter( gg_rct_ScourgeBottomRangedBirth ) // ScourgeBottomRangedBirthLocatio
-	set MU = GetRectCenter(OZ)
-	set QU = GetRectCenter(XZ)
-	set PU = GetRectCenter(EZ)
-	set SU = GetRectCenter(TY)
-	set UU = GetRectCenter(SY)
-	set TU = GetRectCenter(gg_rct_SentinelBottomRangedBirth)
+	set ScourgeCenterMeleeBirthLocatio   = GetRectCenter( gg_rct_ScourgeCenterMeleeBirth   ) // ScourgeCenterMeleeBirthLocatio
+	set ScourgeTopMeleeBirthLocatio      = GetRectCenter( gg_rct_ScourgeTopMeleeBirth      ) // ScourgeTopMeleeBirthLocatio
+	set ScourgeBottomMeleeBirthLocatio   = GetRectCenter( gg_rct_ScourgeBottomMeleeBirth   ) // ScourgeBottomMeleeBirthLocatio
+	set ScourgeCenterRangedBirthLocatio  = GetRectCenter( gg_rct_ScourgeCenterRangedBirth  ) // ScourgeCenterRangedBirthLocatio
+	set ScourgeTopRangedBirthLocatio     = GetRectCenter( gg_rct_ScourgeTopRangedBirth     ) // ScourgeTopRangedBirthLocatio
+	set ScourgeBottomRangedBirthLocatio  = GetRectCenter( gg_rct_ScourgeBottomRangedBirth  ) // ScourgeBottomRangedBirthLocatio
+	set SentinelCenterMeleeBirthLocatio  = GetRectCenter( gg_rct_SentinelCenterMeleeBirth  ) // SentinelCenterMeleeBirthLocatio
+	set SentinelTopMeleeBirthLocatio     = GetRectCenter( gg_rct_SentinelTopMeleeBirth	   ) // SentinelTopMeleeBirthLocatio
+	set SentinelBottomMeleeBirthLocatio  = GetRectCenter( gg_rct_SentinelBottomMeleeBirth  ) // SentinelBottomMeleeBirthLocatio
+	set SentinelCenterRangedBirthLocatio = GetRectCenter( gg_rct_SentinelCenterRangedBirth ) // SentinelCenterRangedBirthLocatio
+	set SentinelTopRangedBirthLocatio    = GetRectCenter( gg_rct_SentinelTopRangedBirth    ) // SentinelTopRangedBirthLocatio
+	set SentinelBottomRangedBirthLocatio = GetRectCenter( gg_rct_SentinelBottomRangedBirth ) // SentinelBottomRangedBirthLocatio
 	set WU = GetRectCenter(gg_rct_LeftTopRune)
 	set YU = GetRectCenter(gg_rct_RightBottomRune)
 	set t = CreateTrigger()
@@ -94430,7 +94434,7 @@ function main takes nothing returns nothing
 	call A8X(Player(9), 5,-6990., 6840., 750)
 	call A8X(Player(10), 5,-6990., 6840., 750)
 	call A8X(Player(11), 5,-6990., 6840., 750)
-	call A8X(Player($C), 5,-6990., 6840., 750)
+	call A8X(Player(12), 5,-6990., 6840., 750)
 
 	set DNV = CreateRegion()
 	call RegionAddRect(DNV, Rect(-8192.,-8128.,-5120.,-5536.))
@@ -94516,7 +94520,7 @@ function main takes nothing returns nothing
 
 	// 初始化肉山
 	set HOO = GetRectCenter(gg_rct_RoshanBirthRect)
-	set CT = CreateUnit(Player($C),'n00L', GetRectCenterX(gg_rct_RoshanBirthRect), GetRectCenterY(gg_rct_RoshanBirthRect), 180.)
+	set CT = CreateUnit(Player(12),'n00L', GetRectCenterX(gg_rct_RoshanBirthRect), GetRectCenterY(gg_rct_RoshanBirthRect), 180.)
 	call SetUnitAcquireRange(CT, 150)
 	call YTX()
 	if XEV > 1 then
@@ -94526,7 +94530,7 @@ function main takes nothing returns nothing
 	endif
 	call UnitAddItem(CT, CreateItem(XOV[AAV], 0, 0))
 	call YKX()
-	call PauseUnit(CreateUnit(Player($C),'o00G', GetUnitX(CT), GetUnitY(CT), 0), true)
+	call PauseUnit(CreateUnit(Player(12),'o00G', GetUnitX(CT), GetUnitY(CT), 0), true)
 
 	set t = CreateTrigger()
 	call TriggerRegisterUnitInRange(t, O2, 300, null)
@@ -94540,9 +94544,9 @@ function main takes nothing returns nothing
 	call TriggerAddAction(D1, function GXO)
 	set t = CreateTrigger()
 	set XVN = CreateRegion()
-	call RegionAddRect(XVN, OZ)
-	call RegionAddRect(XVN, TY)
-	call RegionAddRect(XVN, H0)
+	call RegionAddRect(XVN, gg_rct_SentinelCenterMeleeBirth)
+	call RegionAddRect(XVN, gg_rct_SentinelCenterRangedBirth)
+	call RegionAddRect(XVN, gg_rct_SentinelCenterSuperCreepsBirth)
 	call TriggerRegisterEnterRegion(t, XVN, null)
 	call TriggerAddCondition(t, Condition(function GOO))
 	set t = CreateTrigger()
@@ -94554,9 +94558,9 @@ function main takes nothing returns nothing
 	call TriggerAddCondition(t, Condition(function GRO))
 	set t = CreateTrigger()
 	set XVN = CreateRegion()
-	call RegionAddRect(XVN, XZ)
-	call RegionAddRect(XVN, SY)
-	call RegionAddRect(XVN, J0)
+	call RegionAddRect(XVN, gg_rct_SentinelTopMeleeBirth)
+	call RegionAddRect(XVN, gg_rct_SentinelTopRangedBirth)
+	call RegionAddRect(XVN, gg_rct_SentinelTopSuperCreepsBirth)
 	call TriggerRegisterEnterRegion(t, XVN, null)
 	call TriggerAddCondition(t, Condition(function GIO))
 	set t = CreateTrigger()
@@ -94569,8 +94573,8 @@ function main takes nothing returns nothing
 	set t = CreateTrigger()
 	set XVN = CreateRegion()
 	call RegionAddRect(XVN, gg_rct_SentinelBottomRangedBirth)
-	call RegionAddRect(XVN, EZ)
-	call RegionAddRect(XVN, G0)
+	call RegionAddRect(XVN, gg_rct_SentinelBottomMeleeBirth)
+	call RegionAddRect(XVN, gg_rct_SentinelBottomSuperCreepsBirth)
 	call TriggerRegisterEnterRegion(t, XVN, null)
 	call TriggerAddCondition(t, Condition(function GNO))
 	set t = CreateTrigger()
@@ -94742,8 +94746,8 @@ function main takes nothing returns nothing
 	call TriggerRegisterTimerEvent(t, 2, false)
 	call TriggerAddCondition(t, Condition(function SEO))
 	set KK = CreateRegion()
-	call RegionAddRect(KK, G4)
-	call RegionAddRect(KK, F4)
+	call RegionAddRect(KK, gg_rct_SentinelBuyArea)
+	call RegionAddRect(KK, gg_rct_ScourgeBuyArea)
 	set t = CreateTrigger()
 	call TriggerRegisterPlayerChatEvent(t, Sentinels[1], "", false)
 	call TriggerRegisterPlayerChatEvent(t, Sentinels[2], "", false)
