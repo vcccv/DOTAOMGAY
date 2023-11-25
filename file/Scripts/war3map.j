@@ -761,11 +761,11 @@ globals
 	boolean IsSentinelMidMeleeBarracksAlive = true
 	boolean IsSentinelBotMeleeBarracksAlive = true
 	boolean IsScourgeTopRangedBarracksAlive = true
-	boolean OU = true
-	boolean RU = true
+	boolean IsScourgeMidRangedBarracksAlive = true
+	boolean IsScourgeBotRangedBarracksAlive = true
 	boolean IsScourgeTopMeleeBarracksAlive = true
-	boolean AU = true
-	boolean NU = true
+	boolean IsScourgeMidMeleeBarracksAlive = true
+	boolean IsScourgeBotMeleeBarracksAlive = true
 	integer SpawnMeleeSoldiersNumber  = 3
 	integer SpawnRangedSoldiersNumber = 1
 	location WU = null
@@ -23394,6 +23394,7 @@ globals
 	constant integer SPAWN_SPEED_TYPE_ADD    = 1
 	constant integer SPAWN_SPEED_TYPE_REDUCE = 2
 endglobals
+
 function SpawnTopSoldiers takes boolean spawnDemolisher returns nothing
 	// 天灾
 	if (IsSentinelTopMeleeBarracksAlive) then
@@ -23408,19 +23409,21 @@ function SpawnTopSoldiers takes boolean spawnDemolisher returns nothing
 		call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'u002', Scourges[0], ScourgeTopRangedSpawnLocatio, bj_UNIT_FACING)
 	endif
 	call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 2, SPAWN_SPEED_TYPE_ADD)
+
 	// 近卫
 	if (IsScourgeTopMeleeBarracksAlive) then
 		call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'esen', Sentinels[0], SentinelTopMeleeSpawnLocatio, bj_UNIT_FACING)
 	else
 		call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'e00V', Sentinels[0], SentinelTopMeleeSpawnLocatio, bj_UNIT_FACING)
 	endif
-	call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 2, SPAWN_SPEED_TYPE_REDUCE)		
+	call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 2, SPAWN_SPEED_TYPE_REDUCE)
 	if (IsScourgeTopRangedBarracksAlive) then
 		call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'edry', Sentinels[0], SentinelTopRangedSpawnLocatio, bj_UNIT_FACING)
 	else
 		call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'e00W', Sentinels[0], SentinelTopRangedSpawnLocatio, bj_UNIT_FACING)
 	endif
 	call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 2, SPAWN_SPEED_TYPE_REDUCE)
+
 	// 车
 	if spawnDemolisher then
 		if (IsSentinelTopRangedBarracksAlive) then
@@ -23435,6 +23438,97 @@ function SpawnTopSoldiers takes boolean spawnDemolisher returns nothing
 			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'e026', Sentinels[0], SentinelTopRangedSpawnLocatio, bj_UNIT_FACING)
 		endif
 		call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 2, SPAWN_SPEED_TYPE_REDUCE)
+	endif
+endfunction
+
+function SpawnMidSoldiers takes boolean spawnDemolisher returns nothing
+	// 天灾
+	if (IsSentinelMidMeleeBarracksAlive) then
+		call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'ugho', Scourges[0], ScourgeMidMeleeSpawnLocatio, bj_UNIT_FACING)
+	else
+		call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'u001', Scourges[0], ScourgeMidMeleeSpawnLocatio, bj_UNIT_FACING)
+	endif
+	call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 3, SPAWN_SPEED_TYPE_NONE)
+	if (IsSentinelMidRangedBarracksAlive) then
+		call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'unec', Scourges[0], ScourgeMidRangedSpawnLocatio, bj_UNIT_FACING)
+	else
+		call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'u002', Scourges[0], ScourgeMidRangedSpawnLocatio, bj_UNIT_FACING)
+	endif
+	call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 3, SPAWN_SPEED_TYPE_NONE)
+
+	// 近卫
+	if (IsScourgeMidMeleeBarracksAlive) then
+		call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'esen', Sentinels[0], SentinelMidMeleeSpawnLocatio, bj_UNIT_FACING)
+	else
+		call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'e00V', Sentinels[0], SentinelMidMeleeSpawnLocatio, bj_UNIT_FACING)
+	endif
+	call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 3, SPAWN_SPEED_TYPE_NONE)
+	if (IsScourgeMidRangedBarracksAlive) then
+		call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'edry', Sentinels[0], SentinelMidRangedSpawnLocatio, bj_UNIT_FACING)
+	else
+		call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'e00W', Sentinels[0], SentinelMidRangedSpawnLocatio, bj_UNIT_FACING)
+	endif
+	call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 3, SPAWN_SPEED_TYPE_NONE)
+
+	// 车
+	if spawnDemolisher then
+		if (IsSentinelMidRangedBarracksAlive) then
+			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'umtw', Scourges[0], ScourgeMidRangedSpawnLocatio, bj_UNIT_FACING)
+		else
+			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'u00R', Scourges[0], ScourgeMidRangedSpawnLocatio, bj_UNIT_FACING)
+		endif
+		call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 3, SPAWN_SPEED_TYPE_NONE)
+		if (IsScourgeMidRangedBarracksAlive) then
+			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'ebal', Sentinels[0], SentinelMidRangedSpawnLocatio, bj_UNIT_FACING)
+		else
+			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'e026', Sentinels[0], SentinelMidRangedSpawnLocatio, bj_UNIT_FACING)
+		endif
+		call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 3, SPAWN_SPEED_TYPE_NONE)
+	endif
+endfunction
+function SpawnBotSoldiers takes boolean spawnDemolisher returns nothing
+	// 天灾
+	if (IsSentinelBotMeleeBarracksAlive) then
+		call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'ugho', Scourges[0], ScourgeBotMeleeSpawnLocatio, bj_UNIT_FACING)
+	else
+		call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'u001', Scourges[0], ScourgeBotMeleeSpawnLocatio, bj_UNIT_FACING)
+	endif
+	call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 4, SPAWN_SPEED_TYPE_REDUCE)
+	if (IsSentinelBotRangedBarracksAlive) then
+		call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'unec', Scourges[0], ScourgeBotRangedSpawnLocatio, bj_UNIT_FACING)
+	else
+		call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'u002', Scourges[0], ScourgeBotRangedSpawnLocatio, bj_UNIT_FACING)
+	endif
+	call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 4, SPAWN_SPEED_TYPE_REDUCE)
+
+	// 近卫
+	if (IsScourgeBotMeleeBarracksAlive) then
+		call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'esen', Sentinels[0], SentinelBotMeleeSpawnLocatio, bj_UNIT_FACING)
+	else
+		call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'e00V', Sentinels[0], SentinelBotMeleeSpawnLocatio, bj_UNIT_FACING)
+	endif
+	call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 4, SPAWN_SPEED_TYPE_ADD)
+	if (IsScourgeBotRangedBarracksAlive) then
+		call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'edry', Sentinels[0], SentinelBotRangedSpawnLocatio, bj_UNIT_FACING)
+	else
+		call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'e00W', Sentinels[0], SentinelBotRangedSpawnLocatio, bj_UNIT_FACING)
+	endif
+	call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 4, SPAWN_SPEED_TYPE_ADD)
+
+	// 车
+	if spawnDemolisher then
+		if (IsSentinelBotRangedBarracksAlive) then
+			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'umtw', Scourges[0], ScourgeBotRangedSpawnLocatio, bj_UNIT_FACING)
+		else
+			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'u00R', Scourges[0], ScourgeBotRangedSpawnLocatio, bj_UNIT_FACING)
+		endif
+		call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 4, SPAWN_SPEED_TYPE_REDUCE)
+		if (IsScourgeBotRangedBarracksAlive) then
+			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'ebal', Sentinels[0], SentinelBotRangedSpawnLocatio, bj_UNIT_FACING)
+		else
+			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'e026', Sentinels[0], SentinelBotRangedSpawnLocatio, bj_UNIT_FACING)
+		endif
+		call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 4, SPAWN_SPEED_TYPE_ADD)
 	endif
 endfunction
 function SpawnAttackSoldiersAction takes nothing returns nothing
@@ -23470,136 +23564,17 @@ function SpawnAttackSoldiersAction takes nothing returns nothing
 	if GetTriggerExecCount(SpawnAttackSoldiersTrigger) == 1 then
 		call EnableTrigger(AddGoldForIntervalTrig)
 	endif
-	// 天灾上路出兵
+	// 上路出兵
 	if Mode__OnlyMid == false and Mode__NotTop == false then
 		call SpawnTopSoldiers(spawnDemolisher)
 	endif
-	// 天灾下路出兵
+	// 中路出兵
 	if Mode__NoMid == false then
-		if (IsSentinelMidMeleeBarracksAlive) then
-			call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'ugho', Scourges[0], ScourgeMidMeleeSpawnLocatio, bj_UNIT_FACING)
-		else
-			call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'u001', Scourges[0], ScourgeMidMeleeSpawnLocatio, bj_UNIT_FACING)
-		endif
-		call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 3, SPAWN_SPEED_TYPE_NONE)
+		call SpawnMidSoldiers(spawnDemolisher)
 	endif
+	// 下路出兵
 	if Mode__OnlyMid == false and Mode__NotBot == false then
-		if (IsSentinelBotMeleeBarracksAlive) then
-			call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'ugho', Scourges[0], ScourgeBotMeleeSpawnLocatio, bj_UNIT_FACING)
-		else
-			call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'u001', Scourges[0], ScourgeBotMeleeSpawnLocatio, bj_UNIT_FACING)
-		endif
-		call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 4, SPAWN_SPEED_TYPE_REDUCE)
-	endif
-	if Mode__OnlyMid == false and Mode__NotTop == false then
-	endif
-	if Mode__NoMid == false then
-		if (IsSentinelMidRangedBarracksAlive) then
-			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'unec', Scourges[0], ScourgeMidRangedSpawnLocatio, bj_UNIT_FACING)
-		else
-			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'u002', Scourges[0], ScourgeMidRangedSpawnLocatio, bj_UNIT_FACING)
-		endif
-		call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 3, SPAWN_SPEED_TYPE_NONE)
-	endif
-	if Mode__OnlyMid == false and Mode__NotBot == false then
-		// 下路远程兵
-		if (IsSentinelBotRangedBarracksAlive) then
-			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'unec', Scourges[0], ScourgeBotRangedSpawnLocatio, bj_UNIT_FACING)
-		else
-			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'u002', Scourges[0], ScourgeBotRangedSpawnLocatio, bj_UNIT_FACING)
-		endif
-		call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 4, SPAWN_SPEED_TYPE_REDUCE)
-	endif
-	// 天灾车
-	if spawnDemolisher then
-		if Mode__OnlyMid == false and Mode__NotTop == false then
-			if (IsSentinelTopRangedBarracksAlive) then
-				call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'umtw', Scourges[0], ScourgeTopRangedSpawnLocatio, bj_UNIT_FACING)
-			else
-				call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'u00R', Scourges[0], ScourgeTopRangedSpawnLocatio, bj_UNIT_FACING)
-			endif
-			call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 2, SPAWN_SPEED_TYPE_ADD)
-		endif
-		if Mode__NoMid == false then
-			if (IsSentinelMidRangedBarracksAlive) then
-				call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'umtw', Scourges[0], ScourgeMidRangedSpawnLocatio, bj_UNIT_FACING)
-			else
-				call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'u00R', Scourges[0], ScourgeMidRangedSpawnLocatio, bj_UNIT_FACING)
-			endif
-			call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 3, SPAWN_SPEED_TYPE_NONE)
-		endif
-		if Mode__OnlyMid == false and Mode__NotBot == false then
-			if (IsSentinelBotRangedBarracksAlive) then
-				call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'umtw', Scourges[0], ScourgeBotRangedSpawnLocatio, bj_UNIT_FACING)
-			else
-				call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'u00R', Scourges[0], ScourgeBotRangedSpawnLocatio, bj_UNIT_FACING)
-			endif
-			call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 4, SPAWN_SPEED_TYPE_REDUCE)
-		endif
-	endif
-	if Mode__OnlyMid == false and Mode__NotTop == false then
-
-	endif
-	// 近卫中路近战
-	if Mode__NoMid == false then
-		if (AU) then
-			call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'esen', Sentinels[0], SentinelMidMeleeSpawnLocatio, bj_UNIT_FACING)
-		else
-			call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'e00V', Sentinels[0], SentinelMidMeleeSpawnLocatio, bj_UNIT_FACING)
-		endif
-		call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 3, SPAWN_SPEED_TYPE_NONE)
-	endif
-	// 近卫下路近战
-	if Mode__OnlyMid == false and Mode__NotBot == false then
-		if (NU) then
-			call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'esen', Sentinels[0], SentinelBotMeleeSpawnLocatio, bj_UNIT_FACING)
-		else
-			call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'e00V', Sentinels[0], SentinelBotMeleeSpawnLocatio, bj_UNIT_FACING)
-		endif
-		call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 4, SPAWN_SPEED_TYPE_ADD)
-	endif
-	// 近卫上路远程
-	if Mode__OnlyMid == false and Mode__NotTop == false then
-	endif
-	// 近卫中路远程兵
-	if Mode__NoMid == false then
-		if (OU) then
-			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'edry', Sentinels[0], SentinelMidRangedSpawnLocatio, bj_UNIT_FACING)
-		else
-			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'e00W', Sentinels[0], SentinelMidRangedSpawnLocatio, bj_UNIT_FACING)
-		endif
-		call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 3, SPAWN_SPEED_TYPE_NONE)
-	endif
-	// 近卫下路远程兵
-	if Mode__OnlyMid == false and Mode__NotBot == false then
-		if (RU) then
-			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'edry', Sentinels[0], SentinelBotRangedSpawnLocatio, bj_UNIT_FACING)
-		else
-			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'e00W', Sentinels[0], SentinelBotRangedSpawnLocatio, bj_UNIT_FACING)
-		endif
-		call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 4, SPAWN_SPEED_TYPE_ADD)
-	endif
-	// 近卫车
-	if spawnDemolisher then
-		if Mode__OnlyMid == false and Mode__NotTop == false then
-	
-		endif
-		if Mode__NoMid == false then
-			if (OU) then
-				call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'ebal', Sentinels[0], SentinelMidRangedSpawnLocatio, bj_UNIT_FACING)
-			else
-				call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'e026', Sentinels[0], SentinelMidRangedSpawnLocatio, bj_UNIT_FACING)
-			endif
-			call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 3, SPAWN_SPEED_TYPE_NONE)
-		endif
-		if Mode__OnlyMid == false and Mode__NotBot == false then
-			if (RU) then
-				call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'ebal', Sentinels[0], SentinelBotRangedSpawnLocatio, bj_UNIT_FACING)
-			else
-				call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'e026', Sentinels[0], SentinelBotRangedSpawnLocatio, bj_UNIT_FACING)
-			endif
-			call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 4, SPAWN_SPEED_TYPE_ADD)
-		endif
+		call SpawnBotSoldiers(spawnDemolisher)
 	endif
 endfunction
 function GQO takes nothing returns nothing
@@ -23645,13 +23620,13 @@ function GZO takes nothing returns nothing
 	call ONX(GetKillingUnit(), true)
 endfunction
 function G_O takes nothing returns nothing
-	set OU = false
+	set IsScourgeMidRangedBarracksAlive = false
 	call DisableTrigger(Q1)
 	call StoreDrCacheData("Rax" + I2S(1)+ I2S(1)+ I2S(1), GetPlayerId(GetOwningPlayer(GetKillingUnit())))
 	call ONX(GetKillingUnit(), true)
 endfunction
 function G0O takes nothing returns nothing
-	set RU = false
+	set IsScourgeBotRangedBarracksAlive = false
 	call DisableTrigger(S1)
 	call StoreDrCacheData("Rax" + I2S(1)+ I2S(2)+ I2S(1), GetPlayerId(GetOwningPlayer(GetKillingUnit())))
 	call ONX(GetKillingUnit(), true)
@@ -23663,13 +23638,13 @@ function G1O takes nothing returns nothing
 	call ONX(GetKillingUnit(), false)
 endfunction
 function G2O takes nothing returns nothing
-	set AU = false
+	set IsScourgeMidMeleeBarracksAlive = false
 	call DisableTrigger(U1)
 	call StoreDrCacheData("Rax" + I2S(1)+ I2S(1)+ I2S(0), GetPlayerId(GetOwningPlayer(GetKillingUnit())))
 	call ONX(GetKillingUnit(), false)
 endfunction
 function G3O takes nothing returns nothing
-	set NU = false
+	set IsScourgeBotMeleeBarracksAlive = false
 	call DisableTrigger(W1)
 	call StoreDrCacheData("Rax" + I2S(1)+ I2S(2)+ I2S(0), GetPlayerId(GetOwningPlayer(GetKillingUnit())))
 	call ONX(GetKillingUnit(), false)
@@ -23715,7 +23690,7 @@ function G6O takes nothing returns boolean
 	return false
 endfunction
 function G7O takes nothing returns boolean
-	return(not(IsScourgeTopMeleeBarracksAlive or AU or NU or IsScourgeTopRangedBarracksAlive or OU or RU))
+	return(not(IsScourgeTopMeleeBarracksAlive or IsScourgeMidMeleeBarracksAlive or IsScourgeBotMeleeBarracksAlive or IsScourgeTopRangedBarracksAlive or IsScourgeMidRangedBarracksAlive or IsScourgeBotRangedBarracksAlive))
 endfunction
 function G8O takes nothing returns nothing
 	call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, CR[GetPlayerId(LocalPlayer)]* 2, GetObjectName('n04O')+ " " + GetObjectName('n0C7'))
