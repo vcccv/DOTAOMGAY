@@ -1,5 +1,6 @@
 ﻿
 globals
+	group			TempGroup = CreateGroup()
 	boolean			IsReplayMode	= false
 	// Japi常量
 
@@ -158,7 +159,7 @@ globals
 	// 哈希表的Key值
 	constant integer KEY_USE_DOUBLECLICK_SPELL = 1
 
-	boolean bDoubleClickSystemIsEnable = false
+	boolean IsEnableDoubleClickSystem = false
 
 	// 单位大头像
 	integer PortraitFrame
@@ -272,8 +273,6 @@ globals
 	string GourpListStr = null
 	integer array GroupsId
 	integer GroupsDebugCount = 0
-	lightning array NeutralsPosTipLightning
-	integer NeutralsPosTipNumber = 0
 	real array Chat_times
 	effect array tower_rangeeff
 	integer tower_rangeint = 0
@@ -536,13 +535,13 @@ globals
 	constant integer JB =$F
 	boolean KB = false
 	group LB
-	boolean MB = true
+	boolean IsNotUpgraded = true
 	integer array PB
 	constant integer QB = 1325
 	unit SB = null
 	integer WB
 	boolean YB = false
-	integer array ZB
+	integer array CreepsLastCreatedIndex
 	integer array VC
 	integer array EC
 	constant integer IC = StringHash("color")
@@ -554,7 +553,7 @@ globals
 	real MC
 	integer PC = 5
 	integer TC
-	integer WC
+	integer TempInt
 	timer ZC = CreateTimer()
 	boolean array XD
 	integer AD = 0
@@ -750,11 +749,11 @@ globals
 	boolean Mode__EasyMode = false
 	boolean JT = false
 	boolean KT = false
-	location LT = null
-	location MT = null
-	location PT = null
-	location QT = null
-	location TT = null
+	location AttackToScourgeLocation = null
+	location AttackToSentinelLocation = null
+	location AttackToMidLocation   = null
+	location AttackToTopLocation  = null
+	location AttackToBotLocation = null
 	boolean UT = true
 	boolean WT = true
 	boolean YT = true
@@ -767,20 +766,8 @@ globals
 	boolean IU = true
 	boolean AU = true
 	boolean NU = true
-	integer BU = 3
-	integer CU = 1
-	location ScourgeCenterMeleeBirthLocatio   = null
-	location ScourgeTopMeleeBirthLocatio      = null
-	location ScourgeBottomMeleeBirthLocatio   = null
-	location ScourgeBottomRangedBirthLocatio  = null
-	location ScourgeCenterRangedBirthLocatio  = null
-	location ScourgeTopRangedBirthLocatio     = null
-	location SentinelCenterMeleeBirthLocatio  = null
-	location SentinelBottomMeleeBirthLocatio  = null
-	location SentinelTopMeleeBirthLocatio     = null
-	location SentinelCenterRangedBirthLocatio = null
-	location SentinelBottomRangedBirthLocatio = null
-	location SentinelTopRangedBirthLocatio    = null
+	integer SpawnMeleeSoldiersNumber  = 3
+	integer SpawnRangedSoldiersNumber = 1
 	location WU = null
 	location YU = null
 	unit array Player__Hero
@@ -799,7 +786,7 @@ globals
 	// 天灾
 	player array Scourges
 	
-	player BW = null
+	player CreepsPlayer = null
 	constant player CW = Player(15)
 	boolean DW = false
 	integer VO = 0
@@ -810,7 +797,7 @@ globals
 	unit GW = null
 	integer HW = 0
 	real JW = 0
-	location array KW
+	location array SoldiersNextWaypoint
 	group LW = null
 	boolean MW = false
 	boolean PW = false
@@ -834,23 +821,12 @@ globals
 	boolean Z3 = false
 	string K3 = ""
 	string array BY
-	// 下路近战兵
-	rect gg_rct_ScourgeBottomMeleeBirth   = null
-	rect gg_rct_ScourgeCenterMeleeBirth   = null
-	rect gg_rct_ScourgeTopMeleeBirth      = null
-	rect gg_rct_ScourgeRevivalPoint       = null
-	rect gg_rct_SentinelBottomRangedBirth = null
-	rect gg_rct_SentinelTopRangedBirth    = null
-	rect gg_rct_SentinelCenterRangedBirth = null
-	rect gg_rct_ScourgeBottomRangedBirth  = null
-	rect gg_rct_ScourgeCenterRangedBirth  = null
-	rect gg_rct_ScourgeTopRangedBirth     = null
-	rect gg_rct_SentinelRevivalPoint      = null
-	rect gg_rct_SentinelBottomMeleeBirth  = null
-	rect gg_rct_SentinelTopMeleeBirth     = null
-	rect gg_rct_SentinelCenterMeleeBirth  = null
+
+	rect gg_rct_SentinelRevivalPoint   = null
+	rect gg_rct_ScourgeRevivalPoint    = null
+	
 	rect gg_rct_RightBottomRune = null
-	rect gg_rct_ScourgeBuyArea = null
+	rect gg_rct_ScourgeBuyArea  = null
 	rect gg_rct_SentinelBuyArea = null
 	rect gg_rct_LeftTopRune = null
 	rect gg_rct_ScourgeAncientCenter  = null
@@ -865,7 +841,7 @@ globals
 	rect gg_rct_SentinelCreepCenter2 = null
 	rect gg_rct_SentinelTavernCamera = null
 	rect gg_rct_ScourgeTavernCamera = null
-	rect gg_rct_RoshanBirthRect 	 = null // gg_rct_RoshanBirthRect
+	rect gg_rct_RoshanSpawn 	 = null // gg_rct_RoshanSpawn
 	rect gg_rct_ScourgeAncientRange  = null
 	rect gg_rct_SentinelAncientRange = null
 	rect gg_rct_SentinelCreepRange3 = null
@@ -883,18 +859,7 @@ globals
 	rect gg_rct_SentinelCreepRange1 = null
 	rect gg_rct_SentinelCreepCenter1 = null
 	rect gg_rct_DummyBirthPoint = null
-	rect gg_rct_SentinelSpecialTerrain1 = null
-	rect gg_rct_SentinelSpecialTerrain2 = null
-	rect gg_rct_SentinelSpecialTerrain3 = null
-	rect gg_rct_SentinelSpecialTerrain4 = null
-	rect gg_rct_ScourgeSpecialTerrain1 = null
-	rect gg_rct_ScourgeSpecialTerrain2 = null
-	rect gg_rct_ScourgeCenterSuperCreepsBirth  = null
-	rect gg_rct_ScourgeTopSuperCreepsBirth     = null
-	rect gg_rct_ScourgeBottomSuperCreepsBirth  = null
-	rect gg_rct_SentinelBottomSuperCreepsBirth = null
-	rect gg_rct_SentinelCenterSuperCreepsBirth = null
-	rect gg_rct_SentinelTopSuperCreepsBirth    = null
+
 	boolean ShouSiJuHuaB = true
 	boolean JUHUABIEPAOB = true
 	boolean SHUIZAODEZHUAB = true
@@ -975,7 +940,7 @@ globals
 	sound SF = null
 	trigger C1 = null
 	trigger D1 = null
-	trigger AG = null
+	trigger SpawnAttackSoldiersTrigger = null
 	trigger F1 = null
 	trigger G1 = null
 	trigger H1 = null
@@ -990,7 +955,7 @@ globals
 	trigger W1 = null
 	trigger JG = null
 	trigger KG = null
-	trigger LG = null
+	trigger SoldiersUpgerTrig = null
 	trigger MG = null
 	trigger NG = null
 	trigger SG = null
@@ -999,11 +964,11 @@ globals
 	trigger Y1 = null
 	trigger IH = null
 	trigger OH = null
-	unit Z1 = null
-	unit V2 = null
-	unit X2 = null
-	unit O2 = null
-	unit R2 = null
+	unit AttackToScourgeDummyUnit = null
+	unit AttackToTopDummyUnit = null
+	unit AttackToSentinelDummyUnit = null
+	unit AttackToBotDummyUnit = null
+	unit AttackToMidDummyUnit = null
 	unit I2 = null
 	unit A2 = null
 	unit N2 = null
@@ -1096,7 +1061,6 @@ globals
 	boolean IsChooseHeroEnd = false
 	boolean X4 = false
 	integer array O4
-	region R4
 	constant real ZN = 150
 	integer array I4
 	integer A4 = 0
@@ -1658,7 +1622,7 @@ globals
 	integer FJV ='A0HX'
 	trigger FKV
 	region FLV
-	boolean FMV = false
+	boolean IsDisableSpawn = false
 	boolean FPV = false
 	boolean FQV = false
 	unit array FSV
@@ -1696,10 +1660,10 @@ globals
 	boolean GKV = false
 	boolean GLV = false
 	boolean GMV = false
-	boolean GPV = false
-	boolean GQV = false
-	boolean GSV = false
-	boolean GTV = false
+	boolean Mode__OnlyMid = false
+	boolean Mode__NotBot = false
+	boolean Mode__NoMid = false
+	boolean Mode__NotTop = false
 	boolean GUV = false
 	boolean GWV = false
 	boolean GYV = false
@@ -2429,7 +2393,7 @@ function RegisterUnitAttackEvent takes string s, integer level returns nothing
 	local integer i = 0
 	loop
 	exitwhen HaveSavedString(Q,'DMGE'+ level, i) == false
-		if LoadStr(Q,'DMGE'+ level, i)== s then
+		if LoadStr(Q,'DMGE'+ level, i) == s then
 			return
 		endif
 		set i = i + 1
@@ -2508,7 +2472,7 @@ function TUV takes trigger t, string s, boolean TWV returns nothing
 endfunction
 
 function UnitVisibleToPlayer takes unit u, player p returns boolean
-	return IsUnitVisible(u, p) and(GetUnitAbilityLevel(u,'A1HX')== 0 or IsUnitAlly(u, p))
+	return IsUnitVisible(u, p) and(GetUnitAbilityLevel(u,'A1HX') == 0 or IsUnitAlly(u, p))
 endfunction
 function UnitAddPermanentAbility takes unit trigUnit, integer ab returns boolean
 	return UnitAddAbility(trigUnit, ab) and UnitMakeAbilityPermanent(trigUnit, true, ab)
@@ -2567,7 +2531,7 @@ function UXV takes nothing returns boolean
 	local boolean b = false
 	loop
 		set p = Player(i)
-		if GetPlayerController(p)== MAP_CONTROL_USER and GetPlayerSlotState(p)== PLAYER_SLOT_STATE_PLAYING then
+		if GetPlayerController(p) == MAP_CONTROL_USER and GetPlayerSlotState(p) == PLAYER_SLOT_STATE_PLAYING then
 			set n = n + 1
 		endif
 		set i = i + 1
@@ -2620,7 +2584,7 @@ function UIV takes nothing returns nothing
 	local player p
 	loop
 		set p = Player(i)
-		if GetPlayerController(p)== MAP_CONTROL_USER and GetPlayerSlotState(p)== PLAYER_SLOT_STATE_PLAYING then
+		if GetPlayerController(p) == MAP_CONTROL_USER and GetPlayerSlotState(p) == PLAYER_SLOT_STATE_PLAYING then
 			call TriggerRegisterPlayerEventLeave(t, p)
 		endif
 		set i = i + 1
@@ -2744,7 +2708,7 @@ function ThrowLog takes nothing returns nothing
 	call PreloadGenClear()
 	call PreloadGenStart()
 	call Preload(s)
-	if GetObjectName('TEST')== "L1ch" then
+	if GetObjectName('TEST') == "L1ch" then
 		call PreloadGenEnd("exec" + R2S(GetRandomReal(0,$4C4B40))+ ".txt")
 	endif
 	call PreloadGenClear()
@@ -2788,7 +2752,7 @@ function UZV takes unit u, integer id returns boolean
 	local boolean U_V = false
 	local boolean U0V = true
 	set it = CreateItem(id, GetUnitX(u), GetUnitY(u))
-	if GetUnitAbilityLevel(u,'AInv')== 0 then
+	if GetUnitAbilityLevel(u,'AInv') == 0 then
 		set U_V = true
 		call UnitAddPermanentAbility(u,'AInv')
 	endif
@@ -2950,7 +2914,7 @@ function WIV takes unit u, string s returns integer
 	local integer WXV = U7V(s)
 	local real WAV = 0
 	loop
-		if GetUnitAbilityLevel(u, WEV + WVV)== 1 then
+		if GetUnitAbilityLevel(u, WEV + WVV) == 1 then
 			set WAV = WAV + Pow(2, WVV)
 		endif
 		set WVV = WVV + 1
@@ -2998,7 +2962,7 @@ function WDV takes nothing returns nothing
 	set u = null
 endfunction
 function WHV takes unit u, integer WGV returns nothing
-	if GetUnitAbilityLevel(u, WGV)== 0 and(IsUnitType(u, UNIT_TYPE_STRUCTURE) and GetUnitAbilityLevel(u, LoadInteger(HY, GetHandleId(LoadTimerHandle(HY, GetHandleId(u), WGV)), 0))== 0) then
+	if GetUnitAbilityLevel(u, WGV) == 0 and(IsUnitType(u, UNIT_TYPE_STRUCTURE) and GetUnitAbilityLevel(u, LoadInteger(HY, GetHandleId(LoadTimerHandle(HY, GetHandleId(u), WGV)), 0)) == 0) then
 		return
 	endif
 	call TimerStart(LoadTimerHandle(HY, GetHandleId(u), WGV), .0, false, function WDV)
@@ -3008,7 +2972,7 @@ function WJV takes unit u, integer WKV, integer WGV, real WLV returns nothing
 	local timer t = null
 	local integer WFV
 	set FK = false
-	if GetUnitAbilityLevel(u, WGV)== 0 then
+	if GetUnitAbilityLevel(u, WGV) == 0 then
 		set t = CreateTimer()
 	else
 		set t = LoadTimerHandle(HY, GetHandleId(u), WGV)
@@ -3087,7 +3051,7 @@ function WSV takes nothing returns nothing
 	endif
 	set FK = false
 	call UnitAddAbility(u, WTV)
-	if GetUnitAbilityLevel(u, WTV)== 0 or b then
+	if GetUnitAbilityLevel(u, WTV) == 0 or b then
 		if b then
 			call UnitRemoveAbility(u, WTV)
 			set WTV = LoadInteger(P, WFV, 3)
@@ -4310,7 +4274,7 @@ function T6E takes integer WWV returns boolean
 	if LOD_DEBUGMODE then
 		return true
 	endif
-	return((GetPlayerController(Player(WWV))== MAP_CONTROL_USER) and(GetPlayerSlotState(Player(WWV))== PLAYER_SLOT_STATE_PLAYING))
+	return((GetPlayerController(Player(WWV)) == MAP_CONTROL_USER) and(GetPlayerSlotState(Player(WWV)) == PLAYER_SLOT_STATE_PLAYING))
 endfunction
 function T7E takes player p, boolean b returns nothing
 	local sound s = CreateSoundFromLabel("InterfaceError", false, false, false, 10, 10)
@@ -4373,7 +4337,7 @@ function GetUnitMissProbability takes unit whichUnit returns integer
 	local item it
 	local integer level
 	// 模糊
-	if IsAttackEffectEnabled[4]then
+	if IsAttackEffectEnabled[4] then
 		set level = GetUnitAbilityLevel(whichUnit,'A03P')*(1 -GetUnitAbilityLevel(whichUnit,'A36D'))
 		if level > 0 then
 			set probability = probability *(.9 -0.1 * level)
@@ -4386,19 +4350,19 @@ function GetUnitMissProbability takes unit whichUnit returns integer
 			set probability = probability *(.95 -0.05 * level)
 		endif
 	endif
-	if IsAttackEffectEnabled[2]or IsAttackEffectEnabled[3]or IsAttackEffectEnabled[6]then
+	if IsAttackEffectEnabled[2]or IsAttackEffectEnabled[3]or IsAttackEffectEnabled[6] then
 		//set UQE = LoadInteger(HY, GetHandleId(u),'BFLY')	//蝴蝶buff 需要修改
 		set inventorySize = UnitInventorySize(whichUnit)
 		loop
 		exitwhen i > inventorySize
 			set it = UnitItemInSlot(whichUnit, i)
 			if it != null then
-				if GetItemIndex(it)== A5V then
+				if GetItemIndex(it) == A5V then
 					// 蝴蝶 35%
 					if GetUnitAbilityLevel(whichUnit,'AIev') > 0 then
 						set probability = probability * .65
 					endif
-				elseif GetItemIndex(it)== RXV or GetItemIndex(it)== N1V then
+				elseif GetItemIndex(it) == RXV or GetItemIndex(it) == N1V then
 					// 闪避护符和天堂之戟 25%
 					set probability = probability * .75
 				endif
@@ -4407,11 +4371,11 @@ function GetUnitMissProbability takes unit whichUnit returns integer
 		endloop
 		set it = null
 	endif
-	if IsAttackEffectEnabled[5]then
-		if GetUnitAbilityLevel(whichUnit,'A39G')== 1 then
+	if IsAttackEffectEnabled[5] then
+		if GetUnitAbilityLevel(whichUnit,'A39G') == 1 then
 			set probability = probability * .75
 		endif
-		if GetUnitAbilityLevel(whichUnit,'A39M')== 1 then
+		if GetUnitAbilityLevel(whichUnit,'A39M') == 1 then
 			set probability = probability * .75
 		endif
 	endif
@@ -4428,71 +4392,71 @@ endfunction
 function GetUnitBlind takes unit u returns integer
 	local integer c = 0
 	local integer ch
-	if IsAttackEffectEnabled[14]then
-		if GetUnitAbilityLevel(u,'B02P')== 1 then
+	if IsAttackEffectEnabled[14] then
+		if GetUnitAbilityLevel(u,'B02P') == 1 then
 			set c = 100 
 		endif
 	endif
 	if c != 100  then
-		if IsAttackEffectEnabled[8]then
-			if GetUnitAbilityLevel(u,'BNdh')== 1 then
-				if GetUnitAbilityLevel(u,'A3PU')== 1 then
+		if IsAttackEffectEnabled[8] then
+			if GetUnitAbilityLevel(u,'BNdh') == 1 then
+				if GetUnitAbilityLevel(u,'A3PU') == 1 then
 					set c = 75
-				elseif GetUnitAbilityLevel(u,'A3PR')== 1 then
+				elseif GetUnitAbilityLevel(u,'A3PR') == 1 then
 					set c = 45
-				elseif GetUnitAbilityLevel(u,'A3PS')== 1 then
+				elseif GetUnitAbilityLevel(u,'A3PS') == 1 then
 					set c = 55
-				elseif GetUnitAbilityLevel(u,'A3PT')== 1 then
+				elseif GetUnitAbilityLevel(u,'A3PT') == 1 then
 					set c = 65
 				endif
 			endif
 		endif
-		if IsAttackEffectEnabled[9]then
-			if GetUnitAbilityLevel(u,'B01D')== 1 then
-				if GetUnitAbilityLevel(u,'A3PY')== 1 then
+		if IsAttackEffectEnabled[9] then
+			if GetUnitAbilityLevel(u,'B01D') == 1 then
+				if GetUnitAbilityLevel(u,'A3PY') == 1 then
 					set c = UUE(c, 60)
-				elseif GetUnitAbilityLevel(u,'A3PV')== 1 then
+				elseif GetUnitAbilityLevel(u,'A3PV') == 1 then
 					set c = UUE(c, 30)
-				elseif GetUnitAbilityLevel(u,'A3PW')== 1 then
+				elseif GetUnitAbilityLevel(u,'A3PW') == 1 then
 					set c = UUE(c, 40)
-				elseif GetUnitAbilityLevel(u,'A3PX')== 1 then
+				elseif GetUnitAbilityLevel(u,'A3PX') == 1 then
 					set c = UUE(c, 50)
 				endif
 			endif
 		endif
 		if IsAttackEffectEnabled[B] then
 			// 烟雾
-			if GetUnitAbilityLevel(u,'Bhea')== 1 then
+			if GetUnitAbilityLevel(u,'Bhea') == 1 then
 				set c = UUE(c, 30 + 10 * F)
 			endif
 		endif
 		if IsAttackEffectEnabled[I] then
 			// 致盲之光
-			if GetUnitAbilityLevel(u,'B09K')== 1 then
+			if GetUnitAbilityLevel(u,'B09K') == 1 then
 				set c = UUE(c, 80)
 			endif
 		endif
-		if IsAttackEffectEnabled[A]then
+		if IsAttackEffectEnabled[A] then
 			// 伤残恐惧
-			if GetUnitAbilityLevel(u,'B02M')== 1 then
+			if GetUnitAbilityLevel(u,'B02M') == 1 then
 				set c = UUE(c, 50)
 			endif
 		endif
-		if IsAttackEffectEnabled[N]then
+		if IsAttackEffectEnabled[N] then
 			// 辉耀
-			if GetUnitAbilityLevel(u,'B3DJ')== 1 then
+			if GetUnitAbilityLevel(u,'B3DJ') == 1 then
 				set c = UUE(c, 17)
 			endif
 		endif
-		if IsAttackEffectEnabled[D]then
+		if IsAttackEffectEnabled[D] then
 			// 日耀
-			if GetUnitAbilityLevel(u,'B39I')== 1 then
+			if GetUnitAbilityLevel(u,'B39I') == 1 then
 				set c = UUE(c, 25)
 			endif
 		endif
-		if IsAttackEffectEnabled[16]then
+		if IsAttackEffectEnabled[16] then
 			// 旋风飞斧
-			if GetUnitAbilityLevel(u,'B00C')== 1 then
+			if GetUnitAbilityLevel(u,'B00C') == 1 then
 				set c = UUE(c, 60)
 			endif
 		endif
@@ -4511,8 +4475,8 @@ function U4E takes unit U6E, integer UZE returns integer
 	local integer n = 0
 	local integer c = UnitInventorySize(U6E)-1
 	loop
-		if GetItemTypeId(UnitItemInSlot(U6E, i))== UZE then
-			if GetTriggerEventId()== EVENT_PLAYER_UNIT_DROP_ITEM or GetTriggerEventId()== EVENT_PLAYER_UNIT_PAWN_ITEM then
+		if GetItemTypeId(UnitItemInSlot(U6E, i)) == UZE then
+			if GetTriggerEventId() == EVENT_PLAYER_UNIT_DROP_ITEM or GetTriggerEventId() == EVENT_PLAYER_UNIT_PAWN_ITEM then
 				if UnitItemInSlot(U6E, i)!= GetManipulatedItem() then
 					set n = n + 1
 				endif
@@ -4584,7 +4548,7 @@ endfunction
 function WAE takes unit u returns nothing
 	local real ev = 1
 	local integer i
-	if GetUnitAbilityLevel(u,'A36D')== 0 then
+	if GetUnitAbilityLevel(u,'A36D') == 0 then
 		if(GetUnitAbilityLevel(u,'A0MX'))> 0 then
 			set ev = ev *(1 -(((GetUnitAbilityLevel(u,'A0MX'))* 5 + 5)* .01))
 		endif
@@ -4592,7 +4556,7 @@ function WAE takes unit u returns nothing
 			set ev = ev *(1 -0.1 -(GetUnitAbilityLevel(u,'A03P'))* .1)
 		endif
 	endif
-	if(GetUnitAbilityLevel(u,'A39M'))== 1 then
+	if(GetUnitAbilityLevel(u,'A39M')) == 1 then
 		set ev = ev * .75
 	endif
 	if GetUnitAbilityLevel(u,'A2K6')> 0 then
@@ -4633,7 +4597,7 @@ function EvasionStacking takes nothing returns nothing
 			call WAE(GetTriggerUnit())
 		endif
 	else
-		if U_E(WC) then
+		if U_E(TempInt) then
 			call WAE(GetTriggerUnit())
 		endif
 	endif
@@ -4641,7 +4605,7 @@ endfunction
 function WBE takes integer WDE returns integer
 	local integer i = 1
 	loop
-		if WDE == PassiveSkills_Learned[i]then
+		if WDE == PassiveSkills_Learned[i] then
 			return i
 		endif
 		set i = i + 1
@@ -4715,7 +4679,7 @@ function WTE takes unit WUE, unit WWE returns real
 	return 1.
 endfunction
 function W1E takes unit u returns nothing	//召唤单位是否选择
-	if F_V[GetPlayerId(GetOwningPlayer(u))]and GetUnitAbilityLevel(u,'B06L')== 0 and GetUnitAbilityLevel(u,'B098')== 0 and WTE(Player__Hero[GetPlayerId(GetOwningPlayer(u))], u)<$3E8 then
+	if F_V[GetPlayerId(GetOwningPlayer(u))]and GetUnitAbilityLevel(u,'B06L') == 0 and GetUnitAbilityLevel(u,'B098') == 0 and WTE(Player__Hero[GetPlayerId(GetOwningPlayer(u))], u)<$3E8 then
 		if IsUnitHidden(u) == false then
 			call SelectUnitAddForPlayer(u, GetOwningPlayer(u))
 		else
@@ -4805,7 +4769,7 @@ function W5E takes nothing returns nothing
 endfunction
 function W6E takes unit u, integer id returns nothing
 	if id =='A1IQ' then
-		if GetHeroLevel(u)> 4 and GetUnitAbilityLevel(u,'A524')== 0 then
+		if GetHeroLevel(u)> 4 and GetUnitAbilityLevel(u,'A524') == 0 then
 			call UnitAddPermanentAbility(u,'A524')
 		endif
 		if GetHeroLevel(u)>$D then
@@ -4844,7 +4808,7 @@ function W8E takes integer W9E returns integer
 	local integer i = 1
 	local integer k = 0
 	loop
-		if W9E == PassiveSkills_Learned[i]or W9E == PassiveSkills_Show[i]or W9E == PassiveSkills_Real[i]or W9E == PassiveSkills_SpellBook[i]then
+		if W9E == PassiveSkills_Learned[i]or W9E == PassiveSkills_Show[i]or W9E == PassiveSkills_Real[i]or W9E == PassiveSkills_SpellBook[i] then
 			set k = i
 		endif
 		set i = i + 1
@@ -4856,7 +4820,7 @@ function W8EP takes integer W9E returns integer
 	local integer i = 1
 	local integer k = 0
 	loop
-		if W9E == PassiveSkills_Learned[i]or W9E == PassiveSkills_Show[i]or W9E == PassiveSkills_illusion[i] or W9E == PassiveSkills_Real[i]or W9E == PassiveSkills_SpellBook[i]then
+		if W9E == PassiveSkills_Learned[i]or W9E == PassiveSkills_Show[i]or W9E == PassiveSkills_illusion[i] or W9E == PassiveSkills_Real[i]or W9E == PassiveSkills_SpellBook[i] then
 			set k = i
 		endif
 		set i = i + 1
@@ -5128,9 +5092,9 @@ function YWE takes nothing returns nothing
 	local boolean b = true
 	local boolean bb = false
 	loop
-		if(GetPlayerController(Player(ZL[i]))== MAP_CONTROL_USER) and(GetPlayerSlotState(Player(ZL[i]))== PLAYER_SLOT_STATE_PLAYING) then
+		if(GetPlayerController(Player(ZL[i])) == MAP_CONTROL_USER) and(GetPlayerSlotState(Player(ZL[i])) == PLAYER_SLOT_STATE_PLAYING) then
 			set bb = true
-			if not RM[ZL[i]]then
+			if not RM[ZL[i]] then
 				set b = false
 				exitwhen true
 			endif
@@ -5145,9 +5109,9 @@ function YWE takes nothing returns nothing
 	set b = true
 	set bb = false
 	loop
-		if(GetPlayerController(Player(ZL[i]))== MAP_CONTROL_USER) and(GetPlayerSlotState(Player(ZL[i]))== PLAYER_SLOT_STATE_PLAYING) then
+		if(GetPlayerController(Player(ZL[i])) == MAP_CONTROL_USER) and(GetPlayerSlotState(Player(ZL[i])) == PLAYER_SLOT_STATE_PLAYING) then
 			set bb = true
-			if not RM[ZL[i]]then
+			if not RM[ZL[i]] then
 				set b = false
 				exitwhen true
 			endif
@@ -5194,8 +5158,8 @@ function Y0E takes player p returns nothing
 	if not(SM) then
 		call DisplayTimedTextToPlayer(p, .0, .0, 10., "|c00FF0000[FF] |r" + "|c006699CC" + "以下是玩家是否同意快速结束情况." + "|r")
 		loop
-			if((GetPlayerController(Player(ZL[Y1E]))== MAP_CONTROL_USER) and(GetPlayerSlotState(Player(ZL[Y1E]))== PLAYER_SLOT_STATE_PLAYING)) then
-				if RM[ZL[Y1E]]then
+			if((GetPlayerController(Player(ZL[Y1E])) == MAP_CONTROL_USER) and(GetPlayerSlotState(Player(ZL[Y1E])) == PLAYER_SLOT_STATE_PLAYING)) then
+				if RM[ZL[Y1E]] then
 					call DisplayTimedTextToPlayer(p, .0, .0, 10., "|c006699CC[|r" + "|c0066FF66Y|r" + "|c006699CC]|r" + " " + TM + PlayersColoerText[ZL[Y1E]]+ PlayersName[ZL[Y1E]]+ "|r")
 				else
 					call DisplayTimedTextToPlayer(p, .0, .0, 10., "|c006699CC[|r" + "|c00C83264N|r" + "|c006699CC]|r" + " " + TM + PlayersColoerText[ZL[Y1E]]+ PlayersName[ZL[Y1E]]+ "|r")
@@ -5219,7 +5183,7 @@ function Y3E takes nothing returns nothing
 	endloop
 endfunction
 function IsPlaying takes player p returns boolean
-	return GetPlayerSlotState(p)== PLAYER_SLOT_STATE_PLAYING and GetPlayerController(p)== MAP_CONTROL_USER
+	return GetPlayerSlotState(p) == PLAYER_SLOT_STATE_PLAYING and GetPlayerController(p) == MAP_CONTROL_USER
 endfunction
 
 function Y8E takes nothing returns boolean
@@ -5260,7 +5224,7 @@ function ZGE takes nothing returns nothing
 			// call TriggerAddAction(t, function ZFE)
 			set t = null
 		endif
-		if IsUnitType(u, UNIT_TYPE_HERO) and GetUnitAbilityLevel(u,'A04R')== 0 then
+		if IsUnitType(u, UNIT_TYPE_HERO) and GetUnitAbilityLevel(u,'A04R') == 0 then
 			// 注册英雄的事件
 			
 		endif
@@ -5281,7 +5245,7 @@ function IsPlayerHasSkill takes player p, integer index returns boolean
 	return false
 endfunction
 function ZLE takes unit u returns boolean
-	return GetUnitAbilityLevel(u,'Y076')== 1 or GetUnitAbilityLevel(u,'A065')> 0 or GetUnitAbilityLevel(u,'A527')> 0 or GetUnitAbilityLevel(u,'A528')> 0 or IsPlayerHasSkill(GetOwningPlayer(u), 76)
+	return GetUnitAbilityLevel(u,'Y076') == 1 or GetUnitAbilityLevel(u,'A065')> 0 or GetUnitAbilityLevel(u,'A527')> 0 or GetUnitAbilityLevel(u,'A528')> 0 or IsPlayerHasSkill(GetOwningPlayer(u), 76)
 endfunction
 function ZME takes integer WWV, integer ZSE returns integer
 	local integer xx = 1
@@ -5396,21 +5360,21 @@ function VGX takes nothing returns nothing
 	loop
 		if(bj_stockAllowedPermanent[VFX]) then
 			set VKX = VKX + 1
-			if(GetRandomInt(1, VKX)== 1) then
+			if(GetRandomInt(1, VKX) == 1) then
 				set VHX = ITEM_TYPE_PERMANENT
 				set VJX = VFX
 			endif
 		endif
 		if(bj_stockAllowedCharged[VFX]) then
 			set VKX = VKX + 1
-			if(GetRandomInt(1, VKX)== 1) then
+			if(GetRandomInt(1, VKX) == 1) then
 				set VHX = ITEM_TYPE_CHARGED
 				set VJX = VFX
 			endif
 		endif
 		if(bj_stockAllowedArtifact[VFX]) then
 			set VKX = VKX + 1
-			if(GetRandomInt(1, VKX)== 1) then
+			if(GetRandomInt(1, VKX) == 1) then
 				set VHX = ITEM_TYPE_ARTIFACT
 				set VJX = VFX
 			endif
@@ -5447,7 +5411,7 @@ function VMX takes nothing returns nothing
 	set i = 0
 	set j = 0
 	loop
-		if VSX[j]then
+		if VSX[j] then
 			set j = j + 1
 		endif
 	exitwhen j >= 256
@@ -5459,7 +5423,7 @@ function VMX takes nothing returns nothing
 	loop
 	exitwhen i >=$C
 		set h = R2I( 100 * GetPlayerHandicap(Player(i)))
-		if not VSX[h]then
+		if not VSX[h] then
 			set h = VQX[h]
 			set v = h / 6
 			set h = h -v * 6
@@ -5592,7 +5556,7 @@ function V9X takes nothing returns boolean
 	local integer i = 0
 	loop
 	exitwhen i == 240
-		if GroupsIsAllocated[i]then
+		if GroupsIsAllocated[i] then
 			set EVX = EVX + 1
 		endif
 		set i = i + 1
@@ -5917,10 +5881,10 @@ function XFX takes player p returns boolean
 	return p == Sentinels[1]or p == Sentinels[2]or p == Sentinels[3]or p == Sentinels[4]or p == Sentinels[5]or p == Scourges[1]or p == Scourges[2]or p == Scourges[3]or p == Scourges[4]or p == Scourges[5]
 endfunction
 function XGX takes player p returns boolean
-	return((GetPlayerSlotState(p)== PLAYER_SLOT_STATE_PLAYING or GetPlayerSlotState(p)== PLAYER_SLOT_STATE_LEFT) and GetPlayerController(p)== MAP_CONTROL_USER) or(LOD_DEBUGMODE and p != Sentinels[0]and p != Scourges[0])
+	return((GetPlayerSlotState(p) == PLAYER_SLOT_STATE_PLAYING or GetPlayerSlotState(p) == PLAYER_SLOT_STATE_LEFT) and GetPlayerController(p) == MAP_CONTROL_USER) or(LOD_DEBUGMODE and p != Sentinels[0]and p != Scourges[0])
 endfunction
 function XHX takes player p returns boolean
-	return GetPlayerSlotState(p)== PLAYER_SLOT_STATE_LEFT and GetPlayerController(p)== MAP_CONTROL_USER
+	return GetPlayerSlotState(p) == PLAYER_SLOT_STATE_LEFT and GetPlayerController(p) == MAP_CONTROL_USER
 endfunction
 function XJX takes nothing returns nothing
 	if(IsPlaying(GetEnumPlayer())) then
@@ -5933,7 +5897,7 @@ function XKX takes force f returns integer
 	return bj_forceCountPlayers
 endfunction
 function XLX takes nothing returns nothing
-	if GetPlayerSlotState(GetEnumPlayer())== PLAYER_SLOT_STATE_PLAYING then
+	if GetPlayerSlotState(GetEnumPlayer()) == PLAYER_SLOT_STATE_PLAYING then
 		if GetEnumPlayer()!= Player($D) and GetEnumPlayer()!= Player($E) then
 			set bj_forceCountPlayers = bj_forceCountPlayers + 1
 		endif
@@ -6078,7 +6042,7 @@ function X3X takes unit u returns boolean
 	return GetUnitAbilityLevel(u,'B01T')> 0 or GetUnitAbilityLevel(u,'BNsi')> 0 or GetUnitAbilityLevel(u,'B01X')> 0 or GetUnitAbilityLevel(u,'BNdo')> 0 or GetUnitAbilityLevel(u,'B02M')> 0 or GetUnitAbilityLevel(u,'Bhea')> 0 or GetUnitAbilityLevel(u,'B07V')> 0 or GetUnitAbilityLevel(u,'B0BY')> 0 or GetUnitAbilityLevel(u,'B08O')> 0 or GetUnitAbilityLevel(u,'B07U')> 0 or GetUnitAbilityLevel(u,'B0DL')> 0 or GetUnitAbilityLevel(u,'B08V')> 0 or GetUnitAbilityLevel(u,'B031')> 0 or GetUnitAbilityLevel(u,'B0FT')> 0 or GetUnitAbilityLevel(u,'B0FG')> 0 or GetUnitAbilityLevel(u,'B450')> 0 or GetUnitAbilityLevel(u,'B463')> 0
 endfunction
 function X4X takes unit u returns boolean
-	return IsUnitType(u, UNIT_TYPE_MELEE_ATTACKER) == false and(GetUnitAbilityLevel(u,'A1N3')> 0 or GetUnitAbilityLevel(u,'A12Q')== 1 or WIV(u, "attack")>$C8)
+	return IsUnitType(u, UNIT_TYPE_MELEE_ATTACKER) == false and(GetUnitAbilityLevel(u,'A1N3')> 0 or GetUnitAbilityLevel(u,'A12Q') == 1 or WIV(u, "attack")>$C8)
 endfunction
 function X5X takes string s returns integer
 	if s == "a"then
@@ -6166,7 +6130,7 @@ function ONX takes unit u, boolean OBX returns nothing
 	if IsUnitAlly(GetDyingUnit(), GetOwningPlayer(u)) then
 		set Y_E = Y_E / 2
 	endif
-	if GetOwningPlayer(GetDyingUnit())== Scourges[0]then
+	if GetOwningPlayer(GetDyingUnit()) == Scourges[0] then
 		call OIX(0, Y_E)
 	else
 		call OIX(1, Y_E)
@@ -6179,7 +6143,7 @@ function OCX takes unit U6E, integer ODX returns nothing
 	if IsUnitAlly(GetDyingUnit(), GetOwningPlayer(U6E)) then
 		set Y_E = Y_E / 2
 	endif
-	if GetOwningPlayer(GetDyingUnit())== Scourges[0]then
+	if GetOwningPlayer(GetDyingUnit()) == Scourges[0] then
 		call OIX(0, Y_E)
 	else
 		call OIX(1, Y_E)
@@ -6240,7 +6204,7 @@ function OHX takes player p, integer OJX returns nothing
 	exitwhen ZQ[TTV]== false or j > 400
 		set j = j + 1
 	endloop
-	if j > 400 and ZQ[TTV]then
+	if j > 400 and ZQ[TTV] then
 		if OJX == 1 then
 			call DisplayTimedTextToPlayer(p, 0, 0, 10, "没有剩余的近战英雄.")
 		elseif OJX == 2 then
@@ -6308,7 +6272,7 @@ function OUX takes destructable d returns boolean
 endfunction
 // 是魔法免疫单位
 function IsMagicImmuneUnit takes unit u returns boolean
-	return IsUnitType(u, UNIT_TYPE_MAGIC_IMMUNE) or LoadInteger(HY, GetHandleId(u), 4252)== 1
+	return IsUnitType(u, UNIT_TYPE_MAGIC_IMMUNE) or LoadInteger(HY, GetHandleId(u), 4252) == 1
 endfunction
 function OYX takes unit u returns boolean
 	return HaveSavedHandle(HY, GetHandleId(u),'FRZH')
@@ -6348,7 +6312,7 @@ function O5X takes integer XVX returns integer
 	local integer i = 1
 	loop
 	exitwhen i > VZV
-		if XVX == VUV[i]then
+		if XVX == VUV[i] then
 			return i
 		endif
 		set i = i + 1
@@ -6635,7 +6599,7 @@ function RVX takes nothing returns nothing
 		// 需要 + 0.001 而不是0.0001 否则还会全光环
 		call TriggerRegisterTimerEvent(hTrig, rDur + 0.001, false) // 
 		call TriggerAddCondition(hTrig, Condition(function O8X))
-		//call SaveBoolean(HY, iNewTrigHandleId, 0, GetTriggerEventId()== EVENT_UNIT_SPELL_ENDCAST)
+		//call SaveBoolean(HY, iNewTrigHandleId, 0, GetTriggerEventId() == EVENT_UNIT_SPELL_ENDCAST)
 		set hTrig = null
 		set hTriggerUnit = null
 	endif
@@ -6900,7 +6864,7 @@ function UnitDamageTargetEx takes unit u, unit t, integer damageType, real d ret
 		if IsUnitType(t, UNIT_TYPE_HERO) then
 			call UnitDamageTarget(u, t, 0, true, true, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_FIRE, WEAPON_TYPE_WHOKNOWS)
 		endif
-		if damageType == 6 or GetUnitAbilityLevel(t,'B07D')== 0 and GetWidgetLife(t)< 2 and RFX(t) == false then
+		if damageType == 6 or GetUnitAbilityLevel(t,'B07D') == 0 and GetWidgetLife(t)< 2 and RFX(t) == false then
 			if IsUnitType(t, UNIT_TYPE_SUMMONED) == false then
 				call UnitRemoveBuffs(t, true, true)
 			endif
@@ -6946,7 +6910,7 @@ function IsNotItemAbility takes integer abilityId returns boolean
 	//local integer i = 1
 	//loop
 	//exitwhen i > EY
-		//if T0V == VY[i]then
+		//if T0V == VY[i] then
 		return not LoadBoolean( ObjectData, OBJ_HTKEY_IS_ITEM_ABILITY, abilityId )	
 		//	return false
 		//endif
@@ -6960,7 +6924,7 @@ function IsUltimateSkill takes integer id returns boolean
 	if not IsNotItemAbility(id) then
 		return false
 	endif
-	return GetAbilityreqLevel(id)== 6
+	return GetAbilityreqLevel(id) == 6
 endfunction
 
 function GetAbilityTimerNumber takes unit u, integer id returns integer
@@ -6982,16 +6946,16 @@ function GetAbilityTimerNumber takes unit u, integer id returns integer
 endfunction
 
 function RefreshUnitAbilityCoolDownTimer takes unit u, integer id, real cd returns nothing
-	if GetAbilityTimerNumber(u, id)== 1 then
+	if GetAbilityTimerNumber(u, id) == 1 then
 		call TimerStart(ESV[GetPlayerId(GetOwningPlayer(u))], cd, false, null)
-	elseif GetAbilityTimerNumber(u, id)== 2 then
+	elseif GetAbilityTimerNumber(u, id) == 2 then
 		call TimerStart(ETV[GetPlayerId(GetOwningPlayer(u))], cd, false, null)
 	endif
 endfunction
 
 //设置技能冷却
 function Japi_SetUnitAbilityCoolDown1 takes unit u, integer id, real cd returns nothing
-	if GetUnitAbilityLevel(u, id)== 0 or cd == 0.00 then
+	if GetUnitAbilityLevel(u, id) == 0 or cd == 0.00 then
 		return
 	endif
 	call YDWESetUnitAbilityState(u, id, 1, cd)
@@ -7488,7 +7452,7 @@ function DisplayTimedTextToAllPlayer takes force AEX, real EHX, string AXX retur
 	call ForForce(AEX, function I9X)
 endfunction
 function Y68 takes nothing returns nothing
-	if S3[GetPlayerId(GetEnumPlayer())]then
+	if S3[GetPlayerId(GetEnumPlayer())] then
 		call DisplayTimedTextToPlayer(GetEnumPlayer(), 0, 0, ZJ, HJ)
 	endif
 endfunction
@@ -7537,7 +7501,7 @@ function ACX takes unit U6E, integer UYV returns item
 	loop
 	exitwhen index == 6
 		set AFX = UnitItemInSlot(U6E, index)
-		if AFX != null and GetItemTypeId(AFX)== UYV then
+		if AFX != null and GetItemTypeId(AFX) == UYV then
 			return AFX
 		endif
 		set index = index + 1
@@ -7745,7 +7709,7 @@ function NOX takes nothing returns boolean
 	local boolean NDX
 	local real NFX
 	local real NGX
-	if GetTriggerEventId()== EVENT_UNIT_SPELL_EFFECT then
+	if GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT then
 		if OXX(GetSpellAbilityId()) then
 			call SaveBoolean(HY, h,-1, true)
 			call SaveReal(HY, h,-1, GetUnitX(GetTriggerUnit()))
@@ -7812,7 +7776,7 @@ function NHX takes unit WUE, unit WWE, integer NJX, string NKX, real NRX, boolea
 		call SaveReal(HY, h,-2, 0)
 		call TriggerRegisterUnitEvent(t, WWE, EVENT_UNIT_SPELL_EFFECT)
 	endif
-	if IsUnitOwnedByPlayer(WUE, BW) then
+	if IsUnitOwnedByPlayer(WUE, CreepsPlayer) then
 		call SaveUnitHandle(HY, h, 45,(CreateUnit(GetOwningPlayer(WUE), NJX, WYE, WZE, NMX)))
 	else
 		call SaveUnitHandle(HY, h, 45,(CreateUnit(GetOwningPlayer(WWE), NJX, WYE, WZE, NMX)))
@@ -8376,7 +8340,7 @@ function B2X takes unit U6E, item UWV returns integer
 	local integer i = 0
 	loop
 	exitwhen i > 5
-		if UnitItemInSlot(U6E, i)== UWV then
+		if UnitItemInSlot(U6E, i) == UWV then
 			return i
 		endif
 		set i = i + 1
@@ -8426,7 +8390,7 @@ function B9X takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local unit WWE =(LoadUnitHandle(HY, h, 17))
 	local integer CVX =(LoadInteger(HY, h, 59))
-	if UnitRemoveAbility(WWE, CVX) or GetUnitAbilityLevel(WWE, CVX)== 0 then
+	if UnitRemoveAbility(WWE, CVX) or GetUnitAbilityLevel(WWE, CVX) == 0 then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 	endif
@@ -8473,7 +8437,7 @@ function COX takes nothing returns boolean
 	local integer CVX =(LoadInteger(HY, h, 59))
 	local integer CRX =(LoadInteger(HY, h, 59))
 	call UnitRemoveAbility(WWE, CRX)
-	if UnitRemoveAbility(WWE, CVX) or GetUnitAbilityLevel(WWE, CVX)== 0 then
+	if UnitRemoveAbility(WWE, CVX) or GetUnitAbilityLevel(WWE, CVX) == 0 then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 	endif
@@ -8524,7 +8488,7 @@ function UnitAddAbilityTimedEx_RemoveFix takes nothing returns boolean
 	local integer CAX = LoadInteger(HY, h, 60)
 	local integer T0V = LoadInteger(HY, h, 59)
 	call UnitRemoveAbility(u, T0V)
-	if UnitRemoveAbility(u, CAX) or GetUnitAbilityLevel(u, CAX)== 0 then
+	if UnitRemoveAbility(u, CAX) or GetUnitAbilityLevel(u, CAX) == 0 then
 		call RemoveSavedHandle(P, GetHandleId(u), 0 -T0V)
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
@@ -8543,7 +8507,7 @@ function CBX takes nothing returns boolean
 	call SaveBoolean(HY, h, 0, true)
 	call UnitRemoveAbility(u, CAX)
 	call UnitRemoveAbility(u, T0V)
-	if GetUnitAbilityLevel(u, T0V)== 0 then
+	if GetUnitAbilityLevel(u, T0V) == 0 then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 		call DestroyTimer(tt)
@@ -8771,7 +8735,7 @@ function C4X takes unit u returns boolean
 	return GetUnitAbilityLevel(u,'B0C1')> 0 or GetUnitAbilityLevel(u,'BEer')> 0 or GetUnitAbilityLevel(u,'Beng')> 0 or GetUnitAbilityLevel(u,'Bena')> 0 or GetUnitAbilityLevel(u,'B017')> 0 or GetUnitAbilityLevel(u,'B078')> 0 or GetUnitAbilityLevel(u,'B08F')> 0 or GetUnitAbilityLevel(u,'B08E')> 0 or GetUnitAbilityLevel(u,'B0ER')> 0 or GetUnitAbilityLevel(u,'B0FN')> 0
 endfunction
 function C5X takes unit u returns boolean
-	return GetUnitAbilityLevel(u,'B00H')> 0 or GetUnitAbilityLevel(u,'BOhx')> 0 or GetUnitAbilityLevel(u,'BPSE')> 0 or GetUnitAbilityLevel(u,'B099')> 0 or GetUnitAbilityLevel(u,'BSTN')> 0 or GetUnitAbilityLevel(u,'B0CF')> 0 or GetUnitAbilityLevel(u,'B0BM')> 0 or GetUnitAbilityLevel(u,'B07N')> 0 or GetUnitAbilityLevel(u,'B08S')> 0 or GetUnitAbilityLevel(u,'B00Q')> 0 or GetUnitAbilityLevel(u,'B04V')> 0 or GetUnitAbilityLevel(u,'B072')> 0 or GetUnitAbilityLevel(u,'BUan')> 0 or GetUnitAbilityLevel(u,'B095')> 0 or GetUnitAbilityLevel(u,'B03I')> 0 or GetUnitAbilityLevel(u,'B0AD')> 0 or GetUnitAbilityLevel(u,'B0AE')> 0 or GetUnitAbilityLevel(u,'B0BE')> 0 or GetUnitAbilityLevel(u,'B0BF')> 0 or GetUnitAbilityLevel(u,'B008')> 0 or GetUnitAbilityLevel(u,'B04B')> 0 or GetUnitAbilityLevel(u,'B02F')> 0 or GetUnitAbilityLevel(u,'BUsp')> 0 or GetUnitAbilityLevel(u,'BUst')> 0 or GetUnitAbilityLevel(u,'B0DD')> 0 or GetUnitAbilityLevel(u,'B0C2')> 0 or GetUnitAbilityLevel(u,'B06S')> 0 or GetUnitAbilityLevel(u,'B02S')> 0 or GetUnitAbilityLevel(u,'B00Q')> 0 or LoadInteger(HY, GetHandleId(u), 4293)== 1 or LoadInteger(HY, GetHandleId(u), 4303)== 1
+	return GetUnitAbilityLevel(u,'B00H')> 0 or GetUnitAbilityLevel(u,'BOhx')> 0 or GetUnitAbilityLevel(u,'BPSE')> 0 or GetUnitAbilityLevel(u,'B099')> 0 or GetUnitAbilityLevel(u,'BSTN')> 0 or GetUnitAbilityLevel(u,'B0CF')> 0 or GetUnitAbilityLevel(u,'B0BM')> 0 or GetUnitAbilityLevel(u,'B07N')> 0 or GetUnitAbilityLevel(u,'B08S')> 0 or GetUnitAbilityLevel(u,'B00Q')> 0 or GetUnitAbilityLevel(u,'B04V')> 0 or GetUnitAbilityLevel(u,'B072')> 0 or GetUnitAbilityLevel(u,'BUan')> 0 or GetUnitAbilityLevel(u,'B095')> 0 or GetUnitAbilityLevel(u,'B03I')> 0 or GetUnitAbilityLevel(u,'B0AD')> 0 or GetUnitAbilityLevel(u,'B0AE')> 0 or GetUnitAbilityLevel(u,'B0BE')> 0 or GetUnitAbilityLevel(u,'B0BF')> 0 or GetUnitAbilityLevel(u,'B008')> 0 or GetUnitAbilityLevel(u,'B04B')> 0 or GetUnitAbilityLevel(u,'B02F')> 0 or GetUnitAbilityLevel(u,'BUsp')> 0 or GetUnitAbilityLevel(u,'BUst')> 0 or GetUnitAbilityLevel(u,'B0DD')> 0 or GetUnitAbilityLevel(u,'B0C2')> 0 or GetUnitAbilityLevel(u,'B06S')> 0 or GetUnitAbilityLevel(u,'B02S')> 0 or GetUnitAbilityLevel(u,'B00Q')> 0 or LoadInteger(HY, GetHandleId(u), 4293) == 1 or LoadInteger(HY, GetHandleId(u), 4303) == 1
 endfunction
 function C6X takes unit u returns boolean
 	return C5X(u) or C4X(u) or IsUnitPaused(u) or RCX(u)
@@ -8796,22 +8760,22 @@ function DEX takes real x, real y returns location
 	exitwhen i > 40
 		set NBX = x + i * 20
 		set NCX = y + i * 20
-		if IsPointInRegion(R4, NBX, NCX) == false then
+		if IsPointInRegion(TerrainCliffRegion, NBX, NCX) == false then
 			return Location(NBX, NCX)
 		endif
 		set NBX = x + i * 20
 		set NCX = y -i * 20
-		if IsPointInRegion(R4, NBX, NCX) == false then
+		if IsPointInRegion(TerrainCliffRegion, NBX, NCX) == false then
 			return Location(NBX, NCX)
 		endif
 		set NBX = x -i * 20
 		set NCX = y + i * 20
-		if IsPointInRegion(R4, NBX, NCX) == false then
+		if IsPointInRegion(TerrainCliffRegion, NBX, NCX) == false then
 			return Location(NBX, NCX)
 		endif
 		set NBX = x -i * 20
 		set NCX = y -i * 20
-		if IsPointInRegion(R4, NBX, NCX) == false then
+		if IsPointInRegion(TerrainCliffRegion, NBX, NCX) == false then
 			return Location(NBX, NCX)
 		endif
 		set i = i + 1
@@ -8819,7 +8783,7 @@ function DEX takes real x, real y returns location
 	return Location(x, y)
 endfunction
 function DXX takes unit u returns boolean
-	return IsUnitVisible(u, BW) == false
+	return IsUnitVisible(u, CreepsPlayer) == false
 endfunction
 function DOX takes unit u returns boolean
 	return GetUnitAbilityLevel(u,'B068')> 0 or GetUnitAbilityLevel(u,'B07T')> 0 or GetUnitAbilityLevel(u,'B076')> 0 or GetUnitAbilityLevel(u,'BOwk')> 0 or GetUnitAbilityLevel(u,'B04R')> 0 or GetUnitAbilityLevel(u,'B0A5')> 0 or GetUnitAbilityLevel(u,'B01Q')> 0 or GetUnitAbilityLevel(u,'B006')> 0 or GetUnitAbilityLevel(u,'Binv')> 0 or GetUnitAbilityLevel(u,'Apiv')> 0 or GetUnitAbilityLevel(u,'A021')> 0 or GetUnitAbilityLevel(u,'A0K4')> 0 or GetUnitAbilityLevel(u,'A0XB')> 0 or GetUnitAbilityLevel(u,'A0Z2')> 0 or GetUnitAbilityLevel(u,'A1GA')> 0 or GetUnitAbilityLevel(u,'A1HW')> 0 or GetUnitAbilityLevel(u,'A1HX')> 0 or GetUnitAbilityLevel(u,'A00J')> 0 or GetUnitAbilityLevel(u,'B08K')> 0 or GetUnitAbilityLevel(u,'B08X')> 0 or GetUnitAbilityLevel(u,'B039')> 0 or GetUnitAbilityLevel(u,'B00K')> 0 or GetUnitAbilityLevel(u,'BHfs')> 0 or GetUnitAbilityLevel(u,'A140')> 0 or GetUnitAbilityLevel(u,'B021')> 0 or GetUnitAbilityLevel(u,'A0ZD')> 0 or GetUnitAbilityLevel(u,'A0KT')> 0
@@ -8836,7 +8800,7 @@ endfunction
 // IsAliveNotStrucNotWard
 // 存活 非建筑 非 守卫
 function IsAliveNotStrucNotWard takes unit u returns boolean
-	return UnitAlive(u) and not IsUnitType(u, UNIT_TYPE_STRUCTURE) and GetUnitAbilityLevel(u,'A04R')== 0
+	return UnitAlive(u) and not IsUnitType(u, UNIT_TYPE_STRUCTURE) and GetUnitAbilityLevel(u,'A04R') == 0
 endfunction
 
 function DNX takes nothing returns boolean
@@ -8847,7 +8811,7 @@ function DBX takes unit u returns boolean
 	return not IsUnitType(u, UNIT_TYPE_ANCIENT) or DRX(u)
 endfunction
 function DCX takes nothing returns boolean
-	return(IsMagicImmuneUnit(GetFilterUnit()) == false and IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and(GetUnitAbilityLevel(GetFilterUnit(),'A04R')== 0 and UnitIsDead(GetFilterUnit()) == false) and DBX(GetFilterUnit()))!= null
+	return(IsMagicImmuneUnit(GetFilterUnit()) == false and IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and(GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0 and UnitIsDead(GetFilterUnit()) == false) and DBX(GetFilterUnit()))!= null
 endfunction
 function DDX takes nothing returns boolean
 	return(IsUnitEnemy(GetTriggerUnit(), GetOwningPlayer(GetFilterUnit())) and(IsAliveNotStrucNotWard(GetFilterUnit())) and DBX(GetFilterUnit()))!= null
@@ -8889,13 +8853,13 @@ function DUX takes nothing returns boolean
 	return(IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and(IsAliveNotStrucNotWard(GetFilterUnit())))!= null
 endfunction
 function DWX takes nothing returns boolean
-	return(IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and(GetUnitAbilityLevel(GetFilterUnit(),'A04R')== 0 and UnitIsDead(GetFilterUnit()) == false) and DBX(GetFilterUnit()))!= null
+	return(IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and(GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0 and UnitIsDead(GetFilterUnit()) == false) and DBX(GetFilterUnit()))!= null
 endfunction
 function DYX takes nothing returns boolean
-	return(((IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and(GetUnitAbilityLevel(GetFilterUnit(),'A04R')== 0 and UnitIsDead(GetFilterUnit()) == false) and DBX(GetFilterUnit())) and IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) == false))
+	return(((IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and(GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0 and UnitIsDead(GetFilterUnit()) == false) and DBX(GetFilterUnit())) and IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) == false))
 endfunction
 function DZX takes nothing returns boolean
-	return(IsMagicImmuneUnit(GetFilterUnit()) == false and(IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and(GetUnitAbilityLevel(GetFilterUnit(),'A04R')== 0 and UnitIsDead(GetFilterUnit()) == false) and DBX(GetFilterUnit())))!= null
+	return(IsMagicImmuneUnit(GetFilterUnit()) == false and(IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and(GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0 and UnitIsDead(GetFilterUnit()) == false) and DBX(GetFilterUnit())))!= null
 endfunction
 function D_X takes nothing returns boolean
 	return(IsUnitEnemy(GetTriggerUnit(), GetOwningPlayer(GetFilterUnit())) == false and(IsAliveNotStrucNotWard(GetFilterUnit())))!= null
@@ -9369,7 +9333,7 @@ function GDX takes nothing returns nothing
 	local boolean GGX = LoadBoolean(HY, h,'0NEW')
 	local player np = LoadPlayerHandle(HY, h,'0NEW')
 	local unit W_V = LoadUnitHandle(HY, h,'DUMM')
-	if GetTriggerEventId()== EVENT_UNIT_DEATH then
+	if GetTriggerEventId() == EVENT_UNIT_DEATH then
 		call RemoveUnit(W_V)
 		call UnitShareVision(u, p, false)
 		call FlushChildHashtable(HY, h)
@@ -9384,7 +9348,7 @@ function GDX takes nothing returns nothing
 				call SavePlayerHandle(HY, h, 0, p)
 				call SaveBoolean(HY, h,'0NEW', false)
 			endif
-			if GetUnitAbilityLevel(u,'A1HX')== 0 then
+			if GetUnitAbilityLevel(u,'A1HX') == 0 then
 				call UnitShareVision(u, p, true)
 				call SetUnitPosition(W_V, GetUnitX(u), GetUnitY(u))
 			else
@@ -9443,18 +9407,18 @@ function GPX takes nothing returns nothing
 	local integer id = LoadInteger(HY, h, 0)
 	local integer GFX = LoadInteger(HY, h, 1)
 	local integer TPE
-	if GetTriggerEventId()== EVENT_UNIT_DEATH then
+	if GetTriggerEventId() == EVENT_UNIT_DEATH then
 		call UnitRemoveAbility(u, id)
 		call UnitRemoveAbility(u, GFX)
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
-	elseif GetTriggerEventId()== EVENT_PLAYER_UNIT_SPELL_EFFECT then
-		if GetUnitAbilityLevel(u, id)== 0 then
+	elseif GetTriggerEventId() == EVENT_PLAYER_UNIT_SPELL_EFFECT then
+		if GetUnitAbilityLevel(u, id) == 0 then
 			call FlushChildHashtable(HY, h)
 			call CleanCurrentTrigger(t)
 		else
 			set TPE = GetSpellAbilityId()
-			if GetTriggerUnit()== u then
+			if GetTriggerUnit() == u then
 				if GLX(TPE) then
 					call UnitRemoveAbility(u, id)
 					call UnitRemoveAbility(u, GFX)
@@ -9462,7 +9426,7 @@ function GPX takes nothing returns nothing
 					call CleanCurrentTrigger(t)
 				endif
 			else
-				if GetSpellTargetUnit()== u and(IsPlayerAlly(GetOwningPlayer(GetTriggerUnit()), GetOwningPlayer(u)) or UnitHasSpellShield(u) == false) and GMX(TPE) then
+				if GetSpellTargetUnit() == u and(IsPlayerAlly(GetOwningPlayer(GetTriggerUnit()), GetOwningPlayer(u)) or UnitHasSpellShield(u) == false) and GMX(TPE) then
 					call UnitRemoveAbility(u, id)
 					call UnitRemoveAbility(u, GFX)
 					call FlushChildHashtable(HY, h)
@@ -9518,7 +9482,7 @@ function GYX takes unit u, integer id returns boolean
 	loop
 	exitwhen i > 5
 		set it = UnitItemInSlot(u, i)
-		if it != null and GetItemTypeId(it)== id then
+		if it != null and GetItemTypeId(it) == id then
 			set it = null
 			return true
 		endif
@@ -9534,7 +9498,7 @@ function GZX takes unit u, integer id, item it returns item
 	loop
 	exitwhen i > 5
 		set G_X = UnitItemInSlot(u, i)
-		if G_X != null and G_X != it and GetItemTypeId(G_X)== id then
+		if G_X != null and G_X != it and GetItemTypeId(G_X) == id then
 			set G_X = null
 			return UnitItemInSlot(u, i)
 		endif
@@ -9551,7 +9515,7 @@ function GetItemOfTypeFromUnit takes unit u, integer id returns item
 	loop
 	exitwhen i > 5
 		set it = UnitItemInSlot(u, i)
-		if it != null and GetItemTypeId(it)== id then
+		if it != null and GetItemTypeId(it) == id then
 			set it = null
 			return UnitItemInSlot(u, i)
 		endif
@@ -9567,7 +9531,7 @@ function G1X takes player p, unit u, integer GTX, item G_X returns item
 	loop
 	exitwhen i > 5
 		set it = UnitItemInSlot(u, i)
-		if it != null and it != G_X and UUV(it)== GTX and(GetItemPlayer(it)== p or GTX == R2V or GTX == R3V) then
+		if it != null and it != G_X and UUV(it) == GTX and(GetItemPlayer(it) == p or GTX == R2V or GTX == R3V) then
 			set it = null
 			return UnitItemInSlot(u, i)
 		endif
@@ -9583,7 +9547,7 @@ function G2X takes player p, unit u, integer GTX returns item
 	loop
 	exitwhen i > 5
 		set it = UnitItemInSlot(u, i)
-		if(it != null) and UUV(it)== GTX and(GetItemPlayer(it)== p or GTX == R2V or GTX == R3V) then
+		if(it != null) and UUV(it) == GTX and(GetItemPlayer(it) == p or GTX == R2V or GTX == R3V) then
 			set it = null
 			return UnitItemInSlot(u, i)
 		endif
@@ -9596,7 +9560,7 @@ function G3X takes unit u returns boolean
 	local item it
 	local integer i = 0
 	local integer id
-	if GetUnitAbilityLevel(u,'A3E7')== 1 then
+	if GetUnitAbilityLevel(u,'A3E7') == 1 then
 		set it = null
 		return true
 	endif
@@ -9743,7 +9707,7 @@ function HIX takes integer k, unit u, integer G8X returns nothing
 		endif
 	endif
 	call UnitRemoveAbility(u, AghanimUpgradeChangeId[k])
-	if AghanimUpgradeUpgradeId[k]!= AghanimUpgradeNormalId[k]then
+	if AghanimUpgradeUpgradeId[k]!= AghanimUpgradeNormalId[k] then
 		call UnitRemoveAbility(u, AghanimUpgradeUpgradeId[k])
 	endif
 	call SaveInteger(K, GetHandleId(u),'AGH0'+ G8X, 0)
@@ -9887,7 +9851,7 @@ endfunction
 function HFX takes item it returns boolean
 	local integer i = UUV(it)
 	local integer id = GetItemTypeId(it)
-	if id == XOV[XCV]or id == XOV[XFV]or id == XOV[XDV]then
+	if id == XOV[XCV]or id == XOV[XFV]or id == XOV[XDV] then
 		return true
 	endif
 	return false
@@ -9896,7 +9860,7 @@ function HGX takes integer GTX returns boolean
 	return GTX == NXV or GTX == R6V or GTX == R8V or GTX == RYV or GTX == R_V or GTX == R0V or GTX == R2V or GTX == R3V or GTX == R4V or GTX == RZV or GTX == R9V or GTX == IVV or GTX == it_jys
 endfunction
 function HHX takes integer GTX returns boolean
-	return(GTX)== NUV or GTX == RRV or(GTX)== IUV or(GTX)== IWV or GTX == NIV or GTX == AIV or(GTX)== Item_MagicStick or(GTX)== Item_MagicWand or GTX == RAV
+	return(GTX) == NUV or GTX == RRV or(GTX) == IUV or(GTX) == IWV or GTX == NIV or GTX == AIV or(GTX) == Item_MagicStick or(GTX) == Item_MagicWand or GTX == RAV
 endfunction
 function HJX takes player p returns unit
 	local unit u
@@ -9908,7 +9872,7 @@ function HJX takes player p returns unit
 		set u = FirstOfGroup(g)
 	exitwhen u == null
 		if OPX(u) and UnitAlive(u) then
-			if GetOwningPlayer(u)== p then
+			if GetOwningPlayer(u) == p then
 				set HKX = u
 			exitwhen true
 			elseif GetPlayerAlliance(GetOwningPlayer(u), p, ALLIANCE_SHARED_CONTROL) then
@@ -9935,7 +9899,7 @@ function HMX takes item it, player p returns nothing
 	if u == null then
 		return
 	endif
-	if UnitItemInSlot(u, 0)== null or UnitItemInSlot(u, 1)== null or UnitItemInSlot(u, 2)== null or UnitItemInSlot(u, 3)== null or UnitItemInSlot(u, 4)== null or UnitItemInSlot(u, 5)== null then
+	if UnitItemInSlot(u, 0) == null or UnitItemInSlot(u, 1) == null or UnitItemInSlot(u, 2) == null or UnitItemInSlot(u, 3) == null or UnitItemInSlot(u, 4) == null or UnitItemInSlot(u, 5) == null then
 		call UnitAddItem(u, it)
 	else
 		set U2 = u
@@ -9945,7 +9909,7 @@ function HMX takes item it, player p returns nothing
 	set u = null
 endfunction
 function HQX takes item UWV returns boolean
-	return UUV(UWV)== ASV or UUV(UWV)== ATV or UUV(UWV)== X4V or UUV(UWV)== X5V
+	return UUV(UWV) == ASV or UUV(UWV) == ATV or UUV(UWV) == X4V or UUV(UWV) == X5V
 endfunction
 function HSX takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
@@ -9965,7 +9929,7 @@ function HSX takes nothing returns boolean
 	if HTX then
 		call SetItemCharges(HWX, HUX)
 	endif
-	if UYV == XXV[BUV]then
+	if UYV == XXV[BUV] then
 		call HMX(HWX, p)
 	endif
 	call FlushChildHashtable(HY, h)
@@ -9999,7 +9963,7 @@ function H_X takes unit U6E returns integer
 	local integer H0X = UnitInventorySize(U6E)-1
 	loop
 	exitwhen i > H0X
-		if UnitItemInSlot(U6E, i)== null then
+		if UnitItemInSlot(U6E, i) == null then
 			set n = n + 1
 		endif
 		set i = i + 1
@@ -10070,7 +10034,7 @@ function H7X takes integer GTX returns integer
 	return 1
 endfunction
 function H8X takes item UWV returns boolean
-	return GetItemType(UWV)== ITEM_TYPE_POWERUP or GetItemType(UWV)== ITEM_TYPE_PURCHASABLE or GetItemType(UWV)== ITEM_TYPE_MISCELLANEOUS
+	return GetItemType(UWV) == ITEM_TYPE_POWERUP or GetItemType(UWV) == ITEM_TYPE_PURCHASABLE or GetItemType(UWV) == ITEM_TYPE_MISCELLANEOUS
 endfunction
 function H9X takes unit trigUnit returns real
 	local real JVX
@@ -10099,7 +10063,7 @@ function JXX takes unit trigUnit, item C1X, integer JOX returns nothing
 	call DisableTrigger(CUV)
 	loop
 	exitwhen i >(UnitInventorySize(trigUnit)-1)
-		if UnitItemInSlot(trigUnit, i)== null and i != JOX then
+		if UnitItemInSlot(trigUnit, i) == null and i != JOX then
 			set JRX = CreateItem('I02M', x, y)
 			call UnitAddItem(trigUnit, JRX)
 			set b[i]= true
@@ -10116,7 +10080,7 @@ function JXX takes unit trigUnit, item C1X, integer JOX returns nothing
 	set i = 0
 	loop
 	exitwhen i > 5
-		if b[i]then
+		if b[i] then
 			call RemoveItem(UnitItemInSlot(trigUnit, i))
 		endif
 		set i = i + 1
@@ -10137,7 +10101,7 @@ function JIX takes unit trigUnit, integer JAX, integer JNX returns item
 	if JAX > 0 then
 		loop
 		exitwhen i >(UnitInventorySize(trigUnit)-1)
-			if UnitItemInSlot(trigUnit, i)== null and i != JNX then
+			if UnitItemInSlot(trigUnit, i) == null and i != JNX then
 				set JCX = CreateItem('I02M', x, y)
 				call UnitAddItem(trigUnit, JCX)
 				set JBX[i]= true
@@ -10154,7 +10118,7 @@ function JIX takes unit trigUnit, integer JAX, integer JNX returns item
 		set i = 0
 		loop
 		exitwhen i > 5
-			if JBX[i]then
+			if JBX[i] then
 				call RemoveItem(UnitItemInSlot(trigUnit, i))
 			endif
 			set i = i + 1
@@ -10461,7 +10425,7 @@ function KNX takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local unit WUE =(LoadUnitHandle(HY, h, 2))
 	local unit KBX =(LoadUnitHandle(HY, h, 19))
-	if GetTriggerEventId()== EVENT_UNIT_DEATH then
+	if GetTriggerEventId() == EVENT_UNIT_DEATH then
 		call KillUnit(KBX)
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
@@ -10490,7 +10454,7 @@ function KDX takes integer H4X returns boolean
 	local integer i = 0
 	loop
 	exitwhen i > 59
-		if H4X == U4[i]then
+		if H4X == U4[i] then
 			return true
 		endif
 		set i = i + 1
@@ -10520,7 +10484,7 @@ function KMX takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local unit KKX =(LoadUnitHandle(HY, h, 2))
 	local unit W_V =(LoadUnitHandle(HY, h, 19))
-	if GetTriggerEventId()== EVENT_UNIT_DEATH or KKX == null then
+	if GetTriggerEventId() == EVENT_UNIT_DEATH or KKX == null then
 		call KillUnit(W_V)
 		call FlushChildHashtable(HY, h)
 		call DestroyTrigger(t)
@@ -10760,10 +10724,10 @@ function K_X takes nothing returns nothing
 	set O3X = 1
 	set K0X = 5
 	loop
-		if GetPlayerSlotState(Sentinels[O3X])== PLAYER_SLOT_STATE_EMPTY then
+		if GetPlayerSlotState(Sentinels[O3X]) == PLAYER_SLOT_STATE_EMPTY then
 			call SetPlayerName(Sentinels[O3X], GetObjectName('n0DH')+ " " + I2S(O3X))
 		endif
-		if GetPlayerSlotState(Scourges[O3X])== PLAYER_SLOT_STATE_EMPTY then
+		if GetPlayerSlotState(Scourges[O3X]) == PLAYER_SLOT_STATE_EMPTY then
 			call SetPlayerName(Scourges[O3X], GetObjectName('n0DH')+ " " + I2S(5 + O3X))
 		endif
 		set O3X = O3X + 1
@@ -10874,7 +10838,7 @@ function K3X takes unit K4X returns boolean
 	return false
 endfunction
 function K5X takes nothing returns nothing
-	if(GetOwningPlayer(GetEnumUnit())== Player(0)) then
+	if(GetOwningPlayer(GetEnumUnit()) == Player(0)) then
 		call SetUnitOwner(GetEnumUnit(), Sentinels[0], false)
 		if K3X(GetEnumUnit()) == false then
 			call SetUnitColor(GetEnumUnit(), ConvertPlayerColor(0))
@@ -10903,7 +10867,7 @@ function K7X takes player p returns nothing
 	local integer K9X = J_X
 	loop
 	exitwhen i == J_X
-		if SubString(K8X, i, i + 1)== "("and SubString(K8X, i -1, i)== " "then
+		if SubString(K8X, i, i + 1) == "("and SubString(K8X, i -1, i) == " "then
 			set K9X = i -1
 			call SetPlayerName(p, SubString(K8X, 0, K9X))
 			set i = J_X
@@ -10948,7 +10912,7 @@ function InitObserverPlayer takes nothing returns nothing	//OB是否存在 MW来
 		set Scourges[0]= Player($E)
 		set VKV = Player(0)
 		set VLV = Player(6)
-		set GV = GetPlayerName(VKV)== "ohsystem.net"
+		set GV = GetPlayerName(VKV) == "ohsystem.net"
 		call SetAllyColorFilterState(0)
 		loop
 		exitwhen x > 5
@@ -11044,7 +11008,7 @@ function InitObserverPlayer takes nothing returns nothing	//OB是否存在 MW来
 	call SetPlayerTeam(Scourges[5], 1)
 	call SetPlayerName(Sentinels[0], GetObjectName('n03N'))
 	call SetPlayerName(Scourges[0], GetObjectName('n03O'))
-	call SetPlayerName(BW, GetObjectName('n0E8'))
+	call SetPlayerName(CreepsPlayer, GetObjectName('n0E8'))
 	call K1X()
 	if(Sentinels[0]!= Player(0) or Scourges[0]!= Player(6)) then
 		call K6X()
@@ -11088,7 +11052,7 @@ function InitObserverPlayer takes nothing returns nothing	//OB是否存在 MW来
 	call SetPlayerState(Scourges[3], PLAYER_STATE_GIVES_BOUNTY, 0)
 	call SetPlayerState(Scourges[4], PLAYER_STATE_GIVES_BOUNTY, 0)
 	call SetPlayerState(Scourges[5], PLAYER_STATE_GIVES_BOUNTY, 0)
-	call SetPlayerState(BW, PLAYER_STATE_GIVES_BOUNTY, 0)
+	call SetPlayerState(CreepsPlayer, PLAYER_STATE_GIVES_BOUNTY, 0)
 	call GetHostPlayer()
 	call KZX()
 	call K7X(Sentinels[1])
@@ -11161,7 +11125,7 @@ function LWX takes nothing returns boolean
 	local integer LZX
 	local integer L_X = GetPlayerState(LYX, PLAYER_STATE_RESOURCE_GOLD)
 	if F0V[GetPlayerId(LYX)]== false and YS then
-		if GetTriggerEvalCount(t)== 1 then
+		if GetTriggerEvalCount(t) == 1 then
 			if IsPlayerAlly(LocalPlayer, LYX) then
 				call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 6, GetObjectName('n0J3'))
 				call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 6, GetObjectName('n0JG'))
@@ -11285,13 +11249,13 @@ function L2X takes nothing returns nothing
 	set hPlayerHeroUnit = null
 endfunction
 function L6X takes unit u returns nothing
-	if GetUnitAbilityLevel(u,'A40E')== 1 then
+	if GetUnitAbilityLevel(u,'A40E') == 1 then
 		call UnitRemoveAbility(u,'A40E')
 	endif
-	//if GetUnitAbilityLevel(u,'B09Y')== 1 then
+	//if GetUnitAbilityLevel(u,'B09Y') == 1 then
 	//	call UnitRemoveAbility(u,'B09Y')
 	//endif
-	//if GetUnitAbilityLevel(u,'B3JQ')== 1 then
+	//if GetUnitAbilityLevel(u,'B3JQ') == 1 then
 	//	call UnitRemoveAbility(u,'B3JQ')
 	//endif
 endfunction
@@ -11315,7 +11279,7 @@ function L8X takes unit u returns nothing
 	call SetPlayerAbilityAvailable(GetOwningPlayer(u),'A11X', false)
 	call SetPlayerAbilityAvailable(GetOwningPlayer(u),'A10U', false)
 	call SetPlayerAbilityAvailable(GetOwningPlayer(u),'A344', false)
-	if GetOwningPlayer(u)== LocalPlayer then
+	if GetOwningPlayer(u) == LocalPlayer then
 		call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 1, " ")
 		call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 1, "|c006699CC" + GetObjectName('n0GR'))
 		call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 1, " ")
@@ -11451,7 +11415,7 @@ function MIX takes unit whichUnit returns nothing
 	local integer charges
 	if GetItemOfTypeFromUnit(whichUnit, XOV[NIV])!= null and GetUnitTypeId(whichUnit)!='H00J' then
 		set charges = R2I(GetItemCharges(GetItemOfTypeFromUnit(whichUnit, XOV[NIV]))* .67)
-		if GetItemCharges(GetItemOfTypeFromUnit(whichUnit, XOV[NIV]))== 1 then
+		if GetItemCharges(GetItemOfTypeFromUnit(whichUnit, XOV[NIV])) == 1 then
 			set charges = 0
 		endif
 	endif
@@ -11460,7 +11424,7 @@ function MBX takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local unit u = LoadUnitHandle(HY, h, 0)
-	if GetTriggerEventId()== EVENT_UNIT_DAMAGED then
+	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
 		call TriggerRegisterTimerEvent(t, 0, false)
 	else
 		if GetWidgetLife(u)!= GetUnitState(u, UNIT_STATE_MAX_LIFE) then
@@ -11504,7 +11468,7 @@ function MCX takes nothing returns nothing
 	call L8X(u)
 	if GetItemOfTypeFromUnit(u, XOV[NIV])!= null and GetUnitTypeId(u)!='H00J' then
 		set c = R2I(GetItemCharges(GetItemOfTypeFromUnit(u, XOV[NIV]))* .67 * 1.)
-		if GetItemCharges(GetItemOfTypeFromUnit(u, XOV[NIV]))== 1 then
+		if GetItemCharges(GetItemOfTypeFromUnit(u, XOV[NIV])) == 1 then
 			set c = 0
 		endif
 		call SetItemCharges(GetItemOfTypeFromUnit(u, XOV[NIV]), c)
@@ -11829,7 +11793,7 @@ function QRX takes nothing returns nothing
 		call UnitRemoveAbility(Circle[GetPlayerId(GetOwningPlayer(GetEnumUnit()))],'A14E')
 		//call UnitRemoveAbility(Circle[GetPlayerId(GetOwningPlayer(GetEnumUnit()))],'A14H')
 	endif
-	if GetUnitAbilityLevel(GetEnumUnit(),'A0I4')== 0 then
+	if GetUnitAbilityLevel(GetEnumUnit(),'A0I4') == 0 then
 		call UnitAddAbility(GetEnumUnit(),'A0I4')
 	endif
 endfunction
@@ -12462,7 +12426,7 @@ function PlayerChooseHeroUnit takes unit whichUnit returns boolean
 			set TeamHeroUseLivesCount[1]= TeamHeroUseLivesCount[1] + 1
 		endif
 		set PlayerHeroReincarnCount[playerId]= PlayerHeroReincarnCount[playerId]+ 1
-		if PlayerHeroReincarnCount[playerId]> 1 and whichUnit != OW[playerId]then
+		if PlayerHeroReincarnCount[playerId]> 1 and whichUnit != OW[playerId] then
 			// 似乎是为了同步血精石充能 但没写完
 			call MIX(OW[playerId])
 			// 同步单位等级
@@ -12647,13 +12611,13 @@ function SRX takes nothing returns boolean
 		set p = Sentinels[i]
 		set id = GetPlayerId(p)
 		set g = GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)
-		if g < EUV[id]then
+		if g < EUV[id] then
 			set EUV[id]= g
 		endif
 		set p = Scourges[i]
 		set id = GetPlayerId(p)
 		set g = GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)
-		if g < EUV[id]then
+		if g < EUV[id] then
 			set EUV[id]= g
 		endif
 		set i = i + 1
@@ -12855,12 +12819,12 @@ endfunction
 function SWX takes unit SYX, unit SZX returns nothing
 	local integer id = GetUnitTypeId(SZX)
 	local integer TME = GetPlayerId(GetOwningPlayer(SYX))
-	if GetOwningPlayer(SZX)== BW then
+	if GetOwningPlayer(SZX) == CreepsPlayer then
 		set BQ[TME]= BQ[TME]+ 1
 		set AQ[TME]= AQ[TME]+ 1
 		call SaveInteger(HY, 400 + TME, 79, LoadInteger(HY, 400 + TME, 79)+ 1)
 	else
-		if STX(id) and(GetOwningPlayer(SZX)== Sentinels[0]or GetOwningPlayer(SZX)== Scourges[0]) then
+		if STX(id) and(GetOwningPlayer(SZX) == Sentinels[0]or GetOwningPlayer(SZX) == Scourges[0]) then
 			if IsUnitAlly(SZX, GetOwningPlayer(SYX)) then
 				set NQ[TME]= NQ[TME]+ 1
 				call SUX(SZX, TME)
@@ -12913,7 +12877,7 @@ function S7X takes nothing returns nothing
 	local player p
 	local real x
 	local real y
-	if GetTriggerEventId()== EVENT_GAME_TIMER_EXPIRED then
+	if GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
 		set p = GetOwningPlayer(u)
 		if IsScourgesPlayer(p) then
 			set x = GetRectCenterX(gg_rct_ScourgeRevivalPoint)
@@ -12943,7 +12907,7 @@ function S8X takes unit u, real SYV returns nothing
 	set t = null
 endfunction
 function S9X takes nothing returns boolean
-	if GetItemPlayer(GetFilterItem())== Player(15) then
+	if GetItemPlayer(GetFilterItem()) == Player(15) then
 		call RemoveItem(GetFilterItem())
 	endif
 	return false
@@ -13017,7 +12981,7 @@ function TNX takes nothing returns nothing
 		set p = Sentinels[i]
 		if XGX(p) then
 			set TME = GetPlayerId(p)
-			if GR[TME]then
+			if GR[TME] then
 				if Player__Hero[TME]!= null then
 					set TBX = TBX + TOX(Player__Hero[TME])
 					set TBX = TBX + TOX(Circle[TME])
@@ -13038,7 +13002,7 @@ function TNX takes nothing returns nothing
 		set p = Scourges[i]
 		if XGX(p) then
 			set TME = GetPlayerId(p)
-			if GR[TME]then
+			if GR[TME] then
 				if Player__Hero[TME]!= null then
 					set TBX = TBX + TOX(Player__Hero[TME])
 					set TBX = TBX + TOX(Circle[TME])
@@ -13114,7 +13078,7 @@ function THX takes nothing returns boolean
 	local real x
 	local real y
 	local real a
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 		if GetTriggerUnit()!= TJX then
@@ -13140,7 +13104,7 @@ function TKX takes nothing returns boolean
 	local unit WWE =(LoadUnitHandle(HY, h, 17))
 	local unit KBX =(LoadUnitHandle(HY, h, 19))
 	local unit TJX
-	if GetSummoningUnit()== KBX then
+	if GetSummoningUnit() == KBX then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 		set TJX = GetSummonedUnit()
@@ -13474,17 +13438,17 @@ function UAX takes unit u1, unit u2 returns real
 	return 1.
 endfunction
 function UNX takes nothing returns nothing
-	if GetUnitAbilityLevel(GetEnumUnit(),'Aloc')== 0 and UnitAlive(GetEnumUnit()) and IsUnitEnemy(GetEnumUnit(), GetOwningPlayer(SB)) and UAX(GetTriggerUnit(), GetEnumUnit())<= QB * QB then
+	if GetUnitAbilityLevel(GetEnumUnit(),'Aloc') == 0 and UnitAlive(GetEnumUnit()) and IsUnitEnemy(GetEnumUnit(), GetOwningPlayer(SB)) and UAX(GetTriggerUnit(), GetEnumUnit())<= QB * QB then
 		call GroupAddUnit(IV, GetEnumUnit())
 	endif
 endfunction
 function UBX takes nothing returns nothing
-	if GetUnitAbilityLevel(GetEnumUnit(),'Aloc')== 0 and UnitAlive(GetEnumUnit()) and IsUnitAlly(GetEnumUnit(), GetOwningPlayer(SB)) and UAX(GetTriggerUnit(), GetEnumUnit())<= QB * QB then
+	if GetUnitAbilityLevel(GetEnumUnit(),'Aloc') == 0 and UnitAlive(GetEnumUnit()) and IsUnitAlly(GetEnumUnit(), GetOwningPlayer(SB)) and UAX(GetTriggerUnit(), GetEnumUnit())<= QB * QB then
 		call GroupAddUnit(IV, GetEnumUnit())
 	endif
 endfunction
 function UCX takes nothing returns nothing
-	if GetUnitAbilityLevel(GetEnumUnit(),'Aloc')== 0 and UnitAlive(GetEnumUnit()) and UAX(GetTriggerUnit(), GetEnumUnit())<= QB * QB then
+	if GetUnitAbilityLevel(GetEnumUnit(),'Aloc') == 0 and UnitAlive(GetEnumUnit()) and UAX(GetTriggerUnit(), GetEnumUnit())<= QB * QB then
 		call GroupAddUnit(IV, GetEnumUnit())
 	endif
 endfunction
@@ -13492,7 +13456,7 @@ function UDX takes nothing returns nothing
 	local unit u = GetTriggerUnit()
 	call GroupClear(IV)
 	// 中立
-	if GetOwningPlayer(u)== BW then
+	if GetOwningPlayer(u) == CreepsPlayer then
 		if not IsUnitType(u, UNIT_TYPE_ANCIENT) then
 			call ForGroup(OV, function UCX)
 		else
@@ -13550,13 +13514,13 @@ function UGX takes unit SYX returns boolean
 					call GroupAddUnit(IV, Player__Hero[GetPlayerId(GetOwningPlayer(SYX))])
 				endif
 			else
-				if UnitAlive(SYX) or LoadInteger(HY, GetHandleId(SYX),'A06B')== 1 then
+				if UnitAlive(SYX) or LoadInteger(HY, GetHandleId(SYX),'A06B') == 1 then
 					call GroupAddUnit(IV, SYX)
 				endif
 			endif
 		else
 			// 存在英雄 并且凶手单位存活 而且主人单位还是自爆的
-			if Player__Hero[GetPlayerId(GetOwningPlayer(SYX))]!= null and ( UnitAlive(Player__Hero[GetPlayerId(GetOwningPlayer(SYX))]) or LoadInteger(HY, GetHandleId(Player__Hero[GetPlayerId(GetOwningPlayer(SYX))]),'A06B')== 1 ) then
+			if Player__Hero[GetPlayerId(GetOwningPlayer(SYX))]!= null and ( UnitAlive(Player__Hero[GetPlayerId(GetOwningPlayer(SYX))]) or LoadInteger(HY, GetHandleId(Player__Hero[GetPlayerId(GetOwningPlayer(SYX))]),'A06B') == 1 ) then
 				call GroupAddUnit(IV, Player__Hero[GetPlayerId(GetOwningPlayer(SYX))])
 			endif
 		endif
@@ -13637,15 +13601,15 @@ function UGX takes unit SYX returns boolean
 			set TME = GetPlayerId(GetOwningPlayer(u))
 			set UJX = R2I(U3X * LoadReal(VV,'Assi', TME))
 			call SaveInteger(VV,'Assi', TME, UJX)
-			if u != SYX or UnitAlive(u) or LoadInteger(HY, GetHandleId(SYX),'A06B')== 1 then
+			if u != SYX or UnitAlive(u) or LoadInteger(HY, GetHandleId(SYX),'A06B') == 1 then
 				call AddHeroXPSimple(u, UHX, true)
 			endif
 			if u == SYX and not IsUnitInRange(SYX, GetTriggerUnit(), QB) then //WTE(SYX, GetTriggerUnit())> QB then
-				if UnitAlive(u) or LoadInteger(HY, GetHandleId(SYX),'A06B')== 1 then
+				if UnitAlive(u) or LoadInteger(HY, GetHandleId(SYX),'A06B') == 1 then
 					call AddHeroXPSimple(u, ODX * UYX, true)
 				endif
 			else
-				if UnitAlive(u) or LoadInteger(HY, GetHandleId(SYX),'A06B')== 1 then
+				if UnitAlive(u) or LoadInteger(HY, GetHandleId(SYX),'A06B') == 1 then
 					call AddHeroXPSimple(u, ODX, true)
 				endif
 			endif
@@ -13697,26 +13661,26 @@ function U7X takes nothing returns nothing
 	local unit WZX
 	local unit W_X
 	local string W0X
-	local boolean W1X = LoadInteger(HY, GetHandleId(U9X), 4418)== 1 or(LoadInteger(HY, GetHandleId(U9X), 4419)== 1)
+	local boolean W1X = LoadInteger(HY, GetHandleId(U9X), 4418) == 1 or(LoadInteger(HY, GetHandleId(U9X), 4419) == 1)
 	local item it
 	if W1X then
 		set UF[GetPlayerId(WXX)]= true
 	endif
-	if LoadInteger(HY, GetHandleId(U9X), 4333)== 1 or LoadInteger(HY, GetHandleId(U9X), 4334)== 1 then
+	if LoadInteger(HY, GetHandleId(U9X), 4333) == 1 or LoadInteger(HY, GetHandleId(U9X), 4334) == 1 then
 		set WVX = Player__Hero[GetPlayerId(LoadPlayerHandle(HY, GetHandleId(U9X), 4333))]
 		set WEX = GetOwningPlayer(WVX)
 		set WSX = 30
 	endif
-	if WVX == null and LoadInteger(HY, GetHandleId(U9X), 4500)== 1 then
+	if WVX == null and LoadInteger(HY, GetHandleId(U9X), 4500) == 1 then
 		set WVX = QEV
 		set WEX = GetOwningPlayer(WVX)
 	endif
 	set WUX = SMX(U9X, WVX)
-	if IsPlayerAlly(WEX, WXX) and((LoadInteger(HY, GetHandleId(WVX), 4328))== 1) and PG != null then
+	if IsPlayerAlly(WEX, WXX) and((LoadInteger(HY, GetHandleId(WVX), 4328)) == 1) and PG != null then
 		set WVX = PG
 		set WEX = GetOwningPlayer(WVX)
 	endif
-	if T9X(WVX, WXX, WEX) == false and WUX == 1 and XFX(WEX) == false and WEX != BW then
+	if T9X(WVX, WXX, WEX) == false and WUX == 1 and XFX(WEX) == false and WEX != CreepsPlayer then
 		call SPX(U9X, WVX)
 		set WEX = E1V[1]
 		set WVX = Player__Hero[GetPlayerId(WEX)]
@@ -13755,7 +13719,7 @@ function U7X takes nothing returns nothing
 			set RQ[GetPlayerId(Scourges[0])]= RQ[GetPlayerId(Scourges[0])]+ 1
 			set FS[2]= FS[2]+ 1
 			set FS[1]= 0
-			if WEX != Scourges[0]then
+			if WEX != Scourges[0] then
 				set RQ[WOX]= RQ[WOX]+ 1
 				set XS[WOX]= XS[WOX]+ 1
 			endif
@@ -13774,13 +13738,13 @@ function U7X takes nothing returns nothing
 			set RQ[GetPlayerId(Sentinels[0])]= RQ[GetPlayerId(Sentinels[0])]+ 1
 			set FS[1]= FS[1]+ 1
 			set FS[2]= 0
-			if WEX != Sentinels[0]then
+			if WEX != Sentinels[0] then
 				set RQ[WOX]= RQ[WOX]+ 1
 				set XS[WOX]= XS[WOX]+ 1
 			endif
 		endif
 	endif
-	if WEX == BW then
+	if WEX == CreepsPlayer then
 		set WNX = false
 		if GetUnitTypeId(WVX)=='n00L' then
 			call DisplayTimedTextToAllPlayer(XY, CR[GetPlayerId(LocalPlayer)], PlayersColoerText[WRX]+ PlayersName[WRX]+ "|r " + GetObjectName('n03T'))
@@ -13793,7 +13757,7 @@ function U7X takes nothing returns nothing
 		call A5X(Q0, GetUnitX(U9X), GetUnitY(U9X))
 	endif
 	call StoreDrCacheData("Hero" + I2S(WRX), WOX)
-	if XS[WOX]> HQ[WOX]then
+	if XS[WOX]> HQ[WOX] then
 		set HQ[WOX]= XS[WOX]
 	endif
 	set WFX = XS[WRX]
@@ -13864,12 +13828,12 @@ function U7X takes nothing returns nothing
 			set WKX = WKX + "(+" + I2S(LoadInteger(VV,'Assi', GetPlayerId(WEX)))+ ")"
 		endif
 		set WKX = WKX + "|r"
-		if WEX == Sentinels[0]or WEX == Scourges[0]then
+		if WEX == Sentinels[0]or WEX == Scourges[0] then
 			if WUX == 0 then
-				if WEX == Sentinels[0]then
+				if WEX == Sentinels[0] then
 					set WJX = WHX + " " + GetObjectName('n042')+ " " + WGX + GetObjectName('n043')+ GetObjectName('n049')+ " " + WKX + " " + GetObjectName('n044')+ "."
 					call T1X(WEX, WIX)
-				elseif WEX == Scourges[0]then
+				elseif WEX == Scourges[0] then
 					set WJX = WHX + " " + GetObjectName('n042')+ " " + WGX + GetObjectName('n043')+ GetObjectName('n049')+ " " + WKX + " " + GetObjectName('n044')+ "."
 					call T1X(WEX, WIX)
 				endif
@@ -13929,7 +13893,7 @@ function U7X takes nothing returns nothing
 	call SaveInteger(HY,(400 + WOX),(450 + WRX),((LoadInteger(HY,(400 + WOX),(450 + WRX)))+ 1))
 	call SaveInteger(HY,(400 + WRX),(500 + WOX),((LoadInteger(HY,(400 + WRX),(500 + WOX)))+ 1))
 	call TimerStart(MS[WOX], 18, false, function U6X)
-	if U8X == false and WEX != Sentinels[0]and WEX != Scourges[0]and WEX != BW then
+	if U8X == false and WEX != Sentinels[0]and WEX != Scourges[0]and WEX != CreepsPlayer then
 		set IS[WOX]= IS[WOX]+ 1
 		if IS[WOX]== 2 then
 			set JQ[WOX]= JQ[WOX]+ 1
@@ -14057,7 +14021,7 @@ function W6X takes unit SYX, unit SZX returns nothing
 	local integer i = 1
 	local integer TME
 	local integer Y_E =$96
-	if p == Sentinels[0]or p == Scourges[0]then
+	if p == Sentinels[0]or p == Scourges[0] then
 		call SSX(SZX, SYX, Y_E)
 		set s = SLX(SZX, SYX)+ " " + GetObjectName('n04W')+ " |c00ff0303" + GetObjectName('n04Y')+ GetObjectName('n049')+ "|r "
 		call SetTopMessageText(s, 8.)
@@ -14093,8 +14057,8 @@ function W8X takes nothing returns nothing
 	local unit SZX = GetTriggerUnit()
 	local player pk = GetOwningPlayer(SYX)
 	if PR == false then
-		if pk != BW and SYX != null and IsPlayerEnemy(GetOwningPlayer(SZX), pk) then
-			if pk == Sentinels[0]or pk == Scourges[0]then
+		if pk != CreepsPlayer and SYX != null and IsPlayerEnemy(GetOwningPlayer(SZX), pk) then
+			if pk == Sentinels[0]or pk == Scourges[0] then
 				if SMX(SZX, SYX)> 0 then
 					call W6X(SYX, SZX)
 				endif
@@ -14117,7 +14081,7 @@ function W9X takes nothing returns nothing
 		set c = c + 1
 		call SaveInteger(HY, h, 34,(c))
 	endif
-	if c > 5 / .05 or(GetTriggerEventId()== EVENT_UNIT_DAMAGED and GetEventDamage()> 20) or GetUnitAbilityLevel(u,'A3KL')== 0 then
+	if c > 5 / .05 or(GetTriggerEventId() == EVENT_UNIT_DAMAGED and GetEventDamage()> 20) or GetUnitAbilityLevel(u,'A3KL') == 0 then
 		call FlushChildHashtable(HY,(h))
 		call CleanCurrentTrigger(t)
 	else
@@ -14246,29 +14210,29 @@ function YQX takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local unit u = null
-	if GetTriggerEventId()== EVENT_UNIT_DEATH then
+	if GetTriggerEventId() == EVENT_UNIT_DEATH then
 		call ExecuteFunc("YSX")
 		call FlushChildHashtable(HY,(h))
 		call CleanCurrentTrigger(t)
-	elseif GetTriggerEventId()== EVENT_UNIT_SPELL_EFFECT then
+	elseif GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT then
 		call YCX()
 	else
-		if GetUnitAbilityLevel(CT,'B0BI')== 0 then
+		if GetUnitAbilityLevel(CT,'B0BI') == 0 then
 			call SaveInteger(HY, h, 0, LoadInteger(HY, h, 0)+ 1)
 		endif
-		if LoadInteger(HY, h, 0)== 15 or GetTriggerEvalCount(t)== 1 then
+		if LoadInteger(HY, h, 0) == 15 or GetTriggerEvalCount(t) == 1 then
 			call SaveInteger(HY, h, 0, 0)
-			set u = CreateUnit(BW,'e00E', GetUnitX(CT), GetUnitY(CT), 0)
+			set u = CreateUnit(CreepsPlayer,'e00E', GetUnitX(CT), GetUnitY(CT), 0)
 			call UnitAddAbility(u,'A3KM')
 			call IssueTargetOrderById(u,$D025C, CT)
 			set u = null
 		endif
-		if GetOwningPlayer(CT) == BW and ModuloInteger(GetTriggerEvalCount(t), 10)== 0 then
+		if GetOwningPlayer(CT) == CreepsPlayer and ModuloInteger(GetTriggerEvalCount(t), 10) == 0 then
 			if not RectContainsUnit(FI, CT) then
 				if (LoadBoolean(HY,(h), 91)) then
 					call SaveBoolean(HY,(h), 91,(false))
 				else
-					call SetUnitPosition(CT, GetRectCenterX(gg_rct_RoshanBirthRect), GetRectCenterY(gg_rct_RoshanBirthRect))
+					call SetUnitPosition(CT, GetRectCenterX(gg_rct_RoshanSpawn), GetRectCenterY(gg_rct_RoshanSpawn))
 					call SaveBoolean(HY,(h), 91,(true))
 				endif
 			endif
@@ -14291,7 +14255,7 @@ function YTX takes nothing returns nothing
 	set t = null
 endfunction
 function YUX takes nothing returns nothing
-	set CT = CreateUnit(Player(12),'n00L', GetRectCenterX(gg_rct_RoshanBirthRect), GetRectCenterY(gg_rct_RoshanBirthRect), 180.)
+	set CT = CreateUnit(Player(12),'n00L', GetRectCenterX(gg_rct_RoshanSpawn), GetRectCenterY(gg_rct_RoshanSpawn), 180.)
 	call SetUnitAcquireRange(CT, 150)
 	call YTX()
 	if XEV > 1 then
@@ -14306,7 +14270,7 @@ function YWX takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local real XEX
 	local integer WTX = LoadInteger(HY, GetHandleId(t), 0)
-	if GetTriggerEvalCount(t)== WTX or FPV then
+	if GetTriggerEvalCount(t) == WTX or FPV then
 		set FPV = false
 		call YXX()
 		set XEV = XEV + 1
@@ -14314,7 +14278,7 @@ function YWX takes nothing returns boolean
 		call YHX()
 		call SetPlayerTechResearched(GetOwningPlayer(CT),'R00F', E9V)
 		call CleanCurrentTrigger(t)
-	elseif GetTriggerEvalCount(t)== 300 then
+	elseif GetTriggerEvalCount(t) == 300 then
 		call YXX()
 	endif
 	set t = null
@@ -14334,13 +14298,13 @@ function YSX takes nothing returns nothing
 	set E8V = false
 	set it = CreateItem(XXV[AIV], GetUnitX(CT), GetUnitY(CT))
 	call SetItemCharges(it, 1)
-	if GetUnitAbilityLevel(CT,'A0Q6')== 1 then
+	if GetUnitAbilityLevel(CT,'A0Q6') == 1 then
 		set it = CreateItem(XXV[R6V], GetUnitX(CT), GetUnitY(CT))
 		call SetItemCharges(it, 1)
 	endif
 	call RemoveItem(UnitRemoveItemFromSlot(CT, 0))
 	call RemoveItem(UnitRemoveItemFromSlot(CT, 1))
-	call CreateUnitAtLoc(Player(12),'e01V', GetRectCenter(gg_rct_RoshanBirthRect), 0)
+	call CreateUnitAtLoc(Player(12),'e01V', GetRectCenter(gg_rct_RoshanSpawn), 0)
 	if(IsSentinelsPlayer(GetOwningPlayer(GetKillingUnit()))) then
 		call StoreDrCacheData("Roshan", 0)
 		call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, CR[GetPlayerId(LocalPlayer)], YOX("|c00ff0000" + GetObjectName('n065')+ "|r", GetObjectName('n065')))
@@ -14439,12 +14403,12 @@ function Y0X takes nothing returns boolean
 	return false
 endfunction
 function Y3X takes nothing returns nothing
-	if((GetUnitLevel(GetEnumUnit())< 25 or G0V) and GetUnitAbilityLevel(GetEnumUnit(),'Aloc')== 0) then
+	if((GetUnitLevel(GetEnumUnit())< 25 or G0V) and GetUnitAbilityLevel(GetEnumUnit(),'Aloc') == 0) then
 		call AddHeroXPSimple(GetEnumUnit(), WB, true)
 	endif
 endfunction
 function Y4X takes integer xp, player p, unit SYX returns nothing
-	if(xp > 0 and p != BW and p != null) then
+	if(xp > 0 and p != CreepsPlayer and p != null) then
 		if IsUnitType(GetTriggerUnit(), UNIT_TYPE_SUMMONED) then
 			set xp = R2I(xp * .5)
 		endif
@@ -14606,7 +14570,7 @@ function ZEX takes nothing returns nothing
 			call UPV(GetTriggerUnit(), "在家")
 		elseif id ==$D0021 then
 			call UPV(GetTriggerUnit(), "控制中")
-		elseif LoadReal(HY, h, 0)== GetUnitX(u) and LoadReal(HY, h, 1)== GetUnitY(u) then
+		elseif LoadReal(HY, h, 0) == GetUnitX(u) and LoadReal(HY, h, 1) == GetUnitY(u) then
 			call SaveInteger(HY, h, 0, LoadInteger(HY, h, 0)+ 1)
 			if LoadInteger(HY, h, 0)>= 5 then
 				call UPV(u, "待命")
@@ -14619,7 +14583,7 @@ function ZEX takes nothing returns nothing
 			call SaveReal(HY, h, 0, GetUnitX(u))
 			call SaveReal(HY, h, 1, GetUnitY(u))
 		endif
-		if ModuloInteger(GetTriggerEvalCount(GetTriggeringTrigger()), 10)== 1 then
+		if ModuloInteger(GetTriggerEvalCount(GetTriggeringTrigger()), 10) == 1 then
 			call ZVX(u)
 		endif
 	endif
@@ -14755,7 +14719,7 @@ function RuneRefresh__CallBack takes nothing returns boolean
 		call RemoveItem(Z2)
 	endif
 	set ZKX = ZDX()
-	if GetRandomInt(1, 2)== 1 then
+	if GetRandomInt(1, 2) == 1 then
 		set x = x1
 		set y = y1
 		set dx = x2
@@ -14802,7 +14766,7 @@ function ZLX takes unit u returns nothing
 endfunction
 function ZMX takes nothing returns nothing
 	local item C1X = GetEnumItem()
-	if GetWidgetLife(C1X)> 0 and GetItemPlayer(C1X)== CMV and CSV == 0 then
+	if GetWidgetLife(C1X)> 0 and GetItemPlayer(C1X) == CMV and CSV == 0 then
 		set CSV = CSV + 1
 		call UnitAddItem(CPV, C1X)
 	endif
@@ -14810,7 +14774,7 @@ function ZMX takes nothing returns nothing
 endfunction
 function ZPX takes nothing returns nothing
 	local item C1X = GetEnumItem()
-	if GetWidgetLife(C1X)> 0 and GetItemPlayer(C1X)== CMV then
+	if GetWidgetLife(C1X)> 0 and GetItemPlayer(C1X) == CMV then
 		call UnitAddItem(CQV, C1X)
 	endif
 	set C1X = null
@@ -14824,7 +14788,7 @@ function ZQX takes nothing returns boolean
 	local real x =(LoadReal(HY, h, 6))
 	local real y =(LoadReal(HY, h, 7))
 	local rect r = Rect(x -300, y -300, x + 300, y + 300)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 		set CMV = p
@@ -14879,7 +14843,7 @@ function ZTX takes unit ZSX, unit trigUnit returns nothing
 	exitwhen i > 5
 		set C1X = UnitItemInSlot(ZSX, i)
 		set GTX = UUV(C1X)
-		if C1X != null and GetItemPlayer(C1X)== p and(GTX != O3V and GTX != O4V and GTX != O5V and GTX != O6V and GTX != O7V) then
+		if C1X != null and GetItemPlayer(C1X) == p and(GTX != O3V and GTX != O4V and GTX != O5V and GTX != O6V and GTX != O7V) then
 			call UnitRemoveItem(ZSX, C1X)
 			call SetItemPosition(C1X, x, y)
 		endif
@@ -14946,13 +14910,13 @@ function Z3X takes unit Y1X, unit KKX, boolean Z4X, integer Z5X returns nothing
 	call FlushChildHashtable(HY,'ITEM')
 	loop
 		set it = UnitItemInSlot(Y1X, i)
-		if it != null and(GetItemPlayer(it)== p or GetPlayerSlotState(GetItemPlayer(it))== PLAYER_SLOT_STATE_LEFT) then
+		if it != null and(GetItemPlayer(it) == p or GetPlayerSlotState(GetItemPlayer(it)) == PLAYER_SLOT_STATE_LEFT) then
 			call SaveItemHandle(HY,'ITEM', k, it)
 			call SaveInteger(HY,'ITEM', k, UUV(it))
 			set k = k + 1
 		endif
 		set it = UnitItemInSlot(KKX, i)
-		if it != null and(GetItemPlayer(it)== p or GetPlayerSlotState(GetItemPlayer(it))== PLAYER_SLOT_STATE_LEFT) then
+		if it != null and(GetItemPlayer(it) == p or GetPlayerSlotState(GetItemPlayer(it)) == PLAYER_SLOT_STATE_LEFT) then
 			call SaveItemHandle(HY,'ITEM', k, it)
 			call SaveInteger(HY,'ITEM', k, UUV(it))
 			set k = k + 1
@@ -15018,7 +14982,7 @@ function Z3X takes unit Y1X, unit KKX, boolean Z4X, integer Z5X returns nothing
 					elseif CBV[k]== IWV then
 						call SaveInteger(HY,'ITEM', 300, 12)
 					elseif CBV[k]== Item_MagicWand then
-						if UUV(it)== Item_MagicStick then
+						if UUV(it) == Item_MagicStick then
 							call SaveInteger(HY,'ITEM', 300, GetItemCharges(it))
 						endif
 					endif
@@ -15073,15 +15037,15 @@ function Z9X takes nothing returns boolean
 	local integer i
 	local player p = GetOwningPlayer(trigUnit)
 	local item C1X
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
-		if GetTriggerUnit()== trigUnit or UnitIsDead(trigUnit) then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
+		if GetTriggerUnit() == trigUnit or UnitIsDead(trigUnit) then
 			call ZLX(ZSX)
 		endif
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
-	elseif GetTriggerEventId()== EVENT_UNIT_ISSUED_ORDER or GetTriggerEventId()== EVENT_UNIT_ISSUED_TARGET_ORDER or GetTriggerEventId()== EVENT_UNIT_ISSUED_POINT_ORDER then
+	elseif GetTriggerEventId() == EVENT_UNIT_ISSUED_ORDER or GetTriggerEventId() == EVENT_UNIT_ISSUED_TARGET_ORDER or GetTriggerEventId() == EVENT_UNIT_ISSUED_POINT_ORDER then
 		set i = GetIssuedOrderId()
-		if(LoadInteger(HY, h, 679))== 1 then
+		if(LoadInteger(HY, h, 679)) == 1 then
 			call SaveInteger(HY, h, 679, 0)
 		elseif i != 852100 and i != 852090 and i != 851973 and i != 851986 and not(i >= 852002 and i <= 852013) then
 			call FlushChildHashtable(HY, h)	//不确定新增
@@ -15140,7 +15104,7 @@ function VOO takes nothing returns nothing
 	local item C1X = GetEnumItem()
 	local player p = ZO
 	local integer id = GetPlayerId(p)
-	if GetWidgetLife(C1X)> 0 and GetItemPlayer(C1X)== p and IsItemVisible(C1X) then
+	if GetWidgetLife(C1X)> 0 and GetItemPlayer(C1X) == p and IsItemVisible(C1X) then
 		call SetItemPosition(C1X, VHV[id], VJV[id])
 		call UnitAddItem(CTV, C1X)
 	endif
@@ -15160,7 +15124,7 @@ function VRO takes nothing returns boolean
 	else
 		call EnumItemsInRect(gg_rct_ScourgeFountainOfLifeRange, null, function VOO)
 	endif
-	if GetTriggerEvalCount(t)== 3 then
+	if GetTriggerEvalCount(t) == 3 then
 		call KillUnit(u)
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
@@ -15277,7 +15241,7 @@ function VDO takes nothing returns nothing
 				call KYX(p)
 			else
 				call SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)+ Y4[KFX(GetHeroLevel(Player__Hero[GetPlayerId(GetOwningPlayer(GetSellingUnit()))]))])
-				if UF[TME]then
+				if UF[TME] then
 					call InterfaceErrorForPlayer(p, "因死神镰刀的诅咒无法买活")
 				endif
 			endif
@@ -15317,7 +15281,7 @@ function VFO takes player VBX, unit U6E, integer VGO, integer i0, integer i1, in
 	call SetItemPlayer(C1X, VBX, true)
 	call SetItemUserData(C1X, 0)
 	call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Items\\AIem\\AIemTarget.mdl", U6E, "origin"))
-	if UUV(C1X)== NIV then
+	if UUV(C1X) == NIV then
 		call SetItemCharges(C1X, 8)
 	endif
 	call EnableTrigger(C3V)
@@ -15395,7 +15359,7 @@ function VHO takes player p, unit U6E, integer GTX returns boolean
 	set ERO = UUV(VWO)
 	set EIO = UUV(VYO)
 	set EAO = UUV(VZO)
-	if(GetPlayerSlotState((p))== PLAYER_SLOT_STATE_LEFT) then
+	if(GetPlayerSlotState((p)) == PLAYER_SLOT_STATE_LEFT) then
 		set VPO = 5
 		set ENO = true
 	endif
@@ -15406,12 +15370,12 @@ function VHO takes player p, unit U6E, integer GTX returns boolean
 		loop
 		exitwhen k > VPO
 			if IsSentinelsPlayer(p) then
-				if p != Sentinels[m]then
+				if p != Sentinels[m] then
 					set VQO[k]= Sentinels[m]
 					set k = k + 1
 				endif
 			else
-				if p != Scourges[m]then
+				if p != Scourges[m] then
 					set VQO[k]= Scourges[m]
 					set k = k + 1
 				endif
@@ -15424,37 +15388,37 @@ function VHO takes player p, unit U6E, integer GTX returns boolean
 	exitwhen k > VPO
 		set VBX = VQO[k]
 		set i = 0
-		if VSO != null and V5O == 1 and(V_O == VBX or L3 or(GetPlayerSlotState((V_O))== PLAYER_SLOT_STATE_LEFT)) then
+		if VSO != null and V5O == 1 and(V_O == VBX or L3 or(GetPlayerSlotState((V_O)) == PLAYER_SLOT_STATE_LEFT)) then
 			set VJO[i + 1]= EEO
 		else
 			set VJO[i + 1]= 0
 		endif
 		set i = 1
-		if VTO != null and V6O == 1 and(V0O == VBX or L3 or(GetPlayerSlotState((V0O))== PLAYER_SLOT_STATE_LEFT)) then
+		if VTO != null and V6O == 1 and(V0O == VBX or L3 or(GetPlayerSlotState((V0O)) == PLAYER_SLOT_STATE_LEFT)) then
 			set VJO[i + 1]= EXO
 		else
 			set VJO[i + 1]= 0
 		endif
 		set i = 2
-		if VUO != null and V7O == 1 and(V1O == VBX or L3 or(GetPlayerSlotState((V1O))== PLAYER_SLOT_STATE_LEFT)) then
+		if VUO != null and V7O == 1 and(V1O == VBX or L3 or(GetPlayerSlotState((V1O)) == PLAYER_SLOT_STATE_LEFT)) then
 			set VJO[i + 1]= EOO
 		else
 			set VJO[i + 1]= 0
 		endif
 		set i = 3
-		if VWO != null and V8O == 1 and(V2O == VBX or L3 or(GetPlayerSlotState((V2O))== PLAYER_SLOT_STATE_LEFT)) then
+		if VWO != null and V8O == 1 and(V2O == VBX or L3 or(GetPlayerSlotState((V2O)) == PLAYER_SLOT_STATE_LEFT)) then
 			set VJO[i + 1]= ERO
 		else
 			set VJO[i + 1]= 0
 		endif
 		set i = 4
-		if VYO != null and V9O == 1 and(V3O == VBX or L3 or(GetPlayerSlotState((V3O))== PLAYER_SLOT_STATE_LEFT)) then
+		if VYO != null and V9O == 1 and(V3O == VBX or L3 or(GetPlayerSlotState((V3O)) == PLAYER_SLOT_STATE_LEFT)) then
 			set VJO[i + 1]= EIO
 		else
 			set VJO[i + 1]= 0
 		endif
 		set i = 5
-		if VZO != null and EVO == 1 and(V4O == VBX or L3 or(GetPlayerSlotState((V4O))== PLAYER_SLOT_STATE_LEFT)) then
+		if VZO != null and EVO == 1 and(V4O == VBX or L3 or(GetPlayerSlotState((V4O)) == PLAYER_SLOT_STATE_LEFT)) then
 			set VJO[i + 1]= EAO
 		else
 			set VJO[i + 1]= 0
@@ -15505,7 +15469,7 @@ function VHO takes player p, unit U6E, integer GTX returns boolean
 				else
 					set y = 0
 					loop
-						if VJO[y]== VLO[x]and VKO[y]and VMO[x]then
+						if VJO[y]== VLO[x]and VKO[y]and VMO[x] then
 							set VKO[y]= false
 							set VMO[x]= false
 							set b[x]= true
@@ -15518,13 +15482,13 @@ function VHO takes player p, unit U6E, integer GTX returns boolean
 					exitwhen y == 7
 					endloop
 				endif
-				if b[x]then
+				if b[x] then
 					set x = x + 1
 				else
 					set x = 5
 				endif
 			endloop
-			if b[0]and b[1]and b[2]and b[3]and b[4]then
+			if b[0]and b[1]and b[2]and b[3]and b[4] then
 				call VFO(VBX, U6E, CBV[i], JVX[1], JVX[2], JVX[3], JVX[4], JVX[5], JVX[6])
 				set i = CCV + 2
 			else
@@ -15566,7 +15530,7 @@ function ECO takes player VBX, unit U6E, integer GTX returns boolean
 	return JVX
 endfunction
 function EDO takes nothing returns boolean
-	if IsUnitAlly(GetFilterUnit(), GetOwningPlayer(U2)) and GetUnitAbilityLevel(GetFilterUnit(),'Aloc')== 0 and UnitInventorySize(GetFilterUnit())> 1 and GetUnitTypeId(GetFilterUnit())!='ncop' and GetPlayerAlliance(GetOwningPlayer(GetFilterUnit()), GetOwningPlayer(U2), ALLIANCE_SHARED_CONTROL) and GetOwningPlayer(U2)!= GetOwningPlayer(GetFilterUnit()) and IsUnitIllusion(GetFilterUnit()) == false and UnitIsDead(GetFilterUnit()) == false then
+	if IsUnitAlly(GetFilterUnit(), GetOwningPlayer(U2)) and GetUnitAbilityLevel(GetFilterUnit(),'Aloc') == 0 and UnitInventorySize(GetFilterUnit())> 1 and GetUnitTypeId(GetFilterUnit())!='ncop' and GetPlayerAlliance(GetOwningPlayer(GetFilterUnit()), GetOwningPlayer(U2), ALLIANCE_SHARED_CONTROL) and GetOwningPlayer(U2)!= GetOwningPlayer(GetFilterUnit()) and IsUnitIllusion(GetFilterUnit()) == false and UnitIsDead(GetFilterUnit()) == false then
 		if IsMessengerUnit(GetFilterUnit()) then
 			set Q2 = Q2 + 1
 			set W2 = GetFilterUnit()
@@ -15575,10 +15539,10 @@ function EDO takes nothing returns boolean
 	return false
 endfunction
 function EFO takes nothing returns boolean
-	if IsUnitAlly(GetFilterUnit(), GetOwningPlayer(U2)) and GetUnitAbilityLevel(GetFilterUnit(),'Aloc')== 0 and UnitInventorySize(GetFilterUnit())> 1 and GetUnitTypeId(GetFilterUnit())!='ncop' and IsUnitIllusion(GetFilterUnit()) == false and UnitIsDead(GetFilterUnit()) == false then
-		if GetOwningPlayer(U2)== GetOwningPlayer(GetFilterUnit()) then
+	if IsUnitAlly(GetFilterUnit(), GetOwningPlayer(U2)) and GetUnitAbilityLevel(GetFilterUnit(),'Aloc') == 0 and UnitInventorySize(GetFilterUnit())> 1 and GetUnitTypeId(GetFilterUnit())!='ncop' and IsUnitIllusion(GetFilterUnit()) == false and UnitIsDead(GetFilterUnit()) == false then
+		if GetOwningPlayer(U2) == GetOwningPlayer(GetFilterUnit()) then
 			if IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) then
-				if GetUnitAbilityLevel(GetFilterUnit(),'A04R')== 0 then
+				if GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0 then
 					set W2 = GetFilterUnit()
 				endif
 			elseif IsUnitType(W2, UNIT_TYPE_HERO) == false then
@@ -15623,7 +15587,7 @@ function EJO takes player VBX, unit U6E, unit EKO, integer GTX, real x, real y, 
 	endif
 	if EMO == null or ECO(VBX, EMO, GSX(GTX)) == false or X3 == false then
 		if HHX(GSX(GTX)) then
-			if H_X(EMO)== 0 or EMO == null then
+			if H_X(EMO) == 0 or EMO == null then
 				if EMO == null then
 					call HYX(XXV[GTX], x, y, VBX, true, HUX)
 				else
@@ -15641,7 +15605,7 @@ function EJO takes player VBX, unit U6E, unit EKO, integer GTX, real x, real y, 
 				call SetItemUserData(HWX, ELO)
 			endif
 		elseif HGX(GSX(GTX)) then
-			if EMO == null or(H_X(EMO)== 0 and GetItemOfTypeFromUnit(EMO, XOV[GTX])== null) then
+			if EMO == null or(H_X(EMO) == 0 and GetItemOfTypeFromUnit(EMO, XOV[GTX]) == null) then
 				call HYX(XXV[GTX], x, y, VBX, true, H7X(GTX))
 			else
 				set HWX = CreateItem(XXV[GTX], x, y)
@@ -15651,7 +15615,7 @@ function EJO takes player VBX, unit U6E, unit EKO, integer GTX, real x, real y, 
 				call UnitAddItem(EMO, HWX)
 			endif
 		else
-			if H_X(EMO)== 0 or EMO == null then
+			if H_X(EMO) == 0 or EMO == null then
 				if EMO == null then
 					call HYX(XXV[GTX], x, y, VBX, true, 0)
 				else
@@ -15850,7 +15814,7 @@ function E8O takes unit u, integer id returns boolean
 	return b
 endfunction
 function E9O takes nothing returns boolean
-	if Q2 < 6 and GetItemPlayer(GetFilterItem())== E3 and GetItemUserData(GetFilterItem())>= 0 and GetWidgetLife(GetFilterItem())> 1 then
+	if Q2 < 6 and GetItemPlayer(GetFilterItem()) == E3 and GetItemUserData(GetFilterItem())>= 0 and GetWidgetLife(GetFilterItem())> 1 then
 		set Q2 = Q2 + 1
 		return true
 	endif
@@ -15880,7 +15844,7 @@ function XOO takes unit KKX, integer XRO, player p returns nothing
 	local unit d
 	local real x
 	local real y
-	if XRO ==-1 or GetPlayerSlotState(p)== PLAYER_SLOT_STATE_LEFT then
+	if XRO ==-1 or GetPlayerSlotState(p) == PLAYER_SLOT_STATE_LEFT then
 		set it = null
 		set Y1X = null
 		set d = null
@@ -15893,21 +15857,21 @@ function XOO takes unit KKX, integer XRO, player p returns nothing
 	loop
 		if Y1X != null then
 			set it = UnitItemInSlot(Y1X, i)
-			if it != null and GetItemPlayer(it)== p then
+			if it != null and GetItemPlayer(it) == p then
 				call SaveItemHandle(HY,'ITEM', k, it)
 				call SaveInteger(HY,'ITEM', k, UUV(it))
 				set k = k + 1
 			endif
 		endif
 		set it = UnitItemInSlot(KKX, i)
-		if it != null and GetItemPlayer(it)== p then
+		if it != null and GetItemPlayer(it) == p then
 			call SaveItemHandle(HY,'ITEM', k, it)
 			call SaveInteger(HY,'ITEM', k, UUV(it))
 			set k = k + 1
 		endif
-		if KKX != Player__Hero[GetPlayerId(p)]then
+		if KKX != Player__Hero[GetPlayerId(p)] then
 			set it = UnitItemInSlot(Player__Hero[GetPlayerId(p)], i)
-			if it != null and GetItemPlayer(it)== p then
+			if it != null and GetItemPlayer(it) == p then
 				call SaveItemHandle(HY,'ITEM', k, it)
 				call SaveInteger(HY,'ITEM', k, UUV(it))
 				set k = k + 1
@@ -16326,12 +16290,12 @@ function XLO takes unit trigUnit, item C1X returns boolean
 		call TDE(trigUnit, XOV[O2V], E3, false, 1)
 		call UnitRemoveAbility(u,'B0GI')
 	endif
-	if(GTX)== IUV and GetItemCharges(C1X)== 0 then
+	if(GTX) == IUV and GetItemCharges(C1X) == 0 then
 		set E3 = GetItemPlayer(C1X)
 		call HZX(C1X)
 		call TDE(trigUnit, XOV[IYV], E3, false, 1)
 	endif
-	if GTX == RRV and GetItemCharges(C1X)== 0 then
+	if GTX == RRV and GetItemCharges(C1X) == 0 then
 		set E3 = GetItemPlayer(C1X)
 		call HZX(C1X)
 		call TDE(trigUnit, XOV[RIV], E3, false, 1)
@@ -16396,7 +16360,7 @@ function XLO takes unit trigUnit, item C1X returns boolean
 		set Q2 = GetItemCharges(C1X)
 		call RemoveItem(C1X)
 		if GTX == AIV then
-			set Z2 = CreateItem(XXV[GTX], GetRectCenterX(gg_rct_RoshanBirthRect), GetRectCenterY(gg_rct_RoshanBirthRect))
+			set Z2 = CreateItem(XXV[GTX], GetRectCenterX(gg_rct_RoshanSpawn), GetRectCenterY(gg_rct_RoshanSpawn))
 			call SetItemCharges(Z2, Q2)
 		endif
 		call SetItemPlayer(Z2, E3, false)
@@ -16544,13 +16508,13 @@ function XZO takes nothing returns boolean
 				set X4O = true
 				call HZX(C1X)
 			endif
-		elseif L3 == false and X0O == false and GetItemType(C1X)== ITEM_TYPE_CAMPAIGN and H2X(C1X)!= 0 and(p == X1O or(GetPlayerSlotState(X1O)== PLAYER_SLOT_STATE_LEFT)) then
+		elseif L3 == false and X0O == false and GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and H2X(C1X)!= 0 and(p == X1O or(GetPlayerSlotState(X1O) == PLAYER_SLOT_STATE_LEFT)) then
 			if HHX(GTX) then
 				set HTX = true
 			else
 				set HTX = false
 			endif
-			if not(GetPlayerSlotState(X1O)== PLAYER_SLOT_STATE_LEFT and GUX(GTX)) then
+			if not(GetPlayerSlotState(X1O) == PLAYER_SLOT_STATE_LEFT and GUX(GTX)) then
 				call HZX(C1X)
 				set X4O = true
 				set HWX = UnitAddItemById(ZWX, XOV[GTX])
@@ -16561,7 +16525,7 @@ function XZO takes nothing returns boolean
 					call SetItemCharges(HWX, HUX)
 				endif
 			endif
-		elseif L3 == false and X0O == false and GetItemType(C1X)== ITEM_TYPE_PERMANENT and p != X1O and XIV[UUV(C1X)]!= 0 and(GetPlayerSlotState(X1O)== PLAYER_SLOT_STATE_LEFT) == false then
+		elseif L3 == false and X0O == false and GetItemType(C1X) == ITEM_TYPE_PERMANENT and p != X1O and XIV[UUV(C1X)]!= 0 and(GetPlayerSlotState(X1O) == PLAYER_SLOT_STATE_LEFT) == false then
 			if HHX(GTX) then
 				set HTX = true
 			else
@@ -16576,7 +16540,7 @@ function XZO takes nothing returns boolean
 			if HTX then
 				call SetItemCharges(HWX, HUX)
 			endif
-		elseif X0O == false and GetItemType(C1X)== ITEM_TYPE_PERMANENT and HFX(C1X) and IsUnitType(ZWX, UNIT_TYPE_HERO) then
+		elseif X0O == false and GetItemType(C1X) == ITEM_TYPE_PERMANENT and HFX(C1X) and IsUnitType(ZWX, UNIT_TYPE_HERO) then
 			if HDX(ZWX, false) then
 				if GTX == XFV or(IsPlayerHasSkill(X1O,(39 -1)* 4 + 3) and GTX != XDV) then
 					call HZX(C1X)
@@ -16598,7 +16562,7 @@ function XZO takes nothing returns boolean
 					call SetItemUserData(HWX, 1)
 				endif
 			endif
-		elseif X0O == false and GetItemType(C1X)== ITEM_TYPE_ARTIFACT then
+		elseif X0O == false and GetItemType(C1X) == ITEM_TYPE_ARTIFACT then
 			if(p != X1O and XHX(X1O) == false and(GTX == R0V or GTX == R_V or GTX == RYV)) then
 				call DisableTrigger(CUV)
 				call HZX(C1X)
@@ -16622,7 +16586,7 @@ function XZO takes nothing returns boolean
 		elseif X0O and HGX(GSX(GTX)) then
 			if(p == X1O) then
 				call DisableTrigger(CUV)
-				if H_X(ZWX)== 0 and G2X(X1O, ZWX, GTX)== null then
+				if H_X(ZWX) == 0 and G2X(X1O, ZWX, GTX) == null then
 					call InterfaceErrorForPlayer(p, GetObjectName('n02O'))
 					call HYX(XXV[(GTX)],(((LoadReal(HY, h, 6)))* 1.),(((LoadReal(HY, h, 7)))* 1.),(X1O),(true),(HUX))
 				else
@@ -16653,7 +16617,7 @@ function XZO takes nothing returns boolean
 					call SetItemPlayer(HWX, X1O, false)
 					call SetItemUserData(HWX, 1)
 					call SetItemCharges(HWX, HUX)
-				elseif X2O == null and H_X(ZWX)== 0 then
+				elseif X2O == null and H_X(ZWX) == 0 then
 					call InterfaceErrorForPlayer(p, GetObjectName('n02O'))
 					call HYX(XXV[(GTX)],(((LoadReal(HY, h, 6)))* 1.),(((LoadReal(HY, h, 7)))* 1.),(X1O),(true),(HUX))
 				else
@@ -16663,7 +16627,7 @@ function XZO takes nothing returns boolean
 			endif
 		elseif X0O then
 			call EJO(X1O, ZWX, null, GTX, LoadReal(HY, h, 6), LoadReal(HY, h, 7), HUX, 1)
-		elseif X0O == false and(GetItemType(C1X)== ITEM_TYPE_PERMANENT or GetItemType(C1X)== ITEM_TYPE_CAMPAIGN) then
+		elseif X0O == false and(GetItemType(C1X) == ITEM_TYPE_PERMANENT or GetItemType(C1X) == ITEM_TYPE_CAMPAIGN) then
 			call SetItemUserData(C1X, 1)
 			set X4O = ECO(X1O, ZWX, 0)
 		endif
@@ -16682,7 +16646,7 @@ function XZO takes nothing returns boolean
 			if GetItemUserData(C1X)==-500 then
 				call RemoveItem(C1X)
 			elseif IsItemOwned(C1X) == false then
-				if GetItemType(C1X)== ITEM_TYPE_ARTIFACT or HHX(GTX) or GTX == R_V or GTX == RYV or GTX == R0V or GTX == it_jys then
+				if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(GTX) or GTX == R_V or GTX == RYV or GTX == R0V or GTX == it_jys then
 					set HTX = true
 				endif
 				call HYX(XXV[GTX], GetItemX(C1X), GetItemY(C1X), X1O, HTX, HUX)
@@ -16825,7 +16789,7 @@ endfunction
 
 function Item_dragonlance takes boolean MCBCZ returns nothing
 	if MCBCZ then
-		if GZX(GetTriggerUnit(), XOV[it_mlq], GetManipulatedItem())== null and GZX(GetTriggerUnit(), XOV[Item_HurricanePike], GetManipulatedItem())== null then
+		if GZX(GetTriggerUnit(), XOV[it_mlq], GetManipulatedItem()) == null and GZX(GetTriggerUnit(), XOV[Item_HurricanePike], GetManipulatedItem()) == null then
 			//("丢弃")
 			call MCBZZ(GetTriggerPlayer(), 0, GetTriggerUnit())
 		endif
@@ -16852,7 +16816,7 @@ endfunction
 
 function UYYEQ1 takes unit src, unit dst returns nothing
 	local integer h = GetHandleId(src)
-	if LoadReal(HY, h,'A3UC')< GetGameTime() or LoadReal(HY, h,'A3UC')== 0 then
+	if LoadReal(HY, h,'A3UC')< GetGameTime() or LoadReal(HY, h,'A3UC') == 0 then
 		call QTUWW(src, false)
 		call RemoveSavedReal(HY, h,'A3UC')
 		call UnitRemoveAbility(src,'A3UC')
@@ -16885,7 +16849,7 @@ endfunction
 function UYYRQ takes nothing returns nothing
 	local integer h = GetHandleId(WX)
 	local integer i = LoadInteger(HY, h,'A3UC')
-	//	if i > 0 and LoadUnitHandle(HY, h,'A3UC')== T4 then
+	//	if i > 0 and LoadUnitHandle(HY, h,'A3UC') == T4 then
 	if i > 0 then
 		if i == 1 then
 			call RemoveSavedInteger(HY, h,'A3UC')
@@ -16915,15 +16879,15 @@ function OMO takes nothing returns boolean
 	set id = GetPlayerId(GetOwningPlayer(u))
 	// 非镜像 英雄或者熊灵
 	if (IsUnitType(u, UNIT_TYPE_HERO) or IsBearUnit(u)) and not IsUnitIllusion(u) then
-		if GetTriggerEventId()== EVENT_PLAYER_UNIT_PICKUP_ITEM then
+		if GetTriggerEventId() == EVENT_PLAYER_UNIT_PICKUP_ITEM then
 			if i == XOV[A5V]or i == XOV[RXV]or i == XOV[AWV]or i == XOV[N1V]or i == XOV[RJV] or i == XOV[ASV] then
-				if i == XOV[A5V]then
+				if i == XOV[A5V] then
 					call EnableAttackEffectByTime(2, 0)
-				elseif i == XOV[RXV]then
+				elseif i == XOV[RXV] then
 					call EnableAttackEffectByTime(6, 0)
-				elseif i == XOV[N1V]then
+				elseif i == XOV[N1V] then
 					call EnableAttackEffectByTime(3, 0)
-				elseif i == XOV[RJV]then
+				elseif i == XOV[RJV] then
 					call EnableAttackEffectByTime(5, 0)
 				elseif i == XOV[AWV] or i == XOV[ASV] then
 					call EnableAttackEffectByTime(17, 0)
@@ -16932,25 +16896,25 @@ function OMO takes nothing returns boolean
 			if i == XOV[OXV] or i == XOV[I1V] or i == XOV[I_V] or i == XOV[A2V]  then
 				call OOZ()
 			endif
-			if i == XOV[OYV]then
+			if i == XOV[OYV] then
 				set CDV[id]= CDV[id]+ 1
-			elseif i == XOV[X9V]then
+			elseif i == XOV[X9V] then
 				set HaveBlinkDaggerCount = HaveBlinkDaggerCount + 1
 				set CFV[id]= CFV[id]+ 1
-			elseif i == XOV[AWV]or i == XOV[AYV]then
+			elseif i == XOV[AWV]or i == XOV[AYV] then
 				call ExecuteFunc("OPO")
-			elseif i == XOV[NIV]then
+			elseif i == XOV[NIV] then
 				set CZV = CZV + 1
 				set CGV[id]= CGV[id]+ 1
-			elseif i == XOV[IQV]or(i)== XOV[N2V]then
+			elseif i == XOV[IQV]or(i) == XOV[N2V] then
 				set CHV[id]= CHV[id]+ 1
 				call ExecuteFunc("OPO")
 			elseif i == XOV[I6V] or i == XOV[it_fj] then
 				call OOO()
-			elseif i == XOV[A0V]then
+			elseif i == XOV[A0V] then
 				set HaveHeartofTarrasqueCount = HaveHeartofTarrasqueCount + 1
 				set C7V[id]= C7V[id]+ 1
-			elseif i == XOV[APV]then
+			elseif i == XOV[APV] then
 				set CWV = CWV + 1
 				set CJV[id]= CJV[id]+ 1
 				call DisableTrigger(CUV)
@@ -16961,41 +16925,41 @@ function OMO takes nothing returns boolean
 				endif
 				set it = null
 				call EnableTrigger(CUV)
-			elseif i == XOV[I5V]then
+			elseif i == XOV[I5V] then
 				set CKV[id]= CKV[id]+ 1
-			elseif i == XOV[IPV]then
+			elseif i == XOV[IPV] then
 				set CLV[id]= CLV[id]+ 1
-			elseif i == XOV[N1V]then
+			elseif i == XOV[N1V] then
 				set C1V[id]= C1V[id]+ 1
-			elseif i == XOV[RLV]then
+			elseif i == XOV[RLV] then
 				set C1Z[id]= C1Z[id]+ 1
 				call OCO()
-			elseif i == XOV[RNV]then
+			elseif i == XOV[RNV] then
 				set HaveTranquilBootsCount = HaveTranquilBootsCount + 1
 				call X5O()
 				set C8V[id]= C8V[id]+ 1
-			elseif i == XOV[RFV]then //玲珑心
+			elseif i == XOV[RFV] then //玲珑心
 				if HaveSpellLifesteal == false then
 					set HaveSpellLifesteal = true
 				endif
 			elseif i == XOV[it_hyzr] then
 				call XHYZR()
-			elseif i == XOV[RVV]or i == XOV[REV]then
+			elseif i == XOV[RVV]or i == XOV[REV] then
 				call X9O()
-			elseif i == XOV[IUV]or i == XOV[IWV]or id == XOV[IYV]then
+			elseif i == XOV[IUV]or i == XOV[IWV]or id == XOV[IYV] then
 				call OEO()
-			elseif i == XOV[A3V]or i == XOV[A4V]then
+			elseif i == XOV[A3V]or i == XOV[A4V] then
 				call ONO()
-			elseif i == XOV[XKV]or i == XOV[XLV]then
+			elseif i == XOV[XKV]or i == XOV[XLV] then
 				call OIO()
-			elseif i == XOV[NEV]or i == XOV[ITV]then	//漩涡and雷神之锤
+			elseif i == XOV[NEV]or i == XOV[ITV] then	//漩涡and雷神之锤
 				call X7O()
-			elseif i == XOV[A5V]then
+			elseif i == XOV[A5V] then
 				if HaveSavedHandle(HY, GetHandleId(u),'AIev') == false then
 					call UnitAddPermanentAbility(u,'A431')
 					call UnitMakeAbilityPermanent(u, true,'AIev')
 				endif
-			elseif i == XOV[NOV]then
+			elseif i == XOV[NOV] then
 				call OFO()
 			elseif i == XOV[it_mlq] or i == XOV[Item_HurricanePike] then //拾取魔龙枪
 				if not IsBearUnit(u) then
@@ -17006,32 +16970,32 @@ function OMO takes nothing returns boolean
 					endif
 				endif
 			endif
-		elseif GetTriggerEventId()== EVENT_PLAYER_UNIT_DROP_ITEM then
-			if i == XOV[OYV]then
+		elseif GetTriggerEventId() == EVENT_PLAYER_UNIT_DROP_ITEM then
+			if i == XOV[OYV] then
 				set CDV[id]= CDV[id]-1
-			elseif i == XOV[X9V]then
+			elseif i == XOV[X9V] then
 				set CFV[id]= CFV[id]-1
 				set HaveBlinkDaggerCount = HaveBlinkDaggerCount -1
-			elseif i == XOV[RNV]then
+			elseif i == XOV[RNV] then
 				set C8V[id]= C8V[id]-1
 				set HaveTranquilBootsCount = HaveTranquilBootsCount -1
-			elseif i == XOV[NIV]then
+			elseif i == XOV[NIV] then
 				set CGV[id]= CGV[id]-1
 				set CZV = CZV -1
-			elseif i == XOV[IQV]or(i)== XOV[N2V]then
+			elseif i == XOV[IQV]or(i) == XOV[N2V] then
 				set CHV[id]= CHV[id]-1
-				if CHV[id]< 1 or GZX(u, XOV[IQV], GetManipulatedItem())== null or GZX(u, XOV[N2V], GetManipulatedItem())== null then
+				if CHV[id]< 1 or GZX(u, XOV[IQV], GetManipulatedItem()) == null or GZX(u, XOV[N2V], GetManipulatedItem()) == null then
 					call UnitRemoveAbility(u,'A174')
 				endif
-			elseif i == XOV[A0V]then
+			elseif i == XOV[A0V] then
 				set C7V[id]= C7V[id]-1
 				set HaveHeartofTarrasqueCount = HaveHeartofTarrasqueCount -1
-			elseif i == XOV[APV]or i == XIV[APV]then
+			elseif i == XOV[APV]or i == XIV[APV] then
 				set CWV = IMaxBJ(CWV -1, 0)
 				set CJV[id]= IMaxBJ(CJV[id]-1, 0)
 				call UnitRemoveAbility(u,'B0BI')
-			elseif i == XOV[A5V]then
-				if GZX(u, XOV[A5V], GetManipulatedItem())== null then
+			elseif i == XOV[A5V] then
+				if GZX(u, XOV[A5V], GetManipulatedItem()) == null then
 					call UnitRemoveAbility(u,'A431')
 				endif
 				//魔龙枪和飓风长戟
@@ -17042,7 +17006,7 @@ function OMO takes nothing returns boolean
 			endif
 		endif
 	endif
-	if GetTriggerEventId()== EVENT_PLAYER_UNIT_PAWN_ITEM then
+	if GetTriggerEventId() == EVENT_PLAYER_UNIT_PAWN_ITEM then
 		set C1X = GetSoldItem()
 		call SetItemUserData(C1X,-2)
 		call OLO(GetOwningPlayer(u), C1X)
@@ -17058,7 +17022,7 @@ function OMO takes nothing returns boolean
 			set t = null
 			return false
 		endif
-		if GetTriggerEventId()== EVENT_PLAYER_UNIT_PICKUP_ITEM then
+		if GetTriggerEventId() == EVENT_PLAYER_UNIT_PICKUP_ITEM then
 			set X_O = 1
 		else
 			set X_O = 2
@@ -17224,7 +17188,7 @@ function O4O takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local unit trigUnit =(LoadUnitHandle(HY, h, 14))
-	if GetUnitAbilityLevel(trigUnit,'B01S')== 0 or(GetWidgetLife(trigUnit)== GetUnitState(trigUnit, UNIT_STATE_MAX_LIFE) and GetUnitState(trigUnit, UNIT_STATE_MANA)== GetUnitState(trigUnit, UNIT_STATE_MAX_MANA)) then
+	if GetUnitAbilityLevel(trigUnit,'B01S') == 0 or(GetWidgetLife(trigUnit) == GetUnitState(trigUnit, UNIT_STATE_MAX_LIFE) and GetUnitState(trigUnit, UNIT_STATE_MANA) == GetUnitState(trigUnit, UNIT_STATE_MAX_MANA)) then
 		call UnitRemoveAbility(trigUnit,'B01S')
 		call UnitRemoveAbility(trigUnit,'B04A')
 		call FlushChildHashtable(HY, h)
@@ -17262,7 +17226,7 @@ function O7O takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	loop
 	exitwhen O9O > 6
-		if GetItemTypeId(UnitItemInSlot(O8O, O9O))== 0 then
+		if GetItemTypeId(UnitItemInSlot(O8O, O9O)) == 0 then
 			call UnitRemoveItemFromSlot(O8O, O9O)
 		endif
 		set O9O = O9O + 1
@@ -17310,7 +17274,7 @@ function RXO takes nothing returns boolean
 	local integer JNX
 	local integer id
 	local integer TZE = UUV(C1X)
-	if C1X != null and GUX(TZE) and GetHandleId(C1X)== RRO and UnitAlive(u) and UnitAlive(u) then
+	if C1X != null and GUX(TZE) and GetHandleId(C1X) == RRO and UnitAlive(u) and UnitAlive(u) then
 		set id = GWX(TZE)
 		set JNX = B2X(u, C1X)
 		set E3 = GetItemPlayer(C1X)
@@ -17396,7 +17360,7 @@ function RCO takes unit trigUnit, item C1X returns nothing
 				set E3 = GetItemPlayer(it)
 				call HZX(it)
 				call DisableTrigger(CUV)
-				if GetOwningPlayer(trigUnit)== E3 then
+				if GetOwningPlayer(trigUnit) == E3 then
 					set Z2 = JIX(trigUnit, XOV[k], i)
 				else
 					set Z2 = JIX(trigUnit, XIV[k], i)
@@ -17414,7 +17378,7 @@ function RCO takes unit trigUnit, item C1X returns nothing
 				set E3 = GetItemPlayer(it)
 				call HZX(it)
 				call DisableTrigger(CUV)
-				if GetOwningPlayer(trigUnit)== E3 then
+				if GetOwningPlayer(trigUnit) == E3 then
 					set Z2 = JIX(trigUnit, XOV[k], i)
 				else
 					set Z2 = JIX(trigUnit, XIV[k], i)
@@ -17454,13 +17418,13 @@ function RDO takes item C1X, unit WUE, boolean RFO returns nothing
 	local integer h = GetHandleId(WUE)
 	local string s = ""
 	// 宝石
-	if(GTX == X4V and GZX(WUE, X4V, C1X)== null) or(GTX == X5V and GZX(WUE, X5V, C1X)== null) then
+	if(GTX == X4V and GZX(WUE, X4V, C1X) == null) or(GTX == X5V and GZX(WUE, X5V, C1X) == null) then
 		if IsPlayerAlly(LocalPlayer, GetOwningPlayer(WUE)) or IsObserverPlayer(LocalPlayer) then
 			set s = "Abilities\\Spells\\Human\\MagicSentry\\MagicSentryCaster.mdl"
 		endif
 		if RFO then
-			if H_X(WUE)> 0 or GetItemType(C1X)== ITEM_TYPE_PERMANENT or GetItemType(C1X)== ITEM_TYPE_CAMPAIGN then
-				if GetUnitAbilityLevel(WUE,'A26A')== 0 and GetUnitAbilityLevel(WUE,'A26B')== 0 then
+			if H_X(WUE)> 0 or GetItemType(C1X) == ITEM_TYPE_PERMANENT or GetItemType(C1X) == ITEM_TYPE_CAMPAIGN then
+				if GetUnitAbilityLevel(WUE,'A26A') == 0 and GetUnitAbilityLevel(WUE,'A26B') == 0 then
 					if s == "Abilities\\Spells\\Human\\MagicSentry\\MagicSentryCaster.mdl" then
 						call UnitAddPermanentAbility(WUE,'A26A')
 					else
@@ -17469,7 +17433,7 @@ function RDO takes item C1X, unit WUE, boolean RFO returns nothing
 				endif
 			endif
 		else
-			if not(GetUnitAbilityLevel(WUE,'A26A')== 0 and GetUnitAbilityLevel(WUE,'A26B')== 0) then
+			if not(GetUnitAbilityLevel(WUE,'A26A') == 0 and GetUnitAbilityLevel(WUE,'A26B') == 0) then
 				call UnitRemoveAbility(WUE,'A26B')
 				call UnitRemoveAbility(WUE,'A26A')
 				call RemoveSavedHandle(HY, h, 670)
@@ -17528,11 +17492,11 @@ function RJO takes nothing returns boolean
 		return false
 	endif
 	if UUV(whichItem)> 0 then
-		if(GetTriggerEventId()== EVENT_PLAYER_UNIT_DROP_ITEM and GetItemType(whichItem)!= ITEM_TYPE_PURCHASABLE) or GetTriggerEventId()== EVENT_PLAYER_UNIT_PAWN_ITEM then
+		if(GetTriggerEventId() == EVENT_PLAYER_UNIT_DROP_ITEM and GetItemType(whichItem)!= ITEM_TYPE_PURCHASABLE) or GetTriggerEventId() == EVENT_PLAYER_UNIT_PAWN_ITEM then
 			call RDO(whichItem, whichUnit, false)
 			call StoreDrCacheData("DRI_" + I2S(GetPlayerId(GetOwningPlayer(whichUnit))), XOV[GSX(UUV(whichItem))])
 			call RHO(whichUnit)
-		elseif GetTriggerEventId()== EVENT_PLAYER_UNIT_PICKUP_ITEM then
+		elseif GetTriggerEventId() == EVENT_PLAYER_UNIT_PICKUP_ITEM then
 			call RDO(whichItem, whichUnit, true)
 			call StoreDrCacheData("PUI_" + I2S(GetPlayerId(GetOwningPlayer(whichUnit))), XOV[GSX(UUV(whichItem))])
 			call RHO(whichUnit)
@@ -17576,7 +17540,7 @@ function DisassembleItems takes nothing returns nothing
 			call RKO(p, 1, OBV, x, y)
 			call RKO(p, 1, OIV, x, y)
 			call RKO(p, 1, B_V, x, y)
-		elseif(TZE)== NEV then
+		elseif(TZE) == NEV then
 			call RemoveItem(it)
 			call RKO(p, 1, X7V, x, y)
 			call RKO(p, 1, ITV, x, y)
@@ -17660,14 +17624,14 @@ function RQO takes integer GTX returns boolean
 	return GTX != ASV and GTX != NIV and GTX != X4V and GTX != AIV
 endfunction
 function RSO takes nothing returns nothing
-	if GetTriggerEventId()== EVENT_PLAYER_UNIT_PICKUP_ITEM then
+	if GetTriggerEventId() == EVENT_PLAYER_UNIT_PICKUP_ITEM then
 		call SetItemPawnable(GetManipulatedItem(), false)
 	else
 		call SetItemPawnable(GetManipulatedItem(), true)
 	endif
 endfunction
 function RTO takes nothing returns boolean
-	if GetItemType(GetManipulatedItem())== ITEM_TYPE_PERMANENT and RQO(GetItemIndex(GetManipulatedItem())) and IsMessengerUnit(GetTriggerUnit()) then
+	if GetItemType(GetManipulatedItem()) == ITEM_TYPE_PERMANENT and RQO(GetItemIndex(GetManipulatedItem())) and IsMessengerUnit(GetTriggerUnit()) then
 		call RSO()
 	endif
 	return false
@@ -17743,7 +17707,7 @@ function ObsWardAttacked takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local integer c = LoadInteger(HY, h, 0)
-	if GetTriggerEventId()== EVENT_PLAYER_UNIT_ATTACKED then
+	if GetTriggerEventId() == EVENT_PLAYER_UNIT_ATTACKED then
 		if GetUnitTypeId(GetTriggerUnit())=='oeye' or GetUnitTypeId(GetTriggerUnit())=='o004' then
 			call UnitAddPermanentAbility(GetAttacker(),'A3AW')
 			call UnitMakeAbilityPermanent(GetAttacker(), true,'A3AV')
@@ -17799,7 +17763,7 @@ function R6O takes nothing returns nothing
 	loop
 	exitwhen i > 5
 		set C1X = UnitItemInSlot(u, i)
-		if C1X != null and GetItemPlayer(C1X)== p then
+		if C1X != null and GetItemPlayer(C1X) == p then
 			call UnitRemoveItem(u, C1X)
 			call SetItemPosition(C1X, VHV[id], VJV[id])
 		endif
@@ -17814,7 +17778,7 @@ function R7O takes nothing returns nothing
 	local unit u = C4V
 	local player p = GetOwningPlayer(u)
 	local integer id = GetPlayerId(p)
-	if GetWidgetLife(C1X)> 0 and GetItemPlayer(C1X)== p then
+	if GetWidgetLife(C1X)> 0 and GetItemPlayer(C1X) == p then
 		call SetItemPosition(C1X, VHV[id], VJV[id])
 		call UnitAddItem(Circle[id], C1X)
 	endif
@@ -17832,7 +17796,7 @@ function R8O takes nothing returns boolean
 	else
 		call EnumItemsInRect(gg_rct_ScourgeFountainOfLifeRange, null, function R7O)
 	endif
-	if GetTriggerEvalCount(t)== 2 then
+	if GetTriggerEvalCount(t) == 2 then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 	endif
@@ -18084,15 +18048,15 @@ function IMO takes nothing returns nothing
 	loop
 	exitwhen x > IQO
 		set i = UnitItemInSlot(IPO, x)
-		if GetItemIndex(i)== OYV and TKV(IPO,'JAVL', 20) and DOX(IPO) == false then
+		if GetItemIndex(i) == OYV and TKV(IPO,'JAVL', 20) and DOX(IPO) == false then
 			if IsBearUnit(IPO) then
 				if ILO(IPO) == false then
-					if GetUnitAbilityLevel(GetTriggerUnit(),'A04R')== 0 then
+					if GetUnitAbilityLevel(GetTriggerUnit(),'A04R') == 0 then
 						call UnitDamageTargetEx(IPO, GetTriggerUnit(), 2, 40)
 					endif
 				endif
 			else
-				if GetUnitAbilityLevel(GetTriggerUnit(),'A04R')== 0 then
+				if GetUnitAbilityLevel(GetTriggerUnit(),'A04R') == 0 then
 					call UnitDamageTargetEx(IPO, GetTriggerUnit(), 2, 40)
 				endif
 			endif
@@ -18114,7 +18078,7 @@ function ITO takes nothing returns boolean
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 	else
-		if GetEventDamageSource()== WUE and GetEventDamage()> 0 then
+		if GetEventDamageSource() == WUE and GetEventDamage()> 0 then
 			if FK then
 				call FlushChildHashtable(HY, h)
 				call CleanCurrentTrigger(t)
@@ -18153,7 +18117,7 @@ function DVD takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local unit WUE =(LoadUnitHandle(HY, h, 2))
 	local real IWO =(LoadReal(HY,(GetHandleId(WUE)), 693))
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or IWO <(GetGameTime()) then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or IWO <(GetGameTime()) then
 		call UnitRemoveAbility(WUE,'A264')
 		call UnitRemoveAbility(WUE,'B02I')
 		call SaveReal(HY,(GetHandleId(WUE)), 693,(0 * 1.))
@@ -18176,7 +18140,7 @@ function IZO takes nothing returns boolean
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 	else
-		if GetEventDamageSource()== WUE and GetEventDamage()> 0 and(EXGetEventDamageData(1) != 0) then
+		if GetEventDamageSource() == WUE and GetEventDamage()> 0 and(EXGetEventDamageData(1) != 0) then
 			if FK then
 				call FlushChildHashtable(HY, h)
 				call CleanCurrentTrigger(t)
@@ -18194,7 +18158,7 @@ function I_O takes nothing returns nothing
 	local unit WWE = GetTriggerUnit()
 	local trigger t
 	local integer h
-	if((LoadInteger(HY,(GetHandleId((WUE))),(4309)))== 1) == false then
+	if((LoadInteger(HY,(GetHandleId((WUE))),(4309))) == 1) == false then
 		call EPX(WUE, 4309, .2)
 		if TKV(WUE,'MAIM', 15) then
 			set t = CreateTrigger()
@@ -18250,7 +18214,7 @@ function CraniumBasherWrapper takes nothing returns nothing
 	set u = null
 endfunction
 function I5O takes unit u returns unit
-	if IsUnitType(u, UNIT_TYPE_HERO) or GetUnitAbilityLevel(u,'A04R')== 0 then
+	if IsUnitType(u, UNIT_TYPE_HERO) or GetUnitAbilityLevel(u,'A04R') == 0 then
 		return u
 	else
 		return Player__Hero[GetPlayerId(GetOwningPlayer(u))]
@@ -18409,8 +18373,8 @@ function AEO takes nothing returns nothing
 	local integer h = GetHandleId(t)
 	local unit u = LoadUnitHandle(P, h, 0)
 	local real AXO = LoadReal(P, h, 0)
-	if GetTriggerEventId()== EVENT_GAME_TIMER_EXPIRED then
-		if GetItemOfTypeFromUnit(u, XOV[NBV])== null then
+	if GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
+		if GetItemOfTypeFromUnit(u, XOV[NBV]) == null then
 			call SetHeroStr(u, IMaxBJ(GetHeroStr(u, false)-LoadInteger(K, GetHandleId(u),'ARML'), 1), true)
 			call SaveInteger(K, GetHandleId(u),'ARML', 0)
 			if IsTriggerEnabled(t) then
@@ -18442,40 +18406,40 @@ function AOO takes nothing returns nothing
 	local unit u = GetTriggerUnit()
 	local trigger t
 	local real AXO
-	if GetTriggerEventId()== EVENT_PLAYER_UNIT_DROP_ITEM then
-		if GetItemIndex(GetManipulatedItem())== NCV or GetItemIndex(GetManipulatedItem())== NFV then
+	if GetTriggerEventId() == EVENT_PLAYER_UNIT_DROP_ITEM then
+		if GetItemIndex(GetManipulatedItem()) == NCV or GetItemIndex(GetManipulatedItem()) == NFV then
 			call UnitRemoveAbility(u,'A44Q')
-			if GetItemIndex(GetManipulatedItem())== NCV then
+			if GetItemIndex(GetManipulatedItem()) == NCV then
 				call AVO(u, 0)
 			endif
 		endif
-		if GetItemIndex(GetManipulatedItem())== A2V then
+		if GetItemIndex(GetManipulatedItem()) == A2V then
 			call UnitRemoveAbility(u,'A1BW')
 		endif
-		if GetItemIndex(GetManipulatedItem())== NBV or GetItemIndex(GetManipulatedItem())== NDV then
+		if GetItemIndex(GetManipulatedItem()) == NBV or GetItemIndex(GetManipulatedItem()) == NDV then
 			call UnitRemoveAbility(u,'A44Q')
 			call UnitRemoveAbility(u,'A0UK')
 			if HaveSavedHandle(HY, GetHandleId(u),'ARML') then
 				call TriggerEvaluate(LoadTriggerHandle(HY, GetHandleId(u),'ARML'))
 			endif
-			if GetItemIndex(GetManipulatedItem())== NBV then
+			if GetItemIndex(GetManipulatedItem()) == NBV then
 			endif
 		endif
 	endif
-	if GetTriggerEventId()== EVENT_PLAYER_UNIT_PICKUP_ITEM then
-		if GetItemIndex(GetManipulatedItem())== NCV or GetItemIndex(GetManipulatedItem())== NFV then
+	if GetTriggerEventId() == EVENT_PLAYER_UNIT_PICKUP_ITEM then
+		if GetItemIndex(GetManipulatedItem()) == NCV or GetItemIndex(GetManipulatedItem()) == NFV then
 			call UnitAddPermanentAbility(u,'A44Q')
-			if GetItemIndex(GetManipulatedItem())== NCV then
+			if GetItemIndex(GetManipulatedItem()) == NCV then
 				call AVO(u, 0)
 			endif
 		endif
-		if GetItemIndex(GetManipulatedItem())== A2V then
+		if GetItemIndex(GetManipulatedItem()) == A2V then
 			call UnitAddPermanentAbility(u,'A1BW')
 		endif
-		if GetItemIndex(GetManipulatedItem())== NBV or GetItemIndex(GetManipulatedItem())== NDV then
+		if GetItemIndex(GetManipulatedItem()) == NBV or GetItemIndex(GetManipulatedItem()) == NDV then
 			call UnitAddPermanentAbility(u,'A44Q')
 			call UnitAddPermanentAbility(u,'A0UK')
-			if GetItemIndex(GetManipulatedItem())== NBV then
+			if GetItemIndex(GetManipulatedItem()) == NBV then
 				set t = CreateTrigger()
 				call TriggerRegisterTimerEvent(t, .6 / 25, true)
 				set AXO = GetUnitState(GetTriggerUnit(), UNIT_STATE_MAX_LIFE)-GetWidgetLife(GetTriggerUnit())
@@ -18495,7 +18459,7 @@ function AOO takes nothing returns nothing
 	set u = null
 endfunction
 function ARO takes nothing returns boolean
-	if GetItemType(GetManipulatedItem())== ITEM_TYPE_PERMANENT and(GetItemIndex(GetManipulatedItem())== NBV or GetItemIndex(GetManipulatedItem())== NCV or GetItemIndex(GetManipulatedItem())== A2V or GetItemIndex(GetManipulatedItem())== NIV) then
+	if GetItemType(GetManipulatedItem()) == ITEM_TYPE_PERMANENT and(GetItemIndex(GetManipulatedItem()) == NBV or GetItemIndex(GetManipulatedItem()) == NCV or GetItemIndex(GetManipulatedItem()) == A2V or GetItemIndex(GetManipulatedItem()) == NIV) then
 		call AOO()
 	endif
 	return false
@@ -18505,7 +18469,7 @@ function AIO takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local unit trigUnit =(LoadUnitHandle(HY, h, 14))
 	local item C1X =(LoadItemHandle(HY, h, 96))
-	if GetTriggerEventId()== EVENT_UNIT_DROP_ITEM and GetManipulatedItem()== C1X then
+	if GetTriggerEventId() == EVENT_UNIT_DROP_ITEM and GetManipulatedItem() == C1X then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 	elseif GetTriggerEventId()!= EVENT_UNIT_DROP_ITEM then
@@ -18531,7 +18495,7 @@ function AAO takes nothing returns nothing
 	set trigUnit = null
 endfunction
 function ANO takes nothing returns boolean
-	if GetItemType(GetManipulatedItem())== ITEM_TYPE_PERMANENT and(GetItemIndex(GetManipulatedItem())== NBV or(GetItemIndex(GetManipulatedItem())== NDV and DRX(GetTriggerUnit()))) then
+	if GetItemType(GetManipulatedItem()) == ITEM_TYPE_PERMANENT and(GetItemIndex(GetManipulatedItem()) == NBV or(GetItemIndex(GetManipulatedItem()) == NDV and DRX(GetTriggerUnit()))) then
 		call AAO()
 	endif
 	return false
@@ -18553,7 +18517,7 @@ function ADO takes unit trigUnit, item C1X, integer JNX returns item
 	local item JCX
 	loop
 	exitwhen i >(UnitInventorySize(trigUnit)-1)
-		if UnitItemInSlot(trigUnit, i)== null and i != JNX then
+		if UnitItemInSlot(trigUnit, i) == null and i != JNX then
 			set JCX = CreateItem('I02M', x, y)
 			call UnitAddItem(trigUnit, JCX)
 			set JBX[i]= true
@@ -18568,7 +18532,7 @@ function ADO takes unit trigUnit, item C1X, integer JNX returns item
 	set i = 0
 	loop
 	exitwhen i > 5
-		if JBX[i]then
+		if JBX[i] then
 			call RemoveItem(UnitItemInSlot(trigUnit, i))
 		endif
 		set i = i + 1
@@ -18587,7 +18551,7 @@ function AFO takes nothing returns boolean
 	local unit KBX
 	local item RIO
 	local item it = null
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call SaveBoolean(HY,(GetHandleId(u)),'f',(false))
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
@@ -18753,7 +18717,7 @@ function AKO takes nothing returns nothing
 			set E3 = GetItemPlayer(C1X)
 			call HZX(C1X)
 			call DisableTrigger(CUV)
-			if GetOwningPlayer(u)== E3 then
+			if GetOwningPlayer(u) == E3 then
 				set Z2 = JIX(u, XOV[APO], JNX)
 			else
 				set Z2 = JIX(u, XIV[APO], JNX)
@@ -18813,7 +18777,7 @@ function AQO takes nothing returns boolean
 			if ZNX(GetItemTypeId(GetOrderTargetItem())) then
 				call EXStopUnit(GetTriggerUnit())
 				call InterfaceErrorForPlayer(GetOwningPlayer(GetTriggerUnit()), GetObjectName('n0LU'))
-			elseif UUV(GetOrderTargetItem())== ASV or UUV(GetOrderTargetItem())== ATV then
+			elseif UUV(GetOrderTargetItem()) == ASV or UUV(GetOrderTargetItem()) == ATV then
 				call EXStopUnit(GetTriggerUnit())
 				call InterfaceErrorForPlayer(GetOwningPlayer(GetTriggerUnit()), "信使不能拾取圣剑")
 			endif
@@ -18871,7 +18835,7 @@ function AWO takes player p returns integer
 	if OLX(p) then
 		return'np01'
 	endif
-	if GetRandomInt(1, 3)== 1 then
+	if GetRandomInt(1, 3) == 1 then
 		return'e02R'
 	elseif IsSentinelsPlayer(p) then
 		return'e01H'
@@ -19289,7 +19253,7 @@ function AYO takes nothing returns boolean
 	set HUX[5]= LoadInteger(HY, h, 116)
 	set HUX[6]= LoadInteger(HY, h,'u')
 	call DisableTrigger(CUV)
-	if GetTriggerEvalCount(t)== 1 then
+	if GetTriggerEvalCount(t) == 1 then
 		call UnitAddAbility(u, A_O)
 		if W3[GetPlayerId(GetOwningPlayer(u))]== false then
 			call UnitRemoveType(u, UNIT_TYPE_PEON)
@@ -19391,32 +19355,32 @@ function A1O takes nothing returns boolean
 	set p5 = GetItemPlayer(A9O)
 	set C1X = A4O
 	set i = UUV(C1X)
-	if GetItemType(C1X)== ITEM_TYPE_ARTIFACT or HHX(i) or(GetItemType(C1X)== ITEM_TYPE_CAMPAIGN and A0O(i)) then
+	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(i) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(i)) then
 		set NAO = GetItemCharges(C1X)
 	endif
 	set C1X = A5O
 	set i = UUV(C1X)
-	if GetItemType(C1X)== ITEM_TYPE_ARTIFACT or HHX(i) or(GetItemType(C1X)== ITEM_TYPE_CAMPAIGN and A0O(i)) then
+	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(i) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(i)) then
 		set NNO = GetItemCharges(C1X)
 	endif
 	set C1X = A6O
 	set i = UUV(C1X)
-	if GetItemType(C1X)== ITEM_TYPE_ARTIFACT or HHX(i) or(GetItemType(C1X)== ITEM_TYPE_CAMPAIGN and A0O(i)) then
+	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(i) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(i)) then
 		set NBO = GetItemCharges(C1X)
 	endif
 	set C1X = A7O
 	set i = UUV(C1X)
-	if GetItemType(C1X)== ITEM_TYPE_ARTIFACT or HHX(i) or(GetItemType(C1X)== ITEM_TYPE_CAMPAIGN and A0O(i)) then
+	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(i) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(i)) then
 		set NCO = GetItemCharges(C1X)
 	endif
 	set C1X = A8O
 	set i = UUV(C1X)
-	if GetItemType(C1X)== ITEM_TYPE_ARTIFACT or HHX(i) or(GetItemType(C1X)== ITEM_TYPE_CAMPAIGN and A0O(i)) then
+	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(i) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(i)) then
 		set NDO = GetItemCharges(C1X)
 	endif
 	set C1X = A9O
 	set i = UUV(C1X)
-	if GetItemType(C1X)== ITEM_TYPE_ARTIFACT or HHX(i) or(GetItemType(C1X)== ITEM_TYPE_CAMPAIGN and A0O(i)) then
+	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(i) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(i)) then
 		set NFO = GetItemCharges(C1X)
 	endif
 	call HZX(A4O)
@@ -19454,7 +19418,7 @@ function A1O takes nothing returns boolean
 	elseif A3O =='np00' then
 		set A_O ='S015'
 	endif
-	if GetRandomInt(1, 10)== 1 then
+	if GetRandomInt(1, 10) == 1 then
 		set A_O ='S00G'
 	endif
 	if GetRandomInt(1, 10)< 3 then
@@ -19556,7 +19520,7 @@ function NGO takes nothing returns boolean
 	local integer NDO =(LoadInteger(HY, h, 116))
 	local integer NFO =(LoadInteger(HY, h,'u'))
 	call DisableTrigger(CUV)
-	if GetTriggerEvalCount(t)== 1 then
+	if GetTriggerEvalCount(t) == 1 then
 		call UnitAddAbility(NHO, A_O)
 		if W3[GetPlayerId(GetOwningPlayer(NHO))]== false then
 			call UnitRemoveType(NHO, UNIT_TYPE_PEON)
@@ -19676,7 +19640,7 @@ function NJO takes unit A2O returns nothing
 	loop
 	exitwhen i > 5
 		set NKO = UnitItemInSlot(A2O, i)
-		if UUV(NKO)== X4V then
+		if UUV(NKO) == X4V then
 			call UnitRemoveItem(A2O, NKO)
 		endif
 		set i = i + 1
@@ -19700,27 +19664,27 @@ function NJO takes unit A2O returns nothing
 	set p4 = GetItemPlayer(A8O)
 	set p5 = GetItemPlayer(A9O)
 	set C1X = A4O
-	if GetItemType(C1X)== ITEM_TYPE_ARTIFACT or HHX(UUV(C1X)) or(GetItemType(C1X)== ITEM_TYPE_CAMPAIGN and A0O(UUV(C1X))) then
+	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(UUV(C1X)) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(UUV(C1X))) then
 		set NAO = GetItemCharges(C1X)
 	endif
 	set C1X = A5O
-	if GetItemType(C1X)== ITEM_TYPE_ARTIFACT or HHX(UUV(C1X)) or(GetItemType(C1X)== ITEM_TYPE_CAMPAIGN and A0O(UUV(C1X))) then
+	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(UUV(C1X)) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(UUV(C1X))) then
 		set NNO = GetItemCharges(C1X)
 	endif
 	set C1X = A6O
-	if GetItemType(C1X)== ITEM_TYPE_ARTIFACT or HHX(UUV(C1X)) or(GetItemType(C1X)== ITEM_TYPE_CAMPAIGN and A0O(UUV(C1X))) then
+	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(UUV(C1X)) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(UUV(C1X))) then
 		set NBO = GetItemCharges(C1X)
 	endif
 	set C1X = A7O
-	if GetItemType(C1X)== ITEM_TYPE_ARTIFACT or HHX(UUV(C1X)) or(GetItemType(C1X)== ITEM_TYPE_CAMPAIGN and A0O(UUV(C1X))) then
+	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(UUV(C1X)) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(UUV(C1X))) then
 		set NCO = GetItemCharges(C1X)
 	endif
 	set C1X = A8O
-	if GetItemType(C1X)== ITEM_TYPE_ARTIFACT or HHX(UUV(C1X)) or(GetItemType(C1X)== ITEM_TYPE_CAMPAIGN and A0O(UUV(C1X))) then
+	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(UUV(C1X)) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(UUV(C1X))) then
 		set NDO = GetItemCharges(C1X)
 	endif
 	set C1X = A9O
-	if GetItemType(C1X)== ITEM_TYPE_ARTIFACT or HHX(UUV(C1X)) or(GetItemType(C1X)== ITEM_TYPE_CAMPAIGN and A0O(UUV(C1X))) then
+	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(UUV(C1X)) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(UUV(C1X))) then
 		set NFO = GetItemCharges(C1X)
 	endif
 	call HZX(A4O)
@@ -19738,7 +19702,7 @@ function NJO takes unit A2O returns nothing
 		else
 			set A_O ='S00J'
 		endif
-		if GetRandomInt(1, 3)== 1 then
+		if GetRandomInt(1, 3) == 1 then
 			set A_O ='S00Z'
 		endif
 	endif
@@ -19836,9 +19800,9 @@ function NQO takes nothing returns boolean
 		set DVV[GetPlayerId(GetOwningPlayer(trigUnit))]= GetItemY(C1X)
 	endif
 	call RCO(trigUnit, C1X)
-	if(GetItemTypeId(C1X)== XOV[NBV]or GetItemTypeId(C1X)== XOV[NCV]) and IsMessengerUnit(trigUnit) then
+	if(GetItemTypeId(C1X) == XOV[NBV]or GetItemTypeId(C1X) == XOV[NCV]) and IsMessengerUnit(trigUnit) then
 		call UnitRemoveItem(trigUnit, C1X)
-	elseif(GetItemTypeId(C1X))== XOV[Item_MagicWand]and IsUnitType(trigUnit, UNIT_TYPE_HERO) then
+	elseif(GetItemTypeId(C1X)) == XOV[Item_MagicWand]and IsUnitType(trigUnit, UNIT_TYPE_HERO) then
 		// 如果拿了魔杖 还是英雄 设置
 		set i = LoadInteger(HY, GetHandleId(trigUnit), 750)
 		if i > 0 then
@@ -19847,7 +19811,7 @@ function NQO takes nothing returns boolean
 				call SetItemCharges(C1X, i)
 			endif
 		endif
-	elseif GetItemTypeId(C1X)== XOV[AIV]and GetUnitTypeId(trigUnit)!='n00L' and E8V == false then
+	elseif GetItemTypeId(C1X) == XOV[AIV]and GetUnitTypeId(trigUnit)!='n00L' and E8V == false then
 		set E7V = trigUnit
 		set E8V = true
 		call StoreDrCacheData("AegisOn", GetPlayerId(GetOwningPlayer(trigUnit)))
@@ -19856,7 +19820,7 @@ function NQO takes nothing returns boolean
 		else
 			call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, CR[GetPlayerId(LocalPlayer)], PlayersColoerText[GetPlayerId(GetOwningPlayer(trigUnit))]+ GetUnitName(trigUnit)+ "|r " + "获得了不朽的守护!")
 		endif
-	elseif GetItemTypeId(C1X)== XOV[BUV]and OPX(trigUnit) then
+	elseif GetItemTypeId(C1X) == XOV[BUV]and OPX(trigUnit) then
 		call NPO(trigUnit, false)
 	endif
 	set trigUnit = null
@@ -19869,7 +19833,7 @@ function NSO takes nothing returns boolean
 	local real YVX = LoadReal(HY, h, 0)
 	local unit u = LoadUnitHandle(HY, h, 0)
 	local integer c = LoadInteger(HY, h, 0)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call UnitRemoveAbility(u,'A0PV')
 		call UnitRemoveAbility(u,'B07L')
 		call RemoveSavedHandle(HY, GetHandleId(u),'TNGO')
@@ -20009,7 +19973,7 @@ function N_O takes nothing returns boolean
 	local real d
 	local unit u = GetFilterUnit()
 	local integer id = GetUnitTypeId(u)
-	if IsUnitType(u, UNIT_TYPE_STRUCTURE) and GetWidgetLife(u)> 0 and GetUnitAbilityLevel(u,'Asud')== 0 and IsUnitAlly(u, GetOwningPlayer(W2)) and id !='ntav' and id!='u00S' and id!='ncop' and id!='emow' and id!='uzig' and IsUnitType(u, UNIT_TYPE_ANCIENT) == false then
+	if IsUnitType(u, UNIT_TYPE_STRUCTURE) and GetWidgetLife(u)> 0 and GetUnitAbilityLevel(u,'Asud') == 0 and IsUnitAlly(u, GetOwningPlayer(W2)) and id !='ntav' and id!='u00S' and id!='ncop' and id!='emow' and id!='uzig' and IsUnitType(u, UNIT_TYPE_ANCIENT) == false then
 		set d = GetDistanceBetween(TJ, RJ, GetUnitX(u), GetUnitY(u))
 		if d < S2 then
 			set S2 = d
@@ -20213,7 +20177,7 @@ function tp_texttag takes nothing returns nothing
 	local real tp_second = LoadReal(HY, h, 0)
 	local real tri_ec = GetTriggerEvalCount(t)* .5 -0.5
 	local texttag tt
-	if GetTriggerEventId()== EVENT_UNIT_SPELL_ENDCAST or tri_ec >= tp_second then
+	if GetTriggerEventId() == EVENT_UNIT_SPELL_ENDCAST or tri_ec >= tp_second then
 		call FlushChildHashtable(HY, h)
 		call DestroyTrigger(t)
 	else
@@ -20258,7 +20222,7 @@ function scroll_of_town_portal takes nothing returns nothing
 	if stg_u == null then
 		set x = GetSpellTargetX()
 		set y = GetSpellTargetY()
-		if x == C9V[id]and y == DVV[id]then
+		if x == C9V[id]and y == DVV[id] then
 			if IsSentinelsPlayer(GetOwningPlayer(trigUnit)) then
 				set x = GetUnitX(A5)
 				set y = GetUnitY(A5)
@@ -20284,7 +20248,7 @@ function scroll_of_town_portal takes nothing returns nothing
 		set x = GetUnitX(stg_u)+ 120* Cos(a)
 		set y = GetUnitY(stg_u)+ 120* Sin(a)
 	endif
-	if IsPointInRegion(R4, x, y) then
+	if IsPointInRegion(TerrainCliffRegion, x, y) then
 		set a = Atan2(y -GetUnitY(stg_u), x -GetUnitX(stg_u))
 		set x = GetUnitX(stg_u)+$C8* Cos(a)
 		set y = GetUnitY(stg_u)+$C8* Sin(a)
@@ -20384,7 +20348,7 @@ endfunction
 function BXO takes nothing returns boolean
 	local real d
 	local unit u = GetFilterUnit()
-	if GetWidgetLife(u)> 0 and IsUnitIdType(GetUnitTypeId(u), UNIT_TYPE_HERO) == false and GetUnitAbilityLevel(u,'Asud')== 0 and(GetUnitAbilityLevel(u,'A04R')== 0 or GetUnitTypeId(u)=='nfoh' or GetUnitTypeId(u)=='ndfl') and IsUnitAlly(u, GetOwningPlayer(W2)) and GetOwningPlayer(u)!= CW and IsUnitIllusion(u) == false then
+	if GetWidgetLife(u)> 0 and IsUnitIdType(GetUnitTypeId(u), UNIT_TYPE_HERO) == false and GetUnitAbilityLevel(u,'Asud') == 0 and(GetUnitAbilityLevel(u,'A04R') == 0 or GetUnitTypeId(u)=='nfoh' or GetUnitTypeId(u)=='ndfl') and IsUnitAlly(u, GetOwningPlayer(W2)) and GetOwningPlayer(u)!= CW and IsUnitIllusion(u) == false then
 		set d = GetDistanceBetween(TJ, RJ, GetUnitX(u), GetUnitY(u))
 		if d < S2 then
 			set S2 = d
@@ -20396,7 +20360,7 @@ function BXO takes nothing returns boolean
 endfunction
 function BOO takes nothing returns boolean
 	local real d
-	if UnitIsDead(GetFilterUnit()) == false and GetFilterUnit()!= GetTriggerUnit() and GetUnitAbilityLevel(GetFilterUnit(),'Asud')== 0 and(GetUnitAbilityLevel(GetFilterUnit(),'A04R')== 0 or GetUnitTypeId(GetFilterUnit())=='nfoh' or GetUnitTypeId(GetFilterUnit())=='ndfl') and IsUnitAlly(GetFilterUnit(), GetOwningPlayer(W2)) and GetOwningPlayer(GetFilterUnit())!= CW then
+	if UnitIsDead(GetFilterUnit()) == false and GetFilterUnit()!= GetTriggerUnit() and GetUnitAbilityLevel(GetFilterUnit(),'Asud') == 0 and(GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0 or GetUnitTypeId(GetFilterUnit())=='nfoh' or GetUnitTypeId(GetFilterUnit())=='ndfl') and IsUnitAlly(GetFilterUnit(), GetOwningPlayer(W2)) and GetOwningPlayer(GetFilterUnit())!= CW then
 		set d = GetDistanceBetween(TJ, RJ, GetUnitX(GetFilterUnit()), GetUnitY(GetFilterUnit()))
 		if d < S2 then
 			set S2 = d
@@ -20454,7 +20418,7 @@ function boots_of_travel_recipe takes nothing returns nothing
 	if stg_u == null then
 		set x = GetSpellTargetX()
 		set y = GetSpellTargetY()
-		if x == C9V[id]and y == DVV[id]then
+		if x == C9V[id]and y == DVV[id] then
 			if IsSentinelsPlayer(GetOwningPlayer(trigUnit)) then
 				set x = GetUnitX(A5)
 				set y = GetUnitY(A5)
@@ -20554,7 +20518,7 @@ function BAO takes unit u returns boolean
 endfunction
 function BNO takes nothing returns boolean
 	if BAO(GetFilterUnit()) then
-		if LoadInteger(VV, 0, 0)== LoadInteger(HY, GetHandleId(GetFilterUnit()), 784) then
+		if LoadInteger(VV, 0, 0) == LoadInteger(HY, GetHandleId(GetFilterUnit()), 784) then
 			call KillUnit(GetFilterUnit())
 		endif
 	endif
@@ -20704,7 +20668,7 @@ function GYE takes nothing returns nothing
 	endif
 endfunction
 function BLO takes nothing returns nothing
-	if((LoadInteger(HY,(GetHandleId((GetEnumUnit()))),(4258)))== 1) then
+	if((LoadInteger(HY,(GetHandleId((GetEnumUnit()))),(4258))) == 1) then
 		call InterfaceErrorForPlayer(GetOwningPlayer(GetEnumUnit()), GetObjectName('n02M')+ " " + GetUnitName(GetEnumUnit())+ " " + GetObjectName('n02S'))
 	else
 		if IsUnitType(GetEnumUnit(), UNIT_TYPE_HERO) then
@@ -20723,13 +20687,13 @@ function GZE takes nothing returns nothing
 	set g = null
 endfunction
 function BMO takes nothing returns nothing
-	if((LoadInteger(HY,(GetHandleId((GetEnumUnit()))),(4278)))== 1) then
+	if((LoadInteger(HY,(GetHandleId((GetEnumUnit()))),(4278))) == 1) then
 		call InterfaceErrorForPlayer(GetOwningPlayer(GetEnumUnit()), GetObjectName('n02M'))
 	else
 		if IsUnitType(GetEnumUnit(), UNIT_TYPE_HERO) then
 			call EPX(GetEnumUnit(), 4278, 50)
 		endif
-		if GetUnitAbilityLevel(GetEnumUnit(),'B0BT')== 0 and GetUnitAbilityLevel(GetEnumUnit(),'B0BU')== 0 then
+		if GetUnitAbilityLevel(GetEnumUnit(),'B0BT') == 0 and GetUnitAbilityLevel(GetEnumUnit(),'B0BU') == 0 then
 			call IssueTargetOrderById(DCV,$D00DA, GetEnumUnit())
 		endif
 	endif
@@ -20771,7 +20735,7 @@ function BQO takes nothing returns boolean
 	else
 		set bid = 'B031'
 	endif
-	if GetTriggerEventId()!= EVENT_UNIT_DAMAGED or GetUnitAbilityLevel(GetTriggerUnit(), bid)== 0 then
+	if GetTriggerEventId()!= EVENT_UNIT_DAMAGED or GetUnitAbilityLevel(GetTriggerUnit(), bid) == 0 then
 		call DestroyEffect((LoadEffectHandle(HY, h, 32)))
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
@@ -20841,7 +20805,7 @@ function BWO takes unit u, real d returns boolean
 endfunction
 function BYO takes unit u returns unit
 	local group g
-	if GetUnitAbilityLevel(u,'A04R')== 0 then
+	if GetUnitAbilityLevel(u,'A04R') == 0 then
 		return u
 	endif
 	set U2 = GetTriggerUnit()
@@ -20868,10 +20832,10 @@ function B_O takes nothing returns nothing
 	local unit KBX
 	local unit u = LoadUnitHandle(HY, h, 0)
 	local group g
-	if GetUnitAbilityLevel(u,'A3KI')== 0 then
+	if GetUnitAbilityLevel(u,'A3KI') == 0 then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
-	elseif GetTriggerEventId()== EVENT_UNIT_DAMAGED then
+	elseif GetTriggerEventId() == EVENT_UNIT_DAMAGED then
 		set g = AllocationGroup(29)
 		set u =(LoadUnitHandle(HY, h, 2))
 		set KBX = CreateUnit(GetOwningPlayer(u),'e00E', GetUnitX(GetTriggerUnit()), GetUnitY(GetTriggerUnit()), 0)
@@ -21119,7 +21083,7 @@ function CRO takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local unit u = LoadUnitHandle(HY, h, 0)
 	local integer c = LoadInteger(HY, h, 0)
-	if GetTriggerEventId()== EVENT_GAME_TIMER_EXPIRED then
+	if GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
 		if c <= 1 then
 			call RemoveSavedHandle(HY, GetHandleId(u),'BREK')
 			call FlushChildHashtable(HY, h)
@@ -21298,7 +21262,7 @@ function CKO takes integer id returns boolean
 	local integer i = 1
 	loop
 	exitwhen i > EHV
-		if id == EGV[i]then
+		if id == EGV[i] then
 			return false
 		endif
 		set i = i + 1
@@ -21358,7 +21322,7 @@ endfunction
 function CPO takes nothing returns nothing
 	local integer id = GetSpellAbilityId()
 	// 魔棒充能
-	if id != 0 and IsNotItemAbility(id) and CKO(id) and GetUnitAbilityLevel(GetTriggerUnit(),'A04R')== 0 and not LNX(id) then
+	if id != 0 and IsNotItemAbility(id) and CKO(id) and GetUnitAbilityLevel(GetTriggerUnit(),'A04R') == 0 and not LNX(id) then
 		call CMO()
 	endif
 endfunction
@@ -21366,7 +21330,7 @@ function CQO takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local unit CSO =(LoadUnitHandle(HY, h,$86))
-	if GetTriggerEventId()== EVENT_UNIT_DEATH then
+	if GetTriggerEventId() == EVENT_UNIT_DEATH then
 		call DestroyEffect((LoadEffectHandle(HY, h, 32)))
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
@@ -21411,7 +21375,7 @@ function CWO takes unit u, player p returns nothing
 		loop
 		exitwhen x > 5
 			set i = GetPlayerId(Sentinels[x])
-			if u != Circle[i]then
+			if u != Circle[i] then
 				call YDWESetUnitAbilityState(Circle[i],'A141', 1, 300)
 			endif
 			set x = x + 1
@@ -21420,7 +21384,7 @@ function CWO takes unit u, player p returns nothing
 		loop
 		exitwhen x > 5
 			set i = GetPlayerId(Scourges[x])
-			if u != Circle[i]then
+			if u != Circle[i] then
 				call YDWESetUnitAbilityState(Circle[i],'A141', 1, 300)
 			endif
 			set x = x + 1
@@ -21491,7 +21455,7 @@ function CYO takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local unit u = LoadUnitHandle(HY, h, 0)
-	if GetTriggerEventId()== EVENT_UNIT_SPELL_CAST then
+	if GetTriggerEventId() == EVENT_UNIT_SPELL_CAST then
 		call UnitRemoveAbility(GetTriggerUnit(),'A3CQ')
 		call UnitRemoveAbility(GetTriggerUnit(),'A3K1')
 		call UnitRemoveAbility(GetTriggerUnit(),'B09Y')
@@ -21575,12 +21539,12 @@ function C1O takes nothing returns boolean
 	local real d =(LoadReal(HY, h, 138))
 	local real x = CoordinateX50(GetUnitX(stg_u)+ d / 10 * Cos(a * bj_DEGTORAD))
 	local real y = CoordinateY50(GetUnitY(stg_u)+ d / 10 * Sin(a * bj_DEGTORAD))
-	if GetTriggerEvalCount(t)== 11 or GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEvalCount(t) == 11 or GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 	else
 		call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Human\\FlakCannons\\FlakTarget.mdl", x, y))
-		if((LoadInteger(HY,(GetHandleId((stg_u))),(4306)))!= 1) and GetUnitAbilityLevel(stg_u,'B08V')== 0 then
+		if((LoadInteger(HY,(GetHandleId((stg_u))),(4306)))!= 1) and GetUnitAbilityLevel(stg_u,'B08V') == 0 then
 			call A3X(x, y, 150)
 			if IsUnitType(stg_u, UNIT_TYPE_HERO) then
 				call SaveBoolean(K, GetHandleId(stg_u), 99, true)
@@ -21608,7 +21572,7 @@ function C2O takes unit stg_u returns nothing
 	exitwhen C3O or i == 23
 		set x = CoordinateX50(GetUnitX(stg_u)+(600 -i * 25)* Cos(a * bj_DEGTORAD))
 		set y = CoordinateY50(GetUnitY(stg_u)+(600 -i * 25)* Sin(a * bj_DEGTORAD))
-		if(IsPointInRegion(R4,((x)* 1.),((y)* 1.))) == false then
+		if(IsPointInRegion(TerrainCliffRegion,((x)* 1.),((y)* 1.))) == false then
 			set C3O = true
 		endif
 		set i = i + 1
@@ -21666,18 +21630,18 @@ function QTUEW takes nothing returns nothing
 	local integer int = LoadInteger(HY, h, 10)
 	local integer id
 	if LoadReal(HY, hu,'A3UC')> 0 then
-		if GetTriggerEventId()== EVENT_UNIT_ACQUIRED_TARGET then
+		if GetTriggerEventId() == EVENT_UNIT_ACQUIRED_TARGET then
 			call QTUWW(u, GetEventTargetUnit() == target)
 		else
 			set id = GetIssuedOrderId()
-			if id == 851983 or (id == 851971 and GetOrderTargetUnit()== target)  then 
-				call QTUWW(u, GetOrderTargetUnit()== target)
+			if id == 851983 or (id == 851971 and GetOrderTargetUnit() == target)  then 
+				call QTUWW(u, GetOrderTargetUnit() == target)
 				set int = int + 1
 				call SaveInteger(HY, h, 10, int)
 			endif
 		endif
 	endif
-	if int == 4 or GetTriggerEventId()== EVENT_GAME_TIMER_EXPIRED then
+	if int == 4 or GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 		call QTUWW(u, false)
@@ -21720,11 +21684,11 @@ function QTTQW takes nothing returns boolean
 	local real dy
 	local integer c = GetTriggerEvalCount(t)
 	local integer hu = GetHandleId(WWUTQ)
-	if c == 11 or GetTriggerEventId()== EVENT_WIDGET_DEATH or LoadInteger(HY, hu, 4260)== 1 or LoadInteger(HY, hu,'ublo')== 1 then
+	if c == 11 or GetTriggerEventId() == EVENT_WIDGET_DEATH or LoadInteger(HY, hu, 4260) == 1 or LoadInteger(HY, hu,'ublo') == 1 then
 		call CleanCurrentTrigger(t)
 	else
 		if(not QTRUW(WWUTQ)) and(LoadInteger(HY, hu, 4324)!= 1) then
-			//call H5O(WWUTQ,4414,0.1)
+			//call CreateSentinelCreeps4(WWUTQ,4414,0.1)
 			set dx = CoordinateX50(GetUnitX(WWUTQ)+ RTRWQ / 10. * Cos(TWQUQ * bj_DEGTORAD))
 			set dy = CoordinateY50(GetUnitY(WWUTQ)+ RTRWQ / 10. * Sin(TWQUQ * bj_DEGTORAD))
 			call DestroyEffect(AddSpecialEffect(LoadStr(HY, h, 12), dx, dy))
@@ -21797,7 +21761,7 @@ function QTUTW takes nothing returns nothing
 	local unit WWUTQ = GetSpellTargetUnit()
 	local integer h
 	if GetUnitTypeId(u)!='e00E'then
-		if GetUnitAbilityLevel(WWUTQ,'A32U')== 0 then
+		if GetUnitAbilityLevel(WWUTQ,'A32U') == 0 then
 			call QTTWW(u, WWUTQ, 450., 0.2, WWUTQ)
 			call QTTWW(u, u, 450., 0.2, WWUTQ)
 		endif
@@ -21827,16 +21791,16 @@ function Item_SpellEffect_ForceStaff takes nothing returns nothing
 		set u = WJE
 	endif
 	set C6O = R3X(GetUnitTypeId(u))
-	if GetUnitTypeId(u)!='n00L' and GetUnitAbilityLevel(u,'B0FG')== 0 and LoadBoolean(HY, GetHandleId(u), 4306) == false then
+	if GetUnitTypeId(u)!='n00L' and GetUnitAbilityLevel(u,'B0FG') == 0 and LoadBoolean(HY, GetHandleId(u), 4306) == false then
 		if C6O then
 			call C2O(u)
-		elseif GetUnitAbilityLevel(u,'A04R')> 0 and GetUnitMoveSpeed(u)== 0 then
+		elseif GetUnitAbilityLevel(u,'A04R')> 0 and GetUnitMoveSpeed(u) == 0 then
 			call C5O(u)
 		elseif IsUnitEnemy(u, GetOwningPlayer(WJE)) then
 			if UnitHasSpellShield(u) == false then
 				call C2O(u)
 			endif
-		elseif IsUnitAlly(u, GetOwningPlayer(WJE)) and(LoadBoolean(HY, GetHandleId(GetOwningPlayer(u)),$8B) == false or GetOwningPlayer(u)== GetOwningPlayer(WJE)) then
+		elseif IsUnitAlly(u, GetOwningPlayer(WJE)) and(LoadBoolean(HY, GetHandleId(GetOwningPlayer(u)),$8B) == false or GetOwningPlayer(u) == GetOwningPlayer(WJE)) then
 			call C2O(u)
 		endif
 	endif
@@ -21847,7 +21811,7 @@ endfunction
 function Item_SpellEffect_HurricanePike takes nothing returns nothing
 	if IsUnitAlly(GetSpellTargetUnit(), GetTriggerPlayer()) or GetSpellTargetItem()!= null or GetUnitTypeId(GetSpellTargetUnit())=='n00L' then
 		call Item_SpellEffect_ForceStaff() //推推棒
-	elseif GetUnitAbilityLevel(GetSpellTargetUnit(),'B0BI')== 0 then
+	elseif GetUnitAbilityLevel(GetSpellTargetUnit(),'B0BI') == 0 then
 		call QTUTW()
 	endif
 endfunction
@@ -21865,7 +21829,7 @@ function C7O takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local unit WUE =(LoadUnitHandle(HY, h, 2))
-	if(GetTriggerEvalCount(t)> 30) or GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if(GetTriggerEvalCount(t)> 30) or GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call UnitRemoveAbility(WUE,'A1QC')
 		call UnitRemoveAbility(WUE,'B0CY')
 		call FlushChildHashtable(HY, h)
@@ -22015,10 +21979,10 @@ function DNO takes nothing returns boolean
 	local real DGO =(LoadReal(HY, h, 668))
 	local real DHO = GetUnitStatePercent(WUE, UNIT_STATE_MANA, UNIT_STATE_MAX_MANA)
 	local real DJO =(DGO -DHO)/  100 
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
-	elseif GetTriggerEvalCount(t)== 20 *$A then
+	elseif GetTriggerEvalCount(t) == 20 *$A then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 		if DBO <$96 then
@@ -22121,7 +22085,7 @@ function DMO takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local unit WWE =(LoadUnitHandle(HY, h, 17))
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or(GetTriggerEventId()== EVENT_UNIT_DAMAGED and(STX(GetUnitTypeId(GetEventDamageSource())) == false and(GetOwningPlayer(GetEventDamageSource())!= BW) and GetEventDamage()> 0) or DMV) then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or(GetTriggerEventId() == EVENT_UNIT_DAMAGED and(STX(GetUnitTypeId(GetEventDamageSource())) == false and(GetOwningPlayer(GetEventDamageSource())!= CreepsPlayer) and GetEventDamage()> 0) or DMV) then
 		call UnitRemoveAbility(WWE,'B0CG')
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
@@ -22136,7 +22100,7 @@ function DPO takes nothing returns boolean
 	local unit WJE = LoadUnitHandle(HY, h, 0)
 	local unit WLE = LoadUnitHandle(HY, h, 1)
 	local integer c = LoadInteger(HY, h, 0)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or c == 0 then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or c == 0 then
 		call UnitRemoveAbility(WLE,'A3B2')
 		call UnitRemoveAbility(WLE,'B3B2')
 		call RemoveSavedHandle(HY, GetHandleId(WLE),'EURN')
@@ -22187,7 +22151,7 @@ function HHE takes nothing returns nothing
 	set KBX = CreateUnit(GetOwningPlayer(WUE),'e00E', GetUnitX(WWE), GetUnitY(WWE), 0)
 	loop
 	exitwhen i > 5 or C3O
-		if GetItemIndex(UnitItemInSlot(WUE, i))== NUV then
+		if GetItemIndex(UnitItemInSlot(WUE, i)) == NUV then
 			set HUX = GetItemCharges(UnitItemInSlot(WUE, i))
 			if HUX > 0 then
 				set b = true
@@ -22203,7 +22167,7 @@ function HHE takes nothing returns nothing
 		set t = CreateTrigger()
 		set h = GetHandleId(t)
 		if IsUnitAlly(WWE, GetOwningPlayer(WUE)) then
-			if GetUnitAbilityLevel(WWE,'B0CG')== 0 then
+			if GetUnitAbilityLevel(WWE,'B0CG') == 0 then
 				call UnitAddAbility(KBX,'A1MM')
 				call IssueTargetOrderById(KBX,$D0281, WWE)
 				call O0O(400, 0, 8,'B0CG', WWE)
@@ -22226,7 +22190,7 @@ function H5E takes nothing returns nothing
 	local unit u = GetSpellTargetUnit()
 	local integer i
 	set bj_playerIsCrippled[0]= false
-	if IsUnitType(u, UNIT_TYPE_HERO) and HeroIsDummyUnit(u) == false and GetUnitAbilityLevel(u,'A3E7')== 0 then
+	if IsUnitType(u, UNIT_TYPE_HERO) and HeroIsDummyUnit(u) == false and GetUnitAbilityLevel(u,'A3E7') == 0 then
 		call UnitAddPermanentAbility(u,'A3E7')
 		call HDX(u, false)
 		set i = 0
@@ -22292,13 +22256,13 @@ function DYO takes nothing returns boolean
 	local group g
 	local integer EVX
 	local boolean DZO
-	if GetTriggerEventId()== EVENT_PLAYER_UNIT_ATTACKED then
-		if GetAttacker()== WUE then
+	if GetTriggerEventId() == EVENT_PLAYER_UNIT_ATTACKED then
+		if GetAttacker() == WUE then
 			call UnitRemoveAbility(WUE,'A20L')
 			call UnitRemoveAbility(WUE,'A20S')
 			call UnitRemoveAbility(WUE,'B0E2')
 			call UnitRemoveAbility(WUE,'B09Y')
-			if((LoadInteger(HY,(GetHandleId((WUE))),(4302)))== 1) == false then
+			if((LoadInteger(HY,(GetHandleId((WUE))),(4302))) == 1) == false then
 				call UnitSetUsesAltIcon(WUE, false)
 			endif
 			call DestroyEffect((LoadEffectHandle(HY, h, 32)))
@@ -22430,7 +22394,7 @@ function D4O takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local unit u =(LoadUnitHandle(HY, h, 2))
-	if GetUnitAbilityLevel(u,'Bdet')== 0 or LoadReal(HY, GetHandleId(u),'AItb')+ 12 < GetGameTime() then
+	if GetUnitAbilityLevel(u,'Bdet') == 0 or LoadReal(HY, GetHandleId(u),'AItb')+ 12 < GetGameTime() then
 		call UnitRemoveAbility(u,'A2SJ')
 		call UnitRemoveAbility(u,'B0GR')
 		call UnitRemoveAbility(u,'Bdet')
@@ -22438,7 +22402,7 @@ function D4O takes nothing returns boolean
 		call CleanCurrentTrigger(t)
 	else
 		if DOX(u) then
-			if GetUnitAbilityLevel(u,'B0GR')== 0 then
+			if GetUnitAbilityLevel(u,'B0GR') == 0 then
 				call UnitAddPermanentAbility(u,'A2SJ')
 			endif
 		else
@@ -22583,7 +22547,7 @@ function D9O takes nothing returns nothing
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local unit u = LoadUnitHandle(HY, h, 0)
-	if GetUnitAbilityLevel(u,'B0BI')== 0 or GetTriggerEvalCount(t)>$A0 or GetTriggerEventId()== EVENT_UNIT_DEATH then
+	if GetUnitAbilityLevel(u,'B0BI') == 0 or GetTriggerEvalCount(t)>$A0 or GetTriggerEventId() == EVENT_UNIT_DEATH then
 		call UnitRemoveAbility(u,'B0BI')
 		call DestroyEffect(LoadEffectHandle(HY, h, 1))
 		call FlushChildHashtable(HY, h)
@@ -22673,13 +22637,13 @@ function FRO takes nothing returns nothing
 		if GetSpellTargetItem()!= null then
 			call FOO()
 		else
-			if(GetUnitAbilityLevel(GetSpellTargetUnit(),'BIrm')== 0 and GetSpellAbilityId()!='AIpr') then
+			if(GetUnitAbilityLevel(GetSpellTargetUnit(),'BIrm') == 0 and GetSpellAbilityId()!='AIpr') then
 				call O0O(0, 150, 30,'BIrm', GetSpellTargetUnit())
-			elseif(GetUnitAbilityLevel(GetSpellTargetUnit(),'B02Z')== 0 and GetSpellAbilityId()=='AIpr') then
+			elseif(GetUnitAbilityLevel(GetSpellTargetUnit(),'B02Z') == 0 and GetSpellAbilityId()=='AIpr') then
 				call O0O(400, 0, 8,'B02Z', GetSpellTargetUnit())
 			endif
 		endif
-	elseif GetSpellAbilityId()=='A0FO' and GetUnitAbilityLevel(GetTriggerUnit(),'B04A')== 0 then
+	elseif GetSpellAbilityId()=='A0FO' and GetUnitAbilityLevel(GetTriggerUnit(),'B04A') == 0 then
 		call O0O(110, 70, 3,'B04A', GetTriggerUnit())
 	endif
 endfunction
@@ -22731,7 +22695,7 @@ function GHE takes nothing returns nothing
 		set WJE = GetTriggerUnit()
 		set x = GetSpellTargetX()
 		set y = GetSpellTargetY()
-		if GetSpellTargetUnit()== null then
+		if GetSpellTargetUnit() == null then
 			if IsPointInRegion(FLV, x, y) then
 				call FIO(WJE, FBO)
 			else
@@ -22767,7 +22731,7 @@ function FDO takes nothing returns boolean
 	local unit WUE =(LoadUnitHandle(HY, h, 2))
 	local unit WWE =(LoadUnitHandle(HY, h, 17))
 	local integer ODX =(LoadInteger(HY, h, 34))
-	if(GetTriggerEventId()== EVENT_UNIT_DEATH and GetKillingUnit()== WUE) or(GetTriggerEventId()== EVENT_UNIT_DAMAGED and GetUnitAbilityLevel(WWE,'B0ES')> 0) then
+	if(GetTriggerEventId() == EVENT_UNIT_DEATH and GetKillingUnit() == WUE) or(GetTriggerEventId() == EVENT_UNIT_DAMAGED and GetUnitAbilityLevel(WWE,'B0ES')> 0) then
 		call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Other\\Transmute\\PileofGold.mdl", GetUnitX(WWE), GetUnitY(WWE)))
 		if(IsUnitType(WUE, UNIT_TYPE_HERO)) then
 			call AddHeroXPSimple(WUE, R2I(LoadInteger(M, GetUnitTypeId(WWE), HC)* 2.5), true)
@@ -22840,7 +22804,7 @@ endfunction
 function FHO takes nothing returns nothing
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
-	if GetTriggerEventId()== EVENT_GAME_TIMER_EXPIRED then
+	if GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
 		call UnitDamageTargetEx(LoadUnitHandle(HY, h, 0), LoadUnitHandle(HY, h, 1), 1, 50)
 	endif
 	call DestroyTrigger(t)
@@ -22959,7 +22923,7 @@ function FQO takes unit u returns nothing
 	call ShowUnit(u, true)
 	set i = 1
 	loop
-		if b[i]then
+		if b[i] then
 			call SelectUnitAddForPlayer(u, Player(i))
 		endif
 		set i = i + 1
@@ -23023,7 +22987,7 @@ function FWO takes nothing returns nothing
 	set u = null
 endfunction
 function FYO takes nothing returns nothing
-	if GetItemIndex(GetManipulatedItem())== AIV then
+	if GetItemIndex(GetManipulatedItem()) == AIV then
 		call FWO()
 	endif
 endfunction
@@ -23069,11 +23033,11 @@ function F0O takes integer GTX returns nothing
 	elseif GTX == IDV then
 		call FZO(u, IBV, 1, it)
 	endif
-	if GTX == IUV and GetItemCharges(it)== 0 then
+	if GTX == IUV and GetItemCharges(it) == 0 then
 		call FZO(u, IYV, 1, it)
-	elseif GTX == IWV and GetItemCharges(it)== 0 then
+	elseif GTX == IWV and GetItemCharges(it) == 0 then
 		call FZO(u, IZV, 1, it)
-	elseif GTX == RRV and GetItemCharges(it)== 0 then
+	elseif GTX == RRV and GetItemCharges(it) == 0 then
 		call FZO(u, RIV, 1, it)
 	endif
 	set u = null
@@ -23246,8 +23210,8 @@ function F9O takes nothing returns boolean
 	elseif TZE == XOV[RPV] or TZE == XOV[Item_IronwoodBranch] or TZE == XOV[Item_MoonShard] then
 		// 使用芒果 树枝 银月 那就删了
 		call RemoveItem(GetManipulatedItem())
-	elseif TZE == XOV[XDV]then
-		if bj_playerIsCrippled[0]then
+	elseif TZE == XOV[XDV] then
+		if bj_playerIsCrippled[0] then
 			call RemoveItem(GetManipulatedItem())
 			call HDX(GetTriggerUnit(), true)
 		endif
@@ -23265,53 +23229,53 @@ function F9O takes nothing returns boolean
 	call F5O(id)
 	return false
 endfunction
-function GVO takes nothing returns boolean
-	if GetOwningPlayer(GetTriggerUnit())== Sentinels[0]then
-		call IssuePointOrderByIdLoc(GetTriggerUnit(), 851983, LT)
-	elseif GetOwningPlayer(GetTriggerUnit())== Scourges[0]then
-		call IssuePointOrderByIdLoc(GetTriggerUnit(), 851983, MT)
+function SoldiersAttackToBase takes nothing returns boolean
+	if GetOwningPlayer(GetTriggerUnit()) == Sentinels[0] then
+		call IssuePointOrderByIdLoc(GetTriggerUnit(), 851983, AttackToScourgeLocation)
+	elseif GetOwningPlayer(GetTriggerUnit()) == Scourges[0] then
+		call IssuePointOrderByIdLoc(GetTriggerUnit(), 851983, AttackToSentinelLocation)
 	endif
 	return false
 endfunction
 function GEO takes nothing returns nothing
-	set CU = CU + 1
+	set SpawnRangedSoldiersNumber = SpawnRangedSoldiersNumber + 1
 endfunction
 function GXO takes nothing returns nothing
-	set BU = BU + 1
+	set SpawnMeleeSoldiersNumber = SpawnMeleeSoldiersNumber + 1
 endfunction
-function GOO takes nothing returns boolean
-	if GetOwningPlayer(GetTriggerUnit())== Sentinels[0]then
-		call IssuePointOrderByIdLoc(GetTriggerUnit(), 851983, PT)
+function SentinelAttackToMid takes nothing returns boolean
+	if GetOwningPlayer(GetTriggerUnit()) == Sentinels[0] then
+		call IssuePointOrderByIdLoc(GetTriggerUnit(), 851983, AttackToMidLocation)
 	endif
 	return false
 endfunction
-function GRO takes nothing returns boolean
-	if GetOwningPlayer(GetTriggerUnit())== Scourges[0]then
-		call IssuePointOrderByIdLoc(GetTriggerUnit(), 851983, PT)
+function ScourgeAttackToMid takes nothing returns boolean
+	if GetOwningPlayer(GetTriggerUnit()) == Scourges[0] then
+		call IssuePointOrderByIdLoc(GetTriggerUnit(), 851983, AttackToMidLocation)
 	endif
 	return false
 endfunction
-function GIO takes nothing returns boolean
-	if GetOwningPlayer(GetTriggerUnit())== Sentinels[0]then
-		call IssuePointOrderByIdLoc(GetTriggerUnit(), 851983, QT)
+function SentinelAttackToTop takes nothing returns boolean
+	if GetOwningPlayer(GetTriggerUnit()) == Sentinels[0] then
+		call IssuePointOrderByIdLoc(GetTriggerUnit(), 851983, AttackToTopLocation)
 	endif
 	return false
 endfunction
-function GAO takes nothing returns boolean
-	if GetOwningPlayer(GetTriggerUnit())== Scourges[0]then
-		call IssuePointOrderByIdLoc(GetTriggerUnit(), 851983, QT)
+function ScourgeAttackToTop takes nothing returns boolean
+	if GetOwningPlayer(GetTriggerUnit()) == Scourges[0] then
+		call IssuePointOrderByIdLoc(GetTriggerUnit(), 851983, AttackToTopLocation)
 	endif
 	return false
 endfunction
-function GNO takes nothing returns boolean
-	if GetOwningPlayer(GetTriggerUnit())== Sentinels[0]then
-		call IssuePointOrderByIdLoc(GetTriggerUnit(), 851983, TT)
+function SentinelAttackToBot takes nothing returns boolean
+	if GetOwningPlayer(GetTriggerUnit()) == Sentinels[0] then
+		call IssuePointOrderByIdLoc(GetTriggerUnit(), 851983, AttackToBotLocation)
 	endif
 	return false
 endfunction
-function GBO takes nothing returns boolean
-	if GetOwningPlayer(GetTriggerUnit())== Scourges[0]then
-		call IssuePointOrderByIdLoc(GetTriggerUnit(), 851983, TT)
+function ScourgeAttackToBot takes nothing returns boolean
+	if GetOwningPlayer(GetTriggerUnit()) == Scourges[0] then
+		call IssuePointOrderByIdLoc(GetTriggerUnit(), 851983, AttackToBotLocation)
 	endif
 	return false
 endfunction
@@ -23384,16 +23348,16 @@ function GGO takes nothing returns boolean
 	call GDO(true)
 	return false
 endfunction
-function GHO takes group g, integer GJO returns nothing
-	local unit u
+function SetGroupUnitsNextWaypoint takes group g, integer nextWaypointIndex returns nothing
+	local unit firstUnit
 	loop
-		set u = FirstOfGroup(g)
-	exitwhen(u == null)
-		call GroupRemoveUnit(g, u)
-		call SetUnitAbilityLevel(u,'A06G', GJO)
-		call IssuePointOrderByIdLoc(u, 851983, KW[GJO])
+		set firstUnit = FirstOfGroup(g)
+	exitwhen( firstUnit == null)
+		call GroupRemoveUnit(g, firstUnit)
+		call SetUnitAbilityLevel(firstUnit, 'A06G', nextWaypointIndex)
+		call IssuePointOrderByIdLoc(firstUnit, 851983, SoldiersNextWaypoint[nextWaypointIndex])
 	endloop
-	set u = null
+	set firstUnit = null
 endfunction
 function GKO takes nothing returns nothing
 	local timer t = GetExpiredTimer()
@@ -23405,12 +23369,12 @@ function GKO takes nothing returns nothing
 	set t = null
 	set u = null
 endfunction
-function GLO takes nothing returns nothing
+function SetGroupUnitsNotupgradedSpeed takes nothing returns nothing
 	local timer t = CreateTimer()
 	local integer h = GetHandleId(t)
 	local real m
-	local real d =$A
-	if WC == 1 then
+	local real d = 10.
+	if TempInt == 1 then
 		set m = 1.25
 	else
 		set m = .75
@@ -23421,16 +23385,16 @@ function GLO takes nothing returns nothing
 	call SaveUnitHandle(HY, h, 0, GetEnumUnit())
 	set t = null
 endfunction
-function GMO takes nothing returns nothing
-	local boolean GPO = ModuloInteger(GetTriggerExecCount(AG), 7)== 0
-	if FMV then
+function SpawnAttackSoldiersAction takes nothing returns nothing
+	local boolean spawnDemolisher = ModuloInteger(GetTriggerExecCount(SpawnAttackSoldiersTrigger), 7) == 0
+	if IsDisableSpawn then
 		return
 	endif
 	call GDO(false)
-	if GPO then
+	if spawnDemolisher then
 		call GCO()
 	endif
-	if GetTriggerExecCount(AG)== 1 and GPV == false then
+	if GetTriggerExecCount(SpawnAttackSoldiersTrigger) == 1 and Mode__OnlyMid == false then
 		call EXUnitResetCooldown(Circle[1])
 		call EXUnitResetCooldown(Circle[2])
 		call EXUnitResetCooldown(Circle[3])
@@ -23447,210 +23411,212 @@ function GMO takes nothing returns nothing
 		call UnitRemoveAbility(U7,'Avul')
 		call UnitRemoveAbility(W7,'Avul')
 		call UnitRemoveAbility(Y7,'Avul')
-	elseif GetTriggerExecCount(AG)== 1 and GPV then
+	elseif GetTriggerExecCount(SpawnAttackSoldiersTrigger) == 1 and Mode__OnlyMid then
 		call UnitRemoveAbility(Y5,'Avul')
 		call UnitRemoveAbility(W7,'Avul')
 	endif
-	if GetTriggerExecCount(AG)== 1 then
+	if GetTriggerExecCount(SpawnAttackSoldiersTrigger) == 1 then
 		call EnableTrigger(AddGoldForIntervalTrig)
 	endif
-	if GPV == false and GTV == false then
+	if Mode__OnlyMid == false and Mode__NotTop == false then
 		if(ZT) then
-			call CreateNUnitsAtLoc(BU,'ugho', Scourges[0], ScourgeTopMeleeBirthLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'ugho', Scourges[0], ScourgeTopMeleeSpawnLocatio, bj_UNIT_FACING)
 		else
-			call CreateNUnitsAtLoc(BU,'u001', Scourges[0], ScourgeTopMeleeBirthLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'u001', Scourges[0], ScourgeTopMeleeSpawnLocatio, bj_UNIT_FACING)
 		endif
-		if MB then
-			set WC = 1
-			call ForGroup(bj_lastCreatedGroup, function GLO)
+		if IsNotUpgraded then
+			set TempInt = 1
+			call ForGroup(bj_lastCreatedGroup, function SetGroupUnitsNotupgradedSpeed)
 		endif
-		call GHO(bj_lastCreatedGroup, 2)
+		call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 2)
 	endif
-	if GSV == false then
+	if Mode__NoMid == false then
 		if(VU) then
-			call CreateNUnitsAtLoc(BU,'ugho', Scourges[0], ScourgeCenterMeleeBirthLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'ugho', Scourges[0], ScourgeMidMeleeSpawnLocatio, bj_UNIT_FACING)
 		else
-			call CreateNUnitsAtLoc(BU,'u001', Scourges[0], ScourgeCenterMeleeBirthLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'u001', Scourges[0], ScourgeMidMeleeSpawnLocatio, bj_UNIT_FACING)
 		endif
-		call GHO(bj_lastCreatedGroup, 3)
+		call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 3)
 	endif
-	if GPV == false and GQV == false then
+	if Mode__OnlyMid == false and Mode__NotBot == false then
 		// 下路近战兵
 		if(EU) then
-			call CreateNUnitsAtLoc(BU,'ugho', Scourges[0], ScourgeBottomMeleeBirthLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'ugho', Scourges[0], ScourgeBotMeleeSpawnLocatio, bj_UNIT_FACING)
 		else
-			call CreateNUnitsAtLoc(BU,'u001', Scourges[0], ScourgeBottomMeleeBirthLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'u001', Scourges[0], ScourgeBotMeleeSpawnLocatio, bj_UNIT_FACING)
 		endif
-		if MB then
-			set WC = 2
-			call ForGroup(bj_lastCreatedGroup, function GLO)
+		if IsNotUpgraded then
+			set TempInt = 2
+			call ForGroup(bj_lastCreatedGroup, function SetGroupUnitsNotupgradedSpeed)
 		endif
-		call GHO(bj_lastCreatedGroup, 4)
+		call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 4)
 	endif
-	if GPV == false and GTV == false then
+	if Mode__OnlyMid == false and Mode__NotTop == false then
 		if(UT) then
-			call CreateNUnitsAtLoc(CU,'unec', Scourges[0], ScourgeTopRangedBirthLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'unec', Scourges[0], ScourgeTopRangedSpawnLocatio, bj_UNIT_FACING)
 		else
-			call CreateNUnitsAtLoc(CU,'u002', Scourges[0], ScourgeTopRangedBirthLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'u002', Scourges[0], ScourgeTopRangedSpawnLocatio, bj_UNIT_FACING)
 		endif
-		if MB then
-			set WC = 1
-			call ForGroup(bj_lastCreatedGroup, function GLO)
+		if IsNotUpgraded then
+			set TempInt = 1
+			call ForGroup(bj_lastCreatedGroup, function SetGroupUnitsNotupgradedSpeed)
 		endif
-		call GHO(bj_lastCreatedGroup, 2)
+		call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 2)
 	endif
-	if GSV == false then
+	if Mode__NoMid == false then
 		if(WT) then
-			call CreateNUnitsAtLoc(CU,'unec', Scourges[0], ScourgeCenterRangedBirthLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'unec', Scourges[0], ScourgeMidRangedSpawnLocatio, bj_UNIT_FACING)
 		else
-			call CreateNUnitsAtLoc(CU,'u002', Scourges[0], ScourgeCenterRangedBirthLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'u002', Scourges[0], ScourgeMidRangedSpawnLocatio, bj_UNIT_FACING)
 		endif
-		call GHO(bj_lastCreatedGroup, 3)
+		call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 3)
 	endif
-	if GPV == false and GQV == false then
+	if Mode__OnlyMid == false and Mode__NotBot == false then
 		// 下路远程兵
 		if(YT) then
-			call CreateNUnitsAtLoc(CU,'unec', Scourges[0], ScourgeBottomRangedBirthLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'unec', Scourges[0], ScourgeBotRangedSpawnLocatio, bj_UNIT_FACING)
 		else
-			call CreateNUnitsAtLoc(CU,'u002', Scourges[0], ScourgeBottomRangedBirthLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'u002', Scourges[0], ScourgeBotRangedSpawnLocatio, bj_UNIT_FACING)
 		endif
-		if MB then
-			set WC = 2
-			call ForGroup(bj_lastCreatedGroup, function GLO)
+		if IsNotUpgraded then
+			set TempInt = 2
+			call ForGroup(bj_lastCreatedGroup, function SetGroupUnitsNotupgradedSpeed)
 		endif
-		call GHO(bj_lastCreatedGroup, 4)
+		call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 4)
 	endif
-	if GPO then
-		if GPV == false and GTV == false then
+	// 天灾车
+	if spawnDemolisher then
+		if Mode__OnlyMid == false and Mode__NotTop == false then
 			if(UT) then
-				call CreateNUnitsAtLoc(CU,'umtw', Scourges[0], ScourgeTopRangedBirthLocatio, bj_UNIT_FACING)
+				call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'umtw', Scourges[0], ScourgeTopRangedSpawnLocatio, bj_UNIT_FACING)
 			else
-				call CreateNUnitsAtLoc(CU,'u00R', Scourges[0], ScourgeTopRangedBirthLocatio, bj_UNIT_FACING)
+				call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'u00R', Scourges[0], ScourgeTopRangedSpawnLocatio, bj_UNIT_FACING)
 			endif
-			if MB then
-				set WC = 1
-				call ForGroup(bj_lastCreatedGroup, function GLO)
+			if IsNotUpgraded then
+				set TempInt = 1
+				call ForGroup(bj_lastCreatedGroup, function SetGroupUnitsNotupgradedSpeed)
 			endif
-			call GHO(bj_lastCreatedGroup, 2)
+			call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 2)
 		endif
-		if GSV == false then
+		if Mode__NoMid == false then
 			if(WT) then
-				call CreateNUnitsAtLoc(CU,'umtw', Scourges[0], ScourgeCenterRangedBirthLocatio, bj_UNIT_FACING)
+				call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'umtw', Scourges[0], ScourgeMidRangedSpawnLocatio, bj_UNIT_FACING)
 			else
-				call CreateNUnitsAtLoc(CU,'u00R', Scourges[0], ScourgeCenterRangedBirthLocatio, bj_UNIT_FACING)
+				call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'u00R', Scourges[0], ScourgeMidRangedSpawnLocatio, bj_UNIT_FACING)
 			endif
-			call GHO(bj_lastCreatedGroup, 3)
+			call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 3)
 		endif
-		if GPV == false and GQV == false then
+		if Mode__OnlyMid == false and Mode__NotBot == false then
 			// 下路攻城车
 			if(YT) then
-				call CreateNUnitsAtLoc(CU,'umtw', Scourges[0], ScourgeBottomRangedBirthLocatio, bj_UNIT_FACING)
+				call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'umtw', Scourges[0], ScourgeBotRangedSpawnLocatio, bj_UNIT_FACING)
 			else
-				call CreateNUnitsAtLoc(CU,'u00R', Scourges[0], ScourgeBottomRangedBirthLocatio, bj_UNIT_FACING)
+				call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'u00R', Scourges[0], ScourgeBotRangedSpawnLocatio, bj_UNIT_FACING)
 			endif
-			if MB then
-				set WC = 2
-				call ForGroup(bj_lastCreatedGroup, function GLO)
+			if IsNotUpgraded then
+				set TempInt = 2
+				call ForGroup(bj_lastCreatedGroup, function SetGroupUnitsNotupgradedSpeed)
 			endif
-			call GHO(bj_lastCreatedGroup, 4)
+			call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 4)
 		endif
 	endif
-	if GPV == false and GTV == false then
+	if Mode__OnlyMid == false and Mode__NotTop == false then
 		if(IU) then
-			call CreateNUnitsAtLoc(BU,'esen', Sentinels[0], SentinelTopMeleeBirthLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'esen', Sentinels[0], SentinelTopMeleeSpawnLocatio, bj_UNIT_FACING)
 		else
-			call CreateNUnitsAtLoc(BU,'e00V', Sentinels[0], SentinelTopMeleeBirthLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'e00V', Sentinels[0], SentinelTopMeleeSpawnLocatio, bj_UNIT_FACING)
 		endif
-		if MB then
-			set WC = 2
-			call ForGroup(bj_lastCreatedGroup, function GLO)
+		if IsNotUpgraded then
+			set TempInt = 2
+			call ForGroup(bj_lastCreatedGroup, function SetGroupUnitsNotupgradedSpeed)
 		endif
-		call GHO(bj_lastCreatedGroup, 2)
+		call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 2)
 	endif
-	if GSV == false then
+	if Mode__NoMid == false then
 		if(AU) then
-			call CreateNUnitsAtLoc(BU,'esen', Sentinels[0], SentinelCenterMeleeBirthLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'esen', Sentinels[0], SentinelMidMeleeSpawnLocatio, bj_UNIT_FACING)
 		else
-			call CreateNUnitsAtLoc(BU,'e00V', Sentinels[0], SentinelCenterMeleeBirthLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'e00V', Sentinels[0], SentinelMidMeleeSpawnLocatio, bj_UNIT_FACING)
 		endif
-		call GHO(bj_lastCreatedGroup, 3)
+		call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 3)
 	endif
-	if GPV == false and GQV == false then
+	if Mode__OnlyMid == false and Mode__NotBot == false then
 		if(NU) then
-			call CreateNUnitsAtLoc(BU,'esen', Sentinels[0], SentinelBottomMeleeBirthLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'esen', Sentinels[0], SentinelBotMeleeSpawnLocatio, bj_UNIT_FACING)
 		else
-			call CreateNUnitsAtLoc(BU,'e00V', Sentinels[0], SentinelBottomMeleeBirthLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'e00V', Sentinels[0], SentinelBotMeleeSpawnLocatio, bj_UNIT_FACING)
 		endif
-		if MB then
-			set WC = 1
-			call ForGroup(bj_lastCreatedGroup, function GLO)
+		if IsNotUpgraded then
+			set TempInt = 1
+			call ForGroup(bj_lastCreatedGroup, function SetGroupUnitsNotupgradedSpeed)
 		endif
-		call GHO(bj_lastCreatedGroup, 4)
+		call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 4)
 	endif
-	if GPV == false and GTV == false then
+	if Mode__OnlyMid == false and Mode__NotTop == false then
 		if(XU) then
-			call CreateNUnitsAtLoc(CU,'edry', Sentinels[0], SentinelTopRangedBirthLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'edry', Sentinels[0], SentinelTopRangedSpawnLocatio, bj_UNIT_FACING)
 		else
-			call CreateNUnitsAtLoc(CU,'e00W', Sentinels[0], SentinelTopRangedBirthLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'e00W', Sentinels[0], SentinelTopRangedSpawnLocatio, bj_UNIT_FACING)
 		endif
-		if MB then
-			set WC = 2
-			call ForGroup(bj_lastCreatedGroup, function GLO)
+		if IsNotUpgraded then
+			set TempInt = 2
+			call ForGroup(bj_lastCreatedGroup, function SetGroupUnitsNotupgradedSpeed)
 		endif
-		call GHO(bj_lastCreatedGroup, 2)
+		call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 2)
 	endif
-	if GSV == false then
+	if Mode__NoMid == false then
 		if(OU) then
-			call CreateNUnitsAtLoc(CU,'edry', Sentinels[0], SentinelCenterRangedBirthLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'edry', Sentinels[0], SentinelMidRangedSpawnLocatio, bj_UNIT_FACING)
 		else
-			call CreateNUnitsAtLoc(CU,'e00W', Sentinels[0], SentinelCenterRangedBirthLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'e00W', Sentinels[0], SentinelMidRangedSpawnLocatio, bj_UNIT_FACING)
 		endif
-		call GHO(bj_lastCreatedGroup, 3)
+		call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 3)
 	endif
-	if GPV == false and GQV == false then
+	if Mode__OnlyMid == false and Mode__NotBot == false then
 		if(RU) then
-			call CreateNUnitsAtLoc(CU,'edry', Sentinels[0], SentinelBottomRangedBirthLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'edry', Sentinels[0], SentinelBotRangedSpawnLocatio, bj_UNIT_FACING)
 		else
-			call CreateNUnitsAtLoc(CU,'e00W', Sentinels[0], SentinelBottomRangedBirthLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'e00W', Sentinels[0], SentinelBotRangedSpawnLocatio, bj_UNIT_FACING)
 		endif
-		if MB then
-			set WC = 1
-			call ForGroup(bj_lastCreatedGroup, function GLO)
+		if IsNotUpgraded then
+			set TempInt = 1
+			call ForGroup(bj_lastCreatedGroup, function SetGroupUnitsNotupgradedSpeed)
 		endif
-		call GHO(bj_lastCreatedGroup, 4)
+		call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 4)
 	endif
-	if GPO then
-		if GPV == false and GTV == false then
+	// 近卫车
+	if spawnDemolisher then
+		if Mode__OnlyMid == false and Mode__NotTop == false then
 			if(RU) then
-				call CreateNUnitsAtLoc(CU,'ebal', Sentinels[0], SentinelTopRangedBirthLocatio, bj_UNIT_FACING)
+				call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'ebal', Sentinels[0], SentinelTopRangedSpawnLocatio, bj_UNIT_FACING)
 			else
-				call CreateNUnitsAtLoc(CU,'e026', Sentinels[0], SentinelTopRangedBirthLocatio, bj_UNIT_FACING)
+				call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'e026', Sentinels[0], SentinelTopRangedSpawnLocatio, bj_UNIT_FACING)
 			endif
-			if MB then
-				set WC = 2
-				call ForGroup(bj_lastCreatedGroup, function GLO)
+			if IsNotUpgraded then
+				set TempInt = 2
+				call ForGroup(bj_lastCreatedGroup, function SetGroupUnitsNotupgradedSpeed)
 			endif
-			call GHO(bj_lastCreatedGroup, 2)
+			call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 2)
 		endif
-		if GSV == false then
+		if Mode__NoMid == false then
 			if(OU) then
-				call CreateNUnitsAtLoc(CU,'ebal', Sentinels[0], SentinelCenterRangedBirthLocatio, bj_UNIT_FACING)
+				call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'ebal', Sentinels[0], SentinelMidRangedSpawnLocatio, bj_UNIT_FACING)
 			else
-				call CreateNUnitsAtLoc(CU,'e026', Sentinels[0], SentinelCenterRangedBirthLocatio, bj_UNIT_FACING)
+				call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'e026', Sentinels[0], SentinelMidRangedSpawnLocatio, bj_UNIT_FACING)
 			endif
-			call GHO(bj_lastCreatedGroup, 3)
+			call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 3)
 		endif
-		if GPV == false and GQV == false then
+		if Mode__OnlyMid == false and Mode__NotBot == false then
 			if(RU) then
-				call CreateNUnitsAtLoc(CU,'ebal', Sentinels[0], SentinelBottomRangedBirthLocatio, bj_UNIT_FACING)
+				call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'ebal', Sentinels[0], SentinelBotRangedSpawnLocatio, bj_UNIT_FACING)
 			else
-				call CreateNUnitsAtLoc(CU,'e026', Sentinels[0], SentinelBottomRangedBirthLocatio, bj_UNIT_FACING)
+				call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'e026', Sentinels[0], SentinelBotRangedSpawnLocatio, bj_UNIT_FACING)
 			endif
-			if MB then
-				set WC = 1
-				call ForGroup(bj_lastCreatedGroup, function GLO)
+			if IsNotUpgraded then
+				set TempInt = 1
+				call ForGroup(bj_lastCreatedGroup, function SetGroupUnitsNotupgradedSpeed)
 			endif
-			call GHO(bj_lastCreatedGroup, 4)
+			call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 4)
 		endif
 	endif
 endfunction
@@ -23784,394 +23750,394 @@ function HVO takes nothing returns nothing
 	call SetPlayerTechResearchedSwap('R00B',(GetPlayerTechCountSimple('R00B', Scourges[0])+ 30), Scourges[0])
 	call DisableTrigger(KG)
 endfunction
-function HEO takes nothing returns nothing
+function SoldiersUpgerAction takes nothing returns nothing
 	call SetPlayerTechResearchedSwap('R007',(GetPlayerTechCountSimple('R007', Sentinels[0])+ 1), Sentinels[0])
 	call SetPlayerTechResearchedSwap('R00C',(GetPlayerTechCountSimple('R00C', Sentinels[0])+ 1), Sentinels[0])
 	call SetPlayerTechResearchedSwap('R008',(GetPlayerTechCountSimple('R008', Sentinels[0])+ 1), Sentinels[0])
 	call SetPlayerTechResearchedSwap('R00D',(GetPlayerTechCountSimple('R00D', Sentinels[0])+ 1), Sentinels[0])
-	call SetPlayerTechResearchedSwap('R009',(GetPlayerTechCountSimple('R009', Scourges[0])+ 1), Scourges[0])
-	call SetPlayerTechResearchedSwap('R003',(GetPlayerTechCountSimple('R003', Scourges[0])+ 1), Scourges[0])
-	call SetPlayerTechResearchedSwap('R00A',(GetPlayerTechCountSimple('R00A', Scourges[0])+ 1), Scourges[0])
-	call SetPlayerTechResearchedSwap('R00B',(GetPlayerTechCountSimple('R00B', Scourges[0])+ 1), Scourges[0])
-	set MB = false
+	call SetPlayerTechResearchedSwap('R009',(GetPlayerTechCountSimple('R009', Scourges[0] )+ 1), Scourges[0] )
+	call SetPlayerTechResearchedSwap('R003',(GetPlayerTechCountSimple('R003', Scourges[0] )+ 1), Scourges[0] )
+	call SetPlayerTechResearchedSwap('R00A',(GetPlayerTechCountSimple('R00A', Scourges[0] )+ 1), Scourges[0] )
+	call SetPlayerTechResearchedSwap('R00B',(GetPlayerTechCountSimple('R00B', Scourges[0] )+ 1), Scourges[0] )
+	set IsNotUpgraded = false
 endfunction
 function HXO takes nothing returns nothing
 	local location HOO = GetRectCenter(gg_rct_DummyBirthPoint)
-	call RemoveUnit(CreateUnitAtLoc(BW,'nbdo', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(BW,'nbds', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(BW,'ngst', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(BW,'n026', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(BW,'nggr', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(BW,'nbdk', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(BW,'nbwm', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(BW,'nogm', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(BW,'nomg', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(BW,'nfpc', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(BW,'nfpu', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(BW,'nsth', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(BW,'nstl', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(BW,'nsat', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(BW,'nwlg', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(BW,'nkol', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(BW,'nkob', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(BW,'nkot', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(BW,'ncnk', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(BW,'ncen', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(BW,'ngns', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(BW,'nftb', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(BW,'nfsh', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(BW,'ngh1', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(BW,'npfl', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(BW,'nowe', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(BW,'nowb', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(BW,'nmrm', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(BW,'nmrr', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(BW,'nmrl', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(BW,'ndtr', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(BW,'ndtw', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(BW,'n0LC', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(BW,'n0LD', HOO, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nbdo', HOO, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nbds', HOO, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'ngst', HOO, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'n026', HOO, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nggr', HOO, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nbdk', HOO, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nbwm', HOO, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nogm', HOO, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nomg', HOO, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nfpc', HOO, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nfpu', HOO, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nsth', HOO, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nstl', HOO, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nsat', HOO, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nwlg', HOO, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nkol', HOO, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nkob', HOO, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nkot', HOO, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'ncnk', HOO, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'ncen', HOO, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'ngns', HOO, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nftb', HOO, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nfsh', HOO, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'ngh1', HOO, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'npfl', HOO, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nowe', HOO, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nowb', HOO, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nmrm', HOO, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nmrr', HOO, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nmrl', HOO, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'ndtr', HOO, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'ndtw', HOO, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'n0LC', HOO, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'n0LD', HOO, bj_UNIT_FACING))
 	call RemoveLocation(HOO)
 	set HOO = null
 endfunction
-function HRO takes real x, real y returns nothing
-	call SetUnitPosition(CreateUnit(BW,'n0HW', x, y, 0), x, y)
-	call SetUnitPosition(CreateUnit(BW,'n0HX', x, y, 0), x, y)
-	call SetUnitPosition(CreateUnit(BW,'n0HW', x, y, 0), x, y)
+function CreateCreeps_Harpy takes real x, real y returns nothing
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'n0HW', x, y, 0), x, y)
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'n0HX', x, y, 0), x, y)
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'n0HW', x, y, 0), x, y)
 endfunction
-function HIO takes real x, real y returns nothing
+function CreateAncientCreeps_JungleBeast takes real x, real y returns nothing
 	local unit u
-	set u = CreateUnit(BW,'njg1', x, y, 0)
+	set u = CreateUnit(CreepsPlayer,'njg1', x, y, 0)
 	call SetUnitPosition(u, x, y)
-	set u = CreateUnit(BW,'njg1', x, y, 0)
+	set u = CreateUnit(CreepsPlayer,'njg1', x, y, 0)
 	call SetUnitPosition(u, x, y)
-	set u = CreateUnit(BW,'njga', x, y, 0)
+	set u = CreateUnit(CreepsPlayer,'njga', x, y, 0)
 	call SetUnitPosition(u, x, y)
 	set u = null
 endfunction
-function HAO takes real x, real y returns nothing
-	call SetUnitPosition(CreateUnit(BW,'nbdo', x, y, 0), x, y)
-	call SetUnitPosition(CreateUnit(BW,'nbdo', x, y, 0), x, y)
-	call SetUnitPosition(CreateUnit(BW,'nbds', x, y, 0), x, y)
+function CreateAncientCreeps_BlueDragon takes real x, real y returns nothing
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'nbdo', x, y, 0), x, y)
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'nbdo', x, y, 0), x, y)
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'nbds', x, y, 0), x, y)
 endfunction
-function HNO takes real x, real y returns nothing
-	call SetUnitPosition(CreateUnit(BW,'nbdk', x, y, 0), x, y)
-	call SetUnitPosition(CreateUnit(BW,'nbdk', x, y, 0), x, y)
-	call SetUnitPosition(CreateUnit(BW,'nbwm', x, y, 0), x, y)
+function CreateAncientCreeps_BlackDragon takes real x, real y returns nothing
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'nbdk', x, y, 0), x, y)
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'nbdk', x, y, 0), x, y)
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'nbwm', x, y, 0), x, y)
 endfunction
-function HBO takes real x, real y returns nothing
-	call SetUnitPosition(CreateUnit(BW,'ngst', x, y, 0), x, y)
-	call SetUnitPosition(CreateUnit(BW,'ngst', x, y, 0), x, y)
-	call SetUnitPosition(CreateUnit(BW,'nggr', x, y, 0), x, y)
+function CreateAncientCreeps_RockGolem takes real x, real y returns nothing
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'ngst', x, y, 0), x, y)
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'ngst', x, y, 0), x, y)
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'nggr', x, y, 0), x, y)
 endfunction
-function HCO takes real x, real y returns nothing
+function CreateAncientCreeps_ThunderLizard takes real x, real y returns nothing
 	local unit u
-	set u = CreateUnit(BW,'n0LC', x, y, 0)
+	set u = CreateUnit(CreepsPlayer,'n0LC', x, y, 0)
 	call SetUnitPosition(u, x, y)
-	call SetUnitPosition(CreateUnit(BW,'n0LD', x, y, 0), x, y)
-	call SetUnitPosition(CreateUnit(BW,'n0LD', x, y, 0), x, y)
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'n0LD', x, y, 0), x, y)
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'n0LD', x, y, 0), x, y)
 	set u = null
 endfunction
-function HDO takes real x, real y returns nothing
-	call SetUnitPosition(CreateUnit(BW,'nogm', x, y, 0), x, y)
-	call SetUnitPosition(CreateUnit(BW,'nogm', x, y, 0), x, y)
-	call SetUnitPosition(CreateUnit(BW,'nomg', x, y, 0), x, y)
+function CreateCreeps_Ogre takes real x, real y returns nothing
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'nogm', x, y, 0), x, y)
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'nogm', x, y, 0), x, y)
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'nomg', x, y, 0), x, y)
 endfunction
-function HFO takes real x, real y returns nothing
-	call SetUnitPosition(CreateUnit(BW,'nfpc', x, y, 0), x, y)
-	call SetUnitPosition(CreateUnit(BW,'nfpu', x, y, 0), x, y)
+function CreateCreeps_PolarFurbolg takes real x, real y returns nothing
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'nfpc', x, y, 0), x, y)
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'nfpu', x, y, 0), x, y)
 endfunction
-function HGO takes real x, real y returns nothing
-	call SetUnitPosition(CreateUnit(BW,'nsth', x, y, 0), x, y)
-	call SetUnitPosition(CreateUnit(BW,'nstl', x, y, 0), x, y)
-	call SetUnitPosition(CreateUnit(BW,'nsat', x, y, 0), x, y)
+function CreateCreeps_Satyr_Tough takes real x, real y returns nothing
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'nsth', x, y, 0), x, y)
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'nstl', x, y, 0), x, y)
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'nsat', x, y, 0), x, y)
 endfunction
-function HHO takes real x, real y returns nothing
-	call SetUnitPosition(CreateUnit(BW,'nstl', x, y, 0), x, y)
-	call SetUnitPosition(CreateUnit(BW,'nstl', x, y, 0), x, y)
-	call SetUnitPosition(CreateUnit(BW,'nsat', x, y, 0), x, y)
-	call SetUnitPosition(CreateUnit(BW,'nsat', x, y, 0), x, y)
+function CreateCreeps_Satyr_Easy takes real x, real y returns nothing
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'nstl', x, y, 0), x, y)
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'nstl', x, y, 0), x, y)
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'nsat', x, y, 0), x, y)
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'nsat', x, y, 0), x, y)
 endfunction
-function HJO takes real x, real y returns nothing
-	call SetUnitPosition(CreateUnit(BW,'nwlg', x, y, 0), x, y)
-	call SetUnitPosition(CreateUnit(BW,'nwlg', x, y, 0), x, y)
-	call SetUnitPosition(CreateUnit(BW,'n00S', x, y, 0), x, y)
+function CreateCreeps_TimberWolf takes real x, real y returns nothing
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'nwlg', x, y, 0), x, y)
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'nwlg', x, y, 0), x, y)
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'n00S', x, y, 0), x, y)
 endfunction
-function HKO takes real x, real y returns nothing
-	call SetUnitPosition(CreateUnit(BW,'n026', x, y, 0), x, y)
-	call SetUnitPosition(CreateUnit(BW,'n026', x, y, 0), x, y)
+function CreateCreeps_MudGolem takes real x, real y returns nothing
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'n026', x, y, 0), x, y)
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'n026', x, y, 0), x, y)
 endfunction
-function HLO takes real x, real y returns nothing
-	call SetUnitPosition(CreateUnit(BW,'nkol', x, y, 0), x, y)
-	call SetUnitPosition(CreateUnit(BW,'nkob', x, y, 0), x, y)
-	call SetUnitPosition(CreateUnit(BW,'nkob', x, y, 0), x, y)
-	call SetUnitPosition(CreateUnit(BW,'nkob', x, y, 0), x, y)
-	call SetUnitPosition(CreateUnit(BW,'nkot', x, y, 0), x, y)
+function CreateCreeps_Kobold takes real x, real y returns nothing
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'nkol', x, y, 0), x, y)
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'nkob', x, y, 0), x, y)
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'nkob', x, y, 0), x, y)
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'nkob', x, y, 0), x, y)
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'nkot', x, y, 0), x, y)
 endfunction
-function HMO takes real x, real y returns nothing
-	call SetUnitPosition(CreateUnit(BW,'nftb', x, y, 0), x, y)
-	call SetUnitPosition(CreateUnit(BW,'nftb', x, y, 0), x, y)
-	call SetUnitPosition(CreateUnit(BW,'nfsh', x, y, 0), x, y)
+function CreateCreeps_ForestTroll takes real x, real y returns nothing
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'nftb', x, y, 0), x, y)
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'nftb', x, y, 0), x, y)
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'nfsh', x, y, 0), x, y)
 endfunction
-function HPO takes real x, real y returns nothing
-	call SetUnitPosition(CreateUnit(BW,'ncen', x, y, 0), x, y)
-	call SetUnitPosition(CreateUnit(BW,'ncnk', x, y, 0), x, y)
+function CreateCreeps_Centaur takes real x, real y returns nothing
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'ncen', x, y, 0), x, y)
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'ncnk', x, y, 0), x, y)
 endfunction
-function HQO takes real x, real y returns nothing
-	call SetUnitPosition(CreateUnit(BW,'ngns', x, y, 0), x, y)
-	call SetUnitPosition(CreateUnit(BW,'ngns', x, y, 0), x, y)
-	call SetUnitPosition(CreateUnit(BW,'ngns', x, y, 0), x, y)
+function CreateCreeps_GnollAssassin takes real x, real y returns nothing
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'ngns', x, y, 0), x, y)
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'ngns', x, y, 0), x, y)
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'ngns', x, y, 0), x, y)
 endfunction
-function HSO takes real x, real y returns nothing
-	call SetUnitPosition(CreateUnit(BW,'nftb', x, y, 0), x, y)
-	call SetUnitPosition(CreateUnit(BW,'nftb', x, y, 0), x, y)
-	call SetUnitPosition(CreateUnit(BW,'nkol', x, y, 0), x, y)
+function CreateCreeps_KoboldAndTroll takes real x, real y returns nothing
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'nftb', x, y, 0), x, y)
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'nftb', x, y, 0), x, y)
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'nkol', x, y, 0), x, y)
 endfunction
-function HTO takes real x, real y returns nothing
-	call SetUnitPosition(CreateUnit(BW,'ngh1', x, y, 0), x, y)
-	call SetUnitPosition(CreateUnit(BW,'npfl', x, y, 0), x, y)
-	call SetUnitPosition(CreateUnit(BW,'npfl', x, y, 0), x, y)
+function CreateCreeps_Ghost takes real x, real y returns nothing
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'ngh1', x, y, 0), x, y)
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'npfl', x, y, 0), x, y)
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'npfl', x, y, 0), x, y)
 endfunction
-function HUO takes real x, real y returns nothing
-	call SetUnitPosition(CreateUnit(BW,'nowe', x, y, 0), x, y)
-	call SetUnitPosition(CreateUnit(BW,'nowb', x, y, 0), x, y)
-	call SetUnitPosition(CreateUnit(BW,'nowb', x, y, 0), x, y)
+function CreateCreeps_OwlBear takes real x, real y returns nothing
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'nowe', x, y, 0), x, y)
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'nowb', x, y, 0), x, y)
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'nowb', x, y, 0), x, y)
 endfunction
-function HWO takes real x, real y returns nothing
-	call SetUnitPosition(CreateUnit(BW,'ndtr', x, y, 0), x, y)
-	call SetUnitPosition(CreateUnit(BW,'ndtr', x, y, 0), x, y)
-	call SetUnitPosition(CreateUnit(BW,'ndtw', x, y, 0), x, y)
+function CreateCreeps_DarkTroll takes real x, real y returns nothing
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'ndtr', x, y, 0), x, y)
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'ndtr', x, y, 0), x, y)
+	call SetUnitPosition(CreateUnit(CreepsPlayer,'ndtw', x, y, 0), x, y)
 endfunction
-function HYO takes real x, real y returns nothing
+function CreateSentinelCreeps3 takes real x, real y returns nothing
 	local integer i = GetRandomInt(1, 5)
 	loop
-	exitwhen i != ZB[0]
+	exitwhen i != CreepsLastCreatedIndex[0]
 		set i = GetRandomInt(1, 5)
 	endloop
-	set ZB[0]= i
+	set CreepsLastCreatedIndex[0]= i
 	if i == 1 then
-		call HFO(x, y)
+		call CreateCreeps_PolarFurbolg(x, y)
 	elseif i == 2 then
-		call HGO(x, y)
+		call CreateCreeps_Satyr_Tough(x, y)
 	elseif i == 3 then
-		call HUO(x, y)
+		call CreateCreeps_OwlBear(x, y)
 	elseif i == 4 then
-		call HWO(x, y)
+		call CreateCreeps_DarkTroll(x, y)
 	elseif i == 5 then
-		call HPO(x, y)
+		call CreateCreeps_Centaur(x, y)
 	endif
 endfunction
-function HZO takes real x, real y returns nothing
+function CreateSentinelCreeps1 takes real x, real y returns nothing
 	local integer i = GetRandomInt(1, 5)
 	loop
-	exitwhen i != ZB[1]
+	exitwhen i != CreepsLastCreatedIndex[1]
 		set i = GetRandomInt(1, 5)
 	endloop
-	set ZB[1]= i
+	set CreepsLastCreatedIndex[1]= i
 	if i == 1 then
-		call HFO(x, y)
+		call CreateCreeps_PolarFurbolg(x, y)
 	elseif i == 2 then
-		call HGO(x, y)
+		call CreateCreeps_Satyr_Tough(x, y)
 	elseif i == 3 then
-		call HUO(x, y)
+		call CreateCreeps_OwlBear(x, y)
 	elseif i == 4 then
-		call HWO(x, y)
+		call CreateCreeps_DarkTroll(x, y)
 	elseif i == 5 then
-		call HPO(x, y)
+		call CreateCreeps_Centaur(x, y)
 	endif
 endfunction
-function H_O takes real x, real y returns nothing
+function CreateScourgeCreeps5 takes real x, real y returns nothing
 	local integer i = GetRandomInt(1, 5)
 	loop
-	exitwhen i != ZB[2]
+	exitwhen i != CreepsLastCreatedIndex[2]
 		set i = GetRandomInt(1, 5)
 	endloop
-	set ZB[2]= i
+	set CreepsLastCreatedIndex[2]= i
 	if i == 1 then
-		call HFO(x, y)
+		call CreateCreeps_PolarFurbolg(x, y)
 	elseif i == 2 then
-		call HGO(x, y)
+		call CreateCreeps_Satyr_Tough(x, y)
 	elseif i == 3 then
-		call HUO(x, y)
+		call CreateCreeps_OwlBear(x, y)
 	elseif i == 4 then
-		call HWO(x, y)
+		call CreateCreeps_DarkTroll(x, y)
 	elseif i == 5 then
-		call HPO(x, y)
+		call CreateCreeps_Centaur(x, y)
 	endif
 endfunction
-function H0O takes real x, real y returns nothing
+function CreateScourgeCreeps1 takes real x, real y returns nothing
 	local integer i = GetRandomInt(1, 5)
 	loop
-	exitwhen i != ZB[3]
+	exitwhen i != CreepsLastCreatedIndex[3]
 		set i = GetRandomInt(1, 5)
 	endloop
-	set ZB[3]= i
+	set CreepsLastCreatedIndex[3]= i
 	if i == 1 then
-		call HFO(x, y)
+		call CreateCreeps_PolarFurbolg(x, y)
 	elseif i == 2 then
-		call HGO(x, y)
+		call CreateCreeps_Satyr_Tough(x, y)
 	elseif i == 3 then
-		call HUO(x, y)
+		call CreateCreeps_OwlBear(x, y)
 	elseif i == 4 then
-		call HWO(x, y)
+		call CreateCreeps_DarkTroll(x, y)
 	elseif i == 5 then
-		call HPO(x, y)
+		call CreateCreeps_Centaur(x, y)
 	endif
 endfunction
-function H1O takes real x, real y returns nothing
+function CreateSentinelCreeps2 takes real x, real y returns nothing
 	local integer i = GetRandomInt(1, 5)
 	loop
-	exitwhen i != ZB[4]
+	exitwhen i != CreepsLastCreatedIndex[4]
 		set i = GetRandomInt(1, 5)
 	endloop
-	set ZB[4]= i
+	set CreepsLastCreatedIndex[4]= i
 	if i == 1 then
-		call HKO(x, y)
+		call CreateCreeps_MudGolem(x, y)
 	elseif i == 2 then
-		call HDO(x, y)
+		call CreateCreeps_Ogre(x, y)
 	elseif i == 3 then
-		call HHO(x, y)
+		call CreateCreeps_Satyr_Easy(x, y)
 	elseif i == 4 then
-		call HJO(x, y)
+		call CreateCreeps_TimberWolf(x, y)
 	elseif i == 5 then
-		call HPO(x, y)
+		call CreateCreeps_Centaur(x, y)
 	endif
 endfunction
-function H2O takes real x, real y returns nothing
+function CreateScourgeCreeps2 takes real x, real y returns nothing
 	local integer i = GetRandomInt(1, 5)
 	loop
-	exitwhen i != ZB[5]
+	exitwhen i != CreepsLastCreatedIndex[5]
 		set i = GetRandomInt(1, 5)
 	endloop
-	set ZB[5]= i
+	set CreepsLastCreatedIndex[5]= i
 	if i == 1 then
-		call HKO(x, y)
+		call CreateCreeps_MudGolem(x, y)
 	elseif i == 2 then
-		call HDO(x, y)
+		call CreateCreeps_Ogre(x, y)
 	elseif i == 3 then
-		call HHO(x, y)
+		call CreateCreeps_Satyr_Easy(x, y)
 	elseif i == 4 then
-		call HJO(x, y)
+		call CreateCreeps_TimberWolf(x, y)
 	elseif i == 5 then
-		call HPO(x, y)
+		call CreateCreeps_Centaur(x, y)
 	endif
 endfunction
-function H3O takes real x, real y returns nothing
+function CreateScourgeCreeps3 takes real x, real y returns nothing
 	local integer i = GetRandomInt(1, 5)
 	loop
-	exitwhen i != ZB[6]
+	exitwhen i != CreepsLastCreatedIndex[6]
 		set i = GetRandomInt(1, 5)
 	endloop
-	set ZB[6]= i
+	set CreepsLastCreatedIndex[6]= i
 	if i == 1 then
-		call HKO(x, y)
+		call CreateCreeps_MudGolem(x, y)
 	elseif i == 2 then
-		call HDO(x, y)
+		call CreateCreeps_Ogre(x, y)
 	elseif i == 3 then
-		call HHO(x, y)
+		call CreateCreeps_Satyr_Easy(x, y)
 	elseif i == 4 then
-		call HJO(x, y)
+		call CreateCreeps_TimberWolf(x, y)
 	elseif i == 5 then
-		call HPO(x, y)
+		call CreateCreeps_Centaur(x, y)
 	endif
 endfunction
-function H4O takes real x, real y returns nothing
+function CreateSentinelCreeps5 takes real x, real y returns nothing
 	local integer i = GetRandomInt(1, 5)
 	loop
-	exitwhen i != ZB[7]
+	exitwhen i != CreepsLastCreatedIndex[7]
 		set i = GetRandomInt(1, 5)
 	endloop
-	set ZB[7]= i
+	set CreepsLastCreatedIndex[7]= i
 	if i == 1 then
-		call HKO(x, y)
+		call CreateCreeps_MudGolem(x, y)
 	elseif i == 2 then
-		call HDO(x, y)
+		call CreateCreeps_Ogre(x, y)
 	elseif i == 3 then
-		call HHO(x, y)
+		call CreateCreeps_Satyr_Easy(x, y)
 	elseif i == 4 then
-		call HJO(x, y)
+		call CreateCreeps_TimberWolf(x, y)
 	elseif i == 5 then
-		call HPO(x, y)
+		call CreateCreeps_Centaur(x, y)
 	endif
 endfunction
-function H5O takes real x, real y returns nothing
+function CreateSentinelCreeps4 takes real x, real y returns nothing
 	local integer i = GetRandomInt(1, 6)
 	loop
-	exitwhen i != ZB[8]
+	exitwhen i != CreepsLastCreatedIndex[8]
 		set i = GetRandomInt(1, 6)
 	endloop
-	set ZB[8]= i
+	set CreepsLastCreatedIndex[8]= i
 	if i == 1 then
-		call HTO(x, y)
+		call CreateCreeps_Ghost(x, y)
 	elseif i == 2 then
-		call HSO(x, y)
+		call CreateCreeps_KoboldAndTroll(x, y)
 	elseif i == 3 then
-		call HQO(x, y)
+		call CreateCreeps_GnollAssassin(x, y)
 	elseif i == 4 then
-		call HLO(x, y)
+		call CreateCreeps_Kobold(x, y)
 	elseif i == 5 then
-		call HMO(x, y)
+		call CreateCreeps_ForestTroll(x, y)
 	elseif i == 6 then
-		call HRO(x, y)
+		call CreateCreeps_Harpy(x, y)
 	endif
 endfunction
-function H6O takes real x, real y returns nothing
+function CreateScourgeCreeps4 takes real x, real y returns nothing
 	local integer i = GetRandomInt(1, 6)
 	loop
-	exitwhen i != ZB[9]
+	exitwhen i != CreepsLastCreatedIndex[9]
 		set i = GetRandomInt(1, 6)
 	endloop
-	set ZB[9]= i
+	set CreepsLastCreatedIndex[9]= i
 	if i == 1 then
-		call HTO(x, y)
+		call CreateCreeps_Ghost(x, y)
 	elseif i == 2 then
-		call HSO(x, y)
+		call CreateCreeps_KoboldAndTroll(x, y)
 	elseif i == 3 then
-		call HQO(x, y)
+		call CreateCreeps_GnollAssassin(x, y)
 	elseif i == 4 then
-		call HLO(x, y)
+		call CreateCreeps_Kobold(x, y)
 	elseif i == 5 then
-		call HMO(x, y)
+		call CreateCreeps_ForestTroll(x, y)
 	elseif i == 6 then
-		call HRO(x, y)
+		call CreateCreeps_Harpy(x, y)
 	endif
 endfunction
-function H7O takes real x, real y returns nothing
+function CreateScourgeAncientCreeps takes real x, real y returns nothing
 	local integer i = GetRandomInt(1, 5)
 	loop
-	exitwhen i != ZB[10]
+	exitwhen i != CreepsLastCreatedIndex[10]
 		set i = GetRandomInt(3, 5)
 	endloop
-	set ZB[10]= i
+	set CreepsLastCreatedIndex[10]= i
 	if i == 1 then
-		call HIO(x, y)
+		call CreateAncientCreeps_JungleBeast(x, y)
 	elseif i == 2 then
-		call HAO(x, y)
+		call CreateAncientCreeps_BlueDragon(x, y)
 	elseif i == 3 then
-		call HNO(x, y)
+		call CreateAncientCreeps_BlackDragon(x, y)
 	elseif i == 4 then
-		call HBO(x, y)
+		call CreateAncientCreeps_RockGolem(x, y)
 	elseif i == 5 then
-		call HCO(x, y)
+		call CreateAncientCreeps_ThunderLizard(x, y)
 	endif
 endfunction
-function H8O takes real x, real y returns nothing
+function CreateSentinelAncientCreeps takes real x, real y returns nothing
 	local integer i = GetRandomInt(1, 5)
 	loop
-	exitwhen i != ZB[11]
+	exitwhen i != CreepsLastCreatedIndex[11]
 		set i = GetRandomInt(3, 5)
 	endloop
-	set ZB[11]= i
+	set CreepsLastCreatedIndex[11]= i
 	if i == 1 then
-		call HIO(x, y)
+		call CreateAncientCreeps_JungleBeast(x, y)
 	elseif i == 2 then
-		call HAO(x, y)
+		call CreateAncientCreeps_BlueDragon(x, y)
 	elseif i == 3 then
-		call HNO(x, y)
+		call CreateAncientCreeps_BlackDragon(x, y)
 	elseif i == 4 then
-		call HBO(x, y)
+		call CreateAncientCreeps_RockGolem(x, y)
 	elseif i == 5 then
-		call HCO(x, y)
+		call CreateAncientCreeps_ThunderLizard(x, y)
 	endif
 endfunction
 function H9O takes nothing returns nothing
@@ -24182,69 +24148,71 @@ endfunction
 function JVO takes nothing returns boolean
 	return(not(GetUnitAbilityLevel(GetFilterUnit(),'A0P4')!= 0 or GetUnitTypeId(GetFilterUnit())=='o003' or GetUnitTypeId(GetFilterUnit())=='o01X' or UnitIsDead(GetFilterUnit()) or IsMessengerUnit(GetFilterUnit())))
 endfunction
-function JEO takes nothing returns boolean
-	local group g
-	local rect r1
-	local rect r2
+function GetTempGroup takes nothing returns group
+	return TempGroup
+endfunction
+function CheckRectCanRefreshCreeps takes rect r returns boolean
+	local unit firstUnit = null
+
+	call GroupEnumUnitsInRect(GetTempGroup(), r, null)
+	loop
+		set firstUnit = FirstOfGroup(GetTempGroup())
+		exitwhen firstUnit == null
+		call GroupRemoveUnit(GetTempGroup(), firstUnit)
+		if not (GetUnitAbilityLevel(firstUnit,'A0P4')!= 0 or GetUnitTypeId(firstUnit) == 'o003' or GetUnitTypeId(firstUnit) == 'o01X' or UnitIsDead(firstUnit) or IsMessengerUnit(firstUnit)) then
+			set firstUnit = null
+			return false
+		endif
+	endloop
+
+	set firstUnit = null
+	return true
+endfunction
+function RefreshAllCreeps takes nothing returns boolean
 	if Mode__NoNeutrals then
 		return false
 	endif
-	set g = AllocationGroup(43)
-	call GroupEnumUnitsInRect(g, gg_rct_ScourgeAncientRange, Condition(function JVO))
-	
+
 	//if Z3 then 
-	if FirstOfGroup(g)== null then
-		call H7O(GetRectCenterX(gg_rct_ScourgeAncientCenter), GetRectCenterY(gg_rct_ScourgeAncientCenter))
+	if CheckRectCanRefreshCreeps(gg_rct_ScourgeAncientRange) then
+		call CreateScourgeAncientCreeps(GetRectCenterX(gg_rct_ScourgeAncientCenter), GetRectCenterY(gg_rct_ScourgeAncientCenter))
 	endif
-	call GroupEnumUnitsInRect(g, gg_rct_SentinelAncientRange, Condition(function JVO))
-	if FirstOfGroup(g)== null then
-		call H8O(GetRectCenterX(gg_rct_SentinelAncientCenter), GetRectCenterY(gg_rct_SentinelAncientCenter))
+	if CheckRectCanRefreshCreeps(gg_rct_SentinelAncientRange) then
+		call CreateSentinelAncientCreeps(GetRectCenterX(gg_rct_SentinelAncientCenter), GetRectCenterY(gg_rct_SentinelAncientCenter))
 	endif
 	//endif
-	call GroupEnumUnitsInRect(g, gg_rct_SentinelCreepRange3, Condition(function JVO))
-	if FirstOfGroup(g)== null then
-		call HYO(GetRectCenterX(gg_rct_SentinelCreepCenter3), GetRectCenterY(gg_rct_SentinelCreepCenter3))
+	if CheckRectCanRefreshCreeps(gg_rct_SentinelCreepRange1) then
+		call CreateSentinelCreeps1(GetRectCenterX(gg_rct_SentinelCreepCenter1), GetRectCenterY(gg_rct_SentinelCreepCenter1))
 	endif
-	call GroupEnumUnitsInRect(g, gg_rct_ScourgeCreepRange5, Condition(function JVO))
-	if FirstOfGroup(g)== null then
-		call H_O(GetRectCenterX(gg_rct_ScourgeCreepCenter5), GetRectCenterY(gg_rct_ScourgeCreepCenter5))
+	if CheckRectCanRefreshCreeps(gg_rct_SentinelCreepRange2) then
+		call CreateSentinelCreeps2(GetRectCenterX(gg_rct_SentinelCreepCenter2), GetRectCenterY(gg_rct_SentinelCreepCenter2))
 	endif
-	call GroupEnumUnitsInRect(g, gg_rct_ScourgeCreepRange4, Condition(function JVO))
-	if FirstOfGroup(g)== null then
-		call H6O(GetRectCenterX(gg_rct_ScourgeCreepCenter4), GetRectCenterY(gg_rct_ScourgeCreepCenter4))
+	if CheckRectCanRefreshCreeps(gg_rct_SentinelCreepRange3) then
+		call CreateSentinelCreeps3(GetRectCenterX(gg_rct_SentinelCreepCenter3), GetRectCenterY(gg_rct_SentinelCreepCenter3))
 	endif
-	call GroupEnumUnitsInRect(g, gg_rct_SentinelCreepRange4, Condition(function JVO))
-	if FirstOfGroup(g)== null then
-		call H5O(GetRectCenterX(gg_rct_SentinelCreepCenter4), GetRectCenterY(gg_rct_SentinelCreepCenter4))
+	if CheckRectCanRefreshCreeps(gg_rct_SentinelCreepRange4) then
+		call CreateSentinelCreeps4(GetRectCenterX(gg_rct_SentinelCreepCenter4), GetRectCenterY(gg_rct_SentinelCreepCenter4))
 	endif
-	call GroupEnumUnitsInRect(g, gg_rct_ScourgeCreepRange3, Condition(function JVO))
-	if FirstOfGroup(g)== null then
-		call H3O(GetRectCenterX(gg_rct_ScourgeCreepCenter3), GetRectCenterY(gg_rct_ScourgeCreepCenter3))
+	if CheckRectCanRefreshCreeps(gg_rct_SentinelCreepRange5) then
+		call CreateSentinelCreeps5(GetRectCenterX(gg_rct_SentinelCreepCenter5), GetRectCenterY(gg_rct_SentinelCreepCenter5))
 	endif
-	call GroupEnumUnitsInRect(g, gg_rct_SentinelCreepRange5, Condition(function JVO))
-	if FirstOfGroup(g)== null then
-		call H4O(GetRectCenterX(gg_rct_SentinelCreepCenter5), GetRectCenterY(gg_rct_SentinelCreepCenter5))
+	
+	if CheckRectCanRefreshCreeps(gg_rct_ScourgeCreepRange1) then
+		call CreateScourgeCreeps1(GetRectCenterX(gg_rct_ScourgeCreepCenter1), GetRectCenterY(gg_rct_ScourgeCreepCenter1))
 	endif
-	call GroupEnumUnitsInRect(g, gg_rct_ScourgeCreepRange1, Condition(function JVO))
-	if FirstOfGroup(g)== null then
-		call H0O(GetRectCenterX(gg_rct_ScourgeCreepCenter1), GetRectCenterY(gg_rct_ScourgeCreepCenter1))
+	if CheckRectCanRefreshCreeps(gg_rct_ScourgeCreepRange2) then
+		call CreateScourgeCreeps2(GetRectCenterX(gg_rct_ScourgeCreepCenter2), GetRectCenterY(gg_rct_ScourgeCreepCenter2))
 	endif
-	call GroupEnumUnitsInRect(g, gg_rct_SentinelCreepRange2, Condition(function JVO))
-	if FirstOfGroup(g)== null then
-		call H1O(GetRectCenterX(gg_rct_SentinelCreepCenter2), GetRectCenterY(gg_rct_SentinelCreepCenter2))
+	if CheckRectCanRefreshCreeps(gg_rct_ScourgeCreepRange3) then
+		call CreateScourgeCreeps3(GetRectCenterX(gg_rct_ScourgeCreepCenter3), GetRectCenterY(gg_rct_ScourgeCreepCenter3))
 	endif
-	call GroupEnumUnitsInRect(g, gg_rct_ScourgeCreepRange2, Condition(function JVO))
-	if FirstOfGroup(g)== null then
-		call H2O(GetRectCenterX(gg_rct_ScourgeCreepCenter2), GetRectCenterY(gg_rct_ScourgeCreepCenter2))
+	if CheckRectCanRefreshCreeps(gg_rct_ScourgeCreepRange4) then
+		call CreateScourgeCreeps4(GetRectCenterX(gg_rct_ScourgeCreepCenter4), GetRectCenterY(gg_rct_ScourgeCreepCenter4))
 	endif
-	call GroupEnumUnitsInRect(g, gg_rct_SentinelCreepRange1, Condition(function JVO))
-	if FirstOfGroup(g)== null then
-		call HZO(GetRectCenterX(gg_rct_SentinelCreepCenter1), GetRectCenterY(gg_rct_SentinelCreepCenter1))
+	if CheckRectCanRefreshCreeps(gg_rct_ScourgeCreepRange5) then
+		call CreateScourgeCreeps5(GetRectCenterX(gg_rct_ScourgeCreepCenter5), GetRectCenterY(gg_rct_ScourgeCreepCenter5))
 	endif
-	call DeallocateGroup(g)
-	set r1 = null
-	set r2 = null
-	set g = null
+
 	return false
 endfunction
 function JXO takes nothing returns nothing
@@ -24260,7 +24228,7 @@ function JXO takes nothing returns nothing
 	local integer F2O = 0
 	local string s = ""
 	local unit u2
-	if GSV and GTV and GQV then
+	if Mode__NoMid and Mode__NotTop and Mode__NotBot then
 		return
 	endif
 	set JOO[0]='n003'
@@ -24268,34 +24236,34 @@ function JXO takes nothing returns nothing
 	set JOO[2]='n00D'
 	set F2O = JOO[JRO]
 	set JRO = GetRandomInt(0, 2)
-	if GPV then
+	if Mode__OnlyMid then
 		set JRO = 0
 	endif
-	if(GSV and JRO == 0) or(GTV and JRO == 2) or(GQV and JRO == 1) then
+	if(Mode__NoMid and JRO == 0) or(Mode__NotTop and JRO == 2) or(Mode__NotBot and JRO == 1) then
 		loop
 			set JRO = GetRandomInt(0, 2)
-		exitwhen(GSV and JRO != 0) or(GTV and JRO != 2) or(GQV and JRO != 1)
+		exitwhen(Mode__NoMid and JRO != 0) or(Mode__NotTop and JRO != 2) or(Mode__NotBot and JRO != 1)
 		endloop
 	endif
 	if JRO == 0 then
-		set x1 = GetRectCenterX(gg_rct_SentinelCenterSuperCreepsBirth)
-		set y1 = GetRectCenterY(gg_rct_SentinelCenterSuperCreepsBirth)
-		set x2 = GetRectCenterX(gg_rct_ScourgeCenterSuperCreepsBirth)
-		set y2 = GetRectCenterY(gg_rct_ScourgeCenterSuperCreepsBirth)
+		set x1 = GetRectCenterX(gg_rct_SentinelMidSuperCreepsSpawn)
+		set y1 = GetRectCenterY(gg_rct_SentinelMidSuperCreepsSpawn)
+		set x2 = GetRectCenterX(gg_rct_ScourgeMidSuperCreepsSpawn)
+		set y2 = GetRectCenterY(gg_rct_ScourgeMidSuperCreepsSpawn)
 		set i = 2
 		set s = "中路"
 	elseif JRO == 1 then
-		set x1 = GetRectCenterX(gg_rct_SentinelBottomSuperCreepsBirth)
-		set y1 = GetRectCenterY(gg_rct_SentinelBottomSuperCreepsBirth)
-		set x2 = GetRectCenterX(gg_rct_ScourgeBottomSuperCreepsBirth)
-		set y2 = GetRectCenterY(gg_rct_ScourgeBottomSuperCreepsBirth)
+		set x1 = GetRectCenterX(gg_rct_SentinelBotSuperCreepsSpawn)
+		set y1 = GetRectCenterY(gg_rct_SentinelBotSuperCreepsSpawn)
+		set x2 = GetRectCenterX(gg_rct_ScourgeBotSuperCreepsSpawn)
+		set y2 = GetRectCenterY(gg_rct_ScourgeBotSuperCreepsSpawn)
 		set i = 3
 		set s = "下路"
 	else
-		set x1 = GetRectCenterX(gg_rct_SentinelTopSuperCreepsBirth)
-		set y1 = GetRectCenterY(gg_rct_SentinelTopSuperCreepsBirth)
-		set x2 = GetRectCenterX(gg_rct_ScourgeTopSuperCreepsBirth)
-		set y2 = GetRectCenterY(gg_rct_ScourgeTopSuperCreepsBirth)
+		set x1 = GetRectCenterX(gg_rct_SentinelTopSuperCreepsSpawn)
+		set y1 = GetRectCenterY(gg_rct_SentinelTopSuperCreepsSpawn)
+		set x2 = GetRectCenterX(gg_rct_ScourgeTopSuperCreepsSpawn)
+		set y2 = GetRectCenterY(gg_rct_ScourgeTopSuperCreepsSpawn)
 		set i = 4
 		set s = "上路"
 	endif
@@ -24305,25 +24273,25 @@ function JXO takes nothing returns nothing
 		call GroupAddUnit(g, u)
 		set u2 = CreateUnit(Scourges[0], F2O, x2, y2, 90)
 		call GroupAddUnit(g, u2)
-		call GHO(g, i)
-		if MB and JRO != 0 then
+		call SetGroupUnitsNextWaypoint(g, i)
+		if IsNotUpgraded and JRO != 0 then
 			call GroupClear(g)
 			if JRO == 1 then
-				set WC = 1
+				set TempInt = 1
 				call GroupAddUnit(g, u)
-				call ForGroup(g, function GLO)
+				call ForGroup(g, function SetGroupUnitsNotupgradedSpeed)
 				call GroupClear(g)
-				set WC = 2
+				set TempInt = 2
 				call GroupAddUnit(g, u2)
-				call ForGroup(g, function GLO)
+				call ForGroup(g, function SetGroupUnitsNotupgradedSpeed)
 			else
-				set WC = 1
+				set TempInt = 1
 				call GroupAddUnit(g, u2)
-				call ForGroup(g, function GLO)
+				call ForGroup(g, function SetGroupUnitsNotupgradedSpeed)
 				call GroupClear(g)
-				set WC = 2
+				set TempInt = 2
 				call GroupAddUnit(g, u)
-				call ForGroup(g, function GLO)
+				call ForGroup(g, function SetGroupUnitsNotupgradedSpeed)
 			endif
 		endif
 		call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, CR[GetPlayerId(LocalPlayer)], "|c000000ff" + GetObjectName(F2O)+ "|r 已向双方阵营的 " + s + " 路出发")
@@ -24542,7 +24510,7 @@ function JDO takes integer a returns integer
 	local string s = I2S(a)
 	loop
 	exitwhen i > StringLength(s)
-		if SubString(s, i, i + 1)== "1"then
+		if SubString(s, i, i + 1) == "1"then
 			set x = x + 1
 		endif
 		set i = i + 1
@@ -24551,7 +24519,7 @@ function JDO takes integer a returns integer
 endfunction
 function JFO takes player p, integer k returns string
 	if IsPlayerAlly(LocalPlayer, p) then
-		if GXV[GetPlayerId(LocalPlayer)]then
+		if GXV[GetPlayerId(LocalPlayer)] then
 			if k <= 4 + RP then
 				return HeroSkillsIcon[PlayerSkillIndex[GetPlayerId(p)* HL + k]]
 			else
@@ -24702,7 +24670,7 @@ function JHO takes nothing returns nothing
 	if BT != null then
 		set id = GetPlayerId(LocalPlayer)
 		if id >= 0 and id < 16 then
-			if U3[x]then
+			if U3[x] then
 				set JKO = I2S(RQ[id])
 				set JLO = I2S(IQ[id])
 				set JMO = I2S(CQ[id])
@@ -24736,7 +24704,7 @@ function JHO takes nothing returns nothing
 		set TME = GetPlayerId(VW[O3X])
 		call VWX(BT, 1, O3X + 2, ELX(Player__Hero[TME]))
 		call VTX(BT, 4, O3X + 2, "|c00838B8B" + I2S(GetHeroLevel(Player__Hero[TME]))+ "|r")
-		if GEV[GetPlayerId(LocalPlayer)]then
+		if GEV[GetPlayerId(LocalPlayer)] then
 			call V2X(BT, 8, 1, 3)
 			call V2X(BT, 9, 1, 2.8)
 			call V2X(BT, 10, 1, .8)
@@ -24758,7 +24726,7 @@ function JHO takes nothing returns nothing
 			call VYX(BT, 13, O3X + 2, false, true)
 			call VYX(BT, 14, O3X + 2, false, true)
 			call VTX(BT, 9, 1, "物品")
-		elseif GXV[GetPlayerId(LocalPlayer)]then
+		elseif GXV[GetPlayerId(LocalPlayer)] then
 			call V2X(BT, 8, 1, 3)
 			call V2X(BT, 9, 1, 2.8)
 			call V2X(BT, 10, 1, .8)
@@ -24835,7 +24803,7 @@ function JHO takes nothing returns nothing
 		else
 			set J1O = "  "
 		endif
-		if EJV[TME]then
+		if EJV[TME] then
 			call VTX(BT, 1, O3X + 2, TM + "|c00333333" +(PlayersName[TME])+ "|r" + J1O)
 		else
 			call VTX(BT, 1, O3X + 2, TM +(PlayersName[TME])+ J1O)
@@ -24852,7 +24820,7 @@ function JHO takes nothing returns nothing
 		else
 			set JSO = " "
 		endif
-		if IsPlayerEnemy(LocalPlayer, VW[O3X]) and GetUnitAbilityLevel(Player__Hero[GetPlayerId(VW[O3X])],'B00L')== 0 then
+		if IsPlayerEnemy(LocalPlayer, VW[O3X]) and GetUnitAbilityLevel(Player__Hero[GetPlayerId(VW[O3X])],'B00L') == 0 then
 			call VTX(BT, 8, O3X + 2, " ")
 			set s = " "
 			set JSO = " "
@@ -24870,7 +24838,7 @@ function JHO takes nothing returns nothing
 		set TME = GetPlayerId(EW[O3X])
 		call VWX(BT, 1, O3X + 3 + D4V, ELX(Player__Hero[TME]))
 		call VTX(BT, 4, O3X + 3 + D4V, "|c00838B8B" + I2S(GetHeroLevel(Player__Hero[TME]))+ "|r")
-		if GEV[GetPlayerId(LocalPlayer)]then
+		if GEV[GetPlayerId(LocalPlayer)] then
 			call V2X(BT, 8, 1, 3)
 			call V2X(BT, 9, 1, 2.8)
 			call V2X(BT, 10, 1, .8)
@@ -24892,7 +24860,7 @@ function JHO takes nothing returns nothing
 			call VYX(BT, 13, O3X + 3 + D4V, false, true)
 			call VYX(BT, 14, O3X + 3 + D4V, false, true)
 			call VTX(BT, 9, 1, "Items")
-		elseif GXV[GetPlayerId(LocalPlayer)]then
+		elseif GXV[GetPlayerId(LocalPlayer)] then
 			call V2X(BT, 8, 1, 3)
 			call V2X(BT, 9, 1, 2.8)
 			call V2X(BT, 10, 1, .8)
@@ -24969,7 +24937,7 @@ function JHO takes nothing returns nothing
 		else
 			set J1O = "  "
 		endif
-		if EJV[TME]then
+		if EJV[TME] then
 			call VTX(BT, 1, O3X + 3 + D4V, TM + "|c00333333" +(PlayersName[TME])+ "|r" + J1O)
 		else
 			call VTX(BT, 1, O3X + 3 + D4V, TM +(PlayersName[TME])+ J1O)
@@ -24986,7 +24954,7 @@ function JHO takes nothing returns nothing
 		else
 			set JSO = " "
 		endif
-		if IsPlayerEnemy(LocalPlayer, EW[O3X]) and GetUnitAbilityLevel(Player__Hero[GetPlayerId(EW[O3X])],'B00L')== 0 then
+		if IsPlayerEnemy(LocalPlayer, EW[O3X]) and GetUnitAbilityLevel(Player__Hero[GetPlayerId(EW[O3X])],'B00L') == 0 then
 			call VTX(BT, 8, O3X + 3 + D4V, " ")
 			set s = " "
 			set JSO = " "
@@ -25258,7 +25226,7 @@ function KYO takes nothing returns nothing
 	set i = 1
 	loop
 	exitwhen i > 5
-		if IsPlaying(Sentinels[i]) or GetPlayerSlotState(Sentinels[i])== PLAYER_SLOT_STATE_LEFT then
+		if IsPlaying(Sentinels[i]) or GetPlayerSlotState(Sentinels[i]) == PLAYER_SLOT_STATE_LEFT then
 			set K0O[x]= Sentinels[i]
 			set x = x + 1
 		endif
@@ -25268,7 +25236,7 @@ function KYO takes nothing returns nothing
 	set i = 1
 	loop
 	exitwhen i > 5
-		if IsPlaying(Scourges[i]) or GetPlayerSlotState(Scourges[i])== PLAYER_SLOT_STATE_LEFT then
+		if IsPlaying(Scourges[i]) or GetPlayerSlotState(Scourges[i]) == PLAYER_SLOT_STATE_LEFT then
 			set K1O[x]= Scourges[i]
 			set x = x + 1
 		endif
@@ -26017,7 +25985,7 @@ function LBO takes nothing returns nothing
 	if LCO > 0 and LDO > 0 then
 		set K4O = K4O + 2
 	endif
-	if GetTriggerExecCount(GetTriggeringTrigger())== 1 then
+	if GetTriggerExecCount(GetTriggeringTrigger()) == 1 then
 		call LIO(K4O, K5O)
 	endif
 	if MW and(LocalPlayer== VKV or LocalPlayer== VLV) then
@@ -26080,7 +26048,7 @@ function LBO takes nothing returns nothing
 	set i = 1
 	loop
 	exitwhen i > 5
-		if IsPlaying(Sentinels[i]) or GetPlayerSlotState(Sentinels[i])== PLAYER_SLOT_STATE_LEFT then
+		if IsPlaying(Sentinels[i]) or GetPlayerSlotState(Sentinels[i]) == PLAYER_SLOT_STATE_LEFT then
 			set K0O[x]= Sentinels[i]
 			set x = x + 1
 		endif
@@ -26090,7 +26058,7 @@ function LBO takes nothing returns nothing
 	set i = 1
 	loop
 	exitwhen i > 5
-		if IsPlaying(Scourges[i]) or GetPlayerSlotState(Scourges[i])== PLAYER_SLOT_STATE_LEFT then
+		if IsPlaying(Scourges[i]) or GetPlayerSlotState(Scourges[i]) == PLAYER_SLOT_STATE_LEFT then
 			set K1O[x]= Scourges[i]
 			set x = x + 1
 		endif
@@ -26910,7 +26878,7 @@ function LBO takes nothing returns nothing
 		set K3O = K3O + 1
 		set VUX = MultiboardGetItem(FEV, K2O, K3O)
 		call MultiboardSetItemValueColor(VUX, LFO, LGO, LHO, LJO)
-		if LXO(K0O[i])== " "then
+		if LXO(K0O[i]) == " "then
 			call MultiboardSetItemStyle(VUX, true, false)
 		else
 			call MultiboardSetItemStyle(VUX, true, false)
@@ -26927,7 +26895,7 @@ function LBO takes nothing returns nothing
 		set K3O = K3O + 1
 		set VUX = MultiboardGetItem(FEV, K2O, K3O)
 		call MultiboardSetItemValueColor(VUX, LFO, LGO, LHO, LJO)
-		if LXO(K1O[i])== " "then
+		if LXO(K1O[i]) == " "then
 			call MultiboardSetItemStyle(VUX, true, false)
 		else
 			call MultiboardSetItemStyle(VUX, true, false)
@@ -26950,7 +26918,7 @@ function LBO takes nothing returns nothing
 	exitwhen i > LCO
 		set K3O = K3O + 1
 		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		if LXO(K0O[i])== " "then
+		if LXO(K0O[i]) == " "then
 			call MultiboardSetItemStyle(VUX, true, false)
 		else
 			call MultiboardSetItemStyle(VUX, true, true)
@@ -26966,7 +26934,7 @@ function LBO takes nothing returns nothing
 	exitwhen i > LDO
 		set K3O = K3O + 1
 		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		if LXO(K1O[i])== " "then
+		if LXO(K1O[i]) == " "then
 			call MultiboardSetItemStyle(VUX, true, false)
 		else
 			call MultiboardSetItemStyle(VUX, true, true)
@@ -27008,9 +26976,9 @@ endfunction
 function LTO takes nothing returns boolean
 	local unit u = GetTriggerUnit()
 	local integer id = GetUnitTypeId(u)
-	local boolean b = GetOwningPlayer(u)== Player(15) and LLO(u) and LocalPlayer== GetTriggerPlayer()
+	local boolean b = GetOwningPlayer(u) == Player(15) and LLO(u) and LocalPlayer== GetTriggerPlayer()
 	local string s = ""
-	if GetTriggerEventId()== EVENT_PLAYER_UNIT_DESELECTED then
+	if GetTriggerEventId() == EVENT_PLAYER_UNIT_DESELECTED then
 		if b then
 			call ResetUnitAnimation(u)
 		endif
@@ -27055,17 +27023,17 @@ function LUO takes unit u, unit IZX, real ZCE returns nothing
 	call SetWidgetLife(u, GetWidgetLife(u)+ FTX * ZCE)
 endfunction
 function LWO takes unit u returns boolean
-	return(GetOwningPlayer(u)== Sentinels[0]or GetOwningPlayer(u)== Scourges[0]) and GetUnitTypeId(u)!='hFFD'
+	return(GetOwningPlayer(u) == Sentinels[0]or GetOwningPlayer(u) == Scourges[0]) and GetUnitTypeId(u)!='hFFD'
 endfunction
 function LYO takes nothing returns boolean
-	return(GetOwningPlayer(GetFilterUnit())== Sentinels[0]or GetOwningPlayer(GetFilterUnit())== Scourges[0]) and GetUnitTypeId(GetFilterUnit())!='hFFD'
+	return(GetOwningPlayer(GetFilterUnit()) == Sentinels[0]or GetOwningPlayer(GetFilterUnit()) == Scourges[0]) and GetUnitTypeId(GetFilterUnit())!='hFFD'
 endfunction
 // 建筑
 function LZO takes nothing returns nothing
 	local unit u = GetTriggerUnit()
 	local integer hu = GetHandleId(u)
-	if GetTriggerEventId()== EVENT_UNIT_DAMAGED then
-		if GetUnitAbilityLevel(u,'A17R')== 0 then
+	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
+		if GetUnitAbilityLevel(u,'A17R') == 0 then
 			if LoadBoolean(P, hu,'isBD') and IsUnitEnemy(u, GetOwningPlayer(GetEventDamageSource())) then
 				call LUO(u, GetEventDamageSource(), GetEventDamage())
 			else
@@ -27091,7 +27059,7 @@ function L_O takes unit u returns nothing
 	endif
 	set hu = GetHandleId(u)
 	set g = AllocationGroup(45)
-	if GetOwningPlayer(u)== Sentinels[0]then
+	if GetOwningPlayer(u) == Sentinels[0] then
 		set p = Scourges[0]
 	endif
 	loop
@@ -27100,7 +27068,7 @@ function L_O takes unit u returns nothing
 		loop
 			set u2 = FirstOfGroup(g)
 		exitwhen b or u2 == null
-			if GetOwningPlayer(u2)== p then
+			if GetOwningPlayer(u2) == p then
 				set b = true
 			else
 				call GroupRemoveUnit(g, u2)
@@ -27134,7 +27102,7 @@ function L1O takes nothing returns nothing
 	local integer hu = GetHandleId(u)
 	local real L2O
 	local real L3O
-	if hu == 0 or UnitIsDead(u) or GetUnitState(u, UNIT_STATE_MAX_LIFE)== GetWidgetLife(u) then
+	if hu == 0 or UnitIsDead(u) or GetUnitState(u, UNIT_STATE_MAX_LIFE) == GetWidgetLife(u) then
 		return
 	endif
 	set L2O = GetWidgetLife(u)
@@ -27163,10 +27131,10 @@ function L5O takes nothing returns nothing
 	endif
 endfunction
 function L6O takes nothing returns boolean
-	return STX(GetUnitTypeId(GetFilterUnit())) and GetUnitCurrentOrder(GetFilterUnit())== 0
+	return STX(GetUnitTypeId(GetFilterUnit())) and GetUnitCurrentOrder(GetFilterUnit()) == 0
 endfunction
 function L7O takes nothing returns nothing
-	call IssuePointOrderByIdLoc(GetEnumUnit(), 851983, KW[GetUnitAbilityLevel(GetEnumUnit(),'A06G')])
+	call IssuePointOrderByIdLoc(GetEnumUnit(), 851983, SoldiersNextWaypoint[GetUnitAbilityLevel(GetEnumUnit(),'A06G')])
 endfunction
 function L8O takes nothing returns nothing
 	local group g = AllocationGroup(47)
@@ -27179,7 +27147,7 @@ endfunction
 function L9O takes unit u returns nothing
 	local integer hu = GetHandleId(u)
 	call GroupAddUnit(UR, u)
-	if GetOwningPlayer(u)== Sentinels[0]then
+	if GetOwningPlayer(u) == Sentinels[0] then
 		call SaveRectHandle(P, hu,'ABDr'+ 0, Rect(-8160.,-8192.,-3712.,-4352.))
 		call SaveRectHandle(P, hu,'ABDr'+ 1, Rect(-8192.,-4960.,-4640.,-3552.))
 		call SaveRectHandle(P, hu,'ABDr'+ 2, Rect(-4000.,-7744.,-3072.,-5152.))
@@ -27300,9 +27268,9 @@ function MRO takes nothing returns boolean
 			call TriggerAddCondition(t, Condition(function MVO))
 			set t = null
 		endif
-		call TriggerRegisterTimerEvent(AG, 30, true)
-		call TriggerExecute(AG)
-		call TriggerRegisterTimerEvent(LG, 450, true)
+		call TriggerRegisterTimerEvent(SpawnAttackSoldiersTrigger, 30, true)
+		call TriggerExecute(SpawnAttackSoldiersTrigger)
+		call TriggerRegisterTimerEvent(SoldiersUpgerTrig, 450, true)
 		call TriggerRegisterTimerEvent(C1,$A8B-30, false)
 		call TriggerRegisterTimerEvent(D1, 999 -$96, false)
 		call TriggerRegisterTimerEvent(D1,$7CF- 240, false)
@@ -27324,7 +27292,7 @@ function MRO takes nothing returns boolean
 		call SetResourceBarTime(C8X, C9X, true)
 	elseif Y2X == 20 then
 	elseif Y2X ==$F and UM and(CK[0]> 0 or CK[1]> 0) then
-		if not FP[GetPlayerId(LocalPlayer)]then
+		if not FP[GetPlayerId(LocalPlayer)] then
 			call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, CR[GetPlayerId(LocalPlayer)], "|c006699CC" + "如果你需要更多时间来挑选技能，请输入 -addtime" + "|r")
 		endif
 	else
@@ -27333,7 +27301,7 @@ function MRO takes nothing returns boolean
 	return false
 endfunction
 function MAO takes nothing returns boolean
-	if IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(GetAttacker())) and UnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(GetAttacker())) and GetUnitAbilityLevel(GetFilterUnit(),'A04R')== 0 and GetWidgetLife(GetFilterUnit())> 1 and IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) == false and GetOwningPlayer(GetFilterUnit())!= BW then
+	if IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(GetAttacker())) and UnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(GetAttacker())) and GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0 and GetWidgetLife(GetFilterUnit())> 1 and IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) == false and GetOwningPlayer(GetFilterUnit())!= CreepsPlayer then
 		if IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) then
 			set FIV = GetFilterUnit()
 		else
@@ -27369,7 +27337,7 @@ function MBO takes nothing returns nothing
 	endif
 	if GetUnitCurrentOrder(GetEnumUnit())!= 851983then
 		call GroupRemoveUnit(FNV, GetEnumUnit())
-		call IssuePointOrderByIdLoc(GetEnumUnit(), 851983, KW[GetUnitAbilityLevel(GetEnumUnit(),'A06G')])
+		call IssuePointOrderByIdLoc(GetEnumUnit(), 851983, SoldiersNextWaypoint[GetUnitAbilityLevel(GetEnumUnit(),'A06G')])
 	endif
 endfunction
 function MCO takes nothing returns boolean
@@ -27572,7 +27540,7 @@ function MUO takes nothing returns nothing
 	call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, 60, K3 + " " + GetObjectName('n054')+ " QQ讨论群1064025490")
 	set OY = true
 	call NEX()
-	call DisableTrigger(AG)
+	call DisableTrigger(SpawnAttackSoldiersTrigger)
 	call DisableTrigger(QG)
 	call DisableTrigger(AddGoldForIntervalTrig)
 	call UOV()
@@ -27592,7 +27560,7 @@ function MWO takes nothing returns nothing
 endfunction
 function MYO takes nothing returns boolean
 	call SetUnitVertexColorBJ(T7, 100, 100, 100, GetTriggerEvalCount(GetTriggeringTrigger()))
-	if GetTriggerEvalCount(GetTriggeringTrigger())== 100  then
+	if GetTriggerEvalCount(GetTriggeringTrigger()) == 100  then
 		call ShowUnit(T7, false)
 		call CleanCurrentTrigger(GetTriggeringTrigger())
 	endif
@@ -27621,7 +27589,7 @@ function M0O takes unit u returns boolean
 	return GetUnitAbilityLevel(u,'A464')> 0 or GetUnitAbilityLevel(u,'BNdo')> 0 or GetUnitAbilityLevel(u,'BEsh')> 0 or GetUnitAbilityLevel(u,'B001')> 0 or GetUnitAbilityLevel(u,'B0AQ')> 0 or GetUnitAbilityLevel(u,'B0AP')> 0
 endfunction
 function M1O takes nothing returns nothing
-	if not((M_O(10) and IsUnitType(GetTriggerUnit(), UNIT_TYPE_STRUCTURE) and GetUnitTypeId(GetTriggerUnit())!='etol' and GetUnitTypeId(GetTriggerUnit())!='unpl') or(M_O(25) and M0O(GetTriggerUnit())) or(M_O(50) and IsUnitIdType(GetUnitTypeId(GetTriggerUnit()), UNIT_TYPE_HERO) == false and(IsUnitType(GetTriggerUnit(), UNIT_TYPE_STRUCTURE) == false)) or(GetUnitTypeId(GetTriggerUnit())=='u00S') or(LoadInteger(HY, GetHandleId(GetAttacker()), 4328)== 1)) then
+	if not((M_O(10) and IsUnitType(GetTriggerUnit(), UNIT_TYPE_STRUCTURE) and GetUnitTypeId(GetTriggerUnit())!='etol' and GetUnitTypeId(GetTriggerUnit())!='unpl') or(M_O(25) and M0O(GetTriggerUnit())) or(M_O(50) and IsUnitIdType(GetUnitTypeId(GetTriggerUnit()), UNIT_TYPE_HERO) == false and(IsUnitType(GetTriggerUnit(), UNIT_TYPE_STRUCTURE) == false)) or(GetUnitTypeId(GetTriggerUnit())=='u00S') or(LoadInteger(HY, GetHandleId(GetAttacker()), 4328) == 1)) then
 		call IssueImmediateOrderById(GetAttacker(),$D0004)
 	endif
 endfunction
@@ -27651,7 +27619,7 @@ function M3O takes nothing returns boolean
 	local unit trigUnit = LoadUnitHandle(HY, h, 14)
 	local real x = LoadReal(HY, h, 6)
 	local real y = LoadReal(HY, h, 7)
-	if GetTriggerEventId()== EVENT_PLAYER_UNIT_SPELL_EFFECT or LoadBoolean(HY, GetHandleId(trigUnit),$8C) then
+	if GetTriggerEventId() == EVENT_PLAYER_UNIT_SPELL_EFFECT or LoadBoolean(HY, GetHandleId(trigUnit),$8C) then
 		if LoadBoolean(HY, GetHandleId(trigUnit),$8C) then
 			call SaveBoolean(HY, GetHandleId(trigUnit), 140, false)
 			call SaveInteger(HY, GetHandleId(trigUnit), 4259, 2)
@@ -27660,7 +27628,7 @@ function M3O takes nothing returns boolean
 			call PauseUnit(trigUnit, false)
 			call FlushChildHashtable(HY, h)
 			call CleanCurrentTrigger(t)
-		elseif GetSpellTargetUnit()== trigUnit and GetSpellAbilityId()== FJV and(GetPlayerSlotState(GetOwningPlayer(trigUnit))== PLAYER_SLOT_STATE_LEFT) and LoadInteger(HY, GetHandleId(trigUnit), 4259)== 1 then
+		elseif GetSpellTargetUnit() == trigUnit and GetSpellAbilityId() == FJV and(GetPlayerSlotState(GetOwningPlayer(trigUnit)) == PLAYER_SLOT_STATE_LEFT) and LoadInteger(HY, GetHandleId(trigUnit), 4259) == 1 then
 			call SaveInteger(HY, GetHandleId(trigUnit), 4259, 2)
 			call UnitRemoveAbility(trigUnit,'A04R')
 			call UnitRemoveAbility(trigUnit,'Avul')
@@ -27705,9 +27673,9 @@ function M5O takes nothing returns nothing
 	endif
 endfunction
 function M6O takes nothing returns boolean
-	if GetSpellAbilityId()== FHV and GetPlayerSlotState(GetOwningPlayer(GetSpellTargetUnit()))== PLAYER_SLOT_STATE_LEFT and LoadInteger(HY, GetHandleId(GetSpellTargetUnit()), 4259)!= 1 then
+	if GetSpellAbilityId() == FHV and GetPlayerSlotState(GetOwningPlayer(GetSpellTargetUnit())) == PLAYER_SLOT_STATE_LEFT and LoadInteger(HY, GetHandleId(GetSpellTargetUnit()), 4259)!= 1 then
 		call M4O()
-	elseif(GetSpellAbilityId()== FJV or GetSpellAbilityId()== FHV) and GetPlayerSlotState(GetOwningPlayer(GetSpellTargetUnit()))!= PLAYER_SLOT_STATE_LEFT then
+	elseif(GetSpellAbilityId() == FJV or GetSpellAbilityId() == FHV) and GetPlayerSlotState(GetOwningPlayer(GetSpellTargetUnit()))!= PLAYER_SLOT_STATE_LEFT then
 		call InterfaceErrorForPlayer(GetOwningPlayer(GetTriggerUnit()), GetObjectName('n02N'))
 	endif
 	if FDX(GetSpellAbilityId()) then
@@ -27804,7 +27772,7 @@ function PBO takes unit PNO, unit SYX returns nothing
 		call DisplayTimedTextToAllPlayer(XY, CR[GetPlayerId(LocalPlayer)], PlayersColoerText[TME]+ PlayersName[TME]+ "|r " + GetObjectName('n0EN')+ ".")
 	endif
 	if PAO(PNO) then
-		if GetOwningPlayer(PNO)== Sentinels[0]then
+		if GetOwningPlayer(PNO) == Sentinels[0] then
 			call DisplayTimedTextToAllPlayer(RW, CR[GetPlayerId(LocalPlayer)], "我方的防御符文冷却时间已刷新")
 		else
 			call DisplayTimedTextToAllPlayer(IW, CR[GetPlayerId(LocalPlayer)], "我方的防御符文冷却时间已刷新")
@@ -27966,46 +27934,46 @@ function PFO takes nothing returns nothing
 endfunction
 function PGO takes nothing returns boolean
 	local integer x = 0
-	if GetPlayerSlotState(Sentinels[1])== PLAYER_SLOT_STATE_EMPTY then
+	if GetPlayerSlotState(Sentinels[1]) == PLAYER_SLOT_STATE_EMPTY then
 		set x = x + 1
 	endif
-	if GetPlayerSlotState(Sentinels[2])== PLAYER_SLOT_STATE_EMPTY then
+	if GetPlayerSlotState(Sentinels[2]) == PLAYER_SLOT_STATE_EMPTY then
 		set x = x + 1
 	endif
-	if GetPlayerSlotState(Sentinels[3])== PLAYER_SLOT_STATE_EMPTY then
+	if GetPlayerSlotState(Sentinels[3]) == PLAYER_SLOT_STATE_EMPTY then
 		set x = x + 1
 	endif
-	if GetPlayerSlotState(Sentinels[4])== PLAYER_SLOT_STATE_EMPTY then
+	if GetPlayerSlotState(Sentinels[4]) == PLAYER_SLOT_STATE_EMPTY then
 		set x = x + 1
 	endif
-	if GetPlayerSlotState(Sentinels[5])== PLAYER_SLOT_STATE_EMPTY then
+	if GetPlayerSlotState(Sentinels[5]) == PLAYER_SLOT_STATE_EMPTY then
 		set x = x + 1
 	endif
-	if GetPlayerSlotState(Scourges[1])== PLAYER_SLOT_STATE_EMPTY then
+	if GetPlayerSlotState(Scourges[1]) == PLAYER_SLOT_STATE_EMPTY then
 		set x = x + 1
 	endif
-	if GetPlayerSlotState(Scourges[2])== PLAYER_SLOT_STATE_EMPTY then
+	if GetPlayerSlotState(Scourges[2]) == PLAYER_SLOT_STATE_EMPTY then
 		set x = x + 1
 	endif
-	if GetPlayerSlotState(Scourges[3])== PLAYER_SLOT_STATE_EMPTY then
+	if GetPlayerSlotState(Scourges[3]) == PLAYER_SLOT_STATE_EMPTY then
 		set x = x + 1
 	endif
-	if GetPlayerSlotState(Scourges[4])== PLAYER_SLOT_STATE_EMPTY then
+	if GetPlayerSlotState(Scourges[4]) == PLAYER_SLOT_STATE_EMPTY then
 		set x = x + 1
 	endif
-	if GetPlayerSlotState(Scourges[5])== PLAYER_SLOT_STATE_EMPTY then
+	if GetPlayerSlotState(Scourges[5]) == PLAYER_SLOT_STATE_EMPTY then
 		set x = x + 1
 	endif
 	return x == 9
 endfunction
-function PHO takes nothing returns nothing
-	set FMV = false
+function TestChat_SpawnOnAction takes nothing returns nothing
+	set IsDisableSpawn = false
 endfunction
 function PJO takes nothing returns nothing
 	set FPV = true
 endfunction
-function PKO takes nothing returns nothing
-	set FMV = true
+function TestCaht_SpawnOffAction takes nothing returns nothing
+	set IsDisableSpawn = true
 endfunction
 function PLO takes nothing returns nothing
 	set IsNoHeroLimit = false
@@ -28054,7 +28022,7 @@ function PYO takes nothing returns nothing
 	local string s = SubString(GetEventPlayerChatString(), 2, StringLength(GetEventPlayerChatString()))
 	local integer ODX = S2I(s)
 	local group g = AllocationGroup(56)
-	if GetEventPlayerChatString()== "-l" then
+	if GetEventPlayerChatString() == "-l" then
 		set Q2 = 25
 		call GroupEnumUnitsOfPlayer(g, GetTriggerPlayer(), Condition(function PWO))
 		call DeallocateGroup(g)
@@ -28073,7 +28041,7 @@ function PYO takes nothing returns nothing
 	set g = null
 endfunction
 function PZO takes nothing returns nothing
-	call TriggerExecute(AG)
+	call TriggerExecute(SpawnAttackSoldiersTrigger)
 endfunction
 function P_O takes nothing returns boolean
 	local unit u = GetFilterUnit()
@@ -28107,7 +28075,7 @@ endfunction
 function P4O takes nothing returns nothing
 	local string s = SubString(GetEventPlayerChatString(), 2, StringLength(GetEventPlayerChatString()))
 	local integer g = S2I(s)
-	if GetEventPlayerChatString()== "-g" then
+	if GetEventPlayerChatString() == "-g" then
 		call SetPlayerState(GetTriggerPlayer(), PLAYER_STATE_RESOURCE_GOLD,$F423F)
 		return
 	endif
@@ -28127,7 +28095,7 @@ function P5O takes nothing returns nothing
 	endif
 	if OY == false and UnitIsDead(SDX) then
 		call MEX(SDX, T6X, GetLocationX(S1X), GetLocationY(S1X), true)
-		if S_X(SDX) == false or GetUnitAbilityLevel(SDX,'A0MW')== 0 then
+		if S_X(SDX) == false or GetUnitAbilityLevel(SDX,'A0MW') == 0 then
 			call ReviveHeroLoc(SDX, S1X, true)
 		else
 			call S0X(SDX, S1X)
@@ -28264,10 +28232,10 @@ function QXO takes nothing returns nothing
 	call TriggerAddAction(t, function PTO)
 	set t = CreateTrigger()
 	call TUV(t, "-spawnoff", true)
-	call TriggerAddAction(t, function PKO)
+	call TriggerAddAction(t, function TestCaht_SpawnOffAction)
 	set t = CreateTrigger()
 	call TUV(t, "-spawnon", true)
-	call TriggerAddAction(t, function PHO)
+	call TriggerAddAction(t, function TestChat_SpawnOnAction)
 	set t = CreateTrigger()
 	call TUV(t, "-roshan", true)
 	call TriggerAddAction(t, function PJO)
@@ -28351,7 +28319,7 @@ function QFO takes nothing returns boolean
 endfunction
 function QGO takes nothing returns nothing
 	call SetUnitUserData(GetEnumUnit(), 0)
-	call IssuePointOrderByIdLoc(GetEnumUnit(), 851983,(KW[GetUnitAbilityLevel((GetEnumUnit()),'A06G')]))
+	call IssuePointOrderByIdLoc(GetEnumUnit(), 851983,(SoldiersNextWaypoint[GetUnitAbilityLevel((GetEnumUnit()),'A06G')]))
 endfunction
 function QHO takes nothing returns nothing
 	call IssueTargetOrderById(GetEnumUnit(), 851983, FUV)
@@ -28363,16 +28331,16 @@ function QJO takes nothing returns boolean
 	if id =='ebal' or id =='e026' or id =='umtw' or id =='u00R' then
 		return false
 	endif
-	if IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(FUV)) and(GetOwningPlayer(GetFilterUnit())== Sentinels[0]or GetOwningPlayer(GetFilterUnit())== Scourges[0]) and GetUnitUserData(GetFilterUnit())== 0 then
+	if IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(FUV)) and(GetOwningPlayer(GetFilterUnit()) == Sentinels[0]or GetOwningPlayer(GetFilterUnit()) == Scourges[0]) and GetUnitUserData(GetFilterUnit()) == 0 then
 		return true
 	endif
 	return false
 endfunction
 function QKO takes nothing returns nothing
-	if GetUnitCurrentOrder(GetEnumUnit())== 0 and IsUnitInRange(GetEnumUnit(), FUV, GetUnitAcquireRange(GetEnumUnit())) == false then
+	if GetUnitCurrentOrder(GetEnumUnit()) == 0 and IsUnitInRange(GetEnumUnit(), FUV, GetUnitAcquireRange(GetEnumUnit())) == false then
 		call GroupRemoveUnit(FTV, GetEnumUnit())
 		call SetUnitUserData(GetEnumUnit(), 0)
-		call IssuePointOrderByIdLoc(GetEnumUnit(), 851983,(KW[GetUnitAbilityLevel((GetEnumUnit()),'A06G')]))
+		call IssuePointOrderByIdLoc(GetEnumUnit(), 851983,(SoldiersNextWaypoint[GetUnitAbilityLevel((GetEnumUnit()),'A06G')]))
 	endif
 endfunction
 function QLO takes nothing returns nothing
@@ -28464,7 +28432,7 @@ function QYO takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer id
 	local unit u
-	if GetTriggerEventId()== EVENT_UNIT_CHANGE_OWNER then
+	if GetTriggerEventId() == EVENT_UNIT_CHANGE_OWNER then
 		set u = GetTriggerUnit()
 		set id = GetUnitTypeId(u)
 		if id =='n026' or id =='n127' then
@@ -28498,11 +28466,11 @@ function Q_O takes unit u returns nothing
 	local integer id = GetUnitTypeId(u)
 	if id =='n127' or id =='n128' then
 		call UnitApplyTimedLife(u,'BTLF', 60)
-		if GetOwningPlayer(u)!= BW then
+		if GetOwningPlayer(u)!= CreepsPlayer then
 			call UnitAddPermanentAbility(u,'A36I')
 		endif
 	endif
-	if GetOwningPlayer(u)== BW then
+	if GetOwningPlayer(u) == CreepsPlayer then
 		if id =='n127' or id =='n026' or id =='ndtw' or id =='nomg' or id =='n0HX' or id =='nsat' or id =='nstl' then
 			call QZO(u)
 		endif
@@ -28521,17 +28489,17 @@ function Q0O takes nothing returns boolean
 	return false
 endfunction
 function Q1O takes nothing returns boolean
-	if GetOwningPlayer(GetTriggerUnit())== Sentinels[0]then
+	if GetOwningPlayer(GetTriggerUnit()) == Sentinels[0] then
 		call SetUnitAbilityLevel(GetTriggerUnit(),'A06G', 5)
 		if FSV[GetUnitUserData(GetTriggerUnit())]== null then
 			call SetUnitUserData(GetTriggerUnit(), 0)
-			call IssuePointOrderByIdLoc(GetTriggerUnit(), 851983,(KW[GetUnitAbilityLevel((GetTriggerUnit()),'A06G')]))
+			call IssuePointOrderByIdLoc(GetTriggerUnit(), 851983,(SoldiersNextWaypoint[GetUnitAbilityLevel((GetTriggerUnit()),'A06G')]))
 		endif
-	elseif GetOwningPlayer(GetTriggerUnit())== Scourges[0]then
+	elseif GetOwningPlayer(GetTriggerUnit()) == Scourges[0] then
 		call SetUnitAbilityLevel(GetTriggerUnit(),'A06G', 1)
 		if FSV[GetUnitUserData(GetTriggerUnit())]== null then
 			call SetUnitUserData(GetTriggerUnit(), 0)
-			call IssuePointOrderByIdLoc(GetTriggerUnit(), 851983,(KW[GetUnitAbilityLevel((GetTriggerUnit()),'A06G')]))
+			call IssuePointOrderByIdLoc(GetTriggerUnit(), 851983,(SoldiersNextWaypoint[GetUnitAbilityLevel((GetTriggerUnit()),'A06G')]))
 		endif
 	endif
 	return false
@@ -28600,7 +28568,7 @@ function Q5O takes nothing returns nothing
 		call IssueTargetOrderById(Q6O, 851983, WWE)
 	else
 		call DisableTrigger(GetTriggeringTrigger())
-		call IssuePointOrderByIdLoc(Q6O, 851983,(KW[GetUnitAbilityLevel((Q6O),'A06G')]))
+		call IssuePointOrderByIdLoc(Q6O, 851983,(SoldiersNextWaypoint[GetUnitAbilityLevel((Q6O),'A06G')]))
 		call EnableTrigger(GetTriggeringTrigger())
 	endif
 	set Q6O = null
@@ -28620,7 +28588,7 @@ function Q8O takes nothing returns nothing
 		call IssueTargetOrderById(Q6O, 851983, WWE)
 	else
 		call DisableTrigger(GetTriggeringTrigger())
-		call IssuePointOrderByIdLoc(Q6O, 851983,(KW[GetUnitAbilityLevel((Q6O),'A06G')]))
+		call IssuePointOrderByIdLoc(Q6O, 851983,(SoldiersNextWaypoint[GetUnitAbilityLevel((Q6O),'A06G')]))
 		call EnableTrigger(GetTriggeringTrigger())
 	endif
 	set Q6O = null
@@ -28633,11 +28601,11 @@ function Q9O takes nothing returns boolean
 	return false
 endfunction
 function SVO takes nothing returns boolean
-	if GetOwningPlayer(GetTriggerUnit())== Sentinels[0]then
+	if GetOwningPlayer(GetTriggerUnit()) == Sentinels[0] then
 		if IsUnitFogged(GetAttacker(), Sentinels[1]) or IsUnitFogged(GetAttacker(), Scourges[1]) then
 			call BEX(CreateFogModifierRadius(Sentinels[1], FOG_OF_WAR_VISIBLE, GetUnitX(GetAttacker()), GetUnitY(GetAttacker()),$80, true, false), 1)
 		endif
-	elseif GetOwningPlayer(GetTriggerUnit())== Scourges[0]then
+	elseif GetOwningPlayer(GetTriggerUnit()) == Scourges[0] then
 		if IsUnitFogged(GetAttacker(), Sentinels[1]) or IsUnitFogged(GetAttacker(), Scourges[1]) then
 			call BEX(CreateFogModifierRadius(Scourges[1], FOG_OF_WAR_VISIBLE, GetUnitX(GetAttacker()), GetUnitY(GetAttacker()),$80, true, false), 1)
 		endif
@@ -28648,7 +28616,7 @@ function SEO takes nothing returns boolean
 	local trigger t
 	local group g
 	local unit u
-	call ExecuteFunc("SXO")
+	call ExecuteFunc("PreloadCreeps")
 	if MW then
 		set t = CreateTrigger()
 		call TriggerRegisterPlayerUnitEvent(t, Sentinels[0], EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER, null)
@@ -28727,38 +28695,38 @@ function SAO takes nothing returns nothing
 	set x = 0
 	loop
 	exitwhen x > 5
-		call SetPlayerAlliance(Sentinels[x], BW, ALLIANCE_PASSIVE, false)
-		call SetPlayerAlliance(Sentinels[x], BW, ALLIANCE_HELP_REQUEST, false)
-		call SetPlayerAlliance(Sentinels[x], BW, ALLIANCE_HELP_RESPONSE, false)
-		call SetPlayerAlliance(Sentinels[x], BW, ALLIANCE_SHARED_XP, false)
-		call SetPlayerAlliance(Sentinels[x], BW, ALLIANCE_SHARED_SPELLS, false)
-		call SetPlayerAlliance(Sentinels[x], BW, ALLIANCE_SHARED_VISION, false)
-		call SetPlayerAlliance(Sentinels[x], BW, ALLIANCE_SHARED_CONTROL, false)
-		call SetPlayerAlliance(Sentinels[x], BW, ALLIANCE_SHARED_ADVANCED_CONTROL, false)
-		call SetPlayerAlliance(Scourges[x], BW, ALLIANCE_PASSIVE, false)
-		call SetPlayerAlliance(Scourges[x], BW, ALLIANCE_HELP_REQUEST, false)
-		call SetPlayerAlliance(Scourges[x], BW, ALLIANCE_HELP_RESPONSE, false)
-		call SetPlayerAlliance(Scourges[x], BW, ALLIANCE_SHARED_XP, false)
-		call SetPlayerAlliance(Scourges[x], BW, ALLIANCE_SHARED_SPELLS, false)
-		call SetPlayerAlliance(Scourges[x], BW, ALLIANCE_SHARED_VISION, false)
-		call SetPlayerAlliance(Scourges[x], BW, ALLIANCE_SHARED_CONTROL, false)
-		call SetPlayerAlliance(Scourges[x], BW, ALLIANCE_SHARED_ADVANCED_CONTROL, false)
-		call SetPlayerAlliance(BW, Sentinels[x], ALLIANCE_PASSIVE, false)
-		call SetPlayerAlliance(BW, Sentinels[x], ALLIANCE_HELP_REQUEST, false)
-		call SetPlayerAlliance(BW, Sentinels[x], ALLIANCE_HELP_RESPONSE, false)
-		call SetPlayerAlliance(BW, Sentinels[x], ALLIANCE_SHARED_XP, false)
-		call SetPlayerAlliance(BW, Sentinels[x], ALLIANCE_SHARED_SPELLS, false)
-		call SetPlayerAlliance(BW, Sentinels[x], ALLIANCE_SHARED_VISION, false)
-		call SetPlayerAlliance(BW, Sentinels[x], ALLIANCE_SHARED_CONTROL, false)
-		call SetPlayerAlliance(BW, Sentinels[x], ALLIANCE_SHARED_ADVANCED_CONTROL, false)
-		call SetPlayerAlliance(BW, Scourges[x], ALLIANCE_PASSIVE, false)
-		call SetPlayerAlliance(BW, Scourges[x], ALLIANCE_HELP_REQUEST, false)
-		call SetPlayerAlliance(BW, Scourges[x], ALLIANCE_HELP_RESPONSE, false)
-		call SetPlayerAlliance(BW, Scourges[x], ALLIANCE_SHARED_XP, false)
-		call SetPlayerAlliance(BW, Scourges[x], ALLIANCE_SHARED_SPELLS, false)
-		call SetPlayerAlliance(BW, Scourges[x], ALLIANCE_SHARED_VISION, false)
-		call SetPlayerAlliance(BW, Scourges[x], ALLIANCE_SHARED_CONTROL, false)
-		call SetPlayerAlliance(BW, Scourges[x], ALLIANCE_SHARED_ADVANCED_CONTROL, false)
+		call SetPlayerAlliance(Sentinels[x], CreepsPlayer, ALLIANCE_PASSIVE, false)
+		call SetPlayerAlliance(Sentinels[x], CreepsPlayer, ALLIANCE_HELP_REQUEST, false)
+		call SetPlayerAlliance(Sentinels[x], CreepsPlayer, ALLIANCE_HELP_RESPONSE, false)
+		call SetPlayerAlliance(Sentinels[x], CreepsPlayer, ALLIANCE_SHARED_XP, false)
+		call SetPlayerAlliance(Sentinels[x], CreepsPlayer, ALLIANCE_SHARED_SPELLS, false)
+		call SetPlayerAlliance(Sentinels[x], CreepsPlayer, ALLIANCE_SHARED_VISION, false)
+		call SetPlayerAlliance(Sentinels[x], CreepsPlayer, ALLIANCE_SHARED_CONTROL, false)
+		call SetPlayerAlliance(Sentinels[x], CreepsPlayer, ALLIANCE_SHARED_ADVANCED_CONTROL, false)
+		call SetPlayerAlliance(Scourges[x], CreepsPlayer, ALLIANCE_PASSIVE, false)
+		call SetPlayerAlliance(Scourges[x], CreepsPlayer, ALLIANCE_HELP_REQUEST, false)
+		call SetPlayerAlliance(Scourges[x], CreepsPlayer, ALLIANCE_HELP_RESPONSE, false)
+		call SetPlayerAlliance(Scourges[x], CreepsPlayer, ALLIANCE_SHARED_XP, false)
+		call SetPlayerAlliance(Scourges[x], CreepsPlayer, ALLIANCE_SHARED_SPELLS, false)
+		call SetPlayerAlliance(Scourges[x], CreepsPlayer, ALLIANCE_SHARED_VISION, false)
+		call SetPlayerAlliance(Scourges[x], CreepsPlayer, ALLIANCE_SHARED_CONTROL, false)
+		call SetPlayerAlliance(Scourges[x], CreepsPlayer, ALLIANCE_SHARED_ADVANCED_CONTROL, false)
+		call SetPlayerAlliance(CreepsPlayer, Sentinels[x], ALLIANCE_PASSIVE, false)
+		call SetPlayerAlliance(CreepsPlayer, Sentinels[x], ALLIANCE_HELP_REQUEST, false)
+		call SetPlayerAlliance(CreepsPlayer, Sentinels[x], ALLIANCE_HELP_RESPONSE, false)
+		call SetPlayerAlliance(CreepsPlayer, Sentinels[x], ALLIANCE_SHARED_XP, false)
+		call SetPlayerAlliance(CreepsPlayer, Sentinels[x], ALLIANCE_SHARED_SPELLS, false)
+		call SetPlayerAlliance(CreepsPlayer, Sentinels[x], ALLIANCE_SHARED_VISION, false)
+		call SetPlayerAlliance(CreepsPlayer, Sentinels[x], ALLIANCE_SHARED_CONTROL, false)
+		call SetPlayerAlliance(CreepsPlayer, Sentinels[x], ALLIANCE_SHARED_ADVANCED_CONTROL, false)
+		call SetPlayerAlliance(CreepsPlayer, Scourges[x], ALLIANCE_PASSIVE, false)
+		call SetPlayerAlliance(CreepsPlayer, Scourges[x], ALLIANCE_HELP_REQUEST, false)
+		call SetPlayerAlliance(CreepsPlayer, Scourges[x], ALLIANCE_HELP_RESPONSE, false)
+		call SetPlayerAlliance(CreepsPlayer, Scourges[x], ALLIANCE_SHARED_XP, false)
+		call SetPlayerAlliance(CreepsPlayer, Scourges[x], ALLIANCE_SHARED_SPELLS, false)
+		call SetPlayerAlliance(CreepsPlayer, Scourges[x], ALLIANCE_SHARED_VISION, false)
+		call SetPlayerAlliance(CreepsPlayer, Scourges[x], ALLIANCE_SHARED_CONTROL, false)
+		call SetPlayerAlliance(CreepsPlayer, Scourges[x], ALLIANCE_SHARED_ADVANCED_CONTROL, false)
 		set x = x + 1
 	endloop
 endfunction
@@ -28791,7 +28759,7 @@ function SDO takes nothing returns boolean
 	loop
 	exitwhen WWV >$B
 		set trigUnit = Player__Hero[WWV]
-		if trigUnit != null and UnitIsDead(trigUnit) == false and GetUnitTypeId(trigUnit)== PlayerHeroTypeId[WWV]and R5X(trigUnit) == false then
+		if trigUnit != null and UnitIsDead(trigUnit) == false and GetUnitTypeId(trigUnit) == PlayerHeroTypeId[WWV]and R5X(trigUnit) == false then
 			loop
 				set i = GetRandomInt(1,'l')
 			exitwhen(IsUnitIdType(VUV[i], UNIT_TYPE_MELEE_ATTACKER) and IsUnitIdType(PlayerHeroTypeId[WWV], UNIT_TYPE_MELEE_ATTACKER)) or(IsUnitIdType(VUV[i], UNIT_TYPE_RANGED_ATTACKER) and IsUnitIdType(PlayerHeroTypeId[WWV], UNIT_TYPE_RANGED_ATTACKER))
@@ -28847,7 +28815,7 @@ function ShowSkillsOnSelecting takes nothing returns nothing
 	local player p = GetTriggerPlayer()
 	local player t = GetOwningPlayer(GetTriggerUnit())
 	local integer i
-	if p != t and JI[GetPlayerId(p)]and GetTriggerUnit()== Player__Hero[GetPlayerId(t)]and IsPlayerAlly(p, t) then
+	if p != t and JI[GetPlayerId(p)]and GetTriggerUnit() == Player__Hero[GetPlayerId(t)]and IsPlayerAlly(p, t) then
 		set i = PlayerSkillIndex[GetPlayerId(t)* HL]
 		call DisplayTimedTextToPlayer(p, 0, 0, 10, "|c00a0a0f8" + GetObjectName(HeroCommonSkills[i + 1])+ "|r level: |c00f8a0a0" + I2S(ZTE(GetTriggerUnit(), 1))+ "|r")
 		call DisplayTimedTextToPlayer(p, 0, 0, 10, "|c00a0a0f8" + GetObjectName(HeroCommonSkills[i + 2])+ "|r level: |c00f8a0a0" + I2S(ZTE(GetTriggerUnit(), 2))+ "|r")
@@ -28861,7 +28829,7 @@ function ShowSkillsOnSelecting takes nothing returns nothing
 		endif
 	endif
 	if GetUnitTypeId(GetTriggerUnit())!='hfoo' and IsUnitEnemy(GetTriggerUnit(), p) and UnitVisibleToPlayer(GetTriggerUnit(), p) == false then
-		if GetObjectName('TEST')== "L1ch" then
+		if GetObjectName('TEST') == "L1ch" then
 			call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 10, "|c00ff0303可能的开图点击|r " + PlayersColoerText[GetPlayerId(p)]+ PlayersName[GetPlayerId(p)]+ "|r on " + GetUnitName(GetTriggerUnit()))
 		endif
 	endif
@@ -28879,7 +28847,7 @@ function SMO takes nothing returns nothing
 	loop
 		set p = Player(k)
 		set i = k
-		if FP[i]== false and GetPlayerController(p)== MAP_CONTROL_USER and GetPlayerSlotState(p)== PLAYER_SLOT_STATE_PLAYING then
+		if FP[i]== false and GetPlayerController(p) == MAP_CONTROL_USER and GetPlayerSlotState(p) == PLAYER_SLOT_STATE_PLAYING then
 			loop
 			exitwhen FP[i]
 				if MainModeName =="sd" or MainModeName =="md" then
@@ -28915,24 +28883,24 @@ function SMO takes nothing returns nothing
 	call ExecuteFunc("SQO")
 endfunction
 function SSO takes nothing returns nothing
-	call UnitAddPermanentAbility(GetEnumUnit(), WC)
+	call UnitAddPermanentAbility(GetEnumUnit(), TempInt)
 	if MC == 1. then
-		call SetPlayerAbilityAvailable(GetOwningPlayer(GetEnumUnit()), WC, false)
+		call SetPlayerAbilityAvailable(GetOwningPlayer(GetEnumUnit()), TempInt, false)
 		set MC = .0
 	endif
-	if GetUnitAbilityLevel(GetEnumUnit(), WC)== 0 then
-		call AddUnitToStock(GetEnumUnit(), WC, 1, 1)
-		// debug call SingleDebug(UGV(WC)+ " (" + GetObjectName(WC)+ ") added")
+	if GetUnitAbilityLevel(GetEnumUnit(), TempInt) == 0 then
+		call AddUnitToStock(GetEnumUnit(), TempInt, 1, 1)
+		// debug call SingleDebug(UGV(TempInt)+ " (" + GetObjectName(TempInt)+ ") added")
 	endif
 endfunction
 function STO takes nothing returns nothing
 	local string SUO = SubString(GetEventPlayerChatString(), 4, 99999)
 	local group g
 	if bj_isSinglePlayer then
-		set WC = UDV(SUO)
+		set TempInt = UDV(SUO)
 		set MC = .0
-		call XSX(WC)
-		if SubString(SUO, 0, 2)== "QU" then
+		call XSX(TempInt)
+		if SubString(SUO, 0, 2) == "QU" then
 			set MC = 1.
 		endif
 		set g = AllocationGroup(67)
@@ -28943,16 +28911,16 @@ function STO takes nothing returns nothing
 	set g = null
 endfunction
 function SWO takes nothing returns nothing
-	call UnitRemoveAbility(GetEnumUnit(), WC)
+	call UnitRemoveAbility(GetEnumUnit(), TempInt)
 endfunction
 function SYO takes nothing returns nothing
 	local string SUO = SubString(GetEventPlayerChatString(), 4, 99999)
 	local group g
 	if bj_isSinglePlayer then
-		set WC = UDV(SUO)
+		set TempInt = UDV(SUO)
 		set g = AllocationGroup(68)
 		call GroupEnumUnitsSelected(g, GetTriggerPlayer(), null)
-		if FirstOfGroup(g)== null then
+		if FirstOfGroup(g) == null then
 			call GroupAddUnit(g, Player__Hero[GetPlayerId(GetTriggerPlayer())])
 		endif
 		call ForGroup(g, function SWO)
@@ -28961,13 +28929,13 @@ function SYO takes nothing returns nothing
 	set g = null
 endfunction
 function SZO takes nothing returns nothing
-	call BJDebugMsg(GetObjectName(GetUnitTypeId(GetEnumUnit()))+ "'s lvl of " + UGV(WC)+ " is " + I2S(GetUnitAbilityLevel(GetEnumUnit(), WC)))
+	call BJDebugMsg(GetObjectName(GetUnitTypeId(GetEnumUnit()))+ "'s lvl of " + UGV(TempInt)+ " is " + I2S(GetUnitAbilityLevel(GetEnumUnit(), TempInt)))
 endfunction
 function S_O takes nothing returns nothing
 	local string SUO = SubString(GetEventPlayerChatString(), 4, 99999)
 	local group g
 	if bj_isSinglePlayer then
-		set WC = UDV(SUO)
+		set TempInt = UDV(SUO)
 		set g = AllocationGroup(69)
 		call GroupEnumUnitsSelected(g, GetTriggerPlayer(), null)
 		call ForGroup(g, function SZO)
@@ -28976,13 +28944,13 @@ function S_O takes nothing returns nothing
 	set g = null
 endfunction
 function S0O takes nothing returns nothing
-	call SetPlayerAbilityAvailable(GetOwningPlayer(GetEnumUnit()), WC, false)
+	call SetPlayerAbilityAvailable(GetOwningPlayer(GetEnumUnit()), TempInt, false)
 endfunction
 function S1O takes nothing returns nothing
 	local string SUO = SubString(GetEventPlayerChatString(), 4, 99999)
 	local group g
 	if bj_isSinglePlayer then
-		set WC = UDV(SUO)
+		set TempInt = UDV(SUO)
 		set g = AllocationGroup(70)
 		call GroupEnumUnitsSelected(g, GetTriggerPlayer(), null)
 		call ForGroup(g, function S0O)
@@ -28991,7 +28959,7 @@ function S1O takes nothing returns nothing
 	set g = null
 endfunction
 function S2O takes nothing returns nothing
-	local item it = UnitAddItemById(GetEnumUnit(), WC)
+	local item it = UnitAddItemById(GetEnumUnit(), TempInt)
 	call SetItemPlayer(it, GetOwningPlayer(GetEnumUnit()), false)
 	set it = null
 endfunction
@@ -28999,7 +28967,7 @@ function S3O takes nothing returns nothing
 	local string SUO = SubString(GetEventPlayerChatString(), 4, 99999)
 	local group g
 	if bj_isSinglePlayer then
-		set WC = UDV(SUO)
+		set TempInt = UDV(SUO)
 		set g = AllocationGroup(71)
 		call GroupEnumUnitsSelected(g, GetTriggerPlayer(), null)
 		call ForGroup(g, function S2O)
@@ -29008,17 +28976,17 @@ function S3O takes nothing returns nothing
 	set g = null
 endfunction
 function S4O takes nothing returns nothing
-	call SetUnitOwner(GetEnumUnit(), Player(WC), true)
+	call SetUnitOwner(GetEnumUnit(), Player(TempInt), true)
 	if IsUnitType(GetEnumUnit(), UNIT_TYPE_HERO) then
-		set Player__Hero[WC]= GetEnumUnit()
+		set Player__Hero[TempInt]= GetEnumUnit()
 	endif
 endfunction
 function S5O takes nothing returns nothing
 	local string SUO = SubString(GetEventPlayerChatString(), 3, 5)
 	local group g
 	if bj_isSinglePlayer then
-		set WC = S2I(SUO)
-		if WC < 0 or WC >$F then
+		set TempInt = S2I(SUO)
+		if TempInt < 0 or TempInt > 15 then
 			return
 		endif
 		set g = AllocationGroup(72)
@@ -29134,7 +29102,7 @@ function S9O takes nothing returns nothing
 	set g = null
 endfunction
 function TVO takes nothing returns nothing
-	if IsItemPawnable(UnitItemInSlot(GetEnumUnit(), WC)) then
+	if IsItemPawnable(UnitItemInSlot(GetEnumUnit(), TempInt)) then
 		call BJDebugMsg("pawn")
 	else
 		call BJDebugMsg("unpawn")
@@ -29144,7 +29112,7 @@ function TEO takes nothing returns nothing
 	local string SUO = SubString(GetEventPlayerChatString(), 4, 999)
 	local group g
 	if bj_isSinglePlayer then
-		set WC = S2I(SUO)
+		set TempInt = S2I(SUO)
 		set g = AllocationGroup(74)
 		call GroupEnumUnitsSelected(g, GetTriggerPlayer(), null)
 		call ForGroup(g, function TVO)
@@ -29153,8 +29121,8 @@ function TEO takes nothing returns nothing
 	set g = null
 endfunction
 function TXO takes nothing returns nothing
-	call UnitAddType(GetEnumUnit(), ConvertUnitType(WC))
-	if IsUnitType(GetEnumUnit(), ConvertUnitType(WC)) then
+	call UnitAddType(GetEnumUnit(), ConvertUnitType(TempInt))
+	if IsUnitType(GetEnumUnit(), ConvertUnitType(TempInt)) then
 		call BJDebugMsg("added")
 	endif
 endfunction
@@ -29162,7 +29130,7 @@ function TOO takes nothing returns nothing
 	local string SUO = SubString(GetEventPlayerChatString(), 4, 999)
 	local group g
 	if bj_isSinglePlayer then
-		set WC = S2I(SUO)
+		set TempInt = S2I(SUO)
 		set g = AllocationGroup(75)
 		call GroupEnumUnitsSelected(g, GetTriggerPlayer(), null)
 		call ForGroup(g, function TXO)
@@ -29195,14 +29163,14 @@ function TRO takes nothing returns nothing
 	set g = null
 endfunction
 function TIO takes nothing returns nothing
-	call SetWidgetLife(GetEnumUnit(), WC)
+	call SetWidgetLife(GetEnumUnit(), TempInt)
 endfunction
 function TAO takes nothing returns nothing
 	local string SUO = SubString(GetEventPlayerChatString(), 4, 999)
 	local group g
 	local integer i = S2I(SUO)
 	if bj_isSinglePlayer then
-		set WC = S2I(SUO)
+		set TempInt = S2I(SUO)
 		set g = AllocationGroup(77)
 		call GroupEnumUnitsSelected(g, GetTriggerPlayer(), null)
 		call ForGroup(g, function TIO)
@@ -29237,14 +29205,14 @@ function TDO takes nothing returns nothing
 	set g = null
 endfunction
 function TFO takes nothing returns nothing
-	call SetUnitState(GetEnumUnit(), UNIT_STATE_MANA, WC)
+	call SetUnitState(GetEnumUnit(), UNIT_STATE_MANA, TempInt)
 endfunction
 function TGO takes nothing returns nothing
 	local string SUO = SubString(GetEventPlayerChatString(), 4, 999)
 	local group g
 	local integer i = S2I(SUO)
 	if bj_isSinglePlayer then
-		set WC = S2I(SUO)
+		set TempInt = S2I(SUO)
 		set g = AllocationGroup(80)
 		call GroupEnumUnitsSelected(g, GetTriggerPlayer(), null)
 		call ForGroup(g, function TFO)
@@ -29253,14 +29221,14 @@ function TGO takes nothing returns nothing
 	set g = null
 endfunction
 function THO takes nothing returns nothing
-	call CreateItem(WC, GetUnitX(GetEnumUnit()), GetUnitY(GetEnumUnit()))
+	call CreateItem(TempInt, GetUnitX(GetEnumUnit()), GetUnitY(GetEnumUnit()))
 endfunction
 function TJO takes nothing returns nothing
 	local string SUO = SubString(GetEventPlayerChatString(), 4, 9)
 	local group g
 	local integer i = S2I(SUO)
 	if bj_isSinglePlayer then
-		set WC = UDV(SUO)
+		set TempInt = UDV(SUO)
 		set g = AllocationGroup(81)
 		call GroupEnumUnitsSelected(g, GetTriggerPlayer(), null)
 		call ForGroup(g, function THO)
@@ -29324,7 +29292,7 @@ function TSO takes nothing returns nothing
 			set i = 7
 		endif
 		loop
-			if FA[i]then
+			if FA[i] then
 				set TTO = TTO + 1
 			endif
 			set i = i + 1
@@ -29431,15 +29399,15 @@ endfunction
 function SetUpDoubleClickSpell takes nothing returns nothing
 	local player p = GetTriggerPlayer()
 	if LocalPlayer == p then
-		set bDoubleClickSystemIsEnable = not bDoubleClickSystemIsEnable
-		call GetSetUpText("双击对己施法", bDoubleClickSystemIsEnable)
+		set IsEnableDoubleClickSystem = not IsEnableDoubleClickSystem
+		call GetSetUpText("双击对己施法", IsEnableDoubleClickSystem)
 	endif
 	call Click_CheckBox_Nothing(p, 16)
 endfunction
 
 function SetUpDoubleClickSpellByCheckBox takes boolean enable returns nothing
-	set bDoubleClickSystemIsEnable = enable
-	call GetSetUpText("双击对己施法", bDoubleClickSystemIsEnable)
+	set IsEnableDoubleClickSystem = enable
+	call GetSetUpText("双击对己施法", IsEnableDoubleClickSystem)
 endfunction
 
 function T3O takes nothing returns nothing
@@ -29476,7 +29444,7 @@ function T5O takes nothing returns nothing
 endfunction
 function T6O takes nothing returns nothing
 	local player p = GetTriggerPlayer()
-	if GetEventPlayerChatString()== "-sddon" then
+	if GetEventPlayerChatString() == "-sddon" then
 		//call DisplayTimedTextToPlayer(p, .0, .0, 10., "|cffff0000[SDD] |r" + "|c006699CC" + "显示伤害值已 |c0000FF00开启|r" + "|c006699CC" + "." + "|r")
 		set EnableMapSetUp__ShowDamageTextTag[GetPlayerId(p)]= true
 		call Set_CheckBox_Nothing(p, 15, true)
@@ -29492,7 +29460,7 @@ endfunction
 function T7O takes nothing returns nothing
 	local integer TME = GetPlayerId(GetTriggerPlayer())
 	if GetUnitAbilityLevel(Player__Hero[TME],'A0AK')> 0 or GetUnitAbilityLevel(Player__Hero[TME],'A1FY')> 0 then
-		if GetUnitAbilityLevel(Player__Hero[TME],'A1WF')== 0 then
+		if GetUnitAbilityLevel(Player__Hero[TME],'A1WF') == 0 then
 			call UnitAddPermanentAbility(Player__Hero[TME],'A1WF')
 		else
 			call UnitRemoveAbility(Player__Hero[TME],'A1WF')
@@ -29531,11 +29499,11 @@ function UEO takes player p returns nothing
 	local integer i
 	local integer te
 	if UM then
-		if GetGameTime()> JN[GetPlayerId(p)]then
+		if GetGameTime()> JN[GetPlayerId(p)] then
 			if GS == false then
 				call DisplayTimedTextToPlayer(p, .0, .0, 10., "|cff99ccff" + "你现在还不能使用这个命令." + "|r")
 			else
-				if FP[GetPlayerId(p)]then
+				if FP[GetPlayerId(p)] then
 					call DisplayTimedTextToPlayer(p, .0, .0, 10., "|cff99ccff" + "你已经将你的所有技能选择完毕." + "|r")
 				else
 					set JN[GetPlayerId(p)]= GetGameTime()+ 4
@@ -29608,13 +29576,13 @@ function UCO takes nothing returns nothing
 	endif
 endfunction
 function UDO takes nothing returns nothing
-	call SetUnitAbilityLevel(GetEnumUnit(), WC, Q2)
+	call SetUnitAbilityLevel(GetEnumUnit(), TempInt, Q2)
 endfunction
 function UFO takes nothing returns nothing
 	local string id = SubString(GetEventPlayerChatString(), 4, 8)
 	local integer level = S2I(SubString(GetEventPlayerChatString(), 9, 11))
 	local group g
-	set WC = UDV(id)
+	set TempInt = UDV(id)
 	set Q2 = level
 	set g = AllocationGroup(85)
 	call GroupEnumUnitsSelected(g, GetTriggerPlayer(), null)
@@ -29626,7 +29594,7 @@ function UGO takes nothing returns nothing
 	local integer id = UDV(SubString(GetEventPlayerChatString(), 4, 8))
 	if id > 0 then
 		set X3 = true
-		call CreateUnit(BW, id,-510,-512, 0)
+		call CreateUnit(CreepsPlayer, id,-510,-512, 0)
 		set X3 = false
 	endif
 endfunction
@@ -29650,7 +29618,7 @@ function ULO takes nothing returns nothing
 	local string UMO = SubString(GetEventPlayerChatString(),$B, 15)
 	local integer i2 = S2I(UMO)
 	local group g
-	set WC = i
+	set TempInt = i
 	set Q2 = i2
 	set g = AllocationGroup(87)
 	call GroupEnumUnitsSelected(g, GetTriggerPlayer(), null)
@@ -29674,18 +29642,18 @@ function UQO takes nothing returns nothing
 	set g = null
 endfunction
 function USO takes nothing returns nothing
-	if IssueTargetOrderById(GetEnumUnit(), WC, GetEnumUnit()) then
-		// debug call SingleDebug(I2S(WC)+ " is target skill")
-	elseif IssueImmediateOrderById(GetEnumUnit(), WC) then
-		// debug call SingleDebug(I2S(WC)+ " is immediate skill")
-	elseif IssuePointOrderById(GetEnumUnit(), WC, 0, 0) then
-		// debug call SingleDebug(I2S(WC)+ " is point skill")
+	if IssueTargetOrderById(GetEnumUnit(), TempInt, GetEnumUnit()) then
+		// debug call SingleDebug(I2S(TempInt)+ " is target skill")
+	elseif IssueImmediateOrderById(GetEnumUnit(), TempInt) then
+		// debug call SingleDebug(I2S(TempInt)+ " is immediate skill")
+	elseif IssuePointOrderById(GetEnumUnit(), TempInt, 0, 0) then
+		// debug call SingleDebug(I2S(TempInt)+ " is point skill")
 	endif
 endfunction
 function UTO takes nothing returns nothing
 	local group g
-	set WC = S2I(SubString(GetEventPlayerChatString(), 4, 19))
-	// debug call SingleDebug("Started " + I2S(WC))
+	set TempInt = S2I(SubString(GetEventPlayerChatString(), 4, 19))
+	// debug call SingleDebug("Started " + I2S(TempInt))
 	set g = AllocationGroup(89)
 	call GroupEnumUnitsSelected(g, GetTriggerPlayer(), null)
 	call ForGroup(g, function USO)
@@ -29743,7 +29711,7 @@ function UZO takes string s returns nothing
 	local integer k = StringLength(s)
 	local integer U_O = 1
 	loop
-		if SubString(s, i, i + 1)== " "then
+		if SubString(s, i, i + 1) == " "then
 			set U_O = U_O + 1
 		else
 			if U_O == 1 then
@@ -29843,7 +29811,7 @@ function U5O takes string s returns nothing
 	local integer k = 1
 	loop
 	exitwhen i > U8O
-		if SubString(s, i, i + 1)== " "then
+		if SubString(s, i, i + 1) == " "then
 			set k = k + 1
 		else
 			if k == 1 then
@@ -30094,35 +30062,35 @@ function TestEfficiency takes nothing returns nothing
 endfunction
 
 function WCO takes string s returns nothing
-	local boolean WDO = SubString(s, 0, 4)== "-aa "
-	local boolean WFO = SubString(s, 0, 4)== "-au "
-	local boolean WGO = SubString(s, 0, 4)== "-sa "
-	local boolean WHO = SubString(s, 0, 4)== "-at "
-	local boolean WJO = SubString(s, 0, 4)== "-ra "
+	local boolean WDO = SubString(s, 0, 4) == "-aa "
+	local boolean WFO = SubString(s, 0, 4) == "-au "
+	local boolean WGO = SubString(s, 0, 4) == "-sa "
+	local boolean WHO = SubString(s, 0, 4) == "-at "
+	local boolean WJO = SubString(s, 0, 4) == "-ra "
 	local boolean WKO = s == "-r"
-	local boolean WLO = SubString(s, 0, 4)== "-ga "
-	local boolean WMO = SubString(s, 0, 4)== "-ha "
-	local boolean WPO = SubString(s, 0, 4)== "-ai "
-	local boolean WQO = SubString(s, 0, 3)== "-o "
-	local boolean WSO = SubString(s, 0, 4)== "-et "
-	local boolean WTO = SubString(s, 0, 4)== "-ep "
-	local boolean WUO = SubString(s, 0, 7)== "-setms "
-	local boolean WWO = SubString(s, 0, 6)== "-anim "
-	local boolean WYO = SubString(s, 0, 4)== "-hp "
+	local boolean WLO = SubString(s, 0, 4) == "-ga "
+	local boolean WMO = SubString(s, 0, 4) == "-ha "
+	local boolean WPO = SubString(s, 0, 4) == "-ai "
+	local boolean WQO = SubString(s, 0, 3) == "-o "
+	local boolean WSO = SubString(s, 0, 4) == "-et "
+	local boolean WTO = SubString(s, 0, 4) == "-ep "
+	local boolean WUO = SubString(s, 0, 7) == "-setms "
+	local boolean WWO = SubString(s, 0, 6) == "-anim "
+	local boolean WYO = SubString(s, 0, 4) == "-hp "
 	local boolean WZO = s == "-hp"
-	local boolean W_O = SubString(s, 0, 4)== "-mp "
-	local boolean W0O = SubString(s, 0, 4)== "-ar "
-	local boolean W1O = SubString(s, 0, 4)== "-ip "
+	local boolean W_O = SubString(s, 0, 4) == "-mp "
+	local boolean W0O = SubString(s, 0, 4) == "-ar "
+	local boolean W1O = SubString(s, 0, 4) == "-ip "
 	local boolean W2O = s == "-nerf"
-	local boolean W3O = SubString(s, 0, 4)== "-or "
-	local boolean W4O = SubString(s, 0, 7)== "-mytry "
+	local boolean W3O = SubString(s, 0, 4) == "-or "
+	local boolean W4O = SubString(s, 0, 7) == "-mytry "
 	local boolean W5O = s == "-cc"
 	local boolean W6O = s == "-b"
 	local boolean W7O = s == "-control" or s == "-c"
 	local boolean W8O = s == "-xy"
 	local boolean gi = s == "-gi"
-	local boolean W9O = SubString(s, 0, 5)== "-sxy "
-	local boolean YVO = SubString(s, 0, 6)== "-tint "
+	local boolean W9O = SubString(s, 0, 5) == "-sxy "
+	local boolean YVO = SubString(s, 0, 6) == "-tint "
 	local boolean YEO = s == "-ms "
 	local boolean YXO = s == "-path"
 	local boolean YOO = s == "-k"
@@ -30130,8 +30098,8 @@ function WCO takes string s returns nothing
 	local boolean YIO = s == "-path on"
 	local boolean YAO = s == "-path off"
 	local boolean YNO = s == "-path"
-	local boolean YBO = SubString(s, 0, 7)== "-souls "
-	local boolean YCO = SubString(s, 0, 7)== "-scale "
+	local boolean YBO = SubString(s, 0, 7) == "-souls "
+	local boolean YCO = SubString(s, 0, 7) == "-scale "
 	local boolean YDO = s == "-fog"
 	local boolean getId = s == "-all"
 	local boolean testEfficiency = s == "-效率"
@@ -30188,10 +30156,10 @@ function YGO takes unit u, integer s1, integer s2 returns nothing
 	local item YHO = null
 	local item YJO = null
 	call DisableTrigger(CUV)
-	if UnitItemInSlot(u, s2 -1)!= null and GUX(UUV(UnitItemInSlot(u, s2 -1))) == false and GetItemIndex(UnitItemInSlot(u, s2 -1))== XCV then
+	if UnitItemInSlot(u, s2 -1)!= null and GUX(UUV(UnitItemInSlot(u, s2 -1))) == false and GetItemIndex(UnitItemInSlot(u, s2 -1)) == XCV then
 		set YJO = UnitRemoveItemFromSlot(u, s2 -1)
 	endif
-	if UnitItemInSlot(u, s1 -1)!= null and GUX(UUV(UnitItemInSlot(u, s1 -1))) == false and GetItemIndex(UnitItemInSlot(u, s1 -1))== XCV then
+	if UnitItemInSlot(u, s1 -1)!= null and GUX(UUV(UnitItemInSlot(u, s1 -1))) == false and GetItemIndex(UnitItemInSlot(u, s1 -1)) == XCV then
 		set YHO = UnitRemoveItemFromSlot(u, s1 -1)
 	endif
 	call EnableTrigger(CUV)
@@ -30209,13 +30177,13 @@ function YKO takes nothing returns nothing
 	local integer s1
 	local integer s2
 	local integer IMX = 0
-	if SubString(s, 0, 1)== " " then
+	if SubString(s, 0, 1) == " " then
 		set IMX = 1
 	endif
 	set s1 = S2I(SubString(s, IMX, IMX + 1))
 	set s = SubString(s, IMX + 1, 5)
 	set IMX = 0
-	if SubString(s, 0, 1)== " " then
+	if SubString(s, 0, 1) == " " then
 		set IMX = 1
 	endif
 	set s2 = S2I(SubString(s, IMX, IMX + 1))
@@ -30230,7 +30198,7 @@ function GetSkillAghanimUpgradeIndex takes integer id returns integer
 	local integer i = 1
 	loop
 	exitwhen i > AghanimUpgradeMaxIndex
-		if id == AghanimUpgradeUpgradeId[i]or id == AghanimUpgradeNormalId[i]then
+		if id == AghanimUpgradeUpgradeId[i]or id == AghanimUpgradeNormalId[i] then
 			return i
 		endif
 		set i = i + 1
@@ -30540,17 +30508,17 @@ endfunction
 
 function YLO takes string s returns nothing
 	local string s5 = SubString(s, 0, 5)
-	local boolean YMO = SubString(s, 0, 5)== "-swap"
-	local boolean YPO = SubString(s, 0, 5)== "-roll"
-	local boolean YQO = SubString(s, 0, 8)== "-kickafk"
-	local boolean YSO = SubString(s, 0, 6)== "-music"
-	local boolean YTO = SubString(s, 0, 6)== "-water"
-	local boolean YUO = SubString(s, 0, 9)== "-rickroll"
-	local boolean YWO = SubString(s, 0, 7)== "-switch"
-	local boolean YYO = SubString(s, 0, 18)== "-removeiteminslot "
-	local boolean YZO = SubString(s, 0, 2)== "-r" and(SubString(s, 2, 3)== " " or S2I(SubString(s, 2, 3))> 0)
-	local boolean Y_O = SubString(s, 0, 4)== "-cam"
-	local boolean Y0O = SubString(s, 0, 9)== "-itemswap"
+	local boolean YMO = SubString(s, 0, 5) == "-swap"
+	local boolean YPO = SubString(s, 0, 5) == "-roll"
+	local boolean YQO = SubString(s, 0, 8) == "-kickafk"
+	local boolean YSO = SubString(s, 0, 6) == "-music"
+	local boolean YTO = SubString(s, 0, 6) == "-water"
+	local boolean YUO = SubString(s, 0, 9) == "-rickroll"
+	local boolean YWO = SubString(s, 0, 7) == "-switch"
+	local boolean YYO = SubString(s, 0, 18) == "-removeiteminslot "
+	local boolean YZO = SubString(s, 0, 2) == "-r" and(SubString(s, 2, 3) == " " or S2I(SubString(s, 2, 3))> 0)
+	local boolean Y_O = SubString(s, 0, 4) == "-cam"
+	local boolean Y0O = SubString(s, 0, 9) == "-itemswap"
 	if s5 == "-ikey" then
 		call ExecuteFunc("IKY")
 	elseif s5 == "-hkey" then
@@ -30580,7 +30548,7 @@ function Y9O takes nothing returns nothing
 			return
 		endif
 	endif
-	if(SubString(s, 0, 1)== "-") then
+	if(SubString(s, 0, 1) == "-") then
 		call YLO(s)
 	endif
 endfunction
@@ -30898,7 +30866,7 @@ function ZJO takes nothing returns nothing
 		set ZMO = GetRectCenter(gg_rct_ScourgeBuyArea)
 	endif
 	if VT then
-		if(GetRandomInt(1, 2)== 1) then
+		if(GetRandomInt(1, 2) == 1) then
 			set ZKO = 1
 			set ZLO = VWV
 		else
@@ -30914,7 +30882,7 @@ function ZJO takes nothing returns nothing
 		call RemoveUnit(ZPO)
 	endif
 	call AdjustPlayerStateBJ(-1 * GT, p, PLAYER_STATE_RESOURCE_GOLD)
-	if(RT or GKV) and FT[GetPlayerId(GetTriggerPlayer())]then
+	if(RT or GKV) and FT[GetPlayerId(GetTriggerPlayer())] then
 		call AdjustPlayerStateBJ(-$96, p, PLAYER_STATE_RESOURCE_GOLD)
 	endif
 	set KS[WWV]= true
@@ -31057,16 +31025,16 @@ function ZQO takes nothing returns nothing
 	if Mode__SameHero then
 		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "Same Hero" + "|r:		   " + GetObjectName('n07U')+ " " +(PlayersName[GetPlayerId((HostPlayer))])+ "|r" + " " + GetObjectName('n07W'))
 	endif
-	if GPV then
+	if Mode__OnlyMid then
 		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "Only Mid" + "|r:		   " + GetObjectName('n080'))
 	endif
-	if GQV then
+	if Mode__NotBot then
 		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "No Bot" + "|r:		   " + GetObjectName('n07V'))
 	endif
-	if GSV then
+	if Mode__NoMid then
 		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "No Mid" + "|r:		   " + GetObjectName('n07S'))
 	endif
-	if GTV then
+	if Mode__NotTop then
 		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "No Top" + "|r:		   " + GetObjectName('n07R'))
 	endif
 	if J3 then
@@ -31261,12 +31229,12 @@ function ZUO takes unit u1, unit u2, player p1, player p2 returns nothing
 		return
 	endif
 	set d = CreateUnit(p1,'e01F', 0, 0, 0)
-	if FT[GetPlayerId(p1)]then
+	if FT[GetPlayerId(p1)] then
 		if GetPlayerState(p1, PLAYER_STATE_RESOURCE_GOLD)< 100 then
 			return
 		endif
 	endif
-	if FT[GetPlayerId(p2)]then
+	if FT[GetPlayerId(p2)] then
 		if GetPlayerState(p2, PLAYER_STATE_RESOURCE_GOLD)< 100 then
 			return
 		endif
@@ -31501,7 +31469,7 @@ endfunction
 function Z6O takes nothing returns nothing
 	local integer i = S2I(SubString(GetEventPlayerChatString(), 6, StringLength(GetEventPlayerChatString())))
 	local player p = GetTriggerPlayer()
-	if GetEventPlayerChatString()== "-swapall"then
+	if GetEventPlayerChatString() == "-swapall"then
 		set i = 1
 		set W2 = Player__Hero[GetPlayerId(p)]
 		loop
@@ -31567,7 +31535,7 @@ function Z7O takes nothing returns nothing
 	exitwhen i > 5
 		set p = Sentinels[i]
 		set u = Player__Hero[GetPlayerId(p)]
-		if IsPlayerAlly(GetTriggerPlayer(), p) and GetTriggerPlayer()!= p and u != null and GetOwningPlayer(u)== p then
+		if IsPlayerAlly(GetTriggerPlayer(), p) and GetTriggerPlayer()!= p and u != null and GetOwningPlayer(u) == p then
 			set s = " "
 			if Z2O(Player__Hero[GetPlayerId(GetTriggerPlayer())], u, GetTriggerPlayer(), p) then
 				set s = " |c00ff0303(" + GetObjectName('n085')+ ")|r"
@@ -31576,7 +31544,7 @@ function Z7O takes nothing returns nothing
 		endif
 		set p = Scourges[i]
 		set u = Player__Hero[GetPlayerId(p)]
-		if IsPlayerAlly(GetTriggerPlayer(), p) and GetTriggerPlayer()!= p and u != null and GetOwningPlayer(u)== p then
+		if IsPlayerAlly(GetTriggerPlayer(), p) and GetTriggerPlayer()!= p and u != null and GetOwningPlayer(u) == p then
 			set s = " "
 			if Z2O(Player__Hero[GetPlayerId(GetTriggerPlayer())], u, GetTriggerPlayer(), p) then
 				set s = " |c00ff0303(" + GetObjectName('n085')+ ")|r"
@@ -31597,11 +31565,11 @@ function Z8O takes player VBX returns boolean
 	loop
 	exitwhen O3X > 5
 		if IsSentinelsPlayer(VBX) then
-			if Player__Hero[GetPlayerId(Sentinels[O3X])]!= null and Sentinels[O3X]!= VBX and GetHeroLevel(Player__Hero[GetPlayerId(Sentinels[O3X])])== 1 then
+			if Player__Hero[GetPlayerId(Sentinels[O3X])]!= null and Sentinels[O3X]!= VBX and GetHeroLevel(Player__Hero[GetPlayerId(Sentinels[O3X])]) == 1 then
 				set Z9O = Z9O + 1
 			endif
 		else
-			if Player__Hero[GetPlayerId(Scourges[O3X])]!= null and Scourges[O3X]!= VBX and GetHeroLevel(Player__Hero[GetPlayerId(Scourges[O3X])])== 1 then
+			if Player__Hero[GetPlayerId(Scourges[O3X])]!= null and Scourges[O3X]!= VBX and GetHeroLevel(Player__Hero[GetPlayerId(Scourges[O3X])]) == 1 then
 				set Z9O = Z9O + 1
 			endif
 		endif
@@ -31618,7 +31586,7 @@ function VVR takes nothing returns boolean
 		call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10, "-swaphero " + GetObjectName('n088'))
 		return false
 	endif
-	if FT[GetPlayerId(GetTriggerPlayer())]then
+	if FT[GetPlayerId(GetTriggerPlayer())] then
 		if GetPlayerState(GetTriggerPlayer(), PLAYER_STATE_RESOURCE_GOLD)< 100  then
 			call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10, "在random之后需要至少100大洋才可以swap.")
 			return false
@@ -31644,9 +31612,9 @@ function VVR takes nothing returns boolean
 endfunction
 function Y1O takes nothing returns nothing
 	if VVR() then
-		if GetEventPlayerChatString()== "-swap"or GetEventPlayerChatString()== "-swaphero"then
+		if GetEventPlayerChatString() == "-swap"or GetEventPlayerChatString() == "-swaphero"then
 			call Z7O()
-		elseif GetEventPlayerChatString()== "-swapcancel"then
+		elseif GetEventPlayerChatString() == "-swapcancel"then
 			call FlushChildHashtable(HY,(800 + GetPlayerId(GetTriggerPlayer())))
 		else
 			call Z6O()
@@ -31676,8 +31644,8 @@ function VIR takes nothing returns boolean
 	local integer EVX = GetTriggerEvalCount(t)
 	local real x
 	local real y
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or EVX > 60 then
-		if((LoadInteger(HY,(GetHandleId((trigUnit))),(4259)))== 1) == false then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or EVX > 60 then
+		if((LoadInteger(HY,(GetHandleId((trigUnit))),(4259))) == 1) == false then
 			if IsSentinelsPlayer(GetOwningPlayer(trigUnit)) then
 				set x = GetRectCenterX(gg_rct_SentinelRevivalPoint)
 				set y = GetRectCenterY(gg_rct_SentinelRevivalPoint)
@@ -31857,7 +31825,7 @@ function VMR takes nothing returns nothing
 endfunction
 function VPR takes nothing returns nothing
 	local integer x = GetPlayerId(GetTriggerPlayer())
-	if(GetEventPlayerChatString()== "-cson") then
+	if(GetEventPlayerChatString() == "-cson") then
 		set U3[x]= true
 		set F6V[x]= true
 	else
@@ -31905,14 +31873,14 @@ function VTR takes nothing returns nothing
 		if IsSentinelsPlayer(GetTriggerPlayer()) then
 			if IsSentinelsPlayer(Player(i)) and IsPlaying(Player(i)) then
 				set VUR = VUR + 1
-				if F2V[i]then
+				if F2V[i] then
 					set EVX = EVX + 1
 				endif
 			endif
 		else
 			if IsScourgesPlayer(Player(i)) and IsPlaying(Player(i)) then
 				set VUR = VUR + 1
-				if F2V[i]then
+				if F2V[i] then
 					set EVX = EVX + 1
 				endif
 			endif
@@ -31989,7 +31957,7 @@ function VWR takes nothing returns nothing
 					set s = s + "即将复活: " + I2S(WIE)+ "|n"
 					set V_R = 1
 				endif
-				if ModuloInteger(c, 2)== 1 then
+				if ModuloInteger(c, 2) == 1 then
 					call Y9X(p)
 				endif
 				if HaveSavedHandle(K, GetHandleId(p),'COUR') and(LoadBoolean(K, GetHandleId(p),'UIds') or UnitIsDead(LoadUnitHandle(K, GetHandleId(p),'COUR'))) then
@@ -32043,7 +32011,7 @@ endfunction
 function V2R takes nothing returns nothing
 	local player p = GetTriggerPlayer()
 	local integer x = GetPlayerId(p)
-	if GetEventPlayerChatString()== "-don"or GetEventPlayerChatString()== "-deathon"then
+	if GetEventPlayerChatString() == "-don"or GetEventPlayerChatString() == "-deathon"then
 		call Set_CheckBox_Nothing(p, 18, true)
 		set F4V[x]= true
 		call GetSetUpText("复活计时器窗口", true)
@@ -32056,7 +32024,7 @@ function V2R takes nothing returns nothing
 	endif
 endfunction
 function V3R takes nothing returns nothing
-	if(GetEventPlayerChatString()== "-showdeny") then
+	if(GetEventPlayerChatString() == "-showdeny") then
 		set F6V[GetPlayerId(GetTriggerPlayer())]= true
 	else
 		set F6V[GetPlayerId(GetTriggerPlayer())]= false
@@ -32088,7 +32056,7 @@ function V7R takes nothing returns boolean
 	elseif x == 4 then
 		set F8V = V5
 	endif
-	if F9V[GetPlayerId(LocalPlayer)]then
+	if F9V[GetPlayerId(LocalPlayer)] then
 		call EnableWeatherEffect(E5, false)
 		call EnableWeatherEffect(X5, false)
 		call EnableWeatherEffect(Z4, false)
@@ -32160,7 +32128,7 @@ function Y2O takes nothing returns nothing
 	local integer a = S2I(SubString(GetEventPlayerChatString(), 6, StringLength(GetEventPlayerChatString())))
 	local integer index = GetPlayerId(GetTriggerPlayer())
 	local integer TTV
-	if GetEventPlayerChatString()== "-rollon"or GetEventPlayerChatString()== "-rolloff"then
+	if GetEventPlayerChatString() == "-rollon"or GetEventPlayerChatString() == "-rolloff"then
 		return
 	endif
 	set Q3[index]= Q3[index]+ 1
@@ -32173,7 +32141,7 @@ function Y2O takes nothing returns nothing
 	endif
 	if a > 0 and a <$7D1 then
 		set TTV = GetRandomInt(1, a)
-		if S3[GetPlayerId(LocalPlayer)]then
+		if S3[GetPlayerId(LocalPlayer)] then
 			call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 5, PlayersColoerText[index]+ PlayersName[index]+ "|r " + GetObjectName('n05I')+ " " + I2S(TTV)+ " " + GetObjectName('n05M')+ " " + I2S(a))
 		endif
 	else
@@ -32182,7 +32150,7 @@ function Y2O takes nothing returns nothing
 endfunction
 function EER takes nothing returns nothing
 	local integer a
-	if GetRandomInt(1, 2)== 1 then
+	if GetRandomInt(1, 2) == 1 then
 		set a = GetRandomInt(VYV, VZV)
 	else
 		set a = GetRandomInt(1, VWV)
@@ -32215,7 +32183,7 @@ function EIR takes nothing returns nothing
 	local player p = GetTriggerPlayer()
 	local integer id = GetPlayerId(p)
 	call Click_CheckBox_Nothing(p, 11)
-	if T3[id]then
+	if T3[id] then
 		set T3[id]= false
 		call DisplayTimedTextToPlayer(p, 0, 0, 10, GetObjectName('n08T'))
 	else
@@ -32282,7 +32250,7 @@ function EBR takes nothing returns nothing
 endfunction
 function EDR takes nothing returns nothing
 	call B4X(GetTriggerPlayer())
-	if GetTriggerEventId()== EVENT_PLAYER_END_CINEMATIC then
+	if GetTriggerEventId() == EVENT_PLAYER_END_CINEMATIC then
 		return
 	endif
 	set BR[GetPlayerId(GetTriggerPlayer())]= BR[GetPlayerId(GetTriggerPlayer())]+ 1
@@ -32435,7 +32403,7 @@ function ELR takes nothing returns boolean
 	local player p = GetOwningPlayer(u)
 	local integer id = GetIssuedOrderId()
 	local player p2
-	if p != Sentinels[0]and p != Scourges[0]then
+	if p != Sentinels[0]and p != Scourges[0] then
 		set SQ[GetPlayerId(p)]= SQ[GetPlayerId(p)]+ 1
 		if id !=$D000F then
 			set TQ[GetPlayerId(p)]= GetGameTime()
@@ -32457,7 +32425,7 @@ function ELR takes nothing returns boolean
 	return false
 endfunction
 function EMR takes nothing returns boolean
-	return IsMessengerUnit(GetFilterUnit()) and GetOwningPlayer(GetFilterUnit())== GetTriggerPlayer()
+	return IsMessengerUnit(GetFilterUnit()) and GetOwningPlayer(GetFilterUnit()) == GetTriggerPlayer()
 endfunction
 function EPR takes nothing returns nothing
 	local group g = AllocationGroup(108)
@@ -32588,7 +32556,7 @@ function EUR takes string s returns nothing
 	local integer E_R = 1
 	loop
 	exitwhen i > H0X
-		if SubString(s, i, i + 1)== " "then
+		if SubString(s, i, i + 1) == " "then
 			set E_R = E_R + 1
 		else
 			if E_R == 1 then
@@ -32804,9 +32772,9 @@ function XOR takes player p returns nothing
 	endif
 endfunction
 function XRR takes nothing returns nothing
-	if GetOwningPlayer(GetEnumUnit())== FM then
+	if GetOwningPlayer(GetEnumUnit()) == FM then
 		call SetUnitOwner(GetEnumUnit(), GM, true)
-	elseif GetOwningPlayer(GetEnumUnit())== GM then
+	elseif GetOwningPlayer(GetEnumUnit()) == GM then
 		call SetUnitOwner(GetEnumUnit(), FM, true)
 	endif
 endfunction
@@ -32843,7 +32811,7 @@ function XIR takes unit u, player p returns nothing
 		loop
 		exitwhen i > 5
 			set C1X = UnitItemInSlot(u, i)
-			if GetUnitTypeId(u)!='H00J' and C1X != null and(GetItemPlayer(C1X)!= GetOwningPlayer(u) and UUV(C1X)!= ASV and UUV(C1X)!= ATV) and GetItemTypeId(C1X)!= XOV[AIV]then
+			if GetUnitTypeId(u)!='H00J' and C1X != null and(GetItemPlayer(C1X)!= GetOwningPlayer(u) and UUV(C1X)!= ASV and UUV(C1X)!= ATV) and GetItemTypeId(C1X)!= XOV[AIV] then
 				call UnitRemoveItem(u, C1X)
 			endif
 			set i = i + 1
@@ -32877,7 +32845,7 @@ function XNR takes item i, player p returns nothing
 	call SetItemPosition(i, x, y)
 endfunction
 function XBR takes nothing returns nothing
-	if GetItemPlayer(GetEnumItem())== WM then
+	if GetItemPlayer(GetEnumItem()) == WM then
 		call XNR(GetEnumItem(), WM)
 	endif
 endfunction
@@ -33008,7 +32976,7 @@ function XDR takes player p1, player p2 returns nothing
 	if XM != null then
 		call TriggerEvaluate(XM)
 	endif
-	if GetPlayerSlotState(p2)== PLAYER_SLOT_STATE_EMPTY then
+	if GetPlayerSlotState(p2) == PLAYER_SLOT_STATE_EMPTY then
 		set PlayersName[GetPlayerId(p2)]= GetPlayerName(p2)
 		set VPV[i]= StringHash(PlayersName[GetPlayerId(p2)])
 	endif
@@ -33056,14 +33024,14 @@ function XHR takes nothing returns nothing
 		set p = Sentinels[i]
 		if IsPlaying(p) then
 			set KM = KM + 1
-			if HM[GetPlayerId(p)]then
+			if HM[GetPlayerId(p)] then
 				set JM = JM + 1
 			endif
 		endif
 		set p = Scourges[i]
 		if IsPlaying(p) then
 			set KM = KM + 1
-			if HM[GetPlayerId(p)]then
+			if HM[GetPlayerId(p)] then
 				set JM = JM + 1
 			endif
 		endif
@@ -33097,7 +33065,7 @@ function XKR takes nothing returns nothing
 			set XLR = XLR + 1
 			set XPR = XPR + 1
 		endif
-		if IsPlaying(p) and HM[GetPlayerId(p)]then
+		if IsPlaying(p) and HM[GetPlayerId(p)] then
 			set XMR = XMR + 1
 			set XPR = XPR + 1
 		endif
@@ -33106,7 +33074,7 @@ function XKR takes nothing returns nothing
 			set XLR = XLR + 1
 			set XPR = XPR + 1
 		endif
-		if IsPlaying(p) and HM[GetPlayerId(p)]then
+		if IsPlaying(p) and HM[GetPlayerId(p)] then
 			set XMR = XMR + 1
 			set XPR = XPR + 1
 		endif
@@ -33134,7 +33102,7 @@ function XQR takes nothing returns nothing
 		else
 			set XSR = Sentinels[i]
 		endif
-		if GetPlayerSlotState(XSR)== PLAYER_SLOT_STATE_LEFT and GetPlayerController(XSR)== MAP_CONTROL_USER then
+		if GetPlayerSlotState(XSR) == PLAYER_SLOT_STATE_LEFT and GetPlayerController(XSR) == MAP_CONTROL_USER then
 			set s = "|c00ff0303[" + GetObjectName('n0FY')+ "]|r"
 		endif
 		if Player__Hero[GetPlayerId(XSR)]!= null then
@@ -33212,15 +33180,15 @@ function Y8O takes nothing returns nothing
 		call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10, GetObjectName('n0GX'))
 		return
 	endif
-	if GetEventPlayerChatString()== "-switch accept"or GetEventPlayerChatString()== "-ok"then
+	if GetEventPlayerChatString() == "-switch accept"or GetEventPlayerChatString() == "-ok"then
 		if BM then
 			call XKR()
 		endif
-	elseif GetEventPlayerChatString()== "-no"then
+	elseif GetEventPlayerChatString() == "-no"then
 		if BM then
 			call XJR()
 		endif
-	elseif GetEventPlayerChatString()== "-switch"then
+	elseif GetEventPlayerChatString() == "-switch"then
 		if BM == false then
 			call XQR()
 		endif
@@ -33338,7 +33306,7 @@ function X7R takes integer WTV returns boolean
 	return WTV =='A02Z'
 endfunction
 function X8R takes integer WTV returns boolean
-	return WTV != 0 and X4R(WTV) and IsAttackSpecialEffects(WTV) == false and X5R(WTV) == false and LNX(WTV) == false and IsNotItemAbility(WTV) and GetUnitAbilityLevel(GetTriggerUnit(),'A04R')== 0 and X6R(WTV) == false and X7R(WTV) == false
+	return WTV != 0 and X4R(WTV) and IsAttackSpecialEffects(WTV) == false and X5R(WTV) == false and LNX(WTV) == false and IsNotItemAbility(WTV) and GetUnitAbilityLevel(GetTriggerUnit(),'A04R') == 0 and X6R(WTV) == false and X7R(WTV) == false
 endfunction
 
 function X9R takes integer WWV, integer abilityId returns boolean
@@ -33466,7 +33434,7 @@ endfunction
 function fnDoubleClickSpellTips takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	// 没有启用双击施法 并且不是裁判才发
-	if not bDoubleClickSystemIsEnable and not IsObserverPlayer(LocalPlayer) then
+	if not IsEnableDoubleClickSystem and not IsObserverPlayer(LocalPlayer) then
 		call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, "|c006699CC提示：你可以输入 -dch来开启双击对己施法(仅适用于游戏内的快捷键)|r")
 	endif
 	call DestroyTimer(t)
@@ -33579,11 +33547,11 @@ function SQO takes nothing returns nothing
 	set OLR = CreateTimer()
 	call TimerStart(OLR, 70, false, function OCR)
 	if Mode__FastNeutrals then
-		call JEO()
+		call RefreshAllCreeps()
 		set t = CreateTrigger()
 		call TriggerRegisterTimerEvent(t, 30, false)
 		call TriggerRegisterTimerEvent(t, 90, false)
-		call TriggerAddCondition(t, Condition(function JEO))
+		call TriggerAddCondition(t, Condition(function RefreshAllCreeps))
 		set t = null
 	endif
 	call EnableTrigger(hChooseHeroTrigger)
@@ -33649,7 +33617,7 @@ function OSR takes integer OTR returns boolean
 	local integer k = 0
 	local boolean b = false
 	loop
-		if OTR == RB[k]then
+		if OTR == RB[k] then
 			set b = true
 		endif
 		set k = k + 1
@@ -33660,7 +33628,7 @@ endfunction
 function OUR takes integer XQX returns boolean
 	local integer i = 1
 	loop
-		if VUV[XQX]== V7V[i]then
+		if VUV[XQX]== V7V[i] then
 			return true
 		endif
 		set i = i + 1
@@ -33669,7 +33637,7 @@ function OUR takes integer XQX returns boolean
 	return false
 endfunction
 function OWR takes integer OYR, integer WWV, boolean OZR returns boolean
-	local boolean O_R = I2R(OYR / 4)== I2R(OYR)/ 4.
+	local boolean O_R = I2R(OYR / 4) == I2R(OYR)/ 4.
 	local boolean pr = true
 	local integer ns = 0
 	local integer O0R = 0
@@ -33697,16 +33665,16 @@ function OWR takes integer OYR, integer WWV, boolean OZR returns boolean
 	if OYR ==(116 -1)* 4 + 4 or OYR ==(115 -1)* 4 + 4 or OYR ==(114 -1)* 4 + 4 then
 		set O_R = false
 	endif
-	if FP[WWV]then
+	if FP[WWV] then
 		call URE(p, OZR, "你已经准备好了")
 		return false
 	endif
-	if IsDisabledSkill[OYR]then
+	if IsDisabledSkill[OYR] then
 		call URE(p, OZR, "该技能无法被选择 :(")
 		return false
 	endif
 	if Mode__DeathMatch or MainModeName =="ar" then
-		if IsNoDeathMatchSkill[OYR]then
+		if IsNoDeathMatchSkill[OYR] then
 			return false
 		endif
 	endif
@@ -33935,7 +33903,7 @@ function OWR takes integer OYR, integer WWV, boolean OZR returns boolean
 		set xx = 1
 		loop
 			if PlayerSkillIndex[ROR + xx]> 0 and HaveSavedString(Q, HeroCommonSkills[PlayerSkillIndex[ROR + xx]], HotKeyStringHash) then
-				if LoadStr(Q, HeroCommonSkills[OYR], HotKeyStringHash)== LoadStr(Q, HeroCommonSkills[PlayerSkillIndex[ROR + xx]], HotKeyStringHash) then
+				if LoadStr(Q, HeroCommonSkills[OYR], HotKeyStringHash) == LoadStr(Q, HeroCommonSkills[PlayerSkillIndex[ROR + xx]], HotKeyStringHash) then
 					call URE(p, OZR, "快捷键冲突 : " + GetObjectName(HeroCommonSkills[PlayerSkillIndex[ROR + xx]]))
 					if HaveSavedBoolean(K, GetHandleId(Player(WWV)),'NSHK') and VT then
 						return false
@@ -34025,7 +33993,7 @@ function Q7X takes nothing returns nothing
 		set i = i + 1
 	exitwhen FP[WWV]
 	endloop
-	if not FP[WWV]then
+	if not FP[WWV] then
 		call SaveInteger(HY,'hRUT', 2, PlayerSkillIndex[WWV * HL + 1])
 		call SaveInteger(HY,'hRUT', 3, PlayerSkillIndex[WWV * HL + 2])
 		call SaveInteger(HY,'hRUT', 4, PlayerSkillIndex[WWV * HL + 3])
@@ -34290,7 +34258,7 @@ function RDR takes nothing returns nothing
 			endloop
 		endif
 	endif
-	if FP[TME]then
+	if FP[TME] then
 		call SQO()
 	endif
 endfunction
@@ -35038,7 +35006,7 @@ function IJR takes nothing returns boolean
 	local integer V0R
 	local integer ILR
 	local integer IMR
-	if GetTriggerEventId()== EVENT_UNIT_SELL then
+	if GetTriggerEventId() == EVENT_UNIT_SELL then
 		call IDR()
 		set t = null
 		return false
@@ -35106,14 +35074,14 @@ function IJR takes nothing returns boolean
 				call SaveInteger(HY, h, 10, GetPlayerId(Sentinels[IMR]))
 				call SaveInteger(HY, h, 5, IMR)
 				call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, PlayersColoerText[GetPlayerId(Sentinels[IMR])]+ PlayersName[GetPlayerId(Sentinels[IMR])]+ "|r " + GetObjectName('n064'))
-				if LocalPlayer== Sentinels[IMR]then
+				if LocalPlayer== Sentinels[IMR] then
 					call IHR(h)
 				endif
 			else
 				call SaveInteger(HY, h, 10, GetPlayerId(Scourges[ILR]))
 				call SaveInteger(HY, h, 6, ILR)
 				call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, PlayersColoerText[GetPlayerId(Scourges[ILR])]+ PlayersName[GetPlayerId(Scourges[ILR])]+ "|r " + GetObjectName('n064'))
-				if LocalPlayer== Scourges[ILR]then
+				if LocalPlayer== Scourges[ILR] then
 					call IHR(h)
 				endif
 			endif
@@ -35122,13 +35090,13 @@ function IJR takes nothing returns boolean
 			if IKR == 1 then
 				call SaveInteger(HY, h, 10, GetPlayerId(Sentinels[IMR]))
 				call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, PlayersColoerText[GetPlayerId(Sentinels[IMR])]+ PlayersName[GetPlayerId(Sentinels[IMR])]+ "|r " + GetObjectName('n064'))
-				if LocalPlayer== Sentinels[IMR]then
+				if LocalPlayer== Sentinels[IMR] then
 					call IHR(h)
 				endif
 				if IMR + 1 < 6 then
 					call SaveInteger(HY, h,$B, GetPlayerId(Sentinels[IMR + 1]))
 					call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, PlayersColoerText[GetPlayerId(Sentinels[IMR + 1])]+ PlayersName[GetPlayerId(Sentinels[IMR + 1])]+ "|r " + GetObjectName('n064'))
-					if LocalPlayer== Sentinels[IMR + 1]then
+					if LocalPlayer== Sentinels[IMR + 1] then
 						call IHR(h)
 					endif
 				endif
@@ -35136,13 +35104,13 @@ function IJR takes nothing returns boolean
 			else
 				call SaveInteger(HY, h, 10, GetPlayerId(Scourges[ILR]))
 				call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, PlayersColoerText[GetPlayerId(Scourges[ILR])]+ PlayersName[GetPlayerId(Scourges[ILR])]+ "|r " + GetObjectName('n064'))
-				if LocalPlayer== Scourges[ILR]then
+				if LocalPlayer== Scourges[ILR] then
 					call IHR(h)
 				endif
 				if ILR + 1 < 6 then
 					call SaveInteger(HY, h,$B, GetPlayerId(Scourges[ILR + 1]))
 					call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, PlayersColoerText[GetPlayerId(Scourges[ILR + 1])]+ PlayersName[GetPlayerId(Scourges[ILR + 1])]+ "|r " + GetObjectName('n064'))
-					if LocalPlayer== Scourges[ILR + 1]then
+					if LocalPlayer== Scourges[ILR + 1] then
 						call IHR(h)
 					endif
 				endif
@@ -35292,7 +35260,7 @@ function InitMode__RandomDraft takes nothing returns nothing
 	if Mode__FastNeutrals then
 		set t = CreateTrigger()
 		call TriggerRegisterTimerEvent(t,$D2, false)
-		call TriggerAddCondition(t, Condition(function JEO))
+		call TriggerAddCondition(t, Condition(function RefreshAllCreeps))
 		set t = null
 	endif
 	set t = null
@@ -35317,11 +35285,11 @@ function ISR takes nothing returns nothing
 		set OLR = null
 		// 如果允许立即刷野 那就刷野罢
 		if Mode__FastNeutrals then
-			call JEO()
+			call RefreshAllCreeps()
 			set t = CreateTrigger()
 			call TriggerRegisterTimerEvent(t, 30, false)
 			call TriggerRegisterTimerEvent(t, 90, false)
-			call TriggerAddCondition(t, Condition(function JEO))
+			call TriggerAddCondition(t, Condition(function RefreshAllCreeps))
 			set t = null
 		endif
 	elseif mn == GetObjectName('n0ID') then
@@ -35352,7 +35320,7 @@ function ITR takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer h = GetHandleId(t)
 	local unit u
-	if GetGameTime()> LoadReal(HY, h, 0) or GetUnitAbilityLevel(LoadUnitHandle(HY, h, 0),'QH00')== 0 then
+	if GetGameTime()> LoadReal(HY, h, 0) or GetUnitAbilityLevel(LoadUnitHandle(HY, h, 0),'QH00') == 0 then
 		set u = LoadUnitHandle(HY, h, 0)
 		call UnitRemoveAbility(u,'C104')
 		call UnitRemoveAbility(u,'C105')
@@ -35395,7 +35363,7 @@ function IWR takes unit u, unit t returns nothing
 		call WJV(u,'C107'+ WUV,'D105', 4.5)
 		return
 	endif
-	if GetUnitAbilityLevel(t,'D107')== 1 then
+	if GetUnitAbilityLevel(t,'D107') == 1 then
 		set WUV = GetUnitAbilityLevel(t,'C104')+ 2 * GetUnitAbilityLevel(t,'C105')+ 3 * GetUnitAbilityLevel(t,'C106')+ 4 * GetUnitAbilityLevel(t,'C107')
 		if WUV > 4 then
 			set WUV = 4
@@ -35528,7 +35496,7 @@ function SummonedIllusionUnitEvnet takes nothing returns boolean
 	endif
 	set hSummoningUnit = LoadUnitHandle(HY, GetHandleId(GetSummoningUnit()),'0ILU')
 	if GetUnitAbilityLevel(hIllusionUnit,'B0EN')> 0 then
-		set iTriggerPlayerId = WC
+		set iTriggerPlayerId = TempInt
 	endif
 	if hSummoningUnit != null then
 		set iTriggerPlayerId = GetPlayerId(GetOwningPlayer(hSummoningUnit))
@@ -35849,9 +35817,9 @@ function AYR takes string AZR, integer A_R returns nothing
 	set A0R[10]= "sc"
 	set A0R[11]= "em"
 	set A0R[12]= "du"
-	set A0R[$D]= "sh"
-	set A0R[$E]= "om"
-	set A0R[$F]= "nm"
+	set A0R[13]= "sh"
+	set A0R[14]= "om"
+	set A0R[15]= "nm"
 	set A0R[16]= "nt"
 	set A0R[17]= "nb"
 	set A0R[18]= "ns"
@@ -35931,9 +35899,9 @@ function AYR takes string AZR, integer A_R returns nothing
 	set SC = A1R[10]
 	set EM = A1R[11]
 	set DU = A1R[12]
-	set SH = A1R[$D]
-	set OM = A1R[$E]
-	set NM = A1R[$F]
+	set SH = A1R[13]
+	set OM = A1R[14]
+	set NM = A1R[15]
 	set NT = A1R[16]
 	set NB = A1R[17]
 	set NS = A1R[18]
@@ -36384,10 +36352,10 @@ function AYR takes string AZR, integer A_R returns nothing
 	call INX("NDR", NP)
 	call INX("NFR", SC)
 	call INX("NGR", EM)
-	call INX("NHR", OM)
-	call INX("NJR", NB)
-	call INX("NKR", NT)
-	call INX("NLR", NM)
+	call INX("PickMode_OnlyMid", OM)
+	call INX("PickMode_NotBot" , NB)
+	call INX("PickMode_NotTop" , NT)
+	call INX("PickMode_NoMid"  , NM)
 	call INX("NMR", NS)
 	call INX("NPR", NR)
 	call INX("NQR", PM)
@@ -36411,7 +36379,7 @@ function NZR takes nothing returns nothing
 	call AYR(GetEventPlayerChatString(), 1)
 endfunction
 function N_R takes nothing returns boolean
-	set CV = MW and(GetPlayerName(VKV)== "|cFFFF0000RGC" or GetPlayerName(VLV)== "|cFFFF0000RGC")
+	set CV = MW and(GetPlayerName(VKV) == "|cFFFF0000RGC" or GetPlayerName(VLV) == "|cFFFF0000RGC")
 	if G2 == "rgc" then
 		set G2 = "sdzm3lsso"
 	elseif G2 == "rgc2" then
@@ -37102,7 +37070,7 @@ function BCR takes nothing returns nothing
 	local integer VXR = GetUnitTypeId(trigUnit)
 	local trigger t
 	local integer h
-	if(GetOwningPlayer(trigUnit)== HostPlayer and IsUnitType(trigUnit, UNIT_TYPE_HERO)) then
+	if(GetOwningPlayer(trigUnit) == HostPlayer and IsUnitType(trigUnit, UNIT_TYPE_HERO)) then
 		call DisableTrigger(GetTriggeringTrigger())
 		if FT[GetPlayerId(HostPlayer)]== false and VT == false and OT == false then
 			call SetPlayerState(HostPlayer, PLAYER_STATE_RESOURCE_GOLD,$FA+ GetPlayerState(HostPlayer, PLAYER_STATE_RESOURCE_GOLD))
@@ -37255,7 +37223,7 @@ function BGR takes nothing returns nothing
 	local trigger N8R = CreateTrigger()
 	local trigger t = CreateTrigger()
 	call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, 10., " ")
-	call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, 10., "额外指令: 可以在15秒内输入 -noneutrals 取消野怪. ")
+	call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, 10., "额外指令: 可以在15秒内输入 -noneutrals 取消野怪。")
 	call TriggerRegisterTimerEvent(N8R, 15, false)
 	call TriggerAddAction(N8R, function BFR)
 	call SaveTriggerHandle(HY,(GetHandleId(N8R)),$AE,(t))
@@ -37264,20 +37232,20 @@ function BGR takes nothing returns nothing
 	set N8R = null
 	set t = null
 endfunction
-function NHR takes nothing returns nothing
-	set GPV = true
+function PickMode_OnlyMid takes nothing returns nothing
+	set Mode__OnlyMid = true
 	if Mode__NoNeutrals == false then
 		call ExecuteFunc("BGR")
 	endif
 endfunction
-function NJR takes nothing returns nothing
-	set GQV = true
+function PickMode_NotBot takes nothing returns nothing
+	set Mode__NotBot = true
 endfunction
-function NLR takes nothing returns nothing
-	set GSV = true
+function PickMode_NoMid takes nothing returns nothing
+	set Mode__NoMid = true
 endfunction
-function NKR takes nothing returns nothing
-	set GTV = true
+function PickMode_NotTop takes nothing returns nothing
+	set Mode__NotTop = true
 endfunction
 function NMR takes nothing returns nothing
 	set F3 = true
@@ -37317,7 +37285,7 @@ function NTR takes nothing returns nothing
 endfunction
 function BKR takes nothing returns boolean
 	if LocalPlayer== VKV or LocalPlayer== VLV then
-		if GetTriggerEvalCount(GetTriggeringTrigger())== 1 then
+		if GetTriggerEvalCount(GetTriggeringTrigger()) == 1 then
 			call CameraSetupSetDestPosition(G_V, 0, 0, .0)
 		else
 			call CameraSetupSetDestPosition(G_V, GetCameraTargetPositionX(), GetCameraTargetPositionY(), .0)
@@ -37381,7 +37349,7 @@ endfunction
 function BQR takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer h = GetHandleId(t)
-	if UnitRemoveAbility(LoadUnitHandle(HY, h, 0), LoadInteger(HY, h, 0)) and GetUnitAbilityLevel(LoadUnitHandle(HY, h, 0), LoadInteger(HY, h, 0))== 0 then
+	if UnitRemoveAbility(LoadUnitHandle(HY, h, 0), LoadInteger(HY, h, 0)) and GetUnitAbilityLevel(LoadUnitHandle(HY, h, 0), LoadInteger(HY, h, 0)) == 0 then
 		call PauseTimer(t)
 		call DestroyTimer(t)
 		call FlushChildHashtable(HY, h)
@@ -37407,18 +37375,18 @@ function BTR takes nothing returns nothing
 	local real BUR = LoadReal(HY, h, 0)
 	local integer GFX = LoadInteger(HY, h, 0)
 	local unit d
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call RemoveSavedHandle(HY, GetHandleId(u),'STFU')
 		call BSR(u,'B463')
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
-	elseif GetTriggerEventId()== EVENT_GAME_TIMER_EXPIRED then
-		if BUR < GetGameTime() or GetUnitAbilityLevel(u, GFX)== 0 or LoadBoolean(HY, h,'SLDR') then
+	elseif GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
+		if BUR < GetGameTime() or GetUnitAbilityLevel(u, GFX) == 0 or LoadBoolean(HY, h,'SLDR') then
 			call RemoveSavedHandle(HY, GetHandleId(u),'STFU')
 			call UnitRemoveAbility(u,'B463')
 			call FlushChildHashtable(HY, h)
 			call CleanCurrentTrigger(t)
-		elseif GetUnitAbilityLevel(u, GFX)> 0 and GetUnitAbilityLevel(u,'B463')== 0 then
+		elseif GetUnitAbilityLevel(u, GFX)> 0 and GetUnitAbilityLevel(u,'B463') == 0 then
 			set d = CreateUnit(GetOwningPlayer(u),'e00E', GetUnitX(u), GetUnitY(u), 0)
 			call UnitAddAbility(d,'A463')
 			call IssueTargetOrderById(d,$D02BC, u)
@@ -37560,16 +37528,16 @@ function B1R takes unit d, string S6V, real x, real y returns nothing
 	endif
 endfunction
 function B4R takes unit u returns real
-	if GetUnitAbilityLevel(u,'A1CN')== 1 then	//撒旦主动
+	if GetUnitAbilityLevel(u,'A1CN') == 1 then	//撒旦主动
 		return 2.
 	endif
-	if GetUnitAbilityLevel(u,'A04T')== 1 then	//撒旦被动
+	if GetUnitAbilityLevel(u,'A04T') == 1 then	//撒旦被动
 		return .25
 	endif
-	if GetUnitAbilityLevel(u,'A0II')== 1 then	//疯脸
+	if GetUnitAbilityLevel(u,'A0II') == 1 then	//疯脸
 		return .2
 	endif
-	if GetUnitAbilityLevel(u,'A09P')== 1 then	//死亡面具和支配头盔
+	if GetUnitAbilityLevel(u,'A09P') == 1 then	//死亡面具和支配头盔
 		return .15
 	endif
 	return .0
@@ -37592,12 +37560,12 @@ function CVR takes nothing returns nothing
 	local integer hu = LoadInteger(HY, h, 0)
 	local real CER = LoadReal(HY, h, 0)
 	local real hp = GetWidgetLife(u)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or u == null or LoadReal(HY, h, 1)< GetGameTime() then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or u == null or LoadReal(HY, h, 1)< GetGameTime() then
 		call RemoveSavedHandle(HY, hu,'FRZH')
 		call FlushChildHashtable(HY, h)
 		call DestroyTrigger(t)
 	else
-		if hp < CER or LoadInteger(HY, hu,'AFRZ')== 1 then
+		if hp < CER or LoadInteger(HY, hu,'AFRZ') == 1 then
 			call SaveReal(HY, h, 0, hp)
 		else
 			call SetWidgetLife(u, CER)
@@ -37631,7 +37599,7 @@ function COR takes nothing returns nothing
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local unit u = LoadUnitHandle(HY, h, 0)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or GetTriggerEvalCount(t)== 60 or GetUnitAbilityLevel(u,'A3K6')== 0 then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or GetTriggerEvalCount(t) == 60 or GetUnitAbilityLevel(u,'A3K6') == 0 then
 		call SetHeroStr(u, GetHeroStr(u, false)+ LoadInteger(HY, h, 0), true)
 		call SetHeroAgi(u, GetHeroAgi(u, false)+ LoadInteger(HY, h, 1), true)
 		call SetHeroInt(u, GetHeroInt(u, false)+ LoadInteger(HY, h, 2), true)
@@ -37731,7 +37699,7 @@ function CGR takes nothing returns nothing
 	local real N3X = LoadReal(HY, h, 3)
 	local group g
 	local group AIR = LoadGroupHandle(HY, h, 2)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call SetUnitPathing(u, true)
 		call DestroyEffect(LoadEffectHandle(HY, h, 4))
 		call DestroyEffect(LoadEffectHandle(HY, h, 5))
@@ -37740,7 +37708,7 @@ function CGR takes nothing returns nothing
 		call CleanCurrentTrigger(t)
 	else
 		call SetUnitPosition(u, CoordinateX50(GetUnitX(u)+ N3X * Cos(I3X)), CoordinateY50(GetUnitY(u)+ N3X * Sin(I3X)))
-		if ModuloInteger(GetTriggerEvalCount(t), 10)== 0 then
+		if ModuloInteger(GetTriggerEvalCount(t), 10) == 0 then
 			call A3X(GetUnitX(u), GetUnitY(u), 150)
 		endif
 		call SetUnitFacing(u, I3X * bj_RADTODEG)
@@ -37761,7 +37729,7 @@ function CGR takes nothing returns nothing
 			set GI = AIR
 			call GroupEnumUnitsInRange(g, cx, cy, 275, Condition(function CDR))
 			set MC = level * 50.
-			set WC = level
+			set TempInt = level
 			set UN = u
 			call ForGroup(g, function CFR)
 			call GroupAddGroup(g, AIR)
@@ -38140,7 +38108,7 @@ function B_E takes nothing returns nothing
 	endif
 endfunction
 function C8R takes nothing returns boolean
-	if UnitIsDead(GetFilterUnit()) == false and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(QN)) and GetUnitAbilityLevel(GetFilterUnit(),'A04R')== 0 and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and IsMagicImmuneUnit(GetFilterUnit()) == false then
+	if UnitIsDead(GetFilterUnit()) == false and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(QN)) and GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0 and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and IsMagicImmuneUnit(GetFilterUnit()) == false then
 		if IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) then
 			set TN = TN + 1
 		endif
@@ -38233,7 +38201,7 @@ endfunction
 function DOR takes unit R8X, unit WLE returns nothing //致命创伤属于 英雄攻击 普通伤害 即物理伤害
 	local timer tt = null
 	local integer ht
-	if GetEventDamage()> 20 and DV == false and GetUnitAbilityLevel(R8X,'A36D')== 0 and TKV(R8X,'A460', 30) then
+	if GetEventDamage()> 20 and DV == false and GetUnitAbilityLevel(R8X,'A36D') == 0 and TKV(R8X,'A460', 30) then
 		set tt = CreateTimer()
 		set ht = GetHandleId(tt)
 		call TimerStart(tt, 1, true, function DER)
@@ -38245,7 +38213,7 @@ function DOR takes unit R8X, unit WLE returns nothing //致命创伤属于 英�
 	endif
 endfunction
 function DRR takes nothing returns boolean
-	if IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and UnitIsDead(GetFilterUnit()) == false and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(QN)) and GetUnitAbilityLevel(GetFilterUnit(),'Avul')== 0 and GetUnitAbilityLevel(GetFilterUnit(),'A04R')== 0 then
+	if IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and UnitIsDead(GetFilterUnit()) == false and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(QN)) and GetUnitAbilityLevel(GetFilterUnit(),'Avul') == 0 and GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0 then
 		if GetWidgetLife(GetFilterUnit())< LN then
 			set LN = GetWidgetLife(GetFilterUnit())
 			set MN = GetFilterUnit()
@@ -38388,7 +38356,7 @@ function DDR takes nothing returns boolean
 	local unit KBX
 	set DFR = .6 *(EVX -25)*(EVX -25)
 	if EVX < 51 and GetTriggerEventId()!= EVENT_WIDGET_DEATH then
-		if ModuloInteger(EVX, 5)== 0 then
+		if ModuloInteger(EVX, 5) == 0 then
 			call UnitDamageTargetEx(WUE, WWE, 1, 3 + 3 * ODX)
 		endif
 		if O0X(WWE) == false then
@@ -38618,7 +38586,7 @@ function Tidebringer_Ranged takes unit sourceUnit, unit targetUnit, real attackD
 	exitwhen firstUnit == null
 		call GroupRemoveUnit(AK, firstUnit)
 		// 敌对 非守卫 非建筑 存活
-		if IsUnitEnemy(firstUnit, Temp__Player) and GetUnitAbilityLevel(firstUnit,'A04R')== 0 and not IsUnitType(firstUnit, UNIT_TYPE_STRUCTURE) and UnitAlive(firstUnit) then
+		if IsUnitEnemy(firstUnit, Temp__Player) and GetUnitAbilityLevel(firstUnit,'A04R') == 0 and not IsUnitType(firstUnit, UNIT_TYPE_STRUCTURE) and UnitAlive(firstUnit) then
 			call UnitDamageTargetEx(Temp__ArrayUnit[0], firstUnit, 2, Temp__ArrayReal[0])
 			call DestroyEffect(AddSpecialEffectTarget("Abilities\\Weapons\\WaterElementalMissile\\WaterElementalMissile.mdl", firstUnit, "chest"))
 		endif
@@ -38660,11 +38628,11 @@ endfunction
 function LearnSkill__Tidebringer takes nothing returns nothing
 	local unit u = GetTriggerUnit()
 	local integer h = GetHandleId(u)
-	local boolean isDestroyEffect = GetUnitAbilityLevel(u,'A36D')== 1 // 破坏效果
+	local boolean isDestroyEffect = GetUnitAbilityLevel(u,'A36D') == 1 // 破坏效果
 	// 如果有水刀 而且不是禁用技能状态 + 15 攻击力
 	if LoadBoolean(ExtraHT, h, HTKEY_SKILL_TIDEBRINGER) and not isDestroyEffect then
 		call LodSystem_AddUnitExtraState(u, 15, "damage")
-	elseif GetUnitAbilityLevel(u,'A13T')== 1 then
+	elseif GetUnitAbilityLevel(u,'A13T') == 1 then
 		// 第一次学习
 		call Learn_HaveCoolDownSkill()
 		if not isDestroyEffect then
@@ -38718,7 +38686,7 @@ function DWR takes nothing returns boolean
 	local real x = LoadReal(HY, h, 6)
 	local real y = LoadReal(HY, h, 7)
 	local unit u = LoadUnitHandle(HY, h, 2)
-	if GetTriggerEventId()!= EVENT_UNIT_SPELL_EFFECT or(GetTriggerEventId()== EVENT_UNIT_SPELL_EFFECT and GetSpellAbilityId()=='A13D') then
+	if GetTriggerEventId()!= EVENT_UNIT_SPELL_EFFECT or(GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT and GetSpellAbilityId()=='A13D') then
 		if GetTriggerEventId()!= EVENT_WIDGET_DEATH and(IsMagicImmuneUnit(target) == false or IsUnitAlly(target, GetOwningPlayer(u))) then
 			if IsUnitHidden(target) then
 				call SetUnitX(target, x)
@@ -38813,7 +38781,7 @@ function DZR takes nothing returns boolean
 	local unit WWE = LoadUnitHandle(HY, h, 17)
 	local integer D_R = LoadInteger(HY, h,$88)
 	local integer N5O = LoadInteger(HY, h,$BC)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or GetTriggerEvalCount(t)> N5O then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or GetTriggerEvalCount(t)> N5O then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 	else
@@ -39017,7 +38985,7 @@ function YYV takes nothing returns nothing
 	local integer D8R ='h06U'
 	local boolean b = GetSpellAbilityId()=='Z31K'
 	local integer c = 150
-	if GetRandomInt(0, 5)== 0 then
+	if GetRandomInt(0, 5) == 0 then
 		set D8R ='h0DJ'
 	endif
 	if IsPlayerAlly(GetOwningPlayer(u), LocalPlayer) or IsObserverPlayer(LocalPlayer) then
@@ -39068,7 +39036,7 @@ endfunction
 function D9R takes nothing returns boolean
 	local unit t = GetFilterUnit()
 	if IsUnitEnemy(Temp__ArrayUnit[0], GetOwningPlayer(t)) and IsAliveNotStrucNotWard(t) then
-		if Temp__ArrayReal[4]== 1 and GetUnitAbilityLevel(t,'A3E9')== 1 and IsMagicImmuneUnit(Temp__ArrayUnit[1]) == false then
+		if Temp__ArrayReal[4]== 1 and GetUnitAbilityLevel(t,'A3E9') == 1 and IsMagicImmuneUnit(Temp__ArrayUnit[1]) == false then
 			call SaveInteger(VV,'A3E9','0lvl', R2I(Temp__ArrayReal[2]))
 			call SaveUnitHandle(VV,'A3E9','targ', Temp__ArrayUnit[1])
 			call SaveUnitHandle(VV,'A3E9','cstr', t)
@@ -39117,7 +39085,7 @@ function FOR takes nothing returns boolean
 	local integer level = LoadInteger(HY, h, 0)
 	call SetUnitX(NIX, x)
 	call SetUnitY(NIX, y)
-	if GetDistanceBetween(x, y, GetUnitX(WWE), GetUnitY(WWE))<= 18 or(GetUnitX(WWE)== 0 and GetUnitY(WWE)== 0) then
+	if GetDistanceBetween(x, y, GetUnitX(WWE), GetUnitY(WWE))<= 18 or(GetUnitX(WWE) == 0 and GetUnitY(WWE) == 0) then
 		call KillUnit(NIX)
 		call FER(WUE, SAX, x, y, false, level, LoadBoolean(HY, h, 0))
 		call FlushChildHashtable(HY, h)
@@ -39182,7 +39150,7 @@ function FCR takes nothing returns boolean
 	local integer i
 	local string s
 	local integer level = LoadInteger(HY, h, 0)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		if Rubick_AbilityFilter(WUE , 'A1NI') then
 			call S9E(GetOwningPlayer(WUE),'A1NI', true)
 		endif
@@ -39191,7 +39159,7 @@ function FCR takes nothing returns boolean
 		call DestroyEffect(LoadEffectHandle(HY, h, 32))
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
-	elseif GetTriggerEventId()== EVENT_UNIT_SPELL_EFFECT then
+	elseif GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT then
 		if GetSpellAbilityId()=='A1NH' then
 			call FRR(WUE, GetSpellTargetUnit(), JJO, level, false)
 			if Rubick_AbilityFilter(WUE , 'A1NI') then
@@ -39301,14 +39269,14 @@ endfunction
 function FJR takes unit u, unit t returns nothing
 	local player p = GetOwningPlayer(u)
 	local integer WUV
-	if GetUnitAbilityLevel(u,'Aloc')== 1 then
+	if GetUnitAbilityLevel(u,'Aloc') == 1 then
 		set u = Player__Hero[GetPlayerId(GetOwningPlayer(u))]
 	endif
 	set WUV = GetUnitAbilityLevel(u,'P155')
 	if GetUnitAbilityLevel(u,'A36D')!= 0 then
 		set WUV = 0
 	endif
-	if WUV > 0 and IsUnitEnemy(t, p) and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and IsUnitIllusion(t) == false and(GetUnitAbilityLevel(t,'A04R')== 0) then
+	if WUV > 0 and IsUnitEnemy(t, p) and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and IsUnitIllusion(t) == false and(GetUnitAbilityLevel(t,'A04R') == 0) then
 		call FGR(u, t, p, WUV)
 	endif
 endfunction
@@ -39316,7 +39284,7 @@ function FKR takes nothing returns nothing
 	local integer ETX
 	local integer WFV
 	local unit t = GetFilterUnit()
-	if UnitAlive(t) and IsUnitEnemy(t, Temp__Player) and GetUnitAbilityLevel(t,'A04R')== 0 and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and GetUnitTypeId(t)!='n0F5' then
+	if UnitAlive(t) and IsUnitEnemy(t, Temp__Player) and GetUnitAbilityLevel(t,'A04R') == 0 and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and GetUnitTypeId(t)!='n0F5' then
 		call GroupAddUnit(BK, t)
 		call UnitDamageTargetEx(Temp__ArrayUnit[0], t, 2, XK[0])
 		if IsUnitInGroup(t, IK) == false then
@@ -39557,12 +39525,12 @@ function KRE takes nothing returns nothing
 	set KBX = null
 endfunction
 function FYR takes nothing returns nothing
-	if GetUnitAbilityLevel(WX,'P133')> 0 and GetUnitAbilityLevel(WX,'A36D')== 0 and GetUnitState(YX, UNIT_STATE_MANA)> 0 then
+	if GetUnitAbilityLevel(WX,'P133')> 0 and GetUnitAbilityLevel(WX,'A36D') == 0 and GetUnitState(YX, UNIT_STATE_MANA)> 0 then
 		call B2O(WX, YX, 16 + 12 * GetUnitAbilityLevel(WX,'P133'))
 	endif
 endfunction
 function FZR takes nothing returns nothing
-	if GetUnitAbilityLevel(WX,'P133')> 0 and IsUnitType(WX, UNIT_TYPE_MELEE_ATTACKER) and GetUnitAbilityLevel(WX,'A36D')== 0 and GetUnitState(YX, UNIT_STATE_MANA)> 0 then
+	if GetUnitAbilityLevel(WX,'P133')> 0 and IsUnitType(WX, UNIT_TYPE_MELEE_ATTACKER) and GetUnitAbilityLevel(WX,'A36D') == 0 and GetUnitState(YX, UNIT_STATE_MANA)> 0 then
 		call B2O(WX, YX, 16 + 12 * GetUnitAbilityLevel(WX,'P133'))
 	endif
 endfunction
@@ -39792,7 +39760,7 @@ function F8R takes nothing returns nothing
 	call UnitAddPermanentAbility(KBX,'A0NY')
 	call SetUnitAbilityLevel(KBX,'A0NY', ODX)
 	call IssueImmediateOrderById(KBX,$D0080)
-	if GetUnitAbilityLevel(trigUnit,'A0O2')== 0 then
+	if GetUnitAbilityLevel(trigUnit,'A0O2') == 0 then
 		set x = GetUnitX(trigUnit)+ 650 * Cos(a * bj_DEGTORAD)
 		set y = GetUnitY(trigUnit)+ 650 * Sin(a * bj_DEGTORAD)
 		call GroupEnumUnitsInRange(g2, x, y, 275, Condition(function DDX))
@@ -39853,12 +39821,12 @@ function GVR takes nothing returns boolean
 	local real GIR = GetUnitY(GER)
 	call SaveReal(HY, h, 6,((GRR)* 1.))
 	call SaveReal(HY, h, 7,((GIR)* 1.))
-	if GetTriggerEventId()== EVENT_UNIT_DEATH then
+	if GetTriggerEventId() == EVENT_UNIT_DEATH then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 	else
 		if GXR == GRR and GOR == GIR then
-			if GetUnitAbilityLevel(GER,'A1WG')== 0 then
+			if GetUnitAbilityLevel(GER,'A1WG') == 0 then
 				call UnitAddPermanentAbility(GER,'A1WG')
 			endif
 		else
@@ -40031,7 +39999,7 @@ function GDR takes nothing returns boolean
 	local unit KBX = LoadUnitHandle(HY, h, 19)
 	call SetUnitX(KBX, GetUnitX(WWE))
 	call SetUnitY(KBX, GetUnitY(WWE))
-	if(GetTriggerEvalCount(t)>$A and GetUnitAbilityLevel(WWE,'B00L')== 0) or LoadReal(HY, GetHandleId(WWE), 314)== 0 then
+	if(GetTriggerEvalCount(t)>$A and GetUnitAbilityLevel(WWE,'B00L') == 0) or LoadReal(HY, GetHandleId(WWE), 314) == 0 then
 		call UnitRemoveAbility(WWE,'B00L')
 		call RemoveSavedHandle(HY, GetHandleId(WWE),'B00L')
 		call SaveReal(HY, GetHandleId(WWE), 314, 0)
@@ -40100,8 +40068,8 @@ function GGR takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local unit WWE = LoadUnitHandle(HY, h, 30)
 	local unit WUE =(LoadUnitHandle(HY, h, 2))
-	if GetTriggerEventId()== EVENT_UNIT_DAMAGED then
-		if GetEventDamageSource()== WUE and(GetEventDamage()> 40 or IsUnitType(WWE, UNIT_TYPE_STRUCTURE) or GetUnitTypeId(WWE)=='umtw' or GetUnitTypeId(WWE)=='ebal') and(LoadBoolean(HY,(GetHandleId(WUE)),('A1IQ'+$B7))) then
+	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
+		if GetEventDamageSource() == WUE and(GetEventDamage()> 40 or IsUnitType(WWE, UNIT_TYPE_STRUCTURE) or GetUnitTypeId(WWE)=='umtw' or GetUnitTypeId(WWE)=='ebal') and(LoadBoolean(HY,(GetHandleId(WUE)),('A1IQ'+$B7))) then
 			call GFR(WUE, WWE)
 			call SaveBoolean(HY, GetHandleId(WUE),'A1IQ'+$B7, false)
 			call SaveReal(HY, GetHandleId(WUE),'A1IQ'+$B8, GetGameTime()* 1.)
@@ -40149,7 +40117,7 @@ function GKR takes nothing returns boolean
 	local unit WWE
 	local unit WUE
 	local integer ODX
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call SaveBoolean(HY, GetHandleId(GetTriggerUnit()),'A1IQ'+$B7, false)
 		call SaveReal(HY, GetHandleId(GetTriggerUnit()),'A1IQ'+$B8, GetGameTime()* 1.)
 		call UnitRemoveAbility(GetTriggerUnit(),'A1IS')
@@ -40160,7 +40128,7 @@ function GKR takes nothing returns boolean
 		call FlushChildHashtable(HY, GetHandleId(GetTriggeringTrigger()))
 		call CleanCurrentTrigger(GetTriggeringTrigger())
 	elseif GetAttacker()==(LoadUnitHandle(HY, GetHandleId(GetTriggeringTrigger()),$B6)) then
-		if IsUnitAlly(GetAttacker(), GetOwningPlayer(GetTriggerUnit())) == false and IsUnitType(GetTriggerUnit(), UNIT_TYPE_STRUCTURE) == false and GetUnitAbilityLevel(GetAttacker(),'A36D')== 0 then
+		if IsUnitAlly(GetAttacker(), GetOwningPlayer(GetTriggerUnit())) == false and IsUnitType(GetTriggerUnit(), UNIT_TYPE_STRUCTURE) == false and GetUnitAbilityLevel(GetAttacker(),'A36D') == 0 then
 			set t = CreateTrigger()
 			set h = GetHandleId(t)
 			set WWE = GetTriggerUnit()
@@ -40224,7 +40192,7 @@ function GLR takes nothing returns boolean
 		call TriggerAddCondition(t, Condition(function GKR))
 		call SaveUnitHandle(HY, h,$B6, trigUnit)
 		call UnitAddPermanentAbility(trigUnit,'A1IS')
-		if GetUnitAbilityLevel(trigUnit,'B068')== 0 then
+		if GetUnitAbilityLevel(trigUnit,'B068') == 0 then
 			if ODX == 1 then
 				call UnitAddPermanentAbility(trigUnit,'A1J4')
 				call UnitMakeAbilityPermanent(trigUnit, true,'A1J2')
@@ -40255,7 +40223,7 @@ function GLR takes nothing returns boolean
 		call S9E(GetOwningPlayer(trigUnit),'A1J3', false)
 		call S9E(GetOwningPlayer(trigUnit),'A1J5', false)
 		call S9E(GetOwningPlayer(trigUnit),'A1IU', false)
-	elseif GQR == false and GetUnitAbilityLevel(trigUnit,'B068')== 0 then
+	elseif GQR == false and GetUnitAbilityLevel(trigUnit,'B068') == 0 then
 		call UnitRemoveAbility(trigUnit,'A1IS')
 		call UnitRemoveAbility(trigUnit,'A1J4')
 		call UnitRemoveAbility(trigUnit,'A1J3')
@@ -40292,11 +40260,11 @@ function GSR takes nothing returns boolean
 	if ODX < 1 then
 		set ODX = GetUnitAbilityLevel(WUE,'QB09')
 	endif
-	if GetTriggerEventId()== EVENT_UNIT_DAMAGED then
-		if GetEventDamageSource()== WUE then
+	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
+		if GetEventDamageSource() == WUE then
 			call FlushChildHashtable(HY, h)
 			call CleanCurrentTrigger(t)
-			if((LoadInteger(HY,(GetHandleId((WUE))),($9B7)))== 1) == false then
+			if((LoadInteger(HY,(GetHandleId((WUE))),($9B7))) == 1) == false then
 				call EPX(WUE,$9B7, .5)
 				if IsUnitType(WWE, UNIT_TYPE_STRUCTURE) == false and IsUnitEnemy(WWE, GetOwningPlayer(WUE)) then
 					call UnitDamageTargetEx(WUE, WWE, 2, 30 * ODX)
@@ -40330,7 +40298,7 @@ endfunction
 function GUR takes nothing returns boolean
 	local integer lv
 	local unit u
-	if GetTriggerEventId()== EVENT_UNIT_SPELL_CAST or GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_UNIT_SPELL_CAST or GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		set u =(LoadUnitHandle(HY,(GetHandleId(GetTriggeringTrigger())), 14))
 		set lv = GetUnitAbilityLevel(GetAttacker(),'A524')
 		if(LoadBoolean(HY,(GetHandleId(u)),('A1IQ'+$B7))) then
@@ -40365,9 +40333,9 @@ function GUR takes nothing returns boolean
 		endif
 		call FlushChildHashtable(HY,(GetHandleId(GetTriggeringTrigger())))
 		call CleanCurrentTrigger(GetTriggeringTrigger())
-	elseif GetTriggerEventId()== EVENT_PLAYER_UNIT_ATTACKED then
+	elseif GetTriggerEventId() == EVENT_PLAYER_UNIT_ATTACKED then
 		if GetAttacker()==(LoadUnitHandle(HY,(GetHandleId(GetTriggeringTrigger())), 14)) then
-			if((LoadInteger(HY,(GetHandleId((GetAttacker()))),($9B8)))== 1) == false then
+			if((LoadInteger(HY,(GetHandleId((GetAttacker()))),($9B8))) == 1) == false then
 				call FlushChildHashtable(HY,(GetHandleId(GetTriggeringTrigger())))
 				call CleanCurrentTrigger(GetTriggeringTrigger())
 				call GTR()
@@ -40480,8 +40448,8 @@ function GWR takes nothing returns nothing
 		set ZCE = 75 *(level + 1)
 	endif
 	call UnitDamageTargetEx(WJE, WLE, 1, ZCE)
-	if GetUnitAbilityLevel(WLE,'A3E9')== 1 and LoadBoolean(P, h,'A004') == false then
-		if IsMagicImmuneUnit(WJE) == false and GetUnitAbilityLevel(WJE,'Aloc')== 0 then
+	if GetUnitAbilityLevel(WLE,'A3E9') == 1 and LoadBoolean(P, h,'A004') == false then
+		if IsMagicImmuneUnit(WJE) == false and GetUnitAbilityLevel(WJE,'Aloc') == 0 then
 			call SaveUnitHandle(VV,'A3E9', 0, WLE)
 			call SaveUnitHandle(VV,'A3E9', 1, WJE)
 			call SaveInteger(VV,'A3E9', 0, level)
@@ -40728,7 +40696,7 @@ function HVR takes nothing returns boolean
 	local real HIR
 	local real L2O = GetWidgetLife(whichUnit)
 	// L2O > .405  更改至  UnitAlive(whichUnit) 更合理的安全性检查
-	if(IXX > 5) and UnitAlive(whichUnit) and FK and GetUnitAbilityLevel(whichUnit,'A36D')== 0 then
+	if(IXX > 5) and UnitAlive(whichUnit) and FK and GetUnitAbilityLevel(whichUnit,'A36D') == 0 then
 		if((HOR -HXR)<(-180.)) then
 			set HRR =(HOR -HXR + 360)
 		else
@@ -40796,7 +40764,7 @@ function HBR takes nothing returns nothing
 	endif
 	set HCR ='A37U'-1 + level
 	set HDR ='A3F0'+ 4 *(level -1)-1
-	if GetUnitAbilityLevel(WLE,'B37Y')== 0 then
+	if GetUnitAbilityLevel(WLE,'B37Y') == 0 then
 		set HFR = 0
 	else
 		set HFR = LoadInteger(HY, hu,'A0FW')
@@ -40826,7 +40794,7 @@ function HBR takes nothing returns nothing
 		call SaveInteger(HY, hu,'A0Fw', HDR)
 		call CCX(WLE, HCR, HFR + 1, 5, 0)
 	endif
-	if GetUnitAbilityLevel(WLE,'A3E9')== 1 and IsMagicImmuneUnit(WJE) and HGR == false then
+	if GetUnitAbilityLevel(WLE,'A3E9') == 1 and IsMagicImmuneUnit(WJE) and HGR == false then
 		if UnitHasSpellShield(WJE) == false then
 			call NHX(WLE, WJE,'h01K', "HBR", 1000, true)
 		else
@@ -40864,7 +40832,7 @@ function HJR takes nothing returns boolean
 	local unit t = GetFilterUnit()
 	local unit u = Temp__ArrayUnit[0]
 	local group g = LoadGroupHandle(HY, XK[0], 1)
-	if IsUnitInGroup(t, g) == false and IsUnitEnemy(u, GetOwningPlayer(t)) and UnitAlive(t) and IsMagicImmuneUnit(t) == false and GetUnitAbilityLevel(t,'A04R')== 0 and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and GetUnitTypeId(t)!='n00L' then
+	if IsUnitInGroup(t, g) == false and IsUnitEnemy(u, GetOwningPlayer(t)) and UnitAlive(t) and IsMagicImmuneUnit(t) == false and GetUnitAbilityLevel(t,'A04R') == 0 and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and GetUnitTypeId(t)!='n00L' then
 		call GroupAddUnit(g, t)
 		call WJV(t,'C017','D017', 1. + .5 * GetUnitAbilityLevel(u,'A2O4'))
 		call UnitDamageTargetEx(u, t, 1, XK[1])
@@ -40880,7 +40848,7 @@ function HKR takes nothing returns boolean
 	local integer UYX = LoadInteger(HY, WFV, 0)
 	local unit u = LoadUnitHandle(HY, WFV, 0)
 	local group g = LoadGroupHandle(HY, WFV, 1)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or UYX == 76 then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or UYX == 76 then
 		call SetUnitPathing(u, true)
 		call UnitRemoveAbility(u,'A2O4')
 		call UnitRemoveAbility(u,'B0GB')
@@ -40973,7 +40941,7 @@ endfunction
 function HTR takes nothing returns boolean
 	local unit t = GetFilterUnit()
 	local unit u = QF
-	if IsUnitEnemy(u, GetOwningPlayer(t)) and UnitAlive(t) and IsMagicImmuneUnit(t) == false and GetUnitAbilityLevel(t,'A04R')== 0 and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false then
+	if IsUnitEnemy(u, GetOwningPlayer(t)) and UnitAlive(t) and IsMagicImmuneUnit(t) == false and GetUnitAbilityLevel(t,'A04R') == 0 and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false then
 		call UnitDamageTargetEx(u, t, 1, PF)
 	endif
 	set u = null
@@ -40984,7 +40952,7 @@ function HUR takes unit u, unit t, integer level, boolean FAR returns nothing
 	local real x = GetWidgetX(t)
 	local real y = GetWidgetY(t)
 	local group g
-	if GetUnitAbilityLevel(t,'A3E9')== 1 and not FAR and GetUnitAbilityLevel(u,'A04R')== 0 then
+	if GetUnitAbilityLevel(t,'A3E9') == 1 and not FAR and GetUnitAbilityLevel(u,'A04R') == 0 then
 		call SaveUnitHandle(VV,'A3E9', 0, t)
 		call SaveUnitHandle(VV,'A3E9', 1, u)
 		call SaveInteger(VV,'A3E9', 0, level)
@@ -41020,7 +40988,7 @@ function HYR takes nothing returns nothing
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local unit u = LoadUnitHandle(P, h, 0)
-	if GetUnitAbilityLevel(u,'A3KA')== 1 then
+	if GetUnitAbilityLevel(u,'A3KA') == 1 then
 		call SetUnitX(u, LoadReal(P, h, 0))
 		call SetUnitY(u, LoadReal(P, h, 1))
 	endif
@@ -41043,17 +41011,17 @@ function HZR takes unit u, real x, real y, integer level returns nothing
 	set t = null
 endfunction
 function H_R takes nothing returns boolean
-	return UnitIsDead(GetFilterUnit()) == false and((GetUnitAbilityLevel(GetFilterUnit(),'A0KO')== 1) or(GetUnitAbilityLevel(GetFilterUnit(),'A0KQ')== 1) or(GetUnitAbilityLevel(GetFilterUnit(),'A0KR')== 1) or(GetUnitAbilityLevel(GetFilterUnit(),'A0KP')== 1))
+	return UnitIsDead(GetFilterUnit()) == false and((GetUnitAbilityLevel(GetFilterUnit(),'A0KO') == 1) or(GetUnitAbilityLevel(GetFilterUnit(),'A0KQ') == 1) or(GetUnitAbilityLevel(GetFilterUnit(),'A0KR') == 1) or(GetUnitAbilityLevel(GetFilterUnit(),'A0KP') == 1))
 endfunction
 function H0R takes nothing returns boolean
-	return UnitIsDead(GetFilterUnit()) == false and GetUnitAbilityLevel(GetFilterUnit(),'Aloc')== 0 and GetUnitAbilityLevel(GetFilterUnit(),'A04R')== 0 and IsUnitIdType(GetUnitTypeId(GetFilterUnit()), UNIT_TYPE_HERO) == false
+	return UnitIsDead(GetFilterUnit()) == false and GetUnitAbilityLevel(GetFilterUnit(),'Aloc') == 0 and GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0 and IsUnitIdType(GetUnitTypeId(GetFilterUnit()), UNIT_TYPE_HERO) == false
 endfunction
 function H1R takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local unit H2R = LoadUnitHandle(HY, h, 0)
 	local unit WLE = LoadUnitHandle(HY, h, 1)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call DestroyEffect(LoadEffectHandle(HY, h, 32))
 		call FlushChildHashtable(HY, h)
 		call DestroyTrigger(t)
@@ -41161,7 +41129,7 @@ function YBV takes nothing returns nothing
 endfunction
 function P7E takes nothing returns nothing
 	local unit u = GetTriggerUnit()
-	if GetUnitAbilityLevel(u,'A2MC')== 0 then
+	if GetUnitAbilityLevel(u,'A2MC') == 0 then
 		call UnitAddPermanentAbility(u,'A2MC')
 	endif
 	call SetUnitAbilityLevel(u,'A2MC', GetUnitAbilityLevel(u,'A0LV'))
@@ -41174,7 +41142,7 @@ function H6R takes nothing returns nothing
 	local real ZCE
 	local integer hu
 	local unit WLE = LoadUnitHandle(HY, h, 0)
-	if GetTriggerEventId()== EVENT_UNIT_DAMAGED and GetUnitAbilityLevel(WLE,'B05H')== 1 then
+	if GetTriggerEventId() == EVENT_UNIT_DAMAGED and GetUnitAbilityLevel(WLE,'B05H') == 1 then
 		if LoadBoolean(HY, h, 0) == false then
 			call SaveBoolean(HY, h, 0, true)
 			set ZCE = GetEventDamage()* LoadReal(HY, h, 5)
@@ -41595,7 +41563,7 @@ function J_R takes nothing returns boolean
 	else
 		call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Human\\ManaFlare\\ManaFlareBoltImpact.mdl", x, y))
 		call A3X(x, y, 150)
-		if((LoadInteger(HY,(GetHandleId((WWE))),(4261)))== 1) == false then
+		if((LoadInteger(HY,(GetHandleId((WWE))),(4261))) == 1) == false then
 			call SetUnitPosition(WWE, x + J0R * Cos(a * bj_DEGTORAD), y + J0R * Sin(a * bj_DEGTORAD))
 		endif
 	endif
@@ -41633,7 +41601,7 @@ endfunction
 function J3R takes unit u, integer h returns boolean
 	local unit J4R = JMR(u, h)
 	local boolean JVX = true
-	if UnitIsDead(J4R) or(LoadInteger(HY,(GetHandleId(J4R)),$9C))== 1 then
+	if UnitIsDead(J4R) or(LoadInteger(HY,(GetHandleId(J4R)),$9C)) == 1 then
 		set JVX = false
 	endif
 	call SaveInteger(HY,(GetHandleId(J4R)),$9C, 1)
@@ -41642,7 +41610,7 @@ function J3R takes unit u, integer h returns boolean
 	return JVX
 endfunction
 function J5R takes nothing returns nothing
-	if GetUnitState(GetEnumUnit(), UNIT_STATE_MANA)> 0 and IsUnitInGroup(GetEnumUnit(), DK) == false and((LoadInteger(HY, GetHandleId(GetEnumUnit()), 4260))== 1) == false and J3R(GetEnumUnit(), HLV) then
+	if GetUnitState(GetEnumUnit(), UNIT_STATE_MANA)> 0 and IsUnitInGroup(GetEnumUnit(), DK) == false and((LoadInteger(HY, GetHandleId(GetEnumUnit()), 4260)) == 1) == false and J3R(GetEnumUnit(), HLV) then
 		call SaveInteger(HY, GetHandleId(GetEnumUnit()), 4260, 1)
 		call GroupAddUnit(EK, GetEnumUnit())
 	endif
@@ -41982,7 +41950,7 @@ function KKR takes nothing returns boolean
 	set KPR = CreateUnit(GetOwningPlayer(trigUnit), ID, x, y, a)
 	call SaveUnitHandle(HY, KSR, 700 + EVX, KPR)
 	if WWE != null then
-		if GetOwningPlayer(WWE)== BW or LoadInteger(HY, GetHandleId(WWE), 4259)== 1 then
+		if GetOwningPlayer(WWE) == CreepsPlayer or LoadInteger(HY, GetHandleId(WWE), 4259) == 1 then
 			set WWE = null
 		endif
 		call FlushChildHashtable(HY, h)
@@ -42074,7 +42042,7 @@ function KZR takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local integer EVX = GetTriggerEvalCount(t)
 	local unit trigUnit = LoadUnitHandle(HY, h, 14)
-	if EVX >$E or GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if EVX >$E or GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 	else
@@ -42136,7 +42104,7 @@ function K2R takes nothing returns boolean
 		set a = GetRandomReal(270, 360)
 	endif
 	set d = GetRandomReal($8C, 710)
-	if c >$96 or GetUnitAbilityLevel(trigUnit,'A03R')+ GetUnitAbilityLevel(trigUnit,'A0AV')== 0 or(GetTriggerEventId()== EVENT_UNIT_SPELL_ENDCAST and(GetSpellAbilityId()=='A03R' or GetSpellAbilityId()=='A0AV')) then
+	if c >$96 or GetUnitAbilityLevel(trigUnit,'A03R')+ GetUnitAbilityLevel(trigUnit,'A0AV') == 0 or(GetTriggerEventId() == EVENT_UNIT_SPELL_ENDCAST and(GetSpellAbilityId()=='A03R' or GetSpellAbilityId()=='A0AV')) then
 		if GetSpellAbilityId()=='A0AV' and LoadBoolean(HY, h, 0) == false then
 			call UnitRemoveAbility(trigUnit,'A0ST')
 			call DestroyEffect(LoadEffectHandle(HY, h, 0))
@@ -42416,7 +42384,7 @@ function GXE takes nothing returns nothing
 			if lv == 3 then
 				call LXR(d, u, dur, life)
 			endif
-		elseif IsUnitIllusion(u) or(GetOwningPlayer(u)!= Sentinels[0]and GetOwningPlayer(u)!= Scourges[0]and GetOwningPlayer(u)!= BW) then
+		elseif IsUnitIllusion(u) or(GetOwningPlayer(u)!= Sentinels[0]and GetOwningPlayer(u)!= Scourges[0]and GetOwningPlayer(u)!= CreepsPlayer) then
 			if lv > 1 then
 				call LXR(d, u, dur, life)
 			endif
@@ -42596,19 +42564,19 @@ function LDR takes nothing returns boolean
 	local unit u = LoadUnitHandle(HY, h, 0)
 	local unit LFR = null
 	local real WOV
-	if GetTriggerEventId()== EVENT_PLAYER_UNIT_DEATH then
+	if GetTriggerEventId() == EVENT_PLAYER_UNIT_DEATH then
 		set LFR = GetKillingUnit()
 		if GetUnitAbilityLevel(LFR,'Aloc')> 0 or GetUnitAbilityLevel(LFR,'A04R')> 0 or GetUnitTypeId(LFR) == 'e00E'then
 			set LFR = Player__Hero[GetPlayerId(GetOwningPlayer(LFR))]
 		endif
-		if GetKillingUnit()== u then
+		if GetKillingUnit() == u then
 			if GetUnitAbilityLevel(u,'A44Y')> 0 then
 				if UnitAlive(u) and IsUnitIllusion(GetTriggerUnit()) == false and IsUnitType(GetTriggerUnit(), UNIT_TYPE_STRUCTURE) == false and GetTriggerUnit()!= CT then
 					call DestroyEffect(AddSpecialEffectTarget("Objects\\Spawnmodels\\Human\\HumanBlood\\HeroBloodElfBlood.mdl", u, "overhead"))
 					call SetWidgetLife(u, GetWidgetLife(u)+ GetUnitState(GetTriggerUnit(), UNIT_STATE_MAX_LIFE)* .2)
 				endif
 			endif
-		elseif GetTriggerUnit()== u then
+		elseif GetTriggerUnit() == u then
 			if GetUnitAbilityLevel(u,'A44Y')> 0 then
 				set LFR = GetKillingUnit()
 				if GetUnitAbilityLevel(LFR,'Aloc')> 0 or GetUnitAbilityLevel(LFR,'A04R')> 0 or GetUnitTypeId(LFR) == 'e00E'then
@@ -42628,7 +42596,7 @@ function LDR takes nothing returns boolean
 			call CleanCurrentTrigger(t)
 		endif
 		set LFR = null
-	elseif GetTriggerEventId()== EVENT_UNIT_DAMAGED then
+	elseif GetTriggerEventId() == EVENT_UNIT_DAMAGED then
 		if LoadBoolean(HY, h, 0) == false then
 			call SaveBoolean(HY, h, 0, true)
 			set WOV = GetEventDamage()* LoadReal(HY, h, 10)
@@ -42637,7 +42605,7 @@ function LDR takes nothing returns boolean
 		endif
 	else
 		set WOV = LoadReal(HY, h, 1)
-		if WOV < GetGameTime() or GetUnitAbilityLevel(u,'A44Y')== 0 then
+		if WOV < GetGameTime() or GetUnitAbilityLevel(u,'A44Y') == 0 then
 			call UnitRemoveAbility(u,'A44Y')
 			call UnitRemoveAbility(u,'B44Y')
 			call FlushChildHashtable(HY, h)
@@ -42819,12 +42787,12 @@ function LSR takes nothing returns boolean
 	local group g = LoadGroupHandle(HY, h, 100)
 	local unit u2
 	local group gg
-	if LoadBoolean(HY, h, 0) == false and GetTriggerEventId()== EVENT_UNIT_ATTACKED then
+	if LoadBoolean(HY, h, 0) == false and GetTriggerEventId() == EVENT_UNIT_ATTACKED then
 		set ZCE = LoadInteger(HY, GetHandleId(GetAttacker()),'MDMG')+ 5 + 5 * level
 		call LodSystem_AddUnitExtraState(GetAttacker(), 5 + 5 * level, "damageneg")
 		call SaveInteger(HY, GetHandleId(GetAttacker()),'MDMG', ZCE)
 		call GroupAddUnit(g, GetAttacker())
-	elseif LoadBoolean(HY, h, 0) == false and GetGameTime()> LoadReal(HY, h, 0) or GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	elseif LoadBoolean(HY, h, 0) == false and GetGameTime()> LoadReal(HY, h, 0) or GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call SaveBoolean(HY, h, 0, true)
 		call SaveInteger(HY, h,-1, 5 * 4)
 		call DestroyEffect(LoadEffectHandle(HY, h, 1))
@@ -42939,7 +42907,7 @@ function LUR takes nothing returns nothing
 	endif
 endfunction
 function LWR takes nothing returns nothing
-	if GetUnitAbilityLevel(WX,'A455')> 0 and GetUnitAbilityLevel(WX,'A36D')== 0 then
+	if GetUnitAbilityLevel(WX,'A455')> 0 and GetUnitAbilityLevel(WX,'A36D') == 0 then
 		call LUR()
 	endif
 endfunction
@@ -42982,14 +42950,14 @@ function L1R takes nothing returns boolean
 	local unit L3R =(LoadUnitHandle(HY,(DOO), 8))
 	local group g
 	local integer ODX =(LoadInteger(HY,(DOO), 5))
-	if GetTriggerEventId()== EVENT_UNIT_DEATH then
+	if GetTriggerEventId() == EVENT_UNIT_DEATH then
 		call ShowUnit(L3R, false)
 		call KillUnit(L3R)
 		call FlushChildHashtable(HY,(L2R))
 		call CleanCurrentTrigger(t1)
 		call FlushChildHashtable(HY,(DOO))
 		call CleanCurrentTrigger(t2)
-	elseif IsUnitEnemy(GetTriggerUnit(), GetOwningPlayer(L3R)) and IsUnitType(GetTriggerUnit(), UNIT_TYPE_STRUCTURE) == false and GetUnitAbilityLevel(GetTriggerUnit(),'A04R')== 0 then
+	elseif IsUnitEnemy(GetTriggerUnit(), GetOwningPlayer(L3R)) and IsUnitType(GetTriggerUnit(), UNIT_TYPE_STRUCTURE) == false and GetUnitAbilityLevel(GetTriggerUnit(),'A04R') == 0 then
 		set g = AllocationGroup(164)
 		set U2 = L3R
 		set HQV = L3R
@@ -43094,8 +43062,8 @@ function L7R takes nothing returns boolean
 	local unit WWE = LoadUnitHandle(HY, h, 30)
 	local unit WUE =(LoadUnitHandle(HY, h, 2))
 	local trigger L8R =(LoadTriggerHandle(HY, h,$CA))
-	if GetTriggerEventId()== EVENT_UNIT_DAMAGED then
-		if GetEventDamageSource()== WUE and((LoadInteger(HY,(GetHandleId((WUE))),(4264)))== 1) then
+	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
+		if GetEventDamageSource() == WUE and((LoadInteger(HY,(GetHandleId((WUE))),(4264))) == 1) then
 			call DisableTrigger(t)
 			call L6R(WUE, WWE)
 			call FlushChildHashtable(HY, h)
@@ -43152,7 +43120,7 @@ function MER takes nothing returns nothing
 endfunction
 function MXR takes nothing returns boolean
 	local integer WTV = GetSpellAbilityId()
-	if(WTV =='A14O' or WTV =='A3FJ' or WTV =='A0SB' or X8R(WTV)) and(LoadInteger(HY, GetHandleId(GetTriggerUnit()), 4264)!= 1) and GetUnitAbilityLevel(GetTriggerUnit(),'A36D')== 0 and IsNotItemAbility(WTV) then
+	if(WTV =='A14O' or WTV =='A3FJ' or WTV =='A0SB' or X8R(WTV)) and(LoadInteger(HY, GetHandleId(GetTriggerUnit()), 4264)!= 1) and GetUnitAbilityLevel(GetTriggerUnit(),'A36D') == 0 and IsNotItemAbility(WTV) then
 		call SaveInteger(HY, GetHandleId(GetTriggerUnit()), 4264, 1)
 		call MER()
 	endif
@@ -43182,7 +43150,7 @@ function MOR takes nothing returns boolean
 	endif
 	call SetUnitX(u, x)
 	call SetUnitY(u, y)
-	if GetTriggerEvalCount(t)==($A+$A* lv) or GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEvalCount(t)==($A+$A* lv) or GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 	endif
@@ -43232,7 +43200,7 @@ function ElectricVortex takes nothing returns nothing
 	local unit d
 	local group g = null
 	// 如果是马甲放的 那就设置为主人单位
-	if GetUnitAbilityLevel(u,'Aloc')== 1 and HaveSavedHandle(HY, GetHandleId(u), 0) then
+	if GetUnitAbilityLevel(u,'Aloc') == 1 and HaveSavedHandle(HY, GetHandleId(u), 0) then
 		set u = LoadUnitHandle(HY, GetHandleId(u), 0)
 	endif
 	// 在过滤马甲单位后再获取技能等级 否则会导致多重施法失败
@@ -43376,7 +43344,7 @@ function ZJV takes nothing returns nothing
 		set KBX = CreateUnit(GetOwningPlayer(WUE),'o010', WYE, WZE, 0)
 		set MNR = CreateUnit(GetOwningPlayer(WUE),'H07G', WYE, WZE, 0)
 		set APX = AddLightning("FORK", true, WYE, WZE, WYE, WZE)
-		if GetSpellTargetUnit()== null then
+		if GetSpellTargetUnit() == null then
 			set x = GetSpellTargetX()
 			set y = GetSpellTargetY()
 		else
@@ -43567,14 +43535,14 @@ function MTR takes nothing returns nothing
 	local trigger t = GetTriggeringTrigger()
 	local boolean b = false
 	local real MUR
-	if GetTriggerEventId()== EVENT_UNIT_DAMAGED then
+	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
 		set u = GetTriggerUnit()
 		set ZCE = GetEventDamage()
 		set YJX = GetWidgetLife(u)
-		if GetUnitAbilityLevel(u,'A36D')== 0 then
+		if GetUnitAbilityLevel(u,'A36D') == 0 then
 			set MUR = GetUnitState(u, UNIT_STATE_MAX_LIFE)
 			if YJX / MUR > .2 and YJX > 300 then
-				if ZCE >= YJX / 2 and UnitAlive(u) and GetUnitAbilityLevel(u,'B0H7')== 1 then
+				if ZCE >= YJX / 2 and UnitAlive(u) and GetUnitAbilityLevel(u,'B0H7') == 1 then
 					set b = true
 					call CommonTextTag(GetUnitName(u)+ " just Cheated Death!!", 5, u, .03, 255, 0, 0, 255)
 					set level = GetUnitAbilityLevel(u,'A34A')
@@ -43643,8 +43611,8 @@ endfunction
 function MYR takes nothing returns nothing
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
-	if GetTriggerEventId()== EVENT_UNIT_DAMAGED then
-		if GetEventDamageSource()== LoadUnitHandle(HY, h, 0) then
+	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
+		if GetEventDamageSource() == LoadUnitHandle(HY, h, 0) then
 			call CommonUnitAddStun(GetTriggerUnit(),(LoadReal(HY, h, 0)* .25)+ 2.25, false)
 			call UnitDamageTargetEx(LoadUnitHandle(HY, h, 1), GetTriggerUnit(), 1, 25 * LoadReal(HY, h, 0))
 			call FlushChildHashtable(HY, h)
@@ -43712,7 +43680,7 @@ function ZMV takes nothing returns nothing
 	call UnitAddAbility(d,'A3ES')
 	call SetUnitAbilityLevel(d,'A3ES', GetUnitAbilityLevel(WJE,'A03F'))
 	call TGV(3)
-	if GetSpellTargetUnit()== WJE then
+	if GetSpellTargetUnit() == WJE then
 		call B1R(d, "breathoffire", GetUnitX(WJE)+ 1 * Cos(bj_DEGTORAD * GetUnitFacing(WJE)), GetUnitY(WJE)+ 1 * Sin(bj_DEGTORAD * GetUnitFacing(WJE)))
 	else
 		call B1R(d, "breathoffire", GetSpellTargetX(), GetSpellTargetY())
@@ -43858,7 +43826,7 @@ function M7R takes nothing returns nothing
 endfunction
 function PVR takes nothing returns nothing
 	local unit u = GetEnumUnit()
-	if UnitIsDead(u) or((LoadInteger(HY,(GetHandleId((u))),(4306)))== 1) or GetUnitAbilityLevel(u,'B08V')> 0 or((LoadInteger(HY,(GetHandleId((u))),(4335)))== 1) then
+	if UnitIsDead(u) or((LoadInteger(HY,(GetHandleId((u))),(4306))) == 1) or GetUnitAbilityLevel(u,'B08V')> 0 or((LoadInteger(HY,(GetHandleId((u))),(4335))) == 1) then
 		call GroupRemoveUnit(NH, u)
 		call SaveInteger(HY,(GetHandleId((u))),(4336), 2)
 		if GetUnitTypeId(u)!='o01X' then
@@ -43885,7 +43853,7 @@ function PER takes nothing returns boolean
 	set XH = 0
 	set NH = g
 	call ForGroup(g, function PVR)
-	if GetTriggerEvalCount(t)>$C8 or FirstOfGroup(g)== null then
+	if GetTriggerEvalCount(t)>$C8 or FirstOfGroup(g) == null then
 		set b = true
 	else
 		set PAR = PRR +$3E8* .03 * Cos(I3X)
@@ -43928,7 +43896,7 @@ function PER takes nothing returns boolean
 	return false
 endfunction
 function PCR takes nothing returns boolean
-	return GetUnitTypeId(GetFilterUnit())=='o01X' and GetOwningPlayer(GetFilterUnit())== GetOwningPlayer(U2)
+	return GetUnitTypeId(GetFilterUnit())=='o01X' and GetOwningPlayer(GetFilterUnit()) == GetOwningPlayer(U2)
 endfunction
 function PDR takes nothing returns nothing
 	local unit u = GetEnumUnit()
@@ -43953,7 +43921,7 @@ function ZPV takes nothing returns nothing
 		set g = AllocationGroup(171)
 		set U2 = WJE
 		call GroupEnumUnitsInRange(g, GetSpellTargetX(), GetSpellTargetY(), 265, Condition(function PCR))
-		if FirstOfGroup(g)== null then
+		if FirstOfGroup(g) == null then
 			call DeallocateGroup(g)
 			set WJE = null
 			set g = null
@@ -43996,7 +43964,7 @@ function KHE takes nothing returns nothing
 		set g = AllocationGroup(174)
 		set U2 = GetTriggerUnit()
 		call GroupEnumUnitsInRange(g, GetSpellTargetX(), GetSpellTargetY(), 265, Condition(function PCR))
-		if FirstOfGroup(g)== null then
+		if FirstOfGroup(g) == null then
 			call EXStopUnit(GetTriggerUnit())
 			if IsUnitType(GetTriggerUnit(), UNIT_TYPE_HERO) then
 				call InterfaceErrorForPlayer(GetOwningPlayer(GetTriggerUnit()), "附近没有发现岩石")
@@ -44008,14 +43976,14 @@ function KHE takes nothing returns nothing
 	set WLE = null
 endfunction
 function PFR takes nothing returns boolean
-	return(UnitIsDead(GetFilterUnit()) == false and IsUnitEnemy(LH, GetOwningPlayer(GetFilterUnit())) and GetUnitAbilityLevel(GetFilterUnit(),'A04R')== 0 and IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and((LoadInteger(HY,(GetHandleId((GetFilterUnit()))),(809)))== 1))!= null
+	return(UnitIsDead(GetFilterUnit()) == false and IsUnitEnemy(LH, GetOwningPlayer(GetFilterUnit())) and GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0 and IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and((LoadInteger(HY,(GetHandleId((GetFilterUnit()))),(809))) == 1))!= null
 endfunction
 function PGR takes nothing returns nothing
 	call CNX((GetEnumUnit()),'A2QN', 1, 2,'B0GK')
 endfunction
 function PHR takes unit WLE returns nothing
 	local group g = AllocationGroup(175)
-	if((LoadInteger(HY,(GetHandleId((WLE))),(809)))== 1) then
+	if((LoadInteger(HY,(GetHandleId((WLE))),(809))) == 1) then
 		call GroupEnumUnitsInRange(g, 0, 0, 99999, Condition(function PFR))
 	endif
 	call GroupAddUnit(g, WLE)
@@ -44029,7 +43997,7 @@ function PJR takes nothing returns nothing
 		if IsUnitType(GetEnumUnit(), UNIT_TYPE_HERO) then
 			set FH = true
 			set MH = GetEnumUnit()
-			if((LoadInteger(HY,(GetHandleId((GetEnumUnit()))),(809)))== 1) then
+			if((LoadInteger(HY,(GetHandleId((GetEnumUnit()))),(809))) == 1) then
 				set PH = GetEnumUnit()
 			endif
 			if GH == 1 then
@@ -44148,7 +44116,7 @@ function PKR takes nothing returns boolean
 		call SetUnitX(WJE, x)
 		call SetUnitY(WJE, y)
 	endif
-	if C5X(WJE) or GetTriggerEventId()== EVENT_WIDGET_DEATH or b or(WLE == null and(c >$82 or FH or(PSR == 0 and PTR > 800) or(PSR == 1 and PTR >$640))) then
+	if C5X(WJE) or GetTriggerEventId() == EVENT_WIDGET_DEATH or b or(WLE == null and(c >$82 or FH or(PSR == 0 and PTR > 800) or(PSR == 1 and PTR >$640))) then
 		call KillUnit(W_V)
 		call DeallocateGroup(g)
 		call DestroyEffect(LoadEffectHandle(HY, h, 5))
@@ -44205,12 +44173,12 @@ function PWR takes nothing returns boolean
 	local unit WJE =(LoadUnitHandle(HY, h, 2))
 	local real PYR =(LoadReal(HY, h, 442))
 	local integer PZR =(LoadInteger(HY,(GetHandleId(WJE)), 800))
-	if GetTriggerEventId()== EVENT_UNIT_SPELL_CAST then
+	if GetTriggerEventId() == EVENT_UNIT_SPELL_CAST then
 		if(GetSpellAbilityId()=='A2TH') and PZR <= 0 then
 			call InterfaceErrorForPlayer(GetOwningPlayer(WJE), "没有足够的巨石了")
 			call EXStopUnit(WJE)
 		endif
-	elseif GetTriggerEventId()== EVENT_UNIT_SPELL_EFFECT then
+	elseif GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT then
 		if GetSpellAbilityId()=='A2TH' or GetSpellAbilityId()=='A2TJ' then
 			if GetSpellAbilityId()=='A2TJ' then
 				call PUR(WJE, null)
@@ -44285,7 +44253,7 @@ function ZQV takes nothing returns nothing
 			call DisplayTimedTextToPlayer(GetOwningPlayer(WJE), 0, 0, 10, I2S(PZR)+ " 剩余巨石")
 		endif
 		call SaveInteger(HY,(GetHandleId(WJE)), 800,(PZR))
-		if GetSpellTargetUnit()== null then
+		if GetSpellTargetUnit() == null then
 			set x = GetSpellTargetX()
 			set y = GetSpellTargetY()
 		else
@@ -44323,14 +44291,14 @@ function MGX takes nothing returns nothing
 	set t = null
 endfunction
 function P8R takes nothing returns boolean
-	return(UnitIsDead(GetFilterUnit()) == false and IsUnitEnemy(QH, GetOwningPlayer(GetFilterUnit())) and GetUnitAbilityLevel(GetFilterUnit(),'A04R')== 0 and IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and((LoadInteger(HY,(GetHandleId((GetFilterUnit()))),(809)))== 1))!= null
+	return(UnitIsDead(GetFilterUnit()) == false and IsUnitEnemy(QH, GetOwningPlayer(GetFilterUnit())) and GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0 and IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and((LoadInteger(HY,(GetHandleId((GetFilterUnit()))),(809))) == 1))!= null
 endfunction
 function P9R takes nothing returns nothing
 	call CommonUnitAddStun(GetEnumUnit(), .25 + .5 * XJ, false)
 endfunction
 function QVR takes unit u returns nothing
 	local group g = AllocationGroup(180)
-	if((LoadInteger(HY,(GetHandleId((u))),(809)))== 1) then
+	if((LoadInteger(HY,(GetHandleId((u))),(809))) == 1) then
 		call GroupEnumUnitsInRange(g, 0, 0, 99999, Condition(function P8R))
 	endif
 	call GroupAddUnit(g, u)
@@ -44345,7 +44313,7 @@ function QER takes nothing returns nothing
 		if VJ == 1 then
 			call QVR(GetEnumUnit())
 		endif
-		if IsUnitType(GetEnumUnit(), UNIT_TYPE_HERO) and(LoadInteger(HY, GetHandleId(GetEnumUnit()), 809)== 1) then
+		if IsUnitType(GetEnumUnit(), UNIT_TYPE_HERO) and(LoadInteger(HY, GetHandleId(GetEnumUnit()), 809) == 1) then
 			set UH = GetEnumUnit()
 		endif
 	endif
@@ -44385,7 +44353,7 @@ function QXR takes nothing returns boolean
 	set XJ = GetUnitAbilityLevel(WJE,'A2QM')
 	set NJ = 50 * XJ
 	set UH = null
-	if((LoadInteger(HY,(GetHandleId(WLE)), 4306))== 1) or GetTriggerEventId()== EVENT_WIDGET_DEATH or GetUnitAbilityLevel(WLE,'B08V')> 0 or((LoadInteger(HY,(GetHandleId(WLE)), 4336))== 1) or(QRR == null and GetTriggerEvalCount(t)>$C8) then
+	if((LoadInteger(HY,(GetHandleId(WLE)), 4306)) == 1) or GetTriggerEventId() == EVENT_WIDGET_DEATH or GetUnitAbilityLevel(WLE,'B08V')> 0 or((LoadInteger(HY,(GetHandleId(WLE)), 4336)) == 1) or(QRR == null and GetTriggerEvalCount(t)>$C8) then
 		set b = true
 	else
 		call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Human\\FlakCannons\\FlakTarget.mdl", M8R, M9R))
@@ -44479,7 +44447,7 @@ function QIR takes nothing returns nothing
 		set i = i + 1
 		set dx = CoordinateX50(GetUnitX(WLE)+(QAR -i * 25)* Cos(I3X * bj_DEGTORAD))
 		set dy = CoordinateY50(GetUnitY(WLE)+(QAR -i * 25)* Sin(I3X * bj_DEGTORAD))
-		if(IsPointInRegion(R4,((dx)* 1.),((dy)* 1.))) == false then
+		if(IsPointInRegion(TerrainCliffRegion,((dx)* 1.),((dy)* 1.))) == false then
 			set b = true
 		endif
 	endloop
@@ -44555,7 +44523,7 @@ function QDR takes nothing returns nothing
 	local group g = AllocationGroup(185)
 	set U2 = u
 	call GroupEnumUnitsInRange(g, GetUnitX(u), GetUnitY(u),$CD, Condition(function PCR))
-	if FirstOfGroup(g)== null then
+	if FirstOfGroup(g) == null then
 		call EXStopUnit(u)
 		if IsUnitType(u, UNIT_TYPE_HERO) then
 			call InterfaceErrorForPlayer(GetOwningPlayer(u), "无效目标")
@@ -44577,7 +44545,7 @@ function ZSV takes nothing returns nothing
 	endif
 endfunction
 function J_E takes nothing returns nothing
-	if GetSpellTargetUnit()== null then
+	if GetSpellTargetUnit() == null then
 		call QDR()
 	elseif(WTE(GetTriggerUnit(), GetSpellTargetUnit())>$AA and GetUnitTypeId(GetSpellTargetUnit())!='n00L') then
 		call QFR()
@@ -44593,7 +44561,7 @@ function QGR takes nothing returns nothing
 	call ExecuteFunc("QHR")
 endfunction
 function QJR takes nothing returns boolean
-	return UnitIsDead(GetFilterUnit()) == false and GetUnitTypeId(GetFilterUnit())=='o01X' and((LoadInteger(HY,(GetHandleId((GetFilterUnit()))),(4335)))== 1) == false and((LoadInteger(HY,(GetHandleId((GetFilterUnit()))),(4340)))== 1) == false
+	return UnitIsDead(GetFilterUnit()) == false and GetUnitTypeId(GetFilterUnit())=='o01X' and((LoadInteger(HY,(GetHandleId((GetFilterUnit()))),(4335))) == 1) == false and((LoadInteger(HY,(GetHandleId((GetFilterUnit()))),(4340))) == 1) == false
 endfunction
 function QKR takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
@@ -44606,7 +44574,7 @@ function QKR takes nothing returns boolean
 	local integer C2R = GetTriggerEvalCount(t)
 	local integer level = GetUnitAbilityLevel(WJE,'A2TI')
 	local real QLR =(LoadReal(HY,(GetHandleId(SZX)), 807))
-	if ModuloInteger(C2R, 5)== 0 then
+	if ModuloInteger(C2R, 5) == 0 then
 		call UnitDamageTargetEx(WJE, SZX, 1,(25 + 25 * level)/ 2)
 	endif
 	set WH = WJE
@@ -44746,7 +44714,7 @@ function Q0R takes nothing returns nothing
 		set g = AllocationGroup(189)
 		call GroupEnumUnitsInRange(g, GetUnitX(WLE), GetUnitY(WLE), 325, Condition(function DHX))
 		call ForGroup(g, function Q_R)
-		if GetUnitAbilityLevel(WLE,'A3E9')== 1 and IsMagicImmuneUnit(WJE) == false then
+		if GetUnitAbilityLevel(WLE,'A3E9') == 1 and IsMagicImmuneUnit(WJE) == false then
 			if UnitHasSpellShield(WJE) == false then
 				call SetUnitOwner(W_V, GetOwningPlayer(WLE), true)
 				call SetUnitX(W_V, GetUnitX(WJE))
@@ -44774,7 +44742,7 @@ function Q3R takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local unit WJE =(LoadUnitHandle(HY, h, 14))
 	local unit WLE =(LoadUnitHandle(HY, h, 17))
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call SaveReal(HY,(GetHandleId(WJE)), 356,((GetUnitX(WLE))* 1.))
 		call SaveReal(HY,(GetHandleId(WJE)), 357,((GetUnitY(WLE))* 1.))
 	endif
@@ -44820,13 +44788,13 @@ function Q5R takes nothing returns boolean
 	local unit WLE =(LoadUnitHandle(HY, h, 17))
 	local integer level = LoadInteger(HY, h, 5)
 	local integer c = LoadInteger(HY, h, 0)
-	if GetTriggerEventId()== EVENT_UNIT_DAMAGED then
+	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
 		if LoadBoolean(HY, h, 0) == false then
 			call SaveBoolean(HY, h, 0, true)
 			call UnitDamageTargetEx(GetEventDamageSource(), GetTriggerUnit(), 3, GetEventDamage()* .5)
 			call SaveBoolean(HY, h, 0, false)
 		endif
-	elseif GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	elseif GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 		call UnitRemoveAbility(WLE,'A2T4')
@@ -44834,7 +44802,7 @@ function Q5R takes nothing returns boolean
 		call UnitRemoveAbility(WLE,'B3KE')
 		call UnitRemoveAbility(WLE,'A3KD')
 		call RemoveSavedHandle(HY, GetHandleId(WLE),'A2T5')
-	elseif c >(level + 2)*$A or GetUnitAbilityLevel(WLE,'A2T4')== 0 then
+	elseif c >(level + 2)*$A or GetUnitAbilityLevel(WLE,'A2T4') == 0 then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 		call UnitRemoveAbility(WLE,'A2T4')
@@ -44890,7 +44858,7 @@ function Q7R takes nothing returns boolean
 	local unit WLE =(LoadUnitHandle(HY, h, 17))
 	local integer level = LoadInteger(HY, h, 5)
 	local integer C2R =(LoadInteger(HY, h, 34))
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or C2R > 9 * 5 or LoadInteger(HY, GetHandleId(WLE),'A2SG')== 0 then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or C2R > 9 * 5 or LoadInteger(HY, GetHandleId(WLE),'A2SG') == 0 then
 		call DestroyEffect((LoadEffectHandle(HY, h, 32)))
 		call SaveInteger(HY, GetHandleId(WLE),'A2SG', IMaxBJ(LoadInteger(HY, GetHandleId(WLE),'A2SG')-1, 0))
 		call FlushChildHashtable(HY, h)
@@ -44898,7 +44866,7 @@ function Q7R takes nothing returns boolean
 	else
 		set C2R = C2R + 1
 		call SaveInteger(HY, h, 34,(C2R))
-		if ModuloInteger(C2R, 5)== 0 then
+		if ModuloInteger(C2R, 5) == 0 then
 			call SetWidgetLife(WLE, GetWidgetLife(WLE)+$B* level)
 		endif
 	endif
@@ -44959,7 +44927,7 @@ function FalsePromise_CallBack takes nothing returns boolean
 	if SBR then
 		set duration = duration - 2
 	endif
-	if timeCount >(duration)* 50 or GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if timeCount >(duration)* 50 or GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call DisableTrigger(t)
 		call UnitRemoveAbility(targetUnit,'A3KN')
 		call UnitRemoveAbility(targetUnit,'B3KN')
@@ -44973,7 +44941,7 @@ function FalsePromise_CallBack takes nothing returns boolean
 				call SetWidgetLife(targetUnit, SRR + SNR)
 				set restoreLife = restoreLife -SNR
 				set ZCE =(LoadReal(HY, h,(20000+ i)))
-				if(LoadUnitHandle(HY, h,(22000+ i)))== spellUnit or((LoadInteger(HY,(GetHandleId((targetUnit))),($9B5)))== 1) then
+				if(LoadUnitHandle(HY, h,(22000+ i))) == spellUnit or((LoadInteger(HY,(GetHandleId((targetUnit))),($9B5))) == 1) then
 					if GetWidgetLife(targetUnit)<= ZCE + 2 then
 						set ZCE = GetWidgetLife(targetUnit)-2
 					endif
@@ -44987,7 +44955,7 @@ function FalsePromise_CallBack takes nothing returns boolean
 		endif
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
-	elseif GetTriggerEventId()== EVENT_UNIT_DAMAGED and IsEffectiveDamage(GetEventDamage()) then
+	elseif GetTriggerEventId() == EVENT_UNIT_DAMAGED and IsEffectiveDamage(GetEventDamage()) then
 		set damagedCount = damagedCount + 1
 		call SaveInteger(HY, h, 34,(damagedCount))
 		call SaveUnitHandle(HY, h,(22000+ damagedCount),(GetEventDamageSource()))
@@ -45060,8 +45028,8 @@ function SFR takes nothing returns nothing
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local integer c
-	if GetTriggerEventId()== EVENT_UNIT_DAMAGED then
-		if GetEventDamageSource()== LoadUnitHandle(HY, h, 0) then
+	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
+		if GetEventDamageSource() == LoadUnitHandle(HY, h, 0) then
 			call CommonUnitAddStun(GetTriggerUnit(), LoadReal(HY, h, 0), false)
 			call UnitDamageTargetEx(LoadUnitHandle(HY, h, 1), GetTriggerUnit(), 1, LoadReal(HY, h, 1))
 			set c = LoadInteger(HY, h, 0)
@@ -45087,7 +45055,7 @@ function SGR takes unit u, integer level returns nothing
 	local unit d
 	local real SYV
 	local real ZCE
-	if GetUnitAbilityLevel(u,'A36D')== 1 then
+	if GetUnitAbilityLevel(u,'A36D') == 1 then
 		return
 	endif
 	if GetUnitAbilityLevel(u,'A0DJ')+ GetUnitAbilityLevel(u,'QP1G') > 0 then
@@ -45235,7 +45203,7 @@ function SSR takes nothing returns nothing
 	endif
 endfunction
 function STR takes nothing returns boolean
-	return((GetUnitAbilityLevel(GetFilterUnit(),'A04R')== 0 and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(GetTriggerUnit())) and UnitIsDead(GetFilterUnit()) == false))
+	return((GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0 and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(GetTriggerUnit())) and UnitIsDead(GetFilterUnit()) == false))
 endfunction
 function SUR takes nothing returns nothing
 	call UnitShareVision(GetEnumUnit(), GetOwningPlayer(UI), false)
@@ -45303,7 +45271,7 @@ endfunction
 function S_R takes nothing returns nothing
 	local unit WUE
 	local unit WWE
-	if GetTriggerEventId()== EVENT_PLAYER_UNIT_SPELL_EFFECT then
+	if GetTriggerEventId() == EVENT_PLAYER_UNIT_SPELL_EFFECT then
 		set WUE = GetSpellTargetUnit()
 		set WWE = GetTriggerUnit()
 	else
@@ -45317,10 +45285,10 @@ function S_R takes nothing returns nothing
 	set WWE = null
 endfunction
 function S0R takes nothing returns boolean
-	if GetTriggerEventId()== EVENT_PLAYER_UNIT_SPELL_EFFECT then
-		return GetUnitAbilityLevel(GetSpellTargetUnit(),'A0DW')> 0 and GetUnitAbilityLevel(GetSpellTargetUnit(),'A36D')== 0
+	if GetTriggerEventId() == EVENT_PLAYER_UNIT_SPELL_EFFECT then
+		return GetUnitAbilityLevel(GetSpellTargetUnit(),'A0DW')> 0 and GetUnitAbilityLevel(GetSpellTargetUnit(),'A36D') == 0
 	else
-		return GetUnitAbilityLevel(GetTriggerUnit(),'A0DW')> 0 and GetUnitAbilityLevel(GetTriggerUnit(),'A36D')== 0
+		return GetUnitAbilityLevel(GetTriggerUnit(),'A0DW')> 0 and GetUnitAbilityLevel(GetTriggerUnit(),'A36D') == 0
 	endif
 endfunction
 function MMX takes nothing returns nothing
@@ -45428,7 +45396,7 @@ function TVR takes nothing returns nothing
 	call TriggerAddCondition(t, Condition(function S9R))
 	call SaveUnitHandle(HY, h, 17,(WWE))
 	call SetUnitOwner(WWE, GetOwningPlayer(WUE), true)
-	if GetUnitAbilityLevel(WUE,'A0A8')== 0 then
+	if GetUnitAbilityLevel(WUE,'A0A8') == 0 then
 		call UnitApplyTimedLife(WWE,'BTLF', 80)
 	else
 		call UnitApplyTimedLife(WWE,'BTLF',$B4)
@@ -45589,7 +45557,7 @@ function TBR takes real y returns real
 	return y
 endfunction
 function TCR takes nothing returns boolean
-	return((GXX(GetFilterUnit()) and GetUnitAbilityLevel(GetFilterUnit(),'A04R')== 0 and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and(IsUnitType(GetFilterUnit(), UNIT_TYPE_ANCIENT) == false or CZX(GetUnitTypeId(GetFilterUnit())) or DRX(GetFilterUnit()) or GetUnitTypeId(GetFilterUnit())=='n00U' or GetUnitTypeId(GetFilterUnit())=='n00Y' or GetUnitTypeId(GetFilterUnit())=='n00Z' or GetUnitTypeId(GetFilterUnit())=='n0KU' or GetUnitTypeId(GetFilterUnit())=='n0KV' or GetUnitTypeId(GetFilterUnit())=='n0KW' or RHX(GetUnitTypeId(GetFilterUnit()))) and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer((LoadUnitHandle(HY,(GetHandleId(GetTriggeringTrigger())), 318))))))
+	return((GXX(GetFilterUnit()) and GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0 and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and(IsUnitType(GetFilterUnit(), UNIT_TYPE_ANCIENT) == false or CZX(GetUnitTypeId(GetFilterUnit())) or DRX(GetFilterUnit()) or GetUnitTypeId(GetFilterUnit())=='n00U' or GetUnitTypeId(GetFilterUnit())=='n00Y' or GetUnitTypeId(GetFilterUnit())=='n00Z' or GetUnitTypeId(GetFilterUnit())=='n0KU' or GetUnitTypeId(GetFilterUnit())=='n0KV' or GetUnitTypeId(GetFilterUnit())=='n0KW' or RHX(GetUnitTypeId(GetFilterUnit()))) and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer((LoadUnitHandle(HY,(GetHandleId(GetTriggeringTrigger())), 318))))))
 endfunction
 function TED takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
@@ -45633,7 +45601,7 @@ function TKR takes nothing returns boolean
 	local unit KBX
 	local real x
 	local real y
-	if GetTriggerEventId()== EVENT_UNIT_SPELL_ENDCAST and(GetSpellAbilityId()=='A1BX' or GetSpellAbilityId()=='A30L') then
+	if GetTriggerEventId() == EVENT_UNIT_SPELL_ENDCAST and(GetSpellAbilityId()=='A1BX' or GetSpellAbilityId()=='A30L') then
 		call KillUnit(bh)
 		set KBX = LoadUnitHandle(HY, h, 19)
 		call UnitApplyTimedLife(LoadUnitHandle(HY, h,$FA),'BTLF', 1)
@@ -45662,7 +45630,7 @@ function TKR takes nothing returns boolean
 		set x = GetUnitX(bh)
 		set y = GetUnitY(bh)
 		set Q6V = LoadUnitHandle(HY, h, 2)
-		set KN = GetTriggerEvalCount(t)== 20 or GetTriggerEvalCount(t)== 40 or GetTriggerEvalCount(t)== 60 or GetTriggerEvalCount(t)== 80
+		set KN = GetTriggerEvalCount(t) == 20 or GetTriggerEvalCount(t) == 40 or GetTriggerEvalCount(t) == 60 or GetTriggerEvalCount(t) == 80
 		set g = AllocationGroup(196)
 		call GroupEnumUnitsInRange(g, x, y, 445, Condition(function TCR))
 		call ForGroup(g, function TDR)
@@ -45776,7 +45744,7 @@ function TPR takes nothing returns boolean
 	local real y1
 	local real d
 	local real a
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 	else
@@ -45790,7 +45758,7 @@ function TPR takes nothing returns boolean
 		call SaveBoolean(K, GetHandleId(WWE), 99, true)
 		call SetUnitPosition(WWE, x1, y1)
 		call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Human\\FlakCannons\\FlakTarget.mdl", x1, y1))
-		if GetTriggerEvalCount(t)>$F then
+		if GetTriggerEvalCount(t)> 15 then
 			call FlushChildHashtable(HY, h)
 			call CleanCurrentTrigger(t)
 		endif
@@ -45841,8 +45809,8 @@ function TWR takes nothing returns boolean
 	local unit WUE =(LoadUnitHandle(HY, h, 2))
 	local unit WWE = LoadUnitHandle(HY, h, 30)
 	local lightning APX =(LoadLightningHandle(HY, h,$C4))
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
-		if A_R == 2 and GetTriggerUnit()== WUE then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
+		if A_R == 2 and GetTriggerUnit() == WUE then
 			call TQR(WWE, WUE)
 		endif
 		call DestroyLightning(APX)
@@ -45923,7 +45891,7 @@ function T_R takes nothing returns boolean
 	local integer ODX
 	local integer S4R
 	local integer d
-	if(GetTriggerEventId()== EVENT_UNIT_ISSUED_ORDER and GetIssuedOrderId()!=$D0222) or GetTriggerEventId()== EVENT_UNIT_ISSUED_POINT_ORDER or GetTriggerEventId()== EVENT_UNIT_ISSUED_TARGET_ORDER or GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if(GetTriggerEventId() == EVENT_UNIT_ISSUED_ORDER and GetIssuedOrderId()!=$D0222) or GetTriggerEventId() == EVENT_UNIT_ISSUED_POINT_ORDER or GetTriggerEventId() == EVENT_UNIT_ISSUED_TARGET_ORDER or GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call SetUnitInvulnerable(trigUnit, false)
 		call UnitRemoveAbility(trigUnit,'A04R')
 		call FlushChildHashtable(HY, h)
@@ -46029,7 +45997,7 @@ function T6R takes nothing returns boolean
 	local group T7R
 	local real x
 	local real y
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		if GetUnitTypeId(WUE)=='e00E' then
 			set WUE = Player__Hero[GetPlayerId(GetOwningPlayer(WUE))]
 		endif
@@ -46319,7 +46287,7 @@ function UHR takes nothing returns boolean
 	local integer level = LoadInteger(HY, h, 0)
 	local boolean UDR = LoadInteger(HY, h, 1)=='A1B3'
 	call SetUnitAnimationByIndex(WUE, LoadInteger(P, GetUnitTypeId(WUE),'A1P8'))
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or GetDistanceBetween(GXR, GOR, W_E, W0E)>$578 or C5X(WUE) then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or GetDistanceBetween(GXR, GOR, W_E, W0E)>$578 or C5X(WUE) then
 		call SetUnitPathing(WUE, true)
 		call DestroyEffect(LoadEffectHandle(HY, h, 175))
 		call DestroyEffect(LoadEffectHandle(HY, h, 176))
@@ -46389,7 +46357,7 @@ function UKR takes nothing returns nothing
 	local unit WLE = LoadUnitHandle(HY, h, 1)
 	local integer id = LoadInteger(HY, h, 0)
 	local integer level = LoadInteger(HY, h, 1)
-	if GetUnitAbilityLevel(WJE,'Aloc')== 1 and HaveSavedHandle(HY, GetHandleId(WJE), 0) then
+	if GetUnitAbilityLevel(WJE,'Aloc') == 1 and HaveSavedHandle(HY, GetHandleId(WJE), 0) then
 		set WJE = LoadUnitHandle(HY, GetHandleId(WJE), 0)
 	endif
 	call UJR(WJE, WLE, id, level)
@@ -46429,7 +46397,7 @@ function ULR takes nothing returns boolean
 		set YVX =(ODX * 1. / 4 + .25)* .6 * DRO + 2 * ODX
 	endif
 	set YVX = YVX / 8.
-	if c > 16 * 8. or GetUnitAbilityLevel(WLE,'A0QO')== 0 or GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if c > 16 * 8. or GetUnitAbilityLevel(WLE,'A0QO') == 0 or GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call RemoveSavedHandle(HY, GetHandleId(WLE),'A0QP')
 		call UnitRemoveAbility(WLE,'A0QO')
 		call UnitRemoveAbility(WLE,'B080')
@@ -46510,7 +46478,7 @@ function UQR takes unit R8X, unit WLE returns nothing
 			call UPR(R8X, WLE)
 		endif
 		if LoadBoolean(P, GetHandleId(R8X),'A0QN'+ 1) then
-			if LoadUnitHandle(P, GetHandleId(R8X),'A0QN'+ 1)== WLE then
+			if LoadUnitHandle(P, GetHandleId(R8X),'A0QN'+ 1) == WLE then
 				call UPR(R8X, WLE)
 			else
 				call SaveBoolean(P, GetHandleId(R8X),'A0QN'+ 1, false)
@@ -46536,7 +46504,7 @@ function UTR takes unit trigUnit, integer O3O returns nothing
 		set i = i + 1
 	exitwhen i > 28
 	endloop
-	if GetUnitAbilityLevel(trigUnit, CG[O3O / 3])== 0 then
+	if GetUnitAbilityLevel(trigUnit, CG[O3O / 3]) == 0 then
 		call UnitAddPermanentAbility(trigUnit, CG[O3O / 3])
 	endif
 endfunction
@@ -46555,7 +46523,7 @@ function UUR takes nothing returns boolean
 		set i = IMaxBJ(IMinBJ(R2I( 100 -UYR)/ 7, 14), 1)
 		set U2V =(2 + ODX)* i
 		set U_R =(6 + 2 * ODX)* i
-		if GetUnitAbilityLevel(trigUnit,'A36D')== 1 then
+		if GetUnitAbilityLevel(trigUnit,'A36D') == 1 then
 			set U2V = 0
 			set U_R = 0
 		endif
@@ -46608,9 +46576,9 @@ function MYE takes nothing returns nothing
 	set CG[10]='A2OY'
 	set CG[11]='A2P0'
 	set CG[12]='A2P1'
-	set CG[$D]='A2P2'
-	set CG[$E]='A2P7'
-	set CG[$F]='A2P6'
+	set CG[13]='A2P2'
+	set CG[14]='A2P7'
+	set CG[15]='A2P6'
 	set CG[16]='A2P5'
 	set CG[17]='A2P4'
 	set CG[18]='A2P3'
@@ -46636,9 +46604,9 @@ function MYE takes nothing returns nothing
 	call SetAllPlayerAbilityUnavailable(CG[10])
 	call SetAllPlayerAbilityUnavailable(CG[11])
 	call SetAllPlayerAbilityUnavailable(CG[12])
-	call SetAllPlayerAbilityUnavailable(CG[$D])
-	call SetAllPlayerAbilityUnavailable(CG[$E])
-	call SetAllPlayerAbilityUnavailable(CG[$F])
+	call SetAllPlayerAbilityUnavailable(CG[13])
+	call SetAllPlayerAbilityUnavailable(CG[14])
+	call SetAllPlayerAbilityUnavailable(CG[15])
 	call SetAllPlayerAbilityUnavailable(CG[16])
 	call SetAllPlayerAbilityUnavailable(CG[17])
 	call SetAllPlayerAbilityUnavailable(CG[18])
@@ -46936,7 +46904,7 @@ endfunction
 // 冰火交加
 function DualBreathDamagedEvent takes nothing returns nothing
 	local integer i = GetUnitAbilityLevel(DamagedEventSourceUnit,'A0OB')
-	if i > 0 and GetUnitAbilityLevel(DamagedEventSourceUnit,'A3JI'-1 + i)== 0 then
+	if i > 0 and GetUnitAbilityLevel(DamagedEventSourceUnit,'A3JI'-1 + i) == 0 then
 		call CCX(DamagedEventTargetUnit,'A3JI'-1 + GetUnitAbilityLevel(DamagedEventSourceUnit,'A0OB'), 1, 5,'B3J1')
 	endif
 endfunction
@@ -47079,7 +47047,7 @@ function WCR takes nothing returns nothing
 	local unit fovd = CreateUnit(GetOwningPlayer(u),'o00D', GetUnitX(u), GetUnitY(u), 0)
 	local integer WDR
 	local integer WFR
-	if GetUnitAbilityLevel(u,'Aloc')== 1 and HaveSavedHandle(HY, GetHandleId(u), 0) then
+	if GetUnitAbilityLevel(u,'Aloc') == 1 and HaveSavedHandle(HY, GetHandleId(u), 0) then
 		set u = LoadUnitHandle(HY, GetHandleId(u), 0)
 	endif
 	set WDR = IMaxBJ(GetHeroStr(u, true), IMaxBJ(GetHeroAgi(u, true), GetHeroInt(u, true)))
@@ -47171,7 +47139,7 @@ function WJR takes nothing returns boolean
 	local unit WUE =(LoadUnitHandle(HY, h, 2))
 	local integer EVX = GetTriggerEvalCount(t)
 	local group g
-	if EVX == 16 or GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if EVX == 16 or GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call DestroyEffect(LoadEffectHandle(HY, h, 32))
 		call FlushChildHashtable(HY, h)
 		//call SetUnitPathing(WUE, true)
@@ -47230,7 +47198,7 @@ function WMR takes nothing returns boolean
 	local real y1
 	local real x2
 	local real y2
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or(GetTriggerEventId()== EVENT_UNIT_DAMAGED and GetEventDamage()> 2 and XFX(GetOwningPlayer(GetEventDamageSource()))) then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or(GetTriggerEventId() == EVENT_UNIT_DAMAGED and GetEventDamage()> 2 and XFX(GetOwningPlayer(GetEventDamageSource()))) then
 		call DestroyEffect((LoadEffectHandle(HY, h, 175)))
 		call DestroyEffect((LoadEffectHandle(HY, h, 176)))
 		call FlushChildHashtable(HY, h)
@@ -47353,7 +47321,7 @@ function ManaLeak_Fx takes nothing returns boolean
 	if distance > 300 then
 		set leakValue = 0
 	endif
-	if leakValue > 1 and ModuloInteger(evalCount, 3)== 0 then
+	if leakValue > 1 and ModuloInteger(evalCount, 3) == 0 then
 		call DestroyEffect(AddSpecialEffectTarget("Abilities\\Weapons\\WingedSerpentMissile\\WingedSerpentMissile.mdl", targetUnit, "chest"))
 	endif
 	if leakValue > 0 then
@@ -47362,7 +47330,7 @@ function ManaLeak_Fx takes nothing returns boolean
 	endif
 	call SaveReal(HY, h, 23,(x)* 1.)
 	call SaveReal(HY, h, 24,(y)* 1.)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or evalCount == (level + 4)* 10 or GetUnitAbilityLevel(targetUnit, GetManaLeakAbilityFromLevel(level))== 0 then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or evalCount == (level + 4)* 10 or GetUnitAbilityLevel(targetUnit, GetManaLeakAbilityFromLevel(level)) == 0 then
 		call UnitRemoveAbility(targetUnit, GetManaLeakAbilityFromLevel(level))
 		call UnitRemoveAbility(targetUnit, GetManaLeakBuffFromLevel(level))
 		call DestroyEffect(LoadEffectHandle(HY, h, 32))
@@ -47464,7 +47432,7 @@ endfunction
 function W1R takes nothing returns boolean
 	local unit u = GetFilterUnit()
 	local integer id = GetUnitTypeId(u)
-	if UnitAlive(u) and IsUnitInGroup(u, Q7V) == false and GetUnitAbilityLevel(u,'A04R')== 0 and IsUnitType(u, UNIT_TYPE_STRUCTURE) == false then
+	if UnitAlive(u) and IsUnitInGroup(u, Q7V) == false and GetUnitAbilityLevel(u,'A04R') == 0 and IsUnitType(u, UNIT_TYPE_STRUCTURE) == false then
 		call GroupAddUnit(Q7V, u)
 		if IsUnitEnemy(u, Temp__Player) then
 			call UnitDamageTargetEx(Temp__ArrayUnit[0], u, 1, XK[0])
@@ -47768,7 +47736,7 @@ function YXR takes unit u returns nothing
 	set t = null
 endfunction
 function YOR takes nothing returns boolean
-	if GetUnitAbilityLevel(GetTriggerUnit(),'A36D')== 0 and(X8R(GetSpellAbilityId()) or(Mode__BalanceOff and OER(GetSpellAbilityId()))) then
+	if GetUnitAbilityLevel(GetTriggerUnit(),'A36D') == 0 and(X8R(GetSpellAbilityId()) or(Mode__BalanceOff and OER(GetSpellAbilityId()))) then
 		call YXR(GetTriggerUnit())
 	endif
 	return false
@@ -47862,7 +47830,7 @@ function V3E takes nothing returns nothing
 	local unit d = CreateUnit(GetOwningPlayer(GetTriggerUnit()),'e00E', GetUnitX(GetTriggerUnit()), GetUnitY(GetTriggerUnit()), GetUnitFacing(GetTriggerUnit()))
 	call UnitAddAbility(d,'A3IJ')
 	call SetUnitAbilityLevel(d,'A3IJ', GetUnitAbilityLevel(GetTriggerUnit(),'A01F'))
-	if GetSpellTargetUnit()== GetTriggerUnit() then
+	if GetSpellTargetUnit() == GetTriggerUnit() then
 		call B1R(d, "carrionswarm", GetUnitX(GetTriggerUnit())+ 1 * Cos(bj_DEGTORAD * GetUnitFacing(GetTriggerUnit())), GetUnitY(GetTriggerUnit())+ 1 * Sin(bj_DEGTORAD * GetUnitFacing(GetTriggerUnit())))
 	else
 		call B1R(d, "carrionswarm", GetSpellTargetX(), GetSpellTargetY())
@@ -47905,7 +47873,7 @@ function YNR takes nothing returns nothing
 			loop
 				set WFV = GetHandleId(u)
 				call SaveInteger(P, WFV, ETX, LoadInteger(P, WFV, ETX)-1)
-				if LoadInteger(P, WFV, ETX)== 0 then
+				if LoadInteger(P, WFV, ETX) == 0 then
 					call WHV(u,'D032')
 				endif
 				call LodSystem_ReduceUnitExtraState(u, XK[0], "damage")
@@ -47920,7 +47888,7 @@ function YNR takes nothing returns nothing
 	endif
 	set XK[1]= GetUnitAbilityLevel(u,'A062')* 8 + 6
 	set Temp__Player = GetOwningPlayer(u)
-	if XK[0]!= XK[1]then
+	if XK[0]!= XK[1] then
 		call SaveBoolean(P, 99999, 99998, true)
 		call SaveInteger(P, WFV, 0, XK[1])
 	else
@@ -47932,7 +47900,7 @@ function YNR takes nothing returns nothing
 	exitwhen u == null
 		set WFV = GetHandleId(u)
 		call SaveInteger(P, WFV, ETX, LoadInteger(P, WFV, ETX)-1)
-		if LoadInteger(P, WFV, ETX)== 0 then
+		if LoadInteger(P, WFV, ETX) == 0 then
 			call WHV(u,'D032')
 		endif
 		call LodSystem_ReduceUnitExtraState(u, XK[0], "damage")
@@ -47973,7 +47941,7 @@ endfunction
 function YBR takes nothing returns boolean
 	local unit fu = GetFilterUnit()
 	local real N5X = WTE(fu, AL)
-	if fu != AL and IsUnitEnemy(fu, GetOwningPlayer(IL)) and UnitIsDead(fu) == false and C3X(fu) == false and N5X < CL and(GetUnitAbilityLevel(fu,'A04R')== 0) and GetUnitAbilityLevel(fu,'Avul')== 0 and UnitVisibleToPlayer(fu, GetOwningPlayer(IL)) and IsUnitInRangeXY(fu, GetUnitX(AL), GetUnitY(AL), 460) then
+	if fu != AL and IsUnitEnemy(fu, GetOwningPlayer(IL)) and UnitIsDead(fu) == false and C3X(fu) == false and N5X < CL and(GetUnitAbilityLevel(fu,'A04R') == 0) and GetUnitAbilityLevel(fu,'Avul') == 0 and UnitVisibleToPlayer(fu, GetOwningPlayer(IL)) and IsUnitInRangeXY(fu, GetUnitX(AL), GetUnitY(AL), 460) then
 		set CL = N5X
 		set NL = fu
 	endif
@@ -48118,7 +48086,7 @@ function YQR takes nothing returns boolean
 		set y = y + GetRandomInt(-350, 350)
 		call ABX("effects\\Eclipse.mdx", x, y, 1.5)
 	endif
-	if(GetTriggerEvalCount(t)+ 1)== WAR or b == false then
+	if(GetTriggerEvalCount(t)+ 1) == WAR or b == false then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 	endif
@@ -48144,7 +48112,7 @@ function V8E takes nothing returns nothing
 		set WXV = 6 * GetUnitAbilityLevel(WJE,'A00U')
 		set Z6X = 60
 		call SaveUnitHandle(HY, h, 0, WJE)
-		if GetSpellTargetUnit()== null or IsUnitEnemy(GetSpellTargetUnit(), GetOwningPlayer(WJE)) then
+		if GetSpellTargetUnit() == null or IsUnitEnemy(GetSpellTargetUnit(), GetOwningPlayer(WJE)) then
 			call SaveBoolean(HY, h, 0, true)
 			call SaveReal(HY, h, 0, GetSpellTargetX())
 			call SaveReal(HY, h, 1, GetSpellTargetY())
@@ -48301,7 +48269,7 @@ function XJCAX takes nothing returns nothing
 		set c = c -1
 		call SaveInteger(HY, h, 0, c)
 	endif
-	if c == 0 and GetUnitAbilityLevel(u,'A3UF')> 0 and(GetUnitAbilityLevel(u,'A0KV')> 0 or GetUnitAbilityLevel(u,'A3UG')> 0) and(GetWidgetLife(u)> 0.405 and not IsUnitType(u, UNIT_TYPE_DEAD)) and GetUnitAbilityLevel(u,'A36D')== 0 then
+	if c == 0 and GetUnitAbilityLevel(u,'A3UF')> 0 and(GetUnitAbilityLevel(u,'A0KV')> 0 or GetUnitAbilityLevel(u,'A3UG')> 0) and(GetWidgetLife(u)> 0.405 and not IsUnitType(u, UNIT_TYPE_DEAD)) and GetUnitAbilityLevel(u,'A36D') == 0 then
 		set g = AllocationGroup(220)
 		set U2 = u
 		call GroupEnumUnitsInRange(g, GetUnitX(u), GetUnitY(u), 650, Condition(function DGX))
@@ -48504,7 +48472,7 @@ function EXE takes nothing returns nothing
 	set ZFR = null
 endfunction
 function ZGR takes nothing returns boolean
-	return((IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(GW)) and GetUnitAbilityLevel(GetFilterUnit(),'A04R')== 0 and UnitIsDead(GetFilterUnit()) == false and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and GetUnitAbilityLevel(GetFilterUnit(),'Aloc')== 0))
+	return((IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(GW)) and GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0 and UnitIsDead(GetFilterUnit()) == false and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and GetUnitAbilityLevel(GetFilterUnit(),'Aloc') == 0))
 endfunction
 function ZHR takes integer ZJR returns real
 	if ZJR <= 1 then
@@ -48751,10 +48719,10 @@ function Z1R takes nothing returns boolean
 	local integer EVX =(LoadInteger(HY, h, 34))-1
 	local texttag tt
 	call SaveInteger(HY, h, 34,(EVX))
-	if GetTriggerEvalCount(t)== 1 then
+	if GetTriggerEvalCount(t) == 1 then
 		call RemoveSavedHandle(HY, h,'0ILU')
 	endif
-	if GetTriggerEventId()== EVENT_UNIT_DEATH then
+	if GetTriggerEventId() == EVENT_UNIT_DEATH then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 	else
@@ -48766,7 +48734,7 @@ function Z1R takes nothing returns boolean
 		call SetTextTagFadepoint(tt, 3)
 		call SetTextTagLifespan(tt, .9)
 		call SetTextTagPermanent(tt, false)
-		call SetTextTagVisibility(tt, GetOwningPlayer(WUE)== LocalPlayer)
+		call SetTextTagVisibility(tt, GetOwningPlayer(WUE) == LocalPlayer)
 		set tt = CreateTextTag()
 		call SetTextTagText(tt, I2S(EVX), .03)
 		call SetTextTagPosUnit(tt, WWE, 0)
@@ -48775,7 +48743,7 @@ function Z1R takes nothing returns boolean
 		call SetTextTagFadepoint(tt, 3)
 		call SetTextTagLifespan(tt, .9)
 		call SetTextTagPermanent(tt, false)
-		call SetTextTagVisibility(tt, GetOwningPlayer(WUE)== LocalPlayer)
+		call SetTextTagVisibility(tt, GetOwningPlayer(WUE) == LocalPlayer)
 	endif
 	set t = null
 	set tt = null
@@ -48841,7 +48809,7 @@ function Z8R takes nothing returns nothing
 	local unit Z3R = GetSummonedUnit()
 	local trigger t
 	set u = GetSummoningUnit()
-	if GetUnitAbilityLevel(u,'Aloc')== 1 and HaveSavedHandle(HY, GetHandleId(u), 0) then
+	if GetUnitAbilityLevel(u,'Aloc') == 1 and HaveSavedHandle(HY, GetHandleId(u), 0) then
 		set u = LoadUnitHandle(HY, GetHandleId(u), 0)
 	endif
 	set h = GetHandleId(u)
@@ -48873,7 +48841,7 @@ endfunction
 function EAE takes nothing returns nothing
 	local unit u = GetTriggerUnit()
 	local unit t = GetSpellTargetUnit()
-	if GetUnitAbilityLevel(u,'Aloc')== 1 and HaveSavedHandle(HY, GetHandleId(u), 0) then
+	if GetUnitAbilityLevel(u,'Aloc') == 1 and HaveSavedHandle(HY, GetHandleId(u), 0) then
 		set u = LoadUnitHandle(HY, GetHandleId(u), 0)
 	endif
 	call SaveUnitHandle(HY,(GetHandleId(u)),$E4,(t))
@@ -49067,8 +49035,8 @@ endfunction
 function VGI takes nothing returns nothing
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
-	if GetTriggerEventId()== EVENT_UNIT_DAMAGED then
-		if GetEventDamageSource()== LoadUnitHandle(HY, h, 0) then
+	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
+		if GetEventDamageSource() == LoadUnitHandle(HY, h, 0) then
 			call CommonUnitAddStun(GetTriggerUnit(), LoadReal(HY, h, 0), false)
 			call FlushChildHashtable(HY, h)
 			call DestroyTrigger(t)
@@ -49091,7 +49059,7 @@ function VHI takes nothing returns nothing
 	local real I3X
 	local trigger t
 	local integer h
-	if GetUnitAbilityLevel(u,'Aloc')== 1 and HaveSavedHandle(HY, GetHandleId(u), 0) then
+	if GetUnitAbilityLevel(u,'Aloc') == 1 and HaveSavedHandle(HY, GetHandleId(u), 0) then
 		set u = LoadUnitHandle(HY, GetHandleId(u), 0)
 	endif
 	if GetUnitAbilityLevel(u,'A04R')> 0 then
@@ -49172,7 +49140,7 @@ function VTI takes nothing returns boolean
 		call S9E(GetOwningPlayer(WUE),'A38E', false)
 		call S9E(GetOwningPlayer(WUE),'A24E', true)
 	endif
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or GetTriggerEvalCount(t)>$8C or(GetTriggerEventId()== EVENT_UNIT_SPELL_EFFECT and GetSpellAbilityId()=='A24E') then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or GetTriggerEvalCount(t)>$8C or(GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT and GetSpellAbilityId()=='A24E') then
 		if Rubick_AbilityFilter(WUE , 'A07U') or(LoadInteger(HY,(GetHandleId(WUE)), 704))=='A38E' then
 			call S9E(GetOwningPlayer(WUE),'A07U', true)
 			call S9E(GetOwningPlayer(WUE),'A38E', true)
@@ -49273,7 +49241,7 @@ function EDE takes nothing returns nothing
 	set g = null
 endfunction
 function V_I takes nothing returns boolean
-	return IsUnitEnemy(ZK, GetOwningPlayer(GetFilterUnit())) and UnitIsDead(GetFilterUnit()) == false and(GetUnitAbilityLevel(GetFilterUnit(),'A04R')== 0)
+	return IsUnitEnemy(ZK, GetOwningPlayer(GetFilterUnit())) and UnitIsDead(GetFilterUnit()) == false and(GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0)
 endfunction
 function V0I takes nothing returns nothing
 	local unit u = GetEnumUnit()
@@ -49336,13 +49304,13 @@ function V2I takes unit WUE, unit WWE, integer ODX returns nothing
 	set KBX = null
 endfunction
 function V3I takes nothing returns boolean
-	if IsUnitIllusion(GetFilterUnit()) and GetOwningPlayer(GetFilterUnit())== GetOwningPlayer(GetTriggerUnit()) then
+	if IsUnitIllusion(GetFilterUnit()) and GetOwningPlayer(GetFilterUnit()) == GetOwningPlayer(GetTriggerUnit()) then
 		call V2I(GetFilterUnit(), JUV, GetUnitAbilityLevel(GetTriggerUnit(),'A24D'))
 	endif
 	return false
 endfunction
 function V4I takes nothing returns boolean
-	if IsUnitIllusion(GetFilterUnit()) and GetOwningPlayer(GetFilterUnit())== GetOwningPlayer(GetTriggerUnit()) then
+	if IsUnitIllusion(GetFilterUnit()) and GetOwningPlayer(GetFilterUnit()) == GetOwningPlayer(GetTriggerUnit()) then
 		call SetUnitFacing(GetFilterUnit(), S2)
 		call SetUnitAnimation(GetFilterUnit(), "spell")
 	endif
@@ -49380,8 +49348,8 @@ endfunction
 function V6I takes nothing returns nothing
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
-	if GetTriggerEventId()== EVENT_UNIT_DAMAGED then
-		if GetEventDamageSource()== LoadUnitHandle(HY, h, 1) then
+	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
+		if GetEventDamageSource() == LoadUnitHandle(HY, h, 1) then
 			call CommonUnitAddStun(GetTriggerUnit(), 1.5, false)
 			call FlushChildHashtable(HY, h)
 			call CleanCurrentTrigger(t)
@@ -49425,8 +49393,8 @@ endfunction
 function V8I takes nothing returns nothing
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
-	if GetTriggerEventId()== EVENT_UNIT_DAMAGED then
-		if GetEventDamageSource()== LoadUnitHandle(HY, h, 0) then
+	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
+		if GetEventDamageSource() == LoadUnitHandle(HY, h, 0) then
 			call CommonUnitAddStun(GetTriggerUnit(), 1.5, false)
 			call UnitDamageTargetEx(LoadUnitHandle(HY, h, 1), GetTriggerUnit(), 1,$F+ 65 * LoadReal(HY, h, 0))
 			call FlushChildHashtable(HY, h)
@@ -49562,7 +49530,7 @@ function EAI takes unit u returns integer
 endfunction
 function EBI takes nothing returns nothing
 	set Q2 = 0
-	if GetUnitAbilityLevel(U2,'A088')== 0 or EOI() == false then
+	if GetUnitAbilityLevel(U2,'A088') == 0 or EOI() == false then
 		return
 	endif
 	set Q2 = EII(U2, GetUnitAbilityLevel(U2,'A088'))
@@ -49588,7 +49556,7 @@ function ECI takes nothing returns boolean
 	return false
 endfunction
 function EDI takes nothing returns boolean
-	return(IsUnitEnemy(Q5V, GetOwningPlayer(GetFilterUnit())) and IsAliveNotStrucNotWard(GetFilterUnit()) and IsMagicImmuneUnit(GetFilterUnit()) == false and GetUnitAbilityLevel(GetFilterUnit(),'B03J')== 0 and UnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(Q5V)))!= null
+	return(IsUnitEnemy(Q5V, GetOwningPlayer(GetFilterUnit())) and IsAliveNotStrucNotWard(GetFilterUnit()) and IsMagicImmuneUnit(GetFilterUnit()) == false and GetUnitAbilityLevel(GetFilterUnit(),'B03J') == 0 and UnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(Q5V)))!= null
 endfunction
 function EFI takes nothing returns boolean
 	return(IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and IsAliveNotStrucNotWard(GetFilterUnit()) and IsMagicImmuneUnit(GetFilterUnit()) == false and UnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(U2)) and IsHeroUnitId(GetUnitTypeId(GetFilterUnit())) == false)!= null
@@ -49639,7 +49607,7 @@ function GushUpgraded_Actions takes nothing returns nothing
 endfunction
 
 function Group_Condition takes unit u returns boolean
-	return IsUnitType(u, UNIT_TYPE_STRUCTURE) == false and UnitAlive(u) and GetUnitAbilityLevel(u,'A04R')== 0
+	return IsUnitType(u, UNIT_TYPE_STRUCTURE) == false and UnitAlive(u) and GetUnitAbilityLevel(u,'A04R') == 0
 endfunction
 
 function Enum_Unit1 takes nothing returns boolean
@@ -49685,7 +49653,7 @@ function WaveRunningActions takes nothing returns nothing
 	local integer dt = LoadInteger(HY, h, 1)
 	local string funcstr = LoadStr(HY, h, 0)
 	local integer lv = LoadInteger(HY, h, 5)
-	local boolean time_event = GetTriggerEventId()== EVENT_GAME_TIMER_EXPIRED
+	local boolean time_event = GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED
 	local boolean b2 = LoadBoolean(HY, h,'ally')
 	local real x
 	local real y
@@ -50025,24 +49993,24 @@ function EYI takes nothing returns boolean
 	local real ty
 	if(GetUnitAbilityLevel(GetTriggerUnit(),'A088'))> 0 then
 		set u = GetTriggerUnit()
-		if GetTriggerEventId()== EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER then
+		if GetTriggerEventId() == EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER then
 			call SaveInteger(HY, GetHandleId(u),'0ORD', GetIssuedOrderId())
 			call SaveInteger(HY, GetHandleId(u),'ORDT', 1)
 			set u = null
 			return false
-		elseif GetTriggerEventId()== EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER then
+		elseif GetTriggerEventId() == EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER then
 			call SaveInteger(HY, GetHandleId(u),'0ORD', GetIssuedOrderId())
 			call SaveInteger(HY, GetHandleId(u),'ORDT', 2)
 			set u = null
 			return false
-		elseif GetTriggerEventId()== EVENT_PLAYER_UNIT_ISSUED_ORDER then
+		elseif GetTriggerEventId() == EVENT_PLAYER_UNIT_ISSUED_ORDER then
 			call SaveInteger(HY, GetHandleId(u),'0ORD', GetIssuedOrderId())
 			call SaveInteger(HY, GetHandleId(u),'ORDT', 3)
 			set u = null
 			return false
 		endif
-		if OXR(GetSpellAbilityId()) and GetUnitAbilityLevel(GetTriggerUnit(),'A04R')== 0 then
-			if GetSpellTargetUnit()!= null and LoadInteger(HY, GetHandleId(u),'ORDT')== 1 then
+		if OXR(GetSpellAbilityId()) and GetUnitAbilityLevel(GetTriggerUnit(),'A04R') == 0 then
+			if GetSpellTargetUnit()!= null and LoadInteger(HY, GetHandleId(u),'ORDT') == 1 then
 				if not UnitHasSpellShield(GetSpellTargetUnit()) and IsPlayerEnemy(GetOwningPlayer(GetSpellTargetUnit()), GetOwningPlayer(u)) then
 					set r = EAI(u)
 					if r > 1 then
@@ -50054,7 +50022,7 @@ function EYI takes nothing returns boolean
 						call EUI(r)
 					endif
 				endif
-			elseif GetSpellTargetLoc()!= null and LoadInteger(HY, GetHandleId(u),'ORDT')== 2 then
+			elseif GetSpellTargetLoc()!= null and LoadInteger(HY, GetHandleId(u),'ORDT') == 2 then
 				set r = EAI(u)
 				if r > 1 then
 					set ux = GetUnitX(u)
@@ -50064,7 +50032,7 @@ function EYI takes nothing returns boolean
 					call SaveReal(HY, GetHandleId(u),'000D', SquareRoot(((tx -ux)*(tx -ux))+((ty -uy)*(ty -uy))))
 					call EUI(r)
 				endif
-			elseif LoadInteger(HY, GetHandleId(u),'ORDT')== 3 then
+			elseif LoadInteger(HY, GetHandleId(u),'ORDT') == 3 then
 				set r = EAI(u)
 				if r > 1 then
 					call EUI(r)
@@ -50254,7 +50222,7 @@ endfunction
 function E_I takes nothing returns boolean
 	local unit f = GetFilterUnit()
 	local unit u = GetTriggerUnit()
-	if IsUnitAlly(f, GetOwningPlayer(u)) and UnitIsDead(f) == false and(IsUnitType(f, UNIT_TYPE_HERO) or((GetOwningPlayer(f)== Sentinels[0]or GetOwningPlayer(f)== Scourges[0])) or(GetOwningPlayer(f)== GetOwningPlayer(u) and R_X(f) == false)) then
+	if IsUnitAlly(f, GetOwningPlayer(u)) and UnitIsDead(f) == false and(IsUnitType(f, UNIT_TYPE_HERO) or((GetOwningPlayer(f) == Sentinels[0]or GetOwningPlayer(f) == Scourges[0])) or(GetOwningPlayer(f) == GetOwningPlayer(u) and R_X(f) == false)) then
 		set f = null
 		set u = null
 		return true
@@ -50276,7 +50244,7 @@ function E0I takes group gg returns unit
 			if U2 == null then
 				set U2 = u
 			else
-				if GetRandomInt(0, 1)== 1 then
+				if GetRandomInt(0, 1) == 1 then
 					set U2 = u
 				endif
 			endif
@@ -50284,7 +50252,7 @@ function E0I takes group gg returns unit
 			if W2 == null then
 				set W2 = u
 			else
-				if GetRandomInt(0, 1)== 1 then
+				if GetRandomInt(0, 1) == 1 then
 					set W2 = u
 				endif
 			endif
@@ -50370,15 +50338,15 @@ endfunction
 function E2I takes nothing returns boolean
 	local integer r
 	if(GetUnitAbilityLevel(GetTriggerUnit(),'A088'))> 0 then
-		if GetTriggerEventId()== EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER then
+		if GetTriggerEventId() == EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER then
 			call SaveInteger(HY, GetHandleId(GetTriggerUnit()),'0ORD'+ 1, GetIssuedOrderId())
-		elseif GetTriggerEventId()== EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER then
+		elseif GetTriggerEventId() == EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER then
 			call SaveInteger(HY, GetHandleId(GetTriggerUnit()),'0ORD'+ 1, 0)
-		elseif GetTriggerEventId()== EVENT_PLAYER_UNIT_ISSUED_ORDER then
+		elseif GetTriggerEventId() == EVENT_PLAYER_UNIT_ISSUED_ORDER then
 			call SaveInteger(HY, GetHandleId(GetTriggerUnit()),'0ORD'+ 1, 0)
 		endif
-		if GetTriggerEventId()== EVENT_PLAYER_UNIT_SPELL_EFFECT and(LoadInteger(HY, GetHandleId(GetTriggerUnit()),'0ORD'+ 1)!= 0) then
-			if OXR(GetSpellAbilityId()) and(GetSpellTargetUnit()!= null) and(GetSpellAbilityId()!= null) and GetUnitAbilityLevel(GetTriggerUnit(),'A04R')== 0 then
+		if GetTriggerEventId() == EVENT_PLAYER_UNIT_SPELL_EFFECT and(LoadInteger(HY, GetHandleId(GetTriggerUnit()),'0ORD'+ 1)!= 0) then
+			if OXR(GetSpellAbilityId()) and(GetSpellTargetUnit()!= null) and(GetSpellAbilityId()!= null) and GetUnitAbilityLevel(GetTriggerUnit(),'A04R') == 0 then
 				if IsPlayerAlly(GetOwningPlayer(GetSpellTargetUnit()), GetOwningPlayer(GetTriggerUnit())) then
 					set r = EAI(GetTriggerUnit())
 					if r > 1 then
@@ -50477,7 +50445,7 @@ function E6I takes nothing returns boolean
 	if IsUnitIllusion(TJX) then
 		set KBX = GetSummoningUnit()
 		set WWE =(LoadUnitHandle(HY,(GetHandleId(KBX)), 303))
-		if WWE == null or GetUnitX(WWE)== .0 or GetUnitY(WWE)== .0 then
+		if WWE == null or GetUnitX(WWE) == .0 or GetUnitY(WWE) == .0 then
 			set TJX = null
 			set KBX = null
 			set WWE = null
@@ -50519,7 +50487,7 @@ function E9I takes unit WUE, player p, unit WWE, integer ODX, boolean XVI return
 		call UnitDamageTargetEx(KBX, WWE, 1, 50 + 50 * ODX)
 		call E7I(p, WWE, ODX)
 		set KBX = null
-		if GetUnitAbilityLevel(WWE,'A3E9')== 1 and IsMagicImmuneUnit(WUE) == false and HaveSavedHandle(HY, GetHandleId(WUE), 0) == false then
+		if GetUnitAbilityLevel(WWE,'A3E9') == 1 and IsMagicImmuneUnit(WUE) == false and HaveSavedHandle(HY, GetHandleId(WUE), 0) == false then
 			call SaveUnitHandle(VV,'A3E9', 0, WWE)
 			call SaveUnitHandle(VV,'A3E9', 1, WUE)
 			call SaveInteger(VV,'A3E9', 0, ODX)
@@ -50547,7 +50515,7 @@ function XXI takes nothing returns boolean
 	local boolean NDX
 	local real NFX
 	local real NGX
-	if GetTriggerEventId()== EVENT_UNIT_SPELL_EFFECT then
+	if GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT then
 		if OXX(GetSpellAbilityId()) then
 			call SaveBoolean(HY, h, 0, true)
 			call SaveReal(HY, h, 0, GetUnitX(GetTriggerUnit()))
@@ -50609,7 +50577,7 @@ function XOI takes unit WUE, integer ODX, unit WWE, boolean F0X returns nothing
 	set NIX = null
 endfunction
 function XRI takes nothing returns boolean
-	if IsUnitIllusion(GetFilterUnit()) and IsPlayerHasSkill(GetOwningPlayer(GetFilterUnit()), 83) and GetOwningPlayer(GetFilterUnit())== GetOwningPlayer(GetTriggerUnit()) then
+	if IsUnitIllusion(GetFilterUnit()) and IsPlayerHasSkill(GetOwningPlayer(GetFilterUnit()), 83) and GetOwningPlayer(GetFilterUnit()) == GetOwningPlayer(GetTriggerUnit()) then
 		call XOI(GetFilterUnit(), 3, GetSpellTargetUnit(), false)
 	endif
 	return false
@@ -50631,7 +50599,7 @@ function XEI takes nothing returns nothing
 	call FlushChildHashtable(VV,'A3E9')
 endfunction
 function XII takes nothing returns boolean
-	if IsUnitIllusion(GetFilterUnit()) and IsPlayerHasSkill(GetOwningPlayer(GetFilterUnit()), 83) and GetOwningPlayer(GetFilterUnit())== GetOwningPlayer(GetTriggerUnit()) then
+	if IsUnitIllusion(GetFilterUnit()) and IsPlayerHasSkill(GetOwningPlayer(GetFilterUnit()), 83) and GetOwningPlayer(GetFilterUnit()) == GetOwningPlayer(GetTriggerUnit()) then
 		call SetUnitFacing(GetFilterUnit(), S2)
 		call SetUnitAnimation(GetFilterUnit(), "spell")
 	endif
@@ -50689,7 +50657,7 @@ function XNI takes unit u returns nothing
 	set d = null
 endfunction
 function XCI takes unit u, unit WLE returns nothing
-	if(GetUnitAbilityLevel(u,'P083')> 0 or GetUnitAbilityLevel(u,'B03B')> 0 or GetUnitAbilityLevel(u,'B03A')> 0) and GetUnitAbilityLevel(u,'A36D')== 0 and IsUnitType(WLE, UNIT_TYPE_STRUCTURE) == false and IsUnitEnemy(WLE, GetOwningPlayer(u)) then
+	if(GetUnitAbilityLevel(u,'P083')> 0 or GetUnitAbilityLevel(u,'B03B')> 0 or GetUnitAbilityLevel(u,'B03A')> 0) and GetUnitAbilityLevel(u,'A36D') == 0 and IsUnitType(WLE, UNIT_TYPE_STRUCTURE) == false and IsUnitEnemy(WLE, GetOwningPlayer(u)) then
 		call XNI(u)
 	endif
 endfunction
@@ -50728,8 +50696,8 @@ function XFI takes nothing returns boolean
 	local boolean ESI = false
 	local real x
 	local real y
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
-		if GetTriggerUnit()== u then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
+		if GetTriggerUnit() == u then
 			call XDI(u, hu, t)
 		else
 			if GetUnitCurrentOrder(u)!=$D0012 then
@@ -50738,16 +50706,16 @@ function XFI takes nothing returns boolean
 				call EnableTrigger(t)
 			endif
 		endif
-	elseif GetTriggerEventId()== EVENT_UNIT_ATTACKED then
-		if GetAttacker()== u then
+	elseif GetTriggerEventId() == EVENT_UNIT_ATTACKED then
+		if GetAttacker() == u then
 			call XDI(u, hu, t)
 		endif
-	elseif GetTriggerEventId()== EVENT_UNIT_ISSUED_ORDER or GetTriggerEventId()== EVENT_UNIT_ISSUED_TARGET_ORDER or GetTriggerEventId()== EVENT_UNIT_ISSUED_POINT_ORDER then
+	elseif GetTriggerEventId() == EVENT_UNIT_ISSUED_ORDER or GetTriggerEventId() == EVENT_UNIT_ISSUED_TARGET_ORDER or GetTriggerEventId() == EVENT_UNIT_ISSUED_POINT_ORDER then
 		if GetIssuedOrderId()!=$D000F and not(GetIssuedOrderId()==851971 and GetOrderTargetUnit()!= null and IsUnitEnemy(GetOrderTargetUnit(), GetOwningPlayer(u))) then
 			call XDI(u, hu, t)
 		endif
 	else
-		if C6X(u) or(LoadBoolean(HY, h, 5) and GetUnitAbilityLevel(u,'A46F')== 0) then
+		if C6X(u) or(LoadBoolean(HY, h, 5) and GetUnitAbilityLevel(u,'A46F') == 0) then
 			call XDI(u, hu, t)
 		else
 			set EOX = WTE(u, WLE)
@@ -50765,7 +50733,7 @@ function XFI takes nothing returns boolean
 					call XDI(u, hu, t)
 				endif
 			elseif LoadBoolean(HY, h, 5) == false then
-				if LoadBoolean(HY, h, 0) == false and GetUnitAbilityLevel(u,'A46F')== 0 and EOX <= XGI and GetUnitAbilityLevel(u,'A46D')> 0 then
+				if LoadBoolean(HY, h, 0) == false and GetUnitAbilityLevel(u,'A46F') == 0 and EOX <= XGI and GetUnitAbilityLevel(u,'A46D')> 0 then
 					call UnitAddPermanentAbility(u,'A46F')
 					call SetUnitImitateMoveSpeed(u, 999, 800)
 					if GetUnitAbilityLevel(u,'A46D')> 0 then
@@ -50832,7 +50800,7 @@ endfunction
 // 幻影冲锋 右键
 function XKI takes nothing returns boolean
 	if GetOrderTargetUnit()!= null and IsUnitEnemy(GetOrderTargetUnit(), GetOwningPlayer(GetTriggerUnit())) and(GetIssuedOrderId()==$D000F or GetIssuedOrderId()==851971) then
-		if GetUnitAbilityLevel(GetTriggerUnit(),'A46D')> 0 and GetUnitAbilityLevel(GetTriggerUnit(),'A36D')== 0 then
+		if GetUnitAbilityLevel(GetTriggerUnit(),'A46D')> 0 and GetUnitAbilityLevel(GetTriggerUnit(),'A36D') == 0 then
 			call XHI()
 		endif
 	endif
@@ -50843,7 +50811,7 @@ function XLI takes nothing returns boolean
 	local unit u
 	if IsUnitIllusion(GetTriggerUnit()) then
 		set u = Player__Hero[GetPlayerId(GetOwningPlayer(GetTriggerUnit()))]
-		if GetUnitAbilityLevel(u,'A46E')> 0 and GetUnitTypeId(GetTriggerUnit())== GetUnitTypeId(u) then
+		if GetUnitAbilityLevel(u,'A46E')> 0 and GetUnitTypeId(GetTriggerUnit()) == GetUnitTypeId(u) then
 			call UnitAddPermanentAbility(GetTriggerUnit(),'A46D')
 			call SetUnitAbilityLevel(GetTriggerUnit(),'A46D', GetUnitAbilityLevel(u,'A46E'))
 		endif
@@ -50858,7 +50826,7 @@ function POE takes nothing returns boolean
 	return false
 endfunction
 function XMI takes nothing returns boolean
-	return GetOwningPlayer(GetFilterUnit())== GetOwningPlayer(U2) and IsUnitIllusion(GetFilterUnit()) and UnitIsDead(GetFilterUnit()) == false
+	return GetOwningPlayer(GetFilterUnit()) == GetOwningPlayer(U2) and IsUnitIllusion(GetFilterUnit()) and UnitIsDead(GetFilterUnit()) == false
 endfunction
 function XPI takes nothing returns nothing
 	local timer t = GetExpiredTimer()
@@ -51038,7 +51006,7 @@ function RegisterPhantomLancerTrigger takes nothing returns nothing
 	set t = null
 endfunction
 function XUI takes nothing returns boolean
-	if GetUnitTypeId(GetFilterUnit())== VUV[21]and GetOwningPlayer(GetFilterUnit())== GetOwningPlayer(GetTriggerUnit()) and IsUnitIllusion(GetFilterUnit()) == false then
+	if GetUnitTypeId(GetFilterUnit()) == VUV[21]and GetOwningPlayer(GetFilterUnit()) == GetOwningPlayer(GetTriggerUnit()) and IsUnitIllusion(GetFilterUnit()) == false then
 		set U2 = GetFilterUnit()
 	endif
 	return false
@@ -51135,7 +51103,7 @@ function X2I takes unit WJE, group g returns nothing
 		set u = FirstOfGroup(g)
 	exitwhen u == null
 		set hu = GetHandleId(u)
-		if GetUnitAbilityLevel(u,'B0ER')== 0 and LoadBoolean(HY, hu,'B0ER') == false then
+		if GetUnitAbilityLevel(u,'B0ER') == 0 and LoadBoolean(HY, hu,'B0ER') == false then
 			call SaveUnitHandle(HY, h, i, u)
 			call SaveInteger(HY, h, i, hu)
 			call SaveBoolean(HY, hu,'B0ER', true)
@@ -51297,7 +51265,7 @@ function X8I takes nothing returns nothing
 	local integer WFV = GetHandleId(t)
 	local integer UYX = LoadInteger(P, WFV, 0)
 	local unit u = LoadUnitHandle(P, WFV, 0)
-	local boolean b1 = GetUnitAbilityLevel(u,'B021')== 0
+	local boolean b1 = GetUnitAbilityLevel(u,'B021') == 0
 	local boolean b2 = IsPointHaveTreeInRange(GetWidgetX(u), GetWidgetY(u), 375)
 	if LoadBoolean(P, GetHandleId(u), StringHash("TreeInvisibility")) and LoadBoolean(P, WFV, 0) and b1 and b2 and UYX > 1 then
 		set d = CreateUnit(GetOwningPlayer(u),'e00E', GetWidgetX(u), GetWidgetY(u), 0)
@@ -51453,7 +51421,7 @@ function ONI takes nothing returns nothing
 	local integer h = GetHandleId(t)
 	local unit u = LoadUnitHandle(HY, h, 0)
 	local integer c = LoadInteger(HY, h, 1)+ 1
-	if GetUnitAbilityLevel(u,'A3KF')== 0 or LoadInteger(HY, h, 0)== 0 or c >=$F* 5 or GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetUnitAbilityLevel(u,'A3KF') == 0 or LoadInteger(HY, h, 0) == 0 or c >=$F* 5 or GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call RemoveSavedHandle(HY, GetHandleId(u),'A2ML')
 		call UnitRemoveAbility(u,'A3KF')
 		call UnitRemoveAbility(u,'B3KF')
@@ -51517,7 +51485,7 @@ function OFI takes nothing returns boolean
 	local unit WWE =(LoadUnitHandle(HY, h, 17))
 	local integer ODX =(LoadInteger(HY, h, 5))
 	local group g
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 		call UnitRemoveAbility(WWE,'A272')
@@ -51704,7 +51672,7 @@ function OUI takes nothing returns boolean
 		call SetUnitState(WWE, UNIT_STATE_MANA, GetUnitState(WWE, UNIT_STATE_MANA)-8 * ODX)
 		call UnitDamageTargetEx(WUE, WWE, 1, 5 +$F* ODX)
 	endif
-	if EVX >= 6 or GetUnitAbilityLevel(WWE,'A1PS')== 0 or GetTriggerEventId()== EVENT_WIDGET_DEATH or(GetTriggerEventId()== EVENT_UNIT_SPELL_EFFECT and OTI(GetSpellAbilityId())) then
+	if EVX >= 6 or GetUnitAbilityLevel(WWE,'A1PS') == 0 or GetTriggerEventId() == EVENT_WIDGET_DEATH or(GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT and OTI(GetSpellAbilityId())) then
 		call UnitRemoveAbility(WWE,'A1PS')
 		call UnitRemoveAbility(WWE,'B0CQ')
 		call FlushChildHashtable(HY, h)
@@ -51816,7 +51784,7 @@ function PTE takes nothing returns nothing
 endfunction
 
 function O1I takes nothing returns nothing
-	if GetUnitAbilityLevel(WX,'P102')!= 0 and GetUnitAbilityLevel(WX,'A36D')== 0 and TKV(WX,'P102', 40) then
+	if GetUnitAbilityLevel(WX,'P102')!= 0 and GetUnitAbilityLevel(WX,'A36D') == 0 and TKV(WX,'P102', 40) then
 		call CCX(YX,'A469', 1, .5,'B469')
 		call UnitDamageTargetEx(WX, YX, 2, 25 * GetUnitAbilityLevel(WX,'P102')-$A)
 	endif
@@ -51860,7 +51828,7 @@ function O3I takes nothing returns boolean
 	call DestroyEffect(LoadEffectHandle(HY, h,$B4))
 	call DestroyEffect(LoadEffectHandle(HY, h, 330))
 	call DestroyEffect(LoadEffectHandle(HY, h, 331))
-	if GetTriggerEvalCount(t)== 11 then
+	if GetTriggerEvalCount(t) == 11 then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 	else
@@ -51931,7 +51899,7 @@ function O4I takes nothing returns boolean
 	local integer i
 	call UnitAddPermanentAbility(KBX,'A19F')
 	call SetUnitAbilityLevel(KBX,'A19F', ODX)
-	if GetTriggerEvalCount(t)== 1 then
+	if GetTriggerEvalCount(t) == 1 then
 		set i = 1
 		loop
 		exitwhen i >$A
@@ -51995,7 +51963,7 @@ function O5I takes nothing returns boolean
 			call SaveReal(HY, h, 0, WIE * 1.)
 		endif
 	endif
-	if HUX == 0 or GetUnitAbilityLevel(u,'A064')== 0 then
+	if HUX == 0 or GetUnitAbilityLevel(u,'A064') == 0 then
 		call UnitRemoveAbility(u,'A46B')
 		call UnitRemoveAbility(u,'B46B')
 	elseif GetUnitAbilityLevel(u,'A064')> 0 then
@@ -52021,7 +51989,7 @@ function JPE takes nothing returns nothing
 	if HaveSavedHandle(HY, GetHandleId(GetTriggerUnit()),'A064') == false then
 		call O6I(GetTriggerUnit())
 	endif
-	if LoadInteger(HY, GetHandleId(GetTriggerUnit()),'A064')== 0 then
+	if LoadInteger(HY, GetHandleId(GetTriggerUnit()),'A064') == 0 then
 		call EXStopUnit(GetTriggerUnit())
 		call InterfaceErrorForPlayer(GetOwningPlayer(GetTriggerUnit()), "能量点数不足")
 	endif
@@ -52143,7 +52111,7 @@ function RVI takes nothing returns nothing
 		loop
 			set u2 = FirstOfGroup(gg)
 		exitwhen u2 == null
-			if GetUnitAbilityLevel(u2,'B0BS')== 0 then
+			if GetUnitAbilityLevel(u2,'B0BS') == 0 then
 				call GroupAddUnit(AIR, u2)
 				call SetUnitTurnSpeed(u2, GetUnitDefaultTurnSpeed(u2)* .7)
 			endif
@@ -52155,7 +52123,7 @@ function RVI takes nothing returns nothing
 		loop
 			set u2 = FirstOfGroup(AIR)
 		exitwhen u2 == null
-			if GetUnitAbilityLevel(u2,'B0BS')== 0 then
+			if GetUnitAbilityLevel(u2,'B0BS') == 0 then
 				call SetUnitTurnSpeed(u2, GetUnitDefaultTurnSpeed(u2))
 			endif
 			call GroupRemoveUnit(AIR, u2)
@@ -52208,12 +52176,12 @@ function RXI takes nothing returns nothing
 	local unit WJE = LoadUnitHandle(HY, h, 0)
 	local unit WLE = LoadUnitHandle(HY, h, 1)
 	local integer ZCE = LoadInteger(P, GetHandleId(WJE),'BACK')
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call FlushChildHashtable(HY, h)
 		call DestroyTrigger(t)
 		call RemoveSavedHandle(P, GetHandleId(WJE),'BACK')
-	elseif GetTriggerEventId()== EVENT_UNIT_DAMAGED then
-		if GetEventDamageSource()== WJE and AD < 1 and GetEventDamage()> 0 then
+	elseif GetTriggerEventId() == EVENT_UNIT_DAMAGED then
+		if GetEventDamageSource() == WJE and AD < 1 and GetEventDamage()> 0 then
 			call SaveInteger(P, GetHandleId(WJE),'BACK', 0)
 			call RemoveSavedHandle(P, GetHandleId(WJE),'BACK')
 			call FlushChildHashtable(HY, h)
@@ -52241,7 +52209,7 @@ function ROI takes unit u, unit t returns nothing
 	local integer h
 	local integer i
 	local integer ms
-	if WUV == 0 or GetUnitAbilityLevel(u,'A36D')== 1 then
+	if WUV == 0 or GetUnitAbilityLevel(u,'A36D') == 1 then
 		return
 	endif
 	set d = RAbsBJ(GetUnitFacing(u)-GetUnitFacing(t))
@@ -52373,15 +52341,15 @@ function RDI takes nothing returns nothing
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local unit u
-	if GetTriggerEventId()== EVENT_UNIT_SPELL_CAST then
+	if GetTriggerEventId() == EVENT_UNIT_SPELL_CAST then
 		if GetSpellAbilityId()=='A0K9' or IsAttackSpecialEffects(GetSpellAbilityId()) then
 			set u = GetTriggerUnit()
 			call SaveBoolean(K, GetHandleId(u), 23, false)
 			call RCI(u)
 			set u = null
 		endif
-	elseif GetTriggerEventId()== EVENT_PLAYER_UNIT_ATTACKED then
-		if GetAttacker()== LoadUnitHandle(P, h, 0) then
+	elseif GetTriggerEventId() == EVENT_PLAYER_UNIT_ATTACKED then
+		if GetAttacker() == LoadUnitHandle(P, h, 0) then
 			set u = GetAttacker()
 			call SaveBoolean(K, GetHandleId(u), 23, false)
 			call RCI(u)
@@ -52389,13 +52357,13 @@ function RDI takes nothing returns nothing
 		endif
 	else
 		set u = LoadUnitHandle(P, h, 0)
-		if GetUnitTypeId(u)== 0 then
+		if GetUnitTypeId(u) == 0 then
 			call FlushChildHashtable(K, GetHandleId(u))
 			call FlushChildHashtable(P, h)
 			call CleanCurrentTrigger(t)
 		else
 			if LoadBoolean(K, GetHandleId(u), 23) and DXX(u) then
-				if GetUnitAbilityLevel(u,'A30F')== 0 then
+				if GetUnitAbilityLevel(u,'A30F') == 0 then
 					call UnitAddPermanentAbility(u,'A30F')
 				endif
 			endif
@@ -52427,14 +52395,14 @@ function LTE takes nothing returns nothing
 	set t = null
 endfunction
 function RFI takes nothing returns boolean
-	return(UnitIsDead(GetFilterUnit()) == false and GetUnitAbilityLevel(GetFilterUnit(),'A04R')== 0 and IsUnitAlly(LoadUnitHandle(VV,'A2IS','cast'), GetOwningPlayer(GetFilterUnit())) and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and IsUnitIllusion(GetFilterUnit()) == false)!= null
+	return(UnitIsDead(GetFilterUnit()) == false and GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0 and IsUnitAlly(LoadUnitHandle(VV,'A2IS','cast'), GetOwningPlayer(GetFilterUnit())) and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and IsUnitIllusion(GetFilterUnit()) == false)!= null
 endfunction
 function RGI takes nothing returns nothing
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local integer c = LoadInteger(HY, h, 0)
 	local unit u = LoadUnitHandle(HY, h, 0)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or c <= 0 or GetUnitAbilityLevel(u,'C025')== 0 then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or c <= 0 or GetUnitAbilityLevel(u,'C025') == 0 then
 		call LodSystem_ReduceUnitExtraState(u, LoadInteger(HY, h, 1), "armour")
 		call UnitRemoveAbility(u,'C025')
 		call UnitRemoveAbility(u,'D025')
@@ -52529,7 +52497,7 @@ function RLI takes unit WUE, player p, unit WWE, integer ODX returns nothing
 	local unit KBX = CreateUnit(p,'e00E', GetUnitX(WWE), GetUnitY(WWE), 0)
 	local integer E8I
 	local group g = AllocationGroup(262)
-	if GetUnitAbilityLevel(WWE,'A3E9')== 1 and IsMagicImmuneUnit(WUE) == false then
+	if GetUnitAbilityLevel(WWE,'A3E9') == 1 and IsMagicImmuneUnit(WUE) == false then
 		call SaveUnitHandle(VV,'A3E9', 0, WWE)
 		call SaveUnitHandle(VV,'A3E9', 1, WUE)
 		call SaveInteger(VV,'A3E9', 0, ODX)
@@ -52568,7 +52536,7 @@ function RPI takes nothing returns boolean
 	local real NBX
 	local real NCX
 	local boolean I1O
-	if GetTriggerEventId()== EVENT_UNIT_SPELL_EFFECT then
+	if GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT then
 		if OXX(GetSpellAbilityId()) then
 			call SaveBoolean(HY, h, 0, true)
 			call SaveReal(HY, h, 0, GetUnitX(GetTriggerUnit()))
@@ -52686,7 +52654,7 @@ function SLE takes nothing returns nothing
 		
 		call SetUnitMoveSpeed(RWI, GetUnitDefaultMoveSpeed(RWI)+ 8 * level)
 		
-		if GetUnitAbilityLevel(RWI,'A3IL')== 0 then
+		if GetUnitAbilityLevel(RWI,'A3IL') == 0 then
 			call UnitAddPermanentAbility(RWI,'A3IL')
 		endif
 		call SetUnitAbilityLevel(RWI,'A3IL', level)
@@ -52711,10 +52679,10 @@ function RYI takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local unit u = LoadUnitHandle(HY, h, 2)
 	local real WIE
-	if GetTriggerEventId()== EVENT_UNIT_DEATH then
+	if GetTriggerEventId() == EVENT_UNIT_DEATH then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
-	elseif GetTriggerEventId()== EVENT_UNIT_DAMAGED then
+	elseif GetTriggerEventId() == EVENT_UNIT_DAMAGED then
 		if GetEventDamage()> 2 and GetEventDamageSource()!= GetTriggerUnit() and XFX(GetOwningPlayer(GetEventDamageSource())) then
 			call SaveReal(HY, h, 785, GetGameTime()* 1.)
 			call SaveReal(HY, GetHandleId(u), 785, GetGameTime()* 1.)
@@ -52723,12 +52691,12 @@ function RYI takes nothing returns boolean
 	endif
 	set WIE = LoadReal(HY, h, 785)
 	if WIE + 3 < GetGameTime() then
-		if(LoadInteger(HY, h, 34))== 2 then
+		if(LoadInteger(HY, h, 34)) == 2 then
 			call SaveInteger(HY, h, 34, 1)
 			call S9E(GetOwningPlayer(u),'A0A7', true)
 		endif
 	else
-		if(LoadInteger(HY, h, 34))== 1 then
+		if(LoadInteger(HY, h, 34)) == 1 then
 			call SaveInteger(HY, h, 34, 2)
 			call S9E(GetOwningPlayer(u),'A0A7', false)
 		endif
@@ -52760,7 +52728,7 @@ function R_I takes nothing returns nothing
 	if GetHandleId(RWI)!= 0 and(GetUnitAbilityLevel(WLE,'B0C1')> 0 or c == 1) then
 		call UnitDamageTargetEx(I_X(RWI), WLE, 2, 30)
 	endif
-	if UnitIsDead(WLE) or(GetUnitAbilityLevel(WLE,'B0C1')== 0 and c > 1) then
+	if UnitIsDead(WLE) or(GetUnitAbilityLevel(WLE,'B0C1') == 0 and c > 1) then
 		call PauseTimer(t)
 		call DestroyTimer(t)
 		call FlushChildHashtable(HY, h)
@@ -52784,7 +52752,7 @@ function R0I takes unit X1O, unit WLE returns nothing
 	set t = null
 endfunction
 function R1I takes unit R8X, unit WLE returns nothing
-	if GetUnitAbilityLevel(R8X,'A33C')> 0 and GetUnitAbilityLevel(R8X,'A36D')== 0 and GetGameTime()> LoadReal(P, GetHandleId(R8X),'A33C') and TKV(R8X,'A33C', 20) then
+	if GetUnitAbilityLevel(R8X,'A33C')> 0 and GetUnitAbilityLevel(R8X,'A36D') == 0 and GetGameTime()> LoadReal(P, GetHandleId(R8X),'A33C') and TKV(R8X,'A33C', 20) then
 		call SaveReal(P, GetHandleId(R8X),'A33C', GetGameTime()+ 5)
 		call R0I(R8X, WLE)
 	endif
@@ -52902,7 +52870,7 @@ function E_E takes nothing returns nothing
 	endif
 	
 	call GroupEnumUnitsOfPlayer(g, GetOwningPlayer(u), Condition(function RUI))
-	if FirstOfGroup(g)== null then
+	if FirstOfGroup(g) == null then
 		if(ODX == 1) then
 			set id ='n004'
 		elseif(ODX == 2) then
@@ -52930,7 +52898,7 @@ function E_E takes nothing returns nothing
 		
 		call SetUnitMoveSpeed(RWI, GetUnitDefaultMoveSpeed(RWI)+ 8 * GetUnitAbilityLevel(u,'A0A8'))
 		
-		if GetUnitAbilityLevel(RWI,'A3IL')== 0 then
+		if GetUnitAbilityLevel(RWI,'A3IL') == 0 then
 			call UnitAddPermanentAbility(RWI,'A3IL')
 		endif
 		call SetUnitAbilityLevel(RWI,'A3IL', GetUnitAbilityLevel(u,'A0A8'))
@@ -53086,7 +53054,7 @@ function INI takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local integer UYX = LoadInteger(HY, h, 100)
 	local integer level = LoadInteger(HY, h, 0)
-	if GetTriggerEventId()== EVENT_UNIT_DAMAGED then
+	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
 		if XFX(GetOwningPlayer(GetEventDamageSource())) and IsUnitEnemy(GetTriggerUnit(), GetOwningPlayer(GetEventDamageSource())) and J7V == false then
 			if J8V == false then
 				call UnitRemoveAbility(GetTriggerUnit(),'B0BM')
@@ -53116,14 +53084,14 @@ endfunction
 function IBI takes nothing returns boolean
 	local trigger HLR = null
 	local unit u = GetFilterUnit()
-	if IsUnitEnemy(u, Temp__Player) and GetUnitAbilityLevel(u,'A04R')== 0 and GetUnitAbilityLevel(u,'B0BM')> 0 then
+	if IsUnitEnemy(u, Temp__Player) and GetUnitAbilityLevel(u,'A04R') == 0 and GetUnitAbilityLevel(u,'B0BM')> 0 then
 		set HLR = CreateTrigger()
 		call TriggerRegisterUnitEvent(HLR, u, EVENT_UNIT_DAMAGED)
 		call TriggerRegisterDeathEvent(HLR, u)
 		call TriggerRegisterTimerEvent(HLR, .5, true)
 		call TriggerRegisterTimerEvent(HLR, 0, false)
 		call TriggerAddCondition(HLR, Condition(function INI))
-		call SaveInteger(HY, GetHandleId(HLR), 0, WC)
+		call SaveInteger(HY, GetHandleId(HLR), 0, TempInt)
 		call SaveUnitHandle(HY, GetHandleId(HLR), 0, u)
 		set HLR = null
 	endif
@@ -53134,14 +53102,14 @@ function ICI takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer WFV = GetHandleId(t)
 	set Temp__Player = LoadPlayerHandle(P, WFV, 0)
-	set WC = LoadInteger(P, WFV, 0)
+	set TempInt = LoadInteger(P, WFV, 0)
 	call GroupEnumUnitsInRange(AK, LoadReal(P, WFV, 0), LoadReal(P, WFV, 1), 1000, Condition(function IBI))
 	call DestroyTimerAndFlushHT_P(t)
 	set t = null
 endfunction
 function IDI takes nothing returns boolean
 	local unit t = GetFilterUnit()
-	if IsUnitEnemy(t, Temp__Player) and GetUnitAbilityLevel(t,'A04R')== 0 and IsMagicImmuneUnit(t) == false and UnitAlive(t) and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false then
+	if IsUnitEnemy(t, Temp__Player) and GetUnitAbilityLevel(t,'A04R') == 0 and IsMagicImmuneUnit(t) == false and UnitAlive(t) and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false then
 		call UnitDamageTargetEx(I_X(Temp__ArrayUnit[0]), t, XK[0], 70 +$A* GetUnitAbilityLevel(Temp__ArrayUnit[1],'A1A9'))
 		call UnitShareVision(t, Temp__Player, true)
 		call IssueTargetOrderById(Temp__ArrayUnit[1], 852095, t)
@@ -53210,12 +53178,12 @@ function IGI takes nothing returns boolean
 	local unit WUE =(LoadUnitHandle(HY, h, 2))
 	local unit TJX =(LoadUnitHandle(HY, h, 335))
 	local boolean IHI =(LoadBoolean(HY, h, 336))
-	if GetTriggerEventId()== EVENT_UNIT_SPELL_ENDCAST then
+	if GetTriggerEventId() == EVENT_UNIT_SPELL_ENDCAST then
 		call SaveInteger(HY,(GetHandleId((WUE))),(4269), 2)
 		call SaveBoolean(HY,(GetHandleId(TJX)), 337,(true))
 		call SaveBoolean(P, GetHandleId(TJX),'A1AA', false)
 		call IssueImmediateOrderById(TJX,$D0004)
-		if GetUnitAbilityLevel(TJX,'Aloc')== 0 then
+		if GetUnitAbilityLevel(TJX,'Aloc') == 0 then
 			call SetUnitAnimation(TJX, "stand")
 		else
 			call SetUnitAnimationByIndex(TJX, 3)
@@ -53326,19 +53294,19 @@ function IMI takes nothing returns nothing
 		return
 	endif
 	if J0V == 1 then
-		if GetUnitAbilityLevel(GetEnumUnit(),'A1CA')== 0 then
+		if GetUnitAbilityLevel(GetEnumUnit(),'A1CA') == 0 then
 			call UnitAddPermanentAbility(GetEnumUnit(),'A1CA')
 		endif
 	elseif J0V == 2 then
-		if GetUnitAbilityLevel(GetEnumUnit(),'A1C9')== 0 then
+		if GetUnitAbilityLevel(GetEnumUnit(),'A1C9') == 0 then
 			call UnitAddPermanentAbility(GetEnumUnit(),'A1C9')
 		endif
 	elseif J0V == 3 then
-		if GetUnitAbilityLevel(GetEnumUnit(),'A1CB')== 0 then
+		if GetUnitAbilityLevel(GetEnumUnit(),'A1CB') == 0 then
 			call UnitAddPermanentAbility(GetEnumUnit(),'A1CB')
 		endif
 	elseif J0V == 4 then
-		if GetUnitAbilityLevel(GetEnumUnit(),'A1CC')== 0 then
+		if GetUnitAbilityLevel(GetEnumUnit(),'A1CC') == 0 then
 			call UnitAddPermanentAbility(GetEnumUnit(),'A1CC')
 		endif
 	endif
@@ -53376,7 +53344,7 @@ function IPI takes nothing returns boolean
 	endif
 	call GroupRemoveGroup(g, IQI)
 	call ForGroup(IQI, function ILI)
-	if UnitIsDead(WUE) == false and GetUnitAbilityLevel(WUE,'A36D')== 0 then
+	if UnitIsDead(WUE) == false and GetUnitAbilityLevel(WUE,'A36D') == 0 then
 		call ForGroup(g, function IMI)
 	endif
 	call SaveGroupHandle(HY, h, 340, g)
@@ -53591,7 +53559,7 @@ endfunction
 function I9I takes nothing returns boolean
 	local unit t = GetFilterUnit()
 	local group g = LoadGroupHandle(P, XK[0], 2)
-	if UnitAlive(t) and IsUnitEnemy(Temp__ArrayUnit[0], GetOwningPlayer(t)) and GetUnitAbilityLevel(t,'A04R')== 0 and IsUnitInGroup(t, g) == false and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false then
+	if UnitAlive(t) and IsUnitEnemy(Temp__ArrayUnit[0], GetOwningPlayer(t)) and GetUnitAbilityLevel(t,'A04R') == 0 and IsUnitInGroup(t, g) == false and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false then
 		if IsUnitType(t, UNIT_TYPE_HERO) then
 			call SaveInteger(P, XK[0], 4, LoadInteger(P, XK[0], 4)+ 1)
 		else
@@ -53762,7 +53730,7 @@ function AOI takes nothing returns nothing
 	local unit WWE = GetOrderTargetUnit()
 	local real x
 	local real y
-	if GetTriggerEventId()== EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER then
+	if GetTriggerEventId() == EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER then
 		set x = GetUnitX(GetOrderTargetUnit())
 		set y = GetUnitY(GetOrderTargetUnit())
 	else
@@ -53788,7 +53756,7 @@ function MOE takes nothing returns nothing
 	set t = null
 endfunction
 function AII takes nothing returns boolean
-	return IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and(GetUnitAbilityLevel(GetFilterUnit(),'A04R')== 0) and not IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) and UnitAlive(GetFilterUnit())
+	return IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and(GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0) and not IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) and UnitAlive(GetFilterUnit())
 endfunction
 function AAI takes unit u returns nothing
 	local integer lv = GetUnitAbilityLevel(u,'A06B')+ GetUnitAbilityLevel(u,'A471')
@@ -53838,12 +53806,12 @@ function W3X takes nothing returns nothing
 endfunction
 function LQE takes nothing returns nothing
 	call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10, "你可以使用 -show 命令将技能遥控炸弹切换至其副技能集中引爆")
-	if(GetUnitAbilityLevel(GetTriggerUnit(),'A0AK')== 1 or GetUnitAbilityLevel(GetTriggerUnit(),'A1FY')== 1) then
+	if(GetUnitAbilityLevel(GetTriggerUnit(),'A0AK') == 1 or GetUnitAbilityLevel(GetTriggerUnit(),'A1FY') == 1) then
 		call UnitAddPermanentAbility(GetTriggerUnit(),'A1WF')
 	endif
 endfunction
 function ADI takes nothing returns boolean
-	return(IsUnitEnemy(GetFilterUnit(), LoadPlayerHandle(VV,'A0AM', 1)) and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and GetUnitAbilityLevel(GetFilterUnit(),'A04R')== 0)!= null
+	return(IsUnitEnemy(GetFilterUnit(), LoadPlayerHandle(VV,'A0AM', 1)) and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0)!= null
 endfunction
 function AFI takes nothing returns nothing
 	call UnitDamageTargetEx(LoadUnitHandle(VV,'A0AM', 0), GetEnumUnit(), 1, LoadReal(VV,'A0AM', 0))
@@ -53886,7 +53854,7 @@ function JQE takes nothing returns nothing
 	call AGI(GetTriggerUnit(), false)
 endfunction
 function ALI takes nothing returns boolean
-	return GetOwningPlayer(GetFilterUnit())== LoadPlayerHandle(VV,'A0AN', 0) and UnitIsDead(GetFilterUnit()) == false and RLX(GetFilterUnit())
+	return GetOwningPlayer(GetFilterUnit()) == LoadPlayerHandle(VV,'A0AN', 0) and UnitIsDead(GetFilterUnit()) == false and RLX(GetFilterUnit())
 endfunction
 function AMI takes nothing returns nothing
 	call IssueImmediateOrderById(GetEnumUnit(),$D024C)
@@ -53918,10 +53886,10 @@ function AQI takes nothing returns boolean
 	return RMX(GetTriggerUnit())
 endfunction
 function ASI takes nothing returns boolean
-	return IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(U2)) and(GetUnitAbilityLevel(GetFilterUnit(),'A04R')== 0 or OPX(GetFilterUnit())) and R0X(GetFilterUnit()) == false and RFX(GetFilterUnit()) == false
+	return IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(U2)) and(GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0 or OPX(GetFilterUnit())) and R0X(GetFilterUnit()) == false and RFX(GetFilterUnit()) == false
 endfunction
 function ATI takes nothing returns boolean
-	return IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(U2)) and(GetUnitAbilityLevel(GetFilterUnit(),'A04R')== 0 or OPX(GetFilterUnit())) and R0X(GetFilterUnit()) == false and RFX(GetFilterUnit()) == false and((IsUnitAliveBJ(GetEnumUnit()) == true))
+	return IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(U2)) and(GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0 or OPX(GetFilterUnit())) and R0X(GetFilterUnit()) == false and RFX(GetFilterUnit()) == false and((IsUnitAliveBJ(GetEnumUnit()) == true))
 endfunction
 function AUI takes nothing returns nothing
 	local timer t = GetExpiredTimer()
@@ -53977,17 +53945,17 @@ function AYI takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local unit u =(LoadUnitHandle(HY, h, 347))
 	local group g
-	if GetTriggerEventId()== EVENT_UNIT_DEATH then
-		if GetHandleId(GetKillingUnit())== 0 then
+	if GetTriggerEventId() == EVENT_UNIT_DEATH then
+		if GetHandleId(GetKillingUnit()) == 0 then
 			call AWI(u, .3)
 		else
 			call SetUnitAnimationByIndex(GetTriggerUnit(), 4)
 		endif
 		call FlushChildHashtable(HY,(h))
 		call CleanCurrentTrigger(t)
-	elseif GetTriggerEventId()== EVENT_GAME_TIMER_EXPIRED then
+	elseif GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
 		if LoadBoolean(HY, h, 0) == false then
-			if LoadInteger(HY, h, 0)== 0 then
+			if LoadInteger(HY, h, 0) == 0 then
 				call SaveInteger(HY, h, 0, 1)
 				call TriggerRegisterUnitInRange(t, u,$E1, null)
 			else
@@ -54006,7 +53974,7 @@ function AYI takes nothing returns boolean
 			call CleanCurrentTrigger(t)
 		endif
 	else
-		if IsUnitEnemy(GetTriggerUnit(), GetOwningPlayer(u)) and(GetUnitAbilityLevel(GetTriggerUnit(),'A04R')== 0 or OPX(GetTriggerUnit())) and R0X(GetTriggerUnit()) == false and RFX(GetTriggerUnit()) == false then
+		if IsUnitEnemy(GetTriggerUnit(), GetOwningPlayer(u)) and(GetUnitAbilityLevel(GetTriggerUnit(),'A04R') == 0 or OPX(GetTriggerUnit())) and R0X(GetTriggerUnit()) == false and RFX(GetTriggerUnit()) == false then
 			call TriggerRegisterTimerEvent(t, .3, false)
 			call SaveBoolean(HY, h, 0, true)
 		endif
@@ -54031,16 +53999,16 @@ function A_I takes nothing returns boolean
 	local unit A0I = LoadUnitHandle(HY, h, 0)
 	local group g
 	local unit d
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		if GetKillingUnit()!= null then
 			call FlushChildHashtable(HY, h)
 			call DestroyTrigger(t)
 		else
 			call TriggerRegisterTimerEvent(t, 0, false)
 		endif
-	elseif GetTriggerEvalCount(t)== 1 then
+	elseif GetTriggerEvalCount(t) == 1 then
 		call TriggerRegisterUnitInRange(t, A0I, 450, null)
-	elseif GetTriggerEventId()== EVENT_GAME_TIMER_EXPIRED then
+	elseif GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
 		call DisableTrigger(t)
 		call KillUnit(A0I)
 		call SetUnitAnimationByIndex(A0I, 3)
@@ -54063,7 +54031,7 @@ function A_I takes nothing returns boolean
 		call DestroyTrigger(t)
 	else
 		set u = GetTriggerUnit()
-		if IsUnitEnemy(u, GetOwningPlayer(A0I)) and IsMagicImmuneUnit(u) == false and GetUnitAbilityLevel(u,'A04R')== 0 then
+		if IsUnitEnemy(u, GetOwningPlayer(A0I)) and IsMagicImmuneUnit(u) == false and GetUnitAbilityLevel(u,'A04R') == 0 then
 			if IsUnitAlly(A0I, LocalPlayer) or IsObserverPlayer(LocalPlayer) then
 				call SetUnitAnimationByIndex(A0I, 5)
 			endif
@@ -54198,7 +54166,7 @@ function E2E takes nothing returns nothing
 	set W_V = null
 endfunction
 function A5I takes nothing returns boolean
-	return DPX() and IsHeroUnitId(GetUnitTypeId(GetFilterUnit())) and UnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(U2)) and GetUnitAbilityLevel(GetFilterUnit(),'A04R')== 0 and LoadInteger(HY, GetHandleId(GetFilterUnit()),'A33G')!= 1
+	return DPX() and IsHeroUnitId(GetUnitTypeId(GetFilterUnit())) and UnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(U2)) and GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0 and LoadInteger(HY, GetHandleId(GetFilterUnit()),'A33G')!= 1
 endfunction
 function A6I takes unit WJE, unit A7I returns nothing
 	local group g = AllocationGroup(280)
@@ -54419,7 +54387,7 @@ function NNI takes nothing returns boolean
 				call UnitDamageTargetEx(trigUnit, WUE, 1,(.2 + .15 * level)* 75 * NCI)
 			endif
 		endif
-		if LoadBoolean(HY, h, 0) == false and WWE != null and IsUnitEnemy(WWE, GetOwningPlayer(trigUnit)) and GetUnitAbilityLevel(WWE,'A3E9')== 1 and IsMagicImmuneUnit(trigUnit) == false then
+		if LoadBoolean(HY, h, 0) == false and WWE != null and IsUnitEnemy(WWE, GetOwningPlayer(trigUnit)) and GetUnitAbilityLevel(WWE,'A3E9') == 1 and IsMagicImmuneUnit(trigUnit) == false then
 			call SaveInteger(VV,'A3E9', 0, NCI)
 			call SaveUnitHandle(VV,'A3E9', 0, WWE)
 			call SaveUnitHandle(VV,'A3E9', 1, trigUnit)
@@ -54453,7 +54421,7 @@ function NFI takes unit trigUnit, unit WWE, integer level, boolean FAR returns n
 	if GetUnitTypeId(trigUnit)=='e00C' or GetUnitTypeId(trigUnit)=='e00E'then
 		if WWE == null then
 			set trigUnit = Player__Hero[GetPlayerId(GetOwningPlayer(trigUnit))]
-			if GetOwningPlayer(WWE)== GetOwningPlayer(trigUnit) then
+			if GetOwningPlayer(WWE) == GetOwningPlayer(trigUnit) then
 				set WWE = NAI(trigUnit, 500 +$C8* level + 25)
 			endif
 			if WUE == null or WWE == null then
@@ -54586,8 +54554,8 @@ function NQI takes nothing returns boolean
 	local unit WWE
 	local integer ODX
 	local unit KBX
-	if GetTriggerEventId()== EVENT_UNIT_SPELL_EFFECT then
-		if IsAttackSpecialEffects(GetSpellAbilityId()) and GetSpellTargetUnit()== LoadUnitHandle(HY, GetHandleId(GetTriggeringTrigger()), 0) then
+	if GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT then
+		if IsAttackSpecialEffects(GetSpellAbilityId()) and GetSpellTargetUnit() == LoadUnitHandle(HY, GetHandleId(GetTriggeringTrigger()), 0) then
 			set WWE = GetSpellTargetUnit()
 			set WUE = GetTriggerUnit()
 		else
@@ -54598,7 +54566,7 @@ function NQI takes nothing returns boolean
 		set WWE = GetAttacker()
 	endif
 	set ODX =(GetUnitAbilityLevel(WUE,'A19Q'))
-	if ODX > 0 and GetUnitAbilityLevel(WUE,'A36D')== 0 and IsAliveNotStrucNotWard(WWE) and WTE(WUE, WWE)< 500 and TKV(WUE,'A19Q', 15) then
+	if ODX > 0 and GetUnitAbilityLevel(WUE,'A36D') == 0 and IsAliveNotStrucNotWard(WWE) and WTE(WUE, WWE)< 500 and TKV(WUE,'A19Q', 15) then
 		call UnitDamageTargetEx(WUE, WWE, 1, 25 + 25 * ODX)
 		call DestroyEffect(AddSpecialEffectTarget("Abilities\\Weapons\\RockBoltMissile\\RockBoltMissile.mdl", WWE, "origin"))
 		call CommonUnitAddStun(WWE, 1.1 + .1 * ODX, false)
@@ -54613,7 +54581,7 @@ endfunction
 function PPE takes nothing returns nothing
 	local trigger t
 	local unit WUE = GetTriggerUnit()
-	if GetUnitAbilityLevel(WUE,'A19Q')== 1 then
+	if GetUnitAbilityLevel(WUE,'A19Q') == 1 then
 		set t = CreateTrigger()
 		call TriggerRegisterUnitEvent(t, WUE, EVENT_UNIT_ATTACKED)
 		call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
@@ -54626,7 +54594,7 @@ function PPE takes nothing returns nothing
 	set WUE = null
 endfunction
 function NSI takes nothing returns boolean
-	if((LoadInteger(HY,(GetHandleId((GetFilterUnit()))),(4268)))== 1) and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(KXV)) then
+	if((LoadInteger(HY,(GetHandleId((GetFilterUnit()))),(4268))) == 1) and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(KXV)) then
 		call UnitDamageTargetEx(KXV, GetFilterUnit(), 1, KOV)
 	endif
 	return false
@@ -54757,7 +54725,7 @@ function N_I takes unit u, unit WWE returns nothing
 	set N0I = null
 endfunction
 function N2I takes unit R8X, unit WLE returns nothing
-	if GetUnitAbilityLevel(R8X,'P107')> 0 and GetUnitAbilityLevel(R8X,'A36D')== 0 and LoadInteger(HY, GetHandleId(R8X), 4271)!= 1 then
+	if GetUnitAbilityLevel(R8X,'P107')> 0 and GetUnitAbilityLevel(R8X,'A36D') == 0 and LoadInteger(HY, GetHandleId(R8X), 4271)!= 1 then
 		call N_I(R8X, WLE)
 	endif
 endfunction
@@ -55015,14 +54983,14 @@ function KMF takes nothing returns boolean
 	local integer ODX = LoadInteger(HY, h, 5)
 	local integer EVX = LoadInteger(HY, h, 34)
 	local integer Z6X = LoadInteger(HY, h, 0)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call UnitRemoveAbility(WUE,'A1N3')
 		call UnitRemoveAbility(WUE,'A1N7')
 		call UnitRemoveAbility(WUE,'B0CH')
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
-	elseif GetTriggerEventId()== EVENT_PLAYER_UNIT_ATTACKED then
-		if GetAttacker()== WUE then
+	elseif GetTriggerEventId() == EVENT_PLAYER_UNIT_ATTACKED then
+		if GetAttacker() == WUE then
 			set EVX = EVX + 1
 			call SaveInteger(HY, h, 34,(EVX))
 			if EVX >= Z6X then
@@ -55064,7 +55032,7 @@ function XOE takes nothing returns nothing
 	local unit u = GetTriggerUnit()
 	local integer ODX = GetUnitAbilityLevel(u, GetSpellAbilityId())
 	call CCX(u,'A1N7', 1, 15,'B0CH')
-	if GetUnitAbilityLevel(u,'A0CY')== 0 then
+	if GetUnitAbilityLevel(u,'A0CY') == 0 then
 		call CCX(u,'A1N3', 1, 15, 0)
 	endif
 	call SaveInteger(HY, GetHandleId(u),'A1N7'+ 1, 2 + ODX)
@@ -55108,7 +55076,7 @@ function BDI takes nothing returns nothing
 	local unit BCI
 	local integer level
 	local real ZCE
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		set BCI = LoadUnitHandle(HY, h, 0)
 		set SZX = LoadUnitHandle(HY, h, 1)
 		call DestroyEffect(LoadEffectHandle(HY, h, 10))
@@ -55185,7 +55153,7 @@ function BGI takes nothing returns boolean
 	local unit WUE = LoadUnitHandle(HY, h, 2)
 	local integer ZCE
 	local integer BHI
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or(GetUnitAbilityLevel(WUE,'B02H')== 0 and GetTriggerEvalCount(t)> 4) or(GetTriggerEventId()== EVENT_PLAYER_UNIT_SPELL_EFFECT and GetSpellTargetUnit()== WUE and FDX(GetSpellAbilityId())) then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or(GetUnitAbilityLevel(WUE,'B02H') == 0 and GetTriggerEvalCount(t)> 4) or(GetTriggerEventId() == EVENT_PLAYER_UNIT_SPELL_EFFECT and GetSpellTargetUnit() == WUE and FDX(GetSpellAbilityId())) then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 		call UnitRemoveAbility(WUE,'B02H')
@@ -55259,7 +55227,7 @@ function BLI takes nothing returns boolean
 		call DeallocateGroup(g)
 		set g = null
 		call BJI(KBX, x, y, ODX)
-		if ModuloInteger(GetTriggerEvalCount(t), 2)== 0 then
+		if ModuloInteger(GetTriggerEvalCount(t), 2) == 0 then
 			call KillUnit(CreateUnit(GetOwningPlayer(WUE),'e02A', x, y, 0))
 		endif
 		set x = CoordinateX50(x +$C8* Cos(a * bj_DEGTORAD))
@@ -55303,7 +55271,7 @@ function BMI takes nothing returns nothing
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local unit u = LoadUnitHandle(HY, h, 0)
-	if GetTriggerEventId()== EVENT_UNIT_DEATH or GetTriggerEventId()== EVENT_UNIT_HERO_REVIVE_FINISH or GetUnitTypeId(LoadUnitHandle(HY, h, 1))!= LoadInteger(HY, h, 0) then
+	if GetTriggerEventId() == EVENT_UNIT_DEATH or GetTriggerEventId() == EVENT_UNIT_HERO_REVIVE_FINISH or GetUnitTypeId(LoadUnitHandle(HY, h, 1))!= LoadInteger(HY, h, 0) then
 		call UnitRemoveAbility(u, LoadInteger(HY, h, 1))
 		call UnitRemoveAbility(u,'B0HB')
 		call FlushChildHashtable(HY, h)
@@ -55349,7 +55317,7 @@ function BSI takes nothing returns boolean
 	local real y2 =(LoadReal(HY, h, 67))
 	local trigger tt
 	call SetUnitPosition(WUE, x2, y2)
-	if(A4X(x1, y1) == false or IsPointInRegion(R4, x1, y1)) and IsUnitType(WWE, UNIT_TYPE_HERO) then
+	if(A4X(x1, y1) == false or IsPointInRegion(TerrainCliffRegion, x1, y1)) and IsUnitType(WWE, UNIT_TYPE_HERO) then
 		set tt = CreateTrigger()
 		call SaveUnitHandle(HY, GetHandleId(tt), 0, WWE)
 		call TriggerRegisterTimerEvent(tt, 5, false)
@@ -55375,9 +55343,9 @@ function XDE takes nothing returns nothing
 	local trigger t
 	local integer h
 	local boolean BTI = IsUnitAlly(WUE, GetOwningPlayer(WWE))
-	local boolean BUI = GetUnitAbilityLevel(WWE,'A3E9')== 1
-	if GetUnitAbilityLevel(WUE,'Aloc')== 1 or(BTI == false and BUI) then
-		if GetUnitAbilityLevel(WUE,'Aloc')== 0 then
+	local boolean BUI = GetUnitAbilityLevel(WWE,'A3E9') == 1
+	if GetUnitAbilityLevel(WUE,'Aloc') == 1 or(BTI == false and BUI) then
+		if GetUnitAbilityLevel(WUE,'Aloc') == 0 then
 			call T4V(WWE)
 			call SetUnitPosition(WWE, x2, y2)
 			call SetUnitPosition(WUE, x1, y1)
@@ -55406,7 +55374,7 @@ function XDE takes nothing returns nothing
 	set t = null
 endfunction
 function K0E takes nothing returns nothing
-	if(IsTerrainPathable(GetUnitX(GetTriggerUnit()), GetUnitY(GetTriggerUnit()), PATHING_TYPE_WALKABILITY)) and GetUnitAbilityLevel(GetTriggerUnit(),'Aloc')== 0 then
+	if(IsTerrainPathable(GetUnitX(GetTriggerUnit()), GetUnitY(GetTriggerUnit()), PATHING_TYPE_WALKABILITY)) and GetUnitAbilityLevel(GetTriggerUnit(),'Aloc') == 0 then
 		call EXStopUnit(GetTriggerUnit())
 		call InterfaceErrorForPlayer(GetOwningPlayer(GetTriggerUnit()), GetObjectName('n03B'))
 	endif
@@ -55417,11 +55385,11 @@ endfunction
 function BWI takes nothing returns nothing
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
-	if GetTriggerEventId()== EVENT_UNIT_DAMAGED then
-		if GetEventDamageSource()== LoadUnitHandle(HY, h, 0) then
+	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
+		if GetEventDamageSource() == LoadUnitHandle(HY, h, 0) then
 			call CommonUnitAddStun(GetTriggerUnit(), 1.35 + LoadReal(HY, h, 0)* .1, false)
 			call UnitDamageTargetEx(LoadUnitHandle(HY, h, 1), GetTriggerUnit(), 1, 25 + 75 * LoadReal(HY, h, 0))
-			if GetUnitAbilityLevel(GetTriggerUnit(),'A3E9')== 1 and LoadBoolean(HY, h, 0) == false and IsMagicImmuneUnit(LoadUnitHandle(HY, h, 1)) == false then
+			if GetUnitAbilityLevel(GetTriggerUnit(),'A3E9') == 1 and LoadBoolean(HY, h, 0) == false and IsMagicImmuneUnit(LoadUnitHandle(HY, h, 1)) == false then
 				call SaveUnitHandle(VV,'A3E9', 0, GetTriggerUnit())
 				call SaveUnitHandle(VV,'A3E9', 1, LoadUnitHandle(HY, h, 1))
 				call SaveInteger(VV,'A3E9', 0, R2I(LoadReal(HY, h, 0)))
@@ -55492,7 +55460,7 @@ function B_I takes nothing returns nothing
 endfunction
 function B0I takes nothing returns boolean
 	local unit t = GetFilterUnit()
-	if UnitAlive(t) and IsUnitEnemy(Temp__ArrayUnit[0], GetOwningPlayer(t)) and GetUnitAbilityLevel(t,'A04R')== 0 and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and(IsUnitType(t, UNIT_TYPE_ANCIENT) == false or DRX(t)) then
+	if UnitAlive(t) and IsUnitEnemy(Temp__ArrayUnit[0], GetOwningPlayer(t)) and GetUnitAbilityLevel(t,'A04R') == 0 and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and(IsUnitType(t, UNIT_TYPE_ANCIENT) == false or DRX(t)) then
 		call WJV(t, XK[0],'B08M', 5)
 		call UnitDamageTargetEx(U2, t, 3, 75)
 	endif
@@ -55628,7 +55596,7 @@ function B6I takes unit u, real B7I, real B8I, real B9I, real CVI, real CEI, rea
 endfunction
 function CII takes nothing returns boolean
 	local unit t = GetFilterUnit()
-	if UnitAlive(t) and IsUnitEnemy(Temp__ArrayUnit[0], GetOwningPlayer(t)) and GetUnitAbilityLevel(t,'A04R')== 0 and IsMagicImmuneUnit(t) == false and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and(IsUnitType(t, UNIT_TYPE_ANCIENT) == false or DRX(t)) and t != GetTriggerUnit() then
+	if UnitAlive(t) and IsUnitEnemy(Temp__ArrayUnit[0], GetOwningPlayer(t)) and GetUnitAbilityLevel(t,'A04R') == 0 and IsMagicImmuneUnit(t) == false and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and(IsUnitType(t, UNIT_TYPE_ANCIENT) == false or DRX(t)) and t != GetTriggerUnit() then
 		if B6I(t, Temp__ArrayReal[0], Temp__ArrayReal[1], Temp__ArrayReal[2], Temp__ArrayReal[3], Temp__ArrayReal[4], Temp__ArrayReal[5], Temp__ArrayReal[6], Temp__ArrayReal[7]) then
 			call UnitDamageTargetEx(Temp__ArrayUnit[0], t, 3, Temp__ArrayReal[8])
 			call DestroyEffect(AddSpecialEffectTarget("Abilities\\Weapons\\PriestMissile\\PriestMissile.mdl", t, "chest"))
@@ -55733,11 +55701,11 @@ function CCI takes nothing returns boolean
 	local real CJR
 	local real x
 	local real y
-	if GetTriggerEventId()== EVENT_UNIT_DAMAGED then
+	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
 		set t = GetTriggerUnit()
 		set u = GetEventDamageSource()
 		set CJR = GetEventDamage()
-		if LoadUnitHandle(P, WFV, 0)== u and CJR > 1 and AD < 1 and FK and UnitAlive(t) then
+		if LoadUnitHandle(P, WFV, 0) == u and CJR > 1 and AD < 1 and FK and UnitAlive(t) then
 			set x = GetWidgetX(t)
 			set y = GetWidgetY(t)
 			call DisableTrigger(HLR)
@@ -55784,7 +55752,7 @@ function CFI takes unit u , unit t, real damage returns nothing
 endfunction
 
 function CGI takes unit u, unit t, real damage returns nothing
-	if damage > 1 and GetUnitAbilityLevel(u,'A0RO') > 0 and GetUnitAbilityLevel(u,'A36D')== 0 and LoadBoolean(P, GetHandleId(u),'A0RO') and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and IsUnitIllusion(t) == false then
+	if damage > 1 and GetUnitAbilityLevel(u,'A0RO') > 0 and GetUnitAbilityLevel(u,'A36D') == 0 and LoadBoolean(P, GetHandleId(u),'A0RO') and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and IsUnitIllusion(t) == false then
 		call CFI(u, t, damage)
 	endif
 endfunction
@@ -55850,7 +55818,7 @@ function CKI takes nothing returns boolean
 	local unit trigUnit =(LoadUnitHandle(HY,(GetHandleId(t)), 14))
 	local integer h = GetHandleId(trigUnit)
 	local integer Y2X =(LoadInteger(HY, h, 351))
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or(GetTriggerEventId()== EVENT_PLAYER_UNIT_ATTACKED and GetAttacker()== trigUnit and IsUnitAlly(GetAttacker(), GetOwningPlayer(GetTriggerUnit())) == false) then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or(GetTriggerEventId() == EVENT_PLAYER_UNIT_ATTACKED and GetAttacker() == trigUnit and IsUnitAlly(GetAttacker(), GetOwningPlayer(GetTriggerUnit())) == false) then
 		if GetTriggerEventId()!= EVENT_WIDGET_DEATH and Y2X > 0 and GetEventDamage()> 0 then
 			call SaveInteger(HY, h, 351,(Y2X -1))
 		else
@@ -55957,8 +55925,8 @@ function CQI takes nothing returns boolean
 	local unit WUE = LoadUnitHandle(HY, h, 2)
 	local trigger CSI = LoadTriggerHandle(HY, h, 353)
 	local integer level = LoadInteger(HY, h, 0)
-	if GetTriggerEventId()== EVENT_UNIT_DAMAGED then
-		if GetEventDamageSource()== WUE and AD < 1 and FK then
+	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
+		if GetEventDamageSource() == WUE and AD < 1 and FK then
 			call DisableTrigger(t)
 			call FlushChildHashtable(HY, GetHandleId(CSI))
 			call CleanCurrentTrigger(CSI)
@@ -55966,14 +55934,14 @@ function CQI takes nothing returns boolean
 			call FlushChildHashtable(HY, h)
 			call CleanCurrentTrigger(t)
 		endif
-	elseif GetTriggerEventId()== EVENT_UNIT_ATTACKED then
-		if GetAttacker()== WUE then
+	elseif GetTriggerEventId() == EVENT_UNIT_ATTACKED then
+		if GetAttacker() == WUE then
 			if LoadBoolean(HY, h, 0) == false then
 				call SaveBoolean(HY, h, 0, true)
 			endif
 		endif
 	else
-		if LoadInteger(HY, h, 1)== 0 then
+		if LoadInteger(HY, h, 1) == 0 then
 			if LoadBoolean(HY, h, 0) == false then
 				call FlushChildHashtable(HY, h)
 				call CleanCurrentTrigger(t)
@@ -56013,18 +55981,18 @@ function CUI takes nothing returns boolean
 	local real x = LoadReal(HY, h, 6)
 	local real y = LoadReal(HY, h, 7)
 	local integer level = LoadInteger(HY, h, 0)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or GetTriggerEventId()== EVENT_UNIT_SPELL_CAST or(GetTriggerEventId()== EVENT_PLAYER_UNIT_ATTACKED and GetAttacker()== trigUnit and IsUnitAlly(GetTriggerUnit(), GetOwningPlayer(trigUnit)) == false) then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or GetTriggerEventId() == EVENT_UNIT_SPELL_CAST or(GetTriggerEventId() == EVENT_PLAYER_UNIT_ATTACKED and GetAttacker() == trigUnit and IsUnitAlly(GetTriggerUnit(), GetOwningPlayer(trigUnit)) == false) then
 		if GetTriggerEventId()!= EVENT_WIDGET_DEATH and GetTriggerEventId()!= EVENT_UNIT_SPELL_CAST and IsUnitType(GetTriggerUnit(), UNIT_TYPE_STRUCTURE) == false then
 			call CTI(trigUnit, GetTriggerUnit(), t, level)
 			call UnitRemoveAbility(trigUnit,'B08K')
 			call FlushChildHashtable(HY, h)
 			call CleanCurrentTrigger(t)
 		endif
-		if GetTriggerEventId()== EVENT_WIDGET_DEATH or GetTriggerEventId()== EVENT_UNIT_SPELL_CAST then
+		if GetTriggerEventId() == EVENT_WIDGET_DEATH or GetTriggerEventId() == EVENT_UNIT_SPELL_CAST then
 			call FlushChildHashtable(HY, h)
 			call CleanCurrentTrigger(t)
 		endif
-	elseif GetTriggerEventId()== EVENT_UNIT_ISSUED_TARGET_ORDER then
+	elseif GetTriggerEventId() == EVENT_UNIT_ISSUED_TARGET_ORDER then
 		if(GetIssuedOrderId()==$D000F or GetIssuedOrderId()==851971) and IsUnitEnemy(GetOrderTargetUnit(), GetOwningPlayer(GetTriggerUnit())) and IsUnitType(GetOrderTargetUnit(), UNIT_TYPE_STRUCTURE) == false then
 			call CTI(GetTriggerUnit(), GetOrderTargetUnit(), t, level)
 			call UnitRemoveAbility(trigUnit,'B08K')
@@ -56069,7 +56037,7 @@ function CWI takes nothing returns boolean
 	local integer ODX =(LoadInteger(HY, h, 5))
 	local integer CYI =(LoadInteger(HY, h,$F7))
 	call DestroyEffect(AddSpecialEffect("effects\\Tornado.mdx", GetUnitX(WUE), GetUnitY(WUE)))
-	if GetTriggerEvalCount(t)>$A*(2 + .75 * ODX) or GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEvalCount(t)>$A*(2 + .75 * ODX) or GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call DestroyEffect((LoadEffectHandle(HY, h, 175)))
 		call DestroyEffect((LoadEffectHandle(HY, h, 176)))
 		call FlushChildHashtable(HY, h)
@@ -56190,7 +56158,7 @@ function C3I takes nothing returns boolean
 	local real C6I
 	local boolean FAR
 	local unit WUE
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 		call KillUnit(NIX)
@@ -56206,7 +56174,7 @@ function C3I takes nothing returns boolean
 			call FlushChildHashtable(HY, h)
 			call CleanCurrentTrigger(t)
 			if GetUnitTypeId(WWE)!='n00L' and I1O then
-				if GetUnitAbilityLevel(WWE,'A3E9')== 1 and IsMagicImmuneUnit(WUE) == false and FAR == false then
+				if GetUnitAbilityLevel(WWE,'A3E9') == 1 and IsMagicImmuneUnit(WUE) == false and FAR == false then
 					call SaveUnitHandle(VV,'A3E9', 0, WWE)
 					call SaveUnitHandle(VV,'A3E9', 1, WUE)
 					call SaveInteger(VV,'A3E9', 0, ODX)
@@ -56290,7 +56258,7 @@ function C7I takes nothing returns nothing
 	set WLE = null
 endfunction
 function C9I takes nothing returns nothing
-	if IsUnitInGroup(GetEnumUnit(), KQV) == false and GetUnitAbilityLevel(GetEnumUnit(),'Bcyc')== 0 then
+	if IsUnitInGroup(GetEnumUnit(), KQV) == false and GetUnitAbilityLevel(GetEnumUnit(),'Bcyc') == 0 then
 		call UnitDamageTargetEx((KSV),(GetEnumUnit()), 1,(((KTV)* 1.))* Pow(.9,(KWV))* Pow(.99,(KUV)))
 		call GroupAddUnit(KQV, GetEnumUnit())
 		set KWV = KWV + 1
@@ -56432,30 +56400,30 @@ function DBI takes nothing returns boolean
 	local unit WWE = LoadUnitHandle(HY, h, 30)
 	local real J0R =(LoadReal(HY, h,$C1))
 	local boolean KMR =(LoadBoolean(HY, h, 15))
-	//	if GetTriggerEvalCount(t)== 1 then
+	//	if GetTriggerEvalCount(t) == 1 then
 	//		call TriggerRegisterUnitEvent(t, WUE, EVENT_UNIT_SPELL_EFFECT)
 	//	endif
-	if GetTriggerEventId()== EVENT_PLAYER_UNIT_ATTACKED then
-		if GetAttacker()== WUE and GetTriggerUnit()== WWE then
+	if GetTriggerEventId() == EVENT_PLAYER_UNIT_ATTACKED then
+		if GetAttacker() == WUE and GetTriggerUnit() == WWE then
 			call DestroyEffect(AddSpecialEffectTarget("effects\\Tornado.mdx", WUE, "hand,left"))
 			call DestroyEffect(AddSpecialEffectTarget("effects\\Tornado.mdx", WUE, "hand,right"))
-			if GetUnitAbilityLevel(WUE,'A12R')== 0 then
+			if GetUnitAbilityLevel(WUE,'A12R') == 0 then
 				call UnitAddPermanentAbility(WUE,'A12R')
 				call UnitMakeAbilityPermanent(WUE, true,'A12S')
 				call UnitMakeAbilityPermanent(WUE, true,'A12Q')
 			endif
-		elseif GetAttacker()== WUE and GetTriggerUnit()!= WWE then
+		elseif GetAttacker() == WUE and GetTriggerUnit()!= WWE then
 			call UnitRemoveAbility(WUE,'A12R')
 			call UnitRemoveAbility(WUE,'B09X')
 			call UnitRemoveAbility(WUE,'A1FK')
 			call UnitRemoveAbility(WUE,'A1FL')
 			call UnitRemoveAbility(WUE,'A1FJ')
 		endif
-	elseif GetTriggerEventId()== EVENT_UNIT_DAMAGED then
-		if GetEventDamageSource()== WUE and KMR == false and FK then
+	elseif GetTriggerEventId() == EVENT_UNIT_DAMAGED then
+		if GetEventDamageSource() == WUE and KMR == false and FK then
 			call SetWidgetLife(WWE, GetWidgetLife(WWE)+(J0R)* GetEventDamage())
 		endif
-		//	elseif GetTriggerEventId()== EVENT_UNIT_SPELL_EFFECT then
+		//	elseif GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT then
 		//		if GetSpellAbilityId()=='A12P' or GetSpellAbilityId()=='A1D6' then
 		//			if GetUnitAbilityLevel(WUE,'A12R')> 0 then
 		//				call UnitRemoveAbility(WUE,'A12R')
@@ -56489,7 +56457,7 @@ function DCI takes nothing returns nothing
 	local integer ODX = GetUnitAbilityLevel(WUE,'A12P')
 	local real J0R = .6 -ODX * .1
 	local boolean KMR = false
-	if GetUnitAbilityLevel(WUE,'Aloc')== 1 and HaveSavedHandle(HY, GetHandleId(WUE), 0) then
+	if GetUnitAbilityLevel(WUE,'Aloc') == 1 and HaveSavedHandle(HY, GetHandleId(WUE), 0) then
 		set WUE = LoadUnitHandle(HY, GetHandleId(WUE), 0)
 	endif
 	if(HaveSavedHandle(HY, l__K, 'trig') ) then
@@ -56549,7 +56517,7 @@ function DGI takes nothing returns nothing
 	endif
 	call UnitAddAbility(d, id)
 	call SetUnitAbilityLevel(d, id, QI)
-	if GetUnitAbilityLevel(GetEnumUnit(),'A1HX')== 0 then
+	if GetUnitAbilityLevel(GetEnumUnit(),'A1HX') == 0 then
 		call IssueTargetOrderById(d,$D0097, GetEnumUnit())
 	endif
 	set d = null
@@ -56566,7 +56534,7 @@ endfunction
 function DHI takes nothing returns boolean
 	local unit t = GetFilterUnit()
 	local unit u = Temp__ArrayUnit[0]
-	if IsUnitEnemy(u, GetOwningPlayer(t)) and UnitAlive(t) and IsMagicImmuneUnit(t) == false and GetUnitAbilityLevel(t,'A04R')== 0 and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and GetUnitTypeId(t)!='n00L' then
+	if IsUnitEnemy(u, GetOwningPlayer(t)) and UnitAlive(t) and IsMagicImmuneUnit(t) == false and GetUnitAbilityLevel(t,'A04R') == 0 and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and GetUnitTypeId(t)!='n00L' then
 		call UnitDamageTargetEx(u, t, 1, GetWidgetLife(t)*(.03 + .02 * XK[0])+ .01 * GetUnitState(t, UNIT_STATE_MAX_LIFE))
 		call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Other\\ForkedLightning\\ForkedLightningTarget.mdl", t, "overhead"))
 	endif
@@ -56601,7 +56569,7 @@ function DJI takes unit u returns nothing
 endfunction
 function DKI takes unit u, integer WTV returns nothing
 	set XK[0]= GetUnitAbilityLevel(u,'A0N5')
-	if GetUnitAbilityLevel(u,'A36D')== 0 and((IsAttackSpecialEffects(WTV) == false and X5R(WTV) == false and LNX(WTV) == false and IsNotItemAbility(WTV) and GetUnitAbilityLevel(u,'A04R')== 0 and X6R(WTV) == false) or(Mode__BalanceOff and OER(WTV))) then
+	if GetUnitAbilityLevel(u,'A36D') == 0 and((IsAttackSpecialEffects(WTV) == false and X5R(WTV) == false and LNX(WTV) == false and IsNotItemAbility(WTV) and GetUnitAbilityLevel(u,'A04R') == 0 and X6R(WTV) == false) or(Mode__BalanceOff and OER(WTV))) then
 		if XK[0]> 0 then
 			set Temp__ArrayUnit[0]= u
 			call GroupEnumUnitsInRange(AK, GetWidgetX(u), GetWidgetY(u), 1225, Condition(function DHI))
@@ -56630,7 +56598,7 @@ function DMI takes unit u, unit t, integer lv, boolean FAR, real x, real y retur
 		set g = null
 	endif
 	if t != null and UnitHasSpellShield(t) == false then
-		if GetUnitAbilityLevel(t,'A3E9')== 1 and IsMagicImmuneUnit(u) == false and FAR == false then
+		if GetUnitAbilityLevel(t,'A3E9') == 1 and IsMagicImmuneUnit(u) == false and FAR == false then
 			call SaveUnitHandle(VV,'A3E9', 0, t)
 			call SaveUnitHandle(VV,'A3E9', 1, u)
 			call SaveInteger(VV,'A3E9', 0, lv)
@@ -56795,7 +56763,7 @@ function D_I takes nothing returns boolean
 	local unit WWE = LoadUnitHandle(HY, h, 30)
 	local integer ODX
 	local integer c = LoadInteger(HY, h, 0)
-	if GetTriggerEventId()== EVENT_UNIT_DAMAGED then
+	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
 		if FK and LoadBoolean(P, GetHandleId(GetTriggerUnit()),'A0NS') == false then
 			if D0I < GetEventDamage() then
 				set WUE =(LoadUnitHandle(HY, h, 2))
@@ -56813,7 +56781,7 @@ function D_I takes nothing returns boolean
 			endif
 		endif
 	else
-		if GetUnitAbilityLevel(WWE,'C000')== 0 or c >$F* 5 then
+		if GetUnitAbilityLevel(WWE,'C000') == 0 or c >$F* 5 then
 			set WUE =(LoadUnitHandle(HY, h, 2))
 			set ODX =(LoadInteger(HY, h, 5))
 			call SaveBoolean(HY,(GetHandleId(WWE)), 363,(false))
@@ -56889,7 +56857,7 @@ function D2I takes nothing returns nothing
 	local real ZCE
 	local unit u
 	local integer j = LoadInteger(HY, h, 0)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or b == false then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or b == false then
 		if j > 0 then
 			loop
 				set u = LoadUnitHandle(HY, h, j)
@@ -56907,7 +56875,7 @@ function D2I takes nothing returns nothing
 			loop
 				set u = LoadUnitHandle(HY, h, j)
 				if WTE(D3I, u)< 900 then
-					if GetUnitAbilityLevel(u,'A3KG')== 0 then
+					if GetUnitAbilityLevel(u,'A3KG') == 0 then
 						call UnitAddPermanentAbility(u,'A3KG')
 						call SaveUnitHandle(HY, GetHandleId(u),'A3KG', D3I)
 					endif
@@ -57002,14 +56970,14 @@ function YDV takes nothing returns nothing
 endfunction
 function D6I takes unit u, real d returns nothing
 	local integer hu = GetHandleId(u)
-	if LoadBoolean( ExtraHT, hu, HTKEY_HAS_BORROWEDTIME ) and YDWEGetUnitAbilityState(u, 'A0NS', 1) == 0. and YDWEGetUnitAbilityState(u, 'A1DA', 1) == 0. and 400 > GetWidgetLife(u) and GetUnitAbilityLevel(u,'A36D')== 0 then
+	if LoadBoolean( ExtraHT, hu, HTKEY_HAS_BORROWEDTIME ) and YDWEGetUnitAbilityState(u, 'A0NS', 1) == 0. and YDWEGetUnitAbilityState(u, 'A1DA', 1) == 0. and 400 > GetWidgetLife(u) and GetUnitAbilityLevel(u,'A36D') == 0 then
 		call UnitSpellEffect__BorrowedTime(u, hu)
 	endif
 endfunction
 function LearnSkill__BorrowedTime takes nothing returns nothing
 	local unit u = GetTriggerUnit()
 	local integer h = GetHandleId(u)
-	if(GetUnitAbilityLevel(u,'A0NS')== 1 or GetUnitAbilityLevel(u,'A1DA')== 1) and IsUnitIllusion(u) == false then
+	if(GetUnitAbilityLevel(u,'A0NS') == 1 or GetUnitAbilityLevel(u,'A1DA') == 1) and IsUnitIllusion(u) == false then
 		call SaveBoolean( ExtraHT, h, HTKEY_HAS_BORROWEDTIME, true )
 		call TriggerRegisterUnitEvent(JJ, u, EVENT_UNIT_DAMAGED)
 	endif
@@ -57025,23 +56993,23 @@ function D7I takes nothing returns boolean
 	local real IXX =(ODX + 1)* 8
 	local integer N5O =$A
 	local unit TMX
-	if GetTriggerEventId()== EVENT_UNIT_SPELL_EFFECT then
+	if GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT then
 		if GetTriggerEvalCount(t)> 1 and GetSpellAbilityId()=='A0S1' and not UnitHasSpellShield(GetSpellTargetUnit()) and WWE == GetSpellTargetUnit() then
 			call FlushChildHashtable(HY, h)
 			call CleanCurrentTrigger(t)
 		endif
-	elseif GetTriggerEventId()== EVENT_PLAYER_UNIT_SPELL_EFFECT then
-		if FDX(GetSpellAbilityId()) and GetSpellTargetUnit()== WWE then
+	elseif GetTriggerEventId() == EVENT_PLAYER_UNIT_SPELL_EFFECT then
+		if FDX(GetSpellAbilityId()) and GetSpellTargetUnit() == WWE then
 			call FlushChildHashtable(HY, h)
 			call CleanCurrentTrigger(t)
 		endif
-	elseif GetTriggerEventId()== EVENT_PLAYER_UNIT_DEATH then
+	elseif GetTriggerEventId() == EVENT_PLAYER_UNIT_DEATH then
 		if IsUnitIllusion(GetTriggerUnit()) == false and GetUnitTypeId(GetTriggerUnit())!='u00S' then
 			set TMX = GetKillingUnit()
 			if OZX(TMX) then
 				set TMX =(Player__Hero[GetPlayerId(GetOwningPlayer((TMX)))])
 			endif
-			if GetTriggerUnit()== WWE or TMX == WWE then
+			if GetTriggerUnit() == WWE or TMX == WWE then
 				call FlushChildHashtable(HY, h)
 				call CleanCurrentTrigger(t)
 				call UnitRemoveAbility(WWE,'A1W2')
@@ -57051,7 +57019,7 @@ function D7I takes nothing returns boolean
 	else
 		set EVX = EVX + 1
 		call SaveInteger(HY, h, 34,(EVX))
-		if GetUnitAbilityLevel(WWE,'A1W2')== 0 or EVX == N5O then
+		if GetUnitAbilityLevel(WWE,'A1W2') == 0 or EVX == N5O then
 			call FlushChildHashtable(HY, h)
 			call CleanCurrentTrigger(t)
 			call UnitRemoveAbility(WWE,'A1W2')
@@ -57160,9 +57128,9 @@ function FAI takes nothing returns boolean
 	local integer FOI =(LoadInteger(HY, h, 365))
 	local integer ODX =(LoadInteger(HY, h, 5))
 	local integer EVX =(LoadInteger(HY, h, 34))
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or GetTriggerEventId()== EVENT_GAME_TIMER_EXPIRED then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
 		set EVX = EVX + 1
-		if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+		if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 			set EVX = 9999
 		endif
 		call SaveInteger(HY, h, 34,(EVX))
@@ -57196,8 +57164,8 @@ function FNI takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer h = GetHandleId(t)
 	local unit u = LoadUnitHandle(HY, h, 0)
-	if GetUnitAbilityLevel(u,'C003')== 2 then
-	elseif GetUnitAbilityLevel(u,'C003')== 0 then
+	if GetUnitAbilityLevel(u,'C003') == 2 then
+	elseif GetUnitAbilityLevel(u,'C003') == 0 then
 		call PauseTimer(t)
 		call DestroyTimer(t)
 		call FlushChildHashtable(HY, h)
@@ -57243,7 +57211,7 @@ function XWE takes nothing returns nothing
 	set trigUnit = null
 endfunction
 function FCI takes nothing returns boolean
-	return((IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and((GetUnitAbilityLevel(GetFilterUnit(),'A04R')== 0) and(IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false) and UnitIsDead(GetFilterUnit()) == false)))
+	return((IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and((GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0) and(IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false) and UnitIsDead(GetFilterUnit()) == false)))
 endfunction
 function FDI takes unit trigUnit returns nothing
 	local group g = AllocationGroup(303)
@@ -57274,7 +57242,7 @@ function FDI takes unit trigUnit returns nothing
 	call DeallocateGroup(g)
 endfunction
 function FFI takes unit R8X, unit WLE returns nothing
-	if GetUnitAbilityLevel(WLE,'B03P')> 0 and IsUnitType(R8X, UNIT_TYPE_STRUCTURE) == false and(IsUnitType(R8X, UNIT_TYPE_MECHANICAL) == false and GetUnitAbilityLevel(R8X,'A04R')== 0 or IsFortDefenseTypeUnit(R8X)) and IsUnitEnemy(R8X, GetOwningPlayer(WLE)) and LoadInteger(HY, GetHandleId(WLE), 4267)!= 1 and GetUnitAbilityLevel(WLE,'A1HX')== 0 and GetUnitAbilityLevel(WLE,'A36D')== 0 and TKV(WLE,'B03P', 20) then
+	if GetUnitAbilityLevel(WLE,'B03P')> 0 and IsUnitType(R8X, UNIT_TYPE_STRUCTURE) == false and(IsUnitType(R8X, UNIT_TYPE_MECHANICAL) == false and GetUnitAbilityLevel(R8X,'A04R') == 0 or IsFortDefenseTypeUnit(R8X)) and IsUnitEnemy(R8X, GetOwningPlayer(WLE)) and LoadInteger(HY, GetHandleId(WLE), 4267)!= 1 and GetUnitAbilityLevel(WLE,'A1HX') == 0 and GetUnitAbilityLevel(WLE,'A36D') == 0 and TKV(WLE,'B03P', 20) then
 		call FDI(WLE)
 	endif
 endfunction
@@ -57393,8 +57361,8 @@ function FMI takes nothing returns boolean
 	local player FQI =(LoadPlayerHandle(HY,(h), 54))
 	local integer FSI =(LoadInteger(HY,(h), 5))
 	local unit FTI
-	local boolean b = GetTriggerEventId()== EVENT_GAME_TIMER_EXPIRED
-	if GetUnitAbilityLevel(R3O,'B02F')== 0 then
+	local boolean b = GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED
+	if GetUnitAbilityLevel(R3O,'B02F') == 0 then
 		call SetPlayerAbilityAvailable(GetOwningPlayer(R3O),'A04Y', true)
 		call SetPlayerAbilityAvailable(GetOwningPlayer(R3O),'A2O9', false)
 		call UnitRemoveAbility(R3O,'A37S')
@@ -57407,7 +57375,7 @@ function FMI takes nothing returns boolean
 		endif
 		call FlushChildHashtable(HY,(h))
 		call CleanCurrentTrigger(FPI)
-	elseif b == false and GetTriggerUnit()== R3O then
+	elseif b == false and GetTriggerUnit() == R3O then
 		call SetPlayerAbilityAvailable(GetOwningPlayer(R3O),'A04Y', true)
 		call SetPlayerAbilityAvailable(GetOwningPlayer(R3O),'A2O9', false)
 		call UnitRemoveAbility(R3O,'B02F')
@@ -57427,13 +57395,13 @@ function FMI takes nothing returns boolean
 		call CleanCurrentTrigger(FPI)
 	elseif b then
 		call SaveInteger(HY, h, 0, LoadInteger(HY, h, 0)+ 1)
-		if LoadInteger(HY, h, 0)== 9 then
+		if LoadInteger(HY, h, 0) == 9 then
 			call UnitRemoveAbility(R3O,'A3C9')
 			if HaveSavedHandle(HY, GetHandleId(R3O),'VisD') then
 				call UnitRemoveAbility(LoadUnitHandle(HY, GetHandleId(R3O),'VisD'),'A3C9')
 			endif
 		endif
-		if ModuloInteger(LoadInteger(HY, h, 0), 10)== 0 then
+		if ModuloInteger(LoadInteger(HY, h, 0), 10) == 0 then
 			if GetUnitState(R3O, UNIT_STATE_LIFE)> 21 then
 				call SetUnitState(R3O, UNIT_STATE_LIFE, GetUnitState(R3O, UNIT_STATE_LIFE)-20)
 			else
@@ -57530,7 +57498,7 @@ endfunction
 function FZI takes nothing returns boolean
 	local timer t = null
 	local unit u = GetTriggerUnit()
-	if GetIssuedOrderId()== 852589and GetUnitAbilityLevel(u,'A2O9')> 0 then
+	if GetIssuedOrderId() == 852589and GetUnitAbilityLevel(u,'A2O9')> 0 then
 		set t = CreateTimer()
 		call TimerStart(t, 0, false, function FYI)
 		call SaveUnitHandle(P, GetHandleId(t), 0, u)
@@ -57568,14 +57536,14 @@ function F0I takes nothing returns boolean
 	if GetUnitAbilityLevel(WUE,'A1D9')> 0 then
 		set EVX = 8
 	endif
-	if GetTriggerEventId()== EVENT_UNIT_SPELL_ENDCAST then
+	if GetTriggerEventId() == EVENT_UNIT_SPELL_ENDCAST then
 		call FogModifierStop(fm)
 		call DestroyFogModifier(fm)
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 		call SaveBoolean(P, GetHandleId(WUE),'Grip', false)
 		call FIX(WWE)
-	elseif GetTriggerEvalCount(t)> EVX or(GetTriggerEvalCount(t)== 1 and GetUnitAbilityLevel(WWE,'A3E9')== 1) then
+	elseif GetTriggerEvalCount(t)> EVX or(GetTriggerEvalCount(t) == 1 and GetUnitAbilityLevel(WWE,'A3E9') == 1) then
 		call FogModifierStop(fm)
 		call DestroyFogModifier(fm)
 		call FlushChildHashtable(HY, h)
@@ -57593,7 +57561,7 @@ function F0I takes nothing returns boolean
 			call SetUnitState(WUE, UNIT_STATE_MANA, GetUnitState(WUE, UNIT_STATE_MANA)+ W5R)
 			call SetUnitState(WWE, UNIT_STATE_MANA, GetUnitState(WWE, UNIT_STATE_MANA)-W5R)
 		endif
-		if UnitIsDead(WWE) == false and GetUnitAbilityLevel(WWE,'Bdet')== 0 then
+		if UnitIsDead(WWE) == false and GetUnitAbilityLevel(WWE,'Bdet') == 0 then
 			call FAX(WUE, WWE)
 		endif
 	endif
@@ -57647,7 +57615,7 @@ function F3I takes unit u returns nothing
 	local timer t = LoadTimerHandle(P, GetHandleId(u),'A04V')
 	local integer WFV = GetHandleId(t)
 	local integer O3O = 30 * GetUnitAbilityLevel(d,'A04V')
-	if t == null or GetUnitAbilityLevel(u,'D018')== 0 or GetUnitTypeId(d)=='e00E' then
+	if t == null or GetUnitAbilityLevel(u,'D018') == 0 or GetUnitTypeId(d)=='e00E' then
 		set t = CreateTimer()
 		set WFV = GetHandleId(t)
 		call SaveTimerHandle(P, GetHandleId(u),'A04V', t)
@@ -57675,7 +57643,7 @@ function F4I takes nothing returns boolean
 	local integer EVX =(LoadInteger(HY,(GetHandleId(WWE)), 281))
 	local boolean F5I =(LoadBoolean(HY, h, 280))
 	local real ZCE = 0.5
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call SetUnitTurnSpeed(WWE, GetUnitDefaultTurnSpeed(WWE))
 		call SaveInteger(HY,(GetHandleId(WWE)), 281, 0)
 		call FlushChildHashtable(HY, h)
@@ -57686,7 +57654,7 @@ function F4I takes nothing returns boolean
 		call SaveInteger(HY,(GetHandleId(WWE)), 281, 0)
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
-	elseif GetTriggerEventId()== EVENT_UNIT_DAMAGED and F5I == false then
+	elseif GetTriggerEventId() == EVENT_UNIT_DAMAGED and F5I == false then
 		if EVX > 0 and GetUnitAbilityLevel(GetEventDamageSource(),'A1EL')> 0 and WUE == GetEventDamageSource() and FK then
 			call SaveBoolean(HY, h, 280,(true))
 			set ZCE =(3 + 5 * GetUnitAbilityLevel(WUE,'A1EL'))* EVX
@@ -57870,7 +57838,7 @@ function F8I takes nothing returns boolean
 	local real y2
 	local real x
 	local real y
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or GetTriggerEvalCount(t)>$A then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or GetTriggerEvalCount(t)>$A then
 		call A3X(GetUnitX(WWE), GetUnitY(WWE), 200)
 		call DestroyEffect((LoadEffectHandle(HY, h, 32)))
 		call FlushChildHashtable(HY, h)
@@ -57878,7 +57846,7 @@ function F8I takes nothing returns boolean
 	else
 		set x2 = x1 + d * Cos(a)
 		set y2 = y1 + d * Sin(a)
-		if(IsPointInRegion(R4,((x2)* 1.),((y2)* 1.))) == false then
+		if(IsPointInRegion(TerrainCliffRegion,((x2)* 1.),((y2)* 1.))) == false then
 			call SaveReal(HY, h, 6,((x2)* 1.))
 			call SaveReal(HY, h, 7,((y2)* 1.))
 			set x = x2
@@ -57903,7 +57871,7 @@ function F9I takes nothing returns nothing
 	local integer h = GetHandleId(t)
 	local integer c = LoadInteger(HY, h, 0)
 	local unit u = LoadUnitHandle(HY, h, 1)
-	if c == 1 or UnitIsDead(u) or GetUnitAbilityLevel(u,'A37T')== 0 then
+	if c == 1 or UnitIsDead(u) or GetUnitAbilityLevel(u,'A37T') == 0 then
 		if GetUnitAbilityLevel(u,'A37T')!= 0 then
 			call UnitDamageTargetEx(LoadUnitHandle(HY, h, 0), u, 1, LoadReal(HY, h, 0))
 		endif
@@ -58017,7 +57985,7 @@ function GII takes nothing returns nothing
 	local unit CSO = GetEnumUnit()
 	local unit WWE
 	local group g
-	if GetUnitCurrentOrder(CSO)== 0 then
+	if GetUnitCurrentOrder(CSO) == 0 then
 		set g = AllocationGroup(307)
 		set U2 = CSO
 		call GroupEnumUnitsInRange(g, GetUnitX(CSO), GetUnitY(CSO), 825, Condition(function DKX))
@@ -58025,7 +57993,7 @@ function GII takes nothing returns nothing
 		if WWE != null then
 			call GroupRemoveUnit(g, WWE)
 		endif
-		if FirstOfGroup(g)== null and WWE == WUE then
+		if FirstOfGroup(g) == null and WWE == WUE then
 			call IssueTargetOrderById(CSO, 851983, WWE)
 		endif
 		call DeallocateGroup(g)
@@ -58105,7 +58073,7 @@ function GCI takes nothing returns boolean
 		call SaveReal(HY, h,$8FC+ EVX, x * 1.)
 		call SaveReal(HY, h,$9C4+ EVX, y * 1.)
 	endif
-	if ModuloInteger(GetTriggerEvalCount(t), 10)== 0 then
+	if ModuloInteger(GetTriggerEvalCount(t), 10) == 0 then
 		set LEV = true
 		call GBI(WUE, h, EVX, level)
 		set LEV = false
@@ -58163,7 +58131,7 @@ endfunction
 function X7E takes nothing returns nothing
 	if GetUnitTypeId(GetTriggerUnit())!='O017' then
 		call GDI()
-		if(GetRandomInt(1, 10)== 1) then
+		if(GetRandomInt(1, 10) == 1) then
 			call PlaySoundOnUnitBJ(B1, 100, GetTriggerUnit())
 		endif
 	elseif IsTerrainPathable(GetUnitX(GetTriggerUnit()), GetUnitY(GetTriggerUnit()), PATHING_TYPE_WALKABILITY) then
@@ -58184,7 +58152,7 @@ function GHI takes nothing returns boolean
 	local real x1
 	local real y1
 	local boolean MDR = LoadBoolean(HY, h, 0)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or GetTriggerEvalCount(t)> R2I(20 * N5O) then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or GetTriggerEvalCount(t)> R2I(20 * N5O) then
 		call DestroyEffect(LoadEffectHandle(HY, h, 32))
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
@@ -58197,7 +58165,7 @@ function GHI takes nothing returns boolean
 	else
 		call SetUnitX(KBX, GetUnitX(WUE))
 		call SetUnitY(KBX, GetUnitY(WUE))
-		if MDR and ModuloInteger(GetTriggerEvalCount(t), 20)== 0 then
+		if MDR and ModuloInteger(GetTriggerEvalCount(t), 20) == 0 then
 			call DestroyEffect(AddSpecialEffectTarget("Abilities\\Weapons\\RedDragonBreath\\RedDragonMissile.mdl", WWE, "chest"))
 			call UnitDamageTargetEx(WUE, WWE, 1, 50 + 25 * LoadInteger(HY, h, 0))
 		endif
@@ -58218,7 +58186,7 @@ function GHI takes nothing returns boolean
 				set a = Atan2(GetUnitY(WWE)-GetUnitY(WUE), GetUnitX(WWE)-GetUnitX(WUE))
 				set x1 = GetUnitX(WUE)+ 300 * Cos(a)
 				set y1 = GetUnitY(WUE)+ 300 * Sin(a)
-				if(IsPointInRegion(R4, x1 * 1., y1 * 1.)) == false then
+				if(IsPointInRegion(TerrainCliffRegion, x1 * 1., y1 * 1.)) == false then
 					call SetUnitX(WWE, x1)
 					call SetUnitY(WWE, y1)
 				endif
@@ -58495,7 +58463,7 @@ function G6I takes unit u returns nothing
 		if DOX(u) then
 			if GetUnitAbilityLevel(u,'A1HX')> 0 then
 				call UnitRemoveAbility(W_V,'A30X')
-			elseif GetUnitAbilityLevel(W_V,'A30X')== 0 then
+			elseif GetUnitAbilityLevel(W_V,'A30X') == 0 then
 				call UnitAddAbility(W_V,'A30X')
 			endif
 		else
@@ -58531,7 +58499,7 @@ function G8I takes nothing returns boolean
 	local integer i
 	local unit u
 	local boolean b = IsSentinelsPlayer(GetOwningPlayer(WUE))
-	local boolean br = GetUnitAbilityLevel(WUE,'A36D')== 1
+	local boolean br = GetUnitAbilityLevel(WUE,'A36D') == 1
 	set i = HOI
 	loop
 		if b then
@@ -58752,7 +58720,7 @@ function M5X takes nothing returns nothing
 	set t = null
 endfunction
 function HJI takes nothing returns boolean
-	return GetOwningPlayer(GetFilterUnit())== GetOwningPlayer(XB) and(GetUnitAbilityLevel(GetFilterUnit(),'Aloc')== 0 and GetUnitAbilityLevel(GetFilterUnit(),'A04R')== 0)
+	return GetOwningPlayer(GetFilterUnit()) == GetOwningPlayer(XB) and(GetUnitAbilityLevel(GetFilterUnit(),'Aloc') == 0 and GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0)
 endfunction
 function HKI takes nothing returns nothing
 	local real x
@@ -58792,12 +58760,12 @@ endfunction
 function HMI takes nothing returns nothing	//如果三秒内没被打则设置无视地形。
 	local unit u = GetEnumUnit()
 	if IsUnitType(u, UNIT_TYPE_HERO) then
-		if GetUnitAbilityLevel(u,'A021')== 0 then
+		if GetUnitAbilityLevel(u,'A021') == 0 then
 			call L6X(u)
 			call UnitAddAbility(u,'A021')
 		endif
 	else
-		if GetUnitAbilityLevel(u,'A29C')== 0 then
+		if GetUnitAbilityLevel(u,'A29C') == 0 then
 			call UnitAddAbility(u,'A29C')
 		endif
 	endif
@@ -58810,7 +58778,7 @@ function HPI takes nothing returns nothing//织网
 	local group g
 	local group gg = null
 	local unit u
-	if GetTriggerEventId()== EVENT_UNIT_DEATH then
+	if GetTriggerEventId() == EVENT_UNIT_DEATH then
 		call DestroyGroup(LoadGroupHandle(HY, h, 1))
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
@@ -58864,7 +58832,7 @@ function RQF takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local unit u =(LoadUnitHandle(HY, h, 14))
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or GetUnitAbilityLevel(u,'A0WR')== 0 or GetTriggerEvalCount(t)>= 5 *$E then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or GetUnitAbilityLevel(u,'A0WR') == 0 or GetTriggerEvalCount(t)>= 5 *$E then
 		if UnitAlive(u) then
 			call UnitRemoveAbility(u,'A0WR')
 			call UnitRemoveAbility(u,'B01E')
@@ -58883,7 +58851,7 @@ function HTI takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local unit u =(LoadUnitHandle(HY,(h), 14))
 	local integer c = LoadInteger(HY, h, 1)+ 1
-	if GetUnitAbilityLevel(u,'A0WR')== 0 or c > 5 * 14 or GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetUnitAbilityLevel(u,'A0WR') == 0 or c > 5 * 14 or GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call LodSystem_ReduceUnitExtraState(u, LoadInteger(HY, h, 0), "damage")
 		//if UnitAlive(u) then
 		call UnitRemoveAbility(u,'A0WR')
@@ -58929,7 +58897,7 @@ function HUI takes unit R8X, unit WLE returns nothing
 	call EnableAttackEffectByTime(9, 2.5)
 endfunction
 function HWI takes nothing returns nothing
-	if(GetUnitAbilityLevel(WX,'Q0BK')> 0) and GetUnitAbilityLevel(WX,'A36D')== 0 and GetUnitAbilityLevel(YX,'A04R')== 0 then
+	if(GetUnitAbilityLevel(WX,'Q0BK')> 0) and GetUnitAbilityLevel(WX,'A36D') == 0 and GetUnitAbilityLevel(YX,'A04R') == 0 then
 		call HUI(WX, YX)
 	endif
 endfunction
@@ -58943,7 +58911,7 @@ function HYI_Actions takes unit u, real damage returns nothing
 endfunction
 
 function HYI takes nothing returns nothing
-	if GetUnitAbilityLevel(WX,'A340')> 0 and IsUnitIllusion(YX) == false and GetUnitAbilityLevel(YX,'A04R')== 0 then
+	if GetUnitAbilityLevel(WX,'A340')> 0 and IsUnitIllusion(YX) == false and GetUnitAbilityLevel(YX,'A04R') == 0 then
 		call HYI_Actions(WX, ZX)
 	endif
 endfunction
@@ -58960,7 +58928,7 @@ function HZI takes nothing returns boolean
 		call CCX(target,'A3B8', level, 2,'B3B8')
 		call EUX(target,'A3B8', GetPlayerId(GetOwningPlayer(u)), 2)
 		call UnitDamageTargetEx(u, target, 1, level * 75)
-		if GetUnitAbilityLevel(target,'A3E9')== 1 and IsUnitType(u, UNIT_TYPE_HERO) and HGR == false and IsMagicImmuneUnit(u) == false then
+		if GetUnitAbilityLevel(target,'A3E9') == 1 and IsUnitType(u, UNIT_TYPE_HERO) and HGR == false and IsMagicImmuneUnit(u) == false then
 			if UnitHasSpellShield(u) == false then
 				call T4V(target)
 				call NHX(target, u,'h07V', "HZI",$4B0, true)
@@ -59014,13 +58982,13 @@ function H1I takes nothing returns boolean
 	if GetTriggerEventId()!= EVENT_UNIT_DAMAGED then
 		call FlushChildHashtable(P, WFV)
 		call CleanCurrentTrigger(HLR)
-	elseif GetEventDamageSource()== LoadUnitHandle(P, WFV, 0) then
+	elseif GetEventDamageSource() == LoadUnitHandle(P, WFV, 0) then
 		call DisableTrigger(HLR)
 		set FHR = CreateTextTag()
 		set d = LoadReal(P, WFV, 1)
 		set i = LoadReal(P, WFV, 0)
 		set u = LoadUnitHandle(P, WFV, 2)
-		if GetUnitAbilityLevel(u,'A3E9')== 1 and IsMagicImmuneUnit(LoadUnitHandle(P, WFV, 1)) == false and GetUnitAbilityLevel(LoadUnitHandle(P, WFV, 1),'Aloc')== 0 then
+		if GetUnitAbilityLevel(u,'A3E9') == 1 and IsMagicImmuneUnit(LoadUnitHandle(P, WFV, 1)) == false and GetUnitAbilityLevel(LoadUnitHandle(P, WFV, 1),'Aloc') == 0 then
 			if LoadBoolean(P, WFV, 0) == false then
 				call SaveUnitHandle(VV,'A3E9', 0, u)
 				call SaveUnitHandle(VV,'A3E9', 1, LoadUnitHandle(P, WFV, 1))
@@ -59094,7 +59062,7 @@ function RAF takes nothing returns boolean
 	return false
 endfunction
 function H6I takes nothing returns boolean
-	if GetUnitTypeId(GetFilterUnit())== GetUnitTypeId(LNV) and GetOwningPlayer(GetFilterUnit())== GetOwningPlayer(LNV) and IsUnitIllusion(GetFilterUnit()) then
+	if GetUnitTypeId(GetFilterUnit()) == GetUnitTypeId(LNV) and GetOwningPlayer(GetFilterUnit()) == GetOwningPlayer(LNV) and IsUnitIllusion(GetFilterUnit()) then
 		call SetUnitX(GetFilterUnit(), LIV)
 		call SetUnitY(GetFilterUnit(), LAV)
 		call IssueTargetOrderById(GetFilterUnit(), 851983, LBV)
@@ -59151,7 +59119,7 @@ function H8I takes nothing returns nothing
 	local unit u = LoadUnitHandle(HY, h, 0)
 	local unit WLE = LoadUnitHandle(HY, h, 1)
 	local integer level = GetUnitAbilityLevel(u,'A0RW')
-	if GetUnitAbilityLevel(u,'Aloc')== 1 and HaveSavedHandle(HY, GetHandleId(u), 0) then
+	if GetUnitAbilityLevel(u,'Aloc') == 1 and HaveSavedHandle(HY, GetHandleId(u), 0) then
 		set u = LoadUnitHandle(HY, GetHandleId(u), 0)
 	endif
 	if UnitHasSpellShield(WLE) == false then
@@ -59179,7 +59147,7 @@ function H9I takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local unit u = LoadUnitHandle(HY, GetHandleId(t), 0)
 	call UnitRemoveAbility(u,'A40D')
-	if GetUnitAbilityLevel(u,'A40D')== 0 then
+	if GetUnitAbilityLevel(u,'A40D') == 0 then
 		call DestroyTimerAndFlushHT_HY(t)
 		
 	elseif LoadBoolean(HY, GetHandleId(t), 0) == false then
@@ -59214,7 +59182,7 @@ function OIE takes nothing returns nothing
 		call SaveUnitHandle(HY, GetHandleId(trg), 2, u)
 		set trg = null
 	endif
-	if GetRandomInt(0, 1)== 1 then
+	if GetRandomInt(0, 1) == 1 then
 		set t = CreateTimer()
 		call TimerStart(t, .51, false, function H9I)
 		call UnitAddPermanentAbility(u,'A40D')
@@ -59263,7 +59231,7 @@ function JEI takes nothing returns boolean
 	call KVX(WUE)
 	call UnitAddMaxLife(WUE,-1 * JOI)
 	call SaveInteger(HY, GetHandleId(WUE),'h272', LoadInteger(HY, GetHandleId(WUE),'a272')-JOI)
-	if LoadInteger(HY, GetHandleId(WUE),'a272')== 0 then
+	if LoadInteger(HY, GetHandleId(WUE),'a272') == 0 then
 		call UnitRemoveAbility(WUE,'A1R0')
 		call UnitRemoveAbility(WUE,'B0D5')
 	endif
@@ -59354,7 +59322,7 @@ function JFI takes nothing returns nothing
 	local unit JGI =(LoadUnitHandle(HY, h,$FE))
 	local integer level = GetUnitAbilityLevel(JGI,'P347')
 	local timer t
-	if GetUnitAbilityLevel(JGI,'A36D')== 0 and WTE(u, JGI)<$578 and TKV(u,'P347', 40) then
+	if GetUnitAbilityLevel(JGI,'A36D') == 0 and WTE(u, JGI)<$578 and TKV(u,'P347', 40) then
 		set t = CreateTimer()
 		call TimerStart(t, 0, false, function JDI)
 		call SaveUnitHandle(HY, GetHandleId(t), 0, u)
@@ -59512,7 +59480,7 @@ function JQI takes nothing returns nothing
 	if IsUnitIllusion(WWE) then
 		set JSI = Player__Hero[GetPlayerId(GetOwningPlayer(WWE))]
 	endif
-	if GetHeroInt(WJE, true)== 0 then
+	if GetHeroInt(WJE, true) == 0 then
 		set WJE = Player__Hero[GetPlayerId(GetOwningPlayer(WJE))]
 	endif
 	set i = GetHeroMainAttributesType(WJE)
@@ -59584,12 +59552,12 @@ function JYI takes nothing returns boolean
 	local unit WUE = LoadUnitHandle(HY, h, 2)
 	local group g
 	local integer EVX = LoadInteger(HY, h, 34)
-	if EVX >$FA or GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if EVX >$FA or GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call WHV(WWE,'D001')
 		call DestroyEffect((LoadEffectHandle(HY, h, 31)))
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
-	elseif GetTriggerEventId()== EVENT_PLAYER_UNIT_SPELL_EFFECT and GetSpellAbilityId()=='A0QG' and GetSpellTargetUnit()== WWE then
+	elseif GetTriggerEventId() == EVENT_PLAYER_UNIT_SPELL_EFFECT and GetSpellAbilityId()=='A0QG' and GetSpellTargetUnit() == WWE then
 		call DestroyEffect((LoadEffectHandle(HY, h, 31)))
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
@@ -59644,7 +59612,7 @@ function JZI takes nothing returns boolean
 	local real y1
 	local real d
 	local real a
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call SetUnitPathing(LoadUnitHandle(HY, h, 17), true)
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
@@ -59663,7 +59631,7 @@ function JZI takes nothing returns boolean
 			call SetUnitX(WWE, x1)
 			call SetUnitY(WWE, y1)
 		endif
-		if GetTriggerEvalCount(t)>$F then
+		if GetTriggerEvalCount(t)> 15 then
 			set WUE =(LoadUnitHandle(HY, h, 2))
 			set ODX =(LoadInteger(HY, h, 5))
 			call FlushChildHashtable(HY, h)
@@ -59727,7 +59695,7 @@ endfunction
 function K5E takes nothing returns nothing
 	local real x = GetSpellTargetX()
 	local real y = GetSpellTargetY()
-	if A4X(x, y) == false or(IsPointInRegion(R4,((x)* 1.),((y)* 1.))) then
+	if A4X(x, y) == false or(IsPointInRegion(TerrainCliffRegion,((x)* 1.),((y)* 1.))) then
 		call EXStopUnit(GetTriggerUnit())
 		call InterfaceErrorForPlayer(GetOwningPlayer(GetTriggerUnit()), GetObjectName('n03K'))
 	endif
@@ -59975,11 +59943,11 @@ function KNI takes unit u returns nothing
 endfunction
 function KBI takes nothing returns nothing
 	local unit whichUnit = GetTriggerUnit()
-	if GetTriggerEventId()== EVENT_UNIT_ATTACKED then
+	if GetTriggerEventId() == EVENT_UNIT_ATTACKED then
 		call SaveReal(P, GetHandleId(whichUnit),'LSTE', GetGameTime())
 		call KII(whichUnit)
 	else
-		if IsAttackSpecialEffects(GetSpellAbilityId()) and GetSpellTargetUnit()== LoadUnitHandle(HY, GetHandleId(GetTriggeringTrigger()), 0) then
+		if IsAttackSpecialEffects(GetSpellAbilityId()) and GetSpellTargetUnit() == LoadUnitHandle(HY, GetHandleId(GetTriggeringTrigger()), 0) then
 			call SaveReal(P, GetHandleId(GetSpellTargetUnit()),'LSTE', GetGameTime())
 			call KII(GetSpellTargetUnit())
 		endif
@@ -59987,7 +59955,7 @@ function KBI takes nothing returns nothing
 	set whichUnit = null
 endfunction
 function KCI takes nothing returns nothing
-	if GetAttacker()== LoadUnitHandle(HY, GetHandleId(GetTriggeringTrigger()), 0) and IsUnitEnemy(GetAttacker(), GetOwningPlayer(GetTriggerUnit())) then
+	if GetAttacker() == LoadUnitHandle(HY, GetHandleId(GetTriggeringTrigger()), 0) and IsUnitEnemy(GetAttacker(), GetOwningPlayer(GetTriggerUnit())) then
 		call SaveReal(P, GetHandleId(GetAttacker()),'LSTC', GetGameTime())
 		call KNI(GetAttacker())
 	endif
@@ -59997,11 +59965,11 @@ function KDI takes nothing returns nothing
 	local unit u = LoadUnitHandle(HY, GetHandleId(t), 0)
 	local integer hu = GetHandleId(u)
 	local real currentTime = GetGameTime()
-	if currentTime - LoadReal(P, hu,'LSTC')>= 10 and GetUnitAbilityLevel(u,'A34F')== 0 then
+	if currentTime - LoadReal(P, hu,'LSTC')>= 10 and GetUnitAbilityLevel(u,'A34F') == 0 then
 		call UnitAddPermanentAbility(u,'A34F')
 		call UnitAddPermanentAbility(u,'A40A')
 	endif
-	if currentTime - LoadReal(P, hu,'LSTE')>= 10 and GetUnitAbilityLevel(u,'A34E')== 0 then
+	if currentTime - LoadReal(P, hu,'LSTE')>= 10 and GetUnitAbilityLevel(u,'A34E') == 0 then
 		call UnitAddPermanentAbility(u,'A34E')
 	endif
 	set t = null
@@ -60066,12 +60034,12 @@ function KFI takes nothing returns boolean
 	local integer E6X = LoadInteger(HY, h, 29)
 	local unit WUE = LoadUnitHandle(HY, h, 2)
 	local unit WWE = LoadUnitHandle(HY, h, 17)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		if(LoadBoolean(HY, h, 276)) == false and GetTriggerUnit()==(WUE) then
 			call SaveBoolean(HY, h, 276, true)
 			call SetHeroStr(WUE, GetHeroStr(WUE, false)-E6X, true)
 			call SaveInteger(K, GetHandleId(WUE), 30, LoadInteger(K, GetHandleId(WUE), 30)-E6X)
-		elseif(LoadBoolean(HY, h, 277)) == false and GetTriggerUnit()== WWE then
+		elseif(LoadBoolean(HY, h, 277)) == false and GetTriggerUnit() == WWE then
 			call SaveBoolean(HY, h, 277, true)
 			call SetHeroStr(WWE, GetHeroStr(WWE, false)+ E6X, true)
 		endif
@@ -60220,7 +60188,7 @@ function KQI takes nothing returns nothing
 	set t = null
 endfunction
 function OKE takes nothing returns nothing
-	if(IsUnitType(GetSpellTargetUnit(), UNIT_TYPE_STRUCTURE) == false or GetOwningPlayer(GetSpellTargetUnit())== GetOwningPlayer(GetTriggerUnit())) then
+	if(IsUnitType(GetSpellTargetUnit(), UNIT_TYPE_STRUCTURE) == false or GetOwningPlayer(GetSpellTargetUnit()) == GetOwningPlayer(GetTriggerUnit())) then
 		call KQI()
 	endif
 endfunction
@@ -60229,21 +60197,21 @@ function KSI takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local unit WWE = LoadUnitHandle(HY, h, 30)
 	local unit KTI =(LoadUnitHandle(HY, h, 269))
-	if GetTriggerEventId()== EVENT_UNIT_DEATH or GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_UNIT_DEATH or GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
-		if GetTriggerUnit()== WWE then
+		if GetTriggerUnit() == WWE then
 			call KillUnit(KTI)
 		endif
 	elseif OY then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 		call PauseUnit(KTI, true)
-	elseif GetTriggerEventId()== EVENT_UNIT_ISSUED_ORDER or GetTriggerEventId()== EVENT_UNIT_ISSUED_POINT_ORDER or GetTriggerEventId()== EVENT_UNIT_ISSUED_TARGET_ORDER then
+	elseif GetTriggerEventId() == EVENT_UNIT_ISSUED_ORDER or GetTriggerEventId() == EVENT_UNIT_ISSUED_POINT_ORDER or GetTriggerEventId() == EVENT_UNIT_ISSUED_TARGET_ORDER then
 		call DisableTrigger(t)
 		call IssueTargetOrderById(KTI, 851983, WWE)
 		call EnableTrigger(t)
-	elseif(GetWidgetLife(WWE)<( 100 * LYV) or GetWidgetLife(WWE)/ GetUnitState(WWE, UNIT_STATE_MAX_LIFE)< LYV * .05 + .15) and GetUnitAbilityLevel(KTI,'B0AN')== 0 then
+	elseif(GetWidgetLife(WWE)<( 100 * LYV) or GetWidgetLife(WWE)/ GetUnitState(WWE, UNIT_STATE_MAX_LIFE)< LYV * .05 + .15) and GetUnitAbilityLevel(KTI,'B0AN') == 0 then
 		call IssueTargetOrderById(LZV[GetPlayerId(GetOwningPlayer(KTI))],$D0085, KTI)
 	elseif UnitVisibleToPlayer(WWE, GetOwningPlayer(KTI)) == false then
 		if(LoadBoolean(HY, h, 270)) then
@@ -60319,7 +60287,7 @@ function KZI takes nothing returns boolean
 	else
 		set XSR = Sentinels[0]
 	endif
-	if GetTriggerEventId()== EVENT_UNIT_DEATH then
+	if GetTriggerEventId() == EVENT_UNIT_DEATH then
 		if(LoadBoolean(HY, h, 265)) then
 			call A8X(XSR, .4, GetUnitX(WUE), GetUnitY(WUE), 600)
 		endif
@@ -60359,7 +60327,7 @@ function KZI takes nothing returns boolean
 endfunction
 function K2I takes nothing returns nothing
 	local integer h = GetHandleId(GetTriggeringTrigger())
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call RemoveSavedBoolean(HY, h, 0)
 		call CleanCurrentTrigger(GetTriggeringTrigger())
 	elseif IsUnitIdType(GetUnitTypeId(GetEventDamageSource()), UNIT_TYPE_HERO) == false or GetUnitAbilityLevel(GetEventDamageSource(),'A1W4')> 0 then
@@ -60559,17 +60527,17 @@ function LII takes nothing returns boolean
 	local real a
 	local boolean b = LoadBoolean(HY, h2, 273)
 	local real LAI = LoadReal(HY, h2, 30)
-	if(GetTriggerEventId()== EVENT_UNIT_DEATH and GetTriggerUnit()== WUE) or(GetTriggerEventId()== EVENT_GAME_TIMER_EXPIRED and GetGameTime()> LAI) then
+	if(GetTriggerEventId() == EVENT_UNIT_DEATH and GetTriggerUnit() == WUE) or(GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED and GetGameTime()> LAI) then
 		call LEI(WUE)
 		call LRI(LoadGroupHandle(HY, h2, 30))
 		call FlushChildHashtable(HY, h)
 		call FlushChildHashtable(HY, h2)
 		call CleanCurrentTrigger(t1)
 		call CleanCurrentTrigger(t2)
-	elseif GetTriggerEventId()== EVENT_GAME_TIMER_EXPIRED then
+	elseif GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
 		call LXI(WUE, LoadGroupHandle(HY, h2, 30))
-	elseif GetTriggerEventId()== EVENT_UNIT_DAMAGED then
-	elseif GetTriggerEventId()== EVENT_UNIT_DEATH then
+	elseif GetTriggerEventId() == EVENT_UNIT_DAMAGED then
+	elseif GetTriggerEventId() == EVENT_UNIT_DEATH then
 		if IsUnitIllusion(GetDyingUnit()) == false then
 			call NHX(GetDyingUnit(), WUE,'h07Y', "K9I", 9999, false)
 		endif
@@ -60587,7 +60555,7 @@ function LNI takes nothing returns boolean
 	local integer DOO = GetHandleId(t2)
 	local unit WWE = GetTriggerUnit()
 	local unit WUE =(LoadUnitHandle(HY,(L2R), 2))
-	if IsUnitEnemy(WUE, GetOwningPlayer(WWE)) and IsUnitType(WWE, UNIT_TYPE_STRUCTURE) == false and GetUnitAbilityLevel(WWE,'A04R')== 0 then
+	if IsUnitEnemy(WUE, GetOwningPlayer(WWE)) and IsUnitType(WWE, UNIT_TYPE_STRUCTURE) == false and GetUnitAbilityLevel(WWE,'A04R') == 0 then
 		if(LoadBoolean(HY,(DOO),(GetHandleId(WWE)))) == false then
 			call GroupAddUnit(LoadGroupHandle(HY, DOO, 30), WWE)
 			call TriggerRegisterUnitEvent(t2, WWE, EVENT_UNIT_DEATH)
@@ -60632,7 +60600,7 @@ function OPE takes nothing returns nothing
 	else
 		call GroupRemoveUnit(OX, GetTriggerUnit())
 	endif
-	if GetUnitAbilityLevel(GetTriggerUnit(),'QINV')== 1 then
+	if GetUnitAbilityLevel(GetTriggerUnit(),'QINV') == 1 then
 		call UnitRemoveAbility(GetTriggerUnit(),'QINV')
 	endif
 endfunction
@@ -60718,7 +60686,7 @@ function OQE takes nothing returns nothing
 	local real y2
 	local real a
 	local unit KBX = CreateUnit(GetOwningPlayer(trigUnit),'e00E', x1, y1, 0)
-	if GetSpellTargetUnit()== null then
+	if GetSpellTargetUnit() == null then
 		set x2 = GetSpellTargetX()
 		set y2 = GetSpellTargetY()
 	else
@@ -60752,7 +60720,7 @@ endfunction
 function LFI takes nothing returns nothing
 	local unit u = GetTriggerUnit()
 	local real d = GetEventDamage()
-	if(d > 0) and GetWidgetLife(u)> 1 and FK and GetUnitAbilityLevel(u,'A36D')== 0 then
+	if(d > 0) and GetWidgetLife(u)> 1 and FK and GetUnitAbilityLevel(u,'A36D') == 0 then
 		if(d <= 20) then
 			if GetRandomInt(0, 100)< 5 + 5 *(GetUnitAbilityLevel(u,'A0CZ')) then
 				call SetWidgetLife(u, GetWidgetLife(u)+ d)
@@ -60830,7 +60798,7 @@ function LQI takes nothing returns nothing
 	local group gg
 	local integer SYV = LoadInteger(HY, h, 6)
 	call SaveUnitHandle(VV,'CHRN', 0, d)
-	if GetTriggerEventId()== EVENT_GAME_TIMER_EXPIRED then
+	if GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
 		set c = c + 1
 		call SaveInteger(HY, h, 28, c)
 		if WTE(trigUnit, d)< 435 then
@@ -60848,7 +60816,7 @@ function LQI takes nothing returns nothing
 		call DeallocateGroup(gg)
 	else
 		set U2 = trigUnit
-		if LKI() and GetUnitAbilityLevel(GetTriggerUnit(),'Aloc')== 0 and GetUnitAbilityLevel(GetTriggerUnit(),'A04R')== 0 and IsUnitInGroup(GetTriggerUnit(), g) == false then
+		if LKI() and GetUnitAbilityLevel(GetTriggerUnit(),'Aloc') == 0 and GetUnitAbilityLevel(GetTriggerUnit(),'A04R') == 0 and IsUnitInGroup(GetTriggerUnit(), g) == false then
 			call GroupAddUnit(g, GetTriggerUnit())
 			call LLI(GetTriggerUnit())
 		endif
@@ -60909,7 +60877,7 @@ endfunction
 function LSI takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local unit u = LoadUnitHandle(P, GetHandleId(t), 0)
-	if GetUnitAbilityLevel(u,'B0C2')== 0 then
+	if GetUnitAbilityLevel(u,'B0C2') == 0 then
 		call RemoveSavedHandle(P, GetHandleId(u),'A081')
 		call DestroyTimerAndFlushHT_P(t)
 		set t = null
@@ -60930,7 +60898,7 @@ endfunction
 function LUI takes unit u, unit t returns nothing
 	local integer WFV = GetHandleId(t)
 	local integer WUV = GetUnitAbilityLevel(u,'A081')
-	if WUV > 0 and GetUnitAbilityLevel(t,'B0C2')== 1 and HaveSavedHandle(P, WFV,'A081') == false then
+	if WUV > 0 and GetUnitAbilityLevel(t,'B0C2') == 1 and HaveSavedHandle(P, WFV,'A081') == false then
 		call LTI(t, GetHandleId(t))
 		if LoadBoolean(HY, WFV, 4306) then
 			call UnitDamageTargetEx(u, t, 1, WUV *$A+ 30)
@@ -60943,7 +60911,7 @@ function LWI takes nothing returns nothing
 	local unit u = LoadUnitHandle(HY, h, 30)
 	local integer hu = GetHandleId(u)
 	local integer c = LoadInteger(HY, h, 1)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or c == 1 then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or c == 1 then
 		call LodSystem_ReduceUnitExtraState(u, LoadInteger(HY, h, 2), "armourneg")
 		call RemoveSavedHandle(HY, hu,'A0VW')
 		call FlushChildHashtable(HY, h)
@@ -60982,7 +60950,7 @@ function LYI takes unit u returns nothing
 endfunction
 function LZI takes nothing returns boolean
 	local real d
-	if GetUnitAbilityLevel(GetTriggerUnit(),'B091')> 0 and GetUnitAbilityLevel(GetEventDamageSource(),'A0VV')> 0 and(LoadUnitHandle(HY,(GetHandleId(GetTriggeringTrigger())), 2))== GetEventDamageSource() then
+	if GetUnitAbilityLevel(GetTriggerUnit(),'B091')> 0 and GetUnitAbilityLevel(GetEventDamageSource(),'A0VV')> 0 and(LoadUnitHandle(HY,(GetHandleId(GetTriggeringTrigger())), 2)) == GetEventDamageSource() then
 		call UnitRemoveAbility(GetTriggerUnit(),'B091')
 		call DisableTrigger(GetTriggeringTrigger())
 		call LYI(GetTriggerUnit())
@@ -60995,7 +60963,7 @@ function L_I takes nothing returns nothing
 	local trigger t
 	local unit WWE
 	local unit WUE
-	if GetTriggerEventId()== EVENT_UNIT_SPELL_EFFECT then
+	if GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT then
 		set WWE = GetSpellTargetUnit()
 		set WUE = GetTriggerUnit()
 	else
@@ -61013,17 +60981,17 @@ function L_I takes nothing returns nothing
 	set WUE = null
 endfunction
 function L0I takes nothing returns boolean
-	if GetTriggerEventId()== EVENT_PLAYER_UNIT_ATTACKED then
+	if GetTriggerEventId() == EVENT_PLAYER_UNIT_ATTACKED then
 		if GetUnitAbilityLevel(GetAttacker(),'A0VV')> 0 and(LoadBoolean(HY,(GetHandleId(GetTriggeringTrigger())),$BC0)) and IsUnitType(GetTriggerUnit(), UNIT_TYPE_STRUCTURE) == false and GetAttacker()==(LoadUnitHandle(HY,(GetHandleId(GetTriggeringTrigger())), 2)) then
 			call L_I()
 		endif
-	elseif GetTriggerEventId()== EVENT_UNIT_ISSUED_ORDER then
+	elseif GetTriggerEventId() == EVENT_UNIT_ISSUED_ORDER then
 		if(GetIssuedOrderId()==$D011F) then
 			call SaveBoolean(HY,(GetHandleId(GetTriggeringTrigger())),$BC0,(true))
 		elseif(GetIssuedOrderId()==$D0120) then
 			call SaveBoolean(HY,(GetHandleId(GetTriggeringTrigger())),$BC0,(false))
 		endif
-	elseif GetTriggerEventId()== EVENT_UNIT_SPELL_EFFECT and GetSpellAbilityId()=='A0VV' then
+	elseif GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT and GetSpellAbilityId()=='A0VV' then
 		call L_I()
 	endif
 	return false
@@ -61075,7 +61043,7 @@ function L5I takes nothing returns boolean
 	if EVX > KLR / 3 then
 		call SaveReal(HY, h,$C1,((J0R * .98)* 1.))
 	endif
-	if EVX > KLR or GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if EVX > KLR or GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 		if GetTriggerEventId()!= EVENT_WIDGET_DEATH then
@@ -61437,7 +61405,7 @@ function OYE takes nothing returns nothing
 	local real a = Atan2(y -GetUnitY(WUE), x -GetUnitX(WUE))
 	local unit KBX
 	if GetUnitTypeId(WUE)=='e00E' then
-		if GetRandomInt(0, 1)== 1 then
+		if GetRandomInt(0, 1) == 1 then
 			set a = a + GetRandomReal(0, bj_PI / 4)
 		else
 			set a = a -GetRandomReal(0, bj_PI / 4)
@@ -61501,7 +61469,7 @@ function MQI takes nothing returns boolean
 	local real MSI =(LoadReal(HY,(GetHandleId(WWE)), 681))
 	call FlushChildHashtable(HY, h)
 	call CleanCurrentTrigger(t)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or MSI <(GetGameTime()) then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or MSI <(GetGameTime()) then
 		call MPI(WWE)
 	endif
 	set t = null
@@ -61617,7 +61585,7 @@ function MYI takes nothing returns boolean
 	local unit u = LoadUnitHandle(HY, GetHandleId(t), 0)
 	if UnitAlive(u) then
 		call UnitRemoveAbility(u,'QFZZ')
-		if GetUnitAbilityLevel(u,'QFZZ')== 0 then
+		if GetUnitAbilityLevel(u,'QFZZ') == 0 then
 			call FlushChildHashtable(HY, GetHandleId(t))
 			call DestroyTrigger(t)
 		endif
@@ -61632,7 +61600,7 @@ function MZI takes nothing returns boolean
 	local unit KBX =(LoadUnitHandle(HY, h, 19))
 	local unit trigUnit =(LoadUnitHandle(HY, h, 14))
 	local trigger tt
-	if GetUnitAbilityLevel(trigUnit,'B08X')== 0 then
+	if GetUnitAbilityLevel(trigUnit,'B08X') == 0 then
 		call S9E(GetOwningPlayer(trigUnit),'Z605', true)
 		call UnitRemoveAbility(trigUnit,'QFZZ')
 		if GetUnitAbilityLevel(trigUnit,'QFZZ')> 0 then
@@ -61688,8 +61656,8 @@ function M0I takes nothing returns boolean
 	local unit WWE = LoadUnitHandle(HY, h, 30)
 	local integer ODX =(LoadInteger(HY, h, 5))
 	local unit WUE =(LoadUnitHandle(HY, h, 2))
-	if GetTriggerEventId()== EVENT_UNIT_DAMAGED then
-		if GetEventDamage()>$A and((LoadInteger(HY,(GetHandleId((t))),(4263)))== 1) == false and GetOwningPlayer(GetEventDamageSource())!= GetOwningPlayer(GetTriggerUnit()) and FK then
+	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
+		if GetEventDamage()>$A and((LoadInteger(HY,(GetHandleId((t))),(4263))) == 1) == false and GetOwningPlayer(GetEventDamageSource())!= GetOwningPlayer(GetTriggerUnit()) and FK then
 			call DisableTrigger(t)
 			call M_I(WUE, WWE, ODX)
 			call EnableTrigger(t)
@@ -61781,7 +61749,7 @@ function M3I takes nothing returns boolean
 	local effect FX =(LoadEffectHandle(HY, h, 32))
 	local integer EVX = GetTriggerEvalCount(t)
 	call UnitDamageTargetEx(WUE, WWE, 1, IXX)
-	if GetUnitAbilityLevel(WWE,'A42R')== 0 or EVX == 3 then
+	if GetUnitAbilityLevel(WWE,'A42R') == 0 or EVX == 3 then
 		call SaveInteger(P, GetHandleId(WWE),'A42R', LoadInteger(P, GetHandleId(WWE),'A42R')-1)
 		if LoadInteger(P, GetHandleId(WWE),'A42R')<= 0 then
 			call UnitRemoveAbility(WWE,'A42R')
@@ -61839,7 +61807,7 @@ function M7I takes nothing returns boolean
 		set NCX = CoordinateY50(GetUnitY(KBX)+$F* Sin(a))
 		call SetUnitX(KBX, NBX)
 		call SetUnitY(KBX, NCX)
-		if(EVX > 1 and ModuloInteger(EVX, 10)== 0) or EVX == 1 then
+		if(EVX > 1 and ModuloInteger(EVX, 10) == 0) or EVX == 1 then
 			set g = AllocationGroup(341)
 			set U2 = WUE
 			set S2 = 40 + 20 * ODX
@@ -61942,13 +61910,13 @@ function PEI takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local integer ETX =$54273
 	local boolean b = false
-	if IsUnitAlly(t, EG) and GetUnitAbilityLevel(t,'A04R')== 0 and UnitAlive(t) then
+	if IsUnitAlly(t, EG) and GetUnitAbilityLevel(t,'A04R') == 0 and UnitAlive(t) then
 		if LoadBoolean(HY, h, ETX) then
 			set ZCE = LoadInteger(HY, h, ETX)
 			set b = true
 		endif
 		if IsUnitIdType(GetUnitTypeId(t), UNIT_TYPE_HERO) then
-			if IsUnitType(t, UNIT_TYPE_RANGED_ATTACKER)== IsUnitType(VG, UNIT_TYPE_RANGED_ATTACKER) and IsUnitType(t, UNIT_TYPE_MELEE_ATTACKER)== IsUnitType(VG, UNIT_TYPE_MELEE_ATTACKER) then
+			if IsUnitType(t, UNIT_TYPE_RANGED_ATTACKER) == IsUnitType(VG, UNIT_TYPE_RANGED_ATTACKER) and IsUnitType(t, UNIT_TYPE_MELEE_ATTACKER) == IsUnitType(VG, UNIT_TYPE_MELEE_ATTACKER) then
 				if b or GetUnitAbilityLevel(t,'D006')> 0 then
 					if OG then
 						if ZCE != XG then
@@ -61981,7 +61949,7 @@ function PEI takes nothing returns boolean
 		else
 			if IsUnitType(t, UNIT_TYPE_RANGED_ATTACKER) and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false then
 				if b then
-					if OG and LoadInteger(HY, GetHandleId(VG),$54274)== 1 then
+					if OG and LoadInteger(HY, GetHandleId(VG),$54274) == 1 then
 						if ZCE != XG then
 							call SaveInteger(HY, h, ETX, XG)
 							call LodSystem_ReduceUnitExtraState(t, ZCE, "damage")
@@ -61994,7 +61962,7 @@ function PEI takes nothing returns boolean
 						call SaveBoolean(HY, h, ETX, false)
 					endif
 				else
-					if OG and LoadInteger(HY, GetHandleId(VG),$54274)== 1 then
+					if OG and LoadInteger(HY, GetHandleId(VG),$54274) == 1 then
 						call SaveInteger(HY, h, ETX, XG)
 						call SaveBoolean(HY, h, ETX, true)
 						call LodSystem_AddUnitExtraState(t, XG, "damage")
@@ -62022,7 +61990,7 @@ function PXI takes nothing returns nothing
 	set XG = ZCE
 	set OG = true
 	set PRI = p != EG
-	if UnitIsDead(u) or u == null or GetUnitTypeId(u)< 1 or POI or PRI or GetUnitAbilityLevel(u,'A36D')== 1 then
+	if UnitIsDead(u) or u == null or GetUnitTypeId(u)< 1 or POI or PRI or GetUnitAbilityLevel(u,'A36D') == 1 then
 		set XG = 0
 		set OG = false
 	endif
@@ -62077,7 +62045,7 @@ function PNI takes nothing returns boolean
 	local real M8R
 	local real M9R
 	local integer c = GetTriggerEvalCount(t)
-	if c > O3O or GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if c > O3O or GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call A3X(GetUnitX(WLE), GetUnitY(WLE), 100)
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
@@ -62142,7 +62110,7 @@ function PGI takes nothing returns boolean
 	call SetUnitY(W_V, PJI)
 	call SetUnitX(PKI, PHI)
 	call SetUnitY(PKI, PJI)
-	if ModuloInteger(GetTriggerEvalCount(t), 2)== 1 and GetTriggerEvalCount(t)< 20 then
+	if ModuloInteger(GetTriggerEvalCount(t), 2) == 1 and GetTriggerEvalCount(t)< 20 then
 		call IssuePointOrderById(PKI,$D0270, PHI, PJI)
 	endif
 	set gg = AllocationGroup(343)
@@ -62232,7 +62200,7 @@ function PMI takes nothing returns nothing
 			endif
 		endif
 		call GroupEnumUnitsInRange(AK, GetWidgetX(u), GetWidgetY(u), 400 + 25, Condition(function PLI))
-		if OK and GetUnitAbilityLevel(u,'A36D')== 0 then
+		if OK and GetUnitAbilityLevel(u,'A36D') == 0 then
 			call SaveInteger(HY, h, 1, 0)
 			if LoadBoolean(HY, h, 0) then
 				set level = LoadInteger(HY, h, 0)
@@ -62275,7 +62243,7 @@ function Q_A takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer h = GetHandleId(t)
 	local unit u = LoadUnitHandle(HY, h, 0)
-	if GetGameTime()> LoadReal(HY, h, 0) or GetUnitAbilityLevel(u,'B0DM')== 0 then
+	if GetGameTime()> LoadReal(HY, h, 0) or GetUnitAbilityLevel(u,'B0DM') == 0 then
 		call UnitRemoveAbility(u,'A2OV')
 		call UnitRemoveAbility(u,'A2OU')
 		call UnitRemoveAbility(u,'B0DM')
@@ -62323,7 +62291,7 @@ endfunction
 function QYA takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer h = GetHandleId(t)
-	if GetGameTime()> LoadReal(HY, h, 0) or GetUnitAbilityLevel(LoadUnitHandle(HY, h, 0),'A40W')== 0 then
+	if GetGameTime()> LoadReal(HY, h, 0) or GetUnitAbilityLevel(LoadUnitHandle(HY, h, 0),'A40W') == 0 then
 		call ResetUnitVertexColor(LoadUnitHandle(HY, h, 0))
 		call UnitRemoveAbility(LoadUnitHandle(HY, h, 0),'A40W')
 		call UnitRemoveAbility(LoadUnitHandle(HY, h, 0),'B0HF')
@@ -62380,7 +62348,7 @@ endfunction
 function Z1I takes unit u, unit t returns nothing
 	local unit d
 	local integer i
-	if GetUnitAbilityLevel(u,'A061')== 1 then
+	if GetUnitAbilityLevel(u,'A061') == 1 then
 		if TKV(u, 'A061', 35) then	//金箍棒
 			call TGA(u, t, 5)
 		endif
@@ -62471,7 +62439,7 @@ function MarksmanshipEnum takes unit u, unit target returns nothing
 endfunction
 
 function Marksmanship takes nothing returns nothing
-	if GetUnitAbilityLevel(WX,'A36D')== 0 and GetUnitAbilityLevel(WX,'S3UR')> 0 and IsUnitEnemy(WX, GetOwningPlayer(YX)) then
+	if GetUnitAbilityLevel(WX,'A36D') == 0 and GetUnitAbilityLevel(WX,'S3UR')> 0 and IsUnitEnemy(WX, GetOwningPlayer(YX)) then
 		call MarksmanshipEnum(WX, YX)
 	endif
 endfunction
@@ -62526,10 +62494,10 @@ function PTI takes nothing returns boolean
 	elseif ODX == 4 then
 		set IXX = 50
 	endif
-	if GetTriggerEvalCount(t)== 3 or GetTriggerEvalCount(t)== 4 then
+	if GetTriggerEvalCount(t) == 3 or GetTriggerEvalCount(t) == 4 then
 		call UnitDamageTargetEx(WUE, WWE, 1, IXX)
 	endif
-	if GetTriggerEvalCount(t)== 4 then
+	if GetTriggerEvalCount(t) == 4 then
 		call DestroyEffect(LoadEffectHandle(HY, h, 32))
 		call UnitRemoveAbility(WWE,'A1VS')
 		call UnitRemoveAbility(WWE,'B0DN')
@@ -62557,9 +62525,9 @@ endfunction
 function PWI takes nothing returns nothing
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
-	if GetTriggerEventId()== EVENT_UNIT_DAMAGED then
-		if GetEventDamageSource()== LoadUnitHandle(HY, h, 0) then
-			if GetUnitAbilityLevel(GetTriggerUnit(),'A3E9')== 1 and IsMagicImmuneUnit(LoadUnitHandle(HY, h, 1)) == false and LoadBoolean(HY, h, 0) == false then
+	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
+		if GetEventDamageSource() == LoadUnitHandle(HY, h, 0) then
+			if GetUnitAbilityLevel(GetTriggerUnit(),'A3E9') == 1 and IsMagicImmuneUnit(LoadUnitHandle(HY, h, 1)) == false and LoadBoolean(HY, h, 0) == false then
 				call SaveUnitHandle(VV,'A3E9', 0, GetTriggerUnit())
 				call SaveUnitHandle(VV,'A3E9', 1, LoadUnitHandle(HY, h, 1))
 				call SaveInteger(VV,'A3E9', 0, R2I(LoadReal(HY, h, 0)))
@@ -62649,17 +62617,17 @@ function AhalimReincarnation_Actions takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local unit u = GetTriggerUnit()
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
-		if GetUnitAbilityLevel(u,'A3DA')== 1 then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
+		if GetUnitAbilityLevel(u,'A3DA') == 1 then
 			call UnitRemoveAbility(u,'A3DA')
 			call UnitRemoveAbility(u,'B3DA')
 			call FlushChildHashtable(HY, h)
 			call CleanCurrentTrigger(t)
 			call ResetUnitVertexColor(u)
 			call BZR(u)
-		elseif GetUnitAbilityLevel(u,'A3D9')== 1 then
+		elseif GetUnitAbilityLevel(u,'A3D9') == 1 then
 			// 如果有盾或者自杀就倒闭
-			if LoadBoolean(HY, GetHandleId(u),'suic') or GetUnitAbilityLevel(u,'AIrc')== 1 then
+			if LoadBoolean(HY, GetHandleId(u),'suic') or GetUnitAbilityLevel(u,'AIrc') == 1 then
 				call UnitRemoveAbility(u,'A3DK')
 				call UnitRemoveAbility(u,'B3I9')
 				call FlushChildHashtable(HY, h)
@@ -62688,13 +62656,13 @@ function AhalimReincarnation_Actions takes nothing returns boolean
 			call SaveInteger(HY, h, 0, 1)
 			call SetUnitVertexColor(u, 140, 120, 100, 70)
 			call DisableUnitBloodstone(u)
-			if LoadInteger(HY, GetHandleId(u), 4333)== 1 then
+			if LoadInteger(HY, GetHandleId(u), 4333) == 1 then
 				call EPX(u, 4334, 4.01)
 			endif
-			if LoadInteger(HY, GetHandleId(u), 4418)== 1 then
+			if LoadInteger(HY, GetHandleId(u), 4418) == 1 then
 				call EPX(u, 4419, 4.01)
 			endif
-		elseif LoadInteger(HY, h, 0)== 1 then
+		elseif LoadInteger(HY, h, 0) == 1 then
 			call SaveInteger(HY, h, 0, 2)
 			call SelectUnitAddForPlayer(u, GetOwningPlayer(u))
 			call SetUnitState(u, UNIT_STATE_MANA, LoadReal(HY, h, 10))
@@ -62716,7 +62684,7 @@ function AhalimReincarnation_Actions takes nothing returns boolean
 				call UnitDamageTargetEx(LoadUnitHandle(HY, GetHandleId(u),'lstd'), u, 7, 99999999)
 				call UnitDamageTargetEx(LoadUnitHandle(HY, GetHandleId(u),'lstd'), u, 10, 99999999)
 				if UnitAlive(u) then
-					if GetHandleId(LoadUnitHandle(HY, GetHandleId(u),'lstd'))== 0 then
+					if GetHandleId(LoadUnitHandle(HY, GetHandleId(u),'lstd')) == 0 then
 						call KillUnit(u)
 					else
 						if GetUnitAbilityLevel(u,'A0MQ')> 0 or GetUnitAbilityLevel(u,'A1B6')> 0 then
@@ -62746,7 +62714,7 @@ function register_AhalimReincarnation takes unit whichUnit returns nothing
 	local trigger t
 	local integer h
 	local integer hu = GetHandleId(whichUnit)
-	if not HaveSavedHandle(HY, hu,'Leor') and GetUnitAbilityLevel(whichUnit,'A3DA')== 0 then
+	if not HaveSavedHandle(HY, hu,'Leor') and GetUnitAbilityLevel(whichUnit,'A3DA') == 0 then
 		set t = CreateTrigger()
 		set h = GetHandleId(t)
 		call SaveTriggerHandle(HY, hu,'Leor', t)
@@ -62794,9 +62762,9 @@ function EnumAddBuff_Reincarnation takes nothing returns boolean
 		exitwhen firstUnit == null
 			call GroupRemoveUnit(enumGroup, firstUnit)
 			// 友军 存活 非建筑 非守卫 英雄 并且没有绿翔光环
-			if IsUnitAlly(U2, GetOwningPlayer(firstUnit)) and IsAliveNotStrucNotWard(firstUnit) and IsUnitType(firstUnit, UNIT_TYPE_HERO) and GetUnitAbilityLevel(firstUnit,'A3DA')== 0 then
+			if IsUnitAlly(U2, GetOwningPlayer(firstUnit)) and IsAliveNotStrucNotWard(firstUnit) and IsUnitType(firstUnit, UNIT_TYPE_HERO) and GetUnitAbilityLevel(firstUnit,'A3DA') == 0 then
 				call GroupAddUnit(auraGroup, firstUnit)
-				if GetUnitAbilityLevel(firstUnit,'A3DK')== 0 then
+				if GetUnitAbilityLevel(firstUnit,'A3DK') == 0 then
 					call UnitAddPermanentAbility(firstUnit,'A3DK')
 					call UnitMakeAbilityPermanent(firstUnit, true,'A3D9')
 					call UnitMakeAbilityPermanent(firstUnit, true,'A3I9')
@@ -62839,7 +62807,7 @@ endfunction
 function P5I takes unit u, unit t returns nothing	//吸血光环
 	local integer lv
 	local real i
-	if GetUnitAbilityLevel(t,'A04R')== 0 and IsUnitIllusion(t) == false and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and IsUnitType(t, UNIT_TYPE_MECHANICAL) == false and IsUnitEnemy(u, GetOwningPlayer(t)) and(GetUnitAbilityLevel(u,'BVA1')> 0 or GetUnitAbilityLevel(u,'BVA2')> 0 or GetUnitAbilityLevel(u,'BVA3')> 0 or GetUnitAbilityLevel(u,'BVA4')> 0) and UnitAlive(u) then
+	if GetUnitAbilityLevel(t,'A04R') == 0 and IsUnitIllusion(t) == false and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and IsUnitType(t, UNIT_TYPE_MECHANICAL) == false and IsUnitEnemy(u, GetOwningPlayer(t)) and(GetUnitAbilityLevel(u,'BVA1')> 0 or GetUnitAbilityLevel(u,'BVA2')> 0 or GetUnitAbilityLevel(u,'BVA3')> 0 or GetUnitAbilityLevel(u,'BVA4')> 0) and UnitAlive(u) then
 		set lv = GetUnitAbilityLevel(u,'BVA1')+ GetUnitAbilityLevel(u,'BVA2')* 2 + GetUnitAbilityLevel(u,'BVA3')* 3 + GetUnitAbilityLevel(u,'BVA4')* 4
 		set i = .1 + .05 * lv
 		call SetWidgetLife(u, GetWidgetLife(u)+ GetEventDamage()* i)
@@ -62907,7 +62875,7 @@ function ReincarnationActions takes nothing returns boolean
 	if YDWEGetUnitAbilityState(u, id, 1) == 0 and GetUnitState(u, UNIT_STATE_MANA)>= 120 + 40 * lv then
 		if HeroCommonSkills[PlayerSkillIndex[pid * HL + 4]]=='A01Y' or HeroCommonSkills[PlayerSkillIndex[pid * HL + 6]]=='A01Y'  then
 			set b = true
-			if GetUnitAbilityLevel(u,'A39S')== 1 then
+			if GetUnitAbilityLevel(u,'A39S') == 1 then
 				if GetUnitAbilityLevel(u,'A01Y')> 0 then
 					set cd = YDWEGetUnitAbilityDataReal(u, 'A01Y', lv, 105)
 					call Japi_ReduceUnitAbilityCoolDown(u,'A01Y', cd * 0.25)
@@ -62961,7 +62929,7 @@ function P8I takes nothing returns boolean
 	local integer level = GetUnitAbilityLevel(WJE,'A2S0')
 	local real P9I = LoadReal(HY, h, 797)
 	local real QVI = LoadReal(HY, h, 798)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call SaveInteger(HY, GetHandleId(WJE), 4338, 2)
 		call SetPlayerAbilityAvailable(GetOwningPlayer(WJE),'AOcr', true)
 		call DestroyEffect(LoadEffectHandle(HY, h, 175))
@@ -63038,7 +63006,7 @@ function O9E takes nothing returns nothing
 	endif
 endfunction
 function QXI takes unit U6E returns boolean
-	return(IsUnitIllusion(U6E)) and GetWidgetLife(U6E)> .5 and GetOwningPlayer(U6E)== GetOwningPlayer(GetTriggerUnit())
+	return(IsUnitIllusion(U6E)) and GetWidgetLife(U6E)> .5 and GetOwningPlayer(U6E) == GetOwningPlayer(GetTriggerUnit())
 endfunction
 function QOI takes nothing returns boolean
 	return QXI(GetFilterUnit())
@@ -63161,7 +63129,7 @@ function QDI takes nothing returns nothing
 	local integer h = GetHandleId(t)
 	local unit QFI = LoadUnitHandle(HY, h, 0)
 	local unit WLE = LoadUnitHandle(HY, h, 1)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or LoadReal(HY, h, 0)< GetGameTime() or GetUnitAbilityLevel(WLE, LoadInteger(HY, h, 0))== 0 then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or LoadReal(HY, h, 0)< GetGameTime() or GetUnitAbilityLevel(WLE, LoadInteger(HY, h, 0)) == 0 then
 		call UnitRemoveAbility(WLE, LoadInteger(HY, h, 0))
 		call UnitRemoveAbility(WLE,'B079')
 		call RemoveSavedHandle(P, GetHandleId(WLE),'A40F')
@@ -63169,7 +63137,7 @@ function QDI takes nothing returns nothing
 		call DisableTrigger(t)
 		call DestroyTrigger(t)
 	else
-		if ModuloInteger(GetTriggerEvalCount(t), 2)== 1 then
+		if ModuloInteger(GetTriggerEvalCount(t), 2) == 1 then
 			call UnitDamageTargetEx(QFI, WLE, 1, LoadInteger(HY, h, 1)* 5 +$A)
 		endif
 	endif
@@ -63178,7 +63146,7 @@ function QDI takes nothing returns nothing
 	set t = null
 endfunction
 function QGI takes unit u returns boolean
-	return GetUnitAbilityLevel(u,'A3A0')== 1 or GetUnitAbilityLevel(u,'A3A1')== 1 or GetUnitAbilityLevel(u,'A3A2')== 1 or GetUnitAbilityLevel(u,'A3A3')== 1 or GetUnitAbilityLevel(u,'A3A4')== 1 or GetUnitAbilityLevel(u,'A3A5')== 1 or GetUnitAbilityLevel(u,'A3A6')== 1 or GetUnitAbilityLevel(u,'A3A7')== 1
+	return GetUnitAbilityLevel(u,'A3A0') == 1 or GetUnitAbilityLevel(u,'A3A1') == 1 or GetUnitAbilityLevel(u,'A3A2') == 1 or GetUnitAbilityLevel(u,'A3A3') == 1 or GetUnitAbilityLevel(u,'A3A4') == 1 or GetUnitAbilityLevel(u,'A3A5') == 1 or GetUnitAbilityLevel(u,'A3A6') == 1 or GetUnitAbilityLevel(u,'A3A7') == 1
 endfunction
 function QHI takes unit u, unit WLE returns nothing
 	local trigger t
@@ -63188,14 +63156,14 @@ function QHI takes unit u, unit WLE returns nothing
 		set t = LoadTriggerHandle(P, GetHandleId(WLE),'A40F')
 		set h = GetHandleId(t)
 		if IsUnitType(u, UNIT_TYPE_RANGED_ATTACKER) and IsUnitType(u, UNIT_TYPE_MELEE_ATTACKER) == false then
-			if GetUnitAbilityLevel(WLE,'A3A0'-1 + level)== 0 then
+			if GetUnitAbilityLevel(WLE,'A3A0'-1 + level) == 0 then
 				call UnitRemoveAbility(WLE, LoadInteger(HY, h, 0))
 				call UnitRemoveAbility(WLE,'B079')
 				call UnitAddPermanentAbility(WLE,'A3A0'-1 + level)
 				call SaveInteger(HY, h, 0,'A3A0'-1 + level)
 			endif
 		else
-			if GetUnitAbilityLevel(WLE,'A3A4'-1 + level)== 0 then
+			if GetUnitAbilityLevel(WLE,'A3A4'-1 + level) == 0 then
 				call UnitRemoveAbility(WLE, LoadInteger(HY, h, 0))
 				call UnitRemoveAbility(WLE,'B079')
 				call UnitAddPermanentAbility(WLE,'A3A4'-1 + level)
@@ -63538,7 +63506,7 @@ function S1I takes nothing returns nothing
 		return
 	endif
 	call DisableTrigger(CUV)
-	if GetTriggerEventId()== EVENT_PLAYER_UNIT_DROP_ITEM then
+	if GetTriggerEventId() == EVENT_PLAYER_UNIT_DROP_ITEM then
 		set S4I = true
 	endif
 	loop
@@ -63926,12 +63894,12 @@ function T8I takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local unit WUE =(LoadUnitHandle(HY, h, 2))
-	if IsUnitIllusion(GetTriggerUnit()) == false and GetOwningPlayer(GetTriggerUnit())== GetOwningPlayer(WUE) then
+	if IsUnitIllusion(GetTriggerUnit()) == false and GetOwningPlayer(GetTriggerUnit()) == GetOwningPlayer(WUE) then
 		if GetLearnedSkill()=='A0MW' or GetLearnedSkill()=='A27C' then
 			call DisableTrigger(GetTriggeringTrigger())
 			call T7I(GetTriggerUnit(), false)
 			call EnableTrigger(GetTriggeringTrigger())
-		elseif GetLearnedSkill()=='A0NR' or GetLearnedSkill()== Z_E or GetLearnedSkill()== Z0E or GetLearnedSkill()== TGI or GetLearnedSkill()== THI or GetLearnedSkill()== TJI then
+		elseif GetLearnedSkill()=='A0NR' or GetLearnedSkill() == Z_E or GetLearnedSkill() == Z0E or GetLearnedSkill() == TGI or GetLearnedSkill() == THI or GetLearnedSkill() == TJI then
 			call TriggerExecute((LoadTriggerHandle(HY,(GetHandleId(GetOwningPlayer(GetTriggerUnit()))), 371)))
 			call TriggerExecute((LoadTriggerHandle(HY,(GetHandleId(GetOwningPlayer(GetTriggerUnit()))), 372)))
 			call DisableTrigger(GetTriggeringTrigger())
@@ -63987,7 +63955,7 @@ function RBE takes nothing returns nothing
 	endif
 endfunction
 function UEI takes nothing returns boolean
-	return IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and GetUnitAbilityLevel(GetFilterUnit(),'A04R')== 0 and UnitIsDead(GetFilterUnit()) == false and GetUnitAbilityLevel(GetFilterUnit(),'Avul')== 0
+	return IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0 and UnitIsDead(GetFilterUnit()) == false and GetUnitAbilityLevel(GetFilterUnit(),'Avul') == 0
 endfunction
 function UXI takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
@@ -64078,7 +64046,7 @@ function URI takes nothing returns boolean
 		endif
 	endif
 	//脉冲新星结束 事件==死亡 or 魔法不足 or 释放关闭技能 LoadInteger(HY, GetHandleId(u), 704) == -1 and not 
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or GetUnitState(u, UNIT_STATE_MANA)< 20 * lv or b or( GetTriggerEventId()== EVENT_UNIT_SPELL_EFFECT and( GetSpellAbilityId()=='A21H' or GetSpellAbilityId()=='A27H' or GetSpellAbilityId()=='A30J' )) then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or GetUnitState(u, UNIT_STATE_MANA)< 20 * lv or b or( GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT and( GetSpellAbilityId()=='A21H' or GetSpellAbilityId()=='A27H' or GetSpellAbilityId()=='A30J' )) then
 		set b = Rubick_AbilityFilter(u, 'A21F')
 		if b then
 			call S9E(GetOwningPlayer(u),'A21F', true)
@@ -64169,7 +64137,7 @@ function UAI takes nothing returns boolean
 				endif
 			endif
 			if UBI == 1 and not LoadBoolean(HY, h, 0) then
-				if GetUnitAbilityLevel(WWE,'A3E9')== 1 then
+				if GetUnitAbilityLevel(WWE,'A3E9') == 1 then
 					if UnitHasSpellShield(WUE) == false then
 						call SaveUnitHandle(VV,'A3E9', 0, WWE)
 						call SaveUnitHandle(VV,'A3E9', 1, WUE)
@@ -64404,7 +64372,7 @@ function UTI takes nothing returns nothing
 		call UnitRemoveAbility(u,'A308')
 		call UnitRemoveAbility(u,'B308')
 	endif
-	if GetUnitAbilityLevel(u,'B308')== 0 then
+	if GetUnitAbilityLevel(u,'B308') == 0 then
 		call SaveBoolean(HY, GetHandleId(u),$7C7, false)
 		call RemoveSavedHandle(HY, GetHandleId(u),$7C7)
 		call FlushChildHashtable(HY, GetHandleId(t))
@@ -64765,7 +64733,7 @@ function IXE takes nothing returns nothing
 	local integer tl = GetHeroLevel(WWE)
 	local integer level = GetUnitAbilityLevel(WUE,'A094')
 	local real ZCE = 75 + 50 * level
-	if(IsUnitType(WUE, UNIT_TYPE_HERO) or HaveSavedHandle(HY, GetHandleId(WUE), 0)) and(ModuloInteger(tl, 7 -level)== 0 or tl == 25) then
+	if(IsUnitType(WUE, UNIT_TYPE_HERO) or HaveSavedHandle(HY, GetHandleId(WUE), 0)) and(ModuloInteger(tl, 7 -level) == 0 or tl == 25) then
 		set ZCE = ZCE + GetUnitState(WWE, UNIT_STATE_MAX_LIFE)* .2
 		call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Demon\\DemonBoltImpact\\DemonBoltImpact.mdl", WWE, "chest"))
 	endif
@@ -64779,7 +64747,7 @@ function U4I takes nothing returns nothing
 	local integer h = GetHandleId(t)
 	local unit U5I = LoadUnitHandle(HY, h, 0)
 	local unit WLE = LoadUnitHandle(HY, h, 1)
-	if GetUnitAbilityLevel(WLE,'A464')== 0 or UnitIsDead(WLE) then
+	if GetUnitAbilityLevel(WLE,'A464') == 0 or UnitIsDead(WLE) then
 		call PauseTimer(t)
 		call DestroyTimer(t)
 		call FlushChildHashtable(HY, h)
@@ -64997,7 +64965,7 @@ function WAI takes nothing returns boolean
 	if WNI == 0 then
 		call BMX(GetOwningPlayer(trigUnit), trigUnit, 25 * ODX)
 	endif
-	if WNI == 0 or GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if WNI == 0 or GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call S9E(GetOwningPlayer(trigUnit),'A10R', true)
 		call UnitRemoveAbility(trigUnit,'A10S')
 		call FlushChildHashtable(HY, h)
@@ -65058,7 +65026,7 @@ function WBI takes nothing returns boolean
 	local integer bookabil
 	local integer WCI
 	local integer WDI
-	if GetTriggerEventId()== EVENT_UNIT_SPELL_EFFECT then
+	if GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT then
 		if ODX == 1 then
 			set WCI ='A1OE'
 			set WDI ='A1OJ'
@@ -65161,10 +65129,10 @@ function WHI takes nothing returns boolean
 		set WIE = WIE + 1
 		call SaveInteger(HY, h, 34, WIE)
 	endif
-	if ModuloInteger(GetTriggerEvalCount(t), 10)== 1 then
+	if ModuloInteger(GetTriggerEvalCount(t), 10) == 1 then
 		call UnitDamageTargetEx(WJE, stg_u, 7, LoadReal(HY, h, 5))
 	endif
-	if WIE > 150 or(GetUnitAbilityLevel(stg_u,'BNdo')== 0 and GetTriggerEvalCount(t)> 2) then
+	if WIE > 150 or(GetUnitAbilityLevel(stg_u,'BNdo') == 0 and GetTriggerEvalCount(t)> 2) then
 		call UnitRemoveAbility(stg_u,'BNdo')
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
@@ -65246,7 +65214,7 @@ function LTF takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local unit WWE =(LoadUnitHandle(HY, h, 17))
-	if GetUnitAbilityLevel(WWE,'B00U')== 0 or GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetUnitAbilityLevel(WWE,'B00U') == 0 or GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call UnitRemoveAbility(WWE,'A1Q0')
 		call UnitRemoveAbility(WWE,'A1Q1')
 		call UnitRemoveAbility(WWE,'A1Q2')
@@ -65292,7 +65260,7 @@ function IME takes nothing returns nothing
 	local unit d = CreateUnit(GetOwningPlayer(GetTriggerUnit()),'e00E', GetUnitX(GetTriggerUnit()), GetUnitY(GetTriggerUnit()), GetUnitFacing(GetTriggerUnit()))
 	call UnitAddAbility(d,'A3IH')
 	call SetUnitAbilityLevel(d,'A3IH', GetUnitAbilityLevel(GetTriggerUnit(),'A02S'))
-	if GetSpellTargetUnit()== GetTriggerUnit() then
+	if GetSpellTargetUnit() == GetTriggerUnit() then
 		call B1R(d, "carrionswarm", GetUnitX(GetTriggerUnit())+ 1 * Cos(bj_DEGTORAD * GetUnitFacing(GetTriggerUnit())), GetUnitY(GetTriggerUnit())+ 1 * Sin(bj_DEGTORAD * GetUnitFacing(GetTriggerUnit())))
 	else
 		call B1R(d, "carrionswarm", GetSpellTargetX(), GetSpellTargetY())
@@ -65329,7 +65297,7 @@ function WSI takes nothing returns nothing
 	local location l
 	local real x
 	local real y
-	if IsPointInRegion(R4, GetUnitX(u), GetUnitY(u)) then
+	if IsPointInRegion(TerrainCliffRegion, GetUnitX(u), GetUnitY(u)) then
 		set l = DEX(GetUnitX(u), GetUnitY(u))
 		set x = CoordinateX75(GetLocationX(l))
 		set y = CoordinateY75(GetLocationY(l))
@@ -65367,10 +65335,10 @@ function WTI takes nothing returns boolean
 	call SetUnitFacing(WUE, a * bj_RADTODEG)
 	call SaveReal(HY, h, 6,((NBX)* 1.))
 	call SaveReal(HY, h, 7,((NCX)* 1.))
-	if ModuloInteger(GetTriggerEvalCount(t), 4)== 0 then
+	if ModuloInteger(GetTriggerEvalCount(t), 4) == 0 then
 		call DestroyEffect(AddSpecialEffect("Abilities\\Weapons\\AncientProtectorMissile\\AncientProtectorMissile.mdl", NBX, NCX))
 	endif
-	if GetTriggerEvalCount(t)== 2 then
+	if GetTriggerEvalCount(t) == 2 then
 		call SetUnitAnimationByIndex(WUE, 3)
 	endif
 	set g = AllocationGroup(358)
@@ -65384,10 +65352,10 @@ function WTI takes nothing returns boolean
 	set ZI = NBX
 	set VA = NCX
 	call ForGroup(gg, function WQI)
-	if ModuloInteger(GetTriggerEvalCount(t), 3)== 0 then
+	if ModuloInteger(GetTriggerEvalCount(t), 3) == 0 then
 		call A3X(NBX, NCX,$C8)
 	endif
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or GetTriggerEvalCount(t)> WUI then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or GetTriggerEvalCount(t)> WUI then
 		call DestroyEffect((LoadEffectHandle(HY, h, 175)))
 		call SetUnitAnimationByIndex(WUE, 0)
 		call SetUnitTimeScale(WUE, 1.)
@@ -65399,7 +65367,7 @@ function WTI takes nothing returns boolean
 		call IssueTargetOrderById(WUE,$D000F, FirstOfGroup(gg))
 		call ForGroup(gg, function WSI)
 		call A3X(NBX, NCX, 375)
-		if IsPointInRegion(R4, GetUnitX(WUE), GetUnitY(WUE)) then
+		if IsPointInRegion(TerrainCliffRegion, GetUnitX(WUE), GetUnitY(WUE)) then
 			set l = DEX(GetUnitX(WUE), GetUnitY(WUE))
 			if IsUnitType(WUE, UNIT_TYPE_HERO) then
 				call SaveBoolean(K, GetHandleId(WUE), 99, true)
@@ -65509,7 +65477,7 @@ endfunction
 
 function WWI takes nothing returns boolean
 	local real d
-	if IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and UnitIsDead(GetFilterUnit()) == false and GetUnitAbilityLevel(GetFilterUnit(),'A04R')== 0 and IsUnitAlly(GetFilterUnit(), GetOwningPlayer(MEV)) and IsUnitInGroup(GetFilterUnit(), MOV) == false and UnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(MXV)) then
+	if IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and UnitIsDead(GetFilterUnit()) == false and GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0 and IsUnitAlly(GetFilterUnit(), GetOwningPlayer(MEV)) and IsUnitInGroup(GetFilterUnit(), MOV) == false and UnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(MXV)) then
 		set d = GetDistanceBetween(GetUnitX(GetFilterUnit()), GetUnitY(GetFilterUnit()), GetUnitX(MEV), GetUnitY(MEV))
 		if d < MRV then
 			set MVV = GetFilterUnit()
@@ -65631,7 +65599,7 @@ function IPE takes nothing returns nothing
 	local unit WJE = GetTriggerUnit()
 	local unit WLE = GetSpellTargetUnit()
 	local integer level = GetUnitAbilityLevel(WJE,'A0G2')
-	if GetUnitAbilityLevel(WJE,'Aloc')== 1 and HaveSavedHandle(HY, GetHandleId(WJE), 0) then
+	if GetUnitAbilityLevel(WJE,'Aloc') == 1 and HaveSavedHandle(HY, GetHandleId(WJE), 0) then
 		set WJE = LoadUnitHandle(HY, GetHandleId(WJE), 0)
 	endif
 	if UnitHasSpellShield(WLE) == false then
@@ -65686,7 +65654,7 @@ function W4I takes nothing returns boolean
 	local unit SZX = LoadUnitHandle(HY, h, 17)
 	local integer level = LoadInteger(HY, h, 0)
 	local real W5I = LoadReal(HY, h, 0)
-	if GetTriggerEventId()== EVENT_UNIT_DAMAGED then
+	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
 		if LoadBoolean(HY, h, 0) == false then
 			call SaveBoolean(HY, h, 0, true)
 			call UnitDamageTargetEx(GetEventDamageSource(), GetTriggerUnit(), 7, GetEventDamage()* W5I)
@@ -65737,12 +65705,12 @@ endfunction
 function W7I takes nothing returns nothing
 	local unit u = GetEnumUnit()
 	call SaveReal(HY, GetHandleId(u), 799,(LoadReal(HY, GetHandleId(u), 799)+ .02)* 1.)
-	if GetUnitAbilityLevel(u,'A2S3')== 0 then
+	if GetUnitAbilityLevel(u,'A2S3') == 0 then
 		call UnitAddPermanentAbility(u,'A2S3')
 		call UnitAddPermanentAbility(u,'A2TM')
 		call SetUnitTurnSpeed(u, GetUnitDefaultTurnSpeed(u)* .5)
 	endif
-	if(LoadReal(HY, GetHandleId(u), 799))== 2. then
+	if(LoadReal(HY, GetHandleId(u), 799)) == 2. then
 		call W6I(DG, u, Q2)
 	endif
 	set u = null
@@ -65834,7 +65802,7 @@ function YCI takes integer Y6R, unit R3O, unit R4O returns nothing
 	if Y6R == 0 then
 		call IssueTargetOrderById(R3O, 851983, R4O)
 	endif
-	if GetUnitAbilityLevel(R4O,'A3EC')== 1 and IsMagicImmuneUnit(R4O) == false then
+	if GetUnitAbilityLevel(R4O,'A3EC') == 1 and IsMagicImmuneUnit(R4O) == false then
 		if Y6R < 3 then
 			call CCX(R4O,'A3ED', 1, 1.,'B3ED')
 		elseif Y6R == 3 then
@@ -65867,7 +65835,7 @@ function YDI takes nothing returns boolean
 			call SaveInteger(HY, h, 34,(EVX))
 		endif
 	elseif IsEffectiveDamage(GetEventDamage()) and IsUnitEnemy(GetTriggerUnit(), GetOwningPlayer(u)) and IsUnitType(u, UNIT_TYPE_STRUCTURE) == false then
-		if IsUnitType(u, UNIT_TYPE_HERO) or GetUnitAbilityLevel(u,'A04R')== 0 then
+		if IsUnitType(u, UNIT_TYPE_HERO) or GetUnitAbilityLevel(u,'A04R') == 0 then
 			call SetWidgetLife(u, GetWidgetLife(u)+ GetEventDamage()* YFI)
 		else
 			set u = Player__Hero[GetPlayerId(GetOwningPlayer(u))]
@@ -65949,7 +65917,7 @@ function Infest_Actions takes nothing returns boolean
 	local integer lv =(LoadInteger(HY, h, 5))
 	local player p = GetOwningPlayer(u)
 	//call BJDebugMsg(I2S( GetIssuedOrderId() ))
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call UnitShareVision(target, p, false)
 		call DestroyEffect(AddSpecialEffect("Objects\\Spawnmodels\\Human\\HumanLargeDeathExplode\\HumanLargeDeathExplode.mdl", GetUnitX(target), GetUnitY(target)))
 		call SetUnitPosition(u, GetUnitX(target), GetUnitY(target))
@@ -65985,8 +65953,8 @@ function Infest_Actions takes nothing returns boolean
 		call CleanCurrentTrigger(t)
 		call YKI(u, target, lv)
 		call SaveInteger(HY,(GetHandleId((u))),(4310), 2)
-	elseif GetTriggerEventId()== EVENT_UNIT_SPELL_EFFECT or(GetTriggerEventId()== EVENT_UNIT_ISSUED_ORDER and GetIssuedOrderId()== 852129) then
-		if GetSpellAbilityId()=='A0SX' or GetSpellAbilityId()=='A459' or GetTriggerEventId()== EVENT_UNIT_ISSUED_ORDER then
+	elseif GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT or(GetTriggerEventId() == EVENT_UNIT_ISSUED_ORDER and GetIssuedOrderId() == 852129) then
+		if GetSpellAbilityId()=='A0SX' or GetSpellAbilityId()=='A459' or GetTriggerEventId() == EVENT_UNIT_ISSUED_ORDER then
 			call DestroyEffect(AddSpecialEffect("Objects\\Spawnmodels\\Human\\HumanLargeDeathExplode\\HumanLargeDeathExplode.mdl", GetUnitX(target), GetUnitY(target)))
 			if IsUnitEnemy(target, p) then
 				call SetWidgetLife(u, GetWidgetLife(u)+ GetWidgetLife(target))
@@ -66033,11 +66001,11 @@ function Infest_Actions takes nothing returns boolean
 			call ClearSelectionForPlayer(p)
 			call SelectUnitAddForPlayer(target, p)
 		endif
-	elseif GetTriggerEventId()== EVENT_PLAYER_UNIT_SELECTED and GetTriggerUnit()== target and GetOwningPlayer(target)!= p then
+	elseif GetTriggerEventId() == EVENT_PLAYER_UNIT_SELECTED and GetTriggerUnit() == target and GetOwningPlayer(target)!= p then
 		call ClearSelectionForPlayer(p)
 		call SelectUnitAddForPlayer(ghoul, p)
 	else
-		if GetOwningPlayer(target)== p then
+		if GetOwningPlayer(target) == p then
 			call SetUnitMoveSpeed(target, GetUnitMoveSpeed(u))
 		endif
 		call SetUnitPosition(u, GetUnitX(target), GetUnitY(target))
@@ -66074,7 +66042,7 @@ function Infest takes nothing returns nothing
 		call TriggerRegisterUnitEvent(t, target, EVENT_UNIT_ISSUED_ORDER)
 	endif
 	call ClearSelectionForPlayer(GetOwningPlayer(u))
-	if GetOwningPlayer(target)== GetOwningPlayer(u) then
+	if GetOwningPlayer(target) == GetOwningPlayer(u) then
 		if GetUnitTypeId(target)=='ncnk' or GetUnitTypeId(target)=='nowe' then
 			call UnitAddPermanentAbility(target,'A459')
 		else
@@ -66155,7 +66123,7 @@ function IYE takes nothing returns nothing
 	set t = null
 endfunction
 function YTI takes nothing returns boolean
-	return(IsUnitEnemy(WX, GetOwningPlayer(YX)) and(GetUnitAbilityLevel(WX,'A0SS')> 0) and GetUnitTypeId(YX)!='n00L' and GetUnitTypeId(YX)!='n0F5' and RHX(GetUnitTypeId(YX)) == false and GetUnitAbilityLevel(WX,'A36D')== 0 and IsUnitType(YX, UNIT_TYPE_STRUCTURE) == false and GetUnitAbilityLevel(YX,'A04R')== 0)!= null
+	return(IsUnitEnemy(WX, GetOwningPlayer(YX)) and(GetUnitAbilityLevel(WX,'A0SS')> 0) and GetUnitTypeId(YX)!='n00L' and GetUnitTypeId(YX)!='n0F5' and RHX(GetUnitTypeId(YX)) == false and GetUnitAbilityLevel(WX,'A36D') == 0 and IsUnitType(YX, UNIT_TYPE_STRUCTURE) == false and GetUnitAbilityLevel(YX,'A04R') == 0)!= null
 endfunction
 function YUI takes unit WUE, unit WWE returns nothing
 	local integer ODX = GetUnitAbilityLevel(WUE,'A0SS')
@@ -66224,7 +66192,7 @@ function Y1I takes nothing returns nothing
 	local integer h = GetHandleId(GetExpiredTimer())
 	local unit WUE = LoadUnitHandle(HY, h, 2)
 	local group g
-	if UnitIsDead(WUE) == false and GetUnitAbilityLevel(WUE,'A36D')== 0 then
+	if UnitIsDead(WUE) == false and GetUnitAbilityLevel(WUE,'A36D') == 0 then
 		set g = AllocationGroup(366)
 		set MNV = WUE
 		set MBV = GetUnitAbilityLevel(WUE,'P302')+ 1
@@ -66284,15 +66252,15 @@ function Y4I takes unit SYX, unit SZX returns nothing
 		set u = null
 		return
 	endif
-	if LoadInteger(HY, GetHandleId(SZX), 4333)== 1 then
+	if LoadInteger(HY, GetHandleId(SZX), 4333) == 1 then
 		set u = Player__Hero[GetPlayerId(LoadPlayerHandle(HY, GetHandleId(SZX), 4333))]
-	elseif GetUnitAbilityLevel(SYX,'Aloc')== 1 then
+	elseif GetUnitAbilityLevel(SYX,'Aloc') == 1 then
 		set u = Player__Hero[GetPlayerId(GetOwningPlayer(SYX))]
 	else
 		set u = SYX
 	endif
 	set WUV = GetUnitAbilityLevel(u,'P303')
-	if WUV > 0 and UnitAlive(u) and GetUnitAbilityLevel(u,'A36D')== 0 then
+	if WUV > 0 and UnitAlive(u) and GetUnitAbilityLevel(u,'A36D') == 0 then
 		call Y3I(u, WUV, IsUnitType(SZX, UNIT_TYPE_HERO))
 	endif
 	set u = null
@@ -66372,7 +66340,7 @@ function Y8I takes nothing returns nothing
 	local integer Y9I = GetUnitAbilityLevel(WUE,'A067')
 	local integer ZVI = GetUnitAbilityLevel(WUE,'A08P')
 	local real YFI
-	if GetUnitAbilityLevel(WUE,'Aloc')== 1 and HaveSavedHandle(HY, GetHandleId(WUE), 0) then
+	if GetUnitAbilityLevel(WUE,'Aloc') == 1 and HaveSavedHandle(HY, GetHandleId(WUE), 0) then
 		set WUE = LoadUnitHandle(HY, GetHandleId(WUE), 0)
 	endif
 	if Y9I == 1 then
@@ -66481,7 +66449,7 @@ function ZRI takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local unit whichUnit = LoadUnitHandle(HY, h, 2)
 	local unit WWE
-	if GetTriggerEventId()== EVENT_UNIT_DAMAGED then
+	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
 		if GetEventDamage()> 0 and IsPlayerEnemy(GetOwningPlayer(GetEventDamageSource()), GetOwningPlayer(whichUnit)) and FK and IsUnitInGroup(Player__Hero[GetPlayerId(GetOwningPlayer(GetEventDamageSource()))], LoadGroupHandle(HY, h, 7)) == false then
 			// 判断是否玩家单位
 			if XFX(GetOwningPlayer(GetEventDamageSource())) and IsEffectiveDamage(GetEventDamage()) then
@@ -66500,7 +66468,7 @@ function ZRI takes nothing returns boolean
 				endif
 			endif
 		endif
-	elseif LoadInteger(HY, h, 1)== 0 then
+	elseif LoadInteger(HY, h, 1) == 0 then
 		call ZOI(t, whichUnit, h)
 	else
 		// 这里没 - 1 可能是导致出bug的原因
@@ -66619,7 +66587,7 @@ function ZCI takes unit SYX, unit SZX returns nothing
 	endif
 endfunction
 function ZDI takes nothing returns boolean
-	return(IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and IsUnitEnemy(GetTriggerUnit(), GetOwningPlayer(GetFilterUnit())) and GetUnitAbilityLevel(GetFilterUnit(),'A04R')== 0)!= null
+	return(IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and IsUnitEnemy(GetTriggerUnit(), GetOwningPlayer(GetFilterUnit())) and GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0)!= null
 endfunction
 function ZFI takes nothing returns nothing
 	call UnitDamageTargetEx(TK, GetEnumUnit(), 1, 25 + 75 * UK)
@@ -66833,7 +66801,7 @@ function PNE takes nothing returns nothing
 	local unit u = GetTriggerUnit()
 	local integer level = GetUnitAbilityLevel(u,'A086')
 	call UnitAddPermanentAbility(u,'P247')
-	if(O6X() or GetUnitAbilityLevel(u,'A36D')== 1) then
+	if(O6X() or GetUnitAbilityLevel(u,'A36D') == 1) then
 		call SetUnitAbilityLevel(u,'P247', 5)
 	else
 		call SetUnitAbilityLevel(u,'P247', level)
@@ -66884,7 +66852,7 @@ function ZSI takes nothing returns nothing
 	endif
 	if ZWI > 0 then
 		set id ='DRK0'-1 + ZWI
-		if GetUnitAbilityLevel(GetEnumUnit(), id)== 0 then
+		if GetUnitAbilityLevel(GetEnumUnit(), id) == 0 then
 			call UnitRemoveAbility(GetEnumUnit(),'DRK0')
 			call UnitRemoveAbility(GetEnumUnit(),'DRK1')
 			call UnitRemoveAbility(GetEnumUnit(),'DRK2')
@@ -66990,11 +66958,11 @@ function Z2I takes nothing returns nothing
 		call CommonTextTag(I2S(R2I(IXX))+ "!", 3, WWE, .02, 255, 0, 0, 255)
 	endif
 	set b = false
-	if GetUnitAbilityLevel(WUE,'Aloc')== 1 and HaveSavedHandle(HY, GetHandleId(WUE), 0) then
+	if GetUnitAbilityLevel(WUE,'Aloc') == 1 and HaveSavedHandle(HY, GetHandleId(WUE), 0) then
 		set WUE = LoadUnitHandle(HY, GetHandleId(WUE), 0)
 		set b = true
 	endif
-	if b == false and GetUnitAbilityLevel(WWE,'A3E9')== 1 and IsMagicImmuneUnit(WUE) == false then
+	if b == false and GetUnitAbilityLevel(WWE,'A3E9') == 1 and IsMagicImmuneUnit(WUE) == false then
 		set Q2 = ODX
 		set U2 = WUE
 		set W2 = WWE
@@ -67042,13 +67010,13 @@ function Z5I takes nothing returns boolean
 	local unit WUE = LoadUnitHandle(HY, h, 2)
 	local unit WWE = LoadUnitHandle(HY, h, 30)
 	local integer EVX = LoadInteger(HY, h, 34)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or GetUnitAbilityLevel(WUE,'A1CO')== 0 then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or GetUnitAbilityLevel(WUE,'A1CO') == 0 then
 		call UnitRemoveAbility(WUE,'A1CO')
 		call UnitRemoveAbility(WUE,'B1CO')
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
-	elseif GetTriggerEventId()== EVENT_PLAYER_UNIT_ATTACKED then
-		if GetAttacker()== WUE then
+	elseif GetTriggerEventId() == EVENT_PLAYER_UNIT_ATTACKED then
+		if GetAttacker() == WUE then
 			if GetTriggerUnit()!= WWE then
 				call UnitRemoveAbility(WUE,'A1CO')
 				call UnitRemoveAbility(WUE,'B1CO')
@@ -67102,7 +67070,7 @@ function Z7I takes nothing returns nothing
 	local integer h = GetHandleId(t)
 	local unit u = LoadUnitHandle(HY, h, 0)
 	local unit WLE = LoadUnitHandle(HY, h, 1)
-	if GetUnitAbilityLevel(u,'Aloc')== 1 and HaveSavedHandle(HY, GetHandleId(u), 0) then
+	if GetUnitAbilityLevel(u,'Aloc') == 1 and HaveSavedHandle(HY, GetHandleId(u), 0) then
 		set u = LoadUnitHandle(HY, GetHandleId(u), 0)
 	endif
 	call Z6I(u, WLE) // GetUnitAbilityLevel(u,'A0PL')
@@ -67145,7 +67113,7 @@ function VVA takes nothing returns boolean
 	if WUE != null and UnitIsDead(WUE) == false and GetUnitAbilityLevel(WUE,'P239')> 0 then
 		set U2 = WUE
 		set g = AllocationGroup(373)
-		if GetUnitAbilityLevel(WUE,'A36D')== 0 then
+		if GetUnitAbilityLevel(WUE,'A36D') == 0 then
 			call GroupEnumUnitsInRange(g, GetUnitX(WUE), GetUnitY(WUE),$659, Condition(function DLX))
 		else
 			call GroupAddUnit(g, WUE)
@@ -67162,7 +67130,7 @@ function VVA takes nothing returns boolean
 				call SaveInteger(HY,(GetHandleId((WUE))),(4302), 2)
 				call Z8I(WUE, true)
 				call SetUnitVertexColorEx(WUE,-1,-1,-1, 255)
-				if GetUnitAbilityLevel(WUE,'A20S')== 0 then
+				if GetUnitAbilityLevel(WUE,'A20S') == 0 then
 					call UnitSetUsesAltIcon(WUE, false)
 				endif
 			endif
@@ -67308,7 +67276,7 @@ function VDA takes unit u returns nothing
 endfunction
 
 function VFA takes nothing returns boolean
-	return IsUnitAlly(GetFilterUnit(), GetOwningPlayer(U2)) and GetUnitAbilityLevel(GetFilterUnit(),'Aloc')== 0 and GetUnitAbilityLevel(GetFilterUnit(),'A04R')== 0 and UnitIsDead(GetFilterUnit()) == false and XFX(GetOwningPlayer(GetFilterUnit()))
+	return IsUnitAlly(GetFilterUnit(), GetOwningPlayer(U2)) and GetUnitAbilityLevel(GetFilterUnit(),'Aloc') == 0 and GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0 and UnitIsDead(GetFilterUnit()) == false and XFX(GetOwningPlayer(GetFilterUnit()))
 endfunction
 
 function VGA takes unit WUE, unit WWE returns nothing
@@ -67357,7 +67325,7 @@ function VHA takes nothing returns boolean
 		set WWE = null
 		return false
 	endif
-	if GetTriggerEventId()== EVENT_GAME_TIMER_EXPIRED then
+	if GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
 		call DestroyEffect((LoadEffectHandle(HY, h, 32)))
 		call VGA(WUE, WWE)
 		call FlushChildHashtable(HY, h)
@@ -67372,7 +67340,7 @@ endfunction
 
 function VJA takes nothing returns boolean
 	local real d
-	if IsUnitAlly(GetFilterUnit(), GetOwningPlayer(GetTriggerUnit())) == false or GetUnitAbilityLevel(GetFilterUnit(),'A04R')> 0 or GetOwningPlayer(GetFilterUnit())== Player(15) or UnitIsDead(GetFilterUnit()) then
+	if IsUnitAlly(GetFilterUnit(), GetOwningPlayer(GetTriggerUnit())) == false or GetUnitAbilityLevel(GetFilterUnit(),'A04R')> 0 or GetOwningPlayer(GetFilterUnit()) == Player(15) or UnitIsDead(GetFilterUnit()) then
 		return false
 	endif
 	if IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) or(LWO(GetFilterUnit())) then
@@ -67517,7 +67485,7 @@ function PJX takes nothing returns nothing
 endfunction
 function VMA takes nothing returns nothing
 	local unit t = GetEnumUnit()
-	if GetUnitAbilityLevel(t,'D009')== 1 then
+	if GetUnitAbilityLevel(t,'D009') == 1 then
 		if IsUnitType(t, UNIT_TYPE_STRUCTURE) then
 			call UnitDamageTargetEx(Temp__ArrayUnit[0], t, 1, XK[0]/ 3)
 		else
@@ -67529,7 +67497,7 @@ endfunction
 function VPA takes nothing returns boolean
 	local unit t = GetFilterUnit()
 	local unit u = Temp__ArrayUnit[0]
-	if IsUnitEnemy(u, GetOwningPlayer(t)) and UnitAlive(t) and GetUnitAbilityLevel(t,'A04R')== 0 and IsMagicImmuneUnit(t) == false then
+	if IsUnitEnemy(u, GetOwningPlayer(t)) and UnitAlive(t) and GetUnitAbilityLevel(t,'A04R') == 0 and IsMagicImmuneUnit(t) == false then
 		if IsUnitType(t, UNIT_TYPE_STRUCTURE) then
 			call UnitDamageTargetEx(u, t, 1, XK[0]/ 3)
 		else
@@ -67633,7 +67601,7 @@ endfunction
 function VWA takes nothing returns boolean
 	local unit u = GetTriggerUnit()
 	local integer id = GetUnitTypeId(u)
-	if GetUnitAbilityLevel(u,'A04R')== 0 and id !='n0F5' and id !='N0MM' and IsUnitIllusion(u) == false and UnitIsDead(u) then
+	if GetUnitAbilityLevel(u,'A04R') == 0 and id !='n0F5' and id !='N0MM' and IsUnitIllusion(u) == false and UnitIsDead(u) then
 		set Temp__Player = GetOwningPlayer(u)
 		set Temp__ArrayUnit[0]= u
 		call GroupEnumUnitsInRange(AK, GetWidgetX(Temp__ArrayUnit[0]), GetWidgetY(Temp__ArrayUnit[0]), 925, Condition(function VUA))
@@ -67661,7 +67629,7 @@ function VYA takes nothing returns boolean
 	local group g
 	local unit u2
 	local real ZCE
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call DestroyTrigger(t)
 		call FlushChildHashtable(HY, h)
 		call RemoveSavedHandle(HY, hu,'A0AZ')
@@ -67739,7 +67707,7 @@ function W2X takes nothing returns nothing
 	if IsSentinelsPlayer(GetOwningPlayer(SZX)) then
 		loop
 			set TME = GetPlayerId(Scourges[i])
-			if UnitIsDead(Player__Hero[TME]) == false and(GetPlayerId(GetOwningPlayer(SYX))== TME or WTE(SZX, Player__Hero[TME])< 725) then
+			if UnitIsDead(Player__Hero[TME]) == false and(GetPlayerId(GetOwningPlayer(SYX)) == TME or WTE(SZX, Player__Hero[TME])< 725) then
 				set SI[TME]= SI[TME]+ 1
 			endif
 			set i = i + 1
@@ -67748,7 +67716,7 @@ function W2X takes nothing returns nothing
 	elseif IsScourgesPlayer(GetOwningPlayer(SZX)) then
 		loop
 			set TME = GetPlayerId(Sentinels[i])
-			if UnitIsDead(Player__Hero[TME]) == false and(GetPlayerId(GetOwningPlayer(SYX))== TME or WTE(SZX, Player__Hero[TME])< 725) then
+			if UnitIsDead(Player__Hero[TME]) == false and(GetPlayerId(GetOwningPlayer(SYX)) == TME or WTE(SZX, Player__Hero[TME])< 725) then
 				set SI[TME]= SI[TME]+ 1
 			endif
 			set i = i + 1
@@ -67762,7 +67730,7 @@ function V1A takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local unit u =(LoadUnitHandle(HY, h, 2))
-	if GetTriggerEvalCount(t)== 1 then
+	if GetTriggerEvalCount(t) == 1 then
 		call ShowUnit(u, false)
 	elseif GetTriggerEvalCount(t)> 80 then
 		call FlushChildHashtable(HY, h)
@@ -67900,7 +67868,7 @@ function V7A takes nothing returns boolean
 	set V8A = V8A -1
 	call SaveInteger(HY, h, 376,(V8A))
 	if V8A <= 0 then
-		if(A4X(x, y) == false or IsPointInRegion(R4, x, y)) and IsUnitType(u, UNIT_TYPE_HERO) then
+		if(A4X(x, y) == false or IsPointInRegion(TerrainCliffRegion, x, y)) and IsUnitType(u, UNIT_TYPE_HERO) then
 			set tt = CreateTrigger()
 			call SaveUnitHandle(HY, GetHandleId(tt), 0, u)
 			call TriggerRegisterTimerEvent(tt, 5, false)
@@ -68014,8 +67982,8 @@ function dismember_upgraded_effect takes nothing returns boolean
 	local integer lv =(LoadInteger(HY, h, 5))
 	local real damage =(75 + 50 * lv)+ E3X(u)
 	local integer c =(LoadInteger(HY, h, 34))
-	if GetTriggerEventId()== EVENT_UNIT_DEATH or GetTriggerEventId()== EVENT_UNIT_SPELL_ENDCAST then
-		if GetTriggerEventId()== EVENT_UNIT_DEATH or(GetTriggerEventId()== EVENT_UNIT_SPELL_ENDCAST and GetSpellAbilityId()=='A1CX') then
+	if GetTriggerEventId() == EVENT_UNIT_DEATH or GetTriggerEventId() == EVENT_UNIT_SPELL_ENDCAST then
+		if GetTriggerEventId() == EVENT_UNIT_DEATH or(GetTriggerEventId() == EVENT_UNIT_SPELL_ENDCAST and GetSpellAbilityId()=='A1CX') then
 			call FIX(target)
 			call FlushChildHashtable(HY, h)
 			call CleanCurrentTrigger(t)
@@ -68076,8 +68044,8 @@ function dismember_effect takes nothing returns boolean
 	local integer lv =(LoadInteger(HY, h, 5))
 	local real damage =(50 + 50 * lv)
 	local integer c =(LoadInteger(HY, h, 34))
-	if GetTriggerEventId()== EVENT_UNIT_DEATH or GetTriggerEventId()== EVENT_UNIT_SPELL_ENDCAST then
-		if GetTriggerEventId()== EVENT_UNIT_DEATH or(GetTriggerEventId()== EVENT_UNIT_SPELL_ENDCAST and GetSpellAbilityId()=='A0FL') then
+	if GetTriggerEventId() == EVENT_UNIT_DEATH or GetTriggerEventId() == EVENT_UNIT_SPELL_ENDCAST then
+		if GetTriggerEventId() == EVENT_UNIT_DEATH or(GetTriggerEventId() == EVENT_UNIT_SPELL_ENDCAST and GetSpellAbilityId()=='A0FL') then
 			call FIX(target)
 			call FlushChildHashtable(HY,(h))
 			call CleanCurrentTrigger(t)
@@ -68095,7 +68063,7 @@ function dismember_effect takes nothing returns boolean
 			endif
 			call SaveInteger(HY, h, 34,(c))
 		endif
-		if UnitIsDead(target) == false and GetUnitAbilityLevel(target,'Bdet')== 0 then
+		if UnitIsDead(target) == false and GetUnitAbilityLevel(target,'Bdet') == 0 then
 			call FAX(u, target)
 		endif
 	endif
@@ -68147,13 +68115,13 @@ function EAA takes unit FAO, real ENA returns nothing
 endfunction
 function EBA takes nothing returns nothing
 	local real ZCE = .25
-	if GetTriggerEventId()== EVENT_UNIT_DAMAGED then
+	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
 		if IsUnitType(GetEventDamageSource(), UNIT_TYPE_HERO) == false then
 			call EAA(GetTriggerUnit(), GetEventDamage()-0.25)
 		else
 			call EAA(GetTriggerUnit(), GetEventDamage()-1)
 		endif
-	elseif GetTriggerEventId()== EVENT_UNIT_DEATH then
+	elseif GetTriggerEventId() == EVENT_UNIT_DEATH then
 		call CleanCurrentTrigger(GetTriggeringTrigger())
 	endif
 endfunction
@@ -68162,11 +68130,11 @@ function ECA takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local unit FAO =(LoadUnitHandle(HY, h, 19))
 	local integer level =(LoadInteger(HY, h, 5))
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call SetUnitAnimation(FAO, "death")
 		call FlushChildHashtable(HY,(h))
 		call CleanCurrentTrigger(t)
-	elseif GetTriggerEventId()== EVENT_UNIT_DAMAGED then
+	elseif GetTriggerEventId() == EVENT_UNIT_DAMAGED then
 		if IsUnitIdType(GetUnitTypeId(GetEventDamageSource()), UNIT_TYPE_HERO) then
 			call SetUnitToReduceDamage(FAO, GetEventDamage()-1)
 		else
@@ -68218,7 +68186,7 @@ function EDA takes nothing returns nothing
 	local boolean HPR = LoadBoolean(HY, h, 0)
 	local real EFA = 0
 	local real targetsMana = 0
-	if GetUnitAbilityLevel(u,'Bdcl')== 0 or(GetTriggerEventId()== EVENT_UNIT_SPELL_ENDCAST and(GetSpellAbilityId()=='A0CC' or GetSpellAbilityId()=='A02Z')) then
+	if GetUnitAbilityLevel(u,'Bdcl') == 0 or(GetTriggerEventId() == EVENT_UNIT_SPELL_ENDCAST and(GetSpellAbilityId()=='A0CC' or GetSpellAbilityId()=='A02Z')) then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 	else
@@ -68277,7 +68245,7 @@ function EHA takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer h = GetHandleId(t)
 	local unit u = LoadUnitHandle(HY, h, 0)
-	if GetUnitAbilityLevel(u,'B01N')== 0 or UnitIsDead(u) then
+	if GetUnitAbilityLevel(u,'B01N') == 0 or UnitIsDead(u) then
 		call UnitRemoveAbility(u, LoadInteger(HY, h, 0))
 		call UnitRemoveAbility(u, LoadInteger(HY, h, 1))
 		call UnitRemoveAbility(u,'B0HM')
@@ -68475,7 +68443,7 @@ function EWA takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local unit WUE =(LoadUnitHandle(HY, h, 2))
 	local integer ODX
-	if GetSpellTargetUnit()== WUE and GetUnitAbilityLevel(WUE,'A36D')== 0 and EQA(GetSpellAbilityId()) and IsUnitAlly(GetTriggerUnit(), GetOwningPlayer(WUE)) == false and IsUnitType(GetTriggerUnit(), UNIT_TYPE_HERO) then
+	if GetSpellTargetUnit() == WUE and GetUnitAbilityLevel(WUE,'A36D') == 0 and EQA(GetSpellAbilityId()) and IsUnitAlly(GetTriggerUnit(), GetOwningPlayer(WUE)) == false and IsUnitType(GetTriggerUnit(), UNIT_TYPE_HERO) then
 		set ODX = GetUnitAbilityLevel(WUE,'P283')
 		call ETA(WUE, WUE, GetTriggerUnit(), ODX)
 	endif
@@ -68652,7 +68620,7 @@ function E5A takes nothing returns boolean
 	return false
 endfunction
 function E6A takes nothing returns boolean
-	if(UnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(U2)) and IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and(GetUnitAbilityLevel(GetFilterUnit(),'A04R')== 0 and UnitIsDead(GetFilterUnit()) == false)) and GetUnitTypeId(GetFilterUnit())!='emow' and GetUnitTypeId(GetFilterUnit())!='uzig' and GetUnitTypeId(GetFilterUnit())!='n00L' then
+	if(UnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(U2)) and IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and(GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0 and UnitIsDead(GetFilterUnit()) == false)) and GetUnitTypeId(GetFilterUnit())!='emow' and GetUnitTypeId(GetFilterUnit())!='uzig' and GetUnitTypeId(GetFilterUnit())!='n00L' then
 		if GetWidgetLife(GetFilterUnit())< MKV then
 			set MKV = GetWidgetLife(GetFilterUnit())
 			set MJV = GetFilterUnit()
@@ -68685,11 +68653,11 @@ function E8A takes nothing returns boolean
 	local integer EVX = GetTriggerEvalCount(t)
 	local integer interval
 	local real S7V
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call E_A(h)
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
-		if GetTriggerUnit()== WUE then
+		if GetTriggerUnit() == WUE then
 			call KillUnit(KBX)
 		endif
 	else
@@ -68711,7 +68679,7 @@ function E8A takes nothing returns boolean
 			endif
 		endif
 		set S7V = S7V / .05
-		if ModuloInteger(EVX, R2I(S7V))== 0 or EVX == 1 then
+		if ModuloInteger(EVX, R2I(S7V)) == 0 or EVX == 1 then
 			set MLV = h
 			call E7A(WUE, KBX, ODX)
 		endif
@@ -68983,14 +68951,14 @@ function XJA takes nothing returns nothing
 	local unit SZX = LoadUnitHandle(HY, h, 1)
 	local unit sk = LoadUnitHandle(HY, h, 0)
 	local integer level = LoadInteger(HY, h, 0)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call XGA(sk, SZX, level, false)
 		call DestroyEffect(LoadEffectHandle(HY, h, 10))
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 		call RemoveSavedHandle(HY, GetHandleId(SZX),'CFNL')
 		call RemoveSavedBoolean(HY, GetHandleId(SZX),'CFNL')
-	elseif GetTriggerEventId()== EVENT_GAME_TIMER_EXPIRED then
+	elseif GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
 		if GetGameTime()> LoadReal(HY, h, 0) then
 			call XGA(sk, SZX, level, true)
 			call UnitRemoveAbility(SZX,'A348')
@@ -69031,7 +68999,7 @@ function XKA takes unit sk, unit WLE returns nothing
 	call SaveReal(HY, h, 0, GetGameTime()+ 8)
 	call SaveInteger(HY, h, 0, GetUnitAbilityLevel(sk,'A0FA'))
 	call SaveUnitHandle(HY, h, 0, sk)
-	if(LoadBoolean(HY, h, 0) and LoadInteger(HY, h, 1)== 2) or LoadInteger(HY, h, 1)== 4 then
+	if(LoadBoolean(HY, h, 0) and LoadInteger(HY, h, 1) == 2) or LoadInteger(HY, h, 1) == 4 then
 		call SaveInteger(HY, h, 1, 0)
 		call TriggerEvaluate(t)
 	else
@@ -69043,7 +69011,7 @@ function XLA takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local unit trigUnit =(LoadUnitHandle(HY, h, 14))
-	if((LoadInteger(HY,(GetHandleId((trigUnit))),(4299)))== 1) == false then
+	if((LoadInteger(HY,(GetHandleId((trigUnit))),(4299))) == 1) == false then
 		call UnitRemoveAbility(trigUnit,'B04R')
 	endif
 	call RemoveUnit((LoadUnitHandle(HY, h, 379)))
@@ -69088,7 +69056,7 @@ function XWA takes nothing returns boolean
 	local integer EVX = GetTriggerEvalCount(t)
 	local group g
 	local integer XYA = 550
-	if GetTriggerEventId()== EVENT_UNIT_SPELL_ENDCAST or EVX > ODX * 40 then
+	if GetTriggerEventId() == EVENT_UNIT_SPELL_ENDCAST or EVX > ODX * 40 then
 		call XMA(trigUnit, ODX, XPA, XQA, XSA, XTA)
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
@@ -69182,7 +69150,7 @@ function XZA takes nothing returns nothing
 	local unit u = LoadUnitHandle(HY, h, 0)
 	local integer hu = GetHandleId(u)
 	local real X_A = LoadReal(HY, h, 0)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or(GetUnitAbilityLevel(u,'B013')== 0 and GetTriggerEvalCount(t)> 2) or GetGameTime()>= X_A then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or(GetUnitAbilityLevel(u,'B013') == 0 and GetTriggerEvalCount(t)> 2) or GetGameTime()>= X_A then
 		call RemoveSavedHandle(HY, hu,'A05C')
 		//call UnitRemoveAbility(u,'B3JQ')
 		call SetUnitPhaseMove( u, false )
@@ -69230,7 +69198,7 @@ function X0A takes nothing returns nothing
 	local unit WLE = LoadUnitHandle(HY, h, 0)
 	local real WIE = GetGameTime()
 	local real WOV = LoadReal(P, GetHandleId(WLE),'A034')
-	if GetTriggerEventId()== EVENT_UNIT_DEATH then
+	if GetTriggerEventId() == EVENT_UNIT_DEATH then
 		call UnitRemoveAbility(WLE,'A310')
 		call UnitRemoveAbility(WLE,'B30Z')
 		call FlushChildHashtable(HY, h)
@@ -69273,7 +69241,7 @@ function Slardar_AmplifyDamage takes nothing returns nothing
 	call SetUnitAbilityLevel(WLE,'A30Y', level)
 	call GHX(WLE, WJE,'A310')
 	call GQX(WLE,'A310','B30Z')
-	if LoadTriggerHandle(P, GetHandleId(WLE),'A304')== null then
+	if LoadTriggerHandle(P, GetHandleId(WLE),'A304') == null then
 		set t = CreateTrigger()
 		set h = GetHandleId(t)
 		call TriggerRegisterTimerEvent(t, 1, true)
@@ -69343,7 +69311,7 @@ function X5A takes nothing returns nothing
 	set t = null
 endfunction
 function X7A takes nothing returns boolean
-	return((IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(GW)) and IsUnitInGroup(GetFilterUnit(), LW) == false and GetUnitAbilityLevel(GetFilterUnit(),'A04R')== 0 and GetWidgetLife(GetFilterUnit())> 1 and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false))
+	return((IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(GW)) and IsUnitInGroup(GetFilterUnit(), LW) == false and GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0 and GetWidgetLife(GetFilterUnit())> 1 and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false))
 endfunction
 function X8A takes nothing returns nothing
 	local timer t = GetExpiredTimer()
@@ -69453,7 +69421,7 @@ function OEA takes nothing returns nothing
 	loop
 	exitwhen O3X > 5
 		if OVA(trigUnit, O3X) then
-			if GetUnitAbilityLevel(trigUnit,('B047'))== 0 then
+			if GetUnitAbilityLevel(trigUnit,('B047')) == 0 then
 				call SetItemDropOnDeath(UnitItemInSlot(trigUnit, O3X), true)
 				if GetItemTypeId(UnitItemInSlot(trigUnit, O3X))=='oflg' then
 					call SetItemDroppable(UnitItemInSlot(trigUnit, O3X), true)
@@ -69469,7 +69437,7 @@ function OEA takes nothing returns nothing
 	endloop
 	set N5O = N5O + .2
 	call SaveReal(HY, h, 57, N5O * 1.)
-	if GetUnitAbilityLevel(trigUnit,('B047'))== 0 then
+	if GetUnitAbilityLevel(trigUnit,('B047')) == 0 then
 		call SetUnitPathing(trigUnit, true)
 	else
 		call SetUnitPathing(trigUnit, false)
@@ -69538,7 +69506,7 @@ endfunction
 function AUE takes nothing returns nothing
 	local unit WJE = GetTriggerUnit()
 	local integer level = GetUnitAbilityLevel(WJE,'A0HW')
-	if GetUnitAbilityLevel(WJE,'Aloc')== 1 and HaveSavedHandle(HY, GetHandleId(WJE), 0) then
+	if GetUnitAbilityLevel(WJE,'Aloc') == 1 and HaveSavedHandle(HY, GetHandleId(WJE), 0) then
 		set WJE = LoadUnitHandle(HY, GetHandleId(WJE), 0)
 	endif
 	call OXA(WJE, level)
@@ -69557,7 +69525,7 @@ function ORA takes unit R8X, unit WLE returns nothing
 	local real d = 20 * GetUnitAbilityLevel(R8X,'P338')
 	call GroupEnumUnitsInRange(g, GetUnitX(WLE), GetUnitY(WLE), 275, Condition(function OOA))
 	call GroupRemoveUnit(g, WLE)
-	if FirstOfGroup(g)== null then
+	if FirstOfGroup(g) == null then
 		if IsUnitIllusion(R8X) or IsUnitType(R8X, UNIT_TYPE_MELEE_ATTACKER) == false then
 			set d = 0 +$A* GetUnitAbilityLevel(R8X,'P338')
 			if GetUnitAbilityLevel(R8X,'B06L')> 0 then
@@ -69572,7 +69540,7 @@ function ORA takes unit R8X, unit WLE returns nothing
 	set g = null
 endfunction
 function OIA takes unit R8X, unit WLE returns nothing
-	if GetUnitAbilityLevel(R8X,'P338')> 0 and(IsUnitIllusion(R8X) or IsUnitType(R8X, UNIT_TYPE_MELEE_ATTACKER)) and GetUnitAbilityLevel(R8X,'A36D')== 0 and LoadInteger(HY, GetHandleId(R8X), 4275)!= 1 and IsAliveNotStrucNotWard(WLE) and WLE != CT then
+	if GetUnitAbilityLevel(R8X,'P338')> 0 and(IsUnitIllusion(R8X) or IsUnitType(R8X, UNIT_TYPE_MELEE_ATTACKER)) and GetUnitAbilityLevel(R8X,'A36D') == 0 and LoadInteger(HY, GetHandleId(R8X), 4275)!= 1 and IsAliveNotStrucNotWard(WLE) and WLE != CT then
 		call ORA(R8X, WLE)
 	endif
 endfunction
@@ -69596,9 +69564,9 @@ function OAA takes nothing returns boolean
 	local real ENI
 	local real ONA
 	local unit firstUnit = null
-	if IsEffectiveDamage(rDamageValue) and FK and UnitAlive(damagedUnit) and GetUnitAbilityLevel(damagedUnit,'A36D')== 0 then
+	if IsEffectiveDamage(rDamageValue) and FK and UnitAlive(damagedUnit) and GetUnitAbilityLevel(damagedUnit,'A36D') == 0 then
 		set g = AllocationGroup(392)
-		if not Mode__RearmCombos and GetHeroMainAttributesType(damagedUnit)== 3 then
+		if not Mode__RearmCombos and GetHeroMainAttributesType(damagedUnit) == 3 then
 			set ONA = rDamageValue *(.06 + .02 * level)
 		else
 			set ONA = rDamageValue *(.06 + .04 * level)
@@ -69660,7 +69628,7 @@ function ODA takes nothing returns nothing
 		set OFA = OFA + 1
 		call SaveInteger(HY, h, 385,(OFA))
 	endif
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call DisableTrigger(GetTriggeringTrigger())
 		call FlushChildHashtable(HY,(GetHandleId(HLR)))
 		call SaveInteger(HY, h, 385,(OFA))
@@ -69830,7 +69798,7 @@ function OSA takes nothing returns boolean
 	if c > 35 then
 		call SaveReal(HY, h,$C1, EOX * .98)
 	endif
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or c > WOV then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or c > WOV then
 		set i = LoadInteger(P, h,'A0G5')-1
 		call SaveInteger(P, h,'A0G5', i)
 		call FlushChildHashtable(HY, h)
@@ -69840,7 +69808,7 @@ function OSA takes nothing returns boolean
 		call A3X(x, y, 150)
 		set x = CoordinateX50(x + EOX * Cos(I3X))
 		set y = CoordinateY50(y + EOX * Sin(I3X))
-		if(IsPointInRegion(R4,((x)* 1.),((y)* 1.))) == false then
+		if(IsPointInRegion(TerrainCliffRegion,((x)* 1.),((y)* 1.))) == false then
 			if IsUnitType(target, UNIT_TYPE_HERO) then
 				call SaveBoolean(K, GetHandleId(target), 99, true)
 			endif
@@ -69881,7 +69849,7 @@ endfunction
 function OWA takes unit u, unit t, boolean b, integer i returns nothing
 	local unit d = null
 	local integer lv
-	if GetUnitAbilityLevel(u,'A36D')== 1 then
+	if GetUnitAbilityLevel(u,'A36D') == 1 then
 		return
 	endif
 	set lv = GetUnitAbilityLevel(u,'A0G5')
@@ -69904,7 +69872,7 @@ function OWA takes unit u, unit t, boolean b, integer i returns nothing
 endfunction
 function OYA takes unit u, unit t returns nothing
 	if IsUnitIllusion(u) == false and(Mode__BalanceOff or LoadReal(P, GetHandleId(u),'A0G5')< GetGameTime()) then
-		if GetUnitAbilityLevel(u,'A36D')== 0 and GetUnitAbilityLevel(u,'A3L2')== 0 and TKV(u,'A0G5', 17) then
+		if GetUnitAbilityLevel(u,'A36D') == 0 and GetUnitAbilityLevel(u,'A3L2') == 0 and TKV(u,'A0G5', 17) then
 			call SaveReal(P, GetHandleId(u),'A0G5', GetGameTime()+ 1.5)
 			call OWA(u, t, true, 1)
 		endif
@@ -69918,7 +69886,7 @@ function OZA takes nothing returns boolean
 	local real x2
 	local real y2
 	local real O_A
-	if IsUnitEnemy(u, GetOwningPlayer(t)) and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and GetUnitAbilityLevel(t,'A04R')== 0 and UnitVisibleToPlayer(t, GetOwningPlayer(u)) and UnitAlive(t) and(IsUnitType(t, UNIT_TYPE_ANCIENT) == false or DRX(t)) and IsMagicImmuneUnit(t) == false then
+	if IsUnitEnemy(u, GetOwningPlayer(t)) and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and GetUnitAbilityLevel(t,'A04R') == 0 and UnitVisibleToPlayer(t, GetOwningPlayer(u)) and UnitAlive(t) and(IsUnitType(t, UNIT_TYPE_ANCIENT) == false or DRX(t)) and IsMagicImmuneUnit(t) == false then
 		set u = Temp__ArrayUnit[2]
 		set x1 = GetWidgetX(u)
 		set y1 = GetWidgetY(u)
@@ -69981,7 +69949,7 @@ function O2A takes nothing returns boolean
 	local unit t = GetFilterUnit()
 	local unit u = Temp__ArrayUnit[0]
 	local group g = LoadGroupHandle(P, XK[0], 2)
-	if IsUnitEnemy(u, GetOwningPlayer(t)) and IsUnitInGroup(t, g) == false and t != Temp__ArrayUnit[1]and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and GetUnitAbilityLevel(t,'A04R')== 0 and UnitAlive(t) and(IsUnitType(t, UNIT_TYPE_ANCIENT) == false or DRX(t)) then
+	if IsUnitEnemy(u, GetOwningPlayer(t)) and IsUnitInGroup(t, g) == false and t != Temp__ArrayUnit[1]and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and GetUnitAbilityLevel(t,'A04R') == 0 and UnitAlive(t) and(IsUnitType(t, UNIT_TYPE_ANCIENT) == false or DRX(t)) then
 		call GroupAddUnit(g, t)
 		call OWA(u, t, false, 3)
 	endif
@@ -70079,7 +70047,7 @@ endfunction
 function W9V takes nothing returns nothing
 	local unit WJE = GetTriggerUnit()
 	local integer level = GetUnitAbilityLevel(WJE,'A1P8')
-	if GetUnitAbilityLevel(WJE,'Aloc')== 1 and HaveSavedHandle(HY, GetHandleId(WJE), 0) then
+	if GetUnitAbilityLevel(WJE,'Aloc') == 1 and HaveSavedHandle(HY, GetHandleId(WJE), 0) then
 		set WJE = LoadUnitHandle(HY, GetHandleId(WJE), 0)
 	endif
 	if not UnitHasSpellShield(GetSpellTargetUnit()) then
@@ -70202,7 +70170,7 @@ function RXA takes nothing returns boolean
 	local real d = GetDistanceBetween(x, y, GXR, GOR)
 	call SaveReal(HY, h, 23,((x)* 1.))
 	call SaveReal(HY, h, 24,((y)* 1.))
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or d >$708 or EVX > 100  then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or d >$708 or EVX > 100  then
 		call SetUnitVertexColorEx(WUE,-1,-1,-1, 255)
 		call UnitRemoveAbility(WWE,'A314')
 		call UnitRemoveAbility(WUE,'A179')
@@ -70223,7 +70191,7 @@ function RXA takes nothing returns boolean
 				call O9A(WUE, WWE)
 			endif
 			call UnitDamageTargetEx(WUE, WWE, 1, 50 + 100 * ODX)
-			if GetUnitAbilityLevel(WWE,'A3E9')== 1 and UnitIsDead(WWE) == false and UnitIsDead(WUE) == false then
+			if GetUnitAbilityLevel(WWE,'A3E9') == 1 and UnitIsDead(WWE) == false and UnitIsDead(WUE) == false then
 				call SaveUnitHandle(VV,'A3E9', 0, WWE)
 				call SaveUnitHandle(VV,'A3E9', 1, WUE)
 				call SaveInteger(VV,'A3E9', 0, LoadInteger(HY, h, 4))
@@ -70264,7 +70232,7 @@ function AZE takes nothing returns nothing
 	local unit WJE = GetTriggerUnit()
 	local integer T0V = GetSpellAbilityId()
 	local integer level = GetUnitAbilityLevel(WJE, T0V)
-	if GetUnitAbilityLevel(WJE,'Aloc')== 1 and HaveSavedHandle(HY, GetHandleId(WJE), 0) then
+	if GetUnitAbilityLevel(WJE,'Aloc') == 1 and HaveSavedHandle(HY, GetHandleId(WJE), 0) then
 		set WJE = LoadUnitHandle(HY, GetHandleId(WJE), 0)
 	endif
 	if not UnitHasSpellShield(GetSpellTargetUnit()) then
@@ -70292,18 +70260,18 @@ function RAA takes nothing returns nothing
 	local real RBA =(LoadReal(HY, h, 296))
 	local integer ODX = LoadInteger(HY, h, 2)
 	local real RCA = .25
-	if GetSpellTargetUnit()== WUE then
+	if GetSpellTargetUnit() == WUE then
 		call EPX(WUE,'AFRZ', .03)
 		call SetWidgetLife(WUE, RMaxBJ(GetUnitState(WUE, UNIT_STATE_MAX_LIFE)* RBA * .01, GetUnitState(WUE, UNIT_STATE_MAX_LIFE)* RCA))
 	endif
-	if GetSpellTargetUnit()== WWE and GetWidgetLife(WWE)> .5 then
+	if GetSpellTargetUnit() == WWE and GetWidgetLife(WWE)> .5 then
 		call EPX(WWE,'AFRZ', .03)
 		call SetUnitLifePercentBJ(WWE, RNA)
 		if GetUnitLifePercent(WWE)< 25 then
 			call SetUnitLifePercentBJ(WWE, 25.)
 		endif
 	endif
-	if GetTriggerEvalCount(t)== 2 then
+	if GetTriggerEvalCount(t) == 2 then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 	endif
@@ -70395,7 +70363,7 @@ endfunction
 function A_E takes nothing returns nothing
 	local unit WJE = GetTriggerUnit()
 	local integer level = GetUnitAbilityLevel(WJE, GetSpellAbilityId())
-	if GetUnitAbilityLevel(WJE,'Aloc')== 1 and HaveSavedHandle(HY, GetHandleId(WJE), 0) then
+	if GetUnitAbilityLevel(WJE,'Aloc') == 1 and HaveSavedHandle(HY, GetHandleId(WJE), 0) then
 		set WJE = LoadUnitHandle(HY, GetHandleId(WJE), 0)
 	endif
 	if not UnitHasSpellShield(GetSpellTargetUnit()) then
@@ -70484,11 +70452,11 @@ function RJA takes nothing returns boolean
 	local unit WLE =(LoadUnitHandle(HY, h, 17))
 	local unit d =(LoadUnitHandle(HY, h, 19))
 	local integer level =(LoadInteger(HY, h, 5))
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or GetTriggerEvalCount(t)> 28or X3X(WJE) or WTE(WJE, WLE)> 600 or UnitVisibleToPlayer(WLE, GetOwningPlayer(WJE)) == false then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or GetTriggerEvalCount(t)> 28or X3X(WJE) or WTE(WJE, WLE)> 600 or UnitVisibleToPlayer(WLE, GetOwningPlayer(WJE)) == false then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 		call KillUnit(d)
-	elseif GetTriggerEventId()== EVENT_UNIT_SPELL_EFFECT then
+	elseif GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT then
 		if GetTriggerEvalCount(t)> 1 and GetSpellAbilityId()=='A1RA' then
 			call FlushChildHashtable(HY, h)
 			call CleanCurrentTrigger(t)
@@ -70515,7 +70483,7 @@ function RKA takes nothing returns boolean
 	local unit WLE =(LoadUnitHandle(HY, h, 17))
 	local unit d =(LoadUnitHandle(HY, h, 19))
 	local boolean b = HaveSavedHandle(HY, h, 21)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call UnitRemoveAbility(WJE,'A1RA')
 		if b then
 			call RemoveUnit(LoadUnitHandle(HY, h, 21))
@@ -70523,7 +70491,7 @@ function RKA takes nothing returns boolean
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 	else
-		if GetTriggerEvalCount(t)== 1 then
+		if GetTriggerEvalCount(t) == 1 then
 			call IssueImmediateOrderById(WJE,$D0019)
 		endif
 		if IsUnitEnemy(WJE, GetOwningPlayer(WLE)) then
@@ -70565,7 +70533,7 @@ function RLA takes nothing returns nothing
 		call IssueTargetOrderById(d,$D0207, WLE)
 	else
 		call UnitAddPermanentAbility(WJE,'A1RA')
-		set d = CreateUnit(BW,'u01G', 0, 0, 0)
+		set d = CreateUnit(CreepsPlayer,'u01G', 0, 0, 0)
 		call SetUnitUserData(d, GetPlayerId(GetOwningPlayer(WJE)))
 		call UnitAddAbility(d,'A04L')
 		call SetUnitAbilityLevel(d,'A04L', level)
@@ -70665,7 +70633,7 @@ function RPA takes nothing returns boolean
 	local real RQA = LoadReal(HY, h, 412)
 	local real WIE = LoadReal(HY, h, 411)
 	local integer level = GetUnitAbilityLevel(WUE,'A04E')
-	if XFX(GetOwningPlayer(WWE)) and GetUnitAbilityLevel(WUE,'A36D')== 0 then
+	if XFX(GetOwningPlayer(WWE)) and GetUnitAbilityLevel(WUE,'A36D') == 0 then
 		if(WIE + 6)<(GetGameTime()) then
 			set RQA = 0
 		endif
@@ -70806,7 +70774,7 @@ function K9E takes nothing returns nothing
 	set WUE = null
 endfunction
 function RYA takes nothing returns boolean
-	return((IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(GW)) and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and GetUnitAbilityLevel(GetFilterUnit(),'A04R')== 0))
+	return((IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(GW)) and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0))
 endfunction
 function RZA takes nothing returns nothing
 	call UnitDamageTargetEx(I_X(GW), GetEnumUnit(), 2, JW)
@@ -70821,7 +70789,7 @@ function R_A takes unit WUE, unit WWE, real IXX returns nothing
 	set g = null
 endfunction
 function R0A takes nothing returns boolean
-	return((IsUnitInGroup(GetFilterUnit(), LW) == false and IsUnitAlly(GetFilterUnit(), GetOwningPlayer(GW)) and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and GetUnitAbilityLevel(GetFilterUnit(),'A04R')== 0 and UnitIsDead(GetFilterUnit()) == false and GetFilterUnit()!= MUV))
+	return((IsUnitInGroup(GetFilterUnit(), LW) == false and IsUnitAlly(GetFilterUnit(), GetOwningPlayer(GW)) and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0 and UnitIsDead(GetFilterUnit()) == false and GetFilterUnit()!= MUV))
 endfunction
 function R1A takes group R2A, unit R3A, unit WUE, unit OriginalTargetreturns returns unit
 	local group g = AllocationGroup(402)
@@ -70926,7 +70894,7 @@ function IEA takes nothing returns nothing
 	local integer c = GetTriggerEvalCount(t)
 	local real IXX = 8 + 6 * ODX
 	local unit KBX = LoadUnitHandle(HY, h, 19)
-	if GetUnitAbilityLevel(WWE,'A0OW')== 0 or c > 6 then
+	if GetUnitAbilityLevel(WWE,'A0OW') == 0 or c > 6 then
 		call UnitRemoveAbility(WWE,'A0OW')
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
@@ -70970,7 +70938,7 @@ function IXA takes nothing returns nothing
 	call SaveUnitHandle(HY, h, 19, KBX)
 	call SaveInteger(HY, h, 0, LoadInteger(HY, GetHandleId(GetTriggeringTrigger()), 5))
 	call UnitAddPermanentAbility(W2,'A0OW')
-	if GetUnitAbilityLevel(W2,'A3E9')== 1 and LoadBoolean(HY, GetHandleId(GetTriggeringTrigger()), 0) == false and IsMagicImmuneUnit(W2) == false then
+	if GetUnitAbilityLevel(W2,'A3E9') == 1 and LoadBoolean(HY, GetHandleId(GetTriggeringTrigger()), 0) == false and IsMagicImmuneUnit(W2) == false then
 		call SaveUnitHandle(VV,'A3E9', 0, W2)
 		call SaveUnitHandle(VV,'A3E9', 1, U2)
 		call SaveInteger(VV,'A3E9', 0, LoadInteger(HY, GetHandleId(GetTriggeringTrigger()), 5))
@@ -71214,7 +71182,7 @@ function IMA takes nothing returns boolean
 		call SaveReal(HY, h, 389,((IPA)* 1.))
 		call SaveReal(HY, h, 390,((IQA)* 1.))
 	endif
-	if GetTriggerEventId()== EVENT_UNIT_DAMAGED then
+	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
 		if FK then
 			set WWE = GetTriggerUnit()
 			set IKA =(LoadReal(HY,(GetHandleId(WWE)),$F3))
@@ -71430,7 +71398,7 @@ function I0A takes nothing returns nothing
 	local unit SZX = LoadUnitHandle(HY, h, 2)
 	local integer SYV = LoadInteger(HY, h, 0)
 	local unit I1A
-	if UnitIsDead(SZX) or SYV < 1 or GetUnitAbilityLevel(SZX,'A42O')== 0 then
+	if UnitIsDead(SZX) or SYV < 1 or GetUnitAbilityLevel(SZX,'A42O') == 0 then
 		call RemoveSavedHandle(P, GetHandleId(SZX),'A0A6')
 		call FlushChildHashtable(HY, h)
 		call PauseTimer(t)
@@ -71597,7 +71565,7 @@ function I8A takes nothing returns boolean
 	local unit WWE = LoadUnitHandle(HY, h, 17)
 	local integer ODX = LoadInteger(HY, h, 5)
 	local real MSI = LoadReal(HY, GetHandleId(WWE), 684)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or MSI <(GetGameTime()) or IsMagicImmuneUnit(WWE) then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or MSI <(GetGameTime()) or IsMagicImmuneUnit(WWE) then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 		call SaveReal(HY, GetHandleId(WWE), 684, .0)
@@ -71651,7 +71619,7 @@ function I9A takes nothing returns nothing
 endfunction
 function AVA takes nothing returns boolean
 	if GetUnitAbilityLevel(GetTriggerUnit(),'A0MM')> 0 and IsAliveNotStrucNotWard(GetEventDamageSource()) and IsUnitEnemy(GetEventDamageSource(), GetOwningPlayer(GetTriggerUnit())) and IsMagicImmuneUnit(GetEventDamageSource()) == false and WTE(GetEventDamageSource(), GetTriggerUnit())<=$578 then
-		if GetUnitAbilityLevel(GetTriggerUnit(),'A36D')== 0 and OB == false then
+		if GetUnitAbilityLevel(GetTriggerUnit(),'A36D') == 0 and OB == false then
 			call I9A()
 		endif
 	endif
@@ -71668,7 +71636,7 @@ function AEA takes nothing returns nothing
 	local integer h = GetHandleId(t)
 	local unit IZX = LoadUnitHandle(HY, h, 0)
 	local unit WLE = LoadUnitHandle(HY, h, 1)
-	if UnitIsDead(WLE) or GetUnitAbilityLevel(WLE,'B06D')== 0 then
+	if UnitIsDead(WLE) or GetUnitAbilityLevel(WLE,'B06D') == 0 then
 		call RemoveSavedHandle(HY, LoadInteger(HY, h,-1),'A09V')
 		call PauseTimer(t)
 		call DestroyTimer(t)
@@ -71833,10 +71801,10 @@ function ACA takes nothing returns boolean
 	local unit WUE =(LoadUnitHandle(HY, h, 2))
 	local integer AIA =(LoadInteger(HY, h, 425))
 	local integer ODX = GetUnitAbilityLevel(GetTriggerUnit(),'A0VX')
-	if GetTriggerEventId()== EVENT_UNIT_DAMAGED then
+	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
 		if GetEventDamage()> 2 and GetEventDamageSource()!= GetTriggerUnit() and XFX(GetOwningPlayer(GetEventDamageSource())) and FK then
 			set AIA = IMaxBJ(AIA -1, 0)
-			if GetUnitAbilityLevel(WUE,'A36D')== 1 then
+			if GetUnitAbilityLevel(WUE,'A36D') == 1 then
 				set AIA = 0
 			endif
 			call SaveInteger(HY, h, 425,(AIA))
@@ -71934,11 +71902,11 @@ function AJA takes nothing returns boolean
 	local integer ODX =(LoadInteger(HY, h, 5))
 	local integer S4R =(LoadInteger(HY, h, 28))
 	local integer Y2X =(LoadInteger(HY, h,$C2))
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
-	elseif GetTriggerEventId()== EVENT_PLAYER_UNIT_ATTACKED then
-		if GetAttacker()== AGA then
+	elseif GetTriggerEventId() == EVENT_PLAYER_UNIT_ATTACKED then
+		if GetAttacker() == AGA then
 			set Y2X = IMaxBJ(Y2X -1, 0)
 			call SaveInteger(HY, h,$C2,(Y2X))
 			call AFA(AGA, Y2X, ODX)
@@ -71946,7 +71914,7 @@ function AJA takes nothing returns boolean
 	else
 		set S4R = S4R + 1
 		call SaveInteger(HY, h, 28,(S4R))
-		if ModuloInteger(S4R, 15)== 0 then
+		if ModuloInteger(S4R, 15) == 0 then
 			set Y2X = IMinBJ(Y2X + 1, 7)
 			call SaveInteger(HY, h,$C2,(Y2X))
 		endif
@@ -72136,14 +72104,14 @@ function ASA takes unit WUE, integer CHO, integer ATA returns nothing
 	endif
 	call SetTextTagText(tt, JVX, .023)
 	call SetTextTagPosUnit(tt, WUE, 0)
-	call SetTextTagVisibility(tt, GetOwningPlayer(WUE)== LocalPlayer and UnitIsDead(WUE) == false)
+	call SetTextTagVisibility(tt, GetOwningPlayer(WUE) == LocalPlayer and UnitIsDead(WUE) == false)
 	call SetTextTagPermanent(tt, true)
 	set tt = null
 endfunction
 function AUA takes unit trigUnit, integer ODX returns nothing
 	local integer ATA = GetUnitAbilityLevel(trigUnit,'A1NA')
 	call ASA(trigUnit, ODX, ATA)
-	if ODX == 0 or((LoadInteger(HY,(GetHandleId((trigUnit))),($9B4)))== 1) then
+	if ODX == 0 or((LoadInteger(HY,(GetHandleId((trigUnit))),($9B4))) == 1) then
 		call UnitRemoveAbility(trigUnit,'A1O7')
 		call UnitRemoveAbility(trigUnit,'A1O8')
 		call UnitRemoveAbility(trigUnit,'A1O9')
@@ -72285,7 +72253,7 @@ function AUA takes unit trigUnit, integer ODX returns nothing
 		call UnitRemoveAbility(trigUnit,'A0NF')
 		call UnitAddPermanentAbility(trigUnit,'A0MD')
 	endif
-	if(GetUnitAbilityLevel(trigUnit,'A1NA')+ 2)== ODX then
+	if(GetUnitAbilityLevel(trigUnit,'A1NA')+ 2) == ODX then
 		call UnitAddPermanentAbility(trigUnit,'A1NJ')
 	else
 		call UnitRemoveAbility(trigUnit,'A1NJ')
@@ -72330,7 +72298,7 @@ function A_A takes nothing returns nothing
 	set M_V = true
 	call UnitDamageTargetEx(WUE, WWE, 1, IXX)
 	set M_V = false
-	if LoadBoolean(HY, h, 20) == false and GetUnitAbilityLevel(WWE,'A3E9')== 1 and IsMagicImmuneUnit(WUE) == false then
+	if LoadBoolean(HY, h, 20) == false and GetUnitAbilityLevel(WWE,'A3E9') == 1 and IsMagicImmuneUnit(WUE) == false then
 		call SaveUnitHandle(VV,'A3E9', 0, WWE)
 		call SaveUnitHandle(VV,'A3E9', 1, WUE)
 		call SaveInteger(VV,'A3E9', 0, LoadInteger(HY, h, 20))
@@ -72391,7 +72359,7 @@ endfunction
 //	call MDO("SoulAssumptionDamagedEvent")
 //endfunction
 function A9A takes nothing returns boolean
-	return((IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(GW)) and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and GetUnitAbilityLevel(GetFilterUnit(),'A04R')== 0 and GetWidgetLife(GetFilterUnit())> 1))
+	return((IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(GW)) and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0 and GetWidgetLife(GetFilterUnit())> 1))
 endfunction
 function NVA takes unit WLE, integer level returns nothing
 	local unit d = CreateUnit(GetOwningPlayer(WLE),'e00E', GetUnitX(WLE), GetUnitY(WLE), 0)
@@ -72430,7 +72398,7 @@ function NRA takes nothing returns nothing
 	local integer h = GetHandleId(t)
 	local unit trigUnit
 	local unit KBX = LoadUnitHandle(HY, h, 19)
-	//if GetTriggerEventId()== EVENT_UNIT_SPELL_ENDCAST then
+	//if GetTriggerEventId() == EVENT_UNIT_SPELL_ENDCAST then
 	//call KillUnit(KBX)
 	//call FlushChildHashtable(HY, h)
 	//call CleanCurrentTrigger(t)
@@ -72510,7 +72478,7 @@ function NFA takes nothing returns nothing
 	set g = null
 endfunction
 function NGA takes nothing returns boolean
-	return((IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(GetTriggerUnit())) and UnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(GetTriggerUnit())) and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and GetUnitAbilityLevel(GetFilterUnit(),'A04R')== 0 and UnitIsDead(GetFilterUnit()) == false))
+	return((IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(GetTriggerUnit())) and UnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(GetTriggerUnit())) and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0 and UnitIsDead(GetFilterUnit()) == false))
 endfunction
 function NHA takes nothing returns nothing
 	set S2 = WTE(GetEnumUnit(), U2)
@@ -72530,7 +72498,7 @@ function N3E takes nothing returns nothing
 	local group MLI = AllocationGroup(412)
 	local unit array NJA
 	local string FX = "Abilities\\Spells\\Undead\\Curse\\CurseTarget.mdl"
-	if GetUnitAbilityLevel(trigUnit,'Aloc')== 1 and HaveSavedHandle(HY, GetHandleId(trigUnit), 0) then
+	if GetUnitAbilityLevel(trigUnit,'Aloc') == 1 and HaveSavedHandle(HY, GetHandleId(trigUnit), 0) then
 		set trigUnit = LoadUnitHandle(HY, GetHandleId(trigUnit), 0)
 	endif
 	call SaveUnitHandle(HY, h, 14,(trigUnit))
@@ -72545,7 +72513,7 @@ function N3E takes nothing returns nothing
 	call SaveGroupHandle(HY, h,$DC,(MLI))
 	set U2 = null
 	loop
-	exitwhen i >(1 + 2 * ODX) or FirstOfGroup(g)== null
+	exitwhen i >(1 + 2 * ODX) or FirstOfGroup(g) == null
 		set T2 = 9999
 		set U2 = NJA[i -1]
 		set Q5V = null
@@ -72580,7 +72548,7 @@ function NKA takes nothing returns boolean
 	local unit WUE = LoadUnitHandle(HY, h, 2)
 	local unit WWE = LoadUnitHandle(HY, h, 17)
 	local integer ODX = LoadInteger(HY, h, 0)
-	if GetTriggerEvalCount(t)> LoadInteger(HY, h, 1) or GetTriggerEventId()== EVENT_WIDGET_DEATH or GetUnitAbilityLevel(WWE,'A17K')== 0 then
+	if GetTriggerEvalCount(t)> LoadInteger(HY, h, 1) or GetTriggerEventId() == EVENT_WIDGET_DEATH or GetUnitAbilityLevel(WWE,'A17K') == 0 then
 		call UnitRemoveAbility(WWE,'A17K')
 		call UnitRemoveAbility(WWE,'B0AP')
 		call FlushChildHashtable(HY, h)
@@ -72599,7 +72567,7 @@ function NLA takes nothing returns boolean
 	local unit WUE = LoadUnitHandle(HY, h, 2)
 	local unit WWE = LoadUnitHandle(HY, h, 17)
 	local integer ODX = LoadInteger(HY, h, 0)
-	if GetTriggerEvalCount(t)> LoadInteger(HY, h, 1) or GetTriggerEventId()== EVENT_WIDGET_DEATH or GetUnitAbilityLevel(WWE,'A0P0')== 0 then
+	if GetTriggerEvalCount(t)> LoadInteger(HY, h, 1) or GetTriggerEventId() == EVENT_WIDGET_DEATH or GetUnitAbilityLevel(WWE,'A0P0') == 0 then
 		call UnitRemoveAbility(WWE,'A0P0')
 		call UnitRemoveAbility(WWE,'B073')
 		call FlushChildHashtable(HY, h)
@@ -72667,10 +72635,10 @@ function NMA takes nothing returns boolean
 	if GetUnitAbilityLevel(Player__Hero[GetPlayerId(GetOwningPlayer(WUE))],'A0A8')> 0 then
 		set i = 2
 	endif
-	if GetTriggerEventId()== EVENT_UNIT_DEATH then
+	if GetTriggerEventId() == EVENT_UNIT_DEATH then
 		set WUE = GetTriggerUnit()
 		set i = GetUnitAbilityLevel(Player__Hero[GetPlayerId(GetOwningPlayer(WUE))],'A0A8')
-		if i > 0 and GetUnitAbilityLevel(WUE,'A3J0')== 0 and(GetUnitTypeId(WUE)=='n0KU' or GetUnitTypeId(WUE)=='n0KV' or GetUnitTypeId(WUE)=='n0KW') then
+		if i > 0 and GetUnitAbilityLevel(WUE,'A3J0') == 0 and(GetUnitTypeId(WUE)=='n0KU' or GetUnitTypeId(WUE)=='n0KV' or GetUnitTypeId(WUE)=='n0KW') then
 			set g = AllocationGroup(413)
 			set U2 = WUE
 			call GroupEnumUnitsInRange(g, GetUnitX(WUE), GetUnitY(WUE), 275, Condition(function DHX))
@@ -72720,7 +72688,7 @@ function NPA takes unit u returns nothing
 			call UnitAddPermanentAbility(u,'A3IY')
 		elseif GetUnitTypeId(u)=='n00Z' then
 			call UnitAddPermanentAbility(u,'A3IZ')
-		elseif GetUnitAbilityLevel(u,'BNin')== 0 then
+		elseif GetUnitAbilityLevel(u,'BNin') == 0 then
 			call UnitApplyTimedLife(u,'BTLF', 60)
 			call UnitAddPermanentAbility(u,'A3J0')
 		endif
@@ -72788,9 +72756,9 @@ function NUA takes unit R8X, unit WLE returns nothing
 	if GetRandomReal(0, 100)< 40 then
 		set g = AllocationGroup(415)
 		set a = AngleBetweenUnit(R8X, WLE)* bj_DEGTORAD
-		if GetUnitAbilityLevel(R8X,'A0IM')== 1 then
+		if GetUnitAbilityLevel(R8X,'A0IM') == 1 then
 			set ZCE = 80
-		elseif GetUnitAbilityLevel(R8X,'A0IQ')== 1 then
+		elseif GetUnitAbilityLevel(R8X,'A0IQ') == 1 then
 			set ZCE = 115
 		else
 			set ZCE =$96
@@ -72815,7 +72783,7 @@ function NYA takes nothing returns boolean
 	local unit t = GetFilterUnit()
 	local unit u = LoadUnitHandle(VV,'A0CA', 0)
 	local group g = LoadGroupHandle(P, GetHandleId(u), StringHash("ShukuGroup"))
-	if u != null and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(u)) and(t != u) and IsUnitInGroup(t, g) == false and GetUnitAbilityLevel(t,'A04R')== 0 and IsMagicImmuneUnit(t) == false and UnitAlive(t) and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and(IsUnitType(t, UNIT_TYPE_ANCIENT) == false or DRX(t)) then
+	if u != null and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(u)) and(t != u) and IsUnitInGroup(t, g) == false and GetUnitAbilityLevel(t,'A04R') == 0 and IsMagicImmuneUnit(t) == false and UnitAlive(t) and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and(IsUnitType(t, UNIT_TYPE_ANCIENT) == false or DRX(t)) then
 		call GroupAddUnit(g, t)
 		call UnitDamageTargetEx(u, t, 1, LoadInteger(P, GetHandleId(u), StringHash("ShukuDamage")))
 		call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Undead\\AbsorbMana\\AbsorbManaBirthMissile.mdl", t, "chest"))
@@ -72830,7 +72798,7 @@ function NZA takes nothing returns nothing
 	local integer WFV = GetHandleId(t)
 	local unit u = LoadUnitHandle(P, WFV, 0)
 	local group g
-	if GetUnitAbilityLevel(u,'BHfs')== 0 then
+	if GetUnitAbilityLevel(u,'BHfs') == 0 then
 		call DeallocateGroup(LoadGroupHandle(P, GetHandleId(u), StringHash("ShukuGroup")))
 		call DestroyTimerAndFlushHT_P(t)
 		set t = null
@@ -72941,16 +72909,16 @@ function N3A takes nothing returns boolean
 	local unit WUE =(LoadUnitHandle(HY, h, 2))
 	local unit WWE =(LoadUnitHandle(HY, h, 17))
 	local integer c = LoadInteger(HY, h, 2)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call LodSystem_ReduceUnitExtraState(WWE, c, "armourneg")
 		call SaveInteger(HY,(GetHandleId((WWE))),(4290), 2)
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
-		if GetTriggerUnit()== WWE then
+		if GetTriggerUnit() == WWE then
 			call KillUnit(WUE)
 		endif
-	elseif GetTriggerEventId()== EVENT_UNIT_DAMAGED then
-		if GetEventDamageSource()== WUE then
+	elseif GetTriggerEventId() == EVENT_UNIT_DAMAGED then
+		if GetEventDamageSource() == WUE then
 			call LodSystem_AddUnitExtraState(WWE, 1, "armourneg")
 			call SaveInteger(HY, h, 2, c + 1)
 			call DestroyEffect(AddSpecialEffectTarget("Abilities\\Weapons\\SkeletalMageMissile\\SkeletalMageMissile.mdl", WWE, "chest"))
@@ -72960,7 +72928,7 @@ function N3A takes nothing returns boolean
 		call SetUnitY(WUE, GetUnitY(WWE)-40)
 		if DOX(WWE) and UnitVisibleToPlayer(WWE, GetOwningPlayer(WUE)) == false then
 			call KillUnit(WUE)
-		elseif ModuloInteger(GetTriggerEvalCount(t), 5)== 0 then
+		elseif ModuloInteger(GetTriggerEvalCount(t), 5) == 0 then
 			call IssueTargetOrderById(WUE, 851983, WWE)
 		endif
 	endif
@@ -73127,10 +73095,10 @@ function N9A takes nothing returns nothing
 	local unit W_V = LoadUnitHandle(HY, h, 0)
 	local unit WLE = LoadUnitHandle(HY, h, 1)
 	local unit IZX = LoadUnitHandle(HY, h, 2)
-	if GetTriggerEventId()== EVENT_UNIT_DAMAGED then
-		if GetEventDamageSource()== W_V then
-			if LoadUnitHandle(HY, h,-1)== LoadUnitHandle(HY, h, 2) then
-				if GetUnitAbilityLevel(WLE,'A3E9')== 1 and IsMagicImmuneUnit(IZX) and LoadBoolean(HY, h, 0) == false then
+	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
+		if GetEventDamageSource() == W_V then
+			if LoadUnitHandle(HY, h,-1) == LoadUnitHandle(HY, h, 2) then
+				if GetUnitAbilityLevel(WLE,'A3E9') == 1 and IsMagicImmuneUnit(IZX) and LoadBoolean(HY, h, 0) == false then
 					if UnitHasSpellShield(IZX) == false then
 						call SaveUnitHandle(VV,'A3E9', 0, WLE)
 						call SaveUnitHandle(VV,'A3E9', 1, IZX)
@@ -73266,7 +73234,7 @@ function BFA takes unit trigUnit returns nothing
 	local real BGA = 4 + 4 * ODX
 	call SetUnitState(trigUnit, UNIT_STATE_MANA, GetUnitState(trigUnit, UNIT_STATE_MANA)-(BGA / 3))
 	if GetUnitState(trigUnit, UNIT_STATE_MANA)< BGA then
-		if((LoadInteger(HY,(GetHandleId((trigUnit))),(4265)))== 1) == false then
+		if((LoadInteger(HY,(GetHandleId((trigUnit))),(4265))) == 1) == false then
 			call IssueImmediateOrderById(trigUnit,$D00D2)
 		endif
 	endif
@@ -73275,7 +73243,7 @@ function BHA takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local unit trigUnit =(LoadUnitHandle(HY, h, 14))
-	if GetTriggerEventId()== EVENT_UNIT_ISSUED_ORDER then
+	if GetTriggerEventId() == EVENT_UNIT_ISSUED_ORDER then
 		if GetIssuedOrderId()==$D00D2 then
 			call FlushChildHashtable(HY, h)
 			call CleanCurrentTrigger(t)
@@ -73313,7 +73281,7 @@ function BJA takes nothing returns boolean
 	local integer EVX = GetTriggerEvalCount(t)
 	local real BKA = LoadReal(HY, h, 392)
 	local real BLA = 0
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call WHV(WWE,'D002')
 		call DestroyEffect(LoadEffectHandle(HY, h, 32))
 		call FlushChildHashtable(HY, h)
@@ -73375,7 +73343,7 @@ function BQA takes nothing returns boolean
 	local unit WUE =(LoadUnitHandle(HY, h, 2))
 	call FlushChildHashtable(HY, h)
 	call CleanCurrentTrigger(t)
-	if GetTriggerEventId()== EVENT_GAME_TIMER_EXPIRED then
+	if GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
 		call EXStopUnit(WUE)
 	endif
 	set WUE = null
@@ -73423,7 +73391,7 @@ function SIG takes nothing returns boolean
 		if u != null and BTA > 0 then
 			if M2V[id]> WIE and UnitAlive(u) then
 				set hp = GetWidgetLife(u)
-				if hp < M3V[id]or LoadInteger(HY, GetHandleId(u),'AFRZ')== 1 then
+				if hp < M3V[id]or LoadInteger(HY, GetHandleId(u),'AFRZ') == 1 then
 					set M3V[id]= hp
 				endif
 				call SetWidgetLife(u, M3V[id])
@@ -73455,14 +73423,14 @@ function BUA takes nothing returns boolean
 	local string s
 	local real BWA = LoadReal(HY, h, 0)
 	local integer c = LoadInteger(HY, h, 0)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call UnitRemoveAbility(WWE,'A1JA')
 		call UnitRemoveAbility(WWE,'B0CD')
 		call RemoveSavedHandle(HY, GetHandleId(WWE),'A1MI')
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 		// debug call SingleDebug("dest 1")
-	elseif GetTriggerEventId()== EVENT_GAME_TIMER_EXPIRED then
+	elseif GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
 		if GetGameTime()> BWA then
 			call UnitRemoveAbility(WWE,'A1JA')
 			call UnitRemoveAbility(WWE,'B0CD')
@@ -73472,12 +73440,12 @@ function BUA takes nothing returns boolean
 		else
 			set c = c + 1
 			call SaveInteger(HY, h, 0, c)
-			if ModuloInteger(c, 10)== 0 then
+			if ModuloInteger(c, 10) == 0 then
 				call UnitDamageTargetEx(LoadUnitHandle(HY, h, 0), WWE, 1, 5 +$A* ODX)
 			endif
 		endif
 	else
-		if GetUnitAbilityLevel(WWE,'A1JA')== 0 then
+		if GetUnitAbilityLevel(WWE,'A1JA') == 0 then
 			if GetTriggerEvalCount(t)> 4 then
 				call UnitRemoveAbility(WWE,'A1JA')
 				call UnitRemoveAbility(WWE,'B0CD')
@@ -73517,7 +73485,7 @@ function BYA takes unit WUE, unit WWE returns nothing
 	if GetUnitAbilityLevel(WUE,'A2QE')> 0 then
 		set BZA = 17
 	endif
-	if ODX > 0 and IsUnitType(WWE, UNIT_TYPE_HERO) and GetUnitAbilityLevel(WWE,'A04R')== 0 then
+	if ODX > 0 and IsUnitType(WWE, UNIT_TYPE_HERO) and GetUnitAbilityLevel(WWE,'A04R') == 0 then
 		if HaveSavedHandle(HY, GetHandleId(WWE),'A1MI') then
 			set t = LoadTriggerHandle(HY, GetHandleId(WWE),'A1MI')
 			set h = GetHandleId(t)
@@ -73569,22 +73537,22 @@ function B0A takes nothing returns nothing
 	endif
 	if IsMagicImmuneUnit(GetEnumUnit()) == false then
 		if M7V == 1 then
-			if GetUnitAbilityLevel(GetEnumUnit(),'A1HZ')== 0 then
+			if GetUnitAbilityLevel(GetEnumUnit(),'A1HZ') == 0 then
 				call UnitRemoveAbility(GetEnumUnit(),'B0C5')
 				call UnitAddPermanentAbility(GetEnumUnit(),'A1HZ')
 			endif
 		elseif M7V == 2 then
-			if GetUnitAbilityLevel(GetEnumUnit(),'A1I4')== 0 then
+			if GetUnitAbilityLevel(GetEnumUnit(),'A1I4') == 0 then
 				call UnitRemoveAbility(GetEnumUnit(),'B0C5')
 				call UnitAddPermanentAbility(GetEnumUnit(),'A1I4')
 			endif
 		elseif M7V == 3 then
-			if GetUnitAbilityLevel(GetEnumUnit(),'A1I3')== 0 then
+			if GetUnitAbilityLevel(GetEnumUnit(),'A1I3') == 0 then
 				call UnitRemoveAbility(GetEnumUnit(),'B0C5')
 				call UnitAddPermanentAbility(GetEnumUnit(),'A1I3')
 			endif
 		elseif M7V == 4 then
-			if GetUnitAbilityLevel(GetEnumUnit(),'A1I6')== 0 then
+			if GetUnitAbilityLevel(GetEnumUnit(),'A1I6') == 0 then
 				call UnitRemoveAbility(GetEnumUnit(),'B0C5')
 				call UnitAddPermanentAbility(GetEnumUnit(),'A1I6')
 			endif
@@ -73600,7 +73568,7 @@ function B1A takes nothing returns boolean
 	local real x = GetUnitX(KBX)
 	local real y = GetUnitY(KBX)
 	local group g = AllocationGroup(422)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call ForGroup(IQI, function B_A)
 		call DeallocateGroup(g)
 		call DeallocateGroup(IQI)
@@ -73662,7 +73630,7 @@ function B2A takes nothing returns boolean
 	local integer level = LoadInteger(HY, h, 5)
 	local real IXX =( 100 + 50 * level)/ 4
 	local integer i = GetTriggerEvalCount(t)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or GetDistanceBetween(x, y, GetUnitX(WWE), GetUnitY(WWE))> 765 or GetUnitAbilityLevel(WWE,'B0CC')== 0 then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or GetDistanceBetween(x, y, GetUnitX(WWE), GetUnitY(WWE))> 765 or GetUnitAbilityLevel(WWE,'B0CC') == 0 then
 		call DestroyEffect(LoadEffectHandle(HY, h, 32))
 		call DestroyEffect(LoadEffectHandle(HY, h, 176))
 		call UnitRemoveAbility(WWE,'A1J9')
@@ -73843,7 +73811,7 @@ function B8A takes nothing returns boolean
 	set y = CoordinateY50(CVA)
 	call SetUnitX(NIX, x)
 	call SetUnitY(NIX, y)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or(GetTriggerEventId()== EVENT_PLAYER_UNIT_SPELL_EFFECT and GetSpellAbilityId()=='A1MN') or x != B9A or y != CVA then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or(GetTriggerEventId() == EVENT_PLAYER_UNIT_SPELL_EFFECT and GetSpellAbilityId()=='A1MN') or x != B9A or y != CVA then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 		call RemoveUnit(NIX)
@@ -73902,8 +73870,8 @@ function CEA takes nothing returns boolean
 	local unit WUE =(LoadUnitHandle(HY, h, 2))
 	local integer ODX =(LoadInteger(HY, h, 5))
 	local integer CXA =(LoadInteger(HY,(GetHandleId(WUE)), 449))
-	if GetTriggerEventId()== EVENT_UNIT_DAMAGED then
-		if GetEventDamageSource()== WUE and GetEventDamage()> 1 and FK then
+	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
+		if GetEventDamageSource() == WUE and GetEventDamage()> 1 and FK then
 			call DisableTrigger(t)
 			if CXA > 0 then
 				call SaveInteger(HY,(GetHandleId(WUE)), 449,(CXA -1))
@@ -73927,13 +73895,13 @@ function COA takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local unit WUE = LoadUnitHandle(HY, h, 2)
 	local integer ODX = LoadInteger(HY, h, 5)
-	if GetTriggerEventId()!= EVENT_PLAYER_UNIT_ATTACKED or(LoadInteger(HY, GetHandleId(WUE), 449))== 0 or GetUnitAbilityLevel(WUE,'A1HN')== 0 then
+	if GetTriggerEventId()!= EVENT_PLAYER_UNIT_ATTACKED or(LoadInteger(HY, GetHandleId(WUE), 449)) == 0 or GetUnitAbilityLevel(WUE,'A1HN') == 0 then
 		call SaveInteger(HY, GetHandleId(WUE), 449, 0)
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 		call UnitRemoveAbility(WUE,'A1HN')
 		call UnitRemoveAbility(WUE,'B0CJ')
-	elseif GetAttacker()== WUE and(LoadInteger(HY, GetHandleId(WUE), 4289)!= 1) then
+	elseif GetAttacker() == WUE and(LoadInteger(HY, GetHandleId(WUE), 4289)!= 1) then
 		call EPX(WUE, 4289, .4)
 		set t = CreateTrigger()
 		set h = GetHandleId(t)
@@ -73954,7 +73922,7 @@ function T7G takes nothing returns nothing
 	local trigger t
 	local integer h
 	local integer ODX = GetUnitAbilityLevel(WUE,'A1HQ')
-	if LoadInteger(HY, GetHandleId(WWE), 449)> 0 and GetUnitAbilityLevel(WWE,'A1HN')== 1 then
+	if LoadInteger(HY, GetHandleId(WWE), 449)> 0 and GetUnitAbilityLevel(WWE,'A1HN') == 1 then
 		call SaveInteger(HY, GetHandleId(WWE), 449, 2 + ODX + LoadInteger(HY, GetHandleId(WWE), 449))
 		set WUE = null
 		set WWE = null
@@ -73976,7 +73944,7 @@ endfunction
 function CRA takes nothing returns nothing
 	local trigger t
 	local integer h
-	if GetUnitAbilityLevel(WX,'A1HN')== 1 then
+	if GetUnitAbilityLevel(WX,'A1HN') == 1 then
 		set t = LoadTriggerHandle(HY, GetHandleId(WX),'A1HN')
 		set h = GetHandleId(t)
 		call CommonTextTag("+" + I2S(R2I(LoadReal(HY, h, 1))), 1, WX, .024, 100, 200, 255, 255)
@@ -73989,7 +73957,7 @@ function CIA takes nothing returns nothing
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local unit u = LoadUnitHandle(HY, h, 0)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or GetUnitAbilityLevel(u,'A1HN')== 0 or GetGameTime()> LoadReal(HY, h, 0) or LoadInteger(HY, h, 0)<= 0 then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or GetUnitAbilityLevel(u,'A1HN') == 0 or GetGameTime()> LoadReal(HY, h, 0) or LoadInteger(HY, h, 0)<= 0 then
 		call RemoveSavedHandle(HY, GetHandleId(u),'A1HN')
 		call UnitRemoveAbility(u,'A1HN')
 		call UnitRemoveAbility(u,'B0CJ')
@@ -74053,7 +74021,7 @@ function CBA takes nothing returns boolean
 	local unit u
 	local real ZCE
 	local boolean b = LoadBoolean(HY, h, 0)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 		set WUE = null
@@ -74124,7 +74092,7 @@ function CCA takes nothing returns boolean
 	else
 		set p = Sentinels[1]
 	endif
-	if GetTriggerEventId()== EVENT_UNIT_DAMAGED and GetOwningPlayer(GetEventDamageSource())== BW then
+	if GetTriggerEventId() == EVENT_UNIT_DAMAGED and GetOwningPlayer(GetEventDamageSource()) == CreepsPlayer then
 		if GetUnitAbilityLevel(WUE,'A1IE')> 0 then
 			call UnitRemoveAbility(WUE,'A1IE')
 			call UnitRemoveAbility(WUE,'B0C9')
@@ -74147,7 +74115,7 @@ function CCA takes nothing returns boolean
 		set WUE = null
 		return false
 	endif
-	if(UnitVisibleToPlayer(WUE, p) and GetUnitAbilityLevel(WUE,'A1HX')== 0) or GetUnitAbilityLevel(WUE,'A36D')== 1 then
+	if(UnitVisibleToPlayer(WUE, p) and GetUnitAbilityLevel(WUE,'A1HX') == 0) or GetUnitAbilityLevel(WUE,'A36D') == 1 then
 		set CFA = 0
 		if GetUnitAbilityLevel(WUE,'A1IE')> 0 or GetUnitAbilityLevel(WUE,'A1IF')> 0 or GetUnitAbilityLevel(WUE,'A1IG')> 0 then
 			set CDA = CDA + .1
@@ -74169,14 +74137,14 @@ function CCA takes nothing returns boolean
 		endif
 		call SaveReal(HY, h, 415, CDA * 1.)
 		call SaveReal(HY, h, 416, CFA * 1.)
-	elseif(UnitVisibleToPlayer(WUE, p) == false or GetUnitAbilityLevel(WUE,'A1HX')> 0) and GetUnitAbilityLevel(WUE,'A36D')== 0 then
+	elseif(UnitVisibleToPlayer(WUE, p) == false or GetUnitAbilityLevel(WUE,'A1HX')> 0) and GetUnitAbilityLevel(WUE,'A36D') == 0 then
 		set CDA = 0
-		if(GetUnitAbilityLevel(WUE,'A1IE'-1 + ODX)== 0) then
+		if(GetUnitAbilityLevel(WUE,'A1IE'-1 + ODX) == 0) then
 			set CFA = CFA + .1
 			if CFA > .4 then
 				set CFA = 0
 				if ODX == 1 then
-					if GetUnitAbilityLevel(WUE,'A1IE')== 0 then
+					if GetUnitAbilityLevel(WUE,'A1IE') == 0 then
 						call UnitAddPermanentAbility(WUE,'A1IE')
 						call UnitMakeAbilityPermanent(WUE, true,'A1I7')
 						call UnitMakeAbilityPermanent(WUE, true,'A1I8')
@@ -74187,7 +74155,7 @@ function CCA takes nothing returns boolean
 						call UnitRemoveAbility(WUE,'A1IE')
 						call UnitRemoveAbility(WUE,'B0C9')
 					endif
-					if GetUnitAbilityLevel(WUE,'A1IF')== 0 then
+					if GetUnitAbilityLevel(WUE,'A1IF') == 0 then
 						call UnitAddPermanentAbility(WUE,'A1IF')
 						call UnitMakeAbilityPermanent(WUE, true,'A1I7')
 						call UnitMakeAbilityPermanent(WUE, true,'A1I9')
@@ -74202,7 +74170,7 @@ function CCA takes nothing returns boolean
 						call UnitRemoveAbility(WUE,'A1IF')
 						call UnitRemoveAbility(WUE,'B0C9')
 					endif
-					if GetUnitAbilityLevel(WUE,'A1IG')== 0 then
+					if GetUnitAbilityLevel(WUE,'A1IG') == 0 then
 						call UnitAddPermanentAbility(WUE,'A1IG')
 						call UnitMakeAbilityPermanent(WUE, true,'A1I7')
 						call UnitMakeAbilityPermanent(WUE, true,'A1IA')
@@ -74243,7 +74211,7 @@ endfunction
 function CHA takes nothing returns nothing
 	local unit WLE = GetSpellTargetUnit()
 	local unit u = GetTriggerUnit()
-	if GetUnitAbilityLevel(WLE,'A1HX')> 0 and((IsUnitEnemy(WLE, GetOwningPlayer(u)) and GetUnitAbilityLevel(u,'Aloc')== 0) or IsUnitType(u, UNIT_TYPE_HERO) == false and GetUnitTypeId(u)!='u00L') then
+	if GetUnitAbilityLevel(WLE,'A1HX')> 0 and((IsUnitEnemy(WLE, GetOwningPlayer(u)) and GetUnitAbilityLevel(u,'Aloc') == 0) or IsUnitType(u, UNIT_TYPE_HERO) == false and GetUnitTypeId(u)!='u00L') then
 		call IssueImmediateOrderById(u,$D0004)
 		if IsUnitType(u, UNIT_TYPE_HERO) == false then
 			call InterfaceErrorForPlayer(GetOwningPlayer(u), "不能以该单位为目标")
@@ -74266,8 +74234,8 @@ function CJA takes nothing returns boolean
 	local integer E5X = LoadInteger(HY, h, 422)
 	local integer E6X = LoadInteger(HY, h, 423)
 	local integer E4X = LoadInteger(HY, h, 424)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
-		if(LoadBoolean(HY, h, 276)) == false and GetTriggerUnit()== WUE then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
+		if(LoadBoolean(HY, h, 276)) == false and GetTriggerUnit() == WUE then
 			call SaveBoolean(HY, h, 276,(true))
 			call SetHeroAgi(WUE, GetHeroAgi(WUE, false)-E5X -E6X -E4X, true)
 			call SaveInteger(K, GetHandleId(WUE), 31, LoadInteger(K, GetHandleId(WUE), 31)-E5X -E6X -E4X)
@@ -74275,7 +74243,7 @@ function CJA takes nothing returns boolean
 			if LoadInteger(HY, h, 0)> 0 then
 				call LodSystem_ReduceUnitExtraState(WUE, LoadInteger(HY, h, 0), "damage")
 			endif
-		elseif(LoadBoolean(HY, h, 277)) == false and GetTriggerUnit()== WWE then
+		elseif(LoadBoolean(HY, h, 277)) == false and GetTriggerUnit() == WWE then
 			call SaveBoolean(HY, h, 277,(true))
 			call SetHeroAgi(WWE, GetHeroAgi(WWE, false)+ E5X, true)
 			call SetHeroStr(WWE, GetHeroStr(WWE, false)+ E6X, true)
@@ -74434,7 +74402,7 @@ function CSA takes nothing returns boolean
 	local real GIX = GetDistanceBetween(GXR, GOR, W_E, W0E)
 	call SaveReal(HY, h, 23,((W_E)* 1.))
 	call SaveReal(HY, h, 24,((W0E)* 1.))
-	if GIX > 100  or EVX >(3.5 / .03) or IsMagicImmuneUnit(WWE) or GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GIX > 100  or EVX >(3.5 / .03) or IsMagicImmuneUnit(WWE) or GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call DestroyLightning(APX)
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
@@ -74642,7 +74610,7 @@ function C1A takes nothing returns nothing
 	local boolean C4A = false
 	local integer dt = LoadInteger(HY, h, 1)
 	local boolean C0A = LoadBoolean(HY, h, 0)
-	if GetTriggerEventId()== EVENT_GAME_TIMER_EXPIRED then
+	if GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
 		call SetUnitX(u, GetUnitX(u)+ N3X * Cos(I3X))
 		call SetUnitY(u, GetUnitY(u)+ N3X * Sin(I3X))
 		call SaveInteger(HY, h, 12, LoadInteger(HY, h, 12)+ 1)
@@ -74721,9 +74689,9 @@ function C5A takes unit WJE, integer WPV, real ZCE, real O_A, real C2A, real QTR
 endfunction
 function BSE takes nothing returns nothing
 	local real ZCE = 325
-	if GetUnitAbilityLevel(GetTriggerUnit(), GetSpellAbilityId())== 3 then
+	if GetUnitAbilityLevel(GetTriggerUnit(), GetSpellAbilityId()) == 3 then
 		set ZCE = 555
-	elseif GetUnitAbilityLevel(GetTriggerUnit(), GetSpellAbilityId())== 2 then
+	elseif GetUnitAbilityLevel(GetTriggerUnit(), GetSpellAbilityId()) == 2 then
 		set ZCE = 440
 	endif
 	call C5A(GetTriggerUnit(),'h02C', ZCE, 800, 100, 450, GetUnitX(GetTriggerUnit()), GetUnitY(GetTriggerUnit()), GetSpellTargetX(), GetSpellTargetY(), 800, 7, true)
@@ -74739,7 +74707,7 @@ function C7A takes nothing returns boolean
 	local unit WLE = LoadUnitHandle(HY, h, 3)
 	local real r = LoadReal(HY, h, 0)-0.1
 	local unit d
-	if GetTriggerEventId()== EVENT_UNIT_SPELL_ENDCAST then
+	if GetTriggerEventId() == EVENT_UNIT_SPELL_ENDCAST then
 		call FIX(WLE)
 		call FlushChildHashtable(HY,(h))
 		call CleanCurrentTrigger(t)
@@ -74751,7 +74719,7 @@ function C7A takes nothing returns boolean
 	else
 		call SaveReal(HY, h, 0, r)
 		call UnitDamageTargetEx(WJE, WLE, 1, LoadReal(HY, h, 1))
-		if GetUnitAbilityLevel(WLE,'Bdet')== 0 then
+		if GetUnitAbilityLevel(WLE,'Bdet') == 0 then
 			call FAX(WJE, WLE)
 		endif
 	endif
@@ -74808,7 +74776,7 @@ function C9A takes nothing returns boolean
 	local unit WUE = LoadUnitHandle(HY, h, 2)
 	local unit WLE = LoadUnitHandle(HY, h, 17)
 	local integer ODX = LoadInteger(HY, h, 5)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or GetTriggerEvalCount(t)== 4 or IsMagicImmuneUnit(WUE) then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or GetTriggerEvalCount(t) == 4 or IsMagicImmuneUnit(WUE) then
 		call WHV(WLE,'D011')
 		call DestroyEffect((LoadEffectHandle(HY, h, 32)))
 		call FlushChildHashtable(HY, h)
@@ -74889,7 +74857,7 @@ function DRA takes nothing returns boolean
 	local group CNO =(LoadGroupHandle(HY, h,$85))
 	local group g
 	local integer ODX = LoadInteger(HY, h, 0)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or(GetTriggerEventId()== EVENT_UNIT_SPELL_EFFECT and GetSpellAbilityId()!='A1Z2' and EVX > 0) or EVX > 100  or C6X(WUE) then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or(GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT and GetSpellAbilityId()!='A1Z2' and EVX > 0) or EVX > 100  or C6X(WUE) then
 		call A3X(x, y, 300)
 		call SetUnitVertexColorEx(WUE,-1,-1,-1, 255)
 		if  Rubick_AbilityFilter(WUE , 'A1RJ') then
@@ -74901,7 +74869,7 @@ function DRA takes nothing returns boolean
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 	else
-		if ModuloInteger(EVX, 10)== 0 then
+		if ModuloInteger(EVX, 10) == 0 then
 			call A3X(x, y, 200)
 		endif
 		call SaveInteger(HY, h, 34,(EVX + 1))
@@ -74973,7 +74941,7 @@ function DCA takes nothing returns boolean
 	local unit WUE = LoadUnitHandle(HY, h, 2)
 	local integer ODX = LoadInteger(HY, h, 0)
 	local group g
-	if GetTriggerEventId()== EVENT_UNIT_DEATH then
+	if GetTriggerEventId() == EVENT_UNIT_DEATH then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 	else
@@ -74998,10 +74966,10 @@ function DDA takes nothing returns boolean
 	local unit WLE = LoadUnitHandle(HY, h, 3)
 	local real x = LoadReal(HY, h, 6)
 	local real y = LoadReal(HY, h, 7)
-	if GetTriggerEventId()== EVENT_UNIT_DEATH then
+	if GetTriggerEventId() == EVENT_UNIT_DEATH then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
-	elseif GetTriggerEventId()== EVENT_UNIT_DAMAGED then
+	elseif GetTriggerEventId() == EVENT_UNIT_DAMAGED then
 		if AD > 0 or IsUnitIllusion(GetEventDamageSource()) then
 			call SetUnitToReduceDamage(DFA, GetEventDamage())
 		endif
@@ -75020,7 +74988,7 @@ function DDA takes nothing returns boolean
 		call SetUnitX(DFA, GetWidgetX(WUE))
 		call SetUnitY(DFA, GetWidgetY(WUE))
 	endif
-	if GetTriggerEvalCount(t)== 1 then
+	if GetTriggerEvalCount(t) == 1 then
 		call PauseUnit(WUE, true)
 	endif
 	set t = null
@@ -75041,7 +75009,7 @@ function DGA takes nothing returns boolean
 	local integer ODX = LoadInteger(HY, h, 0)
 	local group g
 	local unit KBX
-	if GetTriggerEventId()== EVENT_UNIT_DEATH then
+	if GetTriggerEventId() == EVENT_UNIT_DEATH then
 		call StopSound(IF, false, false)
 		call ShowUnit(DHA, false)
 		call ShowUnit(DJA, false)
@@ -75081,9 +75049,9 @@ function DGA takes nothing returns boolean
 		call UnitDamageTargetEx(KBX, WUE, 4,$5F5E100)
 		set KBX = null
 	else
-		if GetTriggerEvalCount(t)== 1 then
+		if GetTriggerEvalCount(t) == 1 then
 			call SetUnitFlyHeight(DFA, 0, 200)
-		elseif GetTriggerEvalCount(t)== 2 then
+		elseif GetTriggerEvalCount(t) == 2 then
 			call PauseUnit(DFA, false)
 			call UnitApplyTimedLife(DFA,'BTLF', .1)
 			call StopSound(IF, false, false)
@@ -75264,7 +75232,7 @@ function DLA takes unit u, timer t, integer WFV returns nothing
 endfunction
 function DMA takes nothing returns boolean
 	local unit t = GetFilterUnit()
-	if GetUnitAbilityLevel(t,'A04R')== 0 and UnitAlive(t) and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and t != Temp__ArrayUnit[0]and(IsUnitType(t, UNIT_TYPE_ANCIENT) == false or DRX(t)!= null) then
+	if GetUnitAbilityLevel(t,'A04R') == 0 and UnitAlive(t) and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and t != Temp__ArrayUnit[0]and(IsUnitType(t, UNIT_TYPE_ANCIENT) == false or DRX(t)!= null) then
 		call GroupAddUnit(LoadGroupHandle(P, XK[0], 1), t)
 	endif
 	set t = null
@@ -75312,7 +75280,7 @@ function DSA takes unit u, integer S6V returns nothing
 		if S6V ==851971 then
 			set x1 = GetWidgetX(u)
 			set y1 = GetWidgetY(u)
-			if GetTriggerEventId()== EVENT_UNIT_ISSUED_TARGET_ORDER then
+			if GetTriggerEventId() == EVENT_UNIT_ISSUED_TARGET_ORDER then
 				set x2 = GetWidgetX(GetOrderTargetUnit())
 				set y2 = GetWidgetY(GetOrderTargetUnit())
 			else
@@ -75558,8 +75526,8 @@ function D2A takes nothing returns boolean
 	local unit t = GetFilterUnit()
 	local unit u = Temp__ArrayUnit[0]
 	if IsAliveNotStrucNotWard(t) and IsUnitEnemy(u, GetOwningPlayer(t)) and IsMagicImmuneUnit(t) == false then
-		call CCX(t,'A45O'-1 + WC, 1, 4, 0)
-		call D1A(t, WC)
+		call CCX(t,'A45O'-1 + TempInt, 1, 4, 0)
+		call D1A(t, TempInt)
 	endif
 	set t = null
 	set u = null
@@ -75582,7 +75550,7 @@ function D4A takes unit u, real d returns nothing
 endfunction
 function D5A takes unit WUE, unit NIX, real x, real y, integer level returns nothing
 	set Temp__ArrayUnit[0]= WUE
-	set WC = level
+	set TempInt = level
 	call GroupEnumUnitsInRange(AK, x, y, 200, Condition(function D2A))
 	call DestroyEffect(AddSpecialEffect("war3mapImported\\Firaga_2.mdx", x, y))
 	call KillUnit(NIX)
@@ -75603,7 +75571,7 @@ function D6A takes nothing returns boolean
 	local real a
 	local real r = 18
 	local integer ODX = LoadInteger(HY, h, 0)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		set W_E = GetUnitX(WWE)
 		set W0E = GetUnitY(WWE)
 		call SaveReal(HY, h, 47, W_E * 1.)
@@ -75683,7 +75651,7 @@ function FVA takes nothing returns boolean
 	local real REI
 	local unit KBX = LoadUnitHandle(HY, h, 19)
 	set PI = ODX
-	if GetTriggerEventId()== EVENT_UNIT_SPELL_EFFECT then
+	if GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT then
 		if GetSpellAbilityId()=='A1Z2' then
 			if UnitIsDead(FEA) == false then
 				call D9A(WUE, FEA, GetSpellTargetUnit(), D8A, KBX)
@@ -75763,7 +75731,7 @@ function FVA takes nothing returns boolean
 			call SetUnitX(FRA, x)
 			call SetUnitY(FRA, y)
 		endif
-		if EVX > 800 or GetTriggerEventId()== EVENT_WIDGET_DEATH then
+		if EVX > 800 or GetTriggerEventId() == EVENT_WIDGET_DEATH then
 			if FEA != null and UnitIsDead(FEA) == false then
 				call D9A(WUE, FEA, WUE, D8A, KBX)
 			endif
@@ -75788,7 +75756,7 @@ function FVA takes nothing returns boolean
 				call BYX(XF, GetOwningPlayer(WUE))
 			endif
 			if EVX > 600 then
-				if ModuloInteger(EVX, 10)== 0 or ModuloInteger(EVX, 10)== 1 or ModuloInteger(EVX, 10)== 2 or ModuloInteger(EVX, 10)== 3 or ModuloInteger(EVX, 10)== 4 then
+				if ModuloInteger(EVX, 10) == 0 or ModuloInteger(EVX, 10) == 1 or ModuloInteger(EVX, 10) == 2 or ModuloInteger(EVX, 10) == 3 or ModuloInteger(EVX, 10) == 4 then
 					call SetUnitVertexColor(FEA, 255, 0, 0, 255)
 					call SetUnitVertexColor(FXA, 255, 0, 0, 255)
 					call SetUnitVertexColor(FOA, 255, 0, 0, 255)
@@ -75880,24 +75848,24 @@ function FIA takes nothing returns boolean
 	else
 		set IXX = IXX + IMaxBJ(EVX -5, 0)* 50
 	endif
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call DestroyEffect((LoadEffectHandle(HY, h, 32)))
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 		call SaveInteger(HY,(GetHandleId(WWE)), 627, 0)
 		call SaveReal(HY,(GetHandleId(WWE)), 628,(0 * 1.))
-	elseif GetTriggerEventId()== EVENT_UNIT_SPELL_EFFECT then
+	elseif GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT then
 		if GetSpellAbilityId()=='A1S9' then
 			call DestroyEffect((LoadEffectHandle(HY, h, 32)))
 			call FlushChildHashtable(HY, h)
 			call CleanCurrentTrigger(t)
 			call SaveInteger(HY,(GetHandleId(WWE)), 627, 0)
 			call SaveReal(HY,(GetHandleId(WWE)), 628,(0 * 1.))
-			if((LoadInteger(HY,(GetHandleId((WWE))),(4293)))== 1) then
+			if((LoadInteger(HY,(GetHandleId((WWE))),(4293))) == 1) then
 				call SetUnitInvulnerable(WWE, false)
 			endif
 			call UnitDamageTargetEx(WUE, WWE, 1, IXX)
-			if((LoadInteger(HY,(GetHandleId((WWE))),(4293)))== 1) then
+			if((LoadInteger(HY,(GetHandleId((WWE))),(4293))) == 1) then
 				call SetUnitInvulnerable(WWE, true)
 			endif
 			call CommonTextTag(I2S(R2I(IXX))+ "!", 2, WWE, .025, 100, 0, 200,$D8)
@@ -75908,11 +75876,11 @@ function FIA takes nothing returns boolean
 		call CleanCurrentTrigger(t)
 		call SaveInteger(HY,(GetHandleId(WWE)), 627, 0)
 		call SaveReal(HY,(GetHandleId(WWE)), 628,(0 * 1.))
-		if((LoadInteger(HY,(GetHandleId((WWE))),(4293)))== 1) then
+		if((LoadInteger(HY,(GetHandleId((WWE))),(4293))) == 1) then
 			call SetUnitInvulnerable(WWE, false)
 		endif
 		call UnitDamageTargetEx(WUE, WWE, 1, IXX)
-		if((LoadInteger(HY,(GetHandleId((WWE))),(4293)))== 1) then
+		if((LoadInteger(HY,(GetHandleId((WWE))),(4293))) == 1) then
 			call SetUnitInvulnerable(WWE, true)
 		endif
 		call CommonTextTag(I2S(R2I(IXX))+ "!", 2, WWE, .025, 100, 0, 200,$D8)
@@ -76029,7 +75997,7 @@ function FDA takes nothing returns boolean
 	if GetTriggerEventId()!= EVENT_PLAYER_UNIT_SUMMON then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
-	elseif GetUnitAbilityLevel(FFA,'B0DA')> 0 and GetOwningPlayer(GetSummoningUnit())== GetOwningPlayer(WUE) then
+	elseif GetUnitAbilityLevel(FFA,'B0DA')> 0 and GetOwningPlayer(GetSummoningUnit()) == GetOwningPlayer(WUE) then
 		if IsUnitAlly(WWE, GetOwningPlayer(WUE)) then
 			call SelectUnitAddForPlayer(FFA, GetOwningPlayer(WUE))
 		else
@@ -76128,7 +76096,7 @@ function FJA takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local integer ODX = LoadInteger(HY, h, 0)
 	local unit WLE = LoadUnitHandle(HY, h, 0)
-	if GetTriggerEventId()== EVENT_UNIT_DAMAGED then
+	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
 		if LoadBoolean(HY, h, 0) == false then
 			call SaveBoolean(HY, h, 0, true)
 			call UnitDamageTargetEx(GetEventDamageSource(), GetTriggerUnit(), 3, GetEventDamage()* LoadReal(HY, h, 0))
@@ -76186,11 +76154,11 @@ function time_effect_demonic_purge takes nothing returns boolean
 	local unit stg_u = LoadUnitHandle(HY, h, 17)
 	local integer tri_ec = GetTriggerEvalCount(t)
 	if tri_ec == 5 then
-		if(LoadInteger(HY, GetHandleId(stg_u), 4293)== 1) then
+		if(LoadInteger(HY, GetHandleId(stg_u), 4293) == 1) then
 			call SetUnitInvulnerable(stg_u, false)
 		endif
 		call UnitDamageTargetEx(trigUnit, stg_u, 1, 4 *(25 + 25 * LoadInteger(HY, h, 0)))
-		if(LoadInteger(HY, GetHandleId(stg_u), 4293)== 1) then
+		if(LoadInteger(HY, GetHandleId(stg_u), 4293) == 1) then
 			call SetUnitInvulnerable(stg_u, true)
 		endif
 		call FlushChildHashtable(HY, h)
@@ -76221,7 +76189,7 @@ function effect_demonic_purge takes unit u, unit stg_u returns nothing
 	set d = null
 endfunction
 function enum_demonic_purge takes nothing returns boolean
-	if(IsUnitEnemy(LoadUnitHandle(VV,'A1SA','cast'), GetOwningPlayer(GetFilterUnit())) and(GetUnitAbilityLevel(GetFilterUnit(),'Aloc')== 0 and IsAliveNotStrucNotWard(GetFilterUnit())))!= null then
+	if(IsUnitEnemy(LoadUnitHandle(VV,'A1SA','cast'), GetOwningPlayer(GetFilterUnit())) and(GetUnitAbilityLevel(GetFilterUnit(),'Aloc') == 0 and IsAliveNotStrucNotWard(GetFilterUnit())))!= null then
 		call effect_demonic_purge(LoadUnitHandle(VV,'A1SA','cast'), GetFilterUnit())
 	endif
 	return false
@@ -76324,7 +76292,7 @@ endfunction
 function FUA takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or GetTriggerEvalCount(t)> 3 / .05 then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or GetTriggerEvalCount(t)> 3 / .05 then
 		call UnitRemoveAbility(LoadUnitHandle(HY, h, 2),'A1SP')
 		call KillUnit(LoadUnitHandle(HY, h, 19))
 		call FlushChildHashtable(HY, h)
@@ -76371,7 +76339,7 @@ function FWA takes nothing returns boolean
 	local real GXR = GetUnitX(NIX)
 	local real GOR = GetUnitY(NIX)
 	local real a = AngleBetweenXY(GXR, GOR, GetUnitX(WWE), GetUnitY(WWE))* bj_DEGTORAD
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call UnitShareVision(NIX, GetOwningPlayer(WWE), false)
 		call DestroyEffect(LoadEffectHandle(HY, h, 32))
 		call FlushChildHashtable(HY, h)
@@ -76379,7 +76347,7 @@ function FWA takes nothing returns boolean
 		if GetTriggerUnit()!= NIX then
 			call KillUnit(NIX)
 		endif
-	elseif GetTriggerEventId()== EVENT_UNIT_DAMAGED then
+	elseif GetTriggerEventId() == EVENT_UNIT_DAMAGED then
 		call UnitRemoveBuffs(NIX, true, true)
 	elseif EVX < 3 / .02 then
 		call SetUnitFacing(NIX, a * bj_RADTODEG)
@@ -76559,8 +76527,8 @@ function F_A takes nothing returns boolean
 	local integer F0A = LoadInteger(HY, h, 375)
 	local unit WUE = LoadUnitHandle(HY, h, 2)
 	local integer EVX
-	if GetTriggerEventId()== EVENT_UNIT_DAMAGED then
-		if GetEventDamageSource()== WUE and(GetEventDamage()> 20 or IsUnitType(GetTriggerUnit(), UNIT_TYPE_STRUCTURE)) and FK then
+	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
+		if GetEventDamageSource() == WUE and(GetEventDamage()> 20 or IsUnitType(GetTriggerUnit(), UNIT_TYPE_STRUCTURE)) and FK then
 			set EVX = LoadInteger(HY, F0A, 34)
 			if EVX > 0 then
 				call SaveInteger(HY, F0A, 34, EVX + 1)
@@ -76614,12 +76582,12 @@ function F3A takes nothing returns boolean
 	local integer EVX = LoadInteger(HY, h, 34)
 	local integer ODX = LoadInteger(HY, h, 0)
 	local integer F0A = h
-	if GetTriggerEventId()== EVENT_PLAYER_UNIT_ATTACKED then
+	if GetTriggerEventId() == EVENT_PLAYER_UNIT_ATTACKED then
 		if IsUnitIllusion(GetAttacker()) and GetUnitAbilityLevel(GetAttacker(),'A1TW')> 0 then
 			call F2A(GetAttacker())
 			call UnitRemoveAbility(GetAttacker(),'A1TW')
 		endif
-		if GetAttacker()== WUE then
+		if GetAttacker() == WUE then
 			set EVX = EVX + 1
 			if EVX > 3 + ODX then
 				call UnitRemoveAbility(WUE,'A1TW')
@@ -76922,7 +76890,7 @@ function GXA takes nothing returns boolean
 		call DeallocateGroup(g)
 		set g = null
 	endif
-	if GetUnitAbilityLevel(WWE,'A42Q')== 0 or GetTriggerEvalCount(t)== 300 then
+	if GetUnitAbilityLevel(WWE,'A42Q') == 0 or GetTriggerEvalCount(t) == 300 then
 		call UnitRemoveAbility(WWE,'A42Q')
 		call UnitRemoveAbility(WWE,'B0HH')
 		call KillUnit(KBX)
@@ -76976,11 +76944,11 @@ endfunction
 function Disruptor_StaticStormClear takes nothing returns nothing
 	local trigger t = GetTriggeringTrigger()
 	local unit u = LoadUnitHandle(HY, GetHandleId(t), 0)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call FlushChildHashtable(HY, GetHandleId(t))
 		call CleanCurrentTrigger(t)
 	else
-		if GetUnitAbilityLevel(u,'B0DL')== 0 then
+		if GetUnitAbilityLevel(u,'B0DL') == 0 then
 			call FlushChildHashtable(HY, GetHandleId(t))
 			call CleanCurrentTrigger(t)
 		endif
@@ -76994,7 +76962,7 @@ endfunction
 function GAA takes nothing returns nothing
 	call UnitDamageTargetEx(PMV, GetEnumUnit(), 1, PLV)
 	call DestroyEffect(AddSpecialEffectTarget("war3mapImported\\Purge_NoBirth.mdx", GetEnumUnit(), "origin"))
-	if PPV and GetUnitAbilityLevel(GetEnumUnit(),'QINV')== 0 and GetUnitAbilityLevel(GetEnumUnit(),'AInv')> 0 and IsUnitType(GetEnumUnit(), UNIT_TYPE_HERO) then
+	if PPV and GetUnitAbilityLevel(GetEnumUnit(),'QINV') == 0 and GetUnitAbilityLevel(GetEnumUnit(),'AInv')> 0 and IsUnitType(GetEnumUnit(), UNIT_TYPE_HERO) then
 		call GIA(GetEnumUnit())
 	endif
 endfunction
@@ -77182,7 +77150,7 @@ function GKA takes nothing returns boolean
 		call SaveBoolean(HY, h, 515,(true))
 		call UnitAddPermanentAbility(GSA,'Aloc')
 	endif
-	if GetTriggerEventId()== EVENT_UNIT_SPELL_EFFECT then
+	if GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT then
 		if GetSpellAbilityId()=='A24A' then
 			if(LoadBoolean(HY, h, 655)) then
 				call SaveBoolean(HY, h, 655,(false))
@@ -77208,7 +77176,7 @@ function GKA takes nothing returns boolean
 		set d = RMinBJ(d + 5, 875)
 		call SaveReal(HY, h, 138,((d)* 1.))
 	endif
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or EVX == 950 or(UnitIsDead(GLA) and UnitIsDead(GMA) and UnitIsDead(GPA) and UnitIsDead(GQA) and UnitIsDead(GSA)) or(EVX > 1 and GetTriggerEventId()== EVENT_UNIT_SPELL_EFFECT and GetSpellAbilityId()=='A1T8') then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or EVX == 950 or(UnitIsDead(GLA) and UnitIsDead(GMA) and UnitIsDead(GPA) and UnitIsDead(GQA) and UnitIsDead(GSA)) or(EVX > 1 and GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT and GetSpellAbilityId()=='A1T8') then
 		if GetTriggerEventId()!= EVENT_UNIT_SPELL_EFFECT then
 			call UnitRemoveAbility(WUE,'A24A')
 			call UnitRemoveAbility(WUE,'A24B')
@@ -77473,10 +77441,10 @@ function G0A takes nothing returns boolean
 	local boolean I1O = false
 	local real G2A = .2 *(GetWidgetLife(WUE)* .025)
 	local real G3A = .2 *(GetUnitState(WUE, UNIT_STATE_MANA)* .025)
-	if GetTriggerEventId()== EVENT_UNIT_ISSUED_ORDER then
-		if GetIssuedOrderId()== 852589 then
+	if GetTriggerEventId() == EVENT_UNIT_ISSUED_ORDER then
+		if GetIssuedOrderId() == 852589 then
 			call G_A(WUE, ODX)
-		elseif GetIssuedOrderId()== 852590 then
+		elseif GetIssuedOrderId() == 852590 then
 			call GYA(WUE)
 		endif
 	endif
@@ -77570,7 +77538,7 @@ function G5A takes unit WUE, unit WWE, group CNO, integer level returns nothing
 	set g = null
 endfunction
 function G6A takes unit WUE, unit WWE returns boolean
-	return((LoadInteger(HY,(GetHandleId((WUE))),(4294)))== 1)
+	return((LoadInteger(HY,(GetHandleId((WUE))),(4294))) == 1)
 endfunction
 function G7A takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
@@ -77626,7 +77594,7 @@ function G8A takes nothing returns boolean
 	local real HEA =(LoadReal(HY, h, 667))
 	local real HXA
 	local real HOA
-	if WWE == null or WUE == null or UnitIsDead(WUE) or(EVX > 600 and G6A(WUE, WWE) == false and((LoadInteger(HY,(GetHandleId((WUE))),(4295)))== 1) == false) or(d > 925 and((LoadInteger(HY,(GetHandleId((WUE))),(4295)))!= 1)) or GetTriggerEventId()== EVENT_WIDGET_DEATH or(GetTriggerEventId()== EVENT_UNIT_SPELL_EFFECT and GetSpellAbilityId()=='A1TU') then
+	if WWE == null or WUE == null or UnitIsDead(WUE) or(EVX > 600 and G6A(WUE, WWE) == false and((LoadInteger(HY,(GetHandleId((WUE))),(4295))) == 1) == false) or(d > 925 and((LoadInteger(HY,(GetHandleId((WUE))),(4295)))!= 1)) or GetTriggerEventId() == EVENT_WIDGET_DEATH or(GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT and GetSpellAbilityId()=='A1TU') then
 		call DeallocateGroup(CNO)
 		call DestroyLightning(APX)
 		call UnitRemoveAbility(WWE,'A1TM')
@@ -77650,7 +77618,7 @@ function G8A takes nothing returns boolean
 		set HXA = G9A / GetUnitState(WUE, UNIT_STATE_MAX_LIFE)
 		set HOA = DDO / GetUnitState(WUE, UNIT_STATE_MAX_MANA)
 		if HXA -HVA > 0 and(HXA -HVA)< .5 then
-			if((LoadInteger(HY,(GetHandleId((WUE))),(4298)))== 1) == false then
+			if((LoadInteger(HY,(GetHandleId((WUE))),(4298))) == 1) == false then
 				call SetWidgetLife(WWE, GetWidgetLife(WWE)+(HXA -HVA)* GetUnitState(WUE, UNIT_STATE_MAX_LIFE)* 1.5)
 			endif
 		endif
@@ -77667,7 +77635,7 @@ function G8A takes nothing returns boolean
 		if IsObserverPlayer(LocalPlayer) then
 			set a = 1
 		endif
-		if d < 700 or((LoadInteger(HY,(GetHandleId((WUE))),(4295)))== 1) then
+		if d < 700 or((LoadInteger(HY,(GetHandleId((WUE))),(4295))) == 1) then
 			call SetLightningColor(APX, .0, 1., 1., a)
 		else
 			call SetLightningColor(APX, .8, .7, .4, a)
@@ -77792,7 +77760,7 @@ function HBA takes nothing returns boolean
 	local real WZE =(LoadReal(HY, h,$BE))
 	local fogmodifier fm =(LoadFogModifierHandle(HY, h, 42))
 	local string s
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call SaveInteger(HY,(GetHandleId((WUE))),(4294), 2)
 		call DestroyEffect((LoadEffectHandle(HY, h, 32)))
 		call FogModifierStop(fm)
@@ -77803,7 +77771,7 @@ function HBA takes nothing returns boolean
 		call A3X(W_E, W0E,$FA)
 		call A3X(WYE, WZE,$FA)
 		set s = "Objects\\Spawnmodels\\NightElf\\NECancelDeath\\NECancelDeath.mdl"
-		if GetTriggerEvalCount(t)== 1 then
+		if GetTriggerEvalCount(t) == 1 then
 			if UnitIsDead(WUE) == false then
 				call DestroyEffect(AddSpecialEffect(s, GetUnitX(WUE), GetUnitY(WUE)))
 				call SetUnitPosition(WUE, W_E, W0E)
@@ -78140,11 +78108,11 @@ function HSA takes nothing returns boolean
 	local effect eff = LoadEffectHandle(HY, h2, 32)
 	local trigger t = LoadTriggerHandle(HY, h2, 35)
 	local integer h = LoadInteger(HY, h2, 375)
-	if GetTriggerEvalCount(t2)== 1 then
+	if GetTriggerEvalCount(t2) == 1 then
 		call IssueTargetOrderById(u, 851983, target)
 	else
-		if GetTriggerEventId()== EVENT_UNIT_DAMAGED then
-			if GetEventDamageSource()== u and EXGetEventDamageData(1) != 0 and FK then
+		if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
+			if GetEventDamageSource() == u and EXGetEventDamageData(1) != 0 and FK then
 				call CXX(u,'A1UH', 1, .1)
 				call DestroyEffect(eff)
 				call CleanCurrentTrigger(t2)
@@ -78153,8 +78121,8 @@ function HSA takes nothing returns boolean
 				call FlushChildHashtable(HY, h)
 				call HPA(u, target, LoadInteger(HY, h2, 0))
 			endif
-		elseif GetTriggerEventId()== EVENT_PLAYER_UNIT_ATTACKED then
-			if GetAttacker()== u and GetTriggerUnit()!= target then
+		elseif GetTriggerEventId() == EVENT_PLAYER_UNIT_ATTACKED then
+			if GetAttacker() == u and GetTriggerUnit()!= target then
 				call FlushChildHashtable(HY, h2)
 				call CleanCurrentTrigger(t2)
 			endif
@@ -78185,7 +78153,7 @@ function HUA takes nothing returns boolean
 		call UnitRemoveAbility(u,'A1UH')
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
-	elseif GetAttacker()== u and GetTriggerUnit()!=(LoadUnitHandle(HY, h, 17)) and IsUnitAlly(GetTriggerUnit(), GetOwningPlayer(u)) == false and IsUnitType(GetTriggerUnit(), UNIT_TYPE_STRUCTURE) == false and GetUnitTypeId(u)!='N0MH' then
+	elseif GetAttacker() == u and GetTriggerUnit()!=(LoadUnitHandle(HY, h, 17)) and IsUnitAlly(GetTriggerUnit(), GetOwningPlayer(u)) == false and IsUnitType(GetTriggerUnit(), UNIT_TYPE_STRUCTURE) == false and GetUnitTypeId(u)!='N0MH' then
 		set target = GetTriggerUnit()
 		call SaveUnitHandle(HY, h, 17, target)
 		set t2 = CreateTrigger()
@@ -78258,7 +78226,7 @@ function HWA takes nothing returns boolean
 	endif
 	set nX = CoordinateX50(nX)
 	set nY = CoordinateY50(nY)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or GetUnitAbilityLevel(WLE,'B08V')> 0 or GetTriggerEvalCount(t)>$C8 then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or GetUnitAbilityLevel(WLE,'B08V')> 0 or GetTriggerEvalCount(t)>$C8 then
 		set X_A = true
 	else
 		call SetUnitPosition(WLE, nX, nY)
@@ -78298,7 +78266,7 @@ function H1A takes nothing returns nothing
 		set i = i + 1
 		set x = CoordinateX50(GetUnitX(WLE)+(EOX -i * 25)* Cos(N8X))
 		set y = CoordinateY50(GetUnitY(WLE)+(EOX -i * 25)* Sin(N8X))
-		if(IsPointInRegion(R4,((x)* 1.),((y)* 1.))) == false then
+		if(IsPointInRegion(TerrainCliffRegion,((x)* 1.),((y)* 1.))) == false then
 			set H2A = true
 		endif
 	endloop
@@ -78322,7 +78290,7 @@ function H1A takes nothing returns nothing
 	set t = null
 endfunction
 function KNE takes nothing returns nothing
-	if GetSpellTargetUnit()== CT then
+	if GetSpellTargetUnit() == CT then
 		call EXStopUnit(GetTriggerUnit())
 		call InterfaceErrorForPlayer(GetOwningPlayer(GetTriggerUnit()), GetObjectName('n0K9'))
 	else
@@ -78403,7 +78371,7 @@ function H5A takes nothing returns boolean
 		call DeallocateGroup(CNO)
 		call KillUnit(d)
 		call CleanCurrentTrigger(t)
-		if GetUnitAbilityLevel(WWE,'A3E9')== 1 and IsMagicImmuneUnit(u) == false then
+		if GetUnitAbilityLevel(WWE,'A3E9') == 1 and IsMagicImmuneUnit(u) == false then
 			call SaveUnitHandle(VV,'A3E9', 0, WWE)
 			call SaveUnitHandle(VV,'A3E9', 1, u)
 			call SaveInteger(VV,'A3E9', 0, LoadInteger(HY, h, 5))
@@ -78411,7 +78379,7 @@ function H5A takes nothing returns boolean
 		endif
 		call FlushChildHashtable(HY,(h))
 	else
-		if ModuloInteger(GetTriggerEvalCount(t), 5)== 0 then
+		if ModuloInteger(GetTriggerEvalCount(t), 5) == 0 then
 			call A3X(x, y, 200)
 			set g = AllocationGroup(453)
 			call GroupEnumUnitsInRange(g, x, y, KJR, Condition(function DHX))
@@ -78518,8 +78486,8 @@ function JXA takes nothing returns boolean
 	local unit WJE =(LoadUnitHandle(HY, h, 17))
 	local group g
 	local integer level = LoadInteger(HY, h, 5)
-	if GetTriggerEventId()== EVENT_GAME_TIMER_EXPIRED then
-		if GetTriggerEvalCount(t)== 1 then
+	if GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
+		if GetTriggerEvalCount(t) == 1 then
 			call IssueTargetOrderById(JOA,$D0012, WJE)
 			call TriggerRegisterDeathEvent(t, JOA)
 		endif
@@ -78581,10 +78549,10 @@ function JAA takes nothing returns boolean
 	local unit WUE =(LoadUnitHandle(HY, h, 2))
 	local unit WWE =(LoadUnitHandle(HY, h, 17))
 	local unit KBX =(LoadUnitHandle(HY, h, 19))
-	if GetTriggerEventId()== EVENT_UNIT_DEATH then
+	if GetTriggerEventId() == EVENT_UNIT_DEATH then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
-	elseif GetTriggerEventId()== EVENT_UNIT_DAMAGED and FK then
+	elseif GetTriggerEventId() == EVENT_UNIT_DAMAGED and FK then
 		set QEV = GetEventDamageSource()
 	else
 		call SetUnitX(WUE, GetUnitX(WWE))
@@ -78603,10 +78571,10 @@ function JNA takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local unit WUE =(LoadUnitHandle(HY, h, 2))
 	local unit WWE =(LoadUnitHandle(HY, h, 17))
-	if GetTriggerEventId()== EVENT_UNIT_DEATH then
+	if GetTriggerEventId() == EVENT_UNIT_DEATH then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
-	elseif GetTriggerEventId()== EVENT_UNIT_DAMAGED then
+	elseif GetTriggerEventId() == EVENT_UNIT_DAMAGED then
 		set QEV = GetEventDamageSource()
 	endif
 	set t = null
@@ -78757,7 +78725,7 @@ function JHA takes nothing returns boolean
 		endif
 		call SetUnitX(WWE, CoordinateX50(W_E))
 		call SetUnitY(WWE, CoordinateY50(W0E))
-		if IsPointInRegion(R4, GetUnitX(WWE), GetUnitY(WWE)) then
+		if IsPointInRegion(TerrainCliffRegion, GetUnitX(WWE), GetUnitY(WWE)) then
 			set l = DEX(GetUnitX(WWE), GetUnitY(WWE))
 			if IsUnitType(WWE, UNIT_TYPE_HERO) then
 				call SaveBoolean(K, GetHandleId(WWE), 99, true)
@@ -78826,13 +78794,13 @@ function JPA takes nothing returns boolean
 	local real W0E = LoadReal(HY, h, 48)
 	local integer JQA = LoadInteger(HY, h, 706)
 	local real a
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or(GetTriggerEventId()!= EVENT_UNIT_SPELL_EFFECT and C5X(WWE) == false) then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or(GetTriggerEventId()!= EVENT_UNIT_SPELL_EFFECT and C5X(WWE) == false) then
 		call S9E(GetOwningPlayer(WUE),'A27F', true)
 		call S9E(GetOwningPlayer(WUE),'A27X', false)
 		call JJA(WUE, WWE, LoadUnitHandle(HY, h, 711), W_E, W0E, LoadEffectHandle(HY, h, 32), LoadEffectHandle(HY, h, 176), LoadInteger(HY, h, 0))
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
-	elseif GetTriggerEventId()== EVENT_UNIT_SPELL_EFFECT then
+	elseif GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT then
 		if GetSpellAbilityId()=='A27X' then
 			call DestroyEffect((LoadEffectHandle(HY, h, 176)))
 			set a = AngleBetweenXY(GetUnitX(WWE), GetUnitY(WWE), GetSpellTargetX(), GetSpellTargetY())* bj_DEGTORAD
@@ -78853,7 +78821,7 @@ function JPA takes nothing returns boolean
 		set EVX = EVX + 1
 		call SaveInteger(HY, h, 34, EVX)
 		call SetUnitPathing(WWE, false)
-		if(LoadInteger(HY, h, 707))== 1 then
+		if(LoadInteger(HY, h, 707)) == 1 then
 			set JQA = JQA + 3
 		else
 			set JQA = JQA -3
@@ -79042,7 +79010,7 @@ function J_A takes integer id returns boolean
 	endif
 	loop
 	exitwhen i == QNV
-		if id == QAV[i]then
+		if id == QAV[i] then
 			return true
 		endif
 		set i = i + 1
@@ -79053,7 +79021,7 @@ function J0A takes nothing returns boolean
 	local unit u = GetTriggerUnit()
 	local integer id = GetSpellAbilityId()
 	local integer h
-	if IsUnitType(u, UNIT_TYPE_HERO) and J_A(id) == false and GetUnitAbilityLevel(u,'A04R')== 0 then
+	if IsUnitType(u, UNIT_TYPE_HERO) and J_A(id) == false and GetUnitAbilityLevel(u,'A04R') == 0 then
 		set h = GetHandleId(u)
 		call SaveInteger(HY, h, 705, id)
 		call SaveInteger(HY, h, 712, GetUnitAbilityLevel(u, id))
@@ -79108,7 +79076,7 @@ function J5A takes nothing returns boolean
 			call CleanCurrentTrigger(t)
 			call J4A(u, id, r)
 		endif
-	elseif GetTriggerEventId()== EVENT_UNIT_SPELL_EFFECT then
+	elseif GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT then
 		if(GetSpellAbilityId()=='A27H' or GetSpellAbilityId()=='A30J') then
 			if LoadInteger(HY,(GetHandleId(GetSpellTargetUnit())), 705) != id then
 				call S9E(GetOwningPlayer(u), id, false)
@@ -79116,11 +79084,11 @@ function J5A takes nothing returns boolean
 			endif
 			call FlushChildHashtable(HY, h)
 			call CleanCurrentTrigger(t)
-		elseif GetSpellAbilityId()== id then
-		//if GetSpellAbilityId()== id then
+		elseif GetSpellAbilityId() == id then
+		//if GetSpellAbilityId() == id then
 			call SaveReal(HY, h, 411, GetGameTime()* 1.)
 		endif
-	elseif GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	elseif GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		//call BYR(u)
 		call S9E(GetOwningPlayer(u), id, false)
 		call FlushChildHashtable(HY, h)
@@ -79146,7 +79114,7 @@ function J7A takes nothing returns nothing
 	local integer lv =(LoadInteger(HY, h, 5))
 	local real J8A = 60 *(2 + IMaxBJ(GetUnitAbilityLevel(u,'A27H'), GetUnitAbilityLevel(u,'A30J')))
 	local integer id = GetPlayerId(GetOwningPlayer(u))
-	local boolean J9A = (GetUnitAbilityLevel(u, J2A)== 0) or J2A == LoadInteger(HY,(GetHandleId(u)), 704)
+	local boolean J9A = (GetUnitAbilityLevel(u, J2A) == 0) or J2A == LoadInteger(HY,(GetHandleId(u)), 704)
 	local integer i = 1
 	call A5X(LF, GetUnitX(u), GetUnitY(u))
 	loop
@@ -79337,22 +79305,22 @@ function KIA takes nothing returns nothing
 		return
 	endif
 	if QBV == 1 then
-		if GetUnitAbilityLevel(GetEnumUnit(),'A27N')== 0 then
+		if GetUnitAbilityLevel(GetEnumUnit(),'A27N') == 0 then
 			call UnitAddPermanentAbility(GetEnumUnit(),'A27N')
 		endif
 	elseif QBV == 2 then
-		if GetUnitAbilityLevel(GetEnumUnit(),'A27O')== 0 then
+		if GetUnitAbilityLevel(GetEnumUnit(),'A27O') == 0 then
 			call UnitRemoveAbility(GetEnumUnit(),'A27N')
 			call UnitAddPermanentAbility(GetEnumUnit(),'A27O')
 		endif
 	elseif QBV == 3 then
-		if GetUnitAbilityLevel(GetEnumUnit(),'A27M')== 0 then
+		if GetUnitAbilityLevel(GetEnumUnit(),'A27M') == 0 then
 			call UnitRemoveAbility(GetEnumUnit(),'A27N')
 			call UnitRemoveAbility(GetEnumUnit(),'A27O')
 			call UnitAddPermanentAbility(GetEnumUnit(),'A27M')
 		endif
 	elseif QBV == 4 then
-		if GetUnitAbilityLevel(GetEnumUnit(),'A27P')== 0 then
+		if GetUnitAbilityLevel(GetEnumUnit(),'A27P') == 0 then
 			call UnitRemoveAbility(GetEnumUnit(),'A27N')
 			call UnitRemoveAbility(GetEnumUnit(),'A27O')
 			call UnitRemoveAbility(GetEnumUnit(),'A27M')
@@ -79389,7 +79357,7 @@ function KAAA takes nothing returns boolean
 	if UnitIsDead(WUE) == false then
 		call GroupEnumUnitsInRange(g, x, y, 925, Condition(function B7O))
 	endif
-	if UnitIsDead(WUE) == false and GetUnitAbilityLevel(WUE,'A36D')== 0 then
+	if UnitIsDead(WUE) == false and GetUnitAbilityLevel(WUE,'A36D') == 0 then
 		call ForGroup(g, function KIAA2)
 	endif
 	call DeallocateGroup(g)
@@ -79421,7 +79389,7 @@ function KAA takes nothing returns boolean
 	endif
 	call GroupRemoveGroup(g, IQI)
 	call ForGroup(IQI, function KRA)
-	if UnitIsDead(WUE) == false and GetUnitAbilityLevel(WUE,'A36D')== 0 then
+	if UnitIsDead(WUE) == false and GetUnitAbilityLevel(WUE,'A36D') == 0 then
 		call ForGroup(g, function KIA)
 	endif
 	call SaveGroupHandle(HY, h, 340,(g))
@@ -79501,7 +79469,7 @@ function DKE takes nothing returns nothing
 	local unit d = CreateUnit(GetOwningPlayer(GetTriggerUnit()),'e00E', GetUnitX(GetTriggerUnit()), GetUnitY(GetTriggerUnit()), GetUnitFacing(GetTriggerUnit()))
 	call UnitAddAbility(d,'A3II')
 	call SetUnitAbilityLevel(d,'A3II', GetUnitAbilityLevel(GetTriggerUnit(), GetSpellAbilityId()))
-	if GetSpellTargetUnit()== GetTriggerUnit() then
+	if GetSpellTargetUnit() == GetTriggerUnit() then
 		call B1R(d, "carrionswarm", GetUnitX(GetTriggerUnit())+ 1 * Cos(bj_DEGTORAD * GetUnitFacing(GetTriggerUnit())), GetUnitY(GetTriggerUnit())+ 1 * Sin(bj_DEGTORAD * GetUnitFacing(GetTriggerUnit())))
 	else
 		call B1R(d, "carrionswarm", GetSpellTargetX(), GetSpellTargetY())
@@ -79576,7 +79544,7 @@ function KJA takes nothing returns boolean
 	local unit WUE = LoadUnitHandle(HY, h, 2)
 	local integer ODX = LoadInteger(HY, h, 0)
 	local group g
-	if(GetUnitAbilityLevel(WUE,'B0FP')== 0 and GetUnitAbilityLevel(WUE,'B0FQ')== 0) or(GetTriggerEventId()== EVENT_UNIT_SPELL_EFFECT and GetSpellAbilityId()=='A2HS') then
+	if(GetUnitAbilityLevel(WUE,'B0FP') == 0 and GetUnitAbilityLevel(WUE,'B0FQ') == 0) or(GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT and GetSpellAbilityId()=='A2HS') then
 		call DestroyEffect(LoadEffectHandle(HY, h, 32))
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
@@ -79675,8 +79643,8 @@ function KUA takes nothing returns nothing
 	local unit WLE = LoadUnitHandle(HY, h, 1)
 	local group g = LoadGroupHandle(HY, h, 2)
 	local group gg = LoadGroupHandle(HY, h, 3)
-	if GetTriggerEventId()== EVENT_UNIT_DAMAGED then
-		if GetEventDamageSource()== KWA and AD < 1 then
+	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
+		if GetEventDamageSource() == KWA and AD < 1 then
 			call GroupAddUnit(g, WLE)
 			call GroupRemoveUnit(gg, WLE)
 			call FlushChildHashtable(HY, h)
@@ -79751,7 +79719,7 @@ function K_A takes nothing returns boolean
 	local fogmodifier fm = LoadFogModifierHandle(HY, h, 42)
 	local trigger tt
 	loop
-	exitwhen FirstOfGroup(g)== null or b
+	exitwhen FirstOfGroup(g) == null or b
 		set target = FirstOfGroup(g)
 		call GroupRemoveUnit(g, target)
 		if UnitIsDead(target) then
@@ -79766,7 +79734,7 @@ function K_A takes nothing returns boolean
 	call SetUnitPathing(u, false)
 	call SetUnitInvulnerable(u, true)
 	call KZA(u)
-	if b == false or(LoadInteger(HY, GetHandleId(u), 4319))== 1 or UnitIsDead(u) then
+	if b == false or(LoadInteger(HY, GetHandleId(u), 4319)) == 1 or UnitIsDead(u) then
 		call SaveInteger(HY, GetHandleId(u), 4318, 2)
 		call KLA(u)
 		call UnitRemoveAbility(u,'QF90')
@@ -79786,7 +79754,7 @@ function K_A takes nothing returns boolean
 		call YDWEUnitTransform( u, LoadInteger(ExtraHT, GetHandleId(u), HTKEY_UNIT_ORIGIN_TYPEID ) )
 		call SetUnitCurrentScaleEx(u, GetUnitCurrentScale(u))
 		//call FixUnitSkillsBug(u)
-		if(LoadInteger(HY, GetHandleId(u), 4319)== 1) == false then
+		if(LoadInteger(HY, GetHandleId(u), 4319) == 1) == false then
 			call SetUnitX(u, LoadReal(HY, h, 189))
 			call SetUnitY(u, LoadReal(HY, h,$BE))
 		endif
@@ -79934,7 +79902,7 @@ function K2A takes nothing returns boolean
 	if ODX > 2 then
 		set KLR = 3
 	endif
-	if GetTriggerEvalCount(t)== KLR then
+	if GetTriggerEvalCount(t) == KLR then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 	endif
@@ -79978,7 +79946,7 @@ function DQE takes nothing returns nothing
 	set U2 = WUE
 	call GroupEnumUnitsInRange(g, x, y, 425, Condition(function DSX))
 	loop
-	exitwhen FirstOfGroup(g)== null or XMR == 2
+	exitwhen FirstOfGroup(g) == null or XMR == 2
 		set u = GroupPickRandomUnit(g)
 		if u != null then
 			if XMR == 0 then
@@ -80168,7 +80136,7 @@ function LBA takes nothing returns boolean
 	local real NCX
 	local real d = GetDistanceBetween(GRR, GIR, W_E, W0E)
 	local real VEI = U6V(WUE)* 2.5 * .02
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call LRA(WUE, L3R)
 		
 		call DestroyTextTag(LoadTextTagHandle(HY, GetHandleId(L3R), 'time'))
@@ -80303,7 +80271,7 @@ function LKA takes nothing returns boolean
 	endif
 	set a = AngleBetweenXY(GRR, GIR, W_E, W0E)* bj_DEGTORAD
 	set d = GetDistanceBetween(GRR, GIR, W_E, W0E)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call SaveInteger(HY, GetHandleId(WUE), 4319, 2)
 		call ResetUnitVertexColor(WUE)
 		call SetUnitVertexColorEx(WUE,-1,-1,-1, 255)
@@ -80458,7 +80426,7 @@ endfunction
 function SAE takes nothing returns nothing
 	call UnitAddPermanentAbility(GetTriggerUnit(),'A2JL')
 	call SetUnitAbilityLevel(GetTriggerUnit(),'A2JL', GetUnitAbilityLevel(GetTriggerUnit(),'A2JK'))
-	if GetUnitAbilityLevel(GetTriggerUnit(),'A2JK')== 1 then
+	if GetUnitAbilityLevel(GetTriggerUnit(),'A2JK') == 1 then
 		call LPA()
 		call LEA()
 	endif
@@ -80540,7 +80508,7 @@ function LUA takes unit WLE returns nothing
 	endif
 endfunction
 function LWA takes unit R8X, unit WLE returns nothing
-	if GetUnitAbilityLevel(WLE,'A2EY')> 0 and LoadInteger(HY, GetHandleId(WLE), 4316)!= 1 and IsUnitEnemy(WLE, GetOwningPlayer(R8X)) and GetUnitAbilityLevel(WLE,'A36D')== 0 then
+	if GetUnitAbilityLevel(WLE,'A2EY')> 0 and LoadInteger(HY, GetHandleId(WLE), 4316)!= 1 and IsUnitEnemy(WLE, GetOwningPlayer(R8X)) and GetUnitAbilityLevel(WLE,'A36D') == 0 then
 		call LUA(WLE)
 	endif
 endfunction
@@ -80618,7 +80586,7 @@ function LZA takes nothing returns boolean
 	local unit KBX
 	local integer ph
 	local unit u
-	if GetTriggerEvalCount(t)== 1 then
+	if GetTriggerEvalCount(t) == 1 then
 		if LoadBoolean(HY, h, 0) then
 			call BWR(WUE,'B467', 9999)
 			call BWR(WWE,'B467', 9999)
@@ -80631,9 +80599,9 @@ function LZA takes nothing returns boolean
 			call CCX(WWE,'A467', 1, .75 * level + 3.25,'B467')
 		endif
 	endif
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or KGX <(GetGameTime()) or WTE(WUE, WWE)>$7D0 then
-		if GetTriggerEventId()== EVENT_WIDGET_DEATH then
-			if GetTriggerUnit()== WUE then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or KGX <(GetGameTime()) or WTE(WUE, WWE)>$7D0 then
+		if GetTriggerEventId() == EVENT_WIDGET_DEATH then
+			if GetTriggerUnit() == WUE then
 				set u = WWE
 			else
 				set u = WUE
@@ -80678,7 +80646,7 @@ function L_A takes unit WUE, unit WWE returns nothing
 	local trigger t
 	local integer h
 	local boolean MDR = GetUnitAbilityLevel(WUE,'A38C')> 0
-	if GetUnitAbilityLevel(WUE,'Aloc')== 1 and HaveSavedHandle(HY, GetHandleId(WUE), 0) then
+	if GetUnitAbilityLevel(WUE,'Aloc') == 1 and HaveSavedHandle(HY, GetHandleId(WUE), 0) then
 		set WUE = LoadUnitHandle(HY, GetHandleId(WUE), 0)
 	endif
 	call SetUnitPathing(WUE, false)
@@ -80737,14 +80705,14 @@ function L1A takes nothing returns boolean
 	local integer EVX =(LoadInteger(HY, h, 34))
 	set EVX = EVX + 1
 	call SaveInteger(HY, h, 34,(EVX))
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or EVX > 50 or GetUnitAbilityLevel(WWE,'A2J4')== 0 then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or EVX > 50 or GetUnitAbilityLevel(WWE,'A2J4') == 0 then
 		call UnitRemoveAbility(WWE,'A2J4')
 		call FlushChildHashtable(HY, h)
 		call RemoveSavedHandle(HY, GetHandleId(WWE),'A2J2')
 		call CleanCurrentTrigger(t)
 	else
 		call SetWidgetLife(WWE, GetWidgetLife(WWE)+ 2 + 1 * ODX)
-		if ModuloInteger(EVX, 10)== 1 then
+		if ModuloInteger(EVX, 10) == 1 then
 			call ARX("Abilities\\Spells\\Orc\\SpiritLink\\SpiritLinkZapTarget.mdl", WWE, "chest", 1.9)
 		endif
 	endif
@@ -80786,7 +80754,7 @@ function Legion_PtA_Init takes nothing returns nothing
 	set QPV[4]='A2J6'
 endfunction
 function L2A takes nothing returns nothing
-	if(IsUnitType(GetEnumUnit(), UNIT_TYPE_SUMMONED) and CYX(GetEnumUnit()) == false and GetUnitAbilityLevel(GetEnumUnit(),'ACrk')== 0 and GetUnitAbilityLevel(GetEnumUnit(),'A12G')== 0) or IsUnitIllusion(GetEnumUnit()) then
+	if(IsUnitType(GetEnumUnit(), UNIT_TYPE_SUMMONED) and CYX(GetEnumUnit()) == false and GetUnitAbilityLevel(GetEnumUnit(),'ACrk') == 0 and GetUnitAbilityLevel(GetEnumUnit(),'A12G') == 0) or IsUnitIllusion(GetEnumUnit()) then
 		call UnitDamageTargetEx(GetTriggerUnit(), GetEnumUnit(), 1, GetUnitState(GetEnumUnit(), UNIT_STATE_MAX_LIFE)* .5)
 	endif
 	call UnitDamageTargetEx(GetTriggerUnit(), GetEnumUnit(), 1, 50 * QTV +($C+ QTV * 2)* QQV +(5 + QTV *$F)* QSV)
@@ -80803,7 +80771,7 @@ function L4A takes nothing returns nothing
 	local integer h = GetHandleId(t)
 	local integer c = LoadInteger(HY, h, 0)
 	local unit u = LoadUnitHandle(HY, h, 0)
-	if c >= 5 * 7 or GetUnitAbilityLevel(u,'C020')== 0 then
+	if c >= 5 * 7 or GetUnitAbilityLevel(u,'C020') == 0 then
 		call UnitRemoveAbility(u,'C020')
 		call UnitRemoveAbility(u,'D020')
 		call J8X(u, LoadInteger(HY, h, 1))
@@ -80929,7 +80897,7 @@ function L7A takes nothing returns nothing
 	local integer ODX = LoadInteger(HY, GetHandleId(GetTriggeringTrigger()), 0)
 	local integer i = E3X(WUE)
 	local real IXX = 40 + 20 * ODX + 1.6 * i
-	if GetUnitAbilityLevel(WWE,'A3E9')== 1 and IsMagicImmuneUnit(WUE) == false then
+	if GetUnitAbilityLevel(WWE,'A3E9') == 1 and IsMagicImmuneUnit(WUE) == false then
 		call SaveUnitHandle(VV,'A3E9', 0, WWE)
 		call SaveUnitHandle(VV,'A3E9', 1, WUE)
 		call SaveInteger(VV,'A3E9', 0, ODX)
@@ -81056,7 +81024,7 @@ function MAA takes nothing returns boolean
 	local integer MNA =(LoadInteger(HY, h, 422))
 	local integer MBA =(LoadInteger(HY, h, 423))
 	local integer JLI =(LoadInteger(HY, h, 424))
-	if GetUnitAbilityLevel(WWE,'A42S')== 0 or GetTriggerEvalCount(t)> 35 or GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetUnitAbilityLevel(WWE,'A42S') == 0 or GetTriggerEvalCount(t)> 35 or GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call SetHeroAgi(WWE, GetHeroAgi(WWE, false)+ MNA, true)
 		call SetHeroStr(WWE, GetHeroStr(WWE, false)+ MBA, true)
 		call SetHeroInt(WWE, GetHeroInt(WWE, false)+ JLI, true)
@@ -81320,7 +81288,7 @@ function MPA takes unit u returns nothing
 	set t = null
 endfunction
 function MSA takes unit R8X, unit WLE returns nothing
-	if GetUnitAbilityLevel(WLE,'A2E4')> 0 and GetUnitAbilityLevel(WLE,'A36D')== 0 and IsUnitEnemy(R8X, GetOwningPlayer(WLE)) then
+	if GetUnitAbilityLevel(WLE,'A2E4')> 0 and GetUnitAbilityLevel(WLE,'A36D') == 0 and IsUnitEnemy(R8X, GetOwningPlayer(WLE)) then
 		call MPA(WLE)
 	endif
 endfunction
@@ -81405,8 +81373,8 @@ function M1A takes nothing returns boolean
 		endif
 	endif
 	call UnitAddPermanentAbility(WUE, M4A)
-	if GetTriggerEventId()== EVENT_UNIT_SPELL_EFFECT then //释放技能结束
-		if GetSpellAbilityId()== M5A then
+	if GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT then //释放技能结束
+		if GetSpellAbilityId() == M5A then
 			call SaveInteger(HY, h, 33, 2)
 			call GroupClear(D7R) //
 			call S9E(GetOwningPlayer(WUE), M5A, false)
@@ -81418,10 +81386,10 @@ function M1A takes nothing returns boolean
 			call TEV(WUE, M5A, 0)
 		endif
 	//单位死亡或拉比克大窃取的技能换了
-	elseif GetTriggerEventId()== EVENT_WIDGET_DEATH or b then
+	elseif GetTriggerEventId() == EVENT_WIDGET_DEATH or b then
 		call TEV(WUE, M5A, 0)
 		set b = Rubick_AbilityFilter(WUE , 'A2E5')
-		if b or (LoadInteger(HY, GetHandleId(WUE), 704))== FJI then
+		if b or (LoadInteger(HY, GetHandleId(WUE), 704)) == FJI then
 			if FJI =='A43Q' then
 				if LoadBoolean(P, GetHandleId(U2),'A43Q') then
 					call S9E(GetOwningPlayer(WUE), FJI, true)
@@ -81511,7 +81479,7 @@ function M1A takes nothing returns boolean
 			call DeallocateGroup(D7R)
 			call FlushChildHashtable(HY, h)
 			call CleanCurrentTrigger(t)
-			if Rubick_AbilityFilter(WUE , 'A2E5') or(LoadInteger(HY,(GetHandleId(WUE)), 704))== FJI then
+			if Rubick_AbilityFilter(WUE , 'A2E5') or(LoadInteger(HY,(GetHandleId(WUE)), 704)) == FJI then
 				if FJI =='A43Q' then
 					//这里判断一下是否选了此技能 没选并且是偷的就可以重新显示
 					if LoadBoolean(P, GetHandleId(U2),'A43Q') or ( not PlayerHaveAbilityByActive(GetOwningPlayer(WUE), 'A2E5') and LoadInteger(HY, GetHandleId(WUE), 704) == 'A43Q' ) then
@@ -81602,7 +81570,7 @@ function delXL takes nothing returns nothing
 endfunction
 function HEX takes nothing returns nothing
 	call UnitAddPermanentAbility(U2,'A43Q')
-	call S9E(GetOwningPlayer(U2),'A43Q', GetUnitAbilityLevel(U2,'A43O')== 0)
+	call S9E(GetOwningPlayer(U2),'A43Q', GetUnitAbilityLevel(U2,'A43O') == 0)
 	call SaveBoolean(P, GetHandleId(U2),'A43Q', true)
 	call SetUnitAbilityLevel(U2,'A43Q', GetUnitAbilityLevel(U2,'A2E5')+ GetUnitAbilityLevel(U2,'A43S'))
 endfunction
@@ -81658,7 +81626,7 @@ function M8A takes nothing returns nothing
 	local unit u = null
 	local integer level = LoadInteger(HY, h, 2)
 	local integer i = LoadInteger(HY, h, 3)
-	if GetTriggerEventId()== EVENT_UNIT_SPELL_ENDCAST and GetSpellAbilityId()== LoadInteger(HY, h, 0) then
+	if GetTriggerEventId() == EVENT_UNIT_SPELL_ENDCAST and GetSpellAbilityId() == LoadInteger(HY, h, 0) then
 		set i = i + 1
 		if i >= LoadInteger(HY, h, 4) then
 			set u = LoadUnitHandle(HY, h, 0)
@@ -81683,7 +81651,7 @@ endfunction
 function M9A takes unit u, integer TPE, integer PVA, integer level returns nothing
 	local trigger t = null
 	local integer h
-	if not UnitAddPermanentAbility(u, HeroCommonSkills[PlayerSkillIndex[TPE]]) and GetUnitAbilityLevel(u, HeroCommonSkills[PlayerSkillIndex[TPE]])== 0 then
+	if not UnitAddPermanentAbility(u, HeroCommonSkills[PlayerSkillIndex[TPE]]) and GetUnitAbilityLevel(u, HeroCommonSkills[PlayerSkillIndex[TPE]]) == 0 then
 		return
 	endif
 	set t = CreateTrigger()
@@ -81732,7 +81700,7 @@ function PEA takes unit u, integer TPE, integer PXA returns boolean
 	if CheckAbilityIdFormIndex(PXA,-1, "metamorphosis", null) and(UnitTypeIsMetamorphosis(u) or LoadBoolean(P, GetHandleId(u),'A40K') or LoadBoolean(P, GetHandleId(u),'A40K'+ 1) or LoadBoolean(P, GetHandleId(u),'A40K'+ 2) or LoadBoolean(P, GetHandleId(u),'A40K'+ 3)) then
 		return false
 	endif
-	if(LoadInteger(P, GetHandleId(u),'A40K')== TPE or LoadInteger(P, GetHandleId(u),'A40K'+ 1)== TPE or LoadInteger(P, GetHandleId(u),'A40K'+ 2)== TPE or LoadInteger(P, GetHandleId(u),'A40K'+ 3)== TPE) then
+	if(LoadInteger(P, GetHandleId(u),'A40K') == TPE or LoadInteger(P, GetHandleId(u),'A40K'+ 1) == TPE or LoadInteger(P, GetHandleId(u),'A40K'+ 2) == TPE or LoadInteger(P, GetHandleId(u),'A40K'+ 3) == TPE) then
 		return false
 	endif
 	return true
@@ -81850,7 +81818,7 @@ function PBA takes unit u returns nothing
 	local integer level = GetUnitAbilityLevel(Player__Hero[GetPlayerId(GetOwningPlayer(u))],'A00T')
 	local real WIE = 99999
 	local unit u2 = null
-	if GetUnitAbilityLevel(u,'BFig')== 1 then
+	if GetUnitAbilityLevel(u,'BFig') == 1 then
 		call KillUnit(u)
 		call RemoveUnit(u)
 		set Q2 = 1 + level
@@ -81894,7 +81862,7 @@ function PDA takes unit u returns nothing
 	local integer level = GetUnitAbilityLevel(Player__Hero[GetPlayerId(GetOwningPlayer(u))],'A43Y')
 	local real WIE = 99999
 	local unit u2 = null
-	if GetUnitAbilityLevel(u,'BFig')== 1 then
+	if GetUnitAbilityLevel(u,'BFig') == 1 then
 		call KillUnit(u)
 		call RemoveUnit(u)
 		set Q2 = 1 + level * 2
@@ -81976,7 +81944,7 @@ function CreateLodTrigger takes nothing returns nothing
 endfunction
 function PGA takes nothing returns boolean
 	local unit t = GetFilterUnit()
-	if UnitAlive(t) and IsUnitAlly(Temp__ArrayUnit[0], GetOwningPlayer(t)) and GetUnitAbilityLevel(t,'A04R')== 0 and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and t != Temp__ArrayUnit[0]then
+	if UnitAlive(t) and IsUnitAlly(Temp__ArrayUnit[0], GetOwningPlayer(t)) and GetUnitAbilityLevel(t,'A04R') == 0 and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and t != Temp__ArrayUnit[0] then
 		call SaveBoolean(P, 99999, 99999, false)
 		set t = null
 	endif
@@ -82000,7 +81968,7 @@ function PHA takes nothing returns nothing
 	call SaveBoolean(P, 99999, 99999, true)
 	call GroupEnumUnitsInRange(AK, GetWidgetX(u), GetWidgetY(u),$FA, Condition(function PGA))
 	if LoadBoolean(P, 99999, 99999) then
-		if GetUnitAbilityLevel(u,'D027')== 0 then
+		if GetUnitAbilityLevel(u,'D027') == 0 then
 			call WJV(u,'C027','D027', 6 -UYX * .05)
 		endif
 		if UYX /$A== UYX / 10. then
@@ -82032,7 +82000,7 @@ function PJA takes nothing returns nothing
 	local integer ETX
 	local integer WFV
 	local unit u = GetFilterUnit()
-	if IsUnitAlly(u, Temp__Player) and(IsUnitType(u, UNIT_TYPE_HERO) or IsUnitType(u, UNIT_TYPE_STRUCTURE)) and GetUnitAbilityLevel(u,'A04R')== 0 and UnitAlive(u) then
+	if IsUnitAlly(u, Temp__Player) and(IsUnitType(u, UNIT_TYPE_HERO) or IsUnitType(u, UNIT_TYPE_STRUCTURE)) and GetUnitAbilityLevel(u,'A04R') == 0 and UnitAlive(u) then
 		call GroupAddUnit(BK, u)
 		if IsUnitInGroup(u, IK) == false then
 			set WFV = GetHandleId(u)
@@ -82139,7 +82107,7 @@ function PLA takes unit u returns nothing
 endfunction
 function PMA takes nothing returns boolean
 	local unit t = GetFilterUnit()
-	if IsUnitEnemy(t, Temp__Player) and GetUnitAbilityLevel(t,'A04R')== 0 and IsMagicImmuneUnit(t) == false and UnitAlive(t) and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and(IsUnitType(t, UNIT_TYPE_ANCIENT) == false or DRX(t)) then
+	if IsUnitEnemy(t, Temp__Player) and GetUnitAbilityLevel(t,'A04R') == 0 and IsMagicImmuneUnit(t) == false and UnitAlive(t) and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and(IsUnitType(t, UNIT_TYPE_ANCIENT) == false or DRX(t)) then
 		call PLA(t)
 	endif
 	set t = null
@@ -82272,7 +82240,7 @@ function PYA takes nothing returns boolean
 	local unit WJE =(LoadUnitHandle(HY, h, 2))
 	local unit PUA =(LoadUnitHandle(HY, h, 17))
 	local integer level = GetUnitAbilityLevel(WJE,'A2M0')
-	if GetTriggerEvalCount(t)==$C8 or GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEvalCount(t)==$C8 or GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 		call KillUnit(PUA)
@@ -82318,14 +82286,14 @@ function YUV takes nothing returns nothing
 	call DisableTrigger(CUV)
 	loop
 	exitwhen i > 5
-		if UnitItemInSlot(WJE, i)!= null and GetItemTypeId(UnitItemInSlot(WJE, i))!= XOV[AIV]and GetItemTypeId(UnitItemInSlot(WJE, i))!= XOV[A6V]and GetItemTypeId(UnitItemInSlot(WJE, i))!= XOV[R2V]and GetItemTypeId(UnitItemInSlot(WJE, i))!= XOV[R3V]and GetItemTypeId(UnitItemInSlot(WJE, i))!= XOV[IVV]then
+		if UnitItemInSlot(WJE, i)!= null and GetItemTypeId(UnitItemInSlot(WJE, i))!= XOV[AIV]and GetItemTypeId(UnitItemInSlot(WJE, i))!= XOV[A6V]and GetItemTypeId(UnitItemInSlot(WJE, i))!= XOV[R2V]and GetItemTypeId(UnitItemInSlot(WJE, i))!= XOV[R3V]and GetItemTypeId(UnitItemInSlot(WJE, i))!= XOV[IVV] then
 			set it = CreateItem(GetItemTypeId(UnitItemInSlot(WJE, i)), 0, 0)
 			if GetItemCharges(UnitItemInSlot(WJE, i))> 0 then
 				call SetItemCharges(it, GetItemCharges(UnitItemInSlot(WJE, i)))
 			endif
 			call UnitAddItem(PUA, it)
 			call SetItemPlayer(it, GetOwningPlayer(PUA), false)
-			if GetItemTypeId(it)== XOV[ASV]or GetItemTypeId(it)== XOV[ATV]or GetItemTypeId(it)== XOV[X4V]then
+			if GetItemTypeId(it) == XOV[ASV]or GetItemTypeId(it) == XOV[ATV]or GetItemTypeId(it) == XOV[X4V] then
 				call SetItemDropOnDeath(it, false)
 			endif
 		else
@@ -82394,7 +82362,7 @@ function YUV takes nothing returns nothing
 	set it = null
 endfunction
 function P_A takes unit u returns boolean
-	return GetUnitAbilityLevel(u,'D100')== 1 or GetUnitAbilityLevel(u,'D101')== 1 or GetUnitAbilityLevel(u,'D102')== 1 or GetUnitAbilityLevel(u,'D103')== 1
+	return GetUnitAbilityLevel(u,'D100') == 1 or GetUnitAbilityLevel(u,'D101') == 1 or GetUnitAbilityLevel(u,'D102') == 1 or GetUnitAbilityLevel(u,'D103') == 1
 endfunction
 function P0A takes nothing returns nothing
 	local timer t = GetExpiredTimer()
@@ -82460,7 +82428,7 @@ function P3A takes unit u, unit t returns nothing
 	set HLR = null
 endfunction
 function P4A takes unit u, unit t returns nothing
-	if GetUnitAbilityLevel(u,'D029')== 1 and GetUnitAbilityLevel(t,'A04R')== 0 and P_A(t) == false and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and IsUnitEnemy(u, GetOwningPlayer(t)) and GetUnitTypeId(t)!='n00L'then
+	if GetUnitAbilityLevel(u,'D029') == 1 and GetUnitAbilityLevel(t,'A04R') == 0 and P_A(t) == false and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and IsUnitEnemy(u, GetOwningPlayer(t)) and GetUnitTypeId(t)!='n00L'then
 		call P3A(u, t)
 	endif
 endfunction
@@ -82536,7 +82504,7 @@ function P9A takes unit WJE, unit WLE, integer level, boolean FAR returns nothin
 	call GroupRemoveUnit(g, WLE)
 	call ForGroup(g, function P8A)
 	call DeallocateGroup(g)
-	if GetUnitAbilityLevel(WLE,'A3E9')== 1 and FAR == false and IsMagicImmuneUnit(WJE) then
+	if GetUnitAbilityLevel(WLE,'A3E9') == 1 and FAR == false and IsMagicImmuneUnit(WJE) then
 		call SaveUnitHandle(VV,'A3E9', 0, WLE)
 		call SaveUnitHandle(VV,'A3E9', 1, WJE)
 		call SaveInteger(VV,'A3E9', 0, level)
@@ -82679,7 +82647,7 @@ function FLE takes nothing returns nothing
 	set t = null
 endfunction
 function QRA takes unit u returns nothing
-	if GetUnitAbilityLevel(u,'D031')> 0 and UnitIsSleeping(u) == false and GetUnitAbilityLevel(u,'B008')== 0 and K0V == false then
+	if GetUnitAbilityLevel(u,'D031')> 0 and UnitIsSleeping(u) == false and GetUnitAbilityLevel(u,'B008') == 0 and K0V == false then
 		call DisableTrigger(JJ)
 		call IssueTargetOrderById(u, 851983, LoadUnitHandle(P, GetHandleId(u),'A0Z0'))
 		call EnableTrigger(JJ)
@@ -82743,7 +82711,7 @@ function QBA takes nothing returns boolean
 			call ForGroup(g, function QIA)
 		endif
 	else
-		if UnitIsSleeping(GetTriggerUnit()) == false and GetUnitAbilityLevel(GetTriggerUnit(),'B008')== 0 and GetIssuedOrderId()!=$D0005 then
+		if UnitIsSleeping(GetTriggerUnit()) == false and GetUnitAbilityLevel(GetTriggerUnit(),'B008') == 0 and GetIssuedOrderId()!=$D0005 then
 			call DisableTrigger(t)
 			call ClearSelectionForPlayer(GetOwningPlayer(GetTriggerUnit()))
 			call IssueTargetOrderById(GetTriggerUnit(), 851983, WLE)
@@ -82764,7 +82732,7 @@ function QCA takes nothing returns nothing
 	local integer level = GetUnitAbilityLevel(WJE,'A0Z0')
 	local unit WLE = GetSpellTargetUnit()
 	local unit W_V = CreateUnit(GetOwningPlayer(WJE),'e00E', GetUnitX(WLE), GetUnitY(WLE), 0)
-	if GetUnitAbilityLevel(WJE,'Aloc')== 1 and HaveSavedHandle(HY, GetHandleId(WJE), 0) then
+	if GetUnitAbilityLevel(WJE,'Aloc') == 1 and HaveSavedHandle(HY, GetHandleId(WJE), 0) then
 		set WJE = LoadUnitHandle(HY, GetHandleId(WJE), 0)
 	endif
 	set PG = WJE
@@ -82795,7 +82763,7 @@ function QDA takes nothing returns nothing
 	local integer WFV = GetHandleId(t)
 	local integer UYX = LoadInteger(P, WFV, 0)
 	local unit u = LoadUnitHandle(P, WFV, 0)
-	if UnitIsDead(u) or(GetUnitAbilityLevel(u,'B0G8')== 0 and UYX > LoadInteger(P, WFV, 2)) or(LoadBoolean(P, WFV, 0) and(LoadReal(P, WFV, 0)!= GetWidgetX(u) or LoadReal(P, WFV, 1)!= GetWidgetY(u))) then
+	if UnitIsDead(u) or(GetUnitAbilityLevel(u,'B0G8') == 0 and UYX > LoadInteger(P, WFV, 2)) or(LoadBoolean(P, WFV, 0) and(LoadReal(P, WFV, 0)!= GetWidgetX(u) or LoadReal(P, WFV, 1)!= GetWidgetY(u))) then
 		call SaveBoolean(P, GetHandleId(u),'A2N5', false)
 		call UnitRemoveAbility(u,'B0G8')
 		call DestroyTimerAndFlushHT_P(t)
@@ -82832,7 +82800,7 @@ endfunction
 function QGA takes unit u returns nothing
 	local timer t = CreateTimer()
 	local string s = ""
-	if GetOwningPlayer(u)== LocalPlayer then
+	if GetOwningPlayer(u) == LocalPlayer then
 		set s = "Abilities\\Spells\\Undead\\DeathandDecay\\DeathandDecayTarget.mdl"
 	endif
 	call DestroyEffect(AddSpecialEffectTarget(s, u, "chest"))
@@ -82936,14 +82904,14 @@ function QLA takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local unit u = LoadUnitHandle(HY, h, 0)
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call UnitRemoveAbility(u,'A38T')
 		call UnitRemoveAbility(u,'A38X')
 		call UnitRemoveAbility(u,'A3G1')
 		call UnitRemoveAbility(u,'B3G1')
 		call FlushChildHashtable(HY, h)
 		call DestroyTrigger(t)
-	elseif GetTriggerEventId()== EVENT_GAME_TIMER_EXPIRED then
+	elseif GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
 		if GetGameTime()>= LoadReal(HY, h, 1) then
 			call UnitRemoveAbility(u,'A38T')
 			call UnitRemoveAbility(u,'A38X')
@@ -82956,7 +82924,7 @@ function QLA takes nothing returns boolean
 			call UnitAddPermanentAbility(u,'A3G1')
 		endif
 	else
-		if(GetTriggerEventId()== EVENT_PLAYER_UNIT_ATTACKED and u == GetAttacker()) or GetTriggerEventId()== EVENT_UNIT_SPELL_EFFECT then
+		if(GetTriggerEventId() == EVENT_PLAYER_UNIT_ATTACKED and u == GetAttacker()) or GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT then
 			call SaveReal(HY, h, 0, GetGameTime()+ .4)
 			call UnitRemoveAbility(u,'A38T')
 			call UnitRemoveAbility(u,'A3G1')
@@ -83027,7 +82995,7 @@ function QQA takes nothing returns nothing
 	local integer h = GetHandleId(t)
 	local unit WJE = LoadUnitHandle(HY, h, 0)
 	if GetGameTime()< LoadReal(HY, h, 0) then
-		if GetUnitAbilityLevel(WJE,'A39G')== 1 then
+		if GetUnitAbilityLevel(WJE,'A39G') == 1 then
 			call SetUnitAbilityLevel(WJE,'A39G', 2)
 			call WAE(WJE)
 		endif
@@ -83093,7 +83061,7 @@ function QSA takes nothing returns nothing
 	local unit WJE = LoadUnitHandle(HY, h, 0)
 	local unit QTA = LoadUnitHandle(HY, h, 1)
 	local unit d
-	if GetTriggerEventId()== EVENT_UNIT_SPELL_ENDCAST then
+	if GetTriggerEventId() == EVENT_UNIT_SPELL_ENDCAST then
 		set d = CreateUnit(GetOwningPlayer(WJE),'e00E', GetUnitX(WJE), GetUnitY(WJE), 0)
 		call UnitAddAbility(d,'A33T')
 		call SetUnitAbilityLevel(d,'A33T', GetUnitAbilityLevel(QTA,'A33O'))
@@ -83171,7 +83139,7 @@ function Q1A takes nothing returns nothing
 	local integer level = LoadInteger(HY, h, 0)
 	local unit Q2A = LoadUnitHandle(HY, h, 0)
 	local unit WLE = LoadUnitHandle(HY, h, 1)
-	if GetUnitAbilityLevel(WLE,'Bpoi')+ GetUnitAbilityLevel(WLE,'Bpsd')== 0 then
+	if GetUnitAbilityLevel(WLE,'Bpoi')+ GetUnitAbilityLevel(WLE,'Bpsd') == 0 then
 		call RemoveSavedHandle(P, GetHandleId(WLE),'Pois')
 		call PauseTimer(t)
 		call DestroyTimer(t)
@@ -83274,14 +83242,14 @@ function Q6A takes unit SYX, unit Q7A returns nothing
 	if b == false or YB then
 		set i = GetUnitTypeId(Q7A)
 		set p = GetOwningPlayer(SYX)
-		if(YB == false) and(p != Sentinels[0]and p != Scourges[0]and p != BW) then
-			if GetUnitAbilityLevel(SYX,'Aloc')== 1 then
+		if(YB == false) and(p != Sentinels[0]and p != Scourges[0]and p != CreepsPlayer) then
+			if GetUnitAbilityLevel(SYX,'Aloc') == 1 then
 				set SYX = Player__Hero[GetPlayerId(p)]
 			endif
 			set Q9A = GetUnitAbilityLevel(SYX,'P155')
-			if Q9A > 0 and GetUnitAbilityLevel(SYX,'A36D')== 0 then
+			if Q9A > 0 and GetUnitAbilityLevel(SYX,'A36D') == 0 then
 				set UYX = GetHandleId(SYX)
-				if IsUnitType(Q7A, UNIT_TYPE_STRUCTURE) == false and(GetUnitAbilityLevel(Q7A,'A04R')== 0) then
+				if IsUnitType(Q7A, UNIT_TYPE_STRUCTURE) == false and(GetUnitAbilityLevel(Q7A,'A04R') == 0) then
 					set Q8A = IMinBJ(LoadInteger(P, UYX,'A0O3')* 2 + Q9A * 2 + 2, 8 * Q9A)
 					call SaveInteger(P, GetHandleId(p),'A0O3', LoadInteger(P, GetHandleId(p),'A0O3')+ Q8A)
 					call DestroyEffect(AddSpecialEffect("war3mapImported\\GoblinCoin.mdx", GetUnitX(Q7A), GetUnitY(Q7A)))
@@ -83293,7 +83261,7 @@ function Q6A takes unit SYX, unit Q7A returns nothing
 			endif
 		endif
 		set xp = LoadInteger(M, i, HC)
-		if(xp > 0 and p != BW) then
+		if(xp > 0 and p != CreepsPlayer) then
 			call Y4X(xp, p, SYX)
 		endif
 		set YB = false
@@ -83302,7 +83270,7 @@ function Q6A takes unit SYX, unit Q7A returns nothing
 	set gg = null
 endfunction
 function SVA takes nothing returns nothing
-	if IsUnitType(WX, UNIT_TYPE_HERO) or IsUnitType(WX, UNIT_TYPE_STRUCTURE) or GetUnitAbilityLevel(YX,'AZ00')== 1 then
+	if IsUnitType(WX, UNIT_TYPE_HERO) or IsUnitType(WX, UNIT_TYPE_STRUCTURE) or GetUnitAbilityLevel(YX,'AZ00') == 1 then
 		call KillUnit(YX)
 	else
 		call UnitAddAbility(YX,'AZ00')
@@ -83358,10 +83326,10 @@ function SNA takes nothing returns nothing	//吸血光环
 endfunction
 function OGO takes nothing returns nothing	//祭品
 	local real i
-	if GetUnitAbilityLevel(WX,'B3B5')== 0 then
+	if GetUnitAbilityLevel(WX,'B3B5') == 0 then
 		return
 	endif
-	if IsUnitIllusion(YX) == false and IsUnitType(YX, UNIT_TYPE_STRUCTURE) == false and IsUnitType(YX, UNIT_TYPE_MECHANICAL) == false and GetUnitAbilityLevel(YX,'A04R')== 0 and IsUnitEnemy(WX, GetOwningPlayer(YX)) and UnitIsDead(WX) == false then
+	if IsUnitIllusion(YX) == false and IsUnitType(YX, UNIT_TYPE_STRUCTURE) == false and IsUnitType(YX, UNIT_TYPE_MECHANICAL) == false and GetUnitAbilityLevel(YX,'A04R') == 0 and IsUnitEnemy(WX, GetOwningPlayer(YX)) and UnitIsDead(WX) == false then
 		if IsUnitType(WX, UNIT_TYPE_MELEE_ATTACKER) then
 			set i = .15
 		else
@@ -83398,7 +83366,7 @@ function hrzycd takes unit u returns nothing
 endfunction
 
 function Hyzr_Actions takes unit u , unit t returns nothing
-	if LoadInteger(HY, GetHandleId(WX),'echs')== 0 then
+	if LoadInteger(HY, GetHandleId(WX),'echs') == 0 then
 		call UnitAddAbility(u,'A3TW')
 		call hrzycd(u)
 		if not IsUnitType(u, UNIT_TYPE_STRUCTURE) and not R_X(t) then
@@ -83437,7 +83405,7 @@ function X8O takes nothing returns nothing	//雷神之锤and漩涡
 	endif
 endfunction
 function SBA takes nothing returns nothing	//月刃
-	if GetUnitAbilityLevel(WX,'A36D')== 0 and LoadBoolean(HY, EO, 11) == false and LoadBoolean(HY, EO, 12) == false and LoadBoolean(HY, EO, 14) then
+	if GetUnitAbilityLevel(WX,'A36D') == 0 and LoadBoolean(HY, EO, 11) == false and LoadBoolean(HY, EO, 12) == false and LoadBoolean(HY, EO, 14) then
 		if GetUnitAbilityLevel(WX,'P098')> 0 then
 			call YFR(WX, YX, ZX)
 		endif
@@ -83498,15 +83466,15 @@ function SHA takes nothing returns nothing
 	endif
 endfunction
 function SJA takes nothing returns nothing
-	if(GetUnitAbilityLevel(WX,'A0FA')> 0) and GetUnitAbilityLevel(WX,'A36D')== 0 then
-		if IsUnitType(WX, UNIT_TYPE_MELEE_ATTACKER) == false and GetRandomInt(0, 1)== 0 then
+	if(GetUnitAbilityLevel(WX,'A0FA')> 0) and GetUnitAbilityLevel(WX,'A36D') == 0 then
+		if IsUnitType(WX, UNIT_TYPE_MELEE_ATTACKER) == false and GetRandomInt(0, 1) == 0 then
 			return
 		endif
 		call XKA(WX, YX)
 	endif
 endfunction
 function SKA takes nothing returns nothing
-	if GetUnitAbilityLevel(WX,'A43Z')> 0 and GetUnitAbilityLevel(WX,'A36D')== 0 then
+	if GetUnitAbilityLevel(WX,'A43Z')> 0 and GetUnitAbilityLevel(WX,'A36D') == 0 then
 		call PAA(WX, YX)
 	endif
 endfunction
@@ -83536,17 +83504,17 @@ function SSA takes nothing returns nothing
 	endif
 endfunction
 function STA takes nothing returns nothing
-	if(GetUnitAbilityLevel(WX,'A1HR')> 0) and IsUnitType(YX, UNIT_TYPE_HERO) and GetUnitAbilityLevel(WX,'A36D')== 0 then
+	if(GetUnitAbilityLevel(WX,'A1HR')> 0) and IsUnitType(YX, UNIT_TYPE_HERO) and GetUnitAbilityLevel(WX,'A36D') == 0 then
 		call CMA(WX, YX)
 	endif
 endfunction
 function SUA takes nothing returns nothing
-	if(GetUnitAbilityLevel(WX,'A0G5')> 0) and GetUnitAbilityLevel(WX,'A36D')== 0 then
+	if(GetUnitAbilityLevel(WX,'A0G5')> 0) and GetUnitAbilityLevel(WX,'A36D') == 0 then
 		call OYA(WX, YX)
 	endif
 endfunction
 function SWA takes nothing returns nothing
-	if GetUnitAbilityLevel(WX,'P067')> 0 and GetUnitAbilityLevel(WX,'A36D')== 0 then
+	if GetUnitAbilityLevel(WX,'P067')> 0 and GetUnitAbilityLevel(WX,'A36D') == 0 then
 		call BFI(WX, YX)
 	endif
 endfunction
@@ -83564,17 +83532,17 @@ function OBO takes nothing returns nothing	//斯嘉蒂之眼
 	endif
 endfunction
 function SYA takes nothing returns nothing
-	if GetUnitAbilityLevel(WX,'P418')> 0 and GetUnitAbilityLevel(YX,'Bpsd')> 0 and IsAliveNotStrucNotWard(YX) and IsUnitEnemy(WX, GetOwningPlayer(YX)) and GetUnitAbilityLevel(WX,'A36D')== 0 then
+	if GetUnitAbilityLevel(WX,'P418')> 0 and GetUnitAbilityLevel(YX,'Bpsd')> 0 and IsAliveNotStrucNotWard(YX) and IsUnitEnemy(WX, GetOwningPlayer(YX)) and GetUnitAbilityLevel(WX,'A36D') == 0 then
 		call Q3A(WX, YX)
 	endif
 endfunction
 function SZA takes nothing returns nothing
-	if GetUnitAbilityLevel(WX,'P338')> 0 and IsUnitType(WX, UNIT_TYPE_MELEE_ATTACKER) == false and GetUnitAbilityLevel(WX,'A36D')== 0 and LoadInteger(HY, GetHandleId(WX), 4275)!= 1 and IsAliveNotStrucNotWard(YX) and YX != CT then
+	if GetUnitAbilityLevel(WX,'P338')> 0 and IsUnitType(WX, UNIT_TYPE_MELEE_ATTACKER) == false and GetUnitAbilityLevel(WX,'A36D') == 0 and LoadInteger(HY, GetHandleId(WX), 4275)!= 1 and IsAliveNotStrucNotWard(YX) and YX != CT then
 		call ORA(WX, YX)
 	endif
 endfunction
 function S_A takes nothing returns nothing
-	if GetUnitAbilityLevel(WX,'A36D')== 0 and(GetUnitAbilityLevel(WX,'A0MG')> 0) then
+	if GetUnitAbilityLevel(WX,'A36D') == 0 and(GetUnitAbilityLevel(WX,'A0MG')> 0) then
 		call IUR(WX, YX)
 	endif
 endfunction
@@ -83587,7 +83555,7 @@ function S1A takes nothing returns nothing
 	call UQR(WX, YX)
 endfunction
 function S2A takes nothing returns nothing
-	if(GetUnitAbilityLevel(WX,'A0N7')> 0) and GetUnitAbilityLevel(WX,'A36D')== 0 then
+	if(GetUnitAbilityLevel(WX,'A0N7')> 0) and GetUnitAbilityLevel(WX,'A36D') == 0 then
 		call QHI(WX, YX)
 	endif
 endfunction
@@ -83639,7 +83607,7 @@ function TNA takes nothing returns nothing
 	call OIA(WX, YX)
 endfunction
 function TBA takes nothing returns nothing
-	if GetUnitAbilityLevel(YX,'P123')> 0 and R_X(WX) == false and GetUnitAbilityLevel(WX,'A04R')== 0 and GetUnitAbilityLevel(YX,'A36D')== 0 then
+	if GetUnitAbilityLevel(YX,'P123')> 0 and R_X(WX) == false and GetUnitAbilityLevel(WX,'A04R') == 0 and GetUnitAbilityLevel(YX,'A36D') == 0 then
 		call HHR(WX, YX)
 	endif
 endfunction
@@ -83700,7 +83668,7 @@ function TLA takes unit u, unit t, real dmg returns nothing
 	endif
 endfunction
 function TMA takes nothing returns nothing	//混沌一击
-	if GetUnitAbilityLevel(WX,'A36D')== 0 and LoadBoolean(HY, EO, 11) == false and LoadBoolean(HY, EO, 12) == false and LoadBoolean(HY, EO, 14) then
+	if GetUnitAbilityLevel(WX,'A36D') == 0 and LoadBoolean(HY, EO, 11) == false and LoadBoolean(HY, EO, 12) == false and LoadBoolean(HY, EO, 14) then
 		if GetUnitAbilityLevel(WX,'P431')> 0 then
 			call TLA(WX, YX, ZX)
 		endif
@@ -83723,7 +83691,7 @@ function TPA takes nothing returns nothing
 			call EPX(WX,'bash', 2.3)
 			call TGA(WX, YX, 4)
 		endif
-	elseif GetUnitAbilityLevel(WX,'A36D')== 0 then
+	elseif GetUnitAbilityLevel(WX,'A36D') == 0 then
 		if GetUnitAbilityLevel(WX,'A0JJ')> 0 then	//重击
 			if isMeleeAttacker then
 				if TKV(WX,'A0JJ', 5 + 5 * GetUnitAbilityLevel(WX,'A0JJ')) then
@@ -83759,7 +83727,7 @@ function TPA takes nothing returns nothing
 			endif
 		endif
 	endif
-	if GetUnitAbilityLevel(WX,'A061')== 1 then	//金箍棒
+	if GetUnitAbilityLevel(WX,'A061') == 1 then	//金箍棒
 		if TKV(WX,'A061', 35) then
 			call TGA(WX, YX, 5)
 		endif
@@ -83796,18 +83764,18 @@ endfunction
 function TUA takes nothing returns nothing
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
-	if GetTriggerEventId()== EVENT_UNIT_DAMAGED and LoadInteger(HY, h, 0)> 0 then	//右键伤害
-		if GetEventDamageSource()== LoadUnitHandle(HY, h, 0) and FK and(EXGetEventDamageData(1) != 0) and(GetEventDamage()> 0 or not LoadBoolean(HY, h, 10)) then
+	if GetTriggerEventId() == EVENT_UNIT_DAMAGED and LoadInteger(HY, h, 0)> 0 then	//右键伤害
+		if GetEventDamageSource() == LoadUnitHandle(HY, h, 0) and FK and(EXGetEventDamageData(1) != 0) and(GetEventDamage()> 0 or not LoadBoolean(HY, h, 10)) then
 			call DisableTrigger(t)
 			call TTA(LoadUnitHandle(HY, h, 0), LoadUnitHandle(HY, h, 1), GetEventDamage())
 			call EnableTrigger(t)
-			if LoadInteger(HY, h, 0)== 1 then
+			if LoadInteger(HY, h, 0) == 1 then
 				call SaveInteger(HY, h, 0, 0)
 			else
 				call SaveInteger(HY, h, 0, LoadInteger(HY, h, 0)-1)
 			endif
 		endif
-	elseif GetTriggerEventId()== EVENT_GAME_TIMER_EXPIRED then
+	elseif GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
 		//call RemoveSavedHandle(HY, GetHandleId(LoadUnitHandle(HY, h, 0)), 'A09J')	//美杜莎分裂箭
 		call RemoveSavedHandle(P, LoadInteger(HY, h, 10), LoadInteger(HY, h, 11))
 		call PauseTimer(LoadTimerHandle(HY, h, 3))
@@ -83824,12 +83792,12 @@ function SetUnitMiss takes nothing returns nothing
 	local integer TYA = 0
 	local unit d
 	// 有金箍棒
-	if(IsAttackEffectEnabled[17]and GetUnitAbilityLevel(WX,'A1FO')== 1 and(not IsUnitType(YX, UNIT_TYPE_STRUCTURE) or(GetOwningPlayer(YX)!= Scourges[0]and GetOwningPlayer(YX)!= Sentinels[0]))) or GetUnitAbilityLevel(YX,'A3Q3')== 1 then
+	if(IsAttackEffectEnabled[17]and GetUnitAbilityLevel(WX,'A1FO') == 1 and(not IsUnitType(YX, UNIT_TYPE_STRUCTURE) or(GetOwningPlayer(YX)!= Scourges[0]and GetOwningPlayer(YX)!= Sentinels[0]))) or GetUnitAbilityLevel(YX,'A3Q3') == 1 then
 		call UnitRemoveAbility(WX,'a3PQ')
 		return
 	endif
 	// 大隐刀 仇杀
-	if(IsAttackEffectEnabled[19]and GetUnitAbilityLevel(WX,'B39C')== 1) or(IsAttackEffectEnabled[20]and GetUnitAbilityLevel(WX,'B00K')== 1) then
+	if(IsAttackEffectEnabled[19]and GetUnitAbilityLevel(WX,'B39C') == 1) or(IsAttackEffectEnabled[20]and GetUnitAbilityLevel(WX,'B00K') == 1) then
 		call UnitRemoveAbility(WX,'a3PQ')
 		return
 	endif
@@ -83841,13 +83809,13 @@ function SetUnitMiss takes nothing returns nothing
 		endif
 	endif
 	// 查各种丢失 磁场 和 醉拳百分百闪避
-	if(IsAttackEffectEnabled[0]and GetUnitAbilityLevel(YX,'ACes')> 0) or(IsAttackEffectEnabled[1]and GetUnitAbilityLevel(YX,'A34E')> 0 and GetUnitAbilityLevel(YX,'A36D')== 0) then
+	if(IsAttackEffectEnabled[0]and GetUnitAbilityLevel(YX,'ACes')> 0) or(IsAttackEffectEnabled[1]and GetUnitAbilityLevel(YX,'A34E')> 0 and GetUnitAbilityLevel(YX,'A36D') == 0) then
 		set probability = 100
 	else
 		set probability = GetUnitMissProbability(YX)
 	endif
 	set TYA = UUE(TYA, GetUnitBlind(WX))
-	if IsAttackEffectEnabled[18]and GetUnitAbilityLevel(YX,'B0F5')== 1 then
+	if IsAttackEffectEnabled[18]and GetUnitAbilityLevel(YX,'B0F5') == 1 then
 		set probability = R2I(probability * .6)
 		set TYA = R2I(TYA * .6)
 	endif
@@ -83883,7 +83851,7 @@ function TZA takes unit attackerUnit, unit targetUnit, boolean isAbility returns
 	// 遍历 单位被攻击 事件 会第一时间运行闪避类
 	call ExecuteAttackEvent(-1)
 	// 是玩家单位 或者 有吸血光环 则继续 否则返回
-	if not(XFX(GetOwningPlayer(attackerUnit)) or XFX(GetOwningPlayer(targetUnit)) or(EE and(GetUnitAbilityLevel(attackerUnit,'BVA1')== 1 or GetUnitAbilityLevel(attackerUnit,'BVA2')== 1 or GetUnitAbilityLevel(attackerUnit,'BVA3')== 1 or GetUnitAbilityLevel(attackerUnit,'BVA4')== 1)) or(EV and GetUnitAbilityLevel(attackerUnit,'B07O')== 1)) then
+	if not(XFX(GetOwningPlayer(attackerUnit)) or XFX(GetOwningPlayer(targetUnit)) or(EE and(GetUnitAbilityLevel(attackerUnit,'BVA1') == 1 or GetUnitAbilityLevel(attackerUnit,'BVA2') == 1 or GetUnitAbilityLevel(attackerUnit,'BVA3') == 1 or GetUnitAbilityLevel(attackerUnit,'BVA4') == 1)) or(EV and GetUnitAbilityLevel(attackerUnit,'B07O') == 1)) then
 		return
 	endif
 	if HaveSavedHandle(P, GetHandleId(attackerUnit), GetHandleId(targetUnit)) then
@@ -83916,7 +83884,7 @@ function TZA takes unit attackerUnit, unit targetUnit, boolean isAbility returns
 		// 目标单位是否是建筑
 		call SaveBoolean(HY, h, 11, IsUnitType(targetUnit, UNIT_TYPE_STRUCTURE))
 		// 目标单位不是守卫单位
-		call SaveBoolean(HY, h, 14, GetUnitAbilityLevel(targetUnit,'A04R')== 0)
+		call SaveBoolean(HY, h, 14, GetUnitAbilityLevel(targetUnit,'A04R') == 0)
 		// 攻击单位是否是目标单位的敌军
 		call SaveBoolean(HY, h, 15, IsUnitEnemy(attackerUnit, GetOwningPlayer(targetUnit)))
 		set LX = LX + 1
@@ -83944,7 +83912,7 @@ function T2A takes nothing returns nothing
 	local player p = GetOwningPlayer(GetEventDamageSource())
 	local unit u = GetTriggerUnit()
 	if IsUnitEnemy(u, GetOwningPlayer(GetEventDamageSource())) then
-		if GetUnitAbilityLevel(u,'A17R')== 1 then
+		if GetUnitAbilityLevel(u,'A17R') == 1 then
 			call SetUnitToReduceDamage(u, ZCE)
 		else
 			if IsUnitIllusion(GetEventDamageSource()) then
@@ -84124,7 +84092,7 @@ function OtherDamagedEvent takes unit damageTarget, unit damageSource, real rDam
 	local player t = GetOwningPlayer(damageTarget)
 	local player a = GetOwningPlayer(damageSource)
 	// 镜头震动
-	if IsPlaying(t) and bj_cineModePriorDawnDusk and rDamageValue>= 5 and ZR[GetPlayerId(t)]then
+	if IsPlaying(t) and bj_cineModePriorDawnDusk and rDamageValue>= 5 and ZR[GetPlayerId(t)] then
 		call ZBE(damageTarget, rDamageValue)
 	endif
 	if d == "0" or( not EnableMapSetUp__ShowDamageTextTag[GetPlayerId(t)] and not EnableMapSetUp__ShowDamageTextTag[GetPlayerId(a)]) then
@@ -84232,7 +84200,7 @@ function GerHeroReducedDamage takes nothing returns real
         endif
         // 折射 需要检查是否被破被动 而且还会根据模型主属性和谐减伤值
         if GetUnitAbilityLevel(DamagedEventTargetUnit,'A0NA') > 0 and GetUnitAbilityLevel(DamagedEventTargetUnit,'A36D') == 0 then
-            if not Mode__RearmCombos and GetHeroMainAttributesType(DamagedEventTargetUnit)== 3 then
+            if not Mode__RearmCombos and GetHeroMainAttributesType(DamagedEventTargetUnit) == 3 then
                 set rReducedDamage = rReducedDamage + DamagedEventDamageValue *(.06 + .02 * GetUnitAbilityLevel(DamagedEventTargetUnit,'A0NA'))
                 //set DamagedEventDamageValue = DamagedEventDamageValue - DamagedEventDamageValue *(.06 + .02 * GetUnitAbilityLevel(DamagedEventTargetUnit,'A0NA'))
             else
@@ -84241,12 +84209,12 @@ function GerHeroReducedDamage takes nothing returns real
             endif
         endif
         // 奔袭冲撞 0.6
-        if GetUnitAbilityLevel(DamagedEventTargetUnit,'A2O4')== 2 then
+        if GetUnitAbilityLevel(DamagedEventTargetUnit,'A2O4') == 2 then
             set rReducedDamage = rReducedDamage + DamagedEventDamageValue * .6
             //set DamagedEventDamageValue = DamagedEventDamageValue - DamagedEventDamageValue * .6
         endif
         // 冰龙大的减伤 被诅咒的单位被攻击时 0.7
-        if LoadInteger(HY, GetHandleId(DamagedEventRealSourceUnit), 4328)== 1 then
+        if LoadInteger(HY, GetHandleId(DamagedEventRealSourceUnit), 4328) == 1 then
             set rReducedDamage = rReducedDamage + DamagedEventDamageValue * .7
             //set DamagedEventDamageValue = DamagedEventDamageValue - DamagedEventDamageValue * .7
         endif
@@ -84260,7 +84228,7 @@ function GerHeroReducedDamage takes nothing returns real
         //	set DamagedEventDamageValue = DamagedEventDamageValue -DamagedEventDamageValue *(.05 * GetUnitAbilityLevel(DamagedEventTargetUnit,'A1VM'))
         //endif
         // 大隐刀 造成的伤害减少40%
-        if GetUnitAbilityLevel(DamagedEventRealSourceUnit,'A39D')== 1 then
+        if GetUnitAbilityLevel(DamagedEventRealSourceUnit,'A39D') == 1 then
             set rReducedDamage = rReducedDamage + DamagedEventDamageValue * .4
             //set DamagedEventDamageValue = DamagedEventDamageValue - DamagedEventDamageValue * .4
         endif
@@ -84309,7 +84277,7 @@ function A3A takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local unit WUE =(LoadUnitHandle(HY, h, 2))
 	local real IXX =(LoadReal(HY, h, 20))
-	if GetTriggerEventId()!= EVENT_UNIT_SPELL_EFFECT or(GetTriggerEventId()== EVENT_UNIT_SPELL_EFFECT and GetSpellAbilityId()=='A1NA') then
+	if GetTriggerEventId()!= EVENT_UNIT_SPELL_EFFECT or(GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT and GetSpellAbilityId()=='A1NA') then
 		if GetTriggerEventId()!= EVENT_UNIT_SPELL_EFFECT then
 			call SaveReal(HY,(GetHandleId(WUE)), 443,(((LoadReal(HY,(GetHandleId(WUE)), 443))-IXX)* 1.))
 		endif
@@ -84412,7 +84380,7 @@ function AnyUnitDamagedEvent takes nothing returns boolean
 			set hu = GetHandleId(DamagedEventTargetUnit)
 			set YO[0]= GetUnitTypeId(DamagedEventTargetUnit)
 			// 设置真正的伤害来源 排除掉马甲
-			if (GetUnitAbilityLevel(DamagedEventSourceUnit,'Aloc')== 1) then
+			if (GetUnitAbilityLevel(DamagedEventSourceUnit,'Aloc') == 1) then
 				set DamagedEventRealSourceUnit = Player__Hero[DamagedEventSourcePlayerId]
 			else
 				set DamagedEventRealSourceUnit = DamagedEventSourceUnit
@@ -84427,12 +84395,12 @@ function AnyUnitDamagedEvent takes nothing returns boolean
 				//	set DamagedEventReducedDamage = DamagedEventReducedDamage + DamagedEventDamageValue *(.05 * GetUnitAbilityLevel(DamagedEventTargetUnit,'A1VM'))
 				//	set DamagedEventDamageValue = DamagedEventDamageValue - DamagedEventDamageValue *(.05 * GetUnitAbilityLevel(DamagedEventTargetUnit,'A1VM'))
 				//endif
-				if GetUnitAbilityLevel(DamagedEventRealSourceUnit,'A39D')== 1 then
+				if GetUnitAbilityLevel(DamagedEventRealSourceUnit,'A39D') == 1 then
 					set MC = RMinBJ(1. - DamagedEventReducedDamage, .4)
 					set DamagedEventReducedDamage = DamagedEventReducedDamage + MC
 				endif
 				if DamagedEventReducedDamage < 1 then
-					if GetUnitAbilityLevel(DamagedEventTargetUnit,'A3KF')== 1 then
+					if GetUnitAbilityLevel(DamagedEventTargetUnit,'A3KF') == 1 then
 						set MC = OII()
 						if MC > 0 then
 							set MC = RMinBJ(1 -DamagedEventReducedDamage, MC / DamagedEventDamageValue)
@@ -84473,14 +84441,14 @@ function AnyUnitDamagedEvent takes nothing returns boolean
 			if HaveSpellLifesteal and EXGetEventDamageData(1) == 0 then
 				set p = GetOwningPlayer(DamagedEventSourceUnit)
 				// 伤害来源是否是 非电脑 玩家的单位
-				if p != Sentinels[0] and p != Scourges[0] and p != BW then
-					if GetUnitAbilityLevel(DamagedEventRealSourceUnit,'A39S')== 1 and IsUnitIllusion(DamagedEventTargetUnit) == false and GetWidgetLife(DamagedEventRealSourceUnit)>= 1 then
+				if p != Sentinels[0] and p != Scourges[0] and p != CreepsPlayer then
+					if GetUnitAbilityLevel(DamagedEventRealSourceUnit,'A39S') == 1 and IsUnitIllusion(DamagedEventTargetUnit) == false and GetWidgetLife(DamagedEventRealSourceUnit)>= 1 then
 						call SpellLifesteal()
 					endif
 				endif
 			endif
 			// 伤害增加
-			if LoadInteger(HY, GetHandleId(GetTriggeringTrigger()),'AMPL')== 0 and DX == 0 then
+			if LoadInteger(HY, GetHandleId(GetTriggeringTrigger()),'AMPL') == 0 and DX == 0 then
 				set extraDamage = LoadReal(HY, hu,'AMPL')
 				if AX and(GetUnitAbilityLevel(DamagedEventSourceUnit,'A460')> 0) and IsUnitEnemy(DamagedEventSourceUnit, GetOwningPlayer(DamagedEventTargetUnit)) and IsAliveNotStrucNotWard(DamagedEventTargetUnit) then
 					// 致命创伤 再造成一次伤害
@@ -84562,10 +84530,10 @@ function ZPI takes nothing returns boolean
 	local integer h = GetHandleId(GetTriggeringTrigger())
 	local unit ZQI = LoadUnitHandle(HY, h, 304)
 	local unit W_V = LoadUnitHandle(HY, h, 305)
-	if GetTriggerEvalCount(GetTriggeringTrigger())== 1 then
+	if GetTriggerEvalCount(GetTriggeringTrigger()) == 1 then
 		call UnitAddAbility(W_V,'Aloc')
 	endif
-	if ZQI == null or not UnitAlive(ZQI) or O6X() or GetUnitAbilityLevel(ZQI,'DRKN')+ GetUnitAbilityLevel(ZQI,'DRKU')== 0 then
+	if ZQI == null or not UnitAlive(ZQI) or O6X() or GetUnitAbilityLevel(ZQI,'DRKN')+ GetUnitAbilityLevel(ZQI,'DRKU') == 0 then
 		call ShowUnit(W_V, false)
 		call SetUnitX(W_V, GetUnitX(ZQI))
 		call SetUnitY(W_V, GetUnitY(ZQI))
@@ -84726,8 +84694,8 @@ function HeroReincarnationEvent takes nothing returns boolean
 	// 清除一些buff
 	call GBX(whichUnit)
 	// 不朽盾(AIrc) 骷髅王冥魂(A3DK) 重生和A杖(A01Y,A1AZ) 真实视野(A14K)?
-	if reincarnationLevel > 0 or GetUnitAbilityLevel(whichUnit,'AIrc')== 1 or GetUnitAbilityLevel(whichUnit,'A3DK')> 0 or GetUnitAbilityLevel(whichUnit,'A46S')== 1 or GetUnitAbilityLevel(whichUnit,'A14K')== 1 then
-		if GetUnitAbilityLevel(whichUnit,'AIrc')== 1 then
+	if reincarnationLevel > 0 or GetUnitAbilityLevel(whichUnit,'AIrc') == 1 or GetUnitAbilityLevel(whichUnit,'A3DK')> 0 or GetUnitAbilityLevel(whichUnit,'A46S') == 1 or GetUnitAbilityLevel(whichUnit,'A14K') == 1 then
+		if GetUnitAbilityLevel(whichUnit,'AIrc') == 1 then
 			set duration = 5.01
 		elseif reincarnationLevel > 0 and GetUnitState(whichUnit, UNIT_STATE_MANA) >= 120 + 40 * reincarnationLevel and ( YDWEGetUnitAbilityState(whichUnit, 'A01Y', 1) + YDWEGetUnitAbilityState(whichUnit, 'A1AZ', 1) ) == 0 then
 			set duration = 3.01
@@ -84770,7 +84738,7 @@ function RegisterHeroEventWait0sFilter takes nothing returns boolean
 	local trigger trig = GetTriggeringTrigger()
 	local integer iHandleId = GetHandleId(trig)
 	local unit whichUnit = LoadUnitHandle(HY, iHandleId, 0)
-	if whichUnit != null and GetUnitAbilityLevel(whichUnit,'Aloc')== 0 then
+	if whichUnit != null and GetUnitAbilityLevel(whichUnit,'Aloc') == 0 then
 		// 伤害事件
 		call TriggerRegisterUnitEvent(AnyUnitDamagedTrigger, whichUnit, EVENT_UNIT_DAMAGED)
 		// 视野和状态记录
@@ -84822,7 +84790,7 @@ endfunction
 function AnyUnitEventRegisterFilter takes nothing returns boolean
 	local trigger trig = null
 	local unit whichUnit = GetEnteringUnit()
-	if GetUnitAbilityLevel(whichUnit,'Aloc')== 0 and UnitIsCanRegisterUnitEvent(whichUnit) then
+	if GetUnitAbilityLevel(whichUnit,'Aloc') == 0 and UnitIsCanRegisterUnitEvent(whichUnit) then
 		// 如果是英雄 等0秒后再检查一次是否有效
 		if IsUnitType(whichUnit, UNIT_TYPE_HERO) then
 			if not UM then
@@ -84988,7 +84956,7 @@ function URA takes nothing returns nothing
 	local integer level = GetUnitAbilityLevel(WJE, id)
 	local trigger t
 	local integer h
-	if GetUnitAbilityLevel(UIA, id)== 0 then
+	if GetUnitAbilityLevel(UIA, id) == 0 then
 		call UnitAddPermanentAbilitySetLevel(UIA, id, level)
 		set HE = true
 		if IssueTargetOrderById(UIA,$D0207, WJE) then
@@ -85058,7 +85026,7 @@ function UKA takes string s returns nothing
 	local integer i = 0
 	loop
 	exitwhen HaveSavedString(Q,'SPLL', i) == false
-		if LoadStr(Q,'SPLL', i)== s then
+		if LoadStr(Q,'SPLL', i) == s then
 			return
 		endif
 		set i = i + 1
@@ -85091,27 +85059,27 @@ function GetUnitCoolDownReduce takes unit whichUnit, integer id returns real
 	if abilityCoolDown <= 0. then
 		return rReduceCoolDown
 	endif
-	if GetUnitAbilityLevel(whichUnit,'A39S')== 1 then
+	if GetUnitAbilityLevel(whichUnit,'A39S') == 1 then
 		set rReduceCoolDown = abilityCoolDown * 0.25
 	endif
-	if GetUnitAbilityLevel(whichUnit,'B3DU')== 1 then
+	if GetUnitAbilityLevel(whichUnit,'B3DU') == 1 then
 		// 是物品技能就不减cd
 		if not IsNotItemAbility(id) then
 			return rReduceCoolDown
 		endif
-		if GetUnitAbilityLevel(whichUnit,'A3DU')== 1 then
+		if GetUnitAbilityLevel(whichUnit,'A3DU') == 1 then
 				//	call LFX(whichUnit, id, false, 2)
 			set rReduceCoolDown = rReduceCoolDown + 2
 			call UnitRemoveAbility(whichUnit,'A3DU')
-		elseif GetUnitAbilityLevel(whichUnit,'A3DV')== 1 then
+		elseif GetUnitAbilityLevel(whichUnit,'A3DV') == 1 then
 			//	call LFX(whichUnit, id, false, 3)
 			set rReduceCoolDown = rReduceCoolDown + 3
 			call UnitRemoveAbility(whichUnit,'A3DV')
-		elseif GetUnitAbilityLevel(whichUnit,'A3DW')== 1 then
+		elseif GetUnitAbilityLevel(whichUnit,'A3DW') == 1 then
 				//	call LFX(whichUnit, id, false, 4)
 			set rReduceCoolDown = rReduceCoolDown + 4
 			call UnitRemoveAbility(whichUnit,'A3DW')
-		elseif GetUnitAbilityLevel(whichUnit,'A3DX')== 1 then
+		elseif GetUnitAbilityLevel(whichUnit,'A3DX') == 1 then
 				//	call LFX(whichUnit, id, false, 5)
 			set rReduceCoolDown = rReduceCoolDown + 5
 			call UnitRemoveAbility(whichUnit,'A3DX')
@@ -85131,7 +85099,7 @@ function UTA takes unit whichUnit, integer id returns nothing
 	endif
 	// 技能施法目标 不等于没有 并且是技能目标的敌对玩家 有莲花 而且施法者不是蝗虫
 	// 莲花的判断
-	if targetUnit!= null and IsUnitEnemy(whichUnit, GetOwningPlayer(targetUnit)) and GetUnitAbilityLevel(targetUnit,'A3E9')== 1 and(GetUnitAbilityLevel(whichUnit,'Aloc')== 0 or LoadBoolean(HY, GetHandleId(whichUnit),'REFL')) then
+	if targetUnit!= null and IsUnitEnemy(whichUnit, GetOwningPlayer(targetUnit)) and GetUnitAbilityLevel(targetUnit,'A3E9') == 1 and(GetUnitAbilityLevel(whichUnit,'Aloc') == 0 or LoadBoolean(HY, GetHandleId(whichUnit),'REFL')) then
 		// 技能不等于攻击特效 不等于汲取技能(生命魔法) 不等于吞噬技能 不是特殊技能 不是莲花技能 还有一些奇怪的技能不能被反弹
 		if not IsAttackSpecialEffects(id) and not UDA(id) and not IsSpecialAbility(id) and not HE and not UHA(id) then
 			if IsDrainAbility(id) then
@@ -85363,7 +85331,7 @@ function U8A takes nothing returns boolean
 		// call UnitAddMaxLife(u, R2I(GetUnitState(Player__Hero[GetPlayerId(whichPlayer)], UNIT_STATE_MAX_LIFE)*(.2 + .05 * i)))
 	endif
 	// 野怪进入
-	if whichPlayer == BW or whichPlayer == Sentinels[0] or whichPlayer == Scourges[0]then
+	if whichPlayer == CreepsPlayer or whichPlayer == Sentinels[0] or whichPlayer == Scourges[0] then
 		// 反低级开图者 错误的图标坐标 然并卵 并且还与网易平台的观战系统冲突
 		if AT then
 			call UnitAddPermanentAbility(whichUnit,'A44F')
@@ -85415,7 +85383,7 @@ function WEA takes string s returns nothing
 	local integer i = 0
 	loop
 	exitwhen HaveSavedString(Q,'DEAD', i) == false
-		if LoadStr(Q,'DEAD', i)== s then
+		if LoadStr(Q,'DEAD', i) == s then
 			return
 		endif
 		set i = i + 1
@@ -85724,17 +85692,17 @@ function YVA takes nothing returns nothing
 		set k = k + 1
 	exitwhen k >$B
 	endloop
-	if Q3V[1]then
+	if Q3V[1] then
 		set im = LoadImageHandle(HY, h,$5F0)
 		call DestroyImage(im)
 		set Q3V[1]= false
 	endif
-	if Q3V[2]then
+	if Q3V[2] then
 		set im = LoadImageHandle(HY, h,$5F1)
 		call DestroyImage(im)
 		set Q3V[2]= false
 	endif
-	if Q3V[3]then
+	if Q3V[3] then
 		set im = LoadImageHandle(HY, h,$5F2)
 		call DestroyImage(im)
 		set Q3V[3]= false
@@ -85831,7 +85799,7 @@ function YNA takes nothing returns nothing
 			endif
 		endif
 		if level > 0 then
-			if O6X() or GetUnitAbilityLevel(KKX,'A36D')== 1 then
+			if O6X() or GetUnitAbilityLevel(KKX,'A36D') == 1 then
 				if GetUnitAbilityLevel(W_V,'A330')!= 0 then
 					call UnitRemoveAbility(W_V,'A330')
 				endif
@@ -85853,7 +85821,7 @@ function YNA takes nothing returns nothing
 					if GetUnitAbilityLevel(KKX,'P247')!= level then
 						call SetUnitAbilityLevel(KKX,'P247', level)
 					endif
-					if GetUnitAbilityLevel(KKX,'A116')== 0 then
+					if GetUnitAbilityLevel(KKX,'A116') == 0 then
 						call UnitAddPermanentAbility(KKX,'A116')
 						call UnitAddPermanentAbility(KKX,'A117')
 					endif
@@ -85911,8 +85879,8 @@ function YCA takes nothing returns boolean //辉耀，此物品本身自带龙�
 	local integer h = GetHandleId(t)
 	local unit u = LoadUnitHandle(HY, h, 14)
 	local group g = null
-	if GetTriggerEventId()== EVENT_UNIT_DROP_ITEM then
-		if GetManipulatedItem()== LoadItemHandle(HY, h , 96) then
+	if GetTriggerEventId() == EVENT_UNIT_DROP_ITEM then
+		if GetManipulatedItem() == LoadItemHandle(HY, h , 96) then
 			call FlushChildHashtable(HY,(h))
 			call CleanCurrentTrigger(t)
 		endif
@@ -85959,7 +85927,7 @@ function YGA takes nothing returns nothing
 	call UnitRemoveAbility(GetEnumUnit(),'A3E2')
 endfunction
 function YHA takes nothing returns nothing
-	if GetUnitAbilityLevel(GetEnumUnit(),'A393')== 0 then
+	if GetUnitAbilityLevel(GetEnumUnit(),'A393') == 0 then
 		call UnitAddPermanentAbility(GetEnumUnit(),'A393')
 		call UnitAddPermanentAbility(GetEnumUnit(),'A394')
 	endif
@@ -85967,7 +85935,7 @@ function YHA takes nothing returns nothing
 		if GetWidgetLife(GetEnumUnit())/ GetUnitState(GetEnumUnit(), UNIT_STATE_MAX_LIFE)<= .2 then
 			call SetUnitAbilityLevel(GetEnumUnit(),'A393', 2)
 			call UnitAddPermanentAbility(GetEnumUnit(),'A3E2')
-		elseif GetUnitAbilityLevel(GetEnumUnit(),'A393')== 2 then
+		elseif GetUnitAbilityLevel(GetEnumUnit(),'A393') == 2 then
 			call SetUnitAbilityLevel(GetEnumUnit(),'A393', 1)
 			call UnitRemoveAbility(GetEnumUnit(),'A3E2')
 		endif
@@ -85981,7 +85949,7 @@ function YJA takes nothing returns boolean
 	local real x = GetUnitX(u)
 	local real y = GetUnitY(u)
 	local group gg
-	if u == null or(GetTriggerEventId()== EVENT_UNIT_DROP_ITEM and GetManipulatedItem()== LoadItemHandle(HY,(h), 96)) then
+	if u == null or(GetTriggerEventId() == EVENT_UNIT_DROP_ITEM and GetManipulatedItem() == LoadItemHandle(HY,(h), 96)) then
 		call FlushChildHashtable(HY,(h))
 		call CleanCurrentTrigger(t)
 		call ForGroup(g, function YGA)
@@ -86027,7 +85995,7 @@ function YMA takes nothing returns nothing
 	call BSR(GetEnumUnit(),'A3AX')
 endfunction
 function YPA takes nothing returns nothing
-	if GetUnitAbilityLevel(GetEnumUnit(),'A3AX')== 0 then
+	if GetUnitAbilityLevel(GetEnumUnit(),'A3AX') == 0 then
 		call UnitAddPermanentAbility(GetEnumUnit(),'A3AX')
 	endif
 endfunction
@@ -86039,7 +86007,7 @@ function YQA takes nothing returns boolean
 	local real x = GetUnitX(u)
 	local real y = GetUnitY(u)
 	local group gg
-	if u == null or(GetTriggerEventId()== EVENT_UNIT_DROP_ITEM and GetManipulatedItem()== LoadItemHandle(HY,(h), 96)) then
+	if u == null or(GetTriggerEventId() == EVENT_UNIT_DROP_ITEM and GetManipulatedItem() == LoadItemHandle(HY,(h), 96)) then
 		call FlushChildHashtable(HY,(h))
 		call CleanCurrentTrigger(t)
 		call ForGroup(g, function YMA)
@@ -86080,14 +86048,14 @@ function PickPipeItem takes unit u returns nothing
 endfunction
 // 获取物品和单位被召唤
 function YTA takes nothing returns boolean
-	if GetTriggerEventId()== EVENT_PLAYER_UNIT_PICKUP_ITEM then
-		if GetItemType(GetManipulatedItem())== ITEM_TYPE_PERMANENT then
-			if GetItemIndex(GetManipulatedItem())== AZV then
+	if GetTriggerEventId() == EVENT_PLAYER_UNIT_PICKUP_ITEM then
+		if GetItemType(GetManipulatedItem()) == ITEM_TYPE_PERMANENT then
+			if GetItemIndex(GetManipulatedItem()) == AZV then
 				call PickRadianceItem(GetTriggerUnit())
-			elseif GetItemIndex(GetManipulatedItem())== RTV then
+			elseif GetItemIndex(GetManipulatedItem()) == RTV then
 				// 卫士胫甲
 				call PickGuardianGreavesItem(GetTriggerUnit())
-			elseif GetItemIndex(GetManipulatedItem())== NPV then
+			elseif GetItemIndex(GetManipulatedItem()) == NPV then
 				call SetAllPlayerAbilityUnavailable('A3AX')
 				call PickPipeItem(GetTriggerUnit())
 			endif
@@ -86106,7 +86074,7 @@ function YUA takes unit u, item it, integer JOX returns nothing
 	local integer SQV = UUV(it)
 	local player p
 	loop
-		if UnitItemInSlot(u, i)== null then
+		if UnitItemInSlot(u, i) == null then
 			set YWA = YWA + 1
 		endif
 		set i = i + 1
@@ -86293,7 +86261,7 @@ endfunction
 function RightDoubleClickItemCondition takes nothing returns nothing
 	local integer id = GetIssuedOrderId()
 	if id >= 852002 and id <= 852007 then
-		if GetOrderTargetItem()== UnitItemInSlot(GetTriggerUnit(), id -852002) then
+		if GetOrderTargetItem() == UnitItemInSlot(GetTriggerUnit(), id -852002) then
 			call RightDoubleClickItemAction(GetTriggerUnit(), GetOrderTargetItem(), id -852002)
 		endif
 	endif
@@ -86308,7 +86276,7 @@ function Y1A takes nothing returns nothing
 	local unit u = GetTriggerUnit()
 	local real x = GetUnitX(u)
 	local real y = GetUnitY(u)
-	if GetUnitTypeId(u)!='hfoo' and GetUnitAbilityLevel(u,'Aloc')== 0 then
+	if GetUnitTypeId(u)!='hfoo' and GetUnitAbilityLevel(u,'Aloc') == 0 then
 		if CoordinateX50(x)!= x then
 			call SetUnitX(u, CoordinateX50(x))
 		endif
@@ -86322,7 +86290,7 @@ function Y2A takes nothing returns nothing
 	local unit u = GetTriggerUnit()
 	local real x = GetUnitX(u)
 	local real y = GetUnitY(u)
-	if GetUnitAbilityLevel(u,'Aloc')== 0 and GetOwningPlayer(u)!= Player(15) then
+	if GetUnitAbilityLevel(u,'Aloc') == 0 and GetOwningPlayer(u)!= Player(15) then
 		call SetUnitPosition(u, x, y)
 	endif
 	set u = null
@@ -86494,7 +86462,7 @@ function ZVA takes unit u returns nothing
 	set t = null
 endfunction
 function ZEA takes unit u, item it returns nothing
-	if GetOrderPointX()== GetItemX(it) and GetOrderPointY()== GetItemY(it) then
+	if GetOrderPointX() == GetItemX(it) and GetOrderPointY() == GetItemY(it) then
 		if IsSentinelsPlayer(GetOwningPlayer(u)) then
 			if RectContainsUnit(WA, u) then
 				call EXStopUnit(u)
@@ -86549,7 +86517,7 @@ function UnitIssuedItemOrder takes nothing returns nothing // 发布物品命令
 					set i = 0
 					set b = false
 					loop
-						if UnitItemInSlot(targetUnit, i)== null then
+						if UnitItemInSlot(targetUnit, i) == null then
 							set b = true
 							exitwhen true
 						endif
@@ -86641,7 +86609,7 @@ function UnitIssuedItemOrder takes nothing returns nothing // 发布物品命令
 				set i = 0
 				set b = false
 				loop
-					if UnitItemInSlot(targetUnit, i)== null then
+					if UnitItemInSlot(targetUnit, i) == null then
 						set b = true
 					exitwhen true
 					endif
@@ -86734,7 +86702,7 @@ endfunction
 function ZAA takes nothing returns nothing
 	if UM then
 		if GetUnitTypeId(GetFilterUnit())=='hfoo' then
-			if GetTriggerPlayer()== LocalPlayer then
+			if GetTriggerPlayer() == LocalPlayer then
 				call ClearSelection()
 				call SelectUnit(LoadUnitHandle(HY, GetHandleId(GetFilterUnit()), 0), true)
 			endif
@@ -86832,7 +86800,7 @@ endfunction
 function ZLA takes nothing returns nothing
 	local integer h = GetHandleId(GetExpiredTimer())
 	local player p = LoadPlayerHandle(HY, h, 0)
-	if GetPlayerSlotState(p)== PLAYER_SLOT_STATE_LEFT then
+	if GetPlayerSlotState(p) == PLAYER_SLOT_STATE_LEFT then
 		call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 10, PlayersColoerText[GetPlayerId(p)]+ GetPlayerName(p)+ "|r: Maphack detected, kicked.")
 	endif
 	call FlushChildHashtable(HY, GetHandleId(GetExpiredTimer()))
@@ -86855,14 +86823,14 @@ function ZPA takes nothing returns nothing
 		set GO[id]= true
 	endif
 	if u == KO then
-		if(GetPlayerController(p)== MAP_CONTROL_USER) and(GetPlayerSlotState(p)== PLAYER_SLOT_STATE_PLAYING) then
+		if(GetPlayerController(p) == MAP_CONTROL_USER) and(GetPlayerSlotState(p) == PLAYER_SLOT_STATE_PLAYING) then
 			if FO[id]== false or GO[id] then
 				if UnitVisibleToPlayer(LO, p) == false then
 					set AO[id]= AO[id]+ 1
-					if ModuloInteger(AO[id], 30)== 3 then
+					if ModuloInteger(AO[id], 30) == 3 then
 						call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 10, PlayersColoerText[id]+ GetPlayerName(p)+ "|r: 作弊检测 " + I2S(AO[id])+ " 秒")
 					endif
-					if GV and ModuloInteger(AO[id], 60)== 5 then
+					if GV and ModuloInteger(AO[id], 60) == 5 then
 						call StoreDrCacheData("MH" + I2S(id), R2I(GetGameTime()))
 					endif
 				endif
@@ -86987,26 +86955,26 @@ function ZUA takes nothing returns nothing
 	local integer hu = GetHandleId(u)
 	if UnitAlive(u) and(HaveSavedReal(HY, hu,'FnLv') == false or GetGameTime()-LoadReal(HY, hu,'FnLv')< 2.5) then
 		if GetWidgetLife(u)< GetUnitState(u, UNIT_STATE_MAX_LIFE) then
-			if GetUnitAbilityLevel(u,'A35Y')== 0 then
+			if GetUnitAbilityLevel(u,'A35Y') == 0 then
 				call UnitAddPermanentAbility(u,'A35Y')
 			endif
 			call SetWidgetLife(u, GetWidgetLife(u)+ .004 * GetUnitState(u, UNIT_STATE_MAX_LIFE))
 		else
-			if GetUnitAbilityLevel(u,'A35Y')== 1 then
+			if GetUnitAbilityLevel(u,'A35Y') == 1 then
 				call UnitRemoveAbility(u,'A35Y')
 			endif
 		endif
 		if GetUnitState(u, UNIT_STATE_MANA)< GetUnitState(u, UNIT_STATE_MAX_MANA) then
-			if GetUnitAbilityLevel(u,'A35Z')== 0 then
+			if GetUnitAbilityLevel(u,'A35Z') == 0 then
 				call UnitAddPermanentAbility(u,'A35Z')
 			endif
 			call SetUnitState(u, UNIT_STATE_MANA, GetUnitState(u, UNIT_STATE_MANA)+ .004 * GetUnitState(u, UNIT_STATE_MAX_MANA)+ 1.4)
 		else
-			if GetUnitAbilityLevel(u,'A35Z')== 1 then
+			if GetUnitAbilityLevel(u,'A35Z') == 1 then
 				call UnitRemoveAbility(u,'A35Z')
 			endif
 		endif
-		if HaveSavedReal(HY, hu,'FnLv') == false and UnitInventorySize(u)> 0 and ModuloInteger(GetTriggerEvalCount(GetTriggeringTrigger()), 2)== 1 then
+		if HaveSavedReal(HY, hu,'FnLv') == false and UnitInventorySize(u)> 0 and ModuloInteger(GetTriggerEvalCount(GetTriggeringTrigger()), 2) == 1 then
 			call ZTA(u)
 		endif
 	else
@@ -87018,17 +86986,17 @@ function ZUA takes nothing returns nothing
 	if IsMessengerUnit(u) then
 		if HaveSavedReal(HY, hu,'FnLv') then
 			call UnitRemoveAbility(u,'Avul')
-		elseif GetUnitAbilityLevel(u,'Avul')== 0 then
+		elseif GetUnitAbilityLevel(u,'Avul') == 0 then
 			call UnitAddPermanentAbility(u,'Avul')
 		endif
 	endif
 	set u = null
 endfunction
 function ZWA takes nothing returns boolean
-	return(GetPlayerTeam(GetOwningPlayer(GetFilterUnit())) == 0 and GetWidgetLife(GetFilterUnit())> .5 and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and GetUnitAbilityLevel(GetFilterUnit(),'Aloc')== 0)!= null
+	return(GetPlayerTeam(GetOwningPlayer(GetFilterUnit())) == 0 and GetWidgetLife(GetFilterUnit())> .5 and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and GetUnitAbilityLevel(GetFilterUnit(),'Aloc') == 0)!= null
 endfunction
 function ZYA takes nothing returns boolean
-	return(GetPlayerTeam(GetOwningPlayer(GetFilterUnit())) == 1 and GetWidgetLife(GetFilterUnit())> .5 and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and GetUnitAbilityLevel(GetFilterUnit(),'Aloc')== 0)!= null
+	return(GetPlayerTeam(GetOwningPlayer(GetFilterUnit())) == 1 and GetWidgetLife(GetFilterUnit())> .5 and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and GetUnitAbilityLevel(GetFilterUnit(),'Aloc') == 0)!= null
 endfunction
 function ZZA takes nothing returns boolean
 	return GetUnitPointValue(GetTriggerUnit())!=$C8
@@ -87036,9 +87004,9 @@ endfunction
 function Z_A takes nothing returns nothing
 	local group g
 	local unit u
-	if GetTriggerEventId()== EVENT_GAME_LEAVE_REGION then
-		if GetUnitAbilityLevel(GetTriggerUnit(),'Aloc')== 0 then
-			if(GetTriggeringRegion()== HX and GetPlayerTeam(GetOwningPlayer(GetTriggerUnit())) == 0) or(GetTriggeringRegion()== JX and GetPlayerTeam(GetOwningPlayer(GetTriggerUnit())) == 1) then
+	if GetTriggerEventId() == EVENT_GAME_LEAVE_REGION then
+		if GetUnitAbilityLevel(GetTriggerUnit(),'Aloc') == 0 then
+			if(GetTriggeringRegion() == HX and GetPlayerTeam(GetOwningPlayer(GetTriggerUnit())) == 0) or(GetTriggeringRegion() == JX and GetPlayerTeam(GetOwningPlayer(GetTriggerUnit())) == 1) then
 				call SaveReal(HY, GetHandleId(GetTriggerUnit()),'FnLv', GetGameTime())
 				call GroupAddUnit(AV, GetTriggerUnit())
 			endif
@@ -87165,8 +87133,8 @@ function InitBuyBack takes nothing returns nothing
 	set W4[10]= U4[0]
 	set W4[11]= U4[0]
 	set W4[12]= U4[0]
-	set W4[$D]= U4[0]
-	set W4[$E]= U4[0]
+	set W4[13]= U4[0]
+	set W4[14]= U4[0]
 endfunction
 function SaveHeroModelData takes integer id, integer XQX, integer KLX, integer cmid, string Z4A, real Z5A returns nothing
 	set VUV[id]= XQX
@@ -91052,9 +91020,9 @@ function SaveHerosData takes nothing returns nothing
 	set V_V[10]='HC92'
 	set V_V[11]='Hvwd'
 	set V_V[12]='HC49'
-	set V_V[$D]='Huth'
-	set V_V[$E]='Ogrh'
-	set V_V[$F]='U006'
+	set V_V[13]='Huth'
+	set V_V[14]='Ogrh'
+	set V_V[15]='U006'
 	set V_V[16]='EC57'
 	set V_V[17]='Eevi'
 	set V_V[18]='Ubal'
@@ -91090,9 +91058,9 @@ function SaveHerosData takes nothing returns nothing
 	set V1V[10]='NC00'
 	set V1V[11]='Udre'
 	set V1V[12]='UC11'
-	set V1V[$D]='Ofar'
-	set V1V[$E]='U00F'
-	set V1V[$F]='U00K'
+	set V1V[13]='Ofar'
+	set V1V[14]='U00F'
+	set V1V[15]='U00K'
 	set V1V[16]='O00J'
 	set V1V[17]='Udea'
 	set V1V[18]='Opgh'
@@ -91133,9 +91101,9 @@ function SaveHerosData takes nothing returns nothing
 	set V3V[10]='Hmkg'
 	set V3V[11]='Hblm'
 	set V3V[12]='N01A'
-	set V3V[$D]='H00A'
-	set V3V[$E]='Ulic'
-	set V3V[$F]='Ekee'
+	set V3V[13]='H00A'
+	set V3V[14]='Ulic'
+	set V3V[15]='Ekee'
 	set V3V[16]='UC76'
 	set V3V[17]='UC18'
 	set V3V[18]='UC01'
@@ -91192,12 +91160,12 @@ function AHC takes boolean b returns nothing
 		set size = 1
 	endif
 	loop
-		call SetLightningColor(NeutralsPosTipLightning[i * 4 + 0], 0.211, 0.87, 0, a)
-		call SetLightningColor(NeutralsPosTipLightning[i * 4 + 1], 0.211, 0.87, 0, a)
-		call SetLightningColor(NeutralsPosTipLightning[i * 4 + 2], 0.211, 0.87, 0, a)
-		call SetLightningColor(NeutralsPosTipLightning[i * 4 + 3], 0.211, 0.87, 0, a)
+		call SetLightningColor(CreepsRectIndicatorLightning[i * 4 + 0], 0.211, 0.87, 0, a)
+		call SetLightningColor(CreepsRectIndicatorLightning[i * 4 + 1], 0.211, 0.87, 0, a)
+		call SetLightningColor(CreepsRectIndicatorLightning[i * 4 + 2], 0.211, 0.87, 0, a)
+		call SetLightningColor(CreepsRectIndicatorLightning[i * 4 + 3], 0.211, 0.87, 0, a)
 		set i = i + 1
-	exitwhen i > NeutralsPosTipNumber
+	exitwhen i > CreepsRectIndicatorCount
 	endloop
 	loop
 		if tower_rangeeff[i2] != null then
@@ -91217,36 +91185,40 @@ function createtower_rangeeff takes unit u returns nothing
 	set eff = null
 endfunction
 
+globals
+	lightning array CreepsRectIndicatorLightning
+	integer 		CreepsRectIndicatorCount 	 = 0
+endglobals
 function CreateCreepsRectIndicator takes rect r, boolean high returns nothing
 	local integer h = 896
 	if high then
 		set h = 1024
 	endif
-	set NeutralsPosTipLightning[NeutralsPosTipNumber * 4 + 0]= AddLightningEx("BRDR", false, GetRectMinX(r), GetRectMinY(r), h, GetRectMaxX(r), GetRectMinY(r), h)
-	set NeutralsPosTipLightning[NeutralsPosTipNumber * 4 + 1]= AddLightningEx("BRDR", false, GetRectMinX(r), GetRectMaxY(r), h, GetRectMaxX(r), GetRectMaxY(r), h)
-	set NeutralsPosTipLightning[NeutralsPosTipNumber * 4 + 2]= AddLightningEx("BRDR", false, GetRectMinX(r), GetRectMinY(r), h, GetRectMinX(r), GetRectMaxY(r), h)
-	set NeutralsPosTipLightning[NeutralsPosTipNumber * 4 + 3]= AddLightningEx("BRDR", false, GetRectMaxX(r), GetRectMinY(r), h, GetRectMaxX(r), GetRectMaxY(r), h)
-	call SetLightningColor(NeutralsPosTipLightning[NeutralsPosTipNumber * 4 + 0], 0.211, 0.87, 0, 0.0)
-	call SetLightningColor(NeutralsPosTipLightning[NeutralsPosTipNumber * 4 + 1], 0.211, 0.87, 0, 0.0)
-	call SetLightningColor(NeutralsPosTipLightning[NeutralsPosTipNumber * 4 + 2], 0.211, 0.87, 0, 0.0)
-	call SetLightningColor(NeutralsPosTipLightning[NeutralsPosTipNumber * 4 + 3], 0.211, 0.87, 0, 0.0)
-	set NeutralsPosTipNumber = NeutralsPosTipNumber + 1
+	set CreepsRectIndicatorLightning[CreepsRectIndicatorCount * 4 + 0]= AddLightningEx("BRDR", false, GetRectMinX(r), GetRectMinY(r), h, GetRectMaxX(r), GetRectMinY(r), h)
+	set CreepsRectIndicatorLightning[CreepsRectIndicatorCount * 4 + 1]= AddLightningEx("BRDR", false, GetRectMinX(r), GetRectMaxY(r), h, GetRectMaxX(r), GetRectMaxY(r), h)
+	set CreepsRectIndicatorLightning[CreepsRectIndicatorCount * 4 + 2]= AddLightningEx("BRDR", false, GetRectMinX(r), GetRectMinY(r), h, GetRectMinX(r), GetRectMaxY(r), h)
+	set CreepsRectIndicatorLightning[CreepsRectIndicatorCount * 4 + 3]= AddLightningEx("BRDR", false, GetRectMaxX(r), GetRectMinY(r), h, GetRectMaxX(r), GetRectMaxY(r), h)
+	call SetLightningColor(CreepsRectIndicatorLightning[CreepsRectIndicatorCount * 4 + 0], 0.211, 0.87, 0, 0.0)
+	call SetLightningColor(CreepsRectIndicatorLightning[CreepsRectIndicatorCount * 4 + 1], 0.211, 0.87, 0, 0.0)
+	call SetLightningColor(CreepsRectIndicatorLightning[CreepsRectIndicatorCount * 4 + 2], 0.211, 0.87, 0, 0.0)
+	call SetLightningColor(CreepsRectIndicatorLightning[CreepsRectIndicatorCount * 4 + 3], 0.211, 0.87, 0, 0.0)
+	set CreepsRectIndicatorCount = CreepsRectIndicatorCount + 1
 endfunction
 
-function SXO takes nothing returns nothing
-	call RemoveUnit(CreateUnit(BW,'u001', GetRectCenterX(gg_rct_ScourgeAncientCenter), GetRectCenterY(gg_rct_ScourgeAncientCenter), 0))
-	call RemoveUnit(CreateUnit(BW,'u001', GetRectCenterX(gg_rct_ScourgeAncientCenter), GetRectCenterY(gg_rct_ScourgeAncientCenter), 0))
-	call RemoveUnit(CreateUnit(BW,'u001', GetRectCenterX(gg_rct_SentinelAncientCenter), GetRectCenterY(gg_rct_SentinelAncientCenter), 0))
-	call RemoveUnit(CreateUnit(BW,'u001', GetRectCenterX(gg_rct_SentinelCreepCenter3), GetRectCenterY(gg_rct_SentinelCreepCenter3), 0))
-	call RemoveUnit(CreateUnit(BW,'u001', GetRectCenterX(gg_rct_ScourgeCreepCenter5), GetRectCenterY(gg_rct_ScourgeCreepCenter5), 0))
-	call RemoveUnit(CreateUnit(BW,'u001', GetRectCenterX(gg_rct_ScourgeCreepCenter4), GetRectCenterY(gg_rct_ScourgeCreepCenter4), 0))
-	call RemoveUnit(CreateUnit(BW,'u001', GetRectCenterX(gg_rct_SentinelCreepCenter4), GetRectCenterY(gg_rct_SentinelCreepCenter4), 0))
-	call RemoveUnit(CreateUnit(BW,'u001', GetRectCenterX(gg_rct_ScourgeCreepCenter3), GetRectCenterY(gg_rct_ScourgeCreepCenter3), 0))
-	call RemoveUnit(CreateUnit(BW,'u001', GetRectCenterX(gg_rct_SentinelCreepCenter5), GetRectCenterY(gg_rct_SentinelCreepCenter5), 0))
-	call RemoveUnit(CreateUnit(BW,'u001', GetRectCenterX(gg_rct_ScourgeCreepCenter1), GetRectCenterY(gg_rct_ScourgeCreepCenter1), 0))
-	call RemoveUnit(CreateUnit(BW,'u001', GetRectCenterX(gg_rct_SentinelCreepCenter2), GetRectCenterY(gg_rct_SentinelCreepCenter2), 0))
-	call RemoveUnit(CreateUnit(BW,'u001', GetRectCenterX(gg_rct_ScourgeCreepCenter2), GetRectCenterY(gg_rct_ScourgeCreepCenter2), 0))
-	call RemoveUnit(CreateUnit(BW,'u001', GetRectCenterX(gg_rct_SentinelCreepCenter1), GetRectCenterY(gg_rct_SentinelCreepCenter1), 0))
+function PreloadCreeps takes nothing returns nothing
+	call RemoveUnit(CreateUnit(CreepsPlayer,'u001', GetRectCenterX(gg_rct_ScourgeAncientCenter), GetRectCenterY(gg_rct_ScourgeAncientCenter), 0))
+	call RemoveUnit(CreateUnit(CreepsPlayer,'u001', GetRectCenterX(gg_rct_ScourgeAncientCenter), GetRectCenterY(gg_rct_ScourgeAncientCenter), 0))
+	call RemoveUnit(CreateUnit(CreepsPlayer,'u001', GetRectCenterX(gg_rct_SentinelAncientCenter), GetRectCenterY(gg_rct_SentinelAncientCenter), 0))
+	call RemoveUnit(CreateUnit(CreepsPlayer,'u001', GetRectCenterX(gg_rct_SentinelCreepCenter3), GetRectCenterY(gg_rct_SentinelCreepCenter3), 0))
+	call RemoveUnit(CreateUnit(CreepsPlayer,'u001', GetRectCenterX(gg_rct_ScourgeCreepCenter5), GetRectCenterY(gg_rct_ScourgeCreepCenter5), 0))
+	call RemoveUnit(CreateUnit(CreepsPlayer,'u001', GetRectCenterX(gg_rct_ScourgeCreepCenter4), GetRectCenterY(gg_rct_ScourgeCreepCenter4), 0))
+	call RemoveUnit(CreateUnit(CreepsPlayer,'u001', GetRectCenterX(gg_rct_SentinelCreepCenter4), GetRectCenterY(gg_rct_SentinelCreepCenter4), 0))
+	call RemoveUnit(CreateUnit(CreepsPlayer,'u001', GetRectCenterX(gg_rct_ScourgeCreepCenter3), GetRectCenterY(gg_rct_ScourgeCreepCenter3), 0))
+	call RemoveUnit(CreateUnit(CreepsPlayer,'u001', GetRectCenterX(gg_rct_SentinelCreepCenter5), GetRectCenterY(gg_rct_SentinelCreepCenter5), 0))
+	call RemoveUnit(CreateUnit(CreepsPlayer,'u001', GetRectCenterX(gg_rct_ScourgeCreepCenter1), GetRectCenterY(gg_rct_ScourgeCreepCenter1), 0))
+	call RemoveUnit(CreateUnit(CreepsPlayer,'u001', GetRectCenterX(gg_rct_SentinelCreepCenter2), GetRectCenterY(gg_rct_SentinelCreepCenter2), 0))
+	call RemoveUnit(CreateUnit(CreepsPlayer,'u001', GetRectCenterX(gg_rct_ScourgeCreepCenter2), GetRectCenterY(gg_rct_ScourgeCreepCenter2), 0))
+	call RemoveUnit(CreateUnit(CreepsPlayer,'u001', GetRectCenterX(gg_rct_SentinelCreepCenter1), GetRectCenterY(gg_rct_SentinelCreepCenter1), 0))
 endfunction
 function InitTaverns takes nothing returns nothing
 	local player p = Player(15)
@@ -92139,9 +92111,9 @@ endfunction
 function fj_Actions takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local unit u = GetTriggerUnit()
-	if GetTriggerEventId()== EVENT_WIDGET_DEATH or GetTriggerEventId()== EVENT_GAME_TIMER_EXPIRED then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
 		call CleanCurrentTrigger(t)
-	elseif GetTriggerEventId()== EVENT_UNIT_DAMAGED then
+	elseif GetTriggerEventId() == EVENT_UNIT_DAMAGED then
 		if(EXGetEventDamageData(1) != 0) and GetUnitAbilityLevel(u,'A3W0')> 0 and GetEventDamage() > 1.00 then
 			call CCX(u,'A3W9', 1, 0.4,'B3W9')
 		endif
@@ -92365,7 +92337,7 @@ function SetUp_SyncData takes nothing returns boolean
 			call GetSetUpText("自动装置神符", XI[id])
 		endif
 		set XI[id]= not XI[id]
-		//if XI[id]then
+		//if XI[id] then
 		//	call DisplayTimedTextToPlayer(p, 0, 0, 5, "右键点击|cffff0000神符|r时|c0000FF00不会|r把神符装入瓶中")
 		//else
 		//	call DisplayTimedTextToPlayer(p, 0, 0, 5, "右键点击|cffff0000神符|r时|c0000FF00将会|r把神符装入瓶中")
@@ -93202,7 +93174,7 @@ function EnterKey___PushKey takes nothing returns nothing
 				call Click_UI_Glyph_A()
 			endif
 		endif
-		if bDoubleClickSystemIsEnable then
+		if IsEnableDoubleClickSystem then
 			if KeyCanDoubleClickSpell[iHotKey] > 0 then
 				// 因为取消按键在右下角
 				call GetLocalAbilityId(3, 2)
@@ -93938,81 +93910,97 @@ function Init_Sounds takes nothing returns nothing
 endfunction
 // 初始化矩形区域
 function Init_RectsAndRegions takes nothing returns nothing
-	// 天灾上路
-	set gg_rct_ScourgeTopMeleeBirth           = Rect(  2304.,  5280.,  2752.,  5728. ) // ScourgeTopMeleeBirth
-	set gg_rct_ScourgeTopRangedBirth          = Rect(  2752.,  5408.,  3040.,  5632. ) // ScourgeTopRangedBirth
-	set gg_rct_ScourgeTopSuperCreepsBirth     = Rect(  2336.,  5952.,  2592.,  6240. ) // ScourgeTopSuperCreepsBirth
-	// 天灾中路
-	set gg_rct_ScourgeCenterMeleeBirth        = Rect(  3616.,  3584.,  3872.,  3872. ) // ScourgeCenterMeleeBirth
-	set gg_rct_ScourgeCenterRangedBirth       = Rect(  4128.,  3776.,  4352.,  4032. ) // ScourgeCenterRangedBirth
-	set gg_rct_ScourgeCenterSuperCreepsBirth  = Rect(  3904.,  2976.,  4160.,  3264. ) // ScourgeCenterSuperCreepsBirth
-	// 天灾下路
-	set gg_rct_ScourgeBottomMeleeBirth        = Rect(  6176.,  3136.,  6400.,  3392. ) // ScourgeBottomMeleeBirth
-	set gg_rct_ScourgeBottomRangedBirth       = Rect(  6048.,  3424.,  6304.,  3776. ) // ScourgeBottomRangedBirth
-	set gg_rct_ScourgeBottomSuperCreepsBirth  = Rect(  6304.,  1984.,  6560.,  2272. ) // ScourgeBottomSuperCreeps
+	globals
+		rect gg_rct_SentinelBotRangedSpawn = null
+		rect gg_rct_SentinelTopRangedSpawn = null
+		rect gg_rct_SentinelMidRangedSpawn = null
+		rect gg_rct_SentinelBotMeleeSpawn  = null
+		rect gg_rct_SentinelTopMeleeSpawn  = null
+		rect gg_rct_SentinelMidMeleeSpawn  = null
+
+		rect gg_rct_ScourgeTopMeleeSpawn   = null
+		rect gg_rct_ScourgeMidMeleeSpawn   = null
+		rect gg_rct_ScourgeBotMeleeSpawn   = null
+		rect gg_rct_ScourgeBotRangedSpawn  = null
+		rect gg_rct_ScourgeMidRangedSpawn  = null
+		rect gg_rct_ScourgeTopRangedSpawn  = null
+
+		rect gg_rct_SentinelBotSuperCreepsSpawn = null
+		rect gg_rct_SentinelMidSuperCreepsSpawn = null
+		rect gg_rct_SentinelTopSuperCreepsSpawn = null
+
+		rect gg_rct_ScourgeMidSuperCreepsSpawn  = null
+		rect gg_rct_ScourgeTopSuperCreepsSpawn  = null
+		rect gg_rct_ScourgeBotSuperCreepsSpawn  = null
+	endglobals
 	// 近卫上路
-	set gg_rct_SentinelTopMeleeBirth 		  = Rect( -6336., -4224., -5984., -3904. ) // SentinelTopMeleeBirth
-	set gg_rct_SentinelTopRangedBirth 		  = Rect( -6304., -4384., -6080., -4224. ) // SentinelTopRangedBirth
-	set gg_rct_SentinelTopSuperCreepsBirth    = Rect( -6432., -3840., -6176., -3552. ) // SentinelTopSuperCreepsBirth
+	set gg_rct_SentinelTopMeleeSpawn 	   = Rect( -6336., -4224., -5984., -3904. )
+	set gg_rct_SentinelTopRangedSpawn 	   = Rect( -6304., -4384., -6080., -4224. )
+	set gg_rct_SentinelTopSuperCreepsSpawn = Rect( -6432., -3840., -6176., -3552. )
 	// 近卫中路
-	set gg_rct_SentinelCenterMeleeBirth       = Rect( -4896., -5504., -4608., -5184. ) // SentinelCenterMeleeBirth
-	set gg_rct_SentinelCenterRangedBirth      = Rect( -4928., -5760., -4736., -5536. ) // SentinelCenterRangedBirth
-	set gg_rct_SentinelCenterSuperCreepsBirth = Rect( -4384., -4800., -4128., -4512. ) // SentinelCenterSuperCreepsBirth
+	set gg_rct_SentinelMidMeleeSpawn       = Rect( -4896., -5504., -4608., -5184. )
+	set gg_rct_SentinelMidRangedSpawn      = Rect( -4928., -5760., -4736., -5536. )
+	set gg_rct_SentinelMidSuperCreepsSpawn = Rect( -4384., -4800., -4128., -4512. )
 	// 近卫下路
-	set gg_rct_SentinelBottomMeleeBirth       = Rect( -3648., -6880., -3424., -6688. ) // SentinelBottomMeleeBirth
-	set gg_rct_SentinelBottomRangedBirth      = Rect( -4224., -6848., -3968., -6592. ) // SentinelBottomRangedBirth
-	set gg_rct_SentinelBottomSuperCreepsBirth = Rect( -3328., -6912., -3072., -6624. ) // SentinelBottomSuperCreepsBirth
+	set gg_rct_SentinelBotMeleeSpawn       = Rect( -3648., -6880., -3424., -6688. )
+	set gg_rct_SentinelBotRangedSpawn      = Rect( -4224., -6848., -3968., -6592. )
+	set gg_rct_SentinelBotSuperCreepsSpawn = Rect( -3328., -6912., -3072., -6624. )
+	// 天灾上路
+	set gg_rct_ScourgeTopMeleeSpawn        = Rect(  2304.,  5280.,  2752.,  5728. )
+	set gg_rct_ScourgeTopRangedSpawn       = Rect(  2752.,  5408.,  3040.,  5632. )
+	set gg_rct_ScourgeTopSuperCreepsSpawn  = Rect(  2336.,  5952.,  2592.,  6240. )
+	// 天灾中路
+	set gg_rct_ScourgeMidMeleeSpawn        = Rect(  3616.,  3584.,  3872.,  3872. )
+	set gg_rct_ScourgeMidRangedSpawn       = Rect(  4128.,  3776.,  4352.,  4032. )
+	set gg_rct_ScourgeMidSuperCreepsSpawn  = Rect(  3904.,  2976.,  4160.,  3264. )
+	// 天灾下路
+	set gg_rct_ScourgeBotMeleeSpawn        = Rect(  6176.,  3136.,  6400.,  3392. )
+	set gg_rct_ScourgeBotRangedSpawn       = Rect(  6048.,  3424.,  6304.,  3776. )
+	set gg_rct_ScourgeBotSuperCreepsSpawn  = Rect(  6304.,  1984.,  6560.,  2272. )
 	// 复活点
-	set gg_rct_ScourgeRevivalPoint  = Rect(  6176.,  5952.,  6624.,  6240. ) // ScourgeRevivalPoint
-	set gg_rct_SentinelRevivalPoint = Rect( -7040., -6912., -6688., -6656. ) // SentinelRevivalPoint
+	set gg_rct_SentinelRevivalPoint = Rect( -7040., -6912., -6688., -6656. )
+	set gg_rct_ScourgeRevivalPoint  = Rect(  6176.,  5952.,  6624.,  6240. )
 	// 其他
-	set gg_rct_LeftTopRune 	   = Rect( -2464.,  1536., -2240.,  1760. )	// LeftTopRune
-	set gg_rct_RightBottomRune = Rect(  2912., -2944.,  3104., -2720. ) // RightBottomRune
-	set gg_rct_RoshanBirthRect = Rect(  4192., -2272.,  4224., -2304. ) // RoshanBirthRect
-	set gg_rct_DummyBirthPoint = Rect(  -480.,  -800.,  -256.,  -512. ) // DummyBirthPoint
+	set gg_rct_LeftTopRune 	   = Rect( -2464.,  1536., -2240.,  1760. )
+	set gg_rct_RightBottomRune = Rect(  2912., -2944.,  3104., -2720. )
+	set gg_rct_RoshanSpawn     = Rect(  4192., -2272.,  4224., -2304. )
+	set gg_rct_DummyBirthPoint = Rect(  -480.,  -800.,  -256.,  -512. )
 	// 购物区域
-	set gg_rct_ScourgeBuyArea  = Rect(  5696.,  5504.,  7296.,  7392. ) // ScourgeBuyArea
-	set gg_rct_SentinelBuyArea = Rect( -7680., -8032., -6176., -6240. ) // SentinelBuyArea
+	set gg_rct_ScourgeBuyArea  = Rect(  5696.,  5504.,  7296.,  7392. )
+	set gg_rct_SentinelBuyArea = Rect( -7680., -8032., -6176., -6240. )
 	// 泉水区域
-	set gg_rct_SentinelFountainOfLifeRange = Rect( -7936., -7776., -5920., -5760. ) // SentinelFountainOfLifeRange
-	set gg_rct_ScourgeFountainOfLifeRange  = Rect(  5504.,  5184.,  7744.,  7136. ) // ScourgeFountainOfLifeRange
+	set gg_rct_SentinelFountainOfLifeRange = Rect( -7936., -7776., -5920., -5760. )
+	set gg_rct_ScourgeFountainOfLifeRange  = Rect(  5504.,  5184.,  7744.,  7136. )
 	// 酒馆镜头区域
-	set gg_rct_SentinelTavernCamera = Rect( -7104.,  6656., -6848.,  6912. ) // SentinelTavernCamera
-	set gg_rct_ScourgeTavernCamera  = Rect( -7104.,  6656., -6880.,  6880. ) // ScourgeTavernCamera
-	// 黑洞特殊区域
-	set gg_rct_ScourgeSpecialTerrain1  = Rect( -8192.,  2016., -6816.,  2880. ) // ScourgeSpecialTerrain1
-	set gg_rct_ScourgeSpecialTerrain2  = Rect(  6880., -3328.,  8000., -2624. ) // ScourgeSpecialTerrain2
-	set gg_rct_SentinelSpecialTerrain1 = Rect( -8192., -3712., -7008., -2144. ) // SentinelSpecialTerrain1
-	set gg_rct_SentinelSpecialTerrain2 = Rect( -3360., -8192., -1472., -7648. ) // SentinelSpecialTerrain2
-	set gg_rct_SentinelSpecialTerrain3 = Rect( -2528., -7840., -1696., -7488. ) // SentinelSpecialTerrain3
-	set gg_rct_SentinelSpecialTerrain4 = Rect( -2336., -7584., -1600., -7456. ) // SentinelSpecialTerrain4
+	set gg_rct_SentinelTavernCamera = Rect( -7104.,  6656., -6848.,  6912. )
+	set gg_rct_ScourgeTavernCamera  = Rect( -7104.,  6656., -6880.,  6880. )
 	// 远古野
-	set gg_rct_ScourgeAncientCenter  = Rect(  4480., -1184.,  4512., -1216. ) // ScourgeAncientCenter
-	set gg_rct_SentinelAncientCenter = Rect( -3328.,  -416., -3104.,   -96. ) // SentinelAncientCenter
-	set gg_rct_ScourgeAncientRange   = Rect(  4000., -1568.,  4768.,  -736. ) // ScourgeAncientRange 4000, -736, 4768, -1568
-	set gg_rct_SentinelAncientRange  = Rect( -3552.,  -768., -2528.,   320. ) // SentinelAncientRange
+	set gg_rct_ScourgeAncientCenter  = Rect(  4480., -1184.,  4512., -1216. )
+	set gg_rct_SentinelAncientCenter = Rect( -3328.,  -416., -3104.,   -96. )
+	set gg_rct_ScourgeAncientRange   = Rect(  4000., -1568.,  4768.,  -736. )
+	set gg_rct_SentinelAncientRange  = Rect( -3552.,  -768., -2528.,   320. )
 	// 近卫野区
-	set gg_rct_SentinelCreepRange1  = Rect( -1728., -4992.,  -768., -3840. ) // SentinelCreepRange1
-	set gg_rct_SentinelCreepCenter1 = Rect( -1152., -4704.,  -960., -4480. ) // SentinelCreepCenter1
-	set gg_rct_SentinelCreepRange2  = Rect( -1024., -3808.,   192., -2752. ) // SentinelCreepRange2
-	set gg_rct_SentinelCreepCenter2 = Rect(  -512., -3648.,  -320., -3520. ) // SentinelCreepCenter2
-	set gg_rct_SentinelCreepRange3  = Rect(  1056., -5216.,  2368., -3744. ) // SentinelCreepRange3
-	set gg_rct_SentinelCreepCenter3 = Rect(  1440., -4096.,  1728., -3872. ) // SentinelCreepCenter3
-	set gg_rct_SentinelCreepRange4  = Rect(  2272., -6080.,  3776., -4928. ) // SentinelCreepRange4
-	set gg_rct_SentinelCreepCenter4 = Rect(  2848., -5088.,  3072., -4928. ) // SentinelCreepCenter4
-	set gg_rct_SentinelCreepRange5  = Rect(  2592., -4800.,  3744., -3328. ) // SentinelCreepRange5
-	set gg_rct_SentinelCreepCenter5 = Rect(  3008., -3776.,  3136., -3648. ) // SentinelCreepCenter5
+	set gg_rct_SentinelCreepRange1  = Rect( -1728., -4992.,  -768., -3840. )
+	set gg_rct_SentinelCreepCenter1 = Rect( -1152., -4704.,  -960., -4480. )
+	set gg_rct_SentinelCreepRange2  = Rect( -1024., -3808.,   192., -2752. )
+	set gg_rct_SentinelCreepCenter2 = Rect(  -512., -3648.,  -320., -3520. )
+	set gg_rct_SentinelCreepRange3  = Rect(  1056., -5216.,  2368., -3744. )
+	set gg_rct_SentinelCreepCenter3 = Rect(  1440., -4096.,  1728., -3872. )
+	set gg_rct_SentinelCreepRange4  = Rect(  2272., -6080.,  3776., -4928. )
+	set gg_rct_SentinelCreepCenter4 = Rect(  2848., -5088.,  3072., -4928. )
+	set gg_rct_SentinelCreepRange5  = Rect(  2592., -4800.,  3744., -3328. )
+	set gg_rct_SentinelCreepCenter5 = Rect(  3008., -3776.,  3136., -3648. )
 	// 天灾野区
-	set gg_rct_ScourgeCreepRange1   = Rect(  416. ,  2624.,  1632.,  3648. ) // ScourgeCreepRange1
-	set gg_rct_ScourgeCreepCenter1  = Rect(  1184.,  2976.,  1280.,  3104. ) // ScourgeCreepCenter1
-	set gg_rct_ScourgeCreepRange2   = Rect(  -800.,  3072.,    64.,  4032. ) // ScourgeCreepRange2
-	set gg_rct_ScourgeCreepCenter2  = Rect(  -384.,  3392.,  -192.,  3520. ) // ScourgeCreepCenter2
-	set gg_rct_ScourgeCreepRange3   = Rect( -1888.,  2208.,  -992.,  3040. ) // ScourgeCreepRange3
-	set gg_rct_ScourgeCreepCenter3  = Rect( -1824.,  2240., -1472.,  2464. ) // ScourgeCreepCenter3
-	set gg_rct_ScourgeCreepRange4   = Rect( -3456.,  3808., -2656.,  4864. ) // ScourgeCreepRange4
-	set gg_rct_ScourgeCreepCenter4  = Rect( -3264.,  4192., -2912.,  4320. ) // ScourgeCreepCenter4
-	set gg_rct_ScourgeCreepRange5   = Rect( -5120.,  3008., -3648.,  4320. ) // ScourgeCreepRange5
-	set gg_rct_ScourgeCreepCenter5  = Rect( -4576.,  3328., -4448.,  3488. ) // ScourgeCreepCenter5
+	set gg_rct_ScourgeCreepRange1   = Rect(  416. ,  2624.,  1632.,  3648. )
+	set gg_rct_ScourgeCreepCenter1  = Rect(  1184.,  2976.,  1280.,  3104. )
+	set gg_rct_ScourgeCreepRange2   = Rect(  -800.,  3072.,    64.,  4032. )
+	set gg_rct_ScourgeCreepCenter2  = Rect(  -384.,  3392.,  -192.,  3520. )
+	set gg_rct_ScourgeCreepRange3   = Rect( -1888.,  2208.,  -992.,  3040. )
+	set gg_rct_ScourgeCreepCenter3  = Rect( -1824.,  2240., -1472.,  2464. )
+	set gg_rct_ScourgeCreepRange4   = Rect( -3456.,  3808., -2656.,  4864. )
+	set gg_rct_ScourgeCreepCenter4  = Rect( -3264.,  4192., -2912.,  4320. )
+	set gg_rct_ScourgeCreepRange5   = Rect( -5120.,  3008., -3648.,  4320. )
+	set gg_rct_ScourgeCreepCenter5  = Rect( -4576.,  3328., -4448.,  3488. )
 	// 刷怪矩形区域
 	call CreateCreepsRectIndicator( gg_rct_ScourgeAncientRange , true  ) 
 	call CreateCreepsRectIndicator( gg_rct_SentinelAncientRange, true  ) 
@@ -94025,65 +94013,83 @@ function Init_RectsAndRegions takes nothing returns nothing
 	call CreateCreepsRectIndicator( gg_rct_SentinelCreepRange2 , false )
 	call CreateCreepsRectIndicator( gg_rct_SentinelCreepRange3 , true  ) 
 	call CreateCreepsRectIndicator( gg_rct_SentinelCreepRange4 , true  ) 
-	call CreateCreepsRectIndicator( gg_rct_SentinelCreepRange5 , true  ) 
+	call CreateCreepsRectIndicator( gg_rct_SentinelCreepRange5 , true  )
 
+	// 黑洞特殊区域
+	globals
+		rect gg_rct_SentinelSpecialTerrain1 = null
+		rect gg_rct_SentinelSpecialTerrain2 = null
+		rect gg_rct_SentinelSpecialTerrain3 = null
+		rect gg_rct_SentinelSpecialTerrain4 = null
+		rect gg_rct_ScourgeSpecialTerrain1  = null
+		rect gg_rct_ScourgeSpecialTerrain2  = null
+	endglobals
+	set gg_rct_ScourgeSpecialTerrain1  = Rect( -8192.,  2016., -6816.,  2880. ) // ScourgeSpecialTerrain1
+	set gg_rct_ScourgeSpecialTerrain2  = Rect(  6880., -3328.,  8000., -2624. ) // ScourgeSpecialTerrain2
+	set gg_rct_SentinelSpecialTerrain1 = Rect( -8192., -3712., -7008., -2144. ) // SentinelSpecialTerrain1
+	set gg_rct_SentinelSpecialTerrain2 = Rect( -3360., -8192., -1472., -7648. ) // SentinelSpecialTerrain2
+	set gg_rct_SentinelSpecialTerrain3 = Rect( -2528., -7840., -1696., -7488. ) // SentinelSpecialTerrain3
+	set gg_rct_SentinelSpecialTerrain4 = Rect( -2336., -7584., -1600., -7456. ) // SentinelSpecialTerrain4
+	globals
+		region TerrainCliffRegion = null
+	endglobals
 	// 和谐区域
-	set R4 = CreateRegion()
-	call RegionAddRect(R4, Rect(-7968., 5216., -7456., 5920.))
-	call RegionAddRect(R4, Rect(-8064., 2880., -7648., 4512.))
-	call RegionAddRect(R4, Rect(-3296., 3712., -2688., 3968.))
-	call RegionAddRect(R4, Rect(-2144., 2528., -1888., 2944.))
-	call RegionAddRect(R4, Rect(-576., .0, -352., 256.))
-	call RegionAddRect(R4, Rect(4960., -3104., 5632., -2816.))
-	call RegionAddRect(R4, Rect(4896., -3744., 5280., -3456.))
-	call RegionAddRect(R4, Rect(7488., -3520., 8192., -2336.))
-	call RegionAddRect(R4, Rect(6656., -3328., 7808., -2656.))
-	call RegionAddRect(R4, Rect(-5856., 2944., -5600., 3200.))
-	call RegionAddRect(R4, Rect(-8128., -8192., 5536., -7744.))
-	call RegionAddRect(R4, Rect(2368., -7904., 2688., -7584.))
-	call RegionAddRect(R4, Rect(-1664., -7808., -1344., -7552.))
-	call RegionAddRect(R4, Rect(-2944., -8192., -1664., -7680.))
-	call RegionAddRect(R4, Rect(-3296., 3744., -3104., 3872.))
-	call RegionAddRect(R4, Rect(-8192., -8128., -7904., 8160.))
-	call RegionAddRect(R4, Rect(-7744., 3936., -7328., 5600.))
-	call RegionAddRect(R4, Rect(-7680., 1984., -6560., 2816.))
-	call RegionAddRect(R4, Rect(-7776., 1696. + $80, -6944., 2176.))
-	call RegionAddRect(R4, Rect(-3168., -1952., -2912., -1696.))
-	call RegionAddRect(R4, Rect(-4128., -1632., -3776., -1152.))
-	call RegionAddRect(R4, Rect(-4992., -1792., -3968., -1440.))
-	call RegionAddRect(R4, Rect(-5536., -1664., -4832., -1280.))
-	call RegionAddRect(R4, Rect(-2304., 3872., -2048., 4096.))
-	call RegionAddRect(R4, Rect(-5664., -1440., -5344. - 64., .0))
-	call RegionAddRect(R4, Rect(-5856., 2200., -5248., 2592.))
-	call RegionAddRect(R4, Rect(-5408., 1888., -4928., 2368.))
-	call RegionAddRect(R4, Rect(-5056., 1664., -4064., 2144.))
-	call RegionAddRect(R4, Rect(-4320., 1344., -3808., 1952.))
-	call RegionAddRect(R4, Rect(-2112., 3424., -1856., 3744.))
-	call RegionAddRect(R4, Rect(-2400., 640., -2208., 896.))
-	call RegionAddRect(R4, Rect(-3392., 640., -3200., 896.))
-	call RegionAddRect(R4, Rect(-3744., -1024., -3232., -500.))
-	call RegionAddRect(R4, Rect(-3744., .0, -3232., 368.))
-	call RegionAddRect(R4, Rect(-3744., -500., -3408., 90.))
-	call RegionAddRect(R4, Rect(896., -3328., 1088., -3072.))
-	call RegionAddRect(R4, Rect(2368., -3808., 2688., -3360.))
-	call RegionAddRect(R4, Rect(1952., -3744., 2208., -3456.))
-	call RegionAddRect(R4, Rect(-768., -1344., -480., -1024.))
-	call RegionAddRect(R4, Rect(-1376. - 200, -6784., -1184. - 200, -6528.))
-	call RegionAddRect(R4, Rect(7616., -6528., 8192., 8160.))
-	call RegionAddRect(R4, Rect(-7872., 7872., 8192., 8192.))
-	call RegionAddRect(R4, Rect(-2656., .0, -2496., 256.))
-	call RegionAddRect(R4, Rect(-768., 7232., -416., 7424.))
-	call RegionAddRect(R4, Rect(-7968., 5472., -7648., 5792.))
-	call RegionAddRect(R4, Rect(736., 4480., 1120., 4800.))
-	call RegionAddRect(R4, Rect(576., 4384., 1120., 4928.))
-	call RegionAddRect(R4, Rect(2560., 4160., 2784., 4576.))
-	call RegionAddRect(R4, Rect(-5984. + 64, -3776. + 64, -5504. + 64, - $CA0 + 64.))
-	call RegionAddRect(R4, Rect(576., 4256., 1024., 4672.))
-	call RegionAddRect(R4, Rect(544., 4352., 992., 4768.))
-	call RegionAddRect(R4, Rect(704., 2496., 1376., 2784.))
-	call RegionAddRect(R4, Rect(-1888., 416. - 64, -1696., 576. - 64))
-	call RegionAddRect(R4, Rect(7776., 2720., 8192., 3648.))
-	call RegionAddRect(R4, Rect(-3104., 2720., -2624., 3232.))
+	set TerrainCliffRegion = CreateRegion()
+	call RegionAddRect(TerrainCliffRegion, Rect(-7968., 5216., -7456., 5920.))
+	call RegionAddRect(TerrainCliffRegion, Rect(-8064., 2880., -7648., 4512.))
+	call RegionAddRect(TerrainCliffRegion, Rect(-3296., 3712., -2688., 3968.))
+	call RegionAddRect(TerrainCliffRegion, Rect(-2144., 2528., -1888., 2944.))
+	call RegionAddRect(TerrainCliffRegion, Rect(-576., .0, -352., 256.))
+	call RegionAddRect(TerrainCliffRegion, Rect(4960., -3104., 5632., -2816.))
+	call RegionAddRect(TerrainCliffRegion, Rect(4896., -3744., 5280., -3456.))
+	call RegionAddRect(TerrainCliffRegion, Rect(7488., -3520., 8192., -2336.))
+	call RegionAddRect(TerrainCliffRegion, Rect(6656., -3328., 7808., -2656.))
+	call RegionAddRect(TerrainCliffRegion, Rect(-5856., 2944., -5600., 3200.))
+	call RegionAddRect(TerrainCliffRegion, Rect(-8128., -8192., 5536., -7744.))
+	call RegionAddRect(TerrainCliffRegion, Rect(2368., -7904., 2688., -7584.))
+	call RegionAddRect(TerrainCliffRegion, Rect(-1664., -7808., -1344., -7552.))
+	call RegionAddRect(TerrainCliffRegion, Rect(-2944., -8192., -1664., -7680.))
+	call RegionAddRect(TerrainCliffRegion, Rect(-3296., 3744., -3104., 3872.))
+	call RegionAddRect(TerrainCliffRegion, Rect(-8192., -8128., -7904., 8160.))
+	call RegionAddRect(TerrainCliffRegion, Rect(-7744., 3936., -7328., 5600.))
+	call RegionAddRect(TerrainCliffRegion, Rect(-7680., 1984., -6560., 2816.))
+	call RegionAddRect(TerrainCliffRegion, Rect(-7776., 1696. + $80, -6944., 2176.))
+	call RegionAddRect(TerrainCliffRegion, Rect(-3168., -1952., -2912., -1696.))
+	call RegionAddRect(TerrainCliffRegion, Rect(-4128., -1632., -3776., -1152.))
+	call RegionAddRect(TerrainCliffRegion, Rect(-4992., -1792., -3968., -1440.))
+	call RegionAddRect(TerrainCliffRegion, Rect(-5536., -1664., -4832., -1280.))
+	call RegionAddRect(TerrainCliffRegion, Rect(-2304., 3872., -2048., 4096.))
+	call RegionAddRect(TerrainCliffRegion, Rect(-5664., -1440., -5344. - 64., .0))
+	call RegionAddRect(TerrainCliffRegion, Rect(-5856., 2200., -5248., 2592.))
+	call RegionAddRect(TerrainCliffRegion, Rect(-5408., 1888., -4928., 2368.))
+	call RegionAddRect(TerrainCliffRegion, Rect(-5056., 1664., -4064., 2144.))
+	call RegionAddRect(TerrainCliffRegion, Rect(-4320., 1344., -3808., 1952.))
+	call RegionAddRect(TerrainCliffRegion, Rect(-2112., 3424., -1856., 3744.))
+	call RegionAddRect(TerrainCliffRegion, Rect(-2400., 640., -2208., 896.))
+	call RegionAddRect(TerrainCliffRegion, Rect(-3392., 640., -3200., 896.))
+	call RegionAddRect(TerrainCliffRegion, Rect(-3744., -1024., -3232., -500.))
+	call RegionAddRect(TerrainCliffRegion, Rect(-3744., .0, -3232., 368.))
+	call RegionAddRect(TerrainCliffRegion, Rect(-3744., -500., -3408., 90.))
+	call RegionAddRect(TerrainCliffRegion, Rect(896., -3328., 1088., -3072.))
+	call RegionAddRect(TerrainCliffRegion, Rect(2368., -3808., 2688., -3360.))
+	call RegionAddRect(TerrainCliffRegion, Rect(1952., -3744., 2208., -3456.))
+	call RegionAddRect(TerrainCliffRegion, Rect(-768., -1344., -480., -1024.))
+	call RegionAddRect(TerrainCliffRegion, Rect(-1376. - 200, -6784., -1184. - 200, -6528.))
+	call RegionAddRect(TerrainCliffRegion, Rect(7616., -6528., 8192., 8160.))
+	call RegionAddRect(TerrainCliffRegion, Rect(-7872., 7872., 8192., 8192.))
+	call RegionAddRect(TerrainCliffRegion, Rect(-2656., .0, -2496., 256.))
+	call RegionAddRect(TerrainCliffRegion, Rect(-768., 7232., -416., 7424.))
+	call RegionAddRect(TerrainCliffRegion, Rect(-7968., 5472., -7648., 5792.))
+	call RegionAddRect(TerrainCliffRegion, Rect(736., 4480., 1120., 4800.))
+	call RegionAddRect(TerrainCliffRegion, Rect(576., 4384., 1120., 4928.))
+	call RegionAddRect(TerrainCliffRegion, Rect(2560., 4160., 2784., 4576.))
+	call RegionAddRect(TerrainCliffRegion, Rect(-5984. + 64, -3776. + 64, -5504. + 64, - $CA0 + 64.))
+	call RegionAddRect(TerrainCliffRegion, Rect(576., 4256., 1024., 4672.))
+	call RegionAddRect(TerrainCliffRegion, Rect(544., 4352., 992., 4768.))
+	call RegionAddRect(TerrainCliffRegion, Rect(704., 2496., 1376., 2784.))
+	call RegionAddRect(TerrainCliffRegion, Rect(-1888., 416. - 64, -1696., 576. - 64))
+	call RegionAddRect(TerrainCliffRegion, Rect(7776., 2720., 8192., 3648.))
+	call RegionAddRect(TerrainCliffRegion, Rect(-3104., 2720., -2624., 3232.))
 endfunction
 
 function Init_BlzFunction takes nothing returns nothing
@@ -94121,7 +94127,7 @@ function Init_BlzFunction takes nothing returns nothing
 	set index = 0
 	loop
 	exitwhen index >=$C
-		if(GetPlayerController(Player(index))== MAP_CONTROL_USER and GetPlayerSlotState(Player(index))== PLAYER_SLOT_STATE_PLAYING) then
+		if(GetPlayerController(Player(index)) == MAP_CONTROL_USER and GetPlayerSlotState(Player(index)) == PLAYER_SLOT_STATE_PLAYING) then
 			set userControlledPlayers = userControlledPlayers + 1
 		endif
 		set index = index + 1
@@ -94156,7 +94162,7 @@ function main takes nothing returns nothing
 	local integer VFX
 	local integer a
 	local location HOO
-	local region XVN
+	local region reg
 	local real d
 	local timer tt
 
@@ -94212,11 +94218,11 @@ function main takes nothing returns nothing
 	call SetUnitColor(B2, ConvertPlayerColor(12))
 	set C2 = CreateUnit(p,'n12K', 7439.,-4289., 270.)
 	call SetUnitColor(C2, ConvertPlayerColor(12))
-	set V2 = CreateUnit(p,'e00D',-6005.1, 5458.6, 212.15)
-	set R2 = CreateUnit(p,'e00B',-561.7,-651.7, 325.6)
-	set O2 = CreateUnit(p,'e00A', 5613.5,-6350.9, 64.)
-	set X2 = CreateUnit(p,'e008',-5467.9,-5891.1, 307.304)
-	set Z1 = CreateUnit(p,'e001', 4901.8, 4536.6, 212.11)
+	set AttackToTopDummyUnit = CreateUnit(p,'e00D',-6005.1, 5458.6, 212.15)
+	set AttackToMidDummyUnit = CreateUnit(p,'e00B',-561.7,-651.7, 325.6)
+	set AttackToBotDummyUnit = CreateUnit(p,'e00A', 5613.5,-6350.9, 64.)
+	set AttackToSentinelDummyUnit = CreateUnit(p,'e008',-5467.9,-5891.1, 307.304)
+	set AttackToScourgeDummyUnit = CreateUnit(p,'e001', 4901.8, 4536.6, 212.11)
 
 	// 改过的bj初始化
 	call Init_BlzFunction()
@@ -94282,30 +94288,44 @@ function main takes nothing returns nothing
 	set Scourges[3]= Player(9)
 	set Scourges[4]= Player(10)
 	set Scourges[5]= Player(11)
-	set BW = Player(12)
+	set CreepsPlayer = Player(12)
 	set UR = CreateGroup()
-	set LT = GetUnitLoc(Z1)
-	set MT = GetUnitLoc(X2)
-	set PT = GetUnitLoc(R2)
-	set QT = GetUnitLoc(V2)
-	set TT = GetUnitLoc(O2)
-	set KW[1]= MT
-	set KW[2]= QT
-	set KW[3]= PT
-	set KW[4]= TT
-	set KW[5]= LT
-	set ScourgeCenterMeleeBirthLocatio   = GetRectCenter( gg_rct_ScourgeCenterMeleeBirth   ) // ScourgeCenterMeleeBirthLocatio
-	set ScourgeTopMeleeBirthLocatio      = GetRectCenter( gg_rct_ScourgeTopMeleeBirth      ) // ScourgeTopMeleeBirthLocatio
-	set ScourgeBottomMeleeBirthLocatio   = GetRectCenter( gg_rct_ScourgeBottomMeleeBirth   ) // ScourgeBottomMeleeBirthLocatio
-	set ScourgeCenterRangedBirthLocatio  = GetRectCenter( gg_rct_ScourgeCenterRangedBirth  ) // ScourgeCenterRangedBirthLocatio
-	set ScourgeTopRangedBirthLocatio     = GetRectCenter( gg_rct_ScourgeTopRangedBirth     ) // ScourgeTopRangedBirthLocatio
-	set ScourgeBottomRangedBirthLocatio  = GetRectCenter( gg_rct_ScourgeBottomRangedBirth  ) // ScourgeBottomRangedBirthLocatio
-	set SentinelCenterMeleeBirthLocatio  = GetRectCenter( gg_rct_SentinelCenterMeleeBirth  ) // SentinelCenterMeleeBirthLocatio
-	set SentinelTopMeleeBirthLocatio     = GetRectCenter( gg_rct_SentinelTopMeleeBirth	   ) // SentinelTopMeleeBirthLocatio
-	set SentinelBottomMeleeBirthLocatio  = GetRectCenter( gg_rct_SentinelBottomMeleeBirth  ) // SentinelBottomMeleeBirthLocatio
-	set SentinelCenterRangedBirthLocatio = GetRectCenter( gg_rct_SentinelCenterRangedBirth ) // SentinelCenterRangedBirthLocatio
-	set SentinelTopRangedBirthLocatio    = GetRectCenter( gg_rct_SentinelTopRangedBirth    ) // SentinelTopRangedBirthLocatio
-	set SentinelBottomRangedBirthLocatio = GetRectCenter( gg_rct_SentinelBottomRangedBirth ) // SentinelBottomRangedBirthLocatio
+	set AttackToScourgeLocation = GetUnitLoc(AttackToScourgeDummyUnit)
+	set AttackToSentinelLocation = GetUnitLoc(AttackToSentinelDummyUnit)
+	set AttackToMidLocation  = GetUnitLoc(AttackToMidDummyUnit)
+	set AttackToTopLocation = GetUnitLoc(AttackToTopDummyUnit)
+	set AttackToBotLocation = GetUnitLoc(AttackToBotDummyUnit)
+	set SoldiersNextWaypoint[1]= AttackToSentinelLocation
+	set SoldiersNextWaypoint[2]= AttackToTopLocation
+	set SoldiersNextWaypoint[3]= AttackToMidLocation
+	set SoldiersNextWaypoint[4]= AttackToBotLocation
+	set SoldiersNextWaypoint[5]= AttackToScourgeLocation
+	globals
+		location ScourgeMidMeleeSpawnLocatio   = null
+		location ScourgeTopMeleeSpawnLocatio   = null
+		location ScourgeBotMeleeSpawnLocatio   = null
+		location ScourgeBotRangedSpawnLocatio  = null
+		location ScourgeMidRangedSpawnLocatio  = null
+		location ScourgeTopRangedSpawnLocatio  = null
+		location SentinelMidMeleeSpawnLocatio  = null
+		location SentinelBotMeleeSpawnLocatio  = null
+		location SentinelTopMeleeSpawnLocatio  = null
+		location SentinelMidRangedSpawnLocatio = null
+		location SentinelBotRangedSpawnLocatio = null
+		location SentinelTopRangedSpawnLocatio = null
+	endglobals
+	set ScourgeMidMeleeSpawnLocatio   = GetRectCenter( gg_rct_ScourgeMidMeleeSpawn   )
+	set ScourgeTopMeleeSpawnLocatio   = GetRectCenter( gg_rct_ScourgeTopMeleeSpawn   )
+	set ScourgeBotMeleeSpawnLocatio   = GetRectCenter( gg_rct_ScourgeBotMeleeSpawn   )
+	set ScourgeMidRangedSpawnLocatio  = GetRectCenter( gg_rct_ScourgeMidRangedSpawn  )
+	set ScourgeTopRangedSpawnLocatio  = GetRectCenter( gg_rct_ScourgeTopRangedSpawn  )
+	set ScourgeBotRangedSpawnLocatio  = GetRectCenter( gg_rct_ScourgeBotRangedSpawn  )
+	set SentinelMidMeleeSpawnLocatio  = GetRectCenter( gg_rct_SentinelMidMeleeSpawn  )
+	set SentinelTopMeleeSpawnLocatio  = GetRectCenter( gg_rct_SentinelTopMeleeSpawn	 )
+	set SentinelBotMeleeSpawnLocatio  = GetRectCenter( gg_rct_SentinelBotMeleeSpawn  )
+	set SentinelMidRangedSpawnLocatio = GetRectCenter( gg_rct_SentinelMidRangedSpawn )
+	set SentinelTopRangedSpawnLocatio = GetRectCenter( gg_rct_SentinelTopRangedSpawn )
+	set SentinelBotRangedSpawnLocatio = GetRectCenter( gg_rct_SentinelBotRangedSpawn )
 	set WU = GetRectCenter(gg_rct_LeftTopRune)
 	set YU = GetRectCenter(gg_rct_RightBottomRune)
 	set t = CreateTrigger()
@@ -94519,8 +94539,8 @@ function main takes nothing returns nothing
 	call TriggerAddCondition(t, Condition(function F9O))
 
 	// 初始化肉山
-	set HOO = GetRectCenter(gg_rct_RoshanBirthRect)
-	set CT = CreateUnit(Player(12),'n00L', GetRectCenterX(gg_rct_RoshanBirthRect), GetRectCenterY(gg_rct_RoshanBirthRect), 180.)
+	set HOO = GetRectCenter(gg_rct_RoshanSpawn)
+	set CT = CreateUnit(Player(12),'n00L', GetRectCenterX(gg_rct_RoshanSpawn), GetRectCenterY(gg_rct_RoshanSpawn), 180.)
 	call SetUnitAcquireRange(CT, 150)
 	call YTX()
 	if XEV > 1 then
@@ -94533,59 +94553,66 @@ function main takes nothing returns nothing
 	call PauseUnit(CreateUnit(Player(12),'o00G', GetUnitX(CT), GetUnitY(CT), 0), true)
 
 	set t = CreateTrigger()
-	call TriggerRegisterUnitInRange(t, O2, 300, null)
-	call TriggerRegisterUnitInRange(t, R2, 300, null)
-	call TriggerRegisterUnitInRange(t, V2, 300, null)
-	call TriggerAddCondition(t, Condition(function GVO))
+	call TriggerRegisterUnitInRange(t, AttackToBotDummyUnit, 300, null)
+	call TriggerRegisterUnitInRange(t, AttackToMidDummyUnit  , 300, null)
+	call TriggerRegisterUnitInRange(t, AttackToTopDummyUnit , 300, null)
+	call TriggerAddCondition(t, Condition(function SoldiersAttackToBase))
 	
 	set C1 = CreateTrigger()
 	call TriggerAddAction(C1, function GEO)
 	set D1 = CreateTrigger()
 	call TriggerAddAction(D1, function GXO)
 	set t = CreateTrigger()
-	set XVN = CreateRegion()
-	call RegionAddRect(XVN, gg_rct_SentinelCenterMeleeBirth)
-	call RegionAddRect(XVN, gg_rct_SentinelCenterRangedBirth)
-	call RegionAddRect(XVN, gg_rct_SentinelCenterSuperCreepsBirth)
-	call TriggerRegisterEnterRegion(t, XVN, null)
-	call TriggerAddCondition(t, Condition(function GOO))
+
+	// 中
+	set reg = CreateRegion()
+	call RegionAddRect(reg, gg_rct_SentinelMidMeleeSpawn)
+	call RegionAddRect(reg, gg_rct_SentinelMidRangedSpawn)
+	call RegionAddRect(reg, gg_rct_SentinelMidSuperCreepsSpawn)
+	call TriggerRegisterEnterRegion(t, reg, null)
+	call TriggerAddCondition(t, Condition(function SentinelAttackToMid))
 	set t = CreateTrigger()
-	set XVN = CreateRegion()
-	call RegionAddRect(XVN, gg_rct_ScourgeCenterRangedBirth)
-	call RegionAddRect(XVN, gg_rct_ScourgeCenterMeleeBirth)
-	call RegionAddRect(XVN, gg_rct_ScourgeCenterSuperCreepsBirth)
-	call TriggerRegisterEnterRegion(t, XVN, null)
-	call TriggerAddCondition(t, Condition(function GRO))
+	set reg = CreateRegion()
+	call RegionAddRect(reg, gg_rct_ScourgeMidRangedSpawn)
+	call RegionAddRect(reg, gg_rct_ScourgeMidMeleeSpawn)
+	call RegionAddRect(reg, gg_rct_ScourgeMidSuperCreepsSpawn)
+	call TriggerRegisterEnterRegion(t, reg, null)
+	call TriggerAddCondition(t, Condition(function ScourgeAttackToMid))
+
+	// 上
 	set t = CreateTrigger()
-	set XVN = CreateRegion()
-	call RegionAddRect(XVN, gg_rct_SentinelTopMeleeBirth)
-	call RegionAddRect(XVN, gg_rct_SentinelTopRangedBirth)
-	call RegionAddRect(XVN, gg_rct_SentinelTopSuperCreepsBirth)
-	call TriggerRegisterEnterRegion(t, XVN, null)
-	call TriggerAddCondition(t, Condition(function GIO))
+	set reg = CreateRegion()
+	call RegionAddRect(reg, gg_rct_SentinelTopMeleeSpawn)
+	call RegionAddRect(reg, gg_rct_SentinelTopRangedSpawn)
+	call RegionAddRect(reg, gg_rct_SentinelTopSuperCreepsSpawn)
+	call TriggerRegisterEnterRegion(t, reg, null)
+	call TriggerAddCondition(t, Condition(function SentinelAttackToTop))
 	set t = CreateTrigger()
-	set XVN = CreateRegion()
-	call RegionAddRect(XVN, gg_rct_ScourgeTopRangedBirth)
-	call RegionAddRect(XVN, gg_rct_ScourgeTopMeleeBirth)
-	call RegionAddRect(XVN, gg_rct_ScourgeTopSuperCreepsBirth)
-	call TriggerRegisterEnterRegion(t, XVN, null)
-	call TriggerAddCondition(t, Condition(function GAO))
+	set reg = CreateRegion()
+	call RegionAddRect(reg, gg_rct_ScourgeTopRangedSpawn)
+	call RegionAddRect(reg, gg_rct_ScourgeTopMeleeSpawn)
+	call RegionAddRect(reg, gg_rct_ScourgeTopSuperCreepsSpawn)
+	call TriggerRegisterEnterRegion(t, reg, null)
+	call TriggerAddCondition(t, Condition(function ScourgeAttackToTop))
+
+	// 下
 	set t = CreateTrigger()
-	set XVN = CreateRegion()
-	call RegionAddRect(XVN, gg_rct_SentinelBottomRangedBirth)
-	call RegionAddRect(XVN, gg_rct_SentinelBottomMeleeBirth)
-	call RegionAddRect(XVN, gg_rct_SentinelBottomSuperCreepsBirth)
-	call TriggerRegisterEnterRegion(t, XVN, null)
-	call TriggerAddCondition(t, Condition(function GNO))
+	set reg = CreateRegion()
+	call RegionAddRect(reg, gg_rct_SentinelBotRangedSpawn)
+	call RegionAddRect(reg, gg_rct_SentinelBotMeleeSpawn)
+	call RegionAddRect(reg, gg_rct_SentinelBotSuperCreepsSpawn)
+	call TriggerRegisterEnterRegion(t, reg, null)
+	call TriggerAddCondition(t, Condition(function SentinelAttackToBot))
 	set t = CreateTrigger()
-	set XVN = CreateRegion()
-	call RegionAddRect(XVN, gg_rct_ScourgeBottomRangedBirth)
-	call RegionAddRect(XVN, gg_rct_ScourgeBottomMeleeBirth)
-	call RegionAddRect(XVN, gg_rct_ScourgeBottomSuperCreepsBirth)
-	call TriggerRegisterEnterRegion(t, XVN, null)
-	call TriggerAddCondition(t, Condition(function GBO))
-	set AG = CreateTrigger()
-	call TriggerAddAction(AG, function GMO)
+	set reg = CreateRegion()
+	call RegionAddRect(reg, gg_rct_ScourgeBotRangedSpawn)
+	call RegionAddRect(reg, gg_rct_ScourgeBotMeleeSpawn)
+	call RegionAddRect(reg, gg_rct_ScourgeBotSuperCreepsSpawn)
+	call TriggerRegisterEnterRegion(t, reg, null)
+	call TriggerAddCondition(t, Condition(function ScourgeAttackToBot))
+	
+	set SpawnAttackSoldiersTrigger = CreateTrigger()
+	call TriggerAddAction(SpawnAttackSoldiersTrigger, function SpawnAttackSoldiersAction)
 	set JG = CreateTrigger()
 	call TriggerRegisterPlayerUnitEventBJ(JG, EVENT_PLAYER_UNIT_DEATH)
 	call TriggerAddCondition(JG, Condition(function G7O))
@@ -94594,13 +94621,13 @@ function main takes nothing returns nothing
 	call TriggerRegisterPlayerUnitEventBJ(KG, EVENT_PLAYER_UNIT_DEATH)
 	call TriggerAddCondition(KG, Condition(function G9O))
 	call TriggerAddAction(KG, function HVO)
-	set LG = CreateTrigger()
-	call TriggerAddAction(LG, function HEO)
+	set SoldiersUpgerTrig = CreateTrigger()
+	call TriggerAddAction(SoldiersUpgerTrig, function SoldiersUpgerAction)
 	set MG = CreateTrigger()
 	call TriggerRegisterTimerEvent(MG, 75, false)
 	call TriggerAddAction(MG, function HXO)
 	set NG = CreateTrigger()
-	call TriggerAddCondition(NG, Condition(function JEO))
+	call TriggerAddCondition(NG, Condition(function RefreshAllCreeps))
 	set SG = CreateTrigger()
 	call TriggerAddAction(SG, function JXO)
 	set TG = CreateTrigger()
@@ -94696,7 +94723,7 @@ function main takes nothing returns nothing
 	set FKV = CreateTrigger()
 	call TriggerAddAction(FKV, function PVO)
 	set t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEvent(t, BW, EVENT_PLAYER_UNIT_ATTACKED, null)
+	call TriggerRegisterPlayerUnitEvent(t, CreepsPlayer, EVENT_PLAYER_UNIT_ATTACKED, null)
 	call TriggerAddCondition(t, Condition(function PEO))
 	set FLV = CreateRegion()
 	call RegionAddRect(FLV, Rect($D80,-$7E0, 4448,-$A40))
@@ -94729,14 +94756,14 @@ function main takes nothing returns nothing
 	call TriggerRegisterPlayerUnitEvent(t, Scourges[5], EVENT_PLAYER_HERO_LEVEL, null)
 	call TriggerAddCondition(t, Condition(function HeroLevelUpCondition))
 	set t = CreateTrigger()
-	set XVN = CreateRegion()
-	call RegionAddRect(XVN, GetWorldBounds())
-	call TriggerRegisterEnterRegion(t, XVN, null)
+	set reg = CreateRegion()
+	call RegionAddRect(reg, GetWorldBounds())
+	call TriggerRegisterEnterRegion(t, reg, null)
 	call TriggerAddCondition(t, Condition(function Q0O))
 	set t = CreateTrigger()
-	call TriggerRegisterUnitInRange(t, O2, 300, null)
-	call TriggerRegisterUnitInRange(t, R2, 300, null)
-	call TriggerRegisterUnitInRange(t, V2, 300, null)
+	call TriggerRegisterUnitInRange(t, AttackToBotDummyUnit, 300, null)
+	call TriggerRegisterUnitInRange(t, AttackToMidDummyUnit  , 300, null)
+	call TriggerRegisterUnitInRange(t, AttackToTopDummyUnit , 300, null)
 	call TriggerAddCondition(t, Condition(function Q1O))
 	set t = CreateTrigger()
 	call TriggerRegisterTimerEvent(t, 25, false)
@@ -94819,9 +94846,9 @@ function main takes nothing returns nothing
 	call TriggerAddCondition(t, Condition(function BPR))
 	call TriggerAddCondition(t, Condition(function BMR))
 	set t = CreateTrigger()
-	set XVN = CreateRegion()
-	call RegionAddRect(XVN, GetWorldBounds())
-	call TriggerRegisterEnterRegion(t, XVN, null)
+	set reg = CreateRegion()
+	call RegionAddRect(reg, GetWorldBounds())
+	call TriggerRegisterEnterRegion(t, reg, null)
 	call TriggerAddCondition(t, Condition(function L2I))
 	set t = CreateTrigger()
 
@@ -94875,7 +94902,7 @@ function main takes nothing returns nothing
 	call TriggerAddCondition(t, Condition(function CreateLastSpellStateCondition))
 	
 	set t = null
-	set XVN = null
+	set reg = null
 
 	call SetTerrainFogEx(0, 9999999., 10000000., .0, .0, .0, .0)
 	call SetReservedLocalHeroButtons(1)

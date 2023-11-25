@@ -2196,7 +2196,7 @@ missilespeed=9000
 missilearc=0.35
 name="Dark Flame"
 [e001]
-name="AttackToUD"
+name="AttackToScourge"
 [e009]
 art=ReplaceableTextures\CommandButtons\BTNBreathOfFrost
 specialart=Units\NightElf\Wisp\WispExplode.mdl
@@ -2209,7 +2209,7 @@ missilespeed=1200
 missilehoming=1
 name="Liberated Soul"
 [e00D]
-name="AttackToLeft"
+name="AttackToTop"
 [e00J]
 art=replaceableTextures\CommandButtons\BTNtemp
 researches=R000
@@ -2270,13 +2270,13 @@ missilearc=0.15
 missilespeed=900
 name="猛禽德鲁伊"
 [e00A]
-name="AttackToRight"
+name="AttackToBot"
 [e00B]
 name="AttackToMid"
 [e00C]
 name="Self Caster"
 [e008]
-name="AttackToSent"
+name="AttackToSentinel"
 [e00O]
 art=ReplaceableTextures\CommandButtons\BTNPriest
 missileart=Abilities\Weapons\PriestMissile\PriestMissile.mdl
