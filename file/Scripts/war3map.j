@@ -457,7 +457,7 @@ globals
 	boolean PR = false
 	constant integer QR = StringHash("tempest")
 	integer SR =-1
-	group StructuresGroup = null
+	group AntiBackdoorStructuresGroup = null
 	trigger YR
 	boolean array ZR
 	integer VI
@@ -27001,11 +27001,12 @@ function LZO takes nothing returns nothing
 		endif
 	else
 		call FlushChildHashtable(P, hu)
-		call GroupRemoveUnit(StructuresGroup, u)
+		call GroupRemoveUnit(AntiBackdoorStructuresGroup, u)
 	endif
 	set u = null
 endfunction
-function L_O takes unit u returns nothing
+
+function UpdateStructureAntiBackdoorState takes unit u returns nothing
 	local integer hu
 	local rect r
 	local group g
@@ -27045,11 +27046,11 @@ endfunction
 function CheckBackdoorLoopAction takes nothing returns nothing
 	local unit u
 	local group g = AllocationGroup(46)
-	call GroupAddGroup(StructuresGroup, g)
+	call GroupAddGroup(AntiBackdoorStructuresGroup, g)
 	loop
 		set u = FirstOfGroup(g)
 	exitwhen u == null
-		call L_O(u)
+		call UpdateStructureAntiBackdoorState(u)
 		call GroupRemoveUnit(g, u)
 	endloop
 	call DeallocateGroup(g)
@@ -27076,7 +27077,7 @@ function L1O takes nothing returns nothing
 	set u = null
 endfunction
 function L4O takes nothing returns nothing
-	call ForGroup(StructuresGroup, function L1O)
+	call ForGroup(AntiBackdoorStructuresGroup, function L1O)
 endfunction
 function L5O takes nothing returns nothing
 	if HaveSavedReal(K, GetHandleId(LocalPlayer),'CAMD') and GetCameraField(CAMERA_FIELD_TARGET_DISTANCE)!= LoadReal(K, GetHandleId(LocalPlayer),'CAMD') and LoadReal(K, GetHandleId(LocalPlayer),'CAMD')!=$672 then
@@ -27104,9 +27105,9 @@ function L8O takes nothing returns nothing
 	call DeallocateGroup(g)
 endfunction
 
-function AddUnitToStructureGroup takes unit u returns nothing
+function AddUnitToBaseStructuresGroup takes unit u returns nothing
 	local integer hu = GetHandleId(u)
-	call GroupAddUnit(StructuresGroup, u)
+	call GroupAddUnit(AntiBackdoorStructuresGroup, u)
 	if GetOwningPlayer(u) == Sentinels[0] then
 		call SaveRectHandle(P, hu,'ABDr'+ 0, Rect(-8160.,-8192.,-3712.,-4352.))
 		call SaveRectHandle(P, hu,'ABDr'+ 1, Rect(-8192.,-4960.,-4640.,-3552.))
@@ -91251,9 +91252,9 @@ function CreateSentinelsUnits takes nothing returns nothing
 	call SaveRectHandle(P, GetHandleId(SentinleTopTowerLevel2),'ABDr', Rect(-6944.,-1792.,-5248.,-224.))
 	call SaveRectHandle(P, GetHandleId(SentinleMidTowerLevel2),'ABDr', Rect(-4128.,-3712.,-2496.,-2272.))
 	call SaveRectHandle(P, GetHandleId(SentinleBotTowerLevel2),'ABDr', Rect(-1536.,-7424., 640.,-6048.))
-	call GroupAddUnit(StructuresGroup, SentinleTopTowerLevel2)
-	call GroupAddUnit(StructuresGroup, SentinleMidTowerLevel2)
-	call GroupAddUnit(StructuresGroup, SentinleBotTowerLevel2)
+	call GroupAddUnit(AntiBackdoorStructuresGroup, SentinleTopTowerLevel2)
+	call GroupAddUnit(AntiBackdoorStructuresGroup, SentinleMidTowerLevel2)
+	call GroupAddUnit(AntiBackdoorStructuresGroup, SentinleBotTowerLevel2)
 	// level 3
 	set SentinleTopTowerLevel3 = CreateUnit(Sentinels[0],'e00S',-6368,-4256, 90)
 	call CreateTowerAttackRangeIndicator(SentinleTopTowerLevel3)
@@ -91273,17 +91274,17 @@ function CreateSentinelsUnits takes nothing returns nothing
 	set SentinelTopRangedRaxUnit = CreateUnit(Sentinels[0],'eaoe',-6656,-4480, 90) // top
 	set SentinelMidRangedRaxUnit = CreateUnit(Sentinels[0],'eaoe',-4864,-4992, 45) // mid
 	set SentinelBotRangedRaxUnit = CreateUnit(Sentinels[0],'eaoe',-4032,-6528, 0)  // bot
-	call AddUnitToStructureGroup(SentinleTopTowerLevel3)
-	call AddUnitToStructureGroup(SentinleMidTowerLevel3)
-	call AddUnitToStructureGroup(SentinleBotTowerLevel3)
-	call AddUnitToStructureGroup(SentinleLeftTowerLevel4)
-	call AddUnitToStructureGroup(SentinleRightTowerLevel4)
-	call AddUnitToStructureGroup(SentinelTopMeleeRaxUnit)
-	call AddUnitToStructureGroup(SentinelMidMeleeRaxUnit)
-	call AddUnitToStructureGroup(SentinelBotMeleeRaxUnit)
-	call AddUnitToStructureGroup(SentinelTopRangedRaxUnit)
-	call AddUnitToStructureGroup(SentinelMidRangedRaxUnit)
-	call AddUnitToStructureGroup(SentinelBotRangedRaxUnit)
+	call AddUnitToBaseStructuresGroup(SentinleTopTowerLevel3)
+	call AddUnitToBaseStructuresGroup(SentinleMidTowerLevel3)
+	call AddUnitToBaseStructuresGroup(SentinleBotTowerLevel3)
+	call AddUnitToBaseStructuresGroup(SentinleLeftTowerLevel4)
+	call AddUnitToBaseStructuresGroup(SentinleRightTowerLevel4)
+	call AddUnitToBaseStructuresGroup(SentinelTopMeleeRaxUnit)
+	call AddUnitToBaseStructuresGroup(SentinelMidMeleeRaxUnit)
+	call AddUnitToBaseStructuresGroup(SentinelBotMeleeRaxUnit)
+	call AddUnitToBaseStructuresGroup(SentinelTopRangedRaxUnit)
+	call AddUnitToBaseStructuresGroup(SentinelMidRangedRaxUnit)
+	call AddUnitToBaseStructuresGroup(SentinelBotRangedRaxUnit)
 	set L6 = CreateUnit(Sentinels[0],'emow',-5856,-5472, 270)
 	set M6 = CreateUnit(Sentinels[0],'emow',-6624,-5088, 270)
 	set P6 = CreateUnit(Sentinels[0],'emow',-5344,-$F60, 270)
@@ -91423,9 +91424,9 @@ function CreateScourgesUnits takes nothing returns nothing
 	call SaveRectHandle(P, GetHandleId(ScourgeTopTowerLevel2),'ABDr', Rect(-1088., 5376., 768., 6624.))
 	call SaveRectHandle(P, GetHandleId(ScourgeMidTowerLevel2),'ABDr', Rect(1600., 1024., 3456., 2432.))
 	call SaveRectHandle(P, GetHandleId(ScourgeBotTowerLevel2),'ABDr', Rect(5504.,-1056., 7200., 512.))
-	call GroupAddUnit(StructuresGroup, ScourgeTopTowerLevel2)
-	call GroupAddUnit(StructuresGroup, ScourgeMidTowerLevel2)
-	call GroupAddUnit(StructuresGroup, ScourgeBotTowerLevel2)
+	call GroupAddUnit(AntiBackdoorStructuresGroup, ScourgeTopTowerLevel2)
+	call GroupAddUnit(AntiBackdoorStructuresGroup, ScourgeMidTowerLevel2)
+	call GroupAddUnit(AntiBackdoorStructuresGroup, ScourgeBotTowerLevel2)
 	// level 3
 	set ScourgeTopTowerLevel3 = CreateUnit(Scourges[0],'u00N', 2976, 5792, 270)
 	call CreateTowerAttackRangeIndicator(ScourgeTopTowerLevel3)
@@ -91466,17 +91467,17 @@ function CreateScourgesUnits takes nothing returns nothing
 	set W1 = CreateTrigger()
 	call TriggerRegisterUnitEvent(W1, ScourgeBotMeleeRaxUnit, EVENT_UNIT_DEATH)
 	call TriggerAddAction(W1, function G3O)
-	call AddUnitToStructureGroup(ScourgeTopTowerLevel3)
-	call AddUnitToStructureGroup(ScourgeMidTowerLevel3)
-	call AddUnitToStructureGroup(ScourgeBotTowerLevel3)
-	call AddUnitToStructureGroup(ScourgeLeftTowerLevel4)
-	call AddUnitToStructureGroup(ScourgeRightTowerLevel4)
-	call AddUnitToStructureGroup(ScourgeTopMeleeRaxUnit)
-	call AddUnitToStructureGroup(ScourgeMidMeleeRaxUnit)
-	call AddUnitToStructureGroup(ScourgeBotMeleeRaxUnit)
-	call AddUnitToStructureGroup(ScourgeTopRangedRaxUnit)
-	call AddUnitToStructureGroup(ScourgeMidRangedRaxUnit)
-	call AddUnitToStructureGroup(ScourgeBotRangedRaxUnit)
+	call AddUnitToBaseStructuresGroup(ScourgeTopTowerLevel3)
+	call AddUnitToBaseStructuresGroup(ScourgeMidTowerLevel3)
+	call AddUnitToBaseStructuresGroup(ScourgeBotTowerLevel3)
+	call AddUnitToBaseStructuresGroup(ScourgeLeftTowerLevel4)
+	call AddUnitToBaseStructuresGroup(ScourgeRightTowerLevel4)
+	call AddUnitToBaseStructuresGroup(ScourgeTopMeleeRaxUnit)
+	call AddUnitToBaseStructuresGroup(ScourgeMidMeleeRaxUnit)
+	call AddUnitToBaseStructuresGroup(ScourgeBotMeleeRaxUnit)
+	call AddUnitToBaseStructuresGroup(ScourgeTopRangedRaxUnit)
+	call AddUnitToBaseStructuresGroup(ScourgeMidRangedRaxUnit)
+	call AddUnitToBaseStructuresGroup(ScourgeBotRangedRaxUnit)
 	set H8 = CreateUnit(Scourges[0],'uzig',$A60, 4704, 270)
 	set J8 = CreateUnit(Scourges[0],'uzig',$C60,$FE0, 270)
 	set K8 = CreateUnit(Scourges[0],'uzig',$DA0, 4832, 270)
@@ -94267,7 +94268,7 @@ function main takes nothing returns nothing
 	set Scourges[4]= Player(10)
 	set Scourges[5]= Player(11)
 	set CreepsPlayer = Player(12)
-	set StructuresGroup = CreateGroup()
+	set AntiBackdoorStructuresGroup = CreateGroup()
 	set AttackToScourgeLocation = GetUnitLoc(AttackToScourgeDummyUnit)
 	set AttackToSentinelLocation = GetUnitLoc(AttackToSentinelDummyUnit)
 	set AttackToMidLocation  = GetUnitLoc(AttackToMidDummyUnit)
@@ -94683,9 +94684,12 @@ function main takes nothing returns nothing
 	call TriggerAddCondition(t, Condition(function L4O))
 	call TriggerAddCondition(t, Condition(function L5O))
 	call TriggerAddCondition(t, Condition(function L8O))
+
+	// 防偷塔
 	set t = CreateTrigger()
 	call TriggerRegisterTimerEvent(t, 5, true)
 	call TriggerAddCondition(t, Condition(function CheckBackdoorLoopAction))
+
 	set t = CreateTrigger()
 	call TriggerRegisterTimerEvent(t, 4, true)
 	call TriggerAddCondition(t, Condition(function MCO))
