@@ -766,8 +766,8 @@ globals
 	boolean IsScourgeTopMeleeRaxAlive = true
 	boolean IsScourgeMidMeleeRaxAlive = true
 	boolean IsScourgeBotMeleeRaxAlive = true
-	integer SpawnMeleeSoldiersNumber  = 3
-	integer SpawnRangedSoldiersNumber = 1
+	integer SpawnMeleeCreepNumber  = 3
+	integer SpawnRangedCreepNumber = 1
 	location WU = null
 	location YU = null
 	unit array Player__Hero
@@ -797,7 +797,7 @@ globals
 	unit GW = null
 	integer HW = 0
 	real JW = 0
-	location array SoldiersNextWaypoint
+	location array CreepNextWaypoint
 	group LW = null
 	boolean MW = false
 	boolean PW = false
@@ -831,33 +831,33 @@ globals
 	rect gg_rct_LeftTopRune = null
 	rect gg_rct_ScourgeAncientCenter  = null
 	rect gg_rct_SentinelAncientCenter = null
-	rect gg_rct_SentinelCreepCenter3 = null
-	rect gg_rct_ScourgeCreepCenter5 = null
-	rect gg_rct_ScourgeCreepCenter4 = null
-	rect gg_rct_SentinelCreepCenter4 = null
-	rect gg_rct_ScourgeCreepCenter3 = null
-	rect gg_rct_SentinelCreepCenter5 = null
-	rect gg_rct_ScourgeCreepCenter1 = null
-	rect gg_rct_SentinelCreepCenter2 = null
+	rect gg_rct_SentinelNeutralCreepCenter3 = null
+	rect gg_rct_ScourgeNeutralCreepCenter5 = null
+	rect gg_rct_ScourgeNeutralCreepCenter4 = null
+	rect gg_rct_SentinelNeutralCreepCenter4 = null
+	rect gg_rct_ScourgeNeutralCreepCenter3 = null
+	rect gg_rct_SentinelNeutralCreepCenter5 = null
+	rect gg_rct_ScourgeNeutralCreepCenter1 = null
+	rect gg_rct_SentinelNeutralCreepCenter2 = null
 	rect gg_rct_SentinelTavernCamera = null
 	rect gg_rct_ScourgeTavernCamera = null
 	rect gg_rct_RoshanSpawn 	 = null // gg_rct_RoshanSpawn
 	rect gg_rct_ScourgeAncientRange  = null
 	rect gg_rct_SentinelAncientRange = null
-	rect gg_rct_SentinelCreepRange3 = null
-	rect gg_rct_ScourgeCreepRange5 = null
-	rect gg_rct_ScourgeCreepRange4 = null
-	rect gg_rct_SentinelCreepRange4 = null
-	rect gg_rct_ScourgeCreepRange3 = null
-	rect gg_rct_ScourgeCreepRange1 = null
-	rect gg_rct_SentinelCreepRange5 = null
-	rect gg_rct_SentinelCreepRange2 = null
+	rect gg_rct_SentinelNeutralCreepRange3 = null
+	rect gg_rct_ScourgeNeutralCreepRange5 = null
+	rect gg_rct_ScourgeNeutralCreepRange4 = null
+	rect gg_rct_SentinelNeutralCreepRange4 = null
+	rect gg_rct_ScourgeNeutralCreepRange3 = null
+	rect gg_rct_ScourgeNeutralCreepRange1 = null
+	rect gg_rct_SentinelNeutralCreepRange5 = null
+	rect gg_rct_SentinelNeutralCreepRange2 = null
 	rect gg_rct_SentinelFountainOfLifeRange = null
 	rect gg_rct_ScourgeFountainOfLifeRange = null
-	rect gg_rct_ScourgeCreepRange2 = null
-	rect gg_rct_ScourgeCreepCenter2 = null
-	rect gg_rct_SentinelCreepRange1 = null
-	rect gg_rct_SentinelCreepCenter1 = null
+	rect gg_rct_ScourgeNeutralCreepRange2 = null
+	rect gg_rct_ScourgeNeutralCreepCenter2 = null
+	rect gg_rct_SentinelNeutralCreepRange1 = null
+	rect gg_rct_SentinelNeutralCreepCenter1 = null
 	rect gg_rct_DummyBirthPoint = null
 
 	boolean ShouSiJuHuaB = true
@@ -940,7 +940,7 @@ globals
 	sound SF = null
 	trigger C1 = null
 	trigger D1 = null
-	trigger SpawnAttackSoldiersTrigger = null
+	trigger SpawnAttackCreepTrigger = null
 	trigger F1 = null
 	trigger G1 = null
 	trigger H1 = null
@@ -953,12 +953,12 @@ globals
 	trigger T1 = null
 	trigger U1 = null
 	trigger W1 = null
-	trigger JG = null
-	trigger KG = null
-	trigger SoldiersUpgerTrig = null
-	trigger MG = null
-	trigger NG = null
-	trigger SG = null
+	trigger SentinelSuperCreepCheckTrig = null
+	trigger ScourgeSuperCreepCheckTrig  = null
+	trigger CreepUpgerTrig = null
+	trigger PreloadCreepsTrig = null
+	trigger SpawnAllCreepsTrig = null
+	trigger SpawnSuperCreepsTrig = null
 	trigger TG = null
 	trigger QG = null
 	trigger Y1 = null
@@ -1608,7 +1608,6 @@ globals
 	integer FVV = 0
 	multiboard FEV
 	trigger FXV
-	constant real FOV = 90
 	boolean FRV = false
 	unit FIV = null
 	unit FAV = null
@@ -1671,7 +1670,7 @@ globals
 	camerasetup G_V = null
 	boolean G0V = false
 	boolean G1V = false
-	boolean G2V = false
+	boolean Mode__AntiBackdoor = false
 	boolean G3V = false
 	boolean G4V = false
 	// 小模式 - 立即刷野
@@ -7331,8 +7330,8 @@ function IWX takes integer i returns unit
 	call EnableTrigger(Y1)
 	return E[i]
 endfunction
-function IYX takes unit IZX returns unit
-	local integer TME = GetPlayerId(GetOwningPlayer(IZX))
+function IYX takes unit damageSource returns unit
+	local integer TME = GetPlayerId(GetOwningPlayer(damageSource))
 	if GetWidgetLife(E[TME])> 1 then
 		return E[TME]
 	endif
@@ -9099,20 +9098,20 @@ function FQX takes unit u, real dur returns real
 	local integer h
 	local real FSX
 	local integer c
-	local real FTX
+	local real ratio
 	if Mode__BalanceOff or not IsUnitType(u, UNIT_TYPE_HERO) then
 		return dur
 	endif
 	set h = GetHandleId(u)
 	set c = LoadInteger(K, h, 32)
-	set FTX = 1
+	set ratio = 1
 	if GetGameTime()-LoadReal(K, h, 32)< 6 and LoadReal(K, h, 32)!= 0 then
 		if c == 1 then
-			set FTX = .75
+			set ratio = .75
 		elseif c == 2 then
-			set FTX = .5
+			set ratio = .5
 		else
-			set FTX = .25
+			set ratio = .25
 		endif
 		call SaveInteger(K, h, 32, c + 1)
 		// debug call SingleDebug(" 晕眩限制 "+ R2S(c) )
@@ -9120,7 +9119,7 @@ function FQX takes unit u, real dur returns real
 		call SaveInteger(K, h, 32, 1)
 	endif
 	call SaveReal(K, h, 32, GetGameTime())
-	set FSX = RMaxBJ(R2I(dur * 1. * FTX * 10)* 1. / 10, .01)
+	set FSX = RMaxBJ(R2I(dur * 1. * ratio * 10)* 1. / 10, .01)
 	return FSX
 endfunction
 // 晕眩单位 单位 持续时间 是否无视魔免
@@ -12801,7 +12800,7 @@ function SSX takes unit SDX, unit SFX, real L_X returns nothing
 		set i = i + 1
 	endloop
 endfunction
-function STX takes integer id returns boolean
+function IsSoldierTypeId takes integer id returns boolean
 	return id =='ugho' or id =='unec' or id =='esen' or id =='edry' or id =='u001' or id =='u002' or id =='e00V' or id =='e00W' or id =='ebal' or id =='e026' or id =='umtw' or id =='u00R'
 endfunction
 function SUX takes unit u, integer TME returns nothing
@@ -12824,7 +12823,7 @@ function SWX takes unit SYX, unit SZX returns nothing
 		set AQ[TME]= AQ[TME]+ 1
 		call SaveInteger(HY, 400 + TME, 79, LoadInteger(HY, 400 + TME, 79)+ 1)
 	else
-		if STX(id) and(GetOwningPlayer(SZX) == Sentinels[0]or GetOwningPlayer(SZX) == Scourges[0]) then
+		if IsSoldierTypeId(id) and(GetOwningPlayer(SZX) == Sentinels[0]or GetOwningPlayer(SZX) == Scourges[0]) then
 			if IsUnitAlly(SZX, GetOwningPlayer(SYX)) then
 				set NQ[TME]= NQ[TME]+ 1
 				call SUX(SZX, TME)
@@ -22085,7 +22084,7 @@ function DMO takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local unit WWE =(LoadUnitHandle(HY, h, 17))
-	if GetTriggerEventId() == EVENT_WIDGET_DEATH or(GetTriggerEventId() == EVENT_UNIT_DAMAGED and(STX(GetUnitTypeId(GetEventDamageSource())) == false and(GetOwningPlayer(GetEventDamageSource())!= CreepsPlayer) and GetEventDamage()> 0) or DMV) then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or(GetTriggerEventId() == EVENT_UNIT_DAMAGED and(IsSoldierTypeId(GetUnitTypeId(GetEventDamageSource())) == false and(GetOwningPlayer(GetEventDamageSource())!= CreepsPlayer) and GetEventDamage()> 0) or DMV) then
 		call UnitRemoveAbility(WWE,'B0CG')
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
@@ -23229,7 +23228,7 @@ function F9O takes nothing returns boolean
 	call F5O(id)
 	return false
 endfunction
-function SoldiersAttackToBase takes nothing returns boolean
+function CreepAttackToBase takes nothing returns boolean
 	if GetOwningPlayer(GetTriggerUnit()) == Sentinels[0] then
 		call IssuePointOrderByIdLoc(GetTriggerUnit(), 851983, AttackToScourgeLocation)
 	elseif GetOwningPlayer(GetTriggerUnit()) == Scourges[0] then
@@ -23238,10 +23237,10 @@ function SoldiersAttackToBase takes nothing returns boolean
 	return false
 endfunction
 function GEO takes nothing returns nothing
-	set SpawnRangedSoldiersNumber = SpawnRangedSoldiersNumber + 1
+	set SpawnRangedCreepNumber = SpawnRangedCreepNumber + 1
 endfunction
 function GXO takes nothing returns nothing
-	set SpawnMeleeSoldiersNumber = SpawnMeleeSoldiersNumber + 1
+	set SpawnMeleeCreepNumber = SpawnMeleeCreepNumber + 1
 endfunction
 function SentinelAttackToMid takes nothing returns boolean
 	if GetOwningPlayer(GetTriggerUnit()) == Sentinels[0] then
@@ -23385,7 +23384,7 @@ function SetGroupUnitsNextWaypoint takes group g, integer nextWaypointIndex, int
 			call SetGroupUnitsNotupgradedSpeed(firstUnit, addSpeedType)
 		endif
 		call SetUnitAbilityLevel(firstUnit, 'A06G', nextWaypointIndex)
-		call IssuePointOrderByIdLoc(firstUnit, 851983, SoldiersNextWaypoint[nextWaypointIndex])
+		call IssuePointOrderByIdLoc(firstUnit, 851983, CreepNextWaypoint[nextWaypointIndex])
 	endloop
 	set firstUnit = null
 endfunction
@@ -23395,144 +23394,144 @@ globals
 	constant integer SPAWN_SPEED_TYPE_REDUCE = 2
 endglobals
 
-function SpawnTopSoldiers takes boolean spawnDemolisher returns nothing
+function SpawnTopCreep takes boolean spawnDemolisher returns nothing
 	// 天灾
 	if (IsSentinelTopMeleeRaxAlive) then
-		call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'ugho', Scourges[0], ScourgeTopMeleeSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnMeleeCreepNumber,'ugho', Scourges[0], ScourgeTopMeleeSpawnLocatio, bj_UNIT_FACING)
 	else
-		call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'u001', Scourges[0], ScourgeTopMeleeSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnMeleeCreepNumber,'u001', Scourges[0], ScourgeTopMeleeSpawnLocatio, bj_UNIT_FACING)
 	endif
 	call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 2, SPAWN_SPEED_TYPE_ADD)
 	if (IsSentinelTopRangedRaxAlive) then
-		call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'unec', Scourges[0], ScourgeTopRangedSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'unec', Scourges[0], ScourgeTopRangedSpawnLocatio, bj_UNIT_FACING)
 	else
-		call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'u002', Scourges[0], ScourgeTopRangedSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'u002', Scourges[0], ScourgeTopRangedSpawnLocatio, bj_UNIT_FACING)
 	endif
 	call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 2, SPAWN_SPEED_TYPE_ADD)
 
 	// 近卫
 	if (IsScourgeTopMeleeRaxAlive) then
-		call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'esen', Sentinels[0], SentinelTopMeleeSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnMeleeCreepNumber,'esen', Sentinels[0], SentinelTopMeleeSpawnLocatio, bj_UNIT_FACING)
 	else
-		call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'e00V', Sentinels[0], SentinelTopMeleeSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnMeleeCreepNumber,'e00V', Sentinels[0], SentinelTopMeleeSpawnLocatio, bj_UNIT_FACING)
 	endif
 	call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 2, SPAWN_SPEED_TYPE_REDUCE)
 	if (IsScourgeTopRangedRaxAlive) then
-		call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'edry', Sentinels[0], SentinelTopRangedSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'edry', Sentinels[0], SentinelTopRangedSpawnLocatio, bj_UNIT_FACING)
 	else
-		call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'e00W', Sentinels[0], SentinelTopRangedSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'e00W', Sentinels[0], SentinelTopRangedSpawnLocatio, bj_UNIT_FACING)
 	endif
 	call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 2, SPAWN_SPEED_TYPE_REDUCE)
 
 	// 车
 	if spawnDemolisher then
 		if (IsSentinelTopRangedRaxAlive) then
-			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'umtw', Scourges[0], ScourgeTopRangedSpawnLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'umtw', Scourges[0], ScourgeTopRangedSpawnLocatio, bj_UNIT_FACING)
 		else
-			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'u00R', Scourges[0], ScourgeTopRangedSpawnLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'u00R', Scourges[0], ScourgeTopRangedSpawnLocatio, bj_UNIT_FACING)
 		endif
 		call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 2, SPAWN_SPEED_TYPE_ADD)
 		if (IsScourgeTopRangedRaxAlive) then
-			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'ebal', Sentinels[0], SentinelTopRangedSpawnLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'ebal', Sentinels[0], SentinelTopRangedSpawnLocatio, bj_UNIT_FACING)
 		else
-			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'e026', Sentinels[0], SentinelTopRangedSpawnLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'e026', Sentinels[0], SentinelTopRangedSpawnLocatio, bj_UNIT_FACING)
 		endif
 		call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 2, SPAWN_SPEED_TYPE_REDUCE)
 	endif
 endfunction
 
-function SpawnMidSoldiers takes boolean spawnDemolisher returns nothing
+function SpawnMidCreep takes boolean spawnDemolisher returns nothing
 	// 天灾
 	if (IsSentinelMidMeleeRaxAlive) then
-		call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'ugho', Scourges[0], ScourgeMidMeleeSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnMeleeCreepNumber,'ugho', Scourges[0], ScourgeMidMeleeSpawnLocatio, bj_UNIT_FACING)
 	else
-		call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'u001', Scourges[0], ScourgeMidMeleeSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnMeleeCreepNumber,'u001', Scourges[0], ScourgeMidMeleeSpawnLocatio, bj_UNIT_FACING)
 	endif
 	call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 3, SPAWN_SPEED_TYPE_NONE)
 	if (IsSentinelMidRangedRaxAlive) then
-		call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'unec', Scourges[0], ScourgeMidRangedSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'unec', Scourges[0], ScourgeMidRangedSpawnLocatio, bj_UNIT_FACING)
 	else
-		call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'u002', Scourges[0], ScourgeMidRangedSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'u002', Scourges[0], ScourgeMidRangedSpawnLocatio, bj_UNIT_FACING)
 	endif
 	call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 3, SPAWN_SPEED_TYPE_NONE)
 
 	// 近卫
 	if (IsScourgeMidMeleeRaxAlive) then
-		call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'esen', Sentinels[0], SentinelMidMeleeSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnMeleeCreepNumber,'esen', Sentinels[0], SentinelMidMeleeSpawnLocatio, bj_UNIT_FACING)
 	else
-		call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'e00V', Sentinels[0], SentinelMidMeleeSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnMeleeCreepNumber,'e00V', Sentinels[0], SentinelMidMeleeSpawnLocatio, bj_UNIT_FACING)
 	endif
 	call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 3, SPAWN_SPEED_TYPE_NONE)
 	if (IsScourgeMidRangedRaxAlive) then
-		call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'edry', Sentinels[0], SentinelMidRangedSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'edry', Sentinels[0], SentinelMidRangedSpawnLocatio, bj_UNIT_FACING)
 	else
-		call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'e00W', Sentinels[0], SentinelMidRangedSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'e00W', Sentinels[0], SentinelMidRangedSpawnLocatio, bj_UNIT_FACING)
 	endif
 	call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 3, SPAWN_SPEED_TYPE_NONE)
 
 	// 车
 	if spawnDemolisher then
 		if (IsSentinelMidRangedRaxAlive) then
-			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'umtw', Scourges[0], ScourgeMidRangedSpawnLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'umtw', Scourges[0], ScourgeMidRangedSpawnLocatio, bj_UNIT_FACING)
 		else
-			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'u00R', Scourges[0], ScourgeMidRangedSpawnLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'u00R', Scourges[0], ScourgeMidRangedSpawnLocatio, bj_UNIT_FACING)
 		endif
 		call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 3, SPAWN_SPEED_TYPE_NONE)
 		if (IsScourgeMidRangedRaxAlive) then
-			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'ebal', Sentinels[0], SentinelMidRangedSpawnLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'ebal', Sentinels[0], SentinelMidRangedSpawnLocatio, bj_UNIT_FACING)
 		else
-			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'e026', Sentinels[0], SentinelMidRangedSpawnLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'e026', Sentinels[0], SentinelMidRangedSpawnLocatio, bj_UNIT_FACING)
 		endif
 		call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 3, SPAWN_SPEED_TYPE_NONE)
 	endif
 endfunction
-function SpawnBotSoldiers takes boolean spawnDemolisher returns nothing
+function SpawnBotCreep takes boolean spawnDemolisher returns nothing
 	// 天灾
 	if (IsSentinelBotMeleeRaxAlive) then
-		call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'ugho', Scourges[0], ScourgeBotMeleeSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnMeleeCreepNumber,'ugho', Scourges[0], ScourgeBotMeleeSpawnLocatio, bj_UNIT_FACING)
 	else
-		call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'u001', Scourges[0], ScourgeBotMeleeSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnMeleeCreepNumber,'u001', Scourges[0], ScourgeBotMeleeSpawnLocatio, bj_UNIT_FACING)
 	endif
 	call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 4, SPAWN_SPEED_TYPE_REDUCE)
 	if (IsSentinelBotRangedRaxAlive) then
-		call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'unec', Scourges[0], ScourgeBotRangedSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'unec', Scourges[0], ScourgeBotRangedSpawnLocatio, bj_UNIT_FACING)
 	else
-		call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'u002', Scourges[0], ScourgeBotRangedSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'u002', Scourges[0], ScourgeBotRangedSpawnLocatio, bj_UNIT_FACING)
 	endif
 	call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 4, SPAWN_SPEED_TYPE_REDUCE)
 
 	// 近卫
 	if (IsScourgeBotMeleeRaxAlive) then
-		call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'esen', Sentinels[0], SentinelBotMeleeSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnMeleeCreepNumber,'esen', Sentinels[0], SentinelBotMeleeSpawnLocatio, bj_UNIT_FACING)
 	else
-		call CreateNUnitsAtLoc(SpawnMeleeSoldiersNumber,'e00V', Sentinels[0], SentinelBotMeleeSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnMeleeCreepNumber,'e00V', Sentinels[0], SentinelBotMeleeSpawnLocatio, bj_UNIT_FACING)
 	endif
 	call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 4, SPAWN_SPEED_TYPE_ADD)
 	if (IsScourgeBotRangedRaxAlive) then
-		call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'edry', Sentinels[0], SentinelBotRangedSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'edry', Sentinels[0], SentinelBotRangedSpawnLocatio, bj_UNIT_FACING)
 	else
-		call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'e00W', Sentinels[0], SentinelBotRangedSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'e00W', Sentinels[0], SentinelBotRangedSpawnLocatio, bj_UNIT_FACING)
 	endif
 	call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 4, SPAWN_SPEED_TYPE_ADD)
 
 	// 车
 	if spawnDemolisher then
 		if (IsSentinelBotRangedRaxAlive) then
-			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'umtw', Scourges[0], ScourgeBotRangedSpawnLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'umtw', Scourges[0], ScourgeBotRangedSpawnLocatio, bj_UNIT_FACING)
 		else
-			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'u00R', Scourges[0], ScourgeBotRangedSpawnLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'u00R', Scourges[0], ScourgeBotRangedSpawnLocatio, bj_UNIT_FACING)
 		endif
 		call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 4, SPAWN_SPEED_TYPE_REDUCE)
 		if (IsScourgeBotRangedRaxAlive) then
-			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'ebal', Sentinels[0], SentinelBotRangedSpawnLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'ebal', Sentinels[0], SentinelBotRangedSpawnLocatio, bj_UNIT_FACING)
 		else
-			call CreateNUnitsAtLoc(SpawnRangedSoldiersNumber,'e026', Sentinels[0], SentinelBotRangedSpawnLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'e026', Sentinels[0], SentinelBotRangedSpawnLocatio, bj_UNIT_FACING)
 		endif
 		call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 4, SPAWN_SPEED_TYPE_ADD)
 	endif
 endfunction
-function SpawnAttackSoldiersAction takes nothing returns nothing
-	local boolean spawnDemolisher = ModuloInteger(GetTriggerExecCount(SpawnAttackSoldiersTrigger), 7) == 0
+function SpawnAttackCreepAction takes nothing returns nothing
+	local boolean spawnDemolisher = ModuloInteger(GetTriggerExecCount(SpawnAttackCreepTrigger), 7) == 0
 	if IsDisableSpawn then
 		return
 	endif
@@ -23540,7 +23539,7 @@ function SpawnAttackSoldiersAction takes nothing returns nothing
 	if spawnDemolisher then
 		call GCO()
 	endif
-	if GetTriggerExecCount(SpawnAttackSoldiersTrigger) == 1 and Mode__OnlyMid == false then
+	if GetTriggerExecCount(SpawnAttackCreepTrigger) == 1 and Mode__OnlyMid == false then
 		call UnitResetCooldownEx(Circle[1])
 		call UnitResetCooldownEx(Circle[2])
 		call UnitResetCooldownEx(Circle[3])
@@ -23557,24 +23556,24 @@ function SpawnAttackSoldiersAction takes nothing returns nothing
 		call UnitRemoveAbility(ScourgeTopTowerLevel1,'Avul')
 		call UnitRemoveAbility(ScourgeMidTowerLevel1,'Avul')
 		call UnitRemoveAbility(ScourgeBotTowerLevel1,'Avul')
-	elseif GetTriggerExecCount(SpawnAttackSoldiersTrigger) == 1 and Mode__OnlyMid then
+	elseif GetTriggerExecCount(SpawnAttackCreepTrigger) == 1 and Mode__OnlyMid then
 		call UnitRemoveAbility(SentinleMidTowerLevel1,'Avul')
 		call UnitRemoveAbility(ScourgeMidTowerLevel1,'Avul')
 	endif
-	if GetTriggerExecCount(SpawnAttackSoldiersTrigger) == 1 then
+	if GetTriggerExecCount(SpawnAttackCreepTrigger) == 1 then
 		call EnableTrigger(AddGoldForIntervalTrig)
 	endif
 	// 上路出兵
 	if Mode__OnlyMid == false and Mode__NotTop == false then
-		call SpawnTopSoldiers(spawnDemolisher)
+		call SpawnTopCreep(spawnDemolisher)
 	endif
 	// 中路出兵
 	if Mode__NoMid == false then
-		call SpawnMidSoldiers(spawnDemolisher)
+		call SpawnMidCreep(spawnDemolisher)
 	endif
 	// 下路出兵
 	if Mode__OnlyMid == false and Mode__NotBot == false then
-		call SpawnBotSoldiers(spawnDemolisher)
+		call SpawnBotCreep(spawnDemolisher)
 	endif
 endfunction
 function GQO takes nothing returns nothing
@@ -23689,25 +23688,25 @@ function FrozenThroneStoreLifeCache takes nothing returns boolean
 	endif
 	return false
 endfunction
-function G7O takes nothing returns boolean
-	return(not(IsScourgeTopMeleeRaxAlive or IsScourgeMidMeleeRaxAlive or IsScourgeBotMeleeRaxAlive or IsScourgeTopRangedRaxAlive or IsScourgeMidRangedRaxAlive or IsScourgeBotRangedRaxAlive))
+function SentinelSuperCreepCheckAction takes nothing returns boolean
+	if (not(IsScourgeTopMeleeRaxAlive or IsScourgeMidMeleeRaxAlive or IsScourgeBotMeleeRaxAlive or IsScourgeTopRangedRaxAlive or IsScourgeMidRangedRaxAlive or IsScourgeBotRangedRaxAlive)) then
+		call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, CR[GetPlayerId(LocalPlayer)]* 2, GetObjectName('n04O')+ " " + GetObjectName('n0C7'))
+		call SetPlayerTechResearchedSwap('R00D',(GetPlayerTechCountSimple('R00D', Sentinels[0])+ 30), Sentinels[0])
+		call SetPlayerTechResearchedSwap('R00C',(GetPlayerTechCountSimple('R00C', Sentinels[0])+ 30), Sentinels[0])
+		call DisableTrigger(SentinelSuperCreepCheckTrig)
+	endif
+	return false
 endfunction
-function G8O takes nothing returns nothing
-	call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, CR[GetPlayerId(LocalPlayer)]* 2, GetObjectName('n04O')+ " " + GetObjectName('n0C7'))
-	call SetPlayerTechResearchedSwap('R00D',(GetPlayerTechCountSimple('R00D', Sentinels[0])+ 30), Sentinels[0])
-	call SetPlayerTechResearchedSwap('R00C',(GetPlayerTechCountSimple('R00C', Sentinels[0])+ 30), Sentinels[0])
-	call DisableTrigger(JG)
+function ScourgeSuperCreepCheckAction takes nothing returns boolean
+	if (not(IsSentinelTopMeleeRaxAlive or IsSentinelMidMeleeRaxAlive or IsSentinelBotMeleeRaxAlive or IsSentinelTopRangedRaxAlive or IsSentinelMidRangedRaxAlive or IsSentinelBotRangedRaxAlive)) then
+		call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, CR[GetPlayerId(LocalPlayer)]* 2, GetObjectName('n04X')+ " " + GetObjectName('n0C9'))
+		call SetPlayerTechResearchedSwap('R009',(GetPlayerTechCountSimple('R009', Scourges[0])+ 30), Scourges[0])
+		call SetPlayerTechResearchedSwap('R00B',(GetPlayerTechCountSimple('R00B', Scourges[0])+ 30), Scourges[0])
+		call DisableTrigger(ScourgeSuperCreepCheckTrig)
+	endif
+	return false
 endfunction
-function G9O takes nothing returns boolean
-	return(not(IsSentinelTopMeleeRaxAlive or IsSentinelMidMeleeRaxAlive or IsSentinelBotMeleeRaxAlive or IsSentinelTopRangedRaxAlive or IsSentinelMidRangedRaxAlive or IsSentinelBotRangedRaxAlive))
-endfunction
-function HVO takes nothing returns nothing
-	call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, CR[GetPlayerId(LocalPlayer)]* 2, GetObjectName('n04X')+ " " + GetObjectName('n0C9'))
-	call SetPlayerTechResearchedSwap('R009',(GetPlayerTechCountSimple('R009', Scourges[0])+ 30), Scourges[0])
-	call SetPlayerTechResearchedSwap('R00B',(GetPlayerTechCountSimple('R00B', Scourges[0])+ 30), Scourges[0])
-	call DisableTrigger(KG)
-endfunction
-function SoldiersUpgerAction takes nothing returns nothing
+function CreepUpgerAction takes nothing returns nothing
 	call SetPlayerTechResearchedSwap('R007',(GetPlayerTechCountSimple('R007', Sentinels[0])+ 1), Sentinels[0])
 	call SetPlayerTechResearchedSwap('R00C',(GetPlayerTechCountSimple('R00C', Sentinels[0])+ 1), Sentinels[0])
 	call SetPlayerTechResearchedSwap('R008',(GetPlayerTechCountSimple('R008', Sentinels[0])+ 1), Sentinels[0])
@@ -23718,44 +23717,44 @@ function SoldiersUpgerAction takes nothing returns nothing
 	call SetPlayerTechResearchedSwap('R00B',(GetPlayerTechCountSimple('R00B', Scourges[0] )+ 1), Scourges[0] )
 	set IsNotUpgraded = false
 endfunction
-function HXO takes nothing returns nothing
-	local location HOO = GetRectCenter(gg_rct_DummyBirthPoint)
-	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nbdo', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nbds', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'ngst', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'n026', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nggr', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nbdk', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nbwm', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nogm', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nomg', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nfpc', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nfpu', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nsth', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nstl', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nsat', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nwlg', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nkol', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nkob', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nkot', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'ncnk', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'ncen', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'ngns', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nftb', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nfsh', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'ngh1', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'npfl', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nowe', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nowb', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nmrm', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nmrr', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nmrl', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'ndtr', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'ndtw', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'n0LC', HOO, bj_UNIT_FACING))
-	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'n0LD', HOO, bj_UNIT_FACING))
-	call RemoveLocation(HOO)
-	set HOO = null
+function PreloadCreepsAction takes nothing returns nothing
+	local location loc = GetRectCenter(gg_rct_DummyBirthPoint)
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nbdo', loc, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nbds', loc, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'ngst', loc, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'n026', loc, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nggr', loc, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nbdk', loc, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nbwm', loc, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nogm', loc, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nomg', loc, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nfpc', loc, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nfpu', loc, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nsth', loc, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nstl', loc, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nsat', loc, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nwlg', loc, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nkol', loc, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nkob', loc, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nkot', loc, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'ncnk', loc, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'ncen', loc, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'ngns', loc, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nftb', loc, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nfsh', loc, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'ngh1', loc, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'npfl', loc, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nowe', loc, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nowb', loc, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nmrm', loc, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nmrr', loc, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nmrl', loc, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'ndtr', loc, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'ndtw', loc, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'n0LC', loc, bj_UNIT_FACING))
+	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'n0LD', loc, bj_UNIT_FACING))
+	call RemoveLocation(loc)
+	set loc = null
 endfunction
 function CreateCreeps_Harpy takes real x, real y returns nothing
 	call SetUnitPosition(CreateUnit(CreepsPlayer,'n0HW', x, y, 0), x, y)
@@ -24125,7 +24124,7 @@ function CheckRectCanRefreshCreeps takes rect r returns boolean
 	set firstUnit = null
 	return true
 endfunction
-function RefreshAllCreeps takes nothing returns boolean
+function SpawnAllNeutralCreepsAction takes nothing returns boolean
 	if Mode__NoNeutrals then
 		return false
 	endif
@@ -24138,41 +24137,41 @@ function RefreshAllCreeps takes nothing returns boolean
 		call CreateSentinelAncientCreeps(GetRectCenterX(gg_rct_SentinelAncientCenter), GetRectCenterY(gg_rct_SentinelAncientCenter))
 	endif
 	//endif
-	if CheckRectCanRefreshCreeps(gg_rct_SentinelCreepRange1) then
-		call CreateSentinelCreeps1(GetRectCenterX(gg_rct_SentinelCreepCenter1), GetRectCenterY(gg_rct_SentinelCreepCenter1))
+	if CheckRectCanRefreshCreeps(gg_rct_SentinelNeutralCreepRange1) then
+		call CreateSentinelCreeps1(GetRectCenterX(gg_rct_SentinelNeutralCreepCenter1), GetRectCenterY(gg_rct_SentinelNeutralCreepCenter1))
 	endif
-	if CheckRectCanRefreshCreeps(gg_rct_SentinelCreepRange2) then
-		call CreateSentinelCreeps2(GetRectCenterX(gg_rct_SentinelCreepCenter2), GetRectCenterY(gg_rct_SentinelCreepCenter2))
+	if CheckRectCanRefreshCreeps(gg_rct_SentinelNeutralCreepRange2) then
+		call CreateSentinelCreeps2(GetRectCenterX(gg_rct_SentinelNeutralCreepCenter2), GetRectCenterY(gg_rct_SentinelNeutralCreepCenter2))
 	endif
-	if CheckRectCanRefreshCreeps(gg_rct_SentinelCreepRange3) then
-		call CreateSentinelCreeps3(GetRectCenterX(gg_rct_SentinelCreepCenter3), GetRectCenterY(gg_rct_SentinelCreepCenter3))
+	if CheckRectCanRefreshCreeps(gg_rct_SentinelNeutralCreepRange3) then
+		call CreateSentinelCreeps3(GetRectCenterX(gg_rct_SentinelNeutralCreepCenter3), GetRectCenterY(gg_rct_SentinelNeutralCreepCenter3))
 	endif
-	if CheckRectCanRefreshCreeps(gg_rct_SentinelCreepRange4) then
-		call CreateSentinelCreeps4(GetRectCenterX(gg_rct_SentinelCreepCenter4), GetRectCenterY(gg_rct_SentinelCreepCenter4))
+	if CheckRectCanRefreshCreeps(gg_rct_SentinelNeutralCreepRange4) then
+		call CreateSentinelCreeps4(GetRectCenterX(gg_rct_SentinelNeutralCreepCenter4), GetRectCenterY(gg_rct_SentinelNeutralCreepCenter4))
 	endif
-	if CheckRectCanRefreshCreeps(gg_rct_SentinelCreepRange5) then
-		call CreateSentinelCreeps5(GetRectCenterX(gg_rct_SentinelCreepCenter5), GetRectCenterY(gg_rct_SentinelCreepCenter5))
+	if CheckRectCanRefreshCreeps(gg_rct_SentinelNeutralCreepRange5) then
+		call CreateSentinelCreeps5(GetRectCenterX(gg_rct_SentinelNeutralCreepCenter5), GetRectCenterY(gg_rct_SentinelNeutralCreepCenter5))
 	endif
 	
-	if CheckRectCanRefreshCreeps(gg_rct_ScourgeCreepRange1) then
-		call CreateScourgeCreeps1(GetRectCenterX(gg_rct_ScourgeCreepCenter1), GetRectCenterY(gg_rct_ScourgeCreepCenter1))
+	if CheckRectCanRefreshCreeps(gg_rct_ScourgeNeutralCreepRange1) then
+		call CreateScourgeCreeps1(GetRectCenterX(gg_rct_ScourgeNeutralCreepCenter1), GetRectCenterY(gg_rct_ScourgeNeutralCreepCenter1))
 	endif
-	if CheckRectCanRefreshCreeps(gg_rct_ScourgeCreepRange2) then
-		call CreateScourgeCreeps2(GetRectCenterX(gg_rct_ScourgeCreepCenter2), GetRectCenterY(gg_rct_ScourgeCreepCenter2))
+	if CheckRectCanRefreshCreeps(gg_rct_ScourgeNeutralCreepRange2) then
+		call CreateScourgeCreeps2(GetRectCenterX(gg_rct_ScourgeNeutralCreepCenter2), GetRectCenterY(gg_rct_ScourgeNeutralCreepCenter2))
 	endif
-	if CheckRectCanRefreshCreeps(gg_rct_ScourgeCreepRange3) then
-		call CreateScourgeCreeps3(GetRectCenterX(gg_rct_ScourgeCreepCenter3), GetRectCenterY(gg_rct_ScourgeCreepCenter3))
+	if CheckRectCanRefreshCreeps(gg_rct_ScourgeNeutralCreepRange3) then
+		call CreateScourgeCreeps3(GetRectCenterX(gg_rct_ScourgeNeutralCreepCenter3), GetRectCenterY(gg_rct_ScourgeNeutralCreepCenter3))
 	endif
-	if CheckRectCanRefreshCreeps(gg_rct_ScourgeCreepRange4) then
-		call CreateScourgeCreeps4(GetRectCenterX(gg_rct_ScourgeCreepCenter4), GetRectCenterY(gg_rct_ScourgeCreepCenter4))
+	if CheckRectCanRefreshCreeps(gg_rct_ScourgeNeutralCreepRange4) then
+		call CreateScourgeCreeps4(GetRectCenterX(gg_rct_ScourgeNeutralCreepCenter4), GetRectCenterY(gg_rct_ScourgeNeutralCreepCenter4))
 	endif
-	if CheckRectCanRefreshCreeps(gg_rct_ScourgeCreepRange5) then
-		call CreateScourgeCreeps5(GetRectCenterX(gg_rct_ScourgeCreepCenter5), GetRectCenterY(gg_rct_ScourgeCreepCenter5))
+	if CheckRectCanRefreshCreeps(gg_rct_ScourgeNeutralCreepRange5) then
+		call CreateScourgeCreeps5(GetRectCenterX(gg_rct_ScourgeNeutralCreepCenter5), GetRectCenterY(gg_rct_ScourgeNeutralCreepCenter5))
 	endif
 
 	return false
 endfunction
-function JXO takes nothing returns nothing
+function SpawnSuperCreepsAction takes nothing returns nothing
 	local integer i = 0
 	local group g
 	local unit u = null
@@ -26974,12 +26973,12 @@ function LTO takes nothing returns boolean
 	set u = null
 	return false
 endfunction
-function LUO takes unit u, unit IZX, real damageValue returns nothing
-	local real FTX = .25
-	if G2V then
-		set FTX = 1
+function LUO takes unit u, unit damageSource, real damageValue returns nothing
+	local real ratio = .25
+	if Mode__AntiBackdoor then
+		set ratio = 1
 	endif
-	call SetWidgetLife(u, GetWidgetLife(u)+ FTX * damageValue)
+	call SetWidgetLife(u, GetWidgetLife(u) + ratio * damageValue)
 endfunction
 function LWO takes unit u returns boolean
 	return(GetOwningPlayer(u) == Sentinels[0]or GetOwningPlayer(u) == Scourges[0]) and GetUnitTypeId(u)!='hFFD'
@@ -26988,14 +26987,15 @@ function LYO takes nothing returns boolean
 	return(GetOwningPlayer(GetFilterUnit()) == Sentinels[0]or GetOwningPlayer(GetFilterUnit()) == Scourges[0]) and GetUnitTypeId(GetFilterUnit())!='hFFD'
 endfunction
 // 建筑
-function LZO takes nothing returns nothing
+function AntiBackdoorAndStructuresDeathTrig takes nothing returns nothing
 	local unit u = GetTriggerUnit()
 	local integer hu = GetHandleId(u)
 	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
 		if GetUnitAbilityLevel(u,'A17R') == 0 then
+			// 处于防偷塔状态 敌人攻击
 			if LoadBoolean(P, hu,'isBD') and IsUnitEnemy(u, GetOwningPlayer(GetEventDamageSource())) then
 				call LUO(u, GetEventDamageSource(), GetEventDamage())
-			else
+			else // 非防偷塔状态 或者友军攻击 记录已经受到的合法伤害
 				call SaveReal(P, hu,'DMGR', LoadReal(P, hu,'DMGR')+ GetEventDamage())
 			endif
 		endif
@@ -27057,27 +27057,31 @@ function CheckBackdoorLoopAction takes nothing returns nothing
 	set g = null
 	set u = null
 endfunction
-function L1O takes nothing returns nothing
+
+globals
+	constant real STRUCTURE_MAX_REGENERATION = 90
+endglobals
+function AntiBackdoorRegenerationEnumAction takes nothing returns nothing
 	local unit u = GetEnumUnit()
-	local integer hu = GetHandleId(u)
-	local real L2O
-	local real L3O
-	if hu == 0 or UnitIsDead(u) or GetUnitState(u, UNIT_STATE_MAX_LIFE) == GetWidgetLife(u) then
+	local integer h = GetHandleId(u)
+	local real life
+	local real realLife
+	if h == 0 or UnitIsDead(u) or GetUnitState(u, UNIT_STATE_MAX_LIFE) == GetWidgetLife(u) then
 		return
 	endif
-	set L2O = GetWidgetLife(u)
-	set L3O = GetUnitState(u, UNIT_STATE_MAX_LIFE)-LoadReal(P, hu,'DMGR')
-	if L2O <= L3O then
-		if L2O + FOV <= L3O then
-			call SetWidgetLife(u, L2O + FOV)
+	set life = GetWidgetLife(u)
+	set realLife = GetUnitState(u, UNIT_STATE_MAX_LIFE) - LoadReal(P, h,'DMGR') // 最大生命值减去合法伤害 = 最终回复的血量
+	if life <= realLife then
+		if life + STRUCTURE_MAX_REGENERATION <= realLife then // StructureMaxRegeneration STRUCTURE_MAX_REGENERATION
+			call SetWidgetLife(u, life + STRUCTURE_MAX_REGENERATION)
 		else
-			call SetWidgetLife(u, L3O)
+			call SetWidgetLife(u, realLife)
 		endif
 	endif
 	set u = null
 endfunction
-function L4O takes nothing returns nothing
-	call ForGroup(AntiBackdoorStructuresGroup, function L1O)
+function AntiBackdoorRegenerationLoopAction takes nothing returns nothing
+	call ForGroup(AntiBackdoorStructuresGroup, function AntiBackdoorRegenerationEnumAction)
 endfunction
 function L5O takes nothing returns nothing
 	if HaveSavedReal(K, GetHandleId(LocalPlayer),'CAMD') and GetCameraField(CAMERA_FIELD_TARGET_DISTANCE)!= LoadReal(K, GetHandleId(LocalPlayer),'CAMD') and LoadReal(K, GetHandleId(LocalPlayer),'CAMD')!= 1650 then
@@ -27091,18 +27095,43 @@ function L5O takes nothing returns nothing
 	endif
 endfunction
 function L6O takes nothing returns boolean
-	return STX(GetUnitTypeId(GetFilterUnit())) and GetUnitCurrentOrder(GetFilterUnit()) == 0
+	return IsSoldierTypeId(GetUnitTypeId(GetFilterUnit())) and GetUnitCurrentOrder(GetFilterUnit()) == 0
 endfunction
 function L7O takes nothing returns nothing
-	call IssuePointOrderByIdLoc(GetEnumUnit(), 851983, SoldiersNextWaypoint[GetUnitAbilityLevel(GetEnumUnit(),'A06G')])
+	call IssuePointOrderByIdLoc(GetEnumUnit(), 851983, CreepNextWaypoint[GetUnitAbilityLevel(GetEnumUnit(),'A06G')])
 endfunction
-function L8O takes nothing returns nothing
-	local group g = AllocationGroup(47)
-	call GroupEnumUnitsOfPlayer(g, Sentinels[0], Condition(function L6O))
-	call ForGroup(g, function L7O)
-	call GroupEnumUnitsOfPlayer(g, Scourges[0], Condition(function L6O))
-	call ForGroup(g, function L7O)
+// 命令 = 0时继续攻击
+function ResumeCreepAttackOrder takes nothing returns nothing
+	local group g 		  = AllocationGroup(47)
+	local unit  firstUnit = null
+	
+	call GroupEnumUnitsOfPlayer(g, Sentinels[0], null)
+	loop
+		set firstUnit = FirstOfGroup(g)
+		exitwhen firstUnit == null
+		call GroupRemoveUnit(g, firstUnit)
+		
+		if IsSoldierTypeId(GetUnitTypeId(firstUnit)) and GetUnitCurrentOrder(firstUnit) == 0 then
+			call IssuePointOrderByIdLoc(firstUnit, 851983, CreepNextWaypoint[GetUnitAbilityLevel(firstUnit,'A06G')])
+		endif
+
+	endloop
+
+	call GroupEnumUnitsOfPlayer(g, Scourges[0], null)
+	loop
+		set firstUnit = FirstOfGroup(g)
+		exitwhen firstUnit == null
+		call GroupRemoveUnit(g, firstUnit)
+		
+		if IsSoldierTypeId(GetUnitTypeId(firstUnit)) and GetUnitCurrentOrder(firstUnit) == 0 then
+			call IssuePointOrderByIdLoc(firstUnit, 851983, CreepNextWaypoint[GetUnitAbilityLevel(firstUnit,'A06G')])
+		endif
+
+	endloop
+
 	call DeallocateGroup(g)
+	set firstUnit = null
+	set g 	      = null
 endfunction
 
 function AddUnitToBaseStructuresGroup takes unit u returns nothing
@@ -27126,7 +27155,7 @@ function AddUnitToBaseStructuresGroup takes unit u returns nothing
 endfunction
 function MVO takes nothing returns boolean
 	call CleanCurrentTrigger(GetTriggeringTrigger())
-	call TriggerEvaluate(NG)
+	call TriggerEvaluate(SpawnAllCreepsTrig)
 	return false
 endfunction
 function MEO takes nothing returns boolean
@@ -27222,16 +27251,16 @@ function MRO takes nothing returns boolean
 			call TriggerRegisterTimerEvent(RuneRefreshTrigger, 120, true)
 			call TriggerEvaluate(RuneRefreshTrigger)
 		endif
-		call TriggerRegisterTimerEvent(NG, 60, true)
+		call TriggerRegisterTimerEvent(SpawnAllCreepsTrig, 60, true)
 		if not Mode__FastNeutrals then
 			set t = CreateTrigger()
 			call TriggerRegisterTimerEvent(t, 30, false)
 			call TriggerAddCondition(t, Condition(function MVO))
 			set t = null
 		endif
-		call TriggerRegisterTimerEvent(SpawnAttackSoldiersTrigger, 30, true)
-		call TriggerExecute(SpawnAttackSoldiersTrigger)
-		call TriggerRegisterTimerEvent(SoldiersUpgerTrig, 450, true)
+		call TriggerRegisterTimerEvent(SpawnAttackCreepTrigger, 30, true)
+		call TriggerExecute(SpawnAttackCreepTrigger)
+		call TriggerRegisterTimerEvent(CreepUpgerTrig, 450, true)
 		call TriggerRegisterTimerEvent(C1, 2699-30, false)
 		call TriggerRegisterTimerEvent(D1, 999  -150, false)
 		call TriggerRegisterTimerEvent(D1, 1999- 240, false)
@@ -27241,7 +27270,7 @@ function MRO takes nothing returns boolean
 		call TriggerRegisterTimerEvent(PN, 30, true)
 		call TriggerEvaluate(PN)
 		if KT then
-			call TriggerRegisterTimerEvent(SG, 600, true)
+			call TriggerRegisterTimerEvent(SpawnSuperCreepsTrig, 600, true)
 		endif
 	elseif r == 7 and not UM then
 		set t = CreateTrigger()
@@ -27298,7 +27327,7 @@ function MBO takes nothing returns nothing
 	endif
 	if GetUnitCurrentOrder(GetEnumUnit())!= 851983then
 		call GroupRemoveUnit(FNV, GetEnumUnit())
-		call IssuePointOrderByIdLoc(GetEnumUnit(), 851983, SoldiersNextWaypoint[GetUnitAbilityLevel(GetEnumUnit(),'A06G')])
+		call IssuePointOrderByIdLoc(GetEnumUnit(), 851983, CreepNextWaypoint[GetUnitAbilityLevel(GetEnumUnit(),'A06G')])
 	endif
 endfunction
 function MCO takes nothing returns boolean
@@ -27501,7 +27530,7 @@ function MUO takes nothing returns nothing
 	call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, 60, K3 + " " + GetObjectName('n054')+ " QQ讨论群1064025490")
 	set OY = true
 	call NEX()
-	call DisableTrigger(SpawnAttackSoldiersTrigger)
+	call DisableTrigger(SpawnAttackCreepTrigger)
 	call DisableTrigger(QG)
 	call DisableTrigger(AddGoldForIntervalTrig)
 	call UOV()
@@ -28002,7 +28031,7 @@ function PYO takes nothing returns nothing
 	set g = null
 endfunction
 function PZO takes nothing returns nothing
-	call TriggerExecute(SpawnAttackSoldiersTrigger)
+	call TriggerExecute(SpawnAttackCreepTrigger)
 endfunction
 function P_O takes nothing returns boolean
 	local unit u = GetFilterUnit()
@@ -28112,7 +28141,7 @@ function P7O takes nothing returns nothing
 	call TriggerEvaluate(RuneRefreshTrigger)
 endfunction
 function P8O takes nothing returns nothing
-	call TriggerEvaluate(NG)
+	call TriggerEvaluate(SpawnAllCreepsTrig)
 endfunction
 function P9O takes nothing returns nothing
 	call EnumDestructablesInRectAll(bj_mapInitialPlayableArea, function M9O)
@@ -28280,7 +28309,7 @@ function QFO takes nothing returns boolean
 endfunction
 function QGO takes nothing returns nothing
 	call SetUnitUserData(GetEnumUnit(), 0)
-	call IssuePointOrderByIdLoc(GetEnumUnit(), 851983,(SoldiersNextWaypoint[GetUnitAbilityLevel((GetEnumUnit()),'A06G')]))
+	call IssuePointOrderByIdLoc(GetEnumUnit(), 851983,(CreepNextWaypoint[GetUnitAbilityLevel((GetEnumUnit()),'A06G')]))
 endfunction
 function QHO takes nothing returns nothing
 	call IssueTargetOrderById(GetEnumUnit(), 851983, FUV)
@@ -28301,7 +28330,7 @@ function QKO takes nothing returns nothing
 	if GetUnitCurrentOrder(GetEnumUnit()) == 0 and IsUnitInRange(GetEnumUnit(), FUV, GetUnitAcquireRange(GetEnumUnit())) == false then
 		call GroupRemoveUnit(FTV, GetEnumUnit())
 		call SetUnitUserData(GetEnumUnit(), 0)
-		call IssuePointOrderByIdLoc(GetEnumUnit(), 851983,(SoldiersNextWaypoint[GetUnitAbilityLevel((GetEnumUnit()),'A06G')]))
+		call IssuePointOrderByIdLoc(GetEnumUnit(), 851983,(CreepNextWaypoint[GetUnitAbilityLevel((GetEnumUnit()),'A06G')]))
 	endif
 endfunction
 function QLO takes nothing returns nothing
@@ -28454,13 +28483,13 @@ function Q1O takes nothing returns boolean
 		call SetUnitAbilityLevel(GetTriggerUnit(),'A06G', 5)
 		if FSV[GetUnitUserData(GetTriggerUnit())]== null then
 			call SetUnitUserData(GetTriggerUnit(), 0)
-			call IssuePointOrderByIdLoc(GetTriggerUnit(), 851983,(SoldiersNextWaypoint[GetUnitAbilityLevel((GetTriggerUnit()),'A06G')]))
+			call IssuePointOrderByIdLoc(GetTriggerUnit(), 851983,(CreepNextWaypoint[GetUnitAbilityLevel((GetTriggerUnit()),'A06G')]))
 		endif
 	elseif GetOwningPlayer(GetTriggerUnit()) == Scourges[0] then
 		call SetUnitAbilityLevel(GetTriggerUnit(),'A06G', 1)
 		if FSV[GetUnitUserData(GetTriggerUnit())]== null then
 			call SetUnitUserData(GetTriggerUnit(), 0)
-			call IssuePointOrderByIdLoc(GetTriggerUnit(), 851983,(SoldiersNextWaypoint[GetUnitAbilityLevel((GetTriggerUnit()),'A06G')]))
+			call IssuePointOrderByIdLoc(GetTriggerUnit(), 851983,(CreepNextWaypoint[GetUnitAbilityLevel((GetTriggerUnit()),'A06G')]))
 		endif
 	endif
 	return false
@@ -28529,7 +28558,7 @@ function Q5O takes nothing returns nothing
 		call IssueTargetOrderById(Q6O, 851983, WWE)
 	else
 		call DisableTrigger(GetTriggeringTrigger())
-		call IssuePointOrderByIdLoc(Q6O, 851983,(SoldiersNextWaypoint[GetUnitAbilityLevel((Q6O),'A06G')]))
+		call IssuePointOrderByIdLoc(Q6O, 851983,(CreepNextWaypoint[GetUnitAbilityLevel((Q6O),'A06G')]))
 		call EnableTrigger(GetTriggeringTrigger())
 	endif
 	set Q6O = null
@@ -28549,7 +28578,7 @@ function Q8O takes nothing returns nothing
 		call IssueTargetOrderById(Q6O, 851983, WWE)
 	else
 		call DisableTrigger(GetTriggeringTrigger())
-		call IssuePointOrderByIdLoc(Q6O, 851983,(SoldiersNextWaypoint[GetUnitAbilityLevel((Q6O),'A06G')]))
+		call IssuePointOrderByIdLoc(Q6O, 851983,(CreepNextWaypoint[GetUnitAbilityLevel((Q6O),'A06G')]))
 		call EnableTrigger(GetTriggeringTrigger())
 	endif
 	set Q6O = null
@@ -31022,7 +31051,7 @@ function ZQO takes nothing returns nothing
 	if G1V then
 		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "See skills" + "|r:		   你能看见敌方选择的技能")
 	endif
-	if G2V then
+	if Mode__AntiBackdoor then
 		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "Antibackdoor" + "|r:		   当攻击塔时若被系统判定为偷塔则塔受到的伤害变为极小")
 	endif
 	if G3V then
@@ -33508,11 +33537,11 @@ function SQO takes nothing returns nothing
 	set OLR = CreateTimer()
 	call TimerStart(OLR, 70, false, function OCR)
 	if Mode__FastNeutrals then
-		call RefreshAllCreeps()
+		call SpawnAllNeutralCreepsAction()
 		set t = CreateTrigger()
 		call TriggerRegisterTimerEvent(t, 30, false)
 		call TriggerRegisterTimerEvent(t, 90, false)
-		call TriggerAddCondition(t, Condition(function RefreshAllCreeps))
+		call TriggerAddCondition(t, Condition(function SpawnAllNeutralCreepsAction))
 		set t = null
 	endif
 	call EnableTrigger(hChooseHeroTrigger)
@@ -35221,7 +35250,7 @@ function InitMode__RandomDraft takes nothing returns nothing
 	if Mode__FastNeutrals then
 		set t = CreateTrigger()
 		call TriggerRegisterTimerEvent(t, 210, false)
-		call TriggerAddCondition(t, Condition(function RefreshAllCreeps))
+		call TriggerAddCondition(t, Condition(function SpawnAllNeutralCreepsAction))
 		set t = null
 	endif
 	set t = null
@@ -35246,11 +35275,11 @@ function ISR takes nothing returns nothing
 		set OLR = null
 		// 如果允许立即刷野 那就刷野罢
 		if Mode__FastNeutrals then
-			call RefreshAllCreeps()
+			call SpawnAllNeutralCreepsAction()
 			set t = CreateTrigger()
 			call TriggerRegisterTimerEvent(t, 30, false)
 			call TriggerRegisterTimerEvent(t, 90, false)
-			call TriggerAddCondition(t, Condition(function RefreshAllCreeps))
+			call TriggerAddCondition(t, Condition(function SpawnAllNeutralCreepsAction))
 			set t = null
 		endif
 	elseif mn == GetObjectName('n0ID') then
@@ -36256,7 +36285,7 @@ function AYR takes string AZR, integer A_R returns nothing
 	endif
 	if AB then
 		call AddModeName("防偷塔")
-		set G2V = true
+		set Mode__AntiBackdoor = true
 	endif
 	if FN then
 		call AddModeName("快速刷野")
@@ -36720,7 +36749,7 @@ function BVR takes nothing returns nothing
 	set LAX = null
 endfunction
 function A9R takes nothing returns nothing
-	local location HOO
+	local location loc
 	local real BXR
 	local trigger t
 	local integer BOR
@@ -36752,7 +36781,7 @@ function A9R takes nothing returns nothing
 	call UnitRemoveAbility(VDV,'Aawa')
 	call UnitRemoveAbility(VFV,'Aawa')
 	call ExecuteFunc("N7R")
-	set HOO = null
+	set loc = null
 	set t = null
 endfunction
 function NAR takes nothing returns nothing
@@ -40655,8 +40684,8 @@ function HVR takes nothing returns boolean
 	local real IXX = GetEventDamage()
 	local real hp
 	local real HIR
-	local real L2O = GetWidgetLife(whichUnit)
-	// L2O > .405  更改至  UnitAlive(whichUnit) 更合理的安全性检查
+	local real life = GetWidgetLife(whichUnit)
+	// life > .405  更改至  UnitAlive(whichUnit) 更合理的安全性检查
 	if (IXX > 5) and UnitAlive(whichUnit) and FK and GetUnitAbilityLevel(whichUnit,'A36D') == 0 then
 		if ((HOR -HXR)<(-180.)) then
 			set HRR =(HOR -HXR + 360)
@@ -43450,20 +43479,20 @@ endfunction
 function MLR takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local unit u = LoadUnitHandle(HY, GetHandleId(t), 0)
-	local unit IZX = LoadUnitHandle(HY, GetHandleId(t), 1)
+	local unit damageSource = LoadUnitHandle(HY, GetHandleId(t), 1)
 	local real damageValue = LoadReal(HY, GetHandleId(t), 0)
 	call SetUnitInvulnerable(u, false)
-	call UnitDamageTargetEx(IZX, u, 2, damageValue)
+	call UnitDamageTargetEx(damageSource, u, 2, damageValue)
 	call DestroyTimerAndFlushHT_HY(t)
 	set t = null
 	set u = null
-	set IZX = null
+	set damageSource = null
 endfunction
-function MMR takes unit u, real MPR, unit IZX returns nothing
+function MMR takes unit u, real MPR, unit damageSource returns nothing
 	local timer t = CreateTimer()
 	call TimerStart(t, 0, false, function MLR)
 	call SaveUnitHandle(HY, GetHandleId(t), 0, u)
-	call SaveUnitHandle(HY, GetHandleId(t), 1, IZX)
+	call SaveUnitHandle(HY, GetHandleId(t), 1, damageSource)
 	call SaveReal(HY, GetHandleId(t), 0, MPR)
 	call SetUnitInvulnerable(u, true)
 	set t = null
@@ -51702,7 +51731,7 @@ function O0I takes nothing returns nothing
 	set g = null
 endfunction
 function EPE takes nothing returns nothing
-	local location HOO = GetUnitLoc(GetTriggerUnit())
+	local location loc = GetUnitLoc(GetTriggerUnit())
 	local trigger t = CreateTrigger()
 	local integer level = GetUnitAbilityLevel(GetTriggerUnit(),'A0L3')
 	if level == 0 then
@@ -51717,16 +51746,16 @@ function EPE takes nothing returns nothing
 	call UnitApplyTimedLife(bj_lastCreatedUnit,'BTLF', 5)
 	call UnitAddAbility(bj_lastCreatedUnit,'A0L2')
 	call SetUnitAbilityLevel(bj_lastCreatedUnit,'A0L2', level)
-	call IssuePointOrderByIdLoc(bj_lastCreatedUnit, 852592, HOO)
+	call IssuePointOrderByIdLoc(bj_lastCreatedUnit, 852592, loc)
 	if IsPlayerEnemy(LocalPlayer, GetTriggerPlayer()) then
 		call VolumeGroupSetVolume(SOUND_VOLUMEGROUP_UNITSOUNDS, .0)
 		call VolumeGroupSetVolume(SOUND_VOLUMEGROUP_COMBAT, .0)
 		call VolumeGroupSetVolume(SOUND_VOLUMEGROUP_SPELLS, .0)
 		call VolumeGroupSetVolume(SOUND_VOLUMEGROUP_MUSIC, .0)
 	endif
-	call RemoveLocation(HOO)
+	call RemoveLocation(loc)
 	set t = null
-	set HOO = null
+	set loc = null
 endfunction
 
 function range_Take_Aim takes nothing returns nothing
@@ -51964,7 +51993,7 @@ function M0X takes nothing returns nothing
 	call AddAbilityIDToPreloadQueue('A19F')
 endfunction
 function O8I takes nothing returns nothing
-	local unit IZX = U2
+	local unit damageSource = U2
 	local unit WLE = W2
 	local integer h = GetHandleId(GetTriggeringTrigger())
 	local integer level = LoadInteger(HY, h, 10)
@@ -51978,13 +52007,13 @@ function O8I takes nothing returns nothing
 	loop
 		set u = FirstOfGroup(g)
 	exitwhen u == null
-		call UnitDamageTargetEx(IZX, u, 1, damageValue)
+		call UnitDamageTargetEx(damageSource, u, 1, damageValue)
 		call GroupRemoveUnit(g, u)
 	endloop
 	call DestroyEffect(LoadEffectHandle(HY, GetHandleId(LoadUnitHandle(HY, h, 45)),-1))
 	call DeallocateGroup(g)
 	set g = null
-	set IZX = null
+	set damageSource = null
 	set WLE = null
 endfunction
 function F8E takes nothing returns nothing
@@ -54180,11 +54209,11 @@ function A9I takes nothing returns boolean
 endfunction
 function NVI takes nothing returns nothing
 	local integer h = GetHandleId(GetTriggeringTrigger())
-	local unit IZX = U2
+	local unit damageSource = U2
 	local unit WLE = W2
 	local integer level = LoadInteger(HY, h, 0)
-	call UnitDamageTargetEx(IZX, WLE, 1, 50 + 75 * level)
-	set IZX = null
+	call UnitDamageTargetEx(damageSource, WLE, 1, 50 + 75 * level)
+	set damageSource = null
 	set WLE = null
 endfunction
 function NEI takes unit u, group g returns nothing
@@ -56506,24 +56535,24 @@ endfunction
 function DJI takes unit u returns nothing
 	local group g = AllocationGroup(298)
 	local unit u2
-	local unit IZX = null
+	local unit damageSource = null
 	local integer level
 	call GroupEnumUnitsInRange(g, GetUnitX(u), GetUnitY(u), 1300, Condition(function D5X))
 	loop
 		set u2 = FirstOfGroup(g)
 	exitwhen u2 == null
 		if GetUnitAbilityLevel(u2,'A0N5')> 0 then
-			set IZX = u2
+			set damageSource = u2
 		exitwhen true
 		endif
 		call GroupRemoveUnit(g, u2)
 	endloop
-	if IZX != null then
-		set XK[0]= GetUnitAbilityLevel(IZX,'A0N5')
-		set Temp__ArrayUnit[0]= IZX
-		call GroupEnumUnitsInRange(AK, GetWidgetX(IZX), GetWidgetY(IZX), 1225, Condition(function DHI))
+	if damageSource != null then
+		set XK[0]= GetUnitAbilityLevel(damageSource,'A0N5')
+		set Temp__ArrayUnit[0]= damageSource
+		call GroupEnumUnitsInRange(AK, GetWidgetX(damageSource), GetWidgetY(damageSource), 1225, Condition(function DHI))
 	endif
-	set IZX = null
+	set damageSource = null
 	set u2 = null
 	call DeallocateGroup(g)
 	set g = null
@@ -58304,24 +58333,24 @@ function GWI takes unit u, integer level, boolean GSI returns nothing
 endfunction
 function G1I takes unit WUE, unit WWE returns nothing
 	local integer level
-	local real FTX = 1.
+	local real ratio = 1.
 	if GetUnitTypeId(WUE)=='e00E' or IsUnitType(WUE, UNIT_TYPE_HERO) == false then
 		set WUE = Player__Hero[GetPlayerId(GetOwningPlayer(WUE))]
 	endif
 	set level = GetUnitAbilityLevel(WUE,'A0LE')
 	if IsUnitIllusion(WWE) == false and IsUnitType(WWE, UNIT_TYPE_STRUCTURE) == false and WWE != CT then
 		if IsUnitType(WUE, UNIT_TYPE_MELEE_ATTACKER) == false then
-			set FTX = .5
+			set ratio = .5
 		endif
 		if IsUnitType(WWE, UNIT_TYPE_HERO) == false then
 			if level > 0 then
 				call GWI(WUE, level, false)
-				call GLI(WUE, WWE,(level * .05 + .05)* FTX)
+				call GLI(WUE, WWE,(level * .05 + .05)* ratio)
 			endif
 		else
 			if level > 0 then
 				call GWI(WUE, level, true)
-				call GLI(WUE, WWE, level * .1 * FTX)
+				call GLI(WUE, WWE, level * .1 * ratio)
 			else
 				call GPI(WUE, WWE, level)
 			endif
@@ -59433,7 +59462,7 @@ function JQI takes nothing returns nothing
 	local integer MFR
 	local integer array SBF
 	local integer ODX = GetUnitAbilityLevel(WJE,'A0OK')
-	local integer FTX = 7 + 1 * ODX
+	local integer ratio = 7 + 1 * ODX
 	local integer i
 	local boolean UDR = GetUnitAbilityLevel(WJE,'A1VW')> 0
 	local unit d
@@ -59454,12 +59483,12 @@ function JQI takes nothing returns nothing
 	endif
 	if UDR then
 		set ODX = GetUnitAbilityLevel(WJE,'A1VW')
-		set FTX = 7 + 1 * ODX + 1
+		set ratio = 7 + 1 * ODX + 1
 	endif
 	set MFR = -10+ 20 * ODX
 	if (OJO > 0) then
-		call UnitDamageTargetEx(WJE, WWE, 1, OJO * FTX)
-		call CommonTextTag(I2S(R2I(OJO * FTX)), 3, WWE, .023, 216, 30, 30, 216)
+		call UnitDamageTargetEx(WJE, WWE, 1, OJO * ratio)
+		call CommonTextTag(I2S(R2I(OJO * ratio)), 3, WWE, .023, 216, 30, 30, 216)
 		call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Human\\Feedback\\SpellBreakerAttack.mdl", WWE, "overhead"))
 		call SetUnitState(WWE, UNIT_STATE_MANA, GetUnitState(WWE, UNIT_STATE_MANA)* .6)
 		if UDR and UnitIsDead(WWE) == false then
@@ -60427,7 +60456,7 @@ function LEI takes unit u returns nothing
 	call TimerStart(t, .25, false, function LVI)
 	set t = null
 endfunction
-function LXI takes unit IZX, group g returns nothing
+function LXI takes unit damageSource, group g returns nothing
 	local group gg = AllocationGroup(325)
 	local unit u
 	local real LJR
@@ -60438,10 +60467,10 @@ function LXI takes unit IZX, group g returns nothing
 		set u = FirstOfGroup(gg)
 	exitwhen u == null
 		set LJR = LoadReal(HY, GetHandleId(u),'ZMBI')
-		set d = WTE(IZX, u)
+		set d = WTE(damageSource, u)
 		if d < 775 then
-			set a = 20 + 5 * GetUnitAbilityLevel(IZX,'QM03')
-			if K8I(IZX) then
+			set a = 20 + 5 * GetUnitAbilityLevel(damageSource,'QM03')
+			if K8I(damageSource) then
 				set a = a + 5
 			endif
 			if d > 200 then
@@ -62470,12 +62499,12 @@ function PTI takes nothing returns boolean
 	set WWE = null
 	return false
 endfunction
-function PUI takes unit IZX, unit WLE, integer level returns nothing
+function PUI takes unit damageSource, unit WLE, integer level returns nothing
 	local trigger t = CreateTrigger()
 	local integer h = GetHandleId(t)
 	call TriggerRegisterTimerEvent(t, 1, true)
 	call TriggerAddCondition(t, Condition(function PTI))
-	call SaveUnitHandle(HY, h, 2, IZX)
+	call SaveUnitHandle(HY, h, 2, damageSource)
 	call SaveUnitHandle(HY, h, 17, WLE)
 	call SaveInteger(HY, h, 5, level)
 	call SaveEffectHandle(HY, h, 32, AddSpecialEffectTarget("Environment\\LargeBuildingFire\\LargeBuildingFire1.mdl", WLE, "chest"))
@@ -71595,7 +71624,7 @@ endfunction
 function AEA takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer h = GetHandleId(t)
-	local unit IZX = LoadUnitHandle(HY, h, 0)
+	local unit damageSource = LoadUnitHandle(HY, h, 0)
 	local unit WLE = LoadUnitHandle(HY, h, 1)
 	if UnitIsDead(WLE) or GetUnitAbilityLevel(WLE,'B06D') == 0 then
 		call RemoveSavedHandle(HY, LoadInteger(HY, h,-1),'A09V')
@@ -71603,9 +71632,9 @@ function AEA takes nothing returns nothing
 		call DestroyTimer(t)
 		call FlushChildHashtable(HY, h)
 	else
-		call UnitDamageTargetEx(IZX, WLE, 1, 8 + 6 * LoadInteger(HY, h, 0))
+		call UnitDamageTargetEx(damageSource, WLE, 1, 8 + 6 * LoadInteger(HY, h, 0))
 	endif
-	set IZX = null
+	set damageSource = null
 	set WLE = null
 	set t = null
 endfunction
@@ -73055,32 +73084,32 @@ function N9A takes nothing returns nothing
 	local integer h = GetHandleId(t)
 	local unit W_V = LoadUnitHandle(HY, h, 0)
 	local unit WLE = LoadUnitHandle(HY, h, 1)
-	local unit IZX = LoadUnitHandle(HY, h, 2)
+	local unit damageSource = LoadUnitHandle(HY, h, 2)
 	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
 		if GetEventDamageSource() == W_V then
 			if LoadUnitHandle(HY, h,-1) == LoadUnitHandle(HY, h, 2) then
-				if GetUnitAbilityLevel(WLE,'A3E9') == 1 and IsMagicImmuneUnit(IZX) and LoadBoolean(HY, h, 0) == false then
-					if UnitHasSpellShield(IZX) == false then
+				if GetUnitAbilityLevel(WLE,'A3E9') == 1 and IsMagicImmuneUnit(damageSource) and LoadBoolean(HY, h, 0) == false then
+					if UnitHasSpellShield(damageSource) == false then
 						call SaveUnitHandle(VV,'A3E9', 0, WLE)
-						call SaveUnitHandle(VV,'A3E9', 1, IZX)
+						call SaveUnitHandle(VV,'A3E9', 1, damageSource)
 						call SaveInteger(VV,'A3E9', 0, LoadInteger(HY, h, 0))
 						call ExecuteFunc("BVA")
 					else
-						call AJO(IZX)
+						call AJO(damageSource)
 					endif
 				endif
 			endif
 			if IsUnitType(WLE, UNIT_TYPE_HERO) or C_X(WLE) then
 				call CommonUnitAddStun(WLE, 1, false)
-				call UnitDamageTargetEx(IZX, WLE, 1, 75)
+				call UnitDamageTargetEx(damageSource, WLE, 1, 75)
 			else
 				call CommonUnitAddStun(WLE, 5, false)
-				call UnitDamageTargetEx(IZX, WLE, 1, 50 + 25 * LoadInteger(HY, h, 0))
+				call UnitDamageTargetEx(damageSource, WLE, 1, 50 + 25 * LoadInteger(HY, h, 0))
 			endif
 			if LoadInteger(HY, h, 1)> 0 then
 				call SaveUnitHandle(VV,'cask', 0, WLE)
 				call RemoveSavedHandle(VV,'cask', 1)
-				call SaveUnitHandle(VV,'cask', 2, IZX)
+				call SaveUnitHandle(VV,'cask', 2, damageSource)
 				call SaveInteger(VV,'cask', 0, LoadInteger(HY, h, 0))
 				call SaveInteger(VV,'cask', 1, LoadInteger(HY, h, 1))
 				call ExecuteFunc("BEA")
@@ -74042,7 +74071,7 @@ function CCA takes nothing returns boolean
 	local real KGX = GetGameTime()
 	local real CDA = LoadReal(HY, h, 415)
 	local real CFA = LoadReal(HY, h, 416)
-	local integer FTX
+	local integer ratio
 	if UnitIsDead(WUE) then
 		set t = null
 		set WUE = null
@@ -74139,8 +74168,8 @@ function CCA takes nothing returns boolean
 				endif
 			endif
 		elseif UnitIsDead(WUE) == false then
-			set FTX = 2 + ODX
-			call SetWidgetLife(WUE, GetWidgetLife(WUE)+ GetUnitState(WUE, UNIT_STATE_MAX_LIFE)/ 1000* FTX)
+			set ratio = 2 + ODX
+			call SetWidgetLife(WUE, GetWidgetLife(WUE)+ GetUnitState(WUE, UNIT_STATE_MAX_LIFE)/ 1000* ratio)
 		endif
 		call SaveReal(HY, h, 415, CDA * 1.)
 		call SaveReal(HY, h, 416, CFA * 1.)
@@ -91170,16 +91199,16 @@ function PreloadCreeps takes nothing returns nothing
 	call RemoveUnit(CreateUnit(CreepsPlayer,'u001', GetRectCenterX(gg_rct_ScourgeAncientCenter), GetRectCenterY(gg_rct_ScourgeAncientCenter), 0))
 	call RemoveUnit(CreateUnit(CreepsPlayer,'u001', GetRectCenterX(gg_rct_ScourgeAncientCenter), GetRectCenterY(gg_rct_ScourgeAncientCenter), 0))
 	call RemoveUnit(CreateUnit(CreepsPlayer,'u001', GetRectCenterX(gg_rct_SentinelAncientCenter), GetRectCenterY(gg_rct_SentinelAncientCenter), 0))
-	call RemoveUnit(CreateUnit(CreepsPlayer,'u001', GetRectCenterX(gg_rct_SentinelCreepCenter3), GetRectCenterY(gg_rct_SentinelCreepCenter3), 0))
-	call RemoveUnit(CreateUnit(CreepsPlayer,'u001', GetRectCenterX(gg_rct_ScourgeCreepCenter5), GetRectCenterY(gg_rct_ScourgeCreepCenter5), 0))
-	call RemoveUnit(CreateUnit(CreepsPlayer,'u001', GetRectCenterX(gg_rct_ScourgeCreepCenter4), GetRectCenterY(gg_rct_ScourgeCreepCenter4), 0))
-	call RemoveUnit(CreateUnit(CreepsPlayer,'u001', GetRectCenterX(gg_rct_SentinelCreepCenter4), GetRectCenterY(gg_rct_SentinelCreepCenter4), 0))
-	call RemoveUnit(CreateUnit(CreepsPlayer,'u001', GetRectCenterX(gg_rct_ScourgeCreepCenter3), GetRectCenterY(gg_rct_ScourgeCreepCenter3), 0))
-	call RemoveUnit(CreateUnit(CreepsPlayer,'u001', GetRectCenterX(gg_rct_SentinelCreepCenter5), GetRectCenterY(gg_rct_SentinelCreepCenter5), 0))
-	call RemoveUnit(CreateUnit(CreepsPlayer,'u001', GetRectCenterX(gg_rct_ScourgeCreepCenter1), GetRectCenterY(gg_rct_ScourgeCreepCenter1), 0))
-	call RemoveUnit(CreateUnit(CreepsPlayer,'u001', GetRectCenterX(gg_rct_SentinelCreepCenter2), GetRectCenterY(gg_rct_SentinelCreepCenter2), 0))
-	call RemoveUnit(CreateUnit(CreepsPlayer,'u001', GetRectCenterX(gg_rct_ScourgeCreepCenter2), GetRectCenterY(gg_rct_ScourgeCreepCenter2), 0))
-	call RemoveUnit(CreateUnit(CreepsPlayer,'u001', GetRectCenterX(gg_rct_SentinelCreepCenter1), GetRectCenterY(gg_rct_SentinelCreepCenter1), 0))
+	call RemoveUnit(CreateUnit(CreepsPlayer,'u001', GetRectCenterX(gg_rct_SentinelNeutralCreepCenter3), GetRectCenterY(gg_rct_SentinelNeutralCreepCenter3), 0))
+	call RemoveUnit(CreateUnit(CreepsPlayer,'u001', GetRectCenterX(gg_rct_ScourgeNeutralCreepCenter5), GetRectCenterY(gg_rct_ScourgeNeutralCreepCenter5), 0))
+	call RemoveUnit(CreateUnit(CreepsPlayer,'u001', GetRectCenterX(gg_rct_ScourgeNeutralCreepCenter4), GetRectCenterY(gg_rct_ScourgeNeutralCreepCenter4), 0))
+	call RemoveUnit(CreateUnit(CreepsPlayer,'u001', GetRectCenterX(gg_rct_SentinelNeutralCreepCenter4), GetRectCenterY(gg_rct_SentinelNeutralCreepCenter4), 0))
+	call RemoveUnit(CreateUnit(CreepsPlayer,'u001', GetRectCenterX(gg_rct_ScourgeNeutralCreepCenter3), GetRectCenterY(gg_rct_ScourgeNeutralCreepCenter3), 0))
+	call RemoveUnit(CreateUnit(CreepsPlayer,'u001', GetRectCenterX(gg_rct_SentinelNeutralCreepCenter5), GetRectCenterY(gg_rct_SentinelNeutralCreepCenter5), 0))
+	call RemoveUnit(CreateUnit(CreepsPlayer,'u001', GetRectCenterX(gg_rct_ScourgeNeutralCreepCenter1), GetRectCenterY(gg_rct_ScourgeNeutralCreepCenter1), 0))
+	call RemoveUnit(CreateUnit(CreepsPlayer,'u001', GetRectCenterX(gg_rct_SentinelNeutralCreepCenter2), GetRectCenterY(gg_rct_SentinelNeutralCreepCenter2), 0))
+	call RemoveUnit(CreateUnit(CreepsPlayer,'u001', GetRectCenterX(gg_rct_ScourgeNeutralCreepCenter2), GetRectCenterY(gg_rct_ScourgeNeutralCreepCenter2), 0))
+	call RemoveUnit(CreateUnit(CreepsPlayer,'u001', GetRectCenterX(gg_rct_SentinelNeutralCreepCenter1), GetRectCenterY(gg_rct_SentinelNeutralCreepCenter1), 0))
 endfunction
 function InitTaverns takes nothing returns nothing
 	local player p = Player(15)
@@ -93959,40 +93988,40 @@ function Init_RectsAndRegions takes nothing returns nothing
 	set gg_rct_ScourgeAncientRange   = Rect(  4000., -1568.,  4768.,  -736. )
 	set gg_rct_SentinelAncientRange  = Rect( -3552.,  -768., -2528.,   320. )
 	// 近卫野区
-	set gg_rct_SentinelCreepRange1  = Rect( -1728., -4992.,  -768., -3840. )
-	set gg_rct_SentinelCreepCenter1 = Rect( -1152., -4704.,  -960., -4480. )
-	set gg_rct_SentinelCreepRange2  = Rect( -1024., -3808.,   192., -2752. )
-	set gg_rct_SentinelCreepCenter2 = Rect(  -512., -3648.,  -320., -3520. )
-	set gg_rct_SentinelCreepRange3  = Rect(  1056., -5216.,  2368., -3744. )
-	set gg_rct_SentinelCreepCenter3 = Rect(  1440., -4096.,  1728., -3872. )
-	set gg_rct_SentinelCreepRange4  = Rect(  2272., -6080.,  3776., -4928. )
-	set gg_rct_SentinelCreepCenter4 = Rect(  2848., -5088.,  3072., -4928. )
-	set gg_rct_SentinelCreepRange5  = Rect(  2592., -4800.,  3744., -3328. )
-	set gg_rct_SentinelCreepCenter5 = Rect(  3008., -3776.,  3136., -3648. )
+	set gg_rct_SentinelNeutralCreepRange1  = Rect( -1728., -4992.,  -768., -3840. )
+	set gg_rct_SentinelNeutralCreepCenter1 = Rect( -1152., -4704.,  -960., -4480. )
+	set gg_rct_SentinelNeutralCreepRange2  = Rect( -1024., -3808.,   192., -2752. )
+	set gg_rct_SentinelNeutralCreepCenter2 = Rect(  -512., -3648.,  -320., -3520. )
+	set gg_rct_SentinelNeutralCreepRange3  = Rect(  1056., -5216.,  2368., -3744. )
+	set gg_rct_SentinelNeutralCreepCenter3 = Rect(  1440., -4096.,  1728., -3872. )
+	set gg_rct_SentinelNeutralCreepRange4  = Rect(  2272., -6080.,  3776., -4928. )
+	set gg_rct_SentinelNeutralCreepCenter4 = Rect(  2848., -5088.,  3072., -4928. )
+	set gg_rct_SentinelNeutralCreepRange5  = Rect(  2592., -4800.,  3744., -3328. )
+	set gg_rct_SentinelNeutralCreepCenter5 = Rect(  3008., -3776.,  3136., -3648. )
 	// 天灾野区
-	set gg_rct_ScourgeCreepRange1   = Rect(  416. ,  2624.,  1632.,  3648. )
-	set gg_rct_ScourgeCreepCenter1  = Rect(  1184.,  2976.,  1280.,  3104. )
-	set gg_rct_ScourgeCreepRange2   = Rect(  -800.,  3072.,    64.,  4032. )
-	set gg_rct_ScourgeCreepCenter2  = Rect(  -384.,  3392.,  -192.,  3520. )
-	set gg_rct_ScourgeCreepRange3   = Rect( -1888.,  2208.,  -992.,  3040. )
-	set gg_rct_ScourgeCreepCenter3  = Rect( -1824.,  2240., -1472.,  2464. )
-	set gg_rct_ScourgeCreepRange4   = Rect( -3456.,  3808., -2656.,  4864. )
-	set gg_rct_ScourgeCreepCenter4  = Rect( -3264.,  4192., -2912.,  4320. )
-	set gg_rct_ScourgeCreepRange5   = Rect( -5120.,  3008., -3648.,  4320. )
-	set gg_rct_ScourgeCreepCenter5  = Rect( -4576.,  3328., -4448.,  3488. )
+	set gg_rct_ScourgeNeutralCreepRange1   = Rect(  416. ,  2624.,  1632.,  3648. )
+	set gg_rct_ScourgeNeutralCreepCenter1  = Rect(  1184.,  2976.,  1280.,  3104. )
+	set gg_rct_ScourgeNeutralCreepRange2   = Rect(  -800.,  3072.,    64.,  4032. )
+	set gg_rct_ScourgeNeutralCreepCenter2  = Rect(  -384.,  3392.,  -192.,  3520. )
+	set gg_rct_ScourgeNeutralCreepRange3   = Rect( -1888.,  2208.,  -992.,  3040. )
+	set gg_rct_ScourgeNeutralCreepCenter3  = Rect( -1824.,  2240., -1472.,  2464. )
+	set gg_rct_ScourgeNeutralCreepRange4   = Rect( -3456.,  3808., -2656.,  4864. )
+	set gg_rct_ScourgeNeutralCreepCenter4  = Rect( -3264.,  4192., -2912.,  4320. )
+	set gg_rct_ScourgeNeutralCreepRange5   = Rect( -5120.,  3008., -3648.,  4320. )
+	set gg_rct_ScourgeNeutralCreepCenter5  = Rect( -4576.,  3328., -4448.,  3488. )
 	// 刷怪矩形区域
 	call CreateCreepsRectIndicator( gg_rct_ScourgeAncientRange , true  ) 
 	call CreateCreepsRectIndicator( gg_rct_SentinelAncientRange, true  ) 
-	call CreateCreepsRectIndicator( gg_rct_ScourgeCreepRange1  , true  ) 
-	call CreateCreepsRectIndicator( gg_rct_ScourgeCreepRange2  , true  ) 
-	call CreateCreepsRectIndicator( gg_rct_ScourgeCreepRange3  , false )
-	call CreateCreepsRectIndicator( gg_rct_ScourgeCreepRange4  , true  ) 
-	call CreateCreepsRectIndicator( gg_rct_ScourgeCreepRange5  , true  ) 
-	call CreateCreepsRectIndicator( gg_rct_SentinelCreepRange1 , false )
-	call CreateCreepsRectIndicator( gg_rct_SentinelCreepRange2 , false )
-	call CreateCreepsRectIndicator( gg_rct_SentinelCreepRange3 , true  ) 
-	call CreateCreepsRectIndicator( gg_rct_SentinelCreepRange4 , true  ) 
-	call CreateCreepsRectIndicator( gg_rct_SentinelCreepRange5 , true  )
+	call CreateCreepsRectIndicator( gg_rct_ScourgeNeutralCreepRange1  , true  ) 
+	call CreateCreepsRectIndicator( gg_rct_ScourgeNeutralCreepRange2  , true  ) 
+	call CreateCreepsRectIndicator( gg_rct_ScourgeNeutralCreepRange3  , false )
+	call CreateCreepsRectIndicator( gg_rct_ScourgeNeutralCreepRange4  , true  ) 
+	call CreateCreepsRectIndicator( gg_rct_ScourgeNeutralCreepRange5  , true  ) 
+	call CreateCreepsRectIndicator( gg_rct_SentinelNeutralCreepRange1 , false )
+	call CreateCreepsRectIndicator( gg_rct_SentinelNeutralCreepRange2 , false )
+	call CreateCreepsRectIndicator( gg_rct_SentinelNeutralCreepRange3 , true  ) 
+	call CreateCreepsRectIndicator( gg_rct_SentinelNeutralCreepRange4 , true  ) 
+	call CreateCreepsRectIndicator( gg_rct_SentinelNeutralCreepRange5 , true  )
 
 	// 黑洞特殊区域
 	globals
@@ -94140,7 +94169,7 @@ function main takes nothing returns nothing
 	local version v
 	local integer VFX
 	local integer a
-	local location HOO
+	local location loc
 	local region reg
 	local real d
 	local timer tt
@@ -94274,11 +94303,11 @@ function main takes nothing returns nothing
 	set AttackToMidLocation  = GetUnitLoc(AttackToMidDummyUnit)
 	set AttackToTopLocation = GetUnitLoc(AttackToTopDummyUnit)
 	set AttackToBotLocation = GetUnitLoc(AttackToBotDummyUnit)
-	set SoldiersNextWaypoint[1]= AttackToSentinelLocation
-	set SoldiersNextWaypoint[2]= AttackToTopLocation
-	set SoldiersNextWaypoint[3]= AttackToMidLocation
-	set SoldiersNextWaypoint[4]= AttackToBotLocation
-	set SoldiersNextWaypoint[5]= AttackToScourgeLocation
+	set CreepNextWaypoint[1]= AttackToSentinelLocation
+	set CreepNextWaypoint[2]= AttackToTopLocation
+	set CreepNextWaypoint[3]= AttackToMidLocation
+	set CreepNextWaypoint[4]= AttackToBotLocation
+	set CreepNextWaypoint[5]= AttackToScourgeLocation
 	globals
 		location ScourgeMidMeleeSpawnLocatio   = null
 		location ScourgeTopMeleeSpawnLocatio   = null
@@ -94520,7 +94549,7 @@ function main takes nothing returns nothing
 	call TriggerAddCondition(t, Condition(function F9O))
 
 	// 初始化肉山
-	set HOO = GetRectCenter(gg_rct_RoshanSpawn)
+	set loc = GetRectCenter(gg_rct_RoshanSpawn)
 	set CT = CreateUnit(Player(12),'n00L', GetRectCenterX(gg_rct_RoshanSpawn), GetRectCenterY(gg_rct_RoshanSpawn), 180.)
 	call SetUnitAcquireRange(CT, 150)
 	call YTX()
@@ -94537,7 +94566,7 @@ function main takes nothing returns nothing
 	call TriggerRegisterUnitInRange(t, AttackToBotDummyUnit, 300, null)
 	call TriggerRegisterUnitInRange(t, AttackToMidDummyUnit  , 300, null)
 	call TriggerRegisterUnitInRange(t, AttackToTopDummyUnit , 300, null)
-	call TriggerAddCondition(t, Condition(function SoldiersAttackToBase))
+	call TriggerAddCondition(t, Condition(function CreepAttackToBase))
 	
 	set C1 = CreateTrigger()
 	call TriggerAddAction(C1, function GEO)
@@ -94592,26 +94621,31 @@ function main takes nothing returns nothing
 	call TriggerRegisterEnterRegion(t, reg, null)
 	call TriggerAddCondition(t, Condition(function ScourgeAttackToBot))
 	
-	set SpawnAttackSoldiersTrigger = CreateTrigger()
-	call TriggerAddAction(SpawnAttackSoldiersTrigger, function SpawnAttackSoldiersAction)
+	set SpawnAttackCreepTrigger = CreateTrigger()
+	call TriggerAddAction(SpawnAttackCreepTrigger, function SpawnAttackCreepAction)
 
-	set JG = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(JG, EVENT_PLAYER_UNIT_DEATH)
-	call TriggerAddCondition(JG, Condition(function G7O))
-	call TriggerAddAction(JG, function G8O)
-	set KG = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(KG, EVENT_PLAYER_UNIT_DEATH)
-	call TriggerAddCondition(KG, Condition(function G9O))
-	call TriggerAddAction(KG, function HVO)
-	set SoldiersUpgerTrig = CreateTrigger()
-	call TriggerAddAction(SoldiersUpgerTrig, function SoldiersUpgerAction)
-	set MG = CreateTrigger()
-	call TriggerRegisterTimerEvent(MG, 75, false)
-	call TriggerAddAction(MG, function HXO)
-	set NG = CreateTrigger()
-	call TriggerAddCondition(NG, Condition(function RefreshAllCreeps))
-	set SG = CreateTrigger()
-	call TriggerAddAction(SG, function JXO)
+	set SentinelSuperCreepCheckTrig = CreateTrigger()
+	call TriggerRegisterPlayerUnitEventBJ(SentinelSuperCreepCheckTrig, EVENT_PLAYER_UNIT_DEATH)
+	call TriggerAddCondition(SentinelSuperCreepCheckTrig, Condition(function SentinelSuperCreepCheckAction))
+	set ScourgeSuperCreepCheckTrig = CreateTrigger()
+	call TriggerRegisterPlayerUnitEventBJ(ScourgeSuperCreepCheckTrig, EVENT_PLAYER_UNIT_DEATH)
+	call TriggerAddCondition(ScourgeSuperCreepCheckTrig, Condition(function ScourgeSuperCreepCheckAction))
+
+	set CreepUpgerTrig = CreateTrigger()
+	call TriggerAddAction(CreepUpgerTrig, function CreepUpgerAction)
+
+	// 预读野怪感觉没几把用啊
+	set PreloadCreepsTrig = CreateTrigger()
+	call TriggerRegisterTimerEvent(PreloadCreepsTrig, 75, false)
+	call TriggerAddAction(PreloadCreepsTrig, function PreloadCreepsAction)
+
+	set SpawnAllCreepsTrig = CreateTrigger()
+	call TriggerAddCondition(SpawnAllCreepsTrig, Condition(function SpawnAllNeutralCreepsAction))
+
+	// 超级兵(SC)
+	set SpawnSuperCreepsTrig = CreateTrigger()
+	call TriggerAddAction(SpawnSuperCreepsTrig, function SpawnSuperCreepsAction)
+
 	set TG = CreateTrigger()
 	call TriggerAddAction(TG, function JCO)
 	set QG = CreateTrigger()
@@ -94621,8 +94655,9 @@ function main takes nothing returns nothing
 	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_DESELECTED)
 	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SELECTED)
 	call TriggerAddCondition(t, Condition(function LTO))
+
 	set t = CreateTrigger()
-	call TriggerAddCondition(t, Condition(function LZO))
+	call TriggerAddCondition(t, Condition(function AntiBackdoorAndStructuresDeathTrig))
 	call TriggerRegisterUnitEvent(t, SentinleTopTowerLevel2, EVENT_UNIT_DAMAGED)
 	call TriggerRegisterUnitEvent(t, SentinleTopTowerLevel2, EVENT_UNIT_DEATH)
 	call TriggerRegisterUnitEvent(t, SentinleMidTowerLevel2, EVENT_UNIT_DAMAGED)
@@ -94679,13 +94714,15 @@ function main takes nothing returns nothing
 	call TriggerRegisterUnitEvent(t, ScourgeMidRangedRaxUnit, EVENT_UNIT_DEATH)
 	call TriggerRegisterUnitEvent(t, ScourgeBotRangedRaxUnit, EVENT_UNIT_DAMAGED)
 	call TriggerRegisterUnitEvent(t, ScourgeBotRangedRaxUnit, EVENT_UNIT_DEATH)
+
 	set t = CreateTrigger()
 	call TriggerRegisterTimerEvent(t, 1, true)
-	call TriggerAddCondition(t, Condition(function L4O))
-	call TriggerAddCondition(t, Condition(function L5O))
-	call TriggerAddCondition(t, Condition(function L8O))
+	call TriggerAddCondition(t, Condition(function AntiBackdoorRegenerationLoopAction))
+	// idk
+	call TriggerAddCondition(t, Condition(function L5O)) // 重置镜头？
+	call TriggerAddCondition(t, Condition(function ResumeCreepAttackOrder))
 
-	// 防偷塔
+	// 防偷塔判定
 	set t = CreateTrigger()
 	call TriggerRegisterTimerEvent(t, 5, true)
 	call TriggerAddCondition(t, Condition(function CheckBackdoorLoopAction))
@@ -94944,7 +94981,7 @@ function main takes nothing returns nothing
 
 	set t = null
 	set u = null
-	set HOO = null
+	set loc = null
 	call SaveBoolean(V, 0, -107681000, true)
 	call SaveBoolean(V, 0, -1526589116, true)
 
