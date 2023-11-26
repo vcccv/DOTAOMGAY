@@ -956,7 +956,7 @@ globals
 	trigger SentinelSuperCreepCheckTrig = null
 	trigger ScourgeSuperCreepCheckTrig  = null
 	trigger CreepUpgerTrig = null
-	trigger PreloadCreepsTrig = null
+	trigger PreloadNeutralCreepsTrig = null
 	trigger SpawnAllCreepsTrig = null
 	trigger SpawnSuperCreepsTrig = null
 	trigger TG = null
@@ -4827,8 +4827,8 @@ function W8EP takes integer W9E returns integer
 	endloop
 	return k
 endfunction
-function YVE takes unit u, integer TME returns boolean
-	return IsUnitType(u, UNIT_TYPE_MELEE_ATTACKER) == false or CheckAbilityIdFormIndex(PlayerSkillIndex[TME + 1],-1, "range morph", null) or CheckAbilityIdFormIndex(PlayerSkillIndex[TME + 2],-1, "range morph", null) or CheckAbilityIdFormIndex(PlayerSkillIndex[TME + 3],-1, "range morph", null) or CheckAbilityIdFormIndex(PlayerSkillIndex[TME + 4],-1, "range morph", null) or CheckAbilityIdFormIndex(PlayerSkillIndex[TME + 5],-1, "range morph", null) or CheckAbilityIdFormIndex(PlayerSkillIndex[TME + 6],-1, "range morph", null)
+function YVE takes unit u, integer pid returns boolean
+	return IsUnitType(u, UNIT_TYPE_MELEE_ATTACKER) == false or CheckAbilityIdFormIndex(PlayerSkillIndex[pid + 1],-1, "range morph", null) or CheckAbilityIdFormIndex(PlayerSkillIndex[pid + 2],-1, "range morph", null) or CheckAbilityIdFormIndex(PlayerSkillIndex[pid + 3],-1, "range morph", null) or CheckAbilityIdFormIndex(PlayerSkillIndex[pid + 4],-1, "range morph", null) or CheckAbilityIdFormIndex(PlayerSkillIndex[pid + 5],-1, "range morph", null) or CheckAbilityIdFormIndex(PlayerSkillIndex[pid + 6],-1, "range morph", null)
 endfunction
 
 function YDWEId2S takes integer value returns string
@@ -6153,11 +6153,11 @@ function OFX takes player p, integer at returns nothing
 	local integer k
 	local location OGX
 	local integer TTV
-	local integer TME = GetPlayerId(p)
+	local integer pid = GetPlayerId(p)
 	local boolean E4X = at == 1
 	local boolean E5X = at == 2
 	local boolean E6X = at == 3
-	set FT[TME]= true
+	set FT[pid]= true
 	if IsSentinelsPlayer(p) then
 		set OGX = GetRectCenter(gg_rct_SentinelRevivalPoint)
 	else
@@ -6171,7 +6171,7 @@ function OFX takes player p, integer at returns nothing
 		elseif E6X then
 			set TTV = TVE(V1V[GetRandomInt(1, V2V)])
 		endif
-	exitwhen ZQ[TTV]== false and(PP[TME]== 0 or(IsUnitIdType(VUV[TTV], UNIT_TYPE_RANGED_ATTACKER) and PP[TME]== 2) or(IsUnitIdType(VUV[TTV], UNIT_TYPE_MELEE_ATTACKER) and PP[TME]== 1))
+	exitwhen ZQ[TTV]== false and(PP[pid]== 0 or(IsUnitIdType(VUV[TTV], UNIT_TYPE_RANGED_ATTACKER) and PP[pid]== 2) or(IsUnitIdType(VUV[TTV], UNIT_TYPE_MELEE_ATTACKER) and PP[pid]== 1))
 	endloop
 	if PW == false then
 		call XTX(VUV[TTV])
@@ -6227,7 +6227,7 @@ function OKX takes player p returns nothing
 	local integer k
 	local location OGX
 	local integer TTV
-	local integer TME = GetPlayerId(p)
+	local integer pid = GetPlayerId(p)
 	set FT[GetPlayerId(p)]= true
 	if IsSentinelsPlayer(p) then
 		set OGX = GetRectCenter(gg_rct_SentinelRevivalPoint)
@@ -6236,7 +6236,7 @@ function OKX takes player p returns nothing
 	endif
 	loop
 		set TTV = GetRandomInt(1, VZV)
-	exitwhen ZQ[TTV]== false and(PP[TME]== 0 or(IsUnitIdType(VUV[TTV], UNIT_TYPE_RANGED_ATTACKER) and PP[TME]== 2) or(IsUnitIdType(VUV[TTV], UNIT_TYPE_MELEE_ATTACKER) and PP[TME]== 1))
+	exitwhen ZQ[TTV]== false and(PP[pid]== 0 or(IsUnitIdType(VUV[TTV], UNIT_TYPE_RANGED_ATTACKER) and PP[pid]== 2) or(IsUnitIdType(VUV[TTV], UNIT_TYPE_MELEE_ATTACKER) and PP[pid]== 1))
 	endloop
 	if PW == false then
 		call XTX(VUV[TTV])
@@ -7069,17 +7069,17 @@ function TWE takes unit u, boolean TYE returns nothing
 	local integer TPE
 	local integer level
 	local integer TZE
-	local integer TME
+	local integer pid
 	local integer xx
 	local integer i
-	set TME = GetPlayerId(GetOwningPlayer(u))
+	set pid = GetPlayerId(GetOwningPlayer(u))
 	set xx = 1
 	if TYE then
 		call TFE(u)
 		return
 	endif
 	loop
-		set TZE = PlayerSkillIndex[TME * HL + xx]
+		set TZE = PlayerSkillIndex[pid * HL + xx]
 		set TPE = HeroCommonSkills[TZE]
 		set i = TBE(TPE)
 		if i > 0 and GetUnitAbilityLevel(u, AghanimUpgradeChangeId[i])> 0 then
@@ -7331,11 +7331,11 @@ function IWX takes integer i returns unit
 	return E[i]
 endfunction
 function IYX takes unit damageSource returns unit
-	local integer TME = GetPlayerId(GetOwningPlayer(damageSource))
-	if GetWidgetLife(E[TME])> 1 then
-		return E[TME]
+	local integer pid = GetPlayerId(GetOwningPlayer(damageSource))
+	if GetWidgetLife(E[pid])> 1 then
+		return E[pid]
 	endif
-	return IWX(TME)
+	return IWX(pid)
 endfunction
 function I_X takes unit u returns unit
 	return IUX(u)
@@ -7665,10 +7665,10 @@ function NEX takes nothing returns nothing
 	set t = null
 endfunction
 function NXX takes nothing returns nothing
-	local integer TME = GetPlayerId(GetTriggerPlayer())
+	local integer pid = GetPlayerId(GetTriggerPlayer())
 	local integer i = 1
 	local integer level
-	local unit u = Player__Hero[TME]
+	local unit u = Player__Hero[pid]
 	if u != null and UnitAlive(u) then
 		loop
 			set level = GetUnitAbilityLevel(u, PassiveSkills_Learned[i])
@@ -9798,7 +9798,7 @@ function get_a_c takes unit u returns integer
 endfunction
 
 function HDX takes unit u, boolean G6X returns boolean
-	local integer TME = GetPlayerId(GetOwningPlayer(u))
+	local integer pid = GetPlayerId(GetOwningPlayer(u))
 	local integer k
 	local integer z
 	local boolean b = false
@@ -9807,16 +9807,16 @@ function HDX takes unit u, boolean G6X returns boolean
 		return false
 	endif
 	// 给单位添加A杖效果技能
-	if a_fx[TME] == 0 then
+	if a_fx[pid] == 0 then
 		set k = get_a_c(u)
-		set a_fx[TME]= k
+		set a_fx[pid]= k
 	// 如果死亡竞赛或者全部随机 会重新检测A杖技能
 	elseif Mode__DeathMatch or MainModeName =="ar" then
 		set k = get_a_c(u)
 	else
-		set k = a_fx[TME]
+		set k = a_fx[pid]
 	endif
-	set a_fx_b[TME] = not G6X
+	set a_fx_b[pid] = not G6X
 	if k != 0 then
 		if G6X then
 			call UnitRemoveAbility(u, k)
@@ -9825,7 +9825,7 @@ function HDX takes unit u, boolean G6X returns boolean
 		endif
 	endif
 	loop
-		if HeroCommonSkills[PlayerSkillIndex[TME * HL + i]] == 'QF88' then
+		if HeroCommonSkills[PlayerSkillIndex[pid * HL + i]] == 'QF88' then
 			if G6X then
 				set U2 = u
 				call UnitRemoveAbility(u,'S3UR')	//小黑A杖
@@ -9833,14 +9833,14 @@ function HDX takes unit u, boolean G6X returns boolean
 				call UnitAddPermanentAbility(u,'S3UR')
 			endif
 		endif
-		set k = TBE(HeroCommonSkills[PlayerSkillIndex[TME * HL + i]])
+		set k = TBE(HeroCommonSkills[PlayerSkillIndex[pid * HL + i]])
 		if k > 0 then
 			if G6X then
 				call HIX(k, u, 1)
 			else
 				set b = G7X(k, u, 1) or b
 			endif
-			call G5X(HeroCommonSkills[PlayerSkillIndex[TME * HL + i]], u, G6X)
+			call G5X(HeroCommonSkills[PlayerSkillIndex[pid * HL + i]], u, G6X)
 		endif
 		set i = i + 1
 	exitwhen i > 4 + RP
@@ -12549,13 +12549,13 @@ function HideMianbanCoolDownTimer takes nothing returns nothing
 	local integer h = GetHandleId(t)
 	local unit u = LoadUnitHandle(HY, h, 1)
 	local integer id = LoadInteger(HY, h, 2)
-	local integer TME = GetPlayerId(GetOwningPlayer(u))
-	local integer TPE = PlayerSkillIndex[TME * HL + 4]
+	local integer pid = GetPlayerId(GetOwningPlayer(u))
+	local integer TPE = PlayerSkillIndex[pid * HL + 4]
 	local real cd = YDWEGetUnitAbilityState(u, id, 1)
 	if id == HeroCommonSkills[TPE]or(HeroUpgradeSkills[TPE]!= null and id == HeroUpgradeSkills[TPE]) then
-		call TimerStart(ESV[TME], cd, false, null)
+		call TimerStart(ESV[pid], cd, false, null)
 	elseif G4V then
-		call TimerStart(ETV[TME], cd, false, null)
+		call TimerStart(ETV[pid], cd, false, null)
 	endif
 	call FlushChildHashtable(HY, h)
 	call CleanCurrentTrigger(t)
@@ -12575,12 +12575,12 @@ endfunction
 function SXX takes nothing returns nothing
 	local unit WUE = GetTriggerUnit()
 	local integer id = GetSpellAbilityId()
-	local integer TME = GetPlayerId(GetOwningPlayer(WUE))
-	local integer TPE = PlayerSkillIndex[TME * HL + 4]
+	local integer pid = GetPlayerId(GetOwningPlayer(WUE))
+	local integer TPE = PlayerSkillIndex[pid * HL + 4]
 	local real cd = 0.00
 	if id =='A02W' then
-		call TimerStart(ESV[TME], 0, false, null)
-		call TimerStart(ETV[TME], 0, false, null)
+		call TimerStart(ESV[pid], 0, false, null)
+		call TimerStart(ETV[pid], 0, false, null)
 	elseif IsUnitType(WUE, UNIT_TYPE_HERO) and IsUltimateSkill(id) then
 		set cd = YDWEGetUnitAbilityDataReal(WUE, id, GetUnitAbilityLevel(WUE, id), 105)
 		if cd > 0 then
@@ -12803,11 +12803,11 @@ endfunction
 function IsSoldierTypeId takes integer id returns boolean
 	return id =='ugho' or id =='unec' or id =='esen' or id =='edry' or id =='u001' or id =='u002' or id =='e00V' or id =='e00W' or id =='ebal' or id =='e026' or id =='umtw' or id =='u00R'
 endfunction
-function SUX takes unit u, integer TME returns nothing
+function SUX takes unit u, integer pid returns nothing
 	local texttag t = CreateTextTag()
 	call SetTextTagText(t, "!", .03)
 	call SetTextTagPosUnit(t, u, 0)
-	call SetTextTagColorBJ(t, VQV[TME], VSV[TME], VTV[TME], 15)
+	call SetTextTagColorBJ(t, VQV[pid], VSV[pid], VTV[pid], 15)
 	call SetTextTagVelocity(t, 0, .035)
 	call SetTextTagFadepoint(t, 3)
 	call SetTextTagLifespan(t, 1.5)
@@ -12817,18 +12817,18 @@ function SUX takes unit u, integer TME returns nothing
 endfunction
 function SWX takes unit SYX, unit SZX returns nothing
 	local integer id = GetUnitTypeId(SZX)
-	local integer TME = GetPlayerId(GetOwningPlayer(SYX))
+	local integer pid = GetPlayerId(GetOwningPlayer(SYX))
 	if GetOwningPlayer(SZX) == CreepsPlayer then
-		set BQ[TME]= BQ[TME]+ 1
-		set AQ[TME]= AQ[TME]+ 1
-		call SaveInteger(HY, 400 + TME, 79, LoadInteger(HY, 400 + TME, 79)+ 1)
+		set BQ[pid]= BQ[pid]+ 1
+		set AQ[pid]= AQ[pid]+ 1
+		call SaveInteger(HY, 400 + pid, 79, LoadInteger(HY, 400 + pid, 79)+ 1)
 	else
 		if IsSoldierTypeId(id) and(GetOwningPlayer(SZX) == Sentinels[0]or GetOwningPlayer(SZX) == Scourges[0]) then
 			if IsUnitAlly(SZX, GetOwningPlayer(SYX)) then
-				set NQ[TME]= NQ[TME]+ 1
-				call SUX(SZX, TME)
+				set NQ[pid]= NQ[pid]+ 1
+				call SUX(SZX, pid)
 			else
-				set AQ[TME]= AQ[TME]+ 1
+				set AQ[pid]= AQ[pid]+ 1
 			endif
 		endif
 	endif
@@ -12972,51 +12972,51 @@ function TIX takes integer nw, unit TAX returns nothing
 endfunction
 function TNX takes nothing returns nothing
 	local integer i = 1
-	local integer TME
+	local integer pid
 	local player p
 	local integer TBX
 	loop
 		set TBX = 0
 		set p = Sentinels[i]
 		if XGX(p) then
-			set TME = GetPlayerId(p)
-			if GR[TME] then
-				if Player__Hero[TME]!= null then
-					set TBX = TBX + TOX(Player__Hero[TME])
-					set TBX = TBX + TOX(Circle[TME])
+			set pid = GetPlayerId(p)
+			if GR[pid] then
+				if Player__Hero[pid]!= null then
+					set TBX = TBX + TOX(Player__Hero[pid])
+					set TBX = TBX + TOX(Circle[pid])
 				endif
 				if HaveSavedHandle(HY, GetHandleId(p), 333) then
 					set TBX = TBX + TOX(LoadUnitHandle(HY, GetHandleId(p), 333))
 				endif
-				set TBX = TBX + XX[TME]
-				set GR[TME]= false
-				set DR[TME]= TBX
+				set TBX = TBX + XX[pid]
+				set GR[pid]= false
+				set DR[pid]= TBX
 			else
-				set TBX = DR[TME]
+				set TBX = DR[pid]
 			endif
-			set RI[TME]= TBX + GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)
-			call TIX(RI[TME], Circle[TME])
+			set RI[pid]= TBX + GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)
+			call TIX(RI[pid], Circle[pid])
 		endif
 		set TBX = 0
 		set p = Scourges[i]
 		if XGX(p) then
-			set TME = GetPlayerId(p)
-			if GR[TME] then
-				if Player__Hero[TME]!= null then
-					set TBX = TBX + TOX(Player__Hero[TME])
-					set TBX = TBX + TOX(Circle[TME])
+			set pid = GetPlayerId(p)
+			if GR[pid] then
+				if Player__Hero[pid]!= null then
+					set TBX = TBX + TOX(Player__Hero[pid])
+					set TBX = TBX + TOX(Circle[pid])
 				endif
 				if HaveSavedHandle(HY, GetHandleId(p), 333) then
 					set TBX = TBX + TOX(LoadUnitHandle(HY, GetHandleId(p), 333))
 				endif
-				set TBX = TBX + XX[TME]
-				set GR[TME]= false
-				set DR[TME]= TBX
+				set TBX = TBX + XX[pid]
+				set GR[pid]= false
+				set DR[pid]= TBX
 			else
-				set TBX = DR[TME]
+				set TBX = DR[pid]
 			endif
-			set RI[TME]= TBX + GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)
-			call TIX(RI[TME], Circle[TME])
+			set RI[pid]= TBX + GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)
+			call TIX(RI[pid], Circle[pid])
 		endif
 		set i = i + 1
 	exitwhen i > 5
@@ -13327,11 +13327,11 @@ endfunction
 function UXX takes player p returns integer
 	local integer i = 1
 	local integer UOX = 1
-	local integer TME = GetPlayerId(p)
-	local integer nw = RI[TME]
+	local integer pid = GetPlayerId(p)
+	local integer nw = RI[pid]
 	if IsSentinelsPlayer(p) then
 		loop
-			if GetPlayerId(Sentinels[i])!= TME then
+			if GetPlayerId(Sentinels[i])!= pid then
 				if RI[GetPlayerId(Sentinels[i])]> nw then
 					set UOX = UOX + 1
 				endif
@@ -13341,7 +13341,7 @@ function UXX takes player p returns integer
 		endloop
 	else
 		loop
-			if GetPlayerId(Scourges[i])!= TME then
+			if GetPlayerId(Scourges[i])!= pid then
 				if RI[GetPlayerId(Scourges[i])]> nw then
 					set UOX = UOX + 1
 				endif
@@ -13499,7 +13499,7 @@ function UGX takes unit SYX returns boolean
 	local real U1X
 	local integer U2X
 	local integer U3X
-	local integer TME
+	local integer pid
 	local real U4X
 	local real U5X
 	if IsUnitType(u, UNIT_TYPE_HERO) and not MOX(GetUnitTypeId(u)) then
@@ -13597,9 +13597,9 @@ function UGX takes unit SYX returns boolean
 		loop
 			set u = FirstOfGroup(IV)
 		exitwhen u == null
-			set TME = GetPlayerId(GetOwningPlayer(u))
-			set UJX = R2I(U3X * LoadReal(VV,'Assi', TME))
-			call SaveInteger(VV,'Assi', TME, UJX)
+			set pid = GetPlayerId(GetOwningPlayer(u))
+			set UJX = R2I(U3X * LoadReal(VV,'Assi', pid))
+			call SaveInteger(VV,'Assi', pid, UJX)
 			if u != SYX or UnitAlive(u) or LoadInteger(HY, GetHandleId(SYX),'A06B') == 1 then
 				call AddHeroXPSimple(u, UHX, true)
 			endif
@@ -13612,9 +13612,9 @@ function UGX takes unit SYX returns boolean
 					call AddHeroXPSimple(u, ODX, true)
 				endif
 			endif
-			set E5V[TME]= E5V[TME]+ UHX
-			set E6V[TME]= E6V[TME]+ UJX
-			set EUV[TME]= EUV[TME]+ UJX
+			set E5V[pid]= E5V[pid]+ UHX
+			set E6V[pid]= E6V[pid]+ UJX
+			set EUV[pid]= EUV[pid]+ UJX
 			call B8X(GetOwningPlayer(u), UJX, u)
 			call GroupRemoveUnit(IV, u)
 		endloop
@@ -14018,7 +14018,7 @@ function W6X takes unit SYX, unit SZX returns nothing
 	local string s
 	local integer W7X = SMX(SZX, SYX)
 	local integer i = 1
-	local integer TME
+	local integer pid
 	local integer goldBonus = 150
 	if p == Sentinels[0]or p == Scourges[0] then
 		call SSX(SZX, SYX, goldBonus)
@@ -14032,19 +14032,19 @@ function W6X takes unit SYX, unit SZX returns nothing
 		loop
 		exitwhen i > 5
 			if IsSentinelsPlayer(GetOwningPlayer(SYX)) then
-				set TME = GetPlayerId(Sentinels[i])
+				set pid = GetPlayerId(Sentinels[i])
 			else
-				set TME = GetPlayerId(Scourges[i])
+				set pid = GetPlayerId(Scourges[i])
 			endif
 			set i = i + 1
 		endloop
 	else
-		set TME = GetPlayerId(p)
-		set s = PlayersColoerText[TME]+(PlayersName[TME])+ "|r " + GetObjectName('n04W')+ " |c00ff0303" + GetObjectName('n04Y')+ GetObjectName('n049')+ "|r "
+		set pid = GetPlayerId(p)
+		set s = PlayersColoerText[pid]+(PlayersName[pid])+ "|r " + GetObjectName('n04W')+ " |c00ff0303" + GetObjectName('n04Y')+ GetObjectName('n049')+ "|r "
 		call SetTopMessageText(s, 8.)
 		set s = s + "(+" + I2S(goldBonus)+ " " + GetObjectName('n045')+ ")"
-		call B8X(p, goldBonus, Player__Hero[TME])
-		set EUV[TME]= EUV[TME]+ goldBonus
+		call B8X(p, goldBonus, Player__Hero[pid])
+		set EUV[pid]= EUV[pid]+ goldBonus
 	endif
 	call DisplayTimedTextToAllPlayer(XY, CR[GetPlayerId(LocalPlayer)], s)
 	call BWX(P0)
@@ -14628,9 +14628,9 @@ function ZOX takes unit u returns nothing
 endfunction
 function ZRX takes unit u returns nothing
 	local player p = GetOwningPlayer(u)
-	local integer TME = GetPlayerId(p)
+	local integer pid = GetPlayerId(p)
 	if IsMessengerUnit(u) and IsUnitIllusion(u) == false then
-		call DisplayTimedTextToAllPlayer(XY, 10., PlayersColoerText[TME]+ PlayersName[TME]+ "|r的信使被 |c00ff0000永久地|r 杀死了.它不会再复活.")
+		call DisplayTimedTextToAllPlayer(XY, 10., PlayersColoerText[pid]+ PlayersName[pid]+ "|r的信使被 |c00ff0000永久地|r 杀死了.它不会再复活.")
 		call PingMinimapEx(GetUnitX(u), GetUnitY(u), 6, 255, 0, 0, false)
 	endif
 endfunction
@@ -15209,38 +15209,38 @@ endfunction
 function VDO takes nothing returns nothing
 	local unit u = GetSoldUnit()
 	local player p = GetOwningPlayer(u)
-	local integer TME = GetPlayerId(p)
+	local integer pid = GetPlayerId(p)
 	local real r = 0
 	if GetUnitTypeId(u)=='h085' then
-		if Player__Hero[TME]!= null and UnitIsDead(Player__Hero[TME]) == false then
-			call VVO(Player__Hero[TME], true)
+		if Player__Hero[pid]!= null and UnitIsDead(Player__Hero[pid]) == false then
+			call VVO(Player__Hero[pid], true)
 		endif
 		call KillUnit(u)
 	elseif GetUnitTypeId(u)=='h0BV' then
-		if Player__Hero[TME]!= null then
-			call VIO(Player__Hero[TME])
+		if Player__Hero[pid]!= null then
+			call VIO(Player__Hero[pid])
 		endif
 		call KillUnit(u)
 	elseif GetUnitTypeId(u)=='h0DE' then
-		if Player__Hero[TME]!= null then
+		if Player__Hero[pid]!= null then
 			call VVO(LoadUnitHandle(HY, GetHandleId(GetSellingUnit()), 8002 + LoadInteger(HY, GetHandleId(GetSellingUnit()), 8000)-1), false)
 		endif
 		call KillUnit(u)
 	elseif KDX(GetUnitTypeId(u)) then
-		if Player__Hero[TME]!= null then
-			if UnitIsDead(Player__Hero[TME]) and p == GetOwningPlayer(GetSellingUnit()) and LoadInteger(HY, GetHandleId(Player__Hero[TME]), 4304)!= 1 and UF[TME]== false then
-				set r = TimerGetRemaining(PS[TME])
+		if Player__Hero[pid]!= null then
+			if UnitIsDead(Player__Hero[pid]) and p == GetOwningPlayer(GetSellingUnit()) and LoadInteger(HY, GetHandleId(Player__Hero[pid]), 4304)!= 1 and UF[pid]== false then
+				set r = TimerGetRemaining(PS[pid])
 				call SaveReal(K, GetHandleId(p), 25, r + GetGameTime())
 				call SaveReal(K, GetHandleId(p), 26, r * .25)
-				call VNO(Player__Hero[TME])
-				call ReviveHero(Player__Hero[TME], GetUnitX(u), GetUnitY(u), true)
-				call VCO(Player__Hero[TME], r)
-				call SetUnitState(Player__Hero[TME], UNIT_STATE_MANA, 10000)
-				set EUV[TME]= IMaxBJ(0, EUV[TME]-Y4[KFX(GetHeroLevel(Player__Hero[GetPlayerId(GetOwningPlayer(GetSellingUnit()))]))])
+				call VNO(Player__Hero[pid])
+				call ReviveHero(Player__Hero[pid], GetUnitX(u), GetUnitY(u), true)
+				call VCO(Player__Hero[pid], r)
+				call SetUnitState(Player__Hero[pid], UNIT_STATE_MANA, 10000)
+				set EUV[pid]= IMaxBJ(0, EUV[pid]-Y4[KFX(GetHeroLevel(Player__Hero[GetPlayerId(GetOwningPlayer(GetSellingUnit()))]))])
 				call KYX(p)
 			else
 				call SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)+ Y4[KFX(GetHeroLevel(Player__Hero[GetPlayerId(GetOwningPlayer(GetSellingUnit()))]))])
-				if UF[TME] then
+				if UF[pid] then
 					call InterfaceErrorForPlayer(p, "因死神镰刀的诅咒无法买活")
 				endif
 			endif
@@ -15733,7 +15733,7 @@ endfunction
 function E4O takes unit u returns nothing
 	local integer i = 0
 	local item it
-	local integer TME = GetPlayerId(GetOwningPlayer(u))
+	local integer pid = GetPlayerId(GetOwningPlayer(u))
 	local region r = CreateRegion()
 	local boolean b = IsMessengerUnit(u) or GetUnitTypeId(u)=='ncop'
 	if IsSentinelsPlayer(GetOwningPlayer(u)) then
@@ -15750,8 +15750,8 @@ function E4O takes unit u returns nothing
 				call DisplayTimedTextToPlayer(GetOwningPlayer(u), 0, 0, 8, "|c00ffff00" + GetItemName(it)+ "|r 已被放置在你的能量圈中")
 			endif
 			if (GetUnitTypeId(u)=='ncop' or IsUnitInRegion(r, u)) and IsPlayerAlly(GetItemPlayer(it), GetOwningPlayer(u)) then
-				set TME = GetPlayerId(GetItemPlayer(it))
-				call SetItemPosition(it, VHV[TME], VJV[TME])
+				set pid = GetPlayerId(GetItemPlayer(it))
+				call SetItemPosition(it, VHV[pid], VJV[pid])
 			endif
 		endif
 		set i = i + 1
@@ -16158,7 +16158,7 @@ function XFO takes nothing returns boolean
 	local unit u = GetSoldUnit()
 	local player p = LocalPlayer
 	local player ETO = GetOwningPlayer(u)
-	local integer TME = GetPlayerId(ETO)
+	local integer pid = GetPlayerId(ETO)
 	local integer WPV = H3X(u)
 	if GetUnitTypeId(u)=='h304' or GetUnitTypeId(u)=='h305' then
 		if (IsSentinelsPlayer(ETO) and GetUnitTypeId(u)=='h304') or(IsScourgesPlayer(ETO) and GetUnitTypeId(u)=='h305') then
@@ -16178,34 +16178,34 @@ function XFO takes nothing returns boolean
 		if IsPlayerAlly(p, ETO) or(MW and(p == VKV or p == VLV)) then
 			if WPV == R5V then
 				call PingMinimapEx(GetUnitX(u), GetUnitY(u), 3, 255, 255, 255, false)
-				call DisplayTimedTextToPlayer(p, 0, 0, 20, PlayersColoerText[TME]+(PlayersName[TME])+ "|r |c00ffff00" + GetObjectName('n0HU')+ "|r")
+				call DisplayTimedTextToPlayer(p, 0, 0, 20, PlayersColoerText[pid]+(PlayersName[pid])+ "|r |c00ffff00" + GetObjectName('n0HU')+ "|r")
 			elseif WPV == BUV and WN then
 				call PingMinimapEx(GetUnitX(u), GetUnitY(u), 3, 255, 255, 255, false)
-				call DisplayTimedTextToPlayer(p, 0, 0, CR[GetPlayerId(LocalPlayer)], PlayersColoerText[TME]+(PlayersName[TME])+ "|r |c00ffff00" + GetObjectName('n0KG')+ "|r")
+				call DisplayTimedTextToPlayer(p, 0, 0, CR[GetPlayerId(LocalPlayer)], PlayersColoerText[pid]+(PlayersName[pid])+ "|r |c00ffff00" + GetObjectName('n0KG')+ "|r")
 			elseif WPV == R8V then
-				call DisplayTimedTextToPlayer(p, 0, 0, 4, PlayersColoerText[TME]+(PlayersName[TME])+ "|r |c00ffff00" + GetObjectName('n0KO')+ "|r")
+				call DisplayTimedTextToPlayer(p, 0, 0, 4, PlayersColoerText[pid]+(PlayersName[pid])+ "|r |c00ffff00" + GetObjectName('n0KO')+ "|r")
 			elseif WPV == R2V then
 				call PingMinimapEx(GetUnitX(u), GetUnitY(u), 3, 255, 255, 255, false)
-				call DisplayTimedTextToPlayer(p, 0, 0, 4, PlayersColoerText[TME]+(PlayersName[TME])+ "|r |c00ffff00" + GetObjectName('n0KP')+ "|r")
+				call DisplayTimedTextToPlayer(p, 0, 0, 4, PlayersColoerText[pid]+(PlayersName[pid])+ "|r |c00ffff00" + GetObjectName('n0KP')+ "|r")
 			elseif WPV == R3V then
 				call PingMinimapEx(GetUnitX(u), GetUnitY(u), 3, 255, 255, 255, false)
-				call DisplayTimedTextToPlayer(p, 0, 0, 4, PlayersColoerText[TME]+(PlayersName[TME])+ "|r |c00ffff00" + GetObjectName('n0KQ')+ "|r")
+				call DisplayTimedTextToPlayer(p, 0, 0, 4, PlayersColoerText[pid]+(PlayersName[pid])+ "|r |c00ffff00" + GetObjectName('n0KQ')+ "|r")
 			elseif WPV == B4V then
 				call PingMinimapEx(GetUnitX(u), GetUnitY(u), 3, 255, 255, 255, false)
-				call DisplayTimedTextToPlayer(p, 0, 0, 4, PlayersColoerText[TME]+(PlayersName[TME])+ "|r |c00ffff00" + GetObjectName('n0KT')+ "|r")
+				call DisplayTimedTextToPlayer(p, 0, 0, 4, PlayersColoerText[pid]+(PlayersName[pid])+ "|r |c00ffff00" + GetObjectName('n0KT')+ "|r")
 			elseif WPV == X4V then
 				call PingMinimapEx(GetUnitX(u), GetUnitY(u), 3, 255, 255, 255, false)
-				call DisplayTimedTextToPlayer(p, 0, 0, 4, PlayersColoerText[TME]+(PlayersName[TME])+ "|r |c00ffff00" + GetObjectName('n0LB')+ "|r")
+				call DisplayTimedTextToPlayer(p, 0, 0, 4, PlayersColoerText[pid]+(PlayersName[pid])+ "|r |c00ffff00" + GetObjectName('n0LB')+ "|r")
 			elseif WPV == IVV then
 				call PingMinimapEx(GetUnitX(u), GetUnitY(u), 3, 255, 255, 255, false)
-				call DisplayTimedTextToPlayer(p, 0, 0, 4, PlayersColoerText[TME]+(PlayersName[TME])+ "|r |c00ffff00" + GetObjectName('n0LP')+ "|r")
+				call DisplayTimedTextToPlayer(p, 0, 0, 4, PlayersColoerText[pid]+(PlayersName[pid])+ "|r |c00ffff00" + GetObjectName('n0LP')+ "|r")
 			elseif WPV == it_jys then
 				call PingMinimapEx(GetUnitX(u), GetUnitY(u), 3, 255, 255, 255, false)
-				call DisplayTimedTextToPlayer(p, 0, 0, 4, PlayersColoerText[TME]+(PlayersName[TME])+ "|r |c00ffff00购买了知识之书|r")
+				call DisplayTimedTextToPlayer(p, 0, 0, 4, PlayersColoerText[pid]+(PlayersName[pid])+ "|r |c00ffff00购买了知识之书|r")
 			endif
 		endif
 		if WPV == OZV then
-			if XI[TME]== false then
+			if XI[pid]== false then
 				call DisplayTimedTextToPlayer(ETO, 0, 0, CR[GetPlayerId(LocalPlayer)], "|c00FF0000注意|r: 你可以输入 -orp 指令来恢复旧版魔瓶模式.")
 			endif
 		endif
@@ -16736,15 +16736,15 @@ function OHO takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer h = GetHandleId(t)
 	local player p = LoadPlayerHandle(HY, h, 0)
-	local integer TME = GetPlayerId(p)
+	local integer pid = GetPlayerId(p)
 	local integer goldold = LoadInteger(HY, h, 0)
 	local integer goldBonus = GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)
 	local integer OJO = TEX(LoadInteger(HY, h, 1))/ 2
 	if OJO > 0 then
 		call DisplayTimedTextToPlayer(p, 0, 0, 5, "出售刚刚购入的物品,额外返还  |cfffffa00" + I2S(OJO)+ "|r 金钱.")
 		call SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)+ OJO)
-		call SaveInteger(P,'ITEM', TME, 0)
-		call SaveReal(P,'ITEM', TME, .0)
+		call SaveInteger(P,'ITEM', pid, 0)
+		call SaveReal(P,'ITEM', pid, .0)
 	endif
 	call PauseTimer(t)
 	call DestroyTimer(t)
@@ -16757,8 +16757,8 @@ endfunction
 function OLO takes player p, item it returns nothing
 	local timer t
 	local integer goldBonus
-	local integer TME = GetPlayerId(p)
-	if XOV[UUV(it)]== LoadInteger(P,'ITEM', TME) and GetGameTime()-LoadReal(P,'ITEM', TME)< 10. and OKO(it) == false and HaveSavedHandle(VV,'ITEM', GetPlayerId(p)) == false then
+	local integer pid = GetPlayerId(p)
+	if XOV[UUV(it)]== LoadInteger(P,'ITEM', pid) and GetGameTime()-LoadReal(P,'ITEM', pid)< 10. and OKO(it) == false and HaveSavedHandle(VV,'ITEM', GetPlayerId(p)) == false then
 		set t = CreateTimer()
 		set goldBonus = GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)
 		call TimerStart(t, 0, false, function OHO)
@@ -17447,13 +17447,13 @@ function RGO takes nothing returns nothing
 	local integer i = 0
 	local integer k = UnitInventorySize(u)
 	local item it
-	local integer TME = GetPlayerId(GetOwningPlayer(u))
+	local integer pid = GetPlayerId(GetOwningPlayer(u))
 	call RemoveSavedHandle(HY, GetHandleId(u),'INVR')
 	call DestroyTimer(t)
 	loop
 		set it = UnitItemInSlot(u, i)
 		if it != null then
-			call StoreDrCacheData("LoD_INV_" + I2S(TME), GetItemTypeId(it))
+			call StoreDrCacheData("LoD_INV_" + I2S(pid), GetItemTypeId(it))
 		endif
 		set i = i + 1
 	exitwhen i > k
@@ -20573,8 +20573,8 @@ endfunction
 function GWE takes nothing returns nothing
 	local unit u = GetSpellTargetUnit()
 	local integer WFV
-	local integer TME = GetPlayerId(GetOwningPlayer(GetTriggerUnit()))
-	if IsSentinelsPlayer(Player(TME)) then
+	local integer pid = GetPlayerId(GetOwningPlayer(GetTriggerUnit()))
+	if IsSentinelsPlayer(Player(pid)) then
 		call UnitShareVision(u, Scourges[0], false)
 		call UnitShareVision(u, Scourges[1], false)
 		call UnitShareVision(u, Scourges[2], false)
@@ -23717,7 +23717,7 @@ function CreepUpgerAction takes nothing returns nothing
 	call SetPlayerTechResearchedSwap('R00B',(GetPlayerTechCountSimple('R00B', Scourges[0] )+ 1), Scourges[0] )
 	set IsNotUpgraded = false
 endfunction
-function PreloadCreepsAction takes nothing returns nothing
+function PreloadNeutralCreepsAction takes nothing returns nothing
 	local location loc = GetRectCenter(gg_rct_DummyBirthPoint)
 	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nbdo', loc, bj_UNIT_FACING))
 	call RemoveUnit(CreateUnitAtLoc(CreepsPlayer,'nbds', loc, bj_UNIT_FACING))
@@ -24266,7 +24266,7 @@ function JIO takes nothing returns nothing
 	local integer m
 	local integer i
 	local player p
-	local integer TME
+	local integer pid
 	local string JAO
 	local string JNO
 	local string JBO
@@ -24335,10 +24335,10 @@ function JIO takes nothing returns nothing
 	call VTX(BT, 1, 3 + D4V, GetObjectName('n0DO'))
 	call VTX(BT, 5, 3 + D4V, "|c00ff0303" + "0|r")
 	call VTX(BT, 6, 3 + D4V, "|c000042ff" + "0|r")
-	set TME = GetPlayerId(Sentinels[0])
-	call V0X(BT, 1, 2, X6X(SubString(PlayersColoerText[TME], 4, 6))/ 255. * 100 , X6X(SubString(PlayersColoerText[TME], 6, 8))/ 255. * 100 , X6X(SubString(PlayersColoerText[TME], 8, 10))/ 255. * 100 , 0)
-	set TME = GetPlayerId(Scourges[0])
-	call V0X(BT, 1, 3 + D4V, X6X(SubString(PlayersColoerText[TME], 4, 6))/ 255. * 100 , X6X(SubString(PlayersColoerText[TME], 6, 8))/ 255. * 100 , X6X(SubString(PlayersColoerText[TME], 8, 10))/ 255. * 100 , 0)
+	set pid = GetPlayerId(Sentinels[0])
+	call V0X(BT, 1, 2, X6X(SubString(PlayersColoerText[pid], 4, 6))/ 255. * 100 , X6X(SubString(PlayersColoerText[pid], 6, 8))/ 255. * 100 , X6X(SubString(PlayersColoerText[pid], 8, 10))/ 255. * 100 , 0)
+	set pid = GetPlayerId(Scourges[0])
+	call V0X(BT, 1, 3 + D4V, X6X(SubString(PlayersColoerText[pid], 4, 6))/ 255. * 100 , X6X(SubString(PlayersColoerText[pid], 6, 8))/ 255. * 100 , X6X(SubString(PlayersColoerText[pid], 8, 10))/ 255. * 100 , 0)
 	set k = 1
 	set j = 3 + D5V + D4V
 	loop
@@ -24382,19 +24382,19 @@ function JIO takes nothing returns nothing
 	exitwhen k > j
 		call VYX(BT, 1, k + 2, true, true)
 		call V0X(BT, 8, k + 2, 255, 204, 0, 0)
-		set TME = GetPlayerId(VW[k])
-		set D1V[TME]= 1 -1
-		set D2V[TME]= k + 2 -1
-		call VTX(BT, 1, k + 2,(PlayersName[TME]))
+		set pid = GetPlayerId(VW[k])
+		set D1V[pid]= 1 -1
+		set D2V[pid]= k + 2 -1
+		call VTX(BT, 1, k + 2,(PlayersName[pid]))
 		if IsPlaying(VW[k]) then
-			set JAO = SubString(PlayersColoerText[TME], 4, 6)
-			set JNO = SubString(PlayersColoerText[TME], 6, 8)
-			set JBO = SubString(PlayersColoerText[TME], 8, 10)
+			set JAO = SubString(PlayersColoerText[pid], 4, 6)
+			set JNO = SubString(PlayersColoerText[pid], 6, 8)
+			set JBO = SubString(PlayersColoerText[pid], 8, 10)
 			call V0X(BT, 1, k + 2, X6X(JAO)/ 255. * 100 , X6X(JNO)/ 255. * 100 , X6X(JBO)/ 255. * 100 , 0)
 			call V0X(BT, 2, k + 2, X6X(JAO)/ 255. * 100 , X6X(JNO)/ 255. * 100 , X6X(JBO)/ 255. * 100 , 0)
 			call V0X(BT, 3, k + 2, X6X(JAO)/ 255. * 100 , X6X(JNO)/ 255. * 100 , X6X(JBO)/ 255. * 100 , 0)
 		else
-			call VTX(BT, 1, k + 2, "|c00333333" +(PlayersName[TME])+ "|r")
+			call VTX(BT, 1, k + 2, "|c00333333" +(PlayersName[pid])+ "|r")
 		endif
 		call VTX(BT, 5, k + 2, "|c00ff0303" + "0|r")
 		call VTX(BT, 6, k + 2, "|c000042ff" + "0|r")
@@ -24407,19 +24407,19 @@ function JIO takes nothing returns nothing
 	exitwhen k > j
 		call VYX(BT, 1, k + 3 + D4V, true, true)
 		call V0X(BT, 8, k + 3 + D4V, 255, 204, 0, 0)
-		set TME = GetPlayerId(EW[k])
-		set D1V[TME]= 1 -1
-		set D2V[TME]= k + 3 + D4V -1
-		call VTX(BT, 1, k + 3 + D4V,(PlayersName[TME]))
+		set pid = GetPlayerId(EW[k])
+		set D1V[pid]= 1 -1
+		set D2V[pid]= k + 3 + D4V -1
+		call VTX(BT, 1, k + 3 + D4V,(PlayersName[pid]))
 		if IsPlaying(EW[k]) then
-			set JAO = SubString(PlayersColoerText[TME], 4, 6)
-			set JNO = SubString(PlayersColoerText[TME], 6, 8)
-			set JBO = SubString(PlayersColoerText[TME], 8, 10)
+			set JAO = SubString(PlayersColoerText[pid], 4, 6)
+			set JNO = SubString(PlayersColoerText[pid], 6, 8)
+			set JBO = SubString(PlayersColoerText[pid], 8, 10)
 			call V0X(BT, 1, k + 3 + D4V, X6X(JAO)/ 255. * 100 , X6X(JNO)/ 255. * 100 , X6X(JBO)/ 255. * 100 , 0)
 			call V0X(BT, 2, k + 3 + D4V, X6X(JAO)/ 255. * 100 , X6X(JNO)/ 255. * 100 , X6X(JBO)/ 255. * 100 , 0)
 			call V0X(BT, 3, k + 3 + D4V, X6X(JAO)/ 255. * 100 , X6X(JNO)/ 255. * 100 , X6X(JBO)/ 255. * 100 , 0)
 		else
-			call VTX(BT, 1, k + 3 + D4V, "|c00333333" +(PlayersName[TME])+ "|r")
+			call VTX(BT, 1, k + 3 + D4V, "|c00333333" +(PlayersName[pid])+ "|r")
 		endif
 		call VTX(BT, 5, k + 3 + D4V, "|c00ff0303" + "0|r")
 		call VTX(BT, 6, k + 3 + D4V, "|c000042ff" + "0|r")
@@ -24489,40 +24489,40 @@ function JFO takes player p, integer k returns string
 		return "UI\\Widgets\\Console\\Undead\\undead-inventory-slotfiller.blp"
 	endif
 endfunction
-function JGO takes nothing returns string
-	local integer TME = GetPlayerId(LocalPlayer)
-	local string loc_str = ""
+function GetLocalCharges takes nothing returns string
+	local integer pid = GetPlayerId(LocalPlayer)
+	local string str = ""
 	if LoadBoolean(K, GetHandleId(LocalPlayer),'OptC') then
 		return""
 	endif
-	if GetUnitAbilityLevel(Player__Hero[TME],'A0K9')> 0 then
-		set loc_str = loc_str + "|c0064a8e5"
-		set loc_str = loc_str + I2S(LoadInteger(HY, GetHandleId(Player__Hero[TME]),'A0K9'))
-		set loc_str = loc_str + " (" + I2S(R2I(LoadReal(HY, GetHandleId(LoadTriggerHandle(HY, GetHandleId(Player__Hero[TME]),'A0K9')), 0)))+ ")"
-		set loc_str = loc_str + "|r;"
+	if GetUnitAbilityLevel(Player__Hero[pid],'A0K9')> 0 then
+		set str = str + "|c0064a8e5"
+		set str = str + I2S(LoadInteger(HY, GetHandleId(Player__Hero[pid]),'A0K9'))
+		set str = str + " (" + I2S(R2I(LoadReal(HY, GetHandleId(LoadTriggerHandle(HY, GetHandleId(Player__Hero[pid]),'A0K9')), 0)))+ ")"
+		set str = str + "|r;"
 	endif
-	if GetUnitAbilityLevel(Player__Hero[TME],'A34J')> 0 then
-		if loc_str != "" then
-			set loc_str = loc_str + " "
+	if GetUnitAbilityLevel(Player__Hero[pid],'A34J')> 0 then
+		if str != "" then
+			set str = str + " "
 		endif
-		set loc_str = loc_str + "|c009621c4"
-		set loc_str = loc_str + I2S(LoadInteger(HY, GetHandleId(Player__Hero[TME]),'A34J'))
-		set loc_str = loc_str + " (" + I2S(R2I(LoadReal(HY, GetHandleId(LoadTriggerHandle(HY, GetHandleId(Player__Hero[TME]),'A34J')), 0)))+ ")"
-		set loc_str = loc_str + "|r;"
+		set str = str + "|c009621c4"
+		set str = str + I2S(LoadInteger(HY, GetHandleId(Player__Hero[pid]),'A34J'))
+		set str = str + " (" + I2S(R2I(LoadReal(HY, GetHandleId(LoadTriggerHandle(HY, GetHandleId(Player__Hero[pid]),'A34J')), 0)))+ ")"
+		set str = str + "|r;"
 	endif
-	if GetUnitAbilityLevel(Player__Hero[TME],'A064')> 0 then
-		if loc_str != "" then
-			set loc_str = loc_str + " "
+	if GetUnitAbilityLevel(Player__Hero[pid],'A064')> 0 then
+		if str != "" then
+			set str = str + " "
 		endif
-		set loc_str = loc_str + "|c00dcf1f7"
-		set loc_str = loc_str + I2S(LoadInteger(HY, GetHandleId(Player__Hero[TME]),'A064'))
-		set loc_str = loc_str + " (" + I2S(R2I(LoadReal(HY, GetHandleId(LoadTriggerHandle(HY, GetHandleId(Player__Hero[TME]),'A064')), 0)))+ ")"
-		set loc_str = loc_str + "|r;"
+		set str = str + "|c00dcf1f7"
+		set str = str + I2S(LoadInteger(HY, GetHandleId(Player__Hero[pid]),'A064'))
+		set str = str + " (" + I2S(R2I(LoadReal(HY, GetHandleId(LoadTriggerHandle(HY, GetHandleId(Player__Hero[pid]),'A064')), 0)))+ ")"
+		set str = str + "|r;"
 	endif
-	if loc_str != "" then
-		set loc_str = "充能点数: " + loc_str
+	if str != "" then
+		set str = "充能点数: " + str
 	endif
-	return loc_str
+	return str
 endfunction
 function JHO takes nothing returns nothing
 	local integer O3X
@@ -24557,30 +24557,30 @@ function JHO takes nothing returns nothing
 	local integer J_O = 0
 	local integer J0O = 0
 	local string J1O = ""
-	local integer TME
+	local integer pid
 	local string HUX = ""
 	if BT == null then
 		return
 	endif
-	set HUX = JGO()
+	set HUX = GetLocalCharges()
 	set i = 1
 	loop
 	exitwhen i > 5
-		set TME = GetPlayerId(Sentinels[i])
-		set r = R2I(TimerGetRemaining(PS[TME]))
+		set pid = GetPlayerId(Sentinels[i])
+		set r = R2I(TimerGetRemaining(PS[pid]))
 		if r > 0 then
 			set JWO = JWO + JDO(r)
 			if J_O == 0 then
 				if r < 10 then
-					set JYO = PlayersColoerText[TME]+ "0" + I2S(r)+ " |r"
+					set JYO = PlayersColoerText[pid]+ "0" + I2S(r)+ " |r"
 				else
-					set JYO = PlayersColoerText[TME]+ I2S(r)+ " |r"
+					set JYO = PlayersColoerText[pid]+ I2S(r)+ " |r"
 				endif
 			else
 				if r < 10 then
-					set JYO = JYO + "|c00ffffff" + "| |r" + PlayersColoerText[TME]+ "0" + I2S(r)+ " |r"
+					set JYO = JYO + "|c00ffffff" + "| |r" + PlayersColoerText[pid]+ "0" + I2S(r)+ " |r"
 				else
-					set JYO = JYO + "|c00ffffff" + "| |r" + PlayersColoerText[TME]+ I2S(r)+ " |r"
+					set JYO = JYO + "|c00ffffff" + "| |r" + PlayersColoerText[pid]+ I2S(r)+ " |r"
 				endif
 			endif
 			set J_O = J_O + 1
@@ -24597,21 +24597,21 @@ function JHO takes nothing returns nothing
 	set i = 1
 	loop
 	exitwhen i > 5
-		set TME = GetPlayerId(Scourges[i])
-		set r = R2I(TimerGetRemaining(PS[TME]))
+		set pid = GetPlayerId(Scourges[i])
+		set r = R2I(TimerGetRemaining(PS[pid]))
 		if r > 0 then
 			set JWO = JWO + JDO(r)
 			if J0O == 0 then
 				if r < 10 then
-					set JZO = PlayersColoerText[TME]+ "0" + I2S(r)+ " |r"
+					set JZO = PlayersColoerText[pid]+ "0" + I2S(r)+ " |r"
 				else
-					set JZO = PlayersColoerText[TME]+ I2S(r)+ " |r"
+					set JZO = PlayersColoerText[pid]+ I2S(r)+ " |r"
 				endif
 			else
 				if r < 10 then
-					set JZO = JZO + "|c00ffffff" + "| |r" + PlayersColoerText[TME]+ "0" + I2S(r)+ " |r"
+					set JZO = JZO + "|c00ffffff" + "| |r" + PlayersColoerText[pid]+ "0" + I2S(r)+ " |r"
 				else
-					set JZO = JZO + "|c00ffffff" + "| |r" + PlayersColoerText[TME]+ I2S(r)+ " |r"
+					set JZO = JZO + "|c00ffffff" + "| |r" + PlayersColoerText[pid]+ I2S(r)+ " |r"
 				endif
 			endif
 			set J0O = J0O + 1
@@ -24659,9 +24659,9 @@ function JHO takes nothing returns nothing
 	set K0X = D4V
 	loop
 	exitwhen O3X > K0X
-		set TME = GetPlayerId(VW[O3X])
-		call VWX(BT, 1, O3X + 2, ELX(Player__Hero[TME]))
-		call VTX(BT, 4, O3X + 2, "|c00838B8B" + I2S(GetHeroLevel(Player__Hero[TME]))+ "|r")
+		set pid = GetPlayerId(VW[O3X])
+		call VWX(BT, 1, O3X + 2, ELX(Player__Hero[pid]))
+		call VTX(BT, 4, O3X + 2, "|c00838B8B" + I2S(GetHeroLevel(Player__Hero[pid]))+ "|r")
 		if GEV[GetPlayerId(LocalPlayer)] then
 			call V2X(BT, 8, 1, 3)
 			call V2X(BT, 9, 1, 2.8)
@@ -24751,28 +24751,28 @@ function JHO takes nothing returns nothing
 		call VWX(BT, 12, O3X + 2, JFO(VW[O3X], 4))
 		call VWX(BT, 13, O3X + 2, JFO(VW[O3X], 5))
 		call VWX(BT, 14, O3X + 2, JFO(VW[O3X], 6))
-		set TME = GetPlayerId(VW[O3X])
-		if (E8X(Player__Hero[TME]) and Player__Hero[TME]!= null and TimerGetRemaining(PS[TME])> 0) then
+		set pid = GetPlayerId(VW[O3X])
+		if (E8X(Player__Hero[pid]) and Player__Hero[pid]!= null and TimerGetRemaining(PS[pid])> 0) then
 			if IsPlayerAlly(LocalPlayer, VW[O3X]) then
-				set J1O = "|c00ffffff" + " (" + I2S(R2I(TimerGetRemaining(PS[TME])))+ ")|r"
+				set J1O = "|c00ffffff" + " (" + I2S(R2I(TimerGetRemaining(PS[pid])))+ ")|r"
 			else
-				set J1O = "|c00ff0303" + " (" + I2S(R2I(TimerGetRemaining(PS[TME])))+ ")|r"
+				set J1O = "|c00ff0303" + " (" + I2S(R2I(TimerGetRemaining(PS[pid])))+ ")|r"
 			endif
 		else
 			set J1O = "  "
 		endif
-		if EJV[TME] then
-			call VTX(BT, 1, O3X + 2, TM + "|c00333333" +(PlayersName[TME])+ "|r" + J1O)
+		if EJV[pid] then
+			call VTX(BT, 1, O3X + 2, TM + "|c00333333" +(PlayersName[pid])+ "|r" + J1O)
 		else
-			call VTX(BT, 1, O3X + 2, TM +(PlayersName[TME])+ J1O)
+			call VTX(BT, 1, O3X + 2, TM +(PlayersName[pid])+ J1O)
 		endif
-		set JTO =(TimerGetRemaining(ESV[TME]))
+		set JTO =(TimerGetRemaining(ESV[pid]))
 		if JTO > 0 then
 			set s = I2S(R2I(JTO))
 		else
 			set s = " "
 		endif
-		set JUO =(TimerGetRemaining(ETV[TME]))
+		set JUO =(TimerGetRemaining(ETV[pid]))
 		if JUO > 0 then
 			set JSO = I2S(R2I(JUO))
 		else
@@ -24793,9 +24793,9 @@ function JHO takes nothing returns nothing
 	set K0X = D5V
 	loop
 	exitwhen O3X > K0X
-		set TME = GetPlayerId(EW[O3X])
-		call VWX(BT, 1, O3X + 3 + D4V, ELX(Player__Hero[TME]))
-		call VTX(BT, 4, O3X + 3 + D4V, "|c00838B8B" + I2S(GetHeroLevel(Player__Hero[TME]))+ "|r")
+		set pid = GetPlayerId(EW[O3X])
+		call VWX(BT, 1, O3X + 3 + D4V, ELX(Player__Hero[pid]))
+		call VTX(BT, 4, O3X + 3 + D4V, "|c00838B8B" + I2S(GetHeroLevel(Player__Hero[pid]))+ "|r")
 		if GEV[GetPlayerId(LocalPlayer)] then
 			call V2X(BT, 8, 1, 3)
 			call V2X(BT, 9, 1, 2.8)
@@ -24885,28 +24885,28 @@ function JHO takes nothing returns nothing
 		call VWX(BT, 12, O3X + 3 + D4V, JFO(EW[O3X], 4))
 		call VWX(BT, 13, O3X + 3 + D4V, JFO(EW[O3X], 5))
 		call VWX(BT, 14, O3X + 3 + D4V, JFO(EW[O3X], 6))
-		set TME = GetPlayerId(EW[O3X])
-		if (E8X(Player__Hero[TME]) and Player__Hero[TME]!= null and TimerGetRemaining(PS[TME])> 0) then
+		set pid = GetPlayerId(EW[O3X])
+		if (E8X(Player__Hero[pid]) and Player__Hero[pid]!= null and TimerGetRemaining(PS[pid])> 0) then
 			if IsPlayerAlly(LocalPlayer, EW[O3X]) then
-				set J1O = "|c00ffffff" + " (" + I2S(R2I(TimerGetRemaining(PS[TME])))+ ")|r"
+				set J1O = "|c00ffffff" + " (" + I2S(R2I(TimerGetRemaining(PS[pid])))+ ")|r"
 			else
-				set J1O = "|c00ff0303" + " (" + I2S(R2I(TimerGetRemaining(PS[TME])))+ ")|r"
+				set J1O = "|c00ff0303" + " (" + I2S(R2I(TimerGetRemaining(PS[pid])))+ ")|r"
 			endif
 		else
 			set J1O = "  "
 		endif
-		if EJV[TME] then
-			call VTX(BT, 1, O3X + 3 + D4V, TM + "|c00333333" +(PlayersName[TME])+ "|r" + J1O)
+		if EJV[pid] then
+			call VTX(BT, 1, O3X + 3 + D4V, TM + "|c00333333" +(PlayersName[pid])+ "|r" + J1O)
 		else
-			call VTX(BT, 1, O3X + 3 + D4V, TM +(PlayersName[TME])+ J1O)
+			call VTX(BT, 1, O3X + 3 + D4V, TM +(PlayersName[pid])+ J1O)
 		endif
-		set JTO = TimerGetRemaining(ESV[TME])
+		set JTO = TimerGetRemaining(ESV[pid])
 		if JTO > 0 then
 			set s = I2S(R2I(JTO))
 		else
 			set s = " "
 		endif
-		set JUO = TimerGetRemaining(ETV[TME])
+		set JUO = TimerGetRemaining(ETV[pid])
 		if JUO > 0 then
 			set JSO = I2S(R2I(JUO))
 		else
@@ -26915,7 +26915,7 @@ function LKO takes nothing returns nothing
 	endif
 	set t = null
 endfunction
-function LLO takes unit u returns boolean
+function IsShopUnit takes unit u returns boolean
 	local integer i = GetUnitTypeId(u)
 	return i =='hC95' or i =='n12B' or i =='n01K' or i =='nC38' or i =='n00V' or i =='n00W' or i =='n002' or i =='n00X' or i =='n009' or i =='n0HE' or i =='nC35' or i =='u00Q' or i =='uC74' or i =='u010' or i =='u00Z'or i =='n999'
 endfunction
@@ -26931,10 +26931,10 @@ function LSO takes unit u returns nothing
 		call LMO(PlayersName[GetPlayerId(GetTriggerPlayer())], GetGameTime(), GetUnitName(u))
 	endif
 endfunction
-function LTO takes nothing returns boolean
+function SelectedShopUnitAction takes nothing returns boolean
 	local unit u = GetTriggerUnit()
 	local integer id = GetUnitTypeId(u)
-	local boolean b = GetOwningPlayer(u) == Player(15) and LLO(u) and LocalPlayer== GetTriggerPlayer()
+	local boolean b = GetOwningPlayer(u) == Player(15) and IsShopUnit(u) and LocalPlayer== GetTriggerPlayer()
 	local string s = ""
 	if GetTriggerEventId() == EVENT_PLAYER_UNIT_DESELECTED then
 		if b then
@@ -27202,7 +27202,7 @@ function MRO takes nothing returns boolean
 	local integer C9X = ModuloInteger(JJO, 60)
 	local trigger t
 	local integer i
-	local integer TME
+	local integer pid
 	if r == 0 then
 		if UM then
 			set UM = false
@@ -27223,16 +27223,16 @@ function MRO takes nothing returns boolean
 		set i = 1
 		loop
 			if IsPlaying(Player(i)) then
-				set TME = GetPlayerId(Player(i))
-				call StoreDrCacheData("SP1_" + I2S(i), HeroCommonSkills[PlayerSkillIndex[TME * HL + 1]])
-				call StoreDrCacheData("SP2_" + I2S(i), HeroCommonSkills[PlayerSkillIndex[TME * HL + 2]])
-				call StoreDrCacheData("SP3_" + I2S(i), HeroCommonSkills[PlayerSkillIndex[TME * HL + 3]])
-				call StoreDrCacheData("SP4_" + I2S(i), HeroCommonSkills[PlayerSkillIndex[TME * HL + 4]])
+				set pid = GetPlayerId(Player(i))
+				call StoreDrCacheData("SP1_" + I2S(i), HeroCommonSkills[PlayerSkillIndex[pid * HL + 1]])
+				call StoreDrCacheData("SP2_" + I2S(i), HeroCommonSkills[PlayerSkillIndex[pid * HL + 2]])
+				call StoreDrCacheData("SP3_" + I2S(i), HeroCommonSkills[PlayerSkillIndex[pid * HL + 3]])
+				call StoreDrCacheData("SP4_" + I2S(i), HeroCommonSkills[PlayerSkillIndex[pid * HL + 4]])
 				if RP >= 1 then
-					call StoreDrCacheData("SP5_" + I2S(i), HeroCommonSkills[PlayerSkillIndex[TME * HL + 5]])
+					call StoreDrCacheData("SP5_" + I2S(i), HeroCommonSkills[PlayerSkillIndex[pid * HL + 5]])
 				endif
 				if RP >= 2 then
-					call StoreDrCacheData("SP6_" + I2S(i), HeroCommonSkills[PlayerSkillIndex[TME * HL + 6]])
+					call StoreDrCacheData("SP6_" + I2S(i), HeroCommonSkills[PlayerSkillIndex[pid * HL + 6]])
 				endif
 			endif
 			set i = i + 1
@@ -27385,7 +27385,7 @@ function MMO takes string MPO returns nothing
 	local integer JJO = R2I(GetGameTime()-WQ)
 	local integer C8X = JJO / 60 -1 / 2
 	local integer C9X = ModuloInteger(JJO, 60)
-	local integer TME
+	local integer pid
 	if MPO == "1" then
 		call StoreMapIdCacheData("w", "0", 31)
 	else
@@ -27400,39 +27400,39 @@ function MMO takes string MPO returns nothing
 	exitwhen i > 5
 		set p = Sentinels[i]
 		set id = I2S(GetPlayerId(p))
-		set TME = GetPlayerId(p)
-		call StoreInteger(DrCache, id, "1", RQ[TME])
-		call StoreInteger(DrCache, id, "2", IQ[TME])
-		call StoreInteger(DrCache, id, "3", AQ[TME])
-		call StoreInteger(DrCache, id, "4", NQ[TME])
-		call StoreInteger(DrCache, id, "5", CQ[TME])
+		set pid = GetPlayerId(p)
+		call StoreInteger(DrCache, id, "1", RQ[pid])
+		call StoreInteger(DrCache, id, "2", IQ[pid])
+		call StoreInteger(DrCache, id, "3", AQ[pid])
+		call StoreInteger(DrCache, id, "4", NQ[pid])
+		call StoreInteger(DrCache, id, "5", CQ[pid])
 		call StoreInteger(DrCache, id, "6", GetPlayerState((p), PLAYER_STATE_RESOURCE_GOLD))
-		call StoreInteger(DrCache, id, "7", LoadInteger(HY, 400 + TME, 79))
-		call StoreInteger(DrCache, id, "8_0", GetItemTypeId(UnitItemInSlot(Player__Hero[TME], 0)))
-		call StoreInteger(DrCache, id, "8_1", GetItemTypeId(UnitItemInSlot(Player__Hero[TME], 1)))
-		call StoreInteger(DrCache, id, "8_2", GetItemTypeId(UnitItemInSlot(Player__Hero[TME], 2)))
-		call StoreInteger(DrCache, id, "8_3", GetItemTypeId(UnitItemInSlot(Player__Hero[TME], 3)))
-		call StoreInteger(DrCache, id, "8_4", GetItemTypeId(UnitItemInSlot(Player__Hero[TME], 4)))
-		call StoreInteger(DrCache, id, "8_5", GetItemTypeId(UnitItemInSlot(Player__Hero[TME], 5)))
-		call StoreInteger(DrCache, id, "9", PlayerHeroTypeId[TME])
+		call StoreInteger(DrCache, id, "7", LoadInteger(HY, 400 + pid, 79))
+		call StoreInteger(DrCache, id, "8_0", GetItemTypeId(UnitItemInSlot(Player__Hero[pid], 0)))
+		call StoreInteger(DrCache, id, "8_1", GetItemTypeId(UnitItemInSlot(Player__Hero[pid], 1)))
+		call StoreInteger(DrCache, id, "8_2", GetItemTypeId(UnitItemInSlot(Player__Hero[pid], 2)))
+		call StoreInteger(DrCache, id, "8_3", GetItemTypeId(UnitItemInSlot(Player__Hero[pid], 3)))
+		call StoreInteger(DrCache, id, "8_4", GetItemTypeId(UnitItemInSlot(Player__Hero[pid], 4)))
+		call StoreInteger(DrCache, id, "8_5", GetItemTypeId(UnitItemInSlot(Player__Hero[pid], 5)))
+		call StoreInteger(DrCache, id, "9", PlayerHeroTypeId[pid])
 		call StoreInteger(DrCache, id, "id", i)
 		set p = Scourges[i]
-		set TME = GetPlayerId(p)
-		set id = I2S(TME)
-		call StoreInteger(DrCache, id, "1", RQ[TME])
-		call StoreInteger(DrCache, id, "2", IQ[TME])
-		call StoreInteger(DrCache, id, "3", AQ[TME])
-		call StoreInteger(DrCache, id, "4", NQ[TME])
-		call StoreInteger(DrCache, id, "5", CQ[TME])
+		set pid = GetPlayerId(p)
+		set id = I2S(pid)
+		call StoreInteger(DrCache, id, "1", RQ[pid])
+		call StoreInteger(DrCache, id, "2", IQ[pid])
+		call StoreInteger(DrCache, id, "3", AQ[pid])
+		call StoreInteger(DrCache, id, "4", NQ[pid])
+		call StoreInteger(DrCache, id, "5", CQ[pid])
 		call StoreInteger(DrCache, id, "6", GetPlayerState((p), PLAYER_STATE_RESOURCE_GOLD))
-		call StoreInteger(DrCache, id, "7", LoadInteger(HY, 400 + TME, 79))
-		call StoreInteger(DrCache, id, "8_0", GetItemTypeId(UnitItemInSlot(Player__Hero[TME], 0)))
-		call StoreInteger(DrCache, id, "8_1", GetItemTypeId(UnitItemInSlot(Player__Hero[TME], 1)))
-		call StoreInteger(DrCache, id, "8_2", GetItemTypeId(UnitItemInSlot(Player__Hero[TME], 2)))
-		call StoreInteger(DrCache, id, "8_3", GetItemTypeId(UnitItemInSlot(Player__Hero[TME], 3)))
-		call StoreInteger(DrCache, id, "8_4", GetItemTypeId(UnitItemInSlot(Player__Hero[TME], 4)))
-		call StoreInteger(DrCache, id, "8_5", GetItemTypeId(UnitItemInSlot(Player__Hero[TME], 5)))
-		call StoreInteger(DrCache, id, "9", PlayerHeroTypeId[TME])
+		call StoreInteger(DrCache, id, "7", LoadInteger(HY, 400 + pid, 79))
+		call StoreInteger(DrCache, id, "8_0", GetItemTypeId(UnitItemInSlot(Player__Hero[pid], 0)))
+		call StoreInteger(DrCache, id, "8_1", GetItemTypeId(UnitItemInSlot(Player__Hero[pid], 1)))
+		call StoreInteger(DrCache, id, "8_2", GetItemTypeId(UnitItemInSlot(Player__Hero[pid], 2)))
+		call StoreInteger(DrCache, id, "8_3", GetItemTypeId(UnitItemInSlot(Player__Hero[pid], 3)))
+		call StoreInteger(DrCache, id, "8_4", GetItemTypeId(UnitItemInSlot(Player__Hero[pid], 4)))
+		call StoreInteger(DrCache, id, "8_5", GetItemTypeId(UnitItemInSlot(Player__Hero[pid], 5)))
+		call StoreInteger(DrCache, id, "9", PlayerHeroTypeId[pid])
 		call StoreInteger(DrCache, id, "id", i + 5)
 		if LocalPlayer== HostPlayer then
 			call SyncStoredInteger(DrCache, I2S(GetPlayerId(Sentinels[i])), "1")
@@ -27483,14 +27483,14 @@ function I09 takes nothing returns nothing
 endfunction
 function L4X takes nothing returns nothing
 	local player p = FFV
-	local integer TME = GetPlayerId(p)
-	local string id = I2S(TME)
-	call StoreInteger(DrCache, id, "8_0", GetItemTypeId(UnitItemInSlot(Player__Hero[TME], 0)))
-	call StoreInteger(DrCache, id, "8_1", GetItemTypeId(UnitItemInSlot(Player__Hero[TME], 1)))
-	call StoreInteger(DrCache, id, "8_2", GetItemTypeId(UnitItemInSlot(Player__Hero[TME], 2)))
-	call StoreInteger(DrCache, id, "8_3", GetItemTypeId(UnitItemInSlot(Player__Hero[TME], 3)))
-	call StoreInteger(DrCache, id, "8_4", GetItemTypeId(UnitItemInSlot(Player__Hero[TME], 4)))
-	call StoreInteger(DrCache, id, "8_5", GetItemTypeId(UnitItemInSlot(Player__Hero[TME], 5)))
+	local integer pid = GetPlayerId(p)
+	local string id = I2S(pid)
+	call StoreInteger(DrCache, id, "8_0", GetItemTypeId(UnitItemInSlot(Player__Hero[pid], 0)))
+	call StoreInteger(DrCache, id, "8_1", GetItemTypeId(UnitItemInSlot(Player__Hero[pid], 1)))
+	call StoreInteger(DrCache, id, "8_2", GetItemTypeId(UnitItemInSlot(Player__Hero[pid], 2)))
+	call StoreInteger(DrCache, id, "8_3", GetItemTypeId(UnitItemInSlot(Player__Hero[pid], 3)))
+	call StoreInteger(DrCache, id, "8_4", GetItemTypeId(UnitItemInSlot(Player__Hero[pid], 4)))
+	call StoreInteger(DrCache, id, "8_5", GetItemTypeId(UnitItemInSlot(Player__Hero[pid], 5)))
 	if LocalPlayer== HostPlayer then
 		call SyncStoredInteger(DrCache, id, "8_0")
 		call SyncStoredInteger(DrCache, id, "8_1")
@@ -27751,15 +27751,15 @@ function PAO takes unit PNO returns boolean
 endfunction
 function PBO takes unit PNO, unit SYX returns nothing
 	local player p = GetOwningPlayer(SYX)
-	local integer TME = GetPlayerId(p)
+	local integer pid = GetPlayerId(p)
 	call DestroyEffect(tower_rangeeff[LoadInteger(ExtraHT, GetHandleId(PNO), HTKEY_TOWER_ATTACK_RANGE_EFFECT )])
 	set tower_rangeeff[LoadInteger(ExtraHT, GetHandleId(PNO), HTKEY_TOWER_ATTACK_RANGE_EFFECT )] = null
 	if IsUnitAlly(PNO, p) then
-		set MQ[TME]= MQ[TME]+ 1
-		call DisplayTimedTextToAllPlayer(XY, CR[GetPlayerId(LocalPlayer)], PlayersColoerText[TME]+ PlayersName[TME]+ "|r " + GetObjectName('n04P')+ ".")
+		set MQ[pid]= MQ[pid]+ 1
+		call DisplayTimedTextToAllPlayer(XY, CR[GetPlayerId(LocalPlayer)], PlayersColoerText[pid]+ PlayersName[pid]+ "|r " + GetObjectName('n04P')+ ".")
 	else
-		set QQ[TME]= QQ[TME]+ 1
-		call DisplayTimedTextToAllPlayer(XY, CR[GetPlayerId(LocalPlayer)], PlayersColoerText[TME]+ PlayersName[TME]+ "|r " + GetObjectName('n0EN')+ ".")
+		set QQ[pid]= QQ[pid]+ 1
+		call DisplayTimedTextToAllPlayer(XY, CR[GetPlayerId(LocalPlayer)], PlayersColoerText[pid]+ PlayersName[pid]+ "|r " + GetObjectName('n0EN')+ ".")
 	endif
 	if PAO(PNO) then
 		if GetOwningPlayer(PNO) == Sentinels[0] then
@@ -27773,7 +27773,7 @@ function PCO takes nothing returns nothing
 	local unit u = GetDyingUnit()
 	local unit SYX = GetKillingUnit()
 	local player pk = GetOwningPlayer(SYX)
-	local integer TME = GetPlayerId(pk)
+	local integer pid = GetPlayerId(pk)
 	call PBO(u, SYX)
 	if u == SentinleTopTowerLevel1 or u == SentinleMidTowerLevel1 or u == SentinleBotTowerLevel1 then
 		call OCX(SYX, 1)
@@ -27781,25 +27781,25 @@ function PCO takes nothing returns nothing
 			call PIO(0)
 		endif
 		if u == SentinleTopTowerLevel1 then
-			call StoreDrCacheData("Tower010", TME)
+			call StoreDrCacheData("Tower010", pid)
 			call UnitRemoveAbility(SentinleTopTowerLevel2,'Avul')
 		elseif u == SentinleMidTowerLevel1 then
-			call StoreDrCacheData("Tower011", TME)
+			call StoreDrCacheData("Tower011", pid)
 			call UnitRemoveAbility(SentinleMidTowerLevel2,'Avul')
 		else
-			call StoreDrCacheData("Tower012", TME)
+			call StoreDrCacheData("Tower012", pid)
 			call UnitRemoveAbility(SentinleBotTowerLevel2,'Avul')
 		endif
 	elseif u == SentinleTopTowerLevel2 or u == SentinleMidTowerLevel2 or u == SentinleBotTowerLevel2 then
 		call OCX(SYX, 2)
 		if u == SentinleTopTowerLevel2 then
-			call StoreDrCacheData("Tower020", TME)
+			call StoreDrCacheData("Tower020", pid)
 			call UnitRemoveAbility(SentinleTopTowerLevel3,'Avul')
 		elseif u == SentinleMidTowerLevel2 then
-			call StoreDrCacheData("Tower021", TME)
+			call StoreDrCacheData("Tower021", pid)
 			call UnitRemoveAbility(SentinleMidTowerLevel3,'Avul')
 		else
-			call StoreDrCacheData("Tower022", TME)
+			call StoreDrCacheData("Tower022", pid)
 			call UnitRemoveAbility(SentinleBotTowerLevel3,'Avul')
 		endif
 	elseif u == SentinleTopTowerLevel3 or u == SentinleMidTowerLevel3 or u == SentinleBotTowerLevel3 then
@@ -27822,20 +27822,20 @@ function PCO takes nothing returns nothing
 		call UnitRemoveAbility(V7,'Avul')
 		call UnitRemoveAbility(E7,'Avul')
 		if u == SentinleTopTowerLevel3 then
-			call StoreDrCacheData("Tower030", TME)
+			call StoreDrCacheData("Tower030", pid)
 			call UnitRemoveAbility(SentinelTopMeleeRaxUnit,'Avul')
 			call UnitRemoveAbility(SentinelTopRangedRaxUnit,'Avul')
 		elseif u == SentinleMidTowerLevel3 then
-			call StoreDrCacheData("Tower031", TME)
+			call StoreDrCacheData("Tower031", pid)
 			call UnitRemoveAbility(SentinelMidMeleeRaxUnit,'Avul')
 			call UnitRemoveAbility(SentinelMidRangedRaxUnit,'Avul')
 		else
-			call StoreDrCacheData("Tower032", TME)
+			call StoreDrCacheData("Tower032", pid)
 			call UnitRemoveAbility(SentinelBotMeleeRaxUnit,'Avul')
 			call UnitRemoveAbility(SentinelBotRangedRaxUnit,'Avul')
 		endif
 	elseif u == SentinleLeftTowerLevel4 or u == SentinleRightTowerLevel4 then
-		call StoreDrCacheData("Tower041", TME)
+		call StoreDrCacheData("Tower041", pid)
 		call OCX(SYX, 4)
 		if (u == SentinleLeftTowerLevel4 and UnitIsDead(SentinleRightTowerLevel4)) or(u == SentinleRightTowerLevel4 and UnitIsDead(SentinleLeftTowerLevel4)) then
 			call UnitRemoveAbility(WorldTree,'Avul')
@@ -27851,7 +27851,7 @@ function PFO takes nothing returns nothing
 	local unit u = GetDyingUnit()
 	local unit SYX = GetKillingUnit()
 	local player pk = GetOwningPlayer(SYX)
-	local integer TME = GetPlayerId(pk)
+	local integer pid = GetPlayerId(pk)
 	call PBO(u, SYX)
 	if u == ScourgeTopTowerLevel1 or u == ScourgeMidTowerLevel1 or u == ScourgeBotTowerLevel1 then
 		call OCX(SYX, 1)
@@ -27859,25 +27859,25 @@ function PFO takes nothing returns nothing
 			call PIO(1)
 		endif
 		if u == ScourgeTopTowerLevel1 then
-			call StoreDrCacheData("Tower110", TME)
+			call StoreDrCacheData("Tower110", pid)
 			call UnitRemoveAbility(ScourgeTopTowerLevel2,'Avul')
 		elseif u == ScourgeMidTowerLevel1 then
-			call StoreDrCacheData("Tower111", TME)
+			call StoreDrCacheData("Tower111", pid)
 			call UnitRemoveAbility(ScourgeMidTowerLevel2,'Avul')
 		else
-			call StoreDrCacheData("Tower112", TME)
+			call StoreDrCacheData("Tower112", pid)
 			call UnitRemoveAbility(ScourgeBotTowerLevel2,'Avul')
 		endif
 	elseif u == ScourgeTopTowerLevel2 or u == ScourgeMidTowerLevel2 or u == ScourgeBotTowerLevel2 then
 		call OCX(SYX, 2)
 		if u == ScourgeTopTowerLevel2 then
-			call StoreDrCacheData("Tower120", TME)
+			call StoreDrCacheData("Tower120", pid)
 			call UnitRemoveAbility(ScourgeTopTowerLevel3,'Avul')
 		elseif u == ScourgeMidTowerLevel2 then
-			call StoreDrCacheData("Tower121", TME)
+			call StoreDrCacheData("Tower121", pid)
 			call UnitRemoveAbility(ScourgeMidTowerLevel3,'Avul')
 		else
-			call StoreDrCacheData("Tower122", TME)
+			call StoreDrCacheData("Tower122", pid)
 			call UnitRemoveAbility(ScourgeBotTowerLevel3,'Avul')
 		endif
 	elseif u == ScourgeTopTowerLevel3 or u == ScourgeMidTowerLevel3 or u == ScourgeBotTowerLevel3 then
@@ -27900,20 +27900,20 @@ function PFO takes nothing returns nothing
 		call UnitRemoveAbility(U8,'Avul')
 		call UnitRemoveAbility(W8,'Avul')
 		if u == ScourgeTopTowerLevel3 then
-			call StoreDrCacheData("Tower130", TME)
+			call StoreDrCacheData("Tower130", pid)
 			call UnitRemoveAbility(ScourgeTopMeleeRaxUnit,'Avul')
 			call UnitRemoveAbility(ScourgeTopRangedRaxUnit,'Avul')
 		elseif u == ScourgeMidTowerLevel3 then
-			call StoreDrCacheData("Tower131", TME)
+			call StoreDrCacheData("Tower131", pid)
 			call UnitRemoveAbility(ScourgeMidMeleeRaxUnit,'Avul')
 			call UnitRemoveAbility(ScourgeMidRangedRaxUnit,'Avul')
 		else
-			call StoreDrCacheData("Tower132", TME)
+			call StoreDrCacheData("Tower132", pid)
 			call UnitRemoveAbility(ScourgeBotMeleeRaxUnit,'Avul')
 			call UnitRemoveAbility(ScourgeBotRangedRaxUnit,'Avul')
 		endif
 	elseif u == ScourgeLeftTowerLevel4 or u == ScourgeRightTowerLevel4 then
-		call StoreDrCacheData("Tower141", TME)
+		call StoreDrCacheData("Tower141", pid)
 		call OCX(SYX, 4)
 		if (u == ScourgeLeftTowerLevel4 and UnitIsDead(ScourgeRightTowerLevel4)) or(u == ScourgeRightTowerLevel4 and UnitIsDead(ScourgeLeftTowerLevel4)) then
 			call UnitRemoveAbility(FrozenThrone,'Avul')
@@ -28606,7 +28606,7 @@ function SEO takes nothing returns boolean
 	local trigger t
 	local group g
 	local unit u
-	call ExecuteFunc("PreloadCreeps")
+	call ExecuteFunc("PreloadNeutralCreeps")
 	if MW then
 		set t = CreateTrigger()
 		call TriggerRegisterPlayerUnitEvent(t, Sentinels[0], EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER, null)
@@ -29275,9 +29275,9 @@ function TSO takes nothing returns nothing
 	local integer i = 1
 	local integer k = 5
 	local integer TTO = 0
-	local integer TME = GetPlayerId(GetTriggerPlayer())
-	if FA[TME]== false then
-		if TME > 6 then
+	local integer pid = GetPlayerId(GetTriggerPlayer())
+	if FA[pid]== false then
+		if pid > 6 then
 			set k = 11
 			set i = 7
 		endif
@@ -29290,23 +29290,23 @@ function TSO takes nothing returns nothing
 		endloop
 		if TTO == 4 then
 			call UOV()
-			if TME < 7 then
+			if pid < 7 then
 				call KillUnit(WorldTree)
 			else
 				call KillUnit(FrozenThrone)
 			endif
 		endif
-		set FA[TME]= true
+		set FA[pid]= true
 	endif
 endfunction
 function TUO takes nothing returns nothing
-	local integer TME = GetPlayerId(GetTriggerPlayer())
-	local unit u = Player__Hero[TME]
+	local integer pid = GetPlayerId(GetTriggerPlayer())
+	local unit u = Player__Hero[pid]
 	if (u != null and UnitAlive(u)) then
 		if GetUnitAbilityLevel(u,'A0KW')> 0 then
-			call SetPlayerAbilityAvailable(Player(TME),'A0KW', XA[TME])
-			call SetPlayerAbilityAvailable(Player(TME),'A0KX', XA[TME])
-			set XA[TME]= not XA[TME]
+			call SetPlayerAbilityAvailable(Player(pid),'A0KW', XA[pid])
+			call SetPlayerAbilityAvailable(Player(pid),'A0KX', XA[pid])
+			set XA[pid]= not XA[pid]
 		else
 			call InterfaceErrorForPlayer(GetTriggerPlayer(), "你没有属性转换")
 		endif
@@ -29341,17 +29341,17 @@ function TZO takes nothing returns nothing
 endfunction
 function T_O takes nothing returns nothing
 	local player p = GetTriggerPlayer()
-	local integer TME = GetPlayerId(p)
+	local integer pid = GetPlayerId(p)
 	call Click_CheckBox_Nothing(p, 17)
 	if LocalPlayer == p then
-		call GetSetUpText("快速清理", CR[TME]== 10.)
+		call GetSetUpText("快速清理", CR[pid]== 10.)
 	endif
-	if CR[TME]== 1. then
+	if CR[pid]== 1. then
 		//call DisplayTimedTextToPlayer(p, 0, 0, 3, "|c00aeae00 快速清理关闭|r - 所有死亡信息持续显示10秒.")
-		set CR[TME]= 10.
+		set CR[pid]= 10.
 	else
 		//call DisplayTimedTextToPlayer(p, 0, 0, 3, "|c00fcfa00 快速清理开启|r - 所有死亡信息持续显示1秒.")
-		set CR[TME]= 1.
+		set CR[pid]= 1.
 	endif
 endfunction
 function T0O takes nothing returns nothing
@@ -29402,22 +29402,22 @@ endfunction
 
 function T3O takes nothing returns nothing
 	local player p = GetTriggerPlayer()
-	local integer TME = GetPlayerId(p)
-	set ZR[TME]= not ZR[TME]
+	local integer pid = GetPlayerId(p)
+	set ZR[pid]= not ZR[pid]
 	call Click_CheckBox_Nothing(p, 14)
 	if LocalPlayer == p then
-		call GetSetUpText("震动视角", ZR[TME])
+		call GetSetUpText("震动视角", ZR[pid])
 	endif
 endfunction
 function T4O takes nothing returns nothing
 	local player p = GetTriggerPlayer()
-	local integer TME = GetPlayerId(p)
+	local integer pid = GetPlayerId(p)
 	if LocalPlayer == p then
-		call GetSetUpText("自动装置神符", XI[TME])
+		call GetSetUpText("自动装置神符", XI[pid])
 	endif
-	set XI[TME]= not XI[TME]
+	set XI[pid]= not XI[pid]
 	call Click_CheckBox_Nothing(p, 8)
-	//if XI[TME] then
+	//if XI[pid] then
 	//	call DisplayTimedTextToPlayer(p, 0, 0, 5, "右键点击|cffff0000神符|r时|c0000FF00不会|r把神符装入瓶中")
 	//else
 	//	call DisplayTimedTextToPlayer(p, 0, 0, 5, "右键点击|cffff0000神符|r时|c0000FF00将会|r把神符装入瓶中")
@@ -29426,10 +29426,10 @@ function T4O takes nothing returns nothing
 endfunction
 function T5O takes nothing returns nothing
 	local player p = GetTriggerPlayer()
-	local integer TME = GetPlayerId(p)
-	set JI[TME]= not JI[TME]
+	local integer pid = GetPlayerId(p)
+	set JI[pid]= not JI[pid]
 	if LocalPlayer == p then
-		call GetSetUpText("技能可见", JI[TME])
+		call GetSetUpText("技能可见", JI[pid])
 	endif
 endfunction
 function T6O takes nothing returns nothing
@@ -29448,12 +29448,12 @@ function T6O takes nothing returns nothing
 	endif
 endfunction
 function T7O takes nothing returns nothing
-	local integer TME = GetPlayerId(GetTriggerPlayer())
-	if GetUnitAbilityLevel(Player__Hero[TME],'A0AK')> 0 or GetUnitAbilityLevel(Player__Hero[TME],'A1FY')> 0 then
-		if GetUnitAbilityLevel(Player__Hero[TME],'A1WF') == 0 then
-			call UnitAddPermanentAbility(Player__Hero[TME],'A1WF')
+	local integer pid = GetPlayerId(GetTriggerPlayer())
+	if GetUnitAbilityLevel(Player__Hero[pid],'A0AK')> 0 or GetUnitAbilityLevel(Player__Hero[pid],'A1FY')> 0 then
+		if GetUnitAbilityLevel(Player__Hero[pid],'A1WF') == 0 then
+			call UnitAddPermanentAbility(Player__Hero[pid],'A1WF')
 		else
-			call UnitRemoveAbility(Player__Hero[TME],'A1WF')
+			call UnitRemoveAbility(Player__Hero[pid],'A1WF')
 		endif
 	endif
 endfunction
@@ -30394,15 +30394,15 @@ function Ike_Sht takes player p, integer i, integer hotkey returns nothing
 	local integer id = 0
 	local integer a = 1
 	local integer e = 1
-	local integer TME = GetPlayerId(p)
+	local integer pid = GetPlayerId(p)
 	local integer AghanimID
 	local boolean b1 = false
 	local boolean b2 = false
 	local integer IkeyID
 	local integer f
 	local unit u = Circle[GetPlayerId(p)]
-	if IsPassiveSkill[PlayerSkillIndex[TME * HL + i]] then
-		set id = HeroCommonSkills[PlayerSkillIndex[TME * HL + i]]
+	if IsPassiveSkill[PlayerSkillIndex[pid * HL + i]] then
+		set id = HeroCommonSkills[PlayerSkillIndex[pid * HL + i]]
 		if id != 0 then
 			call UnitAddAbility(u, id)
 			call SetPasAbilityHotKey(u, id, hotkey, p)
@@ -30415,7 +30415,7 @@ function Ike_Sht takes player p, integer i, integer hotkey returns nothing
 			endif
 		endif
 	else
-		set id = HeroCommonSkills[PlayerSkillIndex[TME * HL + i]]
+		set id = HeroCommonSkills[PlayerSkillIndex[pid * HL + i]]
 		if FireRemnat_Hk(u, id, hotkey, p) then
 			set u = null
 			return
@@ -30432,7 +30432,7 @@ function Ike_Sht takes player p, integer i, integer hotkey returns nothing
 			set id = 'A08Q'
 		endif
 		set IkeyID = LoadInteger(ExtraHT, HTKEY_SWITCHING_SKILLS, id)
-		set AghanimID = HeroUpgradeSkills[PlayerSkillIndex[TME * HL + i]]
+		set AghanimID = HeroUpgradeSkills[PlayerSkillIndex[pid * HL + i]]
 		if AghanimID != 0 then
 			set b1 = true
 		endif
@@ -30452,7 +30452,7 @@ function Ike_Sht takes player p, integer i, integer hotkey returns nothing
 			loop
 			exitwhen e > f
 				if e == 1 then
-					set id = HeroCommonSkills[PlayerSkillIndex[TME * HL + i]]
+					set id = HeroCommonSkills[PlayerSkillIndex[pid * HL + i]]
 				elseif b2 then
 					set id = IkeyID
 				elseif b1 then
@@ -30544,9 +30544,9 @@ function Y9O takes nothing returns nothing
 endfunction
 function Y7O takes nothing returns nothing
 	local integer a = S2I(SubString(GetEventPlayerChatString(), 10, StringLength(GetEventPlayerChatString())))
-	local integer TME = GetPlayerId(GetTriggerPlayer())
-	set FZV[TME]= FZV[TME]+ 1
-	if FZV[TME]> 10 then
+	local integer pid = GetPlayerId(GetTriggerPlayer())
+	set FZV[pid]= FZV[pid]+ 1
+	if FZV[pid]> 10 then
 		call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, CR[GetPlayerId(LocalPlayer)], GetObjectName('n0DQ'))
 		return
 	endif
@@ -31914,7 +31914,7 @@ function VTR takes nothing returns nothing
 endfunction
 function VWR takes nothing returns nothing
 	local integer i = 1
-	local integer TME
+	local integer pid
 	local boolean VYR
 	local boolean Y1X
 	local boolean U5V
@@ -31940,9 +31940,9 @@ function VWR takes nothing returns nothing
 				set p = Scourges[i]
 			endif
 			if IsPlaying(p) then
-				set TME = GetPlayerId(p)
-				set WIE = R2I(TimerGetRemaining(PS[TME]))
-				set VYR = WIE > 0 and F4V[TME]and VZR
+				set pid = GetPlayerId(p)
+				set WIE = R2I(TimerGetRemaining(PS[pid]))
+				set VYR = WIE > 0 and F4V[pid]and VZR
 				if VYR then
 					set s = s + "即将复活: " + I2S(WIE)+ "|n"
 					set V_R = 1
@@ -31962,11 +31962,11 @@ function VWR takes nothing returns nothing
 					endif
 				endif
 				if V_R > 0 then
-					call LeaderboardDisplay(F5V[TME], true)
-					call LeaderboardSetLabel(F5V[TME], s)
-					call PlayerSetLeaderboard(p, F5V[TME])
-				elseif IsLeaderboardDisplayed(F5V[TME]) then
-					call LeaderboardDisplay(F5V[TME], false)
+					call LeaderboardDisplay(F5V[pid], true)
+					call LeaderboardSetLabel(F5V[pid], s)
+					call PlayerSetLeaderboard(p, F5V[pid])
+				elseif IsLeaderboardDisplayed(F5V[pid]) then
+					call LeaderboardDisplay(F5V[pid], false)
 				endif
 			endif
 			set i = i + 1
@@ -31979,21 +31979,21 @@ function VWR takes nothing returns nothing
 endfunction
 function CreateLeaderboards takes nothing returns nothing
 	local integer i = 1
-	local integer TME
+	local integer pid
 	local timer t = CreateTimer()
 	call TimerStart(t, 1, true, function VWR)
 	set t = null
 	loop
-		set TME = GetPlayerId(Sentinels[i])
-		set F5V[TME]= CreateLeaderboard()
-		call PlayerSetLeaderboard(Sentinels[i], F5V[TME])
-		call LeaderboardDisplay(F5V[TME], false)
-		call LeaderboardSetLabel(F5V[TME], "Default string")
-		set TME = GetPlayerId(Scourges[i])
-		set F5V[TME]= CreateLeaderboard()
-		call PlayerSetLeaderboard(Scourges[i], F5V[TME])
-		call LeaderboardDisplay(F5V[TME], false)
-		call LeaderboardSetLabel(F5V[TME], "Default string")
+		set pid = GetPlayerId(Sentinels[i])
+		set F5V[pid]= CreateLeaderboard()
+		call PlayerSetLeaderboard(Sentinels[i], F5V[pid])
+		call LeaderboardDisplay(F5V[pid], false)
+		call LeaderboardSetLabel(F5V[pid], "Default string")
+		set pid = GetPlayerId(Scourges[i])
+		set F5V[pid]= CreateLeaderboard()
+		call PlayerSetLeaderboard(Scourges[i], F5V[pid])
+		call LeaderboardDisplay(F5V[pid], false)
+		call LeaderboardSetLabel(F5V[pid], "Default string")
 		set i = i + 1
 	exitwhen i > 5
 	endloop
@@ -32341,21 +32341,21 @@ endfunction
 function HeroGPS takes nothing returns nothing
 	local integer i = 1
 	local player p
-	local integer TME
+	local integer pid
 	local integer k = 0
 	loop
 		set k = 0
 		set p = Sentinels[i]
 		if IsPlaying(p) then
-			set TME = GetPlayerId(p)
-			call StoreDrCacheData("LoD_HeroX_" + I2S(R2I(GetUnitX(Player__Hero[TME]))), TME)
-			call StoreDrCacheData("LoD_HeroY_" + I2S(R2I(GetUnitY(Player__Hero[TME]))), TME)
+			set pid = GetPlayerId(p)
+			call StoreDrCacheData("LoD_HeroX_" + I2S(R2I(GetUnitX(Player__Hero[pid]))), pid)
+			call StoreDrCacheData("LoD_HeroY_" + I2S(R2I(GetUnitY(Player__Hero[pid]))), pid)
 		endif
 		set p = Scourges[i]
 		if IsPlaying(p) then
-			set TME = GetPlayerId(p)
-			call StoreDrCacheData("LoD_HeroX_" + I2S(R2I(GetUnitX(Player__Hero[TME]))), TME)
-			call StoreDrCacheData("LoD_HeroY_" + I2S(R2I(GetUnitY(Player__Hero[TME]))), TME)
+			set pid = GetPlayerId(p)
+			call StoreDrCacheData("LoD_HeroX_" + I2S(R2I(GetUnitX(Player__Hero[pid]))), pid)
+			call StoreDrCacheData("LoD_HeroY_" + I2S(R2I(GetUnitY(Player__Hero[pid]))), pid)
 		endif
 		set i = i + 1
 	exitwhen i > 5
@@ -32624,7 +32624,7 @@ function E2R takes player p returns nothing
 endfunction
 function E4R takes nothing returns boolean
 	local player p = GetTriggerPlayer()
-	local integer TME = GetPlayerId(p)
+	local integer pid = GetPlayerId(p)
 	local integer h = GetHandleId(p)
 	local integer i
 	local integer k
@@ -32642,28 +32642,28 @@ function E4R takes nothing returns boolean
 	if k > 0 then
 		call DisplayTimedTextToPlayer(p, 0, 0, 10., GetObjectName('n0GM')+ " " + R2S(I2R(i)/ I2R(k)* 100 )+ "% (" + I2S(i)+ "/" + I2S(k)+ ")")
 	endif
-	if LoadInteger(K, TME,'MC_T')> 0 then
-		call DisplayTimedTextToPlayer(p, 0, 0, 10., GetObjectName('n0JH')+ " " + I2S(LoadInteger(K, TME,'MC_T')))
-		call DisplayTimedTextToPlayer(p, 0, 0, 10., GetObjectName('n0JM')+ " " + I2S(LoadInteger(K, TME,'MC_2')+ LoadInteger(K, TME,'MC_3')+ LoadInteger(K, TME,'MC_4'))+ " (" + I2S((LoadInteger(K, TME,'MC_2')+ LoadInteger(K, TME,'MC_3')+ LoadInteger(K, TME,'MC_4'))* 100 / LoadInteger(K, TME,'MC_T'))+ "%)")
-		call DisplayTimedTextToPlayer(p, 0, 0, 10., GetObjectName('n0JL')+ " " + I2S(LoadInteger(K, TME,'MC_2'))+ " (" + I2S( 100 * LoadInteger(K, TME,'MC_2')/ LoadInteger(K, TME,'MC_T'))+ "%)")
-		call DisplayTimedTextToPlayer(p, 0, 0, 10., GetObjectName('n0JK')+ " " + I2S(LoadInteger(K, TME,'MC_3'))+ " (" + I2S( 100 * LoadInteger(K, TME,'MC_3')/ LoadInteger(K, TME,'MC_T'))+ "%)")
-		call DisplayTimedTextToPlayer(p, 0, 0, 10., GetObjectName('n0JJ')+ " " + I2S(LoadInteger(K, TME,'MC_4'))+ " (" + I2S( 100 * LoadInteger(K, TME,'MC_4')/ LoadInteger(K, TME,'MC_T'))+ "%)")
+	if LoadInteger(K, pid,'MC_T')> 0 then
+		call DisplayTimedTextToPlayer(p, 0, 0, 10., GetObjectName('n0JH')+ " " + I2S(LoadInteger(K, pid,'MC_T')))
+		call DisplayTimedTextToPlayer(p, 0, 0, 10., GetObjectName('n0JM')+ " " + I2S(LoadInteger(K, pid,'MC_2')+ LoadInteger(K, pid,'MC_3')+ LoadInteger(K, pid,'MC_4'))+ " (" + I2S((LoadInteger(K, pid,'MC_2')+ LoadInteger(K, pid,'MC_3')+ LoadInteger(K, pid,'MC_4'))* 100 / LoadInteger(K, pid,'MC_T'))+ "%)")
+		call DisplayTimedTextToPlayer(p, 0, 0, 10., GetObjectName('n0JL')+ " " + I2S(LoadInteger(K, pid,'MC_2'))+ " (" + I2S( 100 * LoadInteger(K, pid,'MC_2')/ LoadInteger(K, pid,'MC_T'))+ "%)")
+		call DisplayTimedTextToPlayer(p, 0, 0, 10., GetObjectName('n0JK')+ " " + I2S(LoadInteger(K, pid,'MC_3'))+ " (" + I2S( 100 * LoadInteger(K, pid,'MC_3')/ LoadInteger(K, pid,'MC_T'))+ "%)")
+		call DisplayTimedTextToPlayer(p, 0, 0, 10., GetObjectName('n0JJ')+ " " + I2S(LoadInteger(K, pid,'MC_4'))+ " (" + I2S( 100 * LoadInteger(K, pid,'MC_4')/ LoadInteger(K, pid,'MC_T'))+ "%)")
 	endif
-	if JZV[TME]> 0 then
-		call DisplayTimedTextToPlayer(p, 0, 0, 10., GetObjectName('n0HM')+ " " + I2S(JZV[TME]))
+	if JZV[pid]> 0 then
+		call DisplayTimedTextToPlayer(p, 0, 0, 10., GetObjectName('n0HM')+ " " + I2S(JZV[pid]))
 	endif
 	call E2R(p)
-	if LoadInteger(P, GetHandleId(Player__Hero[TME]),'A06D')> 0 then
-		call DisplayTimedTextToPlayer(p, 0, 0, 10., "腐肉堆积祭品数: " + I2S(SI[TME]))
-		call DisplayTimedTextToPlayer(p, 0, 0, 10., GetObjectName('n09R')+ " " + I2S(LoadInteger(P, GetHandleId(Player__Hero[TME]),'A06D'))+ " " + GetObjectName('n09S'))
+	if LoadInteger(P, GetHandleId(Player__Hero[pid]),'A06D')> 0 then
+		call DisplayTimedTextToPlayer(p, 0, 0, 10., "腐肉堆积祭品数: " + I2S(SI[pid]))
+		call DisplayTimedTextToPlayer(p, 0, 0, 10., GetObjectName('n09R')+ " " + I2S(LoadInteger(P, GetHandleId(Player__Hero[pid]),'A06D'))+ " " + GetObjectName('n09S'))
 	endif
 	set i = LoadInteger(K, h,'HK_H')
 	set k = LoadInteger(K, h,'HK_T')
 	if k > 0 then
 		call DisplayTimedTextToPlayer(p, 0, 0, 10., GetObjectName('n0EL')+ " " + R2S(I2R(i)/ I2R(k)* 100 )+ "% (" + I2S(i)+ "/" + I2S(k)+ ")")
 	endif
-	if HHV[TME]> 0 then
-		call DisplayTimedTextToPlayer(p, 0, 0, 10, "通过追踪术获得的额外金钱: " + I2S(HHV[TME]))
+	if HHV[pid]> 0 then
+		call DisplayTimedTextToPlayer(p, 0, 0, 10, "通过追踪术获得的额外金钱: " + I2S(HHV[pid]))
 	endif
 	return false
 endfunction
@@ -33470,11 +33470,11 @@ function OJR takes nothing returns nothing
 	set g = null
 	set t = null
 endfunction
-function OKR takes integer TME returns nothing
+function OKR takes integer pid returns nothing
 	local timer t = CreateTimer()
 	local group g = AllocationGroup(111)
 	call TimerStart(t, 4, false, function OJR)
-	call GroupEnumUnitsOfPlayer(g, Player(TME), Condition(function OFR))
+	call GroupEnumUnitsOfPlayer(g, Player(pid), Condition(function OFR))
 	call ForGroup(g, function OHR)
 	call SaveGroupHandle(HY, GetHandleId(t), 0, g)
 	set g = null
@@ -33548,19 +33548,19 @@ function SQO takes nothing returns nothing
 	set OLR = null
 	call OOR()
 endfunction
-function OMR takes integer TME, integer sn, integer T0V returns nothing
+function OMR takes integer pid, integer sn, integer T0V returns nothing
 	local multiboarditem mi
 	local string s = HeroSkillsIcon[T0V]
 	if LOD_DEBUGMODE then
-		if IsScourgesPlayer(Player(TME)) then
-			set mi = MultiboardGetItem(JP,(TME + 2)-1, sn -1)
+		if IsScourgesPlayer(Player(pid)) then
+			set mi = MultiboardGetItem(JP,(pid + 2)-1, sn -1)
 		else
-			set mi = MultiboardGetItem(JP,(TME + 1)-1, sn -1)
+			set mi = MultiboardGetItem(JP,(pid + 1)-1, sn -1)
 		endif
 	else
-		set mi = MultiboardGetItem(JP, D2V[TME]-1, sn -1)
+		set mi = MultiboardGetItem(JP, D2V[pid]-1, sn -1)
 	endif
-	if IsSentinelsPlayer(Player(TME)) and G1V == false then
+	if IsSentinelsPlayer(Player(pid)) and G1V == false then
 		if IsScourgesPlayer(LocalPlayer) then
 			if T0V == 0 then
 				set s = HeroSkillsIcon[0]
@@ -33568,7 +33568,7 @@ function OMR takes integer TME, integer sn, integer T0V returns nothing
 				set s = "ReplaceableTextures\\CommandButtons\\BTNQuestion.blp"
 			endif
 		endif
-	elseif IsScourgesPlayer(Player(TME)) and G1V == false then
+	elseif IsScourgesPlayer(Player(pid)) and G1V == false then
 		if IsSentinelsPlayer(LocalPlayer) then
 			if T0V == 0 then
 				set s = HeroSkillsIcon[0]
@@ -33581,12 +33581,12 @@ function OMR takes integer TME, integer sn, integer T0V returns nothing
 	call MultiboardReleaseItem(mi)
 	set mi = null
 endfunction
-function OPR takes integer TME returns integer
+function OPR takes integer pid returns integer
 	local integer k = 0
 	local integer c = 0
 	loop
 		if RB[k]!= 0 then
-			if PlayerSkillIndex[TME * HL + 1]== RB[k]or PlayerSkillIndex[TME * HL + 2]== RB[k]or PlayerSkillIndex[TME * HL + 3]== RB[k]or PlayerSkillIndex[TME * HL + 4]== RB[k]or(RP >= 1 and PlayerSkillIndex[TME * HL + 5]== RB[k]) or(RP >= 2 and PlayerSkillIndex[TME * HL + 6]== RB[k]) then
+			if PlayerSkillIndex[pid * HL + 1]== RB[k]or PlayerSkillIndex[pid * HL + 2]== RB[k]or PlayerSkillIndex[pid * HL + 3]== RB[k]or PlayerSkillIndex[pid * HL + 4]== RB[k]or(RP >= 1 and PlayerSkillIndex[pid * HL + 5]== RB[k]) or(RP >= 2 and PlayerSkillIndex[pid * HL + 6]== RB[k]) then
 				set c = c + 1
 			endif
 		endif
@@ -33595,9 +33595,9 @@ function OPR takes integer TME returns integer
 	endloop
 	return c
 endfunction
-function OQR takes integer TME returns boolean
+function OQR takes integer pid returns boolean
 	local integer id = 34 * 4 + 3
-	local integer d = TME * HL
+	local integer d = pid * HL
 	if PlayerSkillIndex[d + 1]== id or PlayerSkillIndex[d + 2]== id or PlayerSkillIndex[d + 3]== id or PlayerSkillIndex[d + 4]== id or(RP >= 1 and PlayerSkillIndex[d + 5]== id) or(RP >= 2 and PlayerSkillIndex[d + 6]== id) then
 		return true
 	endif
@@ -34039,7 +34039,7 @@ function MIO takes nothing returns nothing
 	exitwhen WWV > 12
 	endloop
 endfunction
-function RIR takes integer TME, integer TPE returns boolean
+function RIR takes integer pid, integer TPE returns boolean
 	local integer xx
 	local integer YTE
 	local integer sn
@@ -34048,46 +34048,46 @@ function RIR takes integer TME, integer TPE returns boolean
 	set sn = R2I((I2R(TPE)+ 3.)/ 4.)
 	set sn = TPE -((sn -1)* 4)
 	if Mode__RandomExtraAbilities then
-		if PlayerSkillIndex[TME * HL + 5]== TPE and RP >= 1 then
-			call URE(Player(TME), true, "你不能在\"额外随机技能\"模式下移除该技能.")
+		if PlayerSkillIndex[pid * HL + 5]== TPE and RP >= 1 then
+			call URE(Player(pid), true, "你不能在\"额外随机技能\"模式下移除该技能.")
 			return false
 		endif
-		if PlayerSkillIndex[TME * HL + 6]== TPE and RP >= 2 then
-			call URE(Player(TME), true, "你不能在\"额外随机技能\"模式下移除该技能.")
+		if PlayerSkillIndex[pid * HL + 6]== TPE and RP >= 2 then
+			call URE(Player(pid), true, "你不能在\"额外随机技能\"模式下移除该技能.")
 			return false
 		endif
 	endif
 	set xx = 1
 	loop
-		if (PlayerSkillIndex[TME * HL + xx]== TPE) then
-			set PlayerSkillIndex[TME * HL + xx]= 0
-			call OMR(TME, xx, 0)
+		if (PlayerSkillIndex[pid * HL + xx]== TPE) then
+			set PlayerSkillIndex[pid * HL + xx]= 0
+			call OMR(pid, xx, 0)
 		exitwhen true
 		endif
 		set xx = xx + 1
 	exitwhen xx > 4 + RP
 	endloop
-	set PP[TME]= 0
+	set PP[pid]= 0
 	set xx = 1
 	loop
-		if CheckAbilityIdFormIndex(PlayerSkillIndex[TME * HL + xx],-1, "melee only", null) then
-			set PP[TME]= 1
+		if CheckAbilityIdFormIndex(PlayerSkillIndex[pid * HL + xx],-1, "melee only", null) then
+			set PP[pid]= 1
 		exitwhen true
-		elseif CheckAbilityIdFormIndex(PlayerSkillIndex[TME * HL + xx],-1, "range only", null) then
-			set PP[TME]= 2
+		elseif CheckAbilityIdFormIndex(PlayerSkillIndex[pid * HL + xx],-1, "range only", null) then
+			set PP[pid]= 2
 		exitwhen true
 		endif
 		set xx = xx + 1
 	exitwhen xx > 4 + RP
 	endloop
-	if GetUnitAbilityLevel(KP[TME],'Z004'-1 + sn)> 0 then
-		call UnitRemoveAbility(KP[TME],('Z004'-1)+ sn)
-		call UnitAddAbility(KP[TME],('Z000'-1)+ sn)
+	if GetUnitAbilityLevel(KP[pid],'Z004'-1 + sn)> 0 then
+		call UnitRemoveAbility(KP[pid],('Z004'-1)+ sn)
+		call UnitAddAbility(KP[pid],('Z000'-1)+ sn)
 	endif
 	if HVV then
 		set xx = 0
 		loop
-			if IsSentinelsPlayer(Player(TME)) then
+			if IsSentinelsPlayer(Player(pid)) then
 				set V0R = GetPlayerId(Sentinels[xx])
 			else
 				set V0R = GetPlayerId(Scourges[xx])
@@ -34101,12 +34101,12 @@ function RIR takes integer TME, integer TPE returns boolean
 			set xx = xx + 1
 		exitwhen xx > 5
 		endloop
-		if IsSentinelsPlayer(Player(TME)) then
+		if IsSentinelsPlayer(Player(pid)) then
 			set YTE = 1
 		else
 			set YTE = 2
 		endif
-		if XP[YTE * OP + TPE]== TME then
+		if XP[YTE * OP + TPE]== pid then
 			set XP[YTE * OP + TPE]= 0
 		endif
 	endif
@@ -34202,8 +34202,8 @@ function RCR takes nothing returns nothing
 	endif
 endfunction
 function RDR takes nothing returns nothing
-	local integer TME = GetPlayerId(GetOwningPlayer(GetSpellAbilityUnit()))
-	local integer QLX =(MP[TME]* 4)-4
+	local integer pid = GetPlayerId(GetOwningPlayer(GetSpellAbilityUnit()))
+	local integer QLX =(MP[pid]* 4)-4
 	local integer sn
 	local integer xx
 	local integer RFR
@@ -34225,21 +34225,21 @@ function RDR takes nothing returns nothing
 	else
 		return
 	endif
-	if not OWR(QLX, TME, true) then
+	if not OWR(QLX, pid, true) then
 		return
 	endif
-	if IsPlayerHasSkill(Player(TME), QLX) then
-		call UnitRemoveAbility(KP[TME],('Z000'-1)+ sn)
-		call UnitAddAbility(KP[TME],('Z004'-1)+ sn)
+	if IsPlayerHasSkill(Player(pid), QLX) then
+		call UnitRemoveAbility(KP[pid],('Z000'-1)+ sn)
+		call UnitAddAbility(KP[pid],('Z004'-1)+ sn)
 		if HVV then
 			set xx = 1
 			loop
-				if IsSentinelsPlayer(Player(TME)) then
+				if IsSentinelsPlayer(Player(pid)) then
 					set RFR = GetPlayerId(Sentinels[xx])
 				else
 					set RFR = GetPlayerId(Scourges[xx])
 				endif
-				if GetUnitAbilityLevel(KP[RFR], HeroCommonSkills[QLX])> 0 and TME != RFR and GetUnitAbilityLevel(KP[RFR],'Z000'-1 + sn)> 0 then
+				if GetUnitAbilityLevel(KP[RFR], HeroCommonSkills[QLX])> 0 and pid != RFR and GetUnitAbilityLevel(KP[RFR],'Z000'-1 + sn)> 0 then
 					call UnitRemoveAbility(KP[RFR],('Z000'-1)+ sn)
 					call UnitAddAbility(KP[RFR],('Z010'-1)+ sn)
 				endif
@@ -34248,7 +34248,7 @@ function RDR takes nothing returns nothing
 			endloop
 		endif
 	endif
-	if FP[TME] then
+	if FP[pid] then
 		call SQO()
 	endif
 endfunction
@@ -34882,32 +34882,32 @@ function IAR takes integer h, real x, real y returns nothing
 	call SaveImageHandle(HY, h, 200+ 7, R3)
 endfunction
 function INR takes player p, unit IBR returns nothing
-	local integer TME = GetPlayerId(p)
+	local integer pid = GetPlayerId(p)
 	local unit u
 	local integer hu = GetHandleId(IBR)
 	local integer h = GetHandleId(GetTriggeringTrigger())
 	local integer i = LoadInteger(HY, hu, 0)
-	set FP[TME]= true
-	set PlayerSkillIndex[TME * HL + 1]= LoadInteger(HY, h, 100 * i + 1)
-	set PlayerSkillIndex[TME * HL + 2]= LoadInteger(HY, h, 100 * i + 2)
-	set PlayerSkillIndex[TME * HL + 3]= LoadInteger(HY, h, 100 * i + 3)
-	set PlayerSkillIndex[TME * HL + 4]= LoadInteger(HY, h, 100 * i + 4)
-	set PlayerSkillIndex[TME * HL + 5]= LoadInteger(HY, h, 100 * i + 5)
-	set PlayerSkillIndex[TME * HL + 6]= LoadInteger(HY, h, 100 * i + 6)
-	call ORR(PlayerSkillIndex[TME * HL + 1])
-	call ORR(PlayerSkillIndex[TME * HL + 2])
-	call ORR(PlayerSkillIndex[TME * HL + 3])
-	call ORR(PlayerSkillIndex[TME * HL + 4])
-	call ORR(PlayerSkillIndex[TME * HL + 5])
-	call ORR(PlayerSkillIndex[TME * HL + 6])
+	set FP[pid]= true
+	set PlayerSkillIndex[pid * HL + 1]= LoadInteger(HY, h, 100 * i + 1)
+	set PlayerSkillIndex[pid * HL + 2]= LoadInteger(HY, h, 100 * i + 2)
+	set PlayerSkillIndex[pid * HL + 3]= LoadInteger(HY, h, 100 * i + 3)
+	set PlayerSkillIndex[pid * HL + 4]= LoadInteger(HY, h, 100 * i + 4)
+	set PlayerSkillIndex[pid * HL + 5]= LoadInteger(HY, h, 100 * i + 5)
+	set PlayerSkillIndex[pid * HL + 6]= LoadInteger(HY, h, 100 * i + 6)
+	call ORR(PlayerSkillIndex[pid * HL + 1])
+	call ORR(PlayerSkillIndex[pid * HL + 2])
+	call ORR(PlayerSkillIndex[pid * HL + 3])
+	call ORR(PlayerSkillIndex[pid * HL + 4])
+	call ORR(PlayerSkillIndex[pid * HL + 5])
+	call ORR(PlayerSkillIndex[pid * HL + 6])
 	call SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD) -250)
 	if IsSentinelsPlayer(p) then
-		set Player__Hero[TME]= CreateUnit(p, VUV[GetUnitUserData(IBR)], GetRectCenterX(gg_rct_SentinelRevivalPoint), GetRectCenterY(gg_rct_SentinelRevivalPoint), 0)
+		set Player__Hero[pid]= CreateUnit(p, VUV[GetUnitUserData(IBR)], GetRectCenterX(gg_rct_SentinelRevivalPoint), GetRectCenterY(gg_rct_SentinelRevivalPoint), 0)
 		call ShowUnit(IBR, false)
 		call UnitApplyTimedLife(IBR,'BTLF', 120)
 		set u = CreateUnit(p, RX[GetUnitUserData(IBR)],-7250 +(GetPlayerId(p)-1)* 110, 6900, 270)
 	else
-		set Player__Hero[TME]= CreateUnit(p, VUV[GetUnitUserData(IBR)], GetRectCenterX(gg_rct_ScourgeRevivalPoint), GetRectCenterY(gg_rct_ScourgeRevivalPoint), 0)
+		set Player__Hero[pid]= CreateUnit(p, VUV[GetUnitUserData(IBR)], GetRectCenterX(gg_rct_ScourgeRevivalPoint), GetRectCenterY(gg_rct_ScourgeRevivalPoint), 0)
 		call ShowUnit(IBR, false)
 		call UnitApplyTimedLife(IBR,'BTLF', 120)
 		set u = CreateUnit(p, RX[GetUnitUserData(IBR)],-7250 +(GetPlayerId(p)-7)* 110, 6590, 90)
@@ -34917,8 +34917,8 @@ function INR takes player p, unit IBR returns nothing
 	call SetUnitUserData(IBR, 0)
 	set u = null
 endfunction
-function ICR takes integer TME returns nothing
-	local player p = Player(TME)
+function ICR takes integer pid returns nothing
+	local player p = Player(pid)
 	local integer i = 0
 	local integer h = GetHandleId(GetTriggeringTrigger())
 	local unit u
@@ -34933,18 +34933,18 @@ endfunction
 function IDR takes nothing returns nothing
 	local unit u = GetSoldUnit()
 	local player p = GetOwningPlayer(u)
-	local integer TME = GetPlayerId(p)
+	local integer pid = GetPlayerId(p)
 	local integer h = GetHandleId(GetTriggeringTrigger())
 	local unit IBR
 	if GetUnitTypeId(u)=='h06N'then
 		call RemoveUnit(u)
 		set u = null
-		if TME != LoadInteger(HY, h, 10) and TME != LoadInteger(HY, h, 11) then
+		if pid != LoadInteger(HY, h, 10) and pid != LoadInteger(HY, h, 11) then
 			call InterfaceErrorForPlayer(p, "还未到你选择.")
 		else
 			set IBR = GetSellingUnit()
 			call INR(p, IBR)
-			if TME == LoadInteger(HY, h, 10) then
+			if pid == LoadInteger(HY, h, 10) then
 				call RemoveSavedInteger(HY, h, 10)
 			else
 				call RemoveSavedInteger(HY, h, 11)
@@ -37249,13 +37249,13 @@ function NQR takes nothing returns nothing
 endfunction
 function BHR takes nothing returns nothing
 	local integer i = 0
-	local integer TME
+	local integer pid
 	loop
 	exitwhen i > 5
-		set TME = GetPlayerId(Sentinels[i])
-		call SetPlayerName(Sentinels[i], PlayersName[TME]+ " (" + I2S(RQ[TME])+ "/" + I2S(IQ[TME])+ " | " + I2S(AQ[TME])+ "-" + I2S(NQ[TME])+ ")")
-		set TME = GetPlayerId(Scourges[i])
-		call SetPlayerName(Scourges[i], PlayersName[TME]+ " (" + I2S(RQ[TME])+ "/" + I2S(IQ[TME])+ " | " + I2S(AQ[TME])+ "-" + I2S(NQ[TME])+ ")")
+		set pid = GetPlayerId(Sentinels[i])
+		call SetPlayerName(Sentinels[i], PlayersName[pid]+ " (" + I2S(RQ[pid])+ "/" + I2S(IQ[pid])+ " | " + I2S(AQ[pid])+ "-" + I2S(NQ[pid])+ ")")
+		set pid = GetPlayerId(Scourges[i])
+		call SetPlayerName(Scourges[i], PlayersName[pid]+ " (" + I2S(RQ[pid])+ "/" + I2S(IQ[pid])+ " | " + I2S(AQ[pid])+ "-" + I2S(NQ[pid])+ ")")
 		set i = i + 1
 	endloop
 endfunction
@@ -37992,7 +37992,7 @@ function C0R takes nothing returns nothing
 	local unit u = null
 	local boolean C1R = LoadBoolean(HY, h, 0)
 	local player p
-	local integer TME = 0
+	local integer pid = 0
 	local integer C2R = LoadInteger(HY, h, 1)+ 1
 	local integer C3R = 0
 	local integer C4R = 0
@@ -38001,11 +38001,11 @@ function C0R takes nothing returns nothing
 	local unit array C6R
 	loop
 		if C1R then
-			set TME = GetPlayerId(Scourges[i])
+			set pid = GetPlayerId(Scourges[i])
 		else
-			set TME = GetPlayerId(Sentinels[i])
+			set pid = GetPlayerId(Sentinels[i])
 		endif
-		set u = Player__Hero[TME]
+		set u = Player__Hero[pid]
 		if u != null then //UnitAlive(u) and
 			set hu = GetHandleId(u)
 			if (GetDistanceBetween(GetUnitX(WJE), GetUnitY(WJE), GetUnitX(u), GetUnitY(u))< 925 or LoadBoolean(P, hu,'A32G'+ 1)) then
@@ -45227,20 +45227,20 @@ function Z_V takes nothing returns nothing
 	local real x = GetUnitX(WUE)
 	local real y = GetUnitY(WUE)
 	local group g = AllocationGroup(194)
-	local integer TME = GetPlayerId(GetOwningPlayer(WUE))
+	local integer pid = GetPlayerId(GetOwningPlayer(WUE))
 	local integer ODX = GetUnitAbilityLevel(WUE,'A0DH')
 	call SGR(WUE, 4)
 	if ODX == 0 then
 		set ODX = GetUnitAbilityLevel(WUE,'A1OB')
 	endif
-	set H0V[TME]= CreateUnit(GetOwningPlayer(WUE),'e00E', x, y, 0)
-	call UnitAddAbility(H0V[TME],'A3L6')
-	call SetUnitAbilityLevel(H0V[TME],'A3L6', ODX)
-	call IssueImmediateOrderById(H0V[TME], 852526)
-	call UnitRemoveAbility(H0V[TME],'A3L6')
-	call SetUnitScale(H0V[TME], .25, .25, .25)
-	call UnitAddPermanentAbility(H0V[TME],'A0DM')
-	call SetUnitAbilityLevel(H0V[TME],'A0DM', ODX)
+	set H0V[pid]= CreateUnit(GetOwningPlayer(WUE),'e00E', x, y, 0)
+	call UnitAddAbility(H0V[pid],'A3L6')
+	call SetUnitAbilityLevel(H0V[pid],'A3L6', ODX)
+	call IssueImmediateOrderById(H0V[pid], 852526)
+	call UnitRemoveAbility(H0V[pid],'A3L6')
+	call SetUnitScale(H0V[pid], .25, .25, .25)
+	call UnitAddPermanentAbility(H0V[pid],'A0DM')
+	call SetUnitAbilityLevel(H0V[pid],'A0DM', ODX)
 	set UI = WUE
 	call GroupEnumUnitsInRange(g, x, y, 1200, Condition(function STR))
 	call ForGroup(g, function SWR)
@@ -52959,8 +52959,8 @@ function M1X takes nothing returns nothing
 	set t = null
 endfunction
 function R9I takes unit SZX returns nothing
-	local integer TME = GetPlayerId(GetOwningPlayer(SZX))
-	if SZX == Player__Hero[TME]and HaveSavedHandle(HY, GetHandleId(GetOwningPlayer(SZX)), 333) and UnitIsDead(LoadUnitHandle(HY, GetHandleId(GetOwningPlayer(SZX)), 333)) == false and G3X(SZX) == false then
+	local integer pid = GetPlayerId(GetOwningPlayer(SZX))
+	if SZX == Player__Hero[pid]and HaveSavedHandle(HY, GetHandleId(GetOwningPlayer(SZX)), 333) and UnitIsDead(LoadUnitHandle(HY, GetHandleId(GetOwningPlayer(SZX)), 333)) == false and G3X(SZX) == false then
 		call KillUnit(LoadUnitHandle(HY, GetHandleId(GetOwningPlayer(SZX)), 333))
 	endif
 endfunction
@@ -54506,7 +54506,7 @@ function PQE takes nothing returns nothing
 	local real scale = GetUnitModelScale(u)
 	local real addScale = lv * 0.25
 	local player p = GetOwningPlayer(u)
-	local integer TME = GetPlayerId(p)
+	local integer pid = GetPlayerId(p)
 	if lv == 1 then
 		set W_V = CreateUnit(p,'e01V', 0, 0, 0)
 		call UnitAddPermanentAbility(W_V,'A10B')
@@ -55103,24 +55103,24 @@ function BFI takes unit BCI, unit WLE returns nothing
 	local trigger t
 	local integer h
 	local integer ht = GetHandleId(WLE)
-	local integer TME = GetPlayerId(GetOwningPlayer(BCI))
+	local integer pid = GetPlayerId(GetOwningPlayer(BCI))
 	local integer level = GetUnitAbilityLevel(BCI,'P067')
 	if GetUnitTypeId(WLE)!='n00L' then
-		if LoadBoolean(HY, ht,'FRSW'+ TME) == false then
+		if LoadBoolean(HY, ht,'FRSW'+ pid) == false then
 			set t = CreateTrigger()
 			set h = GetHandleId(t)
 			call TriggerRegisterDeathEvent(t, WLE)
 			call TriggerRegisterTimerEvent(t, 1, true)
 			call TriggerAddCondition(t, Condition(function BDI))
-			call SaveBoolean(HY, ht,'FRSW'+ TME, true)
-			call SaveTriggerHandle(HY, ht,'FRSW'+ TME, t)
+			call SaveBoolean(HY, ht,'FRSW'+ pid, true)
+			call SaveTriggerHandle(HY, ht,'FRSW'+ pid, t)
 			call SaveBoolean(HY, h, 2, true)
 			call TriggerRegisterTimerEvent(t, 0, false)
 			call SaveUnitHandle(HY, h, 1, WLE)
 			call SaveEffectHandle(HY, h, 10, AddSpecialEffectTarget("Abilities\\Spells\\NightElf\\BattleRoar\\RoarTarget.mdl", WLE, "overhead"))
 			call UnitAddPermanentAbility(WLE,'A349')
 		else
-			set t = LoadTriggerHandle(HY, ht,'FRSW'+ TME)
+			set t = LoadTriggerHandle(HY, ht,'FRSW'+ pid)
 			set h = GetHandleId(t)
 			call SaveBoolean(HY, h, 2, true)
 			call TriggerRegisterTimerEvent(t, 0, false)
@@ -62450,7 +62450,7 @@ function L5E takes nothing returns nothing
 endfunction
 function PPI takes unit u, integer level returns nothing
 	local timer t = CreateTimer()
-	local integer TME = GetPlayerId(GetOwningPlayer(u))
+	local integer pid = GetPlayerId(GetOwningPlayer(u))
 	call SaveUnitHandle(HY, GetHandleId(t), 0, u)
 	call TimerStart(t, .1, true, function PMI)
 	call SaveInteger(HY, GetHandleId(t), 0, level)
@@ -67693,21 +67693,21 @@ function W2X takes nothing returns nothing
 	local unit SYX = W2
 	local integer i = 1
 	local integer k = 5
-	local integer TME
+	local integer pid
 	if IsSentinelsPlayer(GetOwningPlayer(SZX)) then
 		loop
-			set TME = GetPlayerId(Scourges[i])
-			if UnitIsDead(Player__Hero[TME]) == false and(GetPlayerId(GetOwningPlayer(SYX)) == TME or WTE(SZX, Player__Hero[TME])< 725) then
-				set SI[TME]= SI[TME]+ 1
+			set pid = GetPlayerId(Scourges[i])
+			if UnitIsDead(Player__Hero[pid]) == false and(GetPlayerId(GetOwningPlayer(SYX)) == pid or WTE(SZX, Player__Hero[pid])< 725) then
+				set SI[pid]= SI[pid]+ 1
 			endif
 			set i = i + 1
 		exitwhen i > k
 		endloop
 	elseif IsScourgesPlayer(GetOwningPlayer(SZX)) then
 		loop
-			set TME = GetPlayerId(Sentinels[i])
-			if UnitIsDead(Player__Hero[TME]) == false and(GetPlayerId(GetOwningPlayer(SYX)) == TME or WTE(SZX, Player__Hero[TME])< 725) then
-				set SI[TME]= SI[TME]+ 1
+			set pid = GetPlayerId(Sentinels[i])
+			if UnitIsDead(Player__Hero[pid]) == false and(GetPlayerId(GetOwningPlayer(SYX)) == pid or WTE(SZX, Player__Hero[pid])< 725) then
+				set SI[pid]= SI[pid]+ 1
 			endif
 			set i = i + 1
 		exitwhen i > k
@@ -74270,7 +74270,7 @@ function CKA takes unit u, unit WWE returns nothing
 	local integer str
 	local integer int
 	local integer i = LoadInteger(P, GetHandleId(u), QL)+ 1
-	local integer TME = GetPlayerId(GetOwningPlayer(u))
+	local integer pid = GetPlayerId(GetOwningPlayer(u))
 	set agi = IMinBJ(GetHeroAgi(WWE, false)-1, 1)
 	set str = IMinBJ(GetHeroStr(WWE, false)-1, 1)
 	set int = IMinBJ(GetHeroInt(WWE, false)-1, 1)
@@ -79593,11 +79593,11 @@ function KMA takes unit WUE returns nothing
 	call UnitRemoveAbility(WUE,'B0FL')
 endfunction
 function KPA takes unit WUE returns nothing
-	local integer TME = GetPlayerId(GetOwningPlayer(WUE))
+	local integer pid = GetPlayerId(GetOwningPlayer(WUE))
 	local boolean KQA
 	local integer level
 	if GetUnitAbilityLevel(WUE,'A0CY')> 0 then
-		set KQA = YVE(WUE, TME * HL)
+		set KQA = YVE(WUE, pid * HL)
 		if GetUnitAbilityLevel(WUE,'A0CY')> 0 then
 			set level = GetUnitAbilityLevel(WUE,'A0CY')
 		endif
@@ -81702,7 +81702,7 @@ function F2E takes nothing returns nothing
 	local integer array a
 	local integer array b
 	local integer k = 1
-	local integer TME = 0
+	local integer pid = 0
 	local integer xx = 0
 	local unit u = GetTriggerUnit()
 	local integer playerId = GetPlayerId(GetOwningPlayer(u))
@@ -82264,7 +82264,7 @@ function YUV takes nothing returns nothing
 	local integer i = 0
 	local item it
 	local integer PZA ='I02M'
-	local integer TME = GetPlayerId(GetOwningPlayer(WJE))
+	local integer pid = GetPlayerId(GetOwningPlayer(WJE))
 	set QV = true
 	call DisableTrigger(hChooseHeroTrigger)
 	set PUA = CreateUnit(GetOwningPlayer(WJE), GetUnitTypeId(WJE), GetUnitX(WJE), GetUnitY(WJE), 0)
@@ -82305,32 +82305,32 @@ function YUV takes nothing returns nothing
 		call SelectHeroSkill(PUA,'A0NR')
 		set i = i + 1
 	endloop
-	call UnitAddPermanentAbility(PUA, HeroChangeAbilitySkills[PlayerSkillIndex[TME * HL + 1]])
-	call UnitAddPermanentAbility(PUA, HeroChangeAbilitySkills[PlayerSkillIndex[TME * HL + 2]])
-	call UnitAddPermanentAbility(PUA, HeroChangeAbilitySkills[PlayerSkillIndex[TME * HL + 3]])
-	call UnitAddPermanentAbility(PUA, HeroChangeAbilitySkills[PlayerSkillIndex[TME * HL + 4]])
+	call UnitAddPermanentAbility(PUA, HeroChangeAbilitySkills[PlayerSkillIndex[pid * HL + 1]])
+	call UnitAddPermanentAbility(PUA, HeroChangeAbilitySkills[PlayerSkillIndex[pid * HL + 2]])
+	call UnitAddPermanentAbility(PUA, HeroChangeAbilitySkills[PlayerSkillIndex[pid * HL + 3]])
+	call UnitAddPermanentAbility(PUA, HeroChangeAbilitySkills[PlayerSkillIndex[pid * HL + 4]])
 	set i = 1
 	loop
-	exitwhen i > GetUnitAbilityLevel(WJE, HeroCommonSkills[PlayerSkillIndex[TME * HL + 1]])
-		call SelectHeroSkill(PUA, HeroCommonSkills[PlayerSkillIndex[TME * HL + 1]])
+	exitwhen i > GetUnitAbilityLevel(WJE, HeroCommonSkills[PlayerSkillIndex[pid * HL + 1]])
+		call SelectHeroSkill(PUA, HeroCommonSkills[PlayerSkillIndex[pid * HL + 1]])
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
-	exitwhen i > GetUnitAbilityLevel(WJE, HeroCommonSkills[PlayerSkillIndex[TME * HL + 2]])
-		call SelectHeroSkill(PUA, HeroCommonSkills[PlayerSkillIndex[TME * HL + 2]])
+	exitwhen i > GetUnitAbilityLevel(WJE, HeroCommonSkills[PlayerSkillIndex[pid * HL + 2]])
+		call SelectHeroSkill(PUA, HeroCommonSkills[PlayerSkillIndex[pid * HL + 2]])
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
-	exitwhen i > GetUnitAbilityLevel(WJE, HeroCommonSkills[PlayerSkillIndex[TME * HL + 3]])
-		call SelectHeroSkill(PUA, HeroCommonSkills[PlayerSkillIndex[TME * HL + 3]])
+	exitwhen i > GetUnitAbilityLevel(WJE, HeroCommonSkills[PlayerSkillIndex[pid * HL + 3]])
+		call SelectHeroSkill(PUA, HeroCommonSkills[PlayerSkillIndex[pid * HL + 3]])
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
-	exitwhen i > GetUnitAbilityLevel(WJE, HeroCommonSkills[PlayerSkillIndex[TME * HL + 4]])
-		call SelectHeroSkill(PUA, HeroCommonSkills[PlayerSkillIndex[TME * HL + 4]])
+	exitwhen i > GetUnitAbilityLevel(WJE, HeroCommonSkills[PlayerSkillIndex[pid * HL + 4]])
+		call SelectHeroSkill(PUA, HeroCommonSkills[PlayerSkillIndex[pid * HL + 4]])
 		set i = i + 1
 	endloop
 	call UnitRemoveAbility(PUA,'A2M0')
@@ -86773,8 +86773,8 @@ function ZJA takes nothing returns nothing
 	local timer t = CreateTimer()
 	set t = null
 endfunction
-function ZKA takes unit u, integer TME returns nothing
-	local player p = Player(TME)
+function ZKA takes unit u, integer pid returns nothing
+	local player p = Player(pid)
 	call UnitAddAbility(u,'A141')
 	if LocalPlayer== p then
 		call ClearSelection()
@@ -86783,9 +86783,9 @@ function ZKA takes unit u, integer TME returns nothing
 	else
 		call SetUnitVertexColor(u, 255, 255, 255, 25)
 	endif
-	set Circle[TME]= u
-	set VHV[TME]= GetUnitX(u)
-	set VJV[TME]= GetUnitY(u)
+	set Circle[pid]= u
+	set VHV[pid]= GetUnitX(u)
+	set VJV[pid]= GetUnitY(u)
 endfunction
 function ZLA takes nothing returns nothing
 	local integer h = GetHandleId(GetExpiredTimer())
@@ -91195,7 +91195,7 @@ function CreateCreepsRectIndicator takes rect r, boolean high returns nothing
 	set CreepsRectIndicatorCount = CreepsRectIndicatorCount + 1
 endfunction
 
-function PreloadCreeps takes nothing returns nothing
+function PreloadNeutralCreeps takes nothing returns nothing
 	call RemoveUnit(CreateUnit(CreepsPlayer,'u001', GetRectCenterX(gg_rct_ScourgeAncientCenter), GetRectCenterY(gg_rct_ScourgeAncientCenter), 0))
 	call RemoveUnit(CreateUnit(CreepsPlayer,'u001', GetRectCenterX(gg_rct_ScourgeAncientCenter), GetRectCenterY(gg_rct_ScourgeAncientCenter), 0))
 	call RemoveUnit(CreateUnit(CreepsPlayer,'u001', GetRectCenterX(gg_rct_SentinelAncientCenter), GetRectCenterY(gg_rct_SentinelAncientCenter), 0))
@@ -94635,9 +94635,9 @@ function main takes nothing returns nothing
 	call TriggerAddAction(CreepUpgerTrig, function CreepUpgerAction)
 
 	// 预读野怪感觉没几把用啊
-	set PreloadCreepsTrig = CreateTrigger()
-	call TriggerRegisterTimerEvent(PreloadCreepsTrig, 75, false)
-	call TriggerAddAction(PreloadCreepsTrig, function PreloadCreepsAction)
+	set PreloadNeutralCreepsTrig = CreateTrigger()
+	call TriggerRegisterTimerEvent(PreloadNeutralCreepsTrig, 75, false)
+	call TriggerAddAction(PreloadNeutralCreepsTrig, function PreloadNeutralCreepsAction)
 
 	set SpawnAllCreepsTrig = CreateTrigger()
 	call TriggerAddCondition(SpawnAllCreepsTrig, Condition(function SpawnAllNeutralCreepsAction))
@@ -94646,15 +94646,20 @@ function main takes nothing returns nothing
 	set SpawnSuperCreepsTrig = CreateTrigger()
 	call TriggerAddAction(SpawnSuperCreepsTrig, function SpawnSuperCreepsAction)
 
+	// 多面板相关
 	set TG = CreateTrigger()
 	call TriggerAddAction(TG, function JCO)
+
+	// 多面板更新
 	set QG = CreateTrigger()
 	call TriggerRegisterTimerEvent(QG, 1., true)
 	call TriggerAddAction(QG, function JHO)
+
+	//
 	set t = CreateTrigger()
 	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_DESELECTED)
 	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SELECTED)
-	call TriggerAddCondition(t, Condition(function LTO))
+	call TriggerAddCondition(t, Condition(function SelectedShopUnitAction))
 
 	set t = CreateTrigger()
 	call TriggerAddCondition(t, Condition(function AntiBackdoorAndStructuresDeathTrig))
