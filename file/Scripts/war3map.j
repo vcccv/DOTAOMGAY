@@ -181,7 +181,7 @@ globals
 	integer GlyphFrame = 0
 	//integer GlyphFrame_tip = 0
 	//integer GlyphFrame_tip_text = 0
-	multiboard BJ_Multiboard = null //按Tab键会打开的多面板
+	multiboard BJ_Multiboard = null //按Tab键会打开的多面板 哦憋异步handle了吓尿我了啊啊啊啊啊
 
 	integer CommandBarButtonIndex = - 1
 	integer FirstCommandBarButton
@@ -742,7 +742,7 @@ globals
 	boolean RT = false
 	boolean IT = false
 	boolean AT = false
-	multiboard BT = null
+	multiboard MainMultiboard = null
 	unit CT = null
 	boolean array FT
 	integer GT = 150
@@ -769,13 +769,13 @@ globals
 	boolean IsScourgeBotMeleeRaxAlive = true
 	integer SpawnMeleeCreepNumber  = 3
 	integer SpawnRangedCreepNumber = 1
-	location WU = null
-	location YU = null
+	location LeftTopRuneLocatio     = null
+	location RightBottomRuneLocatio = null
 	unit array Player__Hero
 	integer IM1 = 0
 	integer N1 = 0
-	player array VW
-	player array EW
+	player array SentinelUsers
+	player array ScourgeUsers
 
 	unit array OW
 	// 用于死亡竞赛 玩家的复活次数
@@ -1220,7 +1220,6 @@ globals
 	integer V6V = 0
 	integer array V7V
 	integer V8V = 0
-	string array V9V
 	unit EVV
 	unit EEV
 	unit EXV
@@ -1265,9 +1264,9 @@ globals
 	integer array XOV
 	integer array XRV
 	integer array XIV
-	string array XAV
+	string array ItemsIconFilePath
 	integer array XNV
-	integer XBV = 0
+	integer MaxItemsNumber = 0
 	integer XCV
 	integer XDV
 	integer XFV
@@ -1601,8 +1600,8 @@ globals
 	integer array D1V
 	integer array D2V
 	integer D3V = 0
-	integer D4V = 0
-	integer D5V = 0
+	integer SentinelUserCount = 0
+	integer ScourgeUserCount = 0
 	multiboard D6V
 	integer array D7V
 	integer array D8V
@@ -1644,8 +1643,9 @@ globals
 	weathereffect F8V
 	boolean array F9V
 	boolean array NeedHideHeroNames
-	boolean array GEV
-	boolean array GXV
+	// 配置选项
+	boolean array IsPlayersEnableItemInfo
+	boolean array IsPlayersEnableSkillInfo
 	boolean GOV = true
 	boolean array GRV
 	string array GIV
@@ -2732,7 +2732,7 @@ function USV takes unit u, integer UTV, real x, real y returns boolean
 	call SaveBoolean(K, GetHandleId(u),'ORDR', false)
 	return b
 endfunction
-function UUV takes item UWV returns integer
+function GetItemIndexEx takes item UWV returns integer
 	local integer UYV
 	local integer i = 1
 	if UWV == null then
@@ -2744,7 +2744,7 @@ function UUV takes item UWV returns integer
 			return i
 		endif
 		set i = i + 1
-	exitwhen i > XBV
+	exitwhen i > MaxItemsNumber
 	endloop
 	return -1
 endfunction
@@ -4173,7 +4173,7 @@ function GetItemIndex takes item it returns integer
 			return i
 		endif
 		set i = i + 1
-	exitwhen i > XBV
+	exitwhen i > MaxItemsNumber
 	endloop
 	return -1
 endfunction
@@ -5431,41 +5431,45 @@ function VMX takes nothing returns nothing
 		set i = i + 1
 	endloop
 endfunction
-function VTX takes multiboard mb, integer c, integer r, string s returns nothing
-	local multiboarditem VUX = null
-	set VUX = MultiboardGetItem(mb, r -1, c -1)
-	call MultiboardSetItemValue(VUX, s)
-	call MultiboardReleaseItem(VUX)
-	set VUX = null
+
+// 多面板项目操作
+function SetMultiboardItemText takes multiboard mb, integer c, integer r, string s returns nothing
+	local multiboarditem mbt = null
+	set mbt = MultiboardGetItem(mb, r -1, c -1)
+	call MultiboardSetItemValue(mbt, s)
+	call MultiboardReleaseItem(mbt)
+	set mbt = null
 endfunction
-function VWX takes multiboard mb, integer c, integer r, string s returns nothing
-	local multiboarditem VUX = null
-	set VUX = MultiboardGetItem(mb, r -1, c -1)
-	call MultiboardSetItemIcon(VUX, s)
-	call MultiboardReleaseItem(VUX)
-	set VUX = null
+// c = 列; r = 行
+function SetMultiboardItemIcon takes multiboard mb, integer c, integer r, string s returns nothing
+	local multiboarditem mbt = null
+	set mbt = MultiboardGetItem(mb, r -1, c -1)
+	call MultiboardSetItemIcon(mbt, s)
+	call MultiboardReleaseItem(mbt)
+	set mbt = null
 endfunction
-function VYX takes multiboard mb, integer c, integer r, boolean VZX, boolean V_X returns nothing
-	local multiboarditem VUX = null
-	set VUX = MultiboardGetItem(mb, r -1, c -1)
-	call MultiboardSetItemStyle(VUX, VZX, V_X)
-	call MultiboardReleaseItem(VUX)
-	set VUX = null
+function SetMultiboardItemStyle takes multiboard mb, integer c, integer r, boolean showValue, boolean showIcon returns nothing
+	local multiboarditem mbt = null
+	set mbt = MultiboardGetItem(mb, r -1, c -1)
+	call MultiboardSetItemStyle(mbt, showValue, showIcon)
+	call MultiboardReleaseItem(mbt)
+	set mbt = null
 endfunction
-function V0X takes multiboard mb, integer c, integer r, real V1X, real g, real b, real a returns nothing
-	local multiboarditem VUX = null
-	set VUX = MultiboardGetItem(mb, r -1, c -1)
-	call MultiboardSetItemValueColor(VUX, PercentTo255(V1X), PercentTo255(g), PercentTo255(b), PercentTo255(100. -a))
-	call MultiboardReleaseItem(VUX)
-	set VUX = null
+function SetMultiboardItemValueColor takes multiboard mb, integer c, integer r, real V1X, real g, real b, real a returns nothing
+	local multiboarditem mbt = null
+	set mbt = MultiboardGetItem(mb, r -1, c -1)
+	call MultiboardSetItemValueColor(mbt, PercentTo255(V1X), PercentTo255(g), PercentTo255(b), PercentTo255(100. -a))
+	call MultiboardReleaseItem(mbt)
+	set mbt = null
 endfunction
-function V2X takes multiboard mb, integer c, integer r, real w returns nothing
-	local multiboarditem VUX = null
-	set VUX = MultiboardGetItem(mb, r -1, c -1)
-	call MultiboardSetItemWidth(VUX, w /  100 )
-	call MultiboardReleaseItem(VUX)
-	set VUX = null
+function SetMultiboardItemWidth takes multiboard mb, integer c, integer r, real w returns nothing
+	local multiboarditem mbt = null
+	set mbt = MultiboardGetItem(mb, r -1, c -1)
+	call MultiboardSetItemWidth(mbt, w /  100 )
+	call MultiboardReleaseItem(mbt)
+	set mbt = null
 endfunction
+
 function V3X takes integer i returns destructable
 	if i > 16000 then
 		return LY[i  -16000]
@@ -5675,11 +5679,12 @@ function EKX takes integer i returns string
 	endif
 	return GetObjectName(VUV[i])
 endfunction
-function ELX takes unit u returns string
+
+function GetHeroIconFilePath takes unit u returns string
 	if u == null then
 		return "UI\\Widgets\\Console\\Undead\\undead-inventory-slotfiller.blp"
 	endif
-	return V9V[LoadInteger(HY, GetPlayerId(GetOwningPlayer(u)),'hHid')]
+	return HerosIconFilePath[LoadInteger(HY, GetPlayerId(GetOwningPlayer(u)),'hHid')]
 endfunction
 
 function EMX takes nothing returns boolean
@@ -5711,7 +5716,7 @@ function ESX takes nothing returns nothing
 	call DestroyTimer(t)
 	set t = null
 endfunction
-function EUX takes unit u, integer ETX, integer VZX, real SYV returns nothing
+function EUX takes unit u, integer ETX, integer i, real SYV returns nothing
 	local timer t
 	local integer h
 	local integer hu = GetHandleId(u)
@@ -5723,7 +5728,7 @@ function EUX takes unit u, integer ETX, integer VZX, real SYV returns nothing
 		set h = GetHandleId(t)
 		call SaveInteger(HY, h, 0, ETX)
 		call SaveInteger(HY, h, 1, hu)
-		call SaveInteger(HY, hu, ETX, VZX)
+		call SaveInteger(HY, hu, ETX, i)
 		call SaveTimerHandle(HY, hu, ETX, t)
 	endif
 	call TimerStart(t, SYV, false, function ESX)
@@ -9535,7 +9540,7 @@ function G1X takes player p, unit u, integer GTX, item G_X returns item
 	loop
 	exitwhen i > 5
 		set it = UnitItemInSlot(u, i)
-		if it != null and it != G_X and UUV(it) == GTX and(GetItemPlayer(it) == p or GTX == R2V or GTX == R3V) then
+		if it != null and it != G_X and GetItemIndexEx(it) == GTX and(GetItemPlayer(it) == p or GTX == R2V or GTX == R3V) then
 			set it = null
 			return UnitItemInSlot(u, i)
 		endif
@@ -9551,7 +9556,7 @@ function G2X takes player p, unit u, integer GTX returns item
 	loop
 	exitwhen i > 5
 		set it = UnitItemInSlot(u, i)
-		if (it != null) and UUV(it) == GTX and(GetItemPlayer(it) == p or GTX == R2V or GTX == R3V) then
+		if (it != null) and GetItemIndexEx(it) == GTX and(GetItemPlayer(it) == p or GTX == R2V or GTX == R3V) then
 			set it = null
 			return UnitItemInSlot(u, i)
 		endif
@@ -9853,7 +9858,7 @@ function HDX takes unit u, boolean G6X returns boolean
 	return b
 endfunction
 function HFX takes item it returns boolean
-	local integer i = UUV(it)
+	local integer i = GetItemIndexEx(it)
 	local integer id = GetItemTypeId(it)
 	if id == XOV[XCV]or id == XOV[XFV]or id == XOV[XDV] then
 		return true
@@ -9913,7 +9918,7 @@ function HMX takes item it, player p returns nothing
 	set u = null
 endfunction
 function HQX takes item UWV returns boolean
-	return UUV(UWV) == ASV or UUV(UWV) == ATV or UUV(UWV) == X4V or UUV(UWV) == X5V
+	return GetItemIndexEx(UWV) == ASV or GetItemIndexEx(UWV) == ATV or GetItemIndexEx(UWV) == X4V or GetItemIndexEx(UWV) == X5V
 endfunction
 function HSX takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
@@ -9982,7 +9987,7 @@ function H1X takes item UWV returns integer
 	endif
 	set UYV = GetItemTypeId(UWV)
 	loop
-	exitwhen i > XBV
+	exitwhen i > MaxItemsNumber
 		if XIV[i]== UYV then
 			return i
 		endif
@@ -9998,7 +10003,7 @@ function H2X takes item UWV returns integer
 	endif
 	set UYV = GetItemTypeId(UWV)
 	loop
-	exitwhen i > XBV
+	exitwhen i > MaxItemsNumber
 		if XIV[i]== UYV then
 			return XOV[i]
 		endif
@@ -10014,7 +10019,7 @@ function H3X takes unit U6E returns integer
 	endif
 	set H4X = GetUnitTypeId(U6E)
 	loop
-	exitwhen i > XBV
+	exitwhen i > MaxItemsNumber
 		if XRV[i]== H4X then
 			return i
 		endif
@@ -10022,11 +10027,11 @@ function H3X takes unit U6E returns integer
 	endloop
 	return -1
 endfunction
-function H5X takes item H6X returns string
-	if H6X == null then
+function GetItemIcon takes item it returns string
+	if it == null then
 		return "UI\\Widgets\\Console\\Undead\\undead-inventory-slotfiller.blp"
 	endif
-	return XAV[UUV(H6X)]
+	return ItemsIconFilePath[GetItemIndexEx(it)]
 endfunction
 function H7X takes integer GTX returns integer
 	if R0V == GTX then
@@ -10698,8 +10703,8 @@ function KZX takes nothing returns nothing
 	set VTV[GetPlayerId(ScourgePlayers[5])]= 4
 endfunction
 function K_X takes nothing returns nothing
-	local integer O3X
-	local integer K0X
+	local integer loop_i
+	local integer loop_max
 	local integer i
 	set PlayersColoerText[GetPlayerId(SentinelPlayers[0])]= "|c00ff0303"
 	set PlayersColoerText[GetPlayerId(SentinelPlayers[1])]= "|c000042ff"
@@ -10725,17 +10730,17 @@ function K_X takes nothing returns nothing
 	call SetPlayerColor(ScourgePlayers[3], PLAYER_COLOR_LIGHT_BLUE)
 	call SetPlayerColor(ScourgePlayers[4], PLAYER_COLOR_AQUA)
 	call SetPlayerColor(ScourgePlayers[5], PLAYER_COLOR_BROWN)
-	set O3X = 1
-	set K0X = 5
+	set loop_i = 1
+	set loop_max = 5
 	loop
-		if GetPlayerSlotState(SentinelPlayers[O3X]) == PLAYER_SLOT_STATE_EMPTY then
-			call SetPlayerName(SentinelPlayers[O3X], GetObjectName('n0DH')+ " " + I2S(O3X))
+		if GetPlayerSlotState(SentinelPlayers[loop_i]) == PLAYER_SLOT_STATE_EMPTY then
+			call SetPlayerName(SentinelPlayers[loop_i], GetObjectName('n0DH')+ " " + I2S(loop_i))
 		endif
-		if GetPlayerSlotState(ScourgePlayers[O3X]) == PLAYER_SLOT_STATE_EMPTY then
-			call SetPlayerName(ScourgePlayers[O3X], GetObjectName('n0DH')+ " " + I2S(5 + O3X))
+		if GetPlayerSlotState(ScourgePlayers[loop_i]) == PLAYER_SLOT_STATE_EMPTY then
+			call SetPlayerName(ScourgePlayers[loop_i], GetObjectName('n0DH')+ " " + I2S(5 + loop_i))
 		endif
-		set O3X = O3X + 1
-	exitwhen O3X > K0X
+		set loop_i = loop_i + 1
+	exitwhen loop_i > loop_max
 	endloop
 endfunction
 function K1X takes nothing returns nothing
@@ -10902,8 +10907,8 @@ endfunction
 function InitObserverPlayer takes nothing returns nothing	//OB是否存在 MW来判断
 	local integer LOX
 	local integer LRX
-	local integer O3X
-	local integer K0X
+	local integer loop_i
+	local integer loop_max
 	local integer x = 0
 	local integer y = 0
 	local integer i
@@ -11020,19 +11025,19 @@ function InitObserverPlayer takes nothing returns nothing	//OB是否存在 MW来
 	call K_X()
 	set LRX = XMX(RW)
 	set LOX = XMX(IW)
-	set O3X = 1
-	set K0X = 5
+	set loop_i = 1
+	set loop_max = 5
 	loop
-	exitwhen O3X > K0X
-		if (IsPlayingPlayer(SentinelPlayers[O3X])) then
-			call SetPlayerState(SentinelPlayers[O3X], PLAYER_STATE_RESOURCE_GOLD,(4375 / LRX))
-			call SetPlayerState(SentinelPlayers[O3X], PLAYER_STATE_RESOURCE_LUMBER, 0)
+	exitwhen loop_i > loop_max
+		if (IsPlayingPlayer(SentinelPlayers[loop_i])) then
+			call SetPlayerState(SentinelPlayers[loop_i], PLAYER_STATE_RESOURCE_GOLD,(4375 / LRX))
+			call SetPlayerState(SentinelPlayers[loop_i], PLAYER_STATE_RESOURCE_LUMBER, 0)
 		endif
-		if (IsPlayingPlayer(ScourgePlayers[O3X])) then
-			call SetPlayerState(ScourgePlayers[O3X], PLAYER_STATE_RESOURCE_GOLD,(4375 / LOX))
-			call SetPlayerState(ScourgePlayers[O3X], PLAYER_STATE_RESOURCE_LUMBER, 0)
+		if (IsPlayingPlayer(ScourgePlayers[loop_i])) then
+			call SetPlayerState(ScourgePlayers[loop_i], PLAYER_STATE_RESOURCE_GOLD,(4375 / LOX))
+			call SetPlayerState(ScourgePlayers[loop_i], PLAYER_STATE_RESOURCE_LUMBER, 0)
 		endif
-		set O3X = O3X + 1
+		set loop_i = loop_i + 1
 	endloop
 	call SetPlayerHandicapXP(SentinelPlayers[1], 1)
 	call SetPlayerHandicapXP(SentinelPlayers[2], 1)
@@ -11125,7 +11130,7 @@ function LWX takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local player LYX =(LoadPlayerHandle(HY, h, 78))
-	local integer O3X = 1
+	local integer loop_i = 1
 	local integer LZX
 	local integer L_X = GetPlayerState(LYX, PLAYER_STATE_RESOURCE_GOLD)
 	if F0V[GetPlayerId(LYX)]== false and YS then
@@ -11147,19 +11152,19 @@ function LWX takes nothing returns boolean
 		endif
 		if IsSentinelPlayer(LYX) then
 			loop
-			exitwhen O3X > 5
-				if IsPlayingPlayer(SentinelPlayers[O3X]) then
-					call SetPlayerState(SentinelPlayers[O3X], PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(SentinelPlayers[O3X], PLAYER_STATE_RESOURCE_GOLD)+ L_X / LZX)
+			exitwhen loop_i > 5
+				if IsPlayingPlayer(SentinelPlayers[loop_i]) then
+					call SetPlayerState(SentinelPlayers[loop_i], PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(SentinelPlayers[loop_i], PLAYER_STATE_RESOURCE_GOLD)+ L_X / LZX)
 				endif
-				set O3X = O3X + 1
+				set loop_i = loop_i + 1
 			endloop
 		else
 			loop
-			exitwhen O3X > 5
-				if IsPlayingPlayer(ScourgePlayers[O3X]) then
-					call SetPlayerState(ScourgePlayers[O3X], PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(ScourgePlayers[O3X], PLAYER_STATE_RESOURCE_GOLD)+ L_X / LZX)
+			exitwhen loop_i > 5
+				if IsPlayingPlayer(ScourgePlayers[loop_i]) then
+					call SetPlayerState(ScourgePlayers[loop_i], PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(ScourgePlayers[loop_i], PLAYER_STATE_RESOURCE_GOLD)+ L_X / LZX)
 				endif
-				set O3X = O3X + 1
+				set loop_i = loop_i + 1
 			endloop
 		endif
 	endif
@@ -11175,18 +11180,18 @@ function L0X takes player LYX returns nothing
 	set t = null
 endfunction
 function L1X takes player p returns nothing
-	local multiboarditem VUX = MultiboardGetItem(BT, D2V[GetPlayerId(p)], D1V[GetPlayerId(p)])
-	call MultiboardSetItemValue(VUX, "|c00333333" +(PlayersName[GetPlayerId((p))])+ "|r")
-	call MultiboardReleaseItem(VUX)
-	set VUX = null
+	local multiboarditem mbt = MultiboardGetItem(MainMultiboard, D2V[GetPlayerId(p)], D1V[GetPlayerId(p)])
+	call MultiboardSetItemValue(mbt, "|c00333333" +(PlayersName[GetPlayerId((p))])+ "|r")
+	call MultiboardReleaseItem(mbt)
+	set mbt = null
 endfunction
 
 // 退出游戏
 function L2X takes nothing returns nothing
 	local integer LRX = XKX(RW)
 	local integer LOX = XKX(IW)
-	local integer O3X
-	local integer K0X
+	local integer loop_i
+	local integer loop_max
 	local string KGX
 	local string L3X
 	local unit hPlayerHeroUnit = Player__Hero[GetPlayerId(GetTriggerPlayer())]
@@ -11205,28 +11210,28 @@ function L2X takes nothing returns nothing
 		call YYE(GetPlayerId(GetTriggerPlayer()), true)
 		call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, 25., PlayersColoerText[GetPlayerId(GetTriggerPlayer())]+(PlayersName[GetPlayerId((GetTriggerPlayer()))])+ " (" + L3X + ")|r|c00ff0303 " + GetObjectName('n02D')+ "|r")
 		if (IsSentinelPlayer(GetTriggerPlayer())) then
-			set O3X = 1
-			set K0X = 5
+			set loop_i = 1
+			set loop_max = 5
 			loop
-			exitwhen O3X > K0X
-				if (SentinelPlayers[O3X]!= GetTriggerPlayer()) then
-					if (IsPlayingPlayer(SentinelPlayers[O3X])) then
-						call SetPlayerAllianceStateBJ(GetTriggerPlayer(), SentinelPlayers[O3X], 4)
+			exitwhen loop_i > loop_max
+				if (SentinelPlayers[loop_i]!= GetTriggerPlayer()) then
+					if (IsPlayingPlayer(SentinelPlayers[loop_i])) then
+						call SetPlayerAllianceStateBJ(GetTriggerPlayer(), SentinelPlayers[loop_i], 4)
 					endif
 				endif
-				set O3X = O3X + 1
+				set loop_i = loop_i + 1
 			endloop
 		else
-			set O3X = 1
-			set K0X = 5
+			set loop_i = 1
+			set loop_max = 5
 			loop
-			exitwhen O3X > K0X
-				if (ScourgePlayers[O3X]!= GetTriggerPlayer()) then
-					if (IsPlayingPlayer(ScourgePlayers[O3X])) then
-						call SetPlayerAllianceStateBJ(GetTriggerPlayer(), ScourgePlayers[O3X], 4)
+			exitwhen loop_i > loop_max
+				if (ScourgePlayers[loop_i]!= GetTriggerPlayer()) then
+					if (IsPlayingPlayer(ScourgePlayers[loop_i])) then
+						call SetPlayerAllianceStateBJ(GetTriggerPlayer(), ScourgePlayers[loop_i], 4)
 					endif
 				endif
-				set O3X = O3X + 1
+				set loop_i = loop_i + 1
 			endloop
 		endif
 		if IsSentinelPlayer(GetTriggerPlayer()) or IsScourgePlayer(GetTriggerPlayer()) then
@@ -11815,26 +11820,26 @@ function QAX takes nothing returns nothing
 	local integer TQV = 0
 	local string s = ""
 	local real QNX = .12
-	if D4V != 0 then
+	if SentinelUserCount != 0 then
 		set i = 4 + RP
 		set d = 1
 		loop
 			set mi = MultiboardGetItem(JP, d, i)
-			call MultiboardSetItemValue(mi, TM + PlayersColoerText[GetPlayerId(VW[d])]+ PlayersName[GetPlayerId(VW[d])]+ "|r")
+			call MultiboardSetItemValue(mi, TM + PlayersColoerText[GetPlayerId(SentinelUsers[d])]+ PlayersName[GetPlayerId(SentinelUsers[d])]+ "|r")
 			call MultiboardReleaseItem(mi)
 			set d = d + 1
-		exitwhen d == D4V + 1
+		exitwhen d == SentinelUserCount + 1
 		endloop
 	endif
-	if D5V != 0 then
+	if ScourgeUserCount != 0 then
 		set i = 4 + RP
-		set d = 2 + D4V
+		set d = 2 + SentinelUserCount
 		loop
 			set mi = MultiboardGetItem(JP, d, i)
-			call MultiboardSetItemValue(mi, TM + PlayersColoerText[GetPlayerId(EW[d -1 -D4V])]+ PlayersName[GetPlayerId(EW[d -1 -D4V])]+ "|r")
+			call MultiboardSetItemValue(mi, TM + PlayersColoerText[GetPlayerId(ScourgeUsers[d -1 -SentinelUserCount])]+ PlayersName[GetPlayerId(ScourgeUsers[d -1 -SentinelUserCount])]+ "|r")
 			set d = d + 1
 			call MultiboardReleaseItem(mi)
-		exitwhen d == D4V + D5V + 2
+		exitwhen d == SentinelUserCount + ScourgeUserCount + 2
 		endloop
 	endif
 	set mi = null
@@ -11849,10 +11854,10 @@ function QBX takes nothing returns nothing
 	set JP = CreateMultiboard()
 	set BJ_Multiboard = JP
 	if LOD_DEBUGMODE then
-		set D4V = 5
-		set D5V = 5
+		set SentinelUserCount = 5
+		set ScourgeUserCount = 5
 	endif
-	call MultiboardSetRowCount(JP, 2 + D4V + D5V)
+	call MultiboardSetRowCount(JP, 2 + SentinelUserCount + ScourgeUserCount)
 	call MultiboardSetColumnCount(JP, 5 + RP)
 	call MultiboardSetItemsWidth(JP, .015)
 	call MultiboardSetTitleText(JP, "-" + StringCase(EP, true))
@@ -11870,7 +11875,7 @@ function QBX takes nothing returns nothing
 	endloop
 	set i = 0
 	loop
-		set mi = MultiboardGetItem(JP, 1 + D4V, i)
+		set mi = MultiboardGetItem(JP, 1 + SentinelUserCount, i)
 		call MultiboardSetItemStyle(mi, true, false)
 		if i == 0 then
 			call MultiboardSetItemWidth(mi, QNX)
@@ -11880,7 +11885,7 @@ function QBX takes nothing returns nothing
 		set i = i + 1
 	exitwhen i == MultiboardGetColumnCount(JP)
 	endloop
-	if D4V != 0 then
+	if SentinelUserCount != 0 then
 		set i = 0
 		set d = 1
 		loop
@@ -11888,7 +11893,7 @@ function QBX takes nothing returns nothing
 			if i ==(4 + RP) then
 				call MultiboardSetItemStyle(mi, true, false)
 				call MultiboardSetItemWidth(mi, QNX)
-				call MultiboardSetItemValue(mi, TM + PlayersColoerText[GetPlayerId((VW[d]))]+ PlayersName[GetPlayerId((VW[d]))]+ "|r")
+				call MultiboardSetItemValue(mi, TM + PlayersColoerText[GetPlayerId((SentinelUsers[d]))]+ PlayersName[GetPlayerId((SentinelUsers[d]))]+ "|r")
 			else
 				call MultiboardSetItemStyle(mi, false, true)
 				call MultiboardSetItemIcon(mi, HeroSkillsIcon[0])
@@ -11899,18 +11904,18 @@ function QBX takes nothing returns nothing
 				set i = 0
 			endif
 			call MultiboardReleaseItem(mi)
-		exitwhen d == D4V + 1
+		exitwhen d == SentinelUserCount + 1
 		endloop
 	endif
-	if D5V != 0 then
+	if ScourgeUserCount != 0 then
 		set i = 0
-		set d = 2 + D4V
+		set d = 2 + SentinelUserCount
 		loop
 			set mi = MultiboardGetItem(JP, d, i)
 			if i == 4 + RP then
 				call MultiboardSetItemStyle(mi, true, false)
 				call MultiboardSetItemWidth(mi, QNX)
-				call MultiboardSetItemValue(mi, TM + PlayersColoerText[GetPlayerId((EW[d -1 -D4V]))]+ PlayersName[GetPlayerId((EW[d -1 -D4V]))]+ "|r")
+				call MultiboardSetItemValue(mi, TM + PlayersColoerText[GetPlayerId((ScourgeUsers[d -1 -SentinelUserCount]))]+ PlayersName[GetPlayerId((ScourgeUsers[d -1 -SentinelUserCount]))]+ "|r")
 			else
 				call MultiboardSetItemStyle(mi, false, true)
 				call MultiboardSetItemIcon(mi, HeroSkillsIcon[0])
@@ -11921,7 +11926,7 @@ function QBX takes nothing returns nothing
 				set i = 0
 			endif
 			call MultiboardReleaseItem(mi)
-		exitwhen d == D4V + D5V + 2
+		exitwhen d == SentinelUserCount + ScourgeUserCount + 2
 		endloop
 	endif
 	call MultiboardMinimize(JP, false)
@@ -12134,7 +12139,7 @@ function PlayerPickHero takes unit u, integer playerId, unit QKX returns nothing
 	call SelectUnitAddForPlayer(KP[playerId],  whichPlayer )
 endfunction
 function QUX takes nothing returns nothing
-	call MultiboardDisplay(BT, false)
+	call MultiboardDisplay(MainMultiboard, false)
 	call QBX()
 	call SuspendTimeOfDay(true)
 	call DisableTrigger(hChooseHeroTrigger)
@@ -13241,7 +13246,7 @@ function T0X takes string TWX, integer T_X returns nothing
 	set t = null
 endfunction
 function T1X takes player T2X, integer T3X returns nothing
-	local integer O3X = 1
+	local integer loop_i = 1
 	local integer LZX
 	if IsSentinelPlayer(T2X) then
 		set LZX = XKX(RW)
@@ -13250,21 +13255,21 @@ function T1X takes player T2X, integer T3X returns nothing
 	endif
 	if IsSentinelPlayer(T2X) then
 		loop
-		exitwhen O3X > 5
-			if IsPlayingPlayer(SentinelPlayers[O3X]) then
-				set PlayersReliableGold[GetPlayerId(SentinelPlayers[O3X])]= PlayersReliableGold[GetPlayerId(SentinelPlayers[O3X])]+ T3X / LZX
-				call B8X(SentinelPlayers[O3X], T3X / LZX, Player__Hero[GetPlayerId(SentinelPlayers[O3X])])
+		exitwhen loop_i > 5
+			if IsPlayingPlayer(SentinelPlayers[loop_i]) then
+				set PlayersReliableGold[GetPlayerId(SentinelPlayers[loop_i])]= PlayersReliableGold[GetPlayerId(SentinelPlayers[loop_i])]+ T3X / LZX
+				call B8X(SentinelPlayers[loop_i], T3X / LZX, Player__Hero[GetPlayerId(SentinelPlayers[loop_i])])
 			endif
-			set O3X = O3X + 1
+			set loop_i = loop_i + 1
 		endloop
 	else
 		loop
-		exitwhen O3X > 5
-			if IsPlayingPlayer(ScourgePlayers[O3X]) then
-				set PlayersReliableGold[GetPlayerId(ScourgePlayers[O3X])]= PlayersReliableGold[GetPlayerId(ScourgePlayers[O3X])]+ T3X / LZX
-				call B8X(ScourgePlayers[O3X], T3X / LZX, Player__Hero[GetPlayerId(ScourgePlayers[O3X])])
+		exitwhen loop_i > 5
+			if IsPlayingPlayer(ScourgePlayers[loop_i]) then
+				set PlayersReliableGold[GetPlayerId(ScourgePlayers[loop_i])]= PlayersReliableGold[GetPlayerId(ScourgePlayers[loop_i])]+ T3X / LZX
+				call B8X(ScourgePlayers[loop_i], T3X / LZX, Player__Hero[GetPlayerId(ScourgePlayers[loop_i])])
 			endif
-			set O3X = O3X + 1
+			set loop_i = loop_i + 1
 		endloop
 	endif
 endfunction
@@ -14546,7 +14551,7 @@ function ZEX takes nothing returns nothing
 	if GetTriggerEventId()!= EVENT_GAME_TIMER_EXPIRED then
 		set id = GetIssuedOrderId()
 		if id >=852008 and id <= 852013 then
-			set id = UUV(UnitItemInSlot(GetTriggerUnit(), id -852008))
+			set id = GetItemIndexEx(UnitItemInSlot(GetTriggerUnit(), id -852008))
 			// and not( id == I9V or id == AVV or id == AEV or id == AXV or id == AOV or id == ARV ) 让信使能用BKB
 			if id != R_V and id != RYV and id != RPV and id != IVV then
 				call EXStopUnit(GetTriggerUnit())
@@ -14706,10 +14711,10 @@ function RuneRefresh__CallBack takes nothing returns boolean
 	local real x2
 	local real y2
 	local integer ZKX
-	set x1 = GetLocationX(WU)
-	set y1 = GetLocationY(WU)
-	set x2 = GetLocationX(YU)
-	set y2 = GetLocationY(YU)
+	set x1 = GetLocationX(LeftTopRuneLocatio)
+	set y1 = GetLocationY(LeftTopRuneLocatio)
+	set x2 = GetLocationX(RightBottomRuneLocatio)
+	set y2 = GetLocationY(RightBottomRuneLocatio)
 	set Z2 = null
 	call EnumItemsInRect(gg_rct_LeftTopRune, null, function ZCX)
 	set ZHX = true
@@ -14846,7 +14851,7 @@ function ZTX takes unit ZSX, unit trigUnit returns nothing
 	loop
 	exitwhen i > 5
 		set C1X = UnitItemInSlot(ZSX, i)
-		set GTX = UUV(C1X)
+		set GTX = GetItemIndexEx(C1X)
 		if C1X != null and GetItemPlayer(C1X) == p and(GTX != O3V and GTX != O4V and GTX != O5V and GTX != O6V and GTX != O7V) then
 			call UnitRemoveItem(ZSX, C1X)
 			call SetItemPosition(C1X, x, y)
@@ -14916,13 +14921,13 @@ function Z3X takes unit Y1X, unit KKX, boolean Z4X, integer Z5X returns nothing
 		set it = UnitItemInSlot(Y1X, i)
 		if it != null and(GetItemPlayer(it) == p or GetPlayerSlotState(GetItemPlayer(it)) == PLAYER_SLOT_STATE_LEFT) then
 			call SaveItemHandle(HY,'ITEM', k, it)
-			call SaveInteger(HY,'ITEM', k, UUV(it))
+			call SaveInteger(HY,'ITEM', k, GetItemIndexEx(it))
 			set k = k + 1
 		endif
 		set it = UnitItemInSlot(KKX, i)
 		if it != null and(GetItemPlayer(it) == p or GetPlayerSlotState(GetItemPlayer(it)) == PLAYER_SLOT_STATE_LEFT) then
 			call SaveItemHandle(HY,'ITEM', k, it)
-			call SaveInteger(HY,'ITEM', k, UUV(it))
+			call SaveInteger(HY,'ITEM', k, GetItemIndexEx(it))
 			set k = k + 1
 		endif
 		set i = i + 1
@@ -14986,7 +14991,7 @@ function Z3X takes unit Y1X, unit KKX, boolean Z4X, integer Z5X returns nothing
 					elseif CBV[k]== IWV then
 						call SaveInteger(HY,'ITEM', 300, 12)
 					elseif CBV[k]== Item_MagicWand then
-						if UUV(it) == Item_MagicStick then
+						if GetItemIndexEx(it) == Item_MagicStick then
 							call SaveInteger(HY,'ITEM', 300, GetItemCharges(it))
 						endif
 					endif
@@ -15164,7 +15169,7 @@ function VIO takes unit trigUnit returns nothing
 		loop
 		exitwhen i > 5
 			set C1X = UnitItemInSlot(WUE, i)
-			if GUX(UUV(C1X)) == false and UUV(C1X)!= AIV then
+			if GUX(GetItemIndexEx(C1X)) == false and GetItemIndexEx(C1X)!= AIV then
 				call UnitRemoveItemFromSlot(WUE, i)
 				if IsUnitInRegion(r, WUE) and IsPlayerAlly(GetItemPlayer(C1X), GetOwningPlayer(WUE)) then
 					set id = GetPlayerId(GetItemPlayer(C1X))
@@ -15285,7 +15290,7 @@ function VFO takes player whichPlayer, unit U6E, integer VGO, integer i0, intege
 	call SetItemPlayer(C1X, whichPlayer, true)
 	call SetItemUserData(C1X, 0)
 	call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Items\\AIem\\AIemTarget.mdl", U6E, "origin"))
-	if UUV(C1X) == NIV then
+	if GetItemIndexEx(C1X) == NIV then
 		call SetItemCharges(C1X, 8)
 	endif
 	call EnableTrigger(C3V)
@@ -15357,12 +15362,12 @@ function VHO takes player p, unit U6E, integer GTX returns boolean
 	set V8O = GetItemUserData(VWO)
 	set V9O = GetItemUserData(VYO)
 	set EVO = GetItemUserData(VZO)
-	set EEO = UUV(VSO)
-	set EXO = UUV(VTO)
-	set EOO = UUV(VUO)
-	set ERO = UUV(VWO)
-	set EIO = UUV(VYO)
-	set EAO = UUV(VZO)
+	set EEO = GetItemIndexEx(VSO)
+	set EXO = GetItemIndexEx(VTO)
+	set EOO = GetItemIndexEx(VUO)
+	set ERO = GetItemIndexEx(VWO)
+	set EIO = GetItemIndexEx(VYO)
+	set EAO = GetItemIndexEx(VZO)
 	if (GetPlayerSlotState((p)) == PLAYER_SLOT_STATE_LEFT) then
 		set VPO = 5
 		set ENO = true
@@ -15749,7 +15754,7 @@ function E4O takes unit u returns nothing
 	loop
 	exitwhen i > 5
 		set it = UnitItemInSlot(u, i)
-		if it != null and UUV(it)!= AIV then
+		if it != null and GetItemIndexEx(it)!= AIV then
 			set it = UnitRemoveItemFromSlot(u, i)
 			if b == false then
 				call DisplayTimedTextToPlayer(GetOwningPlayer(u), 0, 0, 8, "|c00ffff00" + GetItemName(it)+ "|r 已被放置在你的能量圈中")
@@ -15831,7 +15836,7 @@ function XEO takes unit u returns boolean
 	return IsUnitInRange(u, B2, 800) or IsUnitInRange(u, C2, 800)
 endfunction
 function XXO takes item it returns boolean
-	local integer id = UUV(it)
+	local integer id = GetItemIndexEx(it)
 	return id == OQV or id == OTV or id == XPV or id == XQV or id == XTV or id == XWV or id == X6V or id == X9V or id == OXV or id == ODV or id == OFV or id == OHV or id == OJV or id == OLV or id == OMV or id == Item_MagicStick or id == RVV or id == RXV or id == OWV or id == R4V or id == X2V or id == XMV or id == XKV or id == XZV or id == XYV or id == ONV
 endfunction
 function XOO takes unit KKX, integer XRO, player p returns nothing
@@ -15863,21 +15868,21 @@ function XOO takes unit KKX, integer XRO, player p returns nothing
 			set it = UnitItemInSlot(Y1X, i)
 			if it != null and GetItemPlayer(it) == p then
 				call SaveItemHandle(HY,'ITEM', k, it)
-				call SaveInteger(HY,'ITEM', k, UUV(it))
+				call SaveInteger(HY,'ITEM', k, GetItemIndexEx(it))
 				set k = k + 1
 			endif
 		endif
 		set it = UnitItemInSlot(KKX, i)
 		if it != null and GetItemPlayer(it) == p then
 			call SaveItemHandle(HY,'ITEM', k, it)
-			call SaveInteger(HY,'ITEM', k, UUV(it))
+			call SaveInteger(HY,'ITEM', k, GetItemIndexEx(it))
 			set k = k + 1
 		endif
 		if KKX != Player__Hero[GetPlayerId(p)] then
 			set it = UnitItemInSlot(Player__Hero[GetPlayerId(p)], i)
 			if it != null and GetItemPlayer(it) == p then
 				call SaveItemHandle(HY,'ITEM', k, it)
-				call SaveInteger(HY,'ITEM', k, UUV(it))
+				call SaveInteger(HY,'ITEM', k, GetItemIndexEx(it))
 				set k = k + 1
 			endif
 		endif
@@ -15896,7 +15901,7 @@ function XOO takes unit KKX, integer XRO, player p returns nothing
 	exitwhen i < 0
 		if HaveSavedHandle(VV,'ITEM', i) then
 			call SaveItemHandle(HY,'ITEM', k, LoadItemHandle(VV,'ITEM', i))
-			call SaveInteger(HY,'ITEM', k, UUV(LoadItemHandle(VV,'ITEM', i)))
+			call SaveInteger(HY,'ITEM', k, GetItemIndexEx(LoadItemHandle(VV,'ITEM', i)))
 			call RemoveSavedHandle(VV,'ITEM', i)
 			set k = k + 1
 		endif
@@ -16279,7 +16284,7 @@ endfunction
 function XLO takes unit trigUnit, item C1X returns boolean
 	local unit u = trigUnit
 	local integer H4X = GetUnitTypeId(u)
-	local integer GTX = UUV(C1X)
+	local integer GTX = GetItemIndexEx(C1X)
 	local real x
 	local real y
 	local integer i
@@ -16529,7 +16534,7 @@ function XZO takes nothing returns boolean
 					call SetItemCharges(HWX, HUX)
 				endif
 			endif
-		elseif L3 == false and X0O == false and GetItemType(C1X) == ITEM_TYPE_PERMANENT and p != X1O and XIV[UUV(C1X)]!= 0 and(GetPlayerSlotState(X1O) == PLAYER_SLOT_STATE_LEFT) == false then
+		elseif L3 == false and X0O == false and GetItemType(C1X) == ITEM_TYPE_PERMANENT and p != X1O and XIV[GetItemIndexEx(C1X)]!= 0 and(GetPlayerSlotState(X1O) == PLAYER_SLOT_STATE_LEFT) == false then
 			if HHX(GTX) then
 				set HTX = true
 			else
@@ -16757,13 +16762,13 @@ function OHO takes nothing returns nothing
 	set t = null
 endfunction
 function OKO takes item it returns boolean
-	return XOV[UUV(it)]== XOV[OFV]
+	return XOV[GetItemIndexEx(it)]== XOV[OFV]
 endfunction
 function OLO takes player p, item it returns nothing
 	local timer t
 	local integer goldBonus
 	local integer pid = GetPlayerId(p)
-	if XOV[UUV(it)]== LoadInteger(P,'ITEM', pid) and GetGameTime()-LoadReal(P,'ITEM', pid)< 10. and OKO(it) == false and HaveSavedHandle(VV,'ITEM', GetPlayerId(p)) == false then
+	if XOV[GetItemIndexEx(it)]== LoadInteger(P,'ITEM', pid) and GetGameTime()-LoadReal(P,'ITEM', pid)< 10. and OKO(it) == false and HaveSavedHandle(VV,'ITEM', GetPlayerId(p)) == false then
 		set t = CreateTimer()
 		set goldBonus = GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)
 		call TimerStart(t, 0, false, function OHO)
@@ -17044,7 +17049,7 @@ function OMO takes nothing returns boolean
 			call TriggerAddCondition(t, Condition(function XZO))
 			call SaveUnitHandle(HY, h, 26,(u))
 			call SaveInteger(HY, h, 97,(X_O))
-			call SaveInteger(HY, h, 93,(UUV(C1X)))
+			call SaveInteger(HY, h, 93,(GetItemIndexEx(C1X)))
 			call SaveItemHandle(HY, h, 0, C1X)
 			if H8X(C1X) then
 				call SaveBoolean(HY, h, 95,(true))
@@ -17277,7 +17282,7 @@ function RXO takes nothing returns boolean
 	local item RIO
 	local integer JNX
 	local integer id
-	local integer TZE = UUV(C1X)
+	local integer TZE = GetItemIndexEx(C1X)
 	if C1X != null and GUX(TZE) and GetHandleId(C1X) == RRO and UnitAlive(u) and UnitAlive(u) then
 		set id = GWX(TZE)
 		set JNX = B2X(u, C1X)
@@ -17418,7 +17423,7 @@ function RCO takes unit trigUnit, item C1X returns nothing
 	set it = null
 endfunction
 function RDO takes item C1X, unit WUE, boolean RFO returns nothing
-	local integer GTX = UUV(C1X)
+	local integer GTX = GetItemIndexEx(C1X)
 	local integer h = GetHandleId(WUE)
 	local string s = ""
 	// 宝石
@@ -17495,14 +17500,14 @@ function RJO takes nothing returns boolean
 		set whichItem = null
 		return false
 	endif
-	if UUV(whichItem)> 0 then
+	if GetItemIndexEx(whichItem)> 0 then
 		if (GetTriggerEventId() == EVENT_PLAYER_UNIT_DROP_ITEM and GetItemType(whichItem)!= ITEM_TYPE_PURCHASABLE) or GetTriggerEventId() == EVENT_PLAYER_UNIT_PAWN_ITEM then
 			call RDO(whichItem, whichUnit, false)
-			call StoreDrCacheData("DRI_" + I2S(GetPlayerId(GetOwningPlayer(whichUnit))), XOV[GSX(UUV(whichItem))])
+			call StoreDrCacheData("DRI_" + I2S(GetPlayerId(GetOwningPlayer(whichUnit))), XOV[GSX(GetItemIndexEx(whichItem))])
 			call RHO(whichUnit)
 		elseif GetTriggerEventId() == EVENT_PLAYER_UNIT_PICKUP_ITEM then
 			call RDO(whichItem, whichUnit, true)
-			call StoreDrCacheData("PUI_" + I2S(GetPlayerId(GetOwningPlayer(whichUnit))), XOV[GSX(UUV(whichItem))])
+			call StoreDrCacheData("PUI_" + I2S(GetPlayerId(GetOwningPlayer(whichUnit))), XOV[GSX(GetItemIndexEx(whichItem))])
 			call RHO(whichUnit)
 		endif
 	endif
@@ -17529,7 +17534,7 @@ function DisassembleItems takes nothing returns nothing
 	loop
 	exitwhen i > 5
 		set it = UnitItemInSlot(u, i)
-		set TZE = UUV(it)
+		set TZE = GetItemIndexEx(it)
 		set p = GetItemPlayer(it)
 		if TZE == IEV then
 			call RemoveItem(it)
@@ -17842,7 +17847,7 @@ function G6E takes nothing returns nothing
 	loop
 	exitwhen i > 5
 		set C1X = UnitItemInSlot(u, i)
-		if GUX(UUV(C1X)) == false and UUV(C1X)!= AIV then
+		if GUX(GetItemIndexEx(C1X)) == false and GetItemIndexEx(C1X)!= AIV then
 			call UnitRemoveItemFromSlot(u, i)
 			if (GetUnitTypeId(u)=='ncop' or IsUnitInRegion(r, u)) and IsPlayerAlly(GetItemPlayer(C1X), GetOwningPlayer(u)) then
 				set id = GetPlayerId(GetItemPlayer(C1X))
@@ -18696,7 +18701,7 @@ endfunction
 function AKO takes nothing returns nothing
 	local unit u = GetTriggerUnit()
 	local item C1X = GetManipulatedItem()
-	local integer GTX = UUV(C1X)
+	local integer GTX = GetItemIndexEx(C1X)
 	local unit ALO
 	local integer AMO
 	local integer JNX
@@ -18781,7 +18786,7 @@ function AQO takes nothing returns boolean
 			if ZNX(GetItemTypeId(GetOrderTargetItem())) then
 				call EXStopUnit(GetTriggerUnit())
 				call InterfaceErrorForPlayer(GetOwningPlayer(GetTriggerUnit()), GetObjectName('n0LU'))
-			elseif UUV(GetOrderTargetItem()) == ASV or UUV(GetOrderTargetItem()) == ATV then
+			elseif GetItemIndexEx(GetOrderTargetItem()) == ASV or GetItemIndexEx(GetOrderTargetItem()) == ATV then
 				call EXStopUnit(GetTriggerUnit())
 				call InterfaceErrorForPlayer(GetOwningPlayer(GetTriggerUnit()), "信使不能拾取圣剑")
 			endif
@@ -19358,32 +19363,32 @@ function A1O takes nothing returns boolean
 	set p4 = GetItemPlayer(A8O)
 	set p5 = GetItemPlayer(A9O)
 	set C1X = A4O
-	set i = UUV(C1X)
+	set i = GetItemIndexEx(C1X)
 	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(i) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(i)) then
 		set NAO = GetItemCharges(C1X)
 	endif
 	set C1X = A5O
-	set i = UUV(C1X)
+	set i = GetItemIndexEx(C1X)
 	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(i) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(i)) then
 		set NNO = GetItemCharges(C1X)
 	endif
 	set C1X = A6O
-	set i = UUV(C1X)
+	set i = GetItemIndexEx(C1X)
 	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(i) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(i)) then
 		set NBO = GetItemCharges(C1X)
 	endif
 	set C1X = A7O
-	set i = UUV(C1X)
+	set i = GetItemIndexEx(C1X)
 	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(i) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(i)) then
 		set NCO = GetItemCharges(C1X)
 	endif
 	set C1X = A8O
-	set i = UUV(C1X)
+	set i = GetItemIndexEx(C1X)
 	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(i) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(i)) then
 		set NDO = GetItemCharges(C1X)
 	endif
 	set C1X = A9O
-	set i = UUV(C1X)
+	set i = GetItemIndexEx(C1X)
 	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(i) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(i)) then
 		set NFO = GetItemCharges(C1X)
 	endif
@@ -19644,7 +19649,7 @@ function NJO takes unit A2O returns nothing
 	loop
 	exitwhen i > 5
 		set NKO = UnitItemInSlot(A2O, i)
-		if UUV(NKO) == X4V then
+		if GetItemIndexEx(NKO) == X4V then
 			call UnitRemoveItem(A2O, NKO)
 		endif
 		set i = i + 1
@@ -19668,27 +19673,27 @@ function NJO takes unit A2O returns nothing
 	set p4 = GetItemPlayer(A8O)
 	set p5 = GetItemPlayer(A9O)
 	set C1X = A4O
-	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(UUV(C1X)) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(UUV(C1X))) then
+	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(GetItemIndexEx(C1X)) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(GetItemIndexEx(C1X))) then
 		set NAO = GetItemCharges(C1X)
 	endif
 	set C1X = A5O
-	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(UUV(C1X)) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(UUV(C1X))) then
+	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(GetItemIndexEx(C1X)) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(GetItemIndexEx(C1X))) then
 		set NNO = GetItemCharges(C1X)
 	endif
 	set C1X = A6O
-	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(UUV(C1X)) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(UUV(C1X))) then
+	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(GetItemIndexEx(C1X)) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(GetItemIndexEx(C1X))) then
 		set NBO = GetItemCharges(C1X)
 	endif
 	set C1X = A7O
-	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(UUV(C1X)) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(UUV(C1X))) then
+	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(GetItemIndexEx(C1X)) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(GetItemIndexEx(C1X))) then
 		set NCO = GetItemCharges(C1X)
 	endif
 	set C1X = A8O
-	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(UUV(C1X)) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(UUV(C1X))) then
+	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(GetItemIndexEx(C1X)) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(GetItemIndexEx(C1X))) then
 		set NDO = GetItemCharges(C1X)
 	endif
 	set C1X = A9O
-	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(UUV(C1X)) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(UUV(C1X))) then
+	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(GetItemIndexEx(C1X)) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(GetItemIndexEx(C1X))) then
 		set NFO = GetItemCharges(C1X)
 	endif
 	call HZX(A4O)
@@ -23222,7 +23227,7 @@ function F9O takes nothing returns boolean
 		set bj_playerIsCrippled[0]= false
 	endif
 	if VE then
-		call XOO(GetTriggerUnit(), XIO(UUV(GetManipulatedItem()), true), GetItemPlayer(GetManipulatedItem()))
+		call XOO(GetTriggerUnit(), XIO(GetItemIndexEx(GetManipulatedItem()), true), GetItemPlayer(GetManipulatedItem()))
 		set VE = false
 	endif
 	call F0O(id)
@@ -24276,24 +24281,24 @@ function JIO takes nothing returns nothing
 	local string JNO
 	local string JBO
 	set D3V = D3V + 1
-	set D4V = 0
-	set D5V = 0
+	set SentinelUserCount = 0
+	set ScourgeUserCount = 0
 	set i = 0
 	loop
 	exitwhen i > 5
 		set p = SentinelPlayers[i]
 		if IsUserPlayer(p) then
-			set D4V = D4V + 1
+			set SentinelUserCount = SentinelUserCount + 1
 		endif
 		set p = ScourgePlayers[i]
 		if IsUserPlayer(p) then
-			set D5V = D5V + 1
+			set ScourgeUserCount = ScourgeUserCount + 1
 		endif
 		set i = i + 1
 	endloop
 	if YM == false then
-		set IM1 = D4V
-		set N1 = D5V
+		set IM1 = SentinelUserCount
+		set N1 = ScourgeUserCount
 	endif
 	set k = 1
 	set j = 5
@@ -24302,7 +24307,7 @@ function JIO takes nothing returns nothing
 	exitwhen k > j
 		set p = SentinelPlayers[k]
 		if IsUserPlayer(p) then
-			set VW[n]= p
+			set SentinelUsers[n]= p
 			set n = n + 1
 		endif
 		set k = k + 1
@@ -24314,58 +24319,58 @@ function JIO takes nothing returns nothing
 	exitwhen k > j
 		set p = ScourgePlayers[k]
 		if IsUserPlayer(p) then
-			set EW[n]= p
+			set ScourgeUsers[n]= p
 			set n = n + 1
 		endif
 		set k = k + 1
 	endloop
 	if D3V == 1 then
-		set BT = CreateMultiboardBJ(8 + 6, 3 + D5V + D4V, " ")
-		call MultiboardMinimize(BT, true)
+		set MainMultiboard = CreateMultiboardBJ(8 + 6, 3 + ScourgeUserCount + SentinelUserCount, " ")
+		call MultiboardMinimize(MainMultiboard, true)
 	endif
 	if RP >= 2 then
-		call VTX(BT, 2, 1, "CD1")
-		call VTX(BT, 3, 1, "CD2")
+		call SetMultiboardItemText(MainMultiboard, 2, 1, "CD1")
+		call SetMultiboardItemText(MainMultiboard, 3, 1, "CD2")
 	else
-		call VTX(BT, 2, 1, "CD")
-		call VTX(BT, 3, 1, " ")
+		call SetMultiboardItemText(MainMultiboard, 2, 1, "CD")
+		call SetMultiboardItemText(MainMultiboard, 3, 1, " ")
 	endif
-	call VTX(BT, 4, 1, "|c00838B8BL|r")
-	call VTX(BT, 5, 1, "|c00ff0303" + "K|r")
-	call VTX(BT, 6, 1, "|c000042ff" + "D|r")
-	call VTX(BT, 7, 1, "|c00646464" + "A|r")
-	call VTX(BT, 1, 2, GetObjectName('n0DK'))
-	call VTX(BT, 5, 2, "|c00ff0303" + "0|r")
-	call VTX(BT, 6, 2, "|c000042ff" + "0|r")
-	call VTX(BT, 1, 3 + D4V, GetObjectName('n0DO'))
-	call VTX(BT, 5, 3 + D4V, "|c00ff0303" + "0|r")
-	call VTX(BT, 6, 3 + D4V, "|c000042ff" + "0|r")
+	call SetMultiboardItemText(MainMultiboard, 4, 1, "|c00838B8BL|r")
+	call SetMultiboardItemText(MainMultiboard, 5, 1, "|c00ff0303" + "K|r")
+	call SetMultiboardItemText(MainMultiboard, 6, 1, "|c000042ff" + "D|r")
+	call SetMultiboardItemText(MainMultiboard, 7, 1, "|c00646464" + "A|r")
+	call SetMultiboardItemText(MainMultiboard, 1, 2, GetObjectName('n0DK'))
+	call SetMultiboardItemText(MainMultiboard, 5, 2, "|c00ff0303" + "0|r")
+	call SetMultiboardItemText(MainMultiboard, 6, 2, "|c000042ff" + "0|r")
+	call SetMultiboardItemText(MainMultiboard, 1, 3 + SentinelUserCount, GetObjectName('n0DO'))
+	call SetMultiboardItemText(MainMultiboard, 5, 3 + SentinelUserCount, "|c00ff0303" + "0|r")
+	call SetMultiboardItemText(MainMultiboard, 6, 3 + SentinelUserCount, "|c000042ff" + "0|r")
 	set pid = GetPlayerId(SentinelPlayers[0])
-	call V0X(BT, 1, 2, X6X(SubString(PlayersColoerText[pid], 4, 6))/ 255. * 100 , X6X(SubString(PlayersColoerText[pid], 6, 8))/ 255. * 100 , X6X(SubString(PlayersColoerText[pid], 8, 10))/ 255. * 100 , 0)
+	call SetMultiboardItemValueColor(MainMultiboard, 1, 2, X6X(SubString(PlayersColoerText[pid], 4, 6))/ 255. * 100 , X6X(SubString(PlayersColoerText[pid], 6, 8))/ 255. * 100 , X6X(SubString(PlayersColoerText[pid], 8, 10))/ 255. * 100 , 0)
 	set pid = GetPlayerId(ScourgePlayers[0])
-	call V0X(BT, 1, 3 + D4V, X6X(SubString(PlayersColoerText[pid], 4, 6))/ 255. * 100 , X6X(SubString(PlayersColoerText[pid], 6, 8))/ 255. * 100 , X6X(SubString(PlayersColoerText[pid], 8, 10))/ 255. * 100 , 0)
+	call SetMultiboardItemValueColor(MainMultiboard, 1, 3 + SentinelUserCount, X6X(SubString(PlayersColoerText[pid], 4, 6))/ 255. * 100 , X6X(SubString(PlayersColoerText[pid], 6, 8))/ 255. * 100 , X6X(SubString(PlayersColoerText[pid], 8, 10))/ 255. * 100 , 0)
 	set k = 1
-	set j = 3 + D5V + D4V
+	set j = 3 + ScourgeUserCount + SentinelUserCount
 	loop
 	exitwhen k > j
-		call V2X(BT, 1, k, 10.8)
-		call V2X(BT, 2, k, 2)
+		call SetMultiboardItemWidth(MainMultiboard, 1, k, 10.8)
+		call SetMultiboardItemWidth(MainMultiboard, 2, k, 2)
 		if RP >= 2 then
-			call V2X(BT, 3, k, 2)
+			call SetMultiboardItemWidth(MainMultiboard, 3, k, 2)
 		else
-			call V2X(BT, 3, k, .01)
+			call SetMultiboardItemWidth(MainMultiboard, 3, k, .01)
 		endif
-		call V2X(BT, 4, k, 2)
-		call V2X(BT, 5, k, 1.3)
-		call V2X(BT, 6, k, 1.3)
-		call V2X(BT, 7, k, 1.3)
-		call V2X(BT, 8, k, 2.5)
-		call V2X(BT, 9, k, .01)
-		call V2X(BT, 10, k, .01)
-		call V2X(BT, 11, k, .01)
-		call V2X(BT, 12, k, .01)
-		call V2X(BT, 13, k, .01)
-		call V2X(BT, 14, k, .01)
+		call SetMultiboardItemWidth(MainMultiboard, 4, k, 2)
+		call SetMultiboardItemWidth(MainMultiboard, 5, k, 1.3)
+		call SetMultiboardItemWidth(MainMultiboard, 6, k, 1.3)
+		call SetMultiboardItemWidth(MainMultiboard, 7, k, 1.3)
+		call SetMultiboardItemWidth(MainMultiboard, 8, k, 2.5)
+		call SetMultiboardItemWidth(MainMultiboard, 9, k, .01)
+		call SetMultiboardItemWidth(MainMultiboard, 10, k, .01)
+		call SetMultiboardItemWidth(MainMultiboard, 11, k, .01)
+		call SetMultiboardItemWidth(MainMultiboard, 12, k, .01)
+		call SetMultiboardItemWidth(MainMultiboard, 13, k, .01)
+		call SetMultiboardItemWidth(MainMultiboard, 14, k, .01)
 		set k = k + 1
 	endloop
 	set k = 1
@@ -24373,69 +24378,69 @@ function JIO takes nothing returns nothing
 	loop
 	exitwhen k > j
 		set n = 1
-		set m = 3 + D5V + D4V
+		set m = 3 + ScourgeUserCount + SentinelUserCount
 		loop
 		exitwhen n > m
-			call VYX(BT, k, n, true, false)
+			call SetMultiboardItemStyle(MainMultiboard, k, n, true, false)
 			set n = n + 1
 		endloop
 		set k = k + 1
 	endloop
 	set k = 1
-	set j = D4V
+	set j = SentinelUserCount
 	loop
 	exitwhen k > j
-		call VYX(BT, 1, k + 2, true, true)
-		call V0X(BT, 8, k + 2, 255, 204, 0, 0)
-		set pid = GetPlayerId(VW[k])
+		call SetMultiboardItemStyle(MainMultiboard, 1, k + 2, true, true)
+		call SetMultiboardItemValueColor(MainMultiboard, 8, k + 2, 255, 204, 0, 0)
+		set pid = GetPlayerId(SentinelUsers[k])
 		set D1V[pid]= 1 -1
 		set D2V[pid]= k + 2 -1
-		call VTX(BT, 1, k + 2,(PlayersName[pid]))
-		if IsPlayingPlayer(VW[k]) then
+		call SetMultiboardItemText(MainMultiboard, 1, k + 2,(PlayersName[pid]))
+		if IsPlayingPlayer(SentinelUsers[k]) then
 			set JAO = SubString(PlayersColoerText[pid], 4, 6)
 			set JNO = SubString(PlayersColoerText[pid], 6, 8)
 			set JBO = SubString(PlayersColoerText[pid], 8, 10)
-			call V0X(BT, 1, k + 2, X6X(JAO)/ 255. * 100 , X6X(JNO)/ 255. * 100 , X6X(JBO)/ 255. * 100 , 0)
-			call V0X(BT, 2, k + 2, X6X(JAO)/ 255. * 100 , X6X(JNO)/ 255. * 100 , X6X(JBO)/ 255. * 100 , 0)
-			call V0X(BT, 3, k + 2, X6X(JAO)/ 255. * 100 , X6X(JNO)/ 255. * 100 , X6X(JBO)/ 255. * 100 , 0)
+			call SetMultiboardItemValueColor(MainMultiboard, 1, k + 2, X6X(JAO)/ 255. * 100 , X6X(JNO)/ 255. * 100 , X6X(JBO)/ 255. * 100 , 0)
+			call SetMultiboardItemValueColor(MainMultiboard, 2, k + 2, X6X(JAO)/ 255. * 100 , X6X(JNO)/ 255. * 100 , X6X(JBO)/ 255. * 100 , 0)
+			call SetMultiboardItemValueColor(MainMultiboard, 3, k + 2, X6X(JAO)/ 255. * 100 , X6X(JNO)/ 255. * 100 , X6X(JBO)/ 255. * 100 , 0)
 		else
-			call VTX(BT, 1, k + 2, "|c00333333" +(PlayersName[pid])+ "|r")
+			call SetMultiboardItemText(MainMultiboard, 1, k + 2, "|c00333333" +(PlayersName[pid])+ "|r")
 		endif
-		call VTX(BT, 5, k + 2, "|c00ff0303" + "0|r")
-		call VTX(BT, 6, k + 2, "|c000042ff" + "0|r")
-		call VTX(BT, 7, k + 2, "|c00646464" + "0|r")
+		call SetMultiboardItemText(MainMultiboard, 5, k + 2, "|c00ff0303" + "0|r")
+		call SetMultiboardItemText(MainMultiboard, 6, k + 2, "|c000042ff" + "0|r")
+		call SetMultiboardItemText(MainMultiboard, 7, k + 2, "|c00646464" + "0|r")
 		set k = k + 1
 	endloop
 	set k = 1
-	set j = D5V
+	set j = ScourgeUserCount
 	loop
 	exitwhen k > j
-		call VYX(BT, 1, k + 3 + D4V, true, true)
-		call V0X(BT, 8, k + 3 + D4V, 255, 204, 0, 0)
-		set pid = GetPlayerId(EW[k])
+		call SetMultiboardItemStyle(MainMultiboard, 1, k + 3 + SentinelUserCount, true, true)
+		call SetMultiboardItemValueColor(MainMultiboard, 8, k + 3 + SentinelUserCount, 255, 204, 0, 0)
+		set pid = GetPlayerId(ScourgeUsers[k])
 		set D1V[pid]= 1 -1
-		set D2V[pid]= k + 3 + D4V -1
-		call VTX(BT, 1, k + 3 + D4V,(PlayersName[pid]))
-		if IsPlayingPlayer(EW[k]) then
+		set D2V[pid]= k + 3 + SentinelUserCount -1
+		call SetMultiboardItemText(MainMultiboard, 1, k + 3 + SentinelUserCount,(PlayersName[pid]))
+		if IsPlayingPlayer(ScourgeUsers[k]) then
 			set JAO = SubString(PlayersColoerText[pid], 4, 6)
 			set JNO = SubString(PlayersColoerText[pid], 6, 8)
 			set JBO = SubString(PlayersColoerText[pid], 8, 10)
-			call V0X(BT, 1, k + 3 + D4V, X6X(JAO)/ 255. * 100 , X6X(JNO)/ 255. * 100 , X6X(JBO)/ 255. * 100 , 0)
-			call V0X(BT, 2, k + 3 + D4V, X6X(JAO)/ 255. * 100 , X6X(JNO)/ 255. * 100 , X6X(JBO)/ 255. * 100 , 0)
-			call V0X(BT, 3, k + 3 + D4V, X6X(JAO)/ 255. * 100 , X6X(JNO)/ 255. * 100 , X6X(JBO)/ 255. * 100 , 0)
+			call SetMultiboardItemValueColor(MainMultiboard, 1, k + 3 + SentinelUserCount, X6X(JAO)/ 255. * 100 , X6X(JNO)/ 255. * 100 , X6X(JBO)/ 255. * 100 , 0)
+			call SetMultiboardItemValueColor(MainMultiboard, 2, k + 3 + SentinelUserCount, X6X(JAO)/ 255. * 100 , X6X(JNO)/ 255. * 100 , X6X(JBO)/ 255. * 100 , 0)
+			call SetMultiboardItemValueColor(MainMultiboard, 3, k + 3 + SentinelUserCount, X6X(JAO)/ 255. * 100 , X6X(JNO)/ 255. * 100 , X6X(JBO)/ 255. * 100 , 0)
 		else
-			call VTX(BT, 1, k + 3 + D4V, "|c00333333" +(PlayersName[pid])+ "|r")
+			call SetMultiboardItemText(MainMultiboard, 1, k + 3 + SentinelUserCount, "|c00333333" +(PlayersName[pid])+ "|r")
 		endif
-		call VTX(BT, 5, k + 3 + D4V, "|c00ff0303" + "0|r")
-		call VTX(BT, 6, k + 3 + D4V, "|c000042ff" + "0|r")
-		call VTX(BT, 7, k + 3 + D4V, "|c00646464" + "0|r")
+		call SetMultiboardItemText(MainMultiboard, 5, k + 3 + SentinelUserCount, "|c00ff0303" + "0|r")
+		call SetMultiboardItemText(MainMultiboard, 6, k + 3 + SentinelUserCount, "|c000042ff" + "0|r")
+		call SetMultiboardItemText(MainMultiboard, 7, k + 3 + SentinelUserCount, "|c00646464" + "0|r")
 		set k = k + 1
 	endloop
 	if IsGameHaveObserver and(LocalPlayer== ObserverPlayer1 or LocalPlayer== ObserverPlayer2) and D3V == 1 then
-		call MultiboardDisplay(BT, false)
+		call MultiboardDisplay(MainMultiboard, false)
 	endif
-	call VYX(BT, 8, 1, false, true)
-	call VWX(BT, 8, 1, "UI\\Feedback\\Resources\\ResourceGold.blp")
+	call SetMultiboardItemStyle(MainMultiboard, 8, 1, false, true)
+	call SetMultiboardItemIcon(MainMultiboard, 8, 1, "UI\\Feedback\\Resources\\ResourceGold.blp")
 	if D3V > 1 then
 		call TriggerExecute(TG)
 	endif
@@ -24444,26 +24449,26 @@ endfunction
 function JCO takes nothing returns nothing
 	local integer i
 	local integer k
-	call VTX(BT, 5, 2, "|c00ff0303" + I2S(PlayerKillHerosCount[GetPlayerId(SentinelPlayers[0])])+ "|r")
-	call VTX(BT, 6, 2, "|c000042ff" + I2S(PlayerHeroDeathCount[GetPlayerId(SentinelPlayers[0])])+ "|r")
-	call VTX(BT, 5, 3 + D4V, "|c00ff0303" + I2S(PlayerKillHerosCount[GetPlayerId(ScourgePlayers[0])])+ "|r")
-	call VTX(BT, 6, 3 + D4V, "|c000042ff" + I2S(PlayerHeroDeathCount[GetPlayerId(ScourgePlayers[0])])+ "|r")
+	call SetMultiboardItemText(MainMultiboard, 5, 2, "|c00ff0303" + I2S(PlayerKillHerosCount[GetPlayerId(SentinelPlayers[0])])+ "|r")
+	call SetMultiboardItemText(MainMultiboard, 6, 2, "|c000042ff" + I2S(PlayerHeroDeathCount[GetPlayerId(SentinelPlayers[0])])+ "|r")
+	call SetMultiboardItemText(MainMultiboard, 5, 3 + SentinelUserCount, "|c00ff0303" + I2S(PlayerKillHerosCount[GetPlayerId(ScourgePlayers[0])])+ "|r")
+	call SetMultiboardItemText(MainMultiboard, 6, 3 + SentinelUserCount, "|c000042ff" + I2S(PlayerHeroDeathCount[GetPlayerId(ScourgePlayers[0])])+ "|r")
 	set i = 1
-	set k = D4V
+	set k = SentinelUserCount
 	loop
 	exitwhen i > k
-		call VTX(BT, 5,(i + 2), "|c00ff0303" + I2S(PlayerKillHerosCount[GetPlayerId(VW[i])])+ "|r")
-		call VTX(BT, 6,(i + 2), "|c000042ff" + I2S(PlayerHeroDeathCount[GetPlayerId(VW[i])])+ "|r")
-		call VTX(BT, 7,(i + 2), "|c00646464" + I2S(PlayerAssistCount[GetPlayerId(VW[i])])+ "|r")
+		call SetMultiboardItemText(MainMultiboard, 5,(i + 2), "|c00ff0303" + I2S(PlayerKillHerosCount[GetPlayerId(SentinelUsers[i])])+ "|r")
+		call SetMultiboardItemText(MainMultiboard, 6,(i + 2), "|c000042ff" + I2S(PlayerHeroDeathCount[GetPlayerId(SentinelUsers[i])])+ "|r")
+		call SetMultiboardItemText(MainMultiboard, 7,(i + 2), "|c00646464" + I2S(PlayerAssistCount[GetPlayerId(SentinelUsers[i])])+ "|r")
 		set i = i + 1
 	endloop
 	set i = 1
-	set k = D5V
+	set k = ScourgeUserCount
 	loop
 	exitwhen i > k
-		call VTX(BT, 5,(i + 3 + D4V), "|c00ff0303" + I2S(PlayerKillHerosCount[GetPlayerId(EW[i])])+ "|r")
-		call VTX(BT, 6,(i + 3 + D4V), "|c000042ff" + I2S(PlayerHeroDeathCount[GetPlayerId(EW[i])])+ "|r")
-		call VTX(BT, 7,(i + 3 + D4V), "|c00646464" + I2S(PlayerAssistCount[GetPlayerId(EW[i])])+ "|r")
+		call SetMultiboardItemText(MainMultiboard, 5,(i + 3 + SentinelUserCount), "|c00ff0303" + I2S(PlayerKillHerosCount[GetPlayerId(ScourgeUsers[i])])+ "|r")
+		call SetMultiboardItemText(MainMultiboard, 6,(i + 3 + SentinelUserCount), "|c000042ff" + I2S(PlayerHeroDeathCount[GetPlayerId(ScourgeUsers[i])])+ "|r")
+		call SetMultiboardItemText(MainMultiboard, 7,(i + 3 + SentinelUserCount), "|c00646464" + I2S(PlayerAssistCount[GetPlayerId(ScourgeUsers[i])])+ "|r")
 		set i = i + 1
 	endloop
 endfunction
@@ -24480,16 +24485,16 @@ function JDO takes integer a returns integer
 	endloop
 	return x
 endfunction
-function JFO takes player p, integer k returns string
+function GetPlayerInfoIconBySlot takes player p, integer k returns string
 	if IsPlayerAlly(LocalPlayer, p) then
-		if GXV[GetPlayerId(LocalPlayer)] then
+		if IsPlayersEnableSkillInfo[GetPlayerId(LocalPlayer)] then
 			if k <= 4 + RP then
 				return HeroSkillsIcon[PlayerSkillIndex[GetPlayerId(p)* HL + k]]
 			else
 				return "UI\\Widgets\\Console\\Undead\\undead-inventory-slotfiller.blp"
 			endif
 		endif
-		return H5X(UnitItemInSlot(Player__Hero[GetPlayerId(p)], k -1))
+		return GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(p)], k -1))
 	else
 		return "UI\\Widgets\\Console\\Undead\\undead-inventory-slotfiller.blp"
 	endif
@@ -24530,8 +24535,8 @@ function GetLocalChargesText takes nothing returns string
 	return str
 endfunction
 function UpdateMainMultiboardAction takes nothing returns nothing
-	local integer O3X
-	local integer K0X
+	local integer loop_i
+	local integer loop_max
 	local string KGX
 	local real JJO
 	local string s1 = " "
@@ -24558,7 +24563,7 @@ function UpdateMainMultiboardAction takes nothing returns nothing
 	local real JTO
 	local real JUO
 	local string spacer
-	local integer JWO = 0
+	//local integer JWO = 0
 	local string sentinelsReviveText = ""
 	local string scourgesReviveText = ""
 	local integer sentinelsReviveCount = 0
@@ -24566,7 +24571,7 @@ function UpdateMainMultiboardAction takes nothing returns nothing
 	local string J1O = ""
 	local integer pid
 	local string chargesString = ""
-	if BT == null then
+	if MainMultiboard == null then
 		return
 	endif
 	set chargesString = GetLocalChargesText()
@@ -24576,7 +24581,7 @@ function UpdateMainMultiboardAction takes nothing returns nothing
 		set pid = GetPlayerId(SentinelPlayers[i])
 		set r = R2I(TimerGetRemaining(PS[pid]))
 		if r > 0 then // 剩余复活时间？ 标题上显示的复活剩余复活时间 根据英雄颜色
-			set JWO = JWO + JDO(r)
+			//set JWO = JWO + JDO(r)
 			if sentinelsReviveCount == 0 then
 				if r < 10 then
 					set sentinelsReviveText = PlayersColoerText[pid]+ "0" + I2S(r)+ " |r"
@@ -24607,7 +24612,7 @@ function UpdateMainMultiboardAction takes nothing returns nothing
 		set pid = GetPlayerId(ScourgePlayers[i])
 		set r = R2I(TimerGetRemaining(PS[pid]))
 		if r > 0 then
-			set JWO = JWO + JDO(r)
+			//set JWO = JWO + JDO(r)
 			if scourgesReviveCount == 0 then
 				if r < 10 then
 					set scourgesReviveText = PlayersColoerText[pid]+ "0" + I2S(r)+ " |r"
@@ -24632,7 +24637,7 @@ function UpdateMainMultiboardAction takes nothing returns nothing
 			set scourgesReviveText = "|c00ff0303" + "[" + GetObjectName('n0JR')+ " |r" + scourgesReviveText + "|c00ff0303" + "]|r"
 		endif
 	endif
-	if BT != null then
+	if MainMultiboard != null then
 		// 本地战绩
 		set id = GetPlayerId(LocalPlayer)
 		if id >= 0 and id < 16 then
@@ -24647,122 +24652,122 @@ function UpdateMainMultiboardAction takes nothing returns nothing
 		endif
 	endif
 	if scourgesReviveCount == 0 and sentinelsReviveCount == 0 then
-		call MultiboardSetTitleText(BT, chargesString + s2)
+		call MultiboardSetTitleText(MainMultiboard, chargesString + s2)
 	else
 		if IsPlayerAlly(LocalPlayer, SentinelPlayers[0]) then
-			call MultiboardSetTitleText(BT, chargesString + scourgesReviveText + " " + sentinelsReviveText + " " + s2)
+			call MultiboardSetTitleText(MainMultiboard, chargesString + scourgesReviveText + " " + sentinelsReviveText + " " + s2)
 		else
-			call MultiboardSetTitleText(BT, chargesString + sentinelsReviveText + " " + scourgesReviveText + " " + s2)
+			call MultiboardSetTitleText(MainMultiboard, chargesString + sentinelsReviveText + " " + scourgesReviveText + " " + s2)
 		endif
 	endif
 	if not IsPickingHero then
 		if (IsGameHaveObserver and(LocalPlayer== ObserverPlayer1 or LocalPlayer== ObserverPlayer2)) == false then
-			call MultiboardDisplay(BT, true)
+			call MultiboardDisplay(MainMultiboard, true)
 		endif
 	endif
 	// 什么天才 在多面板刷新动作中刷新水的颜色？
 	if GBV[GetPlayerId(LocalPlayer)]== false then
 		call SetWaterBaseColor(0, 0, 255, 255)
 	endif
-	set O3X = 1
-	set K0X = D4V
+	set loop_i = 1
+	set loop_max = SentinelUserCount
 	loop
-	exitwhen O3X > K0X
-		set pid = GetPlayerId(VW[O3X])
-		call VWX(BT, 1, O3X + 2, ELX(Player__Hero[pid]))
-		call VTX(BT, 4, O3X + 2, "|c00838B8B" + I2S(GetHeroLevel(Player__Hero[pid]))+ "|r")
-		if GEV[GetPlayerId(LocalPlayer)] then
-			call V2X(BT, 8, 1, 3)
-			call V2X(BT, 9, 1, 2.8)
-			call V2X(BT, 10, 1, .8)
-			call V2X(BT, 11, 1, .8)
-			call V2X(BT, 12, 1, .8)
-			call V2X(BT, 13, 1, .8)
-			call V2X(BT, 14, 1, .1)
-			call V2X(BT, 8, O3X + 2, 3)
-			call V2X(BT, 9, O3X + 2, 1.1)
-			call V2X(BT, 10, O3X + 2, 1.1)
-			call V2X(BT, 11, O3X + 2, 1.1)
-			call V2X(BT, 12, O3X + 2, 1.1)
-			call V2X(BT, 13, O3X + 2, 1.1)
-			call V2X(BT, 14, O3X + 2, .1)
-			call VYX(BT, 9, O3X + 2, false, true)
-			call VYX(BT, 10, O3X + 2, false, true)
-			call VYX(BT, 11, O3X + 2, false, true)
-			call VYX(BT, 12, O3X + 2, false, true)
-			call VYX(BT, 13, O3X + 2, false, true)
-			call VYX(BT, 14, O3X + 2, false, true)
-			call VTX(BT, 9, 1, "物品")
-		elseif GXV[GetPlayerId(LocalPlayer)] then
-			call V2X(BT, 8, 1, 3)
-			call V2X(BT, 9, 1, 2.8)
-			call V2X(BT, 10, 1, .8)
-			call V2X(BT, 11, 1, .8)
-			call V2X(BT, 12, 1, .8)
-			call V2X(BT, 13, 1, .8)
-			call V2X(BT, 14, 1, .1)
-			call V2X(BT, 8, O3X + 2, 3)
-			call V2X(BT, 9, O3X + 2, 1.1)
-			call V2X(BT, 10, O3X + 2, 1.1)
-			call V2X(BT, 11, O3X + 2, 1.1)
+	exitwhen loop_i > loop_max
+		set pid = GetPlayerId(SentinelUsers[loop_i])
+		call SetMultiboardItemIcon(MainMultiboard, 1, loop_i + 2, GetHeroIconFilePath(Player__Hero[pid])) // 刷新头像？
+		call SetMultiboardItemText(MainMultiboard, 4, loop_i + 2, "|c00838B8B" + I2S(GetHeroLevel(Player__Hero[pid]))+ "|r") // 英雄等级
+		if IsPlayersEnableItemInfo[GetPlayerId(LocalPlayer)] then // -ii? loop_i + 2 = 自己
+			call SetMultiboardItemWidth(MainMultiboard, 8, 1, 3)
+			call SetMultiboardItemWidth(MainMultiboard, 9, 1, 2.8)
+			call SetMultiboardItemWidth(MainMultiboard, 10, 1, .8)
+			call SetMultiboardItemWidth(MainMultiboard, 11, 1, .8)
+			call SetMultiboardItemWidth(MainMultiboard, 12, 1, .8)
+			call SetMultiboardItemWidth(MainMultiboard, 13, 1, .8)
+			call SetMultiboardItemWidth(MainMultiboard, 14, 1, .1)
+			call SetMultiboardItemWidth(MainMultiboard, 8, loop_i + 2, 3)
+			call SetMultiboardItemWidth(MainMultiboard, 9, loop_i + 2, 1.1)
+			call SetMultiboardItemWidth(MainMultiboard, 10, loop_i + 2, 1.1)
+			call SetMultiboardItemWidth(MainMultiboard, 11, loop_i + 2, 1.1)
+			call SetMultiboardItemWidth(MainMultiboard, 12, loop_i + 2, 1.1)
+			call SetMultiboardItemWidth(MainMultiboard, 13, loop_i + 2, 1.1)
+			call SetMultiboardItemWidth(MainMultiboard, 14, loop_i + 2, .1)
+			call SetMultiboardItemStyle(MainMultiboard, 9, loop_i + 2, false, true)
+			call SetMultiboardItemStyle(MainMultiboard, 10, loop_i + 2, false, true)
+			call SetMultiboardItemStyle(MainMultiboard, 11, loop_i + 2, false, true)
+			call SetMultiboardItemStyle(MainMultiboard, 12, loop_i + 2, false, true)
+			call SetMultiboardItemStyle(MainMultiboard, 13, loop_i + 2, false, true)
+			call SetMultiboardItemStyle(MainMultiboard, 14, loop_i + 2, false, true)
+			call SetMultiboardItemText(MainMultiboard, 9, 1, "物品")
+		elseif IsPlayersEnableSkillInfo[GetPlayerId(LocalPlayer)] then // -si
+			call SetMultiboardItemWidth(MainMultiboard, 8, 1, 3)
+			call SetMultiboardItemWidth(MainMultiboard, 9, 1, 2.8)
+			call SetMultiboardItemWidth(MainMultiboard, 10, 1, .8)
+			call SetMultiboardItemWidth(MainMultiboard, 11, 1, .8)
+			call SetMultiboardItemWidth(MainMultiboard, 12, 1, .8)
+			call SetMultiboardItemWidth(MainMultiboard, 13, 1, .8)
+			call SetMultiboardItemWidth(MainMultiboard, 14, 1, .1)
+			call SetMultiboardItemWidth(MainMultiboard, 8, loop_i + 2, 3)
+			call SetMultiboardItemWidth(MainMultiboard, 9, loop_i + 2, 1.1)
+			call SetMultiboardItemWidth(MainMultiboard, 10, loop_i + 2, 1.1)
+			call SetMultiboardItemWidth(MainMultiboard, 11, loop_i + 2, 1.1)
 			if RP >= 1 then
-				call V2X(BT, 12, O3X + 2, 1.1)
+				call SetMultiboardItemWidth(MainMultiboard, 12, loop_i + 2, 1.1)
 			else
-				call V2X(BT, 12, O3X + 2, .1)
+				call SetMultiboardItemWidth(MainMultiboard, 12, loop_i + 2, .1)
 			endif
 			if RP >= 2 then
-				call V2X(BT, 13, O3X + 2, 1.1)
+				call SetMultiboardItemWidth(MainMultiboard, 13, loop_i + 2, 1.1)
 			else
-				call V2X(BT, 13, O3X + 2, .1)
+				call SetMultiboardItemWidth(MainMultiboard, 13, loop_i + 2, .1)
 			endif
-			call V2X(BT, 14, O3X + 2, .1)
-			call VYX(BT, 9, O3X + 2, false, true)
-			call VYX(BT, 10, O3X + 2, false, true)
-			call VYX(BT, 11, O3X + 2, false, true)
-			call VYX(BT, 12, O3X + 2, false, true)
+			call SetMultiboardItemWidth(MainMultiboard, 14, loop_i + 2, .1)
+			call SetMultiboardItemStyle(MainMultiboard, 9, loop_i + 2, false, true)
+			call SetMultiboardItemStyle(MainMultiboard, 10, loop_i + 2, false, true)
+			call SetMultiboardItemStyle(MainMultiboard, 11, loop_i + 2, false, true)
+			call SetMultiboardItemStyle(MainMultiboard, 12, loop_i + 2, false, true)
 			if RP >= 1 then
-				call VYX(BT, 13, O3X + 2, false, true)
+				call SetMultiboardItemStyle(MainMultiboard, 13, loop_i + 2, false, true)
 			else
-				call VYX(BT, 13, O3X + 2, false, false)
+				call SetMultiboardItemStyle(MainMultiboard, 13, loop_i + 2, false, false)
 			endif
 			if RP >= 2 then
-				call VYX(BT, 14, O3X + 2, false, true)
+				call SetMultiboardItemStyle(MainMultiboard, 14, loop_i + 2, false, true)
 			else
-				call VYX(BT, 14, O3X + 2, false, false)
+				call SetMultiboardItemStyle(MainMultiboard, 14, loop_i + 2, false, false)
 			endif
-			call VTX(BT, 9, 1, "技能")
+			call SetMultiboardItemText(MainMultiboard, 9, 1, "技能")
 		else
-			call V2X(BT, 8, 1, 2)
-			call V2X(BT, 9, 1, .1)
-			call V2X(BT, 10, 1, .1)
-			call V2X(BT, 11, 1, .1)
-			call V2X(BT, 12, 1, .1)
-			call V2X(BT, 13, 1, .1)
-			call V2X(BT, 14, 1, .1)
-			call V2X(BT, 8, O3X + 2, 2.5)
-			call V2X(BT, 9, O3X + 2, .1)
-			call V2X(BT, 10, O3X + 2, .1)
-			call V2X(BT, 11, O3X + 2, .1)
-			call V2X(BT, 12, O3X + 2, .1)
-			call V2X(BT, 13, O3X + 2, .1)
-			call V2X(BT, 14, O3X + 2, .1)
-			call VYX(BT, 9, O3X + 2, false, false)
-			call VYX(BT, 10, O3X + 2, false, false)
-			call VYX(BT, 11, O3X + 2, false, false)
-			call VYX(BT, 12, O3X + 2, false, false)
-			call VYX(BT, 13, O3X + 2, false, false)
-			call VYX(BT, 14, O3X + 2, false, false)
-			call VTX(BT, 9, 1, " ")
+			call SetMultiboardItemWidth(MainMultiboard, 8, 1, 2)
+			call SetMultiboardItemWidth(MainMultiboard, 9, 1, .1)
+			call SetMultiboardItemWidth(MainMultiboard, 10, 1, .1)
+			call SetMultiboardItemWidth(MainMultiboard, 11, 1, .1)
+			call SetMultiboardItemWidth(MainMultiboard, 12, 1, .1)
+			call SetMultiboardItemWidth(MainMultiboard, 13, 1, .1)
+			call SetMultiboardItemWidth(MainMultiboard, 14, 1, .1)
+			call SetMultiboardItemWidth(MainMultiboard, 8, loop_i + 2, 2.5)
+			call SetMultiboardItemWidth(MainMultiboard, 9, loop_i + 2, .1)
+			call SetMultiboardItemWidth(MainMultiboard, 10, loop_i + 2, .1)
+			call SetMultiboardItemWidth(MainMultiboard, 11, loop_i + 2, .1)
+			call SetMultiboardItemWidth(MainMultiboard, 12, loop_i + 2, .1)
+			call SetMultiboardItemWidth(MainMultiboard, 13, loop_i + 2, .1)
+			call SetMultiboardItemWidth(MainMultiboard, 14, loop_i + 2, .1)
+			call SetMultiboardItemStyle(MainMultiboard, 9, loop_i + 2, false, false)
+			call SetMultiboardItemStyle(MainMultiboard, 10, loop_i + 2, false, false)
+			call SetMultiboardItemStyle(MainMultiboard, 11, loop_i + 2, false, false)
+			call SetMultiboardItemStyle(MainMultiboard, 12, loop_i + 2, false, false)
+			call SetMultiboardItemStyle(MainMultiboard, 13, loop_i + 2, false, false)
+			call SetMultiboardItemStyle(MainMultiboard, 14, loop_i + 2, false, false)
+			call SetMultiboardItemText(MainMultiboard, 9, 1, " ")
 		endif
-		call VWX(BT, 9, O3X + 2, JFO(VW[O3X], 1))
-		call VWX(BT, 10, O3X + 2, JFO(VW[O3X], 2))
-		call VWX(BT, 11, O3X + 2, JFO(VW[O3X], 3))
-		call VWX(BT, 12, O3X + 2, JFO(VW[O3X], 4))
-		call VWX(BT, 13, O3X + 2, JFO(VW[O3X], 5))
-		call VWX(BT, 14, O3X + 2, JFO(VW[O3X], 6))
-		set pid = GetPlayerId(VW[O3X])
+		call SetMultiboardItemIcon(MainMultiboard, 9, loop_i + 2, GetPlayerInfoIconBySlot(SentinelUsers[loop_i], 1))
+		call SetMultiboardItemIcon(MainMultiboard, 10, loop_i + 2, GetPlayerInfoIconBySlot(SentinelUsers[loop_i], 2))
+		call SetMultiboardItemIcon(MainMultiboard, 11, loop_i + 2, GetPlayerInfoIconBySlot(SentinelUsers[loop_i], 3))
+		call SetMultiboardItemIcon(MainMultiboard, 12, loop_i + 2, GetPlayerInfoIconBySlot(SentinelUsers[loop_i], 4))
+		call SetMultiboardItemIcon(MainMultiboard, 13, loop_i + 2, GetPlayerInfoIconBySlot(SentinelUsers[loop_i], 5))
+		call SetMultiboardItemIcon(MainMultiboard, 14, loop_i + 2, GetPlayerInfoIconBySlot(SentinelUsers[loop_i], 6))
+		set pid = GetPlayerId(SentinelUsers[loop_i])
 		if (E8X(Player__Hero[pid]) and Player__Hero[pid]!= null and TimerGetRemaining(PS[pid])> 0) then
-			if IsPlayerAlly(LocalPlayer, VW[O3X]) then
+			if IsPlayerAlly(LocalPlayer, SentinelUsers[loop_i]) then
 				set J1O = "|c00ffffff" + " (" + I2S(R2I(TimerGetRemaining(PS[pid])))+ ")|r"
 			else
 				set J1O = "|c00ff0303" + " (" + I2S(R2I(TimerGetRemaining(PS[pid])))+ ")|r"
@@ -24771,9 +24776,9 @@ function UpdateMainMultiboardAction takes nothing returns nothing
 			set J1O = "  "
 		endif
 		if EJV[pid] then
-			call VTX(BT, 1, O3X + 2, TM + "|c00333333" +(PlayersName[pid])+ "|r" + J1O)
+			call SetMultiboardItemText(MainMultiboard, 1, loop_i + 2, TM + "|c00333333" +(PlayersName[pid])+ "|r" + J1O)
 		else
-			call VTX(BT, 1, O3X + 2, TM +(PlayersName[pid])+ J1O)
+			call SetMultiboardItemText(MainMultiboard, 1, loop_i + 2, TM +(PlayersName[pid])+ J1O)
 		endif
 		set JTO =(TimerGetRemaining(ESV[pid]))
 		if JTO > 0 then
@@ -24787,116 +24792,116 @@ function UpdateMainMultiboardAction takes nothing returns nothing
 		else
 			set JSO = " "
 		endif
-		if IsPlayerEnemy(LocalPlayer, VW[O3X]) and GetUnitAbilityLevel(Player__Hero[GetPlayerId(VW[O3X])],'B00L') == 0 then
-			call VTX(BT, 8, O3X + 2, " ")
+		if IsPlayerEnemy(LocalPlayer, SentinelUsers[loop_i]) and GetUnitAbilityLevel(Player__Hero[GetPlayerId(SentinelUsers[loop_i])],'B00L') == 0 then
+			call SetMultiboardItemText(MainMultiboard, 8, loop_i + 2, " ")
 			set s = " "
 			set JSO = " "
 		else
-			call VTX(BT, 8, O3X + 2, "|cffffcc00" + I2S(R2I(GetPlayerState(VW[O3X], PLAYER_STATE_RESOURCE_GOLD)))+ "|r")
+			call SetMultiboardItemText(MainMultiboard, 8, loop_i + 2, "|cffffcc00" + I2S(R2I(GetPlayerState(SentinelUsers[loop_i], PLAYER_STATE_RESOURCE_GOLD)))+ "|r")
 		endif
-		call VTX(BT, 2, O3X + 2, s)
-		call VTX(BT, 3, O3X + 2, JSO)
-		set O3X = O3X + 1
+		call SetMultiboardItemText(MainMultiboard, 2, loop_i + 2, s)
+		call SetMultiboardItemText(MainMultiboard, 3, loop_i + 2, JSO)
+		set loop_i = loop_i + 1
 	endloop
-	set O3X = 1
-	set K0X = D5V
+	set loop_i = 1
+	set loop_max = ScourgeUserCount
 	loop
-	exitwhen O3X > K0X
-		set pid = GetPlayerId(EW[O3X])
-		call VWX(BT, 1, O3X + 3 + D4V, ELX(Player__Hero[pid]))
-		call VTX(BT, 4, O3X + 3 + D4V, "|c00838B8B" + I2S(GetHeroLevel(Player__Hero[pid]))+ "|r")
-		if GEV[GetPlayerId(LocalPlayer)] then
-			call V2X(BT, 8, 1, 3)
-			call V2X(BT, 9, 1, 2.8)
-			call V2X(BT, 10, 1, .8)
-			call V2X(BT, 11, 1, .8)
-			call V2X(BT, 12, 1, .8)
-			call V2X(BT, 13, 1, .8)
-			call V2X(BT, 14, 1, .1)
-			call V2X(BT, 8, O3X + 3 + D4V, 3)
-			call V2X(BT, 9, O3X + 3 + D4V, 1.1)
-			call V2X(BT, 10, O3X + 3 + D4V, 1.1)
-			call V2X(BT, 11, O3X + 3 + D4V, 1.1)
-			call V2X(BT, 12, O3X + 3 + D4V, 1.1)
-			call V2X(BT, 13, O3X + 3 + D4V, 1.1)
-			call V2X(BT, 14, O3X + 3 + D4V, .1)
-			call VYX(BT, 9, O3X + 3 + D4V, false, true)
-			call VYX(BT, 10, O3X + 3 + D4V, false, true)
-			call VYX(BT, 11, O3X + 3 + D4V, false, true)
-			call VYX(BT, 12, O3X + 3 + D4V, false, true)
-			call VYX(BT, 13, O3X + 3 + D4V, false, true)
-			call VYX(BT, 14, O3X + 3 + D4V, false, true)
-			call VTX(BT, 9, 1, "Items")
-		elseif GXV[GetPlayerId(LocalPlayer)] then
-			call V2X(BT, 8, 1, 3)
-			call V2X(BT, 9, 1, 2.8)
-			call V2X(BT, 10, 1, .8)
-			call V2X(BT, 11, 1, .8)
-			call V2X(BT, 12, 1, .8)
-			call V2X(BT, 13, 1, .8)
-			call V2X(BT, 14, 1, .1)
-			call V2X(BT, 8, O3X + 3 + D4V, 3)
-			call V2X(BT, 9, O3X + 3 + D4V, 1.1)
-			call V2X(BT, 10, O3X + 3 + D4V, 1.1)
-			call V2X(BT, 11, O3X + 3 + D4V, 1.1)
+	exitwhen loop_i > loop_max
+		set pid = GetPlayerId(ScourgeUsers[loop_i])
+		call SetMultiboardItemIcon(MainMultiboard, 1, loop_i + 3 + SentinelUserCount, GetHeroIconFilePath(Player__Hero[pid]))
+		call SetMultiboardItemText(MainMultiboard, 4, loop_i + 3 + SentinelUserCount, "|c00838B8B" + I2S(GetHeroLevel(Player__Hero[pid]))+ "|r")
+		if IsPlayersEnableItemInfo[GetPlayerId(LocalPlayer)] then
+			call SetMultiboardItemWidth(MainMultiboard, 8, 1, 3)
+			call SetMultiboardItemWidth(MainMultiboard, 9, 1, 2.8)
+			call SetMultiboardItemWidth(MainMultiboard, 10, 1, .8)
+			call SetMultiboardItemWidth(MainMultiboard, 11, 1, .8)
+			call SetMultiboardItemWidth(MainMultiboard, 12, 1, .8)
+			call SetMultiboardItemWidth(MainMultiboard, 13, 1, .8)
+			call SetMultiboardItemWidth(MainMultiboard, 14, 1, .1)
+			call SetMultiboardItemWidth(MainMultiboard, 8, loop_i + 3 + SentinelUserCount, 3)
+			call SetMultiboardItemWidth(MainMultiboard, 9, loop_i + 3 + SentinelUserCount, 1.1)
+			call SetMultiboardItemWidth(MainMultiboard, 10, loop_i + 3 + SentinelUserCount, 1.1)
+			call SetMultiboardItemWidth(MainMultiboard, 11, loop_i + 3 + SentinelUserCount, 1.1)
+			call SetMultiboardItemWidth(MainMultiboard, 12, loop_i + 3 + SentinelUserCount, 1.1)
+			call SetMultiboardItemWidth(MainMultiboard, 13, loop_i + 3 + SentinelUserCount, 1.1)
+			call SetMultiboardItemWidth(MainMultiboard, 14, loop_i + 3 + SentinelUserCount, .1)
+			call SetMultiboardItemStyle(MainMultiboard, 9, loop_i + 3 + SentinelUserCount, false, true)
+			call SetMultiboardItemStyle(MainMultiboard, 10, loop_i + 3 + SentinelUserCount, false, true)
+			call SetMultiboardItemStyle(MainMultiboard, 11, loop_i + 3 + SentinelUserCount, false, true)
+			call SetMultiboardItemStyle(MainMultiboard, 12, loop_i + 3 + SentinelUserCount, false, true)
+			call SetMultiboardItemStyle(MainMultiboard, 13, loop_i + 3 + SentinelUserCount, false, true)
+			call SetMultiboardItemStyle(MainMultiboard, 14, loop_i + 3 + SentinelUserCount, false, true)
+			call SetMultiboardItemText(MainMultiboard, 9, 1, "Items")
+		elseif IsPlayersEnableSkillInfo[GetPlayerId(LocalPlayer)] then
+			call SetMultiboardItemWidth(MainMultiboard, 8, 1, 3)
+			call SetMultiboardItemWidth(MainMultiboard, 9, 1, 2.8)
+			call SetMultiboardItemWidth(MainMultiboard, 10, 1, .8)
+			call SetMultiboardItemWidth(MainMultiboard, 11, 1, .8)
+			call SetMultiboardItemWidth(MainMultiboard, 12, 1, .8)
+			call SetMultiboardItemWidth(MainMultiboard, 13, 1, .8)
+			call SetMultiboardItemWidth(MainMultiboard, 14, 1, .1)
+			call SetMultiboardItemWidth(MainMultiboard, 8, loop_i + 3 + SentinelUserCount, 3)
+			call SetMultiboardItemWidth(MainMultiboard, 9, loop_i + 3 + SentinelUserCount, 1.1)
+			call SetMultiboardItemWidth(MainMultiboard, 10, loop_i + 3 + SentinelUserCount, 1.1)
+			call SetMultiboardItemWidth(MainMultiboard, 11, loop_i + 3 + SentinelUserCount, 1.1)
 			if RP >= 1 then
-				call V2X(BT, 12, O3X + 3 + D4V, 1.1)
+				call SetMultiboardItemWidth(MainMultiboard, 12, loop_i + 3 + SentinelUserCount, 1.1)
 			else
-				call V2X(BT, 12, O3X + 3 + D4V, .1)
+				call SetMultiboardItemWidth(MainMultiboard, 12, loop_i + 3 + SentinelUserCount, .1)
 			endif
 			if RP >= 2 then
-				call V2X(BT, 13, O3X + 3 + D4V, 1.1)
+				call SetMultiboardItemWidth(MainMultiboard, 13, loop_i + 3 + SentinelUserCount, 1.1)
 			else
-				call V2X(BT, 13, O3X + 3 + D4V, .1)
+				call SetMultiboardItemWidth(MainMultiboard, 13, loop_i + 3 + SentinelUserCount, .1)
 			endif
-			call V2X(BT, 14, O3X + 3 + D4V, .1)
-			call VYX(BT, 9, O3X + 3 + D4V, false, true)
-			call VYX(BT, 10, O3X + 3 + D4V, false, true)
-			call VYX(BT, 11, O3X + 3 + D4V, false, true)
-			call VYX(BT, 12, O3X + 3 + D4V, false, true)
+			call SetMultiboardItemWidth(MainMultiboard, 14, loop_i + 3 + SentinelUserCount, .1)
+			call SetMultiboardItemStyle(MainMultiboard, 9, loop_i + 3 + SentinelUserCount, false, true)
+			call SetMultiboardItemStyle(MainMultiboard, 10, loop_i + 3 + SentinelUserCount, false, true)
+			call SetMultiboardItemStyle(MainMultiboard, 11, loop_i + 3 + SentinelUserCount, false, true)
+			call SetMultiboardItemStyle(MainMultiboard, 12, loop_i + 3 + SentinelUserCount, false, true)
 			if RP >= 1 then
-				call VYX(BT, 13, O3X + 3 + D4V, false, true)
+				call SetMultiboardItemStyle(MainMultiboard, 13, loop_i + 3 + SentinelUserCount, false, true)
 			else
-				call VYX(BT, 13, O3X + 3 + D4V, false, false)
+				call SetMultiboardItemStyle(MainMultiboard, 13, loop_i + 3 + SentinelUserCount, false, false)
 			endif
 			if RP >= 2 then
-				call VYX(BT, 14, O3X + 3 + D4V, false, true)
+				call SetMultiboardItemStyle(MainMultiboard, 14, loop_i + 3 + SentinelUserCount, false, true)
 			else
-				call VYX(BT, 14, O3X + 3 + D4V, false, false)
+				call SetMultiboardItemStyle(MainMultiboard, 14, loop_i + 3 + SentinelUserCount, false, false)
 			endif
-			call VTX(BT, 9, 1, "技能")
+			call SetMultiboardItemText(MainMultiboard, 9, 1, "技能")
 		else
-			call V2X(BT, 8, 1, 2)
-			call V2X(BT, 9, 1, .1)
-			call V2X(BT, 10, 1, .1)
-			call V2X(BT, 11, 1, .1)
-			call V2X(BT, 12, 1, .1)
-			call V2X(BT, 13, 1, .1)
-			call V2X(BT, 14, 1, .1)
-			call V2X(BT, 8, O3X + 3 + D4V, 2.5)
-			call V2X(BT, 9, O3X + 3 + D4V, .1)
-			call V2X(BT, 10, O3X + 3 + D4V, .1)
-			call V2X(BT, 11, O3X + 3 + D4V, .1)
-			call V2X(BT, 12, O3X + 3 + D4V, .1)
-			call V2X(BT, 13, O3X + 3 + D4V, .1)
-			call V2X(BT, 14, O3X + 3 + D4V, .1)
-			call VYX(BT, 9, O3X + 3 + D4V, false, false)
-			call VYX(BT, 10, O3X + 3 + D4V, false, false)
-			call VYX(BT, 11, O3X + 3 + D4V, false, false)
-			call VYX(BT, 12, O3X + 3 + D4V, false, false)
-			call VYX(BT, 13, O3X + 3 + D4V, false, false)
-			call VYX(BT, 14, O3X + 3 + D4V, false, false)
-			call VTX(BT, 9, 1, " ")
+			call SetMultiboardItemWidth(MainMultiboard, 8, 1, 2)
+			call SetMultiboardItemWidth(MainMultiboard, 9, 1, .1)
+			call SetMultiboardItemWidth(MainMultiboard, 10, 1, .1)
+			call SetMultiboardItemWidth(MainMultiboard, 11, 1, .1)
+			call SetMultiboardItemWidth(MainMultiboard, 12, 1, .1)
+			call SetMultiboardItemWidth(MainMultiboard, 13, 1, .1)
+			call SetMultiboardItemWidth(MainMultiboard, 14, 1, .1)
+			call SetMultiboardItemWidth(MainMultiboard, 8, loop_i + 3 + SentinelUserCount, 2.5)
+			call SetMultiboardItemWidth(MainMultiboard, 9, loop_i + 3 + SentinelUserCount, .1)
+			call SetMultiboardItemWidth(MainMultiboard, 10, loop_i + 3 + SentinelUserCount, .1)
+			call SetMultiboardItemWidth(MainMultiboard, 11, loop_i + 3 + SentinelUserCount, .1)
+			call SetMultiboardItemWidth(MainMultiboard, 12, loop_i + 3 + SentinelUserCount, .1)
+			call SetMultiboardItemWidth(MainMultiboard, 13, loop_i + 3 + SentinelUserCount, .1)
+			call SetMultiboardItemWidth(MainMultiboard, 14, loop_i + 3 + SentinelUserCount, .1)
+			call SetMultiboardItemStyle(MainMultiboard, 9, loop_i + 3 + SentinelUserCount, false, false)
+			call SetMultiboardItemStyle(MainMultiboard, 10, loop_i + 3 + SentinelUserCount, false, false)
+			call SetMultiboardItemStyle(MainMultiboard, 11, loop_i + 3 + SentinelUserCount, false, false)
+			call SetMultiboardItemStyle(MainMultiboard, 12, loop_i + 3 + SentinelUserCount, false, false)
+			call SetMultiboardItemStyle(MainMultiboard, 13, loop_i + 3 + SentinelUserCount, false, false)
+			call SetMultiboardItemStyle(MainMultiboard, 14, loop_i + 3 + SentinelUserCount, false, false)
+			call SetMultiboardItemText(MainMultiboard, 9, 1, " ")
 		endif
-		call VWX(BT, 9, O3X + 3 + D4V, JFO(EW[O3X], 1))
-		call VWX(BT, 10, O3X + 3 + D4V, JFO(EW[O3X], 2))
-		call VWX(BT, 11, O3X + 3 + D4V, JFO(EW[O3X], 3))
-		call VWX(BT, 12, O3X + 3 + D4V, JFO(EW[O3X], 4))
-		call VWX(BT, 13, O3X + 3 + D4V, JFO(EW[O3X], 5))
-		call VWX(BT, 14, O3X + 3 + D4V, JFO(EW[O3X], 6))
-		set pid = GetPlayerId(EW[O3X])
+		call SetMultiboardItemIcon(MainMultiboard, 9, loop_i + 3 + SentinelUserCount, GetPlayerInfoIconBySlot(ScourgeUsers[loop_i], 1))
+		call SetMultiboardItemIcon(MainMultiboard, 10, loop_i + 3 + SentinelUserCount, GetPlayerInfoIconBySlot(ScourgeUsers[loop_i], 2))
+		call SetMultiboardItemIcon(MainMultiboard, 11, loop_i + 3 + SentinelUserCount, GetPlayerInfoIconBySlot(ScourgeUsers[loop_i], 3))
+		call SetMultiboardItemIcon(MainMultiboard, 12, loop_i + 3 + SentinelUserCount, GetPlayerInfoIconBySlot(ScourgeUsers[loop_i], 4))
+		call SetMultiboardItemIcon(MainMultiboard, 13, loop_i + 3 + SentinelUserCount, GetPlayerInfoIconBySlot(ScourgeUsers[loop_i], 5))
+		call SetMultiboardItemIcon(MainMultiboard, 14, loop_i + 3 + SentinelUserCount, GetPlayerInfoIconBySlot(ScourgeUsers[loop_i], 6))
+		set pid = GetPlayerId(ScourgeUsers[loop_i])
 		if (E8X(Player__Hero[pid]) and Player__Hero[pid]!= null and TimerGetRemaining(PS[pid])> 0) then
-			if IsPlayerAlly(LocalPlayer, EW[O3X]) then
+			if IsPlayerAlly(LocalPlayer, ScourgeUsers[loop_i]) then
 				set J1O = "|c00ffffff" + " (" + I2S(R2I(TimerGetRemaining(PS[pid])))+ ")|r"
 			else
 				set J1O = "|c00ff0303" + " (" + I2S(R2I(TimerGetRemaining(PS[pid])))+ ")|r"
@@ -24905,9 +24910,9 @@ function UpdateMainMultiboardAction takes nothing returns nothing
 			set J1O = "  "
 		endif
 		if EJV[pid] then
-			call VTX(BT, 1, O3X + 3 + D4V, TM + "|c00333333" +(PlayersName[pid])+ "|r" + J1O)
+			call SetMultiboardItemText(MainMultiboard, 1, loop_i + 3 + SentinelUserCount, TM + "|c00333333" +(PlayersName[pid])+ "|r" + J1O)
 		else
-			call VTX(BT, 1, O3X + 3 + D4V, TM +(PlayersName[pid])+ J1O)
+			call SetMultiboardItemText(MainMultiboard, 1, loop_i + 3 + SentinelUserCount, TM +(PlayersName[pid])+ J1O)
 		endif
 		set JTO = TimerGetRemaining(ESV[pid])
 		if JTO > 0 then
@@ -24921,16 +24926,16 @@ function UpdateMainMultiboardAction takes nothing returns nothing
 		else
 			set JSO = " "
 		endif
-		if IsPlayerEnemy(LocalPlayer, EW[O3X]) and GetUnitAbilityLevel(Player__Hero[GetPlayerId(EW[O3X])],'B00L') == 0 then
-			call VTX(BT, 8, O3X + 3 + D4V, " ")
+		if IsPlayerEnemy(LocalPlayer, ScourgeUsers[loop_i]) and GetUnitAbilityLevel(Player__Hero[GetPlayerId(ScourgeUsers[loop_i])],'B00L') == 0 then
+			call SetMultiboardItemText(MainMultiboard, 8, loop_i + 3 + SentinelUserCount, " ")
 			set s = " "
 			set JSO = " "
 		else
-			call VTX(BT, 8, O3X + 3 + D4V, "|cffffcc00" + I2S(R2I(GetPlayerState(EW[O3X], PLAYER_STATE_RESOURCE_GOLD)))+ "|r")
+			call SetMultiboardItemText(MainMultiboard, 8, loop_i + 3 + SentinelUserCount, "|cffffcc00" + I2S(R2I(GetPlayerState(ScourgeUsers[loop_i], PLAYER_STATE_RESOURCE_GOLD)))+ "|r")
 		endif
-		call VTX(BT, 2, O3X + 3 + D4V, s)
-		call VTX(BT, 3, O3X + 3 + D4V, JSO)
-		set O3X = O3X + 1
+		call SetMultiboardItemText(MainMultiboard, 2, loop_i + 3 + SentinelUserCount, s)
+		call SetMultiboardItemText(MainMultiboard, 3, loop_i + 3 + SentinelUserCount, JSO)
+		set loop_i = loop_i + 1
 	endloop
 endfunction
 function J2O takes player p returns string
@@ -24954,19 +24959,19 @@ function J6O takes player p returns string
 endfunction
 function L5X takes nothing returns nothing
 	local integer i = 1
-	local multiboarditem VUX
+	local multiboarditem mbt
 	loop
 	exitwhen i > FVV
 		if (BY[GetPlayerId((D9V[i]))])!= "Here"then
-			set VUX = MultiboardGetItem(D6V, D7V[i], D8V[i])
-			call MultiboardSetItemStyle(VUX, true, false)
-			call MultiboardSetItemValue(VUX, "|c00555555" +(BY[GetPlayerId((D9V[i]))])+ "|r")
-			call MultiboardSetItemWidth(VUX, .07)
-			call MultiboardReleaseItem(VUX)
+			set mbt = MultiboardGetItem(D6V, D7V[i], D8V[i])
+			call MultiboardSetItemStyle(mbt, true, false)
+			call MultiboardSetItemValue(mbt, "|c00555555" +(BY[GetPlayerId((D9V[i]))])+ "|r")
+			call MultiboardSetItemWidth(mbt, .07)
+			call MultiboardReleaseItem(mbt)
 		endif
 		set i = i + 1
 	endloop
-	set VUX = null
+	set mbt = null
 endfunction
 function J7O takes player p returns string
 	local string J4O = I2S(GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD))
@@ -25145,28 +25150,28 @@ function KMO takes player WUE, player WWE returns string
 	endif
 	return J5O
 endfunction
-function KPO takes multiboarditem VUX, boolean KQO, boolean KSO, string KTO, string KUO, real KWO returns nothing
-	call MultiboardSetItemStyle(VUX, KQO, KSO)
+function KPO takes multiboarditem mbt, boolean KQO, boolean KSO, string KTO, string KUO, real KWO returns nothing
+	call MultiboardSetItemStyle(mbt, KQO, KSO)
 	if KUO != null then
-		call MultiboardSetItemIcon(VUX, KUO)
+		call MultiboardSetItemIcon(mbt, KUO)
 	endif
 	if KTO != null then
-		call MultiboardSetItemValue(VUX, KTO)
+		call MultiboardSetItemValue(mbt, KTO)
 	endif
 	if KWO > 0 then
-		call MultiboardSetItemWidth(VUX, KWO)
+		call MultiboardSetItemWidth(mbt, KWO)
 	endif
 endfunction
 function KYO takes nothing returns nothing
-	local integer KZO = D4V
-	local integer K_O = D5V
+	local integer KZO = SentinelUserCount
+	local integer K_O = ScourgeUserCount
 	local player array K0O
 	local player array K1O
 	local integer K2O
 	local integer K3O
 	local integer K4O = 21 + IMaxBJ(KZO, K_O)+ 1
 	local integer K5O = 1 +(KZO + K_O)* 2
-	local multiboarditem VUX
+	local multiboarditem mbt
 	local integer i
 	local integer x
 	local string e = "|r"
@@ -25174,7 +25179,7 @@ function KYO takes nothing returns nothing
 	local integer K6O
 	local integer K7O
 	call DisableTrigger(UpdateMainMultiboardTrig)
-	call DestroyMultiboard(BT)
+	call DestroyMultiboard(MainMultiboard)
 	if KZO > 0 and K_O > 0 then
 		set K4O = K4O + 2
 	endif
@@ -25213,534 +25218,534 @@ function KYO takes nothing returns nothing
 	set K3O = 0
 	loop
 	exitwhen i > K4O
-		set VUX = MultiboardGetItem(D6V, i, K3O)
-		call MultiboardSetItemWidth(VUX, .075)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, i, K3O)
+		call MultiboardSetItemWidth(mbt, .075)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K2O = 0
 	set K3O = 0
-	set VUX = MultiboardGetItem(D6V, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, " ")
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(D6V, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, " ")
+	call MultiboardReleaseItem(mbt)
 	set K3O = 0
-	set VUX = MultiboardGetItem(D6V, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, false, false)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(D6V, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, false, false)
+	call MultiboardReleaseItem(mbt)
 	set K3O = 0
 	set i = 1
 	loop
 	exitwhen i > KZO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, true, false, J2O(K0O[i]), null, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, true, false, J2O(K0O[i]), null, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > K_O
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, true, false, J2O(K1O[i]), null, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, true, false, J2O(K1O[i]), null, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K2O = K2O + 1
 	set K3O = 0
-	set VUX = MultiboardGetItem(D6V, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, false, false)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(D6V, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, false, false)
+	call MultiboardReleaseItem(mbt)
 	set i = 1
 	loop
 	exitwhen i > KZO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, true, true, J9O(K0O[i]), ELX(Player__Hero[GetPlayerId(K0O[i])]), .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, true, true, J9O(K0O[i]), GetHeroIconFilePath(Player__Hero[GetPlayerId(K0O[i])]), .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > K_O
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, true, true, J9O(K1O[i]), ELX(Player__Hero[GetPlayerId(K1O[i])]), .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, true, true, J9O(K1O[i]), GetHeroIconFilePath(Player__Hero[GetPlayerId(K1O[i])]), .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K2O = K2O + 1
 	set K3O = 0
 	set K2O = K2O + 1
-	set VUX = MultiboardGetItem(D6V, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, c0 + GetObjectName('n0EB')+ e)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(D6V, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0EB')+ e)
+	call MultiboardReleaseItem(mbt)
 	set K3O = 0
 	set i = 1
 	loop
 	exitwhen i > KZO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, false, true, null, H5X(UnitItemInSlot(Player__Hero[GetPlayerId(K0O[i])], 0)), .015)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, false, true, null, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(K0O[i])], 0)), .015)
+		call MultiboardReleaseItem(mbt)
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, false, true, null, H5X(UnitItemInSlot(Player__Hero[GetPlayerId(K0O[i])], 1)), .054)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, false, true, null, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(K0O[i])], 1)), .054)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > K_O
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, false, true, null, H5X(UnitItemInSlot(Player__Hero[GetPlayerId(K1O[i])], 0)), .015)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, false, true, null, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(K1O[i])], 0)), .015)
+		call MultiboardReleaseItem(mbt)
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, false, true, null, H5X(UnitItemInSlot(Player__Hero[GetPlayerId(K1O[i])], 1)), .054)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, false, true, null, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(K1O[i])], 1)), .054)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K2O = K2O + 1
 	set K3O = 0
-	set VUX = MultiboardGetItem(D6V, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, c0 + " " + e)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(D6V, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, c0 + " " + e)
+	call MultiboardReleaseItem(mbt)
 	set i = 1
 	loop
 	exitwhen i > KZO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, false, true, null, H5X(UnitItemInSlot(Player__Hero[GetPlayerId(K0O[i])], 2)), .015)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, false, true, null, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(K0O[i])], 2)), .015)
+		call MultiboardReleaseItem(mbt)
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, false, true, null, H5X(UnitItemInSlot(Player__Hero[GetPlayerId(K0O[i])], 3)), .054)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, false, true, null, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(K0O[i])], 3)), .054)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > K_O
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, false, true, null, H5X(UnitItemInSlot(Player__Hero[GetPlayerId(K1O[i])], 2)), .015)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, false, true, null, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(K1O[i])], 2)), .015)
+		call MultiboardReleaseItem(mbt)
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, false, true, null, H5X(UnitItemInSlot(Player__Hero[GetPlayerId(K1O[i])], 3)), .054)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, false, true, null, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(K1O[i])], 3)), .054)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K2O = K2O + 1
 	set K3O = 0
-	set VUX = MultiboardGetItem(D6V, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, c0 + " " + e)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(D6V, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, c0 + " " + e)
+	call MultiboardReleaseItem(mbt)
 	set i = 1
 	loop
 	exitwhen i > KZO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, false, true, null, H5X(UnitItemInSlot(Player__Hero[GetPlayerId(K0O[i])], 4)), .015)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, false, true, null, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(K0O[i])], 4)), .015)
+		call MultiboardReleaseItem(mbt)
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, false, true, null, H5X(UnitItemInSlot(Player__Hero[GetPlayerId(K0O[i])], 5)), .054)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, false, true, null, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(K0O[i])], 5)), .054)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > K_O
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, false, true, null, H5X(UnitItemInSlot(Player__Hero[GetPlayerId(K1O[i])], 4)), .015)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, false, true, null, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(K1O[i])], 4)), .015)
+		call MultiboardReleaseItem(mbt)
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, false, true, null, H5X(UnitItemInSlot(Player__Hero[GetPlayerId(K0O[i])], 5)), .054)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, false, true, null, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(K0O[i])], 5)), .054)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K3O = 0
 	set K2O = K2O + 1
-	set VUX = MultiboardGetItem(D6V, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, c0 + GetObjectName('n0E2')+ e)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(D6V, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0E2')+ e)
+	call MultiboardReleaseItem(mbt)
 	set K3O = 0
 	set i = 1
 	loop
 	exitwhen i > KZO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, true, false, J7O(K0O[i]), null, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, true, false, J7O(K0O[i]), null, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > K_O
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, true, false, J7O(K1O[i]), null, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, true, false, J7O(K1O[i]), null, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K3O = 0
 	set K2O = K2O + 1
-	set VUX = MultiboardGetItem(D6V, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, c0 + GetObjectName('n0E1')+ e)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(D6V, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0E1')+ e)
+	call MultiboardReleaseItem(mbt)
 	set K3O = 0
 	set i = 1
 	loop
 	exitwhen i > KZO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, true, false, KRO(K0O[i])+ "/" + KIO(K0O[i])+ "/" + KOO(K0O[i]), null, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, true, false, KRO(K0O[i])+ "/" + KIO(K0O[i])+ "/" + KOO(K0O[i]), null, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > K_O
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, true, false, KRO(K1O[i])+ "/" + KIO(K1O[i])+ "/" + KOO(K1O[i]), null, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, true, false, KRO(K1O[i])+ "/" + KIO(K1O[i])+ "/" + KOO(K1O[i]), null, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K3O = 0
 	set K2O = K2O + 1
-	set VUX = MultiboardGetItem(D6V, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, c0 + GetObjectName('n0DZ')+ e)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(D6V, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0DZ')+ e)
+	call MultiboardReleaseItem(mbt)
 	set K3O = 0
 	set i = 1
 	loop
 	exitwhen i > KZO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, true, false, KAO(K0O[i])+ "/" + KNO(K0O[i]), null, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, true, false, KAO(K0O[i])+ "/" + KNO(K0O[i]), null, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > K_O
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, true, false, KAO(K1O[i])+ "/" + KNO(K1O[i]), null, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, true, false, KAO(K1O[i])+ "/" + KNO(K1O[i]), null, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K3O = 0
 	set K2O = K2O + 1
-	set VUX = MultiboardGetItem(D6V, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, c0 + GetObjectName('n0JU')+ e)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(D6V, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0JU')+ e)
+	call MultiboardReleaseItem(mbt)
 	set K3O = 0
 	set i = 1
 	loop
 	exitwhen i > KZO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, true, false, J3O(K0O[i]), null, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, true, false, J3O(K0O[i]), null, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > K_O
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, true, false, J3O(K1O[i]), null, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, true, false, J3O(K1O[i]), null, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K3O = 0
 	set K2O = K2O + 1
-	set VUX = MultiboardGetItem(D6V, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, c0 + GetObjectName('n0KF')+ e)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(D6V, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0KF')+ e)
+	call MultiboardReleaseItem(mbt)
 	set K3O = 0
 	set i = 1
 	loop
 	exitwhen i > KZO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, true, false, J6O(K0O[i]), null, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, true, false, J6O(K0O[i]), null, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > K_O
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, true, false, J6O(K1O[i]), null, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, true, false, J6O(K1O[i]), null, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K3O = 0
 	set K2O = K2O + 1
-	set VUX = MultiboardGetItem(D6V, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, c0 + GetObjectName('n0E0')+ e)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(D6V, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0E0')+ e)
+	call MultiboardReleaseItem(mbt)
 	set K3O = 0
 	set i = 1
 	loop
 	exitwhen i > KZO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, true, false, KVO(K0O[i]), null, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, true, false, KVO(K0O[i]), null, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > K_O
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, true, false, KVO(K1O[i]), null, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, true, false, KVO(K1O[i]), null, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K3O = 0
 	set K2O = K2O + 1
-	set VUX = MultiboardGetItem(D6V, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, c0 + GetObjectName('n0DT')+ e)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(D6V, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0DT')+ e)
+	call MultiboardReleaseItem(mbt)
 	set K3O = 0
 	set i = 1
 	loop
 	exitwhen i > KZO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, true, false, KGO(K0O[i]), null, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, true, false, KGO(K0O[i]), null, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > K_O
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, true, false, KGO(K1O[i]), null, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, true, false, KGO(K1O[i]), null, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K3O = 0
 	set K2O = K2O + 1
-	set VUX = MultiboardGetItem(D6V, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, c0 + GetObjectName('n0DY')+ e)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(D6V, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0DY')+ e)
+	call MultiboardReleaseItem(mbt)
 	set K3O = 0
 	set i = 1
 	loop
 	exitwhen i > KZO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, true, false, KBO(K0O[i]), null, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, true, false, KBO(K0O[i]), null, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > K_O
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, true, false, KBO(K1O[i]), null, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, true, false, KBO(K1O[i]), null, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K3O = 0
 	set K2O = K2O + 1
-	set VUX = MultiboardGetItem(D6V, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, c0 + GetObjectName('n0DU')+ e)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(D6V, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0DU')+ e)
+	call MultiboardReleaseItem(mbt)
 	set K3O = 0
 	set i = 1
 	loop
 	exitwhen i > KZO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, true, false, KEO(K0O[i]), null, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, true, false, KEO(K0O[i]), null, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > K_O
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, true, false, KEO(K1O[i]), null, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, true, false, KEO(K1O[i]), null, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K3O = 0
 	set K2O = K2O + 1
-	set VUX = MultiboardGetItem(D6V, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, c0 + GetObjectName('n0DV')+ e)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(D6V, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0DV')+ e)
+	call MultiboardReleaseItem(mbt)
 	set K3O = 0
 	set i = 1
 	loop
 	exitwhen i > KZO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, true, false, KKO(K0O[i]), null, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, true, false, KKO(K0O[i]), null, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > K_O
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, true, false, KKO(K1O[i]), null, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, true, false, KKO(K1O[i]), null, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K3O = 0
 	set K2O = K2O + 1
-	set VUX = MultiboardGetItem(D6V, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, c0 + GetObjectName('n0DW')+ e)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(D6V, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0DW')+ e)
+	call MultiboardReleaseItem(mbt)
 	set K3O = 0
 	set i = 1
 	loop
 	exitwhen i > KZO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, true, false, KXO(K0O[i]), null, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, true, false, KXO(K0O[i]), null, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > K_O
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, true, false, KXO(K1O[i]), null, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, true, false, KXO(K1O[i]), null, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K3O = 0
 	set K2O = K2O + 1
-	set VUX = MultiboardGetItem(D6V, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, c0 + GetObjectName('n0DN')+ e)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(D6V, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0DN')+ e)
+	call MultiboardReleaseItem(mbt)
 	set K3O = 0
 	set i = 1
 	loop
 	exitwhen i > KZO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, true, false, J8O(K0O[i]), null, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, true, false, J8O(K0O[i]), null, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > K_O
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, true, false, J8O(K1O[i]), null, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, true, false, J8O(K1O[i]), null, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K3O = 0
 	set K2O = K2O + 1
-	set VUX = MultiboardGetItem(D6V, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, c0 + GetObjectName('n0D8')+ e)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(D6V, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0D8')+ e)
+	call MultiboardReleaseItem(mbt)
 	set K3O = 0
 	set i = 1
 	loop
 	exitwhen i > KZO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, true, false, KCO(K0O[i]), null, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, true, false, KCO(K0O[i]), null, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > K_O
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, true, false, KCO(K1O[i]), null, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, true, false, KCO(K1O[i]), null, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K3O = 0
 	set K2O = K2O + 1
-	set VUX = MultiboardGetItem(D6V, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, c0 + GetObjectName('n0DI')+ e)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(D6V, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0DI')+ e)
+	call MultiboardReleaseItem(mbt)
 	set K3O = 0
 	set i = 1
 	loop
 	exitwhen i > KZO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, true, false, KDO(K0O[i]), null, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, true, false, KDO(K0O[i]), null, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > K_O
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, true, false, KDO(K1O[i]), null, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, true, false, KDO(K1O[i]), null, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K3O = 0
 	set K2O = K2O + 1
-	set VUX = MultiboardGetItem(D6V, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, c0 + GetObjectName('n0DM')+ e)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(D6V, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0DM')+ e)
+	call MultiboardReleaseItem(mbt)
 	set K3O = 0
 	set i = 1
 	loop
 	exitwhen i > KZO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, true, false, KFO(K0O[i]), null, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, true, false, KFO(K0O[i]), null, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > K_O
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, true, false, KFO(K1O[i]), null, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, true, false, KFO(K1O[i]), null, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	if KZO > 0 and K_O > 0 then
@@ -25748,10 +25753,10 @@ function KYO takes nothing returns nothing
 		set K6O = K2O
 		set K7O = K3O
 		set K2O = K2O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, true, false)
-		call MultiboardSetItemValue(VUX, c0 + GetObjectName('n0DL')+ e)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, true, false)
+		call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0DL')+ e)
+		call MultiboardReleaseItem(mbt)
 		set K2O = K6O
 		set x = 1
 		loop
@@ -25763,13 +25768,13 @@ function KYO takes nothing returns nothing
 			exitwhen i > K_O
 				set K3O = x +(x -1)
 				set K2O = K2O + 1
-				set VUX = MultiboardGetItem(D6V, K2O, K3O)
-				call KPO(VUX, false, true, null, ELX(Player__Hero[GetPlayerId(K0O[x])]), .01)
-				call MultiboardReleaseItem(VUX)
+				set mbt = MultiboardGetItem(D6V, K2O, K3O)
+				call KPO(mbt, false, true, null, GetHeroIconFilePath(Player__Hero[GetPlayerId(K0O[x])]), .01)
+				call MultiboardReleaseItem(mbt)
 				set K3O = K3O + 1
-				set VUX = MultiboardGetItem(D6V, K2O, K3O)
-				call KPO(VUX, true, true, " " + KMO(K0O[x], K1O[i]), ELX(Player__Hero[GetPlayerId(K1O[i])]), .059)
-				call MultiboardReleaseItem(VUX)
+				set mbt = MultiboardGetItem(D6V, K2O, K3O)
+				call KPO(mbt, true, true, " " + KMO(K0O[x], K1O[i]), GetHeroIconFilePath(Player__Hero[GetPlayerId(K1O[i])]), .059)
+				call MultiboardReleaseItem(mbt)
 				set i = i + 1
 			endloop
 			set x = x + 1
@@ -25784,13 +25789,13 @@ function KYO takes nothing returns nothing
 			exitwhen i > KZO
 				set K3O = x +(x -1)
 				set K2O = K2O + 1
-				set VUX = MultiboardGetItem(D6V, K2O, K3O)
-				call KPO(VUX, false, true, null, ELX(Player__Hero[GetPlayerId(K1O[x -KZO])]), .01)
-				call MultiboardReleaseItem(VUX)
+				set mbt = MultiboardGetItem(D6V, K2O, K3O)
+				call KPO(mbt, false, true, null, GetHeroIconFilePath(Player__Hero[GetPlayerId(K1O[x -KZO])]), .01)
+				call MultiboardReleaseItem(mbt)
 				set K3O = K3O + 1
-				set VUX = MultiboardGetItem(D6V, K2O, K3O)
-				call KPO(VUX, true, true, " " + KMO(K1O[x -KZO], K0O[i]), ELX(Player__Hero[GetPlayerId(K0O[i])]), .059)
-				call MultiboardReleaseItem(VUX)
+				set mbt = MultiboardGetItem(D6V, K2O, K3O)
+				call KPO(mbt, true, true, " " + KMO(K1O[x -KZO], K0O[i]), GetHeroIconFilePath(Player__Hero[GetPlayerId(K0O[i])]), .059)
+				call MultiboardReleaseItem(mbt)
 				set i = i + 1
 			endloop
 			set x = x + 1
@@ -25799,18 +25804,18 @@ function KYO takes nothing returns nothing
 	set K2O = K2O + 1
 	set K3O = 0
 	set K2O = K2O + 1
-	set VUX = MultiboardGetItem(D6V, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, c0 + GetObjectName('n0CZ')+ e)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(D6V, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0CZ')+ e)
+	call MultiboardReleaseItem(mbt)
 	set K3O = 0
 	set i = 1
 	loop
 	exitwhen i > KZO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, true, false, BY[GetPlayerId(K0O[i])], null, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, true, false, BY[GetPlayerId(K0O[i])], null, .07)
+		call MultiboardReleaseItem(mbt)
 		set FVV = FVV + 1
 		set D7V[FVV]= K2O
 		set D8V[FVV]= K3O
@@ -25821,9 +25826,9 @@ function KYO takes nothing returns nothing
 	loop
 	exitwhen i > K_O
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(D6V, K2O, K3O)
-		call KPO(VUX, true, false, BY[GetPlayerId(K1O[i])], null, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(D6V, K2O, K3O)
+		call KPO(mbt, true, false, BY[GetPlayerId(K1O[i])], null, .07)
+		call MultiboardReleaseItem(mbt)
 		set FVV = FVV + 1
 		set D7V[FVV]= K2O
 		set D8V[FVV]= K3O
@@ -25832,18 +25837,18 @@ function KYO takes nothing returns nothing
 	endloop
 	set K3O = 0
 	set K2O = K2O + 1
-	set VUX = MultiboardGetItem(D6V, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, c0 + GetObjectName('n0D9')+ e)
-	call MultiboardReleaseItem(VUX)
-	set VUX = MultiboardGetItem(D6V, K2O, K3O + 1)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX,(K3))
-	call MultiboardSetItemWidth(VUX, .07)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(D6V, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0D9')+ e)
+	call MultiboardReleaseItem(mbt)
+	set mbt = MultiboardGetItem(D6V, K2O, K3O + 1)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt,(K3))
+	call MultiboardSetItemWidth(mbt, .07)
+	call MultiboardReleaseItem(mbt)
 	call MultiboardMinimize(D6V, true)
 	call MultiboardMinimize(D6V, false)
-	set VUX = null
+	set mbt = null
 endfunction
 function K8O takes player p returns string
 	return PlayersColoerText[GetPlayerId(p)]+(PlayersName[GetPlayerId((p))])+ "|r"
@@ -25932,7 +25937,7 @@ function LBO takes nothing returns nothing
 	local integer K3O
 	local integer K4O = 1 + 21 + IMaxBJ(LCO, LDO)
 	local integer K5O = 1 +(LCO + LDO)* 2
-	local multiboarditem VUX
+	local multiboarditem mbt
 	local integer i
 	local integer x
 	local string e = "|r"
@@ -26035,737 +26040,737 @@ function LBO takes nothing returns nothing
 	set K3O = 0
 	loop
 	exitwhen i > K4O
-		set VUX = MultiboardGetItem(FEV, i, K3O)
-		call MultiboardSetItemWidth(VUX, .075)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, i, K3O)
+		call MultiboardSetItemWidth(mbt, .075)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K2O = 0
 	set K3O = 0
-	set VUX = MultiboardGetItem(FEV, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, " ")
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, " ")
+	call MultiboardReleaseItem(mbt)
 	set K3O = 0
-	set VUX = MultiboardGetItem(FEV, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, false, false)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, false, false)
+	call MultiboardReleaseItem(mbt)
 	set K3O = 0
 	set i = 1
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, true, false)
-		call MultiboardSetItemValue(VUX, K8O(K0O[i]))
-		call MultiboardSetItemWidth(VUX, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, true, false)
+		call MultiboardSetItemValue(mbt, K8O(K0O[i]))
+		call MultiboardSetItemWidth(mbt, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, true, false)
-		call MultiboardSetItemValue(VUX, K8O(K1O[i]))
-		call MultiboardSetItemWidth(VUX, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, true, false)
+		call MultiboardSetItemValue(mbt, K8O(K1O[i]))
+		call MultiboardSetItemWidth(mbt, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K2O = K2O + 1
 	set K3O = 0
-	set VUX = MultiboardGetItem(FEV, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, false, false)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, false, false)
+	call MultiboardReleaseItem(mbt)
 	set i = 1
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, true, true)
-		call MultiboardSetItemValue(VUX, "(" +(I2S(GetUnitLevel(Player__Hero[GetPlayerId((K0O[i]))])))+ ")")
-		call MultiboardSetItemIcon(VUX,(ELX(Player__Hero[GetPlayerId((K0O[i]))])))
-		call MultiboardSetItemWidth(VUX, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, true, true)
+		call MultiboardSetItemValue(mbt, "(" +(I2S(GetUnitLevel(Player__Hero[GetPlayerId((K0O[i]))])))+ ")")
+		call MultiboardSetItemIcon(mbt,(GetHeroIconFilePath(Player__Hero[GetPlayerId((K0O[i]))])))
+		call MultiboardSetItemWidth(mbt, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, true, true)
-		call MultiboardSetItemValue(VUX, "(" + I2S(GetUnitLevel(Player__Hero[GetPlayerId(K1O[i])]))+ ")")
-		call MultiboardSetItemIcon(VUX,(ELX(Player__Hero[GetPlayerId(K1O[i])])))
-		call MultiboardSetItemWidth(VUX, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, true, true)
+		call MultiboardSetItemValue(mbt, "(" + I2S(GetUnitLevel(Player__Hero[GetPlayerId(K1O[i])]))+ ")")
+		call MultiboardSetItemIcon(mbt,(GetHeroIconFilePath(Player__Hero[GetPlayerId(K1O[i])])))
+		call MultiboardSetItemWidth(mbt, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K2O = K2O + 1
 	set K3O = 0
 	set K2O = K2O + 1
-	set VUX = MultiboardGetItem(FEV, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, c0 + GetObjectName('n0EB')+ e)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0EB')+ e)
+	call MultiboardReleaseItem(mbt)
 	set K3O = 0
 	set i = 1
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, false, true)
-		call MultiboardSetItemIcon(VUX, H5X(UnitItemInSlot(Player__Hero[GetPlayerId(K0O[i])], 1 -1)))
-		call MultiboardSetItemWidth(VUX, .015)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, false, true)
+		call MultiboardSetItemIcon(mbt, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(K0O[i])], 1 -1)))
+		call MultiboardSetItemWidth(mbt, .015)
+		call MultiboardReleaseItem(mbt)
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, false, true)
-		call MultiboardSetItemIcon(VUX, H5X(UnitItemInSlot(Player__Hero[GetPlayerId(K0O[i])], 2 -1)))
-		call MultiboardSetItemWidth(VUX, .054)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, false, true)
+		call MultiboardSetItemIcon(mbt, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(K0O[i])], 2 -1)))
+		call MultiboardSetItemWidth(mbt, .054)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, false, true)
-		call MultiboardSetItemIcon(VUX, H5X(UnitItemInSlot(Player__Hero[GetPlayerId(K1O[i])], 1 -1)))
-		call MultiboardSetItemWidth(VUX, .015)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, false, true)
+		call MultiboardSetItemIcon(mbt, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(K1O[i])], 1 -1)))
+		call MultiboardSetItemWidth(mbt, .015)
+		call MultiboardReleaseItem(mbt)
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, false, true)
-		call MultiboardSetItemIcon(VUX, H5X(UnitItemInSlot(Player__Hero[GetPlayerId(K1O[i])], 2 -1)))
-		call MultiboardSetItemWidth(VUX, .054)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, false, true)
+		call MultiboardSetItemIcon(mbt, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(K1O[i])], 2 -1)))
+		call MultiboardSetItemWidth(mbt, .054)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K2O = K2O + 1
 	set K3O = 0
-	set VUX = MultiboardGetItem(FEV, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, c0 + " " + e)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, c0 + " " + e)
+	call MultiboardReleaseItem(mbt)
 	set i = 1
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, false, true)
-		call MultiboardSetItemIcon(VUX, H5X(UnitItemInSlot(Player__Hero[GetPlayerId(K0O[i])], 3 -1)))
-		call MultiboardSetItemWidth(VUX, .015)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, false, true)
+		call MultiboardSetItemIcon(mbt, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(K0O[i])], 3 -1)))
+		call MultiboardSetItemWidth(mbt, .015)
+		call MultiboardReleaseItem(mbt)
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, false, true)
-		call MultiboardSetItemIcon(VUX, H5X(UnitItemInSlot(Player__Hero[GetPlayerId(K0O[i])], 4 -1)))
-		call MultiboardSetItemWidth(VUX, .054)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, false, true)
+		call MultiboardSetItemIcon(mbt, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(K0O[i])], 4 -1)))
+		call MultiboardSetItemWidth(mbt, .054)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, false, true)
-		call MultiboardSetItemIcon(VUX, H5X(UnitItemInSlot(Player__Hero[GetPlayerId(K1O[i])], 3 -1)))
-		call MultiboardSetItemWidth(VUX, .015)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, false, true)
+		call MultiboardSetItemIcon(mbt, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(K1O[i])], 3 -1)))
+		call MultiboardSetItemWidth(mbt, .015)
+		call MultiboardReleaseItem(mbt)
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, false, true)
-		call MultiboardSetItemIcon(VUX, H5X(UnitItemInSlot(Player__Hero[GetPlayerId(K1O[i])], 4 -1)))
-		call MultiboardSetItemWidth(VUX, .054)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, false, true)
+		call MultiboardSetItemIcon(mbt, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(K1O[i])], 4 -1)))
+		call MultiboardSetItemWidth(mbt, .054)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K2O = K2O + 1
 	set K3O = 0
-	set VUX = MultiboardGetItem(FEV, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, c0 + " " + e)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, c0 + " " + e)
+	call MultiboardReleaseItem(mbt)
 	set i = 1
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, false, true)
-		call MultiboardSetItemIcon(VUX, H5X(UnitItemInSlot(Player__Hero[GetPlayerId(K0O[i])], 5 -1)))
-		call MultiboardSetItemWidth(VUX, .015)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, false, true)
+		call MultiboardSetItemIcon(mbt, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(K0O[i])], 5 -1)))
+		call MultiboardSetItemWidth(mbt, .015)
+		call MultiboardReleaseItem(mbt)
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, false, true)
-		call MultiboardSetItemIcon(VUX, H5X(UnitItemInSlot(Player__Hero[GetPlayerId(K0O[i])], 6 -1)))
-		call MultiboardSetItemWidth(VUX, .054)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, false, true)
+		call MultiboardSetItemIcon(mbt, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(K0O[i])], 6 -1)))
+		call MultiboardSetItemWidth(mbt, .054)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, false, true)
-		call MultiboardSetItemIcon(VUX, H5X(UnitItemInSlot(Player__Hero[GetPlayerId(K1O[i])], 5 -1)))
-		call MultiboardSetItemWidth(VUX, .015)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, false, true)
+		call MultiboardSetItemIcon(mbt, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(K1O[i])], 5 -1)))
+		call MultiboardSetItemWidth(mbt, .015)
+		call MultiboardReleaseItem(mbt)
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, false, true)
-		call MultiboardSetItemIcon(VUX, H5X(UnitItemInSlot(Player__Hero[GetPlayerId(K1O[i])], 6 -1)))
-		call MultiboardSetItemWidth(VUX, .054)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, false, true)
+		call MultiboardSetItemIcon(mbt, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(K1O[i])], 6 -1)))
+		call MultiboardSetItemWidth(mbt, .054)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K3O = 0
 	set K2O = K2O + 1
-	set VUX = MultiboardGetItem(FEV, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, c0 + GetObjectName('n0E2')+ e)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0E2')+ e)
+	call MultiboardReleaseItem(mbt)
 	set K3O = 0
 	set i = 1
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, true, false)
-		call MultiboardSetItemValue(VUX, I2S(GetPlayerState(K0O[i], PLAYER_STATE_RESOURCE_GOLD)))
-		call MultiboardSetItemWidth(VUX, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, true, false)
+		call MultiboardSetItemValue(mbt, I2S(GetPlayerState(K0O[i], PLAYER_STATE_RESOURCE_GOLD)))
+		call MultiboardSetItemWidth(mbt, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, true, false)
-		call MultiboardSetItemValue(VUX,(I2S(GetPlayerState(K1O[i], PLAYER_STATE_RESOURCE_GOLD))))
-		call MultiboardSetItemWidth(VUX, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, true, false)
+		call MultiboardSetItemValue(mbt,(I2S(GetPlayerState(K1O[i], PLAYER_STATE_RESOURCE_GOLD))))
+		call MultiboardSetItemWidth(mbt, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K3O = 0
 	set K2O = K2O + 1
-	set VUX = MultiboardGetItem(FEV, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, c0 + GetObjectName('n0LT')+ e)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0LT')+ e)
+	call MultiboardReleaseItem(mbt)
 	set K3O = 0
 	set i = 1
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemValueColor(VUX, LFO, LGO, LHO, LJO)
-		call MultiboardSetItemStyle(VUX, true, false)
-		call MultiboardSetItemValue(VUX,(I2S(Y4[KFX(GetHeroLevel(Player__Hero[GetPlayerId((K0O[i]))]))])))
-		call MultiboardSetItemWidth(VUX, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemValueColor(mbt, LFO, LGO, LHO, LJO)
+		call MultiboardSetItemStyle(mbt, true, false)
+		call MultiboardSetItemValue(mbt,(I2S(Y4[KFX(GetHeroLevel(Player__Hero[GetPlayerId((K0O[i]))]))])))
+		call MultiboardSetItemWidth(mbt, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemValueColor(VUX, LFO, LGO, LHO, LJO)
-		call MultiboardSetItemStyle(VUX, true, false)
-		call MultiboardSetItemValue(VUX,(I2S(Y4[KFX(GetHeroLevel(Player__Hero[GetPlayerId(K1O[i])]))])))
-		call MultiboardSetItemWidth(VUX, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemValueColor(mbt, LFO, LGO, LHO, LJO)
+		call MultiboardSetItemStyle(mbt, true, false)
+		call MultiboardSetItemValue(mbt,(I2S(Y4[KFX(GetHeroLevel(Player__Hero[GetPlayerId(K1O[i])]))])))
+		call MultiboardSetItemWidth(mbt, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K3O = 0
 	set K2O = K2O + 1
-	set VUX = MultiboardGetItem(FEV, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, c0 + GetObjectName('n0DZ')+ e)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0DZ')+ e)
+	call MultiboardReleaseItem(mbt)
 	set K3O = 0
 	set i = 1
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, true, false)
-		call MultiboardSetItemValue(VUX,(I2S(PlayerCreepsLastHitCount[GetPlayerId((K0O[i]))]))+ "/" +(I2S(PlayerCreepsDenyCount[GetPlayerId((K0O[i]))]))+ "/" +(I2S((LoadInteger(HY,(400 + GetPlayerId((K0O[i]))), 79)))))
-		call MultiboardSetItemWidth(VUX, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, true, false)
+		call MultiboardSetItemValue(mbt,(I2S(PlayerCreepsLastHitCount[GetPlayerId((K0O[i]))]))+ "/" +(I2S(PlayerCreepsDenyCount[GetPlayerId((K0O[i]))]))+ "/" +(I2S((LoadInteger(HY,(400 + GetPlayerId((K0O[i]))), 79)))))
+		call MultiboardSetItemWidth(mbt, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, true, false)
-		call MultiboardSetItemValue(VUX,(I2S(PlayerCreepsLastHitCount[GetPlayerId(K1O[i])]))+ "/" +(I2S(PlayerCreepsDenyCount[GetPlayerId(K1O[i])]))+ "/" +(I2S((LoadInteger(HY,(400 + GetPlayerId(K1O[i])), 79)))))
-		call MultiboardSetItemWidth(VUX, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, true, false)
+		call MultiboardSetItemValue(mbt,(I2S(PlayerCreepsLastHitCount[GetPlayerId(K1O[i])]))+ "/" +(I2S(PlayerCreepsDenyCount[GetPlayerId(K1O[i])]))+ "/" +(I2S((LoadInteger(HY,(400 + GetPlayerId(K1O[i])), 79)))))
+		call MultiboardSetItemWidth(mbt, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K3O = 0
 	set K2O = K2O + 1
-	set VUX = MultiboardGetItem(FEV, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, c0 + GetObjectName('n0E1')+ e)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0E1')+ e)
+	call MultiboardReleaseItem(mbt)
 	set K3O = 0
 	set i = 1
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemValueColor(VUX, LFO, LGO, LHO, LJO)
-		call MultiboardSetItemStyle(VUX, true, false)
-		call MultiboardSetItemValue(VUX,(I2S(PlayerKillHerosCount[GetPlayerId((K0O[i]))]))+ "/" +(I2S(PlayerHeroDeathCount[GetPlayerId((K0O[i]))]))+ "/" +(I2S(PlayerAssistCount[GetPlayerId((K0O[i]))])))
-		call MultiboardSetItemWidth(VUX, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemValueColor(mbt, LFO, LGO, LHO, LJO)
+		call MultiboardSetItemStyle(mbt, true, false)
+		call MultiboardSetItemValue(mbt,(I2S(PlayerKillHerosCount[GetPlayerId((K0O[i]))]))+ "/" +(I2S(PlayerHeroDeathCount[GetPlayerId((K0O[i]))]))+ "/" +(I2S(PlayerAssistCount[GetPlayerId((K0O[i]))])))
+		call MultiboardSetItemWidth(mbt, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemValueColor(VUX, LFO, LGO, LHO, LJO)
-		call MultiboardSetItemStyle(VUX, true, false)
-		call MultiboardSetItemValue(VUX,(I2S(PlayerKillHerosCount[GetPlayerId(K1O[i])]))+ "/" +(I2S(PlayerHeroDeathCount[GetPlayerId(K1O[i])]))+ "/" +(I2S(PlayerAssistCount[GetPlayerId(K1O[i])])))
-		call MultiboardSetItemWidth(VUX, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemValueColor(mbt, LFO, LGO, LHO, LJO)
+		call MultiboardSetItemStyle(mbt, true, false)
+		call MultiboardSetItemValue(mbt,(I2S(PlayerKillHerosCount[GetPlayerId(K1O[i])]))+ "/" +(I2S(PlayerHeroDeathCount[GetPlayerId(K1O[i])]))+ "/" +(I2S(PlayerAssistCount[GetPlayerId(K1O[i])])))
+		call MultiboardSetItemWidth(mbt, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K3O = 0
 	set K2O = K2O + 1
-	set VUX = MultiboardGetItem(FEV, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, c0 + GetObjectName('n0E0')+ e)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0E0')+ e)
+	call MultiboardReleaseItem(mbt)
 	set K3O = 0
 	set i = 1
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, true, false)
-		call MultiboardSetItemValue(VUX,(I2S(FQ[GetPlayerId((K0O[i]))])))
-		call MultiboardSetItemWidth(VUX, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, true, false)
+		call MultiboardSetItemValue(mbt,(I2S(FQ[GetPlayerId((K0O[i]))])))
+		call MultiboardSetItemWidth(mbt, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, true, false)
-		call MultiboardSetItemValue(VUX,(I2S(FQ[GetPlayerId(K1O[i])])))
-		call MultiboardSetItemWidth(VUX, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, true, false)
+		call MultiboardSetItemValue(mbt,(I2S(FQ[GetPlayerId(K1O[i])])))
+		call MultiboardSetItemWidth(mbt, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K3O = 0
 	set K2O = K2O + 1
-	set VUX = MultiboardGetItem(FEV, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, c0 + GetObjectName('n0DT')+ e)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0DT')+ e)
+	call MultiboardReleaseItem(mbt)
 	set K3O = 0
 	set i = 1
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemValueColor(VUX, LFO, LGO, LHO, LJO)
-		call MultiboardSetItemStyle(VUX, true, false)
-		call MultiboardSetItemValue(VUX, K9O(K0O[i]))
-		call MultiboardSetItemWidth(VUX, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemValueColor(mbt, LFO, LGO, LHO, LJO)
+		call MultiboardSetItemStyle(mbt, true, false)
+		call MultiboardSetItemValue(mbt, K9O(K0O[i]))
+		call MultiboardSetItemWidth(mbt, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemValueColor(VUX, LFO, LGO, LHO, LJO)
-		call MultiboardSetItemStyle(VUX, true, false)
-		call MultiboardSetItemValue(VUX, K9O(K1O[i]))
-		call MultiboardSetItemWidth(VUX, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemValueColor(mbt, LFO, LGO, LHO, LJO)
+		call MultiboardSetItemStyle(mbt, true, false)
+		call MultiboardSetItemValue(mbt, K9O(K1O[i]))
+		call MultiboardSetItemWidth(mbt, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K3O = 0
 	set K2O = K2O + 1
-	set VUX = MultiboardGetItem(FEV, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, c0 + GetObjectName('n0DU')+ e)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0DU')+ e)
+	call MultiboardReleaseItem(mbt)
 	set K3O = 0
 	set i = 1
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, true, false)
-		call MultiboardSetItemValue(VUX,(I2S(PQ[GetPlayerId((K0O[i]))])))
-		call MultiboardSetItemWidth(VUX, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, true, false)
+		call MultiboardSetItemValue(mbt,(I2S(PQ[GetPlayerId((K0O[i]))])))
+		call MultiboardSetItemWidth(mbt, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, true, false)
-		call MultiboardSetItemValue(VUX,(I2S(PQ[GetPlayerId(K1O[i])])))
-		call MultiboardSetItemWidth(VUX, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, true, false)
+		call MultiboardSetItemValue(mbt,(I2S(PQ[GetPlayerId(K1O[i])])))
+		call MultiboardSetItemWidth(mbt, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K2O = K2O + 1
 	set K3O = 0
 	set K2O = K2O + 1
-	set VUX = MultiboardGetItem(FEV, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, c0 + "技能" + e)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, c0 + "技能" + e)
+	call MultiboardReleaseItem(mbt)
 	set K3O = 0
 	set i = 1
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, false, true)
-		call MultiboardSetItemIcon(VUX, HeroSkillsIcon[PlayerSkillIndex[GetPlayerId(K0O[i])* HL + 1]])
-		call MultiboardSetItemWidth(VUX, .015)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, false, true)
+		call MultiboardSetItemIcon(mbt, HeroSkillsIcon[PlayerSkillIndex[GetPlayerId(K0O[i])* HL + 1]])
+		call MultiboardSetItemWidth(mbt, .015)
+		call MultiboardReleaseItem(mbt)
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, true, false)
-		call MultiboardSetItemValue(VUX, I2S(ZTE(Player__Hero[GetPlayerId((K0O[i]))], 1)))
-		call MultiboardSetItemWidth(VUX, .054)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, true, false)
+		call MultiboardSetItemValue(mbt, I2S(ZTE(Player__Hero[GetPlayerId((K0O[i]))], 1)))
+		call MultiboardSetItemWidth(mbt, .054)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, false, true)
-		call MultiboardSetItemIcon(VUX, HeroSkillsIcon[PlayerSkillIndex[GetPlayerId(K1O[i])* HL + 1]])
-		call MultiboardSetItemWidth(VUX, .015)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, false, true)
+		call MultiboardSetItemIcon(mbt, HeroSkillsIcon[PlayerSkillIndex[GetPlayerId(K1O[i])* HL + 1]])
+		call MultiboardSetItemWidth(mbt, .015)
+		call MultiboardReleaseItem(mbt)
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, true, false)
-		call MultiboardSetItemValue(VUX, I2S(ZTE(Player__Hero[GetPlayerId(K1O[i])], 1)))
-		call MultiboardSetItemWidth(VUX, .054)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, true, false)
+		call MultiboardSetItemValue(mbt, I2S(ZTE(Player__Hero[GetPlayerId(K1O[i])], 1)))
+		call MultiboardSetItemWidth(mbt, .054)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K2O = K2O + 1
 	set K3O = 0
-	set VUX = MultiboardGetItem(FEV, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, c0 + " " + e)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, c0 + " " + e)
+	call MultiboardReleaseItem(mbt)
 	set i = 1
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, false, true)
-		call MultiboardSetItemIcon(VUX, HeroSkillsIcon[PlayerSkillIndex[GetPlayerId(K0O[i])* HL + 2]])
-		call MultiboardSetItemWidth(VUX, .015)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, false, true)
+		call MultiboardSetItemIcon(mbt, HeroSkillsIcon[PlayerSkillIndex[GetPlayerId(K0O[i])* HL + 2]])
+		call MultiboardSetItemWidth(mbt, .015)
+		call MultiboardReleaseItem(mbt)
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, true, false)
-		call MultiboardSetItemValue(VUX, I2S(ZTE(Player__Hero[GetPlayerId((K0O[i]))], 2)))
-		call MultiboardSetItemWidth(VUX, .054)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, true, false)
+		call MultiboardSetItemValue(mbt, I2S(ZTE(Player__Hero[GetPlayerId((K0O[i]))], 2)))
+		call MultiboardSetItemWidth(mbt, .054)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, false, true)
-		call MultiboardSetItemIcon(VUX, HeroSkillsIcon[PlayerSkillIndex[GetPlayerId(K1O[i])* HL + 2]])
-		call MultiboardSetItemWidth(VUX, .015)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, false, true)
+		call MultiboardSetItemIcon(mbt, HeroSkillsIcon[PlayerSkillIndex[GetPlayerId(K1O[i])* HL + 2]])
+		call MultiboardSetItemWidth(mbt, .015)
+		call MultiboardReleaseItem(mbt)
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, true, false)
-		call MultiboardSetItemValue(VUX, I2S(ZTE(Player__Hero[GetPlayerId(K1O[i])], 2)))
-		call MultiboardSetItemWidth(VUX, .054)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, true, false)
+		call MultiboardSetItemValue(mbt, I2S(ZTE(Player__Hero[GetPlayerId(K1O[i])], 2)))
+		call MultiboardSetItemWidth(mbt, .054)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K2O = K2O + 1
 	set K3O = 0
-	set VUX = MultiboardGetItem(FEV, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, c0 + " " + e)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, c0 + " " + e)
+	call MultiboardReleaseItem(mbt)
 	set i = 1
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, false, true)
-		call MultiboardSetItemIcon(VUX, HeroSkillsIcon[PlayerSkillIndex[GetPlayerId(K0O[i])* HL + 3]])
-		call MultiboardSetItemWidth(VUX, .015)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, false, true)
+		call MultiboardSetItemIcon(mbt, HeroSkillsIcon[PlayerSkillIndex[GetPlayerId(K0O[i])* HL + 3]])
+		call MultiboardSetItemWidth(mbt, .015)
+		call MultiboardReleaseItem(mbt)
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, true, false)
-		call MultiboardSetItemValue(VUX, I2S(ZTE(Player__Hero[GetPlayerId((K0O[i]))], 3)))
-		call MultiboardSetItemWidth(VUX, .054)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, true, false)
+		call MultiboardSetItemValue(mbt, I2S(ZTE(Player__Hero[GetPlayerId((K0O[i]))], 3)))
+		call MultiboardSetItemWidth(mbt, .054)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, false, true)
-		call MultiboardSetItemIcon(VUX, HeroSkillsIcon[PlayerSkillIndex[GetPlayerId(K1O[i])* HL + 3]])
-		call MultiboardSetItemWidth(VUX, .015)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, false, true)
+		call MultiboardSetItemIcon(mbt, HeroSkillsIcon[PlayerSkillIndex[GetPlayerId(K1O[i])* HL + 3]])
+		call MultiboardSetItemWidth(mbt, .015)
+		call MultiboardReleaseItem(mbt)
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, true, false)
-		call MultiboardSetItemValue(VUX, I2S(ZTE(Player__Hero[GetPlayerId(K1O[i])], 3)))
-		call MultiboardSetItemWidth(VUX, .054)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, true, false)
+		call MultiboardSetItemValue(mbt, I2S(ZTE(Player__Hero[GetPlayerId(K1O[i])], 3)))
+		call MultiboardSetItemWidth(mbt, .054)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K2O = K2O + 1
 	set K3O = 0
-	set VUX = MultiboardGetItem(FEV, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, c0 + " " + e)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, c0 + " " + e)
+	call MultiboardReleaseItem(mbt)
 	set i = 1
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, false, true)
-		call MultiboardSetItemIcon(VUX, HeroSkillsIcon[PlayerSkillIndex[GetPlayerId(K0O[i])* HL + 4]])
-		call MultiboardSetItemWidth(VUX, .015)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, false, true)
+		call MultiboardSetItemIcon(mbt, HeroSkillsIcon[PlayerSkillIndex[GetPlayerId(K0O[i])* HL + 4]])
+		call MultiboardSetItemWidth(mbt, .015)
+		call MultiboardReleaseItem(mbt)
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, true, false)
-		call MultiboardSetItemValue(VUX, I2S(ZTE(Player__Hero[GetPlayerId((K0O[i]))], 4)))
-		call MultiboardSetItemWidth(VUX, .054)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, true, false)
+		call MultiboardSetItemValue(mbt, I2S(ZTE(Player__Hero[GetPlayerId((K0O[i]))], 4)))
+		call MultiboardSetItemWidth(mbt, .054)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, false, true)
-		call MultiboardSetItemIcon(VUX, HeroSkillsIcon[PlayerSkillIndex[GetPlayerId(K1O[i])* HL + 4]])
-		call MultiboardSetItemWidth(VUX, .015)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, false, true)
+		call MultiboardSetItemIcon(mbt, HeroSkillsIcon[PlayerSkillIndex[GetPlayerId(K1O[i])* HL + 4]])
+		call MultiboardSetItemWidth(mbt, .015)
+		call MultiboardReleaseItem(mbt)
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, true, false)
-		call MultiboardSetItemValue(VUX, I2S(ZTE(Player__Hero[GetPlayerId(K1O[i])], 4)))
-		call MultiboardSetItemWidth(VUX, .054)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, true, false)
+		call MultiboardSetItemValue(mbt, I2S(ZTE(Player__Hero[GetPlayerId(K1O[i])], 4)))
+		call MultiboardSetItemWidth(mbt, .054)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	if RP >= 1 then
 		set K2O = K2O + 1
 		set K3O = 0
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, true, false)
-		call MultiboardSetItemValue(VUX, c0 + " " + e)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, true, false)
+		call MultiboardSetItemValue(mbt, c0 + " " + e)
+		call MultiboardReleaseItem(mbt)
 		set i = 1
 		loop
 		exitwhen i > LCO
 			set K3O = K3O + 1
-			set VUX = MultiboardGetItem(FEV, K2O, K3O)
-			call MultiboardSetItemStyle(VUX, false, true)
-			call MultiboardSetItemIcon(VUX, HeroSkillsIcon[PlayerSkillIndex[GetPlayerId(K0O[i])* HL + 5]])
-			call MultiboardSetItemWidth(VUX, .015)
-			call MultiboardReleaseItem(VUX)
+			set mbt = MultiboardGetItem(FEV, K2O, K3O)
+			call MultiboardSetItemStyle(mbt, false, true)
+			call MultiboardSetItemIcon(mbt, HeroSkillsIcon[PlayerSkillIndex[GetPlayerId(K0O[i])* HL + 5]])
+			call MultiboardSetItemWidth(mbt, .015)
+			call MultiboardReleaseItem(mbt)
 			set K3O = K3O + 1
-			set VUX = MultiboardGetItem(FEV, K2O, K3O)
-			call MultiboardSetItemStyle(VUX, true, false)
-			call MultiboardSetItemValue(VUX, I2S(ZTE(Player__Hero[GetPlayerId((K0O[i]))], 5)))
-			call MultiboardSetItemWidth(VUX, .054)
-			call MultiboardReleaseItem(VUX)
+			set mbt = MultiboardGetItem(FEV, K2O, K3O)
+			call MultiboardSetItemStyle(mbt, true, false)
+			call MultiboardSetItemValue(mbt, I2S(ZTE(Player__Hero[GetPlayerId((K0O[i]))], 5)))
+			call MultiboardSetItemWidth(mbt, .054)
+			call MultiboardReleaseItem(mbt)
 			set i = i + 1
 		endloop
 		set i = 1
 		loop
 		exitwhen i > LDO
 			set K3O = K3O + 1
-			set VUX = MultiboardGetItem(FEV, K2O, K3O)
-			call MultiboardSetItemStyle(VUX, false, true)
-			call MultiboardSetItemIcon(VUX, HeroSkillsIcon[PlayerSkillIndex[GetPlayerId(K1O[i])* HL + 5]])
-			call MultiboardSetItemWidth(VUX, .015)
-			call MultiboardReleaseItem(VUX)
+			set mbt = MultiboardGetItem(FEV, K2O, K3O)
+			call MultiboardSetItemStyle(mbt, false, true)
+			call MultiboardSetItemIcon(mbt, HeroSkillsIcon[PlayerSkillIndex[GetPlayerId(K1O[i])* HL + 5]])
+			call MultiboardSetItemWidth(mbt, .015)
+			call MultiboardReleaseItem(mbt)
 			set K3O = K3O + 1
-			set VUX = MultiboardGetItem(FEV, K2O, K3O)
-			call MultiboardSetItemStyle(VUX, true, false)
-			call MultiboardSetItemValue(VUX, I2S(ZTE(Player__Hero[GetPlayerId(K1O[i])], 5)))
-			call MultiboardSetItemWidth(VUX, .054)
-			call MultiboardReleaseItem(VUX)
+			set mbt = MultiboardGetItem(FEV, K2O, K3O)
+			call MultiboardSetItemStyle(mbt, true, false)
+			call MultiboardSetItemValue(mbt, I2S(ZTE(Player__Hero[GetPlayerId(K1O[i])], 5)))
+			call MultiboardSetItemWidth(mbt, .054)
+			call MultiboardReleaseItem(mbt)
 			set i = i + 1
 		endloop
 	endif
 	if RP >= 2 then
 		set K2O = K2O + 1
 		set K3O = 0
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, true, false)
-		call MultiboardSetItemValue(VUX, c0 + " " + e)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, true, false)
+		call MultiboardSetItemValue(mbt, c0 + " " + e)
+		call MultiboardReleaseItem(mbt)
 		set i = 1
 		loop
 		exitwhen i > LCO
 			set K3O = K3O + 1
-			set VUX = MultiboardGetItem(FEV, K2O, K3O)
-			call MultiboardSetItemStyle(VUX, false, true)
-			call MultiboardSetItemIcon(VUX, HeroSkillsIcon[PlayerSkillIndex[GetPlayerId(K0O[i])* HL + 6]])
-			call MultiboardSetItemWidth(VUX, .015)
-			call MultiboardReleaseItem(VUX)
+			set mbt = MultiboardGetItem(FEV, K2O, K3O)
+			call MultiboardSetItemStyle(mbt, false, true)
+			call MultiboardSetItemIcon(mbt, HeroSkillsIcon[PlayerSkillIndex[GetPlayerId(K0O[i])* HL + 6]])
+			call MultiboardSetItemWidth(mbt, .015)
+			call MultiboardReleaseItem(mbt)
 			set K3O = K3O + 1
-			set VUX = MultiboardGetItem(FEV, K2O, K3O)
-			call MultiboardSetItemStyle(VUX, true, false)
-			call MultiboardSetItemValue(VUX, I2S(ZTE(Player__Hero[GetPlayerId((K0O[i]))], 6)))
-			call MultiboardSetItemWidth(VUX, .054)
-			call MultiboardReleaseItem(VUX)
+			set mbt = MultiboardGetItem(FEV, K2O, K3O)
+			call MultiboardSetItemStyle(mbt, true, false)
+			call MultiboardSetItemValue(mbt, I2S(ZTE(Player__Hero[GetPlayerId((K0O[i]))], 6)))
+			call MultiboardSetItemWidth(mbt, .054)
+			call MultiboardReleaseItem(mbt)
 			set i = i + 1
 		endloop
 		set i = 1
 		loop
 		exitwhen i > LDO
 			set K3O = K3O + 1
-			set VUX = MultiboardGetItem(FEV, K2O, K3O)
-			call MultiboardSetItemStyle(VUX, false, true)
-			call MultiboardSetItemIcon(VUX, HeroSkillsIcon[PlayerSkillIndex[GetPlayerId(K1O[i])* HL + 6]])
-			call MultiboardSetItemWidth(VUX, .015)
-			call MultiboardReleaseItem(VUX)
+			set mbt = MultiboardGetItem(FEV, K2O, K3O)
+			call MultiboardSetItemStyle(mbt, false, true)
+			call MultiboardSetItemIcon(mbt, HeroSkillsIcon[PlayerSkillIndex[GetPlayerId(K1O[i])* HL + 6]])
+			call MultiboardSetItemWidth(mbt, .015)
+			call MultiboardReleaseItem(mbt)
 			set K3O = K3O + 1
-			set VUX = MultiboardGetItem(FEV, K2O, K3O)
-			call MultiboardSetItemStyle(VUX, true, false)
-			call MultiboardSetItemValue(VUX, I2S(ZTE(Player__Hero[GetPlayerId(K1O[i])], 6)))
-			call MultiboardSetItemWidth(VUX, .054)
-			call MultiboardReleaseItem(VUX)
+			set mbt = MultiboardGetItem(FEV, K2O, K3O)
+			call MultiboardSetItemStyle(mbt, true, false)
+			call MultiboardSetItemValue(mbt, I2S(ZTE(Player__Hero[GetPlayerId(K1O[i])], 6)))
+			call MultiboardSetItemWidth(mbt, .054)
+			call MultiboardReleaseItem(mbt)
 			set i = i + 1
 		endloop
 	endif
 	set K3O = 0
 	set K2O = K2O + 1
-	set VUX = MultiboardGetItem(FEV, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, c0 + GetObjectName('n0DV')+ e)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0DV')+ e)
+	call MultiboardReleaseItem(mbt)
 	set K3O = 0
 	set i = 1
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, true, false)
-		call MultiboardSetItemValue(VUX, LVO(K0O[i]))
-		call MultiboardSetItemWidth(VUX, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, true, false)
+		call MultiboardSetItemValue(mbt, LVO(K0O[i]))
+		call MultiboardSetItemWidth(mbt, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, true, false)
-		call MultiboardSetItemValue(VUX, LVO(K1O[i]))
-		call MultiboardSetItemWidth(VUX, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, true, false)
+		call MultiboardSetItemValue(mbt, LVO(K1O[i]))
+		call MultiboardSetItemWidth(mbt, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K3O = 0
 	set K2O = K2O + 1
-	set VUX = MultiboardGetItem(FEV, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, c0 + GetObjectName('n0DW')+ e)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0DW')+ e)
+	call MultiboardReleaseItem(mbt)
 	set K3O = 0
 	set i = 1
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemValueColor(VUX, LFO, LGO, LHO, LJO)
-		call MultiboardSetItemStyle(VUX, true, false)
-		call MultiboardSetItemValue(VUX,(I2S(GQ[GetPlayerId((K0O[i]))])))
-		call MultiboardSetItemWidth(VUX, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemValueColor(mbt, LFO, LGO, LHO, LJO)
+		call MultiboardSetItemStyle(mbt, true, false)
+		call MultiboardSetItemValue(mbt,(I2S(GQ[GetPlayerId((K0O[i]))])))
+		call MultiboardSetItemWidth(mbt, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemValueColor(VUX, LFO, LGO, LHO, LJO)
-		call MultiboardSetItemStyle(VUX, true, false)
-		call MultiboardSetItemValue(VUX,(I2S(GQ[GetPlayerId(K1O[i])])))
-		call MultiboardSetItemWidth(VUX, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemValueColor(mbt, LFO, LGO, LHO, LJO)
+		call MultiboardSetItemStyle(mbt, true, false)
+		call MultiboardSetItemValue(mbt,(I2S(GQ[GetPlayerId(K1O[i])])))
+		call MultiboardSetItemWidth(mbt, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K3O = 0
 	set K2O = K2O + 1
-	set VUX = MultiboardGetItem(FEV, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, c0 + GetObjectName('n0DN')+ e)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0DN')+ e)
+	call MultiboardReleaseItem(mbt)
 	set K3O = 0
 	set i = 1
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, true, false)
-		call MultiboardSetItemValue(VUX,(I2S(DQ[GetPlayerId((K0O[i]))])))
-		call MultiboardSetItemWidth(VUX, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, true, false)
+		call MultiboardSetItemValue(mbt,(I2S(DQ[GetPlayerId((K0O[i]))])))
+		call MultiboardSetItemWidth(mbt, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, true, false)
-		call MultiboardSetItemValue(VUX,(I2S(DQ[GetPlayerId(K1O[i])])))
-		call MultiboardSetItemWidth(VUX, .07)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, true, false)
+		call MultiboardSetItemValue(mbt,(I2S(DQ[GetPlayerId(K1O[i])])))
+		call MultiboardSetItemWidth(mbt, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	if LCO > 0 and LDO > 0 then
@@ -26773,10 +26778,10 @@ function LBO takes nothing returns nothing
 		set K6O = K2O
 		set K7O = K3O
 		set K2O = K2O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemStyle(VUX, true, false)
-		call MultiboardSetItemValue(VUX, c0 + GetObjectName('n0DL')+ e)
-		call MultiboardReleaseItem(VUX)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemStyle(mbt, true, false)
+		call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0DL')+ e)
+		call MultiboardReleaseItem(mbt)
 		set K2O = K6O
 		set x = 1
 		loop
@@ -26788,18 +26793,18 @@ function LBO takes nothing returns nothing
 			exitwhen i > LDO
 				set K3O = x +(x -1)
 				set K2O = K2O + 1
-				set VUX = MultiboardGetItem(FEV, K2O, K3O)
-				call MultiboardSetItemStyle(VUX, false, true)
-				call MultiboardSetItemIcon(VUX,(ELX(Player__Hero[GetPlayerId((K0O[x]))])))
-				call MultiboardSetItemWidth(VUX, .01)
-				call MultiboardReleaseItem(VUX)
+				set mbt = MultiboardGetItem(FEV, K2O, K3O)
+				call MultiboardSetItemStyle(mbt, false, true)
+				call MultiboardSetItemIcon(mbt,(GetHeroIconFilePath(Player__Hero[GetPlayerId((K0O[x]))])))
+				call MultiboardSetItemWidth(mbt, .01)
+				call MultiboardReleaseItem(mbt)
 				set K3O = K3O + 1
-				set VUX = MultiboardGetItem(FEV, K2O, K3O)
-				call MultiboardSetItemStyle(VUX, true, true)
-				call MultiboardSetItemIcon(VUX,(ELX(Player__Hero[GetPlayerId(K1O[i])])))
-				call MultiboardSetItemValue(VUX, " " + LEO(K0O[x], K1O[i]))
-				call MultiboardSetItemWidth(VUX, .059)
-				call MultiboardReleaseItem(VUX)
+				set mbt = MultiboardGetItem(FEV, K2O, K3O)
+				call MultiboardSetItemStyle(mbt, true, true)
+				call MultiboardSetItemIcon(mbt,(GetHeroIconFilePath(Player__Hero[GetPlayerId(K1O[i])])))
+				call MultiboardSetItemValue(mbt, " " + LEO(K0O[x], K1O[i]))
+				call MultiboardSetItemWidth(mbt, .059)
+				call MultiboardReleaseItem(mbt)
 				set i = i + 1
 			endloop
 			set x = x + 1
@@ -26814,18 +26819,18 @@ function LBO takes nothing returns nothing
 			exitwhen i > LCO
 				set K3O = x +(x -1)
 				set K2O = K2O + 1
-				set VUX = MultiboardGetItem(FEV, K2O, K3O)
-				call MultiboardSetItemStyle(VUX, false, true)
-				call MultiboardSetItemIcon(VUX,(ELX(Player__Hero[GetPlayerId((K1O[x -LCO]))])))
-				call MultiboardSetItemWidth(VUX, .01)
-				call MultiboardReleaseItem(VUX)
+				set mbt = MultiboardGetItem(FEV, K2O, K3O)
+				call MultiboardSetItemStyle(mbt, false, true)
+				call MultiboardSetItemIcon(mbt,(GetHeroIconFilePath(Player__Hero[GetPlayerId((K1O[x -LCO]))])))
+				call MultiboardSetItemWidth(mbt, .01)
+				call MultiboardReleaseItem(mbt)
 				set K3O = K3O + 1
-				set VUX = MultiboardGetItem(FEV, K2O, K3O)
-				call MultiboardSetItemStyle(VUX, true, true)
-				call MultiboardSetItemIcon(VUX,(ELX(Player__Hero[GetPlayerId((K0O[i]))])))
-				call MultiboardSetItemValue(VUX, " " + LEO(K1O[x -LCO], K0O[i]))
-				call MultiboardSetItemWidth(VUX, .059)
-				call MultiboardReleaseItem(VUX)
+				set mbt = MultiboardGetItem(FEV, K2O, K3O)
+				call MultiboardSetItemStyle(mbt, true, true)
+				call MultiboardSetItemIcon(mbt,(GetHeroIconFilePath(Player__Hero[GetPlayerId((K0O[i]))])))
+				call MultiboardSetItemValue(mbt, " " + LEO(K1O[x -LCO], K0O[i]))
+				call MultiboardSetItemWidth(mbt, .059)
+				call MultiboardReleaseItem(mbt)
 				set i = i + 1
 			endloop
 			set x = x + 1
@@ -26834,85 +26839,85 @@ function LBO takes nothing returns nothing
 	set K2O = K2O + 1
 	set K3O = 0
 	set K2O = K2O + 1
-	set VUX = MultiboardGetItem(FEV, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, c0 + GetObjectName('n0HS')+ e)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0HS')+ e)
+	call MultiboardReleaseItem(mbt)
 	set K3O = 0
 	set i = 1
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemValueColor(VUX, LFO, LGO, LHO, LJO)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemValueColor(mbt, LFO, LGO, LHO, LJO)
 		if LXO(K0O[i]) == " "then
-			call MultiboardSetItemStyle(VUX, true, false)
+			call MultiboardSetItemStyle(mbt, true, false)
 		else
-			call MultiboardSetItemStyle(VUX, true, false)
-			call MultiboardSetItemIcon(VUX,(ELX(Player__Hero[GetPlayerId((K0O[i]))])))
+			call MultiboardSetItemStyle(mbt, true, false)
+			call MultiboardSetItemIcon(mbt,(GetHeroIconFilePath(Player__Hero[GetPlayerId((K0O[i]))])))
 		endif
-		call MultiboardSetItemValue(VUX, LRO(K0O[i]))
-		call MultiboardSetItemWidth(VUX, .07)
-		call MultiboardReleaseItem(VUX)
+		call MultiboardSetItemValue(mbt, LRO(K0O[i]))
+		call MultiboardSetItemWidth(mbt, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
-		call MultiboardSetItemValueColor(VUX, LFO, LGO, LHO, LJO)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		call MultiboardSetItemValueColor(mbt, LFO, LGO, LHO, LJO)
 		if LXO(K1O[i]) == " "then
-			call MultiboardSetItemStyle(VUX, true, false)
+			call MultiboardSetItemStyle(mbt, true, false)
 		else
-			call MultiboardSetItemStyle(VUX, true, false)
-			call MultiboardSetItemIcon(VUX,(ELX(Player__Hero[GetPlayerId(K1O[i])])))
+			call MultiboardSetItemStyle(mbt, true, false)
+			call MultiboardSetItemIcon(mbt,(GetHeroIconFilePath(Player__Hero[GetPlayerId(K1O[i])])))
 		endif
-		call MultiboardSetItemValue(VUX, LRO(K1O[i]))
-		call MultiboardSetItemWidth(VUX, .07)
-		call MultiboardReleaseItem(VUX)
+		call MultiboardSetItemValue(mbt, LRO(K1O[i]))
+		call MultiboardSetItemWidth(mbt, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K3O = 0
 	set K2O = K2O + 1
-	set VUX = MultiboardGetItem(FEV, K2O, K3O)
-	call MultiboardSetItemStyle(VUX, true, false)
-	call MultiboardSetItemValue(VUX, c0 + GetObjectName('n0E4')+ e)
-	call MultiboardReleaseItem(VUX)
+	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	call MultiboardSetItemStyle(mbt, true, false)
+	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0E4')+ e)
+	call MultiboardReleaseItem(mbt)
 	set K3O = 0
 	set i = 1
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
 		if LXO(K0O[i]) == " "then
-			call MultiboardSetItemStyle(VUX, true, false)
+			call MultiboardSetItemStyle(mbt, true, false)
 		else
-			call MultiboardSetItemStyle(VUX, true, true)
-			call MultiboardSetItemIcon(VUX,(ELX(Player__Hero[GetPlayerId((K0O[i]))])))
+			call MultiboardSetItemStyle(mbt, true, true)
+			call MultiboardSetItemIcon(mbt,(GetHeroIconFilePath(Player__Hero[GetPlayerId((K0O[i]))])))
 		endif
-		call MultiboardSetItemValue(VUX, LXO(K0O[i]))
-		call MultiboardSetItemWidth(VUX, .07)
-		call MultiboardReleaseItem(VUX)
+		call MultiboardSetItemValue(mbt, LXO(K0O[i]))
+		call MultiboardSetItemWidth(mbt, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set VUX = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(FEV, K2O, K3O)
 		if LXO(K1O[i]) == " "then
-			call MultiboardSetItemStyle(VUX, true, false)
+			call MultiboardSetItemStyle(mbt, true, false)
 		else
-			call MultiboardSetItemStyle(VUX, true, true)
-			call MultiboardSetItemIcon(VUX,(ELX(Player__Hero[GetPlayerId(K1O[i])])))
+			call MultiboardSetItemStyle(mbt, true, true)
+			call MultiboardSetItemIcon(mbt,(GetHeroIconFilePath(Player__Hero[GetPlayerId(K1O[i])])))
 		endif
-		call MultiboardSetItemValue(VUX, LXO(K1O[i]))
-		call MultiboardSetItemWidth(VUX, .07)
-		call MultiboardReleaseItem(VUX)
+		call MultiboardSetItemValue(mbt, LXO(K1O[i]))
+		call MultiboardSetItemWidth(mbt, .07)
+		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
-	set VUX = null
+	set mbt = null
 endfunction
 function LKO takes nothing returns nothing
 	local trigger t
@@ -29078,7 +29083,7 @@ function S7O takes nothing returns nothing
 	local string SUO = SubString(GetEventPlayerChatString(), 18, 19)
 	local integer i = S2I(SUO)
 	if i > 0 and i < 7 then
-		if UnitItemInSlot(Player__Hero[GetPlayerId(GetTriggerPlayer())], i -1)!= null and UUV(UnitItemInSlot(Player__Hero[GetPlayerId(GetTriggerPlayer())], i -1))< 0 or GetItemTypeId(UnitItemInSlot(Player__Hero[GetPlayerId(GetTriggerPlayer())], i -1)) == 0 then
+		if UnitItemInSlot(Player__Hero[GetPlayerId(GetTriggerPlayer())], i -1)!= null and GetItemIndexEx(UnitItemInSlot(Player__Hero[GetPlayerId(GetTriggerPlayer())], i -1))< 0 or GetItemTypeId(UnitItemInSlot(Player__Hero[GetPlayerId(GetTriggerPlayer())], i -1)) == 0 then
 			call UnitRemoveItemFromSlot(Player__Hero[GetPlayerId(GetTriggerPlayer())], i -1)
 		else
 			call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10, "该物品不属于Bug")
@@ -30155,10 +30160,10 @@ function YGO takes unit u, integer s1, integer s2 returns nothing
 	local item YHO = null
 	local item YJO = null
 	call DisableTrigger(CUV)
-	if UnitItemInSlot(u, s2 -1)!= null and GUX(UUV(UnitItemInSlot(u, s2 -1))) == false and GetItemIndex(UnitItemInSlot(u, s2 -1)) == XCV then
+	if UnitItemInSlot(u, s2 -1)!= null and GUX(GetItemIndexEx(UnitItemInSlot(u, s2 -1))) == false and GetItemIndex(UnitItemInSlot(u, s2 -1)) == XCV then
 		set YJO = UnitRemoveItemFromSlot(u, s2 -1)
 	endif
-	if UnitItemInSlot(u, s1 -1)!= null and GUX(UUV(UnitItemInSlot(u, s1 -1))) == false and GetItemIndex(UnitItemInSlot(u, s1 -1)) == XCV then
+	if UnitItemInSlot(u, s1 -1)!= null and GUX(GetItemIndexEx(UnitItemInSlot(u, s1 -1))) == false and GetItemIndex(UnitItemInSlot(u, s1 -1)) == XCV then
 		set YHO = UnitRemoveItemFromSlot(u, s1 -1)
 	endif
 	call EnableTrigger(CUV)
@@ -30845,8 +30850,8 @@ function ZJO takes nothing returns nothing
 	local integer ZLO
 	local location ZMO
 	local integer X1X
-	local integer O3X
-	local integer K0X
+	local integer loop_i
+	local integer loop_max
 	local unit ZPO
 	local integer WWV = GetPlayerId(p)
 	local location LIX = GetRectCenter(gg_rct_SentinelTavernCamera)
@@ -30897,8 +30902,8 @@ function ZJO takes nothing returns nothing
 	if RT or GKV or HOV then
 		call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 60, GetObjectName('n05Y'))
 		if RT or GKV or HOV then
-			set O3X = 1
-			set K0X = VZV
+			set loop_i = 1
+			set loop_max = VZV
 		endif
 		call YCE(p)
 		if IsSentinelPlayer(p) then
@@ -30910,21 +30915,21 @@ function ZJO takes nothing returns nothing
 			call ZHO(p)
 		endif
 		loop
-		exitwhen O3X > K0X
+		exitwhen loop_i > loop_max
 			if RT then
-				if ZQ[O3X]== false then
-					call SetPlayerTechMaxAllowed(p, VUV[O3X], 999)
+				if ZQ[loop_i]== false then
+					call SetPlayerTechMaxAllowed(p, VUV[loop_i], 999)
 				else
-					call SetPlayerTechMaxAllowed(p, VUV[O3X], 0)
+					call SetPlayerTechMaxAllowed(p, VUV[loop_i], 0)
 				endif
 			elseif GKV or HOV then
-				if DP[WWV * GL + O3X]and ZQ[O3X]== false and YQ[O3X]== false then
-					call SetPlayerTechMaxAllowed(p, VUV[O3X], 999)
+				if DP[WWV * GL + loop_i]and ZQ[loop_i]== false and YQ[loop_i]== false then
+					call SetPlayerTechMaxAllowed(p, VUV[loop_i], 999)
 				else
-					call SetPlayerTechMaxAllowed(p, VUV[O3X], 0)
+					call SetPlayerTechMaxAllowed(p, VUV[loop_i], 0)
 				endif
 			endif
-			set O3X = O3X + 1
+			set loop_i = loop_i + 1
 		endloop
 		call ZFO(Player(WWV), PP[WWV])
 		call RemoveLocation(LIX)
@@ -31559,20 +31564,20 @@ function Z7O takes nothing returns nothing
 	set p = null
 endfunction
 function Z8O takes player whichPlayer returns boolean
-	local integer O3X = 1
+	local integer loop_i = 1
 	local integer Z9O = 0
 	loop
-	exitwhen O3X > 5
+	exitwhen loop_i > 5
 		if IsSentinelPlayer(whichPlayer) then
-			if Player__Hero[GetPlayerId(SentinelPlayers[O3X])]!= null and SentinelPlayers[O3X]!= whichPlayer and GetHeroLevel(Player__Hero[GetPlayerId(SentinelPlayers[O3X])]) == 1 then
+			if Player__Hero[GetPlayerId(SentinelPlayers[loop_i])]!= null and SentinelPlayers[loop_i]!= whichPlayer and GetHeroLevel(Player__Hero[GetPlayerId(SentinelPlayers[loop_i])]) == 1 then
 				set Z9O = Z9O + 1
 			endif
 		else
-			if Player__Hero[GetPlayerId(ScourgePlayers[O3X])]!= null and ScourgePlayers[O3X]!= whichPlayer and GetHeroLevel(Player__Hero[GetPlayerId(ScourgePlayers[O3X])]) == 1 then
+			if Player__Hero[GetPlayerId(ScourgePlayers[loop_i])]!= null and ScourgePlayers[loop_i]!= whichPlayer and GetHeroLevel(Player__Hero[GetPlayerId(ScourgePlayers[loop_i])]) == 1 then
 				set Z9O = Z9O + 1
 			endif
 		endif
-		set O3X = O3X + 1
+		set loop_i = loop_i + 1
 	endloop
 	if Z9O > 0 then
 		return true
@@ -31724,27 +31729,27 @@ function VCR takes player p returns string
 	return" "
 endfunction
 function VDR takes nothing returns nothing
-	local integer O3X = 1
-	local integer K0X = 5
+	local integer loop_i = 1
+	local integer loop_max = 5
 	local integer index
 	call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 20, " ")
 	if (IsScourgePlayer(GetTriggerPlayer())) then
 		loop
-		exitwhen O3X > K0X
-			set index = GetPlayerId(SentinelPlayers[O3X])
+		exitwhen loop_i > loop_max
+			set index = GetPlayerId(SentinelPlayers[loop_i])
 			if (Player__Hero[index]!= null) then
-				call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 20, PlayersColoerText[index]+(PlayersName[GetPlayerId((SentinelPlayers[O3X]))])+ "|r " + GetObjectName('n08M')+ " " + GetUnitName(Player__Hero[index])+ " (" + GetObjectName('n08L')+ " " + I2S(GetUnitLevel(Player__Hero[index]))+ ")" + VCR(SentinelPlayers[O3X]))
+				call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 20, PlayersColoerText[index]+(PlayersName[GetPlayerId((SentinelPlayers[loop_i]))])+ "|r " + GetObjectName('n08M')+ " " + GetUnitName(Player__Hero[index])+ " (" + GetObjectName('n08L')+ " " + I2S(GetUnitLevel(Player__Hero[index]))+ ")" + VCR(SentinelPlayers[loop_i]))
 			endif
-			set O3X = O3X + 1
+			set loop_i = loop_i + 1
 		endloop
 	else
 		loop
-		exitwhen O3X > K0X
-			set index = GetPlayerId(ScourgePlayers[O3X])
+		exitwhen loop_i > loop_max
+			set index = GetPlayerId(ScourgePlayers[loop_i])
 			if (Player__Hero[index]!= null) then
-				call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 20, PlayersColoerText[index]+(PlayersName[GetPlayerId((ScourgePlayers[O3X]))])+ "|r " + GetObjectName('n08M')+ " " + GetUnitName(Player__Hero[index])+ " (" + GetObjectName('n08L')+ " " + I2S(GetUnitLevel(Player__Hero[index]))+ ")" + VCR(ScourgePlayers[O3X]))
+				call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 20, PlayersColoerText[index]+(PlayersName[GetPlayerId((ScourgePlayers[loop_i]))])+ "|r " + GetObjectName('n08M')+ " " + GetUnitName(Player__Hero[index])+ " (" + GetObjectName('n08L')+ " " + I2S(GetUnitLevel(Player__Hero[index]))+ ")" + VCR(ScourgePlayers[loop_i]))
 			endif
-			set O3X = O3X + 1
+			set loop_i = loop_i + 1
 		endloop
 	endif
 	call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 20, " ")
@@ -32194,36 +32199,36 @@ endfunction
 function EAR takes nothing returns nothing
 	local player p = GetTriggerPlayer()
 	local integer id = GetPlayerId(p)
-	set GEV[id] = ( GXV[id] and SetUp_ItemInfo[id] ) //-ii
-	set GXV[id] = not GXV[id] // -si
-	set SetUp_SkillInfo[id] = GXV[id]
+	set IsPlayersEnableItemInfo[id] = ( IsPlayersEnableSkillInfo[id] and SetUp_ItemInfo[id] ) //-ii
+	set IsPlayersEnableSkillInfo[id] = not IsPlayersEnableSkillInfo[id] // -si
+	set SetUp_SkillInfo[id] = IsPlayersEnableSkillInfo[id]
 	if LocalPlayer == p then
-		call DzFrameSetEnable(UIFrame__CheckBox[5], not GXV[id])
-		if not GXV[id] and SetUp_ItemInfo[id] then
+		call DzFrameSetEnable(UIFrame__CheckBox[5], not IsPlayersEnableSkillInfo[id])
+		if not IsPlayersEnableSkillInfo[id] and SetUp_ItemInfo[id] then
 			call DzFrameSetEnable(UIFrame__CheckBox[4], false)
-		elseif GXV[id] then
+		elseif IsPlayersEnableSkillInfo[id] then
 			call DzFrameSetEnable(UIFrame__CheckBox[4], true)
 		endif
-		call DzFrameShow( UIFrame__HighLight[4], GXV[id] )
-		set UIFrame__IsCheckBoxEnable[4] = GXV[id]
+		call DzFrameShow( UIFrame__HighLight[4], IsPlayersEnableSkillInfo[id] )
+		set UIFrame__IsCheckBoxEnable[4] = IsPlayersEnableSkillInfo[id]
 	endif
 endfunction
 //-ii
 function ENR takes nothing returns nothing
 	local player p = GetTriggerPlayer()
 	local integer id = GetPlayerId(p)
-	set GXV[id] = ( GEV[id] and SetUp_SkillInfo[id] ) //-si
-	set GEV[id] = not GEV[id] //-ii
-	set SetUp_ItemInfo[id] = GEV[id]
+	set IsPlayersEnableSkillInfo[id] = ( IsPlayersEnableItemInfo[id] and SetUp_SkillInfo[id] ) //-si
+	set IsPlayersEnableItemInfo[id] = not IsPlayersEnableItemInfo[id] //-ii
+	set SetUp_ItemInfo[id] = IsPlayersEnableItemInfo[id]
 	if LocalPlayer == p then
-		call DzFrameSetEnable(UIFrame__CheckBox[4], not GEV[id])
-		if not GEV[id] and SetUp_SkillInfo[id] then
+		call DzFrameSetEnable(UIFrame__CheckBox[4], not IsPlayersEnableItemInfo[id])
+		if not IsPlayersEnableItemInfo[id] and SetUp_SkillInfo[id] then
 			call DzFrameSetEnable(UIFrame__CheckBox[5], false)
-		elseif GEV[id] then
+		elseif IsPlayersEnableItemInfo[id] then
 			call DzFrameSetEnable(UIFrame__CheckBox[5], true)
 		endif
-		call DzFrameShow( UIFrame__HighLight[5], GEV[id] )
-		set UIFrame__IsCheckBoxEnable[5] = GEV[id]
+		call DzFrameShow( UIFrame__HighLight[5], IsPlayersEnableItemInfo[id] )
+		set UIFrame__IsCheckBoxEnable[5] = IsPlayersEnableItemInfo[id]
 	endif
 endfunction
 function EBR takes nothing returns nothing
@@ -32742,31 +32747,31 @@ function XXR takes player p2 returns string
 	return s
 endfunction
 function XOR takes player p returns nothing
-	local integer O3X
-	local integer K0X
+	local integer loop_i
+	local integer loop_max
 	if (IsSentinelPlayer(p)) then
-		set O3X = 1
-		set K0X = 5
+		set loop_i = 1
+		set loop_max = 5
 		loop
-		exitwhen O3X > K0X
-			if (SentinelPlayers[O3X]!= p) then
-				if (IsPlayingPlayer(SentinelPlayers[O3X])) then
-					call SetPlayerAllianceStateBJ(p, SentinelPlayers[O3X], 4)
+		exitwhen loop_i > loop_max
+			if (SentinelPlayers[loop_i]!= p) then
+				if (IsPlayingPlayer(SentinelPlayers[loop_i])) then
+					call SetPlayerAllianceStateBJ(p, SentinelPlayers[loop_i], 4)
 				endif
 			endif
-			set O3X = O3X + 1
+			set loop_i = loop_i + 1
 		endloop
 	else
-		set O3X = 1
-		set K0X = 5
+		set loop_i = 1
+		set loop_max = 5
 		loop
-		exitwhen O3X > K0X
-			if (ScourgePlayers[O3X]!= p) then
-				if (IsPlayingPlayer(ScourgePlayers[O3X])) then
-					call SetPlayerAllianceStateBJ(p, ScourgePlayers[O3X], 4)
+		exitwhen loop_i > loop_max
+			if (ScourgePlayers[loop_i]!= p) then
+				if (IsPlayingPlayer(ScourgePlayers[loop_i])) then
+					call SetPlayerAllianceStateBJ(p, ScourgePlayers[loop_i], 4)
 				endif
 			endif
-			set O3X = O3X + 1
+			set loop_i = loop_i + 1
 		endloop
 	endif
 endfunction
@@ -32810,7 +32815,7 @@ function XIR takes unit u, player p returns nothing
 		loop
 		exitwhen i > 5
 			set C1X = UnitItemInSlot(u, i)
-			if GetUnitTypeId(u)!='H00J' and C1X != null and(GetItemPlayer(C1X)!= GetOwningPlayer(u) and UUV(C1X)!= ASV and UUV(C1X)!= ATV) and GetItemTypeId(C1X)!= XOV[AIV] then
+			if GetUnitTypeId(u)!='H00J' and C1X != null and(GetItemPlayer(C1X)!= GetOwningPlayer(u) and GetItemIndexEx(C1X)!= ASV and GetItemIndexEx(C1X)!= ATV) and GetItemTypeId(C1X)!= XOV[AIV] then
 				call UnitRemoveItem(u, C1X)
 			endif
 			set i = i + 1
@@ -33237,7 +33242,7 @@ function X_R takes nothing returns nothing
 	local player p
 	loop
 		set p = Player(i)
-		if GXV[i]== false then
+		if IsPlayersEnableSkillInfo[i]== false then
 			call DisplayTimedTextToPlayer(p, 0, 0, 15, "|c006699CC提示：你可以输入 -SI 来查看队友技能|r")
 		endif
 		set i = i + 1
@@ -33532,8 +33537,8 @@ function SQO takes nothing returns nothing
 	call RemoveUnit(IR)
 	call ODR()
 	call DestroyMultiboard(JP)
-	call MultiboardDisplay(BT, true)
-	set BJ_Multiboard = BT
+	call MultiboardDisplay(MainMultiboard, true)
+	set BJ_Multiboard = MainMultiboard
 	call AddUnitToStock(J7,'h02C', 2, 4)	//游戏开始时添加贩卖
 	call AddUnitToStock(H5,'h02C', 2, 4)
 	call AddUnitToStock(shop_1,'n139', 0, 3) 		//游戏开始时添加经验书
@@ -35013,8 +35018,8 @@ function IJR takes nothing returns boolean
 	if LoadBoolean(HY, h, 0) then
 		set i = 1
 		call DestroyMultiboard(JP)
-		call MultiboardDisplay(BT, true)
-		set BJ_Multiboard = BT
+		call MultiboardDisplay(MainMultiboard, true)
+		set BJ_Multiboard = MainMultiboard
 		call AddUnitToStock(J7,'h02C', 2, 4) 		//游戏开始时添加贩卖
 		call AddUnitToStock(H5,'h02C', 2, 4)
 		call AddUnitToStock(shop_1,'n139', 0, 3) 		//游戏开始时添加经验书
@@ -36563,8 +36568,8 @@ function NNR takes nothing returns nothing
 	local location LAX = GetRectCenter(gg_rct_ScourgeRevivalPoint)
 	local location N1R = GetRectCenter(gg_rct_SentinelRevivalPoint)
 	local location N2R = GetRectCenter(gg_rct_ScourgeRevivalPoint)
-	local integer O3X = 1
-	local integer K0X = 5
+	local integer loop_i = 1
+	local integer loop_max = 5
 	local integer X1X
 	local trigger t
 	set VT = true
@@ -36692,8 +36697,8 @@ function N7R takes nothing returns nothing
 endfunction
 function BVR takes nothing returns nothing
 	local integer BER =(LoadInteger(HY,(GetHandleId(GetTriggeringTrigger())), 173))
-	local integer O3X
-	local integer K0X
+	local integer loop_i
+	local integer loop_max
 	local integer X1X
 	local integer BOX
 	local location LIX = GetRectCenter(gg_rct_SentinelTavernCamera)
@@ -36706,25 +36711,25 @@ function BVR takes nothing returns nothing
 		return
 	endif
 	if IsSentinelPlayer(Player(BER)) then
-		set O3X = 1
-		set K0X = VWV
+		set loop_i = 1
+		set loop_max = VWV
 		set BOX = 0
 	else
-		set O3X = VYV
-		set K0X = VZV
+		set loop_i = VYV
+		set loop_max = VZV
 		set BOX = 1
 	endif
-	set O3X = 1
-	set K0X = VZV
+	set loop_i = 1
+	set loop_max = VZV
 	call YCE(Player(BER))
 	set Q2 = BER
 	if not VT then
 		loop
-		exitwhen O3X > K0X
-			if ZQ[O3X]== false then
-				call SetPlayerTechMaxAllowed(Player(BER), VUV[O3X], 999)
+		exitwhen loop_i > loop_max
+			if ZQ[loop_i]== false then
+				call SetPlayerTechMaxAllowed(Player(BER), VUV[loop_i], 999)
 			endif
-			set O3X = O3X + 1
+			set loop_i = loop_i + 1
 		endloop
 		if (GetPlayerState(Player(BER), PLAYER_STATE_RESOURCE_GOLD)< 250) then
 			call SetPlayerState(Player(BER), PLAYER_STATE_RESOURCE_GOLD, 250)
@@ -46082,8 +46087,8 @@ function T8R takes nothing returns nothing
 endfunction
 function VEE takes nothing returns nothing
 	local destructable array dx
-	local integer O3X
-	local integer K0X
+	local integer loop_i
+	local integer loop_max
 	local fogmodifier T9R
 	local unit KBX = GetTriggerUnit()
 	local unit WWE = GetSpellTargetUnit()
@@ -46104,12 +46109,12 @@ function VEE takes nothing returns nothing
 		set U2 = KBX
 		call GroupEnumUnitsInRange(g, x, y, 150, Condition(function DHX))
 		call BEX(CreateFogModifierRadiusLocBJ(true, GetOwningPlayer(KBX), FOG_OF_WAR_VISIBLE, UVR, 1000.), 2 + GetUnitAbilityLevel(KBX,'A21E'))
-		set O3X = 1
-		set K0X = 8
+		set loop_i = 1
+		set loop_max = 8
 		loop
-		exitwhen O3X > K0X
-			call BRX(CreateDestructableLoc('B005', VIX(UVR, 150.,(I2R(O3X)* 45.)), GetRandomReal(0, 360), 1, 0), 2 + GetUnitAbilityLevel(KBX,'A21E'))
-			set O3X = O3X + 1
+		exitwhen loop_i > loop_max
+			call BRX(CreateDestructableLoc('B005', VIX(UVR, 150.,(I2R(loop_i)* 45.)), GetRandomReal(0, 360), 1, 0), 2 + GetUnitAbilityLevel(KBX,'A21E'))
+			set loop_i = loop_i + 1
 		endloop
 	endif
 	call RemoveLocation(UVR)
@@ -53014,7 +53019,7 @@ function IEI takes nothing returns nothing
 	set RWI = null
 endfunction
 function IOI takes nothing returns nothing
-	local integer GTX = UUV(GetEnumItem())
+	local integer GTX = GetItemIndexEx(GetEnumItem())
 	if GetWidgetLife(GetEnumItem())> 0 and GTX != AIV then
 		if Mode__DeathMatch then
 			call IVI()
@@ -63715,12 +63720,12 @@ function TRI takes unit TII, integer TAI returns nothing
 	set S3X = null
 endfunction
 function TNI takes integer E8I, unit TBI, unit TCI returns nothing
-	local integer O3X = 1
-	local integer K0X = GetUnitAbilityLevel(TBI, E8I)
+	local integer loop_i = 1
+	local integer loop_max = GetUnitAbilityLevel(TBI, E8I)
 	loop
-	exitwhen O3X > K0X
+	exitwhen loop_i > loop_max
 		call SelectHeroSkill(TCI, E8I)
-		set O3X = O3X + 1
+		set loop_i = loop_i + 1
 	endloop
 endfunction
 function TDI takes unit SPI, unit TFI returns nothing
@@ -69416,23 +69421,23 @@ function OEA takes nothing returns nothing
 	local integer h = GetHandleId(t)
 	local unit trigUnit = LoadUnitHandle(HY, h, 14)
 	local real N5O = LoadReal(HY, h, 57)
-	local integer O3X = 0
+	local integer loop_i = 0
 	loop
-	exitwhen O3X > 5
-		if OVA(trigUnit, O3X) then
+	exitwhen loop_i > 5
+		if OVA(trigUnit, loop_i) then
 			if GetUnitAbilityLevel(trigUnit,('B047')) == 0 then
-				call SetItemDropOnDeath(UnitItemInSlot(trigUnit, O3X), true)
-				if GetItemTypeId(UnitItemInSlot(trigUnit, O3X))=='oflg' then
-					call SetItemDroppable(UnitItemInSlot(trigUnit, O3X), true)
+				call SetItemDropOnDeath(UnitItemInSlot(trigUnit, loop_i), true)
+				if GetItemTypeId(UnitItemInSlot(trigUnit, loop_i))=='oflg' then
+					call SetItemDroppable(UnitItemInSlot(trigUnit, loop_i), true)
 				endif
 			else
-				call SetItemDropOnDeath(UnitItemInSlot(trigUnit, O3X), false)
-				if GetItemTypeId(UnitItemInSlot(trigUnit, O3X))=='oflg' then
-					call SetItemDroppable(UnitItemInSlot(trigUnit, O3X), false)
+				call SetItemDropOnDeath(UnitItemInSlot(trigUnit, loop_i), false)
+				if GetItemTypeId(UnitItemInSlot(trigUnit, loop_i))=='oflg' then
+					call SetItemDroppable(UnitItemInSlot(trigUnit, loop_i), false)
 				endif
 			endif
 		endif
-		set O3X = O3X + 1
+		set loop_i = loop_i + 1
 	endloop
 	set N5O = N5O + .2
 	call SaveReal(HY, h, 57, N5O * 1.)
@@ -69445,16 +69450,16 @@ function OEA takes nothing returns nothing
 		call PauseTimer(t)
 		call FlushChildHashtable(HY, h)
 		call SetUnitPathing(trigUnit, true)
-		set O3X = 0
+		set loop_i = 0
 		loop
-		exitwhen O3X > 5
-			if OVA(trigUnit, O3X) then
-				call SetItemDropOnDeath(UnitItemInSlot(trigUnit, O3X), true)
-				if GetItemTypeId(UnitItemInSlot(trigUnit, O3X))=='oflg' then
-					call SetItemDroppable(UnitItemInSlot(trigUnit, O3X), true)
+		exitwhen loop_i > 5
+			if OVA(trigUnit, loop_i) then
+				call SetItemDropOnDeath(UnitItemInSlot(trigUnit, loop_i), true)
+				if GetItemTypeId(UnitItemInSlot(trigUnit, loop_i))=='oflg' then
+					call SetItemDroppable(UnitItemInSlot(trigUnit, loop_i), true)
 				endif
 			endif
-			set O3X = O3X + 1
+			set loop_i = loop_i + 1
 		endloop
 	endif
 	set t = null
@@ -85757,7 +85762,7 @@ function YEA takes nothing returns boolean
 			exitwhen k > 5
 				set it = UnitItemInSlot(Player__Hero[i], k)
 				if it != null then
-					if UUV(it)==-1 then
+					if GetItemIndexEx(it)==-1 then
 						call UnitRemoveItem(Player__Hero[i], it)
 					else
 						call XKO(Player__Hero[i], it)
@@ -86070,7 +86075,7 @@ function YUA takes unit u, item it, integer JOX returns nothing
 	local integer YYA = 0
 	local integer i = 0
 	local item YZA
-	local integer SQV = UUV(it)
+	local integer SQV = GetItemIndexEx(it)
 	local player p
 	loop
 		if UnitItemInSlot(u, i) == null then
@@ -86213,7 +86218,7 @@ function YUA takes unit u, item it, integer JOX returns nothing
 	set YZA = null
 endfunction
 function Bke takes item it returns boolean
-	local integer id = UUV(it)
+	local integer id = GetItemIndexEx(it)
 	if id == it_hyzr or id == it_mlq or id == IEV or id == IBV or id == ICV or id == IDV or id == Item_MoonShard or id == IRV or id == IIV or id == NGV or id == NHV or id == NEV or id == NZV or id == N1V or id == I_V or id == I0V or id == ANV or id == ABV or id == ROV or id == I5V or id == RUV or id == RWV or id == N2V or id == RGV or id == RQV or id == RJV or id == NKV or id == I1V or id == I7V or id == A8V or id == A9V or id == NNV or id == NQV or id == NSV or id == RNV or id == RCV or id == ISV or id == A5V or id == AWV then
 		return true
 	endif
@@ -86479,7 +86484,7 @@ function UnitIssuedItemOrder takes nothing returns nothing // 发布物品命令
 	local unit whichUnit = GetTriggerUnit()
 	local unit targetUnit = GetOrderTargetUnit()
 	local item it = UnitItemInSlot(whichUnit, GetIssuedOrderId() - 852008)
-	local integer id = UUV(it)
+	local integer id = GetItemIndexEx(it)
 	local integer i
 	local boolean b
 	local player trigPlayer = GetTriggerPlayer()
@@ -86769,8 +86774,8 @@ function ZGA takes nothing returns boolean
 endfunction
 function ZHA takes nothing returns nothing
 	local timer t = GetExpiredTimer()
-	call RemoveItem(CreateItem('I006'+ GetRandomInt(0, 2), GetLocationX(WU), GetLocationY(WU)))
-	call RemoveItem(CreateItem('I006'+ GetRandomInt(0, 2), GetLocationX(YU), GetLocationY(YU)))
+	call RemoveItem(CreateItem('I006'+ GetRandomInt(0, 2), GetLocationX(LeftTopRuneLocatio), GetLocationY(LeftTopRuneLocatio)))
+	call RemoveItem(CreateItem('I006'+ GetRandomInt(0, 2), GetLocationX(RightBottomRuneLocatio), GetLocationY(RightBottomRuneLocatio)))
 	call RemoveItem(CreateItem(XXV[ASV], GetRandomReal(-6000, 6000), GetRandomReal(-6000, 6000)))
 	call RemoveItem(CreateItem(XXV[X4V], GetRandomReal(-6000, 6000), GetRandomReal(-6000, 6000)))
 	call TimerStart(t, GetRandomReal(1.5, 3), false, function ZHA)
@@ -86934,7 +86939,7 @@ function ZTA takes unit u returns nothing
 	loop
 	exitwhen i > k
 		set it = UnitItemInSlot(u, i)
-		set id = UUV(it)
+		set id = GetItemIndexEx(it)
 		if (id == O_V or id == O0V or id == O1V) and GetItemUserData(it)> 0 then
 			call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Undead\\ReplenishMana\\SpiritTouchTarget.mdl", u, "overhead"))
 			call IRX(GetOwningPlayer(u), "Abilities\\Spells\\Human\\Heal\\HealTarget.wav")
@@ -87135,11 +87140,14 @@ function InitBuyBack takes nothing returns nothing
 	set W4[13]= U4[0]
 	set W4[14]= U4[0]
 endfunction
+globals
+	string array HerosIconFilePath
+endglobals
 function SaveHeroModelData takes integer id, integer XQX, integer KLX, integer cmid, string Z4A, real Z5A returns nothing
 	set VUV[id]= XQX
 	set RX[id]= KLX
 	if XQX > 0 then
-		set V9V[id]= GetAbilitySoundById(XQX, SOUND_TYPE_EFFECT_LOOPED)
+		set HerosIconFilePath[id]= GetAbilitySoundById(XQX, SOUND_TYPE_EFFECT_LOOPED)
 	endif
 	call XRX(XQX, Z4A)
 	call SaveHeroModelScale(XQX, Z5A, KLX)
@@ -89899,18 +89907,18 @@ function InitHeroSkillsData takes nothing returns nothing
 endfunction
 
 function RegisterItem takes integer EUN, integer EWN, integer EYN, integer EZN returns integer
-	set XBV = XBV + 1
-	set XXV[XBV]= EUN
-	set XOV[XBV]= EWN
-	set XRV[XBV]= EYN
-	call SaveBoolean(M, XRV[XBV], 0, true)
-	set XIV[XBV]= EZN
+	set MaxItemsNumber = MaxItemsNumber + 1
+	set XXV[MaxItemsNumber]= EUN
+	set XOV[MaxItemsNumber]= EWN
+	set XRV[MaxItemsNumber]= EYN
+	call SaveBoolean(M, XRV[MaxItemsNumber], 0, true)
+	set XIV[MaxItemsNumber]= EZN
 	if EWN > 0 then
-		set XAV[XBV]= GetAbilitySoundById(EWN, SOUND_TYPE_EFFECT_LOOPED)
-		if StringLength(XAV[XBV])< 20 then
+		set ItemsIconFilePath[MaxItemsNumber]= GetAbilitySoundById(EWN, SOUND_TYPE_EFFECT_LOOPED)
+		if StringLength(ItemsIconFilePath[MaxItemsNumber])< 20 then
 		endif
 	endif
-	return XBV
+	return MaxItemsNumber
 endfunction
 function InitItemsSystem takes nothing returns nothing
 	local string s = ""
@@ -91246,7 +91254,7 @@ function InitTaverns takes nothing returns nothing
 	call SetUnitColor(EDV, ConvertPlayerColor(11))
 	call SetUnitColor(EFV, ConvertPlayerColor(11))
 endfunction
-function CreateSentinelsUnits takes nothing returns nothing
+function CreateSentinelUnits takes nothing returns nothing
 	local trigger t
 	set SentinelFountainOfLifeUnit = CreateUnit(SentinelPlayers[0],'nfoh',-7168,-7168, 270)
 	call CreateUnit(SentinelPlayers[0],'o00G',-7168,-7168, 270)
@@ -91419,7 +91427,7 @@ function CreateSentinelsUnits takes nothing returns nothing
 	call TriggerAddCondition(IH, Condition(function PRO))
 	call TriggerAddAction(IH, function PCO)
 endfunction
-function CreateScourgesUnits takes nothing returns nothing
+function CreateScourgeUnits takes nothing returns nothing
 	local trigger t
 	set ScourgeFountainOfLifeUnit = CreateUnit(ScourgePlayers[0],'ndfl', 6784, 6368, 270)
 	call CreateUnit(ScourgePlayers[0],'o00G', 6784, 6368, 270)
@@ -92322,21 +92330,21 @@ function SetUp_SyncData takes nothing returns boolean
 	elseif data == 3 then
 		call SetCharges(p)
 	elseif data == 4 then //-si
-		set GEV[id] = ( GXV[id] and SetUp_ItemInfo[id] ) //-ii
-		set GXV[id] = not GXV[id] // -si
-		set SetUp_SkillInfo[id] = GXV[id]
+		set IsPlayersEnableItemInfo[id] = ( IsPlayersEnableSkillInfo[id] and SetUp_ItemInfo[id] ) //-ii
+		set IsPlayersEnableSkillInfo[id] = not IsPlayersEnableSkillInfo[id] // -si
+		set SetUp_SkillInfo[id] = IsPlayersEnableSkillInfo[id]
 		if LocalPlayer == p then
-			call GetSetUpText("多面板显示技能", GXV[id])
+			call GetSetUpText("多面板显示技能", IsPlayersEnableSkillInfo[id])
 		endif
 		//if SetUp_ItemInfo[id] then
 		//	call GetSetUpText("多面板显示物品", false)
 		//endif
 	elseif data == 5 then //-ii
-		set GXV[id] = ( GEV[id] and SetUp_SkillInfo[id] ) //-si
-		set GEV[id] = not GEV[id] //-ii
-		set SetUp_ItemInfo[id] = GEV[id]
+		set IsPlayersEnableSkillInfo[id] = ( IsPlayersEnableItemInfo[id] and SetUp_SkillInfo[id] ) //-si
+		set IsPlayersEnableItemInfo[id] = not IsPlayersEnableItemInfo[id] //-ii
+		set SetUp_ItemInfo[id] = IsPlayersEnableItemInfo[id]
 		if LocalPlayer == p then
-			call GetSetUpText("多面板显示物品", GEV[id])
+			call GetSetUpText("多面板显示物品", IsPlayersEnableItemInfo[id])
 		endif
 		//if SetUp_SkillInfo[id] then
 		//	call GetSetUpText("多面板显示技能", false)
@@ -94343,8 +94351,9 @@ function main takes nothing returns nothing
 	set SentinelMidRangedSpawnLocatio = GetRectCenter( gg_rct_SentinelMidRangedSpawn )
 	set SentinelTopRangedSpawnLocatio = GetRectCenter( gg_rct_SentinelTopRangedSpawn )
 	set SentinelBotRangedSpawnLocatio = GetRectCenter( gg_rct_SentinelBotRangedSpawn )
-	set WU = GetRectCenter(gg_rct_LeftTopRune)
-	set YU = GetRectCenter(gg_rct_RightBottomRune)
+
+	set LeftTopRuneLocatio     = GetRectCenter(gg_rct_LeftTopRune)
+	set RightBottomRuneLocatio = GetRectCenter(gg_rct_RightBottomRune)
 
 	set t = CreateTrigger()
 	call YDWETriggerRegisterEnterRectSimpleNull(t, GetWorldBounds())
@@ -94354,8 +94363,8 @@ function main takes nothing returns nothing
 	call SetAltMinimapIcon("war3mapImported\\black.blp")
 	call RegisterUnitAttackEvent("SetUnitMiss",-1)
 	// 创建近卫和天灾的建筑 包括商店
-	call CreateSentinelsUnits()
-	call CreateScourgesUnits()
+	call CreateSentinelUnits()
+	call CreateScourgeUnits()
 	call BZR(Circle[1])
 	call BZR(Circle[2])
 	call BZR(Circle[3])
