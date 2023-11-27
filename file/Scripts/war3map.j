@@ -663,7 +663,7 @@ globals
 	boolean array RM
 	boolean SM = false
 	string TM = "		"
-	boolean UM = true
+	boolean IsPickingHero = true
 	// 主要模式名
 	string MainModeName = ""
 	string EP
@@ -693,12 +693,13 @@ globals
 	boolean array IsMultiIconSkill
 	boolean array IsNoDeathMatchSkill
 	boolean array IsDisabledSkill
-	integer array RQ
-	integer array IQ
-	integer array AQ
-	integer array NQ
+
+	integer array PlayerKillHerosCount
+	integer array PlayerHeroDeathCount
+	integer array PlayerCreepsLastHitCount
+	integer array PlayerCreepsDenyCount
 	integer array BQ
-	integer array CQ
+	integer array PlayerAssistCount
 	integer array DQ
 	integer array FQ
 	integer array GQ
@@ -782,9 +783,9 @@ globals
 	force RW = null
 	force IW = null
 	// 近卫
-	player array Sentinels
+	player array SentinelPlayers
 	// 天灾
-	player array Scourges
+	player array ScourgePlayers
 	
 	player CreepsPlayer = null
 	constant player NEUTRAL_PASSIVE_PLAYER = Player(15)
@@ -799,7 +800,7 @@ globals
 	real JW = 0
 	location array CreepNextWaypoint
 	group LW = null
-	boolean MW = false
+	boolean IsGameHaveObserver = false
 	boolean PW = false
 	boolean QW = false
 	boolean SW = false
@@ -812,7 +813,7 @@ globals
 	integer array VY
 	integer EY = 0
 	force XY = null
-	boolean OY = false
+	boolean IsGameEnd = false
 	boolean RY = true
 	boolean IY = true
 	boolean array AY
@@ -960,7 +961,7 @@ globals
 	trigger SpawnAllCreepsTrig = null
 	trigger SpawnSuperCreepsTrig = null
 	trigger TG = null
-	trigger QG = null
+	trigger UpdateMainMultiboardTrig = null
 	trigger Y1 = null
 	trigger IH = null
 	trigger OH = null
@@ -1042,7 +1043,7 @@ globals
 	integer array Q3
 	boolean array S3
 	boolean array T3
-	boolean array U3
+	boolean array PlayerShowKDA
 	boolean array W3
 	unit IM = null
 	unit AM = null
@@ -1197,8 +1198,8 @@ globals
 	unit array Circle
 	real array VHV
 	real array VJV
-	player VKV
-	player VLV
+	player ObserverPlayer1
+	player ObserverPlayer2
 	string array PlayersName
 	string array ObserverPlayersName
 	integer array VPV
@@ -1242,7 +1243,8 @@ globals
 	trigger EQV
 	timer array ESV
 	timer array ETV
-	integer array EUV
+	// 可靠金钱
+	integer array PlayersReliableGold
 	real array AssistTime
 	integer array EYV
 	integer array EZV
@@ -2458,16 +2460,16 @@ endfunction
 
 
 function TUV takes trigger t, string s, boolean TWV returns nothing
-	call TriggerRegisterPlayerChatEvent(t, Sentinels[1], s, TWV)
-	call TriggerRegisterPlayerChatEvent(t, Sentinels[2], s, TWV)
-	call TriggerRegisterPlayerChatEvent(t, Sentinels[3], s, TWV)
-	call TriggerRegisterPlayerChatEvent(t, Sentinels[4], s, TWV)
-	call TriggerRegisterPlayerChatEvent(t, Sentinels[5], s, TWV)
-	call TriggerRegisterPlayerChatEvent(t, Scourges[1], s, TWV)
-	call TriggerRegisterPlayerChatEvent(t, Scourges[2], s, TWV)
-	call TriggerRegisterPlayerChatEvent(t, Scourges[3], s, TWV)
-	call TriggerRegisterPlayerChatEvent(t, Scourges[4], s, TWV)
-	call TriggerRegisterPlayerChatEvent(t, Scourges[5], s, TWV)
+	call TriggerRegisterPlayerChatEvent(t, SentinelPlayers[1], s, TWV)
+	call TriggerRegisterPlayerChatEvent(t, SentinelPlayers[2], s, TWV)
+	call TriggerRegisterPlayerChatEvent(t, SentinelPlayers[3], s, TWV)
+	call TriggerRegisterPlayerChatEvent(t, SentinelPlayers[4], s, TWV)
+	call TriggerRegisterPlayerChatEvent(t, SentinelPlayers[5], s, TWV)
+	call TriggerRegisterPlayerChatEvent(t, ScourgePlayers[1], s, TWV)
+	call TriggerRegisterPlayerChatEvent(t, ScourgePlayers[2], s, TWV)
+	call TriggerRegisterPlayerChatEvent(t, ScourgePlayers[3], s, TWV)
+	call TriggerRegisterPlayerChatEvent(t, ScourgePlayers[4], s, TWV)
+	call TriggerRegisterPlayerChatEvent(t, ScourgePlayers[5], s, TWV)
 endfunction
 
 function UnitVisibleToPlayer takes unit u, player p returns boolean
@@ -2557,11 +2559,11 @@ function UOV takes nothing returns nothing
 	endif
 	set Q8V = true
 	loop
-		call StorePlayerCacheData("a", T5V(i), RQ[n])
-		call StorePlayerCacheData("b", T5V(i), IQ[n])
-		call StorePlayerCacheData("c", T5V(i), CQ[n])
-		call StorePlayerCacheData("d", T5V(i), AQ[n])
-		call StorePlayerCacheData("e", T5V(i), NQ[n])
+		call StorePlayerCacheData("a", T5V(i), PlayerKillHerosCount[n])
+		call StorePlayerCacheData("b", T5V(i), PlayerHeroDeathCount[n])
+		call StorePlayerCacheData("c", T5V(i), PlayerAssistCount[n])
+		call StorePlayerCacheData("d", T5V(i), PlayerCreepsLastHitCount[n])
+		call StorePlayerCacheData("e", T5V(i), PlayerCreepsDenyCount[n])
 		call StorePlayerCacheData("f", T5V(i), LoadInteger(HY,(400 + n), 79))
 		set n = n + 1
 		set i = i + 1
@@ -5035,7 +5037,7 @@ function YAE takes nothing returns nothing
 			call EnableTrigger(GetTriggeringTrigger())
 		endif
 	endif
-	if not UM then
+	if not IsPickingHero then
 		call DestroyTrigger(GetTriggeringTrigger())
 	endif
 endfunction
@@ -5181,9 +5183,6 @@ function Y3E takes nothing returns nothing
 	exitwhen xx > 12
 	endloop
 endfunction
-function IsPlaying takes player p returns boolean
-	return GetPlayerSlotState(p) == PLAYER_SLOT_STATE_PLAYING and GetPlayerController(p) == MAP_CONTROL_USER
-endfunction
 
 function Y8E takes nothing returns boolean
 	call SuspendHeroXP(LoadUnitHandle(HY,(GetHandleId(GetTriggeringTrigger())), 2), true)
@@ -5214,7 +5213,7 @@ endfunction
 function ZGE takes nothing returns nothing
 	local unit u = GetTriggerUnit()
 	local trigger t
-	if not (IsUnitType(u, UNIT_TYPE_HERO) and UM) and GetUnitAbilityLevel( u, 'Aloc' ) == 0 then
+	if not (IsUnitType(u, UNIT_TYPE_HERO) and IsPickingHero) and GetUnitAbilityLevel( u, 'Aloc' ) == 0 then
 		// debug call SingleDebug("给" + GetUnitName( GetTriggerUnit() ) + "注册伤害值显示和技能事件。")
 		if KB then
 			set t = CreateTrigger()
@@ -5598,7 +5597,7 @@ function EXX takes group g, real x, real y returns unit
 	return U2
 endfunction
 function EIX takes string s returns nothing
-	if OY == false and FQV == false then
+	if IsGameEnd == false and FQV == false then
 		call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 120, "|c00ff0303内部检验失败|r")
 		call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 120, "|c00ff0303这可能不是一个严重的故障，但对我来说这个信息十分重要|r")
 		call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 120, "|c00ff0303Error code: " + s + "|r")
@@ -5870,23 +5869,29 @@ function XBX takes unit u returns nothing
 		call SetUnitAnimation(u, XNX(u))
 	endif
 endfunction
-function IsSentinelsPlayer takes player p returns boolean
-	return(p == Sentinels[0]) or(p == Sentinels[1]) or(p == Sentinels[2]) or(p == Sentinels[3]) or(p == Sentinels[4]) or(p == Sentinels[5])
+function IsSentinelPlayer takes player p returns boolean
+	return(p == SentinelPlayers[0]) or(p == SentinelPlayers[1]) or(p == SentinelPlayers[2]) or(p == SentinelPlayers[3]) or(p == SentinelPlayers[4]) or(p == SentinelPlayers[5])
 endfunction
-function IsScourgesPlayer takes player p returns boolean
-	return(p == Scourges[0]) or(p == Scourges[1]) or(p == Scourges[2]) or(p == Scourges[3]) or(p == Scourges[4]) or(p == Scourges[5])
+function IsScourgePlayer takes player p returns boolean
+	return(p == ScourgePlayers[0]) or(p == ScourgePlayers[1]) or(p == ScourgePlayers[2]) or(p == ScourgePlayers[3]) or(p == ScourgePlayers[4]) or(p == ScourgePlayers[5])
 endfunction
 function XFX takes player p returns boolean
-	return p == Sentinels[1]or p == Sentinels[2]or p == Sentinels[3]or p == Sentinels[4]or p == Sentinels[5]or p == Scourges[1]or p == Scourges[2]or p == Scourges[3]or p == Scourges[4]or p == Scourges[5]
+	return p == SentinelPlayers[1]or p == SentinelPlayers[2]or p == SentinelPlayers[3]or p == SentinelPlayers[4]or p == SentinelPlayers[5]or p == ScourgePlayers[1]or p == ScourgePlayers[2]or p == ScourgePlayers[3]or p == ScourgePlayers[4]or p == ScourgePlayers[5]
 endfunction
-function XGX takes player p returns boolean
-	return((GetPlayerSlotState(p) == PLAYER_SLOT_STATE_PLAYING or GetPlayerSlotState(p) == PLAYER_SLOT_STATE_LEFT) and GetPlayerController(p) == MAP_CONTROL_USER) or(LOD_DEBUGMODE and p != Sentinels[0]and p != Scourges[0])
+// 有效玩家
+function IsUserPlayer takes player p returns boolean
+	return((GetPlayerSlotState(p) == PLAYER_SLOT_STATE_PLAYING or GetPlayerSlotState(p) == PLAYER_SLOT_STATE_LEFT) and GetPlayerController(p) == MAP_CONTROL_USER) or(LOD_DEBUGMODE and p != SentinelPlayers[0]and p != ScourgePlayers[0])
 endfunction
-function XHX takes player p returns boolean
+// 离线玩家
+function IsOfflinePlayer takes player p returns boolean
 	return GetPlayerSlotState(p) == PLAYER_SLOT_STATE_LEFT and GetPlayerController(p) == MAP_CONTROL_USER
 endfunction
+// 在线玩家
+function IsPlayingPlayer takes player p returns boolean
+	return GetPlayerSlotState(p) == PLAYER_SLOT_STATE_PLAYING and GetPlayerController(p) == MAP_CONTROL_USER
+endfunction
 function XJX takes nothing returns nothing
-	if (IsPlaying(GetEnumPlayer())) then
+	if (IsPlayingPlayer(GetEnumPlayer())) then
 		set bj_forceCountPlayers = bj_forceCountPlayers + 1
 	endif
 endfunction
@@ -5914,29 +5919,29 @@ function XPX takes integer XQX, player p returns nothing
 	endif
 endfunction
 function XSX takes integer XQX returns nothing
-	call XPX(XQX, Sentinels[1])
-	call XPX(XQX, Sentinels[2])
-	call XPX(XQX, Sentinels[3])
-	call XPX(XQX, Sentinels[4])
-	call XPX(XQX, Sentinels[5])
-	call XPX(XQX, Scourges[1])
-	call XPX(XQX, Scourges[2])
-	call XPX(XQX, Scourges[3])
-	call XPX(XQX, Scourges[4])
-	call XPX(XQX, Scourges[5])
+	call XPX(XQX, SentinelPlayers[1])
+	call XPX(XQX, SentinelPlayers[2])
+	call XPX(XQX, SentinelPlayers[3])
+	call XPX(XQX, SentinelPlayers[4])
+	call XPX(XQX, SentinelPlayers[5])
+	call XPX(XQX, ScourgePlayers[1])
+	call XPX(XQX, ScourgePlayers[2])
+	call XPX(XQX, ScourgePlayers[3])
+	call XPX(XQX, ScourgePlayers[4])
+	call XPX(XQX, ScourgePlayers[5])
 endfunction
 function XTX takes integer XQX returns nothing
 	if IsNoHeroLimit then
-		call SetPlayerTechMaxAllowed(Sentinels[1], XQX, 0)
-		call SetPlayerTechMaxAllowed(Sentinels[2], XQX, 0)
-		call SetPlayerTechMaxAllowed(Sentinels[3], XQX, 0)
-		call SetPlayerTechMaxAllowed(Sentinels[4], XQX, 0)
-		call SetPlayerTechMaxAllowed(Sentinels[5], XQX, 0)
-		call SetPlayerTechMaxAllowed(Scourges[1], XQX, 0)
-		call SetPlayerTechMaxAllowed(Scourges[2], XQX, 0)
-		call SetPlayerTechMaxAllowed(Scourges[3], XQX, 0)
-		call SetPlayerTechMaxAllowed(Scourges[4], XQX, 0)
-		call SetPlayerTechMaxAllowed(Scourges[5], XQX, 0)
+		call SetPlayerTechMaxAllowed(SentinelPlayers[1], XQX, 0)
+		call SetPlayerTechMaxAllowed(SentinelPlayers[2], XQX, 0)
+		call SetPlayerTechMaxAllowed(SentinelPlayers[3], XQX, 0)
+		call SetPlayerTechMaxAllowed(SentinelPlayers[4], XQX, 0)
+		call SetPlayerTechMaxAllowed(SentinelPlayers[5], XQX, 0)
+		call SetPlayerTechMaxAllowed(ScourgePlayers[1], XQX, 0)
+		call SetPlayerTechMaxAllowed(ScourgePlayers[2], XQX, 0)
+		call SetPlayerTechMaxAllowed(ScourgePlayers[3], XQX, 0)
+		call SetPlayerTechMaxAllowed(ScourgePlayers[4], XQX, 0)
+		call SetPlayerTechMaxAllowed(ScourgePlayers[5], XQX, 0)
 	endif
 endfunction
 function XUX takes player p returns nothing
@@ -5958,16 +5963,16 @@ function XUX takes player p returns nothing
 	endif
 endfunction
 function XWX takes nothing returns nothing
-	call XUX(Sentinels[1])
-	call XUX(Sentinels[2])
-	call XUX(Sentinels[3])
-	call XUX(Sentinels[4])
-	call XUX(Sentinels[5])
-	call XUX(Scourges[1])
-	call XUX(Scourges[2])
-	call XUX(Scourges[3])
-	call XUX(Scourges[4])
-	call XUX(Scourges[5])
+	call XUX(SentinelPlayers[1])
+	call XUX(SentinelPlayers[2])
+	call XUX(SentinelPlayers[3])
+	call XUX(SentinelPlayers[4])
+	call XUX(SentinelPlayers[5])
+	call XUX(ScourgePlayers[1])
+	call XUX(ScourgePlayers[2])
+	call XUX(ScourgePlayers[3])
+	call XUX(ScourgePlayers[4])
+	call XUX(ScourgePlayers[5])
 endfunction
 function XYX takes player p returns nothing
 	local integer i = 1
@@ -5988,16 +5993,16 @@ function XYX takes player p returns nothing
 	endif
 endfunction
 function XZX takes nothing returns nothing
-	call XYX(Sentinels[1])
-	call XYX(Sentinels[2])
-	call XYX(Sentinels[3])
-	call XYX(Sentinels[4])
-	call XYX(Sentinels[5])
-	call XYX(Scourges[1])
-	call XYX(Scourges[2])
-	call XYX(Scourges[3])
-	call XYX(Scourges[4])
-	call XYX(Scourges[5])
+	call XYX(SentinelPlayers[1])
+	call XYX(SentinelPlayers[2])
+	call XYX(SentinelPlayers[3])
+	call XYX(SentinelPlayers[4])
+	call XYX(SentinelPlayers[5])
+	call XYX(ScourgePlayers[1])
+	call XYX(ScourgePlayers[2])
+	call XYX(ScourgePlayers[3])
+	call XYX(ScourgePlayers[4])
+	call XYX(ScourgePlayers[5])
 endfunction
 function X_X takes nothing returns nothing
 	local integer i
@@ -6102,21 +6107,21 @@ function OOX takes player whichPlayer, integer goldBonus returns nothing
 endfunction
 function ORX takes player p, integer goldBonus returns nothing
 	call OOX(p, goldBonus)
-	set EUV[GetPlayerId(p)]= EUV[GetPlayerId(p)] + goldBonus // EUV = 可靠金钱？
+	set PlayersReliableGold[GetPlayerId(p)]= PlayersReliableGold[GetPlayerId(p)] + goldBonus // EUV = 可靠金钱？
 endfunction
 function OIX takes integer OAX, integer goldBonus returns nothing
 	if OAX == 0 then
-		call ORX(Sentinels[1], goldBonus)
-		call ORX(Sentinels[2], goldBonus)
-		call ORX(Sentinels[3], goldBonus)
-		call ORX(Sentinels[4], goldBonus)
-		call ORX(Sentinels[5], goldBonus)
+		call ORX(SentinelPlayers[1], goldBonus)
+		call ORX(SentinelPlayers[2], goldBonus)
+		call ORX(SentinelPlayers[3], goldBonus)
+		call ORX(SentinelPlayers[4], goldBonus)
+		call ORX(SentinelPlayers[5], goldBonus)
 	else
-		call ORX(Scourges[1], goldBonus)
-		call ORX(Scourges[2], goldBonus)
-		call ORX(Scourges[3], goldBonus)
-		call ORX(Scourges[4], goldBonus)
-		call ORX(Scourges[5], goldBonus)
+		call ORX(ScourgePlayers[1], goldBonus)
+		call ORX(ScourgePlayers[2], goldBonus)
+		call ORX(ScourgePlayers[3], goldBonus)
+		call ORX(ScourgePlayers[4], goldBonus)
+		call ORX(ScourgePlayers[5], goldBonus)
 	endif
 endfunction
 function ONX takes unit u, boolean OBX returns nothing
@@ -6129,7 +6134,7 @@ function ONX takes unit u, boolean OBX returns nothing
 	if IsUnitAlly(GetDyingUnit(), GetOwningPlayer(u)) then
 		set goldBonus = goldBonus / 2
 	endif
-	if GetOwningPlayer(GetDyingUnit()) == Scourges[0] then
+	if GetOwningPlayer(GetDyingUnit()) == ScourgePlayers[0] then
 		call OIX(0, goldBonus)
 	else
 		call OIX(1, goldBonus)
@@ -6142,7 +6147,7 @@ function OCX takes unit U6E, integer ODX returns nothing
 	if IsUnitAlly(GetDyingUnit(), GetOwningPlayer(U6E)) then
 		set goldBonus = goldBonus / 2
 	endif
-	if GetOwningPlayer(GetDyingUnit()) == Scourges[0] then
+	if GetOwningPlayer(GetDyingUnit()) == ScourgePlayers[0] then
 		call OIX(0, goldBonus)
 	else
 		call OIX(1, goldBonus)
@@ -6158,7 +6163,7 @@ function OFX takes player p, integer at returns nothing
 	local boolean E5X = at == 2
 	local boolean E6X = at == 3
 	set FT[pid]= true
-	if IsSentinelsPlayer(p) then
+	if IsSentinelPlayer(p) then
 		set OGX = GetRectCenter(gg_rct_SentinelRevivalPoint)
 	else
 		set OGX = GetRectCenter(gg_rct_ScourgeRevivalPoint)
@@ -6189,7 +6194,7 @@ function OHX takes player p, integer OJX returns nothing
 	local integer TTV = 0
 	local integer j = 0
 	set FT[GetPlayerId(p)]= true
-	if IsSentinelsPlayer(p) then
+	if IsSentinelPlayer(p) then
 		set OGX = GetRectCenter(gg_rct_SentinelRevivalPoint)
 	else
 		set OGX = GetRectCenter(gg_rct_ScourgeRevivalPoint)
@@ -6229,7 +6234,7 @@ function OKX takes player p returns nothing
 	local integer TTV
 	local integer pid = GetPlayerId(p)
 	set FT[GetPlayerId(p)]= true
-	if IsSentinelsPlayer(p) then
+	if IsSentinelPlayer(p) then
 		set OGX = GetRectCenter(gg_rct_SentinelRevivalPoint)
 	else
 		set OGX = GetRectCenter(gg_rct_ScourgeRevivalPoint)
@@ -6288,19 +6293,19 @@ function IsEffectiveDamage takes real d returns boolean
 endfunction
 function GetHostPlayer takes nothing returns nothing
 	local integer i = 1
-	set HostPlayer = Sentinels[1]
+	set HostPlayer = SentinelPlayers[1]
 	loop
-	exitwhen IsPlaying(HostPlayer) or i > 5
+	exitwhen IsPlayingPlayer(HostPlayer) or i > 5
 		set i = i + 1
-		set HostPlayer = Sentinels[i]
+		set HostPlayer = SentinelPlayers[i]
 	endloop
-	if IsPlaying(HostPlayer) == false then
-		set HostPlayer = Scourges[1]
+	if IsPlayingPlayer(HostPlayer) == false then
+		set HostPlayer = ScourgePlayers[1]
 		set i = 1
 		loop
-		exitwhen IsPlaying(HostPlayer) or i > 5
+		exitwhen IsPlayingPlayer(HostPlayer) or i > 5
 			set i = i + 1
-			set HostPlayer = Scourges[i]
+			set HostPlayer = ScourgePlayers[i]
 		endloop
 	endif
 endfunction
@@ -6745,7 +6750,7 @@ function RNX takes unit trigUnit returns integer
 	return 0
 endfunction
 function IsObserverPlayer takes player p returns boolean
-	return MW and(VKV == p or VLV == p)
+	return IsGameHaveObserver and(ObserverPlayer1 == p or ObserverPlayer2 == p)
 endfunction
 function RCX takes unit u returns boolean
 	return GetUnitAbilityLevel(u,'Bcyc')> 0 or GetUnitAbilityLevel(u,'Bcy2')> 0
@@ -7280,7 +7285,7 @@ function SetUnitToReduceDamage takes unit whichUnit, real reduceValue returns no
 		endif
 	endif
 	// call BJDebugMsg( "原伤害" +R2S(GetEventDamage())+" "+ GetUnitName(whichUnit) + "减免伤害:" + R2S(reduceValue))
-	if MW then
+	if IsGameHaveObserver then
 		call ReduceDamageTextTag("+" + I2S(R2I(reduceValue)), 4, whichUnit, .028, 128, 0, 216, 0, 216)
 	endif
 endfunction
@@ -7594,8 +7599,8 @@ function A1X takes trigger t, playerunitevent whichEvent returns nothing
 	local integer i = 1
 	loop
 	exitwhen i > 5
-		call TriggerRegisterPlayerUnitEvent(t, Sentinels[i], whichEvent, null)
-		call TriggerRegisterPlayerUnitEvent(t, Scourges[i], whichEvent, null)
+		call TriggerRegisterPlayerUnitEvent(t, SentinelPlayers[i], whichEvent, null)
+		call TriggerRegisterPlayerUnitEvent(t, ScourgePlayers[i], whichEvent, null)
 		set i = i + 1
 	endloop
 endfunction
@@ -10037,7 +10042,7 @@ function H8X takes item UWV returns boolean
 endfunction
 function H9X takes unit trigUnit returns real
 	local real JVX
-	if IsSentinelsPlayer(GetOwningPlayer(trigUnit)) then
+	if IsSentinelPlayer(GetOwningPlayer(trigUnit)) then
 		set JVX = GetRectCenterX(gg_rct_SentinelRevivalPoint)
 	else
 		set JVX = GetRectCenterX(gg_rct_ScourgeRevivalPoint)
@@ -10046,7 +10051,7 @@ function H9X takes unit trigUnit returns real
 endfunction
 function JEX takes unit trigUnit returns real
 	local real JVX
-	if IsSentinelsPlayer(GetOwningPlayer(trigUnit)) then
+	if IsSentinelPlayer(GetOwningPlayer(trigUnit)) then
 		set JVX = GetRectCenterY(gg_rct_SentinelRevivalPoint)
 	else
 		set JVX = GetRectCenterY(gg_rct_ScourgeRevivalPoint)
@@ -10172,7 +10177,7 @@ endfunction
 function StoreDrCacheDataToPlayer takes player p, string key, integer value returns nothing
 	local string id = I2S(GetPlayerId(p))
 	call StoreInteger(DrCache, id, key, value)
-	if IsPlaying(HostPlayer) == false then
+	if IsPlayingPlayer(HostPlayer) == false then
 		call GetHostPlayer()
 	endif
 	if LocalPlayer == HostPlayer then
@@ -10181,7 +10186,7 @@ function StoreDrCacheDataToPlayer takes player p, string key, integer value retu
 endfunction
 function StoreDrCacheData takes string key, integer value returns nothing
 	call StoreInteger(DrCache, "Data", key, value)
-	if IsPlaying(HostPlayer) == false then
+	if IsPlayingPlayer(HostPlayer) == false then
 		call GetHostPlayer()
 	endif
 	if LocalPlayer == HostPlayer then
@@ -10576,16 +10581,16 @@ function KUX takes nothing returns boolean
 		return false
 	endif
 	// 刷新买活？
-	call KTX(Sentinels[1])
-	call KTX(Sentinels[2])
-	call KTX(Sentinels[3])
-	call KTX(Sentinels[4])
-	call KTX(Sentinels[5])
-	call KTX(Scourges[1])
-	call KTX(Scourges[2])
-	call KTX(Scourges[3])
-	call KTX(Scourges[4])
-	call KTX(Scourges[5])
+	call KTX(SentinelPlayers[1])
+	call KTX(SentinelPlayers[2])
+	call KTX(SentinelPlayers[3])
+	call KTX(SentinelPlayers[4])
+	call KTX(SentinelPlayers[5])
+	call KTX(ScourgePlayers[1])
+	call KTX(ScourgePlayers[2])
+	call KTX(ScourgePlayers[3])
+	call KTX(ScourgePlayers[4])
+	call KTX(ScourgePlayers[5])
 	return false
 endfunction
 function KWX takes nothing returns nothing
@@ -10661,73 +10666,73 @@ function KYX takes player p returns nothing
 	set t = null
 endfunction
 function KZX takes nothing returns nothing
-	set VQV[GetPlayerId(Sentinels[1])]= 0
-	set VSV[GetPlayerId(Sentinels[1])]= 66
-	set VTV[GetPlayerId(Sentinels[1])]= 255
-	set VQV[GetPlayerId(Sentinels[2])]= 48
-	set VSV[GetPlayerId(Sentinels[2])]= 230
-	set VTV[GetPlayerId(Sentinels[2])]= 185
-	set VQV[GetPlayerId(Sentinels[3])]= 50
-	set VSV[GetPlayerId(Sentinels[3])]= 0
-	set VTV[GetPlayerId(Sentinels[3])]= 129
-	set VQV[GetPlayerId(Sentinels[4])]= 255
-	set VSV[GetPlayerId(Sentinels[4])]= 252
-	set VTV[GetPlayerId(Sentinels[4])]= 1
-	set VQV[GetPlayerId(Sentinels[5])]= 255
-	set VSV[GetPlayerId(Sentinels[5])]= 50
-	set VTV[GetPlayerId(Sentinels[5])]= 0
-	set VQV[GetPlayerId(Scourges[1])]= 220
-	set VSV[GetPlayerId(Scourges[1])]= 50
-	set VTV[GetPlayerId(Scourges[1])]= 50
-	set VQV[GetPlayerId(Scourges[2])]= 50
-	set VSV[GetPlayerId(Scourges[2])]= 50
-	set VTV[GetPlayerId(Scourges[2])]= 50
-	set VQV[GetPlayerId(Scourges[3])]= 75
-	set VSV[GetPlayerId(Scourges[3])]= 150
-	set VTV[GetPlayerId(Scourges[3])]= 190
-	set VQV[GetPlayerId(Scourges[4])]= 16
-	set VSV[GetPlayerId(Scourges[4])]= 60
-	set VTV[GetPlayerId(Scourges[4])]= 18
-	set VQV[GetPlayerId(Scourges[5])]= 68
-	set VSV[GetPlayerId(Scourges[5])]= 42
-	set VTV[GetPlayerId(Scourges[5])]= 4
+	set VQV[GetPlayerId(SentinelPlayers[1])]= 0
+	set VSV[GetPlayerId(SentinelPlayers[1])]= 66
+	set VTV[GetPlayerId(SentinelPlayers[1])]= 255
+	set VQV[GetPlayerId(SentinelPlayers[2])]= 48
+	set VSV[GetPlayerId(SentinelPlayers[2])]= 230
+	set VTV[GetPlayerId(SentinelPlayers[2])]= 185
+	set VQV[GetPlayerId(SentinelPlayers[3])]= 50
+	set VSV[GetPlayerId(SentinelPlayers[3])]= 0
+	set VTV[GetPlayerId(SentinelPlayers[3])]= 129
+	set VQV[GetPlayerId(SentinelPlayers[4])]= 255
+	set VSV[GetPlayerId(SentinelPlayers[4])]= 252
+	set VTV[GetPlayerId(SentinelPlayers[4])]= 1
+	set VQV[GetPlayerId(SentinelPlayers[5])]= 255
+	set VSV[GetPlayerId(SentinelPlayers[5])]= 50
+	set VTV[GetPlayerId(SentinelPlayers[5])]= 0
+	set VQV[GetPlayerId(ScourgePlayers[1])]= 220
+	set VSV[GetPlayerId(ScourgePlayers[1])]= 50
+	set VTV[GetPlayerId(ScourgePlayers[1])]= 50
+	set VQV[GetPlayerId(ScourgePlayers[2])]= 50
+	set VSV[GetPlayerId(ScourgePlayers[2])]= 50
+	set VTV[GetPlayerId(ScourgePlayers[2])]= 50
+	set VQV[GetPlayerId(ScourgePlayers[3])]= 75
+	set VSV[GetPlayerId(ScourgePlayers[3])]= 150
+	set VTV[GetPlayerId(ScourgePlayers[3])]= 190
+	set VQV[GetPlayerId(ScourgePlayers[4])]= 16
+	set VSV[GetPlayerId(ScourgePlayers[4])]= 60
+	set VTV[GetPlayerId(ScourgePlayers[4])]= 18
+	set VQV[GetPlayerId(ScourgePlayers[5])]= 68
+	set VSV[GetPlayerId(ScourgePlayers[5])]= 42
+	set VTV[GetPlayerId(ScourgePlayers[5])]= 4
 endfunction
 function K_X takes nothing returns nothing
 	local integer O3X
 	local integer K0X
 	local integer i
-	set PlayersColoerText[GetPlayerId(Sentinels[0])]= "|c00ff0303"
-	set PlayersColoerText[GetPlayerId(Sentinels[1])]= "|c000042ff"
-	set PlayersColoerText[GetPlayerId(Sentinels[2])]= "|c001ce6b9"
-	set PlayersColoerText[GetPlayerId(Sentinels[3])]= "|c00540081"
-	set PlayersColoerText[GetPlayerId(Sentinels[4])]= "|c00fffc01"
-	set PlayersColoerText[GetPlayerId(Sentinels[5])]= "|c00ff8000"
-	set PlayersColoerText[GetPlayerId(Scourges[0])]= "|c0020c000"
-	set PlayersColoerText[GetPlayerId(Scourges[1])]= "|c00e55bb0"
-	set PlayersColoerText[GetPlayerId(Scourges[2])]= "|c00959697"
-	set PlayersColoerText[GetPlayerId(Scourges[3])]= "|c007ebff1"
-	set PlayersColoerText[GetPlayerId(Scourges[4])]= "|c00106246"
-	set PlayersColoerText[GetPlayerId(Scourges[5])]= "|c004e2a04"
-	call SetPlayerColor(Sentinels[0], PLAYER_COLOR_RED)
-	call SetPlayerColor(Sentinels[1], PLAYER_COLOR_BLUE)
-	call SetPlayerColor(Sentinels[2], PLAYER_COLOR_CYAN)
-	call SetPlayerColor(Sentinels[3], PLAYER_COLOR_PURPLE)
-	call SetPlayerColor(Sentinels[4], PLAYER_COLOR_YELLOW)
-	call SetPlayerColor(Sentinels[5], PLAYER_COLOR_ORANGE)
-	call SetPlayerColor(Scourges[0], PLAYER_COLOR_GREEN)
-	call SetPlayerColor(Scourges[1], PLAYER_COLOR_PINK)
-	call SetPlayerColor(Scourges[2], PLAYER_COLOR_LIGHT_GRAY)
-	call SetPlayerColor(Scourges[3], PLAYER_COLOR_LIGHT_BLUE)
-	call SetPlayerColor(Scourges[4], PLAYER_COLOR_AQUA)
-	call SetPlayerColor(Scourges[5], PLAYER_COLOR_BROWN)
+	set PlayersColoerText[GetPlayerId(SentinelPlayers[0])]= "|c00ff0303"
+	set PlayersColoerText[GetPlayerId(SentinelPlayers[1])]= "|c000042ff"
+	set PlayersColoerText[GetPlayerId(SentinelPlayers[2])]= "|c001ce6b9"
+	set PlayersColoerText[GetPlayerId(SentinelPlayers[3])]= "|c00540081"
+	set PlayersColoerText[GetPlayerId(SentinelPlayers[4])]= "|c00fffc01"
+	set PlayersColoerText[GetPlayerId(SentinelPlayers[5])]= "|c00ff8000"
+	set PlayersColoerText[GetPlayerId(ScourgePlayers[0])]= "|c0020c000"
+	set PlayersColoerText[GetPlayerId(ScourgePlayers[1])]= "|c00e55bb0"
+	set PlayersColoerText[GetPlayerId(ScourgePlayers[2])]= "|c00959697"
+	set PlayersColoerText[GetPlayerId(ScourgePlayers[3])]= "|c007ebff1"
+	set PlayersColoerText[GetPlayerId(ScourgePlayers[4])]= "|c00106246"
+	set PlayersColoerText[GetPlayerId(ScourgePlayers[5])]= "|c004e2a04"
+	call SetPlayerColor(SentinelPlayers[0], PLAYER_COLOR_RED)
+	call SetPlayerColor(SentinelPlayers[1], PLAYER_COLOR_BLUE)
+	call SetPlayerColor(SentinelPlayers[2], PLAYER_COLOR_CYAN)
+	call SetPlayerColor(SentinelPlayers[3], PLAYER_COLOR_PURPLE)
+	call SetPlayerColor(SentinelPlayers[4], PLAYER_COLOR_YELLOW)
+	call SetPlayerColor(SentinelPlayers[5], PLAYER_COLOR_ORANGE)
+	call SetPlayerColor(ScourgePlayers[0], PLAYER_COLOR_GREEN)
+	call SetPlayerColor(ScourgePlayers[1], PLAYER_COLOR_PINK)
+	call SetPlayerColor(ScourgePlayers[2], PLAYER_COLOR_LIGHT_GRAY)
+	call SetPlayerColor(ScourgePlayers[3], PLAYER_COLOR_LIGHT_BLUE)
+	call SetPlayerColor(ScourgePlayers[4], PLAYER_COLOR_AQUA)
+	call SetPlayerColor(ScourgePlayers[5], PLAYER_COLOR_BROWN)
 	set O3X = 1
 	set K0X = 5
 	loop
-		if GetPlayerSlotState(Sentinels[O3X]) == PLAYER_SLOT_STATE_EMPTY then
-			call SetPlayerName(Sentinels[O3X], GetObjectName('n0DH')+ " " + I2S(O3X))
+		if GetPlayerSlotState(SentinelPlayers[O3X]) == PLAYER_SLOT_STATE_EMPTY then
+			call SetPlayerName(SentinelPlayers[O3X], GetObjectName('n0DH')+ " " + I2S(O3X))
 		endif
-		if GetPlayerSlotState(Scourges[O3X]) == PLAYER_SLOT_STATE_EMPTY then
-			call SetPlayerName(Scourges[O3X], GetObjectName('n0DH')+ " " + I2S(5 + O3X))
+		if GetPlayerSlotState(ScourgePlayers[O3X]) == PLAYER_SLOT_STATE_EMPTY then
+			call SetPlayerName(ScourgePlayers[O3X], GetObjectName('n0DH')+ " " + I2S(5 + O3X))
 		endif
 		set O3X = O3X + 1
 	exitwhen O3X > K0X
@@ -10737,26 +10742,26 @@ function K1X takes nothing returns nothing
 	local integer i
 	local integer k
 	local integer K2X = 125
-	call SetUnitOwner(VXV, Sentinels[1], false)
-	call SetUnitOwner(VOV, Sentinels[2], false)
-	call SetUnitOwner(VRV, Sentinels[3], false)
-	call SetUnitOwner(VIV, Sentinels[4], false)
-	call SetUnitOwner(VAV, Sentinels[5], false)
-	call SetUnitOwner(VNV, Scourges[1], false)
-	call SetUnitOwner(VBV, Scourges[2], false)
-	call SetUnitOwner(VCV, Scourges[3], false)
-	call SetUnitOwner(VDV, Scourges[4], false)
-	call SetUnitOwner(VFV, Scourges[5], false)
-	set Circle[GetPlayerId(Sentinels[1])]= VXV
-	set Circle[GetPlayerId(Sentinels[2])]= VOV
-	set Circle[GetPlayerId(Sentinels[3])]= VRV
-	set Circle[GetPlayerId(Sentinels[4])]= VIV
-	set Circle[GetPlayerId(Sentinels[5])]= VAV
-	set Circle[GetPlayerId(Scourges[1])]= VNV
-	set Circle[GetPlayerId(Scourges[2])]= VBV
-	set Circle[GetPlayerId(Scourges[3])]= VCV
-	set Circle[GetPlayerId(Scourges[4])]= VDV
-	set Circle[GetPlayerId(Scourges[5])]= VFV
+	call SetUnitOwner(VXV, SentinelPlayers[1], false)
+	call SetUnitOwner(VOV, SentinelPlayers[2], false)
+	call SetUnitOwner(VRV, SentinelPlayers[3], false)
+	call SetUnitOwner(VIV, SentinelPlayers[4], false)
+	call SetUnitOwner(VAV, SentinelPlayers[5], false)
+	call SetUnitOwner(VNV, ScourgePlayers[1], false)
+	call SetUnitOwner(VBV, ScourgePlayers[2], false)
+	call SetUnitOwner(VCV, ScourgePlayers[3], false)
+	call SetUnitOwner(VDV, ScourgePlayers[4], false)
+	call SetUnitOwner(VFV, ScourgePlayers[5], false)
+	set Circle[GetPlayerId(SentinelPlayers[1])]= VXV
+	set Circle[GetPlayerId(SentinelPlayers[2])]= VOV
+	set Circle[GetPlayerId(SentinelPlayers[3])]= VRV
+	set Circle[GetPlayerId(SentinelPlayers[4])]= VIV
+	set Circle[GetPlayerId(SentinelPlayers[5])]= VAV
+	set Circle[GetPlayerId(ScourgePlayers[1])]= VNV
+	set Circle[GetPlayerId(ScourgePlayers[2])]= VBV
+	set Circle[GetPlayerId(ScourgePlayers[3])]= VCV
+	set Circle[GetPlayerId(ScourgePlayers[4])]= VDV
+	set Circle[GetPlayerId(ScourgePlayers[5])]= VFV
 	set i = 1
 	if LocalPlayer== Player(i) then
 		call SetUnitVertexColor(Circle[GetPlayerId(Player(i))], 255, 255, 255, 255)
@@ -10819,10 +10824,10 @@ function K1X takes nothing returns nothing
 	endif
 	set i = 1
 	loop
-		set k = GetPlayerId(Sentinels[i])
+		set k = GetPlayerId(SentinelPlayers[i])
 		set VHV[k]= GetUnitX(Circle[k])
 		set VJV[k]= GetUnitY(Circle[k])
-		set k = GetPlayerId(Scourges[i])
+		set k = GetPlayerId(ScourgePlayers[i])
 		set VHV[k]= GetUnitX(Circle[k])
 		set VJV[k]= GetUnitY(Circle[k])
 		set i = i + 1
@@ -10838,12 +10843,12 @@ function K3X takes unit K4X returns boolean
 endfunction
 function K5X takes nothing returns nothing
 	if (GetOwningPlayer(GetEnumUnit()) == Player(0)) then
-		call SetUnitOwner(GetEnumUnit(), Sentinels[0], false)
+		call SetUnitOwner(GetEnumUnit(), SentinelPlayers[0], false)
 		if K3X(GetEnumUnit()) == false then
 			call SetUnitColor(GetEnumUnit(), ConvertPlayerColor(0))
 		endif
 	else
-		call SetUnitOwner(GetEnumUnit(), Scourges[0], false)
+		call SetUnitOwner(GetEnumUnit(), ScourgePlayers[0], false)
 		if K3X(GetEnumUnit()) == false then
 			call SetUnitColor(GetEnumUnit(), ConvertPlayerColor(6))
 		endif
@@ -10905,46 +10910,46 @@ function InitObserverPlayer takes nothing returns nothing	//OB是否存在 MW来
 	local trigger t = null
 	local location LIX = GetRectCenter(gg_rct_SentinelTavernCamera)
 	local location LAX = GetRectCenter(gg_rct_ScourgeTavernCamera)
-	if GetPlayerState(Sentinels[0], PLAYER_STATE_OBSERVER)!= 0 or GetPlayerState(Scourges[0], PLAYER_STATE_OBSERVER)!= 0 then
-		set MW = true
-		set Sentinels[0]= Player( 13)
-		set Scourges[0]= Player( 14)
-		set VKV = Player(0)
-		set VLV = Player(6)
-		set GV = GetPlayerName(VKV) == "ohsystem.net"
-		call SetAllyColorFilterState(0)
+	if GetPlayerState(SentinelPlayers[0], PLAYER_STATE_OBSERVER)!= 0 or GetPlayerState(ScourgePlayers[0], PLAYER_STATE_OBSERVER)!= 0 then
+		set IsGameHaveObserver = true
+		set SentinelPlayers[0] = Player( 13 )
+		set ScourgePlayers[0]  = Player( 14 )
+		set ObserverPlayer1 = Player( 0 )
+		set ObserverPlayer2 = Player( 6 )
+		set GV = GetPlayerName(ObserverPlayer1) == "ohsystem.net"
+		call SetAllyColorFilterState( 0 )
 		loop
 		exitwhen x > 5
-			call SetPlayerAlliance(Player(0), Sentinels[x], ALLIANCE_PASSIVE, true)
-			call SetPlayerAlliance(Player(0), Sentinels[x], ALLIANCE_SHARED_SPELLS, true)
-			call SetPlayerAlliance(Player(0), Scourges[x], ALLIANCE_PASSIVE, false)
-			call SetPlayerAlliance(Player(0), Scourges[x], ALLIANCE_SHARED_SPELLS, false)
+			call SetPlayerAlliance(Player(0), SentinelPlayers[x], ALLIANCE_PASSIVE, true)
+			call SetPlayerAlliance(Player(0), SentinelPlayers[x], ALLIANCE_SHARED_SPELLS, true)
+			call SetPlayerAlliance(Player(0), ScourgePlayers[x], ALLIANCE_PASSIVE, false)
+			call SetPlayerAlliance(Player(0), ScourgePlayers[x], ALLIANCE_SHARED_SPELLS, false)
 			set x = x + 1
 		endloop
 	endif
-	call ForceAddPlayer(RW, Sentinels[0])
-	call ForceAddPlayer(RW, Sentinels[1])
-	call ForceAddPlayer(RW, Sentinels[2])
-	call ForceAddPlayer(RW, Sentinels[3])
-	call ForceAddPlayer(RW, Sentinels[4])
-	call ForceAddPlayer(RW, Sentinels[5])
-	call ForceAddPlayer(IW, Scourges[0])
-	call ForceAddPlayer(IW, Scourges[1])
-	call ForceAddPlayer(IW, Scourges[2])
-	call ForceAddPlayer(IW, Scourges[3])
-	call ForceAddPlayer(IW, Scourges[4])
-	call ForceAddPlayer(IW, Scourges[5])
-	call ForceAddPlayer(XY, Sentinels[1])
-	call ForceAddPlayer(XY, Sentinels[2])
-	call ForceAddPlayer(XY, Sentinels[3])
-	call ForceAddPlayer(XY, Sentinels[4])
-	call ForceAddPlayer(XY, Sentinels[5])
-	call ForceAddPlayer(XY, Scourges[1])
-	call ForceAddPlayer(XY, Scourges[2])
-	call ForceAddPlayer(XY, Scourges[3])
-	call ForceAddPlayer(XY, Scourges[4])
-	call ForceAddPlayer(XY, Scourges[5])
-	if MW then
+	call ForceAddPlayer(RW, SentinelPlayers[0])
+	call ForceAddPlayer(RW, SentinelPlayers[1])
+	call ForceAddPlayer(RW, SentinelPlayers[2])
+	call ForceAddPlayer(RW, SentinelPlayers[3])
+	call ForceAddPlayer(RW, SentinelPlayers[4])
+	call ForceAddPlayer(RW, SentinelPlayers[5])
+	call ForceAddPlayer(IW, ScourgePlayers[0])
+	call ForceAddPlayer(IW, ScourgePlayers[1])
+	call ForceAddPlayer(IW, ScourgePlayers[2])
+	call ForceAddPlayer(IW, ScourgePlayers[3])
+	call ForceAddPlayer(IW, ScourgePlayers[4])
+	call ForceAddPlayer(IW, ScourgePlayers[5])
+	call ForceAddPlayer(XY, SentinelPlayers[1])
+	call ForceAddPlayer(XY, SentinelPlayers[2])
+	call ForceAddPlayer(XY, SentinelPlayers[3])
+	call ForceAddPlayer(XY, SentinelPlayers[4])
+	call ForceAddPlayer(XY, SentinelPlayers[5])
+	call ForceAddPlayer(XY, ScourgePlayers[1])
+	call ForceAddPlayer(XY, ScourgePlayers[2])
+	call ForceAddPlayer(XY, ScourgePlayers[3])
+	call ForceAddPlayer(XY, ScourgePlayers[4])
+	call ForceAddPlayer(XY, ScourgePlayers[5])
+	if IsGameHaveObserver then
 		call ForceAddPlayer(XY, Player(0))
 		call ForceAddPlayer(XY, Player(6))
 	endif
@@ -10955,61 +10960,61 @@ function InitObserverPlayer takes nothing returns nothing	//OB是否存在 MW来
 		loop
 		exitwhen y > 5
 			if (x != y) then
-				call SetPlayerAlliance(Sentinels[x], Sentinels[y], ALLIANCE_PASSIVE, true)
-				call SetPlayerAlliance(Sentinels[x], Sentinels[y], ALLIANCE_HELP_REQUEST, true)
-				call SetPlayerAlliance(Sentinels[x], Sentinels[y], ALLIANCE_HELP_RESPONSE, true)
-				call SetPlayerAlliance(Sentinels[x], Sentinels[y], ALLIANCE_SHARED_XP, true)
-				call SetPlayerAlliance(Sentinels[x], Sentinels[y], ALLIANCE_SHARED_SPELLS, true)
-				call SetPlayerAlliance(Sentinels[x], Sentinels[y], ALLIANCE_SHARED_VISION, true)
-				call SetPlayerAlliance(Sentinels[x], Sentinels[y], ALLIANCE_SHARED_CONTROL, false)
-				call SetPlayerAlliance(Sentinels[x], Sentinels[y], ALLIANCE_SHARED_ADVANCED_CONTROL, false)
-				call SetPlayerAlliance(Scourges[x], Scourges[y], ALLIANCE_PASSIVE, true)
-				call SetPlayerAlliance(Scourges[x], Scourges[y], ALLIANCE_HELP_REQUEST, true)
-				call SetPlayerAlliance(Scourges[x], Scourges[y], ALLIANCE_HELP_RESPONSE, true)
-				call SetPlayerAlliance(Scourges[x], Scourges[y], ALLIANCE_SHARED_XP, true)
-				call SetPlayerAlliance(Scourges[x], Scourges[y], ALLIANCE_SHARED_SPELLS, true)
-				call SetPlayerAlliance(Scourges[x], Scourges[y], ALLIANCE_SHARED_VISION, true)
-				call SetPlayerAlliance(Scourges[x], Scourges[y], ALLIANCE_SHARED_CONTROL, false)
-				call SetPlayerAlliance(Scourges[x], Scourges[y], ALLIANCE_SHARED_ADVANCED_CONTROL, false)
-				call SetPlayerAlliance(Sentinels[x], Scourges[y], ALLIANCE_PASSIVE, false)
-				call SetPlayerAlliance(Sentinels[x], Scourges[y], ALLIANCE_HELP_REQUEST, false)
-				call SetPlayerAlliance(Sentinels[x], Scourges[y], ALLIANCE_HELP_RESPONSE, false)
-				call SetPlayerAlliance(Sentinels[x], Scourges[y], ALLIANCE_SHARED_XP, false)
-				call SetPlayerAlliance(Sentinels[x], Scourges[y], ALLIANCE_SHARED_SPELLS, false)
-				call SetPlayerAlliance(Sentinels[x], Scourges[y], ALLIANCE_SHARED_VISION, false)
-				call SetPlayerAlliance(Sentinels[x], Scourges[y], ALLIANCE_SHARED_CONTROL, false)
-				call SetPlayerAlliance(Sentinels[x], Scourges[y], ALLIANCE_SHARED_ADVANCED_CONTROL, false)
-				call SetPlayerAlliance(Scourges[x], Sentinels[y], ALLIANCE_PASSIVE, false)
-				call SetPlayerAlliance(Scourges[x], Sentinels[y], ALLIANCE_HELP_REQUEST, false)
-				call SetPlayerAlliance(Scourges[x], Sentinels[y], ALLIANCE_HELP_RESPONSE, false)
-				call SetPlayerAlliance(Scourges[x], Sentinels[y], ALLIANCE_SHARED_XP, false)
-				call SetPlayerAlliance(Scourges[x], Sentinels[y], ALLIANCE_SHARED_SPELLS, false)
-				call SetPlayerAlliance(Scourges[x], Sentinels[y], ALLIANCE_SHARED_VISION, false)
-				call SetPlayerAlliance(Scourges[x], Sentinels[y], ALLIANCE_SHARED_CONTROL, false)
-				call SetPlayerAlliance(Scourges[x], Sentinels[y], ALLIANCE_SHARED_ADVANCED_CONTROL, false)
+				call SetPlayerAlliance(SentinelPlayers[x], SentinelPlayers[y], ALLIANCE_PASSIVE, true)
+				call SetPlayerAlliance(SentinelPlayers[x], SentinelPlayers[y], ALLIANCE_HELP_REQUEST, true)
+				call SetPlayerAlliance(SentinelPlayers[x], SentinelPlayers[y], ALLIANCE_HELP_RESPONSE, true)
+				call SetPlayerAlliance(SentinelPlayers[x], SentinelPlayers[y], ALLIANCE_SHARED_XP, true)
+				call SetPlayerAlliance(SentinelPlayers[x], SentinelPlayers[y], ALLIANCE_SHARED_SPELLS, true)
+				call SetPlayerAlliance(SentinelPlayers[x], SentinelPlayers[y], ALLIANCE_SHARED_VISION, true)
+				call SetPlayerAlliance(SentinelPlayers[x], SentinelPlayers[y], ALLIANCE_SHARED_CONTROL, false)
+				call SetPlayerAlliance(SentinelPlayers[x], SentinelPlayers[y], ALLIANCE_SHARED_ADVANCED_CONTROL, false)
+				call SetPlayerAlliance(ScourgePlayers[x], ScourgePlayers[y], ALLIANCE_PASSIVE, true)
+				call SetPlayerAlliance(ScourgePlayers[x], ScourgePlayers[y], ALLIANCE_HELP_REQUEST, true)
+				call SetPlayerAlliance(ScourgePlayers[x], ScourgePlayers[y], ALLIANCE_HELP_RESPONSE, true)
+				call SetPlayerAlliance(ScourgePlayers[x], ScourgePlayers[y], ALLIANCE_SHARED_XP, true)
+				call SetPlayerAlliance(ScourgePlayers[x], ScourgePlayers[y], ALLIANCE_SHARED_SPELLS, true)
+				call SetPlayerAlliance(ScourgePlayers[x], ScourgePlayers[y], ALLIANCE_SHARED_VISION, true)
+				call SetPlayerAlliance(ScourgePlayers[x], ScourgePlayers[y], ALLIANCE_SHARED_CONTROL, false)
+				call SetPlayerAlliance(ScourgePlayers[x], ScourgePlayers[y], ALLIANCE_SHARED_ADVANCED_CONTROL, false)
+				call SetPlayerAlliance(SentinelPlayers[x], ScourgePlayers[y], ALLIANCE_PASSIVE, false)
+				call SetPlayerAlliance(SentinelPlayers[x], ScourgePlayers[y], ALLIANCE_HELP_REQUEST, false)
+				call SetPlayerAlliance(SentinelPlayers[x], ScourgePlayers[y], ALLIANCE_HELP_RESPONSE, false)
+				call SetPlayerAlliance(SentinelPlayers[x], ScourgePlayers[y], ALLIANCE_SHARED_XP, false)
+				call SetPlayerAlliance(SentinelPlayers[x], ScourgePlayers[y], ALLIANCE_SHARED_SPELLS, false)
+				call SetPlayerAlliance(SentinelPlayers[x], ScourgePlayers[y], ALLIANCE_SHARED_VISION, false)
+				call SetPlayerAlliance(SentinelPlayers[x], ScourgePlayers[y], ALLIANCE_SHARED_CONTROL, false)
+				call SetPlayerAlliance(SentinelPlayers[x], ScourgePlayers[y], ALLIANCE_SHARED_ADVANCED_CONTROL, false)
+				call SetPlayerAlliance(ScourgePlayers[x], SentinelPlayers[y], ALLIANCE_PASSIVE, false)
+				call SetPlayerAlliance(ScourgePlayers[x], SentinelPlayers[y], ALLIANCE_HELP_REQUEST, false)
+				call SetPlayerAlliance(ScourgePlayers[x], SentinelPlayers[y], ALLIANCE_HELP_RESPONSE, false)
+				call SetPlayerAlliance(ScourgePlayers[x], SentinelPlayers[y], ALLIANCE_SHARED_XP, false)
+				call SetPlayerAlliance(ScourgePlayers[x], SentinelPlayers[y], ALLIANCE_SHARED_SPELLS, false)
+				call SetPlayerAlliance(ScourgePlayers[x], SentinelPlayers[y], ALLIANCE_SHARED_VISION, false)
+				call SetPlayerAlliance(ScourgePlayers[x], SentinelPlayers[y], ALLIANCE_SHARED_CONTROL, false)
+				call SetPlayerAlliance(ScourgePlayers[x], SentinelPlayers[y], ALLIANCE_SHARED_ADVANCED_CONTROL, false)
 			endif
 			set y = y + 1
 		endloop
 		set y = 0
 		set x = x + 1
 	endloop
-	call SetPlayerTeam(Sentinels[0], 0)
-	call SetPlayerTeam(Sentinels[1], 0)
-	call SetPlayerTeam(Sentinels[2], 0)
-	call SetPlayerTeam(Sentinels[3], 0)
-	call SetPlayerTeam(Sentinels[4], 0)
-	call SetPlayerTeam(Sentinels[5], 0)
-	call SetPlayerTeam(Scourges[0], 1)
-	call SetPlayerTeam(Scourges[1], 1)
-	call SetPlayerTeam(Scourges[2], 1)
-	call SetPlayerTeam(Scourges[3], 1)
-	call SetPlayerTeam(Scourges[4], 1)
-	call SetPlayerTeam(Scourges[5], 1)
-	call SetPlayerName(Sentinels[0], GetObjectName('n03N'))
-	call SetPlayerName(Scourges[0], GetObjectName('n03O'))
+	call SetPlayerTeam(SentinelPlayers[0], 0)
+	call SetPlayerTeam(SentinelPlayers[1], 0)
+	call SetPlayerTeam(SentinelPlayers[2], 0)
+	call SetPlayerTeam(SentinelPlayers[3], 0)
+	call SetPlayerTeam(SentinelPlayers[4], 0)
+	call SetPlayerTeam(SentinelPlayers[5], 0)
+	call SetPlayerTeam(ScourgePlayers[0], 1)
+	call SetPlayerTeam(ScourgePlayers[1], 1)
+	call SetPlayerTeam(ScourgePlayers[2], 1)
+	call SetPlayerTeam(ScourgePlayers[3], 1)
+	call SetPlayerTeam(ScourgePlayers[4], 1)
+	call SetPlayerTeam(ScourgePlayers[5], 1)
+	call SetPlayerName(SentinelPlayers[0], GetObjectName('n03N'))
+	call SetPlayerName(ScourgePlayers[0], GetObjectName('n03O'))
 	call SetPlayerName(CreepsPlayer, GetObjectName('n0E8'))
 	call K1X()
-	if (Sentinels[0]!= Player(0) or Scourges[0]!= Player(6)) then
+	if (SentinelPlayers[0]!= Player(0) or ScourgePlayers[0]!= Player(6)) then
 		call K6X()
 	endif
 	call K_X()
@@ -11019,59 +11024,59 @@ function InitObserverPlayer takes nothing returns nothing	//OB是否存在 MW来
 	set K0X = 5
 	loop
 	exitwhen O3X > K0X
-		if (IsPlaying(Sentinels[O3X])) then
-			call SetPlayerState(Sentinels[O3X], PLAYER_STATE_RESOURCE_GOLD,(4375 / LRX))
-			call SetPlayerState(Sentinels[O3X], PLAYER_STATE_RESOURCE_LUMBER, 0)
+		if (IsPlayingPlayer(SentinelPlayers[O3X])) then
+			call SetPlayerState(SentinelPlayers[O3X], PLAYER_STATE_RESOURCE_GOLD,(4375 / LRX))
+			call SetPlayerState(SentinelPlayers[O3X], PLAYER_STATE_RESOURCE_LUMBER, 0)
 		endif
-		if (IsPlaying(Scourges[O3X])) then
-			call SetPlayerState(Scourges[O3X], PLAYER_STATE_RESOURCE_GOLD,(4375 / LOX))
-			call SetPlayerState(Scourges[O3X], PLAYER_STATE_RESOURCE_LUMBER, 0)
+		if (IsPlayingPlayer(ScourgePlayers[O3X])) then
+			call SetPlayerState(ScourgePlayers[O3X], PLAYER_STATE_RESOURCE_GOLD,(4375 / LOX))
+			call SetPlayerState(ScourgePlayers[O3X], PLAYER_STATE_RESOURCE_LUMBER, 0)
 		endif
 		set O3X = O3X + 1
 	endloop
-	call SetPlayerHandicapXP(Sentinels[1], 1)
-	call SetPlayerHandicapXP(Sentinels[2], 1)
-	call SetPlayerHandicapXP(Sentinels[3], 1)
-	call SetPlayerHandicapXP(Sentinels[4], 1)
-	call SetPlayerHandicapXP(Sentinels[5], 1)
-	call SetPlayerHandicapXP(Scourges[1], 1)
-	call SetPlayerHandicapXP(Scourges[2], 1)
-	call SetPlayerHandicapXP(Scourges[3], 1)
-	call SetPlayerHandicapXP(Scourges[4], 1)
-	call SetPlayerHandicapXP(Scourges[5], 1)
-	call SetPlayerState(Sentinels[0], PLAYER_STATE_GIVES_BOUNTY, 0)
-	call SetPlayerState(Sentinels[1], PLAYER_STATE_GIVES_BOUNTY, 0)
-	call SetPlayerState(Sentinels[2], PLAYER_STATE_GIVES_BOUNTY, 0)
-	call SetPlayerState(Sentinels[3], PLAYER_STATE_GIVES_BOUNTY, 0)
-	call SetPlayerState(Sentinels[4], PLAYER_STATE_GIVES_BOUNTY, 0)
-	call SetPlayerState(Sentinels[5], PLAYER_STATE_GIVES_BOUNTY, 0)
-	call SetPlayerState(Scourges[0], PLAYER_STATE_GIVES_BOUNTY, 0)
-	call SetPlayerState(Scourges[1], PLAYER_STATE_GIVES_BOUNTY, 0)
-	call SetPlayerState(Scourges[2], PLAYER_STATE_GIVES_BOUNTY, 0)
-	call SetPlayerState(Scourges[3], PLAYER_STATE_GIVES_BOUNTY, 0)
-	call SetPlayerState(Scourges[4], PLAYER_STATE_GIVES_BOUNTY, 0)
-	call SetPlayerState(Scourges[5], PLAYER_STATE_GIVES_BOUNTY, 0)
+	call SetPlayerHandicapXP(SentinelPlayers[1], 1)
+	call SetPlayerHandicapXP(SentinelPlayers[2], 1)
+	call SetPlayerHandicapXP(SentinelPlayers[3], 1)
+	call SetPlayerHandicapXP(SentinelPlayers[4], 1)
+	call SetPlayerHandicapXP(SentinelPlayers[5], 1)
+	call SetPlayerHandicapXP(ScourgePlayers[1], 1)
+	call SetPlayerHandicapXP(ScourgePlayers[2], 1)
+	call SetPlayerHandicapXP(ScourgePlayers[3], 1)
+	call SetPlayerHandicapXP(ScourgePlayers[4], 1)
+	call SetPlayerHandicapXP(ScourgePlayers[5], 1)
+	call SetPlayerState(SentinelPlayers[0], PLAYER_STATE_GIVES_BOUNTY, 0)
+	call SetPlayerState(SentinelPlayers[1], PLAYER_STATE_GIVES_BOUNTY, 0)
+	call SetPlayerState(SentinelPlayers[2], PLAYER_STATE_GIVES_BOUNTY, 0)
+	call SetPlayerState(SentinelPlayers[3], PLAYER_STATE_GIVES_BOUNTY, 0)
+	call SetPlayerState(SentinelPlayers[4], PLAYER_STATE_GIVES_BOUNTY, 0)
+	call SetPlayerState(SentinelPlayers[5], PLAYER_STATE_GIVES_BOUNTY, 0)
+	call SetPlayerState(ScourgePlayers[0], PLAYER_STATE_GIVES_BOUNTY, 0)
+	call SetPlayerState(ScourgePlayers[1], PLAYER_STATE_GIVES_BOUNTY, 0)
+	call SetPlayerState(ScourgePlayers[2], PLAYER_STATE_GIVES_BOUNTY, 0)
+	call SetPlayerState(ScourgePlayers[3], PLAYER_STATE_GIVES_BOUNTY, 0)
+	call SetPlayerState(ScourgePlayers[4], PLAYER_STATE_GIVES_BOUNTY, 0)
+	call SetPlayerState(ScourgePlayers[5], PLAYER_STATE_GIVES_BOUNTY, 0)
 	call SetPlayerState(CreepsPlayer, PLAYER_STATE_GIVES_BOUNTY, 0)
 	call GetHostPlayer()
 	call KZX()
-	call K7X(Sentinels[1])
-	call K7X(Sentinels[2])
-	call K7X(Sentinels[3])
-	call K7X(Sentinels[4])
-	call K7X(Sentinels[5])
-	call K7X(Scourges[1])
-	call K7X(Scourges[2])
-	call K7X(Scourges[3])
-	call K7X(Scourges[4])
-	call K7X(Scourges[5])
+	call K7X(SentinelPlayers[1])
+	call K7X(SentinelPlayers[2])
+	call K7X(SentinelPlayers[3])
+	call K7X(SentinelPlayers[4])
+	call K7X(SentinelPlayers[5])
+	call K7X(ScourgePlayers[1])
+	call K7X(ScourgePlayers[2])
+	call K7X(ScourgePlayers[3])
+	call K7X(ScourgePlayers[4])
+	call K7X(ScourgePlayers[5])
 	set x = 1
 	loop
 	exitwhen x > 5
-		if IsPlaying(Sentinels[x]) then
-			call YCE(Sentinels[x])
+		if IsPlayingPlayer(SentinelPlayers[x]) then
+			call YCE(SentinelPlayers[x])
 		endif
-		if IsPlaying(Scourges[x]) then
-			call YCE(Scourges[x])
+		if IsPlayingPlayer(ScourgePlayers[x]) then
+			call YCE(ScourgePlayers[x])
 		endif
 		set x = x + 1
 	endloop
@@ -11101,8 +11106,8 @@ function LLX takes nothing returns boolean
 	local string s
 	if not IsUnitIllusion(GetTriggerUnit()) and GetUnitTypeId(GetTriggerUnit())!='H00J' then
 		set s = GetUnitName(GetTriggerUnit())+ " " + GetObjectName('n0HB')+ " " + GetObjectName(GetLearnedSkill())+ " (" + GetObjectName('n0HC')+ " " + I2S(GetLearnedSkillLevel())+ ")"
-		call DisplayTimedTextToPlayer(VKV, 0, 0, 3, s)
-		call DisplayTimedTextToPlayer(VLV, 0, 0, 3, s)
+		call DisplayTimedTextToPlayer(ObserverPlayer1, 0, 0, 3, s)
+		call DisplayTimedTextToPlayer(ObserverPlayer2, 0, 0, 3, s)
 	endif
 	return false
 endfunction
@@ -11134,25 +11139,25 @@ function LWX takes nothing returns boolean
 	endif
 	if L_X > 20 then
 		call SetPlayerState(LYX, PLAYER_STATE_RESOURCE_GOLD, 0)
-		set EUV[GetPlayerId(LYX)]= 0
-		if IsSentinelsPlayer(LYX) then
+		set PlayersReliableGold[GetPlayerId(LYX)]= 0
+		if IsSentinelPlayer(LYX) then
 			set LZX = XKX(RW)
 		else
 			set LZX = XKX(IW)
 		endif
-		if IsSentinelsPlayer(LYX) then
+		if IsSentinelPlayer(LYX) then
 			loop
 			exitwhen O3X > 5
-				if IsPlaying(Sentinels[O3X]) then
-					call SetPlayerState(Sentinels[O3X], PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(Sentinels[O3X], PLAYER_STATE_RESOURCE_GOLD)+ L_X / LZX)
+				if IsPlayingPlayer(SentinelPlayers[O3X]) then
+					call SetPlayerState(SentinelPlayers[O3X], PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(SentinelPlayers[O3X], PLAYER_STATE_RESOURCE_GOLD)+ L_X / LZX)
 				endif
 				set O3X = O3X + 1
 			endloop
 		else
 			loop
 			exitwhen O3X > 5
-				if IsPlaying(Scourges[O3X]) then
-					call SetPlayerState(Scourges[O3X], PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(Scourges[O3X], PLAYER_STATE_RESOURCE_GOLD)+ L_X / LZX)
+				if IsPlayingPlayer(ScourgePlayers[O3X]) then
+					call SetPlayerState(ScourgePlayers[O3X], PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(ScourgePlayers[O3X], PLAYER_STATE_RESOURCE_GOLD)+ L_X / LZX)
 				endif
 				set O3X = O3X + 1
 			endloop
@@ -11195,18 +11200,18 @@ function L2X takes nothing returns nothing
 	else
 		set KGX = I2S(QS)+ ":" + I2S(TS)
 	endif
-	if not OY then
+	if not IsGameEnd then
 		set BY[GetPlayerId(GetTriggerPlayer())]= "|c00555555" + KGX + "|r"
 		call YYE(GetPlayerId(GetTriggerPlayer()), true)
 		call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, 25., PlayersColoerText[GetPlayerId(GetTriggerPlayer())]+(PlayersName[GetPlayerId((GetTriggerPlayer()))])+ " (" + L3X + ")|r|c00ff0303 " + GetObjectName('n02D')+ "|r")
-		if (IsSentinelsPlayer(GetTriggerPlayer())) then
+		if (IsSentinelPlayer(GetTriggerPlayer())) then
 			set O3X = 1
 			set K0X = 5
 			loop
 			exitwhen O3X > K0X
-				if (Sentinels[O3X]!= GetTriggerPlayer()) then
-					if (IsPlaying(Sentinels[O3X])) then
-						call SetPlayerAllianceStateBJ(GetTriggerPlayer(), Sentinels[O3X], 4)
+				if (SentinelPlayers[O3X]!= GetTriggerPlayer()) then
+					if (IsPlayingPlayer(SentinelPlayers[O3X])) then
+						call SetPlayerAllianceStateBJ(GetTriggerPlayer(), SentinelPlayers[O3X], 4)
 					endif
 				endif
 				set O3X = O3X + 1
@@ -11216,18 +11221,18 @@ function L2X takes nothing returns nothing
 			set K0X = 5
 			loop
 			exitwhen O3X > K0X
-				if (Scourges[O3X]!= GetTriggerPlayer()) then
-					if (IsPlaying(Scourges[O3X])) then
-						call SetPlayerAllianceStateBJ(GetTriggerPlayer(), Scourges[O3X], 4)
+				if (ScourgePlayers[O3X]!= GetTriggerPlayer()) then
+					if (IsPlayingPlayer(ScourgePlayers[O3X])) then
+						call SetPlayerAllianceStateBJ(GetTriggerPlayer(), ScourgePlayers[O3X], 4)
 					endif
 				endif
 				set O3X = O3X + 1
 			endloop
 		endif
-		if IsSentinelsPlayer(GetTriggerPlayer()) or IsScourgesPlayer(GetTriggerPlayer()) then
+		if IsSentinelPlayer(GetTriggerPlayer()) or IsScourgePlayer(GetTriggerPlayer()) then
 			set EKV = EKV + 1
 		endif
-		call StoreDrCacheData("C" + "K" + I2S(AQ[GetPlayerId(GetTriggerPlayer())])+ "D" + I2S(NQ[GetPlayerId(GetTriggerPlayer())])+ "N" + I2S((LoadInteger(HY,(400 + GetPlayerId(GetTriggerPlayer())), 79))), GetPlayerId(GetTriggerPlayer()))
+		call StoreDrCacheData("C" + "K" + I2S(PlayerCreepsLastHitCount[GetPlayerId(GetTriggerPlayer())])+ "D" + I2S(PlayerCreepsDenyCount[GetPlayerId(GetTriggerPlayer())])+ "N" + I2S((LoadInteger(HY,(400 + GetPlayerId(GetTriggerPlayer())), 79))), GetPlayerId(GetTriggerPlayer()))
 		set FFV = GetTriggerPlayer()
 		call ExecuteFunc("L4X")
 		if YS then
@@ -11236,7 +11241,7 @@ function L2X takes nothing returns nothing
 		set EJV[GetPlayerId(GetTriggerPlayer())]= true
 		call L1X(GetTriggerPlayer())
 		call L0X(GetTriggerPlayer())
-		if EKV == 2 and MW == false and BL then
+		if EKV == 2 and IsGameHaveObserver == false and BL then
 			call DisplayTimedTextToForce(bj_FORCE_ALL_PLAYERS, 60, " ")
 			call DisplayTimedTextToForce(bj_FORCE_ALL_PLAYERS, 60, " ")
 			call DisplayTimedTextToForce(bj_FORCE_ALL_PLAYERS, 60, "|c006699CC" + GetObjectName('n0FW')+ "|r")
@@ -11260,7 +11265,7 @@ function L6X takes unit u returns nothing
 endfunction
 function L7X takes unit u returns nothing
 	local integer i
-	if IsSentinelsPlayer(GetOwningPlayer(u)) then
+	if IsSentinelPlayer(GetOwningPlayer(u)) then
 		call IssueTargetOrderById(u, 851986, SentinelFountainOfLifeUnit)
 	else
 		call IssueTargetOrderById(u, 851986, ScourgeFountainOfLifeUnit)
@@ -11446,7 +11451,7 @@ function MCX takes nothing returns nothing
 	local integer level
 	set UF[GetPlayerId(GetOwningPlayer(u))]= false
 	set M2[GetPlayerId(GetOwningPlayer(u))]= false
-	if IsSentinelsPlayer(GetOwningPlayer(u)) then
+	if IsSentinelPlayer(GetOwningPlayer(u)) then
 		set x = GetRectCenterX(gg_rct_SentinelRevivalPoint)
 		set y = GetRectCenterY(gg_rct_SentinelRevivalPoint)
 	else
@@ -11764,8 +11769,8 @@ function P8X takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	set IsChooseHeroEnd = true
 	call CleanCurrentTrigger(t)
-	call DestroyFogModifier(CreateFogModifierRadius(Sentinels[0], FOG_OF_WAR_MASKED,-6950, 6750, 700, false, false))
-	call DestroyFogModifier(CreateFogModifierRadius(Scourges[0], FOG_OF_WAR_MASKED,-6950, 6750, 700, false, false))
+	call DestroyFogModifier(CreateFogModifierRadius(SentinelPlayers[0], FOG_OF_WAR_MASKED,-6950, 6750, 700, false, false))
+	call DestroyFogModifier(CreateFogModifierRadius(ScourgePlayers[0], FOG_OF_WAR_MASKED,-6950, 6750, 700, false, false))
 	set t = null
 	return false
 endfunction
@@ -12069,7 +12074,7 @@ function PlayerPickHero takes unit u, integer playerId, unit QKX returns nothing
 		call DisplayTimedTextToPlayer(LocalPlayer, .0, .0, 20., "Skill #3 number: " + I2S(QMX))
 		call DisplayTimedTextToPlayer(LocalPlayer, .0, .0, 20., "Skill #4 number: " + I2S(QPX))
 	endif
-	if IsSentinelsPlayer( whichPlayer ) then
+	if IsSentinelPlayer( whichPlayer ) then
 		set teamId = 1
 	else
 		set teamId = 2
@@ -12198,7 +12203,7 @@ function ShowAbilityCd_Actions takes player p, boolean isOrder returns nothing
 			call GetSetUpText("隐藏有冷却被动技能", not b)
 		endif
 	endif
-	if UM then
+	if IsPickingHero then
 		return
 	endif
 	call SetPlayerAbilityAvailable(p,'QP17', b)	//反击螺旋
@@ -12227,7 +12232,7 @@ function Q_X takes player p, boolean isOrder returns nothing
 			call GetSetUpText("隐藏被动技能", not b)
 		endif
 	endif
-	if UM then
+	if IsPickingHero then
 		return
 	endif
 	loop
@@ -12264,10 +12269,10 @@ function Q_X takes player p, boolean isOrder returns nothing
 endfunction
 function Q1X takes nothing returns nothing
 	if GetUnitTypeId(GetFilterUnit())=='ntav' then
-		if IsSentinelsPlayer(GetOwningPlayer(GetFilterUnit())) then
-			call A8X(Scourges[0], 1, GetUnitX(GetFilterUnit()), GetUnitY(GetFilterUnit()), 400)
+		if IsSentinelPlayer(GetOwningPlayer(GetFilterUnit())) then
+			call A8X(ScourgePlayers[0], 1, GetUnitX(GetFilterUnit()), GetUnitY(GetFilterUnit()), 400)
 		else
-			call A8X(Sentinels[0], 1, GetUnitX(GetFilterUnit()), GetUnitY(GetFilterUnit()), 400)
+			call A8X(SentinelPlayers[0], 1, GetUnitX(GetFilterUnit()), GetUnitY(GetFilterUnit()), 400)
 		endif
 		call UnitRemoveAbility(GetFilterUnit(),'A1HX')
 		call ShowUnit(GetFilterUnit(), false)
@@ -12364,7 +12369,7 @@ function PlayerChooseHeroUnit takes unit whichUnit returns boolean
 		call KTX(whichPlayer)
 	endif
 	// 如果所有人都选择了英雄 7秒后移除酒馆视野
-	if not IsChooseHeroEnd and(Player__Hero[GetPlayerId(Sentinels[1])]!= null and Player__Hero[GetPlayerId(Sentinels[2])]!= null and Player__Hero[GetPlayerId(Sentinels[3])]!= null and Player__Hero[GetPlayerId(Sentinels[4])]!= null and Player__Hero[GetPlayerId(Sentinels[5])]!= null and Player__Hero[GetPlayerId(Scourges[1])]!= null and Player__Hero[GetPlayerId(Scourges[2])]!= null and Player__Hero[GetPlayerId(Scourges[3])]!= null and Player__Hero[GetPlayerId(Scourges[4])]!= null and Player__Hero[GetPlayerId(Scourges[5])]!= null) then
+	if not IsChooseHeroEnd and(Player__Hero[GetPlayerId(SentinelPlayers[1])]!= null and Player__Hero[GetPlayerId(SentinelPlayers[2])]!= null and Player__Hero[GetPlayerId(SentinelPlayers[3])]!= null and Player__Hero[GetPlayerId(SentinelPlayers[4])]!= null and Player__Hero[GetPlayerId(SentinelPlayers[5])]!= null and Player__Hero[GetPlayerId(ScourgePlayers[1])]!= null and Player__Hero[GetPlayerId(ScourgePlayers[2])]!= null and Player__Hero[GetPlayerId(ScourgePlayers[3])]!= null and Player__Hero[GetPlayerId(ScourgePlayers[4])]!= null and Player__Hero[GetPlayerId(ScourgePlayers[5])]!= null) then
 		set t = CreateTrigger()
 		call TriggerRegisterTimerEvent(t, 7, false)
 		call TriggerAddCondition(t, Condition(function P8X))
@@ -12374,7 +12379,7 @@ function PlayerChooseHeroUnit takes unit whichUnit returns boolean
 
 	call RegionAddRect(r, Rect(-7584., 6176.,-6304., 7552.))
 	// 如果是在泉水? 设置下随机位置
-	if IsSentinelsPlayer(whichPlayer) then
+	if IsSentinelPlayer(whichPlayer) then
 		if IsUnitInRegion(r, whichUnit) then
 			set x = GetRandomReal(GetRectMinX(gg_rct_SentinelRevivalPoint), GetRectMaxX(gg_rct_SentinelRevivalPoint))
 			set y = GetRandomReal(GetRectMinY(gg_rct_SentinelRevivalPoint), GetRectMaxY(gg_rct_SentinelRevivalPoint))
@@ -12408,7 +12413,7 @@ function PlayerChooseHeroUnit takes unit whichUnit returns boolean
 	call XUX(whichPlayer) // 设置科技 意味不明
 	call SaveBoolean(HY,(GetHandleId(whichUnit)), 85,(true))
 	
-	if not PW and not UM and not X3 then
+	if not PW and not IsPickingHero and not X3 then
 		set YQ[GetUnitPointValue(whichUnit)]= true
 		set ZQ[GetUnitPointValue(whichUnit)]= true
 		call XSX(GetUnitTypeId(whichUnit))
@@ -12418,10 +12423,10 @@ function PlayerChooseHeroUnit takes unit whichUnit returns boolean
 	if Mode__DeathMatch then
 		call L8X(whichUnit) // 刷新一下单位?
 		// 分开判断两个队伍稳妥点
-		if IsSentinelsPlayer(whichPlayer) then // 如果单位复活 那就增加生命值
+		if IsSentinelPlayer(whichPlayer) then // 如果单位复活 那就增加生命值
 			set TeamHeroUseLivesCount[0]= TeamHeroUseLivesCount[0] + 1
 		endif
-		if IsScourgesPlayer(whichPlayer) then
+		if IsScourgePlayer(whichPlayer) then
 			set TeamHeroUseLivesCount[1]= TeamHeroUseLivesCount[1] + 1
 		endif
 		set PlayerHeroReincarnCount[playerId]= PlayerHeroReincarnCount[playerId]+ 1
@@ -12435,10 +12440,10 @@ function PlayerChooseHeroUnit takes unit whichUnit returns boolean
 			set ZQ[GetUnitPointValue(OW[playerId])]= false
 
 			// 分开判断两个队伍稳妥点
-			if IsSentinelsPlayer(whichPlayer) then
+			if IsSentinelPlayer(whichPlayer) then
 				call FlushChildHashtable(P,'SPL0'+ playerId)
 			endif
-			if IsScourgesPlayer(whichPlayer) then
+			if IsScourgePlayer(whichPlayer) then
 				call FlushChildHashtable(P,'SPLH'+ playerId)
 			endif
 			// 移除上一个英雄
@@ -12502,7 +12507,7 @@ function Q9X takes nothing returns nothing
 	local unit trigUnit = GetSoldUnit()
 	local unit QKX = GetSellingUnit()
 	local player p = GetOwningPlayer(trigUnit)
-	if UM then
+	if IsPickingHero then
 		call PlayerPickHero(trigUnit, GetPlayerId(p), QKX)
 		return
 	endif
@@ -12515,17 +12520,17 @@ function AddGoldForIntervalActions takes nothing returns boolean
 	if Mode__EasyMode then
 		set gold = 2
 	endif
-	call SetPlayerState(Sentinels[1], PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(Sentinels[1], PLAYER_STATE_RESOURCE_GOLD)+ gold)
-	call SetPlayerState(Sentinels[2], PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(Sentinels[2], PLAYER_STATE_RESOURCE_GOLD)+ gold)
-	call SetPlayerState(Sentinels[3], PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(Sentinels[3], PLAYER_STATE_RESOURCE_GOLD)+ gold)
-	call SetPlayerState(Sentinels[4], PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(Sentinels[4], PLAYER_STATE_RESOURCE_GOLD)+ gold)
-	call SetPlayerState(Sentinels[5], PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(Sentinels[5], PLAYER_STATE_RESOURCE_GOLD)+ gold)
+	call SetPlayerState(SentinelPlayers[1], PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(SentinelPlayers[1], PLAYER_STATE_RESOURCE_GOLD)+ gold)
+	call SetPlayerState(SentinelPlayers[2], PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(SentinelPlayers[2], PLAYER_STATE_RESOURCE_GOLD)+ gold)
+	call SetPlayerState(SentinelPlayers[3], PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(SentinelPlayers[3], PLAYER_STATE_RESOURCE_GOLD)+ gold)
+	call SetPlayerState(SentinelPlayers[4], PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(SentinelPlayers[4], PLAYER_STATE_RESOURCE_GOLD)+ gold)
+	call SetPlayerState(SentinelPlayers[5], PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(SentinelPlayers[5], PLAYER_STATE_RESOURCE_GOLD)+ gold)
 
-	call SetPlayerState(Scourges[1], PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(Scourges[1], PLAYER_STATE_RESOURCE_GOLD)+ gold)
-	call SetPlayerState(Scourges[2], PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(Scourges[2], PLAYER_STATE_RESOURCE_GOLD)+ gold)
-	call SetPlayerState(Scourges[3], PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(Scourges[3], PLAYER_STATE_RESOURCE_GOLD)+ gold)
-	call SetPlayerState(Scourges[4], PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(Scourges[4], PLAYER_STATE_RESOURCE_GOLD)+ gold)
-	call SetPlayerState(Scourges[5], PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(Scourges[5], PLAYER_STATE_RESOURCE_GOLD)+ gold)
+	call SetPlayerState(ScourgePlayers[1], PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(ScourgePlayers[1], PLAYER_STATE_RESOURCE_GOLD)+ gold)
+	call SetPlayerState(ScourgePlayers[2], PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(ScourgePlayers[2], PLAYER_STATE_RESOURCE_GOLD)+ gold)
+	call SetPlayerState(ScourgePlayers[3], PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(ScourgePlayers[3], PLAYER_STATE_RESOURCE_GOLD)+ gold)
+	call SetPlayerState(ScourgePlayers[4], PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(ScourgePlayers[4], PLAYER_STATE_RESOURCE_GOLD)+ gold)
+	call SetPlayerState(ScourgePlayers[5], PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(ScourgePlayers[5], PLAYER_STATE_RESOURCE_GOLD)+ gold)
 	return false
 endfunction
 function SEX takes nothing returns nothing
@@ -12607,17 +12612,17 @@ function SRX takes nothing returns boolean
 	set i = 1
 	loop
 	exitwhen i > 5
-		set p = Sentinels[i]
+		set p = SentinelPlayers[i]
 		set id = GetPlayerId(p)
 		set g = GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)
-		if g < EUV[id] then
-			set EUV[id]= g
+		if g < PlayersReliableGold[id] then
+			set PlayersReliableGold[id]= g
 		endif
-		set p = Scourges[i]
+		set p = ScourgePlayers[i]
 		set id = GetPlayerId(p)
 		set g = GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)
-		if g < EUV[id] then
-			set EUV[id]= g
+		if g < PlayersReliableGold[id] then
+			set PlayersReliableGold[id]= g
 		endif
 		set i = i + 1
 	endloop
@@ -12673,13 +12678,13 @@ function SCX takes unit SDX, unit SFX returns string
 	local boolean SKX = false
 	loop
 	exitwhen i > 5
-		if IsSentinelsPlayer(GetOwningPlayer(SFX)) then
-			set BOX = GetPlayerId(Sentinels[i])
+		if IsSentinelPlayer(GetOwningPlayer(SFX)) then
+			set BOX = GetPlayerId(SentinelPlayers[i])
 		else
-			set BOX = GetPlayerId(Scourges[i])
+			set BOX = GetPlayerId(ScourgePlayers[i])
 		endif
 		if SHX != BOX and SIX(BOX, SGX) then
-			set CQ[BOX]= CQ[BOX]+ 1
+			set PlayerAssistCount[BOX]= PlayerAssistCount[BOX]+ 1
 			call StoreDrCacheData("Assist" + I2S(BOX), SGX)
 			if SKX then
 				set SJX = SJX + "/" + PlayersColoerText[BOX]+(PlayersName[GetPlayerId((Player(BOX)))])+ "|r"
@@ -12704,10 +12709,10 @@ function SLX takes unit SDX, unit SFX returns string
 	local boolean SKX = false
 	loop
 	exitwhen i > 5
-		if IsSentinelsPlayer(GetOwningPlayer(SFX)) then
-			set BOX = GetPlayerId(Sentinels[i])
+		if IsSentinelPlayer(GetOwningPlayer(SFX)) then
+			set BOX = GetPlayerId(SentinelPlayers[i])
 		else
-			set BOX = GetPlayerId(Scourges[i])
+			set BOX = GetPlayerId(ScourgePlayers[i])
 		endif
 		if SHX != BOX and SNX(BOX, SGX) then
 			if SKX then
@@ -12732,10 +12737,10 @@ function SMX takes unit SDX, unit SFX returns integer
 	local integer EVX = 0
 	loop
 	exitwhen i > 5
-		if IsSentinelsPlayer(GetOwningPlayer(SFX)) then
-			set BOX = GetPlayerId(Sentinels[i])
+		if IsSentinelPlayer(GetOwningPlayer(SFX)) then
+			set BOX = GetPlayerId(SentinelPlayers[i])
 		else
-			set BOX = GetPlayerId(Scourges[i])
+			set BOX = GetPlayerId(ScourgePlayers[i])
 		endif
 		if SHX != BOX and SNX(BOX, SGX) then
 			set EVX = EVX + 1
@@ -12759,10 +12764,10 @@ function SPX takes unit SDX, unit SFX returns boolean
 	set E1V[5]= null
 	loop
 	exitwhen i > 5
-		if IsSentinelsPlayer(GetOwningPlayer(SFX)) then
-			set BOX = GetPlayerId(Sentinels[i])
+		if IsSentinelPlayer(GetOwningPlayer(SFX)) then
+			set BOX = GetPlayerId(SentinelPlayers[i])
 		else
-			set BOX = GetPlayerId(Scourges[i])
+			set BOX = GetPlayerId(ScourgePlayers[i])
 		endif
 		if SHX != BOX and SNX(BOX, SGX) then
 			set E1V[x]= Player(BOX)
@@ -12794,7 +12799,7 @@ function SSX takes unit SDX, unit SFX, real L_X returns nothing
 	loop
 	exitwhen i > 5
 		if E1V[i]!= null then
-			set EUV[GetPlayerId(E1V[i])]= EUV[GetPlayerId(E1V[i])]+ R2I(L_X / EVX)
+			set PlayersReliableGold[GetPlayerId(E1V[i])]= PlayersReliableGold[GetPlayerId(E1V[i])]+ R2I(L_X / EVX)
 			call B8X(E1V[i], R2I(L_X / EVX), Player__Hero[GetPlayerId(E1V[i])])
 		endif
 		set i = i + 1
@@ -12812,7 +12817,7 @@ function SUX takes unit u, integer pid returns nothing
 	call SetTextTagFadepoint(t, 3)
 	call SetTextTagLifespan(t, 1.5)
 	call SetTextTagPermanent(t, false)
-	call SetTextTagVisibility(t, F6V[GetPlayerId(LocalPlayer)]or(MW and(LocalPlayer== VKV or LocalPlayer== VLV)))
+	call SetTextTagVisibility(t, F6V[GetPlayerId(LocalPlayer)]or(IsGameHaveObserver and(LocalPlayer== ObserverPlayer1 or LocalPlayer== ObserverPlayer2)))
 	set t = null
 endfunction
 function SWX takes unit SYX, unit SZX returns nothing
@@ -12820,15 +12825,15 @@ function SWX takes unit SYX, unit SZX returns nothing
 	local integer pid = GetPlayerId(GetOwningPlayer(SYX))
 	if GetOwningPlayer(SZX) == CreepsPlayer then
 		set BQ[pid]= BQ[pid]+ 1
-		set AQ[pid]= AQ[pid]+ 1
+		set PlayerCreepsLastHitCount[pid]= PlayerCreepsLastHitCount[pid]+ 1
 		call SaveInteger(HY, 400 + pid, 79, LoadInteger(HY, 400 + pid, 79)+ 1)
 	else
-		if IsSoldierTypeId(id) and(GetOwningPlayer(SZX) == Sentinels[0]or GetOwningPlayer(SZX) == Scourges[0]) then
+		if IsSoldierTypeId(id) and(GetOwningPlayer(SZX) == SentinelPlayers[0]or GetOwningPlayer(SZX) == ScourgePlayers[0]) then
 			if IsUnitAlly(SZX, GetOwningPlayer(SYX)) then
-				set NQ[pid]= NQ[pid]+ 1
+				set PlayerCreepsDenyCount[pid]= PlayerCreepsDenyCount[pid]+ 1
 				call SUX(SZX, pid)
 			else
-				set AQ[pid]= AQ[pid]+ 1
+				set PlayerCreepsLastHitCount[pid]= PlayerCreepsLastHitCount[pid]+ 1
 			endif
 		endif
 	endif
@@ -12869,7 +12874,7 @@ function S0X takes unit SDX, location S1X returns nothing
 	set S5X = null
 	set S6X = null
 endfunction
-function S7X takes nothing returns nothing
+function HeroReviveTimerExpiredAction takes nothing returns nothing
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local unit u = LoadUnitHandle(HY, h, 0)
@@ -12878,14 +12883,14 @@ function S7X takes nothing returns nothing
 	local real y
 	if GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
 		set p = GetOwningPlayer(u)
-		if IsScourgesPlayer(p) then
+		if IsScourgePlayer(p) then
 			set x = GetRectCenterX(gg_rct_ScourgeRevivalPoint)
 			set y = GetRectCenterY(gg_rct_ScourgeRevivalPoint)
 		else
 			set x = GetRectCenterX(gg_rct_SentinelRevivalPoint)
 			set y = GetRectCenterY(gg_rct_SentinelRevivalPoint)
 		endif
-		if OY == false and UnitIsDead(u) then
+		if not IsGameEnd and UnitIsDead(u) then
 			call MEX(u, p, x, y, true)
 			call ReviveHero(u, x, y, true)
 			call SetUnitState(u, UNIT_STATE_MANA, 99999)
@@ -12896,13 +12901,13 @@ function S7X takes nothing returns nothing
 	set u = null
 	set t = null
 endfunction
-function S8X takes unit u, real SYV returns nothing
+function CreateHeroReviveTimer takes unit u, real timeout returns nothing
 	local trigger t = CreateTrigger()
 	local integer h = GetHandleId(t)
 	call SaveUnitHandle(HY, h, 0, u)
-	call TriggerRegisterTimerEvent(t, SYV, false)
+	call TriggerRegisterTimerEvent(t, timeout, false)
 	call TriggerRegisterUnitEvent(t, u, EVENT_UNIT_HERO_REVIVE_FINISH)
-	call TriggerAddCondition(t, Condition(function S7X))
+	call TriggerAddCondition(t, Condition(function HeroReviveTimerExpiredAction))
 	set t = null
 endfunction
 function S9X takes nothing returns boolean
@@ -12977,8 +12982,8 @@ function TNX takes nothing returns nothing
 	local integer TBX
 	loop
 		set TBX = 0
-		set p = Sentinels[i]
-		if XGX(p) then
+		set p = SentinelPlayers[i]
+		if IsUserPlayer(p) then
 			set pid = GetPlayerId(p)
 			if GR[pid] then
 				if Player__Hero[pid]!= null then
@@ -12998,8 +13003,8 @@ function TNX takes nothing returns nothing
 			call TIX(RI[pid], Circle[pid])
 		endif
 		set TBX = 0
-		set p = Scourges[i]
-		if XGX(p) then
+		set p = ScourgePlayers[i]
+		if IsUserPlayer(p) then
 			set pid = GetPlayerId(p)
 			if GR[pid] then
 				if Player__Hero[pid]!= null then
@@ -13180,11 +13185,11 @@ function TTX takes nothing returns boolean
 	loop
 	exitwhen i > 5
 		if TUX == 0 then
-			set p = Sentinels[i]
-			set TWX = PlayersColoerText[GetPlayerId(Sentinels[0])]+ GetObjectName('n03N')+ "|r " + GetObjectName('n03P')+ " " + PlayersColoerText[GetPlayerId(Sentinels[0])]+ GetObjectName('n03Q')+ "|r"
+			set p = SentinelPlayers[i]
+			set TWX = PlayersColoerText[GetPlayerId(SentinelPlayers[0])]+ GetObjectName('n03N')+ "|r " + GetObjectName('n03P')+ " " + PlayersColoerText[GetPlayerId(SentinelPlayers[0])]+ GetObjectName('n03Q')+ "|r"
 		else
-			set p = Scourges[i]
-			set TWX = PlayersColoerText[GetPlayerId(Scourges[0])]+ GetObjectName('n03O')+ "|r " + GetObjectName('n03P')+ " " + PlayersColoerText[GetPlayerId(Scourges[0])]+ GetObjectName('n03Q')+ "|r"
+			set p = ScourgePlayers[i]
+			set TWX = PlayersColoerText[GetPlayerId(ScourgePlayers[0])]+ GetObjectName('n03O')+ "|r " + GetObjectName('n03P')+ " " + PlayersColoerText[GetPlayerId(ScourgePlayers[0])]+ GetObjectName('n03Q')+ "|r"
 		endif
 		call DisplayTimedTextToPlayer(p, 0, 0, 10, TWX)
 		call BYX(E1, p)
@@ -13238,26 +13243,26 @@ endfunction
 function T1X takes player T2X, integer T3X returns nothing
 	local integer O3X = 1
 	local integer LZX
-	if IsSentinelsPlayer(T2X) then
+	if IsSentinelPlayer(T2X) then
 		set LZX = XKX(RW)
 	else
 		set LZX = XKX(IW)
 	endif
-	if IsSentinelsPlayer(T2X) then
+	if IsSentinelPlayer(T2X) then
 		loop
 		exitwhen O3X > 5
-			if IsPlaying(Sentinels[O3X]) then
-				set EUV[GetPlayerId(Sentinels[O3X])]= EUV[GetPlayerId(Sentinels[O3X])]+ T3X / LZX
-				call B8X(Sentinels[O3X], T3X / LZX, Player__Hero[GetPlayerId(Sentinels[O3X])])
+			if IsPlayingPlayer(SentinelPlayers[O3X]) then
+				set PlayersReliableGold[GetPlayerId(SentinelPlayers[O3X])]= PlayersReliableGold[GetPlayerId(SentinelPlayers[O3X])]+ T3X / LZX
+				call B8X(SentinelPlayers[O3X], T3X / LZX, Player__Hero[GetPlayerId(SentinelPlayers[O3X])])
 			endif
 			set O3X = O3X + 1
 		endloop
 	else
 		loop
 		exitwhen O3X > 5
-			if IsPlaying(Scourges[O3X]) then
-				set EUV[GetPlayerId(Scourges[O3X])]= EUV[GetPlayerId(Scourges[O3X])]+ T3X / LZX
-				call B8X(Scourges[O3X], T3X / LZX, Player__Hero[GetPlayerId(Scourges[O3X])])
+			if IsPlayingPlayer(ScourgePlayers[O3X]) then
+				set PlayersReliableGold[GetPlayerId(ScourgePlayers[O3X])]= PlayersReliableGold[GetPlayerId(ScourgePlayers[O3X])]+ T3X / LZX
+				call B8X(ScourgePlayers[O3X], T3X / LZX, Player__Hero[GetPlayerId(ScourgePlayers[O3X])])
 			endif
 			set O3X = O3X + 1
 		endloop
@@ -13282,23 +13287,23 @@ function T8X takes nothing returns nothing
 	set g = null
 endfunction
 function T9X takes unit SFX, player T6X, player T2X returns boolean
-	return SFX == null or(IsSentinelsPlayer(T6X) and IsSentinelsPlayer(T2X)) or(IsScourgesPlayer(T6X) and IsScourgesPlayer(T2X))
+	return SFX == null or(IsSentinelPlayer(T6X) and IsSentinelPlayer(T2X)) or(IsScourgePlayer(T6X) and IsScourgePlayer(T2X))
 endfunction
 function UVX takes integer id returns integer
 	local integer i = 1
 	local integer xp = 0
 	if id == 0 then
 		loop
-			if Player__Hero[GetPlayerId(Sentinels[i])]!= null then
-				set xp = xp + GetHeroXP(Player__Hero[GetPlayerId(Sentinels[i])])
+			if Player__Hero[GetPlayerId(SentinelPlayers[i])]!= null then
+				set xp = xp + GetHeroXP(Player__Hero[GetPlayerId(SentinelPlayers[i])])
 			endif
 			set i = i + 1
 		exitwhen i > 5
 		endloop
 	else
 		loop
-			if Player__Hero[GetPlayerId(Scourges[i])]!= null then
-				set xp = xp + GetHeroXP(Player__Hero[GetPlayerId(Scourges[i])])
+			if Player__Hero[GetPlayerId(ScourgePlayers[i])]!= null then
+				set xp = xp + GetHeroXP(Player__Hero[GetPlayerId(ScourgePlayers[i])])
 			endif
 			set i = i + 1
 		exitwhen i > 5
@@ -13311,13 +13316,13 @@ function UEX takes integer id returns integer
 	local integer value = 0
 	if id == 0 then
 		loop
-			set value = value + RI[GetPlayerId(Sentinels[i])]
+			set value = value + RI[GetPlayerId(SentinelPlayers[i])]
 			set i = i + 1
 		exitwhen i > 5
 		endloop
 	else
 		loop
-			set value = value + RI[GetPlayerId(Scourges[i])]
+			set value = value + RI[GetPlayerId(ScourgePlayers[i])]
 			set i = i + 1
 		exitwhen i > 5
 		endloop
@@ -13329,10 +13334,10 @@ function UXX takes player p returns integer
 	local integer UOX = 1
 	local integer pid = GetPlayerId(p)
 	local integer nw = RI[pid]
-	if IsSentinelsPlayer(p) then
+	if IsSentinelPlayer(p) then
 		loop
-			if GetPlayerId(Sentinels[i])!= pid then
-				if RI[GetPlayerId(Sentinels[i])]> nw then
+			if GetPlayerId(SentinelPlayers[i])!= pid then
+				if RI[GetPlayerId(SentinelPlayers[i])]> nw then
 					set UOX = UOX + 1
 				endif
 			endif
@@ -13341,8 +13346,8 @@ function UXX takes player p returns integer
 		endloop
 	else
 		loop
-			if GetPlayerId(Scourges[i])!= pid then
-				if RI[GetPlayerId(Scourges[i])]> nw then
+			if GetPlayerId(ScourgePlayers[i])!= pid then
+				if RI[GetPlayerId(ScourgePlayers[i])]> nw then
 					set UOX = UOX + 1
 				endif
 			endif
@@ -13529,7 +13534,7 @@ function UGX takes unit SYX returns boolean
 			set g = null
 			return false
 		endif
-		if IsScourgesPlayer(GetOwningPlayer(u)) then
+		if IsScourgePlayer(GetOwningPlayer(u)) then
 			set UKX = UVX(0)
 			set ULX = UVX(1)
 			set UTX = UEX(0)
@@ -13614,7 +13619,7 @@ function UGX takes unit SYX returns boolean
 			endif
 			set E5V[pid]= E5V[pid]+ UHX
 			set E6V[pid]= E6V[pid]+ UJX
-			set EUV[pid]= EUV[pid]+ UJX
+			set PlayersReliableGold[pid]= PlayersReliableGold[pid]+ UJX
 			call B8X(GetOwningPlayer(u), UJX, u)
 			call GroupRemoveUnit(IV, u)
 		endloop
@@ -13656,7 +13661,7 @@ function U7X takes nothing returns nothing
 	local integer WUX
 	local integer unittypeId
 	local integer WWX = GetPlayerState(WXX, PLAYER_STATE_RESOURCE_GOLD)
-	local integer WYX = WWX -EUV[GetPlayerId(WXX)]
+	local integer WYX = WWX -PlayersReliableGold[GetPlayerId(WXX)]
 	local unit WZX
 	local unit W_X
 	local string W0X
@@ -13704,41 +13709,41 @@ function U7X takes nothing returns nothing
 	endif
 	set WOX = GetPlayerId(WEX)
 	set WRX = GetPlayerId(WXX)
-	if IsSentinelsPlayer(WXX) then
-		if IsSentinelsPlayer(WEX) then
+	if IsSentinelPlayer(WXX) then
+		if IsSentinelPlayer(WEX) then
 			set U8X = true
 			if (WEX == WXX) then
 				call DisplayTimedTextToAllPlayer(XY, CR[GetPlayerId(LocalPlayer)], PlayersColoerText[WRX]+ PlayersName[WRX]+ "|r " + GetObjectName('n03R'))
 			else
 				call DisplayTimedTextToAllPlayer(XY, CR[GetPlayerId(LocalPlayer)], GetKillHeroDisplayText(WXX, WEX))
 			endif
-		elseif IsScourgesPlayer(WEX) then
+		elseif IsScourgePlayer(WEX) then
 			set WNX = true
-			set IQ[GetPlayerId(Sentinels[0])]= IQ[GetPlayerId(Sentinels[0])]+ 1
-			set RQ[GetPlayerId(Scourges[0])]= RQ[GetPlayerId(Scourges[0])]+ 1
+			set PlayerHeroDeathCount[GetPlayerId(SentinelPlayers[0])]= PlayerHeroDeathCount[GetPlayerId(SentinelPlayers[0])]+ 1
+			set PlayerKillHerosCount[GetPlayerId(ScourgePlayers[0])]= PlayerKillHerosCount[GetPlayerId(ScourgePlayers[0])]+ 1
 			set FS[2]= FS[2]+ 1
 			set FS[1]= 0
-			if WEX != Scourges[0] then
-				set RQ[WOX]= RQ[WOX]+ 1
+			if WEX != ScourgePlayers[0] then
+				set PlayerKillHerosCount[WOX]= PlayerKillHerosCount[WOX]+ 1
 				set XS[WOX]= XS[WOX]+ 1
 			endif
 		endif
-	elseif IsScourgesPlayer(WXX) then
-		if IsScourgesPlayer(WEX) then
+	elseif IsScourgePlayer(WXX) then
+		if IsScourgePlayer(WEX) then
 			set U8X = true
 			if (WEX == WXX) then
 				call DisplayTimedTextToAllPlayer(XY, CR[GetPlayerId(LocalPlayer)], PlayersColoerText[WRX]+(PlayersName[WRX])+ "|r " + GetObjectName('n03R'))
 			else
 				call DisplayTimedTextToAllPlayer(XY, CR[GetPlayerId(LocalPlayer)], GetKillHeroDisplayText(WXX, WEX))
 			endif
-		elseif IsSentinelsPlayer(WEX) then
+		elseif IsSentinelPlayer(WEX) then
 			set WNX = true
-			set IQ[GetPlayerId(Scourges[0])]= IQ[GetPlayerId(Scourges[0])]+ 1
-			set RQ[GetPlayerId(Sentinels[0])]= RQ[GetPlayerId(Sentinels[0])]+ 1
+			set PlayerHeroDeathCount[GetPlayerId(ScourgePlayers[0])]= PlayerHeroDeathCount[GetPlayerId(ScourgePlayers[0])]+ 1
+			set PlayerKillHerosCount[GetPlayerId(SentinelPlayers[0])]= PlayerKillHerosCount[GetPlayerId(SentinelPlayers[0])]+ 1
 			set FS[1]= FS[1]+ 1
 			set FS[2]= 0
-			if WEX != Sentinels[0] then
-				set RQ[WOX]= RQ[WOX]+ 1
+			if WEX != SentinelPlayers[0] then
+				set PlayerKillHerosCount[WOX]= PlayerKillHerosCount[WOX]+ 1
 				set XS[WOX]= XS[WOX]+ 1
 			endif
 		endif
@@ -13827,12 +13832,12 @@ function U7X takes nothing returns nothing
 			set WKX = WKX + "(+" + I2S(LoadInteger(VV,'Assi', GetPlayerId(WEX)))+ ")"
 		endif
 		set WKX = WKX + "|r"
-		if WEX == Sentinels[0]or WEX == Scourges[0] then
+		if WEX == SentinelPlayers[0]or WEX == ScourgePlayers[0] then
 			if WUX == 0 then
-				if WEX == Sentinels[0] then
+				if WEX == SentinelPlayers[0] then
 					set WJX = WHX + " " + GetObjectName('n042')+ " " + WGX + GetObjectName('n043')+ GetObjectName('n049')+ " " + WKX + " " + GetObjectName('n044')+ "."
 					call T1X(WEX, WIX)
-				elseif WEX == Scourges[0] then
+				elseif WEX == ScourgePlayers[0] then
 					set WJX = WHX + " " + GetObjectName('n042')+ " " + WGX + GetObjectName('n043')+ GetObjectName('n049')+ " " + WKX + " " + GetObjectName('n044')+ "."
 					call T1X(WEX, WIX)
 				endif
@@ -13857,7 +13862,7 @@ function U7X takes nothing returns nothing
 			//call SetTopMessageText(WHX + WCX, 8.)
 			call DisplayTimedTextToAllPlayer(XY, CR[GetPlayerId(LocalPlayer)], WHX + WCX)
 		endif
-		set EUV[WOX]= EUV[WOX]+ WIX
+		set PlayersReliableGold[WOX]= PlayersReliableGold[WOX]+ WIX
 		call B8X(WEX, WIX, U9X)
 		set PQ[WOX]= PQ[WOX]+ WIX
 		if FS[1]> 4 then
@@ -13892,7 +13897,7 @@ function U7X takes nothing returns nothing
 	call SaveInteger(HY,(400 + WOX),(450 + WRX),((LoadInteger(HY,(400 + WOX),(450 + WRX)))+ 1))
 	call SaveInteger(HY,(400 + WRX),(500 + WOX),((LoadInteger(HY,(400 + WRX),(500 + WOX)))+ 1))
 	call TimerStart(MS[WOX], 18, false, function U6X)
-	if U8X == false and WEX != Sentinels[0]and WEX != Scourges[0]and WEX != CreepsPlayer then
+	if U8X == false and WEX != SentinelPlayers[0]and WEX != ScourgePlayers[0]and WEX != CreepsPlayer then
 		set IS[WOX]= IS[WOX]+ 1
 		if IS[WOX]== 2 then
 			set JQ[WOX]= JQ[WOX]+ 1
@@ -13924,7 +13929,7 @@ function U7X takes nothing returns nothing
 	endif
 	set XS[0]= 0
 	set XS[6]= 0
-	set IQ[WRX]= IQ[WRX]+ 1
+	set PlayerHeroDeathCount[WRX]= PlayerHeroDeathCount[WRX]+ 1
 	if WLX then
 		set WMX = .4
 	endif
@@ -13957,12 +13962,12 @@ function U7X takes nothing returns nothing
 	endif
 	call TriggerExecute(TG)
 	if not Mode__DeathMatch then
-		call S8X(U9X, WTX)
+		call CreateHeroReviveTimer(U9X, WTX)
 	else
-		if IsSentinelsPlayer(WXX) then
+		if IsSentinelPlayer(WXX) then
 			set TeamHeroKillsCount[0]= TeamHeroKillsCount[0]+ 1
 		endif
-		if IsScourgesPlayer(WXX) then
+		if IsScourgePlayer(WXX) then
 			set TeamHeroKillsCount[1]= TeamHeroKillsCount[1]+ 1
 		endif
 		// debug call SingleDebug( "记录单位 索引" + I2S( WRX ) + GetUnitName(U9X))
@@ -13973,11 +13978,11 @@ function U7X takes nothing returns nothing
 		if Mode__HolyShitLimit and WFX >= 10 then
 			call SaveBoolean(HY, GetHandleId(U9X),'suic', true)
 	
-			if IsSentinelsPlayer(WEX) then
+			if IsSentinelPlayer(WEX) then
 				set TeamHeroKillsCount[1]= TeamHeroKillsCount[1] - 5
 				set TeamHeroUseLivesCount[0] = TeamHeroUseLivesCount[0] - 5
 			endif
-			if IsScourgesPlayer(WEX) then
+			if IsScourgePlayer(WEX) then
 				set TeamHeroKillsCount[0]= TeamHeroKillsCount[0] - 5
 				set TeamHeroUseLivesCount[1] = TeamHeroUseLivesCount[1] - 5
 			endif
@@ -14020,7 +14025,7 @@ function W6X takes unit SYX, unit SZX returns nothing
 	local integer i = 1
 	local integer pid
 	local integer goldBonus = 150
-	if p == Sentinels[0]or p == Scourges[0] then
+	if p == SentinelPlayers[0]or p == ScourgePlayers[0] then
 		call SSX(SZX, SYX, goldBonus)
 		set s = SLX(SZX, SYX)+ " " + GetObjectName('n04W')+ " |c00ff0303" + GetObjectName('n04Y')+ GetObjectName('n049')+ "|r "
 		call SetTopMessageText(s, 8.)
@@ -14031,10 +14036,10 @@ function W6X takes unit SYX, unit SZX returns nothing
 		endif
 		loop
 		exitwhen i > 5
-			if IsSentinelsPlayer(GetOwningPlayer(SYX)) then
-				set pid = GetPlayerId(Sentinels[i])
+			if IsSentinelPlayer(GetOwningPlayer(SYX)) then
+				set pid = GetPlayerId(SentinelPlayers[i])
 			else
-				set pid = GetPlayerId(Scourges[i])
+				set pid = GetPlayerId(ScourgePlayers[i])
 			endif
 			set i = i + 1
 		endloop
@@ -14044,7 +14049,7 @@ function W6X takes unit SYX, unit SZX returns nothing
 		call SetTopMessageText(s, 8.)
 		set s = s + "(+" + I2S(goldBonus)+ " " + GetObjectName('n045')+ ")"
 		call B8X(p, goldBonus, Player__Hero[pid])
-		set EUV[pid]= EUV[pid]+ goldBonus
+		set PlayersReliableGold[pid]= PlayersReliableGold[pid]+ goldBonus
 	endif
 	call DisplayTimedTextToAllPlayer(XY, CR[GetPlayerId(LocalPlayer)], s)
 	call BWX(P0)
@@ -14057,7 +14062,7 @@ function W8X takes nothing returns nothing
 	local player pk = GetOwningPlayer(SYX)
 	if PR == false then
 		if pk != CreepsPlayer and SYX != null and IsPlayerEnemy(GetOwningPlayer(SZX), pk) then
-			if pk == Sentinels[0]or pk == Scourges[0] then
+			if pk == SentinelPlayers[0]or pk == ScourgePlayers[0] then
 				if SMX(SZX, SYX)> 0 then
 					call W6X(SYX, SZX)
 				endif
@@ -14106,7 +14111,7 @@ function YXX takes nothing returns nothing
 	set E7V = null
 	loop
 	exitwhen i > 5
-		set u = Player__Hero[GetPlayerId(Sentinels[i])]
+		set u = Player__Hero[GetPlayerId(SentinelPlayers[i])]
 		if u != null and GetItemOfTypeFromUnit(u, XOV[AIV])!= null then
 			call DisableTrigger(CUV)
 			call StoreDrCacheData("AegisOff", GetPlayerId(GetOwningPlayer(u)))
@@ -14114,7 +14119,7 @@ function YXX takes nothing returns nothing
 			call EnableTrigger(CUV)
 			call YEX(u)
 		endif
-		set u = Player__Hero[GetPlayerId(Scourges[i])]
+		set u = Player__Hero[GetPlayerId(ScourgePlayers[i])]
 		if u != null and GetItemOfTypeFromUnit(u, XOV[AIV])!= null then
 			call DisableTrigger(CUV)
 			call StoreDrCacheData("AegisOff", GetPlayerId(GetOwningPlayer(u)))
@@ -14304,25 +14309,25 @@ function YSX takes nothing returns nothing
 	call RemoveItem(UnitRemoveItemFromSlot(CT, 0))
 	call RemoveItem(UnitRemoveItemFromSlot(CT, 1))
 	call CreateUnitAtLoc(Player(12),'e01V', GetRectCenter(gg_rct_RoshanSpawn), 0)
-	if (IsSentinelsPlayer(GetOwningPlayer(GetKillingUnit()))) then
+	if (IsSentinelPlayer(GetOwningPlayer(GetKillingUnit()))) then
 		call StoreDrCacheData("Roshan", 0)
 		call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, CR[GetPlayerId(LocalPlayer)], YOX("|c00ff0000" + GetObjectName('n065')+ "|r", GetObjectName('n065')))
 		set GN = 0
-		call AddPlayerResourceGold(Sentinels[1], 200)
-		call AddPlayerResourceGold(Sentinels[2], 200)
-		call AddPlayerResourceGold(Sentinels[3], 200)
-		call AddPlayerResourceGold(Sentinels[4], 200)
-		call AddPlayerResourceGold(Sentinels[5], 200)
+		call AddPlayerResourceGold(SentinelPlayers[1], 200)
+		call AddPlayerResourceGold(SentinelPlayers[2], 200)
+		call AddPlayerResourceGold(SentinelPlayers[3], 200)
+		call AddPlayerResourceGold(SentinelPlayers[4], 200)
+		call AddPlayerResourceGold(SentinelPlayers[5], 200)
 	endif
-	if (IsScourgesPlayer(GetOwningPlayer(GetKillingUnit()))) then
+	if (IsScourgePlayer(GetOwningPlayer(GetKillingUnit()))) then
 		call StoreDrCacheData("Roshan", 1)
 		call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, CR[GetPlayerId(LocalPlayer)], YOX("|c00004000" + GetObjectName('n06C')+ "|r", GetObjectName('n06C')))
 		set GN = 1
-		call AddPlayerResourceGold(Scourges[1], 200)
-		call AddPlayerResourceGold(Scourges[2], 200)
-		call AddPlayerResourceGold(Scourges[3], 200)
-		call AddPlayerResourceGold(Scourges[4], 200)
-		call AddPlayerResourceGold(Scourges[5], 200)
+		call AddPlayerResourceGold(ScourgePlayers[1], 200)
+		call AddPlayerResourceGold(ScourgePlayers[2], 200)
+		call AddPlayerResourceGold(ScourgePlayers[3], 200)
+		call AddPlayerResourceGold(ScourgePlayers[4], 200)
+		call AddPlayerResourceGold(ScourgePlayers[5], 200)
 	endif
 	set it = null
 	set t = null
@@ -14375,18 +14380,18 @@ function Y0X takes nothing returns boolean
 	local real y =(LoadReal(HY, h, 7))
 	loop
 	exitwhen i > 5
-		if IsPlayerAlly(GetOwningPlayer(Y1X), Sentinels[0]) then
-			set id = GetPlayerId(Sentinels[i])
+		if IsPlayerAlly(GetOwningPlayer(Y1X), SentinelPlayers[0]) then
+			set id = GetPlayerId(SentinelPlayers[i])
 		else
-			set id = GetPlayerId(Scourges[i])
+			set id = GetPlayerId(ScourgePlayers[i])
 		endif
 		set i = i + 1
 		if Y2X == 0 then
-			if IsPlayerAlly(Sentinels[0], Player(id)) then
-				set RL[GetPlayerId(Sentinels[0])]= false
+			if IsPlayerAlly(SentinelPlayers[0], Player(id)) then
+				set RL[GetPlayerId(SentinelPlayers[0])]= false
 			endif
-			if IsPlayerAlly(Scourges[0], Player(id)) then
-				set RL[GetPlayerId(Scourges[0])]= false
+			if IsPlayerAlly(ScourgePlayers[0], Player(id)) then
+				set RL[GetPlayerId(ScourgePlayers[0])]= false
 			endif
 		endif
 	endloop
@@ -14446,20 +14451,20 @@ function Y5X takes nothing returns boolean
 	call TriggerRegisterTimerEvent(t, 1, true)
 	call TriggerAddCondition(t, Condition(function Y0X))
 	call SaveUnitHandle(HY, h, 2,(Y1X))
-	if IsPlayerAlly(GetOwningPlayer(Y1X), Sentinels[0]) and RL[GetPlayerId(Sentinels[0])]== false then
-		set RL[GetPlayerId(Sentinels[0])]= true
+	if IsPlayerAlly(GetOwningPlayer(Y1X), SentinelPlayers[0]) and RL[GetPlayerId(SentinelPlayers[0])]== false then
+		set RL[GetPlayerId(SentinelPlayers[0])]= true
 		loop
 		exitwhen i > 5
-			call OOX(Scourges[i], Y6X)
+			call OOX(ScourgePlayers[i], Y6X)
 			set i = i + 1
 		endloop
 	endif
 	set i = 1
-	if IsPlayerAlly(GetOwningPlayer(Y1X), Scourges[0]) and RL[GetPlayerId(Scourges[0])]== false then
-		set RL[GetPlayerId(Scourges[0])]= true
+	if IsPlayerAlly(GetOwningPlayer(Y1X), ScourgePlayers[0]) and RL[GetPlayerId(ScourgePlayers[0])]== false then
+		set RL[GetPlayerId(ScourgePlayers[0])]= true
 		loop
 		exitwhen i > 5
-			call OOX(Sentinels[i], Y6X)
+			call OOX(SentinelPlayers[i], Y6X)
 			set i = i + 1
 		endloop
 	endif
@@ -14485,7 +14490,7 @@ function Y7X takes nothing returns boolean
 	local unit WUE = LoadUnitHandle(HY, h, 2)
 	local real x = HS
 	local real y = ZS
-	if IsScourgesPlayer(GetOwningPlayer(WUE)) then
+	if IsScourgePlayer(GetOwningPlayer(WUE)) then
 		set x = A7
 		set y = N7
 	endif
@@ -14560,7 +14565,7 @@ function ZEX takes nothing returns nothing
 		set id = GetUnitCurrentOrder(u)
 		set x = HS
 		set y = ZS
-		//	if IsScourgesPlayer(GetOwningPlayer(u)) then//测试
+		//	if IsScourgePlayer(GetOwningPlayer(u)) then//测试
 		if GetPlayerTeam(GetOwningPlayer(u)) == 0 then
 			set x = A7
 			set y = N7
@@ -15118,7 +15123,7 @@ function VRO takes nothing returns boolean
 	local player p = LoadPlayerHandle(HY, h, 50)
 	set ZO = p
 	set CTV = WUE
-	if IsSentinelsPlayer(p) then
+	if IsSentinelPlayer(p) then
 		call EnumItemsInRect(gg_rct_SentinelFountainOfLifeRange, null, function VOO)
 	else
 		call EnumItemsInRect(gg_rct_ScourgeFountainOfLifeRange, null, function VOO)
@@ -15143,7 +15148,7 @@ function VIO takes unit trigUnit returns nothing
 	local integer h
 	local unit WUE = GetSellingUnit()
 	local player p = GetOwningPlayer(u)
-	if IsSentinelsPlayer(GetOwningPlayer(u)) then
+	if IsSentinelPlayer(GetOwningPlayer(u)) then
 		call RegionAddRect(r, gg_rct_SentinelFountainOfLifeRange)
 	else
 		call RegionAddRect(r, gg_rct_ScourgeFountainOfLifeRange)
@@ -15236,7 +15241,7 @@ function VDO takes nothing returns nothing
 				call ReviveHero(Player__Hero[pid], GetUnitX(u), GetUnitY(u), true)
 				call VCO(Player__Hero[pid], r)
 				call SetUnitState(Player__Hero[pid], UNIT_STATE_MANA, 10000)
-				set EUV[pid]= IMaxBJ(0, EUV[pid]-Y4[KFX(GetHeroLevel(Player__Hero[GetPlayerId(GetOwningPlayer(GetSellingUnit()))]))])
+				set PlayersReliableGold[pid]= IMaxBJ(0, PlayersReliableGold[pid]-Y4[KFX(GetHeroLevel(Player__Hero[GetPlayerId(GetOwningPlayer(GetSellingUnit()))]))])
 				call KYX(p)
 			else
 				call SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)+ Y4[KFX(GetHeroLevel(Player__Hero[GetPlayerId(GetOwningPlayer(GetSellingUnit()))]))])
@@ -15368,14 +15373,14 @@ function VHO takes player p, unit U6E, integer GTX returns boolean
 		set m = 1
 		loop
 		exitwhen k > VPO
-			if IsSentinelsPlayer(p) then
-				if p != Sentinels[m] then
-					set VQO[k]= Sentinels[m]
+			if IsSentinelPlayer(p) then
+				if p != SentinelPlayers[m] then
+					set VQO[k]= SentinelPlayers[m]
 					set k = k + 1
 				endif
 			else
-				if p != Scourges[m] then
-					set VQO[k]= Scourges[m]
+				if p != ScourgePlayers[m] then
+					set VQO[k]= ScourgePlayers[m]
 					set k = k + 1
 				endif
 			endif
@@ -15671,9 +15676,9 @@ function EPO takes player p, integer GTX returns nothing
 endfunction
 function EQO takes unit ESO, unit ETO returns boolean
 	local integer GTX
-	if (ESO == J7 or ESO == F7 or ESO == shop_2) and IsUnitAlly(ETO, Scourges[0]) then
+	if (ESO == J7 or ESO == F7 or ESO == shop_2) and IsUnitAlly(ETO, ScourgePlayers[0]) then
 		return false
-	elseif (ESO == H5 or ESO == C5 or ESO == shop_1) and IsUnitAlly(ETO, Sentinels[0]) then
+	elseif (ESO == H5 or ESO == C5 or ESO == shop_1) and IsUnitAlly(ETO, SentinelPlayers[0]) then
 		return false
 	endif
 	set GTX = H3X(ETO)
@@ -15736,7 +15741,7 @@ function E4O takes unit u returns nothing
 	local integer pid = GetPlayerId(GetOwningPlayer(u))
 	local region r = CreateRegion()
 	local boolean b = IsMessengerUnit(u) or GetUnitTypeId(u)=='ncop'
-	if IsSentinelsPlayer(GetOwningPlayer(u)) then
+	if IsSentinelPlayer(GetOwningPlayer(u)) then
 		call RegionAddRect(r, gg_rct_SentinelFountainOfLifeRange)
 	else
 		call RegionAddRect(r, gg_rct_ScourgeFountainOfLifeRange)
@@ -15881,7 +15886,7 @@ function XOO takes unit KKX, integer XRO, player p returns nothing
 	endloop
 	set E3 = p
 	set Q2 = 0
-	if IsSentinelsPlayer(p) then
+	if IsSentinelPlayer(p) then
 		call EnumItemsInRect(WA, Condition(function E9O), function XVO)
 	else
 		call EnumItemsInRect(YA, Condition(function E9O), function XVO)
@@ -16089,10 +16094,10 @@ function XNO takes nothing returns nothing
 	endif
 	if EQO(GetSellingUnit(), u) then
 		call InterfaceErrorForPlayer(p, GetObjectName('n02G'))
-		if IsUnitAlly(u, Sentinels[0]) then
-			set p = Scourges[0]
+		if IsUnitAlly(u, SentinelPlayers[0]) then
+			set p = ScourgePlayers[0]
 		else
-			set p = Sentinels[0]
+			set p = SentinelPlayers[0]
 		endif
 		set x = E2O(GetSellingUnit(), u)
 		set y = E3O(GetSellingUnit(), u)
@@ -16123,8 +16128,8 @@ function B1E takes nothing returns nothing
 	set VE = true
 endfunction
 function XBO takes nothing returns nothing
-	if UM and TimerGetRemaining(NK)> 0 and((IsSentinelsPlayer(GetTriggerPlayer()) and CK[0]> 0) or(IsScourgesPlayer(GetTriggerPlayer()) and CK[1]> 0)) then
-		if IsSentinelsPlayer(GetTriggerPlayer()) then
+	if IsPickingHero and TimerGetRemaining(NK)> 0 and((IsSentinelPlayer(GetTriggerPlayer()) and CK[0]> 0) or(IsScourgePlayer(GetTriggerPlayer()) and CK[1]> 0)) then
+		if IsSentinelPlayer(GetTriggerPlayer()) then
 			set CK[0]= CK[0]-1
 			if UnitIsDead(HR) then
 				call KillUnit(JR)
@@ -16144,8 +16149,8 @@ function XBO takes nothing returns nothing
 	endif
 endfunction
 function XDO takes player p returns nothing
-	if UM and TimerGetRemaining(NK)> 0 and((IsSentinelsPlayer(p) and CK[0]> 0) or(IsScourgesPlayer(p) and CK[1]> 0)) then
-		if IsSentinelsPlayer(p) then
+	if IsPickingHero and TimerGetRemaining(NK)> 0 and((IsSentinelPlayer(p) and CK[0]> 0) or(IsScourgePlayer(p) and CK[1]> 0)) then
+		if IsSentinelPlayer(p) then
 			set CK[0]= CK[0]-1
 		else
 			set CK[1]= CK[1]-1
@@ -16161,7 +16166,7 @@ function XFO takes nothing returns boolean
 	local integer pid = GetPlayerId(ETO)
 	local integer WPV = H3X(u)
 	if GetUnitTypeId(u)=='h304' or GetUnitTypeId(u)=='h305' then
-		if (IsSentinelsPlayer(ETO) and GetUnitTypeId(u)=='h304') or(IsScourgesPlayer(ETO) and GetUnitTypeId(u)=='h305') then
+		if (IsSentinelPlayer(ETO) and GetUnitTypeId(u)=='h304') or(IsScourgePlayer(ETO) and GetUnitTypeId(u)=='h305') then
 			call KillUnit(GetSellingUnit())
 			call XDO(GetOwningPlayer(u))
 		else
@@ -16175,7 +16180,7 @@ function XFO takes nothing returns boolean
 	endif
 	if GetUnitPointValue(u)>= 200 then
 		call XNO()
-		if IsPlayerAlly(p, ETO) or(MW and(p == VKV or p == VLV)) then
+		if IsPlayerAlly(p, ETO) or(IsGameHaveObserver and(p == ObserverPlayer1 or p == ObserverPlayer2)) then
 			if WPV == R5V then
 				call PingMinimapEx(GetUnitX(u), GetUnitY(u), 3, 255, 255, 255, false)
 				call DisplayTimedTextToPlayer(p, 0, 0, 20, PlayersColoerText[pid]+(PlayersName[pid])+ "|r |c00ffff00" + GetObjectName('n0HU')+ "|r")
@@ -16562,7 +16567,7 @@ function XZO takes nothing returns boolean
 				endif
 			endif
 		elseif X0O == false and GetItemType(C1X) == ITEM_TYPE_ARTIFACT then
-			if (p != X1O and XHX(X1O) == false and(GTX == R0V or GTX == R_V or GTX == RYV)) then
+			if (p != X1O and IsOfflinePlayer(X1O) == false and(GTX == R0V or GTX == R_V or GTX == RYV)) then
 				call DisableTrigger(CUV)
 				call HZX(C1X)
 				set HWX = UnitAddItemById(ZWX, XIV[GTX])
@@ -17686,12 +17691,12 @@ function R1O takes nothing returns boolean
 	if CZV > 0 then
 		loop
 		exitwhen i > 5
-			set id = GetPlayerId(Sentinels[i])
+			set id = GetPlayerId(SentinelPlayers[i])
 			set trigUnit = Player__Hero[id]
 			if CGV[id]> 0 and trigUnit != null and UnitIsDead(trigUnit) == false then
 				call R0O(trigUnit)
 			endif
-			set id = GetPlayerId(Scourges[i])
+			set id = GetPlayerId(ScourgePlayers[i])
 			set trigUnit = Player__Hero[id]
 			if CGV[id]> 0 and trigUnit != null and UnitIsDead(trigUnit) == false then
 				call R0O(trigUnit)
@@ -17790,7 +17795,7 @@ function R8O takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local unit u =(LoadUnitHandle(HY, h, 53))
 	set C4V = u
-	if IsSentinelsPlayer(GetOwningPlayer(C4V)) then
+	if IsSentinelPlayer(GetOwningPlayer(C4V)) then
 		call EnumItemsInRect(gg_rct_SentinelFountainOfLifeRange, null, function R7O)
 	else
 		call EnumItemsInRect(gg_rct_ScourgeFountainOfLifeRange, null, function R7O)
@@ -17829,7 +17834,7 @@ function G6E takes nothing returns nothing
 	local item C1X
 	local integer id = GetPlayerId(GetOwningPlayer(u))
 	local region r = CreateRegion()
-	if IsSentinelsPlayer(GetOwningPlayer(u)) then
+	if IsSentinelPlayer(GetOwningPlayer(u)) then
 		call RegionAddRect(r, gg_rct_SentinelFountainOfLifeRange)
 	else
 		call RegionAddRect(r, gg_rct_ScourgeFountainOfLifeRange)
@@ -18008,7 +18013,7 @@ function IHO takes nothing returns boolean
 		//绿鞋
 		loop
 		exitwhen i > 5
-			set id = GetPlayerId(Sentinels[i])
+			set id = GetPlayerId(SentinelPlayers[i])
 			set u = Player__Hero[id]
 			if u != null and UnitAlive(u) then
 				call DHNO(u, id)
@@ -18019,7 +18024,7 @@ function IHO takes nothing returns boolean
 					endif
 				endif
 			endif
-			set id = GetPlayerId(Scourges[i])
+			set id = GetPlayerId(ScourgePlayers[i])
 			set u = Player__Hero[id]
 			if u != null and UnitAlive(u) then
 				call DHNO(u, id)
@@ -18641,18 +18646,18 @@ function AHO takes nothing returns boolean
 	local integer i = 1
 	local unit u = null
 	local integer id
-	if OY then
+	if IsGameEnd then
 		return false
 	endif
 	if CWV > 0 then
 		loop
 		exitwhen i > 5
-			set id = GetPlayerId(Sentinels[i])
+			set id = GetPlayerId(SentinelPlayers[i])
 			set u = Player__Hero[id]
 			if CJV[id]> 0 and u != null and UnitAlive(u) and LoadBoolean(HY, GetHandleId(u),'f') == false and UnitHasSpellShield(u) == false and LoadBoolean(HY, GetHandleId(u), 129) == false then
 				call AGO(u)
 			endif
-			set id = GetPlayerId(Scourges[i])
+			set id = GetPlayerId(ScourgePlayers[i])
 			set u = Player__Hero[id]
 			if CJV[id]> 0 and u != null and UnitAlive(u) and LoadBoolean(HY, GetHandleId(u),'f') == false and UnitHasSpellShield(u) == false and LoadBoolean(HY, GetHandleId(u), 129) == false then
 				call AGO(u)
@@ -18795,7 +18800,7 @@ function AUO takes player p returns integer
 	if OLX(p) then
 		return'np00'
 	endif
-	if IsSentinelsPlayer(p) then
+	if IsSentinelPlayer(p) then
 		if r == 1 then
 			return'n00I'
 		elseif r == 2 then
@@ -18836,7 +18841,7 @@ function AWO takes player p returns integer
 	endif
 	if GetRandomInt(1, 3) == 1 then
 		return'e02R'
-	elseif IsSentinelsPlayer(p) then
+	elseif IsSentinelPlayer(p) then
 		return'e01H'
 	else
 		return'e01Z'
@@ -18871,8 +18876,8 @@ function MUSetMessengerNotShare takes unit messenger returns nothing
 	if GetPlayerTeam(owner) == 0 then
 		set i = 1
 		loop
-			if Sentinels[i] != owner then
-				call DisplayTimedTextToPlayer(Sentinels[i], 0, 0, 10, "|cffffff11你不再能控制" + PlayersColoerText[GetPlayerId(owner)] + GetPlayerName(owner) + "|cffffff11的信使了|r")
+			if SentinelPlayers[i] != owner then
+				call DisplayTimedTextToPlayer(SentinelPlayers[i], 0, 0, 10, "|cffffff11你不再能控制" + PlayersColoerText[GetPlayerId(owner)] + GetPlayerName(owner) + "|cffffff11的信使了|r")
 			endif
 			set i = i + 1
 		exitwhen i > 5
@@ -18880,8 +18885,8 @@ function MUSetMessengerNotShare takes unit messenger returns nothing
 	else
 		set i = 1
 		loop
-			if Scourges[i] != owner then
-				call DisplayTimedTextToPlayer(Scourges[i], 0, 0, 10, "|cffffff11你不再能控制" + PlayersColoerText[GetPlayerId(owner)] + GetPlayerName(owner) + "|cffffff11的信使了|r")
+			if ScourgePlayers[i] != owner then
+				call DisplayTimedTextToPlayer(ScourgePlayers[i], 0, 0, 10, "|cffffff11你不再能控制" + PlayersColoerText[GetPlayerId(owner)] + GetPlayerName(owner) + "|cffffff11的信使了|r")
 			endif
 			set i = i + 1
 		exitwhen i > 5
@@ -18899,11 +18904,11 @@ function MUInitDummyPlayer takes integer id1, integer id2 returns nothing
 	// 颜色
 	set PlayersColoerText[id1] = PlayersColoerText[0]
 	set PlayersColoerText[id2] = PlayersColoerText[6]
-	call SetPlayerColor(Player(id1), GetPlayerColor(Sentinels[0]))
-	call SetPlayerColor(Player(id2), GetPlayerColor(Scourges[0]))
+	call SetPlayerColor(Player(id1), GetPlayerColor(SentinelPlayers[0]))
+	call SetPlayerColor(Player(id2), GetPlayerColor(ScourgePlayers[0]))
 	// 名字
-	call SetPlayerName(Player(id1), GetPlayerName(Sentinels[0]))
-	call SetPlayerName(Player(id2), GetPlayerName(Scourges[0]))
+	call SetPlayerName(Player(id1), GetPlayerName(SentinelPlayers[0]))
+	call SetPlayerName(Player(id2), GetPlayerName(ScourgePlayers[0]))
 	set PlayersName[id1] = GetPlayerName(Player(id1))
 	set PlayersName[id2] = GetPlayerName(Player(id2))
 	// 队伍
@@ -18912,51 +18917,51 @@ function MUInitDummyPlayer takes integer id1, integer id2 returns nothing
 	// 结盟
 	set i = 0
 	loop
-		call SetPlayerAlliance(Player(id1), Sentinels[i], ALLIANCE_PASSIVE, true)
-		call SetPlayerAlliance(Player(id1), Sentinels[i], ALLIANCE_HELP_REQUEST, true)
-		call SetPlayerAlliance(Player(id1), Sentinels[i], ALLIANCE_HELP_RESPONSE, true)
-		call SetPlayerAlliance(Player(id1), Sentinels[i], ALLIANCE_SHARED_XP, true)
-		call SetPlayerAlliance(Player(id1), Sentinels[i], ALLIANCE_SHARED_SPELLS, true)
-		call SetPlayerAlliance(Sentinels[i], Player(id1), ALLIANCE_PASSIVE, true)
-		call SetPlayerAlliance(Sentinels[i], Player(id1), ALLIANCE_HELP_REQUEST, true)
-		call SetPlayerAlliance(Sentinels[i], Player(id1), ALLIANCE_HELP_RESPONSE, true)
-		call SetPlayerAlliance(Sentinels[i], Player(id1), ALLIANCE_SHARED_XP, true)
-		call SetPlayerAlliance(Sentinels[i], Player(id1), ALLIANCE_SHARED_SPELLS, true)
-		call SetPlayerAlliance(Player(id1), Scourges[i], ALLIANCE_PASSIVE, false)
-		call SetPlayerAlliance(Player(id1), Scourges[i], ALLIANCE_HELP_REQUEST, false)
-		call SetPlayerAlliance(Player(id1), Scourges[i], ALLIANCE_HELP_RESPONSE, false)
-		call SetPlayerAlliance(Player(id1), Scourges[i], ALLIANCE_SHARED_XP, false)
-		call SetPlayerAlliance(Player(id1), Scourges[i], ALLIANCE_SHARED_SPELLS, false)
-		call SetPlayerAlliance(Scourges[i], Player(id1), ALLIANCE_PASSIVE, false)
-		call SetPlayerAlliance(Scourges[i], Player(id1), ALLIANCE_HELP_REQUEST, false)
-		call SetPlayerAlliance(Scourges[i], Player(id1), ALLIANCE_HELP_RESPONSE, false)
-		call SetPlayerAlliance(Scourges[i], Player(id1), ALLIANCE_SHARED_XP, false)
-		call SetPlayerAlliance(Scourges[i], Player(id1), ALLIANCE_SHARED_SPELLS, false)
+		call SetPlayerAlliance(Player(id1), SentinelPlayers[i], ALLIANCE_PASSIVE, true)
+		call SetPlayerAlliance(Player(id1), SentinelPlayers[i], ALLIANCE_HELP_REQUEST, true)
+		call SetPlayerAlliance(Player(id1), SentinelPlayers[i], ALLIANCE_HELP_RESPONSE, true)
+		call SetPlayerAlliance(Player(id1), SentinelPlayers[i], ALLIANCE_SHARED_XP, true)
+		call SetPlayerAlliance(Player(id1), SentinelPlayers[i], ALLIANCE_SHARED_SPELLS, true)
+		call SetPlayerAlliance(SentinelPlayers[i], Player(id1), ALLIANCE_PASSIVE, true)
+		call SetPlayerAlliance(SentinelPlayers[i], Player(id1), ALLIANCE_HELP_REQUEST, true)
+		call SetPlayerAlliance(SentinelPlayers[i], Player(id1), ALLIANCE_HELP_RESPONSE, true)
+		call SetPlayerAlliance(SentinelPlayers[i], Player(id1), ALLIANCE_SHARED_XP, true)
+		call SetPlayerAlliance(SentinelPlayers[i], Player(id1), ALLIANCE_SHARED_SPELLS, true)
+		call SetPlayerAlliance(Player(id1), ScourgePlayers[i], ALLIANCE_PASSIVE, false)
+		call SetPlayerAlliance(Player(id1), ScourgePlayers[i], ALLIANCE_HELP_REQUEST, false)
+		call SetPlayerAlliance(Player(id1), ScourgePlayers[i], ALLIANCE_HELP_RESPONSE, false)
+		call SetPlayerAlliance(Player(id1), ScourgePlayers[i], ALLIANCE_SHARED_XP, false)
+		call SetPlayerAlliance(Player(id1), ScourgePlayers[i], ALLIANCE_SHARED_SPELLS, false)
+		call SetPlayerAlliance(ScourgePlayers[i], Player(id1), ALLIANCE_PASSIVE, false)
+		call SetPlayerAlliance(ScourgePlayers[i], Player(id1), ALLIANCE_HELP_REQUEST, false)
+		call SetPlayerAlliance(ScourgePlayers[i], Player(id1), ALLIANCE_HELP_RESPONSE, false)
+		call SetPlayerAlliance(ScourgePlayers[i], Player(id1), ALLIANCE_SHARED_XP, false)
+		call SetPlayerAlliance(ScourgePlayers[i], Player(id1), ALLIANCE_SHARED_SPELLS, false)
 		set i = i + 1
 	exitwhen i > 5
 	endloop
 	set i = 0
 	loop
-		call SetPlayerAlliance(Player(id2), Scourges[i], ALLIANCE_PASSIVE, true)
-		call SetPlayerAlliance(Player(id2), Scourges[i], ALLIANCE_HELP_REQUEST, true)
-		call SetPlayerAlliance(Player(id2), Scourges[i], ALLIANCE_HELP_RESPONSE, true)
-		call SetPlayerAlliance(Player(id2), Scourges[i], ALLIANCE_SHARED_XP, true)
-		call SetPlayerAlliance(Player(id2), Scourges[i], ALLIANCE_SHARED_SPELLS, true)
-		call SetPlayerAlliance(Scourges[i], Player(id2), ALLIANCE_PASSIVE, true)
-		call SetPlayerAlliance(Scourges[i], Player(id2), ALLIANCE_HELP_REQUEST, true)
-		call SetPlayerAlliance(Scourges[i], Player(id2), ALLIANCE_HELP_RESPONSE, true)
-		call SetPlayerAlliance(Scourges[i], Player(id2), ALLIANCE_SHARED_XP, true)
-		call SetPlayerAlliance(Scourges[i], Player(id2), ALLIANCE_SHARED_SPELLS, true)
-		call SetPlayerAlliance(Player(id2), Sentinels[i], ALLIANCE_PASSIVE, false)
-		call SetPlayerAlliance(Player(id2), Sentinels[i], ALLIANCE_HELP_REQUEST, false)
-		call SetPlayerAlliance(Player(id2), Sentinels[i], ALLIANCE_HELP_RESPONSE, false)
-		call SetPlayerAlliance(Player(id2), Sentinels[i], ALLIANCE_SHARED_XP, false)
-		call SetPlayerAlliance(Player(id2), Sentinels[i], ALLIANCE_SHARED_SPELLS, false)
-		call SetPlayerAlliance(Sentinels[i], Player(id2), ALLIANCE_PASSIVE, false)
-		call SetPlayerAlliance(Sentinels[i], Player(id2), ALLIANCE_HELP_REQUEST, false)
-		call SetPlayerAlliance(Sentinels[i], Player(id2), ALLIANCE_HELP_RESPONSE, false)
-		call SetPlayerAlliance(Sentinels[i], Player(id2), ALLIANCE_SHARED_XP, false)
-		call SetPlayerAlliance(Sentinels[i], Player(id2), ALLIANCE_SHARED_SPELLS, false)
+		call SetPlayerAlliance(Player(id2), ScourgePlayers[i], ALLIANCE_PASSIVE, true)
+		call SetPlayerAlliance(Player(id2), ScourgePlayers[i], ALLIANCE_HELP_REQUEST, true)
+		call SetPlayerAlliance(Player(id2), ScourgePlayers[i], ALLIANCE_HELP_RESPONSE, true)
+		call SetPlayerAlliance(Player(id2), ScourgePlayers[i], ALLIANCE_SHARED_XP, true)
+		call SetPlayerAlliance(Player(id2), ScourgePlayers[i], ALLIANCE_SHARED_SPELLS, true)
+		call SetPlayerAlliance(ScourgePlayers[i], Player(id2), ALLIANCE_PASSIVE, true)
+		call SetPlayerAlliance(ScourgePlayers[i], Player(id2), ALLIANCE_HELP_REQUEST, true)
+		call SetPlayerAlliance(ScourgePlayers[i], Player(id2), ALLIANCE_HELP_RESPONSE, true)
+		call SetPlayerAlliance(ScourgePlayers[i], Player(id2), ALLIANCE_SHARED_XP, true)
+		call SetPlayerAlliance(ScourgePlayers[i], Player(id2), ALLIANCE_SHARED_SPELLS, true)
+		call SetPlayerAlliance(Player(id2), SentinelPlayers[i], ALLIANCE_PASSIVE, false)
+		call SetPlayerAlliance(Player(id2), SentinelPlayers[i], ALLIANCE_HELP_REQUEST, false)
+		call SetPlayerAlliance(Player(id2), SentinelPlayers[i], ALLIANCE_HELP_RESPONSE, false)
+		call SetPlayerAlliance(Player(id2), SentinelPlayers[i], ALLIANCE_SHARED_XP, false)
+		call SetPlayerAlliance(Player(id2), SentinelPlayers[i], ALLIANCE_SHARED_SPELLS, false)
+		call SetPlayerAlliance(SentinelPlayers[i], Player(id2), ALLIANCE_PASSIVE, false)
+		call SetPlayerAlliance(SentinelPlayers[i], Player(id2), ALLIANCE_HELP_REQUEST, false)
+		call SetPlayerAlliance(SentinelPlayers[i], Player(id2), ALLIANCE_HELP_RESPONSE, false)
+		call SetPlayerAlliance(SentinelPlayers[i], Player(id2), ALLIANCE_SHARED_XP, false)
+		call SetPlayerAlliance(SentinelPlayers[i], Player(id2), ALLIANCE_SHARED_SPELLS, false)
 		set i = i + 1
 	exitwhen i > 5
 	endloop
@@ -19001,18 +19006,18 @@ function MUSetMessengerShare takes unit messenger returns nothing
 	local string name
 	local integer i
 	if team == 0 then
-		if Sentinels[0] == Player(0) then
+		if SentinelPlayers[0] == Player(0) then
 			set target_player = Player(13)
 			call MUInitDummyPlayer(13, 14)
-		elseif Sentinels[0] == Player(13) then
+		elseif SentinelPlayers[0] == Player(13) then
 			set target_player = Player(0)
 			call MUInitDummyPlayer(0, 6)
 		endif
 	elseif team == 1 then
-		if Scourges[0] == Player(6) then
+		if ScourgePlayers[0] == Player(6) then
 			set target_player = Player(14)
 			call MUInitDummyPlayer(13, 14)
-		elseif Scourges[0] == Player(14) then
+		elseif ScourgePlayers[0] == Player(14) then
 			set target_player = Player(6)
 			call MUInitDummyPlayer(0, 6)
 		endif
@@ -19029,11 +19034,11 @@ function MUSetMessengerShare takes unit messenger returns nothing
 	if team == 0 then
 		set i = 1
 		loop
-			call SetPlayerAlliance(target_player, Sentinels[i], ALLIANCE_SHARED_CONTROL, true)
-			call UnitShareVision(messenger, Sentinels[i], true)
-			call MUCreateDummyMessenger(messenger, Sentinels[i], owner)
-			if Sentinels[i] != owner then
-				call DisplayTimedTextToPlayer(Sentinels[i], 0, 0, 10, "|cffffff11你可以控制" + PlayersColoerText[GetPlayerId(owner)] + GetPlayerName(owner) + "|cffffff11的信使了|r")
+			call SetPlayerAlliance(target_player, SentinelPlayers[i], ALLIANCE_SHARED_CONTROL, true)
+			call UnitShareVision(messenger, SentinelPlayers[i], true)
+			call MUCreateDummyMessenger(messenger, SentinelPlayers[i], owner)
+			if SentinelPlayers[i] != owner then
+				call DisplayTimedTextToPlayer(SentinelPlayers[i], 0, 0, 10, "|cffffff11你可以控制" + PlayersColoerText[GetPlayerId(owner)] + GetPlayerName(owner) + "|cffffff11的信使了|r")
 			endif
 			set i = i + 1
 		exitwhen i > 5
@@ -19041,11 +19046,11 @@ function MUSetMessengerShare takes unit messenger returns nothing
 	elseif team == 1 then
 		set i = 1
 		loop
-			call SetPlayerAlliance(target_player, Scourges[i], ALLIANCE_SHARED_CONTROL, true)
-			call UnitShareVision(messenger, Scourges[i], true)
-			call MUCreateDummyMessenger(messenger, Scourges[i], owner)
-			if Scourges[i] != owner then
-				call DisplayTimedTextToPlayer(Scourges[i], 0, 0, 10, "|cffffff11你可以控制" + PlayersColoerText[GetPlayerId(owner)] + GetPlayerName(owner) + "|cffffff11的信使了|r")
+			call SetPlayerAlliance(target_player, ScourgePlayers[i], ALLIANCE_SHARED_CONTROL, true)
+			call UnitShareVision(messenger, ScourgePlayers[i], true)
+			call MUCreateDummyMessenger(messenger, ScourgePlayers[i], owner)
+			if ScourgePlayers[i] != owner then
+				call DisplayTimedTextToPlayer(ScourgePlayers[i], 0, 0, 10, "|cffffff11你可以控制" + PlayersColoerText[GetPlayerId(owner)] + GetPlayerName(owner) + "|cffffff11的信使了|r")
 			endif
 			set i = i + 1
 		exitwhen i > 5
@@ -19695,7 +19700,7 @@ function NJO takes unit A2O returns nothing
 	if GetUnitTypeId(A2O)=='np00'then
 		set A_O ='S020'
 	else
-		//	if IsSentinelsPlayer(GetOwningPlayer(A2O)) then
+		//	if IsSentinelPlayer(GetOwningPlayer(A2O)) then
 		if GetPlayerTeam(GetOwningPlayer(A2O)) == 0 then
 			set A_O ='S00I'
 		else
@@ -19814,7 +19819,7 @@ function NQO takes nothing returns boolean
 		set E7V = trigUnit
 		set E8V = true
 		call StoreDrCacheData("AegisOn", GetPlayerId(GetOwningPlayer(trigUnit)))
-		if (IsSentinelsPlayer(GetOwningPlayer(trigUnit)) and GN == 0) or(IsScourgesPlayer(GetOwningPlayer(trigUnit)) and GN == 1) then
+		if (IsSentinelPlayer(GetOwningPlayer(trigUnit)) and GN == 0) or(IsScourgePlayer(GetOwningPlayer(trigUnit)) and GN == 1) then
 			call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, CR[GetPlayerId(LocalPlayer)], PlayersColoerText[GetPlayerId(GetOwningPlayer(trigUnit))]+ GetUnitName(trigUnit)+ "|r " + GetObjectName('n0EQ'))
 		else
 			call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, CR[GetPlayerId(LocalPlayer)], PlayersColoerText[GetPlayerId(GetOwningPlayer(trigUnit))]+ GetUnitName(trigUnit)+ "|r " + "获得了不朽的守护!")
@@ -19921,49 +19926,49 @@ function NWO takes integer id, real x, real y returns integer
 	return EVX
 endfunction
 function NYO takes integer index returns integer
-	if index == GetPlayerId(Sentinels[1]) then
+	if index == GetPlayerId(SentinelPlayers[1]) then
 		return'h0BI'
-	elseif index == GetPlayerId(Sentinels[2]) then
+	elseif index == GetPlayerId(SentinelPlayers[2]) then
 		return'h0BK'
-	elseif index == GetPlayerId(Sentinels[3]) then
+	elseif index == GetPlayerId(SentinelPlayers[3]) then
 		return'h0BG'
-	elseif index == GetPlayerId(Sentinels[4]) then
+	elseif index == GetPlayerId(SentinelPlayers[4]) then
 		return'h0BF'
-	elseif index == GetPlayerId(Sentinels[5]) then
+	elseif index == GetPlayerId(SentinelPlayers[5]) then
 		return'h0BL'
-	elseif index == GetPlayerId(Scourges[1]) then
+	elseif index == GetPlayerId(ScourgePlayers[1]) then
 		return'h0BH'
-	elseif index == GetPlayerId(Scourges[2]) then
+	elseif index == GetPlayerId(ScourgePlayers[2]) then
 		return'h0BJ'
-	elseif index == GetPlayerId(Scourges[3]) then
+	elseif index == GetPlayerId(ScourgePlayers[3]) then
 		return'h0BM'
-	elseif index == GetPlayerId(Scourges[4]) then
+	elseif index == GetPlayerId(ScourgePlayers[4]) then
 		return'h0A5'
-	elseif index == GetPlayerId(Scourges[5]) then
+	elseif index == GetPlayerId(ScourgePlayers[5]) then
 		return'h0BN'
 	endif
 	return'h0BN'
 endfunction
 function NZO takes integer index returns string
-	if index == GetPlayerId(Sentinels[1]) then
+	if index == GetPlayerId(SentinelPlayers[1]) then
 		return"war3mapImported\\TeleportTarget_Blue.mdx"
-	elseif index == GetPlayerId(Sentinels[2]) then
+	elseif index == GetPlayerId(SentinelPlayers[2]) then
 		return"war3mapImported\\TeleportTarget_Teal.mdx"
-	elseif index == GetPlayerId(Sentinels[3]) then
+	elseif index == GetPlayerId(SentinelPlayers[3]) then
 		return"war3mapImported\\TeleportTarget_Purple.mdx"
-	elseif index == GetPlayerId(Sentinels[4]) then
+	elseif index == GetPlayerId(SentinelPlayers[4]) then
 		return"war3mapImported\\TeleportTarget_Yellow.mdx"
-	elseif index == GetPlayerId(Sentinels[5]) then
+	elseif index == GetPlayerId(SentinelPlayers[5]) then
 		return"war3mapImported\\TeleportTarget_Orange.mdx"
-	elseif index == GetPlayerId(Scourges[1]) then
+	elseif index == GetPlayerId(ScourgePlayers[1]) then
 		return"war3mapImported\\TeleportTarget_Pink.mdx"
-	elseif index == GetPlayerId(Scourges[2]) then
+	elseif index == GetPlayerId(ScourgePlayers[2]) then
 		return"war3mapImported\\TeleportTarget_Gray.mdx"
-	elseif index == GetPlayerId(Scourges[3]) then
+	elseif index == GetPlayerId(ScourgePlayers[3]) then
 		return"war3mapImported\\TeleportTarget_LightBlue.mdx"
-	elseif index == GetPlayerId(Scourges[4]) then
+	elseif index == GetPlayerId(ScourgePlayers[4]) then
 		return"war3mapImported\\TeleportTarget_DarkGreen.mdx"
-	elseif index == GetPlayerId(Scourges[5]) then
+	elseif index == GetPlayerId(ScourgePlayers[5]) then
 		return"war3mapImported\\TeleportTarget_Brown.mdx"
 	endif
 	return"Abilities\\Spells\\Human\\MassTeleport\\MassTeleportTarget.mdl"
@@ -20222,7 +20227,7 @@ function scroll_of_town_portal takes nothing returns nothing
 		set x = GetSpellTargetX()
 		set y = GetSpellTargetY()
 		if x == C9V[id]and y == DVV[id] then
-			if IsSentinelsPlayer(GetOwningPlayer(trigUnit)) then
+			if IsSentinelPlayer(GetOwningPlayer(trigUnit)) then
 				set x = GetUnitX(SentinelFountainOfLifeUnit)
 				set y = GetUnitY(SentinelFountainOfLifeUnit)
 				set stg_u = SentinelFountainOfLifeUnit
@@ -20254,7 +20259,7 @@ function scroll_of_town_portal takes nothing returns nothing
 	endif
 	set x = CoordinateX50(x)
 	set y = CoordinateY50(y)
-	if (IsUnitAlly(trigUnit, LocalPlayer) and LocalPlayer!= GetOwningPlayer(trigUnit)) or(MW and(LocalPlayer== VKV or LocalPlayer== VLV)) then
+	if (IsUnitAlly(trigUnit, LocalPlayer) and LocalPlayer!= GetOwningPlayer(trigUnit)) or(IsGameHaveObserver and(LocalPlayer== ObserverPlayer1 or LocalPlayer== ObserverPlayer2)) then
 		call PingMinimapEx(x, y, 3, 255, 255, 255, false)
 	endif
 	set N3O = CreateUnit(GetOwningPlayer(trigUnit), NYO(id), x, y, 0)
@@ -20418,7 +20423,7 @@ function boots_of_travel_recipe takes nothing returns nothing
 		set x = GetSpellTargetX()
 		set y = GetSpellTargetY()
 		if x == C9V[id]and y == DVV[id] then
-			if IsSentinelsPlayer(GetOwningPlayer(trigUnit)) then
+			if IsSentinelPlayer(GetOwningPlayer(trigUnit)) then
 				set x = GetUnitX(SentinelFountainOfLifeUnit)
 				set y = GetUnitY(SentinelFountainOfLifeUnit)
 				set stg_u = SentinelFountainOfLifeUnit
@@ -20437,7 +20442,7 @@ function boots_of_travel_recipe takes nothing returns nothing
 	set jd = bj_RADTODEG * Atan2(y - GetUnitY(trigUnit), x - GetUnitX(trigUnit))
 	set x = GetUnitX(stg_u)
 	set y = GetUnitY(stg_u)
-	if (IsUnitAlly(trigUnit, LocalPlayer) and LocalPlayer!= GetOwningPlayer(trigUnit)) or(MW and(LocalPlayer== VKV or LocalPlayer== VLV)) then
+	if (IsUnitAlly(trigUnit, LocalPlayer) and LocalPlayer!= GetOwningPlayer(trigUnit)) or(IsGameHaveObserver and(LocalPlayer== ObserverPlayer1 or LocalPlayer== ObserverPlayer2)) then
 		call PingMinimapEx(x, y, 3, 255, 255, 255, false)
 	endif
 	set tp_ube = CreateUbersplat(GetUnitX(trigUnit)+ 25 * Cos(225 * bj_DEGTORAD), GetUnitY(trigUnit)+ 20 * Sin(225 * bj_DEGTORAD), "SCTP", 255, 255, 255, 255, false, false)
@@ -20574,20 +20579,20 @@ function GWE takes nothing returns nothing
 	local unit u = GetSpellTargetUnit()
 	local integer WFV
 	local integer pid = GetPlayerId(GetOwningPlayer(GetTriggerUnit()))
-	if IsSentinelsPlayer(Player(pid)) then
-		call UnitShareVision(u, Scourges[0], false)
-		call UnitShareVision(u, Scourges[1], false)
-		call UnitShareVision(u, Scourges[2], false)
-		call UnitShareVision(u, Scourges[3], false)
-		call UnitShareVision(u, Scourges[4], false)
-		call UnitShareVision(u, Scourges[5], false)
+	if IsSentinelPlayer(Player(pid)) then
+		call UnitShareVision(u, ScourgePlayers[0], false)
+		call UnitShareVision(u, ScourgePlayers[1], false)
+		call UnitShareVision(u, ScourgePlayers[2], false)
+		call UnitShareVision(u, ScourgePlayers[3], false)
+		call UnitShareVision(u, ScourgePlayers[4], false)
+		call UnitShareVision(u, ScourgePlayers[5], false)
 	else
-		call UnitShareVision(u, Sentinels[0], false)
-		call UnitShareVision(u, Sentinels[1], false)
-		call UnitShareVision(u, Sentinels[2], false)
-		call UnitShareVision(u, Sentinels[3], false)
-		call UnitShareVision(u, Sentinels[4], false)
-		call UnitShareVision(u, Sentinels[5], false)
+		call UnitShareVision(u, SentinelPlayers[0], false)
+		call UnitShareVision(u, SentinelPlayers[1], false)
+		call UnitShareVision(u, SentinelPlayers[2], false)
+		call UnitShareVision(u, SentinelPlayers[3], false)
+		call UnitShareVision(u, SentinelPlayers[4], false)
+		call UnitShareVision(u, SentinelPlayers[5], false)
 	endif
 	call UnitAddAbility(u,'ACrk')
 	call I8X(u)
@@ -21354,7 +21359,7 @@ function CUO takes nothing returns nothing
 	local string s
 	call UnitAddAbility(CSO,'A17R')
 	call UnitAddAbility(CSO,'A24F')
-	if IsSentinelsPlayer(DJV) then
+	if IsSentinelPlayer(DJV) then
 		set s = "effects\\GlyphSent.mdx"
 	else
 		set s = "effects\\GlyphScourge.mdx"
@@ -21370,10 +21375,10 @@ endfunction
 function CWO takes unit u, player p returns nothing
 	local integer i
 	local integer x = 1
-	if IsSentinelsPlayer(p) then
+	if IsSentinelPlayer(p) then
 		loop
 		exitwhen x > 5
-			set i = GetPlayerId(Sentinels[x])
+			set i = GetPlayerId(SentinelPlayers[x])
 			if u != Circle[i] then
 				call YDWESetUnitAbilityState(Circle[i],'A141', 1, 300)
 			endif
@@ -21382,7 +21387,7 @@ function CWO takes unit u, player p returns nothing
 	else
 		loop
 		exitwhen x > 5
-			set i = GetPlayerId(Scourges[x])
+			set i = GetPlayerId(ScourgePlayers[x])
 			if u != Circle[i] then
 				call YDWESetUnitAbilityState(Circle[i],'A141', 1, 300)
 			endif
@@ -21425,13 +21430,13 @@ function G8E takes nothing returns nothing
 	local group g
 	local unit u = GetTriggerUnit()
 	local player p = GetOwningPlayer(u)
-	if (IsSentinelsPlayer(p) and DKV == false) or(IsSentinelsPlayer(p) == false and DLV == false) then
+	if (IsSentinelPlayer(p) and DKV == false) or(IsSentinelPlayer(p) == false and DLV == false) then
 		set g = AllocationGroup(34)
 		set DJV = p
 		call GroupEnumUnitsInRange(g, 0, 0, 12000, Condition(function CTO))
 		call ForGroup(g, function CUO)
 		call DeallocateGroup(g)
-		if IsSentinelsPlayer(p) then
+		if IsSentinelPlayer(p) then
 			set DKV = true
 			call CWO(u, p)
 			call GlyphCoolDown(u)
@@ -21442,7 +21447,7 @@ function G8E takes nothing returns nothing
 			call GlyphCoolDown(u)
 			set DLV = false
 		endif
-		if (IsPlayerAlly(p, LocalPlayer) or(MW and IsObserverPlayer(LocalPlayer))) and p != LocalPlayer then
+		if (IsPlayerAlly(p, LocalPlayer) or(IsGameHaveObserver and IsObserverPlayer(LocalPlayer))) and p != LocalPlayer then
 			call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 5, PlayersColoerText[GetPlayerId(p)]+ PlayersName[GetPlayerId((p))]+ "|r 开启了防御符文")
 		endif
 	endif
@@ -22738,7 +22743,7 @@ function FDO takes nothing returns boolean
 			call AddHeroXPSimple(Player__Hero[GetPlayerId(GetOwningPlayer(WUE))], R2I(LoadInteger(M, GetUnitTypeId(WWE), HC)* 2.5), true)
 		endif
 		call BMX(GetOwningPlayer(WUE), WWE, 190)
-		set EUV[GetPlayerId(GetOwningPlayer(WUE))]= EUV[GetPlayerId(GetOwningPlayer(WUE))]+ 190
+		set PlayersReliableGold[GetPlayerId(GetOwningPlayer(WUE))]= PlayersReliableGold[GetPlayerId(GetOwningPlayer(WUE))]+ 190
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 		call KillUnit(WWE)
@@ -23229,9 +23234,9 @@ function F9O takes nothing returns boolean
 	return false
 endfunction
 function CreepAttackToBase takes nothing returns boolean
-	if GetOwningPlayer(GetTriggerUnit()) == Sentinels[0] then
+	if GetOwningPlayer(GetTriggerUnit()) == SentinelPlayers[0] then
 		call IssuePointOrderByIdLoc(GetTriggerUnit(), 851983, AttackToScourgeLocation)
-	elseif GetOwningPlayer(GetTriggerUnit()) == Scourges[0] then
+	elseif GetOwningPlayer(GetTriggerUnit()) == ScourgePlayers[0] then
 		call IssuePointOrderByIdLoc(GetTriggerUnit(), 851983, AttackToSentinelLocation)
 	endif
 	return false
@@ -23243,37 +23248,37 @@ function GXO takes nothing returns nothing
 	set SpawnMeleeCreepNumber = SpawnMeleeCreepNumber + 1
 endfunction
 function SentinelAttackToMid takes nothing returns boolean
-	if GetOwningPlayer(GetTriggerUnit()) == Sentinels[0] then
+	if GetOwningPlayer(GetTriggerUnit()) == SentinelPlayers[0] then
 		call IssuePointOrderByIdLoc(GetTriggerUnit(), 851983, AttackToMidLocation)
 	endif
 	return false
 endfunction
 function ScourgeAttackToMid takes nothing returns boolean
-	if GetOwningPlayer(GetTriggerUnit()) == Scourges[0] then
+	if GetOwningPlayer(GetTriggerUnit()) == ScourgePlayers[0] then
 		call IssuePointOrderByIdLoc(GetTriggerUnit(), 851983, AttackToMidLocation)
 	endif
 	return false
 endfunction
 function SentinelAttackToTop takes nothing returns boolean
-	if GetOwningPlayer(GetTriggerUnit()) == Sentinels[0] then
+	if GetOwningPlayer(GetTriggerUnit()) == SentinelPlayers[0] then
 		call IssuePointOrderByIdLoc(GetTriggerUnit(), 851983, AttackToTopLocation)
 	endif
 	return false
 endfunction
 function ScourgeAttackToTop takes nothing returns boolean
-	if GetOwningPlayer(GetTriggerUnit()) == Scourges[0] then
+	if GetOwningPlayer(GetTriggerUnit()) == ScourgePlayers[0] then
 		call IssuePointOrderByIdLoc(GetTriggerUnit(), 851983, AttackToTopLocation)
 	endif
 	return false
 endfunction
 function SentinelAttackToBot takes nothing returns boolean
-	if GetOwningPlayer(GetTriggerUnit()) == Sentinels[0] then
+	if GetOwningPlayer(GetTriggerUnit()) == SentinelPlayers[0] then
 		call IssuePointOrderByIdLoc(GetTriggerUnit(), 851983, AttackToBotLocation)
 	endif
 	return false
 endfunction
 function ScourgeAttackToBot takes nothing returns boolean
-	if GetOwningPlayer(GetTriggerUnit()) == Scourges[0] then
+	if GetOwningPlayer(GetTriggerUnit()) == ScourgePlayers[0] then
 		call IssuePointOrderByIdLoc(GetTriggerUnit(), 851983, AttackToBotLocation)
 	endif
 	return false
@@ -23283,13 +23288,13 @@ function GCO takes nothing returns nothing
 	local integer id
 	loop
 	exitwhen i > 5
-		set id = GetPlayerId(Sentinels[i])
-		call StoreDrCacheData("CSK" + I2S(id), AQ[id])
-		call StoreDrCacheData("ConvertSkillData" + I2S(id), NQ[id])
+		set id = GetPlayerId(SentinelPlayers[i])
+		call StoreDrCacheData("CSK" + I2S(id), PlayerCreepsLastHitCount[id])
+		call StoreDrCacheData("ConvertSkillData" + I2S(id), PlayerCreepsDenyCount[id])
 		call StoreDrCacheData("NK" + I2S(id),(LoadInteger(HY,(400 + id), 79)))
-		set id = GetPlayerId(Scourges[i])
-		call StoreDrCacheData("CSK" + I2S(id), AQ[id])
-		call StoreDrCacheData("ConvertSkillData" + I2S(id), NQ[id])
+		set id = GetPlayerId(ScourgePlayers[i])
+		call StoreDrCacheData("CSK" + I2S(id), PlayerCreepsLastHitCount[id])
+		call StoreDrCacheData("ConvertSkillData" + I2S(id), PlayerCreepsDenyCount[id])
 		call StoreDrCacheData("NK" + I2S(id),(LoadInteger(HY,(400 + id), 79)))
 		set i = i + 1
 	endloop
@@ -23397,44 +23402,44 @@ endglobals
 function SpawnTopCreep takes boolean spawnDemolisher returns nothing
 	// 天灾
 	if (IsSentinelTopMeleeRaxAlive) then
-		call CreateNUnitsAtLoc(SpawnMeleeCreepNumber,'ugho', Scourges[0], ScourgeTopMeleeSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnMeleeCreepNumber,'ugho', ScourgePlayers[0], ScourgeTopMeleeSpawnLocatio, bj_UNIT_FACING)
 	else
-		call CreateNUnitsAtLoc(SpawnMeleeCreepNumber,'u001', Scourges[0], ScourgeTopMeleeSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnMeleeCreepNumber,'u001', ScourgePlayers[0], ScourgeTopMeleeSpawnLocatio, bj_UNIT_FACING)
 	endif
 	call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 2, SPAWN_SPEED_TYPE_ADD)
 	if (IsSentinelTopRangedRaxAlive) then
-		call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'unec', Scourges[0], ScourgeTopRangedSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'unec', ScourgePlayers[0], ScourgeTopRangedSpawnLocatio, bj_UNIT_FACING)
 	else
-		call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'u002', Scourges[0], ScourgeTopRangedSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'u002', ScourgePlayers[0], ScourgeTopRangedSpawnLocatio, bj_UNIT_FACING)
 	endif
 	call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 2, SPAWN_SPEED_TYPE_ADD)
 
 	// 近卫
 	if (IsScourgeTopMeleeRaxAlive) then
-		call CreateNUnitsAtLoc(SpawnMeleeCreepNumber,'esen', Sentinels[0], SentinelTopMeleeSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnMeleeCreepNumber,'esen', SentinelPlayers[0], SentinelTopMeleeSpawnLocatio, bj_UNIT_FACING)
 	else
-		call CreateNUnitsAtLoc(SpawnMeleeCreepNumber,'e00V', Sentinels[0], SentinelTopMeleeSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnMeleeCreepNumber,'e00V', SentinelPlayers[0], SentinelTopMeleeSpawnLocatio, bj_UNIT_FACING)
 	endif
 	call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 2, SPAWN_SPEED_TYPE_REDUCE)
 	if (IsScourgeTopRangedRaxAlive) then
-		call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'edry', Sentinels[0], SentinelTopRangedSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'edry', SentinelPlayers[0], SentinelTopRangedSpawnLocatio, bj_UNIT_FACING)
 	else
-		call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'e00W', Sentinels[0], SentinelTopRangedSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'e00W', SentinelPlayers[0], SentinelTopRangedSpawnLocatio, bj_UNIT_FACING)
 	endif
 	call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 2, SPAWN_SPEED_TYPE_REDUCE)
 
 	// 车
 	if spawnDemolisher then
 		if (IsSentinelTopRangedRaxAlive) then
-			call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'umtw', Scourges[0], ScourgeTopRangedSpawnLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'umtw', ScourgePlayers[0], ScourgeTopRangedSpawnLocatio, bj_UNIT_FACING)
 		else
-			call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'u00R', Scourges[0], ScourgeTopRangedSpawnLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'u00R', ScourgePlayers[0], ScourgeTopRangedSpawnLocatio, bj_UNIT_FACING)
 		endif
 		call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 2, SPAWN_SPEED_TYPE_ADD)
 		if (IsScourgeTopRangedRaxAlive) then
-			call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'ebal', Sentinels[0], SentinelTopRangedSpawnLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'ebal', SentinelPlayers[0], SentinelTopRangedSpawnLocatio, bj_UNIT_FACING)
 		else
-			call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'e026', Sentinels[0], SentinelTopRangedSpawnLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'e026', SentinelPlayers[0], SentinelTopRangedSpawnLocatio, bj_UNIT_FACING)
 		endif
 		call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 2, SPAWN_SPEED_TYPE_REDUCE)
 	endif
@@ -23443,44 +23448,44 @@ endfunction
 function SpawnMidCreep takes boolean spawnDemolisher returns nothing
 	// 天灾
 	if (IsSentinelMidMeleeRaxAlive) then
-		call CreateNUnitsAtLoc(SpawnMeleeCreepNumber,'ugho', Scourges[0], ScourgeMidMeleeSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnMeleeCreepNumber,'ugho', ScourgePlayers[0], ScourgeMidMeleeSpawnLocatio, bj_UNIT_FACING)
 	else
-		call CreateNUnitsAtLoc(SpawnMeleeCreepNumber,'u001', Scourges[0], ScourgeMidMeleeSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnMeleeCreepNumber,'u001', ScourgePlayers[0], ScourgeMidMeleeSpawnLocatio, bj_UNIT_FACING)
 	endif
 	call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 3, SPAWN_SPEED_TYPE_NONE)
 	if (IsSentinelMidRangedRaxAlive) then
-		call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'unec', Scourges[0], ScourgeMidRangedSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'unec', ScourgePlayers[0], ScourgeMidRangedSpawnLocatio, bj_UNIT_FACING)
 	else
-		call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'u002', Scourges[0], ScourgeMidRangedSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'u002', ScourgePlayers[0], ScourgeMidRangedSpawnLocatio, bj_UNIT_FACING)
 	endif
 	call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 3, SPAWN_SPEED_TYPE_NONE)
 
 	// 近卫
 	if (IsScourgeMidMeleeRaxAlive) then
-		call CreateNUnitsAtLoc(SpawnMeleeCreepNumber,'esen', Sentinels[0], SentinelMidMeleeSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnMeleeCreepNumber,'esen', SentinelPlayers[0], SentinelMidMeleeSpawnLocatio, bj_UNIT_FACING)
 	else
-		call CreateNUnitsAtLoc(SpawnMeleeCreepNumber,'e00V', Sentinels[0], SentinelMidMeleeSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnMeleeCreepNumber,'e00V', SentinelPlayers[0], SentinelMidMeleeSpawnLocatio, bj_UNIT_FACING)
 	endif
 	call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 3, SPAWN_SPEED_TYPE_NONE)
 	if (IsScourgeMidRangedRaxAlive) then
-		call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'edry', Sentinels[0], SentinelMidRangedSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'edry', SentinelPlayers[0], SentinelMidRangedSpawnLocatio, bj_UNIT_FACING)
 	else
-		call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'e00W', Sentinels[0], SentinelMidRangedSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'e00W', SentinelPlayers[0], SentinelMidRangedSpawnLocatio, bj_UNIT_FACING)
 	endif
 	call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 3, SPAWN_SPEED_TYPE_NONE)
 
 	// 车
 	if spawnDemolisher then
 		if (IsSentinelMidRangedRaxAlive) then
-			call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'umtw', Scourges[0], ScourgeMidRangedSpawnLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'umtw', ScourgePlayers[0], ScourgeMidRangedSpawnLocatio, bj_UNIT_FACING)
 		else
-			call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'u00R', Scourges[0], ScourgeMidRangedSpawnLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'u00R', ScourgePlayers[0], ScourgeMidRangedSpawnLocatio, bj_UNIT_FACING)
 		endif
 		call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 3, SPAWN_SPEED_TYPE_NONE)
 		if (IsScourgeMidRangedRaxAlive) then
-			call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'ebal', Sentinels[0], SentinelMidRangedSpawnLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'ebal', SentinelPlayers[0], SentinelMidRangedSpawnLocatio, bj_UNIT_FACING)
 		else
-			call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'e026', Sentinels[0], SentinelMidRangedSpawnLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'e026', SentinelPlayers[0], SentinelMidRangedSpawnLocatio, bj_UNIT_FACING)
 		endif
 		call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 3, SPAWN_SPEED_TYPE_NONE)
 	endif
@@ -23488,44 +23493,44 @@ endfunction
 function SpawnBotCreep takes boolean spawnDemolisher returns nothing
 	// 天灾
 	if (IsSentinelBotMeleeRaxAlive) then
-		call CreateNUnitsAtLoc(SpawnMeleeCreepNumber,'ugho', Scourges[0], ScourgeBotMeleeSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnMeleeCreepNumber,'ugho', ScourgePlayers[0], ScourgeBotMeleeSpawnLocatio, bj_UNIT_FACING)
 	else
-		call CreateNUnitsAtLoc(SpawnMeleeCreepNumber,'u001', Scourges[0], ScourgeBotMeleeSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnMeleeCreepNumber,'u001', ScourgePlayers[0], ScourgeBotMeleeSpawnLocatio, bj_UNIT_FACING)
 	endif
 	call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 4, SPAWN_SPEED_TYPE_REDUCE)
 	if (IsSentinelBotRangedRaxAlive) then
-		call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'unec', Scourges[0], ScourgeBotRangedSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'unec', ScourgePlayers[0], ScourgeBotRangedSpawnLocatio, bj_UNIT_FACING)
 	else
-		call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'u002', Scourges[0], ScourgeBotRangedSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'u002', ScourgePlayers[0], ScourgeBotRangedSpawnLocatio, bj_UNIT_FACING)
 	endif
 	call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 4, SPAWN_SPEED_TYPE_REDUCE)
 
 	// 近卫
 	if (IsScourgeBotMeleeRaxAlive) then
-		call CreateNUnitsAtLoc(SpawnMeleeCreepNumber,'esen', Sentinels[0], SentinelBotMeleeSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnMeleeCreepNumber,'esen', SentinelPlayers[0], SentinelBotMeleeSpawnLocatio, bj_UNIT_FACING)
 	else
-		call CreateNUnitsAtLoc(SpawnMeleeCreepNumber,'e00V', Sentinels[0], SentinelBotMeleeSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnMeleeCreepNumber,'e00V', SentinelPlayers[0], SentinelBotMeleeSpawnLocatio, bj_UNIT_FACING)
 	endif
 	call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 4, SPAWN_SPEED_TYPE_ADD)
 	if (IsScourgeBotRangedRaxAlive) then
-		call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'edry', Sentinels[0], SentinelBotRangedSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'edry', SentinelPlayers[0], SentinelBotRangedSpawnLocatio, bj_UNIT_FACING)
 	else
-		call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'e00W', Sentinels[0], SentinelBotRangedSpawnLocatio, bj_UNIT_FACING)
+		call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'e00W', SentinelPlayers[0], SentinelBotRangedSpawnLocatio, bj_UNIT_FACING)
 	endif
 	call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 4, SPAWN_SPEED_TYPE_ADD)
 
 	// 车
 	if spawnDemolisher then
 		if (IsSentinelBotRangedRaxAlive) then
-			call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'umtw', Scourges[0], ScourgeBotRangedSpawnLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'umtw', ScourgePlayers[0], ScourgeBotRangedSpawnLocatio, bj_UNIT_FACING)
 		else
-			call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'u00R', Scourges[0], ScourgeBotRangedSpawnLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'u00R', ScourgePlayers[0], ScourgeBotRangedSpawnLocatio, bj_UNIT_FACING)
 		endif
 		call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 4, SPAWN_SPEED_TYPE_REDUCE)
 		if (IsScourgeBotRangedRaxAlive) then
-			call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'ebal', Sentinels[0], SentinelBotRangedSpawnLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'ebal', SentinelPlayers[0], SentinelBotRangedSpawnLocatio, bj_UNIT_FACING)
 		else
-			call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'e026', Sentinels[0], SentinelBotRangedSpawnLocatio, bj_UNIT_FACING)
+			call CreateNUnitsAtLoc(SpawnRangedCreepNumber,'e026', SentinelPlayers[0], SentinelBotRangedSpawnLocatio, bj_UNIT_FACING)
 		endif
 		call SetGroupUnitsNextWaypoint(bj_lastCreatedGroup, 4, SPAWN_SPEED_TYPE_ADD)
 	endif
@@ -23691,8 +23696,8 @@ endfunction
 function SentinelSuperCreepCheckAction takes nothing returns boolean
 	if (not(IsScourgeTopMeleeRaxAlive or IsScourgeMidMeleeRaxAlive or IsScourgeBotMeleeRaxAlive or IsScourgeTopRangedRaxAlive or IsScourgeMidRangedRaxAlive or IsScourgeBotRangedRaxAlive)) then
 		call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, CR[GetPlayerId(LocalPlayer)]* 2, GetObjectName('n04O')+ " " + GetObjectName('n0C7'))
-		call SetPlayerTechResearchedSwap('R00D',(GetPlayerTechCountSimple('R00D', Sentinels[0])+ 30), Sentinels[0])
-		call SetPlayerTechResearchedSwap('R00C',(GetPlayerTechCountSimple('R00C', Sentinels[0])+ 30), Sentinels[0])
+		call SetPlayerTechResearchedSwap('R00D',(GetPlayerTechCountSimple('R00D', SentinelPlayers[0])+ 30), SentinelPlayers[0])
+		call SetPlayerTechResearchedSwap('R00C',(GetPlayerTechCountSimple('R00C', SentinelPlayers[0])+ 30), SentinelPlayers[0])
 		call DisableTrigger(SentinelSuperCreepCheckTrig)
 	endif
 	return false
@@ -23700,21 +23705,21 @@ endfunction
 function ScourgeSuperCreepCheckAction takes nothing returns boolean
 	if (not(IsSentinelTopMeleeRaxAlive or IsSentinelMidMeleeRaxAlive or IsSentinelBotMeleeRaxAlive or IsSentinelTopRangedRaxAlive or IsSentinelMidRangedRaxAlive or IsSentinelBotRangedRaxAlive)) then
 		call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, CR[GetPlayerId(LocalPlayer)]* 2, GetObjectName('n04X')+ " " + GetObjectName('n0C9'))
-		call SetPlayerTechResearchedSwap('R009',(GetPlayerTechCountSimple('R009', Scourges[0])+ 30), Scourges[0])
-		call SetPlayerTechResearchedSwap('R00B',(GetPlayerTechCountSimple('R00B', Scourges[0])+ 30), Scourges[0])
+		call SetPlayerTechResearchedSwap('R009',(GetPlayerTechCountSimple('R009', ScourgePlayers[0])+ 30), ScourgePlayers[0])
+		call SetPlayerTechResearchedSwap('R00B',(GetPlayerTechCountSimple('R00B', ScourgePlayers[0])+ 30), ScourgePlayers[0])
 		call DisableTrigger(ScourgeSuperCreepCheckTrig)
 	endif
 	return false
 endfunction
 function CreepUpgerAction takes nothing returns nothing
-	call SetPlayerTechResearchedSwap('R007',(GetPlayerTechCountSimple('R007', Sentinels[0])+ 1), Sentinels[0])
-	call SetPlayerTechResearchedSwap('R00C',(GetPlayerTechCountSimple('R00C', Sentinels[0])+ 1), Sentinels[0])
-	call SetPlayerTechResearchedSwap('R008',(GetPlayerTechCountSimple('R008', Sentinels[0])+ 1), Sentinels[0])
-	call SetPlayerTechResearchedSwap('R00D',(GetPlayerTechCountSimple('R00D', Sentinels[0])+ 1), Sentinels[0])
-	call SetPlayerTechResearchedSwap('R009',(GetPlayerTechCountSimple('R009', Scourges[0] )+ 1), Scourges[0] )
-	call SetPlayerTechResearchedSwap('R003',(GetPlayerTechCountSimple('R003', Scourges[0] )+ 1), Scourges[0] )
-	call SetPlayerTechResearchedSwap('R00A',(GetPlayerTechCountSimple('R00A', Scourges[0] )+ 1), Scourges[0] )
-	call SetPlayerTechResearchedSwap('R00B',(GetPlayerTechCountSimple('R00B', Scourges[0] )+ 1), Scourges[0] )
+	call SetPlayerTechResearchedSwap('R007',(GetPlayerTechCountSimple('R007', SentinelPlayers[0])+ 1), SentinelPlayers[0])
+	call SetPlayerTechResearchedSwap('R00C',(GetPlayerTechCountSimple('R00C', SentinelPlayers[0])+ 1), SentinelPlayers[0])
+	call SetPlayerTechResearchedSwap('R008',(GetPlayerTechCountSimple('R008', SentinelPlayers[0])+ 1), SentinelPlayers[0])
+	call SetPlayerTechResearchedSwap('R00D',(GetPlayerTechCountSimple('R00D', SentinelPlayers[0])+ 1), SentinelPlayers[0])
+	call SetPlayerTechResearchedSwap('R009',(GetPlayerTechCountSimple('R009', ScourgePlayers[0] )+ 1), ScourgePlayers[0] )
+	call SetPlayerTechResearchedSwap('R003',(GetPlayerTechCountSimple('R003', ScourgePlayers[0] )+ 1), ScourgePlayers[0] )
+	call SetPlayerTechResearchedSwap('R00A',(GetPlayerTechCountSimple('R00A', ScourgePlayers[0] )+ 1), ScourgePlayers[0] )
+	call SetPlayerTechResearchedSwap('R00B',(GetPlayerTechCountSimple('R00B', ScourgePlayers[0] )+ 1), ScourgePlayers[0] )
 	set IsNotUpgraded = false
 endfunction
 function PreloadNeutralCreepsAction takes nothing returns nothing
@@ -24225,9 +24230,9 @@ function SpawnSuperCreepsAction takes nothing returns nothing
 	endif
 	if F2O > 0 then
 		set g = AllocationGroup(44)
-		set u = CreateUnit(Sentinels[0], F2O, x1, y1, 90)
+		set u = CreateUnit(SentinelPlayers[0], F2O, x1, y1, 90)
 		call GroupAddUnit(g, u)
-		set u2 = CreateUnit(Scourges[0], F2O, x2, y2, 90)
+		set u2 = CreateUnit(ScourgePlayers[0], F2O, x2, y2, 90)
 		call GroupAddUnit(g, u2)
 		call SetGroupUnitsNextWaypoint(g, i, JRO)
 		/*
@@ -24276,12 +24281,12 @@ function JIO takes nothing returns nothing
 	set i = 0
 	loop
 	exitwhen i > 5
-		set p = Sentinels[i]
-		if XGX(p) then
+		set p = SentinelPlayers[i]
+		if IsUserPlayer(p) then
 			set D4V = D4V + 1
 		endif
-		set p = Scourges[i]
-		if XGX(p) then
+		set p = ScourgePlayers[i]
+		if IsUserPlayer(p) then
 			set D5V = D5V + 1
 		endif
 		set i = i + 1
@@ -24295,8 +24300,8 @@ function JIO takes nothing returns nothing
 	set n = 1
 	loop
 	exitwhen k > j
-		set p = Sentinels[k]
-		if XGX(p) then
+		set p = SentinelPlayers[k]
+		if IsUserPlayer(p) then
 			set VW[n]= p
 			set n = n + 1
 		endif
@@ -24307,8 +24312,8 @@ function JIO takes nothing returns nothing
 	set n = 1
 	loop
 	exitwhen k > j
-		set p = Scourges[k]
-		if XGX(p) then
+		set p = ScourgePlayers[k]
+		if IsUserPlayer(p) then
 			set EW[n]= p
 			set n = n + 1
 		endif
@@ -24335,9 +24340,9 @@ function JIO takes nothing returns nothing
 	call VTX(BT, 1, 3 + D4V, GetObjectName('n0DO'))
 	call VTX(BT, 5, 3 + D4V, "|c00ff0303" + "0|r")
 	call VTX(BT, 6, 3 + D4V, "|c000042ff" + "0|r")
-	set pid = GetPlayerId(Sentinels[0])
+	set pid = GetPlayerId(SentinelPlayers[0])
 	call V0X(BT, 1, 2, X6X(SubString(PlayersColoerText[pid], 4, 6))/ 255. * 100 , X6X(SubString(PlayersColoerText[pid], 6, 8))/ 255. * 100 , X6X(SubString(PlayersColoerText[pid], 8, 10))/ 255. * 100 , 0)
-	set pid = GetPlayerId(Scourges[0])
+	set pid = GetPlayerId(ScourgePlayers[0])
 	call V0X(BT, 1, 3 + D4V, X6X(SubString(PlayersColoerText[pid], 4, 6))/ 255. * 100 , X6X(SubString(PlayersColoerText[pid], 6, 8))/ 255. * 100 , X6X(SubString(PlayersColoerText[pid], 8, 10))/ 255. * 100 , 0)
 	set k = 1
 	set j = 3 + D5V + D4V
@@ -24386,7 +24391,7 @@ function JIO takes nothing returns nothing
 		set D1V[pid]= 1 -1
 		set D2V[pid]= k + 2 -1
 		call VTX(BT, 1, k + 2,(PlayersName[pid]))
-		if IsPlaying(VW[k]) then
+		if IsPlayingPlayer(VW[k]) then
 			set JAO = SubString(PlayersColoerText[pid], 4, 6)
 			set JNO = SubString(PlayersColoerText[pid], 6, 8)
 			set JBO = SubString(PlayersColoerText[pid], 8, 10)
@@ -24411,7 +24416,7 @@ function JIO takes nothing returns nothing
 		set D1V[pid]= 1 -1
 		set D2V[pid]= k + 3 + D4V -1
 		call VTX(BT, 1, k + 3 + D4V,(PlayersName[pid]))
-		if IsPlaying(EW[k]) then
+		if IsPlayingPlayer(EW[k]) then
 			set JAO = SubString(PlayersColoerText[pid], 4, 6)
 			set JNO = SubString(PlayersColoerText[pid], 6, 8)
 			set JBO = SubString(PlayersColoerText[pid], 8, 10)
@@ -24426,7 +24431,7 @@ function JIO takes nothing returns nothing
 		call VTX(BT, 7, k + 3 + D4V, "|c00646464" + "0|r")
 		set k = k + 1
 	endloop
-	if MW and(LocalPlayer== VKV or LocalPlayer== VLV) and D3V == 1 then
+	if IsGameHaveObserver and(LocalPlayer== ObserverPlayer1 or LocalPlayer== ObserverPlayer2) and D3V == 1 then
 		call MultiboardDisplay(BT, false)
 	endif
 	call VYX(BT, 8, 1, false, true)
@@ -24439,26 +24444,26 @@ endfunction
 function JCO takes nothing returns nothing
 	local integer i
 	local integer k
-	call VTX(BT, 5, 2, "|c00ff0303" + I2S(RQ[GetPlayerId(Sentinels[0])])+ "|r")
-	call VTX(BT, 6, 2, "|c000042ff" + I2S(IQ[GetPlayerId(Sentinels[0])])+ "|r")
-	call VTX(BT, 5, 3 + D4V, "|c00ff0303" + I2S(RQ[GetPlayerId(Scourges[0])])+ "|r")
-	call VTX(BT, 6, 3 + D4V, "|c000042ff" + I2S(IQ[GetPlayerId(Scourges[0])])+ "|r")
+	call VTX(BT, 5, 2, "|c00ff0303" + I2S(PlayerKillHerosCount[GetPlayerId(SentinelPlayers[0])])+ "|r")
+	call VTX(BT, 6, 2, "|c000042ff" + I2S(PlayerHeroDeathCount[GetPlayerId(SentinelPlayers[0])])+ "|r")
+	call VTX(BT, 5, 3 + D4V, "|c00ff0303" + I2S(PlayerKillHerosCount[GetPlayerId(ScourgePlayers[0])])+ "|r")
+	call VTX(BT, 6, 3 + D4V, "|c000042ff" + I2S(PlayerHeroDeathCount[GetPlayerId(ScourgePlayers[0])])+ "|r")
 	set i = 1
 	set k = D4V
 	loop
 	exitwhen i > k
-		call VTX(BT, 5,(i + 2), "|c00ff0303" + I2S(RQ[GetPlayerId(VW[i])])+ "|r")
-		call VTX(BT, 6,(i + 2), "|c000042ff" + I2S(IQ[GetPlayerId(VW[i])])+ "|r")
-		call VTX(BT, 7,(i + 2), "|c00646464" + I2S(CQ[GetPlayerId(VW[i])])+ "|r")
+		call VTX(BT, 5,(i + 2), "|c00ff0303" + I2S(PlayerKillHerosCount[GetPlayerId(VW[i])])+ "|r")
+		call VTX(BT, 6,(i + 2), "|c000042ff" + I2S(PlayerHeroDeathCount[GetPlayerId(VW[i])])+ "|r")
+		call VTX(BT, 7,(i + 2), "|c00646464" + I2S(PlayerAssistCount[GetPlayerId(VW[i])])+ "|r")
 		set i = i + 1
 	endloop
 	set i = 1
 	set k = D5V
 	loop
 	exitwhen i > k
-		call VTX(BT, 5,(i + 3 + D4V), "|c00ff0303" + I2S(RQ[GetPlayerId(EW[i])])+ "|r")
-		call VTX(BT, 6,(i + 3 + D4V), "|c000042ff" + I2S(IQ[GetPlayerId(EW[i])])+ "|r")
-		call VTX(BT, 7,(i + 3 + D4V), "|c00646464" + I2S(CQ[GetPlayerId(EW[i])])+ "|r")
+		call VTX(BT, 5,(i + 3 + D4V), "|c00ff0303" + I2S(PlayerKillHerosCount[GetPlayerId(EW[i])])+ "|r")
+		call VTX(BT, 6,(i + 3 + D4V), "|c000042ff" + I2S(PlayerHeroDeathCount[GetPlayerId(EW[i])])+ "|r")
+		call VTX(BT, 7,(i + 3 + D4V), "|c00646464" + I2S(PlayerAssistCount[GetPlayerId(EW[i])])+ "|r")
 		set i = i + 1
 	endloop
 endfunction
@@ -24489,7 +24494,7 @@ function JFO takes player p, integer k returns string
 		return "UI\\Widgets\\Console\\Undead\\undead-inventory-slotfiller.blp"
 	endif
 endfunction
-function GetLocalCharges takes nothing returns string
+function GetLocalChargesText takes nothing returns string
 	local integer pid = GetPlayerId(LocalPlayer)
 	local string str = ""
 	if LoadBoolean(K, GetHandleId(LocalPlayer),'OptC') then
@@ -24524,7 +24529,7 @@ function GetLocalCharges takes nothing returns string
 	endif
 	return str
 endfunction
-function JHO takes nothing returns nothing
+function UpdateMainMultiboardAction takes nothing returns nothing
 	local integer O3X
 	local integer K0X
 	local string KGX
@@ -24540,11 +24545,13 @@ function JHO takes nothing returns nothing
 	local integer index_1b = 0
 	local integer x = 0
 	local integer id
-	local string JKO
-	local string JLO
-	local string JMO
-	local string JPO
-	local string JQO
+
+	local string killText
+	local string deathText
+	local string assistText
+	local string lastHitText
+	local string denyText
+
 	local string s2 = " "
 	local string s
 	local string JSO
@@ -24552,106 +24559,108 @@ function JHO takes nothing returns nothing
 	local real JUO
 	local string spacer
 	local integer JWO = 0
-	local string JYO = ""
-	local string JZO = ""
-	local integer J_O = 0
-	local integer J0O = 0
+	local string sentinelsReviveText = ""
+	local string scourgesReviveText = ""
+	local integer sentinelsReviveCount = 0
+	local integer scourgesReviveCount = 0
 	local string J1O = ""
 	local integer pid
-	local string HUX = ""
+	local string chargesString = ""
 	if BT == null then
 		return
 	endif
-	set HUX = GetLocalCharges()
+	set chargesString = GetLocalChargesText()
 	set i = 1
 	loop
 	exitwhen i > 5
-		set pid = GetPlayerId(Sentinels[i])
+		set pid = GetPlayerId(SentinelPlayers[i])
 		set r = R2I(TimerGetRemaining(PS[pid]))
-		if r > 0 then
+		if r > 0 then // 剩余复活时间？ 标题上显示的复活剩余复活时间 根据英雄颜色
 			set JWO = JWO + JDO(r)
-			if J_O == 0 then
+			if sentinelsReviveCount == 0 then
 				if r < 10 then
-					set JYO = PlayersColoerText[pid]+ "0" + I2S(r)+ " |r"
+					set sentinelsReviveText = PlayersColoerText[pid]+ "0" + I2S(r)+ " |r"
 				else
-					set JYO = PlayersColoerText[pid]+ I2S(r)+ " |r"
+					set sentinelsReviveText = PlayersColoerText[pid]+ I2S(r)+ " |r"
 				endif
 			else
 				if r < 10 then
-					set JYO = JYO + "|c00ffffff" + "| |r" + PlayersColoerText[pid]+ "0" + I2S(r)+ " |r"
+					set sentinelsReviveText = sentinelsReviveText + "|c00ffffff" + "| |r" + PlayersColoerText[pid]+ "0" + I2S(r)+ " |r"
 				else
-					set JYO = JYO + "|c00ffffff" + "| |r" + PlayersColoerText[pid]+ I2S(r)+ " |r"
+					set sentinelsReviveText = sentinelsReviveText + "|c00ffffff" + "| |r" + PlayersColoerText[pid]+ I2S(r)+ " |r"
 				endif
 			endif
-			set J_O = J_O + 1
+			set sentinelsReviveCount = sentinelsReviveCount + 1
 		endif
 		set i = i + 1
 	endloop
-	if J_O > 0 then
-		if IsPlayerAlly(LocalPlayer, Sentinels[0]) then
-			set JYO = "|c00ffffff" + "[" + GetObjectName('n0JS')+ " |r" + JYO + "|c00ffffff" + "]|r"
+	if sentinelsReviveCount > 0 then
+		if IsPlayerAlly(LocalPlayer, SentinelPlayers[0]) then
+			set sentinelsReviveText = "|c00ffffff" + "[" + GetObjectName('n0JS')+ " |r" + sentinelsReviveText + "|c00ffffff" + "]|r"
 		else
-			set JYO = "|c00ff0303" + "[" + GetObjectName('n0JR')+ " |r" + JYO + "|c00ff0303" + "]|r"
+			set sentinelsReviveText = "|c00ff0303" + "[" + GetObjectName('n0JR')+ " |r" + sentinelsReviveText + "|c00ff0303" + "]|r"
 		endif
 	endif
 	set i = 1
 	loop
 	exitwhen i > 5
-		set pid = GetPlayerId(Scourges[i])
+		set pid = GetPlayerId(ScourgePlayers[i])
 		set r = R2I(TimerGetRemaining(PS[pid]))
 		if r > 0 then
 			set JWO = JWO + JDO(r)
-			if J0O == 0 then
+			if scourgesReviveCount == 0 then
 				if r < 10 then
-					set JZO = PlayersColoerText[pid]+ "0" + I2S(r)+ " |r"
+					set scourgesReviveText = PlayersColoerText[pid]+ "0" + I2S(r)+ " |r"
 				else
-					set JZO = PlayersColoerText[pid]+ I2S(r)+ " |r"
+					set scourgesReviveText = PlayersColoerText[pid]+ I2S(r)+ " |r"
 				endif
 			else
 				if r < 10 then
-					set JZO = JZO + "|c00ffffff" + "| |r" + PlayersColoerText[pid]+ "0" + I2S(r)+ " |r"
+					set scourgesReviveText = scourgesReviveText + "|c00ffffff" + "| |r" + PlayersColoerText[pid]+ "0" + I2S(r)+ " |r"
 				else
-					set JZO = JZO + "|c00ffffff" + "| |r" + PlayersColoerText[pid]+ I2S(r)+ " |r"
+					set scourgesReviveText = scourgesReviveText + "|c00ffffff" + "| |r" + PlayersColoerText[pid]+ I2S(r)+ " |r"
 				endif
 			endif
-			set J0O = J0O + 1
+			set scourgesReviveCount = scourgesReviveCount + 1
 		endif
 		set i = i + 1
 	endloop
-	if J0O > 0 then
-		if IsPlayerAlly(LocalPlayer, Scourges[0]) then
-			set JZO = "|c00ffffff" + "[" + GetObjectName('n0JS')+ " |r" + JZO + "|c00ffffff" + "]|r"
+	if scourgesReviveCount > 0 then
+		if IsPlayerAlly(LocalPlayer, ScourgePlayers[0]) then
+			set scourgesReviveText = "|c00ffffff" + "[" + GetObjectName('n0JS')+ " |r" + scourgesReviveText + "|c00ffffff" + "]|r"
 		else
-			set JZO = "|c00ff0303" + "[" + GetObjectName('n0JR')+ " |r" + JZO + "|c00ff0303" + "]|r"
+			set scourgesReviveText = "|c00ff0303" + "[" + GetObjectName('n0JR')+ " |r" + scourgesReviveText + "|c00ff0303" + "]|r"
 		endif
 	endif
 	if BT != null then
+		// 本地战绩
 		set id = GetPlayerId(LocalPlayer)
 		if id >= 0 and id < 16 then
-			if U3[x] then
-				set JKO = I2S(RQ[id])
-				set JLO = I2S(IQ[id])
-				set JMO = I2S(CQ[id])
-				set JPO = I2S(AQ[id])
-				set JQO = I2S(NQ[id])
-				set s2 = " |c00838B8B(" + JKO + "/" + JLO + "/" + JMO + " - " + JPO + "/" + JQO + " - |r|c00FFDC00" + I2S(EUV[id])+ "|r |c00838B8B)|r"
+			if PlayerShowKDA[id] then
+				set killText    = I2S(PlayerKillHerosCount[id])     // kill
+				set deathText   = I2S(PlayerHeroDeathCount[id])     // death
+				set assistText  = I2S(PlayerAssistCount[id]) 	    // assist
+				set lastHitText = I2S(PlayerCreepsLastHitCount[id]) // 正补last hit
+				set denyText    = I2S(PlayerCreepsDenyCount[id])    // 反补deny
+				set s2 = " |c00838B8B(" + killText + "/" + deathText + "/" + assistText + " - " + lastHitText + "/" + denyText + " - |r|c00FFDC00" + I2S(PlayersReliableGold[id])+ "|r |c00838B8B)|r"
 			endif
 		endif
 	endif
-	if J0O == 0 and J_O == 0 then
-		call MultiboardSetTitleText(BT, HUX + s2)
+	if scourgesReviveCount == 0 and sentinelsReviveCount == 0 then
+		call MultiboardSetTitleText(BT, chargesString + s2)
 	else
-		if IsPlayerAlly(LocalPlayer, Sentinels[0]) then
-			call MultiboardSetTitleText(BT, HUX + JZO + " " + JYO + " " + s2)
+		if IsPlayerAlly(LocalPlayer, SentinelPlayers[0]) then
+			call MultiboardSetTitleText(BT, chargesString + scourgesReviveText + " " + sentinelsReviveText + " " + s2)
 		else
-			call MultiboardSetTitleText(BT, HUX + JYO + " " + JZO + " " + s2)
+			call MultiboardSetTitleText(BT, chargesString + sentinelsReviveText + " " + scourgesReviveText + " " + s2)
 		endif
 	endif
-	if not UM then
-		if (MW and(LocalPlayer== VKV or LocalPlayer== VLV)) == false then
+	if not IsPickingHero then
+		if (IsGameHaveObserver and(LocalPlayer== ObserverPlayer1 or LocalPlayer== ObserverPlayer2)) == false then
 			call MultiboardDisplay(BT, true)
 		endif
 	endif
+	// 什么天才 在多面板刷新动作中刷新水的颜色？
 	if GBV[GetPlayerId(LocalPlayer)]== false then
 		call SetWaterBaseColor(0, 0, 255, 255)
 	endif
@@ -25008,7 +25017,7 @@ function KXO takes player p returns string
 	return J5O
 endfunction
 function KOO takes player p returns string
-	local string J4O = I2S(CQ[GetPlayerId(p)])
+	local string J4O = I2S(PlayerAssistCount[GetPlayerId(p)])
 	local string J5O = J4O
 	if p == LocalPlayer then
 		set J5O = "|c00FF6600" + J4O + "|r"
@@ -25016,7 +25025,7 @@ function KOO takes player p returns string
 	return J5O
 endfunction
 function KRO takes player p returns string
-	local string J4O = I2S(RQ[GetPlayerId(p)])
+	local string J4O = I2S(PlayerKillHerosCount[GetPlayerId(p)])
 	local string J5O = J4O
 	if p == LocalPlayer then
 		set J5O = "|c00FF6600" + J4O + "|r"
@@ -25024,7 +25033,7 @@ function KRO takes player p returns string
 	return J5O
 endfunction
 function KIO takes player p returns string
-	local string J4O = I2S(IQ[GetPlayerId(p)])
+	local string J4O = I2S(PlayerHeroDeathCount[GetPlayerId(p)])
 	local string J5O = J4O
 	if p == LocalPlayer then
 		set J5O = "|c00FF6600" + J4O + "|r"
@@ -25032,7 +25041,7 @@ function KIO takes player p returns string
 	return J5O
 endfunction
 function KAO takes player p returns string
-	local string J4O = I2S(AQ[GetPlayerId(p)])
+	local string J4O = I2S(PlayerCreepsLastHitCount[GetPlayerId(p)])
 	local string J5O = J4O
 	if p == LocalPlayer then
 		set J5O = "|c00FF6600" + J4O + "|r"
@@ -25040,7 +25049,7 @@ function KAO takes player p returns string
 	return J5O
 endfunction
 function KNO takes player p returns string
-	local string J4O = I2S(NQ[GetPlayerId(p)])
+	local string J4O = I2S(PlayerCreepsDenyCount[GetPlayerId(p)])
 	local string J5O = J4O
 	if p == LocalPlayer then
 		set J5O = "|c00FF6600" + J4O + "|r"
@@ -25164,7 +25173,7 @@ function KYO takes nothing returns nothing
 	local string c0 = "|cff99ccff"
 	local integer K6O
 	local integer K7O
-	call DisableTrigger(QG)
+	call DisableTrigger(UpdateMainMultiboardTrig)
 	call DestroyMultiboard(BT)
 	if KZO > 0 and K_O > 0 then
 		set K4O = K4O + 2
@@ -25179,13 +25188,13 @@ function KYO takes nothing returns nothing
 	call MultiboardSetItemsStyle(D6V, false, false)
 	call MultiboardDisplay(D6V, true)
 	call MultiboardMinimize(D6V, false)
-	call MultiboardSetTitleText(D6V, GetObjectName('n0E3')+ " " + " - " +(C3)+ " - " +("|c00ff0303" + I2S(RQ[GetPlayerId(Sentinels[0])])+ "|r/|c0020c000" + I2S(IQ[GetPlayerId(Sentinels[0])])+ "|r"))
+	call MultiboardSetTitleText(D6V, GetObjectName('n0E3')+ " " + " - " +(C3)+ " - " +("|c00ff0303" + I2S(PlayerKillHerosCount[GetPlayerId(SentinelPlayers[0])])+ "|r/|c0020c000" + I2S(PlayerHeroDeathCount[GetPlayerId(SentinelPlayers[0])])+ "|r"))
 	set x = 1
 	set i = 1
 	loop
 	exitwhen i > 5
-		if IsPlaying(Sentinels[i]) or GetPlayerSlotState(Sentinels[i]) == PLAYER_SLOT_STATE_LEFT then
-			set K0O[x]= Sentinels[i]
+		if IsPlayingPlayer(SentinelPlayers[i]) or GetPlayerSlotState(SentinelPlayers[i]) == PLAYER_SLOT_STATE_LEFT then
+			set K0O[x]= SentinelPlayers[i]
 			set x = x + 1
 		endif
 		set i = i + 1
@@ -25194,8 +25203,8 @@ function KYO takes nothing returns nothing
 	set i = 1
 	loop
 	exitwhen i > 5
-		if IsPlaying(Scourges[i]) or GetPlayerSlotState(Scourges[i]) == PLAYER_SLOT_STATE_LEFT then
-			set K1O[x]= Scourges[i]
+		if IsPlayingPlayer(ScourgePlayers[i]) or GetPlayerSlotState(ScourgePlayers[i]) == PLAYER_SLOT_STATE_LEFT then
+			set K1O[x]= ScourgePlayers[i]
 			set x = x + 1
 		endif
 		set i = i + 1
@@ -25908,7 +25917,7 @@ function LIO takes integer LAO, integer LNO returns nothing		//Ob的Tab切换多
 	call MultiboardSetTitleText(FEV, GetObjectName('n0E3')+ " " + " - " +(C3))
 	call MultiboardMinimize(FEV, true)
 	call MultiboardSetItemsStyle(FEV, false, false)
-	if (LocalPlayer== VKV or LocalPlayer== VLV) then
+	if (LocalPlayer== ObserverPlayer1 or LocalPlayer== ObserverPlayer2) then
 		call MultiboardDisplay(FEV, true)
 		call DzTriggerRegisterKeyEventByCode(null, 9, 0, false, function ob_tab0)
 		call DzTriggerRegisterKeyEventByCode(null, 9, 1, false, function ob_tab1)
@@ -25935,10 +25944,10 @@ function LBO takes nothing returns nothing
 	local integer LHO = 139
 	local integer LJO = 255
 	local integer JWO = 0
-	local string JYO = ""
-	local string JZO = ""
-	local integer J_O = 0
-	local integer J0O = 0
+	local string sentinelsReviveText = ""
+	local string scourgesReviveText = ""
+	local integer sentinelsReviveCount = 0
+	local integer scourgesReviveCount = 0
 	local integer r
 	if LCO > 0 and LDO > 0 then
 		set K4O = K4O + 2
@@ -25946,68 +25955,68 @@ function LBO takes nothing returns nothing
 	if GetTriggerExecCount(GetTriggeringTrigger()) == 1 then
 		call LIO(K4O, K5O)
 	endif
-	if MW and(LocalPlayer== VKV or LocalPlayer== VLV) then
+	if IsGameHaveObserver and(LocalPlayer== ObserverPlayer1 or LocalPlayer== ObserverPlayer2) then
 		call MultiboardDisplay(FEV, true)
 	endif
 	set i = 1
 	loop
 	exitwhen i > 5
-		set r = R2I(TimerGetRemaining(PS[GetPlayerId(Sentinels[i])]))
+		set r = R2I(TimerGetRemaining(PS[GetPlayerId(SentinelPlayers[i])]))
 		if r > 0 then
 			set JWO = JWO + JDO(r)
-			if J_O == 0 then
+			if sentinelsReviveCount == 0 then
 				if r < 10 then
-					set JYO = PlayersColoerText[GetPlayerId(Sentinels[i])]+ "0" + I2S(r)+ " |r"
+					set sentinelsReviveText = PlayersColoerText[GetPlayerId(SentinelPlayers[i])]+ "0" + I2S(r)+ " |r"
 				else
-					set JYO = PlayersColoerText[GetPlayerId(Sentinels[i])]+ I2S(r)+ " |r"
+					set sentinelsReviveText = PlayersColoerText[GetPlayerId(SentinelPlayers[i])]+ I2S(r)+ " |r"
 				endif
 			else
 				if r < 10 then
-					set JYO = JYO + "|c00ffffff" + "| |r" + PlayersColoerText[GetPlayerId(Sentinels[i])]+ "0" + I2S(r)+ " |r"
+					set sentinelsReviveText = sentinelsReviveText + "|c00ffffff" + "| |r" + PlayersColoerText[GetPlayerId(SentinelPlayers[i])]+ "0" + I2S(r)+ " |r"
 				else
-					set JYO = JYO + "|c00ffffff" + "| |r" + PlayersColoerText[GetPlayerId(Sentinels[i])]+ I2S(r)+ " |r"
+					set sentinelsReviveText = sentinelsReviveText + "|c00ffffff" + "| |r" + PlayersColoerText[GetPlayerId(SentinelPlayers[i])]+ I2S(r)+ " |r"
 				endif
 			endif
-			set J_O = J_O + 1
+			set sentinelsReviveCount = sentinelsReviveCount + 1
 		endif
 		set i = i + 1
 	endloop
-	if J_O > 0 then
-		set JYO = "|c00ffffff" + "[AW: |r" + JYO + "|c00ffffff" + "]|r"
+	if sentinelsReviveCount > 0 then
+		set sentinelsReviveText = "|c00ffffff" + "[AW: |r" + sentinelsReviveText + "|c00ffffff" + "]|r"
 	endif
 	set i = 1
 	loop
 	exitwhen i > 5
-		set r = R2I(TimerGetRemaining(PS[GetPlayerId(Scourges[i])]))
+		set r = R2I(TimerGetRemaining(PS[GetPlayerId(ScourgePlayers[i])]))
 		if r > 0 then
 			set JWO = JWO + JDO(r)
-			if J0O == 0 then
+			if scourgesReviveCount == 0 then
 				if r < 10 then
-					set JZO = PlayersColoerText[GetPlayerId(Scourges[i])]+ "0" + I2S(r)+ " |r"
+					set scourgesReviveText = PlayersColoerText[GetPlayerId(ScourgePlayers[i])]+ "0" + I2S(r)+ " |r"
 				else
-					set JZO = PlayersColoerText[GetPlayerId(Scourges[i])]+ I2S(r)+ " |r"
+					set scourgesReviveText = PlayersColoerText[GetPlayerId(ScourgePlayers[i])]+ I2S(r)+ " |r"
 				endif
 			else
 				if r < 10 then
-					set JZO = JZO + "|c00ffffff" + "| |r" + PlayersColoerText[GetPlayerId(Scourges[i])]+ "0" + I2S(r)+ " |r"
+					set scourgesReviveText = scourgesReviveText + "|c00ffffff" + "| |r" + PlayersColoerText[GetPlayerId(ScourgePlayers[i])]+ "0" + I2S(r)+ " |r"
 				else
-					set JZO = JZO + "|c00ffffff" + "| |r" + PlayersColoerText[GetPlayerId(Scourges[i])]+ I2S(r)+ " |r"
+					set scourgesReviveText = scourgesReviveText + "|c00ffffff" + "| |r" + PlayersColoerText[GetPlayerId(ScourgePlayers[i])]+ I2S(r)+ " |r"
 				endif
 			endif
-			set J0O = J0O + 1
+			set scourgesReviveCount = scourgesReviveCount + 1
 		endif
 		set i = i + 1
 	endloop
-	if J0O > 0 then
-		set JZO = "|c00ffffff" + "[天灾: |r" + JZO + "|c00ffffff" + "]|r"
+	if scourgesReviveCount > 0 then
+		set scourgesReviveText = "|c00ffffff" + "[天灾: |r" + scourgesReviveText + "|c00ffffff" + "]|r"
 	endif
-	call MultiboardSetTitleText(FEV, JYO + " " + JZO + " " + GetObjectName('n0E3')+ "  - " + C3 + " - " +("|c00ff0303" + I2S(RQ[GetPlayerId(Sentinels[0])])+ "|r/|c0020c000" + I2S(IQ[GetPlayerId(Sentinels[0])])+ "|r"))
+	call MultiboardSetTitleText(FEV, sentinelsReviveText + " " + scourgesReviveText + " " + GetObjectName('n0E3')+ "  - " + C3 + " - " +("|c00ff0303" + I2S(PlayerKillHerosCount[GetPlayerId(SentinelPlayers[0])])+ "|r/|c0020c000" + I2S(PlayerHeroDeathCount[GetPlayerId(SentinelPlayers[0])])+ "|r"))
 	set x = 1
 	set i = 1
 	loop
 	exitwhen i > 5
-		if IsPlaying(Sentinels[i]) or GetPlayerSlotState(Sentinels[i]) == PLAYER_SLOT_STATE_LEFT then
-			set K0O[x]= Sentinels[i]
+		if IsPlayingPlayer(SentinelPlayers[i]) or GetPlayerSlotState(SentinelPlayers[i]) == PLAYER_SLOT_STATE_LEFT then
+			set K0O[x]= SentinelPlayers[i]
 			set x = x + 1
 		endif
 		set i = i + 1
@@ -26016,8 +26025,8 @@ function LBO takes nothing returns nothing
 	set i = 1
 	loop
 	exitwhen i > 5
-		if IsPlaying(Scourges[i]) or GetPlayerSlotState(Scourges[i]) == PLAYER_SLOT_STATE_LEFT then
-			set K1O[x]= Scourges[i]
+		if IsPlayingPlayer(ScourgePlayers[i]) or GetPlayerSlotState(ScourgePlayers[i]) == PLAYER_SLOT_STATE_LEFT then
+			set K1O[x]= ScourgePlayers[i]
 			set x = x + 1
 		endif
 		set i = i + 1
@@ -26288,7 +26297,7 @@ function LBO takes nothing returns nothing
 		set K3O = K3O + 1
 		set VUX = MultiboardGetItem(FEV, K2O, K3O)
 		call MultiboardSetItemStyle(VUX, true, false)
-		call MultiboardSetItemValue(VUX,(I2S(AQ[GetPlayerId((K0O[i]))]))+ "/" +(I2S(NQ[GetPlayerId((K0O[i]))]))+ "/" +(I2S((LoadInteger(HY,(400 + GetPlayerId((K0O[i]))), 79)))))
+		call MultiboardSetItemValue(VUX,(I2S(PlayerCreepsLastHitCount[GetPlayerId((K0O[i]))]))+ "/" +(I2S(PlayerCreepsDenyCount[GetPlayerId((K0O[i]))]))+ "/" +(I2S((LoadInteger(HY,(400 + GetPlayerId((K0O[i]))), 79)))))
 		call MultiboardSetItemWidth(VUX, .07)
 		call MultiboardReleaseItem(VUX)
 		set i = i + 1
@@ -26299,7 +26308,7 @@ function LBO takes nothing returns nothing
 		set K3O = K3O + 1
 		set VUX = MultiboardGetItem(FEV, K2O, K3O)
 		call MultiboardSetItemStyle(VUX, true, false)
-		call MultiboardSetItemValue(VUX,(I2S(AQ[GetPlayerId(K1O[i])]))+ "/" +(I2S(NQ[GetPlayerId(K1O[i])]))+ "/" +(I2S((LoadInteger(HY,(400 + GetPlayerId(K1O[i])), 79)))))
+		call MultiboardSetItemValue(VUX,(I2S(PlayerCreepsLastHitCount[GetPlayerId(K1O[i])]))+ "/" +(I2S(PlayerCreepsDenyCount[GetPlayerId(K1O[i])]))+ "/" +(I2S((LoadInteger(HY,(400 + GetPlayerId(K1O[i])), 79)))))
 		call MultiboardSetItemWidth(VUX, .07)
 		call MultiboardReleaseItem(VUX)
 		set i = i + 1
@@ -26318,7 +26327,7 @@ function LBO takes nothing returns nothing
 		set VUX = MultiboardGetItem(FEV, K2O, K3O)
 		call MultiboardSetItemValueColor(VUX, LFO, LGO, LHO, LJO)
 		call MultiboardSetItemStyle(VUX, true, false)
-		call MultiboardSetItemValue(VUX,(I2S(RQ[GetPlayerId((K0O[i]))]))+ "/" +(I2S(IQ[GetPlayerId((K0O[i]))]))+ "/" +(I2S(CQ[GetPlayerId((K0O[i]))])))
+		call MultiboardSetItemValue(VUX,(I2S(PlayerKillHerosCount[GetPlayerId((K0O[i]))]))+ "/" +(I2S(PlayerHeroDeathCount[GetPlayerId((K0O[i]))]))+ "/" +(I2S(PlayerAssistCount[GetPlayerId((K0O[i]))])))
 		call MultiboardSetItemWidth(VUX, .07)
 		call MultiboardReleaseItem(VUX)
 		set i = i + 1
@@ -26330,7 +26339,7 @@ function LBO takes nothing returns nothing
 		set VUX = MultiboardGetItem(FEV, K2O, K3O)
 		call MultiboardSetItemValueColor(VUX, LFO, LGO, LHO, LJO)
 		call MultiboardSetItemStyle(VUX, true, false)
-		call MultiboardSetItemValue(VUX,(I2S(RQ[GetPlayerId(K1O[i])]))+ "/" +(I2S(IQ[GetPlayerId(K1O[i])]))+ "/" +(I2S(CQ[GetPlayerId(K1O[i])])))
+		call MultiboardSetItemValue(VUX,(I2S(PlayerKillHerosCount[GetPlayerId(K1O[i])]))+ "/" +(I2S(PlayerHeroDeathCount[GetPlayerId(K1O[i])]))+ "/" +(I2S(PlayerAssistCount[GetPlayerId(K1O[i])])))
 		call MultiboardSetItemWidth(VUX, .07)
 		call MultiboardReleaseItem(VUX)
 		set i = i + 1
@@ -26907,7 +26916,7 @@ function LBO takes nothing returns nothing
 endfunction
 function LKO takes nothing returns nothing
 	local trigger t
-	if MW then
+	if IsGameHaveObserver then
 		set t = CreateTrigger()
 		call TriggerRegisterTimerEvent(t, 1, true)
 		call TriggerAddAction(t, function LBO)
@@ -26981,10 +26990,10 @@ function LUO takes unit u, unit damageSource, real damageValue returns nothing
 	call SetWidgetLife(u, GetWidgetLife(u) + ratio * damageValue)
 endfunction
 function LWO takes unit u returns boolean
-	return(GetOwningPlayer(u) == Sentinels[0]or GetOwningPlayer(u) == Scourges[0]) and GetUnitTypeId(u)!='hFFD'
+	return(GetOwningPlayer(u) == SentinelPlayers[0]or GetOwningPlayer(u) == ScourgePlayers[0]) and GetUnitTypeId(u)!='hFFD'
 endfunction
 function LYO takes nothing returns boolean
-	return(GetOwningPlayer(GetFilterUnit()) == Sentinels[0]or GetOwningPlayer(GetFilterUnit()) == Scourges[0]) and GetUnitTypeId(GetFilterUnit())!='hFFD'
+	return(GetOwningPlayer(GetFilterUnit()) == SentinelPlayers[0]or GetOwningPlayer(GetFilterUnit()) == ScourgePlayers[0]) and GetUnitTypeId(GetFilterUnit())!='hFFD'
 endfunction
 // 建筑
 function AntiBackdoorAndStructuresDeathTrig takes nothing returns nothing
@@ -27012,15 +27021,15 @@ function UpdateStructureBackdoorState takes unit u returns nothing
 	local group g
 	local unit firstUnit = null
 	local boolean b = false
-	local player p = Sentinels[0]
+	local player p = SentinelPlayers[0]
 	local integer i = 0
 	if UnitIsDead(u) then
 		return
 	endif
 	set hu = GetHandleId(u)
 	set g = AllocationGroup(45)
-	if IsUnitOwnedByPlayer(u, Sentinels[0]) then
-		set p = Scourges[0]
+	if IsUnitOwnedByPlayer(u, SentinelPlayers[0]) then
+		set p = ScourgePlayers[0]
 	endif
 	loop
 		set r = LoadRectHandle(P, hu,'ABDr'+ i)
@@ -27105,7 +27114,7 @@ function ResumeCreepAttackOrder takes nothing returns nothing
 	local group g 		  = AllocationGroup(47)
 	local unit  firstUnit = null
 	
-	call GroupEnumUnitsOfPlayer(g, Sentinels[0], null)
+	call GroupEnumUnitsOfPlayer(g, SentinelPlayers[0], null)
 	loop
 		set firstUnit = FirstOfGroup(g)
 		exitwhen firstUnit == null
@@ -27117,7 +27126,7 @@ function ResumeCreepAttackOrder takes nothing returns nothing
 
 	endloop
 
-	call GroupEnumUnitsOfPlayer(g, Scourges[0], null)
+	call GroupEnumUnitsOfPlayer(g, ScourgePlayers[0], null)
 	loop
 		set firstUnit = FirstOfGroup(g)
 		exitwhen firstUnit == null
@@ -27137,7 +27146,7 @@ endfunction
 function AddUnitToBaseStructuresGroup takes unit u returns nothing
 	local integer hu = GetHandleId(u)
 	call GroupAddUnit(AntiBackdoorStructuresGroup, u)
-	if GetOwningPlayer(u) == Sentinels[0] then
+	if GetOwningPlayer(u) == SentinelPlayers[0] then
 		call SaveRectHandle(P, hu,'ABDr'+ 0, Rect(-8160.,-8192.,-3712.,-4352.))
 		call SaveRectHandle(P, hu,'ABDr'+ 1, Rect(-8192.,-4960.,-4640.,-3552.))
 		call SaveRectHandle(P, hu,'ABDr'+ 2, Rect(-4000.,-7744.,-3072.,-5152.))
@@ -27160,7 +27169,7 @@ function MVO takes nothing returns boolean
 endfunction
 function MEO takes nothing returns boolean
 	if GetUnitTypeId(GetFilterUnit())=='ntav' then
-		if Player__Hero[GetPlayerId(GetOwningPlayer(GetFilterUnit()))]!= null or IsPlaying(GetOwningPlayer(GetFilterUnit())) == false then
+		if Player__Hero[GetPlayerId(GetOwningPlayer(GetFilterUnit()))]!= null or IsPlayingPlayer(GetOwningPlayer(GetFilterUnit())) == false then
 			call KillUnit(GetFilterUnit())
 		else
 			set Q2 = Q2 + 1
@@ -27171,20 +27180,20 @@ endfunction
 function MXO takes nothing returns nothing
 	local group g = AllocationGroup(48)
 	set Q2 = 0
-	call GroupEnumUnitsOfPlayer(g, Sentinels[1], Condition(function MEO))
-	call GroupEnumUnitsOfPlayer(g, Sentinels[2], Condition(function MEO))
-	call GroupEnumUnitsOfPlayer(g, Sentinels[3], Condition(function MEO))
-	call GroupEnumUnitsOfPlayer(g, Sentinels[4], Condition(function MEO))
-	call GroupEnumUnitsOfPlayer(g, Sentinels[5], Condition(function MEO))
-	call GroupEnumUnitsOfPlayer(g, Scourges[1], Condition(function MEO))
-	call GroupEnumUnitsOfPlayer(g, Scourges[2], Condition(function MEO))
-	call GroupEnumUnitsOfPlayer(g, Scourges[3], Condition(function MEO))
-	call GroupEnumUnitsOfPlayer(g, Scourges[4], Condition(function MEO))
-	call GroupEnumUnitsOfPlayer(g, Scourges[5], Condition(function MEO))
+	call GroupEnumUnitsOfPlayer(g, SentinelPlayers[1], Condition(function MEO))
+	call GroupEnumUnitsOfPlayer(g, SentinelPlayers[2], Condition(function MEO))
+	call GroupEnumUnitsOfPlayer(g, SentinelPlayers[3], Condition(function MEO))
+	call GroupEnumUnitsOfPlayer(g, SentinelPlayers[4], Condition(function MEO))
+	call GroupEnumUnitsOfPlayer(g, SentinelPlayers[5], Condition(function MEO))
+	call GroupEnumUnitsOfPlayer(g, ScourgePlayers[1], Condition(function MEO))
+	call GroupEnumUnitsOfPlayer(g, ScourgePlayers[2], Condition(function MEO))
+	call GroupEnumUnitsOfPlayer(g, ScourgePlayers[3], Condition(function MEO))
+	call GroupEnumUnitsOfPlayer(g, ScourgePlayers[4], Condition(function MEO))
+	call GroupEnumUnitsOfPlayer(g, ScourgePlayers[5], Condition(function MEO))
 	if Q2 == 0 then
 		call DestroyTimer(GetExpiredTimer())
-		call A8X(Sentinels[0], 10,-7000, 6800, 1000)
-		call A8X(Scourges[0], 10,-7000, 6800, 1000)
+		call A8X(SentinelPlayers[0], 10,-7000, 6800, 1000)
+		call A8X(ScourgePlayers[0], 10,-7000, 6800, 1000)
 	endif
 	call DeallocateGroup(g)
 	set g = null
@@ -27204,8 +27213,8 @@ function MRO takes nothing returns boolean
 	local integer i
 	local integer pid
 	if r == 0 then
-		if UM then
-			set UM = false
+		if IsPickingHero then
+			set IsPickingHero = false
 			call RemoveUnit(HR)
 			call RemoveUnit(JR)
 			call RemoveUnit(KR)
@@ -27217,12 +27226,12 @@ function MRO takes nothing returns boolean
 		set FRV = true
 		call FlushGameCache(InitGameCache("start"))
 		call StoreMapIdCacheData("i", "d", 3)
-		call A8X(Sentinels[0], 2,-6990., 6840, 800)
-		call A8X(Scourges[0], 2,-6990., 6840, 800)
+		call A8X(SentinelPlayers[0], 2,-6990., 6840, 800)
+		call A8X(ScourgePlayers[0], 2,-6990., 6840, 800)
 		call MOO()
 		set i = 1
 		loop
-			if IsPlaying(Player(i)) then
+			if IsPlayingPlayer(Player(i)) then
 				set pid = GetPlayerId(Player(i))
 				call StoreDrCacheData("SP1_" + I2S(i), HeroCommonSkills[PlayerSkillIndex[pid * HL + 1]])
 				call StoreDrCacheData("SP2_" + I2S(i), HeroCommonSkills[PlayerSkillIndex[pid * HL + 2]])
@@ -27272,16 +27281,16 @@ function MRO takes nothing returns boolean
 		if KT then
 			call TriggerRegisterTimerEvent(SpawnSuperCreepsTrig, 600, true)
 		endif
-	elseif r == 7 and not UM then
+	elseif r == 7 and not IsPickingHero then
 		set t = CreateTrigger()
 		call TriggerRegisterTimerEvent(t, 30, true)
 		call TriggerAddCondition(t, Condition(function GGO))
-	elseif Y2X < 12 and PK == false and not UM then
+	elseif Y2X < 12 and PK == false and not IsPickingHero then
 		set PK = true
 		call PlaySoundBJ(QD)
 		call SetResourceBarTime(C8X, C9X, true)
 	elseif Y2X == 20 then
-	elseif Y2X == 15 and UM and(CK[0]> 0 or CK[1]> 0) then
+	elseif Y2X == 15 and IsPickingHero and(CK[0]> 0 or CK[1]> 0) then
 		if not FP[GetPlayerId(LocalPlayer)] then
 			call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, CR[GetPlayerId(LocalPlayer)], "|c006699CC" + "如果你需要更多时间来挑选技能，请输入 -addtime" + "|r")
 		endif
@@ -27340,13 +27349,13 @@ endfunction
 //endfunction
 
 function MJO takes nothing returns nothing
-	if IsMessengerUnit(GetEnumUnit()) and IsUnitAlly(GetEnumUnit(), Sentinels[0]) == false and GetWidgetLife(GetEnumUnit())> .5 then
+	if IsMessengerUnit(GetEnumUnit()) and IsUnitAlly(GetEnumUnit(), SentinelPlayers[0]) == false and GetWidgetLife(GetEnumUnit())> .5 then
 		call UnitRemoveAbility(GetEnumUnit(),'B08H')
 		call UnitDamageTargetEx(SentinelFountainOfLifeUnit, GetEnumUnit(), 2, 500)
 	endif
 endfunction
 function MKO takes nothing returns nothing
-	if IsMessengerUnit(GetEnumUnit()) and IsUnitAlly(GetEnumUnit(), Scourges[0]) == false and GetWidgetLife(GetEnumUnit())> .5 then
+	if IsMessengerUnit(GetEnumUnit()) and IsUnitAlly(GetEnumUnit(), ScourgePlayers[0]) == false and GetWidgetLife(GetEnumUnit())> .5 then
 		call UnitRemoveAbility(GetEnumUnit(),'B08H')
 		call UnitDamageTargetEx(ScourgeFountainOfLifeUnit, GetEnumUnit(), 2, 500)
 	endif
@@ -27398,14 +27407,14 @@ function MMO takes string MPO returns nothing
 	set i = 1
 	loop
 	exitwhen i > 5
-		set p = Sentinels[i]
+		set p = SentinelPlayers[i]
 		set id = I2S(GetPlayerId(p))
 		set pid = GetPlayerId(p)
-		call StoreInteger(DrCache, id, "1", RQ[pid])
-		call StoreInteger(DrCache, id, "2", IQ[pid])
-		call StoreInteger(DrCache, id, "3", AQ[pid])
-		call StoreInteger(DrCache, id, "4", NQ[pid])
-		call StoreInteger(DrCache, id, "5", CQ[pid])
+		call StoreInteger(DrCache, id, "1", PlayerKillHerosCount[pid])
+		call StoreInteger(DrCache, id, "2", PlayerHeroDeathCount[pid])
+		call StoreInteger(DrCache, id, "3", PlayerCreepsLastHitCount[pid])
+		call StoreInteger(DrCache, id, "4", PlayerCreepsDenyCount[pid])
+		call StoreInteger(DrCache, id, "5", PlayerAssistCount[pid])
 		call StoreInteger(DrCache, id, "6", GetPlayerState((p), PLAYER_STATE_RESOURCE_GOLD))
 		call StoreInteger(DrCache, id, "7", LoadInteger(HY, 400 + pid, 79))
 		call StoreInteger(DrCache, id, "8_0", GetItemTypeId(UnitItemInSlot(Player__Hero[pid], 0)))
@@ -27416,14 +27425,14 @@ function MMO takes string MPO returns nothing
 		call StoreInteger(DrCache, id, "8_5", GetItemTypeId(UnitItemInSlot(Player__Hero[pid], 5)))
 		call StoreInteger(DrCache, id, "9", PlayerHeroTypeId[pid])
 		call StoreInteger(DrCache, id, "id", i)
-		set p = Scourges[i]
+		set p = ScourgePlayers[i]
 		set pid = GetPlayerId(p)
 		set id = I2S(pid)
-		call StoreInteger(DrCache, id, "1", RQ[pid])
-		call StoreInteger(DrCache, id, "2", IQ[pid])
-		call StoreInteger(DrCache, id, "3", AQ[pid])
-		call StoreInteger(DrCache, id, "4", NQ[pid])
-		call StoreInteger(DrCache, id, "5", CQ[pid])
+		call StoreInteger(DrCache, id, "1", PlayerKillHerosCount[pid])
+		call StoreInteger(DrCache, id, "2", PlayerHeroDeathCount[pid])
+		call StoreInteger(DrCache, id, "3", PlayerCreepsLastHitCount[pid])
+		call StoreInteger(DrCache, id, "4", PlayerCreepsDenyCount[pid])
+		call StoreInteger(DrCache, id, "5", PlayerAssistCount[pid])
 		call StoreInteger(DrCache, id, "6", GetPlayerState((p), PLAYER_STATE_RESOURCE_GOLD))
 		call StoreInteger(DrCache, id, "7", LoadInteger(HY, 400 + pid, 79))
 		call StoreInteger(DrCache, id, "8_0", GetItemTypeId(UnitItemInSlot(Player__Hero[pid], 0)))
@@ -27435,36 +27444,36 @@ function MMO takes string MPO returns nothing
 		call StoreInteger(DrCache, id, "9", PlayerHeroTypeId[pid])
 		call StoreInteger(DrCache, id, "id", i + 5)
 		if LocalPlayer== HostPlayer then
-			call SyncStoredInteger(DrCache, I2S(GetPlayerId(Sentinels[i])), "1")
-			call SyncStoredInteger(DrCache, I2S(GetPlayerId(Sentinels[i])), "2")
-			call SyncStoredInteger(DrCache, I2S(GetPlayerId(Sentinels[i])), "3")
-			call SyncStoredInteger(DrCache, I2S(GetPlayerId(Sentinels[i])), "4")
-			call SyncStoredInteger(DrCache, I2S(GetPlayerId(Sentinels[i])), "5")
-			call SyncStoredInteger(DrCache, I2S(GetPlayerId(Sentinels[i])), "6")
-			call SyncStoredInteger(DrCache, I2S(GetPlayerId(Sentinels[i])), "7")
-			call SyncStoredInteger(DrCache, I2S(GetPlayerId(Sentinels[i])), "8_0")
-			call SyncStoredInteger(DrCache, I2S(GetPlayerId(Sentinels[i])), "8_1")
-			call SyncStoredInteger(DrCache, I2S(GetPlayerId(Sentinels[i])), "8_2")
-			call SyncStoredInteger(DrCache, I2S(GetPlayerId(Sentinels[i])), "8_3")
-			call SyncStoredInteger(DrCache, I2S(GetPlayerId(Sentinels[i])), "8_4")
-			call SyncStoredInteger(DrCache, I2S(GetPlayerId(Sentinels[i])), "8_5")
-			call SyncStoredInteger(DrCache, I2S(GetPlayerId(Sentinels[i])), "9")
-			call SyncStoredInteger(DrCache, I2S(GetPlayerId(Sentinels[i])), "id")
-			call SyncStoredInteger(DrCache, I2S(GetPlayerId(Scourges[i])), "1")
-			call SyncStoredInteger(DrCache, I2S(GetPlayerId(Scourges[i])), "2")
-			call SyncStoredInteger(DrCache, I2S(GetPlayerId(Scourges[i])), "3")
-			call SyncStoredInteger(DrCache, I2S(GetPlayerId(Scourges[i])), "4")
-			call SyncStoredInteger(DrCache, I2S(GetPlayerId(Scourges[i])), "5")
-			call SyncStoredInteger(DrCache, I2S(GetPlayerId(Scourges[i])), "6")
-			call SyncStoredInteger(DrCache, I2S(GetPlayerId(Scourges[i])), "7")
-			call SyncStoredInteger(DrCache, I2S(GetPlayerId(Scourges[i])), "8_0")
-			call SyncStoredInteger(DrCache, I2S(GetPlayerId(Scourges[i])), "8_1")
-			call SyncStoredInteger(DrCache, I2S(GetPlayerId(Scourges[i])), "8_2")
-			call SyncStoredInteger(DrCache, I2S(GetPlayerId(Scourges[i])), "8_3")
-			call SyncStoredInteger(DrCache, I2S(GetPlayerId(Scourges[i])), "8_4")
-			call SyncStoredInteger(DrCache, I2S(GetPlayerId(Scourges[i])), "8_5")
-			call SyncStoredInteger(DrCache, I2S(GetPlayerId(Scourges[i])), "9")
-			call SyncStoredInteger(DrCache, I2S(GetPlayerId(Scourges[i])), "id")
+			call SyncStoredInteger(DrCache, I2S(GetPlayerId(SentinelPlayers[i])), "1")
+			call SyncStoredInteger(DrCache, I2S(GetPlayerId(SentinelPlayers[i])), "2")
+			call SyncStoredInteger(DrCache, I2S(GetPlayerId(SentinelPlayers[i])), "3")
+			call SyncStoredInteger(DrCache, I2S(GetPlayerId(SentinelPlayers[i])), "4")
+			call SyncStoredInteger(DrCache, I2S(GetPlayerId(SentinelPlayers[i])), "5")
+			call SyncStoredInteger(DrCache, I2S(GetPlayerId(SentinelPlayers[i])), "6")
+			call SyncStoredInteger(DrCache, I2S(GetPlayerId(SentinelPlayers[i])), "7")
+			call SyncStoredInteger(DrCache, I2S(GetPlayerId(SentinelPlayers[i])), "8_0")
+			call SyncStoredInteger(DrCache, I2S(GetPlayerId(SentinelPlayers[i])), "8_1")
+			call SyncStoredInteger(DrCache, I2S(GetPlayerId(SentinelPlayers[i])), "8_2")
+			call SyncStoredInteger(DrCache, I2S(GetPlayerId(SentinelPlayers[i])), "8_3")
+			call SyncStoredInteger(DrCache, I2S(GetPlayerId(SentinelPlayers[i])), "8_4")
+			call SyncStoredInteger(DrCache, I2S(GetPlayerId(SentinelPlayers[i])), "8_5")
+			call SyncStoredInteger(DrCache, I2S(GetPlayerId(SentinelPlayers[i])), "9")
+			call SyncStoredInteger(DrCache, I2S(GetPlayerId(SentinelPlayers[i])), "id")
+			call SyncStoredInteger(DrCache, I2S(GetPlayerId(ScourgePlayers[i])), "1")
+			call SyncStoredInteger(DrCache, I2S(GetPlayerId(ScourgePlayers[i])), "2")
+			call SyncStoredInteger(DrCache, I2S(GetPlayerId(ScourgePlayers[i])), "3")
+			call SyncStoredInteger(DrCache, I2S(GetPlayerId(ScourgePlayers[i])), "4")
+			call SyncStoredInteger(DrCache, I2S(GetPlayerId(ScourgePlayers[i])), "5")
+			call SyncStoredInteger(DrCache, I2S(GetPlayerId(ScourgePlayers[i])), "6")
+			call SyncStoredInteger(DrCache, I2S(GetPlayerId(ScourgePlayers[i])), "7")
+			call SyncStoredInteger(DrCache, I2S(GetPlayerId(ScourgePlayers[i])), "8_0")
+			call SyncStoredInteger(DrCache, I2S(GetPlayerId(ScourgePlayers[i])), "8_1")
+			call SyncStoredInteger(DrCache, I2S(GetPlayerId(ScourgePlayers[i])), "8_2")
+			call SyncStoredInteger(DrCache, I2S(GetPlayerId(ScourgePlayers[i])), "8_3")
+			call SyncStoredInteger(DrCache, I2S(GetPlayerId(ScourgePlayers[i])), "8_4")
+			call SyncStoredInteger(DrCache, I2S(GetPlayerId(ScourgePlayers[i])), "8_5")
+			call SyncStoredInteger(DrCache, I2S(GetPlayerId(ScourgePlayers[i])), "9")
+			call SyncStoredInteger(DrCache, I2S(GetPlayerId(ScourgePlayers[i])), "id")
 		endif
 		set i = i + 1
 	endloop
@@ -27522,16 +27531,16 @@ function MUO takes nothing returns nothing
 	call DisableTrigger(FrozenThroneDeathTrig)
 	call DisableTrigger(WorldTreeDeathTrig)
 	call ExecuteFunc("RUO")
-	if MW then
+	if IsGameHaveObserver then
 		call DisableTrigger(FXV)
 	endif
 	call DisableTrigger(EQV)
 	call ClearTextMessages()
 	call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, 60, K3 + " " + GetObjectName('n054')+ " QQ讨论群1064025490")
-	set OY = true
+	set IsGameEnd = true
 	call NEX()
 	call DisableTrigger(SpawnAttackCreepTrigger)
-	call DisableTrigger(QG)
+	call DisableTrigger(UpdateMainMultiboardTrig)
 	call DisableTrigger(AddGoldForIntervalTrig)
 	call UOV()
 	call V9X()
@@ -27762,7 +27771,7 @@ function PBO takes unit PNO, unit SYX returns nothing
 		call DisplayTimedTextToAllPlayer(XY, CR[GetPlayerId(LocalPlayer)], PlayersColoerText[pid]+ PlayersName[pid]+ "|r " + GetObjectName('n0EN')+ ".")
 	endif
 	if PAO(PNO) then
-		if GetOwningPlayer(PNO) == Sentinels[0] then
+		if GetOwningPlayer(PNO) == SentinelPlayers[0] then
 			call DisplayTimedTextToAllPlayer(RW, CR[GetPlayerId(LocalPlayer)], "我方的防御符文冷却时间已刷新")
 		else
 			call DisplayTimedTextToAllPlayer(IW, CR[GetPlayerId(LocalPlayer)], "我方的防御符文冷却时间已刷新")
@@ -27924,34 +27933,34 @@ function PFO takes nothing returns nothing
 endfunction
 function PGO takes nothing returns boolean
 	local integer x = 0
-	if GetPlayerSlotState(Sentinels[1]) == PLAYER_SLOT_STATE_EMPTY then
+	if GetPlayerSlotState(SentinelPlayers[1]) == PLAYER_SLOT_STATE_EMPTY then
 		set x = x + 1
 	endif
-	if GetPlayerSlotState(Sentinels[2]) == PLAYER_SLOT_STATE_EMPTY then
+	if GetPlayerSlotState(SentinelPlayers[2]) == PLAYER_SLOT_STATE_EMPTY then
 		set x = x + 1
 	endif
-	if GetPlayerSlotState(Sentinels[3]) == PLAYER_SLOT_STATE_EMPTY then
+	if GetPlayerSlotState(SentinelPlayers[3]) == PLAYER_SLOT_STATE_EMPTY then
 		set x = x + 1
 	endif
-	if GetPlayerSlotState(Sentinels[4]) == PLAYER_SLOT_STATE_EMPTY then
+	if GetPlayerSlotState(SentinelPlayers[4]) == PLAYER_SLOT_STATE_EMPTY then
 		set x = x + 1
 	endif
-	if GetPlayerSlotState(Sentinels[5]) == PLAYER_SLOT_STATE_EMPTY then
+	if GetPlayerSlotState(SentinelPlayers[5]) == PLAYER_SLOT_STATE_EMPTY then
 		set x = x + 1
 	endif
-	if GetPlayerSlotState(Scourges[1]) == PLAYER_SLOT_STATE_EMPTY then
+	if GetPlayerSlotState(ScourgePlayers[1]) == PLAYER_SLOT_STATE_EMPTY then
 		set x = x + 1
 	endif
-	if GetPlayerSlotState(Scourges[2]) == PLAYER_SLOT_STATE_EMPTY then
+	if GetPlayerSlotState(ScourgePlayers[2]) == PLAYER_SLOT_STATE_EMPTY then
 		set x = x + 1
 	endif
-	if GetPlayerSlotState(Scourges[3]) == PLAYER_SLOT_STATE_EMPTY then
+	if GetPlayerSlotState(ScourgePlayers[3]) == PLAYER_SLOT_STATE_EMPTY then
 		set x = x + 1
 	endif
-	if GetPlayerSlotState(Scourges[4]) == PLAYER_SLOT_STATE_EMPTY then
+	if GetPlayerSlotState(ScourgePlayers[4]) == PLAYER_SLOT_STATE_EMPTY then
 		set x = x + 1
 	endif
-	if GetPlayerSlotState(Scourges[5]) == PLAYER_SLOT_STATE_EMPTY then
+	if GetPlayerSlotState(ScourgePlayers[5]) == PLAYER_SLOT_STATE_EMPTY then
 		set x = x + 1
 	endif
 	return x == 9
@@ -27976,13 +27985,13 @@ function PMO takes nothing returns boolean
 endfunction
 function PPO takes nothing returns nothing
 	local group g = AllocationGroup(53)
-	call GroupEnumUnitsOfPlayer(g, Scourges[0], Condition(function PMO))
+	call GroupEnumUnitsOfPlayer(g, ScourgePlayers[0], Condition(function PMO))
 	call DeallocateGroup(g)
 	set g = null
 endfunction
 function PQO takes nothing returns nothing
 	local group g = AllocationGroup(54)
-	call GroupEnumUnitsOfPlayer(g, Sentinels[0], Condition(function PMO))
+	call GroupEnumUnitsOfPlayer(g, SentinelPlayers[0], Condition(function PMO))
 	call DeallocateGroup(g)
 	set g = null
 endfunction
@@ -28078,12 +28087,12 @@ function P5O takes nothing returns nothing
 	local unit SDX = Player__Hero[GetPlayerId(GetTriggerPlayer())]
 	local player T6X = GetTriggerPlayer()
 	local location S1X
-	if IsScourgesPlayer(T6X) then
+	if IsScourgePlayer(T6X) then
 		set S1X = GetRectCenter(gg_rct_ScourgeRevivalPoint)
 	else
 		set S1X = GetRectCenter(gg_rct_SentinelRevivalPoint)
 	endif
-	if OY == false and UnitIsDead(SDX) then
+	if IsGameEnd == false and UnitIsDead(SDX) then
 		call MEX(SDX, T6X, GetLocationX(S1X), GetLocationY(S1X), true)
 		if S_X(SDX) == false or GetUnitAbilityLevel(SDX,'A0MW') == 0 then
 			call ReviveHeroLoc(SDX, S1X, true)
@@ -28105,15 +28114,15 @@ function P6O takes nothing returns nothing
 	if (S2I(s)> 0) then
 		set i = S2I(s)
 	endif
-	if IsScourgesPlayer(GetOwningPlayer(WUE)) then
-		set p = Sentinels[1]
+	if IsScourgePlayer(GetOwningPlayer(WUE)) then
+		set p = SentinelPlayers[1]
 	else
-		set p = Scourges[1]
+		set p = ScourgePlayers[1]
 	endif
 	loop
-		set u = CreateUnit(Scourges[1],'H000',-400,-400, 0)
+		set u = CreateUnit(ScourgePlayers[1],'H000',-400,-400, 0)
 		call SetHeroLevel(u, 10, false)
-		set Player__Hero[GetPlayerId(Scourges[1])]= u
+		set Player__Hero[GetPlayerId(ScourgePlayers[1])]= u
 		set i = i -1
 	exitwhen i == 0
 	endloop
@@ -28162,7 +28171,7 @@ function QXO takes nothing returns nothing
 	set KB = true
 
 	// 单机也能看到伤害减免
-	//set MW = true
+	//set IsGameHaveObserver = true
 	call DisplayTimedTextToForce(bj_FORCE_ALL_PLAYERS, 60, "系统检测到你正在使用单机模式，所以你可以使用如下命令 -lvlup xx, -refresh, -spawncreeps, -powerup, -neutrals, -kill, -gold xxxx, -time xx, -killsent, -killscourge, -killall, -noherolimit, -trees, -killwards, -spawnoff, -spawnon, -roshan, -respawn, -dummy")
 	set t = CreateTrigger()
 	call TriggerAddCondition(t, Condition(function QVO))
@@ -28321,7 +28330,7 @@ function QJO takes nothing returns boolean
 	if id =='ebal' or id =='e026' or id =='umtw' or id =='u00R' then
 		return false
 	endif
-	if IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(FUV)) and(GetOwningPlayer(GetFilterUnit()) == Sentinels[0]or GetOwningPlayer(GetFilterUnit()) == Scourges[0]) and GetUnitUserData(GetFilterUnit()) == 0 then
+	if IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(FUV)) and(GetOwningPlayer(GetFilterUnit()) == SentinelPlayers[0]or GetOwningPlayer(GetFilterUnit()) == ScourgePlayers[0]) and GetUnitUserData(GetFilterUnit()) == 0 then
 		return true
 	endif
 	return false
@@ -28470,7 +28479,7 @@ function Q_O takes unit u returns nothing
 	endif
 endfunction
 function Q0O takes nothing returns boolean
-	if O4X(GetTriggerUnit()) and(LoadBoolean(HY,(GetHandleId(GetTriggerUnit())), 142)) == false and(not UM) then
+	if O4X(GetTriggerUnit()) and(LoadBoolean(HY,(GetHandleId(GetTriggerUnit())), 142)) == false and(not IsPickingHero) then
 		call QWO(GetTriggerUnit())
 	endif
 	if HaveSavedInteger(M, GetUnitTypeId(GetTriggerUnit()), HC) then
@@ -28479,13 +28488,13 @@ function Q0O takes nothing returns boolean
 	return false
 endfunction
 function Q1O takes nothing returns boolean
-	if GetOwningPlayer(GetTriggerUnit()) == Sentinels[0] then
+	if GetOwningPlayer(GetTriggerUnit()) == SentinelPlayers[0] then
 		call SetUnitAbilityLevel(GetTriggerUnit(),'A06G', 5)
 		if FSV[GetUnitUserData(GetTriggerUnit())]== null then
 			call SetUnitUserData(GetTriggerUnit(), 0)
 			call IssuePointOrderByIdLoc(GetTriggerUnit(), 851983,(CreepNextWaypoint[GetUnitAbilityLevel((GetTriggerUnit()),'A06G')]))
 		endif
-	elseif GetOwningPlayer(GetTriggerUnit()) == Scourges[0] then
+	elseif GetOwningPlayer(GetTriggerUnit()) == ScourgePlayers[0] then
 		call SetUnitAbilityLevel(GetTriggerUnit(),'A06G', 1)
 		if FSV[GetUnitUserData(GetTriggerUnit())]== null then
 			call SetUnitUserData(GetTriggerUnit(), 0)
@@ -28510,14 +28519,14 @@ function Q4O takes nothing returns nothing
 	set t = CreateTrigger()
 	call TriggerAddAction(t, function Q2O)
 	set g = AllocationGroup(60)
-	call GroupEnumUnitsOfPlayer(g, Sentinels[0], null)
+	call GroupEnumUnitsOfPlayer(g, SentinelPlayers[0], null)
 	loop
 		set CSO = FirstOfGroup(g)
 	exitwhen CSO == null
 		call GroupRemoveUnit(g, CSO)
 		if GetUnitAbilityLevel(CSO,'Adts')> 0 or GetUnitAbilityLevel(CSO,'Atru')> 0 then
 			call TriggerRegisterUnitEvent(t, CSO, EVENT_UNIT_DEATH)
-			set Q3O = CreateUnit(Sentinels[1],('u00B'),-5000,-5100, 0)
+			set Q3O = CreateUnit(SentinelPlayers[1],('u00B'),-5000,-5100, 0)
 			call SetUnitScale(Q3O, 0, 0, 0)
 			call SetUnitPathing(Q3O, false)
 			call SetUnitInvulnerable(Q3O, true)
@@ -28528,14 +28537,14 @@ function Q4O takes nothing returns nothing
 	endloop
 	call DeallocateGroup(g)
 	set g = AllocationGroup(61)
-	call GroupEnumUnitsOfPlayer(g, Scourges[0], null)
+	call GroupEnumUnitsOfPlayer(g, ScourgePlayers[0], null)
 	loop
 		set CSO = FirstOfGroup(g)
 	exitwhen CSO == null
 		call GroupRemoveUnit(g, CSO)
 		if GetUnitAbilityLevel(CSO,'Adts')> 0 or GetUnitAbilityLevel(CSO,'Atru')> 0 then
 			call TriggerRegisterUnitEvent(t, CSO, EVENT_UNIT_DEATH)
-			set Q3O = CreateUnit(Scourges[1],('u00B'), 3400, 4400, 0)
+			set Q3O = CreateUnit(ScourgePlayers[1],('u00B'), 3400, 4400, 0)
 			call SetUnitScale(Q3O, 0, 0, 0)
 			call SetUnitPathing(Q3O, false)
 			call SetUnitInvulnerable(Q3O, true)
@@ -28591,13 +28600,13 @@ function Q9O takes nothing returns boolean
 	return false
 endfunction
 function SVO takes nothing returns boolean
-	if GetOwningPlayer(GetTriggerUnit()) == Sentinels[0] then
-		if IsUnitFogged(GetAttacker(), Sentinels[1]) or IsUnitFogged(GetAttacker(), Scourges[1]) then
-			call BEX(CreateFogModifierRadius(Sentinels[1], FOG_OF_WAR_VISIBLE, GetUnitX(GetAttacker()), GetUnitY(GetAttacker()), 128, true, false), 1)
+	if GetOwningPlayer(GetTriggerUnit()) == SentinelPlayers[0] then
+		if IsUnitFogged(GetAttacker(), SentinelPlayers[1]) or IsUnitFogged(GetAttacker(), ScourgePlayers[1]) then
+			call BEX(CreateFogModifierRadius(SentinelPlayers[1], FOG_OF_WAR_VISIBLE, GetUnitX(GetAttacker()), GetUnitY(GetAttacker()), 128, true, false), 1)
 		endif
-	elseif GetOwningPlayer(GetTriggerUnit()) == Scourges[0] then
-		if IsUnitFogged(GetAttacker(), Sentinels[1]) or IsUnitFogged(GetAttacker(), Scourges[1]) then
-			call BEX(CreateFogModifierRadius(Scourges[1], FOG_OF_WAR_VISIBLE, GetUnitX(GetAttacker()), GetUnitY(GetAttacker()), 128, true, false), 1)
+	elseif GetOwningPlayer(GetTriggerUnit()) == ScourgePlayers[0] then
+		if IsUnitFogged(GetAttacker(), SentinelPlayers[1]) or IsUnitFogged(GetAttacker(), ScourgePlayers[1]) then
+			call BEX(CreateFogModifierRadius(ScourgePlayers[1], FOG_OF_WAR_VISIBLE, GetUnitX(GetAttacker()), GetUnitY(GetAttacker()), 128, true, false), 1)
 		endif
 	endif
 	return false
@@ -28607,14 +28616,14 @@ function SEO takes nothing returns boolean
 	local group g
 	local unit u
 	call ExecuteFunc("PreloadNeutralCreeps")
-	if MW then
+	if IsGameHaveObserver then
 		set t = CreateTrigger()
-		call TriggerRegisterPlayerUnitEvent(t, Sentinels[0], EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER, null)
-		call TriggerRegisterPlayerUnitEvent(t, Scourges[0], EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER, null)
+		call TriggerRegisterPlayerUnitEvent(t, SentinelPlayers[0], EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER, null)
+		call TriggerRegisterPlayerUnitEvent(t, ScourgePlayers[0], EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER, null)
 		call TriggerAddCondition(t, Condition(function Q9O))
 		set t = CreateTrigger()
 		set g = AllocationGroup(62)
-		call GroupEnumUnitsOfPlayer(g, Sentinels[0], null)
+		call GroupEnumUnitsOfPlayer(g, SentinelPlayers[0], null)
 		loop
 			set u = FirstOfGroup(g)
 		exitwhen u == null
@@ -28625,7 +28634,7 @@ function SEO takes nothing returns boolean
 		endloop
 		call DeallocateGroup(g)
 		set g = AllocationGroup(63)
-		call GroupEnumUnitsOfPlayer(g, Scourges[0], null)
+		call GroupEnumUnitsOfPlayer(g, ScourgePlayers[0], null)
 		loop
 			set u = FirstOfGroup(g)
 		exitwhen u == null
@@ -28666,16 +28675,16 @@ function SIO takes nothing returns nothing
 	set x = 1
 	loop
 	exitwhen x > 5
-		call SetPlayerAlliance(Sentinels[0], Sentinels[x], ALLIANCE_SHARED_VISION, false)
-		call SetPlayerAlliance(Scourges[0], Scourges[x], ALLIANCE_SHARED_VISION, false)
+		call SetPlayerAlliance(SentinelPlayers[0], SentinelPlayers[x], ALLIANCE_SHARED_VISION, false)
+		call SetPlayerAlliance(ScourgePlayers[0], ScourgePlayers[x], ALLIANCE_SHARED_VISION, false)
 		set x = x + 1
 	endloop
 	set g = AllocationGroup(64)
-	call GroupEnumUnitsOfPlayer(g, Sentinels[0], null)
+	call GroupEnumUnitsOfPlayer(g, SentinelPlayers[0], null)
 	call ForGroup(g, function SRO)
 	call DeallocateGroup(g)
 	set g = AllocationGroup(65)
-	call GroupEnumUnitsOfPlayer(g, Scourges[0], null)
+	call GroupEnumUnitsOfPlayer(g, ScourgePlayers[0], null)
 	call ForGroup(g, function SRO)
 	call DeallocateGroup(g)
 	set g = null
@@ -28685,38 +28694,38 @@ function SAO takes nothing returns nothing
 	set x = 0
 	loop
 	exitwhen x > 5
-		call SetPlayerAlliance(Sentinels[x], CreepsPlayer, ALLIANCE_PASSIVE, false)
-		call SetPlayerAlliance(Sentinels[x], CreepsPlayer, ALLIANCE_HELP_REQUEST, false)
-		call SetPlayerAlliance(Sentinels[x], CreepsPlayer, ALLIANCE_HELP_RESPONSE, false)
-		call SetPlayerAlliance(Sentinels[x], CreepsPlayer, ALLIANCE_SHARED_XP, false)
-		call SetPlayerAlliance(Sentinels[x], CreepsPlayer, ALLIANCE_SHARED_SPELLS, false)
-		call SetPlayerAlliance(Sentinels[x], CreepsPlayer, ALLIANCE_SHARED_VISION, false)
-		call SetPlayerAlliance(Sentinels[x], CreepsPlayer, ALLIANCE_SHARED_CONTROL, false)
-		call SetPlayerAlliance(Sentinels[x], CreepsPlayer, ALLIANCE_SHARED_ADVANCED_CONTROL, false)
-		call SetPlayerAlliance(Scourges[x], CreepsPlayer, ALLIANCE_PASSIVE, false)
-		call SetPlayerAlliance(Scourges[x], CreepsPlayer, ALLIANCE_HELP_REQUEST, false)
-		call SetPlayerAlliance(Scourges[x], CreepsPlayer, ALLIANCE_HELP_RESPONSE, false)
-		call SetPlayerAlliance(Scourges[x], CreepsPlayer, ALLIANCE_SHARED_XP, false)
-		call SetPlayerAlliance(Scourges[x], CreepsPlayer, ALLIANCE_SHARED_SPELLS, false)
-		call SetPlayerAlliance(Scourges[x], CreepsPlayer, ALLIANCE_SHARED_VISION, false)
-		call SetPlayerAlliance(Scourges[x], CreepsPlayer, ALLIANCE_SHARED_CONTROL, false)
-		call SetPlayerAlliance(Scourges[x], CreepsPlayer, ALLIANCE_SHARED_ADVANCED_CONTROL, false)
-		call SetPlayerAlliance(CreepsPlayer, Sentinels[x], ALLIANCE_PASSIVE, false)
-		call SetPlayerAlliance(CreepsPlayer, Sentinels[x], ALLIANCE_HELP_REQUEST, false)
-		call SetPlayerAlliance(CreepsPlayer, Sentinels[x], ALLIANCE_HELP_RESPONSE, false)
-		call SetPlayerAlliance(CreepsPlayer, Sentinels[x], ALLIANCE_SHARED_XP, false)
-		call SetPlayerAlliance(CreepsPlayer, Sentinels[x], ALLIANCE_SHARED_SPELLS, false)
-		call SetPlayerAlliance(CreepsPlayer, Sentinels[x], ALLIANCE_SHARED_VISION, false)
-		call SetPlayerAlliance(CreepsPlayer, Sentinels[x], ALLIANCE_SHARED_CONTROL, false)
-		call SetPlayerAlliance(CreepsPlayer, Sentinels[x], ALLIANCE_SHARED_ADVANCED_CONTROL, false)
-		call SetPlayerAlliance(CreepsPlayer, Scourges[x], ALLIANCE_PASSIVE, false)
-		call SetPlayerAlliance(CreepsPlayer, Scourges[x], ALLIANCE_HELP_REQUEST, false)
-		call SetPlayerAlliance(CreepsPlayer, Scourges[x], ALLIANCE_HELP_RESPONSE, false)
-		call SetPlayerAlliance(CreepsPlayer, Scourges[x], ALLIANCE_SHARED_XP, false)
-		call SetPlayerAlliance(CreepsPlayer, Scourges[x], ALLIANCE_SHARED_SPELLS, false)
-		call SetPlayerAlliance(CreepsPlayer, Scourges[x], ALLIANCE_SHARED_VISION, false)
-		call SetPlayerAlliance(CreepsPlayer, Scourges[x], ALLIANCE_SHARED_CONTROL, false)
-		call SetPlayerAlliance(CreepsPlayer, Scourges[x], ALLIANCE_SHARED_ADVANCED_CONTROL, false)
+		call SetPlayerAlliance(SentinelPlayers[x], CreepsPlayer, ALLIANCE_PASSIVE, false)
+		call SetPlayerAlliance(SentinelPlayers[x], CreepsPlayer, ALLIANCE_HELP_REQUEST, false)
+		call SetPlayerAlliance(SentinelPlayers[x], CreepsPlayer, ALLIANCE_HELP_RESPONSE, false)
+		call SetPlayerAlliance(SentinelPlayers[x], CreepsPlayer, ALLIANCE_SHARED_XP, false)
+		call SetPlayerAlliance(SentinelPlayers[x], CreepsPlayer, ALLIANCE_SHARED_SPELLS, false)
+		call SetPlayerAlliance(SentinelPlayers[x], CreepsPlayer, ALLIANCE_SHARED_VISION, false)
+		call SetPlayerAlliance(SentinelPlayers[x], CreepsPlayer, ALLIANCE_SHARED_CONTROL, false)
+		call SetPlayerAlliance(SentinelPlayers[x], CreepsPlayer, ALLIANCE_SHARED_ADVANCED_CONTROL, false)
+		call SetPlayerAlliance(ScourgePlayers[x], CreepsPlayer, ALLIANCE_PASSIVE, false)
+		call SetPlayerAlliance(ScourgePlayers[x], CreepsPlayer, ALLIANCE_HELP_REQUEST, false)
+		call SetPlayerAlliance(ScourgePlayers[x], CreepsPlayer, ALLIANCE_HELP_RESPONSE, false)
+		call SetPlayerAlliance(ScourgePlayers[x], CreepsPlayer, ALLIANCE_SHARED_XP, false)
+		call SetPlayerAlliance(ScourgePlayers[x], CreepsPlayer, ALLIANCE_SHARED_SPELLS, false)
+		call SetPlayerAlliance(ScourgePlayers[x], CreepsPlayer, ALLIANCE_SHARED_VISION, false)
+		call SetPlayerAlliance(ScourgePlayers[x], CreepsPlayer, ALLIANCE_SHARED_CONTROL, false)
+		call SetPlayerAlliance(ScourgePlayers[x], CreepsPlayer, ALLIANCE_SHARED_ADVANCED_CONTROL, false)
+		call SetPlayerAlliance(CreepsPlayer, SentinelPlayers[x], ALLIANCE_PASSIVE, false)
+		call SetPlayerAlliance(CreepsPlayer, SentinelPlayers[x], ALLIANCE_HELP_REQUEST, false)
+		call SetPlayerAlliance(CreepsPlayer, SentinelPlayers[x], ALLIANCE_HELP_RESPONSE, false)
+		call SetPlayerAlliance(CreepsPlayer, SentinelPlayers[x], ALLIANCE_SHARED_XP, false)
+		call SetPlayerAlliance(CreepsPlayer, SentinelPlayers[x], ALLIANCE_SHARED_SPELLS, false)
+		call SetPlayerAlliance(CreepsPlayer, SentinelPlayers[x], ALLIANCE_SHARED_VISION, false)
+		call SetPlayerAlliance(CreepsPlayer, SentinelPlayers[x], ALLIANCE_SHARED_CONTROL, false)
+		call SetPlayerAlliance(CreepsPlayer, SentinelPlayers[x], ALLIANCE_SHARED_ADVANCED_CONTROL, false)
+		call SetPlayerAlliance(CreepsPlayer, ScourgePlayers[x], ALLIANCE_PASSIVE, false)
+		call SetPlayerAlliance(CreepsPlayer, ScourgePlayers[x], ALLIANCE_HELP_REQUEST, false)
+		call SetPlayerAlliance(CreepsPlayer, ScourgePlayers[x], ALLIANCE_HELP_RESPONSE, false)
+		call SetPlayerAlliance(CreepsPlayer, ScourgePlayers[x], ALLIANCE_SHARED_XP, false)
+		call SetPlayerAlliance(CreepsPlayer, ScourgePlayers[x], ALLIANCE_SHARED_SPELLS, false)
+		call SetPlayerAlliance(CreepsPlayer, ScourgePlayers[x], ALLIANCE_SHARED_VISION, false)
+		call SetPlayerAlliance(CreepsPlayer, ScourgePlayers[x], ALLIANCE_SHARED_CONTROL, false)
+		call SetPlayerAlliance(CreepsPlayer, ScourgePlayers[x], ALLIANCE_SHARED_ADVANCED_CONTROL, false)
 		set x = x + 1
 	endloop
 endfunction
@@ -28729,7 +28738,7 @@ endfunction
 // 如果有ob 则会注册一些触发器
 function SCO takes nothing returns nothing
 	local trigger t = null
-	if not MW then
+	if not IsGameHaveObserver then
 		return
 	endif
 	call SIO()
@@ -29318,7 +29327,7 @@ endfunction
 function TWO takes nothing returns nothing
 	local player p = GetTriggerPlayer()
 	local integer i = 1
-	if IsScourgesPlayer(p) then
+	if IsScourgePlayer(p) then
 		set i = 7
 	endif
 	call SetPlayerAlliance(Player(i + 0), p, ALLIANCE_SHARED_ADVANCED_CONTROL, not GetPlayerAlliance(Player(i + 0), p, ALLIANCE_SHARED_ADVANCED_CONTROL))
@@ -29488,7 +29497,7 @@ function UEO takes player p returns nothing
 	local integer ZKE
 	local integer i
 	local integer te
-	if UM then
+	if IsPickingHero then
 		if GetGameTime()> JN[GetPlayerId(p)] then
 			if GS == false then
 				call DisplayTimedTextToPlayer(p, .0, .0, 10., "|cff99ccff" + "你现在还不能使用这个命令." + "|r")
@@ -29551,12 +29560,12 @@ function URO takes nothing returns nothing
 	endif
 endfunction
 function UIO takes nothing returns nothing
-	if not UM and MainModeName != "md" then
+	if not IsPickingHero and MainModeName != "md" then
 		call ExecuteFunc("UAO")
 	endif
 endfunction
 function UNO takes nothing returns nothing
-	if not UM then
+	if not IsPickingHero then
 		call ExecuteFunc("UBO")
 	endif
 endfunction
@@ -30583,7 +30592,7 @@ function ZEO takes player p, integer ZXO returns nothing
 	local boolean ZRO = ZXO == 2
 	local boolean ZIO = ZXO == 0
 	set FT[GetPlayerId(p)]= true
-	if IsSentinelsPlayer(p) then
+	if IsSentinelPlayer(p) then
 		set l = GetRectCenter(gg_rct_SentinelRevivalPoint)
 	else
 		set l = GetRectCenter(gg_rct_ScourgeRevivalPoint)
@@ -30846,7 +30855,7 @@ function ZJO takes nothing returns nothing
 	set Q2 = WWV
 	set bj_groupEnumOwningPlayer = p
 	call GroupEnumUnitsInRect(g, GetWorldBounds(), filterGetUnitsInRectOfPlayer)
-	if (IsSentinelsPlayer(p)) then
+	if (IsSentinelPlayer(p)) then
 		set ZKO = 1
 		set ZLO = VWV
 		set ZMO = GetRectCenter(gg_rct_SentinelBuyArea)
@@ -30892,7 +30901,7 @@ function ZJO takes nothing returns nothing
 			set K0X = VZV
 		endif
 		call YCE(p)
-		if IsSentinelsPlayer(p) then
+		if IsSentinelPlayer(p) then
 			call PanCameraToTimedLocForPlayer(p, LIX, 0)
 		else
 			call PanCameraToTimedLocForPlayer(p, LAX, 0)
@@ -31237,9 +31246,9 @@ function ZUO takes unit u1, unit u2, player p1, player p2 returns nothing
 		set TF[GetPlayerId(p2)]= 1
 		call SetPlayerState(p2, PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(p2, PLAYER_STATE_RESOURCE_GOLD)- 100 )
 	endif
-	set ZZO = EUV[GetPlayerId(p1)]
-	set EUV[GetPlayerId(p1)]= EUV[GetPlayerId(p2)]
-	set EUV[GetPlayerId(p2)]= ZZO
+	set ZZO = PlayersReliableGold[GetPlayerId(p1)]
+	set PlayersReliableGold[GetPlayerId(p1)]= PlayersReliableGold[GetPlayerId(p2)]
+	set PlayersReliableGold[GetPlayerId(p2)]= ZZO
 	call DisableTrigger(CUV)
 	if GetUnitAbilityLevel(u1,'A03E')> 0 then
 		set IM = u1
@@ -31409,7 +31418,7 @@ function Z3O takes player p returns integer
 	local integer i = 1
 	loop
 	exitwhen i > 5
-		if Sentinels[i]== p or Scourges[i]== p then
+		if SentinelPlayers[i]== p or ScourgePlayers[i]== p then
 			return i
 		endif
 		set i = i + 1
@@ -31464,10 +31473,10 @@ function Z6O takes nothing returns nothing
 		set W2 = Player__Hero[GetPlayerId(p)]
 		loop
 		exitwhen i > 5
-			if IsSentinelsPlayer(p) then
-				set E3 = Sentinels[i]
+			if IsSentinelPlayer(p) then
+				set E3 = SentinelPlayers[i]
 			else
-				set E3 = Scourges[i]
+				set E3 = ScourgePlayers[i]
 			endif
 			set U2 = Player__Hero[GetPlayerId(E3)]
 			if not(W2 == null or GetOwningPlayer(W2)!= p or U2 == null or GetOwningPlayer(U2)!= E3 or E3 == p) then
@@ -31481,26 +31490,26 @@ function Z6O takes nothing returns nothing
 	elseif i < 1 or i > 5 then
 		call InterfaceErrorForPlayer(p, GetObjectName('n02Z'))
 		return
-	elseif UM then
-		if IsSentinelsPlayer(p) then
-			set E3 = Sentinels[i]
+	elseif IsPickingHero then
+		if IsSentinelPlayer(p) then
+			set E3 = SentinelPlayers[i]
 		else
-			set E3 = Scourges[i]
+			set E3 = ScourgePlayers[i]
 		endif
-		if not IsPlaying(E3) or E3 == p then
+		if not IsPlayingPlayer(E3) or E3 == p then
 			call InterfaceErrorForPlayer(p, GetObjectName('n02Z'))
 			return
 		endif
 	endif
 	set W2 = Player__Hero[GetPlayerId(p)]
-	if IsSentinelsPlayer(p) then
-		set E3 = Sentinels[i]
+	if IsSentinelPlayer(p) then
+		set E3 = SentinelPlayers[i]
 	else
-		set E3 = Scourges[i]
+		set E3 = ScourgePlayers[i]
 	endif
 	set U2 = Player__Hero[GetPlayerId(E3)]
-	if UM then
-		if not((GKV or HOV) and IsPlaying(E3) and E3 != p) then
+	if IsPickingHero then
+		if not((GKV or HOV) and IsPlayingPlayer(E3) and E3 != p) then
 			call InterfaceErrorForPlayer(p, GetObjectName('n02Z'))
 			return
 		endif
@@ -31523,7 +31532,7 @@ function Z7O takes nothing returns nothing
 	set i = 1
 	loop
 	exitwhen i > 5
-		set p = Sentinels[i]
+		set p = SentinelPlayers[i]
 		set u = Player__Hero[GetPlayerId(p)]
 		if IsPlayerAlly(GetTriggerPlayer(), p) and GetTriggerPlayer()!= p and u != null and GetOwningPlayer(u) == p then
 			set s = " "
@@ -31532,7 +31541,7 @@ function Z7O takes nothing returns nothing
 			endif
 			call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 45, PlayersColoerText[GetPlayerId(p)]+ I2S(i)+ "|r" + " - " + "|cff99ccff" + GetUnitName(u)+ "|r" + s)
 		endif
-		set p = Scourges[i]
+		set p = ScourgePlayers[i]
 		set u = Player__Hero[GetPlayerId(p)]
 		if IsPlayerAlly(GetTriggerPlayer(), p) and GetTriggerPlayer()!= p and u != null and GetOwningPlayer(u) == p then
 			set s = " "
@@ -31554,12 +31563,12 @@ function Z8O takes player whichPlayer returns boolean
 	local integer Z9O = 0
 	loop
 	exitwhen O3X > 5
-		if IsSentinelsPlayer(whichPlayer) then
-			if Player__Hero[GetPlayerId(Sentinels[O3X])]!= null and Sentinels[O3X]!= whichPlayer and GetHeroLevel(Player__Hero[GetPlayerId(Sentinels[O3X])]) == 1 then
+		if IsSentinelPlayer(whichPlayer) then
+			if Player__Hero[GetPlayerId(SentinelPlayers[O3X])]!= null and SentinelPlayers[O3X]!= whichPlayer and GetHeroLevel(Player__Hero[GetPlayerId(SentinelPlayers[O3X])]) == 1 then
 				set Z9O = Z9O + 1
 			endif
 		else
-			if Player__Hero[GetPlayerId(Scourges[O3X])]!= null and Scourges[O3X]!= whichPlayer and GetHeroLevel(Player__Hero[GetPlayerId(Scourges[O3X])]) == 1 then
+			if Player__Hero[GetPlayerId(ScourgePlayers[O3X])]!= null and ScourgePlayers[O3X]!= whichPlayer and GetHeroLevel(Player__Hero[GetPlayerId(ScourgePlayers[O3X])]) == 1 then
 				set Z9O = Z9O + 1
 			endif
 		endif
@@ -31586,7 +31595,7 @@ function VVR takes nothing returns boolean
 	// 	 call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10, "由于你选择了某些技能，所以不能swap。")
 	// 	 return false
 	// endif
-	if GetWidgetLife(Player__Hero[GetPlayerId(GetTriggerPlayer())])< 1 and(not UM or not(GKV or HOV)) then
+	if GetWidgetLife(Player__Hero[GetPlayerId(GetTriggerPlayer())])< 1 and(not IsPickingHero or not(GKV or HOV)) then
 		call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10, GetObjectName('n08F'))
 		return false
 	endif
@@ -31594,7 +31603,7 @@ function VVR takes nothing returns boolean
 		call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10, GetObjectName('n08G')+ " -swaphero.")
 		return false
 	endif
-	if Z8O(GetTriggerPlayer()) == false and(not UM or not(GKV or HOV)) then
+	if Z8O(GetTriggerPlayer()) == false and(not IsPickingHero or not(GKV or HOV)) then
 		call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10, GetObjectName('n08H'))
 		return false
 	endif
@@ -31636,7 +31645,7 @@ function VIR takes nothing returns boolean
 	local real y
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH or EVX > 60 then
 		if ((LoadInteger(HY,(GetHandleId((trigUnit))),(4259))) == 1) == false then
-			if IsSentinelsPlayer(GetOwningPlayer(trigUnit)) then
+			if IsSentinelPlayer(GetOwningPlayer(trigUnit)) then
 				set x = GetRectCenterX(gg_rct_SentinelRevivalPoint)
 				set y = GetRectCenterY(gg_rct_SentinelRevivalPoint)
 			else
@@ -31719,21 +31728,21 @@ function VDR takes nothing returns nothing
 	local integer K0X = 5
 	local integer index
 	call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 20, " ")
-	if (IsScourgesPlayer(GetTriggerPlayer())) then
+	if (IsScourgePlayer(GetTriggerPlayer())) then
 		loop
 		exitwhen O3X > K0X
-			set index = GetPlayerId(Sentinels[O3X])
+			set index = GetPlayerId(SentinelPlayers[O3X])
 			if (Player__Hero[index]!= null) then
-				call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 20, PlayersColoerText[index]+(PlayersName[GetPlayerId((Sentinels[O3X]))])+ "|r " + GetObjectName('n08M')+ " " + GetUnitName(Player__Hero[index])+ " (" + GetObjectName('n08L')+ " " + I2S(GetUnitLevel(Player__Hero[index]))+ ")" + VCR(Sentinels[O3X]))
+				call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 20, PlayersColoerText[index]+(PlayersName[GetPlayerId((SentinelPlayers[O3X]))])+ "|r " + GetObjectName('n08M')+ " " + GetUnitName(Player__Hero[index])+ " (" + GetObjectName('n08L')+ " " + I2S(GetUnitLevel(Player__Hero[index]))+ ")" + VCR(SentinelPlayers[O3X]))
 			endif
 			set O3X = O3X + 1
 		endloop
 	else
 		loop
 		exitwhen O3X > K0X
-			set index = GetPlayerId(Scourges[O3X])
+			set index = GetPlayerId(ScourgePlayers[O3X])
 			if (Player__Hero[index]!= null) then
-				call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 20, PlayersColoerText[index]+(PlayersName[GetPlayerId((Scourges[O3X]))])+ "|r " + GetObjectName('n08M')+ " " + GetUnitName(Player__Hero[index])+ " (" + GetObjectName('n08L')+ " " + I2S(GetUnitLevel(Player__Hero[index]))+ ")" + VCR(Scourges[O3X]))
+				call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 20, PlayersColoerText[index]+(PlayersName[GetPlayerId((ScourgePlayers[O3X]))])+ "|r " + GetObjectName('n08M')+ " " + GetUnitName(Player__Hero[index])+ " (" + GetObjectName('n08L')+ " " + I2S(GetUnitLevel(Player__Hero[index]))+ ")" + VCR(ScourgePlayers[O3X]))
 			endif
 			set O3X = O3X + 1
 		endloop
@@ -31811,15 +31820,15 @@ function VLR takes nothing returns nothing
 	//call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10, GetObjectName('n08O'))
 endfunction
 function VMR takes nothing returns nothing
-	call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10., "   " + GetObjectName('n08P')+ " " + I2S(AQ[GetPlayerId(GetTriggerPlayer())])+ " " + GetObjectName('n08Q')+ " " + I2S(NQ[GetPlayerId(GetTriggerPlayer())])+ " " + GetObjectName('n08S')+ " " + I2S(BQ[GetPlayerId(GetTriggerPlayer())]))
+	call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10., "   " + GetObjectName('n08P')+ " " + I2S(PlayerCreepsLastHitCount[GetPlayerId(GetTriggerPlayer())])+ " " + GetObjectName('n08Q')+ " " + I2S(PlayerCreepsDenyCount[GetPlayerId(GetTriggerPlayer())])+ " " + GetObjectName('n08S')+ " " + I2S(BQ[GetPlayerId(GetTriggerPlayer())]))
 endfunction
 function VPR takes nothing returns nothing
 	local integer x = GetPlayerId(GetTriggerPlayer())
 	if (GetEventPlayerChatString() == "-cson") then
-		set U3[x]= true
+		set PlayerShowKDA[x]= true
 		set F6V[x]= true
 	else
-		set U3[x]= false
+		set PlayerShowKDA[x]= false
 		set F6V[x]= false
 	endif
 endfunction
@@ -31860,15 +31869,15 @@ function VTR takes nothing returns nothing
 	set i = 0
 	loop
 	exitwhen i > 15
-		if IsSentinelsPlayer(GetTriggerPlayer()) then
-			if IsSentinelsPlayer(Player(i)) and IsPlaying(Player(i)) then
+		if IsSentinelPlayer(GetTriggerPlayer()) then
+			if IsSentinelPlayer(Player(i)) and IsPlayingPlayer(Player(i)) then
 				set VUR = VUR + 1
 				if F2V[i] then
 					set EVX = EVX + 1
 				endif
 			endif
 		else
-			if IsScourgesPlayer(Player(i)) and IsPlaying(Player(i)) then
+			if IsScourgePlayer(Player(i)) and IsPlayingPlayer(Player(i)) then
 				set VUR = VUR + 1
 				if F2V[i] then
 					set EVX = EVX + 1
@@ -31878,11 +31887,11 @@ function VTR takes nothing returns nothing
 		set i = i + 1
 	endloop
 	if EVX * 2 > VUR then
-		if IsSentinelsPlayer(GetTriggerPlayer()) then
+		if IsSentinelPlayer(GetTriggerPlayer()) then
 			set i = 0
 			loop
 			exitwhen i > 5
-				set p = Sentinels[i]
+				set p = SentinelPlayers[i]
 				if EJV[GetPlayerId(p)]and F0V[GetPlayerId(p)]== false then
 					call DisplayTimedTextToAllPlayer(RW, 10, GetObjectName('n0KD')+ " " +(PlayersName[GetPlayerId((p))]))
 					call C2X(p)
@@ -31894,7 +31903,7 @@ function VTR takes nothing returns nothing
 			set i = 0
 			loop
 			exitwhen i > 5
-				set p = Scourges[i]
+				set p = ScourgePlayers[i]
 				if EJV[GetPlayerId(p)]and F0V[GetPlayerId(p)]== false then
 					call DisplayTimedTextToAllPlayer(IW, 10, GetObjectName('n0KD')+ " " +(PlayersName[GetPlayerId((p))]))
 					call C2X(p)
@@ -31904,7 +31913,7 @@ function VTR takes nothing returns nothing
 			endloop
 		endif
 	else
-		if IsSentinelsPlayer(GetTriggerPlayer()) then
+		if IsSentinelPlayer(GetTriggerPlayer()) then
 			call DisplayTimedTextToAllPlayer(RW, 10, GetObjectName('n0KB')+ " " + I2S(EVX)+ "/" + I2S(VUR)+ " (" +(PlayersName[GetPlayerId((GetTriggerPlayer()))])+ ")")
 		else
 			call DisplayTimedTextToAllPlayer(IW, 10, GetObjectName('n0KB')+ " " + I2S(EVX)+ "/" + I2S(VUR)+ " (" +(PlayersName[GetPlayerId((GetTriggerPlayer()))])+ ")")
@@ -31919,7 +31928,7 @@ function VWR takes nothing returns nothing
 	local boolean Y1X
 	local boolean U5V
 	local player p
-	local boolean VZR = not(M3 or OY)
+	local boolean VZR = not(M3 or IsGameEnd)
 	local string s = ""
 	local integer WIE
 	local integer V_R
@@ -31935,11 +31944,11 @@ function VWR takes nothing returns nothing
 			set V_R = 0
 			set s = "	"
 			if k == 1 then
-				set p = Sentinels[i]
+				set p = SentinelPlayers[i]
 			else
-				set p = Scourges[i]
+				set p = ScourgePlayers[i]
 			endif
-			if IsPlaying(p) then
+			if IsPlayingPlayer(p) then
 				set pid = GetPlayerId(p)
 				set WIE = R2I(TimerGetRemaining(PS[pid]))
 				set VYR = WIE > 0 and F4V[pid]and VZR
@@ -31984,14 +31993,14 @@ function CreateLeaderboards takes nothing returns nothing
 	call TimerStart(t, 1, true, function VWR)
 	set t = null
 	loop
-		set pid = GetPlayerId(Sentinels[i])
+		set pid = GetPlayerId(SentinelPlayers[i])
 		set F5V[pid]= CreateLeaderboard()
-		call PlayerSetLeaderboard(Sentinels[i], F5V[pid])
+		call PlayerSetLeaderboard(SentinelPlayers[i], F5V[pid])
 		call LeaderboardDisplay(F5V[pid], false)
 		call LeaderboardSetLabel(F5V[pid], "Default string")
-		set pid = GetPlayerId(Scourges[i])
+		set pid = GetPlayerId(ScourgePlayers[i])
 		set F5V[pid]= CreateLeaderboard()
-		call PlayerSetLeaderboard(Scourges[i], F5V[pid])
+		call PlayerSetLeaderboard(ScourgePlayers[i], F5V[pid])
 		call LeaderboardDisplay(F5V[pid], false)
 		call LeaderboardSetLabel(F5V[pid], "Default string")
 		set i = i + 1
@@ -32060,19 +32069,19 @@ function V8R takes nothing returns nothing
 	local trigger t = CreateTrigger()
 	call TriggerRegisterTimerEvent(t, 300, true)
 	call TriggerAddCondition(t, Condition(function V7R))
-	set F9V[GetPlayerId(Sentinels[1])]= false
-	set F9V[GetPlayerId(Sentinels[2])]= false
-	set F9V[GetPlayerId(Sentinels[3])]= false
-	set F9V[GetPlayerId(Sentinels[4])]= false
-	set F9V[GetPlayerId(Sentinels[5])]= false
-	set F9V[GetPlayerId(Scourges[1])]= false
-	set F9V[GetPlayerId(Scourges[2])]= false
-	set F9V[GetPlayerId(Scourges[3])]= false
-	set F9V[GetPlayerId(Scourges[4])]= false
-	set F9V[GetPlayerId(Scourges[5])]= false
-	if MW then
-		set F9V[GetPlayerId(VKV)]= false
-		set F9V[GetPlayerId(VLV)]= false
+	set F9V[GetPlayerId(SentinelPlayers[1])]= false
+	set F9V[GetPlayerId(SentinelPlayers[2])]= false
+	set F9V[GetPlayerId(SentinelPlayers[3])]= false
+	set F9V[GetPlayerId(SentinelPlayers[4])]= false
+	set F9V[GetPlayerId(SentinelPlayers[5])]= false
+	set F9V[GetPlayerId(ScourgePlayers[1])]= false
+	set F9V[GetPlayerId(ScourgePlayers[2])]= false
+	set F9V[GetPlayerId(ScourgePlayers[3])]= false
+	set F9V[GetPlayerId(ScourgePlayers[4])]= false
+	set F9V[GetPlayerId(ScourgePlayers[5])]= false
+	if IsGameHaveObserver then
+		set F9V[GetPlayerId(ObserverPlayer1)]= false
+		set F9V[GetPlayerId(ObserverPlayer2)]= false
 	endif
 	if x == 1 then
 		set F8V = E5
@@ -32157,16 +32166,16 @@ function ERR takes nothing returns nothing
 	call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10, GetObjectName('n090'))
 	set NeedHideHeroNames[GetPlayerId(GetTriggerPlayer())]= true
 	if LocalPlayer== GetTriggerPlayer() then
-		call SetPlayerName(Sentinels[1], PlayersName[GetPlayerId(Sentinels[1])])
-		call SetPlayerName(Sentinels[2], PlayersName[GetPlayerId(Sentinels[2])])
-		call SetPlayerName(Sentinels[3], PlayersName[GetPlayerId(Sentinels[3])])
-		call SetPlayerName(Sentinels[4], PlayersName[GetPlayerId(Sentinels[4])])
-		call SetPlayerName(Sentinels[5], PlayersName[GetPlayerId(Sentinels[5])])
-		call SetPlayerName(Scourges[1], PlayersName[GetPlayerId(Scourges[1])])
-		call SetPlayerName(Scourges[2], PlayersName[GetPlayerId(Scourges[2])])
-		call SetPlayerName(Scourges[3], PlayersName[GetPlayerId(Scourges[3])])
-		call SetPlayerName(Scourges[4], PlayersName[GetPlayerId(Scourges[4])])
-		call SetPlayerName(Scourges[5], PlayersName[GetPlayerId(Scourges[5])])
+		call SetPlayerName(SentinelPlayers[1], PlayersName[GetPlayerId(SentinelPlayers[1])])
+		call SetPlayerName(SentinelPlayers[2], PlayersName[GetPlayerId(SentinelPlayers[2])])
+		call SetPlayerName(SentinelPlayers[3], PlayersName[GetPlayerId(SentinelPlayers[3])])
+		call SetPlayerName(SentinelPlayers[4], PlayersName[GetPlayerId(SentinelPlayers[4])])
+		call SetPlayerName(SentinelPlayers[5], PlayersName[GetPlayerId(SentinelPlayers[5])])
+		call SetPlayerName(ScourgePlayers[1], PlayersName[GetPlayerId(ScourgePlayers[1])])
+		call SetPlayerName(ScourgePlayers[2], PlayersName[GetPlayerId(ScourgePlayers[2])])
+		call SetPlayerName(ScourgePlayers[3], PlayersName[GetPlayerId(ScourgePlayers[3])])
+		call SetPlayerName(ScourgePlayers[4], PlayersName[GetPlayerId(ScourgePlayers[4])])
+		call SetPlayerName(ScourgePlayers[5], PlayersName[GetPlayerId(ScourgePlayers[5])])
 	endif
 endfunction
 function EIR takes nothing returns nothing
@@ -32223,13 +32232,13 @@ function EBR takes nothing returns nothing
 	local real ECR
 	loop
 	exitwhen i > 5
-		set p = Sentinels[i]
-		if IsPlaying(p) then
+		set p = SentinelPlayers[i]
+		if IsPlayingPlayer(p) then
 			set ECR = SQ[GetPlayerId(p)]/(GetGameTime())* 60
 			call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 15., PlayersColoerText[GetPlayerId(p)]+(PlayersName[GetPlayerId((p))])+ "|r" + " " + GetObjectName('n084')+ " " + R2S(ECR))
 		endif
-		set p = Scourges[i]
-		if IsPlaying(p) then
+		set p = ScourgePlayers[i]
+		if IsPlayingPlayer(p) then
 			set ECR = SQ[GetPlayerId(p)]/(GetGameTime())* 60
 			call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 15., PlayersColoerText[GetPlayerId(p)]+(PlayersName[GetPlayerId((p))])+ "|r" + " " + GetObjectName('n084')+ " " + R2S(ECR))
 		endif
@@ -32278,15 +32287,15 @@ function Y3O takes nothing returns nothing
 		if index < 1 or GRV[index]== false then
 			loop
 			exitwhen i > 5
-				set p = Sentinels[i]
-				if IsPlaying(p) and((GetGameTime())-TQ[GetPlayerId(p)])> 300. and GRV[GetPlayerId(p)]== false and not UM then
+				set p = SentinelPlayers[i]
+				if IsPlayingPlayer(p) and((GetGameTime())-TQ[GetPlayerId(p)])> 300. and GRV[GetPlayerId(p)]== false and not IsPickingHero then
 					set GRV[GetPlayerId(p)]= true
 					call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 15., PlayersColoerText[GetPlayerId(p)]+(PlayersName[GetPlayerId((p))])+ "|r" + " " + GetObjectName('n05G')+ " " + R2S(((GetGameTime())-TQ[GetPlayerId(p)])/ 60)+ " " + GetObjectName('N05F'))
 					call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 15., GetObjectName('n05O')+ " |cff99ccff-kickafk " + I2S(GetPlayerId(p))+ " |r " + GetObjectName('n05P'))
 					call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 15., " ")
 				endif
-				set p = Scourges[i]
-				if IsPlaying(p) and((GetGameTime())-TQ[GetPlayerId(p)])> 300. and GRV[GetPlayerId(p)]== false and not UM then
+				set p = ScourgePlayers[i]
+				if IsPlayingPlayer(p) and((GetGameTime())-TQ[GetPlayerId(p)])> 300. and GRV[GetPlayerId(p)]== false and not IsPickingHero then
 					set GRV[GetPlayerId(p)]= true
 					call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 15., PlayersColoerText[GetPlayerId(p)]+(PlayersName[GetPlayerId((p))])+ "|r" + " " + GetObjectName('n05G')+ " " + R2S(((GetGameTime())-TQ[GetPlayerId(p)])/ 60)+ " " + GetObjectName('N05F'))
 					call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 15., GetObjectName('n05O')+ " |cff99ccff-kickafk " + I2S(GetPlayerId(p))+ " |r " + GetObjectName('n05P'))
@@ -32295,7 +32304,7 @@ function Y3O takes nothing returns nothing
 				set i = i + 1
 			endloop
 			call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 15., " ")
-		elseif IsPlaying(Player(index)) and IsPlayerAlly(GetTriggerPlayer(), Player(index)) then
+		elseif IsPlayingPlayer(Player(index)) and IsPlayerAlly(GetTriggerPlayer(), Player(index)) then
 			call DisplayTimedTextToPlayer(Player(index), 0, 0, 3600, "|c00ff0303" + GetObjectName('n05E')+ "|r")
 			call L1X(Player(index))
 			set BY[GetPlayerId(Player(index))]= "|c00555555" + KGX + "|r"
@@ -32318,13 +32327,13 @@ function EJR takes nothing returns nothing
 	if GOV then
 		loop
 		exitwhen i > 5
-			set p = Sentinels[i]
-			if IsPlaying(p) and((GetGameTime())-TQ[GetPlayerId(p)])/ 60 > .2 then
+			set p = SentinelPlayers[i]
+			if IsPlayingPlayer(p) and((GetGameTime())-TQ[GetPlayerId(p)])/ 60 > .2 then
 				set x = x + 1
 				call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 15., PlayersColoerText[GetPlayerId(p)]+(PlayersName[GetPlayerId((p))])+ "|r" + " " + GetObjectName('n05D')+ " " + R2S(((GetGameTime())-TQ[GetPlayerId(p)])/ 60)+ " " + GetObjectName('N05F'))
 			endif
-			set p = Scourges[i]
-			if IsPlaying(p) and((GetGameTime())-TQ[GetPlayerId(p)])/ 60 > .2 then
+			set p = ScourgePlayers[i]
+			if IsPlayingPlayer(p) and((GetGameTime())-TQ[GetPlayerId(p)])/ 60 > .2 then
 				set x = x + 1
 				call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 15., PlayersColoerText[GetPlayerId(p)]+(PlayersName[GetPlayerId((p))])+ "|r" + " " + GetObjectName('n05D')+ " " + R2S(((GetGameTime())-TQ[GetPlayerId(p)])/ 60)+ " " + GetObjectName('N05F'))
 			endif
@@ -32345,14 +32354,14 @@ function HeroGPS takes nothing returns nothing
 	local integer k = 0
 	loop
 		set k = 0
-		set p = Sentinels[i]
-		if IsPlaying(p) then
+		set p = SentinelPlayers[i]
+		if IsPlayingPlayer(p) then
 			set pid = GetPlayerId(p)
 			call StoreDrCacheData("LoD_HeroX_" + I2S(R2I(GetUnitX(Player__Hero[pid]))), pid)
 			call StoreDrCacheData("LoD_HeroY_" + I2S(R2I(GetUnitY(Player__Hero[pid]))), pid)
 		endif
-		set p = Scourges[i]
-		if IsPlaying(p) then
+		set p = ScourgePlayers[i]
+		if IsPlayingPlayer(p) then
 			set pid = GetPlayerId(p)
 			call StoreDrCacheData("LoD_HeroX_" + I2S(R2I(GetUnitX(Player__Hero[pid]))), pid)
 			call StoreDrCacheData("LoD_HeroY_" + I2S(R2I(GetUnitY(Player__Hero[pid]))), pid)
@@ -32368,15 +32377,15 @@ function EKR takes nothing returns boolean
 	if GOV then
 		loop
 		exitwhen i > 5
-			set p = Sentinels[i]
-			if IsPlaying(p) and(KGX -TQ[GetPlayerId(p)])> 300. and GRV[GetPlayerId(p)]== false then
+			set p = SentinelPlayers[i]
+			if IsPlayingPlayer(p) and(KGX -TQ[GetPlayerId(p)])> 300. and GRV[GetPlayerId(p)]== false then
 				set GRV[GetPlayerId(p)]= true
 				call DisplayTimedTextToAllPlayer(RW, 15, PlayersColoerText[GetPlayerId(p)]+(PlayersName[GetPlayerId((p))])+ "|r" + " " + GetObjectName('n05G')+ " " + R2S((KGX -TQ[GetPlayerId(p)])/ 60)+ " " + GetObjectName('N05F'))
 				call DisplayTimedTextToAllPlayer(RW, 15, GetObjectName('n05O')+ " |cff99ccff-kickafk " + I2S(GetPlayerId(p))+ " |r " + GetObjectName('n05P'))
 				call DisplayTimedTextToAllPlayer(RW, 15, " ")
 			endif
-			set p = Scourges[i]
-			if IsPlaying(p) and(KGX -TQ[GetPlayerId(p)])> 300. and GRV[GetPlayerId(p)]== false then
+			set p = ScourgePlayers[i]
+			if IsPlayingPlayer(p) and(KGX -TQ[GetPlayerId(p)])> 300. and GRV[GetPlayerId(p)]== false then
 				set GRV[GetPlayerId(p)]= true
 				call DisplayTimedTextToAllPlayer(IW, 15, PlayersColoerText[GetPlayerId(p)]+(PlayersName[GetPlayerId((p))])+ "|r" + " " + GetObjectName('n05G')+ " " + R2S((KGX -TQ[GetPlayerId(p)])/ 60)+ " " + GetObjectName('N05F'))
 				call DisplayTimedTextToAllPlayer(IW, 15, GetObjectName('n05O')+ " |cff99ccff-kickafk " + I2S(GetPlayerId(p))+ " |r " + GetObjectName('n05P'))
@@ -32393,7 +32402,7 @@ function ELR takes nothing returns boolean
 	local player p = GetOwningPlayer(u)
 	local integer id = GetIssuedOrderId()
 	local player p2
-	if p != Sentinels[0]and p != Scourges[0] then
+	if p != SentinelPlayers[0]and p != ScourgePlayers[0] then
 		set SQ[GetPlayerId(p)]= SQ[GetPlayerId(p)]+ 1
 		if id != 851983 then
 			set TQ[GetPlayerId(p)]= GetGameTime()
@@ -32402,7 +32411,7 @@ function ELR takes nothing returns boolean
 		if (id == 851983 or id ==851971) and GetOrderTargetItem()!= null then
 			if id == 851983 or(id ==851971 and LoadBoolean(HY, GetHandleId(GetItemPlayer(GetOrderTargetItem())), 139)) then
 				set p2 = GetItemPlayer(GetOrderTargetItem())
-				if p2 != p and IsPlayerEnemy(p2, p) == false and XHX(p2) == false and IsPointInRegion(KK, GetItemX(GetOrderTargetItem()), GetItemY(GetOrderTargetItem())) then
+				if p2 != p and IsPlayerEnemy(p2, p) == false and IsOfflinePlayer(p2) == false and IsPointInRegion(KK, GetItemX(GetOrderTargetItem()), GetItemY(GetOrderTargetItem())) then
 					call DisableTrigger(GetTriggeringTrigger())
 					call EXStopUnit(u)
 					call InterfaceErrorForPlayer(p, GetObjectName('n0G7'))
@@ -32685,14 +32694,14 @@ function E7R takes nothing returns nothing
 	if MK then
 		loop
 		exitwhen i > 5
-			set trigUnit = Player__Hero[GetPlayerId(Sentinels[i])]
+			set trigUnit = Player__Hero[GetPlayerId(SentinelPlayers[i])]
 			if trigUnit != null then
 				if LK == 2 then
 					call JKX(trigUnit)
 				endif
 				call UnitSetUsesAltIcon(trigUnit, false)
 			endif
-			set trigUnit = Player__Hero[GetPlayerId(Scourges[i])]
+			set trigUnit = Player__Hero[GetPlayerId(ScourgePlayers[i])]
 			if trigUnit != null then
 				if LK == 2 then
 					call JKX(trigUnit)
@@ -32735,14 +32744,14 @@ endfunction
 function XOR takes player p returns nothing
 	local integer O3X
 	local integer K0X
-	if (IsSentinelsPlayer(p)) then
+	if (IsSentinelPlayer(p)) then
 		set O3X = 1
 		set K0X = 5
 		loop
 		exitwhen O3X > K0X
-			if (Sentinels[O3X]!= p) then
-				if (IsPlaying(Sentinels[O3X])) then
-					call SetPlayerAllianceStateBJ(p, Sentinels[O3X], 4)
+			if (SentinelPlayers[O3X]!= p) then
+				if (IsPlayingPlayer(SentinelPlayers[O3X])) then
+					call SetPlayerAllianceStateBJ(p, SentinelPlayers[O3X], 4)
 				endif
 			endif
 			set O3X = O3X + 1
@@ -32752,9 +32761,9 @@ function XOR takes player p returns nothing
 		set K0X = 5
 		loop
 		exitwhen O3X > K0X
-			if (Scourges[O3X]!= p) then
-				if (IsPlaying(Scourges[O3X])) then
-					call SetPlayerAllianceStateBJ(p, Scourges[O3X], 4)
+			if (ScourgePlayers[O3X]!= p) then
+				if (IsPlayingPlayer(ScourgePlayers[O3X])) then
+					call SetPlayerAllianceStateBJ(p, ScourgePlayers[O3X], 4)
 				endif
 			endif
 			set O3X = O3X + 1
@@ -32775,7 +32784,7 @@ function XIR takes unit u, player p returns nothing
 	local real y2
 	local integer i
 	local item C1X
-	if IsSentinelsPlayer(p) then
+	if IsSentinelPlayer(p) then
 		set x1 = GetRectCenterX(gg_rct_ScourgeRevivalPoint)
 		set y1 = GetRectCenterY(gg_rct_ScourgeRevivalPoint)
 		set x2 = GetRectCenterX(gg_rct_SentinelRevivalPoint)
@@ -32825,7 +32834,7 @@ endfunction
 function XNR takes item i, player p returns nothing
 	local real x
 	local real y
-	if IsSentinelsPlayer(p) then
+	if IsSentinelPlayer(p) then
 		set x = GetRectCenterX(gg_rct_SentinelRevivalPoint)
 		set y = GetRectCenterY(gg_rct_SentinelRevivalPoint)
 	else
@@ -32875,19 +32884,19 @@ function XDR takes player p1, player p2 returns nothing
 	local integer ZZO
 	local integer XFR
 	local integer XGR
-	set ZZO = EUV[GetPlayerId(p1)]
-	set EUV[GetPlayerId(p1)]= EUV[GetPlayerId(p2)]
-	set EUV[GetPlayerId(p2)]= ZZO
+	set ZZO = PlayersReliableGold[GetPlayerId(p1)]
+	set PlayersReliableGold[GetPlayerId(p1)]= PlayersReliableGold[GetPlayerId(p2)]
+	set PlayersReliableGold[GetPlayerId(p2)]= ZZO
 	call StoreDrCacheData("SWITCH_" + I2S(GetPlayerId(p1))+ "_" + I2S(GetPlayerId(p2)), 0)
 	call StoreDrCacheData("SWITCH_" + I2S(GetPlayerId(p2))+ "_" + I2S(GetPlayerId(p1)), 0)
-	if IsSentinelsPlayer(p1) then
+	if IsSentinelPlayer(p1) then
 		set x1 = GetRectCenterX(gg_rct_ScourgeRevivalPoint)
 		set y1 = GetRectCenterY(gg_rct_ScourgeRevivalPoint)
 	else
 		set x1 = GetRectCenterX(gg_rct_SentinelRevivalPoint)
 		set y1 = GetRectCenterY(gg_rct_SentinelRevivalPoint)
 	endif
-	if IsSentinelsPlayer(p2) then
+	if IsSentinelPlayer(p2) then
 		set x2 = GetRectCenterX(gg_rct_ScourgeRevivalPoint)
 		set y2 = GetRectCenterY(gg_rct_ScourgeRevivalPoint)
 	else
@@ -32897,33 +32906,33 @@ function XDR takes player p1, player p2 returns nothing
 	set i = 1
 	loop
 	exitwhen i > 5
-		if Sentinels[i]== p1 or Scourges[i]== p1 then
+		if SentinelPlayers[i]== p1 or ScourgePlayers[i]== p1 then
 			set i1 = i
 		endif
-		if Sentinels[i]== p2 or Scourges[i]== p2 then
+		if SentinelPlayers[i]== p2 or ScourgePlayers[i]== p2 then
 			set i2 = i
 		endif
 		set i = i + 1
 	endloop
-	if IsSentinelsPlayer(p1) then
-		set Scourges[i2]= p1
-		set Sentinels[i1]= p2
+	if IsSentinelPlayer(p1) then
+		set ScourgePlayers[i2]= p1
+		set SentinelPlayers[i1]= p2
 	else
-		set Sentinels[i2]= p1
-		set Scourges[i1]= p2
+		set SentinelPlayers[i2]= p1
+		set ScourgePlayers[i1]= p2
 	endif
-	call SetPlayerTeam(Sentinels[0], 0)
-	call SetPlayerTeam(Sentinels[1], 0)
-	call SetPlayerTeam(Sentinels[2], 0)
-	call SetPlayerTeam(Sentinels[3], 0)
-	call SetPlayerTeam(Sentinels[4], 0)
-	call SetPlayerTeam(Sentinels[5], 0)
-	call SetPlayerTeam(Scourges[0], 1)
-	call SetPlayerTeam(Scourges[1], 1)
-	call SetPlayerTeam(Scourges[2], 1)
-	call SetPlayerTeam(Scourges[3], 1)
-	call SetPlayerTeam(Scourges[4], 1)
-	call SetPlayerTeam(Scourges[5], 1)
+	call SetPlayerTeam(SentinelPlayers[0], 0)
+	call SetPlayerTeam(SentinelPlayers[1], 0)
+	call SetPlayerTeam(SentinelPlayers[2], 0)
+	call SetPlayerTeam(SentinelPlayers[3], 0)
+	call SetPlayerTeam(SentinelPlayers[4], 0)
+	call SetPlayerTeam(SentinelPlayers[5], 0)
+	call SetPlayerTeam(ScourgePlayers[0], 1)
+	call SetPlayerTeam(ScourgePlayers[1], 1)
+	call SetPlayerTeam(ScourgePlayers[2], 1)
+	call SetPlayerTeam(ScourgePlayers[3], 1)
+	call SetPlayerTeam(ScourgePlayers[4], 1)
+	call SetPlayerTeam(ScourgePlayers[5], 1)
 	call K_X()
 	set x = 0
 	set y = 0
@@ -32931,10 +32940,10 @@ function XDR takes player p1, player p2 returns nothing
 	exitwhen x > 5
 		loop
 		exitwhen y > 5
-			call SetPlayerAllianceStateBJ(Sentinels[x], Sentinels[y], 3)
-			call SetPlayerAllianceStateBJ(Scourges[x], Scourges[y], 3)
-			call SetPlayerAllianceStateBJ(Sentinels[x], Scourges[y], 0)
-			call SetPlayerAllianceStateBJ(Scourges[x], Sentinels[y], 0)
+			call SetPlayerAllianceStateBJ(SentinelPlayers[x], SentinelPlayers[y], 3)
+			call SetPlayerAllianceStateBJ(ScourgePlayers[x], ScourgePlayers[y], 3)
+			call SetPlayerAllianceStateBJ(SentinelPlayers[x], ScourgePlayers[y], 0)
+			call SetPlayerAllianceStateBJ(ScourgePlayers[x], SentinelPlayers[y], 0)
 			set y = y + 1
 		endloop
 		set y = 0
@@ -32942,18 +32951,18 @@ function XDR takes player p1, player p2 returns nothing
 	endloop
 	call ForceClear(RW)
 	call ForceClear(IW)
-	call ForceAddPlayer(RW, Sentinels[0])
-	call ForceAddPlayer(RW, Sentinels[1])
-	call ForceAddPlayer(RW, Sentinels[2])
-	call ForceAddPlayer(RW, Sentinels[3])
-	call ForceAddPlayer(RW, Sentinels[4])
-	call ForceAddPlayer(RW, Sentinels[5])
-	call ForceAddPlayer(IW, Scourges[0])
-	call ForceAddPlayer(IW, Scourges[1])
-	call ForceAddPlayer(IW, Scourges[2])
-	call ForceAddPlayer(IW, Scourges[3])
-	call ForceAddPlayer(IW, Scourges[4])
-	call ForceAddPlayer(IW, Scourges[5])
+	call ForceAddPlayer(RW, SentinelPlayers[0])
+	call ForceAddPlayer(RW, SentinelPlayers[1])
+	call ForceAddPlayer(RW, SentinelPlayers[2])
+	call ForceAddPlayer(RW, SentinelPlayers[3])
+	call ForceAddPlayer(RW, SentinelPlayers[4])
+	call ForceAddPlayer(RW, SentinelPlayers[5])
+	call ForceAddPlayer(IW, ScourgePlayers[0])
+	call ForceAddPlayer(IW, ScourgePlayers[1])
+	call ForceAddPlayer(IW, ScourgePlayers[2])
+	call ForceAddPlayer(IW, ScourgePlayers[3])
+	call ForceAddPlayer(IW, ScourgePlayers[4])
+	call ForceAddPlayer(IW, ScourgePlayers[5])
 	call ExecuteFunc("K1X")
 	call XCR(p1, p2)
 	set YM = true
@@ -32973,12 +32982,12 @@ function XDR takes player p1, player p2 returns nothing
 	set i = 1
 	loop
 	exitwhen i > 5
-		set p = Sentinels[i]
-		if XHX(p) then
+		set p = SentinelPlayers[i]
+		if IsOfflinePlayer(p) then
 			call XOR(p)
 		endif
-		set p = Scourges[i]
-		if XHX(p) then
+		set p = ScourgePlayers[i]
+		if IsOfflinePlayer(p) then
 			call XOR(p)
 		endif
 		set i = i + 1
@@ -33011,15 +33020,15 @@ function XHR takes nothing returns nothing
 	set KM = 0
 	loop
 	exitwhen i > 5
-		set p = Sentinels[i]
-		if IsPlaying(p) then
+		set p = SentinelPlayers[i]
+		if IsPlayingPlayer(p) then
 			set KM = KM + 1
 			if HM[GetPlayerId(p)] then
 				set JM = JM + 1
 			endif
 		endif
-		set p = Scourges[i]
-		if IsPlaying(p) then
+		set p = ScourgePlayers[i]
+		if IsPlayingPlayer(p) then
 			set KM = KM + 1
 			if HM[GetPlayerId(p)] then
 				set JM = JM + 1
@@ -33050,21 +33059,21 @@ function XKR takes nothing returns nothing
 	endif
 	loop
 	exitwhen i > 5
-		set p = Sentinels[i]
-		if IsPlaying(p) and HM[GetPlayerId(p)]== false then
+		set p = SentinelPlayers[i]
+		if IsPlayingPlayer(p) and HM[GetPlayerId(p)]== false then
 			set XLR = XLR + 1
 			set XPR = XPR + 1
 		endif
-		if IsPlaying(p) and HM[GetPlayerId(p)] then
+		if IsPlayingPlayer(p) and HM[GetPlayerId(p)] then
 			set XMR = XMR + 1
 			set XPR = XPR + 1
 		endif
-		set p = Scourges[i]
-		if IsPlaying(p) and HM[GetPlayerId(p)]== false then
+		set p = ScourgePlayers[i]
+		if IsPlayingPlayer(p) and HM[GetPlayerId(p)]== false then
 			set XLR = XLR + 1
 			set XPR = XPR + 1
 		endif
-		if IsPlaying(p) and HM[GetPlayerId(p)] then
+		if IsPlayingPlayer(p) and HM[GetPlayerId(p)] then
 			set XMR = XMR + 1
 			set XPR = XPR + 1
 		endif
@@ -33087,10 +33096,10 @@ function XQR takes nothing returns nothing
 	exitwhen i > 5
 		set s = ""
 		set s2 = ""
-		if IsSentinelsPlayer(p) then
-			set XSR = Scourges[i]
+		if IsSentinelPlayer(p) then
+			set XSR = ScourgePlayers[i]
 		else
-			set XSR = Sentinels[i]
+			set XSR = SentinelPlayers[i]
 		endif
 		if GetPlayerSlotState(XSR) == PLAYER_SLOT_STATE_LEFT and GetPlayerController(XSR) == MAP_CONTROL_USER then
 			set s = "|c00ff0303[" + GetObjectName('n0FY')+ "]|r"
@@ -33148,12 +33157,12 @@ function XUR takes player p1, player p2 returns nothing
 	set i = 1
 	loop
 	exitwhen i > 5
-		set p = Sentinels[i]
+		set p = SentinelPlayers[i]
 		if p != p1 then
 			call DisplayTimedTextToPlayer(p, 0, 0, 20, s)
 			call DisplayTimedTextToPlayer(p, 0, 0, 20, s2)
 		endif
-		set p = Scourges[i]
+		set p = ScourgePlayers[i]
 		if p != p1 then
 			call DisplayTimedTextToPlayer(p, 0, 0, 20, s)
 			call DisplayTimedTextToPlayer(p, 0, 0, 20, s2)
@@ -33185,15 +33194,15 @@ function Y8O takes nothing returns nothing
 	elseif BM == false then
 		set VM = S2I(SubString(GetEventPlayerChatString(), 8, StringLength(GetEventPlayerChatString())))
 		if VM > 0 and VM < 6 then
-			if IsSentinelsPlayer(GetTriggerPlayer()) then
-				if F0V[GetPlayerId(Scourges[VM])]== false then
-					call XUR(GetTriggerPlayer(), Scourges[VM])
+			if IsSentinelPlayer(GetTriggerPlayer()) then
+				if F0V[GetPlayerId(ScourgePlayers[VM])]== false then
+					call XUR(GetTriggerPlayer(), ScourgePlayers[VM])
 				else
 					call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10, GetObjectName('n0HY'))
 				endif
 			else
-				if F0V[GetPlayerId(Sentinels[VM])]== false then
-					call XUR(GetTriggerPlayer(), Sentinels[VM])
+				if F0V[GetPlayerId(SentinelPlayers[VM])]== false then
+					call XUR(GetTriggerPlayer(), SentinelPlayers[VM])
 				else
 					call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10, GetObjectName('n0HY'))
 				endif
@@ -33243,7 +33252,7 @@ function X0R takes nothing returns nothing
 	call TriggerRegisterTimerEvent(t, .25, true)
 	call TriggerAddCondition(t, Condition(function MRO))
 	set NK = CreateTimer()
-	if UM then
+	if IsPickingHero then
 		if MainModeName =="sd" then
 			set N3 = KL +(RP * 30)
 		elseif MainModeName =="md" then
@@ -33530,7 +33539,7 @@ function SQO takes nothing returns nothing
 	call AddUnitToStock(shop_1,'n139', 0, 3) 		//游戏开始时添加经验书
 	call AddUnitToStock(shop_2,'n139', 0, 3)
 	call ClearSelection()
-	set UM = false
+	set IsPickingHero = false
 	call DestroyTimer(NK)
 	set NK = CreateTimer()
 	call TimerStart(NK, 90 + 1, false, null)
@@ -33552,7 +33561,7 @@ function OMR takes integer pid, integer sn, integer T0V returns nothing
 	local multiboarditem mi
 	local string s = HeroSkillsIcon[T0V]
 	if LOD_DEBUGMODE then
-		if IsScourgesPlayer(Player(pid)) then
+		if IsScourgePlayer(Player(pid)) then
 			set mi = MultiboardGetItem(JP,(pid + 2)-1, sn -1)
 		else
 			set mi = MultiboardGetItem(JP,(pid + 1)-1, sn -1)
@@ -33560,16 +33569,16 @@ function OMR takes integer pid, integer sn, integer T0V returns nothing
 	else
 		set mi = MultiboardGetItem(JP, D2V[pid]-1, sn -1)
 	endif
-	if IsSentinelsPlayer(Player(pid)) and G1V == false then
-		if IsScourgesPlayer(LocalPlayer) then
+	if IsSentinelPlayer(Player(pid)) and G1V == false then
+		if IsScourgePlayer(LocalPlayer) then
 			if T0V == 0 then
 				set s = HeroSkillsIcon[0]
 			else
 				set s = "ReplaceableTextures\\CommandButtons\\BTNQuestion.blp"
 			endif
 		endif
-	elseif IsScourgesPlayer(Player(pid)) and G1V == false then
-		if IsSentinelsPlayer(LocalPlayer) then
+	elseif IsScourgePlayer(Player(pid)) and G1V == false then
+		if IsSentinelPlayer(LocalPlayer) then
 			if T0V == 0 then
 				set s = HeroSkillsIcon[0]
 			else
@@ -33669,7 +33678,7 @@ function OWR takes integer OYR, integer WWV, boolean OZR returns boolean
 		endif
 	endif
 	if HVV then
-		if IsSentinelsPlayer(p) then
+		if IsSentinelPlayer(p) then
 			set YTE = 1
 		else
 			set YTE = 2
@@ -33801,13 +33810,13 @@ function OWR takes integer OYR, integer WWV, boolean OZR returns boolean
 		call T9E(p, OZR, "注意：该技能是多图标技能。建议用命令改键来修改额外技能快捷键。")
 	endif
 	if OYR ==(35 -1)* 4 + 3 then
-		if IsSentinelsPlayer(p) then
-			if OQR(GetPlayerId(Sentinels[1])) or OQR(GetPlayerId(Sentinels[2])) or OQR(GetPlayerId(Sentinels[3])) or OQR(GetPlayerId(Sentinels[4])) or OQR(GetPlayerId(Sentinels[5])) then
+		if IsSentinelPlayer(p) then
+			if OQR(GetPlayerId(SentinelPlayers[1])) or OQR(GetPlayerId(SentinelPlayers[2])) or OQR(GetPlayerId(SentinelPlayers[3])) or OQR(GetPlayerId(SentinelPlayers[4])) or OQR(GetPlayerId(SentinelPlayers[5])) then
 				call URE(p, OZR, "你的队友已经选择了这个技能，不能再选择一个了。")
 				return false
 			endif
 		else
-			if OQR(GetPlayerId(Scourges[1])) or OQR(GetPlayerId(Scourges[2])) or OQR(GetPlayerId(Scourges[3])) or OQR(GetPlayerId(Scourges[4])) or OQR(GetPlayerId(Scourges[5])) then
+			if OQR(GetPlayerId(ScourgePlayers[1])) or OQR(GetPlayerId(ScourgePlayers[2])) or OQR(GetPlayerId(ScourgePlayers[3])) or OQR(GetPlayerId(ScourgePlayers[4])) or OQR(GetPlayerId(ScourgePlayers[5])) then
 				call URE(p, OZR, "你的队友已经选择了这个技能，不能再选择一个了。")
 				return false
 			endif
@@ -33821,10 +33830,10 @@ function OWR takes integer OYR, integer WWV, boolean OZR returns boolean
 	if OSR(OYR) then
 		set O7R = OPR(WWV)>= RRR
 		if O7R == false then
-			if IsSentinelsPlayer(p) then
-				set O7R =(OPR(GetPlayerId(Sentinels[1]))+ OPR(GetPlayerId(Sentinels[2]))+ OPR(GetPlayerId(Sentinels[3]))+ OPR(GetPlayerId(Sentinels[4]))+ OPR(GetPlayerId(Sentinels[5])))>= 7
+			if IsSentinelPlayer(p) then
+				set O7R =(OPR(GetPlayerId(SentinelPlayers[1]))+ OPR(GetPlayerId(SentinelPlayers[2]))+ OPR(GetPlayerId(SentinelPlayers[3]))+ OPR(GetPlayerId(SentinelPlayers[4]))+ OPR(GetPlayerId(SentinelPlayers[5])))>= 7
 			else
-				set O7R =(OPR(GetPlayerId(Scourges[1]))+ OPR(GetPlayerId(Scourges[2]))+ OPR(GetPlayerId(Scourges[3]))+ OPR(GetPlayerId(Scourges[4]))+ OPR(GetPlayerId(Scourges[5])))>= 7
+				set O7R =(OPR(GetPlayerId(ScourgePlayers[1]))+ OPR(GetPlayerId(ScourgePlayers[2]))+ OPR(GetPlayerId(ScourgePlayers[3]))+ OPR(GetPlayerId(ScourgePlayers[4]))+ OPR(GetPlayerId(ScourgePlayers[5])))>= 7
 			endif
 			set O8R = O7R
 		endif
@@ -34087,10 +34096,10 @@ function RIR takes integer pid, integer TPE returns boolean
 	if HVV then
 		set xx = 0
 		loop
-			if IsSentinelsPlayer(Player(pid)) then
-				set V0R = GetPlayerId(Sentinels[xx])
+			if IsSentinelPlayer(Player(pid)) then
+				set V0R = GetPlayerId(SentinelPlayers[xx])
 			else
-				set V0R = GetPlayerId(Scourges[xx])
+				set V0R = GetPlayerId(ScourgePlayers[xx])
 			endif
 			if LoadBoolean(HY, GetHandleId(Player(V0R)), WPV) then
 				if GetUnitAbilityLevel(KP[V0R], HeroCommonSkills[TPE])> 0 then
@@ -34101,7 +34110,7 @@ function RIR takes integer pid, integer TPE returns boolean
 			set xx = xx + 1
 		exitwhen xx > 5
 		endloop
-		if IsSentinelsPlayer(Player(pid)) then
+		if IsSentinelPlayer(Player(pid)) then
 			set YTE = 1
 		else
 			set YTE = 2
@@ -34118,7 +34127,7 @@ function Y4O takes nothing returns nothing
 	if i == 0 then
 		set i = S2I(SubString(GetEventPlayerChatString(), 3, 4))
 	endif
-	if UM then
+	if IsPickingHero then
 		if GetGameTime()> HN[WWV]+ 2 then
 			if i < 7 and i > 0 then
 				set HN[WWV]= GetGameTime()
@@ -34134,7 +34143,7 @@ function Y4O takes nothing returns nothing
 endfunction
 function reset_choice takes player p, boolean b returns nothing
 	local integer id = GetPlayerId(p)
-	if UM then
+	if IsPickingHero then
 		if b or GetGameTime()> HN[id]+ 2 then
 			set HN[id]= GetGameTime()
 			call RIR(id, PlayerSkillIndex[id * HL + 1])
@@ -34234,10 +34243,10 @@ function RDR takes nothing returns nothing
 		if HVV then
 			set xx = 1
 			loop
-				if IsSentinelsPlayer(Player(pid)) then
-					set RFR = GetPlayerId(Sentinels[xx])
+				if IsSentinelPlayer(Player(pid)) then
+					set RFR = GetPlayerId(SentinelPlayers[xx])
 				else
-					set RFR = GetPlayerId(Scourges[xx])
+					set RFR = GetPlayerId(ScourgePlayers[xx])
 				endif
 				if GetUnitAbilityLevel(KP[RFR], HeroCommonSkills[QLX])> 0 and pid != RFR and GetUnitAbilityLevel(KP[RFR],'Z000'-1 + sn)> 0 then
 					call UnitRemoveAbility(KP[RFR],('Z000'-1)+ sn)
@@ -34270,7 +34279,7 @@ function RGR takes player p, integer iHeroTypeId, integer i2 returns nothing
 	if DW then
 		loop
 		exitwhen j > 5
-			if Sentinels[j]== p or Scourges[j]== p then
+			if SentinelPlayers[j]== p or ScourgePlayers[j]== p then
 				set y = 7128 -192 *(j -1)
 			endif
 			set j = j + 1
@@ -34367,8 +34376,8 @@ function RKR takes nothing returns nothing
 endfunction
 function RMR takes integer WWV, integer i returns boolean
 	local boolean b = false
-	set b = DP[GetPlayerId(Sentinels[1])* GL + i]== false and DP[GetPlayerId(Sentinels[2])* GL + i]== false and DP[GetPlayerId(Sentinels[3])* GL + i]== false and DP[GetPlayerId(Sentinels[4])* GL + i]== false and DP[GetPlayerId(Sentinels[5])* GL + i]== false
-	set b = b and(DP[GetPlayerId(Scourges[1])* GL + i]== false and DP[GetPlayerId(Scourges[2])* GL + i]== false and DP[GetPlayerId(Scourges[3])* GL + i]== false and DP[GetPlayerId(Scourges[4])* GL + i]== false and DP[GetPlayerId(Scourges[5])* GL + i]== false)
+	set b = DP[GetPlayerId(SentinelPlayers[1])* GL + i]== false and DP[GetPlayerId(SentinelPlayers[2])* GL + i]== false and DP[GetPlayerId(SentinelPlayers[3])* GL + i]== false and DP[GetPlayerId(SentinelPlayers[4])* GL + i]== false and DP[GetPlayerId(SentinelPlayers[5])* GL + i]== false
+	set b = b and(DP[GetPlayerId(ScourgePlayers[1])* GL + i]== false and DP[GetPlayerId(ScourgePlayers[2])* GL + i]== false and DP[GetPlayerId(ScourgePlayers[3])* GL + i]== false and DP[GetPlayerId(ScourgePlayers[4])* GL + i]== false and DP[GetPlayerId(ScourgePlayers[5])* GL + i]== false)
 	return b
 endfunction
 
@@ -34403,11 +34412,11 @@ endfunction
 function InitBarAndHeroByMDMode takes integer iTeamIndex, boolean bIsSentinelPlayer returns nothing
 	local integer i
 	local integer c = 10 + BP
-	local integer iPlayerIndex// = GetPlayerId(Sentinels[iTeamIndex])
+	local integer iPlayerIndex// = GetPlayerId(SentinelPlayers[iTeamIndex])
 	if bIsSentinelPlayer then
-		set iPlayerIndex = GetPlayerId(Sentinels[iTeamIndex])
+		set iPlayerIndex = GetPlayerId(SentinelPlayers[iTeamIndex])
 	else
-		set iPlayerIndex = GetPlayerId(Scourges[iTeamIndex])
+		set iPlayerIndex = GetPlayerId(ScourgePlayers[iTeamIndex])
 	endif
 	if c <= LoadInteger(HY, iTeamIndex,'sdcn') then
 		return
@@ -34425,23 +34434,23 @@ function InitBarAndHeroByMDMode takes integer iTeamIndex, boolean bIsSentinelPla
 		call RGR(Player(iPlayerIndex), VUV[QP[i]], QP[i])
 		set DP[iPlayerIndex * GL + QP[i]]= true
 		// 如果是近卫军团 就给天灾军团也弄一个
-		if bIsSentinelPlayer and IsPlaying(Scourges[iTeamIndex]) then
-			call RGR(Scourges[iTeamIndex], VUV[QP[i]], QP[i])
-			set DP[(GetPlayerId(Scourges[iTeamIndex]))* GL + QP[i]]= true
+		if bIsSentinelPlayer and IsPlayingPlayer(ScourgePlayers[iTeamIndex]) then
+			call RGR(ScourgePlayers[iTeamIndex], VUV[QP[i]], QP[i])
+			set DP[(GetPlayerId(ScourgePlayers[iTeamIndex]))* GL + QP[i]]= true
 		endif
 	endif
 	call SaveInteger(HY, iTeamIndex,'sdcn', LoadInteger(HY, iTeamIndex,'sdcn')+ 1)
 endfunction
 
-// 近卫Sentinels[] 天灾Scourges[]
+// 近卫SentinelPlayers[] 天灾ScourgePlayers[]
 function RSR takes integer iTeamIndex, integer i returns nothing
 	// 如果是近卫或天灾就返回
 	if iTeamIndex == 0 or iTeamIndex == 6 or i == 0 then
 		return
 	endif
-	if not IsPlaying(Sentinels[iTeamIndex]) then
+	if not IsPlayingPlayer(SentinelPlayers[iTeamIndex]) then
 		// 如果 近卫没玩家 天灾有玩家
-		if IsPlaying(Scourges[iTeamIndex]) then
+		if IsPlayingPlayer(ScourgePlayers[iTeamIndex]) then
 			call InitBarAndHeroByMDMode(iTeamIndex, false)
 			//if i == 1 then
 			//	call BJDebugMsg("天灾存在玩家"+I2S(iTeamIndex))
@@ -34688,7 +34697,7 @@ function R7R takes integer iPlayerIndex, integer i returns nothing
 		return
 	endif
 	// 玩家不存在也拉倒 并且没有玩家名字等于"df" (不知道什么鬼 也许是俄国作者想要和谐玩家)
-	if not IsPlaying(Player(iPlayerIndex)) and not JE then
+	if not IsPlayingPlayer(Player(iPlayerIndex)) and not JE then
 		return
 	endif
 	call RPR(iPlayerIndex, false)
@@ -34901,7 +34910,7 @@ function INR takes player p, unit IBR returns nothing
 	call ORR(PlayerSkillIndex[pid * HL + 5])
 	call ORR(PlayerSkillIndex[pid * HL + 6])
 	call SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD) -250)
-	if IsSentinelsPlayer(p) then
+	if IsSentinelPlayer(p) then
 		set Player__Hero[pid]= CreateUnit(p, VUV[GetUnitUserData(IBR)], GetRectCenterX(gg_rct_SentinelRevivalPoint), GetRectCenterY(gg_rct_SentinelRevivalPoint), 0)
 		call ShowUnit(IBR, false)
 		call UnitApplyTimedLife(IBR,'BTLF', 120)
@@ -35036,10 +35045,10 @@ function IJR takes nothing returns boolean
 		set i = GetRandomInt(1, 2)
 		if i == 1 then
 			set s = "1221122112"
-			call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, PlayersColoerText[GetPlayerId(Sentinels[0])]+ GetObjectName('n065')+ "|r 将会以 1-2-2-2-2-1 的顺序选取英雄")
+			call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, PlayersColoerText[GetPlayerId(SentinelPlayers[0])]+ GetObjectName('n065')+ "|r 将会以 1-2-2-2-2-1 的顺序选取英雄")
 		else
 			set s = "2112211221"
-			call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, PlayersColoerText[GetPlayerId(Scourges[0])]+ GetObjectName('n06C')+ "|r 将会以 1-2-2-2-2-1 的顺序选取英雄")
+			call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, PlayersColoerText[GetPlayerId(ScourgePlayers[0])]+ GetObjectName('n06C')+ "|r 将会以 1-2-2-2-2-1 的顺序选取英雄")
 		endif
 		call SaveStr(HY, h, 0, s)
 		call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15., " ")
@@ -35061,46 +35070,46 @@ function IJR takes nothing returns boolean
 		set V0R = S2I(s2)
 		if IKR != V0R then
 			if IKR == 1 then
-				call SaveInteger(HY, h, 10, GetPlayerId(Sentinels[IMR]))
+				call SaveInteger(HY, h, 10, GetPlayerId(SentinelPlayers[IMR]))
 				call SaveInteger(HY, h, 5, IMR)
-				call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, PlayersColoerText[GetPlayerId(Sentinels[IMR])]+ PlayersName[GetPlayerId(Sentinels[IMR])]+ "|r " + GetObjectName('n064'))
-				if LocalPlayer== Sentinels[IMR] then
+				call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, PlayersColoerText[GetPlayerId(SentinelPlayers[IMR])]+ PlayersName[GetPlayerId(SentinelPlayers[IMR])]+ "|r " + GetObjectName('n064'))
+				if LocalPlayer== SentinelPlayers[IMR] then
 					call IHR(h)
 				endif
 			else
-				call SaveInteger(HY, h, 10, GetPlayerId(Scourges[ILR]))
+				call SaveInteger(HY, h, 10, GetPlayerId(ScourgePlayers[ILR]))
 				call SaveInteger(HY, h, 6, ILR)
-				call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, PlayersColoerText[GetPlayerId(Scourges[ILR])]+ PlayersName[GetPlayerId(Scourges[ILR])]+ "|r " + GetObjectName('n064'))
-				if LocalPlayer== Scourges[ILR] then
+				call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, PlayersColoerText[GetPlayerId(ScourgePlayers[ILR])]+ PlayersName[GetPlayerId(ScourgePlayers[ILR])]+ "|r " + GetObjectName('n064'))
+				if LocalPlayer== ScourgePlayers[ILR] then
 					call IHR(h)
 				endif
 			endif
 			call SaveInteger(HY, h, 0, c + 1)
 		else
 			if IKR == 1 then
-				call SaveInteger(HY, h, 10, GetPlayerId(Sentinels[IMR]))
-				call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, PlayersColoerText[GetPlayerId(Sentinels[IMR])]+ PlayersName[GetPlayerId(Sentinels[IMR])]+ "|r " + GetObjectName('n064'))
-				if LocalPlayer== Sentinels[IMR] then
+				call SaveInteger(HY, h, 10, GetPlayerId(SentinelPlayers[IMR]))
+				call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, PlayersColoerText[GetPlayerId(SentinelPlayers[IMR])]+ PlayersName[GetPlayerId(SentinelPlayers[IMR])]+ "|r " + GetObjectName('n064'))
+				if LocalPlayer== SentinelPlayers[IMR] then
 					call IHR(h)
 				endif
 				if IMR + 1 < 6 then
-					call SaveInteger(HY, h, 11, GetPlayerId(Sentinels[IMR + 1]))
-					call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, PlayersColoerText[GetPlayerId(Sentinels[IMR + 1])]+ PlayersName[GetPlayerId(Sentinels[IMR + 1])]+ "|r " + GetObjectName('n064'))
-					if LocalPlayer== Sentinels[IMR + 1] then
+					call SaveInteger(HY, h, 11, GetPlayerId(SentinelPlayers[IMR + 1]))
+					call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, PlayersColoerText[GetPlayerId(SentinelPlayers[IMR + 1])]+ PlayersName[GetPlayerId(SentinelPlayers[IMR + 1])]+ "|r " + GetObjectName('n064'))
+					if LocalPlayer== SentinelPlayers[IMR + 1] then
 						call IHR(h)
 					endif
 				endif
 				call SaveInteger(HY, h, 5, IMR + 1)
 			else
-				call SaveInteger(HY, h, 10, GetPlayerId(Scourges[ILR]))
-				call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, PlayersColoerText[GetPlayerId(Scourges[ILR])]+ PlayersName[GetPlayerId(Scourges[ILR])]+ "|r " + GetObjectName('n064'))
-				if LocalPlayer== Scourges[ILR] then
+				call SaveInteger(HY, h, 10, GetPlayerId(ScourgePlayers[ILR]))
+				call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, PlayersColoerText[GetPlayerId(ScourgePlayers[ILR])]+ PlayersName[GetPlayerId(ScourgePlayers[ILR])]+ "|r " + GetObjectName('n064'))
+				if LocalPlayer== ScourgePlayers[ILR] then
 					call IHR(h)
 				endif
 				if ILR + 1 < 6 then
-					call SaveInteger(HY, h, 11, GetPlayerId(Scourges[ILR + 1]))
-					call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, PlayersColoerText[GetPlayerId(Scourges[ILR + 1])]+ PlayersName[GetPlayerId(Scourges[ILR + 1])]+ "|r " + GetObjectName('n064'))
-					if LocalPlayer== Scourges[ILR + 1] then
+					call SaveInteger(HY, h, 11, GetPlayerId(ScourgePlayers[ILR + 1]))
+					call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, PlayersColoerText[GetPlayerId(ScourgePlayers[ILR + 1])]+ PlayersName[GetPlayerId(ScourgePlayers[ILR + 1])]+ "|r " + GetObjectName('n064'))
+					if LocalPlayer== ScourgePlayers[ILR + 1] then
 						call IHR(h)
 					endif
 				endif
@@ -35192,7 +35201,7 @@ function InitMode__RandomDraft takes nothing returns nothing
 	set OLR = null
 	call IAR(h,-7000, 7080)
 	// 设置选择英雄状态为否
-	set UM = false
+	set IsPickingHero = false
 	set IY = false
 	set RY = false
 	// 隐藏原本的酒馆
@@ -35233,15 +35242,15 @@ function InitMode__RandomDraft takes nothing returns nothing
 		set i = i + 1
 	exitwhen i > XT
 	endloop
-	set fm = CreateFogModifierRadius(Sentinels[1], FOG_OF_WAR_VISIBLE,-7030, 6766, 900, true, true)
+	set fm = CreateFogModifierRadius(SentinelPlayers[1], FOG_OF_WAR_VISIBLE,-7030, 6766, 900, true, true)
 	call SaveFogModifierHandle(HY, h, 220, fm)
 	call FogModifierStart(fm)
-	set fm = CreateFogModifierRadius(Scourges[1], FOG_OF_WAR_VISIBLE,-7030, 6766, 900, true, true)
+	set fm = CreateFogModifierRadius(ScourgePlayers[1], FOG_OF_WAR_VISIBLE,-7030, 6766, 900, true, true)
 	call SaveFogModifierHandle(HY, h, 221, fm)
 	call FogModifierStart(fm)
 	set fm = null
 	// 对RD的英雄进行沉默
-	set u = CreateUnit(Scourges[0],'e00E',-7030, 6766, 0)
+	set u = CreateUnit(ScourgePlayers[0],'e00E',-7030, 6766, 0)
 	call UnitAddAbility(u,'A457')
 	call IssuePointOrderById(u, 852592,-7030, 6766)
 	call DisplayTimedTextToForce(bj_FORCE_ALL_PLAYERS, 20, "所有玩家在开始挑选英雄前都有60秒的准备时间")
@@ -35263,7 +35272,7 @@ function ISR takes nothing returns nothing
 	// 死亡竞赛模式或者全部随机 那就立即开始游戏(不需要选英雄)
 	if mn == GetObjectName('n0I7') or mn == GetObjectName('n0II') then
 		set MainModeName = "ar"
-		set UM = false
+		set IsPickingHero = false
 		// 游戏开始时添加贩卖经验书和假眼
 		call AddUnitToStock(J7,'h02C', 2, 4)	
 		call AddUnitToStock(H5,'h02C', 2, 4)
@@ -36369,7 +36378,7 @@ function NZR takes nothing returns nothing
 	call AYR(GetEventPlayerChatString(), 1)
 endfunction
 function N_R takes nothing returns boolean
-	set CV = MW and(GetPlayerName(VKV) == "|cFFFF0000RGC" or GetPlayerName(VLV) == "|cFFFF0000RGC")
+	set CV = IsGameHaveObserver and(GetPlayerName(ObserverPlayer1) == "|cFFFF0000RGC" or GetPlayerName(ObserverPlayer2) == "|cFFFF0000RGC")
 	if G2 == "rgc" then
 		set G2 = "sdzm3lsso"
 	elseif G2 == "rgc2" then
@@ -36471,11 +36480,11 @@ function NBR takes nothing returns nothing
 	set N3 = 120
 	loop
 	exitwhen x > 5
-		if IsPlaying(Sentinels[x]) then
-			call YCE(Sentinels[x])
+		if IsPlayingPlayer(SentinelPlayers[x]) then
+			call YCE(SentinelPlayers[x])
 		endif
-		if IsPlaying(Scourges[x]) then
-			call YCE(Scourges[x])
+		if IsPlayingPlayer(ScourgePlayers[x]) then
+			call YCE(ScourgePlayers[x])
 		endif
 		set x = x + 1
 	endloop
@@ -36494,9 +36503,9 @@ function N0R takes nothing returns boolean
 	local location LIX = GetRectCenter(gg_rct_SentinelRevivalPoint)
 	local location LAX = GetRectCenter(gg_rct_ScourgeRevivalPoint)
 	if BOX < 6 then
-		set p = Sentinels[BOX]
+		set p = SentinelPlayers[BOX]
 	elseif BOX < 11 then
-		set p = Scourges[BOX -5]
+		set p = ScourgePlayers[BOX -5]
 	endif
 	if BOX > 10 then
 		call FlushChildHashtable(HY, h)
@@ -36508,7 +36517,7 @@ function N0R takes nothing returns boolean
 		call SaveInteger(HY, h, 55,(BOX + 1))
 		set Player__Hero[GetPlayerId(p)]= null
 		set PlayerHeroTypeId[GetPlayerId(p)]= 0
-		if IsPlaying(p) then
+		if IsPlayingPlayer(p) then
 			loop
 			exitwhen Player__Hero[GetPlayerId(p)]!= null
 				set X1X = X0X()
@@ -36526,7 +36535,7 @@ function N0R takes nothing returns boolean
 		call SaveInteger(HY, h, 55,(BOX + 1))
 		set Player__Hero[GetPlayerId(p)]= null
 		set PlayerHeroTypeId[GetPlayerId(p)]= 0
-		if IsPlaying(p) then
+		if IsPlayingPlayer(p) then
 			loop
 			exitwhen Player__Hero[GetPlayerId(p)]!= null
 				set X1X = X0X()
@@ -36564,22 +36573,22 @@ function NNR takes nothing returns nothing
 		call XWX()
 	endif
 	set GT = 250
-	call PanCameraToTimedLocForPlayer(Sentinels[1], N1R, 0)
-	call PanCameraToTimedLocForPlayer(Sentinels[2], N1R, 0)
-	call PanCameraToTimedLocForPlayer(Sentinels[3], N1R, 0)
-	call PanCameraToTimedLocForPlayer(Sentinels[4], N1R, 0)
-	call PanCameraToTimedLocForPlayer(Sentinels[5], N1R, 0)
-	call PanCameraToTimedLocForPlayer(Scourges[1], N2R, 0)
-	call PanCameraToTimedLocForPlayer(Scourges[2], N2R, 0)
-	call PanCameraToTimedLocForPlayer(Scourges[3], N2R, 0)
-	call PanCameraToTimedLocForPlayer(Scourges[4], N2R, 0)
-	call PanCameraToTimedLocForPlayer(Scourges[5], N2R, 0)
+	call PanCameraToTimedLocForPlayer(SentinelPlayers[1], N1R, 0)
+	call PanCameraToTimedLocForPlayer(SentinelPlayers[2], N1R, 0)
+	call PanCameraToTimedLocForPlayer(SentinelPlayers[3], N1R, 0)
+	call PanCameraToTimedLocForPlayer(SentinelPlayers[4], N1R, 0)
+	call PanCameraToTimedLocForPlayer(SentinelPlayers[5], N1R, 0)
+	call PanCameraToTimedLocForPlayer(ScourgePlayers[1], N2R, 0)
+	call PanCameraToTimedLocForPlayer(ScourgePlayers[2], N2R, 0)
+	call PanCameraToTimedLocForPlayer(ScourgePlayers[3], N2R, 0)
+	call PanCameraToTimedLocForPlayer(ScourgePlayers[4], N2R, 0)
+	call PanCameraToTimedLocForPlayer(ScourgePlayers[5], N2R, 0)
 	if Mode__SameHero then
 		loop
 			set X1X = X0X()
 		exitwhen ZQ[X1X]== false
 		endloop
-		if IsSentinelsPlayer(HostPlayer) then
+		if IsSentinelPlayer(HostPlayer) then
 			set Player__Hero[GetPlayerId(HostPlayer)]= CreateUnit(HostPlayer, VUV[X1X], GetLocationX(LIX), GetLocationY(LIX), 270)
 			set PlayerHeroTypeId[GetPlayerId(HostPlayer)]= VUV[X1X]
 		else
@@ -36689,14 +36698,14 @@ function BVR takes nothing returns nothing
 	local integer BOX
 	local location LIX = GetRectCenter(gg_rct_SentinelTavernCamera)
 	local location LAX = GetRectCenter(gg_rct_ScourgeTavernCamera)
-	if OY then	
+	if IsGameEnd then	
 		call RemoveLocation(LIX)
 		call RemoveLocation(LAX)
 		set LIX = null
 		set LAX = null
 		return
 	endif
-	if IsSentinelsPlayer(Player(BER)) then
+	if IsSentinelPlayer(Player(BER)) then
 		set O3X = 1
 		set K0X = VWV
 		set BOX = 0
@@ -36726,9 +36735,9 @@ function BVR takes nothing returns nothing
 		//endif
 		set Player__Hero[BER]= null
 		set PlayerHeroTypeId[BER]= 0
-		if IsPlaying(Player(BER)) then
+		if IsPlayingPlayer(Player(BER)) then
 			loop
-				if IsSentinelsPlayer(Player(BER)) then
+				if IsSentinelPlayer(Player(BER)) then
 					set Player__Hero[BER]= CreateUnitAtLoc(Player(BER), UFE(), LIX, bj_UNIT_FACING)
 					set PlayerHeroTypeId[BER]= GetUnitTypeId(Player__Hero[BER])
 				else
@@ -36758,12 +36767,12 @@ function A9R takes nothing returns nothing
 	set x = 1
 	loop
 	exitwhen x > 5
-		set BOR = GetPlayerId(Sentinels[x])
+		set BOR = GetPlayerId(SentinelPlayers[x])
 		set t = CreateTrigger()
 		call TriggerRegisterTimerExpireEvent(t, PS[BOR])
 		call TriggerAddAction(t, function BVR)
 		call SaveInteger(HY,(GetHandleId(t)), 173,(BOR))
-		set BOR = GetPlayerId(Scourges[x])
+		set BOR = GetPlayerId(ScourgePlayers[x])
 		set t = CreateTrigger()
 		call TriggerRegisterTimerExpireEvent(t, PS[BOR])
 		call TriggerAddAction(t, function BVR)
@@ -36805,24 +36814,24 @@ function A8R takes nothing returns nothing
 	local location LAX = GetRectCenter(gg_rct_ScourgeTavernCamera)
 	local integer i
 	set DW = true
-	call KillPlayerAllZoneIndicator(Sentinels[1])
-	call KillPlayerAllZoneIndicator(Sentinels[2])
-	call KillPlayerAllZoneIndicator(Sentinels[3])
-	call KillPlayerAllZoneIndicator(Sentinels[4])
-	call KillPlayerAllZoneIndicator(Sentinels[5])
-	call KillPlayerAllZoneIndicator(Scourges[1])
-	call KillPlayerAllZoneIndicator(Scourges[2])
-	call KillPlayerAllZoneIndicator(Scourges[3])
-	call KillPlayerAllZoneIndicator(Scourges[4])
-	call KillPlayerAllZoneIndicator(Scourges[5])
+	call KillPlayerAllZoneIndicator(SentinelPlayers[1])
+	call KillPlayerAllZoneIndicator(SentinelPlayers[2])
+	call KillPlayerAllZoneIndicator(SentinelPlayers[3])
+	call KillPlayerAllZoneIndicator(SentinelPlayers[4])
+	call KillPlayerAllZoneIndicator(SentinelPlayers[5])
+	call KillPlayerAllZoneIndicator(ScourgePlayers[1])
+	call KillPlayerAllZoneIndicator(ScourgePlayers[2])
+	call KillPlayerAllZoneIndicator(ScourgePlayers[3])
+	call KillPlayerAllZoneIndicator(ScourgePlayers[4])
+	call KillPlayerAllZoneIndicator(ScourgePlayers[5])
 	set x = 1
 	loop
 	exitwhen x > 5
-		if IsPlaying(Sentinels[x]) then
-			call YCE(Sentinels[x])
+		if IsPlayingPlayer(SentinelPlayers[x]) then
+			call YCE(SentinelPlayers[x])
 		endif
-		if IsPlaying(Scourges[x]) then
-			call YCE(Scourges[x])
+		if IsPlayingPlayer(ScourgePlayers[x]) then
+			call YCE(ScourgePlayers[x])
 		endif
 		set x = x + 1
 	endloop
@@ -36843,11 +36852,11 @@ function A8R takes nothing returns nothing
 	set k = 1
 	loop
 	exitwhen k > 5
-		if (IsPlaying(Sentinels[k])) then
-			set BAR[w]= Sentinels[k]
+		if (IsPlayingPlayer(SentinelPlayers[k])) then
+			set BAR[w]= SentinelPlayers[k]
 			set w = w + 1
 		else
-			set BNR[z]= Sentinels[k]
+			set BNR[z]= SentinelPlayers[k]
 			set z = z + 1
 		endif
 		set k = k + 1
@@ -36855,31 +36864,31 @@ function A8R takes nothing returns nothing
 	set k = 1
 	loop
 	exitwhen k > 5
-		if (IsPlaying(Scourges[k])) then
-			set BAR[w]= Scourges[k]
+		if (IsPlayingPlayer(ScourgePlayers[k])) then
+			set BAR[w]= ScourgePlayers[k]
 			set w = w + 1
 		else
-			set BNR[z]= Scourges[k]
+			set BNR[z]= ScourgePlayers[k]
 			set z = z + 1
 		endif
 		set k = k + 1
 	endloop
-	set Sentinels[1]= null
-	set Sentinels[2]= null
-	set Sentinels[3]= null
-	set Sentinels[4]= null
-	set Sentinels[5]= null
-	set Scourges[1]= null
-	set Scourges[2]= null
-	set Scourges[3]= null
-	set Scourges[4]= null
-	set Scourges[5]= null
+	set SentinelPlayers[1]= null
+	set SentinelPlayers[2]= null
+	set SentinelPlayers[3]= null
+	set SentinelPlayers[4]= null
+	set SentinelPlayers[5]= null
+	set ScourgePlayers[1]= null
+	set ScourgePlayers[2]= null
+	set ScourgePlayers[3]= null
+	set ScourgePlayers[4]= null
+	set ScourgePlayers[5]= null
 	set k = 1
 	loop
 	exitwhen k >(WXV / 2)
 		set o = GetRandomInt(1, WXV)
 		if (BAR[o]!= null) then
-			set Sentinels[k]= BAR[o]
+			set SentinelPlayers[k]= BAR[o]
 			set BAR[o]= null
 			set k = k + 1
 		endif
@@ -36890,7 +36899,7 @@ function A8R takes nothing returns nothing
 	exitwhen k > WXV -x + 1
 		set o = GetRandomInt(1, WXV)
 		if (BAR[o]!= null) then
-			set Scourges[k]= BAR[o]
+			set ScourgePlayers[k]= BAR[o]
 			set BAR[o]= null
 			set k = k + 1
 		endif
@@ -36900,14 +36909,14 @@ function A8R takes nothing returns nothing
 	set y = 1
 	loop
 	exitwhen k > 5
-		set Sentinels[k]= BNR[y]
+		set SentinelPlayers[k]= BNR[y]
 		set y = y + 1
 		set k = k + 1
 	endloop
 	set k = z
 	loop
 	exitwhen k > 5
-		set Scourges[k]= BNR[y]
+		set ScourgePlayers[k]= BNR[y]
 		set y = y + 1
 		set k = k + 1
 	endloop
@@ -36916,27 +36925,27 @@ function A8R takes nothing returns nothing
 	exitwhen k > 5
 		set k = k + 1
 	endloop
-	call SetPlayerTeam(Sentinels[0], 0)
-	call SetPlayerTeam(Sentinels[1], 0)
-	call SetPlayerTeam(Sentinels[2], 0)
-	call SetPlayerTeam(Sentinels[3], 0)
-	call SetPlayerTeam(Sentinels[4], 0)
-	call SetPlayerTeam(Sentinels[5], 0)
-	call SetPlayerTeam(Scourges[0], 1)
-	call SetPlayerTeam(Scourges[1], 1)
-	call SetPlayerTeam(Scourges[2], 1)
-	call SetPlayerTeam(Scourges[3], 1)
-	call SetPlayerTeam(Scourges[4], 1)
-	call SetPlayerTeam(Scourges[5], 1)
+	call SetPlayerTeam(SentinelPlayers[0], 0)
+	call SetPlayerTeam(SentinelPlayers[1], 0)
+	call SetPlayerTeam(SentinelPlayers[2], 0)
+	call SetPlayerTeam(SentinelPlayers[3], 0)
+	call SetPlayerTeam(SentinelPlayers[4], 0)
+	call SetPlayerTeam(SentinelPlayers[5], 0)
+	call SetPlayerTeam(ScourgePlayers[0], 1)
+	call SetPlayerTeam(ScourgePlayers[1], 1)
+	call SetPlayerTeam(ScourgePlayers[2], 1)
+	call SetPlayerTeam(ScourgePlayers[3], 1)
+	call SetPlayerTeam(ScourgePlayers[4], 1)
+	call SetPlayerTeam(ScourgePlayers[5], 1)
 	set i = 1
 	loop
-		set ZL[i]= GetPlayerId(Sentinels[i])
+		set ZL[i]= GetPlayerId(SentinelPlayers[i])
 		set i = i + 1
 	exitwhen i > 5
 	endloop
 	set i = 7
 	loop
-		set ZL[i]= GetPlayerId(Scourges[i -6])
+		set ZL[i]= GetPlayerId(ScourgePlayers[i -6])
 		set i = i + 1
 	exitwhen i > 11
 	endloop
@@ -36947,10 +36956,10 @@ function A8R takes nothing returns nothing
 	exitwhen x > 5
 		loop
 		exitwhen y > 5
-			call SetPlayerAllianceStateBJ(Sentinels[x], Sentinels[y], 3)
-			call SetPlayerAllianceStateBJ(Scourges[x], Scourges[y], 3)
-			call SetPlayerAllianceStateBJ(Sentinels[x], Scourges[y], 0)
-			call SetPlayerAllianceStateBJ(Scourges[x], Sentinels[y], 0)
+			call SetPlayerAllianceStateBJ(SentinelPlayers[x], SentinelPlayers[y], 3)
+			call SetPlayerAllianceStateBJ(ScourgePlayers[x], ScourgePlayers[y], 3)
+			call SetPlayerAllianceStateBJ(SentinelPlayers[x], ScourgePlayers[y], 0)
+			call SetPlayerAllianceStateBJ(ScourgePlayers[x], SentinelPlayers[y], 0)
 			set y = y + 1
 		endloop
 		set y = 0
@@ -36958,18 +36967,18 @@ function A8R takes nothing returns nothing
 	endloop
 	call ForceClear(RW)
 	call ForceClear(IW)
-	call ForceAddPlayer(RW, Sentinels[0])
-	call ForceAddPlayer(RW, Sentinels[1])
-	call ForceAddPlayer(RW, Sentinels[2])
-	call ForceAddPlayer(RW, Sentinels[3])
-	call ForceAddPlayer(RW, Sentinels[4])
-	call ForceAddPlayer(RW, Sentinels[5])
-	call ForceAddPlayer(IW, Scourges[0])
-	call ForceAddPlayer(IW, Scourges[1])
-	call ForceAddPlayer(IW, Scourges[2])
-	call ForceAddPlayer(IW, Scourges[3])
-	call ForceAddPlayer(IW, Scourges[4])
-	call ForceAddPlayer(IW, Scourges[5])
+	call ForceAddPlayer(RW, SentinelPlayers[0])
+	call ForceAddPlayer(RW, SentinelPlayers[1])
+	call ForceAddPlayer(RW, SentinelPlayers[2])
+	call ForceAddPlayer(RW, SentinelPlayers[3])
+	call ForceAddPlayer(RW, SentinelPlayers[4])
+	call ForceAddPlayer(RW, SentinelPlayers[5])
+	call ForceAddPlayer(IW, ScourgePlayers[0])
+	call ForceAddPlayer(IW, ScourgePlayers[1])
+	call ForceAddPlayer(IW, ScourgePlayers[2])
+	call ForceAddPlayer(IW, ScourgePlayers[3])
+	call ForceAddPlayer(IW, ScourgePlayers[4])
+	call ForceAddPlayer(IW, ScourgePlayers[5])
 	call ExecuteFunc("K1X")
 	call JIO()
 	set BRR = XKX(RW)
@@ -36977,24 +36986,24 @@ function A8R takes nothing returns nothing
 	set k = 1
 	loop
 	exitwhen k > 5
-		if (IsPlaying(Sentinels[k])) then
-			call SetPlayerStateBJ(Sentinels[k], PLAYER_STATE_RESOURCE_GOLD,(4375 / BRR))
-			call SetPlayerStateBJ(Sentinels[k], PLAYER_STATE_RESOURCE_LUMBER, 0)
+		if (IsPlayingPlayer(SentinelPlayers[k])) then
+			call SetPlayerStateBJ(SentinelPlayers[k], PLAYER_STATE_RESOURCE_GOLD,(4375 / BRR))
+			call SetPlayerStateBJ(SentinelPlayers[k], PLAYER_STATE_RESOURCE_LUMBER, 0)
 		endif
-		if (IsPlaying(Scourges[k])) then
-			call SetPlayerStateBJ(Scourges[k], PLAYER_STATE_RESOURCE_GOLD,(4375 / BIR))
-			call SetPlayerStateBJ(Scourges[k], PLAYER_STATE_RESOURCE_LUMBER, 0)
+		if (IsPlayingPlayer(ScourgePlayers[k])) then
+			call SetPlayerStateBJ(ScourgePlayers[k], PLAYER_STATE_RESOURCE_GOLD,(4375 / BIR))
+			call SetPlayerStateBJ(ScourgePlayers[k], PLAYER_STATE_RESOURCE_LUMBER, 0)
 		endif
 		set k = k + 1
 	endloop
-	if MW then
+	if IsGameHaveObserver then
 		set x = 0
 		loop
 		exitwhen x > 5
-			call SetPlayerAlliance(Player(0), Sentinels[x], ALLIANCE_PASSIVE, true)
-			call SetPlayerAlliance(Player(0), Sentinels[x], ALLIANCE_SHARED_SPELLS, true)
-			call SetPlayerAlliance(Player(0), Scourges[x], ALLIANCE_PASSIVE, false)
-			call SetPlayerAlliance(Player(0), Scourges[x], ALLIANCE_SHARED_SPELLS, false)
+			call SetPlayerAlliance(Player(0), SentinelPlayers[x], ALLIANCE_PASSIVE, true)
+			call SetPlayerAlliance(Player(0), SentinelPlayers[x], ALLIANCE_SHARED_SPELLS, true)
+			call SetPlayerAlliance(Player(0), ScourgePlayers[x], ALLIANCE_PASSIVE, false)
+			call SetPlayerAlliance(Player(0), ScourgePlayers[x], ALLIANCE_SHARED_SPELLS, false)
 			set x = x + 1
 		endloop
 	endif
@@ -37035,13 +37044,13 @@ function BBR takes nothing returns boolean
 	local integer x = 1
 	loop
 	exitwhen x > 5
-		set p = Sentinels[x]
-		if IsPlaying(p) and p != HostPlayer then
+		set p = SentinelPlayers[x]
+		if IsPlayingPlayer(p) and p != HostPlayer then
 			set Player__Hero[GetPlayerId(p)]= CreateUnit(p, VXR, GetRectCenterX(gg_rct_SentinelRevivalPoint), GetRectCenterY(gg_rct_SentinelRevivalPoint), 270)
 			set PlayerHeroTypeId[GetPlayerId(p)]= VXR
 		endif
-		set p = Scourges[x]
-		if IsPlaying(p) and p != HostPlayer then
+		set p = ScourgePlayers[x]
+		if IsPlayingPlayer(p) and p != HostPlayer then
 			set Player__Hero[GetPlayerId(p)]= CreateUnit(p, VXR, GetRectCenterX(gg_rct_ScourgeRevivalPoint), GetRectCenterY(gg_rct_ScourgeRevivalPoint), 270)
 			set PlayerHeroTypeId[GetPlayerId(p)]= VXR
 		endif
@@ -37083,15 +37092,15 @@ function NVR takes nothing returns nothing
 	set Mode__SameHero = true
 	loop
 	exitwhen x > 5
-		if (Sentinels[x]!= HostPlayer ) then
-			call XUX(Sentinels[x])
-			set FT[GetPlayerId(Sentinels[x])]= true
-			set KS[GetPlayerId(Sentinels[x])]= true
+		if (SentinelPlayers[x]!= HostPlayer ) then
+			call XUX(SentinelPlayers[x])
+			set FT[GetPlayerId(SentinelPlayers[x])]= true
+			set KS[GetPlayerId(SentinelPlayers[x])]= true
 		endif
-		if (Scourges[x]!= HostPlayer ) then
-			call XUX(Scourges[x])
-			set FT[GetPlayerId(Scourges[x])]= true
-			set KS[GetPlayerId(Scourges[x])]= true
+		if (ScourgePlayers[x]!= HostPlayer ) then
+			call XUX(ScourgePlayers[x])
+			set FT[GetPlayerId(ScourgePlayers[x])]= true
+			set KS[GetPlayerId(ScourgePlayers[x])]= true
 		endif
 		set x = x + 1
 	endloop
@@ -37179,20 +37188,20 @@ endfunction
 function NGR takes nothing returns nothing
 	set Mode__EasyMode = true
 
-	call SetPlayerTechResearched(Sentinels[0], 'R004', 1)
-	call SetPlayerTechResearched(Scourges[0], 'R004', 1)
+	call SetPlayerTechResearched(SentinelPlayers[0], 'R004', 1)
+	call SetPlayerTechResearched(ScourgePlayers[0], 'R004', 1)
 
 	//设置经验获取不再有用，因为是脚本给予的经验值
-	//call SetPlayerHandicapXP(Sentinels[1], 1.5)
-	//call SetPlayerHandicapXP(Sentinels[2], 1.5)
-	//call SetPlayerHandicapXP(Sentinels[3], 1.5)
-	//call SetPlayerHandicapXP(Sentinels[4], 1.5)
-	//call SetPlayerHandicapXP(Sentinels[5], 1.5)
-	//call SetPlayerHandicapXP(Scourges[1], 1.5)
-	//call SetPlayerHandicapXP(Scourges[2], 1.5)
-	//call SetPlayerHandicapXP(Scourges[3], 1.5)
-	//call SetPlayerHandicapXP(Scourges[4], 1.5)
-	//call SetPlayerHandicapXP(Scourges[5], 1.5)
+	//call SetPlayerHandicapXP(SentinelPlayers[1], 1.5)
+	//call SetPlayerHandicapXP(SentinelPlayers[2], 1.5)
+	//call SetPlayerHandicapXP(SentinelPlayers[3], 1.5)
+	//call SetPlayerHandicapXP(SentinelPlayers[4], 1.5)
+	//call SetPlayerHandicapXP(SentinelPlayers[5], 1.5)
+	//call SetPlayerHandicapXP(ScourgePlayers[1], 1.5)
+	//call SetPlayerHandicapXP(ScourgePlayers[2], 1.5)
+	//call SetPlayerHandicapXP(ScourgePlayers[3], 1.5)
+	//call SetPlayerHandicapXP(ScourgePlayers[4], 1.5)
+	//call SetPlayerHandicapXP(ScourgePlayers[5], 1.5)
 endfunction
 function NDR takes nothing returns nothing
 	set JT = true
@@ -37252,16 +37261,16 @@ function BHR takes nothing returns nothing
 	local integer pid
 	loop
 	exitwhen i > 5
-		set pid = GetPlayerId(Sentinels[i])
-		call SetPlayerName(Sentinels[i], PlayersName[pid]+ " (" + I2S(RQ[pid])+ "/" + I2S(IQ[pid])+ " | " + I2S(AQ[pid])+ "-" + I2S(NQ[pid])+ ")")
-		set pid = GetPlayerId(Scourges[i])
-		call SetPlayerName(Scourges[i], PlayersName[pid]+ " (" + I2S(RQ[pid])+ "/" + I2S(IQ[pid])+ " | " + I2S(AQ[pid])+ "-" + I2S(NQ[pid])+ ")")
+		set pid = GetPlayerId(SentinelPlayers[i])
+		call SetPlayerName(SentinelPlayers[i], PlayersName[pid]+ " (" + I2S(PlayerKillHerosCount[pid])+ "/" + I2S(PlayerHeroDeathCount[pid])+ " | " + I2S(PlayerCreepsLastHitCount[pid])+ "-" + I2S(PlayerCreepsDenyCount[pid])+ ")")
+		set pid = GetPlayerId(ScourgePlayers[i])
+		call SetPlayerName(ScourgePlayers[i], PlayersName[pid]+ " (" + I2S(PlayerKillHerosCount[pid])+ "/" + I2S(PlayerHeroDeathCount[pid])+ " | " + I2S(PlayerCreepsLastHitCount[pid])+ "-" + I2S(PlayerCreepsDenyCount[pid])+ ")")
 		set i = i + 1
 	endloop
 endfunction
 function BJR takes nothing returns boolean
 	if GWV == false then
-		if LocalPlayer== VKV or LocalPlayer== VLV then
+		if LocalPlayer== ObserverPlayer1 or LocalPlayer== ObserverPlayer2 then
 			call BHR()
 		endif
 	endif
@@ -37274,7 +37283,7 @@ function NTR takes nothing returns nothing
 	set GYV = true
 endfunction
 function BKR takes nothing returns boolean
-	if LocalPlayer== VKV or LocalPlayer== VLV then
+	if LocalPlayer== ObserverPlayer1 or LocalPlayer== ObserverPlayer2 then
 		if GetTriggerEvalCount(GetTriggeringTrigger()) == 1 then
 			call CameraSetupSetDestPosition(G_V, 0, 0, .0)
 		else
@@ -37308,15 +37317,15 @@ function BLR takes nothing returns nothing
 	local player p
 	loop
 	exitwhen i > 5
-		set p = Sentinels[i]
+		set p = SentinelPlayers[i]
 		set id = I2S(GetPlayerId(p))
 		call StoreInteger(DrCache, id, "id", i)
-		set p = Scourges[i]
+		set p = ScourgePlayers[i]
 		set id = I2S(GetPlayerId(p))
 		call StoreInteger(DrCache, id, "id", i + 5)
 		if LocalPlayer == HostPlayer then
-			call SyncStoredInteger(DrCache, I2S(GetPlayerId(Sentinels[i])), "id")
-			call SyncStoredInteger(DrCache, I2S(GetPlayerId(Scourges[i])), "id")
+			call SyncStoredInteger(DrCache, I2S(GetPlayerId(SentinelPlayers[i])), "id")
+			call SyncStoredInteger(DrCache, I2S(GetPlayerId(ScourgePlayers[i])), "id")
 		endif
 		set i = i + 1
 	endloop
@@ -38001,9 +38010,9 @@ function C0R takes nothing returns nothing
 	local unit array C6R
 	loop
 		if C1R then
-			set pid = GetPlayerId(Scourges[i])
+			set pid = GetPlayerId(ScourgePlayers[i])
 		else
-			set pid = GetPlayerId(Sentinels[i])
+			set pid = GetPlayerId(SentinelPlayers[i])
 		endif
 		set u = Player__Hero[pid]
 		if u != null then //UnitAlive(u) and
@@ -38070,7 +38079,7 @@ function FRE takes nothing returns nothing
 	call SaveInteger(HY, GetHandleId(t),-1, R2I(8 / .25)+ 1)
 	call SaveUnitHandle(HY, GetHandleId(t), 0, u)
 	call SaveInteger(HY, GetHandleId(t), 0, lv)
-	call SaveBoolean(HY, GetHandleId(t), 0, IsScourgesPlayer(GetOwningPlayer(u)))
+	call SaveBoolean(HY, GetHandleId(t), 0, IsScourgePlayer(GetOwningPlayer(u)))
 	set t = null
 	set u = null
 endfunction
@@ -38360,7 +38369,7 @@ function DDR takes nothing returns boolean
 		if O0X(WWE) == false then
 			call SetUnitFlyHeight(WWE, GetUnitDefaultFlyHeight(WWE), 0)
 		endif
-		if OY == false then
+		if IsGameEnd == false then
 			call PauseUnit(WWE, false)
 		endif
 		call SetUnitPathing(WWE, true)
@@ -39936,14 +39945,14 @@ function GBR takes nothing returns nothing
 	call SetTextTagFadepoint(tt, 2)
 	call SetTextTagLifespan(tt, 3)
 	call SetTextTagPermanent(tt, false)
-	set EUV[GetPlayerId(p)]= EUV[GetPlayerId(p)]+ goldBonus
+	set PlayersReliableGold[GetPlayerId(p)]= PlayersReliableGold[GetPlayerId(p)]+ goldBonus
 	set HHV[GetPlayerId(p)]= HHV[GetPlayerId(p)]+ goldBonus
 	loop
 	exitwhen i > 5
-		if IsSentinelsPlayer(p) then
-			set p2 = Sentinels[i]
+		if IsSentinelPlayer(p) then
+			set p2 = SentinelPlayers[i]
 		else
-			set p2 = Scourges[i]
+			set p2 = ScourgePlayers[i]
 		endif
 		if p2 != p then
 			set u = Player__Hero[GetPlayerId(p2)]
@@ -39965,7 +39974,7 @@ function GBR takes nothing returns nothing
 				call SetTextTagFadepoint(tt, 2)
 				call SetTextTagLifespan(tt, 3)
 				call SetTextTagPermanent(tt, false)
-				set EUV[GetPlayerId(p2)]= EUV[GetPlayerId(p2)]+ goldBonus
+				set PlayersReliableGold[GetPlayerId(p2)]= PlayersReliableGold[GetPlayerId(p2)]+ goldBonus
 				set HHV[GetPlayerId(p2)]= HHV[GetPlayerId(p2)]+ goldBonus
 			endif
 		endif
@@ -41048,7 +41057,7 @@ function YCV takes nothing returns nothing
 	local real y
 	local group g
 	local unit u2
-	if IsSentinelsPlayer(p) then
+	if IsSentinelPlayer(p) then
 		set x = GetRectCenterX(gg_rct_SentinelRevivalPoint)
 		set y = GetRectCenterY(gg_rct_SentinelRevivalPoint)
 	else
@@ -41212,20 +41221,20 @@ function JVR takes unit WLE returns nothing
 	endif
 	call DeallocateGroup(g)
 	set g = null
-	if IsSentinelsPlayer(GetOwningPlayer(H2R)) then
-		call UnitShareVision(WLE, Scourges[0], false)
-		call UnitShareVision(WLE, Scourges[1], false)
-		call UnitShareVision(WLE, Scourges[2], false)
-		call UnitShareVision(WLE, Scourges[3], false)
-		call UnitShareVision(WLE, Scourges[4], false)
-		call UnitShareVision(WLE, Scourges[5], false)
+	if IsSentinelPlayer(GetOwningPlayer(H2R)) then
+		call UnitShareVision(WLE, ScourgePlayers[0], false)
+		call UnitShareVision(WLE, ScourgePlayers[1], false)
+		call UnitShareVision(WLE, ScourgePlayers[2], false)
+		call UnitShareVision(WLE, ScourgePlayers[3], false)
+		call UnitShareVision(WLE, ScourgePlayers[4], false)
+		call UnitShareVision(WLE, ScourgePlayers[5], false)
 	else
-		call UnitShareVision(WLE, Sentinels[0], false)
-		call UnitShareVision(WLE, Sentinels[1], false)
-		call UnitShareVision(WLE, Sentinels[2], false)
-		call UnitShareVision(WLE, Sentinels[3], false)
-		call UnitShareVision(WLE, Sentinels[4], false)
-		call UnitShareVision(WLE, Sentinels[5], false)
+		call UnitShareVision(WLE, SentinelPlayers[0], false)
+		call UnitShareVision(WLE, SentinelPlayers[1], false)
+		call UnitShareVision(WLE, SentinelPlayers[2], false)
+		call UnitShareVision(WLE, SentinelPlayers[3], false)
+		call UnitShareVision(WLE, SentinelPlayers[4], false)
+		call UnitShareVision(WLE, SentinelPlayers[5], false)
 	endif
 	call I8X(WLE)
 	call UnitAddPermanentAbility(WLE,'A0KO')
@@ -41749,10 +41758,10 @@ function KAR takes nothing returns boolean
 	if ODX < 4 then
 		set L2O = 2
 	endif
-	if IsSentinelsPlayer(GetOwningPlayer(trigUnit)) then
-		set XSR = Scourges[0]
+	if IsSentinelPlayer(GetOwningPlayer(trigUnit)) then
+		set XSR = ScourgePlayers[0]
 	else
-		set XSR = Sentinels[0]
+		set XSR = SentinelPlayers[0]
 	endif
 	call FlushChildHashtable(HY, h)
 	call CleanCurrentTrigger(t)
@@ -42244,22 +42253,22 @@ function FBE takes nothing returns nothing
 	endif
 endfunction
 function K7R takes unit u returns nothing
-	local boolean K8R = IsSentinelsPlayer(GetOwningPlayer(u))
-	local boolean K9R = IsScourgesPlayer(GetOwningPlayer(u))
+	local boolean K8R = IsSentinelPlayer(GetOwningPlayer(u))
+	local boolean K9R = IsScourgePlayer(GetOwningPlayer(u))
 	if K9R then
-		call UnitShareVision(u, Scourges[0], false)
-		call UnitShareVision(u, Scourges[1], false)
-		call UnitShareVision(u, Scourges[2], false)
-		call UnitShareVision(u, Scourges[3], false)
-		call UnitShareVision(u, Scourges[4], false)
-		call UnitShareVision(u, Scourges[5], false)
+		call UnitShareVision(u, ScourgePlayers[0], false)
+		call UnitShareVision(u, ScourgePlayers[1], false)
+		call UnitShareVision(u, ScourgePlayers[2], false)
+		call UnitShareVision(u, ScourgePlayers[3], false)
+		call UnitShareVision(u, ScourgePlayers[4], false)
+		call UnitShareVision(u, ScourgePlayers[5], false)
 	elseif K8R then
-		call UnitShareVision(u, Sentinels[0], false)
-		call UnitShareVision(u, Sentinels[1], false)
-		call UnitShareVision(u, Sentinels[2], false)
-		call UnitShareVision(u, Sentinels[3], false)
-		call UnitShareVision(u, Sentinels[4], false)
-		call UnitShareVision(u, Sentinels[5], false)
+		call UnitShareVision(u, SentinelPlayers[0], false)
+		call UnitShareVision(u, SentinelPlayers[1], false)
+		call UnitShareVision(u, SentinelPlayers[2], false)
+		call UnitShareVision(u, SentinelPlayers[3], false)
+		call UnitShareVision(u, SentinelPlayers[4], false)
+		call UnitShareVision(u, SentinelPlayers[5], false)
 	endif
 endfunction
 function LVR takes nothing returns nothing
@@ -42355,7 +42364,7 @@ function GXE takes nothing returns nothing
 	local unit d = CreateUnit(GetOwningPlayer(WJE),'e00E', GetUnitX(WJE), GetUnitY(WJE), 0)
 	local unit u
 	local integer lv = GetUnitAbilityLevel(WJE,'A46J')
-	local boolean b = IsSentinelsPlayer(GetOwningPlayer(WJE))
+	local boolean b = IsSentinelPlayer(GetOwningPlayer(WJE))
 	local integer c
 	local integer GOX = 0
 	local integer LAR = GetUnitAbilityLevel(Player__Hero[GetPlayerId(GetTriggerPlayer())],'A0A8')
@@ -42374,7 +42383,7 @@ function GXE takes nothing returns nothing
 			if lv == 3 then
 				call LXR(d, u, dur, life)
 			endif
-		elseif IsUnitIllusion(u) or(GetOwningPlayer(u)!= Sentinels[0]and GetOwningPlayer(u)!= Scourges[0]and GetOwningPlayer(u)!= CreepsPlayer) then
+		elseif IsUnitIllusion(u) or(GetOwningPlayer(u)!= SentinelPlayers[0]and GetOwningPlayer(u)!= ScourgePlayers[0]and GetOwningPlayer(u)!= CreepsPlayer) then
 			if lv > 1 then
 				call LXR(d, u, dur, life)
 			endif
@@ -45517,7 +45526,7 @@ function KLE takes nothing returns nothing
 	local unit trigUnit = GetTriggerUnit()
 	local unit WWE = GetSpellTargetUnit()
 	local integer UHE = GetUnitLevel(WWE)
-	if GetOwningPlayer(WWE)!= Sentinels[0]and GetOwningPlayer(WWE)!= Scourges[0]and LoadInteger(M, GetUnitTypeId(WWE), HC)> 88 then
+	if GetOwningPlayer(WWE)!= SentinelPlayers[0]and GetOwningPlayer(WWE)!= ScourgePlayers[0]and LoadInteger(M, GetUnitTypeId(WWE), HC)> 88 then
 		call EXStopUnit(trigUnit)
 		call InterfaceErrorForPlayer(GetOwningPlayer(trigUnit), GetObjectName('n0CX'))
 	endif
@@ -45651,7 +45660,7 @@ function Z5V takes nothing returns nothing
 	local unit KBX = CreateUnit(GetOwningPlayer(WUE),'e00E', x, y, 0)
 	local unit bh = CreateUnit(GetOwningPlayer(WUE),'u004', x, y, 0)
 	call SetUnitAbilityLevel(bh,'A0C0', GetUnitAbilityLevel(WUE,'A1BX')+ GetUnitAbilityLevel(WUE,'A30L'))
-	if IsScourgesPlayer(GetOwningPlayer(WUE)) then
+	if IsScourgePlayer(GetOwningPlayer(WUE)) then
 		call UnitAddPermanentAbility(KBX,'A0X4')
 	else
 		call UnitAddPermanentAbility(KBX,'A0X3')
@@ -49000,7 +49009,7 @@ function VAI takes nothing returns nothing
 	set K4X = null
 endfunction
 function VDI takes nothing returns boolean
-	return not UM and GetUnitTypeId(GetTriggerUnit())=='O00P' and IsUnitIllusion(GetTriggerUnit()) == false
+	return not IsPickingHero and GetUnitTypeId(GetTriggerUnit())=='O00P' and IsUnitIllusion(GetTriggerUnit()) == false
 endfunction
 function VFI takes nothing returns nothing
 	local trigger t
@@ -50212,7 +50221,7 @@ endfunction
 function E_I takes nothing returns boolean
 	local unit f = GetFilterUnit()
 	local unit u = GetTriggerUnit()
-	if IsUnitAlly(f, GetOwningPlayer(u)) and UnitIsDead(f) == false and(IsUnitType(f, UNIT_TYPE_HERO) or((GetOwningPlayer(f) == Sentinels[0]or GetOwningPlayer(f) == Scourges[0])) or(GetOwningPlayer(f) == GetOwningPlayer(u) and R_X(f) == false)) then
+	if IsUnitAlly(f, GetOwningPlayer(u)) and UnitIsDead(f) == false and(IsUnitType(f, UNIT_TYPE_HERO) or((GetOwningPlayer(f) == SentinelPlayers[0]or GetOwningPlayer(f) == ScourgePlayers[0])) or(GetOwningPlayer(f) == GetOwningPlayer(u) and R_X(f) == false)) then
 		set f = null
 		set u = null
 		return true
@@ -52147,7 +52156,7 @@ function ESE takes nothing returns nothing
 	call SetUnitVertexColor(KBX, 255, 255, 255, 150)
 	call UnitApplyTimedLife(KBX,'BTLF', 6)
 	call SetUnitScale(KBX, REI, REI, REI)
-	if IsScourgesPlayer(GetOwningPlayer(trigUnit)) then
+	if IsScourgePlayer(GetOwningPlayer(trigUnit)) then
 		call UnitAddPermanentAbility(KBX,'A019')
 		call SetUnitAbilityLevel(KBX,'A019', ODX)
 	else
@@ -52966,7 +52975,7 @@ function R9I takes unit SZX returns nothing
 endfunction
 function IVI takes nothing returns nothing
 	local location l
-	if IsSentinelsPlayer(GetOwningPlayer(GetTriggerUnit())) then
+	if IsSentinelPlayer(GetOwningPlayer(GetTriggerUnit())) then
 		set l = GetRectCenter(gg_rct_SentinelRevivalPoint)
 	else
 		set l = GetRectCenter(gg_rct_ScourgeRevivalPoint)
@@ -52984,7 +52993,7 @@ function IEI takes nothing returns nothing
 	local integer x
 	local integer y
 	if IXI == null then
-		if IsSentinelsPlayer(GetOwningPlayer(RWI)) then
+		if IsSentinelPlayer(GetOwningPlayer(RWI)) then
 			set x =-6390
 			set y =-5615
 		else
@@ -56890,19 +56899,19 @@ function D4I takes unit u returns nothing
 	local integer k = 5
 	local boolean b = false
 	local integer j = 0
-	if IsScourgesPlayer(p) then
+	if IsScourgePlayer(p) then
 		set b = true
 	endif
 	loop
 		if b then
-			if Player__Hero[GetPlayerId(Scourges[i])]!= null and Player__Hero[GetPlayerId(Scourges[i])]!= u then
+			if Player__Hero[GetPlayerId(ScourgePlayers[i])]!= null and Player__Hero[GetPlayerId(ScourgePlayers[i])]!= u then
 				set j = j + 1
-				call SaveUnitHandle(HY, h, j, Player__Hero[GetPlayerId(Scourges[i])])
+				call SaveUnitHandle(HY, h, j, Player__Hero[GetPlayerId(ScourgePlayers[i])])
 			endif
 		else
-			if Player__Hero[GetPlayerId(Sentinels[i])]!= null and Player__Hero[GetPlayerId(Sentinels[i])]!= u then
+			if Player__Hero[GetPlayerId(SentinelPlayers[i])]!= null and Player__Hero[GetPlayerId(SentinelPlayers[i])]!= u then
 				set j = j + 1
-				call SaveUnitHandle(HY, h, j, Player__Hero[GetPlayerId(Sentinels[i])])
+				call SaveUnitHandle(HY, h, j, Player__Hero[GetPlayerId(SentinelPlayers[i])])
 			endif
 		endif
 		set i = i + 1
@@ -58051,7 +58060,7 @@ function GCI takes nothing returns boolean
 	set WUE = LoadUnitHandle(HY, h, 2)
 	set x = GetWidgetX(WUE)
 	set y = GetWidgetY(WUE)
-	if MW then
+	if IsGameHaveObserver then
 		call GAI(WUE)
 	endif
 	if GetDistanceBetween(x, y, LoadReal(HY, h, 23), LoadReal(HY, h, 24))> 125 then
@@ -58488,14 +58497,14 @@ function G8I takes nothing returns boolean
 	local integer HRI = 5
 	local integer i
 	local unit u
-	local boolean b = IsSentinelsPlayer(GetOwningPlayer(WUE))
+	local boolean b = IsSentinelPlayer(GetOwningPlayer(WUE))
 	local boolean br = GetUnitAbilityLevel(WUE,'A36D') == 1
 	set i = HOI
 	loop
 		if b then
-			set u = Player__Hero[GetPlayerId(Scourges[i])]
+			set u = Player__Hero[GetPlayerId(ScourgePlayers[i])]
 		else
-			set u = Player__Hero[GetPlayerId(Sentinels[i])]
+			set u = Player__Hero[GetPlayerId(SentinelPlayers[i])]
 		endif
 		if u != null then
 			set LRV = WUE
@@ -60193,7 +60202,7 @@ function KSI takes nothing returns boolean
 		if GetTriggerUnit() == WWE then
 			call KillUnit(KTI)
 		endif
-	elseif OY then
+	elseif IsGameEnd then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 		call PauseUnit(KTI, true)
@@ -60272,10 +60281,10 @@ function KZI takes nothing returns boolean
 	local integer ODX =(LoadInteger(HY, h, 5))
 	local group g
 	local player XSR
-	if IsSentinelsPlayer(GetOwningPlayer(WUE)) then
-		set XSR = Scourges[0]
+	if IsSentinelPlayer(GetOwningPlayer(WUE)) then
+		set XSR = ScourgePlayers[0]
 	else
-		set XSR = Sentinels[0]
+		set XSR = SentinelPlayers[0]
 	endif
 	if GetTriggerEventId() == EVENT_UNIT_DEATH then
 		if (LoadBoolean(HY, h, 265)) then
@@ -60301,7 +60310,7 @@ function KZI takes nothing returns boolean
 		set LWV = GetOwningPlayer(WUE)
 		set LYV = ODX
 		call GroupEnumUnitsInRange(g, GetUnitX(WUE), GetUnitY(WUE), 25 + 400 + 200* ODX, Condition(function DGX))
-		if OY == false then
+		if IsGameEnd == false then
 			call ForGroup(g, function KUI)
 		endif
 		call DeallocateGroup(g)
@@ -60813,7 +60822,7 @@ function LQI takes nothing returns nothing
 	endif
 	call RemoveSavedHandle(VV,'CHRN', 0)
 	if c > SYV then
-		if OY == false then
+		if IsGameEnd == false then
 			call ForGroup(g, function LPI)
 		endif
 		call SetUnitImitateMoveSpeed(trigUnit, 0, 0)
@@ -60997,7 +61006,7 @@ function L1I takes unit WUE returns nothing
 	set t = null
 endfunction
 function L2I takes nothing returns boolean
-	if not UM then
+	if not IsPickingHero then
 		if (IsPlayerHasSkill(GetOwningPlayer(GetTriggerUnit()), 316) or IsPlayerHasSkill(GetOwningPlayer(GetTriggerUnit()), 212)) and IsUnitIllusion(GetTriggerUnit()) == false then
 			set U2 = GetTriggerUnit()
 		elseif IsPlayerHasSkill(GetOwningPlayer(GetTriggerUnit()), 356) and IsUnitIllusion(GetTriggerUnit()) == false and GetUnitTypeId(GetTriggerUnit())!='H00J' then
@@ -61702,7 +61711,7 @@ function O4E takes nothing returns nothing
 		call M2I(GetOwningPlayer(WUE))
 	endif
 	set d = CreateUnit(GetOwningPlayer(WUE),'fRG0'+ ODX, GetUnitX(WUE), GetUnitY(WUE), GetUnitFacing(WUE))
-	call SetUnitColor(d, GetPlayerColor(Sentinels[0]))
+	call SetUnitColor(d, GetPlayerColor(SentinelPlayers[0]))
 	call AddSpecialEffectTarget("Abilities\\Spells\\Orc\\FeralSpirit\\feralspiritdone.mdl", d, "chest")
 	call UnitApplyTimedLife(d,'BTLF', 35)
 	call SetUnitAbilityLevel(d,'A0VV', ODX)
@@ -61715,7 +61724,7 @@ function O4E takes nothing returns nothing
 	call W1E(d)
 	if ODX > 2 then
 		set d = CreateUnit(GetOwningPlayer(WUE),'fRG0'+ ODX, GetUnitX(WUE), GetUnitY(WUE), GetUnitFacing(WUE))
-		call SetUnitColor(d, GetPlayerColor(Sentinels[0]))
+		call SetUnitColor(d, GetPlayerColor(SentinelPlayers[0]))
 		call AddSpecialEffectTarget("Abilities\\Spells\\Orc\\FeralSpirit\\feralspiritdone.mdl", d, "chest")
 		call UnitApplyTimedLife(d,'BTLF', 35)
 		call SetUnitAbilityLevel(d,'A0VV', ODX)
@@ -64702,10 +64711,10 @@ function IVE takes nothing returns nothing
 	endif
 	loop
 	exitwhen i > 5
-		if IsSentinelsPlayer(GetOwningPlayer(trigUnit)) then
-			set p = Sentinels[i]
+		if IsSentinelPlayer(GetOwningPlayer(trigUnit)) then
+			set p = SentinelPlayers[i]
 		else
-			set p = Scourges[i]
+			set p = ScourgePlayers[i]
 		endif
 		set KBX = CreateUnit(p,'e01V', 0, 0, 0)
 		call UnitAddPermanentAbility(KBX, TXE)
@@ -66912,7 +66921,7 @@ endfunction
 function YSV takes nothing returns nothing
 	local unit u = GetTriggerUnit()
 	local real SYV = 50.
-	local unit d = CreateUnit(Sentinels[1],'e00E', 0, 0, 0)
+	local unit d = CreateUnit(SentinelPlayers[1],'e00E', 0, 0, 0)
 	call YHR(SYV, false)
 	call UnitAddAbility(d,'A1T6')
 	call IssueImmediateOrderById(d, 852621)
@@ -67694,18 +67703,18 @@ function W2X takes nothing returns nothing
 	local integer i = 1
 	local integer k = 5
 	local integer pid
-	if IsSentinelsPlayer(GetOwningPlayer(SZX)) then
+	if IsSentinelPlayer(GetOwningPlayer(SZX)) then
 		loop
-			set pid = GetPlayerId(Scourges[i])
+			set pid = GetPlayerId(ScourgePlayers[i])
 			if UnitIsDead(Player__Hero[pid]) == false and(GetPlayerId(GetOwningPlayer(SYX)) == pid or WTE(SZX, Player__Hero[pid])< 725) then
 				set SI[pid]= SI[pid]+ 1
 			endif
 			set i = i + 1
 		exitwhen i > k
 		endloop
-	elseif IsScourgesPlayer(GetOwningPlayer(SZX)) then
+	elseif IsScourgePlayer(GetOwningPlayer(SZX)) then
 		loop
-			set pid = GetPlayerId(Sentinels[i])
+			set pid = GetPlayerId(SentinelPlayers[i])
 			if UnitIsDead(Player__Hero[pid]) == false and(GetPlayerId(GetOwningPlayer(SYX)) == pid or WTE(SZX, Player__Hero[pid])< 725) then
 				set SI[pid]= SI[pid]+ 1
 			endif
@@ -68867,10 +68876,10 @@ function XNA takes nothing returns nothing
 	if GetUnitAbilityLevel(trigUnit,'Aloc') > 0 then
 		set trigUnit = Player__Hero[GetPlayerId(GetOwningPlayer(trigUnit))]
 	endif
-	if IsSentinelsPlayer(p) then
-		set MMV[GetPlayerId(p)]= CreateUnit(Scourges[0],'e00E', GetUnitX(trigUnit), GetUnitY(trigUnit), 0)
+	if IsSentinelPlayer(p) then
+		set MMV[GetPlayerId(p)]= CreateUnit(ScourgePlayers[0],'e00E', GetUnitX(trigUnit), GetUnitY(trigUnit), 0)
 	else
-		set MMV[GetPlayerId(p)]= CreateUnit(Sentinels[0],'e00E', GetUnitX(trigUnit), GetUnitY(trigUnit), 0)
+		set MMV[GetPlayerId(p)]= CreateUnit(SentinelPlayers[0],'e00E', GetUnitX(trigUnit), GetUnitY(trigUnit), 0)
 	endif
 	call UnitAddPermanentAbility(MMV[GetPlayerId(p)],'A17B')
 	call SaveUnitHandle(HY, h, 14, trigUnit)
@@ -74077,10 +74086,10 @@ function CCA takes nothing returns boolean
 		set WUE = null
 		return false
 	endif
-	if IsSentinelsPlayer(GetOwningPlayer(WUE)) then
-		set p = Scourges[1]
+	if IsSentinelPlayer(GetOwningPlayer(WUE)) then
+		set p = ScourgePlayers[1]
 	else
-		set p = Sentinels[1]
+		set p = SentinelPlayers[1]
 	endif
 	if GetTriggerEventId() == EVENT_UNIT_DAMAGED and GetOwningPlayer(GetEventDamageSource()) == CreepsPlayer then
 		if GetUnitAbilityLevel(WUE,'A1IE')> 0 then
@@ -77006,7 +77015,7 @@ function DXE takes nothing returns nothing
 	call SetSoundVolume(BF, 200)
 	call StartSound(BF)
 	call SetSoundPosition(BF, W_E, W0E, 100)
-	if IsScourgesPlayer(GetOwningPlayer(WUE)) then
+	if IsScourgePlayer(GetOwningPlayer(WUE)) then
 		call UnitAddPermanentAbility(KBX,'A1U5')
 		if GetSpellAbilityId()=='A30N' then
 			call SetUnitAbilityLevel(KBX,'A1U5', 2)
@@ -77768,7 +77777,7 @@ function HBA takes nothing returns boolean
 				call PanCameraToTimedForPlayer(GetOwningPlayer(WUE), W_E, W0E, 0)
 				call DestroyEffect(AddSpecialEffect(s, GetUnitX(WUE), GetUnitY(WUE)))
 			endif
-			if WWE != null and UnitIsDead(WWE) == false and GetOwningPlayer(WWE)!= Sentinels[0]and GetOwningPlayer(WWE)!= Scourges[0]and(LoadBoolean(HY, GetHandleId(GetOwningPlayer(WWE)), 139) == false) then
+			if WWE != null and UnitIsDead(WWE) == false and GetOwningPlayer(WWE)!= SentinelPlayers[0]and GetOwningPlayer(WWE)!= ScourgePlayers[0]and(LoadBoolean(HY, GetHandleId(GetOwningPlayer(WWE)), 139) == false) then
 				call DestroyEffect(AddSpecialEffect(s, GetUnitX(WWE), GetUnitY(WWE)))
 				call EPX(WWE, 4402, 1)
 				call SetUnitPosition(WWE, W_E, W0E)
@@ -77784,7 +77793,7 @@ function HBA takes nothing returns boolean
 				call PanCameraToTimedForPlayer(GetOwningPlayer(WUE), WYE, WZE, 0)
 				call DestroyEffect(AddSpecialEffect(s, GetUnitX(WUE), GetUnitY(WUE)))
 			endif
-			if WWE != null and UnitIsDead(WWE) == false and GetOwningPlayer(WWE)!= Sentinels[0]and GetOwningPlayer(WWE)!= Scourges[0]and(LoadBoolean(HY, GetHandleId(GetOwningPlayer(WWE)), 139) == false) then
+			if WWE != null and UnitIsDead(WWE) == false and GetOwningPlayer(WWE)!= SentinelPlayers[0]and GetOwningPlayer(WWE)!= ScourgePlayers[0]and(LoadBoolean(HY, GetHandleId(GetOwningPlayer(WWE)), 139) == false) then
 				call DestroyEffect(AddSpecialEffect(s, GetUnitX(WWE), GetUnitY(WWE)))
 				call EPX(WWE, 4402, 1)
 				call SetUnitPosition(WWE, WYE, WZE)
@@ -77861,7 +77870,7 @@ function DNE takes nothing returns nothing
 	local integer ODX = GetUnitAbilityLevel(WUE,'A1TB')+ GetUnitAbilityLevel(WUE,'A3FQ')
 	//local boolean b = false
 	call DestroyEffect(AddSpecialEffectTarget("Objects\\Spawnmodels\\NightElf\\NECancelDeath\\NECancelDeath.mdl", WUE, "chest"))
-	//if IsPlayerAlly(GetOwningPlayer(WUE), LocalPlayer) or(MW and IsObserverPlayer(LocalPlayer)) or IsVisibleToPlayer(x, y, LocalPlayer) then
+	//if IsPlayerAlly(GetOwningPlayer(WUE), LocalPlayer) or(IsGameHaveObserver and IsObserverPlayer(LocalPlayer)) or IsVisibleToPlayer(x, y, LocalPlayer) then
 		//set b = true
 		call PingMinimapEx(x, y, 4., 255, 0, 0, false)
 	//endif
@@ -77882,7 +77891,7 @@ function LBE takes nothing returns nothing
 		call EXStopUnit(GetTriggerUnit())
 		call InterfaceErrorForPlayer(GetOwningPlayer(GetTriggerUnit()), GetObjectName('n0KX'))
 	else
-		if IsSentinelsPlayer(GetOwningPlayer(GetTriggerUnit())) then
+		if IsSentinelPlayer(GetOwningPlayer(GetTriggerUnit())) then
 			if IsPointInRegion(P0V, GetSpellTargetX(), GetSpellTargetY()) then
 				call EXStopUnit(GetTriggerUnit())
 				call InterfaceErrorForPlayer(GetOwningPlayer(GetTriggerUnit()), GetObjectName('n03Y'))
@@ -81315,7 +81324,7 @@ function MWA takes unit WUE, unit WWE returns nothing
 	set KBX = null
 endfunction
 function MZA takes nothing returns nothing
-	if OY == false then
+	if IsGameEnd == false then
 		call UnitDamageTargetEx(Q_V, GetEnumUnit(), 3,(25 + 25 * Q0V)* .5)
 		call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Other\\Stampede\\StampedeMissileDeath.mdl", GetEnumUnit(), "origin"))
 		call MWA(Q_V, GetEnumUnit())
@@ -83232,7 +83241,7 @@ function Q6A takes unit SYX, unit Q7A returns nothing
 	if b == false or YB then
 		set i = GetUnitTypeId(Q7A)
 		set p = GetOwningPlayer(SYX)
-		if (YB == false) and(p != Sentinels[0]and p != Scourges[0]and p != CreepsPlayer) then
+		if (YB == false) and(p != SentinelPlayers[0]and p != ScourgePlayers[0]and p != CreepsPlayer) then
 			if GetUnitAbilityLevel(SYX,'Aloc') == 1 then
 				set SYX = Player__Hero[GetPlayerId(p)]
 			endif
@@ -83782,7 +83791,7 @@ function SetUnitMiss takes nothing returns nothing
 	local integer TYA = 0
 	local unit d
 	// 有金箍棒
-	if (IsAttackEffectEnabled[17]and GetUnitAbilityLevel(WX,'A1FO') == 1 and(not IsUnitType(YX, UNIT_TYPE_STRUCTURE) or(GetOwningPlayer(YX)!= Scourges[0]and GetOwningPlayer(YX)!= Sentinels[0]))) or GetUnitAbilityLevel(YX,'A3Q3') == 1 then
+	if (IsAttackEffectEnabled[17]and GetUnitAbilityLevel(WX,'A1FO') == 1 and(not IsUnitType(YX, UNIT_TYPE_STRUCTURE) or(GetOwningPlayer(YX)!= ScourgePlayers[0]and GetOwningPlayer(YX)!= SentinelPlayers[0]))) or GetUnitAbilityLevel(YX,'A3Q3') == 1 then
 		call UnitRemoveAbility(WX,'a3PQ')
 		return
 	endif
@@ -84067,7 +84076,7 @@ endfunction
 //	set t = null
 //endfunction
 //function MHO takes nothing returns boolean
-//	if not UM and IsUnitType(GetTriggerUnit(), UNIT_TYPE_HERO) and GetUnitTypeId(GetTriggerUnit())!='H0B8' and GetUnitTypeId(GetTriggerUnit())!='H00M' and GetUnitTypeId(GetTriggerUnit())!='H07G' and GetUnitTypeId(GetTriggerUnit())!='H00Y' and IsUnitIllusion(GetTriggerUnit()) == false and HaveSavedBoolean(HY, GetHandleId(GetTriggerUnit()), 38) == false then
+//	if not IsPickingHero and IsUnitType(GetTriggerUnit(), UNIT_TYPE_HERO) and GetUnitTypeId(GetTriggerUnit())!='H0B8' and GetUnitTypeId(GetTriggerUnit())!='H00M' and GetUnitTypeId(GetTriggerUnit())!='H07G' and GetUnitTypeId(GetTriggerUnit())!='H00Y' and IsUnitIllusion(GetTriggerUnit()) == false and HaveSavedBoolean(HY, GetHandleId(GetTriggerUnit()), 38) == false then
 		//if (GetUnitTypeId(GetTriggerUnit())!='O00P') then
 			// 注册英雄单位受伤
 //			call MGO(GetTriggerUnit())
@@ -84083,7 +84092,7 @@ function OtherDamagedEvent takes unit damageTarget, unit damageSource, real rDam
 	local player t = GetOwningPlayer(damageTarget)
 	local player a = GetOwningPlayer(damageSource)
 	// 镜头震动
-	if IsPlaying(t) and bj_cineModePriorDawnDusk and rDamageValue>= 5 and ZR[GetPlayerId(t)] then
+	if IsPlayingPlayer(t) and bj_cineModePriorDawnDusk and rDamageValue>= 5 and ZR[GetPlayerId(t)] then
 		call ZBE(damageTarget, rDamageValue)
 	endif
 	if d == "0" or( not EnableMapSetUp__ShowDamageTextTag[GetPlayerId(t)] and not EnableMapSetUp__ShowDamageTextTag[GetPlayerId(a)]) then
@@ -84432,7 +84441,7 @@ function AnyUnitDamagedEvent takes nothing returns boolean
 			if HaveSpellLifesteal and EXGetEventDamageData(1) == 0 then
 				set p = GetOwningPlayer(DamagedEventSourceUnit)
 				// 伤害来源是否是 非电脑 玩家的单位
-				if p != Sentinels[0] and p != Scourges[0] and p != CreepsPlayer then
+				if p != SentinelPlayers[0] and p != ScourgePlayers[0] and p != CreepsPlayer then
 					if GetUnitAbilityLevel(DamagedEventRealSourceUnit,'A39S') == 1 and IsUnitIllusion(DamagedEventTargetUnit) == false and GetWidgetLife(DamagedEventRealSourceUnit)>= 1 then
 						call SpellLifesteal()
 					endif
@@ -84783,7 +84792,7 @@ function AnyUnitEventRegisterFilter takes nothing returns boolean
 	if GetUnitAbilityLevel(whichUnit,'Aloc') == 0 and UnitIsCanRegisterUnitEvent(whichUnit) then
 		// 如果是英雄 等0秒后再检查一次是否有效
 		if IsUnitType(whichUnit, UNIT_TYPE_HERO) then
-			if not UM then
+			if not IsPickingHero then
 				set trig = CreateTrigger() 
 				call TriggerRegisterTimerEvent(trig, 0, false)
 				call TriggerAddCondition(trig, Condition(function RegisterHeroEventWait0sFilter))
@@ -85321,7 +85330,7 @@ function U8A takes nothing returns boolean
 		// call UnitAddMaxLife(u, R2I(GetUnitState(Player__Hero[GetPlayerId(whichPlayer)], UNIT_STATE_MAX_LIFE)*(.2 + .05 * i)))
 	endif
 	// 野怪进入
-	if whichPlayer == CreepsPlayer or whichPlayer == Sentinels[0] or whichPlayer == Scourges[0] then
+	if whichPlayer == CreepsPlayer or whichPlayer == SentinelPlayers[0] or whichPlayer == ScourgePlayers[0] then
 		// 反低级开图者 错误的图标坐标 然并卵 并且还与网易平台的观战系统冲突
 		if AT then
 			call UnitAddPermanentAbility(whichUnit,'A44F')
@@ -85337,11 +85346,11 @@ function U8A takes nothing returns boolean
 		endif
 	endif
 	// 如果是有效英雄 并且不处于选择英雄阶段 还不是风暴双雄
-	//if unitIsHero and not UM and(bIsDummyHero == false) and LoadBoolean(HY, GetHandleId(whichUnit), QR) == false then
+	//if unitIsHero and not IsPickingHero and(bIsDummyHero == false) and LoadBoolean(HY, GetHandleId(whichUnit), QR) == false then
 		// 可能是给英雄单位再注册一下死亡和受伤事件
 		// 全部移动至AnyUnitEventRegisterFilter
 	//endif
-	if not unitIsHero or UM then
+	if not unitIsHero or IsPickingHero then
 		if not IsUnitIllusion(whichUnit) then
 			set whichUnit = null
 			// 如果不是镜像 并且不是有效英雄还处于选择英雄阶段 那就直接返回
@@ -85774,7 +85783,7 @@ function YNA takes nothing returns nothing
 	local integer i = 1
 	local integer level = 0
 	local boolean b = G3V or G4V
-	if UM then
+	if IsPickingHero then
 		set KKX = null
 		set W_V = null
 		return
@@ -86374,7 +86383,7 @@ function Y7A takes nothing returns nothing
 	local integer k
 	local boolean Y8A = false
 	loop
-		if IN[i]and XHX(Player(i)) == false then
+		if IN[i]and IsOfflinePlayer(Player(i)) == false then
 			set Y8A = false
 			set u = Player__Hero[i]
 			if u == null or GetUnitTypeId(u)< 1 or GetHandleId(u)< 1 then
@@ -86453,7 +86462,7 @@ function ZVA takes unit u returns nothing
 endfunction
 function ZEA takes unit u, item it returns nothing
 	if GetOrderPointX() == GetItemX(it) and GetOrderPointY() == GetItemY(it) then
-		if IsSentinelsPlayer(GetOwningPlayer(u)) then
+		if IsSentinelPlayer(GetOwningPlayer(u)) then
 			if RectContainsUnit(WA, u) then
 				call EXStopUnit(u)
 				call InterfaceErrorForPlayer(GetOwningPlayer(u), GetObjectName('TX0Y'))
@@ -86656,19 +86665,19 @@ function ZOA takes nothing returns nothing
 			else
 				call EPX(u,'ACQR', 0)
 				call ZVA(u)
-				if IsScourgesPlayer(GetOwningPlayer(u)) then
-					call SetPlayerAlliance(GetOwningPlayer(u), Scourges[0], ALLIANCE_HELP_RESPONSE, false)
+				if IsScourgePlayer(GetOwningPlayer(u)) then
+					call SetPlayerAlliance(GetOwningPlayer(u), ScourgePlayers[0], ALLIANCE_HELP_RESPONSE, false)
 				else
-					call SetPlayerAlliance(GetOwningPlayer(u), Sentinels[0], ALLIANCE_HELP_RESPONSE, false)
+					call SetPlayerAlliance(GetOwningPlayer(u), SentinelPlayers[0], ALLIANCE_HELP_RESPONSE, false)
 				endif
 			endif
 		endif
 	else
 		if GetUnitAbilityLevel(u,'A40E')> 0 then
-			if IsScourgesPlayer(GetOwningPlayer(u)) then
-				call SetPlayerAlliance(GetOwningPlayer(u), Scourges[0], ALLIANCE_HELP_RESPONSE, true)
+			if IsScourgePlayer(GetOwningPlayer(u)) then
+				call SetPlayerAlliance(GetOwningPlayer(u), ScourgePlayers[0], ALLIANCE_HELP_RESPONSE, true)
 			else
-				call SetPlayerAlliance(GetOwningPlayer(u), Sentinels[0], ALLIANCE_HELP_RESPONSE, true)
+				call SetPlayerAlliance(GetOwningPlayer(u), SentinelPlayers[0], ALLIANCE_HELP_RESPONSE, true)
 			endif
 		endif
 	endif
@@ -86690,7 +86699,7 @@ function ZIA takes nothing returns boolean
 	return false
 endfunction
 function ZAA takes nothing returns nothing
-	if UM then
+	if IsPickingHero then
 		if GetUnitTypeId(GetFilterUnit())=='hfoo' then
 			if GetTriggerPlayer() == LocalPlayer then
 				call ClearSelection()
@@ -86701,7 +86710,7 @@ function ZAA takes nothing returns nothing
 endfunction
 function ZNA takes nothing returns nothing
 	local group g
-	if UM then
+	if IsPickingHero then
 		set g = AllocationGroup(500)
 		call GroupEnumUnitsSelected(g, GetTriggerPlayer(), Condition(function ZAA))
 		call DeallocateGroup(g)
@@ -91239,8 +91248,8 @@ function InitTaverns takes nothing returns nothing
 endfunction
 function CreateSentinelsUnits takes nothing returns nothing
 	local trigger t
-	set SentinelFountainOfLifeUnit = CreateUnit(Sentinels[0],'nfoh',-7168,-7168, 270)
-	call CreateUnit(Sentinels[0],'o00G',-7168,-7168, 270)
+	set SentinelFountainOfLifeUnit = CreateUnit(SentinelPlayers[0],'nfoh',-7168,-7168, 270)
+	call CreateUnit(SentinelPlayers[0],'o00G',-7168,-7168, 270)
 	set N5 = CreateUnit(NEUTRAL_PASSIVE_PLAYER,'n12B',-6360,-6892, 45)
 	set B5 = CreateUnit(NEUTRAL_PASSIVE_PLAYER,'n12B',-6837,-5824, 90)
 	
@@ -91258,21 +91267,21 @@ function CreateSentinelsUnits takes nothing returns nothing
 	set Q5 = CreateUnit(NEUTRAL_PASSIVE_PLAYER,'n009',-6678 + 64,-6432, 270)
 	set T5 = CreateUnit(NEUTRAL_PASSIVE_PLAYER,'n0HE',-7072 + 64,-6368, 270)
 
-	set WorldTree = CreateUnit(Sentinels[0],'etol',-5568,-6016, 270)
+	set WorldTree = CreateUnit(SentinelPlayers[0],'etol',-5568,-6016, 270)
 
 	// level 1
-	set SentinleTopTowerLevel1 = CreateUnit(Sentinels[0],'e00R',-6112., 1568., 90.) // top
+	set SentinleTopTowerLevel1 = CreateUnit(SentinelPlayers[0],'e00R',-6112., 1568., 90.) // top
 	call CreateTowerAttackRangeIndicator(SentinleTopTowerLevel1)
-	set SentinleMidTowerLevel1 = CreateUnit(Sentinels[0],'e00R',-1504.,-1824., 45.) // mid
+	set SentinleMidTowerLevel1 = CreateUnit(SentinelPlayers[0],'e00R',-1504.,-1824., 45.) // mid
 	call CreateTowerAttackRangeIndicator(SentinleMidTowerLevel1)
-	set SentinleBotTowerLevel1 = CreateUnit(Sentinels[0],'e00R', 4960.,-6752., 0.)  // bot
+	set SentinleBotTowerLevel1 = CreateUnit(SentinelPlayers[0],'e00R', 4960.,-6752., 0.)  // bot
 	call CreateTowerAttackRangeIndicator(SentinleBotTowerLevel1)
 	// level 2
-	set SentinleTopTowerLevel2 = CreateUnit(Sentinels[0],'e011',-6112.,-1184., 90.) // top
+	set SentinleTopTowerLevel2 = CreateUnit(SentinelPlayers[0],'e011',-6112.,-1184., 90.) // top
 	call CreateTowerAttackRangeIndicator(SentinleTopTowerLevel2)
-	set SentinleMidTowerLevel2 = CreateUnit(Sentinels[0],'e011',-3488.,-3296., 45.) // mid
+	set SentinleMidTowerLevel2 = CreateUnit(SentinelPlayers[0],'e011',-3488.,-3296., 45.) // mid
 	call CreateTowerAttackRangeIndicator(SentinleMidTowerLevel2)
-	set SentinleBotTowerLevel2 = CreateUnit(Sentinels[0],'e011',-608.,-6688., 0.) // bot
+	set SentinleBotTowerLevel2 = CreateUnit(SentinelPlayers[0],'e011',-608.,-6688., 0.) // bot
 	call CreateTowerAttackRangeIndicator(SentinleBotTowerLevel2)
 	
 	set WorldTreeDeathTrig = CreateTrigger()
@@ -91285,24 +91294,24 @@ function CreateSentinelsUnits takes nothing returns nothing
 	call GroupAddUnit(AntiBackdoorStructuresGroup, SentinleMidTowerLevel2)
 	call GroupAddUnit(AntiBackdoorStructuresGroup, SentinleBotTowerLevel2)
 	// level 3
-	set SentinleTopTowerLevel3 = CreateUnit(Sentinels[0],'e00S',-6368,-4256, 90)
+	set SentinleTopTowerLevel3 = CreateUnit(SentinelPlayers[0],'e00S',-6368,-4256, 90)
 	call CreateTowerAttackRangeIndicator(SentinleTopTowerLevel3)
-	set SentinleMidTowerLevel3 = CreateUnit(Sentinels[0],'e00S',-4448,-4960, 45)
+	set SentinleMidTowerLevel3 = CreateUnit(SentinelPlayers[0],'e00S',-4448,-4960, 45)
 	call CreateTowerAttackRangeIndicator(SentinleMidTowerLevel3)
-	set SentinleBotTowerLevel3 = CreateUnit(Sentinels[0],'e00S', -3744,-6816, 0)
+	set SentinleBotTowerLevel3 = CreateUnit(SentinelPlayers[0],'e00S', -3744,-6816, 0)
 	call CreateTowerAttackRangeIndicator(SentinleBotTowerLevel3)
 	// level 4
-	set SentinleLeftTowerLevel4 = CreateUnit(Sentinels[0],'e019',-5536,-5664, 45)
+	set SentinleLeftTowerLevel4 = CreateUnit(SentinelPlayers[0],'e019',-5536,-5664, 45)
 	call CreateTowerAttackRangeIndicator(SentinleLeftTowerLevel4)
-	set SentinleRightTowerLevel4 = CreateUnit(Sentinels[0],'e019',-5216,-6048, 45)
+	set SentinleRightTowerLevel4 = CreateUnit(SentinelPlayers[0],'e019',-5216,-6048, 45)
 	call CreateTowerAttackRangeIndicator(SentinleRightTowerLevel4)
 	
-	set SentinelTopMeleeRaxUnit = CreateUnit(Sentinels[0],'eaom',-6080,-4480, 90) // top SentinelTopMeleeRaxUnit
-	set SentinelMidMeleeRaxUnit = CreateUnit(Sentinels[0],'eaom',-4416,-5312, 45) // mid
-	set SentinelBotMeleeRaxUnit = CreateUnit(Sentinels[0],'eaom',-4032,-7040, 0)  // bot
-	set SentinelTopRangedRaxUnit = CreateUnit(Sentinels[0],'eaoe',-6656,-4480, 90) // top
-	set SentinelMidRangedRaxUnit = CreateUnit(Sentinels[0],'eaoe',-4864,-4992, 45) // mid
-	set SentinelBotRangedRaxUnit = CreateUnit(Sentinels[0],'eaoe',-4032,-6528, 0)  // bot
+	set SentinelTopMeleeRaxUnit = CreateUnit(SentinelPlayers[0],'eaom',-6080,-4480, 90) // top SentinelTopMeleeRaxUnit
+	set SentinelMidMeleeRaxUnit = CreateUnit(SentinelPlayers[0],'eaom',-4416,-5312, 45) // mid
+	set SentinelBotMeleeRaxUnit = CreateUnit(SentinelPlayers[0],'eaom',-4032,-7040, 0)  // bot
+	set SentinelTopRangedRaxUnit = CreateUnit(SentinelPlayers[0],'eaoe',-6656,-4480, 90) // top
+	set SentinelMidRangedRaxUnit = CreateUnit(SentinelPlayers[0],'eaoe',-4864,-4992, 45) // mid
+	set SentinelBotRangedRaxUnit = CreateUnit(SentinelPlayers[0],'eaoe',-4032,-6528, 0)  // bot
 	call AddUnitToBaseStructuresGroup(SentinleTopTowerLevel3)
 	call AddUnitToBaseStructuresGroup(SentinleMidTowerLevel3)
 	call AddUnitToBaseStructuresGroup(SentinleBotTowerLevel3)
@@ -91314,21 +91323,21 @@ function CreateSentinelsUnits takes nothing returns nothing
 	call AddUnitToBaseStructuresGroup(SentinelTopRangedRaxUnit)
 	call AddUnitToBaseStructuresGroup(SentinelMidRangedRaxUnit)
 	call AddUnitToBaseStructuresGroup(SentinelBotRangedRaxUnit)
-	set L6 = CreateUnit(Sentinels[0],'emow',-5856,-5472, 270)
-	set M6 = CreateUnit(Sentinels[0],'emow',-6624,-5088, 270)
-	set P6 = CreateUnit(Sentinels[0],'emow',-5344, -3936, 270)
-	set Q6 = CreateUnit(Sentinels[0],'emow',-5088,-4576, 270)
-	set T6 = CreateUnit(Sentinels[0],'emow', -3936,-5344, 270)
-	set U6 = CreateUnit(Sentinels[0],'emow',-5088,-5536, 270)
-	set W6 = CreateUnit(Sentinels[0],'emow',-4896,-6240, 270)
-	set Y6 = CreateUnit(Sentinels[0],'emow', -3808,-5856, 270)
-	set Z6 = CreateUnit(Sentinels[0],'emow',-4512,-7072, 270)
-	set V7 = CreateUnit(Sentinels[0],'emow',-5472,-4704, 270)
-	set E7 = CreateUnit(Sentinels[0],'emow',-4512,-5856, 270)
-	set X7 = CreateUnit(Sentinels[0],'eaow',-6080,-5120, 270)
-	set O7 = CreateUnit(Sentinels[0],'eaow',-4544,-6528, 270)
-	set R7 = CreateUnit(Sentinels[0],'edob',-6400,-5696, 270)
-	set I7 = CreateUnit(Sentinels[0],'edob',-5248,-6848, 270)
+	set L6 = CreateUnit(SentinelPlayers[0],'emow',-5856,-5472, 270)
+	set M6 = CreateUnit(SentinelPlayers[0],'emow',-6624,-5088, 270)
+	set P6 = CreateUnit(SentinelPlayers[0],'emow',-5344, -3936, 270)
+	set Q6 = CreateUnit(SentinelPlayers[0],'emow',-5088,-4576, 270)
+	set T6 = CreateUnit(SentinelPlayers[0],'emow', -3936,-5344, 270)
+	set U6 = CreateUnit(SentinelPlayers[0],'emow',-5088,-5536, 270)
+	set W6 = CreateUnit(SentinelPlayers[0],'emow',-4896,-6240, 270)
+	set Y6 = CreateUnit(SentinelPlayers[0],'emow', -3808,-5856, 270)
+	set Z6 = CreateUnit(SentinelPlayers[0],'emow',-4512,-7072, 270)
+	set V7 = CreateUnit(SentinelPlayers[0],'emow',-5472,-4704, 270)
+	set E7 = CreateUnit(SentinelPlayers[0],'emow',-4512,-5856, 270)
+	set X7 = CreateUnit(SentinelPlayers[0],'eaow',-6080,-5120, 270)
+	set O7 = CreateUnit(SentinelPlayers[0],'eaow',-4544,-6528, 270)
+	set R7 = CreateUnit(SentinelPlayers[0],'edob',-6400,-5696, 270)
+	set I7 = CreateUnit(SentinelPlayers[0],'edob',-5248,-6848, 270)
 	call S9E(NEUTRAL_PASSIVE_PLAYER,'Aro1', false)
 	call SetUnitColor(C5, O5)
 	call SetUnitColor(H5, O5)
@@ -91412,8 +91421,8 @@ function CreateSentinelsUnits takes nothing returns nothing
 endfunction
 function CreateScourgesUnits takes nothing returns nothing
 	local trigger t
-	set ScourgeFountainOfLifeUnit = CreateUnit(Scourges[0],'ndfl', 6784, 6368, 270)
-	call CreateUnit(Scourges[0],'o00G', 6784, 6368, 270)
+	set ScourgeFountainOfLifeUnit = CreateUnit(ScourgePlayers[0],'ndfl', 6784, 6368, 270)
+	call CreateUnit(ScourgePlayers[0],'o00G', 6784, 6368, 270)
 	set C7 = CreateUnit(NEUTRAL_PASSIVE_PLAYER,'n12B', 5521, 6187, 180)
 	set D7 = CreateUnit(NEUTRAL_PASSIVE_PLAYER,'n12B', 6500, 5600,-45)
 	
@@ -91430,21 +91439,21 @@ function CreateScourgesUnits takes nothing returns nothing
 	set P7 = CreateUnit(NEUTRAL_PASSIVE_PLAYER,'n00X', 5920 + 64, 6304 + 128, 0)
 	set Q7 = CreateUnit(NEUTRAL_PASSIVE_PLAYER,'n009', 5984, 5792 + 128, 0)
 	set S7 = CreateUnit(NEUTRAL_PASSIVE_PLAYER,'n0HE', 5920, 6176 + 128, 0)
-	set FrozenThrone = CreateUnit(Scourges[0],'unpl', 5248, 4918, 220)
+	set FrozenThrone = CreateUnit(ScourgePlayers[0],'unpl', 5248, 4918, 220)
 
 	// level 1
-	set ScourgeTopTowerLevel1 = CreateUnit(Scourges[0],'u00M',-4704, 5920, 270) // top
+	set ScourgeTopTowerLevel1 = CreateUnit(ScourgePlayers[0],'u00M',-4704, 5920, 270) // top
 	call CreateTowerAttackRangeIndicator(ScourgeTopTowerLevel1)
-	set ScourgeMidTowerLevel1 = CreateUnit(Scourges[0],'u00M', 1056,-96, 270)  // mid
+	set ScourgeMidTowerLevel1 = CreateUnit(ScourgePlayers[0],'u00M', 1056,-96, 270)  // mid
 	call CreateTowerAttackRangeIndicator(ScourgeMidTowerLevel1)
-	set ScourgeBotTowerLevel1 = CreateUnit(Scourges[0],'u00M', 6048,-2080, 270) // bot
+	set ScourgeBotTowerLevel1 = CreateUnit(ScourgePlayers[0],'u00M', 6048,-2080, 270) // bot
 	call CreateTowerAttackRangeIndicator(ScourgeBotTowerLevel1)
 	// level 2
-	set ScourgeTopTowerLevel2 = CreateUnit(Scourges[0],'u00D',-32, 5920, 270)
+	set ScourgeTopTowerLevel2 = CreateUnit(ScourgePlayers[0],'u00D',-32, 5920, 270)
 	call CreateTowerAttackRangeIndicator(ScourgeTopTowerLevel2)
-	set ScourgeMidTowerLevel2 = CreateUnit(Scourges[0],'u00D', 2528, 1824, 270)
+	set ScourgeMidTowerLevel2 = CreateUnit(ScourgePlayers[0],'u00D', 2528, 1824, 270)
 	call CreateTowerAttackRangeIndicator(ScourgeMidTowerLevel2)
-	set ScourgeBotTowerLevel2 = CreateUnit(Scourges[0],'u00D', 6272, -160, 270)
+	set ScourgeBotTowerLevel2 = CreateUnit(ScourgePlayers[0],'u00D', 6272, -160, 270)
 	call CreateTowerAttackRangeIndicator(ScourgeBotTowerLevel2)
 
 	set FrozenThroneDeathTrig = CreateTrigger()
@@ -91457,26 +91466,26 @@ function CreateScourgesUnits takes nothing returns nothing
 	call GroupAddUnit(AntiBackdoorStructuresGroup, ScourgeMidTowerLevel2)
 	call GroupAddUnit(AntiBackdoorStructuresGroup, ScourgeBotTowerLevel2)
 	// level 3
-	set ScourgeTopTowerLevel3 = CreateUnit(Scourges[0],'u00N', 2976, 5792, 270)
+	set ScourgeTopTowerLevel3 = CreateUnit(ScourgePlayers[0],'u00N', 2976, 5792, 270)
 	call CreateTowerAttackRangeIndicator(ScourgeTopTowerLevel3)
-	set ScourgeMidTowerLevel3 = CreateUnit(Scourges[0],'u00N', 3936, 3488, 270)
+	set ScourgeMidTowerLevel3 = CreateUnit(ScourgePlayers[0],'u00N', 3936, 3488, 270)
 	call CreateTowerAttackRangeIndicator(ScourgeMidTowerLevel3)
-	set ScourgeBotTowerLevel3 = CreateUnit(Scourges[0],'u00N', 6368, 2528, 270)
+	set ScourgeBotTowerLevel3 = CreateUnit(ScourgePlayers[0],'u00N', 6368, 2528, 270)
 	call CreateTowerAttackRangeIndicator(ScourgeBotTowerLevel3)
 	// level 4
-	set ScourgeLeftTowerLevel4 = CreateUnit(Scourges[0],'u00T', 4832, 4832, 270)
+	set ScourgeLeftTowerLevel4 = CreateUnit(ScourgePlayers[0],'u00T', 4832, 4832, 270)
 	call CreateTowerAttackRangeIndicator(ScourgeLeftTowerLevel4)
-	set ScourgeRightTowerLevel4 = CreateUnit(Scourges[0],'u00T', 5152, 4512, 270)
+	set ScourgeRightTowerLevel4 = CreateUnit(ScourgePlayers[0],'u00T', 5152, 4512, 270)
 	call CreateTowerAttackRangeIndicator(ScourgeRightTowerLevel4)
 
 	// melee
-	set ScourgeTopMeleeRaxUnit = CreateUnit(Scourges[0],'usep', 3392, 5504, 270)
-	set ScourgeMidMeleeRaxUnit = CreateUnit(Scourges[0],'usep', 4352, 3584, 270)
-	set ScourgeBotMeleeRaxUnit = CreateUnit(Scourges[0],'usep', 6656, 2880, 270)
+	set ScourgeTopMeleeRaxUnit = CreateUnit(ScourgePlayers[0],'usep', 3392, 5504, 270)
+	set ScourgeMidMeleeRaxUnit = CreateUnit(ScourgePlayers[0],'usep', 4352, 3584, 270)
+	set ScourgeBotMeleeRaxUnit = CreateUnit(ScourgePlayers[0],'usep', 6656, 2880, 270)
 	// ranged
-	set ScourgeTopRangedRaxUnit = CreateUnit(Scourges[0],'utod', 3392, 6080, 270)
-	set ScourgeMidRangedRaxUnit = CreateUnit(Scourges[0],'utod', 3904, 3904, 270)
-	set ScourgeBotRangedRaxUnit = CreateUnit(Scourges[0],'utod', 6080, 2944, 270)
+	set ScourgeTopRangedRaxUnit = CreateUnit(ScourgePlayers[0],'utod', 3392, 6080, 270)
+	set ScourgeMidRangedRaxUnit = CreateUnit(ScourgePlayers[0],'utod', 3904, 3904, 270)
+	set ScourgeBotRangedRaxUnit = CreateUnit(ScourgePlayers[0],'utod', 6080, 2944, 270)
 
 	set P1 = CreateTrigger()
 	call TriggerRegisterUnitEvent(P1, ScourgeTopRangedRaxUnit, EVENT_UNIT_DEATH)
@@ -91507,21 +91516,21 @@ function CreateScourgesUnits takes nothing returns nothing
 	call AddUnitToBaseStructuresGroup(ScourgeTopRangedRaxUnit)
 	call AddUnitToBaseStructuresGroup(ScourgeMidRangedRaxUnit)
 	call AddUnitToBaseStructuresGroup(ScourgeBotRangedRaxUnit)
-	set H8 = CreateUnit(Scourges[0],'uzig', 2656, 4704, 270)
-	set J8 = CreateUnit(Scourges[0],'uzig', 3168, 4064, 270)
-	set K8 = CreateUnit(Scourges[0],'uzig', 3488, 4832, 270)
-	set L8 = CreateUnit(Scourges[0],'uzig', 4128, 6240, 270)
-	set M8 = CreateUnit(Scourges[0],'uzig', 4064, 5280, 270)
-	set P8 = CreateUnit(Scourges[0],'uzig', 4384, 4256, 270)
-	set Q8 = CreateUnit(Scourges[0],'uzig', 5728, 4000, 270)
-	set S8 = CreateUnit(Scourges[0],'uzig', 5536, 2464, 270)
-	set T8 = CreateUnit(Scourges[0],'uzig', 5024, 3744, 270)
-	set U8 = CreateUnit(Scourges[0],'uzig', 6880, 3936, 270)
-	set W8 = CreateUnit(Scourges[0],'uzig', 4640, 2848, 270)
-	set Y8 = CreateUnit(Scourges[0],'usap', 3968, 5888, 270)
-	set Z8 = CreateUnit(Scourges[0],'usap', 6400, 3584, 270)
-	set VVV = CreateUnit(Scourges[0],'ubon', 4992, 5952, 270)
-	set VEV = CreateUnit(Scourges[0],'ubon', 6464, 4608, 270)
+	set H8 = CreateUnit(ScourgePlayers[0],'uzig', 2656, 4704, 270)
+	set J8 = CreateUnit(ScourgePlayers[0],'uzig', 3168, 4064, 270)
+	set K8 = CreateUnit(ScourgePlayers[0],'uzig', 3488, 4832, 270)
+	set L8 = CreateUnit(ScourgePlayers[0],'uzig', 4128, 6240, 270)
+	set M8 = CreateUnit(ScourgePlayers[0],'uzig', 4064, 5280, 270)
+	set P8 = CreateUnit(ScourgePlayers[0],'uzig', 4384, 4256, 270)
+	set Q8 = CreateUnit(ScourgePlayers[0],'uzig', 5728, 4000, 270)
+	set S8 = CreateUnit(ScourgePlayers[0],'uzig', 5536, 2464, 270)
+	set T8 = CreateUnit(ScourgePlayers[0],'uzig', 5024, 3744, 270)
+	set U8 = CreateUnit(ScourgePlayers[0],'uzig', 6880, 3936, 270)
+	set W8 = CreateUnit(ScourgePlayers[0],'uzig', 4640, 2848, 270)
+	set Y8 = CreateUnit(ScourgePlayers[0],'usap', 3968, 5888, 270)
+	set Z8 = CreateUnit(ScourgePlayers[0],'usap', 6400, 3584, 270)
+	set VVV = CreateUnit(ScourgePlayers[0],'ubon', 4992, 5952, 270)
+	set VEV = CreateUnit(ScourgePlayers[0],'ubon', 6464, 4608, 270)
 	call SetUnitColor(F7, R5)
 	call SetUnitColor(H7, I5)
 	call SetUnitColor(G7, I5) 
@@ -92164,7 +92173,7 @@ endfunction
 
 function jys_changeDesc takes integer team returns nothing
 	local string s = "使用后直接获得%d经验。再次使用将额外增加135点经验。|n|n|cFF99CCFF商店最大储量：|r 3|n|cFF99CCFF商店刷新时间：|r 10 分钟|n|n|cFF99CCFF开局后10分钟才可购买|r"
-	if (team == 0 and IsSentinelsPlayer(LocalPlayer)) or(team == 1 and IsScourgesPlayer(LocalPlayer)) then
+	if (team == 0 and IsSentinelPlayer(LocalPlayer)) or(team == 1 and IsScourgePlayer(LocalPlayer)) then
 		set s = StringReplace(s, "%d", I2S(jys_calc(team)))
 		call YDWESetItemDataString(XOV[it_jys], 3, s)
 		//set s = j5j(K1V[it_jys], 2)
@@ -92181,7 +92190,7 @@ function jys_trigger takes nothing returns nothing
 	local unit u = GetTriggerUnit()
 	local integer team
 	local player p = GetOwningPlayer(u)
-	if IsSentinelsPlayer(p) then
+	if IsSentinelPlayer(p) then
 		set team = 0
 	else
 		set team = 1
@@ -92220,9 +92229,9 @@ endfunction
 
 function GetSeGlyphCd takes integer i returns real
 	if i == 1 then
-		return YDWEGetUnitAbilityState(Circle[GetPlayerId(Sentinels[1])], 'A141', 1)
+		return YDWEGetUnitAbilityState(Circle[GetPlayerId(SentinelPlayers[1])], 'A141', 1)
 	else
-		return YDWEGetUnitAbilityState(Circle[GetPlayerId(Scourges[1])], 'A141', 1)
+		return YDWEGetUnitAbilityState(Circle[GetPlayerId(ScourgePlayers[1])], 'A141', 1)
 	endif
 	return 0.
 endfunction
@@ -92530,7 +92539,7 @@ function Trig_Synsp takes nothing returns nothing
 	elseif s == "2" then
 		call Trig_SynsL(p, id)
 	elseif s == "0" then
-		if IsSentinelsPlayer(p) then
+		if IsSentinelPlayer(p) then
 			if IsPlayerAlly(LocalPlayer, p) or IsObserverPlayer(LocalPlayer) then
 				if GetSeGlyphCd(1) == 0.00 then
 					call EXDisplayChat(p, 1, "防御符文 > 已准备就绪")
@@ -92538,7 +92547,7 @@ function Trig_Synsp takes nothing returns nothing
 					call EXDisplayChat(p, 1, "防御符文 > 冷却中 ( " + I2S(R2I(GetSeGlyphCd(1)))+ " )")
 				endif
 			endif
-		elseif IsScourgesPlayer(p) then
+		elseif IsScourgePlayer(p) then
 			if IsPlayerAlly(LocalPlayer, p) or IsObserverPlayer(LocalPlayer) then
 				if GetSeGlyphCd(2) == 0.00 then
 					call EXDisplayChat(p, 1, "防御符文 > 准备就绪。")
@@ -94284,18 +94293,18 @@ function main takes nothing returns nothing
 	set E5 = AddWeatherEffect(bj_mapInitialPlayableArea,'SNbs')
 	set Z4 = AddWeatherEffect(bj_mapInitialPlayableArea,'LRma')
 	set V5 = AddWeatherEffect(bj_mapInitialPlayableArea,'WOlw')
-	set Sentinels[0]= Player(0)
-	set Sentinels[1]= Player(1)
-	set Sentinels[2]= Player(2)
-	set Sentinels[3]= Player(3)
-	set Sentinels[4]= Player(4)
-	set Sentinels[5]= Player(5)
-	set Scourges[0]= Player(6)
-	set Scourges[1]= Player(7)
-	set Scourges[2]= Player(8)
-	set Scourges[3]= Player(9)
-	set Scourges[4]= Player(10)
-	set Scourges[5]= Player(11)
+	set SentinelPlayers[0]= Player(0)
+	set SentinelPlayers[1]= Player(1)
+	set SentinelPlayers[2]= Player(2)
+	set SentinelPlayers[3]= Player(3)
+	set SentinelPlayers[4]= Player(4)
+	set SentinelPlayers[5]= Player(5)
+	set ScourgePlayers[0]= Player(6)
+	set ScourgePlayers[1]= Player(7)
+	set ScourgePlayers[2]= Player(8)
+	set ScourgePlayers[3]= Player(9)
+	set ScourgePlayers[4]= Player(10)
+	set ScourgePlayers[5]= Player(11)
 	set CreepsPlayer = Player(12)
 	set AntiBackdoorStructuresGroup = CreateGroup()
 	set AttackToScourgeLocation = GetUnitLoc(AttackToScourgeDummyUnit)
@@ -94360,16 +94369,16 @@ function main takes nothing returns nothing
 	call InitObserverPlayer()
 	call ExecuteFunc("SaveHerosData")
 	call X_X()
-	call XUX(Sentinels[1])
-	call XUX(Sentinels[2])
-	call XUX(Sentinels[3])
-	call XUX(Sentinels[4])
-	call XUX(Sentinels[5])
-	call XUX(Scourges[1])
-	call XUX(Scourges[2])
-	call XUX(Scourges[3])
-	call XUX(Scourges[4])
-	call XUX(Scourges[5])
+	call XUX(SentinelPlayers[1])
+	call XUX(SentinelPlayers[2])
+	call XUX(SentinelPlayers[3])
+	call XUX(SentinelPlayers[4])
+	call XUX(SentinelPlayers[5])
+	call XUX(ScourgePlayers[1])
+	call XUX(ScourgePlayers[2])
+	call XUX(ScourgePlayers[3])
+	call XUX(ScourgePlayers[4])
+	call XUX(ScourgePlayers[5])
 	call ExecuteFunc("InitTaverns")
 	call ExecuteFunc("InitItemsSystem")
 	call ExecuteFunc("InitBuyBack")
@@ -94379,30 +94388,30 @@ function main takes nothing returns nothing
 
 	// 玩家离开游戏触发器
 	set t = CreateTrigger()
-	call TriggerRegisterPlayerEventLeave(t, Sentinels[1])
-	call TriggerRegisterPlayerEventLeave(t, Sentinels[2])
-	call TriggerRegisterPlayerEventLeave(t, Sentinels[3])
-	call TriggerRegisterPlayerEventLeave(t, Sentinels[4])
-	call TriggerRegisterPlayerEventLeave(t, Sentinels[5])
-	call TriggerRegisterPlayerEventLeave(t, Scourges[1])
-	call TriggerRegisterPlayerEventLeave(t, Scourges[2])
-	call TriggerRegisterPlayerEventLeave(t, Scourges[3])
-	call TriggerRegisterPlayerEventLeave(t, Scourges[4])
-	call TriggerRegisterPlayerEventLeave(t, Scourges[5])
+	call TriggerRegisterPlayerEventLeave(t, SentinelPlayers[1])
+	call TriggerRegisterPlayerEventLeave(t, SentinelPlayers[2])
+	call TriggerRegisterPlayerEventLeave(t, SentinelPlayers[3])
+	call TriggerRegisterPlayerEventLeave(t, SentinelPlayers[4])
+	call TriggerRegisterPlayerEventLeave(t, SentinelPlayers[5])
+	call TriggerRegisterPlayerEventLeave(t, ScourgePlayers[1])
+	call TriggerRegisterPlayerEventLeave(t, ScourgePlayers[2])
+	call TriggerRegisterPlayerEventLeave(t, ScourgePlayers[3])
+	call TriggerRegisterPlayerEventLeave(t, ScourgePlayers[4])
+	call TriggerRegisterPlayerEventLeave(t, ScourgePlayers[5])
 	call TriggerAddAction(t, function L2X)
 	call TriggerAddAction(t, function YWE)
 	call TriggerAddAction(t, function RBR)
 
-	if MW then
+	if IsGameHaveObserver then
 		call LMX()
 		set t = CreateTrigger()
-		if IsPlayerObserver(VKV) then
-			call TriggerRegisterPlayerEventLeave(t, VKV)
-			set ObserverPlayersName[GetPlayerId(VKV)] = GetPlayerName(VKV)
+		if IsPlayerObserver(ObserverPlayer1) then
+			call TriggerRegisterPlayerEventLeave(t, ObserverPlayer1)
+			set ObserverPlayersName[GetPlayerId(ObserverPlayer1)] = GetPlayerName(ObserverPlayer1)
 		endif
-		if IsPlayerObserver(VLV) then
-			call TriggerRegisterPlayerEventLeave(t, VLV)
-			set ObserverPlayersName[GetPlayerId(VLV)] = GetPlayerName(VLV)
+		if IsPlayerObserver(ObserverPlayer2) then
+			call TriggerRegisterPlayerEventLeave(t, ObserverPlayer2)
+			set ObserverPlayersName[GetPlayerId(ObserverPlayer2)] = GetPlayerName(ObserverPlayer2)
 		endif
 		call TriggerAddAction(t, function LUX)
 	endif
@@ -94651,9 +94660,9 @@ function main takes nothing returns nothing
 	call TriggerAddAction(TG, function JCO)
 
 	// 多面板更新
-	set QG = CreateTrigger()
-	call TriggerRegisterTimerEvent(QG, 1., true)
-	call TriggerAddAction(QG, function JHO)
+	set UpdateMainMultiboardTrig = CreateTrigger()
+	call TriggerRegisterTimerEvent(UpdateMainMultiboardTrig, 1., true)
+	call TriggerAddAction(UpdateMainMultiboardTrig, function UpdateMainMultiboardAction)
 
 	//
 	set t = CreateTrigger()
@@ -94739,8 +94748,8 @@ function main takes nothing returns nothing
 	//set t = CreateTrigger()
 	//call YDWETriggerRegisterEnterRectSimpleNull(t, GetWorldBounds())
 	//call TriggerAddCondition(t, Condition(function MHO))
-	call DestroyFogModifier(CreateFogModifierRect(Sentinels[0], FOG_OF_WAR_VISIBLE, bj_mapInitialPlayableArea, true, true))
-	call DestroyFogModifier(CreateFogModifierRect(Scourges[0], FOG_OF_WAR_VISIBLE, bj_mapInitialPlayableArea, true, true))
+	call DestroyFogModifier(CreateFogModifierRect(SentinelPlayers[0], FOG_OF_WAR_VISIBLE, bj_mapInitialPlayableArea, true, true))
+	call DestroyFogModifier(CreateFogModifierRect(ScourgePlayers[0], FOG_OF_WAR_VISIBLE, bj_mapInitialPlayableArea, true, true))
 	set t = CreateTrigger()
 	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ATTACKED)
 	call TriggerAddCondition(t, Condition(function M2O))
@@ -94771,16 +94780,16 @@ function main takes nothing returns nothing
 	call TriggerRegisterPlayerChatEvent(t, HostPlayer, "-test", true)
 	call TriggerAddCondition(t, Condition(function QFO))
 	set t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEvent(t, Sentinels[1], EVENT_PLAYER_HERO_LEVEL, null)
-	call TriggerRegisterPlayerUnitEvent(t, Sentinels[2], EVENT_PLAYER_HERO_LEVEL, null)
-	call TriggerRegisterPlayerUnitEvent(t, Sentinels[3], EVENT_PLAYER_HERO_LEVEL, null)
-	call TriggerRegisterPlayerUnitEvent(t, Sentinels[4], EVENT_PLAYER_HERO_LEVEL, null)
-	call TriggerRegisterPlayerUnitEvent(t, Sentinels[5], EVENT_PLAYER_HERO_LEVEL, null)
-	call TriggerRegisterPlayerUnitEvent(t, Scourges[1], EVENT_PLAYER_HERO_LEVEL, null)
-	call TriggerRegisterPlayerUnitEvent(t, Scourges[2], EVENT_PLAYER_HERO_LEVEL, null)
-	call TriggerRegisterPlayerUnitEvent(t, Scourges[3], EVENT_PLAYER_HERO_LEVEL, null)
-	call TriggerRegisterPlayerUnitEvent(t, Scourges[4], EVENT_PLAYER_HERO_LEVEL, null)
-	call TriggerRegisterPlayerUnitEvent(t, Scourges[5], EVENT_PLAYER_HERO_LEVEL, null)
+	call TriggerRegisterPlayerUnitEvent(t, SentinelPlayers[1], EVENT_PLAYER_HERO_LEVEL, null)
+	call TriggerRegisterPlayerUnitEvent(t, SentinelPlayers[2], EVENT_PLAYER_HERO_LEVEL, null)
+	call TriggerRegisterPlayerUnitEvent(t, SentinelPlayers[3], EVENT_PLAYER_HERO_LEVEL, null)
+	call TriggerRegisterPlayerUnitEvent(t, SentinelPlayers[4], EVENT_PLAYER_HERO_LEVEL, null)
+	call TriggerRegisterPlayerUnitEvent(t, SentinelPlayers[5], EVENT_PLAYER_HERO_LEVEL, null)
+	call TriggerRegisterPlayerUnitEvent(t, ScourgePlayers[1], EVENT_PLAYER_HERO_LEVEL, null)
+	call TriggerRegisterPlayerUnitEvent(t, ScourgePlayers[2], EVENT_PLAYER_HERO_LEVEL, null)
+	call TriggerRegisterPlayerUnitEvent(t, ScourgePlayers[3], EVENT_PLAYER_HERO_LEVEL, null)
+	call TriggerRegisterPlayerUnitEvent(t, ScourgePlayers[4], EVENT_PLAYER_HERO_LEVEL, null)
+	call TriggerRegisterPlayerUnitEvent(t, ScourgePlayers[5], EVENT_PLAYER_HERO_LEVEL, null)
 	call TriggerAddCondition(t, Condition(function HeroLevelUpCondition))
 	set t = CreateTrigger()
 	set reg = CreateRegion()
@@ -94803,20 +94812,20 @@ function main takes nothing returns nothing
 	call RegionAddRect(KK, gg_rct_SentinelBuyArea)
 	call RegionAddRect(KK, gg_rct_ScourgeBuyArea)
 	set t = CreateTrigger()
-	call TriggerRegisterPlayerChatEvent(t, Sentinels[1], "", false)
-	call TriggerRegisterPlayerChatEvent(t, Sentinels[2], "", false)
-	call TriggerRegisterPlayerChatEvent(t, Sentinels[3], "", false)
-	call TriggerRegisterPlayerChatEvent(t, Sentinels[4], "", false)
-	call TriggerRegisterPlayerChatEvent(t, Sentinels[5], "", false)
-	call TriggerRegisterPlayerChatEvent(t, Scourges[1], "", false)
-	call TriggerRegisterPlayerChatEvent(t, Scourges[2], "", false)
-	call TriggerRegisterPlayerChatEvent(t, Scourges[3], "", false)
-	call TriggerRegisterPlayerChatEvent(t, Scourges[4], "", false)
-	call TriggerRegisterPlayerChatEvent(t, Scourges[5], "", false)
+	call TriggerRegisterPlayerChatEvent(t, SentinelPlayers[1], "", false)
+	call TriggerRegisterPlayerChatEvent(t, SentinelPlayers[2], "", false)
+	call TriggerRegisterPlayerChatEvent(t, SentinelPlayers[3], "", false)
+	call TriggerRegisterPlayerChatEvent(t, SentinelPlayers[4], "", false)
+	call TriggerRegisterPlayerChatEvent(t, SentinelPlayers[5], "", false)
+	call TriggerRegisterPlayerChatEvent(t, ScourgePlayers[1], "", false)
+	call TriggerRegisterPlayerChatEvent(t, ScourgePlayers[2], "", false)
+	call TriggerRegisterPlayerChatEvent(t, ScourgePlayers[3], "", false)
+	call TriggerRegisterPlayerChatEvent(t, ScourgePlayers[4], "", false)
+	call TriggerRegisterPlayerChatEvent(t, ScourgePlayers[5], "", false)
 	call TriggerAddAction(t, function Y9O)
 	set i = 0
 	loop
-		set U3[i]= true
+		set PlayerShowKDA[i]= true
 		set F6V[i]= true
 		set F_V[i]= true
 		set S3[i]= true
@@ -94832,8 +94841,8 @@ function main takes nothing returns nothing
 	endloop
 	set i = 0
 	loop
-		set F4V[GetPlayerId(Sentinels[i])]= true
-		set F4V[GetPlayerId(Scourges[i])]= true
+		set F4V[GetPlayerId(SentinelPlayers[i])]= true
+		set F4V[GetPlayerId(ScourgePlayers[i])]= true
 		set i = i + 1
 	exitwhen i > 5
 	endloop
@@ -94860,7 +94869,7 @@ function main takes nothing returns nothing
 	call TriggerAddAction(t, function NZR)
 	call TriggerAddCondition(t, Condition(function AFR))
 	set GHV = t
-	if MW then
+	if IsGameHaveObserver then
 		set t = CreateTrigger()
 		call TriggerRegisterTimerEvent(t, 1, true)
 		call TriggerAddCondition(t, Condition(function BJR))
