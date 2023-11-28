@@ -585,7 +585,7 @@ loopingsoundfadeout=512
 missileart=Abilities\Spells\Orc\Purge\PurgeBuffTarget.mdx
 missilespeed=1000
 sellunits=h087,h026,h01V,h01M,h01X,h01K,h021,h01R,h01G,h012,h011,h0EI
-name="神秘圣地"
+name="奎尔瑟兰的密室"
 [H00A]
 art=ReplaceableTextures\CommandButtons\BTNHeroFarseer
 scorescreenicon=ReplaceableTextures\CommandButtons\BTNHeroFarseer.blp
