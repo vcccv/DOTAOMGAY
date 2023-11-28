@@ -810,7 +810,6 @@ globals
 	string NY = ""
 	boolean array G3
 	boolean Z3 = false
-	string K3 = ""
 	string array BY
 
 	rect gg_rct_SentinelRevivalPoint   = null
@@ -1489,7 +1488,7 @@ globals
 	group FNV
 	//integer FBV = 0
 	//string array FCV
-	integer FDV
+	integer WinnerIndex
 	player FFV
 	integer FGV
 	integer FHV ='A0HU'
@@ -23447,42 +23446,6 @@ function SpawnAttackCreepAction takes nothing returns nothing
 		call SpawnBotCreep(spawnDemolisher)
 	endif
 endfunction
-function ScourgeTopRangedRaxDeathAction takes nothing returns nothing
-	set IsScourgeTopRangedRaxAlive = false
-	call DisableTrigger(ScourgeTopRangedRaxDeathTrig)
-	call StoreDrCacheData("Rax" + I2S(1)+ I2S(0)+ I2S(1), GetPlayerId(GetOwningPlayer(GetKillingUnit())))
-	call RaxDeathGoldBouns(GetKillingUnit(), true)
-endfunction
-function ScourgeMidRangedRaxDeathAction takes nothing returns nothing
-	set IsScourgeMidRangedRaxAlive = false
-	call DisableTrigger(ScourgeMidRangedRaxDeathTrig)
-	call StoreDrCacheData("Rax" + I2S(1)+ I2S(1)+ I2S(1), GetPlayerId(GetOwningPlayer(GetKillingUnit())))
-	call RaxDeathGoldBouns(GetKillingUnit(), true)
-endfunction
-function ScourgeBotRangedRaxDeathAction takes nothing returns nothing
-	set IsScourgeBotRangedRaxAlive = false
-	call DisableTrigger(ScourgeBotRangedRaxDeathTrig)
-	call StoreDrCacheData("Rax" + I2S(1)+ I2S(2)+ I2S(1), GetPlayerId(GetOwningPlayer(GetKillingUnit())))
-	call RaxDeathGoldBouns(GetKillingUnit(), true)
-endfunction
-function ScourgeTopMeleeRaxDeathAction takes nothing returns nothing
-	set IsScourgeTopMeleeRaxAlive = false
-	call DisableTrigger(ScourgeTopMeleeRaxDeathTrig)
-	call StoreDrCacheData("Rax" + I2S(1)+ I2S(0)+ I2S(0), GetPlayerId(GetOwningPlayer(GetKillingUnit())))
-	call RaxDeathGoldBouns(GetKillingUnit(), false)
-endfunction
-function ScourgeMidMeleeRaxDeathAction takes nothing returns nothing
-	set IsScourgeMidMeleeRaxAlive = false
-	call DisableTrigger(ScourgeMidMeleeRaxDeathTrig)
-	call StoreDrCacheData("Rax" + I2S(1)+ I2S(1)+ I2S(0), GetPlayerId(GetOwningPlayer(GetKillingUnit())))
-	call RaxDeathGoldBouns(GetKillingUnit(), false)
-endfunction
-function ScourgeBotMeleeRaxDeathAction takes nothing returns nothing
-	set IsScourgeBotMeleeRaxAlive = false
-	call DisableTrigger(ScourgeBotMeleeRaxDeathTrig)
-	call StoreDrCacheData("Rax" + I2S(1)+ I2S(2)+ I2S(0), GetPlayerId(GetOwningPlayer(GetKillingUnit())))
-	call RaxDeathGoldBouns(GetKillingUnit(), false)
-endfunction
 function WorldTreeStoreLifeCache takes nothing returns boolean
 	local real percent = GetWidgetLife(GetTriggerUnit())/ GetUnitState(GetTriggerUnit(), UNIT_STATE_MAX_LIFE)
 	if percent < .75 and D0V == false then
@@ -25673,7 +25636,7 @@ function KYO takes nothing returns nothing
 	call MultiboardReleaseItem(mbt)
 	set mbt = MultiboardGetItem(D6V, K2O, K3O + 1)
 	call MultiboardSetItemStyle(mbt, true, false)
-	call MultiboardSetItemValue(mbt,(K3))
+	call MultiboardSetItemValue(mbt, (VictoryTeamName) )
 	call MultiboardSetItemWidth(mbt, .07)
 	call MultiboardReleaseItem(mbt)
 	call MultiboardMinimize(D6V, true)
@@ -27187,11 +27150,11 @@ function MMO takes string MPO returns nothing
 		endif
 		set i = i + 1
 	endloop
-	call StoreInteger(DrCache, "Global", "Winner", FDV)
+	call StoreInteger(DrCache, "Global", "WinnerIndex", WinnerIndex)
 	call StoreInteger(DrCache, "Global", "m", C8X)
 	call StoreInteger(DrCache, "Global", "s", C9X)
 	if LocalPlayer== HostPlayer then
-		call SyncStoredInteger(DrCache, "Global", "Winner")
+		call SyncStoredInteger(DrCache, "Global", "WinnerIndex")
 		call SyncStoredInteger(DrCache, "Global", "m")
 		call SyncStoredInteger(DrCache, "Global", "s")
 	endif
@@ -27246,7 +27209,7 @@ function MUO takes nothing returns nothing
 	endif
 	call DisableTrigger(EQV)
 	call ClearTextMessages()
-	call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, 60, K3 + " " + GetObjectName('n054')+ " QQ讨论群1064025490")
+	call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, 60, VictoryTeamName + " " + GetObjectName('n054')+ " QQ讨论群1064025490")
 	set IsGameEnd = true
 	call NEX()
 	call DisableTrigger(SpawnAttackCreepTrigger)
@@ -93454,7 +93417,7 @@ function main takes nothing returns nothing
 	call SetAltMinimapIcon("war3mapImported\\black.blp")
 	call RegisterUnitAttackEvent("SetUnitMiss",-1)
 
-	call Init_Structures()
+	call Structures_Init()
 
 	call BZR(CirclesUnit[1])
 	call BZR(CirclesUnit[2])

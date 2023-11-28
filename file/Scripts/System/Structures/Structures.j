@@ -7,23 +7,23 @@ scope Structures
 
     //! import "Merchants.j"
     //! import "AntiBackdoor.j"
-    //! import "Tower.j"
-    //! import "Rax.j"
-
+    //! import "Towers.j"
+    //! import "Raxs.j"
+    globals
+	    string VictoryTeamName = ""
+    endglobals
     //***************************************************************************
     //*
     //*  SentinelUnits
     //*
     //***************************************************************************
-
-   
     function WorldTreeDeathAction takes nothing returns nothing
         local trigger t = CreateTrigger()
         call PanCameraToTimed(GetUnitX(GetTriggerUnit()), GetUnitY(GetTriggerUnit()), 0)
         call TriggerRegisterTimerEvent(t, 2.5, false)
         call TriggerAddCondition(t, Condition(function MQO))
-        set FDV = 2
-        set K3 = "|c0020c000" + GetObjectName('n03O')+ "|r"
+        set WinnerIndex = 2
+        set VictoryTeamName = "|c0020c000" + GetObjectName('n03O')+ "|r"
         call MUO()
         call MTO()
         call MMO("2")
@@ -40,37 +40,10 @@ scope Structures
         set SentinelFountainOfLifeUnit = CreateUnit(SentinelPlayers[0],'nfoh',-7168,-7168, 270)
         call CreateUnit(SentinelPlayers[0],'o00G',-7168,-7168, 270)
 
-        call CreateSentinelMerchants()
-        call CreateSentinelTowers()
-
         set WorldTree = CreateUnit(SentinelPlayers[0],'etol',-5568,-6016, 270)
         set WorldTreeDeathTrig = CreateTrigger()
         call TriggerRegisterUnitEvent(WorldTreeDeathTrig, WorldTree, EVENT_UNIT_DEATH)
         call TriggerAddAction(WorldTreeDeathTrig, function WorldTreeDeathAction)
-
-       
-        
-        globals
-            unit SentinelTopMeleeRaxUnit
-            unit SentinelMidMeleeRaxUnit
-            unit SentinelBotMeleeRaxUnit
-            unit SentinelTopRangedRaxUnit
-            unit SentinelMidRangedRaxUnit
-            unit SentinelBotRangedRaxUnit
-        endglobals
-        set SentinelTopMeleeRaxUnit  = CreateUnit(SentinelPlayers[0], 'eaom', -6080, -4480, 90)
-        set SentinelMidMeleeRaxUnit  = CreateUnit(SentinelPlayers[0], 'eaom', -4416, -5312, 45)
-        set SentinelBotMeleeRaxUnit  = CreateUnit(SentinelPlayers[0], 'eaom', -4032, -7040, 0 ) 
-        set SentinelTopRangedRaxUnit = CreateUnit(SentinelPlayers[0], 'eaoe', -6656, -4480, 90)
-        set SentinelMidRangedRaxUnit = CreateUnit(SentinelPlayers[0], 'eaoe', -4864, -4992, 45)
-        set SentinelBotRangedRaxUnit = CreateUnit(SentinelPlayers[0], 'eaoe', -4032, -6528, 0 ) 
-        
-        call AddUnitToBaseStructuresGroup(SentinelTopMeleeRaxUnit)
-        call AddUnitToBaseStructuresGroup(SentinelMidMeleeRaxUnit)
-        call AddUnitToBaseStructuresGroup(SentinelBotMeleeRaxUnit)
-        call AddUnitToBaseStructuresGroup(SentinelTopRangedRaxUnit)
-        call AddUnitToBaseStructuresGroup(SentinelMidRangedRaxUnit)
-        call AddUnitToBaseStructuresGroup(SentinelBotRangedRaxUnit)
 
         globals
             unit SentinelMoonWell1
@@ -89,7 +62,6 @@ scope Structures
             unit SentinelHuntersHall1
             unit SentinelHuntersHall2
         endglobals
-
         set SentinelMoonWell1  = CreateUnit(SentinelPlayers[0],'emow',-5856,-5472, 270)
         set SentinelMoonWell2  = CreateUnit(SentinelPlayers[0],'emow',-6624,-5088, 270)
         set SentinelMoonWell3  = CreateUnit(SentinelPlayers[0],'emow',-5344, -3936, 270)
@@ -105,6 +77,7 @@ scope Structures
         set SentinelAncientOfWind2 = CreateUnit(SentinelPlayers[0],'eaow',-4544,-6528, 270)
         set SentinelHuntersHall1 = CreateUnit(SentinelPlayers[0],'edob',-6400,-5696, 270)
         set SentinelHuntersHall2 = CreateUnit(SentinelPlayers[0],'edob',-5248,-6848, 270)
+        call UnitAddAbility(WorldTree,'Avul')
         call UnitAddAbility(SentinleTopTowerLevel2,'Avul')
         call UnitAddAbility(SentinleMidTowerLevel2,'Avul')
         call UnitAddAbility(SentinleBotTowerLevel2,'Avul')
@@ -113,7 +86,6 @@ scope Structures
         call UnitAddAbility(SentinleBotTowerLevel3,'Avul')
         call UnitAddAbility(SentinleLeftTowerLevel4,'Avul')
         call UnitAddAbility(SentinleRightTowerLevel4,'Avul')
-        call UnitAddAbility(WorldTree,'Avul')
         call UnitAddAbility(SentinelTopMeleeRaxUnit,'Avul')
         call UnitAddAbility(SentinelMidMeleeRaxUnit,'Avul')
         call UnitAddAbility(SentinelBotMeleeRaxUnit,'Avul')
@@ -135,34 +107,6 @@ scope Structures
         call UnitAddAbility(SentinelMoonWell9, 'Avul')
         call UnitAddAbility(SentinelMoonWell10,'Avul')
         call UnitAddAbility(SentinelMoonWell11,'Avul')
-
-        globals
-            trigger SentinelTopRangedRaxDeathTrig = null
-            trigger SentinelMidRangedRaxDeathTrig = null
-            trigger SentinelBotRangedRaxDeathTrig = null
-            trigger SentinelTopMeleeRaxDeathTrig = null
-            trigger SentinelMidMeleeRaxDeathTrig = null
-            trigger SentinelBotMeleeRaxDeathTrig = null
-        endglobals
-
-        set SentinelTopRangedRaxDeathTrig = CreateTrigger()
-        call TriggerRegisterUnitEvent(SentinelTopRangedRaxDeathTrig, SentinelTopRangedRaxUnit, EVENT_UNIT_DEATH)
-        call TriggerAddAction(SentinelTopRangedRaxDeathTrig, function SentinelTopRangedRaxDeathAction)
-        set SentinelMidRangedRaxDeathTrig = CreateTrigger()
-        call TriggerRegisterUnitEvent(SentinelMidRangedRaxDeathTrig, SentinelMidRangedRaxUnit, EVENT_UNIT_DEATH)
-        call TriggerAddAction(SentinelMidRangedRaxDeathTrig, function SentinelMidRangedRaxDeathAction)
-        set SentinelBotRangedRaxDeathTrig = CreateTrigger()
-        call TriggerRegisterUnitEvent(SentinelBotRangedRaxDeathTrig, SentinelBotRangedRaxUnit, EVENT_UNIT_DEATH)
-        call TriggerAddAction(SentinelBotRangedRaxDeathTrig, function SentinelBotRangedRaxDeathAction)
-        set SentinelTopMeleeRaxDeathTrig = CreateTrigger()
-        call TriggerRegisterUnitEvent(SentinelTopMeleeRaxDeathTrig, SentinelTopMeleeRaxUnit, EVENT_UNIT_DEATH)
-        call TriggerAddAction(SentinelTopMeleeRaxDeathTrig, function SentinelTopMeleeRaxDeathAction)
-        set SentinelMidMeleeRaxDeathTrig = CreateTrigger()
-        call TriggerRegisterUnitEvent(SentinelMidMeleeRaxDeathTrig, SentinelMidMeleeRaxUnit, EVENT_UNIT_DEATH)
-        call TriggerAddAction(SentinelMidMeleeRaxDeathTrig, function SentinelMidMeleeRaxDeathAction)
-        set SentinelBotMeleeRaxDeathTrig = CreateTrigger()
-        call TriggerRegisterUnitEvent(SentinelBotMeleeRaxDeathTrig, SentinelBotMeleeRaxUnit, EVENT_UNIT_DEATH)
-        call TriggerAddAction(SentinelBotMeleeRaxDeathTrig, function SentinelBotMeleeRaxDeathAction)
 
         globals
             unit SentinelCircle1
@@ -191,9 +135,7 @@ scope Structures
         call TriggerRegisterUnitEvent(t, WorldTree, EVENT_UNIT_DAMAGED)
         call TriggerAddCondition(t, Condition(function WorldTreeStoreLifeCache))
 
-
-        
-        call SetPlayerAbilityAvailableEx(NEUTRAL_PASSIVE_PLAYER,'Aro1', false)
+        //call SetPlayerAbilityAvailableEx(NEUTRAL_PASSIVE_PLAYER,'Aro1', false)
     endfunction
 
     //***************************************************************************
@@ -206,8 +148,8 @@ scope Structures
         call PanCameraToTimed(GetUnitX(GetTriggerUnit()), GetUnitY(GetTriggerUnit()), 0)
         call TriggerRegisterTimerEvent(t, 1.5, false)
         call TriggerAddCondition(t, Condition(function MQO))
-        set FDV = 1
-        set K3 = "|c00ff0303" + GetObjectName('n03N')+ "|r"
+        set WinnerIndex = 1
+        set VictoryTeamName = "|c00ff0303" + GetObjectName('n03N')+ "|r"
         call MUO()
         call MTO()
         call MMO("1")
@@ -232,57 +174,6 @@ scope Structures
         call TriggerRegisterUnitEvent(FrozenThroneDeathTrig, FrozenThrone, EVENT_UNIT_DEATH)
         call TriggerAddAction(FrozenThroneDeathTrig, function FrozenThroneDeathAction)
        
-
-        globals
-            unit ScourgeTopMeleeRaxUnit
-            unit ScourgeMidMeleeRaxUnit
-            unit ScourgeBotMeleeRaxUnit
-            unit ScourgeTopRangedRaxUnit
-            unit ScourgeMidRangedRaxUnit
-            unit ScourgeBotRangedRaxUnit
-        endglobals
-        // melee
-        set ScourgeTopMeleeRaxUnit = CreateUnit(ScourgePlayers[0],'usep', 3392, 5504, 270)
-        set ScourgeMidMeleeRaxUnit = CreateUnit(ScourgePlayers[0],'usep', 4352, 3584, 270)
-        set ScourgeBotMeleeRaxUnit = CreateUnit(ScourgePlayers[0],'usep', 6656, 2880, 270)
-        // ranged
-        set ScourgeTopRangedRaxUnit = CreateUnit(ScourgePlayers[0],'utod', 3392, 6080, 270)
-        set ScourgeMidRangedRaxUnit = CreateUnit(ScourgePlayers[0],'utod', 3904, 3904, 270)
-        set ScourgeBotRangedRaxUnit = CreateUnit(ScourgePlayers[0],'utod', 6080, 2944, 270)
-
-        globals
-            trigger ScourgeTopRangedRaxDeathTrig = null
-            trigger ScourgeMidRangedRaxDeathTrig = null
-            trigger ScourgeBotRangedRaxDeathTrig = null
-            trigger ScourgeTopMeleeRaxDeathTrig = null
-            trigger ScourgeMidMeleeRaxDeathTrig = null
-            trigger ScourgeBotMeleeRaxDeathTrig = null
-        endglobals
-        set ScourgeTopRangedRaxDeathTrig = CreateTrigger()
-        call TriggerRegisterUnitEvent(ScourgeTopRangedRaxDeathTrig, ScourgeTopRangedRaxUnit, EVENT_UNIT_DEATH)
-        call TriggerAddAction(ScourgeTopRangedRaxDeathTrig, function ScourgeTopRangedRaxDeathAction)
-        set ScourgeMidRangedRaxDeathTrig = CreateTrigger()
-        call TriggerRegisterUnitEvent(ScourgeMidRangedRaxDeathTrig, ScourgeMidRangedRaxUnit, EVENT_UNIT_DEATH)
-        call TriggerAddAction(ScourgeMidRangedRaxDeathTrig, function ScourgeMidRangedRaxDeathAction)
-        set ScourgeBotRangedRaxDeathTrig = CreateTrigger()
-        call TriggerRegisterUnitEvent(ScourgeBotRangedRaxDeathTrig, ScourgeBotRangedRaxUnit, EVENT_UNIT_DEATH)
-        call TriggerAddAction(ScourgeBotRangedRaxDeathTrig, function ScourgeBotRangedRaxDeathAction)
-        set ScourgeTopMeleeRaxDeathTrig = CreateTrigger()
-        call TriggerRegisterUnitEvent(ScourgeTopMeleeRaxDeathTrig, ScourgeTopMeleeRaxUnit, EVENT_UNIT_DEATH)
-        call TriggerAddAction(ScourgeTopMeleeRaxDeathTrig, function ScourgeTopMeleeRaxDeathAction)
-        set ScourgeMidMeleeRaxDeathTrig = CreateTrigger()
-        call TriggerRegisterUnitEvent(ScourgeMidMeleeRaxDeathTrig, ScourgeMidMeleeRaxUnit, EVENT_UNIT_DEATH)
-        call TriggerAddAction(ScourgeMidMeleeRaxDeathTrig, function ScourgeMidMeleeRaxDeathAction)
-        set ScourgeBotMeleeRaxDeathTrig = CreateTrigger()
-        call TriggerRegisterUnitEvent(ScourgeBotMeleeRaxDeathTrig, ScourgeBotMeleeRaxUnit, EVENT_UNIT_DEATH)
-        call TriggerAddAction(ScourgeBotMeleeRaxDeathTrig, function ScourgeBotMeleeRaxDeathAction)
-        call AddUnitToBaseStructuresGroup(ScourgeTopMeleeRaxUnit)
-        call AddUnitToBaseStructuresGroup(ScourgeMidMeleeRaxUnit)
-        call AddUnitToBaseStructuresGroup(ScourgeBotMeleeRaxUnit)
-        call AddUnitToBaseStructuresGroup(ScourgeTopRangedRaxUnit)
-        call AddUnitToBaseStructuresGroup(ScourgeMidRangedRaxUnit)
-        call AddUnitToBaseStructuresGroup(ScourgeBotRangedRaxUnit)
-
         globals
             unit ScourgeZiggurat1
             unit ScourgeZiggurat2
@@ -315,6 +206,7 @@ scope Structures
         set ScourgeSacrificialPit2 = CreateUnit(ScourgePlayers[0], 'usap', 6400, 3584, 270)
         set ScourgeBoneyard1 = CreateUnit(ScourgePlayers[0], 'ubon', 4992, 5952, 270)
         set ScourgeBoneyard2 = CreateUnit(ScourgePlayers[0], 'ubon', 6464, 4608, 270)
+        call UnitAddAbility(FrozenThrone,'Avul')
         call UnitAddAbility(ScourgeTopTowerLevel2,'Avul')
         call UnitAddAbility(ScourgeMidTowerLevel2,'Avul')
         call UnitAddAbility(ScourgeBotTowerLevel2,'Avul')
@@ -323,7 +215,6 @@ scope Structures
         call UnitAddAbility(ScourgeBotTowerLevel3,'Avul')
         call UnitAddAbility(ScourgeLeftTowerLevel4,'Avul')
         call UnitAddAbility(ScourgeRightTowerLevel4,'Avul')
-        call UnitAddAbility(FrozenThrone,'Avul')
         call UnitAddAbility(ScourgeTopMeleeRaxUnit,'Avul')
         call UnitAddAbility(ScourgeMidMeleeRaxUnit,'Avul')
         call UnitAddAbility(ScourgeBotMeleeRaxUnit,'Avul')
@@ -371,14 +262,6 @@ scope Structures
         set t = CreateTrigger()
         call TriggerRegisterUnitEvent(t, FrozenThrone, EVENT_UNIT_DAMAGED)
         call TriggerAddCondition(t, Condition(function FrozenThroneStoreLifeCache))
-
-        globals
-            trigger ScourgeTowersDeathTrig = null
-        endglobals
-        set ScourgeTowersDeathTrig = CreateTrigger()
-        call TriggerRegisterPlayerUnitEventBJ(ScourgeTowersDeathTrig, EVENT_PLAYER_UNIT_DEATH)
-        call TriggerAddCondition(ScourgeTowersDeathTrig, Condition(function ScourgeTowersDeathCondition))
-        call TriggerAddAction(ScourgeTowersDeathTrig, function ScourgeTowersDeathAction)
     endfunction
 
     //***************************************************************************
@@ -448,15 +331,16 @@ scope Structures
         call TriggerRegisterUnitEvent(StructuresDamagedTrig, ScourgeBotRangedRaxUnit, EVENT_UNIT_DAMAGED)
         call TriggerRegisterUnitEvent(StructuresDamagedTrig, FrozenThrone, EVENT_UNIT_DAMAGED)
     endfunction
- 
 
-    function Init_Structures takes nothing returns nothing
+    function Structures_Init takes nothing returns nothing
         // 创建近卫和天灾的建筑 包括商店
+        call Towers_Init()
+        call Merchants_Init()
+        call Raxs_Init()
         call CreateSentinelUnits()
         call CreateScourgeUnits()
+        call AntiBackdoor_Init()
         call CreateStructuresDamagedTrig()
-        call CreateAntiBackdoorTrig()
-        call Merchants_Init()
     endfunction
 
 endscope

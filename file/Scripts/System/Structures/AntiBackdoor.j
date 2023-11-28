@@ -5,7 +5,7 @@ scope AntiBackdoor
         group AntiBackdoorStructuresGroup = null
     endglobals
 
-    function AddUnitToBaseStructuresGroup takes unit u returns nothing
+    function AddUnitToAntiBackdoorGroup takes unit u returns nothing
         local integer h = GetHandleId(u)
         call GroupAddUnit(AntiBackdoorStructuresGroup, u)
         if GetOwningPlayer(u) == SentinelPlayers[0] then
@@ -130,7 +130,7 @@ scope AntiBackdoor
         set u = null
     endfunction
 
-    function CreateAntiBackdoorTrig takes nothing returns nothing
+    function AntiBackdoor_Init takes nothing returns nothing
         local trigger t = null
         set t = CreateTrigger()
         call TriggerAddCondition(t, Condition(function StructuresAntiBackdoorAction))
