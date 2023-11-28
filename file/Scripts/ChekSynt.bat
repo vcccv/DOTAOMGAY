@@ -1,2 +1,0 @@
-call "C:\Work\Warcraft III File\War3MapTool\MapEditor\YDWE1.32.13正式版\compiler\pjass\pjass-latest.exe" "C:\Work\Warcraft III File\War3MapTool\MapEditor\YDWE1.32.13正式版\compiler\jass\24\common.j" "C:\Work\Warcraft III File\War3MapTool\MapEditor\YDWE1.32.13正式版\compiler\jass\24\Blizzard.j" war3map.j
-pause
