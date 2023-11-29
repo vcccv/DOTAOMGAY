@@ -190,18 +190,6 @@ scope Towers
         call CreateTowerAttackRangeIndicator(SentinleLeftTowerLevel4)
         call CreateTowerAttackRangeIndicator(SentinleRightTowerLevel4)
         
-        call AddUnitToAntiBackdoorGroup(SentinleTopTowerLevel3)
-        call AddUnitToAntiBackdoorGroup(SentinleMidTowerLevel3)
-        call AddUnitToAntiBackdoorGroup(SentinleBotTowerLevel3)
-        call AddUnitToAntiBackdoorGroup(SentinleLeftTowerLevel4)
-        call AddUnitToAntiBackdoorGroup(SentinleRightTowerLevel4)
-
-        call GroupAddUnit(AntiBackdoorStructuresGroup, SentinleTopTowerLevel2)
-        call GroupAddUnit(AntiBackdoorStructuresGroup, SentinleMidTowerLevel2)
-        call GroupAddUnit(AntiBackdoorStructuresGroup, SentinleBotTowerLevel2)
-        call SaveRectHandle(P, GetHandleId(SentinleTopTowerLevel2),'ABDr', Rect( -6944., -1792., -5248., -224.  ))
-        call SaveRectHandle(P, GetHandleId(SentinleMidTowerLevel2),'ABDr', Rect( -4128., -3712., -2496., -2272. ))
-        call SaveRectHandle(P, GetHandleId(SentinleBotTowerLevel2),'ABDr', Rect( -1536., -7424.,   640., -6048. ))
         
         globals
             trigger SentinelTowersDeathTrig = null
@@ -341,19 +329,6 @@ scope Towers
         call CreateTowerAttackRangeIndicator(ScourgeBotTowerLevel3)
         call CreateTowerAttackRangeIndicator(ScourgeLeftTowerLevel4)
         call CreateTowerAttackRangeIndicator(ScourgeRightTowerLevel4)
-
-        call AddUnitToAntiBackdoorGroup(ScourgeTopTowerLevel3)
-        call AddUnitToAntiBackdoorGroup(ScourgeMidTowerLevel3)
-        call AddUnitToAntiBackdoorGroup(ScourgeBotTowerLevel3)
-        call AddUnitToAntiBackdoorGroup(ScourgeLeftTowerLevel4)
-        call AddUnitToAntiBackdoorGroup(ScourgeRightTowerLevel4)
-        
-        call SaveRectHandle(P, GetHandleId(ScourgeTopTowerLevel2),'ABDr', Rect(-1088., 5376.,  768., 6624.))
-        call SaveRectHandle(P, GetHandleId(ScourgeMidTowerLevel2),'ABDr', Rect( 1600., 1024., 3456., 2432.))
-        call SaveRectHandle(P, GetHandleId(ScourgeBotTowerLevel2),'ABDr', Rect( 5504.,-1056., 7200., 512. ))
-        call GroupAddUnit(AntiBackdoorStructuresGroup, ScourgeTopTowerLevel2)
-        call GroupAddUnit(AntiBackdoorStructuresGroup, ScourgeMidTowerLevel2)
-        call GroupAddUnit(AntiBackdoorStructuresGroup, ScourgeBotTowerLevel2)
 
         globals
             trigger ScourgeTowersDeathTrig = null

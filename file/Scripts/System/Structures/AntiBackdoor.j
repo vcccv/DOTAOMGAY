@@ -36,13 +36,16 @@ scope AntiBackdoor
     function StructuresAntiBackdoorAction takes nothing returns nothing
         local unit u = GetTriggerUnit()
         local integer h = GetHandleId(u)
+        call BJDebugMsg("1")
         if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
             if GetUnitAbilityLevel(u,'A17R') == 0 then // 塔防状态？
                 // 处于防偷塔状态 敌人攻击
                 if LoadBoolean(P, h, 'isBD') and IsUnitEnemy(u, GetOwningPlayer(GetEventDamageSource())) then
                     call AntiBackdoorReduceDamage(u, GetEventDamageSource(), GetEventDamage())
+                    call BJDebugMsg("防着呢")
                 else // 非防偷塔状态 或者友军攻击 记录已经受到的合法伤害
                     call SaveReal(P, h, 'DMGR', LoadReal(P, h, 'DMGR') + GetEventDamage())
+                    call BJDebugMsg("我只会掉血")
                 endif
             endif
         else
@@ -109,7 +112,7 @@ scope AntiBackdoor
             set i = i + 1
         exitwhen b or HaveSavedHandle(P, h, 'ABDr'+ i) == false
         endloop
-        call SaveBoolean(P, h, 'isBD', b == false)
+        call SaveBoolean(P, h, 'isBD', not b)
         call DeallocateGroup(g)
         set firstUnit = null
         set g = null
@@ -191,8 +194,6 @@ scope AntiBackdoor
         call TriggerRegisterUnitEvent(t, ScourgeBotRangedRaxUnit, EVENT_UNIT_DAMAGED)
         call TriggerRegisterUnitEvent(t, ScourgeBotRangedRaxUnit, EVENT_UNIT_DEATH)
 
-        set AntiBackdoorStructuresGroup = CreateGroup()
-
         set t = CreateTrigger()
         call TriggerRegisterTimerEvent(t, 1, true)
         call TriggerAddCondition(t, Condition(function AntiBackdoorRegenerationLoopAction))
@@ -201,6 +202,33 @@ scope AntiBackdoor
         set t = CreateTrigger()
         call TriggerRegisterTimerEvent(t, 5, true)
         call TriggerAddCondition(t, Condition(function CheckBackdoorLoopAction))
+
+        set AntiBackdoorStructuresGroup = CreateGroup()
+
+        call AddUnitToAntiBackdoorGroup(SentinleTopTowerLevel3)
+        call AddUnitToAntiBackdoorGroup(SentinleMidTowerLevel3)
+        call AddUnitToAntiBackdoorGroup(SentinleBotTowerLevel3)
+        call AddUnitToAntiBackdoorGroup(SentinleLeftTowerLevel4)
+        call AddUnitToAntiBackdoorGroup(SentinleRightTowerLevel4)
+        call SaveRectHandle(P, GetHandleId(SentinleTopTowerLevel2),'ABDr', Rect( -6944., -1792., -5248., -224.  ))
+        call SaveRectHandle(P, GetHandleId(SentinleMidTowerLevel2),'ABDr', Rect( -4128., -3712., -2496., -2272. ))
+        call SaveRectHandle(P, GetHandleId(SentinleBotTowerLevel2),'ABDr', Rect( -1536., -7424.,   640., -6048. ))
+        call GroupAddUnit(AntiBackdoorStructuresGroup, SentinleTopTowerLevel2)
+        call GroupAddUnit(AntiBackdoorStructuresGroup, SentinleMidTowerLevel2)
+        call GroupAddUnit(AntiBackdoorStructuresGroup, SentinleBotTowerLevel2)
+
+        call AddUnitToAntiBackdoorGroup(ScourgeTopTowerLevel3)
+        call AddUnitToAntiBackdoorGroup(ScourgeMidTowerLevel3)
+        call AddUnitToAntiBackdoorGroup(ScourgeBotTowerLevel3)
+        call AddUnitToAntiBackdoorGroup(ScourgeLeftTowerLevel4)
+        call AddUnitToAntiBackdoorGroup(ScourgeRightTowerLevel4)
+        call SaveRectHandle(P, GetHandleId(ScourgeTopTowerLevel2),'ABDr', Rect(-1088., 5376.,  768., 6624.))
+        call SaveRectHandle(P, GetHandleId(ScourgeMidTowerLevel2),'ABDr', Rect( 1600., 1024., 3456., 2432.))
+        call SaveRectHandle(P, GetHandleId(ScourgeBotTowerLevel2),'ABDr', Rect( 5504.,-1056., 7200., 512. ))
+        call GroupAddUnit(AntiBackdoorStructuresGroup, ScourgeTopTowerLevel2)
+        call GroupAddUnit(AntiBackdoorStructuresGroup, ScourgeMidTowerLevel2)
+        call GroupAddUnit(AntiBackdoorStructuresGroup, ScourgeBotTowerLevel2)
+
     endfunction
 
 endscope
