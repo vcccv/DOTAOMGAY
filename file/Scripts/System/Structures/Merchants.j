@@ -1,6 +1,53 @@
 
 scope Merchants
 
+    function IsMerchantUnit takes unit u returns boolean
+        local integer i = GetUnitTypeId(u)
+        return i =='hC95' or i =='n12B' or i =='n01K' or i =='nC38' or i =='n00V' or i =='n00W' or i =='n002' or i =='n00X' or i =='n009' or i =='n0HE' or i =='nC35' or i =='u00Q' or i =='uC74' or i =='u010' or i =='u00Z'or i =='n999'
+    endfunction
+    function SelectedMerchantsUnitAction takes nothing returns boolean
+        local unit u = GetTriggerUnit()
+        local integer id = GetUnitTypeId(u)
+        local boolean b = GetOwningPlayer(u) == Player(15) and IsMerchantUnit(u) and LocalPlayer == GetTriggerPlayer()
+        local string s = ""
+        if GetTriggerEventId() == EVENT_PLAYER_UNIT_DESELECTED then
+            if b then
+                call ResetUnitAnimation(u)
+            endif
+        else
+            //if Mode__AntiHack then
+                //call CheckFogClicks(u)
+            //endif
+            if b then
+                if id =='hC95' or id =='n12B' or id =='n00X' or id =='n009' or id =='nC35' or id =='u00Q' or id =='u010' or id =='u00Z' then
+                    set s = "stand work"
+                elseif id =='n01K' then
+                    set s = "stand third"
+                elseif id =='nC38' then
+                    call SetUnitAnimationByIndex(u, 3)
+                elseif id =='n00V' then
+                    set s = "spell attack"
+                elseif id =='n00W' then
+                    set s = "spell"
+                elseif id =='n002' then
+                    call SetUnitAnimationByIndex(u, 3)
+                elseif id =='n0HE' then
+                    set s = "stand victory"
+                elseif id =='uC74' then
+                    set s = "stand work gold"
+                elseif id =='n999' then
+                    set s = "spell attack"
+                endif
+                if s != "" then
+                    call SetUnitAnimation(u, s)
+                    call QueueUnitAnimation(u, s)
+                endif
+            endif
+        endif
+        set u = null
+        return false
+    endfunction
+
     //***************************************************************************
     //*
     //*  SentinelMerchants
@@ -94,8 +141,15 @@ scope Merchants
     endfunction
 
     function Merchants_Init takes nothing returns nothing
+        local trigger t = null
+
         call CreateSentinelMerchants()
         call CreateScourgeMerchants()
+
+        set t = CreateTrigger()
+        call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_DESELECTED)
+        call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SELECTED  )
+        call TriggerAddCondition(t, Condition(function SelectedMerchantsUnitAction))
     endfunction
 
 endscope

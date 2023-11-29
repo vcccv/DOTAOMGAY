@@ -21,12 +21,11 @@ scope Structures
         local trigger t = CreateTrigger()
         call PanCameraToTimed(GetUnitX(GetTriggerUnit()), GetUnitY(GetTriggerUnit()), 0)
         call TriggerRegisterTimerEvent(t, 2.5, false)
-        call TriggerAddCondition(t, Condition(function MQO))
+        call TriggerAddCondition(t, Condition(function CreateGameEndMultiboard))
         set WinnerIndex = 2
         set VictoryTeamName = "|c0020c000" + GetObjectName('n03O')+ "|r"
-        call MUO()
-        call MTO()
-        call MMO("2")
+        call GameEndAction()
+        call StoreTeamCache("2")
         set t = null
     endfunction
     function CreateSentinelUnits takes nothing returns nothing
@@ -143,20 +142,27 @@ scope Structures
     //*  ScourgeUnits
     //*
     //***************************************************************************
+    function FrozenThroneFadeOutLoopAction takes nothing returns boolean
+        call SetUnitVertexColorBJ(FrozenThrone, 100, 100, 100, GetTriggerEvalCount(GetTriggeringTrigger()))
+        if GetTriggerEvalCount(GetTriggeringTrigger()) == 100  then
+            call ShowUnit(FrozenThrone, false)
+            call CleanCurrentTrigger(GetTriggeringTrigger())
+        endif
+        return false
+    endfunction
     function FrozenThroneDeathAction takes nothing returns nothing
         local trigger t = CreateTrigger()
         call PanCameraToTimed(GetUnitX(GetTriggerUnit()), GetUnitY(GetTriggerUnit()), 0)
         call TriggerRegisterTimerEvent(t, 1.5, false)
-        call TriggerAddCondition(t, Condition(function MQO))
+        call TriggerAddCondition(t, Condition(function CreateGameEndMultiboard))
         set WinnerIndex = 1
         set VictoryTeamName = "|c00ff0303" + GetObjectName('n03N')+ "|r"
-        call MUO()
-        call MTO()
-        call MMO("1")
+        call GameEndAction()
+        call StoreTeamCache("1")
         call AddSpecialEffect("war3mapImported\\FrozenThronesDeath2.mdx", GetUnitX(FrozenThrone) +150, GetUnitY(FrozenThrone)+ 100 )
         set t = CreateTrigger()
         call TriggerRegisterTimerEvent(t, .02, true)
-        call TriggerAddCondition(t, Condition(function MYO))
+        call TriggerAddCondition(t, Condition(function FrozenThroneFadeOutLoopAction))
         set t = null
     endfunction
     function CreateScourgeUnits takes nothing returns nothing
