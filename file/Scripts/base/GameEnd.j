@@ -1042,7 +1042,7 @@ scope GameEnd
         else
             call SetUnitAnimation(u, GetUnitVictoryAnimation(u))
         endif
-        call QueueUnitAnimation(u, "stand")
+        //call QueueUnitAnimation(u, "stand")
     endfunction
     function SetAllUnitVictoryAnimation takes nothing returns nothing
         local group  g             = AllocationGroup(51)

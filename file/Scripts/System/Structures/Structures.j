@@ -134,7 +134,6 @@ scope Structures
         call TriggerRegisterUnitEvent(t, WorldTree, EVENT_UNIT_DAMAGED)
         call TriggerAddCondition(t, Condition(function WorldTreeStoreLifeCache))
 
-        //call SetPlayerAbilityAvailableEx(NEUTRAL_PASSIVE_PLAYER,'Aro1', false)
     endfunction
 
     //***************************************************************************
@@ -339,6 +338,7 @@ scope Structures
     endfunction
 
     function Structures_Init takes nothing returns nothing
+        call SetPlayerAbilityAvailableEx(NEUTRAL_PASSIVE_PLAYER, 'Aro1', false)
         // 创建近卫和天灾的建筑 包括商店
         call Towers_Init()
         call Merchants_Init()

@@ -26138,6 +26138,13 @@ Name=激活 防御符文
 Tip=激活 防御符文(|cffffcc00F|r)
 Ubertip=在5秒内，使你方阵营所有的建筑物对物理攻击免疫。|n|n|cff99ccff团队冷却时间：|r5分钟
 hotkey=F
+[AN01]
+targetart=Abilities\Spells\NightElf\TargetArtLumber\TargetArtLumber.mdl
+art=ReplaceableTextures\PassiveButtons\BTNNothing
+[BN01]
+buffart=ReplaceableTextures\CommandButtons\BTNImbuedMasonry.blp
+bufftip=防偷塔保护
+buffubertip=该建筑物触发了防偷塔保护，因此正在快速恢复生命值。
 [A14C]
 art=ReplaceableTextures\CommandButtons\BTNUnLoad
 buttonpos=1,2

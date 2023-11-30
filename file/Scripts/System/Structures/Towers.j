@@ -303,20 +303,20 @@ scope Towers
             unit ScourgeRightTowerLevel4 = null
         endglobals
         // level 1
-        set ScourgeTopTowerLevel1 = CreateUnit(ScourgePlayers[0], 'u00M', -4704,  5920, 270)
-        set ScourgeMidTowerLevel1 = CreateUnit(ScourgePlayers[0], 'u00M',  1056, -96  , 270)
-        set ScourgeBotTowerLevel1 = CreateUnit(ScourgePlayers[0], 'u00M',  6048, -2080, 270)
+        set ScourgeTopTowerLevel1 = CreateUnit(ScourgePlayers[0], 'u00M', -4704,  5920, 90)
+        set ScourgeMidTowerLevel1 = CreateUnit(ScourgePlayers[0], 'u00M',  1056, -96  , 45)
+        set ScourgeBotTowerLevel1 = CreateUnit(ScourgePlayers[0], 'u00M',  6048, -2080, 0.)
         // level 2
-        set ScourgeTopTowerLevel2 = CreateUnit(ScourgePlayers[0], 'u00D',  -32, 5920, 270)
-        set ScourgeMidTowerLevel2 = CreateUnit(ScourgePlayers[0], 'u00D', 2528, 1824, 270)
-        set ScourgeBotTowerLevel2 = CreateUnit(ScourgePlayers[0], 'u00D', 6272, -160, 270)
+        set ScourgeTopTowerLevel2 = CreateUnit(ScourgePlayers[0], 'u00D',  -32, 5920, 90)
+        set ScourgeMidTowerLevel2 = CreateUnit(ScourgePlayers[0], 'u00D', 2528, 1824, 45)
+        set ScourgeBotTowerLevel2 = CreateUnit(ScourgePlayers[0], 'u00D', 6272, -160, 0.)
         // level 3
-        set ScourgeTopTowerLevel3 = CreateUnit(ScourgePlayers[0], 'u00N', 2976, 5792, 270)
-        set ScourgeMidTowerLevel3 = CreateUnit(ScourgePlayers[0], 'u00N', 3936, 3488, 270)
-        set ScourgeBotTowerLevel3 = CreateUnit(ScourgePlayers[0], 'u00N', 6368, 2528, 270)
+        set ScourgeTopTowerLevel3 = CreateUnit(ScourgePlayers[0], 'u00N', 2976, 5792, 90)
+        set ScourgeMidTowerLevel3 = CreateUnit(ScourgePlayers[0], 'u00N', 3936, 3488, 45)
+        set ScourgeBotTowerLevel3 = CreateUnit(ScourgePlayers[0], 'u00N', 6368, 2528, 0.)
         // level 4
-        set ScourgeLeftTowerLevel4  = CreateUnit(ScourgePlayers[0], 'u00T', 4832, 4832, 270)
-        set ScourgeRightTowerLevel4 = CreateUnit(ScourgePlayers[0], 'u00T', 5152, 4512, 270)
+        set ScourgeLeftTowerLevel4  = CreateUnit(ScourgePlayers[0], 'u00T', 4832, 4832, 45)
+        set ScourgeRightTowerLevel4 = CreateUnit(ScourgePlayers[0], 'u00T', 5152, 4512, 45)
 
         call CreateTowerAttackRangeIndicator(ScourgeTopTowerLevel1)
         call CreateTowerAttackRangeIndicator(ScourgeMidTowerLevel1)

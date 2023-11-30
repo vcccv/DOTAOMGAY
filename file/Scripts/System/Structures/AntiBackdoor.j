@@ -53,7 +53,8 @@ scope AntiBackdoor
     endfunction
 
     globals
-        constant real STRUCTURE_MAX_REGENERATION = 90
+        constant real STRUCTURE_REGENERATION = 180.
+        constant real BASE_REGENERATION      = 15.
     endglobals
     function AntiBackdoorRegenerationEnumAction takes nothing returns nothing
         local unit u = GetEnumUnit()
@@ -66,13 +67,42 @@ scope AntiBackdoor
         set life = GetWidgetLife(u)
         set realLife = GetUnitState(u, UNIT_STATE_MAX_LIFE) - LoadReal(P, h,'DMGR') // 最大生命值减去合法伤害 = 最终回复的血量
         if life <= realLife then
-            if life + STRUCTURE_MAX_REGENERATION <= realLife then
-                call SetWidgetLife(u, life + STRUCTURE_MAX_REGENERATION)
+            if life + STRUCTURE_REGENERATION <= realLife then
+                call UnitAddAbility(u, 'AN01')
+                call SetWidgetLife(u, life + STRUCTURE_REGENERATION)
             else
                 call SetWidgetLife(u, realLife)
+                call UnitRemoveAbility(u, 'AN01')
+                call UnitRemoveAbility(u, 'BN01')
             endif
         endif
         set u = null
+    endfunction
+    function BaseRegenerationLoopAction takes nothing returns nothing
+        local integer h
+        local real    value
+        if UnitAlive(WorldTree) and GetUnitAbilityLevel(WorldTree, 'AN01') == 0 then
+            set h     = GetHandleId(WorldTree)
+            set value = LoadReal(P, h, 'DMGR')
+            if value > BASE_REGENERATION then
+                call SetWidgetLife(WorldTree, GetWidgetLife(WorldTree) + BASE_REGENERATION)
+                call SaveReal(P, h, 'DMGR', value - BASE_REGENERATION)
+            else
+                call SetWidgetLife(WorldTree, GetWidgetLife(WorldTree) + value)
+                call SaveReal(P, h, 'DMGR', 0.)
+            endif
+        endif
+        if UnitAlive(FrozenThrone) then
+            set h     = GetHandleId(FrozenThrone)
+            set value = LoadReal(P, h, 'DMGR')
+            if value > BASE_REGENERATION then
+                call SetWidgetLife(FrozenThrone, GetWidgetLife(FrozenThrone) + BASE_REGENERATION)
+                call SaveReal(P, h, 'DMGR', value - BASE_REGENERATION)
+            else
+                call SetWidgetLife(FrozenThrone, GetWidgetLife(FrozenThrone) + value)
+                call SaveReal(P, h, 'DMGR', 0.)
+            endif
+        endif
     endfunction
     function AntiBackdoorRegenerationLoopAction takes nothing returns nothing
         call ForGroup(AntiBackdoorStructuresGroup, function AntiBackdoorRegenerationEnumAction)
@@ -251,6 +281,9 @@ scope AntiBackdoor
         call AddUnitToAntiBackdoorGroup(ScourgeMidRangedRaxUnit)
         call AddUnitToAntiBackdoorGroup(ScourgeBotRangedRaxUnit)
 
+        set t = CreateTrigger()
+        call TriggerRegisterTimerEvent(t, 1., true)
+        call TriggerAddCondition(t, Condition(function BaseRegenerationLoopAction))
     endfunction
 
 endscope

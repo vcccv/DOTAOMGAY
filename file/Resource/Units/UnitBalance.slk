@@ -1722,8 +1722,8 @@ C;Y103;X1;K"etol"
 C;X7;K"mechanical,townhall"
 C;X8;K340
 C;X23;K4250
-C;X25;K20
-C;X26;K"always"
+C;X25;K0
+C;X26;K"none"
 C;X31;K15
 C;X34;K"fort"
 C;X40;K1800
@@ -2144,8 +2144,8 @@ C;Y127;X1;K"unpl"
 C;X7;K"mechanical,townhall"
 C;X8;K1000
 C;X23;K4250
-C;X25;K20
-C;X26;K"always"
+C;X25;K0
+C;X26;K"none"
 C;X31;K15
 C;X32;K1
 C;X34;K"fort"
