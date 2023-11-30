@@ -36,16 +36,13 @@ scope AntiBackdoor
     function StructuresAntiBackdoorAction takes nothing returns nothing
         local unit u = GetTriggerUnit()
         local integer h = GetHandleId(u)
-        call BJDebugMsg("1")
         if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
             if GetUnitAbilityLevel(u,'A17R') == 0 then // 塔防状态？
                 // 处于防偷塔状态 敌人攻击
                 if LoadBoolean(P, h, 'isBD') and IsUnitEnemy(u, GetOwningPlayer(GetEventDamageSource())) then
                     call AntiBackdoorReduceDamage(u, GetEventDamageSource(), GetEventDamage())
-                    call BJDebugMsg("防着呢")
                 else // 非防偷塔状态 或者友军攻击 记录已经受到的合法伤害
                     call SaveReal(P, h, 'DMGR', LoadReal(P, h, 'DMGR') + GetEventDamage())
-                    call BJDebugMsg("我只会掉血")
                 endif
             endif
         else
@@ -165,6 +162,7 @@ scope AntiBackdoor
         call TriggerRegisterUnitEvent(t, SentinelMidRangedRaxUnit, EVENT_UNIT_DEATH)
         call TriggerRegisterUnitEvent(t, SentinelBotRangedRaxUnit, EVENT_UNIT_DAMAGED)
         call TriggerRegisterUnitEvent(t, SentinelBotRangedRaxUnit, EVENT_UNIT_DEATH)
+
         call TriggerRegisterUnitEvent(t, ScourgeTopTowerLevel2, EVENT_UNIT_DAMAGED)
         call TriggerRegisterUnitEvent(t, ScourgeTopTowerLevel2, EVENT_UNIT_DEATH)
         call TriggerRegisterUnitEvent(t, ScourgeMidTowerLevel2, EVENT_UNIT_DAMAGED)
@@ -194,6 +192,13 @@ scope AntiBackdoor
         call TriggerRegisterUnitEvent(t, ScourgeBotRangedRaxUnit, EVENT_UNIT_DAMAGED)
         call TriggerRegisterUnitEvent(t, ScourgeBotRangedRaxUnit, EVENT_UNIT_DEATH)
 
+        
+        call TriggerRegisterUnitEvent(t, WorldTree, EVENT_UNIT_DAMAGED)
+        call TriggerRegisterUnitEvent(t, WorldTree, EVENT_UNIT_DEATH)
+        
+        call TriggerRegisterUnitEvent(t, FrozenThrone, EVENT_UNIT_DAMAGED)
+        call TriggerRegisterUnitEvent(t, FrozenThrone, EVENT_UNIT_DEATH)
+
         set t = CreateTrigger()
         call TriggerRegisterTimerEvent(t, 1, true)
         call TriggerAddCondition(t, Condition(function AntiBackdoorRegenerationLoopAction))
@@ -204,6 +209,9 @@ scope AntiBackdoor
         call TriggerAddCondition(t, Condition(function CheckBackdoorLoopAction))
 
         set AntiBackdoorStructuresGroup = CreateGroup()
+
+        call AddUnitToAntiBackdoorGroup(WorldTree)
+        call AddUnitToAntiBackdoorGroup(FrozenThrone)
 
         call AddUnitToAntiBackdoorGroup(SentinleTopTowerLevel3)
         call AddUnitToAntiBackdoorGroup(SentinleMidTowerLevel3)
@@ -228,6 +236,20 @@ scope AntiBackdoor
         call GroupAddUnit(AntiBackdoorStructuresGroup, ScourgeTopTowerLevel2)
         call GroupAddUnit(AntiBackdoorStructuresGroup, ScourgeMidTowerLevel2)
         call GroupAddUnit(AntiBackdoorStructuresGroup, ScourgeBotTowerLevel2)
+
+        call AddUnitToAntiBackdoorGroup(SentinelTopMeleeRaxUnit)
+        call AddUnitToAntiBackdoorGroup(SentinelMidMeleeRaxUnit)
+        call AddUnitToAntiBackdoorGroup(SentinelBotMeleeRaxUnit)
+        call AddUnitToAntiBackdoorGroup(SentinelTopRangedRaxUnit)
+        call AddUnitToAntiBackdoorGroup(SentinelMidRangedRaxUnit)
+        call AddUnitToAntiBackdoorGroup(SentinelBotRangedRaxUnit)
+
+        call AddUnitToAntiBackdoorGroup(ScourgeTopMeleeRaxUnit)
+        call AddUnitToAntiBackdoorGroup(ScourgeMidMeleeRaxUnit)
+        call AddUnitToAntiBackdoorGroup(ScourgeBotMeleeRaxUnit)
+        call AddUnitToAntiBackdoorGroup(ScourgeTopRangedRaxUnit)
+        call AddUnitToAntiBackdoorGroup(ScourgeMidRangedRaxUnit)
+        call AddUnitToAntiBackdoorGroup(ScourgeBotRangedRaxUnit)
 
     endfunction
 

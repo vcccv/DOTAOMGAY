@@ -59,13 +59,6 @@ scope Raxs
         set SentinelMidRangedRaxUnit = CreateUnit(SentinelPlayers[0], 'eaoe', -4864, -4992, 45)
         set SentinelBotRangedRaxUnit = CreateUnit(SentinelPlayers[0], 'eaoe', -4032, -6528, 0 ) 
         
-        call AddUnitToAntiBackdoorGroup(SentinelTopMeleeRaxUnit)
-        call AddUnitToAntiBackdoorGroup(SentinelMidMeleeRaxUnit)
-        call AddUnitToAntiBackdoorGroup(SentinelBotMeleeRaxUnit)
-        call AddUnitToAntiBackdoorGroup(SentinelTopRangedRaxUnit)
-        call AddUnitToAntiBackdoorGroup(SentinelMidRangedRaxUnit)
-        call AddUnitToAntiBackdoorGroup(SentinelBotRangedRaxUnit)
-
         globals
             trigger SentinelTopRangedRaxDeathTrig = null
             trigger SentinelMidRangedRaxDeathTrig = null
@@ -153,13 +146,6 @@ scope Raxs
         set ScourgeMidRangedRaxUnit = CreateUnit(ScourgePlayers[0],'utod', 3904, 3904, 270)
         set ScourgeBotRangedRaxUnit = CreateUnit(ScourgePlayers[0],'utod', 6080, 2944, 270)   
 
-        call AddUnitToAntiBackdoorGroup(ScourgeTopMeleeRaxUnit)
-        call AddUnitToAntiBackdoorGroup(ScourgeMidMeleeRaxUnit)
-        call AddUnitToAntiBackdoorGroup(ScourgeBotMeleeRaxUnit)
-        call AddUnitToAntiBackdoorGroup(ScourgeTopRangedRaxUnit)
-        call AddUnitToAntiBackdoorGroup(ScourgeMidRangedRaxUnit)
-        call AddUnitToAntiBackdoorGroup(ScourgeBotRangedRaxUnit)
-        
         globals
             trigger ScourgeTopRangedRaxDeathTrig = null
             trigger ScourgeMidRangedRaxDeathTrig = null
