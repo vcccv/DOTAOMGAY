@@ -79,6 +79,8 @@ globals
 	integer InterfaceErrorTextAlpha = 0
 	//
 	// UI
+	integer array UIFrame__Button           //按钮
+	integer array UIFrame__Text // 文本
 	integer UIFrame__TargetingError
 	integer UIText__TargetingError
 	// 更新日志
@@ -99,16 +101,13 @@ globals
 	// 改键仅限英雄
 	boolean ChangeHotkeyHeroOnly = true
 	// 本地命令按钮快捷键
-	integer array LocalCommandButtonHotKey
+	integer array LocalCommandButtonHotkey
 	integer array LocalCommandX
 	integer array LocalCommandY
 	integer ChangeKeyLoopIndex
     integer LocalPlayerSelectHandle = 0
 
     integer UpdateCallbackCount = 0
-
-    integer EditBoxInterval
-    integer FirstEditBox
 
 	// 禁止刷新的技能Id
 	integer array DisableRefreshCoolDownSkillId
@@ -192,41 +191,7 @@ globals
 	integer UIText__ToolTip
 	// 扩展提示
 	integer UIText__ToolUberTip
-	//======================================================================
-	// 本地玩家,游戏开始时Set,无需后面一直LocalPlayer
-
-	// 菜单设置的UI
-	integer UIFrame__MapSetUpBackdrop
-	integer UIFrame__MainPanel //主菜单
-	integer UIFrame__ReturnButton //主菜单返回按钮
-	// 地图设置框架
-	integer UIFrame__SetUp
-	// 命令设置框架
-	integer UIFrame__OrderSetUp
-	integer array UIFrame__Button //按钮
-	integer array UIFrame__HighLight //复选框高亮
-	integer array UIFrame__CheckBox //复选框
-	integer array UIFrame__Text // 文本
-	integer array UIFrame__CheckBoxText //复选框文本
-	boolean array UIFrame__IsCheckBoxEnable //复选框是否勾选
-	integer FirstCheckBox
-	integer GameUI // 等价于DzGetGameUI()
-	integer Frame_X //连续创建Frame的间隔值
-	boolean IsSetUpUIEnable = false
-	//复选框长宽初始值
-	constant real CheckBox_WidthInitialValue = 0.150
-	constant real CheckBox_HeightInitialValue = 0.490
-	//复选框长宽间值
-	constant real CheckBox_WidthSpacing = 0.115
-	constant real CheckBox_HeightSpacing = 0.024
-	//服务器值
-	string ServerValue = ""
-	//各种选项的布尔值
-	boolean IsTabEnableMultiboard = false //Tab键是否启用多面板,异步
-	boolean array SetUp_SkillInfo
-	boolean array SetUp_ItemInfo
-	boolean array Default_SetUp
-
+	
 	//======================================================================
 	// 任意单位受伤事件 的temp变量
 	// 受伤单位的玩家
@@ -650,7 +615,7 @@ globals
 	constant integer QL = StringHash("essenceshift")
 	integer TL = 25
 	// 显示伤害值
-	boolean array EnableMapSetUp__ShowDamageTextTag
+	boolean array EnableMapSetup__ShowDamageTextTag
 	integer array ZL
 	boolean array RM
 	boolean SM = false
@@ -2129,7 +2094,7 @@ function GetEnableText takes boolean enable returns string
 	return null
 endfunction
 
-function GetSetUpText takes string msg, boolean enable returns nothing
+function GetSetupText takes string msg, boolean enable returns nothing
 	call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, DisplayTextDuration[LocalPlayerId], "|CFFFF8000[设置]|R |c006699CC" + msg + GetEnableText(enable)) 
 endfunction
 
@@ -12024,15 +11989,15 @@ endfunction
 
 function Click_CheckBox_Nothing takes player p, integer i returns nothing
 	if LocalPlayer == p then
-		set UIFrame__IsCheckBoxEnable[i] = not UIFrame__IsCheckBoxEnable[i]
-		call DzFrameShow(UIFrame__HighLight[i], UIFrame__IsCheckBoxEnable[i])
+		set IsMenuOptionCheckBoxEnabled[i] = not IsMenuOptionCheckBoxEnabled[i]
+		call DzFrameShow(OptionCheckBoxsHighLight[i], IsMenuOptionCheckBoxEnabled[i])
 	endif
 endfunction
 
 function Set_CheckBox_Nothing takes player p, integer i , boolean b returns nothing
 	if LocalPlayer == p then
-		set UIFrame__IsCheckBoxEnable[i] = b
-		call DzFrameShow(UIFrame__HighLight[i], UIFrame__IsCheckBoxEnable[i])
+		set IsMenuOptionCheckBoxEnabled[i] = b
+		call DzFrameShow(OptionCheckBoxsHighLight[i], IsMenuOptionCheckBoxEnabled[i])
 	endif
 endfunction
 
@@ -12048,7 +12013,7 @@ function ShowAbilityCd_Actions takes player p, boolean isOrder returns nothing
 	endif
 	if not isOrder then
 		if p == LocalPlayer then
-			call GetSetUpText("隐藏有冷却被动技能", not b)
+			call GetSetupText("隐藏有冷却被动技能", not b)
 		endif
 	endif
 	if IsPickingHero then
@@ -12077,7 +12042,7 @@ function Q_X takes player p, boolean isOrder returns nothing
 	endif
 	if not isOrder then
 		if p == LocalPlayer then
-			call GetSetUpText("隐藏被动技能", not b)
+			call GetSetupText("隐藏被动技能", not b)
 		endif
 	endif
 	if IsPickingHero then
@@ -18998,7 +18963,7 @@ function MUChangeMessengerShare takes player target returns nothing
 		call GroupEnumUnitsOfPlayer(temp_group, LoadPlayerHandle(HY, GetHandleId(target), StringHash("信使共享玩家")), null)
 	endif
 	if target == LocalPlayer then
-		call GetSetUpText("信使共享", flag)
+		call GetSetupText("信使共享", flag)
 	endif
 	call SaveBoolean(HY, GetHandleId(target), StringHash("信使共享"), flag)
 	
@@ -27681,7 +27646,7 @@ function TZO takes nothing returns nothing
 	local boolean b = LoadBoolean(K, GetHandleId(p),'UIds')
 	call Click_CheckBox_Nothing(p, 18)
 	if LocalPlayer == p then
-		call GetSetUpText("信使复活窗口", b)
+		call GetSetupText("信使复活窗口", b)
 	endif
 	call SaveBoolean(K, GetHandleId(p),'UIds', not b)
 endfunction
@@ -27690,7 +27655,7 @@ function T_O takes nothing returns nothing
 	local integer pid = GetPlayerId(p)
 	call Click_CheckBox_Nothing(p, 17)
 	if LocalPlayer == p then
-		call GetSetUpText("快速清理", DisplayTextDuration[pid]== 10.)
+		call GetSetupText("快速清理", DisplayTextDuration[pid]== 10.)
 	endif
 	if DisplayTextDuration[pid]== 1. then
 		//call DisplayTimedTextToPlayer(p, 0, 0, 3, "|c00aeae00 快速清理关闭|r - 所有死亡信息持续显示10秒.")
@@ -27723,7 +27688,7 @@ function SetCharges takes player p returns nothing
 	local boolean b = LoadBoolean(K, GetHandleId(p),'OptC')
 	call SaveBoolean(K, GetHandleId(p),'OptC', not b)
 	if LocalPlayer == p then
-		call GetSetUpText("充能显示", b)
+		call GetSetupText("充能显示", b)
 	endif
 endfunction
 function T2O takes nothing returns nothing
@@ -27732,18 +27697,18 @@ function T2O takes nothing returns nothing
 	call Click_CheckBox_Nothing(p, 3)
 endfunction
 
-function SetUpDoubleClickSpell takes nothing returns nothing
+function SetupDoubleClickSpell takes nothing returns nothing
 	local player p = GetTriggerPlayer()
 	if LocalPlayer == p then
 		set IsEnableDoubleClickSystem = not IsEnableDoubleClickSystem
-		call GetSetUpText("双击对己施法", IsEnableDoubleClickSystem)
+		call GetSetupText("双击对己施法", IsEnableDoubleClickSystem)
 	endif
 	call Click_CheckBox_Nothing(p, 16)
 endfunction
 
-function SetUpDoubleClickSpellByCheckBox takes boolean enable returns nothing
+function SetupDoubleClickSpellByCheckBox takes boolean enable returns nothing
 	set IsEnableDoubleClickSystem = enable
-	call GetSetUpText("双击对己施法", IsEnableDoubleClickSystem)
+	call GetSetupText("双击对己施法", IsEnableDoubleClickSystem)
 endfunction
 
 function T3O takes nothing returns nothing
@@ -27752,14 +27717,14 @@ function T3O takes nothing returns nothing
 	set ZR[pid]= not ZR[pid]
 	call Click_CheckBox_Nothing(p, 14)
 	if LocalPlayer == p then
-		call GetSetUpText("震动视角", ZR[pid])
+		call GetSetupText("震动视角", ZR[pid])
 	endif
 endfunction
 function T4O takes nothing returns nothing
 	local player p = GetTriggerPlayer()
 	local integer pid = GetPlayerId(p)
 	if LocalPlayer == p then
-		call GetSetUpText("自动装置神符", XI[pid])
+		call GetSetupText("自动装置神符", XI[pid])
 	endif
 	set XI[pid]= not XI[pid]
 	call Click_CheckBox_Nothing(p, 8)
@@ -27775,22 +27740,22 @@ function T5O takes nothing returns nothing
 	local integer pid = GetPlayerId(p)
 	set JI[pid]= not JI[pid]
 	if LocalPlayer == p then
-		call GetSetUpText("技能可见", JI[pid])
+		call GetSetupText("技能可见", JI[pid])
 	endif
 endfunction
 function T6O takes nothing returns nothing
 	local player p = GetTriggerPlayer()
 	if GetEventPlayerChatString() == "-sddon" then
 		//call DisplayTimedTextToPlayer(p, .0, .0, 10., "|cffff0000[SDD] |r" + "|c006699CC" + "显示伤害值已 |c0000FF00开启|r" + "|c006699CC" + "." + "|r")
-		set EnableMapSetUp__ShowDamageTextTag[GetPlayerId(p)]= true
+		set EnableMapSetup__ShowDamageTextTag[GetPlayerId(p)]= true
 		call Set_CheckBox_Nothing(p, 15, true)
 	else
 		//call DisplayTimedTextToPlayer(p, .0, .0, 10., "|cffff0000[SDD] |r" + "|c006699CC" + "显示伤害值已 |c0000FF00关闭|r" + "|c006699CC" + "." + "|r")
-		set EnableMapSetUp__ShowDamageTextTag[GetPlayerId(p)] = false
+		set EnableMapSetup__ShowDamageTextTag[GetPlayerId(p)] = false
 		call Set_CheckBox_Nothing(p, 15, false)
 	endif
 	if LocalPlayer == p then
-		call GetSetUpText("显示伤害值", EnableMapSetUp__ShowDamageTextTag[GetPlayerId(p)])
+		call GetSetupText("显示伤害值", EnableMapSetup__ShowDamageTextTag[GetPlayerId(p)])
 	endif
 endfunction
 function T7O takes nothing returns nothing
@@ -28290,30 +28255,25 @@ function WNO takes nothing returns nothing
 		set u = FirstOfGroup(g)
 	endloop
 endfunction
-
+/*
 // 获取当前选择的单位的所有技能
 function EXGetUnitAllAbilityId takes nothing returns nothing
 	local unit whichUnit = GetPlayerSelectedUnit()
-	local integer abilityId = 0
+	local integer abilityId   = 0
 	local integer loop__Index = 0
 
-	// debug call SingleDebug( "检查单位" + GetUnitName(whichUnit) + "的技能" )
-	
+	call BJDebugMsg("|cffff6600" + GetUnitName(whichUnit) + " - Abilitys Start|r")
 	loop
 		set abilityId = EXGetAbilityId( EXGetUnitAbilityByIndex( whichUnit, loop__Index ) )
 		exitwhen abilityId == 0
-
-		// debug call SingleDebug( I2S( loop__Index ) + " 号技能为 " + GetObjectName(abilityId) + " " + YDWEId2S( abilityId ) )
-		
+		call BJDebugMsg("|cffffff00 技能[" + I2S(loop__Index) + "] " + Id2String(abilityId) + " " + GetObjectName(abilityId))
 		set loop__Index = loop__Index + 1
 	endloop
-	set abilityId = EXGetAbilityId( EXGetUnitAbilityByIndex( whichUnit, loop__Index + 1 ) )
-	if abilityId != 0 then
-		// debug call SingleDebug( "奇怪错误：" + I2S( loop__Index ) + " 号技能为 " + GetObjectName(abilityId) + " " + YDWEId2S( abilityId ) )
-	endif
+	call BJDebugMsg("|cffff6600" + GetUnitName(whichUnit) + " - Abilitys End|r")
 
 	set whichUnit = null
 endfunction
+*/
 
 // 驱散Buff
 // EXGetAbilityId( EXGetUnitAbilityByIndex( whichUnit, Index ) )
@@ -28443,7 +28403,7 @@ function WCO takes string s returns nothing
 		call Cheat("iseedeadpeople")
 	endif
 	
-	call INX("EXGetUnitAllAbilityId", getId)
+	//call INX("EXGetUnitAllAbilityId", getId)
 	call INX("TestEfficiency", testEfficiency)
 
 	call INX("WNO", YCO)
@@ -30148,12 +30108,12 @@ function VJR takes nothing returns nothing
 endfunction
 function VKR takes nothing returns nothing
 	call SaveBoolean(HY, GetHandleId(GetTriggerPlayer()), 139, true)
-	call GetSetUpText(GetObjectName('n08R'), true)
+	call GetSetupText(GetObjectName('n08R'), true)
 	//call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10, GetObjectName('n08R'))
 endfunction
 function VLR takes nothing returns nothing
 	call SaveBoolean(HY, GetHandleId(GetTriggerPlayer()), 139, false)
-	call GetSetUpText(GetObjectName('n08R'), false)
+	call GetSetupText(GetObjectName('n08R'), false)
 	//call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10, GetObjectName('n08O'))
 endfunction
 function VMR takes nothing returns nothing
@@ -30350,12 +30310,12 @@ function V2R takes nothing returns nothing
 	if GetEventPlayerChatString() == "-don"or GetEventPlayerChatString() == "-deathon"then
 		call Set_CheckBox_Nothing(p, 18, true)
 		set F4V[x]= true
-		call GetSetUpText("复活计时器窗口", true)
+		call GetSetupText("复活计时器窗口", true)
 		//call DisplayTimedTextToPlayer(p, 0, 0, 10, GetObjectName('n08W'))
 	else
 		call Set_CheckBox_Nothing(p, 18, false)
 		set F4V[x]= false
-		call GetSetUpText("复活计时器窗口", false)
+		call GetSetupText("复活计时器窗口", false)
 		//call DisplayTimedTextToPlayer(p, 0, 0, 10, GetObjectName('n08X'))
 	endif
 endfunction
@@ -30372,13 +30332,13 @@ endfunction
 function V5R takes nothing returns nothing
 	local player p = GetTriggerPlayer()
 	call ForceRemovePlayer(AllPlayerForce, p)
-	call GetSetUpText(GetObjectName('n08U'), true)
+	call GetSetupText(GetObjectName('n08U'), true)
 	call Set_CheckBox_Nothing(p, 12, true)
 endfunction
 function V6R takes nothing returns nothing
 	local player p = GetTriggerPlayer()
 	call ForceAddPlayer(AllPlayerForce, p)
-	call GetSetUpText(GetObjectName('n08U'), false)
+	call GetSetupText(GetObjectName('n08U'), false)
 	call Set_CheckBox_Nothing(p, 12, false)
 endfunction
 function V7R takes nothing returns boolean
@@ -30531,36 +30491,36 @@ endfunction
 function EAR takes nothing returns nothing
 	local player p = GetTriggerPlayer()
 	local integer id = GetPlayerId(p)
-	set IsPlayersEnableItemInfo[id] = ( IsPlayersEnableSkillInfo[id] and SetUp_ItemInfo[id] ) //-ii
+	set IsPlayersEnableItemInfo[id] = ( IsPlayersEnableSkillInfo[id] and Setup_ItemInfo[id] ) //-ii
 	set IsPlayersEnableSkillInfo[id] = not IsPlayersEnableSkillInfo[id] // -si
-	set SetUp_SkillInfo[id] = IsPlayersEnableSkillInfo[id]
+	set Setup_SkillInfo[id] = IsPlayersEnableSkillInfo[id]
 	if LocalPlayer == p then
-		call DzFrameSetEnable(UIFrame__CheckBox[5], not IsPlayersEnableSkillInfo[id])
-		if not IsPlayersEnableSkillInfo[id] and SetUp_ItemInfo[id] then
-			call DzFrameSetEnable(UIFrame__CheckBox[4], false)
+		call DzFrameSetEnable(OptionCheckBoxs[5], not IsPlayersEnableSkillInfo[id])
+		if not IsPlayersEnableSkillInfo[id] and Setup_ItemInfo[id] then
+			call DzFrameSetEnable(OptionCheckBoxs[4], false)
 		elseif IsPlayersEnableSkillInfo[id] then
-			call DzFrameSetEnable(UIFrame__CheckBox[4], true)
+			call DzFrameSetEnable(OptionCheckBoxs[4], true)
 		endif
-		call DzFrameShow( UIFrame__HighLight[4], IsPlayersEnableSkillInfo[id] )
-		set UIFrame__IsCheckBoxEnable[4] = IsPlayersEnableSkillInfo[id]
+		call DzFrameShow( OptionCheckBoxsHighLight[4], IsPlayersEnableSkillInfo[id] )
+		set IsMenuOptionCheckBoxEnabled[4] = IsPlayersEnableSkillInfo[id]
 	endif
 endfunction
 //-ii
 function ENR takes nothing returns nothing
 	local player p = GetTriggerPlayer()
 	local integer id = GetPlayerId(p)
-	set IsPlayersEnableSkillInfo[id] = ( IsPlayersEnableItemInfo[id] and SetUp_SkillInfo[id] ) //-si
+	set IsPlayersEnableSkillInfo[id] = ( IsPlayersEnableItemInfo[id] and Setup_SkillInfo[id] ) //-si
 	set IsPlayersEnableItemInfo[id] = not IsPlayersEnableItemInfo[id] //-ii
-	set SetUp_ItemInfo[id] = IsPlayersEnableItemInfo[id]
+	set Setup_ItemInfo[id] = IsPlayersEnableItemInfo[id]
 	if LocalPlayer == p then
-		call DzFrameSetEnable(UIFrame__CheckBox[4], not IsPlayersEnableItemInfo[id])
-		if not IsPlayersEnableItemInfo[id] and SetUp_SkillInfo[id] then
-			call DzFrameSetEnable(UIFrame__CheckBox[5], false)
+		call DzFrameSetEnable(OptionCheckBoxs[4], not IsPlayersEnableItemInfo[id])
+		if not IsPlayersEnableItemInfo[id] and Setup_SkillInfo[id] then
+			call DzFrameSetEnable(OptionCheckBoxs[5], false)
 		elseif IsPlayersEnableItemInfo[id] then
-			call DzFrameSetEnable(UIFrame__CheckBox[5], true)
+			call DzFrameSetEnable(OptionCheckBoxs[5], true)
 		endif
-		call DzFrameShow( UIFrame__HighLight[5], IsPlayersEnableItemInfo[id] )
-		set UIFrame__IsCheckBoxEnable[5] = IsPlayersEnableItemInfo[id]
+		call DzFrameShow( OptionCheckBoxsHighLight[5], IsPlayersEnableItemInfo[id] )
+		set IsMenuOptionCheckBoxEnabled[5] = IsPlayersEnableItemInfo[id]
 	endif
 endfunction
 function EBR takes nothing returns nothing
@@ -54096,7 +54056,7 @@ function S3E takes nothing returns nothing
 	local integer WFV = GetHandleId(p)
 	local boolean b = LoadBoolean(P, WFV,'A0RO')
 	if LocalPlayer == p then
-		call GetSetUpText("灵能之刃作用范围显示", b)
+		call GetSetupText("灵能之刃作用范围显示", b)
 	endif
 	call SaveBoolean(P, WFV,'A0RO', not b)
 	//if b then
@@ -82372,7 +82332,7 @@ function OtherDamagedEvent takes unit damageTarget, unit damageSource, real rDam
 	if IsPlayingPlayer(t) and bj_cineModePriorDawnDusk and rDamageValue>= 5 and ZR[GetPlayerId(t)] then
 		call ZBE(damageTarget, rDamageValue)
 	endif
-	if d == "0" or( not EnableMapSetUp__ShowDamageTextTag[GetPlayerId(t)] and not EnableMapSetUp__ShowDamageTextTag[GetPlayerId(a)]) then
+	if d == "0" or( not EnableMapSetup__ShowDamageTextTag[GetPlayerId(t)] and not EnableMapSetup__ShowDamageTextTag[GetPlayerId(a)]) then
 		return
 	endif
 	set tt = CreateTextTag()
@@ -82388,11 +82348,11 @@ function OtherDamagedEvent takes unit damageTarget, unit damageSource, real rDam
 	call SetTextTagPermanent(tt, false)
 	call SetTextTagFadepoint(tt, 2)
 	call SetTextTagVisibility(tt, false)
-	if EnableMapSetUp__ShowDamageTextTag[GetPlayerId(t)] and LocalPlayer == t then
+	if EnableMapSetup__ShowDamageTextTag[GetPlayerId(t)] and LocalPlayer == t then
 		call SetTextTagColor(tt, 250, 0, 0, 255)
 		call SetTextTagVisibility(tt, true)
 	endif
-	if EnableMapSetUp__ShowDamageTextTag[GetPlayerId(a)] and LocalPlayer == a and UnitVisibleToPlayer(damageTarget, a) then
+	if EnableMapSetup__ShowDamageTextTag[GetPlayerId(a)] and LocalPlayer == a and UnitVisibleToPlayer(damageTarget, a) then
 		call SetTextTagColor(tt, 0, 0, 250, 255 )
 		call SetTextTagVisibility(tt, true)
 	endif
@@ -86081,7 +86041,7 @@ function Init_Instructions takes nothing returns nothing
 	call SaveStr(Z, StringHash("-hhn"), 0, "ERR")
 	call SaveStr(Z, StringHash("-ui"), 0, "TZO")
 	call SaveStr(Z, StringHash("-charges"), 0, "T2O")
-	call SaveStr(Z, StringHash("-dch"), 0, "SetUpDoubleClickSpell")
+	call SaveStr(Z, StringHash("-dch"), 0, "SetupDoubleClickSpell")
 	call SaveStr(Z, StringHash("-hideheronames"), 0, "ERR")
 	call SaveStr(Z, StringHash("-mute"), 0, "EIR")
 	call SaveStr(Z, StringHash("-afk"), 0, "EJR")
@@ -89428,34 +89388,6 @@ function SaveHerosData takes nothing returns nothing
 	call SaveHeroModelScale('np01', 0.5,'np01')
 endfunction
 
-function AHC takes boolean b returns nothing
-	local real a = 0.0
-	local integer i = 0
-	local integer i2 = 0
-	local real size = 0.01
-	set DownAlt = b
-	if b then
-		set a = 0.70
-		set size = 1
-	endif
-	loop
-		call SetLightningColor(CreepsRectIndicatorLightning[i * 4 + 0], 0.211, 0.87, 0, a)
-		call SetLightningColor(CreepsRectIndicatorLightning[i * 4 + 1], 0.211, 0.87, 0, a)
-		call SetLightningColor(CreepsRectIndicatorLightning[i * 4 + 2], 0.211, 0.87, 0, a)
-		call SetLightningColor(CreepsRectIndicatorLightning[i * 4 + 3], 0.211, 0.87, 0, a)
-		set i = i + 1
-	exitwhen i > CreepsRectIndicatorCount
-	endloop
-	loop
-		if tower_rangeeff[i2] != null then
-			call EXSetEffectSize(tower_rangeeff[i2], size)
-		endif
-		set i2 = i2 + 1
-	exitwhen i2 > tower_rangeint
-	endloop
-endfunction
-
-
 globals
 	lightning array CreepsRectIndicatorLightning
 	integer 		CreepsRectIndicatorCount 	 = 0
@@ -89521,6 +89453,24 @@ endfunction
 
 //! import "Scripts\base\GameEnd.j"
 //! import "Scripts\System\Structures\Structures.j"
+
+function AHC takes boolean b returns nothing
+	local real a = 0.0
+	local integer i = 0
+	set DownAlt = b
+	if b then
+		set a = 0.70
+	endif
+	loop
+		call SetLightningColor(CreepsRectIndicatorLightning[i * 4 + 0], 0.211, 0.87, 0, a)
+		call SetLightningColor(CreepsRectIndicatorLightning[i * 4 + 1], 0.211, 0.87, 0, a)
+		call SetLightningColor(CreepsRectIndicatorLightning[i * 4 + 2], 0.211, 0.87, 0, a)
+		call SetLightningColor(CreepsRectIndicatorLightning[i * 4 + 3], 0.211, 0.87, 0, a)
+		set i = i + 1
+	exitwhen i > CreepsRectIndicatorCount
+	endloop
+	call SetTowerRangeIndicatorState(b)
+endfunction
 
 function PreloadAbilityLockPos takes nothing returns nothing
 
@@ -90238,134 +90188,6 @@ function Trig_SynsT takes nothing returns nothing
 	endif
 endfunction
 
-function SetUp_SyncData takes nothing returns boolean
-	local string s = DzGetTriggerSyncData()
-    local integer data = S2I(s)
-    local player p = DzGetTriggerSyncPlayer()
-	local integer id = GetPlayerId(p)
-	local boolean b
-	if data == 1 then
-		call Q_X(p, false)
-	elseif data == 2 then
-		call ShowAbilityCd_Actions(p, false)
-	elseif data == 3 then
-		call SetCharges(p)
-	elseif data == 4 then //-si
-		set IsPlayersEnableItemInfo[id] = ( IsPlayersEnableSkillInfo[id] and SetUp_ItemInfo[id] ) //-ii
-		set IsPlayersEnableSkillInfo[id] = not IsPlayersEnableSkillInfo[id] // -si
-		set SetUp_SkillInfo[id] = IsPlayersEnableSkillInfo[id]
-		if LocalPlayer == p then
-			call GetSetUpText("多面板显示技能", IsPlayersEnableSkillInfo[id])
-		endif
-		//if SetUp_ItemInfo[id] then
-		//	call GetSetUpText("多面板显示物品", false)
-		//endif
-	elseif data == 5 then //-ii
-		set IsPlayersEnableSkillInfo[id] = ( IsPlayersEnableItemInfo[id] and SetUp_SkillInfo[id] ) //-si
-		set IsPlayersEnableItemInfo[id] = not IsPlayersEnableItemInfo[id] //-ii
-		set SetUp_ItemInfo[id] = IsPlayersEnableItemInfo[id]
-		if LocalPlayer == p then
-			call GetSetUpText("多面板显示物品", IsPlayersEnableItemInfo[id])
-		endif
-		//if SetUp_SkillInfo[id] then
-		//	call GetSetUpText("多面板显示技能", false)
-		//endif
-	elseif data == 7 then //自动选择召唤物
-		if F_V[id] then
-			set F_V[id]= false
-			call DisplayTimedTextToPlayer(p, 0, 0, 5, GetObjectName('n0JZ'))
-		else
-			set F_V[id]= true
-			call DisplayTimedTextToPlayer(p, 0, 0, 5, GetObjectName('n0K0'))
-		endif
-	elseif data == 8 then //自动装置神符
-		if LocalPlayer == p then
-			call GetSetUpText("自动装置神符", XI[id])
-		endif
-		set XI[id]= not XI[id]
-		//if XI[id] then
-		//	call DisplayTimedTextToPlayer(p, 0, 0, 5, "右键点击|cffff0000神符|r时|c0000FF00不会|r把神符装入瓶中")
-		//else
-		//	call DisplayTimedTextToPlayer(p, 0, 0, 5, "右键点击|cffff0000神符|r时|c0000FF00将会|r把神符装入瓶中")
-		//endif
-	
-	elseif data == 9 then //拒绝队友帮助技能
-		set b = not LoadBoolean(HY, GetHandleId(p),  139)
-		call SaveBoolean(HY, GetHandleId(p),  139, b)
-		if LocalPlayer == p then
-			call GetSetUpText(GetObjectName('n08O'), b)
-		endif
-	elseif data == 10 then
-		call MUChangeMessengerShare(p) //共享信使 默认关闭
-	elseif data == 11 then //特殊音效
-		if T3[id] then
-			if LocalPlayer == p then
-				call GetSetUpText(GetObjectName('n08T'), T3[id])
-			endif
-		else
-		set T3[id] = not T3[id]
-		endif
-	elseif data == 12 then
-		if IsPlayerInForce(p, AllPlayerForce) then
-			call ForceRemovePlayer(AllPlayerForce, p)
-			if LocalPlayer == p then
-				call GetSetUpText(GetObjectName('n08U'), true)
-			endif
-		else
-			call ForceAddPlayer(AllPlayerForce, p)
-			if LocalPlayer == p then
-				call GetSetUpText(GetObjectName('n08U'), false)
-			endif
-		endif
-	elseif data == 14 then
-		set ZR[id]= not ZR[id]
-		//if ZR[id] then
-		//	call DisplayTimedTextToPlayer(p, 0, 0, 5, "震动视角已 |c0000FF00开启|r")
-		//else
-		//	call DisplayTimedTextToPlayer(p, 0, 0, 5, "震动视角已 |c0000FF00关闭|r")
-		//endif
-		if LocalPlayer == p then
-			call GetSetUpText("震动视角", ZR[id])
-		endif
-	elseif data == 15 then
-		set EnableMapSetUp__ShowDamageTextTag[id] = not EnableMapSetUp__ShowDamageTextTag[id]
-		//if EnableMapSetUp__ShowDamageTextTag[id] then
-		//	call DisplayTimedTextToPlayer(p, .0, .0, 10., "|cffff0000[SDD] |r" + "|c006699CC" + "显示伤害值已 |c0000FF00开启|r" + "|c006699CC" + "." + "|r")
-		//else
-		//	call DisplayTimedTextToPlayer(p, .0, .0, 10., "|cffff0000[SDD] |r" + "|c006699CC" + "显示伤害值已 |c0000FF00关闭|r" + "|c006699CC" + "." + "|r")
-		//endif
-		if LocalPlayer == p then
-			call GetSetUpText("显示伤害值", EnableMapSetUp__ShowDamageTextTag[id])
-		endif
-	elseif data == 17 then
-		if LocalPlayer == p then
-			call GetSetUpText("快速清理", DisplayTextDuration[id]== 10.)
-		endif
-		if DisplayTextDuration[id]== 1. then
-			//call DisplayTimedTextToPlayer(p, 0, 0, 3, "|c00aeae00 快速清理关闭|r - 所有死亡信息持续显示10秒.")
-			set DisplayTextDuration[id]= 10.
-		else
-			//call DisplayTimedTextToPlayer(p, 0, 0, 3, "|c00fcfa00 快速清理开启|r - 所有死亡信息持续显示3秒.")
-			set DisplayTextDuration[id]= 1.
-		endif
-	elseif data == 18 then
-		set b = LoadBoolean(K, GetHandleId(p),'UIds')
-		//if b then
-		//	call DisplayTimedTextToPlayer(p, 0, 0, 5, "|c00aeae00信使窗口开启|r")
-		//else
-		//	call DisplayTimedTextToPlayer(p, 0, 0, 5, "|c00fcfa00信使窗口关闭|r")
-		//endif
-		if LocalPlayer == p then
-			call GetSetUpText("信使复活窗口", b)
-		endif
-		call SaveBoolean(K, GetHandleId(p),'UIds', not b)
-	elseif data == 19 then
-		set F4V[id] = not F4V[id]
-		call GetSetUpText("复活计时器窗口", F4V[id])
-	endif
-    set p = null
-    return false
-endfunction
 
 
 function UnitLP takes unit u, boolean b returns string
@@ -90567,9 +90389,6 @@ function InitSyncTrigger takes nothing returns nothing
 	set trig = CreateTrigger()
 	call DzTriggerRegisterSyncData(trig, "t", false)
 	call TriggerAddAction(trig, function Trig_SynsT)
-	set trig = CreateTrigger()
-	call DzTriggerRegisterSyncData(trig, "setup", false)
-    call TriggerAddCondition(trig, Condition( function SetUp_SyncData))
 
 	set trig = CreateTrigger()
 	call DzTriggerRegisterSyncData(trig, "FogClick", false)
@@ -90582,304 +90401,6 @@ function InitSyncTrigger takes nothing returns nothing
 	set trig = null
 endfunction
 
-function Click_LifeManaButton takes nothing returns nothing
-	local unit u = GetPlayerSelectedUnit()
-	local integer i = LocalPlayerId
-	local player p
-	if DzIsKeyDown(18) then
-		if u != null and GetUnitAbilityLevel(u, 'AHer') > 0 then
-			if IsUnitAlly(u, LocalPlayer) and IsUnitType(u, UNIT_TYPE_HERO) then
-				if GetChat_times() then
-					if u == Player__Hero[i] then 
-						call DzSyncData("t", "我拥有" + UnitLP(u, true)+ UnitMP(u))
-					else
-						set p = GetOwningPlayer(u)
-						call DzSyncData("t", "队友 " + PlayersColoerText[GetPlayerId(p)] + GetPlayerName(p) + "|r拥有" + UnitLP(u, true)+ UnitMP(u))
-						set p = null
-					endif
-				endif
-			else
-				if GetChat_times() then
-					// 如果是敌人 则要发送信号 所以直接同步单位
-					call DzSyncData("p", I2S(GetHandleId(u)))
-				endif
-			endif
-		endif
-	endif
-	set u = null
-endfunction
-
-
-function tab0 takes nothing returns nothing
-	if IsTabEnableMultiboard then
-		call MultiboardMinimize(BJ_Multiboard, true)
-	endif
-endfunction
-function tab1 takes nothing returns nothing
-	if IsTabEnableMultiboard then
-		if IsMultiboardMinimized(BJ_Multiboard) then
-			call MultiboardMinimize(BJ_Multiboard, false)
-		endif
-	endif
-endfunction
-
-function ShowSetUpPanel takes boolean show returns nothing
-
-	set IsSetUpUIEnable = show
-	call DzFrameShow( UIFrame__SetUp, show )
-	call DzFrameShow( UIFrame__MainPanel, not show)
-
-endfunction
-
-// 清除输入框的焦点 防止凯住
-function ClearAllEditBoxFocus takes nothing returns nothing
-	local integer i = 1
-	loop
-		call DzFrameSetFocus(HotKeyEditBoxs[i], false)
-	exitwhen i == 23
-	set i = i + 1
-	endloop
-endfunction
-
-function ClickOrderSetUpSaveButton takes nothing returns nothing
-    local string s = ""
-    local integer i = 0
-    local string dummy
-    loop
-        if UIFrame__IsCheckBoxEnable[i] then
-            set dummy = "N"
-        else
-            set dummy = "O"
-        endif
-        set s = s + dummy
-        exitwhen i == 23
-		set i = i + 1
-    endloop
-
-	call ShowSetUpPanel(false)
-	call ClearAllEditBoxFocus()
-	call DzClickFrame( DzFrameFindByName("PreviousButton", 0) )
-	call DzFrameSetParent( UIFrame__ToolTip, GameUI )
-
-    call DzAPI_Map_SaveServerValue(LocalPlayer, "setup", s)
-	//call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 10, "|CFFFF8000[设置]|R |c006699CC复选框|r 已成功保存") 
-    
-	set i = 0
-	set s = null
-    loop
-        if LocalCommandButtonHotKey[i] == 0 then
-            set dummy = "0"
-        else
-            set dummy = Key2Str(LocalCommandButtonHotKey[i])
-        endif
-        set s = s + dummy
-        exitwhen i == 23
-		set i = i + 1
-    endloop
-	call DzAPI_Map_SaveServerValue(LocalPlayer, "hotkey", s)
-	
-	call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 10, "|CFFFF8000[设置]|R |c006699CC设置数据|r |cFF00FF00已上传|r") 
-
-endfunction
-
-// 点击 地图设置 按钮
-function ClickMapSetUpButton__Script takes nothing returns nothing
-
-	call DzClickFrame( DzFrameFindByName("EndGameButton", 0) )
-	call DzFrameShow( UIFrame__MapSetUpBackdrop , true)
-	call DzFrameShow( DzFrameFindByName("EndGamePanel", 0) , false)
-	call ShowSetUpPanel(true)
-
-	call DzFrameSetParent( UIFrame__ToolTip, DzFrameFindByName("MapOptionsPanel", 0) )
-endfunction
-
-// 点击地图选项返回按钮
-function ClickMapSetUpReturnButton takes nothing returns nothing
-	// 隐藏地图设置界面
-	call ClearAllEditBoxFocus()
-	call ShowSetUpPanel(false)
-	if DzGetTriggerKey() != 27 then
-		call DzClickFrame( DzFrameFindByName("PreviousButton", 0) )
-	endif
-
-	call DzFrameSetParent( UIFrame__ToolTip, GameUI )
-	// call DzClickFrame( UIFrame__ReturnButton )
-endfunction
-
-function ClickMapSetUpResetButton takes nothing returns nothing
-	local integer i = 1
-	loop
-		call DzFrameSetText(HotKeyEditBoxs[i], "")
-	exitwhen i == 23
-	set i = i + 1
-	endloop
-endfunction
-
-// 隐藏按钮的父级
-function Click_OKButton_Script takes nothing returns nothing
-	set UpdateLogIsShow = false
-	call DzFrameShow( UIFrame__UpdateLog , false)
-	if UIFrame__DebugLog != 0 then
-		call DzFrameShow( UIFrame__DebugLog , false)
-	endif
-	//call DzFrameShow( DzFrameGetParent( DzGetTriggerUIEventFrame() ) , false)
-endfunction
-
-function Click_MenuMainButton_Script takes nothing returns nothing
-    set bMenuMainPanelIsEnable = true
-endfunction
-
-function Click_MenuMainReturnButton_Script takes nothing returns nothing
-    set bMenuMainPanelIsEnable = false
-endfunction
-
-
-
-function Click_Key_S takes nothing returns nothing
-    if IsSetUpUIEnable then
-        call DzClickFrame(UIFrame__Button[1])
-    endif
-endfunction
-
-function Click_Key_R takes nothing returns nothing
-    if IsSetUpUIEnable then
-        call DzClickFrame(UIFrame__Button[2])
-    endif
-endfunction
-
-function Click_SetUp_GlueCheckBox_Actions takes integer id returns nothing
-	if id == 4 then//-ii 与si冲突
-		call DzFrameSetEnable(UIFrame__CheckBox[5], not UIFrame__IsCheckBoxEnable[id])
-		call DzSyncData("setup", "4")
-	elseif id == 5 then//-si 与-ii冲突
-		call DzFrameSetEnable(UIFrame__CheckBox[4], not UIFrame__IsCheckBoxEnable[id])
-		call DzSyncData("setup", "5")
-	elseif id == 16 then
-		call SetUpDoubleClickSpellByCheckBox(UIFrame__IsCheckBoxEnable[id])
-	elseif id == 20 then
-        set IsTabEnableMultiboard = UIFrame__IsCheckBoxEnable[id]
-		call GetSetUpText("Tab键开启多面板", UIFrame__IsCheckBoxEnable[id])
-    elseif id == 21 then
-        call DzEnableWideScreen(UIFrame__IsCheckBoxEnable[id])
-		call GetSetUpText("宽屏模式", UIFrame__IsCheckBoxEnable[id])
-	elseif id == 22 then
-		call DzFrameSetEnable(UIFrame__CheckBox[23], UIFrame__IsCheckBoxEnable[id])
-		set UseChangeHotKeySystem = UIFrame__IsCheckBoxEnable[id]
-		call GetSetUpText("改键系统", UIFrame__IsCheckBoxEnable[id])
-	elseif id == 23 then
-		set ChangeHotkeyHeroOnly = UIFrame__IsCheckBoxEnable[id]
-		call GetSetUpText("改键仅限英雄", UIFrame__IsCheckBoxEnable[id])
-    else //这一类都是需要同步的
-        call DzSyncData("setup", I2S(id))
-    endif
-endfunction
-
-function GetLocalPlayerSetUp takes nothing returns nothing
-    local string s
-    local integer i = 0
-    set ServerValue = DzAPI_Map_GetServerValue(LocalPlayer, "setup")
-	set s = SubString(ServerValue, 0 , 1)
-    if ServerValue == null or (s != "N" and s != "O") then
-        return
-    endif
-	// call DisplayTimedTextToPlayer(LocalPlayer,0,0,60, ServerValue) 
-    // call DisplayTimedTextToPlayer(LocalPlayer,0,0,60,"读取服务器数据")
-    loop
-        set s = SubString(ServerValue, i , i + 1)
-        set UIFrame__IsCheckBoxEnable[i] = s == "N"
-		if Default_SetUp[i] != UIFrame__IsCheckBoxEnable[i] then
-			call Click_SetUp_GlueCheckBox_Actions(i)
-			call DzFrameShow( UIFrame__HighLight[i], UIFrame__IsCheckBoxEnable[i] )
-		endif
-        exitwhen i == 23
-		set i = i + 1
-    endloop
-    set ServerValue = DzAPI_Map_GetServerValue(LocalPlayer, "hotkey")
-	if ServerValue == null then
-		return
-    endif
-	set i = 0
-	loop
-        set s = SubString(ServerValue, i , i + 1)
-		if s != "0" then
-			call DzFrameSetText(HotKeyEditBoxs[i + 1], s )
-		endif
-        exitwhen i == 22
-		set i = i + 1
-    endloop
-endfunction
-
-//初始勾选的复选框回调
-function Click_SetUp_GlueCheckBox_true takes nothing returns nothing
-    //每次加载 连续创建的UI的间隔值不同,所以需要这样计算
-    local integer id = R2I(((DzGetTriggerUIEventFrame() - FirstCheckBox) / Frame_X )) //得到UI的Id
-    set UIFrame__IsCheckBoxEnable[id] = not UIFrame__IsCheckBoxEnable[id]
-    call DzFrameShow( UIFrame__HighLight[id], UIFrame__IsCheckBoxEnable[id] )
-	call Click_SetUp_GlueCheckBox_Actions(id)
-endfunction
-
-// 创建复选框 id为序号,xy的值是UI的绝对位置,b为是否初始勾选
-function Create__CheckBox takes integer id, string tip, boolean b returns string
-    local real x
-    local real y
-    //local string str = "QuestCheckBox" //默认的复选框模板,初始时不勾选
- 
-    if id > 10 then
-        set x = CheckBox_WidthInitialValue + CheckBox_WidthSpacing
-        set y = CheckBox_HeightInitialValue - CheckBox_HeightSpacing * (id - 11)
-    else
-        set x = CheckBox_WidthInitialValue
-        set y = CheckBox_HeightInitialValue - CheckBox_HeightSpacing * id
-    endif
-    // 复选框,父UI为"地图设置"
-    set UIFrame__CheckBox[id] = DzCreateFrameByTagName("GLUECHECKBOX", "name", UIFrame__OrderSetUp, "SetUp_CheckBox", id)
-    call DzFrameSetAbsolutePoint( UIFrame__CheckBox[id], 4, x, y )
-    //if ServerValue == "" then
-    set UIFrame__IsCheckBoxEnable[id] = b
-    //else
-    //    set b = UIFrame__IsCheckBoxEnable[id]
-    //endif
-	set Default_SetUp[id] = b
-    set UIFrame__HighLight[id] = DzCreateFrameByTagName("HIGHLIGHT", "name", UIFrame__CheckBox[id], "SetUp_CheckBox_Highlight", id)
-    call DzFrameSetAllPoints( UIFrame__HighLight[id], UIFrame__CheckBox[id] )
-    if not b then
-        call DzFrameShow(UIFrame__HighLight[id], false)
-    endif
-    // 初始勾选的复选框回调与初始不勾选不同,需脚本来控制高亮模型隐藏/显示
-    // 事件Id,  7是勾选复选框,8是取消勾选
-    call DzFrameSetScriptByCode( UIFrame__CheckBox[id], 7, function Click_SetUp_GlueCheckBox_true, false)
-    call DzFrameSetScriptByCode( UIFrame__CheckBox[id], 8, function Click_SetUp_GlueCheckBox_true, false)
-    // 复选框注释
-    set UIFrame__CheckBoxText[id] = DzCreateFrameByTagName("TEXT", "name", UIFrame__CheckBox[id], "CheckBox_Text", id)
-    call DzFrameSetPoint( UIFrame__CheckBoxText[id], 3, UIFrame__CheckBox[id], 5, 0.005, 0.0 )
-    call DzFrameSetText( UIFrame__CheckBoxText[id], tip)
-	return tip
-endfunction
-
-function CreateTopMsgFrame takes nothing returns nothing
-	local integer i = 1
-	local integer TopMessage = DzFrameGetTopMessage()
-
-	loop
-		set UIFrame__Text[i] = DzCreateFrameByTagName("TEXT", "TopMsg"+I2S(i), GameUI, "TopMessageTextTemplate", 0)
-    	call DzFrameSetPoint( UIFrame__Text[i], 1, TopMessage, 1, 0, -0.0054 + -0.0166 * i )
-		//call DzFrameSetPriority( UIFrame__Text[i], -1 )
-		//call DzFrameSetEnable( UIFrame__Text[i], false )
-		call DzFrameShow(UIFrame__Text[i], false)
-		exitwhen i == 6
-		set i = i + 1
-	endloop
-	set UIFrame__TargetingError = DzCreateFrame("TargetingError", GameUI, 0)
-    call DzFrameSetSize( UIFrame__TargetingError, 0.10, 0.10 )
-	set UIText__TargetingError = DzFrameFindByName("TargetingErrorText", 0)
-	
-	call DzFrameSetText( UIText__TargetingError, null )
-	call DzFrameSetAbsolutePoint( UIFrame__TargetingError, 4, 0.36, 0.175 )
-	call DzFrameSetAbsolutePoint( UIText__TargetingError, 4, 0.36, 0.175 )
-	call DzFrameShow( UIFrame__TargetingError , false )
-
-endfunction
-
 function ChangeUnitAbilityHotKey takes integer iabilityId, integer newKey returns nothing
     local ability hAbility = null
     local integer iHotKey
@@ -90889,7 +90410,7 @@ function ChangeUnitAbilityHotKey takes integer iabilityId, integer newKey return
     if iabilityId == 0 then
         return
 	elseif iabilityId == 'AHer' then
-        set newKey = LocalCommandButtonHotKey[ChangeKeyLoopIndex + 12]
+        set newKey = LocalCommandButtonHotkey[ChangeKeyLoopIndex + 12]
         if MessageAbilityOrder == 0 or MessageAbilityOrder == 852000 or newKey == 0 then
             //call BJDebugMsg("返回 " + GetObjectName(MessageAbilityOrder))
             return
@@ -90914,7 +90435,6 @@ function ChangeUnitAbilityHotKey takes integer iabilityId, integer newKey return
     endif
     // 如果技能没快捷键 说明不必要改了
     if iHotKey == 0 or iHotKey == newKey then
-        // ability属于handle 不知道有没有必要 保险起见
         set hAbility = null
         return
     endif
@@ -90960,88 +90480,19 @@ function ChangeUnitAbilityHotKey takes integer iabilityId, integer newKey return
         call EXSetAbilityDataString(hAbility, 1, ABILITY_DATA_RESEARCH_TIP, GetHeroSkillResearchTip(iabilityId, Key2Str(newKey)) )
     endif
 
-    //call BJDebugMsg("改键成功" + GetObjectName(iabilityId)+ " " + I2S(iabilityId) + Key2Str(newKey))
-
     set hAbility = null
 endfunction
-
-
 
 // 刷新单位的快捷键
 function RefreshUnitAbilityHotKey takes unit whichUnit returns nothing
     set ChangeKeyLoopIndex = 0
     loop
-        if LocalCommandButtonHotKey[ChangeKeyLoopIndex] != 0 or LocalCommandButtonHotKey[ChangeKeyLoopIndex + 12] != 0 then
-            call ChangeUnitAbilityHotKey(GetLocalAbilityId(LocalCommandX[ChangeKeyLoopIndex], LocalCommandY[ChangeKeyLoopIndex]), LocalCommandButtonHotKey[ChangeKeyLoopIndex])
+        if LocalCommandButtonHotkey[ChangeKeyLoopIndex] != 0 or LocalCommandButtonHotkey[ChangeKeyLoopIndex + 12] != 0 then
+            call ChangeUnitAbilityHotKey(GetLocalAbilityId(LocalCommandX[ChangeKeyLoopIndex], LocalCommandY[ChangeKeyLoopIndex]), LocalCommandButtonHotkey[ChangeKeyLoopIndex])
         endif
         exitwhen ChangeKeyLoopIndex == 11
         set ChangeKeyLoopIndex = ChangeKeyLoopIndex + 1
     endloop
-endfunction
-
-// 每帧回调函数
-function cUpdateCallback takes nothing returns nothing
-	local boolean b = DzIsKeyDown(18)
-	local unit selectUnit = GetPlayerSelectedUnit()
-	// 改键
-	if UseChangeHotKeySystem then
-    	set UpdateCallbackCount = UpdateCallbackCount + 1
-    	if LocalPlayerSelectHandle != GetHandleId(selectUnit) then
-    	    set LocalPlayerSelectHandle = GetHandleId(selectUnit)
-			// 判断是否 需要对非英雄单位改键
-    	    if selectUnit != null and ( not ChangeHotkeyHeroOnly or IsUnitType(selectUnit, UNIT_TYPE_HERO) ) then
-    	        call RefreshUnitAbilityHotKey(selectUnit)
-    	    endif
-    	elseif UpdateCallbackCount > 60 and selectUnit != null then
-    	    set UpdateCallbackCount = 0
-			if selectUnit != null and ( not ChangeHotkeyHeroOnly or IsUnitType(selectUnit, UNIT_TYPE_HERO) ) then
-     			call RefreshUnitAbilityHotKey(selectUnit)
-			endif
-    	endif
-	endif
-	set selectUnit = null
-	if b != DownAlt then
-		call AHC(b)
-	endif
-	// 模拟错误提示
-	if InterfaceErrorHideTime > 0. and InterfaceErrorHideTime < GetGameTime( ) then
-		set InterfaceErrorTextAlpha = R2I( 255 - 255 * ( ( GetGameTime( ) - InterfaceErrorHideTime ) / 3 ) )
-		if InterfaceErrorTextAlpha <= 0 then
-			call DzFrameSetAlpha( UIText__TargetingError, 255 )
-			call DzFrameShow( UIFrame__TargetingError , false )
-			set InterfaceErrorHideTime = 0
-			set InterfaceErrorTextAlpha = 0
-		else
-			call DzFrameSetAlpha( UIText__TargetingError, InterfaceErrorTextAlpha )
-		endif
-	endif
-endfunction
-
-// 鼠标左键点击
-function MouseLeftClick takes nothing returns nothing
-	// call BJDebugMsg( "鼠标点击Frame:" + I2S( DzGetMouseFocus() ) + "  Name:" + DzFrameGetName( DzGetMouseFocus() ) )
-	if DownAlt then
-		if CommandBarButtonIndex == - 1 then
-			return
-		endif
-		call SetStartLocPrioCount(CommandBarButtonIndex / 3 , ModuloInteger(CommandBarButtonIndex, 3))
-		if DzIsKeyDown(18) and tip_string != null and tip_string != "" then
-			if GetChat_times() then
-				call DzSyncData("t", tip_string)
-			endif
-		endif
-		set tip_string = null
-	endif
-endfunction
-
-// 鼠标进入命令按钮
-function Enter_UI_Ability_Button takes nothing returns nothing
-	set CommandBarButtonIndex = (DzGetTriggerUIEventFrame() - FirstCommandBarButton)/ ButtonInterval
-endfunction
-
-// 鼠标离开命令按钮
-function LeaveButton takes nothing returns nothing
-	set CommandBarButtonIndex = - 1
 endfunction
 
 
@@ -91057,124 +90508,6 @@ function DoubleClickSkill takes nothing returns nothing
 		endif
 	else
 		set DoubleClickKeyTime = GetGameTime()
-	endif
-endfunction
-
-// 按下ESC按键
-// 直接异步清理消息 更顺滑
-function EnterKey___PushOther takes nothing returns nothing
-	local integer key = DzGetTriggerKey()
-	//call DzFrameShow( UIFrame__Text[1], false )
-	// 回车
-	if key == 13 then
-		if UpdateLogIsShow then
-			// 退出更新日志
-			call DzClickFrame(UIButton__UpdateLogOK)
-		endif
-	elseif key == 27 then
-		// 按下ESC
-		if IsSetUpUIEnable then
-			// 退出选择面板
-			call ClickMapSetUpReturnButton()
-		elseif bMenuMainPanelIsEnable then
-			// 退出菜单
-			set bMenuMainPanelIsEnable = false
-		elseif UpdateLogIsShow then
-			// 退出更新日志
-			call DzClickFrame(UIButton__UpdateLogOK)
-		//else
-		//	call ClearTextMessages()
-		//endif
-		endif
-	elseif key == 115 then
-		// 如果按下F4 的同时还按着Alt 说明玩家要直接退游戏 隐藏一下防止露馅
-		if DzIsKeyDown(18) then
-			call DzFrameShow( UIFrame__SetUp, false )
-			call DzFrameShow( UIFrame__OrderSetUp, false )
-			set IsSetUpUIEnable = false
-			set bMenuGameplayPanelIsEnable = false
-		endif
-	elseif key == 121 then
-		// 按F10
-		set bMenuMainPanelIsEnable = true
-	endif
-endfunction
-
-
-// 按键按下
-function EnterKey___PushKey takes nothing returns nothing
-	local integer iHotKey = DzGetTriggerKey()
-	local integer x = 0
-	local integer abilityId
-	if not KeyIsDown[iHotKey] then
-		set KeyIsDown[iHotKey] = true
-		// 如果在菜单界面
-		if bMenuMainPanelIsEnable then
-			if iHotKey == 'C' and not IsSetUpUIEnable then
-				call ClickMapSetUpButton__Script()
-				return
-			endif
-		// 如果按下了J 可能是要开启防御符文
-		elseif iHotKey == 'J' then
-			if DzIsKeyDown(18) then
-				call Click_UI_Glyph_A()
-			endif
-		endif
-		if IsEnableDoubleClickSystem then
-			if KeyCanDoubleClickSpell[iHotKey] > 0 then
-				// 因为取消按键在右下角
-				call GetLocalAbilityId(3, 2)
-				if MessageAbilityOrder == 851979 then
-					if DoubleClickKey == iHotKey then
-						if (DoubleClickKeyTime != 0. ) then
-							call DoubleClickSkill()
-							return
-						else
-							set DoubleClickKeyTime = GetGameTime()
-						endif
-					else
-						set DoubleClickKeyTime = 0.
-					endif
-				endif
-				set abilityId = GetLocalAbilityId(0, 0)
-				if LoadBoolean(LocalHashTable, abilityId, KEY_USE_DOUBLECLICK_SPELL) then
-					if LoadInteger(LocalHashTable, abilityId, HotKeyStringHash) == iHotKey then
-						set DoubleClickKey = iHotKey
-						set DoubleClickKeyTime = GetGameTime()
-						return
-					endif
-				else
-					loop
-						exitwhen x > 3
-						set abilityId = GetLocalAbilityId(x, 2)
-						if LoadBoolean(LocalHashTable, abilityId, KEY_USE_DOUBLECLICK_SPELL) then
-							if LoadInteger(LocalHashTable, abilityId, HotKeyStringHash) == iHotKey then
-								set DoubleClickKey = iHotKey
-								set DoubleClickKeyTime = GetGameTime()
-								return
-							endif
-						endif
-						set abilityId = GetLocalAbilityId(x, 1)
-						if LoadBoolean(LocalHashTable, abilityId, KEY_USE_DOUBLECLICK_SPELL) then
-							if LoadInteger(LocalHashTable, abilityId, HotKeyStringHash) == iHotKey then
-								set DoubleClickKey = iHotKey
-								set DoubleClickKeyTime = GetGameTime()
-								return
-							endif
-						endif
-						set x = x + 1
-					endloop
-				endif
-			endif
-		endif
-	endif
-endfunction
-
-// 按键弹起
-function EnterKey___PoolKey takes nothing returns nothing
-	local integer key = DzGetTriggerKey()
-	if KeyIsDown[key] then
-		set KeyIsDown[key] = false
 	endif
 endfunction
 
@@ -91195,318 +90528,46 @@ endfunction
 
 // 初始化技能双击施法
 function DoubleClickSkill__Init takes nothing returns nothing
-	// 这里直接复制高版本偷懒 - - 不自己找了
-	// 模拟的应该差不多
-	call AddDoubleClickSkillID('A11N')//X标记
-	call AddDoubleClickSkillID('A08V')//全能魔免
-	call AddDoubleClickSkillID('A08N')//全能加血
-	call AddDoubleClickSkillID('A2ML')//大树护甲
-	call AddDoubleClickSkillID('A0QP')//神灵活血术
-	call AddDoubleClickSkillID('A2J2')//军团加血
-	call AddDoubleClickSkillID('A0MF')//死骑套子
-	call AddDoubleClickSkillID('A037')//猛犸授予力量
-	call AddDoubleClickSkillID('A047')//剑圣棒子
-	call AddDoubleClickSkillID('A44X')//血魔d
-	call AddDoubleClickSkillID('A3DM')//A杖蚂蚁大
-	call AddDoubleClickSkillID('A0N8')//地卜师忽悠
-	call AddDoubleClickSkillID('A112')//光法加魔
-	call AddDoubleClickSkillID('A21E')//先知发芽
-	call AddDoubleClickSkillID('A0QG')//兔子套子
-	call AddDoubleClickSkillID('A0R7')//兔子加速
-	call AddDoubleClickSkillID('A08R')//巫妖冰甲
-	call AddDoubleClickSkillID('A2TD')//骨法虚无
-	call AddDoubleClickSkillID('A0OJ')//黑鸟t
-	call AddDoubleClickSkillID('A0AS')//术士暗言术
-	call AddDoubleClickSkillID('A1S8')//毒狗关人
-	call AddDoubleClickSkillID('A10L')//薄葬
-	call AddDoubleClickSkillID('A0OR')//暗牧加血
-	call AddDoubleClickSkillID('Z607')//灵动迅捷
-	call AddDoubleClickSkillID('A2LB')//冰龙加血
-	call AddDoubleClickSkillID('A01Z')//大自然的掩护
-	call AddDoubleClickSkillID('A0AS')//暗言术
-	call AddDoubleClickSkillID('A2T5')//命运敕令
-	call AddDoubleClickSkillID('A2SG')//涤罪之焰
-	call AddDoubleClickSkillID('A2TF')//虚妄诺言
-	call AddDoubleClickSkillID('A0G8')//复制
-	call AddDoubleClickSkillID('A04Y')//噩梦
-	call AddDoubleClickSkillID('A00U')//月蚀
-	call AddDoubleClickSkillID('A43H')//超新星
-	call AddDoubleClickSkillID('A083')//嗜血术
-	call AddDoubleClickSkillID('A06B')//自爆
-	call AddDoubleClickSkillID('A471')//A杖自爆
+	call AddDoubleClickSkillID('A11N') // X标记
+	call AddDoubleClickSkillID('A08V') // 全能魔免
+	call AddDoubleClickSkillID('A08N') // 全能加血
+	call AddDoubleClickSkillID('A2ML') // 大树护甲
+	call AddDoubleClickSkillID('A0QP') // 神灵活血术
+	call AddDoubleClickSkillID('A2J2') // 军团加血
+	call AddDoubleClickSkillID('A0MF') // 死骑套子
+	call AddDoubleClickSkillID('A037') // 猛犸授予力量
+	call AddDoubleClickSkillID('A047') // 剑圣棒子
+	call AddDoubleClickSkillID('A44X') // 血魔d
+	call AddDoubleClickSkillID('A3DM') // A杖蚂蚁大
+	call AddDoubleClickSkillID('A0N8') // 地卜师忽悠
+	call AddDoubleClickSkillID('A112') // 光法加魔
+	call AddDoubleClickSkillID('A21E') // 先知发芽
+	call AddDoubleClickSkillID('A0QG') // 兔子套子
+	call AddDoubleClickSkillID('A0R7') // 兔子加速
+	call AddDoubleClickSkillID('A08R') // 巫妖冰甲
+	call AddDoubleClickSkillID('A2TD') // 骨法虚无
+	call AddDoubleClickSkillID('A0OJ') // 黑鸟t
+	call AddDoubleClickSkillID('A0AS') // 术士暗言术
+	call AddDoubleClickSkillID('A1S8') // 毒狗关人
+	call AddDoubleClickSkillID('A10L') // 薄葬
+	call AddDoubleClickSkillID('A0OR') // 暗牧加血
+	call AddDoubleClickSkillID('Z607') // 灵动迅捷
+	call AddDoubleClickSkillID('A2LB') // 冰龙加血
+	call AddDoubleClickSkillID('A01Z') // 大自然的掩护
+	call AddDoubleClickSkillID('A0AS') // 暗言术
+	call AddDoubleClickSkillID('A2T5') // 命运敕令
+	call AddDoubleClickSkillID('A2SG') // 涤罪之焰
+	call AddDoubleClickSkillID('A2TF') // 虚妄诺言
+	call AddDoubleClickSkillID('A0G8') // 复制
+	call AddDoubleClickSkillID('A04Y') // 噩梦
+	call AddDoubleClickSkillID('A00U') // 月蚀
+	call AddDoubleClickSkillID('A43H') // 超新星
+	call AddDoubleClickSkillID('A083') // 嗜血术
+	call AddDoubleClickSkillID('A06B') // 自爆
+	call AddDoubleClickSkillID('A471') // A杖自爆
 endfunction
 
-
-
-function SeEditBoxTextEvent takes nothing returns nothing
-    local integer hTrigFrame = DzGetTriggerUIEventFrame()
-    local string sText = DzFrameGetText(hTrigFrame)
-    local integer id
-	local integer key
-	if sText == null or sText == "" or sText == "0" then
-        set id = (hTrigFrame - FirstEditBox) / EditBoxInterval 
-        set LocalCommandButtonHotKey[id] = 0
-        return
-    endif
-    if DzFrameGetEnable(hTrigFrame) and sText != null then
-		set sText = StringCase(sText, true)
-		set key = Str2Key(sText)
-		if key == null then
-			set sText = null
-		endif
-		set id = (hTrigFrame - FirstEditBox) / EditBoxInterval 
-        //call BJDebugMsg(I2S(id))
-        set LocalCommandButtonHotKey[id] = key
-        call DzFrameSetEnable(hTrigFrame, false)
-        call DzFrameSetText(hTrigFrame, sText )
-    else
-        call DzFrameSetEnable(hTrigFrame, true)
-    endif
-endfunction
-
-// 初始化改键的UI
-function InitSetUpHotKeyEditFrame takes nothing returns nothing
-	local integer loop__Index = 1
-	local integer tmp__Int
-    local real xOffSet = 0.03
-    local real yOffSet = - 0.03
-    local integer row = 0
-    local integer column = 0
-	set HotKeyEditBoxFrame = DzCreateFrameByTagName("FRAME", null, UIFrame__SetUp, null, 0)
-    call DzFrameSetPriority( HotKeyEditBoxFrame, -1 )
-    call DzFrameSetSize( HotKeyEditBoxFrame, 0.30, 0.20 )
-    loop
-        set HotKeyEditBoxs[loop__Index] = DzCreateFrameByTagName("EDITBOX", null, HotKeyEditBoxFrame, "HotKeyEditBox__Template", 0)
-
-        call DzFrameSetAbsolutePoint(HotKeyEditBoxs[loop__Index], 4, 0.5 + xOffSet * row, 0.460 + yOffSet * column )
-
-        if ModuloInteger(loop__Index, 4) == 0 then
-            set column = column + 1
-            set row = 0
-        else
-            set row = row + 1
-        endif
-        
-        call DzFrameSetScriptByCode( HotKeyEditBoxs[loop__Index], 9, function SeEditBoxTextEvent, false )
-        // call DzFrameSetTextSizeLimit( HotKeyEditBoxs[loop__Index], 1 )
-        exitwhen loop__Index == 12
-        set loop__Index = loop__Index + 1
-    endloop
-
-    set loop__Index = loop__Index + 1
-    set row = 0
-    set column = 0
-    loop
-        set HotKeyEditBoxs[loop__Index] = DzCreateFrameByTagName("EDITBOX", null, HotKeyEditBoxFrame, "HotKeyEditBox__Template", 0)
-        
-        call DzFrameSetAbsolutePoint(HotKeyEditBoxs[loop__Index], 4, 0.5 + xOffSet * row, 0.34 + yOffSet * column )
-
-        if ModuloInteger(loop__Index, 4) == 0 then
-            set column = column + 1
-            set row = 0
-        else
-            set row = row + 1
-        endif
-        
-        call DzFrameSetScriptByCode( HotKeyEditBoxs[loop__Index], 9, function SeEditBoxTextEvent, false )
-        // call DzFrameSetTextSizeLimit( HotKeyEditBoxs[loop__Index], 1 )
-        exitwhen loop__Index == 23
-        set loop__Index = loop__Index + 1
-    endloop
-
-    set FirstEditBox = HotKeyEditBoxs[1]
-    set EditBoxInterval = HotKeyEditBoxs[2] - HotKeyEditBoxs[1]
-endfunction
-
-function GetFrameToolTipStr takes integer frame, integer typeId returns string
-	return LoadStr( ExtraHT, frame, typeId )
-endfunction
-
-function FrameToolTip__MouseEnter takes nothing returns nothing
-	local integer frame = DzGetTriggerUIEventFrame()
-	call DzFrameShow( UIFrame__ToolTip, true )
-	call DzFrameSetText( UIText__ToolTip, GetFrameToolTipStr( frame, HTKEY_UI_TOOLTIP_STR ) )
-	call DzFrameSetText( UIText__ToolUberTip, GetFrameToolTipStr( frame, HTKEY_UI_TOOLTIP_UBERSTR ) )
-endfunction
-
-function FrameToolTip__MouseLeave takes nothing returns nothing
-	call DzFrameShow( UIFrame__ToolTip, false )
-endfunction
-
-// 给Frame添加工具提示
-function SetFrameToolTip takes integer frame, string tip, string uberTip returns nothing
-	call SaveStr( ExtraHT, frame, HTKEY_UI_TOOLTIP_STR, tip )
-	call SaveStr( ExtraHT, frame, HTKEY_UI_TOOLTIP_UBERSTR, uberTip )
-	call DzFrameSetScriptByCode( frame, 2, function FrameToolTip__MouseEnter, false )
-	call DzFrameSetScriptByCode( frame, 3, function FrameToolTip__MouseLeave, false )
-endfunction
-
-function InitMainUI takes nothing returns nothing
- 	// 实际上应该为常量,但无法在全局变量中声明
-	set GameUI = DzGetGameUI()
-	// 加载toc fdf模板
-	call DzLoadToc("UI\\path.toc")
-	set IsReplayMode=DzSimpleFrameFindByName("SimpleReplayPanel", 0) != 0
-	//======================================================================
-	// 防御符文按钮
-	set GlyphFrame = DzCreateFrameByTagName("TEXTBUTTON", "name", GameUI, "Glyph_Button", 0)
-	call DzFrameSetPoint(GlyphFrame, 4, DzFrameGetMinimap(), 4, 0.087, -0.061)
-	// 按钮提示
-	//set GlyphFrame_tip = DzCreateFrameByTagName("BACKDROP", "Tooltip", GameUI, "Demo_BorderBack", 0)
-	//set GlyphFrame_tip_text = DzCreateFrameByTagName("TEXT", "text", GlyphFrame_tip, null, 0)
-	//call DzFrameSetText(GlyphFrame_tip_text, "激活 防御符文(|cffffcc00Alt-J|r)\n在5秒内，使你方阵营所有的建筑物对物理攻击免疫。|n|n|cff99ccff团队冷却时间：|r5分钟")
-	call SetFrameToolTip( GlyphFrame, "激活 防御符文(|cffffcc00Alt-J|r)", "在5秒内，使你方阵营所有的建筑物对物理攻击免疫。|n|n|cff99ccff团队冷却时间：|r5分钟" )
-	//call DzFrameSetParent(GlyphFrame, DzFrameGetMinimap() )
-	//======================================================================
-	// 创建顶部消息栏 击杀信息
-	call CreateTopMsgFrame()
-	//======================================================================
-	// 创建底部信息提示栏 错误提示
-
-	//======================================================================
-	// 更新日志
-	set UIFrame__UpdateLog = DzCreateFrame( "UpdateLogDialog" , GameUI, 0 )
-	call DzFrameSetAbsolutePoint( UIFrame__UpdateLog, 4, 0.4, 0.35 )
-	call DzFrameSetText(DzFrameFindByName("UpdateLogArea", 0), UpdateLogStr)
-	set UIButton__UpdateLogOK = DzFrameFindByName("UpdateLogOkButton", 0)
-	call DzFrameSetScriptByCode( UIButton__UpdateLogOK, 1, function Click_OKButton_Script, false)
-	call DzFrameShow( UIFrame__UpdateLog, false )
-	//======================================================================
-	
-	//======================================================================
-	// 地图设置
-	set UIFrame__MainPanel = DzFrameFindByName("MainPanel", 0) // 主菜单
-    set UIFrame__ReturnButton = DzFrameFindByName("ReturnButton", 0) // 主菜单返回按钮
-    // UIFrame__SetUp做为父级UI,初始隐藏,隐藏UIFrame__SetUp时,子级UI会一起被隐藏
-
-    set UIFrame__SetUp = DzCreateFrame( "EscMenuMapOptionsPanel" , DzFrameFindByName("EscMenuMainPanel", 0), 0 )
-	call DzFrameSetAbsolutePoint( UIFrame__SetUp, 4, 0.4, 0.3 )
-
-	set UIFrame__Text[10] = DzCreateFrameByTagName("TEXT", null, UIFrame__SetUp, "SetUpPanelTitleText", 0)
-    call DzFrameSetPoint( UIFrame__Text[10], 4, UIFrame__SetUp, 4, 0.14, 0.185 )
-    call DzFrameSetText( UIFrame__Text[10], "使用技能按键")
-	set UIFrame__Text[10] = DzCreateFrameByTagName("TEXT", null, UIFrame__SetUp, "SetUpPanelTitleText", 0)
-    call DzFrameSetPoint( UIFrame__Text[10], 4, UIFrame__SetUp, 4, 0.14, 0.065 )
-    call DzFrameSetText( UIFrame__Text[10], "学习技能按键")
-
-	call DzFrameShow( UIFrame__SetUp, false )
-	call DzFrameShow( UIFrame__SetUp, true )
-	call DzFrameShow( UIFrame__SetUp, false )
-	call DzFrameSetPriority( UIFrame__SetUp ,  50 )
-	// 设置优先级 防止被背景挡住
-	call DzFrameSetPriority( DzFrameFindByName("MapOptionsPanel", 0) ,  1 )
-
-	set UIFrame__MapSetUpBackdrop = DzCreateFrame( "EscMenuMapSetUpBackdrop", UIFrame__SetUp, 0 )
-	call DzFrameSetAbsolutePoint( UIFrame__MapSetUpBackdrop, 4, 0.4, 0.363 )
-	call DzFrameShow( UIFrame__MapSetUpBackdrop, false )
-
-	set UIFrame__OrderSetUp = DzCreateFrameByTagName("FRAME", null, UIFrame__SetUp, null, 0)
-	// 初始化改键
-	call InitSetUpHotKeyEditFrame()
-	// 点击命令设置按钮
-	// 设置按钮,点击后会弹出UIFrame__SetUp
-	set UIFrame__Button[0] = DzCreateFrame("MapSetUpButton", DzFrameFindByName("InsideMainPanel", 0), 0)
-	// 点击 地图设置(C)
-    call DzFrameSetScriptByCode( UIFrame__Button[0], 1, function ClickMapSetUpButton__Script, false)
-	// 点击 菜单按钮
-	call DzFrameSetScriptByCode( DzSimpleFrameFindByName("UpperButtonBarMenuButton", 0), 1, function Click_MenuMainButton_Script, false)
-	// 返回按钮
-	call DzFrameSetScriptByCode( DzFrameFindByName("MapSetUpReturnButton", 0), 1, function ClickMapSetUpReturnButton, false)
-	// 重置按钮
-	call DzFrameSetScriptByCode( DzFrameFindByName("MapSetUpResetButton", 0), 1, function ClickMapSetUpResetButton, false)
-	// 确定按钮
-    call DzFrameSetScriptByCode( DzFrameFindByName("MapSetUpOKButton", 0), 1, function ClickOrderSetUpSaveButton, false)
-	// 捕捉点击菜单的返回按钮
-    call DzFrameSetScriptByCode( UIFrame__ReturnButton, 1, function Click_MenuMainReturnButton_Script, false)
-
-
-	//======================================================================
-	// 工具提示
-	set UIFrame__ToolTip = DzCreateFrameByTagName("FRAME", null, GameUI, null, 0)
-	set UIBackDrop__ToolTip = DzCreateFrameByTagName("BACKDROP", null, UIFrame__ToolTip, "TooltipBackDrop", 0)
-	set UIText__ToolTip = DzCreateFrameByTagName("TEXT", null, UIBackDrop__ToolTip, "TooltipText", 0)
-	set UIText__ToolUberTip = DzCreateFrameByTagName("TEXT", null, UIBackDrop__ToolTip, "TooltipText", 0)
-	//call DzFrameSetSize(UIBackDrop__ToolTip, 0.209, 0)
-	call DzFrameSetSize(UIText__ToolTip, 0.209, 0)
-	call DzFrameSetSize(UIText__ToolUberTip, 0.209, 0)
-	// 设置"提示背景"的左上为"提示"的左上
-	call DzFrameSetPoint(UIBackDrop__ToolTip, 0, UIText__ToolTip, 0, - 0.005, 0.005)
-	// 设置"提示"的底部为"扩展提示"的顶部
-	call DzFrameSetPoint(UIText__ToolTip, 6, UIText__ToolUberTip, 0, 0, 0.005)
-	// 设置"提示背景"的右下为"扩展提示"的右下
-	call DzFrameSetPoint(UIBackDrop__ToolTip, 8, UIText__ToolUberTip, 8, 0.005, - 0.005)
-	call DzFrameSetAbsolutePoint(UIText__ToolUberTip, 8, 0.7935, 0.168)
-
-	call DzFrameShow( UIFrame__ToolTip, false )
-	call DzFrameSetPriority( UIFrame__ToolTip ,  100 )
-	//======================================================================
-	// 捕捉点击血条的按钮
-	call DzCreateSimpleFrame("StateButtonFrame", DzSimpleFrameFindByName("ConsoleUI", 0), 0)
-	set UIFrame__Button[3] = DzSimpleFrameFindByName("StateButton", 0)
-	call DzFrameSetAbsolutePoint( UIFrame__Button[3], 0, 0.214, 0.03 )
-    call DzFrameSetAbsolutePoint( UIFrame__Button[3], 8, 0.292, 0.002 )
-	call DzFrameSetScriptByCode( UIFrame__Button[3], 1, function Click_LifeManaButton, false)
-	//======================================================================
-	// 创建复选框
-    call Create__CheckBox(0, "右键反补", false) //null
-	call SetFrameToolTip( UIFrame__CheckBox[0], "右键反补", "?" )
-    set FirstCheckBox = UIFrame__CheckBox[0]
-    call Create__CheckBox(1, "隐藏被动", false)  //-sp
-	call SetFrameToolTip( UIFrame__CheckBox[1], "隐藏被动", "隐藏大部分被动技能，不包括有冷却时间的技能。" )
-    set Frame_X = UIFrame__CheckBox[1] - UIFrame__CheckBox[0]
-    call Create__CheckBox(2, "隐藏有冷却被动", false) //-spcd
-	call SetFrameToolTip( UIFrame__CheckBox[2], "隐藏有冷却被动", "隐藏有冷却的被动技能，不包括|CFFFF8000重生|r和|CFFFF8000连击|r。" )
-    call Create__CheckBox(3, "多面板显示充能", true) //-charges
-	call SetFrameToolTip( UIFrame__CheckBox[3], "多面板显示充能", "在右上角多面板显示一些技能的充能和冷却情况。" )
-    call Create__CheckBox(4, "多面板显示技能", false) //-si
-	call SetFrameToolTip( UIFrame__CheckBox[4], "多面板显示技能", "在右上角多面板显示选择的技能，与显示物品冲突。" )
-    call Create__CheckBox(5, "多面板显示物品", false) //-ii
-	call SetFrameToolTip( UIFrame__CheckBox[5], "多面板显示物品", "在右上角多面板显示选择的技能，与显示技能冲突。" )
-    call Create__CheckBox(6, "自动攻击", false) //null
-	call SetFrameToolTip( UIFrame__CheckBox[6], "自动攻击", "?" )
-    call Create__CheckBox(7, "自动选择召唤物", true) //-disableselection/-ds 和 -enableselection/-es
-	call SetFrameToolTip( UIFrame__CheckBox[7], "自动选择召唤物", "开启后使用召唤类技能(包括镜像)将会自动选取被召唤单位。" )
-	call Create__CheckBox(8, "自动装置神符", true) //-orp
-	call SetFrameToolTip( UIFrame__CheckBox[8], "自动装置神符", "右键点击|cffff0000神符|r时|c0000FF00会|r把神符装入瓶中" )
-    call Create__CheckBox(9, "禁用帮助技能", false) //-disablehelp 和 -enablehelp
-	call SetFrameToolTip( UIFrame__CheckBox[9], "禁用帮助技能", "禁止友军对你使用帮助技能，例如|CFFFF8000忠诚考验|r和|CFFFF8000X标记|r。" )
-    call Create__CheckBox(10, "共享信使", false) // 无指令,能量圈中使用
-	call SetFrameToolTip( UIFrame__CheckBox[10], "共享信使", "将你的信使更改为队伍公用，不必向友军开启共享单位。" )
-    call Create__CheckBox(11, "关闭特殊音效", true) //-mute
-	call SetFrameToolTip( UIFrame__CheckBox[11], "特殊音效", "关闭后不会播放大部分音效，例如击杀，连杀音效。" )
-    call Create__CheckBox(12, "隐藏系统信息", false) //-showmsg 和 -hidemsg
-	call SetFrameToolTip( UIFrame__CheckBox[12], "隐藏系统信息", "开启后不再显示系统信息，例如击杀消息，重要提示等。" )
-    call Create__CheckBox(13, "镜头置中", false) //null
-    call Create__CheckBox(14, "震动视角", false) //-shaking
-	call SetFrameToolTip( UIFrame__CheckBox[14], "震动视角", "目前只有在单人模式下才可使用，挨打会让屏幕震动。" )
-    call Create__CheckBox(15, "显示伤害值", false) //-sddon 和 -sddoff
-	call SetFrameToolTip( UIFrame__CheckBox[15], "显示伤害值", "目前只有在单人模式下才可使用，一般用于测试。" )
-    call Create__CheckBox(16, "双击对己施法", false) // -dch
-	call SetFrameToolTip( UIFrame__CheckBox[16], "双击对己施法", "开启后双击技能快捷键将对自己释放技能。需要注意必须是游戏内的快捷键，平台修改的快捷键地图并不会知道。" )
-    call Create__CheckBox(17, "快速清理阵亡消息", false) //-fc
-	call SetFrameToolTip( UIFrame__CheckBox[17], "快速清理阵亡消息", "开启后，死亡信息持续显示1秒，关闭则10秒。" )
-    call Create__CheckBox(18, "开启信使阵亡窗口", true) //-ui
-	call SetFrameToolTip( UIFrame__CheckBox[18], "开启信使阵亡窗口", "开启将显示信使阵亡窗口，关闭则会显示信使当前活动情况。" )
-    call Create__CheckBox(19, "等待复活计时窗口", true) //-deathon/-don 和 -doff/-deathoff
-	call SetFrameToolTip( UIFrame__CheckBox[19], "等待复活计时窗口", "死后的复活计时窗口。" )
-    call Create__CheckBox(20, "Tab键开启多面板", false) //无指令
-	call SetFrameToolTip( UIFrame__CheckBox[20], "Tab键开启多面板", "开启后按住Tab键会显示多面板，松开则取消显示。" )
-    call Create__CheckBox(21, "宽屏模式", false) //无指令
-	call SetFrameToolTip( UIFrame__CheckBox[21], "宽屏模式", "顾名思义。" )
-	call Create__CheckBox(22, "改键系统", false) //无指令
-	call SetFrameToolTip( UIFrame__CheckBox[22], "改键系统", "如果你有同时使用平台改键的话，那么我建议你两边设置都相同。此系统有略微延迟，学习技能后重新选择单位可能有所改善。不建议喜欢使用原生按键的玩家开启此项。" )
-	call Create__CheckBox(23, "改键仅限英雄", true) //无指令
-	call SetFrameToolTip( UIFrame__CheckBox[23], "改键仅限英雄", "开启后仅会更改英雄单位的快捷键。" )
-	call DzFrameSetAbsolutePoint( UIFrame__CheckBox[22], 4, 0.4, 0.424 )
-	call DzFrameSetAbsolutePoint( UIFrame__CheckBox[23], 4, 0.4, 0.4 )
-	// 一些不可用的
-	call DzFrameSetEnable( UIFrame__CheckBox[0], false )
-	call DzFrameSetEnable( UIFrame__CheckBox[6], false )
-	call DzFrameSetEnable( UIFrame__CheckBox[13], false )
-	call DzFrameSetEnable( UIFrame__CheckBox[23], false )
-	//======================================================================
-
-endfunction
+//! import "Scripts\System\Frame\UIMain.j"
 
 function Init_ExtraTriggers takes nothing returns nothing
 	local integer i
@@ -91524,88 +90585,10 @@ function Init_ExtraTriggers takes nothing returns nothing
 	call SetSkillDisableRefreshCoolDown('A3TY') //回音战刃
 	call SetSkillDisableRefreshCoolDown('A3TZ') //碎颅锤
 	// 初始化UI
-	call InitMainUI()
+	call UIMain_Init()
 	// 初始化同步触发器
 	call InitSyncTrigger()
 
-	// 和谐资源栏
-	set i = 0
-	loop
-		exitwhen i > 11
-		//call DzFrameShow(DzFrameFindByName("AllyCheckBox",i ),false)
-		//call DzFrameShow(DzFrameFindByName("VisionCheckBox",i ),false)
-		//call DzFrameShow(DzFrameFindByName("UnitsCheckBox",i ),false)
-		call DzFrameShow(DzFrameFindByName("GoldBackdrop",i ),false)
-		call DzFrameShow(DzFrameFindByName("LumberBackdrop",i ),false)
-		set i = i + 1
-	endloop
-	set i = 0
-    loop
-		set LocalCommandX[i] = ModuloInteger(i, 4)
-		set LocalCommandY[i] = i / 4
-        exitwhen i == 11
-        set i = i + 1
-    endloop
-
-	// 注册一些异步事件
-	//======================================================================
-	// 读取服务器存档
-	call GetLocalPlayerSetUp()
-	//======================================================================
-	set i = 65
-	set PortraitFrame = DzFrameGetPortrait()
-	// A - Z 键代码 因为技能快捷键现在仅支持A - Z
-	loop
-		exitwhen i > 90
-		call DzTriggerRegisterKeyEventByCode(null, i, 1, false, function EnterKey___PushKey)
-		call DzTriggerRegisterKeyEventByCode(null, i, 0, false, function EnterKey___PoolKey)
-		set i = i + 1
-	endloop
-	// 按下回车 13
-	call DzTriggerRegisterKeyEventByCode(null, 13, 1, false, function EnterKey___PushOther)
-	// 按下ESC 27
-	call DzTriggerRegisterKeyEventByCode(null, 27, 1, false, function EnterKey___PushOther)
-	// 按下F4 115 
-	call DzTriggerRegisterKeyEventByCode(null, 115, 1, false, function EnterKey___PushOther)
-	// 按下F10 121 
-	call DzTriggerRegisterKeyEventByCode(null, 121, 1, false, function EnterKey___PushOther)
-	// 按下J 74
-	// call DzTriggerRegisterKeyEventByCode(null, 74, 1, false, function EnterKey___PushOther)
-	// 点击防御符文按钮
-	call DzFrameSetScriptByCode(GlyphFrame, 1, function Click_UI_Glyph, false)
-	// 左键松开
-	call DzTriggerRegisterMouseEventByCode(null, 1, 0, false, function MouseLeftClick)
-	// Tab键松开与按下
-	call DzTriggerRegisterKeyEventByCode(null, 9, 0, false, function tab0)
-	call DzTriggerRegisterKeyEventByCode(null, 9, 1, false, function tab1)
-
-	// 点击英雄图标按钮
-	call DzFrameSetScriptByCode(DzFrameGetHeroBarButton(0), 1, function Click_UI_HeroBarButton, false)
-	// 鼠标进入和离开右下角技能栏
-	set x = 0
-	set y = 0
-	loop
-		exitwhen x > 3
-		set y = 0
-		loop
-			exitwhen y > 2
-			set hTempFrame = DzFrameGetCommandBarButton(y, x)
-			call DzFrameSetScriptByCode(hTempFrame, 2, function Enter_UI_Ability_Button, false)
-			call DzFrameSetScriptByCode(hTempFrame, 3, function LeaveButton, false)
-			set y = y + 1
-		endloop
-		set x = x + 1
-	endloop
-
-	// 界面更新回调
-	call DzFrameSetUpdateCallbackByCode(function cUpdateCallback)
-
-	if IsObserverPlayer(LocalPlayer) then
-		call DzFrameSetEnable( GlyphFrame, false )
-		call DzFrameSetEnable( UIFrame__Button[0], false )
-	endif
-	set FirstCommandBarButton = DzFrameGetCommandBarButton(0, 0)
-	set ButtonInterval = DzFrameGetCommandBarButton(1, 0) - FirstCommandBarButton
 	call DestroyTimer(GetExpiredTimer())
 	//call BJDebugMsg("额外触发器初始化完毕")
 endfunction
