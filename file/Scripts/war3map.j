@@ -208,10 +208,6 @@ globals
 	// 减少的伤害值
 	real DamagedEventReducedDamage
 	//======================================================================
-	// 声音的哈希表 因为音效不能在播放时间内重复播放
-	//hashtable SoundHT = InitHashtable()
-	// Error.wav 0.614
-	//constant integer SOUNDHTKEgoldBonusRROR_SOUND = 0
 
 	//======================================================================
 	hashtable V = InitHashtable()
@@ -241,18 +237,18 @@ globals
 	integer fakeJys
 	integer array jys_count
 	// 哈希表
-	hashtable K = InitHashtable()
-	hashtable L = InitHashtable()
-	hashtable M = InitHashtable()
-	hashtable P = InitHashtable()
-	hashtable HY = InitHashtable()
-	hashtable Q = InitHashtable()
-	hashtable T = InitHashtable()
-	hashtable U = InitHashtable()
-	hashtable W = InitHashtable()
-	hashtable Y = InitHashtable()
-	hashtable Z = InitHashtable()
-	hashtable VV = InitHashtable()
+	hashtable OtherHashTable 		 = InitHashtable()
+	hashtable UnitRGBHashTable       = InitHashtable()
+	hashtable SightDataHashTable     = InitHashtable()
+	hashtable ObjectHashTable        = InitHashtable()
+	hashtable HY 					 = InitHashtable()
+	hashtable AbilityDataHashTable 	 = InitHashtable()
+	hashtable PrdRandomHashTable 	 = InitHashtable()
+	hashtable ItemGoldHashTable      = InitHashtable()
+	hashtable PassiveAbilityCooldown = InitHashtable()
+	hashtable ItemCooldownHashTable  = InitHashtable()
+	hashtable ChatCommandHashTable   = InitHashtable()
+	hashtable OtherHashTable2 	     = InitHashtable()
 	// 额外哈希表
 	hashtable ExtraHT = InitHashtable()
 
@@ -504,8 +500,8 @@ globals
 	constant integer IC = StringHash("color")
 	constant integer CC = StringHash("bounty_lowest")
 	constant integer DC = StringHash("bounty_highest")
-	constant integer FC = StringHash("sight")
-	constant integer GC = StringHash("nsight")
+	constant integer SightHash = StringHash("sight")
+	constant integer NightSightHash = StringHash("nsight")
 	constant integer HC = StringHash("expirience")
 	real MC
 	integer PC = 5
@@ -574,8 +570,7 @@ globals
 	integer XJ
 	real OJ
 	real NJ
-	trigger JJ = CreateTrigger()
-	trigger KJ = CreateTrigger()
+	trigger UnitEventMainTrig = CreateTrigger()
 
 	constant integer MJ = 12
 	constant integer PJ = 10
@@ -2227,13 +2222,13 @@ endfunction
 function RegisterUnitAttackEvent takes string s, integer level returns nothing
 	local integer i = 0
 	loop
-	exitwhen HaveSavedString(Q,'DMGE'+ level, i) == false
-		if LoadStr(Q,'DMGE'+ level, i) == s then
+	exitwhen HaveSavedString(AbilityDataHashTable,'DMGE'+ level, i) == false
+		if LoadStr(AbilityDataHashTable,'DMGE'+ level, i) == s then
 			return
 		endif
 		set i = i + 1
 	endloop
-	call SaveStr(Q,'DMGE'+ level, i, s)
+	call SaveStr(AbilityDataHashTable,'DMGE'+ level, i, s)
 endfunction
 function TDV takes unit u returns nothing
 	local unit d = CreateUnit(GetOwningPlayer(u),'e00E', GetUnitX(u), GetUnitY(u), 0)
@@ -2278,16 +2273,16 @@ endfunction
 function TKV takes unit u, integer id, real i returns boolean
 	local integer h = GetHandleId(u)
 	local real TPV = R2I(i / 5.)* 5.
-	local real TQV = LoadReal(T,-1, R2I(TPV / 5.)-1)
-	local real TSV = LoadReal(T, h, id)
+	local real TQV = LoadReal(PrdRandomHashTable,-1, R2I(TPV / 5.)-1)
+	local real TSV = LoadReal(PrdRandomHashTable, h, id)
 	if not IsUnitType(u, UNIT_TYPE_HERO) then
 		return GetRandomInt(1, 100)< i	//如果不是英雄 则直接返回随机数
 	endif
 	if GetRandomReal(.0, 1.) < TSV + TQV then
-		call SaveReal(T, h, id, .0)
+		call SaveReal(PrdRandomHashTable, h, id, .0)
 		return true
 	else
-		call SaveReal(T, h, id, TSV + TQV)
+		call SaveReal(PrdRandomHashTable, h, id, TSV + TQV)
 		return false
 	endif
 endfunction
@@ -2550,20 +2545,20 @@ function ThrowLog takes nothing returns nothing
 endfunction
 function DestroyTimerAndFlushHT_P takes timer t returns nothing
 	call PauseTimer(t)
-	call FlushChildHashtable(P, GetHandleId(t))
+	call FlushChildHashtable(ObjectHashTable, GetHandleId(t))
 	call DestroyTimer(t)
 endfunction
 function UPV takes unit u, string s returns nothing
-	call SaveStr(K, GetHandleId(u),'ORDR', s)
+	call SaveStr(OtherHashTable, GetHandleId(u),'ORDR', s)
 endfunction
 function UQV takes unit u returns boolean
-	return LoadBoolean(K, GetHandleId(u),'ORDR')
+	return LoadBoolean(OtherHashTable, GetHandleId(u),'ORDR')
 endfunction
 function USV takes unit u, integer UTV, real x, real y returns boolean
 	local boolean b
-	call SaveBoolean(K, GetHandleId(u),'ORDR', true)
+	call SaveBoolean(OtherHashTable, GetHandleId(u),'ORDR', true)
 	set b = IssuePointOrderById(u, UTV, x, y)
-	call SaveBoolean(K, GetHandleId(u),'ORDR', false)
+	call SaveBoolean(OtherHashTable, GetHandleId(u),'ORDR', false)
 	return b
 endfunction
 function GetItemIndexEx takes item UWV returns integer
@@ -2655,8 +2650,8 @@ function U3V takes unit u returns integer
 	return 0
 endfunction
 function U6V takes unit u returns real
-	if LoadReal(K, GetHandleId(u), 99)> 0 then
-		return LoadReal(K, GetHandleId(u), 99)+ GetUnitMoveSpeed(u)
+	if LoadReal(OtherHashTable, GetHandleId(u), 99)> 0 then
+		return LoadReal(OtherHashTable, GetHandleId(u), 99)+ GetUnitMoveSpeed(u)
 	endif
 	return GetUnitMoveSpeed(u)
 endfunction
@@ -2706,7 +2701,7 @@ function U8V takes string s returns integer
 	endif
 endfunction
 function U9V takes unit u, integer i, string s returns integer
-	local integer WVV = 0
+	local integer count = 0
 	local integer WEV = U8V(s)
 	local integer WXV = U7V(s)
 	local integer WOV = R2I(Pow(2, WXV)-1)
@@ -2714,16 +2709,16 @@ function U9V takes unit u, integer i, string s returns integer
 	local real WRV
 	if i > WOV then
 		loop
-			call UnitAddAbility(u, WEV + WVV)
-			set WVV = WVV + 1
-		exitwhen WVV > WOV
+			call UnitAddAbility(u, WEV + count)
+			set count = count + 1
+		exitwhen count > WOV
 		endloop
 		return WOV
 	elseif 1 > i then
 		loop
-			call UnitRemoveAbility(u, WEV + WVV)
-			set WVV = WVV + 1
-		exitwhen WVV > WOV
+			call UnitRemoveAbility(u, WEV + count)
+			set count = count + 1
+		exitwhen count > WOV
 		endloop
 		return 0
 	endif
@@ -2731,29 +2726,29 @@ function U9V takes unit u, integer i, string s returns integer
 	set i = i / 2
 	loop
 		if i == WRV or 0 > i then
-			call UnitRemoveAbility(u, WEV + WVV)
+			call UnitRemoveAbility(u, WEV + count)
 		else
-			call UnitAddAbility(u, WEV + WVV)
-			call UnitMakeAbilityPermanent(u, true, WEV + WVV)
+			call UnitAddAbility(u, WEV + count)
+			call UnitMakeAbilityPermanent(u, true, WEV + count)
 		endif
 		set WRV = i / 2.
 		set i = i / 2
-		set WVV = WVV + 1
-	exitwhen WVV == WXV
+		set count = count + 1
+	exitwhen count == WXV
 	endloop
 	return r
 endfunction
 function WIV takes unit u, string s returns integer
-	local integer WVV = 0
+	local integer count = 0
 	local integer WEV = U8V(s)
 	local integer WXV = U7V(s)
 	local real WAV = 0
 	loop
-		if GetUnitAbilityLevel(u, WEV + WVV) == 1 then
-			set WAV = WAV + Pow(2, WVV)
+		if GetUnitAbilityLevel(u, WEV + count) == 1 then
+			set WAV = WAV + Pow(2, count)
 		endif
-		set WVV = WVV + 1
-	exitwhen WVV > WXV
+		set count = count + 1
+	exitwhen count > WXV
 	endloop
 	return R2I(WAV)
 endfunction
@@ -2876,10 +2871,10 @@ endfunction
 function WSV takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer WFV = GetHandleId(t)
-	local integer WTV = LoadInteger(P, WFV, 0)
-	local unit u = LoadUnitHandle(P, WFV, 0)
-	local integer WUV = GetUnitAbilityLevel(u, LoadInteger(P, WFV, 2))
-	local boolean b = UnitRemoveAbility(u, LoadInteger(P, WFV, 1)) == false
+	local integer WTV = LoadInteger(ObjectHashTable, WFV, 0)
+	local unit u = LoadUnitHandle(ObjectHashTable, WFV, 0)
+	local integer WUV = GetUnitAbilityLevel(u, LoadInteger(ObjectHashTable, WFV, 2))
+	local boolean b = UnitRemoveAbility(u, LoadInteger(ObjectHashTable, WFV, 1)) == false
 	local integer WWV = GetPlayerId(GetOwningPlayer(u))
 	if WTV =='A065' and HeroCommonSkills[PlayerSkillIndex[WWV * HL + 6]]=='A065' then
 		set WUV = IP[GetPlayerId(GetOwningPlayer(u))* 2 + 2]
@@ -2889,19 +2884,19 @@ function WSV takes nothing returns nothing
 	if GetUnitAbilityLevel(u, WTV) == 0 or b then
 		if b then
 			call UnitRemoveAbility(u, WTV)
-			set WTV = LoadInteger(P, WFV, 3)
+			set WTV = LoadInteger(ObjectHashTable, WFV, 3)
 			call UnitAddAbility(u, WTV)
 		else
-			set WTV = LoadInteger(P, WFV, 3)
+			set WTV = LoadInteger(ObjectHashTable, WFV, 3)
 		endif
-		call UnitRemoveAbility(u, LoadInteger(P, WFV, 4))
-		set WUV = GetUnitAbilityLevel(u, LoadInteger(P, WFV, 5))
+		call UnitRemoveAbility(u, LoadInteger(ObjectHashTable, WFV, 4))
+		set WUV = GetUnitAbilityLevel(u, LoadInteger(ObjectHashTable, WFV, 5))
 	endif
 	call UnitMakeAbilityPermanent(u, true, WTV)
 	call SetUnitAbilityLevel(u, WTV, WUV)
 	set FK = true
-	if LoadBoolean(P, WFV, 0) then
-		call SaveBoolean(P, GetHandleId(u), WTV, LoadBoolean(P, WTV, 1))
+	if LoadBoolean(ObjectHashTable, WFV, 0) then
+		call SaveBoolean(ObjectHashTable, GetHandleId(u), WTV, LoadBoolean(ObjectHashTable, WTV, 1))
 	endif
 	call DestroyTimerAndFlushHT_P(t)
 	set t = null
@@ -2911,987 +2906,987 @@ function WYV takes unit u, integer WTV, integer WUV returns nothing
 	local unit d = CreateUnit(Player( 14),'e00E', 0, 0, 0)
 	local timer t = CreateTimer()
 	local integer WFV = GetHandleId(t)
-	local integer WZV = LoadInteger(P, WTV, 0)
-	local integer W_V = LoadInteger(P, WTV, 1)
+	local integer WZV = LoadInteger(ObjectHashTable, WTV, 0)
+	local integer W_V = LoadInteger(ObjectHashTable, WTV, 1)
 	local integer W0V = GetHandleId(u)
-	call SaveUnitHandle(P, WFV, 0, u)
-	call SaveInteger(P, WFV, 0, WTV)
-	call SaveInteger(P, WFV, 1, WZV)
-	call SaveInteger(P, WFV, 2, W_V)
-	call SaveInteger(P, WFV, 3, LoadInteger(P, W_V, 2))
-	call SaveInteger(P, WFV, 4, LoadInteger(P, WTV, 2))
-	call SaveInteger(P, WFV, 5, LoadInteger(P, WTV, 3))
+	call SaveUnitHandle(ObjectHashTable, WFV, 0, u)
+	call SaveInteger(ObjectHashTable, WFV, 0, WTV)
+	call SaveInteger(ObjectHashTable, WFV, 1, WZV)
+	call SaveInteger(ObjectHashTable, WFV, 2, W_V)
+	call SaveInteger(ObjectHashTable, WFV, 3, LoadInteger(ObjectHashTable, W_V, 2))
+	call SaveInteger(ObjectHashTable, WFV, 4, LoadInteger(ObjectHashTable, WTV, 2))
+	call SaveInteger(ObjectHashTable, WFV, 5, LoadInteger(ObjectHashTable, WTV, 3))
 	set FK = false
 	call UnitRemoveAbility(u, WTV)
 	call UnitAddAbility(u, WZV)
 	call SetUnitAbilityLevel(u, WZV, WUV)
 	call UnitMakeAbilityPermanent(u, true, WZV)
-	call SaveTimerHandle(P, W0V, WTV, t)
-	if LoadBoolean(P, WTV, 0) then
-		call SaveBoolean(P, WFV, 0, true)
-		call SaveBoolean(P, W0V, WTV, LoadBoolean(P, WTV, 1) == false)
+	call SaveTimerHandle(ObjectHashTable, W0V, WTV, t)
+	if LoadBoolean(ObjectHashTable, WTV, 0) then
+		call SaveBoolean(ObjectHashTable, WFV, 0, true)
+		call SaveBoolean(ObjectHashTable, W0V, WTV, LoadBoolean(ObjectHashTable, WTV, 1) == false)
 	endif
 	call UnitAddAbility(u,'A04R')
 	call UnitAddAbility(d,'A502')
 	call IssueTargetOrderById(d, 852248, u)
 	call UnitRemoveAbility(u,'A04R')
 	set FK = true
-	call TimerStart(t, LoadReal(P, WTV, WUV), false, function WSV)
+	call TimerStart(t, LoadReal(ObjectHashTable, WTV, WUV), false, function WSV)
 	set d = null
 	set t = null
 endfunction
 function W1V takes unit u, integer WTV, integer WUV returns nothing
-	local integer W2V = LoadInteger(P, WTV, 0)
+	local integer W2V = LoadInteger(ObjectHashTable, WTV, 0)
 	if WUV == 1 then
 		call UnitAddAbility(u, W2V)
 		call UnitMakeAbilityPermanent(u, true, W2V)
 		return
 	endif
 	call SetUnitAbilityLevel(u, W2V, WUV)
-	call SetUnitAbilityLevel(u, LoadInteger(P, WTV, 1), WUV)
-	call SetUnitAbilityLevel(u, LoadInteger(P, WTV, 2), WUV)
+	call SetUnitAbilityLevel(u, LoadInteger(ObjectHashTable, WTV, 1), WUV)
+	call SetUnitAbilityLevel(u, LoadInteger(ObjectHashTable, WTV, 2), WUV)
 endfunction
 function W3V takes nothing returns nothing
-	call SaveBoolean(P,'A065', 0, false)
-	call SaveInteger(P,'A065', 0,'A528')
-	call SaveInteger(P,'A065', 1,'A527')
-	call SaveInteger(P,'A527', 0,'A065')
-	call SaveInteger(P,'A527', 1,'A528')
-	call SaveReal(P,'A065', 1, 9)
-	call SaveReal(P,'A065', 2, 6)
-	call SaveReal(P,'A065', 3, 3)
+	call SaveBoolean(ObjectHashTable,'A065', 0, false)
+	call SaveInteger(ObjectHashTable,'A065', 0,'A528')
+	call SaveInteger(ObjectHashTable,'A065', 1,'A527')
+	call SaveInteger(ObjectHashTable,'A527', 0,'A065')
+	call SaveInteger(ObjectHashTable,'A527', 1,'A528')
+	call SaveReal(ObjectHashTable,'A065', 1, 9)
+	call SaveReal(ObjectHashTable,'A065', 2, 6)
+	call SaveReal(ObjectHashTable,'A065', 3, 3)
 
 endfunction
 // 初始化大部分的单位技能
 function InitActiveAbilitys takes nothing returns nothing
-	call SaveStr(P,'A2NT', 0, "W5V")
-	call SaveStr(P,'A0ES', 0, "W6V")
-	call SaveStr(P,'A0MT', 0, "W7V")
-	call SaveStr(P,'A09D', 0, "W8V")
-	call SaveStr(P,'A1P8', 0, "W9V")
-	call SaveStr(P,'A01I', 0, "YVV")
-	call SaveStr(P,'A1YY', 0, "YEV")
-	call SaveStr(P,'A0O6', 0, "YXV")
-	call SaveStr(P,'A0IL', 0, "YOV")
-	call SaveStr(P,'A1A8', 0, "YRV")
-	call SaveStr(P,'A21J', 0, "YIV")
-	call SaveStr(P,'A2KZ', 0, "YAV")
-	call SaveStr(P,'A04V', 0, "YNV")
-	call SaveStr(P,'A0LV', 0, "YBV")
-	call SaveStr(P,'A2MC', 0, "YCV")
-	call SaveStr(P,'A0NS', 0, "YDV")
-	call SaveStr(P,'A1DA', 0, "YDV")
-	call SaveStr(P,'A1DP', 0, "YFV")
-	call SaveStr(P,'A2IS', 0, "YGV")
-	call SaveStr(P,'A0RP', 0, "YHV")
-	call SaveStr(P,'A449', 0, "YHV")
-	call SaveStr(P,'A0RT', 0, "YJV")
-	call SaveStr(P,'A0RQ', 0, "YJV")
-	call SaveStr(P,'A2ML', 0, "YKV")
-	call SaveStr(P,'A2M1', 0, "YLV")
-	call SaveStr(P,'A2LM', 0, "YMV")
-	call SaveStr(P,'A2LL', 0, "YPV")
-	call SaveStr(P,'A332', 0, "YQV")
-	call SaveStr(P,'DRKN', 0, "YSV")
-	call SaveStr(P,'DRKU', 0, "YSV")
-	call SaveStr(P,'A2LA', 0, "YTV")
-	call SaveStr(P,'A2M0', 0, "YUV")
-	call SaveStr(P,'A136', 0, "YWV")
-	call SaveStr(P,'A11K', 0, "YYV") 
-	call SaveStr(P,'Z31K', 0, "YYV")
-	call SaveStr(P,'A1NI', 0, "YZV")
-	call SaveStr(P,'A0E3', 0, "Y_V")
-	call SaveStr(P,'AEbl', 0, "Y0V")
-	call SaveStr(P,'QB08', 0, "Y0V")
-	call SaveStr(P,'A0O1', 0, "Y1V")
-	call SaveStr(P,'A0O2', 0, "Y2V")
-	call SaveStr(P,'A289', 0, "Y2V")
-	call SaveStr(P,'A13Z', 0, "Y3V")
-	call SaveStr(P,'A0B4', 0, "Y4V")
-	call SaveStr(P,'QB0D', 0, "Y4V")
-	call SaveStr(P,'A07A', 0, "Y5V")
-	call SaveStr(P,'QB09', 0, "Y5V")
-	call SaveStr(P,'QB0A', 0, "Y6V")
-	call SaveStr(P,'A0FW', 0, "Y7V")
-	call SaveStr(P,'A3OD', 0, "a_gangbei")
-	call SaveStr(P,'A0GP', 0, "SpellEffect__QuillSpray")
-	call SaveStr(P,'A2O6', 0, "Y9V")
-	call SaveStr(P,'A384', 0, "Y9V")
-	call SaveStr(P,'A00L', 0, "ZVV")
-	call SaveStr(P,'A00S', 0, "ZEV")
-	call SaveStr(P,'A0KM', 0, "ZXV")
-	call SaveStr(P,'A28T', 0, "ZOV")
-	call SaveStr(P,'A361', 0, "ZOV")
-	call SaveStr(P,'A0LT', 0, "ZRV")
-	call SaveStr(P,'A0DL', 0, "ZIV")
-	call SaveStr(P,'A1CS', 0, "ZRV")
-	call SaveStr(P,'A0Z6', 0, "ZAV")
-	call SaveStr(P,'A0Z5', 0, "ZNV")
-	call SaveStr(P,'A0Z8', 0, "ZBV")
-	call SaveStr(P,'A1CV', 0, "ZBV")
-	call SaveStr(P,'A0Z4', 0, "ZCV")
-	call SaveStr(P,'A03R', 0, "ZDV")
-	call SaveStr(P,'A0AV', 0, "ZDV")
-	call SaveStr(P,'A1E9', 0, "ZFV")
-	call SaveStr(P,'A14P', 0, "ZGV")
-	call SaveStr(P,'A14R', 0, "ElectricVortex")
-	call SaveStr(P,'A3WT', 0, "ElectricVortex")
-	call SaveStr(P,'A14O', 0, "ZJV")
-	call SaveStr(P,'A3FJ', 0, "ZJV")
-	call SaveStr(P,'A0AR', 0, "ZKV")
-	call SaveStr(P,'QB0G', 0, "ZKV")
-	call SaveStr(P,'A03G', 0, "ZLV")
-	call SaveStr(P,'QM00', 0, "ZLV")
-	call SaveStr(P,'A03F', 0, "ZMV")
-	call SaveStr(P,'A2QI', 0, "ZPV")
-	call SaveStr(P,'A2TH', 0, "ZQV")
-	call SaveStr(P,'A2QM', 0, "ZSV")
-	call SaveStr(P,'A2QT', 0, "SpellEffect__FortuneEnd")
-	call SaveStr(P,'A2T5', 0, "SpellEffect__FateEdict")
-	call SaveStr(P,'A2SG', 0, "ZWV")
-	call SaveStr(P,'A2TF', 0, "SpellEffect__FalsePromise")
-	call SaveStr(P,'QB11', 0, "SpellEffect__FalsePromise")
-	call SaveStr(P,'A0SK', 0, "ZZV")
-	call SaveStr(P,'A0DH', 0, "Z_V")
-	call SaveStr(P,'A1OB', 0, "Z_V")
-	call SaveStr(P,'A01B', 0, "Z0V")
-	call SaveStr(P,'A0DX', 0, "Z1V")
-	call SaveStr(P,'A0B1', 0, "Z2V")
-	call SaveStr(P,'A0I7', 0, "Z3V")
-	call SaveStr(P,'A180', 0, "Z4V")
-	call SaveStr(P,'A1BX', 0, "Z5V")
-	call SaveStr(P,'A30L', 0, "Z5V")
-	call SaveStr(P,'A09W', 0, "Z6V")
-	call SaveStr(P,'A0SC', 0, "Z7V")
-	call SaveStr(P,'A1QP', 0, "Z8V")
-	call SaveStr(P,'A0S8', 0, "Z8V")
-	call SaveStr(P,'A0S9', 0, "Z9V")
-	call SaveStr(P,'A0SA', 0, "VVE")
-	call SaveStr(P,'A21E', 0, "VEE")
-	call SaveStr(P,'A1W8', 0, "VRE")
-	call SaveStr(P,'A1W9', 0, "VRE")
-	call SaveStr(P,'A0QR', 0, "VIE")
-	call SaveStr(P,'A1B3', 0, "VIE")
-	call SaveStr(P,'A0QP', 0, "VAE")
-	call SaveStr(P,'A0O5', 0, "VNE")
-	call SaveStr(P,'A30T', 0, "VCE")
-	call SaveStr(P,'A1B1', 0, "VNE")
-	call SaveStr(P,'ANLS', 0, "VDE")
-	call SaveStr(P,'A0O7', 0, "VGE")
-	call SaveStr(P,'A0M1', 0, "VJE")
-	call SaveStr(P,'A1AX', 0, "VJE")
-	call SaveStr(P,'A05G', 0, "VLE")
-	call SaveStr(P,'A2S8', 0, "VPE")
-	call SaveStr(P,'A10U', 0, "VSE")
-	call SaveStr(P,'A10X', 0, "SpellEffect__ManaLeak")
-	call SaveStr(P,'A112', 0, "V_E")
-	call SaveStr(P,'QM01', 0, "V0E")
-	call SaveStr(P,'A11X', 0, "V1E")
-	call SaveStr(P,'QB0E', 0, "V2E")
-	call SaveStr(P,'A01F', 0, "V3E")
-	call SaveStr(P,'A09Z', 0, "V5E")
-	call SaveStr(P,'A01P', 0, "V5E")
-	call SaveStr(P,'A054', 0, "V8E")
-	call SaveStr(P,'A00U', 0, "V8E")
-	call SaveStr(P,'A042', 0, "V9E")
-	call SaveStr(P,'A0KV', 0, "EVE")
-	call SaveStr(P,'A3UG', 0, "EVE")
-	call SaveStr(P,'A0KU', 0, "EEE")
-	call SaveStr(P,'A0LN', 0, "EXE")
-	call SaveStr(P,'A0L8', 0, "EOE")
-	call SaveStr(P,'A33U', 0, "ERE")
-	call SaveStr(P,'A0FN', 0, "EIE")
-	call SaveStr(P,'QB02', 0, "EIE")
-	call SaveStr(P,'A0G8', 0, "EAE")
-	call SaveStr(P,'A0GC', 0, "ENE")
-	call SaveStr(P,'A0G6', 0, "EBE")
-	call SaveStr(P,'A07U', 0, "ECE")
-	call SaveStr(P,'A38E', 0, "ECE")
-	call SaveStr(P,'A2KU', 0, "EDE")
-	call SaveStr(P,'A24D', 0, "EFE")
-	call SaveStr(P,'A08N', 0, "EGE")
-	call SaveStr(P,'A10D', 0, "EHE")
-	call SaveStr(P,'A46H', 0, "EJE")
-	call SaveStr(P,'QB0B', 0, "EKE")
-	call SaveStr(P,'A0D7', 0, "EKE")
-	call SaveStr(P,'A26N', 0, "ELE")
-	call SaveStr(P,'A14L', 0, "EME")
-	call SaveStr(P,'A0L3', 0, "EPE")
-	call SaveStr(P,'A2QC', 0, "EPE")
-	call SaveStr(P,'A064', 0, "EQE")
-	call SaveStr(P,'A0RG', 0, "ESE")
-	call SaveStr(P,'A0K9', 0, "ETE")
-	call SaveStr(P,'A063', 0, "Naga_MirrorImage") //小娜迦分身
-	call SaveStr(P,'A0WP', 0, "EUE")
-	call SaveStr(P,'A43D', 0, "EUE")
-	call SaveStr(P,'A190', 0, "EWE")
-	call SaveStr(P,'A1EG', 0, "EYE")
-	call SaveStr(P,'A0A5', 0, "E_E")
-	call SaveStr(P,'A0AG', 0, "E0E")
-	call SaveStr(P,'A1A1', 0, "E1E")
-	call SaveStr(P,'A43J', 0, "E1E")
-	call SaveStr(P,'A0BQ', 0, "E2E")
-	call SaveStr(P,'A049', 0, "E3E")
-	call SaveStr(P,'A33G', 0, "E3E")
-	call SaveStr(P,'A33F', 0, "E4E")
-	call SaveStr(P,'A05E', 0, "E4E")
-	call SaveStr(P,'A0BZ', 0, "E5E")
-	call SaveStr(P,'A0LL', 0, "E6E")
-	call SaveStr(P,'A1EJ', 0, "E7E")
-	call SaveStr(P,'A0BE', 0, "E8E")
-	call SaveStr(P,'A21M', 0, "XVE")
-	call SaveStr(P,'A21N', 0, "XEE")
-	call SaveStr(P,'A1N4', 0, "XOE")
-	call SaveStr(P,'QB0P', 0, "XOE")
-	call SaveStr(P,'A03Y', 0, "XRE")
-	call SaveStr(P,'A0LC', 0, "XIE")
-	call SaveStr(P,'A443', 0, "XIE")
-	call SaveStr(P,'A17O', 0, "XNE")
-	call SaveStr(P,'A0IN', 0, "XDE")
-	call SaveStr(P,'A1AW', 0, "XDE")
-	call SaveStr(P,'A1EA', 0, "XFE")
-	call SaveStr(P,'QB03', 0, "XFE")
-	call SaveStr(P,'A0RV', 0, "XGE")
-	call SaveStr(P,'A14I', 0, "XHE")
-	call SaveStr(P,'A12J', 0, "XJE")
-	call SaveStr(P,'A12K', 0, "XKE")
-	call SaveStr(P,'A12P', 0, "XLE")
-	call SaveStr(P,'A1D6', 0, "XLE")
-	call SaveStr(P,'A29G', 0, "XME")
-	call SaveStr(P,'A29H', 0, "XME")
-	call SaveStr(P,'A0JC', 0, "XPE")
-	call SaveStr(P,'A020', 0, "XQE")
-	call SaveStr(P,'A0I3', 0, "XSE")
-	call SaveStr(P,'A0MF', 0, "XTE")
-	call SaveStr(P,'A0S1', 0, "XUE")
-	call SaveStr(P,'A0I6', 0, "XWE")
-	call SaveStr(P,'A0E2', 0, "X_E")
-	call SaveStr(P,'A1MR', 0, "X_E")
-	call SaveStr(P,'A04Y', 0, "X1E")
-	call SaveStr(P,'A02Q', 0, "X2E")
-	call SaveStr(P,'A1D9', 0, "X2E")
-	call SaveStr(P,'A1EL', 0, "X4E")
-	call SaveStr(P,'A19V', 0, "X5E")
-	call SaveStr(P,'QM04', 0, "X7E")
-	call SaveStr(P,'A19O', 0, "X8E")
-	call SaveStr(P,'A1MV', 0, "X8E")
-	call SaveStr(P,'A0LH', 0, "X9E")
-	call SaveStr(P,'A0EC', 0, "OVE")
-	call SaveStr(P,'Z234', 0, "OEE")
-	call SaveStr(P,'A0WQ', 0, "OXE")
-	call SaveStr(P,'A0BH', 0, "OOE")
-	call SaveStr(P,'A0RW', 0, "ORE")
-	call SaveStr(P,'A03O', 0, "OIE")
-	call SaveStr(P,'A04Q', 0, "ONE")
-	call SaveStr(P,'A0OJ', 0, "OBE")
-	call SaveStr(P,'A0OK', 0, "OCE")
-	call SaveStr(P,'A1VW', 0, "OCE")
-	call SaveStr(P,'A0QG', 0, "ODE")
-	call SaveStr(P,'A0QE', 0, "OFE")
-	call SaveStr(P,'A0R7', 0, "OGE")
-	call SaveStr(P,'A21Q', 0, "OHE")
-	call SaveStr(P,'A0QK', 0, "OHE")
-	call SaveStr(P,'A15S', 0, "OJE")
-	call SaveStr(P,'A3JX', 0, "OJE")
-	call SaveStr(P,'A0R5', 0, "OKE")
-	call SaveStr(P,'A15V', 0, "OME")
-	call SaveStr(P,'QM03', 0, "OPE")
-	call SaveStr(P,'A0LK', 0, "OQE")
-	call SaveStr(P,'A0J1', 0, "OSE")
-	call SaveStr(P,'A1D7', 0, "OSE")
-	call SaveStr(P,'A333', 0, "OTE")
-	call SaveStr(P,'Z610', 0, "OUE")
-	call SaveStr(P,'A3K5', 0, "OUE")
-	call SaveStr(P,'Z609', 0, "OWE")
-	call SaveStr(P,'Z608', 0, "OYE")
-	call SaveStr(P,'Z607', 0, "O_E")
-	call SaveStr(P,'Z606', 0, "O0E")
-	call SaveStr(P,'Z605', 0, "O1E")
-	call SaveStr(P,'Z604', 0, "O2E")
-	call SaveStr(P,'Z603', 0, "O4E")
-	call SaveStr(P,'Z602', 0, "O5E")
-	call SaveStr(P,'Z601', 0, "O6E")
-	call SaveStr(P,'A33A', 0, "O7E")
-	call SaveStr(P,'AHtb', 0, "O8E")
-	call SaveStr(P,'QB0H', 0, "O8E")
-	call SaveStr(P,'A2S0', 0, "O9E")
-	call SaveStr(P,'A0N8', 0, "RXE")
-	call SaveStr(P,'A0NB', 0, "RAE")
-	call SaveStr(P,'Z397', 0, "RNE")
-	call SaveStr(P,'QB0F', 0, "RNE")
-	call SaveStr(P,'A06V', 0, "RBE")
-	call SaveStr(P,'A20T', 0, "RCE")
-	call SaveStr(P,'A21G', 0, "RQE")
-	call SaveStr(P,'A21F', 0, "RQE")
-	call SaveStr(P,'A05T', 0, "RTE")
-	call SaveStr(P,'A08H', 0, "RTE")
-	call SaveStr(P,'A0X5', 0, "RUE")
-	call SaveStr(P,'A0MN', 0, "SpellEffect__Voodoo") // 妖术
+	call SaveStr(ObjectHashTable,'A2NT', 0, "W5V")
+	call SaveStr(ObjectHashTable,'A0ES', 0, "W6V")
+	call SaveStr(ObjectHashTable,'A0MT', 0, "W7V")
+	call SaveStr(ObjectHashTable,'A09D', 0, "W8V")
+	call SaveStr(ObjectHashTable,'A1P8', 0, "W9V")
+	call SaveStr(ObjectHashTable,'A01I', 0, "YVV")
+	call SaveStr(ObjectHashTable,'A1YY', 0, "YEV")
+	call SaveStr(ObjectHashTable,'A0O6', 0, "YXV")
+	call SaveStr(ObjectHashTable,'A0IL', 0, "YOV")
+	call SaveStr(ObjectHashTable,'A1A8', 0, "YRV")
+	call SaveStr(ObjectHashTable,'A21J', 0, "YIV")
+	call SaveStr(ObjectHashTable,'A2KZ', 0, "YAV")
+	call SaveStr(ObjectHashTable,'A04V', 0, "YNV")
+	call SaveStr(ObjectHashTable,'A0LV', 0, "YBV")
+	call SaveStr(ObjectHashTable,'A2MC', 0, "YCV")
+	call SaveStr(ObjectHashTable,'A0NS', 0, "YDV")
+	call SaveStr(ObjectHashTable,'A1DA', 0, "YDV")
+	call SaveStr(ObjectHashTable,'A1DP', 0, "YFV")
+	call SaveStr(ObjectHashTable,'A2IS', 0, "YGV")
+	call SaveStr(ObjectHashTable,'A0RP', 0, "YHV")
+	call SaveStr(ObjectHashTable,'A449', 0, "YHV")
+	call SaveStr(ObjectHashTable,'A0RT', 0, "YJV")
+	call SaveStr(ObjectHashTable,'A0RQ', 0, "YJV")
+	call SaveStr(ObjectHashTable,'A2ML', 0, "YKV")
+	call SaveStr(ObjectHashTable,'A2M1', 0, "YLV")
+	call SaveStr(ObjectHashTable,'A2LM', 0, "YMV")
+	call SaveStr(ObjectHashTable,'A2LL', 0, "YPV")
+	call SaveStr(ObjectHashTable,'A332', 0, "YQV")
+	call SaveStr(ObjectHashTable,'DRKN', 0, "YSV")
+	call SaveStr(ObjectHashTable,'DRKU', 0, "YSV")
+	call SaveStr(ObjectHashTable,'A2LA', 0, "YTV")
+	call SaveStr(ObjectHashTable,'A2M0', 0, "YUV")
+	call SaveStr(ObjectHashTable,'A136', 0, "YWV")
+	call SaveStr(ObjectHashTable,'A11K', 0, "YYV") 
+	call SaveStr(ObjectHashTable,'Z31K', 0, "YYV")
+	call SaveStr(ObjectHashTable,'A1NI', 0, "YZV")
+	call SaveStr(ObjectHashTable,'A0E3', 0, "Y_V")
+	call SaveStr(ObjectHashTable,'AEbl', 0, "Y0V")
+	call SaveStr(ObjectHashTable,'QB08', 0, "Y0V")
+	call SaveStr(ObjectHashTable,'A0O1', 0, "Y1V")
+	call SaveStr(ObjectHashTable,'A0O2', 0, "Y2V")
+	call SaveStr(ObjectHashTable,'A289', 0, "Y2V")
+	call SaveStr(ObjectHashTable,'A13Z', 0, "Y3V")
+	call SaveStr(ObjectHashTable,'A0B4', 0, "Y4V")
+	call SaveStr(ObjectHashTable,'QB0D', 0, "Y4V")
+	call SaveStr(ObjectHashTable,'A07A', 0, "Y5V")
+	call SaveStr(ObjectHashTable,'QB09', 0, "Y5V")
+	call SaveStr(ObjectHashTable,'QB0A', 0, "Y6V")
+	call SaveStr(ObjectHashTable,'A0FW', 0, "Y7V")
+	call SaveStr(ObjectHashTable,'A3OD', 0, "a_gangbei")
+	call SaveStr(ObjectHashTable,'A0GP', 0, "SpellEffect__QuillSpray")
+	call SaveStr(ObjectHashTable,'A2O6', 0, "Y9V")
+	call SaveStr(ObjectHashTable,'A384', 0, "Y9V")
+	call SaveStr(ObjectHashTable,'A00L', 0, "ZVV")
+	call SaveStr(ObjectHashTable,'A00S', 0, "ZEV")
+	call SaveStr(ObjectHashTable,'A0KM', 0, "ZXV")
+	call SaveStr(ObjectHashTable,'A28T', 0, "ZOV")
+	call SaveStr(ObjectHashTable,'A361', 0, "ZOV")
+	call SaveStr(ObjectHashTable,'A0LT', 0, "ZRV")
+	call SaveStr(ObjectHashTable,'A0DL', 0, "ZIV")
+	call SaveStr(ObjectHashTable,'A1CS', 0, "ZRV")
+	call SaveStr(ObjectHashTable,'A0Z6', 0, "ZAV")
+	call SaveStr(ObjectHashTable,'A0Z5', 0, "ZNV")
+	call SaveStr(ObjectHashTable,'A0Z8', 0, "ZBV")
+	call SaveStr(ObjectHashTable,'A1CV', 0, "ZBV")
+	call SaveStr(ObjectHashTable,'A0Z4', 0, "ZCV")
+	call SaveStr(ObjectHashTable,'A03R', 0, "ZDV")
+	call SaveStr(ObjectHashTable,'A0AV', 0, "ZDV")
+	call SaveStr(ObjectHashTable,'A1E9', 0, "ZFV")
+	call SaveStr(ObjectHashTable,'A14P', 0, "ZGV")
+	call SaveStr(ObjectHashTable,'A14R', 0, "ElectricVortex")
+	call SaveStr(ObjectHashTable,'A3WT', 0, "ElectricVortex")
+	call SaveStr(ObjectHashTable,'A14O', 0, "ZJV")
+	call SaveStr(ObjectHashTable,'A3FJ', 0, "ZJV")
+	call SaveStr(ObjectHashTable,'A0AR', 0, "ZKV")
+	call SaveStr(ObjectHashTable,'QB0G', 0, "ZKV")
+	call SaveStr(ObjectHashTable,'A03G', 0, "ZLV")
+	call SaveStr(ObjectHashTable,'QM00', 0, "ZLV")
+	call SaveStr(ObjectHashTable,'A03F', 0, "ZMV")
+	call SaveStr(ObjectHashTable,'A2QI', 0, "ZPV")
+	call SaveStr(ObjectHashTable,'A2TH', 0, "ZQV")
+	call SaveStr(ObjectHashTable,'A2QM', 0, "ZSV")
+	call SaveStr(ObjectHashTable,'A2QT', 0, "SpellEffect__FortuneEnd")
+	call SaveStr(ObjectHashTable,'A2T5', 0, "SpellEffect__FateEdict")
+	call SaveStr(ObjectHashTable,'A2SG', 0, "ZWV")
+	call SaveStr(ObjectHashTable,'A2TF', 0, "SpellEffect__FalsePromise")
+	call SaveStr(ObjectHashTable,'QB11', 0, "SpellEffect__FalsePromise")
+	call SaveStr(ObjectHashTable,'A0SK', 0, "ZZV")
+	call SaveStr(ObjectHashTable,'A0DH', 0, "Z_V")
+	call SaveStr(ObjectHashTable,'A1OB', 0, "Z_V")
+	call SaveStr(ObjectHashTable,'A01B', 0, "Z0V")
+	call SaveStr(ObjectHashTable,'A0DX', 0, "Z1V")
+	call SaveStr(ObjectHashTable,'A0B1', 0, "Z2V")
+	call SaveStr(ObjectHashTable,'A0I7', 0, "Z3V")
+	call SaveStr(ObjectHashTable,'A180', 0, "Z4V")
+	call SaveStr(ObjectHashTable,'A1BX', 0, "Z5V")
+	call SaveStr(ObjectHashTable,'A30L', 0, "Z5V")
+	call SaveStr(ObjectHashTable,'A09W', 0, "Z6V")
+	call SaveStr(ObjectHashTable,'A0SC', 0, "Z7V")
+	call SaveStr(ObjectHashTable,'A1QP', 0, "Z8V")
+	call SaveStr(ObjectHashTable,'A0S8', 0, "Z8V")
+	call SaveStr(ObjectHashTable,'A0S9', 0, "Z9V")
+	call SaveStr(ObjectHashTable,'A0SA', 0, "VVE")
+	call SaveStr(ObjectHashTable,'A21E', 0, "VEE")
+	call SaveStr(ObjectHashTable,'A1W8', 0, "VRE")
+	call SaveStr(ObjectHashTable,'A1W9', 0, "VRE")
+	call SaveStr(ObjectHashTable,'A0QR', 0, "VIE")
+	call SaveStr(ObjectHashTable,'A1B3', 0, "VIE")
+	call SaveStr(ObjectHashTable,'A0QP', 0, "VAE")
+	call SaveStr(ObjectHashTable,'A0O5', 0, "VNE")
+	call SaveStr(ObjectHashTable,'A30T', 0, "VCE")
+	call SaveStr(ObjectHashTable,'A1B1', 0, "VNE")
+	call SaveStr(ObjectHashTable,'ANLS', 0, "VDE")
+	call SaveStr(ObjectHashTable,'A0O7', 0, "VGE")
+	call SaveStr(ObjectHashTable,'A0M1', 0, "VJE")
+	call SaveStr(ObjectHashTable,'A1AX', 0, "VJE")
+	call SaveStr(ObjectHashTable,'A05G', 0, "VLE")
+	call SaveStr(ObjectHashTable,'A2S8', 0, "VPE")
+	call SaveStr(ObjectHashTable,'A10U', 0, "VSE")
+	call SaveStr(ObjectHashTable,'A10X', 0, "SpellEffect__ManaLeak")
+	call SaveStr(ObjectHashTable,'A112', 0, "V_E")
+	call SaveStr(ObjectHashTable,'QM01', 0, "V0E")
+	call SaveStr(ObjectHashTable,'A11X', 0, "V1E")
+	call SaveStr(ObjectHashTable,'QB0E', 0, "V2E")
+	call SaveStr(ObjectHashTable,'A01F', 0, "V3E")
+	call SaveStr(ObjectHashTable,'A09Z', 0, "V5E")
+	call SaveStr(ObjectHashTable,'A01P', 0, "V5E")
+	call SaveStr(ObjectHashTable,'A054', 0, "V8E")
+	call SaveStr(ObjectHashTable,'A00U', 0, "V8E")
+	call SaveStr(ObjectHashTable,'A042', 0, "V9E")
+	call SaveStr(ObjectHashTable,'A0KV', 0, "EVE")
+	call SaveStr(ObjectHashTable,'A3UG', 0, "EVE")
+	call SaveStr(ObjectHashTable,'A0KU', 0, "EEE")
+	call SaveStr(ObjectHashTable,'A0LN', 0, "EXE")
+	call SaveStr(ObjectHashTable,'A0L8', 0, "EOE")
+	call SaveStr(ObjectHashTable,'A33U', 0, "ERE")
+	call SaveStr(ObjectHashTable,'A0FN', 0, "EIE")
+	call SaveStr(ObjectHashTable,'QB02', 0, "EIE")
+	call SaveStr(ObjectHashTable,'A0G8', 0, "EAE")
+	call SaveStr(ObjectHashTable,'A0GC', 0, "ENE")
+	call SaveStr(ObjectHashTable,'A0G6', 0, "EBE")
+	call SaveStr(ObjectHashTable,'A07U', 0, "ECE")
+	call SaveStr(ObjectHashTable,'A38E', 0, "ECE")
+	call SaveStr(ObjectHashTable,'A2KU', 0, "EDE")
+	call SaveStr(ObjectHashTable,'A24D', 0, "EFE")
+	call SaveStr(ObjectHashTable,'A08N', 0, "EGE")
+	call SaveStr(ObjectHashTable,'A10D', 0, "EHE")
+	call SaveStr(ObjectHashTable,'A46H', 0, "EJE")
+	call SaveStr(ObjectHashTable,'QB0B', 0, "EKE")
+	call SaveStr(ObjectHashTable,'A0D7', 0, "EKE")
+	call SaveStr(ObjectHashTable,'A26N', 0, "ELE")
+	call SaveStr(ObjectHashTable,'A14L', 0, "EME")
+	call SaveStr(ObjectHashTable,'A0L3', 0, "EPE")
+	call SaveStr(ObjectHashTable,'A2QC', 0, "EPE")
+	call SaveStr(ObjectHashTable,'A064', 0, "EQE")
+	call SaveStr(ObjectHashTable,'A0RG', 0, "ESE")
+	call SaveStr(ObjectHashTable,'A0K9', 0, "ETE")
+	call SaveStr(ObjectHashTable,'A063', 0, "Naga_MirrorImage") //小娜迦分身
+	call SaveStr(ObjectHashTable,'A0WP', 0, "EUE")
+	call SaveStr(ObjectHashTable,'A43D', 0, "EUE")
+	call SaveStr(ObjectHashTable,'A190', 0, "EWE")
+	call SaveStr(ObjectHashTable,'A1EG', 0, "EYE")
+	call SaveStr(ObjectHashTable,'A0A5', 0, "E_E")
+	call SaveStr(ObjectHashTable,'A0AG', 0, "E0E")
+	call SaveStr(ObjectHashTable,'A1A1', 0, "E1E")
+	call SaveStr(ObjectHashTable,'A43J', 0, "E1E")
+	call SaveStr(ObjectHashTable,'A0BQ', 0, "E2E")
+	call SaveStr(ObjectHashTable,'A049', 0, "E3E")
+	call SaveStr(ObjectHashTable,'A33G', 0, "E3E")
+	call SaveStr(ObjectHashTable,'A33F', 0, "E4E")
+	call SaveStr(ObjectHashTable,'A05E', 0, "E4E")
+	call SaveStr(ObjectHashTable,'A0BZ', 0, "E5E")
+	call SaveStr(ObjectHashTable,'A0LL', 0, "E6E")
+	call SaveStr(ObjectHashTable,'A1EJ', 0, "E7E")
+	call SaveStr(ObjectHashTable,'A0BE', 0, "E8E")
+	call SaveStr(ObjectHashTable,'A21M', 0, "XVE")
+	call SaveStr(ObjectHashTable,'A21N', 0, "XEE")
+	call SaveStr(ObjectHashTable,'A1N4', 0, "XOE")
+	call SaveStr(ObjectHashTable,'QB0P', 0, "XOE")
+	call SaveStr(ObjectHashTable,'A03Y', 0, "XRE")
+	call SaveStr(ObjectHashTable,'A0LC', 0, "XIE")
+	call SaveStr(ObjectHashTable,'A443', 0, "XIE")
+	call SaveStr(ObjectHashTable,'A17O', 0, "XNE")
+	call SaveStr(ObjectHashTable,'A0IN', 0, "XDE")
+	call SaveStr(ObjectHashTable,'A1AW', 0, "XDE")
+	call SaveStr(ObjectHashTable,'A1EA', 0, "XFE")
+	call SaveStr(ObjectHashTable,'QB03', 0, "XFE")
+	call SaveStr(ObjectHashTable,'A0RV', 0, "XGE")
+	call SaveStr(ObjectHashTable,'A14I', 0, "XHE")
+	call SaveStr(ObjectHashTable,'A12J', 0, "XJE")
+	call SaveStr(ObjectHashTable,'A12K', 0, "XKE")
+	call SaveStr(ObjectHashTable,'A12P', 0, "XLE")
+	call SaveStr(ObjectHashTable,'A1D6', 0, "XLE")
+	call SaveStr(ObjectHashTable,'A29G', 0, "XME")
+	call SaveStr(ObjectHashTable,'A29H', 0, "XME")
+	call SaveStr(ObjectHashTable,'A0JC', 0, "XPE")
+	call SaveStr(ObjectHashTable,'A020', 0, "XQE")
+	call SaveStr(ObjectHashTable,'A0I3', 0, "XSE")
+	call SaveStr(ObjectHashTable,'A0MF', 0, "XTE")
+	call SaveStr(ObjectHashTable,'A0S1', 0, "XUE")
+	call SaveStr(ObjectHashTable,'A0I6', 0, "XWE")
+	call SaveStr(ObjectHashTable,'A0E2', 0, "X_E")
+	call SaveStr(ObjectHashTable,'A1MR', 0, "X_E")
+	call SaveStr(ObjectHashTable,'A04Y', 0, "X1E")
+	call SaveStr(ObjectHashTable,'A02Q', 0, "X2E")
+	call SaveStr(ObjectHashTable,'A1D9', 0, "X2E")
+	call SaveStr(ObjectHashTable,'A1EL', 0, "X4E")
+	call SaveStr(ObjectHashTable,'A19V', 0, "X5E")
+	call SaveStr(ObjectHashTable,'QM04', 0, "X7E")
+	call SaveStr(ObjectHashTable,'A19O', 0, "X8E")
+	call SaveStr(ObjectHashTable,'A1MV', 0, "X8E")
+	call SaveStr(ObjectHashTable,'A0LH', 0, "X9E")
+	call SaveStr(ObjectHashTable,'A0EC', 0, "OVE")
+	call SaveStr(ObjectHashTable,'Z234', 0, "OEE")
+	call SaveStr(ObjectHashTable,'A0WQ', 0, "OXE")
+	call SaveStr(ObjectHashTable,'A0BH', 0, "OOE")
+	call SaveStr(ObjectHashTable,'A0RW', 0, "ORE")
+	call SaveStr(ObjectHashTable,'A03O', 0, "OIE")
+	call SaveStr(ObjectHashTable,'A04Q', 0, "ONE")
+	call SaveStr(ObjectHashTable,'A0OJ', 0, "OBE")
+	call SaveStr(ObjectHashTable,'A0OK', 0, "OCE")
+	call SaveStr(ObjectHashTable,'A1VW', 0, "OCE")
+	call SaveStr(ObjectHashTable,'A0QG', 0, "ODE")
+	call SaveStr(ObjectHashTable,'A0QE', 0, "OFE")
+	call SaveStr(ObjectHashTable,'A0R7', 0, "OGE")
+	call SaveStr(ObjectHashTable,'A21Q', 0, "OHE")
+	call SaveStr(ObjectHashTable,'A0QK', 0, "OHE")
+	call SaveStr(ObjectHashTable,'A15S', 0, "OJE")
+	call SaveStr(ObjectHashTable,'A3JX', 0, "OJE")
+	call SaveStr(ObjectHashTable,'A0R5', 0, "OKE")
+	call SaveStr(ObjectHashTable,'A15V', 0, "OME")
+	call SaveStr(ObjectHashTable,'QM03', 0, "OPE")
+	call SaveStr(ObjectHashTable,'A0LK', 0, "OQE")
+	call SaveStr(ObjectHashTable,'A0J1', 0, "OSE")
+	call SaveStr(ObjectHashTable,'A1D7', 0, "OSE")
+	call SaveStr(ObjectHashTable,'A333', 0, "OTE")
+	call SaveStr(ObjectHashTable,'Z610', 0, "OUE")
+	call SaveStr(ObjectHashTable,'A3K5', 0, "OUE")
+	call SaveStr(ObjectHashTable,'Z609', 0, "OWE")
+	call SaveStr(ObjectHashTable,'Z608', 0, "OYE")
+	call SaveStr(ObjectHashTable,'Z607', 0, "O_E")
+	call SaveStr(ObjectHashTable,'Z606', 0, "O0E")
+	call SaveStr(ObjectHashTable,'Z605', 0, "O1E")
+	call SaveStr(ObjectHashTable,'Z604', 0, "O2E")
+	call SaveStr(ObjectHashTable,'Z603', 0, "O4E")
+	call SaveStr(ObjectHashTable,'Z602', 0, "O5E")
+	call SaveStr(ObjectHashTable,'Z601', 0, "O6E")
+	call SaveStr(ObjectHashTable,'A33A', 0, "O7E")
+	call SaveStr(ObjectHashTable,'AHtb', 0, "O8E")
+	call SaveStr(ObjectHashTable,'QB0H', 0, "O8E")
+	call SaveStr(ObjectHashTable,'A2S0', 0, "O9E")
+	call SaveStr(ObjectHashTable,'A0N8', 0, "RXE")
+	call SaveStr(ObjectHashTable,'A0NB', 0, "RAE")
+	call SaveStr(ObjectHashTable,'Z397', 0, "RNE")
+	call SaveStr(ObjectHashTable,'QB0F', 0, "RNE")
+	call SaveStr(ObjectHashTable,'A06V', 0, "RBE")
+	call SaveStr(ObjectHashTable,'A20T', 0, "RCE")
+	call SaveStr(ObjectHashTable,'A21G', 0, "RQE")
+	call SaveStr(ObjectHashTable,'A21F', 0, "RQE")
+	call SaveStr(ObjectHashTable,'A05T', 0, "RTE")
+	call SaveStr(ObjectHashTable,'A08H', 0, "RTE")
+	call SaveStr(ObjectHashTable,'A0X5', 0, "RUE")
+	call SaveStr(ObjectHashTable,'A0MN', 0, "SpellEffect__Voodoo") // 妖术
 	
-	call SaveStr(P,'A053', 0, "R_E")
-	call SaveStr(P,'QM02', 0, "R1E")
-	call SaveStr(P,'A03D', 0, "R3E")
-	call SaveStr(P,'A0ZF', 0, "IVE")
-	call SaveStr(P,'A094', 0, "IXE")
-	call SaveStr(P,'A10R', 0, "IOE")
-	call SaveStr(P,'A1OP', 0, "IRE")
-	call SaveStr(P,'A0A2', 0, "IAE")
-	call SaveStr(P,'A0MU', 0, "IBE")
-	call SaveStr(P,'A29L', 0, "ICE")
-	call SaveStr(P,'A447', 0, "ICE")
-	call SaveStr(P,'A037', 0, "IKE")
-	call SaveStr(P,'A1RD', 0, "ILE")
-	call SaveStr(P,'A02S', 0, "IME")
-	call SaveStr(P,'A3Y8', 0, "amengmaw")
-	call SaveStr(P,'A0G2', 0, "IPE")
-	call SaveStr(P,'A1C0', 0, "IQE")	//分裂箭开启
-	call SaveStr(P,'A418', 0, "ISE")	//分裂箭关闭
-	call SaveStr(P,'A1AT', 0, "SpellEffect__StoneGaze")
-	call SaveStr(P,'QB10', 0, "SpellEffect__StoneGaze")
-	call SaveStr(P,'A194', 0, "IUE")
-	call SaveStr(P,'A0SW', 0, "Infest")	//感染
-	call SaveStr(P,'A0T2', 0, "IYE")
-	call SaveStr(P,'A05V', 0, "IZE")
-	call SaveStr(P,'A067', 0, "I_E")
-	call SaveStr(P,'A08P', 0, "I_E")
-	call SaveStr(P,'A0X7', 0, "I0E")
-	call SaveStr(P,'A1H5', 0, "I1E")
-	call SaveStr(P,'A2KO', 0, "I2E")
+	call SaveStr(ObjectHashTable,'A053', 0, "R_E")
+	call SaveStr(ObjectHashTable,'QM02', 0, "R1E")
+	call SaveStr(ObjectHashTable,'A03D', 0, "R3E")
+	call SaveStr(ObjectHashTable,'A0ZF', 0, "IVE")
+	call SaveStr(ObjectHashTable,'A094', 0, "IXE")
+	call SaveStr(ObjectHashTable,'A10R', 0, "IOE")
+	call SaveStr(ObjectHashTable,'A1OP', 0, "IRE")
+	call SaveStr(ObjectHashTable,'A0A2', 0, "IAE")
+	call SaveStr(ObjectHashTable,'A0MU', 0, "IBE")
+	call SaveStr(ObjectHashTable,'A29L', 0, "ICE")
+	call SaveStr(ObjectHashTable,'A447', 0, "ICE")
+	call SaveStr(ObjectHashTable,'A037', 0, "IKE")
+	call SaveStr(ObjectHashTable,'A1RD', 0, "ILE")
+	call SaveStr(ObjectHashTable,'A02S', 0, "IME")
+	call SaveStr(ObjectHashTable,'A3Y8', 0, "amengmaw")
+	call SaveStr(ObjectHashTable,'A0G2', 0, "IPE")
+	call SaveStr(ObjectHashTable,'A1C0', 0, "IQE")	//分裂箭开启
+	call SaveStr(ObjectHashTable,'A418', 0, "ISE")	//分裂箭关闭
+	call SaveStr(ObjectHashTable,'A1AT', 0, "SpellEffect__StoneGaze")
+	call SaveStr(ObjectHashTable,'QB10', 0, "SpellEffect__StoneGaze")
+	call SaveStr(ObjectHashTable,'A194', 0, "IUE")
+	call SaveStr(ObjectHashTable,'A0SW', 0, "Infest")	//感染
+	call SaveStr(ObjectHashTable,'A0T2', 0, "IYE")
+	call SaveStr(ObjectHashTable,'A05V', 0, "IZE")
+	call SaveStr(ObjectHashTable,'A067', 0, "I_E")
+	call SaveStr(ObjectHashTable,'A08P', 0, "I_E")
+	call SaveStr(ObjectHashTable,'A0X7', 0, "I0E")
+	call SaveStr(ObjectHashTable,'A1H5', 0, "I1E")
+	call SaveStr(ObjectHashTable,'A2KO', 0, "I2E")
 	
-	call SaveStr(P,'A0FH', 0, "I3E")
-	call SaveStr(P,'A0F0', 0, "I3E")
-	call SaveStr(P,'A0EY', 0, "I3E")
+	call SaveStr(ObjectHashTable,'A0FH', 0, "I3E")
+	call SaveStr(ObjectHashTable,'A0F0', 0, "I3E")
+	call SaveStr(ObjectHashTable,'A0EY', 0, "I3E")
 	
-	call SaveStr(P,'A344', 0, "I4E")
-	call SaveStr(P,'A34C', 0, "I4E")
-	call SaveStr(P,'A02H', 0, "I5E")
-	call SaveStr(P,'A0YM', 0, "I6E")
-	call SaveStr(P,'A0PL', 0, "I7E")
-	call SaveStr(P,'A0RA', 0, "I8E")
-	call SaveStr(P,'A06I', 0, "I9E")
-	call SaveStr(P,'A1CX', 0, "Dismember_Upgraded")
-	call SaveStr(P,'A0FL', 0, "Dismember")
-	call SaveStr(P,'A2TD', 0, "AAE")
-	call SaveStr(P,'A1E7', 0, "ABE")
-	call SaveStr(P,'A1AO', 0, "AME")
-	call SaveStr(P,'A1UV', 0, "AME")
-	call SaveStr(P,'A06O', 0, "APE")
-	call SaveStr(P,'A3NX', 0, "APE")
-	call SaveStr(P,'A0H0', 0, "AQE")
-	call SaveStr(P,'A05C', 0, "ASE")
-	call SaveStr(P,'A29K', 0, "ATE")
-	call SaveStr(P,'QB0I', 0, "ATE")
-	call SaveStr(P,'A0HW', 0, "AUE")
-	call SaveStr(P,'A0H9', 0, "AWE")
-	call SaveStr(P,'A0HA', 0, "AYE")
-	call SaveStr(P,'A0G4', 0, "AZE")
-	call SaveStr(P,'A1D8', 0, "AZE")
-	call SaveStr(P,'A07Q', 0, "ATB")
-	call SaveStr(P,'A0H4', 0, "A1E")
-	call SaveStr(P,'A046', 0, "NXE")
-	call SaveStr(P,'A3OH', 0, "a_chaoxi")
+	call SaveStr(ObjectHashTable,'A344', 0, "I4E")
+	call SaveStr(ObjectHashTable,'A34C', 0, "I4E")
+	call SaveStr(ObjectHashTable,'A02H', 0, "I5E")
+	call SaveStr(ObjectHashTable,'A0YM', 0, "I6E")
+	call SaveStr(ObjectHashTable,'A0PL', 0, "I7E")
+	call SaveStr(ObjectHashTable,'A0RA', 0, "I8E")
+	call SaveStr(ObjectHashTable,'A06I', 0, "I9E")
+	call SaveStr(ObjectHashTable,'A1CX', 0, "Dismember_Upgraded")
+	call SaveStr(ObjectHashTable,'A0FL', 0, "Dismember")
+	call SaveStr(ObjectHashTable,'A2TD', 0, "AAE")
+	call SaveStr(ObjectHashTable,'A1E7', 0, "ABE")
+	call SaveStr(ObjectHashTable,'A1AO', 0, "AME")
+	call SaveStr(ObjectHashTable,'A1UV', 0, "AME")
+	call SaveStr(ObjectHashTable,'A06O', 0, "APE")
+	call SaveStr(ObjectHashTable,'A3NX', 0, "APE")
+	call SaveStr(ObjectHashTable,'A0H0', 0, "AQE")
+	call SaveStr(ObjectHashTable,'A05C', 0, "ASE")
+	call SaveStr(ObjectHashTable,'A29K', 0, "ATE")
+	call SaveStr(ObjectHashTable,'QB0I', 0, "ATE")
+	call SaveStr(ObjectHashTable,'A0HW', 0, "AUE")
+	call SaveStr(ObjectHashTable,'A0H9', 0, "AWE")
+	call SaveStr(ObjectHashTable,'A0HA', 0, "AYE")
+	call SaveStr(ObjectHashTable,'A0G4', 0, "AZE")
+	call SaveStr(ObjectHashTable,'A1D8', 0, "AZE")
+	call SaveStr(ObjectHashTable,'A07Q', 0, "ATB")
+	call SaveStr(ObjectHashTable,'A0H4', 0, "A1E")
+	call SaveStr(ObjectHashTable,'A046', 0, "NXE")
+	call SaveStr(ObjectHashTable,'A3OH', 0, "a_chaoxi")
 	
-	call SaveStr(P,'A29I', 0, "NNE")
-	call SaveStr(P,'A226', 0, "NCE")
-	call SaveStr(P,'A0OR', 0, "NFE")
-	call SaveStr(P,'A0NQ', 0, "NGE")
-	call SaveStr(P,'A10Q', 0, "NJE")
-	call SaveStr(P,'A1DB', 0, "NJE")
-	call SaveStr(P,'A10L', 0, "NKE")
-	call SaveStr(P,'A173', 0, "NLE")
-	call SaveStr(P,'A013', 0, "NPE")
-	call SaveStr(P,'A0A6', 0, "NPE")
-	call SaveStr(P,'A1UZ', 0, "NQE")
-	call SaveStr(P,'A080', 0, "NYE")
-	call SaveStr(P,'A08X', 0, "N_E")
-	call SaveStr(P,'A1NE', 0, "N0E")
-	call SaveStr(P,'A2IG', 0, "N0E")
-	call SaveStr(P,'A1NA', 0, "N1E")
-	call SaveStr(P,'A06P', 0, "SpellEffect__Upheaval")
-	call SaveStr(P,'A0J5', 0, "N3E")
-	call SaveStr(P,'A0AS', 0, "N5E")
-	call SaveStr(P,'S00U', 0, "N6E")
-	call SaveStr(P,'A0CT', 0, "N7E")
-	call SaveStr(P,'A3DM', 0, "N7E")
-	call SaveStr(P,'A1QW', 0, "N8E")
-	call SaveStr(P,'A0NM', 0, "N9E")
-	call SaveStr(P,'A0NE', 0, "BEE")
-	call SaveStr(P,'A0NO', 0, "BRE")
-	call SaveStr(P,'A0NT', 0, "BIE")
-	call SaveStr(P,'A0NX', 0, "BIE")
-	call SaveStr(P,'A1HS', 0, "BAE")
-	call SaveStr(P,'A1MG', 0, "BCE")
-	call SaveStr(P,'A1MI', 0, "BDE")
-	call SaveStr(P,'A2QE', 0, "BDE")
-	call SaveStr(P,'A1HQ', 0, "BFE")
-	call SaveStr(P,'A1IM', 0, "BJE")
-	call SaveStr(P,'A1IN', 0, "BKE")
-	call SaveStr(P,'A1J7', 0, "BLE")
-	call SaveStr(P,'A04A', 0, "BPE")
-	call SaveStr(P,'A28R', 0, "BQE")
-	call SaveStr(P,'A28S', 0, "BSE")
-	call SaveStr(P,'A45W', 0, "B_E")
-	call SaveStr(P,'A45X', 0, "B0E")
-	call SaveStr(P,'A3FA', 0, "B1E")
-	call SaveStr(P,'A00P', 0, "B3E")
-	call SaveStr(P,'A010', 0, "B4E")
-	call SaveStr(P,'A1RJ', 0, "B6E")
-	call SaveStr(P,'A461', 0, "B7E")
-	call SaveStr(P,'A1RK', 0, "CNE")
-	call SaveStr(P,'A43H', 0, "CNE")
-	call SaveStr(P,'A1YX', 0, "CFE")
-	call SaveStr(P,'A1S4', 0, "CGE")
-	call SaveStr(P,'A1S8', 0, "CKE")
-	call SaveStr(P,'A1SB', 0, "SpellEffect__SoulCatcher")
-	call SaveStr(P,'A343', 0, "CUE")
-	call SaveStr(P,'A34J', 0, "hystr_demonic_purge")
-	call SaveStr(P,'A1SO', 0, "C_E")
-	call SaveStr(P,'A1SQ', 0, "C1E")
-	call SaveStr(P,'A1T5', 0, "C3E")
-	call SaveStr(P,'A235', 0, "C3E")
-	call SaveStr(P,'A229', 0, "C8E")
-	call SaveStr(P,'A1SU', 0, "C9E")
-	call SaveStr(P,'A1SW', 0, "DVE")
-	call SaveStr(P,'A1TV', 0, "DEE")
-	call SaveStr(P,'A1U6', 0, "DXE")
-	call SaveStr(P,'A30N', 0, "DXE")
-	call SaveStr(P,'A2KQ', 0, "DOE")
-	call SaveStr(P,'A1PH', 0, "DRE")
-	call SaveStr(P,'A1T8', 0, "DIE")
-	call SaveStr(P,'A1TA', 0, "DAE")
-	call SaveStr(P,'A1TB', 0, "DNE")
-	call SaveStr(P,'A3FQ', 0, "DNE")
-	call SaveStr(P,'A1YO', 0, "DBE")
-	call SaveStr(P,'A1YQ', 0, "DCE")
-	call SaveStr(P,'A3DF', 0, "DDE")
-	call SaveStr(P,'A3DE', 0, "DCE")
-	call SaveStr(P,'A1S7', 0, "DFE")
-	call SaveStr(P,'A27F', 0, "DGE")
-	call SaveStr(P,'A27G', 0, "DHE")
-	call SaveStr(P,'A27H', 0, "DJE")
-	call SaveStr(P,'A30J', 0, "DJE")
-	call SaveStr(P,'QB06', 0, "DKE")
-	call SaveStr(P,'A078', 0, "DKE")
-	call SaveStr(P,'A04N', 0, "DLE")
-	call SaveStr(P,'A2HS', 0, "DME")
-	call SaveStr(P,'A2H0', 0, "DPE")
-	call SaveStr(P,'QB0L', 0, "DPE")
-	call SaveStr(P,'A2H3', 0, "DQE")
-	call SaveStr(P,'A2JO', 0, "DSE")
-	call SaveStr(P,'A2JQ', 0, "DSE")
-	call SaveStr(P,'A2JP', 0, "DSE")
-	call SaveStr(P,'A2JR', 0, "DSE")
-	call SaveStr(P,'A2JL', 0, "DTE")
-	call SaveStr(P,'A2CI', 0, "DUE")
-	call SaveStr(P,'A38C', 0, "DUE")
-	call SaveStr(P,'A2J2', 0, "DWE")
-	call SaveStr(P,'A2JB', 0, "DYE")
-	call SaveStr(P,'A2BG', 0, "DZE")
-	call SaveStr(P,'A30H', 0, "DZE")
-	call SaveStr(P,'A2BE', 0, "D_E")
-	call SaveStr(P,'A2HN', 0, "D0E")
-	call SaveStr(P,'A2IT', 0, "D1E")
-	call SaveStr(P,'A2FK', 0, "D2E")
-	call SaveStr(P,'A2E3', 0, "D3E")
-	call SaveStr(P,'A2E5', 0, "D4E")
-	call SaveStr(P,'A43Q', 0, "D4E")
-	call SaveStr(P,'A43S', 0, "D4E")
-	call SaveStr(P,'A11N', 0, "D5E")
-	call SaveStr(P,'A300', 0, "D6E")
-	call SaveStr(P,'A301', 0, "D7E")
-	call SaveStr(P,'A07F', 0, "D8E")
-	call SaveStr(P,'A0CC', 0, "D9E")
-	call SaveStr(P,'A02Z', 0, "D9E")
-	call SaveStr(P,'A32A', 0, "FVE")
-	call SaveStr(P,'A32C', 0, "FEE")
-	call SaveStr(P,'A32E', 0, "FXE")
-	call SaveStr(P,'A32D', 0, "FOE")
-	call SaveStr(P,'A32G', 0, "FRE")
-	call SaveStr(P,'A004', 0, "FIE")
-	call SaveStr(P,'A0GK', 0, "FAE")
-	call SaveStr(P,'A0R0', 0, "DarkRift")
-	call SaveStr(P,'A04C', 0, "FBE")
-	call SaveStr(P,'A44U', 0, "FCE")
-	call SaveStr(P,'A44X', 0, "FDE")
-	call SaveStr(P,'A44Z', 0, "FFE")
-	call SaveStr(P,'A451', 0, "FGE")
-	call SaveStr(P,'A456', 0, "FHE")
-	call SaveStr(P,'A454', 0, "FJE")
-	call SaveStr(P,'A06B', 0, "FKE")
-	call SaveStr(P,'A471', 0, "FKE")
-	call SaveStr(P,'A2LB', 0, "FLE")
-	call SaveStr(P,'A0Z0', 0, "FME")
-	call SaveStr(P,'A01Z', 0, "FPE")
-	call SaveStr(P,'A0CA', 0, "FQE")
-	call SaveStr(P,'A2N1', 0, "FSE")
-	call SaveStr(P,'A055', 0, "FTE")
-	call SaveStr(P,'A085', 0, "FUE")
-	call SaveStr(P,'A121', 0, "FWE")
-	call SaveStr(P,'A07Z', 0, "FYE")
-	call SaveStr(P,'A44S', 0, "FYE")
-	call SaveStr(P,'A01V', 0, "FZE")
-	call SaveStr(P,'A1HH', 0, "F_E")
-	call SaveStr(P,'QB00', 0, "FTE")
-	call SaveStr(P,'QB01', 0, "FQE")
-	call SaveStr(P,'QB04', 0, "W5V")
-	call SaveStr(P,'A2O2', 0, "F0E")
-	call SaveStr(P,'A34A', 0, "F1E")
-	call SaveStr(P,'A40K', 0, "F2E")
-	call SaveStr(P,'A40L', 0, "F2E")
-	call SaveStr(P,'A40M', 0, "F2E")
-	call SaveStr(P,'A40N', 0, "F2E")
-	call SaveStr(P,'A2TI', 0, "F3E")
-	call SaveStr(P,'A29J', 0, "F4E")
-	call SaveStr(P,'A3OJ', 0, "F4E")
-	call SaveStr(P,'A02A', 0, "F5E")
-	call SaveStr(P,'A06M', 0, "F6E")
-	call SaveStr(P,'A08V', 0, "F7E")
-	call SaveStr(P,'A1AU', 0, "F8E")
-	call SaveStr(P,'QB0J', 0, "F9E")
-	call SaveStr(P,'A04W', 0, "F9E")
-	call SaveStr(P,'A011', 0, "GVE")
-	call SaveStr(P,'A44V', 0, "GEE")
-	call SaveStr(P,'A46J', 0, "GXE")
-	call SaveStr(P,'A42I', 0, "GOE")
-	call SaveStr(P,'A42W', 0, "GRE")
-	call SaveStr(P,'A38R', 0, "GAE")
-	call SaveStr(P,'A38V', 0, "GNE")
-	call SaveStr(P,'A3BP', 0, "GBE")
-	call SaveStr(P,'A39K', 0, "GCE")
-	call SaveStr(P,'A395', 0, "GDE")
-	call SaveStr(P,'A39C', 0, "GFE")
-	call SaveStr(P,'A2K4', 0, "GGE")
+	call SaveStr(ObjectHashTable,'A29I', 0, "NNE")
+	call SaveStr(ObjectHashTable,'A226', 0, "NCE")
+	call SaveStr(ObjectHashTable,'A0OR', 0, "NFE")
+	call SaveStr(ObjectHashTable,'A0NQ', 0, "NGE")
+	call SaveStr(ObjectHashTable,'A10Q', 0, "NJE")
+	call SaveStr(ObjectHashTable,'A1DB', 0, "NJE")
+	call SaveStr(ObjectHashTable,'A10L', 0, "NKE")
+	call SaveStr(ObjectHashTable,'A173', 0, "NLE")
+	call SaveStr(ObjectHashTable,'A013', 0, "NPE")
+	call SaveStr(ObjectHashTable,'A0A6', 0, "NPE")
+	call SaveStr(ObjectHashTable,'A1UZ', 0, "NQE")
+	call SaveStr(ObjectHashTable,'A080', 0, "NYE")
+	call SaveStr(ObjectHashTable,'A08X', 0, "N_E")
+	call SaveStr(ObjectHashTable,'A1NE', 0, "N0E")
+	call SaveStr(ObjectHashTable,'A2IG', 0, "N0E")
+	call SaveStr(ObjectHashTable,'A1NA', 0, "N1E")
+	call SaveStr(ObjectHashTable,'A06P', 0, "SpellEffect__Upheaval")
+	call SaveStr(ObjectHashTable,'A0J5', 0, "N3E")
+	call SaveStr(ObjectHashTable,'A0AS', 0, "N5E")
+	call SaveStr(ObjectHashTable,'S00U', 0, "N6E")
+	call SaveStr(ObjectHashTable,'A0CT', 0, "N7E")
+	call SaveStr(ObjectHashTable,'A3DM', 0, "N7E")
+	call SaveStr(ObjectHashTable,'A1QW', 0, "N8E")
+	call SaveStr(ObjectHashTable,'A0NM', 0, "N9E")
+	call SaveStr(ObjectHashTable,'A0NE', 0, "BEE")
+	call SaveStr(ObjectHashTable,'A0NO', 0, "BRE")
+	call SaveStr(ObjectHashTable,'A0NT', 0, "BIE")
+	call SaveStr(ObjectHashTable,'A0NX', 0, "BIE")
+	call SaveStr(ObjectHashTable,'A1HS', 0, "BAE")
+	call SaveStr(ObjectHashTable,'A1MG', 0, "BCE")
+	call SaveStr(ObjectHashTable,'A1MI', 0, "BDE")
+	call SaveStr(ObjectHashTable,'A2QE', 0, "BDE")
+	call SaveStr(ObjectHashTable,'A1HQ', 0, "BFE")
+	call SaveStr(ObjectHashTable,'A1IM', 0, "BJE")
+	call SaveStr(ObjectHashTable,'A1IN', 0, "BKE")
+	call SaveStr(ObjectHashTable,'A1J7', 0, "BLE")
+	call SaveStr(ObjectHashTable,'A04A', 0, "BPE")
+	call SaveStr(ObjectHashTable,'A28R', 0, "BQE")
+	call SaveStr(ObjectHashTable,'A28S', 0, "BSE")
+	call SaveStr(ObjectHashTable,'A45W', 0, "B_E")
+	call SaveStr(ObjectHashTable,'A45X', 0, "B0E")
+	call SaveStr(ObjectHashTable,'A3FA', 0, "B1E")
+	call SaveStr(ObjectHashTable,'A00P', 0, "B3E")
+	call SaveStr(ObjectHashTable,'A010', 0, "B4E")
+	call SaveStr(ObjectHashTable,'A1RJ', 0, "B6E")
+	call SaveStr(ObjectHashTable,'A461', 0, "B7E")
+	call SaveStr(ObjectHashTable,'A1RK', 0, "CNE")
+	call SaveStr(ObjectHashTable,'A43H', 0, "CNE")
+	call SaveStr(ObjectHashTable,'A1YX', 0, "CFE")
+	call SaveStr(ObjectHashTable,'A1S4', 0, "CGE")
+	call SaveStr(ObjectHashTable,'A1S8', 0, "CKE")
+	call SaveStr(ObjectHashTable,'A1SB', 0, "SpellEffect__SoulCatcher")
+	call SaveStr(ObjectHashTable,'A343', 0, "CUE")
+	call SaveStr(ObjectHashTable,'A34J', 0, "hystr_demonic_purge")
+	call SaveStr(ObjectHashTable,'A1SO', 0, "C_E")
+	call SaveStr(ObjectHashTable,'A1SQ', 0, "C1E")
+	call SaveStr(ObjectHashTable,'A1T5', 0, "C3E")
+	call SaveStr(ObjectHashTable,'A235', 0, "C3E")
+	call SaveStr(ObjectHashTable,'A229', 0, "C8E")
+	call SaveStr(ObjectHashTable,'A1SU', 0, "C9E")
+	call SaveStr(ObjectHashTable,'A1SW', 0, "DVE")
+	call SaveStr(ObjectHashTable,'A1TV', 0, "DEE")
+	call SaveStr(ObjectHashTable,'A1U6', 0, "DXE")
+	call SaveStr(ObjectHashTable,'A30N', 0, "DXE")
+	call SaveStr(ObjectHashTable,'A2KQ', 0, "DOE")
+	call SaveStr(ObjectHashTable,'A1PH', 0, "DRE")
+	call SaveStr(ObjectHashTable,'A1T8', 0, "DIE")
+	call SaveStr(ObjectHashTable,'A1TA', 0, "DAE")
+	call SaveStr(ObjectHashTable,'A1TB', 0, "DNE")
+	call SaveStr(ObjectHashTable,'A3FQ', 0, "DNE")
+	call SaveStr(ObjectHashTable,'A1YO', 0, "DBE")
+	call SaveStr(ObjectHashTable,'A1YQ', 0, "DCE")
+	call SaveStr(ObjectHashTable,'A3DF', 0, "DDE")
+	call SaveStr(ObjectHashTable,'A3DE', 0, "DCE")
+	call SaveStr(ObjectHashTable,'A1S7', 0, "DFE")
+	call SaveStr(ObjectHashTable,'A27F', 0, "DGE")
+	call SaveStr(ObjectHashTable,'A27G', 0, "DHE")
+	call SaveStr(ObjectHashTable,'A27H', 0, "DJE")
+	call SaveStr(ObjectHashTable,'A30J', 0, "DJE")
+	call SaveStr(ObjectHashTable,'QB06', 0, "DKE")
+	call SaveStr(ObjectHashTable,'A078', 0, "DKE")
+	call SaveStr(ObjectHashTable,'A04N', 0, "DLE")
+	call SaveStr(ObjectHashTable,'A2HS', 0, "DME")
+	call SaveStr(ObjectHashTable,'A2H0', 0, "DPE")
+	call SaveStr(ObjectHashTable,'QB0L', 0, "DPE")
+	call SaveStr(ObjectHashTable,'A2H3', 0, "DQE")
+	call SaveStr(ObjectHashTable,'A2JO', 0, "DSE")
+	call SaveStr(ObjectHashTable,'A2JQ', 0, "DSE")
+	call SaveStr(ObjectHashTable,'A2JP', 0, "DSE")
+	call SaveStr(ObjectHashTable,'A2JR', 0, "DSE")
+	call SaveStr(ObjectHashTable,'A2JL', 0, "DTE")
+	call SaveStr(ObjectHashTable,'A2CI', 0, "DUE")
+	call SaveStr(ObjectHashTable,'A38C', 0, "DUE")
+	call SaveStr(ObjectHashTable,'A2J2', 0, "DWE")
+	call SaveStr(ObjectHashTable,'A2JB', 0, "DYE")
+	call SaveStr(ObjectHashTable,'A2BG', 0, "DZE")
+	call SaveStr(ObjectHashTable,'A30H', 0, "DZE")
+	call SaveStr(ObjectHashTable,'A2BE', 0, "D_E")
+	call SaveStr(ObjectHashTable,'A2HN', 0, "D0E")
+	call SaveStr(ObjectHashTable,'A2IT', 0, "D1E")
+	call SaveStr(ObjectHashTable,'A2FK', 0, "D2E")
+	call SaveStr(ObjectHashTable,'A2E3', 0, "D3E")
+	call SaveStr(ObjectHashTable,'A2E5', 0, "D4E")
+	call SaveStr(ObjectHashTable,'A43Q', 0, "D4E")
+	call SaveStr(ObjectHashTable,'A43S', 0, "D4E")
+	call SaveStr(ObjectHashTable,'A11N', 0, "D5E")
+	call SaveStr(ObjectHashTable,'A300', 0, "D6E")
+	call SaveStr(ObjectHashTable,'A301', 0, "D7E")
+	call SaveStr(ObjectHashTable,'A07F', 0, "D8E")
+	call SaveStr(ObjectHashTable,'A0CC', 0, "D9E")
+	call SaveStr(ObjectHashTable,'A02Z', 0, "D9E")
+	call SaveStr(ObjectHashTable,'A32A', 0, "FVE")
+	call SaveStr(ObjectHashTable,'A32C', 0, "FEE")
+	call SaveStr(ObjectHashTable,'A32E', 0, "FXE")
+	call SaveStr(ObjectHashTable,'A32D', 0, "FOE")
+	call SaveStr(ObjectHashTable,'A32G', 0, "FRE")
+	call SaveStr(ObjectHashTable,'A004', 0, "FIE")
+	call SaveStr(ObjectHashTable,'A0GK', 0, "FAE")
+	call SaveStr(ObjectHashTable,'A0R0', 0, "DarkRift")
+	call SaveStr(ObjectHashTable,'A04C', 0, "FBE")
+	call SaveStr(ObjectHashTable,'A44U', 0, "FCE")
+	call SaveStr(ObjectHashTable,'A44X', 0, "FDE")
+	call SaveStr(ObjectHashTable,'A44Z', 0, "FFE")
+	call SaveStr(ObjectHashTable,'A451', 0, "FGE")
+	call SaveStr(ObjectHashTable,'A456', 0, "FHE")
+	call SaveStr(ObjectHashTable,'A454', 0, "FJE")
+	call SaveStr(ObjectHashTable,'A06B', 0, "FKE")
+	call SaveStr(ObjectHashTable,'A471', 0, "FKE")
+	call SaveStr(ObjectHashTable,'A2LB', 0, "FLE")
+	call SaveStr(ObjectHashTable,'A0Z0', 0, "FME")
+	call SaveStr(ObjectHashTable,'A01Z', 0, "FPE")
+	call SaveStr(ObjectHashTable,'A0CA', 0, "FQE")
+	call SaveStr(ObjectHashTable,'A2N1', 0, "FSE")
+	call SaveStr(ObjectHashTable,'A055', 0, "FTE")
+	call SaveStr(ObjectHashTable,'A085', 0, "FUE")
+	call SaveStr(ObjectHashTable,'A121', 0, "FWE")
+	call SaveStr(ObjectHashTable,'A07Z', 0, "FYE")
+	call SaveStr(ObjectHashTable,'A44S', 0, "FYE")
+	call SaveStr(ObjectHashTable,'A01V', 0, "FZE")
+	call SaveStr(ObjectHashTable,'A1HH', 0, "F_E")
+	call SaveStr(ObjectHashTable,'QB00', 0, "FTE")
+	call SaveStr(ObjectHashTable,'QB01', 0, "FQE")
+	call SaveStr(ObjectHashTable,'QB04', 0, "W5V")
+	call SaveStr(ObjectHashTable,'A2O2', 0, "F0E")
+	call SaveStr(ObjectHashTable,'A34A', 0, "F1E")
+	call SaveStr(ObjectHashTable,'A40K', 0, "F2E")
+	call SaveStr(ObjectHashTable,'A40L', 0, "F2E")
+	call SaveStr(ObjectHashTable,'A40M', 0, "F2E")
+	call SaveStr(ObjectHashTable,'A40N', 0, "F2E")
+	call SaveStr(ObjectHashTable,'A2TI', 0, "F3E")
+	call SaveStr(ObjectHashTable,'A29J', 0, "F4E")
+	call SaveStr(ObjectHashTable,'A3OJ', 0, "F4E")
+	call SaveStr(ObjectHashTable,'A02A', 0, "F5E")
+	call SaveStr(ObjectHashTable,'A06M', 0, "F6E")
+	call SaveStr(ObjectHashTable,'A08V', 0, "F7E")
+	call SaveStr(ObjectHashTable,'A1AU', 0, "F8E")
+	call SaveStr(ObjectHashTable,'QB0J', 0, "F9E")
+	call SaveStr(ObjectHashTable,'A04W', 0, "F9E")
+	call SaveStr(ObjectHashTable,'A011', 0, "GVE")
+	call SaveStr(ObjectHashTable,'A44V', 0, "GEE")
+	call SaveStr(ObjectHashTable,'A46J', 0, "GXE")
+	call SaveStr(ObjectHashTable,'A42I', 0, "GOE")
+	call SaveStr(ObjectHashTable,'A42W', 0, "GRE")
+	call SaveStr(ObjectHashTable,'A38R', 0, "GAE")
+	call SaveStr(ObjectHashTable,'A38V', 0, "GNE")
+	call SaveStr(ObjectHashTable,'A3BP', 0, "GBE")
+	call SaveStr(ObjectHashTable,'A39K', 0, "GCE")
+	call SaveStr(ObjectHashTable,'A395', 0, "GDE")
+	call SaveStr(ObjectHashTable,'A39C', 0, "GFE")
+	call SaveStr(ObjectHashTable,'A2K4', 0, "GGE")
 
-	call SaveStr(P,'A083', 0, "SpellEffect__Bloodlust")
+	call SaveStr(ObjectHashTable,'A083', 0, "SpellEffect__Bloodlust")
 
 	
-	call SaveStr(P,'A3W8', 0, "fj_trigger")
-	call SaveStr(P,'A3UH', 0, "jys_trigger")
+	call SaveStr(ObjectHashTable,'A3W8', 0, "fj_trigger")
+	call SaveStr(ObjectHashTable,'A3UH', 0, "jys_trigger")
 	
 	// 马甲的技能 或者 物品
-	call SaveStr(P,'A0AE', 12, "SpellEffect__Rabid")
-	call SaveStr(P,'A02X', 12, "GHE")
-	call SaveStr(P,'AIsw', 12, "GHE")
-	call SaveStr(P,'A0H6', 12, "GLE")
-	call SaveStr(P,'A0B6', 12, "GME")
-	call SaveStr(P,'A0JT', 12, "GPE")
-	call SaveStr(P,'A0OT', 12, "GQE")
-	call SaveStr(P,'Aeat', 12, "GSE")
-	call SaveStr(P,'ANTG', 12, "GSE")
-	call SaveStr(P,'A231', 12, "town_portal")
-	call SaveStr(P,'A3AG', 12, "town_portal")
-	call SaveStr(P,'A1R5', 12, "town_portal")
-	call SaveStr(P,'A0HB', 12, "GUE")
-	call SaveStr(P,'A0D3', 12, "GUE")
-	call SaveStr(P,'A0DF', 12, "GUE")
-	call SaveStr(P,'ACch', 12, "GWE")
-	call SaveStr(P,'A11F', 12, "GYE")
-	call SaveStr(P,'A11E', 12, "GYE")
-	call SaveStr(P,'A0S3', 12, "GYE")
-	call SaveStr(P,'A11D', 12, "GYE")
-	call SaveStr(P,'A11G', 12, "GYE")
-	call SaveStr(P,'A11H', 12, "GYE")
-	call SaveStr(P,'A0CK', 12, "GZE")
-	call SaveStr(P,'A1FP', 12, "G_E")
-	call SaveStr(P,'A02W', 12, "G0E")
-	call SaveStr(P,'A397', 12, "Item_SpellEffect_MoonShard")
-	call SaveStr(P,'AZSZ', 12, "Item_SpellEffect_IronwoodBranch")
-	call SaveStr(P,'A0FD', 12, "G1E")
-	call SaveStr(P,'A3TP', 12, "G1E")
-	call SaveStr(P,'A0JL', 12, "G2E")
-	call SaveStr(P,'A0T9', 12, "G3E")
-	call SaveStr(P,'A0VR', 12, "G4E")
-	call SaveStr(P,'A0JY', 12, "G5E")
-	call SaveStr(P,'A138', 12, "G6E")
-	call SaveStr(P,'A14C', 12, "G6E")
-	call SaveStr(P,'A14D', 12, "G7E")
-	//call SaveStr(P,'A35F', 12, "GameOptions")
-	call SaveStr(P,'AU02', 12, "MUSpellEffect")
-	call SaveStr(P,'A141', 12, "G8E")
-	call SaveStr(P,'A1WI', 12, "G8E")
-	call SaveStr(P,'A12W', 12, "G9E")
-	call SaveStr(P,'A15W', 12, "HVE")
-	call SaveStr(P,'A19M', 12, "Item_SpellEffect_ForceStaff")
-	call SaveStr(P,'A3U8', 12, "Item_SpellEffect_HurricanePike")
-	call SaveStr(P,'AIpg', 12, "HOE")
-	call SaveStr(P,'A1AC', 12, "HRE")
-	call SaveStr(P,'A1AS', 12, "HIE")
-	call SaveStr(P,'A2KS', 12, "HNE")
-	call SaveStr(P,'A0GD', 12, "HDE")
-	call SaveStr(P,'A1EW', 12, "HFE")
-	call SaveStr(P,'A0B8', 12, "HGE")
-	call SaveStr(P,'A1WE', 12, "HGE")
-	call SaveStr(P,'A1MO', 12, "HHE")
-	call SaveStr(P,'A1Q8', 12, "HJE")
-	call SaveStr(P,'A1QD', 12, "HKE")
-	call SaveStr(P,'A1T7', 12, "HME")
-	call SaveStr(P,'A0K7', 12, "HPE")
-	call SaveStr(P,'A28Y', 12, "HQE")
-	call SaveStr(P,'A1ZI', 12, "HSE")
-	call SaveStr(P,'A1ZW', 12, "HTE")
-	call SaveStr(P,'A206', 12, "HUE")
-	call SaveStr(P,'A28D', 12, "HWE")
-	call SaveStr(P,'A2EA', 12, "H_E")
-	call SaveStr(P,'A2HQ', 12, "H2E")
-	call SaveStr(P,'A02O', 12, "H4E")
-	call SaveStr(P,'A08Y', 12, "H4E")
-	call SaveStr(P,'A08Z', 12, "H4E")
-	call SaveStr(P,'A090', 12, "H4E")
-	call SaveStr(P,'A092', 12, "H4E")
-	call SaveStr(P,'A3K7', 12, "H5E")
-	call SaveStr(P,'A2TK', 12, "H7E") //血精石
-	call SaveStr(P,'AItb', 12, "H8E")
-	call SaveStr(P,'A1FD', 12, "H9E")
-	call SaveStr(P,'A0JZ', 12, "JVE")
-	call SaveStr(P,'A2K7', 12, "AbyssalBlade_Overwhelm") // 深渊之刃
+	call SaveStr(ObjectHashTable,'A0AE', 12, "SpellEffect__Rabid")
+	call SaveStr(ObjectHashTable,'A02X', 12, "GHE")
+	call SaveStr(ObjectHashTable,'AIsw', 12, "GHE")
+	call SaveStr(ObjectHashTable,'A0H6', 12, "GLE")
+	call SaveStr(ObjectHashTable,'A0B6', 12, "GME")
+	call SaveStr(ObjectHashTable,'A0JT', 12, "GPE")
+	call SaveStr(ObjectHashTable,'A0OT', 12, "GQE")
+	call SaveStr(ObjectHashTable,'Aeat', 12, "GSE")
+	call SaveStr(ObjectHashTable,'ANTG', 12, "GSE")
+	call SaveStr(ObjectHashTable,'A231', 12, "town_portal")
+	call SaveStr(ObjectHashTable,'A3AG', 12, "town_portal")
+	call SaveStr(ObjectHashTable,'A1R5', 12, "town_portal")
+	call SaveStr(ObjectHashTable,'A0HB', 12, "GUE")
+	call SaveStr(ObjectHashTable,'A0D3', 12, "GUE")
+	call SaveStr(ObjectHashTable,'A0DF', 12, "GUE")
+	call SaveStr(ObjectHashTable,'ACch', 12, "GWE")
+	call SaveStr(ObjectHashTable,'A11F', 12, "GYE")
+	call SaveStr(ObjectHashTable,'A11E', 12, "GYE")
+	call SaveStr(ObjectHashTable,'A0S3', 12, "GYE")
+	call SaveStr(ObjectHashTable,'A11D', 12, "GYE")
+	call SaveStr(ObjectHashTable,'A11G', 12, "GYE")
+	call SaveStr(ObjectHashTable,'A11H', 12, "GYE")
+	call SaveStr(ObjectHashTable,'A0CK', 12, "GZE")
+	call SaveStr(ObjectHashTable,'A1FP', 12, "G_E")
+	call SaveStr(ObjectHashTable,'A02W', 12, "G0E")
+	call SaveStr(ObjectHashTable,'A397', 12, "Item_SpellEffect_MoonShard")
+	call SaveStr(ObjectHashTable,'AZSZ', 12, "Item_SpellEffect_IronwoodBranch")
+	call SaveStr(ObjectHashTable,'A0FD', 12, "G1E")
+	call SaveStr(ObjectHashTable,'A3TP', 12, "G1E")
+	call SaveStr(ObjectHashTable,'A0JL', 12, "G2E")
+	call SaveStr(ObjectHashTable,'A0T9', 12, "G3E")
+	call SaveStr(ObjectHashTable,'A0VR', 12, "G4E")
+	call SaveStr(ObjectHashTable,'A0JY', 12, "G5E")
+	call SaveStr(ObjectHashTable,'A138', 12, "G6E")
+	call SaveStr(ObjectHashTable,'A14C', 12, "G6E")
+	call SaveStr(ObjectHashTable,'A14D', 12, "G7E")
+	//call SaveStr(ObjectHashTable,'A35F', 12, "GameOptions")
+	call SaveStr(ObjectHashTable,'AU02', 12, "MUSpellEffect")
+	call SaveStr(ObjectHashTable,'A141', 12, "G8E")
+	call SaveStr(ObjectHashTable,'A1WI', 12, "G8E")
+	call SaveStr(ObjectHashTable,'A12W', 12, "G9E")
+	call SaveStr(ObjectHashTable,'A15W', 12, "HVE")
+	call SaveStr(ObjectHashTable,'A19M', 12, "Item_SpellEffect_ForceStaff")
+	call SaveStr(ObjectHashTable,'A3U8', 12, "Item_SpellEffect_HurricanePike")
+	call SaveStr(ObjectHashTable,'AIpg', 12, "HOE")
+	call SaveStr(ObjectHashTable,'A1AC', 12, "HRE")
+	call SaveStr(ObjectHashTable,'A1AS', 12, "HIE")
+	call SaveStr(ObjectHashTable,'A2KS', 12, "HNE")
+	call SaveStr(ObjectHashTable,'A0GD', 12, "HDE")
+	call SaveStr(ObjectHashTable,'A1EW', 12, "HFE")
+	call SaveStr(ObjectHashTable,'A0B8', 12, "HGE")
+	call SaveStr(ObjectHashTable,'A1WE', 12, "HGE")
+	call SaveStr(ObjectHashTable,'A1MO', 12, "HHE")
+	call SaveStr(ObjectHashTable,'A1Q8', 12, "HJE")
+	call SaveStr(ObjectHashTable,'A1QD', 12, "HKE")
+	call SaveStr(ObjectHashTable,'A1T7', 12, "HME")
+	call SaveStr(ObjectHashTable,'A0K7', 12, "HPE")
+	call SaveStr(ObjectHashTable,'A28Y', 12, "HQE")
+	call SaveStr(ObjectHashTable,'A1ZI', 12, "HSE")
+	call SaveStr(ObjectHashTable,'A1ZW', 12, "HTE")
+	call SaveStr(ObjectHashTable,'A206', 12, "HUE")
+	call SaveStr(ObjectHashTable,'A28D', 12, "HWE")
+	call SaveStr(ObjectHashTable,'A2EA', 12, "H_E")
+	call SaveStr(ObjectHashTable,'A2HQ', 12, "H2E")
+	call SaveStr(ObjectHashTable,'A02O', 12, "H4E")
+	call SaveStr(ObjectHashTable,'A08Y', 12, "H4E")
+	call SaveStr(ObjectHashTable,'A08Z', 12, "H4E")
+	call SaveStr(ObjectHashTable,'A090', 12, "H4E")
+	call SaveStr(ObjectHashTable,'A092', 12, "H4E")
+	call SaveStr(ObjectHashTable,'A3K7', 12, "H5E")
+	call SaveStr(ObjectHashTable,'A2TK', 12, "H7E") //血精石
+	call SaveStr(ObjectHashTable,'AItb', 12, "H8E")
+	call SaveStr(ObjectHashTable,'A1FD', 12, "H9E")
+	call SaveStr(ObjectHashTable,'A0JZ', 12, "JVE")
+	call SaveStr(ObjectHashTable,'A2K7', 12, "AbyssalBlade_Overwhelm") // 深渊之刃
 	
 
-	call SaveStr(P,'Adsm', 0, "JXE")
-	call SaveStr(P,'Acdh', 0, "JOE")
-	call SaveStr(P,'A1P8', 1, "JRE")
-	call SaveStr(P,'A085', 1, "JNE")
-	call SaveStr(P,'A2QT', 1, "JFE")
-	call SaveStr(P,'A1AA', 2, "JGE")	//回音重踏1
-	call SaveStr(P,'A2LK', 2, "JGE")
-	call SaveStr(P,'A065', 2, "JHE")
-	call SaveStr(P,'A0BE', 2, "E8E")
-	call SaveStr(P,'A064', 3, "JPE")
-	call SaveStr(P,'A0AM', 3, "JQE")
-	call SaveStr(P,'A0A3', 3, "JQE")
-	call SaveStr(P,'A0A4', 3, "JQE")
-	call SaveStr(P,'A1FZ', 3, "JQE")
-	call SaveStr(P,'A1WF', 3, "JTE")
-	call SaveStr(P,'A451', 3, "JUE")
-	call SaveStr(P,'A0AS', 3, "JWE")
-	call SaveStr(P,'A0SW', 3, "JYE")
-	call SaveStr(P,'A0EC', 3, "JZE")
-	call SaveStr(P,'A2QM', 3, "J_E")
-	call SaveStr(P,'A04Y', 3, "J4E")
-	call SaveStr(P,'A34A', 3, "J7E")
-	call SaveStr(P,'A34J', 3, "demonic_purge_charges0") //无充能邪恶净化
-	call SaveStr(P,'A1AA', 3, "KVE")	//回音重踏 前摇
-	call SaveStr(P,'A3DM', 3, "KXE")	//时光倒流
-	call SaveStr(P,'A2LK', 3, "KVE")
-	call SaveStr(P,'A11N', 3, "KOE")
-	call SaveStr(P,'AEbl', 3, "KRE")
-	call SaveStr(P,'QB08', 3, "KRE")
-	call SaveStr(P,'A3DF', 3, "KNE")
-	call SaveStr(P,'A00L', 3, "KBE")
-	call SaveStr(P,'A361', 3, "KCE")
-	call SaveStr(P,'A14O', 3, "KDE")
-	call SaveStr(P,'A3FJ', 3, "KDE")
-	call SaveStr(P,'A2QI', 3, "KHE")
-	call SaveStr(P,'A2QT', 3, "KJE")
-	call SaveStr(P,'A180', 3, "KLE")
-	call SaveStr(P,'A1BX', 3, "KME")
-	call SaveStr(P,'A30L', 3, "KME")
-	call SaveStr(P,'A21E', 3, "KPE")
-	call SaveStr(P,'A0M1', 3, "KQE")
-	call SaveStr(P,'A1AX', 3, "KQE")
-	call SaveStr(P,'A10U', 3, "KSE")
-	call SaveStr(P,'A01P', 3, "KTE")
-	call SaveStr(P,'A24D', 3, "KUE")
-	call SaveStr(P,'A10D', 3, "KWE")
-	call SaveStr(P,'A0K9', 3, "KYE")
-	call SaveStr(P,'A190', 3, "KZE")
-	call SaveStr(P,'A0BZ', 3, "K_E")
-	call SaveStr(P,'A0IN', 3, "K0E")
-	call SaveStr(P,'A1AW', 3, "K0E")
-	call SaveStr(P,'A02A', 3, "K2E")
-	call SaveStr(P,'A0RW', 3, "K3E")
-	call SaveStr(P,'A0OJ', 3, "K4E")
-	call SaveStr(P,'A0QE', 3, "K5E")
-	call SaveStr(P,'AHtb', 3, "K6E")
-	call SaveStr(P,'QB0H', 3, "K6E")
-	call SaveStr(P,'A0R0', 3, "K7E")
-	call SaveStr(P,'A226', 3, "K9E")
-	call SaveStr(P,'A32D', 3, "LEE")
-	call SaveStr(P,'A08Q', 3, "LXE")
-	call SaveStr(P,'A08c', 3, "bsckj")
-	call SaveStr(P,'A2TD', 3, "LOE")
-	call SaveStr(P,'A095', 3, "LRE")
-	call SaveStr(P,'A09W', 3, "LRE")
-	call SaveStr(P,'A12K', 3, "LIE")
-	call SaveStr(P,'A1S8', 3, "LNE")
-	call SaveStr(P,'A1TB', 3, "LBE")
-	call SaveStr(P,'A3FQ', 3, "LBE")
-	call SaveStr(P,'QB0L', 3, "LCE")
-	call SaveStr(P,'A2H0', 3, "LCE")
-	call SaveStr(P,'A0B1', 3, "LFE")
-	call SaveStr(P,'A064', 4, "LHE")
-	call SaveStr(P,'A1P8', 4, "LKE")
-	call SaveStr(P,'A21L', 4, "LLE")
-	call SaveStr(P,'A0I8', 4, "LME")
-	call SaveStr(P,'A0CZ', 4, "LPE")
-	call SaveStr(P,'A0AK', 4, "LQE")
-	call SaveStr(P,'A1FY', 4, "LQE")
-	call SaveStr(P,'A0S1', 4, "LSE")
-	call SaveStr(P,'A0MB', 4, "LTE")
-	call SaveStr(P,'A0MX', 4, "LearnSkill__DrunkenBrawler")
-	call SaveStr(P,'A34J', 4, "LZE")
-	call SaveStr(P,'A32G', 4, "L_E")
-	call SaveStr(P,'AIcd', 4, "L0E")
-	call SaveStr(P,'A0NS', 4, "LearnSkill__BorrowedTime")
-	call SaveStr(P,'A1DA', 4, "LearnSkill__BorrowedTime")
-	call SaveStr(P,'A517', 4, "LearnSkill__BorrowedTime")
-	call SaveStr(P,'A518', 4, "LearnSkill__BorrowedTime")
-	call SaveStr(P,'A0RP', 4, "L2E")
-	call SaveStr(P,'A449', 4, "L2E")
-	call SaveStr(P,'A34A', 4, "L3E")
-	call SaveStr(P,'A2O2', 4, "L4E")
-	call SaveStr(P,'QF88', 4, "L5E")
-	call SaveStr(P,'A0VC', 4, "L5E")
-	call SaveStr(P,'A062', 4, "L6E")
-	call SaveStr(P,'A524', 4, "MEE")
-	call SaveStr(P,'A0M3', 4, "MXE")
-	call SaveStr(P,'A06B', 4, "MOE")
-	call SaveStr(P,'A471', 4, "MOE")
-	call SaveStr(P,'A01N', 4, "MAE")
-	call SaveStr(P,'A0BR', 4, "MNE")
-	call SaveStr(P,'A03P', 4, "MBE")
-	call SaveStr(P,'A06D', 4, "MCE")
-	call SaveStr(P,'A04E', 4, "MDE")
-	call SaveStr(P,'A0MM', 4, "MFE")
-	call SaveStr(P,'A1NA', 4, "LearnLevel1Skill_SoulAssumption")
-	call SaveStr(P,'A0NA', 4, "MME")
-	call SaveStr(P,'A0H9', 4, "MPE")
-	call SaveStr(P,'A1E6', 4, "MWE")
-	call SaveStr(P,'A0QQ', 4, "MYE")
-	call SaveStr(P,'A0QW', 4, "MZE")
-	call SaveStr(P,'A1EA', 4, "M_E")
-	call SaveStr(P,'QB03', 4, "M_E")
-	call SaveStr(P,'A01Y', 4, "SKill_Learn_Reincarnation")
-	call SaveStr(P,'A1AZ', 4, "SKill_Learn_Reincarnation")
+	call SaveStr(ObjectHashTable,'Adsm', 0, "JXE")
+	call SaveStr(ObjectHashTable,'Acdh', 0, "JOE")
+	call SaveStr(ObjectHashTable,'A1P8', 1, "JRE")
+	call SaveStr(ObjectHashTable,'A085', 1, "JNE")
+	call SaveStr(ObjectHashTable,'A2QT', 1, "JFE")
+	call SaveStr(ObjectHashTable,'A1AA', 2, "JGE")	//回音重踏1
+	call SaveStr(ObjectHashTable,'A2LK', 2, "JGE")
+	call SaveStr(ObjectHashTable,'A065', 2, "JHE")
+	call SaveStr(ObjectHashTable,'A0BE', 2, "E8E")
+	call SaveStr(ObjectHashTable,'A064', 3, "JPE")
+	call SaveStr(ObjectHashTable,'A0AM', 3, "JQE")
+	call SaveStr(ObjectHashTable,'A0A3', 3, "JQE")
+	call SaveStr(ObjectHashTable,'A0A4', 3, "JQE")
+	call SaveStr(ObjectHashTable,'A1FZ', 3, "JQE")
+	call SaveStr(ObjectHashTable,'A1WF', 3, "JTE")
+	call SaveStr(ObjectHashTable,'A451', 3, "JUE")
+	call SaveStr(ObjectHashTable,'A0AS', 3, "JWE")
+	call SaveStr(ObjectHashTable,'A0SW', 3, "JYE")
+	call SaveStr(ObjectHashTable,'A0EC', 3, "JZE")
+	call SaveStr(ObjectHashTable,'A2QM', 3, "J_E")
+	call SaveStr(ObjectHashTable,'A04Y', 3, "J4E")
+	call SaveStr(ObjectHashTable,'A34A', 3, "J7E")
+	call SaveStr(ObjectHashTable,'A34J', 3, "demonic_purge_charges0") //无充能邪恶净化
+	call SaveStr(ObjectHashTable,'A1AA', 3, "KVE")	//回音重踏 前摇
+	call SaveStr(ObjectHashTable,'A3DM', 3, "KXE")	//时光倒流
+	call SaveStr(ObjectHashTable,'A2LK', 3, "KVE")
+	call SaveStr(ObjectHashTable,'A11N', 3, "KOE")
+	call SaveStr(ObjectHashTable,'AEbl', 3, "KRE")
+	call SaveStr(ObjectHashTable,'QB08', 3, "KRE")
+	call SaveStr(ObjectHashTable,'A3DF', 3, "KNE")
+	call SaveStr(ObjectHashTable,'A00L', 3, "KBE")
+	call SaveStr(ObjectHashTable,'A361', 3, "KCE")
+	call SaveStr(ObjectHashTable,'A14O', 3, "KDE")
+	call SaveStr(ObjectHashTable,'A3FJ', 3, "KDE")
+	call SaveStr(ObjectHashTable,'A2QI', 3, "KHE")
+	call SaveStr(ObjectHashTable,'A2QT', 3, "KJE")
+	call SaveStr(ObjectHashTable,'A180', 3, "KLE")
+	call SaveStr(ObjectHashTable,'A1BX', 3, "KME")
+	call SaveStr(ObjectHashTable,'A30L', 3, "KME")
+	call SaveStr(ObjectHashTable,'A21E', 3, "KPE")
+	call SaveStr(ObjectHashTable,'A0M1', 3, "KQE")
+	call SaveStr(ObjectHashTable,'A1AX', 3, "KQE")
+	call SaveStr(ObjectHashTable,'A10U', 3, "KSE")
+	call SaveStr(ObjectHashTable,'A01P', 3, "KTE")
+	call SaveStr(ObjectHashTable,'A24D', 3, "KUE")
+	call SaveStr(ObjectHashTable,'A10D', 3, "KWE")
+	call SaveStr(ObjectHashTable,'A0K9', 3, "KYE")
+	call SaveStr(ObjectHashTable,'A190', 3, "KZE")
+	call SaveStr(ObjectHashTable,'A0BZ', 3, "K_E")
+	call SaveStr(ObjectHashTable,'A0IN', 3, "K0E")
+	call SaveStr(ObjectHashTable,'A1AW', 3, "K0E")
+	call SaveStr(ObjectHashTable,'A02A', 3, "K2E")
+	call SaveStr(ObjectHashTable,'A0RW', 3, "K3E")
+	call SaveStr(ObjectHashTable,'A0OJ', 3, "K4E")
+	call SaveStr(ObjectHashTable,'A0QE', 3, "K5E")
+	call SaveStr(ObjectHashTable,'AHtb', 3, "K6E")
+	call SaveStr(ObjectHashTable,'QB0H', 3, "K6E")
+	call SaveStr(ObjectHashTable,'A0R0', 3, "K7E")
+	call SaveStr(ObjectHashTable,'A226', 3, "K9E")
+	call SaveStr(ObjectHashTable,'A32D', 3, "LEE")
+	call SaveStr(ObjectHashTable,'A08Q', 3, "LXE")
+	call SaveStr(ObjectHashTable,'A08c', 3, "bsckj")
+	call SaveStr(ObjectHashTable,'A2TD', 3, "LOE")
+	call SaveStr(ObjectHashTable,'A095', 3, "LRE")
+	call SaveStr(ObjectHashTable,'A09W', 3, "LRE")
+	call SaveStr(ObjectHashTable,'A12K', 3, "LIE")
+	call SaveStr(ObjectHashTable,'A1S8', 3, "LNE")
+	call SaveStr(ObjectHashTable,'A1TB', 3, "LBE")
+	call SaveStr(ObjectHashTable,'A3FQ', 3, "LBE")
+	call SaveStr(ObjectHashTable,'QB0L', 3, "LCE")
+	call SaveStr(ObjectHashTable,'A2H0', 3, "LCE")
+	call SaveStr(ObjectHashTable,'A0B1', 3, "LFE")
+	call SaveStr(ObjectHashTable,'A064', 4, "LHE")
+	call SaveStr(ObjectHashTable,'A1P8', 4, "LKE")
+	call SaveStr(ObjectHashTable,'A21L', 4, "LLE")
+	call SaveStr(ObjectHashTable,'A0I8', 4, "LME")
+	call SaveStr(ObjectHashTable,'A0CZ', 4, "LPE")
+	call SaveStr(ObjectHashTable,'A0AK', 4, "LQE")
+	call SaveStr(ObjectHashTable,'A1FY', 4, "LQE")
+	call SaveStr(ObjectHashTable,'A0S1', 4, "LSE")
+	call SaveStr(ObjectHashTable,'A0MB', 4, "LTE")
+	call SaveStr(ObjectHashTable,'A0MX', 4, "LearnSkill__DrunkenBrawler")
+	call SaveStr(ObjectHashTable,'A34J', 4, "LZE")
+	call SaveStr(ObjectHashTable,'A32G', 4, "L_E")
+	call SaveStr(ObjectHashTable,'AIcd', 4, "L0E")
+	call SaveStr(ObjectHashTable,'A0NS', 4, "LearnSkill__BorrowedTime")
+	call SaveStr(ObjectHashTable,'A1DA', 4, "LearnSkill__BorrowedTime")
+	call SaveStr(ObjectHashTable,'A517', 4, "LearnSkill__BorrowedTime")
+	call SaveStr(ObjectHashTable,'A518', 4, "LearnSkill__BorrowedTime")
+	call SaveStr(ObjectHashTable,'A0RP', 4, "L2E")
+	call SaveStr(ObjectHashTable,'A449', 4, "L2E")
+	call SaveStr(ObjectHashTable,'A34A', 4, "L3E")
+	call SaveStr(ObjectHashTable,'A2O2', 4, "L4E")
+	call SaveStr(ObjectHashTable,'QF88', 4, "L5E")
+	call SaveStr(ObjectHashTable,'A0VC', 4, "L5E")
+	call SaveStr(ObjectHashTable,'A062', 4, "L6E")
+	call SaveStr(ObjectHashTable,'A524', 4, "MEE")
+	call SaveStr(ObjectHashTable,'A0M3', 4, "MXE")
+	call SaveStr(ObjectHashTable,'A06B', 4, "MOE")
+	call SaveStr(ObjectHashTable,'A471', 4, "MOE")
+	call SaveStr(ObjectHashTable,'A01N', 4, "MAE")
+	call SaveStr(ObjectHashTable,'A0BR', 4, "MNE")
+	call SaveStr(ObjectHashTable,'A03P', 4, "MBE")
+	call SaveStr(ObjectHashTable,'A06D', 4, "MCE")
+	call SaveStr(ObjectHashTable,'A04E', 4, "MDE")
+	call SaveStr(ObjectHashTable,'A0MM', 4, "MFE")
+	call SaveStr(ObjectHashTable,'A1NA', 4, "LearnLevel1Skill_SoulAssumption")
+	call SaveStr(ObjectHashTable,'A0NA', 4, "MME")
+	call SaveStr(ObjectHashTable,'A0H9', 4, "MPE")
+	call SaveStr(ObjectHashTable,'A1E6', 4, "MWE")
+	call SaveStr(ObjectHashTable,'A0QQ', 4, "MYE")
+	call SaveStr(ObjectHashTable,'A0QW', 4, "MZE")
+	call SaveStr(ObjectHashTable,'A1EA', 4, "M_E")
+	call SaveStr(ObjectHashTable,'QB03', 4, "M_E")
+	call SaveStr(ObjectHashTable,'A01Y', 4, "SKill_Learn_Reincarnation")
+	call SaveStr(ObjectHashTable,'A1AZ', 4, "SKill_Learn_Reincarnation")
 	
-	call SaveStr(P,'A0DJ', 4, "Learn_HaveCoolDownSkill") //余震
-	call SaveStr(P,'A0C6', 4, "Learn_HaveCoolDownSkill") //反击螺旋
-	call SaveStr(P,'A2EY', 4, "Learn_HaveCoolDownSkill") //勇气之霎
-	//	call SaveStr(P,'A522', 4, "Learn_HaveCoolDownSkill") //水刀
+	call SaveStr(ObjectHashTable,'A0DJ', 4, "Learn_HaveCoolDownSkill") //余震
+	call SaveStr(ObjectHashTable,'A0C6', 4, "Learn_HaveCoolDownSkill") //反击螺旋
+	call SaveStr(ObjectHashTable,'A2EY', 4, "Learn_HaveCoolDownSkill") //勇气之霎
+	//	call SaveStr(ObjectHashTable,'A522', 4, "Learn_HaveCoolDownSkill") //水刀
 	//学习
 	
-	call SaveStr(P,'A18X', 4, "M4E")
-	call SaveStr(P,'A1CD', 4, "M8E")
-	call SaveStr(P,'A1IN', 4, "M9E")
-	call SaveStr(P,'A28Q', 4, "PVE")
-	call SaveStr(P,'A27V', 4, "PEE")
-	call SaveStr(P,'A064', 1000, "LHE")
-	call SaveStr(P,'A0K9', 1000, "PXE")
-	call SaveStr(P,'A46E', 1000, "POE")
-	call SaveStr(P,'A0CG', 1000, "PIE")
-	call SaveStr(P,'A086', 1000, "PNE")
-	call SaveStr(P,'A43S', 1000, "PBE")
-	call SaveStr(P,'A0BR', 1000, "MNE")
-	call SaveStr(P,'A0EY', 1000, "PDE")
-	call SaveStr(P,'A03E', 1000, "PFE")
-	call SaveStr(P,'A32G', 1000, "L_E")
-	call SaveStr(P,'A0MX', 1000, "LearnSkill__DrunkenBrawler")
-	call SaveStr(P,'A21M', 1000, "LLE")
-	call SaveStr(P,'A34A', 1000, "L3E")
-	call SaveStr(P,'A40B', 1000, "PGE")
-	call SaveStr(P,'A2O2', 1000, "L4E")
-	call SaveStr(P,'A34J', 1000, "LZE")
-	call SaveStr(P,'A0MB', 1000, "LTE")
-	call SaveStr(P,'P019', 1000, "PHE")
-	call SaveStr(P,'A1P8', 1000, "LKE")
-	call SaveStr(P,'A0RP', 1000, "L2E")
-	call SaveStr(P,'A449', 1000, "L2E")
-	call SaveStr(P,'AIcd', 1000, "L0E")
-	call SaveStr(P,'A0VC', 1000, "L5E")
-	call SaveStr(P,'QF88', 1000, "L5E")
-	call SaveStr(P,'A1IN', 1000, "M9E")
-	call SaveStr(P,'A13T', 1000, "LearnSkill__Tidebringer")
-	//call SaveStr(P,'A522', 1000, "LearnSkill__Tidebringer")
-	call SaveStr(P,'A19Q', 1000, "PPE")
-	call SaveStr(P,'A0CY', 1000, "PQE")
-	call SaveStr(P,'A1CD', 1000, "M8E")
-	call SaveStr(P,'A0QQ', 1000, "MYE")
-	call SaveStr(P,'A0M3', 1000, "PSE")
-	call SaveStr(P,'A03U', 1000, "PTE")
-	call SaveStr(P,'A062', 1000, "L6E")
-	call SaveStr(P,'A0KX', 1000, "PUE")
-	call SaveStr(P,'A0A5', 1000, "PYE")
-	call SaveStr(P,'A27V', 1000, "PEE")
-	call SaveStr(P,'A28Q', 1000, "PVE")
-	call SaveStr(P,'A18X', 1000, "M4E")
-	call SaveStr(P,'A11N', 1000, "PZE")
-	call SaveStr(P,'A01Y', 1000, "SKill_Learn_Reincarnation")
-	call SaveStr(P,'A1AZ', 1000, "SKill_Learn_Reincarnation")
+	call SaveStr(ObjectHashTable,'A18X', 4, "M4E")
+	call SaveStr(ObjectHashTable,'A1CD', 4, "M8E")
+	call SaveStr(ObjectHashTable,'A1IN', 4, "M9E")
+	call SaveStr(ObjectHashTable,'A28Q', 4, "PVE")
+	call SaveStr(ObjectHashTable,'A27V', 4, "PEE")
+	call SaveStr(ObjectHashTable,'A064', 1000, "LHE")
+	call SaveStr(ObjectHashTable,'A0K9', 1000, "PXE")
+	call SaveStr(ObjectHashTable,'A46E', 1000, "POE")
+	call SaveStr(ObjectHashTable,'A0CG', 1000, "PIE")
+	call SaveStr(ObjectHashTable,'A086', 1000, "PNE")
+	call SaveStr(ObjectHashTable,'A43S', 1000, "PBE")
+	call SaveStr(ObjectHashTable,'A0BR', 1000, "MNE")
+	call SaveStr(ObjectHashTable,'A0EY', 1000, "PDE")
+	call SaveStr(ObjectHashTable,'A03E', 1000, "PFE")
+	call SaveStr(ObjectHashTable,'A32G', 1000, "L_E")
+	call SaveStr(ObjectHashTable,'A0MX', 1000, "LearnSkill__DrunkenBrawler")
+	call SaveStr(ObjectHashTable,'A21M', 1000, "LLE")
+	call SaveStr(ObjectHashTable,'A34A', 1000, "L3E")
+	call SaveStr(ObjectHashTable,'A40B', 1000, "PGE")
+	call SaveStr(ObjectHashTable,'A2O2', 1000, "L4E")
+	call SaveStr(ObjectHashTable,'A34J', 1000, "LZE")
+	call SaveStr(ObjectHashTable,'A0MB', 1000, "LTE")
+	call SaveStr(ObjectHashTable,'P019', 1000, "PHE")
+	call SaveStr(ObjectHashTable,'A1P8', 1000, "LKE")
+	call SaveStr(ObjectHashTable,'A0RP', 1000, "L2E")
+	call SaveStr(ObjectHashTable,'A449', 1000, "L2E")
+	call SaveStr(ObjectHashTable,'AIcd', 1000, "L0E")
+	call SaveStr(ObjectHashTable,'A0VC', 1000, "L5E")
+	call SaveStr(ObjectHashTable,'QF88', 1000, "L5E")
+	call SaveStr(ObjectHashTable,'A1IN', 1000, "M9E")
+	call SaveStr(ObjectHashTable,'A13T', 1000, "LearnSkill__Tidebringer")
+	//call SaveStr(ObjectHashTable,'A522', 1000, "LearnSkill__Tidebringer")
+	call SaveStr(ObjectHashTable,'A19Q', 1000, "PPE")
+	call SaveStr(ObjectHashTable,'A0CY', 1000, "PQE")
+	call SaveStr(ObjectHashTable,'A1CD', 1000, "M8E")
+	call SaveStr(ObjectHashTable,'A0QQ', 1000, "MYE")
+	call SaveStr(ObjectHashTable,'A0M3', 1000, "PSE")
+	call SaveStr(ObjectHashTable,'A03U', 1000, "PTE")
+	call SaveStr(ObjectHashTable,'A062', 1000, "L6E")
+	call SaveStr(ObjectHashTable,'A0KX', 1000, "PUE")
+	call SaveStr(ObjectHashTable,'A0A5', 1000, "PYE")
+	call SaveStr(ObjectHashTable,'A27V', 1000, "PEE")
+	call SaveStr(ObjectHashTable,'A28Q', 1000, "PVE")
+	call SaveStr(ObjectHashTable,'A18X', 1000, "M4E")
+	call SaveStr(ObjectHashTable,'A11N', 1000, "PZE")
+	call SaveStr(ObjectHashTable,'A01Y', 1000, "SKill_Learn_Reincarnation")
+	call SaveStr(ObjectHashTable,'A1AZ', 1000, "SKill_Learn_Reincarnation")
 	//被动学习技能
-	call SaveStr(P,'A0DJ', 1000, "Learn_HaveCoolDownSkill") //余震
-	//	call SaveStr(P,'A522',1000, "Learn_HaveCoolDownSkill") //水刀
-	call SaveStr(P,'A0C6', 1000, "Learn_HaveCoolDownSkill") //反击
-	call SaveStr(P,'A2EY', 1000, "Learn_HaveCoolDownSkill") //勇气之霎
+	call SaveStr(ObjectHashTable,'A0DJ', 1000, "Learn_HaveCoolDownSkill") //余震
+	//	call SaveStr(ObjectHashTable,'A522',1000, "Learn_HaveCoolDownSkill") //水刀
+	call SaveStr(ObjectHashTable,'A0C6', 1000, "Learn_HaveCoolDownSkill") //反击
+	call SaveStr(ObjectHashTable,'A2EY', 1000, "Learn_HaveCoolDownSkill") //勇气之霎
 	
-	call SaveStr(P,'A0RO', 1000, "P_E")
-	call SaveStr(P,'A0QW', 1000, "MZE")
-	call SaveStr(P,'A1E6', 1000, "MWE")
-	call SaveStr(P,'A0NA', 1000, "MME")
-	call SaveStr(P,'A0NS', 1000, "LearnSkill__BorrowedTime")
-	call SaveStr(P,'A0VX', 1000, "P0E")
-	call SaveStr(P,'A1NA', 1000, "LearnLevel1Skill_SoulAssumption")
-	call SaveStr(P,'A04E', 1000, "MDE")
-	call SaveStr(P,'A06D', 1000, "MCE")
-	call SaveStr(P,'A03P', 1000, "MBE")
-	call SaveStr(P,'A01N', 1000, "MAE")
-	call SaveStr(P,'A0I8', 1000, "LME")
-	call SaveStr(P,'A06B', 1000, "MOE")
-	call SaveStr(P,'A1IQ', 1000, "P4E")
-	call SaveStr(P,'A524', 1000, "P4E")
-	call SaveStr(P,'A0IF', 1000, "P5E")
-	call SaveStr(P,'A1EA', 1000, "M_E")
-	call SaveStr(P,'QB03', 1000, "M_E")
-	call SaveStr(P,'A0AK', 1000, "LQE")
-	call SaveStr(P,'A0LV', 1000, "P7E")
-	call SaveStr(P,'A2AI', 1000, "P8E")
-	call SaveStr(P,'A0CZ', 1000, "LPE")
-	call SaveStr(P,'A2S0', 1000, "P9E")
-	call SaveStr(P,'A0MM', 1000, "MFE")
-	call SaveStr(P,'A0CL', 1000, "Q_E")
-	call SaveStr(P,'A0OO', 1000, "Q1E")
-	call SaveStr(P,'A303', 1000, "Q2E")
-	call SaveStr(P,'A0H4', 1000, "Q5E")
-	call SaveStr(P,'Q0BK', 1000, "SXE")
-	call SaveStr(P,'A2JK', 1000, "SAE")
-	//call SaveStr(P,'A1C0', 1000, "SNE")
-	call SaveStr(P,'A440', 1000, "SCE")
-	call SaveStr(P,'A0A8', 1000, "SLE")
-	call SaveStr(P,'A0K9', 5, "PXE")
-	call SaveStr(P,'A46E', 5, "POE")
-	call SaveStr(P,'A43S', 5, "PBE")
-	call SaveStr(P,'A440', 5, "SCE")
-	call SaveStr(P,'A2E5', 5, "PBE")
-	call SaveStr(P,'Q0BK', 5, "SXE")
-	call SaveStr(P,'A2JK', 5, "SAE")
-	//call SaveStr(P,'A1C0', 5, "SNE")
-	call SaveStr(P,'A2S0', 5, "P9E")
-	call SaveStr(P,'A11N', 5, "PZE")
-	call SaveStr(P,'A2AI', 5, "P8E")
-	call SaveStr(P,'A03E', 5, "PFE")
-	call SaveStr(P,'A0VX', 5, "P0E")
-	call SaveStr(P,'A0IF', 5, "P5E")
+	call SaveStr(ObjectHashTable,'A0RO', 1000, "P_E")
+	call SaveStr(ObjectHashTable,'A0QW', 1000, "MZE")
+	call SaveStr(ObjectHashTable,'A1E6', 1000, "MWE")
+	call SaveStr(ObjectHashTable,'A0NA', 1000, "MME")
+	call SaveStr(ObjectHashTable,'A0NS', 1000, "LearnSkill__BorrowedTime")
+	call SaveStr(ObjectHashTable,'A0VX', 1000, "P0E")
+	call SaveStr(ObjectHashTable,'A1NA', 1000, "LearnLevel1Skill_SoulAssumption")
+	call SaveStr(ObjectHashTable,'A04E', 1000, "MDE")
+	call SaveStr(ObjectHashTable,'A06D', 1000, "MCE")
+	call SaveStr(ObjectHashTable,'A03P', 1000, "MBE")
+	call SaveStr(ObjectHashTable,'A01N', 1000, "MAE")
+	call SaveStr(ObjectHashTable,'A0I8', 1000, "LME")
+	call SaveStr(ObjectHashTable,'A06B', 1000, "MOE")
+	call SaveStr(ObjectHashTable,'A1IQ', 1000, "P4E")
+	call SaveStr(ObjectHashTable,'A524', 1000, "P4E")
+	call SaveStr(ObjectHashTable,'A0IF', 1000, "P5E")
+	call SaveStr(ObjectHashTable,'A1EA', 1000, "M_E")
+	call SaveStr(ObjectHashTable,'QB03', 1000, "M_E")
+	call SaveStr(ObjectHashTable,'A0AK', 1000, "LQE")
+	call SaveStr(ObjectHashTable,'A0LV', 1000, "P7E")
+	call SaveStr(ObjectHashTable,'A2AI', 1000, "P8E")
+	call SaveStr(ObjectHashTable,'A0CZ', 1000, "LPE")
+	call SaveStr(ObjectHashTable,'A2S0', 1000, "P9E")
+	call SaveStr(ObjectHashTable,'A0MM', 1000, "MFE")
+	call SaveStr(ObjectHashTable,'A0CL', 1000, "Q_E")
+	call SaveStr(ObjectHashTable,'A0OO', 1000, "Q1E")
+	call SaveStr(ObjectHashTable,'A303', 1000, "Q2E")
+	call SaveStr(ObjectHashTable,'A0H4', 1000, "Q5E")
+	call SaveStr(ObjectHashTable,'Q0BK', 1000, "SXE")
+	call SaveStr(ObjectHashTable,'A2JK', 1000, "SAE")
+	//call SaveStr(ObjectHashTable,'A1C0', 1000, "SNE")
+	call SaveStr(ObjectHashTable,'A440', 1000, "SCE")
+	call SaveStr(ObjectHashTable,'A0A8', 1000, "SLE")
+	call SaveStr(ObjectHashTable,'A0K9', 5, "PXE")
+	call SaveStr(ObjectHashTable,'A46E', 5, "POE")
+	call SaveStr(ObjectHashTable,'A43S', 5, "PBE")
+	call SaveStr(ObjectHashTable,'A440', 5, "SCE")
+	call SaveStr(ObjectHashTable,'A2E5', 5, "PBE")
+	call SaveStr(ObjectHashTable,'Q0BK', 5, "SXE")
+	call SaveStr(ObjectHashTable,'A2JK', 5, "SAE")
+	//call SaveStr(ObjectHashTable,'A1C0', 5, "SNE")
+	call SaveStr(ObjectHashTable,'A2S0', 5, "P9E")
+	call SaveStr(ObjectHashTable,'A11N', 5, "PZE")
+	call SaveStr(ObjectHashTable,'A2AI', 5, "P8E")
+	call SaveStr(ObjectHashTable,'A03E', 5, "PFE")
+	call SaveStr(ObjectHashTable,'A0VX', 5, "P0E")
+	call SaveStr(ObjectHashTable,'A0IF', 5, "P5E")
 	
-	call SaveStr(P,'A086', 5, "PNE")
-	call SaveStr(P,'A08E', 5, "SME")
-	call SaveStr(P,'A0A5', 5, "PYE")
-	call SaveStr(P,'A0CY', 5, "PQE")
-	call SaveStr(P,'A19Q', 5, "PPE")
-	call SaveStr(P,'A0EY', 5, "PDE")
-	call SaveStr(P,'A0KX', 5, "PUE")
-	call SaveStr(P,'A0CG', 5, "PIE")
-	call SaveStr(P,'A0OO', 5, "Q1E")
-	call SaveStr(P,'A03U', 5, "PTE")
-	call SaveStr(P,'P019', 5, "PHE")
-	call SaveStr(P,'A0H4', 5, "Q5E")
-	call SaveStr(P,'A0CL', 5, "Q_E")
-	call SaveStr(P,'A0RO', 5, "P_E")
-	call SaveStr(P,'A40B', 5, "PGE")
-	call SaveStr(P,'A13T', 5, "LearnSkill__Tidebringer")
-	//call SaveStr(P,'A522', 5, "LearnSkill__Tidebringer")
-	call SaveStr(P,'A0LV', 5, "P7E")
-	call SaveStr(P,'A32Y', 5, "SQE")
-	call SaveStr(P,'A32Z', 5, "SWE")
-	call SaveStr(P,'A331', 5, "SYE")
-	call SaveStr(P,'A303', 5, "Q2E")
-	call SaveStr(P,'A0A8', 5, "SLE")
-	call SaveStr(P,'A440',1001, "SCE")
-	call SaveStr(P,'A0K9',1001, "PXE")
-	call SaveStr(P,'A46E',1001, "POE")
-	call SaveStr(P,'A0CG',1001, "PIE")
-	call SaveStr(P,'A2E5',1001, "PBE")
-	//call SaveStr(P,'A1C0',1001, "SNE")
-	call SaveStr(P,'A2JK',1001, "SAE")
-	call SaveStr(P,'A11N',1001, "PZE")
-	call SaveStr(P,'A086',1001, "PNE")
-	call SaveStr(P,'A0EY',1001, "PDE")
-	call SaveStr(P,'A331',1001, "SYE")
-	call SaveStr(P,'A40B',1001, "PGE")
-	call SaveStr(P,'A0H4',1001, "Q5E")
-	call SaveStr(P,'A32Z',1001, "SWE")
-	call SaveStr(P,'A0KX',1001, "PUE")
-	call SaveStr(P,'A32Y',1001, "SQE")
-	call SaveStr(P,'Q0BK',1001, "SXE")
-	call SaveStr(P,'A303',1001, "Q2E")
-	call SaveStr(P,'P019',1001, "PHE")
-	call SaveStr(P,'A0OO',1001, "Q1E")
-	call SaveStr(P,'A2S0',1001, "P9E")
-	call SaveStr(P,'A0LV',1001, "P7E")
-	call SaveStr(P,'A0RO',1001, "P_E")
-	call SaveStr(P,'A13T',1001, "LearnSkill__Tidebringer")
-	//call SaveStr(P,'A522',1001, "LearnSkill__Tidebringer")
-	call SaveStr(P,'A19Q',1001, "SZE")
-	call SaveStr(P,'A03U',1001, "PTE")
-	call SaveStr(P,'A0A5',1001, "PYE")
-	call SaveStr(P,'A03E',1001, "PFE")
-	call SaveStr(P,'A0VX',1001, "P0E")
-	call SaveStr(P,'A2AI',1001, "P8E")
-	call SaveStr(P,'A0CY',1001, "PQE")
-	call SaveStr(P,'A0IF',1001, "P5E")
-	call SaveStr(P,'A0CL',1001, "Q_E")
-	call SaveStr(P,'A0A8',1001, "SLE")
-	call SaveStr(P,'A01O', 7, "S_E")
-	call SaveStr(P,'A04P', 7, "S0E")
-	call SaveStr(P,'A1AU', 7, "S0E")
-	call SaveStr(P,'A454', 7, "S1E")
-	call SaveStr(P,'A24K', 9, "S2E")
-	call SaveStr(P, StringHash("-display"), 10, "S3E")
+	call SaveStr(ObjectHashTable,'A086', 5, "PNE")
+	call SaveStr(ObjectHashTable,'A08E', 5, "SME")
+	call SaveStr(ObjectHashTable,'A0A5', 5, "PYE")
+	call SaveStr(ObjectHashTable,'A0CY', 5, "PQE")
+	call SaveStr(ObjectHashTable,'A19Q', 5, "PPE")
+	call SaveStr(ObjectHashTable,'A0EY', 5, "PDE")
+	call SaveStr(ObjectHashTable,'A0KX', 5, "PUE")
+	call SaveStr(ObjectHashTable,'A0CG', 5, "PIE")
+	call SaveStr(ObjectHashTable,'A0OO', 5, "Q1E")
+	call SaveStr(ObjectHashTable,'A03U', 5, "PTE")
+	call SaveStr(ObjectHashTable,'P019', 5, "PHE")
+	call SaveStr(ObjectHashTable,'A0H4', 5, "Q5E")
+	call SaveStr(ObjectHashTable,'A0CL', 5, "Q_E")
+	call SaveStr(ObjectHashTable,'A0RO', 5, "P_E")
+	call SaveStr(ObjectHashTable,'A40B', 5, "PGE")
+	call SaveStr(ObjectHashTable,'A13T', 5, "LearnSkill__Tidebringer")
+	//call SaveStr(ObjectHashTable,'A522', 5, "LearnSkill__Tidebringer")
+	call SaveStr(ObjectHashTable,'A0LV', 5, "P7E")
+	call SaveStr(ObjectHashTable,'A32Y', 5, "SQE")
+	call SaveStr(ObjectHashTable,'A32Z', 5, "SWE")
+	call SaveStr(ObjectHashTable,'A331', 5, "SYE")
+	call SaveStr(ObjectHashTable,'A303', 5, "Q2E")
+	call SaveStr(ObjectHashTable,'A0A8', 5, "SLE")
+	call SaveStr(ObjectHashTable,'A440',1001, "SCE")
+	call SaveStr(ObjectHashTable,'A0K9',1001, "PXE")
+	call SaveStr(ObjectHashTable,'A46E',1001, "POE")
+	call SaveStr(ObjectHashTable,'A0CG',1001, "PIE")
+	call SaveStr(ObjectHashTable,'A2E5',1001, "PBE")
+	//call SaveStr(ObjectHashTable,'A1C0',1001, "SNE")
+	call SaveStr(ObjectHashTable,'A2JK',1001, "SAE")
+	call SaveStr(ObjectHashTable,'A11N',1001, "PZE")
+	call SaveStr(ObjectHashTable,'A086',1001, "PNE")
+	call SaveStr(ObjectHashTable,'A0EY',1001, "PDE")
+	call SaveStr(ObjectHashTable,'A331',1001, "SYE")
+	call SaveStr(ObjectHashTable,'A40B',1001, "PGE")
+	call SaveStr(ObjectHashTable,'A0H4',1001, "Q5E")
+	call SaveStr(ObjectHashTable,'A32Z',1001, "SWE")
+	call SaveStr(ObjectHashTable,'A0KX',1001, "PUE")
+	call SaveStr(ObjectHashTable,'A32Y',1001, "SQE")
+	call SaveStr(ObjectHashTable,'Q0BK',1001, "SXE")
+	call SaveStr(ObjectHashTable,'A303',1001, "Q2E")
+	call SaveStr(ObjectHashTable,'P019',1001, "PHE")
+	call SaveStr(ObjectHashTable,'A0OO',1001, "Q1E")
+	call SaveStr(ObjectHashTable,'A2S0',1001, "P9E")
+	call SaveStr(ObjectHashTable,'A0LV',1001, "P7E")
+	call SaveStr(ObjectHashTable,'A0RO',1001, "P_E")
+	call SaveStr(ObjectHashTable,'A13T',1001, "LearnSkill__Tidebringer")
+	//call SaveStr(ObjectHashTable,'A522',1001, "LearnSkill__Tidebringer")
+	call SaveStr(ObjectHashTable,'A19Q',1001, "SZE")
+	call SaveStr(ObjectHashTable,'A03U',1001, "PTE")
+	call SaveStr(ObjectHashTable,'A0A5',1001, "PYE")
+	call SaveStr(ObjectHashTable,'A03E',1001, "PFE")
+	call SaveStr(ObjectHashTable,'A0VX',1001, "P0E")
+	call SaveStr(ObjectHashTable,'A2AI',1001, "P8E")
+	call SaveStr(ObjectHashTable,'A0CY',1001, "PQE")
+	call SaveStr(ObjectHashTable,'A0IF',1001, "P5E")
+	call SaveStr(ObjectHashTable,'A0CL',1001, "Q_E")
+	call SaveStr(ObjectHashTable,'A0A8',1001, "SLE")
+	call SaveStr(ObjectHashTable,'A01O', 7, "S_E")
+	call SaveStr(ObjectHashTable,'A04P', 7, "S0E")
+	call SaveStr(ObjectHashTable,'A1AU', 7, "S0E")
+	call SaveStr(ObjectHashTable,'A454', 7, "S1E")
+	call SaveStr(ObjectHashTable,'A24K', 9, "S2E")
+	call SaveStr(ObjectHashTable, StringHash("-display"), 10, "S3E")
 endfunction
 function S5E takes nothing returns nothing
-	call SaveBoolean(P, 1,'A1FP', true)
-	call SaveInteger(P, 2,'A1FP','I0AB')
-	call SaveInteger(P, 1,'I0AB','J000')
-	call SaveReal(P, 0,'I0AB', 35)
-	call SaveInteger(P, 0,'J000','I0AB')
-	call SaveBoolean(P, 1,'A0B8', true)
-	call SaveInteger(P, 2,'A0B8','I09F')
-	call SaveInteger(P, 1,'I09F','J001')
-	call SaveReal(P, 0,'I09F', 35)
-	call SaveReal(P, 0,'J001', 35)
-	call SaveInteger(P, 0,'J001','I09F')
-	call SaveBoolean(P, 1,'A1WE', true)
-	call SaveInteger(P, 2,'A1WE','I0MU')
-	call SaveInteger(P, 1,'I0MU','J002')
-	call SaveReal(P, 0,'I09F', 50)
-	call SaveReal(P, 0,'J002', 50)
-	call SaveInteger(P, 0,'J002','I0MU')
-	call SaveInteger(P, 0,'I09F','A0B8')
-	call SaveInteger(P, 0,'I0MU','A1WE')
-	call SaveInteger(P, 0,'I00Z','A0T9')
-	call SaveInteger(P, 0,'I0AL','AChx')
-	call SaveInteger(P, 0,'I012','A0FD')
-	call SaveInteger(P, 0,'I08O','A15W')
-	call SaveInteger(P, 0,'I08Z','A1T7')
-	call SaveInteger(P, 0,'I0HI','A19M')
-	call SaveInteger(P, 0,'I09M','A02O')
-	call SaveInteger(P, 0,'I09P','A08Y')
-	call SaveInteger(P, 0,'I09N','A08Z')
-	call SaveInteger(P, 0,'I09O','A090')
-	call SaveInteger(P, 0,'I09L','A092')
-	call SaveInteger(P, 0,'I0O3','A28D')
-	call SaveInteger(P, 0,'I0OL','A2EA')
-	call SaveInteger(P, 0,'I093','A0CK')
-	call SaveInteger(P, 0,'I066','AIda')
-	call SaveInteger(P, 0,'I0K6','A1EW')
-	call SaveInteger(P, 0,'I0KY','A1MO')
-	call SaveInteger(P, 0,'I0N0','A1ZI')
-	call SaveInteger(P, 0,'I0NE','A1ZW')
-	call SaveInteger(P, 0,'I0OX','A2K7')
-	call SaveInteger(P, 0,'I09H','A017')
-	call SaveInteger(P, 0,'I0JI','A1AC')
-	call SaveInteger(P, 0,'I0LT','A1QD')
-	call SaveInteger(P, 0,'I0BE','A0JL')
-	call SaveInteger(P, 0,'I08Y','AIxk')
-	call SaveInteger(P, 0,'I08R','AIpg')
-	call SaveInteger(P, 0,'I0J9','AIpg')
-	call SaveInteger(P, 0,'I0OV','A2K4')
-	call SaveInteger(P, 0,'I06B','A231')
-	call SaveInteger(P, 0,'I0GJ','A12W')
-	call SaveInteger(P, 0,'I0LL','A1Q8')
-	call SaveInteger(P, 0,'I0GC','A0JY')
-	call SaveInteger(P, 0,'I0HB','A0JY')
+	call SaveBoolean(ObjectHashTable, 1,'A1FP', true)
+	call SaveInteger(ObjectHashTable, 2,'A1FP','I0AB')
+	call SaveInteger(ObjectHashTable, 1,'I0AB','J000')
+	call SaveReal(ObjectHashTable, 0,'I0AB', 35)
+	call SaveInteger(ObjectHashTable, 0,'J000','I0AB')
+	call SaveBoolean(ObjectHashTable, 1,'A0B8', true)
+	call SaveInteger(ObjectHashTable, 2,'A0B8','I09F')
+	call SaveInteger(ObjectHashTable, 1,'I09F','J001')
+	call SaveReal(ObjectHashTable, 0,'I09F', 35)
+	call SaveReal(ObjectHashTable, 0,'J001', 35)
+	call SaveInteger(ObjectHashTable, 0,'J001','I09F')
+	call SaveBoolean(ObjectHashTable, 1,'A1WE', true)
+	call SaveInteger(ObjectHashTable, 2,'A1WE','I0MU')
+	call SaveInteger(ObjectHashTable, 1,'I0MU','J002')
+	call SaveReal(ObjectHashTable, 0,'I09F', 50)
+	call SaveReal(ObjectHashTable, 0,'J002', 50)
+	call SaveInteger(ObjectHashTable, 0,'J002','I0MU')
+	call SaveInteger(ObjectHashTable, 0,'I09F','A0B8')
+	call SaveInteger(ObjectHashTable, 0,'I0MU','A1WE')
+	call SaveInteger(ObjectHashTable, 0,'I00Z','A0T9')
+	call SaveInteger(ObjectHashTable, 0,'I0AL','AChx')
+	call SaveInteger(ObjectHashTable, 0,'I012','A0FD')
+	call SaveInteger(ObjectHashTable, 0,'I08O','A15W')
+	call SaveInteger(ObjectHashTable, 0,'I08Z','A1T7')
+	call SaveInteger(ObjectHashTable, 0,'I0HI','A19M')
+	call SaveInteger(ObjectHashTable, 0,'I09M','A02O')
+	call SaveInteger(ObjectHashTable, 0,'I09P','A08Y')
+	call SaveInteger(ObjectHashTable, 0,'I09N','A08Z')
+	call SaveInteger(ObjectHashTable, 0,'I09O','A090')
+	call SaveInteger(ObjectHashTable, 0,'I09L','A092')
+	call SaveInteger(ObjectHashTable, 0,'I0O3','A28D')
+	call SaveInteger(ObjectHashTable, 0,'I0OL','A2EA')
+	call SaveInteger(ObjectHashTable, 0,'I093','A0CK')
+	call SaveInteger(ObjectHashTable, 0,'I066','AIda')
+	call SaveInteger(ObjectHashTable, 0,'I0K6','A1EW')
+	call SaveInteger(ObjectHashTable, 0,'I0KY','A1MO')
+	call SaveInteger(ObjectHashTable, 0,'I0N0','A1ZI')
+	call SaveInteger(ObjectHashTable, 0,'I0NE','A1ZW')
+	call SaveInteger(ObjectHashTable, 0,'I0OX','A2K7')
+	call SaveInteger(ObjectHashTable, 0,'I09H','A017')
+	call SaveInteger(ObjectHashTable, 0,'I0JI','A1AC')
+	call SaveInteger(ObjectHashTable, 0,'I0LT','A1QD')
+	call SaveInteger(ObjectHashTable, 0,'I0BE','A0JL')
+	call SaveInteger(ObjectHashTable, 0,'I08Y','AIxk')
+	call SaveInteger(ObjectHashTable, 0,'I08R','AIpg')
+	call SaveInteger(ObjectHashTable, 0,'I0J9','AIpg')
+	call SaveInteger(ObjectHashTable, 0,'I0OV','A2K4')
+	call SaveInteger(ObjectHashTable, 0,'I06B','A231')
+	call SaveInteger(ObjectHashTable, 0,'I0GJ','A12W')
+	call SaveInteger(ObjectHashTable, 0,'I0LL','A1Q8')
+	call SaveInteger(ObjectHashTable, 0,'I0GC','A0JY')
+	call SaveInteger(ObjectHashTable, 0,'I0HB','A0JY')
 endfunction
 function S6E takes nothing returns nothing
 	local player p
-	local integer WVV = 0
+	local integer count = 0
 	set CK[0]= 2
 	set CK[1]= 2
 	call UIV() // 玩家退出
@@ -3907,16 +3902,16 @@ function S6E takes nothing returns nothing
 	call SetAllPlayerAbilityUnavailable('A1WE')
 	call ExecuteFunc("InitPassiveAbilitys")
 	loop
-		set p = Player(WVV)
-		call TriggerRegisterPlayerUnitEvent(JJ, p, EVENT_PLAYER_UNIT_ATTACKED, null)
-		call TriggerRegisterPlayerUnitEvent(JJ, p, EVENT_PLAYER_UNIT_DEATH, null)
-		set WVV = WVV + 1
-	exitwhen WVV == 15
+		set p = Player(count)
+		call TriggerRegisterPlayerUnitEvent(UnitEventMainTrig, p, EVENT_PLAYER_UNIT_ATTACKED, null)
+		call TriggerRegisterPlayerUnitEvent(UnitEventMainTrig, p, EVENT_PLAYER_UNIT_DEATH   , null)
+		set count = count + 1
+	exitwhen count == 15
 	endloop
 	set p = null
 endfunction
 function SetPlayerAbilityAvailableEx takes player p, integer WTV, boolean b returns nothing
-	call SaveBoolean(P, GetHandleId(p), WTV, b == false)
+	call SaveBoolean(ObjectHashTable, GetHandleId(p), WTV, b == false)
 	call SetPlayerAbilityAvailable(p, WTV, b)
 endfunction
 function TVE takes integer id returns integer
@@ -3938,19 +3933,19 @@ function CheckAbilityIdFormIndex takes integer abilIndex, integer TOE, string or
 	local integer j
 	local integer o
 	if TOE >-1 then
-		if HaveSavedString(Q, abilIndex, 0) == false or HaveSavedString(Q, TOE, 0) == false then
+		if HaveSavedString(AbilityDataHashTable, abilIndex, 0) == false or HaveSavedString(AbilityDataHashTable, TOE, 0) == false then
 			return false
 		endif
 		set i = 0
 		loop
-		exitwhen HaveSavedString(Q, abilIndex, i) == false
-			set s1[i]= LoadStr(Q, abilIndex, i)
+		exitwhen HaveSavedString(AbilityDataHashTable, abilIndex, i) == false
+			set s1[i]= LoadStr(AbilityDataHashTable, abilIndex, i)
 			set i = i + 1
 		endloop
 		set k = 0
 		loop
-		exitwhen HaveSavedString(Q, TOE, k) == false
-			set s2[k]= LoadStr(Q, TOE, k)
+		exitwhen HaveSavedString(AbilityDataHashTable, TOE, k) == false
+			set s2[k]= LoadStr(AbilityDataHashTable, TOE, k)
 			set k = k + 1
 		endloop
 		if i == 0 or k == 0 then
@@ -3973,8 +3968,8 @@ function CheckAbilityIdFormIndex takes integer abilIndex, integer TOE, string or
 	else
 		set i = 0
 		loop
-		exitwhen HaveSavedString(Q, abilIndex, i) == false
-			if LoadStr(Q, abilIndex, i) == orderStr then
+		exitwhen HaveSavedString(AbilityDataHashTable, abilIndex, i) == false
+			if LoadStr(AbilityDataHashTable, abilIndex, i) == orderStr then
 				return true
 			endif
 			set i = i + 1
@@ -4074,7 +4069,7 @@ function TFE takes unit u returns nothing
 	call UnitResetCooldownEx(u)
 	call TimerStart(ESV[GetPlayerId(p)], 0, false, null)
 	call TimerStart(ETV[GetPlayerId(p)], 0, false, null)
-	call FlushChildHashtable(W, GetHandleId(u))
+	call FlushChildHashtable(PassiveAbilityCooldown, GetHandleId(u))
 	set i = 0
 	set k = 5
 	loop
@@ -4771,12 +4766,12 @@ function HeroLevelUp takes nothing returns nothing
 			set IP[playerId * 2 + 1]= extraSkillLevel
 			if extraSkillLevel == 1 then
 				// 添加 1 级技能
-				if HaveSavedString(P, abilityId, 1000) then
-					call ExecuteFunc(LoadStr(P, abilityId, 1000))
+				if HaveSavedString(ObjectHashTable, abilityId, 1000) then
+					call ExecuteFunc(LoadStr(ObjectHashTable, abilityId, 1000))
 				endif
 			else
-				if HaveSavedString(P, abilityId,1001) then
-					call ExecuteFunc(LoadStr(P, abilityId,1001))
+				if HaveSavedString(ObjectHashTable, abilityId,1001) then
+					call ExecuteFunc(LoadStr(ObjectHashTable, abilityId,1001))
 				endif
 			endif
 			if abilityId !='A1IQ' then
@@ -4836,12 +4831,12 @@ function HeroLevelUp takes nothing returns nothing
 			call SaveInteger(HY,'0GLS', 1488, abilityId)
 			set IP[playerId * 2 + 2]= extraSkillLevel
 			if extraSkillLevel == 1 then
-				if HaveSavedString(P, abilityId, 1000) then
-					call ExecuteFunc(LoadStr(P, abilityId, 1000))
+				if HaveSavedString(ObjectHashTable, abilityId, 1000) then
+					call ExecuteFunc(LoadStr(ObjectHashTable, abilityId, 1000))
 				endif
 			else
-				if HaveSavedString(P, abilityId,1001) then
-					call ExecuteFunc(LoadStr(P, abilityId,1001))
+				if HaveSavedString(ObjectHashTable, abilityId,1001) then
+					call ExecuteFunc(LoadStr(ObjectHashTable, abilityId,1001))
 				endif
 			endif
 			if abilityId !='A065' then
@@ -4982,7 +4977,7 @@ function YYE takes integer WWV, boolean b returns nothing
 	set p = null
 endfunction
 function AddPlayerResourceGold takes player p, integer goldBonus returns integer
-	if LoadReal(K, GetHandleId(p), 25)> GetGameTime() then
+	if LoadReal(OtherHashTable, GetHandleId(p), 25)> GetGameTime() then
 		set goldBonus = R2I(goldBonus * .4)
 	endif
 	call SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, goldBonus + GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD))
@@ -5042,7 +5037,6 @@ endfunction
 function GetDistanceBetween takes real x1, real y1, real x2, real y2 returns real
 	return SquareRoot((x1 -x2) * (x1 -x2) + (y1 -y2) * (y1 -y2))
 endfunction
-
 
 function ZGE takes nothing returns nothing
 	local unit u = GetTriggerUnit()
@@ -5108,10 +5102,10 @@ function SaveSkillOrder takes integer id, string s returns string
 		return null
 	endif
 	loop
-	exitwhen not HaveSavedString(Q, id, i)
+	exitwhen not HaveSavedString(AbilityDataHashTable, id, i)
 		set i = i + 1
 	endloop
-	call SaveStr(Q, id, i, s)
+	call SaveStr(AbilityDataHashTable, id, i, s)
 	return null
 endfunction
 function Z1E takes integer id, string Z5E returns nothing
@@ -5155,7 +5149,7 @@ function RegisterHeroSkill takes integer id, string StackLim, integer commonSkil
 	set HeroUpgradeSkills[id]= upgradeSkill
 	set HeroChangeAbilitySkills[id]= changeSkill
 	if sHotKey != "_" and sHotKey != "" and sHotKey != null then
-		call SaveStr(Q, commonSkill, HotKeyStringHash, sHotKey)
+		call SaveStr(AbilityDataHashTable, commonSkill, HotKeyStringHash, sHotKey)
 	endif
 	set MaxHeroSkillsNumber = id
 endfunction
@@ -6227,14 +6221,14 @@ endfunction
 function JFX takes unit u returns nothing
 	local integer WPV = GetUnitTypeId(u)
 	local integer a = 255
-	if HaveSavedInteger(P, GetHandleId(u),'ALPH') then
-		set a = LoadInteger(P, GetHandleId(u),'ALPH')
+	if HaveSavedInteger(ObjectHashTable, GetHandleId(u),'ALPH') then
+		set a = LoadInteger(ObjectHashTable, GetHandleId(u),'ALPH')
 	endif
 	call SetUnitVertexColor(u, 128, 192, 192, a)
-	call SaveInteger(P, GetHandleId(u), IC + 0, 128)
-	call SaveInteger(P, GetHandleId(u), IC + 1, 192)
-	call SaveInteger(P, GetHandleId(u), IC + 2, 192)
-	call SaveInteger(P, GetHandleId(u),'ALPH', a)
+	call SaveInteger(ObjectHashTable, GetHandleId(u), IC + 0, 128)
+	call SaveInteger(ObjectHashTable, GetHandleId(u), IC + 1, 192)
+	call SaveInteger(ObjectHashTable, GetHandleId(u), IC + 2, 192)
+	call SaveInteger(ObjectHashTable, GetHandleId(u),'ALPH', a)
 endfunction
 // 恢复单位的RGB
 function ResetUnitVertexColor takes unit u returns nothing
@@ -6243,66 +6237,66 @@ function ResetUnitVertexColor takes unit u returns nothing
 	local integer g = 255
 	local integer b = 255
 	local integer a = 255
-	if HaveSavedInteger(L, WPV, 0) then
-		set r = LoadInteger(L, WPV, 0)
+	if HaveSavedInteger(UnitRGBHashTable, WPV, 0) then
+		set r = LoadInteger(UnitRGBHashTable, WPV, 0)
 	endif
-	if HaveSavedInteger(L, WPV, 1) then
-		set g = LoadInteger(L, WPV, 1)
+	if HaveSavedInteger(UnitRGBHashTable, WPV, 1) then
+		set g = LoadInteger(UnitRGBHashTable, WPV, 1)
 	endif
-	if HaveSavedInteger(L, WPV, 2) then
-		set b = LoadInteger(L, WPV, 2)
+	if HaveSavedInteger(UnitRGBHashTable, WPV, 2) then
+		set b = LoadInteger(UnitRGBHashTable, WPV, 2)
 	endif
-	if HaveSavedInteger(P, GetHandleId(u),'ALPH') then
-		set a = LoadInteger(P, GetHandleId(u),'ALPH')
+	if HaveSavedInteger(ObjectHashTable, GetHandleId(u),'ALPH') then
+		set a = LoadInteger(ObjectHashTable, GetHandleId(u),'ALPH')
 	endif
 	call SetUnitVertexColor(u, r, g, b, a)
-	call SaveInteger(P, GetHandleId(u), IC + 0, r)
-	call SaveInteger(P, GetHandleId(u), IC + 1, g)
-	call SaveInteger(P, GetHandleId(u), IC + 2, b)
-	call SaveInteger(P, GetHandleId(u),'ALPH', a)
+	call SaveInteger(ObjectHashTable, GetHandleId(u), IC + 0, r)
+	call SaveInteger(ObjectHashTable, GetHandleId(u), IC + 1, g)
+	call SaveInteger(ObjectHashTable, GetHandleId(u), IC + 2, b)
+	call SaveInteger(ObjectHashTable, GetHandleId(u),'ALPH', a)
 endfunction
 function SetUnitVertexColorEx takes unit u, integer r, integer g, integer b, integer a returns nothing
 	local integer WPV = GetUnitTypeId(u)
 	local integer h = GetHandleId(u)
 	if r ==-1 then
-		if HaveSavedInteger(P, h, IC + 0) then
-			set r = LoadInteger(P, h, IC + 0)
-		elseif HaveSavedInteger(L, WPV, 0) then
-			set r = LoadInteger(L, WPV, 0)
+		if HaveSavedInteger(ObjectHashTable, h, IC + 0) then
+			set r = LoadInteger(ObjectHashTable, h, IC + 0)
+		elseif HaveSavedInteger(UnitRGBHashTable, WPV, 0) then
+			set r = LoadInteger(UnitRGBHashTable, WPV, 0)
 		else
 			set r = 255
 		endif
 	endif
 	if g ==-1 then
-		if HaveSavedInteger(P, h, IC + 1) then
-			set g = LoadInteger(P, h, IC + 1)
-		elseif HaveSavedInteger(L, WPV, 1) then
-			set g = LoadInteger(L, WPV, 1)
+		if HaveSavedInteger(ObjectHashTable, h, IC + 1) then
+			set g = LoadInteger(ObjectHashTable, h, IC + 1)
+		elseif HaveSavedInteger(UnitRGBHashTable, WPV, 1) then
+			set g = LoadInteger(UnitRGBHashTable, WPV, 1)
 		else
 			set g = 255
 		endif
 	endif
 	if b ==-1 then
-		if HaveSavedInteger(P, h, IC + 2) then
-			set b = LoadInteger(P, h, IC + 2)
-		elseif HaveSavedInteger(L, WPV, 2) then
-			set b = LoadInteger(L, WPV, 2)
+		if HaveSavedInteger(ObjectHashTable, h, IC + 2) then
+			set b = LoadInteger(ObjectHashTable, h, IC + 2)
+		elseif HaveSavedInteger(UnitRGBHashTable, WPV, 2) then
+			set b = LoadInteger(UnitRGBHashTable, WPV, 2)
 		else
 			set b = 255
 		endif
 	endif
 	if a ==-1 then
-		if HaveSavedInteger(P, h,'ALPH') then
-			set a = LoadInteger(P, h,'ALPH')
+		if HaveSavedInteger(ObjectHashTable, h,'ALPH') then
+			set a = LoadInteger(ObjectHashTable, h,'ALPH')
 		else
 			set a = 255
 		endif
 	endif
 	call SetUnitVertexColor(u, r, g, b, a)
-	call SaveInteger(P, h, IC + 0, r)
-	call SaveInteger(P, h, IC + 1, g)
-	call SaveInteger(P, h, IC + 2, b)
-	call SaveInteger(P, h,'ALPH', a)
+	call SaveInteger(ObjectHashTable, h, IC + 0, r)
+	call SaveInteger(ObjectHashTable, h, IC + 1, g)
+	call SaveInteger(ObjectHashTable, h, IC + 2, b)
+	call SaveInteger(ObjectHashTable, h,'ALPH', a)
 endfunction
 
 // 相位移动
@@ -6840,7 +6834,7 @@ function Japi_SetUnitAbilityCoolDown2 takes nothing returns boolean
 	local integer id = LoadInteger(HY, h, 1)
 	local integer lv = LoadInteger(HY, h, 2)
 	local unit u = LoadUnitHandle(HY, h, 10)
-	local real cd = LoadReal(W, id, lv)
+	local real cd = LoadReal(PassiveAbilityCooldown, id, lv)
 	call YDWESetUnitAbilityDataReal(u, id, lv, 105, cd)
 	call FlushChildHashtable(HY, h)
 	call CleanCurrentTrigger(t)
@@ -6871,11 +6865,11 @@ endfunction
 function Japi_SetUnitAbilityCoolDownReduce takes unit u, integer id, real reduce returns nothing
 	local real cd
 	local integer lv = GetUnitAbilityLevel(u, id)
-	if HaveSavedReal(W, id, lv) then
-		set cd = LoadReal(W, id, lv)
+	if HaveSavedReal(PassiveAbilityCooldown, id, lv) then
+		set cd = LoadReal(PassiveAbilityCooldown, id, lv)
 	else
 		set cd = S2R(EXExecuteScript("(require'jass.slk').ability[" + I2S(id) + "].Cool" + I2S(lv) + " or 0"))
-		call SaveReal(W, id, lv, cd)
+		call SaveReal(PassiveAbilityCooldown, id, lv, cd)
 	endif
 	if cd > 0 then
 		call Japi_SetUnitAbilityCoolDownReduceAction(u, id, cd * reduce)
@@ -6903,7 +6897,7 @@ function TWE takes unit u, boolean TYE returns nothing
 		if i > 0 and GetUnitAbilityLevel(u, AghanimUpgradeChangeId[i])> 0 then
 			set TPE = AghanimUpgradeUpgradeId[i]
 		endif
-		if IsPassiveSkill[TZE]== false and LoadBoolean(P, 0, TPE) == false and TPE !='A1RK' and TPE !='A43H' and TPE !='A065' then
+		if IsPassiveSkill[TZE]== false and LoadBoolean(ObjectHashTable, 0, TPE) == false and TPE !='A1RK' and TPE !='A43H' and TPE !='A065' then
 			call Japi_ResetUnitAbilityCoolDown(u, TPE)
 		endif
 		if TPE =='A0OO' then
@@ -6920,7 +6914,7 @@ function TWE takes unit u, boolean TYE returns nothing
 		set xx = xx + 1
 	exitwhen xx > HL
 	endloop
-	if LoadInteger(K, GetHandleId(u),'DEVR')!= 0 then
+	if LoadInteger(OtherHashTable, GetHandleId(u),'DEVR')!= 0 then
 		set U2 = u
 		call ExecuteFunc("T_E")
 	endif
@@ -7192,24 +7186,24 @@ function I1X takes nothing returns nothing
 	endif
 	set I5X = RMinBJ(I4X *(100. + I2X)/ 100., WOV)-GetUnitMoveSpeed(u)
 	call SaveInteger(HY, h,-1, c)
-	call SaveReal(K, GetHandleId(u), 99, R2I(I5X))
+	call SaveReal(OtherHashTable, GetHandleId(u), 99, R2I(I5X))
 	if I5X > 0 and UnitAlive(u) then
 		set x = GetUnitX(u)
 		set y = GetUnitY(u)
 		set dx = LoadReal(HY, h, 10)
 		set dy = LoadReal(HY, h, 11)
 		set d = GetDistanceBetween(dx, dy, x, y)
-		if LoadBoolean(K, GetHandleId(u), 99) == false then
+		if LoadBoolean(OtherHashTable, GetHandleId(u), 99) == false then
 			set I6X = GetUnitCurrentOrder(u)
 			if (d < 100  and d > 1) and I6X != 851993 and I6X != 851972 and I6X != 851973 then
 				set I3X = Atan2(y -dy, x -dx)
 				set ms = I5X * YN
-				call SaveReal(K, GetHandleId(u), 99, R2I(ms / YN))
+				call SaveReal(OtherHashTable, GetHandleId(u), 99, R2I(ms / YN))
 				call SetUnitX(u, CoordinateX50(x + ms * Cos(I3X)))
 				call SetUnitY(u, CoordinateY50(y + ms * Sin(I3X)))
 			endif
 		else
-			call SaveBoolean(K, GetHandleId(u), 99, false)
+			call SaveBoolean(OtherHashTable, GetHandleId(u), 99, false)
 		endif
 		call SaveReal(HY, h, 10, GetUnitX(u))
 		call SaveReal(HY, h, 11, GetUnitY(u))
@@ -7221,7 +7215,7 @@ endfunction
 function SetUnitImitateMoveSpeed takes unit u, integer I2X, integer WOV returns nothing
 	local timer t
 	local integer h
-	if HaveSavedHandle(K, GetHandleId(u),'MVSP') == false then
+	if HaveSavedHandle(OtherHashTable, GetHandleId(u),'MVSP') == false then
 		set t = CreateTimer()
 		set h = GetHandleId(t)
 		call TimerStart(t, YN, true, function I1X)
@@ -7230,9 +7224,9 @@ function SetUnitImitateMoveSpeed takes unit u, integer I2X, integer WOV returns 
 		call SaveReal(HY, h, 10, GetUnitX(u))
 		call SaveReal(HY, h, 11, GetUnitY(u))
 		call SaveBoolean(HY, h, 100, true)
-		call SaveTimerHandle(K, GetHandleId(u),'MVSP', t)
+		call SaveTimerHandle(OtherHashTable, GetHandleId(u),'MVSP', t)
 	else
-		set t = LoadTimerHandle(K, GetHandleId(u),'MVSP')
+		set t = LoadTimerHandle(OtherHashTable, GetHandleId(u),'MVSP')
 		set h = GetHandleId(t)
 	endif
 	if I2X == LoadInteger(HY, h, 0) and WOV == LoadInteger(HY, h, 1) then
@@ -7244,7 +7238,7 @@ function SetUnitImitateMoveSpeed takes unit u, integer I2X, integer WOV returns 
 	if I2X == 0 then
 		call PauseTimer(t)
 		set RR = RR -1
-		call SaveReal(K, GetHandleId(u), 99, 0)
+		call SaveReal(OtherHashTable, GetHandleId(u), 99, 0)
 		call SaveBoolean(HY, h, 100, false)
 	elseif LoadBoolean(HY, h, 100) == false then
 		call TimerStart(t, YN, true, function I1X)
@@ -8306,7 +8300,7 @@ function UnitAddAbilityTimedEx_RemoveFix takes nothing returns boolean
 	local integer T0V = LoadInteger(HY, h, 59)
 	call UnitRemoveAbility(u, T0V)
 	if UnitRemoveAbility(u, CAX) or GetUnitAbilityLevel(u, CAX) == 0 then
-		call RemoveSavedHandle(P, GetHandleId(u), 0 -T0V)
+		call RemoveSavedHandle(ObjectHashTable, GetHandleId(u), 0 -T0V)
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 	endif
@@ -8328,7 +8322,7 @@ function CBX takes nothing returns boolean
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 		call DestroyTimer(tt)
-		call RemoveSavedHandle(P, GetHandleId(u), 0 -T0V)
+		call RemoveSavedHandle(ObjectHashTable, GetHandleId(u), 0 -T0V)
 	else
 		call TimerStart(tt, 1, true, null)
 	endif
@@ -8345,8 +8339,8 @@ function CCX takes unit u, integer T0V, integer level, real SYV, integer CAX ret
 	if not UnitAlive(u) then
 		return
 	endif
-	if HaveSavedHandle(P, GetHandleId(u), 0 -T0V) then
-		set t = LoadTriggerHandle(P, GetHandleId(u), 0 -T0V)
+	if HaveSavedHandle(ObjectHashTable, GetHandleId(u), 0 -T0V) then
+		set t = LoadTriggerHandle(ObjectHashTable, GetHandleId(u), 0 -T0V)
 		set h = GetHandleId(t)
 		set tt = LoadTimerHandle(HY, h, 10)
 	else
@@ -8362,7 +8356,7 @@ function CCX takes unit u, integer T0V, integer level, real SYV, integer CAX ret
 		call SaveTimerHandle(HY, h, 10, tt)
 		call TriggerRegisterTimerExpireEvent(t, tt)
 		call TriggerAddCondition(t, Condition(function CBX))
-		call SaveTriggerHandle(P, GetHandleId(u), 0 -T0V, t)
+		call SaveTriggerHandle(ObjectHashTable, GetHandleId(u), 0 -T0V, t)
 	endif
 	call RemoveSavedBoolean(HY, h, 0)
 	set CDX = TimerGetRemaining(tt)
@@ -8418,12 +8412,12 @@ function PasSkillCoolDownTrigger takes unit u returns nothing
 	call SavePlayerHandle(HY, h, 1, GetOwningPlayer(u))
 	call TriggerRegisterDeathEvent(t, u)
 	call TriggerAddCondition(t, Condition(function PasSkillCoolDownActions))
-	call SaveTriggerHandle(W, GetHandleId(u),'PACD', t)
+	call SaveTriggerHandle(PassiveAbilityCooldown, GetHandleId(u),'PACD', t)
 	set t = null
 endfunction
 
 function Learn_HaveCoolDownSkill takes nothing returns nothing
-	if not HaveSavedHandle(W, GetHandleId(GetTriggerUnit()),'PACD') then
+	if not HaveSavedHandle(PassiveAbilityCooldown, GetHandleId(GetTriggerUnit()),'PACD') then
 		call PasSkillCoolDownTrigger(GetTriggerUnit())
 	endif
 endfunction
@@ -8790,8 +8784,8 @@ endfunction
 
 // 注册一个Buff 
 function SetBuffAbilityId takes integer id, integer buffType returns nothing
-	call SaveInteger(Q, buffType, LoadInteger(Q, buffType, 0)+ 1, id)
-	call SaveInteger(Q, buffType, 0, LoadInteger(Q, buffType, 0)+ 1)
+	call SaveInteger(AbilityDataHashTable, buffType, LoadInteger(AbilityDataHashTable, buffType, 0)+ 1, id)
+	call SaveInteger(AbilityDataHashTable, buffType, 0, LoadInteger(AbilityDataHashTable, buffType, 0)+ 1)
 endfunction
 
 // 注册物理Buff
@@ -8803,8 +8797,8 @@ endfunction
 function FHX takes unit u returns nothing
 	local integer i = 1
 	loop
-	exitwhen HaveSavedInteger(Q,'PRGN', i) == false
-		call UnitRemoveAbility(u, LoadInteger(Q,'PRGN', i))
+	exitwhen HaveSavedInteger(AbilityDataHashTable,'PRGN', i) == false
+		call UnitRemoveAbility(u, LoadInteger(AbilityDataHashTable,'PRGN', i))
 		set i = i + 1
 	endloop
 endfunction
@@ -8813,8 +8807,8 @@ endfunction
 function FJX takes unit u returns nothing
 	local integer i = 1
 	loop
-	exitwhen not HaveSavedInteger(Q,'PRGH', i)
-		call UnitRemoveAbility(u, LoadInteger(Q,'PRGH', i))
+	exitwhen not HaveSavedInteger(AbilityDataHashTable,'PRGH', i)
+		call UnitRemoveAbility(u, LoadInteger(AbilityDataHashTable,'PRGH', i))
 		set i = i + 1
 	endloop
 endfunction
@@ -8823,42 +8817,42 @@ endfunction
 function FKX takes unit u, boolean strongDispel returns nothing
 	local integer i = 1
 	loop
-	exitwhen not HaveSavedInteger(Q,'PRGC', i)
-		call UnitRemoveAbility(u, LoadInteger(Q,'PRGC', i))
+	exitwhen not HaveSavedInteger(AbilityDataHashTable,'PRGC', i)
+		call UnitRemoveAbility(u, LoadInteger(AbilityDataHashTable,'PRGC', i))
 		set i = i + 1
 	endloop
 	// 强驱散
 	if strongDispel then
 		set i = 1
 		loop
-		exitwhen not HaveSavedInteger(Q,'PRGA', i)
-			call UnitRemoveAbility(u, LoadInteger(Q,'PRGA', i))
+		exitwhen not HaveSavedInteger(AbilityDataHashTable,'PRGA', i)
+			call UnitRemoveAbility(u, LoadInteger(AbilityDataHashTable,'PRGA', i))
 			set i = i + 1
 		endloop
 		call RemoveSavedInteger(HY, GetHandleId(u),'A2SG')
 	else
 		set i = 1
 		loop
-		exitwhen not HaveSavedInteger(Q,'PRGE', i)
-			call UnitRemoveAbility(u, LoadInteger(Q,'PRGE', i))
+		exitwhen not HaveSavedInteger(AbilityDataHashTable,'PRGE', i)
+			call UnitRemoveAbility(u, LoadInteger(AbilityDataHashTable,'PRGE', i))
 			set i = i + 1
 		endloop
 		set i = 1
 		loop
-		exitwhen not HaveSavedInteger(Q,'PRGI', i)
-			call UnitRemoveAbility(u, LoadInteger(Q,'PRGI', i))
+		exitwhen not HaveSavedInteger(AbilityDataHashTable,'PRGI', i)
+			call UnitRemoveAbility(u, LoadInteger(AbilityDataHashTable,'PRGI', i))
 			set i = i + 1
 		endloop
 		set i = 1
 		loop
-		exitwhen not HaveSavedInteger(Q,'PRGS', i)
-			call UnitRemoveAbility(u, LoadInteger(Q,'PRGS', i))
+		exitwhen not HaveSavedInteger(AbilityDataHashTable,'PRGS', i)
+			call UnitRemoveAbility(u, LoadInteger(AbilityDataHashTable,'PRGS', i))
 			set i = i + 1
 		endloop
 		set i = 1
 		loop
-		exitwhen not HaveSavedInteger(Q,'PRGN', i)
-			call UnitRemoveAbility(u, LoadInteger(Q,'PRGN', i))
+		exitwhen not HaveSavedInteger(AbilityDataHashTable,'PRGN', i)
+			call UnitRemoveAbility(u, LoadInteger(AbilityDataHashTable,'PRGN', i))
 			set i = i + 1
 		endloop
 		call FNX(u, 0, 0)
@@ -8921,9 +8915,9 @@ function FQX takes unit u, real dur returns real
 		return dur
 	endif
 	set h = GetHandleId(u)
-	set c = LoadInteger(K, h, 32)
+	set c = LoadInteger(OtherHashTable, h, 32)
 	set ratio = 1
-	if GetGameTime()-LoadReal(K, h, 32)< 6 and LoadReal(K, h, 32)!= 0 then
+	if GetGameTime()-LoadReal(OtherHashTable, h, 32)< 6 and LoadReal(OtherHashTable, h, 32)!= 0 then
 		if c == 1 then
 			set ratio = .75
 		elseif c == 2 then
@@ -8931,12 +8925,12 @@ function FQX takes unit u, real dur returns real
 		else
 			set ratio = .25
 		endif
-		call SaveInteger(K, h, 32, c + 1)
+		call SaveInteger(OtherHashTable, h, 32, c + 1)
 		// debug call SingleDebug(" 晕眩限制 "+ R2S(c) )
 	else
-		call SaveInteger(K, h, 32, 1)
+		call SaveInteger(OtherHashTable, h, 32, 1)
 	endif
-	call SaveReal(K, h, 32, GetGameTime())
+	call SaveReal(OtherHashTable, h, 32, GetGameTime())
 	set FSX = RMaxBJ(R2I(dur * 1. * ratio * 10)* 1. / 10, .01)
 	return FSX
 endfunction
@@ -9154,7 +9148,7 @@ function GDX takes nothing returns nothing
 		call RemoveUnit(W_V)
 		call UnitShareVision(u, p, false)
 		call FlushChildHashtable(HY, h)
-		call RemoveSavedHandle(P, GetHandleId(u), GFX)
+		call RemoveSavedHandle(ObjectHashTable, GetHandleId(u), GFX)
 		call CleanCurrentTrigger(t)
 	else
 		if GetUnitAbilityLevel(u, GFX)> 0 then
@@ -9175,7 +9169,7 @@ function GDX takes nothing returns nothing
 			call RemoveUnit(W_V)
 			call UnitShareVision(u, p, false)
 			call FlushChildHashtable(HY, h)
-			call RemoveSavedHandle(P, GetHandleId(u), GFX)
+			call RemoveSavedHandle(ObjectHashTable, GetHandleId(u), GFX)
 			call CleanCurrentTrigger(t)
 		endif
 	endif
@@ -9184,7 +9178,7 @@ function GDX takes nothing returns nothing
 	set W_V = null
 endfunction
 function GHX takes unit u, unit GJX, integer GKX returns nothing
-	local trigger t = LoadTriggerHandle(P, GetHandleId(u), GKX)
+	local trigger t = LoadTriggerHandle(ObjectHashTable, GetHandleId(u), GKX)
 	local integer hu = GetHandleId(u)
 	local integer h
 	local unit W_V
@@ -9197,7 +9191,7 @@ function GHX takes unit u, unit GJX, integer GKX returns nothing
 		call SaveUnitHandle(HY, h, 0, u)
 		call SavePlayerHandle(HY, h, 1, GetOwningPlayer(GJX))
 		call SaveInteger(HY, h, 0, GKX)
-		call SaveTriggerHandle(P, hu, GKX, t)
+		call SaveTriggerHandle(ObjectHashTable, hu, GKX, t)
 		set W_V = CreateUnit(GetOwningPlayer(GJX),'hFFD', GetUnitX(u), GetUnitY(u), 0)
 		call SaveUnitHandle(HY, h,'DUMM', W_V)
 		call UnitAddAbility(W_V,'A30X')
@@ -9488,7 +9482,7 @@ function G7X takes integer k, unit u, integer G8X returns boolean
 		call UnitAddPermanentAbility(u, AghanimUpgradeChangeId[k])
 		call UnitMakeAbilityPermanent(u, true, AghanimUpgradeUpgradeId[k])
 	endif
-	call SaveInteger(K, GetHandleId(u),'AGH0'+ G8X, AghanimUpgradeNormalId[k])
+	call SaveInteger(OtherHashTable, GetHandleId(u),'AGH0'+ G8X, AghanimUpgradeNormalId[k])
 	return true
 endfunction
 function HIX takes integer k, unit u, integer G8X returns nothing
@@ -9527,7 +9521,7 @@ function HIX takes integer k, unit u, integer G8X returns nothing
 	if AghanimUpgradeUpgradeId[k]!= AghanimUpgradeNormalId[k] then
 		call UnitRemoveAbility(u, AghanimUpgradeUpgradeId[k])
 	endif
-	call SaveInteger(K, GetHandleId(u),'AGH0'+ G8X, 0)
+	call SaveInteger(OtherHashTable, GetHandleId(u),'AGH0'+ G8X, 0)
 endfunction
 
 
@@ -9957,13 +9951,13 @@ function JDX takes integer unitTypeId, integer r, integer g, integer b returns n
 endfunction
 function SaveColorToUnitType takes integer whichTypeId, integer r, integer g, integer b returns nothing
 	if r >-1 and r < 256 then
-		call SaveInteger(L, whichTypeId, 0, r)
+		call SaveInteger(UnitRGBHashTable, whichTypeId, 0, r)
 	endif
 	if g >-1 and g < 256 then
-		call SaveInteger(L, whichTypeId, 1, g)
+		call SaveInteger(UnitRGBHashTable, whichTypeId, 1, g)
 	endif
 	if b >-1 and b < 256 then
-		call SaveInteger(L, whichTypeId, 2, b)
+		call SaveInteger(UnitRGBHashTable, whichTypeId, 2, b)
 	endif
 endfunction
 function JKX takes unit u returns nothing
@@ -10073,18 +10067,18 @@ function J5X takes unit u, integer d returns nothing
 endfunction
 function J6X takes unit u, integer d returns nothing
 	local integer h = GetHandleId(u)
-	local integer J7X = LoadInteger(P, h,'MSPC')
+	local integer J7X = LoadInteger(ObjectHashTable, h,'MSPC')
 	if IsUnitType(u, UNIT_TYPE_HERO) then
 		call J5X(u, d + J7X)
-		call SaveInteger(P, h,'MSPC', d + J7X)
+		call SaveInteger(ObjectHashTable, h,'MSPC', d + J7X)
 	endif
 endfunction
 function J8X takes unit u, integer d returns nothing
 	local integer h = GetHandleId(u)
-	local integer J7X = LoadInteger(P, h,'MSPC')
+	local integer J7X = LoadInteger(ObjectHashTable, h,'MSPC')
 	if IsUnitType(u, UNIT_TYPE_HERO) then
 		call J5X(u, J7X -d)
-		call SaveInteger(P, h,'MSPC', J7X -d)
+		call SaveInteger(ObjectHashTable, h,'MSPC', J7X -d)
 	endif
 endfunction
 function J9X takes unit u, integer d returns nothing
@@ -10134,7 +10128,7 @@ function KVX takes unit u returns nothing
 	set i = i + LoadInteger(HY, h,'a272')
 	set i = i + LoadInteger(HY, h,'a430')
 	set i = i + LoadInteger(HY, h,'axxx')
-	set i = i + LoadInteger(K, GetHandleId(GetOwningPlayer(u)),'DDUE')
+	set i = i + LoadInteger(OtherHashTable, GetHandleId(GetOwningPlayer(u)),'DDUE')
 	call J9X(u, i)
 endfunction
 
@@ -11118,9 +11112,9 @@ function L8X takes unit u returns nothing
 	call SetUnitCurrentScaleEx(u, GetUnitCurrentScale(u))
 	call GBX(u)
 	call FKX(u, true)
-	if LoadInteger(P, GetHandleId(u),'A32D')> 0 then
-		call SaveInteger(P, GetHandleId(u),'A32D', 0)
-		call SaveBoolean(P, GetHandleId(u),'A32D', false)
+	if LoadInteger(ObjectHashTable, GetHandleId(u),'A32D')> 0 then
+		call SaveInteger(ObjectHashTable, GetHandleId(u),'A32D', 0)
+		call SaveBoolean(ObjectHashTable, GetHandleId(u),'A32D', false)
 		call SetPlayerAbilityAvailable(GetOwningPlayer(u),'A32D', false)
 	endif
 	// 死亡驱散的一些Buff和技能
@@ -11189,10 +11183,10 @@ function L8X takes unit u returns nothing
 	endif
 	set U2 = u
 	call ExecuteFunc("L9X")
-	if LoadBoolean(P, GetHandleId(u), StringHash("morphedburn")) then
-		call RAX(u, LoadInteger(P, GetHandleId(u), StringHash("second")))
-		call RAX(u, LoadInteger(P, GetHandleId(u), StringHash("first")))
-		call SaveBoolean(P, GetHandleId(u), StringHash("morphedburn"), false)
+	if LoadBoolean(ObjectHashTable, GetHandleId(u), StringHash("morphedburn")) then
+		call RAX(u, LoadInteger(ObjectHashTable, GetHandleId(u), StringHash("second")))
+		call RAX(u, LoadInteger(ObjectHashTable, GetHandleId(u), StringHash("first")))
+		call SaveBoolean(ObjectHashTable, GetHandleId(u), StringHash("morphedburn"), false)
 	endif
 endfunction
 function MVX takes nothing returns boolean
@@ -12254,10 +12248,10 @@ function PlayerChooseHeroUnit takes unit whichUnit returns boolean
 
 			// 分开判断两个队伍稳妥点
 			if IsSentinelPlayer(whichPlayer) then
-				call FlushChildHashtable(P,'SPL0'+ playerId)
+				call FlushChildHashtable(ObjectHashTable,'SPL0'+ playerId)
 			endif
 			if IsScourgePlayer(whichPlayer) then
-				call FlushChildHashtable(P,'SPLH'+ playerId)
+				call FlushChildHashtable(ObjectHashTable,'SPLH'+ playerId)
 			endif
 			// 移除上一个英雄
 			call EXRemoveHero(OW[playerId])
@@ -12735,7 +12729,7 @@ endfunction
 function TEX takes integer id returns integer
 	local integer goldBonus
 	local integer TXX
-	if HaveSavedInteger(U, id,'GOLD') == false then
+	if HaveSavedInteger(ItemGoldHashTable, id,'GOLD') == false then
 		set goldBonus = GetPlayerState(Player(15), PLAYER_STATE_RESOURCE_GOLD)
 		set TXX = 50000
 		call SetPlayerState(Player(15), PLAYER_STATE_RESOURCE_GOLD, TXX)
@@ -12743,10 +12737,10 @@ function TEX takes integer id returns integer
 		call IssueImmediateOrderById(BI, id)
 		set TXX = TXX -GetPlayerState(Player(15), PLAYER_STATE_RESOURCE_GOLD)
 		call SetPlayerState(Player(15), PLAYER_STATE_RESOURCE_GOLD, goldBonus)
-		call SaveInteger(U, id,'GOLD', TXX)
+		call SaveInteger(ItemGoldHashTable, id,'GOLD', TXX)
 		call TVX()
 	else
-		set TXX = LoadInteger(U, id,'GOLD')
+		set TXX = LoadInteger(ItemGoldHashTable, id,'GOLD')
 	endif
 	return TXX
 endfunction
@@ -13172,7 +13166,7 @@ function UXX takes player p returns integer
 endfunction
 function URX takes nothing returns nothing
 	local integer i = 1
-	local integer WXV = LoadInteger(VV,'Assi', 0)
+	local integer WXV = LoadInteger(OtherHashTable2,'Assi', 0)
 	local real array r
 	local player array p
 	local integer k = 0
@@ -13196,8 +13190,8 @@ function URX takes nothing returns nothing
 		set r[4]= 1.25
 	endif
 	loop
-		if HaveSavedHandle(VV,'Assi', i) then
-			set p[k]= LoadPlayerHandle(VV,'Assi', i)
+		if HaveSavedHandle(OtherHashTable2,'Assi', i) then
+			set p[k]= LoadPlayerHandle(OtherHashTable2,'Assi', i)
 			set k = k + 1
 		endif
 		set i = i + 1
@@ -13205,42 +13199,42 @@ function URX takes nothing returns nothing
 	endloop
 	set i = 0
 	loop
-		call SaveReal(VV,'Assi', GetPlayerId(p[i]), r[i])
+		call SaveReal(OtherHashTable2,'Assi', GetPlayerId(p[i]), r[i])
 		set i = i + 1
 	exitwhen i > k
 	endloop
 endfunction
 function UIX takes nothing returns nothing
-	local group g = LoadGroupHandle(VV,'assi', 0)
+	local group g = LoadGroupHandle(OtherHashTable2,'assi', 0)
 	local group gg = AllocationGroup(16)
 	local integer UOX
 	local unit u2
 	local integer i = 0
-	call FlushChildHashtable(VV,'Assi')
+	call FlushChildHashtable(OtherHashTable2,'Assi')
 	call GroupAddGroup(g, gg)
 	loop
 		set u2 = FirstOfGroup(gg)
 	exitwhen u2 == null
 		set i = i + 1
 		set UOX = UXX(GetOwningPlayer(u2))
-		if HaveSavedHandle(VV,'Assi', UOX) then
+		if HaveSavedHandle(OtherHashTable2,'Assi', UOX) then
 			loop
 				set UOX = UOX + 1
-			exitwhen HaveSavedHandle(VV,'Assi', UOX) == false
+			exitwhen HaveSavedHandle(OtherHashTable2,'Assi', UOX) == false
 			endloop
 		endif
-		call SavePlayerHandle(VV,'Assi', UOX, GetOwningPlayer(u2))
-		call SaveInteger(VV,'Assi', i, GetPlayerId(GetOwningPlayer(u2)))
-		call SaveInteger(VV,'Assi', 0, LoadInteger(VV,'Assi', 0)+ 1)
+		call SavePlayerHandle(OtherHashTable2,'Assi', UOX, GetOwningPlayer(u2))
+		call SaveInteger(OtherHashTable2,'Assi', i, GetPlayerId(GetOwningPlayer(u2)))
+		call SaveInteger(OtherHashTable2,'Assi', 0, LoadInteger(OtherHashTable2,'Assi', 0)+ 1)
 		call GroupRemoveUnit(gg, u2)
 	endloop
 	if i == 1 then
-		call SaveReal(VV,'Assi', LoadInteger(VV,'Assi', 1), 1)
+		call SaveReal(OtherHashTable2,'Assi', LoadInteger(OtherHashTable2,'Assi', 1), 1)
 	else
 		call URX()
 	endif
 	call DeallocateGroup(gg)
-	call RemoveSavedHandle(VV,'assi', 0)
+	call RemoveSavedHandle(OtherHashTable2,'assi', 0)
 endfunction
 function UAX takes unit u1, unit u2 returns real
 	local real x1 = GetUnitX(u1)
@@ -13409,15 +13403,15 @@ function UGX takes unit killingUnit returns boolean
 			set U5X = 25.
 		endif
 		set U3X = R2I((U_X + U0X * level + U1X * UQX * UWX + U5X * RMinBJ(U4X / 4000., 1))*(1.2 -0.1 *(UZX -1)))
-		call SaveGroupHandle(VV,'assi', 0, IV)
+		call SaveGroupHandle(OtherHashTable2,'assi', 0, IV)
 		call UIX()
 		set level = R2I(RNX(u)/ UYX)
 		loop
 			set u = FirstOfGroup(IV)
 		exitwhen u == null
 			set pid = GetPlayerId(GetOwningPlayer(u))
-			set UJX = R2I(U3X * LoadReal(VV,'Assi', pid))
-			call SaveInteger(VV,'Assi', pid, UJX)
+			set UJX = R2I(U3X * LoadReal(OtherHashTable2,'Assi', pid))
+			call SaveInteger(OtherHashTable2,'Assi', pid, UJX)
 			if u != killingUnit or UnitAlive(u) or LoadInteger(HY, GetHandleId(killingUnit),'A06B') == 1 then
 				call AddHeroXPSimple(u, UHX, true)
 			endif
@@ -13641,8 +13635,8 @@ function U7X takes nothing returns nothing
 		set WGX = PlayersColoerText[WRX] +(PlayersName[GetPlayerId((WXX))])+ "|r"
 		set WHX = PlayersColoerText[WOX] +(PlayersName[GetPlayerId((WEX))])+ "|r"
 		set WKX = "|c00FFDC00" + I2S(WIX)
-		if LoadInteger(VV,'Assi', GetPlayerId(WEX))> 0 then
-			set WKX = WKX + "(+" + I2S(LoadInteger(VV,'Assi', GetPlayerId(WEX)))+ ")"
+		if LoadInteger(OtherHashTable2,'Assi', GetPlayerId(WEX))> 0 then
+			set WKX = WKX + "(+" + I2S(LoadInteger(OtherHashTable2,'Assi', GetPlayerId(WEX)))+ ")"
 		endif
 		set WKX = WKX + "|r"
 		if WEX == SentinelPlayers[0]or WEX == ScourgePlayers[0] then
@@ -13759,7 +13753,7 @@ function U7X takes nothing returns nothing
 			call ExecuteFunc("W3X")
 		endif
 	endif
-	set WTX =((GetHeroLevel(U9X)* 3.8 + 5 + R2I(LoadReal(K, GetHandleId(U9X), 26)))* WPX + WSX)+ R2I(WQX)
+	set WTX =((GetHeroLevel(U9X)* 3.8 + 5 + R2I(LoadReal(OtherHashTable, GetHandleId(U9X), 26)))* WPX + WSX)+ R2I(WQX)
 	if GYV then
 		set WTX = WTX * .5
 	endif
@@ -14321,17 +14315,17 @@ function Y7X takes nothing returns boolean
 endfunction
 function Y8X takes unit u returns nothing
 	local player p = GetOwningPlayer(u)
-	if HaveSavedHandle(K, GetHandleId(p),'COUR') == false then
-		call SaveUnitHandle(K, GetHandleId(p),'COUR', u)
+	if HaveSavedHandle(OtherHashTable, GetHandleId(p),'COUR') == false then
+		call SaveUnitHandle(OtherHashTable, GetHandleId(p),'COUR', u)
 	endif
 endfunction
 function Y9X takes player p returns nothing
-	if HaveSavedHandle(K, GetHandleId(p),'COUR') then
-		if GetPlayerAlliance(GetOwningPlayer(LoadUnitHandle(K, GetHandleId(p),'COUR')), p, ALLIANCE_SHARED_CONTROL) then
+	if HaveSavedHandle(OtherHashTable, GetHandleId(p),'COUR') then
+		if GetPlayerAlliance(GetOwningPlayer(LoadUnitHandle(OtherHashTable, GetHandleId(p),'COUR')), p, ALLIANCE_SHARED_CONTROL) then
 			return
 		endif
 	endif
-	call SaveUnitHandle(K, GetHandleId(p),'COUR', HJX(p))
+	call SaveUnitHandle(OtherHashTable, GetHandleId(p),'COUR', HJX(p))
 endfunction
 function ZVX takes unit c returns nothing
 	if GXX(c) == false then
@@ -15048,8 +15042,8 @@ function VDO takes nothing returns nothing
 		if Player__Hero[pid]!= null then
 			if UnitIsDead(Player__Hero[pid]) and p == GetOwningPlayer(GetSellingUnit()) and LoadInteger(HY, GetHandleId(Player__Hero[pid]), 4304)!= 1 and UF[pid]== false then
 				set r = TimerGetRemaining(PS[pid])
-				call SaveReal(K, GetHandleId(p), 25, r + GetGameTime())
-				call SaveReal(K, GetHandleId(p), 26, r * .25)
+				call SaveReal(OtherHashTable, GetHandleId(p), 25, r + GetGameTime())
+				call SaveReal(OtherHashTable, GetHandleId(p), 26, r * .25)
 				call VNO(Player__Hero[pid])
 				call ReviveHero(Player__Hero[pid], GetUnitX(u), GetUnitY(u), true)
 				call VCO(Player__Hero[pid], r)
@@ -15592,21 +15586,21 @@ endfunction
 function E6O takes unit u returns unit
 	local unit d = null
 	local player p = GetOwningPlayer(u)
-	if HaveSavedHandle(K, GetHandleId(p),'COUR'+ 1) == false or UnitIsDead(LoadUnitHandle(K, GetHandleId(p),'COUR'+ 1)) then
+	if HaveSavedHandle(OtherHashTable, GetHandleId(p),'COUR'+ 1) == false or UnitIsDead(LoadUnitHandle(OtherHashTable, GetHandleId(p),'COUR'+ 1)) then
 		set d = CreateUnit(p,'e00E', GetUnitX(CirclesUnit[GetPlayerId(p)]), GetUnitY(CirclesUnit[GetPlayerId(p)]), 0)
 		call UnitAddPermanentAbility(d,'AInv')
-		call SaveUnitHandle(K, GetHandleId(p),'COUR'+ 1, d)
+		call SaveUnitHandle(OtherHashTable, GetHandleId(p),'COUR'+ 1, d)
 		call UnitPauseTimedLife(d, true)
 		set d = null
-	elseif HaveSavedHandle(K, GetHandleId(p),'COUR'+ 1) then
-		set d = LoadUnitHandle(K, GetHandleId(p),'COUR'+ 1)
+	elseif HaveSavedHandle(OtherHashTable, GetHandleId(p),'COUR'+ 1) then
+		set d = LoadUnitHandle(OtherHashTable, GetHandleId(p),'COUR'+ 1)
 		if p != GetOwningPlayer(d) then
 			call SetUnitOwner(d, p, true)
 			call SetUnitPosition(d, GetUnitX(CirclesUnit[GetPlayerId(p)]), GetUnitY(CirclesUnit[GetPlayerId(p)]))
 		endif
 		set d = null
 	endif
-	return LoadUnitHandle(K, GetHandleId(p),'COUR'+ 1)
+	return LoadUnitHandle(OtherHashTable, GetHandleId(p),'COUR'+ 1)
 endfunction
 function E7O takes integer id returns boolean
 	return id == NZV or id == I3V or id == X0V or id == X1V or id == OOV or id == OKV or id == X7V or id == OBV or id == RXV or id == OIV or id == X2V or id == OCV or id == OUV or id == OTV
@@ -15639,7 +15633,7 @@ function E9O takes nothing returns boolean
 	return false
 endfunction
 function XVO takes nothing returns nothing
-	call SaveItemHandle(VV,'ITEM', Q2, GetEnumItem())
+	call SaveItemHandle(OtherHashTable2,'ITEM', Q2, GetEnumItem())
 endfunction
 function XEO takes unit u returns boolean
 	return IsUnitInRange(u, B2, 800) or IsUnitInRange(u, C2, 800)
@@ -15657,7 +15651,7 @@ function XOO takes unit KKX, integer XRO, player p returns nothing
 	local integer Z7X
 	local integer Z8X
 	local string s
-	local unit Y1X = LoadUnitHandle(K, GetHandleId(p),'COUR')
+	local unit Y1X = LoadUnitHandle(OtherHashTable, GetHandleId(p),'COUR')
 	local integer id
 	local unit d
 	local real x
@@ -15708,10 +15702,10 @@ function XOO takes unit KKX, integer XRO, player p returns nothing
 	set i = Q2
 	loop
 	exitwhen i < 0
-		if HaveSavedHandle(VV,'ITEM', i) then
-			call SaveItemHandle(HY,'ITEM', k, LoadItemHandle(VV,'ITEM', i))
-			call SaveInteger(HY,'ITEM', k, GetItemIndexEx(LoadItemHandle(VV,'ITEM', i)))
-			call RemoveSavedHandle(VV,'ITEM', i)
+		if HaveSavedHandle(OtherHashTable2,'ITEM', i) then
+			call SaveItemHandle(HY,'ITEM', k, LoadItemHandle(OtherHashTable2,'ITEM', i))
+			call SaveInteger(HY,'ITEM', k, GetItemIndexEx(LoadItemHandle(OtherHashTable2,'ITEM', i)))
+			call RemoveSavedHandle(OtherHashTable2,'ITEM', i)
 			set k = k + 1
 		endif
 		set i = i -1
@@ -15789,13 +15783,13 @@ function XOO takes unit KKX, integer XRO, player p returns nothing
 		if Z8X == Z7X then
 			set i = 100 
 			loop
-				call UnitAddItem(LoadUnitHandle(K, GetHandleId(GetOwningPlayer(KKX)),'COUR'+ 1), LoadItemHandle(HY,'ITEM', i))
+				call UnitAddItem(LoadUnitHandle(OtherHashTable, GetHandleId(GetOwningPlayer(KKX)),'COUR'+ 1), LoadItemHandle(HY,'ITEM', i))
 				call RemoveSavedHandle(HY,'ITEM', i)
 				set i = i + 1
 			exitwhen HaveSavedHandle(HY,'ITEM', i) == false
 			endloop
 		endif
-		set d = LoadUnitHandle(K, GetHandleId(GetOwningPlayer(KKX)),'COUR'+ 1)
+		set d = LoadUnitHandle(OtherHashTable, GetHandleId(GetOwningPlayer(KKX)),'COUR'+ 1)
 		if true then
 			set x = GetUnitX(d)
 			set y = GetUnitY(d)
@@ -15869,8 +15863,8 @@ function XOO takes unit KKX, integer XRO, player p returns nothing
 		call E4O(d)
 		set d = null
 	endif
-	call UnitRemoveAbility(LoadUnitHandle(K, GetHandleId(GetOwningPlayer(KKX)),'COUR'+ 1),'AInv')
-	call UnitAddAbility(LoadUnitHandle(K, GetHandleId(GetOwningPlayer(KKX)),'COUR'+ 1),'AInv')
+	call UnitRemoveAbility(LoadUnitHandle(OtherHashTable, GetHandleId(GetOwningPlayer(KKX)),'COUR'+ 1),'AInv')
+	call UnitAddAbility(LoadUnitHandle(OtherHashTable, GetHandleId(GetOwningPlayer(KKX)),'COUR'+ 1),'AInv')
 	set Y1X = null
 	set it = null
 	set d = null
@@ -15903,8 +15897,8 @@ function XNO takes nothing returns nothing
 		return
 	endif
 	if HGX(GTX) == false and XOV[GTX]!= 0 then
-		call SaveInteger(P,'ITEM', GetPlayerId(p), XOV[GTX])
-		call SaveReal(P,'ITEM', GetPlayerId(p), GetGameTime())
+		call SaveInteger(ObjectHashTable,'ITEM', GetPlayerId(p), XOV[GTX])
+		call SaveReal(ObjectHashTable,'ITEM', GetPlayerId(p), GetGameTime())
 	endif
 	if EQO(GetSellingUnit(), u) then
 		call InterfaceErrorForPlayer(p, GetObjectName('n02G'))
@@ -16136,7 +16130,7 @@ function XLO takes unit trigUnit, item C1X returns boolean
 		call SetItemUserData(Z2, 1)
 	endif
 	if (GTX == I9V or GTX == AVV or GTX == AEV or GTX == AXV or GTX == AOV or GTX == ARV) then
-		set i = LoadInteger(K, GetHandleId(GetOwningPlayer(u)),'0BKB')
+		set i = LoadInteger(OtherHashTable, GetHandleId(GetOwningPlayer(u)),'0BKB')
 		if i == 0 and GTX != I9V then
 			set E3 = GetItemPlayer(C1X)
 			call HZX(C1X)
@@ -16562,12 +16556,12 @@ function OHO takes nothing returns nothing
 	if OJO > 0 then
 		call DisplayTimedTextToPlayer(p, 0, 0, 5, "出售刚刚购入的物品,额外返还  |cfffffa00" + I2S(OJO)+ "|r 金钱.")
 		call SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)+ OJO)
-		call SaveInteger(P,'ITEM', pid, 0)
-		call SaveReal(P,'ITEM', pid, .0)
+		call SaveInteger(ObjectHashTable,'ITEM', pid, 0)
+		call SaveReal(ObjectHashTable,'ITEM', pid, .0)
 	endif
 	call PauseTimer(t)
 	call DestroyTimer(t)
-	call RemoveSavedHandle(VV,'ITEM', GetPlayerId(p))
+	call RemoveSavedHandle(OtherHashTable2,'ITEM', GetPlayerId(p))
 	set t = null
 endfunction
 function OKO takes item it returns boolean
@@ -16577,13 +16571,13 @@ function OLO takes player p, item it returns nothing
 	local timer t
 	local integer goldBonus
 	local integer pid = GetPlayerId(p)
-	if XOV[GetItemIndexEx(it)]== LoadInteger(P,'ITEM', pid) and GetGameTime()-LoadReal(P,'ITEM', pid)< 10. and OKO(it) == false and HaveSavedHandle(VV,'ITEM', GetPlayerId(p)) == false then
+	if XOV[GetItemIndexEx(it)]== LoadInteger(ObjectHashTable,'ITEM', pid) and GetGameTime()-LoadReal(ObjectHashTable,'ITEM', pid)< 10. and OKO(it) == false and HaveSavedHandle(OtherHashTable2,'ITEM', GetPlayerId(p)) == false then
 		set t = CreateTimer()
 		set goldBonus = GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)
 		call TimerStart(t, 0, false, function OHO)
 		call SavePlayerHandle(HY, GetHandleId(t), 0, p)
 		call SaveInteger(HY, GetHandleId(t), 0, goldBonus)
-		call SaveTimerHandle(VV,'ITEM', GetPlayerId(p), t)
+		call SaveTimerHandle(OtherHashTable2,'ITEM', GetPlayerId(p), t)
 		call SaveInteger(HY, GetHandleId(t), 1, GetItemTypeId(it))
 		set t = null
 	endif
@@ -16938,7 +16932,7 @@ function OYO takes nothing returns nothing
 			call SetWidgetLife(WLE, GetWidgetLife(WLE)+ OZO / WLV * .1)
 		endif
 	else
-		call SaveBoolean(P, GetHandleId(WLE), GFX, false)
+		call SaveBoolean(ObjectHashTable, GetHandleId(WLE), GFX, false)
 		call PauseTimer(t)
 		call FlushChildHashtable(HY, h)
 		call DestroyTimer(t)
@@ -16951,7 +16945,7 @@ function O0O takes real hp, real mp, real SYV, integer GFX, unit WLE returns not
 	local integer h = GetHandleId(t)
 	call TimerStart(t, .1, true, function OYO)
 	call SaveUnitHandle(HY, h, 0, WLE)
-	call SaveBoolean(P, GetHandleId(WLE), GFX, true)
+	call SaveBoolean(ObjectHashTable, GetHandleId(WLE), GFX, true)
 	call SaveInteger(HY, h, 0, GFX)
 	call SaveReal(HY, h, 0, hp)
 	call SaveReal(HY, h, 1, mp)
@@ -17023,7 +17017,7 @@ function O5O takes unit trigUnit, item C1X returns nothing
 	call TriggerAddCondition(t, Condition(function O4O))
 	call SaveUnitHandle(HY, h, 14, trigUnit)
 	set t = null
-	if LoadBoolean(P, GetHandleId(trigUnit),'B01S') == false then
+	if LoadBoolean(ObjectHashTable, GetHandleId(trigUnit),'B01S') == false then
 		call O0O( 3000, 2000, 30,'B01S', trigUnit)
 	endif
 endfunction
@@ -18178,14 +18172,14 @@ endfunction
 function AEO takes nothing returns nothing
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
-	local unit u = LoadUnitHandle(P, h, 0)
-	local real AXO = LoadReal(P, h, 0)
+	local unit u = LoadUnitHandle(ObjectHashTable, h, 0)
+	local real AXO = LoadReal(ObjectHashTable, h, 0)
 	if GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
 		if GetItemOfTypeFromUnit(u, XOV[NBV]) == null then
-			call SetHeroStr(u, IMaxBJ(GetHeroStr(u, false)-LoadInteger(K, GetHandleId(u),'ARML'), 1), true)
-			call SaveInteger(K, GetHandleId(u),'ARML', 0)
+			call SetHeroStr(u, IMaxBJ(GetHeroStr(u, false)-LoadInteger(OtherHashTable, GetHandleId(u),'ARML'), 1), true)
+			call SaveInteger(OtherHashTable, GetHandleId(u),'ARML', 0)
 			if IsTriggerEnabled(t) then
-				call FlushChildHashtable(P, h)
+				call FlushChildHashtable(ObjectHashTable, h)
 				call CleanCurrentTrigger(t)
 			endif
 			set t = null
@@ -18194,15 +18188,15 @@ function AEO takes nothing returns nothing
 		endif
 		if GetTriggerEvalCount(t)<= 25 then
 			call SetHeroStr(u, GetHeroStr(u, false)+ 1, true)
-			call SaveInteger(K, GetHandleId(u),'ARML', GetTriggerEvalCount(t))
+			call SaveInteger(OtherHashTable, GetHandleId(u),'ARML', GetTriggerEvalCount(t))
 			if UnitAlive(u) then
 			endif
 		endif
 	else
-		call SetHeroStr(u, IMaxBJ(GetHeroStr(u, false)-LoadInteger(K, GetHandleId(u),'ARML'), 1), true)
-		call SaveInteger(K, GetHandleId(u),'ARML', 0)
+		call SetHeroStr(u, IMaxBJ(GetHeroStr(u, false)-LoadInteger(OtherHashTable, GetHandleId(u),'ARML'), 1), true)
+		call SaveInteger(OtherHashTable, GetHandleId(u),'ARML', 0)
 		if IsTriggerEnabled(t) then
-			call FlushChildHashtable(P, h)
+			call FlushChildHashtable(ObjectHashTable, h)
 			call CleanCurrentTrigger(t)
 		endif
 	endif
@@ -18250,9 +18244,9 @@ function AOO takes nothing returns nothing
 				set t = CreateTrigger()
 				call TriggerRegisterTimerEvent(t, .6 / 25, true)
 				set AXO = GetUnitState(GetTriggerUnit(), UNIT_STATE_MAX_LIFE)-GetWidgetLife(GetTriggerUnit())
-				call SaveUnitHandle(P, GetHandleId(t), 0, u)
-				call SaveBoolean(K, GetHandleId(u), 20, true)
-				call SaveReal(P, GetHandleId(t), 0, AXO)
+				call SaveUnitHandle(ObjectHashTable, GetHandleId(t), 0, u)
+				call SaveBoolean(OtherHashTable, GetHandleId(u), 20, true)
+				call SaveReal(ObjectHashTable, GetHandleId(t), 0, AXO)
 				call TriggerAddCondition(t, Condition(function AEO))
 				if HaveSavedHandle(HY, GetHandleId(u),'ARML') then
 					call TriggerEvaluate(LoadTriggerHandle(HY, GetHandleId(u),'ARML'))
@@ -19011,7 +19005,7 @@ function GME takes nothing returns nothing
 	local unit c = CreateUnit(GetOwningPlayer(u), AUO(GetOwningPlayer(u)), x, y, a)
 	call ZOX(c)
 	call GroupAddUnit(KX, c)
-	call SaveUnitHandle(K, GetHandleId(GetOwningPlayer(u)),'COUR', HJX(GetOwningPlayer(u)))
+	call SaveUnitHandle(OtherHashTable, GetHandleId(GetOwningPlayer(u)),'COUR', HJX(GetOwningPlayer(u)))
 	call SetUnitPosition(c, x + 25 * Cos(a * bj_DEGTORAD), y + 25 * Sin(a * bj_DEGTORAD))
 	call MUInitMessenger(c)
 	if W3[GetPlayerId(GetOwningPlayer(c))]== false then
@@ -19029,7 +19023,7 @@ function GPE takes nothing returns nothing
 	call MUInitMessenger(Y1X)
 	call ZOX(Y1X)
 	call GroupAddUnit(KX, Y1X)
-	call SaveUnitHandle(K, GetHandleId(GetOwningPlayer(u)),'COUR', HJX(GetOwningPlayer(u)))
+	call SaveUnitHandle(OtherHashTable, GetHandleId(GetOwningPlayer(u)),'COUR', HJX(GetOwningPlayer(u)))
 	if W3[GetPlayerId(GetOwningPlayer(Y1X))]== false then
 		call UnitRemoveType(Y1X, UNIT_TYPE_PEON)
 	else
@@ -20325,7 +20319,7 @@ function BAO takes unit u returns boolean
 endfunction
 function BNO takes nothing returns boolean
 	if BAO(GetFilterUnit()) then
-		if LoadInteger(VV, 0, 0) == LoadInteger(HY, GetHandleId(GetFilterUnit()), 784) then
+		if LoadInteger(OtherHashTable2, 0, 0) == LoadInteger(HY, GetHandleId(GetFilterUnit()), 784) then
 			call KillUnit(GetFilterUnit())
 		endif
 	endif
@@ -20354,7 +20348,7 @@ function GUE takes nothing returns nothing
 		set BDO ='n00K'
 		set BFO ='n006'
 	endif
-	call SaveInteger(VV, 0, 0, GetHandleId(WJE))
+	call SaveInteger(OtherHashTable2, 0, 0, GetHandleId(WJE))
 	call GroupEnumUnitsOfPlayer(g, GetOwningPlayer(GetTriggerUnit()), Condition(function BNO))
 	call DeallocateGroup(g)
 	set BBO = CreateUnit(GetOwningPlayer(WJE), BDO, x1, y1, GetUnitFacing(WJE))
@@ -20401,15 +20395,15 @@ function GWE takes nothing returns nothing
 	call I8X(u)
 	call SetWidgetLife(u, 99999)
 	set WFV = GetHandleId(GetTriggerUnit())
-	call KillUnit(LoadUnitHandle(P, WFV,'ACch'))
-	call SaveUnitHandle(P, WFV,'ACch', u)
+	call KillUnit(LoadUnitHandle(ObjectHashTable, WFV,'ACch'))
+	call SaveUnitHandle(ObjectHashTable, WFV,'ACch', u)
 	if GetUnitState(u, UNIT_STATE_MAX_LIFE)< 1400 then
 		call UnitAddMaxLife(u, R2I( 1400-GetUnitState(u, UNIT_STATE_MAX_LIFE)))
 	endif
 	set u = null
 endfunction
 function BGO takes integer i returns integer
-	local integer level = LoadInteger(K, GetHandleId(GetOwningPlayer(GetTriggerUnit())),'0BKB')
+	local integer level = LoadInteger(OtherHashTable, GetHandleId(GetOwningPlayer(GetTriggerUnit())),'0BKB')
 	if (i =='A11F' or i =='A11E' or i =='A0S3' or i =='A11D' or i =='A11G' or i =='A11H') == false then
 		return 0
 	endif
@@ -20429,7 +20423,7 @@ function BGO takes integer i returns integer
 	return 0
 endfunction
 function BHO takes integer i returns integer
-	local integer lv = LoadInteger(K, GetHandleId(GetOwningPlayer(GetTriggerUnit())),'0BKB')
+	local integer lv = LoadInteger(OtherHashTable, GetHandleId(GetOwningPlayer(GetTriggerUnit())),'0BKB')
 	if lv == 0 then
 		return 10
 	else
@@ -20522,7 +20516,7 @@ endfunction
 function G0E takes nothing returns nothing
 	local unit u = GetTriggerUnit()
 	if GetSpellAbilityId()=='A02W' then
-		call FlushChildHashtable(W, GetHandleId(u))
+		call FlushChildHashtable(PassiveAbilityCooldown, GetHandleId(u))
 		//	call UnitResetCooldownEx(u)
 		call UnitResetCooldownEx(u)
 		call FixUnitSkillsBug(u)
@@ -21354,7 +21348,7 @@ function C1O takes nothing returns boolean
 		if ((LoadInteger(HY,(GetHandleId((stg_u))),(4306)))!= 1) and GetUnitAbilityLevel(stg_u,'B08V') == 0 then
 			call A3X(x, y, 150)
 			if IsUnitType(stg_u, UNIT_TYPE_HERO) then
-				call SaveBoolean(K, GetHandleId(stg_u), 99, true)
+				call SaveBoolean(OtherHashTable, GetHandleId(stg_u), 99, true)
 			endif
 			call SetUnitX(stg_u, x)
 			call SetUnitY(stg_u, y)
@@ -22541,9 +22535,9 @@ function FDO takes nothing returns boolean
 	if (GetTriggerEventId() == EVENT_UNIT_DEATH and GetKillingUnit() == WUE) or(GetTriggerEventId() == EVENT_UNIT_DAMAGED and GetUnitAbilityLevel(WWE,'B0ES')> 0) then
 		call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Other\\Transmute\\PileofGold.mdl", GetUnitX(WWE), GetUnitY(WWE)))
 		if (IsUnitType(WUE, UNIT_TYPE_HERO)) then
-			call AddHeroXPSimple(WUE, R2I(LoadInteger(M, GetUnitTypeId(WWE), HC)* 2.5), true)
+			call AddHeroXPSimple(WUE, R2I(LoadInteger(SightDataHashTable, GetUnitTypeId(WWE), HC)* 2.5), true)
 		else
-			call AddHeroXPSimple(Player__Hero[GetPlayerId(GetOwningPlayer(WUE))], R2I(LoadInteger(M, GetUnitTypeId(WWE), HC)* 2.5), true)
+			call AddHeroXPSimple(Player__Hero[GetPlayerId(GetOwningPlayer(WUE))], R2I(LoadInteger(SightDataHashTable, GetUnitTypeId(WWE), HC)* 2.5), true)
 		endif
 		call BMX(GetOwningPlayer(WUE), WWE, 190)
 		set PlayersReliableGold[GetPlayerId(GetOwningPlayer(WUE))]= PlayersReliableGold[GetPlayerId(GetOwningPlayer(WUE))] + 190
@@ -22747,8 +22741,8 @@ function FSO takes nothing returns boolean
 		call FPO()
 	endif
 	call FRO()
-	if HaveSavedString(P, id, 12) then
-		call ExecuteFunc(LoadStr(P, id, 12))
+	if HaveSavedString(ObjectHashTable, id, 12) then
+		call ExecuteFunc(LoadStr(ObjectHashTable, id, 12))
 	endif
 	if GetUnitTypeId(GetTriggerUnit())=='e00E' then
 		return false
@@ -22854,7 +22848,7 @@ function F1O takes integer GTX returns nothing
 	local unit u = GetTriggerUnit()
 	local item it = GetManipulatedItem()
 	local player p = GetItemPlayer(it)
-	local integer i = LoadInteger(K, GetHandleId(p),'0BKB')
+	local integer i = LoadInteger(OtherHashTable, GetHandleId(p),'0BKB')
 	local integer F2O = 0
 	if i == 0 then
 		set F2O = AVV
@@ -22873,9 +22867,9 @@ function F1O takes integer GTX returns nothing
 	if GTX == I9V or GTX == AVV or GTX == AEV or GTX == AXV or GTX == AOV then
 		call FZO(u, F2O, 1, it)
 		if i == 0 then
-			call SaveInteger(K, GetHandleId(p),'0BKB', 9)
+			call SaveInteger(OtherHashTable, GetHandleId(p),'0BKB', 9)
 		else
-			call SaveInteger(K, GetHandleId(p),'0BKB', IMaxBJ(i -1, 5))
+			call SaveInteger(OtherHashTable, GetHandleId(p),'0BKB', IMaxBJ(i -1, 5))
 		endif
 	endif
 	set u = null
@@ -22896,9 +22890,9 @@ function F3O takes integer id returns boolean
 	elseif id == NBV then
 		set AXO = GetUnitState(u, UNIT_STATE_MAX_LIFE)-GetWidgetLife(u)
 		call FZO(u, NCV, 1, it)
-		call SaveBoolean(K, GetHandleId(u), 20, false)
-		call SetHeroStr(u, IMaxBJ(GetHeroStr(u, false)-LoadInteger(K, GetHandleId(u),'ARML'), 1), true)
-		call SaveInteger(K, GetHandleId(u),'ARML', 0)
+		call SaveBoolean(OtherHashTable, GetHandleId(u), 20, false)
+		call SetHeroStr(u, IMaxBJ(GetHeroStr(u, false)-LoadInteger(OtherHashTable, GetHandleId(u),'ARML'), 1), true)
+		call SaveInteger(OtherHashTable, GetHandleId(u),'ARML', 0)
 		call CDO(u)
 	endif
 	set u = null
@@ -22954,7 +22948,7 @@ endfunction
 function F7O takes nothing returns boolean
 	local timer t = CreateTimer()
 	local integer h = GetHandleId(t)
-	call TimerStart(t, LoadInteger(Y, GetItemTypeId(GetManipulatedItem()),'00CD'), false, function F6O)
+	call TimerStart(t, LoadInteger(ItemCooldownHashTable, GetItemTypeId(GetManipulatedItem()),'00CD'), false, function F6O)
 	call SetItemDroppable(GetManipulatedItem(), false)
 	call SaveItemHandle(HY, h, 0, GetManipulatedItem())
 	set t = null
@@ -23009,7 +23003,7 @@ function F9O takes nothing returns boolean
 	local real a
 	local integer id = GetItemIndex(GetManipulatedItem())
 	local integer TZE = GetItemTypeId(GetManipulatedItem())
-	if GetUnitTypeId(GetTriggerUnit())!='e00E' and(LoadInteger(Y, TZE,'00CD'))> 0 and(GetUnitAbilityLevel(GetTriggerUnit(),'A0A5')> 0 or IsBearUnit(GetTriggerUnit())) then
+	if GetUnitTypeId(GetTriggerUnit())!='e00E' and(LoadInteger(ItemCooldownHashTable, TZE,'00CD'))> 0 and(GetUnitAbilityLevel(GetTriggerUnit(),'A0A5')> 0 or IsBearUnit(GetTriggerUnit())) then
 		call F7O()
 	endif
 	if id == ADV or id == AFV or id == AGV or id == AHV or id == AJV then
@@ -24228,7 +24222,7 @@ endfunction
 function GetLocalChargesText takes nothing returns string
 	local integer pid = LocalPlayerId
 	local string str = ""
-	if LoadBoolean(K, GetHandleId(LocalPlayer),'OptC') then
+	if LoadBoolean(OtherHashTable, GetHandleId(LocalPlayer),'OptC') then
 		return""
 	endif
 	if GetUnitAbilityLevel(Player__Hero[pid],'A0K9')> 0 then
@@ -25749,11 +25743,11 @@ function LKO takes nothing returns nothing
 	set t = null
 endfunction
 function SaveFogClicksData takes string p, real time, string WLE returns nothing
-	local integer i = LoadInteger(Q,-1, 0)
+	local integer i = LoadInteger(AbilityDataHashTable,-1, 0)
 	local integer LPO = R2I(time / 60 -1 / 2)
 	local integer LQO = R2I(time -LPO * 60)
-	call SaveStr(Q,-1, i, p + " selected " + WLE + " at " + I2S(LPO)+ ":" + I2S(LQO))
-	call SaveInteger(Q,-1, 0, i + 1)
+	call SaveStr(AbilityDataHashTable,-1, i, p + " selected " + WLE + " at " + I2S(LPO)+ ":" + I2S(LQO))
+	call SaveInteger(AbilityDataHashTable,-1, 0, i + 1)
 endfunction
 function CheckFogClicks takes unit u returns nothing
 	if GetUnitTypeId(u)!='hfoo' and UnitVisibleToPlayer(u, GetTriggerPlayer()) == false then
@@ -25766,8 +25760,8 @@ function LWO takes unit u returns boolean
 endfunction
 
 function L5O takes nothing returns nothing
-	if HaveSavedReal(K, GetHandleId(LocalPlayer),'CAMD') and GetCameraField(CAMERA_FIELD_TARGET_DISTANCE)!= LoadReal(K, GetHandleId(LocalPlayer),'CAMD') and LoadReal(K, GetHandleId(LocalPlayer),'CAMD')!= 1650 then
-		call SetCameraFieldForPlayer(LocalPlayer, CAMERA_FIELD_TARGET_DISTANCE, LoadReal(K, GetHandleId(LocalPlayer),'CAMD'), 0)
+	if HaveSavedReal(OtherHashTable, GetHandleId(LocalPlayer),'CAMD') and GetCameraField(CAMERA_FIELD_TARGET_DISTANCE)!= LoadReal(OtherHashTable, GetHandleId(LocalPlayer),'CAMD') and LoadReal(OtherHashTable, GetHandleId(LocalPlayer),'CAMD')!= 1650 then
+		call SetCameraFieldForPlayer(LocalPlayer, CAMERA_FIELD_TARGET_DISTANCE, LoadReal(OtherHashTable, GetHandleId(LocalPlayer),'CAMD'), 0)
 		call SetCameraFieldForPlayer(LocalPlayer, CAMERA_FIELD_FARZ, 100000, 0)
 		call SetCameraFieldForPlayer(LocalPlayer, CAMERA_FIELD_ZOFFSET, 0, 0)
 		call SetCameraFieldForPlayer(LocalPlayer, CAMERA_FIELD_ROTATION, 90, 0)
@@ -26026,14 +26020,14 @@ function CourierFountainCheck takes nothing returns boolean
 	return false
 endfunction
 function PreloadFogClicks takes nothing returns nothing
-	local integer i = LoadInteger(Q,-1, 0)
+	local integer i = LoadInteger(AbilityDataHashTable,-1, 0)
 	local integer k = 0
 	call PreloadEndEx()
 	call PreloadGenClear()
 	call PreloadGenStart()
 	loop
-		if HaveSavedString(Q,-1, k) then
-			call Preload(LoadStr(Q,-1, k))
+		if HaveSavedString(AbilityDataHashTable,-1, k) then
+			call Preload(LoadStr(AbilityDataHashTable,-1, k))
 		endif
 		set k = k + 1
 	exitwhen k > i
@@ -26784,7 +26778,7 @@ function Q0O takes nothing returns boolean
 	if O4X(GetTriggerUnit()) and(LoadBoolean(HY,(GetHandleId(GetTriggerUnit())), 142)) == false and(not IsPickingHero) then
 		call QWO(GetTriggerUnit())
 	endif
-	if HaveSavedInteger(M, GetUnitTypeId(GetTriggerUnit()), HC) then
+	if HaveSavedInteger(SightDataHashTable, GetUnitTypeId(GetTriggerUnit()), HC) then
 		call Q_O(GetTriggerUnit())
 	endif
 	return false
@@ -27555,14 +27549,14 @@ function TMO takes nothing returns nothing
 	call SetCameraFieldForPlayer(GetTriggerPlayer(), CAMERA_FIELD_FARZ, 100000000, 0)
 	if r <= 0 then
 		call SetCameraFieldForPlayer(GetTriggerPlayer(), CAMERA_FIELD_TARGET_DISTANCE, 1650, 0)
-		call SaveReal(K, GetHandleId(GetTriggerPlayer()),'CAMD', 1650)
+		call SaveReal(OtherHashTable, GetHandleId(GetTriggerPlayer()),'CAMD', 1650)
 		call InterfaceErrorForPlayer(GetTriggerPlayer(), "不正确的参数，镜头调整至默认值。")
 	elseif r > 0 and r < 3 then
 		call SetCameraFieldForPlayer(GetTriggerPlayer(), CAMERA_FIELD_TARGET_DISTANCE, 1650* r, 0)
-		call SaveReal(K, GetHandleId(GetTriggerPlayer()),'CAMD', 1650* r)
+		call SaveReal(OtherHashTable, GetHandleId(GetTriggerPlayer()),'CAMD', 1650* r)
 	elseif r >= 600 and r <= 4500 then
 		call SetCameraFieldForPlayer(GetTriggerPlayer(), CAMERA_FIELD_TARGET_DISTANCE, r, 0)
-		call SaveReal(K, GetHandleId(GetTriggerPlayer()),'CAMD', r)
+		call SaveReal(OtherHashTable, GetHandleId(GetTriggerPlayer()),'CAMD', r)
 	else
 		call InterfaceErrorForPlayer(GetTriggerPlayer(), "参数不能低于600或高于4500。")
 	endif
@@ -27643,12 +27637,12 @@ function TYO takes nothing returns nothing
 endfunction
 function TZO takes nothing returns nothing
 	local player p = GetTriggerPlayer()
-	local boolean b = LoadBoolean(K, GetHandleId(p),'UIds')
+	local boolean b = LoadBoolean(OtherHashTable, GetHandleId(p),'UIds')
 	call Click_CheckBox_Nothing(p, 18)
 	if LocalPlayer == p then
 		call GetSetupText("信使复活窗口", b)
 	endif
-	call SaveBoolean(K, GetHandleId(p),'UIds', not b)
+	call SaveBoolean(OtherHashTable, GetHandleId(p),'UIds', not b)
 endfunction
 function T_O takes nothing returns nothing
 	local player p = GetTriggerPlayer()
@@ -27666,7 +27660,7 @@ function T_O takes nothing returns nothing
 	endif
 endfunction
 function T0O takes nothing returns nothing
-	call SaveBoolean(K, GetHandleId(GetTriggerPlayer()),'NSHK', true)
+	call SaveBoolean(OtherHashTable, GetHandleId(GetTriggerPlayer()),'NSHK', true)
 	call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10, "|c00aeae00 无相同热键|r 模式关闭 - 你可以选择任意热键冲突的技能")
 endfunction
 function T1O takes nothing returns nothing
@@ -27685,8 +27679,8 @@ function T1O takes nothing returns nothing
 	set g = null
 endfunction
 function SetCharges takes player p returns nothing
-	local boolean b = LoadBoolean(K, GetHandleId(p),'OptC')
-	call SaveBoolean(K, GetHandleId(p),'OptC', not b)
+	local boolean b = LoadBoolean(OtherHashTable, GetHandleId(p),'OptC')
+	call SaveBoolean(OtherHashTable, GetHandleId(p),'OptC', not b)
 	if LocalPlayer == p then
 		call GetSetupText("充能显示", b)
 	endif
@@ -27770,13 +27764,13 @@ function T7O takes nothing returns nothing
 endfunction
 function T8O takes nothing returns nothing
 	local player p = GetTriggerPlayer()
-	local boolean CD = LoadBoolean(P, GetHandleId(p), 4)
+	local boolean CD = LoadBoolean(ObjectHashTable, GetHandleId(p), 4)
 	if CD then
 		call DisplayTimedTextToPlayer(p, .0, .0, 10., "被动技能内置冷却时间显示已 |c00FF0000关闭|r")
-		call SaveBoolean(P, GetHandleId(p), 4, false)
+		call SaveBoolean(ObjectHashTable, GetHandleId(p), 4, false)
 	else
 		call DisplayTimedTextToPlayer(p, .0, .0, 10., "被动技能内置冷却时间显示已 |c00FF0000开启|r")
-		call SaveBoolean(P, GetHandleId(p), 4, true)
+		call SaveBoolean(ObjectHashTable, GetHandleId(p), 4, true)
 	endif
 
 endfunction
@@ -28288,24 +28282,24 @@ function RemoveUnitBuff takes unit u, boolean FLX returns nothing
 		exitwhen abilityId == 0
 
 		// debug call SingleDebug( I2S( loop__Index ) + " 号技能为 " + GetObjectName(abilityId) + " " + YDWEId2S( abilityId ) )
-		if LoadInteger(Q,'PRGC', abilityId) != 0 then
+		if LoadInteger(AbilityDataHashTable,'PRGC', abilityId) != 0 then
 			call UnitRemoveAbility(u, abilityId)
 		endif
 		if FLX then
-			if LoadInteger(Q,'PRGA', abilityId) != 0 then
+			if LoadInteger(AbilityDataHashTable,'PRGA', abilityId) != 0 then
 				call UnitRemoveAbility(u, abilityId)
 			endif
 		else
-			if LoadInteger(Q,'PRGE', abilityId) != 0 then
+			if LoadInteger(AbilityDataHashTable,'PRGE', abilityId) != 0 then
 				call UnitRemoveAbility(u, abilityId)
 			endif
-			if LoadInteger(Q,'PRGI', abilityId) != 0 then
+			if LoadInteger(AbilityDataHashTable,'PRGI', abilityId) != 0 then
 				call UnitRemoveAbility(u, abilityId)
 			endif
-			if LoadInteger(Q,'PRGS', abilityId) != 0 then
+			if LoadInteger(AbilityDataHashTable,'PRGS', abilityId) != 0 then
 				call UnitRemoveAbility(u, abilityId)
 			endif
-			if LoadInteger(Q,'PRGN', abilityId) != 0 then
+			if LoadInteger(AbilityDataHashTable,'PRGN', abilityId) != 0 then
 				call UnitRemoveAbility(u, abilityId)
 			endif
 		endif
@@ -28838,8 +28832,8 @@ endfunction
 function Y9O takes nothing returns nothing
 	local string s = StringCase(GetEventPlayerChatString(), false)
 	local integer h = StringHash(s)
-	if HaveSavedString(Z, h, 0) then
-		call ExecuteFunc(LoadStr(Z, h, 0))
+	if HaveSavedString(ChatCommandHashTable, h, 0) then
+		call ExecuteFunc(LoadStr(ChatCommandHashTable, h, 0))
 		if (s != "-c") then
 			return
 		endif
@@ -29449,9 +29443,9 @@ function PlayerSwap takes player p1, player p2 returns nothing
 	call ExecuteFunc("Reset_Ability")
 	call ZTQ(p1, p2)
 	loop
-	exitwhen not HaveSavedHandle(K, h1, 32 + i)
-		set u1 = LoadUnitHandle(K, h1, 32 + i)
-		set u2 = LoadUnitHandle(K, h2, 32 + i)
+	exitwhen not HaveSavedHandle(OtherHashTable, h1, 32 + i)
+		set u1 = LoadUnitHandle(OtherHashTable, h1, 32 + i)
+		set u2 = LoadUnitHandle(OtherHashTable, h2, 32 + i)
 		call SetUnitOwner(u1, p2, true)
 		call SetUnitOwner(u2, p1, true)
 		if LocalPlayer== p2 then
@@ -29461,11 +29455,11 @@ function PlayerSwap takes player p1, player p2 returns nothing
 			call SetUnitScale(u2, 0.5, 0.5, 0.5)
 			call SetUnitScale(u1, 0.3, 0.3, 0.3)
 		endif
-		set u1 = LoadUnitHandle(K, h1, 32 + i)
-		call SaveUnitHandle(K, h1, 32 + i, LoadUnitHandle(K, h2, 32 + i))
-		call SaveUnitHandle(K, h2, 32 + i, u1)
+		set u1 = LoadUnitHandle(OtherHashTable, h1, 32 + i)
+		call SaveUnitHandle(OtherHashTable, h1, 32 + i, LoadUnitHandle(OtherHashTable, h2, 32 + i))
+		call SaveUnitHandle(OtherHashTable, h2, 32 + i, u1)
 		set u2 = u1
-		set u1 = LoadUnitHandle(K, h1, 32 + i)
+		set u1 = LoadUnitHandle(OtherHashTable, h1, 32 + i)
 		set h = GetHandleId(u2)
 		set u3 = LoadUnitHandle(HY, h, 32 + i)
 		call SetUnitPosition(u3, GetUnitX(u1), GetUnitY(u1))
@@ -29476,9 +29470,9 @@ function PlayerSwap takes player p1, player p2 returns nothing
 		call SaveUnitHandle(HY, GetHandleId(u2), 32 + i, u3)
 		set i = i + 1
 	endloop
-	call SelectUnitForPlayerSingle(LoadUnitHandle(K, h1, 32), p1)
-	call SelectUnitForPlayerSingle(LoadUnitHandle(K, h2, 32), p2)
-	set i = LoadInteger(K, h1, 32)
+	call SelectUnitForPlayerSingle(LoadUnitHandle(OtherHashTable, h1, 32), p1)
+	call SelectUnitForPlayerSingle(LoadUnitHandle(OtherHashTable, h2, 32), p2)
+	set i = LoadInteger(OtherHashTable, h1, 32)
 	loop
 		set k = LoadInteger(HY, h1,'hrpl'+ i)
 		set j = LoadInteger(HY, h2,'hrpl'+ i)
@@ -29489,7 +29483,7 @@ function PlayerSwap takes player p1, player p2 returns nothing
 		set i = i -1
 	exitwhen i < 0
 	endloop
-	set i = LoadInteger(K, h1, 32)
+	set i = LoadInteger(OtherHashTable, h1, 32)
 	loop
 		set k = LoadInteger(HY, h1,'hrpl'+ i)
 		set j = LoadInteger(HY, h2,'hrpl'+ i)
@@ -30256,15 +30250,15 @@ function VWR takes nothing returns nothing
 				if ModuloInteger(c, 2) == 1 then
 					call Y9X(p)
 				endif
-				if HaveSavedHandle(K, GetHandleId(p),'COUR') and(LoadBoolean(K, GetHandleId(p),'UIds') or UnitIsDead(LoadUnitHandle(K, GetHandleId(p),'COUR'))) then
+				if HaveSavedHandle(OtherHashTable, GetHandleId(p),'COUR') and(LoadBoolean(OtherHashTable, GetHandleId(p),'UIds') or UnitIsDead(LoadUnitHandle(OtherHashTable, GetHandleId(p),'COUR'))) then
 					set V_R = 1
-					set u = LoadUnitHandle(K, GetHandleId(p),'COUR')
+					set u = LoadUnitHandle(OtherHashTable, GetHandleId(p),'COUR')
 					set V0R = GetPlayerId(GetOwningPlayer(u))
 					set s = s + PlayersColoerText[V0R] + "信使|r: "
 					if UnitIsDead(u) then
 						set s = s + "|c00ff0000死亡|r (" + I2S(R2I(GetGameTime()-LoadReal(HY, GetHandleId(u),'DEAD'))*-1)+ "s)"
 					else
-						set s = s + LoadStr(K, GetHandleId(u),'ORDR')
+						set s = s + LoadStr(OtherHashTable, GetHandleId(u),'ORDR')
 					endif
 				endif
 				if V_R > 0 then
@@ -30937,34 +30931,34 @@ function E4R takes nothing returns boolean
 	if HGV > 0 then
 		call DisplayTimedTextToPlayer(p, 0, 0, 10., GetObjectName('n0LO')+ ": " + I2S(HGV))
 	endif
-	if LoadInteger(K, h,'DUEL')> 0 then
-		call DisplayTimedTextToPlayer(p, 0, 0, 10., "决斗: " + I2S(LoadInteger(K, h,'DUEL'))+ " 次胜利, " + I2S(LoadInteger(K, h,'DDUE'))+ " 点攻击力")
+	if LoadInteger(OtherHashTable, h,'DUEL')> 0 then
+		call DisplayTimedTextToPlayer(p, 0, 0, 10., "决斗: " + I2S(LoadInteger(OtherHashTable, h,'DUEL'))+ " 次胜利, " + I2S(LoadInteger(OtherHashTable, h,'DDUE'))+ " 点攻击力")
 	endif
-	if LoadInteger(P, h,'A0O3')> 0 then
-		call DisplayTimedTextToPlayer(p, 0, 0, 10., GetObjectName('n0GQ')+ " " + I2S(LoadInteger(P, h,'A0O3')))
+	if LoadInteger(ObjectHashTable, h,'A0O3')> 0 then
+		call DisplayTimedTextToPlayer(p, 0, 0, 10., GetObjectName('n0GQ')+ " " + I2S(LoadInteger(ObjectHashTable, h,'A0O3')))
 	endif
-	set i = LoadInteger(K, h,'ARRH')
-	set k = LoadInteger(K, h,'ARRS')
+	set i = LoadInteger(OtherHashTable, h,'ARRH')
+	set k = LoadInteger(OtherHashTable, h,'ARRS')
 	if k > 0 then
 		call DisplayTimedTextToPlayer(p, 0, 0, 10., GetObjectName('n0GM')+ " " + R2S(I2R(i)/ I2R(k)* 100 )+ "% (" + I2S(i)+ "/" + I2S(k)+ ")")
 	endif
-	if LoadInteger(K, pid,'MC_T')> 0 then
-		call DisplayTimedTextToPlayer(p, 0, 0, 10., GetObjectName('n0JH')+ " " + I2S(LoadInteger(K, pid,'MC_T')))
-		call DisplayTimedTextToPlayer(p, 0, 0, 10., GetObjectName('n0JM')+ " " + I2S(LoadInteger(K, pid,'MC_2')+ LoadInteger(K, pid,'MC_3')+ LoadInteger(K, pid,'MC_4'))+ " (" + I2S((LoadInteger(K, pid,'MC_2')+ LoadInteger(K, pid,'MC_3')+ LoadInteger(K, pid,'MC_4'))* 100 / LoadInteger(K, pid,'MC_T'))+ "%)")
-		call DisplayTimedTextToPlayer(p, 0, 0, 10., GetObjectName('n0JL')+ " " + I2S(LoadInteger(K, pid,'MC_2'))+ " (" + I2S( 100 * LoadInteger(K, pid,'MC_2')/ LoadInteger(K, pid,'MC_T'))+ "%)")
-		call DisplayTimedTextToPlayer(p, 0, 0, 10., GetObjectName('n0JK')+ " " + I2S(LoadInteger(K, pid,'MC_3'))+ " (" + I2S( 100 * LoadInteger(K, pid,'MC_3')/ LoadInteger(K, pid,'MC_T'))+ "%)")
-		call DisplayTimedTextToPlayer(p, 0, 0, 10., GetObjectName('n0JJ')+ " " + I2S(LoadInteger(K, pid,'MC_4'))+ " (" + I2S( 100 * LoadInteger(K, pid,'MC_4')/ LoadInteger(K, pid,'MC_T'))+ "%)")
+	if LoadInteger(OtherHashTable, pid,'MC_T')> 0 then
+		call DisplayTimedTextToPlayer(p, 0, 0, 10., GetObjectName('n0JH')+ " " + I2S(LoadInteger(OtherHashTable, pid,'MC_T')))
+		call DisplayTimedTextToPlayer(p, 0, 0, 10., GetObjectName('n0JM')+ " " + I2S(LoadInteger(OtherHashTable, pid,'MC_2')+ LoadInteger(OtherHashTable, pid,'MC_3')+ LoadInteger(OtherHashTable, pid,'MC_4'))+ " (" + I2S((LoadInteger(OtherHashTable, pid,'MC_2')+ LoadInteger(OtherHashTable, pid,'MC_3')+ LoadInteger(OtherHashTable, pid,'MC_4'))* 100 / LoadInteger(OtherHashTable, pid,'MC_T'))+ "%)")
+		call DisplayTimedTextToPlayer(p, 0, 0, 10., GetObjectName('n0JL')+ " " + I2S(LoadInteger(OtherHashTable, pid,'MC_2'))+ " (" + I2S( 100 * LoadInteger(OtherHashTable, pid,'MC_2')/ LoadInteger(OtherHashTable, pid,'MC_T'))+ "%)")
+		call DisplayTimedTextToPlayer(p, 0, 0, 10., GetObjectName('n0JK')+ " " + I2S(LoadInteger(OtherHashTable, pid,'MC_3'))+ " (" + I2S( 100 * LoadInteger(OtherHashTable, pid,'MC_3')/ LoadInteger(OtherHashTable, pid,'MC_T'))+ "%)")
+		call DisplayTimedTextToPlayer(p, 0, 0, 10., GetObjectName('n0JJ')+ " " + I2S(LoadInteger(OtherHashTable, pid,'MC_4'))+ " (" + I2S( 100 * LoadInteger(OtherHashTable, pid,'MC_4')/ LoadInteger(OtherHashTable, pid,'MC_T'))+ "%)")
 	endif
 	if JZV[pid]> 0 then
 		call DisplayTimedTextToPlayer(p, 0, 0, 10., GetObjectName('n0HM')+ " " + I2S(JZV[pid]))
 	endif
 	call E2R(p)
-	if LoadInteger(P, GetHandleId(Player__Hero[pid]),'A06D')> 0 then
+	if LoadInteger(ObjectHashTable, GetHandleId(Player__Hero[pid]),'A06D')> 0 then
 		call DisplayTimedTextToPlayer(p, 0, 0, 10., "腐肉堆积祭品数: " + I2S(SI[pid]))
-		call DisplayTimedTextToPlayer(p, 0, 0, 10., GetObjectName('n09R')+ " " + I2S(LoadInteger(P, GetHandleId(Player__Hero[pid]),'A06D'))+ " " + GetObjectName('n09S'))
+		call DisplayTimedTextToPlayer(p, 0, 0, 10., GetObjectName('n09R')+ " " + I2S(LoadInteger(ObjectHashTable, GetHandleId(Player__Hero[pid]),'A06D'))+ " " + GetObjectName('n09S'))
 	endif
-	set i = LoadInteger(K, h,'HK_H')
-	set k = LoadInteger(K, h,'HK_T')
+	set i = LoadInteger(OtherHashTable, h,'HK_H')
+	set k = LoadInteger(OtherHashTable, h,'HK_T')
 	if k > 0 then
 		call DisplayTimedTextToPlayer(p, 0, 0, 10., GetObjectName('n0EL')+ " " + R2S(I2R(i)/ I2R(k)* 100 )+ "% (" + I2S(i)+ "/" + I2S(k)+ ")")
 	endif
@@ -31583,12 +31577,12 @@ function X2R takes integer WTV returns boolean
 endfunction
 function X3R takes unit u, integer WTV returns nothing
 	local integer WFV = GetHandleId(u)
-	local boolean b = LoadBoolean(P, WFV, WTV)
-	call SaveBoolean(P, WFV, WTV, b == false)
+	local boolean b = LoadBoolean(ObjectHashTable, WFV, WTV)
+	call SaveBoolean(ObjectHashTable, WFV, WTV, b == false)
 endfunction
 function X4R takes integer WTV returns boolean
 	if X2R(WTV) then
-		return LoadBoolean(P, GetHandleId(GetTriggerUnit()), WTV)
+		return LoadBoolean(ObjectHashTable, GetHandleId(GetTriggerUnit()), WTV)
 	endif
 	return true
 endfunction
@@ -31611,7 +31605,7 @@ function X9R takes integer WWV, integer abilityId returns boolean
 		return false
 	endif
 	// 如果 存了不能多重 并且另外个不能多重? 是攻击特效技能 是物品技能 那就返回
-	if LoadBoolean(Q,'MCRS', abilityId) or X5R(abilityId) or IsAttackSpecialEffects(abilityId) or not IsNotItemAbility(abilityId) or X6R(abilityId) then
+	if LoadBoolean(AbilityDataHashTable,'MCRS', abilityId) or X5R(abilityId) or IsAttackSpecialEffects(abilityId) or not IsNotItemAbility(abilityId) or X6R(abilityId) then
 		return false
 	endif
 	set SQV = ZME(WWV, abilityId)
@@ -31693,13 +31687,13 @@ function ORR takes integer i returns nothing
 		call MDX(k, i)
 		set LP[k]= true
 	endif
-	if HaveSavedString(P, HeroCommonSkills[i], 600) and LoadBoolean(P, HeroCommonSkills[i], 600) == false then
-		call SaveBoolean(P, HeroCommonSkills[i], 600, true)
-		call ExecuteFunc(LoadStr(P, HeroCommonSkills[i], 600))
+	if HaveSavedString(ObjectHashTable, HeroCommonSkills[i], 600) and LoadBoolean(ObjectHashTable, HeroCommonSkills[i], 600) == false then
+		call SaveBoolean(ObjectHashTable, HeroCommonSkills[i], 600, true)
+		call ExecuteFunc(LoadStr(ObjectHashTable, HeroCommonSkills[i], 600))
 	endif
-	if HaveSavedString(P, HeroCommonSkills[i], 601) and LoadBoolean(P, HeroCommonSkills[i], 601) == false then
-		call SaveBoolean(P, HeroCommonSkills[i], 601, true)
-		call ExecuteFunc(LoadStr(P, HeroCommonSkills[i], 601))
+	if HaveSavedString(ObjectHashTable, HeroCommonSkills[i], 601) and LoadBoolean(ObjectHashTable, HeroCommonSkills[i], 601) == false then
+		call SaveBoolean(ObjectHashTable, HeroCommonSkills[i], 601, true)
+		call ExecuteFunc(LoadStr(ObjectHashTable, HeroCommonSkills[i], 601))
 	endif
 endfunction
 function OIR takes integer WWV returns nothing
@@ -32195,13 +32189,13 @@ function OWR takes integer OYR, integer WWV, boolean OZR returns boolean
 		endif
 		return false
 	endif
-	if HaveSavedString(Q, HeroCommonSkills[OYR], HotKeyStringHash) then
+	if HaveSavedString(AbilityDataHashTable, HeroCommonSkills[OYR], HotKeyStringHash) then
 		set xx = 1
 		loop
-			if PlayerSkillIndex[ROR + xx]> 0 and HaveSavedString(Q, HeroCommonSkills[PlayerSkillIndex[ROR + xx]], HotKeyStringHash) then
-				if LoadStr(Q, HeroCommonSkills[OYR], HotKeyStringHash) == LoadStr(Q, HeroCommonSkills[PlayerSkillIndex[ROR + xx]], HotKeyStringHash) then
+			if PlayerSkillIndex[ROR + xx]> 0 and HaveSavedString(AbilityDataHashTable, HeroCommonSkills[PlayerSkillIndex[ROR + xx]], HotKeyStringHash) then
+				if LoadStr(AbilityDataHashTable, HeroCommonSkills[OYR], HotKeyStringHash) == LoadStr(AbilityDataHashTable, HeroCommonSkills[PlayerSkillIndex[ROR + xx]], HotKeyStringHash) then
 					call URE(p, OZR, "快捷键冲突 : " + GetObjectName(HeroCommonSkills[PlayerSkillIndex[ROR + xx]]))
-					if HaveSavedBoolean(K, GetHandleId(Player(WWV)),'NSHK') and VT then
+					if HaveSavedBoolean(OtherHashTable, GetHandleId(Player(WWV)),'NSHK') and VT then
 						return false
 					endif
 				endif
@@ -32561,7 +32555,7 @@ endfunction
 // 创建酒馆和添加英雄
 function RGR takes player p, integer iHeroTypeId, integer i2 returns nothing
 	local integer h = GetHandleId(p)
-	local integer c = LoadInteger(K, h, 32)
+	local integer c = LoadInteger(OtherHashTable, h, 32)
 	// 十个英雄一个酒馆
 	local integer i = R2I(c / 10)
 	local integer RJR = 32 + i
@@ -32585,13 +32579,13 @@ function RGR takes player p, integer iHeroTypeId, integer i2 returns nothing
 	if i == 2 then
 		set x = x + 16
 	endif
-	if not HaveSavedHandle(K, h, RJR) then
+	if not HaveSavedHandle(OtherHashTable, h, RJR) then
 		set u = CreateUnit(p,'ntav', x, y, 270)
 		// 自己的酒馆大一点无可厚非吧
 		if LocalPlayer!= p then
 			call SetUnitScale(u, .3, .3, .3)
 		endif
-		call SaveUnitHandle(K, h, RJR, u)
+		call SaveUnitHandle(OtherHashTable, h, RJR, u)
 		// 选中第一个酒馆
 		if c == 0 then
 			call SelectUnitForPlayerSingle(u, p)
@@ -32605,8 +32599,8 @@ function RGR takes player p, integer iHeroTypeId, integer i2 returns nothing
 		endif
 		set u = null
 	endif
-	call AddUnitToStock(LoadUnitHandle(K, h, RJR), iHeroTypeId, 1, 1)
-	call SaveInteger(K, h, 32, c + 1)
+	call AddUnitToStock(LoadUnitHandle(OtherHashTable, h, RJR), iHeroTypeId, 1, 1)
+	call SaveInteger(OtherHashTable, h, 32, c + 1)
 	call SetPlayerTechMaxAllowed(p, iHeroTypeId, 999)
 	call SaveBoolean(HY, h, iHeroTypeId, true)
 	call SaveInteger(HY, h,'hrpl'+ c, iHeroTypeId)
@@ -33814,8 +33808,8 @@ function SummonedIllusionUnitEvnet takes nothing returns boolean
 	call SyncIllusionUnitSkills(hIllusionUnit, hSummoningUnit)
 	// 同步射手天赋给幻象
 	if GetUnitAbilityLevel(hSummoningUnit,'A0VC')> 0 then
-		call SaveUnitHandle(VV,'ILLU', 0, hIllusionUnit)
-		call SaveUnitHandle(VV,'ILLU', 1, hSummoningUnit)
+		call SaveUnitHandle(OtherHashTable2,'ILLU', 0, hIllusionUnit)
+		call SaveUnitHandle(OtherHashTable2,'ILLU', 1, hSummoningUnit)
 		call ExecuteFunc("I8R")
 	endif
 	// 幻象的协同升级
@@ -33899,8 +33893,8 @@ function GraniteAura__Actions takes nothing returns nothing
 			set u2 = FirstOfGroup(AIR)
 		exitwhen u2 == null
 			call GroupRemoveUnit(AIR, u2)
-			call UnitAddMaxLife(u2,-1 * LoadInteger(P, GetHandleId(u2),'BHPA'))
-			call SaveInteger(P, GetHandleId(u2),'BHPA', 0)
+			call UnitAddMaxLife(u2,-1 * LoadInteger(ObjectHashTable, GetHandleId(u2),'BHPA'))
+			call SaveInteger(ObjectHashTable, GetHandleId(u2),'BHPA', 0)
 			call UnitRemoveAbility(u2,'B0HL')
 		endloop
 		call DeallocateGroup(AIR)
@@ -33915,8 +33909,8 @@ function GraniteAura__Actions takes nothing returns nothing
 		exitwhen u2 == null
 			if IsUnitInGroup(u2, g) == false then
 				call GroupRemoveUnit(AIR, u2)
-				call UnitAddMaxLife(u2,-1 * LoadInteger(P, GetHandleId(u2),'BHPA'))
-				call SaveInteger(P, GetHandleId(u2),'BHPA', 0)
+				call UnitAddMaxLife(u2,-1 * LoadInteger(ObjectHashTable, GetHandleId(u2),'BHPA'))
+				call SaveInteger(ObjectHashTable, GetHandleId(u2),'BHPA', 0)
 				call UnitRemoveAbility(u2,'B0HL')
 			endif
 			call GroupRemoveUnit(gg, u2)
@@ -33925,7 +33919,7 @@ function GraniteAura__Actions takes nothing returns nothing
 		loop
 			set u2 = FirstOfGroup(g)
 		exitwhen u2 == null
-			set ANR = LoadInteger(P, GetHandleId(u2),'BHPA')
+			set ANR = LoadInteger(ObjectHashTable, GetHandleId(u2),'BHPA')
 			set AAR = R2I(R2I(GetUnitState(u2, UNIT_STATE_MAX_LIFE)-ANR)* .15)
 			if ANR != 0 then
 				if ANR != AAR then
@@ -33934,7 +33928,7 @@ function GraniteAura__Actions takes nothing returns nothing
 			else
 				call UnitAddMaxLife(u2, AAR)
 			endif
-			call SaveInteger(P, GetHandleId(u2),'BHPA', AAR)
+			call SaveInteger(ObjectHashTable, GetHandleId(u2),'BHPA', AAR)
 			call GroupRemoveUnit(g, u2)
 			call GroupAddUnit(AIR, u2)
 		endloop
@@ -35811,8 +35805,8 @@ function B1R takes unit d, string S6V, real x, real y returns nothing
 	exitwhen IssuePointOrder(d, S6V, x, y) or i > 20
 		call SetUnitX(d, GetUnitX(d)+ B2R)
 		call SetUnitY(d, GetUnitY(d)+ B3R)
-		call SaveReal(VV,'wave','000x', x)
-		call SaveReal(VV,'wave','000y', y)
+		call SaveReal(OtherHashTable2,'wave','000x', x)
+		call SaveReal(OtherHashTable2,'wave','000y', y)
 		set x = x + B2R
 		set y = y + B3R
 		set i = i + 1
@@ -36016,7 +36010,7 @@ function CGR takes nothing returns nothing
 			call FlushChildHashtable(HY, h)
 			call CleanCurrentTrigger(t)
 		else
-			call SetUnitAnimationByIndex(u, LoadInteger(P, GetUnitTypeId(u),'A1P8'))
+			call SetUnitAnimationByIndex(u, LoadInteger(ObjectHashTable, GetUnitTypeId(u),'A1P8'))
 			set cx = GetUnitX(u)
 			set cy = GetUnitY(u)
 			set g = AllocationGroup(118)
@@ -36092,22 +36086,22 @@ function CKR takes nothing returns nothing
 	set t = null
 endfunction
 function FOE takes nothing returns nothing
-	local integer i = LoadInteger(P, GetHandleId(GetTriggerUnit()),'A32D')-1
+	local integer i = LoadInteger(ObjectHashTable, GetHandleId(GetTriggerUnit()),'A32D')-1
 	if not UnitHasSpellShield(GetSpellTargetUnit()) then
 		call CKR()
 	endif
-	call SaveInteger(P, GetHandleId(GetTriggerUnit()),'A32D', i)
+	call SaveInteger(ObjectHashTable, GetHandleId(GetTriggerUnit()),'A32D', i)
 	if i < 1 then
-		call SaveBoolean(P, GetHandleId(GetTriggerUnit()),'A32D', false)
+		call SaveBoolean(ObjectHashTable, GetHandleId(GetTriggerUnit()),'A32D', false)
 		call SetPlayerAbilityAvailable(GetOwningPlayer(GetTriggerUnit()),'A32D', false)
 	endif
 endfunction
 function LEE takes nothing returns nothing
 	local unit u = GetTriggerUnit()
-	if LoadBoolean(P, GetHandleId(u),'A32D') == false or LoadInteger(P, GetHandleId(u),'A32D')< 1 then
+	if LoadBoolean(ObjectHashTable, GetHandleId(u),'A32D') == false or LoadInteger(ObjectHashTable, GetHandleId(u),'A32D')< 1 then
 		call EXStopUnit(u)
 		call InterfaceErrorForPlayer(GetOwningPlayer(u), "没有树木可使用")
-		call SaveBoolean(P, GetHandleId(u),'A32D', false)
+		call SaveBoolean(ObjectHashTable, GetHandleId(u),'A32D', false)
 		call SetPlayerAbilityAvailable(GetOwningPlayer(u),'A32D', false)
 	endif
 	set u = null
@@ -36134,9 +36128,9 @@ function FXE takes nothing returns nothing
 	local unit WJE = GetTriggerUnit()
 	local integer level = GetUnitAbilityLevel(WJE, GetSpellAbilityId())
 	call UnitAddPermanentAbility(WJE,'A32D')
-	call SaveBoolean(P, GetHandleId(WJE),'A32D', true)
+	call SaveBoolean(ObjectHashTable, GetHandleId(WJE),'A32D', true)
 	call SetPlayerAbilityAvailable(GetOwningPlayer(WJE),'A32D', true)
-	call SaveInteger(P, GetHandleId(WJE),'A32D', LoadInteger(P, GetHandleId(WJE),'A32D')+ 1)
+	call SaveInteger(ObjectHashTable, GetHandleId(WJE),'A32D', LoadInteger(ObjectHashTable, GetHandleId(WJE),'A32D')+ 1)
 	call CMR(GetSpellTargetDestructable())
 	set WJE = null
 endfunction
@@ -36152,8 +36146,8 @@ function CPR takes nothing returns nothing
 	local integer level = GetUnitAbilityLevel(u,'A32G')
 	local integer I2X = 5 + 5 * level
 	local integer CQR = 4 + 2 * level
-	local integer CSR = LoadInteger(P, GetHandleId(u),'A32G')
-	local integer CTR = LoadInteger(P, GetHandleId(u),'A32G'+ 1)
+	local integer CSR = LoadInteger(ObjectHashTable, GetHandleId(u),'A32G')
+	local integer CTR = LoadInteger(ObjectHashTable, GetHandleId(u),'A32G'+ 1)
 	local integer i = 0
 	local integer id = 0
 	local integer k = 0
@@ -36185,8 +36179,8 @@ function CPR takes nothing returns nothing
 			call LodSystem_ReduceUnitExtraState(u, CTR, "attack")
 			call LodSystem_AddUnitExtraState(u, CUR, "damage")
 			call LodSystem_AddUnitExtraState(u, CQR, "attack")
-			call SaveInteger(P, GetHandleId(u),'A32G', CUR)
-			call SaveInteger(P, GetHandleId(u),'A32G'+ 1, CQR)
+			call SaveInteger(ObjectHashTable, GetHandleId(u),'A32G', CUR)
+			call SaveInteger(ObjectHashTable, GetHandleId(u),'A32G'+ 1, CQR)
 		endif
 	endif
 	set t = null
@@ -36313,16 +36307,16 @@ function C0R takes nothing returns nothing
 		set u = Player__Hero[pid]
 		if u != null then //UnitAlive(u) and
 			set hu = GetHandleId(u)
-			if (GetDistanceBetween(GetUnitX(WJE), GetUnitY(WJE), GetUnitX(u), GetUnitY(u))< 925 or LoadBoolean(P, hu,'A32G'+ 1)) then
+			if (GetDistanceBetween(GetUnitX(WJE), GetUnitY(WJE), GetUnitX(u), GetUnitY(u))< 925 or LoadBoolean(ObjectHashTable, hu,'A32G'+ 1)) then
 				//if C2R == 1 then
-				call SaveBoolean(P, hu,'A32G'+ 1, true)
+				call SaveBoolean(ObjectHashTable, hu,'A32G'+ 1, true)
 				//endif
 				set C3R = C3R + 1
 				set C6R[C3R]= u
 			elseif GetDistanceBetween(GetUnitX(WJE), GetUnitY(WJE), GetUnitX(u), GetUnitY(u)) > 925 then
 				call CZR(u, 0, 0)
-				call SaveInteger(P, hu,'A32G'+ 1, 0)
-				call SaveBoolean(P, hu,'A32G'+ 1, false)
+				call SaveInteger(ObjectHashTable, hu,'A32G'+ 1, 0)
+				call SaveBoolean(ObjectHashTable, hu,'A32G'+ 1, false)
 			endif
 		endif
 		set i = i + 1
@@ -36333,8 +36327,8 @@ function C0R takes nothing returns nothing
 	loop
 		set u = C6R[i]
 		set hu = GetHandleId(u)
-		if C2R < WOV and(GetDistanceBetween(GetUnitX(WJE), GetUnitY(WJE), GetUnitX(u), GetUnitY(u))< 925 and LoadBoolean(P, hu,'A32G'+ 1)) then
-			set C4R = LoadInteger(P, hu,'A32G'+ 1)
+		if C2R < WOV and(GetDistanceBetween(GetUnitX(WJE), GetUnitY(WJE), GetUnitX(u), GetUnitY(u))< 925 and LoadBoolean(ObjectHashTable, hu,'A32G'+ 1)) then
+			set C4R = LoadInteger(ObjectHashTable, hu,'A32G'+ 1)
 			if C4R != C5R then
 				call CZR(u, 0, 0)
 				if u != WJE then
@@ -36342,12 +36336,12 @@ function C0R takes nothing returns nothing
 				else
 					call CZR(u, C5R, C5R)
 				endif
-				call SaveInteger(P, hu,'A32G'+ 1, C5R)
+				call SaveInteger(ObjectHashTable, hu,'A32G'+ 1, C5R)
 			endif
 		else
 			call CZR(u, 0, 0)
-			call SaveInteger(P, hu,'A32G'+ 1, 0)
-			call SaveBoolean(P, hu,'A32G'+ 1, false)
+			call SaveInteger(ObjectHashTable, hu,'A32G'+ 1, 0)
+			call SaveBoolean(ObjectHashTable, hu,'A32G'+ 1, false)
 		endif
 		set i = i + 1
 	exitwhen i > C3R
@@ -37332,10 +37326,10 @@ function D9R takes nothing returns boolean
 	local unit t = GetFilterUnit()
 	if IsUnitEnemy(Temp__ArrayUnit[0], GetOwningPlayer(t)) and IsAliveNotStrucNotWard(t) then
 		if Temp__ArrayReal[4]== 1 and GetUnitAbilityLevel(t,'A3E9') == 1 and IsMagicImmuneUnit(Temp__ArrayUnit[1]) == false then
-			call SaveInteger(VV,'A3E9','0lvl', R2I(Temp__ArrayReal[2]))
-			call SaveUnitHandle(VV,'A3E9','targ', Temp__ArrayUnit[1])
-			call SaveUnitHandle(VV,'A3E9','cstr', t)
-			call SaveReal(VV,'A3E9','0dur', Temp__ArrayReal[3])
+			call SaveInteger(OtherHashTable2,'A3E9','0lvl', R2I(Temp__ArrayReal[2]))
+			call SaveUnitHandle(OtherHashTable2,'A3E9','targ', Temp__ArrayUnit[1])
+			call SaveUnitHandle(OtherHashTable2,'A3E9','cstr', t)
+			call SaveReal(OtherHashTable2,'A3E9','0dur', Temp__ArrayReal[3])
 			call ExecuteFunc("FVR")
 		endif
 		if UnitHasSpellShield(t) == false then
@@ -37408,13 +37402,13 @@ function FRR takes unit Q4X, unit to, real FIR, integer level, boolean FAR retur
 	set t = null
 endfunction
 function FVR takes nothing returns nothing
-	local unit WJE = LoadUnitHandle(VV,'A3E9','cstr')
-	local unit WLE = LoadUnitHandle(VV,'A3E9','targ')
-	local real FNR = LoadReal(VV,'A3E9','0dur')
-	local integer level = LoadInteger(VV,'A3E9','0lvl')
+	local unit WJE = LoadUnitHandle(OtherHashTable2,'A3E9','cstr')
+	local unit WLE = LoadUnitHandle(OtherHashTable2,'A3E9','targ')
+	local real FNR = LoadReal(OtherHashTable2,'A3E9','0dur')
+	local integer level = LoadInteger(OtherHashTable2,'A3E9','0lvl')
 	call FRR(WJE, WLE, FNR, level, true)
 	call T4V(WJE)
-	call FlushChildHashtable(VV,'A3E9')
+	call FlushChildHashtable(OtherHashTable2,'A3E9')
 	set WJE = null
 	set WLE = null
 endfunction
@@ -37524,8 +37518,8 @@ endfunction
 function FFR takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer h = GetHandleId(t)
-	local integer DSR = LoadInteger(P, h, 0)
-	call SaveInteger(P, DSR,'A0O3', LoadInteger(P, DSR,'A0O3')-LoadInteger(P, h, 1))
+	local integer DSR = LoadInteger(ObjectHashTable, h, 0)
+	call SaveInteger(ObjectHashTable, DSR,'A0O3', LoadInteger(ObjectHashTable, DSR,'A0O3')-LoadInteger(ObjectHashTable, h, 1))
 	call DestroyTimerAndFlushHT_P(t)
 	set t = null
 endfunction
@@ -37534,7 +37528,7 @@ function FGR takes unit u, unit d, player p, integer WUV returns nothing
 	local texttag FHR
 	local integer h = GetHandleId(t)
 	local integer hu = GetHandleId(u)
-	local integer goldBonus = LoadInteger(P, hu,'A0O3')+ WUV * 2 + 2
+	local integer goldBonus = LoadInteger(ObjectHashTable, hu,'A0O3')+ WUV * 2 + 2
 	local boolean b = IsUnitType(d, UNIT_TYPE_HERO)
 	if goldBonus > (8 * WUV) then
 		set goldBonus = 8 * WUV
@@ -37552,12 +37546,12 @@ function FGR takes unit u, unit d, player p, integer WUV returns nothing
 		call SetTextTagPermanent(FHR, false)
 		set FHR = null
 	endif
-	call SaveInteger(P, hu,'A0O3', 2 + LoadInteger(P, hu,'A0O3'))
-	call SaveInteger(P, h, 0, hu)
-	call SaveInteger(P, h, 1, 2)
+	call SaveInteger(ObjectHashTable, hu,'A0O3', 2 + LoadInteger(ObjectHashTable, hu,'A0O3'))
+	call SaveInteger(ObjectHashTable, h, 0, hu)
+	call SaveInteger(ObjectHashTable, h, 1, 2)
 	call TimerStart(t, 25, false, function FFR)
 	set hu = GetHandleId(p)
-	call SaveInteger(P, hu,'A0O3', LoadInteger(P, hu,'A0O3')+ goldBonus)
+	call SaveInteger(ObjectHashTable, hu,'A0O3', LoadInteger(ObjectHashTable, hu,'A0O3')+ goldBonus)
 	set t = null
 	set FHR = null
 endfunction
@@ -37586,9 +37580,9 @@ function FKR takes nothing returns nothing
 			set WFV = GetHandleId(t)
 			set ETX = StringHash("acidspray_count")
 			call LodSystem_AddUnitExtraState(t, XK[1], "armourneg")
-			call SaveInteger(P, GetHandleId(t), StringHash("acidspray"), LoadInteger(P, GetHandleId(t), StringHash("acidspray")+ XK[1]))
+			call SaveInteger(ObjectHashTable, GetHandleId(t), StringHash("acidspray"), LoadInteger(ObjectHashTable, GetHandleId(t), StringHash("acidspray")+ XK[1]))
 			call WJV(t,'C014','D014',-1)
-			call SaveInteger(P, WFV, ETX, LoadInteger(P, WFV, ETX)+ 1)
+			call SaveInteger(ObjectHashTable, WFV, ETX, LoadInteger(ObjectHashTable, WFV, ETX)+ 1)
 			set t = null
 			return
 		endif
@@ -37599,13 +37593,13 @@ endfunction
 function FLR takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
-	local unit u = LoadUnitHandle(P, h, 2)
+	local unit u = LoadUnitHandle(ObjectHashTable, h, 2)
 	if E8X(u) == false then
 		call WHV(u,'D014')
-		call LodSystem_ReduceUnitExtraState(u, LoadInteger(P, h, 0), "armourneg")
+		call LodSystem_ReduceUnitExtraState(u, LoadInteger(ObjectHashTable, h, 0), "armourneg")
 		call DisableTrigger(t)
 		call DestroyTrigger(t)
-		call FlushChildHashtable(P, h)
+		call FlushChildHashtable(ObjectHashTable, h)
 	endif
 	set u = null
 	set t = null
@@ -37616,35 +37610,35 @@ function FMR takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer WFV = GetHandleId(t)
 	local integer ETX = StringHash("acidspray_count")
-	local integer UYX = LoadInteger(P, WFV, 0)
+	local integer UYX = LoadInteger(ObjectHashTable, WFV, 0)
 	local trigger tt
 	local integer h
-	set XK[1]= LoadInteger(P, WFV, 2)
-	set IK = LoadGroupHandle(P, WFV, 1)
+	set XK[1]= LoadInteger(ObjectHashTable, WFV, 2)
+	set IK = LoadGroupHandle(ObjectHashTable, WFV, 1)
 	if UYX == 17 then
-		set UYX = LoadInteger(P, WFV, 2)
-		call DestroyEffect(LoadEffectHandle(P, WFV, 2))
+		set UYX = LoadInteger(ObjectHashTable, WFV, 2)
+		call DestroyEffect(LoadEffectHandle(ObjectHashTable, WFV, 2))
 		loop
 			set u = FirstOfGroup(IK)
 		exitwhen u == null
 			set WFV = GetHandleId(u)
-			set UYX = LoadInteger(P, WFV, ETX)
+			set UYX = LoadInteger(ObjectHashTable, WFV, ETX)
 			if E8X(u) == false then
 				if UYX == 1 then
 					call WHV(u,'D014')
 				endif
-				call SaveInteger(P, GetHandleId(u), StringHash("acidspray"), IMinBJ(LoadInteger(P, GetHandleId(u), StringHash("acidspray")-XK[1]), 0))
+				call SaveInteger(ObjectHashTable, GetHandleId(u), StringHash("acidspray"), IMinBJ(LoadInteger(ObjectHashTable, GetHandleId(u), StringHash("acidspray")-XK[1]), 0))
 				call LodSystem_ReduceUnitExtraState(u, XK[1], "armourneg")
 			else
 				set tt = CreateTrigger()
 				call TriggerRegisterTimerEvent(tt, 1, true)
 				call TriggerAddCondition(tt, Condition(function FLR))
 				set h = GetHandleId(tt)
-				call SaveInteger(P, h, 0, XK[1])
-				call SaveUnitHandle(P, h, 2, u)
+				call SaveInteger(ObjectHashTable, h, 0, XK[1])
+				call SaveUnitHandle(ObjectHashTable, h, 2, u)
 				set tt = null
 			endif
-			call SaveInteger(P, WFV, ETX, UYX -1)
+			call SaveInteger(ObjectHashTable, WFV, ETX, UYX -1)
 			call GroupRemoveUnit(IK, u)
 		endloop
 		call DeallocateGroup(IK)
@@ -37652,21 +37646,21 @@ function FMR takes nothing returns nothing
 		set t = null
 		return
 	endif
-	call SaveInteger(P, WFV, 0, UYX + 1)
-	set Temp__Player = LoadPlayerHandle(P, WFV, 3)
-	set Temp__ArrayUnit[0]= LoadUnitHandle(P, WFV, 0)
-	set XK[0]= LoadInteger(P, WFV, 1)
-	call GroupEnumUnitsInRange(AK, LoadReal(P, WFV, 0), LoadReal(P, WFV, 1), 650, Condition(function FKR))
+	call SaveInteger(ObjectHashTable, WFV, 0, UYX + 1)
+	set Temp__Player = LoadPlayerHandle(ObjectHashTable, WFV, 3)
+	set Temp__ArrayUnit[0]= LoadUnitHandle(ObjectHashTable, WFV, 0)
+	set XK[0]= LoadInteger(ObjectHashTable, WFV, 1)
+	call GroupEnumUnitsInRange(AK, LoadReal(ObjectHashTable, WFV, 0), LoadReal(ObjectHashTable, WFV, 1), 650, Condition(function FKR))
 	loop
 		set u = FirstOfGroup(IK)
 	exitwhen u == null
 		set WFV = GetHandleId(u)
-		set UYX = LoadInteger(P, WFV, ETX)
+		set UYX = LoadInteger(ObjectHashTable, WFV, ETX)
 		if UYX == 1 then
 			call WHV(u,'D014')
 		endif
-		call SaveInteger(P, WFV, ETX, UYX -1)
-		call SaveInteger(P, WFV, StringHash("acidspray"), LoadInteger(P, WFV, StringHash("acidspray")-XK[1]))
+		call SaveInteger(ObjectHashTable, WFV, ETX, UYX -1)
+		call SaveInteger(ObjectHashTable, WFV, StringHash("acidspray"), LoadInteger(ObjectHashTable, WFV, StringHash("acidspray")-XK[1]))
 		call LodSystem_ReduceUnitExtraState(u, XK[1], "armourneg")
 		call GroupRemoveUnit(IK, u)
 	endloop
@@ -37687,15 +37681,15 @@ function YOV takes nothing returns nothing
 	local integer WFV = GetHandleId(t)
 	local real x = GetSpellTargetX()
 	local real y = GetSpellTargetY()
-	call SaveUnitHandle(P, WFV, 0, u)
-	call SaveGroupHandle(P, WFV, 1, AllocationGroup(127))
-	call SaveEffectHandle(P, WFV, 2, AddSpecialEffect("effects\\Radioactivecloud_2c.mdl", x, y))
-	call SavePlayerHandle(P, WFV, 3, GetOwningPlayer(u))
-	call SaveInteger(P, WFV, 0, 0)
-	call SaveInteger(P, WFV, 1, WUV * 6 + 8)
-	call SaveInteger(P, WFV, 2, WUV + 3)
-	call SaveReal(P, WFV, 0, x)
-	call SaveReal(P, WFV, 1, y)
+	call SaveUnitHandle(ObjectHashTable, WFV, 0, u)
+	call SaveGroupHandle(ObjectHashTable, WFV, 1, AllocationGroup(127))
+	call SaveEffectHandle(ObjectHashTable, WFV, 2, AddSpecialEffect("effects\\Radioactivecloud_2c.mdl", x, y))
+	call SavePlayerHandle(ObjectHashTable, WFV, 3, GetOwningPlayer(u))
+	call SaveInteger(ObjectHashTable, WFV, 0, 0)
+	call SaveInteger(ObjectHashTable, WFV, 1, WUV * 6 + 8)
+	call SaveInteger(ObjectHashTable, WFV, 2, WUV + 3)
+	call SaveReal(ObjectHashTable, WFV, 0, x)
+	call SaveReal(ObjectHashTable, WFV, 1, y)
 	call TimerStart(t, 1, true, function FMR)
 	set t = null
 	set u = null
@@ -37976,7 +37970,7 @@ function F3R takes nothing returns nothing
 	call SetUnitPosition(GetEnumUnit(), F4R, F5R)
 	call SetUnitFacingTimed(GetEnumUnit(), RJ -UCV, .3)
 	if IsUnitType(GetEnumUnit(), UNIT_TYPE_HERO) then
-		call SaveBoolean(K, GetHandleId(GetEnumUnit()), 99, true)
+		call SaveBoolean(OtherHashTable, GetHandleId(GetEnumUnit()), 99, true)
 	endif
 	call DestroyEffect(AddSpecialEffectTarget("Abilities\\Weapons\\AncientProtectorMissile\\AncientProtectorMissile.mdl", GetEnumUnit(), "origin"))
 endfunction
@@ -38726,15 +38720,15 @@ function GWR takes nothing returns nothing
 	local integer level
 	local boolean GZR = false
 	local integer h
-	if LoadUnitHandle(P, GetHandleId(WJE),'A004'+ 1)!= null then
-		set WJE = LoadUnitHandle(P, GetHandleId(WJE),'A004'+ 1)
+	if LoadUnitHandle(ObjectHashTable, GetHandleId(WJE),'A004'+ 1)!= null then
+		set WJE = LoadUnitHandle(ObjectHashTable, GetHandleId(WJE),'A004'+ 1)
 		set GZR = true
-		call RemoveSavedHandle(P, GetHandleId(U2),'A004'+ 1)
+		call RemoveSavedHandle(ObjectHashTable, GetHandleId(U2),'A004'+ 1)
 	endif
 	set h = GetHandleId(WJE)
-	set g = LoadGroupHandle(P, h,'A004')
-	set GYR = LoadInteger(P, h,'A004')
-	set level = LoadInteger(P, h,'A005')
+	set g = LoadGroupHandle(ObjectHashTable, h,'A004')
+	set GYR = LoadInteger(ObjectHashTable, h,'A004')
+	set level = LoadInteger(ObjectHashTable, h,'A005')
 	call TDV(WLE)
 	call GroupAddUnit(g, WLE)
 	if GZR then
@@ -38743,11 +38737,11 @@ function GWR takes nothing returns nothing
 		set damageValue = 75 *(level + 1)
 	endif
 	call UnitDamageTargetEx(WJE, WLE, 1, damageValue)
-	if GetUnitAbilityLevel(WLE,'A3E9') == 1 and LoadBoolean(P, h,'A004') == false then
+	if GetUnitAbilityLevel(WLE,'A3E9') == 1 and LoadBoolean(ObjectHashTable, h,'A004') == false then
 		if IsMagicImmuneUnit(WJE) == false and GetUnitAbilityLevel(WJE,'Aloc') == 0 then
-			call SaveUnitHandle(VV,'A3E9', 0, WLE)
-			call SaveUnitHandle(VV,'A3E9', 1, WJE)
-			call SaveInteger(VV,'A3E9', 0, level)
+			call SaveUnitHandle(OtherHashTable2,'A3E9', 0, WLE)
+			call SaveUnitHandle(OtherHashTable2,'A3E9', 1, WJE)
+			call SaveInteger(OtherHashTable2,'A3E9', 0, level)
 			call ExecuteFunc("G_R")
 		endif
 	endif
@@ -38759,23 +38753,23 @@ function GWR takes nothing returns nothing
 		set u = FirstOfGroup(tg)
 		if u != null then
 			call NHX(WLE, u,'h02K', "GWR", 1000, true)
-			call SaveUnitHandle(P, GetHandleId(WLE),'A004'+ 1, WJE)
-			call SaveInteger(P, h,'A004', GYR -1)
+			call SaveUnitHandle(ObjectHashTable, GetHandleId(WLE),'A004'+ 1, WJE)
+			call SaveInteger(ObjectHashTable, h,'A004', GYR -1)
 		else
 			call DeallocateGroup(g)
-			call RemoveSavedInteger(P, h,'A004')
-			call RemoveSavedHandle(P, h,'A004')
-			call RemoveSavedBoolean(P, h,'A004')
-			call RemoveSavedInteger(P, h,'A005')
+			call RemoveSavedInteger(ObjectHashTable, h,'A004')
+			call RemoveSavedHandle(ObjectHashTable, h,'A004')
+			call RemoveSavedBoolean(ObjectHashTable, h,'A004')
+			call RemoveSavedInteger(ObjectHashTable, h,'A005')
 		endif
 		call DeallocateGroup(tg)
 		set tg = null
 	else
 		call DeallocateGroup(g)
-		call RemoveSavedInteger(P, h,'A004')
-		call RemoveSavedHandle(P, h,'A004')
-		call RemoveSavedBoolean(P, h,'A004')
-		call RemoveSavedInteger(P, h,'A005')
+		call RemoveSavedInteger(ObjectHashTable, h,'A004')
+		call RemoveSavedHandle(ObjectHashTable, h,'A004')
+		call RemoveSavedBoolean(ObjectHashTable, h,'A004')
+		call RemoveSavedInteger(ObjectHashTable, h,'A005')
 	endif
 	set WJE = null
 	set WLE = null
@@ -38784,40 +38778,40 @@ function GWR takes nothing returns nothing
 	set tg = null
 endfunction
 function G_R takes nothing returns nothing
-	local unit WJE = LoadUnitHandle(VV,'A3E9', 0)
-	local unit WLE = LoadUnitHandle(VV,'A3E9', 1)
-	local integer level = LoadInteger(VV,'A3E9', 0)
+	local unit WJE = LoadUnitHandle(OtherHashTable2,'A3E9', 0)
+	local unit WLE = LoadUnitHandle(OtherHashTable2,'A3E9', 1)
+	local integer level = LoadInteger(OtherHashTable2,'A3E9', 0)
 	call T4V(WJE)
 	if UnitHasSpellShield(WLE) == false then
 		call NHX(WJE, WLE,'h02K', "GWR", 1000, true)
-		call SaveInteger(P, GetHandleId(WJE),'A004', level -1)
-		call SaveInteger(P, GetHandleId(WJE),'A005', level)
-		call SaveGroupHandle(P, GetHandleId(WJE),'A004', AllocationGroup(135))
-		call SaveBoolean(P, GetHandleId(WJE),'A004', true)
+		call SaveInteger(ObjectHashTable, GetHandleId(WJE),'A004', level -1)
+		call SaveInteger(ObjectHashTable, GetHandleId(WJE),'A005', level)
+		call SaveGroupHandle(ObjectHashTable, GetHandleId(WJE),'A004', AllocationGroup(135))
+		call SaveBoolean(ObjectHashTable, GetHandleId(WJE),'A004', true)
 	else
 		call AJO(WLE)
 	endif
-	call FlushChildHashtable(VV,'A3E9')
+	call FlushChildHashtable(OtherHashTable2,'A3E9')
 	set WJE = null
 	set WLE = null
 endfunction
 function FIE takes nothing returns nothing
 	if not UnitHasSpellShield(GetSpellTargetUnit()) then
 		call NHX(GetTriggerUnit(), GetSpellTargetUnit(),'h02K', "GWR", 1000, true)
-		call SaveInteger(P, GetHandleId(GetTriggerUnit()),'A004', GetUnitAbilityLevel(GetTriggerUnit(),'A004')-1)
-		call SaveGroupHandle(P, GetHandleId(GetTriggerUnit()),'A004', AllocationGroup(136))
-		call SaveInteger(P, GetHandleId(GetTriggerUnit()),'A005', GetUnitAbilityLevel(GetTriggerUnit(),'A004'))
+		call SaveInteger(ObjectHashTable, GetHandleId(GetTriggerUnit()),'A004', GetUnitAbilityLevel(GetTriggerUnit(),'A004')-1)
+		call SaveGroupHandle(ObjectHashTable, GetHandleId(GetTriggerUnit()),'A004', AllocationGroup(136))
+		call SaveInteger(ObjectHashTable, GetHandleId(GetTriggerUnit()),'A005', GetUnitAbilityLevel(GetTriggerUnit(),'A004'))
 	endif
 endfunction
 function G0R takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer WFV = GetHandleId(t)
-	local integer DSR = LoadInteger(P, WFV, 0)
-	local integer UYX = LoadInteger(P, DSR,'A0FV')-1
-	local unit u = LoadUnitHandle(P, WFV, 0)
-	local integer G1R = LoadInteger(P, GetHandleId(u),'WARP')
+	local integer DSR = LoadInteger(ObjectHashTable, WFV, 0)
+	local integer UYX = LoadInteger(ObjectHashTable, DSR,'A0FV')-1
+	local unit u = LoadUnitHandle(ObjectHashTable, WFV, 0)
+	local integer G1R = LoadInteger(ObjectHashTable, GetHandleId(u),'WARP')
 	local integer N3X
-	local integer WUV = LoadInteger(P, GetHandleId(u),'WARL')
+	local integer WUV = LoadInteger(ObjectHashTable, GetHandleId(u),'WARL')
 	local integer i = R2I(.5 * WUV * WUV + .5 * WUV + 4)
 	if G1R > 0 then
 		call J8X(u, G1R)
@@ -38825,13 +38819,13 @@ function G0R takes nothing returns nothing
 	set N3X = i +(UYX)* WUV
 	if (UYX > 0) then
 		call J6X(u, N3X)
-		call SaveInteger(P, GetHandleId(u),'WARP', N3X)
+		call SaveInteger(ObjectHashTable, GetHandleId(u),'WARP', N3X)
 	else
-		call SaveInteger(P, GetHandleId(u),'WARP', 0)
+		call SaveInteger(ObjectHashTable, GetHandleId(u),'WARP', 0)
 		call UnitRemoveAbility(u,'A30P')
 	endif
-	call SaveInteger(P, DSR,'A0FV', UYX)
-	call LodSystem_ReduceUnitExtraState(u, LoadInteger(P, WFV, 1), "damage")
+	call SaveInteger(ObjectHashTable, DSR,'A0FV', UYX)
+	call LodSystem_ReduceUnitExtraState(u, LoadInteger(ObjectHashTable, WFV, 1), "damage")
 	call DestroyTimerAndFlushHT_P(t)
 	set t = null
 	set u = null
@@ -38842,7 +38836,7 @@ function G2R takes unit u, integer WUV returns nothing
 	local integer N3X
 	local integer CJR
 	local integer WFV = GetHandleId(u)
-	local integer UYX = LoadInteger(P, WFV,'A0FV')+ 1
+	local integer UYX = LoadInteger(ObjectHashTable, WFV,'A0FV')+ 1
 	local integer i
 	local integer G1R
 	set CJR = 15+ 5 * WUV
@@ -38852,17 +38846,17 @@ function G2R takes unit u, integer WUV returns nothing
 	set t = CreateTimer()
 	set W0V = GetHandleId(t)
 	set N3X = UYX *(WUV + 2)
-	if LoadInteger(P, WFV,'WARP')> 0 then
-		call J8X(u, LoadInteger(P, WFV,'WARP'))
+	if LoadInteger(ObjectHashTable, WFV,'WARP')> 0 then
+		call J8X(u, LoadInteger(ObjectHashTable, WFV,'WARP'))
 	endif
 	call LodSystem_AddUnitExtraState(u, CJR, "damage")
-	call SaveInteger(P, WFV,'A0FV', UYX)
-	call SaveInteger(P, WFV,'WARP', N3X)
-	call SaveInteger(P, WFV,'WARL', WUV)
+	call SaveInteger(ObjectHashTable, WFV,'A0FV', UYX)
+	call SaveInteger(ObjectHashTable, WFV,'WARP', N3X)
+	call SaveInteger(ObjectHashTable, WFV,'WARL', WUV)
 	call J6X(u, N3X)
-	call SaveUnitHandle(P, W0V, 0, u)
-	call SaveInteger(P, W0V, 0, WFV)
-	call SaveInteger(P, W0V, 1, CJR)
+	call SaveUnitHandle(ObjectHashTable, W0V, 0, u)
+	call SaveInteger(ObjectHashTable, W0V, 0, WFV)
+	call SaveInteger(ObjectHashTable, W0V, 1, CJR)
 	call TimerStart(t, 14., false, function G0R)
 	call UnitAddPermanentAbility(u,'A30P')
 	call UnitMakeAbilityPermanent(u, true,'A0EF')
@@ -38960,7 +38954,7 @@ function G8R takes unit whichUnit returns nothing
 	local unit dummyUnit = CreateUnit(GetOwningPlayer(whichUnit),'e00E', GetUnitX(whichUnit), GetUnitY(whichUnit), 0)
 	local integer level = GetUnitAbilityLevel(whichUnit,'A0GP')
 	//call SetUnitUserData(dummyUnit, 1)
-	//call TriggerRegisterUnitEvent(JJ, dummyUnit, EVENT_UNIT_SPELL_EFFECT)
+	//call TriggerRegisterUnitEvent(UnitEventMainTrig, dummyUnit, EVENT_UNIT_SPELL_EFFECT)
 	call UnitAddPermanentAbility(dummyUnit,'A0GP')
 	call IssueImmediateOrderById(dummyUnit, 852526)
 	// 马甲只是为了释放特效 真正的伤害和操作还得看英雄
@@ -39248,9 +39242,9 @@ function HUR takes unit u, unit t, integer level, boolean FAR returns nothing
 	local real y = GetWidgetY(t)
 	local group g
 	if GetUnitAbilityLevel(t,'A3E9') == 1 and not FAR and GetUnitAbilityLevel(u,'A04R') == 0 then
-		call SaveUnitHandle(VV,'A3E9', 0, t)
-		call SaveUnitHandle(VV,'A3E9', 1, u)
-		call SaveInteger(VV,'A3E9', 0, level)
+		call SaveUnitHandle(OtherHashTable2,'A3E9', 0, t)
+		call SaveUnitHandle(OtherHashTable2,'A3E9', 1, u)
+		call SaveInteger(OtherHashTable2,'A3E9', 0, level)
 		call ExecuteFunc("HWR")
 	endif
 	if UnitHasSpellShield(t) == false then
@@ -39272,9 +39266,9 @@ function ZVV takes nothing returns nothing
 	call HUR(GetTriggerUnit(), GetSpellTargetUnit(), GetUnitAbilityLevel(GetTriggerUnit(),'A00L'), false)
 endfunction
 function HWR takes nothing returns nothing
-	call T4V(LoadUnitHandle(VV,'A3E9', 0))
-	call HUR(LoadUnitHandle(VV,'A3E9', 0), LoadUnitHandle(VV,'A3E9', 1), LoadInteger(VV,'A3E9', 0), true)
-	call FlushChildHashtable(VV,'A3E9')
+	call T4V(LoadUnitHandle(OtherHashTable2,'A3E9', 0))
+	call HUR(LoadUnitHandle(OtherHashTable2,'A3E9', 0), LoadUnitHandle(OtherHashTable2,'A3E9', 1), LoadInteger(OtherHashTable2,'A3E9', 0), true)
+	call FlushChildHashtable(OtherHashTable2,'A3E9')
 endfunction
 function KBE takes nothing returns nothing
 	call DestroyEffect(AddSpecialEffectTarget("war3mapImported\\DoubleEdgeCaster.mdx", GetTriggerUnit(), "hand, right"))
@@ -39282,13 +39276,13 @@ endfunction
 function HYR takes nothing returns nothing
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
-	local unit u = LoadUnitHandle(P, h, 0)
+	local unit u = LoadUnitHandle(ObjectHashTable, h, 0)
 	if GetUnitAbilityLevel(u,'A3KA') == 1 then
-		call SetUnitX(u, LoadReal(P, h, 0))
-		call SetUnitY(u, LoadReal(P, h, 1))
+		call SetUnitX(u, LoadReal(ObjectHashTable, h, 0))
+		call SetUnitY(u, LoadReal(ObjectHashTable, h, 1))
 	endif
 	call UnitRemoveAbility(u,'A3KA')
-	call FlushChildHashtable(P, h)
+	call FlushChildHashtable(ObjectHashTable, h)
 	call CleanCurrentTrigger(t)
 	set t = null
 	set u = null
@@ -39297,10 +39291,10 @@ function HZR takes unit u, real x, real y, integer level returns nothing
 	local trigger t = CreateTrigger()
 	local integer h = GetHandleId(t)
 	local integer S7V = 7 -level
-	call SaveUnitHandle(P, h, 0, u)
+	call SaveUnitHandle(ObjectHashTable, h, 0, u)
 	call UnitAddPermanentAbility(u,'A3KA')
-	call SaveReal(P, h, 0, x)
-	call SaveReal(P, h, 1, y)
+	call SaveReal(ObjectHashTable, h, 0, x)
+	call SaveReal(ObjectHashTable, h, 1, y)
 	call TriggerRegisterTimerEvent(t, S7V, false)
 	call TriggerAddCondition(t, Condition(function HYR))
 	set t = null
@@ -40181,7 +40175,7 @@ function KDR takes nothing returns boolean
 	else
 		set KGR = LoadUnitHandle(HY, h, 700 + count)
 		if IsUnitType(trigUnit, UNIT_TYPE_HERO) then
-			call SaveBoolean(K, GetHandleId(trigUnit), 99, true)
+			call SaveBoolean(OtherHashTable, GetHandleId(trigUnit), 99, true)
 		endif
 		call SetUnitX(trigUnit, GetUnitX(KGR))
 		call SetUnitY(trigUnit, GetUnitY(KGR))
@@ -40886,7 +40880,7 @@ function LDR takes nothing returns boolean
 			call UnitRemoveAbility(u,'A44Y')
 			call UnitRemoveAbility(u,'B44Y')
 			call FlushChildHashtable(HY, h)
-			call RemoveSavedHandle(P, GetHandleId(u),'A2X9')
+			call RemoveSavedHandle(ObjectHashTable, GetHandleId(u),'A2X9')
 			call RemoveSavedReal(HY, GetHandleId(u),'A2X9')
 			call CleanCurrentTrigger(t)
 		endif
@@ -40904,7 +40898,7 @@ function LDR takes nothing returns boolean
 			call UnitRemoveAbility(u,'A44Y')
 			call UnitRemoveAbility(u,'B44Y')
 			call FlushChildHashtable(HY, h)
-			call RemoveSavedHandle(P, GetHandleId(u),'A2X9')
+			call RemoveSavedHandle(ObjectHashTable, GetHandleId(u),'A2X9')
 			call RemoveSavedReal(HY, GetHandleId(u),'A2X9')
 			call CleanCurrentTrigger(t)
 		endif
@@ -40922,8 +40916,8 @@ function LGR takes nothing returns nothing
 	local trigger t
 	local integer h
 	local real LJR
-	if HaveSavedHandle(P, GetHandleId(WLE),'A2X9') then
-		set t = LoadTriggerHandle(P, GetHandleId(WLE),'A2X9')
+	if HaveSavedHandle(ObjectHashTable, GetHandleId(WLE),'A2X9') then
+		set t = LoadTriggerHandle(ObjectHashTable, GetHandleId(WLE),'A2X9')
 		set h = GetHandleId(t)
 		set LJR = LoadReal(HY, h, 10)
 		if LJR != LHR then
@@ -40935,7 +40929,7 @@ function LGR takes nothing returns nothing
 		set h = GetHandleId(t)
 		call TriggerRegisterTimerEvent(t, .1, true)
 		call SaveUnitHandle(HY, h, 0, WLE)
-		call SaveTriggerHandle(P, GetHandleId(WLE),'A2X9', t)
+		call SaveTriggerHandle(ObjectHashTable, GetHandleId(WLE),'A2X9', t)
 		call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_DEATH)
 		call TriggerAddCondition(t, Condition(function LDR))
 		call TriggerRegisterUnitEvent(t, WLE, EVENT_UNIT_DAMAGED)
@@ -41573,7 +41567,7 @@ function MAR takes nothing returns boolean
 	call SetUnitState(WUE, UNIT_STATE_MANA, RMaxBJ(DDO -MBR, 0))
 	call MoveLightning(APX, true, lx, ly, NBX, NCX)
 	if IsUnitType(WUE, UNIT_TYPE_HERO) then
-		call SaveBoolean(K, GetHandleId(WUE), 99, true)
+		call SaveBoolean(OtherHashTable, GetHandleId(WUE), 99, true)
 	endif
 	call SetUnitX(WUE, NBX)
 	call SetUnitY(WUE, NCX)
@@ -42357,7 +42351,7 @@ function PKR takes nothing returns boolean
 		set M8R = x + .02 * N3X * Cos(PQR * bj_DEGTORAD)
 		set M9R = y + .02 * N3X * Sin(PQR * bj_DEGTORAD)
 		if IsUnitType(WJE, UNIT_TYPE_HERO) then
-			call SaveBoolean(K, GetHandleId(WJE), 99, true)
+			call SaveBoolean(OtherHashTable, GetHandleId(WJE), 99, true)
 		endif
 		call SetUnitX(WJE, CoordinateX50(M8R))
 		call SetUnitY(WJE, CoordinateY50(M9R))
@@ -42406,7 +42400,7 @@ function PKR takes nothing returns boolean
 		endif
 	else
 		if IsUnitType(WJE, UNIT_TYPE_HERO) then
-			call SaveBoolean(K, GetHandleId(WJE), 99, true)
+			call SaveBoolean(OtherHashTable, GetHandleId(WJE), 99, true)
 		endif
 		call SetUnitX(WJE, x)
 		call SetUnitY(WJE, y)
@@ -42422,7 +42416,7 @@ function PKR takes nothing returns boolean
 			set M8R = GetUnitX(MH)+ 50 * Cos(PQR * bj_DEGTORAD)
 			set M9R = GetUnitY(MH)+ 50 * Sin(PQR * bj_DEGTORAD)
 			if IsUnitType(WJE, UNIT_TYPE_HERO) then
-				call SaveBoolean(K, GetHandleId(WJE), 99, true)
+				call SaveBoolean(OtherHashTable, GetHandleId(WJE), 99, true)
 			endif
 			call SetUnitX(WJE, CoordinateX50(M8R))
 			call SetUnitY(WJE, CoordinateY50(M9R))
@@ -43822,7 +43816,7 @@ function KLE takes nothing returns nothing
 	local unit trigUnit = GetTriggerUnit()
 	local unit WWE = GetSpellTargetUnit()
 	local integer UHE = GetUnitLevel(WWE)
-	if GetOwningPlayer(WWE)!= SentinelPlayers[0]and GetOwningPlayer(WWE)!= ScourgePlayers[0]and LoadInteger(M, GetUnitTypeId(WWE), HC)> 88 then
+	if GetOwningPlayer(WWE)!= SentinelPlayers[0]and GetOwningPlayer(WWE)!= ScourgePlayers[0]and LoadInteger(SightDataHashTable, GetUnitTypeId(WWE), HC)> 88 then
 		call EXStopUnit(trigUnit)
 		call InterfaceErrorForPlayer(GetOwningPlayer(trigUnit), GetObjectName('n0CX'))
 	endif
@@ -44050,7 +44044,7 @@ function TPR takes nothing returns boolean
 		set a =(LoadReal(HY, h, 137))
 		set x1 = GetUnitX(WWE)+ d /  15* Cos(a)
 		set y1 = GetUnitY(WWE)+ d /  15* Sin(a)
-		call SaveBoolean(K, GetHandleId(WWE), 99, true)
+		call SaveBoolean(OtherHashTable, GetHandleId(WWE), 99, true)
 		call SetUnitPosition(WWE, x1, y1)
 		call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Human\\FlakCannons\\FlakTarget.mdl", x1, y1))
 		if GetTriggerEvalCount(t)> 15 then
@@ -44212,7 +44206,7 @@ function T_R takes nothing returns boolean
 endfunction
 function T0R takes nothing returns nothing
 	local timer t = GetExpiredTimer()
-	call UnitAddAbility(LoadUnitHandle(P, GetHandleId(t), 0),'A04R')
+	call UnitAddAbility(LoadUnitHandle(ObjectHashTable, GetHandleId(t), 0),'A04R')
 	call DestroyTimerAndFlushHT_P(t)
 	set t = null
 endfunction
@@ -44221,7 +44215,7 @@ function T1R takes nothing returns nothing
 	local unit trigUnit = GetTriggerUnit()
 	local trigger t = CreateTrigger()
 	local integer h = GetHandleId(t)
-	call SaveUnitHandle(P, GetHandleId(time), 0, trigUnit)
+	call SaveUnitHandle(ObjectHashTable, GetHandleId(time), 0, trigUnit)
 	call TimerStart(time, 0, false, function T0R)
 	call SetUnitInvulnerable(trigUnit, true)
 	call SaveUnitHandle(HY, h, 14,(trigUnit))
@@ -44440,7 +44434,7 @@ endfunction
 function UOR takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local destructable d = LoadDestructableHandle(HY, GetHandleId(t), 0)
-	call RemoveSavedBoolean(P, GetHandleId(d),'0FON')
+	call RemoveSavedBoolean(ObjectHashTable, GetHandleId(d),'0FON')
 	call PauseTimer(t)
 	call DestroyTimer(t)
 	set d = null
@@ -44448,13 +44442,13 @@ function UOR takes nothing returns nothing
 endfunction
 function URR takes destructable d returns nothing
 	local timer t = CreateTimer()
-	call SaveBoolean(P, GetHandleId(d),'0FON', true)
+	call SaveBoolean(ObjectHashTable, GetHandleId(d),'0FON', true)
 	call SaveDestructableHandle(HY, GetHandleId(t), 0, d)
 	call TimerStart(t, 5, false, function UOR)
 	set t = null
 endfunction
 function UIR takes nothing returns nothing
-	if (IsTreeDestructable(GetEnumDestructable()) or GetDestructableTypeId(GetEnumDestructable())=='B005') and H8V <= H9V and(GetDestructableLife(GetEnumDestructable())> 0 or(DN and LoadBoolean(P, GetHandleId(GetEnumDestructable()),'0FON'))) then
+	if (IsTreeDestructable(GetEnumDestructable()) or GetDestructableTypeId(GetEnumDestructable())=='B005') and H8V <= H9V and(GetDestructableLife(GetEnumDestructable())> 0 or(DN and LoadBoolean(ObjectHashTable, GetHandleId(GetEnumDestructable()),'0FON'))) then
 		set H8V = H8V + 1
 		call UER(GetTriggerUnit(), BN, CN)
 		if not DN then
@@ -44581,7 +44575,7 @@ function UHR takes nothing returns boolean
 	local real a = Atan2(W0E -WZE, W_E -WYE)
 	local integer level = LoadInteger(HY, h, 0)
 	local boolean UDR = LoadInteger(HY, h, 1)=='A1B3'
-	call SetUnitAnimationByIndex(WUE, LoadInteger(P, GetUnitTypeId(WUE),'A1P8'))
+	call SetUnitAnimationByIndex(WUE, LoadInteger(ObjectHashTable, GetUnitTypeId(WUE),'A1P8'))
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH or GetDistanceBetween(GXR, GOR, W_E, W0E)> 1400 or C5X(WUE) then
 		call SetUnitPathing(WUE, true)
 		call DestroyEffect(LoadEffectHandle(HY, h, 175))
@@ -44611,7 +44605,7 @@ function UHR takes nothing returns boolean
 		set x = WYE + 15* Cos(a)
 		set y = WZE + 15* Sin(a)
 		if IsUnitType(WUE, UNIT_TYPE_HERO) then
-			call SaveBoolean(K, GetHandleId(WUE), 99, true)
+			call SaveBoolean(OtherHashTable, GetHandleId(WUE), 99, true)
 		endif
 		call SetUnitPosition(WUE, x, y)
 		call SetUnitFacing(WUE, a * bj_RADTODEG)
@@ -44638,7 +44632,7 @@ function UJR takes unit WUE, unit WWE, integer id, integer level returns nothing
 	call SetUnitPathing(WUE, false)
 	call UnitAddPermanentAbility(WUE,'A0ST')
 	call SetPlayerAbilityAvailableEx(GetOwningPlayer(WUE),'A0ST', false)
-	call SetUnitAnimationByIndex(WUE, LoadInteger(P, GetUnitTypeId(WUE),'A1P8'))
+	call SetUnitAnimationByIndex(WUE, LoadInteger(ObjectHashTable, GetUnitTypeId(WUE),'A1P8'))
 	call FKX(WUE, false)
 	call FJX(WUE)
 	call SetUnitTimeScale(WUE, 3.)
@@ -44753,9 +44747,9 @@ function UPR takes unit R8X, unit WWE returns nothing
 	local integer hu = GetHandleId(R8X)
 	local integer h
 	local trigger t
-	if LoadBoolean(P, hu,'A0QN'+ 1) then
+	if LoadBoolean(ObjectHashTable, hu,'A0QN'+ 1) then
 		call UnitRemoveAbility(R8X,'A40H')
-		call SaveBoolean(P, hu,'A0QN'+ 1, false)
+		call SaveBoolean(ObjectHashTable, hu,'A0QN'+ 1, false)
 	endif
 	set t = CreateTrigger()
 	call TriggerRegisterTimerEvent(t, 1, true)
@@ -44769,23 +44763,23 @@ function UPR takes unit R8X, unit WWE returns nothing
 endfunction
 function UQR takes unit R8X, unit WLE returns nothing
 	if GetUnitAbilityLevel(R8X,'A0QN')> 0 and not X3X(R8X) and IsUnitType(WLE, UNIT_TYPE_MECHANICAL) == false then
-		if LoadBoolean(P, GetHandleId(R8X),'A0QN') then
+		if LoadBoolean(ObjectHashTable, GetHandleId(R8X),'A0QN') then
 			call UPR(R8X, WLE)
 		endif
-		if LoadBoolean(P, GetHandleId(R8X),'A0QN'+ 1) then
-			if LoadUnitHandle(P, GetHandleId(R8X),'A0QN'+ 1) == WLE then
+		if LoadBoolean(ObjectHashTable, GetHandleId(R8X),'A0QN'+ 1) then
+			if LoadUnitHandle(ObjectHashTable, GetHandleId(R8X),'A0QN'+ 1) == WLE then
 				call UPR(R8X, WLE)
 			else
-				call SaveBoolean(P, GetHandleId(R8X),'A0QN'+ 1, false)
+				call SaveBoolean(ObjectHashTable, GetHandleId(R8X),'A0QN'+ 1, false)
 				call UnitRemoveAbility(R8X,'A40H')
 			endif
 		endif
 	endif
 endfunction
 function USR takes unit R8X, unit WLE returns nothing
-	if LoadBoolean(P, GetHandleId(R8X),'A0QN'+ 1) then
-		if LoadUnitHandle(P, GetHandleId(R8X),'A0QN'+ 1)!= WLE then
-			call SaveBoolean(P, GetHandleId(R8X),'A0QN'+ 1, false)
+	if LoadBoolean(ObjectHashTable, GetHandleId(R8X),'A0QN'+ 1) then
+		if LoadUnitHandle(ObjectHashTable, GetHandleId(R8X),'A0QN'+ 1)!= WLE then
+			call SaveBoolean(ObjectHashTable, GetHandleId(R8X),'A0QN'+ 1, false)
 			call UnitRemoveAbility(R8X,'A40H')
 		endif
 	endif
@@ -44980,13 +44974,13 @@ endfunction
 function U3R takes timer t, integer WFV returns nothing
 	local integer i = 0
 	loop
-		call DestroyUbersplat(LoadUbersplatHandle(P, WFV, i + 500))
-		call DestroyEffect(LoadEffectHandle(P, WFV, i + 3))
+		call DestroyUbersplat(LoadUbersplatHandle(ObjectHashTable, WFV, i + 500))
+		call DestroyEffect(LoadEffectHandle(ObjectHashTable, WFV, i + 3))
 		set i = i + 1
 	exitwhen i == 14
 	endloop
-	call RemoveUnit(LoadUnitHandle(P, WFV, 1))
-	call DeallocateGroup(LoadGroupHandle(P, WFV, 2))
+	call RemoveUnit(LoadUnitHandle(ObjectHashTable, WFV, 1))
+	call DeallocateGroup(LoadGroupHandle(ObjectHashTable, WFV, 2))
 	call DestroyTimerAndFlushHT_P(t)
 	set t = null
 endfunction
@@ -44996,7 +44990,7 @@ function U4R takes nothing returns boolean
 	local player p = GetOwningPlayer(t)
 	local group g
 	if IsUnitEnemy(u, p) and IsAliveNotStrucNotWard(t) and IsMagicImmuneUnit(t) == false then
-		set g = LoadGroupHandle(P, XK[0], 2)
+		set g = LoadGroupHandle(ObjectHashTable, XK[0], 2)
 		if IsUnitInGroup(t, g) == false then
 			call GroupAddUnit(g, t)
 			call UnitDamageTargetEx(u, t, 1, XK[1])
@@ -45012,10 +45006,10 @@ endfunction
 function U5R takes nothing returns nothing
 	local ubersplat u = null
 	local timer t = GetExpiredTimer()
-	local integer WVV
+	local integer count
 	local integer WFV = GetHandleId(t)
-	local integer UYX = LoadInteger(P, WFV, 0)+ 1
-	local integer UJV = LoadInteger(P, WFV, 1)
+	local integer UYX = LoadInteger(ObjectHashTable, WFV, 0)+ 1
+	local integer UJV = LoadInteger(ObjectHashTable, WFV, 1)
 	local real I3X
 	local real ax
 	local real ay
@@ -45026,36 +45020,36 @@ function U5R takes nothing returns nothing
 		set t = null
 		return
 	endif
-	call SaveInteger(P, WFV, 0, UYX)
+	call SaveInteger(ObjectHashTable, WFV, 0, UYX)
 	if UYX < 14 then
-		set I3X = LoadReal(P, WFV, 0)
-		set x = LoadReal(P, WFV, 1)+ 100 * UYX * Cos(I3X)
-		set y = LoadReal(P, WFV, 2)+ 100 * UYX * Sin(I3X)
-		call SaveEffectHandle(P, WFV, 2 + UYX, AddSpecialEffect("effects\\IcePath.mdx", x, y))
+		set I3X = LoadReal(ObjectHashTable, WFV, 0)
+		set x = LoadReal(ObjectHashTable, WFV, 1)+ 100 * UYX * Cos(I3X)
+		set y = LoadReal(ObjectHashTable, WFV, 2)+ 100 * UYX * Sin(I3X)
+		call SaveEffectHandle(ObjectHashTable, WFV, 2 + UYX, AddSpecialEffect("effects\\IcePath.mdx", x, y))
 		set u = CreateUbersplat(x, y, "IPTH", 255, 255, 255, 255, false, false)
 		call SetUbersplatRenderAlways(u, true)
-		call SaveUbersplatHandle(P, WFV, 500 + UYX, u)
+		call SaveUbersplatHandle(ObjectHashTable, WFV, 500 + UYX, u)
 		set t = null
 		set u = null
 		return
 	endif
-	set Temp__ArrayUnit[0]= LoadUnitHandle(P, WFV, 0)
-	set Temp__ArrayUnit[1]= LoadUnitHandle(P, WFV, 1)
-	set XK[2]= LoadInteger(P, WFV, 3)
-	set XK[1]= LoadInteger(P, WFV, 2)
+	set Temp__ArrayUnit[0]= LoadUnitHandle(ObjectHashTable, WFV, 0)
+	set Temp__ArrayUnit[1]= LoadUnitHandle(ObjectHashTable, WFV, 1)
+	set XK[2]= LoadInteger(ObjectHashTable, WFV, 3)
+	set XK[1]= LoadInteger(ObjectHashTable, WFV, 2)
 	set XK[0]= WFV
-	set I3X = LoadReal(P, WFV, 0)
-	set x = LoadReal(P, WFV, 1)
-	set y = LoadReal(P, WFV, 2)
+	set I3X = LoadReal(ObjectHashTable, WFV, 0)
+	set x = LoadReal(ObjectHashTable, WFV, 1)
+	set y = LoadReal(ObjectHashTable, WFV, 2)
 	set ax = Cos(I3X)
 	set ay = Sin(I3X)
-	set WVV = 0
+	set count = 0
 	loop
 		call GroupEnumUnitsInRange(AK, x, y, 175, Condition(function U4R))
 		set x = x + 100 * ax
 		set y = y + 100 * ay
-		set WVV = WVV + 1
-	exitwhen WVV == 13
+		set count = count + 1
+	exitwhen count == 13
 	endloop
 	set t = null
 endfunction
@@ -45066,17 +45060,17 @@ function Jakiro_Icepath_Start2 takes nothing returns nothing
 	local integer WUV = GetUnitAbilityLevel(u,'A0O6')
 	local real x = GetWidgetX(u)
 	local real y = GetWidgetY(u)
-	call SaveUnitHandle(P, WFV, 0, u)
+	call SaveUnitHandle(ObjectHashTable, WFV, 0, u)
 	set u = CreateUnit(Player(15),'e00E', 0, 0, 0)
-	call SaveUnitHandle(P, WFV, 1, u)
-	call SaveGroupHandle(P, WFV, 2, AllocationGroup(203))
-	call SaveInteger(P, WFV, 0, 0)
-	call SaveInteger(P, WFV, 1, WUV * 8 + 12)
-	call SaveInteger(P, WFV, 2, 50)
-	call SaveInteger(P, WFV, 3, WUV)
-	call SaveReal(P, WFV, 0, Atan2(GetSpellTargetY()-y, GetSpellTargetX()-x))
-	call SaveReal(P, WFV, 1, x)
-	call SaveReal(P, WFV, 2, y)
+	call SaveUnitHandle(ObjectHashTable, WFV, 1, u)
+	call SaveGroupHandle(ObjectHashTable, WFV, 2, AllocationGroup(203))
+	call SaveInteger(ObjectHashTable, WFV, 0, 0)
+	call SaveInteger(ObjectHashTable, WFV, 1, WUV * 8 + 12)
+	call SaveInteger(ObjectHashTable, WFV, 2, 50)
+	call SaveInteger(ObjectHashTable, WFV, 3, WUV)
+	call SaveReal(ObjectHashTable, WFV, 0, Atan2(GetSpellTargetY()-y, GetSpellTargetX()-x))
+	call SaveReal(ObjectHashTable, WFV, 1, x)
+	call SaveReal(ObjectHashTable, WFV, 2, y)
 	call TimerStart(t, .05, true, function U5R)
 	set t = null
 	set u = null
@@ -45693,7 +45687,7 @@ function W_R takes unit u returns nothing
 	call TimerStart(t, .25, true, function WZR)
 	call SaveUnitHandle(HY, GetHandleId(t), 0, u)
 	call SaveUnitHandle(HY, GetHandleId(t), 1, d)
-	call SaveBoolean(P, GetHandleId(u),'SPRT', true)
+	call SaveBoolean(ObjectHashTable, GetHandleId(u),'SPRT', true)
 	set t = null
 	set d = null
 endfunction
@@ -45707,20 +45701,20 @@ function V0E takes nothing returns nothing
 	call SetUnitAbilityLevel(u,'A11X', level)
 	call SetUnitAbilityLevel(u,'A10U', level)
 	if W0R then
-		if LoadBoolean(P, GetHandleId(u),'SPRT')!= true then
+		if LoadBoolean(ObjectHashTable, GetHandleId(u),'SPRT')!= true then
 			call W_R(u)
 		endif
 	endif
 	set u = null
 endfunction
 function FWE takes nothing returns nothing
-	call SaveBoolean(P, GetHandleId(GetTriggerUnit()),'A085', false)
+	call SaveBoolean(ObjectHashTable, GetHandleId(GetTriggerUnit()),'A085', false)
 endfunction
 function JNE takes nothing returns nothing
 	local unit u = GetTriggerUnit()
 	local integer id = GetUnitTypeId(u)
 	if id <'H06W' or id >'H06Y' then
-		call SaveBoolean(P, GetHandleId(u),'A085', false)
+		call SaveBoolean(ObjectHashTable, GetHandleId(u),'A085', false)
 	endif
 	set u = null
 endfunction
@@ -45741,23 +45735,23 @@ endfunction
 function W2R takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer WFV = GetHandleId(t)
-	local integer UYX = LoadInteger(P, WFV, 0)
-	local unit u = LoadUnitHandle(P, WFV, 0)
+	local integer UYX = LoadInteger(ObjectHashTable, WFV, 0)
+	local unit u = LoadUnitHandle(ObjectHashTable, WFV, 0)
 	local real x
 	local real y
-	local real s = LoadReal(P, WFV, StringHash("scale"))
-	local unit O8O = LoadUnitHandle(P, WFV, 1)
+	local real s = LoadReal(ObjectHashTable, WFV, StringHash("scale"))
+	local unit O8O = LoadUnitHandle(ObjectHashTable, WFV, 1)
 	if UYX == 1 then
-		call DeallocateGroup(LoadGroupHandle(P, WFV, 2))
+		call DeallocateGroup(LoadGroupHandle(ObjectHashTable, WFV, 2))
 		call DestroyTimerAndFlushHT_P(t)
 		call KillUnit(u)
 		set t = null
 		set u = null
 		return
 	endif
-	call SaveInteger(P, WFV, 0, UYX -1)
-	set x = GetWidgetX(u)+ LoadReal(P, WFV, 3)
-	set y = GetWidgetY(u)+ LoadReal(P, WFV, 4)
+	call SaveInteger(ObjectHashTable, WFV, 0, UYX -1)
+	set x = GetWidgetX(u)+ LoadReal(ObjectHashTable, WFV, 3)
+	set y = GetWidgetY(u)+ LoadReal(ObjectHashTable, WFV, 4)
 	call SetUnitX(u, x)
 	call SetUnitY(u, y)
 	if s < .4 then
@@ -45768,12 +45762,12 @@ function W2R takes nothing returns nothing
 		set s = 1.5
 	endif
 	call SetUnitScale(u, s, s, s)
-	call SaveReal(P, WFV, StringHash("scale"), s)
+	call SaveReal(ObjectHashTable, WFV, StringHash("scale"), s)
 	call A8X(GetOwningPlayer(O8O), 2.5, x, y, 375)
-	set Temp__Player = LoadPlayerHandle(P, WFV, 2)
+	set Temp__Player = LoadPlayerHandle(ObjectHashTable, WFV, 2)
 	set Temp__ArrayUnit[0]= O8O
-	set XK[0]= LoadInteger(P, WFV, 1)
-	set Q7V = LoadGroupHandle(P, WFV, 3)
+	set XK[0]= LoadInteger(ObjectHashTable, WFV, 1)
+	set Q7V = LoadGroupHandle(ObjectHashTable, WFV, 3)
 	set X3 = G3X(u)
 	call GroupEnumUnitsInRange(AK, x, y, 375, Condition(function W1R))
 	set O8O = null
@@ -45784,31 +45778,31 @@ function W3R takes nothing returns nothing
 	local real s
 	local timer t = GetExpiredTimer()
 	local integer WFV = GetHandleId(t)
-	local integer UYX = LoadInteger(P, WFV, 0)-1
-	local unit u = LoadUnitHandle(P, WFV, 0)
+	local integer UYX = LoadInteger(ObjectHashTable, WFV, 0)-1
+	local unit u = LoadUnitHandle(ObjectHashTable, WFV, 0)
 	local unit O8O
-	if UYX == 0 or LoadBoolean(P, GetHandleId(LoadUnitHandle(P, WFV, 1)),'A085') == false then
+	if UYX == 0 or LoadBoolean(ObjectHashTable, GetHandleId(LoadUnitHandle(ObjectHashTable, WFV, 1)),'A085') == false then
 		call KillUnit(u)
-		set O8O = CreateUnit(Player(15),'h070', LoadReal(P, WFV, 0), LoadReal(P, WFV, 1), LoadReal(P, WFV, 2))
+		set O8O = CreateUnit(Player(15),'h070', LoadReal(ObjectHashTable, WFV, 0), LoadReal(ObjectHashTable, WFV, 1), LoadReal(ObjectHashTable, WFV, 2))
 		call SetUnitScale(O8O, .1, .1, .1)
-		call SaveReal(P, WFV, StringHash("scale"), .15)
-		call SaveInteger(P, WFV, 0, 61)
-		call SaveInteger(P, WFV, 1,(LoadInteger(P, WFV, 1)-UYX)* 10)
-		call SaveUnitHandle(P, WFV, 0, O8O)
-		call SaveGroupHandle(P, WFV, 3, AllocationGroup(209))
+		call SaveReal(ObjectHashTable, WFV, StringHash("scale"), .15)
+		call SaveInteger(ObjectHashTable, WFV, 0, 61)
+		call SaveInteger(ObjectHashTable, WFV, 1,(LoadInteger(ObjectHashTable, WFV, 1)-UYX)* 10)
+		call SaveUnitHandle(ObjectHashTable, WFV, 0, O8O)
+		call SaveGroupHandle(ObjectHashTable, WFV, 3, AllocationGroup(209))
 		call TimerStart(t, .025, true, function W2R)
-		call SaveBoolean(P, GetHandleId(LoadUnitHandle(P, WFV, 1)),'A085', false)
-		call SetPlayerAbilityAvailableEx(LoadPlayerHandle(P, WFV, 2),'A121', false)
-		call SetPlayerAbilityAvailableEx(LoadPlayerHandle(P, WFV, 2),'A085', true)
-		call RemoveUnit(LoadUnitHandle(P, WFV, 4))
+		call SaveBoolean(ObjectHashTable, GetHandleId(LoadUnitHandle(ObjectHashTable, WFV, 1)),'A085', false)
+		call SetPlayerAbilityAvailableEx(LoadPlayerHandle(ObjectHashTable, WFV, 2),'A121', false)
+		call SetPlayerAbilityAvailableEx(LoadPlayerHandle(ObjectHashTable, WFV, 2),'A085', true)
+		call RemoveUnit(LoadUnitHandle(ObjectHashTable, WFV, 4))
 		set O8O = null
 		set t = null
 		set u = null
 		return
 	endif
-	set s = 1 +(LoadInteger(P, WFV, 1)-UYX)* .1
+	set s = 1 +(LoadInteger(ObjectHashTable, WFV, 1)-UYX)* .1
 	call SetUnitScale(u, s, s, s)
-	call SaveInteger(P, WFV, 0, UYX)
+	call SaveInteger(ObjectHashTable, WFV, 0, UYX)
 	set t = null
 	set u = null
 endfunction
@@ -45826,21 +45820,21 @@ function FUE takes nothing returns nothing
 	call SetPlayerAbilityAvailableEx(p,'A085', false)
 	call SetPlayerAbilityAvailableEx(p,'A121', true)
 	call UnitAddPermanentAbility(u,'A121')
-	call SaveUnitHandle(P, WFV, 0, CreateUnit(Player(15),'u00J', x1, y1, a * bj_RADTODEG))
-	call SavePlayerHandle(P, WFV, 2, p)
-	call SaveInteger(P, WFV, 0, i)
-	call SaveInteger(P, WFV, 1, i)
-	call SaveReal(P, WFV, 0, x1)
-	call SaveReal(P, WFV, 1, y1)
-	call SaveReal(P, WFV, 2, a * bj_RADTODEG)
-	call SaveReal(P, WFV, 3, 26.25 * Cos(a))
-	call SaveReal(P, WFV, 4, 26.25 * Sin(a))
+	call SaveUnitHandle(ObjectHashTable, WFV, 0, CreateUnit(Player(15),'u00J', x1, y1, a * bj_RADTODEG))
+	call SavePlayerHandle(ObjectHashTable, WFV, 2, p)
+	call SaveInteger(ObjectHashTable, WFV, 0, i)
+	call SaveInteger(ObjectHashTable, WFV, 1, i)
+	call SaveReal(ObjectHashTable, WFV, 0, x1)
+	call SaveReal(ObjectHashTable, WFV, 1, y1)
+	call SaveReal(ObjectHashTable, WFV, 2, a * bj_RADTODEG)
+	call SaveReal(ObjectHashTable, WFV, 3, 26.25 * Cos(a))
+	call SaveReal(ObjectHashTable, WFV, 4, 26.25 * Sin(a))
 	if GetUnitTypeId(u)=='e00E' then
-		call SaveUnitHandle(P, WFV, 1, Player__Hero[GetPlayerId(p)])
-		call SaveBoolean(P, GetHandleId(Player__Hero[GetPlayerId(p)]),'A085', true)
+		call SaveUnitHandle(ObjectHashTable, WFV, 1, Player__Hero[GetPlayerId(p)])
+		call SaveBoolean(ObjectHashTable, GetHandleId(Player__Hero[GetPlayerId(p)]),'A085', true)
 	else
-		call SaveUnitHandle(P, WFV, 1, u)
-		call SaveBoolean(P, GetHandleId(u),'A085', true)
+		call SaveUnitHandle(ObjectHashTable, WFV, 1, u)
+		call SaveBoolean(ObjectHashTable, GetHandleId(u),'A085', true)
 		if GetUnitTypeId(u)>='H06W' and GetUnitTypeId(u)<='H06Y' then
 			set u = CreateUnit(p,'h06Z', x, y, a * bj_RADTODEG)
 			call SetUnitX(u, x)
@@ -45848,7 +45842,7 @@ function FUE takes nothing returns nothing
 			call SetUnitAnimation(u, "spell")
 			call QueueUnitAnimation(u, "spell")
 			call SetUnitVertexColor(u, 255, 255, 255, 75)
-			call SaveUnitHandle(P, WFV, 4, u)
+			call SaveUnitHandle(ObjectHashTable, WFV, 4, u)
 		endif
 	endif
 	call TimerStart(t, .1, true, function W3R)
@@ -46143,12 +46137,12 @@ function YAR takes nothing returns nothing
 			set ETX = StringHash("lunar_count")
 			call WJV(u,'C032','D032',-1)
 			call LodSystem_AddUnitExtraState(u, XK[1], "damage")
-			call SaveInteger(P, WFV, ETX, LoadInteger(P, WFV, ETX)+ 1)
+			call SaveInteger(ObjectHashTable, WFV, ETX, LoadInteger(ObjectHashTable, WFV, ETX)+ 1)
 			set u = null
 			return
 		endif
 		call GroupRemoveUnit(IK, u)
-		if LoadBoolean(P, 99999, 99998) then
+		if LoadBoolean(ObjectHashTable, 99999, 99998) then
 			call LodSystem_AddUnitExtraState(u, XK[1], "damage")
 			call LodSystem_ReduceUnitExtraState(u, XK[0], "damage")
 		endif
@@ -46159,16 +46153,16 @@ function YNR takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer ETX = StringHash("lunar_count")
 	local integer WFV = GetHandleId(t)
-	local unit u = LoadUnitHandle(P, WFV, 0)
-	set IK = LoadGroupHandle(P, WFV, 1)
-	set XK[0]= LoadInteger(P, WFV, 0)
+	local unit u = LoadUnitHandle(ObjectHashTable, WFV, 0)
+	set IK = LoadGroupHandle(ObjectHashTable, WFV, 1)
+	set XK[0]= LoadInteger(ObjectHashTable, WFV, 0)
 	if UnitIsDead(u) then
 		set u = FirstOfGroup(IK)
 		if u != null then
 			loop
 				set WFV = GetHandleId(u)
-				call SaveInteger(P, WFV, ETX, LoadInteger(P, WFV, ETX)-1)
-				if LoadInteger(P, WFV, ETX) == 0 then
+				call SaveInteger(ObjectHashTable, WFV, ETX, LoadInteger(ObjectHashTable, WFV, ETX)-1)
+				if LoadInteger(ObjectHashTable, WFV, ETX) == 0 then
 					call WHV(u,'D032')
 				endif
 				call LodSystem_ReduceUnitExtraState(u, XK[0], "damage")
@@ -46184,18 +46178,18 @@ function YNR takes nothing returns nothing
 	set XK[1]= GetUnitAbilityLevel(u,'A062')* 8 + 6
 	set Temp__Player = GetOwningPlayer(u)
 	if XK[0]!= XK[1] then
-		call SaveBoolean(P, 99999, 99998, true)
-		call SaveInteger(P, WFV, 0, XK[1])
+		call SaveBoolean(ObjectHashTable, 99999, 99998, true)
+		call SaveInteger(ObjectHashTable, WFV, 0, XK[1])
 	else
-		call SaveBoolean(P, 99999, 99998, false)
+		call SaveBoolean(ObjectHashTable, 99999, 99998, false)
 	endif
 	call GroupEnumUnitsInRange(AK, GetWidgetX(u), GetWidgetY(u), 925, Condition(function YAR))
 	loop
 		set u = FirstOfGroup(IK)
 	exitwhen u == null
 		set WFV = GetHandleId(u)
-		call SaveInteger(P, WFV, ETX, LoadInteger(P, WFV, ETX)-1)
-		if LoadInteger(P, WFV, ETX) == 0 then
+		call SaveInteger(ObjectHashTable, WFV, ETX, LoadInteger(ObjectHashTable, WFV, ETX)-1)
+		if LoadInteger(ObjectHashTable, WFV, ETX) == 0 then
 			call WHV(u,'D032')
 		endif
 		call LodSystem_ReduceUnitExtraState(u, XK[0], "damage")
@@ -46213,14 +46207,14 @@ function L6E takes nothing returns nothing
 	local timer t = CreateTimer()
 	local unit u = GetTriggerUnit()
 	local integer WFV = GetHandleId(t)
-	call SaveBoolean(P, 99999, 99998, true)
+	call SaveBoolean(ObjectHashTable, 99999, 99998, true)
 	set IK = CreateGroup()
 	set Temp__Player = GetOwningPlayer(u)
 	set XK[0]= 0
 	set XK[1]= GetUnitAbilityLevel(u,'A062')* 8 + 6
-	call SaveUnitHandle(P, WFV, 0, u)
-	call SaveGroupHandle(P, WFV, 1, IK)
-	call SaveInteger(P, WFV, 0, XK[1])
+	call SaveUnitHandle(ObjectHashTable, WFV, 0, u)
+	call SaveGroupHandle(ObjectHashTable, WFV, 1, IK)
+	call SaveInteger(ObjectHashTable, WFV, 0, XK[1])
 	call GroupEnumUnitsInRange(AK, GetWidgetX(u), GetWidgetY(u), 925, Condition(function YAR))
 	loop
 		set u = FirstOfGroup(BK)
@@ -46306,34 +46300,34 @@ function YFR takes unit u, unit target, real d returns nothing
 	endif
 endfunction
 function YGR takes nothing returns nothing
-	call SaveBoolean(P,'DARK', 0, false)
+	call SaveBoolean(ObjectHashTable,'DARK', 0, false)
 	call SuspendTimeOfDay(false)
-	call SetFloatGameState(GAME_STATE_TIME_OF_DAY, LoadReal(P,'DARK', 1))
+	call SetFloatGameState(GAME_STATE_TIME_OF_DAY, LoadReal(ObjectHashTable,'DARK', 1))
 endfunction
 function YHR takes real SYV, boolean b returns nothing
 	local real YJR = GetGameTime()
-	local real YKR = LoadReal(P,'DARK', 0)
+	local real YKR = LoadReal(ObjectHashTable,'DARK', 0)
 	local real endTime
 	local real YLR
 	local real YMR
 	set YLR = SYV / 20.
 	if YJR + SYV > YKR then
 		call TimerStart(ZC, SYV + .1, false, function YGR)
-		call SaveReal(P,'DARK', 0, YJR + SYV)
+		call SaveReal(ObjectHashTable,'DARK', 0, YJR + SYV)
 		call SuspendTimeOfDay(true)
-		if LoadBoolean(P,'DARK', 0) == false then
+		if LoadBoolean(ObjectHashTable,'DARK', 0) == false then
 			set YJR = GetFloatGameState(GAME_STATE_TIME_OF_DAY)
 			set YMR = YJR + YLR
 			if YMR >= 24 then
 				set YMR = YMR -24.
 			endif
-			call SaveReal(P,'DARK', 1, YMR)
+			call SaveReal(ObjectHashTable,'DARK', 1, YMR)
 		endif
 		// debug call SingleDebug(R2S(YMR)+ " " + R2S(YLR))
 		if b then
 			call SetFloatGameState(GAME_STATE_TIME_OF_DAY, 0)
 		endif
-		call SaveBoolean(P,'DARK', 0, true)
+		call SaveBoolean(ObjectHashTable,'DARK', 0, true)
 	endif
 endfunction
 function YPR takes nothing returns boolean
@@ -46705,7 +46699,7 @@ function ZAR takes nothing returns nothing
 		call SetUnitFlyHeight(trigUnit, GetUnitDefaultFlyHeight(trigUnit)+ RMaxBJ(ZDR, 0), 0)
 	endif
 	if IsUnitType(trigUnit, UNIT_TYPE_HERO) then
-		call SaveBoolean(K, GetHandleId(trigUnit), 99, true)
+		call SaveBoolean(OtherHashTable, GetHandleId(trigUnit), 99, true)
 	endif
 	call SetUnitX(trigUnit, CoordinateX50(NBX))
 	call SetUnitY(trigUnit, CoordinateY50(NCX))
@@ -46838,8 +46832,8 @@ function ZLR takes nothing returns nothing
 	call DeallocateGroup(g)
 	if WWE != null then
 		if IsUnitType(WWE, UNIT_TYPE_HERO) then
-			call SaveInteger(K, GetHandleId(p),'ARRH', LoadInteger(K, GetHandleId(p),'ARRH')+ 1)
-			call StoreDrCacheData("AA_Hits" + I2S(GetPlayerId(GetOwningPlayer(WJE))), LoadInteger(K, GetHandleId(p),'ARRH'))
+			call SaveInteger(OtherHashTable, GetHandleId(p),'ARRH', LoadInteger(OtherHashTable, GetHandleId(p),'ARRH')+ 1)
+			call StoreDrCacheData("AA_Hits" + I2S(GetPlayerId(GetOwningPlayer(WJE))), LoadInteger(OtherHashTable, GetHandleId(p),'ARRH'))
 		endif
 		set W_V = CreateUnit(GetOwningPlayer(WWE),'e00E', ZSR, ZTR, 0)
 		set ZJR = IMinBJ(R2I(GetDistanceBetween(LoadReal(HY, h, 191), LoadReal(HY, h, 192), ZSR, ZTR)/ 150), 10)
@@ -46883,8 +46877,8 @@ function EOE takes nothing returns nothing
 	local integer h = GetHandleId(t)
 	local player p = GetOwningPlayer(u)
 	local unit d = CreateUnit(p,'h005', x1, y1, a * bj_RADTODEG)
-	call SaveInteger(K, GetHandleId(p),'ARRS', LoadInteger(K, GetHandleId(p),'ARRS')+ 1)
-	call StoreDrCacheData("AA_Total" + I2S(GetPlayerId(p)), LoadInteger(K, GetHandleId(p),'ARRS'))
+	call SaveInteger(OtherHashTable, GetHandleId(p),'ARRS', LoadInteger(OtherHashTable, GetHandleId(p),'ARRS')+ 1)
+	call StoreDrCacheData("AA_Total" + I2S(GetPlayerId(p)), LoadInteger(OtherHashTable, GetHandleId(p),'ARRS'))
 	call SetUnitFacing(d, a * bj_RADTODEG)
 	set x2 = CoordinateX50(x1 + 3000* Cos(a))
 	set y2 = CoordinateY50(y1 + 3000* Sin(a))
@@ -46944,7 +46938,7 @@ function Z0R takes nothing returns boolean
 	set Y2X = Y2X -1
 	call SaveInteger(HY, h, 194,(Y2X))
 	if IsUnitType(u, UNIT_TYPE_HERO) then
-		call SaveBoolean(K, GetHandleId(u), 99, true)
+		call SaveBoolean(OtherHashTable, GetHandleId(u), 99, true)
 	endif
 	call SetUnitX(u, CoordinateX50(NBX))
 	call SetUnitY(u, CoordinateY50(NCX))
@@ -47161,13 +47155,13 @@ function Z9R takes unit trigUnit, integer VVI, real VEI returns nothing
 	local integer E6X = GetHeroStr(trigUnit, false)
 	local real mp = GetUnitState(trigUnit, UNIT_STATE_MANA)
 	if VVI == 0 then
-		if mp >= VEI and E5X -LoadInteger(K, GetHandleId(trigUnit), 31)> 2 and UnitIsDead(trigUnit) == false and E5X > PC then
+		if mp >= VEI and E5X -LoadInteger(OtherHashTable, GetHandleId(trigUnit), 31)> 2 and UnitIsDead(trigUnit) == false and E5X > PC then
 			call SetUnitState(trigUnit, UNIT_STATE_MANA, mp -VEI)
 			call SetHeroAgi(trigUnit, E5X -2, true)
 			call SetHeroStr(trigUnit, E6X + 2, true)
 		endif
 	elseif VVI == 1 then
-		if mp >= VEI and E6X -LoadInteger(K, GetHandleId(trigUnit), 30)-LoadInteger(K, GetHandleId(trigUnit),'ARML')> 4 and UnitIsDead(trigUnit) == false and E6X > PC then
+		if mp >= VEI and E6X -LoadInteger(OtherHashTable, GetHandleId(trigUnit), 30)-LoadInteger(OtherHashTable, GetHandleId(trigUnit),'ARML')> 4 and UnitIsDead(trigUnit) == false and E6X > PC then
 			call SetUnitState(trigUnit, UNIT_STATE_MANA, mp -VEI)
 			call SetHeroAgi(trigUnit, E5X + 2, true)
 			call SetHeroStr(trigUnit, E6X -2, true)
@@ -47732,7 +47726,7 @@ function EVI takes unit u, integer ETX, real EEI, real EXI returns boolean
 	return(Mode__BalanceOff and TKV(u, ETX, EEI)) or(Mode__BalanceOff == false and TKV(u, ETX, EXI))
 endfunction
 function EOI takes nothing returns boolean
-	local integer id = LoadInteger(VV,'MULT', 0)
+	local integer id = LoadInteger(OtherHashTable2,'MULT', 0)
 	return id =='A1HS'
 endfunction
 
@@ -47767,7 +47761,7 @@ function ERI takes nothing returns nothing
 	loop
 		set abilityId = HeroCommonSkills[PlayerSkillIndex[iPlayerId * HL + i]]
 		if abilityId > 0 and not IsPassiveSkill[PlayerSkillIndex[iPlayerId * HL + i]] then
-			call SaveInteger(VV,'MULT', 0, abilityId)
+			call SaveInteger(OtherHashTable2,'MULT', 0, abilityId)
 			// 能被多重施法
 			if (X9R(iPlayerId, abilityId) and OXR(abilityId)) or EOI() then
 				call DisplayTimedTextToPlayer(p, 0, 0, 15, "	|c00ff0303" + GetObjectName(abilityId)+ "|r " + UGV(abilityId)+ " 能被多重施法")
@@ -47780,29 +47774,29 @@ endfunction
 
 function EII takes unit u, integer lv returns integer
 	local integer i = GetPlayerId(GetOwningPlayer(u))
-	call SaveInteger(K, i,'MC_T', LoadInteger(K, i,'MC_T')+ 1)
+	call SaveInteger(OtherHashTable, i,'MC_T', LoadInteger(OtherHashTable, i,'MC_T')+ 1)
 	if lv == 1 then
 		if EVI(u,'A088', 25, 18) then
-			call SaveInteger(K, i,'MC_2', LoadInteger(K, i,'MC_2')+ 1)
+			call SaveInteger(OtherHashTable, i,'MC_2', LoadInteger(OtherHashTable, i,'MC_2')+ 1)
 			return 2
 		endif
 	elseif lv == 2 then
 		if EVI(u,'A088'+ 1, 20, 13) then
-			call SaveInteger(K, i,'MC_3', LoadInteger(K, i,'MC_3')+ 1)
+			call SaveInteger(OtherHashTable, i,'MC_3', LoadInteger(OtherHashTable, i,'MC_3')+ 1)
 			return 3
 		elseif EVI(u,'A088', 40, 29.5) then
-			call SaveInteger(K, i,'MC_2', LoadInteger(K, i,'MC_2')+ 1)
+			call SaveInteger(OtherHashTable, i,'MC_2', LoadInteger(OtherHashTable, i,'MC_2')+ 1)
 			return 2
 		endif
 	elseif lv == 3 then
 		if EVI(u,'A088'+ 2, 12.5, 5.5) then
-			call SaveInteger(K, i,'MC_4', LoadInteger(K, i,'MC_4')+ 1)
+			call SaveInteger(OtherHashTable, i,'MC_4', LoadInteger(OtherHashTable, i,'MC_4')+ 1)
 			return 4
 		elseif EVI(u,'A088'+ 1, 25, 14.5) then
-			call SaveInteger(K, i,'MC_3', LoadInteger(K, i,'MC_3')+ 1)
+			call SaveInteger(OtherHashTable, i,'MC_3', LoadInteger(OtherHashTable, i,'MC_3')+ 1)
 			return 3
 		elseif EVI(u,'A088', 50, 39.5) then
-			call SaveInteger(K, i,'MC_2', LoadInteger(K, i,'MC_2')+ 1)
+			call SaveInteger(OtherHashTable, i,'MC_2', LoadInteger(OtherHashTable, i,'MC_2')+ 1)
 			return 2
 		endif
 	endif
@@ -48041,8 +48035,8 @@ function Wave takes unit u1, integer id, real damage, real max_distance, real ar
 	local real speed = missiespeed * interval
 	local integer max_evalcount = R2I(max_distance / speed)+ 1
 	call SetUnitColor(u, PLAYER_COLOR_ORANGE)
-	if LoadBoolean(VV,'wave','ally') then
-		call RemoveSavedBoolean(VV,'wave','ally')
+	if LoadBoolean(OtherHashTable2,'wave','ally') then
+		call RemoveSavedBoolean(OtherHashTable2,'wave','ally')
 		call SaveBoolean(HY, h,'ally', true)
 	endif
 	call SaveUnitHandle(HY, h, 0, u)
@@ -48113,15 +48107,15 @@ function EJI takes nothing returns boolean
 		call SaveUnitHandle(HY, GetHandleId(KBX),'REFL', u)
 		call SetUnitX(KBX, GetWidgetX(u))
 		call SetUnitY(KBX, GetWidgetY(u))
-		call SaveUnitHandle(P, GetHandleId(KBX), 0, LoadUnitHandle(HY, h, 2))
-		call TriggerRegisterUnitEvent(JJ, KBX, EVENT_UNIT_SPELL_EFFECT)
-		call RemoveSavedHandle(P, GetHandleId(KBX), 0)
-		if HaveSavedInteger(P, id, 0) then
-			set id = LoadInteger(P, id, 0)
+		call SaveUnitHandle(ObjectHashTable, GetHandleId(KBX), 0, LoadUnitHandle(HY, h, 2))
+		call TriggerRegisterUnitEvent(UnitEventMainTrig, KBX, EVENT_UNIT_SPELL_EFFECT)
+		call RemoveSavedHandle(ObjectHashTable, GetHandleId(KBX), 0)
+		if HaveSavedInteger(ObjectHashTable, id, 0) then
+			set id = LoadInteger(ObjectHashTable, id, 0)
 		endif
 		call UnitAddPermanentAbility(KBX, id)
 		call SetUnitAbilityLevel(KBX, id, lv)
-		set ESI = LoadBoolean(P, GetHandleId(p), id)
+		set ESI = LoadBoolean(ObjectHashTable, GetHandleId(p), id)
 		if ESI then
 			call SetPlayerAbilityAvailable(p, id, true)
 		endif
@@ -48172,7 +48166,7 @@ function EJI takes nothing returns boolean
 						call SetUnitX(KBX, GetUnitX(EQI))
 						call SetUnitY(KBX, GetUnitY(EQI))
 					endif
-				exitwhen EQI == null or(LoadInteger(M, GetUnitTypeId(EQI), HC)<= 88 and IssueTargetOrderById(KBX, S6V, EQI))
+				exitwhen EQI == null or(LoadInteger(SightDataHashTable, GetUnitTypeId(EQI), HC)<= 88 and IssueTargetOrderById(KBX, S6V, EQI))
 					call GroupRemoveUnit(g, EQI)
 				endloop
 				call DeallocateGroup(g)
@@ -48187,10 +48181,10 @@ function EJI takes nothing returns boolean
 			set d = LoadReal(HY, h,'000D')
 			set a = Atan2(ty -uy, tx -ux)
 			if id =='A0JC'then
-				call SaveUnitHandle(VV,'A3E9', 0, KBX)
-				call SaveInteger(VV,'A3E9', 0, lv)
-				call SaveReal(VV,'A3E9', 0, ux)
-				call SaveReal(VV,'A3E9', 1, uy)
+				call SaveUnitHandle(OtherHashTable2,'A3E9', 0, KBX)
+				call SaveInteger(OtherHashTable2,'A3E9', 0, lv)
+				call SaveReal(OtherHashTable2,'A3E9', 0, ux)
+				call SaveReal(OtherHashTable2,'A3E9', 1, uy)
 				call ExecuteFunc("ETI")
 			else
 				loop
@@ -48213,7 +48207,7 @@ function EJI takes nothing returns boolean
 				set tt = null
 			endif
 		elseif i == 3 then
-			call TriggerRegisterUnitEvent(JJ, KBX, EVENT_UNIT_SPELL_FINISH)
+			call TriggerRegisterUnitEvent(UnitEventMainTrig, KBX, EVENT_UNIT_SPELL_FINISH)
 			call IssueImmediateOrderById(KBX, S6V)
 			if id =='A03R' or id =='A0AV'then
 				call EHI(KBX, u)
@@ -48352,12 +48346,12 @@ function MUX takes nothing returns nothing
 endfunction
 
 function SetAbilityCanNotMultiCast takes integer abilityId returns nothing
-	call SaveBoolean(Q,'MCRS', abilityId, true)
+	call SaveBoolean(AbilityDataHashTable,'MCRS', abilityId, true)
 endfunction
 
 // 设置一些不能被多重施法的普通技能
 function InitMultiCast takes nothing returns nothing
-	//call SaveBoolean(Q,'MCRS','A44U', true)		//下注
+	//call SaveBoolean(AbilityDataHashTable,'MCRS','A44U', true)		//下注
 	call SetAbilityCanNotMultiCast('A1TU')
 	call SetAbilityCanNotMultiCast('A33U')
 	call SetAbilityCanNotMultiCast('A456')
@@ -48587,8 +48581,8 @@ function E1I takes integer r returns nothing
 	if u != GetSpellTargetUnit() then
 		call GroupAddUnit(gg, u)
 	endif
-	if HaveSavedInteger(P, id, 0) then
-		set id = LoadInteger(P, id, 0)
+	if HaveSavedInteger(ObjectHashTable, id, 0) then
+		set id = LoadInteger(ObjectHashTable, id, 0)
 	endif
 	call GroupAddGroup(gg, g)
 	loop
@@ -48606,7 +48600,7 @@ function E1I takes integer r returns nothing
 			set b = t == null
 			if b == false then
 				set d = CreateUnit(GetOwningPlayer(u),'e00C', GetUnitX(u), GetUnitY(u), 270)
-				call TriggerRegisterUnitEvent(JJ, d, EVENT_UNIT_SPELL_EFFECT)
+				call TriggerRegisterUnitEvent(UnitEventMainTrig, d, EVENT_UNIT_SPELL_EFFECT)
 				call UnitAddPermanentAbility(d, id)
 				call SetUnitAbilityLevel(d, id, GetUnitAbilityLevel(u, id))
 				call UnitApplyTimedLife(d,'BTLF', 1.)
@@ -48783,9 +48777,9 @@ function E9I takes unit WUE, player p, unit WWE, integer level, boolean XVI retu
 		call E7I(p, WWE, level)
 		set KBX = null
 		if GetUnitAbilityLevel(WWE,'A3E9') == 1 and IsMagicImmuneUnit(WUE) == false and HaveSavedHandle(HY, GetHandleId(WUE), 0) == false then
-			call SaveUnitHandle(VV,'A3E9', 0, WWE)
-			call SaveUnitHandle(VV,'A3E9', 1, WUE)
-			call SaveInteger(VV,'A3E9', 0, level)
+			call SaveUnitHandle(OtherHashTable2,'A3E9', 0, WWE)
+			call SaveUnitHandle(OtherHashTable2,'A3E9', 1, WUE)
+			call SaveInteger(OtherHashTable2,'A3E9', 0, level)
 			call ExecuteFunc("XEI")
 		endif
 	endif
@@ -48889,9 +48883,9 @@ function EHE takes nothing returns nothing
 	set WWE = null
 endfunction
 function XEI takes nothing returns nothing
-	call T4V(LoadUnitHandle(VV,'A3E9', 0))
-	call XOI(LoadUnitHandle(VV,'A3E9', 0), LoadInteger(VV,'A3E9', 0), LoadUnitHandle(VV,'A3E9', 1), UnitHasSpellShield(LoadUnitHandle(VV,'A3E9', 1)) == false)
-	call FlushChildHashtable(VV,'A3E9')
+	call T4V(LoadUnitHandle(OtherHashTable2,'A3E9', 0))
+	call XOI(LoadUnitHandle(OtherHashTable2,'A3E9', 0), LoadInteger(OtherHashTable2,'A3E9', 0), LoadUnitHandle(OtherHashTable2,'A3E9', 1), UnitHasSpellShield(LoadUnitHandle(OtherHashTable2,'A3E9', 1)) == false)
+	call FlushChildHashtable(OtherHashTable2,'A3E9')
 endfunction
 function XII takes nothing returns boolean
 	if IsUnitIllusion(GetFilterUnit()) and IsPlayerHasSkill(GetOwningPlayer(GetFilterUnit()), 83) and GetOwningPlayer(GetFilterUnit()) == GetOwningPlayer(GetTriggerUnit()) then
@@ -49525,7 +49519,7 @@ function X5I takes nothing returns boolean
 		set x = GetWidgetX(d)-Temp__ArrayReal[ 201]
 		set y = GetWidgetY(d)-Temp__ArrayReal[ 202]
 		if Temp__ArrayReal[ 200]> SquareRoot(x * x + y * y) then
-			call SaveBoolean(P, 99999, 99995, true)
+			call SaveBoolean(ObjectHashTable, 99999, 99995, true)
 		endif
 	endif
 	set d = null
@@ -49539,15 +49533,15 @@ function IsPointHaveTreeInRange takes real x, real y, real ZRO returns boolean
 	set Temp__ArrayReal[ 202]= y
 	set ZRO = ZRO + 150
 	set r = Rect(x -ZRO, y -ZRO, x + ZRO, y + ZRO)
-	call SaveBoolean(P, 99999, 99995, false)
+	call SaveBoolean(ObjectHashTable, 99999, 99995, false)
 	call EnumDestructablesInRect(r, Condition(function X5I), null)
 	call RemoveRect(r)
 	set r = null
-	return LoadBoolean(P, 99999, 99995)
+	return LoadBoolean(ObjectHashTable, 99999, 99995)
 endfunction
 function X7I takes unit u returns nothing
 	if GetUnitAbilityLevel(u,'A23N')> 0 then
-		call SaveBoolean(P, GetHandleId(u), StringHash("TreeInvisibility"), false)
+		call SaveBoolean(ObjectHashTable, GetHandleId(u), StringHash("TreeInvisibility"), false)
 		call UnitRemoveAbility(u,'B021')
 		call UnitRemoveAbility(u,'B0E9')
 		call UnitRemoveAbility(u,'A1GA')
@@ -49558,25 +49552,25 @@ function X8I takes nothing returns nothing
 	local unit d = null
 	local timer t = GetExpiredTimer()
 	local integer WFV = GetHandleId(t)
-	local integer UYX = LoadInteger(P, WFV, 0)
-	local unit u = LoadUnitHandle(P, WFV, 0)
+	local integer UYX = LoadInteger(ObjectHashTable, WFV, 0)
+	local unit u = LoadUnitHandle(ObjectHashTable, WFV, 0)
 	local boolean b1 = GetUnitAbilityLevel(u,'B021') == 0
 	local boolean b2 = IsPointHaveTreeInRange(GetWidgetX(u), GetWidgetY(u), 375)
-	if LoadBoolean(P, GetHandleId(u), StringHash("TreeInvisibility")) and LoadBoolean(P, WFV, 0) and b1 and b2 and UYX > 1 then
+	if LoadBoolean(ObjectHashTable, GetHandleId(u), StringHash("TreeInvisibility")) and LoadBoolean(ObjectHashTable, WFV, 0) and b1 and b2 and UYX > 1 then
 		set d = CreateUnit(GetOwningPlayer(u),'e00E', GetWidgetX(u), GetWidgetY(u), 0)
 		call UnitAddAbility(d,'A01Z')
-		call SetUnitAbilityLevel(d,'A01Z', LoadInteger(P, WFV, 2))
+		call SetUnitAbilityLevel(d,'A01Z', LoadInteger(ObjectHashTable, WFV, 2))
 		call L6X(u)
 		call IssueTargetOrderById(d, 852069, u)
-		call SaveInteger(P, WFV, 0, UYX -1)
+		call SaveInteger(ObjectHashTable, WFV, 0, UYX -1)
 		set d = null
 		set u = null
 		set t = null
 		return
 	endif
-	if UYX == 0 or UnitIsDead(u) or b1 or LoadBoolean(P, GetHandleId(u), StringHash("TreeInvisibility")) == false then
+	if UYX == 0 or UnitIsDead(u) or b1 or LoadBoolean(ObjectHashTable, GetHandleId(u), StringHash("TreeInvisibility")) == false then
 		// debug call SingleDebug("del2")
-		call SaveBoolean(P, WFV, 0, false)
+		call SaveBoolean(ObjectHashTable, WFV, 0, false)
 		call UnitRemoveAbility(u,'B0E9')
 		call UnitRemoveAbility(u,'B021')
 		call UnitRemoveAbility(u,'A1GA')
@@ -49586,11 +49580,11 @@ function X8I takes nothing returns nothing
 		set u = null
 		return
 	endif
-	call SaveInteger(P, WFV, 0, UYX -1)
+	call SaveInteger(ObjectHashTable, WFV, 0, UYX -1)
 	if b2 then
-		call SaveInteger(P, WFV, 1, 0)
+		call SaveInteger(ObjectHashTable, WFV, 1, 0)
 	else
-		set UYX = LoadInteger(P, WFV, 1)
+		set UYX = LoadInteger(ObjectHashTable, WFV, 1)
 		if UYX == 9 then
 			call UnitRemoveAbility(u,'B0E9')
 			call UnitRemoveAbility(u,'B021')
@@ -49598,7 +49592,7 @@ function X8I takes nothing returns nothing
 			call UnitRemoveAbility(u,'A1GA')
 			call DestroyTimerAndFlushHT_P(t)
 		else
-			call SaveInteger(P, WFV, 1, UYX + 1)
+			call SaveInteger(ObjectHashTable, WFV, 1, UYX + 1)
 		endif
 	endif
 	set t = null
@@ -49607,14 +49601,14 @@ endfunction
 function X9I takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer WFV = GetHandleId(t)
-	local unit u = LoadUnitHandle(P, WFV, 0)
+	local unit u = LoadUnitHandle(ObjectHashTable, WFV, 0)
 	if UnitAlive(u) and GetUnitAbilityLevel(u,'B021')> 0 then
 		call L6X(u)
 		call UnitAddPermanentAbility(u,'A1GA')
 		call TimerStart(t, .1, true, function X8I)
-		call SaveInteger(P, WFV, 0, LoadInteger(P, WFV, 0)-20)
-		call SaveBoolean(P, WFV, 0, true)
-		call SaveBoolean(P, GetHandleId(u), StringHash("TreeInvisibility"), true)
+		call SaveInteger(ObjectHashTable, WFV, 0, LoadInteger(ObjectHashTable, WFV, 0)-20)
+		call SaveBoolean(ObjectHashTable, WFV, 0, true)
+		call SaveBoolean(ObjectHashTable, GetHandleId(u), StringHash("TreeInvisibility"), true)
 		set t = null
 		set u = null
 		return
@@ -49625,7 +49619,7 @@ function X9I takes nothing returns nothing
 endfunction
 function OVI takes nothing returns nothing
 	local timer t = GetExpiredTimer()
-	call UnitRemoveAbility(LoadUnitHandle(P, GetHandleId(t), 0),'B021')
+	call UnitRemoveAbility(LoadUnitHandle(ObjectHashTable, GetHandleId(t), 0),'B021')
 	call DestroyTimerAndFlushHT_P(t)
 	set t = null
 endfunction
@@ -49639,7 +49633,7 @@ function FPE takes nothing returns nothing
 	local integer WUV
 	if IsPointHaveTreeInRange(GetWidgetX(d), GetWidgetY(d), 375) == false then
 		call TimerStart(t, 0, false, function OVI)
-		call SaveUnitHandle(P, GetHandleId(t), 0, d)
+		call SaveUnitHandle(ObjectHashTable, GetHandleId(t), 0, d)
 		call UnitRemoveAbility(d,'B021')
 		set d = null
 		set t = null
@@ -49648,11 +49642,11 @@ function FPE takes nothing returns nothing
 	set u = GetTriggerUnit()
 	set WFV = GetHandleId(t)
 	set WUV = GetUnitAbilityLevel(u,'A01Z')
-	call SaveUnitHandle(P, WFV, 0, d)
-	call SaveInteger(P, WFV, 0, WUV * 150)
-	call SaveInteger(P, WFV, 1, 0)
-	call SaveInteger(P, WFV, 2, WUV)
-	call SaveBoolean(P, WFV, 0, false)
+	call SaveUnitHandle(ObjectHashTable, WFV, 0, d)
+	call SaveInteger(ObjectHashTable, WFV, 0, WUV * 150)
+	call SaveInteger(ObjectHashTable, WFV, 1, 0)
+	call SaveInteger(ObjectHashTable, WFV, 2, WUV)
+	call SaveBoolean(ObjectHashTable, WFV, 0, false)
 	call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Human\\Invisibility\\InvisibilityTarget.mdl", d, "chest"))
 	call UnitAddPermanentAbility(d,'A23N')
 	if u == d then
@@ -50470,15 +50464,15 @@ function RXI takes nothing returns nothing
 	local integer h = GetHandleId(t)
 	local unit WJE = LoadUnitHandle(HY, h, 0)
 	local unit WLE = LoadUnitHandle(HY, h, 1)
-	local integer damageValue = LoadInteger(P, GetHandleId(WJE),'BACK')
+	local integer damageValue = LoadInteger(ObjectHashTable, GetHandleId(WJE),'BACK')
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call FlushChildHashtable(HY, h)
 		call DestroyTrigger(t)
-		call RemoveSavedHandle(P, GetHandleId(WJE),'BACK')
+		call RemoveSavedHandle(ObjectHashTable, GetHandleId(WJE),'BACK')
 	elseif GetTriggerEventId() == EVENT_UNIT_DAMAGED then
 		if GetEventDamageSource() == WJE and AD < 1 and GetEventDamage()> 0 then
-			call SaveInteger(P, GetHandleId(WJE),'BACK', 0)
-			call RemoveSavedHandle(P, GetHandleId(WJE),'BACK')
+			call SaveInteger(ObjectHashTable, GetHandleId(WJE),'BACK', 0)
+			call RemoveSavedHandle(ObjectHashTable, GetHandleId(WJE),'BACK')
 			call FlushChildHashtable(HY, h)
 			call DestroyTrigger(t)
 			call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Other\\Stampede\\StampedeMissileDeath.mdl", WLE, "chest"))
@@ -50487,7 +50481,7 @@ function RXI takes nothing returns nothing
 	else
 		call FlushChildHashtable(HY, h)
 		call DestroyTrigger(t)
-		call RemoveSavedHandle(P, GetHandleId(WJE),'BACK')
+		call RemoveSavedHandle(ObjectHashTable, GetHandleId(WJE),'BACK')
 	endif
 	set t = null
 	set WJE = null
@@ -50511,12 +50505,12 @@ function ROI takes unit u, unit t returns nothing
 	if d > 180 then
 		set d = 360 -d
 	endif
-	if LoadInteger(P, GetHandleId(u),'BACK')> 0 then
-		call SaveInteger(P, GetHandleId(u),'BACK', 0)
+	if LoadInteger(ObjectHashTable, GetHandleId(u),'BACK')> 0 then
+		call SaveInteger(ObjectHashTable, GetHandleId(u),'BACK', 0)
 	endif
-	if LoadTriggerHandle(P, GetHandleId(u),'BACK')!= null then
-		call FlushChildHashtable(HY, GetHandleId(LoadTriggerHandle(P, GetHandleId(u),'BACK')))
-		call DestroyTrigger(LoadTriggerHandle(P, GetHandleId(u),'BACK'))
+	if LoadTriggerHandle(ObjectHashTable, GetHandleId(u),'BACK')!= null then
+		call FlushChildHashtable(HY, GetHandleId(LoadTriggerHandle(ObjectHashTable, GetHandleId(u),'BACK')))
+		call DestroyTrigger(LoadTriggerHandle(ObjectHashTable, GetHandleId(u),'BACK'))
 	endif
 	if IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and IsUnitIllusion(u) == false and d <='i' then
 		set ENI = .25 * WUV
@@ -50529,7 +50523,7 @@ function ROI takes unit u, unit t returns nothing
 			set i = GetHeroStr(u, true)
 		endif
 		set RRI = R2I(i *(ENI))
-		call SaveInteger(P, GetHandleId(u),'BACK', RRI)
+		call SaveInteger(ObjectHashTable, GetHandleId(u),'BACK', RRI)
 		set tt = CreateTrigger()
 		set h = GetHandleId(tt)
 		call SaveUnitHandle(HY, h, 0, u)
@@ -50538,7 +50532,7 @@ function ROI takes unit u, unit t returns nothing
 		call TriggerRegisterDeathEvent(tt, u)
 		call TriggerRegisterUnitEvent(tt, t, EVENT_UNIT_DAMAGED)
 		call TriggerAddCondition(tt, Condition(function RXI))
-		call SaveTriggerHandle(P, GetHandleId(u),'BACK', tt)
+		call SaveTriggerHandle(ObjectHashTable, GetHandleId(u),'BACK', tt)
 		set tt = null
 	endif
 	set W_V = null
@@ -50639,25 +50633,25 @@ function RDI takes nothing returns nothing
 	if GetTriggerEventId() == EVENT_UNIT_SPELL_CAST then
 		if GetSpellAbilityId()=='A0K9' or IsAttackSpecialEffects(GetSpellAbilityId()) then
 			set u = GetTriggerUnit()
-			call SaveBoolean(K, GetHandleId(u), 23, false)
+			call SaveBoolean(OtherHashTable, GetHandleId(u), 23, false)
 			call RCI(u)
 			set u = null
 		endif
 	elseif GetTriggerEventId() == EVENT_PLAYER_UNIT_ATTACKED then
-		if GetAttacker() == LoadUnitHandle(P, h, 0) then
+		if GetAttacker() == LoadUnitHandle(ObjectHashTable, h, 0) then
 			set u = GetAttacker()
-			call SaveBoolean(K, GetHandleId(u), 23, false)
+			call SaveBoolean(OtherHashTable, GetHandleId(u), 23, false)
 			call RCI(u)
 			set u = null
 		endif
 	else
-		set u = LoadUnitHandle(P, h, 0)
+		set u = LoadUnitHandle(ObjectHashTable, h, 0)
 		if GetUnitTypeId(u) == 0 then
-			call FlushChildHashtable(K, GetHandleId(u))
-			call FlushChildHashtable(P, h)
+			call FlushChildHashtable(OtherHashTable, GetHandleId(u))
+			call FlushChildHashtable(ObjectHashTable, h)
 			call CleanCurrentTrigger(t)
 		else
-			if LoadBoolean(K, GetHandleId(u), 23) and DXX(u) then
+			if LoadBoolean(OtherHashTable, GetHandleId(u), 23) and DXX(u) then
 				if GetUnitAbilityLevel(u,'A30F') == 0 then
 					call UnitAddPermanentAbility(u,'A30F')
 				endif
@@ -50681,8 +50675,8 @@ function LTE takes nothing returns nothing
 	set t = CreateTrigger()
 	set h = GetHandleId(t)
 	call TriggerRegisterTimerEvent(t, .2, true)
-	call SaveUnitHandle(P, h, 0, u)
-	call SaveBoolean(K, GetHandleId(u), 23, true)
+	call SaveUnitHandle(ObjectHashTable, h, 0, u)
+	call SaveBoolean(OtherHashTable, GetHandleId(u), 23, true)
 	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ATTACKED)
 	call TriggerRegisterUnitEvent(t, u, EVENT_UNIT_SPELL_CAST)
 	call TriggerAddCondition(t, Condition(function RDI))
@@ -50690,7 +50684,7 @@ function LTE takes nothing returns nothing
 	set t = null
 endfunction
 function RFI takes nothing returns boolean
-	return(UnitIsDead(GetFilterUnit()) == false and GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0 and IsUnitAlly(LoadUnitHandle(VV,'A2IS','cast'), GetOwningPlayer(GetFilterUnit())) and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and IsUnitIllusion(GetFilterUnit()) == false)!= null
+	return(UnitIsDead(GetFilterUnit()) == false and GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0 and IsUnitAlly(LoadUnitHandle(OtherHashTable2,'A2IS','cast'), GetOwningPlayer(GetFilterUnit())) and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and IsUnitIllusion(GetFilterUnit()) == false)!= null
 endfunction
 function RGI takes nothing returns nothing
 	local trigger t = GetTriggeringTrigger()
@@ -50715,7 +50709,7 @@ function RHI takes nothing returns nothing
 	local trigger t
 	local integer h
 	local integer hu = GetHandleId(u)
-	local integer level = LoadInteger(VV,'A2IS','levl')
+	local integer level = LoadInteger(OtherHashTable2,'A2IS','levl')
 	if HaveSavedHandle(HY, hu,'A2IS') then
 		set t = LoadTriggerHandle(HY, hu,'A2IS')
 		set h = GetHandleId(t)
@@ -50741,12 +50735,12 @@ endfunction
 function YGV takes nothing returns nothing
 	local unit u = GetTriggerUnit()
 	local group g = AllocationGroup(261)
-	call SaveUnitHandle(VV,'A2IS','cast', u)
-	call SaveInteger(VV,'A2IS','levl', GetUnitAbilityLevel(u, GetSpellAbilityId()))
+	call SaveUnitHandle(OtherHashTable2,'A2IS','cast', u)
+	call SaveInteger(OtherHashTable2,'A2IS','levl', GetUnitAbilityLevel(u, GetSpellAbilityId()))
 	call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\NightElf\\BattleRoar\\RoarCaster.mdl", u, "overhead"))
 	call GroupEnumUnitsInRange(g, GetWidgetX(u), GetWidgetY(u), 925, Condition(function RFI))
 	call ForGroup(g, function RHI)
-	call FlushChildHashtable(VV,'A2IS')
+	call FlushChildHashtable(OtherHashTable2,'A2IS')
 	call DeallocateGroup(g)
 	set g = null
 	set u = null
@@ -50793,9 +50787,9 @@ function RLI takes unit WUE, player p, unit WWE, integer level returns nothing
 	local integer E8I
 	local group g = AllocationGroup(262)
 	if GetUnitAbilityLevel(WWE,'A3E9') == 1 and IsMagicImmuneUnit(WUE) == false then
-		call SaveUnitHandle(VV,'A3E9', 0, WWE)
-		call SaveUnitHandle(VV,'A3E9', 1, WUE)
-		call SaveInteger(VV,'A3E9', 0, level)
+		call SaveUnitHandle(OtherHashTable2,'A3E9', 0, WWE)
+		call SaveUnitHandle(OtherHashTable2,'A3E9', 1, WUE)
+		call SaveInteger(OtherHashTable2,'A3E9', 0, level)
 		call ExecuteFunc("RMI")
 	endif
 	set U2 = Player__Hero[GetPlayerId(p)]
@@ -50905,9 +50899,9 @@ function EWE takes nothing returns nothing
 	set WLE = null
 endfunction
 function RMI takes nothing returns nothing
-	call T4V(LoadUnitHandle(VV,'A3E9', 0))
-	call RSI(LoadUnitHandle(VV,'A3E9', 0), LoadUnitHandle(VV,'A3E9', 1), LoadInteger(VV,'A3E9', 0))
-	call FlushChildHashtable(VV,'A3E9')
+	call T4V(LoadUnitHandle(OtherHashTable2,'A3E9', 0))
+	call RSI(LoadUnitHandle(OtherHashTable2,'A3E9', 0), LoadUnitHandle(OtherHashTable2,'A3E9', 1), LoadInteger(OtherHashTable2,'A3E9', 0))
+	call FlushChildHashtable(OtherHashTable2,'A3E9')
 endfunction
 function KZE takes nothing returns nothing
 	call DestroyEffect(AddSpecialEffectTarget("Abilities\\Weapons\\Bolt\\BoltImpact.mdl", GetTriggerUnit(), GetHeroWeaponAttachPointName(GetTriggerUnit())))
@@ -51047,8 +51041,8 @@ function R0I takes unit X1O, unit WLE returns nothing
 	set t = null
 endfunction
 function R1I takes unit R8X, unit WLE returns nothing
-	if GetUnitAbilityLevel(R8X,'A33C')> 0 and GetUnitAbilityLevel(R8X,'A36D') == 0 and GetGameTime()> LoadReal(P, GetHandleId(R8X),'A33C') and TKV(R8X,'A33C', 20) then
-		call SaveReal(P, GetHandleId(R8X),'A33C', GetGameTime()+ 5)
+	if GetUnitAbilityLevel(R8X,'A33C')> 0 and GetUnitAbilityLevel(R8X,'A36D') == 0 and GetGameTime()> LoadReal(ObjectHashTable, GetHandleId(R8X),'A33C') and TKV(R8X,'A33C', 20) then
+		call SaveReal(ObjectHashTable, GetHandleId(R8X),'A33C', GetGameTime()+ 5)
 		call R0I(R8X, WLE)
 	endif
 endfunction
@@ -51081,7 +51075,7 @@ function R5I takes unit u, integer level, player p, boolean b returns nothing
 	call SetUnitAbilityLevel(u,'A34C', level)
 	call SetPlayerAbilityAvailable(GetOwningPlayer(u),'A34C', true)
 	if b then
-		call TriggerRegisterUnitEvent(JJ, u, EVENT_UNIT_SPELL_EFFECT)
+		call TriggerRegisterUnitEvent(UnitEventMainTrig, u, EVENT_UNIT_SPELL_EFFECT)
 	endif
 endfunction
 function PYE takes nothing returns nothing
@@ -51396,9 +51390,9 @@ endfunction
 function ICI takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer WFV = GetHandleId(t)
-	set Temp__Player = LoadPlayerHandle(P, WFV, 0)
-	set TempInt = LoadInteger(P, WFV, 0)
-	call GroupEnumUnitsInRange(AK, LoadReal(P, WFV, 0), LoadReal(P, WFV, 1), 1000, Condition(function IBI))
+	set Temp__Player = LoadPlayerHandle(ObjectHashTable, WFV, 0)
+	set TempInt = LoadInteger(ObjectHashTable, WFV, 0)
+	call GroupEnumUnitsInRange(AK, LoadReal(ObjectHashTable, WFV, 0), LoadReal(ObjectHashTable, WFV, 1), 1000, Condition(function IBI))
 	call DestroyTimerAndFlushHT_P(t)
 	set t = null
 endfunction
@@ -51421,15 +51415,15 @@ function IFI takes nothing returns boolean
 	local real y
 	if GetUnitTypeId(t)=='h07U'then
 		set WFV = GetHandleId(t)
-		if LoadBoolean(P,'A1AA', WFV) then
+		if LoadBoolean(ObjectHashTable,'A1AA', WFV) then
 			set x = GetWidgetX(t)
 			set y = GetWidgetY(t)
 			set d = CreateUnit(GetOwningPlayer(t),'h07Z', x, y, 0)
 			call SetUnitTimeScale(d, 2.5)
 			call UnitApplyTimedLife(d,'BTLF', 2)
 			call GroupEnumUnitsInRange(BK, x, y, 525, Condition(function IDI))
-			call SaveBoolean(P,'A1AA', WFV, false)
-			call SaveBoolean(P, WFV,'A1AA', false)
+			call SaveBoolean(ObjectHashTable,'A1AA', WFV, false)
+			call SaveBoolean(ObjectHashTable, WFV,'A1AA', false)
 			call SetUnitAnimationByIndex(t, 3)
 			set d = null
 		endif
@@ -51457,11 +51451,11 @@ function JGE takes nothing returns nothing
 	call GroupEnumUnitsInRange(AK, x, y, 525, Condition(function IDI))
 	set XK[0]= 2
 	call GroupEnumUnitsOfPlayer(AK, GetOwningPlayer(u), Condition(function IFI))
-	call SavePlayerHandle(P, WFV, 0, Temp__Player)
-	call SaveReal(P, WFV, 0, x)
-	call SaveInteger(P, WFV, 0, GetUnitAbilityLevel(u,'A1AA'))
-	call SaveReal(P, WFV, 1, y)
-	call SaveUnitHandle(P, WFV, 2, u)
+	call SavePlayerHandle(ObjectHashTable, WFV, 0, Temp__Player)
+	call SaveReal(ObjectHashTable, WFV, 0, x)
+	call SaveInteger(ObjectHashTable, WFV, 0, GetUnitAbilityLevel(u,'A1AA'))
+	call SaveReal(ObjectHashTable, WFV, 1, y)
+	call SaveUnitHandle(ObjectHashTable, WFV, 2, u)
 	call TimerStart(t, .65, false, function ICI)
 	set d = null
 	set u = null
@@ -51476,7 +51470,7 @@ function IGI takes nothing returns boolean
 	if GetTriggerEventId() == EVENT_UNIT_SPELL_ENDCAST then
 		call SaveInteger(HY,(GetHandleId((WUE))),(4269), 2)
 		call SaveBoolean(HY,(GetHandleId(TJX)), 337,(true))
-		call SaveBoolean(P, GetHandleId(TJX),'A1AA', false)
+		call SaveBoolean(ObjectHashTable, GetHandleId(TJX),'A1AA', false)
 		call IssueImmediateOrderById(TJX, 851972)
 		if GetUnitAbilityLevel(TJX,'Aloc') == 0 then
 			call SetUnitAnimation(TJX, "stand")
@@ -51514,8 +51508,8 @@ function IJI takes unit u, unit s, boolean b returns nothing
 	call TriggerRegisterUnitEvent(t, s, EVENT_UNIT_SPELL_ENDCAST)
 	call TriggerAddCondition(t, Condition(function IGI))
 	set WFV = GetHandleId(u)
-	call SaveBoolean(P,'A1AA', WFV, true)
-	call SaveBoolean(P, WFV,'A1AA', true)
+	call SaveBoolean(ObjectHashTable,'A1AA', WFV, true)
+	call SaveBoolean(ObjectHashTable, WFV,'A1AA', true)
 	set t = null
 endfunction
 function IKI takes nothing returns boolean
@@ -51524,7 +51518,7 @@ function IKI takes nothing returns boolean
 		if IssueImmediateOrderById(t, 851972) then
 			call IJI(t, Temp__ArrayUnit[0], false)
 		endif
-		call SaveBoolean(P, 99999, 99997, false)
+		call SaveBoolean(ObjectHashTable, 99999, 99997, false)
 	endif
 	set t = null
 	return false
@@ -51535,22 +51529,22 @@ function KVE takes nothing returns nothing
 	if GetUnitTypeId(WUE)=='e00E'then
 		set Temp__ArrayUnit[0]= Player__Hero[GetPlayerId(GetOwningPlayer(WUE))]
 	elseif GetUnitTypeId(WUE)=='h07U' then
-		set Temp__ArrayUnit[0]= LoadUnitHandle(P, GetHandleId(WUE),'A1A8')
+		set Temp__ArrayUnit[0]= LoadUnitHandle(ObjectHashTable, GetHandleId(WUE),'A1A8')
 		if IssueImmediateOrderById(Temp__ArrayUnit[0], 852092) == false then
 			call UnitAddAbility(WUE,'A2LK')
 			call SetUnitAnimation(WUE, "stand")
 			call IssueImmediateOrderById(WUE, 851972)
-			call SaveBoolean(P, GetHandleId(WUE),'A1AA', false)
-			call SaveBoolean(P,'A1AA', GetHandleId(WUE), false)
+			call SaveBoolean(ObjectHashTable, GetHandleId(WUE),'A1AA', false)
+			call SaveBoolean(ObjectHashTable,'A1AA', GetHandleId(WUE), false)
 			set WUE = null
 			return
 		endif
 	else
 		set Temp__ArrayUnit[0]= WUE
 	endif
-	call SaveBoolean(P, 99999, 99997, true)
+	call SaveBoolean(ObjectHashTable, 99999, 99997, true)
 	call GroupEnumUnitsOfPlayer(AK, GetOwningPlayer(WUE), Condition(function IKI))
-	if LoadBoolean(P, 99999, 99997) then
+	if LoadBoolean(ObjectHashTable, 99999, 99997) then
 		set TJX = CreateUnit(GetOwningPlayer(WUE),'h07U', GetUnitX(WUE), GetUnitY(WUE), GetUnitFacing(WUE))
 		call UnitAddPermanentAbility(TJX,'Aloc')
 		call UnitAddPermanentAbility(TJX,'Aetl')
@@ -51618,7 +51612,7 @@ function IPI takes nothing returns boolean
 	local real y = GetUnitY(WUE)
 	local group g = AllocationGroup(268)
 	local group g2 = null
-	local unit u = LoadUnitHandle(P, GetHandleId(WUE),'A1A8')
+	local unit u = LoadUnitHandle(ObjectHashTable, GetHandleId(WUE),'A1A8')
 	if WUE == null then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
@@ -51844,21 +51838,21 @@ endfunction
 function I8I takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer WFV = GetHandleId(t)
-	local unit u = LoadUnitHandle(P, WFV, 0)
-	call LodSystem_ReduceUnitExtraState(u, LoadInteger(P, WFV, 3), "damage")
-	call J8X(u, R2I(LoadReal(P, WFV, 0)))
+	local unit u = LoadUnitHandle(ObjectHashTable, WFV, 0)
+	call LodSystem_ReduceUnitExtraState(u, LoadInteger(ObjectHashTable, WFV, 3), "damage")
+	call J8X(u, R2I(LoadReal(ObjectHashTable, WFV, 0)))
 	call DestroyTimerAndFlushHT_P(t)
 	set t = null
 	set u = null
 endfunction
 function I9I takes nothing returns boolean
 	local unit t = GetFilterUnit()
-	local group g = LoadGroupHandle(P, XK[0], 2)
+	local group g = LoadGroupHandle(ObjectHashTable, XK[0], 2)
 	if UnitAlive(t) and IsUnitEnemy(Temp__ArrayUnit[0], GetOwningPlayer(t)) and GetUnitAbilityLevel(t,'A04R') == 0 and IsUnitInGroup(t, g) == false and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false then
 		if IsUnitType(t, UNIT_TYPE_HERO) then
-			call SaveInteger(P, XK[0], 4, LoadInteger(P, XK[0], 4)+ 1)
+			call SaveInteger(ObjectHashTable, XK[0], 4, LoadInteger(ObjectHashTable, XK[0], 4)+ 1)
 		else
-			call SaveInteger(P, XK[0], 3, LoadInteger(P, XK[0], 3)+ 1)
+			call SaveInteger(ObjectHashTable, XK[0], 3, LoadInteger(ObjectHashTable, XK[0], 3)+ 1)
 		endif
 		call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Undead\\AbsorbMana\\AbsorbManaBirthMissile.mdl", t, "chest"))
 		call UnitDamageTargetEx(Temp__ArrayUnit[0], t, 1, XK[1])
@@ -51874,14 +51868,14 @@ function AVI takes nothing returns nothing
 	local integer i3
 	local integer i2
 	local integer i1
-	local unit u = LoadUnitHandle(P, WFV, 0)
-	local unit d = LoadUnitHandle(P, WFV, 1)
+	local unit u = LoadUnitHandle(ObjectHashTable, WFV, 0)
+	local unit d = LoadUnitHandle(ObjectHashTable, WFV, 1)
 	local real x2 = GetWidgetX(u)
 	local real y2 = GetWidgetY(u)
 	local real x1 = GetWidgetX(d)
 	local real y1 = GetWidgetY(d)
 	local real I3X = Atan2(y2 -y1, x2 -x1)
-	if LoadBoolean(P, GetHandleId(d),'A1AA') then
+	if LoadBoolean(ObjectHashTable, GetHandleId(d),'A1AA') then
 		set d = null
 		set u = null
 		set t = null
@@ -51894,12 +51888,12 @@ function AVI takes nothing returns nothing
 	call SetUnitFacing(d, I3X * bj_RADTODEG)
 	set Temp__ArrayUnit[0]= u
 	set XK[0]= WFV
-	set XK[1]= LoadInteger(P, WFV, 2)
+	set XK[1]= LoadInteger(ObjectHashTable, WFV, 2)
 	call GroupEnumUnitsInRange(AK, x1, y1, 300, Condition(function I9I))
 	if  100 > SquareRoot((x1 -x2)*(x1 -x2)+(y1 -y2)*(y1 -y2)) then
-		set i3 = LoadInteger(P, WFV, 1)
-		set i2 = LoadInteger(P, WFV, 3)
-		set i1 = LoadInteger(P, WFV, 4)
+		set i3 = LoadInteger(ObjectHashTable, WFV, 1)
+		set i2 = LoadInteger(ObjectHashTable, WFV, 3)
+		set i1 = LoadInteger(ObjectHashTable, WFV, 4)
 		if i1 + i2 > 0 then
 			set x1 =(i2 + i1 * 5)
 			set i3 = i2 *(3 * i3 + 3)+ i1 * 10* i3
@@ -51908,8 +51902,8 @@ function AVI takes nothing returns nothing
 			call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Undead\\AbsorbMana\\AbsorbManaBirthMissile.mdl", u, "origin"))
 			call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Undead\\AbsorbMana\\AbsorbManaBirthMissile.mdl", u, "hand,left"))
 			call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Undead\\AbsorbMana\\AbsorbManaBirthMissile.mdl", u, "hand,right"))
-			call SaveInteger(P, WFV, 3, i3)
-			call SaveReal(P, WFV, 0, x1)
+			call SaveInteger(ObjectHashTable, WFV, 3, i3)
+			call SaveReal(ObjectHashTable, WFV, 0, x1)
 			call J6X(u, R2I(x1))
 			call LodSystem_AddUnitExtraState(u, i3, "damage")
 			call TimerStart(t, 9, false, function I8I)
@@ -51917,13 +51911,13 @@ function AVI takes nothing returns nothing
 			call DestroyTimerAndFlushHT_P(t)
 		endif
 		set WFV = GetHandleId(u)
-		set i1 = LoadInteger(P, WFV,'A1A8')
-		call SaveInteger(P, WFV,'A1A8', i1 -1)
+		set i1 = LoadInteger(ObjectHashTable, WFV,'A1A8')
+		call SaveInteger(ObjectHashTable, WFV,'A1A8', i1 -1)
 		if i1 == 1 then
 			call UnitRemoveAbility(u,'A21J')
 			call SetPlayerAbilityAvailableEx(GetOwningPlayer(u),'A1A8', true)
 		endif
-		call FlushChildHashtable(P, GetHandleId(d))
+		call FlushChildHashtable(ObjectHashTable, GetHandleId(d))
 		call RemoveUnit(d)
 	endif
 	set d = null
@@ -51933,20 +51927,20 @@ endfunction
 function AEI takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer WFV = GetHandleId(t)
-	local integer UYX = LoadInteger(P, WFV, 0)
-	local unit u = LoadUnitHandle(P, WFV, 0)
-	local unit d = LoadUnitHandle(P, WFV, 1)
+	local integer UYX = LoadInteger(ObjectHashTable, WFV, 0)
+	local unit u = LoadUnitHandle(ObjectHashTable, WFV, 0)
+	local unit d = LoadUnitHandle(ObjectHashTable, WFV, 1)
 	local real x = GetWidgetX(d)
 	local real y = GetWidgetY(d)
 	set Temp__ArrayUnit[0]= u
 	set XK[0]= WFV
-	set XK[1]= LoadInteger(P, WFV, 2)
+	set XK[1]= LoadInteger(ObjectHashTable, WFV, 2)
 	call GroupEnumUnitsInRange(AK, x, y, 300, Condition(function I9I))
-	if UYX == 80 or LoadBoolean(P, GetHandleId(u),'A1A8') or LoadBoolean(P, GetHandleId(d),'A1A8') then
+	if UYX == 80 or LoadBoolean(ObjectHashTable, GetHandleId(u),'A1A8') or LoadBoolean(ObjectHashTable, GetHandleId(d),'A1A8') then
 		call UnitAddAbility(d,'Aloc')
 		call SetUnitAnimationByIndex(d, 1)
 		call IssueImmediateOrderById(d, 851972)
-		call SaveBoolean(P, WFV, 0, true)
+		call SaveBoolean(ObjectHashTable, WFV, 0, true)
 		call TimerStart(t, .025, true, function AVI)
 		set d = null
 		set u = null
@@ -51954,14 +51948,14 @@ function AEI takes nothing returns nothing
 		return
 	endif
 	call SetUnitMoveSpeed(d, U6V(u))
-	call SaveInteger(P, WFV, 0, UYX + 1)
+	call SaveInteger(ObjectHashTable, WFV, 0, UYX + 1)
 	set d = null
 	set u = null
 	set t = null
 endfunction
 function AXI takes nothing returns nothing
 	local timer t = GetExpiredTimer()
-	local unit u = LoadUnitHandle(P, GetHandleId(t), 0)
+	local unit u = LoadUnitHandle(ObjectHashTable, GetHandleId(t), 0)
 	call UnitRemoveAbility(u,'A21J')
 	call UnitAddPermanentAbility(u,'A21J')
 	call DestroyTimerAndFlushHT_P(t)
@@ -51971,8 +51965,8 @@ endfunction
 function YIV takes nothing returns nothing
 	local timer t = CreateTimer()
 	local unit u = GetTriggerUnit()
-	call SaveUnitHandle(P, GetHandleId(t), 0, u)
-	call SaveBoolean(P, GetHandleId(u),'A1A8', true)
+	call SaveUnitHandle(ObjectHashTable, GetHandleId(t), 0, u)
+	call SaveBoolean(ObjectHashTable, GetHandleId(u),'A1A8', true)
 	call TimerStart(t, 0, false, function AXI)
 	set t = null
 	set u = null
@@ -51989,23 +51983,23 @@ function YRV takes nothing returns nothing
 	call UnitRemoveAbility(d,'Aloc')
 	call ShowUnit(d, false)
 	call ShowUnit(d, true)
-	call SaveBoolean(P, WFV, 0, false)
-	call SaveUnitHandle(P, WFV, 0, u)
-	call SaveUnitHandle(P, WFV, 1, d)
-	call SaveGroupHandle(P, WFV, 2, AllocationGroup(273))
-	call SaveInteger(P, WFV, 0, 0)
-	call SaveInteger(P, WFV, 1, WUV)
-	call SaveInteger(P, WFV, 2, 20 + 40 * WUV)
-	call SaveInteger(P, WFV, 3, 0)
-	call SaveInteger(P, WFV, 4, 0)
+	call SaveBoolean(ObjectHashTable, WFV, 0, false)
+	call SaveUnitHandle(ObjectHashTable, WFV, 0, u)
+	call SaveUnitHandle(ObjectHashTable, WFV, 1, d)
+	call SaveGroupHandle(ObjectHashTable, WFV, 2, AllocationGroup(273))
+	call SaveInteger(ObjectHashTable, WFV, 0, 0)
+	call SaveInteger(ObjectHashTable, WFV, 1, WUV)
+	call SaveInteger(ObjectHashTable, WFV, 2, 20 + 40 * WUV)
+	call SaveInteger(ObjectHashTable, WFV, 3, 0)
+	call SaveInteger(ObjectHashTable, WFV, 4, 0)
 	set WFV = GetHandleId(u)
-	call SaveBoolean(P, WFV,'A1A8', false)
-	call SaveInteger(P, WFV,'A1A8', LoadInteger(P, WFV,'A1A8')+ 1)
-	call SaveUnitHandle(P, WFV,'A1A8', d)
+	call SaveBoolean(ObjectHashTable, WFV,'A1A8', false)
+	call SaveInteger(ObjectHashTable, WFV,'A1A8', LoadInteger(ObjectHashTable, WFV,'A1A8')+ 1)
+	call SaveUnitHandle(ObjectHashTable, WFV,'A1A8', d)
 	call SetPlayerAbilityAvailableEx(p,'A1A8', false)
 	call UnitAddAbility(u,'A21J')
-	call TriggerRegisterUnitEvent(JJ, d, EVENT_UNIT_SPELL_EFFECT)
-	call TriggerRegisterUnitEvent(JJ, d, EVENT_UNIT_SPELL_CAST)
+	call TriggerRegisterUnitEvent(UnitEventMainTrig, d, EVENT_UNIT_SPELL_EFFECT)
+	call TriggerRegisterUnitEvent(UnitEventMainTrig, d, EVENT_UNIT_SPELL_CAST)
 	call UnitAddAbility(d,'A21J')
 	call UnitAddAbility(d,'Aetl')
 	if GetUnitAbilityLevel(u,'A1AA')> 0 then
@@ -52014,7 +52008,7 @@ function YRV takes nothing returns nothing
 	if GetUnitAbilityLevel(u,'A1CD')> 0 then
 		call UnitAddPermanentAbility(d,'A1CQ')
 	endif
-	call SaveUnitHandle(P, GetHandleId(d),'A1A8', u)
+	call SaveUnitHandle(ObjectHashTable, GetHandleId(d),'A1A8', u)
 	call TimerStart(t, .1, true, function AEI)
 	set d = null
 	set u = null
@@ -52106,10 +52100,10 @@ function LQE takes nothing returns nothing
 	endif
 endfunction
 function ADI takes nothing returns boolean
-	return(IsUnitEnemy(GetFilterUnit(), LoadPlayerHandle(VV,'A0AM', 1)) and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0)!= null
+	return(IsUnitEnemy(GetFilterUnit(), LoadPlayerHandle(OtherHashTable2,'A0AM', 1)) and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0)!= null
 endfunction
 function AFI takes nothing returns nothing
-	call UnitDamageTargetEx(LoadUnitHandle(VV,'A0AM', 0), GetEnumUnit(), 1, LoadReal(VV,'A0AM', 0))
+	call UnitDamageTargetEx(LoadUnitHandle(OtherHashTable2,'A0AM', 0), GetEnumUnit(), 1, LoadReal(OtherHashTable2,'A0AM', 0))
 endfunction
 function AGI takes unit u, boolean AHI returns nothing
 	local real damageValue = .0
@@ -52127,16 +52121,16 @@ function AGI takes unit u, boolean AHI returns nothing
 		set damageValue = 750.
 	endif
 	set g = AllocationGroup(275)
-	call SaveUnitHandle(VV,'A0AM', 0, u)
-	call SavePlayerHandle(VV,'A0AM', 1, GetOwningPlayer(u))
+	call SaveUnitHandle(OtherHashTable2,'A0AM', 0, u)
+	call SavePlayerHandle(OtherHashTable2,'A0AM', 1, GetOwningPlayer(u))
 	call GroupEnumUnitsInRange(g, x, y, 450, Condition(function ADI))
 	call ABX("Abilities\\Spells\\Human\\FlameStrike\\FlameStrike1.mdl", x, y, 5)
 	call A8X(GetOwningPlayer(u), 3, x, y, 500)
-	call SaveReal(VV,'A0AM', 0, damageValue)
+	call SaveReal(OtherHashTable2,'A0AM', 0, damageValue)
 	set X4 = AHI == false
 	call ForGroup(g, function AFI)
 	set X4 = false
-	call FlushChildHashtable(VV,'A0AM')
+	call FlushChildHashtable(OtherHashTable2,'A0AM')
 	call RemoveUnit(u)
 	call DeallocateGroup(g)
 	set g = null
@@ -52149,7 +52143,7 @@ function JQE takes nothing returns nothing
 	call AGI(GetTriggerUnit(), false)
 endfunction
 function ALI takes nothing returns boolean
-	return GetOwningPlayer(GetFilterUnit()) == LoadPlayerHandle(VV,'A0AN', 0) and UnitIsDead(GetFilterUnit()) == false and RLX(GetFilterUnit())
+	return GetOwningPlayer(GetFilterUnit()) == LoadPlayerHandle(OtherHashTable2,'A0AN', 0) and UnitIsDead(GetFilterUnit()) == false and RLX(GetFilterUnit())
 endfunction
 function AMI takes nothing returns nothing
 	call IssueImmediateOrderById(GetEnumUnit(), 852556)
@@ -52158,16 +52152,16 @@ function JTE takes nothing returns nothing
 	local group g = AllocationGroup(276)
 	local real x = GetSpellTargetX()
 	local real y = GetSpellTargetY()
-	call SavePlayerHandle(VV,'A0AN', 0, GetOwningPlayer(GetTriggerUnit()))
+	call SavePlayerHandle(OtherHashTable2,'A0AN', 0, GetOwningPlayer(GetTriggerUnit()))
 	call GroupEnumUnitsInRange(g, x, y, 716, Condition(function ALI))
 	call ForGroup(g, function AMI)
-	call FlushChildHashtable(VV,'A0AN')
+	call FlushChildHashtable(OtherHashTable2,'A0AN')
 	call DeallocateGroup(g)
 	set g = null
 endfunction
 function API takes nothing returns nothing
 	if RLX(GetSummonedUnit()) then
-		call TriggerRegisterUnitEvent(JJ, GetSummonedUnit(), EVENT_UNIT_SPELL_CAST)
+		call TriggerRegisterUnitEvent(UnitEventMainTrig, GetSummonedUnit(), EVENT_UNIT_SPELL_CAST)
 	endif
 endfunction
 function M2X takes nothing returns nothing
@@ -52477,7 +52471,7 @@ function A6I takes unit WJE, unit A7I returns nothing
 		set d = CreateUnit(GetOwningPlayer(WJE),'e00E', GetUnitX(A8I), GetUnitY(A8I), 0)
 		call UnitAddAbility(d,'A049')
 		call SetUnitAbilityLevel(d,'A049', level)
-		call TriggerRegisterUnitEvent(JJ, d, EVENT_UNIT_SPELL_EFFECT)
+		call TriggerRegisterUnitEvent(UnitEventMainTrig, d, EVENT_UNIT_SPELL_EFFECT)
 		call IssueTargetOrderById(d, 852585, u)
 		set d = null
 		call EPX(u,'A33G', .5)
@@ -52659,7 +52653,7 @@ function NNI takes nothing returns boolean
 			call SetUnitFlyHeight(WUE, 775 -DFR, 0)
 		endif
 		if IsUnitType(WUE, UNIT_TYPE_HERO) then
-			call SaveBoolean(K, GetHandleId(WUE), 99, true)
+			call SaveBoolean(OtherHashTable, GetHandleId(WUE), 99, true)
 		endif
 		call SetUnitPosition(WUE, NBX, NCX)
 	else
@@ -52683,9 +52677,9 @@ function NNI takes nothing returns boolean
 			endif
 		endif
 		if LoadBoolean(HY, h, 0) == false and WWE != null and IsUnitEnemy(WWE, GetOwningPlayer(trigUnit)) and GetUnitAbilityLevel(WWE,'A3E9') == 1 and IsMagicImmuneUnit(trigUnit) == false then
-			call SaveInteger(VV,'A3E9', 0, NCI)
-			call SaveUnitHandle(VV,'A3E9', 0, WWE)
-			call SaveUnitHandle(VV,'A3E9', 1, trigUnit)
+			call SaveInteger(OtherHashTable2,'A3E9', 0, NCI)
+			call SaveUnitHandle(OtherHashTable2,'A3E9', 0, WWE)
+			call SaveUnitHandle(OtherHashTable2,'A3E9', 1, trigUnit)
 			call ExecuteFunc("NDI")
 		endif
 		call A3X(x2, y2, 300)
@@ -52752,16 +52746,16 @@ function E5E takes nothing returns nothing
 	call NFI(GetTriggerUnit(), GetSpellTargetUnit(), GetUnitAbilityLevel(GetTriggerUnit(),'A0BZ'), false)
 endfunction
 function NDI takes nothing returns nothing
-	local unit WJE = LoadUnitHandle(VV,'A3E9', 0)
+	local unit WJE = LoadUnitHandle(OtherHashTable2,'A3E9', 0)
 	local unit NGI = NAI(WJE, 300)
 	call T4V(WJE)
 	if NGI != null then
 		set KEV = NGI
-		call NFI(WJE, LoadUnitHandle(VV,'A3E9', 1), LoadInteger(VV,'A3E9', 0), true)
+		call NFI(WJE, LoadUnitHandle(OtherHashTable2,'A3E9', 1), LoadInteger(OtherHashTable2,'A3E9', 0), true)
 	endif
 	set WJE = null
 	set NGI = null
-	call FlushChildHashtable(VV,'A3E9')
+	call FlushChildHashtable(OtherHashTable2,'A3E9')
 endfunction
 function K_E takes nothing returns nothing
 	local unit WJE = GetTriggerUnit()
@@ -52993,7 +52987,7 @@ function N_I takes unit u, unit WWE returns nothing
 	local integer c = IMaxBJ(LoadInteger(HY, h, 236), 0)
 	local integer level = GetUnitAbilityLevel(u,'P107')
 	local integer WFR
-	local integer N1I = LoadInteger(P, GetHandleId(u),'P107')
+	local integer N1I = LoadInteger(ObjectHashTable, GetHandleId(u),'P107')
 	if N0I != WWE then
 		set c = 0
 	else
@@ -53010,7 +53004,7 @@ function N_I takes unit u, unit WWE returns nothing
 		else
 			call LodSystem_ReduceUnitExtraState(u, N1I -WFR, "attack")
 		endif
-		call SaveInteger(P, GetHandleId(u),'P107', WFR)
+		call SaveInteger(ObjectHashTable, GetHandleId(u),'P107', WFR)
 	endif
 	call SaveInteger(HY, h, 236, c)
 	if N0I != WWE then
@@ -53685,9 +53679,9 @@ function BWI takes nothing returns nothing
 			call CommonUnitAddStun(GetTriggerUnit(), 1.35 + LoadReal(HY, h, 0)* .1, false)
 			call UnitDamageTargetEx(LoadUnitHandle(HY, h, 1), GetTriggerUnit(), 1, 25 + 75 * LoadReal(HY, h, 0))
 			if GetUnitAbilityLevel(GetTriggerUnit(),'A3E9') == 1 and LoadBoolean(HY, h, 0) == false and IsMagicImmuneUnit(LoadUnitHandle(HY, h, 1)) == false then
-				call SaveUnitHandle(VV,'A3E9', 0, GetTriggerUnit())
-				call SaveUnitHandle(VV,'A3E9', 1, LoadUnitHandle(HY, h, 1))
-				call SaveInteger(VV,'A3E9', 0, R2I(LoadReal(HY, h, 0)))
+				call SaveUnitHandle(OtherHashTable2,'A3E9', 0, GetTriggerUnit())
+				call SaveUnitHandle(OtherHashTable2,'A3E9', 1, LoadUnitHandle(HY, h, 1))
+				call SaveInteger(OtherHashTable2,'A3E9', 0, R2I(LoadReal(HY, h, 0)))
 				call ExecuteFunc("BYI")
 			endif
 			call FlushChildHashtable(HY, h)
@@ -53728,29 +53722,29 @@ function F5E takes nothing returns nothing
 	endif
 endfunction
 function BYI takes nothing returns nothing
-	local unit WJE = LoadUnitHandle(VV,'A3E9', 0)
-	local unit WLE = LoadUnitHandle(VV,'A3E9', 1)
-	local integer level = LoadInteger(VV,'A3E9', 0)
+	local unit WJE = LoadUnitHandle(OtherHashTable2,'A3E9', 0)
+	local unit WLE = LoadUnitHandle(OtherHashTable2,'A3E9', 1)
+	local integer level = LoadInteger(OtherHashTable2,'A3E9', 0)
 	call T4V(WJE)
 	if UnitHasSpellShield(WLE) == false then
 		call BZI(WJE, WLE, level, true)
 	endif
 	set WJE = null
 	set WLE = null
-	call FlushChildHashtable(VV,'A3E9')
+	call FlushChildHashtable(OtherHashTable2,'A3E9')
 endfunction
 function B_I takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer WFV = GetHandleId(t)
-	local integer UYX = LoadInteger(P, WFV, 0)
-	if UYX == 4 or UnitIsDead(LoadUnitHandle(P, WFV, 0)) then
+	local integer UYX = LoadInteger(ObjectHashTable, WFV, 0)
+	if UYX == 4 or UnitIsDead(LoadUnitHandle(ObjectHashTable, WFV, 0)) then
 		call DestroyTimerAndFlushHT_P(t)
 		set t = null
 		return
 	endif
 	set UYX = UYX + 1
-	call SaveInteger(P, WFV, 0, UYX)
-	call SaveInteger(P, LoadInteger(P, WFV, 1), 1, UYX)
+	call SaveInteger(ObjectHashTable, WFV, 0, UYX)
+	call SaveInteger(ObjectHashTable, LoadInteger(ObjectHashTable, WFV, 1), 1, UYX)
 	set t = null
 endfunction
 function B0I takes nothing returns boolean
@@ -53783,7 +53777,7 @@ function B2I takes nothing returns boolean
 	local unit t = GetFilterUnit()
 	local integer i
 	if GetUnitTypeId(t)=='e020' and GetWidgetLife(t)> .405 then
-		set i = LoadInteger(P, GetHandleId(t), 2)
+		set i = LoadInteger(ObjectHashTable, GetHandleId(t), 2)
 		if XK[0]== 0 or XK[1]> i then
 			set XK[1]= i
 			set Temp__ArrayUnit[0]= t
@@ -53804,15 +53798,15 @@ function YJV takes nothing returns nothing
 	local unit u = GetTriggerUnit()
 	local player p = GetOwningPlayer(u)
 	local integer hu = GetHandleId(u)
-	local integer UYX = LoadInteger(P, hu,'A0RP')
+	local integer UYX = LoadInteger(ObjectHashTable, hu,'A0RP')
 	local real x
 	local real y
 	if GetUnitTypeId(u)=='e020'then
 		set Temp__ArrayUnit[0]= u
-		set XK[0]= LoadInteger(P, hu, 1)+'A510'
-		set u = LoadUnitHandle(P, hu, 0)
+		set XK[0]= LoadInteger(ObjectHashTable, hu, 1)+'A510'
+		set u = LoadUnitHandle(ObjectHashTable, hu, 0)
 		set hu = GetHandleId(u)
-		set UYX = LoadInteger(P, hu,'A0RP')
+		set UYX = LoadInteger(ObjectHashTable, hu,'A0RP')
 	else
 		set Temp__ArrayUnit[0]= null
 		set Temp__ArrayReal[0]= 99999
@@ -53823,14 +53817,14 @@ function YJV takes nothing returns nothing
 			set u = null
 			return
 		endif
-		set XK[0]= LoadInteger(P, GetHandleId(Temp__ArrayUnit[0]), 1)+'A510'
+		set XK[0]= LoadInteger(ObjectHashTable, GetHandleId(Temp__ArrayUnit[0]), 1)+'A510'
 	endif
 	set x = GetWidgetX(Temp__ArrayUnit[0])
 	set y = GetWidgetY(Temp__ArrayUnit[0])
 	set U2 = Player__Hero[GetPlayerId(GetOwningPlayer(u))]
 	call GroupEnumUnitsInRange(AK, x, y, 400, Condition(function B0I))
 	call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Items\\TomeOfRetraining\\TomeOfRetrainingCaster.mdl", x, y))
-	call RemoveUnit(LoadUnitHandle(P, GetHandleId(Temp__ArrayUnit[0]), 1))
+	call RemoveUnit(LoadUnitHandle(ObjectHashTable, GetHandleId(Temp__ArrayUnit[0]), 1))
 	call RemoveUnit(Temp__ArrayUnit[0])
 	set p = null
 	set u = null
@@ -53846,31 +53840,31 @@ function YHV takes nothing returns nothing
 	local player p = GetOwningPlayer(u)
 	local unit d = CreateUnit(p,'e020', GetSpellTargetX(), GetSpellTargetY(), 0)
 	local integer hu = GetHandleId(u)
-	local integer h = LoadInteger(P, hu,'A0RP')
+	local integer h = LoadInteger(ObjectHashTable, hu,'A0RP')
 	local integer WOV = 2 + 3 *(GetUnitAbilityLevel(u,'A0RP')+ GetUnitAbilityLevel(u,'A449'))
 	local boolean b = GetUnitAbilityLevel(u,'A449')> 0
 	local unit du
-	call SaveInteger(P, hu,'A0RP', h + 1)
+	call SaveInteger(ObjectHashTable, hu,'A0RP', h + 1)
 	set hu = GetHandleId(d)
-	call SaveUnitHandle(P, hu, 0, u)
-	call SaveInteger(P, hu, 0, 0)
-	call SaveInteger(P, hu, 1, 0)
-	call SaveInteger(P, hu, 2, h)
-	call TriggerRegisterUnitEvent(JJ, d, EVENT_UNIT_SPELL_EFFECT)
+	call SaveUnitHandle(ObjectHashTable, hu, 0, u)
+	call SaveInteger(ObjectHashTable, hu, 0, 0)
+	call SaveInteger(ObjectHashTable, hu, 1, 0)
+	call SaveInteger(ObjectHashTable, hu, 2, h)
+	call TriggerRegisterUnitEvent(UnitEventMainTrig, d, EVENT_UNIT_SPELL_EFFECT)
 	call B3I(p, WOV)
 	call W1E(d)
 	if b then
-		call SaveInteger(P, hu, 1, 4)
+		call SaveInteger(ObjectHashTable, hu, 1, 4)
 		set du = CreateUnit(p,'e01V', GetSpellTargetX(), GetSpellTargetY(), 0)
 		call UnitAddAbility(du,'A44B')
-		call SaveUnitHandle(P, hu, 1, du)
+		call SaveUnitHandle(ObjectHashTable, hu, 1, du)
 		set du = null
 	else
 		set t = CreateTimer()
 		set h = GetHandleId(t)
-		call SaveInteger(P, h, 0, 0)
-		call SaveInteger(P, h, 1, hu)
-		call SaveUnitHandle(P, h, 0, d)
+		call SaveInteger(ObjectHashTable, h, 0, 0)
+		call SaveInteger(ObjectHashTable, h, 1, hu)
+		call SaveUnitHandle(ObjectHashTable, h, 0, d)
 		call TimerStart(t, 1, true, function B_I)
 	endif
 	set d = null
@@ -53903,28 +53897,28 @@ endfunction
 function CAI takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer WFV = GetHandleId(t)
-	local integer UYX = LoadInteger(P, WFV, 0)
-	local integer WVV
+	local integer UYX = LoadInteger(ObjectHashTable, WFV, 0)
+	local integer count
 	local integer a = 0
-	if LocalPlayer== LoadPlayerHandle(P, WFV, 4) then
+	if LocalPlayer== LoadPlayerHandle(ObjectHashTable, WFV, 4) then
 		set a = 1
 	endif
 	if UYX == 10 then
-		call DestroyLightning(LoadLightningHandle(P, WFV, 3))
-		call DestroyLightning(LoadLightningHandle(P, WFV, 2))
-		call DestroyLightning(LoadLightningHandle(P, WFV, 1))
-		call DestroyLightning(LoadLightningHandle(P, WFV, 0))
+		call DestroyLightning(LoadLightningHandle(ObjectHashTable, WFV, 3))
+		call DestroyLightning(LoadLightningHandle(ObjectHashTable, WFV, 2))
+		call DestroyLightning(LoadLightningHandle(ObjectHashTable, WFV, 1))
+		call DestroyLightning(LoadLightningHandle(ObjectHashTable, WFV, 0))
 		call DestroyTimerAndFlushHT_P(t)
 		set t = null
 		return
 	endif
-	set WVV = 0
-	call SaveInteger(P, WFV, 0, UYX + 1)
+	set count = 0
+	call SaveInteger(ObjectHashTable, WFV, 0, UYX + 1)
 	set UYX = 65 + 15* UYX
 	loop
-	exitwhen WVV == 4
-		call SetLightningColor(LoadLightningHandle(P, WFV, WVV), UYX, UYX, UYX, a)
-		set WVV = WVV + 1
+	exitwhen count == 4
+		call SetLightningColor(LoadLightningHandle(ObjectHashTable, WFV, count), UYX, UYX, UYX, a)
+		set count = count + 1
 	endloop
 	set t = null
 endfunction
@@ -53936,20 +53930,20 @@ function CNI takes player p returns nothing
 	if LocalPlayer== p then
 		set a = 1
 	endif
-	call SaveInteger(P, WFV, 0, 0)
+	call SaveInteger(ObjectHashTable, WFV, 0, 0)
 	set l = AddLightning("DRAB", false, Temp__ArrayReal[0], Temp__ArrayReal[4], Temp__ArrayReal[1], Temp__ArrayReal[5])
 	call SetLightningColor(l, 50, 50, 50, a)
-	call SaveLightningHandle(P, WFV, 0, l)
+	call SaveLightningHandle(ObjectHashTable, WFV, 0, l)
 	set l = AddLightning("DRAB", false, Temp__ArrayReal[0], Temp__ArrayReal[4], Temp__ArrayReal[2], Temp__ArrayReal[6])
 	call SetLightningColor(l, 50, 50, 50, a)
-	call SaveLightningHandle(P, WFV, 1, l)
+	call SaveLightningHandle(ObjectHashTable, WFV, 1, l)
 	set l = AddLightning("DRAB", false, Temp__ArrayReal[2], Temp__ArrayReal[6], Temp__ArrayReal[3], Temp__ArrayReal[7])
 	call SetLightningColor(l, 50, 50, 50, a)
-	call SaveLightningHandle(P, WFV, 2, l)
+	call SaveLightningHandle(ObjectHashTable, WFV, 2, l)
 	set l = AddLightning("DRAB", false, Temp__ArrayReal[3], Temp__ArrayReal[7], Temp__ArrayReal[1], Temp__ArrayReal[5])
 	call SetLightningColor(l, 50, 50, 50, a)
-	call SaveLightningHandle(P, WFV, 3, l)
-	call SavePlayerHandle(P, WFV, 4, p)
+	call SaveLightningHandle(ObjectHashTable, WFV, 3, l)
+	call SavePlayerHandle(ObjectHashTable, WFV, 4, p)
 	call TimerStart(t, .05, true, function CAI)
 	set l = null
 	set t = null
@@ -53982,7 +53976,7 @@ function CBI takes unit u, real ZRO, real I3X, real CJR, real x, real y returns 
 	set Temp__ArrayReal[6]= COI
 	set Temp__ArrayReal[7]= CRI
 	set Temp__ArrayReal[8]= CJR
-	if LoadBoolean(P, GetHandleId(p),'A0RO') then
+	if LoadBoolean(ObjectHashTable, GetHandleId(p),'A0RO') then
 		call CNI(p)
 	endif
 	call GroupEnumUnitsInRange(AK, x, y, ZRO, Condition(function CII))
@@ -54000,18 +53994,18 @@ function CCI takes nothing returns boolean
 		set t = GetTriggerUnit()
 		set u = GetEventDamageSource()
 		set CJR = GetEventDamage()
-		if LoadUnitHandle(P, WFV, 0) == u and CJR > 1 and AD < 1 and FK and UnitAlive(t) then
+		if LoadUnitHandle(ObjectHashTable, WFV, 0) == u and CJR > 1 and AD < 1 and FK and UnitAlive(t) then
 			set x = GetWidgetX(t)
 			set y = GetWidgetY(t)
 			call DisableTrigger(HLR)
-			call CBI(u, 575 +(GetUnitAbilityLevel(u,'A0RO'))* 40, Atan2(y -LoadReal(P, WFV, 1), x -LoadReal(P, WFV, 0)), CJR, x, y)
-			call FlushChildHashtable(P, WFV)
+			call CBI(u, 575 +(GetUnitAbilityLevel(u,'A0RO'))* 40, Atan2(y -LoadReal(ObjectHashTable, WFV, 1), x -LoadReal(ObjectHashTable, WFV, 0)), CJR, x, y)
+			call FlushChildHashtable(ObjectHashTable, WFV)
 			call CleanCurrentTrigger(HLR)
 		endif
 		set t = null
 		set u = null
 	endif
-	call FlushChildHashtable(P, WFV)
+	call FlushChildHashtable(ObjectHashTable, WFV)
 	call CleanCurrentTrigger(HLR)
 	set HLR = null
 	return false
@@ -54019,7 +54013,7 @@ endfunction
 function CDI takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer WFV = GetHandleId(t)
-	call SaveBoolean(P, LoadInteger(P, WFV, 0),'A0RO', true)
+	call SaveBoolean(ObjectHashTable, LoadInteger(ObjectHashTable, WFV, 0),'A0RO', true)
 	call DestroyTimerAndFlushHT_P(t)
 	set t = null
 endfunction
@@ -54030,12 +54024,12 @@ endfunction
 //	call TriggerRegisterUnitEvent(HLR, t, EVENT_UNIT_DAMAGED)
 //	call TriggerRegisterTimerEvent(HLR, 2.5, false)
 //	call TriggerAddCondition(HLR, Condition(function CCI))
-//	call SaveUnitHandle(P, WFV, 0, u)
-//	call SaveReal(P, WFV, 0, GetWidgetX(u))
-//	call SaveReal(P, WFV, 1, GetWidgetY(u))
+//	call SaveUnitHandle(ObjectHashTable, WFV, 0, u)
+//	call SaveReal(ObjectHashTable, WFV, 0, GetWidgetX(u))
+//	call SaveReal(ObjectHashTable, WFV, 1, GetWidgetY(u))
 //	set WFV = GetHandleId(u)
-//	call SaveBoolean(P, WFV,'A0RO', false)
-//	call SaveInteger(P, GetHandleId(time), 0, WFV)
+//	call SaveBoolean(ObjectHashTable, WFV,'A0RO', false)
+//	call SaveInteger(ObjectHashTable, GetHandleId(time), 0, WFV)
 //	call TimerStart(time, .4, false, function CDI)
 //	set time = null
 //	set HLR = null
@@ -54047,18 +54041,18 @@ function CFI takes unit u , unit t, real damage returns nothing
 endfunction
 
 function CGI takes unit u, unit t, real damage returns nothing
-	if damage > 1 and GetUnitAbilityLevel(u,'A0RO') > 0 and GetUnitAbilityLevel(u,'A36D') == 0 and LoadBoolean(P, GetHandleId(u),'A0RO') and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and IsUnitIllusion(t) == false then
+	if damage > 1 and GetUnitAbilityLevel(u,'A0RO') > 0 and GetUnitAbilityLevel(u,'A36D') == 0 and LoadBoolean(ObjectHashTable, GetHandleId(u),'A0RO') and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and IsUnitIllusion(t) == false then
 		call CFI(u, t, damage)
 	endif
 endfunction
 function S3E takes nothing returns nothing
 	local player p = GetTriggerPlayer()
 	local integer WFV = GetHandleId(p)
-	local boolean b = LoadBoolean(P, WFV,'A0RO')
+	local boolean b = LoadBoolean(ObjectHashTable, WFV,'A0RO')
 	if LocalPlayer == p then
 		call GetSetupText("灵能之刃作用范围显示", b)
 	endif
-	call SaveBoolean(P, WFV,'A0RO', not b)
+	call SaveBoolean(ObjectHashTable, WFV,'A0RO', not b)
 	//if b then
 	//	call DisplayTextToPlayer(p, 0, 0, "灵能之刃作用范围显示已|c00FF0000关闭|r")
 	//else
@@ -54068,7 +54062,6 @@ function S3E takes nothing returns nothing
 endfunction
 function CHI takes unit u returns nothing
 	local player p = GetOwningPlayer(u)
-	call TriggerRegisterPlayerChatEvent(KJ, p, "-display", true)
 	call DisplayTextToPlayer(p, 0, 0, "输入 -display 来显示灵能之刃的作用范围")
 endfunction
 
@@ -54087,7 +54080,7 @@ function P_E takes nothing returns nothing
 	call Unit_Addrange(u, 60.)
 	if lv == 1 then
 		call CHI(u)
-		call SaveBoolean(P, GetHandleId(u),'A0RO', true)
+		call SaveBoolean(ObjectHashTable, GetHandleId(u),'A0RO', true)
 	endif
 	set u = null
 endfunction
@@ -54470,9 +54463,9 @@ function C3I takes nothing returns boolean
 			call CleanCurrentTrigger(t)
 			if GetUnitTypeId(WWE)!='n00L' and I1O then
 				if GetUnitAbilityLevel(WWE,'A3E9') == 1 and IsMagicImmuneUnit(WUE) == false and FAR == false then
-					call SaveUnitHandle(VV,'A3E9', 0, WWE)
-					call SaveUnitHandle(VV,'A3E9', 1, WUE)
-					call SaveInteger(VV,'A3E9', 0, level)
+					call SaveUnitHandle(OtherHashTable2,'A3E9', 0, WWE)
+					call SaveUnitHandle(OtherHashTable2,'A3E9', 1, WUE)
+					call SaveInteger(OtherHashTable2,'A3E9', 0, level)
 					call ExecuteFunc("C7I")
 				endif
 				set C5I = C1I(NIX, WWE, C4I)
@@ -54544,9 +54537,9 @@ function XJE takes nothing returns nothing
 	set WLE = null
 endfunction
 function C7I takes nothing returns nothing
-	local unit WJE = LoadUnitHandle(VV,'A3E9', 0)
-	local unit WLE = LoadUnitHandle(VV,'A3E9', 1)
-	local integer level = LoadInteger(VV,'A3E9', 0)
+	local unit WJE = LoadUnitHandle(OtherHashTable2,'A3E9', 0)
+	local unit WLE = LoadUnitHandle(OtherHashTable2,'A3E9', 1)
+	local integer level = LoadInteger(OtherHashTable2,'A3E9', 0)
 	call T4V(WJE)
 	call C8I(WJE, WLE, level, true)
 	set WJE = null
@@ -54894,9 +54887,9 @@ function DMI takes unit u, unit t, integer lv, boolean FAR, real x, real y retur
 	endif
 	if t != null and UnitHasSpellShield(t) == false then
 		if GetUnitAbilityLevel(t,'A3E9') == 1 and IsMagicImmuneUnit(u) == false and FAR == false then
-			call SaveUnitHandle(VV,'A3E9', 0, t)
-			call SaveUnitHandle(VV,'A3E9', 1, u)
-			call SaveInteger(VV,'A3E9', 0, lv)
+			call SaveUnitHandle(OtherHashTable2,'A3E9', 0, t)
+			call SaveUnitHandle(OtherHashTable2,'A3E9', 1, u)
+			call SaveInteger(OtherHashTable2,'A3E9', 0, lv)
 			call ExecuteFunc("DPI")
 		endif
 		set x = GetUnitX(t)
@@ -54927,23 +54920,23 @@ function XPE takes nothing returns nothing
 	set t = null
 endfunction
 function DPI takes nothing returns nothing
-	local unit WJE = LoadUnitHandle(VV,'A3E9', 0)
-	local unit WLE = LoadUnitHandle(VV,'A3E9', 1)
-	local integer lv = LoadInteger(VV,'A3E9', 0)
-	call T4V(LoadUnitHandle(VV,'A3E9', 0))
+	local unit WJE = LoadUnitHandle(OtherHashTable2,'A3E9', 0)
+	local unit WLE = LoadUnitHandle(OtherHashTable2,'A3E9', 1)
+	local integer lv = LoadInteger(OtherHashTable2,'A3E9', 0)
+	call T4V(LoadUnitHandle(OtherHashTable2,'A3E9', 0))
 	call DMI(WJE, WLE, lv, true, GetUnitX(WLE), GetUnitY(WLE))
 	set WJE = null
 	set WLE = null
-	call FlushChildHashtable(VV,'A3E9')
+	call FlushChildHashtable(OtherHashTable2,'A3E9')
 endfunction
 function ETI takes nothing returns nothing
-	local unit u = LoadUnitHandle(VV,'A3E9', 0)
-	local integer lv = LoadInteger(VV,'A3E9', 0)
-	local real x = LoadReal(VV,'A3E9', 0)
-	local real y = LoadReal(VV,'A3E9', 1)
+	local unit u = LoadUnitHandle(OtherHashTable2,'A3E9', 0)
+	local integer lv = LoadInteger(OtherHashTable2,'A3E9', 0)
+	local real x = LoadReal(OtherHashTable2,'A3E9', 0)
+	local real y = LoadReal(OtherHashTable2,'A3E9', 1)
 	call DMI(u, null, lv, true, x, y)
 	set u = null
-	call FlushChildHashtable(VV,'A3E9')
+	call FlushChildHashtable(OtherHashTable2,'A3E9')
 endfunction
 function DQI takes nothing returns nothing
 	local timer t = GetExpiredTimer()
@@ -55059,7 +55052,7 @@ function D_I takes nothing returns boolean
 	local integer level
 	local integer c = LoadInteger(HY, h, 0)
 	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
-		if FK and LoadBoolean(P, GetHandleId(GetTriggerUnit()),'A0NS') == false then
+		if FK and LoadBoolean(ObjectHashTable, GetHandleId(GetTriggerUnit()),'A0NS') == false then
 			if D0I < GetEventDamage() then
 				set WUE =(LoadUnitHandle(HY, h, 2))
 				set level =(LoadInteger(HY, h, 5))
@@ -55133,14 +55126,14 @@ endfunction
 function D1I takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer WFV = GetHandleId(t)
-	local boolean Q0X = LoadBoolean(P, WFV,'forc')
-	if LoadBoolean(P, WFV, 0) then
-		call SaveBoolean(P,'A0NS', LoadInteger(P, WFV, 0), true)
+	local boolean Q0X = LoadBoolean(ObjectHashTable, WFV,'forc')
+	if LoadBoolean(ObjectHashTable, WFV, 0) then
+		call SaveBoolean(ObjectHashTable,'A0NS', LoadInteger(ObjectHashTable, WFV, 0), true)
 		call DestroyTimerAndFlushHT_P(t)
 	else
-		call TimerStart(t, LoadInteger(P, WFV, 1), false, function D1I)
-		call SaveBoolean(P, LoadInteger(P, WFV, 0),'A0NS', false)
-		call SaveBoolean(P, WFV, 0, true)
+		call TimerStart(t, LoadInteger(ObjectHashTable, WFV, 1), false, function D1I)
+		call SaveBoolean(ObjectHashTable, LoadInteger(ObjectHashTable, WFV, 0),'A0NS', false)
+		call SaveBoolean(ObjectHashTable, WFV, 0, true)
 	endif
 	set t = null
 endfunction
@@ -55248,11 +55241,11 @@ function UnitSpellEffect__BorrowedTime takes unit u, integer DSR returns nothing
 	endif
 	call WJV(u,'C022','D022', dur) // 添加Buff
 
-	//call SaveInteger(P, h, 1, R2I(YDWEGetUnitAbilityDataReal(u, id, lv, 105))-R2I(dur))
-	//call SaveBoolean(P, DSR,'A0NS', true)
-	//call SaveBoolean(P,'A0NS', DSR, false)
-	//call SaveInteger(P, h, 0, DSR)
-	//call SaveBoolean(P, h, 0, false)
+	//call SaveInteger(ObjectHashTable, h, 1, R2I(YDWEGetUnitAbilityDataReal(u, id, lv, 105))-R2I(dur))
+	//call SaveBoolean(ObjectHashTable, DSR,'A0NS', true)
+	//call SaveBoolean(ObjectHashTable,'A0NS', DSR, false)
+	//call SaveInteger(ObjectHashTable, h, 0, DSR)
+	//call SaveBoolean(ObjectHashTable, h, 0, false)
 	//call TimerStart(t, dur, false, function D1I)
 	//call SaveTimerHandle(HY, DSR,'A0NS', t)
 	set t = null
@@ -55274,7 +55267,7 @@ function LearnSkill__BorrowedTime takes nothing returns nothing
 	local integer h = GetHandleId(u)
 	if (GetUnitAbilityLevel(u,'A0NS') == 1 or GetUnitAbilityLevel(u,'A1DA') == 1) and IsUnitIllusion(u) == false then
 		call SaveBoolean( ExtraHT, h, HTKEY_HAS_BORROWEDTIME, true )
-		call TriggerRegisterUnitEvent(JJ, u, EVENT_UNIT_DAMAGED)
+		call TriggerRegisterUnitEvent(UnitEventMainTrig, u, EVENT_UNIT_DAMAGED)
 	endif
 	set u = null
 endfunction
@@ -55782,7 +55775,7 @@ function J4E takes nothing returns boolean
 endfunction
 function FYI takes nothing returns nothing
 	local timer t = GetExpiredTimer()
-	local unit u = LoadUnitHandle(P, GetHandleId(t), 0)
+	local unit u = LoadUnitHandle(ObjectHashTable, GetHandleId(t), 0)
 	call UnitRemoveAbility(u,'B02F')
 	call UnitRemoveAbility(u,'A2O9')
 	call SetPlayerAbilityAvailableEx(GetOwningPlayer(u),'A04Y', true)
@@ -55796,7 +55789,7 @@ function FZI takes nothing returns boolean
 	if GetIssuedOrderId() == 852589and GetUnitAbilityLevel(u,'A2O9')> 0 then
 		set t = CreateTimer()
 		call TimerStart(t, 0, false, function FYI)
-		call SaveUnitHandle(P, GetHandleId(t), 0, u)
+		call SaveUnitHandle(ObjectHashTable, GetHandleId(t), 0, u)
 		set t = null
 	endif
 	set u = null
@@ -55810,7 +55803,7 @@ function M4X takes nothing returns nothing
 endfunction
 function F_I takes unit R8X, unit WLE returns nothing
 	local unit u
-	if LoadBoolean(P, GetHandleId(WLE),'Grip') then
+	if LoadBoolean(ObjectHashTable, GetHandleId(WLE),'Grip') then
 		if IsUnitEnemy(R8X, GetOwningPlayer(WLE)) then
 			set u = CreateUnit(GetOwningPlayer(R8X),'e00E', GetUnitX(WLE), GetUnitY(WLE), 0)
 			call UnitAddPermanentAbility(u,'A04Y')
@@ -55836,7 +55829,7 @@ function F0I takes nothing returns boolean
 		call DestroyFogModifier(fm)
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
-		call SaveBoolean(P, GetHandleId(WUE),'Grip', false)
+		call SaveBoolean(ObjectHashTable, GetHandleId(WUE),'Grip', false)
 		call FIX(WWE)
 	elseif GetTriggerEvalCount(t)> count or(GetTriggerEvalCount(t) == 1 and GetUnitAbilityLevel(WWE,'A3E9') == 1) then
 		call FogModifierStop(fm)
@@ -55844,7 +55837,7 @@ function F0I takes nothing returns boolean
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 		call EXStopUnit(WUE)
-		call SaveBoolean(P, GetHandleId(WUE),'Grip', false)
+		call SaveBoolean(ObjectHashTable, GetHandleId(WUE),'Grip', false)
 		call FIX(WWE)
 	else
 		if GetUnitAbilityLevel(WUE,'A1D9')> 0 then
@@ -55883,7 +55876,7 @@ function F1I takes nothing returns nothing
 	call SaveUnitHandle(HY, h, 2, WUE)
 	call SaveUnitHandle(HY, h, 17, WWE)
 	call SaveFogModifierHandle(HY, h, 42, ff)
-	call SaveBoolean(P, GetHandleId(WUE),'Grip', GetUnitAbilityLevel(WUE,'A1D9')> 0)
+	call SaveBoolean(ObjectHashTable, GetHandleId(WUE),'Grip', GetUnitAbilityLevel(WUE,'A1D9')> 0)
 	call FAX(WUE, WWE)
 	set WUE = null
 	set WWE = null
@@ -55898,27 +55891,27 @@ endfunction
 function F2I takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer WFV = GetHandleId(t)
-	local unit u = LoadUnitHandle(P, WFV, 0)
-	call LodSystem_ReduceUnitExtraState(u, LoadInteger(P, WFV, 0), "damageneg")
-	call RemoveSavedHandle(P, GetHandleId(u),'A04V')
+	local unit u = LoadUnitHandle(ObjectHashTable, WFV, 0)
+	call LodSystem_ReduceUnitExtraState(u, LoadInteger(ObjectHashTable, WFV, 0), "damageneg")
+	call RemoveSavedHandle(ObjectHashTable, GetHandleId(u),'A04V')
 	call DestroyTimerAndFlushHT_P(t)
 	set t = null
 	set u = null
 endfunction
 function F3I takes unit u returns nothing
 	local unit d = GetTriggerUnit()
-	local timer t = LoadTimerHandle(P, GetHandleId(u),'A04V')
+	local timer t = LoadTimerHandle(ObjectHashTable, GetHandleId(u),'A04V')
 	local integer WFV = GetHandleId(t)
 	local integer O3O = 30 * GetUnitAbilityLevel(d,'A04V')
 	if t == null or GetUnitAbilityLevel(u,'D018') == 0 or GetUnitTypeId(d)=='e00E' then
 		set t = CreateTimer()
 		set WFV = GetHandleId(t)
-		call SaveTimerHandle(P, GetHandleId(u),'A04V', t)
-		call SaveUnitHandle(P, WFV, 0, u)
+		call SaveTimerHandle(ObjectHashTable, GetHandleId(u),'A04V', t)
+		call SaveUnitHandle(ObjectHashTable, WFV, 0, u)
 	else
-		call LodSystem_ReduceUnitExtraState(u, LoadInteger(P, WFV, 0), "damageneg")
+		call LodSystem_ReduceUnitExtraState(u, LoadInteger(ObjectHashTable, WFV, 0), "damageneg")
 	endif
-	call SaveInteger(P, WFV, 0, O3O)
+	call SaveInteger(ObjectHashTable, WFV, 0, O3O)
 	call TimerStart(t, 20, false, function F2I)
 	call LodSystem_AddUnitExtraState(u, O3O, "damageneg")
 	call WJV(u,'C018','D018', 20)
@@ -56583,8 +56576,8 @@ function GQI takes nothing returns nothing
 	call LodSystem_ReduceUnitExtraState(u, GUI, "damage")
 	call UnitRemoveAbility(u,'A33M')
 	call UnitRemoveAbility(u,'B0GY')
-	call SaveBoolean(P, GetHandleId(u),'A0LE', false)
-	call RemoveSavedHandle(P, GetHandleId(u),'A0LE')
+	call SaveBoolean(ObjectHashTable, GetHandleId(u),'A0LE', false)
+	call RemoveSavedHandle(ObjectHashTable, GetHandleId(u),'A0LE')
 	call FlushChildHashtable(HY, h)
 	call DestroyTimer(t)
 	set u = null
@@ -56595,7 +56588,7 @@ function GWI takes unit u, integer level, boolean GSI returns nothing
 	local timer t
 	local real r
 	local integer h = GetHandleId(u)
-	local boolean b = LoadBoolean(P, h,'A0LE')
+	local boolean b = LoadBoolean(ObjectHashTable, h,'A0LE')
 	local integer GZI
 	local integer G_I
 	local real WLV = 5
@@ -56605,7 +56598,7 @@ function GWI takes unit u, integer level, boolean GSI returns nothing
 		set G0I = 2
 	endif
 	if b then
-		set t = LoadTimerHandle(P, h,'A0LE')
+		set t = LoadTimerHandle(ObjectHashTable, h,'A0LE')
 		set GYI = LoadInteger(HY, GetHandleId(t), 0)
 		set GZI = GYI * 10
 		set G_I = GYI * 5
@@ -56623,13 +56616,13 @@ function GWI takes unit u, integer level, boolean GSI returns nothing
 			endif
 		endif
 	else
-		call SaveBoolean(P, h,'A0LE', true)
+		call SaveBoolean(ObjectHashTable, h,'A0LE', true)
 		set t = CreateTimer()
 		call TimerStart(t, WLV, false, function GQI)
 		call SaveBoolean(HY, GetHandleId(t), 0, GSI)
 		call SaveInteger(HY, GetHandleId(t), 0, level)
 		call SaveUnitHandle(HY, GetHandleId(t), 0, u)
-		call SaveTimerHandle(P, h,'A0LE', t)
+		call SaveTimerHandle(ObjectHashTable, h,'A0LE', t)
 		call LodSystem_AddUnitExtraState(u, level * 10* G0I, "attack")
 		call LodSystem_AddUnitExtraState(u, level * 5 * G0I, "damage")
 		call UnitAddPermanentAbility(u,'A33M')
@@ -56745,14 +56738,14 @@ endfunction
 function G6I takes unit u returns nothing
 	local unit W_V
 	local integer h = GetHandleId(u)
-	if (LoadBoolean(K, h, 24) == false) then
-		call SaveBoolean(K, h, 24, true)
+	if (LoadBoolean(OtherHashTable, h, 24) == false) then
+		call SaveBoolean(OtherHashTable, h, 24, true)
 		set W_V = CreateUnit(GetOwningPlayer(LRV),'hBST', GetUnitX(u), GetUnitY(u), 0)
-		call SaveUnitHandle(K, h, 24, W_V)
+		call SaveUnitHandle(OtherHashTable, h, 24, W_V)
 		call SetUnitMoveSpeed(W_V, 522)
 		call IssueTargetOrderById(W_V, 851986, u)
 	else
-		set W_V = LoadUnitHandle(K, h, 24)
+		set W_V = LoadUnitHandle(OtherHashTable, h, 24)
 		call SetUnitX(W_V, GetUnitX(u))
 		call SetUnitY(W_V, GetUnitY(u))
 		if DOX(u) then
@@ -56771,10 +56764,10 @@ function G6I takes unit u returns nothing
 endfunction
 function G7I takes unit u returns nothing
 	local integer h = GetHandleId(u)
-	if (LoadBoolean(K, h, 24)) then
-		call SaveBoolean(K, h, 24, false)
-		call SetUnitPosition(LoadUnitHandle(K, h, 24), 7536,-7632)
-		call KillUnit(LoadUnitHandle(K, h, 24))
+	if (LoadBoolean(OtherHashTable, h, 24)) then
+		call SaveBoolean(OtherHashTable, h, 24, false)
+		call SetUnitPosition(LoadUnitHandle(OtherHashTable, h, 24), 7536,-7632)
+		call KillUnit(LoadUnitHandle(OtherHashTable, h, 24))
 		call UnitRemoveAbility(u,'B0EY')
 	endif
 endfunction
@@ -56807,7 +56800,7 @@ function G8I takes nothing returns boolean
 			if (G5I(u)) and br == false then
 				call G6I(u)
 				set UYX = UYX + 1
-			elseif (LoadBoolean(K, GetHandleId(u), 24)) then
+			elseif (LoadBoolean(OtherHashTable, GetHandleId(u), 24)) then
 				call G7I(u)
 			endif
 		endif
@@ -56821,7 +56814,7 @@ function G8I takes nothing returns boolean
 			call LodSystem_ReduceUnitExtraState(WUE, HVI, "damage")
 			call SaveBoolean(HY, h, 0, false)
 		endif
-		call SaveInteger(K, GetHandleId(WUE),'A214', 0)
+		call SaveInteger(OtherHashTable, GetHandleId(WUE),'A214', 0)
 	else
 		set CJR = CJR * UYX
 		if G9I == false then
@@ -56837,8 +56830,8 @@ function G8I takes nothing returns boolean
 		if HXI != HEI then
 			call SaveInteger(HY, h, 2, HXI)
 		endif
-		call SaveInteger(K, GetHandleId(WUE),'A214', UYX)
-		call SaveInteger(K, GetHandleId(WUE),'A215', level)
+		call SaveInteger(OtherHashTable, GetHandleId(WUE),'A214', UYX)
+		call SaveInteger(OtherHashTable, GetHandleId(WUE),'A215', level)
 		call UnitAddPermanentAbility(WUE,'A214')
 	endif
 	set t = null
@@ -56866,23 +56859,23 @@ function HII takes nothing returns nothing
 	if LoadBoolean(HY, h, 0) then
 		set I2X = 100 
 	endif
-	call SaveReal(K, GetHandleId(u), 99, R2I(I4X * I2X / 100 ))
+	call SaveReal(OtherHashTable, GetHandleId(u), 99, R2I(I4X * I2X / 100 ))
 	if I2X > 0 and UnitAlive(u) then
 		set x = GetUnitX(u)
 		set y = GetUnitY(u)
 		set dx = LoadReal(HY, h, 10)
 		set dy = LoadReal(HY, h, 11)
 		set d = GetDistanceBetween(dx, dy, x, y)
-		if LoadBoolean(K, GetHandleId(u), 99) == false then
+		if LoadBoolean(OtherHashTable, GetHandleId(u), 99) == false then
 			if (d < 100  and d > 1) and GetUnitCurrentOrder(u)!= 851993 and GetUnitCurrentOrder(u)!= 851972 and GetUnitCurrentOrder(u)!= 851973 then
 				set I3X = Atan2(y -dy, x -dx)
 				set ms = I4X * I2X * YN / 100 
-				call SaveReal(K, GetHandleId(u), 99, R2I(ms *(1 / YN)))
+				call SaveReal(OtherHashTable, GetHandleId(u), 99, R2I(ms *(1 / YN)))
 				call SetUnitX(u, CoordinateX50(x + ms * Cos(I3X)))
 				call SetUnitY(u, CoordinateY50(y + ms * Sin(I3X)))
 			endif
 		else
-			call SaveBoolean(K, GetHandleId(u), 99, false)
+			call SaveBoolean(OtherHashTable, GetHandleId(u), 99, false)
 		endif
 		call SaveReal(HY, h, 10, GetUnitX(u))
 		call SaveReal(HY, h, 11, GetUnitY(u))
@@ -56895,14 +56888,14 @@ function HAI takes nothing returns nothing
 	local integer h = GetHandleId(t)
 	local unit u = LoadUnitHandle(HY, h, 0)
 	local integer i = 1
-	local integer UYX = LoadInteger(K, GetHandleId(u),'A214')
-	local integer level = LoadInteger(K, GetHandleId(u),'A215')
+	local integer UYX = LoadInteger(OtherHashTable, GetHandleId(u),'A214')
+	local integer level = LoadInteger(OtherHashTable, GetHandleId(u),'A215')
 	local integer I2X =( 10* level -5)* UYX
 	loop
-		if (LoadBoolean(K, GetHandleId(Player__Hero[i]), 24)) then
-			call SetUnitX(LoadUnitHandle(K, GetHandleId(Player__Hero[i]), 24), GetUnitX(Player__Hero[i]))
-			call SetUnitY(LoadUnitHandle(K, GetHandleId(Player__Hero[i]), 24), GetUnitY(Player__Hero[i]))
-			call IssueTargetOrderById(LoadUnitHandle(K, GetHandleId(Player__Hero[i]), 24), 851986, Player__Hero[i])
+		if (LoadBoolean(OtherHashTable, GetHandleId(Player__Hero[i]), 24)) then
+			call SetUnitX(LoadUnitHandle(OtherHashTable, GetHandleId(Player__Hero[i]), 24), GetUnitX(Player__Hero[i]))
+			call SetUnitY(LoadUnitHandle(OtherHashTable, GetHandleId(Player__Hero[i]), 24), GetUnitY(Player__Hero[i]))
+			call IssueTargetOrderById(LoadUnitHandle(OtherHashTable, GetHandleId(Player__Hero[i]), 24), 851986, Player__Hero[i])
 		endif
 		set i = i + 1
 		if i == 6 then
@@ -57275,19 +57268,19 @@ function H1I takes nothing returns boolean
 	local real i
 	local real d
 	if GetTriggerEventId()!= EVENT_UNIT_DAMAGED then
-		call FlushChildHashtable(P, WFV)
+		call FlushChildHashtable(ObjectHashTable, WFV)
 		call CleanCurrentTrigger(HLR)
-	elseif GetEventDamageSource() == LoadUnitHandle(P, WFV, 0) then
+	elseif GetEventDamageSource() == LoadUnitHandle(ObjectHashTable, WFV, 0) then
 		call DisableTrigger(HLR)
 		set FHR = CreateTextTag()
-		set d = LoadReal(P, WFV, 1)
-		set i = LoadReal(P, WFV, 0)
-		set u = LoadUnitHandle(P, WFV, 2)
-		if GetUnitAbilityLevel(u,'A3E9') == 1 and IsMagicImmuneUnit(LoadUnitHandle(P, WFV, 1)) == false and GetUnitAbilityLevel(LoadUnitHandle(P, WFV, 1),'Aloc') == 0 then
-			if LoadBoolean(P, WFV, 0) == false then
-				call SaveUnitHandle(VV,'A3E9', 0, u)
-				call SaveUnitHandle(VV,'A3E9', 1, LoadUnitHandle(P, WFV, 1))
-				call SaveInteger(VV,'A3E9', 0, LoadInteger(P, WFV, 1))
+		set d = LoadReal(ObjectHashTable, WFV, 1)
+		set i = LoadReal(ObjectHashTable, WFV, 0)
+		set u = LoadUnitHandle(ObjectHashTable, WFV, 2)
+		if GetUnitAbilityLevel(u,'A3E9') == 1 and IsMagicImmuneUnit(LoadUnitHandle(ObjectHashTable, WFV, 1)) == false and GetUnitAbilityLevel(LoadUnitHandle(ObjectHashTable, WFV, 1),'Aloc') == 0 then
+			if LoadBoolean(ObjectHashTable, WFV, 0) == false then
+				call SaveUnitHandle(OtherHashTable2,'A3E9', 0, u)
+				call SaveUnitHandle(OtherHashTable2,'A3E9', 1, LoadUnitHandle(ObjectHashTable, WFV, 1))
+				call SaveInteger(OtherHashTable2,'A3E9', 0, LoadInteger(ObjectHashTable, WFV, 1))
 				call ExecuteFunc("H2I")
 			endif
 		endif
@@ -57300,8 +57293,8 @@ function H1I takes nothing returns boolean
 		call SetTextTagPermanent(FHR, false)
 		call SetTextTagLifespan(FHR, 2)
 		call CommonTextTag(R2SW(i, 1, 1), i, u, .03, 127, 127, 255, 255)
-		call UnitDamageTargetEx(LoadUnitHandle(P, WFV, 1), u, 1, d)
-		call FlushChildHashtable(P, WFV)
+		call UnitDamageTargetEx(LoadUnitHandle(ObjectHashTable, WFV, 1), u, 1, d)
+		call FlushChildHashtable(ObjectHashTable, WFV)
 		call CleanCurrentTrigger(HLR)
 		set FHR = null
 		set u = null
@@ -57315,13 +57308,13 @@ function H3I takes unit u, unit t, integer WUV, boolean H4I returns nothing
 	local integer WFV = GetHandleId(HLR)
 	local real GEX
 	set GEX = GetRandomInt(25 + 50 * WUV, 100 + 50 * WUV)* 1. / 100.
-	call SaveReal(P, WFV, 1,(175 + 25 * WUV)* 1. -15.625 * R2I(RAbsBJ((25 + 50 * WUV)* 1. / 100. -GEX)* 10))
-	call SaveUnitHandle(P, WFV, 0, d)
-	call SaveUnitHandle(P, WFV, 1, u)
-	call SaveUnitHandle(P, WFV, 2, t)
-	call SaveReal(P, WFV, 0, GEX)
-	call SaveInteger(P, WFV, 1, WUV)
-	call SaveBoolean(P, WFV, 0, H4I)
+	call SaveReal(ObjectHashTable, WFV, 1,(175 + 25 * WUV)* 1. -15.625 * R2I(RAbsBJ((25 + 50 * WUV)* 1. / 100. -GEX)* 10))
+	call SaveUnitHandle(ObjectHashTable, WFV, 0, d)
+	call SaveUnitHandle(ObjectHashTable, WFV, 1, u)
+	call SaveUnitHandle(ObjectHashTable, WFV, 2, t)
+	call SaveReal(ObjectHashTable, WFV, 0, GEX)
+	call SaveInteger(ObjectHashTable, WFV, 1, WUV)
+	call SaveBoolean(ObjectHashTable, WFV, 0, H4I)
 	call TriggerRegisterTimerEvent(HLR, 10, false)
 	call TriggerRegisterUnitEvent(HLR, t, EVENT_UNIT_DAMAGED)
 	call TriggerAddCondition(HLR, Condition(function H1I))
@@ -57336,15 +57329,15 @@ function FTE takes nothing returns nothing
 	endif
 endfunction
 function H2I takes nothing returns nothing
-	local unit WLE = LoadUnitHandle(VV,'A3E9', 1)
-	call T4V(LoadUnitHandle(VV,'A3E9', 0))
+	local unit WLE = LoadUnitHandle(OtherHashTable2,'A3E9', 1)
+	call T4V(LoadUnitHandle(OtherHashTable2,'A3E9', 0))
 	if UnitHasSpellShield(WLE) == false then
-		call H3I(LoadUnitHandle(VV,'A3E9', 0), WLE, LoadInteger(VV,'A3E9', 0), true)
+		call H3I(LoadUnitHandle(OtherHashTable2,'A3E9', 0), WLE, LoadInteger(OtherHashTable2,'A3E9', 0), true)
 	else
 		call AJO(WLE)
 	endif
 	set WLE = null
-	call FlushChildHashtable(VV,'A3E9')
+	call FlushChildHashtable(OtherHashTable2,'A3E9')
 endfunction
 function RAF takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
@@ -57920,7 +57913,7 @@ function JZI takes nothing returns boolean
 		set x1 = GetUnitX(WWE)+ d /  15* Cos(a)
 		set y1 = GetUnitY(WWE)+ d /  15* Sin(a)
 		if IsUnitType(WWE, UNIT_TYPE_HERO) then
-			call SaveBoolean(K, GetHandleId(WWE), 99, true)
+			call SaveBoolean(OtherHashTable, GetHandleId(WWE), 99, true)
 			call SetUnitPosition(WWE, x1, y1)
 		else
 			call SetUnitX(WWE, x1)
@@ -58239,11 +58232,11 @@ endfunction
 function KBI takes nothing returns nothing
 	local unit whichUnit = GetTriggerUnit()
 	if GetTriggerEventId() == EVENT_UNIT_ATTACKED then
-		call SaveReal(P, GetHandleId(whichUnit),'LSTE', GetGameTime())
+		call SaveReal(ObjectHashTable, GetHandleId(whichUnit),'LSTE', GetGameTime())
 		call KII(whichUnit)
 	else
 		if IsAttackSpecialEffects(GetSpellAbilityId()) and GetSpellTargetUnit() == LoadUnitHandle(HY, GetHandleId(GetTriggeringTrigger()), 0) then
-			call SaveReal(P, GetHandleId(GetSpellTargetUnit()),'LSTE', GetGameTime())
+			call SaveReal(ObjectHashTable, GetHandleId(GetSpellTargetUnit()),'LSTE', GetGameTime())
 			call KII(GetSpellTargetUnit())
 		endif
 	endif
@@ -58251,7 +58244,7 @@ function KBI takes nothing returns nothing
 endfunction
 function KCI takes nothing returns nothing
 	if GetAttacker() == LoadUnitHandle(HY, GetHandleId(GetTriggeringTrigger()), 0) and IsUnitEnemy(GetAttacker(), GetOwningPlayer(GetTriggerUnit())) then
-		call SaveReal(P, GetHandleId(GetAttacker()),'LSTC', GetGameTime())
+		call SaveReal(ObjectHashTable, GetHandleId(GetAttacker()),'LSTC', GetGameTime())
 		call KNI(GetAttacker())
 	endif
 endfunction
@@ -58260,11 +58253,11 @@ function KDI takes nothing returns nothing
 	local unit u = LoadUnitHandle(HY, GetHandleId(t), 0)
 	local integer hu = GetHandleId(u)
 	local real currentTime = GetGameTime()
-	if currentTime - LoadReal(P, hu,'LSTC')>= 10 and GetUnitAbilityLevel(u,'A34F') == 0 then
+	if currentTime - LoadReal(ObjectHashTable, hu,'LSTC')>= 10 and GetUnitAbilityLevel(u,'A34F') == 0 then
 		call UnitAddPermanentAbility(u,'A34F')
 		call UnitAddPermanentAbility(u,'A40A')
 	endif
-	if currentTime - LoadReal(P, hu,'LSTE')>= 10 and GetUnitAbilityLevel(u,'A34E') == 0 then
+	if currentTime - LoadReal(ObjectHashTable, hu,'LSTE')>= 10 and GetUnitAbilityLevel(u,'A34E') == 0 then
 		call UnitAddPermanentAbility(u,'A34E')
 	endif
 	set t = null
@@ -58287,8 +58280,8 @@ function LearnSkill__DrunkenBrawler takes nothing returns nothing
 	call SaveUnitHandle(HY, GetHandleId(t), 0, u)
 	call TimerStart(tt, 1, true, function KDI)
 	call SaveUnitHandle(HY, GetHandleId(tt), 0, u)
-	call SaveReal(P, GetHandleId(u),'LSTC', GetGameTime())
-	call SaveReal(P, GetHandleId(u),'LSTE', GetGameTime())
+	call SaveReal(ObjectHashTable, GetHandleId(u),'LSTC', GetGameTime())
+	call SaveReal(ObjectHashTable, GetHandleId(u),'LSTE', GetGameTime())
 	set tt = null
 	set u = null
 	set t = null
@@ -58333,7 +58326,7 @@ function KFI takes nothing returns boolean
 		if (LoadBoolean(HY, h, 276)) == false and GetTriggerUnit()==(WUE) then
 			call SaveBoolean(HY, h, 276, true)
 			call SetHeroStr(WUE, GetHeroStr(WUE, false)-E6X, true)
-			call SaveInteger(K, GetHandleId(WUE), 30, LoadInteger(K, GetHandleId(WUE), 30)-E6X)
+			call SaveInteger(OtherHashTable, GetHandleId(WUE), 30, LoadInteger(OtherHashTable, GetHandleId(WUE), 30)-E6X)
 		elseif (LoadBoolean(HY, h, 277)) == false and GetTriggerUnit() == WWE then
 			call SaveBoolean(HY, h, 277, true)
 			call SetHeroStr(WWE, GetHeroStr(WWE, false)+ E6X, true)
@@ -58342,7 +58335,7 @@ function KFI takes nothing returns boolean
 		if (LoadBoolean(HY, h, 276)) == false then
 			call SaveBoolean(HY, h, 276, true)
 			call SetHeroStr(WUE, GetHeroStr(WUE, false)-E6X, true)
-			call SaveInteger(K, GetHandleId(WUE), 30, LoadInteger(K, GetHandleId(WUE), 30)-E6X)
+			call SaveInteger(OtherHashTable, GetHandleId(WUE), 30, LoadInteger(OtherHashTable, GetHandleId(WUE), 30)-E6X)
 		endif
 		if (LoadBoolean(HY, h, 277)) == false then
 			call SaveBoolean(HY, h, 277, true)
@@ -58372,7 +58365,7 @@ function KGI takes nothing returns nothing
 		set t = CreateTrigger()
 		set h = GetHandleId(t)
 		call SetHeroStr(WUE, GetHeroStr(WUE, false)+ KHI, true)
-		call SaveInteger(K, GetHandleId(WUE), 30, LoadInteger(K, GetHandleId(WUE), 30)+ KHI)
+		call SaveInteger(OtherHashTable, GetHandleId(WUE), 30, LoadInteger(OtherHashTable, GetHandleId(WUE), 30)+ KHI)
 		call SetHeroStr(WWE, GetHeroStr(WWE, false)-KHI, true)
 		call TriggerRegisterTimerEvent(t, 30, false)
 		call TriggerRegisterDeathEvent(t, WUE)
@@ -58730,7 +58723,7 @@ function OME takes nothing returns nothing
 	set t = null
 endfunction
 function K8I takes unit whichUnit returns boolean
-	return LoadInteger(K, GetHandleId(whichUnit),'AGH1')=='QM03' or LoadInteger(K, GetHandleId(whichUnit),'AGH2')=='QM03'
+	return LoadInteger(OtherHashTable, GetHandleId(whichUnit),'AGH1')=='QM03' or LoadInteger(OtherHashTable, GetHandleId(whichUnit),'AGH2')=='QM03'
 endfunction
 function K9I takes nothing returns nothing
 	if IsUnitType(U2, UNIT_TYPE_HERO) then
@@ -58749,15 +58742,15 @@ function K9I takes nothing returns nothing
 endfunction
 function LVI takes nothing returns nothing
 	local timer t = GetExpiredTimer()
-	call SaveBoolean(P, LoadInteger(P, GetHandleId(t), 0),'QM03', false)
+	call SaveBoolean(ObjectHashTable, LoadInteger(ObjectHashTable, GetHandleId(t), 0),'QM03', false)
 	call DestroyTimerAndFlushHT_P(t)
 	set t = null
 endfunction
 function LEI takes unit u returns nothing
 	local timer t = CreateTimer()
 	local integer WFV = GetHandleId(u)
-	call SaveBoolean(P, WFV,'QM03', true)
-	call SaveInteger(P, GetHandleId(t), 0, WFV)
+	call SaveBoolean(ObjectHashTable, WFV,'QM03', true)
+	call SaveInteger(ObjectHashTable, GetHandleId(t), 0, WFV)
 	call TimerStart(t, .25, false, function LVI)
 	set t = null
 endfunction
@@ -58950,7 +58943,7 @@ function LDI takes nothing returns boolean
 	call SetUnitPosition(trigUnit, x, y)
 	if (x == x2 and y == y2) or count > LoadInteger(HY, h, 0) then
 		if IsUnitType(KBX, UNIT_TYPE_HERO) then
-			call SaveBoolean(K, GetHandleId(KBX), 99, true)
+			call SaveBoolean(OtherHashTable, GetHandleId(KBX), 99, true)
 		endif
 		call SetUnitX(KBX, CoordinateX50(x))
 		call SetUnitY(KBX, CoordinateY50(y))
@@ -59056,14 +59049,14 @@ function LLI takes unit u returns nothing
 	call SaveBoolean(HY, GetHandleId(u), 4306, true)
 	if IsHeroUnitId(GetUnitTypeId(u)) or IsUnitIllusion(u) then
 		if IsUnitPaused(u) == false then
-			if IssueTargetOrderById(LoadUnitHandle(VV,'CHRN', 0), 852095, u) == false then
-				call UnitShareVision(u, GetOwningPlayer(LoadUnitHandle(VV,'CHRN', 0)), true)
-				if IssueTargetOrderById(LoadUnitHandle(VV,'CHRN', 0), 852095, u) == false then
+			if IssueTargetOrderById(LoadUnitHandle(OtherHashTable2,'CHRN', 0), 852095, u) == false then
+				call UnitShareVision(u, GetOwningPlayer(LoadUnitHandle(OtherHashTable2,'CHRN', 0)), true)
+				if IssueTargetOrderById(LoadUnitHandle(OtherHashTable2,'CHRN', 0), 852095, u) == false then
 					if RCX(u) == false and RDX(u) == false then
 						call PauseUnit(u, true)
 					endif
 				endif
-				call UnitShareVision(u, GetOwningPlayer(LoadUnitHandle(VV,'CHRN', 0)), false)
+				call UnitShareVision(u, GetOwningPlayer(LoadUnitHandle(OtherHashTable2,'CHRN', 0)), false)
 			endif
 		endif
 	else
@@ -59092,7 +59085,7 @@ function LQI takes nothing returns nothing
 	local real W0E = GetUnitY(d)
 	local group gg
 	local integer SYV = LoadInteger(HY, h, 6)
-	call SaveUnitHandle(VV,'CHRN', 0, d)
+	call SaveUnitHandle(OtherHashTable2,'CHRN', 0, d)
 	if GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
 		set c = c + 1
 		call SaveInteger(HY, h, 28, c)
@@ -59116,7 +59109,7 @@ function LQI takes nothing returns nothing
 			call LLI(GetTriggerUnit())
 		endif
 	endif
-	call RemoveSavedHandle(VV,'CHRN', 0)
+	call RemoveSavedHandle(OtherHashTable2,'CHRN', 0)
 	if c > SYV then
 		if IsGameEnd == false then
 			call ForGroup(g, function LPI)
@@ -59171,9 +59164,9 @@ function OSE takes nothing returns nothing
 endfunction
 function LSI takes nothing returns nothing
 	local timer t = GetExpiredTimer()
-	local unit u = LoadUnitHandle(P, GetHandleId(t), 0)
+	local unit u = LoadUnitHandle(ObjectHashTable, GetHandleId(t), 0)
 	if GetUnitAbilityLevel(u,'B0C2') == 0 then
-		call RemoveSavedHandle(P, GetHandleId(u),'A081')
+		call RemoveSavedHandle(ObjectHashTable, GetHandleId(u),'A081')
 		call DestroyTimerAndFlushHT_P(t)
 		set t = null
 		set u = null
@@ -59185,15 +59178,15 @@ function LSI takes nothing returns nothing
 endfunction
 function LTI takes unit u, integer WFV returns nothing
 	local timer t = CreateTimer()
-	call SaveTimerHandle(P, WFV,'A081', t)
-	call SaveUnitHandle(P, GetHandleId(t), 0, u)
+	call SaveTimerHandle(ObjectHashTable, WFV,'A081', t)
+	call SaveUnitHandle(ObjectHashTable, GetHandleId(t), 0, u)
 	call TimerStart(t, .1, true, function LSI)
 	set t = null
 endfunction
 function LUI takes unit u, unit t returns nothing
 	local integer WFV = GetHandleId(t)
 	local integer WUV = GetUnitAbilityLevel(u,'A081')
-	if WUV > 0 and GetUnitAbilityLevel(t,'B0C2') == 1 and HaveSavedHandle(P, WFV,'A081') == false then
+	if WUV > 0 and GetUnitAbilityLevel(t,'B0C2') == 1 and HaveSavedHandle(ObjectHashTable, WFV,'A081') == false then
 		call LTI(t, GetHandleId(t))
 		if LoadBoolean(HY, WFV, 4306) then
 			call UnitDamageTargetEx(u, t, 1, WUV * 10+ 30)
@@ -60045,8 +60038,8 @@ function M3I takes nothing returns boolean
 	local integer count = GetTriggerEvalCount(t)
 	call UnitDamageTargetEx(WUE, WWE, 1, IXX)
 	if GetUnitAbilityLevel(WWE,'A42R') == 0 or count == 3 then
-		call SaveInteger(P, GetHandleId(WWE),'A42R', LoadInteger(P, GetHandleId(WWE),'A42R')-1)
-		if LoadInteger(P, GetHandleId(WWE),'A42R')<= 0 then
+		call SaveInteger(ObjectHashTable, GetHandleId(WWE),'A42R', LoadInteger(ObjectHashTable, GetHandleId(WWE),'A42R')-1)
+		if LoadInteger(ObjectHashTable, GetHandleId(WWE),'A42R')<= 0 then
 			call UnitRemoveAbility(WWE,'A42R')
 			call UnitRemoveAbility(WWE,'B0HI')
 		endif
@@ -60070,7 +60063,7 @@ function M4I takes unit WUE, unit WWE, real IXX, boolean M5I returns nothing
 	call SaveEffectHandle(HY, h, 32,(AddSpecialEffectTarget("Environment\\SmallBuildingFire\\SmallBuildingFire2.mdl", WWE, "chest")))
 	call TriggerRegisterTimerEvent(t, 1, true)
 	call UnitAddPermanentAbility(WWE,'A42R')
-	call SaveInteger(P, GetHandleId(WWE),'A42R', LoadInteger(P, GetHandleId(WWE),'A42R')+ 1)
+	call SaveInteger(ObjectHashTable, GetHandleId(WWE),'A42R', LoadInteger(ObjectHashTable, GetHandleId(WWE),'A42R')+ 1)
 	call TriggerAddCondition(t, Condition(function M3I))
 	set t = null
 endfunction
@@ -60763,10 +60756,10 @@ function PPI takes unit u, integer level returns nothing
 	set t = null
 endfunction
 function I8R takes nothing returns nothing
-	local unit PQI = LoadUnitHandle(VV,'ILLU', 0)
-	local unit PSI = LoadUnitHandle(VV,'ILLU', 1)
-	call RemoveSavedHandle(VV,'ILLU', 0)
-	call RemoveSavedHandle(VV,'ILLU', 1)
+	local unit PQI = LoadUnitHandle(OtherHashTable2,'ILLU', 0)
+	local unit PSI = LoadUnitHandle(OtherHashTable2,'ILLU', 1)
+	call RemoveSavedHandle(OtherHashTable2,'ILLU', 0)
+	call RemoveSavedHandle(OtherHashTable2,'ILLU', 1)
 	if GetUnitAbilityLevel(PSI,'A0VC')> 0 then
 		call PPI(PQI, GetUnitAbilityLevel(PSI,'A0VC'))
 	endif
@@ -60823,9 +60816,9 @@ function PWI takes nothing returns nothing
 	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
 		if GetEventDamageSource() == LoadUnitHandle(HY, h, 0) then
 			if GetUnitAbilityLevel(GetTriggerUnit(),'A3E9') == 1 and IsMagicImmuneUnit(LoadUnitHandle(HY, h, 1)) == false and LoadBoolean(HY, h, 0) == false then
-				call SaveUnitHandle(VV,'A3E9', 0, GetTriggerUnit())
-				call SaveUnitHandle(VV,'A3E9', 1, LoadUnitHandle(HY, h, 1))
-				call SaveInteger(VV,'A3E9', 0, R2I(LoadReal(HY, h, 0)))
+				call SaveUnitHandle(OtherHashTable2,'A3E9', 0, GetTriggerUnit())
+				call SaveUnitHandle(OtherHashTable2,'A3E9', 1, LoadUnitHandle(HY, h, 1))
+				call SaveInteger(OtherHashTable2,'A3E9', 0, R2I(LoadReal(HY, h, 0)))
 				call ExecuteFunc("PYI")
 			endif
 			call CommonUnitAddStun(GetTriggerUnit(), 2., false)
@@ -60864,16 +60857,16 @@ function O8E takes nothing returns nothing
 	endif
 endfunction
 function PYI takes nothing returns nothing
-	local unit WJE = LoadUnitHandle(VV,'A3E9', 0)
-	local unit WLE = LoadUnitHandle(VV,'A3E9', 1)
-	local integer level = LoadInteger(VV,'A3E9', 0)
-	call T4V(LoadUnitHandle(VV,'A3E9', 0))
+	local unit WJE = LoadUnitHandle(OtherHashTable2,'A3E9', 0)
+	local unit WLE = LoadUnitHandle(OtherHashTable2,'A3E9', 1)
+	local integer level = LoadInteger(OtherHashTable2,'A3E9', 0)
+	call T4V(LoadUnitHandle(OtherHashTable2,'A3E9', 0))
 	if UnitHasSpellShield(WLE) == false then
 		call PZI(WJE, WLE, level, true)
 	endif
 	set WJE = null
 	set WLE = null
-	call FlushChildHashtable(VV,'A3E9')
+	call FlushChildHashtable(OtherHashTable2,'A3E9')
 endfunction
 function P_I takes nothing returns boolean
 	return CZX(GetUnitTypeId(GetFilterUnit()))
@@ -61137,10 +61130,10 @@ function P6I takes nothing returns boolean
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 		set h = GetHandleId(u)
-		if LoadBoolean(P, h, StringHash("morphedburn")) then
-			call RAX(u, LoadInteger(P, h, StringHash("second")))
-			call RAX(u, LoadInteger(P, h, StringHash("first")))
-			call SaveBoolean(P, h, StringHash("morphedburn"), false)
+		if LoadBoolean(ObjectHashTable, h, StringHash("morphedburn")) then
+			call RAX(u, LoadInteger(ObjectHashTable, h, StringHash("second")))
+			call RAX(u, LoadInteger(ObjectHashTable, h, StringHash("first")))
+			call SaveBoolean(ObjectHashTable, h, StringHash("morphedburn"), false)
 		endif
 	endif
 	set t = null
@@ -61427,7 +61420,7 @@ function QDI takes nothing returns nothing
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH or LoadReal(HY, h, 0)< GetGameTime() or GetUnitAbilityLevel(WLE, LoadInteger(HY, h, 0)) == 0 then
 		call UnitRemoveAbility(WLE, LoadInteger(HY, h, 0))
 		call UnitRemoveAbility(WLE,'B079')
-		call RemoveSavedHandle(P, GetHandleId(WLE),'A40F')
+		call RemoveSavedHandle(ObjectHashTable, GetHandleId(WLE),'A40F')
 		call FlushChildHashtable(HY, h)
 		call DisableTrigger(t)
 		call DestroyTrigger(t)
@@ -61448,7 +61441,7 @@ function QHI takes unit u, unit WLE returns nothing
 	local integer h
 	local integer level = GetUnitAbilityLevel(u,'A0N7')
 	if QGI(WLE) then
-		set t = LoadTriggerHandle(P, GetHandleId(WLE),'A40F')
+		set t = LoadTriggerHandle(ObjectHashTable, GetHandleId(WLE),'A40F')
 		set h = GetHandleId(t)
 		if IsUnitType(u, UNIT_TYPE_RANGED_ATTACKER) and IsUnitType(u, UNIT_TYPE_MELEE_ATTACKER) == false then
 			if GetUnitAbilityLevel(WLE,'A3A0'-1 + level) == 0 then
@@ -61468,7 +61461,7 @@ function QHI takes unit u, unit WLE returns nothing
 	else
 		set t = CreateTrigger()
 		set h = GetHandleId(t)
-		call SaveTriggerHandle(P, GetHandleId(WLE),'A40F', t)
+		call SaveTriggerHandle(ObjectHashTable, GetHandleId(WLE),'A40F', t)
 		call TriggerRegisterTimerEvent(t, .5, true)
 		call TriggerRegisterDeathEvent(t, WLE)
 		call TriggerAddCondition(t, Condition(function QDI))
@@ -62434,13 +62427,13 @@ function UAI takes nothing returns boolean
 			if UBI == 1 and not LoadBoolean(HY, h, 0) then
 				if GetUnitAbilityLevel(WWE,'A3E9') == 1 then
 					if UnitHasSpellShield(WUE) == false then
-						call SaveUnitHandle(VV,'A3E9', 0, WWE)
-						call SaveUnitHandle(VV,'A3E9', 1, WUE)
-						call SaveInteger(VV,'A3E9', 0, level)
+						call SaveUnitHandle(OtherHashTable2,'A3E9', 0, WWE)
+						call SaveUnitHandle(OtherHashTable2,'A3E9', 1, WUE)
+						call SaveInteger(OtherHashTable2,'A3E9', 0, level)
 						if KLR > 100  then
-							call SaveInteger(VV,'A3E9', 1,'A08H')
+							call SaveInteger(OtherHashTable2,'A3E9', 1,'A08H')
 						else
-							call SaveInteger(VV,'A3E9', 1,'A05T')
+							call SaveInteger(OtherHashTable2,'A3E9', 1,'A05T')
 						endif
 						call ExecuteFunc("UDI")
 					else
@@ -62531,15 +62524,15 @@ endfunction
 function UDI takes nothing returns nothing
 	local timer t = CreateTimer()
 	local integer h = GetHandleId(t)
-	call T4V(LoadUnitHandle(VV,'A3E9', 0))
+	call T4V(LoadUnitHandle(OtherHashTable2,'A3E9', 0))
 	call TimerStart(t, 0, false, function UFI)
-	call SaveUnitHandle(HY, h, 0, LoadUnitHandle(VV,'A3E9', 0))
-	call SaveUnitHandle(HY, h, 1, LoadUnitHandle(VV,'A3E9', 1))
-	call SaveInteger(HY, h, 0, LoadInteger(VV,'A3E9', 0))
-	call SaveInteger(HY, h, 1, LoadInteger(VV,'A3E9', 1))
+	call SaveUnitHandle(HY, h, 0, LoadUnitHandle(OtherHashTable2,'A3E9', 0))
+	call SaveUnitHandle(HY, h, 1, LoadUnitHandle(OtherHashTable2,'A3E9', 1))
+	call SaveInteger(HY, h, 0, LoadInteger(OtherHashTable2,'A3E9', 0))
+	call SaveInteger(HY, h, 1, LoadInteger(OtherHashTable2,'A3E9', 1))
 	call SaveBoolean(HY, h, 0, true)
 	set t = null
-	call FlushChildHashtable(VV,'A3E9')
+	call FlushChildHashtable(OtherHashTable2,'A3E9')
 endfunction
 function RTE takes nothing returns nothing
 	local timer t = CreateTimer()
@@ -62624,7 +62617,7 @@ function UPI takes nothing returns boolean
 endfunction
 function UQI takes nothing returns nothing
 	local unit u = GetEnumUnit()
-	call UnitDamageTargetEx(LoadUnitHandle(VV,'A07F', 0), u, 1, 50 + 25 * Q2)
+	call UnitDamageTargetEx(LoadUnitHandle(OtherHashTable2,'A07F', 0), u, 1, 50 + 25 * Q2)
 	if UnitAlive(u) then
 		call UnitAddPermanentAbility(u,'A30A')
 		call JFX(u)
@@ -62645,11 +62638,11 @@ function USI takes nothing returns nothing
 	set Q5V = u
 	call GroupEnumUnitsInRange(g, GetUnitX(WLE), GetUnitY(WLE), 225, Condition(function UPI))
 	call GroupAddUnit(g, WLE)
-	call SaveUnitHandle(VV,'A07F', 0, u)
+	call SaveUnitHandle(OtherHashTable2,'A07F', 0, u)
 	set Q2 = GetUnitAbilityLevel(u,'A07F')
 	call ForGroup(g, function UQI)
 	call SaveGroupHandle(HY, h, 1, g)
-	call RemoveSavedHandle(VV,'A07F', 0)
+	call RemoveSavedHandle(OtherHashTable2,'A07F', 0)
 	set g = null
 	set WLE = null
 	set u = null
@@ -63107,10 +63100,10 @@ endfunction
 function T_E takes nothing returns nothing
 	local unit u = U2
 	local integer hu = GetHandleId(u)
-	local integer TXE = LoadInteger(K, hu,'DEVR'+ 0)
-	local integer TOE = LoadInteger(K, hu,'DEVR'+ 1)
-	local boolean U9I = LoadBoolean(K, hu,'DEVR'+ 0)
-	local boolean WVI = LoadBoolean(K, hu,'DEVR'+ 1)
+	local integer TXE = LoadInteger(OtherHashTable, hu,'DEVR'+ 0)
+	local integer TOE = LoadInteger(OtherHashTable, hu,'DEVR'+ 1)
+	local boolean U9I = LoadBoolean(OtherHashTable, hu,'DEVR'+ 0)
+	local boolean WVI = LoadBoolean(OtherHashTable, hu,'DEVR'+ 1)
 	if U9I == false then
 		call UnitRemoveAbility(u, TXE)
 		call UnitAddPermanentAbility(u, TXE)
@@ -63122,12 +63115,12 @@ function T_E takes nothing returns nothing
 	set u = null
 endfunction
 function WEI takes unit u returns nothing
-	call UnitRemoveAbility(u, LoadInteger(K, GetHandleId(u),'DEVR'+ 0))
-	call UnitRemoveAbility(u, LoadInteger(K, GetHandleId(u),'DEVR'+ 1))
-	call RemoveSavedInteger(K, GetHandleId(u),'DEVR'+ 0)
-	call RemoveSavedInteger(K, GetHandleId(u),'DEVR'+ 1)
-	call RemoveSavedBoolean(K, GetHandleId(u),'DEVR'+ 0)
-	call RemoveSavedBoolean(K, GetHandleId(u),'DEVR'+ 1)
+	call UnitRemoveAbility(u, LoadInteger(OtherHashTable, GetHandleId(u),'DEVR'+ 0))
+	call UnitRemoveAbility(u, LoadInteger(OtherHashTable, GetHandleId(u),'DEVR'+ 1))
+	call RemoveSavedInteger(OtherHashTable, GetHandleId(u),'DEVR'+ 0)
+	call RemoveSavedInteger(OtherHashTable, GetHandleId(u),'DEVR'+ 1)
+	call RemoveSavedBoolean(OtherHashTable, GetHandleId(u),'DEVR'+ 0)
+	call RemoveSavedBoolean(OtherHashTable, GetHandleId(u),'DEVR'+ 1)
 endfunction
 function WXI takes unit u, integer WPV returns nothing
 	local integer TXE = 0
@@ -63198,7 +63191,7 @@ function WXI takes unit u, integer WPV returns nothing
 	elseif WPV =='n127' then
 		set TXE ='A36K'
 	endif
-	if TXE != 0 and(LoadInteger(K, hu,'DEVR'+ 0)!= TXE or LoadInteger(K, hu,'DEVR'+ 1)!= TOE) then
+	if TXE != 0 and(LoadInteger(OtherHashTable, hu,'DEVR'+ 0)!= TXE or LoadInteger(OtherHashTable, hu,'DEVR'+ 1)!= TOE) then
 		call WEI(u)
 		call UnitAddPermanentAbility(u, TXE)
 		if U9I then
@@ -63214,10 +63207,10 @@ function WXI takes unit u, integer WPV returns nothing
 				call UnitMakeAbilityPermanent(u, true, WRI)
 			endif
 		endif
-		call SaveInteger(K, hu,'DEVR'+ 0, TXE)
-		call SaveBoolean(K, hu,'DEVR'+ 0, U9I)
-		call SaveInteger(K, hu,'DEVR'+ 1, TOE)
-		call SaveBoolean(K, hu,'DEVR'+ 1, WVI)
+		call SaveInteger(OtherHashTable, hu,'DEVR'+ 0, TXE)
+		call SaveBoolean(OtherHashTable, hu,'DEVR'+ 0, U9I)
+		call SaveInteger(OtherHashTable, hu,'DEVR'+ 1, TOE)
+		call SaveBoolean(OtherHashTable, hu,'DEVR'+ 1, WVI)
 	endif
 endfunction
 function WII takes real r returns string
@@ -63584,7 +63577,7 @@ function WPI takes nothing returns boolean
 endfunction
 function WQI takes nothing returns nothing
 	call SetUnitPosition(GetEnumUnit(), ZI, VA)
-	call SaveBoolean(K, GetHandleId(GetEnumUnit()), 99, true)
+	call SaveBoolean(OtherHashTable, GetHandleId(GetEnumUnit()), 99, true)
 	call SetUnitPathing(GetEnumUnit(), false)
 endfunction
 function WSI takes nothing returns nothing
@@ -63596,7 +63589,7 @@ function WSI takes nothing returns nothing
 		set l = DEX(GetUnitX(u), GetUnitY(u))
 		set x = CoordinateX75(GetLocationX(l))
 		set y = CoordinateY75(GetLocationY(l))
-		call SaveBoolean(K, GetHandleId(u), 99, true)
+		call SaveBoolean(OtherHashTable, GetHandleId(u), 99, true)
 		call SetUnitX(u, x)
 		call SetUnitY(u, y)
 		call RemoveLocation(l)
@@ -63624,7 +63617,7 @@ function WTI takes nothing returns boolean
 	local integer WUI =(LoadInteger(HY, h, 12))
 	local location l
 	if IsUnitType(WUE, UNIT_TYPE_HERO) then
-		call SaveBoolean(K, GetHandleId(WUE), 99, true)
+		call SaveBoolean(OtherHashTable, GetHandleId(WUE), 99, true)
 	endif
 	call SetUnitPosition(WUE, NBX, NCX)
 	call SetUnitFacing(WUE, a * bj_RADTODEG)
@@ -63665,7 +63658,7 @@ function WTI takes nothing returns boolean
 		if IsPointInRegion(TerrainCliffRegion, GetUnitX(WUE), GetUnitY(WUE)) then
 			set l = DEX(GetUnitX(WUE), GetUnitY(WUE))
 			if IsUnitType(WUE, UNIT_TYPE_HERO) then
-				call SaveBoolean(K, GetHandleId(WUE), 99, true)
+				call SaveBoolean(OtherHashTable, GetHandleId(WUE), 99, true)
 			endif
 			call SetUnitX(WUE, CoordinateX75(GetLocationX(l)))
 			call SetUnitY(WUE, CoordinateY75(GetLocationY(l)))
@@ -64434,9 +64427,9 @@ endfunction
 function YWI takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer h = GetHandleId(t)
-	call LodSystem_ReduceUnitExtraState(LoadUnitHandle(P, h, 0), LoadInteger(P, h, 0), "damage")
-	call RemoveSavedHandle(P, GetHandleId(LoadUnitHandle(P, h, 0)),'A0SS')
-	call FlushChildHashtable(P, h)
+	call LodSystem_ReduceUnitExtraState(LoadUnitHandle(ObjectHashTable, h, 0), LoadInteger(ObjectHashTable, h, 0), "damage")
+	call RemoveSavedHandle(ObjectHashTable, GetHandleId(LoadUnitHandle(ObjectHashTable, h, 0)),'A0SS')
+	call FlushChildHashtable(ObjectHashTable, h)
 	call DestroyTimer(t)
 	set t = null
 endfunction
@@ -64445,15 +64438,15 @@ function YYI takes unit u, unit WLE, integer level returns nothing
 	local integer h
 	local integer d
 	local real r = GetWidgetLife(WLE)
-	local boolean b = HaveSavedHandle(P, GetHandleId(u),'A0SS')
+	local boolean b = HaveSavedHandle(ObjectHashTable, GetHandleId(u),'A0SS')
 	if b then
-		set t = LoadTimerHandle(P, GetHandleId(u),'A0SS')
+		set t = LoadTimerHandle(ObjectHashTable, GetHandleId(u),'A0SS')
 		set h = GetHandleId(t)
 	else
 		set t = CreateTimer()
 		set h = GetHandleId(t)
-		call SaveTimerHandle(P, GetHandleId(u),'A0SS', t)
-		call SaveUnitHandle(P, h, 0, u)
+		call SaveTimerHandle(ObjectHashTable, GetHandleId(u),'A0SS', t)
+		call SaveUnitHandle(ObjectHashTable, h, 0, u)
 	endif
 	call TimerStart(t, 2, false, function YWI)
 	if (not(Mode__BalanceOff)) and(IsUnitType(u, UNIT_TYPE_RANGED_ATTACKER)) then
@@ -64462,14 +64455,14 @@ function YYI takes unit u, unit WLE, integer level returns nothing
 		set d = R2I((.03 + .01 * level)* r)
 	endif
 	if b then
-		if d != LoadInteger(P, h, 0) then
-			call WCV(u, d -LoadInteger(P, h, 0), "damage")
+		if d != LoadInteger(ObjectHashTable, h, 0) then
+			call WCV(u, d -LoadInteger(ObjectHashTable, h, 0), "damage")
 		endif
 	else
 		call LodSystem_AddUnitExtraState(u, d, "damage")
 	endif
-	call SaveInteger(P, h, 0, d)
-	call SaveUnitHandle(P, h, 0, u)
+	call SaveInteger(ObjectHashTable, h, 0, d)
+	call SaveUnitHandle(ObjectHashTable, h, 0, u)
 	set t = null
 endfunction
 function YZI takes nothing returns nothing
@@ -64507,14 +64500,14 @@ endfunction
 function Y2I takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer WFV = GetHandleId(t)
-	local unit u = LoadUnitHandle(P, WFV, 0)
-	local integer c = LoadInteger(P, WFV, 2)+ 1
+	local unit u = LoadUnitHandle(ObjectHashTable, WFV, 0)
+	local integer c = LoadInteger(ObjectHashTable, WFV, 2)+ 1
 	if UnitIsDead(u) or c > 6 * 10 then
 		call DestroyTimerAndFlushHT_P(t)
 	else
-		call SetWidgetLife(u, GetWidgetLife(u)+ LoadInteger(P, WFV, 0)* .1)
-		call SetUnitState(u, UNIT_STATE_MANA, GetUnitState(u, UNIT_STATE_MANA)+ LoadInteger(P, WFV, 1)* .1)
-		call SaveInteger(P, WFV, 2, c)
+		call SetWidgetLife(u, GetWidgetLife(u)+ LoadInteger(ObjectHashTable, WFV, 0)* .1)
+		call SetUnitState(u, UNIT_STATE_MANA, GetUnitState(u, UNIT_STATE_MANA)+ LoadInteger(ObjectHashTable, WFV, 1)* .1)
+		call SaveInteger(ObjectHashTable, WFV, 2, c)
 	endif
 	set t = null
 	set u = null
@@ -64534,9 +64527,9 @@ function Y3I takes unit u, integer WUV, boolean b returns nothing
 	endif
 	call WJV(u,'C012','D012', 6)
 	call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Undead\\ReplenishMana\\SpiritTouchTarget.mdl", u, "origin"))
-	call SaveUnitHandle(P, WFV, 0, u)
-	call SaveInteger(P, WFV, 0, hp)
-	call SaveInteger(P, WFV, 1, mp)
+	call SaveUnitHandle(ObjectHashTable, WFV, 0, u)
+	call SaveInteger(ObjectHashTable, WFV, 0, hp)
+	call SaveInteger(ObjectHashTable, WFV, 1, mp)
 	call TimerStart(t, .1, true, function Y2I)
 	set t = null
 endfunction
@@ -65011,16 +65004,16 @@ function ZJI takes unit u, integer UJV returns nothing
 	local real x = GetWidgetX(u)
 	local real y = GetWidgetY(u)
 	local unit d = CreateUnit(GetOwningPlayer(u),'e00E', x, y, 0)
-	local integer WVV = 0
+	local integer count = 0
 	local integer I3X = 360 / UJV
 	local integer WUV = GetUnitAbilityLevel(u,'A29J')
 	local boolean is_a = GetUnitAbilityLevel(u,'A3OJ')> 0
 	call UnitAddAbility(d,'A0HG')
 	call SetUnitAbilityLevel(d,'A0HG', WUV)
 	loop
-	exitwhen WVV > UJV
-		call IssuePointOrderById(d, 852218, x + 50 * Cos(bj_DEGTORAD * WVV * I3X), y + 50 * Sin(bj_DEGTORAD * WVV * I3X))
-		set WVV = WVV + 1
+	exitwhen count > UJV
+		call IssuePointOrderById(d, 852218, x + 50 * Cos(bj_DEGTORAD * count * I3X), y + 50 * Sin(bj_DEGTORAD * count * I3X))
+		set count = count + 1
 	endloop
 	call ZHI(u)
 	if is_a then
@@ -65135,8 +65128,8 @@ function ZSI takes nothing returns nothing
 	local integer ZWI = 0
 	local integer level
 	local integer ZYI
-	if LoadInteger(M, GetUnitTypeId(GetEnumUnit()), GC)> 0 then
-		set ZUI = LoadInteger(M, GetUnitTypeId(GetEnumUnit()), GC)* 1.
+	if LoadInteger(SightDataHashTable, GetUnitTypeId(GetEnumUnit()), NightSightHash)> 0 then
+		set ZUI = LoadInteger(SightDataHashTable, GetUnitTypeId(GetEnumUnit()), NightSightHash)* 1.
 	endif
 	if GetPlayerTechResearched(GetOwningPlayer(GetEnumUnit()),'R00I', true) then
 		set ZUI = 1800.
@@ -65555,7 +65548,7 @@ endfunction
 
 function VCA takes nothing returns nothing
 	local timer t = GetExpiredTimer()
-	local unit u = LoadUnitHandle(P, GetHandleId(t), 0)
+	local unit u = LoadUnitHandle(ObjectHashTable, GetHandleId(t), 0)
 	call UnitRemoveAbility(u,'A2MB')
 	call UnitAddPermanentAbility(u,'A2MB')
 	call DestroyTimerAndFlushHT_P(t)
@@ -65565,7 +65558,7 @@ endfunction
 
 function VDA takes unit u returns nothing
 	local timer t = CreateTimer()
-	call SaveUnitHandle(P, GetHandleId(t), 0, u)
+	call SaveUnitHandle(ObjectHashTable, GetHandleId(t), 0, u)
 	call TimerStart(t, 0, false, function VCA)
 	set t = null
 endfunction
@@ -65799,7 +65792,7 @@ function VPA takes nothing returns boolean
 			call UnitDamageTargetEx(u, t, 1, XK[0])
 		endif
 		call WJV(t,'C009','D009', 2)
-		call GroupAddUnit(LoadGroupHandle(P, XK[1], 1), t)
+		call GroupAddUnit(LoadGroupHandle(ObjectHashTable, XK[1], 1), t)
 	endif
 	set u = null
 	set t = null
@@ -65807,18 +65800,18 @@ function VPA takes nothing returns boolean
 endfunction
 function VQA takes nothing returns nothing
 	local timer t = GetExpiredTimer()
-	local integer WVV = 0
+	local integer count = 0
 	local integer WFV = GetHandleId(t)
-	local integer UYX = LoadInteger(P, WFV, 0)
-	local real x = LoadReal(P, WFV, 0)
-	local real y = LoadReal(P, WFV, 1)
-	local group g = LoadGroupHandle(P, WFV, 1)
-	set Temp__ArrayUnit[0]= LoadUnitHandle(P, WFV, 0)
-	set XK[0]= LoadInteger(P, WFV, 1)
+	local integer UYX = LoadInteger(ObjectHashTable, WFV, 0)
+	local real x = LoadReal(ObjectHashTable, WFV, 0)
+	local real y = LoadReal(ObjectHashTable, WFV, 1)
+	local group g = LoadGroupHandle(ObjectHashTable, WFV, 1)
+	set Temp__ArrayUnit[0]= LoadUnitHandle(ObjectHashTable, WFV, 0)
+	set XK[0]= LoadInteger(ObjectHashTable, WFV, 1)
 	call ForGroup(g, function VMA)
-	call SaveInteger(P, WFV, 0, UYX -1)
+	call SaveInteger(ObjectHashTable, WFV, 0, UYX -1)
 	if UYX > 2 then
-		set XK[0]= LoadInteger(P, WFV, 2)
+		set XK[0]= LoadInteger(ObjectHashTable, WFV, 2)
 		set XK[1]= WFV
 		call GroupEnumUnitsInRange(AK, x, y, 425, Condition(function VPA))
 		if UYX == 3 then
@@ -65827,9 +65820,9 @@ function VQA takes nothing returns nothing
 			return
 		endif
 		loop
-		exitwhen WVV == 12
-			call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Demon\\RainOfFire\\RainOfFireTarget.mdl", x + GetRandomReal(50, 275)* Cos(WVV * 30 * bj_DEGTORAD), y + GetRandomReal(50, 275)* Sin(WVV * 30 * bj_DEGTORAD)))
-			set WVV = WVV + 1
+		exitwhen count == 12
+			call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Demon\\RainOfFire\\RainOfFireTarget.mdl", x + GetRandomReal(50, 275)* Cos(count * 30 * bj_DEGTORAD), y + GetRandomReal(50, 275)* Sin(count * 30 * bj_DEGTORAD)))
+			set count = count + 1
 		endloop
 	elseif UYX == 1 then
 		call DeallocateGroup(g)
@@ -65842,23 +65835,23 @@ function YVV takes nothing returns nothing
 	local timer t = CreateTimer()
 	local unit u = GetTriggerUnit()
 	local group g = AllocationGroup(378)
-	local integer WVV = 0
+	local integer count = 0
 	local integer WFV = GetHandleId(t)
 	local integer WUV = GetUnitAbilityLevel(u,'A01I')
 	local real x = GetSpellTargetX()
 	local real y = GetSpellTargetY()
 	loop
-	exitwhen WVV == 12
-		call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Demon\\RainOfFire\\RainOfFireTarget.mdl", x + GetRandomReal(50, 275)* Cos(WVV * 30 * bj_DEGTORAD), y + GetRandomReal(50, 275)* Sin(WVV * 30 * bj_DEGTORAD)))
-		set WVV = WVV + 1
+	exitwhen count == 12
+		call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Demon\\RainOfFire\\RainOfFireTarget.mdl", x + GetRandomReal(50, 275)* Cos(count * 30 * bj_DEGTORAD), y + GetRandomReal(50, 275)* Sin(count * 30 * bj_DEGTORAD)))
+		set count = count + 1
 	endloop
-	call SaveInteger(P, WFV, 0, 8)
-	call SaveInteger(P, WFV, 1, WUV * 5)
-	call SaveInteger(P, WFV, 2, 10+ 15* WUV)
-	call SaveReal(P, WFV, 0, x)
-	call SaveReal(P, WFV, 1, y)
-	call SaveUnitHandle(P, WFV, 0, u)
-	call SaveGroupHandle(P, WFV, 1, g)
+	call SaveInteger(ObjectHashTable, WFV, 0, 8)
+	call SaveInteger(ObjectHashTable, WFV, 1, WUV * 5)
+	call SaveInteger(ObjectHashTable, WFV, 2, 10+ 15* WUV)
+	call SaveReal(ObjectHashTable, WFV, 0, x)
+	call SaveReal(ObjectHashTable, WFV, 1, y)
+	call SaveUnitHandle(ObjectHashTable, WFV, 0, u)
+	call SaveGroupHandle(ObjectHashTable, WFV, 1, g)
 	call TimerStart(t, .9, true, function VQA)
 	set g = null
 	set u = null
@@ -65867,7 +65860,7 @@ endfunction
 function VSA takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer WFV = GetHandleId(t)
-	call LodSystem_ReduceUnitExtraState(LoadUnitHandle(P, WFV, 0), LoadInteger(P, WFV, 0), "damage")
+	call LodSystem_ReduceUnitExtraState(LoadUnitHandle(ObjectHashTable, WFV, 0), LoadInteger(ObjectHashTable, WFV, 0), "damage")
 	call DestroyTimerAndFlushHT_P(t)
 	set t = null
 endfunction
@@ -65879,15 +65872,15 @@ function VTA takes unit u, boolean b returns nothing
 	if b then
 		set CJR = 20
 	endif
-	call SaveUnitHandle(P, WFV, 0, u)
-	call SaveInteger(P, WFV, 0, CJR)
+	call SaveUnitHandle(ObjectHashTable, WFV, 0, u)
+	call SaveInteger(ObjectHashTable, WFV, 0, CJR)
 	call LodSystem_AddUnitExtraState(u, CJR, "damage")
 	call TimerStart(t, level * 5 + 25, false, function VSA)
 	set t = null
 endfunction
 function VUA takes nothing returns boolean
 	local unit t = GetFilterUnit()
-	if LoadBoolean(P, GetHandleId(t),'AIcd') and UnitAlive(t) and IsUnitEnemy(t, Temp__Player) then
+	if LoadBoolean(ObjectHashTable, GetHandleId(t),'AIcd') and UnitAlive(t) and IsUnitEnemy(t, Temp__Player) then
 		call VTA(t, IsUnitType(Temp__ArrayUnit[0], UNIT_TYPE_HERO))
 	endif
 	set t = null
@@ -65906,14 +65899,14 @@ function VWA takes nothing returns boolean
 endfunction
 function L0E takes nothing returns nothing
 	local trigger HLR = null
-	call SaveBoolean(P, GetHandleId(GetTriggerUnit()),'AIcd', true)
-	if LoadBoolean(P,'AIcd', 0) then
+	call SaveBoolean(ObjectHashTable, GetHandleId(GetTriggerUnit()),'AIcd', true)
+	if LoadBoolean(ObjectHashTable,'AIcd', 0) then
 		return
 	endif
 	set HLR = CreateTrigger()
 	call TriggerRegisterPlayerUnitEventBJ(HLR, EVENT_PLAYER_UNIT_DEATH)
 	call TriggerAddCondition(HLR, Condition(function VWA))
-	call SaveBoolean(P,'AIcd', 0, true)
+	call SaveBoolean(ObjectHashTable,'AIcd', 0, true)
 	set HLR = null
 endfunction
 function VYA takes nothing returns boolean
@@ -66076,7 +66069,7 @@ function V2A takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local unit u =(LoadUnitHandle(HY,(GetHandleId(t)), 2))
 	local integer h = GetHandleId(u)
-	local integer V3A = LoadInteger(P, h,'A06D')
+	local integer V3A = LoadInteger(ObjectHashTable, h,'A06D')
 	local integer lv = GetUnitAbilityLevel(u,'A06D')
 	local integer V4A = R2I(I2R(SI[GetPlayerId(GetOwningPlayer(u))])*(.5 * lv))
 	if u == null then
@@ -66086,7 +66079,7 @@ function V2A takes nothing returns boolean
 	if V4A > V3A then
 		call ModifyHeroStat(0, u, 0, V4A -V3A)
 		call SetAbilitydataD(u,'QP13', V4A)
-		call SaveInteger(P, h,'A06D', V4A)
+		call SaveInteger(ObjectHashTable, h,'A06D', V4A)
 		call CommonTextTag("+" + I2S(V4A -V3A)+ " " + GetObjectName('n0MJ'), 3, u, .023, 0, 255, 0, 230)
 		if GetHeroMainAttributesType(u)!= 3 then
 			call SaveInteger(HY, GetHandleId(u),'axxx', V4A)
@@ -66145,7 +66138,7 @@ function V7A takes nothing returns boolean
 		set y = GetUnitY(EVA)
 		if GetDistanceBetween(GetUnitX(EVA), GetUnitY(EVA), GetUnitX(u), GetUnitY(u))< 1200 then
 			if IsUnitType(u, UNIT_TYPE_HERO) then
-				call SaveBoolean(K, GetHandleId(u), 99, true)
+				call SaveBoolean(OtherHashTable, GetHandleId(u), 99, true)
 			endif
 			call SetUnitX(u, x)
 			call SetUnitY(u, y)
@@ -66227,8 +66220,8 @@ function EEA takes nothing returns boolean
 			call SetUnitPathing(target, false)
 			if IsUnitEnemy(target, GetOwningPlayer(u)) then
 				if IsUnitType(target, UNIT_TYPE_HERO) then
-					call SaveInteger(K, hp,'HK_H', LoadInteger(K, hp,'HK_H')+ 1)
-					call StoreDrCacheData("HA_Hits" + I2S(GetPlayerId(GetOwningPlayer(u))), LoadInteger(K, hp,'HK_H'))
+					call SaveInteger(OtherHashTable, hp,'HK_H', LoadInteger(OtherHashTable, hp,'HK_H')+ 1)
+					call StoreDrCacheData("HA_Hits" + I2S(GetPlayerId(GetOwningPlayer(u))), LoadInteger(OtherHashTable, hp,'HK_H'))
 					call EPX(u, 4400, 1.5)
 				endif
 				call V6A(u, target)
@@ -66264,8 +66257,8 @@ function I9E takes nothing returns nothing
 	call SaveTriggerHandle(HY, h, 11,(CreateTrigger()))
 	call TriggerRegisterTimerEvent(t, .025, true)
 	call TriggerAddCondition(t, Condition(function EEA))
-	call SaveInteger(K, hp,'HK_T', LoadInteger(K, hp,'HK_T')+ 1)
-	call StoreDrCacheData("HA_Total" + I2S(GetPlayerId(GetOwningPlayer(u))), LoadInteger(K, hp,'HK_T'))
+	call SaveInteger(OtherHashTable, hp,'HK_T', LoadInteger(OtherHashTable, hp,'HK_T')+ 1)
+	call StoreDrCacheData("HA_Total" + I2S(GetPlayerId(GetOwningPlayer(u))), LoadInteger(OtherHashTable, hp,'HK_T'))
 	set u = null
 	set t = null
 endfunction
@@ -66759,26 +66752,26 @@ endfunction
 function EYA takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer WFV = GetHandleId(t)
-	local integer i = LoadInteger(P, WFV, 1)
-	call LodSystem_ReduceUnitExtraState(LoadUnitHandle(P, WFV, 1), i, "damageneg")
-	call LodSystem_ReduceUnitExtraState(LoadUnitHandle(P, WFV, 0), i, "damage")
+	local integer i = LoadInteger(ObjectHashTable, WFV, 1)
+	call LodSystem_ReduceUnitExtraState(LoadUnitHandle(ObjectHashTable, WFV, 1), i, "damageneg")
+	call LodSystem_ReduceUnitExtraState(LoadUnitHandle(ObjectHashTable, WFV, 0), i, "damage")
 	call DestroyTimerAndFlushHT_P(t)
 	set t = null
 endfunction
 function EZA takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer WFV = GetHandleId(t)
-	local integer UYX = LoadInteger(P, WFV, 0)+ 1
-	local integer O3O = LoadInteger(P, WFV, 1)
-	local unit u1 = LoadUnitHandle(P, WFV, 0)
-	local unit u2 = LoadUnitHandle(P, WFV, 1)
-	local unit W_V = LoadUnitHandle(P, WFV, 33)
+	local integer UYX = LoadInteger(ObjectHashTable, WFV, 0)+ 1
+	local integer O3O = LoadInteger(ObjectHashTable, WFV, 1)
+	local unit u1 = LoadUnitHandle(ObjectHashTable, WFV, 0)
+	local unit u2 = LoadUnitHandle(ObjectHashTable, WFV, 1)
+	local unit W_V = LoadUnitHandle(ObjectHashTable, WFV, 33)
 	local real x2 = GetWidgetX(u2)
 	local real y2 = GetWidgetY(u2)
 	local real x1 = GetWidgetX(u1)
 	local real y1 = GetWidgetY(u1)
 	if UYX == 320 or UnitIsDead(u1) or UnitIsDead(u2) or(x1 -x2)*(x1 -x2)+(y1 -y2)*(y1 -y2)> 490000 then
-		call DestroyLightning(LoadLightningHandle(P, WFV, 2))
+		call DestroyLightning(LoadLightningHandle(ObjectHashTable, WFV, 2))
 		call WJV(u1,'C023','D023', 18)
 		call WJV(u2,'C024','D024', 18)
 		call TimerStart(t, 18, false, function EYA)
@@ -66789,14 +66782,14 @@ function EZA takes nothing returns nothing
 		set W_V = null
 		return
 	endif
-	call SaveInteger(P, WFV, 0, UYX)
-	call MoveLightning(LoadLightningHandle(P, WFV, 2), false, x1, y1, x2, y2)
+	call SaveInteger(ObjectHashTable, WFV, 0, UYX)
+	call MoveLightning(LoadLightningHandle(ObjectHashTable, WFV, 2), false, x1, y1, x2, y2)
 	call SetUnitPosition(W_V, GetUnitX(u2), GetUnitY(u2))
-	set UYX = R2I(LoadInteger(P, WFV, 2)* UYX * 1. / 40.)
-	if LoadInteger(P, WFV, 1)<= UYX then
-		call LodSystem_AddUnitExtraState(u2, UYX -LoadInteger(P, WFV, 1), "damageneg")
-		call LodSystem_AddUnitExtraState(u1, UYX -LoadInteger(P, WFV, 1), "damage")
-		call SaveInteger(P, WFV, 1, UYX)
+	set UYX = R2I(LoadInteger(ObjectHashTable, WFV, 2)* UYX * 1. / 40.)
+	if LoadInteger(ObjectHashTable, WFV, 1)<= UYX then
+		call LodSystem_AddUnitExtraState(u2, UYX -LoadInteger(ObjectHashTable, WFV, 1), "damageneg")
+		call LodSystem_AddUnitExtraState(u1, UYX -LoadInteger(ObjectHashTable, WFV, 1), "damage")
+		call SaveInteger(ObjectHashTable, WFV, 1, UYX)
 	endif
 	set W_V = null
 	set u2 = null
@@ -66818,12 +66811,12 @@ function YFV takes nothing returns nothing
 	set l = AddLightning("CLSB", true, GetWidgetX(u), GetWidgetY(u), GetWidgetX(d), GetWidgetY(d))
 	set i = 7 * i
 	call SetLightningColor(l, .3, .5, 1, 1)
-	call SaveUnitHandle(P, WFV, 0, u)
-	call SaveUnitHandle(P, WFV, 1, d)
-	call SaveUnitHandle(P, WFV, 33, W_V)
-	call SaveLightningHandle(P, WFV, 2, l)
-	call SaveInteger(P, WFV, 0, 0)
-	call SaveInteger(P, WFV, 2, i)
+	call SaveUnitHandle(ObjectHashTable, WFV, 0, u)
+	call SaveUnitHandle(ObjectHashTable, WFV, 1, d)
+	call SaveUnitHandle(ObjectHashTable, WFV, 33, W_V)
+	call SaveLightningHandle(ObjectHashTable, WFV, 2, l)
+	call SaveInteger(ObjectHashTable, WFV, 0, 0)
+	call SaveInteger(ObjectHashTable, WFV, 2, i)
 	call TimerStart(t, .025, true, function EZA)
 	set d = null
 	set u = null
@@ -67492,19 +67485,19 @@ function X0A takes nothing returns nothing
 	local integer h = GetHandleId(t)
 	local unit WLE = LoadUnitHandle(HY, h, 0)
 	local real time = GetGameTime()
-	local real WOV = LoadReal(P, GetHandleId(WLE),'A034')
+	local real WOV = LoadReal(ObjectHashTable, GetHandleId(WLE),'A034')
 	if GetTriggerEventId() == EVENT_UNIT_DEATH then
 		call UnitRemoveAbility(WLE,'A310')
 		call UnitRemoveAbility(WLE,'B30Z')
 		call FlushChildHashtable(HY, h)
-		call RemoveSavedHandle(P, GetHandleId(WLE),'A034')
+		call RemoveSavedHandle(ObjectHashTable, GetHandleId(WLE),'A034')
 		call CleanCurrentTrigger(t)
 	else
 		if time > WOV then
 			call UnitRemoveAbility(WLE,'A310')
 			call UnitRemoveAbility(WLE,'B30Z')
 			call FlushChildHashtable(HY, h)
-			call RemoveSavedHandle(P, GetHandleId(WLE),'A034')
+			call RemoveSavedHandle(ObjectHashTable, GetHandleId(WLE),'A034')
 			call CleanCurrentTrigger(t)
 		endif
 	endif
@@ -67528,7 +67521,7 @@ function Slardar_AmplifyDamage takes nothing returns nothing
 	else
 		set WLV = 120
 	endif
-	call SaveReal(P, GetHandleId(WLE),'A034', GetGameTime()+ WLV)
+	call SaveReal(ObjectHashTable, GetHandleId(WLE),'A034', GetGameTime()+ WLV)
 	call UnitAddPermanentAbility(WLE,'A310')
 	call SetPlayerAbilityAvailable(GetOwningPlayer(WLE),'A310', false)
 	call UnitMakeAbilityPermanent(WLE, true,'A30Y')
@@ -67536,14 +67529,14 @@ function Slardar_AmplifyDamage takes nothing returns nothing
 	call SetUnitAbilityLevel(WLE,'A30Y', level)
 	call GHX(WLE, WJE,'A310')
 	call GQX(WLE,'A310','B30Z')
-	if LoadTriggerHandle(P, GetHandleId(WLE),'A304') == null then
+	if LoadTriggerHandle(ObjectHashTable, GetHandleId(WLE),'A304') == null then
 		set t = CreateTrigger()
 		set h = GetHandleId(t)
 		call TriggerRegisterTimerEvent(t, 1, true)
 		call TriggerRegisterUnitEvent(t, WLE, EVENT_UNIT_DEATH)
 		call TriggerAddCondition(t, Condition(function X0A))
 		call SaveUnitHandle(HY, h, 0, WLE)
-		call SaveTriggerHandle(P, GetHandleId(WLE),'A034', t)
+		call SaveTriggerHandle(ObjectHashTable, GetHandleId(WLE),'A034', t)
 		set t = null
 	endif
 	set WJE = null
@@ -68094,8 +68087,8 @@ function OSA takes nothing returns boolean
 		call SaveReal(HY, h, 193, EOX * .98)
 	endif
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH or c > WOV then
-		set i = LoadInteger(P, h,'A0G5')-1
-		call SaveInteger(P, h,'A0G5', i)
+		set i = LoadInteger(ObjectHashTable, h,'A0G5')-1
+		call SaveInteger(ObjectHashTable, h,'A0G5', i)
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 	else
@@ -68105,7 +68098,7 @@ function OSA takes nothing returns boolean
 		set y = CoordinateY50(y + EOX * Sin(I3X))
 		if (IsPointInRegion(TerrainCliffRegion,((x)* 1.),((y)* 1.))) == false then
 			if IsUnitType(target, UNIT_TYPE_HERO) then
-				call SaveBoolean(K, GetHandleId(target), 99, true)
+				call SaveBoolean(OtherHashTable, GetHandleId(target), 99, true)
 			endif
 			call SetUnitX(target, x)
 			call SetUnitY(target, y)
@@ -68138,7 +68131,7 @@ function OTA takes unit u, unit target, integer lv, boolean OUA returns nothing
 	call SaveReal(HY, h, 193, 2.)
 	call SaveReal(HY, h, 13, Atan2(GetUnitY(target)-GetUnitY(u), GetUnitX(target)-GetUnitX(u)))
 	call UnitDamageTargetEx(u, target, 1, U6V(u)* .1 * lv)
-	call SaveInteger(P, GetHandleId(u),'A0G5', LoadInteger(P, GetHandleId(u),'A0G5')+ 1)
+	call SaveInteger(ObjectHashTable, GetHandleId(u),'A0G5', LoadInteger(ObjectHashTable, GetHandleId(u),'A0G5')+ 1)
 	set t = null
 endfunction
 function OWA takes unit u, unit t, boolean b, integer i returns nothing
@@ -68166,9 +68159,9 @@ function OWA takes unit u, unit t, boolean b, integer i returns nothing
 	set d = null
 endfunction
 function OYA takes unit u, unit t returns nothing
-	if IsUnitIllusion(u) == false and(Mode__BalanceOff or LoadReal(P, GetHandleId(u),'A0G5')< GetGameTime()) then
+	if IsUnitIllusion(u) == false and(Mode__BalanceOff or LoadReal(ObjectHashTable, GetHandleId(u),'A0G5')< GetGameTime()) then
 		if GetUnitAbilityLevel(u,'A36D') == 0 and GetUnitAbilityLevel(u,'A3L2') == 0 and TKV(u,'A0G5', 17) then
-			call SaveReal(P, GetHandleId(u),'A0G5', GetGameTime()+ 1.5)
+			call SaveReal(ObjectHashTable, GetHandleId(u),'A0G5', GetGameTime()+ 1.5)
 			call OWA(u, t, true, 1)
 		endif
 	endif
@@ -68211,16 +68204,16 @@ function O0A takes unit u, unit t, integer i returns boolean
 	if Temp__ArrayUnit[1]!= null then
 		call UnitAddPermanentAbility(Temp__ArrayUnit[1],'A315')
 		call GHX(Temp__ArrayUnit[1], u,'A315')
-		call SaveUnitHandle(P, GetHandleId(u), StringHash("ChargedUnit"), Temp__ArrayUnit[1])
+		call SaveUnitHandle(ObjectHashTable, GetHandleId(u), StringHash("ChargedUnit"), Temp__ArrayUnit[1])
 	endif
 	if IsPlayerAlly(LocalPlayer, GetOwningPlayer(u)) or IsObserverPlayer(LocalPlayer) then
 		set s = "Abilities\\Spells\\Other\\HowlOfTerror\\HowlTarget.mdl"
 	endif
-	call DestroyEffect(LoadEffectHandle(P, i, 5))
-	call DestroyEffect(LoadEffectHandle(P, i, 4))
-	call SaveEffectHandle(P, i, 4, AddSpecialEffectTarget(s, Temp__ArrayUnit[1], "overhead"))
-	call SaveEffectHandle(P, i, 5, AddSpecialEffectTarget(s, Temp__ArrayUnit[1], "overhead"))
-	call SaveUnitHandle(P, i, 1, Temp__ArrayUnit[1])
+	call DestroyEffect(LoadEffectHandle(ObjectHashTable, i, 5))
+	call DestroyEffect(LoadEffectHandle(ObjectHashTable, i, 4))
+	call SaveEffectHandle(ObjectHashTable, i, 4, AddSpecialEffectTarget(s, Temp__ArrayUnit[1], "overhead"))
+	call SaveEffectHandle(ObjectHashTable, i, 5, AddSpecialEffectTarget(s, Temp__ArrayUnit[1], "overhead"))
+	call SaveUnitHandle(ObjectHashTable, i, 1, Temp__ArrayUnit[1])
 	call UnitRemoveAbility(Temp__ArrayUnit[2],'A315')
 	return false
 endfunction
@@ -68229,21 +68222,21 @@ function O1A takes timer t, unit u, unit WLE, integer WFV returns nothing
 	call SetUnitPathing(u, true)
 	call SetUnitAnimation(u, "stand")
 	call SetUnitVertexColorEx(u,-1,-1,-1, 255)
-	if LoadUnitHandle(P, GetHandleId(u), StringHash("ChargedUnit"))!= null then
-		call UnitRemoveAbility(LoadUnitHandle(P, GetHandleId(u), StringHash("ChargedUnit")),'A315')
+	if LoadUnitHandle(ObjectHashTable, GetHandleId(u), StringHash("ChargedUnit"))!= null then
+		call UnitRemoveAbility(LoadUnitHandle(ObjectHashTable, GetHandleId(u), StringHash("ChargedUnit")),'A315')
 	endif
 	call UnitRemoveAbility(WLE,'A315')
-	call SaveBoolean(P, GetHandleId(u),'A1P8', false)
-	call DestroyEffect(LoadEffectHandle(P, WFV, 5))
-	call DestroyEffect(LoadEffectHandle(P, WFV, 4))
-	call DestroyEffect(LoadEffectHandle(P, WFV, 3))
-	call DeallocateGroup(LoadGroupHandle(P, WFV, 2))
+	call SaveBoolean(ObjectHashTable, GetHandleId(u),'A1P8', false)
+	call DestroyEffect(LoadEffectHandle(ObjectHashTable, WFV, 5))
+	call DestroyEffect(LoadEffectHandle(ObjectHashTable, WFV, 4))
+	call DestroyEffect(LoadEffectHandle(ObjectHashTable, WFV, 3))
+	call DeallocateGroup(LoadGroupHandle(ObjectHashTable, WFV, 2))
 	call DestroyTimerAndFlushHT_P(t)
 endfunction
 function O2A takes nothing returns boolean
 	local unit t = GetFilterUnit()
 	local unit u = Temp__ArrayUnit[0]
-	local group g = LoadGroupHandle(P, XK[0], 2)
+	local group g = LoadGroupHandle(ObjectHashTable, XK[0], 2)
 	if IsUnitEnemy(u, GetOwningPlayer(t)) and IsUnitInGroup(t, g) == false and t != Temp__ArrayUnit[1]and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and GetUnitAbilityLevel(t,'A04R') == 0 and UnitAlive(t) and(IsUnitType(t, UNIT_TYPE_ANCIENT) == false or DRX(t)) then
 		call GroupAddUnit(g, t)
 		call OWA(u, t, false, 3)
@@ -68256,8 +68249,8 @@ endfunction
 function O3A takes nothing returns nothing
 	local timer time = GetExpiredTimer()
 	local integer WFV = GetHandleId(time)
-	local unit u = LoadUnitHandle(P, WFV, 0)
-	local unit t = LoadUnitHandle(P, WFV, 1)
+	local unit u = LoadUnitHandle(ObjectHashTable, WFV, 0)
+	local unit t = LoadUnitHandle(ObjectHashTable, WFV, 1)
 	local real x1 = GetWidgetX(u)
 	local real y1 = GetWidgetY(u)
 	local real O_A
@@ -68265,7 +68258,7 @@ function O3A takes nothing returns nothing
 	local real N3X
 	local real x2
 	local real y2
-	if LoadBoolean(P, GetHandleId(u),'A1P8') == false or(UnitIsDead(t) and O0A(u, t, WFV)) then
+	if LoadBoolean(ObjectHashTable, GetHandleId(u),'A1P8') == false or(UnitIsDead(t) and O0A(u, t, WFV)) then
 		call O1A(time, u, t, WFV)
 		set time = null
 		set t = null
@@ -68274,7 +68267,7 @@ function O3A takes nothing returns nothing
 	endif
 	set x2 = GetWidgetX(t)
 	set y2 = GetWidgetY(t)
-	set N3X = LoadReal(P, WFV, 0)
+	set N3X = LoadReal(ObjectHashTable, WFV, 0)
 	set O_A = SquareRoot((x1 -x2)*(x1 -x2)+(y1 -y2)*(y1 -y2))
 	if  100 > O_A then
 		call O1A(time, u, t, WFV)
@@ -68282,7 +68275,7 @@ function O3A takes nothing returns nothing
 		call SetUnitAnimation(u, "attack")
 		call OWA(u, t, true, 3)
 		set u = CreateUnit(GetOwningPlayer(t),'e00E', GetWidgetX(t), GetWidgetY(t), 0)
-		call CommonUnitAddStun(u,(.4 * LoadInteger(P, WFV, 0))+ .8, false)
+		call CommonUnitAddStun(u,(.4 * LoadInteger(ObjectHashTable, WFV, 0))+ .8, false)
 		set time = null
 		set t = null
 		set u = null
@@ -68303,8 +68296,8 @@ function O3A takes nothing returns nothing
 	set u = null
 endfunction
 function JRE takes nothing returns nothing
-	local unit WLE = LoadUnitHandle(P, GetHandleId(GetTriggerUnit()), StringHash("ChargedUnit"))
-	call SaveBoolean(P, GetHandleId(GetTriggerUnit()),'A1P8', false)
+	local unit WLE = LoadUnitHandle(ObjectHashTable, GetHandleId(GetTriggerUnit()), StringHash("ChargedUnit"))
+	call SaveBoolean(ObjectHashTable, GetHandleId(GetTriggerUnit()),'A1P8', false)
 	call UnitRemoveAbility(WLE,'A315')
 	set WLE = null
 endfunction
@@ -68320,20 +68313,20 @@ function O4A takes unit WJE, integer WUV returns nothing
 	endif
 	call SetUnitPathing(WJE, false)
 	call SetUnitTimeScale(WJE, 2.5)
-	call SetUnitAnimationByIndex(WJE, LoadInteger(P, GetUnitTypeId(WJE),'A1P8'))
+	call SetUnitAnimationByIndex(WJE, LoadInteger(ObjectHashTable, GetUnitTypeId(WJE),'A1P8'))
 	call SetUnitVertexColorEx(WJE,-1,-1,-1, 100)
 	call UnitAddPermanentAbility(WLE,'A315')
 	call GHX(WLE, WJE,'A315')
-	call SaveBoolean(P, W0V,'A1P8', true)
-	call SaveUnitHandle(P, WFV, 0, WJE)
-	call SaveUnitHandle(P, WFV, 1, WLE)
-	call SaveUnitHandle(P, GetHandleId(WJE), StringHash("ChargedUnit"), WLE)
-	call SaveGroupHandle(P, WFV, 2, AllocationGroup(396))
-	call SaveEffectHandle(P, WFV, 3, AddSpecialEffectTarget("war3mapImported\\ShockwaveMissilePurple.mdx", WJE, "origin"))
-	call SaveEffectHandle(P, WFV, 4, AddSpecialEffectTarget(s, WLE, "overhead"))
-	call SaveEffectHandle(P, WFV, 5, AddSpecialEffectTarget(s, WLE, "overhead"))
-	call SaveInteger(P, WFV, 0, WUV)
-	call SaveReal(P, WFV, 0, WUV * 1.25 + 13.75)
+	call SaveBoolean(ObjectHashTable, W0V,'A1P8', true)
+	call SaveUnitHandle(ObjectHashTable, WFV, 0, WJE)
+	call SaveUnitHandle(ObjectHashTable, WFV, 1, WLE)
+	call SaveUnitHandle(ObjectHashTable, GetHandleId(WJE), StringHash("ChargedUnit"), WLE)
+	call SaveGroupHandle(ObjectHashTable, WFV, 2, AllocationGroup(396))
+	call SaveEffectHandle(ObjectHashTable, WFV, 3, AddSpecialEffectTarget("war3mapImported\\ShockwaveMissilePurple.mdx", WJE, "origin"))
+	call SaveEffectHandle(ObjectHashTable, WFV, 4, AddSpecialEffectTarget(s, WLE, "overhead"))
+	call SaveEffectHandle(ObjectHashTable, WFV, 5, AddSpecialEffectTarget(s, WLE, "overhead"))
+	call SaveInteger(ObjectHashTable, WFV, 0, WUV)
+	call SaveReal(ObjectHashTable, WFV, 0, WUV * 1.25 + 13.75)
 	call TimerStart(time, .025, true, function O3A)
 	set WJE = null
 	set WLE = null
@@ -68361,15 +68354,15 @@ function O5A takes nothing returns nothing
 	loop
 		set u = Player__Hero[i]
 		if GetUnitAbilityLevel(u,'P310')> 0 and u != null and UnitAlive(u) and M2[i]== false then
-			set O6A = LoadInteger(P, GetHandleId(u),'P310')
+			set O6A = LoadInteger(ObjectHashTable, GetHandleId(u),'P310')
 			set V4A = R2I(.03 * GetUnitAbilityLevel(u,'P310')* U6V(u))
 			if O6A != V4A then
 				if O6A > V4A then
 					call LodSystem_ReduceUnitExtraState(u, O6A -V4A, "damage")
-					call SaveInteger(P, GetHandleId(u),'P310', V4A)
+					call SaveInteger(ObjectHashTable, GetHandleId(u),'P310', V4A)
 				else
 					call LodSystem_AddUnitExtraState(u, V4A -O6A, "damage")
-					call SaveInteger(P, GetHandleId(u),'P310', V4A)
+					call SaveInteger(ObjectHashTable, GetHandleId(u),'P310', V4A)
 				endif
 			endif
 		endif
@@ -68487,10 +68480,10 @@ function RXA takes nothing returns boolean
 			endif
 			call UnitDamageTargetEx(WUE, WWE, 1, 50 + 100 * level)
 			if GetUnitAbilityLevel(WWE,'A3E9') == 1 and UnitIsDead(WWE) == false and UnitIsDead(WUE) == false then
-				call SaveUnitHandle(VV,'A3E9', 0, WWE)
-				call SaveUnitHandle(VV,'A3E9', 1, WUE)
-				call SaveInteger(VV,'A3E9', 0, LoadInteger(HY, h, 4))
-				call SaveInteger(VV,'A3E9', 0, level)
+				call SaveUnitHandle(OtherHashTable2,'A3E9', 0, WWE)
+				call SaveUnitHandle(OtherHashTable2,'A3E9', 1, WUE)
+				call SaveInteger(OtherHashTable2,'A3E9', 0, LoadInteger(HY, h, 4))
+				call SaveInteger(OtherHashTable2,'A3E9', 0, level)
 				call ExecuteFunc("RRA")
 			endif
 		endif
@@ -68536,15 +68529,15 @@ function AZE takes nothing returns nothing
 	set WJE = null
 endfunction
 function RRA takes nothing returns nothing
-	local unit WLE = LoadUnitHandle(VV,'A3E9', 1)
-	call T4V(LoadUnitHandle(VV,'A3E9', 0))
+	local unit WLE = LoadUnitHandle(OtherHashTable2,'A3E9', 1)
+	call T4V(LoadUnitHandle(OtherHashTable2,'A3E9', 0))
 	if UnitHasSpellShield(WLE) == false then
-		call RIA(LoadUnitHandle(VV,'A3E9', 0), WLE, LoadInteger(VV,'A3E9', 0), LoadInteger(VV,'A3E9', 1))
+		call RIA(LoadUnitHandle(OtherHashTable2,'A3E9', 0), WLE, LoadInteger(OtherHashTable2,'A3E9', 0), LoadInteger(OtherHashTable2,'A3E9', 1))
 	else
 		call AJO(WLE)
 	endif
 	set WLE = null
-	call FlushChildHashtable(VV,'A3E9')
+	call FlushChildHashtable(OtherHashTable2,'A3E9')
 endfunction
 function RAA takes nothing returns nothing
 	local trigger t = GetTriggeringTrigger()
@@ -68669,10 +68662,10 @@ endfunction
 function RGA takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer WFV = GetHandleId(t)
-	local unit d = LoadUnitHandle(P, WFV, 0)
-	local unit u = LoadUnitHandle(P, WFV, 1)
+	local unit d = LoadUnitHandle(ObjectHashTable, WFV, 0)
+	local unit u = LoadUnitHandle(ObjectHashTable, WFV, 1)
 	if UnitIsDead(u) or UnitIsDead(d) then
-		call DestroyEffect(LoadEffectHandle(P, WFV, 2))
+		call DestroyEffect(LoadEffectHandle(ObjectHashTable, WFV, 2))
 		call KillUnit(d)
 		call DestroyTimerAndFlushHT_P(t)
 	endif
@@ -68684,20 +68677,20 @@ endfunction
 function S2E takes nothing returns nothing
 	local integer DSR = GetHandleId(GetTriggerUnit())
 	local unit d = GetSummonedUnit()
-	local unit u = LoadUnitHandle(P, DSR, 0)
-	local timer t = LoadTimerHandle(P, DSR, 1)
+	local unit u = LoadUnitHandle(ObjectHashTable, DSR, 0)
+	local timer t = LoadTimerHandle(ObjectHashTable, DSR, 1)
 	local integer WFV = GetHandleId(t)
 	call SetUnitMoveSpeed(d, 522)
 	call UnitAddAbility(d,'Aloc')
-	call SetUnitOwner(d, LoadPlayerHandle(P, DSR, 2), false)
+	call SetUnitOwner(d, LoadPlayerHandle(ObjectHashTable, DSR, 2), false)
 	call IssueTargetOrderById(d, 851983, u)
 	call SetUnitX(d, GetWidgetX(u)+ 100 * Cos(GetRandomReal(-1.8, 1.8)))
 	call SetUnitY(d, GetWidgetY(u)+ 100 * Sin(GetRandomReal(-1.8, 1.8)))
-	call SaveUnitHandle(P, WFV, 0, d)
-	call SaveUnitHandle(P, WFV, 1, u)
-	call SaveEffectHandle(P, WFV, 2, AddSpecialEffectTarget("war3mapImported\\UnholyPresence.mdx", u, "overhead"))
+	call SaveUnitHandle(ObjectHashTable, WFV, 0, d)
+	call SaveUnitHandle(ObjectHashTable, WFV, 1, u)
+	call SaveEffectHandle(ObjectHashTable, WFV, 2, AddSpecialEffectTarget("war3mapImported\\UnholyPresence.mdx", u, "overhead"))
 	call TimerStart(t, .2, true, function RGA)
-	call FlushChildHashtable(P, DSR)
+	call FlushChildHashtable(ObjectHashTable, DSR)
 	set t = null
 	set u = null
 	set d = null
@@ -68720,14 +68713,14 @@ function YAV takes nothing returns nothing
 	exitwhen u == null
 		call CCX(u,'A26T', 1, 1.5 + level,'B0EJ')
 		set d = CreateUnit(GetOwningPlayer(WJE),'e00E', GetUnitX(WJE), GetUnitY(WJE), 0)
-		call SaveInteger(P, GetHandleId(d),'SPEL','A24K')
-		call SaveUnitHandle(P, GetHandleId(d), 0, u)
-		call SaveTimerHandle(P, GetHandleId(d), 1, CreateTimer())
-		call SavePlayerHandle(P, GetHandleId(d), 2, GetOwningPlayer(WJE))
+		call SaveInteger(ObjectHashTable, GetHandleId(d),'SPEL','A24K')
+		call SaveUnitHandle(ObjectHashTable, GetHandleId(d), 0, u)
+		call SaveTimerHandle(ObjectHashTable, GetHandleId(d), 1, CreateTimer())
+		call SavePlayerHandle(ObjectHashTable, GetHandleId(d), 2, GetOwningPlayer(WJE))
 		call UnitAddPermanentAbility(d,'A24K')
 		call SetUnitAbilityLevel(d,'A24K', level)
 		call SaveUnitHandle(HY, GetHandleId(d),'0ILU', u)
-		call TriggerRegisterUnitEvent(JJ, d, EVENT_UNIT_SUMMON)
+		call TriggerRegisterUnitEvent(UnitEventMainTrig, d, EVENT_UNIT_SUMMON)
 		call U1V(d, 852274, u)
 		set d = null
 		call GroupRemoveUnit(g, u)
@@ -69234,9 +69227,9 @@ function IXA takes nothing returns nothing
 	call SaveInteger(HY, h, 0, LoadInteger(HY, GetHandleId(GetTriggeringTrigger()), 5))
 	call UnitAddPermanentAbility(W2,'A0OW')
 	if GetUnitAbilityLevel(W2,'A3E9') == 1 and LoadBoolean(HY, GetHandleId(GetTriggeringTrigger()), 0) == false and IsMagicImmuneUnit(W2) == false then
-		call SaveUnitHandle(VV,'A3E9', 0, W2)
-		call SaveUnitHandle(VV,'A3E9', 1, U2)
-		call SaveInteger(VV,'A3E9', 0, LoadInteger(HY, GetHandleId(GetTriggeringTrigger()), 5))
+		call SaveUnitHandle(OtherHashTable2,'A3E9', 0, W2)
+		call SaveUnitHandle(OtherHashTable2,'A3E9', 1, U2)
+		call SaveInteger(OtherHashTable2,'A3E9', 0, LoadInteger(HY, GetHandleId(GetTriggeringTrigger()), 5))
 		call ExecuteFunc("IOA")
 	endif
 	call TriggerEvaluate(t)
@@ -69260,10 +69253,10 @@ function NGE takes nothing returns nothing
 	set WLE = null
 endfunction
 function IOA takes nothing returns nothing
-	local unit WJE = LoadUnitHandle(VV,'A3E9', 0)
-	local unit WLE = LoadUnitHandle(VV,'A3E9', 1)
-	local integer level = LoadInteger(VV,'A3E9', 0)
-	call T4V(LoadUnitHandle(VV,'A3E9', 0))
+	local unit WJE = LoadUnitHandle(OtherHashTable2,'A3E9', 0)
+	local unit WLE = LoadUnitHandle(OtherHashTable2,'A3E9', 1)
+	local integer level = LoadInteger(OtherHashTable2,'A3E9', 0)
+	call T4V(LoadUnitHandle(OtherHashTable2,'A3E9', 0))
 	if UnitHasSpellShield(WLE) == false then
 		call IRA(WJE, WLE, level, true)
 	endif
@@ -69275,13 +69268,13 @@ function PGX takes nothing returns nothing
 endfunction
 function IIA takes nothing returns nothing
 	local unit WWE = GetEnumUnit()
-	local integer HCR = LoadInteger(K, GetHandleId(WWE), GetHandleId(GetTriggeringTrigger()))
+	local integer HCR = LoadInteger(OtherHashTable, GetHandleId(WWE), GetHandleId(GetTriggeringTrigger()))
 	if IsUnitAlly(WWE, E3) == false then
 		call LodSystem_ReduceUnitExtraState(WWE, HCR, "armourneg")
 	else
 		call LodSystem_ReduceUnitExtraState(WWE, HCR, "armour")
 	endif
-	call SaveInteger(K, GetHandleId(WWE), GetHandleId(GetTriggeringTrigger()), 0)
+	call SaveInteger(OtherHashTable, GetHandleId(WWE), GetHandleId(GetTriggeringTrigger()), 0)
 	set WWE = null
 endfunction
 function IAA takes nothing returns nothing
@@ -69299,10 +69292,10 @@ function IAA takes nothing returns nothing
 	if UnitIsDead(WWE) == false then
 		if IsUnitAlly(WWE, E3) == false then
 			call LodSystem_AddUnitExtraState(WWE, HCR, "armourneg")
-			call SaveInteger(K, GetHandleId(WWE), GetHandleId(GetTriggeringTrigger()), HCR)
+			call SaveInteger(OtherHashTable, GetHandleId(WWE), GetHandleId(GetTriggeringTrigger()), HCR)
 		else
 			call LodSystem_AddUnitExtraState(WWE, HCR, "armour")
-			call SaveInteger(K, GetHandleId(WWE), GetHandleId(GetTriggeringTrigger()), HCR)
+			call SaveInteger(OtherHashTable, GetHandleId(WWE), GetHandleId(GetTriggeringTrigger()), HCR)
 		endif
 	endif
 	set WWE = null
@@ -69694,7 +69687,7 @@ function I0A takes nothing returns nothing
 	local integer SYV = LoadInteger(HY, h, 0)
 	local unit I1A
 	if UnitIsDead(triggerUnit) or SYV < 1 or GetUnitAbilityLevel(triggerUnit,'A42O') == 0 then
-		call RemoveSavedHandle(P, GetHandleId(triggerUnit),'A0A6')
+		call RemoveSavedHandle(ObjectHashTable, GetHandleId(triggerUnit),'A0A6')
 		call FlushChildHashtable(HY, h)
 		call PauseTimer(t)
 		call DestroyTimer(t)
@@ -69717,8 +69710,8 @@ endfunction
 function I2A takes unit WJE, unit u, real damageValue, real SYV, boolean b returns nothing
 	local timer t
 	local integer h
-	if HaveSavedHandle(P, GetHandleId(u),'A0A6') then
-		set t = LoadTimerHandle(P, GetHandleId(u),'A0A6')
+	if HaveSavedHandle(ObjectHashTable, GetHandleId(u),'A0A6') then
+		set t = LoadTimerHandle(ObjectHashTable, GetHandleId(u),'A0A6')
 		set h = GetHandleId(t)
 		call SaveInteger(HY, h, 0, R2I(SYV))
 	else
@@ -69730,7 +69723,7 @@ function I2A takes unit WJE, unit u, real damageValue, real SYV, boolean b retur
 		call SaveUnitHandle(HY, h, 0, WJE)
 		call SaveUnitHandle(HY, h, 2, u)
 		call SaveUnitHandle(HY, h, 1, Player__Hero[GetPlayerId(GetOwningPlayer(WJE))])
-		call SaveTimerHandle(P, GetHandleId(u),'A0A6', t)
+		call SaveTimerHandle(ObjectHashTable, GetHandleId(u),'A0A6', t)
 		call UnitAddPermanentAbility(u,'A42O')
 		if b and IsUnitType(u, UNIT_TYPE_HERO) then
 			call CXR(u, SYV)
@@ -69811,8 +69804,8 @@ endfunction
 function I5A takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer WFV = GetHandleId(t)
-	call LodSystem_ReduceUnitExtraState(LoadUnitHandle(P, WFV, 0), LoadInteger(P, WFV, 0), "damage")
-	call SaveBoolean(P, LoadInteger(P, WFV, 1),'A1A3', false)
+	call LodSystem_ReduceUnitExtraState(LoadUnitHandle(ObjectHashTable, WFV, 0), LoadInteger(ObjectHashTable, WFV, 0), "damage")
+	call SaveBoolean(ObjectHashTable, LoadInteger(ObjectHashTable, WFV, 1),'A1A3', false)
 	call DestroyTimerAndFlushHT_P(t)
 	set t = null
 endfunction
@@ -69837,16 +69830,16 @@ function I6A takes unit u, unit d, integer WUV returns nothing
 	endif
 	set O3O = R2I(dr)
 	call LodSystem_AddUnitExtraState(u, O3O, "damage")
-	call SaveUnitHandle(P, WFV, 0, u)
-	call SaveInteger(P, WFV, 0, O3O)
-	call SaveInteger(P, WFV, 1, GetHandleId(u))
-	call SaveBoolean(P, GetHandleId(u),'A1A3', true)
+	call SaveUnitHandle(ObjectHashTable, WFV, 0, u)
+	call SaveInteger(ObjectHashTable, WFV, 0, O3O)
+	call SaveInteger(ObjectHashTable, WFV, 1, GetHandleId(u))
+	call SaveBoolean(ObjectHashTable, GetHandleId(u),'A1A3', true)
 	call TimerStart(t, .5, false, function I5A)
 	set t = null
 endfunction
 function I7A takes unit R8X, unit WLE returns nothing
 	local integer WUV = GetUnitAbilityLevel(R8X,'A1A3')*(1 -GetUnitAbilityLevel(R8X,'A36D'))
-	if WUV == 0 or LoadBoolean(P, GetHandleId(R8X),'A1A3') then
+	if WUV == 0 or LoadBoolean(ObjectHashTable, GetHandleId(R8X),'A1A3') then
 		return
 	endif
 	if IsUnitEnemy(R8X, GetOwningPlayer(WLE)) then
@@ -70594,9 +70587,9 @@ function A_A takes nothing returns nothing
 	call UnitDamageTargetEx(WUE, WWE, 1, IXX)
 	set M_V = false
 	if LoadBoolean(HY, h, 20) == false and GetUnitAbilityLevel(WWE,'A3E9') == 1 and IsMagicImmuneUnit(WUE) == false then
-		call SaveUnitHandle(VV,'A3E9', 0, WWE)
-		call SaveUnitHandle(VV,'A3E9', 1, WUE)
-		call SaveInteger(VV,'A3E9', 0, LoadInteger(HY, h, 20))
+		call SaveUnitHandle(OtherHashTable2,'A3E9', 0, WWE)
+		call SaveUnitHandle(OtherHashTable2,'A3E9', 1, WUE)
+		call SaveInteger(OtherHashTable2,'A3E9', 0, LoadInteger(HY, h, 20))
 		call ExecuteFunc("A0A")
 	endif
 	call FlushChildHashtable(HY, h)
@@ -70637,16 +70630,16 @@ function N1E takes nothing returns nothing
 	endif
 endfunction
 function A0A takes nothing returns nothing
-	local unit WJE = LoadUnitHandle(VV,'A3E9', 0)
-	local unit WLE = LoadUnitHandle(VV,'A3E9', 1)
-	local integer level = LoadInteger(VV,'A3E9', 0)
-	call T4V(LoadUnitHandle(VV,'A3E9', 0))
+	local unit WJE = LoadUnitHandle(OtherHashTable2,'A3E9', 0)
+	local unit WLE = LoadUnitHandle(OtherHashTable2,'A3E9', 1)
+	local integer level = LoadInteger(OtherHashTable2,'A3E9', 0)
+	call T4V(LoadUnitHandle(OtherHashTable2,'A3E9', 0))
 	if UnitHasSpellShield(WLE) == false then
 		call A2A(WJE, WLE, level, true)
 	endif
 	set WJE = null
 	set WLE = null
-	call FlushChildHashtable(VV,'A3E9')
+	call FlushChildHashtable(OtherHashTable2,'A3E9')
 endfunction
 
 
@@ -71076,11 +71069,11 @@ function NWA takes nothing returns nothing
 endfunction
 function NYA takes nothing returns boolean
 	local unit t = GetFilterUnit()
-	local unit u = LoadUnitHandle(VV,'A0CA', 0)
-	local group g = LoadGroupHandle(P, GetHandleId(u), StringHash("ShukuGroup"))
+	local unit u = LoadUnitHandle(OtherHashTable2,'A0CA', 0)
+	local group g = LoadGroupHandle(ObjectHashTable, GetHandleId(u), StringHash("ShukuGroup"))
 	if u != null and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(u)) and(t != u) and IsUnitInGroup(t, g) == false and GetUnitAbilityLevel(t,'A04R') == 0 and IsMagicImmuneUnit(t) == false and UnitAlive(t) and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and(IsUnitType(t, UNIT_TYPE_ANCIENT) == false or DRX(t)) then
 		call GroupAddUnit(g, t)
-		call UnitDamageTargetEx(u, t, 1, LoadInteger(P, GetHandleId(u), StringHash("ShukuDamage")))
+		call UnitDamageTargetEx(u, t, 1, LoadInteger(ObjectHashTable, GetHandleId(u), StringHash("ShukuDamage")))
 		call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Undead\\AbsorbMana\\AbsorbManaBirthMissile.mdl", t, "chest"))
 	endif
 	set g = null
@@ -71091,20 +71084,20 @@ endfunction
 function NZA takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer WFV = GetHandleId(t)
-	local unit u = LoadUnitHandle(P, WFV, 0)
+	local unit u = LoadUnitHandle(ObjectHashTable, WFV, 0)
 	local group g
 	if GetUnitAbilityLevel(u,'BHfs') == 0 then
-		call DeallocateGroup(LoadGroupHandle(P, GetHandleId(u), StringHash("ShukuGroup")))
+		call DeallocateGroup(LoadGroupHandle(ObjectHashTable, GetHandleId(u), StringHash("ShukuGroup")))
 		call DestroyTimerAndFlushHT_P(t)
 		set t = null
 		set u = null
 		return
 	endif
-	call SaveUnitHandle(VV,'A0CA', 0, u)
+	call SaveUnitHandle(OtherHashTable2,'A0CA', 0, u)
 	set g = AllocationGroup(416)
 	call GroupEnumUnitsInRange(g, GetWidgetX(u), GetWidgetY(u), 200, Condition(function NYA))
 	call DeallocateGroup(g)
-	call RemoveSavedHandle(VV,'A0CA', 0)
+	call RemoveSavedHandle(OtherHashTable2,'A0CA', 0)
 	set g = null
 	set t = null
 	set u = null
@@ -71114,9 +71107,9 @@ function FQE takes nothing returns nothing
 	local unit u = GetTriggerUnit()
 	local integer WFV = GetHandleId(t)
 	local integer WUV = GetUnitAbilityLevel(u,'A0CA')+ GetUnitAbilityLevel(u,'QB01')
-	call SaveUnitHandle(P, WFV, 0, u)
-	call SaveGroupHandle(P, GetHandleId(u), StringHash("ShukuGroup"), AllocationGroup(417))
-	call SaveInteger(P, GetHandleId(u), StringHash("ShukuDamage"), WUV * 25 + 50)
+	call SaveUnitHandle(ObjectHashTable, WFV, 0, u)
+	call SaveGroupHandle(ObjectHashTable, GetHandleId(u), StringHash("ShukuGroup"), AllocationGroup(417))
+	call SaveInteger(ObjectHashTable, GetHandleId(u), StringHash("ShukuDamage"), WUV * 25 + 50)
 	call TimerStart(t, .05, true, function NZA)
 	set t = null
 	set u = null
@@ -71395,9 +71388,9 @@ function N9A takes nothing returns nothing
 			if LoadUnitHandle(HY, h,-1) == LoadUnitHandle(HY, h, 2) then
 				if GetUnitAbilityLevel(WLE,'A3E9') == 1 and IsMagicImmuneUnit(damageSource) and LoadBoolean(HY, h, 0) == false then
 					if UnitHasSpellShield(damageSource) == false then
-						call SaveUnitHandle(VV,'A3E9', 0, WLE)
-						call SaveUnitHandle(VV,'A3E9', 1, damageSource)
-						call SaveInteger(VV,'A3E9', 0, LoadInteger(HY, h, 0))
+						call SaveUnitHandle(OtherHashTable2,'A3E9', 0, WLE)
+						call SaveUnitHandle(OtherHashTable2,'A3E9', 1, damageSource)
+						call SaveInteger(OtherHashTable2,'A3E9', 0, LoadInteger(HY, h, 0))
 						call ExecuteFunc("BVA")
 					else
 						call AJO(damageSource)
@@ -71412,14 +71405,14 @@ function N9A takes nothing returns nothing
 				call UnitDamageTargetEx(damageSource, WLE, 1, 50 + 25 * LoadInteger(HY, h, 0))
 			endif
 			if LoadInteger(HY, h, 1)> 0 then
-				call SaveUnitHandle(VV,'cask', 0, WLE)
-				call RemoveSavedHandle(VV,'cask', 1)
-				call SaveUnitHandle(VV,'cask', 2, damageSource)
-				call SaveInteger(VV,'cask', 0, LoadInteger(HY, h, 0))
-				call SaveInteger(VV,'cask', 1, LoadInteger(HY, h, 1))
+				call SaveUnitHandle(OtherHashTable2,'cask', 0, WLE)
+				call RemoveSavedHandle(OtherHashTable2,'cask', 1)
+				call SaveUnitHandle(OtherHashTable2,'cask', 2, damageSource)
+				call SaveInteger(OtherHashTable2,'cask', 0, LoadInteger(HY, h, 0))
+				call SaveInteger(OtherHashTable2,'cask', 1, LoadInteger(HY, h, 1))
 				call ExecuteFunc("BEA")
 			else
-				call FlushChildHashtable(VV,'cask')
+				call FlushChildHashtable(OtherHashTable2,'cask')
 			endif
 			call CleanCurrentTrigger(t)
 			call FlushChildHashtable(HY, h)
@@ -71453,27 +71446,27 @@ function BXA takes unit WUE, unit BOA, unit BRA, integer level, integer c, boole
 	set KBX = null
 endfunction
 function BEA takes nothing returns nothing
-	local unit BOA = LoadUnitHandle(VV,'cask', 0)
-	local unit BRA = LoadUnitHandle(VV,'cask', 1)
-	local unit WUE = LoadUnitHandle(VV,'cask', 2)
-	local integer level = LoadInteger(VV,'cask', 0)
-	local integer c = LoadInteger(VV,'cask', 1)
+	local unit BOA = LoadUnitHandle(OtherHashTable2,'cask', 0)
+	local unit BRA = LoadUnitHandle(OtherHashTable2,'cask', 1)
+	local unit WUE = LoadUnitHandle(OtherHashTable2,'cask', 2)
+	local integer level = LoadInteger(OtherHashTable2,'cask', 0)
+	local integer c = LoadInteger(OtherHashTable2,'cask', 1)
 	if BRA == null then
 		set BRA = N8A(WUE, BOA)
 	endif
 	if BRA != null then
-		call BXA(WUE, BOA, BRA, level, c, LoadBoolean(VV,'cask', 0))
+		call BXA(WUE, BOA, BRA, level, c, LoadBoolean(OtherHashTable2,'cask', 0))
 	endif
 	set BOA = null
 	set WUE = null
 endfunction
 function BIA takes unit trigUnit, unit WLE, integer level, boolean FAR returns nothing
-	call SaveUnitHandle(VV,'cask', 0, trigUnit)
-	call SaveUnitHandle(VV,'cask', 1, WLE)
-	call SaveUnitHandle(VV,'cask', 2, trigUnit)
-	call SaveInteger(VV,'cask', 0, level)
-	call SaveInteger(VV,'cask', 1, level * 2 + 1)
-	call SaveBoolean(VV,'cask', 0, FAR)
+	call SaveUnitHandle(OtherHashTable2,'cask', 0, trigUnit)
+	call SaveUnitHandle(OtherHashTable2,'cask', 1, WLE)
+	call SaveUnitHandle(OtherHashTable2,'cask', 2, trigUnit)
+	call SaveInteger(OtherHashTable2,'cask', 0, level)
+	call SaveInteger(OtherHashTable2,'cask', 1, level * 2 + 1)
+	call SaveBoolean(OtherHashTable2,'cask', 0, FAR)
 	call BEA()
 endfunction
 function N9E takes nothing returns nothing
@@ -71482,12 +71475,12 @@ function N9E takes nothing returns nothing
 	endif
 endfunction
 function BVA takes nothing returns nothing
-	local unit WJE = LoadUnitHandle(VV,'A3E9', 0)
-	local unit WLE = LoadUnitHandle(VV,'A3E9', 1)
-	local integer level = LoadInteger(VV,'A3E9', 0)
+	local unit WJE = LoadUnitHandle(OtherHashTable2,'A3E9', 0)
+	local unit WLE = LoadUnitHandle(OtherHashTable2,'A3E9', 1)
+	local integer level = LoadInteger(OtherHashTable2,'A3E9', 0)
 	call T4V(WJE)
 	call BIA(WJE, WLE, level, true)
-	call FlushChildHashtable(VV,'A3E9')
+	call FlushChildHashtable(OtherHashTable2,'A3E9')
 	set WJE = null
 	set WLE = null
 endfunction
@@ -71903,7 +71896,7 @@ function BAE takes nothing returns nothing
 	call SaveUnitHandle(HY, h, 19, KBX)
 	call SaveGroupHandle(HY, h, 340, AllocationGroup(423))
 	call SaveInteger(HY, h, 0, GetUnitAbilityLevel(WUE,'A1HS'))
-	call SaveInteger(VV,'MULT', 0,'A1HS')
+	call SaveInteger(OtherHashTable2,'MULT', 0,'A1HS')
 	call SaveReal(HY, h,'0aoe', 300)
 	set U2 = WUE
 	call ExecuteFunc("EBI")
@@ -72533,8 +72526,8 @@ function CJA takes nothing returns boolean
 		if (LoadBoolean(HY, h, 276)) == false and GetTriggerUnit() == WUE then
 			call SaveBoolean(HY, h, 276,(true))
 			call SetHeroAgi(WUE, GetHeroAgi(WUE, false)-E5X -E6X -E4X, true)
-			call SaveInteger(K, GetHandleId(WUE), 31, LoadInteger(K, GetHandleId(WUE), 31)-E5X -E6X -E4X)
-			call SetAbilitydataD(WUE,'QP1F', LoadInteger(K, GetHandleId(WUE), 31))
+			call SaveInteger(OtherHashTable, GetHandleId(WUE), 31, LoadInteger(OtherHashTable, GetHandleId(WUE), 31)-E5X -E6X -E4X)
+			call SetAbilitydataD(WUE,'QP1F', LoadInteger(OtherHashTable, GetHandleId(WUE), 31))
 			if LoadInteger(HY, h, 0)> 0 then
 				call LodSystem_ReduceUnitExtraState(WUE, LoadInteger(HY, h, 0), "damage")
 			endif
@@ -72548,8 +72541,8 @@ function CJA takes nothing returns boolean
 		if (LoadBoolean(HY, h, 276)) == false then
 			call SaveBoolean(HY, h, 276,(true))
 			call SetHeroAgi(WUE, GetHeroAgi(WUE, false)-E5X -E6X -E4X, true)
-			call SaveInteger(K, GetHandleId(WUE), 31, LoadInteger(K, GetHandleId(WUE), 31)-E5X -E6X -E4X)
-			call SetAbilitydataD(WUE,'QP1F', LoadInteger(K, GetHandleId(WUE), 31))
+			call SaveInteger(OtherHashTable, GetHandleId(WUE), 31, LoadInteger(OtherHashTable, GetHandleId(WUE), 31)-E5X -E6X -E4X)
+			call SetAbilitydataD(WUE,'QP1F', LoadInteger(OtherHashTable, GetHandleId(WUE), 31))
 			if LoadInteger(HY, h, 0)> 0 then
 				call LodSystem_ReduceUnitExtraState(WUE, LoadInteger(HY, h, 0), "damage")
 			endif
@@ -72574,7 +72567,7 @@ function CKA takes unit u, unit WWE returns nothing
 	local integer agi
 	local integer str
 	local integer int
-	local integer i = LoadInteger(P, GetHandleId(u), QL)+ 1
+	local integer i = LoadInteger(ObjectHashTable, GetHandleId(u), QL)+ 1
 	local integer pid = GetPlayerId(GetOwningPlayer(u))
 	set agi = IMinBJ(GetHeroAgi(WWE, false)-1, 1)
 	set str = IMinBJ(GetHeroStr(WWE, false)-1, 1)
@@ -72582,13 +72575,13 @@ function CKA takes unit u, unit WWE returns nothing
 	if i > 3 then
 		set i = 1
 	endif
-	call SaveInteger(P, GetHandleId(u), QL, i)
+	call SaveInteger(ObjectHashTable, GetHandleId(u), QL, i)
 	if ((not(Mode__BalanceOff)) and(i < 3 or IsUnitIdType(GetUnitTypeId(u), UNIT_TYPE_RANGED_ATTACKER) == false)) or Mode__BalanceOff then
 		set t = CreateTrigger()
 		set h = GetHandleId(t)
 		call SetHeroAgi(u, GetHeroAgi(u, false)+ agi + str + int, true)
-		call SaveInteger(K, GetHandleId(u), 31, LoadInteger(K, GetHandleId(u), 31)+ agi + str + int)
-		call SetAbilitydataD(u,'QP1F', LoadInteger(K, GetHandleId(u), 31))
+		call SaveInteger(OtherHashTable, GetHandleId(u), 31, LoadInteger(OtherHashTable, GetHandleId(u), 31)+ agi + str + int)
+		call SetAbilitydataD(u,'QP1F', LoadInteger(OtherHashTable, GetHandleId(u), 31))
 		if GetHeroMainAttributesType(u)!= 2 then
 			call LodSystem_AddUnitExtraState(u, agi + str + int, "damage")
 			call SaveInteger(HY, h, 0, agi + str + int)
@@ -72767,7 +72760,7 @@ function CUA takes nothing returns boolean
 		call SetUnitFlyHeight(WUE, GetUnitDefaultFlyHeight(WUE)+ RMaxBJ(ZDR, 0), 0)
 	endif
 	if IsUnitType(WUE, UNIT_TYPE_HERO) then
-		call SaveBoolean(K, GetHandleId(WUE), 99, true)
+		call SaveBoolean(OtherHashTable, GetHandleId(WUE), 99, true)
 	endif
 	call SetUnitX(WUE, CoordinateX50(NBX))
 	call SetUnitY(WUE, CoordinateY50(NCX))
@@ -73169,7 +73162,7 @@ function DRA takes nothing returns boolean
 		endif
 		call SaveInteger(HY, h, 34,(count + 1))
 		if IsUnitType(WUE, UNIT_TYPE_HERO) then
-			call SaveBoolean(K, GetHandleId(WUE), 99, true)
+			call SaveBoolean(OtherHashTable, GetHandleId(WUE), 99, true)
 		endif
 		call SetUnitX(WUE, x)
 		call SetUnitY(WUE, y)
@@ -73501,12 +73494,12 @@ endfunction
 function DLA takes unit u, timer t, integer WFV returns nothing
 	local player p = GetOwningPlayer(u)
 	local integer W0V = GetHandleId(u)
-	call DestroyLightning(LoadLightningHandle(P, WFV, 6))
-	call DestroyLightning(LoadLightningHandle(P, WFV, 5))
-	call DestroyLightning(LoadLightningHandle(P, WFV, 4))
-	call DestroyLightning(LoadLightningHandle(P, WFV, 3))
-	call DestroyLightning(LoadLightningHandle(P, WFV, 2))
-	call DeallocateGroup(LoadGroupHandle(P, WFV, 1))
+	call DestroyLightning(LoadLightningHandle(ObjectHashTable, WFV, 6))
+	call DestroyLightning(LoadLightningHandle(ObjectHashTable, WFV, 5))
+	call DestroyLightning(LoadLightningHandle(ObjectHashTable, WFV, 4))
+	call DestroyLightning(LoadLightningHandle(ObjectHashTable, WFV, 3))
+	call DestroyLightning(LoadLightningHandle(ObjectHashTable, WFV, 2))
+	call DeallocateGroup(LoadGroupHandle(ObjectHashTable, WFV, 1))
 	call SaveInteger(HY, W0V, 4312, 2)
 	if Rubick_AbilityFilter(u , 'A1YY') then
 		call SetPlayerAbilityAvailableEx(p,'A1YY', true)
@@ -73515,8 +73508,8 @@ function DLA takes unit u, timer t, integer WFV returns nothing
 		call UnitRemoveAbility(u,'Abun')
 	endif
 	call SetPlayerAbilityAvailableEx(p,'A1YY', true)
-	call SaveBoolean(P, W0V,'A1YY', false)
-	call SaveBoolean(P, W0V,'A205', false)
+	call SaveBoolean(ObjectHashTable, W0V,'A1YY', false)
+	call SaveBoolean(ObjectHashTable, W0V,'A205', false)
 	call UnitRemoveAbility(u,'A205')
 	call UnitRemoveAbility(u,'A1Z3')
 	call SetUnitPathing(u, true)
@@ -73528,7 +73521,7 @@ endfunction
 function DMA takes nothing returns boolean
 	local unit t = GetFilterUnit()
 	if GetUnitAbilityLevel(t,'A04R') == 0 and UnitAlive(t) and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and t != Temp__ArrayUnit[0]and(IsUnitType(t, UNIT_TYPE_ANCIENT) == false or DRX(t)!= null) then
-		call GroupAddUnit(LoadGroupHandle(P, XK[0], 1), t)
+		call GroupAddUnit(LoadGroupHandle(ObjectHashTable, XK[0], 1), t)
 	endif
 	set t = null
 	return false
@@ -73547,7 +73540,7 @@ function DPA takes nothing returns nothing
 endfunction
 function DQA takes unit u, integer WTV returns nothing
 	if WTV =='A1Z3' or WTV =='A1RK' or WTV =='A43H' or WTV =='A27H' or WTV =='A30J' then
-		call SaveBoolean(P, GetHandleId(u),'A1YY', true)
+		call SaveBoolean(ObjectHashTable, GetHandleId(u),'A1YY', true)
 	endif
 endfunction
 function DSA takes unit u, integer S6V returns nothing
@@ -73558,18 +73551,18 @@ function DSA takes unit u, integer S6V returns nothing
 	local real y1
 	if GetUnitAbilityLevel(u,'A205')> 0 then
 		if S6V == 851983 then
-			call DisableTrigger(JJ)
+			call DisableTrigger(UnitEventMainTrig)
 			call EXStopUnit(u)
-			call SetUnitAnimationByIndex(u, LoadInteger(P, GetUnitTypeId(u),'A1P8'))
-			call EnableTrigger(JJ)
+			call SetUnitAnimationByIndex(u, LoadInteger(ObjectHashTable, GetUnitTypeId(u),'A1P8'))
+			call EnableTrigger(UnitEventMainTrig)
 			return
 		endif
-		set WFV = LoadInteger(P, GetHandleId(u),'A1YY')
+		set WFV = LoadInteger(ObjectHashTable, GetHandleId(u),'A1YY')
 		if S6V == 852177then
-			call SaveBoolean(P, WFV, 1, true)
-			call SetUnitAnimationByIndex(u, LoadInteger(P, GetUnitTypeId(u),'A1P8'))
+			call SaveBoolean(ObjectHashTable, WFV, 1, true)
+			call SetUnitAnimationByIndex(u, LoadInteger(ObjectHashTable, GetUnitTypeId(u),'A1P8'))
 		elseif S6V == 852178then
-			call SaveBoolean(P, WFV, 1, false)
+			call SaveBoolean(ObjectHashTable, WFV, 1, false)
 			call SetUnitAnimation(u, "stand")
 		endif
 		if S6V ==851971 then
@@ -73586,12 +73579,12 @@ function DSA takes unit u, integer S6V returns nothing
 			if 0 > x1 then
 				set x1 = x1 + 6.28318
 			endif
-			call SaveBoolean(P, WFV, 0, true)
-			call SaveReal(P, WFV, 0, x1)
-			call SaveReal(P, WFV, 1, GetUnitFacing(u)* bj_DEGTORAD)
-			call DisableTrigger(JJ)
+			call SaveBoolean(ObjectHashTable, WFV, 0, true)
+			call SaveReal(ObjectHashTable, WFV, 0, x1)
+			call SaveReal(ObjectHashTable, WFV, 1, GetUnitFacing(u)* bj_DEGTORAD)
+			call DisableTrigger(UnitEventMainTrig)
 			call EXStopUnit(u)
-			call EnableTrigger(JJ)
+			call EnableTrigger(UnitEventMainTrig)
 		endif
 	endif
 endfunction
@@ -73602,10 +73595,10 @@ function DTA takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer DSR
 	local integer WUV
-	local integer WVV = 2
+	local integer count = 2
 	local integer WFV = GetHandleId(t)
-	local integer UYX = LoadInteger(P, WFV, 0)
-	local unit u = LoadUnitHandle(P, WFV, 0)
+	local integer UYX = LoadInteger(ObjectHashTable, WFV, 0)
+	local unit u = LoadUnitHandle(ObjectHashTable, WFV, 0)
 	local boolean active = false
 	local real IMX
 	local real I3X
@@ -73625,7 +73618,7 @@ function DTA takes nothing returns nothing
 		endif
 	endif 
 	set DSR = GetHandleId(u)
-	if UnitIsDead(u) or C5X(u) or X3X(u) or IsUnitPaused(u) or RCX(u) or active or UYX > 239 or LoadBoolean(P, DSR,'A1YY') then
+	if UnitIsDead(u) or C5X(u) or X3X(u) or IsUnitPaused(u) or RCX(u) or active or UYX > 239 or LoadBoolean(ObjectHashTable, DSR,'A1YY') then
 		call DLA(u, t, WFV)
 		set t = null
 		set u = null
@@ -73636,10 +73629,10 @@ function DTA takes nothing returns nothing
 	set DUA = GetWidgetLife(u)
 	set I3X = GetUnitFacing(u)* bj_DEGTORAD
 	call SetWidgetLife(u, DUA -DUA * .0015)
-	if LoadBoolean(P, WFV, 0) then
-		set I3X = LoadReal(P, WFV, 0)
+	if LoadBoolean(ObjectHashTable, WFV, 0) then
+		set I3X = LoadReal(ObjectHashTable, WFV, 0)
 		set DWA = I3X -GetUnitFacing(u)* bj_DEGTORAD
-		set IMX = LoadReal(P, WFV, 1)
+		set IMX = LoadReal(ObjectHashTable, WFV, 1)
 		set DUA = I3X -IMX
 		if DUA > 0 then
 			set DYA = bj_DEGTORAD / 2
@@ -73650,37 +73643,37 @@ function DTA takes nothing returns nothing
 			set DYA =-DYA
 		endif
 		set I3X = IMX + DYA
-		call SaveReal(P, WFV, 1, I3X)
-		if HaveSavedReal(P, WFV, 2) then
+		call SaveReal(ObjectHashTable, WFV, 1, I3X)
+		if HaveSavedReal(ObjectHashTable, WFV, 2) then
 			if 0 > DWA then
 				set DWA =-DWA
 			endif
 			if .02 > DWA then
-				call SaveBoolean(P, WFV, 0, false)
-				call RemoveSavedReal(P, WFV, 2)
+				call SaveBoolean(ObjectHashTable, WFV, 0, false)
+				call RemoveSavedReal(ObjectHashTable, WFV, 2)
 			endif
 		endif
-		if LoadBoolean(P, WFV, 0) then
-			call SaveReal(P, WFV, 2, DWA)
+		if LoadBoolean(ObjectHashTable, WFV, 0) then
+			call SaveReal(ObjectHashTable, WFV, 2, DWA)
 		endif
 		if LoadInteger(HY, DSR, 4301)!= 1 then
 			call SetUnitFacing(u, I3X * bj_RADTODEG)
 		endif
 	endif
-	if LoadBoolean(P, WFV, 1) then
+	if LoadBoolean(ObjectHashTable, WFV, 1) then
 		set x1 = CoordinateX50(x1 + 5 * Cos(I3X))
 		set y1 = CoordinateY50(y1 + 5 * Sin(I3X))
 		call A3X(x1, y1, 200)
 		if IsUnitType(u, UNIT_TYPE_HERO) then
-			call SaveBoolean(K, GetHandleId(u), 99, true)
+			call SaveBoolean(OtherHashTable, GetHandleId(u), 99, true)
 		endif
 		call SetUnitX(u, x1)
 		call SetUnitY(u, y1)
 	endif
 	if UYX == 1 then
-		call DisableTrigger(JJ)
+		call DisableTrigger(UnitEventMainTrig)
 		call EXStopUnit(u)
-		call EnableTrigger(JJ)
+		call EnableTrigger(UnitEventMainTrig)
 	endif
 	set DYA = Cos(I3X)
 	set DZA = Sin(I3X)
@@ -73700,33 +73693,33 @@ function DTA takes nothing returns nothing
 	call MoveLocation(Temp__Location, x2, y2)
 	set z2 = GetLocationZ(Temp__Location)
 	loop
-	exitwhen WVV == 7
-		set I3X = 30 *(WVV / 5)* Pow(-1, WVV)
-		set IMX = 30 *((8 -WVV)/ 5)* Pow(-1, WVV)
-		set l = LoadLightningHandle(P, WFV, WVV)
+	exitwhen count == 7
+		set I3X = 30 *(count / 5)* Pow(-1, count)
+		set IMX = 30 *((8 -count)/ 5)* Pow(-1, count)
+		set l = LoadLightningHandle(ObjectHashTable, WFV, count)
 		call MoveLightningEx(l, false, x1 + I3X * DUA, y1 + I3X * DWA, z1 + IMX, x2, y2, z2)
-		set WVV = WVV + 1
+		set count = count + 1
 	endloop
 	call DestroyEffect(AddSpecialEffect("war3mapImported\\FireRayTarget.mdx", x2, y2))
-	call SaveInteger(P, WFV, 0, UYX + 1)
+	call SaveInteger(ObjectHashTable, WFV, 0, UYX + 1)
 	if UYX / 10== UYX / 10. then
 		set x2 = x1
 		set y2 = y1
-		set WVV = 0
-		set g = LoadGroupHandle(P, WFV, 1)
+		set count = 0
+		set g = LoadGroupHandle(ObjectHashTable, WFV, 1)
 		set Temp__ArrayUnit[0]= u
 		set XK[0]= WFV
 		loop
-		exitwhen WVV == 26
+		exitwhen count == 26
 			set x2 = x2 + 50 * DYA
 			set y2 = y2 + 50 * DZA
 			call GroupEnumUnitsInRange(AK, x2, y2, 100, Condition(function DMA))
-			if WVV / 3 == WVV / 3.then
+			if count / 3 == count / 3.then
 				call A8X(GetOwningPlayer(u), 2, x2, y2, 225)
 			endif
-			set WVV = WVV + 1
+			set count = count + 1
 		endloop
-		set WUV = LoadInteger(P, WFV,-1)
+		set WUV = LoadInteger(ObjectHashTable, WFV,-1)
 		set I3X = UYX / 239.
 		set IMX = 8 * WUV + 8
 		set Temp__ArrayReal[0]= IMX + IMX * I3X
@@ -73742,7 +73735,7 @@ endfunction
 function YEV takes nothing returns nothing
 	local unit u = GetTriggerUnit()
 	local timer t = CreateTimer()
-	local integer WVV = 2
+	local integer count = 2
 	local integer WFV = GetHandleId(t)
 	local integer W0V = GetHandleId(u)
 	call UnitAddPermanentAbility(u,'Abun')
@@ -73750,20 +73743,20 @@ function YEV takes nothing returns nothing
 	call UnitAddPermanentAbility(u,'A1Z3')
 	call SetPlayerAbilityAvailableEx(GetOwningPlayer(u),'A1YY', false)
 	call SetUnitPathing(u, false)
-	call SaveInteger(P, W0V,'A1YY', WFV)
-	call SaveBoolean(P, W0V,'A1YY', false)
-	call SaveUnitHandle(P, WFV, 0, u)
-	call SaveGroupHandle(P, WFV, 1, AllocationGroup(435))
-	call SaveBoolean(P, WFV, 0, false)
-	call SaveBoolean(P, WFV, 1, false)
-	call SaveInteger(P, WFV,-1, GetUnitAbilityLevel(u, GetSpellAbilityId()))
+	call SaveInteger(ObjectHashTable, W0V,'A1YY', WFV)
+	call SaveBoolean(ObjectHashTable, W0V,'A1YY', false)
+	call SaveUnitHandle(ObjectHashTable, WFV, 0, u)
+	call SaveGroupHandle(ObjectHashTable, WFV, 1, AllocationGroup(435))
+	call SaveBoolean(ObjectHashTable, WFV, 0, false)
+	call SaveBoolean(ObjectHashTable, WFV, 1, false)
+	call SaveInteger(ObjectHashTable, WFV,-1, GetUnitAbilityLevel(u, GetSpellAbilityId()))
 	call StartSound(WF)
 	call SetSoundPosition(WF, GetWidgetX(u), GetWidgetY(u), 100)
-	call SetUnitAnimationByIndex(u, LoadInteger(P, GetUnitTypeId(u),'A1P8'))
+	call SetUnitAnimationByIndex(u, LoadInteger(ObjectHashTable, GetUnitTypeId(u),'A1P8'))
 	loop
-	exitwhen WVV == 7
-		call SaveLightningHandle(P, WFV, WVV, AddLightning("SRAY", false, 0, 0, 0, 0))
-		set WVV = WVV + 1
+	exitwhen count == 7
+		call SaveLightningHandle(ObjectHashTable, WFV, count, AddLightning("SRAY", false, 0, 0, 0, 0))
+		set count = count + 1
 	endloop
 	call TimerStart(t, .025, true, function DTA)
 	set u = null
@@ -73776,11 +73769,11 @@ endfunction
 function D_A takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer WFV = GetHandleId(t)
-	local integer UYX = LoadInteger(P, WFV, 0)
-	local unit WLE = LoadUnitHandle(P, WFV, 0)
+	local integer UYX = LoadInteger(ObjectHashTable, WFV, 0)
+	local unit WLE = LoadUnitHandle(ObjectHashTable, WFV, 0)
 	if UYX <= 1 or IsMagicImmuneUnit(WLE) or UnitIsDead(WLE) then
-		call RemoveSavedHandle(P, GetHandleId(WLE),'A1YX')
-		call DestroyEffect(LoadEffectHandle(P, WFV, 2))
+		call RemoveSavedHandle(ObjectHashTable, GetHandleId(WLE),'A1YX')
+		call DestroyEffect(LoadEffectHandle(ObjectHashTable, WFV, 2))
 		call DestroyTimerAndFlushHT_P(t)
 		call UnitRemoveAbility(WLE,'C010')
 		call UnitRemoveAbility(WLE,'D010')
@@ -73789,27 +73782,27 @@ function D_A takes nothing returns nothing
 		return
 	endif
 	if UYX / 4 == UYX / 4. then
-		call UnitDamageTargetEx(LoadUnitHandle(P, WFV, 1), WLE, 1, LoadInteger(P, WFV, 1))
+		call UnitDamageTargetEx(LoadUnitHandle(ObjectHashTable, WFV, 1), WLE, 1, LoadInteger(ObjectHashTable, WFV, 1))
 	endif
-	call SaveInteger(P, WFV, 0, UYX -1)
+	call SaveInteger(ObjectHashTable, WFV, 0, UYX -1)
 	set t = null
 	set WLE = null
 endfunction
 function D0A takes unit WJE, unit WLE, integer level returns nothing
-	local timer time = LoadTimerHandle(P, GetHandleId(WLE),'A1YX')
+	local timer time = LoadTimerHandle(ObjectHashTable, GetHandleId(WLE),'A1YX')
 	local integer WFV
 	if time != null then
-		call SaveInteger(P, GetHandleId(time), 0, 16)
+		call SaveInteger(ObjectHashTable, GetHandleId(time), 0, 16)
 	else
 		set time = CreateTimer()
 		set WFV = GetHandleId(time)
-		call SaveUnitHandle(P, WFV, 0, WLE)
-		call SaveUnitHandle(P, WFV, 1, WJE)
-		call SaveEffectHandle(P, WFV, 2, AddSpecialEffectTarget("Environment\\LargeBuildingFire\\LargeBuildingFire1.mdl", WLE, "chest"))
-		call SaveInteger(P, WFV, 0, 16)
-		call SaveInteger(P, WFV, 1, level * 20 -5)
+		call SaveUnitHandle(ObjectHashTable, WFV, 0, WLE)
+		call SaveUnitHandle(ObjectHashTable, WFV, 1, WJE)
+		call SaveEffectHandle(ObjectHashTable, WFV, 2, AddSpecialEffectTarget("Environment\\LargeBuildingFire\\LargeBuildingFire1.mdl", WLE, "chest"))
+		call SaveInteger(ObjectHashTable, WFV, 0, 16)
+		call SaveInteger(ObjectHashTable, WFV, 1, level * 20 -5)
 		call TimerStart(time, .25, true, function D_A)
-		call SaveTimerHandle(P, GetHandleId(WLE),'A1YX', time)
+		call SaveTimerHandle(ObjectHashTable, GetHandleId(WLE),'A1YX', time)
 	endif
 	set time = null
 endfunction
@@ -74484,17 +74477,17 @@ function effect_demonic_purge takes unit u, unit stg_u returns nothing
 	set d = null
 endfunction
 function enum_demonic_purge takes nothing returns boolean
-	if (IsUnitEnemy(LoadUnitHandle(VV,'A1SA','cast'), GetOwningPlayer(GetFilterUnit())) and(GetUnitAbilityLevel(GetFilterUnit(),'Aloc') == 0 and IsAliveNotStrucNotWard(GetFilterUnit())))!= null then
-		call effect_demonic_purge(LoadUnitHandle(VV,'A1SA','cast'), GetFilterUnit())
+	if (IsUnitEnemy(LoadUnitHandle(OtherHashTable2,'A1SA','cast'), GetOwningPlayer(GetFilterUnit())) and(GetUnitAbilityLevel(GetFilterUnit(),'Aloc') == 0 and IsAliveNotStrucNotWard(GetFilterUnit())))!= null then
+		call effect_demonic_purge(LoadUnitHandle(OtherHashTable2,'A1SA','cast'), GetFilterUnit())
 	endif
 	return false
 endfunction
 function CUE takes nothing returns nothing
 	local group g = AllocationGroup(439)
 	set U2 = GetTriggerUnit()
-	call SaveUnitHandle(VV,'A1SA','cast', GetTriggerUnit())
+	call SaveUnitHandle(OtherHashTable2,'A1SA','cast', GetTriggerUnit())
 	call GroupEnumUnitsInRange(g, GetSpellTargetX(), GetSpellTargetY(), 265, Condition(function enum_demonic_purge))
-	call RemoveSavedHandle(VV,'A1SA','cast')
+	call RemoveSavedHandle(OtherHashTable2,'A1SA','cast')
 	call DeallocateGroup(g)
 	set g = null
 endfunction
@@ -75850,7 +75843,7 @@ function G7A takes nothing returns boolean
 		set x = GetLocationX(l)
 		set y = GetLocationY(l)
 		if IsUnitType(WUE, UNIT_TYPE_HERO) then
-			call SaveBoolean(K, GetHandleId(WUE), 99, true)
+			call SaveBoolean(OtherHashTable, GetHandleId(WUE), 99, true)
 		endif
 		call SetUnitX(WUE, CoordinateX50(x))
 		call SetUnitY(WUE, CoordinateY50(y))
@@ -75863,7 +75856,7 @@ function G7A takes nothing returns boolean
 		call SaveInteger(HY,(GetHandleId((WUE))),(4295), 2)
 	else
 		if IsUnitType(WUE, UNIT_TYPE_HERO) then
-			call SaveBoolean(K, GetHandleId(WUE), 99, true)
+			call SaveBoolean(OtherHashTable, GetHandleId(WUE), 99, true)
 		endif
 		call SetUnitX(WUE, x)
 		call SetUnitY(WUE, y)
@@ -76667,9 +76660,9 @@ function H5A takes nothing returns boolean
 		call KillUnit(d)
 		call CleanCurrentTrigger(t)
 		if GetUnitAbilityLevel(WWE,'A3E9') == 1 and IsMagicImmuneUnit(u) == false then
-			call SaveUnitHandle(VV,'A3E9', 0, WWE)
-			call SaveUnitHandle(VV,'A3E9', 1, u)
-			call SaveInteger(VV,'A3E9', 0, LoadInteger(HY, h, 5))
+			call SaveUnitHandle(OtherHashTable2,'A3E9', 0, WWE)
+			call SaveUnitHandle(OtherHashTable2,'A3E9', 1, u)
+			call SaveInteger(OtherHashTable2,'A3E9', 0, LoadInteger(HY, h, 5))
 			call ExecuteFunc("H6A")
 		endif
 		call FlushChildHashtable(HY,(h))
@@ -76756,9 +76749,9 @@ function DFE takes nothing returns nothing
 	call H9A(GetTriggerUnit(), GetSpellTargetUnit(), GetUnitAbilityLevel(GetTriggerUnit(),'A1S7'))
 endfunction
 function H6A takes nothing returns nothing
-	call T4V(LoadUnitHandle(VV,'A3E9', 0))
-	call H9A(LoadUnitHandle(VV,'A3E9', 0), LoadUnitHandle(VV,'A3E9', 0), LoadInteger(VV,'A3E9', 0))
-	call FlushChildHashtable(VV,'A3E9')
+	call T4V(LoadUnitHandle(OtherHashTable2,'A3E9', 0))
+	call H9A(LoadUnitHandle(OtherHashTable2,'A3E9', 0), LoadUnitHandle(OtherHashTable2,'A3E9', 0), LoadInteger(OtherHashTable2,'A3E9', 0))
+	call FlushChildHashtable(OtherHashTable2,'A3E9')
 endfunction
 function JVA takes unit u returns nothing
 	local trigger t = CreateTrigger()
@@ -77007,7 +77000,7 @@ function JHA takes nothing returns boolean
 	local real x = WYE + d * count * Cos(a)
 	local real y = WZE + d * count * Sin(a)
 	if IsUnitType(WWE, UNIT_TYPE_HERO) then
-		call SaveBoolean(K, GetHandleId(WWE), 99, true)
+		call SaveBoolean(OtherHashTable, GetHandleId(WWE), 99, true)
 	endif
 	call SetUnitX(WWE, CoordinateX50(x))
 	call SetUnitY(WWE, CoordinateY50(y))
@@ -77016,14 +77009,14 @@ function JHA takes nothing returns boolean
 	endif
 	if count == 25 then
 		if IsUnitType(WWE, UNIT_TYPE_HERO) then
-			call SaveBoolean(K, GetHandleId(WWE), 99, true)
+			call SaveBoolean(OtherHashTable, GetHandleId(WWE), 99, true)
 		endif
 		call SetUnitX(WWE, CoordinateX50(W_E))
 		call SetUnitY(WWE, CoordinateY50(W0E))
 		if IsPointInRegion(TerrainCliffRegion, GetUnitX(WWE), GetUnitY(WWE)) then
 			set l = DEX(GetUnitX(WWE), GetUnitY(WWE))
 			if IsUnitType(WWE, UNIT_TYPE_HERO) then
-				call SaveBoolean(K, GetHandleId(WWE), 99, true)
+				call SaveBoolean(OtherHashTable, GetHandleId(WWE), 99, true)
 			endif
 			call SetUnitX(WWE, CoordinateX75(GetLocationX(l)))
 			call SetUnitY(WWE, CoordinateY75(GetLocationY(l)))
@@ -78584,7 +78577,7 @@ function LKA takes nothing returns boolean
 		call SetUnitX(WUE, W_E)
 		call SetUnitY(WUE,(W0E))
 		call A3X(W_E, W0E, 100)
-		call SaveBoolean(K, GetHandleId(WUE), 99, true)
+		call SaveBoolean(OtherHashTable, GetHandleId(WUE), 99, true)
 		call LOA(WUE, L3R, W_E, W0E)
 		set L3R = LGA(WUE, XVA, XEA)
 		if L3R == null then
@@ -78614,11 +78607,11 @@ function LKA takes nothing returns boolean
 		set NBX = GRR + VEI * Cos(a)
 		set NCX = GIR + VEI * Sin(a)
 		if IsUnitType(WUE, UNIT_TYPE_HERO) then
-			call SaveBoolean(K, GetHandleId(WUE), 99, true)
+			call SaveBoolean(OtherHashTable, GetHandleId(WUE), 99, true)
 		endif
 		call SetUnitX(WUE,(NBX))
 		call SetUnitY(WUE, NCX)
-		call SaveBoolean(K, GetHandleId(WUE), 99, true)
+		call SaveBoolean(OtherHashTable, GetHandleId(WUE), 99, true)
 		call A3X(NBX, NCX, 100)
 		call SetUnitFacing(WUE, a * bj_RADTODEG)
 	endif
@@ -78809,11 +78802,11 @@ function LWA takes unit R8X, unit WLE returns nothing
 endfunction
 function LYA takes unit WUE, integer level, unit WWE returns nothing
 	local integer ph = GetHandleId(GetOwningPlayer(WUE))
-	local integer damageValue = LoadInteger(K, ph,'DDUE')
+	local integer damageValue = LoadInteger(OtherHashTable, ph,'DDUE')
 	if IsUnitType(WWE, UNIT_TYPE_HERO) then
 		set ph = GetHandleId(GetOwningPlayer(WUE))
-		call SaveInteger(K, ph,'DUEL', LoadInteger(K, ph,'DUEL')+ 1)
-		call SaveInteger(K, ph,'DDUE', LoadInteger(K, ph,'DDUE')+ 6 + 4 * level)
+		call SaveInteger(OtherHashTable, ph,'DUEL', LoadInteger(OtherHashTable, ph,'DUEL')+ 1)
+		call SaveInteger(OtherHashTable, ph,'DDUE', LoadInteger(OtherHashTable, ph,'DDUE')+ 6 + 4 * level)
 		call CommonTextTag(GetUnitName(WUE)+ " 获得了胜利!!", 5, WUE, .03, 255, 0, 0, 255)
 		call KVX(WUE)
 	endif
@@ -79193,9 +79186,9 @@ function L7A takes nothing returns nothing
 	local integer i = E3X(WUE)
 	local real IXX = 40 + 20 * level + 1.6 * i
 	if GetUnitAbilityLevel(WWE,'A3E9') == 1 and IsMagicImmuneUnit(WUE) == false then
-		call SaveUnitHandle(VV,'A3E9', 0, WWE)
-		call SaveUnitHandle(VV,'A3E9', 1, WUE)
-		call SaveInteger(VV,'A3E9', 0, level)
+		call SaveUnitHandle(OtherHashTable2,'A3E9', 0, WWE)
+		call SaveUnitHandle(OtherHashTable2,'A3E9', 1, WUE)
+		call SaveInteger(OtherHashTable2,'A3E9', 0, level)
 		call ExecuteFunc("L8A")
 	endif
 	if i == 0 then
@@ -79209,11 +79202,11 @@ function L9A takes unit WUE, unit WWE, integer level returns nothing
 	call SaveInteger(HY, GetHandleId(NHX(WUE, WWE,'h0DQ', "L7A", 500, false)), 0, level)
 endfunction
 function L8A takes nothing returns nothing
-	call T4V(LoadUnitHandle(VV,'A3E9', 0))
-	if UnitHasSpellShield(LoadUnitHandle(VV,'A3E9', 1)) == false then
-		call L9A(LoadUnitHandle(VV,'A3E9', 0), LoadUnitHandle(VV,'A3E9', 1), LoadInteger(VV,'A3E9', 0))
+	call T4V(LoadUnitHandle(OtherHashTable2,'A3E9', 0))
+	if UnitHasSpellShield(LoadUnitHandle(OtherHashTable2,'A3E9', 1)) == false then
+		call L9A(LoadUnitHandle(OtherHashTable2,'A3E9', 0), LoadUnitHandle(OtherHashTable2,'A3E9', 1), LoadInteger(OtherHashTable2,'A3E9', 0))
 	endif
-	call FlushChildHashtable(VV,'A3E9')
+	call FlushChildHashtable(OtherHashTable2,'A3E9')
 endfunction
 function D_E takes nothing returns nothing
 	if not UnitHasSpellShield(GetSpellTargetUnit()) then
@@ -79432,7 +79425,7 @@ function MHA takes nothing returns boolean
 		set KGR = LoadUnitHandle(HY, h, 700 + count)
 		if MJA == false then
 			if IsUnitType(trigUnit, UNIT_TYPE_HERO) then
-				call SaveBoolean(K, GetHandleId(trigUnit), 99, true)
+				call SaveBoolean(OtherHashTable, GetHandleId(trigUnit), 99, true)
 			endif
 			call SetUnitX(trigUnit, GetUnitX(KGR))
 			call SetUnitY(trigUnit, GetUnitY(KGR))
@@ -79601,14 +79594,14 @@ function MTA takes nothing returns boolean
 	return false
 endfunction
 function MUA takes unit t returns unit
-	if HaveSavedHandle(VV,'A3GA', 0) and GetUnitState(LoadUnitHandle(VV,'A3GA', 0), UNIT_STATE_LIFE)> .5 then
-		call SetUnitX(LoadUnitHandle(VV,'A3GA', 0), GetUnitX(t))
-		call SetUnitY(LoadUnitHandle(VV,'A3GA', 0), GetUnitY(t))
-		call SetUnitOwner(LoadUnitHandle(VV,'A3GA', 0), GetOwningPlayer(t), false)
+	if HaveSavedHandle(OtherHashTable2,'A3GA', 0) and GetUnitState(LoadUnitHandle(OtherHashTable2,'A3GA', 0), UNIT_STATE_LIFE)> .5 then
+		call SetUnitX(LoadUnitHandle(OtherHashTable2,'A3GA', 0), GetUnitX(t))
+		call SetUnitY(LoadUnitHandle(OtherHashTable2,'A3GA', 0), GetUnitY(t))
+		call SetUnitOwner(LoadUnitHandle(OtherHashTable2,'A3GA', 0), GetOwningPlayer(t), false)
 	else
-		call SaveUnitHandle(VV,'A3GA', 0, CreateUnit(GetOwningPlayer(t),'e00E', GetUnitX(t), GetUnitY(t), 0))
+		call SaveUnitHandle(OtherHashTable2,'A3GA', 0, CreateUnit(GetOwningPlayer(t),'e00E', GetUnitX(t), GetUnitY(t), 0))
 	endif
-	return LoadUnitHandle(VV,'A3GA', 0)
+	return LoadUnitHandle(OtherHashTable2,'A3GA', 0)
 endfunction
 function MWA takes unit WUE, unit WWE returns nothing
 	local unit KBX = MUA(WWE)
@@ -79686,7 +79679,7 @@ function M1A takes nothing returns boolean
 		set b = Rubick_AbilityFilter(WUE , 'A2E5')
 		if b or (LoadInteger(HY, GetHandleId(WUE), 704)) == FJI then
 			if FJI =='A43Q' then
-				if LoadBoolean(P, GetHandleId(U2),'A43Q') then
+				if LoadBoolean(ObjectHashTable, GetHandleId(U2),'A43Q') then
 					call SetPlayerAbilityAvailableEx(GetOwningPlayer(WUE), FJI, true)
 				endif
 			else
@@ -79777,7 +79770,7 @@ function M1A takes nothing returns boolean
 			if Rubick_AbilityFilter(WUE , 'A2E5') or(LoadInteger(HY,(GetHandleId(WUE)), 704)) == FJI then
 				if FJI =='A43Q' then
 					//这里判断一下是否选了此技能 没选并且是偷的就可以重新显示
-					if LoadBoolean(P, GetHandleId(U2),'A43Q') or ( not PlayerHaveAbilityByActive(GetOwningPlayer(WUE), 'A2E5') and LoadInteger(HY, GetHandleId(WUE), 704) == 'A43Q' ) then
+					if LoadBoolean(ObjectHashTable, GetHandleId(U2),'A43Q') or ( not PlayerHaveAbilityByActive(GetOwningPlayer(WUE), 'A2E5') and LoadInteger(HY, GetHandleId(WUE), 704) == 'A43Q' ) then
 						call SetPlayerAbilityAvailableEx(GetOwningPlayer(WUE), FJI, true)
 					endif
 				else
@@ -79852,7 +79845,7 @@ function addXL takes nothing returns nothing
 	local unit u = U2
 	call UnitAddAbility(u,'A3UF')
 	call UnitMakeAbilityPermanent(u, true,'A3UF')
-	if HaveSavedHandle(W, GetHandleId(u),'PACD') == false then
+	if HaveSavedHandle(PassiveAbilityCooldown, GetHandleId(u),'PACD') == false then
 		call PasSkillCoolDownTrigger(u)
 	endif
 	if not HaveSavedHandle(HY, GetHandleId(u),'A3UF') then
@@ -79866,12 +79859,12 @@ endfunction
 function HEX takes nothing returns nothing
 	call UnitAddPermanentAbility(U2,'A43Q')
 	call SetPlayerAbilityAvailableEx(GetOwningPlayer(U2),'A43Q', GetUnitAbilityLevel(U2,'A43O') == 0)
-	call SaveBoolean(P, GetHandleId(U2),'A43Q', true)
+	call SaveBoolean(ObjectHashTable, GetHandleId(U2),'A43Q', true)
 	call SetUnitAbilityLevel(U2,'A43Q', GetUnitAbilityLevel(U2,'A2E5')+ GetUnitAbilityLevel(U2,'A43S'))
 endfunction
 function HNX takes nothing returns nothing
 	call SetPlayerAbilityAvailableEx(GetOwningPlayer(U2),'A43Q', false)
-	call SaveBoolean(P, GetHandleId(U2),'A43Q', false)
+	call SaveBoolean(ObjectHashTable, GetHandleId(U2),'A43Q', false)
 endfunction
 function P6X takes nothing returns nothing
 	call AddAbilityIDToPreloadQueue('A2DV')
@@ -79885,11 +79878,11 @@ function M6A takes nothing returns nothing
 	local integer c = LoadInteger(HY, h, 100)+ 1
 	local integer JOX
 	if c == 240 or T0V =='DRKN' or T0V =='DRKU' or T0V =='A29J' then
-		if LoadInteger(P, hu,'A40K')!= T0V and LoadInteger(P, hu,'A40K'+ 1)!= T0V and LoadInteger(P, hu,'A40K'+ 2)!= T0V and LoadInteger(P, hu,'A40K'+ 3)!= T0V then
+		if LoadInteger(ObjectHashTable, hu,'A40K')!= T0V and LoadInteger(ObjectHashTable, hu,'A40K'+ 1)!= T0V and LoadInteger(ObjectHashTable, hu,'A40K'+ 2)!= T0V and LoadInteger(ObjectHashTable, hu,'A40K'+ 3)!= T0V then
 			call UnitRemoveAbility(u, T0V)
 			set JOX = LoadInteger(HY, h, 2)
-			if (LoadBoolean(P, hu,'A40K'+ JOX)) then
-				call RemoveSavedBoolean(P, hu,'A40K'+ JOX)
+			if (LoadBoolean(ObjectHashTable, hu,'A40K'+ JOX)) then
+				call RemoveSavedBoolean(ObjectHashTable, hu,'A40K'+ JOX)
 			endif
 		endif
 		call FlushChildHashtable(HY, h)
@@ -79897,7 +79890,7 @@ function M6A takes nothing returns nothing
 		call DestroyTimer(t)
 	else
 		call SaveInteger(HY, h, 100, c)
-		if LoadInteger(P, hu,'A40K')!= T0V and LoadInteger(P, hu,'A40K'+ 1)!= T0V and LoadInteger(P, hu,'A40K'+ 2)!= T0V and LoadInteger(P, hu,'A40K'+ 3)!= T0V then
+		if LoadInteger(ObjectHashTable, hu,'A40K')!= T0V and LoadInteger(ObjectHashTable, hu,'A40K'+ 1)!= T0V and LoadInteger(ObjectHashTable, hu,'A40K'+ 2)!= T0V and LoadInteger(ObjectHashTable, hu,'A40K'+ 3)!= T0V then
 			call SetPlayerAbilityAvailable(GetOwningPlayer(u), T0V, false)
 		endif
 	endif
@@ -79911,7 +79904,7 @@ function M7A takes unit u, integer Z_E, integer JOX returns nothing
 	call SaveUnitHandle(HY, GetHandleId(t), 0, u)
 	call SaveInteger(HY, GetHandleId(t), 1, Z_E)
 	call SaveInteger(HY, GetHandleId(t), 2, JOX)
-	call SaveInteger(P, GetHandleId(u),'A40K'+ JOX, 0)
+	call SaveInteger(ObjectHashTable, GetHandleId(u),'A40K'+ JOX, 0)
 	call BYR(u)
 	set t = null
 endfunction
@@ -79957,11 +79950,11 @@ function M9A takes unit u, integer TPE, integer PVA, integer level returns nothi
 	call SaveInteger(HY, h, 0, HeroCommonSkills[PlayerSkillIndex[TPE]])
 	call SetUnitAbilityLevel(u, HeroCommonSkills[PlayerSkillIndex[TPE]], level)
 	call SetPlayerAbilityAvailable(GetOwningPlayer(u), HeroCommonSkills[PlayerSkillIndex[TPE]], true)
-	call SaveInteger(P, GetHandleId(u),'A40K'+ PVA, HeroCommonSkills[PlayerSkillIndex[TPE]])
+	call SaveInteger(ObjectHashTable, GetHandleId(u),'A40K'+ PVA, HeroCommonSkills[PlayerSkillIndex[TPE]])
 	call SaveInteger(HY, h, 1, PVA)
 	call SaveInteger(HY, h, 2, level)
 	if CheckAbilityIdFormIndex(GetNormalSkillIndex(TPE),-1, "metamorphosis", null) then
-		call SaveBoolean(P, GetHandleId(u),'A40K'+ PVA, true)
+		call SaveBoolean(ObjectHashTable, GetHandleId(u),'A40K'+ PVA, true)
 	endif
 	if PVA == 3 then
 		call SaveInteger(HY, h, 4, level)
@@ -79992,10 +79985,10 @@ function PEA takes unit u, integer TPE, integer PXA returns boolean
 		set xx = xx + 1
 	exitwhen xx > 6
 	endloop
-	if CheckAbilityIdFormIndex(PXA,-1, "metamorphosis", null) and(UnitTypeIsMetamorphosis(u) or LoadBoolean(P, GetHandleId(u),'A40K') or LoadBoolean(P, GetHandleId(u),'A40K'+ 1) or LoadBoolean(P, GetHandleId(u),'A40K'+ 2) or LoadBoolean(P, GetHandleId(u),'A40K'+ 3)) then
+	if CheckAbilityIdFormIndex(PXA,-1, "metamorphosis", null) and(UnitTypeIsMetamorphosis(u) or LoadBoolean(ObjectHashTable, GetHandleId(u),'A40K') or LoadBoolean(ObjectHashTable, GetHandleId(u),'A40K'+ 1) or LoadBoolean(ObjectHashTable, GetHandleId(u),'A40K'+ 2) or LoadBoolean(ObjectHashTable, GetHandleId(u),'A40K'+ 3)) then
 		return false
 	endif
-	if (LoadInteger(P, GetHandleId(u),'A40K') == TPE or LoadInteger(P, GetHandleId(u),'A40K'+ 1) == TPE or LoadInteger(P, GetHandleId(u),'A40K'+ 2) == TPE or LoadInteger(P, GetHandleId(u),'A40K'+ 3) == TPE) then
+	if (LoadInteger(ObjectHashTable, GetHandleId(u),'A40K') == TPE or LoadInteger(ObjectHashTable, GetHandleId(u),'A40K'+ 1) == TPE or LoadInteger(ObjectHashTable, GetHandleId(u),'A40K'+ 2) == TPE or LoadInteger(ObjectHashTable, GetHandleId(u),'A40K'+ 3) == TPE) then
 		return false
 	endif
 	return true
@@ -80133,7 +80126,7 @@ function PBA takes unit u returns nothing
 		call KillUnit(u2)
 		call DeallocateGroup(g)
 		set u = CreateUnit(p,'u012', x, y, a)
-		call TriggerRegisterUnitEvent(JJ, u, EVENT_UNIT_SPELL_EFFECT)
+		call TriggerRegisterUnitEvent(UnitEventMainTrig, u, EVENT_UNIT_SPELL_EFFECT)
 		if GetUnitAbilityLevel(Player__Hero[GetPlayerId(GetOwningPlayer(u))],'A0A8')> 0 then
 			call UnitAddPermanentAbility(u,'A1HW')
 		endif
@@ -80240,7 +80233,7 @@ endfunction
 function PGA takes nothing returns boolean
 	local unit t = GetFilterUnit()
 	if UnitAlive(t) and IsUnitAlly(Temp__ArrayUnit[0], GetOwningPlayer(t)) and GetUnitAbilityLevel(t,'A04R') == 0 and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and t != Temp__ArrayUnit[0] then
-		call SaveBoolean(P, 99999, 99999, false)
+		call SaveBoolean(ObjectHashTable, 99999, 99999, false)
 		set t = null
 	endif
 	set t = null
@@ -80249,25 +80242,25 @@ endfunction
 function PHA takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer WFV = GetHandleId(t)
-	local integer UYX = LoadInteger(P, WFV, 0)
-	local unit u = LoadUnitHandle(P, WFV, 0)
+	local integer UYX = LoadInteger(ObjectHashTable, WFV, 0)
+	local unit u = LoadUnitHandle(ObjectHashTable, WFV, 0)
 	if UYX == 120 or UnitIsDead(u) then
-		call DestroyEffect(LoadEffectHandle(P, WFV, 2))
+		call DestroyEffect(LoadEffectHandle(ObjectHashTable, WFV, 2))
 		call DestroyTimerAndFlushHT_P(t)
 		set t = null
 		set u = null
 		return
 	endif
-	call SaveInteger(P, WFV, 0, UYX + 1)
+	call SaveInteger(ObjectHashTable, WFV, 0, UYX + 1)
 	set Temp__ArrayUnit[0]= u
-	call SaveBoolean(P, 99999, 99999, true)
+	call SaveBoolean(ObjectHashTable, 99999, 99999, true)
 	call GroupEnumUnitsInRange(AK, GetWidgetX(u), GetWidgetY(u), 250, Condition(function PGA))
-	if LoadBoolean(P, 99999, 99999) then
+	if LoadBoolean(ObjectHashTable, 99999, 99999) then
 		if GetUnitAbilityLevel(u,'D027') == 0 then
 			call WJV(u,'C027','D027', 6 -UYX * .05)
 		endif
 		if UYX / 10== UYX / 10. then
-			call UnitDamageTargetEx(LoadUnitHandle(P, WFV, 1), u, 1, LoadReal(P, WFV, 0))
+			call UnitDamageTargetEx(LoadUnitHandle(ObjectHashTable, WFV, 1), u, 1, LoadReal(ObjectHashTable, WFV, 0))
 		endif
 	else
 		call WHV(u,'D027')
@@ -80280,11 +80273,11 @@ function YLV takes nothing returns nothing
 	local unit u = GetTriggerUnit()
 	local unit d = GetSpellTargetUnit()
 	local integer WFV = GetHandleId(t)
-	call SaveUnitHandle(P, WFV, 0, d)
-	call SaveUnitHandle(P, WFV, 1, u)
-	call SaveEffectHandle(P, WFV, 2, AddSpecialEffectTarget("war3mapImported\\Flux3.mdx", d, "origin"))
-	call SaveInteger(P, WFV, 0, 0)
-	call SaveReal(P, WFV, 0, GetUnitAbilityLevel(u,'A2M1')* 7.5)
+	call SaveUnitHandle(ObjectHashTable, WFV, 0, d)
+	call SaveUnitHandle(ObjectHashTable, WFV, 1, u)
+	call SaveEffectHandle(ObjectHashTable, WFV, 2, AddSpecialEffectTarget("war3mapImported\\Flux3.mdx", d, "origin"))
+	call SaveInteger(ObjectHashTable, WFV, 0, 0)
+	call SaveReal(ObjectHashTable, WFV, 0, GetUnitAbilityLevel(u,'A2M1')* 7.5)
 	call TimerStart(t, .05, true, function PHA)
 	call WJV(d,'C027','D027', 6)
 	set d = null
@@ -80306,7 +80299,7 @@ function PJA takes nothing returns nothing
 			else
 				call LodSystem_AddUnitExtraState(u, XK[1], "attack")
 			endif
-			call SaveInteger(P, WFV, ETX, LoadInteger(P, WFV, ETX)+ 1)
+			call SaveInteger(ObjectHashTable, WFV, ETX, LoadInteger(ObjectHashTable, WFV, ETX)+ 1)
 			call UnitAddAbility(u,'A515')
 			call UnitMakeAbilityPermanent(u, true,'A515')
 			call UnitMakeAbilityPermanent(u, true,'ACes')
@@ -80322,21 +80315,21 @@ function PKA takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer ETX = StringHash("field_count")
 	local integer WFV = GetHandleId(t)
-	local integer UYX = LoadInteger(P, WFV, 0)
-	local integer O3O = LoadInteger(P, WFV, 1)
-	set IK = LoadGroupHandle(P, WFV, 1)
+	local integer UYX = LoadInteger(ObjectHashTable, WFV, 0)
+	local integer O3O = LoadInteger(ObjectHashTable, WFV, 1)
+	set IK = LoadGroupHandle(ObjectHashTable, WFV, 1)
 	if UYX == 0 then
-		call DestroyEffect(LoadEffectHandle(P, WFV, 2))
+		call DestroyEffect(LoadEffectHandle(ObjectHashTable, WFV, 2))
 		loop
 			set u = FirstOfGroup(IK)
 		exitwhen u == null
 			set WFV = GetHandleId(u)
-			set UYX = LoadInteger(P, WFV, ETX)
+			set UYX = LoadInteger(ObjectHashTable, WFV, ETX)
 			if UYX == 1 then
 				call UnitRemoveAbility(u,'A515')
 				call WHV(u,'D028')
 			endif
-			call SaveInteger(P, WFV, ETX, UYX -1)
+			call SaveInteger(ObjectHashTable, WFV, ETX, UYX -1)
 			call LodSystem_ReduceUnitExtraState(u, O3O, "attack")
 			call GroupRemoveUnit(IK, u)
 		endloop
@@ -80345,21 +80338,21 @@ function PKA takes nothing returns nothing
 		set t = null
 		return
 	endif
-	call SaveInteger(P, WFV, 0, UYX -1)
-	set Temp__Player = LoadPlayerHandle(P, WFV, 0)
+	call SaveInteger(ObjectHashTable, WFV, 0, UYX -1)
+	set Temp__Player = LoadPlayerHandle(ObjectHashTable, WFV, 0)
 	set XK[0]= O3O
 	set XK[1]= O3O / 2
-	call GroupEnumUnitsInRange(AK, LoadReal(P, WFV, 0), LoadReal(P, WFV, 1), 325, Condition(function PJA))
+	call GroupEnumUnitsInRange(AK, LoadReal(ObjectHashTable, WFV, 0), LoadReal(ObjectHashTable, WFV, 1), 325, Condition(function PJA))
 	loop
 		set u = FirstOfGroup(IK)
 	exitwhen u == null
 		set WFV = GetHandleId(u)
-		set UYX = LoadInteger(P, WFV, ETX)
+		set UYX = LoadInteger(ObjectHashTable, WFV, ETX)
 		if UYX == 1 then
 			call UnitRemoveAbility(u,'A515')
 			call WHV(u,'D028')
 		endif
-		call SaveInteger(P, WFV, ETX, UYX -1)
+		call SaveInteger(ObjectHashTable, WFV, ETX, UYX -1)
 		call LodSystem_ReduceUnitExtraState(u, O3O, "attack")
 		call GroupRemoveUnit(IK, u)
 	endloop
@@ -80379,13 +80372,13 @@ function YMV takes nothing returns nothing
 	local real y = GetSpellTargetY()
 	local integer WFV = GetHandleId(t)
 	local integer WUV = GetUnitAbilityLevel(u,'A2LM')
-	call SavePlayerHandle(P, WFV, 0, GetOwningPlayer(u))
-	call SaveGroupHandle(P, WFV, 1, AllocationGroup(483))
-	call SaveEffectHandle(P, WFV, 2, AddSpecialEffect("war3mapImported\\MagneticField04.mdl", x, y))
-	call SaveInteger(P, WFV, 0, 30 + 5 * WUV)
-	call SaveInteger(P, WFV, 1, 40 + 10* WUV)
-	call SaveReal(P, WFV, 0, x)
-	call SaveReal(P, WFV, 1, y)
+	call SavePlayerHandle(ObjectHashTable, WFV, 0, GetOwningPlayer(u))
+	call SaveGroupHandle(ObjectHashTable, WFV, 1, AllocationGroup(483))
+	call SaveEffectHandle(ObjectHashTable, WFV, 2, AddSpecialEffect("war3mapImported\\MagneticField04.mdl", x, y))
+	call SaveInteger(ObjectHashTable, WFV, 0, 30 + 5 * WUV)
+	call SaveInteger(ObjectHashTable, WFV, 1, 40 + 10* WUV)
+	call SaveReal(ObjectHashTable, WFV, 0, x)
+	call SaveReal(ObjectHashTable, WFV, 1, y)
 	call TimerStart(t, .1, true, function PKA)
 	call EnableAttackEffectByTime(0, 6)
 	set t = null
@@ -80411,8 +80404,8 @@ endfunction
 function PPA takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer WFV = GetHandleId(t)
-	local unit u1 = LoadUnitHandle(P, WFV, 0)
-	local unit u2 = LoadUnitHandle(P, WFV, 1)
+	local unit u1 = LoadUnitHandle(ObjectHashTable, WFV, 0)
+	local unit u2 = LoadUnitHandle(ObjectHashTable, WFV, 1)
 	local real x2
 	local real y2
 	local real x1
@@ -80430,7 +80423,7 @@ function PPA takes nothing returns nothing
 	set x2 = x1 -GetWidgetX(u2)
 	set y2 = y1 -GetWidgetY(u2)
 	if  15> SquareRoot(x2 * x2 + y2 * y2) then
-		call UnitDamageTargetEx(LoadUnitHandle(P, WFV, 3), u2, 1, LoadInteger(P, WFV, 1))
+		call UnitDamageTargetEx(LoadUnitHandle(ObjectHashTable, WFV, 3), u2, 1, LoadInteger(ObjectHashTable, WFV, 1))
 		call KillUnit(u1)
 		call DestroyTimerAndFlushHT_P(t)
 		set u2 = null
@@ -80449,25 +80442,25 @@ function PQA takes nothing returns nothing
 	local unit u = null
 	local timer t = GetExpiredTimer()
 	local integer WFV = GetHandleId(t)
-	local integer UYX = LoadInteger(P, WFV, 0)
+	local integer UYX = LoadInteger(ObjectHashTable, WFV, 0)
 	if UYX == 1000 then
-		call KillUnit(LoadUnitHandle(P, WFV, 0))
+		call KillUnit(LoadUnitHandle(ObjectHashTable, WFV, 0))
 		call DestroyTimerAndFlushHT_P(t)
 		set t = null
 		return
 	endif
-	set Temp__Player = LoadPlayerHandle(P, WFV, 2)
+	set Temp__Player = LoadPlayerHandle(ObjectHashTable, WFV, 2)
 	set Temp__ArrayUnit[0]= null
-	set Temp__ArrayReal[0]= LoadReal(P, WFV, 0)
-	set Temp__ArrayReal[1]= LoadReal(P, WFV, 1)
+	set Temp__ArrayReal[0]= LoadReal(ObjectHashTable, WFV, 0)
+	set Temp__ArrayReal[1]= LoadReal(ObjectHashTable, WFV, 1)
 	set Temp__ArrayReal[2]= 450
 	call GroupEnumUnitsInRange(AK, Temp__ArrayReal[0], Temp__ArrayReal[1], 400, Condition(function PMA))
-	call SaveInteger(P, WFV, 0, UYX + 1)
+	call SaveInteger(ObjectHashTable, WFV, 0, UYX + 1)
 	if Temp__ArrayUnit[0]!= null then
-		set u = LoadUnitHandle(P, WFV, 0)
+		set u = LoadUnitHandle(ObjectHashTable, WFV, 0)
 		call SetUnitAnimationByIndex(u, 2)
 		call SetUnitVertexColorEx(u,-1,-1,-1, 150)
-		call SaveUnitHandle(P, WFV, 1, Temp__ArrayUnit[0])
+		call SaveUnitHandle(ObjectHashTable, WFV, 1, Temp__ArrayUnit[0])
 		call TimerStart(t, .025, true, function PPA)
 		set u = null
 	endif
@@ -80477,7 +80470,7 @@ function PSA takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer WFV = GetHandleId(t)
 	call TimerStart(t, .05, true, function PQA)
-	call SetUnitAnimationByIndex(LoadUnitHandle(P, WFV, 0), 1)
+	call SetUnitAnimationByIndex(LoadUnitHandle(ObjectHashTable, WFV, 0), 1)
 	set t = null
 endfunction
 function YPV takes nothing returns nothing
@@ -80491,13 +80484,13 @@ function YPV takes nothing returns nothing
 	call UnitAddAbility(d,'Aloc')
 	call UnitAddAbility(d,'A04R')
 	call UnitAddAbility(d,'Arav')
-	call SaveUnitHandle(P, WFV, 0, d)
-	call SaveUnitHandle(P, WFV, 3, u)
-	call SavePlayerHandle(P, WFV, 2, p)
-	call SaveInteger(P, WFV, 0, 0)
-	call SaveInteger(P, WFV, 1, 100 + 50 * GetUnitAbilityLevel(u,'A2LL'))
-	call SaveReal(P, WFV, 0, x)
-	call SaveReal(P, WFV, 1, y)
+	call SaveUnitHandle(ObjectHashTable, WFV, 0, d)
+	call SaveUnitHandle(ObjectHashTable, WFV, 3, u)
+	call SavePlayerHandle(ObjectHashTable, WFV, 2, p)
+	call SaveInteger(ObjectHashTable, WFV, 0, 0)
+	call SaveInteger(ObjectHashTable, WFV, 1, 100 + 50 * GetUnitAbilityLevel(u,'A2LL'))
+	call SaveReal(ObjectHashTable, WFV, 0, x)
+	call SaveReal(ObjectHashTable, WFV, 1, y)
 	call SetUnitAnimationByIndex(d, 0)
 	call TimerStart(t, 3, false, function PSA)
 	set p = null
@@ -80662,11 +80655,11 @@ endfunction
 function P0A takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer WFV = GetHandleId(t)
-	local integer UYX = LoadInteger(P, WFV, 0)
-	local unit u = LoadUnitHandle(P, WFV, 0)
+	local integer UYX = LoadInteger(ObjectHashTable, WFV, 0)
+	local unit u = LoadUnitHandle(ObjectHashTable, WFV, 0)
 	local real L2O
 	if UYX == 4 or UnitIsDead(u) or P_A(u) == false then
-		call DestroyEffect(LoadEffectHandle(P, WFV, 1))
+		call DestroyEffect(LoadEffectHandle(ObjectHashTable, WFV, 1))
 		call DestroyTimerAndFlushHT_P(t)
 		set t = null
 		set u = null
@@ -80678,7 +80671,7 @@ function P0A takes nothing returns nothing
 		set L2O = .406
 	endif
 	call SetWidgetLife(u, L2O)
-	call SaveInteger(P, WFV, 0, UYX + 1)
+	call SaveInteger(ObjectHashTable, WFV, 0, UYX + 1)
 	set t = null
 	set u = null
 endfunction
@@ -80686,9 +80679,9 @@ function P1A takes unit u, unit d, integer WUV returns nothing
 	local timer t = CreateTimer()
 	local integer WFV = GetHandleId(t)
 	call WJV(d,'C100'+ WUV,'D100'+ WUV, 5)
-	call SaveUnitHandle(P, WFV, 0, d)
-	call SaveEffectHandle(P, WFV, 1, AddSpecialEffectTarget("Abilities\\Spells\\Other\\FrostDamage\\FrostDamage.mdl", d, "chest"))
-	call SaveInteger(P, WFV, 0, 0)
+	call SaveUnitHandle(ObjectHashTable, WFV, 0, d)
+	call SaveEffectHandle(ObjectHashTable, WFV, 1, AddSpecialEffectTarget("Abilities\\Spells\\Other\\FrostDamage\\FrostDamage.mdl", d, "chest"))
+	call SaveInteger(ObjectHashTable, WFV, 0, 0)
 	call TimerStart(t, 1, true, function P0A)
 	set t = null
 endfunction
@@ -80698,27 +80691,27 @@ function P2A takes nothing returns nothing
 	local integer h = GetHandleId(t)
 	if GetTriggerEventId()!= EVENT_UNIT_DAMAGED then
 		call CleanCurrentTrigger(t)
-		call FlushChildHashtable(P, h)
+		call FlushChildHashtable(ObjectHashTable, h)
 		set t = null
 		return
 	endif
 	set u = GetEventDamageSource()
-	if u == LoadUnitHandle(P, h, 0) and GetEventDamage()> 5 then
+	if u == LoadUnitHandle(ObjectHashTable, h, 0) and GetEventDamage()> 5 then
 		if P_A(GetTriggerUnit()) == false then
-			call P1A(u, GetTriggerUnit(), LoadInteger(P, h, 0)-1)
+			call P1A(u, GetTriggerUnit(), LoadInteger(ObjectHashTable, h, 0)-1)
 		endif
 		call CleanCurrentTrigger(t)
-		call FlushChildHashtable(P, h)
+		call FlushChildHashtable(ObjectHashTable, h)
 	endif
 	set t = null
 	set u = null
 endfunction
 function P3A takes unit u, unit t returns nothing
 	local trigger HLR = CreateTrigger()
-	call SaveUnitHandle(P, GetHandleId(HLR), 0, u)
+	call SaveUnitHandle(ObjectHashTable, GetHandleId(HLR), 0, u)
 	call TriggerRegisterUnitEvent(HLR, t, EVENT_UNIT_DAMAGED)
 	call TriggerRegisterTimerEvent(HLR, 3, false)
-	call SaveInteger(P, GetHandleId(HLR), 0, GetUnitAbilityLevel(u,'A332'))
+	call SaveInteger(ObjectHashTable, GetHandleId(HLR), 0, GetUnitAbilityLevel(u,'A332'))
 	call TriggerAddCondition(HLR, Condition(function P2A))
 	set HLR = null
 endfunction
@@ -80731,22 +80724,22 @@ endfunction
 function P5A takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer WFV = GetHandleId(t)
-	local unit u = LoadUnitHandle(P, WFV, 0)
+	local unit u = LoadUnitHandle(ObjectHashTable, WFV, 0)
 	local integer level
 	local integer h
-	if UnitAlive(u) and LoadBoolean(P, GetHandleId(u), StringHash("morphedburn")) then
-		call RAX(u, LoadInteger(P, WFV, 1))
-		call RAX(u, LoadInteger(P, WFV, 0))
+	if UnitAlive(u) and LoadBoolean(ObjectHashTable, GetHandleId(u), StringHash("morphedburn")) then
+		call RAX(u, LoadInteger(ObjectHashTable, WFV, 1))
+		call RAX(u, LoadInteger(ObjectHashTable, WFV, 0))
 		call A3X(GetWidgetX(u), GetWidgetY(u), 150)
-		call SaveBoolean(P, GetHandleId(u), StringHash("morphedburn"), false)
-		call SaveInteger(P, GetHandleId(u), StringHash("morphedburn"), 0)
+		call SaveBoolean(ObjectHashTable, GetHandleId(u), StringHash("morphedburn"), false)
+		call SaveInteger(ObjectHashTable, GetHandleId(u), StringHash("morphedburn"), 0)
 		call FixUnitSkillsBug(u)
 		if GetUnitAbilityLevel(u,'A2AI')> 0 then
 			call UnitRemoveAbility(u,'QF0O')
 			call SetUnitAbilityLevel(u,'QB0G', GetUnitAbilityLevel(u,'A2AI'))
 		endif
 		call DestroyTimerAndFlushHT_P(t)
-	elseif UnitIsDead(u) and LoadBoolean(P, GetHandleId(u), StringHash("morphedburn")) then
+	elseif UnitIsDead(u) and LoadBoolean(ObjectHashTable, GetHandleId(u), StringHash("morphedburn")) then
 		call TimerStart(t, 1, true, function P5A)
 	endif
 	set t = null
@@ -80800,9 +80793,9 @@ function P9A takes unit WJE, unit WLE, integer level, boolean FAR returns nothin
 	call ForGroup(g, function P8A)
 	call DeallocateGroup(g)
 	if GetUnitAbilityLevel(WLE,'A3E9') == 1 and FAR == false and IsMagicImmuneUnit(WJE) then
-		call SaveUnitHandle(VV,'A3E9', 0, WLE)
-		call SaveUnitHandle(VV,'A3E9', 1, WJE)
-		call SaveInteger(VV,'A3E9', 0, level)
+		call SaveUnitHandle(OtherHashTable2,'A3E9', 0, WLE)
+		call SaveUnitHandle(OtherHashTable2,'A3E9', 1, WJE)
+		call SaveInteger(OtherHashTable2,'A3E9', 0, level)
 		call ExecuteFunc("QVA")
 	endif
 	set WJE = null
@@ -80870,42 +80863,42 @@ function YTV takes nothing returns nothing
 	set WLE = null
 endfunction
 function QVA takes nothing returns nothing
-	local unit WJE = LoadUnitHandle(VV,'A3E9', 0)
-	local unit WLE = LoadUnitHandle(VV,'A3E9', 1)
-	local integer level = LoadInteger(VV,'A3E9', 0)
-	call T4V(LoadUnitHandle(VV,'A3E9', 0))
+	local unit WJE = LoadUnitHandle(OtherHashTable2,'A3E9', 0)
+	local unit WLE = LoadUnitHandle(OtherHashTable2,'A3E9', 1)
+	local integer level = LoadInteger(OtherHashTable2,'A3E9', 0)
+	call T4V(LoadUnitHandle(OtherHashTable2,'A3E9', 0))
 	if UnitHasSpellShield(WLE) == false then
 		call QXA(WJE, WLE, level, true)
 	endif
 	set WJE = null
 	set WLE = null
-	call FlushChildHashtable(VV,'A3E9')
+	call FlushChildHashtable(OtherHashTable2,'A3E9')
 endfunction
 function QOA takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer WFV = GetHandleId(t)
-	local integer UYX = LoadInteger(P, WFV, 0)
-	local unit u = LoadUnitHandle(P, WFV, 0)
+	local integer UYX = LoadInteger(ObjectHashTable, WFV, 0)
+	local unit u = LoadUnitHandle(ObjectHashTable, WFV, 0)
 	if UYX == 40 or UnitIsDead(u) or IsUnitHidden(u) or(C5X(u) == false and UYX > 4) then
 		set UYX = 1
 		loop
 		exitwhen UYX == 10
-			call DestroyEffect(LoadEffectHandle(P, WFV, UYX))
+			call DestroyEffect(LoadEffectHandle(ObjectHashTable, WFV, UYX))
 			set UYX = UYX + 1
 		endloop
 		set WFV = GetHandleId(u)
-		set UYX = LoadInteger(P, WFV,'A516')
+		set UYX = LoadInteger(ObjectHashTable, WFV,'A516')
 		if UYX == 1 then
 			call UnitRemoveAbility(u,'A516')
 		endif
-		call SaveInteger(P, WFV,'A516', UYX -1)
+		call SaveInteger(ObjectHashTable, WFV,'A516', UYX -1)
 		call DestroyTimerAndFlushHT_P(t)
 		set t = null
 		set u = null
 		return
 	endif
-	call SetWidgetLife(u, GetWidgetLife(u)+ 2 + GetUnitState(u, UNIT_STATE_MAX_LIFE)* LoadReal(P, WFV, 0))
-	call SaveInteger(P, WFV, 0, UYX + 1)
+	call SetWidgetLife(u, GetWidgetLife(u)+ 2 + GetUnitState(u, UNIT_STATE_MAX_LIFE)* LoadReal(ObjectHashTable, WFV, 0))
+	call SaveInteger(ObjectHashTable, WFV, 0, UYX + 1)
 	set t = null
 	set u = null
 endfunction
@@ -80919,20 +80912,20 @@ function FLE takes nothing returns nothing
 	if IssueTargetOrderById(W_V, 852095, u2) then
 		set t = CreateTimer()
 		set WFV = GetHandleId(t)
-		call SaveUnitHandle(P, WFV, 0, u2)
-		call SaveReal(P, WFV, 0, GetUnitAbilityLevel(Player__Hero[GetPlayerId(GetOwningPlayer(u))],'A2LB')* .001 + .002)
-		call SaveInteger(P, WFV, 0, 0)
-		call SaveEffectHandle(P, WFV, 1, AddSpecialEffectTarget("war3mapImported\\Cryofreeze5.mdx", u2, "hand right"))
-		call SaveEffectHandle(P, WFV, 2, AddSpecialEffectTarget("war3mapImported\\Cryofreeze5.mdx", u2, "hand left"))
-		call SaveEffectHandle(P, WFV, 3, AddSpecialEffectTarget("war3mapImported\\Cryofreeze5.mdx", u2, "foot right"))
-		call SaveEffectHandle(P, WFV, 4, AddSpecialEffectTarget("war3mapImported\\Cryofreeze5.mdx", u2, "foot left"))
-		call SaveEffectHandle(P, WFV, 5, AddSpecialEffectTarget("war3mapImported\\Cryofreeze5.mdx", u2, "foot right mount rear"))
-		call SaveEffectHandle(P, WFV, 6, AddSpecialEffectTarget("war3mapImported\\Cryofreeze5.mdx", u2, "foot left mount rear"))
-		call SaveEffectHandle(P, WFV, 7, AddSpecialEffectTarget("war3mapImported\\Cryofreeze5.mdx", u2, "head"))
-		call SaveEffectHandle(P, WFV, 8, AddSpecialEffectTarget("war3mapImported\\Cryofreeze5.mdx", u2, "chest"))
-		call SaveEffectHandle(P, WFV, 9, AddSpecialEffectTarget("war3mapImported\\Cryofreeze5.mdx", u2, GetHeroWeaponAttachPointName(u2)))
+		call SaveUnitHandle(ObjectHashTable, WFV, 0, u2)
+		call SaveReal(ObjectHashTable, WFV, 0, GetUnitAbilityLevel(Player__Hero[GetPlayerId(GetOwningPlayer(u))],'A2LB')* .001 + .002)
+		call SaveInteger(ObjectHashTable, WFV, 0, 0)
+		call SaveEffectHandle(ObjectHashTable, WFV, 1, AddSpecialEffectTarget("war3mapImported\\Cryofreeze5.mdx", u2, "hand right"))
+		call SaveEffectHandle(ObjectHashTable, WFV, 2, AddSpecialEffectTarget("war3mapImported\\Cryofreeze5.mdx", u2, "hand left"))
+		call SaveEffectHandle(ObjectHashTable, WFV, 3, AddSpecialEffectTarget("war3mapImported\\Cryofreeze5.mdx", u2, "foot right"))
+		call SaveEffectHandle(ObjectHashTable, WFV, 4, AddSpecialEffectTarget("war3mapImported\\Cryofreeze5.mdx", u2, "foot left"))
+		call SaveEffectHandle(ObjectHashTable, WFV, 5, AddSpecialEffectTarget("war3mapImported\\Cryofreeze5.mdx", u2, "foot right mount rear"))
+		call SaveEffectHandle(ObjectHashTable, WFV, 6, AddSpecialEffectTarget("war3mapImported\\Cryofreeze5.mdx", u2, "foot left mount rear"))
+		call SaveEffectHandle(ObjectHashTable, WFV, 7, AddSpecialEffectTarget("war3mapImported\\Cryofreeze5.mdx", u2, "head"))
+		call SaveEffectHandle(ObjectHashTable, WFV, 8, AddSpecialEffectTarget("war3mapImported\\Cryofreeze5.mdx", u2, "chest"))
+		call SaveEffectHandle(ObjectHashTable, WFV, 9, AddSpecialEffectTarget("war3mapImported\\Cryofreeze5.mdx", u2, GetHeroWeaponAttachPointName(u2)))
 		call UnitAddAbility(u2,'A516')
-		call SaveInteger(P, GetHandleId(u2),'A516', LoadInteger(P, GetHandleId(u2),'A516')+ 1)
+		call SaveInteger(ObjectHashTable, GetHandleId(u2),'A516', LoadInteger(ObjectHashTable, GetHandleId(u2),'A516')+ 1)
 		call TimerStart(t, .1, true, function QOA)
 		set t = null
 	endif
@@ -80943,9 +80936,9 @@ function FLE takes nothing returns nothing
 endfunction
 function QRA takes unit u returns nothing
 	if GetUnitAbilityLevel(u,'D031')> 0 and UnitIsSleeping(u) == false and GetUnitAbilityLevel(u,'B008') == 0 and K0V == false then
-		call DisableTrigger(JJ)
-		call IssueTargetOrderById(u, 851983, LoadUnitHandle(P, GetHandleId(u),'A0Z0'))
-		call EnableTrigger(JJ)
+		call DisableTrigger(UnitEventMainTrig)
+		call IssueTargetOrderById(u, 851983, LoadUnitHandle(ObjectHashTable, GetHandleId(u),'A0Z0'))
+		call EnableTrigger(UnitEventMainTrig)
 	endif
 endfunction
 function QIA takes nothing returns nothing
@@ -81056,38 +81049,38 @@ function QDA takes nothing returns nothing
 	local unit d = null
 	local timer t = GetExpiredTimer()
 	local integer WFV = GetHandleId(t)
-	local integer UYX = LoadInteger(P, WFV, 0)
-	local unit u = LoadUnitHandle(P, WFV, 0)
-	if UnitIsDead(u) or(GetUnitAbilityLevel(u,'B0G8') == 0 and UYX > LoadInteger(P, WFV, 2)) or(LoadBoolean(P, WFV, 0) and(LoadReal(P, WFV, 0)!= GetWidgetX(u) or LoadReal(P, WFV, 1)!= GetWidgetY(u))) then
-		call SaveBoolean(P, GetHandleId(u),'A2N5', false)
+	local integer UYX = LoadInteger(ObjectHashTable, WFV, 0)
+	local unit u = LoadUnitHandle(ObjectHashTable, WFV, 0)
+	if UnitIsDead(u) or(GetUnitAbilityLevel(u,'B0G8') == 0 and UYX > LoadInteger(ObjectHashTable, WFV, 2)) or(LoadBoolean(ObjectHashTable, WFV, 0) and(LoadReal(ObjectHashTable, WFV, 0)!= GetWidgetX(u) or LoadReal(ObjectHashTable, WFV, 1)!= GetWidgetY(u))) then
+		call SaveBoolean(ObjectHashTable, GetHandleId(u),'A2N5', false)
 		call UnitRemoveAbility(u,'B0G8')
 		call DestroyTimerAndFlushHT_P(t)
 		set t = null
 		set u = null
 		return
 	endif
-	if UYX == LoadInteger(P, WFV, 2) then
+	if UYX == LoadInteger(ObjectHashTable, WFV, 2) then
 		set d = CreateUnit(Player(15),'e00E', 0, 0, 0)
 		call UnitAddAbility(d,'A2N5')
 		call L6X(u)
 		call IssueTargetOrderById(d, 852069, u)
-		call SaveBoolean(P, GetHandleId(u),'A2N5', false)
+		call SaveBoolean(ObjectHashTable, GetHandleId(u),'A2N5', false)
 		set d = null
 		call IssueImmediateOrderById(u, 851993)
-		call SaveReal(P, WFV, 0, GetWidgetX(u))
-		call SaveReal(P, WFV, 1, GetWidgetY(u))
-		call SaveBoolean(P, WFV, 0, true)
+		call SaveReal(ObjectHashTable, WFV, 0, GetWidgetX(u))
+		call SaveReal(ObjectHashTable, WFV, 1, GetWidgetY(u))
+		call SaveBoolean(ObjectHashTable, WFV, 0, true)
 	endif
-	call SaveInteger(P, WFV, 0, UYX + 1)
+	call SaveInteger(ObjectHashTable, WFV, 0, UYX + 1)
 	set t = null
 	set u = null
 endfunction
 function QFA takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer WFV = GetHandleId(t)
-	local unit u = LoadUnitHandle(P, WFV, 0)
-	call SaveInteger(P, WFV, 0, 0)
-	call SaveInteger(P, WFV, 2, R2I(1.5 / .05))
+	local unit u = LoadUnitHandle(ObjectHashTable, WFV, 0)
+	call SaveInteger(ObjectHashTable, WFV, 0, 0)
+	call SaveInteger(ObjectHashTable, WFV, 2, R2I(1.5 / .05))
 	call TimerStart(t, .05, true, function QDA)
 	set t = null
 	set u = null
@@ -81101,7 +81094,7 @@ function QGA takes unit u returns nothing
 	call DestroyEffect(AddSpecialEffectTarget(s, u, "chest"))
 	call DestroyEffect(AddSpecialEffectTarget(s, u, "hand,left"))
 	call DestroyEffect(AddSpecialEffectTarget(s, u, "hand,right"))
-	call SaveUnitHandle(P, GetHandleId(t), 0, u)
+	call SaveUnitHandle(ObjectHashTable, GetHandleId(t), 0, u)
 	call TimerStart(t, .01, false, function QFA)
 	set t = null
 endfunction
@@ -81114,8 +81107,8 @@ function FSE takes nothing returns nothing
 		set WFV = GetHandleId(WLE)
 	endif
 	if WLE != null then
-		if LoadBoolean(P, WFV,'A2N5') == false then
-			call SaveBoolean(P, WFV,'A2N5', true)
+		if LoadBoolean(ObjectHashTable, WFV,'A2N5') == false then
+			call SaveBoolean(ObjectHashTable, WFV,'A2N5', true)
 			call QGA(WLE)
 		endif
 	endif
@@ -81435,7 +81428,7 @@ function Q1A takes nothing returns nothing
 	local unit Q2A = LoadUnitHandle(HY, h, 0)
 	local unit WLE = LoadUnitHandle(HY, h, 1)
 	if GetUnitAbilityLevel(WLE,'Bpoi')+ GetUnitAbilityLevel(WLE,'Bpsd') == 0 then
-		call RemoveSavedHandle(P, GetHandleId(WLE),'Pois')
+		call RemoveSavedHandle(ObjectHashTable, GetHandleId(WLE),'Pois')
 		call PauseTimer(t)
 		call DestroyTimer(t)
 		call FlushChildHashtable(HY, h)
@@ -81450,8 +81443,8 @@ function Q3A takes unit R8X, unit WLE returns nothing
 	local timer t
 	local integer h
 	local integer hu = GetHandleId(WLE)
-	if HaveSavedHandle(P, hu,'Pois') then
-		set t = LoadTimerHandle(P, hu,'Pois')
+	if HaveSavedHandle(ObjectHashTable, hu,'Pois') then
+		set t = LoadTimerHandle(ObjectHashTable, hu,'Pois')
 		set h = GetHandleId(t)
 	else
 		set t = CreateTimer()
@@ -81459,7 +81452,7 @@ function Q3A takes unit R8X, unit WLE returns nothing
 		call TimerStart(t, 1, true, function Q1A)
 		call SaveUnitHandle(HY, h, 0, R8X)
 		call SaveUnitHandle(HY, h, 1, WLE)
-		call SaveTimerHandle(P, hu,'Pois', t)
+		call SaveTimerHandle(ObjectHashTable, hu,'Pois', t)
 	endif
 	call SaveInteger(HY, h, 0, GetUnitAbilityLevel(R8X,'P418'))
 	set t = null
@@ -81522,7 +81515,7 @@ function Q6A takes unit killingUnit, unit Q7A returns nothing
 		if YB then
 			set xp = 0
 		else
-			set xp = LoadInteger(M, i, HC)/ 2
+			set xp = LoadInteger(SightDataHashTable, i, HC)/ 2
 		endif
 		if xp > 0 then
 			set SB = killingUnit
@@ -81545,17 +81538,17 @@ function Q6A takes unit killingUnit, unit Q7A returns nothing
 			if Q9A > 0 and GetUnitAbilityLevel(killingUnit,'A36D') == 0 then
 				set UYX = GetHandleId(killingUnit)
 				if IsUnitType(Q7A, UNIT_TYPE_STRUCTURE) == false and(GetUnitAbilityLevel(Q7A,'A04R') == 0) then
-					set Q8A = IMinBJ(LoadInteger(P, UYX,'A0O3')* 2 + Q9A * 2 + 2, 8 * Q9A)
-					call SaveInteger(P, GetHandleId(p),'A0O3', LoadInteger(P, GetHandleId(p),'A0O3')+ Q8A)
+					set Q8A = IMinBJ(LoadInteger(ObjectHashTable, UYX,'A0O3')* 2 + Q9A * 2 + 2, 8 * Q9A)
+					call SaveInteger(ObjectHashTable, GetHandleId(p),'A0O3', LoadInteger(ObjectHashTable, GetHandleId(p),'A0O3')+ Q8A)
 					call DestroyEffect(AddSpecialEffect("war3mapImported\\GoblinCoin.mdx", GetUnitX(Q7A), GetUnitY(Q7A)))
 				endif
 			endif
-			set goldBonus = GetRandomInt(LoadInteger(M, i, CC), LoadInteger(M, i, DC))+ Q8A
+			set goldBonus = GetRandomInt(LoadInteger(SightDataHashTable, i, CC), LoadInteger(SightDataHashTable, i, DC))+ Q8A
 			if goldBonus > 0 then
 				call BMX(p, Q7A, goldBonus)
 			endif
 		endif
-		set xp = LoadInteger(M, i, HC)
+		set xp = LoadInteger(SightDataHashTable, i, HC)
 		if (xp > 0 and p != NeutralCreepPlayer) then
 			call Y4X(xp, p, killingUnit)
 		endif
@@ -81606,8 +81599,8 @@ endfunction
 function ExecuteAttackEvent takes integer i returns nothing
 	local integer k = 0
 	loop
-	exitwhen HaveSavedString(Q,'DMGE'+ i, k) == false
-		call ExecuteFunc(LoadStr(Q,'DMGE'+ i, k))
+	exitwhen HaveSavedString(AbilityDataHashTable,'DMGE'+ i, k) == false
+		call ExecuteFunc(LoadStr(AbilityDataHashTable,'DMGE'+ i, k))
 		set k = k + 1
 	endloop
 endfunction
@@ -82072,7 +82065,7 @@ function TUA takes nothing returns nothing
 		endif
 	elseif GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
 		//call RemoveSavedHandle(HY, GetHandleId(LoadUnitHandle(HY, h, 0)), 'A09J')	//美杜莎分裂箭
-		call RemoveSavedHandle(P, LoadInteger(HY, h, 10), LoadInteger(HY, h, 11))
+		call RemoveSavedHandle(ObjectHashTable, LoadInteger(HY, h, 10), LoadInteger(HY, h, 11))
 		call PauseTimer(LoadTimerHandle(HY, h, 3))
 		call DestroyTimer(LoadTimerHandle(HY, h, 3))
 		call FlushChildHashtable(HY, h)
@@ -82149,8 +82142,8 @@ function TZA takes unit attackerUnit, unit targetUnit, boolean isAbility returns
 	if not(XFX(GetOwningPlayer(attackerUnit)) or XFX(GetOwningPlayer(targetUnit)) or(EE and(GetUnitAbilityLevel(attackerUnit,'BVA1') == 1 or GetUnitAbilityLevel(attackerUnit,'BVA2') == 1 or GetUnitAbilityLevel(attackerUnit,'BVA3') == 1 or GetUnitAbilityLevel(attackerUnit,'BVA4') == 1)) or(EV and GetUnitAbilityLevel(attackerUnit,'B07O') == 1)) then
 		return
 	endif
-	if HaveSavedHandle(P, GetHandleId(attackerUnit), GetHandleId(targetUnit)) then
-		set t = LoadTriggerHandle(P, GetHandleId(attackerUnit), GetHandleId(targetUnit))
+	if HaveSavedHandle(ObjectHashTable, GetHandleId(attackerUnit), GetHandleId(targetUnit)) then
+		set t = LoadTriggerHandle(ObjectHashTable, GetHandleId(attackerUnit), GetHandleId(targetUnit))
 		set h = GetHandleId(t)
 		if not bDodgeAttack then
 			call SaveInteger(HY, h, 0, LoadInteger(HY, h, 0) + 1)
@@ -82161,7 +82154,7 @@ function TZA takes unit attackerUnit, unit targetUnit, boolean isAbility returns
 		set h = GetHandleId(t)
 		set tt = CreateTimer()
 		call SaveTimerHandle(HY, h, 3, tt)
-		call SaveTriggerHandle(P, GetHandleId(attackerUnit), GetHandleId(targetUnit), t)
+		call SaveTriggerHandle(ObjectHashTable, GetHandleId(attackerUnit), GetHandleId(targetUnit), t)
 		if not bDodgeAttack then
 			call SaveInteger(HY, h, 0, 1)
 		else
@@ -82267,7 +82260,7 @@ function ZNE takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer h = GetHandleId(t)
 	call CameraClearNoiseForPlayer(LoadPlayerHandle(HY, h, 0) )
-	call RemoveSavedHandle(K, GetHandleId(LoadPlayerHandle(HY, h, 0)),'CAMS')
+	call RemoveSavedHandle(OtherHashTable, GetHandleId(LoadPlayerHandle(HY, h, 0)),'CAMS')
 	call FlushChildHashtable(HY, h)
 	call PauseTimer(t)
 	call DestroyTimer(t)
@@ -82279,8 +82272,8 @@ function ZBE takes unit u, real damageValue returns nothing
 	local player p = GetOwningPlayer(u)
 	local integer hp = GetHandleId(p)
 	local real ZDE = RMinBJ(damageValue, 1000)/ 100 
-	if HaveSavedHandle(K, hp,'CAMS') then
-		set t = LoadTimerHandle(K, hp,'CAMS')
+	if HaveSavedHandle(OtherHashTable, hp,'CAMS') then
+		set t = LoadTimerHandle(OtherHashTable, hp,'CAMS')
 		set h = GetHandleId(t)
 		if LoadReal(HY, h, 0)< ZDE then
 			call CameraClearNoiseForPlayer(p)
@@ -82293,7 +82286,7 @@ function ZBE takes unit u, real damageValue returns nothing
 		call SavePlayerHandle(HY, h, 0, p)
 		call SaveReal(HY, h, 0, ZDE)
 		call CameraSetEQNoiseForPlayer(p, ZDE)
-		call SaveTimerHandle(K, hp,'CAMS', t)
+		call SaveTimerHandle(OtherHashTable, hp,'CAMS', t)
 	endif
 	set t = null
 endfunction
@@ -82808,7 +82801,7 @@ function RegisterHeroVisionAndState takes unit u returns nothing
 	call SaveUnitHandle(HY, h, 304, u)
 	set d = CreateUnit(GetOwningPlayer(u),'o01A', GetUnitX(u), GetUnitY(u), 0)
 	call SaveUnitHandle(HY, h, 305, d)
-	call SaveUnitHandle(K, GetHandleId(u),'DUMM', d)
+	call SaveUnitHandle(OtherHashTable, GetHandleId(u),'DUMM', d)
 	// debug call SingleDebug("给" + GetUnitName( u ) + YDWEId2S(GetUnitTypeId( u )) + " 注册视野和坐标记录触发器。")
 	set d = null
 	set t = null
@@ -82955,19 +82948,19 @@ function HeroReincarnationEvent takes nothing returns boolean
 endfunction
 
 function RegisterHeroUnitCommonEvent takes unit whichUnit returns nothing
-	if LoadBoolean(P, GetHandleId(whichUnit), 2) then
+	if LoadBoolean(ObjectHashTable, GetHandleId(whichUnit), 2) then
 		return
 	endif
-	call TriggerRegisterUnitEvent(JJ, whichUnit, EVENT_UNIT_HERO_SKILL)
-	call TriggerRegisterUnitEvent(JJ, whichUnit, EVENT_UNIT_SPELL_CAST)
-	call TriggerRegisterUnitEvent(JJ, whichUnit, EVENT_UNIT_SPELL_EFFECT)
-	call TriggerRegisterUnitEvent(JJ, whichUnit, EVENT_UNIT_SPELL_FINISH)
-	call TriggerRegisterUnitEvent(JJ, whichUnit, EVENT_UNIT_SPELL_CHANNEL)
-	call TriggerRegisterUnitEvent(JJ, whichUnit, EVENT_UNIT_SPELL_ENDCAST)
-	call TriggerRegisterUnitEvent(JJ, whichUnit, EVENT_UNIT_ISSUED_ORDER)
-	call TriggerRegisterUnitEvent(JJ, whichUnit, EVENT_UNIT_ISSUED_POINT_ORDER)
-	call TriggerRegisterUnitEvent(JJ, whichUnit, EVENT_UNIT_ISSUED_TARGET_ORDER)
-	call SaveBoolean(P, GetHandleId(whichUnit), 2, true)
+	call TriggerRegisterUnitEvent(UnitEventMainTrig, whichUnit, EVENT_UNIT_HERO_SKILL)
+	call TriggerRegisterUnitEvent(UnitEventMainTrig, whichUnit, EVENT_UNIT_SPELL_CAST)
+	call TriggerRegisterUnitEvent(UnitEventMainTrig, whichUnit, EVENT_UNIT_SPELL_EFFECT)
+	call TriggerRegisterUnitEvent(UnitEventMainTrig, whichUnit, EVENT_UNIT_SPELL_FINISH)
+	call TriggerRegisterUnitEvent(UnitEventMainTrig, whichUnit, EVENT_UNIT_SPELL_CHANNEL)
+	call TriggerRegisterUnitEvent(UnitEventMainTrig, whichUnit, EVENT_UNIT_SPELL_ENDCAST)
+	call TriggerRegisterUnitEvent(UnitEventMainTrig, whichUnit, EVENT_UNIT_ISSUED_ORDER)
+	call TriggerRegisterUnitEvent(UnitEventMainTrig, whichUnit, EVENT_UNIT_ISSUED_POINT_ORDER)
+	call TriggerRegisterUnitEvent(UnitEventMainTrig, whichUnit, EVENT_UNIT_ISSUED_TARGET_ORDER)
+	call SaveBoolean(ObjectHashTable, GetHandleId(whichUnit), 2, true)
 endfunction
 
 // 注册英雄单位的事件 等0秒后再检查一次是否有效英雄
@@ -83139,10 +83132,10 @@ function UXA takes nothing returns nothing
 	local integer S6V = GetUnitCurrentOrder(WJE)
 	local integer i
 	// 给马甲注册释放技能事件
-	call TriggerRegisterUnitEvent(JJ, u, EVENT_UNIT_SPELL_EFFECT)
-	call TriggerRegisterUnitEvent(JJ, u, EVENT_UNIT_SPELL_CAST)
-	call TriggerRegisterUnitEvent(JJ, u, EVENT_UNIT_SPELL_CHANNEL)
-	call TriggerRegisterUnitEvent(JJ, u, EVENT_UNIT_SPELL_ENDCAST)
+	call TriggerRegisterUnitEvent(UnitEventMainTrig, u, EVENT_UNIT_SPELL_EFFECT)
+	call TriggerRegisterUnitEvent(UnitEventMainTrig, u, EVENT_UNIT_SPELL_CAST)
+	call TriggerRegisterUnitEvent(UnitEventMainTrig, u, EVENT_UNIT_SPELL_CHANNEL)
+	call TriggerRegisterUnitEvent(UnitEventMainTrig, u, EVENT_UNIT_SPELL_ENDCAST)
 	call SaveUnitHandle(HY, GetHandleId(u), 0, t)
 	call T4V(t)
 	call UnitAddAbility(u, id)
@@ -83161,12 +83154,12 @@ function UXA takes nothing returns nothing
 	if S6V >=852008 and S6V <=852013 then
 		call UnitRemoveAbility(u, id)
 		set i = GetItemTypeId(UnitItemInSlot(WJE, S6V -852008))
-		set id = LoadInteger(Q,'A3E9', i)
+		set id = LoadInteger(AbilityDataHashTable,'A3E9', i)
 		call UnitAddAbility(u, id)
-		if LoadBoolean(Q,'A3E9', i) then
-			set S6V = S2I(LoadStr(Q,'A3E9', i))
+		if LoadBoolean(AbilityDataHashTable,'A3E9', i) then
+			set S6V = S2I(LoadStr(AbilityDataHashTable,'A3E9', i))
 		else
-			set S6V = OrderId(LoadStr(Q,'A3E9', i))
+			set S6V = OrderId(LoadStr(AbilityDataHashTable,'A3E9', i))
 		endif
 	endif
 	if T9A(id) then
@@ -83253,21 +83246,21 @@ endfunction
 function UJA takes nothing returns nothing
 	local integer k = 0
 	loop
-	exitwhen HaveSavedString(Q,'SPLL', k) == false
-		call ExecuteFunc(LoadStr(Q,'SPLL', k))
+	exitwhen HaveSavedString(AbilityDataHashTable,'SPLL', k) == false
+		call ExecuteFunc(LoadStr(AbilityDataHashTable,'SPLL', k))
 		set k = k + 1
 	endloop
 endfunction
 function UKA takes string s returns nothing
 	local integer i = 0
 	loop
-	exitwhen HaveSavedString(Q,'SPLL', i) == false
-		if LoadStr(Q,'SPLL', i) == s then
+	exitwhen HaveSavedString(AbilityDataHashTable,'SPLL', i) == false
+		if LoadStr(AbilityDataHashTable,'SPLL', i) == s then
 			return
 		endif
 		set i = i + 1
 	endloop
-	call SaveStr(Q,'SPLL', i, s)
+	call SaveStr(AbilityDataHashTable,'SPLL', i, s)
 endfunction
 function ULA takes nothing returns nothing
 	call DKI(GetTriggerUnit(), GetSpellAbilityId())
@@ -83367,10 +83360,10 @@ function UUA takes unit u, integer S6V, eventid id returns nothing
 	if id == EVENT_UNIT_ISSUED_ORDER then
 		if GetUnitAbilityLevel(u,'A0QN')> 0 then
 			if S6V == 852255 or S6V == 852458 then
-				call SaveBoolean(P, GetHandleId(u),'A0QN', true)
+				call SaveBoolean(ObjectHashTable, GetHandleId(u),'A0QN', true)
 				call UnitAddPermanentAbility(u,'A40H')
 			elseif S6V == 852256 or S6V == 852459 then
-				call SaveBoolean(P, GetHandleId(u),'A0QN', false)
+				call SaveBoolean(ObjectHashTable, GetHandleId(u),'A0QN', false)
 				call UnitRemoveAbility(u,'A40H')
 			endif
 		endif
@@ -83392,8 +83385,8 @@ function UUA takes unit u, integer S6V, eventid id returns nothing
 				call IssueTargetOrderById(u, 851985, GetOrderTargetUnit())
 				set EI = false
 				call UnitAddPermanentAbility(u,'A40H')
-				call SaveBoolean(P, GetHandleId(u),'A0QN'+ 1, true)
-				call SaveUnitHandle(P, GetHandleId(u),'A0QN'+ 1, GetOrderTargetUnit())
+				call SaveBoolean(ObjectHashTable, GetHandleId(u),'A0QN'+ 1, true)
+				call SaveUnitHandle(ObjectHashTable, GetHandleId(u),'A0QN'+ 1, GetOrderTargetUnit())
 			endif
 		endif
 	endif
@@ -83618,13 +83611,13 @@ endfunction
 function WEA takes string s returns nothing
 	local integer i = 0
 	loop
-	exitwhen HaveSavedString(Q,'DEAD', i) == false
-		if LoadStr(Q,'DEAD', i) == s then
+	exitwhen HaveSavedString(AbilityDataHashTable,'DEAD', i) == false
+		if LoadStr(AbilityDataHashTable,'DEAD', i) == s then
 			return
 		endif
 		set i = i + 1
 	endloop
-	call SaveStr(Q,'DEAD', i, s)
+	call SaveStr(AbilityDataHashTable,'DEAD', i, s)
 endfunction
 function WXA takes nothing returns nothing
 endfunction
@@ -83726,13 +83719,13 @@ endfunction
 function W2A takes nothing returns nothing
 	local integer k = 0
 	loop
-	exitwhen HaveSavedString(Q,'DEAD', k) == false
-		call ExecuteFunc(LoadStr(Q,'DEAD', k))
+	exitwhen HaveSavedString(AbilityDataHashTable,'DEAD', k) == false
+		call ExecuteFunc(LoadStr(AbilityDataHashTable,'DEAD', k))
 		set k = k + 1
 	endloop
 endfunction
 function W3A takes unit killingUnit, unit triggerUnit returns nothing
-	if LoadBoolean(M, GetUnitTypeId(triggerUnit), 0) or IsUnitIllusion(triggerUnit) then
+	if LoadBoolean(SightDataHashTable, GetUnitTypeId(triggerUnit), 0) or IsUnitIllusion(triggerUnit) then
 		return
 	endif
 	set SV = triggerUnit
@@ -83799,19 +83792,19 @@ function W7A takes nothing returns boolean
 				call BJDebugMsg(GetUnitName(u)+ " has used " + GetObjectName(i)+ " [" + UGV(i)+ "]")
 			endif
 			call UTA(GetTriggerUnit(), i)
-			if HaveSavedString(P, i, 0) then
-				call ExecuteFunc(LoadStr(P, i, 0))
+			if HaveSavedString(ObjectHashTable, i, 0) then
+				call ExecuteFunc(LoadStr(ObjectHashTable, i, 0))
 			endif
 			//	endif
 		elseif id == EVENT_UNIT_SPELL_ENDCAST then
 			// 停止施法
-			if HaveSavedString(P, i, 1) then
-				call ExecuteFunc(LoadStr(P, i, 1))
+			if HaveSavedString(ObjectHashTable, i, 1) then
+				call ExecuteFunc(LoadStr(ObjectHashTable, i, 1))
 			endif
 		elseif id == EVENT_UNIT_SPELL_FINISH then
 			// 结束施法
-			if HaveSavedString(P, i, 2) then
-				call ExecuteFunc(LoadStr(P, i, 2))
+			if HaveSavedString(ObjectHashTable, i, 2) then
+				call ExecuteFunc(LoadStr(ObjectHashTable, i, 2))
 			endif
 		elseif id == EVENT_UNIT_SPELL_CAST then
 			// 开始施法
@@ -83820,13 +83813,13 @@ function W7A takes nothing returns boolean
 				call I7A(GetTriggerUnit(), GetSpellTargetUnit())
 				call RSA(GetTriggerUnit(), GetSpellTargetUnit())
 			endif
-			if HaveSavedString(P, i, 3) then
-				call ExecuteFunc(LoadStr(P, i, 3))
+			if HaveSavedString(ObjectHashTable, i, 3) then
+				call ExecuteFunc(LoadStr(ObjectHashTable, i, 3))
 			endif
 		elseif id == EVENT_UNIT_SPELL_CHANNEL then
 			// 准备施法
-			if HaveSavedString(P, i, 7) then
-				call ExecuteFunc(LoadStr(P, i, 7))
+			if HaveSavedString(ObjectHashTable, i, 7) then
+				call ExecuteFunc(LoadStr(ObjectHashTable, i, 7))
 			endif
 		endif
 	endif
@@ -83836,13 +83829,13 @@ function W7A takes nothing returns boolean
 		set i = GetLearnedSkill()
 		set l = GetLearnedSkillLevel()
 		call W1V(u, i, l)
-		if HaveSavedString(P, i, 5) then
-			call ExecuteFunc(LoadStr(P, i, 5))
+		if HaveSavedString(ObjectHashTable, i, 5) then
+			call ExecuteFunc(LoadStr(ObjectHashTable, i, 5))
 		endif
 		if l == 1 then
 			// 学习 1 级技能
-			if HaveSavedString(P, i, 4) then
-				call ExecuteFunc(LoadStr(P, i, 4))
+			if HaveSavedString(ObjectHashTable, i, 4) then
+				call ExecuteFunc(LoadStr(ObjectHashTable, i, 4))
 			endif
 		endif
 		set u = null
@@ -83859,8 +83852,8 @@ function W7A takes nothing returns boolean
 	elseif id == EVENT_UNIT_SUMMON then
 		// 单位被召唤
 		set u = GetSummoningUnit()
-		if HaveSavedString(P, LoadInteger(P, GetHandleId(u),'SPEL'), 9) then
-			call ExecuteFunc(LoadStr(P, LoadInteger(P, GetHandleId(u),'SPEL'), 9))
+		if HaveSavedString(ObjectHashTable, LoadInteger(ObjectHashTable, GetHandleId(u),'SPEL'), 9) then
+			call ExecuteFunc(LoadStr(ObjectHashTable, LoadInteger(ObjectHashTable, GetHandleId(u),'SPEL'), 9))
 		endif
 		set u = null
 	elseif id == EVENT_UNIT_DAMAGED then
@@ -83869,12 +83862,6 @@ function W7A takes nothing returns boolean
 	endif
 	set u = null
 	set id = null
-	return false
-endfunction
-function W8A takes nothing returns boolean
-	if HaveSavedString(P, StringHash(GetEventPlayerChatString()), 10) then
-		call ExecuteFunc(LoadStr(P, StringHash(GetEventPlayerChatString()), 10))
-	endif
 	return false
 endfunction
 
@@ -85915,81 +85902,81 @@ function ECN takes nothing returns nothing
 	call RegisterUnitAttackEvent("CRA", 3)
 endfunction
 function InitPassiveAbilitys takes nothing returns nothing	//被动技能学习
-	call SaveStr(P,'A060', 601, "W_A")
-	call SaveStr(P,'A0LE', 601, "WYA")
-	call SaveStr(P,'A0O3', 601, "WUA")	//地精的贪婪
-	call SaveStr(P,'A1W8', 601, "WSA")
-	call SaveStr(P,'A0BH', 601, "WQA")
-	call SaveStr(P,'A0A5', 601, "WMA")
-	call SaveStr(P,'A0RP', 601, "WKA")
-	call SaveStr(P,'A0QV', 601, "WHA")
-	call SaveStr(P,'A0AK', 601, "WFA")
-	call SaveStr(P,'P003', 601, "WCA")
-	call SaveStr(P,'A0LZ', 601, "WIA")
-	call SaveStr(P,'A2QM', 601, "WNA")
-	call SaveStr(P,'A2TJ', 601, "WNA")
-	call SaveStr(P,'A2QI', 601, "WNA")
-	call SaveStr(P,'A2TI', 601, "WNA")
-	call SaveStr(P,'A0BR', 601, "W1A")
-	call SaveStr(P,'Z318', 601, "W1A")
-	call SaveStr(P,'A022', 600, "F_R")
-	call SaveStr(P,'A088', 600, "InitMultiCast")
-	call SaveStr(P,'A0DJ', 600, "EON")
-	call SaveStr(P,'A0FV', 600, "ERN")
-	call SaveStr(P,'A1YY', 600, "EIN")
-	call SaveStr(P,'A33Q', 600, "EAN")
-	call SaveStr(P,'A02C', 600, "ENN")
-	call SaveStr(P,'A0N5', 600, "EBN")
-	call SaveStr(P,'A1A3', 600, "Z8A")
-	call SaveStr(P,'A04E', 600, "Z9A")
-	call SaveStr(P,'A0RO', 600, "VVN")
-	call SaveStr(P,'A0C6', 600, "VEN")
-	call SaveStr(P,'A0DZ', 600, "VXN")
-	call SaveStr(P,'A332', 600, "VON")
-	call SaveStr(P,'A01Z', 600, "VRN")
-	call SaveStr(P,'A08R', 600, "VIN")
-	call SaveStr(P,'P250', 600, "VAN")
-	//call SaveStr(P,'A081', 600, "VNN")
+	call SaveStr(ObjectHashTable,'A060', 601, "W_A")
+	call SaveStr(ObjectHashTable,'A0LE', 601, "WYA")
+	call SaveStr(ObjectHashTable,'A0O3', 601, "WUA")	//地精的贪婪
+	call SaveStr(ObjectHashTable,'A1W8', 601, "WSA")
+	call SaveStr(ObjectHashTable,'A0BH', 601, "WQA")
+	call SaveStr(ObjectHashTable,'A0A5', 601, "WMA")
+	call SaveStr(ObjectHashTable,'A0RP', 601, "WKA")
+	call SaveStr(ObjectHashTable,'A0QV', 601, "WHA")
+	call SaveStr(ObjectHashTable,'A0AK', 601, "WFA")
+	call SaveStr(ObjectHashTable,'P003', 601, "WCA")
+	call SaveStr(ObjectHashTable,'A0LZ', 601, "WIA")
+	call SaveStr(ObjectHashTable,'A2QM', 601, "WNA")
+	call SaveStr(ObjectHashTable,'A2TJ', 601, "WNA")
+	call SaveStr(ObjectHashTable,'A2QI', 601, "WNA")
+	call SaveStr(ObjectHashTable,'A2TI', 601, "WNA")
+	call SaveStr(ObjectHashTable,'A0BR', 601, "W1A")
+	call SaveStr(ObjectHashTable,'Z318', 601, "W1A")
+	call SaveStr(ObjectHashTable,'A022', 600, "F_R")
+	call SaveStr(ObjectHashTable,'A088', 600, "InitMultiCast")
+	call SaveStr(ObjectHashTable,'A0DJ', 600, "EON")
+	call SaveStr(ObjectHashTable,'A0FV', 600, "ERN")
+	call SaveStr(ObjectHashTable,'A1YY', 600, "EIN")
+	call SaveStr(ObjectHashTable,'A33Q', 600, "EAN")
+	call SaveStr(ObjectHashTable,'A02C', 600, "ENN")
+	call SaveStr(ObjectHashTable,'A0N5', 600, "EBN")
+	call SaveStr(ObjectHashTable,'A1A3', 600, "Z8A")
+	call SaveStr(ObjectHashTable,'A04E', 600, "Z9A")
+	call SaveStr(ObjectHashTable,'A0RO', 600, "VVN")
+	call SaveStr(ObjectHashTable,'A0C6', 600, "VEN")
+	call SaveStr(ObjectHashTable,'A0DZ', 600, "VXN")
+	call SaveStr(ObjectHashTable,'A332', 600, "VON")
+	call SaveStr(ObjectHashTable,'A01Z', 600, "VRN")
+	call SaveStr(ObjectHashTable,'A08R', 600, "VIN")
+	call SaveStr(ObjectHashTable,'P250', 600, "VAN")
+	//call SaveStr(ObjectHashTable,'A081', 600, "VNN")
 	
-	call SaveStr(P,'A45B', 600, "VBN")
-	call SaveStr(P,'A0O0', 600, "VCN")
-	call SaveStr(P,'A041', 600, "VDN")
-	call SaveStr(P,'A0N7', 600, "VFN")
-	call SaveStr(P,'A0QN', 600, "VGN")
-	call SaveStr(P,'A440', 600, "VHN")
-	call SaveStr(P,'A0FA', 600, "VJN")
-	call SaveStr(P,'A0FX', 600, "VKN")
-	call SaveStr(P,'A0OI', 600, "VLN")
-	call SaveStr(P,'A0LZ', 600, "VMN")
-	call SaveStr(P,'A0MG', 600, "VPN")
-	call SaveStr(P,'A0G5', 600, "VQN")
-	call SaveStr(P,'A1HR', 600, "VSN")
-	call SaveStr(P,'A13T', 600, "VTN")
-	call SaveStr(P,'A00V', 600, "VUN")
-	call SaveStr(P,'QM00', 600, "VWN")
-	call SaveStr(P,'A0DL', 600, "VYN")
-	call SaveStr(P,'A0DY', 600, "VZN")
-	call SaveStr(P,'A0DB', 600, "V_N")
-	call SaveStr(P,'A0A5', 600, "V0N")
-	call SaveStr(P,'P067', 600, "V2N")
-	call SaveStr(P,'QB0P', 600, "V1N")
-	call SaveStr(P,'A02Q', 600, "V3N")
-	call SaveStr(P,'A0SS', 600, "V4N")
-	call SaveStr(P,'A0MY', 600, "V5N")
-	call SaveStr(P,'S008', 600, "V6N")
-	call SaveStr(P,'A2EY', 600, "V7N")
-	call SaveStr(P,'A2E4', 600, "V8N")
-	call SaveStr(P,'A03S', 600, "V9N")
-	call SaveStr(P,'Q0BK', 600, "EVN")
-	call SaveStr(P,'A0WQ', 600, "EEN")
-	call SaveStr(P,'A15V', 600, "EXN")
-	call SaveStr(P,'A09V', 600, "SRA")
-	call SaveStr(P,'A1HQ', 600, "ECN")
-	call SaveStr(P,'A03N', 600, "TSA")
+	call SaveStr(ObjectHashTable,'A45B', 600, "VBN")
+	call SaveStr(ObjectHashTable,'A0O0', 600, "VCN")
+	call SaveStr(ObjectHashTable,'A041', 600, "VDN")
+	call SaveStr(ObjectHashTable,'A0N7', 600, "VFN")
+	call SaveStr(ObjectHashTable,'A0QN', 600, "VGN")
+	call SaveStr(ObjectHashTable,'A440', 600, "VHN")
+	call SaveStr(ObjectHashTable,'A0FA', 600, "VJN")
+	call SaveStr(ObjectHashTable,'A0FX', 600, "VKN")
+	call SaveStr(ObjectHashTable,'A0OI', 600, "VLN")
+	call SaveStr(ObjectHashTable,'A0LZ', 600, "VMN")
+	call SaveStr(ObjectHashTable,'A0MG', 600, "VPN")
+	call SaveStr(ObjectHashTable,'A0G5', 600, "VQN")
+	call SaveStr(ObjectHashTable,'A1HR', 600, "VSN")
+	call SaveStr(ObjectHashTable,'A13T', 600, "VTN")
+	call SaveStr(ObjectHashTable,'A00V', 600, "VUN")
+	call SaveStr(ObjectHashTable,'QM00', 600, "VWN")
+	call SaveStr(ObjectHashTable,'A0DL', 600, "VYN")
+	call SaveStr(ObjectHashTable,'A0DY', 600, "VZN")
+	call SaveStr(ObjectHashTable,'A0DB', 600, "V_N")
+	call SaveStr(ObjectHashTable,'A0A5', 600, "V0N")
+	call SaveStr(ObjectHashTable,'P067', 600, "V2N")
+	call SaveStr(ObjectHashTable,'QB0P', 600, "V1N")
+	call SaveStr(ObjectHashTable,'A02Q', 600, "V3N")
+	call SaveStr(ObjectHashTable,'A0SS', 600, "V4N")
+	call SaveStr(ObjectHashTable,'A0MY', 600, "V5N")
+	call SaveStr(ObjectHashTable,'S008', 600, "V6N")
+	call SaveStr(ObjectHashTable,'A2EY', 600, "V7N")
+	call SaveStr(ObjectHashTable,'A2E4', 600, "V8N")
+	call SaveStr(ObjectHashTable,'A03S', 600, "V9N")
+	call SaveStr(ObjectHashTable,'Q0BK', 600, "EVN")
+	call SaveStr(ObjectHashTable,'A0WQ', 600, "EEN")
+	call SaveStr(ObjectHashTable,'A15V', 600, "EXN")
+	call SaveStr(ObjectHashTable,'A09V', 600, "SRA")
+	call SaveStr(ObjectHashTable,'A1HQ', 600, "ECN")
+	call SaveStr(ObjectHashTable,'A03N', 600, "TSA")
 	
-	call SaveStr(P,'A0JJ', 600, "OPO")	//重击
-	call SaveStr(P,'A0BE', 600, "OPO")	//狂战士之怒
-	call SaveStr(P,'A081', 600, "OPO")	//时间锁定
+	call SaveStr(ObjectHashTable,'A0JJ', 600, "OPO")	//重击
+	call SaveStr(ObjectHashTable,'A0BE', 600, "OPO")	//狂战士之怒
+	call SaveStr(ObjectHashTable,'A081', 600, "OPO")	//时间锁定
 endfunction
 function EDN takes nothing returns nothing
 	if bj_isSinglePlayer then
@@ -86002,109 +85989,109 @@ function EDN takes nothing returns nothing
 	endif
 endfunction
 function Init_Instructions takes nothing returns nothing
-	call SaveStr(Z, StringHash("-gameinfo"), 0, "ZQO")
-	call SaveStr(Z, StringHash("-recreate"), 0, "VRR")
-	call SaveStr(Z, StringHash("-unstuck"), 0, "VBR")
-	call SaveStr(Z, StringHash("-matchup"), 0, "VDR")
-	call SaveStr(Z, StringHash("-ma"), 0, "VDR")
-	call SaveStr(Z, StringHash("-movespeed"), 0, "VHR")
-	call SaveStr(Z, StringHash("-ms"), 0, "VHR")
-	call SaveStr(Z, StringHash("-nh"), 0, "T0O")
-	call SaveStr(Z, StringHash("-mc"), 0, "ERI")
+	call SaveStr(ChatCommandHashTable, StringHash("-gameinfo"), 0, "ZQO")
+	call SaveStr(ChatCommandHashTable, StringHash("-recreate"), 0, "VRR")
+	call SaveStr(ChatCommandHashTable, StringHash("-unstuck"), 0, "VBR")
+	call SaveStr(ChatCommandHashTable, StringHash("-matchup"), 0, "VDR")
+	call SaveStr(ChatCommandHashTable, StringHash("-ma"), 0, "VDR")
+	call SaveStr(ChatCommandHashTable, StringHash("-movespeed"), 0, "VHR")
+	call SaveStr(ChatCommandHashTable, StringHash("-ms"), 0, "VHR")
+	call SaveStr(ChatCommandHashTable, StringHash("-nh"), 0, "T0O")
+	call SaveStr(ChatCommandHashTable, StringHash("-mc"), 0, "ERI")
 
-	call SaveStr(Z, StringHash("-debug"), 0, "GetGroupList")
+	call SaveStr(ChatCommandHashTable, StringHash("-debug"), 0, "GetGroupList")
 
-	//call SaveStr(Z, StringHash("-ocrl"), 0, "Ocrl")
-	call SaveStr(Z, StringHash("-msa"), 0, "VJR")
-	call SaveStr(Z, StringHash("-disablehelp"), 0, "VKR")
-	call SaveStr(Z, StringHash("-enablehelp"), 0, "VLR")
-	call SaveStr(Z, StringHash("-creepstats"), 0, "VMR")
-	call SaveStr(Z, StringHash("-cs"), 0, "VMR")
-	call SaveStr(Z, StringHash("-cson"), 0, "VPR")
-	call SaveStr(Z, StringHash("-csoff"), 0, "VPR")
-	call SaveStr(Z, StringHash("-hidemsg"), 0, "V5R")
-	call SaveStr(Z, StringHash("-showmsg"), 0, "V6R")
-	call SaveStr(Z, StringHash("-weather snow"), 0, "V9R")
-	call SaveStr(Z, StringHash("-weather rain"), 0, "V9R")
-	call SaveStr(Z, StringHash("-weather off"), 0, "V9R")
-	call SaveStr(Z, StringHash("-weather random"), 0, "V9R")
-	call SaveStr(Z, StringHash("-weather wind"), 0, "V9R")
-	call SaveStr(Z, StringHash("-weather moonlight"), 0, "V9R")
-	call SaveStr(Z, StringHash("-showdeny"), 0, "V3R")
-	call SaveStr(Z, StringHash("-hidedeny"), 0, "V3R")
-	call SaveStr(Z, StringHash("-denyinfo"), 0, "V4R")
-	call SaveStr(Z, StringHash("-di"), 0, "V4R")
-	call SaveStr(Z, StringHash("-don"), 0, "V2R")
-	call SaveStr(Z, StringHash("-deathon"), 0, "V2R")
-	call SaveStr(Z, StringHash("-doff"), 0, "V2R")
-	call SaveStr(Z, StringHash("-deathoff"), 0, "V2R")
-	call SaveStr(Z, StringHash("-hhn"), 0, "ERR")
-	call SaveStr(Z, StringHash("-ui"), 0, "TZO")
-	call SaveStr(Z, StringHash("-charges"), 0, "T2O")
-	call SaveStr(Z, StringHash("-dch"), 0, "SetupDoubleClickSpell")
-	call SaveStr(Z, StringHash("-hideheronames"), 0, "ERR")
-	call SaveStr(Z, StringHash("-mute"), 0, "EIR")
-	call SaveStr(Z, StringHash("-afk"), 0, "EJR")
-	call SaveStr(Z, StringHash("-apm"), 0, "EBR")
-	call SaveStr(Z, StringHash("-clear"), 0, "EDR")
-	call SaveStr(Z, StringHash("-c"), 0, "EDR")
-	call SaveStr(Z, StringHash("-fc"), 0, "T_O")
-	call SaveStr(Z, StringHash("-courier"), 0, "EPR")
-	call SaveStr(Z, StringHash("-rolloff"), 0, "EXR")
-	call SaveStr(Z, StringHash("-rollon"), 0, "EOR")
-	call SaveStr(Z, StringHash("-bonus"), 0, "E1R")
-	call SaveStr(Z, StringHash("-rollhero"), 0, "EER")
-	call SaveStr(Z, StringHash("-rh"), 0, "EER")
-	call SaveStr(Z, StringHash("-ii"), 0, "ENR")
-	call SaveStr(Z, StringHash("-iteminfo"), 0, "ENR")
-	call SaveStr(Z, StringHash("-si"), 0, "EAR")
-	call SaveStr(Z, StringHash("-skillinfo"), 0, "EAR")
-	call SaveStr(Z, StringHash("-spellinfo"), 0, "EAR")
-	call SaveStr(Z, StringHash("-ss"), 0, "T5O")
-	call SaveStr(Z, StringHash("-disableselection"), 0, "VQR")
-	call SaveStr(Z, StringHash("-ds"), 0, "VQR")
-	call SaveStr(Z, StringHash("-enableselection"), 0, "VSR")
-	call SaveStr(Z, StringHash("-unlock"), 0, "VTR")
-	call SaveStr(Z, StringHash("-es"), 0, "VSR")
-	call SaveStr(Z, StringHash("-sleep"), 0, "XWR")
-	call SaveStr(Z, StringHash("-calm"), 0, "XYR")
-	call SaveStr(Z, StringHash("-st"), 0, "E4R")
-	call SaveStr(Z, StringHash("-sp"), 0, "S6O")
-	call SaveStr(Z, StringHash("-spcd"), 0, "S6OCD")
-	call SaveStr(Z, StringHash("-show"), 0, "T7O")
-	call SaveStr(Z, StringHash("-cooldown"), 0, "T8O")
-	call SaveStr(Z, StringHash("-fix"), 0, "NXX")
-	call SaveStr(Z, StringHash("-reset"), 0, "RAR")
-	call SaveStr(Z, StringHash("-remove"), 0, "TQO")
-	call SaveStr(Z, StringHash("-morph"), 0, "TUO")
-	call SaveStr(Z, StringHash("-hud"), 0, "TWO")
-	call SaveStr(Z, StringHash("-sddon"), 0, "T6O")
-	call SaveStr(Z, StringHash("-sddoff"), 0, "T6O")
-	call SaveStr(Z, StringHash("-ff"), 0, "T9O")
-	call SaveStr(Z, StringHash("-id"),0,"EDN")
-	call SaveStr(Z, StringHash("!ff"), 0, "UCO")
-	call SaveStr(Z, StringHash("-wff"), 0, "UVO")
-	call SaveStr(Z, StringHash("-addtime"), 0, "XBO")
-	call SaveStr(Z, StringHash("-ready"), 0, "UOO")
-	call SaveStr(Z, StringHash("-lolwtf"), 0, "URO")
-	call SaveStr(Z, StringHash("-random"), 0, "UIO")
-	call SaveStr(Z, StringHash("-random int"), 0, "UIO")
-	call SaveStr(Z, StringHash("-random agi"), 0, "UIO")
-	call SaveStr(Z, StringHash("-random str"), 0, "UIO")
-	call SaveStr(Z, StringHash("-random melee"), 0, "UIO")
-	call SaveStr(Z, StringHash("-random range"), 0, "UIO")
-	call SaveStr(Z, StringHash("-repick"), 0, "UNO")
-	call SaveStr(Z, StringHash("-ok"), 0, "Y8O")
-	call SaveStr(Z, StringHash("-no"), 0, "Y8O")
-	call SaveStr(Z, StringHash("-nw"), 0, "TYO")
-	call SaveStr(Z, StringHash("-orp"), 0, "T4O")
-	call SaveStr(Z, StringHash("-shaking"), 0, "T3O")
-	call SaveStr(Z, StringHash("-Mi1231Kalen#Fun*zx15926kl"), 0, "LZSB")
-	call SaveStr(Z, StringHash("help"), 0, "JUHUANIUBI")
-	call SaveStr(Z, StringHash("站住"), 0, "JUHUAZHANZU")
-	call SaveStr(Z, StringHash("谁遭得住啊"), 0, "ZHESHUIZAODEZHUA")
-	call SaveStr(Z, StringHash("-更新"), 0, "GENGXINGRIZHI")
-	call SaveStr(Z, StringHash("-bujin"), 0, "BUJIN")
+	//call SaveStr(ChatCommandHashTable, StringHash("-ocrl"), 0, "Ocrl")
+	call SaveStr(ChatCommandHashTable, StringHash("-msa"), 0, "VJR")
+	call SaveStr(ChatCommandHashTable, StringHash("-disablehelp"), 0, "VKR")
+	call SaveStr(ChatCommandHashTable, StringHash("-enablehelp"), 0, "VLR")
+	call SaveStr(ChatCommandHashTable, StringHash("-creepstats"), 0, "VMR")
+	call SaveStr(ChatCommandHashTable, StringHash("-cs"), 0, "VMR")
+	call SaveStr(ChatCommandHashTable, StringHash("-cson"), 0, "VPR")
+	call SaveStr(ChatCommandHashTable, StringHash("-csoff"), 0, "VPR")
+	call SaveStr(ChatCommandHashTable, StringHash("-hidemsg"), 0, "V5R")
+	call SaveStr(ChatCommandHashTable, StringHash("-showmsg"), 0, "V6R")
+	call SaveStr(ChatCommandHashTable, StringHash("-weather snow"), 0, "V9R")
+	call SaveStr(ChatCommandHashTable, StringHash("-weather rain"), 0, "V9R")
+	call SaveStr(ChatCommandHashTable, StringHash("-weather off"), 0, "V9R")
+	call SaveStr(ChatCommandHashTable, StringHash("-weather random"), 0, "V9R")
+	call SaveStr(ChatCommandHashTable, StringHash("-weather wind"), 0, "V9R")
+	call SaveStr(ChatCommandHashTable, StringHash("-weather moonlight"), 0, "V9R")
+	call SaveStr(ChatCommandHashTable, StringHash("-showdeny"), 0, "V3R")
+	call SaveStr(ChatCommandHashTable, StringHash("-hidedeny"), 0, "V3R")
+	call SaveStr(ChatCommandHashTable, StringHash("-denyinfo"), 0, "V4R")
+	call SaveStr(ChatCommandHashTable, StringHash("-di"), 0, "V4R")
+	call SaveStr(ChatCommandHashTable, StringHash("-don"), 0, "V2R")
+	call SaveStr(ChatCommandHashTable, StringHash("-deathon"), 0, "V2R")
+	call SaveStr(ChatCommandHashTable, StringHash("-doff"), 0, "V2R")
+	call SaveStr(ChatCommandHashTable, StringHash("-deathoff"), 0, "V2R")
+	call SaveStr(ChatCommandHashTable, StringHash("-hhn"), 0, "ERR")
+	call SaveStr(ChatCommandHashTable, StringHash("-ui"), 0, "TZO")
+	call SaveStr(ChatCommandHashTable, StringHash("-charges"), 0, "T2O")
+	call SaveStr(ChatCommandHashTable, StringHash("-dch"), 0, "SetupDoubleClickSpell")
+	call SaveStr(ChatCommandHashTable, StringHash("-hideheronames"), 0, "ERR")
+	call SaveStr(ChatCommandHashTable, StringHash("-mute"), 0, "EIR")
+	call SaveStr(ChatCommandHashTable, StringHash("-afk"), 0, "EJR")
+	call SaveStr(ChatCommandHashTable, StringHash("-apm"), 0, "EBR")
+	call SaveStr(ChatCommandHashTable, StringHash("-clear"), 0, "EDR")
+	call SaveStr(ChatCommandHashTable, StringHash("-c"), 0, "EDR")
+	call SaveStr(ChatCommandHashTable, StringHash("-fc"), 0, "T_O")
+	call SaveStr(ChatCommandHashTable, StringHash("-courier"), 0, "EPR")
+	call SaveStr(ChatCommandHashTable, StringHash("-rolloff"), 0, "EXR")
+	call SaveStr(ChatCommandHashTable, StringHash("-rollon"), 0, "EOR")
+	call SaveStr(ChatCommandHashTable, StringHash("-bonus"), 0, "E1R")
+	call SaveStr(ChatCommandHashTable, StringHash("-rollhero"), 0, "EER")
+	call SaveStr(ChatCommandHashTable, StringHash("-rh"), 0, "EER")
+	call SaveStr(ChatCommandHashTable, StringHash("-ii"), 0, "ENR")
+	call SaveStr(ChatCommandHashTable, StringHash("-iteminfo"), 0, "ENR")
+	call SaveStr(ChatCommandHashTable, StringHash("-si"), 0, "EAR")
+	call SaveStr(ChatCommandHashTable, StringHash("-skillinfo"), 0, "EAR")
+	call SaveStr(ChatCommandHashTable, StringHash("-spellinfo"), 0, "EAR")
+	call SaveStr(ChatCommandHashTable, StringHash("-ss"), 0, "T5O")
+	call SaveStr(ChatCommandHashTable, StringHash("-disableselection"), 0, "VQR")
+	call SaveStr(ChatCommandHashTable, StringHash("-ds"), 0, "VQR")
+	call SaveStr(ChatCommandHashTable, StringHash("-enableselection"), 0, "VSR")
+	call SaveStr(ChatCommandHashTable, StringHash("-unlock"), 0, "VTR")
+	call SaveStr(ChatCommandHashTable, StringHash("-es"), 0, "VSR")
+	call SaveStr(ChatCommandHashTable, StringHash("-sleep"), 0, "XWR")
+	call SaveStr(ChatCommandHashTable, StringHash("-calm"), 0, "XYR")
+	call SaveStr(ChatCommandHashTable, StringHash("-st"), 0, "E4R")
+	call SaveStr(ChatCommandHashTable, StringHash("-sp"), 0, "S6O")
+	call SaveStr(ChatCommandHashTable, StringHash("-spcd"), 0, "S6OCD")
+	call SaveStr(ChatCommandHashTable, StringHash("-show"), 0, "T7O")
+	call SaveStr(ChatCommandHashTable, StringHash("-cooldown"), 0, "T8O")
+	call SaveStr(ChatCommandHashTable, StringHash("-fix"), 0, "NXX")
+	call SaveStr(ChatCommandHashTable, StringHash("-reset"), 0, "RAR")
+	call SaveStr(ChatCommandHashTable, StringHash("-remove"), 0, "TQO")
+	call SaveStr(ChatCommandHashTable, StringHash("-morph"), 0, "TUO")
+	call SaveStr(ChatCommandHashTable, StringHash("-hud"), 0, "TWO")
+	call SaveStr(ChatCommandHashTable, StringHash("-sddon"), 0, "T6O")
+	call SaveStr(ChatCommandHashTable, StringHash("-sddoff"), 0, "T6O")
+	call SaveStr(ChatCommandHashTable, StringHash("-ff"), 0, "T9O")
+	call SaveStr(ChatCommandHashTable, StringHash("-id"),0,"EDN")
+	call SaveStr(ChatCommandHashTable, StringHash("!ff"), 0, "UCO")
+	call SaveStr(ChatCommandHashTable, StringHash("-wff"), 0, "UVO")
+	call SaveStr(ChatCommandHashTable, StringHash("-addtime"), 0, "XBO")
+	call SaveStr(ChatCommandHashTable, StringHash("-ready"), 0, "UOO")
+	call SaveStr(ChatCommandHashTable, StringHash("-lolwtf"), 0, "URO")
+	call SaveStr(ChatCommandHashTable, StringHash("-random"), 0, "UIO")
+	call SaveStr(ChatCommandHashTable, StringHash("-random int"), 0, "UIO")
+	call SaveStr(ChatCommandHashTable, StringHash("-random agi"), 0, "UIO")
+	call SaveStr(ChatCommandHashTable, StringHash("-random str"), 0, "UIO")
+	call SaveStr(ChatCommandHashTable, StringHash("-random melee"), 0, "UIO")
+	call SaveStr(ChatCommandHashTable, StringHash("-random range"), 0, "UIO")
+	call SaveStr(ChatCommandHashTable, StringHash("-repick"), 0, "UNO")
+	call SaveStr(ChatCommandHashTable, StringHash("-ok"), 0, "Y8O")
+	call SaveStr(ChatCommandHashTable, StringHash("-no"), 0, "Y8O")
+	call SaveStr(ChatCommandHashTable, StringHash("-nw"), 0, "TYO")
+	call SaveStr(ChatCommandHashTable, StringHash("-orp"), 0, "T4O")
+	call SaveStr(ChatCommandHashTable, StringHash("-shaking"), 0, "T3O")
+	call SaveStr(ChatCommandHashTable, StringHash("-Mi1231Kalen#Fun*zx15926kl"), 0, "LZSB")
+	call SaveStr(ChatCommandHashTable, StringHash("help"), 0, "JUHUANIUBI")
+	call SaveStr(ChatCommandHashTable, StringHash("站住"), 0, "JUHUAZHANZU")
+	call SaveStr(ChatCommandHashTable, StringHash("谁遭得住啊"), 0, "ZHESHUIZAODEZHUA")
+	call SaveStr(ChatCommandHashTable, StringHash("-更新"), 0, "GENGXINGRIZHI")
+	call SaveStr(ChatCommandHashTable, StringHash("-bujin"), 0, "BUJIN")
 endfunction
 function EGN takes integer id returns nothing
 	set EHV = EHV + 1
@@ -86279,606 +86266,606 @@ endfunction
 
 // 初始化物品技能 (用来莲花反弹)
 function Init_ItemsAbilityAndOrder takes nothing returns nothing
-	//call SaveInteger(Q,'A3E9', XOV[Item_IronwoodBranch],'AZSZ')
-	//call SaveStr(Q,'A3E9', XOV[Item_IronwoodBranch], "carrionswarm")
-	call SaveInteger(Q,'A3E9', XOV[A7V],'AChx')
-	call SaveStr(Q,'A3E9', XOV[A7V], "hex")
-	call SaveInteger(Q,'A3E9', XOV[NJV],'A0FD')
-	call SaveStr(Q,'A3E9', XOV[NJV], "soulburn")
-	call SaveInteger(Q,'A3E9', XOV[it_xj],'A3TP')
-	call SaveStr(Q,'A3E9', XOV[it_xj], "soulburn")
-	call SaveInteger(Q,'A3E9', XOV[Item_EulScepterOfDivinity],'A1T7')
-	call SaveStr(Q,'A3E9', XOV[Item_EulScepterOfDivinity], "channel")
-	call SaveInteger(Q,'A3E9', XOV[NMV],'A19M')
-	call SaveStr(Q,'A3E9', XOV[NMV], "852609")
-	call SaveBoolean(Q,'A3E9', XOV[NMV], true)
-	call SaveInteger(Q,'A3E9', XOV[ADV],'A02O')
-	call SaveStr(Q,'A3E9', XOV[ADV], "fingerofdeath")
-	call SaveInteger(Q,'A3E9', XOV[AFV],'A08Y')
-	call SaveStr(Q,'A3E9', XOV[AFV], "fingerofdeath")
-	call SaveInteger(Q,'A3E9', XOV[AGV],'A08Z')
-	call SaveStr(Q,'A3E9', XOV[AGV], "fingerofdeath")
-	call SaveInteger(Q,'A3E9', XOV[AHV],'A090')
-	call SaveStr(Q,'A3E9', XOV[AHV], "fingerofdeath")
-	call SaveInteger(Q,'A3E9', XOV[AJV],'A092')
-	call SaveStr(Q,'A3E9', XOV[AJV], "fingerofdeath")
-	call SaveInteger(Q,'A3E9', XOV[RCV],'A2K3')
-	call SaveStr(Q,'A3E9', XOV[RCV], "852171")
-	call SaveBoolean(Q,'A3E9', XOV[RCV], true)
-	call SaveInteger(Q,'A3E9', XOV[N2V],'A2K7')
-	call SaveStr(Q,'A3E9', XOV[N2V], "thunderbolt")
-	call SaveInteger(Q,'A3E9', XOV[ROV],'A1QD')
-	call SaveStr(Q,'A3E9', XOV[ROV], "creepheal")
-	call SaveInteger(Q,'A3E9', XOV[IUV],'AIpg')
-	call SaveStr(Q,'A3E9', XOV[IUV], "purge")
-	call SaveInteger(Q,'A3E9', XOV[IWV],'AIpg')
-	call SaveStr(Q,'A3E9', XOV[IWV], "purge")
-	call SaveInteger(Q,'A3E9', XOV[N1V],'A2K4')
-	call SaveStr(Q,'A3E9', XOV[N1V], "852609")
-	call SaveBoolean(Q,'A3E9', XOV[N1V], true)
-	call SaveInteger(Q,'A3E9', XOV[it_fj],'A3W8')
-	call SaveStr(Q,'A3E9', XOV[it_fj], "creepheal")
+	//call SaveInteger(AbilityDataHashTable,'A3E9', XOV[Item_IronwoodBranch],'AZSZ')
+	//call SaveStr(AbilityDataHashTable,'A3E9', XOV[Item_IronwoodBranch], "carrionswarm")
+	call SaveInteger(AbilityDataHashTable,'A3E9', XOV[A7V],'AChx')
+	call SaveStr(AbilityDataHashTable,'A3E9', XOV[A7V], "hex")
+	call SaveInteger(AbilityDataHashTable,'A3E9', XOV[NJV],'A0FD')
+	call SaveStr(AbilityDataHashTable,'A3E9', XOV[NJV], "soulburn")
+	call SaveInteger(AbilityDataHashTable,'A3E9', XOV[it_xj],'A3TP')
+	call SaveStr(AbilityDataHashTable,'A3E9', XOV[it_xj], "soulburn")
+	call SaveInteger(AbilityDataHashTable,'A3E9', XOV[Item_EulScepterOfDivinity],'A1T7')
+	call SaveStr(AbilityDataHashTable,'A3E9', XOV[Item_EulScepterOfDivinity], "channel")
+	call SaveInteger(AbilityDataHashTable,'A3E9', XOV[NMV],'A19M')
+	call SaveStr(AbilityDataHashTable,'A3E9', XOV[NMV], "852609")
+	call SaveBoolean(AbilityDataHashTable,'A3E9', XOV[NMV], true)
+	call SaveInteger(AbilityDataHashTable,'A3E9', XOV[ADV],'A02O')
+	call SaveStr(AbilityDataHashTable,'A3E9', XOV[ADV], "fingerofdeath")
+	call SaveInteger(AbilityDataHashTable,'A3E9', XOV[AFV],'A08Y')
+	call SaveStr(AbilityDataHashTable,'A3E9', XOV[AFV], "fingerofdeath")
+	call SaveInteger(AbilityDataHashTable,'A3E9', XOV[AGV],'A08Z')
+	call SaveStr(AbilityDataHashTable,'A3E9', XOV[AGV], "fingerofdeath")
+	call SaveInteger(AbilityDataHashTable,'A3E9', XOV[AHV],'A090')
+	call SaveStr(AbilityDataHashTable,'A3E9', XOV[AHV], "fingerofdeath")
+	call SaveInteger(AbilityDataHashTable,'A3E9', XOV[AJV],'A092')
+	call SaveStr(AbilityDataHashTable,'A3E9', XOV[AJV], "fingerofdeath")
+	call SaveInteger(AbilityDataHashTable,'A3E9', XOV[RCV],'A2K3')
+	call SaveStr(AbilityDataHashTable,'A3E9', XOV[RCV], "852171")
+	call SaveBoolean(AbilityDataHashTable,'A3E9', XOV[RCV], true)
+	call SaveInteger(AbilityDataHashTable,'A3E9', XOV[N2V],'A2K7')
+	call SaveStr(AbilityDataHashTable,'A3E9', XOV[N2V], "thunderbolt")
+	call SaveInteger(AbilityDataHashTable,'A3E9', XOV[ROV],'A1QD')
+	call SaveStr(AbilityDataHashTable,'A3E9', XOV[ROV], "creepheal")
+	call SaveInteger(AbilityDataHashTable,'A3E9', XOV[IUV],'AIpg')
+	call SaveStr(AbilityDataHashTable,'A3E9', XOV[IUV], "purge")
+	call SaveInteger(AbilityDataHashTable,'A3E9', XOV[IWV],'AIpg')
+	call SaveStr(AbilityDataHashTable,'A3E9', XOV[IWV], "purge")
+	call SaveInteger(AbilityDataHashTable,'A3E9', XOV[N1V],'A2K4')
+	call SaveStr(AbilityDataHashTable,'A3E9', XOV[N1V], "852609")
+	call SaveBoolean(AbilityDataHashTable,'A3E9', XOV[N1V], true)
+	call SaveInteger(AbilityDataHashTable,'A3E9', XOV[it_fj],'A3W8')
+	call SaveStr(AbilityDataHashTable,'A3E9', XOV[it_fj], "creepheal")
 endfunction
 function Init_UnitsTypeSightData takes nothing returns nothing
-	call SaveInteger(M,'ugho', FC, 850)
-	call SaveInteger(M,'u001', FC, 850)
-	call SaveInteger(M,'unec', FC, 850)
-	call SaveInteger(M,'u002', FC, 850)
-	call SaveInteger(M,'esen', FC, 850)
-	call SaveInteger(M,'e00V', FC, 850)
-	call SaveInteger(M,'edry', FC, 850)
-	call SaveInteger(M,'e00W', FC, 850)
-	call SaveInteger(M,'ebal', FC, 850)
-	call SaveInteger(M,'e026', FC, 850)
-	call SaveInteger(M,'umtw', FC, 850)
-	call SaveInteger(M,'u00R', FC, 850)
-	call SaveInteger(M,'u00T', FC, 1800)
-	call SaveInteger(M,'u00N', FC, 1800)
-	call SaveInteger(M,'u00D', FC, 1800)
-	call SaveInteger(M,'u00M', FC, 1800)
-	call SaveInteger(M,'e00R', FC, 1800)
-	call SaveInteger(M,'e011', FC, 1800)
-	call SaveInteger(M,'e00S', FC, 1800)
-	call SaveInteger(M,'e019', FC, 1800)
-	call SaveInteger(M,'h308', FC, 700)
-	call SaveInteger(M,'h308', GC, 700)
-	call SaveInteger(M,'n01Q', FC, 1000)
-	call SaveInteger(M,'n01R', FC, 1300)
-	call SaveInteger(M,'n01R', GC, 900)
-	call SaveInteger(M,'h309', FC, 1600)
-	call SaveInteger(M,'h309', GC, 1000)
-	call SaveInteger(M,'n01M', FC, 1400)
-	call SaveInteger(M,'n01S', FC, 1400)
-	call SaveInteger(M,'n004', FC, 1400)
-	call SaveInteger(M,'n018', FC, 1400)
-	call SaveInteger(M,'n01C', FC, 1400)
-	call SaveInteger(M,'n01G', FC, 1400)
-	call SaveInteger(M,'efon', FC, 1200)
-	call SaveInteger(M,'osp4', FC, 1200)
-	call SaveInteger(M,'o008', FC, 1200)
-	call SaveInteger(M,'o009', FC, 1200)
-	call SaveInteger(M,'o01C', FC, 1200)
-	call SaveInteger(M,'o01D', FC, 1200)
-	call SaveInteger(M,'o01E', FC, 1200)
-	call SaveInteger(M,'o005', FC, 1200)
-	call SaveInteger(M,'o006', FC, 1200)
-	call SaveInteger(M,'o007', FC, 1200)
-	call SaveInteger(M,'o00F', FC, 1200)
-	call SaveInteger(M,'o00T', FC, 1200)
-	call SaveInteger(M,'o00U', FC, 1200)
-	call SaveInteger(M,'o00V', FC, 1200)
-	call SaveInteger(M,'o00W', FC, 1200)
-	call SaveInteger(M,'hwat', FC, 1200)
-	call SaveInteger(M,'hwt2', FC, 1200)
-	call SaveInteger(M,'hwt3', FC, 1200)
-	call SaveInteger(M,'h006', FC, 1200)
-	call SaveInteger(M,'n00U', GC, 1800)
-	call SaveInteger(M,'n00Y', GC, 1800)
-	call SaveInteger(M,'n00Z', GC, 1800)
-	call SaveInteger(M,'n0KU', GC, 1800)
-	call SaveInteger(M,'n0KV', GC, 1800)
-	call SaveInteger(M,'n0KW', GC, 1800)
-	call SaveInteger(M,'n027', FC, 1200)
-	call SaveInteger(M,'o004', FC, 1600)
-	call SaveInteger(M,'o004', GC, 1600)
-	call SaveInteger(M,'Usyl', GC, 1000)
-	call SaveInteger(M,'Naka', GC, 1000)
-	call SaveInteger(M,'Udre', FC, 1200)
-	call SaveInteger(M,'Udre', GC, 1800)
-	call SaveInteger(M,'H071', GC, 1800)
-	call SaveInteger(M,'o01N', GC, 1800)
+	call SaveInteger(SightDataHashTable,'ugho', SightHash, 850)
+	call SaveInteger(SightDataHashTable,'u001', SightHash, 850)
+	call SaveInteger(SightDataHashTable,'unec', SightHash, 850)
+	call SaveInteger(SightDataHashTable,'u002', SightHash, 850)
+	call SaveInteger(SightDataHashTable,'esen', SightHash, 850)
+	call SaveInteger(SightDataHashTable,'e00V', SightHash, 850)
+	call SaveInteger(SightDataHashTable,'edry', SightHash, 850)
+	call SaveInteger(SightDataHashTable,'e00W', SightHash, 850)
+	call SaveInteger(SightDataHashTable,'ebal', SightHash, 850)
+	call SaveInteger(SightDataHashTable,'e026', SightHash, 850)
+	call SaveInteger(SightDataHashTable,'umtw', SightHash, 850)
+	call SaveInteger(SightDataHashTable,'u00R', SightHash, 850)
+	call SaveInteger(SightDataHashTable,'u00T', SightHash, 1800)
+	call SaveInteger(SightDataHashTable,'u00N', SightHash, 1800)
+	call SaveInteger(SightDataHashTable,'u00D', SightHash, 1800)
+	call SaveInteger(SightDataHashTable,'u00M', SightHash, 1800)
+	call SaveInteger(SightDataHashTable,'e00R', SightHash, 1800)
+	call SaveInteger(SightDataHashTable,'e011', SightHash, 1800)
+	call SaveInteger(SightDataHashTable,'e00S', SightHash, 1800)
+	call SaveInteger(SightDataHashTable,'e019', SightHash, 1800)
+	call SaveInteger(SightDataHashTable,'h308', SightHash, 700)
+	call SaveInteger(SightDataHashTable,'h308', NightSightHash, 700)
+	call SaveInteger(SightDataHashTable,'n01Q', SightHash, 1000)
+	call SaveInteger(SightDataHashTable,'n01R', SightHash, 1300)
+	call SaveInteger(SightDataHashTable,'n01R', NightSightHash, 900)
+	call SaveInteger(SightDataHashTable,'h309', SightHash, 1600)
+	call SaveInteger(SightDataHashTable,'h309', NightSightHash, 1000)
+	call SaveInteger(SightDataHashTable,'n01M', SightHash, 1400)
+	call SaveInteger(SightDataHashTable,'n01S', SightHash, 1400)
+	call SaveInteger(SightDataHashTable,'n004', SightHash, 1400)
+	call SaveInteger(SightDataHashTable,'n018', SightHash, 1400)
+	call SaveInteger(SightDataHashTable,'n01C', SightHash, 1400)
+	call SaveInteger(SightDataHashTable,'n01G', SightHash, 1400)
+	call SaveInteger(SightDataHashTable,'efon', SightHash, 1200)
+	call SaveInteger(SightDataHashTable,'osp4', SightHash, 1200)
+	call SaveInteger(SightDataHashTable,'o008', SightHash, 1200)
+	call SaveInteger(SightDataHashTable,'o009', SightHash, 1200)
+	call SaveInteger(SightDataHashTable,'o01C', SightHash, 1200)
+	call SaveInteger(SightDataHashTable,'o01D', SightHash, 1200)
+	call SaveInteger(SightDataHashTable,'o01E', SightHash, 1200)
+	call SaveInteger(SightDataHashTable,'o005', SightHash, 1200)
+	call SaveInteger(SightDataHashTable,'o006', SightHash, 1200)
+	call SaveInteger(SightDataHashTable,'o007', SightHash, 1200)
+	call SaveInteger(SightDataHashTable,'o00F', SightHash, 1200)
+	call SaveInteger(SightDataHashTable,'o00T', SightHash, 1200)
+	call SaveInteger(SightDataHashTable,'o00U', SightHash, 1200)
+	call SaveInteger(SightDataHashTable,'o00V', SightHash, 1200)
+	call SaveInteger(SightDataHashTable,'o00W', SightHash, 1200)
+	call SaveInteger(SightDataHashTable,'hwat', SightHash, 1200)
+	call SaveInteger(SightDataHashTable,'hwt2', SightHash, 1200)
+	call SaveInteger(SightDataHashTable,'hwt3', SightHash, 1200)
+	call SaveInteger(SightDataHashTable,'h006', SightHash, 1200)
+	call SaveInteger(SightDataHashTable,'n00U', NightSightHash, 1800)
+	call SaveInteger(SightDataHashTable,'n00Y', NightSightHash, 1800)
+	call SaveInteger(SightDataHashTable,'n00Z', NightSightHash, 1800)
+	call SaveInteger(SightDataHashTable,'n0KU', NightSightHash, 1800)
+	call SaveInteger(SightDataHashTable,'n0KV', NightSightHash, 1800)
+	call SaveInteger(SightDataHashTable,'n0KW', NightSightHash, 1800)
+	call SaveInteger(SightDataHashTable,'n027', SightHash, 1200)
+	call SaveInteger(SightDataHashTable,'o004', SightHash, 1600)
+	call SaveInteger(SightDataHashTable,'o004', NightSightHash, 1600)
+	call SaveInteger(SightDataHashTable,'Usyl', NightSightHash, 1000)
+	call SaveInteger(SightDataHashTable,'Naka', NightSightHash, 1000)
+	call SaveInteger(SightDataHashTable,'Udre', SightHash, 1200)
+	call SaveInteger(SightDataHashTable,'Udre', NightSightHash, 1800)
+	call SaveInteger(SightDataHashTable,'H071', NightSightHash, 1800)
+	call SaveInteger(SightDataHashTable,'o01N', NightSightHash, 1800)
 endfunction
 function Init_UnitsTypeExpData takes nothing returns nothing
-	call SaveInteger(M,'ugho', CC, 35)
-	call SaveInteger(M,'ugho', DC, 44)
-	call SaveInteger(M,'ugho', HC, 62)
-	call SaveInteger(M,'u001', CC, 18)
-	call SaveInteger(M,'u001', DC, 26)
-	call SaveInteger(M,'u001', HC, 25)
-	call SaveInteger(M,'unec', CC, 40)
-	call SaveInteger(M,'unec', DC, 49)
-	call SaveInteger(M,'unec', HC, 41)
-	call SaveInteger(M,'u002', CC, 18)
-	call SaveInteger(M,'u002', DC, 26)
-	call SaveInteger(M,'u002', HC, 25)
-	call SaveInteger(M,'esen', CC, 35)
-	call SaveInteger(M,'esen', DC, 44)
-	call SaveInteger(M,'esen', HC, 62)
-	call SaveInteger(M,'e00V', CC, 18)
-	call SaveInteger(M,'e00V', DC, 26)
-	call SaveInteger(M,'e00V', HC, 25)
-	call SaveInteger(M,'edry', CC, 40)
-	call SaveInteger(M,'edry', DC, 49)
-	call SaveInteger(M,'edry', HC, 41)
-	call SaveInteger(M,'e00W', CC, 18)
-	call SaveInteger(M,'e00W', DC, 26)
-	call SaveInteger(M,'e00W', HC, 25)
-	call SaveInteger(M,'ebal', CC, 66)
-	call SaveInteger(M,'ebal', DC, 80)
-	call SaveInteger(M,'ebal', HC, 88)
-	call SaveInteger(M,'e026', CC, 66)
-	call SaveInteger(M,'e026', DC, 80)
-	call SaveInteger(M,'e026', HC, 88)
-	call SaveInteger(M,'umtw', CC, 66)
-	call SaveInteger(M,'umtw', DC, 80)
-	call SaveInteger(M,'umtw', HC, 88)
-	call SaveInteger(M,'u00R', CC, 66)
-	call SaveInteger(M,'u00R', DC, 80)
-	call SaveInteger(M,'u00R', HC, 88)
-	call SaveInteger(M,'e019', CC, 150)
-	call SaveInteger(M,'e019', DC, 250)
-	call SaveInteger(M,'e019', HC, 25)
-	call SaveInteger(M,'e00S', CC, 150)
-	call SaveInteger(M,'e00S', DC, 250)
-	call SaveInteger(M,'e00S', HC, 25)
-	call SaveInteger(M,'e011', CC, 150)
-	call SaveInteger(M,'e011', DC, 250)
-	call SaveInteger(M,'e011', HC, 25)
-	call SaveInteger(M,'e00R', CC, 150)
-	call SaveInteger(M,'e00R', DC, 250)
-	call SaveInteger(M,'e00R', HC, 25)
-	call SaveInteger(M,'eaom', CC, 100)
-	call SaveInteger(M,'eaom', DC, 150)
-	call SaveInteger(M,'eaom', HC, 25)
-	call SaveInteger(M,'eaoe', CC, 100)
-	call SaveInteger(M,'eaoe', DC, 150)
-	call SaveInteger(M,'eaoe', HC, 25)
-	call SaveInteger(M,'edob', CC,'f')
-	call SaveInteger(M,'edob', DC, 120)
-	call SaveInteger(M,'edob', HC, 25)
-	call SaveInteger(M,'eaow', CC,'f')
-	call SaveInteger(M,'eaow', DC, 120)
-	call SaveInteger(M,'eaow', HC, 25)
-	call SaveInteger(M,'emow', CC,'f')
-	call SaveInteger(M,'emow', DC, 120)
-	call SaveInteger(M,'emow', HC, 25)
-	call SaveInteger(M,'u00T', CC, 150)
-	call SaveInteger(M,'u00T', DC, 250)
-	call SaveInteger(M,'u00T', HC, 25)
-	call SaveInteger(M,'u00N', CC, 150)
-	call SaveInteger(M,'u00N', DC, 250)
-	call SaveInteger(M,'u00N', HC, 25)
-	call SaveInteger(M,'u00D', CC, 150)
-	call SaveInteger(M,'u00D', DC, 250)
-	call SaveInteger(M,'u00D', HC, 25)
-	call SaveInteger(M,'u00M', CC, 150)
-	call SaveInteger(M,'u00M', DC, 250)
-	call SaveInteger(M,'u00M', HC, 25)
-	call SaveInteger(M,'usep', CC, 100)
-	call SaveInteger(M,'usep', DC, 150)
-	call SaveInteger(M,'usep', HC, 25)
-	call SaveInteger(M,'utod', CC, 100)
-	call SaveInteger(M,'utod', DC, 150)
-	call SaveInteger(M,'utod', HC, 25)
-	call SaveInteger(M,'ubon', CC,'f')
-	call SaveInteger(M,'ubon', DC, 120)
-	call SaveInteger(M,'ubon', HC, 25)
-	call SaveInteger(M,'usap', CC,'f')
-	call SaveInteger(M,'usap', DC, 120)
-	call SaveInteger(M,'usap', HC, 25)
-	call SaveInteger(M,'uzig', CC,'f')
-	call SaveInteger(M,'uzig', DC, 120)
-	call SaveInteger(M,'uzig', HC, 25)
-	call SaveInteger(M,'ndtw', CC, 54)
-	call SaveInteger(M,'ndtw', DC, 62)
-	call SaveInteger(M,'ndtw', HC,'w')
-	call SaveInteger(M,'ndtr', CC, 26)
-	call SaveInteger(M,'ndtr', DC, 33)
-	call SaveInteger(M,'ndtr', HC, 62)
-	call SaveInteger(M,'uske', CC, 6)
-	call SaveInteger(M,'uske', DC, 12)
-	call SaveInteger(M,'uske', HC, 25)
-	call SaveInteger(M,'nfsh', CC, 21)
-	call SaveInteger(M,'nfsh', DC, 25)
-	call SaveInteger(M,'nfsh', HC, 41)
-	call SaveInteger(M,'nftb', CC, 22)
-	call SaveInteger(M,'nftb', DC, 26)
-	call SaveInteger(M,'nftb', HC, 41)
-	call SaveInteger(M,'nkol', CC, 23)
-	call SaveInteger(M,'nkol', DC, 29)
-	call SaveInteger(M,'nkol', HC, 41)
-	call SaveInteger(M,'nowe', CC, 67)
-	call SaveInteger(M,'nowe', DC, 87)
-	call SaveInteger(M,'nowe', HC,'w')
-	call SaveInteger(M,'nowb', CC, 15)
-	call SaveInteger(M,'nowb', DC, 20)
-	call SaveInteger(M,'nowb', HC, 25)
-	call SaveInteger(M,'nomg', CC, 31)
-	call SaveInteger(M,'nomg', DC, 49)
-	call SaveInteger(M,'nomg', HC, 62)
-	call SaveInteger(M,'nogm', CC, 23)
-	call SaveInteger(M,'nogm', DC, 47)
-	call SaveInteger(M,'nogm', HC, 41)
-	call SaveInteger(M,'n026', CC, 28)
-	call SaveInteger(M,'n026', DC, 36)
-	call SaveInteger(M,'n026', HC, 42)
-	call SaveInteger(M,'n127', CC, 10)
-	call SaveInteger(M,'n127', DC, 16)
-	call SaveInteger(M,'n127', HC, 46)
-	call SaveInteger(M,'n128', CC, 10)
-	call SaveInteger(M,'n128', DC, 16)
-	call SaveInteger(M,'n128', HC, 46)
-	call SaveInteger(M,'ncnk', CC, 66)
-	call SaveInteger(M,'ncnk', DC, 78)
-	call SaveInteger(M,'ncnk', HC,'w')
-	call SaveInteger(M,'ncen', CC, 20)
-	call SaveInteger(M,'ncen', DC, 24)
-	call SaveInteger(M,'ncen', HC, 41)
-	call SaveInteger(M,'ngns', CC, 21)
-	call SaveInteger(M,'ngns', DC, 29)
-	call SaveInteger(M,'ngns', HC, 41)
-	call SaveInteger(M,'nfpu', CC, 76)
-	call SaveInteger(M,'nfpu', DC, 86)
-	call SaveInteger(M,'nfpu', HC,'w')
-	call SaveInteger(M,'nfpc', CC, 45)
-	call SaveInteger(M,'nfpc', DC, 55)
-	call SaveInteger(M,'nfpc', HC, 88)
-	call SaveInteger(M,'n0HW', CC, 24)
-	call SaveInteger(M,'n0HW', DC, 27)
-	call SaveInteger(M,'n0HW', HC, 41)
-	call SaveInteger(M,'n0HX', CC, 34)
-	call SaveInteger(M,'n0HX', DC, 37)
-	call SaveInteger(M,'n0HX', HC, 62)
-	call SaveInteger(M,'ngh1', CC, 30)
-	call SaveInteger(M,'ngh1', DC, 40)
-	call SaveInteger(M,'ngh1', HC, 62)
-	call SaveInteger(M,'npfl', CC, 20)
-	call SaveInteger(M,'npfl', DC, 24)
-	call SaveInteger(M,'npfl', HC, 41)
-	call SaveInteger(M,'nkot', CC, 17)
-	call SaveInteger(M,'nkot', DC, 19)
-	call SaveInteger(M,'nkot', HC, 25)
-	call SaveInteger(M,'nkob', CC, 7)
-	call SaveInteger(M,'nkob', DC, 9)
-	call SaveInteger(M,'nkob', HC, 25)
-	call SaveInteger(M,'nsat', CC, 15)
-	call SaveInteger(M,'nsat', DC, 17)
-	call SaveInteger(M,'nsat', HC, 41)
-	call SaveInteger(M,'nstl', CC, 27)
-	call SaveInteger(M,'nstl', DC, 33)
-	call SaveInteger(M,'nstl', HC, 62)
-	call SaveInteger(M,'nsth', CC, 77)
-	call SaveInteger(M,'nsth', DC, 91)
-	call SaveInteger(M,'nsth', HC,'w')
-	call SaveInteger(M,'n00S', CC, 22)
-	call SaveInteger(M,'n00S', DC, 26)
-	call SaveInteger(M,'n00S', HC, 62)
-	call SaveInteger(M,'nwlg', CC, 22)
-	call SaveInteger(M,'nwlg', DC, 26)
-	call SaveInteger(M,'nwlg', HC, 62)
-	call SaveInteger(M,'ngst', CC, 54)
-	call SaveInteger(M,'ngst', DC, 62)
-	call SaveInteger(M,'ngst', HC,'w')
-	call SaveInteger(M,'nggr', CC,'k')
-	call SaveInteger(M,'nggr', DC, 121)
-	call SaveInteger(M,'nggr', HC, 155)
-	call SaveInteger(M,'nbwm', CC, 150)
-	call SaveInteger(M,'nbwm', DC, 190)
-	call SaveInteger(M,'nbwm', HC, 155)
-	call SaveInteger(M,'nbdk', CC, 35)
-	call SaveInteger(M,'nbdk', DC, 45)
-	call SaveInteger(M,'nbdk', HC, 62)
-	call SaveInteger(M,'njga', CC, 152)
-	call SaveInteger(M,'njga', DC, 170)
-	call SaveInteger(M,'njga', HC, 155)
-	call SaveInteger(M,'njg1', CC, 52)
-	call SaveInteger(M,'njg1', DC, 70)
-	call SaveInteger(M,'njg1', HC,'w')
-	call SaveInteger(M,'nbdo', CC, 86)
-	call SaveInteger(M,'nbdo', DC, 98)
-	call SaveInteger(M,'nbdo', HC,'w')
-	call SaveInteger(M,'nbds', CC, 74)
-	call SaveInteger(M,'nbds', DC, 82)
-	call SaveInteger(M,'nbds', HC, 62)
-	call SaveInteger(M,'n0LC', CC, 89)
-	call SaveInteger(M,'n0LC', DC, 97)
-	call SaveInteger(M,'n0LC', HC, 155)
-	call SaveInteger(M,'n0LD', CC, 61)
-	call SaveInteger(M,'n0LD', DC, 69)
-	call SaveInteger(M,'n0LD', HC,'w')
-	call SaveInteger(M,'n003', CC,'j')
-	call SaveInteger(M,'n003', DC, 700)
-	call SaveInteger(M,'n003', HC, 349)
-	call SaveInteger(M,'n00E', CC, 158)
-	call SaveInteger(M,'n00E', DC, 950)
-	call SaveInteger(M,'n00E', HC, 410)
-	call SaveInteger(M,'n00D', CC,'o')
-	call SaveInteger(M,'n00D', DC, 1200)
-	call SaveInteger(M,'n00D', HC, 476)
-	call SaveInteger(M,'n00L', CC, 150)
-	call SaveInteger(M,'n00L', DC, 400)
-	call SaveInteger(M,'n00L', HC, 1789)
-	call SaveInteger(M,'h308', CC, 30)
-	call SaveInteger(M,'h308', DC, 30)
-	call SaveInteger(M,'h308', HC, 155)
-	call SaveInteger(M,'n01Q', CC, 40)
-	call SaveInteger(M,'n01Q', DC, 40)
-	call SaveInteger(M,'n01Q', HC, 155)
-	call SaveInteger(M,'n01R', CC, 50)
-	call SaveInteger(M,'n01R', DC, 50)
-	call SaveInteger(M,'n01R', HC, 155)
-	call SaveInteger(M,'h309', CC, 60)
-	call SaveInteger(M,'h309', DC, 60)
-	call SaveInteger(M,'h309', HC, 155)
-	call SaveInteger(M,'h30A', CC, 26)
-	call SaveInteger(M,'h30A', DC, 38)
-	call SaveInteger(M,'h30A', HC,'w')
-	call SaveInteger(M,'n01M', CC, 26)
-	call SaveInteger(M,'n01M', DC, 38)
-	call SaveInteger(M,'n01M', HC,'w')
-	call SaveInteger(M,'n01S', CC, 26)
-	call SaveInteger(M,'n01S', DC, 38)
-	call SaveInteger(M,'n01S', HC,'w')
-	call SaveInteger(M,'h30B', CC, 26)
-	call SaveInteger(M,'h30B', DC, 38)
-	call SaveInteger(M,'h30B', HC,'w')
-	call SaveInteger(M,'n00O', HC, 14)
-	call SaveInteger(M,'n00P', HC, 14)
-	call SaveInteger(M,'n00Q', HC, 14)
-	call SaveInteger(M,'n00N', HC, 14)
-	call SaveInteger(M,'n00O', CC, 10)
-	call SaveInteger(M,'n00O', DC, 10)
-	call SaveInteger(M,'n00P', CC, 10)
-	call SaveInteger(M,'n00P', DC, 10)
-	call SaveInteger(M,'n00Q', CC, 10)
-	call SaveInteger(M,'n00Q', DC, 10)
-	call SaveInteger(M,'n00N', CC, 10)
-	call SaveInteger(M,'n00N', DC, 10)
-	call SaveInteger(M,'otot', HC, 12)
-	call SaveInteger(M,'otot', CC, 10)
-	call SaveInteger(M,'otot', DC, 10)
-	call SaveInteger(M,'o01B', HC, 12)
-	call SaveInteger(M,'o018', HC, 12)
-	call SaveInteger(M,'o00B', HC, 12)
-	call SaveInteger(M,'o002', HC, 12)
-	call SaveInteger(M,'o01B', CC, 10)
-	call SaveInteger(M,'o01B', DC, 10)
-	call SaveInteger(M,'o018', CC, 10)
-	call SaveInteger(M,'o018', DC, 10)
-	call SaveInteger(M,'o00B', CC, 10)
-	call SaveInteger(M,'o00B', DC, 10)
-	call SaveInteger(M,'o002', CC, 10)
-	call SaveInteger(M,'o002', DC, 10)
-	call SaveInteger(M,'e020', CC, 1)
-	call SaveInteger(M,'e020', DC, 1)
-	call SaveInteger(M,'e020', HC, 24)
-	call SaveInteger(M,'o01J', CC, 90)
-	call SaveInteger(M,'o01J', DC, 90)
-	call SaveInteger(M,'o01K', CC, 100)
-	call SaveInteger(M,'o01K', DC, 100)
-	call SaveInteger(M,'o01L', CC, 110)
-	call SaveInteger(M,'o01L', DC, 110)
-	call SaveInteger(M,'o01M', CC, 120)
-	call SaveInteger(M,'o01M', DC, 120)
-	call SaveInteger(M,'n004', CC, 300)
-	call SaveInteger(M,'n004', DC, 300)
-	call SaveInteger(M,'n004', HC, 300)
-	call SaveInteger(M,'n018', CC, 300)
-	call SaveInteger(M,'n018', DC, 300)
-	call SaveInteger(M,'n018', HC, 300)
-	call SaveInteger(M,'n01C', CC, 300)
-	call SaveInteger(M,'n01C', DC, 300)
-	call SaveInteger(M,'n01C', HC, 300)
-	call SaveInteger(M,'n01G', CC, 300)
-	call SaveInteger(M,'n01G', DC, 300)
-	call SaveInteger(M,'n01G', HC, 300)
-	call SaveInteger(M,'efon', CC, 14)
-	call SaveInteger(M,'efon', DC, 20)
-	call SaveInteger(M,'efon', HC, 60)
-	call SaveInteger(M,'efo2', CC, 14)
-	call SaveInteger(M,'efo2', DC, 20)
-	call SaveInteger(M,'efo2', HC, 60)
-	call SaveInteger(M,'osp4', CC, 26)
-	call SaveInteger(M,'osp4', DC, 38)
-	call SaveInteger(M,'osp4', HC, 62)
-	call SaveInteger(M,'o008', CC, 26)
-	call SaveInteger(M,'o008', DC, 38)
-	call SaveInteger(M,'o008', HC, 62)
-	call SaveInteger(M,'o009', CC, 26)
-	call SaveInteger(M,'o009', DC, 38)
-	call SaveInteger(M,'o009', HC, 62)
-	call SaveInteger(M,'o01C', CC, 26)
-	call SaveInteger(M,'o01C', DC, 38)
-	call SaveInteger(M,'o01C', HC, 62)
-	call SaveInteger(M,'o01D', CC, 26)
-	call SaveInteger(M,'o01D', DC, 38)
-	call SaveInteger(M,'o01D', HC, 62)
-	call SaveInteger(M,'o01E', CC, 26)
-	call SaveInteger(M,'o01E', DC, 38)
-	call SaveInteger(M,'o01E', HC, 62)
-	call SaveInteger(M,'o005', CC, 21)
-	call SaveInteger(M,'o005', DC, 21)
-	call SaveInteger(M,'o005', HC, 41)
-	call SaveInteger(M,'o006', CC, 26)
-	call SaveInteger(M,'o006', DC, 26)
-	call SaveInteger(M,'o006', HC, 41)
-	call SaveInteger(M,'o007', CC, 36)
-	call SaveInteger(M,'o007', DC, 36)
-	call SaveInteger(M,'o007', HC, 41)
-	call SaveInteger(M,'o00F', CC, 41)
-	call SaveInteger(M,'o00F', DC, 41)
-	call SaveInteger(M,'o00F', HC, 41)
-	call SaveInteger(M,'u012', CC, 26)
-	call SaveInteger(M,'u012', DC, 38)
-	call SaveInteger(M,'u012', HC, 41)
-	call SaveInteger(M,'n020', CC, 14)
-	call SaveInteger(M,'n020', DC, 28)
-	call SaveInteger(M,'n020', HC, 62)
-	call SaveInteger(M,'n0FJ', CC, 75)
-	call SaveInteger(M,'n0FJ', DC, 75)
-	call SaveInteger(M,'n0FJ', HC, 88)
-	call SaveInteger(M,'n0FI', CC, 100)
-	call SaveInteger(M,'n0FI', DC, 100)
-	call SaveInteger(M,'n0FI', HC, 88)
-	call SaveInteger(M,'n0F6', CC, 125)
-	call SaveInteger(M,'n0F6', DC, 125)
-	call SaveInteger(M,'n0F6', HC, 88)
-	call SaveInteger(M,'n0FH', CC, 150)
-	call SaveInteger(M,'n0FH', DC, 150)
-	call SaveInteger(M,'n0FH', HC, 88)
-	call SaveInteger(M,'h0CH', CC, 20)
-	call SaveInteger(M,'h0CH', DC, 30)
-	call SaveInteger(M,'h0CH', HC, 40)
-	call SaveInteger(M,'h0CF', CC, 20)
-	call SaveInteger(M,'h0CF', DC, 30)
-	call SaveInteger(M,'h0CF', HC, 40)
-	call SaveInteger(M,'h0C1', CC, 20)
-	call SaveInteger(M,'h0C1', DC, 30)
-	call SaveInteger(M,'h0C1', HC, 40)
-	call SaveInteger(M,'h0CG', CC, 20)
-	call SaveInteger(M,'h0CG', DC, 30)
-	call SaveInteger(M,'h0CG', HC, 40)
-	call SaveInteger(M,'n019', CC, 11)
-	call SaveInteger(M,'n019', DC, 13)
-	call SaveInteger(M,'n019', HC, 62)
-	call SaveInteger(M,'n01E', CC, 16)
-	call SaveInteger(M,'n01E', DC, 21)
-	call SaveInteger(M,'n01E', HC, 41)
-	call SaveInteger(M,'u01K', CC, 32)
-	call SaveInteger(M,'u01K', DC, 34)
-	call SaveInteger(M,'u01K', HC, 41)
-	call SaveInteger(M,'u01H', CC, 32)
-	call SaveInteger(M,'u01H', DC, 34)
-	call SaveInteger(M,'u01H', HC, 41)
-	call SaveInteger(M,'u01J', CC, 32)
-	call SaveInteger(M,'u01J', DC, 34)
-	call SaveInteger(M,'u01J', HC, 41)
-	call SaveInteger(M,'u01L', CC, 32)
-	call SaveInteger(M,'u01L', DC, 34)
-	call SaveInteger(M,'u01L', HC, 41)
-	call SaveInteger(M,'o00T', CC, 14)
-	call SaveInteger(M,'o00T', DC, 17)
-	call SaveInteger(M,'o00T', HC, 40)
-	call SaveInteger(M,'o00U', CC, 14)
-	call SaveInteger(M,'o00U', DC, 17)
-	call SaveInteger(M,'o00U', HC, 50)
-	call SaveInteger(M,'o00V', CC, 14)
-	call SaveInteger(M,'o00V', DC, 17)
-	call SaveInteger(M,'o00V', HC, 60)
-	call SaveInteger(M,'o00W', CC, 14)
-	call SaveInteger(M,'o00W', DC, 17)
-	call SaveInteger(M,'o00W', HC, 70)
-	call SaveInteger(M,'hwat', CC, 22)
-	call SaveInteger(M,'hwat', DC, 36)
-	call SaveInteger(M,'hwat', HC, 25)
-	call SaveInteger(M,'hwt2', CC, 22)
-	call SaveInteger(M,'hwt2', DC, 36)
-	call SaveInteger(M,'hwt2', HC, 25)
-	call SaveInteger(M,'hwt3', CC, 22)
-	call SaveInteger(M,'hwt3', DC, 36)
-	call SaveInteger(M,'hwt3', HC, 25)
-	call SaveInteger(M,'h006', CC, 22)
-	call SaveInteger(M,'h006', DC, 36)
-	call SaveInteger(M,'h006', HC, 25)
-	call SaveInteger(M,'o00M', CC, 20)
-	call SaveInteger(M,'o00M', DC, 20)
-	call SaveInteger(M,'o00L', CC, 40)
-	call SaveInteger(M,'o00L', DC, 40)
-	call SaveInteger(M,'o00O', CC, 60)
-	call SaveInteger(M,'o00O', DC, 60)
-	call SaveInteger(M,'o00N', CC, 80)
-	call SaveInteger(M,'o00N', DC, 80)
-	call SaveInteger(M,'n00U', CC, 100)
-	call SaveInteger(M,'n00U', DC, 100)
-	call SaveInteger(M,'n00U', HC, 196)
-	call SaveInteger(M,'n00Y', CC, 150)
-	call SaveInteger(M,'n00Y', DC, 150)
-	call SaveInteger(M,'n00Y', HC, 196)
-	call SaveInteger(M,'n00Z', CC, 200)
-	call SaveInteger(M,'n00Z', DC, 200)
-	call SaveInteger(M,'n00Z', HC, 196)
-	call SaveInteger(M,'n0KU', CC, 50)
-	call SaveInteger(M,'n0KU', DC, 50)
-	call SaveInteger(M,'n0KU', HC, 196)
-	call SaveInteger(M,'n0KV', CC, 75)
-	call SaveInteger(M,'n0KV', DC, 75)
-	call SaveInteger(M,'n0KV', HC, 196)
-	call SaveInteger(M,'n0KW', CC, 100)
-	call SaveInteger(M,'n0KW', DC, 100)
-	call SaveInteger(M,'n0KW', HC, 196)
-	call SaveInteger(M,'n027', CC, 32)
-	call SaveInteger(M,'n027', DC, 46)
-	call SaveInteger(M,'n027', HC, 62)
-	call SaveInteger(M,'fRG1', CC, 32)
-	call SaveInteger(M,'fRG1', DC, 46)
-	call SaveInteger(M,'fRG1', HC, 62)
-	call SaveInteger(M,'fRG2', CC, 32)
-	call SaveInteger(M,'fRG2', DC, 46)
-	call SaveInteger(M,'fRG2', HC, 62)
-	call SaveInteger(M,'fRG3', CC, 32)
-	call SaveInteger(M,'fRG3', DC, 46)
-	call SaveInteger(M,'fRG3', HC, 62)
-	call SaveInteger(M,'fRG4', CC, 32)
-	call SaveInteger(M,'fRG4', DC, 46)
-	call SaveInteger(M,'fRG4', HC, 62)
-	call SaveInteger(M,'u014', CC, 100)
-	call SaveInteger(M,'u014', DC, 100)
-	call SaveInteger(M,'u014', HC, 41)
-	call SaveInteger(M,'u01D', CC, 100)
-	call SaveInteger(M,'u01D', DC, 100)
-	call SaveInteger(M,'u01D', HC, 41)
-	call SaveInteger(M,'u01R', CC, 100)
-	call SaveInteger(M,'u01R', DC, 100)
-	call SaveInteger(M,'u01R', HC, 41)
-	call SaveInteger(M,'u015', CC, 100)
-	call SaveInteger(M,'u015', DC, 100)
-	call SaveInteger(M,'u015', HC, 41)
-	call SaveInteger(M,'u01E', CC, 100)
-	call SaveInteger(M,'u01E', DC, 100)
-	call SaveInteger(M,'u01E', HC, 41)
-	call SaveInteger(M,'u01S', CC, 100)
-	call SaveInteger(M,'u01S', DC, 100)
-	call SaveInteger(M,'u01S', HC, 41)
-	call SaveInteger(M,'u016', CC, 100)
-	call SaveInteger(M,'u016', DC, 100)
-	call SaveInteger(M,'u016', HC, 41)
-	call SaveInteger(M,'u01F', CC, 100)
-	call SaveInteger(M,'u01F', DC, 100)
-	call SaveInteger(M,'u01F', HC, 41)
-	call SaveInteger(M,'u01T', CC, 100)
-	call SaveInteger(M,'u01T', DC, 100)
-	call SaveInteger(M,'u01T', HC, 41)
-	call SaveInteger(M,'n00J', CC, 100)
-	call SaveInteger(M,'n00J', DC, 100)
-	call SaveInteger(M,'n00J', HC, 200)
-	call SaveInteger(M,'n00H', CC, 100)
-	call SaveInteger(M,'n00H', DC, 100)
-	call SaveInteger(M,'n00H', HC, 200)
-	call SaveInteger(M,'n00A', CC, 150)
-	call SaveInteger(M,'n00A', DC, 150)
-	call SaveInteger(M,'n00A', HC, 300)
-	call SaveInteger(M,'n00G', CC, 150)
-	call SaveInteger(M,'n00G', DC, 150)
-	call SaveInteger(M,'n00G', HC, 300)
-	call SaveInteger(M,'n006', CC, 200)
-	call SaveInteger(M,'n006', DC, 200)
-	call SaveInteger(M,'n006', HC, 400)
-	call SaveInteger(M,'n00K', CC, 200)
-	call SaveInteger(M,'n00K', DC, 200)
-	call SaveInteger(M,'n00K', HC, 400)
-	call SaveInteger(M,'o004', CC, 50)
-	call SaveInteger(M,'o004', DC, 50)
-	call SaveInteger(M,'o004', HC, 100)
+	call SaveInteger(SightDataHashTable,'ugho', CC, 35)
+	call SaveInteger(SightDataHashTable,'ugho', DC, 44)
+	call SaveInteger(SightDataHashTable,'ugho', HC, 62)
+	call SaveInteger(SightDataHashTable,'u001', CC, 18)
+	call SaveInteger(SightDataHashTable,'u001', DC, 26)
+	call SaveInteger(SightDataHashTable,'u001', HC, 25)
+	call SaveInteger(SightDataHashTable,'unec', CC, 40)
+	call SaveInteger(SightDataHashTable,'unec', DC, 49)
+	call SaveInteger(SightDataHashTable,'unec', HC, 41)
+	call SaveInteger(SightDataHashTable,'u002', CC, 18)
+	call SaveInteger(SightDataHashTable,'u002', DC, 26)
+	call SaveInteger(SightDataHashTable,'u002', HC, 25)
+	call SaveInteger(SightDataHashTable,'esen', CC, 35)
+	call SaveInteger(SightDataHashTable,'esen', DC, 44)
+	call SaveInteger(SightDataHashTable,'esen', HC, 62)
+	call SaveInteger(SightDataHashTable,'e00V', CC, 18)
+	call SaveInteger(SightDataHashTable,'e00V', DC, 26)
+	call SaveInteger(SightDataHashTable,'e00V', HC, 25)
+	call SaveInteger(SightDataHashTable,'edry', CC, 40)
+	call SaveInteger(SightDataHashTable,'edry', DC, 49)
+	call SaveInteger(SightDataHashTable,'edry', HC, 41)
+	call SaveInteger(SightDataHashTable,'e00W', CC, 18)
+	call SaveInteger(SightDataHashTable,'e00W', DC, 26)
+	call SaveInteger(SightDataHashTable,'e00W', HC, 25)
+	call SaveInteger(SightDataHashTable,'ebal', CC, 66)
+	call SaveInteger(SightDataHashTable,'ebal', DC, 80)
+	call SaveInteger(SightDataHashTable,'ebal', HC, 88)
+	call SaveInteger(SightDataHashTable,'e026', CC, 66)
+	call SaveInteger(SightDataHashTable,'e026', DC, 80)
+	call SaveInteger(SightDataHashTable,'e026', HC, 88)
+	call SaveInteger(SightDataHashTable,'umtw', CC, 66)
+	call SaveInteger(SightDataHashTable,'umtw', DC, 80)
+	call SaveInteger(SightDataHashTable,'umtw', HC, 88)
+	call SaveInteger(SightDataHashTable,'u00R', CC, 66)
+	call SaveInteger(SightDataHashTable,'u00R', DC, 80)
+	call SaveInteger(SightDataHashTable,'u00R', HC, 88)
+	call SaveInteger(SightDataHashTable,'e019', CC, 150)
+	call SaveInteger(SightDataHashTable,'e019', DC, 250)
+	call SaveInteger(SightDataHashTable,'e019', HC, 25)
+	call SaveInteger(SightDataHashTable,'e00S', CC, 150)
+	call SaveInteger(SightDataHashTable,'e00S', DC, 250)
+	call SaveInteger(SightDataHashTable,'e00S', HC, 25)
+	call SaveInteger(SightDataHashTable,'e011', CC, 150)
+	call SaveInteger(SightDataHashTable,'e011', DC, 250)
+	call SaveInteger(SightDataHashTable,'e011', HC, 25)
+	call SaveInteger(SightDataHashTable,'e00R', CC, 150)
+	call SaveInteger(SightDataHashTable,'e00R', DC, 250)
+	call SaveInteger(SightDataHashTable,'e00R', HC, 25)
+	call SaveInteger(SightDataHashTable,'eaom', CC, 100)
+	call SaveInteger(SightDataHashTable,'eaom', DC, 150)
+	call SaveInteger(SightDataHashTable,'eaom', HC, 25)
+	call SaveInteger(SightDataHashTable,'eaoe', CC, 100)
+	call SaveInteger(SightDataHashTable,'eaoe', DC, 150)
+	call SaveInteger(SightDataHashTable,'eaoe', HC, 25)
+	call SaveInteger(SightDataHashTable,'edob', CC,'f')
+	call SaveInteger(SightDataHashTable,'edob', DC, 120)
+	call SaveInteger(SightDataHashTable,'edob', HC, 25)
+	call SaveInteger(SightDataHashTable,'eaow', CC,'f')
+	call SaveInteger(SightDataHashTable,'eaow', DC, 120)
+	call SaveInteger(SightDataHashTable,'eaow', HC, 25)
+	call SaveInteger(SightDataHashTable,'emow', CC,'f')
+	call SaveInteger(SightDataHashTable,'emow', DC, 120)
+	call SaveInteger(SightDataHashTable,'emow', HC, 25)
+	call SaveInteger(SightDataHashTable,'u00T', CC, 150)
+	call SaveInteger(SightDataHashTable,'u00T', DC, 250)
+	call SaveInteger(SightDataHashTable,'u00T', HC, 25)
+	call SaveInteger(SightDataHashTable,'u00N', CC, 150)
+	call SaveInteger(SightDataHashTable,'u00N', DC, 250)
+	call SaveInteger(SightDataHashTable,'u00N', HC, 25)
+	call SaveInteger(SightDataHashTable,'u00D', CC, 150)
+	call SaveInteger(SightDataHashTable,'u00D', DC, 250)
+	call SaveInteger(SightDataHashTable,'u00D', HC, 25)
+	call SaveInteger(SightDataHashTable,'u00M', CC, 150)
+	call SaveInteger(SightDataHashTable,'u00M', DC, 250)
+	call SaveInteger(SightDataHashTable,'u00M', HC, 25)
+	call SaveInteger(SightDataHashTable,'usep', CC, 100)
+	call SaveInteger(SightDataHashTable,'usep', DC, 150)
+	call SaveInteger(SightDataHashTable,'usep', HC, 25)
+	call SaveInteger(SightDataHashTable,'utod', CC, 100)
+	call SaveInteger(SightDataHashTable,'utod', DC, 150)
+	call SaveInteger(SightDataHashTable,'utod', HC, 25)
+	call SaveInteger(SightDataHashTable,'ubon', CC,'f')
+	call SaveInteger(SightDataHashTable,'ubon', DC, 120)
+	call SaveInteger(SightDataHashTable,'ubon', HC, 25)
+	call SaveInteger(SightDataHashTable,'usap', CC,'f')
+	call SaveInteger(SightDataHashTable,'usap', DC, 120)
+	call SaveInteger(SightDataHashTable,'usap', HC, 25)
+	call SaveInteger(SightDataHashTable,'uzig', CC,'f')
+	call SaveInteger(SightDataHashTable,'uzig', DC, 120)
+	call SaveInteger(SightDataHashTable,'uzig', HC, 25)
+	call SaveInteger(SightDataHashTable,'ndtw', CC, 54)
+	call SaveInteger(SightDataHashTable,'ndtw', DC, 62)
+	call SaveInteger(SightDataHashTable,'ndtw', HC,'w')
+	call SaveInteger(SightDataHashTable,'ndtr', CC, 26)
+	call SaveInteger(SightDataHashTable,'ndtr', DC, 33)
+	call SaveInteger(SightDataHashTable,'ndtr', HC, 62)
+	call SaveInteger(SightDataHashTable,'uske', CC, 6)
+	call SaveInteger(SightDataHashTable,'uske', DC, 12)
+	call SaveInteger(SightDataHashTable,'uske', HC, 25)
+	call SaveInteger(SightDataHashTable,'nfsh', CC, 21)
+	call SaveInteger(SightDataHashTable,'nfsh', DC, 25)
+	call SaveInteger(SightDataHashTable,'nfsh', HC, 41)
+	call SaveInteger(SightDataHashTable,'nftb', CC, 22)
+	call SaveInteger(SightDataHashTable,'nftb', DC, 26)
+	call SaveInteger(SightDataHashTable,'nftb', HC, 41)
+	call SaveInteger(SightDataHashTable,'nkol', CC, 23)
+	call SaveInteger(SightDataHashTable,'nkol', DC, 29)
+	call SaveInteger(SightDataHashTable,'nkol', HC, 41)
+	call SaveInteger(SightDataHashTable,'nowe', CC, 67)
+	call SaveInteger(SightDataHashTable,'nowe', DC, 87)
+	call SaveInteger(SightDataHashTable,'nowe', HC,'w')
+	call SaveInteger(SightDataHashTable,'nowb', CC, 15)
+	call SaveInteger(SightDataHashTable,'nowb', DC, 20)
+	call SaveInteger(SightDataHashTable,'nowb', HC, 25)
+	call SaveInteger(SightDataHashTable,'nomg', CC, 31)
+	call SaveInteger(SightDataHashTable,'nomg', DC, 49)
+	call SaveInteger(SightDataHashTable,'nomg', HC, 62)
+	call SaveInteger(SightDataHashTable,'nogm', CC, 23)
+	call SaveInteger(SightDataHashTable,'nogm', DC, 47)
+	call SaveInteger(SightDataHashTable,'nogm', HC, 41)
+	call SaveInteger(SightDataHashTable,'n026', CC, 28)
+	call SaveInteger(SightDataHashTable,'n026', DC, 36)
+	call SaveInteger(SightDataHashTable,'n026', HC, 42)
+	call SaveInteger(SightDataHashTable,'n127', CC, 10)
+	call SaveInteger(SightDataHashTable,'n127', DC, 16)
+	call SaveInteger(SightDataHashTable,'n127', HC, 46)
+	call SaveInteger(SightDataHashTable,'n128', CC, 10)
+	call SaveInteger(SightDataHashTable,'n128', DC, 16)
+	call SaveInteger(SightDataHashTable,'n128', HC, 46)
+	call SaveInteger(SightDataHashTable,'ncnk', CC, 66)
+	call SaveInteger(SightDataHashTable,'ncnk', DC, 78)
+	call SaveInteger(SightDataHashTable,'ncnk', HC,'w')
+	call SaveInteger(SightDataHashTable,'ncen', CC, 20)
+	call SaveInteger(SightDataHashTable,'ncen', DC, 24)
+	call SaveInteger(SightDataHashTable,'ncen', HC, 41)
+	call SaveInteger(SightDataHashTable,'ngns', CC, 21)
+	call SaveInteger(SightDataHashTable,'ngns', DC, 29)
+	call SaveInteger(SightDataHashTable,'ngns', HC, 41)
+	call SaveInteger(SightDataHashTable,'nfpu', CC, 76)
+	call SaveInteger(SightDataHashTable,'nfpu', DC, 86)
+	call SaveInteger(SightDataHashTable,'nfpu', HC,'w')
+	call SaveInteger(SightDataHashTable,'nfpc', CC, 45)
+	call SaveInteger(SightDataHashTable,'nfpc', DC, 55)
+	call SaveInteger(SightDataHashTable,'nfpc', HC, 88)
+	call SaveInteger(SightDataHashTable,'n0HW', CC, 24)
+	call SaveInteger(SightDataHashTable,'n0HW', DC, 27)
+	call SaveInteger(SightDataHashTable,'n0HW', HC, 41)
+	call SaveInteger(SightDataHashTable,'n0HX', CC, 34)
+	call SaveInteger(SightDataHashTable,'n0HX', DC, 37)
+	call SaveInteger(SightDataHashTable,'n0HX', HC, 62)
+	call SaveInteger(SightDataHashTable,'ngh1', CC, 30)
+	call SaveInteger(SightDataHashTable,'ngh1', DC, 40)
+	call SaveInteger(SightDataHashTable,'ngh1', HC, 62)
+	call SaveInteger(SightDataHashTable,'npfl', CC, 20)
+	call SaveInteger(SightDataHashTable,'npfl', DC, 24)
+	call SaveInteger(SightDataHashTable,'npfl', HC, 41)
+	call SaveInteger(SightDataHashTable,'nkot', CC, 17)
+	call SaveInteger(SightDataHashTable,'nkot', DC, 19)
+	call SaveInteger(SightDataHashTable,'nkot', HC, 25)
+	call SaveInteger(SightDataHashTable,'nkob', CC, 7)
+	call SaveInteger(SightDataHashTable,'nkob', DC, 9)
+	call SaveInteger(SightDataHashTable,'nkob', HC, 25)
+	call SaveInteger(SightDataHashTable,'nsat', CC, 15)
+	call SaveInteger(SightDataHashTable,'nsat', DC, 17)
+	call SaveInteger(SightDataHashTable,'nsat', HC, 41)
+	call SaveInteger(SightDataHashTable,'nstl', CC, 27)
+	call SaveInteger(SightDataHashTable,'nstl', DC, 33)
+	call SaveInteger(SightDataHashTable,'nstl', HC, 62)
+	call SaveInteger(SightDataHashTable,'nsth', CC, 77)
+	call SaveInteger(SightDataHashTable,'nsth', DC, 91)
+	call SaveInteger(SightDataHashTable,'nsth', HC,'w')
+	call SaveInteger(SightDataHashTable,'n00S', CC, 22)
+	call SaveInteger(SightDataHashTable,'n00S', DC, 26)
+	call SaveInteger(SightDataHashTable,'n00S', HC, 62)
+	call SaveInteger(SightDataHashTable,'nwlg', CC, 22)
+	call SaveInteger(SightDataHashTable,'nwlg', DC, 26)
+	call SaveInteger(SightDataHashTable,'nwlg', HC, 62)
+	call SaveInteger(SightDataHashTable,'ngst', CC, 54)
+	call SaveInteger(SightDataHashTable,'ngst', DC, 62)
+	call SaveInteger(SightDataHashTable,'ngst', HC,'w')
+	call SaveInteger(SightDataHashTable,'nggr', CC,'k')
+	call SaveInteger(SightDataHashTable,'nggr', DC, 121)
+	call SaveInteger(SightDataHashTable,'nggr', HC, 155)
+	call SaveInteger(SightDataHashTable,'nbwm', CC, 150)
+	call SaveInteger(SightDataHashTable,'nbwm', DC, 190)
+	call SaveInteger(SightDataHashTable,'nbwm', HC, 155)
+	call SaveInteger(SightDataHashTable,'nbdk', CC, 35)
+	call SaveInteger(SightDataHashTable,'nbdk', DC, 45)
+	call SaveInteger(SightDataHashTable,'nbdk', HC, 62)
+	call SaveInteger(SightDataHashTable,'njga', CC, 152)
+	call SaveInteger(SightDataHashTable,'njga', DC, 170)
+	call SaveInteger(SightDataHashTable,'njga', HC, 155)
+	call SaveInteger(SightDataHashTable,'njg1', CC, 52)
+	call SaveInteger(SightDataHashTable,'njg1', DC, 70)
+	call SaveInteger(SightDataHashTable,'njg1', HC,'w')
+	call SaveInteger(SightDataHashTable,'nbdo', CC, 86)
+	call SaveInteger(SightDataHashTable,'nbdo', DC, 98)
+	call SaveInteger(SightDataHashTable,'nbdo', HC,'w')
+	call SaveInteger(SightDataHashTable,'nbds', CC, 74)
+	call SaveInteger(SightDataHashTable,'nbds', DC, 82)
+	call SaveInteger(SightDataHashTable,'nbds', HC, 62)
+	call SaveInteger(SightDataHashTable,'n0LC', CC, 89)
+	call SaveInteger(SightDataHashTable,'n0LC', DC, 97)
+	call SaveInteger(SightDataHashTable,'n0LC', HC, 155)
+	call SaveInteger(SightDataHashTable,'n0LD', CC, 61)
+	call SaveInteger(SightDataHashTable,'n0LD', DC, 69)
+	call SaveInteger(SightDataHashTable,'n0LD', HC,'w')
+	call SaveInteger(SightDataHashTable,'n003', CC,'j')
+	call SaveInteger(SightDataHashTable,'n003', DC, 700)
+	call SaveInteger(SightDataHashTable,'n003', HC, 349)
+	call SaveInteger(SightDataHashTable,'n00E', CC, 158)
+	call SaveInteger(SightDataHashTable,'n00E', DC, 950)
+	call SaveInteger(SightDataHashTable,'n00E', HC, 410)
+	call SaveInteger(SightDataHashTable,'n00D', CC,'o')
+	call SaveInteger(SightDataHashTable,'n00D', DC, 1200)
+	call SaveInteger(SightDataHashTable,'n00D', HC, 476)
+	call SaveInteger(SightDataHashTable,'n00L', CC, 150)
+	call SaveInteger(SightDataHashTable,'n00L', DC, 400)
+	call SaveInteger(SightDataHashTable,'n00L', HC, 1789)
+	call SaveInteger(SightDataHashTable,'h308', CC, 30)
+	call SaveInteger(SightDataHashTable,'h308', DC, 30)
+	call SaveInteger(SightDataHashTable,'h308', HC, 155)
+	call SaveInteger(SightDataHashTable,'n01Q', CC, 40)
+	call SaveInteger(SightDataHashTable,'n01Q', DC, 40)
+	call SaveInteger(SightDataHashTable,'n01Q', HC, 155)
+	call SaveInteger(SightDataHashTable,'n01R', CC, 50)
+	call SaveInteger(SightDataHashTable,'n01R', DC, 50)
+	call SaveInteger(SightDataHashTable,'n01R', HC, 155)
+	call SaveInteger(SightDataHashTable,'h309', CC, 60)
+	call SaveInteger(SightDataHashTable,'h309', DC, 60)
+	call SaveInteger(SightDataHashTable,'h309', HC, 155)
+	call SaveInteger(SightDataHashTable,'h30A', CC, 26)
+	call SaveInteger(SightDataHashTable,'h30A', DC, 38)
+	call SaveInteger(SightDataHashTable,'h30A', HC,'w')
+	call SaveInteger(SightDataHashTable,'n01M', CC, 26)
+	call SaveInteger(SightDataHashTable,'n01M', DC, 38)
+	call SaveInteger(SightDataHashTable,'n01M', HC,'w')
+	call SaveInteger(SightDataHashTable,'n01S', CC, 26)
+	call SaveInteger(SightDataHashTable,'n01S', DC, 38)
+	call SaveInteger(SightDataHashTable,'n01S', HC,'w')
+	call SaveInteger(SightDataHashTable,'h30B', CC, 26)
+	call SaveInteger(SightDataHashTable,'h30B', DC, 38)
+	call SaveInteger(SightDataHashTable,'h30B', HC,'w')
+	call SaveInteger(SightDataHashTable,'n00O', HC, 14)
+	call SaveInteger(SightDataHashTable,'n00P', HC, 14)
+	call SaveInteger(SightDataHashTable,'n00Q', HC, 14)
+	call SaveInteger(SightDataHashTable,'n00N', HC, 14)
+	call SaveInteger(SightDataHashTable,'n00O', CC, 10)
+	call SaveInteger(SightDataHashTable,'n00O', DC, 10)
+	call SaveInteger(SightDataHashTable,'n00P', CC, 10)
+	call SaveInteger(SightDataHashTable,'n00P', DC, 10)
+	call SaveInteger(SightDataHashTable,'n00Q', CC, 10)
+	call SaveInteger(SightDataHashTable,'n00Q', DC, 10)
+	call SaveInteger(SightDataHashTable,'n00N', CC, 10)
+	call SaveInteger(SightDataHashTable,'n00N', DC, 10)
+	call SaveInteger(SightDataHashTable,'otot', HC, 12)
+	call SaveInteger(SightDataHashTable,'otot', CC, 10)
+	call SaveInteger(SightDataHashTable,'otot', DC, 10)
+	call SaveInteger(SightDataHashTable,'o01B', HC, 12)
+	call SaveInteger(SightDataHashTable,'o018', HC, 12)
+	call SaveInteger(SightDataHashTable,'o00B', HC, 12)
+	call SaveInteger(SightDataHashTable,'o002', HC, 12)
+	call SaveInteger(SightDataHashTable,'o01B', CC, 10)
+	call SaveInteger(SightDataHashTable,'o01B', DC, 10)
+	call SaveInteger(SightDataHashTable,'o018', CC, 10)
+	call SaveInteger(SightDataHashTable,'o018', DC, 10)
+	call SaveInteger(SightDataHashTable,'o00B', CC, 10)
+	call SaveInteger(SightDataHashTable,'o00B', DC, 10)
+	call SaveInteger(SightDataHashTable,'o002', CC, 10)
+	call SaveInteger(SightDataHashTable,'o002', DC, 10)
+	call SaveInteger(SightDataHashTable,'e020', CC, 1)
+	call SaveInteger(SightDataHashTable,'e020', DC, 1)
+	call SaveInteger(SightDataHashTable,'e020', HC, 24)
+	call SaveInteger(SightDataHashTable,'o01J', CC, 90)
+	call SaveInteger(SightDataHashTable,'o01J', DC, 90)
+	call SaveInteger(SightDataHashTable,'o01K', CC, 100)
+	call SaveInteger(SightDataHashTable,'o01K', DC, 100)
+	call SaveInteger(SightDataHashTable,'o01L', CC, 110)
+	call SaveInteger(SightDataHashTable,'o01L', DC, 110)
+	call SaveInteger(SightDataHashTable,'o01M', CC, 120)
+	call SaveInteger(SightDataHashTable,'o01M', DC, 120)
+	call SaveInteger(SightDataHashTable,'n004', CC, 300)
+	call SaveInteger(SightDataHashTable,'n004', DC, 300)
+	call SaveInteger(SightDataHashTable,'n004', HC, 300)
+	call SaveInteger(SightDataHashTable,'n018', CC, 300)
+	call SaveInteger(SightDataHashTable,'n018', DC, 300)
+	call SaveInteger(SightDataHashTable,'n018', HC, 300)
+	call SaveInteger(SightDataHashTable,'n01C', CC, 300)
+	call SaveInteger(SightDataHashTable,'n01C', DC, 300)
+	call SaveInteger(SightDataHashTable,'n01C', HC, 300)
+	call SaveInteger(SightDataHashTable,'n01G', CC, 300)
+	call SaveInteger(SightDataHashTable,'n01G', DC, 300)
+	call SaveInteger(SightDataHashTable,'n01G', HC, 300)
+	call SaveInteger(SightDataHashTable,'efon', CC, 14)
+	call SaveInteger(SightDataHashTable,'efon', DC, 20)
+	call SaveInteger(SightDataHashTable,'efon', HC, 60)
+	call SaveInteger(SightDataHashTable,'efo2', CC, 14)
+	call SaveInteger(SightDataHashTable,'efo2', DC, 20)
+	call SaveInteger(SightDataHashTable,'efo2', HC, 60)
+	call SaveInteger(SightDataHashTable,'osp4', CC, 26)
+	call SaveInteger(SightDataHashTable,'osp4', DC, 38)
+	call SaveInteger(SightDataHashTable,'osp4', HC, 62)
+	call SaveInteger(SightDataHashTable,'o008', CC, 26)
+	call SaveInteger(SightDataHashTable,'o008', DC, 38)
+	call SaveInteger(SightDataHashTable,'o008', HC, 62)
+	call SaveInteger(SightDataHashTable,'o009', CC, 26)
+	call SaveInteger(SightDataHashTable,'o009', DC, 38)
+	call SaveInteger(SightDataHashTable,'o009', HC, 62)
+	call SaveInteger(SightDataHashTable,'o01C', CC, 26)
+	call SaveInteger(SightDataHashTable,'o01C', DC, 38)
+	call SaveInteger(SightDataHashTable,'o01C', HC, 62)
+	call SaveInteger(SightDataHashTable,'o01D', CC, 26)
+	call SaveInteger(SightDataHashTable,'o01D', DC, 38)
+	call SaveInteger(SightDataHashTable,'o01D', HC, 62)
+	call SaveInteger(SightDataHashTable,'o01E', CC, 26)
+	call SaveInteger(SightDataHashTable,'o01E', DC, 38)
+	call SaveInteger(SightDataHashTable,'o01E', HC, 62)
+	call SaveInteger(SightDataHashTable,'o005', CC, 21)
+	call SaveInteger(SightDataHashTable,'o005', DC, 21)
+	call SaveInteger(SightDataHashTable,'o005', HC, 41)
+	call SaveInteger(SightDataHashTable,'o006', CC, 26)
+	call SaveInteger(SightDataHashTable,'o006', DC, 26)
+	call SaveInteger(SightDataHashTable,'o006', HC, 41)
+	call SaveInteger(SightDataHashTable,'o007', CC, 36)
+	call SaveInteger(SightDataHashTable,'o007', DC, 36)
+	call SaveInteger(SightDataHashTable,'o007', HC, 41)
+	call SaveInteger(SightDataHashTable,'o00F', CC, 41)
+	call SaveInteger(SightDataHashTable,'o00F', DC, 41)
+	call SaveInteger(SightDataHashTable,'o00F', HC, 41)
+	call SaveInteger(SightDataHashTable,'u012', CC, 26)
+	call SaveInteger(SightDataHashTable,'u012', DC, 38)
+	call SaveInteger(SightDataHashTable,'u012', HC, 41)
+	call SaveInteger(SightDataHashTable,'n020', CC, 14)
+	call SaveInteger(SightDataHashTable,'n020', DC, 28)
+	call SaveInteger(SightDataHashTable,'n020', HC, 62)
+	call SaveInteger(SightDataHashTable,'n0FJ', CC, 75)
+	call SaveInteger(SightDataHashTable,'n0FJ', DC, 75)
+	call SaveInteger(SightDataHashTable,'n0FJ', HC, 88)
+	call SaveInteger(SightDataHashTable,'n0FI', CC, 100)
+	call SaveInteger(SightDataHashTable,'n0FI', DC, 100)
+	call SaveInteger(SightDataHashTable,'n0FI', HC, 88)
+	call SaveInteger(SightDataHashTable,'n0F6', CC, 125)
+	call SaveInteger(SightDataHashTable,'n0F6', DC, 125)
+	call SaveInteger(SightDataHashTable,'n0F6', HC, 88)
+	call SaveInteger(SightDataHashTable,'n0FH', CC, 150)
+	call SaveInteger(SightDataHashTable,'n0FH', DC, 150)
+	call SaveInteger(SightDataHashTable,'n0FH', HC, 88)
+	call SaveInteger(SightDataHashTable,'h0CH', CC, 20)
+	call SaveInteger(SightDataHashTable,'h0CH', DC, 30)
+	call SaveInteger(SightDataHashTable,'h0CH', HC, 40)
+	call SaveInteger(SightDataHashTable,'h0CF', CC, 20)
+	call SaveInteger(SightDataHashTable,'h0CF', DC, 30)
+	call SaveInteger(SightDataHashTable,'h0CF', HC, 40)
+	call SaveInteger(SightDataHashTable,'h0C1', CC, 20)
+	call SaveInteger(SightDataHashTable,'h0C1', DC, 30)
+	call SaveInteger(SightDataHashTable,'h0C1', HC, 40)
+	call SaveInteger(SightDataHashTable,'h0CG', CC, 20)
+	call SaveInteger(SightDataHashTable,'h0CG', DC, 30)
+	call SaveInteger(SightDataHashTable,'h0CG', HC, 40)
+	call SaveInteger(SightDataHashTable,'n019', CC, 11)
+	call SaveInteger(SightDataHashTable,'n019', DC, 13)
+	call SaveInteger(SightDataHashTable,'n019', HC, 62)
+	call SaveInteger(SightDataHashTable,'n01E', CC, 16)
+	call SaveInteger(SightDataHashTable,'n01E', DC, 21)
+	call SaveInteger(SightDataHashTable,'n01E', HC, 41)
+	call SaveInteger(SightDataHashTable,'u01K', CC, 32)
+	call SaveInteger(SightDataHashTable,'u01K', DC, 34)
+	call SaveInteger(SightDataHashTable,'u01K', HC, 41)
+	call SaveInteger(SightDataHashTable,'u01H', CC, 32)
+	call SaveInteger(SightDataHashTable,'u01H', DC, 34)
+	call SaveInteger(SightDataHashTable,'u01H', HC, 41)
+	call SaveInteger(SightDataHashTable,'u01J', CC, 32)
+	call SaveInteger(SightDataHashTable,'u01J', DC, 34)
+	call SaveInteger(SightDataHashTable,'u01J', HC, 41)
+	call SaveInteger(SightDataHashTable,'u01L', CC, 32)
+	call SaveInteger(SightDataHashTable,'u01L', DC, 34)
+	call SaveInteger(SightDataHashTable,'u01L', HC, 41)
+	call SaveInteger(SightDataHashTable,'o00T', CC, 14)
+	call SaveInteger(SightDataHashTable,'o00T', DC, 17)
+	call SaveInteger(SightDataHashTable,'o00T', HC, 40)
+	call SaveInteger(SightDataHashTable,'o00U', CC, 14)
+	call SaveInteger(SightDataHashTable,'o00U', DC, 17)
+	call SaveInteger(SightDataHashTable,'o00U', HC, 50)
+	call SaveInteger(SightDataHashTable,'o00V', CC, 14)
+	call SaveInteger(SightDataHashTable,'o00V', DC, 17)
+	call SaveInteger(SightDataHashTable,'o00V', HC, 60)
+	call SaveInteger(SightDataHashTable,'o00W', CC, 14)
+	call SaveInteger(SightDataHashTable,'o00W', DC, 17)
+	call SaveInteger(SightDataHashTable,'o00W', HC, 70)
+	call SaveInteger(SightDataHashTable,'hwat', CC, 22)
+	call SaveInteger(SightDataHashTable,'hwat', DC, 36)
+	call SaveInteger(SightDataHashTable,'hwat', HC, 25)
+	call SaveInteger(SightDataHashTable,'hwt2', CC, 22)
+	call SaveInteger(SightDataHashTable,'hwt2', DC, 36)
+	call SaveInteger(SightDataHashTable,'hwt2', HC, 25)
+	call SaveInteger(SightDataHashTable,'hwt3', CC, 22)
+	call SaveInteger(SightDataHashTable,'hwt3', DC, 36)
+	call SaveInteger(SightDataHashTable,'hwt3', HC, 25)
+	call SaveInteger(SightDataHashTable,'h006', CC, 22)
+	call SaveInteger(SightDataHashTable,'h006', DC, 36)
+	call SaveInteger(SightDataHashTable,'h006', HC, 25)
+	call SaveInteger(SightDataHashTable,'o00M', CC, 20)
+	call SaveInteger(SightDataHashTable,'o00M', DC, 20)
+	call SaveInteger(SightDataHashTable,'o00L', CC, 40)
+	call SaveInteger(SightDataHashTable,'o00L', DC, 40)
+	call SaveInteger(SightDataHashTable,'o00O', CC, 60)
+	call SaveInteger(SightDataHashTable,'o00O', DC, 60)
+	call SaveInteger(SightDataHashTable,'o00N', CC, 80)
+	call SaveInteger(SightDataHashTable,'o00N', DC, 80)
+	call SaveInteger(SightDataHashTable,'n00U', CC, 100)
+	call SaveInteger(SightDataHashTable,'n00U', DC, 100)
+	call SaveInteger(SightDataHashTable,'n00U', HC, 196)
+	call SaveInteger(SightDataHashTable,'n00Y', CC, 150)
+	call SaveInteger(SightDataHashTable,'n00Y', DC, 150)
+	call SaveInteger(SightDataHashTable,'n00Y', HC, 196)
+	call SaveInteger(SightDataHashTable,'n00Z', CC, 200)
+	call SaveInteger(SightDataHashTable,'n00Z', DC, 200)
+	call SaveInteger(SightDataHashTable,'n00Z', HC, 196)
+	call SaveInteger(SightDataHashTable,'n0KU', CC, 50)
+	call SaveInteger(SightDataHashTable,'n0KU', DC, 50)
+	call SaveInteger(SightDataHashTable,'n0KU', HC, 196)
+	call SaveInteger(SightDataHashTable,'n0KV', CC, 75)
+	call SaveInteger(SightDataHashTable,'n0KV', DC, 75)
+	call SaveInteger(SightDataHashTable,'n0KV', HC, 196)
+	call SaveInteger(SightDataHashTable,'n0KW', CC, 100)
+	call SaveInteger(SightDataHashTable,'n0KW', DC, 100)
+	call SaveInteger(SightDataHashTable,'n0KW', HC, 196)
+	call SaveInteger(SightDataHashTable,'n027', CC, 32)
+	call SaveInteger(SightDataHashTable,'n027', DC, 46)
+	call SaveInteger(SightDataHashTable,'n027', HC, 62)
+	call SaveInteger(SightDataHashTable,'fRG1', CC, 32)
+	call SaveInteger(SightDataHashTable,'fRG1', DC, 46)
+	call SaveInteger(SightDataHashTable,'fRG1', HC, 62)
+	call SaveInteger(SightDataHashTable,'fRG2', CC, 32)
+	call SaveInteger(SightDataHashTable,'fRG2', DC, 46)
+	call SaveInteger(SightDataHashTable,'fRG2', HC, 62)
+	call SaveInteger(SightDataHashTable,'fRG3', CC, 32)
+	call SaveInteger(SightDataHashTable,'fRG3', DC, 46)
+	call SaveInteger(SightDataHashTable,'fRG3', HC, 62)
+	call SaveInteger(SightDataHashTable,'fRG4', CC, 32)
+	call SaveInteger(SightDataHashTable,'fRG4', DC, 46)
+	call SaveInteger(SightDataHashTable,'fRG4', HC, 62)
+	call SaveInteger(SightDataHashTable,'u014', CC, 100)
+	call SaveInteger(SightDataHashTable,'u014', DC, 100)
+	call SaveInteger(SightDataHashTable,'u014', HC, 41)
+	call SaveInteger(SightDataHashTable,'u01D', CC, 100)
+	call SaveInteger(SightDataHashTable,'u01D', DC, 100)
+	call SaveInteger(SightDataHashTable,'u01D', HC, 41)
+	call SaveInteger(SightDataHashTable,'u01R', CC, 100)
+	call SaveInteger(SightDataHashTable,'u01R', DC, 100)
+	call SaveInteger(SightDataHashTable,'u01R', HC, 41)
+	call SaveInteger(SightDataHashTable,'u015', CC, 100)
+	call SaveInteger(SightDataHashTable,'u015', DC, 100)
+	call SaveInteger(SightDataHashTable,'u015', HC, 41)
+	call SaveInteger(SightDataHashTable,'u01E', CC, 100)
+	call SaveInteger(SightDataHashTable,'u01E', DC, 100)
+	call SaveInteger(SightDataHashTable,'u01E', HC, 41)
+	call SaveInteger(SightDataHashTable,'u01S', CC, 100)
+	call SaveInteger(SightDataHashTable,'u01S', DC, 100)
+	call SaveInteger(SightDataHashTable,'u01S', HC, 41)
+	call SaveInteger(SightDataHashTable,'u016', CC, 100)
+	call SaveInteger(SightDataHashTable,'u016', DC, 100)
+	call SaveInteger(SightDataHashTable,'u016', HC, 41)
+	call SaveInteger(SightDataHashTable,'u01F', CC, 100)
+	call SaveInteger(SightDataHashTable,'u01F', DC, 100)
+	call SaveInteger(SightDataHashTable,'u01F', HC, 41)
+	call SaveInteger(SightDataHashTable,'u01T', CC, 100)
+	call SaveInteger(SightDataHashTable,'u01T', DC, 100)
+	call SaveInteger(SightDataHashTable,'u01T', HC, 41)
+	call SaveInteger(SightDataHashTable,'n00J', CC, 100)
+	call SaveInteger(SightDataHashTable,'n00J', DC, 100)
+	call SaveInteger(SightDataHashTable,'n00J', HC, 200)
+	call SaveInteger(SightDataHashTable,'n00H', CC, 100)
+	call SaveInteger(SightDataHashTable,'n00H', DC, 100)
+	call SaveInteger(SightDataHashTable,'n00H', HC, 200)
+	call SaveInteger(SightDataHashTable,'n00A', CC, 150)
+	call SaveInteger(SightDataHashTable,'n00A', DC, 150)
+	call SaveInteger(SightDataHashTable,'n00A', HC, 300)
+	call SaveInteger(SightDataHashTable,'n00G', CC, 150)
+	call SaveInteger(SightDataHashTable,'n00G', DC, 150)
+	call SaveInteger(SightDataHashTable,'n00G', HC, 300)
+	call SaveInteger(SightDataHashTable,'n006', CC, 200)
+	call SaveInteger(SightDataHashTable,'n006', DC, 200)
+	call SaveInteger(SightDataHashTable,'n006', HC, 400)
+	call SaveInteger(SightDataHashTable,'n00K', CC, 200)
+	call SaveInteger(SightDataHashTable,'n00K', DC, 200)
+	call SaveInteger(SightDataHashTable,'n00K', HC, 400)
+	call SaveInteger(SightDataHashTable,'o004', CC, 50)
+	call SaveInteger(SightDataHashTable,'o004', DC, 50)
+	call SaveInteger(SightDataHashTable,'o004', HC, 100)
 endfunction
 // 如果均为 255 则不必储存
 // -1 似乎代表255
@@ -88143,7 +88130,7 @@ function RegisterItem takes integer EUN, integer EWN, integer EYN, integer EZN r
 	set XXV[MaxItemsNumber]= EUN
 	set XOV[MaxItemsNumber]= EWN
 	set XRV[MaxItemsNumber]= EYN
-	call SaveBoolean(M, XRV[MaxItemsNumber], 0, true)
+	call SaveBoolean(SightDataHashTable, XRV[MaxItemsNumber], 0, true)
 	set XIV[MaxItemsNumber]= EZN
 	if EWN > 0 then
 		set ItemsIconFilePath[MaxItemsNumber]= GetAbilitySoundById(EWN, SOUND_TYPE_EFFECT_LOOPED)
@@ -88449,45 +88436,45 @@ function InitItemsSystem takes nothing returns nothing
 	call SaveInteger(HY,'ITDB', RegisterItem(0, 0,'h0EN', 0), RQV)
 	call RegisterItem(0, 0,'h0EA', 0)
 	call SaveInteger(HY,'ITDB', RegisterItem(0, 0,'h0EC', 0), RWV)
-	call SaveInteger(Y, XOV[ARV],'00CD', 55)
-	call SaveInteger(Y, XOV[NGV],'00CD', 30)
-	call SaveInteger(Y, XOV[ISV],'00CD', 15)
-	call SaveInteger(Y, XOV[ANV],'00CD', 50)
-	call SaveInteger(Y, XOV[ABV],'00CD', 50)
-	call SaveInteger(Y, XOV[A7V],'00CD', 30)
-	call SaveInteger(Y, XOV[NJV],'00CD', 18)
-	call SaveInteger(Y, XOV[Item_EulScepterOfDivinity],'00CD', 23)
-	call SaveInteger(Y, XOV[NMV],'00CD', 20)
-	call SaveInteger(Y, XOV[ADV],'00CD', 35)
-	call SaveInteger(Y, XOV[AFV],'00CD', 30)
-	call SaveInteger(Y, XOV[AGV],'00CD', 25)
-	call SaveInteger(Y, XOV[AHV],'00CD', 20)
-	call SaveInteger(Y, XOV[AJV],'00CD', 15)
-	call SaveInteger(Y, XOV[AKV],'00CD', 95)
-	call SaveInteger(Y, XOV[ALV],'00CD', 95)
-	call SaveInteger(Y, XOV[AMV],'00CD', 95)
-	call SaveInteger(Y, XOV[N0V],'00CD', 30)
-	call SaveInteger(Y, XOV[RCV],'00CD', 16)
-	call SaveInteger(Y, XOV[I4V],'00CD', 45)
-	call SaveInteger(Y, XOV[NPV],'00CD', 60)
-	call SaveInteger(Y, XOV[N_V],'00CD', 7)
-	call SaveInteger(Y, XOV[ROV],'00CD', 30)
-	call SaveInteger(Y, XOV[N2V],'00CD', 60)
-	call SaveInteger(Y, XOV[ACV],'00CD', 28)
-	call SaveInteger(Y, XOV[A2V],'00CD', 35)
-	call SaveInteger(Y, XOV[NEV],'00CD', 35)
-	call SaveInteger(Y, XOV[I1V],'00CD', 25)
-	call SaveInteger(Y, XOV[I_V],'00CD', 60)
-	call SaveInteger(Y, XOV[N1V],'00CD', 30)
-	call SaveInteger(Y, XOV[IAV],'00CD', 45)
-	call SaveInteger(Y, XOV[INV],'00CD', 45)
-	call SaveInteger(Y, XOV[IFV],'00CD', 100)
-	call SaveInteger(Y, XOV[R8V],'00CD', 50)
-	call SaveInteger(Y, XOV[RTV],'00CD', 40)
-	call SaveInteger(Y, XOV[RQV],'00CD', 16)
-	call SaveInteger(Y, XOV[RJV],'00CD', 7)
-	call SaveInteger(Y, XOV[RLV],'00CD', 28)
-	call SaveInteger(Y, XOV[RGV],'00CD', 15)
+	call SaveInteger(ItemCooldownHashTable, XOV[ARV],'00CD', 55)
+	call SaveInteger(ItemCooldownHashTable, XOV[NGV],'00CD', 30)
+	call SaveInteger(ItemCooldownHashTable, XOV[ISV],'00CD', 15)
+	call SaveInteger(ItemCooldownHashTable, XOV[ANV],'00CD', 50)
+	call SaveInteger(ItemCooldownHashTable, XOV[ABV],'00CD', 50)
+	call SaveInteger(ItemCooldownHashTable, XOV[A7V],'00CD', 30)
+	call SaveInteger(ItemCooldownHashTable, XOV[NJV],'00CD', 18)
+	call SaveInteger(ItemCooldownHashTable, XOV[Item_EulScepterOfDivinity],'00CD', 23)
+	call SaveInteger(ItemCooldownHashTable, XOV[NMV],'00CD', 20)
+	call SaveInteger(ItemCooldownHashTable, XOV[ADV],'00CD', 35)
+	call SaveInteger(ItemCooldownHashTable, XOV[AFV],'00CD', 30)
+	call SaveInteger(ItemCooldownHashTable, XOV[AGV],'00CD', 25)
+	call SaveInteger(ItemCooldownHashTable, XOV[AHV],'00CD', 20)
+	call SaveInteger(ItemCooldownHashTable, XOV[AJV],'00CD', 15)
+	call SaveInteger(ItemCooldownHashTable, XOV[AKV],'00CD', 95)
+	call SaveInteger(ItemCooldownHashTable, XOV[ALV],'00CD', 95)
+	call SaveInteger(ItemCooldownHashTable, XOV[AMV],'00CD', 95)
+	call SaveInteger(ItemCooldownHashTable, XOV[N0V],'00CD', 30)
+	call SaveInteger(ItemCooldownHashTable, XOV[RCV],'00CD', 16)
+	call SaveInteger(ItemCooldownHashTable, XOV[I4V],'00CD', 45)
+	call SaveInteger(ItemCooldownHashTable, XOV[NPV],'00CD', 60)
+	call SaveInteger(ItemCooldownHashTable, XOV[N_V],'00CD', 7)
+	call SaveInteger(ItemCooldownHashTable, XOV[ROV],'00CD', 30)
+	call SaveInteger(ItemCooldownHashTable, XOV[N2V],'00CD', 60)
+	call SaveInteger(ItemCooldownHashTable, XOV[ACV],'00CD', 28)
+	call SaveInteger(ItemCooldownHashTable, XOV[A2V],'00CD', 35)
+	call SaveInteger(ItemCooldownHashTable, XOV[NEV],'00CD', 35)
+	call SaveInteger(ItemCooldownHashTable, XOV[I1V],'00CD', 25)
+	call SaveInteger(ItemCooldownHashTable, XOV[I_V],'00CD', 60)
+	call SaveInteger(ItemCooldownHashTable, XOV[N1V],'00CD', 30)
+	call SaveInteger(ItemCooldownHashTable, XOV[IAV],'00CD', 45)
+	call SaveInteger(ItemCooldownHashTable, XOV[INV],'00CD', 45)
+	call SaveInteger(ItemCooldownHashTable, XOV[IFV],'00CD', 100)
+	call SaveInteger(ItemCooldownHashTable, XOV[R8V],'00CD', 50)
+	call SaveInteger(ItemCooldownHashTable, XOV[RTV],'00CD', 40)
+	call SaveInteger(ItemCooldownHashTable, XOV[RQV],'00CD', 16)
+	call SaveInteger(ItemCooldownHashTable, XOV[RJV],'00CD', 7)
+	call SaveInteger(ItemCooldownHashTable, XOV[RLV],'00CD', 28)
+	call SaveInteger(ItemCooldownHashTable, XOV[RGV],'00CD', 15)
 	set XNV[RegisterItem('I03A','I051','h08K','I0D9')]= OQV
 	set XNV[RegisterItem('I03Y','I052','h08X','I0C9')]= OTV
 	set XNV[RegisterItem('I02S','I02P','h08S','I0CA')]= XPV
@@ -89706,182 +89693,182 @@ function Init_PreloadAbilitys takes nothing returns nothing
 	call AddAbilityIDToPreloadQueue(S4[10])
 endfunction
 function Init_PRDRandom takes nothing returns nothing
-	call SaveReal(T,-1, 0, .0038)
-	call SaveReal(T,-1, 1, .0147)
-	call SaveReal(T,-1, 2, .0322)
-	call SaveReal(T,-1, 3, .0557)
-	call SaveReal(T,-1, 4, .0847)
-	call SaveReal(T,-1, 5, .1189)
-	call SaveReal(T,-1, 6, .1579)
-	call SaveReal(T,-1, 7, .2015)
-	call SaveReal(T,-1, 8, .2493)
-	call SaveReal(T,-1, 9, .3021)
-	call SaveReal(T,-1, 10, .3604)
-	call SaveReal(T,-1, 11, .4226)
-	call SaveReal(T,-1, 12, .4811)
-	call SaveReal(T,-1, 13, .5714)
-	call SaveReal(T,-1, 14, .6666)
-	call SaveReal(T,-1, 15, .75)
-	call SaveReal(T,-1, 16, .8235)
-	call SaveReal(T,-1, 17, .8888)
-	call SaveReal(T,-1, 18, .9473)
-	call SaveReal(T,-1, 19, 1.)
+	call SaveReal(PrdRandomHashTable,-1, 0, .0038)
+	call SaveReal(PrdRandomHashTable,-1, 1, .0147)
+	call SaveReal(PrdRandomHashTable,-1, 2, .0322)
+	call SaveReal(PrdRandomHashTable,-1, 3, .0557)
+	call SaveReal(PrdRandomHashTable,-1, 4, .0847)
+	call SaveReal(PrdRandomHashTable,-1, 5, .1189)
+	call SaveReal(PrdRandomHashTable,-1, 6, .1579)
+	call SaveReal(PrdRandomHashTable,-1, 7, .2015)
+	call SaveReal(PrdRandomHashTable,-1, 8, .2493)
+	call SaveReal(PrdRandomHashTable,-1, 9, .3021)
+	call SaveReal(PrdRandomHashTable,-1, 10, .3604)
+	call SaveReal(PrdRandomHashTable,-1, 11, .4226)
+	call SaveReal(PrdRandomHashTable,-1, 12, .4811)
+	call SaveReal(PrdRandomHashTable,-1, 13, .5714)
+	call SaveReal(PrdRandomHashTable,-1, 14, .6666)
+	call SaveReal(PrdRandomHashTable,-1, 15, .75)
+	call SaveReal(PrdRandomHashTable,-1, 16, .8235)
+	call SaveReal(PrdRandomHashTable,-1, 17, .8888)
+	call SaveReal(PrdRandomHashTable,-1, 18, .9473)
+	call SaveReal(PrdRandomHashTable,-1, 19, 1.)
 endfunction
 // 暗影冲刺循环播放的动画 以序号
 function Init_ChargeOfDarknessAnimation takes nothing returns nothing
-	call SaveInteger(P,'H06S','A1P8', 11)
-	call SaveInteger(P,'H00D','A1P8', 0)
-	call SaveInteger(P,'H503','A1P8', 5)
-	call SaveInteger(P,'H000','A1P8', 0)
-	call SaveInteger(P,'Otch','A1P8', 1)
-	call SaveInteger(P,'Harf','A1P8', 12)
-	call SaveInteger(P,'Npbm','A1P8', 0)
-	call SaveInteger(P,'H001','A1P8', 0)
-	//	call SaveInteger(P,'Ucrl','A1P8', 1)
-	call SaveInteger(P,'Ucrl','A1P8', 8)
-	call SaveInteger(P,'O015','A1P8', 1)
-	call SaveInteger(P,'Hamg','A1P8', 8)
-	call SaveInteger(P,'O01F','A1P8', 3)
-	call SaveInteger(P,'N01I','A1P8', 4)
-	call SaveInteger(P,'N01H','A1P8', 15)
-	call SaveInteger(P,'N01T','A1P8', 15)
-	call SaveInteger(P,'N01J','A1P8', 15)
-	call SaveInteger(P,'H600','A1P8', 15)
-	call SaveInteger(P,'H601','A1P8', 15)
-	call SaveInteger(P,'H602','A1P8', 15)
-	call SaveInteger(P,'H00T','A1P8', 0)
-	call SaveInteger(P,'Hlgr','A1P8', 6)
-	call SaveInteger(P,'H00E','A1P8', 4)
-	call SaveInteger(P,'H00F','A1P8', 4)
-	call SaveInteger(P,'H00G','A1P8', 4)
-	call SaveInteger(P,'H00Q','A1P8', 17)
-	call SaveInteger(P,'H008','A1P8', 1)
-	call SaveInteger(P,'E02F','A1P8', 5)
-	call SaveInteger(P,'E02I','A1P8', 12)
-	call SaveInteger(P,'E02K','A1P8', 0)
-	call SaveInteger(P,'E032','A1P8', 6)
-	call SaveInteger(P,'N0MU','A1P8', 0)
-	call SaveInteger(P,'Edem','A1P8', 8)
-	call SaveInteger(P,'Usyl','A1P8', 4)
-	call SaveInteger(P,'Nbbc','A1P8', 6)
-	call SaveInteger(P,'N01O','A1P8', 8)
-	call SaveInteger(P,'N013','A1P8', 13)
-	call SaveInteger(P,'N014','A1P8', 13)
-	call SaveInteger(P,'N015','A1P8', 13)
-	call SaveInteger(P,'E005','A1P8', 1)
-	call SaveInteger(P,'H0DL','A1P8', 1)
-	call SaveInteger(P,'HC49','A1P8', 2)
-	call SaveInteger(P,'Ogrh','A1P8', 0)
-	call SaveInteger(P,'N01V','A1P8', 6)
-	call SaveInteger(P,'HC92','A1P8', 10)
-	call SaveInteger(P,'N016','A1P8', 8)
-	call SaveInteger(P,'N017','A1P8', 8)
-	call SaveInteger(P,'QTW2','A1P8', 8)
-	call SaveInteger(P,'QTW3','A1P8', 8)
-	call SaveInteger(P,'N02B','A1P8', 8)
-	call SaveInteger(P,'E02N','A1P8', 2)
-	call SaveInteger(P,'E02O','A1P8', 2)
-	call SaveInteger(P,'Nbrn','A1P8', 8)
-	call SaveInteger(P,'E01Y','A1P8', 2)
-	call SaveInteger(P,'Huth','A1P8', 0)
-	call SaveInteger(P,'Hvwd','A1P8', 5)
-	call SaveInteger(P,'Naka','A1P8', 2)
-	call SaveInteger(P,'N0M0','A1P8', 0)
-	call SaveInteger(P,'H501','A1P8', 3)
-	call SaveInteger(P,'H502','A1P8', 10)
-	call SaveInteger(P,'H500','A1P8', 9)
-	call SaveInteger(P,'Hjai','A1P8', 6)
-	call SaveInteger(P,'Emoo','A1P8', 8)
-	call SaveInteger(P,'N00B','A1P8', 3)
-	call SaveInteger(P,'H00A','A1P8', 2)
-	call SaveInteger(P,'Hblm','A1P8', 0)
-	call SaveInteger(P,'Hmbr','A1P8', 20)
-	call SaveInteger(P,'Emns','A1P8', 7)
-	call SaveInteger(P,'N01A','A1P8', 1)
-	call SaveInteger(P,'H004','A1P8', 2)
-	call SaveInteger(P,'H00S','A1P8', 0)
-	call SaveInteger(P,'N0MU','A1P8', 0)
-	call SaveInteger(P,'N0EG','A1P8', 8)
-	call SaveInteger(P,'E02J','A1P8', 2)
-	call SaveInteger(P,'Hmkg','A1P8', 11)
-	call SaveInteger(P,'H00K','A1P8', 0)
-	call SaveInteger(P,'E00P','A1P8', 4)
-	call SaveInteger(P,'Ntin','A1P8', 0)
+	call SaveInteger(ObjectHashTable,'H06S','A1P8', 11)
+	call SaveInteger(ObjectHashTable,'H00D','A1P8', 0)
+	call SaveInteger(ObjectHashTable,'H503','A1P8', 5)
+	call SaveInteger(ObjectHashTable,'H000','A1P8', 0)
+	call SaveInteger(ObjectHashTable,'Otch','A1P8', 1)
+	call SaveInteger(ObjectHashTable,'Harf','A1P8', 12)
+	call SaveInteger(ObjectHashTable,'Npbm','A1P8', 0)
+	call SaveInteger(ObjectHashTable,'H001','A1P8', 0)
+	//	call SaveInteger(ObjectHashTable,'Ucrl','A1P8', 1)
+	call SaveInteger(ObjectHashTable,'Ucrl','A1P8', 8)
+	call SaveInteger(ObjectHashTable,'O015','A1P8', 1)
+	call SaveInteger(ObjectHashTable,'Hamg','A1P8', 8)
+	call SaveInteger(ObjectHashTable,'O01F','A1P8', 3)
+	call SaveInteger(ObjectHashTable,'N01I','A1P8', 4)
+	call SaveInteger(ObjectHashTable,'N01H','A1P8', 15)
+	call SaveInteger(ObjectHashTable,'N01T','A1P8', 15)
+	call SaveInteger(ObjectHashTable,'N01J','A1P8', 15)
+	call SaveInteger(ObjectHashTable,'H600','A1P8', 15)
+	call SaveInteger(ObjectHashTable,'H601','A1P8', 15)
+	call SaveInteger(ObjectHashTable,'H602','A1P8', 15)
+	call SaveInteger(ObjectHashTable,'H00T','A1P8', 0)
+	call SaveInteger(ObjectHashTable,'Hlgr','A1P8', 6)
+	call SaveInteger(ObjectHashTable,'H00E','A1P8', 4)
+	call SaveInteger(ObjectHashTable,'H00F','A1P8', 4)
+	call SaveInteger(ObjectHashTable,'H00G','A1P8', 4)
+	call SaveInteger(ObjectHashTable,'H00Q','A1P8', 17)
+	call SaveInteger(ObjectHashTable,'H008','A1P8', 1)
+	call SaveInteger(ObjectHashTable,'E02F','A1P8', 5)
+	call SaveInteger(ObjectHashTable,'E02I','A1P8', 12)
+	call SaveInteger(ObjectHashTable,'E02K','A1P8', 0)
+	call SaveInteger(ObjectHashTable,'E032','A1P8', 6)
+	call SaveInteger(ObjectHashTable,'N0MU','A1P8', 0)
+	call SaveInteger(ObjectHashTable,'Edem','A1P8', 8)
+	call SaveInteger(ObjectHashTable,'Usyl','A1P8', 4)
+	call SaveInteger(ObjectHashTable,'Nbbc','A1P8', 6)
+	call SaveInteger(ObjectHashTable,'N01O','A1P8', 8)
+	call SaveInteger(ObjectHashTable,'N013','A1P8', 13)
+	call SaveInteger(ObjectHashTable,'N014','A1P8', 13)
+	call SaveInteger(ObjectHashTable,'N015','A1P8', 13)
+	call SaveInteger(ObjectHashTable,'E005','A1P8', 1)
+	call SaveInteger(ObjectHashTable,'H0DL','A1P8', 1)
+	call SaveInteger(ObjectHashTable,'HC49','A1P8', 2)
+	call SaveInteger(ObjectHashTable,'Ogrh','A1P8', 0)
+	call SaveInteger(ObjectHashTable,'N01V','A1P8', 6)
+	call SaveInteger(ObjectHashTable,'HC92','A1P8', 10)
+	call SaveInteger(ObjectHashTable,'N016','A1P8', 8)
+	call SaveInteger(ObjectHashTable,'N017','A1P8', 8)
+	call SaveInteger(ObjectHashTable,'QTW2','A1P8', 8)
+	call SaveInteger(ObjectHashTable,'QTW3','A1P8', 8)
+	call SaveInteger(ObjectHashTable,'N02B','A1P8', 8)
+	call SaveInteger(ObjectHashTable,'E02N','A1P8', 2)
+	call SaveInteger(ObjectHashTable,'E02O','A1P8', 2)
+	call SaveInteger(ObjectHashTable,'Nbrn','A1P8', 8)
+	call SaveInteger(ObjectHashTable,'E01Y','A1P8', 2)
+	call SaveInteger(ObjectHashTable,'Huth','A1P8', 0)
+	call SaveInteger(ObjectHashTable,'Hvwd','A1P8', 5)
+	call SaveInteger(ObjectHashTable,'Naka','A1P8', 2)
+	call SaveInteger(ObjectHashTable,'N0M0','A1P8', 0)
+	call SaveInteger(ObjectHashTable,'H501','A1P8', 3)
+	call SaveInteger(ObjectHashTable,'H502','A1P8', 10)
+	call SaveInteger(ObjectHashTable,'H500','A1P8', 9)
+	call SaveInteger(ObjectHashTable,'Hjai','A1P8', 6)
+	call SaveInteger(ObjectHashTable,'Emoo','A1P8', 8)
+	call SaveInteger(ObjectHashTable,'N00B','A1P8', 3)
+	call SaveInteger(ObjectHashTable,'H00A','A1P8', 2)
+	call SaveInteger(ObjectHashTable,'Hblm','A1P8', 0)
+	call SaveInteger(ObjectHashTable,'Hmbr','A1P8', 20)
+	call SaveInteger(ObjectHashTable,'Emns','A1P8', 7)
+	call SaveInteger(ObjectHashTable,'N01A','A1P8', 1)
+	call SaveInteger(ObjectHashTable,'H004','A1P8', 2)
+	call SaveInteger(ObjectHashTable,'H00S','A1P8', 0)
+	call SaveInteger(ObjectHashTable,'N0MU','A1P8', 0)
+	call SaveInteger(ObjectHashTable,'N0EG','A1P8', 8)
+	call SaveInteger(ObjectHashTable,'E02J','A1P8', 2)
+	call SaveInteger(ObjectHashTable,'Hmkg','A1P8', 11)
+	call SaveInteger(ObjectHashTable,'H00K','A1P8', 0)
+	call SaveInteger(ObjectHashTable,'E00P','A1P8', 4)
+	call SaveInteger(ObjectHashTable,'Ntin','A1P8', 0)
 	if GetRandomReal(0, 1)> .9 then
-		call SaveInteger(P,'Ntin','A1P8', 13)
+		call SaveInteger(ObjectHashTable,'Ntin','A1P8', 13)
 	endif
-	call SaveInteger(P,'Orkn','A1P8', 0)
-	call SaveInteger(P,'E02X','A1P8', 1)
-	call SaveInteger(P,'H0DO','A1P8', 4)
-	call SaveInteger(P,'NOMD','A1P8', 1)
-	call SaveInteger(P,'Opgh','A1P8', 6)
-	call SaveInteger(P,'U00A','A1P8', 7)
-	call SaveInteger(P,'UC42','A1P8', 1)
-	call SaveInteger(P,'U007','A1P8', 1)
-	call SaveInteger(P,'Udea','A1P8', 0)
-	call SaveInteger(P,'U008','A1P8', 2)
-	call SaveInteger(P,'E015','A1P8', 2)
-	call SaveInteger(P,'Udre','A1P8', 4)
-	call SaveInteger(P,'N00R','A1P8', 3)
-	call SaveInteger(P,'U00F','A1P8', 1)
-	call SaveInteger(P,'NC00','A1P8', 2)
-	call SaveInteger(P,'UC91','A1P8', 1)
-	call SaveInteger(P,'H00R','A1P8', 1)
-	call SaveInteger(P,'H07I','A1P8', 8)
-	call SaveInteger(P,'Ofar','A1P8', 1)
-	call SaveInteger(P,'UC11','A1P8', 3)
-	call SaveInteger(P,'O00J','A1P8', 2)
-	call SaveInteger(P,'U00K','A1P8', 1)
-	call SaveInteger(P,'KODO','A1P8', 9)
-	call SaveInteger(P,'Hvsh','A1P8', 3)
-	call SaveInteger(P,'E004','A1P8', 4)
-	call SaveInteger(P,'U006','A1P8', 1)
-	call SaveInteger(P,'U000','A1P8', 13)
-	call SaveInteger(P,'Ubal','A1P8', 2)
-	call SaveInteger(P,'Ewar','A1P8', 2)
-	call SaveInteger(P,'Nfir','A1P8', 2)
-	call SaveInteger(P,'Eevi','A1P8', 7)
-	call SaveInteger(P,'Eevm','A1P8', 14)
-	call SaveInteger(P,'E02V','A1P8', 14)
-	call SaveInteger(P,'E02W','A1P8', 14)
-	call SaveInteger(P,'E02U','A1P8', 14)
-	call SaveInteger(P,'E01B','A1P8', 1)
-	call SaveInteger(P,'EC57','A1P8', 2)
-	call SaveInteger(P,'EC77','A1P8', 5)
-	call SaveInteger(P,'H00I','A1P8', 1)
-	call SaveInteger(P,'E002','A1P8', 1)
-	call SaveInteger(P,'H071','A1P8', 1)
-	call SaveInteger(P,'EC45','A1P8', 0)
-	call SaveInteger(P,'H00V','A1P8', 1)
-	call SaveInteger(P,'N0MK','A1P8', 9)
-	call SaveInteger(P,'Oshd','A1P8', 5)
-	call SaveInteger(P,'H00N','A1P8', 2)
-	call SaveInteger(P,'UC76','A1P8', 2)
-	call SaveInteger(P,'UC18','A1P8', 0)
-	call SaveInteger(P,'Uktl','A1P8', 2)
-	call SaveInteger(P,'Ulic','A1P8', 4)
-	call SaveInteger(P,'U00E','A1P8', 6)
-	call SaveInteger(P,'H00H','A1P8', 3)
-	call SaveInteger(P,'U00P','A1P8', 4)
-	call SaveInteger(P,'UC01','A1P8', 7)
-	call SaveInteger(P,'E01C','A1P8', 5)
-	call SaveInteger(P,'E02H','A1P8', 2)
-	call SaveInteger(P,'O016','A1P8', 3)
-	call SaveInteger(P,'O017','A1P8', 3)
-	call SaveInteger(P,'N01W','A1P8', 8)
-	call SaveInteger(P,'H00U','A1P8', 2)
-	call SaveInteger(P,'UC60','A1P8', 5)
-	call SaveInteger(P,'Ekee','A1P8', 2)
-	call SaveInteger(P,'E01A','A1P8', 8)
-	call SaveInteger(P,'N0HP','A1P8', 9)
-	call SaveInteger(P,'N0M7','A1P8', 3)
-	call SaveInteger(P,'N0MB','A1P8', 3)
-	call SaveInteger(P,'N0MC','A1P8', 3)
-	call SaveInteger(P,'N0MO','A1P8', 3)
-	call SaveInteger(P,'N0MA','A1P8', 3)
+	call SaveInteger(ObjectHashTable,'Orkn','A1P8', 0)
+	call SaveInteger(ObjectHashTable,'E02X','A1P8', 1)
+	call SaveInteger(ObjectHashTable,'H0DO','A1P8', 4)
+	call SaveInteger(ObjectHashTable,'NOMD','A1P8', 1)
+	call SaveInteger(ObjectHashTable,'Opgh','A1P8', 6)
+	call SaveInteger(ObjectHashTable,'U00A','A1P8', 7)
+	call SaveInteger(ObjectHashTable,'UC42','A1P8', 1)
+	call SaveInteger(ObjectHashTable,'U007','A1P8', 1)
+	call SaveInteger(ObjectHashTable,'Udea','A1P8', 0)
+	call SaveInteger(ObjectHashTable,'U008','A1P8', 2)
+	call SaveInteger(ObjectHashTable,'E015','A1P8', 2)
+	call SaveInteger(ObjectHashTable,'Udre','A1P8', 4)
+	call SaveInteger(ObjectHashTable,'N00R','A1P8', 3)
+	call SaveInteger(ObjectHashTable,'U00F','A1P8', 1)
+	call SaveInteger(ObjectHashTable,'NC00','A1P8', 2)
+	call SaveInteger(ObjectHashTable,'UC91','A1P8', 1)
+	call SaveInteger(ObjectHashTable,'H00R','A1P8', 1)
+	call SaveInteger(ObjectHashTable,'H07I','A1P8', 8)
+	call SaveInteger(ObjectHashTable,'Ofar','A1P8', 1)
+	call SaveInteger(ObjectHashTable,'UC11','A1P8', 3)
+	call SaveInteger(ObjectHashTable,'O00J','A1P8', 2)
+	call SaveInteger(ObjectHashTable,'U00K','A1P8', 1)
+	call SaveInteger(ObjectHashTable,'KODO','A1P8', 9)
+	call SaveInteger(ObjectHashTable,'Hvsh','A1P8', 3)
+	call SaveInteger(ObjectHashTable,'E004','A1P8', 4)
+	call SaveInteger(ObjectHashTable,'U006','A1P8', 1)
+	call SaveInteger(ObjectHashTable,'U000','A1P8', 13)
+	call SaveInteger(ObjectHashTable,'Ubal','A1P8', 2)
+	call SaveInteger(ObjectHashTable,'Ewar','A1P8', 2)
+	call SaveInteger(ObjectHashTable,'Nfir','A1P8', 2)
+	call SaveInteger(ObjectHashTable,'Eevi','A1P8', 7)
+	call SaveInteger(ObjectHashTable,'Eevm','A1P8', 14)
+	call SaveInteger(ObjectHashTable,'E02V','A1P8', 14)
+	call SaveInteger(ObjectHashTable,'E02W','A1P8', 14)
+	call SaveInteger(ObjectHashTable,'E02U','A1P8', 14)
+	call SaveInteger(ObjectHashTable,'E01B','A1P8', 1)
+	call SaveInteger(ObjectHashTable,'EC57','A1P8', 2)
+	call SaveInteger(ObjectHashTable,'EC77','A1P8', 5)
+	call SaveInteger(ObjectHashTable,'H00I','A1P8', 1)
+	call SaveInteger(ObjectHashTable,'E002','A1P8', 1)
+	call SaveInteger(ObjectHashTable,'H071','A1P8', 1)
+	call SaveInteger(ObjectHashTable,'EC45','A1P8', 0)
+	call SaveInteger(ObjectHashTable,'H00V','A1P8', 1)
+	call SaveInteger(ObjectHashTable,'N0MK','A1P8', 9)
+	call SaveInteger(ObjectHashTable,'Oshd','A1P8', 5)
+	call SaveInteger(ObjectHashTable,'H00N','A1P8', 2)
+	call SaveInteger(ObjectHashTable,'UC76','A1P8', 2)
+	call SaveInteger(ObjectHashTable,'UC18','A1P8', 0)
+	call SaveInteger(ObjectHashTable,'Uktl','A1P8', 2)
+	call SaveInteger(ObjectHashTable,'Ulic','A1P8', 4)
+	call SaveInteger(ObjectHashTable,'U00E','A1P8', 6)
+	call SaveInteger(ObjectHashTable,'H00H','A1P8', 3)
+	call SaveInteger(ObjectHashTable,'U00P','A1P8', 4)
+	call SaveInteger(ObjectHashTable,'UC01','A1P8', 7)
+	call SaveInteger(ObjectHashTable,'E01C','A1P8', 5)
+	call SaveInteger(ObjectHashTable,'E02H','A1P8', 2)
+	call SaveInteger(ObjectHashTable,'O016','A1P8', 3)
+	call SaveInteger(ObjectHashTable,'O017','A1P8', 3)
+	call SaveInteger(ObjectHashTable,'N01W','A1P8', 8)
+	call SaveInteger(ObjectHashTable,'H00U','A1P8', 2)
+	call SaveInteger(ObjectHashTable,'UC60','A1P8', 5)
+	call SaveInteger(ObjectHashTable,'Ekee','A1P8', 2)
+	call SaveInteger(ObjectHashTable,'E01A','A1P8', 8)
+	call SaveInteger(ObjectHashTable,'N0HP','A1P8', 9)
+	call SaveInteger(ObjectHashTable,'N0M7','A1P8', 3)
+	call SaveInteger(ObjectHashTable,'N0MB','A1P8', 3)
+	call SaveInteger(ObjectHashTable,'N0MC','A1P8', 3)
+	call SaveInteger(ObjectHashTable,'N0MO','A1P8', 3)
+	call SaveInteger(ObjectHashTable,'N0MA','A1P8', 3)
 endfunction
 function E7N takes integer WPV, integer T0V returns nothing
-	call SaveInteger(L, WPV, 5, T0V)
+	call SaveInteger(UnitRGBHashTable, WPV, 5, T0V)
 endfunction
 function Init_HerosTypeAghanimEffectAbilityId takes nothing returns nothing
 	call E7N(VUV[1],'A1NR')
@@ -90513,7 +90500,7 @@ endfunction
 
 // 将技能设置为可双击施法
 function AddDoubleClickSkillID takes integer iSkillId returns nothing
-	local string sHotKey = LoadStr(Q, iSkillId, HotKeyStringHash)
+	local string sHotKey = LoadStr(AbilityDataHashTable, iSkillId, HotKeyStringHash)
 	local integer iHotKey
 	// 因为没有可靠的记录技能快捷键 所以还是从slk里面读
 	if sHotKey == null then
@@ -91021,7 +91008,7 @@ function Init_RectsAndRegions takes nothing returns nothing
 	call RegionAddRect(TerrainCliffRegion, Rect(-3104., 2720., -2624., 3232.))
 endfunction
 
-function Init_BlzFunction takes nothing returns nothing
+function BlzFunction_Init takes nothing returns nothing
 	local integer index
 	local integer userControlledPlayers
 	call ConfigureNeutralVictim()
@@ -91101,17 +91088,13 @@ function main takes nothing returns nothing
 	endglobals
 	set LocalPlayer   = GetLocalPlayer()
 	set LocalPlayerId = GetPlayerId(LocalPlayer)
-	//call StartCampaignAI( Player(PLAYER_NEUTRAL_AGGRESSIVE), "callback" )
 
 	call S6E()
 
 	call SuspendTimeOfDay(true)
 
 	// 施法触发器
-	call TriggerAddCondition(JJ, Condition(function W7A))
-
-	// 聊天事件分发
-	call TriggerAddCondition(KJ, Condition(function W8A))
+	call TriggerAddCondition(UnitEventMainTrig, Condition(function W7A))
 
 	// 重生事件
 	call TriggerAddCondition(HeroReincarnationTrigger, Condition(function HeroReincarnationEvent))
@@ -91159,7 +91142,7 @@ function main takes nothing returns nothing
 	set AttackToScourgeDummyUnit = CreateUnit(p,'e001', 4901.8, 4536.6, 212.11)
 
 	// 改过的bj初始化
-	call Init_BlzFunction()
+	call BlzFunction_Init()
 
 	// 创建预读马甲
 	set PreloadeHero = CreateUnit(Player(15),'H00Y', 0, 0, 0)

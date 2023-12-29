@@ -102,11 +102,11 @@ scope MenuOptionCheckBox
                 set DisplayTextDuration[id]= 1.
             endif
         elseif data == 18 then
-            set b = LoadBoolean(K, GetHandleId(p),'UIds')
+            set b = LoadBoolean(OtherHashTable, GetHandleId(p),'UIds')
             if LocalPlayer == p then
                 call GetSetupText("信使复活窗口", b)
             endif
-            call SaveBoolean(K, GetHandleId(p),'UIds', not b)
+            call SaveBoolean(OtherHashTable, GetHandleId(p),'UIds', not b)
         elseif data == 19 then
             set F4V[id] = not F4V[id]
             call GetSetupText("复活计时器窗口", F4V[id])
