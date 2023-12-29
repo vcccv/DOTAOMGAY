@@ -490,7 +490,7 @@ globals
 	constant integer GB = 13
 	constant integer HB = 14
 	constant integer JB = 15
-	boolean KB = false
+	boolean IsSinglePlayerMode = false
 	group LB
 	boolean IsNotUpgraded = true
 	integer array PB
@@ -5049,7 +5049,7 @@ function ZGE takes nothing returns nothing
 	local trigger t
 	if not (IsUnitType(u, UNIT_TYPE_HERO) and IsPickingHero) and GetUnitAbilityLevel( u, 'Aloc' ) == 0 then
 		// debug call SingleDebug("给" + GetUnitName( GetTriggerUnit() ) + "注册伤害值显示和技能事件。")
-		if KB then
+		if IsSinglePlayerMode then
 			set t = CreateTrigger()
 			call TriggerRegisterUnitEvent(t, u, EVENT_UNIT_DAMAGED)
 			// 伤害值显示
@@ -26470,7 +26470,7 @@ endfunction
 function QXO takes nothing returns nothing
 	local player QOO = HostPlayer 
 	local trigger t
-	set KB = true
+	set IsSinglePlayerMode = true
 
 	// 单机也能看到伤害减免
 	//set IsGameHaveObserver = true
@@ -82661,7 +82661,7 @@ function AnyUnitDamagedEvent takes nothing returns boolean
 				return false
 			endif
 			// 额外的伤害事件 关于镜头震动和伤害显示 要在额外伤害打出之前运行
-			if KB then
+			if IsSinglePlayerMode then
 				call OtherDamagedEvent(DamagedEventTargetUnit, DamagedEventRealSourceUnit, DamagedEventDamageValue - DamagedEventReducedDamage)
 			endif
 			// 打断物品

@@ -165,16 +165,18 @@ scope MainUI
 
         
         // 和谐资源栏
-        set i = 0
-        loop
-            exitwhen i > 11
-            call DzFrameShow(DzFrameFindByName("GoldBackdrop", i)  , false)
-            call DzFrameShow(DzFrameFindByName("LumberBackdrop", i), false)
-            set i = i + 1
-        endloop
-        call DzFrameShow(DzFrameFindByName("ResourceTradingTitle", 0), false)
-        call DzFrameShow(DzFrameFindByName("GoldHeader"          , 0), false)
-        call DzFrameShow(DzFrameFindByName("LumberHeader"        , 0), false)
+        if not IsSinglePlayerMode then
+            set i = 0
+            loop
+                exitwhen i > 11
+                call DzFrameShow(DzFrameFindByName("GoldBackdrop", i)  , false)
+                call DzFrameShow(DzFrameFindByName("LumberBackdrop", i), false)
+                set i = i + 1
+            endloop
+            call DzFrameShow(DzFrameFindByName("ResourceTradingTitle", 0), false)
+            call DzFrameShow(DzFrameFindByName("GoldHeader"          , 0), false)
+            call DzFrameShow(DzFrameFindByName("LumberHeader"        , 0), false)
+        endif
         
         set i = 0
         loop
