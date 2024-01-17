@@ -6,10 +6,10 @@ scope Merchants
         return i =='hC95' or i =='n12B' or i =='n01K' or i =='nC38' or i =='n00V' or i =='n00W' or i =='n002' or i =='n00X' or i =='n009' or i =='n0HE' or i =='nC35' or i =='u00Q' or i =='uC74' or i =='u010' or i =='u00Z'or i =='n999'
     endfunction
     function SelectedMerchantsUnitAction takes nothing returns boolean
-        local unit u = GetTriggerUnit()
+        local unit    u  = GetTriggerUnit()
         local integer id = GetUnitTypeId(u)
-        local boolean b = GetOwningPlayer(u) == Player(15) and IsMerchantUnit(u) and LocalPlayer == GetTriggerPlayer()
-        local string s = ""
+        local boolean b  = GetOwningPlayer(u) == Player(15) and IsMerchantUnit(u) and LocalPlayer == GetTriggerPlayer()
+        local string  s  = ""
         if GetTriggerEventId() == EVENT_PLAYER_UNIT_DESELECTED then
             if b then
                 call ResetUnitAnimation(u)
@@ -116,9 +116,9 @@ scope Merchants
             unit ScourgeGatewayRelics
             unit ScourgeProtectorate
         endglobals
-        set ScourgeBlackMarket1 = CreateUnit(NEUTRAL_PASSIVE_PLAYER,'n12B', 5521, 6187, 180)
-        set ScourgeBlackMarket2 = CreateUnit(NEUTRAL_PASSIVE_PLAYER,'n12B', 6500, 5600,-45)
-        set ScourgePigKing      = CreateUnit(NEUTRAL_PASSIVE_PLAYER,'n999', 6250, 5600,-45)
+        set ScourgeBlackMarket1         = CreateUnit(NEUTRAL_PASSIVE_PLAYER,'n12B', 5521, 6187, 180)
+        set ScourgeBlackMarket2         = CreateUnit(NEUTRAL_PASSIVE_PLAYER,'n12B', 6500, 5600, -45)
+        set ScourgePigKing              = CreateUnit(NEUTRAL_PASSIVE_PLAYER,'n999', 6250, 5600, -45)
         set ScourgeDemonicArtifacts     = CreateUnit(NEUTRAL_PASSIVE_PLAYER,'nC35', 6816, 5984, 270)
         set ScourgeWeaponsDealer        = CreateUnit(NEUTRAL_PASSIVE_PLAYER,'n01K', 6304, 6368, 270)
         set ScourgeGrylaTheAccessorizer = CreateUnit(NEUTRAL_PASSIVE_PLAYER,'nC38', 6496, 6368, 270)

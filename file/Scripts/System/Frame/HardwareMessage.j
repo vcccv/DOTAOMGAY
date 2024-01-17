@@ -177,7 +177,6 @@ scope HardwareMessage
 
     // 鼠标左键点击
     function MouseLeftClick takes nothing returns nothing
-        // call BJDebugMsg( "鼠标点击Frame:" + I2S( DzGetMouseFocus() ) + "  Name:" + DzFrameGetName( DzGetMouseFocus() ) )
         if DownAlt then
             if CommandBarButtonIndex == - 1 then
                 return

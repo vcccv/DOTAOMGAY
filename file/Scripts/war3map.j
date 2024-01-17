@@ -1,8 +1,26 @@
 ﻿
 globals
+	location ScourgeMidMeleeSpawnLocatio   = null
+	location ScourgeTopMeleeSpawnLocatio   = null
+	location ScourgeBotMeleeSpawnLocatio   = null
+	location ScourgeBotRangedSpawnLocatio  = null
+	location ScourgeMidRangedSpawnLocatio  = null
+	location ScourgeTopRangedSpawnLocatio  = null
+	location SentinelMidMeleeSpawnLocatio  = null
+	location SentinelBotMeleeSpawnLocatio  = null
+	location SentinelTopMeleeSpawnLocatio  = null
+	location SentinelMidRangedSpawnLocatio = null
+	location SentinelBotRangedSpawnLocatio = null
+	location SentinelTopRangedSpawnLocatio = null
+endglobals
+
+globals
 	group			TempGroup = CreateGroup()
 	boolean			IsReplayMode	= false
 	// Japi常量
+
+	player  LocalPlayer = null
+	integer LocalPlayerId
 
 	// 模型路径
 	constant integer UNIT_STRING_MODEL_PATH = 13
@@ -1935,6 +1953,8 @@ native EXSetEffectSpeed takes effect e, real speed returns nothing
 native EXExecuteScript takes string script returns string
 // yd japi ==================================================================
 // 技能----------------------------------------------------
+
+//! import "System\Memoryhack\MemoryHack Init.j"
 
 ///<summary>技能属性 [JAPI]</summary>
 function YDWEGetUnitAbilityState takes unit u, integer abilcode, integer state_type returns real
@@ -52368,21 +52388,6 @@ function JHE takes nothing returns nothing
 	call FixUnitSkillsBug(u)
 	set u = null
 endfunction
-function A2I takes nothing returns nothing
-	local timer t = GetExpiredTimer()
-	local unit u = LoadUnitHandle(HY, GetHandleId(t), 0)
-	call SetUnitState(u, UNIT_STATE_MANA, GetUnitState(u, UNIT_STATE_MANA)+ 50 + 100 * GetUnitAbilityLevel(u,'A528'))
-	set u = null
-	call FlushChildHashtable(HY, GetHandleId(t))
-	call DestroyTimer(t)
-	set t = null
-endfunction
-function Tinker_Rearm_DummySpell takes nothing returns nothing
-	local timer t = CreateTimer()
-	call TimerStart(t, 0, false, function A2I)
-	call SaveUnitHandle(HY, GetHandleId(t), 0, GetTriggerUnit())
-	set t = null
-endfunction
 function Tinker_MarchOfMachines_OnCast takes nothing returns nothing
 	local unit sourceUnit = GetTriggerUnit()
 	local unit u = CreateUnit(GetOwningPlayer(sourceUnit),'n03C', GetUnitX(sourceUnit), GetUnitY(sourceUnit), 0)
@@ -53773,7 +53778,7 @@ function B1I takes nothing returns boolean
 	set t = null
 	return false
 endfunction
-function B2I takes nothing returns boolean
+function B2Izi takes nothing returns boolean
 	local unit t = GetFilterUnit()
 	local integer i
 	if GetUnitTypeId(t)=='e020' and GetWidgetLife(t)> .405 then
@@ -53789,7 +53794,7 @@ function B2I takes nothing returns boolean
 endfunction
 function B3I takes player p, integer WOV returns nothing
 	set XK[0]= 0
-	call GroupEnumUnitsOfPlayer(AK, p, Condition(function B2I))
+	call GroupEnumUnitsOfPlayer(AK, p, Condition(function B2Izi))
 	if XK[0]> WOV then
 		call RemoveUnit(Temp__ArrayUnit[0])
 	endif
@@ -54416,7 +54421,7 @@ function C1I takes unit missileDummy, unit sourceUnit, real J2E returns unit
 	set g = null
 	return KHV
 endfunction
-function C2I takes nothing returns boolean
+function C2III takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	if (LoadLightningHandle(HY, h, 196))!= null then
@@ -54476,7 +54481,7 @@ function C3I takes nothing returns boolean
 					set FWX = CommonUnitAddStun(targetUnit, .75 *(level + 1), false)
 					set C6I = CommonUnitAddStun(C5I, .75 *(level + 1), false)
 					call TriggerRegisterTimerEvent(t, RMaxBJ(FWX, C6I), false)
-					call TriggerAddCondition(t, Condition(function C2I))
+					call TriggerAddCondition(t, Condition(function C2III))
 					set APX = AddLightning("MFPB", true, GetUnitX(targetUnit), GetUnitY(targetUnit), GetUnitX(C5I), GetUnitY(C5I))
 					call SetLightningColor(APX, .5, .5, 1, 1)
 					call SaveLightningHandle(HY, h, 196,(APX))
@@ -54486,7 +54491,7 @@ function C3I takes nothing returns boolean
 					set dummyCaster = CreateUnit(GetOwningPlayer(targetUnit),'e00E', GetUnitX(targetUnit), GetUnitY(targetUnit), 0)
 					set FWX = CommonUnitAddStun(targetUnit, .75 *(level + 1), false)
 					call TriggerRegisterTimerEvent(t, FWX, false)
-					call TriggerAddCondition(t, Condition(function C2I))
+					call TriggerAddCondition(t, Condition(function C2III))
 					set APX = AddLightning("MFPB", true, GetUnitX(targetUnit), GetUnitY(targetUnit), GetDestructableX(d), GetDestructableY(d))
 					call SetLightningColor(APX, .5, .5, 1, 1)
 					call SaveLightningHandle(HY, h, 196,(APX))
@@ -55137,7 +55142,7 @@ function D1I takes nothing returns nothing
 	endif
 	set t = null
 endfunction
-function D2I takes nothing returns nothing
+function D2IIII takes nothing returns nothing
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local unit D3I = LoadUnitHandle(HY, h, 0)
@@ -55209,7 +55214,7 @@ function D4I takes unit u returns nothing
 	call TriggerRegisterDeathEvent(t, u)
 	call TriggerRegisterTimerEvent(t, .1, true)
 	call SaveInteger(HY, h, 0, j)
-	call TriggerAddCondition(t, Condition(function D2I))
+	call TriggerAddCondition(t, Condition(function D2IIII))
 	call SaveUnitHandle(HY, h, 0, u)
 	set t = null
 endfunction
@@ -57281,7 +57286,7 @@ function H1I takes nothing returns boolean
 				call SaveUnitHandle(OtherHashTable2,'A3E9', 0, u)
 				call SaveUnitHandle(OtherHashTable2,'A3E9', 1, LoadUnitHandle(ObjectHashTable, WFV, 1))
 				call SaveInteger(OtherHashTable2,'A3E9', 0, LoadInteger(ObjectHashTable, WFV, 1))
-				call ExecuteFunc("H2I")
+				call ExecuteFunc("H2III")
 			endif
 		endif
 		call CommonUnitAddStun(u, i, false)
@@ -57328,7 +57333,7 @@ function FTE takes nothing returns nothing
 		call H3I(GetTriggerUnit(), GetSpellTargetUnit(), GetUnitAbilityLevel(GetTriggerUnit(),'A055')+ GetUnitAbilityLevel(GetTriggerUnit(),'QB00'), false)
 	endif
 endfunction
-function H2I takes nothing returns nothing
+function H2III takes nothing returns nothing
 	local unit targetUnit = LoadUnitHandle(OtherHashTable2,'A3E9', 1)
 	call T4V(LoadUnitHandle(OtherHashTable2,'A3E9', 0))
 	if UnitHasSpellShield(targetUnit) == false then
@@ -62080,13 +62085,13 @@ function TMI takes unit S3X, unit S4X returns nothing
 	local integer T_I = GetUnitAbilityLevel(S4X, TGI)
 	local integer T0I = GetUnitAbilityLevel(S4X, THI)
 	local integer T1I = GetUnitAbilityLevel(S4X,'A0NR')
-	local integer T2I = GetUnitAbilityLevel(S4X, TJI)
+	local integer T2Z = GetUnitAbilityLevel(S4X, TJI)
 	call TLI(S3X, S4X)
 	call TKI(S3X, S4X, Z_E, TPI, TYI)
 	call TKI(S3X, S4X, Z0E, TQI, TZI)
 	call TKI(S3X, S4X, TGI, TSI, T_I)
 	call TKI(S3X, S4X, THI, TTI, T0I)
-	call TKI(S3X, S4X, TJI, TWI, T2I)
+	call TKI(S3X, S4X, TJI, TWI, T2Z)
 	call TKI(S3X, S4X,'A0NR', TUI, T1I)
 endfunction
 function T3I takes unit S3X, unit S4X returns nothing
@@ -62912,7 +62917,7 @@ function W4X takes nothing returns nothing
 	set trigUnit = null
 	set dummyCaster = null
 endfunction
-function U2I takes nothing returns boolean
+function U2III takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local unit dummyCaster =(LoadUnitHandle(HY, h, 19))
@@ -62940,7 +62945,7 @@ function PFE takes nothing returns nothing
 		call SaveUnitHandle(HY,(GetHandleId(trigUnit)), 219,(dummyCaster))
 		set t = CreateTrigger()
 		set h = GetHandleId(t)
-		call TriggerAddCondition(t, Condition(function U2I))
+		call TriggerAddCondition(t, Condition(function U2III))
 		call TriggerRegisterTimerEvent(t, .2, true)
 		call SaveUnitHandle(HY, h, 2,(trigUnit))
 		call SaveUnitHandle(HY, h, 19,(dummyCaster))
@@ -69707,7 +69712,7 @@ function I0A takes nothing returns nothing
 	set triggerUnit = null
 	set t = null
 endfunction
-function I2A takes unit sourceUnit, unit u, real damageValue, real SYV, boolean b returns nothing
+function I2AAA takes unit sourceUnit, unit u, real damageValue, real SYV, boolean b returns nothing
 	local timer t
 	local integer h
 	if HaveSavedHandle(ObjectHashTable, GetHandleId(u),'A0A6') then
@@ -69754,7 +69759,7 @@ function I4A takes nothing returns nothing
 			set u2 = FirstOfGroup(g)
 		exitwhen u2 == null
 			call GroupAddUnit(g2, u2)
-			call I2A(u, u2, LoadReal(HY, h, 0), 16, LoadBoolean(HY, h, 0))
+			call I2AAA(u, u2, LoadReal(HY, h, 0), 16, LoadBoolean(HY, h, 0))
 			call GroupRemoveUnit(g, u2)
 		endloop
 	endif
@@ -91082,10 +91087,7 @@ function main takes nothing returns nothing
 	local real d
 	local timer tt
 
-	globals
-		player  LocalPlayer = null
-		integer LocalPlayerId
-	endglobals
+	call InitMemoryHack()
 	set LocalPlayer   = GetLocalPlayer()
 	set LocalPlayerId = GetPlayerId(LocalPlayer)
 
@@ -91216,20 +91218,8 @@ function main takes nothing returns nothing
 	set CreepNextWaypoint[3]= AttackToMidLocation
 	set CreepNextWaypoint[4]= AttackToBotLocation
 	set CreepNextWaypoint[5]= AttackToScourgeLocation
-	globals
-		location ScourgeMidMeleeSpawnLocatio   = null
-		location ScourgeTopMeleeSpawnLocatio   = null
-		location ScourgeBotMeleeSpawnLocatio   = null
-		location ScourgeBotRangedSpawnLocatio  = null
-		location ScourgeMidRangedSpawnLocatio  = null
-		location ScourgeTopRangedSpawnLocatio  = null
-		location SentinelMidMeleeSpawnLocatio  = null
-		location SentinelBotMeleeSpawnLocatio  = null
-		location SentinelTopMeleeSpawnLocatio  = null
-		location SentinelMidRangedSpawnLocatio = null
-		location SentinelBotRangedSpawnLocatio = null
-		location SentinelTopRangedSpawnLocatio = null
-	endglobals
+
+
 	set ScourgeMidMeleeSpawnLocatio   = GetRectCenter( gg_rct_ScourgeMidMeleeSpawn   )
 	set ScourgeTopMeleeSpawnLocatio   = GetRectCenter( gg_rct_ScourgeTopMeleeSpawn   )
 	set ScourgeBotMeleeSpawnLocatio   = GetRectCenter( gg_rct_ScourgeBotMeleeSpawn   )
