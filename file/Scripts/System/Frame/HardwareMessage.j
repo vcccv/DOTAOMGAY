@@ -2,11 +2,10 @@
 scope HardwareMessage
 
     // 按下ESC按键
-    // 直接异步清理消息 更顺滑
     function EnterKey_PushOther takes nothing returns nothing
         local integer key = DzGetTriggerKey()
         // 回车
-        if key == 13 then
+        if key == OSKEY_RETURN then
             if UpdateLogIsShow then
                 // 退出更新日志
                 call DzClickFrame(UIButton__UpdateLogOK)
@@ -14,7 +13,7 @@ scope HardwareMessage
                 // 退出选择热键
                 call CancelChangeHotKey()
             endif
-        elseif key == 27 then
+        elseif key == OSKEY_ESCAPE then
             // 按下ESC
             if ChangingHotkey then
                 call CancelChangeHotKey()
@@ -29,15 +28,15 @@ scope HardwareMessage
                 // 退出更新日志
                 call DzClickFrame(UIButton__UpdateLogOK)
             endif
-        elseif key == 115 then
+        elseif key == OSKEY_F4 then
             // 如果按下F4 的同时还按着Alt 说明玩家要直接退游戏 隐藏一下防止露馅
-            if DzIsKeyDown(18) then
+            if MHMsg_IsKeyDown(OSKEY_ALT) then
                 call DzFrameShow( EscMenuMapOptionsPanel, false )
                 call DzFrameShow( UIFrame__OrderSetup, false )
                 set IsSetupUIEnable = false
                 set bMenuGameplayPanelIsEnable = false
             endif
-        elseif key == 121 then
+        elseif key == OSKEY_F10 then
             // 按F10
             set bMenuMainPanelIsEnable = true
         endif
@@ -55,13 +54,12 @@ scope HardwareMessage
                 call ClickMapSetupButton__Script()
                 return
             elseif key == 'J' then
-                if DzIsKeyDown(18) then
+                if MHMsg_IsKeyDown(OSKEY_ALT) then
                     call Click_UI_Glyph_A()
                 endif
             elseif ChangingHotkey then
                 call LocalChangeHotKeyActions(key)
-            endif
-            if IsEnableDoubleClickSystem then
+            elseif IsEnableDoubleClickSystem then
                 if KeyCanDoubleClickSpell[key] > 0 then
                     // 因为取消按键在右下角
                     call GetLocalAbilityId(3, 2)
@@ -107,6 +105,22 @@ scope HardwareMessage
                         endloop
                     endif
                 endif
+            elseif key == OSKEY_M and not MHMsg_IsKeyDown(OSKEY_ALT) and not MHMsg_IsKeyDown(OSKEY_CONTROL) and GetUnitAbilityLevel(GetPlayerSelectedUnit(), 'Amov') > 0 then
+                call MHMsg_CallTargetMode(0, 851986, 0x6)
+            elseif key == OSKEY_P and not MHMsg_IsKeyDown(OSKEY_ALT) and not MHMsg_IsKeyDown(OSKEY_CONTROL) and GetUnitAbilityLevel(GetPlayerSelectedUnit(), 'Amov') > 0 then
+                call MHMsg_CallTargetMode(0, 851990, 0x6)
+            elseif key == OSKEY_S and not MHMsg_IsKeyDown(OSKEY_ALT) and not MHMsg_IsKeyDown(OSKEY_CONTROL) and GetUnitAbilityLevel(GetPlayerSelectedUnit(), 'Aatk') > 0 then
+                if MHMsg_IsKeyDown(OSKEY_SHIFT) then
+                    call MHMsg_SendImmediateOrder(851972, 0x1)
+                else
+                    call MHMsg_SendImmediateOrder(851972, 0x0)
+                endif
+            elseif key == OSKEY_H and not MHMsg_IsKeyDown(OSKEY_ALT) and not MHMsg_IsKeyDown(OSKEY_CONTROL) and GetUnitAbilityLevel(GetPlayerSelectedUnit(), 'Aatk') > 0 and GetUnitAbilityLevel(GetPlayerSelectedUnit(), 'Amov') > 0 then
+                if MHMsg_IsKeyDown(OSKEY_SHIFT) then
+                    call MHMsg_SendImmediateOrder(851993, 0x1)
+                else
+                    call MHMsg_SendImmediateOrder(851993, 0x0)
+                endif
             endif
         endif
     endfunction
@@ -135,8 +149,8 @@ scope HardwareMessage
     
     // 每帧回调函数
     function cUpdateCallback takes nothing returns nothing
-        local boolean b = DzIsKeyDown(18)
-        local unit selectUnit = GetPlayerSelectedUnit()
+        local boolean b = MHMsg_IsKeyDown(OSKEY_ALT)
+        local unit selectUnit = MHPlayer_GetSelectUnit()
         // 改键
         if UseChangeHotKeySystem then
             set UpdateCallbackCount = UpdateCallbackCount + 1
@@ -182,7 +196,7 @@ scope HardwareMessage
                 return
             endif
             call SetStartLocPrioCount(CommandBarButtonIndex / 3 , ModuloInteger(CommandBarButtonIndex, 3))
-            if DzIsKeyDown(18) and tip_string != null and tip_string != "" then
+            if MHMsg_IsKeyDown(OSKEY_ALT) and tip_string != null and tip_string != "" then
                 if GetChat_times() then
                     call DzSyncData("t", tip_string)
                 endif

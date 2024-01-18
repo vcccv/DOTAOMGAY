@@ -328,8 +328,6 @@ globals
 	// 哈希表KEY 技能是否是物品技能
 	constant integer OBJ_HTKEY_IS_ITEM_ABILITY = 110
 
-	constant integer OBJ_HTKEY_HERO_PRIMARY = 111
-
 	// 英雄重生 (实际上为物体死亡 但用条件判断了是否为重生)
 	trigger HeroReincarnationTrigger = CreateTrigger()
 
@@ -1954,8 +1952,7 @@ native EXExecuteScript takes string script returns string
 // yd japi ==================================================================
 // 技能----------------------------------------------------
 
-//! import "System\Memoryhack\MemoryHack Init.j"
-
+//! import "memory_hack\memory_hack_init.j"
 ///<summary>技能属性 [JAPI]</summary>
 function YDWEGetUnitAbilityState takes unit u, integer abilcode, integer state_type returns real
 	return EXGetAbilityState(EXGetUnitAbility(u, abilcode), state_type)
@@ -5467,6 +5464,11 @@ function CleanCurrentTrigger takes trigger t returns nothing
 		call EIX("8k")
 	endif
 endfunction
+
+
+//! import "System\UnitData\UnitData.j"
+
+
 function ENX takes integer i returns nothing
 	if i != IJ then
 		set QY[i]= QY[IJ]
@@ -5618,50 +5620,24 @@ function E1X takes string EZX, real x, real y, real SYV returns nothing
 	set e = null
 	set t = null
 endfunction
-// 力量 3 智力 1 敏捷 2
-function ConvertPrimaryAttributes takes string primary returns integer
-	if primary == "STR" then
-		return 3
-	elseif primary == "INT" then
-		return 1
-	else
-		return 2
-	endif
-endfunction
 function GetHeroMainAttributesType takes unit whichUnit returns integer
-	local integer value
-	local integer id = GetUnitTypeId(whichUnit)
-	if not IsHeroUnitId(id) then
-		return 0
-	endif
-	// 如果是正常英雄 可能会有变身之类的导致误判 获取原生ID就不会误判
-	if HaveSavedInteger(ExtraHT, GetHandleId(whichUnit), HTKEY_UNIT_ORIGIN_TYPEID) then
-		set id = LoadInteger(ExtraHT, GetHandleId(whichUnit), HTKEY_UNIT_ORIGIN_TYPEID)
-	endif
-	if not HaveSavedInteger(ObjectData, OBJ_HTKEY_HERO_PRIMARY, id) then
-		set value = ConvertPrimaryAttributes(GetObjectDataBySlk( id, "unit", "Primary" ))
-		call SaveInteger(ObjectData, OBJ_HTKEY_HERO_PRIMARY, id, value)
-		return value
-	else
-		return LoadInteger(ObjectData, OBJ_HTKEY_HERO_PRIMARY, id)
-	endif
-	return 0
+	return MHHero_GetPrimaryAttr(whichUnit)
 endfunction
-function E3X takes unit u returns integer
-	local integer E4X = GetHeroInt(u, true)
-	local integer E5X = GetHeroAgi(u, true)
-	local integer E6X = GetHeroStr(u, true)
-	return IMaxBJ(IMaxBJ(E6X, E4X), E5X)
+function GetHeroMaxAttributeValue takes unit u returns integer
+	local integer int = GetHeroInt(u, true)
+	local integer agi = GetHeroAgi(u, true)
+	local integer str = GetHeroStr(u, true)
+	return IMaxBJ(IMaxBJ(str, int), agi)
 endfunction
 function GerHeroMainAttributesValue takes unit u returns integer
 	local integer i = GetHeroMainAttributesType(u)
-	if i == 1 then
+	if i == HERO_ATTRIBUTE_INT then
 		return GetHeroInt(u, true)
 	endif
-	if i == 2 then
+	if i == HERO_ATTRIBUTE_AGI then
 		return GetHeroAgi(u, true)
 	endif
-	if i == 3 then
+	if i == HERO_ATTRIBUTE_STR then
 		return GetHeroStr(u, true)
 	endif
 	return 0
@@ -5986,9 +5962,9 @@ function OFX takes player p, integer at returns nothing
 	local location OGX
 	local integer TTV
 	local integer pid = GetPlayerId(p)
-	local boolean E4X = at == 1
-	local boolean E5X = at == 2
-	local boolean E6X = at == 3
+	local boolean int = at == 1
+	local boolean agi = at == 2
+	local boolean str = at == 3
 	set FT[pid]= true
 	if IsSentinelPlayer(p) then
 		set OGX = GetRectCenter(gg_rct_SentinelRevivalPoint)
@@ -5996,11 +5972,11 @@ function OFX takes player p, integer at returns nothing
 		set OGX = GetRectCenter(gg_rct_ScourgeRevivalPoint)
 	endif
 	loop
-		if E4X then
+		if int then
 			set TTV = TVE(V3V[GetRandomInt(1, V4V)])
-		elseif E5X then
+		elseif agi then
 			set TTV = TVE(V_V[GetRandomInt(1, V0V)])
-		elseif E6X then
+		elseif str then
 			set TTV = TVE(V1V[GetRandomInt(1, V2V)])
 		endif
 	exitwhen ZQ[TTV]== false and(PP[pid]== 0 or(IsUnitIdType(VUV[TTV], UNIT_TYPE_RANGED_ATTACKER) and PP[pid]== 2) or(IsUnitIdType(VUV[TTV], UNIT_TYPE_MELEE_ATTACKER) and PP[pid]== 1))
@@ -6185,37 +6161,15 @@ endfunction
 
 function mlq_addrange takes unit u returns nothing
 	if not IsUnitType(u, UNIT_TYPE_MELEE_ATTACKER) then
-		call Unit_Addrange(u, 140.)
-		call SetUnitAcquireRange(u, GetUnitAcquireRange(u)+ 140.)
+		call AddUnitBonusRange(u, 140., true)
 		call SaveBoolean(HY, GetHandleId(u),'R00P', true)
 	endif
 endfunction
 
 function mlq_reducerange takes unit u returns nothing
 	if LoadBoolean(HY, GetHandleId(u),'R00P') then
-		call Unit_Addrange(u,-140.)
-		call SetUnitAcquireRange(u, GetUnitAcquireRange(u)-140.)
+		call AddUnitBonusRange(u,-140., true)
 		call SaveBoolean(HY, GetHandleId(u),'R00P', false)
-	endif
-endfunction
-
-// 修正单位射程
-// 如果两个参数一致 就是刷新单位射程数据 因为单位变身可能会改变
-function FixUnitRange takes unit u, unit trigUnit returns nothing
-	if LoadReal(HY, GetHandleId(trigUnit),'AtkR')!= 0. then
-		call Unit_Setrange(u, lua_UnitIdGetRange(u)+ LoadReal(HY, GetHandleId(trigUnit),'AtkR'))
-		call SetUnitAcquireRange(u, GetUnitDefaultAcquireRange(u)+ LoadReal(HY, GetHandleId(trigUnit),'AtkR'))
-	endif
-	if not IsUnitType(u, UNIT_TYPE_MELEE_ATTACKER) then
-		if not LoadBoolean(HY, GetHandleId(trigUnit),'R00P') and LoadBoolean(HY, GetHandleId(GetOwningPlayer(trigUnit)),'R00O') then
-			//("远程增加")
-			call mlq_addrange(u)
-		endif
-	else
-		if LoadBoolean(HY, GetHandleId(trigUnit),'R00P') and LoadBoolean(HY, GetHandleId(GetOwningPlayer(trigUnit)),'R00O') then
-			//("近战减少")
-			call mlq_reducerange(u)
-		endif
 	endif
 endfunction
 
@@ -6385,7 +6339,7 @@ function O8X takes nothing returns boolean
 	// 修正高度
 	call SetUnitFlyHeight(u, GetUnitDefaultFlyHeight(u), 0)
 	// 修正射程
-	call FixUnitRange(u, u)
+	call RefreshUnitRange(u)
 	// 修正缩放
 	call SetUnitCurrentScaleEx(u, GetUnitCurrentScale(u))
 	// 修正颜色
@@ -6983,7 +6937,6 @@ function HideErrorTipText takes nothing returns nothing
 endfunction
 
 function InterfaceErrorForPlayer takes player p, string str returns nothing
-	local sound s = CreateSoundFromLabel("InterfaceError", false, false, false, 10, 10)
 	if (str != "") and(str != null) then
 		if (LocalPlayer== p) then
 			//call ClearTextMessages()
@@ -6996,10 +6949,8 @@ function InterfaceErrorForPlayer takes player p, string str returns nothing
 	endif
 	// debug call SingleDebug("ErrorTip" + "|cffffcc00" + str + "|r")
 	if (LocalPlayer== p) then
-		call StartSound(s)
+		call MHUI_PlayErrorSound()
 	endif
-	call KillSoundWhenDone(s)
-	set s = null
 endfunction
 function INX takes string f, boolean b returns nothing
 	if b and f != "" and f != null then
@@ -7527,7 +7478,7 @@ function NOX takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local unit targetUnit
 	local unit sourceUnit
-	local real NRX
+	local real speed
 	local unit missileDummy
 	local real x
 	local real y
@@ -7549,13 +7500,13 @@ function NOX takes nothing returns boolean
 	else
 		set targetUnit = LoadUnitHandle(HY, h, 30)
 		set sourceUnit = LoadUnitHandle(HY, h, 43)
-		set NRX =(LoadReal(HY, h, 44))
+		set speed =(LoadReal(HY, h, 44))
 		set missileDummy =(LoadUnitHandle(HY, h, 45))
 		set x = GetUnitX(missileDummy)
 		set y = GetUnitY(missileDummy)
 		set tx = GetUnitX(targetUnit)
 		set ty = GetUnitY(targetUnit)
-		set NAX = NRX * .03
+		set NAX = speed * .03
 		if (LoadBoolean(HY, h,-1)) then
 			set tx = LoadReal(HY, h,-1)
 			set ty = LoadReal(HY, h,-2)
@@ -7589,28 +7540,29 @@ function NOX takes nothing returns boolean
 	set missileDummy = null
 	return false
 endfunction
-function NHX takes unit sourceUnit, unit targetUnit, integer NJX, string NKX, real NRX, boolean NLX returns trigger
-	local trigger t = CreateTrigger()
-	local integer h = GetHandleId(t)
-	local real sx = GetUnitX(sourceUnit)
-	local real sy = GetUnitY(sourceUnit)
-	local real NMX = GetUnitFacing(sourceUnit)
+
+function LaunchMissileByUnitDummy takes unit sourceUnit, unit targetUnit, integer unitTypeId, string callback, real speed, boolean canDodge returns trigger
+	local trigger t   = CreateTrigger()
+	local integer h   = GetHandleId(t)
+	local real    sx  = GetUnitX(sourceUnit)
+	local real    sy  = GetUnitY(sourceUnit)
+	local real    facing = GetUnitFacing(sourceUnit)
 	call TriggerRegisterTimerEvent(t, .03, true)
 	call TriggerAddCondition(t, Condition(function NOX))
-	call SaveReal(HY, h, 44,((NRX)* 1.))
+	call SaveReal(HY, h, 44,((speed)* 1.))
 	call SaveUnitHandle(HY, h, 30,((targetUnit)))
-	call SaveStr(HY, h, 46,(NKX))
+	call SaveStr(HY, h, 46,(callback))
 	call SaveUnitHandle(HY, h, 43,((sourceUnit)))
 	call SaveBoolean(HY, h,-1, false)
-	if NLX then
+	if canDodge then
 		call SaveReal(HY, h,-1, 0)
 		call SaveReal(HY, h,-2, 0)
 		call TriggerRegisterUnitEvent(t, targetUnit, EVENT_UNIT_SPELL_EFFECT)
 	endif
 	if IsUnitOwnedByPlayer(sourceUnit, NeutralCreepPlayer) then
-		call SaveUnitHandle(HY, h, 45,(CreateUnit(GetOwningPlayer(sourceUnit), NJX, sx, sy, NMX)))
+		call SaveUnitHandle(HY, h, 45,(CreateUnit(GetOwningPlayer(sourceUnit), unitTypeId, sx, sy, facing)))
 	else
-		call SaveUnitHandle(HY, h, 45,(CreateUnit(GetOwningPlayer(targetUnit), NJX, sx, sy, NMX)))
+		call SaveUnitHandle(HY, h, 45,(CreateUnit(GetOwningPlayer(targetUnit), unitTypeId, sx, sy, facing)))
 	endif
 	set V3 = t
 	set t = null
@@ -9485,12 +9437,12 @@ function G7X takes integer k, unit u, integer G8X returns boolean
 		
 	elseif AghanimUpgradeNormalId[k]=='A0DY' then
 		if LoadBoolean(HY, GetHandleId(GetOwningPlayer(u)),'R00J') == false then
-			call Unit_Addrange(u, 190.)
+			call AddUnitBonusRange(u, 190., true)
 			call SaveBoolean(HY, GetHandleId(GetOwningPlayer(u)),'R00J', true)
 		endif
 	elseif AghanimUpgradeNormalId[k]=='A0CY' then
 		if LoadBoolean(HY, GetHandleId(GetOwningPlayer(u)),'R0L3') == false then
-			call Unit_Addrange(u, 107.)
+			call AddUnitBonusRange(u, 107., false)
 			call SaveBoolean(HY, GetHandleId(GetOwningPlayer(u)),'R0L3', true)
 			call UnitAddPermanentAbility(u,'A2KK')
 			call UnitMakeAbilityPermanent(u, true,'A1W0')
@@ -9527,12 +9479,12 @@ function HIX takes integer k, unit u, integer G8X returns nothing
 		call ExecuteFunc("HCX")
 	elseif AghanimUpgradeNormalId[k]=='A0DY' then
 		if LoadBoolean(HY, GetHandleId(GetOwningPlayer(u)),'R00J') then
-			call Unit_Addrange(u, -190.)
+			call AddUnitBonusRange(u, -190., true)
 			call SaveBoolean(HY, GetHandleId(GetOwningPlayer(u)),'R00J', false)
 		endif
 	elseif AghanimUpgradeNormalId[k]=='A0CY' then
 		if LoadBoolean(HY, GetHandleId(GetOwningPlayer(u)),'R0L3') then
-			call Unit_Addrange(u, -107.)
+			call AddUnitBonusRange(u, -107., false)
 			call SaveBoolean(HY, GetHandleId(GetOwningPlayer(u)),'R0L3', false)
 			call UnitRemoveAbility(u,'A2KK')
 		endif
@@ -11310,7 +11262,7 @@ function MCX takes nothing returns nothing
 	endif
 	call U9V(u, 0, "armourneg")
 	call FixUnitSkillsBug(u)
-	call FixUnitRange(u, u)
+	call RefreshUnitRange(u)
 	set u = null
 endfunction
 
@@ -21720,15 +21672,15 @@ function DXO takes boolean b, unit targetUnit returns nothing
 	local integer DOO
 	local integer DRO
 	local real O3O
-	set t2 = NHX(sourceUnit, targetUnit,'h0BS', "DEO", 1200, false)
+	set t2 = LaunchMissileByUnitDummy(sourceUnit, targetUnit,'h0BS', "DEO", 1200, false)
 	set DOO = GetHandleId(t2)
 	set DRO = GetHeroMainAttributesType(sourceUnit)
 	if b then
-		if DRO == 1 then
+		if DRO == HERO_ATTRIBUTE_INT then
 			set O3O = GetHeroInt(sourceUnit, true)* 2. + 75
-		elseif DRO == 2 then
+		elseif DRO == HERO_ATTRIBUTE_AGI then
 			set O3O = GetHeroAgi(sourceUnit, true)* 2. + 75
-		elseif DRO == 3 then
+		elseif DRO == HERO_ATTRIBUTE_STR then
 			set O3O = GetHeroStr(sourceUnit, true)* 2. + 75
 		endif
 		call SaveReal(HY,(DOO), 20, O3O)
@@ -28229,7 +28181,7 @@ function WRO takes nothing returns nothing
 			loop
 			exitwhen k == i
 				set k = k + 1
-				call NHX(CreateUnit(GetOwningPlayer(u),'e00E', GetUnitX(u)+ GetRandomReal(50, 300)* Cos(GetRandomReal(0, 6.14)), GetUnitY(u)+ GetRandomReal(50, 300)* Sin(GetRandomReal(0, 6.14)), 0), u,'h0CR', "WIO", 3000, false)
+				call LaunchMissileByUnitDummy(CreateUnit(GetOwningPlayer(u),'e00E', GetUnitX(u)+ GetRandomReal(50, 300)* Cos(GetRandomReal(0, 6.14)), GetUnitY(u)+ GetRandomReal(50, 300)* Sin(GetRandomReal(0, 6.14)), 0), u,'h0CR', "WIO", 3000, false)
 			endloop
 			call GroupRemoveUnit(g, u)
 			set u = FirstOfGroup(g)
@@ -33722,48 +33674,48 @@ function RegisterPassiveSkills takes integer iRealSkill, integer iSpellBookSkill
 endfunction
 
 // 设置幻象的技能
-function SyncIllusionUnitSkills takes unit hIllusionUnit, unit hSummoningUnit returns nothing
+function SyncIllusionUnitSkills takes unit illusionUnit, unit summoningUnit returns nothing
 	local integer i = 1
 	local integer lv
 	loop
-		set lv = GetUnitAbilityLevel(hSummoningUnit, PassiveSkills_Learned[i])
+		set lv = GetUnitAbilityLevel(summoningUnit, PassiveSkills_Learned[i])
 		if PassiveSkills_Real[i]=='P084' then
-			set lv = GetUnitAbilityLevel(hSummoningUnit,'A0DB')
+			set lv = GetUnitAbilityLevel(summoningUnit,'A0DB')
 		endif
 		if lv == 0 then
 			if PassiveSkills_SpellBook[i]> 0 or PassiveSkills_Real[i]> 0 then
-				call UnitRemoveAbility(hIllusionUnit, PassiveSkills_Real[i])
-				call UnitRemoveAbility(hIllusionUnit, PassiveSkills_SpellBook[i])
-				call UnitRemoveAbility(hIllusionUnit, PassiveSkills_Buff[i])
+				call UnitRemoveAbility(illusionUnit, PassiveSkills_Real[i])
+				call UnitRemoveAbility(illusionUnit, PassiveSkills_SpellBook[i])
+				call UnitRemoveAbility(illusionUnit, PassiveSkills_Buff[i])
 			endif
 		else
 			if PassiveSkills_SpellBook[i]> 0 or PassiveSkills_Real[i]> 0 then
-				call UnitAddPermanentAbility(hIllusionUnit, PassiveSkills_SpellBook[i])
-				call UnitMakeAbilityPermanent(hIllusionUnit, true, PassiveSkills_Real[i])
-				call UnitAddPermanentAbility(hIllusionUnit, PassiveSkills_Show[i])
+				call UnitAddPermanentAbility(illusionUnit, PassiveSkills_SpellBook[i])
+				call UnitMakeAbilityPermanent(illusionUnit, true, PassiveSkills_Real[i])
+				call UnitAddPermanentAbility(illusionUnit, PassiveSkills_Show[i])
 				if PassiveSkills_illusion[i]> 0 then
-					call UnitAddPermanentAbility(hIllusionUnit, PassiveSkills_illusion[i])
-					call SetUnitAbilityLevel(hIllusionUnit, PassiveSkills_illusion[i], lv)
+					call UnitAddPermanentAbility(illusionUnit, PassiveSkills_illusion[i])
+					call SetUnitAbilityLevel(illusionUnit, PassiveSkills_illusion[i], lv)
 				endif
-				call SetUnitAbilityLevel(hIllusionUnit, PassiveSkills_Real[i], lv)
+				call SetUnitAbilityLevel(illusionUnit, PassiveSkills_Real[i], lv)
 				if PassiveSkills_SpellBook[i]=='A23F' then
-					call SetUnitAbilityLevel(hIllusionUnit,'A1ER', lv)
-					call UnitAddPermanentAbility(hIllusionUnit,'A1ER')
-					call SetUnitAbilityLevel(hIllusionUnit,'A1ER', lv)
+					call SetUnitAbilityLevel(illusionUnit,'A1ER', lv)
+					call UnitAddPermanentAbility(illusionUnit,'A1ER')
+					call SetUnitAbilityLevel(illusionUnit,'A1ER', lv)
 				endif
 			endif
 			// 瞄准
 			if PassiveSkills_Learned[i] == 'A03U' then
-				set U2 = hIllusionUnit
+				set U2 = illusionUnit
 				set Q2 = lv
 				call ExecuteFunc("range_Take_Aim")
 			elseif PassiveSkills_Learned[i] == 'A0RO' then
 				// ta被动
-				set U2 = hIllusionUnit
+				set U2 = illusionUnit
 				set Q2 = lv
 				call ExecuteFunc("range_Psi_Blades")
 			elseif PassiveSkills_Learned[i]=='A0CL' then
-				set U2 = hIllusionUnit
+				set U2 = illusionUnit
 				set Q2 = lv
 				call ExecuteFunc("SyncIllusionUnitDragonBlood")
 			endif
@@ -33771,12 +33723,12 @@ function SyncIllusionUnitSkills takes unit hIllusionUnit, unit hSummoningUnit re
 		set i = i + 1
 	exitwhen i > YD
 	endloop
-	call FixUnitRange(hIllusionUnit, hSummoningUnit)
+	call RefreshUnitRange(illusionUnit)
 	// 如果幻象是变身单位 直接播放单位的变身Stand 否则被认出来太蠢
-	if UnitTypeIsMetamorphosis(hIllusionUnit) or WTB(hIllusionUnit) then
+	if UnitTypeIsMetamorphosis(illusionUnit) or WTB(illusionUnit) then
 		// call BJDebugMsg("幻象是变身单位")
-		call AddUnitAnimationProperties(hIllusionUnit, "alternate", true)
-		call SetUnitAnimation(hIllusionUnit, "stand alternate")
+		call AddUnitAnimationProperties(illusionUnit, "alternate", true)
+		call SetUnitAnimation(illusionUnit, "stand alternate")
 	endif
 endfunction
 
@@ -33795,63 +33747,66 @@ function Wait0sSetUnitScale takes nothing returns boolean
 endfunction
 // 镜像被召唤事件
 function SummonedIllusionUnitEvnet takes nothing returns boolean
-	local unit hIllusionUnit = GetSummonedUnit()
-	local integer iTriggerPlayerId = GetPlayerId(GetOwningPlayer(hIllusionUnit))
-	local unit hSummoningUnit = null
-	local integer iSummoningTypeId
-	local real hp
-	if not IsUnitIllusion(hIllusionUnit) or GetUnitTypeId(hIllusionUnit)< 1 then
-		set hIllusionUnit = null
+	local unit    illusionUnit    = GetSummonedUnit()
+	local integer trigPlayerId    = GetPlayerId(GetOwningPlayer(illusionUnit))
+	local unit    summoningUnit   = null
+	local integer summoningTypeId
+	local real    hp
+	if not IsUnitIllusion(illusionUnit) or GetUnitTypeId(illusionUnit)< 1 then
+		set illusionUnit = null
 		return false
 	endif
-	set hSummoningUnit = LoadUnitHandle(HY, GetHandleId(GetSummoningUnit()),'0ILU')
-	if GetUnitAbilityLevel(hIllusionUnit,'B0EN')> 0 then
-		set iTriggerPlayerId = TempInt
+	set summoningUnit = LoadUnitHandle(HY, GetHandleId(GetSummoningUnit()),'0ILU')
+	if GetUnitAbilityLevel(illusionUnit,'B0EN')> 0 then
+		set trigPlayerId = TempInt
 	endif
-	if hSummoningUnit != null then
-		set iTriggerPlayerId = GetPlayerId(GetOwningPlayer(hSummoningUnit))
+	if summoningUnit != null then
+		set trigPlayerId = GetPlayerId(GetOwningPlayer(summoningUnit))
 	else
-		set hSummoningUnit = Player__Hero[iTriggerPlayerId]
+		set summoningUnit = Player__Hero[trigPlayerId]
 	endif
-	call SaveUnitHandle(HY, GetHandleId(hIllusionUnit),'0ILU', hSummoningUnit)
+	call SaveUnitHandle(HY, GetHandleId(illusionUnit),'0ILU', summoningUnit)
 	// 这里似乎是判断一下是否有变体精灵的镜像
-	set iSummoningTypeId = GetUnitTypeId(hSummoningUnit)
-	if GetUnitTypeId(hIllusionUnit) != iSummoningTypeId then
-		set hp = GetUnitState(hIllusionUnit, UNIT_STATE_MAX_LIFE)
-		call UnitMakeAbilityPermanent(hIllusionUnit, true,'A09J')
+	set summoningTypeId = GetUnitTypeId(summoningUnit)
+	if GetUnitTypeId(illusionUnit) != summoningTypeId then
+		set hp = GetUnitState(illusionUnit, UNIT_STATE_MAX_LIFE)
+		call UnitMakeAbilityPermanent(illusionUnit, true,'A09J')
 		// 原本是极低效率的一大堆马甲技能，改成了japi的逆变身
-		call YDWEUnitTransform(hIllusionUnit, iSummoningTypeId)
+		call YDWEUnitTransform(illusionUnit, summoningTypeId)
 		// 然后同步下最大生命值
-		call SetUnitState(hIllusionUnit, UNIT_STATE_MAX_LIFE, hp)
+		call SetUnitState(illusionUnit, UNIT_STATE_MAX_LIFE, hp)
 	endif
 	// 同步一下幻象单位的技能 不然可能会有奇怪现象(一堆被动技能)
-	call SyncIllusionUnitSkills(hIllusionUnit, hSummoningUnit)
+	call SyncIllusionUnitSkills(illusionUnit, summoningUnit)
 	// 同步射手天赋给幻象
-	if GetUnitAbilityLevel(hSummoningUnit,'A0VC')> 0 then
-		call SaveUnitHandle(OtherHashTable2,'ILLU', 0, hIllusionUnit)
-		call SaveUnitHandle(OtherHashTable2,'ILLU', 1, hSummoningUnit)
+	if GetUnitAbilityLevel(summoningUnit,'A0VC')> 0 then
+		call SaveUnitHandle(OtherHashTable2,'ILLU', 0, illusionUnit)
+		call SaveUnitHandle(OtherHashTable2,'ILLU', 1, summoningUnit)
 		call ExecuteFunc("I8R")
 	endif
 	// 幻象的协同升级
-	if GetUnitAbilityLevel(Player__Hero[iTriggerPlayerId],'A0A8')> 0 then
-		call UnitAddPermanentAbilitySetLevel(hIllusionUnit,'A3L3', GetUnitAbilityLevel(Player__Hero[iTriggerPlayerId],'A0A8'))
+	if GetUnitAbilityLevel(Player__Hero[trigPlayerId],'A0A8')> 0 then
+		call UnitAddPermanentAbilitySetLevel(illusionUnit,'A3L3', GetUnitAbilityLevel(Player__Hero[trigPlayerId],'A0A8'))
 	endif
 	// 同步长大技能
-	if a_fx_b[iTriggerPlayerId] and GetUnitTypeId(hIllusionUnit) == 'Ucrl' and GetUnitAbilityLevel(hSummoningUnit,'A2KK')> 0 then
+	if a_fx_b[trigPlayerId] and GetUnitTypeId(illusionUnit) == 'Ucrl' and GetUnitAbilityLevel(summoningUnit,'A2KK')> 0 then
 		// 小小模型有A就拿棒子
-		call AddUnitAnimationProperties(hIllusionUnit, "upgrade", true)
+		call AddUnitAnimationProperties(illusionUnit, "upgrade", true)
 	endif
 	// 长大等级
-	if GetUnitAbilityLevel(hSummoningUnit,'A0CY')> 0 then
+	if GetUnitAbilityLevel(summoningUnit,'A0CY')> 0 then
 		set Temp__Int = CreateTimerEventTrigger( .0, false, function Wait0sSetUnitScale ) 
-		call SaveUnitHandle( HY, Temp__Int, 0, hIllusionUnit )
-		// call SaveReal( HY, Temp__Int, 1, 1 + .25 *  GetUnitAbilityLevel(hSummoningUnit,'A0CY') )
-		call SaveReal( ExtraHT, GetHandleId(hIllusionUnit), HTKEY_UNIT_CURRENT_ADDSCALE, GetUnitAbilityLevel(hSummoningUnit,'A0CY') * 0.25 )
+		call SaveUnitHandle( HY, Temp__Int, 0, illusionUnit )
+		// call SaveReal( HY, Temp__Int, 1, 1 + .25 *  GetUnitAbilityLevel(summoningUnit,'A0CY') )
+		call SaveReal( ExtraHT, GetHandleId(illusionUnit), HTKEY_UNIT_CURRENT_ADDSCALE, GetUnitAbilityLevel(summoningUnit,'A0CY') * 0.25 )
 		// 模型缩放
-		// call SetUnitCurrentScaleEx(hIllusionUnit, )
+		// call SetUnitCurrentScaleEx(illusionUnit, )
 	endif
-	set hIllusionUnit = null
-	set hSummoningUnit = null
+	if ( GetItemOfTypeFromUnit(illusionUnit, XOV[it_mlq]) != null ) or ( GetItemOfTypeFromUnit(illusionUnit, XOV[Item_HurricanePike]) != null ) then
+		call AddUnitBonusRange(illusionUnit, 140., true)
+	endif
+	set illusionUnit  = null
+	set summoningUnit = null
 	return false
 endfunction
 
@@ -36102,7 +36057,7 @@ function CHR takes nothing returns nothing
 	set targetUnit = null
 endfunction
 function CKR takes nothing returns nothing
-	local trigger t = NHX(GetTriggerUnit(), GetSpellTargetUnit(),'hKOD', "CHR", 1000, true)
+	local trigger t = LaunchMissileByUnitDummy(GetTriggerUnit(), GetSpellTargetUnit(),'hKOD', "CHR", 1000, true)
 	set t = null
 endfunction
 function FOE takes nothing returns nothing
@@ -36215,9 +36170,9 @@ function L_E takes nothing returns nothing
 	set t = null
 	set u = null
 endfunction
-function CWR takes unit u, integer E6X returns nothing
+function CWR takes unit u, integer str returns nothing
 	local integer array b
-	local integer a = E6X
+	local integer a = str
 	local integer c = 1
 	local integer i = 0
 	local integer z = 5
@@ -36229,7 +36184,7 @@ function CWR takes unit u, integer E6X returns nothing
 	set CYR[3]='A32Q'
 	set CYR[4]='A32R'
 	set CYR[5]='A32S'
-	if E6X < 1 then
+	if str < 1 then
 		//set hp = GetWidgetLife(u)
 		call UnitRemoveAbility(u, CYR[0])
 		call UnitRemoveAbility(u, CYR[1])
@@ -36258,7 +36213,7 @@ function CWR takes unit u, integer E6X returns nothing
 		set i = i + 1
 	endloop
 endfunction
-function CZR takes unit u, integer E6X, integer C_R returns nothing
+function CZR takes unit u, integer str, integer C_R returns nothing
 	local integer array b
 	local integer a = C_R
 	local integer c = 1
@@ -36300,7 +36255,7 @@ function CZR takes unit u, integer E6X, integer C_R returns nothing
 		endif
 		set i = i + 1
 	endloop
-	call CWR(u, E6X)
+	call CWR(u, str)
 endfunction
 function C0R takes nothing returns nothing
 	local timer t = GetExpiredTimer()
@@ -36409,7 +36364,7 @@ function B_E takes nothing returns nothing
 	local trigger t = null
 	local unit d = null
 	if not UnitHasSpellShield(GetSpellTargetUnit()) then
-		set t = NHX(GetTriggerUnit(), GetSpellTargetUnit(),'h077', "C7R", 1500, true)
+		set t = LaunchMissileByUnitDummy(GetTriggerUnit(), GetSpellTargetUnit(),'h077', "C7R", 1500, true)
 		set d = LoadUnitHandle(HY, GetHandleId(t), 45)
 		call SaveEffectHandle(HY, GetHandleId(t),'00fx', AddSpecialEffectTarget("Abilities\\Spells\\Undead\\DeathCoil\\DeathCoilMissile.mdl", d, "origin"))
 		set t = null
@@ -38772,7 +38727,7 @@ function GWR takes nothing returns nothing
 		call GroupRemoveGroup(g, tg)
 		set u = FirstOfGroup(tg)
 		if u != null then
-			call NHX(targetUnit, u,'h02K', "GWR", 1000, true)
+			call LaunchMissileByUnitDummy(targetUnit, u,'h02K', "GWR", 1000, true)
 			call SaveUnitHandle(ObjectHashTable, GetHandleId(targetUnit),'A004'+ 1, sourceUnit)
 			call SaveInteger(ObjectHashTable, h,'A004', GYR -1)
 		else
@@ -38803,7 +38758,7 @@ function G_R takes nothing returns nothing
 	local integer level = LoadInteger(OtherHashTable2,'A3E9', 0)
 	call T4V(sourceUnit)
 	if UnitHasSpellShield(targetUnit) == false then
-		call NHX(sourceUnit, targetUnit,'h02K', "GWR", 1000, true)
+		call LaunchMissileByUnitDummy(sourceUnit, targetUnit,'h02K', "GWR", 1000, true)
 		call SaveInteger(ObjectHashTable, GetHandleId(sourceUnit),'A004', level -1)
 		call SaveInteger(ObjectHashTable, GetHandleId(sourceUnit),'A005', level)
 		call SaveGroupHandle(ObjectHashTable, GetHandleId(sourceUnit),'A004', AllocationGroup(135))
@@ -38817,7 +38772,7 @@ function G_R takes nothing returns nothing
 endfunction
 function FIE takes nothing returns nothing
 	if not UnitHasSpellShield(GetSpellTargetUnit()) then
-		call NHX(GetTriggerUnit(), GetSpellTargetUnit(),'h02K', "GWR", 1000, true)
+		call LaunchMissileByUnitDummy(GetTriggerUnit(), GetSpellTargetUnit(),'h02K', "GWR", 1000, true)
 		call SaveInteger(ObjectHashTable, GetHandleId(GetTriggerUnit()),'A004', GetUnitAbilityLevel(GetTriggerUnit(),'A004')-1)
 		call SaveGroupHandle(ObjectHashTable, GetHandleId(GetTriggerUnit()),'A004', AllocationGroup(136))
 		call SaveInteger(ObjectHashTable, GetHandleId(GetTriggerUnit()),'A005', GetUnitAbilityLevel(GetTriggerUnit(),'A004'))
@@ -39105,7 +39060,7 @@ function HBR takes nothing returns nothing
 	endif
 	if GetUnitAbilityLevel(targetUnit,'A3E9') == 1 and IsMagicImmuneUnit(sourceUnit) and HGR == false then
 		if UnitHasSpellShield(sourceUnit) == false then
-			call NHX(targetUnit, sourceUnit,'h01K', "HBR", 1000, true)
+			call LaunchMissileByUnitDummy(targetUnit, sourceUnit,'h01K', "HBR", 1000, true)
 		else
 			call AJO(sourceUnit)
 		endif
@@ -39116,7 +39071,7 @@ function HBR takes nothing returns nothing
 endfunction
 function Y7V takes nothing returns nothing
 	if not UnitHasSpellShield(GetSpellTargetUnit()) then
-		call NHX(GetTriggerUnit(), GetSpellTargetUnit(),'h01K', "HBR", 1000, true)
+		call LaunchMissileByUnitDummy(GetTriggerUnit(), GetSpellTargetUnit(),'h01K', "HBR", 1000, true)
 	endif
 endfunction
 function a_gangbei takes nothing returns nothing
@@ -39127,14 +39082,14 @@ function a_gangbei takes nothing returns nothing
 	loop
 		set u = FirstOfGroup(g)
 	exitwhen u == null
-		call NHX(GetTriggerUnit(), u,'h01K', "HBR", 1000, true)
+		call LaunchMissileByUnitDummy(GetTriggerUnit(), u,'h01K', "HBR", 1000, true)
 		call GroupRemoveUnit(g, u)
 	endloop
 	call DeallocateGroup(g)
 endfunction
 function HHR takes unit R8X, unit targetUnit returns nothing
 	local integer level = GetUnitAbilityLevel(targetUnit,'P123')
-	local real IXX =( 14+ 2 * level)+(.18 + .12 * level)* E3X(targetUnit)
+	local real IXX =( 14+ 2 * level)+(.18 + .12 * level)* GetHeroMaxAttributeValue(targetUnit)
 	call UnitDamageTargetEx(I_X(targetUnit), R8X, 2, IXX)
 endfunction
 function HJR takes nothing returns boolean
@@ -46279,7 +46234,7 @@ function YDR takes nothing returns nothing
 		call DeallocateGroup(g)
 		set g = null
 		if NL != null then
-			set t = NHX(target, NL,'h999', "YDR", 880, true)
+			set t = LaunchMissileByUnitDummy(target, NL,'h999', "YDR", 880, true)
 			set ht = GetHandleId(t)
 			set hu = GetHandleId(LoadUnitHandle(HY, ht, 45))
 			call SaveInteger(HY, hu, 0, UYX)
@@ -46307,7 +46262,7 @@ function YFR takes unit u, unit target, real d returns nothing
 	call DeallocateGroup(g)
 	set g = null
 	if NL != null then
-		set t = NHX(target, NL,'h999', "YDR", 880, true)
+		set t = LaunchMissileByUnitDummy(target, NL,'h999', "YDR", 880, true)
 		set ht = GetHandleId(t)
 		set hu = GetHandleId(LoadUnitHandle(HY, ht, 45))
 		call SaveInteger(HY, hu, 0, GetUnitAbilityLevel(u,'P098'))
@@ -47171,20 +47126,20 @@ function MTX takes nothing returns nothing
 	set t = null
 endfunction
 function Z9R takes unit trigUnit, integer VVI, real VEI returns nothing
-	local integer E5X = GetHeroAgi(trigUnit, false)
-	local integer E6X = GetHeroStr(trigUnit, false)
+	local integer agi = GetHeroAgi(trigUnit, false)
+	local integer str = GetHeroStr(trigUnit, false)
 	local real mp = GetUnitState(trigUnit, UNIT_STATE_MANA)
 	if VVI == 0 then
-		if mp >= VEI and E5X -LoadInteger(OtherHashTable, GetHandleId(trigUnit), 31)> 2 and UnitIsDead(trigUnit) == false and E5X > PC then
+		if mp >= VEI and agi -LoadInteger(OtherHashTable, GetHandleId(trigUnit), 31)> 2 and UnitIsDead(trigUnit) == false and agi > PC then
 			call SetUnitState(trigUnit, UNIT_STATE_MANA, mp -VEI)
-			call SetHeroAgi(trigUnit, E5X -2, true)
-			call SetHeroStr(trigUnit, E6X + 2, true)
+			call SetHeroAgi(trigUnit, agi -2, true)
+			call SetHeroStr(trigUnit, str + 2, true)
 		endif
 	elseif VVI == 1 then
-		if mp >= VEI and E6X -LoadInteger(OtherHashTable, GetHandleId(trigUnit), 30)-LoadInteger(OtherHashTable, GetHandleId(trigUnit),'ARML')> 4 and UnitIsDead(trigUnit) == false and E6X > PC then
+		if mp >= VEI and str -LoadInteger(OtherHashTable, GetHandleId(trigUnit), 30)-LoadInteger(OtherHashTable, GetHandleId(trigUnit),'ARML')> 4 and UnitIsDead(trigUnit) == false and str > PC then
 			call SetUnitState(trigUnit, UNIT_STATE_MANA, mp -VEI)
-			call SetHeroAgi(trigUnit, E5X + 2, true)
-			call SetHeroStr(trigUnit, E6X -2, true)
+			call SetHeroAgi(trigUnit, agi + 2, true)
+			call SetHeroStr(trigUnit, str -2, true)
 		endif
 	endif
 endfunction
@@ -47375,11 +47330,11 @@ function VHI takes nothing returns nothing
 		set u = Player__Hero[GetPlayerId(GetOwningPlayer(u))]
 	endif
 	set VJI = GetHeroMainAttributesType(u)
-	if VJI == 1 then
+	if VJI == HERO_ATTRIBUTE_INT then
 		set VKI = GetHeroInt(u, true)
-	elseif VJI == 2 then
+	elseif VJI == HERO_ATTRIBUTE_AGI then
 		set VKI = GetHeroAgi(u, true)
-	elseif VJI == 3 then
+	elseif VJI == HERO_ATTRIBUTE_STR then
 		set VKI = GetHeroStr(u, true)
 	endif
 	set damageValue = VKI *(1 + .25 * level)+ 40 + 20 * level
@@ -48090,9 +48045,9 @@ function Wave takes unit u1, integer id, real damage, real max_distance, real ar
 	set t = null
 endfunction
 
-function UAII takes real UNI, real UBI, real UCI, real F5OO, real HHXX, string P7EE, unit u, real tx, real ty, integer NMX returns nothing
+function UAII takes real UNI, real UBI, real UCI, real F5OO, real HHXX, string P7EE, unit u, real tx, real ty, integer facing returns nothing
 	set IR = u
-	call Wave(IR,'h070', F5OO, UNI, UBI, UCI, GetUnitX(u), GetUnitY(u), tx, ty, HHXX, 1, false, P7EE, NMX)
+	call Wave(IR,'h070', F5OO, UNI, UBI, UCI, GetUnitX(u), GetUnitY(u), tx, ty, HHXX, 1, false, P7EE, facing)
 endfunction
 
 function EJI takes nothing returns boolean
@@ -49783,7 +49738,7 @@ function OBI takes nothing returns nothing
 	set targetUnit = null
 endfunction
 function ODI takes nothing returns nothing
-	local trigger t = NHX(JWV, GetEnumUnit(),'h0D8', "OBI", 400, false)
+	local trigger t = LaunchMissileByUnitDummy(JWV, GetEnumUnit(),'h0D8', "OBI", 400, false)
 	call SaveReal(HY, GetHandleId(t), 21, JYV * 1.)
 	set t = null
 endfunction
@@ -49919,7 +49874,7 @@ function W5V takes nothing returns nothing
 	set dummyUnit = null
 endfunction
 function OLI takes unit R8X, unit targetUnit returns nothing
-	local real d =(.15 + .1 * I2R(GetUnitAbilityLevel(R8X,'A0LZ')))* E3X(R8X)
+	local real d =(.15 + .1 * I2R(GetUnitAbilityLevel(R8X,'A0LZ')))* GetHeroMaxAttributeValue(R8X)
 	call UnitRemoveAbility(targetUnit,'B05X')
 	call CommonTextTag("+" + I2S(R2I(d)), 1, targetUnit, .023, 3, 216, 216, 216)
 	call UnitDamageTargetEx(R8X, targetUnit, 3, d)
@@ -49938,7 +49893,7 @@ function OPI takes nothing returns nothing
 	set JZV[GetPlayerId(GetOwningPlayer(sourceUnit))]= JZV[GetPlayerId(GetOwningPlayer(sourceUnit))] + 2
 	call CommonTextTag("-2 " + GetObjectName('n0JP'), 3, triggerUnit, .023, 255, 0, 0, 230)
 	call SetHeroInt(triggerUnit, GetHeroInt(triggerUnit, false)-2, true)
-	call NHX(triggerUnit, sourceUnit,'h0CP', "OMI", 2400, false)
+	call LaunchMissileByUnitDummy(triggerUnit, sourceUnit,'h0CP', "OMI", 2400, false)
 	set sourceUnit = null
 	set triggerUnit = null
 endfunction
@@ -50080,15 +50035,13 @@ endfunction
 function range_Take_Aim takes nothing returns nothing
 	local unit u = U2
 	local integer lv = Q2
-	call SetUnitAcquireRange(u, GetUnitAcquireRange(u)+ 100. * lv)
-	call Unit_Addrange(u, 100. * lv)
+	call AddUnitBonusRange(u, 100. * lv, true)
 	set u = null
 endfunction
 
 function PTE takes nothing returns nothing
 	local unit u = GetTriggerUnit()
-	call SetUnitAcquireRange(u, GetUnitAcquireRange(u)+ 100)
-	call Unit_Addrange(u, 100.)
+	call AddUnitBonusRange(u, 100., true)
 	set u = null
 endfunction
 
@@ -50338,7 +50291,7 @@ endfunction
 function F8E takes nothing returns nothing
 	local unit sourceUnit = GetTriggerUnit()
 	local unit targetUnit = GetSpellTargetUnit()
-	local trigger t = NHX(sourceUnit, targetUnit,'n07D', "O8I", 2500, false)
+	local trigger t = LaunchMissileByUnitDummy(sourceUnit, targetUnit,'n07D', "O8I", 2500, false)
 	local integer h = GetHandleId(t)
 	local unit d = LoadUnitHandle(HY, h, 45)
 	local effect fx = AddSpecialEffectTarget("Abilities\\Weapons\\CannonTowerMissile\\CannonTowerMissile.mdl", d, "origin")
@@ -50535,11 +50488,11 @@ function ROI takes unit u, unit t returns nothing
 	if IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and IsUnitIllusion(u) == false and d <='i' then
 		set ENI = .25 * WUV
 		set ms = GetHeroMainAttributesType(u)
-		if ms == 1 then
+		if ms == HERO_ATTRIBUTE_INT then
 			set i = GetHeroInt(u, true)
-		elseif ms == 2 then
+		elseif ms == HERO_ATTRIBUTE_AGI then
 			set i = GetHeroAgi(u, true)
-		elseif ms == 3 then
+		elseif ms == HERO_ATTRIBUTE_STR then
 			set i = GetHeroStr(u, true)
 		endif
 		set RRI = R2I(i *(ENI))
@@ -52564,7 +52517,7 @@ function E4E takes nothing returns nothing
 			call NEI(sourceUnit, g)
 			set targetUnit = U2
 			if targetUnit != null then
-				set t = NHX(sourceUnit, targetUnit,'hTKR', "NVI", 900, true)
+				set t = LaunchMissileByUnitDummy(sourceUnit, targetUnit,'hTKR', "NVI", 900, true)
 				call SaveInteger(HY, GetHandleId(t), 0, GetUnitAbilityLevel(sourceUnit, GetSpellAbilityId()))
 				set k = k + 1
 			endif
@@ -54073,16 +54026,14 @@ endfunction
 function range_Psi_Blades takes nothing returns nothing
 	local unit u = U2
 	local integer lv = Q2
-	call SetUnitAcquireRange(u, GetUnitAcquireRange(u)+ 60 * lv)
-	call Unit_Addrange(u, 60. * lv)
+	call AddUnitBonusRange(u, 60. * lv, true)
 	set u = null
 endfunction
 
 function P_E takes nothing returns nothing
 	local unit u = GetTriggerUnit()
 	local integer lv =(GetUnitAbilityLevel(u,'A0RO'))
-	call SetUnitAcquireRange(u, GetUnitAcquireRange(u)+ 60)
-	call Unit_Addrange(u, 60.)
+	call AddUnitBonusRange(u, 60., true)
 	if lv == 1 then
 		call CHI(u)
 		call SaveBoolean(ObjectHashTable, GetHandleId(u),'A0RO', true)
@@ -57224,7 +57175,7 @@ function HZI takes nothing returns boolean
 		if GetUnitAbilityLevel(target,'A3E9') == 1 and IsUnitType(u, UNIT_TYPE_HERO) and HGR == false and IsMagicImmuneUnit(u) == false then
 			if UnitHasSpellShield(u) == false then
 				call T4V(target)
-				call NHX(target, u,'h07V', "HZI", 1200, true)
+				call LaunchMissileByUnitDummy(target, u,'h07V', "HZI", 1200, true)
 			else
 				call AJO(u)
 			endif
@@ -57237,7 +57188,7 @@ endfunction
 function H_I takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer h = GetHandleId(t)
-	call NHX(LoadUnitHandle(HY, h, 0), LoadUnitHandle(HY, h, 1),'h07V', "HZI", 1200, true)
+	call LaunchMissileByUnitDummy(LoadUnitHandle(HY, h, 0), LoadUnitHandle(HY, h, 1),'h07V', "HZI", 1200, true)
 	call FlushChildHashtable(HY, h)
 	call DestroyTimer(t)
 	set t = null
@@ -57777,9 +57728,9 @@ function JQI takes nothing returns nothing
 		set sourceUnit = Player__Hero[GetPlayerId(GetOwningPlayer(sourceUnit))]
 	endif
 	set i = GetHeroMainAttributesType(sourceUnit)
-	if i == 1 then
+	if i == HERO_ATTRIBUTE_INT then
 		set OJO = GetHeroInt(sourceUnit, true)-GetHeroInt(JSI, true)
-	elseif i == 2 then
+	elseif i == HERO_ATTRIBUTE_AGI then
 		set OJO = GetHeroAgi(sourceUnit, true)-GetHeroAgi(JSI, true)
 	else
 		set OJO = GetHeroStr(sourceUnit, true)-GetHeroStr(JSI, true)
@@ -58324,27 +58275,27 @@ endfunction
 function KFI takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
-	local integer E6X = LoadInteger(HY, h, 29)
+	local integer str = LoadInteger(HY, h, 29)
 	local unit sourceUnit = LoadUnitHandle(HY, h, 2)
 	local unit targetUnit = LoadUnitHandle(HY, h, 17)
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		if (LoadBoolean(HY, h, 276)) == false and GetTriggerUnit()==(sourceUnit) then
 			call SaveBoolean(HY, h, 276, true)
-			call SetHeroStr(sourceUnit, GetHeroStr(sourceUnit, false)-E6X, true)
-			call SaveInteger(OtherHashTable, GetHandleId(sourceUnit), 30, LoadInteger(OtherHashTable, GetHandleId(sourceUnit), 30)-E6X)
+			call SetHeroStr(sourceUnit, GetHeroStr(sourceUnit, false)-str, true)
+			call SaveInteger(OtherHashTable, GetHandleId(sourceUnit), 30, LoadInteger(OtherHashTable, GetHandleId(sourceUnit), 30)-str)
 		elseif (LoadBoolean(HY, h, 277)) == false and GetTriggerUnit() == targetUnit then
 			call SaveBoolean(HY, h, 277, true)
-			call SetHeroStr(targetUnit, GetHeroStr(targetUnit, false)+ E6X, true)
+			call SetHeroStr(targetUnit, GetHeroStr(targetUnit, false)+ str, true)
 		endif
 	else
 		if (LoadBoolean(HY, h, 276)) == false then
 			call SaveBoolean(HY, h, 276, true)
-			call SetHeroStr(sourceUnit, GetHeroStr(sourceUnit, false)-E6X, true)
-			call SaveInteger(OtherHashTable, GetHandleId(sourceUnit), 30, LoadInteger(OtherHashTable, GetHandleId(sourceUnit), 30)-E6X)
+			call SetHeroStr(sourceUnit, GetHeroStr(sourceUnit, false)-str, true)
+			call SaveInteger(OtherHashTable, GetHandleId(sourceUnit), 30, LoadInteger(OtherHashTable, GetHandleId(sourceUnit), 30)-str)
 		endif
 		if (LoadBoolean(HY, h, 277)) == false then
 			call SaveBoolean(HY, h, 277, true)
-			call SetHeroStr(targetUnit, GetHeroStr(targetUnit, false)+ E6X, true)
+			call SetHeroStr(targetUnit, GetHeroStr(targetUnit, false)+ str, true)
 		endif
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
@@ -58832,7 +58783,7 @@ function LII takes nothing returns boolean
 	elseif GetTriggerEventId() == EVENT_UNIT_DAMAGED then
 	elseif GetTriggerEventId() == EVENT_UNIT_DEATH then
 		if IsUnitIllusion(GetDyingUnit()) == false then
-			call NHX(GetDyingUnit(), sourceUnit,'h07Y', "K9I", 9999, false)
+			call LaunchMissileByUnitDummy(GetDyingUnit(), sourceUnit,'h07Y', "K9I", 9999, false)
 		endif
 	endif
 	set t2 = null
@@ -60273,7 +60224,7 @@ function PXI takes nothing returns nothing
 	local integer h = GetHandleId(t)
 	local unit u = LoadUnitHandle(HY, h, 0)
 	local integer level = GetUnitAbilityLevel(u,'A2O2')
-	local real DRO = E3X(u)* 1.
+	local real DRO = GetHeroMaxAttributeValue(u)* 1.
 	local integer damageValue = R2I(( 12+ 6 * level)* DRO / 100.)
 	local boolean POI = LoadBoolean(HY, h, 10) and LoadInteger(HY,(GetHandleId(u)), 704)!='A2O2'
 	local player p = LoadPlayerHandle(HY, h, 10)
@@ -60504,7 +60455,7 @@ function PMI takes nothing returns nothing
 				call UnitAddPermanentAbility(u,'A2NX')
 				call UnitAddPermanentAbility(u,'A3B6')
 				call SetUnitAbilityLevel(u,'A2NX', level)
-				if GetHeroMainAttributesType(u)!= 2 then
+				if GetHeroMainAttributesType(u)!= HERO_ATTRIBUTE_AGI then
 					call UnitAddPermanentAbility(u,'A33L')
 					call SetUnitAbilityLevel(u,'A33L', level)
 				endif
@@ -60695,7 +60646,7 @@ function MarksmanshipActions takes nothing returns nothing
 endfunction
 
 function Marksmanship_tsw takes unit u, unit u2, unit target, real damage returns nothing
-	local trigger t = NHX(u2, target,'h30C', "MarksmanshipActions", 900, true)
+	local trigger t = LaunchMissileByUnitDummy(u2, target,'h30C', "MarksmanshipActions", 900, true)
 	local integer h = GetHandleId(t)
 	
 	call SaveReal(HY, h,'xhts', damage)
@@ -64183,7 +64134,7 @@ function YHI takes nothing returns nothing
 	local unit sourceUnit = MIV
 	local unit targetUnit = GetEnumUnit()
 	local integer level = MAV
-	local trigger t = NHX(sourceUnit, targetUnit,'h0DF', "YJI", 600, false)
+	local trigger t = LaunchMissileByUnitDummy(sourceUnit, targetUnit,'h0DF', "YJI", 600, false)
 	local integer h = GetHandleId(t)
 	call SaveReal(HY, h, 20,((level * 125 + 25)* 1.))
 	set sourceUnit = null
@@ -64573,7 +64524,7 @@ function YJI takes nothing returns nothing
 	set targetUnit = null
 endfunction
 function Y5I takes nothing returns nothing
-	local trigger t = NHX(U2, GetEnumUnit(),'h00W', "YJI", 400, false)
+	local trigger t = LaunchMissileByUnitDummy(U2, GetEnumUnit(),'h00W', "YJI", 400, false)
 	local integer h = GetHandleId(t)
 	call SaveReal(HY, h, 20,((S2)* 1.))
 	call SaveReal(HY, h, 21,((TJ)* 1.))
@@ -64850,7 +64801,7 @@ function ZNI takes nothing returns nothing
 	set level = GetUnitAbilityLevel(sourceUnit,'A0BR')
 	set ZAI = 8 + 7 * level
 	if ZII <= ZAI then
-		set t = NHX(GetTriggerUnit(), sourceUnit,'h0CR', "WIO", 3000, false)
+		set t = LaunchMissileByUnitDummy(GetTriggerUnit(), sourceUnit,'h0CR', "WIO", 3000, false)
 		set h = GetHandleId(t)
 		set t = null
 		call DestroyEffect(AddSpecialEffect("Abilities\\Weapons\\ZigguratMissile\\ZigguratMissile.mdl", GetUnitX(GetTriggerUnit()), GetUnitY(GetTriggerUnit())))
@@ -65272,7 +65223,7 @@ function Z4I takes unit trigUnit, unit targetUnit, integer level returns nothing
 	if GetUnitAbilityLevel(trigUnit,'Aloc') > 0 then
 		set trigUnit = Player__Hero[GetPlayerId(GetOwningPlayer(trigUnit))]
 	endif
-	set t = NHX(trigUnit, targetUnit,'h010', "Z2I", 1200, false)
+	set t = LaunchMissileByUnitDummy(trigUnit, targetUnit,'h010', "Z2I", 1200, false)
 	set h = GetHandleId(t)
 	set u = LoadUnitHandle(HY, GetHandleId(t), 45)
 	call SaveInteger(HY, h, 5, level)
@@ -66086,7 +66037,7 @@ function V2A takes nothing returns boolean
 		call SetAbilitydataD(u,'QP13', V4A)
 		call SaveInteger(ObjectHashTable, h,'A06D', V4A)
 		call CommonTextTag("+" + I2S(V4A -V3A)+ " " + GetObjectName('n0MJ'), 3, u, .023, 0, 255, 0, 230)
-		if GetHeroMainAttributesType(u)!= 3 then
+		if GetHeroMainAttributesType(u)!= HERO_ATTRIBUTE_STR then
 			call SaveInteger(HY, GetHandleId(u),'axxx', V4A)
 			call KVX(u)
 		endif
@@ -66273,7 +66224,7 @@ function dismember_upgraded_effect takes nothing returns boolean
 	local unit u =(LoadUnitHandle(HY, h, 2))
 	local unit target =(LoadUnitHandle(HY, h, 17))
 	local integer lv =(LoadInteger(HY, h, 5))
-	local real damage =(75 + 50 * lv)+ E3X(u)
+	local real damage =(75 + 50 * lv)+ GetHeroMaxAttributeValue(u)
 	local integer c =(LoadInteger(HY, h, 34))
 	if GetTriggerEventId() == EVENT_UNIT_DEATH or GetTriggerEventId() == EVENT_UNIT_SPELL_ENDCAST then
 		if GetTriggerEventId() == EVENT_UNIT_DEATH or(GetTriggerEventId() == EVENT_UNIT_SPELL_ENDCAST and GetSpellAbilityId()=='A1CX') then
@@ -67859,7 +67810,7 @@ function OAA takes nothing returns boolean
 	local unit firstUnit = null
 	if IsEffectiveDamage(rDamageValue) and FK and UnitAlive(damagedUnit) and GetUnitAbilityLevel(damagedUnit,'A36D') == 0 then
 		set g = AllocationGroup(392)
-		if not Mode__RearmCombos and GetHeroMainAttributesType(damagedUnit) == 3 then
+		if not Mode__RearmCombos and GetHeroMainAttributesType(damagedUnit) == HERO_ATTRIBUTE_STR then
 			set ONA = rDamageValue *(.06 + .02 * level)
 		else
 			set ONA = rDamageValue *(.06 + .04 * level)
@@ -68617,7 +68568,7 @@ function MJN takes nothing returns nothing
 	local unit UBT =(LoadUnitHandle(HY, h, 17))
 	local real MKN = GetUnitLifePercent(DKO)
 	local real MLN = GetUnitLifePercent(UBT)
-	local integer NMX = LoadInteger(HY, h, 5)
+	local integer facing = LoadInteger(HY, h, 5)
 	local real FAR = 0.25
 	//call H9O(DKO,'AFRZ',0.12)
 	//call H9O(UBT,'AFRZ',0.12)
@@ -68914,7 +68865,7 @@ function a_chaoxi takes nothing returns nothing
 endfunction
 function NXE takes nothing returns nothing
 	if not UnitHasSpellShield(GetSpellTargetUnit()) then
-		call NHX(GetTriggerUnit(), GetSpellTargetUnit(),'h0EN', "RMA", 4000, false)
+		call LaunchMissileByUnitDummy(GetTriggerUnit(), GetSpellTargetUnit(),'h0EN', "RMA", 4000, false)
 	endif
 endfunction
 function RPA takes nothing returns boolean
@@ -69242,7 +69193,7 @@ function IXA takes nothing returns nothing
 	set t = null
 endfunction
 function IRA takes unit sourceUnit, unit targetUnit, integer level, boolean FAR returns nothing
-	local trigger t = NHX(sourceUnit, targetUnit,'e00E', "IXA", 1300, true)
+	local trigger t = LaunchMissileByUnitDummy(sourceUnit, targetUnit,'e00E', "IXA", 1300, true)
 	call SaveInteger(HY, GetHandleId(t), 5, level)
 	call SaveBoolean(HY, GetHandleId(t), 0, FAR)
 	set t = null
@@ -70613,7 +70564,7 @@ function A1A takes nothing returns boolean
 	return false
 endfunction
 function A2A takes unit sourceUnit, unit targetUnit, integer level, boolean FAR returns nothing
-	local trigger t = NHX(sourceUnit, targetUnit,'h0BE', "A_A", 1000, false)
+	local trigger t = LaunchMissileByUnitDummy(sourceUnit, targetUnit,'h0BE', "A_A", 1000, false)
 	local integer h = GetHandleId(t)
 	call SaveReal(HY, h, 20,((20 + level * 65)* 1.))
 	call SaveInteger(HY, h, 20, level)
@@ -72524,29 +72475,29 @@ function CJA takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local unit sourceUnit = LoadUnitHandle(HY, h, 2)
 	local unit targetUnit = LoadUnitHandle(HY, h, 17)
-	local integer E5X = LoadInteger(HY, h, 422)
-	local integer E6X = LoadInteger(HY, h, 423)
-	local integer E4X = LoadInteger(HY, h, 424)
+	local integer agi = LoadInteger(HY, h, 422)
+	local integer str = LoadInteger(HY, h, 423)
+	local integer int = LoadInteger(HY, h, 424)
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		if (LoadBoolean(HY, h, 276)) == false and GetTriggerUnit() == sourceUnit then
 			call SaveBoolean(HY, h, 276,(true))
-			call SetHeroAgi(sourceUnit, GetHeroAgi(sourceUnit, false)-E5X -E6X -E4X, true)
-			call SaveInteger(OtherHashTable, GetHandleId(sourceUnit), 31, LoadInteger(OtherHashTable, GetHandleId(sourceUnit), 31)-E5X -E6X -E4X)
+			call SetHeroAgi(sourceUnit, GetHeroAgi(sourceUnit, false)-agi -str -int, true)
+			call SaveInteger(OtherHashTable, GetHandleId(sourceUnit), 31, LoadInteger(OtherHashTable, GetHandleId(sourceUnit), 31)-agi -str -int)
 			call SetAbilitydataD(sourceUnit,'QP1F', LoadInteger(OtherHashTable, GetHandleId(sourceUnit), 31))
 			if LoadInteger(HY, h, 0)> 0 then
 				call LodSystem_ReduceUnitExtraState(sourceUnit, LoadInteger(HY, h, 0), "damage")
 			endif
 		elseif (LoadBoolean(HY, h, 277)) == false and GetTriggerUnit() == targetUnit then
 			call SaveBoolean(HY, h, 277,(true))
-			call SetHeroAgi(targetUnit, GetHeroAgi(targetUnit, false)+ E5X, true)
-			call SetHeroStr(targetUnit, GetHeroStr(targetUnit, false)+ E6X, true)
-			call SetHeroInt(targetUnit, GetHeroInt(targetUnit, false)+ E4X, true)
+			call SetHeroAgi(targetUnit, GetHeroAgi(targetUnit, false)+ agi, true)
+			call SetHeroStr(targetUnit, GetHeroStr(targetUnit, false)+ str, true)
+			call SetHeroInt(targetUnit, GetHeroInt(targetUnit, false)+ int, true)
 		endif
 	else
 		if (LoadBoolean(HY, h, 276)) == false then
 			call SaveBoolean(HY, h, 276,(true))
-			call SetHeroAgi(sourceUnit, GetHeroAgi(sourceUnit, false)-E5X -E6X -E4X, true)
-			call SaveInteger(OtherHashTable, GetHandleId(sourceUnit), 31, LoadInteger(OtherHashTable, GetHandleId(sourceUnit), 31)-E5X -E6X -E4X)
+			call SetHeroAgi(sourceUnit, GetHeroAgi(sourceUnit, false)-agi -str -int, true)
+			call SaveInteger(OtherHashTable, GetHandleId(sourceUnit), 31, LoadInteger(OtherHashTable, GetHandleId(sourceUnit), 31)-agi -str -int)
 			call SetAbilitydataD(sourceUnit,'QP1F', LoadInteger(OtherHashTable, GetHandleId(sourceUnit), 31))
 			if LoadInteger(HY, h, 0)> 0 then
 				call LodSystem_ReduceUnitExtraState(sourceUnit, LoadInteger(HY, h, 0), "damage")
@@ -72554,9 +72505,9 @@ function CJA takes nothing returns boolean
 		endif
 		if (LoadBoolean(HY, h, 277)) == false then
 			call SaveBoolean(HY, h, 277,(true))
-			call SetHeroAgi(targetUnit, GetHeroAgi(targetUnit, false)+ E5X, true)
-			call SetHeroStr(targetUnit, GetHeroStr(targetUnit, false)+ E6X, true)
-			call SetHeroInt(targetUnit, GetHeroInt(targetUnit, false)+ E4X, true)
+			call SetHeroAgi(targetUnit, GetHeroAgi(targetUnit, false)+ agi, true)
+			call SetHeroStr(targetUnit, GetHeroStr(targetUnit, false)+ str, true)
+			call SetHeroInt(targetUnit, GetHeroInt(targetUnit, false)+ int, true)
 		endif
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
@@ -72587,7 +72538,7 @@ function CKA takes unit u, unit targetUnit returns nothing
 		call SetHeroAgi(u, GetHeroAgi(u, false)+ agi + str + int, true)
 		call SaveInteger(OtherHashTable, GetHandleId(u), 31, LoadInteger(OtherHashTable, GetHandleId(u), 31)+ agi + str + int)
 		call SetAbilitydataD(u,'QP1F', LoadInteger(OtherHashTable, GetHandleId(u), 31))
-		if GetHeroMainAttributesType(u)!= 2 then
+		if GetHeroMainAttributesType(u)!= HERO_ATTRIBUTE_AGI then
 			call LodSystem_AddUnitExtraState(u, agi + str + int, "damage")
 			call SaveInteger(HY, h, 0, agi + str + int)
 		endif
@@ -72844,7 +72795,7 @@ endfunction
 function CYA takes nothing returns nothing
 	local unit sourceUnit = GetTriggerUnit()
 	local unit targetUnit = GetEnumUnit()
-	local trigger t = NHX(sourceUnit, targetUnit,'h0BP', "CWA", 700, false)
+	local trigger t = LaunchMissileByUnitDummy(sourceUnit, targetUnit,'h0BP', "CWA", 700, false)
 	local integer h = GetHandleId(t)
 	local integer level = GetUnitAbilityLevel(sourceUnit,'A04A')
 	local real IXX
@@ -77448,7 +77399,7 @@ function J7A takes nothing returns nothing
 	set target = null
 endfunction
 function KVA takes unit u, unit target, integer id, integer lv returns nothing
-	local trigger t = NHX(target, u,'h0DB', "J7A", 900, false)
+	local trigger t = LaunchMissileByUnitDummy(target, u,'h0DB', "J7A", 900, false)
 	local integer h = GetHandleId(t)
 	call A5X(KF, GetUnitX(target), GetUnitY(target))
 	call CommonTextTag(GetObjectName(id), 3.75, target, .024, 170, 0, 255, 216)
@@ -78255,15 +78206,15 @@ function DQE takes nothing returns nothing
 	endloop
 	call DeallocateGroup(g)
 	if u1 != null then
-		set t = NHX(sourceUnit, u1,'h0E0', "K3A", 9000, false)
+		set t = LaunchMissileByUnitDummy(sourceUnit, u1,'h0E0', "K3A", 9000, false)
 		call SaveInteger(HY, GetHandleId(t), 0, GetUnitAbilityLevel(sourceUnit, GetSpellAbilityId()))
 	endif
 	if u2 != null then
-		set t = NHX(sourceUnit, u2,'h0E0', "K3A", 9000, false)
+		set t = LaunchMissileByUnitDummy(sourceUnit, u2,'h0E0', "K3A", 9000, false)
 		call SaveInteger(HY, GetHandleId(t), 0, GetUnitAbilityLevel(sourceUnit, GetSpellAbilityId()))
 	endif
 	if u3 != null then
-		set t = NHX(sourceUnit, u3,'h0E0', "K3A", 9000, false)
+		set t = LaunchMissileByUnitDummy(sourceUnit, u3,'h0E0', "K3A", 9000, false)
 		call SaveInteger(HY, GetHandleId(t), 0, GetUnitAbilityLevel(sourceUnit, GetSpellAbilityId()))
 	endif
 	set g = null
@@ -78552,8 +78503,8 @@ function LKA takes nothing returns boolean
 	local real NBX
 	local real NCX
 	local real d
-	local real NRX =(LoadReal(HY, h, 44))
-	local real VEI = NRX * .02
+	local real speed =(LoadReal(HY, h, 44))
+	local real VEI = speed * .02
 	local group g
 	local integer count =(LoadInteger(HY, h, 34))
 	if L3R != null then
@@ -79188,7 +79139,7 @@ function L7A takes nothing returns nothing
 	local unit sourceUnit = U2
 	local unit targetUnit = W2
 	local integer level = LoadInteger(HY, GetHandleId(GetTriggeringTrigger()), 0)
-	local integer i = E3X(sourceUnit)
+	local integer i = GetHeroMaxAttributeValue(sourceUnit)
 	local real IXX = 40 + 20 * level + 1.6 * i
 	if GetUnitAbilityLevel(targetUnit,'A3E9') == 1 and IsMagicImmuneUnit(sourceUnit) == false then
 		call SaveUnitHandle(OtherHashTable2,'A3E9', 0, targetUnit)
@@ -79197,14 +79148,14 @@ function L7A takes nothing returns nothing
 		call ExecuteFunc("L8A")
 	endif
 	if i == 0 then
-		set IXX = 40 + 20 * level + 1.6 * E3X(Player__Hero[GetPlayerId(GetOwningPlayer(sourceUnit))])
+		set IXX = 40 + 20 * level + 1.6 * GetHeroMaxAttributeValue(Player__Hero[GetPlayerId(GetOwningPlayer(sourceUnit))])
 	endif
 	call UnitDamageTargetEx(sourceUnit, targetUnit, 1, IXX)
 	set sourceUnit = null
 	set targetUnit = null
 endfunction
 function L9A takes unit sourceUnit, unit targetUnit, integer level returns nothing
-	call SaveInteger(HY, GetHandleId(NHX(sourceUnit, targetUnit,'h0DQ', "L7A", 500, false)), 0, level)
+	call SaveInteger(HY, GetHandleId(LaunchMissileByUnitDummy(sourceUnit, targetUnit,'h0DQ', "L7A", 500, false)), 0, level)
 endfunction
 function L8A takes nothing returns nothing
 	call T4V(LoadUnitHandle(OtherHashTable2,'A3E9', 0))
@@ -79302,7 +79253,7 @@ function D1E takes nothing returns nothing
 	set targetUnit = MOA(sourceUnit, g)
 	call DeallocateGroup(g)
 	if targetUnit != null then
-		set t = NHX(sourceUnit, targetUnit,'h0E6', "MXA", 800, false)
+		set t = LaunchMissileByUnitDummy(sourceUnit, targetUnit,'h0E6', "MXA", 800, false)
 		call SaveInteger(HY, GetHandleId(t), 0, GetUnitAbilityLevel(sourceUnit, GetSpellAbilityId()))
 		set t = null
 	endif
@@ -79335,38 +79286,38 @@ function MCA takes nothing returns nothing
 	local trigger t
 	local integer h
 	local integer MDA
-	local integer E5X
-	local integer E6X
-	local integer E4X
+	local integer agi
+	local integer str
+	local integer int
 	local real VEI
 	if IsUnitType(targetUnit, UNIT_TYPE_HERO) then
 		set MDA = GetHeroMainAttributesType(targetUnit)
 		set VEI = .15
 		call CCX(targetUnit,'A42S', 1, 7,'B0HJ')
-		if MDA == 2 then
-			set E5X = R2I(VEI * GetHeroAgi(targetUnit, false))-1
-			set E6X = 0
-			set E4X = 0
-		elseif MDA == 3 then
-			set E5X = 0
-			set E6X = R2I(VEI * GetHeroStr(targetUnit, false))-1
-			set E4X = 0
-		elseif MDA == 1 then
-			set E5X = 0
-			set E6X = 0
-			set E4X = R2I(VEI * GetHeroInt(targetUnit, false))-1
+		if MDA == HERO_ATTRIBUTE_AGI then
+			set agi = R2I(VEI * GetHeroAgi(targetUnit, false))-1
+			set str = 0
+			set int = 0
+		elseif MDA == HERO_ATTRIBUTE_STR then
+			set agi = 0
+			set str = R2I(VEI * GetHeroStr(targetUnit, false))-1
+			set int = 0
+		elseif MDA == HERO_ATTRIBUTE_INT then
+			set agi = 0
+			set str = 0
+			set int = R2I(VEI * GetHeroInt(targetUnit, false))-1
 		endif
-		call SetHeroAgi(targetUnit, GetHeroAgi(targetUnit, false)-E5X, true)
-		call SetHeroStr(targetUnit, GetHeroStr(targetUnit, false)-E6X, true)
-		call SetHeroInt(targetUnit, GetHeroInt(targetUnit, false)-E4X, true)
+		call SetHeroAgi(targetUnit, GetHeroAgi(targetUnit, false)-agi, true)
+		call SetHeroStr(targetUnit, GetHeroStr(targetUnit, false)-str, true)
+		call SetHeroInt(targetUnit, GetHeroInt(targetUnit, false)-int, true)
 		set t = CreateTrigger()
 		set h = GetHandleId(t)
 		call TriggerRegisterTimerEvent(t, .2, true)
 		call TriggerRegisterDeathEvent(t, targetUnit)
 		call TriggerAddCondition(t, Condition(function MAA))
-		call SaveInteger(HY, h, 422, E5X)
-		call SaveInteger(HY, h, 424, E4X)
-		call SaveInteger(HY, h, 423, E6X)
+		call SaveInteger(HY, h, 422, agi)
+		call SaveInteger(HY, h, 424, int)
+		call SaveInteger(HY, h, 423, str)
 		call SaveUnitHandle(HY, h, 17, targetUnit)
 		set t = null
 	endif
@@ -80066,7 +80017,7 @@ endfunction
 function PIA takes unit u returns nothing
 	local trigger t
 	if GetUnitTypeId(u)=='n020' and UnitIsDead(Player__Hero[GetPlayerId(GetOwningPlayer(u))]) == false then
-		set t = NHX(u, Player__Hero[GetPlayerId(GetOwningPlayer(u))],'h00W', "PRA", 400, false)
+		set t = LaunchMissileByUnitDummy(u, Player__Hero[GetPlayerId(GetOwningPlayer(u))],'h00W', "PRA", 400, false)
 		call SaveReal(HY, GetHandleId(t),'n020', GetUnitState(u, UNIT_STATE_MAX_LIFE))
 		set t = null
 	endif
@@ -80081,11 +80032,11 @@ function SCE takes nothing returns nothing
 		else
 			set k = 15
 		endif
-		if i == 1 then
+		if i == HERO_ATTRIBUTE_INT then
 			call SetHeroInt(GetTriggerUnit(), GetHeroInt(GetTriggerUnit(), false)+ k, true)
-		elseif i == 2 then
+		elseif i == HERO_ATTRIBUTE_AGI then
 			call SetHeroAgi(GetTriggerUnit(), GetHeroAgi(GetTriggerUnit(), false)+ k, true)
-		elseif i == 3 then
+		elseif i == HERO_ATTRIBUTE_STR then
 			call SetHeroStr(GetTriggerUnit(), GetHeroStr(GetTriggerUnit(), false)+ k, true)
 		endif
 	endif
@@ -82242,7 +82193,7 @@ function SplitShot takes unit u returns nothing
 		set t = EXX(g, GetUnitX(u), GetUnitY(u))
 	exitwhen t == null
 		call GroupRemoveUnit(g, t)
-		set trg = NHX(u, t,'h30C', "SplitShot_A", 900, true)
+		set trg = LaunchMissileByUnitDummy(u, t,'h30C', "SplitShot_A", 900, true)
 		set h = GetHandleId(trg)
 		call SaveReal(HY, h, 0, d)
 		set i = i + 1
@@ -82435,7 +82386,7 @@ function GerHeroReducedDamage takes nothing returns real
         endif
         // 折射 需要检查是否被破被动 而且还会根据模型主属性和谐减伤值
         if GetUnitAbilityLevel(DamagedEventTargetUnit,'A0NA') > 0 and GetUnitAbilityLevel(DamagedEventTargetUnit,'A36D') == 0 then
-            if not Mode__RearmCombos and GetHeroMainAttributesType(DamagedEventTargetUnit) == 3 then
+            if not Mode__RearmCombos and GetHeroMainAttributesType(DamagedEventTargetUnit) == HERO_ATTRIBUTE_STR then
                 set rReducedDamage = rReducedDamage + DamagedEventDamageValue *(.06 + .02 * GetUnitAbilityLevel(DamagedEventTargetUnit,'A0NA'))
                 //set DamagedEventDamageValue = DamagedEventDamageValue - DamagedEventDamageValue *(.06 + .02 * GetUnitAbilityLevel(DamagedEventTargetUnit,'A0NA'))
             else
@@ -83004,6 +82955,10 @@ function RegisterHeroEventWait0sFilter takes nothing returns boolean
 		// call SaveReal( ExtraHT, GetHandleId(whichUnit), HTKEY_UNIT_CURRENT_PERCENT_SCALE, 1. )
 		if IsTriggerEnabled( hChooseHeroTrigger ) then
 			call PlayerChooseHeroUnit( whichUnit )
+		endif
+
+		if IsUnitAlly(whichUnit, LocalPlayer) then
+			call MHUnit_EnableViewSkill(whichUnit, LocalPlayer)
 		endif
 	endif
 	call FlushChildHashtable(HY, iHandleId)
@@ -84329,6 +84284,10 @@ function YUA takes unit u, item it, integer JOX returns nothing
 			call TDE(u, XOV[IHV], p, false, 1)
 			call TDE(u, XOV[OAV], p, false, 1)
 		elseif SQV == it_mlq then //魔龙枪
+			//call Item_dragonlance(true)
+			if ( GetItemOfTypeFromUnit(u, XOV[it_mlq]) == null ) and ( GetItemOfTypeFromUnit(u, XOV[Item_HurricanePike]) == null ) then
+				call MCBZZ(GetOwningPlayer(u), 0, u)
+			endif
 			call TDE(u, XOV[OAV], p, false, 1)
 			call TDE(u, XOV[XQV], p, false, 1)
 			call TDE(u, XOV[XQV], p, false, 1)
@@ -90079,7 +90038,7 @@ endfunction
 function fj_trigger takes nothing returns nothing
 	local unit u = GetTriggerUnit()
 	local unit u2 = GetSpellTargetUnit()
-	call NHX(u, u2,'h0EO', "fj_exec", 5000, true)
+	call LaunchMissileByUnitDummy(u, u2,'h0EO', "fj_exec", 5000, true)
 	set u = null
 	set u2 = null
 endfunction
@@ -91087,7 +91046,7 @@ function main takes nothing returns nothing
 	local real d
 	local timer tt
 
-	call InitMemoryHack()
+	call memhack_init()
 	set LocalPlayer   = GetLocalPlayer()
 	set LocalPlayerId = GetPlayerId(LocalPlayer)
 

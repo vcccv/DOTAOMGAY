@@ -224,7 +224,8 @@ scope MainUI
         endif
         set FirstCommandBarButton = DzFrameGetCommandBarButton(0, 0)
         set ButtonInterval 		  = DzFrameGetCommandBarButton(1, 0) - FirstCommandBarButton
+
+        call DisplayTimedTextToPlayer(LocalPlayer, .0, .0, DisplayTextDuration[LocalPlayerId], "插件版本:" + MHGame_GetPluginVersion())
     endfunction
 
 endscope
-
