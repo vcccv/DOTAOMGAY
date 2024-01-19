@@ -54,7 +54,7 @@ scope AntiBackdoor
 
     globals
         constant real STRUCTURE_REGENERATION = 180.
-        constant real BASE_REGENERATION      = 15.
+        constant real BASE_REGENERATION      = 5.
     endglobals
     function AntiBackdoorRegenerationEnumAction takes nothing returns nothing
         local unit u = GetEnumUnit()

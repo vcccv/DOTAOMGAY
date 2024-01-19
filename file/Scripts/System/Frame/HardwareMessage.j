@@ -175,33 +175,24 @@ scope HardwareMessage
         if b != DownAlt then
             call AHC(b)
         endif
-        // 模拟错误提示
-        if InterfaceErrorHideTime > 0. and InterfaceErrorHideTime < GetGameTime( ) then
-            set InterfaceErrorTextAlpha = R2I( 255 - 255 * ( ( GetGameTime( ) - InterfaceErrorHideTime ) / 3 ) )
-            if InterfaceErrorTextAlpha <= 0 then
-                call DzFrameSetAlpha( UIText__TargetingError, 255 )
-                call DzFrameShow( UIFrame__TargetingError , false )
-                set InterfaceErrorHideTime = 0
-                set InterfaceErrorTextAlpha = 0
-            else
-                call DzFrameSetAlpha( UIText__TargetingError, InterfaceErrorTextAlpha )
-            endif
-        endif
     endfunction
 
     // 鼠标左键点击
     function MouseLeftClick takes nothing returns nothing
         if DownAlt then
-            if CommandBarButtonIndex == - 1 then
-                return
-            endif
-            call SetStartLocPrioCount(CommandBarButtonIndex / 3 , ModuloInteger(CommandBarButtonIndex, 3))
-            if MHMsg_IsKeyDown(OSKEY_ALT) and tip_string != null and tip_string != "" then
-                if GetChat_times() then
-                    call DzSyncData("t", tip_string)
+            if CommandButtonSkillFousc >= 0 then
+                call SetStartLocPrioCount(CommandButtonSkillFousc / 3 , ModuloInteger(CommandButtonSkillFousc, 3))
+                if MHMsg_IsKeyDown(OSKEY_ALT) and tip_string != null and tip_string != "" then
+                    if GetChat_times() then
+                        call DzSyncData("t", tip_string)
+                    endif
                 endif
+                set tip_string = null
             endif
-            set tip_string = null
+          
+            if CommandButtonItemFousc >= 0 then
+                call onClickItemCommandButton(CommandButtonItemFousc)
+            endif
         endif
     endfunction
 

@@ -3,7 +3,7 @@
 //! import "HotkeySystem.j"
 
 //! import "MenuOption\MenuOptionPanel.j"
-
+//! import "CommandButtonHelper.j"
 //! import "HardwareMessage.j"
 scope MainUI
 
@@ -71,14 +71,6 @@ scope MainUI
         endif
     endfunction
 
-    // 鼠标进入命令按钮
-    function EntherCommandButtonCallback takes nothing returns nothing
-        set CommandBarButtonIndex = (DzGetTriggerUIEventFrame() - FirstCommandBarButton) / ButtonInterval
-    endfunction
-    // 鼠标离开命令按钮
-    function LeaveCommandButtonCallback takes nothing returns nothing
-        set CommandBarButtonIndex = - 1
-    endfunction
 
     function CreateTopMsgFrame takes nothing returns nothing
         local integer i = 1
@@ -91,16 +83,7 @@ scope MainUI
             exitwhen i == 6
             set i = i + 1
         endloop
-        set UIFrame__TargetingError = DzCreateFrame("TargetingError", GameUI, 0)
-        call DzFrameSetSize(UIFrame__TargetingError, 0.10, 0.10)
-        set UIText__TargetingError = DzFrameFindByName("TargetingErrorText", 0)
-        
-        call DzFrameSetText(UIText__TargetingError, null)
-        call DzFrameSetAbsolutePoint(UIFrame__TargetingError, 4, 0.36, 0.175)
-        call DzFrameSetAbsolutePoint(UIText__TargetingError, 4, 0.36, 0.175)
-        call DzFrameShow(UIFrame__TargetingError , false)
     endfunction
-
 
     function UIMain_Init takes nothing returns nothing
         local integer i
@@ -197,26 +180,13 @@ scope MainUI
 
         // 点击英雄图标按钮
         call DzFrameSetScriptByCode(DzFrameGetHeroBarButton(0), 1, function Click_UI_HeroBarButton, false)
-        // 鼠标进入和离开右下角技能栏
-        set x = 0
-        set y = 0
-        loop
-            exitwhen x > 3
-            set y = 0
-            loop
-                exitwhen y > 2
-                set frame = DzFrameGetCommandBarButton(y, x)
-                call DzFrameSetScriptByCode(frame, FRAME_MOUSE_ENTER, function EntherCommandButtonCallback, false)
-                call DzFrameSetScriptByCode(frame, FRAME_MOUSE_LEAVE, function LeaveCommandButtonCallback, false)
-                set y = y + 1
-            endloop
-            set x = x + 1
-        endloop
+
 
         // 界面更新回调
         call DzFrameSetUpdateCallbackByCode(function cUpdateCallback)
 
         call HardwareMessage_Init()
+        call CommandButtonHelper_Init()
 
         if IsObserverPlayer(LocalPlayer) then
             call DzFrameSetEnable(GlyphFrame, false)
@@ -225,7 +195,7 @@ scope MainUI
         set FirstCommandBarButton = DzFrameGetCommandBarButton(0, 0)
         set ButtonInterval 		  = DzFrameGetCommandBarButton(1, 0) - FirstCommandBarButton
 
-        call DisplayTimedTextToPlayer(LocalPlayer, .0, .0, DisplayTextDuration[LocalPlayerId], "插件版本:" + MHGame_GetPluginVersion())
+        //call DisplayTimedTextToPlayer(LocalPlayer, .0, .0, DisplayTextDuration[LocalPlayerId], "插件版本:" + MHGame_GetPluginVersion())
     endfunction
 
 endscope
