@@ -47,6 +47,9 @@ scope HardwareMessage
         local integer key = DzGetTriggerKey()
         local integer x = 0
         local integer abilityId
+        if MHUI_IsChatEditBarOn() then
+            return
+        endif
         if not KeyIsDown[key] then
             set KeyIsDown[key] = true
             // 如果在菜单界面
@@ -59,6 +62,22 @@ scope HardwareMessage
                 endif
             elseif ChangingHotkey then
                 call LocalChangeHotKeyActions(key)
+            elseif key == OSKEY_M and not MHMsg_IsKeyDown(OSKEY_ALT) and not MHMsg_IsKeyDown(OSKEY_CONTROL) and GetUnitAbilityLevel(GetPlayerSelectedUnit(), 'Amov') > 0 then
+                call MHMsg_CallTargetMode(0, 851986, 0x6)
+            elseif key == OSKEY_P and not MHMsg_IsKeyDown(OSKEY_ALT) and not MHMsg_IsKeyDown(OSKEY_CONTROL) and GetUnitAbilityLevel(GetPlayerSelectedUnit(), 'Amov') > 0 then
+                call MHMsg_CallTargetMode(0, 851990, 0x6)
+            elseif key == OSKEY_S and not MHMsg_IsKeyDown(OSKEY_ALT) and not MHMsg_IsKeyDown(OSKEY_CONTROL) and GetUnitAbilityLevel(GetPlayerSelectedUnit(), 'Aatk') > 0 then
+                if MHMsg_IsKeyDown(OSKEY_SHIFT) then
+                    call MHMsg_SendImmediateOrder(851972, 0x1)
+                else
+                    call MHMsg_SendImmediateOrder(851972, 0x0)
+                endif
+            elseif key == OSKEY_H and not MHMsg_IsKeyDown(OSKEY_ALT) and not MHMsg_IsKeyDown(OSKEY_CONTROL) and GetUnitAbilityLevel(GetPlayerSelectedUnit(), 'Aatk') > 0 and GetUnitAbilityLevel(GetPlayerSelectedUnit(), 'Amov') > 0 then
+                if MHMsg_IsKeyDown(OSKEY_SHIFT) then
+                    call MHMsg_SendImmediateOrder(851993, 0x1)
+                else
+                    call MHMsg_SendImmediateOrder(851993, 0x0)
+                endif
             elseif IsEnableDoubleClickSystem then
                 if KeyCanDoubleClickSpell[key] > 0 then
                     // 因为取消按键在右下角
@@ -105,22 +124,6 @@ scope HardwareMessage
                         endloop
                     endif
                 endif
-            elseif key == OSKEY_M and not MHMsg_IsKeyDown(OSKEY_ALT) and not MHMsg_IsKeyDown(OSKEY_CONTROL) and GetUnitAbilityLevel(GetPlayerSelectedUnit(), 'Amov') > 0 then
-                call MHMsg_CallTargetMode(0, 851986, 0x6)
-            elseif key == OSKEY_P and not MHMsg_IsKeyDown(OSKEY_ALT) and not MHMsg_IsKeyDown(OSKEY_CONTROL) and GetUnitAbilityLevel(GetPlayerSelectedUnit(), 'Amov') > 0 then
-                call MHMsg_CallTargetMode(0, 851990, 0x6)
-            elseif key == OSKEY_S and not MHMsg_IsKeyDown(OSKEY_ALT) and not MHMsg_IsKeyDown(OSKEY_CONTROL) and GetUnitAbilityLevel(GetPlayerSelectedUnit(), 'Aatk') > 0 then
-                if MHMsg_IsKeyDown(OSKEY_SHIFT) then
-                    call MHMsg_SendImmediateOrder(851972, 0x1)
-                else
-                    call MHMsg_SendImmediateOrder(851972, 0x0)
-                endif
-            elseif key == OSKEY_H and not MHMsg_IsKeyDown(OSKEY_ALT) and not MHMsg_IsKeyDown(OSKEY_CONTROL) and GetUnitAbilityLevel(GetPlayerSelectedUnit(), 'Aatk') > 0 and GetUnitAbilityLevel(GetPlayerSelectedUnit(), 'Amov') > 0 then
-                if MHMsg_IsKeyDown(OSKEY_SHIFT) then
-                    call MHMsg_SendImmediateOrder(851993, 0x1)
-                else
-                    call MHMsg_SendImmediateOrder(851993, 0x0)
-                endif
             endif
         endif
     endfunction
@@ -128,6 +131,9 @@ scope HardwareMessage
     // 按键弹起
     function EnterKey_PoolKey takes nothing returns nothing
         local integer key = DzGetTriggerKey()
+        if MHUI_IsChatEditBarOn() then
+            return
+        endif
         if KeyIsDown[key] then
             set KeyIsDown[key] = false
         endif

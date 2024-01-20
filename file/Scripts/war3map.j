@@ -22148,7 +22148,9 @@ function ItemRodOfAtosOnMissileLaunch takes nothing returns nothing
 	local integer h
 	set h = GetHandleId(LaunchMissileByUnitDummy(sourceUnit, targetUnit, 'h999', "ItemRodOfAtosOnMissileHit", 1900, true))
 	if h > 0 then
-		call MHUnit_SetModel(LoadUnitHandle(HY, h, 45), "Items\\FX\\RodOfAtosTarget.mdx", false)
+		set sourceUnit = LoadUnitHandle(HY, h, 45)
+		call MHUnit_SetModel(sourceUnit, "Abilities\\Spells\\Undead\\DevourMagic\\DevourMagicBirthMissile.mdl", false)
+		call SetUnitScale(sourceUnit, 3., 3., 3.)
 	endif
 	//call EnableAttackEffectByTime(18, 8)
 	set sourceUnit = null
@@ -65242,7 +65244,6 @@ globals
 	unit AttackReadyTarget
 endglobals
 
-
 function UnitLaunchAttack takes unit source, unit target returns nothing
 	set AttackReadySource = source
 	set AttackReadyTarget = target
@@ -65251,6 +65252,7 @@ function UnitLaunchAttack takes unit source, unit target returns nothing
 	call MHUnit_LaunchAttack(source, 1, target)
 	call AddUnitBonusRange(source, - 99999, false)
 endfunction
+// 窒息之刃
 function StiflingDaggerOnMissileHit takes nothing returns nothing
 	local integer h           = GetHandleId(GetTriggeringTrigger())
 	local unit    sourceUnit  = U2
@@ -65268,15 +65270,17 @@ function StiflingDaggerOnMissileHit takes nothing returns nothing
 	if IsUnitType(targetUnit, UNIT_TYPE_HERO) then
 		set damage = damage / 2
 	endif
-	call UnitDamageTargetEx(sourceUnit, targetUnit, 3, damage)
-
+	
 	if UnitAlive(targetUnit) and LoadBoolean(HY, h, 0) then
 		call UnitLaunchAttack(sourceUnit, targetUnit)
 	endif
 
+	call UnitDamageTargetEx(sourceUnit, targetUnit, 3, damage)
+
 	if b then
 		call CommonTextTag(I2S(R2I(damage))+ "!", 3, targetUnit, .02, 255, 0, 0, 255)
 	endif
+	
 	set b = false
 	if GetUnitAbilityLevel(sourceUnit,'Aloc') == 1 and HaveSavedHandle(HY, GetHandleId(sourceUnit), 0) then
 		set sourceUnit = LoadUnitHandle(HY, GetHandleId(sourceUnit), 0)

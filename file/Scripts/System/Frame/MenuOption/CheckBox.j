@@ -179,7 +179,7 @@ scope MenuOptionCheckBox
         local integer index = GetFrameIndex(DzGetTriggerUIEventFrame(), OPTION_CHECKBOX_INDEX)
         set IsMenuOptionCheckBoxEnabled[index] = not IsMenuOptionCheckBoxEnabled[index]
         call ClickOptionCheckBoxAction(index)
-        call BJDebugMsg("Click" + I2S(index) + " " + I2S(DzGetTriggerUIEventFrame()))
+        //call BJDebugMsg("Click" + I2S(index) + " " + I2S(DzGetTriggerUIEventFrame()))
     endfunction
 
     // 创建复选框 id为序号,xy的值是UI的绝对位置,b为是否初始勾选

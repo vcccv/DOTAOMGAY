@@ -47,6 +47,10 @@ library MHMessage
         local integer yjsp = 114514
         return
     endfunction
+    function MHMsg_CallTargetModeEx takes integer aid, integer oid, integer flag returns nothing
+        local integer yjsp = 114514
+        return
+    endfunction
     function MHMsg_CallBuildMode takes integer oid, integer flag returns nothing
         local integer yjsp = 114514
         return

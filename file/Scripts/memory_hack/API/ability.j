@@ -332,6 +332,10 @@ library MHAbilityEvent
         local integer yjsp = 114514
         return 0.
     endfunction
+    function MHAbilityEndCooldownEvent_Register takes trigger trig returns nothing
+        local integer yjsp = 114514
+        return
+    endfunction
     function MHAbilityRefreshAuraEvent_Register takes trigger trig returns nothing
         local integer yjsp = 114514
         return

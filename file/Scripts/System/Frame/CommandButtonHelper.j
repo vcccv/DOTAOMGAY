@@ -106,7 +106,7 @@ scope CommandButtonHelper
             set data = name + " > " + data
         else
             // 对队友建议
-            set data = GetPlayerName(GetOwningPlayer(u)) + " > " + name + " > " + data
+            set data = GetPlayerName(GetOwningPlayer(u)) + " > " + GetUnitName(u) + " > " + name + " > " + data
         endif        
         
         set u = null

@@ -307,9 +307,17 @@ library MHUnit
         local integer yjsp = 114514
         return
     endfunction
+    function MHUnit_GetIllusionDamageDeal takes unit u returns real
+        local integer yjsp = 114514
+        return 0.
+    endfunction
     function MHUnit_SetIllusionDamageReceive takes unit u, real value returns nothing
         local integer yjsp = 114514
         return
+    endfunction
+    function MHUnit_GetIllusionDamageReceive takes unit u returns real
+        local integer yjsp = 114514
+        return 0.
     endfunction
     function MHUnit_SetModel takes unit u, string model_path, boolean flag returns nothing
         local integer yjsp = 114514
