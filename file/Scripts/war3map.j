@@ -35603,7 +35603,7 @@ endfunction
 
 function BMR takes nothing returns boolean
 	if YW then
-		call AYR("-mdd2s6fnboulffscah", 2)
+		call AYR("-sdd3s6fnabborcdusculsp", 2)
 	endif
 	call BLR()
 	call CleanCurrentTrigger(GetTriggeringTrigger())
@@ -57058,7 +57058,7 @@ function HKI takes nothing returns nothing
 			call UnitRemoveAbility(u,'A29C')
 		endif
 		call UnitRemoveAbility(u,'B01C')
-		call SetUnitPathing(u, true)
+		call SetUnitPathingEx(u, true)
 	endif
 	set web = null
 	set u = null
@@ -57075,7 +57075,7 @@ function HMI takes nothing returns nothing	//如果三秒内没被打则设置�
 			call UnitAddAbility(u,'A29C')
 		endif
 	endif
-	call SetUnitPathing(u, LoadReal(HY, GetHandleId(u), 785) + 3 > GetGameTime())
+	call SetUnitPathingEx(u, LoadReal(HY, GetHandleId(u), 785) + 3 > GetGameTime())
 	set u = null
 endfunction
 function HPI takes nothing returns nothing//织网
@@ -67741,54 +67741,54 @@ function X9A takes nothing returns nothing
 	set missileDummy = null
 	set dummyCaster = null
 endfunction
-function OVA takes unit K4X, integer index returns boolean
-	return(GetItemTypeId(UnitItemInSlot(K4X, index))=='pspd') or(GetItemTypeId(UnitItemInSlot(K4X, index))=='oflg')
-endfunction
+//function OVA takes unit K4X, integer index returns boolean
+//	return(GetItemTypeId(UnitItemInSlot(K4X, index))=='pspd') or(GetItemTypeId(UnitItemInSlot(K4X, index))=='oflg')
+//endfunction
 function OEA takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer h = GetHandleId(t)
 	local unit trigUnit = LoadUnitHandle(HY, h, 14)
 	local real N5O = LoadReal(HY, h, 57)
-	local integer loop_i = 0
-	loop
-	exitwhen loop_i > 5
-		if OVA(trigUnit, loop_i) then
-			if GetUnitAbilityLevel(trigUnit,('B047')) == 0 then
-				call SetItemDropOnDeath(UnitItemInSlot(trigUnit, loop_i), true)
-				if GetItemTypeId(UnitItemInSlot(trigUnit, loop_i))=='oflg' then
-					call SetItemDroppable(UnitItemInSlot(trigUnit, loop_i), true)
-				endif
-			else
-				call SetItemDropOnDeath(UnitItemInSlot(trigUnit, loop_i), false)
-				if GetItemTypeId(UnitItemInSlot(trigUnit, loop_i))=='oflg' then
-					call SetItemDroppable(UnitItemInSlot(trigUnit, loop_i), false)
-				endif
-			endif
-		endif
-		set loop_i = loop_i + 1
-	endloop
+	//local integer loop_i = 0
+	//loop
+	//exitwhen loop_i > 5
+	//	if OVA(trigUnit, loop_i) then
+	//		if GetUnitAbilityLevel(trigUnit,('B047')) == 0 then
+	//			call SetItemDropOnDeath(UnitItemInSlot(trigUnit, loop_i), true)
+	//			if GetItemTypeId(UnitItemInSlot(trigUnit, loop_i))=='oflg' then
+	//				call SetItemDroppable(UnitItemInSlot(trigUnit, loop_i), true)
+	//			endif
+	//		else
+	//			call SetItemDropOnDeath(UnitItemInSlot(trigUnit, loop_i), false)
+	//			if GetItemTypeId(UnitItemInSlot(trigUnit, loop_i))=='oflg' then
+	//				call SetItemDroppable(UnitItemInSlot(trigUnit, loop_i), false)
+	//			endif
+	//		endif
+	//	endif
+	//	set loop_i = loop_i + 1
+	//endloop
 	set N5O = N5O + .2
 	call SaveReal(HY, h, 57, N5O * 1.)
 	if GetUnitAbilityLevel(trigUnit,('B047')) == 0 then
-		call SetUnitPathing(trigUnit, true)
+		call SetUnitPathingEx(trigUnit, true)
 	else
-		call SetUnitPathing(trigUnit, false)
+		call SetUnitPathingEx(trigUnit, false)
 	endif
 	if N5O > 30 then
 		call PauseTimer(t)
 		call FlushChildHashtable(HY, h)
-		call SetUnitPathing(trigUnit, true)
-		set loop_i = 0
-		loop
-		exitwhen loop_i > 5
-			if OVA(trigUnit, loop_i) then
-				call SetItemDropOnDeath(UnitItemInSlot(trigUnit, loop_i), true)
-				if GetItemTypeId(UnitItemInSlot(trigUnit, loop_i))=='oflg' then
-					call SetItemDroppable(UnitItemInSlot(trigUnit, loop_i), true)
-				endif
-			endif
-			set loop_i = loop_i + 1
-		endloop
+		call SetUnitPathingEx(trigUnit, true)
+		//set loop_i = 0
+		//loop
+		//exitwhen loop_i > 5
+		//	if OVA(trigUnit, loop_i) then
+		//		call SetItemDropOnDeath(UnitItemInSlot(trigUnit, loop_i), true)
+		//		if GetItemTypeId(UnitItemInSlot(trigUnit, loop_i))=='oflg' then
+		//			call SetItemDroppable(UnitItemInSlot(trigUnit, loop_i), true)
+		//		endif
+		//	endif
+		//	set loop_i = loop_i + 1
+		//endloop
 	endif
 	set t = null
 	set trigUnit = null
@@ -67827,7 +67827,7 @@ function OXA takes unit trigUnit, integer level returns nothing
 	endif
 	set t = CreateTimer()
 	set h = GetHandleId(t)
-	call SetUnitPathing(trigUnit, false)
+	call SetUnitPathingEx(trigUnit, false)
 	call SaveUnitHandle(HY, h, 14, trigUnit)
 	call TimerStart(t, .2, true, function OEA)
 	set targetUnit = null
@@ -83777,6 +83777,7 @@ function W2A takes nothing returns nothing
 	endloop
 endfunction
 function W3A takes unit killingUnit, unit triggerUnit returns nothing
+	call FlushUnitData(triggerUnit)
 	if LoadBoolean(SightDataHashTable, GetUnitTypeId(triggerUnit), 0) or IsUnitIllusion(triggerUnit) then
 		return
 	endif

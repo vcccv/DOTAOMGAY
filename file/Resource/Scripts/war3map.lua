@@ -21,12 +21,15 @@ local function InitUpdateLogStr()
 	 - 添加查看友军单位技能功能，现在Alt点击物品也可以发送提示信息了。
 	 - 修正|CFFFF8000月刃|r弹射逻辑问题。
 	 - |CFFFF8000窒息之刃|r附带一次普通攻击效果(暂不触发暴击 以后再说)。
+	 - |CFFFF8000幽鬼之刃|r和|CFFFF8000织网|r寻路Bug修复。
 
 	 - 修复天灾下路远程兵营被拆后 近卫上路也会刷新高级投刃车的bug
 	 - 偷塔保护每秒回血90/s > 180/s
 	 - 基地现在能正确防偷塔 基地回血 20/s > 5/s
 	 - 修复|CFFFF8000血棘|rBUFF不能驱散
 	 - |Cffffff00阿托斯之棍|r增加弹道 弹道速度为1900
+	 
+	 - 现在默认指令为-sdd3s6fnabborcdusculsp
 	 ]]
 end
 
