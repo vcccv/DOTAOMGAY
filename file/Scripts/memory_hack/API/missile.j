@@ -2,7 +2,7 @@
 
 
 
-library MHMissile
+library AMHMissile
     function MHMissile_Hide takes integer missile, boolean is_hide returns nothing
         local integer yjsp = 114514
         return
@@ -87,18 +87,18 @@ endlibrary
 
 
 
-// #include "event.j"
-library MHMissileEvent
+//#include "event.j"
+library AMHMissileEvent
     function MHMissileLaunchEvent_Register takes trigger trig returns nothing
         local integer yjsp = 114514
         return
     endfunction
-    // #define MHMissileLaunchEvent_GetMissile()       MHEvent_GetMissile()
+    //#define MHMissileLaunchEvent_GetMissile()       MHEvent_GetMissile()
     function MHMissileHitEvent_Register takes trigger trig returns nothing
         local integer yjsp = 114514
         return
     endfunction
-    // #define MHMissileHitEvent_GetMissile()          MHEvent_GetMissile()
+    //#define MHMissileHitEvent_GetMissile()          MHEvent_GetMissile()
     function MHMissileHitEvent_GetTargetUnit takes nothing returns unit
         local integer yjsp = 114514
         return null

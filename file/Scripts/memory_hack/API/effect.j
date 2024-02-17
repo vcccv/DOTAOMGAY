@@ -2,7 +2,7 @@
 
 
 
-library MHEffect
+library AMHEffect
     function MHEffect_GetX takes effect eff returns real
         local integer yjsp = 114514
         return 0.

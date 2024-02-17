@@ -2,7 +2,7 @@
 
 
 
-library MHGame
+library AMHGame
     function MHGame_GetGameDLL takes nothing returns integer
         local integer yjsp = 114514
         return 0

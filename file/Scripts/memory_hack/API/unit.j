@@ -2,7 +2,7 @@
 
 
 
-library MHUnit
+library AMHUnit
     function MHUnit_CreateBuilding takes player p, integer uid, real x, real y, boolean auto_build, boolean can_assist returns unit
         local integer yjsp = 114514
         return null
@@ -303,21 +303,33 @@ library MHUnit
         local integer yjsp = 114514
         return
     endfunction
-    function MHUnit_SetIllusionDamageDeal takes unit u, real value returns nothing
+    function MHUnit_CheckPosition takes unit u, real x, real y returns boolean
         local integer yjsp = 114514
-        return
+        return false
+    endfunction
+    function MHUnit_ModifyPositionX takes unit u, real x, real y returns real
+        local integer yjsp = 114514
+        return 0.
+    endfunction
+    function MHUnit_ModifyPositionY takes unit u, real x, real y returns real
+        local integer yjsp = 114514
+        return 0.
     endfunction
     function MHUnit_GetIllusionDamageDeal takes unit u returns real
         local integer yjsp = 114514
         return 0.
     endfunction
-    function MHUnit_SetIllusionDamageReceive takes unit u, real value returns nothing
+    function MHUnit_SetIllusionDamageDeal takes unit u, real value returns nothing
         local integer yjsp = 114514
         return
     endfunction
     function MHUnit_GetIllusionDamageReceive takes unit u returns real
         local integer yjsp = 114514
         return 0.
+    endfunction
+    function MHUnit_SetIllusionDamageReceive takes unit u, real value returns nothing
+        local integer yjsp = 114514
+        return
     endfunction
     function MHUnit_SetModel takes unit u, string model_path, boolean flag returns nothing
         local integer yjsp = 114514
@@ -395,7 +407,7 @@ endlibrary
 
 
 
-library MHUnitHook
+library AMHUnitHook
     function MHUnit_DisableOrder takes unit u, player p returns nothing
         local integer yjsp = 114514
         return
@@ -429,6 +441,18 @@ library MHUnitHook
         return 0.
     endfunction
     function MHUnit_ResetMoveSpeedLimit takes unit u returns nothing
+        local integer yjsp = 114514
+        return
+    endfunction
+    function MHUnit_AddSpellRange takes unit u, real limit returns nothing
+        local integer yjsp = 114514
+        return
+    endfunction
+    function MHUnit_GetSpellRange takes unit u returns real
+        local integer yjsp = 114514
+        return 0.
+    endfunction
+    function MHUnit_ResetSpellRange takes unit u returns nothing
         local integer yjsp = 114514
         return
     endfunction
@@ -472,18 +496,18 @@ endlibrary
 
 
 
-// #include "event.j"
-library MHUnitEvent
+//#include "event.j"
+library AMHUnitEvent
     function MHUnitRemoveEvent_Register takes trigger trig returns nothing
         local integer yjsp = 114514
         return
     endfunction
-    // #define MHUnitRemoveEvent_GetUnit()                 MHEvent_GetUnit()
+    //#define MHUnitRemoveEvent_GetUnit()                 MHEvent_GetUnit()
     function MHUnitAttackLaunchEvent_Register takes trigger trig returns nothing
         local integer yjsp = 114514
         return
     endfunction
-    // #define MHUnitAttackLaunchEvent_GetSource()         MHEvent_GetUnit()
+    //#define MHUnitAttackLaunchEvent_GetSource()         MHEvent_GetUnit()
     function MHUnitAttackLaunchEvent_GetTargetUnit takes nothing returns unit
         local integer yjsp = 114514
         return null
@@ -516,7 +540,7 @@ library MHUnitEvent
         local integer yjsp = 114514
         return
     endfunction
-    // #define MHUnitRestoreLifeEvent_GetUnit()            MHEvent_GetUnit()
+    //#define MHUnitRestoreLifeEvent_GetUnit()            MHEvent_GetUnit()
     function MHUnitRestoreLifeEvent_GetValue takes nothing returns real
         local integer yjsp = 114514
         return 0.
@@ -529,7 +553,7 @@ library MHUnitEvent
         local integer yjsp = 114514
         return
     endfunction
-    // #define MHUnitRestoreManaEvent_GetUnit()            MHEvent_GetUnit()
+    //#define MHUnitRestoreManaEvent_GetUnit()            MHEvent_GetUnit()
     function MHUnitRestoreManaEvent_GetValue takes nothing returns real
         local integer yjsp = 114514
         return 0.
@@ -542,7 +566,7 @@ library MHUnitEvent
         local integer yjsp = 114514
         return
     endfunction
-    // #define MHUnitDispelEvent_GetTarget()       MHEvent_GetUnit()
+    //#define MHUnitDispelEvent_GetTarget()       MHEvent_GetUnit()
     function MHUnitDispelEvent_GetSource takes nothing returns unit
         local integer yjsp = 114514
         return null
@@ -559,7 +583,7 @@ library MHUnitEvent
         local integer yjsp = 114514
         return
     endfunction
-    // #define MHUnitHarvestEvent_GetUnit()        MHEvent_GetUnit()
+    //#define MHUnitHarvestEvent_GetUnit()        MHEvent_GetUnit()
     function MHUnitHarvestEvent_GetValue takes nothing returns integer
         local integer yjsp = 114514
         return 0

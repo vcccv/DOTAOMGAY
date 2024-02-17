@@ -2,7 +2,7 @@
 
 
 
-library MHHero
+library AMHHero
     function MHHero_GetMaxExp takes unit u, integer level returns integer
         local integer yjsp = 114514
         return 0
@@ -55,8 +55,8 @@ endlibrary
 
 
 
-// #include "event.j"
-library MHHeroEvent
+//#include "event.j"
+library AMHHeroEvent
     function MHHeroGetExpEvent_Register takes trigger trig returns nothing
         local integer yjsp = 114514
         return

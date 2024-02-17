@@ -2,7 +2,7 @@
 
 
 
-library MHDamage
+library AMHDamage
     function MHDamage_DamageTarget takes unit u, widget target, real dmg, attacktype atk_type, damagetype dmg_type, boolean is_physical, integer flag returns boolean
         local integer yjsp = 114514
         return false
@@ -11,8 +11,8 @@ endlibrary
 
 
 
-// #include "event.j"
-library MHDamageEvent
+//#include "event.j"
+library AMHDamageEvent
     function MHDamageEvent_SetDamage takes real value returns nothing
         local integer yjsp = 114514
         return
@@ -61,8 +61,8 @@ library MHDamageEvent
         local integer yjsp = 114514
         return 0.
     endfunction
-    // #define MHDamagingEvent_GetTarget()             MHEvent_GetUnit()
-    // #define MHDamagingEvent_SetTarget(t)            MHEvent_SetUnit(t)
+    //#define MHDamagingEvent_GetTarget()             MHEvent_GetUnit()
+    //#define MHDamagingEvent_SetTarget(t)            MHEvent_SetUnit(t)
     function MHDamagingEvent_SetDamage takes real value returns nothing
         local integer yjsp = 114514
         return

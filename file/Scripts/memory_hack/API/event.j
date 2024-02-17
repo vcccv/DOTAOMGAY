@@ -1,7 +1,6 @@
 // by Asphodelus
 
-// #define MHEVENT_INCLUDED
-library MHEvent
+library AMHEvent
     function MHEvent_GetId takes nothing returns integer
         local integer yjsp = 114514
         return 0

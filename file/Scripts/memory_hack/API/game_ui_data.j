@@ -2,12 +2,12 @@
 
 
 
-library MHGameUIData
+library AMHGameUIData
     function MHUIData_GetBuffIndicatorBuff takes integer index returns integer
         local integer yjsp = 114514
         return 0
     endfunction
-    // #define MHUIData_GetBuffIndicatorBuffInt(index)  MHUIData_GetBuffIndicatorBuff(index)
+    //#define MHUIData_GetBuffIndicatorBuffInt(index)  MHUIData_GetBuffIndicatorBuff(index)
     function MHUIData_GetTargetModeAbility takes nothing returns integer
         local integer yjsp = 114514
         return 0

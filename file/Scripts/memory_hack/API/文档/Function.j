@@ -183,6 +183,14 @@
     function MHAbility_SetCooldown takes unit u, integer aid, real dur returns nothing
     endfunction
 
+    // 获取剩余持续时间
+    function MHAbility_GetSpellRemain takes unit u, integer aid returns real
+    endfunction
+
+    // 设置剩余持续时间
+    function MHAbility_SetSpellRemain takes unit u, integer aid, real dur returns nothing
+    endfunction
+
     // 获取技能当前目标单位
     function MHAbility_GetTargetUnit takes unit u, integer aid returns unit
     endfunction
@@ -434,7 +442,7 @@
     endfunction
 
     // 注册任意技能进入冷却事件
-    // @Tip：EVENT_ID_ABILITY_STARTCOOLDOWN
+    // @Tip：EVENT_ID_ABILITY_START_COOLDOWN
     function MHAbilityStartCooldownEvent_Register takes trigger trig returns nothing
     endfunction
 
@@ -450,14 +458,21 @@
     function MHAbilityStartCooldownEvent_GetAbility takes nothing returns unit
     endfunction
 
-    // 设置技能进入冷却的时间
-    // @Tip：响应 任意单位技能进入冷却 事件
-    function MHAbilityStartCooldownEvent_SetValue takes real value returns nothing
+    // 注册任意技能结束冷却事件
+    // @Tip：EVENT_ID_ABILITY_END_COOLDOWN
+    function MHAbilityEndCooldownEvent_Register takes trigger trig returns nothing
     endfunction
 
-    // 获取技能进入冷却的时间
-    // @Tip：响应 任意单位技能进入冷却 事件
-    function MHAbilityStartCooldownEvent_GetValue takes nothing returns real
+    // 获取结束技能冷却的单位
+    // @Tip：响应 任意单位技能结束冷却 事件
+    // 等价于 MHEvent_GetUnit
+    function MHAbilityEndCooldownEvent_GetUnit takes nothing returns unit
+    endfunction
+
+    // 获取结束技能冷却的技能
+    // @Tip：响应 任意单位技能结束冷却 事件
+    // 等价于 MHEvent_GetAbility
+    function MHAbilityEndCooldownEvent_GetAbility takes nothing returns unit
     endfunction
 
     // 注册任意光环技能刷新事件
@@ -871,14 +886,37 @@
     function MHUnit_SetCollisionType takes unit u, integer to_other, integer from_other returns nothing
     endfunction
 
+    // 判定可通行性
+    // @Tip：判定坐标(x, y)是否允许单位u通行
+    function MHUnit_CheckPosition takes unit u, real x, real y returns boolean
+    endfunction
+
+    // 修正单位坐标X
+    // @Tip：若单位要移动到坐标(x, y)，获取通行性判定修正后的x坐标
+    function MHUnit_ModifyPositionX takes unit u, real x, real y returns real
+    endfunction
+
+    // 修正单位坐标Y
+    // @Tip：若单位要移动到坐标(x, y)，获取通行性判定修正后的y坐标
+    function MHUnit_ModifyPositionY takes unit u, real x, real y returns real
+    endfunction
+
     // 创建幻象
     // @param player：幻象所属玩家
     function MHUnit_CreateIllusion takes player p, unit u, real x, real y returns unit
     endfunction
 
+    // 获取幻象造成伤害
+    function MHUnit_GetIllusionDamageDeal takes unit u returns real
+    endfunction
+
     // 设置幻象造成伤害
     // @param value：伤害倍率
     function MHUnit_SetIllusionDamageDeal takes unit u, real value returns nothing
+    endfunction
+
+    // 获取幻象接受伤害
+    function MHUnit_GetIllusionDamageReceive takes unit u returns real
     endfunction
 
     // 设置幻象接受伤害
@@ -1029,6 +1067,20 @@
     // 重置单位移速上限
     // @Tip：指代 MHUnit_SetMoveSpeedLimit 中设置的移速上限
     function MHUnit_ResetMoveSpeedLimit takes unit u returns nothing
+    endfunction
+
+    // 增加额外施法距离
+    function MHUnit_AddSpellRange takes unit u, real limit returns nothing
+    endfunction
+
+    // 获取额外施法距离
+    // @Tip：指代 MHUnit_AddSpellRange 中增加的施法距离
+    function MHUnit_GetSpellRange takes unit u returns real
+    endfunction
+
+    // 重置额外施法距离
+    // @Tip：指代 MHUnit_AddSpellRange 中增加的施法距离
+    function MHUnit_ResetSpellRange takes unit u returns nothing
     endfunction
 
     // 允许技能显示
@@ -2300,6 +2352,10 @@
     function MHFrame_Hide takes integer frame, boolean is_hide returns nothing
     endfunction
 
+    // frame被隐藏
+    function MHFrame_IsHidden takes integer frame returns boolean
+    endfunction
+
     // 禁用Frame
     // @param is_disable：true - 禁用; false - 启用
     function MHFrame_Disable takes integer frame, boolean is_disable returns nothing
@@ -2593,6 +2649,18 @@
     function MHUI_GetUberToolTip takes nothing returns integer
     endfunction
 
+    // 获取提示工具对应的Frame
+    // @Tip：指提示工具对应的Frame
+    // 返回一个CCommandButton、CBuffIndicator等
+    function MHUI_GetUberToolTipTarget takes nothing returns integer
+    endfunction
+
+    // 获取提示工具的图标
+    // @Tip：指魔耗、黄金消耗、木材消耗等的图标，按从左到右排列
+    // @param index：序号。1~4
+    function MHUI_GetUberToolTipIcon takes integer index returns integer
+    endfunction
+
     // 获取物体头顶提示
     // @Tip：实际上是控制台最后一个子级
     // 其底部锚点跟随单位血条的顶部锚点偏移 (0, 0.002)
@@ -2755,6 +2823,10 @@
 
     // 设置鼠标模型
     function MHUI_SetCursorModel takes string model_path returns nothing
+    endfunction
+
+    // 获取聊天框
+    function MHUI_GetChatEditBar takes nothing returns integer
     endfunction
 
     // 聊天框打开
@@ -3490,13 +3562,24 @@
 
     // 调起指示器/选择器
     // @Tip：强制调起指示器/选择器，进入选择目标模式
-    // 需要拥有对应的技能
+    // 需要拥有对应的技能。会触发 本地玩家调起指示器/选择器 事件
+    // 调起基本命令时，技能id填0，如调起移动指示器：MHMsg_CallTargetMode(0, 0xD0032, 0x6)
     // @param aid：技能ID
     // @param oid：命令ID
     // @param flag：标志。BitSet。ABILITY_CAST_TYPE
     function MHMsg_CallTargetMode takes integer aid, integer oid, integer flag returns nothing
     endfunction
 
+    // 调起指示器/选择器
+    // @Tip：强制调起指示器/选择器，进入选择目标模式
+    // 无需拥有对应的技能，但不一定能点下去。不会触发 本地玩家调起指示器/选择器 事件
+    // 调起基本命令时，技能id填0，如调起移动指示器：MHMsg_CallTargetModeEx(0, 0xD0032, 0x6)
+    // @param aid：技能ID
+    // @param oid：命令ID
+    // @param flag：标志。BitSet。ABILITY_CAST_TYPE
+    function MHMsg_CallTargetModeEx takes integer aid, integer oid, integer flag returns nothing
+    endfunction
+    
     // 调起建造指示器
     // @Tip：强制调起建造指示器，进入选择建造位置模式
     // @param uid：建筑的单位id
@@ -3510,6 +3593,10 @@
     
     // 获取鼠标指向的物品
     function MHMsg_GetCursorItem takes nothing returns item
+    endfunction
+
+    // 获取鼠标指向的可破坏物
+    function MHMsg_GetCursorDest takes nothing returns destructable
     endfunction
 
     // 本地玩家发送无目标命令
@@ -3887,6 +3974,86 @@
 
 
 
+// 事件库
+
+
+
+    // 注册任意玩家黄金变动事件
+    // @Tip：EVENT_ID_PLAYER_GOLD_CHANGE
+    function MHPlayerGoldChangeEvent_Register takes trigger trig returns nothing
+    endfunction
+
+    // 获取黄金变动的玩家
+    // @Tip：响应 任意玩家黄金变动 事件
+    // 等价于 MHEvent_GetPlayer
+    function MHPlayerGoldChangeEvent_GetPlayer takes nothing returns player
+    endfunction
+
+    // 设置资源变动的玩家
+    // @Tip：响应 任意玩家黄金变动 事件
+    // 等价于 MHEvent_SetPlayer
+    function MHPlayerGoldChangeEvent_SetPlayer takes player p returns nothing
+    endfunction
+
+    // 获取黄金变动的数值
+    // @Tip：响应 任意玩家黄金变动 事件
+    function MHPlayerGoldChangeEvent_GetValue takes nothing returns integer
+    endfunction
+
+    // 设置黄金变动的数值
+    // @Tip：响应 任意玩家黄金变动 事件
+    function MHPlayerGoldChangeEvent_SetValue takes integer value returns nothing
+    endfunction
+
+    // 获取黄金变动是否计算税率
+    // @Tip：响应 任意玩家黄金变动 事件
+    function MHPlayerGoldChangeEvent_IsTax takes nothing returns boolean
+    endfunction
+
+    // 设置黄金变动是否计算税率
+    // @Tip：响应 任意玩家黄金变动 事件
+    function MHPlayerGoldChangeEvent_SetTax takes boolean is_tax returns nothing
+    endfunction
+
+    // 注册任意玩家木材变动事件
+    // @Tip：EVENT_ID_PLAYER_LUMBER_CHANGE
+    function MHPlayerLumberChangeEvent_Register takes trigger trig returns nothing
+    endfunction
+
+    // 获取木材变动的玩家
+    // @Tip：响应 任意玩家木材变动 事件
+    // 等价于 MHEvent_GetPlayer
+    function MHPlayerLumberChangeEvent_GetPlayer takes nothing returns player
+    endfunction
+
+    // 设置资源变动的玩家
+    // @Tip：响应 任意玩家木材变动 事件
+    // 等价于 MHEvent_SetPlayer
+    function MHPlayerLumberChangeEvent_SetPlayer takes player p returns nothing
+    endfunction
+
+    // 获取木材变动的数值
+    // @Tip：响应 任意玩家木材变动 事件
+    function MHPlayerLumberChangeEvent_GetValue takes nothing returns integer
+    endfunction
+
+    // 设置木材变动的数值
+    // @Tip：响应 任意玩家木材变动 事件
+    function MHPlayerLumberChangeEvent_SetValue takes integer value returns nothing
+    endfunction
+
+    // 获取木材变动是否计算税率
+    // @Tip：响应 任意玩家木材变动 事件
+    function MHPlayerLumberChangeEvent_IsTax takes nothing returns boolean
+    endfunction
+
+    // 设置木材变动是否计算税率
+    // @Tip：响应 任意玩家木材变动 事件
+    function MHPlayerLumberChangeEvent_SetTax takes boolean is_tax returns nothing
+    endfunction
+
+
+
 
 
 
@@ -4030,100 +4197,9 @@
 
 
 
-    // 读取内存 (整数)
-    // @param addr：内存地址
-    function MHTool_ReadInt takes integer addr returns integer
-    endfunction
-
-    // 读取内存 (实数)
-    // @param addr：内存地址
-    function MHTool_ReadReal takes integer addr returns real
-    endfunction
-
-    // 读取内存 (布尔值)
-    // @param addr：内存地址
-    function MHTool_ReadBool takes integer addr returns boolean
-    endfunction
-
-    // 读取内存 (字符串)
-    // @param addr：内存地址
-    function MHTool_ReadStr takes integer addr returns string
-    endfunction
-
-    // 写入内存 (整数)
-    // @param addr：内存地址
-    function MHTool_WriteInt takes integer addr, integer value returns nothing
-    endfunction
-
-    // 写入内存 (实数)
-    // @param addr：内存地址
-    function MHTool_WriteReal takes integer addr, real value returns nothing
-    endfunction
-
-    // 写入内存 (布尔值)
-    // @param addr：内存地址
-    function MHTool_WriteBool takes integer addr, boolean value returns nothing
-    endfunction
-
-    // 写入内存 (字符串)
-    // @param addr：内存地址
-    function MHTool_WriteStr takes integer addr, string value returns nothing
-    endfunction
-    
-    // 内存页面保护
-    // @Tip：返回旧保护标志
-    // @param addr：内存地址
-    // @param size：保护区长度
-    // @param prot：页面保护标志。百度搜索VirtualProtect
-    function MHTool_VirtualProtect takes integer addr, integer size, integer prot returns integer
-    endfunction
-
-    // 获取jass native函数地址
-    // @param name：cj或者ai函数名
-    function MHTool_GetNativeFunc takes string name returns integer
-    endfunction
-
-    // 获取CObject
-    // @param hash1：哈希键1
-    // @param hash2：哈希键2
-    function MHTool_GetObject takes integer hash1, integer hash2 returns integer
-    endfunction
-
-    // 获取CAgent
-    // @param hash1：哈希键1
-    // @param hash2：哈希键2
-    function MHTool_GetAgent takes integer hash1, integer hash2 returns integer
-    endfunction
-
-    // 获取Handle类型
-    // @Tip：例如单位返回 '+w3u'，触发器返回 '+trg'
-    function MHTool_GetHandleType takes handle h returns integer
-    endfunction
-
     // 获取Handle类型
     // @Tip：例如单位返回 '+w3u'，触发器返回 '+trg'
     function MHTool_GetHandleIdType takes integer hid returns integer
-    endfunction
-
-    // 获取WidgetUIDef数据
-    // @Tip：返回存储WidgetUI数据的节点
-    function MHTool_GetWidgetUIDefData takes integer widget_id returns integer
-    endfunction
-    
-    // 转换Handle为内存地址
-    // @Tip：可以获取游戏中实例的内存地址 (单位、技能等)
-    function MHTool_ToObject takes handle h returns integer
-    endfunction
-
-    // 转换Handle为内存地址
-    // @Tip：可以获取游戏中实例的内存地址 (单位、技能等)
-    function MHTool_HidToObject takes integer hid returns integer
-    endfunction
-
-    // 转换内存地址为handleId
-    // @Tip：可以将实例的内存地址转换为HandleId (单位、技能等)
-    // @param obj：实例的内存地址 (单位、技能等)
-    function MHTool_ToHandle takes integer obj returns integer
     endfunction
 
     // 获取系统时间

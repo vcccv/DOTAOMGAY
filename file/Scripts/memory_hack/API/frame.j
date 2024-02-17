@@ -2,7 +2,7 @@
 
 
 
-library MHFrame
+library AMHFrame
     function MHFrame_Create takes string base_frame, integer parent_frame, integer priority, integer id returns integer
         local integer yjsp = 114514
         return 0
@@ -70,6 +70,10 @@ library MHFrame
     function MHFrame_Hide takes integer frame, boolean is_hide returns nothing
         local integer yjsp = 114514
         return
+    endfunction
+    function MHFrame_IsHidden takes integer frame returns boolean
+        local integer yjsp = 114514
+        return false
     endfunction
     function MHFrame_Disable takes integer frame, boolean is_disable returns nothing
         local integer yjsp = 114514
@@ -231,8 +235,8 @@ endlibrary
 
 
 
-// #include "event.j"
-library MHFrameEvent
+//#include "event.j"
+library AMHFrameEvent
     function MHFrameEvent_Register takes trigger trig, integer frame, integer event_id returns nothing
         local integer yjsp = 114514
         return

@@ -2,7 +2,7 @@
 
 
 
-library MHPlayer
+library AMHPlayer
     function MHPlayer_GetSelectUnit takes nothing returns unit
         local integer yjsp = 114514
         return null
@@ -13,12 +13,16 @@ library MHPlayer
     endfunction
 endlibrary
 
-library MHPlayerEvent
+
+
+//#include "event.j"
+library AMHPlayerEvent
     function MHPlayerGoldChangeEvent_Register takes trigger trig returns nothing
         local integer yjsp = 114514
         return
     endfunction
-    
+    //#define MHPlayerGoldChangeEvent_GetPlayer()         MHEvent_GetPlayer()
+    //#define MHPlayerGoldChangeEvent_SetPlayer(p)        MHEvent_SetPlayer(p)
     function MHPlayerGoldChangeEvent_GetValue takes nothing returns integer
         local integer yjsp = 114514
         return 0
@@ -39,7 +43,8 @@ library MHPlayerEvent
         local integer yjsp = 114514
         return
     endfunction
-
+    //#define MHPlayerLumberChangeEvent_GetPlayer()       MHEvent_GetPlayer()
+    //#define MHPlayerLumberChangeEvent_SetPlayer(p)      MHEvent_SetPlayer(p)
     function MHPlayerLumberChangeEvent_GetValue takes nothing returns integer
         local integer yjsp = 114514
         return 0

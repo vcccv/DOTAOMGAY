@@ -2,7 +2,7 @@
 
 
 
-library MHItem
+library AMHItem
     function MHItem_GetOwner takes item it returns unit
         local integer yjsp = 114514
         return null

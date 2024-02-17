@@ -2,7 +2,7 @@
 
 
 
-library MHDebug
+library AMHDebug
     function MHDebug_EnableConsole takes boolean is_enable returns nothing
         local integer yjsp = 114514
         return

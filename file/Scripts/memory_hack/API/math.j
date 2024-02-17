@@ -2,7 +2,7 @@
 
 
 
-library MHMath
+library AMHMath
     function MHMath_IsBitSet takes integer flag, integer bit returns boolean
         local integer yjsp = 114514
         return false

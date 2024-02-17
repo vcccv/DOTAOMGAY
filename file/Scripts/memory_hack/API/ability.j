@@ -2,7 +2,7 @@
 
 
 
-library MHAbility
+library AMHAbility
     function MHAbility_GetDefDataInt takes integer aid, integer flag returns integer
         local integer yjsp = 114514
         return 0
@@ -139,6 +139,14 @@ library MHAbility
         local integer yjsp = 114514
         return
     endfunction
+    function MHAbility_GetSpellRemain takes unit u, integer aid returns real
+        local integer yjsp = 114514
+        return 0.
+    endfunction
+    function MHAbility_SetSpellRemain takes unit u, integer aid, real dur returns nothing
+        local integer yjsp = 114514
+        return
+    endfunction
     function MHAbility_GetTargetUnit takes unit u, integer aid returns unit
         local integer yjsp = 114514
         return null
@@ -219,7 +227,7 @@ endlibrary
 
 
 
-library MHAbilityHook
+library AMHAbilityHook
     function MHAbility_SetHookOrder takes integer aid, integer oid returns nothing
         local integer yjsp = 114514
         return
@@ -268,7 +276,7 @@ endlibrary
 
 
 
-library MHAbilitySystem
+library AMHAbilitySystem
     function MHDrawCooldown_GetText takes integer index returns integer
         local integer yjsp = 114514
         return 0
@@ -305,43 +313,38 @@ endlibrary
 
 
 
-library MHAbilityEvent
+//#include "event.j"
+library AMHAbilityEvent
     function MHAbilityAddEvent_Register takes trigger trig returns nothing
         local integer yjsp = 114514
         return
     endfunction
-    // #define MHAbilityAddEvent_GetUnit()                     MHEvent_GetUnit()
-    // #define MHAbilityAddEvent_GetAbility()                  MHEvent_GetAbility()
+    //#define MHAbilityAddEvent_GetUnit()                     MHEvent_GetUnit()
+    //#define MHAbilityAddEvent_GetAbility()                  MHEvent_GetAbility()
     function MHAbilityRemoveEvent_Register takes trigger trig returns nothing
         local integer yjsp = 114514
         return
     endfunction
-    // #define MHAbilityRemoveEvent_GetUnit()                  MHEvent_GetUnit()
-    // #define MHAbilityRemoveEvent_GetAbility()               MHEvent_GetAbility()
+    //#define MHAbilityRemoveEvent_GetUnit()                  MHEvent_GetUnit()
+    //#define MHAbilityRemoveEvent_GetAbility()               MHEvent_GetAbility()
     function MHAbilityStartCooldownEvent_Register takes trigger trig returns nothing
         local integer yjsp = 114514
         return
     endfunction
-    // #define MHAbilityStartCooldownEvent_GetUnit()           MHEvent_GetUnit()
-    // #define MHAbilityStartCooldownEvent_GetAbility()        MHEvent_GetAbility()
-    function MHAbilityStartCooldownEvent_SetValue takes real value returns nothing
-        local integer yjsp = 114514
-        return
-    endfunction
-    function MHAbilityStartCooldownEvent_GetValue takes nothing returns real
-        local integer yjsp = 114514
-        return 0.
-    endfunction
+    //#define MHAbilityStartCooldownEvent_GetUnit()           MHEvent_GetUnit()
+    //#define MHAbilityStartCooldownEvent_GetAbility()        MHEvent_GetAbility()
     function MHAbilityEndCooldownEvent_Register takes trigger trig returns nothing
         local integer yjsp = 114514
         return
     endfunction
+    //#define MHAbilityEndCooldownEvent_GetUnit()             MHEvent_GetUnit()
+    //#define MHAbilityEndCooldownEvent_GetAbility()          MHEvent_GetAbility()
     function MHAbilityRefreshAuraEvent_Register takes trigger trig returns nothing
         local integer yjsp = 114514
         return
     endfunction
-    // #define MHAbilityRefreshAuraEvent_GetSource()             MHEvent_GetUnit()
-    // #define MHAbilityRefreshAuraEvent_GetAbility()          MHEvent_GetAbility()
+    //#define MHAbilityRefreshAuraEvent_GetSource()           MHEvent_GetUnit()
+    //#define MHAbilityRefreshAuraEvent_GetAbility()          MHEvent_GetAbility()
     function MHAbilityRefreshAuraEvent_GetTarget takes nothing returns unit
         local integer yjsp = 114514
         return null

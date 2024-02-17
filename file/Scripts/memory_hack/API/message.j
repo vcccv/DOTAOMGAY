@@ -2,7 +2,7 @@
 
 
 
-library MHMessage
+library AMHMessage
     function MHMsg_GetWindowWidth takes nothing returns integer
         local integer yjsp = 114514
         return 0
@@ -63,6 +63,10 @@ library MHMessage
         local integer yjsp = 114514
         return null
     endfunction
+    function MHMsg_GetCursorDest takes nothing returns destructable
+        local integer yjsp = 114514
+        return null
+    endfunction
     function MHMsg_SendImmediateOrder takes integer oid, integer flag returns nothing
         local integer yjsp = 114514
         return
@@ -87,38 +91,38 @@ endlibrary
 
 
 
-// #include "event.j"
-library MHMessageEvent
+//#include "event.j"
+library AMHMessageEvent
     function MHMsgKeyUpEvent_Register takes trigger trig returns nothing
         local integer yjsp = 114514
         return
     endfunction
-    // #define MHMsgKeyUpEvent_GetKey()                MHEvent_GetKey()
-    // #define MHMsgKeyUpEvent_SetKey(key)             MHEvent_SetKey(key)
+    //#define MHMsgKeyUpEvent_GetKey()                MHEvent_GetKey()
+    //#define MHMsgKeyUpEvent_SetKey(key)             MHEvent_SetKey(key)
     function MHMsgKeyDownEvent_Register takes trigger trig returns nothing
         local integer yjsp = 114514
         return
     endfunction
-    // #define MHMsgKeyDownEvent_GetKey()              MHEvent_GetKey()
-    // #define MHMsgKeyDownEvent_SetKey(key)           MHEvent_SetKey(key)
+    //#define MHMsgKeyDownEvent_GetKey()              MHEvent_GetKey()
+    //#define MHMsgKeyDownEvent_SetKey(key)           MHEvent_SetKey(key)
     function MHMsgKeyHoldEvent_Register takes trigger trig returns nothing
         local integer yjsp = 114514
         return
     endfunction
-    // #define MHMsgKeyHoldEvent_GetKey()              MHEvent_GetKey()
-    // #define MHMsgKeyHoldEvent_SetKey(key)           MHEvent_SetKey(key)
+    //#define MHMsgKeyHoldEvent_GetKey()              MHEvent_GetKey()
+    //#define MHMsgKeyHoldEvent_SetKey(key)           MHEvent_SetKey(key)
     function MHMsgMouseUpEvent_Register takes trigger trig returns nothing
         local integer yjsp = 114514
         return
     endfunction
-    // #define MHMsgMouseUpEvent_GetKey()              MHEvent_GetKey()
-    // #define MHMsgMouseUpEvent_SetKey(key)           MHEvent_SetKey(key)
+    //#define MHMsgMouseUpEvent_GetKey()              MHEvent_GetKey()
+    //#define MHMsgMouseUpEvent_SetKey(key)           MHEvent_SetKey(key)
     function MHMsgMouseDownEvent_Register takes trigger trig returns nothing
         local integer yjsp = 114514
         return
     endfunction
-    // #define MHMsgMouseDownEvent_GetKey()            MHEvent_GetKey()
-    // #define MHMsgMouseDownEvent_SetKey(key)         MHEvent_SetKey(key)
+    //#define MHMsgMouseDownEvent_GetKey()            MHEvent_GetKey()
+    //#define MHMsgMouseDownEvent_SetKey(key)         MHEvent_SetKey(key)
     function MHMsgMouseScrollEvent_Register takes trigger trig returns nothing
         local integer yjsp = 114514
         return
@@ -159,9 +163,9 @@ library MHMessageEvent
         local integer yjsp = 114514
         return 0.
     endfunction
-    // #define MHMsgIndicatorEvent_GetKey()            MHEvent_GetKey()
-    // #define MHMsgIndicatorEvent_SetKey(key)         MHEvent_SetKey(key)
-    // #define MHMsgIndicatorEvent_GetOrder()          MHEvent_GetOrder()
+    //#define MHMsgIndicatorEvent_GetKey()            MHEvent_GetKey()
+    //#define MHMsgIndicatorEvent_SetKey(key)         MHEvent_SetKey(key)
+    //#define MHMsgIndicatorEvent_GetOrder()          MHEvent_GetOrder()
     function MHMsgSelectorEvent_Register takes trigger trig returns nothing
         local integer yjsp = 114514
         return
@@ -178,9 +182,9 @@ library MHMessageEvent
         local integer yjsp = 114514
         return 0.
     endfunction
-    // #define MHMsgSelectorEvent_GetKey()             MHEvent_GetKey()
-    // #define MHMsgSelectorEvent_SetKey(key)          MHEvent_SetKey(key)
-    // #define MHMsgSelectorEvent_GetOrder()           MHEvent_GetOrder()
+    //#define MHMsgSelectorEvent_GetKey()             MHEvent_GetKey()
+    //#define MHMsgSelectorEvent_SetKey(key)          MHEvent_SetKey(key)
+    //#define MHMsgSelectorEvent_GetOrder()           MHEvent_GetOrder()
     function MHMsgCallTargetModeEvent_Register takes trigger trig returns nothing
         local integer yjsp = 114514
         return
@@ -189,7 +193,7 @@ library MHMessageEvent
         local integer yjsp = 114514
         return 0
     endfunction
-    // #define MHMsgCallTargetModeEvent_GetOrder()     MHEvent_GetOrder()
+    //#define MHMsgCallTargetModeEvent_GetOrder()     MHEvent_GetOrder()
     function MHMsgCallTargetModeEvent_GetCastType takes nothing returns integer
         local integer yjsp = 114514
         return 0
@@ -202,21 +206,21 @@ library MHMessageEvent
         local integer yjsp = 114514
         return
     endfunction
-    // #define MHMsgCallBuildModeEvent_GetOrder()     MHEvent_GetOrder()
+    //#define MHMsgCallBuildModeEvent_GetOrder()     MHEvent_GetOrder()
     function MHMsgClickButtonEvent_Register takes trigger trig returns nothing
         local integer yjsp = 114514
         return
     endfunction
-    // #define MHMsgClickButtonEvent_GetButton()           MHEvent_GetFrame()
-    // #define MHMsgClickButtonEvent_GetAbility()          MHEvent_GetAbility()
-    // #define MHMsgClickButtonEvent_GetKey()              MHEvent_GetKey()
-    // #define MHMsgClickButtonEvent_SetKey(key)           MHEvent_SetKey(key)
+    //#define MHMsgClickButtonEvent_GetButton()           MHEvent_GetFrame()
+    //#define MHMsgClickButtonEvent_GetAbility()          MHEvent_GetAbility()
+    //#define MHMsgClickButtonEvent_GetKey()              MHEvent_GetKey()
+    //#define MHMsgClickButtonEvent_SetKey(key)           MHEvent_SetKey(key)
     function MHMsgImmediateOrderEvent_Register takes trigger trig returns nothing
         local integer yjsp = 114514
         return
     endfunction
-    // #define MHMsgLocalOrderEvent_GetOrder()         MHEvent_GetOrder()
-    // #define MHMsgLocalOrderEvent_SetOrder(oid)      MHEvent_SetOrder(oid)
+    //#define MHMsgLocalOrderEvent_GetOrder()         MHEvent_GetOrder()
+    //#define MHMsgLocalOrderEvent_SetOrder(oid)      MHEvent_SetOrder(oid)
     function MHMsgLocalOrderEvent_GetFlag takes nothing returns integer
         local integer yjsp = 114514
         return 0

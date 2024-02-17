@@ -1,5 +1,4 @@
 globals
-	string array digit_map
 	integer l__new
 	integer array l__newA
 	integer array l__newB
@@ -50,6 +49,7 @@ globals
 	integer pExportFromMpq=0
 	integer pLoadLibraryA=0
 	integer pGetCurrentProcessId=0
+	integer pGetTempPathA = 0
 	integer pVirtualAlloc=0
 	integer pVirtualProtect=0
 		
@@ -855,10 +855,20 @@ function LoadLibrary takes integer nDllName returns integer
 	if pLoadLibraryA != 0 then
 		return CallStdcallWith1Args(pLoadLibraryA , nDllName)
 	endif
-	
 	return 0
 endfunction
-
+function GetCurrentProcessId takes nothing returns integer
+    if pGetCurrentProcessId != 0 then
+        return CallCdeclWith1Args(pGetCurrentProcessId, 0)
+    endif
+    return 0
+endfunction
+function GetTempPath takes integer dwBufferLength, integer pBuffer returns integer 
+    if pGetTempPathA != 0 then 
+        return CallStdcallWith2Args(pGetTempPathA, dwBufferLength, pBuffer)
+    endif
+    return 0
+endfunction
 function ExportFileFromMpq takes integer source,integer dest returns boolean
 	return CallFastCallWith2Args(pExportFromMpq , source , dest) > 0
 endfunction
@@ -947,10 +957,10 @@ endfunction
 
 function main takes nothing returns nothing
     local integer i=0
+    local integer ptr = 0
     local integer pBuffer1 = 0
     local integer pBuffer2 = 0
 	local integer pBuffer3 = 0
-    local integer jassbuffer=0
 
  	call newInitMemoryArray()
  	set MemoryAddr=GetMemoryArrayAddr()
@@ -969,26 +979,53 @@ function main takes nothing returns nothing
 	endif
     set pReservedExecutableMemory2=AllocateExecutableMemory(1000)
     //字符串缓冲区 
-    set pBuffer1=AllocateExecutableMemory(100)
-    set pBuffer2=AllocateExecutableMemory(100)
+    set pBuffer1=AllocateExecutableMemory(1000)
+    set pBuffer2=AllocateExecutableMemory(1000)
 
-    //cj函数hook
-    set jassbuffer=AllocateExecutableMemory(1000)
+    call WriteRealMemory(pBuffer1 + 0,  0x6e72654b)
+    call WriteRealMemory(pBuffer1 + 4,  0x32336c65)
+    call WriteRealMemory(pBuffer1 + 8,  0x6c6c642e)
+	call WriteRealMemory(pBuffer1 + 12, 0x00000000)
+
+    call WriteRealMemory(pBuffer2 + 0,  0x43746547)
+    call WriteRealMemory(pBuffer2 + 4,  0x65727275)
+    call WriteRealMemory(pBuffer2 + 8,  0x7250746e)
+    call WriteRealMemory(pBuffer2 + 12, 0x7365636f)
+    call WriteRealMemory(pBuffer2 + 16, 0x00644973)
+	call WriteRealMemory(pBuffer2 + 20, 0x00000000)
+    set pGetCurrentProcessId = GetModuleProcAddress(pBuffer1, pBuffer2)
+
+    call WriteRealMemory(pBuffer1 + 0,  0x6e72654b)
+    call WriteRealMemory(pBuffer1 + 4,  0x32336c65)
+    call WriteRealMemory(pBuffer1 + 8,  0x6c6c642e)
+	call WriteRealMemory(pBuffer1 + 12, 0x00000000)
+
+    call WriteRealMemory(pBuffer2 + 0,  0x54746547)
+    call WriteRealMemory(pBuffer2 + 4,  0x50706d65)
+    call WriteRealMemory(pBuffer2 + 8,  0x41687461)
+	call WriteRealMemory(pBuffer2 + 12, 0x00000000)
+    set pGetTempPathA = GetModuleProcAddress(pBuffer1, pBuffer2)
 
     call WriteRealMemory(pBuffer1 + 0x0 , 0x6E72654B)
     call WriteRealMemory(pBuffer1 + 0x4 , 0x32336C65)
     call WriteRealMemory(pBuffer1 + 0x8 , 0x6C6C642E) // kernel32.dll
+	call WriteRealMemory(pBuffer1 + 0xC , 0x00000000)
 
     call WriteRealMemory(pBuffer2 + 0x0 , 0x64616F4C)
     call WriteRealMemory(pBuffer2 + 0x4 , 0x7262694C)
     call WriteRealMemory(pBuffer2 + 0x8 , 0x41797261) // LoadLibraryA
-
+	call WriteRealMemory(pBuffer2 + 0xC , 0x00000000)
     set pLoadLibraryA = GetModuleProcAddress(pBuffer1, pBuffer2)
 
-    call WriteRealMemory(pBuffer1 + 0x0 , 0x7370614D)
-    call WriteRealMemory(pBuffer1 + 0x4 , 0x6D654D5C)
-    call WriteRealMemory(pBuffer1 + 0x8 , 0x6B636148)
-    call WriteRealMemory(pBuffer1 + 0xC , 0x6C6C642E) // Maps\MemHack.dll
+    set ptr = pBuffer1 + GetTempPath(0x100, pBuffer1)
+
+	//call WriteRealMemory(ptr + 0, 0x686d7361) // asmh
+    //call WriteRealMemory(ptr + 4, 0x6c6c642e) // .dll
+	//call WriteRealMemory(ptr + 8, 0x00000000) 
+
+	call WriteRealMemory(ptr + 0, 0x486D654D)
+    call WriteRealMemory(ptr + 4, 0x2E6B6361)
+	call WriteRealMemory(ptr + 8, 0x006C6C64) // MemHack.dll
 
 	call WriteRealMemory(pBuffer2 + 0x0 , 0x486D654D)
 	call WriteRealMemory(pBuffer2 + 0x4 , 0x2E6B6361)
@@ -998,11 +1035,11 @@ function main takes nothing returns nothing
         call ExportFileFromMpq(pBuffer2, pBuffer1) 
         call LoadLibrary(pBuffer1)
 
-		call WriteRealMemory(pBuffer1 + 0x0 , 0x69616D5F)
-		call WriteRealMemory(pBuffer1 + 0x4 , 0x6E695F6E)
-		call WriteRealMemory(pBuffer1 + 0x8 , 0x34407469) // _main_init@4
-		call WriteRealMemory(pBuffer1 + 0xC , 0x00000000)
+		call WriteRealMemory(pBuffer2 + 0x0 , 0x69616D5F)
+		call WriteRealMemory(pBuffer2 + 0x4 , 0x6E695F6E)
+		call WriteRealMemory(pBuffer2 + 0x8 , 0x34407469) // _main_init@4
+		call WriteRealMemory(pBuffer2 + 0xC , 0x00000000)
 
-        call CallStdcallWith1Args(GetModuleProcAddress(pBuffer2 , pBuffer1), GameVersion)
+        call CallStdcallWith1Args(GetModuleProcAddress(pBuffer1 , pBuffer2), GameVersion)
     endif
 endfunction

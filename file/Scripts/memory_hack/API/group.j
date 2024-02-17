@@ -2,7 +2,7 @@
 
 
 
-library MHGroup
+library AMHGroup
     function MHGroup_GetSize takes group g returns integer
         local integer yjsp = 114514
         return 0

@@ -2,7 +2,7 @@
 
 
 
-library MHConst
+library AMHConst
     function MHConst_SetOPLimit takes integer limit returns integer
         local integer yjsp = 114514
         return 0

@@ -13,74 +13,85 @@ constant integer FLAG_OPERATOR_REMOVE                       = 0x0
 
 
 // 事件ID：任意单位被删除
-constant integer EVENT_ID_UNIT_REMOVE                       = 0x1
-// 事件ID：任意单位恢复生命值
-constant integer EVENT_ID_UNIT_RESTORE_LIFE                 = 0x2
-// 事件ID：任意单位恢复魔法值
-constant integer EVENT_ID_UNIT_RESTORE_MANA                 = 0x3
-// 事件ID：任意单位添加技能
-constant integer EVENT_ID_ABILITY_ADD                       = 0x4
-// 事件ID：任意单位删除技能
-constant integer EVENT_ID_ABILITY_REMOVE                    = 0x5
-// 事件ID：任意单位技能进入冷却
-constant integer EVENT_ID_ABILITY_STARTCOOLDOWN             = 0x6
-// 事件ID：任意单位被驱散魔法效果
-constant integer EVENT_ID_BUFF_DISPEL                       = 0x7
+constant integer EVENT_ID_UNIT_REMOVE				        = 0x0
 // 事件ID：任意单位攻击出手
-constant integer EVENT_ID_ATTACK_LAUNCH                     = 0x8
-// 事件ID：任意单位接受伤害 (前伤害事件)
-constant integer EVENT_ID_DAMAGING                          = 0x9
+constant integer EVENT_ID_UNIT_ATTACK_LAUNCH			    = 0x1
+// 事件ID：任意单位恢复生命值
+// @Tip：不包括自然回血
+constant integer EVENT_ID_UNIT_RESTORE_LIFE			        = 0x2
+// 事件ID：任意单位恢复魔法值
+// @Tip：不包括自然回蓝
+constant integer EVENT_ID_UNIT_RESTORE_MANA			        = 0x3
+// 事件ID：任意单位被驱散魔法效果
+constant integer EVENT_ID_UNIT_DISPEL_BUFF			        = 0x4
+// 事件ID：任意单位送回资源
+constant integer EVENT_ID_UNIT_HARVEST				        = 0x5
+// 事件ID：任意英雄获取经验值
+constant integer EVENT_ID_HERO_GET_EXP				        = 0x6
+// 事件ID：任意单位即将受伤
+// @Tip：指前伤害事件，此时伤害并未被结算为最终伤害
+// 可在此事件中修改伤害来源、受伤单位、攻击类型和伤害类型等
+constant integer EVENT_ID_UNIT_DAMAGING				        = 0x7
+// 事件ID：任意技能被添加
+constant integer EVENT_ID_ABILITY_ADD				        = 0x8
+// 事件ID：任意技能被删除
+constant integer EVENT_ID_ABILITY_REMOVE				    = 0x9
+// 事件ID：任意技能进入冷却
+constant integer EVENT_ID_ABILITY_START_COOLDOWN		    = 0xA
+// 事件ID：任意技能结束冷却
+constant integer EVENT_ID_ABILITY_END_COOLDOWN		        = 0xB
+// 事件ID：任意光环技能刷新
+constant integer EVENT_ID_ABILITY_REFRESH_AURA		        = 0xC
+// 事件ID：任意玩家黄金变动
+constant integer EVENT_ID_PLAYER_GOLD_CHANGE			    = 0xD
+// 事件ID：任意玩家木材变动
+constant integer EVENT_ID_PLAYER_LUMBER_CHANGE		        = 0xE
+// 事件ID：任意投射物发射
+constant integer EVENT_ID_MISSILE_LAUNCH				    = 0xF
+// 事件ID：任意投射物命中
+constant integer EVENT_ID_MISSILE_HIT				        = 0x10
 // 事件ID：数据同步
-constant integer EVENT_ID_SYNC                              = 0xA
-// 事件ID：任意单位获取经验值
-constant integer EVENT_ID_HERO_GET_EXP                      = 0xB
-
-// 本地事件ID：键盘弹起
-constant integer EVENT_ID_KEY_UP                            = 0x1
-// 本地事件ID：键盘按下
-constant integer EVENT_ID_KEY_DOWN                          = 0x2
-// 本地事件ID：键盘按住
-constant integer EVENT_ID_KEY_HOLD                          = 0x3
-// 本地事件ID：鼠标弹起
-constant integer EVENT_ID_MOUSE_UP                          = 0x4
-// 本地事件ID：鼠标按下
-constant integer EVENT_ID_MOUSE_DOWN                        = 0x5
-// 本地事件ID：鼠标滚动
-constant integer EVENT_ID_MOUSE_SCROLL                      = 0x6
-// 本地事件ID：按下指示器
-constant integer EVENT_ID_TARGET_INDICATOR                  = 0x7
-// 本地事件ID：按下选择器
-constant integer EVENT_ID_TARGET_SELECTOR                   = 0x8
-// 本地事件ID：调起指示器/选择器
-constant integer EVENT_ID_CALL_TARGET_MODE                  = 0x9
-// 本地事件ID：调起建造指示器
-constant integer EVENT_ID_CALL_BUILD_MODE                   = 0xA
-// 本地事件ID：发布无目标命令
-constant integer EVENT_ID_IMMEDIATE_ORDER                   = 0xB
-// 本地事件ID：发布指示器命令
-constant integer EVENT_ID_INDICATOR_ORDER                   = 0xC
-// 本地事件ID：发布选择器命令
-constant integer EVENT_ID_SELECTOR_ORDER                    = 0xD
-// 本地事件ID：发布丢弃物品命令
-constant integer EVENT_ID_DROPITEM_ORDER                    = 0xE
-// 本地事件ID：发布右键物体命令
-constant integer EVENT_ID_SMART_ORDER                       = 0xF
-// 本地事件ID：鼠标进入Frame
-constant integer EVENT_ID_FRAME_MOUSE_ENTER                 = 0x10
-// 本地事件ID：鼠标离开Frame
-constant integer EVENT_ID_FRAME_MOUSE_LEAVE                 = 0x11
-// 本地事件ID：鼠标点击Frame
-constant integer EVENT_ID_FRAME_MOUSE_CLICK                 = 0x12
-// 本地事件ID：鼠标弹起Frame
-constant integer EVENT_ID_FRAME_MOUSE_UP                    = 0x13
-// 本地事件ID：鼠标滚动Frame
-constant integer EVENT_ID_FRAME_MOUSE_SCROLL                = 0x14
-// 本地事件ID：鼠标双击Frame
-constant integer EVENT_ID_FRAME_MOUSE_DOUBLECLICK           = 0x15
-// 本地事件ID：帧绘制
-constant integer EVENT_ID_FRAME_TICK                        = 0x16
-// 本地事件ID：点击命令按钮
-constant integer EVENT_ID_CLICK_COMMAND_BUTTON              = 0x17
+constant integer EVENT_ID_SYNC						        = 0x11
+// 事件ID：鼠标进入指定Frame
+constant integer EVENT_ID_FRAME_MOUSE_ENTER			        = 0x12
+// 事件ID：鼠标离开指定Frame
+constant integer EVENT_ID_FRAME_MOUSE_LEAVE			        = 0x13
+// 事件ID：鼠标点击指定Frame
+constant integer EVENT_ID_FRAME_MOUSE_CLICK			        = 0x14
+// 事件ID：鼠标弹起指定Frame
+constant integer EVENT_ID_FRAME_MOUSE_UP				    = 0x15
+// 事件ID：鼠标滚动指定Frame
+constant integer EVENT_ID_FRAME_MOUSE_SCROLL			    = 0x16
+// 事件ID：鼠标双击指定Frame
+constant integer EVENT_ID_FRAME_MOUSE_DOUBLE_CLICK	        = 0x17
+// 事件ID：本地玩家弹起按键
+constant integer EVENT_ID_KEY_UP						    = 0x18
+// 事件ID：本地玩家按下按键
+constant integer EVENT_ID_KEY_DOWN					        = 0x19
+// 事件ID：本地玩家按住按键
+constant integer EVENT_ID_KEY_HOLD					        = 0x1A
+// 事件ID：本地玩家弹起鼠标
+constant integer EVENT_ID_MOUSE_UP					        = 0x1B
+// 事件ID：本地玩家按下鼠标
+constant integer EVENT_ID_MOUSE_DOWN				        = 0x1C
+// 事件ID：本地玩家滚动鼠标
+constant integer EVENT_ID_MOUSE_SCROLL				        = 0x1D
+// 事件ID：本地玩家按下目标指示器
+constant integer EVENT_ID_TARGET_INDICATOR			        = 0x1E
+// 事件ID：本地玩家按下目标选择器
+constant integer EVENT_ID_TARGET_SELECTOR			        = 0x1F
+// 事件ID：本地玩家调起指示器/选择器
+constant integer EVENT_ID_CALL_TARGET_MODE			        = 0x20
+// 事件ID：本地玩家调起建造指示器
+constant integer EVENT_ID_CALL_BUILD_MODE			        = 0x21
+// 事件ID：本地玩家发布无目标命令
+constant integer EVENT_ID_LOCAL_IMMEDIATE_ORDER		        = 0x22
+// 事件ID：本地玩家点击命令按钮
+constant integer EVENT_ID_CLICK_COMMAND_BUTTON		        = 0x23
+// 事件ID：本地玩家帧绘制
+constant integer EVENT_ID_FRAME_TICK					    = 0x24
+// 事件ID：本地玩家刷新血条
+constant integer EVENT_ID_REFRESH_HPBAR				        = 0x25
 
 
 
@@ -574,7 +585,27 @@ constant integer UNIT_ATK_DATA_ATTACK_POINT2                = 0x1C
 // 单位攻击实数数据：攻击后摇1
 constant integer UNIT_ATK_DATA_BACK_SWING1                  = 0x1D
 // 单位攻击实数数据：攻击后摇2
-constant integer UNIT_ATK_DATA_BACK_SWING2                  = 0x1E
+constant integer UNIT_ATK_DATA_BACK_SWING2                  = 0x1E  
+// 单位攻击实数数据：中伤害参数1
+constant integer UNIT_ATK_DATA_HALF_FACTOR1		            = 0x1F  
+// 单位攻击实数数据：中伤害参数2
+constant integer UNIT_ATK_DATA_HALF_FACTOR2		            = 0x20  
+// 单位攻击实数数据：小伤害参数1
+constant integer UNIT_ATK_DATA_SMALL_FACTOR1		        = 0x21  
+// 单位攻击实数数据：小伤害参数2
+constant integer UNIT_ATK_DATA_SMALL_FACTOR2		        = 0x22  
+// 单位攻击实数数据：全伤害范围1
+constant integer UNIT_ATK_DATA_FULL_AREA1	                = 0x23  
+// 单位攻击实数数据：全伤害范围2
+constant integer UNIT_ATK_DATA_FULL_AREA2	                = 0x24  
+// 单位攻击实数数据：中伤害范围1
+constant integer UNIT_ATK_DATA_HALF_AREA1	                = 0x25  
+// 单位攻击实数数据：中伤害范围2
+constant integer UNIT_ATK_DATA_HALF_AREA2	                = 0x26  
+// 单位攻击实数数据：小伤害范围1
+constant integer UNIT_ATK_DATA_SMALL_AREA1		            = 0x27  
+// 单位攻击实数数据：小伤害范围2
+constant integer UNIT_ATK_DATA_SMALL_AREA2		            = 0x28
 
 // 单位物编整数数据：单位ID
 constant integer UNIT_DEF_DATA_ID						    = 0x1
@@ -938,8 +969,8 @@ constant integer UNIT_FLAG_TYPE_TOWNHALL				    = 0x40
 constant integer UNIT_FLAG_TYPE_ANCIENT				        = 0x80
 // 单位种类：守卫
 constant integer UNIT_FLAG_TYPE_WARD					    = 0x200
-// 单位种类：未知
-constant integer UNIT_FLAG_TYPE_UNKNOWN				        = 0x400
+// 单位种类：可通行
+constant integer UNIT_FLAG_TYPE_STANDON				        = 0x400
 // 单位种类：牛头人
 constant integer UNIT_FLAG_TYPE_TAUREN				        = 0x800
 

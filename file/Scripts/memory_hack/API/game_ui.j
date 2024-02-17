@@ -2,7 +2,7 @@
 
 
 
-library MHGameUI
+library AMHGameUI
     function MHUI_GetGameUI takes nothing returns integer
         local integer yjsp = 114514
         return 0
@@ -20,6 +20,14 @@ library MHGameUI
         return 0
     endfunction
     function MHUI_GetUberToolTip takes nothing returns integer
+        local integer yjsp = 114514
+        return 0
+    endfunction
+    function MHUI_GetUberToolTipTarget takes nothing returns integer
+        local integer yjsp = 114514
+        return 0
+    endfunction
+    function MHUI_GetUberToolTipIcon takes integer index returns integer
         local integer yjsp = 114514
         return 0
     endfunction
@@ -159,6 +167,10 @@ library MHGameUI
         local integer yjsp = 114514
         return
     endfunction
+    function MHUI_GetChatEditBar takes nothing returns integer
+        local integer yjsp = 114514
+        return 0
+    endfunction
     function MHUI_IsChatEditBarOn takes nothing returns boolean
         local integer yjsp = 114514
         return false
@@ -191,7 +203,7 @@ endlibrary
 
 
 
-library MHGameUIHook
+library AMHGameUIHook
     function MHUI_DrawAttackSpeed takes boolean is_draw returns nothing
         local integer yjsp = 114514
         return
@@ -204,8 +216,8 @@ endlibrary
 
 
 
-// #include "event.j"
-library MHGameUIEvent
+//#include "event.j"
+library AMHGameUIEvent
     function MHUITickEvent_Register takes trigger trig returns nothing
         local integer yjsp = 114514
         return
@@ -214,8 +226,8 @@ library MHGameUIEvent
         local integer yjsp = 114514
         return
     endfunction
-    // #define MHUIHPBarEvent_GetHPBar()       MHEvent_GetFrame()
-    // #define MHUIHPBarEvent_GetUnit()        MHEvent_GetUnit()
+    //#define MHUIHPBarEvent_GetHPBar()       MHEvent_GetFrame()
+    //#define MHUIHPBarEvent_GetUnit()        MHEvent_GetUnit()
     function MHUIHPBarEvent_GetPoint takes nothing returns integer
         local integer yjsp = 114514
         return 0
@@ -240,7 +252,7 @@ endlibrary
 
 
 
-library MHGameUISystem
+library AMHGameUISystem
     function MHUI_EnableDrawMPBar takes boolean is_enable returns nothing
         local integer yjsp = 114514
         return

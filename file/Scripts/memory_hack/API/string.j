@@ -2,7 +2,7 @@
 
 
 
-library MHString
+library AMHString
     function MHString_FromId takes integer id returns string
         local integer yjsp = 114514
         return null
