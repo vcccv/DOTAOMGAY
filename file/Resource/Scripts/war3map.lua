@@ -12,7 +12,7 @@ local globals              = require 'jass.globals'
 
 local function InitUpdateLogStr()
 	globals.UpdateLogStr = [[
-	 Dota OMG 1.40 beta1
+	 Dota OMG 2.00 beta3
 	 - 现在近战变身为远程，如果目标在射程范围并且处于攻击命令时将会直接攻击。
 	 - 修正了|Cffffff00魔龙枪|r拆分后，会永久提供射程的bug。
 	 - 修正了在使用分身技能时，携带射程增加的物品时会导致本体射程错误的bug。

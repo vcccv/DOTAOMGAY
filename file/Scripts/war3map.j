@@ -6273,17 +6273,12 @@ endfunction
 function SetUnitPhaseMove takes unit whichUnit, boolean open returns nothing
 	if open then
 		if not IsUnitType(whichUnit, UNIT_TYPE_FLYING) then
-			call EXSetUnitMoveType(whichUnit, MOVE_TYPE_WINDWALK )
-			call EXSetUnitCollisionType(true, whichUnit, COLLISION_TYPE_UNIT)
+			call MHUnit_SetCollisionType(whichUnit, UNIT_COLLISION_TYPE_HARVESTER, UNIT_COLLISION_TYPE_BUILDING)
 		endif
 		// 没相位buff并且冲刺也没了 那再移除
 	elseif GetUnitAbilityLevel( whichUnit, 'B09Y' ) == 0 and not HaveSavedHandle(HY, GetHandleId(whichUnit),'A05C') then
 		if not IsUnitType(whichUnit, UNIT_TYPE_FLYING) then
-			call EXSetUnitMoveType(whichUnit, MOVE_TYPE_FOOT )
-			call EXSetUnitCollisionType(false, whichUnit, COLLISION_TYPE_UNIT)
-			// 重新设置位置 防止模型消失
-			call SetUnitX( whichUnit, GetUnitX(whichUnit) )
-			call SetUnitY( whichUnit, GetUnitY(whichUnit) )
+			call MHUnit_SetCollisionType(whichUnit, UNIT_COLLISION_TYPE_FOOT, UNIT_COLLISION_TYPE_GROUND)
 		endif
 	endif
 endfunction
