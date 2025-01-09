@@ -1,0 +1,6536 @@
+{
+    "presets": [
+    ],
+    "strings": [
+        {
+            "content": "peasant",
+            "descript": "技能命令串 返回工作(农民单点发起)(民兵变回农民)"
+        },
+        {
+            "content": "submerge",
+            "descript": "技能命令串 潜水(娜迦)"
+        },
+        {
+            "content": "unsubmerge",
+            "descript": "技能命令串 取消潜水(娜迦)"
+        },
+        {
+            "content": "loadall",
+            "descript": "技能命令串 装载(飞艇、船、缠绕金矿等)"
+        },
+        {
+            "content": "ambush",
+            "descript": "技能命令串 影遁"
+        },
+        {
+            "content": "ensnare",
+            "descript": "技能命令串 诱捕(网)"
+        },
+        {
+            "content": "devour",
+            "descript": "技能命令串 吞噬(科多兽等)"
+        },
+        {
+            "content": "wandillusion",
+            "descript": "技能命令串 幻象物品(物品技能)"
+        },
+        {
+            "content": "absorb",
+            "descript": "技能命令串 吸收魔法(毁灭者)"
+        },
+        {
+            "content": "acidbomb",
+            "descript": "技能命令串 酸性炸弹"
+        },
+        {
+            "content": "acolyteharvest",
+            "descript": "技能命令串 采集(侍僧)(黄金)"
+        },
+        {
+            "content": "aimove",
+            "descript": "技能命令串 AImove(AI移动)"
+        },
+        {
+            "content": "ambush",
+            "descript": "技能命令串 影遁(夜晚)"
+        },
+        {
+            "content": "ancestralspirit",
+            "descript": "技能命令串 先祖幽灵"
+        },
+        {
+            "content": "ancestralspirittarget",
+            "descript": "技能命令串 先祖幽灵(目标)"
+        },
+        {
+            "content": "animatedead",
+            "descript": "技能命令串 操纵死尸"
+        },
+        {
+            "content": "antimagicshell",
+            "descript": "技能命令串 反魔法外壳(单位技能)/具有反魔法盾的物品(物品技能)"
+        },
+        {
+            "content": "attack",
+            "descript": "技能命令串 攻击"
+        },
+        {
+            "content": "attackground",
+            "descript": "技能命令串 攻击地面"
+        },
+        {
+            "content": "attackonce",
+            "descript": "技能命令串 攻击一次"
+        },
+        {
+            "content": "attributemodskill",
+            "descript": "技能命令串 属性加成(黄点技能)"
+        },
+        {
+            "content": "autodispel",
+            "descript": "技能命令串 驱逐魔法(小鹿)"
+        },
+        {
+            "content": "autodispeloff",
+            "descript": "技能命令串 取消驱逐激活状态(小鹿)"
+        },
+        {
+            "content": "autodispelon",
+            "descript": "技能命令串 激活驱逐(小鹿)"
+        },
+        {
+            "content": "autoentangle",
+            "descript": "技能命令串 缠绕金矿(指定单位)"
+        },
+        {
+            "content": "autoentangleinstant",
+            "descript": "技能命令串 缠绕金矿(立即)(指定单位)"
+        },
+        {
+            "content": "autoharvestgold",
+            "descript": "技能命令串 自动采集黄金"
+        },
+        {
+            "content": "autoharvestlumber",
+            "descript": "技能命令串 自动采集木材"
+        },
+        {
+            "content": "avatar",
+            "descript": "技能命令串 天神下凡"
+        },
+        {
+            "content": "avengerform",
+            "descript": "技能命令串 破坏者形态"
+        },
+        {
+            "content": "awaken",
+            "descript": "技能命令串 立即复活英雄"
+        },
+        {
+            "content": "banish",
+            "descript": "技能命令串 放逐(血法)"
+        },
+        {
+            "content": "barkskin",
+            "descript": "技能命令串 硬化皮肤"
+        },
+        {
+            "content": "barkskinoff",
+            "descript": "技能命令串 取消硬化皮肤激活状态"
+        },
+        {
+            "content": "barkskinon",
+            "descript": "技能命令串 激活硬化皮肤"
+        },
+        {
+            "content": "battleroar",
+            "descript": "技能命令串 战争咆哮"
+        },
+        {
+            "content": "battlestations",
+            "descript": "技能命令串 战斗警备(兽族地洞)"
+        },
+        {
+            "content": "bearform",
+            "descript": "技能命令串 变熊"
+        },
+        {
+            "content": "berserk",
+            "descript": "技能命令串 狂战士"
+        },
+        {
+            "content": "blackarrow",
+            "descript": "技能命令串 黑暗之箭"
+        },
+        {
+            "content": "blackarrowoff",
+            "descript": "技能命令串 取消黑暗之箭激活状态"
+        },
+        {
+            "content": "blackarrowon",
+            "descript": "技能命令串 激活黑暗之箭"
+        },
+        {
+            "content": "blight",
+            "descript": "技能命令串 荒芜(荒芜之地)"
+        },
+        {
+            "content": "blink",
+            "descript": "技能命令串 闪现(物品版)(英雄技能&物品技能)"
+        },
+        {
+            "content": "blizzard",
+            "descript": "技能命令串 暴风雪"
+        },
+        {
+            "content": "bloodlust",
+            "descript": "技能命令串 嗜血术"
+        },
+        {
+            "content": "bloodlustoff",
+            "descript": "技能命令串 取消嗜血术激活状态"
+        },
+        {
+            "content": "bloodluston",
+            "descript": "技能命令串 激活嗜血术"
+        },
+        {
+            "content": "board",
+            "descript": "技能命令串 登船"
+        },
+        {
+            "content": "breathoffire",
+            "descript": "技能命令串 火焰吐息"
+        },
+        {
+            "content": "breathoffrost",
+            "descript": "技能命令串 霜冻呼吸"
+        },
+        {
+            "content": "build",
+            "descript": "技能命令串 建筑菜单"
+        },
+        {
+            "content": "burrow",
+            "descript": "技能命令串 钻地"
+        },
+        {
+            "content": "cannibalize",
+            "descript": "技能命令串 吞食尸体"
+        },
+        {
+            "content": "carrionscarabs",
+            "descript": "技能命令串 腐尸甲虫(指定单位)"
+        },
+        {
+            "content": "carrionscarabsinstant",
+            "descript": "技能命令串 召唤腐尸甲虫(无目标)"
+        },
+        {
+            "content": "carrionscarabsoff",
+            "descript": "技能命令串 取消腐尸甲虫激活状态"
+        },
+        {
+            "content": "carrionscarabson",
+            "descript": "技能命令串 激活腐尸甲虫"
+        },
+        {
+            "content": "carrionswarm",
+            "descript": "技能命令串 腐臭蜂群"
+        },
+        {
+            "content": "chainlightning",
+            "descript": "技能命令串 闪电链"
+        },
+        {
+            "content": "channel",
+            "descript": "技能命令串 通魔/引导（1.32+）"
+        },
+        {
+            "content": "charm",
+            "descript": "技能命令串 符咒"
+        },
+        {
+            "content": "chemicalrage",
+            "descript": "技能命令串 化学风暴"
+        },
+        {
+            "content": "cloudoffog",
+            "descript": "技能命令串 乌云技能(单位技能&物品技能)"
+        },
+        {
+            "content": "clusterrockets",
+            "descript": "技能命令串 火箭群"
+        },
+        {
+            "content": "coldarrows",
+            "descript": "技能命令串 激活霜冻之箭"
+        },
+        {
+            "content": "coldarrowstarg",
+            "descript": "技能命令串 霜冻之箭"
+        },
+        {
+            "content": "controlmagic",
+            "descript": "技能命令串 控制魔法"
+        },
+        {
+            "content": "corrosivebreath",
+            "descript": "技能命令串 腐蚀喷吐"
+        },
+        {
+            "content": "coupleinstant",
+            "descript": "技能命令串 骑乘角鹰兽&搭载弓箭手"
+        },
+        {
+            "content": "coupletarget",
+            "descript": "技能命令串 搭载弓箭手"
+        },
+        {
+            "content": "creepanimatedead",
+            "descript": "技能命令串 操纵死尸(中立)"
+        },
+        {
+            "content": "creepdevour",
+            "descript": "技能命令串 吞噬(中立)"
+        },
+        {
+            "content": "creepheal",
+            "descript": "技能命令串 治疗(中立)"
+        },
+        {
+            "content": "creephealoff",
+            "descript": "技能命令串 取消治疗激活状态(中立)"
+        },
+        {
+            "content": "creephealon",
+            "descript": "技能命令串 激活治疗(中立)"
+        },
+        {
+            "content": "creepthunderbolt",
+            "descript": "技能命令串 投石(中立)"
+        },
+        {
+            "content": "creepthunderclap",
+            "descript": "技能命令串 雷霆一击(中立)"
+        },
+        {
+            "content": "cripple",
+            "descript": "技能命令串 残废"
+        },
+        {
+            "content": "curse",
+            "descript": "技能命令串 诅咒"
+        },
+        {
+            "content": "curseoff",
+            "descript": "技能命令串 取消诅咒激活状态"
+        },
+        {
+            "content": "curseon",
+            "descript": "技能命令串 激活诅咒"
+        },
+        {
+            "content": "cyclone",
+            "descript": "技能命令串 飓风术(鸟德)"
+        },
+        {
+            "content": "darkconversion",
+            "descript": "技能命令串 黑暗转换"
+        },
+        {
+            "content": "darkportal",
+            "descript": "技能命令串 黑暗之门"
+        },
+        {
+            "content": "darkritual",
+            "descript": "技能命令串 黑暗仪式"
+        },
+        {
+            "content": "darksummoning",
+            "descript": "技能命令串 黑暗召唤(英雄技能&物品技能)"
+        },
+        {
+            "content": "deathanddecay",
+            "descript": "技能命令串 死亡凋零"
+        },
+        {
+            "content": "deathcoil",
+            "descript": "技能命令串 死亡缠绕"
+        },
+        {
+            "content": "deathpact",
+            "descript": "技能命令串 死亡契约"
+        },
+        {
+            "content": "decouple",
+            "descript": "技能命令串 卸载弓箭手"
+        },
+        {
+            "content": "defend",
+            "descript": "技能命令串 激活防御"
+        },
+        {
+            "content": "detectaoe",
+            "descript": "技能命令串 显示/探测"
+        },
+        {
+            "content": "detonate",
+            "descript": "技能命令串 自爆(小精灵)"
+        },
+        {
+            "content": "devour",
+            "descript": "技能命令串 吞噬(科多兽等)"
+        },
+        {
+            "content": "devourmagic",
+            "descript": "技能命令串 吞噬魔法(毁灭者)"
+        },
+        {
+            "content": "disassociate",
+            "descript": "技能命令串(角鹰骑士)卸载"
+        },
+        {
+            "content": "disenchant",
+            "descript": "技能命令串 消魔(白牛)"
+        },
+        {
+            "content": "dismount",
+            "descript": "技能命令串 取消坐骑"
+        },
+        {
+            "content": "dispel",
+            "descript": "技能命令串 驱散(人族牧师)"
+        },
+        {
+            "content": "divineshield",
+            "descript": "技能命令串 激活神圣护甲"
+        },
+        {
+            "content": "doom",
+            "descript": "技能命令串 末日审判"
+        },
+        {
+            "content": "drain",
+            "descript": "技能命令串 生命汲取/魔法吸吮"
+        },
+        {
+            "content": "dreadlordinferno",
+            "descript": "技能命令串 地狱火"
+        },
+        {
+            "content": "dropitem",
+            "descript": "技能命令串 丢弃物品"
+        },
+        {
+            "content": "drunkenhaze",
+            "descript": "技能命令串 醉酒云雾"
+        },
+        {
+            "content": "earthquake",
+            "descript": "技能命令串 地震(先知)"
+        },
+        {
+            "content": "eattree",
+            "descript": "技能命令串 吃树(古树)"
+        },
+        {
+            "content": "elementalfury",
+            "descript": "技能命令串 火土风暴"
+        },
+        {
+            "content": "ensnare",
+            "descript": "技能命令串 诱捕(网,非蛛网)"
+        },
+        {
+            "content": "ensnareoff",
+            "descript": "技能命令串 激活诱捕(网,非蛛网)"
+        },
+        {
+            "content": "ensnareon",
+            "descript": "技能命令串 取消诱捕激活状态(网,非蛛网)"
+        },
+        {
+            "content": "entangle",
+            "descript": "技能命令串 缠绕金矿"
+        },
+        {
+            "content": "entangleinstant",
+            "descript": "技能命令串 缠绕金矿(立即)"
+        },
+        {
+            "content": "entanglingroots",
+            "descript": "技能命令串 纠缠须根"
+        },
+        {
+            "content": "ethereal",
+            "descript": "技能命令串 虚灵"
+        },
+        {
+            "content": "etherealform",
+            "descript": "技能命令串 激活幽魂(可见)"
+        },
+        {
+            "content": "unetherealform",
+            "descript": "技能命令串 取消幽魂(可见)"
+        },
+        {
+            "content": "uncorporealform",
+            "descript": "技能命令串 虚无状态(白牛转换形态技能)"
+        },
+        {
+            "content": "corporealform",
+            "descript": "技能命令串 灵肉状态(白牛转换形态技能)"
+        },
+        {
+            "content": "evileye",
+            "descript": "技能命令串 岗哨守卫"
+        },
+        {
+            "content": "faeriefire",
+            "descript": "技能命令串 精灵之火"
+        },
+        {
+            "content": "faeriefireoff",
+            "descript": "技能命令串 取消精灵之火激活状态"
+        },
+        {
+            "content": "faeriefireon",
+            "descript": "技能命令串 激活精灵之火"
+        },
+        {
+            "content": "fanofknives",
+            "descript": "技能命令串 刀阵旋风"
+        },
+        {
+            "content": "farsight",
+            "descript": "技能命令串 远视(先知)"
+        },
+        {
+            "content": "fingerofdeath",
+            "descript": "技能命令串 死亡之指(物品)(单位技能&物品技能)"
+        },
+        {
+            "content": "firebolt",
+            "descript": "技能命令串 霹雳闪电"
+        },
+        {
+            "content": "flamestrike",
+            "descript": "技能命令串 烈焰风暴"
+        },
+        {
+            "content": "flamingarrows",
+            "descript": "技能命令串 激活灼热之箭"
+        },
+        {
+            "content": "flamingarrowstarg",
+            "descript": "技能命令串 灼热之箭"
+        },
+        {
+            "content": "flamingattack",
+            "descript": "技能命令串 激活毁灭之球(毁灭者)"
+        },
+        {
+            "content": "flamingattacktarg",
+            "descript": "技能命令串 毁灭之球(毁灭者)"
+        },
+        {
+            "content": "unholyfrenzyaoe",
+            "descript": "技能命令串 邪恶狂潮"
+        },
+        {
+            "content": "ritualdagger",
+            "descript": "技能命令串 仪式匕首(物品)(1.30+)"
+        },
+        {
+            "content": "flare",
+            "descript": "技能命令串 照明弹"
+        },
+        {
+            "content": "forceboard",
+            "descript": "技能命令串 全部装载"
+        },
+        {
+            "content": "forceofnature",
+            "descript": "技能命令串 自然之力"
+        },
+        {
+            "content": "forkedlightning",
+            "descript": "技能命令串 叉状闪电"
+        },
+        {
+            "content": "freezingbreath",
+            "descript": "技能命令串 冰冻喷吐"
+        },
+        {
+            "content": "frenzy",
+            "descript": "技能命令串 狂热(中立)"
+        },
+        {
+            "content": "frenzyoff",
+            "descript": "技能命令串 取消狂热激活状态"
+        },
+        {
+            "content": "frenzyon",
+            "descript": "技能命令串 激活狂热"
+        },
+        {
+            "content": "frostarmor",
+            "descript": "技能命令串 霜冻护甲"
+        },
+        {
+            "content": "frostarmoroff",
+            "descript": "技能命令串 取消霜冻护甲激活状态"
+        },
+        {
+            "content": "frostarmoron",
+            "descript": "技能命令串 激活霜冻护甲"
+        },
+        {
+            "content": "frostnova",
+            "descript": "技能命令串 霜冻新星"
+        },
+        {
+            "content": "getitem",
+            "descript": "技能命令串 给与物品"
+        },
+        {
+            "content": "gold2lumber",
+            "descript": "技能命令串 黄金交换木材"
+        },
+        {
+            "content": "grabtree",
+            "descript": "技能命令串 战棍(山岭巨人)"
+        },
+        {
+            "content": "harvest",
+            "descript": "技能命令串 采集(黄金和木材)"
+        },
+        {
+            "content": "healingspray",
+            "descript": "技能命令串 医疗喷雾"
+        },
+        {
+            "content": "healingward",
+            "descript": "技能命令串 治疗守卫"
+        },
+        {
+            "content": "healingwave",
+            "descript": "技能命令串 医疗波"
+        },
+        {
+            "content": "healoff",
+            "descript": "技能命令串 取消治疗激活状态(人族牧师)"
+        },
+        {
+            "content": "healon",
+            "descript": "技能命令串 激活治疗(人族牧师)"
+        },
+        {
+            "content": "heal",
+            "descript": "技能命令串 治疗(人族牧师)"
+        },
+        {
+            "content": "hex",
+            "descript": "技能命令串 妖术"
+        },
+        {
+            "content": "holdposition",
+            "descript": "技能命令串 保持原位(技能面板)"
+        },
+        {
+            "content": "cancel structure",
+            "descript": "技能命令串 取消建造"
+        },
+        {
+            "content": "upgrade of structure",
+            "descript": "技能命令串 取消建筑物正在研究的科技升级"
+        },
+        {
+            "content": "holybolt",
+            "descript": "技能命令串 神圣之光"
+        },
+        {
+            "content": "howlofterror",
+            "descript": "技能命令串 恐怖嚎叫"
+        },
+        {
+            "content": "humanbuild",
+            "descript": "技能命令串 人族建筑菜单"
+        },
+        {
+            "content": "immolation",
+            "descript": "技能命令串 激活献祭(恶魔猎手)"
+        },
+        {
+            "content": "impale",
+            "descript": "技能命令串 穿刺(地穴领主)"
+        },
+        {
+            "content": "incineratearrow",
+            "descript": "技能命令串 燃灰(箭矢)"
+        },
+        {
+            "content": "incineratearrowoff",
+            "descript": "技能命令串 取消燃灰激活状态(箭矢)"
+        },
+        {
+            "content": "incineratearrowon",
+            "descript": "技能命令串 激活燃灰(箭矢)"
+        },
+        {
+            "content": "inferno",
+            "descript": "技能命令串 地狱火"
+        },
+        {
+            "content": "innerfire",
+            "descript": "技能命令串 心灵之火(人族牧师)"
+        },
+        {
+            "content": "innerfireoff",
+            "descript": "技能命令串 取消心灵之火激活状态(人族牧师)"
+        },
+        {
+            "content": "innerfireon",
+            "descript": "技能命令串 激活心灵之火(人族牧师)"
+        },
+        {
+            "content": "instant",
+            "descript": "技能命令串 复活死尸(无目标)"
+        },
+        {
+            "content": "invisibility",
+            "descript": "技能命令串 隐形术(人族女巫)"
+        },
+        {
+            "content": "lavamonster",
+            "descript": "技能命令串 召唤炎魔"
+        },
+        {
+            "content": "lightningshield",
+            "descript": "技能命令串 闪电护盾"
+        },
+        {
+            "content": "loadarcher ",
+            "descript": "技能命令串 搭载弓箭手"
+        },
+        {
+            "content": "loadcorpse",
+            "descript": "技能命令串 获取尸体(绞肉车)"
+        },
+        {
+            "content": "loadcorpseinstant",
+            "descript": "技能命令串 获取尸体(立即)(绞肉车)"
+        },
+        {
+            "content": "locustswarm",
+            "descript": "技能命令串 蝗虫群"
+        },
+        {
+            "content": "lumber2gold",
+            "descript": "技能命令串 木材交换黄金"
+        },
+        {
+            "content": "magicleash",
+            "descript": "技能命令串 空中锁镣"
+        },
+        {
+            "content": "magicdefense",
+            "descript": "技能命令串 激活魔法防御"
+        },
+        {
+            "content": "magicundefense",
+            "descript": "技能命令串 取消魔法防御激活状态"
+        },
+        {
+            "content": "manaburn",
+            "descript": "技能命令串 法力燃烧"
+        },
+        {
+            "content": "manaflareoff",
+            "descript": "技能命令串 停止魔力之焰(精灵龙)"
+        },
+        {
+            "content": "manaflareon",
+            "descript": "技能命令串 魔力之焰(精灵龙)"
+        },
+        {
+            "content": "manashieldoff",
+            "descript": "技能命令串 取消魔法盾激活状态"
+        },
+        {
+            "content": "manashieldon",
+            "descript": "技能命令串 激活魔法盾"
+        },
+        {
+            "content": "massteleport",
+            "descript": "技能命令串 群体传送/传送权杖(英雄技能&物品技能)"
+        },
+        {
+            "content": "mechanicalcritter",
+            "descript": "技能命令串 机械类的小玩艺(物品技能)"
+        },
+        {
+            "content": "metamorphosis",
+            "descript": "技能命令串 恶魔变身"
+        },
+        {
+            "content": "militia",
+            "descript": "技能命令串 战斗号召(人族民兵)"
+        },
+        {
+            "content": "militiaconvert",
+            "descript": "技能命令串 农民转换成民兵"
+        },
+        {
+            "content": "militiaoff",
+            "descript": "技能命令串 返回工作(人族民兵)"
+        },
+        {
+            "content": "militiaunconvert",
+            "descript": "技能命令串 民兵转换成农民"
+        },
+        {
+            "content": "mindrot",
+            "descript": "技能命令串 心灵腐烂"
+        },
+        {
+            "content": "mirrorimage",
+            "descript": "技能命令串 镜像"
+        },
+        {
+            "content": "monsoon",
+            "descript": "技能命令串 季风"
+        },
+        {
+            "content": "mount",
+            "descript": "技能命令串 骑乘"
+        },
+        {
+            "content": "mounthippogryph",
+            "descript": "技能命令串 骑乘角鹰兽"
+        },
+        {
+            "content": "move",
+            "descript": "技能命令串 移动/跟随"
+        },
+        {
+            "content": "nagabuild",
+            "descript": "技能命令串 娜迦建造菜单"
+        },
+        {
+            "content": "neutraldetectaoe",
+            "descript": "技能命令串 显示(人族及中立)"
+        },
+        {
+            "content": "neutralinteract",
+            "descript": "技能命令串 选择英雄/共享商店，联盟建筑"
+        },
+        {
+            "content": "neutralspell",
+            "descript": "技能命令串 收费(中立)"
+        },
+        {
+            "content": "nightelfbuild",
+            "descript": "技能命令串 暗夜精灵建造菜单"
+        },
+        {
+            "content": "orcbuild",
+            "descript": "技能命令串 兽族建筑菜单"
+        },
+        {
+            "content": "parasite",
+            "descript": "技能命令串 寄生虫(娜迦)"
+        },
+        {
+            "content": "parasiteoff",
+            "descript": "技能命令串 取消寄生虫激活状态(娜迦)"
+        },
+        {
+            "content": "parasiteon",
+            "descript": "技能命令串 激活寄生虫(娜迦)"
+        },
+        {
+            "content": "patrol",
+            "descript": "技能命令串 巡逻"
+        },
+        {
+            "content": "phaseshift",
+            "descript": "技能命令串 相位移动(精灵龙)"
+        },
+        {
+            "content": "phaseshiftinstant",
+            "descript": "技能命令串 相位移动(立即)(精灵龙)"
+        },
+        {
+            "content": "phaseshiftoff",
+            "descript": "技能命令串 取消相位移动激活状态(精灵龙)"
+        },
+        {
+            "content": "phaseshifton",
+            "descript": "技能命令串 激活相位移动(精灵龙)"
+        },
+        {
+            "content": "phoenixfire",
+            "descript": "技能命令串 凤凰烈焰(飞行单位)"
+        },
+        {
+            "content": "phoenixmorph",
+            "descript": "技能命令串 凤凰转换形态"
+        },
+        {
+            "content": "poisonarrowstarg",
+            "descript": "技能命令串 毒箭"
+        },
+        {
+            "content": "polymorph",
+            "descript": "技能命令串 变形术(人族女巫)"
+        },
+        {
+            "content": "possession",
+            "descript": "技能命令串 占据"
+        },
+        {
+            "content": "preservation",
+            "descript": "技能命令串 保存权杖(物品技能)"
+        },
+        {
+            "content": "purge",
+            "descript": "技能命令串 净化/带有净化效果的物品(1)(单位技能&物品技能)"
+        },
+        {
+            "content": "rainofchaos",
+            "descript": "技能命令串 混乱之雨"
+        },
+        {
+            "content": "rainoffire",
+            "descript": "技能命令串 火焰雨"
+        },
+        {
+            "content": "raisedead",
+            "descript": "技能命令串 召唤骷髅(指定单位)"
+        },
+        {
+            "content": "raisedeadoff",
+            "descript": "技能命令串 取消召唤骷髅激活状态(亡灵男巫)"
+        },
+        {
+            "content": "raisedeadon",
+            "descript": "技能命令串 激活召唤骷髅(亡灵男巫)"
+        },
+        {
+            "content": "recharge",
+            "descript": "技能命令串 补充(月井之春)"
+        },
+        {
+            "content": "rechargeoff",
+            "descript": "技能命令串 取消补充激活状态(月井之春)"
+        },
+        {
+            "content": "rechargeon",
+            "descript": "技能命令串 激活补充(月井之春)"
+        },
+        {
+            "content": "rejuvination",
+            "descript": "技能命令串 回春术"
+        },
+        {
+            "content": "renew",
+            "descript": "技能命令串 修理(暗夜精灵族)"
+        },
+        {
+            "content": "renewoff",
+            "descript": "技能命令串 取消修理激活状态(暗夜精灵族)"
+        },
+        {
+            "content": "renewon",
+            "descript": "技能命令串 激活修理(暗夜精灵族)"
+        },
+        {
+            "content": "repair",
+            "descript": "技能命令串 修理(人族、兽族、娜迦族、达拉内尔族(破碎者))"
+        },
+        {
+            "content": "repairoff",
+            "descript": "技能命令串 取消修理激活状态(人族、兽族、娜迦族、达拉内尔族(破碎者))"
+        },
+        {
+            "content": "repairon",
+            "descript": "技能命令串 激活修理(人族、兽族、娜迦族、达拉内尔族(破碎者))"
+        },
+        {
+            "content": "replenish",
+            "descript": "技能命令串 枯萎精髓及灵魂触摸(十胜石雕像)"
+        },
+        {
+            "content": "replenishlife",
+            "descript": "技能命令串 枯萎精髓(十胜石雕像)"
+        },
+        {
+            "content": "replenishlifeoff",
+            "descript": "技能命令串 取消枯萎精髓激活状态(十胜石雕像)"
+        },
+        {
+            "content": "replenishlifeon",
+            "descript": "技能命令串 激活枯萎精髓(十胜石雕像)"
+        },
+        {
+            "content": "replenishmana",
+            "descript": "技能命令串 灵魂触摸(十胜石雕像)"
+        },
+        {
+            "content": "replenishmanaoff",
+            "descript": "技能命令串 取消灵魂触摸激活状态(十胜石雕像)"
+        },
+        {
+            "content": "replenishmanaon",
+            "descript": "技能命令串 激活灵魂触摸(十胜石雕像)"
+        },
+        {
+            "content": "replenishoff",
+            "descript": "技能命令串 取消枯萎精髓及灵魂触摸激活状态(十胜石雕像)"
+        },
+        {
+            "content": "replenishon",
+            "descript": "技能命令串 激活枯萎精髓及灵魂触摸(十胜石雕像)"
+        },
+        {
+            "content": "request_hero",
+            "descript": "技能命令串 请求(英雄)"
+        },
+        {
+            "content": "requestsacrifice",
+            "descript": "技能命令串 牺牲(侍僧)"
+        },
+        {
+            "content": "restoration",
+            "descript": "技能命令串 修理(不死灵族)"
+        },
+        {
+            "content": "restorationoff",
+            "descript": "技能命令串 取消修理激活状态(不死灵族)"
+        },
+        {
+            "content": "restorationon",
+            "descript": "技能命令串 激活修理(不死灵族)"
+        },
+        {
+            "content": "resumebuild",
+            "descript": "技能命令串 返还建造"
+        },
+        {
+            "content": "resumeharvesting",
+            "descript": "技能命令串 返还资源"
+        },
+        {
+            "content": "returnresources",
+            "descript": "技能命令串 返还资源"
+        },
+        {
+            "content": "resurrection",
+            "descript": "技能命令串 复活(圣骑士)"
+        },
+        {
+            "content": "revenge",
+            "descript": "技能命令串 复仇(中立)"
+        },
+        {
+            "content": "revive",
+            "descript": "技能命令串 复活英雄"
+        },
+        {
+            "content": "roar",
+            "descript": "技能命令串 咆哮"
+        },
+        {
+            "content": "sacrifice",
+            "descript": "技能命令串 牺牲(深渊)(不死灵族)"
+        },
+        {
+            "content": "sanctuary",
+            "descript": "技能命令串 避难权杖(物品技能)"
+        },
+        {
+            "content": "scout",
+            "descript": "技能命令串 侦查(白虎猫头鹰)"
+        },
+        {
+            "content": "selfdestruct",
+            "descript": "技能命令串 卡布恩(自爆工兵)"
+        },
+        {
+            "content": "selfdestructoff",
+            "descript": "技能命令串 取消卡布恩激活状态(自爆工兵)"
+        },
+        {
+            "content": "selfdestructon",
+            "descript": "技能命令串 激活卡布恩(自爆工兵)"
+        },
+        {
+            "content": "sentinel",
+            "descript": "技能命令串 哨兵(女猎)"
+        },
+        {
+            "content": "setrally",
+            "descript": "技能命令串 设置集结点"
+        },
+        {
+            "content": "shadowsight",
+            "descript": "技能命令串 影子权杖(物品技能)"
+        },
+        {
+            "content": "shadowstrike",
+            "descript": "技能命令串 暗影突袭"
+        },
+        {
+            "content": "shockwave",
+            "descript": "技能命令串 震荡波"
+        },
+        {
+            "content": "silence",
+            "descript": "技能命令串 沉默"
+        },
+        {
+            "content": "sleep",
+            "descript": "技能命令串 睡眠(恐惧魔王)"
+        },
+        {
+            "content": "slow",
+            "descript": "技能命令串 减速(人族女巫)"
+        },
+        {
+            "content": "slowoff",
+            "descript": "技能命令串 取消减速激活状态(人族女巫)"
+        },
+        {
+            "content": "slowon",
+            "descript": "技能命令串 激活减速(人族女巫)"
+        },
+        {
+            "content": "smart",
+            "descript": "技能命令串 右键点击"
+        },
+        {
+            "content": "smart variant",
+            "descript": "技能命令串 右键点击(2)"
+        },
+        {
+            "content": "soulburn",
+            "descript": "技能命令串 灵魂燃烧"
+        },
+        {
+            "content": "soulpreservation",
+            "descript": "技能命令串 灵魂保存"
+        },
+        {
+            "content": "spellshield",
+            "descript": "技能命令串 魔法护盾(物品技能)"
+        },
+        {
+            "content": "spellshieldaoe",
+            "descript": "技能命令串 魔法护盾(AEO)"
+        },
+        {
+            "content": "spellsteal",
+            "descript": "技能命令串 魔法盗取"
+        },
+        {
+            "content": "spellstealoff",
+            "descript": "技能命令串 取消魔法盗取激活状态"
+        },
+        {
+            "content": "spellstealon",
+            "descript": "技能命令串 激活魔法盗取"
+        },
+        {
+            "content": "spies",
+            "descript": "技能命令串 监视(岗哨守卫)"
+        },
+        {
+            "content": "spiritlink",
+            "descript": "技能命令串 灵魂链接"
+        },
+        {
+            "content": "spiritofvengeance",
+            "descript": "技能命令串 复仇天神"
+        },
+        {
+            "content": "spirittroll",
+            "descript": "技能命令串 召唤猎头者(物品技能)"
+        },
+        {
+            "content": "spiritwolf",
+            "descript": "技能命令串 野兽幽魂"
+        },
+        {
+            "content": "stampede",
+            "descript": "技能命令串 惊吓"
+        },
+        {
+            "content": "standdown",
+            "descript": "技能命令串 卸载苦工(兽族地洞)"
+        },
+        {
+            "content": "starfall",
+            "descript": "技能命令串 群星坠落"
+        },
+        {
+            "content": "stasistrap",
+            "descript": "技能命令串 静止陷阱"
+        },
+        {
+            "content": "steal",
+            "descript": "技能命令串 窃取(物品技能)"
+        },
+        {
+            "content": "stomp",
+            "descript": "技能命令串 战争践踏"
+        },
+        {
+            "content": "stop",
+            "descript": "技能命令串 停止(会立即取消熊猫分身)"
+        },
+        {
+            "content": "summonfactory",
+            "descript": "技能命令串 口袋工厂"
+        },
+        {
+            "content": "summongrizzly",
+            "descript": "技能命令串 召唤熊"
+        },
+        {
+            "content": "summonphoenix",
+            "descript": "技能命令串 召唤凤凰"
+        },
+        {
+            "content": "summonquillbeast",
+            "descript": "技能命令串 召唤豪猪"
+        },
+        {
+            "content": "summonwareagle",
+            "descript": "技能命令串 召唤战鹰"
+        },
+        {
+            "content": "tankdroppilot",
+            "descript": "技能命令串 卸载驾驶员(坦克)"
+        },
+        {
+            "content": "tankloadpilot",
+            "descript": "技能命令串 装载驾驶员(坦克)"
+        },
+        {
+            "content": "tankpilot",
+            "descript": "技能命令串 驾驶员(坦克)(tankpilot)"
+        },
+        {
+            "content": "taunt",
+            "descript": "技能命令串 嘲讽(山岭巨人)"
+        },
+        {
+            "content": "thunderbolt",
+            "descript": "技能命令串 风暴之锤"
+        },
+        {
+            "content": "thunderclap",
+            "descript": "技能命令串 雷霆一击"
+        },
+        {
+            "content": "tornado",
+            "descript": "技能命令串 龙卷风(娜迦女海巫)"
+        },
+        {
+            "content": "townbelloff",
+            "descript": "技能命令串 返回工作(城镇大厅)(townbelloff)"
+        },
+        {
+            "content": "townbellon",
+            "descript": "技能命令串 战斗号召(城镇大厅)(townbellon)"
+        },
+        {
+            "content": "tranquility",
+            "descript": "技能命令串 宁静"
+        },
+        {
+            "content": "transmute",
+            "descript": "技能命令串 点金术"
+        },
+        {
+            "content": "unavatar",
+            "descript": "技能命令串 取消天神下凡"
+        },
+        {
+            "content": "unavengerform",
+            "descript": "技能命令串 取消破坏者形态"
+        },
+        {
+            "content": "unbearform",
+            "descript": "技能命令串 取消变熊"
+        },
+        {
+            "content": "unburrow",
+            "descript": "技能命令串 取消钻地"
+        },
+        {
+            "content": "uncoldarrows",
+            "descript": "技能命令串 取消霜冻之箭激活状态"
+        },
+        {
+            "content": "undeadbuild",
+            "descript": "技能命令串 不死建造菜单"
+        },
+        {
+            "content": "undefend",
+            "descript": "技能命令串 取消防御激活状态"
+        },
+        {
+            "content": "undivineshield",
+            "descript": "技能命令串 取消神圣护甲激活状态"
+        },
+        {
+            "content": "unflamingarrows",
+            "descript": "技能命令串 取消灼热之箭激活状态"
+        },
+        {
+            "content": "unflamingattack",
+            "descript": "技能命令串 取消毁灭之球激活状态(毁灭者)"
+        },
+        {
+            "content": "unholyfrenzy",
+            "descript": "技能命令串 邪恶狂热"
+        },
+        {
+            "content": "immolation",
+            "descript": "技能命令串 激活献祭(恶魔猎手)"
+        },
+        {
+            "content": "unimmolation",
+            "descript": "技能命令串 取消献祭激活状态(恶魔猎手)"
+        },
+        {
+            "content": "load",
+            "descript": "技能命令串 装载"
+        },
+        {
+            "content": "unload",
+            "descript": "技能命令串 卸载"
+        },
+        {
+            "content": "unloadall",
+            "descript": "技能命令串 全部卸载"
+        },
+        {
+            "content": "unloadallcorpses",
+            "descript": "技能命令串 丢弃所有尸体(绞肉车)"
+        },
+        {
+            "content": "unloadallinstant",
+            "descript": "技能命令串 全部卸载(立即)"
+        },
+        {
+            "content": "poisonarrows",
+            "descript": "技能命令串 毒箭"
+        },
+        {
+            "content": "unpoisonarrows",
+            "descript": "技能命令串 取消毒箭激活状态"
+        },
+        {
+            "content": "ravenform",
+            "descript": "技能命令串 风暴之鸦"
+        },
+        {
+            "content": "unravenform",
+            "descript": "技能命令串 取消风暴之鸦"
+        },
+        {
+            "content": "robogoblin",
+            "descript": "技能命令串 机器人形态"
+        },
+        {
+            "content": "unrobogoblin",
+            "descript": "技能命令串 取消机器人形态"
+        },
+        {
+            "content": "root",
+            "descript": "技能命令串 扎根(古树)"
+        },
+        {
+            "content": "unroot",
+            "descript": "技能命令串 拔根(古树)"
+        },
+        {
+            "content": "unstableconcoction",
+            "descript": "技能命令串 不稳定化合物(自爆蝙蝠)"
+        },
+        {
+            "content": "stoneform",
+            "descript": "技能命令串 石像形态"
+        },
+        {
+            "content": "unstoneform",
+            "descript": "技能命令串 取消石像形态"
+        },
+        {
+            "content": "unsummon",
+            "descript": "技能命令串 反召唤建筑(物品技能)(侍僧卖建筑)(单位技能&物品技能)"
+        },
+        {
+            "content": "unwindwalk",
+            "descript": "技能命令串 取消疾风步"
+        },
+        {
+            "content": "vengeance",
+            "descript": "技能命令串 复仇之魂"
+        },
+        {
+            "content": "vengeanceinstant",
+            "descript": "技能命令串 复仇之魂(无目标)"
+        },
+        {
+            "content": "vengeanceoff",
+            "descript": "技能命令串 取消复仇之魂激活状态"
+        },
+        {
+            "content": "vengeanceon",
+            "descript": "技能命令串 激活复仇之魂"
+        },
+        {
+            "content": "volcano",
+            "descript": "技能命令串 火山爆发"
+        },
+        {
+            "content": "voodoo",
+            "descript": "技能命令串 巫毒狂舞(暗影猎手)"
+        },
+        {
+            "content": "ward",
+            "descript": "技能命令串 产卵触角/毒蛇守卫"
+        },
+        {
+            "content": "waterelemental",
+            "descript": "技能命令串(召唤)水元素"
+        },
+        {
+            "content": "wateryminion",
+            "descript": "技能命令串 召唤水奴"
+        },
+        {
+            "content": "web",
+            "descript": "技能命令串 蛛网"
+        },
+        {
+            "content": "weboff",
+            "descript": "技能命令串 取消蛛网激活状态"
+        },
+        {
+            "content": "webon",
+            "descript": "技能命令串 激活蛛网"
+        },
+        {
+            "content": "whirlwind",
+            "descript": "技能命令串 剑刃风暴"
+        },
+        {
+            "content": "windwalk",
+            "descript": "技能命令串 疾风步"
+        },
+        {
+            "content": "wispharvest",
+            "descript": "技能命令串 采集(小精灵)(黄金和木材)"
+        },
+        {
+            "content": "scrollofspeed",
+            "descript": "技能命令串 加速卷轴/能暂时加快移动速度的物品(物品技能)"
+        },
+        {
+            "content": "cancel",
+            "descript": "技能命令串 取消"
+        },
+        {
+            "content": "moveslot1",
+            "descript": "技能命令串 移动物品到第一格"
+        },
+        {
+            "content": "moveslot2",
+            "descript": "技能命令串 移动物品到第二格"
+        },
+        {
+            "content": "moveslot3",
+            "descript": "技能命令串 移动物品到第三格"
+        },
+        {
+            "content": "moveslot4",
+            "descript": "技能命令串 移动物品到第四格"
+        },
+        {
+            "content": "moveslot5",
+            "descript": "技能命令串 移动物品到第五格"
+        },
+        {
+            "content": "moveslot6",
+            "descript": "技能命令串 移动物品到第六格"
+        },
+        {
+            "content": "useslot1",
+            "descript": "技能命令串 使用第一格物品"
+        },
+        {
+            "content": "useslot2",
+            "descript": "技能命令串 使用第二格物品"
+        },
+        {
+            "content": "useslot3",
+            "descript": "技能命令串 使用第三格物品"
+        },
+        {
+            "content": "useslot4",
+            "descript": "技能命令串 使用第四格物品"
+        },
+        {
+            "content": "useslot5",
+            "descript": "技能命令串 使用第五格物品"
+        },
+        {
+            "content": "useslot6",
+            "descript": "技能命令串 使用第六格物品"
+        },
+        {
+            "content": "skillmenu",
+            "descript": "技能命令串 技能菜单(技能面板)"
+        },
+        {
+            "content": "stunned",
+            "descript": "技能命令串 昏迷"
+        },
+        {
+            "content": "instant1",
+            "descript": "技能命令串 巡逻(技能面板)"
+        },
+        {
+            "content": "instant2",
+            "descript": "技能命令串 移动(技能面板)"
+        },
+        {
+            "content": "instant3",
+            "descript": "技能命令串 停止(技能面板)(会立即取消熊猫分身)"
+        },
+        {
+            "content": "instant4",
+            "descript": "技能命令串 采集(黄金和木材)(技能面板)"
+        },
+        {
+            "content": "getitem",
+            "descript": "技能命令串 给予物品"
+        },
+        {
+            "content": "AlphaMode",
+            "descript": "FDF(框架定义) 字母模式"
+        },
+        {
+            "content": "Anchor",
+            "descript": "FDF(框架定义) 锚点"
+        },
+        {
+            "content": "BackdropBackground",
+            "descript": "FDF(框架定义) 背景"
+        },
+        {
+            "content": "BackdropBackgroundInsets",
+            "descript": "FDF(框架定义) 背景插入"
+        },
+        {
+            "content": "BackdropBackgroundSize",
+            "descript": "FDF(框架定义) 背景大小"
+        },
+        {
+            "content": "BackdropBlendAll",
+            "descript": "FDF(框架定义) 背景混合"
+        },
+        {
+            "content": "BackdropBottomFile",
+            "descript": "FDF(框架定义) 背景底部文件"
+        },
+        {
+            "content": "BackdropCornerFile",
+            "descript": "FDF(框架定义) 背景边框文件"
+        },
+        {
+            "content": "BackdropCornerFlags",
+            "descript": "FDF(框架定义) 背景边框标志"
+        },
+        {
+            "content": "BackdropCornerSize",
+            "descript": "FDF(框架定义) 背景边框尺寸"
+        },
+        {
+            "content": "BackdropEdgeFile",
+            "descript": "FDF(框架定义) 背景边框文件"
+        },
+        {
+            "content": "BackdropHalfSides",
+            "descript": "FDF(框架定义) 背景半侧文件"
+        },
+        {
+            "content": "BackdropLeftFile",
+            "descript": "FDF(框架定义) 背景左侧文件"
+        },
+        {
+            "content": "BackdropMirrored",
+            "descript": "FDF(框架定义) 背景镜像"
+        },
+        {
+            "content": "BackdropRightFile",
+            "descript": "FDF(框架定义) 背景右侧文件"
+        },
+        {
+            "content": "BackdropTileBackground",
+            "descript": "FDF(框架定义) 背景平铺"
+        },
+        {
+            "content": "BackdropTopFile",
+            "descript": "FDF(框架定义) 背景顶部文件"
+        },
+        {
+            "content": "BackgroundArt",
+            "descript": "FDF(框架定义) 背景艺术"
+        },
+        {
+            "content": "BarTexture",
+            "descript": "FDF(框架定义) 栏纹理"
+        },
+        {
+            "content": "ButtonPushedTextOffset",
+            "descript": "FDF(框架定义) 按钮文本偏移(按下时)"
+        },
+        {
+            "content": "ButtonText",
+            "descript": "FDF(框架定义) 按钮文本"
+        },
+        {
+            "content": "ChatDisplayBorderSize",
+            "descript": "FDF(框架定义) 聊天框边框尺寸"
+        },
+        {
+            "content": "ChatDisplayEditBox",
+            "descript": "FDF(框架定义) 聊天框输入框"
+        },
+        {
+            "content": "ChatDisplayLineHeight",
+            "descript": "FDF(框架定义) 聊天框高亮"
+        },
+        {
+            "content": "ChatDisplayScrollBar",
+            "descript": "FDF(框架定义) 聊天框滚动条"
+        },
+        {
+            "content": "CheckBoxCheckHighlight",
+            "descript": "FDF(框架定义) 复选框选中高亮"
+        },
+        {
+            "content": "CheckBoxDisabledCheckHighlight",
+            "descript": "FDF(框架定义) 禁用复选框选中高亮"
+        },
+        {
+            "content": "CheckedTexture",
+            "descript": "FDF(框架定义) 选中纹理"
+        },
+        {
+            "content": "ControlBackdrop",
+            "descript": "FDF(框架定义) 控制背景"
+        },
+        {
+            "content": "ControlDisabledBackdrop",
+            "descript": "FDF(框架定义) 禁用控制背景"
+        },
+        {
+            "content": "ControlDisabledPushedBackdrop",
+            "descript": "FDF(框架定义) 禁用控制背景(按下时)"
+        },
+        {
+            "content": "ControlFocusHighlight",
+            "descript": "FDF(框架定义) 控制焦点高亮"
+        },
+        {
+            "content": "ControlMouseOverHighlight",
+            "descript": "FDF(框架定义) 控制鼠标悬停高亮"
+        },
+        {
+            "content": "ControlPushedBackdrop",
+            "descript": "FDF(框架定义) 控制背景(按下时)"
+        },
+        {
+            "content": "ControlShortcutKey",
+            "descript": "FDF(框架定义) 控制快捷键"
+        },
+        {
+            "content": "ControlStyle",
+            "descript": "FDF(框架定义) 控制尺寸"
+        },
+        {
+            "content": "DecorateFileNames",
+            "descript": "FDF(框架定义) 装饰文件名称"
+        },
+        {
+            "content": "DialogBackdrop",
+            "descript": "FDF(框架定义) 对话框背景"
+        },
+        {
+            "content": "DisabledText",
+            "descript": "FDF(框架定义) 禁用状态提示"
+        },
+        {
+            "content": "DisabledTexture",
+            "descript": "FDF(框架定义) 禁用状态纹理"
+        },
+        {
+            "content": "EditBorderSize",
+            "descript": "FDF(框架定义) 输入框尺寸"
+        },
+        {
+            "content": "EditCursorColor",
+            "descript": "FDF(框架定义) 输入框光标颜色"
+        },
+        {
+            "content": "EditTextFrame",
+            "descript": "FDF(框架定义) 输入框文本控件"
+        },
+        {
+            "content": "File",
+            "descript": "FDF(框架定义) 文件"
+        },
+        {
+            "content": "Font",
+            "descript": "FDF(框架定义) 字体(似乎包含字号)"
+        },
+        {
+            "content": "FontColor",
+            "descript": "FDF(框架定义) 字体颜色"
+        },
+        {
+            "content": "FontDisabledColor",
+            "descript": "FDF(框架定义) 字体禁用状态颜色"
+        },
+        {
+            "content": "FontFlags",
+            "descript": "FDF(框架定义) 字体标识(限制输入字符数或文本类型)"
+        },
+        {
+            "content": "FontHighlightColor",
+            "descript": "FDF(框架定义) 字体高亮颜色"
+        },
+        {
+            "content": "FontJustificationH",
+            "descript": "FDF(框架定义) 字体(两端)对齐"
+        },
+        {
+            "content": "FontJustificationOffset",
+            "descript": "FDF(框架定义) 字体两端边距"
+        },
+        {
+            "content": "FontJustificationV",
+            "descript": "FDF(框架定义) 字体(垂直)对齐"
+        },
+        {
+            "content": "FontShadowColor",
+            "descript": "FDF(框架定义) 字体阴影颜色"
+        },
+        {
+            "content": "FontShadowOffset",
+            "descript": "FDF(框架定义) 字体阴影偏移"
+        },
+        {
+            "content": "Frame",
+            "descript": "FDF(框架定义) 控件"
+        },
+        {
+            "content": "FrameFont",
+            "descript": "FDF(框架定义) 控件字体(似乎包含字号)"
+        },
+        {
+            "content": "Height",
+            "descript": "FDF(框架定义) 高度"
+        },
+        {
+            "content": "HighlightAlphaFile",
+            "descript": "FDF(框架定义) 高亮字母文件"
+        },
+        {
+            "content": "HighlightAlphaMode",
+            "descript": "FDF(框架定义) 高亮字母模式"
+        },
+        {
+            "content": "HighlightColor",
+            "descript": "FDF(框架定义) 高亮颜色"
+        },
+        {
+            "content": "HighlightText",
+            "descript": "FDF(框架定义) 高亮文本"
+        },
+        {
+            "content": "HighlightType",
+            "descript": "FDF(框架定义) 高亮类型"
+        },
+        {
+            "content": "IncludeFile",
+            "descript": "FDF(框架定义) 包含文件"
+        },
+        {
+            "content": "Layer",
+            "descript": "FDF(框架定义) 层级(图层)"
+        },
+        {
+            "content": "LayerStyle",
+            "descript": "FDF(框架定义) 层级样式(图层样式)"
+        },
+        {
+            "content": "ListBoxBorder",
+            "descript": "FDF(框架定义) 列表边框"
+        },
+        {
+            "content": "ListBoxScrollBar",
+            "descript": "FDF(框架定义) 列表滚动条边框"
+        },
+        {
+            "content": "MenuBorder",
+            "descript": "FDF(框架定义) 菜单边框"
+        },
+        {
+            "content": "MenuItem",
+            "descript": "FDF(框架定义) 菜单项目"
+        },
+        {
+            "content": "MenuItemHeight",
+            "descript": "FDF(框架定义) 菜单项目高度"
+        },
+        {
+            "content": "MenuTextHighlightColor",
+            "descript": "FDF(框架定义) 菜单文本高亮颜色"
+        },
+        {
+            "content": "NormalText",
+            "descript": "FDF(框架定义) 普通文本"
+        },
+        {
+            "content": "NormalTexture",
+            "descript": "FDF(框架定义) 普通纹理"
+        },
+        {
+            "content": "PopupArrowFrame",
+            "descript": "FDF(框架定义) 弹出指示符"
+        },
+        {
+            "content": "PopupButtonInset",
+            "descript": "FDF(框架定义) 弹出按钮插入"
+        },
+        {
+            "content": "PopupMenuFrame",
+            "descript": "FDF(框架定义) 弹出按钮"
+        },
+        {
+            "content": "PopupTitleFrame",
+            "descript": "FDF(框架定义) 弹出(菜单)标题"
+        },
+        {
+            "content": "PushedTexture",
+            "descript": "FDF(框架定义) 纹理(按下时)"
+        },
+        {
+            "content": "ScrollBarDecButtonFrame",
+            "descript": "FDF(框架定义) 滚动条下滚动按钮"
+        },
+        {
+            "content": "ScrollBarIncButtonFrame",
+            "descript": "FDF(框架定义) 滚动条上滚动按钮"
+        },
+        {
+            "content": "SetAllPoints",
+            "descript": "FDF(框架定义) 设置所有锚点"
+        },
+        {
+            "content": "SetPoint",
+            "descript": "FDF(框架定义) 设置锚点"
+        },
+        {
+            "content": "SliderInitialValue",
+            "descript": "FDF(框架定义) 滑块初始值"
+        },
+        {
+            "content": "SliderLayoutHorizontal",
+            "descript": "FDF(框架定义) 轮播图水平布局"
+        },
+        {
+            "content": "SliderLayoutVertical",
+            "descript": "FDF(框架定义) 轮播图垂直布局"
+        },
+        {
+            "content": "SliderMaxValue",
+            "descript": "FDF(框架定义) 滑块最大值"
+        },
+        {
+            "content": "SliderMinValue",
+            "descript": "FDF(框架定义) 滑块最小值"
+        },
+        {
+            "content": "SliderStepSize",
+            "descript": "FDF(框架定义) 滑块滑动距离(格数)"
+        },
+        {
+            "content": "SliderThumbButtonFrame",
+            "descript": "FDF(框架定义) 滑块拇指按钮"
+        },
+        {
+            "content": "String",
+            "descript": "FDF(框架定义) 字符串"
+        },
+        {
+            "content": "StringList",
+            "descript": "FDF(框架定义) 字符串列表"
+        },
+        {
+            "content": "TabFocusDefault",
+            "descript": "FDF(框架定义) 选项卡焦点(默认值)"
+        },
+        {
+            "content": "TabFocusNext",
+            "descript": "FDF(框架定义) 选项卡焦点-下一个"
+        },
+        {
+            "content": "TabFocusPush",
+            "descript": "FDF(框架定义) 选项卡焦点-推送"
+        },
+        {
+            "content": "TexCoord",
+            "descript": "FDF(框架定义) 贴图坐标"
+        },
+        {
+            "content": "Text",
+            "descript": "FDF(框架定义) 文本"
+        },
+        {
+            "content": "TextAreaInset",
+            "descript": "FDF(框架定义) 文本区域插入"
+        },
+        {
+            "content": "TextAreaLineGap",
+            "descript": "FDF(框架定义) 文本区域行间距"
+        },
+        {
+            "content": "TextAreaLineHeight",
+            "descript": "FDF(框架定义) 文本区域行高度"
+        },
+        {
+            "content": "TextAreaMaxLines",
+            "descript": "FDF(框架定义) 文本区域最大行数"
+        },
+        {
+            "content": "TextAreaScrollBar",
+            "descript": "FDF(框架定义) 文本区域滚动条"
+        },
+        {
+            "content": "TextLength",
+            "descript": "FDF(框架定义)文本长度"
+        },
+        {
+            "content": "Texture",
+            "descript": "FDF(框架定义) 纹理 - 继承于父类 ResourceIconTemplate 资源图标模板"
+        },
+        {
+            "content": "UseActiveContext",
+            "descript": "FDF(框架定义) 使用活动上下文"
+        },
+        {
+            "content": "UseHighlight",
+            "descript": "FDF(框架定义) 高亮显示"
+        },
+        {
+            "content": "Width",
+            "descript": "FDF(框架定义) 宽度"
+        },
+        {
+            "content": "BACKDROP",
+            "descript": "框架类型 背景"
+        },
+        {
+            "content": "BUTTON",
+            "descript": "框架类型 按钮"
+        },
+        {
+            "content": "CHATDISPLAY",
+            "descript": "框架类型 聊天显示框"
+        },
+        {
+            "content": "CHECKBOX",
+            "descript": "框架类型 复选框"
+        },
+        {
+            "content": "CONTROL",
+            "descript": "框架类型 控制"
+        },
+        {
+            "content": "DIALOG",
+            "descript": "框架类型 对话框"
+        },
+        {
+            "content": "EDITBOX",
+            "descript": "框架类型 输入框"
+        },
+        {
+            "content": "FRAME",
+            "descript": "框架类型 框架"
+        },
+        {
+            "content": "GLUEBUTTON",
+            "descript": "框架类型 黏合按钮"
+        },
+        {
+            "content": "GLUECHECKBOX",
+            "descript": "框架类型 黏合复选框"
+        },
+        {
+            "content": "GLUEEDITBOX",
+            "descript": "框架类型 黏合输入框"
+        },
+        {
+            "content": "GLUEPOPUPMENU",
+            "descript": "框架类型 黏合弹出菜单"
+        },
+        {
+            "content": "GLUETEXTBUTTON",
+            "descript": "框架类型 黏合文本按钮"
+        },
+        {
+            "content": "HIGHLIGHT",
+            "descript": "框架类型 高亮显示"
+        },
+        {
+            "content": "LISTBOX",
+            "descript": "框架类型 列表框"
+        },
+        {
+            "content": "MENU",
+            "descript": "框架类型 菜单"
+        },
+        {
+            "content": "MODEL",
+            "descript": "框架类型 模型"
+        },
+        {
+            "content": "POPUPMENU",
+            "descript": "框架类型 弹出菜单"
+        },
+        {
+            "content": "SCROLLBAR",
+            "descript": "框架类型 滚动条"
+        },
+        {
+            "content": "SIMPLEBUTTON",
+            "descript": "框架类型 简易按钮"
+        },
+        {
+            "content": "SIMPLECHECKBOX",
+            "descript": "框架类型 简易复选框"
+        },
+        {
+            "content": "SIMPLEFRAME",
+            "descript": "框架类型 简易框架"
+        },
+        {
+            "content": "SIMPLESTATUSBAR",
+            "descript": "框架类型 简易状态栏"
+        },
+        {
+            "content": "SLASHCHATBOX",
+            "descript": "框架类型 聊天框"
+        },
+        {
+            "content": "SLIDER",
+            "descript": "框架类型 滑块"
+        },
+        {
+            "content": "SPRITE",
+            "descript": "框架类型 精灵图"
+        },
+        {
+            "content": "TEXT",
+            "descript": "框架类型 文本"
+        },
+        {
+            "content": "TEXTAREA",
+            "descript": "框架类型 文本区域"
+        },
+        {
+            "content": "TEXTBUTTON",
+            "descript": "框架类型 文本按钮"
+        },
+        {
+            "content": "TIMERTEXT",
+            "descript": "框架类型 限时文本"
+        },
+        {
+            "content": "RAhr",
+            "descript": "天气特效类型 白杨谷大雨"
+        },
+        {
+            "content": "RAlr",
+            "descript": "天气特效类型 白杨谷小雨"
+        },
+        {
+            "content": "MEds",
+            "descript": "天气特效类型 达拉然之盾"
+        },
+        {
+            "content": "FDbh",
+            "descript": "天气特效类型 地下城/地牢 蓝雾(厚)"
+        },
+        {
+            "content": "FDbl",
+            "descript": "天气特效类型 地下城/地牢 蓝雾(薄)"
+        },
+        {
+            "content": "FDgh",
+            "descript": "天气特效类型 地下城/地牢 绿雾(厚)"
+        },
+        {
+            "content": "FDgl",
+            "descript": "天气特效类型 地下城/地牢 绿雾(薄)"
+        },
+        {
+            "content": "FDrh",
+            "descript": "天气特效类型 地下城/地牢 红雾(厚)"
+        },
+        {
+            "content": "FDrl",
+            "descript": "天气特效类型 地下城/地牢 红雾(薄)"
+        },
+        {
+            "content": "FDwh",
+            "descript": "天气特效类型 地下城/地牢 白雾(厚)"
+        },
+        {
+            "content": "FDwl",
+            "descript": "天气特效类型 地下城/地牢 白雾(薄)"
+        },
+        {
+            "content": "RLhr",
+            "descript": "天气特效类型 洛丹伦大雨"
+        },
+        {
+            "content": "RLlr",
+            "descript": "天气特效类型 洛丹伦小雨"
+        },
+        {
+            "content": "SNbs",
+            "descript": "天气特效类型 诺森德的暴风雪"
+        },
+        {
+            "content": "SNhs",
+            "descript": "天气特效类型 诺森德大雪"
+        },
+        {
+            "content": "SNls",
+            "descript": "天气特效类型 诺森德小雪"
+        },
+        {
+            "content": "WOcw",
+            "descript": "天气特效类型 边缘之地大风"
+        },
+        {
+            "content": "WOlw",
+            "descript": "天气特效类型 边缘之地的风"
+        },
+        {
+            "content": "LRaa",
+            "descript": "天气特效类型 日光"
+        },
+        {
+            "content": "LRma",
+            "descript": "天气特效类型 月光"
+        },
+        {
+            "content": "WNcw",
+            "descript": "天气特效类型 大风"
+        },
+        {
+            "content": "CLPB",
+            "descript": "闪电类型 闪电链 - 主"
+        },
+        {
+            "content": "CLSB",
+            "descript": "闪电类型 闪电链 - 次"
+        },
+        {
+            "content": "DRAB",
+            "descript": "闪电类型 汲取"
+        },
+        {
+            "content": "DRAL",
+            "descript": "闪电类型 生命汲取"
+        },
+        {
+            "content": "DRAM",
+            "descript": "闪电类型 魔法汲取"
+        },
+        {
+            "content": "AFOD",
+            "descript": "闪电类型 死亡之指"
+        },
+        {
+            "content": "FORK",
+            "descript": "闪电类型 叉状闪电"
+        },
+        {
+            "content": "HWPB",
+            "descript": "闪电类型 医疗波 - 主"
+        },
+        {
+            "content": "HWSB",
+            "descript": "闪电类型 医疗波 - 次"
+        },
+        {
+            "content": "CHIM",
+            "descript": "闪电类型 闪电攻击"
+        },
+        {
+            "content": "LEAS",
+            "descript": "闪电类型 魔法镣铐"
+        },
+        {
+            "content": "MBUR",
+            "descript": "闪电类型 法力燃烧"
+        },
+        {
+            "content": "MFPB",
+            "descript": "闪电类型 魔力之焰"
+        },
+        {
+            "content": "SPLK",
+            "descript": "闪电类型 灵魂锁链"
+        },
+        {
+            "content": "birth",
+            "descript": "可破坏物动画 创建/出生"
+        },
+        {
+            "content": "birth second",
+            "descript": "可破坏物动画 创建/出生（二）"
+        },
+        {
+            "content": "birth third",
+            "descript": "可破坏物动画 创建/出生（三）"
+        },
+        {
+            "content": "stand",
+            "descript": "可破坏物动画 站立/常规动画"
+        },
+        {
+            "content": "stand second",
+            "descript": "可破坏物动画 站立/常规动画（二）"
+        },
+        {
+            "content": "stand third",
+            "descript": "可破坏物动画 站立/常规动画（三）"
+        },
+        {
+            "content": "stand - 1",
+            "descript": "可破坏物动画 站立/常规动画（1）"
+        },
+        {
+            "content": "stand - 2",
+            "descript": "可破坏物动画 站立/常规动画（2）"
+        },
+        {
+            "content": "stand - 3",
+            "descript": "可破坏物动画 站立/常规动画（3）"
+        },
+        {
+            "content": "stand 2",
+            "descript": "可破坏物动画 站立/常规动画（2）"
+        },
+        {
+            "content": "stand 3",
+            "descript": "可破坏物动画 站立/常规动画（3）"
+        },
+        {
+            "content": "stand hit",
+            "descript": "可破坏物动画 站立/常规时被攻击/采集"
+        },
+        {
+            "content": "stand portrait",
+            "descript": "可破坏物动画 站立/常规时肖像（被选择显示的头像）动作"
+        },
+        {
+            "content": "stand work",
+            "descript": "可破坏物动画 站立/常规时工作状态"
+        },
+        {
+            "content": "walk",
+            "descript": "可破坏物动画 摆动"
+        },
+        {
+            "content": "walk - 2",
+            "descript": "可破坏物动画 摆动（2）"
+        },
+        {
+            "content": "death",
+            "descript": "可破坏物动画 死亡"
+        },
+        {
+            "content": "death second",
+            "descript": "可破坏物动画 死亡（二）"
+        },
+        {
+            "content": "death third",
+            "descript": "可破坏物动画 死亡（三）"
+        },
+        {
+            "content": "death alternate",
+            "descript": "可破坏物动画 死亡（候选/四）"
+        },
+        {
+            "content": "decay",
+            "descript": "可破坏物动画 腐烂"
+        },
+        {
+            "content": "spell eattree",
+            "descript": "可破坏物动画(树木）被吃/被拔起"
+        },
+        {
+            "content": "LORDAERON_SUMMER",
+            "descript": "地形设置 洛丹伦(夏)"
+        },
+        {
+            "content": "LORDAERON_FALL",
+            "descript": "地形设置 洛丹伦(秋)"
+        },
+        {
+            "content": "LORDAERON_WINTER",
+            "descript": "地形设置 洛丹伦(冬)"
+        },
+        {
+            "content": "BARRENS",
+            "descript": "地形设置 贫瘠之地"
+        },
+        {
+            "content": "ASHENVALE",
+            "descript": "地形设置 白杨谷"
+        },
+        {
+            "content": "FELWOOD",
+            "descript": "地形设置 费尔伍德"
+        },
+        {
+            "content": "NORTHREND",
+            "descript": "地形设置 诺森德"
+        },
+        {
+            "content": "CITYSCAPE",
+            "descript": "地形设置 城邦"
+        },
+        {
+            "content": "VILLAGE",
+            "descript": "地形设置 村庄"
+        },
+        {
+            "content": "VILLAGEFALL",
+            "descript": "地形设置 村庄(秋)"
+        },
+        {
+            "content": "DUNGEON",
+            "descript": "地形设置 地下城/地牢"
+        },
+        {
+            "content": "DUNGEON2",
+            "descript": "地形设置 地底"
+        },
+        {
+            "content": "DALARAN",
+            "descript": "地形设置 达拉然"
+        },
+        {
+            "content": "DALARANRUINS",
+            "descript": "地形设置 达拉然遗迹"
+        },
+        {
+            "content": "RUINS",
+            "descript": "地形设置 沉沦的遗迹"
+        },
+        {
+            "content": "ICECROWN",
+            "descript": "地形设置 冰封王座"
+        },
+        {
+            "content": "OUTLAND",
+            "descript": "地形设置 边缘之地"
+        },
+        {
+            "content": "BLACKCITADEL",
+            "descript": "地形设置 黑色城堡"
+        },
+        {
+            "content": "ALL",
+            "descript": "地形设置 所有"
+        },
+        {
+            "content": "Ldrt",
+            "descript": "地表纹理 洛丹伦(夏) - 泥地"
+        },
+        {
+            "content": "Ldro",
+            "descript": "地表纹理 洛丹伦(夏) - 烂泥地"
+        },
+        {
+            "content": "Ldrg",
+            "descript": "地表纹理 洛丹伦(夏) - 泥草地"
+        },
+        {
+            "content": "Lrok",
+            "descript": "地表纹理 洛丹伦(夏) - 岩石"
+        },
+        {
+            "content": "Lgrs",
+            "descript": "地表纹理 洛丹伦(夏) - 草地"
+        },
+        {
+            "content": "Lgrd",
+            "descript": "地表纹理 洛丹伦(夏) - 黑暗草地"
+        },
+        {
+            "content": "Fdrt",
+            "descript": "地表纹理 洛丹伦(秋) - 泥地"
+        },
+        {
+            "content": "Fdro",
+            "descript": "地表纹理 洛丹伦(秋) - 烂泥地"
+        },
+        {
+            "content": "Fdrg",
+            "descript": "地表纹理 洛丹伦(秋) - 泥草地"
+        },
+        {
+            "content": "Frok",
+            "descript": "地表纹理 洛丹伦(秋) - 岩石"
+        },
+        {
+            "content": "Fgrs",
+            "descript": "地表纹理 洛丹伦(秋) - 草地"
+        },
+        {
+            "content": "Fgrd",
+            "descript": "地表纹理 洛丹伦(秋) - 黑暗草地"
+        },
+        {
+            "content": "Wdrt",
+            "descript": "地表纹理 洛丹伦(冬) - 泥地"
+        },
+        {
+            "content": "Wdro",
+            "descript": "地表纹理 洛丹伦(冬) - 烂泥地"
+        },
+        {
+            "content": "Wsng",
+            "descript": "地表纹理 洛丹伦(冬) - 雪草地"
+        },
+        {
+            "content": "Wrok",
+            "descript": "地表纹理 洛丹伦(冬) - 岩石"
+        },
+        {
+            "content": "Wgrs",
+            "descript": "地表纹理 洛丹伦(冬) - 草地"
+        },
+        {
+            "content": "Wsnw",
+            "descript": "地表纹理 洛丹伦(冬) - 雪地"
+        },
+        {
+            "content": "Bdrt",
+            "descript": "地表纹理 贫瘠之地 - 泥地"
+        },
+        {
+            "content": "Bdrh",
+            "descript": "地表纹理 贫瘠之地 - 烂泥地"
+        },
+        {
+            "content": "Bdrr",
+            "descript": "地表纹理 贫瘠之地 - 鹅卵石"
+        },
+        {
+            "content": "Bdrg",
+            "descript": "地表纹理 贫瘠之地 - 泥草地"
+        },
+        {
+            "content": "Bdsr",
+            "descript": "地表纹理 贫瘠之地 - 沙漠"
+        },
+        {
+            "content": "Bdsd",
+            "descript": "地表纹理 贫瘠之地 - 黑暗沙漠"
+        },
+        {
+            "content": "Bflr",
+            "descript": "地表纹理 贫瘠之地 - 岩石"
+        },
+        {
+            "content": "Bgrr",
+            "descript": "地表纹理 贫瘠之地 - 草地"
+        },
+        {
+            "content": "Adrt",
+            "descript": "地表纹理 白杨谷 - 泥地"
+        },
+        {
+            "content": "Adrd",
+            "descript": "地表纹理 白杨谷 - 烂泥地"
+        },
+        {
+            "content": "Agrs",
+            "descript": "地表纹理 白杨谷 - 草地"
+        },
+        {
+            "content": "Arck",
+            "descript": "地表纹理 白杨谷 - 岩石"
+        },
+        {
+            "content": "Agrd",
+            "descript": "地表纹理 白杨谷 - 长草"
+        },
+        {
+            "content": "Avin",
+            "descript": "地表纹理 白杨谷 - 藤蔓"
+        },
+        {
+            "content": "Adrg",
+            "descript": "地表纹理 白杨谷 - 泥草地"
+        },
+        {
+            "content": "Alvd",
+            "descript": "地表纹理 白杨谷 - 树叶"
+        },
+        {
+            "content": "Cdrt",
+            "descript": "地表纹理 费尔伍德 - 泥地"
+        },
+        {
+            "content": "Cdrd",
+            "descript": "地表纹理 费尔伍德 - 烂泥地"
+        },
+        {
+            "content": "Cpos",
+            "descript": "地表纹理 费尔伍德 - 毒沼"
+        },
+        {
+            "content": "Crck",
+            "descript": "地表纹理 费尔伍德 - 岩石"
+        },
+        {
+            "content": "Cvin",
+            "descript": "地表纹理 费尔伍德 - 藤蔓"
+        },
+        {
+            "content": "Cgrs",
+            "descript": "地表纹理 费尔伍德 - 草地"
+        },
+        {
+            "content": "Clvg",
+            "descript": "地表纹理 费尔伍德 - 树叶"
+        },
+        {
+            "content": "Ndrt",
+            "descript": "地表纹理 诺森德 - 泥地"
+        },
+        {
+            "content": "Ndrd",
+            "descript": "地表纹理 诺森德 - 暗黑泥地"
+        },
+        {
+            "content": "Nrck",
+            "descript": "地表纹理 诺森德 - 岩石"
+        },
+        {
+            "content": "Ngrs",
+            "descript": "地表纹理 诺森德 - 草地"
+        },
+        {
+            "content": "Nice",
+            "descript": "地表纹理 诺森德 - 冰"
+        },
+        {
+            "content": "Nsnw",
+            "descript": "地表纹理 诺森德 - 雪地"
+        },
+        {
+            "content": "Nsnr",
+            "descript": "地表纹理 诺森德 - 雪岩地"
+        },
+        {
+            "content": "Ydrt",
+            "descript": "地表纹理 城邦 - 泥地"
+        },
+        {
+            "content": "Ydtr",
+            "descript": "地表纹理 城邦 - 烂泥地"
+        },
+        {
+            "content": "Yblm",
+            "descript": "地表纹理 城邦 - 黑大理石"
+        },
+        {
+            "content": "Ybtl",
+            "descript": "地表纹理 城邦 - 砖"
+        },
+        {
+            "content": "Ysqd",
+            "descript": "地表纹理 城邦 - 方形地砖"
+        },
+        {
+            "content": "Yrtl",
+            "descript": "地表纹理 城邦 - 圆形地砖"
+        },
+        {
+            "content": "Ygsb",
+            "descript": "地表纹理 城邦 - 草地"
+        },
+        {
+            "content": "Yhdg",
+            "descript": "地表纹理 城邦 - 修剪的草地"
+        },
+        {
+            "content": "Ywmb",
+            "descript": "地表纹理 城邦 - 白大理石"
+        },
+        {
+            "content": "Vdrt",
+            "descript": "地表纹理 村庄 - 泥地"
+        },
+        {
+            "content": "Vdrr",
+            "descript": "地表纹理 村庄 - 烂泥地"
+        },
+        {
+            "content": "Vcrp",
+            "descript": "地表纹理 村庄 - 庄稼"
+        },
+        {
+            "content": "Vcbp",
+            "descript": "地表纹理 村庄 - 卵石路"
+        },
+        {
+            "content": "Vstp",
+            "descript": "地表纹理 村庄 - 碎石路"
+        },
+        {
+            "content": "Vgrs",
+            "descript": "地表纹理 村庄 - 矮草"
+        },
+        {
+            "content": "Vrck",
+            "descript": "地表纹理 村庄 - 岩石"
+        },
+        {
+            "content": "Vgrt",
+            "descript": "地表纹理 村庄 - 长草"
+        },
+        {
+            "content": "Qdrt",
+            "descript": "地表纹理 村庄(秋) - 泥地"
+        },
+        {
+            "content": "Qdrr",
+            "descript": "地表纹理 村庄(秋) - 烂泥地"
+        },
+        {
+            "content": "Qcrp",
+            "descript": "地表纹理 村庄(秋) - 庄稼"
+        },
+        {
+            "content": "Qcbp",
+            "descript": "地表纹理 村庄(秋) - 卵石路"
+        },
+        {
+            "content": "Qstp",
+            "descript": "地表纹理 村庄(秋) - 碎石路"
+        },
+        {
+            "content": "Qgrs",
+            "descript": "地表纹理 村庄(秋) - 矮草"
+        },
+        {
+            "content": "Qrck",
+            "descript": "地表纹理 村庄(秋) - 岩石"
+        },
+        {
+            "content": "Qgrt",
+            "descript": "地表纹理 村庄(秋) - 长草"
+        },
+        {
+            "content": "Xdrt",
+            "descript": "地表纹理 达拉然 - 泥地"
+        },
+        {
+            "content": "Xdtr",
+            "descript": "地表纹理 达拉然 - 烂泥地"
+        },
+        {
+            "content": "Xblm",
+            "descript": "地表纹理 达拉然 - 黑大理石"
+        },
+        {
+            "content": "Xbtl",
+            "descript": "地表纹理 达拉然 - 砖块"
+        },
+        {
+            "content": "Xsqd",
+            "descript": "地表纹理 达拉然 - 方形地砖"
+        },
+        {
+            "content": "Xrtl",
+            "descript": "地表纹理 达拉然 - 圆形地砖"
+        },
+        {
+            "content": "Xgsb",
+            "descript": "地表纹理 达拉然 - 草地"
+        },
+        {
+            "content": "Xhdg",
+            "descript": "地表纹理 达拉然 - 修剪的草地"
+        },
+        {
+            "content": "Xwmb",
+            "descript": "地表纹理 达拉然 - 白大理石"
+        },
+        {
+            "content": "Ddrt",
+            "descript": "地表纹理 地下城/地牢 - 泥地"
+        },
+        {
+            "content": "Dbrk",
+            "descript": "地表纹理 地下城/地牢 - 砖"
+        },
+        {
+            "content": "Drds",
+            "descript": "地表纹理 地下城/地牢 - 红色石头"
+        },
+        {
+            "content": "Dlvc",
+            "descript": "地表纹理 地下城/地牢 - 熔岩裂缝"
+        },
+        {
+            "content": "Dlav",
+            "descript": "地表纹理 地下城/地牢 - 熔岩"
+        },
+        {
+            "content": "Ddkr",
+            "descript": "地表纹理 地下城/地牢 - 黑暗岩石"
+        },
+        {
+            "content": "Dgrs",
+            "descript": "地表纹理 地下城/地牢 - 灰色石头"
+        },
+        {
+            "content": "Dsqd",
+            "descript": "地表纹理 地下城/地牢 - 方形地砖"
+        },
+        {
+            "content": "Gdrt",
+            "descript": "地表纹理 地底 - 泥地"
+        },
+        {
+            "content": "Gbrk",
+            "descript": "地表纹理 地底 - 砖"
+        },
+        {
+            "content": "Grds",
+            "descript": "地表纹理 地底 - 红色石头"
+        },
+        {
+            "content": "Glvc",
+            "descript": "地表纹理 地底 - 熔岩裂缝"
+        },
+        {
+            "content": "Glav",
+            "descript": "地表纹理 地底 - 熔岩"
+        },
+        {
+            "content": "Gdkr",
+            "descript": "地表纹理 地底 - 黑暗岩石"
+        },
+        {
+            "content": "Ggrs",
+            "descript": "地表纹理 地底 - 灰色石头"
+        },
+        {
+            "content": "Gsqd",
+            "descript": "地表纹理 地底 - 方形地砖"
+        },
+        {
+            "content": "Zdrt",
+            "descript": "地表纹理 沉沦的遗迹 - 泥地"
+        },
+        {
+            "content": "Zdtr",
+            "descript": "地表纹理 沉沦的遗迹 - 烂泥地"
+        },
+        {
+            "content": "Zdrg",
+            "descript": "地表纹理 沉沦的遗迹 - 泥草地"
+        },
+        {
+            "content": "Zbks",
+            "descript": "地表纹理 沉沦的遗迹 - 碎砖"
+        },
+        {
+            "content": "Zsan",
+            "descript": "地表纹理 沉沦的遗迹 - 沙地"
+        },
+        {
+            "content": "Zbkl",
+            "descript": "地表纹理 沉沦的遗迹 - 大砖块"
+        },
+        {
+            "content": "Ztil",
+            "descript": "地表纹理 沉沦的遗迹 - 圆形地砖"
+        },
+        {
+            "content": "Zgrs",
+            "descript": "地表纹理 沉沦的遗迹 - 草地"
+        },
+        {
+            "content": "Zvin",
+            "descript": "地表纹理 沉沦的遗迹 - 黑暗草地"
+        },
+        {
+            "content": "Idrt",
+            "descript": "地表纹理 冰封王座 - 泥地"
+        },
+        {
+            "content": "Idtr",
+            "descript": "地表纹理 冰封王座 - 烂泥地"
+        },
+        {
+            "content": "Idki",
+            "descript": "地表纹理 冰封王座 - 黑暗冰"
+        },
+        {
+            "content": "Ibkb",
+            "descript": "地表纹理 冰封王座 - 黑砖块"
+        },
+        {
+            "content": "Irbk",
+            "descript": "地表纹理 冰封王座 - 刻字砖块"
+        },
+        {
+            "content": "Itbk",
+            "descript": "地表纹理 冰封王座 - 砖铺"
+        },
+        {
+            "content": "Iice",
+            "descript": "地表纹理 冰封王座 - 冰"
+        },
+        {
+            "content": "Ibsq",
+            "descript": "地表纹理 冰封王座 - 黑方块"
+        },
+        {
+            "content": "Isnw",
+            "descript": "地表纹理 冰封王座 - 雪地"
+        },
+        {
+            "content": "Odrt",
+            "descript": "地表纹理 边缘之地 - 泥地"
+        },
+        {
+            "content": "Odtr",
+            "descript": "地表纹理 边缘之地 - 轻泥地"
+        },
+        {
+            "content": "Osmb",
+            "descript": "地表纹理 边缘之地 - 烂泥地"
+        },
+        {
+            "content": "Ofst",
+            "descript": "地表纹理 边缘之地 - 干裂土地"
+        },
+        {
+            "content": "Olgb",
+            "descript": "地表纹理 边缘之地 - 平石头"
+        },
+        {
+            "content": "Orok",
+            "descript": "地表纹理 边缘之地 - 岩石"
+        },
+        {
+            "content": "Ofsl",
+            "descript": "地表纹理 边缘之地 - 轻石头"
+        },
+        {
+            "content": "Oaby",
+            "descript": "地表纹理 边缘之地 - 深谷"
+        },
+        {
+            "content": "Kdrt",
+            "descript": "地表纹理 黑色城堡 - 泥地"
+        },
+        {
+            "content": "Kfsl",
+            "descript": "地表纹理 黑色城堡 - 轻泥地"
+        },
+        {
+            "content": "Kdtr",
+            "descript": "地表纹理 黑色城堡 - 烂泥地"
+        },
+        {
+            "content": "Kfst",
+            "descript": "地表纹理 黑色城堡 - 平石头"
+        },
+        {
+            "content": "Ksmb",
+            "descript": "地表纹理 黑色城堡 - 碎砖"
+        },
+        {
+            "content": "Klgb",
+            "descript": "地表纹理 黑色城堡 - 大砖块"
+        },
+        {
+            "content": "Ksqt",
+            "descript": "地表纹理 黑色城堡 - 方形地砖"
+        },
+        {
+            "content": "Kdkt",
+            "descript": "地表纹理 黑色城堡 - 黑砖块"
+        },
+        {
+            "content": "Jdrt",
+            "descript": "地表纹理 达拉然遗迹 - 泥地"
+        },
+        {
+            "content": "Jdtr",
+            "descript": "地表纹理 达拉然遗迹 - 烂泥地"
+        },
+        {
+            "content": "Jblm",
+            "descript": "地表纹理 达拉然遗迹 - 黑大理石"
+        },
+        {
+            "content": "Jbtl",
+            "descript": "地表纹理 达拉然遗迹 - 砖块"
+        },
+        {
+            "content": "Jsqd",
+            "descript": "地表纹理 达拉然遗迹 - 方形地砖"
+        },
+        {
+            "content": "Jrtl",
+            "descript": "地表纹理 达拉然遗迹 - 圆形地砖"
+        },
+        {
+            "content": "Jgsb",
+            "descript": "地表纹理 达拉然遗迹 - 草地"
+        },
+        {
+            "content": "Jhdg",
+            "descript": "地表纹理 达拉然遗迹 - 修剪的草地"
+        },
+        {
+            "content": "Jwmb",
+            "descript": "地表纹理 达拉然遗迹 - 白大理石"
+        },
+        {
+            "content": "cAc2",
+            "descript": "地表纹理 白杨谷 - 泥土悬崖"
+        },
+        {
+            "content": "cAc1",
+            "descript": "地表纹理 白杨谷 - 草地悬崖"
+        },
+        {
+            "content": "cBc2",
+            "descript": "地表纹理 贫瘠之地 - 沙地悬崖"
+        },
+        {
+            "content": "cBc1",
+            "descript": "地表纹理 贫瘠之地 - 草地悬崖"
+        },
+        {
+            "content": "cKc1",
+            "descript": "地表纹理 黑色城堡 - 泥土悬崖"
+        },
+        {
+            "content": "cKc2",
+            "descript": "地表纹理 黑色城堡 - 砖砌墙壁"
+        },
+        {
+            "content": "cYc2",
+            "descript": "地表纹理 城邦 - 泥土悬崖"
+        },
+        {
+            "content": "cYc1",
+            "descript": "地表纹理 城邦 - 方砖墙壁"
+        },
+        {
+            "content": "cXc2",
+            "descript": "地表纹理 达拉然 - 泥土悬崖"
+        },
+        {
+            "content": "cXc1",
+            "descript": "地表纹理 达拉然 - 方砖墙壁"
+        },
+        {
+            "content": "cJc2",
+            "descript": "地表纹理 达拉然遗迹 - 泥土悬崖"
+        },
+        {
+            "content": "cJc1",
+            "descript": "地表纹理 达拉然遗迹 - 方砖墙壁"
+        },
+        {
+            "content": "cDc2",
+            "descript": "地表纹理 地下城 - 天然墙壁"
+        },
+        {
+            "content": "cDc1",
+            "descript": "地表纹理 地下城 - 石砖墙壁"
+        },
+        {
+            "content": "cCc2",
+            "descript": "地表纹理 费尔伍德 - 泥土悬崖"
+        },
+        {
+            "content": "cCc1",
+            "descript": "地表纹理 费尔伍德 - 草地悬崖"
+        },
+        {
+            "content": "cIc2",
+            "descript": "地表纹理 冰封王座 - 石砌墙壁"
+        },
+        {
+            "content": "cIc1",
+            "descript": "地表纹理 冰封王座 - 雪地悬崖"
+        },
+        {
+            "content": "cFc2",
+            "descript": "地表纹理 洛丹伦(秋) - 泥土悬崖"
+        },
+        {
+            "content": "cFc1",
+            "descript": "地表纹理 洛丹伦(秋) - 草地悬崖"
+        },
+        {
+            "content": "cLc2",
+            "descript": "地表纹理 洛丹伦(夏) - 泥土悬崖"
+        },
+        {
+            "content": "cLc1",
+            "descript": "地表纹理 洛丹伦(夏) - 草地悬崖"
+        },
+        {
+            "content": "cWc2",
+            "descript": "地表纹理 洛丹伦(冬) - 草地悬崖"
+        },
+        {
+            "content": "cWc1",
+            "descript": "地表纹理 洛丹伦(冬) - 雪地悬崖"
+        },
+        {
+            "content": "cNc2",
+            "descript": "地表纹理 诺森德- 泥土悬崖"
+        },
+        {
+            "content": "cNc1",
+            "descript": "地表纹理 诺森德- 雪地悬崖"
+        },
+        {
+            "content": "cOc1",
+            "descript": "地表纹理 边缘之地- 深渊"
+        },
+        {
+            "content": "cOc2",
+            "descript": "地表纹理 边缘之地- 泥土悬崖"
+        },
+        {
+            "content": "cZc2",
+            "descript": "地表纹理 沉沦的遗迹 - 泥土悬崖"
+        },
+        {
+            "content": "cZc1",
+            "descript": "地表纹理 沉沦的遗迹 - 石砌墙壁"
+        },
+        {
+            "content": "cGc2",
+            "descript": "地表纹理 地底 - 天然墙壁"
+        },
+        {
+            "content": "cGc1",
+            "descript": "地表纹理 地底 - 砖砌墙壁"
+        },
+        {
+            "content": "cVc2",
+            "descript": "地表纹理 村庄 - 泥土悬崖"
+        },
+        {
+            "content": "cVc1",
+            "descript": "地表纹理 村庄 - 厚草地悬崖"
+        },
+        {
+            "content": "cQc2",
+            "descript": "地表纹理 村庄(秋) - 泥土悬崖"
+        },
+        {
+            "content": "cQc1",
+            "descript": "地表纹理 村庄(秋) - 厚草地悬崖"
+        },
+        {
+            "content": "CIRCLE",
+            "descript": "地形形状/刷子类型 圆形"
+        },
+        {
+            "content": "SQUARE",
+            "descript": "地形形状/刷子类型 方形"
+        },
+        {
+            "content": "SHADOW",
+            "descript": "图像类型 阴影"
+        },
+        {
+            "content": "SELECTION",
+            "descript": "图像类型 选择"
+        },
+        {
+            "content": "INDICATOR",
+            "descript": "图像类型 指示器"
+        },
+        {
+            "content": "OCCLUSIONMARK",
+            "descript": "图像类型 闭塞标志"
+        },
+        {
+            "content": "UBERSPLAT",
+            "descript": "图像类型 地面纹理变化"
+        },
+        {
+            "content": "LAST",
+            "descript": "图像类型 最顶端"
+        },
+        {
+            "content": "TEST",
+            "descript": "地表纹理变化 测试"
+        },
+        {
+            "content": "LSDS",
+            "descript": "地表纹理变化 洛丹伦(夏)泥地小"
+        },
+        {
+            "content": "LSDM",
+            "descript": "地表纹理变化 洛丹伦(夏)泥地中"
+        },
+        {
+            "content": "LSDL",
+            "descript": "地表纹理变化 洛丹伦(夏)泥地大"
+        },
+        {
+            "content": "HCRT",
+            "descript": "地表纹理变化 人类弹坑"
+        },
+        {
+            "content": "UDSU",
+            "descript": "地表纹理变化 不死族金矿"
+        },
+        {
+            "content": "DNCS",
+            "descript": "地表纹理变化 中立城市小建筑(死亡)"
+        },
+        {
+            "content": "HMTP",
+            "descript": "地表纹理变化 群体传送"
+        },
+        {
+            "content": "SCTP",
+            "descript": "地表纹理变化 回城卷轴"
+        },
+        {
+            "content": "AMRC",
+            "descript": "地表纹理变化 召唤护身符"
+        },
+        {
+            "content": "DRKC",
+            "descript": "地表纹理变化 黑暗转换"
+        },
+        {
+            "content": "DOSB",
+            "descript": "地表纹理变化 兽族小建筑(死亡)"
+        },
+        {
+            "content": "DOMB",
+            "descript": "地表纹理变化 兽族中建筑(死亡)"
+        },
+        {
+            "content": "DOLB",
+            "descript": "地表纹理变化 兽族大建筑(死亡)"
+        },
+        {
+            "content": "DHSB",
+            "descript": "地表纹理变化 人类小建筑(死亡)"
+        },
+        {
+            "content": "DHMB",
+            "descript": "地表纹理变化 人类中建筑(死亡)"
+        },
+        {
+            "content": "DHLB",
+            "descript": "地表纹理变化 人类大建筑(死亡)"
+        },
+        {
+            "content": "DUSB",
+            "descript": "地表纹理变化 不死族小建筑(死亡)"
+        },
+        {
+            "content": "DUMB",
+            "descript": "地表纹理变化 不死族中建筑(死亡)"
+        },
+        {
+            "content": "DULB",
+            "descript": "地表纹理变化 不死族大建筑(死亡)"
+        },
+        {
+            "content": "DNSB",
+            "descript": "地表纹理变化 暗夜精灵小古树(死亡)"
+        },
+        {
+            "content": "DNMB",
+            "descript": "地表纹理变化 暗夜精灵中古树(死亡)"
+        },
+        {
+            "content": "DNSA",
+            "descript": "地表纹理变化 暗夜精灵小古迹(死亡)"
+        },
+        {
+            "content": "DNMA",
+            "descript": "地表纹理变化 暗夜精灵中古迹(死亡)"
+        },
+        {
+            "content": "HSMA",
+            "descript": "地表纹理变化 人类小建筑"
+        },
+        {
+            "content": "HMED",
+            "descript": "地表纹理变化 人类中建筑"
+        },
+        {
+            "content": "HLAR",
+            "descript": "地表纹理变化 人类大建筑"
+        },
+        {
+            "content": "OSMA",
+            "descript": "地表纹理变化 兽族小建筑"
+        },
+        {
+            "content": "OMED",
+            "descript": "地表纹理变化 兽族中建筑"
+        },
+        {
+            "content": "OLAR",
+            "descript": "地表纹理变化 兽族大建筑"
+        },
+        {
+            "content": "USMA",
+            "descript": "地表纹理变化 不死族建筑"
+        },
+        {
+            "content": "UMED",
+            "descript": "地表纹理变化 不死族建筑"
+        },
+        {
+            "content": "ULAR",
+            "descript": "地表纹理变化 不死族建筑"
+        },
+        {
+            "content": "ESMA",
+            "descript": "地表纹理变化 暗夜精灵小古树"
+        },
+        {
+            "content": "EMDA",
+            "descript": "地表纹理变化 暗夜精灵中古树"
+        },
+        {
+            "content": "ESMB",
+            "descript": "地表纹理变化 暗夜精灵小建筑"
+        },
+        {
+            "content": "EMDB",
+            "descript": "地表纹理变化 暗夜精灵中建筑"
+        },
+        {
+            "content": "HTOW",
+            "descript": "地表纹理变化 城镇大厅"
+        },
+        {
+            "content": "HCAS",
+            "descript": "地表纹理变化 城堡"
+        },
+        {
+            "content": "NGOL",
+            "descript": "地表纹理变化 金矿"
+        },
+        {
+            "content": "THND",
+            "descript": "地表纹理变化 雷霆一击"
+        },
+        {
+            "content": "NDGS",
+            "descript": "地表纹理变化 恶魔之门"
+        },
+        {
+            "content": "CLTS",
+            "descript": "地表纹理变化 荆棘之盾"
+        },
+        {
+            "content": "HFS1",
+            "descript": "地表纹理变化 烈焰风暴1"
+        },
+        {
+            "content": "HFS2",
+            "descript": "地表纹理变化 烈焰风暴2"
+        },
+        {
+            "content": "USBR",
+            "descript": "地表纹理变化 兽族地洞"
+        },
+        {
+            "content": "NLAR",
+            "descript": "地表纹理变化 娜迦族大建筑"
+        },
+        {
+            "content": "NMED",
+            "descript": "地表纹理变化 娜迦族中建筑"
+        },
+        {
+            "content": "DPSW",
+            "descript": "地表纹理变化 黑暗之门(面向西南)"
+        },
+        {
+            "content": "DPSE",
+            "descript": "地表纹理变化 黑暗之门(面向东南)"
+        },
+        {
+            "content": "NVOL",
+            "descript": "地表纹理变化 火山"
+        },
+        {
+            "content": "NVCR",
+            "descript": "地表纹理变化 火山口"
+        },
+        {
+            "content": "ARTHAS",
+            "descript": "主题音乐 阿尔塞斯的主题曲"
+        },
+        {
+            "content": "BLOODELF",
+            "descript": "主题音乐 血精灵的主题曲"
+        },
+        {
+            "content": "COMRADESHIP",
+            "descript": "主题音乐 伙伴的友谊"
+        },
+        {
+            "content": "CREDITS",
+            "descript": "主题音乐 制作人员"
+        },
+        {
+            "content": "DARKAGENTS",
+            "descript": "主题音乐 黑暗代言人"
+        },
+        {
+            "content": "DARKVICTORY",
+            "descript": "主题音乐 黑暗胜利"
+        },
+        {
+            "content": "DOOM",
+            "descript": "主题音乐 毁灭"
+        },
+        {
+            "content": "HEROIC_VICTORY",
+            "descript": "主题音乐 英雄胜利"
+        },
+        {
+            "content": "HUMAN1",
+            "descript": "主题音乐 人族1"
+        },
+        {
+            "content": "HUMAN2",
+            "descript": "主题音乐 人族2"
+        },
+        {
+            "content": "HUMAN3",
+            "descript": "主题音乐 人族3"
+        },
+        {
+            "content": "HUMANX1",
+            "descript": "主题音乐 人族X1"
+        },
+        {
+            "content": "DEFEAT_HUMAN",
+            "descript": "主题音乐 人族失败"
+        },
+        {
+            "content": "VICTORY_HUMAN",
+            "descript": "主题音乐 人族胜利"
+        },
+        {
+            "content": "ILLIDAN",
+            "descript": "主题音乐 尤迪安的主题曲"
+        },
+        {
+            "content": "LICHKING",
+            "descript": "主题音乐 巫妖王的主题曲"
+        },
+        {
+            "content": "MAINSCREEN",
+            "descript": "主题音乐 主要场景"
+        },
+        {
+            "content": "MAINSCREENX",
+            "descript": "主题音乐 主要场景X"
+        },
+        {
+            "content": "NAGA",
+            "descript": "主题音乐 娜迦的主题曲"
+        },
+        {
+            "content": "NIGHTELF1",
+            "descript": "主题音乐 暗夜精灵族1"
+        },
+        {
+            "content": "NIGHTELF2",
+            "descript": "主题音乐 暗夜精灵族2"
+        },
+        {
+            "content": "NIGHTELF3",
+            "descript": "主题音乐 暗夜精灵族3"
+        },
+        {
+            "content": "NIGHTELFX1",
+            "descript": "主题音乐 暗夜精灵族X1"
+        },
+        {
+            "content": "DEFEAT_NIGHTELF",
+            "descript": "主题音乐 暗夜精灵族失败"
+        },
+        {
+            "content": "VICTORY_NIGHTELF",
+            "descript": "主题音乐 暗夜精灵族胜利"
+        },
+        {
+            "content": "ORC1",
+            "descript": "主题音乐 兽族1"
+        },
+        {
+            "content": "ORC2",
+            "descript": "主题音乐 兽族2"
+        },
+        {
+            "content": "ORC3",
+            "descript": "主题音乐 兽族3"
+        },
+        {
+            "content": "ORCX1",
+            "descript": "主题音乐 兽族X1"
+        },
+        {
+            "content": "DEFEAT_ORC",
+            "descript": "主题音乐 兽族失败"
+        },
+        {
+            "content": "ORC_THEME",
+            "descript": "主题音乐 半兽人的主题曲"
+        },
+        {
+            "content": "VICTORY_ORC",
+            "descript": "主题音乐 兽族胜利"
+        },
+        {
+            "content": "PURSUIT",
+            "descript": "主题音乐 追击"
+        },
+        {
+            "content": "SADMYSTERY",
+            "descript": "主题音乐 神秘哀伤"
+        },
+        {
+            "content": "TENSION",
+            "descript": "主题音乐 紧张"
+        },
+        {
+            "content": "TRAGICCONFRONTATION",
+            "descript": "主题音乐 悲剧降临"
+        },
+        {
+            "content": "UNDEAD1",
+            "descript": "主题音乐 不死族1"
+        },
+        {
+            "content": "UNDEAD2",
+            "descript": "主题音乐 不死族2"
+        },
+        {
+            "content": "UNDEAD3",
+            "descript": "主题音乐 不死族3"
+        },
+        {
+            "content": "UNDEADX1",
+            "descript": "主题音乐 不死族 X1"
+        },
+        {
+            "content": "DEFEAT_UNDEAD",
+            "descript": "主题音乐 不死族失败"
+        },
+        {
+            "content": "VICTORY_UNDEAD",
+            "descript": "主题音乐 不死族胜利"
+        },
+        {
+            "content": "AshenvaleDay",
+            "descript": "白天环境音效 白杨谷"
+        },
+        {
+            "content": "BarrensDay",
+            "descript": "白天环境音效 贫瘠之地"
+        },
+        {
+            "content": "BlackCitadelDay",
+            "descript": "白天环境音效 黑色城堡 - 黑色城堡有两个，分别是 WESTRING_AMBIENTTHEMENIGHT_K WESTRING_AMBIENTTHEMENIGHT_O"
+        },
+        {
+            "content": "CityScapeDay",
+            "descript": "白天环境音效 城邦"
+        },
+        {
+            "content": "DalaranDay",
+            "descript": "白天环境音效 达拉然"
+        },
+        {
+            "content": "DalaranRuinsDay",
+            "descript": "白天环境音效 达拉然遗迹"
+        },
+        {
+            "content": "DungeonDay",
+            "descript": "白天环境音效 地下城/地牢"
+        },
+        {
+            "content": "FelwoodDay",
+            "descript": "白天环境音效 费尔伍德"
+        },
+        {
+            "content": "IceCrownDay",
+            "descript": "白天环境音效 冰封王座"
+        },
+        {
+            "content": "LordaeronFallDay",
+            "descript": "白天环境音效 洛丹伦(秋)"
+        },
+        {
+            "content": "LordaeronSummerDay",
+            "descript": "白天环境音效 洛丹伦(夏)"
+        },
+        {
+            "content": "LordaeronWinterDay",
+            "descript": "白天环境音效 洛丹伦(冬)"
+        },
+        {
+            "content": "NorthrendDay",
+            "descript": "白天环境音效 诺森德"
+        },
+        {
+            "content": "SunkenRuinsDay",
+            "descript": "白天环境音效 沉沦的遗迹"
+        },
+        {
+            "content": "VillageDay",
+            "descript": "白天环境音效 村庄"
+        },
+        {
+            "content": "VillageFallDay",
+            "descript": "白天环境音效 村庄(秋)"
+        },
+        {
+            "content": "DungeonCaveDay",
+            "descript": "白天环境音效 地底"
+        },
+        {
+            "content": "AshenvaleNight",
+            "descript": "夜晚环境音效 白杨谷"
+        },
+        {
+            "content": "BarrensNight",
+            "descript": "夜晚环境音效 贫瘠之地"
+        },
+        {
+            "content": "BlackCitadelNight",
+            "descript": "夜晚环境音效 黑色城堡 - 黑色城堡有两个，分别是 WESTRING_AMBIENTTHEMENIGHT_K WESTRING_AMBIENTTHEMENIGHT_O"
+        },
+        {
+            "content": "CityScapeNight",
+            "descript": "夜晚环境音效 城邦"
+        },
+        {
+            "content": "DalaranNight",
+            "descript": "夜晚环境音效 达拉然"
+        },
+        {
+            "content": "DalaranRuinsNight",
+            "descript": "夜晚环境音效 达拉然遗迹"
+        },
+        {
+            "content": "DungeonNight",
+            "descript": "夜晚环境音效 地下城/地牢"
+        },
+        {
+            "content": "FelwoodNight",
+            "descript": "夜晚环境音效 费尔伍德"
+        },
+        {
+            "content": "IceCrownNight",
+            "descript": "夜晚环境音效 冰封王座"
+        },
+        {
+            "content": "LordaeronFallNight",
+            "descript": "夜晚环境音效 洛丹伦(秋)"
+        },
+        {
+            "content": "LordaeronSummerNight",
+            "descript": "夜晚环境音效 洛丹伦(夏)"
+        },
+        {
+            "content": "LordaeronWinterNight",
+            "descript": "夜晚环境音效 洛丹伦(冬)"
+        },
+        {
+            "content": "NorthrendNight",
+            "descript": "夜晚环境音效 诺森德"
+        },
+        {
+            "content": "SunkenRuinsNight",
+            "descript": "夜晚环境音效 沉沦的遗迹"
+        },
+        {
+            "content": "VillageNight",
+            "descript": "夜晚环境音效 村庄"
+        },
+        {
+            "content": "VillageFallNight",
+            "descript": "夜晚环境音效 村庄(秋)"
+        },
+        {
+            "content": "DungeonCaveNight",
+            "descript": "夜晚环境音效 地底"
+        }
+    ],
+    "excludes": [
+        "logs/1_war3map.j",
+        "logs/2_wave.j",
+        "logs/3_vjass.j",
+        "logs/currentmapscript.j",
+        "logs/inputwar3map.j",
+        "logs/outputwar3map.j",
+        "compiler/jass/20/common.j",
+        "compiler/jass/20/blizzard.j",
+        "compiler/jass/24/common.j",
+        "compiler/jass/24/blizzard.j"
+    ],
+    "numbers": [
+        {
+            "value": 852023,
+            "descript": "技能命令ID 显示(人族及中立)"
+        },
+        {
+            "value": 852040,
+            "descript": "技能命令ID 卡布恩(自爆工兵)"
+        },
+        {
+            "value": 852041,
+            "descript": "技能命令ID 激活卡布恩(自爆工兵)"
+        },
+        {
+            "value": 852042,
+            "descript": "技能命令ID 取消卡布恩激活状态(自爆工兵)"
+        },
+        {
+            "value": 852155,
+            "descript": "技能命令ID 乌鸦形态(中立)"
+        },
+        {
+            "value": 852156,
+            "descript": "技能命令ID 取消乌鸦形态(中立)"
+        },
+        {
+            "value": 852228,
+            "descript": "技能命令ID 黑暗转换"
+        },
+        {
+            "value": 852229,
+            "descript": "技能命令ID 黑暗之门"
+        },
+        {
+            "value": 852231,
+            "descript": "技能命令ID 霹雳闪电"
+        },
+        {
+            "value": 852237,
+            "descript": "技能命令ID 混乱之雨"
+        },
+        {
+            "value": 852238,
+            "descript": "技能命令ID 火焰雨"
+        },
+        {
+            "value": 852241,
+            "descript": "技能命令ID 复仇(中立)"
+        },
+        {
+            "value": 852242,
+            "descript": "技能命令ID 灵魂保存"
+        },
+        {
+            "value": 852243,
+            "descript": "技能命令ID 霜冻之箭"
+        },
+        {
+            "value": 852244,
+            "descript": "技能命令ID 激活霜冻之箭"
+        },
+        {
+            "value": 852245,
+            "descript": "技能命令ID 取消霜冻之箭激活状态"
+        },
+        {
+            "value": 852246,
+            "descript": "技能命令ID 操纵死尸(中立)"
+        },
+        {
+            "value": 852247,
+            "descript": "技能命令ID 吞噬(中立)"
+        },
+        {
+            "value": 852248,
+            "descript": "技能命令ID 医疗(中立)"
+        },
+        {
+            "value": 852249,
+            "descript": "技能命令ID 激活治疗(中立)"
+        },
+        {
+            "value": 852250,
+            "descript": "技能命令ID 取消治疗激活状态(中立)"
+        },
+        {
+            "value": 852251,
+            "descript": "技能命令ID 重生(中立)"
+        },
+        {
+            "value": 852252,
+            "descript": "技能命令ID 投石(中立)"
+        },
+        {
+            "value": 852253,
+            "descript": "技能命令ID 雷霆一击(中立)"
+        },
+        {
+            "value": 852254,
+            "descript": "技能命令ID 毒箭"
+        },
+        {
+            "value": 852255,
+            "descript": "技能命令ID 激活毒箭"
+        },
+        {
+            "value": 852256,
+            "descript": "技能命令ID 取消毒箭激活状态"
+        },
+        {
+            "value": 852487,
+            "descript": "技能命令ID 生命汲取/魔法吸吮"
+        },
+        {
+            "value": 852504,
+            "descript": "技能命令ID 产卵触角/毒蛇守卫"
+        },
+        {
+            "value": 852560,
+            "descript": "技能命令ID 霜冻呼吸"
+        },
+        {
+            "value": 852561,
+            "descript": "技能命令ID 狂热"
+        },
+        {
+            "value": 852565,
+            "descript": "技能命令ID 心灵腐烂"
+        },
+        {
+            "value": 852577,
+            "descript": "技能命令ID 黑暗之箭"
+        },
+        {
+            "value": 852578,
+            "descript": "技能命令ID 激活黑暗之箭"
+        },
+        {
+            "value": 852579,
+            "descript": "技能命令ID 取消黑暗之箭激活状态"
+        },
+        {
+            "value": 852580,
+            "descript": "技能命令ID 火焰吐息"
+        },
+        {
+            "value": 852581,
+            "descript": "技能命令ID 符咒"
+        },
+        {
+            "value": 852582,
+            "descript": "技能命令ID 分裂攻击"
+        },
+        {
+            "value": 852583,
+            "descript": "技能命令ID 末日审判"
+        },
+        {
+            "value": 852584,
+            "descript": "技能命令ID 醉拳"
+        },
+        {
+            "value": 852585,
+            "descript": "技能命令ID 醉酒云雾"
+        },
+        {
+            "value": 852586,
+            "descript": "技能命令ID 火土风暴"
+        },
+        {
+            "value": 852587,
+            "descript": "技能命令ID 叉状闪电"
+        },
+        {
+            "value": 852588,
+            "descript": "技能命令ID 恐怖嚎叫"
+        },
+        {
+            "value": 852589,
+            "descript": "技能命令ID 激活魔法盾"
+        },
+        {
+            "value": 852590,
+            "descript": "技能命令ID 取消魔法盾激活状态"
+        },
+        {
+            "value": 852591,
+            "descript": "技能命令ID 季风"
+        },
+        {
+            "value": 852592,
+            "descript": "技能命令ID 沉默"
+        },
+        {
+            "value": 852593,
+            "descript": "技能命令ID 惊吓"
+        },
+        {
+            "value": 852594,
+            "descript": "技能命令ID 召唤熊"
+        },
+        {
+            "value": 852595,
+            "descript": "技能命令ID 召唤豪猪"
+        },
+        {
+            "value": 852596,
+            "descript": "技能命令ID 召唤战鹰"
+        },
+        {
+            "value": 852597,
+            "descript": "技能命令ID 龙卷风(娜迦女海巫)"
+        },
+        {
+            "value": 852598,
+            "descript": "技能命令ID 召唤水奴"
+        },
+        {
+            "value": 852599,
+            "descript": "技能命令ID 战争咆哮"
+        },
+        {
+            "value": 852600,
+            "descript": "技能命令ID 通魔/引导"
+        },
+        {
+            "value": 852601,
+            "descript": "技能命令ID 寄生虫(娜迦)"
+        },
+        {
+            "value": 852602,
+            "descript": "技能命令ID 激活寄生虫(娜迦)"
+        },
+        {
+            "value": 852603,
+            "descript": "技能命令ID 取消寄生虫激活状态(娜迦)"
+        },
+        {
+            "value": 852604,
+            "descript": "技能命令ID 潜水(娜迦)"
+        },
+        {
+            "value": 852605,
+            "descript": "技能命令ID 取消潜水(娜迦)"
+        },
+        {
+            "value": 852606,
+            "descript": "技能命令ID 飞毯"
+        },
+        {
+            "value": 852615,
+            "descript": "技能命令ID 瓦解光线(中立)"
+        },
+        {
+            "value": 852630,
+            "descript": "技能命令ID 收取黄金和木材(中立)"
+        },
+        {
+            "value": 852652,
+            "descript": "技能命令ID 火箭群"
+        },
+        {
+            "value": 852653,
+            "descript": "技能命令ID 粉碎(地精修补匠)"
+        },
+        {
+            "value": 852654,
+            "descript": "技能命令ID 工程升级"
+        },
+        {
+            "value": 852655,
+            "descript": "技能命令ID 口袋工厂"
+        },
+        {
+            "value": 852656,
+            "descript": "技能命令ID 开启机器人形态"
+        },
+        {
+            "value": 852657,
+            "descript": "技能命令ID 取消机器人形态"
+        },
+        {
+            "value": 852658,
+            "descript": "技能命令ID 口袋工厂"
+        },
+        {
+            "value": 852659,
+            "descript": "技能命令ID 采集(食尸鬼采集木材)"
+        },
+        {
+            "value": 852660,
+            "descript": "技能命令ID 采集(黄金和木材)"
+        },
+        {
+            "value": 852661,
+            "descript": "技能命令ID 毒刺(毒液之球)"
+        },
+        {
+            "value": 852662,
+            "descript": "技能命令ID 酸性炸弹"
+        },
+        {
+            "value": 852663,
+            "descript": "技能命令ID 化学风暴"
+        },
+        {
+            "value": 852664,
+            "descript": "技能命令ID 医疗喷雾"
+        },
+        {
+            "value": 852665,
+            "descript": "技能命令ID 点金术"
+        },
+        {
+            "value": 852666,
+            "descript": "技能命令ID 燃灰"
+        },
+        {
+            "value": 852667,
+            "descript": "技能命令ID 召唤炎魔"
+        },
+        {
+            "value": 852668,
+            "descript": "技能命令ID 灵魂燃烧"
+        },
+        {
+            "value": 852669,
+            "descript": "技能命令ID 火山爆发"
+        },
+        {
+            "value": 852670,
+            "descript": "技能命令ID 燃灰(箭矢)"
+        },
+        {
+            "value": 852671,
+            "descript": "技能命令ID 激活燃灰(箭矢)"
+        },
+        {
+            "value": 852672,
+            "descript": "技能命令ID 取消燃灰激活状态(箭矢)"
+        },
+        {
+            "value": 852467,
+            "descript": "技能命令ID 娜迦建造菜单"
+        },
+        {
+            "value": 852575,
+            "descript": "技能命令ID 尖刺外壳"
+        },
+        {
+            "value": 852576,
+            "descript": "技能命令ID 属性加成(黄点技能)"
+        },
+        {
+            "value": 852628,
+            "descript": "技能命令ID 重生"
+        },
+        {
+            "value": 852629,
+            "descript": "技能命令ID 收费"
+        },
+        {
+            "value": 852093,
+            "descript": "技能命令ID 群体传送/传送权杖(英雄技能&物品技能)"
+        },
+        {
+            "value": 852111,
+            "descript": "技能命令ID 净化/带有净化效果的物品(1)(单位技能&物品技能)"
+        },
+        {
+            "value": 852186,
+            "descript": "技能命令ID 反魔法外壳(单位技能)/具有反魔法盾的物品(物品技能)"
+        },
+        {
+            "value": 852210,
+            "descript": "技能命令ID 反召唤建筑(物品技能)(侍僧卖建筑)(单位技能&物品技能)"
+        },
+        {
+            "value": 852220,
+            "descript": "技能命令ID 黑暗召唤(英雄技能&物品技能)"
+        },
+        {
+            "value": 852230,
+            "descript": "技能命令ID 死亡之指(物品)(单位技能&物品技能)"
+        },
+        {
+            "value": 852257,
+            "descript": "技能命令ID 能增加敏捷的物品"
+        },
+        {
+            "value": 852258,
+            "descript": "技能命令ID 能操纵死尸的物品"
+        },
+        {
+            "value": 852259,
+            "descript": "技能命令ID 永久伤害提升，攻击力提升"
+        },
+        {
+            "value": 852260,
+            "descript": "技能命令ID 能获取经验值的物品"
+        },
+        {
+            "value": 852261,
+            "descript": "技能命令ID 能召唤骷髅战士的物品"
+        },
+        {
+            "value": 852262,
+            "descript": "技能命令ID 能提高智力的物品"
+        },
+        {
+            "value": 852263,
+            "descript": "技能命令ID 能提高等级的物品"
+        },
+        {
+            "value": 852264,
+            "descript": "技能命令ID 能提高生命值的物品"
+        },
+        {
+            "value": 852265,
+            "descript": "技能命令ID 能提高魔法值的物品"
+        },
+        {
+            "value": 852266,
+            "descript": "技能命令ID 能增加力量的物品"
+        },
+        {
+            "value": 852267,
+            "descript": "技能命令ID 统治权杖(物品技能)"
+        },
+        {
+            "value": 852268,
+            "descript": "技能命令ID 能对范围内的树木/墙壁造成伤害的物品"
+        },
+        {
+            "value": 852269,
+            "descript": "技能命令ID 能暂时加强范围内所有单位护甲的物品(物品技能)"
+        },
+        {
+            "value": 852270,
+            "descript": "技能命令ID 能探测一定区域的物品(物品技能)"
+        },
+        {
+            "value": 852271,
+            "descript": "技能命令ID 具有驱逐魔法效果的物品(物品技能)"
+        },
+        {
+            "value": 852272,
+            "descript": "技能命令ID 具有医疗效果的物品/最小的医疗能力(物品技能)"
+        },
+        {
+            "value": 852273,
+            "descript": "技能命令ID 能进行范围医疗的物品/时钟企鹅(物品技能)"
+        },
+        {
+            "value": 852274,
+            "descript": "技能命令ID 幻象物品(物品技能)"
+        },
+        {
+            "value": 852275,
+            "descript": "技能命令ID 带有净化效果的物品(1)(物品技能)"
+        },
+        {
+            "value": 852276,
+            "descript": "技能命令ID 回复魔法(非范围性)(物品技能)"
+        },
+        {
+            "value": 852277,
+            "descript": "技能命令ID 能提高一定范围内所有单位魔法值的物品/神秘区域魔法恢复(物品技能)"
+        },
+        {
+            "value": 852278,
+            "descript": "技能命令ID 能置放地精地雷的物品(物品技能)"
+        },
+        {
+            "value": 852279,
+            "descript": "技能命令ID 召回(物品技能)"
+        },
+        {
+            "value": 852281,
+            "descript": "技能命令ID 能进行医疗和增加魔法值的单位(物品技能)"
+        },
+        {
+            "value": 852282,
+            "descript": "技能命令ID 神秘区域生命魔法恢复/能提高一定范围内所有单位魔法值和生命值的物品(物品技能)"
+        },
+        {
+            "value": 852283,
+            "descript": "技能命令ID 具有复活效果的物品(物品技能)"
+        },
+        {
+            "value": 852284,
+            "descript": "技能命令ID 能盗取单位灵魂的物品(物品技能)"
+        },
+        {
+            "value": 852285,
+            "descript": "技能命令ID 加速卷轴/能暂时加快移动速度的物品(物品技能)"
+        },
+        {
+            "value": 852286,
+            "descript": "技能命令ID 回城卷轴物品(物品技能)"
+        },
+        {
+            "value": 852287,
+            "descript": "技能命令ID 能让单位暂时隐身的物品(物品技能)"
+        },
+        {
+            "value": 852288,
+            "descript": "技能命令ID 能让单位暂时无敌的物品(物品技能)"
+        },
+        {
+            "value": 852289,
+            "descript": "技能命令ID 具有献祭效果的物品(物品技能)"
+        },
+        {
+            "value": 852290,
+            "descript": "技能命令ID 提高英雄三属性、放置荒芜之地、某种未知技能(物品技能)(确实是三种技能共用)"
+        },
+        {
+            "value": 852471,
+            "descript": "技能命令ID 再训练之书(物品技能)"
+        },
+        {
+            "value": 852473,
+            "descript": "技能命令ID 乌云技能(单位技能&物品技能)"
+        },
+        {
+            "value": 852525,
+            "descript": "技能命令ID 闪现(物品版)(英雄技能&物品技能)"
+        },
+        {
+            "value": 852564,
+            "descript": "技能命令ID 机械类的小玩艺(物品技能)"
+        },
+        {
+            "value": 852568,
+            "descript": "技能命令ID 保存权杖(物品技能)"
+        },
+        {
+            "value": 852569,
+            "descript": "技能命令ID 避难权杖(sanctuary)"
+        },
+        {
+            "value": 852570,
+            "descript": "技能命令ID 影子权杖(物品技能)"
+        },
+        {
+            "value": 852571,
+            "descript": "技能命令ID 魔法护盾(物品技能)"
+        },
+        {
+            "value": 852572,
+            "descript": "技能命令ID 魔法护盾(AEO)(spellshieldaoe)"
+        },
+        {
+            "value": 852574,
+            "descript": "技能命令ID 窃取(物品技能)"
+        },
+        {
+            "value": 852609,
+            "descript": "技能命令ID 净化药水/医疗剂/恢复卷轴/普通物品-回复效果(物品技能)"
+        },
+        {
+            "value": 852612,
+            "descript": "技能命令ID 能显示整个地图的物品(物品技能)"
+        },
+        {
+            "value": 852613,
+            "descript": "技能命令ID 带有蛛网技能的物品(物品技能)"
+        },
+        {
+            "value": 852614,
+            "descript": "技能命令ID 怪兽诱捕守卫(物品技能)"
+        },
+        {
+            "value": 852615,
+            "descript": "技能命令ID 带有锁链驱逐效果的物品(物品技能)"
+        },
+        {
+            "value": 852616,
+            "descript": "技能命令ID 某种范围性治疗(物品技能)"
+        },
+        {
+            "value": 852618,
+            "descript": "技能命令ID 信号枪(物品技能)"
+        },
+        {
+            "value": 852619,
+            "descript": "技能命令ID 建造小型的建筑(迷你建筑)(物品技能)"
+        },
+        {
+            "value": 852621,
+            "descript": "技能命令ID 改变一天的时间(物品技能)"
+        },
+        {
+            "value": 852622,
+            "descript": "技能命令ID 随机物品(物品技能)"
+        },
+        {
+            "value": 852623,
+            "descript": "技能命令ID 吸血药水(物品技能)"
+        },
+        {
+            "value": 852624,
+            "descript": "技能命令ID 复活死尸(物品技能)"
+        },
+        {
+            "value": 852625,
+            "descript": "技能命令ID 尘土之影/显影之尘(物品技能)"
+        },
+        {
+            "value": 852627,
+            "descript": "技能命令ID 某种视野雕文技能尘(物品技能)"
+        },
+        {
+            "value": 852607,
+            "descript": "技能命令ID 防御(物品)"
+        },
+        {
+            "value": 852608,
+            "descript": "技能命令ID 魔法书(物品)"
+        },
+        {
+            "value": 852609,
+            "descript": "技能命令ID 某种恢复技能(物品)"
+        },
+        {
+            "value": 852610,
+            "descript": "技能命令ID 金箱子(物品)"
+        },
+        {
+            "value": 852611,
+            "descript": "技能命令ID 木材堆(物品)"
+        },
+        {
+            "value": 852674,
+            "descript": "技能命令ID 仪式匕首(物品)(1.30+)"
+        },
+        {
+            "value": 852676,
+            "descript": "技能命令ID 分裂刀刃(物品)"
+        },
+        {
+            "value": 852678,
+            "descript": "技能命令ID 主属性切换(物品)(1.36测试服的贵族圆环技能)"
+        },
+        {
+            "value": 851971,
+            "descript": "技能命令ID 右键点击"
+        },
+        {
+            "value": 851970,
+            "descript": "技能命令ID 右键点击(2)，对应字串符 smart variant"
+        },
+        {
+            "value": 851972,
+            "descript": "技能命令ID 停止(会立即取消熊猫分身)"
+        },
+        {
+            "value": 851973,
+            "descript": "技能命令ID 昏迷"
+        },
+        {
+            "value": 851974,
+            "descript": "技能命令ID 中立单位静止"
+        },
+        {
+            "value": 851975,
+            "descript": "技能命令ID 停止(会立即取消熊猫分身)"
+        },
+        {
+            "value": 851976,
+            "descript": "技能命令ID 取消"
+        },
+        {
+            "value": 851977,
+            "descript": "技能命令ID 可能是撤回取消"
+        },
+        {
+            "value": 851978,
+            "descript": "技能命令ID 取消建筑物的建造/升级科技"
+        },
+        {
+            "value": 851979,
+            "descript": "技能命令ID 可能是某种信号"
+        },
+        {
+            "value": 851980,
+            "descript": "技能命令ID 设置集结点"
+        },
+        {
+            "value": 851983,
+            "descript": "技能命令ID 攻击"
+        },
+        {
+            "value": 851984,
+            "descript": "技能命令ID 攻击地面"
+        },
+        {
+            "value": 851985,
+            "descript": "技能命令ID 攻击一次"
+        },
+        {
+            "value": 852233,
+            "descript": "技能命令ID 黄金交换木材"
+        },
+        {
+            "value": 852234,
+            "descript": "技能命令ID 木材交换黄金"
+        },
+        {
+            "value": 851991,
+            "descript": "技能命令ID 巡逻(技能面板)"
+        },
+        {
+            "value": 851987,
+            "descript": "技能命令ID 移动(技能面板)"
+        },
+        {
+            "value": 851975,
+            "descript": "技能命令ID 停止(技能面板)(会立即取消熊猫分身)"
+        },
+        {
+            "value": 852019,
+            "descript": "技能命令ID 采集(黄金和木材)(技能面板)"
+        },
+        {
+            "value": 851986,
+            "descript": "技能命令ID 移动/跟随"
+        },
+        {
+            "value": 851988,
+            "descript": "技能命令ID AImove(AI移动)"
+        },
+        {
+            "value": 851993,
+            "descript": "技能命令ID 保持原位(技能面板)"
+        },
+        {
+            "value": 851994,
+            "descript": "技能命令ID 建筑菜单"
+        },
+        {
+            "value": 851990,
+            "descript": "技能命令ID 巡逻"
+        },
+        {
+            "value": 852000,
+            "descript": "技能命令ID 技能菜单(技能面板)"
+        },
+        {
+            "value": 852002,
+            "descript": "技能命令ID 移动物品到第一格"
+        },
+        {
+            "value": 852003,
+            "descript": "技能命令ID 移动物品到第二格"
+        },
+        {
+            "value": 852004,
+            "descript": "技能命令ID 移动物品到第三格"
+        },
+        {
+            "value": 852005,
+            "descript": "技能命令ID 移动物品到第四格"
+        },
+        {
+            "value": 852006,
+            "descript": "技能命令ID 移动物品到第五格"
+        },
+        {
+            "value": 852007,
+            "descript": "技能命令ID 移动物品到第六格"
+        },
+        {
+            "value": 852008,
+            "descript": "技能命令ID 使用第一格物品"
+        },
+        {
+            "value": 852009,
+            "descript": "技能命令ID 使用第二格物品"
+        },
+        {
+            "value": 852010,
+            "descript": "技能命令ID 使用第三格物品"
+        },
+        {
+            "value": 852011,
+            "descript": "技能命令ID 使用第四格物品"
+        },
+        {
+            "value": 852012,
+            "descript": "技能命令ID 使用第五格物品"
+        },
+        {
+            "value": 852013,
+            "descript": "技能命令ID 使用第六格物品"
+        },
+        {
+            "value": 851981,
+            "descript": "技能命令ID 给与物品"
+        },
+        {
+            "value": 851982,
+            "descript": "技能命令ID 可能是使用物品或某种信息"
+        },
+        {
+            "value": 852001,
+            "descript": "技能命令ID 丢弃物品"
+        },
+        {
+            "value": 852017,
+            "descript": "技能命令ID 返还资源(resumeharvesting)"
+        },
+        {
+            "value": 851999,
+            "descript": "技能命令ID 返还建造(resumebuild)"
+        },
+        {
+            "value": 852018,
+            "descript": "技能命令ID 采集(黄金和木材)"
+        },
+        {
+            "value": 852021,
+            "descript": "技能命令ID 自动采集黄金"
+        },
+        {
+            "value": 852022,
+            "descript": "技能命令ID 自动采集木材"
+        },
+        {
+            "value": 852027,
+            "descript": "技能命令ID 开始复活祭坛里的第一个英雄"
+        },
+        {
+            "value": 852028,
+            "descript": "技能命令ID 开始复活祭坛里的第二个英雄"
+        },
+        {
+            "value": 852029,
+            "descript": "技能命令ID 开始复活祭坛里的第三个英雄"
+        },
+        {
+            "value": 852030,
+            "descript": "技能命令ID 开始复活祭坛里的第四个英雄"
+        },
+        {
+            "value": 852031,
+            "descript": "技能命令ID 开始复活祭坛里的第五个英雄"
+        },
+        {
+            "value": 852032,
+            "descript": "技能命令ID 开始复活祭坛里的第六个英雄"
+        },
+        {
+            "value": 852033,
+            "descript": "技能命令ID 开始复活祭坛里的第七个英雄"
+        },
+        {
+            "value": 852034,
+            "descript": "技能命令ID 可能是开始复活祭坛里的第八个英雄"
+        },
+        {
+            "value": 852035,
+            "descript": "技能命令ID 可能是开始复活祭坛里的第九个英雄"
+        },
+        {
+            "value": 852036,
+            "descript": "技能命令ID 可能是开始复活祭坛里的第十个英雄"
+        },
+        {
+            "value": 852037,
+            "descript": "技能命令ID 可能是开始复活祭坛里的第十一个英雄"
+        },
+        {
+            "value": 852038,
+            "descript": "技能命令ID 可能是开始复活祭坛里的第十二个英雄"
+        },
+        {
+            "value": 852039,
+            "descript": "技能命令ID 复活英雄"
+        },
+        {
+            "value": 852043,
+            "descript": "技能命令ID 登船"
+        },
+        {
+            "value": 852044,
+            "descript": "技能命令ID 全部登船"
+        },
+        {
+            "value": 852046,
+            "descript": "技能命令ID 装载"
+        },
+        {
+            "value": 852047,
+            "descript": "技能命令ID 卸载"
+        },
+        {
+            "value": 852048,
+            "descript": "技能命令ID 全部卸载"
+        },
+        {
+            "value": 852049,
+            "descript": "技能命令ID 全部卸载(立即)"
+        },
+        {
+            "value": 852462,
+            "descript": "技能命令ID 立即复活酒馆里的第一个英雄"
+        },
+        {
+            "value": 852463,
+            "descript": "技能命令ID 立即复活酒馆里的第二个英雄"
+        },
+        {
+            "value": 852464,
+            "descript": "技能命令ID 立即复活酒馆里的第三个英雄"
+        },
+        {
+            "value": 852465,
+            "descript": "技能命令ID 立即复活酒馆里的第四个英雄"
+        },
+        {
+            "value": 852557,
+            "descript": "技能命令ID 蝗虫随机游走"
+        },
+        {
+            "value": 852558,
+            "descript": "技能命令ID 蝗虫返回单位"
+        },
+        {
+            "value": 852559,
+            "descript": "技能命令ID 尖刺外壳"
+        },
+        {
+            "value": 852239,
+            "descript": "技能命令ID 请求(英雄)(request_hero)"
+        },
+        {
+            "value": 852020,
+            "descript": "技能命令ID 返还资源(returnresources)"
+        },
+        {
+            "value": 852566,
+            "descript": "技能命令ID 选择英雄/共享商店，联盟建筑"
+        },
+        {
+            "value": 852567,
+            "descript": "技能命令ID 永久献祭"
+        },
+        {
+            "value": 851997,
+            "descript": "技能命令ID 暗夜精灵建造菜单"
+        },
+        {
+            "value": 852131,
+            "descript": "技能命令ID 影遁(夜晚)"
+        },
+        {
+            "value": 852132,
+            "descript": "技能命令ID 驱逐魔法(小鹿)"
+        },
+        {
+            "value": 852133,
+            "descript": "技能命令ID 激活驱逐(小鹿)"
+        },
+        {
+            "value": 852134,
+            "descript": "技能命令ID 取消驱逐激活状态(小鹿)"
+        },
+        {
+            "value": 852138,
+            "descript": "技能命令ID 变熊"
+        },
+        {
+            "value": 852139,
+            "descript": "技能命令ID 取消变熊"
+        },
+        {
+            "value": 852144,
+            "descript": "技能命令ID 飓风术(鸟德)"
+        },
+        {
+            "value": 852145,
+            "descript": "技能命令ID 自爆(小精灵)"
+        },
+        {
+            "value": 852146,
+            "descript": "技能命令ID 吃树(古树)"
+        },
+        {
+            "value": 852147,
+            "descript": "技能命令ID 缠绕金矿"
+        },
+        {
+            "value": 852148,
+            "descript": "技能命令ID 缠绕金矿(立即)"
+        },
+        {
+            "value": 852149,
+            "descript": "技能命令ID 精灵之火"
+        },
+        {
+            "value": 852150,
+            "descript": "技能命令ID 激活精灵之火"
+        },
+        {
+            "value": 852151,
+            "descript": "技能命令ID 取消精灵之火激活状态"
+        },
+        {
+            "value": 852152,
+            "descript": "技能命令ID 穿刺剑刃(投刃车)"
+        },
+        {
+            "value": 852153,
+            "descript": "技能命令ID 魔法免疫(物品)"
+        },
+        {
+            "value": 852154,
+            "descript": "技能命令ID 月刃"
+        },
+        {
+            "value": 852155,
+            "descript": "技能命令ID 风暴之鸦"
+        },
+        {
+            "value": 852156,
+            "descript": "技能命令ID 取消风暴之鸦"
+        },
+        {
+            "value": 852157,
+            "descript": "技能命令ID 补充(月井之春)"
+        },
+        {
+            "value": 852158,
+            "descript": "技能命令ID 激活补充(月井之春)"
+        },
+        {
+            "value": 852159,
+            "descript": "技能命令ID 取消补充激活状态(月井之春)"
+        },
+        {
+            "value": 852160,
+            "descript": "技能命令ID 回春术"
+        },
+        {
+            "value": 852161,
+            "descript": "技能命令ID 修理(暗夜精灵族)"
+        },
+        {
+            "value": 852162,
+            "descript": "技能命令ID 激活修理(暗夜精灵族)"
+        },
+        {
+            "value": 852163,
+            "descript": "技能命令ID 取消修理激活状态(暗夜精灵族)"
+        },
+        {
+            "value": 852164,
+            "descript": "技能命令ID 咆哮"
+        },
+        {
+            "value": 852165,
+            "descript": "技能命令ID 扎根(古树)"
+        },
+        {
+            "value": 852166,
+            "descript": "技能命令ID 拔根(古树)"
+        },
+        {
+            "value": 852167,
+            "descript": "技能命令ID 慢性毒药(小鹿)"
+        },
+        {
+            "value": 852169,
+            "descript": "技能命令ID 荆棘光环"
+        },
+        {
+            "value": 852170,
+            "descript": "技能命令ID 强击光环"
+        },
+        {
+            "value": 852171,
+            "descript": "技能命令ID 纠缠须根"
+        },
+        {
+            "value": 852172,
+            "descript": "技能命令ID 闪避"
+        },
+        {
+            "value": 852173,
+            "descript": "技能命令ID 灼热之箭"
+        },
+        {
+            "value": 852174,
+            "descript": "技能命令ID 激活灼热之箭"
+        },
+        {
+            "value": 852175,
+            "descript": "技能命令ID 取消灼热之箭激活状态"
+        },
+        {
+            "value": 852540,
+            "descript": "技能命令ID 灼热之箭目标(flamingarrowstarg)"
+        },
+        {
+            "value": 852044,
+            "descript": "技能命令ID 全部装载(forceboard)"
+        },
+        {
+            "value": 852176,
+            "descript": "技能命令ID 自然之力"
+        },
+        {
+            "value": 852177,
+            "descript": "技能命令ID 激活献祭(恶魔猎手)"
+        },
+        {
+            "value": 852178,
+            "descript": "技能命令ID 取消献祭激活状态(恶魔猎手)"
+        },
+        {
+            "value": 852179,
+            "descript": "技能命令ID 法力燃烧"
+        },
+        {
+            "value": 852180,
+            "descript": "技能命令ID 恶魔变身"
+        },
+        {
+            "value": 852181,
+            "descript": "技能命令ID 侦查(白虎猫头鹰)"
+        },
+        {
+            "value": 852182,
+            "descript": "技能命令ID 哨兵(女猎)"
+        },
+        {
+            "value": 852183,
+            "descript": "技能命令ID 群星坠落"
+        },
+        {
+            "value": 852184,
+            "descript": "技能命令ID 宁静"
+        },
+        {
+            "value": 852505,
+            "descript": "技能命令ID 缠绕金矿(指定单位)"
+        },
+        {
+            "value": 852506,
+            "descript": "技能命令ID 缠绕金矿(立即)(指定单位)"
+        },
+        {
+            "value": 852507,
+            "descript": "技能命令ID 搭载弓箭手"
+        },
+        {
+            "value": 852508,
+            "descript": "技能命令ID 骑乘角鹰兽&搭载弓箭手"
+        },
+        {
+            "value": 852509,
+            "descript": "技能命令ID 卸载弓箭手"
+        },
+        {
+            "value": 852142,
+            "descript": "技能命令ID 搭载弓箭手"
+        },
+        {
+            "value": 852469,
+            "descript": "技能命令ID 骑乘(mount)"
+        },
+        {
+            "value": 852143,
+            "descript": "技能命令ID 骑乘角鹰兽(mounthippogryph)"
+        },
+        {
+            "value": 852240,
+            "descript": "技能命令ID(角鹰骑士)卸载(disassociate)"
+        },
+        {
+            "value": 852470,
+            "descript": "技能命令ID 取消坐骑(dismount)"
+        },
+        {
+            "value": 852510,
+            "descript": "技能命令ID 虚灵"
+        },
+        {
+            "value": 852511,
+            "descript": "技能命令ID 战棍(山岭巨人)"
+        },
+        {
+            "value": 852512,
+            "descript": "技能命令ID 魔力之焰(精灵龙)"
+        },
+        {
+            "value": 852513,
+            "descript": "技能命令ID 停止魔力之焰(精灵龙)"
+        },
+        {
+            "value": 852514,
+            "descript": "技能命令ID 相位移动(精灵龙)"
+        },
+        {
+            "value": 852515,
+            "descript": "技能命令ID 激活相位移动(精灵龙)"
+        },
+        {
+            "value": 852516,
+            "descript": "技能命令ID 取消相位移动激活状态(精灵龙)"
+        },
+        {
+            "value": 852517,
+            "descript": "技能命令ID 相位移动(立即)(精灵龙)"
+        },
+        {
+            "value": 852518,
+            "descript": "技能命令ID 抗性皮肤(山岭巨人)"
+        },
+        {
+            "value": 852519,
+            "descript": "技能命令ID 硬化皮肤(山岭巨人)"
+        },
+        {
+            "value": 852520,
+            "descript": "技能命令ID 嘲讽(山岭巨人)"
+        },
+        {
+            "value": 852521,
+            "descript": "技能命令ID 复仇之魂"
+        },
+        {
+            "value": 852522,
+            "descript": "技能命令ID 激活复仇之魂"
+        },
+        {
+            "value": 852523,
+            "descript": "技能命令ID 取消复仇之魂激活状态"
+        },
+        {
+            "value": 852524,
+            "descript": "技能命令ID 复仇之魂(无目标)"
+        },
+        {
+            "value": 852526,
+            "descript": "技能命令ID 刀阵旋风"
+        },
+        {
+            "value": 852527,
+            "descript": "技能命令ID 暗影突袭"
+        },
+        {
+            "value": 852528,
+            "descript": "技能命令ID 复仇天神"
+        },
+        {
+            "value": 852135,
+            "descript": "技能命令ID 硬化皮肤"
+        },
+        {
+            "value": 852137,
+            "descript": "技能命令ID 取消硬化皮肤激活状态"
+        },
+        {
+            "value": 852136,
+            "descript": "技能命令ID 激活硬化皮肤"
+        },
+        {
+            "value": 852140,
+            "descript": "技能命令ID 腐蚀喷吐"
+        },
+        {
+            "value": 852214,
+            "descript": "技能命令ID 采集(小精灵)(黄金和木材)"
+        },
+        {
+            "value": 851998,
+            "descript": "技能命令ID 不死建造菜单"
+        },
+        {
+            "value": 852050,
+            "descript": "技能命令ID 获取尸体(绞肉车)"
+        },
+        {
+            "value": 852051,
+            "descript": "技能命令ID 激活获取尸体(绞肉车)"
+        },
+        {
+            "value": 852052,
+            "descript": "技能命令ID 取消获取尸体激活状态(绞肉车)"
+        },
+        {
+            "value": 852053,
+            "descript": "技能命令ID 获取尸体(立即)(绞肉车)"
+        },
+        {
+            "value": 852054,
+            "descript": "技能命令ID 丢弃所有尸体(绞肉车)"
+        },
+        {
+            "value": 852188,
+            "descript": "技能命令ID 吞食尸体"
+        },
+        {
+            "value": 852189,
+            "descript": "技能命令ID 残废"
+        },
+        {
+            "value": 852190,
+            "descript": "技能命令ID 诅咒"
+        },
+        {
+            "value": 852191,
+            "descript": "技能命令ID 激活诅咒"
+        },
+        {
+            "value": 852192,
+            "descript": "技能命令ID 取消诅咒激活状态"
+        },
+        {
+            "value": 852193,
+            "descript": "技能命令ID 疾病光环"
+        },
+        {
+            "value": 852194,
+            "descript": "技能命令ID 疾病云雾(绞肉车)"
+        },
+        {
+            "value": 852196,
+            "descript": "技能命令ID 占据"
+        },
+        {
+            "value": 852197,
+            "descript": "技能命令ID 召唤骷髅(指定单位)"
+        },
+        {
+            "value": 852198,
+            "descript": "技能命令ID 激活召唤骷髅(亡灵男巫)"
+        },
+        {
+            "value": 852199,
+            "descript": "技能命令ID 取消召唤骷髅激活状态(亡灵男巫)"
+        },
+        {
+            "value": 852200,
+            "descript": "技能命令ID 复活死尸(无目标)"
+        },
+        {
+            "value": 852201,
+            "descript": "技能命令ID 牺牲(侍僧)"
+        },
+        {
+            "value": 852202,
+            "descript": "技能命令ID 修理(不死灵族)"
+        },
+        {
+            "value": 852203,
+            "descript": "技能命令ID 激活修理(不死灵族)"
+        },
+        {
+            "value": 852204,
+            "descript": "技能命令ID 取消修理激活状态(不死灵族)"
+        },
+        {
+            "value": 852185,
+            "descript": "技能命令ID 采集(侍僧)(黄金)"
+        },
+        {
+            "value": 852205,
+            "descript": "技能命令ID 牺牲(深渊)(不死灵族)"
+        },
+        {
+            "value": 852206,
+            "descript": "技能命令ID 石像形态"
+        },
+        {
+            "value": 852207,
+            "descript": "技能命令ID 取消石像形态"
+        },
+        {
+            "value": 852208,
+            "descript": "技能命令ID 真实视域"
+        },
+        {
+            "value": 852209,
+            "descript": "技能命令ID 邪恶狂热"
+        },
+        {
+            "value": 852211,
+            "descript": "技能命令ID 蛛网"
+        },
+        {
+            "value": 852212,
+            "descript": "技能命令ID 激活蛛网"
+        },
+        {
+            "value": 852213,
+            "descript": "技能命令ID 取消蛛网激活状态"
+        },
+        {
+            "value": 852217,
+            "descript": "技能命令ID 操纵死尸"
+        },
+        {
+            "value": 852218,
+            "descript": "技能命令ID 腐臭蜂群"
+        },
+        {
+            "value": 852219,
+            "descript": "技能命令ID 黑暗仪式"
+        },
+        {
+            "value": 852221,
+            "descript": "技能命令ID 死亡凋零"
+        },
+        {
+            "value": 852222,
+            "descript": "技能命令ID 死亡缠绕"
+        },
+        {
+            "value": 852223,
+            "descript": "技能命令ID 死亡契约"
+        },
+        {
+            "value": 852224,
+            "descript": "技能命令ID 地狱火"
+        },
+        {
+            "value": 852225,
+            "descript": "技能命令ID 霜冻护甲"
+        },
+        {
+            "value": 852226,
+            "descript": "技能命令ID 霜冻新星"
+        },
+        {
+            "value": 852227,
+            "descript": "技能命令ID 睡眠(恐惧魔王)"
+        },
+        {
+            "value": 852458,
+            "descript": "技能命令ID 激活霜冻护甲"
+        },
+        {
+            "value": 852459,
+            "descript": "技能命令ID 取消霜冻护甲激活状态"
+        },
+        {
+            "value": 852460,
+            "descript": "技能命令ID 某种不能以自身为目标的指向性技能"
+        },
+        {
+            "value": 852461,
+            "descript": "技能命令ID 减速光环"
+        },
+        {
+            "value": 852462,
+            "descript": "技能命令ID 立即复活英雄"
+        },
+        {
+            "value": 852463,
+            "descript": "技能命令ID 立即复活英雄"
+        },
+        {
+            "value": 852464,
+            "descript": "技能命令ID 立即复活英雄"
+        },
+        {
+            "value": 852465,
+            "descript": "技能命令ID 立即复活英雄"
+        },
+        {
+            "value": 852466,
+            "descript": "技能命令ID 立即复活英雄"
+        },
+        {
+            "value": 852467,
+            "descript": "技能命令ID 建造菜单(娜迦)"
+        },
+        {
+            "value": 852469,
+            "descript": "技能命令ID 骑乘"
+        },
+        {
+            "value": 852470,
+            "descript": "技能命令ID 骑乘"
+        },
+        {
+            "value": 852529,
+            "descript": "技能命令ID 吸收魔法(毁灭者)"
+        },
+        {
+            "value": 852530,
+            "descript": "技能命令ID 荒芜光环"
+        },
+        {
+            "value": 852531,
+            "descript": "技能命令ID 破坏者形态"
+        },
+        {
+            "value": 852532,
+            "descript": "技能命令ID 取消破坏者形态"
+        },
+        {
+            "value": 852533,
+            "descript": "技能命令ID 钻地"
+        },
+        {
+            "value": 852534,
+            "descript": "技能命令ID 取消钻地"
+        },
+        {
+            "value": 852535,
+            "descript": "技能命令ID 吞食尸体"
+        },
+        {
+            "value": 852536,
+            "descript": "技能命令ID 吞噬魔法(毁灭者)"
+        },
+        {
+            "value": 852537,
+            "descript": "技能命令ID 挖掘尸体"
+        },
+        {
+            "value": 852538,
+            "descript": "技能命令ID 似乎与挖掘尸体有关"
+        },
+        {
+            "value": 852539,
+            "descript": "技能命令ID 毁灭之球(毁灭者)"
+        },
+        {
+            "value": 852540,
+            "descript": "技能命令ID 激活毁灭之球(毁灭者)"
+        },
+        {
+            "value": 852541,
+            "descript": "技能命令ID 取消毁灭之球激活状态(毁灭者)"
+        },
+        {
+            "value": 852542,
+            "descript": "技能命令ID 枯萎精髓及灵魂触摸(十胜石雕像)"
+        },
+        {
+            "value": 852543,
+            "descript": "技能命令ID 激活枯萎精髓及灵魂触摸(十胜石雕像)"
+        },
+        {
+            "value": 852544,
+            "descript": "技能命令ID 取消枯萎精髓及灵魂触摸激活状态(十胜石雕像)"
+        },
+        {
+            "value": 852545,
+            "descript": "技能命令ID 枯萎精髓(十胜石雕像)"
+        },
+        {
+            "value": 852546,
+            "descript": "技能命令ID 激活枯萎精髓(十胜石雕像)"
+        },
+        {
+            "value": 852547,
+            "descript": "技能命令ID 取消枯萎精髓激活状态(十胜石雕像)"
+        },
+        {
+            "value": 852548,
+            "descript": "技能命令ID 灵魂触摸(十胜石雕像)"
+        },
+        {
+            "value": 852549,
+            "descript": "技能命令ID 激活灵魂触摸(十胜石雕像)"
+        },
+        {
+            "value": 852550,
+            "descript": "技能命令ID 取消灵魂触摸激活状态(十胜石雕像)"
+        },
+        {
+            "value": 852551,
+            "descript": "技能命令ID 腐尸甲虫(指定单位)"
+        },
+        {
+            "value": 852552,
+            "descript": "技能命令ID 激活腐尸甲虫"
+        },
+        {
+            "value": 852553,
+            "descript": "技能命令ID 取消腐尸甲虫激活状态"
+        },
+        {
+            "value": 852554,
+            "descript": "技能命令ID 召唤腐尸甲虫(无目标)"
+        },
+        {
+            "value": 852555,
+            "descript": "技能命令ID 穿刺(地穴领主)"
+        },
+        {
+            "value": 852556,
+            "descript": "技能命令ID 蝗虫群"
+        },
+        {
+            "value": 852195,
+            "descript": "技能命令ID 冰冻喷吐"
+        },
+        {
+            "value": 852562,
+            "descript": "技能命令ID 激活狂热"
+        },
+        {
+            "value": 852563,
+            "descript": "技能命令ID 取消狂热激活状态"
+        },
+        {
+            "value": 852232,
+            "descript": "技能命令ID 地狱火"
+        },
+        {
+            "value": 852215,
+            "descript": "技能命令ID 邪恶光环"
+        },
+        {
+            "value": 852216,
+            "descript": "技能命令ID 吸血光环"
+        },
+        {
+            "value": 852466,
+            "descript": "技能命令ID 唤醒"
+        },
+        {
+            "value": 852187,
+            "descript": "技能命令ID 荒芜(荒芜之地)"
+        },
+        {
+            "value": 852675,
+            "descript": "技能命令ID 邪恶狂潮"
+        },
+        {
+            "value": 852677,
+            "descript": "技能命令ID 优先攻击(石像鬼)"
+        },
+        {
+            "value": 851996,
+            "descript": "技能命令ID 兽族建筑菜单"
+        },
+        {
+            "value": 852024,
+            "descript": "技能命令ID 修理(人族、兽族、娜迦族、达拉内尔族(破碎者))"
+        },
+        {
+            "value": 852025,
+            "descript": "技能命令ID 激活修理(人族、兽族、娜迦族、达拉内尔族(破碎者))"
+        },
+        {
+            "value": 852026,
+            "descript": "技能命令ID 取消修理激活状态(人族、兽族、娜迦族、达拉内尔族(破碎者))"
+        },
+        {
+            "value": 852099,
+            "descript": "技能命令ID 战斗警备(兽族地洞)"
+        },
+        {
+            "value": 852100,
+            "descript": "技能命令ID 狂战士"
+        },
+        {
+            "value": 852101,
+            "descript": "技能命令ID 嗜血术"
+        },
+        {
+            "value": 852102,
+            "descript": "技能命令ID 激活嗜血术"
+        },
+        {
+            "value": 852103,
+            "descript": "技能命令ID 取消嗜血术激活状态"
+        },
+        {
+            "value": 852104,
+            "descript": "技能命令ID 吞噬(科多兽等)"
+        },
+        {
+            "value": 852105,
+            "descript": "技能命令ID 岗哨守卫"
+        },
+        {
+            "value": 852106,
+            "descript": "技能命令ID 诱捕(网,非蛛网)"
+        },
+        {
+            "value": 852108,
+            "descript": "技能命令ID 激活诱捕(网,非蛛网)"
+        },
+        {
+            "value": 852107,
+            "descript": "技能命令ID 取消诱捕激活状态(网,非蛛网)"
+        },
+        {
+            "value": 852109,
+            "descript": "技能命令ID 治疗守卫"
+        },
+        {
+            "value": 852110,
+            "descript": "技能命令ID 闪电护盾"
+        },
+        {
+            "value": 852113,
+            "descript": "技能命令ID 卸载苦工(兽族地洞)"
+        },
+        {
+            "value": 852114,
+            "descript": "技能命令ID 静止陷阱"
+        },
+        {
+            "value": 852115,
+            "descript": "技能命令ID 浸毒武器"
+        },
+        {
+            "value": 852116,
+            "descript": "技能命令ID 粉碎(牛头人)"
+        },
+        {
+            "value": 852117,
+            "descript": "技能命令ID 命令光环"
+        },
+        {
+            "value": 852118,
+            "descript": "技能命令ID 耐久光环"
+        },
+        {
+            "value": 852119,
+            "descript": "技能命令ID 闪电链"
+        },
+        {
+            "value": 852120,
+            "descript": "技能命令ID 致命一击"
+        },
+        {
+            "value": 852121,
+            "descript": "技能命令ID 地震(先知)"
+        },
+        {
+            "value": 852122,
+            "descript": "技能命令ID 远视(先知)"
+        },
+        {
+            "value": 852123,
+            "descript": "技能命令ID 镜像"
+        },
+        {
+            "value": 852124,
+            "descript": "技能命令ID 重生"
+        },
+        {
+            "value": 852125,
+            "descript": "技能命令ID 震荡波"
+        },
+        {
+            "value": 852126,
+            "descript": "技能命令ID 野兽幽魂"
+        },
+        {
+            "value": 852127,
+            "descript": "技能命令ID 战争践踏"
+        },
+        {
+            "value": 852128,
+            "descript": "技能命令ID 剑刃风暴"
+        },
+        {
+            "value": 852129,
+            "descript": "技能命令ID 疾风步"
+        },
+        {
+            "value": 852130,
+            "descript": "技能命令ID 取消疾风步"
+        },
+        {
+            "value": 852490,
+            "descript": "技能命令ID 先祖幽灵"
+        },
+        {
+            "value": 852491,
+            "descript": "技能命令ID 先祖幽灵(目标)"
+        },
+        {
+            "value": 852492,
+            "descript": "技能命令ID 燃烧之油"
+        },
+        {
+            "value": 852494,
+            "descript": "技能命令ID 虚无状态(白牛转换形态技能)"
+        },
+        {
+            "value": 852493,
+            "descript": "技能命令ID 灵肉状态(白牛转换形态技能)"
+        },
+        {
+            "value": 852496,
+            "descript": "技能命令ID 激活幽魂(可见)"
+        },
+        {
+            "value": 852497,
+            "descript": "技能命令ID 取消幽魂(可见)"
+        },
+        {
+            "value": 852498,
+            "descript": "技能命令ID 火油瓶"
+        },
+        {
+            "value": 852495,
+            "descript": "技能命令ID 消魔(白牛)"
+        },
+        {
+            "value": 852098,
+            "descript": "技能命令ID 战鼓"
+        },
+        {
+            "value": 852499,
+            "descript": "技能命令ID 灵魂链接"
+        },
+        {
+            "value": 852500,
+            "descript": "技能命令ID 不稳定化合物(自爆蝙蝠)"
+        },
+        {
+            "value": 852501,
+            "descript": "技能命令ID 医疗波"
+        },
+        {
+            "value": 852502,
+            "descript": "技能命令ID 妖术"
+        },
+        {
+            "value": 852503,
+            "descript": "技能命令ID 巫毒狂舞(暗影猎手)"
+        },
+        {
+            "value": 854299,
+            "descript": "技能命令ID 灵魂锁链"
+        },
+        {
+            "value": 852235,
+            "descript": "技能命令ID 监视(岗哨守卫)(spies)"
+        },
+        {
+            "value": 852236,
+            "descript": "技能命令ID 永久献祭"
+        },
+        {
+            "value": 852573,
+            "descript": "技能命令ID 召唤猎头者(物品技能)(spirittroll)"
+        },
+        {
+            "value": 851995,
+            "descript": "技能命令ID 人族建筑菜单"
+        },
+        {
+            "value": 852673,
+            "descript": "技能命令ID 可能与人族建造有关"
+        },
+        {
+            "value": 852055,
+            "descript": "技能命令ID 激活防御"
+        },
+        {
+            "value": 852056,
+            "descript": "技能命令ID 取消防御激活状态"
+        },
+        {
+            "value": 852057,
+            "descript": "技能命令ID 驱散(人族牧师)"
+        },
+        {
+            "value": 852060,
+            "descript": "技能命令ID 照明弹"
+        },
+        {
+            "value": 852061,
+            "descript": "技能命令ID 飞行器炸弹(矮人直升机)"
+        },
+        {
+            "value": 852062,
+            "descript": "技能命令ID 探测器/反隐(矮人直升机)"
+        },
+        {
+            "value": 852063,
+            "descript": "技能命令ID 治疗(人族牧师)"
+        },
+        {
+            "value": 852064,
+            "descript": "技能命令ID 激活治疗(人族牧师)"
+        },
+        {
+            "value": 852065,
+            "descript": "技能命令ID 取消治疗激活状态(人族牧师)"
+        },
+        {
+            "value": 852066,
+            "descript": "技能命令ID 心灵之火(人族牧师)"
+        },
+        {
+            "value": 852067,
+            "descript": "技能命令ID 激活心灵之火(人族牧师)"
+        },
+        {
+            "value": 852068,
+            "descript": "技能命令ID 取消心灵之火激活状态(人族牧师)"
+        },
+        {
+            "value": 852069,
+            "descript": "技能命令ID 隐形术(人族女巫)"
+        },
+        {
+            "value": 852070,
+            "descript": "技能命令ID 探测/反隐(魔法岗哨)"
+        },
+        {
+            "value": 852072,
+            "descript": "技能命令ID 战斗号召(人族民兵)"
+        },
+        {
+            "value": 852073,
+            "descript": "技能命令ID 返回工作(人族民兵)"
+        },
+        {
+            "value": 852082,
+            "descript": "技能命令ID 战斗号召(城镇大厅)(townbellon)"
+        },
+        {
+            "value": 852083,
+            "descript": "技能命令ID 返回工作(城镇大厅)(townbelloff)"
+        },
+        {
+            "value": 852071,
+            "descript": "技能命令ID 农民转换成民兵"
+        },
+        {
+            "value": 852651,
+            "descript": "技能命令ID 民兵转换成农民"
+        },
+        {
+            "value": 852074,
+            "descript": "技能命令ID 变形术(人族女巫)"
+        },
+        {
+            "value": 852075,
+            "descript": "技能命令ID 减速(人族女巫)"
+        },
+        {
+            "value": 852076,
+            "descript": "技能命令ID 激活减速(人族女巫)"
+        },
+        {
+            "value": 852077,
+            "descript": "技能命令ID 取消减速激活状态(人族女巫)"
+        },
+        {
+            "value": 852078,
+            "descript": "技能命令ID 风暴战锤(狮鹫骑士)"
+        },
+        {
+            "value": 852084,
+            "descript": "技能命令ID 辉煌光环(大法师)"
+        },
+        {
+            "value": 852085,
+            "descript": "技能命令ID 专注光环(圣骑士)"
+        },
+        {
+            "value": 852086,
+            "descript": "技能命令ID 天神下凡"
+        },
+        {
+            "value": 852087,
+            "descript": "技能命令ID 取消天神下凡"
+        },
+        {
+            "value": 852088,
+            "descript": "技能命令ID 猛击(山丘之王)"
+        },
+        {
+            "value": 852089,
+            "descript": "技能命令ID 暴风雪(大法师)"
+        },
+        {
+            "value": 852090,
+            "descript": "技能命令ID 激活神圣护甲"
+        },
+        {
+            "value": 852091,
+            "descript": "技能命令ID 取消神圣护甲激活状态"
+        },
+        {
+            "value": 852092,
+            "descript": "技能命令ID 神圣之光"
+        },
+        {
+            "value": 852094,
+            "descript": "技能命令ID 复活(圣骑士)"
+        },
+        {
+            "value": 852095,
+            "descript": "技能命令ID 风暴之锤"
+        },
+        {
+            "value": 852096,
+            "descript": "技能命令ID 雷霆一击"
+        },
+        {
+            "value": 852097,
+            "descript": "技能命令ID(召唤)水元素"
+        },
+        {
+            "value": 852474,
+            "descript": "技能命令ID 控制魔法"
+        },
+        {
+            "value": 852475,
+            "descript": "技能命令ID 反噬(魔法破坏者)"
+        },
+        {
+            "value": 852476,
+            "descript": "技能命令ID 高射炮火"
+        },
+        {
+            "value": 852477,
+            "descript": "技能命令ID 碎片攻击"
+        },
+        {
+            "value": 852478,
+            "descript": "技能命令ID 激活魔法防御"
+        },
+        {
+            "value": 852479,
+            "descript": "技能命令ID 取消魔法防御激活状态"
+        },
+        {
+            "value": 852480,
+            "descript": "技能命令ID 空中锁镣"
+        },
+        {
+            "value": 852481,
+            "descript": "技能命令ID 凤凰烈焰(飞行单位)"
+        },
+        {
+            "value": 852482,
+            "descript": "技能命令ID 凤凰转换形态"
+        },
+        {
+            "value": 852489,
+            "descript": "技能命令ID 召唤凤凰"
+        },
+        {
+            "value": 852483,
+            "descript": "技能命令ID 魔法盗取"
+        },
+        {
+            "value": 852484,
+            "descript": "技能命令ID 激活魔法盗取"
+        },
+        {
+            "value": 852485,
+            "descript": "技能命令ID 取消魔法盗取激活状态"
+        },
+        {
+            "value": 852486,
+            "descript": "技能命令ID 放逐(血法)"
+        },
+        {
+            "value": 852488,
+            "descript": "技能命令ID 烈焰风暴"
+        },
+        {
+            "value": 852015,
+            "descript": "技能命令ID 显示/探测(detectaoe)"
+        },
+        {
+            "value": 852016,
+            "descript": "技能命令ID 毒药攻击(poison attack)"
+        },
+        {
+            "value": 852079,
+            "descript": "技能命令ID 卸载驾驶员(坦克)(tankdroppilot)"
+        },
+        {
+            "value": 852080,
+            "descript": "技能命令ID 装载驾驶员(坦克)(tankloadpilot)"
+        },
+        {
+            "value": 852081,
+            "descript": "技能命令ID 驾驶员(坦克)(tankpilot)"
+        },
+        {
+            "value": 852472,
+            "descript": "技能命令ID 弹幕攻击"
+        },
+        {
+            "value": 852280,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 851992,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852014,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852045,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852168,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852468,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852058,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852059,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 851989,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852291,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852292,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852293,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852294,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852295,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852296,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852297,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852298,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852299,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852300,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852301,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852302,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852303,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852304,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852305,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852306,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852307,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852308,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852309,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852310,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852311,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852312,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852313,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852314,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852315,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852316,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852317,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852318,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852319,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852320,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852321,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852322,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852323,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852324,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852325,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852326,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852327,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852328,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852329,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852330,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852331,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852332,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852333,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852334,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852335,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852336,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852337,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852338,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852339,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852340,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852341,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852342,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852343,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852344,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852345,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852346,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852347,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852348,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852349,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852350,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852351,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852352,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852353,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852354,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852355,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852356,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852357,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852358,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852359,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852360,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852361,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852362,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852363,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852364,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852365,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852366,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852367,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852368,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852369,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852370,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852371,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852372,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852373,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852374,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852375,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852376,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852377,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852378,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852379,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852380,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852381,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852382,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852383,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852384,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852385,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852386,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852387,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852388,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852389,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852390,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852391,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852392,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852393,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852394,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852395,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852396,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852397,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852398,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852399,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852400,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852401,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852402,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852403,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852404,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852405,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852406,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852407,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852408,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852409,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852410,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852411,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852412,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852413,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852414,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852415,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852416,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852417,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852418,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852419,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852420,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852421,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852422,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852423,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852424,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852425,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852426,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852427,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852428,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852429,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852430,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852431,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852432,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852433,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852434,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852435,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852436,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852437,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852438,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852439,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852440,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852441,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852442,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852443,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852444,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852445,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852446,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852447,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852448,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852449,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852450,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852451,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852452,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852453,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852454,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852455,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852456,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852457,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852617,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852620,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852626,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852631,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852632,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852633,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852634,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852635,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852636,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852637,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852638,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852639,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852640,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852641,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852642,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852643,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852644,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852645,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852646,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852647,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852648,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852649,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852650,
+            "descript": "技能命令ID 未知"
+        },
+        {
+            "value": 852650,
+            "descript": "技能命令ID 未知"
+        }
+    ]
+}

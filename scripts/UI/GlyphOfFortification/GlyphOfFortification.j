@@ -29,7 +29,7 @@ library GlyphOfFortification
         endmethod
         
         private static method onInit takes nothing returns nothing
-
+            local trigger trig = 
         endmethod
 
     endstruct
