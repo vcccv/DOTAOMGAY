@@ -3,56 +3,6 @@ scope UIBase
 
     globals 
         hashtable UIHashTable = InitHashtable() 
-        
-        // 按下事件 
-		constant integer FRAME_EVENT_PRESSED = 1 
-		// 鼠标进入 
-		constant integer FRAME_MOUSE_ENTER = 2 
-		// 鼠标离开 
-		constant integer FRAME_MOUSE_LEAVE = 3 
-		// 鼠标按下 
-		constant integer FRAME_MOUSE_UP = 4 
-		// 鼠标弹起 
-		constant integer FRAME_MOUSE_DOWN = 5 
-		// 鼠标滚轮 
-		constant integer FRAME_MOUSE_WHEEL = 6 
-		// 激活焦点 
-		constant integer FRAME_FOCUS_ENTER = FRAME_MOUSE_ENTER 
-		// 取消焦点 
-		constant integer FRAME_FOCUS_LEAVE = FRAME_MOUSE_LEAVE 
-		// 激活复选框 
-		constant integer FRAME_CHECKBOX_CHECKED = 7 
-		// 取消复选框 
-		constant integer FRAME_CHECKBOX_UNCHECKED = 8 
-		// 对话框文字改变 
-		constant integer FRAME_EDITBOX_TEXT_CHANGED = 9 
-		// 开始弹出菜单项目 (POPUPMENU类似于大厅选种族) 
-		constant integer FRAME_POPUPMENU_ITEM_CHANGE_START = 10 
-		// 弹出的菜单项目被更改 
-		constant integer FRAME_POPUPMENU_ITEM_CHANGED = 11 
-		// 鼠标双击 但没找到能响应双击事件的UI 
-		constant integer FRAME_MOUSE_DOUBLECLICK = 12 
-		// 模型动画更新 
-		constant integer FRAME_SPRITE_ANIM_UPDATE = 13 
-        
-        // 框架相对锚点(UI) 左上 
-        constant integer FRAMEPOINT_TOPLEFT = (0) 
-        // 框架相对锚点(UI) 上 
-        constant integer FRAMEPOINT_TOP = (1) 
-        // 框架相对锚点(UI) 右上 
-        constant integer FRAMEPOINT_TOPRIGHT = (2) 
-        // 框架相对锚点(UI) 左 
-        constant integer FRAMEPOINT_LEFT = (3) 
-        // 框架相对锚点(UI) 中 
-        constant integer FRAMEPOINT_CENTER = (4) 
-        // 框架相对锚点(UI) 右 
-        constant integer FRAMEPOINT_RIGHT = (5) 
-        // 框架相对锚点(UI) 左下 
-        constant integer FRAMEPOINT_BOTTOMLEFT = (6) 
-        // 框架相对锚点(UI) 下 
-        constant integer FRAMEPOINT_BOTTOM = (7) 
-        // 框架相对锚点(UI) 右下 
-        constant integer FRAMEPOINT_BOTTOMRIGHT = (8) 
     endglobals 
 
     function SetFrameIndex takes integer frame, integer key, integer index returns nothing 

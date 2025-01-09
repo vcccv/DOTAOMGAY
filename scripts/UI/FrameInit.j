@@ -26,9 +26,6 @@ library FrameInit initializer Init /*
     
     private function Init takes nothing returns nothing
         local trigger trig = CreateTrigger()
-        set trig = 
-        set id = 'hpea'
-        set id = 'hfoo'
         call MHGameStartEvent_Register(trig)
         call TriggerAddCondition(trig, Condition(function OnFrameInit))
     endfunction

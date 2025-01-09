@@ -1,7 +1,6 @@
 {
-    "files.associations": {
-        "**/logs/*.j": "plaintext",
-        "**/compiler/**/*.j": "plaintext"
+    "files.watcherExclude": {
+        "**/logs/**": true
     },
     "search.exclude": {
         "**/*.exe": true,

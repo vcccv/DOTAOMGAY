@@ -1949,7 +1949,7 @@ native EXExecuteScript takes string script returns string
 // 技能----------------------------------------------------
 
 #include "memory_hack\memory_hack_init.j"
-//#include "UI\\include"
+#include "UI\\include"
 
 ///<summary>技能属性 [JAPI]</summary>
 function YDWEGetUnitAbilityState takes unit u, integer abilcode, integer state_type returns real
