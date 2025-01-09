@@ -1,0 +1,59 @@
+{
+    "version": "2.0.0",
+    "type": "shell",
+    "tasks": [
+        {
+            "label": "compile",
+            "type": "shell",
+            "command": "${workspaceRoot}/lua53",
+            "args": [
+                "${workspaceRoot}/compiler/scripts/init.lua",
+                "script",
+                "--jasshelper",
+                "--jasshelper_optimization",
+            ],
+        },
+        {
+            "label": "compile(debug)",
+            "type": "shell",
+            "command": "${workspaceRoot}/lua53",
+            "args": [
+                "${workspaceRoot}/compiler/scripts/init.lua",
+                "script",
+                "--jasshelper",
+                "--debug",
+            ],
+        },
+        {
+            "label": "test",
+            "type": "shell",
+            "command": "${workspaceRoot}/lua53",
+            "args": [
+                "${workspaceRoot}/save/init.lua",
+                "test",
+                "--jasshelper",
+                "--jasshelper_optimization",
+                "--jasshelper_no_scriptonly"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "test(debug)",
+            "type": "shell",
+            "command": "${workspaceRoot}/lua53",
+            "args": [
+                "${workspaceRoot}/save/init.lua",
+                "test",
+                "--jasshelper",
+                "--debug",
+                "--jasshelper_no_scriptonly"
+            ],
+            "group": {
+                "kind": "build",
+            }
+        }
+    ]
+}

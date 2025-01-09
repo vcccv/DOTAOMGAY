@@ -1,0 +1,25 @@
+
+
+IncludeFile "UI\FrameDef\UI\EscMenuTemplates.fdf",
+
+Frame "EDITBOX" "HotKeyEditBox__Template" 
+{
+    Width 0.03,
+    Height 0.03,
+    EditBorderSize 0.007,
+    EditCursorColor 1.0 1.0 1.0,
+    ControlBackdrop "HotKeyEditBoxBack__Template",
+    // EditSetFocus,
+    EditMaxChars 1, 
+    EditTextOffset 0.0035f 0.,
+    Frame "BACKDROP" "HotKeyEditBoxBack__Template" {
+        BackdropTileBackground,
+        BackdropBackground  "UI\Widgets\BattleNet\bnet-inputbox-back.blp",
+        BackdropCornerFlags "UL|UR|BL|BR|T|L|B|R",
+        BackdropCornerSize  0.016,
+        BackdropBackgroundInsets 0.004 0.004 0.004 0.004,
+        BackdropEdgeFile  "UI\Widgets\BattleNet\bnet-inputbox-border.blp",
+        BackdropBlendAll,
+    }
+}
+
