@@ -1,6 +1,10 @@
 local compiler = require "compiler.scripts"
 
 local function init()
+    local folder_path = "temp"
+    if not folder_exists(folder_path) then
+        os.execute("mkdir " .. folder_path)
+    end
     copy_file("war3map.w3x", "temp\\war3map.w3x")
 
     compiler:compile("scripts")

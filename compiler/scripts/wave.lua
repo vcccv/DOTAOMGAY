@@ -36,15 +36,21 @@ function wave:do_compile(op)
     local suc, exitcode, code = file:close()
 
     -- 打开文件以读取内容
-    local file = io.open(op.output, "r")
+    file = io.open(op.output, "r")
+    if not file then
+        return false
+    end
     local content = file:read("a")
     file:close()
 
     -- 使用 string.gsub 替换 YDNL 为换行符
-    content, count = content:gsub("YDNL", "\n")
+    local content, count = content:gsub("YDNL", "\n")
 
     -- 重新打开文件以写入修改后的内容
     file = io.open(op.output, "w")
+    if not file then
+        return false
+    end
     file:write(content)
     file:close()
 

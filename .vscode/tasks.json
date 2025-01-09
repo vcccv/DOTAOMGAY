@@ -5,54 +5,55 @@
         {
             "label": "compile",
             "type": "shell",
-            "command": "${workspaceRoot}/lua53",
+            "command": "${workspaceFolder}/lua53",
             "args": [
-                "${workspaceRoot}/compiler/scripts/init.lua",
+                "${workspaceFolder}/compiler/scripts/init.lua",
                 "script",
                 "--jasshelper",
-                "--jasshelper_optimization",
-            ],
+                "--jasshelper_optimization"
+            ]
         },
         {
             "label": "compile(debug)",
             "type": "shell",
-            "command": "${workspaceRoot}/lua53",
+            "command": "${workspaceFolder}/lua53",
             "args": [
-                "${workspaceRoot}/compiler/scripts/init.lua",
+                "${workspaceFolder}/compiler/scripts/init.lua",
                 "script",
                 "--jasshelper",
-                "--debug",
-            ],
+                "--debug"
+            ]
         },
         {
             "label": "test",
             "type": "shell",
-            "command": "${workspaceRoot}/lua53",
+            "command": "${workspaceFolder}/lua53",
             "args": [
-                "${workspaceRoot}/save/init.lua",
+                "${workspaceFolder}/save/init.lua",
                 "test",
                 "--jasshelper",
                 "--jasshelper_optimization",
                 "--jasshelper_no_scriptonly"
             ],
             "group": {
-                "kind": "build",
+                "kind": "test",
                 "isDefault": true
             }
         },
         {
             "label": "test(debug)",
             "type": "shell",
-            "command": "${workspaceRoot}/lua53",
+            "command": "${workspaceFolder}/lua53",
             "args": [
-                "${workspaceRoot}/save/init.lua",
+                "${workspaceFolder}/save/init.lua",
                 "test",
                 "--jasshelper",
                 "--debug",
                 "--jasshelper_no_scriptonly"
             ],
             "group": {
-                "kind": "build",
+                "kind": "test",
+                "isDefault": false
             }
         }
     ]

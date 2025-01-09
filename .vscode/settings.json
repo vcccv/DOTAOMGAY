@@ -1,15 +1,19 @@
 {
-    "search.exclude": {      
+    "files.associations": {
+        "**/logs/*.j": "plaintext",
+        "**/compiler/**/*.j": "plaintext"
+    },
+    "search.exclude": {
         "**/*.exe": true,
-        "**/*.dll": true,   
-        "**/backups": true,
-        "**/logs": true,
-        "**/bin": true,
-        "**/plugin": true,
-        "**/compiler": true,
-        "**/save": true,
-        "**/temp": true,
-        "**/tiara.ai": true, 
+        "**/*.dll": true,
+        "backups": true,
+        "logs": true,
+        "bin": true,
+        "plugin": true,
+        "compiler": true,
+        "save": true,
+        "temp": true,
+        "**/tiara.ai": true,
         "**/tiara.blp": true,
         "**/jasshelper.conf": true,
         "**/*.w3x": true,
@@ -17,17 +21,18 @@
     "files.exclude": {
         "**/*.exe": true,
         "**/*.dll": true,
-        "**/backups": true,
-        "**/logs": true,
-        "**/bin": true,
-        "**/plugin": true,
-        "**/compiler": true,
-        "**/save": true,
-        "**/temp": true,
-        "**/tiara.ai": true, 
-        "**/tiara.blp": true, 
+        "backups": true,
+        "logs": true,
+        "bin": true,
+        "plugin": true,
+        "compiler": true,
+        "save": true,
+        "temp": true,
+        "**/tiara.ai": true,
+        "**/tiara.blp": true,
         "**/jasshelper.conf": true,
         "**/*.w3x": true,
     },
-    "terminal.integrated.defaultProfile.windows": "Command Prompt"
+    "terminal.integrated.defaultProfile.windows": "Command Prompt",
+    "jass.support.zinc": false
 }

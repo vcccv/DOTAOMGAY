@@ -19,6 +19,17 @@ function copy_file(src, dest)
 
     return true -- 文件复制成功
 end
+---@diagnostic disable-next-line: lowercase-global
+function folder_exists(path)
+    local command = 'dir "'..path..'" /b'
+    local file = io.popen(command)
+    if not file then
+        return false
+    end
+    local result = file:read("*a")  -- 读取所有输出
+    file:close()
+    return result ~= ""
+end
 
 ---@diagnostic disable-next-line: lowercase-global
 function has_arg(arg, target)
@@ -80,7 +91,7 @@ function compiler:compile(map_path)
             end
             compile_t.input = compile_t.output
 
-            collectgarbage 'collect'
+            --collectgarbage 'collect'
 
             compile_t.input = compile_t.output
             compile_t.output = compile_t.log .. "\\3_vjass.j"
@@ -90,6 +101,11 @@ function compiler:compile(map_path)
             return compile_t.output
         end
     )
+end
+
+local folder_path = "logs"
+if not folder_exists(folder_path) then
+    os.execute("mkdir " .. folder_path)
 end
 
 if arg[1] == "script" then

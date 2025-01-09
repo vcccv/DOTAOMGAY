@@ -1949,6 +1949,7 @@ native EXExecuteScript takes string script returns string
 // 技能----------------------------------------------------
 
 #include "memory_hack\memory_hack_init.j"
+//#include "UI\\include"
 
 ///<summary>技能属性 [JAPI]</summary>
 function YDWEGetUnitAbilityState takes unit u, integer abilcode, integer state_type returns real
@@ -5463,7 +5464,7 @@ function CleanCurrentTrigger takes trigger t returns nothing
 endfunction
 
 
-#include "System\UnitData\UnitData.j"
+#include "Map\UnitData\UnitData.j"
 
 
 function ENX takes integer i returns nothing
@@ -89494,7 +89495,7 @@ function InitTaverns takes nothing returns nothing
 endfunction
 
 #include "base\\GameEnd.j"
-#include "System\\Structures\\Structures.j"
+#include "Map\\Structures\\Structures.j"
 
 function AHC takes boolean b returns nothing
 	local real a = 0.0
@@ -90609,7 +90610,7 @@ function DoubleClickSkill__Init takes nothing returns nothing
 	call AddDoubleClickSkillID('A471') // A杖自爆
 endfunction
 
-#include "System\\Frame\UIMain.j"
+#include "Map\\Frame\UIMain.j"
 
 function Init_ExtraTriggers takes nothing returns nothing
 	local integer i
@@ -91141,8 +91142,6 @@ function main takes nothing returns nothing
 	call MHUI_DrawMoveSpeed(true)
 	call MHDrawCooldown_Initialize()
 	call MHDrawCooldown_SetDivide(1.)
-	//call MHDebug_SetJassLogLevel(JASS_LOG_LEVEL_FUNCTION)
-	//call MHDebug_EnableCrashReport()
 
 	set LocalPlayer   = GetLocalPlayer()
 	set LocalPlayerId = GetPlayerId(LocalPlayer)
