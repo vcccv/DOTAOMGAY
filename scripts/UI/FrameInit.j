@@ -19,7 +19,7 @@ library FrameInit initializer Init /*
             call DisableResourceTradingFrame()
         endif
         
-        static if LIBRARY_GlyphButton then
+        static if LIBRARY_GlyphOfFortification then
             call Glyph.InitUI()
         endif
     endfunction

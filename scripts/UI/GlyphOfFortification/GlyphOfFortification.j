@@ -14,11 +14,11 @@ library GlyphOfFortification
         endmethod
 
         static method InitUI takes nothing returns nothing
-            local Frame gameUI = Frame.GetOriginFrame(ORIGIN_FRAME_GAME_UI, 0)
-            //local Frame parent = Frame.GetOriginFrame(ORIGIN_FRAME_MINIMAP_BUTTON, 0).GetParent()
-            
-            set thistype.Button   = gameUI.CreateFrameByType("BUTTON", "GlyphOfFortificationButton", "", 0)
-            set thistype.Backdrop = thistype.Button.CreateFrameByType("BACKDROP", "GlyphOfFortificationButton", "", 0)
+            //local Frame gameUI = Frame.GetOriginFrame(ORIGIN_FRAME_GAME_UI, 0)
+            local Frame minimapButtonBar = Frame.GetOriginFrame(ORIGIN_FRAME_MINIMAP_BUTTON, 0).GetParent()
+            call DzLoadToc("UI\\path.toc")
+            set thistype.Button   = minimapButtonBar.CreateFrame("GlyphButton", 0, 0)
+            set thistype.Backdrop = Frame.GetFrameByName("GlyphTexture", 0)
     
             call thistype.Backdrop.SetPoint(FRAMEPOINT_CENTER, thistype.Button, FRAMEPOINT_CENTER, 0., 0.)
             call thistype.Button.SetSize(0.0245, 0.0245)
@@ -27,8 +27,16 @@ library GlyphOfFortification
             call thistype.Button.RegisterLocalScript(FRAMEEVENT_CONTROL_CLICK, SCOPE_PRIVATE + "OnButtonUp")
             call thistype.Button.SetPushedOffset(thistype.Backdrop)
             
-            //call thistype.Button.SetPoint(FRAMEPOINT_TOPLEFT, parent, FRAMEPOINT_BOTTOMLEFT, 0.154, 0.06)
-            //call thistype.Backdrop.SetTexture("ReplaceableTextures\\CommandButtons\\BTNGlyph.blp", 0, false)
+            call BJDebugMsg("thistype.Button:" + I2S(thistype.Button) + " ptr:" + I2S(thistype.Button.GetPtr()))
+            call BJDebugMsg("thistype.Backdrop:" + I2S(thistype.Backdrop) + " ptr:" + I2S(thistype.Backdrop.GetPtr()))
+
+            call BJDebugMsg("minimapButtonBar:" + I2S(minimapButtonBar) + " ptr:" + I2S(minimapButtonBar.GetPtr()))
+            //call thistype.Button.SetAbsPoint(FRAMEPOINT_CENTER, 0.4, 0.3)
+
+            call thistype.Button.SetPoint(FRAMEPOINT_TOPLEFT, minimapButtonBar, FRAMEPOINT_BOTTOMLEFT, 0.154, 0.122)
+            call thistype.Backdrop.SetTexture("ReplaceableTextures\\CommandButtons\\BTNGlyph.blp", 0, false)
+
+            call BJDebugMsg("InitUI")
         endmethod
 
         static method OnTest takes nothing returns nothing
@@ -38,10 +46,12 @@ library GlyphOfFortification
             call f.DebugPoint()
 
             set f = Frame.GetOriginFrame(ORIGIN_FRAME_MINIMAP_BUTTON, 1)
-
             call f.DebugPoint()
 
-            //call BJDebugMsg("ORIGIN_FRAME_MINIMAP:" + MHMath_ToHex(Frame.GetOriginFrame(ORIGIN_FRAME_MINIMAP, 0).GetPtr()))
+            set f = Frame.GetOriginFrame(ORIGIN_FRAME_MINIMAP_BUTTON, 4)
+            call f.DebugPoint()
+
+            call BJDebugMsg("ORIGIN_FRAME_MINIMAP:" + MHMath_ToHex(Frame.GetOriginFrame(ORIGIN_FRAME_MINIMAP, 0).GetPtr()))
         endmethod
         
         private static method onInit takes nothing returns nothing

@@ -21,7 +21,7 @@
                 "${workspaceFolder}/compiler/scripts/init.lua",
                 "script",
                 "--jasshelper",
-                "--debug"
+                "--jasshelper_debug"
             ]
         },
         {
@@ -48,7 +48,7 @@
                 "${workspaceFolder}/save/init.lua",
                 "test",
                 "--jasshelper",
-                "--debug",
+                "--jasshelper_debug",
                 "--jasshelper_no_scriptonly"
             ],
             "group": {
