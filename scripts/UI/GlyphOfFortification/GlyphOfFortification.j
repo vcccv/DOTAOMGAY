@@ -15,7 +15,7 @@ library GlyphOfFortification
             local Frame f = Frame.GetTriggerFrame()
 
             if MHMsg_IsKeyDown(OSKEY_ALT) then
-                
+                call PlayerChat.SendChatToAll("冷却中", CHAT_CHANNEL_ALLY)
                 return false
             endif
             
