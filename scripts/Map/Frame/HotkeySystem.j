@@ -124,7 +124,7 @@ scope HotkeySystem
             call DzFrameSetAbsolutePoint(HotKeyMenuButtons[index], FRAMEPOINT_CENTER, 0.47 + xOffSet * row, 0.490 + yOffSet * column)
             call DzFrameSetSize(HotKeyMenuButtons[index], size, size)
             
-            call DzFrameSetScriptByCode(HotKeyMenuButtons[index], FRAME_EVENT_PRESSED, function ClickHotKeyMenuButtonsActions, false)
+            call DzFrameSetScriptByCode(HotKeyMenuButtons[index], FRAMEEVENT_CONTROL_CLICK, function ClickHotKeyMenuButtonsActions, false)
             exitwhen index == 12
             set index = index + 1
         endloop
@@ -147,7 +147,7 @@ scope HotkeySystem
             call DzFrameSetAbsolutePoint(HotKeyMenuButtons[index], FRAMEPOINT_CENTER, 0.47 + xOffSet * row, 0.37 + yOffSet * column)
             call DzFrameSetSize(HotKeyMenuButtons[index], size, size)
             
-            call DzFrameSetScriptByCode(HotKeyMenuButtons[index], FRAME_EVENT_PRESSED, function ClickHotKeyMenuButtonsActions, false)
+            call DzFrameSetScriptByCode(HotKeyMenuButtons[index], FRAMEEVENT_CONTROL_CLICK, function ClickHotKeyMenuButtonsActions, false)
             exitwhen index == MAX_HOTKEY_MENU_COUNT
             set index = index + 1
         endloop

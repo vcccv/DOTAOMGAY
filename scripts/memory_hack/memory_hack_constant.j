@@ -52,8 +52,8 @@
 #define EVENT_ID_MISSILE_LAUNCH				        0x18
 #define EVENT_ID_MISSILE_HIT				        0x19
 #define EVENT_ID_SYNC						        0x1A
-#define EVENT_ID_FRAME_MOUSE_ENTER			        0x1B
-#define EVENT_ID_FRAME_MOUSE_LEAVE			        0x1C
+#define EVENT_ID_FRAMEEVENT_MOUSE_ENTER			        0x1B
+#define EVENT_ID_FRAMEEVENT_MOUSE_LEAVE			        0x1C
 #define EVENT_ID_FRAME_MOUSE_DOWN			        0x1D
 #define EVENT_ID_FRAME_MOUSE_UP			            0x1E
 #define EVENT_ID_FRAME_MOUSE_CLICK				    0x1F

@@ -169,6 +169,10 @@ library FrameSystem
             call SaveInteger(HT, ptr, 0, this)
         endmethod
 
+        method GetPtr takes nothing returns integer
+            return this.ptr
+        endmethod
+
         static method GetPtrToInstance takes integer ptr returns thistype
             local thistype this = LoadInteger(HT, ptr, 0)
 
@@ -825,20 +829,29 @@ library FrameSystem
         method DebugAbsPoint takes nothing returns nothing
             local integer i
             local string  s = ""
+            local integer c
 
             if this.ptr == 0 then
                 return
             endif
 
-            set s = s + "Parent:" + I2S(MHFrame_GetParent(this.ptr))
+            set s = s + "Parent:" + MHMath_ToHex(MHFrame_GetParent(this.ptr)) + "\n"
             set i = 0
+            set c = 0
             loop
 
-                set s = s + I2S(i) + " AbsX:" + R2S(MHFrame_GetAbsolutePointX(this.ptr, i))  + " | AbsY:" + R2S(MHFrame_GetAbsolutePointY(this.ptr, i)) + "\n"
-                
+                if MHFrame_GetAbsolutePointX(this.ptr, i) != 0. and MHFrame_GetAbsolutePointY(this.ptr, i) != 0. then
+                    set s = s + I2S(i) + " AbsX:" + R2S(MHFrame_GetAbsolutePointX(this.ptr, i))  + " | AbsY:" + R2S(MHFrame_GetAbsolutePointY(this.ptr, i)) + "\n"
+                    set c = c + 1
+                endif
+
                 exitwhen i == 9
                 set i = i + 1
             endloop
+
+            if c == 0 then
+                set s = "no abs point."
+            endif
 
             call BJDebugMsg(s)
         endmethod
@@ -846,20 +859,30 @@ library FrameSystem
         method DebugPoint takes nothing returns nothing
             local integer i
             local string  s = ""
+            local integer c
 
             if this.ptr == 0 then
                 return
             endif
 
-            set s = s + "Parent:" + I2S(MHFrame_GetParent(this.ptr))
+            set s = s + "Parent:" + MHMath_ToHex(MHFrame_GetParent(this.ptr)) + "\n"
             set i = 0
+            set c = 0
             loop
 
-                set s = s + I2S(i) + " AbsX:" + R2S(MHFrame_GetRelativePointX(this.ptr, i))  + " | AbsY:" + R2S(MHFrame_GetRelativePointY(this.ptr, i)) + "\n"
+                if MHFrame_GetRelativePoint(this.ptr, i) != 9 then
+                    set s = s + "Point" + I2S(i) + " - X:" + R2S(MHFrame_GetRelativePointX(this.ptr, i))  + " | Y:" + R2S(MHFrame_GetRelativePointY(this.ptr, i))/*
+                    */ + " TargetPoint" + I2S(MHFrame_GetRelativePoint(this.ptr, i)) + "\n"
+                    set c = c + 1
+                endif
                 
                 exitwhen i == 9
                 set i = i + 1
             endloop
+
+            if c == 0 then
+                set s = "no relative point."
+            endif
 
             call BJDebugMsg(s)
         endmethod

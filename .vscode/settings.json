@@ -1,6 +1,7 @@
 {
     "files.watcherExclude": {
-        "**/logs/**": true
+        "**/logs/**": true,
+        "**/files/**": true
     },
     "search.exclude": {
         "**/*.exe": true,

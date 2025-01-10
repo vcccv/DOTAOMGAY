@@ -72,9 +72,9 @@ constant integer EVENT_ID_MISSILE_HIT				        = 0x19
 // 事件ID：数据同步
 constant integer EVENT_ID_SYNC						        = 0x1A
 // 事件ID：鼠标进入指定Frame
-constant integer EVENT_ID_FRAME_MOUSE_ENTER			        = 0x1B
+constant integer EVENT_ID_FRAMEEVENT_MOUSE_ENTER			        = 0x1B
 // 事件ID：鼠标离开指定Frame
-constant integer EVENT_ID_FRAME_MOUSE_LEAVE			        = 0x1C
+constant integer EVENT_ID_FRAMEEVENT_MOUSE_LEAVE			        = 0x1C
 // 事件ID：鼠标按下指定Frame
 constant integer EVENT_ID_FRAME_MOUSE_DOWN			        = 0x1D
 // 事件ID：鼠标弹起指定Frame2

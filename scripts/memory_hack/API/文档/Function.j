@@ -3110,7 +3110,7 @@
 
 
     // 注册Frame事件
-    // @Tip：EVENT_ID_FRAME_MOUSE_ENTER ~ EVENT_ID_FRAME_MOUSE_DOUBLECLICK
+    // @Tip：EVENT_ID_FRAMEEVENT_MOUSE_ENTER ~ EVENT_ID_FRAME_MOUSE_DOUBLECLICK
     // 为 frame 注册 event_id
     // @param event_id：frame事件ID。EVENT_ID_FRAME
     function MHFrameEvent_Register takes trigger trig, integer frame, integer event_id returns nothing

@@ -199,8 +199,8 @@ scope CommandButtonHelper
             loop
                 exitwhen y > 2
                 set frame = DzFrameGetCommandBarButton(y, x)
-                call DzFrameSetScriptByCode(frame, FRAME_MOUSE_ENTER, function EntherCommandButtonCallback, false)
-                call DzFrameSetScriptByCode(frame, FRAME_MOUSE_LEAVE, function LeaveCommandButtonCallback, false)
+                call DzFrameSetScriptByCode(frame, FRAMEEVENT_MOUSE_ENTER, function EntherCommandButtonCallback, false)
+                call DzFrameSetScriptByCode(frame, FRAMEEVENT_MOUSE_LEAVE, function LeaveCommandButtonCallback, false)
                 set y = y + 1
             endloop
             set x = x + 1
@@ -210,7 +210,7 @@ scope CommandButtonHelper
         loop
             exitwhen x > 5
             set ItemBarButton[x] = DzFrameGetItemBarButton(x)
-            call DzFrameSetScriptByCode(ItemBarButton[x], FRAME_MOUSE_ENTER, function EntherItemCommandButtonCallback, false)
+            call DzFrameSetScriptByCode(ItemBarButton[x], FRAMEEVENT_MOUSE_ENTER, function EntherItemCommandButtonCallback, false)
             set x = x + 1
         endloop
         

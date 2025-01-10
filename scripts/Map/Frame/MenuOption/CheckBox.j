@@ -199,8 +199,8 @@ scope MenuOptionCheckBox
         set OptionCheckBoxs[id] = DzCreateFrameByTagName("GLUECHECKBOX", null, UIFrame__OrderSetup, "Setup_CheckBox", id)
         call DzFrameSetAbsolutePoint(OptionCheckBoxs[id], FRAMEPOINT_CENTER, x, y)
         call SetFrameIndex(OptionCheckBoxs[id], OPTION_CHECKBOX_INDEX, id)
-        call DzFrameSetScriptByCode(OptionCheckBoxs[id], FRAME_CHECKBOX_CHECKED  , function ClickOptionCheckBoxCallback, false)
-        call DzFrameSetScriptByCode(OptionCheckBoxs[id], FRAME_CHECKBOX_UNCHECKED, function ClickOptionCheckBoxCallback, false)
+        call DzFrameSetScriptByCode(OptionCheckBoxs[id], FRAMEEVENT_CHECKBOX_CHECKED  , function ClickOptionCheckBoxCallback, false)
+        call DzFrameSetScriptByCode(OptionCheckBoxs[id], FRAMEEVENT_CHECKBOX_UNCHECKED, function ClickOptionCheckBoxCallback, false)
 
         set OptionCheckBoxsText[id] = DzCreateFrameByTagName("TEXT", "null", OptionCheckBoxs[id], "CheckBox_Text", id)
         call DzFrameSetPoint(OptionCheckBoxsText[id], FRAMEPOINT_LEFT, OptionCheckBoxs[id], 5, 0.005, 0.0)

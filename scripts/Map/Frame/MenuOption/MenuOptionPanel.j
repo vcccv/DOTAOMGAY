@@ -138,16 +138,16 @@ scope MenuOptionPanel
         // 设置按钮 点击后会弹出EscMenuMapOptionsPanel
         set UIFrame__Button[0] = DzCreateFrame("MapSetupButton", DzFrameFindByName("InsideMainPanel", 0), 0)
         // 点击 地图设置(C)
-        call DzFrameSetScriptByCode(UIFrame__Button[0], FRAME_EVENT_PRESSED, function ClickMapSetupButton__Script, false)
+        call DzFrameSetScriptByCode(UIFrame__Button[0], FRAMEEVENT_CONTROL_CLICK, function ClickMapSetupButton__Script, false)
         // 点击 菜单按钮
-        call DzFrameSetScriptByCode(DzSimpleFrameFindByName("UpperButtonBarMenuButton", 0), FRAME_EVENT_PRESSED, function Click_MenuMainButton_Script, false)
+        call DzFrameSetScriptByCode(DzSimpleFrameFindByName("UpperButtonBarMenuButton", 0), FRAMEEVENT_CONTROL_CLICK, function Click_MenuMainButton_Script, false)
         
-        call DzFrameSetScriptByCode(MapSetupReturnButton, FRAME_EVENT_PRESSED, function ClickMapSetupReturnButton, false)
-        call DzFrameSetScriptByCode(MapSetupResetButton , FRAME_EVENT_PRESSED, function ClickMapSetupResetButton , false)
-        call DzFrameSetScriptByCode(MapSetupOKButton    , FRAME_EVENT_PRESSED, function ClickOrderSetupSaveButton, false)
+        call DzFrameSetScriptByCode(MapSetupReturnButton, FRAMEEVENT_CONTROL_CLICK, function ClickMapSetupReturnButton, false)
+        call DzFrameSetScriptByCode(MapSetupResetButton , FRAMEEVENT_CONTROL_CLICK, function ClickMapSetupResetButton , false)
+        call DzFrameSetScriptByCode(MapSetupOKButton    , FRAMEEVENT_CONTROL_CLICK, function ClickOrderSetupSaveButton, false)
 
         // 捕捉点击菜单的返回按钮
-        call DzFrameSetScriptByCode(OriginFrame_MainPanel_ReturnButton, FRAME_EVENT_PRESSED, function Click_MenuMainReturnButton_Script, false)
+        call DzFrameSetScriptByCode(OriginFrame_MainPanel_ReturnButton, FRAMEEVENT_CONTROL_CLICK, function Click_MenuMainReturnButton_Script, false)
 
         call HotkeySystem_Init()
     endfunction
