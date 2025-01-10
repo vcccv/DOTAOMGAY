@@ -1,5 +1,5 @@
 
-scope HardwareMessage
+scope HardwareMessage22
 
     // 按下ESC按键
     function EnterKey_PushOther takes nothing returns nothing
@@ -201,8 +201,9 @@ scope HardwareMessage
         endif
     endfunction
 
-    function HardwareMessage_Init takes nothing returns nothing
+    function HardwareMessage_Init222 takes nothing returns nothing
         local integer i
+        return
         set i = 65
         // A - Z 键代码 因为技能快捷键现在仅支持A - Z
         loop

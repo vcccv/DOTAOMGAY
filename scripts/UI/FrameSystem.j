@@ -192,7 +192,7 @@ library FrameSystem
             local thistype newFrame
 
             if this.ptr != 0 then
-                set newFrame = thistype.create(DzCreateFrame(name, this.ptr, createContext))// thistype.create(MHFrame_Create(name, this.ptr, priority, createContext))
+                set newFrame = thistype.create(MHFrame_Create(name, this.ptr, priority, createContext))
             else
                 debug call BJDebugMsg("CreateFrame() error \nname:" + name)
                 return 0
@@ -465,6 +465,14 @@ library FrameSystem
             call MHFrame_SetScale(this.ptr, scale)
         endmethod
 
+        method SetSpriteScale takes real scale returns nothing
+            if this.ptr == 0 then
+                return
+            endif
+
+            call MHFrame_SetSpriteScale(this.ptr, scale)
+        endmethod
+
         method CageMouse takes boolean enable returns nothing
             if this.ptr == 0 then
                 return
@@ -640,7 +648,7 @@ library FrameSystem
                     set TriggerFrame[FrameEventStackTop]  = this
                     set TriggerEvent[FrameEventStackTop]  = $EventName$
                     set TriggerPlayer[FrameEventStackTop] = GetLocalPlayer()
-                    if MHGame_ExecuteFunc($EventName$CodeName) == 0 then
+                    if MHGame_ExecuteCode(MHGame_GetCode(($EventName$CodeName))) == 0 then
                         set TriggerFrame[FrameEventStackTop]  = 0
                         set TriggerEvent[FrameEventStackTop]  = 0
                         set TriggerPlayer[FrameEventStackTop] = null
@@ -841,7 +849,7 @@ library FrameSystem
             loop
 
                 if MHFrame_GetAbsolutePointX(this.ptr, i) != 0. and MHFrame_GetAbsolutePointY(this.ptr, i) != 0. then
-                    set s = s + I2S(i) + " AbsX:" + R2S(MHFrame_GetAbsolutePointX(this.ptr, i))  + " , AbsY:" + R2S(MHFrame_GetAbsolutePointY(this.ptr, i)) + "\n"
+                    set s = s + "Point:" + I2S(i) + " | AbsX:" + R2S(MHFrame_GetAbsolutePointX(this.ptr, i))  + " , AbsY:" + R2S(MHFrame_GetAbsolutePointY(this.ptr, i)) + "\n"
                     set c = c + 1
                 endif
 
@@ -871,8 +879,8 @@ library FrameSystem
             loop
 
                 if MHFrame_GetRelativePoint(this.ptr, i) != 9 then
-                    set s = s + "Point" + I2S(i) + " | X:" + R2S(MHFrame_GetRelativePointX(this.ptr, i))  + " , Y:" + R2S(MHFrame_GetRelativePointY(this.ptr, i))/*
-                    */ + " TargetPoint" + I2S(MHFrame_GetRelativePoint(this.ptr, i)) + "\n"
+                    set s = s + "Point:" + I2S(i) + " | X:" + R2S(MHFrame_GetRelativePointX(this.ptr, i))  + " , Y:" + R2S(MHFrame_GetRelativePointY(this.ptr, i))/*
+                    */ + " | TargetPoint" + I2S(MHFrame_GetRelativePoint(this.ptr, i)) + "\n"
                     set c = c + 1
                 endif
                 
@@ -893,6 +901,14 @@ library FrameSystem
             endif
 
             return Frame.GetPtrToInstance(MHFrame_GetSimpleButtonTexture(this.ptr, state))
+        endmethod
+
+        method GetRelativeFrame takes integer point returns thistype
+            if this.ptr == 0 then
+                return 0
+            endif
+            
+            return Frame.GetPtrToInstance(MHFrame_GetRelativeFrame(this.ptr, point ))
         endmethod
 
     endstruct

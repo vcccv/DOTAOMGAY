@@ -6,3 +6,5 @@
 //#include "Utilities\\UnitDex.j"
 #include "Utilities\\WorldBonuds.j"
 #include "Utilities\\PlayerUtils.j"
+#include "Utilities\\PlayerChatMessage.j"
+

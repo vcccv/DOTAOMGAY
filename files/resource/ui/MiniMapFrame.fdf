@@ -1,7 +1,9 @@
 
+Texture "MiniMapGlyphButtonEnabled" {
+}
+
 Frame "SIMPLEBUTTON" "GlyphButton" {
     Width  0.023125,
     Height 0.020625,
-    Texture "GlyphTexture" {
-    }
+    NormalTexture "MiniMapGlyphButtonEnabled",
 }
