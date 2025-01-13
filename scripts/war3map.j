@@ -2984,7 +2984,7 @@ function InitActiveAbilitys takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A1P8', 0, "W9V")
 	call SaveStr(ObjectHashTable,'A01I', 0, "YVV")
 	call SaveStr(ObjectHashTable,'A1YY', 0, "YEV")
-	call SaveStr(ObjectHashTable,'A0O6', 0, "YXV")
+	call SaveStr(ObjectHashTable,'A0O6', 0, "IcePathOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A0IL', 0, "YOV")
 	call SaveStr(ObjectHashTable,'A1A8', 0, "YRV")
 	call SaveStr(ObjectHashTable,'A21J', 0, "YIV")
@@ -6079,7 +6079,7 @@ function IsTreeDestructable takes destructable d returns boolean
 	return GetDestructableTypeId(d)=='CTtr' or GetDestructableTypeId(d)=='NTtc' or GetDestructableTypeId(d)=='NTtw' or GetDestructableTypeId(d)=='ATtr' or GetDestructableTypeId(d)=='B002' or GetDestructableTypeId(d)=='B003' or GetDestructableTypeId(d)=='B005' or GetDestructableTypeId(d)=='ITtw' or GetDestructableTypeId(d)=='CTtr'
 endfunction
 // 是魔法免疫单位
-function IsMagicImmuneUnit takes unit u returns boolean
+function IsUnitMagicImmune takes unit u returns boolean
 	return IsUnitType(u, UNIT_TYPE_MAGIC_IMMUNE) or LoadInteger(HY, GetHandleId(u), 4252) == 1
 endfunction
 function OYX takes unit u returns boolean
@@ -8584,7 +8584,7 @@ function IsNotAncientOrBear takes unit u returns boolean
 	return not IsUnitType(u, UNIT_TYPE_ANCIENT) or DRX(u)
 endfunction
 function DCX takes nothing returns boolean
-	return(IsMagicImmuneUnit(GetFilterUnit()) == false and IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and(GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0 and UnitIsDead(GetFilterUnit()) == false) and IsNotAncientOrBear(GetFilterUnit()))!= null
+	return(IsUnitMagicImmune(GetFilterUnit()) == false and IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and(GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0 and UnitIsDead(GetFilterUnit()) == false) and IsNotAncientOrBear(GetFilterUnit()))!= null
 endfunction
 function DDX takes nothing returns boolean
 	return(IsUnitEnemy(GetTriggerUnit(), GetOwningPlayer(GetFilterUnit())) and(IsAliveNotStrucNotWard(GetFilterUnit())) and IsNotAncientOrBear(GetFilterUnit()))!= null
@@ -8599,7 +8599,7 @@ function DHX takes nothing returns boolean
 	return IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and IsAliveNotStrucNotWard(GetFilterUnit())
 endfunction
 function DJX takes nothing returns boolean
-	return IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and IsAliveNotStrucNotWard(GetFilterUnit()) and IsMagicImmuneUnit(GetFilterUnit()) == false
+	return IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and IsAliveNotStrucNotWard(GetFilterUnit()) and IsUnitMagicImmune(GetFilterUnit()) == false
 endfunction
 function DKX takes nothing returns boolean
 	return DHX() and IsNotAncientOrBear(GetFilterUnit())
@@ -8611,13 +8611,13 @@ function DMX takes nothing returns boolean
 	return((IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and(IsAliveNotStrucNotWard(GetFilterUnit())) and IsNotAncientOrBear(GetFilterUnit())))!= null
 endfunction
 function DPX takes nothing returns boolean
-	return IsMagicImmuneUnit(GetFilterUnit()) == false and IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and(IsAliveNotStrucNotWard(GetFilterUnit()))
+	return IsUnitMagicImmune(GetFilterUnit()) == false and IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and(IsAliveNotStrucNotWard(GetFilterUnit()))
 endfunction
 function DQX takes nothing returns boolean
 	return DPX() and IsNotAncientOrBear(GetFilterUnit())
 endfunction
 function DSX takes nothing returns boolean
-	return(IsMagicImmuneUnit(GetFilterUnit()) == false and UnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(U2)) and IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and(IsAliveNotStrucNotWard(GetFilterUnit())) and IsNotAncientOrBear(GetFilterUnit()))!= null
+	return(IsUnitMagicImmune(GetFilterUnit()) == false and UnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(U2)) and IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and(IsAliveNotStrucNotWard(GetFilterUnit())) and IsNotAncientOrBear(GetFilterUnit()))!= null
 endfunction
 function DTX takes nothing returns boolean
 	return(UnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(U2)) and IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and(IsAliveNotStrucNotWard(GetFilterUnit())))!= null
@@ -8632,7 +8632,7 @@ function DYX takes nothing returns boolean
 	return(((IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and(GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0 and UnitIsDead(GetFilterUnit()) == false) and IsNotAncientOrBear(GetFilterUnit())) and IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) == false))
 endfunction
 function DZX takes nothing returns boolean
-	return(IsMagicImmuneUnit(GetFilterUnit()) == false and(IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and(GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0 and UnitIsDead(GetFilterUnit()) == false) and IsNotAncientOrBear(GetFilterUnit())))!= null
+	return(IsUnitMagicImmune(GetFilterUnit()) == false and(IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and(GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0 and UnitIsDead(GetFilterUnit()) == false) and IsNotAncientOrBear(GetFilterUnit())))!= null
 endfunction
 function D_X takes nothing returns boolean
 	return(IsUnitEnemy(GetTriggerUnit(), GetOwningPlayer(GetFilterUnit())) == false and(IsAliveNotStrucNotWard(GetFilterUnit())))!= null
@@ -8662,7 +8662,7 @@ function D7X takes nothing returns boolean
 	return((IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and(IsAliveNotStrucNotWard(GetFilterUnit())) and IsNotAncientOrBear(GetFilterUnit())))
 endfunction
 function D8X takes nothing returns boolean
-	return((IsMagicImmuneUnit(GetFilterUnit()) == false and(IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and(IsAliveNotStrucNotWard(GetFilterUnit())) and IsNotAncientOrBear(GetFilterUnit()))))
+	return((IsUnitMagicImmune(GetFilterUnit()) == false and(IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and(IsAliveNotStrucNotWard(GetFilterUnit())) and IsNotAncientOrBear(GetFilterUnit()))))
 endfunction
 function D9X takes nothing returns boolean
 	return(((IsAliveNotStrucNotWard(GetFilterUnit())) and IsNotAncientOrBear(GetFilterUnit())))!= null
@@ -8677,7 +8677,7 @@ function FXX takes nothing returns boolean
 	return DHX() and UnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(U2)) and GetUnitTypeId(GetFilterUnit())!='n0F5'
 endfunction
 function FOX takes nothing returns boolean
-	return(IsMagicImmuneUnit(GetFilterUnit()) == false and((IsAliveNotStrucNotWard(GetFilterUnit())) and IsNotAncientOrBear(GetFilterUnit())) and UnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(U2)))!= null
+	return(IsUnitMagicImmune(GetFilterUnit()) == false and((IsAliveNotStrucNotWard(GetFilterUnit())) and IsNotAncientOrBear(GetFilterUnit())) and UnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(U2)))!= null
 endfunction
 function FRX takes nothing returns boolean
 	return IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(U2)) and X8X(GetFilterUnit())> 0
@@ -9008,7 +9008,7 @@ function impale_enumunit takes nothing returns boolean
 		exitwhen firstUnit == null
 		call GroupRemoveUnit(g2, firstUnit)
 		// 存活 非建筑 非守卫 敌对
-		if not IsMagicImmuneUnit(firstUnit) and IsUnitEnemy(U2, GetOwningPlayer(firstUnit)) and IsAliveNotStrucNotWard(firstUnit) then
+		if not IsUnitMagicImmune(firstUnit) and IsUnitEnemy(U2, GetOwningPlayer(firstUnit)) and IsAliveNotStrucNotWard(firstUnit) then
 			if not IsUnitInGroup(firstUnit, DK) and LoadInteger(HY, GetHandleId(firstUnit), 4253)!= 1 then
 				call GroupAddUnit(DK, firstUnit)
 				call impale_actions(firstUnit, U2, TJ, S2, RJ)
@@ -20702,7 +20702,7 @@ endfunction
 function B2O takes unit R8X, unit targetUnit, real B3O returns nothing
 	local real mp = GetUnitState(targetUnit, UNIT_STATE_MANA)
 	set B3O = RMinBJ(mp, B3O)
-	if mp > 0 and IsMagicImmuneUnit(targetUnit) == false then
+	if mp > 0 and IsUnitMagicImmune(targetUnit) == false then
 		call UnitDamageTargetEx(R8X, targetUnit, 2, B3O)
 		call SetUnitState(targetUnit, UNIT_STATE_MANA, mp -B3O)
 		call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Human\\Feedback\\ArcaneTowerAttack.mdl", targetUnit, "origin"))
@@ -21725,7 +21725,7 @@ function HKE takes nothing returns nothing
 		set t = u
 	endif
 	set it = null
-	if GetSpellAbilityId()=='A1QD' and(UnitHasSpellShield(t) == false or IsUnitAlly(u, GetOwningPlayer(t))) and IsMagicImmuneUnit(t) == false then
+	if GetSpellAbilityId()=='A1QD' and(UnitHasSpellShield(t) == false or IsUnitAlly(u, GetOwningPlayer(t))) and IsUnitMagicImmune(t) == false then
 		call DXO(IsUnitEnemy(u, GetOwningPlayer(t)), t)
 	endif
 	set u = null
@@ -21738,7 +21738,7 @@ function DIO takes nothing returns boolean
 	if GetTriggerEvalCount(t)> 40 then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
-	elseif (IsMagicImmuneUnit(whichUnit) and IsUnitType(whichUnit, UNIT_TYPE_HERO)) then
+	elseif (IsUnitMagicImmune(whichUnit) and IsUnitType(whichUnit, UNIT_TYPE_HERO)) then
 		call UnitRemoveAbility(whichUnit,'Aetl')
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
@@ -21764,7 +21764,7 @@ function DAO takes nothing returns nothing
 	set t = null
 endfunction
 function HRE takes nothing returns nothing
-	if GetSpellAbilityId()=='A1AC' and(IsMagicImmuneUnit(GetTriggerUnit()) == false or IsUnitType(GetTriggerUnit(), UNIT_TYPE_HERO) == false) then
+	if GetSpellAbilityId()=='A1AC' and(IsUnitMagicImmune(GetTriggerUnit()) == false or IsUnitType(GetTriggerUnit(), UNIT_TYPE_HERO) == false) then
 		call DAO()
 	endif
 endfunction
@@ -35958,7 +35958,7 @@ function CRR takes nothing returns nothing
 	set t = null
 endfunction
 function CCR takes nothing returns boolean
-	return IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(UN)) and IsAliveNotStrucNotWard(GetFilterUnit()) and IsMagicImmuneUnit(GetFilterUnit()) == false
+	return IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(UN)) and IsAliveNotStrucNotWard(GetFilterUnit()) and IsUnitMagicImmune(GetFilterUnit()) == false
 endfunction
 function FVE takes nothing returns nothing
 	local unit whichUnit = GetTriggerUnit()
@@ -36419,7 +36419,7 @@ function B_E takes nothing returns nothing
 	endif
 endfunction
 function C8R takes nothing returns boolean
-	if UnitIsDead(GetFilterUnit()) == false and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(QN)) and GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0 and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and IsMagicImmuneUnit(GetFilterUnit()) == false then
+	if UnitIsDead(GetFilterUnit()) == false and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(QN)) and GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0 and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and IsUnitMagicImmune(GetFilterUnit()) == false then
 		if IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) then
 			set TN = TN + 1
 		endif
@@ -36998,7 +36998,7 @@ function DWR takes nothing returns boolean
 	local real y = LoadReal(HY, h, 7)
 	local unit u = LoadUnitHandle(HY, h, 2)
 	if GetTriggerEventId()!= EVENT_UNIT_SPELL_EFFECT or(GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT and GetSpellAbilityId()=='A13D') then
-		if GetTriggerEventId()!= EVENT_WIDGET_DEATH and(IsMagicImmuneUnit(target) == false or IsUnitAlly(target, GetOwningPlayer(u))) then
+		if GetTriggerEventId()!= EVENT_WIDGET_DEATH and(IsUnitMagicImmune(target) == false or IsUnitAlly(target, GetOwningPlayer(u))) then
 			if IsUnitHidden(target) then
 				call SetUnitX(target, x)
 				call SetUnitY(target, y)
@@ -37078,7 +37078,7 @@ function KOE takes nothing returns nothing
 	if (LoadBoolean(HY,(GetHandleId(GetOwningPlayer(GetSpellTargetUnit()))), 139)) and IsUnitAlly(GetSpellTargetUnit(), GetOwningPlayer(GetTriggerUnit())) then
 		call EXStopUnit(GetTriggerUnit())
 		call InterfaceErrorForPlayer(GetOwningPlayer(GetTriggerUnit()), GetObjectName('n038'))
-	elseif IsMagicImmuneUnit(GetSpellTargetUnit()) and IsUnitEnemy(GetSpellTargetUnit(), GetOwningPlayer(GetTriggerUnit())) then
+	elseif IsUnitMagicImmune(GetSpellTargetUnit()) and IsUnitEnemy(GetSpellTargetUnit(), GetOwningPlayer(GetTriggerUnit())) then
 		call EXStopUnit(GetTriggerUnit())
 		call InterfaceErrorForPlayer(GetOwningPlayer(GetTriggerUnit()), "无法作用于魔免的敌人")
 	endif
@@ -37347,7 +37347,7 @@ endfunction
 function D9R takes nothing returns boolean
 	local unit t = GetFilterUnit()
 	if IsUnitEnemy(Temp__ArrayUnit[0], GetOwningPlayer(t)) and IsAliveNotStrucNotWard(t) then
-		if Temp__ArrayReal[4]== 1 and GetUnitAbilityLevel(t,'A3E9') == 1 and IsMagicImmuneUnit(Temp__ArrayUnit[1]) == false then
+		if Temp__ArrayReal[4]== 1 and GetUnitAbilityLevel(t,'A3E9') == 1 and IsUnitMagicImmune(Temp__ArrayUnit[1]) == false then
 			call SaveInteger(OtherHashTable2,'A3E9','0lvl', R2I(Temp__ArrayReal[2]))
 			call SaveUnitHandle(OtherHashTable2,'A3E9','targ', Temp__ArrayUnit[1])
 			call SaveUnitHandle(OtherHashTable2,'A3E9','cstr', t)
@@ -38760,7 +38760,7 @@ function GWR takes nothing returns nothing
 	endif
 	call UnitDamageTargetEx(whichUnit, targetUnit, 1, damageValue)
 	if GetUnitAbilityLevel(targetUnit,'A3E9') == 1 and LoadBoolean(ObjectHashTable, h,'A004') == false then
-		if IsMagicImmuneUnit(whichUnit) == false and GetUnitAbilityLevel(whichUnit,'Aloc') == 0 then
+		if IsUnitMagicImmune(whichUnit) == false and GetUnitAbilityLevel(whichUnit,'Aloc') == 0 then
 			call SaveUnitHandle(OtherHashTable2,'A3E9', 0, targetUnit)
 			call SaveUnitHandle(OtherHashTable2,'A3E9', 1, whichUnit)
 			call SaveInteger(OtherHashTable2,'A3E9', 0, level)
@@ -39105,7 +39105,7 @@ function HBR takes nothing returns nothing
 		call SaveInteger(HY, hu,'A0Fw', HDR)
 		call CCX(targetUnit, HCR, HFR + 1, 5, 0)
 	endif
-	if GetUnitAbilityLevel(targetUnit,'A3E9') == 1 and IsMagicImmuneUnit(whichUnit) and HGR == false then
+	if GetUnitAbilityLevel(targetUnit,'A3E9') == 1 and IsUnitMagicImmune(whichUnit) and HGR == false then
 		if UnitHasSpellShield(whichUnit) == false then
 			call LaunchMissileByUnitDummy(targetUnit, whichUnit,'h01K', "HBR", 1000, true)
 		else
@@ -39143,7 +39143,7 @@ function HJR takes nothing returns boolean
 	local unit t = GetFilterUnit()
 	local unit u = Temp__ArrayUnit[0]
 	local group g = LoadGroupHandle(HY, XK[0], 1)
-	if IsUnitInGroup(t, g) == false and IsUnitEnemy(u, GetOwningPlayer(t)) and UnitAlive(t) and IsMagicImmuneUnit(t) == false and GetUnitAbilityLevel(t,'A04R') == 0 and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and GetUnitTypeId(t)!='n00L' then
+	if IsUnitInGroup(t, g) == false and IsUnitEnemy(u, GetOwningPlayer(t)) and UnitAlive(t) and IsUnitMagicImmune(t) == false and GetUnitAbilityLevel(t,'A04R') == 0 and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and GetUnitTypeId(t)!='n00L' then
 		call GroupAddUnit(g, t)
 		call WJV(t,'C017','D017', 1. + .5 * GetUnitAbilityLevel(u,'A2O4'))
 		call UnitDamageTargetEx(u, t, 1, XK[1])
@@ -39252,7 +39252,7 @@ endfunction
 function HTR takes nothing returns boolean
 	local unit t = GetFilterUnit()
 	local unit u = QF
-	if IsUnitEnemy(u, GetOwningPlayer(t)) and UnitAlive(t) and IsMagicImmuneUnit(t) == false and GetUnitAbilityLevel(t,'A04R') == 0 and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false then
+	if IsUnitEnemy(u, GetOwningPlayer(t)) and UnitAlive(t) and IsUnitMagicImmune(t) == false and GetUnitAbilityLevel(t,'A04R') == 0 and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false then
 		call UnitDamageTargetEx(u, t, 1, PF)
 	endif
 	set u = null
@@ -41499,7 +41499,7 @@ function MRR takes unit u, unit target, real x, real y, integer lv returns nothi
 endfunction
 
 function UNOO takes nothing returns boolean
-	return IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and UnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(U2)) and IsAliveNotStrucNotWard(GetFilterUnit()) and not IsMagicImmuneUnit(GetFilterUnit())
+	return IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and UnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(U2)) and IsAliveNotStrucNotWard(GetFilterUnit()) and not IsUnitMagicImmune(GetFilterUnit())
 endfunction
 
 // 电子涡流
@@ -43025,7 +43025,7 @@ function Q0R takes nothing returns nothing
 		set g = AllocationGroup(189)
 		call GroupEnumUnitsInRange(g, GetUnitX(targetUnit), GetUnitY(targetUnit), 325, Condition(function DHX))
 		call ForGroup(g, function Q_R)
-		if GetUnitAbilityLevel(targetUnit,'A3E9') == 1 and IsMagicImmuneUnit(whichUnit) == false then
+		if GetUnitAbilityLevel(targetUnit,'A3E9') == 1 and IsUnitMagicImmune(whichUnit) == false then
 			if UnitHasSpellShield(whichUnit) == false then
 				call SetUnitOwner(dummyUnit, GetOwningPlayer(targetUnit), true)
 				call SetUnitX(dummyUnit, GetUnitX(whichUnit))
@@ -43545,7 +43545,7 @@ function S_R takes nothing returns nothing
 		set whichUnit = GetTriggerUnit()
 		set targetUnit = GetAttacker()
 	endif
-	if IsUnitEnemy(targetUnit, GetOwningPlayer(whichUnit)) and IsUnitType(targetUnit, UNIT_TYPE_STRUCTURE) == false and IsMagicImmuneUnit(targetUnit) == false then
+	if IsUnitEnemy(targetUnit, GetOwningPlayer(whichUnit)) and IsUnitType(targetUnit, UNIT_TYPE_STRUCTURE) == false and IsUnitMagicImmune(targetUnit) == false then
 		call CCX(targetUnit,'A3EK'-1 + GetUnitAbilityLevel(whichUnit,'A0DW'), 1, 4.,'B38B')
 	endif
 	set whichUnit = null
@@ -44909,7 +44909,7 @@ function U4R takes nothing returns boolean
 	local unit u = Temp__ArrayUnit[0]
 	local player p = GetOwningPlayer(t)
 	local group g
-	if IsUnitEnemy(u, p) and IsAliveNotStrucNotWard(t) and IsMagicImmuneUnit(t) == false then
+	if IsUnitEnemy(u, p) and IsAliveNotStrucNotWard(t) and IsUnitMagicImmune(t) == false then
 		set g = LoadGroupHandle(ObjectHashTable, XK[0], 2)
 		if IsUnitInGroup(t, g) == false then
 			call GroupAddUnit(g, t)
@@ -44994,121 +44994,6 @@ function Jakiro_Icepath_Start2 takes nothing returns nothing
 	call TimerStart(t, .05, true, function U5R)
 	set t = null
 	set u = null
-endfunction
-function U6R takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local real x =(LoadReal(HY,(h), 6))
-	local real y =(LoadReal(HY,(h), 7))
-	local real a =(LoadReal(HY,(h), 137))
-	local unit whichUnit =(LoadUnitHandle(HY,(h), 2))
-	local integer c = GetTriggerEvalCount(t)
-	local real dx
-	local real dy
-	local group g
-	local integer i
-	local group gg =(LoadGroupHandle(HY,(h), 187))
-	local integer level = LoadInteger(HY, h, 5)
-	local unit u
-	local real GEX
-	set i = 0
-	set g = AllocationGroup(204)
-	loop
-		set dx = x + 100 * i * Cos(a * bj_DEGTORAD)
-		set dy = y + 100 * i * Sin(a * bj_DEGTORAD)
-		set U2 = whichUnit
-		set GEX =(.6 + .4 * level)-(c * .05)
-		call GroupEnumUnitsInRange(g, dx, dy, 175, Condition(function DJX))
-		call GroupRemoveGroup(gg, g)
-		loop
-			set u = FirstOfGroup(g)
-		exitwhen u == null
-			if IsUnitInGroup(u, gg) == false and RCX(u) == false then
-				call GroupAddUnit(gg, u)
-				call CommonUnitAddStun(u, GEX, false)
-				call UnitDamageTargetEx(whichUnit, u, 1, 50)
-				call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Undead\\FreezingBreath\\FreezingBreathMissile.mdl", GetUnitX(u), GetUnitY(u)))
-			endif
-			call GroupRemoveUnit(g, u)
-		endloop
-		set i = i + 1
-	exitwhen i > 13
-	endloop
-	call DeallocateGroup(g)
-	if c == 20 *(.6 + .4 * level) then
-		call DeallocateGroup(gg)
-		call FlushChildHashtable(HY,(h))
-		call CleanCurrentTrigger(t)
-	endif
-	set t = null
-	set whichUnit = null
-	set g = null
-	set gg = null
-	return false
-endfunction
-function U7R takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local real x =(LoadReal(HY, h, 6))
-	local real y =(LoadReal(HY, h, 7))
-	local real a =(LoadReal(HY, h, 137))
-	local integer c = GetTriggerEvalCount(t)
-	local real dx = x + 100 * c * Cos(a * bj_DEGTORAD)
-	local real dy = y + 100 * c * Sin(a * bj_DEGTORAD)
-	local unit whichUnit =(LoadUnitHandle(HY, h, 2))
-	local integer level = LoadInteger(HY, h, 5)
-	local ubersplat ub
-	local integer i
-	if c < 13+ 1 then
-		call SaveEffectHandle(HY, h,(609 + c),(AddSpecialEffect("effects\\IcePath.mdx", dx, dy)))
-		set ub = CreateUbersplat(dx, dy, "IPTH", 255, 255, 255, 255, false, false)
-		call SetUbersplatRenderAlways(ub, true)
-		call SaveUbersplatHandle(HY, h,(760 + c),(ub))
-	endif
-	if c == 14 then
-		set t = CreateTrigger()
-		set h = GetHandleId(t)
-		call TriggerRegisterTimerEvent(t, .05, true)
-		call TriggerAddCondition(t, Condition(function U6R))
-		call SaveInteger(HY, h, 5, level)
-		call SaveReal(HY, h, 6,((x)* 1.))
-		call SaveReal(HY, h, 7,((y)* 1.))
-		call SaveReal(HY, h, 137,((a)* 1.))
-		call SaveUnitHandle(HY, h, 2,(whichUnit))
-		call SaveGroupHandle(HY, h, 187,(AllocationGroup(205)))
-		call TriggerEvaluate(t)
-	elseif c >=(.4 + .6 + .4 * level)/ .05 then
-		set i = 0
-		loop
-			call DestroyEffect((LoadEffectHandle(HY, h,(609 + i))))
-			call DestroyUbersplat((LoadUbersplatHandle(HY, h,(760 + i))))
-			set i = i + 1
-		exitwhen i == 14
-		endloop
-		call FlushChildHashtable(HY,(h))
-		call CleanCurrentTrigger(t)
-	endif
-	set t = null
-	set whichUnit = null
-	return false
-endfunction
-function YXV takes nothing returns nothing
-	local trigger t = CreateTrigger()
-	local integer h = GetHandleId(t)
-	local unit whichUnit = GetTriggerUnit()
-	local real x = GetUnitX(whichUnit)
-	local real y = GetUnitY(whichUnit)
-	local real a = AngleBetweenXY(x, y, GetSpellTargetX(), GetSpellTargetY())
-	call TriggerRegisterTimerEvent(t, .05, true)
-	call TriggerAddCondition(t, Condition(function U7R))
-	call SaveReal(HY,(h), 6,((x)* 1.))
-	call SaveReal(HY,(h), 7,((y)* 1.))
-	call SaveInteger(HY, h, 5, GetUnitAbilityLevel(whichUnit,'A0O6'))
-	call SaveReal(HY,(h), 137,((a)* 1.))
-	call SaveUnitHandle(HY,(h), 2,(whichUnit))
-	call TriggerEvaluate(t)
-	set t = null
-	set whichUnit = null
 endfunction
 // 冰火交加
 function DualBreathDamagedEvent takes nothing returns nothing
@@ -45524,7 +45409,7 @@ function ManaLeak_Fx takes nothing returns boolean
 	local real distance = GetDistanceBetween( lastX, lastY, x, y )//SquareRoot(lastX -x)*(lastX -x)+(lastY -y)*(lastY -y)
 	local real leakValue =(.0005)* distance * GetUnitState(targetUnit, UNIT_STATE_MAX_MANA)
 	local integer evalCount = GetTriggerEvalCount(trig)
-	if IsMagicImmuneUnit(targetUnit) then
+	if IsUnitMagicImmune(targetUnit) then
 		set leakValue = 0
 	endif
 	if distance > 300 then
@@ -45958,7 +45843,7 @@ function M4E takes nothing returns nothing
 	set t = null
 endfunction
 function KTE takes nothing returns nothing
-	if IsMagicImmuneUnit(GetSpellTargetUnit()) then
+	if IsUnitMagicImmune(GetSpellTargetUnit()) then
 		call EXStopUnit(GetTriggerUnit())
 		call InterfaceErrorForPlayer(GetOwningPlayer(GetTriggerUnit()), GetObjectName('n0LR'))
 	endif
@@ -47823,10 +47708,10 @@ function ECI takes nothing returns boolean
 	return false
 endfunction
 function EDI takes nothing returns boolean
-	return(IsUnitEnemy(Q5V, GetOwningPlayer(GetFilterUnit())) and IsAliveNotStrucNotWard(GetFilterUnit()) and IsMagicImmuneUnit(GetFilterUnit()) == false and GetUnitAbilityLevel(GetFilterUnit(),'B03J') == 0 and UnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(Q5V)))!= null
+	return(IsUnitEnemy(Q5V, GetOwningPlayer(GetFilterUnit())) and IsAliveNotStrucNotWard(GetFilterUnit()) and IsUnitMagicImmune(GetFilterUnit()) == false and GetUnitAbilityLevel(GetFilterUnit(),'B03J') == 0 and UnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(Q5V)))!= null
 endfunction
 function EFI takes nothing returns boolean
-	return(IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and IsAliveNotStrucNotWard(GetFilterUnit()) and IsMagicImmuneUnit(GetFilterUnit()) == false and UnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(U2)) and IsHeroUnitId(GetUnitTypeId(GetFilterUnit())) == false)!= null
+	return(IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and IsAliveNotStrucNotWard(GetFilterUnit()) and IsUnitMagicImmune(GetFilterUnit()) == false and UnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(U2)) and IsHeroUnitId(GetUnitTypeId(GetFilterUnit())) == false)!= null
 endfunction
 function EGI takes nothing returns nothing
 	local timer t = GetExpiredTimer()
@@ -48756,7 +48641,7 @@ function E9I takes unit whichUnit, player p, unit targetUnit, integer level, boo
 		call UnitDamageTargetEx(dummyCaster, targetUnit, 1, 50 + 50 * level)
 		call E7I(p, targetUnit, level)
 		set dummyCaster = null
-		if GetUnitAbilityLevel(targetUnit,'A3E9') == 1 and IsMagicImmuneUnit(whichUnit) == false and HaveSavedHandle(HY, GetHandleId(whichUnit), 0) == false then
+		if GetUnitAbilityLevel(targetUnit,'A3E9') == 1 and IsUnitMagicImmune(whichUnit) == false and HaveSavedHandle(HY, GetHandleId(whichUnit), 0) == false then
 			call SaveUnitHandle(OtherHashTable2,'A3E9', 0, targetUnit)
 			call SaveUnitHandle(OtherHashTable2,'A3E9', 1, whichUnit)
 			call SaveInteger(OtherHashTable2,'A3E9', 0, level)
@@ -49973,7 +49858,7 @@ function OWI takes nothing returns nothing
 	set t = null
 endfunction
 function OYI takes nothing returns boolean
-	return(IsMagicImmuneUnit(GetFilterUnit()) == false and(IsUnitIdType(GetUnitTypeId(GetFilterUnit()), UNIT_TYPE_HERO) and IsUnitEnemy(GetTriggerUnit(), GetOwningPlayer(GetFilterUnit())) and RFX(GetFilterUnit()) == false and(IsAliveNotStrucNotWard(GetFilterUnit())) and IsNotAncientOrBear(GetFilterUnit())))!= null
+	return(IsUnitMagicImmune(GetFilterUnit()) == false and(IsUnitIdType(GetUnitTypeId(GetFilterUnit()), UNIT_TYPE_HERO) and IsUnitEnemy(GetTriggerUnit(), GetOwningPlayer(GetFilterUnit())) and RFX(GetFilterUnit()) == false and(IsAliveNotStrucNotWard(GetFilterUnit())) and IsNotAncientOrBear(GetFilterUnit())))!= null
 endfunction
 function EME takes nothing returns nothing
 	local group g = AllocationGroup(255)
@@ -49995,7 +49880,7 @@ function OZI takes nothing returns boolean
 	return false
 endfunction
 function O_I takes nothing returns boolean
-	return(IsMagicImmuneUnit(GetFilterUnit()) == false and(IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and IsUnitEnemy(GetTriggerUnit(), GetOwningPlayer(GetFilterUnit())) and(IsAliveNotStrucNotWard(GetFilterUnit())) and IsNotAncientOrBear(GetFilterUnit())))!= null
+	return(IsUnitMagicImmune(GetFilterUnit()) == false and(IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and IsUnitEnemy(GetTriggerUnit(), GetOwningPlayer(GetFilterUnit())) and(IsAliveNotStrucNotWard(GetFilterUnit())) and IsNotAncientOrBear(GetFilterUnit())))!= null
 endfunction
 function O0I takes nothing returns nothing
 	local group g
@@ -50764,7 +50649,7 @@ function RLI takes unit whichUnit, player p, unit targetUnit, integer level retu
 	local unit dummyCaster = CreateUnit(p,'e00E', GetUnitX(targetUnit), GetUnitY(targetUnit), 0)
 	local integer E8I
 	local group g = AllocationGroup(262)
-	if GetUnitAbilityLevel(targetUnit,'A3E9') == 1 and IsMagicImmuneUnit(whichUnit) == false then
+	if GetUnitAbilityLevel(targetUnit,'A3E9') == 1 and IsUnitMagicImmune(whichUnit) == false then
 		call SaveUnitHandle(OtherHashTable2,'A3E9', 0, targetUnit)
 		call SaveUnitHandle(OtherHashTable2,'A3E9', 1, whichUnit)
 		call SaveInteger(OtherHashTable2,'A3E9', 0, level)
@@ -51376,7 +51261,7 @@ function ICI takes nothing returns nothing
 endfunction
 function IDI takes nothing returns boolean
 	local unit t = GetFilterUnit()
-	if IsUnitEnemy(t, Temp__Player) and GetUnitAbilityLevel(t,'A04R') == 0 and IsMagicImmuneUnit(t) == false and UnitAlive(t) and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false then
+	if IsUnitEnemy(t, Temp__Player) and GetUnitAbilityLevel(t,'A04R') == 0 and IsUnitMagicImmune(t) == false and UnitAlive(t) and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false then
 		call UnitDamageTargetEx(I_X(Temp__ArrayUnit[0]), t, XK[0], 70 + 10* GetUnitAbilityLevel(Temp__ArrayUnit[1],'A1A9'))
 		call UnitShareVision(t, Temp__Player, true)
 		call IssueTargetOrderById(Temp__ArrayUnit[1], 852095, t)
@@ -52298,7 +52183,7 @@ function A_I takes nothing returns boolean
 		call DestroyTrigger(t)
 	else
 		set u = GetTriggerUnit()
-		if IsUnitEnemy(u, GetOwningPlayer(A0I)) and IsMagicImmuneUnit(u) == false and GetUnitAbilityLevel(u,'A04R') == 0 then
+		if IsUnitEnemy(u, GetOwningPlayer(A0I)) and IsUnitMagicImmune(u) == false and GetUnitAbilityLevel(u,'A04R') == 0 then
 			if IsUnitAlly(A0I, LocalPlayer) or IsObserverPlayer(LocalPlayer) then
 				call SetUnitAnimationByIndex(A0I, 5)
 			endif
@@ -52361,7 +52246,7 @@ endfunction
 // 机器人的进军
 function MarchOfTheMachinesDamagedEvent takes nothing returns nothing
 	if GetUnitAbilityLevel(DamagedEventSourceUnit,'A05F')> 0 then
-		//if ( not IsMagicImmuneUnit(damageTarget) ) then
+		//if ( not IsUnitMagicImmune(damageTarget) ) then
 		//	call UnitDamageTargetEx(Player__Hero[DamagedEventSourcePlayerId], damageTarget, 1, GetUnitAbilityLevel(damageSource,'A05F')* 8 + 8)
 		//else
 			call UnitDamageTargetEx(Player__Hero[DamagedEventSourcePlayerId], DamagedEventTargetUnit, 7, GetUnitAbilityLevel(DamagedEventSourceUnit,'A05F')* 8 + 8)
@@ -52467,7 +52352,7 @@ function E3E takes nothing returns nothing
 	set targetUnit = null
 endfunction
 function A9I takes nothing returns boolean
-	return(((IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) or IsUnitIllusion(GetFilterUnit())) and IsMagicImmuneUnit(GetFilterUnit()) == false and UnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(U2)) and IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and(IsAliveNotStrucNotWard(GetFilterUnit()))))
+	return(((IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) or IsUnitIllusion(GetFilterUnit())) and IsUnitMagicImmune(GetFilterUnit()) == false and UnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(U2)) and IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and(IsAliveNotStrucNotWard(GetFilterUnit()))))
 endfunction
 function NVI takes nothing returns nothing
 	local integer h = GetHandleId(GetTriggeringTrigger())
@@ -52639,7 +52524,7 @@ function NNI takes nothing returns boolean
 				call UnitDamageTargetEx(trigUnit, whichUnit, 1,(.2 + .15 * level)* 75 * NCI)
 			endif
 		endif
-		if LoadBoolean(HY, h, 0) == false and targetUnit != null and IsUnitEnemy(targetUnit, GetOwningPlayer(trigUnit)) and GetUnitAbilityLevel(targetUnit,'A3E9') == 1 and IsMagicImmuneUnit(trigUnit) == false then
+		if LoadBoolean(HY, h, 0) == false and targetUnit != null and IsUnitEnemy(targetUnit, GetOwningPlayer(trigUnit)) and GetUnitAbilityLevel(targetUnit,'A3E9') == 1 and IsUnitMagicImmune(trigUnit) == false then
 			call SaveInteger(OtherHashTable2,'A3E9', 0, NCI)
 			call SaveUnitHandle(OtherHashTable2,'A3E9', 0, targetUnit)
 			call SaveUnitHandle(OtherHashTable2,'A3E9', 1, trigUnit)
@@ -53641,7 +53526,7 @@ function BWI takes nothing returns nothing
 		if GetEventDamageSource() == LoadUnitHandle(HY, h, 0) then
 			call CommonUnitAddStun(GetTriggerUnit(), 1.35 + LoadReal(HY, h, 0)* .1, false)
 			call UnitDamageTargetEx(LoadUnitHandle(HY, h, 1), GetTriggerUnit(), 1, 25 + 75 * LoadReal(HY, h, 0))
-			if GetUnitAbilityLevel(GetTriggerUnit(),'A3E9') == 1 and LoadBoolean(HY, h, 0) == false and IsMagicImmuneUnit(LoadUnitHandle(HY, h, 1)) == false then
+			if GetUnitAbilityLevel(GetTriggerUnit(),'A3E9') == 1 and LoadBoolean(HY, h, 0) == false and IsUnitMagicImmune(LoadUnitHandle(HY, h, 1)) == false then
 				call SaveUnitHandle(OtherHashTable2,'A3E9', 0, GetTriggerUnit())
 				call SaveUnitHandle(OtherHashTable2,'A3E9', 1, LoadUnitHandle(HY, h, 1))
 				call SaveInteger(OtherHashTable2,'A3E9', 0, R2I(LoadReal(HY, h, 0)))
@@ -53848,7 +53733,7 @@ function B6I takes unit u, real B7I, real B8I, real B9I, real CVI, real CEI, rea
 endfunction
 function CII takes nothing returns boolean
 	local unit t = GetFilterUnit()
-	if UnitAlive(t) and IsUnitEnemy(Temp__ArrayUnit[0], GetOwningPlayer(t)) and GetUnitAbilityLevel(t,'A04R') == 0 and IsMagicImmuneUnit(t) == false and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and(IsUnitType(t, UNIT_TYPE_ANCIENT) == false or DRX(t)) and t != GetTriggerUnit() then
+	if UnitAlive(t) and IsUnitEnemy(Temp__ArrayUnit[0], GetOwningPlayer(t)) and GetUnitAbilityLevel(t,'A04R') == 0 and IsUnitMagicImmune(t) == false and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and(IsUnitType(t, UNIT_TYPE_ANCIENT) == false or DRX(t)) and t != GetTriggerUnit() then
 		if B6I(t, Temp__ArrayReal[0], Temp__ArrayReal[1], Temp__ArrayReal[2], Temp__ArrayReal[3], Temp__ArrayReal[4], Temp__ArrayReal[5], Temp__ArrayReal[6], Temp__ArrayReal[7]) then
 			call UnitDamageTargetEx(Temp__ArrayUnit[0], t, 3, Temp__ArrayReal[8])
 			call DestroyEffect(AddSpecialEffectTarget("Abilities\\Weapons\\PriestMissile\\PriestMissile.mdl", t, "chest"))
@@ -54423,7 +54308,7 @@ function C3I takes nothing returns boolean
 			call FlushChildHashtable(HY, h)
 			call CleanCurrentTrigger(t)
 			if GetUnitTypeId(targetUnit)!='n00L' and I1O then
-				if GetUnitAbilityLevel(targetUnit,'A3E9') == 1 and IsMagicImmuneUnit(whichUnit) == false and FAR == false then
+				if GetUnitAbilityLevel(targetUnit,'A3E9') == 1 and IsUnitMagicImmune(whichUnit) == false and FAR == false then
 					call SaveUnitHandle(OtherHashTable2,'A3E9', 0, targetUnit)
 					call SaveUnitHandle(OtherHashTable2,'A3E9', 1, whichUnit)
 					call SaveInteger(OtherHashTable2,'A3E9', 0, level)
@@ -54783,7 +54668,7 @@ endfunction
 function DHI takes nothing returns boolean
 	local unit t = GetFilterUnit()
 	local unit u = Temp__ArrayUnit[0]
-	if IsUnitEnemy(u, GetOwningPlayer(t)) and UnitAlive(t) and IsMagicImmuneUnit(t) == false and GetUnitAbilityLevel(t,'A04R') == 0 and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and GetUnitTypeId(t)!='n00L' then
+	if IsUnitEnemy(u, GetOwningPlayer(t)) and UnitAlive(t) and IsUnitMagicImmune(t) == false and GetUnitAbilityLevel(t,'A04R') == 0 and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and GetUnitTypeId(t)!='n00L' then
 		call UnitDamageTargetEx(u, t, 1, GetWidgetLife(t)*(.03 + .02 * XK[0])+ .01 * GetUnitState(t, UNIT_STATE_MAX_LIFE))
 		call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Other\\ForkedLightning\\ForkedLightningTarget.mdl", t, "overhead"))
 	endif
@@ -54826,7 +54711,7 @@ function DKI takes unit u, integer WTV returns nothing
 	endif
 endfunction
 function DLI takes nothing returns boolean
-	return(IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and IsAliveNotStrucNotWard(GetFilterUnit()) and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(U2)) and IsMagicImmuneUnit(GetFilterUnit()) == false)!= null
+	return(IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and IsAliveNotStrucNotWard(GetFilterUnit()) and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(U2)) and IsUnitMagicImmune(GetFilterUnit()) == false)!= null
 endfunction
 function DMI takes unit u, unit t, integer lv, boolean FAR, real x, real y returns nothing
 	local unit d
@@ -54847,7 +54732,7 @@ function DMI takes unit u, unit t, integer lv, boolean FAR, real x, real y retur
 		set g = null
 	endif
 	if t != null and UnitHasSpellShield(t) == false then
-		if GetUnitAbilityLevel(t,'A3E9') == 1 and IsMagicImmuneUnit(u) == false and FAR == false then
+		if GetUnitAbilityLevel(t,'A3E9') == 1 and IsUnitMagicImmune(u) == false and FAR == false then
 			call SaveUnitHandle(OtherHashTable2,'A3E9', 0, t)
 			call SaveUnitHandle(OtherHashTable2,'A3E9', 1, u)
 			call SaveInteger(OtherHashTable2,'A3E9', 0, lv)
@@ -55953,7 +55838,7 @@ function F7I takes nothing returns nothing
 	local integer h
 	local integer level = GetUnitAbilityLevel(whichUnit,'A1EL')
 	local integer count = IMinBJ((LoadInteger(HY,(GetHandleId(targetUnit)), 281))+ 1, 10)
-	if IsMagicImmuneUnit(targetUnit) then
+	if IsUnitMagicImmune(targetUnit) then
 		set whichUnit = null
 		set targetUnit = null
 		return
@@ -57177,7 +57062,7 @@ function HZI takes nothing returns boolean
 		call CCX(target,'A3B8', level, 2,'B3B8')
 		call EUX(target,'A3B8', GetPlayerId(GetOwningPlayer(u)), 2)
 		call UnitDamageTargetEx(u, target, 1, level * 75)
-		if GetUnitAbilityLevel(target,'A3E9') == 1 and IsUnitType(u, UNIT_TYPE_HERO) and HGR == false and IsMagicImmuneUnit(u) == false then
+		if GetUnitAbilityLevel(target,'A3E9') == 1 and IsUnitType(u, UNIT_TYPE_HERO) and HGR == false and IsUnitMagicImmune(u) == false then
 			if UnitHasSpellShield(u) == false then
 				call T4V(target)
 				call LaunchMissileByUnitDummy(target, u,'h07V', "HZI", 1200, true)
@@ -57237,7 +57122,7 @@ function H1I takes nothing returns boolean
 		set d = LoadReal(ObjectHashTable, WFV, 1)
 		set i = LoadReal(ObjectHashTable, WFV, 0)
 		set u = LoadUnitHandle(ObjectHashTable, WFV, 2)
-		if GetUnitAbilityLevel(u,'A3E9') == 1 and IsMagicImmuneUnit(LoadUnitHandle(ObjectHashTable, WFV, 1)) == false and GetUnitAbilityLevel(LoadUnitHandle(ObjectHashTable, WFV, 1),'Aloc') == 0 then
+		if GetUnitAbilityLevel(u,'A3E9') == 1 and IsUnitMagicImmune(LoadUnitHandle(ObjectHashTable, WFV, 1)) == false and GetUnitAbilityLevel(LoadUnitHandle(ObjectHashTable, WFV, 1),'Aloc') == 0 then
 			if LoadBoolean(ObjectHashTable, WFV, 0) == false then
 				call SaveUnitHandle(OtherHashTable2,'A3E9', 0, u)
 				call SaveUnitHandle(OtherHashTable2,'A3E9', 1, LoadUnitHandle(ObjectHashTable, WFV, 1))
@@ -59328,7 +59213,7 @@ function L6I takes unit whichUnit, unit targetUnit, integer level returns nothin
 endfunction
 
 function L7I takes nothing returns nothing
-	if IsUnitInGroup(GetEnumUnit(), DK) == false and IsMagicImmuneUnit(GetEnumUnit()) == false then
+	if IsUnitInGroup(GetEnumUnit(), DK) == false and IsUnitMagicImmune(GetEnumUnit()) == false then
 		call GroupAddUnit(DK, GetEnumUnit())
 		call L6I(U2, GetEnumUnit(), Q2)
 	endif
@@ -59506,7 +59391,7 @@ function MXI takes unit whichUnit, unit targetUnit, integer MOI returns nothing
 	local real MRI = RMaxBJ(RMinBJ(GetUnitState(targetUnit, UNIT_STATE_MANA), MOI), 0)
 	local real MII = MRI * .5
 	local real MAI = 0
-	if IsMagicImmuneUnit(targetUnit) == false and MRI > 0 and RCX(targetUnit) == false then
+	if IsUnitMagicImmune(targetUnit) == false and MRI > 0 and RCX(targetUnit) == false then
 		if IsUnitIllusion(targetUnit) == false then
 			if GetUnitState(targetUnit, UNIT_STATE_MANA)> MRI then
 				set MAI = MAI + MRI
@@ -59894,7 +59779,7 @@ function M_I takes unit whichUnit, unit targetUnit, integer level returns nothin
 	local unit dummyCaster = CreateUnit(GetOwningPlayer(targetUnit),'e00E', GetUnitX(targetUnit), GetUnitY(targetUnit), 0)
 	call UnitAddPermanentAbility(dummyCaster,'A0VI')
 	call IssueTargetOrderById(dummyCaster, 852095, targetUnit)
-	if IsMagicImmuneUnit(targetUnit) == false then
+	if IsUnitMagicImmune(targetUnit) == false then
 		call UnitDamageTargetEx(whichUnit, targetUnit, 1, 25 + 5 * level)
 	endif
 	set dummyCaster = null
@@ -60628,7 +60513,7 @@ function Z1I takes unit u, unit t returns nothing
 	if GetUnitAbilityLevel(u,'A0JH')> 0 or GetUnitAbilityLevel(u,'A0FJ')> 0 then
 		call B1O(u, t)	//漩涡和雷神之锤
 	endif
-	if GetUnitAbilityLevel(u,'Afbt')> 0 and IsMagicImmuneUnit(t) == false then
+	if GetUnitAbilityLevel(u,'Afbt')> 0 and IsUnitMagicImmune(t) == false then
 		call B4O(u, t)	//净魂之刃1-2级
 	endif
 	call B7R(u, t)	//黯灭
@@ -60776,7 +60661,7 @@ function PWI takes nothing returns nothing
 	local integer h = GetHandleId(t)
 	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
 		if GetEventDamageSource() == LoadUnitHandle(HY, h, 0) then
-			if GetUnitAbilityLevel(GetTriggerUnit(),'A3E9') == 1 and IsMagicImmuneUnit(LoadUnitHandle(HY, h, 1)) == false and LoadBoolean(HY, h, 0) == false then
+			if GetUnitAbilityLevel(GetTriggerUnit(),'A3E9') == 1 and IsUnitMagicImmune(LoadUnitHandle(HY, h, 1)) == false and LoadBoolean(HY, h, 0) == false then
 				call SaveUnitHandle(OtherHashTable2,'A3E9', 0, GetTriggerUnit())
 				call SaveUnitHandle(OtherHashTable2,'A3E9', 1, LoadUnitHandle(HY, h, 1))
 				call SaveInteger(OtherHashTable2,'A3E9', 0, R2I(LoadReal(HY, h, 0)))
@@ -61305,7 +61190,7 @@ function RXE takes nothing returns nothing
 	set targetUnit = null
 endfunction
 function QAI takes nothing returns boolean
-	return(IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(GW)) and IsMagicImmuneUnit(GetFilterUnit()) == false and(DOX(GetFilterUnit()) == false or IsUnitVisible(GetFilterUnit(), GetOwningPlayer(GW))) and IsAliveNotStrucNotWard(GetFilterUnit()) and GetFilterUnit()!= CT)!= null
+	return(IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(GW)) and IsUnitMagicImmune(GetFilterUnit()) == false and(DOX(GetFilterUnit()) == false or IsUnitVisible(GetFilterUnit(), GetOwningPlayer(GW))) and IsAliveNotStrucNotWard(GetFilterUnit()) and GetFilterUnit()!= CT)!= null
 endfunction
 function QNI takes nothing returns nothing
 	local unit dummyCaster = CreateUnit(GetOwningPlayer(GW),'e00E', GetUnitX(GetEnumUnit()), GetUnitY(GetEnumUnit()), 0)
@@ -62377,7 +62262,7 @@ function UAI takes nothing returns boolean
 		call SetUnitY(UNI, y)
 	else
 		if UnitIsDead(targetUnit) == false then
-			if IsMagicImmuneUnit(targetUnit) == false then
+			if IsUnitMagicImmune(targetUnit) == false then
 				set dummyCaster = CreateUnit(GetOwningPlayer(whichUnit),'e00E', GetUnitX(targetUnit), GetUnitY(targetUnit), 0)
 				call UnitAddPermanentAbility(dummyCaster,'A091')
 				call SetUnitAbilityLevel(dummyCaster,'A091', LoadInteger(HY, h, 6))
@@ -62574,7 +62459,7 @@ function UMI takes nothing returns nothing
 	set t = null
 endfunction
 function UPI takes nothing returns boolean
-	return IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(Q5V)) and IsAliveNotStrucNotWard(GetFilterUnit()) and IsMagicImmuneUnit(GetFilterUnit()) == false
+	return IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(Q5V)) and IsAliveNotStrucNotWard(GetFilterUnit()) and IsUnitMagicImmune(GetFilterUnit()) == false
 endfunction
 function UQI takes nothing returns nothing
 	local unit u = GetEnumUnit()
@@ -62634,7 +62519,7 @@ function UTI takes nothing returns nothing
 endfunction
 function UUI takes unit u, unit t returns nothing
 	local timer tt
-	if IsMagicImmuneUnit(u) == false then
+	if IsUnitMagicImmune(u) == false then
 		call UnitAddPermanentAbility(u,'A308')
 		if (LoadBoolean(HY, GetHandleId(u), 1991)) then
 			set tt = LoadTimerHandle(HY, GetHandleId(u), 1991)
@@ -62752,7 +62637,7 @@ function Z6V takes nothing returns nothing
 	set t = null
 endfunction
 function LRE takes nothing returns nothing
-	if IsMagicImmuneUnit(GetSpellTargetUnit()) then
+	if IsUnitMagicImmune(GetSpellTargetUnit()) then
 		call EXStopUnit(GetTriggerUnit())
 		call InterfaceErrorForPlayer(GetOwningPlayer(GetTriggerUnit()), GetObjectName('n0LR'))
 	endif
@@ -64051,7 +63936,7 @@ function YCI takes integer Y6R, unit R3O, unit R4O returns nothing
 	if Y6R == 0 then
 		call IssueTargetOrderById(R3O, 851983, R4O)
 	endif
-	if GetUnitAbilityLevel(R4O,'A3EC') == 1 and IsMagicImmuneUnit(R4O) == false then
+	if GetUnitAbilityLevel(R4O,'A3EC') == 1 and IsUnitMagicImmune(R4O) == false then
 		if Y6R < 3 then
 			call CCX(R4O,'A3ED', 1, 1.,'B3ED')
 		elseif Y6R == 3 then
@@ -65230,7 +65115,7 @@ function StiflingDaggerOnMissileHit takes nothing returns nothing
 		set b = true
 	endif
 	// 回音护盾？
-	if b == false and GetUnitAbilityLevel(targetUnit,'A3E9') == 1 and IsMagicImmuneUnit(whichUnit) == false then
+	if b == false and GetUnitAbilityLevel(targetUnit,'A3E9') == 1 and IsUnitMagicImmune(whichUnit) == false then
 		set Q2 = level
 		set U2 = whichUnit
 		set MissileHitTargetUnit = targetUnit
@@ -65772,7 +65657,7 @@ endfunction
 function VPA takes nothing returns boolean
 	local unit t = GetFilterUnit()
 	local unit u = Temp__ArrayUnit[0]
-	if IsUnitEnemy(u, GetOwningPlayer(t)) and UnitAlive(t) and GetUnitAbilityLevel(t,'A04R') == 0 and IsMagicImmuneUnit(t) == false then
+	if IsUnitEnemy(u, GetOwningPlayer(t)) and UnitAlive(t) and GetUnitAbilityLevel(t,'A04R') == 0 and IsUnitMagicImmune(t) == false then
 		if IsUnitType(t, UNIT_TYPE_STRUCTURE) then
 			call UnitDamageTargetEx(u, t, 1, XK[0]/ 3)
 		else
@@ -66586,7 +66471,7 @@ function AAE takes nothing returns nothing
 endfunction
 function LOE takes nothing returns nothing
 	local unit u = GetSpellTargetUnit()
-	if not((IsUnitType(u, UNIT_TYPE_STRUCTURE) == false and IsMagicImmuneUnit(u) == false) or GetUnitTypeId(u)=='n0FJ' or GetUnitTypeId(u)=='n0FI' or GetUnitTypeId(u)=='n0F6' or GetUnitTypeId(u)=='n0FH') then
+	if not((IsUnitType(u, UNIT_TYPE_STRUCTURE) == false and IsUnitMagicImmune(u) == false) or GetUnitTypeId(u)=='n0FJ' or GetUnitTypeId(u)=='n0FI' or GetUnitTypeId(u)=='n0F6' or GetUnitTypeId(u)=='n0FH') then
 		call EXStopUnit(GetTriggerUnit())
 		call InterfaceErrorForPlayer(GetOwningPlayer(GetTriggerUnit()), "非法目标")
 	endif
@@ -67186,7 +67071,7 @@ function M8X takes nothing returns nothing
 	set t = null
 endfunction
 function XCA takes nothing returns boolean
-	if (IsMagicImmuneUnit(GetFilterUnit()) == false and IsUnitEnemy(GA, GetOwningPlayer(GetFilterUnit())) and(IsAliveNotStrucNotWard(GetFilterUnit())))!= null then
+	if (IsUnitMagicImmune(GetFilterUnit()) == false and IsUnitEnemy(GA, GetOwningPlayer(GetFilterUnit())) and(IsAliveNotStrucNotWard(GetFilterUnit())))!= null then
 		call UnitDamageTargetEx(GA, GetFilterUnit(), 1, HA)
 		call CCX(GetFilterUnit(),'A38I', 1, 3,'B38I')
 	endif
@@ -67853,7 +67738,7 @@ function OAA takes nothing returns boolean
 		exitwhen firstUnit == null
 			call GroupRemoveUnit(g, firstUnit)
 			// 敌对单位 存活 不是建筑不是守卫 不是魔免
-			if IsUnitEnemy(firstUnit, Temp__ArrayPlayer[8191]) and IsAliveNotStrucNotWard(firstUnit) and not IsMagicImmuneUnit(firstUnit) then
+			if IsUnitEnemy(firstUnit, Temp__ArrayPlayer[8191]) and IsAliveNotStrucNotWard(firstUnit) and not IsUnitMagicImmune(firstUnit) then
 				set d = GetUnitDistanceEx(damagedUnit, firstUnit)-25
 				set ENI =( 1000 - d ) / 700
 				if ENI > 1. then
@@ -68161,7 +68046,7 @@ function OZA takes nothing returns boolean
 	local real x2
 	local real y2
 	local real O_A
-	if IsUnitEnemy(u, GetOwningPlayer(t)) and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and GetUnitAbilityLevel(t,'A04R') == 0 and UnitVisibleToPlayer(t, GetOwningPlayer(u)) and UnitAlive(t) and(IsUnitType(t, UNIT_TYPE_ANCIENT) == false or DRX(t)) and IsMagicImmuneUnit(t) == false then
+	if IsUnitEnemy(u, GetOwningPlayer(t)) and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and GetUnitAbilityLevel(t,'A04R') == 0 and UnitVisibleToPlayer(t, GetOwningPlayer(u)) and UnitAlive(t) and(IsUnitType(t, UNIT_TYPE_ANCIENT) == false or DRX(t)) and IsUnitMagicImmune(t) == false then
 		set u = Temp__ArrayUnit[2]
 		set x1 = GetWidgetX(u)
 		set y1 = GetWidgetY(u)
@@ -68683,7 +68568,7 @@ function S2E takes nothing returns nothing
 	set d = null
 endfunction
 function RHA takes nothing returns boolean
-	return(IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and IsAliveNotStrucNotWard(GetFilterUnit()) and IsMagicImmuneUnit(GetFilterUnit()) == false and UnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(U2)))!= null
+	return(IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and IsAliveNotStrucNotWard(GetFilterUnit()) and IsUnitMagicImmune(GetFilterUnit()) == false and UnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(U2)))!= null
 endfunction
 function YAV takes nothing returns nothing
 	local unit whichUnit = GetTriggerUnit()
@@ -69213,7 +69098,7 @@ function IXA takes nothing returns nothing
 	call SaveUnitHandle(HY, h, 19, dummyCaster)
 	call SaveInteger(HY, h, 0, LoadInteger(HY, GetHandleId(GetTriggeringTrigger()), 5))
 	call UnitAddPermanentAbility(MissileHitTargetUnit,'A0OW')
-	if GetUnitAbilityLevel(MissileHitTargetUnit,'A3E9') == 1 and LoadBoolean(HY, GetHandleId(GetTriggeringTrigger()), 0) == false and IsMagicImmuneUnit(MissileHitTargetUnit) == false then
+	if GetUnitAbilityLevel(MissileHitTargetUnit,'A3E9') == 1 and LoadBoolean(HY, GetHandleId(GetTriggeringTrigger()), 0) == false and IsUnitMagicImmune(MissileHitTargetUnit) == false then
 		call SaveUnitHandle(OtherHashTable2,'A3E9', 0, MissileHitTargetUnit)
 		call SaveUnitHandle(OtherHashTable2,'A3E9', 1, U2)
 		call SaveInteger(OtherHashTable2,'A3E9', 0, LoadInteger(HY, GetHandleId(GetTriggeringTrigger()), 5))
@@ -69840,7 +69725,7 @@ function I8A takes nothing returns boolean
 	local unit targetUnit = LoadUnitHandle(HY, h, 17)
 	local integer level = LoadInteger(HY, h, 5)
 	local real MSI = LoadReal(HY, GetHandleId(targetUnit), 684)
-	if GetTriggerEventId() == EVENT_WIDGET_DEATH or MSI <(GetGameTime()) or IsMagicImmuneUnit(targetUnit) then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or MSI <(GetGameTime()) or IsUnitMagicImmune(targetUnit) then
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 		call SaveReal(HY, GetHandleId(targetUnit), 684, .0)
@@ -69893,7 +69778,7 @@ function I9A takes nothing returns nothing
 	set targetUnit = null
 endfunction
 function AVA takes nothing returns boolean
-	if GetUnitAbilityLevel(GetTriggerUnit(),'A0MM')> 0 and IsAliveNotStrucNotWard(GetEventDamageSource()) and IsUnitEnemy(GetEventDamageSource(), GetOwningPlayer(GetTriggerUnit())) and IsMagicImmuneUnit(GetEventDamageSource()) == false and GetUnitDistanceEx(GetEventDamageSource(), GetTriggerUnit())<= 1400 then
+	if GetUnitAbilityLevel(GetTriggerUnit(),'A0MM')> 0 and IsAliveNotStrucNotWard(GetEventDamageSource()) and IsUnitEnemy(GetEventDamageSource(), GetOwningPlayer(GetTriggerUnit())) and IsUnitMagicImmune(GetEventDamageSource()) == false and GetUnitDistanceEx(GetEventDamageSource(), GetTriggerUnit())<= 1400 then
 		if GetUnitAbilityLevel(GetTriggerUnit(),'A36D') == 0 and OB == false then
 			call I9A()
 		endif
@@ -70573,7 +70458,7 @@ function A_A takes nothing returns nothing
 	set M_V = true
 	call UnitDamageTargetEx(whichUnit, targetUnit, 1, IXX)
 	set M_V = false
-	if LoadBoolean(HY, h, 20) == false and GetUnitAbilityLevel(targetUnit,'A3E9') == 1 and IsMagicImmuneUnit(whichUnit) == false then
+	if LoadBoolean(HY, h, 20) == false and GetUnitAbilityLevel(targetUnit,'A3E9') == 1 and IsUnitMagicImmune(whichUnit) == false then
 		call SaveUnitHandle(OtherHashTable2,'A3E9', 0, targetUnit)
 		call SaveUnitHandle(OtherHashTable2,'A3E9', 1, whichUnit)
 		call SaveInteger(OtherHashTable2,'A3E9', 0, LoadInteger(HY, h, 20))
@@ -70878,7 +70763,7 @@ function N5E takes nothing returns nothing
 	set t = null
 endfunction
 function JWE takes nothing returns nothing
-	if IsUnitEnemy(GetSpellTargetUnit(), GetOwningPlayer(GetTriggerUnit())) and IsMagicImmuneUnit(GetSpellTargetUnit()) then
+	if IsUnitEnemy(GetSpellTargetUnit(), GetOwningPlayer(GetTriggerUnit())) and IsUnitMagicImmune(GetSpellTargetUnit()) then
 		call EXStopUnit(GetTriggerUnit())
 		call InterfaceErrorForPlayer(GetOwningPlayer(GetTriggerUnit()), "无法作用于魔免的敌人")
 	endif
@@ -71058,7 +70943,7 @@ function NYA takes nothing returns boolean
 	local unit t = GetFilterUnit()
 	local unit u = LoadUnitHandle(OtherHashTable2,'A0CA', 0)
 	local group g = LoadGroupHandle(ObjectHashTable, GetHandleId(u), StringHash("ShukuGroup"))
-	if u != null and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(u)) and(t != u) and IsUnitInGroup(t, g) == false and GetUnitAbilityLevel(t,'A04R') == 0 and IsMagicImmuneUnit(t) == false and UnitAlive(t) and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and(IsUnitType(t, UNIT_TYPE_ANCIENT) == false or DRX(t)) then
+	if u != null and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(u)) and(t != u) and IsUnitInGroup(t, g) == false and GetUnitAbilityLevel(t,'A04R') == 0 and IsUnitMagicImmune(t) == false and UnitAlive(t) and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and(IsUnitType(t, UNIT_TYPE_ANCIENT) == false or DRX(t)) then
 		call GroupAddUnit(g, t)
 		call UnitDamageTargetEx(u, t, 1, LoadInteger(ObjectHashTable, GetHandleId(u), StringHash("ShukuDamage")))
 		call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Undead\\AbsorbMana\\AbsorbManaBirthMissile.mdl", t, "chest"))
@@ -71373,7 +71258,7 @@ function N9A takes nothing returns nothing
 	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
 		if GetEventDamageSource() == dummyUnit then
 			if LoadUnitHandle(HY, h,-1) == LoadUnitHandle(HY, h, 2) then
-				if GetUnitAbilityLevel(targetUnit,'A3E9') == 1 and IsMagicImmuneUnit(damageSource) and LoadBoolean(HY, h, 0) == false then
+				if GetUnitAbilityLevel(targetUnit,'A3E9') == 1 and IsUnitMagicImmune(damageSource) and LoadBoolean(HY, h, 0) == false then
 					if UnitHasSpellShield(damageSource) == false then
 						call SaveUnitHandle(OtherHashTable2,'A3E9', 0, targetUnit)
 						call SaveUnitHandle(OtherHashTable2,'A3E9', 1, damageSource)
@@ -71810,7 +71695,7 @@ function B0A takes nothing returns nothing
 	if DVX(GetEnumUnit()) then
 		return
 	endif
-	if IsMagicImmuneUnit(GetEnumUnit()) == false then
+	if IsUnitMagicImmune(GetEnumUnit()) == false then
 		if M7V == 1 then
 			if GetUnitAbilityLevel(GetEnumUnit(),'A1HZ') == 0 then
 				call UnitRemoveAbility(GetEnumUnit(),'B0C5')
@@ -72677,7 +72562,7 @@ function CSA takes nothing returns boolean
 	local real GIX = GetDistanceBetween(GXR, GOR, tx, ty)
 	call SaveReal(HY, h, 23,((tx)* 1.))
 	call SaveReal(HY, h, 24,((ty)* 1.))
-	if GIX > 100  or count >(3.5 / .03) or IsMagicImmuneUnit(targetUnit) or GetTriggerEventId() == EVENT_WIDGET_DEATH then
+	if GIX > 100  or count >(3.5 / .03) or IsUnitMagicImmune(targetUnit) or GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call DestroyLightning(APX)
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
@@ -72766,7 +72651,7 @@ function CUA takes nothing returns boolean
 		call SetUnitPathing(whichUnit, true)
 		call UnitRemoveAbility(whichUnit,'A1J6')
 		call A3X(GetUnitX(whichUnit), GetUnitY(whichUnit), 100)
-		if targetUnit != null and IsMagicImmuneUnit(targetUnit) == false then
+		if targetUnit != null and IsUnitMagicImmune(targetUnit) == false then
 			call EPX(targetUnit, 4408, 5)
 			call CTA(whichUnit, targetUnit, level)
 		endif
@@ -72860,7 +72745,7 @@ function CZA takes unit u, unit dummyUnit returns boolean
 endfunction
 function C_A takes unit u, unit triggerUnit, integer dt, real damageValue, boolean C0A returns nothing
 	if CZA(triggerUnit, u) then
-		if IsMagicImmuneUnit(triggerUnit) == false then
+		if IsUnitMagicImmune(triggerUnit) == false then
 			call UnitDamageTargetEx(u, triggerUnit, dt, damageValue)
 		elseif C0A then
 			call UnitDamageTargetEx(u, triggerUnit, 7, damageValue)
@@ -73051,7 +72936,7 @@ function C9A takes nothing returns boolean
 	local unit whichUnit = LoadUnitHandle(HY, h, 2)
 	local unit targetUnit = LoadUnitHandle(HY, h, 17)
 	local integer level = LoadInteger(HY, h, 5)
-	if GetTriggerEventId() == EVENT_WIDGET_DEATH or GetTriggerEvalCount(t) == 4 or IsMagicImmuneUnit(whichUnit) then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or GetTriggerEvalCount(t) == 4 or IsUnitMagicImmune(whichUnit) then
 		call WHV(targetUnit,'D011')
 		call DestroyEffect((LoadEffectHandle(HY, h, 32)))
 		call FlushChildHashtable(HY, h)
@@ -73070,7 +72955,7 @@ function DVA takes nothing returns nothing
 	local integer h = GetHandleId(t)
 	local unit u = LoadUnitHandle(HY, h, 0)
 	local integer c = LoadInteger(HY, h, 0)+ 1
-	if IsMagicImmuneUnit(u) or c > 20 or UnitIsDead(u) then
+	if IsUnitMagicImmune(u) or c > 20 or UnitIsDead(u) then
 		call UnitRemoveAbility(u,'A43V')
 		call FlushChildHashtable(HY, h)
 		call PauseTimer(t)
@@ -73106,7 +72991,7 @@ function DXA takes unit u, unit whichUnit, integer level returns nothing
 endfunction
 function DOA takes nothing returns boolean
 	local unit u = GetEnumUnit()
-	if IsUnitInGroup(u, PVV) == false and IsMagicImmuneUnit(u) == false then
+	if IsUnitInGroup(u, PVV) == false and IsUnitMagicImmune(u) == false then
 		call GroupAddUnit(PVV, u)
 		call DestroyEffect(AddSpecialEffectTarget("war3mapImported\\FireBlast.mdx", u, "chest"))
 		call DXA(PXV, u, PEV)
@@ -73758,7 +73643,7 @@ function D_A takes nothing returns nothing
 	local integer WFV = GetHandleId(t)
 	local integer UYX = LoadInteger(ObjectHashTable, WFV, 0)
 	local unit targetUnit = LoadUnitHandle(ObjectHashTable, WFV, 0)
-	if UYX <= 1 or IsMagicImmuneUnit(targetUnit) or UnitIsDead(targetUnit) then
+	if UYX <= 1 or IsUnitMagicImmune(targetUnit) or UnitIsDead(targetUnit) then
 		call RemoveSavedHandle(ObjectHashTable, GetHandleId(targetUnit),'A1YX')
 		call DestroyEffect(LoadEffectHandle(ObjectHashTable, WFV, 2))
 		call DestroyTimerAndFlushHT_P(t)
@@ -73800,7 +73685,7 @@ endfunction
 function D2A takes nothing returns boolean
 	local unit t = GetFilterUnit()
 	local unit u = Temp__ArrayUnit[0]
-	if IsAliveNotStrucNotWard(t) and IsUnitEnemy(u, GetOwningPlayer(t)) and IsMagicImmuneUnit(t) == false then
+	if IsAliveNotStrucNotWard(t) and IsUnitEnemy(u, GetOwningPlayer(t)) and IsUnitMagicImmune(t) == false then
 		call CCX(t,'A45O'-1 + TempInt, 1, 4, 0)
 		call D1A(t, TempInt)
 	endif
@@ -74919,7 +74804,7 @@ function F4A takes nothing returns boolean
 	local real y
 	local real a
 	local real d
-	if (IsMagicImmuneUnit(GetFilterUnit()) == false and IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and IsAliveNotStrucNotWard(GetFilterUnit())) then
+	if (IsUnitMagicImmune(GetFilterUnit()) == false and IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and IsAliveNotStrucNotWard(GetFilterUnit())) then
 		set d = GetDistanceBetween(sx, sy, GetUnitX(targetUnit), GetUnitY(targetUnit))
 		set a = AngleBetweenXY(sx, sy, GetUnitX(targetUnit), GetUnitY(targetUnit))* bj_DEGTORAD
 		if d > PGV then
@@ -75052,7 +74937,7 @@ function F7A takes nothing returns boolean
 		call EPX(targetUnit, 4411, 1)
 		call SetUnitPosition(targetUnit, tx, ty)
 		call PanCameraToTimedForPlayer(GetOwningPlayer(targetUnit), tx, ty, 0)
-	elseif IsMagicImmuneUnit(targetUnit) then
+	elseif IsUnitMagicImmune(targetUnit) then
 		call KillUnit(missileDummy)
 		call DestroyEffect((LoadEffectHandle(HY, h, 175)))
 		call DestroyEffect((LoadEffectHandle(HY, h, 176)))
@@ -75332,7 +75217,7 @@ endfunction
 function GGA takes nothing returns nothing
 	if IsUnitType(GetEnumUnit(), UNIT_TYPE_STRUCTURE) == false then
 		call UnitDamageTargetEx(PQV, GetEnumUnit(), 1, PSV)
-		if IsMagicImmuneUnit(GetEnumUnit()) == false then
+		if IsUnitMagicImmune(GetEnumUnit()) == false then
 			call CNX(GetEnumUnit(),'A437', 3, 1,'B0DI')
 			call GQX(GetEnumUnit(),'A437','B0DI')
 		endif
@@ -76646,7 +76531,7 @@ function H5A takes nothing returns boolean
 		call DeallocateGroup(CNO)
 		call KillUnit(d)
 		call CleanCurrentTrigger(t)
-		if GetUnitAbilityLevel(targetUnit,'A3E9') == 1 and IsMagicImmuneUnit(u) == false then
+		if GetUnitAbilityLevel(targetUnit,'A3E9') == 1 and IsUnitMagicImmune(u) == false then
 			call SaveUnitHandle(OtherHashTable2,'A3E9', 0, targetUnit)
 			call SaveUnitHandle(OtherHashTable2,'A3E9', 1, u)
 			call SaveInteger(OtherHashTable2,'A3E9', 0, LoadInteger(HY, h, 5))
@@ -76749,7 +76634,7 @@ function JVA takes unit u returns nothing
 	set t = null
 endfunction
 function JEA takes nothing returns boolean
-	if IsUnitEnemy(GetFilterUnit(), E3) and IsAliveNotStrucNotWard(GetFilterUnit()) and IsMagicImmuneUnit(GetFilterUnit()) == false then
+	if IsUnitEnemy(GetFilterUnit(), E3) and IsAliveNotStrucNotWard(GetFilterUnit()) and IsUnitMagicImmune(GetFilterUnit()) == false then
 		call CCX(GetFilterUnit(), Q2, 1, 2, Q22)
 	endif
 	return false
@@ -79098,7 +78983,7 @@ function DYE takes nothing returns nothing
 	set t = null
 endfunction
 function MysticFlareFilterHeroes takes nothing returns boolean
-	return((IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and(IsAliveNotStrucNotWard(GetFilterUnit())) and RFX(GetFilterUnit()) == false) and IsMagicImmuneUnit(GetFilterUnit()))
+	return((IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and(IsAliveNotStrucNotWard(GetFilterUnit())) and RFX(GetFilterUnit()) == false) and IsUnitMagicImmune(GetFilterUnit()))
 endfunction
 function L5A takes nothing returns boolean
 	return IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and(IsAliveNotStrucNotWard(GetFilterUnit())) and(IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) or IsUnitIllusion(GetFilterUnit()))
@@ -79172,7 +79057,7 @@ function L7A takes nothing returns nothing
 	local integer level = LoadInteger(HY, GetHandleId(GetTriggeringTrigger()), 0)
 	local integer i = GetHeroMaxAttributeValue(whichUnit)
 	local real IXX = 40 + 20 * level + 1.6 * i
-	if GetUnitAbilityLevel(targetUnit,'A3E9') == 1 and IsMagicImmuneUnit(whichUnit) == false then
+	if GetUnitAbilityLevel(targetUnit,'A3E9') == 1 and IsUnitMagicImmune(whichUnit) == false then
 		call SaveUnitHandle(OtherHashTable2,'A3E9', 0, targetUnit)
 		call SaveUnitHandle(OtherHashTable2,'A3E9', 1, whichUnit)
 		call SaveInteger(OtherHashTable2,'A3E9', 0, level)
@@ -80460,7 +80345,7 @@ function PLA takes unit u returns nothing
 endfunction
 function PMA takes nothing returns boolean
 	local unit t = GetFilterUnit()
-	if IsUnitEnemy(t, Temp__Player) and GetUnitAbilityLevel(t,'A04R') == 0 and IsMagicImmuneUnit(t) == false and UnitAlive(t) and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and(IsUnitType(t, UNIT_TYPE_ANCIENT) == false or DRX(t)) then
+	if IsUnitEnemy(t, Temp__Player) and GetUnitAbilityLevel(t,'A04R') == 0 and IsUnitMagicImmune(t) == false and UnitAlive(t) and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and(IsUnitType(t, UNIT_TYPE_ANCIENT) == false or DRX(t)) then
 		call PLA(t)
 	endif
 	set t = null
@@ -80828,7 +80713,7 @@ function P7A takes nothing returns nothing
 	local unit whichUnit = LoadUnitHandle(HY, h, 2)
 	local unit targetUnit = ZG
 	local integer level = LoadInteger(HY, h, 0)
-	if IsMagicImmuneUnit(targetUnit) == false then
+	if IsUnitMagicImmune(targetUnit) == false then
 		call UnitDamageTargetEx(whichUnit, targetUnit, 1, 20 + 80 * level)
 		call WJV(targetUnit,'C030','D030', 4)
 		call CXX(targetUnit,'A2MJ', 1, 4)
@@ -80857,7 +80742,7 @@ function P9A takes unit whichUnit, unit targetUnit, integer level, boolean FAR r
 	call GroupRemoveUnit(g, targetUnit)
 	call ForGroup(g, function P8A)
 	call DeallocateGroup(g)
-	if GetUnitAbilityLevel(targetUnit,'A3E9') == 1 and FAR == false and IsMagicImmuneUnit(whichUnit) then
+	if GetUnitAbilityLevel(targetUnit,'A3E9') == 1 and FAR == false and IsUnitMagicImmune(whichUnit) then
 		call SaveUnitHandle(OtherHashTable2,'A3E9', 0, targetUnit)
 		call SaveUnitHandle(OtherHashTable2,'A3E9', 1, whichUnit)
 		call SaveInteger(OtherHashTable2,'A3E9', 0, level)
@@ -81978,7 +81863,7 @@ function AddingBashOrCritWrapper takes nothing returns nothing
 endfunction
 function ODO takes nothing returns nothing
 	if LoadBoolean(HY, EO, 20) then
-		if IsMagicImmuneUnit(DamageEventTarget) == false then
+		if IsUnitMagicImmune(DamageEventTarget) == false then
 			call CCX(DamageEventTarget,'A39D', 1, 5.,'B39D')
 			call CIO(DamageEventTarget, 5.)
 		endif
@@ -82107,7 +81992,7 @@ function TTA takes unit u, unit target, real damage returns nothing
 		call ExecuteAttackEvent(2)	//攻击目标非建筑，非守卫
 		if LoadBoolean(HY, EO, 15) then	//攻击目标是敌对单位
 			call ExecuteAttackEvent(3)	//攻击目标非建筑，非守卫，非友军
-			if IsMagicImmuneUnit(target) == false then	//攻击目标非魔免
+			if IsUnitMagicImmune(target) == false then	//攻击目标非魔免
 				call ExecuteAttackEvent(4)	//攻击目标非建筑，非守卫，非友军，非魔免
 			endif
 		endif
@@ -84840,7 +84725,7 @@ function UnitIssuedItemOrder takes nothing returns nothing // 发布物品命令
 			endif
 		elseif id == Item_EulScepterOfDivinity then
 			// 吹风 不能对魔免敌对单位使用
-			if IsUnitEnemy(targetUnit, trigPlayer) and IsMagicImmuneUnit(targetUnit) then
+			if IsUnitEnemy(targetUnit, trigPlayer) and IsUnitMagicImmune(targetUnit) then
 				call EXStopUnit(whichUnit)
 				call InterfaceErrorForPlayer(trigPlayer, GetObjectName('TX13'))
 			endif
@@ -84855,7 +84740,7 @@ function UnitIssuedItemOrder takes nothing returns nothing // 发布物品命令
 					call EXStopUnit(whichUnit)
 					call InterfaceErrorForPlayer(trigPlayer, GetObjectName('n038'))
 				elseif IsUnitEnemy(whichUnit, GetOwningPlayer(targetUnit)) then
-					if IsMagicImmuneUnit(targetUnit) then
+					if IsUnitMagicImmune(targetUnit) then
 						call EXStopUnit(whichUnit)
 						call InterfaceErrorForPlayer(trigPlayer, GetObjectName('TX13'))
 					elseif id == Item_HurricanePike then
@@ -84871,7 +84756,7 @@ function UnitIssuedItemOrder takes nothing returns nothing // 发布物品命令
 			endif
 		elseif id == NUV then
 			// 骨灰 不能对魔免敌对单位使用
-			if IsUnitEnemy(targetUnit, trigPlayer) and IsMagicImmuneUnit(targetUnit) then
+			if IsUnitEnemy(targetUnit, trigPlayer) and IsUnitMagicImmune(targetUnit) then
 				call EXStopUnit(whichUnit)
 				call InterfaceErrorForPlayer(trigPlayer, GetObjectName('n0LR'))
 			endif

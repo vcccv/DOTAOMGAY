@@ -31,7 +31,7 @@ scope Earthshaker
     
         set radin = bj_DEGTORAD * AngleBetweenXY(sx, sy, tx, ty)
         loop
-            exitwhen(maxDistance - distance) <= 0. //i > 22 60*22=1320
+            exitwhen ( distance + 60. ) > maxDistance //i > 22 60*22=1320
     
             set distance = distance + 60.
             set x = CoordinateX50(sx + distance * Cos(radin))
@@ -53,6 +53,8 @@ scope Earthshaker
             call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Other\\Volcano\\VolcanoDeath.mdl", x, y))
         endloop
         
+        call BJDebugMsg("distance:" + R2S(distance))
+
         loop
             set first = FirstOfGroup(targGroup)
             exitwhen first == null
