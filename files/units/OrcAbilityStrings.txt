@@ -21212,7 +21212,7 @@ buffubertip="该单位被回音战刃减速了"
 buffart=ReplaceableTextures\CommandButtons\BTNEchoSaber
 [n999]
 art=ReplaceableTextures\CommandButtons\BTNMerchant
-sellunits=n134,h0EU,n138,n12V,n125
+sellunits=n134,h0EU,n138,n12V,n125,n12W
 name=Pig King
 [AU02]
 Name=共享信使

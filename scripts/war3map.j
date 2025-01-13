@@ -1372,13 +1372,13 @@ globals
 	integer CVV
 	trigger RuneRefreshTrigger
 	integer CXV = 0
-	integer array COV
-	integer array CRV
-	integer array CIV
-	integer array CAV
-	integer array CNV
-	integer array CBV
-	integer CCV = 0
+	integer array CombineIndex1
+	integer array CombineIndex2
+	integer array CombineIndex3
+	integer array CombineIndex4
+	integer array CombineIndex5
+	integer array CombinedIndex
+	integer CombineMaxIndex = 0
 	integer array CDV
 	integer array CFV
 	integer array CGV
@@ -3016,7 +3016,7 @@ function InitActiveAbilitys takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A0E3', 0, "Y_V")
 	call SaveStr(ObjectHashTable,'AEbl', 0, "Y0V")
 	call SaveStr(ObjectHashTable,'QB08', 0, "Y0V")
-	call SaveStr(ObjectHashTable,'A0O1', 0, "Y1V")
+	call SaveStr(ObjectHashTable,'A0O1', 0, "WildAxesOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A0O2', 0, "Y2V")
 	call SaveStr(ObjectHashTable,'A289', 0, "Y2V")
 	call SaveStr(ObjectHashTable,'A13Z', 0, "Y3V")
@@ -3040,8 +3040,8 @@ function InitActiveAbilitys takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A1CS', 0, "ZRV")
 	call SaveStr(ObjectHashTable,'A0Z6', 0, "ZAV")
 	call SaveStr(ObjectHashTable,'A0Z5', 0, "ZNV")
-	call SaveStr(ObjectHashTable,'A0Z8', 0, "ZBV")
-	call SaveStr(ObjectHashTable,'A1CV', 0, "ZBV")
+	call SaveStr(ObjectHashTable,'A0Z8', 0, "HookshotOnSpellEffect")
+	call SaveStr(ObjectHashTable,'A1CV', 0, "HookshotOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A0Z4', 0, "ZCV")
 	call SaveStr(ObjectHashTable,'A03R', 0, "ZDV")
 	call SaveStr(ObjectHashTable,'A0AV', 0, "ZDV")
@@ -3064,7 +3064,7 @@ function InitActiveAbilitys takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A2SG', 0, "ZWV")
 	call SaveStr(ObjectHashTable,'A2TF', 0, "SpellEffect__FalsePromise")
 	call SaveStr(ObjectHashTable,'QB11', 0, "SpellEffect__FalsePromise")
-	call SaveStr(ObjectHashTable,'A0SK', 0, "ZZV")
+	call SaveStr(ObjectHashTable,'A0SK', 0, "FissureOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A0DH', 0, "Z_V")
 	call SaveStr(ObjectHashTable,'A1OB', 0, "Z_V")
 	call SaveStr(ObjectHashTable,'A01B', 0, "Z0V")
@@ -7955,7 +7955,7 @@ function BXX takes nothing returns nothing
 	set d = null
 	set t = null
 endfunction
-function BRX takes destructable d, real S7V returns nothing
+function RemoveDestructableToTimed takes destructable d, real S7V returns nothing
 	local timer t = CreateTimer()
 	local integer h = GetHandleId(t)
 	call TimerStart(t, S7V, false, function BXX)
@@ -14718,27 +14718,27 @@ function Z3X takes unit Y1X, unit KKX, boolean Z4X, integer Z5X returns nothing
 		set k = Z5X
 	endif
 	loop
-		call SaveInteger(HY,'ITEM', 51, COV[k])
-		call SaveInteger(HY,'ITEM', 52, CRV[k])
-		call SaveInteger(HY,'ITEM', 53, CIV[k])
-		call SaveInteger(HY,'ITEM', 54, CAV[k])
-		call SaveInteger(HY,'ITEM', 55, CNV[k])
+		call SaveInteger(HY,'ITEM', 51, CombineIndex1[k])
+		call SaveInteger(HY,'ITEM', 52, CombineIndex2[k])
+		call SaveInteger(HY,'ITEM', 53, CombineIndex3[k])
+		call SaveInteger(HY,'ITEM', 54, CombineIndex4[k])
+		call SaveInteger(HY,'ITEM', 55, CombineIndex5[k])
 		set Z8X = 0
 		set Z7X = 0
 		set i = 0
-		if COV[k]!= 0 then
+		if CombineIndex1[k]!= 0 then
 			set Z7X = Z7X + 1
 		endif
-		if CRV[k]!= 0 then
+		if CombineIndex2[k]!= 0 then
 			set Z7X = Z7X + 1
 		endif
-		if CIV[k]!= 0 then
+		if CombineIndex3[k]!= 0 then
 			set Z7X = Z7X + 1
 		endif
-		if CAV[k]!= 0 then
+		if CombineIndex4[k]!= 0 then
 			set Z7X = Z7X + 1
 		endif
-		if CNV[k]!= 0 then
+		if CombineIndex5[k]!= 0 then
 			set Z7X = Z7X + 1
 		endif
 		loop
@@ -14759,13 +14759,13 @@ function Z3X takes unit Y1X, unit KKX, boolean Z4X, integer Z5X returns nothing
 			loop
 				if Z8X == Z7X then
 					set it = LoadItemHandle(HY,'ITEM', i)
-					if CBV[k]== NIV then
+					if CombinedIndex[k]== NIV then
 						call SaveInteger(HY,'ITEM', 300, 8)
-					elseif CBV[k]== IUV then
+					elseif CombinedIndex[k]== IUV then
 						call SaveInteger(HY,'ITEM', 300, 12)
-					elseif CBV[k]== IWV then
+					elseif CombinedIndex[k]== IWV then
 						call SaveInteger(HY,'ITEM', 300, 12)
-					elseif CBV[k]== Item_MagicWand then
+					elseif CombinedIndex[k]== Item_MagicWand then
 						if GetItemIndexEx(it) == Item_MagicStick then
 							call SaveInteger(HY,'ITEM', 300, GetItemCharges(it))
 						endif
@@ -14781,8 +14781,8 @@ function Z3X takes unit Y1X, unit KKX, boolean Z4X, integer Z5X returns nothing
 		endif
 		if Z8X == Z7X then
 			if Z4X == false then
-				set it = UnitAddItemById(KKX, XOV[CBV[k]])
-				if CBV[k]== NIV or CBV[k]== Item_MagicWand or CBV[k]== IUV or CBV[k]== IWV then
+				set it = UnitAddItemById(KKX, XOV[CombinedIndex[k]])
+				if CombinedIndex[k]== NIV or CombinedIndex[k]== Item_MagicWand or CombinedIndex[k]== IUV or CombinedIndex[k]== IWV then
 					if HaveSavedInteger(HY,'ITEM', 300) then
 						call SetItemCharges(it, LoadInteger(HY,'ITEM', 300))
 						call RemoveSavedInteger(HY,'ITEM', 300)
@@ -14793,8 +14793,8 @@ function Z3X takes unit Y1X, unit KKX, boolean Z4X, integer Z5X returns nothing
 				call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Items\\AIem\\AIemTarget.mdl", KKX, "origin"))
 				set it = null
 			else
-				set it = CreateItem(XXV[CBV[k]], GetUnitX(KKX), GetUnitY(KKX))
-				if CBV[k]== NIV or CBV[k]== Item_MagicWand or CBV[k]== IUV or CBV[k]== IWV then
+				set it = CreateItem(XXV[CombinedIndex[k]], GetUnitX(KKX), GetUnitY(KKX))
+				if CombinedIndex[k]== NIV or CombinedIndex[k]== Item_MagicWand or CombinedIndex[k]== IUV or CombinedIndex[k]== IWV then
 					if HaveSavedInteger(HY,'ITEM', 300) then
 						call SetItemCharges(it, LoadInteger(HY,'ITEM', 300))
 						call RemoveSavedInteger(HY,'ITEM', 300)
@@ -14807,7 +14807,7 @@ function Z3X takes unit Y1X, unit KKX, boolean Z4X, integer Z5X returns nothing
 				set it = null
 			endif
 		endif
-	exitwhen k >= CCV
+	exitwhen k >= CombineMaxIndex
 		set k = k + 1
 	endloop
 endfunction
@@ -15210,12 +15210,12 @@ function VHO takes player p, unit whichUnit, integer GTX returns boolean
 		set VJO[0]= GTX
 		set i = 1
 		loop
-		exitwhen i >(CCV)
-			set VLO[0]= COV[i]
-			set VLO[1]= CRV[i]
-			set VLO[2]= CIV[i]
-			set VLO[3]= CAV[i]
-			set VLO[4]= CNV[i]
+		exitwhen i >(CombineMaxIndex)
+			set VLO[0]= CombineIndex1[i]
+			set VLO[1]= CombineIndex2[i]
+			set VLO[2]= CombineIndex3[i]
+			set VLO[3]= CombineIndex4[i]
+			set VLO[4]= CombineIndex5[i]
 			if EBO then
 				set VMO[0]= true
 				set VMO[1]= true
@@ -15273,14 +15273,14 @@ function VHO takes player p, unit whichUnit, integer GTX returns boolean
 				endif
 			endloop
 			if b[0]and b[1]and b[2]and b[3]and b[4] then
-				call VFO(whichPlayer, whichUnit, CBV[i], JVX[1], JVX[2], JVX[3], JVX[4], JVX[5], JVX[6])
-				set i = CCV + 2
+				call VFO(whichPlayer, whichUnit, CombinedIndex[i], JVX[1], JVX[2], JVX[3], JVX[4], JVX[5], JVX[6])
+				set i = CombineMaxIndex + 2
 			else
 				set i = i + 1
 			endif
 		endloop
 		set X3 = JVX[0]== 1
-		if i ==(CCV + 2) then
+		if i ==(CombineMaxIndex + 2) then
 			set VSO = null
 			set VTO = null
 			set VUO = null
@@ -15686,27 +15686,27 @@ function XOO takes unit KKX, integer XRO, player p returns nothing
 	set it = null
 	set Z6X = k
 	set k = XRO
-	call SaveInteger(HY,'ITEM', 51, COV[k])
-	call SaveInteger(HY,'ITEM', 52, CRV[k])
-	call SaveInteger(HY,'ITEM', 53, CIV[k])
-	call SaveInteger(HY,'ITEM', 54, CAV[k])
-	call SaveInteger(HY,'ITEM', 55, CNV[k])
+	call SaveInteger(HY,'ITEM', 51, CombineIndex1[k])
+	call SaveInteger(HY,'ITEM', 52, CombineIndex2[k])
+	call SaveInteger(HY,'ITEM', 53, CombineIndex3[k])
+	call SaveInteger(HY,'ITEM', 54, CombineIndex4[k])
+	call SaveInteger(HY,'ITEM', 55, CombineIndex5[k])
 	set Z8X = 0
 	set Z7X = 0
 	set i = 0
-	if COV[k]!= 0 then
+	if CombineIndex1[k]!= 0 then
 		set Z7X = Z7X + 1
 	endif
-	if CRV[k]!= 0 then
+	if CombineIndex2[k]!= 0 then
 		set Z7X = Z7X + 1
 	endif
-	if CIV[k]!= 0 then
+	if CombineIndex3[k]!= 0 then
 		set Z7X = Z7X + 1
 	endif
-	if CAV[k]!= 0 then
+	if CombineIndex4[k]!= 0 then
 		set Z7X = Z7X + 1
 	endif
-	if CNV[k]!= 0 then
+	if CombineIndex5[k]!= 0 then
 		set Z7X = Z7X + 1
 	endif
 	loop
@@ -15845,11 +15845,11 @@ endfunction
 function XIO takes integer id, boolean XAO returns integer
 	local integer i = 0
 	loop
-		if (XAO == false and CBV[i]== LoadInteger(HY,'ITDB', id)) or(XAO and(COV[i]== id or CRV[i]== id or CIV[i]== id or CAV[i]== id or CNV[i]== id)) then
+		if (XAO == false and CombinedIndex[i]== LoadInteger(HY,'ITDB', id)) or(XAO and(CombineIndex1[i]== id or CombineIndex2[i]== id or CombineIndex3[i]== id or CombineIndex4[i]== id or CombineIndex5[i]== id)) then
 			return i
 		endif
 		set i = i + 1
-	exitwhen i > CCV
+	exitwhen i > CombineMaxIndex
 	endloop
 	return -1
 endfunction
@@ -16584,6 +16584,28 @@ function Item_dragonlance takes boolean MCBCZ returns nothing
 	endif
 endfunction
 
+#define AETHER_LENS_CAST_RANGE_BONUS 999.
+
+function GetUnitCastRangeBonus takes unit whichUnit returns real
+	return MHUnit_GetSpellRange(whichUnit)
+endfunction
+function AetherLensOnPick takes unit whichUnit returns nothing
+	local player p = GetOwningPlayer(whichUnit)
+	if not LoadBoolean(HY, GetHandleId(p),'A3O3') then
+		call SaveBoolean(HY, GetHandleId(p),'A3O3', true)
+		call MHUnit_AddSpellRange(whichUnit, GetUnitCastRangeBonus(whichUnit) + AETHER_LENS_CAST_RANGE_BONUS)	
+		call BJDebugMsg("我说我加了施法射程你耳聋吗？现在是：" + R2S(GetUnitCastRangeBonus(whichUnit)))
+	endif
+endfunction
+function AetherLensOnDrop takes unit whichUnit returns nothing
+	local player p = GetOwningPlayer(whichUnit)
+	if LoadBoolean(HY, GetHandleId(p),'A3O3') then
+		call RemoveSavedBoolean(HY, GetHandleId(p),'A3O3')
+		call MHUnit_AddSpellRange(whichUnit, GetUnitCastRangeBonus(whichUnit) - AETHER_LENS_CAST_RANGE_BONUS)
+		call BJDebugMsg("一点施法射程不要也罢，现在是：" + R2S(GetUnitCastRangeBonus(whichUnit)))
+	endif
+endfunction
+
 function QTUWW takes unit u, boolean WEWQQ returns nothing
 	local real r = GetUnitState(u, UNIT_STATE_ATTACK1_RANGE) 
 	if not IsUnitType(u, UNIT_TYPE_MELEE_ATTACKER) then
@@ -16754,6 +16776,8 @@ function OMO takes nothing returns boolean
 						call RegisterUnitAttackEvent("UYYRQ", 2)
 					endif
 				endif
+			elseif i == XOV[Item_AetherLens] then
+				call AetherLensOnPick(u)
 			endif
 		elseif GetTriggerEventId() == EVENT_PLAYER_UNIT_DROP_ITEM then
 			if i == XOV[OYV] then
@@ -16788,6 +16812,8 @@ function OMO takes nothing returns boolean
 				if not IsBearUnit(u) then
 					call Item_dragonlance(true)
 				endif
+			elseif i == XOV[Item_AetherLens] then
+				call AetherLensOnDrop(u)
 			endif
 		endif
 	endif
@@ -37857,7 +37883,7 @@ function F1R takes nothing returns nothing
 	local real b = 1 -a
 	local boolean DBR = LoadBoolean(HY, h, 291)
 	local group CNO = LoadGroupHandle(HY, h, 133)
-	local real DCR = RMaxBJ(GetDistanceBetween(sx, sy, tx, ty)/  1300, .4)
+	local real DCR = RMaxBJ(GetDistanceBetween(sx, sy, tx, ty)/  ( 1300. + GetUnitCastRangeBonus(trigUnit) ), .4)
 	call SetUnitX(F2R, CoordinateX50(sx * a * a + Bx * 2 * a * b + tx * b * b))
 	call SetUnitY(F2R, CoordinateY50(sy * a * a + By * 2 * a * b + ty * b * b))
 	call F0R(trigUnit, GetUnitX(F2R), GetUnitY(F2R), CNO, LoadInteger(HY, h, 0))
@@ -37884,7 +37910,7 @@ function F1R takes nothing returns nothing
 	set trigUnit = null
 	set CNO = null
 endfunction
-function Y1V takes nothing returns nothing
+function WildAxesOnSpellEffect takes nothing returns nothing
 	local unit u = GetTriggerUnit()
 	local real sx
 	local real sy
@@ -40270,7 +40296,7 @@ function KKR takes nothing returns boolean
 	set targetUnit = null
 	return false
 endfunction
-function ZBV takes nothing returns nothing
+function HookshotOnSpellEffect takes nothing returns nothing
 	local trigger t = CreateTrigger()
 	local integer h = GetHandleId(t)
 	local unit trigUnit = GetTriggerUnit()
@@ -40284,7 +40310,7 @@ function ZBV takes nothing returns nothing
 		set level = GetUnitAbilityLevel(trigUnit,'A1CV')
 		set KMR = true
 	endif
-	set KTR = 1500+ 500 * level
+	set KTR = 1500+ 500 * level + R2I(GetUnitCastRangeBonus(trigUnit))
 	set KLR = KTR / 50
 	call SaveUnitHandle(HY, h, 14, trigUnit)
 	call SaveInteger(HY, h, 5, level)
@@ -43379,50 +43405,76 @@ function SJR takes nothing returns nothing
 	call UnitDamageTargetEx(GetTriggerUnit(), GetEnumUnit(), 1, S2)
 	call CommonUnitAddStun(GetEnumUnit(), Q2 * .25 + .75, false)
 endfunction
-function ZZV takes nothing returns nothing
-	local unit trigUnit = GetTriggerUnit()
+function FissureOnSpellEffect takes nothing returns nothing
+	local unit trigUnit   = GetTriggerUnit()
 	local unit targetUnit = GetSpellTargetUnit()
-	local location l = GetSpellTargetLoc()
-	local integer i = 1
 	local real sx = GetUnitX(trigUnit)
 	local real sy = GetUnitY(trigUnit)
 	local real tx
 	local real ty
 	local real x
 	local real y
-	local real a
-	local group g = AllocationGroup(191)
-	local group g2 = AllocationGroup(192)
+	local real radin
+	local group   enumGroup = AllocationGroup(191)
+	local group   targGroup = AllocationGroup(192)
+	local player  p 		  = GetOwningPlayer(trigUnit)
+	local unit    first
+	local real    range    = 225.
+	local real    damage   = GetUnitAbilityLevel(trigUnit,'A0SK') * 50. + 60.
+	local real    duration = GetUnitAbilityLevel(trigUnit,'A0SK') * .25 + .75
+	local real    maxDistance = 1320. + GetUnitCastRangeBonus(trigUnit)
+	local real    distance    = 0.
+
 	if targetUnit == null then
-		set tx = GetLocationX(l)
-		set ty = GetLocationY(l)
+		set tx = GetSpellTargetX()
+		set ty = GetSpellTargetY()
 	else
 		set tx = GetUnitX(targetUnit)
 		set ty = GetUnitY(targetUnit)
 	endif
-	set a = bj_DEGTORAD * AngleBetweenXY(sx, sy, tx, ty)
-	call RemoveLocation(l)
+
+	set radin 	 = bj_DEGTORAD * AngleBetweenXY(sx, sy, tx, ty)
 	loop
-	exitwhen i > 22
-		set x = CoordinateX50(sx + i * 60 * Cos(a))
-		set y = CoordinateY50(sy + i * 60 * Sin(a))
-		call GroupEnumUnitsInRange(g2, x, y, 250, Condition(function DDX))
-		call GroupAddGroup(g2, g)
-		call GroupClear(g2)
-		call BRX(CreateDestructable('B000', x, y, GetRandomReal(0, 360), .5, GetRandomInt(0, 2)), 8)
+	exitwhen ( maxDistance - distance ) <= 0. //i > 22
+
+		set distance = distance + 60.
+		set x = CoordinateX50(sx + distance * Cos(radin))
+		set y = CoordinateY50(sy + distance * Sin(radin))
+		call GroupEnumUnitsInRange(enumGroup, x, y, range + MAX_UNIT_COLLISION, null)
+
+		loop
+			set first = FirstOfGroup(enumGroup)
+			exitwhen first == null
+			call GroupRemoveUnit(enumGroup, first)
+
+			if IsUnitInRangeXY(first, x, y, range) and IsUnitEnemy(first, p) and IsAliveNotStrucNotWard(first) and IsNotAncientOrBear(first) then
+				call GroupAddUnit(targGroup, first)
+			endif
+
+		endloop
+
+		call RemoveDestructableToTimed(CreateDestructable('B000', x, y, GetRandomReal(0, 360), .5, GetRandomInt(0, 2)), 8)
 		call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Other\\Volcano\\VolcanoDeath.mdl", x, y))
-		set i = i + 1
 	endloop
-	set Q2 = GetUnitAbilityLevel(trigUnit,'A0SK')
-	set S2 = Q2 * 50 + 60
-	call ForGroup(g, function SJR)
-	call DeallocateGroup(g)
-	call DeallocateGroup(g2)
-	set g = null
-	set g2 = null
+	
+	loop
+		set first = FirstOfGroup(targGroup)
+		exitwhen first == null
+		call GroupRemoveUnit(targGroup, first)
+
+		if UnitAlive(first) then
+			call UnitDamageTargetEx(trigUnit, first, 1, damage)
+			call CommonUnitAddStun(first, duration, false)
+
+		endif
+
+	endloop
+
+	call DeallocateGroup(enumGroup)
+	call DeallocateGroup(targGroup)
+
 	set targetUnit = null
 	set trigUnit = null
-	set l = null
 endfunction
 function SKR takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
@@ -44394,7 +44446,7 @@ function VEE takes nothing returns nothing
 		set loop_max = 8
 		loop
 		exitwhen loop_i > loop_max
-			call BRX(CreateDestructableLoc('B005', VIX(UVR, 150.,(I2R(loop_i)* 45.)), GetRandomReal(0, 360), 1, 0), 2 + GetUnitAbilityLevel(dummyCaster,'A21E'))
+			call RemoveDestructableToTimed(CreateDestructableLoc('B005', VIX(UVR, 150.,(I2R(loop_i)* 45.)), GetRandomReal(0, 360), 1, 0), 2 + GetUnitAbilityLevel(dummyCaster,'A21E'))
 			set loop_i = loop_i + 1
 		endloop
 	endif
@@ -48080,14 +48132,16 @@ function WaveRunningActions takes nothing returns nothing
 endfunction
 
 //如果参数area和range的值一样，为矩形冲击波，每次选取的范围一样.range＞area则像食腐蜂群。
-function Wave takes unit u1, integer id, real damage, real max_distance, real area, real range, real ux, real uy, real spx, real spy, real missiespeed, integer dt, boolean b, string func, integer lv returns nothing
+function LaunchWaveSimple takes unit u1, integer id, real damage, real max_distance, real area, real range, real ux, real uy, real spx, real spy, real missiespeed, integer dt, boolean b, string func, integer lv returns nothing
 	local trigger t = CreateTrigger()
 	local integer h = GetHandleId(t)
 	local real angle = AngleBetweenXY(ux, uy, spx, spy)
 	local unit u = CreateUnit(GetOwningPlayer(u1), id, ux, uy, angle)
 	local real interval = 0.02
 	local real speed = missiespeed * interval
-	local integer max_evalcount = R2I(max_distance / speed)+ 1
+	local integer max_evalcount
+	set max_distance = max_distance + GetUnitCastRangeBonus(u1)
+	set max_evalcount = R2I(max_distance / speed)+ 1
 	call SetUnitColor(u, PLAYER_COLOR_ORANGE)
 	if LoadBoolean(OtherHashTable2,'wave','ally') then
 		call RemoveSavedBoolean(OtherHashTable2,'wave','ally')
@@ -48126,7 +48180,7 @@ endfunction
 
 function UAII takes real UNI, real UBI, real UCI, real F5OO, real HHXX, string P7EE, unit u, real tx, real ty, integer facing returns nothing
 	set IR = u
-	call Wave(IR,'h070', F5OO, UNI, UBI, UCI, GetUnitX(u), GetUnitY(u), tx, ty, HHXX, 1, false, P7EE, facing)
+	call LaunchWaveSimple(IR,'h070', F5OO, UNI, UBI, UCI, GetUnitX(u), GetUnitY(u), tx, ty, HHXX, 1, false, P7EE, facing)
 endfunction
 
 function EJI takes nothing returns boolean
@@ -48250,7 +48304,7 @@ function EJI takes nothing returns boolean
 				endloop
 			endif
 			if id =='A3OH' then
-				call Wave(dummyCaster,'h08O', 60 + 50 * lv, 1200, 240, 240, tx, ty, ux, uy, 1500, 1, false, "GushUpgraded_Actions", lv)
+				call LaunchWaveSimple(dummyCaster,'h08O', 60 + 50 * lv, 1200, 240, 240, tx, ty, ux, uy, 1500, 1, false, "GushUpgraded_Actions", lv)
 			endif
 			if id =='A12K' then
 				set S7V = RMinBJ((GetGameTime())-(LoadReal(HY,(GetHandleId(u)), 358))-(.3 * GetTriggerEvalCount(t)), 1.05)
@@ -68965,7 +69019,7 @@ function a_chaoxi takes nothing returns nothing
 	local real x = GetUnitX(u)
 	local real y = GetUnitY(u)
 	local real range = 1200.
-	call Wave(u,'h08O', 60 + 50 * lv, range, 240, 240, x, y, GetSpellTargetX(), GetSpellTargetY(), 1500, 1, false, "GushUpgraded_Actions", lv)
+	call LaunchWaveSimple(u,'h08O', 60 + 50 * lv, range, 240, 240, x, y, GetSpellTargetX(), GetSpellTargetY(), 1500, 1, false, "GushUpgraded_Actions", lv)
 	set u = null
 endfunction
 function NXE takes nothing returns nothing
@@ -76276,27 +76330,27 @@ function HDA takes unit sourceUnit, unit targetUnit, real sx, real sy, real a2 r
 	set HFA = a
 	set x = tx + 200* Cos(HFA * bj_DEGTORAD)
 	set y = ty + 200* Sin(HFA * bj_DEGTORAD)
-	call BRX(CreateDestructable('B006', x, y,-1 * HFA, .6, 1), 7)
+	call RemoveDestructableToTimed(CreateDestructable('B006', x, y,-1 * HFA, .6, 1), 7)
 	call A3X(x, y, 300)
 	set HFA = a -40
 	set x = tx + 200* Cos(HFA * bj_DEGTORAD)
 	set y = ty + 200* Sin(HFA * bj_DEGTORAD)
-	call BRX(CreateDestructable('B006', x, y,-1 * HFA, .6, 1), 7)
+	call RemoveDestructableToTimed(CreateDestructable('B006', x, y,-1 * HFA, .6, 1), 7)
 	call A3X(x, y, 300)
 	set HFA = a -80
 	set x = tx + 200* Cos(HFA * bj_DEGTORAD)
 	set y = ty + 200* Sin(HFA * bj_DEGTORAD)
-	call BRX(CreateDestructable('B006', x, y,-1 * HFA, .6, 1), 7)
+	call RemoveDestructableToTimed(CreateDestructable('B006', x, y,-1 * HFA, .6, 1), 7)
 	call A3X(x, y, 300)
 	set HFA = a + 40
 	set x = tx + 200* Cos(HFA * bj_DEGTORAD)
 	set y = ty + 200* Sin(HFA * bj_DEGTORAD)
-	call BRX(CreateDestructable('B006', x, y,-1 * HFA, .6, 1), 7)
+	call RemoveDestructableToTimed(CreateDestructable('B006', x, y,-1 * HFA, .6, 1), 7)
 	call A3X(x, y, 300)
 	set HFA = a + 80
 	set x = tx + 200* Cos(HFA * bj_DEGTORAD)
 	set y = ty + 200* Sin(HFA * bj_DEGTORAD)
-	call BRX(CreateDestructable('B006', x, y,-1 * HFA, .6, 1), 7)
+	call RemoveDestructableToTimed(CreateDestructable('B006', x, y,-1 * HFA, .6, 1), 7)
 	call A3X(x, y, 300)
 endfunction
 function HGA takes nothing returns nothing
@@ -88308,8 +88362,8 @@ function InitItemsSystem takes nothing returns nothing
 	set it_fj = RegisterItem('IZPS','IZPD', 0,'IZPE')
 	call SaveInteger(HY,'ITDB', RegisterItem(0, 0,'n125', 0), it_fj)//否决一键购买
 
-	set Recipe_AetherLens = RegisterItem('I0VX','I0VY','n138','I0VZ')
-	set Item_AetherLens   = RegisterItem('I0V3','I0V4','n12W','I0V5')
+	set Recipe_AetherLens = RegisterItem('I0V3','I0V4','n12W','I0V5')
+	set Item_AetherLens   = RegisterItem('I0UE','I0UF',     0,'I0UG')
 
 	set XMV = RegisterItem('I02Q','I02O','h011','I00A')
 	set XPV = RegisterItem('I02S','I02P','h012','I0CA')
@@ -88658,517 +88712,518 @@ function InitItemsSystem takes nothing returns nothing
 	set XNV[RegisterItem('I0MA','I0M9','h0CN','I0MB')]= XKV
 	set XNV[RegisterItem('I033','I047','h0D0','I0D7')]= XZV
 	set XNV[RegisterItem('I032','I046','u025','I0CZ')]= XYV
-	set CCV = CCV + 1
-	set COV[CCV]= OFV
-	set CRV[CCV]= OWV
-	set CBV[CCV]= IEV
-	set CCV = CCV + 1
-	set COV[CCV]= IEV
-	set CRV[CCV]= XZV
-	set CIV[CCV]= RHV
-	set CAV[CCV]= XZV
-	set CBV[CCV]= RGV
-	set CCV = CCV + 1
-	set COV[CCV]= X7V
-	set CRV[CCV]= X7V
-	set CBV[CCV]= Item_MoonShard
-	set CCV = CCV + 1
-	set COV[CCV]= ONV
-	set CRV[CCV]= XGV
-	set CBV[CCV]= RQV
-	set CCV = CCV + 1
-	set COV[CCV]= N_V
-	set CRV[CCV]= RXV
-	set CBV[CCV]= RJV
-	set CCV = CCV + 1
-	set COV[CCV]= OHV
-	set CRV[CCV]= Item_IronwoodBranch
-	set CIV[CCV]= N3V
-	set CBV[CCV]= IXV
-	set CCV = CCV + 1
-	set COV[CCV]= XZV
-	set CRV[CCV]= Item_IronwoodBranch
-	set CIV[CCV]= N4V
-	set CBV[CCV]= IOV
-	set CCV = CCV + 1
-	set COV[CCV]= OGV
-	set CRV[CCV]= OMV
-	set CBV[CCV]= IIV
-	set CCV = CCV + 1
-	set COV[CCV]= XMV
-	set CRV[CCV]= N5V
-	set CBV[CCV]= IAV
-	set CCV = CCV + 1
-	set COV[CCV]= IAV
-	set CRV[CCV]= N5V
-	set CBV[CCV]= INV
-	set CCV = CCV + 1
-	set COV[CCV]= I3V
-	set CRV[CCV]= OIV
-	set CBV[CCV]= RFV
-	set CCV = CCV + 1
-	set COV[CCV]= XMV
-	set CRV[CCV]= XQV
-	set CIV[CCV]= XPV
-	set CBV[CCV]= IBV
-	set CCV = CCV + 1
-	set COV[CCV]= XMV
-	set CRV[CCV]= XTV
-	set CIV[CCV]= XPV
-	set CBV[CCV]= ICV
-	set CCV = CCV + 1
-	set COV[CCV]= XMV
-	set CRV[CCV]= OJV
-	set CIV[CCV]= XPV
-	set CBV[CCV]= IDV
-	set CCV = CCV + 1
-	set COV[CCV]= XPV
-	set CRV[CCV]= N6V
-	set CBV[CCV]= IFV
-	set CCV = CCV + 1
-	set COV[CCV]= ODV
-	set CRV[CCV]= OJV
-	set CIV[CCV]= OMV
-	set CBV[CCV]= IHV
-	set CCV = CCV + 1
-	set COV[CCV]= XSV
-	set CRV[CCV]= X3V
-	set CIV[CCV]= N7V
-	set CBV[CCV]= IJV
-	set CCV = CCV + 1
-	set COV[CCV]= XSV
-	set CRV[CCV]= OLV
-	set CIV[CCV]= N8V
-	set CBV[CCV]= IKV
-	set CCV = CCV + 1
-	set COV[CCV]= XSV
-	set CRV[CCV]= OEV
-	set CIV[CCV]= N9V
-	set CBV[CCV]= ILV
-	set CCV = CCV + 1
-	set COV[CCV]= XUV
-	set CRV[CCV]= XQV
-	set CIV[CCV]= BVV
-	set CBV[CCV]= IMV
-	set CCV = CCV + 1
-	set COV[CCV]= OAV
-	set CRV[CCV]= XTV
-	set CIV[CCV]= BEV
-	set CBV[CCV]= IPV
-	set CCV = CCV + 1
-	set COV[CCV]= OYV
-	set CRV[CCV]= XTV
-	set CIV[CCV]= BXV
-	set CBV[CCV]= IQV
-	set CCV = CCV + 1
-	set COV[CCV]= ACV	//大隐刀
-	set CRV[CCV]= IPV
-	set CIV[CCV]= RMV
-	set CBV[CCV]= RLV
-	set CCV = CCV + 1
-	set COV[CCV]= I4V
-	set CRV[CCV]= NZV
-	set CIV[CCV]= RSV
-	set CBV[CCV]= RTV
-	set CCV = CCV + 1
-	set COV[CCV]= XYV
-	set CRV[CCV]= XZV
-	set CIV[CCV]= OJV
-	set CBV[CCV]= ISV
-	set CCV = CCV + 1
-	set COV[CCV]= ORV
-	set CRV[CCV]= XPV
-	set CIV[CCV]= BOV
-	set CBV[CCV]= ITV
-	set CCV = CCV + 1
-	set COV[CCV]= XUV
-	set CRV[CCV]= XUV
-	set CIV[CCV]= OJV
-	set CAV[CCV]= BRV
-	set CBV[CCV]= IUV
-	set CCV = CCV + 1
-	set COV[CCV]= IUV
-	set CRV[CCV]= BRV
-	set CBV[CCV]= IWV
-	set CCV = CCV + 1
-	set COV[CCV]= IYV
-	set CRV[CCV]= BRV
-	set CBV[CCV]= IWV
-	set CCV = CCV + 1
-	set COV[CCV]= X6V
-	set CRV[CCV]= OXV
-	set CBV[CCV]= I_V
-	set CCV = CCV + 1
-	set COV[CCV]= OXV
-	set CRV[CCV]= ODV
-	set CBV[CCV]= I1V
-	set CCV = CCV + 1
-	set COV[CCV]= OMV
-	set CRV[CCV]= OPV
-	set CIV[CCV]= OWV
-	set CAV[CCV]= BAV
-	set CBV[CCV]= Item_EulScepterOfDivinity
-	set CCV = CCV + 1
-	set COV[CCV]= OCV
-	set CRV[CCV]= X2V
-	set CIV[CCV]= OUV
-	set CBV[CCV]= I3V
-	set CCV = CCV + 1
-	set COV[CCV]= IXV
-	set CRV[CCV]= IOV
-	set CIV[CCV]= BNV
-	set CBV[CCV]= I4V
-	set CCV = CCV + 1
-	set COV[CCV]= IPV
-	set CRV[CCV]= IMV
-	set CBV[CCV]= I5V
-	set CCV = CCV + 1
-	set COV[CCV]= ORV
-	set CRV[CCV]= ORV
-	set CIV[CCV]= BCV
-	set CBV[CCV]= I6V
-	set CCV = CCV + 1
-	set COV[CCV]= IEV
-	set CRV[CCV]= XYV
-	set CIV[CCV]= X_V
-	set CAV[CCV]= RVV
-	set CBV[CCV]= I7V
-	set CCV = CCV + 1
-	set COV[CCV]= IEV
-	set CRV[CCV]= XYV
-	set CIV[CCV]= X_V
-	set CAV[CCV]= REV
-	set CBV[CCV]= I7V
-	set CCV = CCV + 1
-	set COV[CCV]= XWV
-	set CRV[CCV]= XYV
-	set CIV[CCV]= BDV
-	set CBV[CCV]= I8V
-	set CCV = CCV + 1
-	set COV[CCV]= ORV
-	set CRV[CCV]= OAV
-	set CIV[CCV]= BFV
-	set CBV[CCV]= I9V
-	set CCV = CCV + 1
-	set COV[CCV]= IMV
-	set CRV[CCV]= OTV
-	set CIV[CCV]= BGV
-	set CBV[CCV]= ABV
-	set CCV = CCV + 1
-	set COV[CCV]= XGV
-	set CRV[CCV]= X_V
-	set CBV[CCV]= ACV
-	set CCV = CCV + 1
-	set COV[CCV]= OPV
-	set CRV[CCV]= ILV
-	set CIV[CCV]= BHV
-	set CBV[CCV]= ADV
-	set CCV = CCV + 1
-	set COV[CCV]= ADV
-	set CRV[CCV]= BHV
-	set CBV[CCV]= AFV
-	set CCV = CCV + 1
-	set COV[CCV]= AFV
-	set CRV[CCV]= BHV
-	set CBV[CCV]= AGV
-	set CCV = CCV + 1
-	set COV[CCV]= AGV
-	set CRV[CCV]= BHV
-	set CBV[CCV]= AHV
-	set CCV = CCV + 1
-	set COV[CCV]= AHV
-	set CRV[CCV]= BHV
-	set CBV[CCV]= AJV
-	set CCV = CCV + 1
-	set COV[CCV]= OPV
-	set CRV[CCV]= XTV
-	set CIV[CCV]= BJV
-	set CBV[CCV]= AKV
-	set CCV = CCV + 1
-	set COV[CCV]= AKV
-	set CRV[CCV]= BJV
-	set CBV[CCV]= ALV
-	set CCV = CCV + 1
-	set COV[CCV]= ALV
-	set CRV[CCV]= BJV
-	set CBV[CCV]= AMV
-	set CCV = CCV + 1
-	set COV[CCV]= OTV
-	set CRV[CCV]= IEV
-	set CIV[CCV]= BKV
-	set CBV[CCV]= APV
-	set CCV = CCV + 1
-	set COV[CCV]= X0V
-	set CRV[CCV]= OKV
-	set CBV[CCV]= ASV
-	set CCV = CCV + 1
-	set COV[CCV]= I8V
-	set CRV[CCV]= X0V
-	set CIV[CCV]= BLV
-	set CBV[CCV]= AUV
-	set CCV = CCV + 1
-	set COV[CCV]= X0V
-	set CRV[CCV]= OYV
-	set CIV[CCV]= OYV
-	set CBV[CCV]= AWV
-	set CCV = CCV + 1
-	set COV[CCV]= OKV
-	set CRV[CCV]= BMV
-	set CBV[CCV]= AZV
-	set CCV = CCV + 1
-	set COV[CCV]= OOV
-	set CRV[CCV]= OUV
-	set CIV[CCV]= BPV
-	set CBV[CCV]= A0V
-	set CCV = CCV + 1
-	set COV[CCV]= OOV
-	set CRV[CCV]= I_V
-	set CIV[CCV]= BQV
-	set CBV[CCV]= A2V
-	set CCV = CCV + 1
-	set COV[CCV]= OOV
-	set CRV[CCV]= I0V
-	set CIV[CCV]= BQV
-	set CBV[CCV]= A2V
-	set CCV = CCV + 1
-	set COV[CCV]= OTV
-	set CRV[CCV]= OTV
-	set CIV[CCV]= OCV
-	set CAV[CCV]= XKV
-	set CBV[CCV]= A3V
-	set CCV = CCV + 1
-	set COV[CCV]= OTV
-	set CRV[CCV]= OTV
-	set CIV[CCV]= OCV
-	set CAV[CCV]= XLV
-	set CBV[CCV]= A3V
-	set CCV = CCV + 1
-	set COV[CCV]= XJV
-	set CRV[CCV]= IOV
-	set CIV[CCV]= A8V
-	set CBV[CCV]= XHV
-	set CCV = CCV + 1
-	set COV[CCV]= XJV
-	set CRV[CCV]= IOV
-	set CIV[CCV]= A9V
-	set CBV[CCV]= XHV
-	set CCV = CCV + 1
-	set COV[CCV]= X1V
-	set CRV[CCV]= ODV
-	set CIV[CCV]= RXV
-	set CBV[CCV]= A5V
-	set CCV = CCV + 1
-	set COV[CCV]= OMV
-	set CRV[CCV]= XZV
-	set CIV[CCV]= B7V
-	set CBV[CCV]= N_V
-	set CCV = CCV + 1
-	set COV[CCV]= OCV
-	set CRV[CCV]= OAV
-	set CIV[CCV]= XUV
-	set CAV[CCV]= OPV
-	set CBV[CCV]= XFV
-	set CCV = CCV + 1
-	set COV[CCV]= IEV
-	set CRV[CCV]= IEV
-	set CIV[CCV]= BSV
-	set CBV[CCV]= A6V
-	set CCV = CCV + 1
-	set COV[CCV]= OTV
-	set CRV[CCV]= OIV
-	set CIV[CCV]= OWV
-	set CBV[CCV]= A7V
-	set CCV = CCV + 1
-	set COV[CCV]= OUV
-	set CRV[CCV]= OFV
-	set CIV[CCV]= OQV
-	set CBV[CCV]= A8V
-	set CCV = CCV + 1
-	set COV[CCV]= OUV
-	set CRV[CCV]= OFV
-	set CIV[CCV]= OSV
-	set CBV[CCV]= A8V
-	set CCV = CCV + 1
-	set COV[CCV]= X2V
-	set CRV[CCV]= OGV
-	set CIV[CCV]= BTV
-	set CBV[CCV]= NVV
-	set CCV = CCV + 1
-	set COV[CCV]= X7V
-	set CRV[CCV]= ITV
-	set CIV[CCV]= B3V
-	set CBV[CCV]= NEV
-	set CCV = CCV + 1
-	set COV[CCV]= R5V
-	set CIV[CCV]= BUV
-	set CBV[CCV]= NXV
-	set CCV = CCV + 1
-	set COV[CCV]= IXV
-	set CRV[CCV]= IRV
-	set CIV[CCV]= OXV
-	set CAV[CCV]= BWV
-	set CBV[CCV]= NOV
-	set CCV = CCV + 1
-	set COV[CCV]= IXV
-	set CRV[CCV]= IIV
-	set CIV[CCV]= OXV
-	set CAV[CCV]= BWV
-	set CBV[CCV]= NOV
-	set CCV = CCV + 1
-	set COV[CCV]= X7V
-	set CRV[CCV]= OBV
-	set CIV[CCV]= XZV
-	set CAV[CCV]= BYV
-	set CBV[CCV]= NRV
-	set CCV = CCV + 1
-	set COV[CCV]= I3V
-	set CRV[CCV]= NAV
-	set CIV[CCV]= NYV
-	set CBV[CCV]= NIV
-	set CCV = CCV + 1
-	set COV[CCV]= OHV
-	set CRV[CCV]= OHV
-	set CIV[CCV]= OFV
-	set CAV[CCV]= ONV
-	set CBV[CCV]= NNV
-	set CCV = CCV + 1
-	set COV[CCV]= XPV
-	set CRV[CCV]= X6V
-	set CIV[CCV]= XWV
-	set CAV[CCV]= BZV
-	set CBV[CCV]= NFV
-	set CCV = CCV + 1
-	set COV[CCV]= OIV
-	set CRV[CCV]= OBV
-	set CIV[CCV]= B_V
-	set CBV[CCV]= NGV
-	set CCV = CCV + 1
-	set COV[CCV]= IHV
-	set CRV[CCV]= IHV
-	set CIV[CCV]= B9V
-	set CBV[CCV]= NJV
-	set CCV = CCV + 1
-	set COV[CCV]= XMV
-	set CRV[CCV]= XWV
-	set CIV[CCV]= XWV
-	set CBV[CCV]= NKV
-	set CCV = CCV + 1
-	set COV[CCV]= Item_MagicStick
-	set CRV[CCV]= Item_IronwoodBranch
-	set CIV[CCV]= Item_IronwoodBranch
-	set CAV[CCV]= XSV
-	set CBV[CCV]= Item_MagicWand
-	set CCV = CCV + 1
-	set COV[CCV]= OHV
-	set CRV[CCV]= OPV
-	set CIV[CCV]= B0V
-	set CBV[CCV]= NMV
-	set CCV = CCV + 1
-	set COV[CCV]= NNV
-	set CRV[CCV]= IXV
-	set CIV[CCV]= B1V
-	set CBV[CCV]= NPV
-	set CCV = CCV + 1
-	set COV[CCV]= OQV
-	set CRV[CCV]= OLV
-	set CIV[CCV]= OLV
-	set CBV[CCV]= NQV
-	set CCV = CCV + 1
-	set COV[CCV]= OSV
-	set CRV[CCV]= OLV
-	set CIV[CCV]= OLV
-	set CBV[CCV]= NQV
-	set CCV = CCV + 1
-	set COV[CCV]= OMV
-	set CRV[CCV]= X3V
-	set CIV[CCV]= X3V
-	set CAV[CCV]= B4V
-	set CBV[CCV]= NUV
-	set CCV = CCV + 1
-	set COV[CCV]= OMV
-	set CRV[CCV]= OHV
-	set CIV[CCV]= B5V
-	set CBV[CCV]= NYV
-	set CCV = CCV + 1
-	set COV[CCV]= X1V
-	set CRV[CCV]= NTV
-	set CBV[CCV]= ROV
-	set CCV = CCV + 1
-	set COV[CCV]= XMV
-	set CRV[CCV]= X2V
-	set CBV[CCV]= NZV
-	set CCV = CCV + 1
-	set COV[CCV]= OJV
-	set CRV[CCV]= IJV
-	set CIV[CCV]= B6V
-	set CBV[CCV]= RRV
-	set CCV = CCV + 1
-	set COV[CCV]= RRV
-	set CRV[CCV]= B6V
-	set CBV[CCV]= RRV
-	set CCV = CCV + 1
-	set COV[CCV]= RIV
-	set CRV[CCV]= B6V
-	set CBV[CCV]= RRV
-	set CCV = CCV + 1
-	set COV[CCV]= X6V
-	set CRV[CCV]= ILV
-	set CIV[CCV]= B8V
-	set CBV[CCV]= N0V
-	set CCV = CCV + 1
-	set COV[CCV]= XMV
-	set CRV[CCV]= OGV
-	set CIV[CCV]= OHV
-	set CBV[CCV]= RNV
-	set CCV = CCV + 1
-	set COV[CCV]= OPV
-	set CRV[CCV]= OPV
-	set CIV[CCV]= OUV
-	set CBV[CCV]= RCV
-	set CCV = CCV + 1
-	set COV[CCV]= IPV
-	set CRV[CCV]= RXV
-	set CBV[CCV]= N1V
-	set CCV = CCV + 1
-	set COV[CCV]= IQV
-	set CRV[CCV]= OKV
-	set CBV[CCV]= N2V
-	set CCV = CCV + 1
-	set COV[CCV]= IKV
-	set CRV[CCV]= IRV
-	set CBV[CCV]= RUV
-	set CCV = CCV + 1
-	set COV[CCV]= IKV
-	set CRV[CCV]= IIV
-	set CBV[CCV]= RWV
-	set CCV = CCV + 1
-	set COV[CCV]= OAV
-	set CRV[CCV]= XQV
-	set CIV[CCV]= XQV
-	set CBV[CCV]= it_mlq
-	set CCV = CCV + 1
-	set COV[CCV]= NJV
-	set CRV[CCV]= I8V
-	set CIV[CCV]= jz_xj
-	set CBV[CCV]= it_xj
-	set CCV = CCV + 1
-	set COV[CCV]= OAV
-	set CRV[CCV]= IHV
-	set CBV[CCV]= it_hyzr
-	set CCV = CCV + 1
-	set COV[CCV]= it_mlq
-	set CRV[CCV]= NMV
-	set CIV[CCV]= Recipe_HurricanePike
-	set CBV[CCV]= Item_HurricanePike
-	set CCV = CCV + 1
-	set COV[CCV]= X6V
-	set CRV[CCV]= I6V
-	set CBV[CCV]= it_fj 
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= OFV
+	set CombineIndex2[CombineMaxIndex]= OWV
+	set CombinedIndex[CombineMaxIndex]= IEV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= IEV
+	set CombineIndex2[CombineMaxIndex]= XZV
+	set CombineIndex3[CombineMaxIndex]= RHV
+	set CombineIndex4[CombineMaxIndex]= XZV
+	set CombinedIndex[CombineMaxIndex]= RGV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= X7V
+	set CombineIndex2[CombineMaxIndex]= X7V
+	set CombinedIndex[CombineMaxIndex]= Item_MoonShard
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= ONV
+	set CombineIndex2[CombineMaxIndex]= XGV
+	set CombinedIndex[CombineMaxIndex]= RQV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= N_V
+	set CombineIndex2[CombineMaxIndex]= RXV
+	set CombinedIndex[CombineMaxIndex]= RJV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= OHV
+	set CombineIndex2[CombineMaxIndex]= Item_IronwoodBranch
+	set CombineIndex3[CombineMaxIndex]= N3V
+	set CombinedIndex[CombineMaxIndex]= IXV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= XZV
+	set CombineIndex2[CombineMaxIndex]= Item_IronwoodBranch
+	set CombineIndex3[CombineMaxIndex]= N4V
+	set CombinedIndex[CombineMaxIndex]= IOV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= OGV
+	set CombineIndex2[CombineMaxIndex]= OMV
+	set CombinedIndex[CombineMaxIndex]= IIV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= XMV
+	set CombineIndex2[CombineMaxIndex]= N5V
+	set CombinedIndex[CombineMaxIndex]= IAV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= IAV
+	set CombineIndex2[CombineMaxIndex]= N5V
+	set CombinedIndex[CombineMaxIndex]= INV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= I3V
+	set CombineIndex2[CombineMaxIndex]= OIV
+	set CombinedIndex[CombineMaxIndex]= RFV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= XMV
+	set CombineIndex2[CombineMaxIndex]= XQV
+	set CombineIndex3[CombineMaxIndex]= XPV
+	set CombinedIndex[CombineMaxIndex]= IBV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= XMV
+	set CombineIndex2[CombineMaxIndex]= XTV
+	set CombineIndex3[CombineMaxIndex]= XPV
+	set CombinedIndex[CombineMaxIndex]= ICV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= XMV
+	set CombineIndex2[CombineMaxIndex]= OJV
+	set CombineIndex3[CombineMaxIndex]= XPV
+	set CombinedIndex[CombineMaxIndex]= IDV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= XPV
+	set CombineIndex2[CombineMaxIndex]= N6V
+	set CombinedIndex[CombineMaxIndex]= IFV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= ODV
+	set CombineIndex2[CombineMaxIndex]= OJV
+	set CombineIndex3[CombineMaxIndex]= OMV
+	set CombinedIndex[CombineMaxIndex]= IHV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= XSV
+	set CombineIndex2[CombineMaxIndex]= X3V
+	set CombineIndex3[CombineMaxIndex]= N7V
+	set CombinedIndex[CombineMaxIndex]= IJV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= XSV
+	set CombineIndex2[CombineMaxIndex]= OLV
+	set CombineIndex3[CombineMaxIndex]= N8V
+	set CombinedIndex[CombineMaxIndex]= IKV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= XSV
+	set CombineIndex2[CombineMaxIndex]= OEV
+	set CombineIndex3[CombineMaxIndex]= N9V
+	set CombinedIndex[CombineMaxIndex]= ILV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= XUV
+	set CombineIndex2[CombineMaxIndex]= XQV
+	set CombineIndex3[CombineMaxIndex]= BVV
+	set CombinedIndex[CombineMaxIndex]= IMV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= OAV
+	set CombineIndex2[CombineMaxIndex]= XTV
+	set CombineIndex3[CombineMaxIndex]= BEV
+	set CombinedIndex[CombineMaxIndex]= IPV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= OYV
+	set CombineIndex2[CombineMaxIndex]= XTV
+	set CombineIndex3[CombineMaxIndex]= BXV
+	set CombinedIndex[CombineMaxIndex]= IQV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= ACV	//大隐刀
+	set CombineIndex2[CombineMaxIndex]= IPV
+	set CombineIndex3[CombineMaxIndex]= RMV
+	set CombinedIndex[CombineMaxIndex]= RLV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= I4V
+	set CombineIndex2[CombineMaxIndex]= NZV
+	set CombineIndex3[CombineMaxIndex]= RSV
+	set CombinedIndex[CombineMaxIndex]= RTV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= XYV
+	set CombineIndex2[CombineMaxIndex]= XZV
+	set CombineIndex3[CombineMaxIndex]= OJV
+	set CombinedIndex[CombineMaxIndex]= ISV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= ORV
+	set CombineIndex2[CombineMaxIndex]= XPV
+	set CombineIndex3[CombineMaxIndex]= BOV
+	set CombinedIndex[CombineMaxIndex]= ITV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= XUV
+	set CombineIndex2[CombineMaxIndex]= XUV
+	set CombineIndex3[CombineMaxIndex]= OJV
+	set CombineIndex4[CombineMaxIndex]= BRV
+	set CombinedIndex[CombineMaxIndex]= IUV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= IUV
+	set CombineIndex2[CombineMaxIndex]= BRV
+	set CombinedIndex[CombineMaxIndex]= IWV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= IYV
+	set CombineIndex2[CombineMaxIndex]= BRV
+	set CombinedIndex[CombineMaxIndex]= IWV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= X6V
+	set CombineIndex2[CombineMaxIndex]= OXV
+	set CombinedIndex[CombineMaxIndex]= I_V
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= OXV
+	set CombineIndex2[CombineMaxIndex]= ODV
+	set CombinedIndex[CombineMaxIndex]= I1V
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= OMV
+	set CombineIndex2[CombineMaxIndex]= OPV
+	set CombineIndex3[CombineMaxIndex]= OWV
+	set CombineIndex4[CombineMaxIndex]= BAV
+	set CombinedIndex[CombineMaxIndex]= Item_EulScepterOfDivinity
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= OCV
+	set CombineIndex2[CombineMaxIndex]= X2V
+	set CombineIndex3[CombineMaxIndex]= OUV
+	set CombinedIndex[CombineMaxIndex]= I3V
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= IXV
+	set CombineIndex2[CombineMaxIndex]= IOV
+	set CombineIndex3[CombineMaxIndex]= BNV
+	set CombinedIndex[CombineMaxIndex]= I4V
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= IPV
+	set CombineIndex2[CombineMaxIndex]= IMV
+	set CombinedIndex[CombineMaxIndex]= I5V
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= ORV
+	set CombineIndex2[CombineMaxIndex]= ORV
+	set CombineIndex3[CombineMaxIndex]= BCV
+	set CombinedIndex[CombineMaxIndex]= I6V
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= IEV
+	set CombineIndex2[CombineMaxIndex]= XYV
+	set CombineIndex3[CombineMaxIndex]= X_V
+	set CombineIndex4[CombineMaxIndex]= RVV
+	set CombinedIndex[CombineMaxIndex]= I7V
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= IEV
+	set CombineIndex2[CombineMaxIndex]= XYV
+	set CombineIndex3[CombineMaxIndex]= X_V
+	set CombineIndex4[CombineMaxIndex]= REV
+	set CombinedIndex[CombineMaxIndex]= I7V
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= XWV
+	set CombineIndex2[CombineMaxIndex]= XYV
+	set CombineIndex3[CombineMaxIndex]= BDV
+	set CombinedIndex[CombineMaxIndex]= I8V
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= ORV
+	set CombineIndex2[CombineMaxIndex]= OAV
+	set CombineIndex3[CombineMaxIndex]= BFV
+	set CombinedIndex[CombineMaxIndex]= I9V
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= IMV
+	set CombineIndex2[CombineMaxIndex]= OTV
+	set CombineIndex3[CombineMaxIndex]= BGV
+	set CombinedIndex[CombineMaxIndex]= ABV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= XGV
+	set CombineIndex2[CombineMaxIndex]= X_V
+	set CombinedIndex[CombineMaxIndex]= ACV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= OPV
+	set CombineIndex2[CombineMaxIndex]= ILV
+	set CombineIndex3[CombineMaxIndex]= BHV
+	set CombinedIndex[CombineMaxIndex]= ADV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= ADV
+	set CombineIndex2[CombineMaxIndex]= BHV
+	set CombinedIndex[CombineMaxIndex]= AFV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= AFV
+	set CombineIndex2[CombineMaxIndex]= BHV
+	set CombinedIndex[CombineMaxIndex]= AGV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= AGV
+	set CombineIndex2[CombineMaxIndex]= BHV
+	set CombinedIndex[CombineMaxIndex]= AHV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= AHV
+	set CombineIndex2[CombineMaxIndex]= BHV
+	set CombinedIndex[CombineMaxIndex]= AJV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= OPV
+	set CombineIndex2[CombineMaxIndex]= XTV
+	set CombineIndex3[CombineMaxIndex]= BJV
+	set CombinedIndex[CombineMaxIndex]= AKV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= AKV
+	set CombineIndex2[CombineMaxIndex]= BJV
+	set CombinedIndex[CombineMaxIndex]= ALV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= ALV
+	set CombineIndex2[CombineMaxIndex]= BJV
+	set CombinedIndex[CombineMaxIndex]= AMV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= OTV
+	set CombineIndex2[CombineMaxIndex]= IEV
+	set CombineIndex3[CombineMaxIndex]= BKV
+	set CombinedIndex[CombineMaxIndex]= APV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= X0V
+	set CombineIndex2[CombineMaxIndex]= OKV
+	set CombinedIndex[CombineMaxIndex]= ASV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= I8V
+	set CombineIndex2[CombineMaxIndex]= X0V
+	set CombineIndex3[CombineMaxIndex]= BLV
+	set CombinedIndex[CombineMaxIndex]= AUV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= X0V
+	set CombineIndex2[CombineMaxIndex]= OYV
+	set CombineIndex3[CombineMaxIndex]= OYV
+	set CombinedIndex[CombineMaxIndex]= AWV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= OKV
+	set CombineIndex2[CombineMaxIndex]= BMV
+	set CombinedIndex[CombineMaxIndex]= AZV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= OOV
+	set CombineIndex2[CombineMaxIndex]= OUV
+	set CombineIndex3[CombineMaxIndex]= BPV
+	set CombinedIndex[CombineMaxIndex]= A0V
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= OOV
+	set CombineIndex2[CombineMaxIndex]= I_V
+	set CombineIndex3[CombineMaxIndex]= BQV
+	set CombinedIndex[CombineMaxIndex]= A2V
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= OOV
+	set CombineIndex2[CombineMaxIndex]= I0V
+	set CombineIndex3[CombineMaxIndex]= BQV
+	set CombinedIndex[CombineMaxIndex]= A2V
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= OTV
+	set CombineIndex2[CombineMaxIndex]= OTV
+	set CombineIndex3[CombineMaxIndex]= OCV
+	set CombineIndex4[CombineMaxIndex]= XKV
+	set CombinedIndex[CombineMaxIndex]= A3V
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= OTV
+	set CombineIndex2[CombineMaxIndex]= OTV
+	set CombineIndex3[CombineMaxIndex]= OCV
+	set CombineIndex4[CombineMaxIndex]= XLV
+	set CombinedIndex[CombineMaxIndex]= A3V
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= XJV
+	set CombineIndex2[CombineMaxIndex]= IOV
+	set CombineIndex3[CombineMaxIndex]= A8V
+	set CombinedIndex[CombineMaxIndex]= XHV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= XJV
+	set CombineIndex2[CombineMaxIndex]= IOV
+	set CombineIndex3[CombineMaxIndex]= A9V
+	set CombinedIndex[CombineMaxIndex]= XHV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= X1V
+	set CombineIndex2[CombineMaxIndex]= ODV
+	set CombineIndex3[CombineMaxIndex]= RXV
+	set CombinedIndex[CombineMaxIndex]= A5V
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= OMV
+	set CombineIndex2[CombineMaxIndex]= XZV
+	set CombineIndex3[CombineMaxIndex]= B7V
+	set CombinedIndex[CombineMaxIndex]= N_V
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= OCV
+	set CombineIndex2[CombineMaxIndex]= OAV
+	set CombineIndex3[CombineMaxIndex]= XUV
+	set CombineIndex4[CombineMaxIndex]= OPV
+	set CombinedIndex[CombineMaxIndex]= XFV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= IEV
+	set CombineIndex2[CombineMaxIndex]= IEV
+	set CombineIndex3[CombineMaxIndex]= BSV
+	set CombinedIndex[CombineMaxIndex]= A6V
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= OTV
+	set CombineIndex2[CombineMaxIndex]= OIV
+	set CombineIndex3[CombineMaxIndex]= OWV
+	set CombinedIndex[CombineMaxIndex]= A7V
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= OUV
+	set CombineIndex2[CombineMaxIndex]= OFV
+	set CombineIndex3[CombineMaxIndex]= OQV
+	set CombinedIndex[CombineMaxIndex]= A8V
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= OUV
+	set CombineIndex2[CombineMaxIndex]= OFV
+	set CombineIndex3[CombineMaxIndex]= OSV
+	set CombinedIndex[CombineMaxIndex]= A8V
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= X2V
+	set CombineIndex2[CombineMaxIndex]= OGV
+	set CombineIndex3[CombineMaxIndex]= BTV
+	set CombinedIndex[CombineMaxIndex]= NVV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= X7V
+	set CombineIndex2[CombineMaxIndex]= ITV
+	set CombineIndex3[CombineMaxIndex]= B3V
+	set CombinedIndex[CombineMaxIndex]= NEV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= R5V
+	set CombineIndex3[CombineMaxIndex]= BUV
+	set CombinedIndex[CombineMaxIndex]= NXV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= IXV
+	set CombineIndex2[CombineMaxIndex]= IRV
+	set CombineIndex3[CombineMaxIndex]= OXV
+	set CombineIndex4[CombineMaxIndex]= BWV
+	set CombinedIndex[CombineMaxIndex]= NOV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= IXV
+	set CombineIndex2[CombineMaxIndex]= IIV
+	set CombineIndex3[CombineMaxIndex]= OXV
+	set CombineIndex4[CombineMaxIndex]= BWV
+	set CombinedIndex[CombineMaxIndex]= NOV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= X7V
+	set CombineIndex2[CombineMaxIndex]= OBV
+	set CombineIndex3[CombineMaxIndex]= XZV
+	set CombineIndex4[CombineMaxIndex]= BYV
+	set CombinedIndex[CombineMaxIndex]= NRV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= I3V
+	set CombineIndex2[CombineMaxIndex]= NAV
+	set CombineIndex3[CombineMaxIndex]= NYV
+	set CombinedIndex[CombineMaxIndex]= NIV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= OHV
+	set CombineIndex2[CombineMaxIndex]= OHV
+	set CombineIndex3[CombineMaxIndex]= OFV
+	set CombineIndex4[CombineMaxIndex]= ONV
+	set CombinedIndex[CombineMaxIndex]= NNV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= XPV
+	set CombineIndex2[CombineMaxIndex]= X6V
+	set CombineIndex3[CombineMaxIndex]= XWV
+	set CombineIndex4[CombineMaxIndex]= BZV
+	set CombinedIndex[CombineMaxIndex]= NFV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= OIV
+	set CombineIndex2[CombineMaxIndex]= OBV
+	set CombineIndex3[CombineMaxIndex]= B_V
+	set CombinedIndex[CombineMaxIndex]= NGV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= IHV
+	set CombineIndex2[CombineMaxIndex]= IHV
+	set CombineIndex3[CombineMaxIndex]= B9V
+	set CombinedIndex[CombineMaxIndex]= NJV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= XMV
+	set CombineIndex2[CombineMaxIndex]= XWV
+	set CombineIndex3[CombineMaxIndex]= XWV
+	set CombinedIndex[CombineMaxIndex]= NKV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= Item_MagicStick
+	set CombineIndex2[CombineMaxIndex]= Item_IronwoodBranch
+	set CombineIndex3[CombineMaxIndex]= Item_IronwoodBranch
+	set CombineIndex4[CombineMaxIndex]= XSV
+	set CombinedIndex[CombineMaxIndex]= Item_MagicWand
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= OHV
+	set CombineIndex2[CombineMaxIndex]= OPV
+	set CombineIndex3[CombineMaxIndex]= B0V
+	set CombinedIndex[CombineMaxIndex]= NMV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= NNV
+	set CombineIndex2[CombineMaxIndex]= IXV
+	set CombineIndex3[CombineMaxIndex]= B1V
+	set CombinedIndex[CombineMaxIndex]= NPV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= OQV
+	set CombineIndex2[CombineMaxIndex]= OLV
+	set CombineIndex3[CombineMaxIndex]= OLV
+	set CombinedIndex[CombineMaxIndex]= NQV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= OSV
+	set CombineIndex2[CombineMaxIndex]= OLV
+	set CombineIndex3[CombineMaxIndex]= OLV
+	set CombinedIndex[CombineMaxIndex]= NQV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= OMV
+	set CombineIndex2[CombineMaxIndex]= X3V
+	set CombineIndex3[CombineMaxIndex]= X3V
+	set CombineIndex4[CombineMaxIndex]= B4V
+	set CombinedIndex[CombineMaxIndex]= NUV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= OMV
+	set CombineIndex2[CombineMaxIndex]= OHV
+	set CombineIndex3[CombineMaxIndex]= B5V
+	set CombinedIndex[CombineMaxIndex]= NYV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= X1V
+	set CombineIndex2[CombineMaxIndex]= NTV
+	set CombinedIndex[CombineMaxIndex]= ROV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= XMV
+	set CombineIndex2[CombineMaxIndex]= X2V
+	set CombinedIndex[CombineMaxIndex]= NZV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= OJV
+	set CombineIndex2[CombineMaxIndex]= IJV
+	set CombineIndex3[CombineMaxIndex]= B6V
+	set CombinedIndex[CombineMaxIndex]= RRV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= RRV
+	set CombineIndex2[CombineMaxIndex]= B6V
+	set CombinedIndex[CombineMaxIndex]= RRV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= RIV
+	set CombineIndex2[CombineMaxIndex]= B6V
+	set CombinedIndex[CombineMaxIndex]= RRV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= X6V
+	set CombineIndex2[CombineMaxIndex]= ILV
+	set CombineIndex3[CombineMaxIndex]= B8V
+	set CombinedIndex[CombineMaxIndex]= N0V
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= XMV
+	set CombineIndex2[CombineMaxIndex]= OGV
+	set CombineIndex3[CombineMaxIndex]= OHV
+	set CombinedIndex[CombineMaxIndex]= RNV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= OPV
+	set CombineIndex2[CombineMaxIndex]= OPV
+	set CombineIndex3[CombineMaxIndex]= OUV
+	set CombinedIndex[CombineMaxIndex]= RCV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= IPV
+	set CombineIndex2[CombineMaxIndex]= RXV
+	set CombinedIndex[CombineMaxIndex]= N1V
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= IQV
+	set CombineIndex2[CombineMaxIndex]= OKV
+	set CombinedIndex[CombineMaxIndex]= N2V
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= IKV
+	set CombineIndex2[CombineMaxIndex]= IRV
+	set CombinedIndex[CombineMaxIndex]= RUV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= IKV
+	set CombineIndex2[CombineMaxIndex]= IIV
+	set CombinedIndex[CombineMaxIndex]= RWV
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= OAV
+	set CombineIndex2[CombineMaxIndex]= XQV
+	set CombineIndex3[CombineMaxIndex]= XQV
+	set CombinedIndex[CombineMaxIndex]= it_mlq
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= NJV
+	set CombineIndex2[CombineMaxIndex]= I8V
+	set CombineIndex3[CombineMaxIndex]= jz_xj
+	set CombinedIndex[CombineMaxIndex]= it_xj
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= OAV
+	set CombineIndex2[CombineMaxIndex]= IHV
+	set CombinedIndex[CombineMaxIndex]= it_hyzr
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= it_mlq
+	set CombineIndex2[CombineMaxIndex]= NMV
+	set CombineIndex3[CombineMaxIndex]= Recipe_HurricanePike
+	set CombinedIndex[CombineMaxIndex]= Item_HurricanePike
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= X6V
+	set CombineIndex2[CombineMaxIndex]= I6V
+	set CombinedIndex[CombineMaxIndex]= it_fj 
 
-	set COV[CCV]= X2V
-	set CRV[CCV]= OWV
-	set CIV[CCV]= Recipe_AetherLens
-	set CBV[CCV]= Item_AetherLens
+	set CombineMaxIndex = CombineMaxIndex + 1
+	set CombineIndex1[CombineMaxIndex]= X2V
+	set CombineIndex2[CombineMaxIndex]= OWV
+	set CombineIndex3[CombineMaxIndex]= Recipe_AetherLens
+	set CombinedIndex[CombineMaxIndex]= Item_AetherLens
 endfunction
 function Init_SpecialAbilityId takes nothing returns nothing //储存切换型技能
 	
