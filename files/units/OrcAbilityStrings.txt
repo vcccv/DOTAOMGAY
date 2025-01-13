@@ -36417,10 +36417,10 @@ missilespeed=9999
 animnames=spell
 Name=烈焰焚身 - 神杖升级
 Tip=烈焰焚身[|cffffcc00R|r] - [|cffffcc00等级 1|r],烈焰焚身[|cffffcc00R|r] - [|cffffcc00等级 2|r],烈焰焚身[|cffffcc00R|r] - [|cffffcc00等级 3|r]
-Ubertip=双头龙在前方施放连续的烈焰风暴，宽度为240，每次烈焰风暴造成125点/秒的|cff6495ed魔法伤害|r，持续20秒。|n|n|cff99ccff施法距离：|r850|n|cff99ccff最大距离：|r900|n|cff99ccff冷却时间：|r60,双头龙在前方施放连续的烈焰风暴，宽度为240，每次烈焰风暴造成175点/秒的|cff6495ed魔法伤害|r，持续20秒。|n|n|cff99ccff施法距离：|r850|n|cff99ccff最大距离：|r900|n|cff99ccff冷却时间：|r60,双头龙在前方施放连续的烈焰风暴，宽度为240，每次烈焰风暴造成225点/秒的|cff6495ed魔法伤害|r，持续20秒。|n|n|cff99ccff施法距离：|r850|n|cff99ccff最大距离：|r900|n|cff99ccff冷却时间：|r60
+Ubertip=双头龙在前方施放连续的烈焰风暴，宽度为240，每次烈焰风暴造成125点/秒的|cff6495ed魔法伤害|r，持续20秒。|n|n|cff99ccff施法距离：|r850|n|cff99ccff最大距离：|r1800|n|cff99ccff冷却时间：|r60,双头龙在前方施放连续的烈焰风暴，宽度为240，每次烈焰风暴造成175点/秒的|cff6495ed魔法伤害|r，持续20秒。|n|n|cff99ccff施法距离：|r850|n|cff99ccff最大距离：|r1800|n|cff99ccff冷却时间：|r60,双头龙在前方施放连续的烈焰风暴，宽度为240，每次烈焰风暴造成225点/秒的|cff6495ed魔法伤害|r，持续20秒。|n|n|cff99ccff施法距离：|r850|n|cff99ccff最大距离：|r1800|n|cff99ccff冷却时间：|r60
 Hotkey=R
 Researchtip=学习 烈焰焚身[|cffffcc00R|r] - [|cffffcc00等级 %d|r]|n(Macropyre)
-Researchubertip=双头龙在前方施放连续的烈焰风暴，宽度为240，每次烈焰风暴造成一定的|cff6495ed魔法伤害|r，持续20秒。|n|n|cffffcc00等级 1|r - 每次烈焰风暴造成125点/秒的伤害|n|cffffcc00等级 2|r - 每次烈焰风暴造成175点/秒的伤害|n|cffffcc00等级 3|r - 每次烈焰风暴造成225点/秒的伤害|n|n|cff99ccff施法距离：|r850|n|cff99ccff最大距离：|r900|n|cff99ccff冷却时间：|r60|n|cff99ccff魔法消耗：|r220/330/440
+Researchubertip=双头龙在前方施放连续的烈焰风暴，宽度为240，每次烈焰风暴造成一定的|cff6495ed魔法伤害|r，持续20秒。|n|n|cffffcc00等级 1|r - 每次烈焰风暴造成125点/秒的伤害|n|cffffcc00等级 2|r - 每次烈焰风暴造成175点/秒的伤害|n|cffffcc00等级 3|r - 每次烈焰风暴造成225点/秒的伤害|n|n|cff99ccff施法距离：|r850|n|cff99ccff最大距离：|r1800|n|cff99ccff冷却时间：|r60|n|cff99ccff魔法消耗：|r220/330/440
 researchhotkey="R"
 [A1CP]
 art=ReplaceableTextures\CommandButtons\BTNGreatStomp
