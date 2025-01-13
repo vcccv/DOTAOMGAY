@@ -90,17 +90,16 @@ scope MainUI
         local integer x
         local integer y
         local integer frame
-        return
         call DzLoadToc("UI\\path.toc")
         set GameUI        = DzGetGameUI()
         set PortraitFrame = DzFrameGetPortrait()
         set IsReplayMode  = DzSimpleFrameFindByName("SimpleReplayPanel", 0) != 0
         //======================================================================
         // 防御符文按钮
-        //set GlyphFrame = DzCreateFrameByTagName("TEXTBUTTON", "name", GameUI, "Glyph_Button", 0)
-        //call DzFrameSetPoint(GlyphFrame, 4, DzFrameGetMinimap(), 4, 0.087, -0.061)
+        set GlyphFrame = DzCreateFrameByTagName("TEXTBUTTON", "name", GameUI, "Glyph_Button", 0)
+        call DzFrameSetPoint(GlyphFrame, 4, DzFrameGetMinimap(), 4, 0.087, -0.061)
         //// 按钮提示
-        //call SetFrameToolTip(GlyphFrame, "激活 防御符文(|cffffcc00Alt-J|r)", "在5秒内，使你方阵营所有的建筑物对物理攻击免疫。|n|n|cff99ccff团队冷却时间：|r5分钟")
+        call SetFrameToolTip(GlyphFrame, "激活 防御符文(|cffffcc00Alt-J|r)", "在5秒内，使你方阵营所有的建筑物对物理攻击免疫。|n|n|cff99ccff团队冷却时间：|r5分钟")
         //======================================================================
         // 创建顶部消息栏 击杀信息
         call CreateTopMsgFrame()
@@ -170,7 +169,7 @@ scope MainUI
         endloop
 
         //// 点击防御符文按钮
-        //call DzFrameSetScriptByCode(GlyphFrame, 1, function Click_UI_Glyph, false)
+        call DzFrameSetScriptByCode(GlyphFrame, 1, function Click_UI_Glyph, false)
         // 注册一些异步事件
         //======================================================================
         // 读取服务器存档

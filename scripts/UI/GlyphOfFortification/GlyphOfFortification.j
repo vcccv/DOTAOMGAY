@@ -2,16 +2,16 @@
 library GlyphOfFortification
 
     struct Glyph extends array
-        
-        private static Frame Button
-        private static Frame Backdrop
-        private static Frame Sprite
 
         static constant real COOLDOWN = 300.
 
         private timer t
 
-        private static method OnButtonUp takes nothing returns boolean
+        static method ResetCooldown takes nothing returns nothing
+            
+        endmethod
+
+        private static method OnButtonClick takes nothing returns boolean
             local Frame f = Frame.GetTriggerFrame()
 
             if MHMsg_IsKeyDown(OSKEY_ALT) then
@@ -21,6 +21,14 @@ library GlyphOfFortification
             
             return false
         endmethod
+
+        private static method OnButtonClickSynced takes nothing returns nothing
+            
+        endmethod
+        
+        private static Frame Button
+        private static Frame Backdrop
+        private static Frame Sprite
 
         // minmapButton父级为MiniMapButtonBar(SimpleFrame), 锚点为ConsoleUI
         static method InitUI takes nothing returns nothing
@@ -43,7 +51,8 @@ library GlyphOfFortification
             endif
 
             //call thistype.Button.SetVisible(false)
-            call thistype.Button.RegisterLocalScript(FRAMEEVENT_CONTROL_CLICK, thistype.OnButtonUp.name)
+            call thistype.Button.RegisterLocalScript(FRAMEEVENT_CONTROL_CLICK, thistype.OnButtonClick.name)
+            call thistype.Button.RegisterEvent(FRAMEEVENT_CONTROL_CLICK, thistype.OnButtonClickSynced.name)
         endmethod
 
         static method OnTest takes nothing returns nothing

@@ -1123,6 +1123,8 @@ globals
 	integer it_mlq
 	integer it_xj
 	integer jz_xj
+	integer Recipe_AetherLens
+	integer Item_AetherLens
 	integer Item_HurricanePike
 	integer Recipe_HurricanePike
 	integer XPV
@@ -1950,7 +1952,7 @@ native EXExecuteScript takes string script returns string
 
 #include "memory_hack\memory_hack_init.j"
 #include "Libraries\\include"
-#include "UI\\include"
+//#include "UI\\include"
 
 ///<summary>技能属性 [JAPI]</summary>
 function YDWEGetUnitAbilityState takes unit u, integer abilcode, integer state_type returns real
@@ -5086,7 +5088,7 @@ function IsPlayerHasSkill takes player p, integer index returns boolean
 	endloop
 	return false
 endfunction
-function ZLE takes unit u returns boolean
+function IsUnitHaveRearmAbility takes unit u returns boolean
 	return GetUnitAbilityLevel(u,'Y076') == 1 or GetUnitAbilityLevel(u,'A065')> 0 or GetUnitAbilityLevel(u,'A527')> 0 or GetUnitAbilityLevel(u,'A528')> 0 or IsPlayerHasSkill(GetOwningPlayer(u), 76)
 endfunction
 function ZME takes integer WWV, integer ZSE returns integer
@@ -8487,6 +8489,12 @@ function C2X takes player p returns nothing
 	set trigUnit = null
 	set C1X = null
 endfunction
+function IsUnitWard takes unit u returns boolean
+	return GetUnitAbilityLevel(u,'A04R') > 0
+endfunction
+function IsUnitInvision takes unit u returns boolean
+	return MHUnit_GetInvisionCount(u) > 0
+endfunction
 function IsUnitEthereal takes unit u returns boolean
 	return MHUnit_GetEtherealCount(u) > 0
 endfunction
@@ -9378,21 +9386,24 @@ function G5X takes integer id, unit u, boolean G6X returns nothing
 	endif
 endfunction
 
-function G7X takes integer k, unit u, integer G8X returns boolean
+// k = abilIndex
+function OnUnitAddAbilityAghanimUpgrade takes integer k, unit u, integer G8X returns boolean
 	local player p = GetOwningPlayer(u)
 	if Mode__RearmCombos == false then
 		if (AghanimUpgradeChangeId[k]=='A2S7' or AghanimUpgradeChangeId[k]=='A236') then
-			if ZLE(u) then
+			if IsUnitHaveRearmAbility(u) then
 				return false
 			endif
 		endif
 	else
 		if AghanimUpgradeChangeId[k]=='A236' then
-			if ZLE(u) then
+			if IsUnitHaveRearmAbility(u) then
 				return false
 			endif
 		endif
 	endif
+
+	//call BJDebugMsg("NMML:" + MHString_FromId(AghanimUpgradeNormalId[k]))
 	
 	if AghanimUpgradeNormalId[k]=='A343'then
 		set U2 = u
@@ -9413,10 +9424,8 @@ function G7X takes integer k, unit u, integer G8X returns boolean
 		set U2 = u
 		call ExecuteFunc("HOX")
 	elseif AghanimUpgradeNormalId[k]=='A01Y' then
-		// 骷髅王获得A杖
 		set U2 = u
 		call ExecuteFunc("HRX")
-		
 	elseif AghanimUpgradeNormalId[k]=='A0DY' then
 		if LoadBoolean(HY, GetHandleId(GetOwningPlayer(u)),'R00J') == false then
 			call AddUnitBonusRange(u, 190., true)
@@ -9439,7 +9448,7 @@ function G7X takes integer k, unit u, integer G8X returns boolean
 	call SaveInteger(OtherHashTable, GetHandleId(u),'AGH0'+ G8X, AghanimUpgradeNormalId[k])
 	return true
 endfunction
-function HIX takes integer k, unit u, integer G8X returns nothing
+function OnUnitRemoveAbilityAghanimUpgrade takes integer k, unit u, integer G8X returns nothing
 	local player p = GetOwningPlayer(u)
 	if G3X(u) then
 		return
@@ -9599,12 +9608,22 @@ function HDX takes unit u, boolean G6X returns boolean
 				call UnitAddPermanentAbility(u,'S3UR')
 			endif
 		endif
+		if HeroCommonSkills[PlayerSkillIndex[pid * HL + i]] == 'A229' then
+			if G6X then
+				set U2 = u
+				call ExecuteFunc("FlakCannonOnRemoveAghanimUpgrade")
+			else
+				set U2 = u
+				call ExecuteFunc("FlakCannonOnAddAghanimUpgrade")
+			endif
+		endif
+	
 		set k = TBE(HeroCommonSkills[PlayerSkillIndex[pid * HL + i]])
 		if k > 0 then
 			if G6X then
-				call HIX(k, u, 1)
+				call OnUnitRemoveAbilityAghanimUpgrade(k, u, 1)
 			else
-				set b = G7X(k, u, 1) or b
+				set b = OnUnitAddAbilityAghanimUpgrade(k, u, 1) or b
 			endif
 			call G5X(HeroCommonSkills[PlayerSkillIndex[pid * HL + i]], u, G6X)
 		endif
@@ -39163,7 +39182,7 @@ endfunction
 function HQR takes nothing returns boolean
 	local unit t = GetFilterUnit()
 	local unit u = Temp__ArrayUnit[0]
-	if (IsUnitType(t, UNIT_TYPE_HERO))!= null and IsUnitAlly(u, GetOwningPlayer(t)) and UnitAlive(t) and(ZLE(u) == false or LoadInteger(HY, GetHandleId(t),'STMP')!= 1) then
+	if (IsUnitType(t, UNIT_TYPE_HERO))!= null and IsUnitAlly(u, GetOwningPlayer(t)) and UnitAlive(t) and(IsUnitHaveRearmAbility(u) == false or LoadInteger(HY, GetHandleId(t),'STMP')!= 1) then
 		if t != u then
 			call EPX(t,'STMP', 45)
 		endif
@@ -48755,7 +48774,7 @@ function E5I takes nothing returns nothing
 endfunction
 function VPE takes nothing returns nothing
 	local timer t
-	if ZLE(GetTriggerUnit()) then
+	if IsUnitHaveRearmAbility(GetTriggerUnit()) then
 		set t = CreateTimer()
 		call TimerStart(t, 0, false, function E5I)
 		call SaveUnitHandle(HY, GetHandleId(t), 0, GetTriggerUnit())
@@ -49451,7 +49470,7 @@ function FYE takes nothing returns nothing
 	local integer i
 	local integer k
 	local destructable d
-	local boolean X3I = ZLE(u)
+	local boolean X3I = IsUnitHaveRearmAbility(u)
 	call GroupEnumUnitsInRange(g, GetUnitX(u), GetUnitY(u), 700, Condition(function XZI))
 	if MDR then
 		set gg = AllocationGroup(251)
@@ -79898,6 +79917,84 @@ endfunction
 function delXL takes nothing returns nothing
 	call UnitRemoveAbility(U2,'A3UF')
 endfunction
+
+function FlakCannonAghanimUpgradeOnUpdate takes nothing returns nothing
+	local trigger trig = GetTriggeringTrigger()
+	local integer h    = GetHandleId(trig)
+	local unit    u    = LoadUnitHandle(HY, h, 0)
+	local player  p    
+	local real    x
+	local real    y
+	local group   enumGroup
+	local group   targGroup
+	local unit    first = null
+	local real    area  = 700.
+
+	if UnitAlive(u) and GetUnitAbilityLevel(u, 'A3UR') > 0 and not IsUnitInvision(u) and not IsUnitHidden(u) and GetUnitAbilityLevel(u,'A36D') == 0 then
+		set enumGroup = AllocationGroup(79912)
+		set targGroup = AllocationGroup(79913)
+
+		set x = GetUnitX(u)
+		set y = GetUnitY(u)
+		set p = GetOwningPlayer(u)
+
+		call GroupEnumUnitsInRange(enumGroup, x, y, area + MAX_UNIT_COLLISION, null)
+		loop
+			set first = FirstOfGroup(enumGroup)
+			exitwhen first == null
+			call GroupRemoveUnit(enumGroup, first)
+
+			if UnitAlive(first) and IsUnitInRangeXY(first, x, y, area) and IsUnitEnemy(first, p) and not IsUnitWard(first) then
+				call GroupAddUnit(targGroup, first)
+			endif
+
+		endloop
+
+		loop
+			set first = GroupPickRandomUnit(targGroup)
+			exitwhen first == null
+			call GroupRemoveUnit(targGroup, first)
+
+			if IsUnitVisible(first, p) and not IsUnitEthereal(first) and not IsUnitInvulnerable(first) then
+				call UnitLaunchAttack(u, first)
+				call MHAbility_SetCooldown(u, 'A3UR', 1.5)
+				exitwhen true
+			endif
+			
+		endloop
+
+		call DeallocateGroup(enumGroup)
+		call DeallocateGroup(targGroup)
+	endif
+
+	set u    = null
+	set trig = null
+endfunction
+
+function FlakCannonOnAddAghanimUpgrade takes nothing returns nothing
+	local unit 	  u = U2
+	local trigger trig 
+	local integer h
+	call UnitAddPermanentAbility(u, 'A3UR')
+	if not HaveSavedHandle(HY, GetHandleId(u), 'A3UR')then
+		set trig = CreateTrigger()
+		set h = GetHandleId(trig)
+		call TriggerAddCondition(trig, Condition(function FlakCannonAghanimUpgradeOnUpdate))
+		call TriggerRegisterTimerEvent(trig, 1.5, true)
+		call SaveTriggerHandle(HY, GetHandleId(u), 'A3UR', trig)
+		call SaveUnitHandle(HY, h, 0, u)
+		call SetPlayerAbilityAvailable(GetOwningPlayer(u), 'A3UR', true)
+		set trig = null
+	endif
+	set u = null
+endfunction
+function FlakCannonOnRemoveAghanimUpgrade takes nothing returns nothing
+	local unit u = U2
+	call BJDebugMsg("Bye")
+	call UnitRemoveAbility(u, 'A3UR')
+	set u = null
+endfunction
+
 function HEX takes nothing returns nothing
 	call UnitAddPermanentAbility(U2,'A43Q')
 	call SetPlayerAbilityAvailableEx(GetOwningPlayer(U2),'A43Q', GetUnitAbilityLevel(U2,'A43O') == 0)
@@ -88210,6 +88307,10 @@ function InitItemsSystem takes nothing returns nothing
 	set it_jys = RegisterItem('I0RC','I0RD','n139', 0)
 	set it_fj = RegisterItem('IZPS','IZPD', 0,'IZPE')
 	call SaveInteger(HY,'ITDB', RegisterItem(0, 0,'n125', 0), it_fj)//否决一键购买
+
+	set Recipe_AetherLens = RegisterItem('I0VX','I0VY','n138','I0VZ')
+	set Item_AetherLens   = RegisterItem('I0V3','I0V4','n12W','I0V5')
+
 	set XMV = RegisterItem('I02Q','I02O','h011','I00A')
 	set XPV = RegisterItem('I02S','I02P','h012','I0CA')
 	set XQV = RegisterItem('I02N','I02R','h013','I0CS')
@@ -89062,7 +89163,12 @@ function InitItemsSystem takes nothing returns nothing
 	set CCV = CCV + 1
 	set COV[CCV]= X6V
 	set CRV[CCV]= I6V
-	set CBV[CCV]= it_fj
+	set CBV[CCV]= it_fj 
+
+	set COV[CCV]= X2V
+	set CRV[CCV]= OWV
+	set CIV[CCV]= Recipe_AetherLens
+	set CBV[CCV]= Item_AetherLens
 endfunction
 function Init_SpecialAbilityId takes nothing returns nothing //储存切换型技能
 	

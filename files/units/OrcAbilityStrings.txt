@@ -21116,6 +21116,37 @@ tip=魔龙枪(|cffffcc00M|r)
 ubertip="|cffffcc00属性：|r|n增加13点力量|n增加14点敏捷|n|n|cff87cefa魔龙之能|r:|n增加|c00ff0000远程|r英雄140点攻击距离，无法叠加|n|n|cffffcc00需要：|r|n食人魔之斧 - 1000|n2x 精灵皮靴 - 900|n|n|c00838B8B总价：1900|r|n|n|c00fffc01可点击购买|n|n|c00fffc01可以拆分|r"
 art=ReplaceableTextures\CommandButtons\BTNArcaniteRanged
 buttonpos=2,2
+[I0V3]
+name="以太之镜卷轴"
+[I0V4]
+name="以太之镜卷轴"
+ubertip="|cffffcc00属性：|r|n+250 魔法|n+125%魔法恢复速率|n+5% 魔法伤害|n|n|cff87cefa焦点|r|n|n|cffffcc00需要：|r|n能量之球 - 900|n虚无宝石 - 850|n卷轴 - 550|n|n|c00838B8B总价：2300|r"
+art=ReplaceableTextures\CommandButtons\BTNSnazzyScrollPurple
+effectsoundlooped=ReplaceableTextures\CommandButtons\BTNSnazzyScrollPurple.blp
+[I0V5]
+name="以太之镜卷轴"
+ubertip="|c00ff0303这件物品不属于你，它失去了效果|r"
+effectsoundlooped=ReplaceableTextures\CommandButtons\BTNSnazzyScrollPurple.blp
+art=ReplaceableTextures\CommandButtons\BTNSnazzyScrollPurple
+[I0UE]
+name="以太之镜"
+[I0UF]
+name="以太之镜"
+ubertip="|cffffcc00属性：|r|n提高250点魔法上限|n提升125%的魔法恢复速度|n提升5%的魔法伤害|n|n|cff87cefa以太焦点|r:指向性技能和物品的施法距离增加150|n|n施法距离无法叠加"
+art=ReplaceableTextures\CommandButtons\BTNLens
+effectsoundlooped=ReplaceableTextures\CommandButtons\BTNLens.blp
+[I0UG]
+name="以太之镜"
+ubertip="|c00ff0303这件物品不属于你，它失去了效果|r"
+effectsoundlooped=ReplaceableTextures\CommandButtons\BTNLens.blp
+art=ReplaceableTextures\CommandButtons\BTNLens
+[n12W]
+name="以太之镜"
+hotkey=Y
+tip=以太之镜(|cffffcc00Y|r)
+ubertip="|cffffcc00属性：|r|n提高250点魔法上限|n提升125%魔法恢复速率|n提升5%的魔法伤害|n|n|cff87cefa以太焦点|r:|n指向性技能和物品的施法距离增加150|n|n|cffffcc00需要：|r|n能量之球 - 900|n虚无宝石 - 850|n卷轴 - 550|n|n|c00838B8B总价：2300|r"
+art=ReplaceableTextures\CommandButtons\BTNLens
+buttonpos=3,2
 [I0VX]
 name="飓风长戟卷轴|nHurricane Pike Recipe"
 [I0VY]
@@ -25191,6 +25222,12 @@ name="Starfall (aghanim)"
 tip="天幕坠落 - 神杖升级"
 ubertip="每12秒自动施放一次同等级的群星坠落，英雄隐身时不会触发"
 buttonpos=0,0
+[A3UR]
+name="侧面机枪 (Gyro Agh)"
+tip="侧面机枪"
+ubertip="由阿哈利姆神杖提供。侧面机枪能在固定的时间间隔内发动随机性的即时攻击。它的攻击不影响正常攻击，不用瞄准目标，不会干扰英雄的其他操作，并能无视英雄的眩晕、控制、施法等状态。侧面机枪能触发任意的攻击效果。如果英雄被致盲了，侧面机枪也会被致盲，除非它拥有克敌机先效果，它的攻击也会被闪避效果所躲避。侧面机枪在英雄隐身时，或被破坏效果禁用后不会攻击。侧面机枪不会攻击守卫或信使，但能攻击建筑，且只会攻击英雄视野范围内的目标。"
+buttonpos=1,0
+art=ReplaceableTextures\CommandButtons\BTNDwarfCar
 [ANXL]
 art=ReplaceableTextures\PassiveButtons\BTNStarfall
 name="Starfall (aghanim)"

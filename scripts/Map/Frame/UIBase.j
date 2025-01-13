@@ -34,7 +34,37 @@ scope UIBase
 endscope 
 
 globals 
-    
+    // 框架相对锚点(UI) 左上
+    constant integer FRAMEPOINT_TOPLEFT = (0)
+    // 框架相对锚点(UI) 上
+    constant integer FRAMEPOINT_TOP = (1)
+    // 框架相对锚点(UI) 右上
+    constant integer FRAMEPOINT_TOPRIGHT = (2)
+    // 框架相对锚点(UI) 左
+    constant integer FRAMEPOINT_LEFT = (3)
+    // 框架相对锚点(UI) 中
+    constant integer FRAMEPOINT_CENTER = (4)
+    // 框架相对锚点(UI) 右
+    constant integer FRAMEPOINT_RIGHT = (5)
+    // 框架相对锚点(UI) 左下
+    constant integer FRAMEPOINT_BOTTOMLEFT = (6)
+    // 框架相对锚点(UI) 下
+    constant integer FRAMEPOINT_BOTTOM = (7)
+    // 框架相对锚点(UI) 右下
+    constant integer FRAMEPOINT_BOTTOMRIGHT = (8)
+    constant integer FRAMEEVENT_CONTROL_CLICK          = 1
+    constant integer FRAMEEVENT_MOUSE_ENTER            = 2
+    constant integer FRAMEEVENT_MOUSE_LEAVE            = 3
+    constant integer FRAMEEVENT_MOUSE_UP               = 4
+    constant integer FRAMEEVENT_MOUSE_DOWN             = 5
+    constant integer FRAMEEVENT_MOUSE_WHEEL            = 6
+    constant integer FRAMEEVENT_CHECKBOX_CHECKED       = 7
+    constant integer FRAMEEVENT_CHECKBOX_UNCHECKED     = 8
+    constant integer FRAMEEVENT_EDITBOX_TEXT_CHANGED   = 9
+    constant integer FRAMEEVENT_POPUPMENU_ITEM_CHANGED = 10
+    constant integer FRAMEEVENT_MOUSE_DOUBLECLICK      = 11
+    constant integer FRAMEEVENT_SPRITE_ANIM_UPDATE     = 12
+    constant integer FRAMEEVENT_SLIDER_VALUE_CHANGED   = 13
     // OS Key constants 
 	
     // 键盘 退格键 
