@@ -1,8 +1,13 @@
 
 scope Earthshaker
 
+    //***************************************************************************
+    //*
+    //*  沟壑
+    //*
+    //***************************************************************************
     function FissureOnSpellEffect takes nothing returns nothing
-        local unit trigUnit = GetTriggerUnit()
+        local unit trigUnit = GetRealSpellUnit(GetTriggerUnit())
         local unit targetUnit = GetSpellTargetUnit()
         local real sx = GetUnitX(trigUnit)
         local real sy = GetUnitY(trigUnit)

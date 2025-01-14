@@ -1,3 +1,8 @@
 
 #include "Str\\Earthshaker.j"
+#include "Str\\TaurenChieftain.j"
+
 #include "Int\\TwinHeadDragon.j"
+#include "Int\\Ezalor.j"
+
+#include "Agi\\VengefulSpirit.j"

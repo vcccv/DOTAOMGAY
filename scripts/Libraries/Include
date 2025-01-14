@@ -8,3 +8,5 @@
 #include "Utilities\\PlayerUtils.j"
 #include "Utilities\\PlayerChatUtils.j"
 #include "Utilities\\TimerUtils.j"
+
+#include "Utilities\\Line Segment Enumeration.j"

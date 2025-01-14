@@ -39,23 +39,35 @@ library TimerUtils /*
         endmethod
     endmodule
 
+    private keyword SimpleTickInit
+    // 简易Tick，Create方法中可以携带一个结构实例data
     struct SimpleTick
         
-        private static integer MAX = 0
-        private        timer   handle
+        private static key        KEY
+        private static TableArray table
+        private static integer    MAX = 0
+        private        timer      handle
+
+        integer data
+
+        static method GetTable takes nothing returns TableArray
+            return table
+        endmethod
         static method GetCount takes nothing returns integer
             return MAX
         endmethod
         static method GetExpired takes nothing returns thistype
             return Table[KEY][GetHandleId(GetExpiredTimer())]
         endmethod
-        static method Create takes nothing returns thistype
+        // 携带一个数据
+        static method Create takes integer data returns thistype
             local thistype this = thistype.allocate()
             set MAX = MAX + 1
             if this.handle == null then
                 set this.handle = CreateTimer()
                 set Table[KEY][GetHandleId(this.handle)] = this
             endif
+            set this.data = data
             return this
         endmethod
         method GetHandle takes nothing returns timer
@@ -82,9 +94,18 @@ library TimerUtils /*
         method Destroy takes nothing returns nothing
             set MAX = MAX - 1
             call PauseTimer(this.handle)
+            call table[this].flush()
             call thistype.deallocate(this)
         endmethod
 
+        implement SimpleTickInit
+
     endstruct
+
+    private module SimpleTickInit
+        private static method onInit takes nothing returns nothing
+            set table = TableArray[JASS_MAX_ARRAY_SIZE]
+        endmethod
+    endmodule
     
 endlibrary
