@@ -34,7 +34,7 @@ scope DeathProphet
         local Shockwave sw
 
         local integer level    = GetUnitAbilityLevel(whichUnit, GetSpellAbilityId())
-        local real    distance = 700. + GetUnitCastRangeBonus(whichUnit)
+        local real    distance = 810. + GetUnitCastRangeBonus(whichUnit)
         local real    damage
 
         if level == 1 then

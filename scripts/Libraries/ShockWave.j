@@ -97,8 +97,15 @@ library ShockwaveLib /*
         endmethod
 
         private method ResetMembers takes nothing returns nothing
+            set this.r              = 255
+            set this.g              = 255
+            set this.b              = 255
+            set this.a              = 255
             set this.model          = null
             set this.timeScale      = 1.
+            set this.radius         = 0.
+            set this.minRadius      = 0.
+            set this.maxRadius      = 0.
             set this.speed          = 0.
             set this.vel            = 0.
             set this.modelScale     = 1.
@@ -119,7 +126,20 @@ library ShockwaveLib /*
         method FixTimeScale takes real time returns nothing
             local real duration = this.distance / this.speed
             set this.timeScale = time / duration
-            call BJDebugMsg("修正动画播放速度为：" + R2S(this.timeScale))
+        endmethod
+
+        integer r
+        integer g
+        integer b
+        integer a
+        method SetColor takes integer r, integer g, integer b, integer a returns nothing
+            set this.r = r
+            set this.g = g
+            set this.b = b
+            set this.a = a
+            if this.shockwaveFX != null then
+                call MHEffect_SetColorEx(this.shockwaveFX, a, r, g, b)
+            endif
         endmethod
 
         static method CreateByDistance takes unit owner, real startX, real startY, real angle, real distance returns thistype
@@ -316,18 +336,18 @@ library ShockwaveLib /*
             endif
             debug set shockwave.launched = true
 
-            if expression[thistype.typeid] == null then
-                set expression[thistype.typeid] = Condition(function thistype.Iterate)
-            endif
-
             set shockwave.shockwaveFX = AddSpecialEffect(shockwave.model, shockwave.x, shockwave.y)
             call MHEffect_SetYaw(shockwave.shockwaveFX, shockwave.angle * bj_RADTODEG)
             call MHEffect_SetTimeScale(shockwave.shockwaveFX, shockwave.timeScale)
             call MHEffect_SetScale(shockwave.shockwaveFX, shockwave.modelScale)
+            call MHEffect_SetColorEx(shockwave.shockwaveFX, shockwave.a, shockwave.r, shockwave.g, shockwave.b)
 
             set duration = shockwave.distance / shockwave.speed
             if duration != 0. then
                 set shockwave.radiusGrowth = ( shockwave.maxRadius - shockwave.minRadius ) * ( TIMER_TIMEOUT / duration )
+            endif
+            if shockwave.minRadius == shockwave.maxRadius then
+                set shockwave.radius = shockwave.maxRadius
             endif
 
             // 插入头节点时，链表为空
@@ -487,9 +507,13 @@ library ShockwaveLib /*
     endmodule
 
     module ShockwaveStruct
-        implement ShockwaveAction
         implement ShockwaveLaunch
         implement ShockwaveTerminate
+        implement ShockwaveAction
+
+        static method onInit takes nothing returns nothing
+            set expression[thistype.typeid] = Condition(function thistype.Iterate)
+        endmethod
     endmodule
 
     private module ShockwaveInit

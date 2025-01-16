@@ -3262,7 +3262,7 @@ function InitActiveAbilitys takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A037', 0, "IKE")
 	call SaveStr(ObjectHashTable,'A1RD', 0, "ILE")
 	call SaveStr(ObjectHashTable,'A02S', 0, "MagnusShockWaveOnSpellEffect")
-	call SaveStr(ObjectHashTable,'A3Y8', 0, "amengmaw")
+	call SaveStr(ObjectHashTable,'A3Y8', 0, "MagnusShockWaveOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A0G2', 0, "IPE")
 	call SaveStr(ObjectHashTable,'A1C0', 0, "IQE")	//分裂箭开启
 	call SaveStr(ObjectHashTable,'A418', 0, "ISE")	//分裂箭关闭
@@ -3348,8 +3348,8 @@ function InitActiveAbilitys takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A1IN', 0, "BKE")
 	call SaveStr(ObjectHashTable,'A1J7', 0, "BLE")
 	call SaveStr(ObjectHashTable,'A04A', 0, "BPE")
-	call SaveStr(ObjectHashTable,'A28R', 0, "BQE")
-	call SaveStr(ObjectHashTable,'A28S', 0, "BSE")
+	call SaveStr(ObjectHashTable,'A28R', 0, "SonicWaveOnSpellEffect")
+	call SaveStr(ObjectHashTable,'A28S', 0, "SonicWaveOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A45W', 0, "B_E")
 	call SaveStr(ObjectHashTable,'A45X', 0, "B0E")
 	call SaveStr(ObjectHashTable,'A3FA', 0, "B1E")
@@ -8290,17 +8290,20 @@ function CBX takes nothing returns boolean
 	set t = null
 	return false
 endfunction
-function CCX takes unit u, integer T0V, integer level, real SYV, integer CAX returns nothing
+
+// 添加技能 多用于龙卷风减速光环 携带buffId在timeout后一起删除
+// 龙卷风减速光环设置等级有滞后，因此不应该多用
+function CCX takes unit u, integer abilityId, integer level, real timeout, integer buffId returns nothing
 	local trigger t
 	local integer h
-	local real CDX
-	//local real ndur = GetGameTime()+ SYV
+	local real lastRemaining
+	//local real ndur = GetGameTime()+ timeout
 	local timer tt
 	if not UnitAlive(u) then
 		return
 	endif
-	if HaveSavedHandle(ObjectHashTable, GetHandleId(u), 0 -T0V) then
-		set t = LoadTriggerHandle(ObjectHashTable, GetHandleId(u), 0 -T0V)
+	if HaveSavedHandle(ObjectHashTable, GetHandleId(u), 0 -abilityId) then
+		set t = LoadTriggerHandle(ObjectHashTable, GetHandleId(u), 0 -abilityId)
 		set h = GetHandleId(t)
 		set tt = LoadTimerHandle(HY, h, 10)
 	else
@@ -8309,23 +8312,23 @@ function CCX takes unit u, integer T0V, integer level, real SYV, integer CAX ret
 		set tt = CreateTimer()
 		call FlushChildHashtable(HY, h)
 		call SaveUnitHandle(HY, h, 17, u)
-		call SaveInteger(HY, h, 59, T0V)
-		call SaveInteger(HY, h, 60, CAX)
+		call SaveInteger(HY, h, 59, abilityId)
+		call SaveInteger(HY, h, 60, buffId)
 		call SaveReal(HY, h, 0, 0)
 		call TriggerRegisterDeathEvent(t, u)
 		call SaveTimerHandle(HY, h, 10, tt)
 		call TriggerRegisterTimerExpireEvent(t, tt)
 		call TriggerAddCondition(t, Condition(function CBX))
-		call SaveTriggerHandle(ObjectHashTable, GetHandleId(u), 0 -T0V, t)
+		call SaveTriggerHandle(ObjectHashTable, GetHandleId(u), 0 -abilityId, t)
 	endif
 	call RemoveSavedBoolean(HY, h, 0)
-	set CDX = TimerGetRemaining(tt)
-	if CDX < SYV then
-		call TimerStart(tt, SYV, false, null)
+	set lastRemaining = TimerGetRemaining(tt)
+	if lastRemaining < timeout then
+		call TimerStart(tt, timeout, false, null)
 	endif
 	set t = null
 	set tt = null
-	call UnitAddPermanentAbilitySetLevel(u, T0V, level)
+	call UnitAddPermanentAbilitySetLevel(u, abilityId, level)
 endfunction
 
 function PasSkillCoolDownTimer takes nothing returns nothing
@@ -47608,17 +47611,6 @@ function EHI takes unit d, unit u returns nothing
 endfunction
 
 
-function ShockWaveActions takes nothing returns nothing
-	local unit target = Wave_U
-	local unit u = Player__Hero[GetPlayerId(GetOwningPlayer(Wave_Sou))]
-	local integer lv = Wave_LV
-	if not IsUnitType(target, UNIT_TYPE_MAGIC_IMMUNE) then
-		call UnitDamageTargetEx(u, target, 1, 37.5 * lv)
-		call CCX(target,'A3Y9', 1, 2.,'a3Y9')
-	endif
-	set target = null
-	set u = null
-endfunction
 
 function GushUpgraded_Actions takes nothing returns nothing
 	local unit u = Wave_U
@@ -63180,41 +63172,6 @@ function TIRUP takes real RYIIO, real TIRPP, real TIRIP, real PPPTO, real PURRO 
 	endif
 endfunction
 
-function a_shockwave takes nothing returns nothing
-	local timer t = GetExpiredTimer()
-	local integer h = GetHandleId(t)
-	local real sx = LoadReal(HY, h, 2)
-	local real sy = LoadReal(HY, h, 3)
-	local real tx = LoadReal(HY, h, 0)
-	local real ty = LoadReal(HY, h, 1)
-	local real a = bj_RADTODEG * Atan2(ty -sy, tx -sx)
-	local real x = sx + 1200. * Cos(a * bj_DEGTORAD)
-	local real y = sy + 1200. * Sin(a * bj_DEGTORAD)
-	local unit u = LoadUnitHandle(HY, h, 0)
-	local unit d = CreateUnit(GetOwningPlayer(u),'e00E', x, y, 0)
-	local real range = SquareRoot((sx -GetUnitX(d))*(sx -GetUnitX(d))+(sy -GetUnitY(d))*(sy -GetUnitY(d)))
-	if range > 1200 then
-		set range = 1200.
-	endif
-	call UAII(range, 150., 150., 0, 1575., "ShockWaveActions", d, sx, sy, GetUnitAbilityLevel(u,'A02S')+ GetUnitAbilityLevel(u,'A3Y8'))
-	set u = null
-	set d = null
-	//call P8E()
-	call FlushChildHashtable(HY, h)
-	call DestroyTimer(t)
-	set t = null
-endfunction
-
-function amengmaw takes nothing returns nothing
-	local integer h = TimerStartSingle(1200. / 1525., function a_shockwave)
-	call TIRUP(1200., 150., 150., 75. * GetUnitAbilityLevel(GetTriggerUnit(), GetSpellAbilityId()), 1575.)
-	call SetUnitVertexColor(IR, 255, 100, 0, 255)
-	call SaveUnitHandle(HY, h, 0, GetTriggerUnit())
-	call SaveReal(HY, h, 0, GetSpellTargetX())
-	call SaveReal(HY, h, 1, GetSpellTargetY())
-	call SaveReal(HY, h, 2, GetUnitX(GetTriggerUnit()))
-	call SaveReal(HY, h, 3, GetUnitY(GetTriggerUnit()))
-endfunction
 
 function WWI takes nothing returns boolean
 	local real d
@@ -72347,126 +72304,8 @@ function BPE takes nothing returns nothing
 	set whichUnit = null
 	set g = null
 endfunction
-function CZA takes unit u, unit dummyUnit returns boolean
-	return(IsUnitEnemy(dummyUnit, GetOwningPlayer(u)) and(IsAliveNotStrucNotWard(u)))!= null
-endfunction
-function C_A takes unit u, unit triggerUnit, integer dt, real damageValue, boolean C0A returns nothing
-	if CZA(triggerUnit, u) then
-		if IsUnitMagicImmune(triggerUnit) == false then
-			call UnitDamageTargetEx(u, triggerUnit, dt, damageValue)
-		elseif C0A then
-			call UnitDamageTargetEx(u, triggerUnit, 7, damageValue)
-		endif
-	endif
-endfunction
-function C1A takes nothing returns nothing
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit u = LoadUnitHandle(HY, h, 0)
-	local real damageValue = LoadReal(HY, h, 0)
-	local real I3X = LoadReal(HY, h, 3)* bj_DEGTORAD
-	local real N3X = LoadReal(HY, h, 4)
-	local real tX = LoadReal(HY, h, 5)
-	local real tY = LoadReal(HY, h, 6)
-	local real C2A = LoadReal(HY, h, 8)
-	local real LMR = LoadReal(HY, h, 9)
-	local unit triggerUnit
-	local group g
-	local group gg
-	local boolean C3A = LoadBoolean(HY, h, 10)
-	local boolean C4A = false
-	local integer dt = LoadInteger(HY, h, 1)
-	local boolean C0A = LoadBoolean(HY, h, 0)
-	if GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
-		call SetUnitX(u, GetUnitX(u)+ N3X * Cos(I3X))
-		call SetUnitY(u, GetUnitY(u)+ N3X * Sin(I3X))
-		call SaveInteger(HY, h, 12, LoadInteger(HY, h, 12)+ 1)
-		if GetDistanceBetween(GetUnitX(u), GetUnitY(u), tX, tY)< 100  or LoadInteger(HY, h, 12)> LoadInteger(HY, h, 13) then
-			set C4A = true
-			call SetUnitX(u, tX)
-			call SetUnitY(u, tY)
-		endif
-	else
-		set triggerUnit = GetTriggerUnit()
-	endif
-	if C3A then
-		set g = LoadGroupHandle(HY, h, 2)
-		set gg = AllocationGroup(430)
-		set U2 = u
-		call GroupEnumUnitsInRange(gg, GetUnitX(u), GetUnitY(u), C2A + LMR *(GetTriggerEvalCount(t)-1), Condition(function DUX))
-		call GroupRemoveGroup(g, gg)
-		loop
-			set triggerUnit = FirstOfGroup(gg)
-		exitwhen triggerUnit == null
-			call GroupRemoveUnit(gg, triggerUnit)
-			call GroupAddUnit(g, triggerUnit)
-			call C_A(LoadUnitHandle(HY, h, 17), triggerUnit, dt, damageValue, C0A)
-		endloop
-		call DeallocateGroup(gg)
-		set gg = null
-		if C4A then
-			call DeallocateGroup(g)
-		endif
-	else
-		call C_A(LoadUnitHandle(HY, h, 17), triggerUnit, dt, damageValue, C0A)
-	endif
-	if C4A then
-		call FlushChildHashtable(HY, h)
-		call CleanCurrentTrigger(t)
-		call KillUnit(u)
-	endif
-	set u = null
-	set g = null
-	set gg = null
-	set t = null
-endfunction
-function C5A takes unit whichUnit, integer unitTypeId, real damageValue, real O_A, real C2A, real QTR, real fX, real fY, real tX, real tY, real N3X, integer dt, boolean C0A returns nothing
-	local trigger t = CreateTrigger()
-	local integer h = GetHandleId(t)
-	local real I3X = AngleBetweenXY(fX, fY, tX, tY)
-	local unit u = CreateUnit(GetOwningPlayer(whichUnit), unitTypeId, fX, fY, I3X)
-	local real C6A = .02
-	call SetUnitX(u, fX + C2A * Cos(I3X * bj_DEGTORAD))
-	call SetUnitY(u, fY + C2A * Sin(I3X * bj_DEGTORAD))
-	call SaveUnitHandle(HY, h, 0, u)
-	call SaveReal(HY, h, 0, damageValue)
-	call SaveReal(HY, h, 1, O_A)
-	call SaveReal(HY, h, 2, QTR)
-	call SaveUnitHandle(HY, h, 17, whichUnit)
-	if C2A != QTR then
-		call SaveReal(HY, h, 8, C2A)
-		call SaveReal(HY, h, 9,(QTR -C2A)* C6A)
-		call SaveGroupHandle(HY, h, 2, AllocationGroup(431))
-		call SaveBoolean(HY, h, 10, true)
-	else
-		call TriggerRegisterUnitInRange(t, u, QTR + 25, null)
-	endif
-	call SaveReal(HY, h, 3, I3X)
-	call SaveReal(HY, h, 4, N3X * C6A)
-	call SaveInteger(HY, h, 13, R2I(O_A / LoadReal(HY, h, 4))+ 1)
-	call SaveReal(HY, h, 5, GetUnitX(u)+ O_A * Cos(I3X * bj_DEGTORAD))
-	call SaveReal(HY, h, 6, GetUnitY(u)+ O_A * Sin(I3X * bj_DEGTORAD))
-	call SaveInteger(HY, h, 1, dt)
-	call SaveBoolean(HY, h, 0, C0A)
-	call TriggerRegisterTimerEvent(t, C6A, true)
-	call TriggerRegisterTimerEvent(t, 0, false)
-	call TriggerAddCondition(t, Condition(function C1A))
-	set u = null
-	set t = null
-endfunction
-function BSE takes nothing returns nothing
-	local real damageValue = 325
-	if GetUnitAbilityLevel(GetTriggerUnit(), GetSpellAbilityId()) == 3 then
-		set damageValue = 555
-	elseif GetUnitAbilityLevel(GetTriggerUnit(), GetSpellAbilityId()) == 2 then
-		set damageValue = 440
-	endif
-	call C5A(GetTriggerUnit(),'h02C', damageValue, 800, 100, 450, GetUnitX(GetTriggerUnit()), GetUnitY(GetTriggerUnit()), GetSpellTargetX(), GetSpellTargetY(), 800, 7, true)
-endfunction
-function BQE takes nothing returns nothing
-	local real damageValue = 200+ 90 * GetUnitAbilityLevel(GetTriggerUnit(), GetSpellAbilityId())
-	call C5A(GetTriggerUnit(),'h02C', damageValue, 800, 100, 450, GetUnitX(GetTriggerUnit()), GetUnitY(GetTriggerUnit()), GetSpellTargetX(), GetSpellTargetY(), 800, 7, true)
-endfunction
+
+
 function C7A takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
@@ -85216,7 +85055,12 @@ function Init_BuffsId takes nothing returns nothing
 	call SetBuffAbilityId('A3W9','PRGE')
 	call SetBuffAbilityId('B3W9','PRGE')
 
-	// PRGA
+	// PRGA 仅强驱散？
+
+	// 猛犸波神杖升级致残
+	call SetBuffAbilityId('A3Y9','PRGA')
+	call SetBuffAbilityId('a3Y9','PRGA')
+
 	call SetBuffAbilityId('A1HN','PRGA')
 	call SetBuffAbilityId('B0CJ','PRGA')
 	call SetBuffAbilityId('A0QO','PRGA')
