@@ -3261,7 +3261,7 @@ function InitActiveAbilitys takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A447', 0, "ICE")
 	call SaveStr(ObjectHashTable,'A037', 0, "IKE")
 	call SaveStr(ObjectHashTable,'A1RD', 0, "ILE")
-	call SaveStr(ObjectHashTable,'A02S', 0, "IME")
+	call SaveStr(ObjectHashTable,'A02S', 0, "MagnataurShockWaveOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A3Y8', 0, "amengmaw")
 	call SaveStr(ObjectHashTable,'A0G2', 0, "IPE")
 	call SaveStr(ObjectHashTable,'A1C0', 0, "IQE")	//分裂箭开启
@@ -3390,8 +3390,8 @@ function InitActiveAbilitys takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A27G', 0, "DHE")
 	call SaveStr(ObjectHashTable,'A27H', 0, "DJE")
 	call SaveStr(ObjectHashTable,'A30J', 0, "DJE")
-	call SaveStr(ObjectHashTable,'QB06', 0, "DKE")
-	call SaveStr(ObjectHashTable,'A078', 0, "DKE")
+	call SaveStr(ObjectHashTable,'QB06', 0, "CarrionSwarmOnSpellEffect")
+	call SaveStr(ObjectHashTable,'A078', 0, "CarrionSwarmOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A04N', 0, "DLE")
 	call SaveStr(ObjectHashTable,'A2HS', 0, "DME")
 	call SaveStr(ObjectHashTable,'A2H0', 0, "DPE")
@@ -6625,6 +6625,9 @@ function R5X takes unit u returns boolean
 	return GetUnitAbilityLevel(u,'BOhx')> 0 or GetUnitAbilityLevel(u,'B00H')> 0
 endfunction
 
+// 1 一般法术伤害(魔法伤害)
+// 2 英雄攻击伤害(物理伤害)
+// 3 英雄攻击魔法伤害(纯粹伤害)
 function UnitDamageTargetEx takes unit u, unit t, integer damageType, real d returns nothing
 	if damageType == 0 or d < 0 then
 		return
@@ -8579,6 +8582,9 @@ endfunction
 
 // IsAliveNotStrucNotWard
 // 存活 非建筑 非 守卫
+function IsUnitStructure takes unit u returns boolean
+	return IsUnitType(u, UNIT_TYPE_STRUCTURE)
+endfunction
 function IsAliveNotStrucNotWard takes unit u returns boolean
 	return UnitAlive(u) and not IsUnitType(u, UNIT_TYPE_STRUCTURE) and GetUnitAbilityLevel(u,'A04R') == 0
 endfunction
@@ -63013,17 +63019,6 @@ function IKE takes nothing returns nothing
 	set targetUnit = null
 endfunction
 
-function IME takes nothing returns nothing
-	local unit d = CreateUnit(GetOwningPlayer(GetTriggerUnit()),'e00E', GetUnitX(GetTriggerUnit()), GetUnitY(GetTriggerUnit()), GetUnitFacing(GetTriggerUnit()))
-	call UnitAddAbility(d,'A3IH')
-	call SetUnitAbilityLevel(d,'A3IH', GetUnitAbilityLevel(GetTriggerUnit(),'A02S'))
-	if GetSpellTargetUnit() == GetTriggerUnit() then
-		call B1R(d, "carrionswarm", GetUnitX(GetTriggerUnit())+ 1 * Cos(bj_DEGTORAD * GetUnitFacing(GetTriggerUnit())), GetUnitY(GetTriggerUnit())+ 1 * Sin(bj_DEGTORAD * GetUnitFacing(GetTriggerUnit())))
-	else
-		call B1R(d, "carrionswarm", GetSpellTargetX(), GetSpellTargetY())
-	endif
-	set d = null
-endfunction
 
 function LWF takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
@@ -77246,17 +77241,6 @@ function DLE takes nothing returns nothing
 	call SaveUnitHandle(HY, GetHandleId(u),'EXOR', d)
 	set t = null
 	set u = null
-	set d = null
-endfunction
-function DKE takes nothing returns nothing
-	local unit d = CreateUnit(GetOwningPlayer(GetTriggerUnit()),'e00E', GetUnitX(GetTriggerUnit()), GetUnitY(GetTriggerUnit()), GetUnitFacing(GetTriggerUnit()))
-	call UnitAddAbility(d,'A3II')
-	call SetUnitAbilityLevel(d,'A3II', GetUnitAbilityLevel(GetTriggerUnit(), GetSpellAbilityId()))
-	if GetSpellTargetUnit() == GetTriggerUnit() then
-		call B1R(d, "carrionswarm", GetUnitX(GetTriggerUnit())+ 1 * Cos(bj_DEGTORAD * GetUnitFacing(GetTriggerUnit())), GetUnitY(GetTriggerUnit())+ 1 * Sin(bj_DEGTORAD * GetUnitFacing(GetTriggerUnit())))
-	else
-		call B1R(d, "carrionswarm", GetSpellTargetX(), GetSpellTargetY())
-	endif
 	set d = null
 endfunction
 function KCA takes nothing returns nothing

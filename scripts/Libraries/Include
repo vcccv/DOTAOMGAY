@@ -10,3 +10,5 @@
 #include "Utilities\\TimerUtils.j"
 
 #include "Utilities\\Line Segment Enumeration.j"
+
+#include "ShockWave.j"
