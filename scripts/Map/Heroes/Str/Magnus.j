@@ -1,29 +1,28 @@
 
-scope DeathProphet
+scope Magnus
 
     //***************************************************************************
     //*
-    //*  食腐蝠群
+    //*  震荡波
     //*
     //***************************************************************************
-    private struct CarrionSwarm extends array
-
+    private struct MShockWave
+        
         real damage
 
         static method OnCollide takes Shockwave sw, unit targ returns boolean
             // 敌对存活非魔免非无敌非守卫非建筑
             if UnitAlive(targ) and IsUnitEnemy(sw.owner, GetOwningPlayer(targ)) and not IsUnitMagicImmune(targ) and not IsUnitInvulnerable(targ) and not IsUnitWard(targ) and not IsUnitStructure(targ) then
                 call UnitDamageTargetEx(sw.owner, targ, 1, thistype(sw).damage)
-                call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Undead\\CarrionSwarm\\CarrionSwarmDamage.mdl", targ, "origin"))
-                //call sw.EnableHitAfter(targ, 0.12)
             endif
             return false
         endmethod
         
         implement ShockwaveStruct
+
     endstruct
 
-    function CarrionSwarmOnSpellEffect takes nothing returns nothing
+    function MagnusShockWaveOnSpellEffect takes nothing returns nothing
         local unit      whichUnit = GetRealSpellUnit(GetTriggerUnit())
         local unit      targUnit  = GetSpellTargetUnit()
         local real      x = GetUnitX(whichUnit)
@@ -34,19 +33,8 @@ scope DeathProphet
         local Shockwave sw
 
         local integer level    = GetUnitAbilityLevel(whichUnit, GetSpellAbilityId())
-        local real    distance = 700. + GetUnitCastRangeBonus(whichUnit)
-        local real    damage
+        local real    distance = 1000. + GetUnitCastRangeBonus(whichUnit)
 
-        if level == 1 then
-            set damage = 100
-        elseif level == 2 then
-            set damage = 175
-        elseif level == 3 then
-            set damage = 250
-        else
-            set damage = 300
-        endif
-        
         if targUnit == null then
             set tx = GetSpellTargetX()
             set ty = GetSpellTargetY()
@@ -62,13 +50,27 @@ scope DeathProphet
             set targUnit = null
         endif
         set sw = Shockwave.CreateByDistance(whichUnit, x, y, angle, distance)
-        call sw.SetSpeed(1100.)
-        set sw.minRadius = 110.
-        set sw.maxRadius = 300.
-        set sw.model = "Abilities\\Spells\\Undead\\CarrionSwarm\\CarrionSwarmMissile.mdl"
+        call sw.SetSpeed(1050.)
+        set sw.minRadius = 150.
+        set sw.maxRadius = 150.
+        set sw.model = "Abilities\\Spells\\Orc\\Shockwave\\ShockwaveMissile.mdl"
         //call sw.FixTimeScale(0.033 + 1.166)
-        set CarrionSwarm(sw).damage = damage
-        call CarrionSwarm.Launch(sw)
+        set MShockWave(sw).damage = level * 75.
+        call MShockWave.Launch(sw)
     endfunction
+
+    /*
+function MagnataurShockWaveOnSpellEffect takes nothing returns nothing
+	local unit d = CreateUnit(GetOwningPlayer(GetTriggerUnit()),'e00E', GetUnitX(GetTriggerUnit()), GetUnitY(GetTriggerUnit()), GetUnitFacing(GetTriggerUnit()))
+	call UnitAddAbility(d,'A3IH')
+	call SetUnitAbilityLevel(d,'A3IH', GetUnitAbilityLevel(GetTriggerUnit(),'A02S'))
+	if GetSpellTargetUnit() == GetTriggerUnit() then
+		call B1R(d, "carrionswarm", GetUnitX(GetTriggerUnit())+ 1 * Cos(bj_DEGTORAD * GetUnitFacing(GetTriggerUnit())), GetUnitY(GetTriggerUnit())+ 1 * Sin(bj_DEGTORAD * GetUnitFacing(GetTriggerUnit())))
+	else
+		call B1R(d, "carrionswarm", GetSpellTargetX(), GetSpellTargetY())
+	endif
+	set d = null
+endfunction
+    */
 
 endscope

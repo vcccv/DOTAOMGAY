@@ -8650,10 +8650,6 @@ Researchtip=学习 食腐蝠群[|cffffcc00R|r] - [|cffffcc00等级 %d|r]|n(Carri
 Researchubertip=召唤一群蝙蝠对一条直线上的敌方目标造成伤害。|n|n|cff99ccff施法距离：|r600|n|cff99ccff最大距离：|r810|n|cff99ccff冷却时间：|r6|n|cff99ccff魔法消耗：|r80/95/115/140|n|n|cffffcc00等级 1|r - 对每个目标造成100点伤害|n|cffffcc00等级 2|r - 对每个目标造成175点伤害|n|cffffcc00等级 3|r - 对每个目标造成250点伤害|n|cffffcc00等级 4|r - 对每个目标造成300点伤害
 researchhotkey="N"
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNCarrionSwarm.blp
-[A3II]
-missileart=Abilities\Spells\Undead\CarrionSwarm\CarrionSwarmMissile.mdl
-missilespeed=1100
-specialart=Abilities\Spells\Undead\CarrionSwarm\CarrionSwarmDamage.mdl
 [A08H]
 art=ReplaceableTextures\CommandButtons\BTNBreathOfFrost
 researchart=ReplaceableTextures\CommandButtons\BTNBreathOfFrost
@@ -23852,9 +23848,6 @@ Researchubertip=发射出一道震荡波，对一条直线上的地面单位造�
 researchhotkey=W
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNShockWave.blp
 missilespeed=1050
-[A3IH]
-missileart=Abilities\Spells\Orc\Shockwave\ShockwaveMissile.mdl
-missilespeed=1050
 [A3MN]
 missileart=Abilities\Spells\Orc\Shockwave\ShockwaveMissile.mdl
 missilespeed=1750
@@ -34921,9 +34914,6 @@ Researchubertip=释放一道火焰，对一条直线上的敌方单位造成|cff
 researchhotkey="D"
 unhotkey=D
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNlpz.blp
-[A3IJ]
-missileart=units\human\phoenix\phoenix.mdl
-missilespeed=1200
 [A001]
 art=ReplaceableTextures\CommandButtons\BTNDisenchant
 buttonpos=2,2

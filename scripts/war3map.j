@@ -3108,7 +3108,7 @@ function InitActiveAbilitys takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'QM01', 0, "V0E")
 	call SaveStr(ObjectHashTable,'A11X', 0, "V1E")
 	call SaveStr(ObjectHashTable,'QB0E', 0, "V2E")
-	call SaveStr(ObjectHashTable,'A01F', 0, "V3E")
+	call SaveStr(ObjectHashTable,'A01F', 0, "DragonSlaveOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A09Z', 0, "V5E")
 	call SaveStr(ObjectHashTable,'A01P', 0, "V5E")
 	call SaveStr(ObjectHashTable,'A054', 0, "V8E")
@@ -3261,7 +3261,7 @@ function InitActiveAbilitys takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A447', 0, "ICE")
 	call SaveStr(ObjectHashTable,'A037', 0, "IKE")
 	call SaveStr(ObjectHashTable,'A1RD', 0, "ILE")
-	call SaveStr(ObjectHashTable,'A02S', 0, "MagnataurShockWaveOnSpellEffect")
+	call SaveStr(ObjectHashTable,'A02S', 0, "MagnusShockWaveOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A3Y8', 0, "amengmaw")
 	call SaveStr(ObjectHashTable,'A0G2', 0, "IPE")
 	call SaveStr(ObjectHashTable,'A1C0', 0, "IQE")	//分裂箭开启
@@ -45801,17 +45801,6 @@ function V5E takes nothing returns nothing
 		endif
 	endif
 	set t = null
-endfunction
-function V3E takes nothing returns nothing
-	local unit d = CreateUnit(GetOwningPlayer(GetTriggerUnit()),'e00E', GetUnitX(GetTriggerUnit()), GetUnitY(GetTriggerUnit()), GetUnitFacing(GetTriggerUnit()))
-	call UnitAddAbility(d,'A3IJ')
-	call SetUnitAbilityLevel(d,'A3IJ', GetUnitAbilityLevel(GetTriggerUnit(),'A01F'))
-	if GetSpellTargetUnit() == GetTriggerUnit() then
-		call B1R(d, "carrionswarm", GetUnitX(GetTriggerUnit())+ 1 * Cos(bj_DEGTORAD * GetUnitFacing(GetTriggerUnit())), GetUnitY(GetTriggerUnit())+ 1 * Sin(bj_DEGTORAD * GetUnitFacing(GetTriggerUnit())))
-	else
-		call B1R(d, "carrionswarm", GetSpellTargetX(), GetSpellTargetY())
-	endif
-	set d = null
 endfunction
 function YAR takes nothing returns nothing
 	local integer ETX

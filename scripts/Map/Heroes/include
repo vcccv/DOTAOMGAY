@@ -1,10 +1,11 @@
 
 #include "Str\\Earthshaker.j"
 #include "Str\\TaurenChieftain.j"
-#include "Str\\Magnataur.j"
+#include "Str\\Magnus.j"
 
 #include "Int\\TwinHeadDragon.j"
 #include "Int\\Ezalor.j"
 #include "Int\\DeathProphet.j"
+#include "Int\\Lina.j"
 
 #include "Agi\\VengefulSpirit.j"
