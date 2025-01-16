@@ -2,6 +2,7 @@
 #include "Str\\Earthshaker.j"
 #include "Str\\TaurenChieftain.j"
 #include "Str\\Magnus.j"
+#include "Str\\DragonKnight.j"
 
 #include "Int\\TwinHeadDragon.j"
 #include "Int\\Ezalor.j"

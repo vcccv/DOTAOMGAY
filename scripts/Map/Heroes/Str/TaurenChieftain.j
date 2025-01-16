@@ -98,8 +98,8 @@ scope TaurenChieftain
             call UnitDamageTargetEx(whichUnit, first, 1, damage)
             call UnitDamageTargetEx(whichUnit, first, 2, damage)
             if upgradeLevel > 0 and UnitIsDead(first) == false then
-                call CCX(first,'A43L', 1, upgradeLevel + 3., 0)
-                call CCX(first,'A44E', 1, upgradeLevel + 3., 0)
+                call UnitAddAbilityToTimed(first,'A43L', 1, upgradeLevel + 3., 0)
+                call UnitAddAbilityToTimed(first,'A44E', 1, upgradeLevel + 3., 0)
             endif
             
         endloop

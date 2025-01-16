@@ -3,6 +3,157 @@ scope TwinHeadDragon
 
     //***************************************************************************
     //*
+    //*  冰火交加
+    //*
+    //***************************************************************************
+    private struct BreathFire extends array
+
+        real    damage
+
+        static method OnCollide takes Shockwave sw, unit targ returns boolean
+            // 敌对存活非魔免非无敌非守卫非建筑
+            if UnitAlive(targ) and IsUnitEnemy(sw.owner, GetOwningPlayer(targ)) and not IsUnitMagicImmune(targ) and not IsUnitInvulnerable(targ) and not IsUnitWard(targ) and not IsUnitStructure(targ) then
+                call UnitAddAbilityToTimed(targ,'A3JI'-1 + thistype(sw).level, 1, 5,'B3J1')
+            endif
+            return false
+        endmethod
+        
+        implement ShockwaveStruct
+    endstruct
+
+    private struct BreathFrost extends array
+
+        integer level
+
+        static method OnCollide takes Shockwave sw, unit targ returns boolean
+            // 敌对存活非魔免非无敌非守卫非建筑
+            if UnitAlive(targ) and IsUnitEnemy(sw.owner, GetOwningPlayer(targ)) and not IsUnitMagicImmune(targ) and not IsUnitInvulnerable(targ) and not IsUnitWard(targ) and not IsUnitStructure(targ) then
+                call UnitAddAbilityToTimed(targ,'A3JI'-1 + thistype(sw).level, 1, 5.,'B3J1')
+            endif
+            return false
+        endmethod
+        
+        implement ShockwaveStruct
+    endstruct
+
+    private function DualBreathDelayAction takes nothing returns nothing
+        local SimpleTick tick  = SimpleTick.GetExpired()
+        local TableArray table = SimpleTick.GetTable()
+
+        local real      x     = table[tick].real['x']
+        local real      y     = table[tick].real['y']
+        local real      angle = table[tick].real['a']
+        local integer   level = table[tick][1]
+
+        local Shockwave sw
+        set sw = Shockwave.CreateByDistance(whichUnit, x, y, angle, distance)
+        call sw.SetSpeed(1200.)
+        set sw.minRadius = 200.
+        set sw.maxRadius = 250.
+        set sw.model = "Abilities\\Spells\\Other\\BreathOfFire\\BreathOfFireMissile.mdl"
+        call sw.FixTimeScale(0.500)
+        set BreathFire(sw).damage = level * 20
+        call BreathFire.Launch(sw)
+
+        call tick.Destroy()
+    endfunction
+
+    function DualBreathOnSpellEffect takes nothing returns nothing
+        local unit      whichUnit = GetRealSpellUnit(GetTriggerUnit())
+        local unit      targUnit  = GetSpellTargetUnit()
+        local real      x = GetUnitX(whichUnit)
+        local real      y = GetUnitY(whichUnit)
+        local real      tx
+        local real      ty
+        local real      angle
+        local Shockwave sw
+
+        local integer    level    = GetUnitAbilityLevel(whichUnit, GetSpellAbilityId())
+        local real       distance = 1075. + GetUnitCastRangeBonus(whichUnit)
+        local SimpleTick tick     = SimpleTick.Create(0)
+        local TableArray table
+        
+        if targUnit == null then
+            set tx = GetSpellTargetX()
+            set ty = GetSpellTargetY()
+            set angle = RadianBetweenXY(x, y, tx, ty)
+        else
+            set tx = GetUnitX(targUnit)
+            set ty = GetUnitY(targUnit)
+            if targUnit == whichUnit then
+                set angle = GetUnitFacing(whichUnit) * bj_DEGTORAD
+            else
+                set angle = RadianBetweenXY(x, y, tx, ty)
+            endif
+            set targUnit = null
+        endif
+        set sw = Shockwave.CreateByDistance(whichUnit, x, y, angle, distance)
+        call sw.SetSpeed(1200.)
+        set sw.minRadius = 200.
+        set sw.maxRadius = 250.
+        set sw.model = "Abilities\\Spells\\Other\\BreathOfFrost\\BreathOfFrostMissile.mdl"
+        call sw.FixTimeScale(0.500)
+        set BreathFrost(sw).level = level
+        call BreathFrost.Launch(sw)
+
+        call tick.Start(0.3, false, function DualBreathDelayAction)
+        set table = SimpleTick.GetTable()
+        set table[tick][1] = level
+        set table[tick].real['x'] = x
+        set table[tick].real['y'] = y
+        set table[tick].real['a'] = angle
+    endfunction
+
+    /*
+
+
+// 冰火交加
+function DualBreathDamagedEvent takes nothing returns nothing
+	local integer i = GetUnitAbilityLevel(DamagedEventSourceUnit,'A0OB')
+	if i > 0 and GetUnitAbilityLevel(DamagedEventSourceUnit,'A3JI'-1 + i) == 0 then
+		call UnitAddAbilityToTimed(DamagedEventTargetUnit,'A3JI'-1 + GetUnitAbilityLevel(DamagedEventSourceUnit,'A0OB'), 1, 5,'B3J1')
+	endif
+endfunction
+function U9R takes nothing returns nothing
+	local trigger t = GetTriggeringTrigger()
+	local integer h = GetHandleId(t)
+	local unit d = LoadUnitHandle(HY, h, 0)
+	call IssuePointOrderById(d, 852560, LoadReal(HY, h, 0), LoadReal(HY, h, 1))
+	call FlushChildHashtable(HY, h)
+	call DestroyTrigger(t)
+	set d = null
+	set t = null
+endfunction
+function DualBreathOnSpellEffect takes nothing returns nothing
+	local unit u = GetTriggerUnit()
+	local real x = GetSpellTargetX()
+	local real y = GetSpellTargetY()
+	local trigger t = CreateTrigger()
+	local integer level = GetUnitAbilityLevel(u, GetSpellAbilityId())
+	local integer h = GetHandleId(t)
+	local unit d = CreateUnit(GetOwningPlayer(u),'e00E', GetUnitX(u), GetUnitY(u), 0)
+	call TGV(3)
+	call TriggerRegisterTimerEvent(t, .3, false)
+	call TriggerAddCondition(t, Condition(function U9R))
+	call UnitAddAbility(d,'A0OB')
+	call SetUnitAbilityLevel(d,'A0OB', level)
+	call IssuePointOrderById(d, 852580, x, y)
+	set d = CreateUnit(GetOwningPlayer(u),'e00E', GetUnitX(u), GetUnitY(u), 0)
+	call UnitAddAbility(d,'A0OC')
+	call SetUnitAbilityLevel(d,'A0OC', level)
+	call SaveUnitHandle(HY, h, 0, d)
+	call SaveReal(HY, h, 0, x)
+	call SaveReal(HY, h, 1, y)
+	set d = null
+	set t = null
+	set u = null
+endfunction
+
+    */
+
+
+    //***************************************************************************
+    //*
     //*  冰封路径
     //*
     //***************************************************************************

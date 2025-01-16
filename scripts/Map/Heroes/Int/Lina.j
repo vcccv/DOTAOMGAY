@@ -14,13 +14,11 @@ scope Lina
             // 敌对存活非魔免非无敌非守卫非建筑
             if UnitAlive(targ) and IsUnitEnemy(sw.owner, GetOwningPlayer(targ)) and not IsUnitMagicImmune(targ) and not IsUnitInvulnerable(targ) and not IsUnitWard(targ) and not IsUnitStructure(targ) then
                 call UnitDamageTargetEx(sw.owner, targ, 1, thistype(sw).damage)
-                //call DestroyEffect(AddSpecialEffectTarget("FireFlyGroundEffect.mdx", targ, "origin"))
             endif
             return false
         endmethod
         
         implement ShockwaveStruct
-
     endstruct
 
     function DragonSlaveOnSpellEffect takes nothing returns nothing

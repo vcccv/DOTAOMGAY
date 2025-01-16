@@ -23897,12 +23897,6 @@ Researchtip=学习 火焰气息[|cffffcc00F|r] - [|cffffcc00等级 %d|r]|n(Breat
 Researchubertip=向面前锥形范围吐出一道火焰，对敌方单位造成|cff6495ed魔法伤害|r。在11秒内减少敌军一定的基础攻击。|n|n|cff99ccff施法距离：|r500|n|cff99ccff最大距离：|r650|n|cff99ccff冷却时间：|r9|n|cff99ccff魔法消耗：|r/90100/110/120|n|n|cffffcc00等级 1|r - 造成90点伤害，减少20%的基础攻击|n|cffffcc00等级 2|r - 造成170点伤害，减少25%的基础攻击|n|cffffcc00等级 3|r - 造成240点伤害，减少30%的基础攻击|n|cffffcc00等级 4|r - 造成300点伤害，减少35%的基础攻击
 researchhotkey=F
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNDKBreatheFire.blp
-[A3ES]
-art=ReplaceableTextures\CommandButtons\BTNDKBreatheFire
-researchart=ReplaceableTextures\CommandButtons\BTNDKBreatheFire
-buttonpos=,2
-missileart=Abilities\Spells\Other\BreathOfFire\BreathOfFireMissile.mdl
-missilespeed=1050
 [A04U]
 art=ReplaceableTextures\CommandButtons\BTNStormBolt
 researchart=ReplaceableTextures\CommandButtons\BTNStormBolt

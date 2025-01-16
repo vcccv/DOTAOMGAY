@@ -3062,7 +3062,7 @@ function InitActiveAbilitys takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'QB0G', 0, "ZKV")
 	call SaveStr(ObjectHashTable,'A03G', 0, "ZLV")
 	call SaveStr(ObjectHashTable,'QM00', 0, "ZLV")
-	call SaveStr(ObjectHashTable,'A03F', 0, "ZMV")
+	call SaveStr(ObjectHashTable,'A03F', 0, "BreatheFireOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A2QI', 0, "ZPV")
 	call SaveStr(ObjectHashTable,'A2TH', 0, "ZQV")
 	call SaveStr(ObjectHashTable,'A2QM', 0, "ZSV")
@@ -3097,7 +3097,7 @@ function InitActiveAbilitys takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A30T', 0, "VCE")
 	call SaveStr(ObjectHashTable,'A1B1', 0, "MacropyreOnSpellEffect")
 	call SaveStr(ObjectHashTable,'ANLS', 0, "VDE")
-	call SaveStr(ObjectHashTable,'A0O7', 0, "VGE")
+	call SaveStr(ObjectHashTable,'A0O7', 0, "DualBreathOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A0M1', 0, "VJE")
 	call SaveStr(ObjectHashTable,'A1AX', 0, "VJE")
 	call SaveStr(ObjectHashTable,'A05G', 0, "VLE")
@@ -8293,7 +8293,7 @@ endfunction
 
 // 添加技能 多用于龙卷风减速光环 携带buffId在timeout后一起删除
 // 龙卷风减速光环设置等级有滞后，因此不应该多用
-function CCX takes unit u, integer abilityId, integer level, real timeout, integer buffId returns nothing
+function UnitAddAbilityToTimed takes unit u, integer abilityId, integer level, real timeout, integer buffId returns nothing
 	local trigger t
 	local integer h
 	local real lastRemaining
@@ -13897,7 +13897,7 @@ function YEX takes unit u returns nothing
 	call TriggerRegisterUnitEvent(t, u, EVENT_UNIT_DAMAGED)
 	call TriggerAddCondition(t, Condition(function W9X))
 	call SaveUnitHandle(HY, GetHandleId(t), 0, u)
-	call CCX(u,'A3KL', 1, 5,'B3KL')
+	call UnitAddAbilityToTimed(u,'A3KL', 1, 5,'B3KL')
 	call SaveReal(HY, GetHandleId(t), 0, GetGameTime()+ 5)
 	set t = null
 endfunction
@@ -17147,7 +17147,7 @@ function RNO takes integer JAX returns integer
 	return -1
 endfunction
 function RBO takes unit u returns nothing
-	call CCX(u,'A3FL', 1, 45,'B01P')
+	call UnitAddAbilityToTimed(u,'A3FL', 1, 45,'B01P')
 	call UnitMakeAbilityPermanent(u, true,'A3FK')
 	call SetAllPlayerAbilityUnavailable('A3FL')
 endfunction
@@ -17883,7 +17883,7 @@ function IMO takes nothing returns nothing
 	set IPO = null
 endfunction
 function ISO takes unit u returns nothing
-	call CCX(u,'A263', 1, 5,'B08N')
+	call UnitAddAbilityToTimed(u,'A263', 1, 5,'B08N')
 endfunction
 function ITO takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
@@ -17945,7 +17945,7 @@ function DVD takes nothing returns boolean
 	return false
 endfunction
 function IYO takes unit u returns nothing
-	call CCX(u,'A264', 1, 4,'B02I')
+	call UnitAddAbilityToTimed(u,'A264', 1, 4,'B02I')
 endfunction
 function IZO takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
@@ -20385,7 +20385,7 @@ function GUE takes nothing returns nothing
 	set whichUnit = null
 endfunction
 function G_E takes nothing returns nothing
-	call CCX(GetTriggerUnit(),'A1CN', 1, 4, 0)
+	call UnitAddAbilityToTimed(GetTriggerUnit(),'A1CN', 1, 4, 0)
 endfunction
 function GWE takes nothing returns nothing
 	local unit u = GetSpellTargetUnit()
@@ -20687,7 +20687,7 @@ function G2E takes nothing returns nothing
 	if targetUnit == null then
 		set targetUnit = whichUnit
 	endif
-	call CCX(targetUnit,'A3KI', 1, 15,'B3KI')
+	call UnitAddAbilityToTimed(targetUnit,'A3KI', 1, 15,'B3KI')
 	call TriggerRegisterTimerEvent(t, .1, true)
 	call TriggerRegisterUnitEvent(t, targetUnit, EVENT_UNIT_DAMAGED)
 	call TriggerAddCondition(t, Condition(function B0O))
@@ -21292,9 +21292,9 @@ function CZO takes unit u returns nothing
 	call SaveUnitHandle(HY, GetHandleId(t), 0, u)
 	call SetUnitPhaseMove( u, true )
 	if IsUnitType(u, UNIT_TYPE_MELEE_ATTACKER) then
-		call CCX(u,'A3K1', 1, 2.5,'B09Y')
+		call UnitAddAbilityToTimed(u,'A3K1', 1, 2.5,'B09Y')
 	else
-		call CCX(u,'A3CQ', 1, 2.5,'B09Y')
+		call UnitAddAbilityToTimed(u,'A3CQ', 1, 2.5,'B09Y')
 	endif
 	set t = null
 endfunction
@@ -21586,7 +21586,7 @@ function QTUTW takes nothing returns nothing
 	endif
 	set h = GetHandleId(u)
 	if u != null then
-		call CCX(u,'A3UC', 1, 5.,'a3UC')
+		call UnitAddAbilityToTimed(u,'A3UC', 1, 5.,'a3UC')
 		call SaveReal(HY, h,'A3UC', GetGameTime()+ 5.)
 		if not IsUnitType(u, UNIT_TYPE_MELEE_ATTACKER) then
 			call QTUQW(u, WWUTQ)
@@ -21675,7 +21675,7 @@ function C9O takes unit u, boolean DVO returns nothing
 	if DVO then
 		set c = 30
 	endif
-	call CCX(whichUnit,'Aetl', 1, R2I(c / 10), 0)
+	call UnitAddAbilityToTimed(whichUnit,'Aetl', 1, R2I(c / 10), 0)
 	call SetPlayerAbilityAvailableEx(GetOwningPlayer(whichUnit),'Aetl', false)
 	call TriggerRegisterTimerEvent(t, .1, true)
 	call TriggerAddCondition(t, Condition(function C8O))
@@ -21695,7 +21695,7 @@ function DEO takes nothing returns nothing
 		if LoadBoolean(HY, h, 0) then
 			set t = CreateTrigger()
 			set h = GetHandleId(t)
-			call CCX(targetUnit,'A1QB', 1, 4,'B0CY')
+			call UnitAddAbilityToTimed(targetUnit,'A1QB', 1, 4,'B0CY')
 			call TriggerRegisterTimerEvent(t, .1, true)
 			call TriggerRegisterDeathEvent(t, targetUnit)
 			call TriggerAddCondition(t, Condition(function C7O))
@@ -21770,7 +21770,7 @@ function DAO takes nothing returns nothing
 	if IsMessengerUnit(whichUnit) == false then
 		set t = CreateTrigger()
 		set h = GetHandleId(t)
-		call CCX(whichUnit,'Aetl', 1, 4, 0)
+		call UnitAddAbilityToTimed(whichUnit,'Aetl', 1, 4, 0)
 		call SetPlayerAbilityAvailableEx(GetOwningPlayer(whichUnit),'Aetl', false)
 		call TriggerRegisterTimerEvent(t, .1, true)
 		call TriggerAddCondition(t, Condition(function DIO))
@@ -22299,11 +22299,11 @@ endfunction
 function GGE takes nothing returns nothing
 	local unit u = GetSpellTargetUnit()
 	if IsUnitType(u, UNIT_TYPE_MELEE_ATTACKER) then
-		call CCX(u,'C033', 1, 3,'D033')
-		call CCX(u,'A3KC', 1, 3, 0)
+		call UnitAddAbilityToTimed(u,'C033', 1, 3,'D033')
+		call UnitAddAbilityToTimed(u,'A3KC', 1, 3, 0)
 	else
-		call CCX(u,'C033', 1, 4.5,'D033')
-		call CCX(u,'A3KC', 1, 4.5, 0)
+		call UnitAddAbilityToTimed(u,'C033', 1, 4.5,'D033')
+		call UnitAddAbilityToTimed(u,'A3KC', 1, 4.5, 0)
 	endif
 	set u = null
 endfunction
@@ -35870,8 +35870,8 @@ function B4R takes unit u returns real
 	return .0
 endfunction
 function B6R takes unit t returns nothing
-	call CCX(t,'A3K2', 1, 15, 0)
-	call CCX(t,'A3K3', 1, 15,'BIcb')
+	call UnitAddAbilityToTimed(t,'A3K2', 1, 15, 0)
+	call UnitAddAbilityToTimed(t,'A3K3', 1, 15,'BIcb')
 endfunction
 function B7R takes unit u, unit t returns boolean
 	if GetUnitAbilityLevel(u,'AIcb')> 0 then	//黯灭
@@ -35962,7 +35962,7 @@ function CRR takes nothing returns nothing
 		call SetHeroAgi(u, GetHeroAgi(u, false)-CNR, true)
 		call SetHeroInt(u, GetHeroInt(u, false)-CBR, true)
 		call TriggerAddCondition(t, Condition(function COR))
-		call CCX(u,'A3K6', 1, 12,'B3K6')
+		call UnitAddAbilityToTimed(u,'A3K6', 1, 12,'B3K6')
 		call SaveUnitHandle(HY, h, 0, u)
 		call SaveInteger(HY, h, 0, CAR)
 		call SaveInteger(HY, h, 1, CNR)
@@ -36010,7 +36010,7 @@ function CDR takes nothing returns boolean
 endfunction
 function CFR takes nothing returns nothing
 	call UnitDamageTargetEx(UN, GetEnumUnit(), 1, MC)
-	call CCX(GetEnumUnit(),'A3LA', 1, 3.,'A32c')
+	call UnitAddAbilityToTimed(GetEnumUnit(),'A3LA', 1, 3.,'A32c')
 	call GroupAddUnit(GI, GetEnumUnit())
 endfunction
 function CGR takes nothing returns nothing
@@ -36454,7 +36454,7 @@ function C9R takes nothing returns nothing
 			set level = TN -1
 			set T0V = T0V + 1
 		endif
-		call CCX(GetEnumUnit(), T0V, level, 1 + SN,'B45Y')
+		call UnitAddAbilityToTimed(GetEnumUnit(), T0V, level, 1 + SN,'B45Y')
 	endif
 endfunction
 function DVR takes nothing returns nothing
@@ -37162,7 +37162,7 @@ function D2R takes nothing returns nothing
 	local integer h = GetHandleId(t)
 	local integer N5O = 10
 	local trigger D1R = CreateTrigger()
-	call CCX(targetUnit,'A12D', 1, N5O,'B09U')
+	call UnitAddAbilityToTimed(targetUnit,'A12D', 1, N5O,'B09U')
 	call TriggerRegisterTimerEvent(t, N5O + .01, false)
 	call TriggerRegisterUnitEvent(t, targetUnit, EVENT_UNIT_DAMAGED)
 	call TriggerAddCondition(t, Condition(function D0R))
@@ -38388,7 +38388,7 @@ function NRE takes nothing returns boolean
 	return false
 endfunction
 function GFR takes unit whichUnit, unit targetUnit returns nothing
-	call CCX(targetUnit,'A1IX', 1, 3,'B0CA')
+	call UnitAddAbilityToTimed(targetUnit,'A1IX', 1, 3,'B0CA')
 endfunction
 function GGR takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
@@ -39119,7 +39119,7 @@ function HBR takes nothing returns nothing
 		set HDR = HDR + IMinBJ(4, HFR + 1)
 		call UnitAddPermanentAbility(targetUnit, HDR)
 		call SaveInteger(HY, hu,'A0Fw', HDR)
-		call CCX(targetUnit, HCR, HFR + 1, 5, 0)
+		call UnitAddAbilityToTimed(targetUnit, HCR, HFR + 1, 5, 0)
 	endif
 	if GetUnitAbilityLevel(targetUnit,'A3E9') == 1 and IsUnitMagicImmune(whichUnit) and HGR == false then
 		if UnitHasSpellShield(whichUnit) == false then
@@ -40536,7 +40536,7 @@ function ZFV takes nothing returns nothing
 		set u2 = FirstOfGroup(g)
 	exitwhen u2 == null
 		call UnitDamageTargetEx(whichUnit, u2, 1, 50 + 50 * level)
-		call CCX(u2,'A3EO'-1 + level, 1, 4.5,'B386')
+		call UnitAddAbilityToTimed(u2,'A3EO'-1 + level, 1, 4.5,'B386')
 		call GroupRemoveUnit(g, u2)
 	endloop
 	call DeallocateGroup(g)
@@ -41008,7 +41008,7 @@ function LKR takes nothing returns nothing
 			call GroupRemoveUnit(g, u2)
 			if LoadInteger(HY, GetHandleId(u2),'frwl')!= 1 then
 				call EPX(u2,'frwl', .49)
-				call CCX(u2,'A452', 1, 1,'B452')
+				call UnitAddAbilityToTimed(u2,'A452', 1, 1,'B452')
 				call UnitDamageTargetEx(u, u2, 1, damageValue)
 			endif
 		endloop
@@ -41366,7 +41366,7 @@ function ZGV takes nothing returns nothing
 endfunction
 function L5R takes nothing returns nothing
 	call UnitDamageTargetEx(HTV, GetEnumUnit(), 1, HUV)
-	call CCX(GetEnumUnit(),'A335', 1, .6,'B08B')
+	call UnitAddAbilityToTimed(GetEnumUnit(),'A335', 1, .6,'B08B')
 endfunction
 function L6R takes unit whichUnit, unit targetUnit returns nothing
 	local integer h = GetHandleId(whichUnit)
@@ -41737,7 +41737,7 @@ function MGR takes nothing returns nothing
 	call SetUnitPathing(GetEnumUnit(), true)
 	if IsUnitEnemy(GetEnumUnit(), GetOwningPlayer(MA)) then
 		call UnitDamageTargetEx(MA, GetEnumUnit(), 1, QA)
-		call CCX(GetEnumUnit(),'A3B7', 1, 1.,'B3B7')
+		call UnitAddAbilityToTimed(GetEnumUnit(),'A3B7', 1, 1.,'B3B7')
 		call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Human\\ManaFlare\\ManaFlareBoltImpact.mdl", GetEnumUnit(), "origin"))
 	endif
 endfunction
@@ -41991,29 +41991,6 @@ function PBX takes nothing returns nothing
 	call AddAbilityIDToPreloadQueue('A0AR')
 	call AddAbilityIDToPreloadQueue('QB0G')
 	call SetAllPlayerAbilityUnavailable('A389')
-endfunction
-// 火焰气息
-function BreatheFireDamagedEvent takes nothing returns nothing
-	local integer i = GetUnitAbilityLevel( DamagedEventSourceUnit ,'A3ES')
-	if GetUnitAbilityLevel( DamagedEventSourceUnit ,'A3ES')> 0 then
-		call CCX(DamagedEventTargetUnit,'A3KW'-1 + i, 1, 11,'B387')
-		call UnitMakeAbilityPermanent(DamagedEventTargetUnit, true,'A3KS'-1 + i)
-		call SetPlayerAbilityAvailable(GetOwningPlayer(DamagedEventTargetUnit),'A3KW'-1 + i, false)
-	endif
-endfunction
-function ZMV takes nothing returns nothing
-	local unit whichUnit = GetTriggerUnit()
-	local unit d = CreateUnit(GetOwningPlayer(whichUnit),'e00E', GetUnitX(whichUnit), GetUnitY(whichUnit), 0)
-	call UnitAddAbility(d,'A3ES')
-	call SetUnitAbilityLevel(d,'A3ES', GetUnitAbilityLevel(whichUnit,'A03F'))
-	call TGV(3)
-	if GetSpellTargetUnit() == whichUnit then
-		call B1R(d, "breathoffire", GetUnitX(whichUnit)+ 1 * Cos(bj_DEGTORAD * GetUnitFacing(whichUnit)), GetUnitY(whichUnit)+ 1 * Sin(bj_DEGTORAD * GetUnitFacing(whichUnit)))
-	else
-		call B1R(d, "breathoffire", GetSpellTargetX(), GetSpellTargetY())
-	endif
-	set d = null
-	set whichUnit = null
 endfunction
 
 // 刷新幻象的护甲 龙族血统
@@ -43562,7 +43539,7 @@ function S_R takes nothing returns nothing
 		set targetUnit = GetAttacker()
 	endif
 	if IsUnitEnemy(targetUnit, GetOwningPlayer(whichUnit)) and IsUnitType(targetUnit, UNIT_TYPE_STRUCTURE) == false and IsUnitMagicImmune(targetUnit) == false then
-		call CCX(targetUnit,'A3EK'-1 + GetUnitAbilityLevel(whichUnit,'A0DW'), 1, 4.,'B38B')
+		call UnitAddAbilityToTimed(targetUnit,'A3EK'-1 + GetUnitAbilityLevel(whichUnit,'A0DW'), 1, 4.,'B38B')
 	endif
 	set whichUnit = null
 	set targetUnit = null
@@ -44536,7 +44513,7 @@ endfunction
 // 自然之怒
 function WrathOfNatureDamagedEvent takes nothing returns nothing
 	if GetUnitAbilityLevel(DamagedEventTargetUnit,'A0AL')> 0 then
-		call CCX(DamagedEventTargetUnit,'A3JO', 1, 4,'B3JO')
+		call UnitAddAbilityToTimed(DamagedEventTargetUnit,'A3JO', 1, 4,'B3JO')
 		call EUX(DamagedEventTargetUnit,'A3JO', GetPlayerId(GetOwningPlayer(DamagedEventSourceUnit)), 4.01)
 	endif
 endfunction
@@ -45008,47 +44985,6 @@ function Jakiro_Icepath_Start2 takes nothing returns nothing
 	call SaveReal(ObjectHashTable, WFV, 1, x)
 	call SaveReal(ObjectHashTable, WFV, 2, y)
 	call TimerStart(t, .05, true, function U5R)
-	set t = null
-	set u = null
-endfunction
-// 冰火交加
-function DualBreathDamagedEvent takes nothing returns nothing
-	local integer i = GetUnitAbilityLevel(DamagedEventSourceUnit,'A0OB')
-	if i > 0 and GetUnitAbilityLevel(DamagedEventSourceUnit,'A3JI'-1 + i) == 0 then
-		call CCX(DamagedEventTargetUnit,'A3JI'-1 + GetUnitAbilityLevel(DamagedEventSourceUnit,'A0OB'), 1, 5,'B3J1')
-	endif
-endfunction
-function U9R takes nothing returns nothing
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit d = LoadUnitHandle(HY, h, 0)
-	call IssuePointOrderById(d, 852560, LoadReal(HY, h, 0), LoadReal(HY, h, 1))
-	call FlushChildHashtable(HY, h)
-	call DestroyTrigger(t)
-	set d = null
-	set t = null
-endfunction
-function VGE takes nothing returns nothing
-	local unit u = GetTriggerUnit()
-	local real x = GetSpellTargetX()
-	local real y = GetSpellTargetY()
-	local trigger t = CreateTrigger()
-	local integer level = GetUnitAbilityLevel(u, GetSpellAbilityId())
-	local integer h = GetHandleId(t)
-	local unit d = CreateUnit(GetOwningPlayer(u),'e00E', GetUnitX(u), GetUnitY(u), 0)
-	call TGV(3)
-	call TriggerRegisterTimerEvent(t, .3, false)
-	call TriggerAddCondition(t, Condition(function U9R))
-	call UnitAddAbility(d,'A0OB')
-	call SetUnitAbilityLevel(d,'A0OB', level)
-	call IssuePointOrderById(d, 852580, x, y)
-	set d = CreateUnit(GetOwningPlayer(u),'e00E', GetUnitX(u), GetUnitY(u), 0)
-	call UnitAddAbility(d,'A0OC')
-	call SetUnitAbilityLevel(d,'A0OC', level)
-	call SaveUnitHandle(HY, h, 0, d)
-	call SaveReal(HY, h, 0, x)
-	call SaveReal(HY, h, 1, y)
-	set d = null
 	set t = null
 	set u = null
 endfunction
@@ -45545,7 +45481,7 @@ function W4R takes nothing returns boolean
 	local unit targetUnit =(LoadUnitHandle(HY, h, 17))
 	local real W5R =(LoadReal(HY, h, 242))
 	call SetUnitState(targetUnit, UNIT_STATE_MANA, GetUnitState(targetUnit, UNIT_STATE_MANA)+ W5R)
-	call CCX(targetUnit,'A3DU'-1 + LoadInteger(HY, h, 5), 1, 12,'B3DU')
+	call UnitAddAbilityToTimed(targetUnit,'A3DU'-1 + LoadInteger(HY, h, 5), 1, 12,'B3DU')
 	call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Items\\AIim\\AIimTarget.mdl", targetUnit, "origin"))
 	call FlushChildHashtable(HY, h)
 	call CleanCurrentTrigger(t)
@@ -45580,7 +45516,7 @@ function W6R takes nothing returns nothing
 	set targetUnit = null
 endfunction
 function W7R takes nothing returns nothing
-	call CCX(GetEnumUnit(),'A3PZ', 1, 3 + JGV,'B09K')
+	call UnitAddAbilityToTimed(GetEnumUnit(),'A3PZ', 1, 3 + JGV,'B09K')
 endfunction
 function W8R takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
@@ -46355,7 +46291,7 @@ function EEE takes nothing returns nothing
 	exitwhen u == null
 		set s = ""
 		call L6X(u)
-		call CCX(u,'A37P'-1 + lv, 1, 15., 0)
+		call UnitAddAbilityToTimed(u,'A37P'-1 + lv, 1, 15., 0)
 		call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Human\\Invisibility\\InvisibilityTarget.mdl", u, "chest"))
 		if IsPlayerAlly(GetOwningPlayer(u), LocalPlayer) or IsObserverPlayer(LocalPlayer) then
 			set s = "Moonlight_Shadow.mdx"
@@ -47225,7 +47161,7 @@ function ECE takes nothing returns nothing
 endfunction
 function VUI takes unit whichUnit, unit targetUnit returns nothing
 	local integer level = GetUnitAbilityLevel(whichUnit,'A2KU')
-	call CCX(targetUnit,'A240', level, 8, 0)
+	call UnitAddAbilityToTimed(targetUnit,'A240', level, 8, 0)
 	call UnitDamageTargetEx(whichUnit, targetUnit, 1, 60 + 40 * level)
 	call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Other\\CrushingWave\\CrushingWaveDamage.mdl", targetUnit, "chest"))
 endfunction
@@ -47616,8 +47552,8 @@ function GushUpgraded_Actions takes nothing returns nothing
 	local unit u = Wave_U
 	local integer lv = Wave_LV
 	call DestroyEffect(AddSpecialEffectTarget("Objects\\Spawnmodels\\Naga\\NagaDeath\\NagaDeath.mdl", u, "origin"))
-	call CCX(u,'A3JR', lv, 4, 0)
-	call CCX(u,'A3JS', 1, 4,'B3JS')
+	call UnitAddAbilityToTimed(u,'A3JR', lv, 4, 0)
+	call UnitAddAbilityToTimed(u,'A3JS', 1, 4,'B3JS')
 	set u = null
 endfunction
 
@@ -49801,7 +49737,7 @@ endfunction
 
 function O1I takes nothing returns nothing
 	if GetUnitAbilityLevel(DamageEventSource,'P102')!= 0 and GetUnitAbilityLevel(DamageEventSource,'A36D') == 0 and TKV(DamageEventSource,'P102', 40) then
-		call CCX(DamageEventTarget,'A469', 1, .5,'B469')
+		call UnitAddAbilityToTimed(DamageEventTarget,'A469', 1, .5,'B469')
 		call UnitDamageTargetEx(DamageEventSource, DamageEventTarget, 2, 25 * GetUnitAbilityLevel(DamageEventSource,'P102') -10)
 	endif
 endfunction
@@ -52029,7 +51965,7 @@ function E3E takes nothing returns nothing
 	call UnitLaunchesMissileToTarget( spellUnit, targetUnit, "war3mapImported\\laser.MDX", 6000, 0., 150, null )
 	if not UnitHasSpellShield(targetUnit) then
 		call EnableAttackEffectByTime(14, dur + 1.)
-		call CCX(targetUnit,'A3Q0', 1, 2.5 + level * .5,'B02P')
+		call UnitAddAbilityToTimed(targetUnit,'A3Q0', 1, 2.5 + level * .5,'B02P')
 		call UnitDamageTargetEx(spellUnit, targetUnit, 3, level * 80)
 		if GetSpellAbilityId()=='A33G' then
 			call EPX(targetUnit,'A33G', .5)
@@ -52528,7 +52464,7 @@ function N_I takes unit u, unit targetUnit returns nothing
 		set c = 0
 	else
 		if c == 4 then
-			call CCX(targetUnit,'A468', level, 4, 0)
+			call UnitAddAbilityToTimed(targetUnit,'A468', level, 4, 0)
 		else
 			set c = c + 1
 		endif
@@ -52856,9 +52792,9 @@ function XOE takes nothing returns nothing
 	local integer h
 	local unit u = GetTriggerUnit()
 	local integer level = GetUnitAbilityLevel(u, GetSpellAbilityId())
-	call CCX(u,'A1N7', 1, 15,'B0CH')
+	call UnitAddAbilityToTimed(u,'A1N7', 1, 15,'B0CH')
 	if GetUnitAbilityLevel(u,'A0CY') == 0 then
-		call CCX(u,'A1N3', 1, 15, 0)
+		call UnitAddAbilityToTimed(u,'A1N3', 1, 15, 0)
 	endif
 	call SaveInteger(HY, GetHandleId(u),'A1N7'+ 1, 2 + level)
 	set t = null
@@ -53807,7 +53743,7 @@ function XHE takes nothing returns nothing
 		set CYI ='A139'
 	endif
 	call EnableAttackEffectByTime(0, 7)
-	call CCX(whichUnit, CYI, 1, 2 + level,'B09W')
+	call UnitAddAbilityToTimed(whichUnit, CYI, 1, 2 + level,'B09W')
 	call UnitMakeAbilityPermanent(whichUnit, true,'ACes')
 	call UnitMakeAbilityPermanent(whichUnit, true,'A12M')
 	call UnitMakeAbilityPermanent(whichUnit, true,'A133')
@@ -54920,7 +54856,7 @@ endfunction
 function FBI takes nothing returns nothing
 	local unit u = GetEnumUnit()
 	set Q2 = Q2 + 1
-	call CCX(u,'C003', 1, GetUnitAbilityLevel(GetTriggerUnit(),'A0I6')* .5 + 1,'D003')
+	call UnitAddAbilityToTimed(u,'C003', 1, GetUnitAbilityLevel(GetTriggerUnit(),'A0I6')* .5 + 1,'D003')
 	call SaveEffectHandle(HY,(WK),( 2700+ Q2),(AddSpecialEffectTarget("Abilities\\Weapons\\LavaSpawnMissile\\LavaSpawnBirthMissile.mdl", u, "chest")))
 	set u = null
 endfunction
@@ -54991,7 +54927,7 @@ function FFI takes unit R8X, unit targetUnit returns nothing
 	endif
 endfunction
 function FGI takes nothing returns nothing
-	call CCX(GetEnumUnit(),'A2IB', 1, XK[0],'B0FV')
+	call UnitAddAbilityToTimed(GetEnumUnit(),'A2IB', 1, XK[0],'B0FV')
 endfunction
 function FHI takes nothing returns nothing
 	local timer t = GetExpiredTimer()
@@ -55111,11 +55047,11 @@ function FMI takes nothing returns boolean
 		call SetPlayerAbilityAvailable(GetOwningPlayer(R3O),'A2O9', false)
 		call UnitRemoveAbility(R3O,'A37S')
 		call UnitRemoveAbility(R3O,'A3C9')
-		call CCX(R3O,'A3CA', 1, 1,'A3CA')
+		call UnitAddAbilityToTimed(R3O,'A3CA', 1, 1,'A3CA')
 		if HaveSavedHandle(HY, GetHandleId(R3O),'VisD') then
 			call UnitRemoveAbility(LoadUnitHandle(HY, GetHandleId(R3O),'VisD'),'A37S')
 			call UnitRemoveAbility(LoadUnitHandle(HY, GetHandleId(R3O),'VisD'),'A3C9')
-			call CCX(LoadUnitHandle(HY, GetHandleId(R3O),'VisD'),'A3CA', 1, 1,'A3CA')
+			call UnitAddAbilityToTimed(LoadUnitHandle(HY, GetHandleId(R3O),'VisD'),'A3CA', 1, 1,'A3CA')
 		endif
 		call FlushChildHashtable(HY,(h))
 		call CleanCurrentTrigger(FPI)
@@ -55127,11 +55063,11 @@ function FMI takes nothing returns boolean
 		call UnitAddPermanentAbility(FTI,'A04Y')
 		call UnitRemoveAbility(R3O,'A37S')
 		call UnitRemoveAbility(R3O,'A3C9')
-		call CCX(R3O,'A3CA', 1, 1,'A3CA')
+		call UnitAddAbilityToTimed(R3O,'A3CA', 1, 1,'A3CA')
 		if HaveSavedHandle(HY, GetHandleId(R3O),'VisD') then
 			call UnitRemoveAbility(LoadUnitHandle(HY, GetHandleId(R3O),'VisD'),'A37S')
 			call UnitRemoveAbility(LoadUnitHandle(HY, GetHandleId(R3O),'VisD'),'A3C9')
-			call CCX(LoadUnitHandle(HY, GetHandleId(R3O),'VisD'),'A3CA', 1, 1,'A3CA')
+			call UnitAddAbilityToTimed(LoadUnitHandle(HY, GetHandleId(R3O),'VisD'),'A3CA', 1, 1,'A3CA')
 		endif
 		call SetUnitAbilityLevel(FTI,'A04Y', FSI)
 		call IssueTargetOrderById(FTI, 852227, GetAttacker())
@@ -55157,9 +55093,9 @@ function FMI takes nothing returns boolean
 				if HaveSavedHandle(HY, GetHandleId(R3O),'VisD') then
 					call UnitRemoveAbility(LoadUnitHandle(HY, GetHandleId(R3O),'VisD'),'A37S')
 					call UnitRemoveAbility(LoadUnitHandle(HY, GetHandleId(R3O),'VisD'),'A3C9')
-					call CCX(R3O,'A3CA', 1, 1,'A3CA')
+					call UnitAddAbilityToTimed(R3O,'A3CA', 1, 1,'A3CA')
 				endif
-				call CCX(R3O,'A3CA', 1, 1,'A3CA')
+				call UnitAddAbilityToTimed(R3O,'A3CA', 1, 1,'A3CA')
 				call UnitDamageTargetEx(R4O, R3O, 1, 50)
 				call FlushChildHashtable(HY,(h))
 				call CleanCurrentTrigger(FPI)
@@ -56637,7 +56573,7 @@ function OXE takes nothing returns nothing
 	set u = null
 endfunction
 function HUI takes unit R8X, unit targetUnit returns nothing
-	call CCX(targetUnit,'A3PV'-1 + GetUnitAbilityLevel(R8X,'A0BK'), 1, 2,'B01D')
+	call UnitAddAbilityToTimed(targetUnit,'A3PV'-1 + GetUnitAbilityLevel(R8X,'A0BK'), 1, 2,'B01D')
 	call EnableAttackEffectByTime(9, 2.5)
 endfunction
 function HWI takes nothing returns nothing
@@ -56669,7 +56605,7 @@ function HZI takes nothing returns boolean
 		set HGR = true
 	endif
 	if level != 0 then
-		call CCX(target,'A3B8', level, 2,'B3B8')
+		call UnitAddAbilityToTimed(target,'A3B8', level, 2,'B3B8')
 		call EUX(target,'A3B8', GetPlayerId(GetOwningPlayer(u)), 2)
 		call UnitDamageTargetEx(u, target, 1, level * 75)
 		if GetUnitAbilityLevel(target,'A3E9') == 1 and IsUnitType(u, UNIT_TYPE_HERO) and HGR == false and IsUnitMagicImmune(u) == false then
@@ -56833,7 +56769,7 @@ function H7I takes unit whichUnit, unit targetUnit, integer level returns nothin
 	call SetUnitFacing(whichUnit,-a)
 	call PlaySoundOnUnitBJ(OC, 100, targetUnit)
 	if targetUnit != CT then
-		call CCX(whichUnit,'A3K9', level, 1.2, 0)
+		call UnitAddAbilityToTimed(whichUnit,'A3K9', level, 1.2, 0)
 		set NBX = sx +(d -25)* Cos(a * bj_DEGTORAD)
 		set NCX = sy +(d -25)* Sin(a * bj_DEGTORAD)
 		call EPX(targetUnit, 4405, 1)
@@ -57459,7 +57395,7 @@ function TFF takes nothing returns boolean
 	return false
 endfunction
 function OGE takes nothing returns nothing
-	call CCX(GetSpellTargetUnit(),'A3KB', 1, 1.5 + 1.5 * GetUnitAbilityLevel(GetTriggerUnit(),'A0R7'),'B07W')
+	call UnitAddAbilityToTimed(GetSpellTargetUnit(),'A3KB', 1, 1.5 + 1.5 * GetUnitAbilityLevel(GetTriggerUnit(),'A0R7'),'B07W')
 	call A5X(TD, GetUnitX(GetSpellTargetUnit()), GetUnitY(GetSpellTargetUnit()))
 endfunction
 function J0I takes boolean KMR returns boolean
@@ -57762,9 +57698,9 @@ function JOE takes nothing returns nothing
 	exitwhen u2 == null
 		call GroupRemoveUnit(g, u2)
 		if IsHeroUnitId(GetUnitTypeId(u2)) then
-			call CCX(u2, level, 1, 8.,'BNdh')
+			call UnitAddAbilityToTimed(u2, level, 1, 8.,'BNdh')
 		else
-			call CCX(u2, level, 1, 12.,'BNdh')
+			call UnitAddAbilityToTimed(u2, level, 1, 12.,'BNdh')
 		endif
 	endloop
 	call DeallocateGroup(g)
@@ -58351,7 +58287,7 @@ endfunction
 function LCI takes nothing returns nothing
 	if not IsUnitInGroup(GetEnumUnit(), L_V) then
 		call GroupAddUnit(L_V, GetEnumUnit())
-		call CCX(GetEnumUnit(), L0V, 1, 3.,'B05Q')
+		call UnitAddAbilityToTimed(GetEnumUnit(), L0V, 1, 3.,'B05Q')
 		call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Items\\SpellShieldAmulet\\SpellShieldCaster.mdl", GetEnumUnit(), "overhead"))
 	endif
 endfunction
@@ -59173,8 +59109,8 @@ endfunction
 function O_E takes nothing returns nothing
 	local unit targetUnit = GetSpellTargetUnit()
 	local integer level = GetUnitAbilityLevel(GetTriggerUnit(),'Z607')
-	call CCX(targetUnit,'A0VJ', level, 13, 0)
-	call CCX(targetUnit,'A109', level, 13, 0)
+	call UnitAddAbilityToTimed(targetUnit,'A0VJ', level, 13, 0)
+	call UnitAddAbilityToTimed(targetUnit,'A109', level, 13, 0)
 	set targetUnit = null
 endfunction
 function MMI takes unit whichUnit returns integer
@@ -61877,7 +61813,7 @@ function UAI takes nothing returns boolean
 				call UnitAddPermanentAbility(dummyCaster,'A091')
 				call SetUnitAbilityLevel(dummyCaster,'A091', LoadInteger(HY, h, 6))
 				if B0R(dummyCaster, targetUnit, 852226) then
-					call CCX(targetUnit,'A3JM', 1, 4, 0)
+					call UnitAddAbilityToTimed(targetUnit,'A3JM', 1, 4, 0)
 				endif
 			endif
 			if UBI == 1 and not LoadBoolean(HY, h, 0) then
@@ -62521,7 +62457,7 @@ function U7I takes nothing returns nothing
 	local unit targetUnit = GetSpellTargetUnit()
 	local unit d
 	if IsUnitType(targetUnit, UNIT_TYPE_HERO) then
-		call CCX(targetUnit,'A464', 1, 14,'B464')
+		call UnitAddAbilityToTimed(targetUnit,'A464', 1, 14,'B464')
 		call BWR(targetUnit,'B464', 14)
 		call U6I(U5I, targetUnit)
 	else
@@ -62993,7 +62929,7 @@ function IKE takes nothing returns nothing
 	call UnitRemoveAbility(targetUnit,'A1Q1')
 	call UnitRemoveAbility(targetUnit,'A1Q2')
 	call UnitRemoveAbility(targetUnit,'A1Q3')
-	call CCX(targetUnit, N0X, 1, 40, 0)
+	call UnitAddAbilityToTimed(targetUnit, N0X, 1, 40, 0)
 	call SetPlayerAbilityAvailableEx(GetOwningPlayer(targetUnit), N0X, false)
 	call UnitMakeAbilityPermanent(targetUnit, true, WLI)
 	set whichUnit = null
@@ -63014,7 +62950,7 @@ function LWF takes nothing returns boolean
 	return false
 endfunction
 function WMI takes unit whichUnit, unit targetUnit, integer level returns nothing
-	call CCX(targetUnit,'A1Q5', 1, 2.5,'B0CX')
+	call UnitAddAbilityToTimed(targetUnit,'A1Q5', 1, 2.5,'B0CX')
 	call UnitDamageTargetEx(whichUnit, targetUnit, 1, 70 * level)
 endfunction
 function WPI takes nothing returns boolean
@@ -63502,15 +63438,15 @@ function YCI takes integer Y6R, unit R3O, unit R4O returns nothing
 	endif
 	if GetUnitAbilityLevel(R4O,'A3EC') == 1 and IsUnitMagicImmune(R4O) == false then
 		if Y6R < 3 then
-			call CCX(R4O,'A3ED', 1, 1.,'B3ED')
+			call UnitAddAbilityToTimed(R4O,'A3ED', 1, 1.,'B3ED')
 		elseif Y6R == 3 then
-			call CCX(R4O,'A3EE', 1, 1.,'B3EE')
+			call UnitAddAbilityToTimed(R4O,'A3EE', 1, 1.,'B3EE')
 		elseif Y6R == 4 then
-			call CCX(R4O,'A3EF', 1, 1.,'B3EF')
+			call UnitAddAbilityToTimed(R4O,'A3EF', 1, 1.,'B3EF')
 		elseif Y6R == 5 then
-			call CCX(R4O,'A3EG', 1, 1.,'B3EG')
+			call UnitAddAbilityToTimed(R4O,'A3EG', 1, 1.,'B3EG')
 		else
-			call CCX(R4O,'A3EH', 1, 1.,'B3EH')
+			call UnitAddAbilityToTimed(R4O,'A3EH', 1, 1.,'B3EH')
 		endif
 	endif
 endfunction
@@ -65995,7 +65931,7 @@ function EJA takes unit whichUnit, unit targetUnit, integer level returns nothin
 	else
 		set id ='A30E'
 		set TOE ='A30E'
-		call CCX(targetUnit,'A3C0'-1 + level, 1, 3.5,'B38G')
+		call UnitAddAbilityToTimed(targetUnit,'A3C0'-1 + level, 1, 3.5,'B38G')
 		set QMX ='A3C0'-1 + level
 	endif
 	call TimerStart(t, .1, true, function EHA)
@@ -66637,7 +66573,7 @@ endfunction
 function XCA takes nothing returns boolean
 	if (IsUnitMagicImmune(GetFilterUnit()) == false and IsUnitEnemy(GA, GetOwningPlayer(GetFilterUnit())) and(IsAliveNotStrucNotWard(GetFilterUnit())))!= null then
 		call UnitDamageTargetEx(GA, GetFilterUnit(), 1, HA)
-		call CCX(GetFilterUnit(),'A38I', 1, 3,'B38I')
+		call UnitAddAbilityToTimed(GetFilterUnit(),'A38I', 1, 3,'B38I')
 	endif
 	return false
 endfunction
@@ -67551,7 +67487,7 @@ endfunction
 function OTA takes unit u, unit target, integer lv, boolean OUA returns nothing
 	local trigger t = null
 	local integer h
-	call CCX(u,'A24G', 1, 3,'B0EC')
+	call UnitAddAbilityToTimed(u,'A24G', 1, 3,'B0EC')
 	if target == CT then
 		return
 	endif
@@ -68147,7 +68083,7 @@ function YAV takes nothing returns nothing
 	loop
 		set u = FirstOfGroup(g)
 	exitwhen u == null
-		call CCX(u,'A26T', 1, 1.5 + level,'B0EJ')
+		call UnitAddAbilityToTimed(u,'A26T', 1, 1.5 + level,'B0EJ')
 		set d = CreateUnit(GetOwningPlayer(whichUnit),'e00E', GetUnitX(whichUnit), GetUnitY(whichUnit), 0)
 		call SaveInteger(ObjectHashTable, GetHandleId(d),'SPEL','A24K')
 		call SaveUnitHandle(ObjectHashTable, GetHandleId(d), 0, u)
@@ -68327,8 +68263,8 @@ function RMA takes nothing returns nothing
 	local unit targetUnit = MissileHitTargetUnit
 	local integer level = GetUnitAbilityLevel(whichUnit,'A046')
 	call DestroyEffect(AddSpecialEffectTarget("Objects\\Spawnmodels\\Naga\\NagaDeath\\NagaDeath.mdl", targetUnit, "chest"))
-	call CCX(targetUnit,'A3JR', level, 4, 0)
-	call CCX(targetUnit,'A3JS', 1, 4,'B3JS')
+	call UnitAddAbilityToTimed(targetUnit,'A3JR', level, 4, 0)
+	call UnitAddAbilityToTimed(targetUnit,'A3JS', 1, 4,'B3JS')
 	call UnitDamageTargetEx(whichUnit, targetUnit, 1, 60. + level * 50.)
 	set whichUnit = null
 	set targetUnit = null
@@ -68397,7 +68333,7 @@ function RSA takes unit u, unit t returns nothing
 	if level == 0 then
 		call UnitRemoveAbility(u,'A3LB')
 	else
-		call CCX(u,'A3LB', level, 2, 0)
+		call UnitAddAbilityToTimed(u,'A3LB', level, 2, 0)
 	endif
 endfunction
 function RTA takes nothing returns boolean
@@ -68465,7 +68401,7 @@ function NCE takes nothing returns nothing
 	exitwhen fu == null
 		call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Other\\CrushingWave\\CrushingWaveDamage.mdl", fu, "chest"))
 		call UnitDamageTargetEx(u, fu, 2, dmg)
-		call CCX(fu,'A228', 1, 6,'B0E8')
+		call UnitAddAbilityToTimed(fu,'A228', 1, 6,'B0E8')
 		call UnitMakeAbilityPermanent(fu, true,'A227')
 		call GroupRemoveUnit(g, fu)
 	endloop
@@ -69423,7 +69359,7 @@ endfunction
 function AOA takes nothing returns nothing
 	local unit whichUnit = GetTriggerUnit()
 	local integer level = GetUnitAbilityLevel(whichUnit,'A08X')
-	call CCX(whichUnit,'A3KH', 1, 2 + level,'B3KH')
+	call UnitAddAbilityToTimed(whichUnit,'A3KH', 1, 2 + level,'B3KH')
 	set whichUnit = null
 endfunction
 function N_E takes nothing returns nothing
@@ -73132,7 +73068,7 @@ function D2A takes nothing returns boolean
 	local unit t = GetFilterUnit()
 	local unit u = Temp__ArrayUnit[0]
 	if IsAliveNotStrucNotWard(t) and IsUnitEnemy(u, GetOwningPlayer(t)) and IsUnitMagicImmune(t) == false then
-		call CCX(t,'A45O'-1 + TempInt, 1, 4, 0)
+		call UnitAddAbilityToTimed(t,'A45O'-1 + TempInt, 1, 4, 0)
 		call D1A(t, TempInt)
 	endif
 	set t = null
@@ -74061,7 +73997,7 @@ function FZA takes nothing returns boolean
 			set u2 = FirstOfGroup(g)
 		exitwhen u2 == null
 			call UnitDamageTargetEx(whichUnit, u2, 1, level * 50 + 200)
-			call CCX(u2,'A1T3', 1, 2,'B0DG')
+			call UnitAddAbilityToTimed(u2,'A1T3', 1, 2,'B0DG')
 			call GroupRemoveUnit(g, u2)
 		endloop
 		call DeallocateGroup(g)
@@ -74080,7 +74016,7 @@ function FZA takes nothing returns boolean
 			else
 				call UnitDamageTargetEx(whichUnit, u2, 1, level * 50 + 50)
 			endif
-			call CCX(u2,'A1ST', 1, 4,'B0DE')
+			call UnitAddAbilityToTimed(u2,'A1ST', 1, 4,'B0DE')
 			call GroupRemoveUnit(g, u2)
 		endloop
 		call DeallocateGroup(g)
@@ -75113,7 +75049,7 @@ endfunction
 function G4A takes nothing returns nothing
 	if IsUnitInGroup(GetEnumUnit(), PYV) == false then
 		call GroupAddUnit(PYV, GetEnumUnit())
-		call CCX(GetEnumUnit(),'A304', 1, .25 + .5 * PZV,'B304')
+		call UnitAddAbilityToTimed(GetEnumUnit(),'A304', 1, .25 + .5 * PZV,'B304')
 		call DestroyEffect(AddSpecialEffectTarget("Abilities\\Weapons\\DragonHawkMissile\\DragonHawkMissile.mdl", GetEnumUnit(), "chest"))
 	endif
 endfunction
@@ -75889,7 +75825,7 @@ function H1A takes nothing returns nothing
 	call SaveInteger(HY,(h), 34, 0)
 	call SaveReal(HY, h, 0, 900 * .03)
 	call SaveReal(HY, h, 1, N8X)
-	call CCX(targetUnit,'A3DG', 1, 5,'B3DG')
+	call UnitAddAbilityToTimed(targetUnit,'A3DG', 1, 5,'B3DG')
 	call UnitDamageTargetEx(whichUnit, targetUnit, 1, 200)
 	set targetUnit = null
 	set whichUnit = null
@@ -76081,7 +76017,7 @@ function JVA takes unit u returns nothing
 endfunction
 function JEA takes nothing returns boolean
 	if IsUnitEnemy(GetFilterUnit(), E3) and IsAliveNotStrucNotWard(GetFilterUnit()) and IsUnitMagicImmune(GetFilterUnit()) == false then
-		call CCX(GetFilterUnit(), Q2, 1, 2, Q22)
+		call UnitAddAbilityToTimed(GetFilterUnit(), Q2, 1, 2, Q22)
 	endif
 	return false
 endfunction
@@ -78185,13 +78121,13 @@ function LZA takes nothing returns boolean
 		if LoadBoolean(HY, h, 0) then
 			call BWR(whichUnit,'B467', 9999)
 			call BWR(targetUnit,'B467', 9999)
-			call CCX(whichUnit,'A467', 1, 9999,'B467')
-			call CCX(targetUnit,'A467', 1, 9999,'B467')
+			call UnitAddAbilityToTimed(whichUnit,'A467', 1, 9999,'B467')
+			call UnitAddAbilityToTimed(targetUnit,'A467', 1, 9999,'B467')
 		else
 			call BWR(whichUnit,'B467', .75 * level + 3.25)
 			call BWR(targetUnit,'B467', .75 * level + 3.25)
-			call CCX(whichUnit,'A467', 1, .75 * level + 3.25,'B467')
-			call CCX(targetUnit,'A467', 1, .75 * level + 3.25,'B467')
+			call UnitAddAbilityToTimed(whichUnit,'A467', 1, .75 * level + 3.25,'B467')
+			call UnitAddAbilityToTimed(targetUnit,'A467', 1, .75 * level + 3.25,'B467')
 		endif
 	endif
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH or KGX <(GetGameTime()) or GetUnitDistanceEx(whichUnit, targetUnit)> 2000 then
@@ -78644,7 +78580,7 @@ function MCA takes nothing returns nothing
 	if IsUnitType(targetUnit, UNIT_TYPE_HERO) then
 		set MDA = GetHeroMainAttributesType(targetUnit)
 		set VEI = .15
-		call CCX(targetUnit,'A42S', 1, 7,'B0HJ')
+		call UnitAddAbilityToTimed(targetUnit,'A42S', 1, 7,'B0HJ')
 		if MDA == HERO_ATTRIBUTE_AGI then
 			set agi = R2I(VEI * GetHeroAgi(targetUnit, false))-1
 			set str = 0
@@ -80691,18 +80627,18 @@ function GCE takes nothing returns nothing
 	local integer h = GetHandleId(t)
 	local unit d
 	if IsUnitAlly(whichUnit, GetOwningPlayer(targetUnit)) then
-		call CCX(targetUnit,'A39J', 1, 7,'B39J')
-		call CCX(targetUnit,'A39E', 1, 7,'A39E')
-		call CCX(targetUnit,'A3C8', 1, 7,'A39M')
+		call UnitAddAbilityToTimed(targetUnit,'A39J', 1, 7,'B39J')
+		call UnitAddAbilityToTimed(targetUnit,'A39E', 1, 7,'A39E')
+		call UnitAddAbilityToTimed(targetUnit,'A3C8', 1, 7,'A39M')
 		call SetAllPlayerAbilityUnavailable('A3C8')
 		
-		call CCX(whichUnit,'A39F', 1, 7,'A39F')
+		call UnitAddAbilityToTimed(whichUnit,'A39F', 1, 7,'A39F')
 		call SaveUnitHandle(HY, h, 1, targetUnit)
 	else
-		call CCX(targetUnit,'A39F', 1, 7,'A39F')
-		call CCX(whichUnit,'A39F', 1, 7,'A39F')
-		call CCX(targetUnit,'A39I', 1, 7,'B39I')
-		call CCX(targetUnit,'A39D', 1, 3,'B39D')
+		call UnitAddAbilityToTimed(targetUnit,'A39F', 1, 7,'A39F')
+		call UnitAddAbilityToTimed(whichUnit,'A39F', 1, 7,'A39F')
+		call UnitAddAbilityToTimed(targetUnit,'A39I', 1, 7,'B39I')
+		call UnitAddAbilityToTimed(targetUnit,'A39D', 1, 3,'B39D')
 		call EnableAttackEffectByTime(D, 8.)
 		call CIO(targetUnit, 3.)
 		if targetUnit == CT then
@@ -80724,7 +80660,7 @@ function GBE takes nothing returns nothing
 	else
 		set targetUnit = GetSpellTargetUnit()
 	endif
-	call CCX(targetUnit,'A3E9', 1, 5.,'B3E9')
+	call UnitAddAbilityToTimed(targetUnit,'A3E9', 1, 5.,'B3E9')
 	call FKX(targetUnit, false)
 	set targetUnit = null
 endfunction
@@ -81043,7 +80979,7 @@ function Hyzr_Actions takes unit u , unit t returns nothing
 		call UnitAddAbility(u,'A3TW')
 		call hrzycd(u)
 		if not IsUnitType(u, UNIT_TYPE_STRUCTURE) and not R_X(t) then
-			call CCX(t,'A3TX', 1, 0.8,'a3TX')
+			call UnitAddAbilityToTimed(t,'A3TX', 1, 0.8,'a3TX')
 		endif
 	endif
 endfunction
@@ -81299,7 +81235,7 @@ endfunction
 function ODO takes nothing returns nothing
 	if LoadBoolean(HY, EO, 20) then
 		if IsUnitMagicImmune(DamageEventTarget) == false then
-			call CCX(DamageEventTarget,'A39D', 1, 5.,'B39D')
+			call UnitAddAbilityToTimed(DamageEventTarget,'A39D', 1, 5.,'B39D')
 			call CIO(DamageEventTarget, 5.)
 		endif
 		call RemoveSavedBoolean(HY, EO, 20)
@@ -81319,8 +81255,8 @@ function TKA takes unit u, unit target, real c, real dmg returns nothing
 	call UnitDamageTargetEx(u, target, 10, dmg *(c -1))
 endfunction
 function H5I takes unit u returns nothing
-	call CCX(u,'A3JG', 1, 8,'B3JG')
-	call CCX(u,'A3JH', 1, 8, 0)
+	call UnitAddAbilityToTimed(u,'A3JG', 1, 8,'B3JG')
+	call UnitAddAbilityToTimed(u,'A3JH', 1, 8, 0)
 endfunction
 function TJA takes nothing returns nothing
 	if HaveSavedReal(HY, EO, 16) then
@@ -81969,14 +81905,10 @@ function AnyUnitDamagedEvent takes nothing returns boolean
 		if UE and GetUnitTypeId(DamagedEventSourceUnit)=='e00E' then
 			// 机器人的进军
 			call MarchOfTheMachinesDamagedEvent()
-			// 火焰呼吸
-			call BreatheFireDamagedEvent()
 			// 闪电风暴
 			call LightningStormDamagedEvent()
 			// 马蹄践踏
 			call HoofStompDamagedEvent()
-			// 冰火交加
-			call DualBreathDamagedEvent()
 			// 自然之怒
 			call WrathOfNatureDamagedEvent()
 			// call FTA()
@@ -82798,7 +82730,7 @@ function UWA takes unit u, unit t returns nothing	//单位被攻击
 		call DisplayTextToPlayer(GetOwningPlayer(u), 0, 0, "你这是在自寻死路")
 	endif
 	if GetUnitTypeId(u)=='ndfl' or GetUnitTypeId(u)=='nfoh' then 
-		call CCX(t,'A39D', 1, 5.,'B39D')
+		call UnitAddAbilityToTimed(t,'A39D', 1, 5.,'B39D')
 		call CIO(t, 5.)	
 		call UnitDamageTargetEx(u, t, 6, 1000)
 	endif
@@ -83488,7 +83420,7 @@ function YBA takes nothing returns nothing
 		call EPX(t, 4341, .99)
 		call UnitDamageTargetEx(SQX(H), t, 1, 50)
 	endif
-	call CCX(t,'A3Q1', 1, 1.,'B3DJ')
+	call UnitAddAbilityToTimed(t,'A3Q1', 1, 1.,'B3DJ')
 	set t = null
 endfunction
 function YCA takes nothing returns boolean //辉耀，此物品本身自带龙卷风破坏光环'A04I'，看情况可删除。
@@ -89413,7 +89345,7 @@ function fj_Actions takes nothing returns boolean
 		call CleanCurrentTrigger(t)
 	elseif GetTriggerEventId() == EVENT_UNIT_DAMAGED then
 		if (EXGetEventDamageData(1) != 0) and GetUnitAbilityLevel(u,'A3W0')> 0 and GetEventDamage() > 1.00 then
-			call CCX(u,'A3W9', 1, 0.4,'B3W9')
+			call UnitAddAbilityToTimed(u,'A3W9', 1, 0.4,'B3W9')
 		endif
 	else
 		if GetUnitAbilityLevel(u,'A3W0')> 0 then
@@ -89434,7 +89366,7 @@ function fj_exec takes nothing returns nothing
 	call FKX(u2, true)
 	if not IsUnitIllusion(u2) then
 		set t = CreateTrigger()
-		call CCX(u2,'A3W0', 1, 6.0,'B3W0')
+		call UnitAddAbilityToTimed(u2,'A3W0', 1, 6.0,'B3W0')
 		call TriggerRegisterTimerEvent(t, 6.00, false)
 		call TriggerRegisterDeathEvent(t, u2)
 		call TriggerRegisterUnitEvent(t, u2, EVENT_UNIT_DAMAGED)

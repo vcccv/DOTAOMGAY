@@ -18,7 +18,7 @@ scope Magnus
                 else
                     call UnitDamageTargetEx(sw.owner, targ, 1, thistype(sw).damage)
                 endif
-                call CCX(targ,'A3Y9', 1, 0.4,'a3Y9')
+                call UnitAddAbilityToTimed(targ,'A3Y9', 1, 0.4,'a3Y9')
             endif
             return false
         endmethod
@@ -111,7 +111,7 @@ function ShockWaveActions takes nothing returns nothing
 	local integer lv = Wave_LV
 	if not IsUnitType(target, UNIT_TYPE_MAGIC_IMMUNE) then
 		call UnitDamageTargetEx(u, target, 1, 37.5 * lv)
-		call CCX(target,'A3Y9', 1, 2.,'a3Y9')
+		call UnitAddAbilityToTimed(target,'A3Y9', 1, 2.,'a3Y9')
 	endif
 	set target = null
 	set u = null
