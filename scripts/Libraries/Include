@@ -12,3 +12,4 @@
 #include "Utilities\\Line Segment Enumeration.j"
 
 #include "ShockWave.j"
+#include "AbilityUtils.j"

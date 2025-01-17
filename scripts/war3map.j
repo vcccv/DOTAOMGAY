@@ -6625,6 +6625,10 @@ function R5X takes unit u returns boolean
 	return GetUnitAbilityLevel(u,'BOhx')> 0 or GetUnitAbilityLevel(u,'B00H')> 0
 endfunction
 
+function AlarmDamage takes unit s, unit t returns nothing
+	call UnitDamageTarget(s, t, 0., false, false, null, null, null)
+endfunction
+
 // 1 一般法术伤害(魔法伤害)
 // 2 英雄攻击伤害(物理伤害)
 // 3 英雄攻击魔法伤害(纯粹伤害)

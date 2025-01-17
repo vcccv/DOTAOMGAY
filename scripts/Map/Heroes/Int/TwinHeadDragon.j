@@ -6,14 +6,66 @@ scope TwinHeadDragon
     //*  冰火交加
     //*
     //***************************************************************************
+    private function OnBreathFireUpdate takes nothing returns nothing
+        local SimpleTick tick  = SimpleTick.GetExpired()
+        local TableArray table = tick.GetTable()
+
+        local unit       owner  = table[tick].unit[1]
+        local unit       targ   = table[tick].unit[2]
+        local real       damage = table[tick].real[1]
+
+        call UnitDamageTargetEx(owner, targ, 1, damage)
+
+        set tick.data = tick.data + 1
+        call BJDebugMsg("造成伤害了次数："+I2S(tick.data))
+
+        set owner = null
+        set targ  = null
+    endfunction
+
+    function TwinHeadDragonBreathFireOnBuffRemove takes nothing returns nothing
+        local unit       u    = MHEvent_GetUnit()
+        local integer    h    = GetHandleId(MHUnit_GetAbility(u, MHEvent_GetAbility(), false))
+        local SimpleTick tick
+        
+        set tick = Table[h]['BUFF']
+
+        call BJDebugMsg("TwinHeadDragonBreathFireOnBuffRemove : " + I2S(h))
+
+        call tick.Destroy()
+        call Table[h].remove('BUFF')
+
+        set u = null
+    endfunction
+
     private struct BreathFire extends array
 
-        real    damage
+        real    level
 
         static method OnCollide takes Shockwave sw, unit targ returns boolean
+            local buff       b
+            local integer    h
+            local SimpleTick tick
+            local TableArray table
             // 敌对存活非魔免非无敌非守卫非建筑
             if UnitAlive(targ) and IsUnitEnemy(sw.owner, GetOwningPlayer(targ)) and not IsUnitMagicImmune(targ) and not IsUnitInvulnerable(targ) and not IsUnitWard(targ) and not IsUnitStructure(targ) then
-                call UnitAddAbilityToTimed(targ,'A3JI'-1 + thistype(sw).level, 1, 5,'B3J1')
+                call AlarmDamage(sw.owner, targ)
+                if GetUnitAbilityLevel(targ, 'B06R') > 0 then
+                    call MHBuff_SetRemain(targ, 'B06R', 5.)
+                else
+                    set b = MHBuff_Create(targ, 'B06R', BUFF_TEMPLATE_BNAB, 5.)
+                    set h = GetHandleId(b)
+                    set tick = SimpleTick.Create(0)
+                    call tick.Start(0.5, true, function OnBreathFireUpdate)
+                    set table = SimpleTick.GetTable()
+                    set table[tick].real[1] = thistype(sw).level * 20. * 0.5
+                    set table[tick].unit[1] = sw.owner
+                    set table[tick].unit[2] = targ
+                    set Table[h]['BUFF'] = tick
+                    call SetAbilityRemoveAction('B06R', "TwinHeadDragonBreathFireOnBuffRemove")
+                    call BJDebugMsg("中了1")
+                    set b = null
+                endif
             endif
             return false
         endmethod
@@ -28,7 +80,9 @@ scope TwinHeadDragon
         static method OnCollide takes Shockwave sw, unit targ returns boolean
             // 敌对存活非魔免非无敌非守卫非建筑
             if UnitAlive(targ) and IsUnitEnemy(sw.owner, GetOwningPlayer(targ)) and not IsUnitMagicImmune(targ) and not IsUnitInvulnerable(targ) and not IsUnitWard(targ) and not IsUnitStructure(targ) then
+                call AlarmDamage(sw.owner, targ)
                 call UnitAddAbilityToTimed(targ,'A3JI'-1 + thistype(sw).level, 1, 5.,'B3J1')
+                call BJDebugMsg("中了1")
             endif
             return false
         endmethod
@@ -40,36 +94,37 @@ scope TwinHeadDragon
         local SimpleTick tick  = SimpleTick.GetExpired()
         local TableArray table = SimpleTick.GetTable()
 
-        local real      x     = table[tick].real['x']
-        local real      y     = table[tick].real['y']
-        local real      angle = table[tick].real['a']
-        local integer   level = table[tick][1]
+        local real      x        = table[tick].real['x']
+        local real      y        = table[tick].real['y']
+        local real      angle    = table[tick].real['a']
+        local real      distance = table[tick].real['d']
+        local integer   level    = table[tick][1]
 
         local Shockwave sw
-        set sw = Shockwave.CreateByDistance(whichUnit, x, y, angle, distance)
-        call sw.SetSpeed(1200.)
+        set sw = Shockwave.CreateByDistance(table[tick].unit[2], x, y, angle, distance)
+        call sw.SetSpeed(1050.)
         set sw.minRadius = 200.
         set sw.maxRadius = 250.
         set sw.model = "Abilities\\Spells\\Other\\BreathOfFire\\BreathOfFireMissile.mdl"
         call sw.FixTimeScale(0.500)
-        set BreathFire(sw).damage = level * 20
+        set BreathFire(sw).level = level
         call BreathFire.Launch(sw)
 
         call tick.Destroy()
     endfunction
 
     function DualBreathOnSpellEffect takes nothing returns nothing
-        local unit      whichUnit = GetRealSpellUnit(GetTriggerUnit())
-        local unit      targUnit  = GetSpellTargetUnit()
-        local real      x = GetUnitX(whichUnit)
-        local real      y = GetUnitY(whichUnit)
-        local real      tx
-        local real      ty
-        local real      angle
-        local Shockwave sw
+        local unit       whichUnit = GetRealSpellUnit(GetTriggerUnit())
+        local unit       targUnit  = GetSpellTargetUnit()
+        local real       x = GetUnitX(whichUnit)
+        local real       y = GetUnitY(whichUnit)
+        local real       tx
+        local real       ty
+        local real       angle
+        local Shockwave  sw
 
         local integer    level    = GetUnitAbilityLevel(whichUnit, GetSpellAbilityId())
-        local real       distance = 1075. + GetUnitCastRangeBonus(whichUnit)
+        local real       distance = 750. + GetUnitCastRangeBonus(whichUnit)
         local SimpleTick tick     = SimpleTick.Create(0)
         local TableArray table
         
@@ -88,7 +143,7 @@ scope TwinHeadDragon
             set targUnit = null
         endif
         set sw = Shockwave.CreateByDistance(whichUnit, x, y, angle, distance)
-        call sw.SetSpeed(1200.)
+        call sw.SetSpeed(1050.)
         set sw.minRadius = 200.
         set sw.maxRadius = 250.
         set sw.model = "Abilities\\Spells\\Other\\BreathOfFrost\\BreathOfFrostMissile.mdl"
@@ -99,11 +154,12 @@ scope TwinHeadDragon
         call tick.Start(0.3, false, function DualBreathDelayAction)
         set table = SimpleTick.GetTable()
         set table[tick][1] = level
+        set table[tick].unit[2] = whichUnit
         set table[tick].real['x'] = x
         set table[tick].real['y'] = y
         set table[tick].real['a'] = angle
+        set table[tick].real['d'] = distance
     endfunction
-
     /*
 
 
