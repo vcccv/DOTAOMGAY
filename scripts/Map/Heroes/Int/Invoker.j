@@ -66,6 +66,22 @@ scope Invoker
         set t = null
     endfunction
 
+    private struct DeafeningBlast extends array
+        
+        real damage
+
+        static method OnCollide takes Shockwave sw, unit targ returns boolean
+             // 敌对存活非魔免非无敌非守卫非建筑
+             if UnitAlive(targ) and IsUnitEnemy(sw.owner, GetOwningPlayer(targ)) and not IsUnitMagicImmune(targ) and not IsUnitInvulnerable(targ) and not IsUnitWard(targ) and not IsUnitStructure(targ) then
+                call UnitDamageTargetEx(sw.owner, targ, 7, thistype(sw).damage)
+            endif
+            return false
+        endmethod
+        
+        implement ShockwaveStruct
+
+    endstruct
+
     function L7I takes nothing returns nothing
         if IsUnitInGroup(GetEnumUnit(), DK) == false and IsUnitMagicImmune(GetEnumUnit()) == false then
             call GroupAddUnit(DK, GetEnumUnit())
@@ -235,6 +251,47 @@ scope Invoker
 
     // 超震声波
     function DeafeningBlastOnSpellEffect takes nothing returns nothing
+        local unit      whichUnit = GetRealSpellUnit(GetTriggerUnit())
+        local unit      targUnit  = GetSpellTargetUnit()
+        local real      x = GetUnitX(whichUnit)
+        local real      y = GetUnitY(whichUnit)
+        local real      tx
+        local real      ty
+        local real      angle
+        local Shockwave sw
+
+        local integer level     = GetUnitAbilityLevel(whichUnit, GetSpellAbilityId())
+        local real    distance  = 1075. + GetUnitCastRangeBonus(whichUnit)
+        local real    damage
+        local boolean isUpgrade = GetSpellAbilityId() == 'A3K5'
+
+        if not isUpgrade then
+            if targUnit == null then
+                set tx = GetSpellTargetX()
+                set ty = GetSpellTargetY()
+                set angle = RadianBetweenXY(x, y, tx, ty)
+            else
+                set tx = GetUnitX(targUnit)
+                set ty = GetUnitY(targUnit)
+                if targUnit == whichUnit then
+                    set angle = GetUnitFacing(whichUnit) * bj_DEGTORAD
+                else
+                    set angle = RadianBetweenXY(x, y, tx, ty)
+                endif
+                set targUnit = null
+            endif
+            set sw = Shockwave.CreateByDistance(whichUnit, x, y, angle, distance)
+            call sw.SetSpeed(1200.)
+            set sw.minRadius = 275.
+            set sw.maxRadius = 200.
+            set sw.model = "units\\human\\phoenix\\phoenix.mdl"
+            set DeafeningBlast(sw).damage = 20. + 60. * level
+            set DeafeningBlast(sw).level = level
+            call DeafeningBlast.Launch(sw)
+        endif
+
+        set whichUnit = null
+
         if GetSpellAbilityId()=='A3K5' then
             call MVI()
         else

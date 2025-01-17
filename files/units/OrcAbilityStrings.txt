@@ -23514,8 +23514,8 @@ Tip=超震声波[|cffffcc00B|r] - [|cffffcc00等级 1|r],超震声波[|cffffcc00
 ubertip=向英雄四周施放一波强力声波，将波及的单位向后推送0.4秒，对波及的敌方单位造成80点|cFF00B9FF魔法伤害|r，并失去1.5秒攻击能力。|n|n|cff99ccff冷却时间：|r24,向英雄四周施放一波强力声波，将波及的单位向后推送0.8秒，对波及的敌方单位造成140点|cFF00B9FF魔法伤害|r，并失去2.5秒攻击能力。|n|n|cff99ccff冷却时间：|r24,向英雄四周施放一波强力声波，将波及的单位向后推送1.2秒，对波及的敌方单位造成200点|cFF00B9FF魔法伤害|r，并失去1.5秒攻击能力。|n|n|cff99ccff冷却时间：|r24,向英雄四周施放一波强力声波，将波及的单位向后推送1.6秒，对波及的敌方单位造成260点伤害，并失去3秒攻击能力。|n|n|cff99ccff冷却时间：|r24
 hotkey=B
 researchhotkey="B"
-Researchtip=学习 超震声波|cffffcc00B|r] - [|cffffcc00等级 %d|r](Deafening Blast)
-researchubertip=向前方施放强力的声波，将波及的单位向后推送，对波及的敌方单位造成|cFF00B9FF魔法伤害|r，并失去攻击能力。|n|n|cffffcc00等级 1|r - 造成80点伤害，推送0.4秒，持续1.5秒无法攻击。|n|cffffcc00等级 2|r - 造成140点伤害，推送0.8秒，持续2秒无法攻击。|n|cffffcc00等级 3|r - 造成200点伤害，推送1.2秒，持续2.5秒无法攻击。|n|cffffcc00等级 4|r - 造成260点伤害，推送1.6秒，持续3秒无法攻击。|n|n|cff99ccff冷却时间：|r18 |n|cff99ccff魔法消耗：|r250
+Researchtip=学习 超震声波[|cffffcc00B|r] - [|cffffcc00等级 %d|r](Deafening Blast)
+researchubertip=向英雄四周施放一波强力声波，将波及的单位向后推送，对波及的敌方单位造成|cFF00B9FF魔法伤害|r，并失去攻击能力。|n|n|cffffcc00等级 1|r - 造成80点伤害，推送0.4秒，持续1.5秒无法攻击。|n|cffffcc00等级 2|r - 造成140点伤害，推送0.8秒，持续2秒无法攻击。|n|cffffcc00等级 3|r - 造成200点伤害，推送1.2秒，持续2.5秒无法攻击。|n|cffffcc00等级 4|r - 造成260点伤害，推送1.6秒，持续3秒无法攻击。|n|n|cff99ccff冷却时间：|r18 |n|cff99ccff魔法消耗：|r250
 [P003]
 researchbuttonpos=2
 researchart=ReplaceableTextures\CommandButtons\BTNGnollCommandAura
