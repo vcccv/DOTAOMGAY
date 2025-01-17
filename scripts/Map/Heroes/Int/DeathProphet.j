@@ -69,6 +69,8 @@ scope DeathProphet
         //call sw.FixTimeScale(0.033 + 1.166)
         set CarrionSwarm(sw).damage = damage
         call CarrionSwarm.Launch(sw)
+
+        set whichUnit = null
     endfunction
 
 endscope

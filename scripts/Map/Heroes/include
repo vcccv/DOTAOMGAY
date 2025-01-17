@@ -3,6 +3,7 @@
 #include "Str\\TaurenChieftain.j"
 #include "Str\\Magnus.j"
 #include "Str\\DragonKnight.j"
+#include "Str\\Tidehunter.j"
 
 #include "Int\\TwinHeadDragon.j"
 #include "Int\\Ezalor.j"

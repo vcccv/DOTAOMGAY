@@ -39,7 +39,7 @@ scope DragonKnight
         local Shockwave sw
 
         local integer level    = GetUnitAbilityLevel(whichUnit, GetSpellAbilityId())
-        local real    distance = 750. + GetUnitCastRangeBonus(whichUnit)
+        local real    distance = 650. + GetUnitCastRangeBonus(whichUnit)
         local real    damage
 
         if level == 1 then
@@ -75,6 +75,8 @@ scope DragonKnight
         set BreatheFire(sw).damage = damage
         set BreatheFire(sw).level = level
         call BreatheFire.Launch(sw)
+
+        set whichUnit = null
     endfunction
 
     /*

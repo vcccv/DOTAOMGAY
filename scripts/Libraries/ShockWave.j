@@ -97,10 +97,6 @@ library ShockwaveLib /*
         endmethod
 
         private method ResetMembers takes nothing returns nothing
-            set this.r              = 255
-            set this.g              = 255
-            set this.b              = 255
-            set this.a              = 255
             set this.model          = null
             set this.timeScale      = 1.
             set this.radius         = 0.
@@ -122,24 +118,19 @@ library ShockwaveLib /*
             set this.vel   = speed * TIMER_TIMEOUT
         endmethod
 
+        method SetModelScale takes real modelScale returns nothing
+            set this.modelScale = modelScale
+            call MHEffect_SetScale(this.shockwaveFX, modelScale)
+        endmethod
+
         // 根据默认动画时间计算需要修正的
         method FixTimeScale takes real time returns nothing
             local real duration = this.distance / this.speed
             set this.timeScale = time / duration
         endmethod
 
-        integer r
-        integer g
-        integer b
-        integer a
         method SetColor takes integer r, integer g, integer b, integer a returns nothing
-            set this.r = r
-            set this.g = g
-            set this.b = b
-            set this.a = a
-            if this.shockwaveFX != null then
-                call MHEffect_SetColorEx(this.shockwaveFX, a, r, g, b)
-            endif
+            call MHEffect_SetColorEx(this.shockwaveFX, a, r, g, b)
         endmethod
 
         static method CreateByDistance takes unit owner, real startX, real startY, real angle, real distance returns thistype
@@ -154,6 +145,7 @@ library ShockwaveLib /*
             set this.targetY = this.y + distance * Sin(angle)
             set this.distance = distance
             set this.allocated = true
+            set this.shockwaveFX = AddSpecialEffect(null, this.x, this.y)
 
             return this
         endmethod
@@ -336,11 +328,11 @@ library ShockwaveLib /*
             endif
             debug set shockwave.launched = true
 
-            set shockwave.shockwaveFX = AddSpecialEffect(shockwave.model, shockwave.x, shockwave.y)
+            call MHEffect_SetModel(shockwave.shockwaveFX, shockwave.model, false)
             call MHEffect_SetYaw(shockwave.shockwaveFX, shockwave.angle * bj_RADTODEG)
             call MHEffect_SetTimeScale(shockwave.shockwaveFX, shockwave.timeScale)
             call MHEffect_SetScale(shockwave.shockwaveFX, shockwave.modelScale)
-            call MHEffect_SetColorEx(shockwave.shockwaveFX, shockwave.a, shockwave.r, shockwave.g, shockwave.b)
+            //call MHEffect_SetColorEx(shockwave.shockwaveFX, shockwave.a, shockwave.r, shockwave.g, shockwave.b)
 
             set duration = shockwave.distance / shockwave.speed
             if duration != 0. then

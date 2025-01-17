@@ -76,8 +76,12 @@ scope Magnus
         local Shockwave sw
 
         local integer level     = GetUnitAbilityLevel(whichUnit, GetSpellAbilityId())
-        local real    distance  = 1200. + GetUnitCastRangeBonus(whichUnit)
+        local real    distance  = 1000. + GetUnitCastRangeBonus(whichUnit)
         local boolean isUpgrade = GetSpellAbilityId() == 'A3Y8'
+
+        if isUpgrade then
+            set distance = distance + 200.
+        endif
 
         if targUnit == null then
             set tx = GetSpellTargetX()

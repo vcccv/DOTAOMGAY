@@ -64,9 +64,10 @@ scope Lina
         set sw.minRadius = 275.
         set sw.maxRadius = 200.
         set sw.model = "units\\human\\phoenix\\phoenix.mdl"
-        //call sw.FixTimeScale(0.033 + 1.166)
         set DragonSlave(sw).damage = damage
         call DragonSlave.Launch(sw)
+
+        set whichUnit = null
     endfunction
 
     /*

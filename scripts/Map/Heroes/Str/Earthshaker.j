@@ -57,8 +57,6 @@ scope Earthshaker
             call RemoveDestructableToTimed(CreateDestructable('B000', x, y, GetRandomReal(0, 360), .5, GetRandomInt(0, 2)), 8)
             call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Other\\Volcano\\VolcanoDeath.mdl", x, y))
         endloop
-        
-        call BJDebugMsg("distance:" + R2S(distance))
 
         loop
             set first = FirstOfGroup(targGroup)

@@ -63,6 +63,8 @@ scope QueenOfPain
         //call sw.FixTimeScale(0.033 + 1.166)
         set SonicWave(sw).damage = damage
         call SonicWave.Launch(sw)
+
+        set whichUnit = null
     endfunction
 
     /*

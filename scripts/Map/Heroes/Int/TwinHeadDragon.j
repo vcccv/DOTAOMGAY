@@ -159,6 +159,8 @@ scope TwinHeadDragon
         set table[tick].real['y'] = y
         set table[tick].real['a'] = angle
         set table[tick].real['d'] = distance
+
+        set whichUnit = null
     endfunction
     /*
 

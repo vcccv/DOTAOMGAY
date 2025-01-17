@@ -2886,7 +2886,7 @@ function UnitTypeIsMetamorphosis takes unit u returns boolean
 	endif
 	return TC > 0
 endfunction
-function WQV takes nothing returns boolean //变身技能
+function IsSpellingMorph takes nothing returns boolean //变身技能
 	local integer id = GetSpellAbilityId()
 	if id =='QM00' or id =='QM01' or id =='QB0K' or id =='QM02' or id =='QM03' or id =='QM04' or id =='A1RI' or id =='A332' then
 		return true
@@ -2982,8 +2982,17 @@ function W3V takes nothing returns nothing
 	call SaveReal(ObjectHashTable,'A065', 3, 3)
 
 endfunction
+
+globals
+	constant integer ABILITY_SPELL_EFFECT_KEY = 0
+endglobals
+
+function SetAbilitiyCastMethod takes integer abilId, string func returns nothing
+
+endfunction
+
 // 初始化大部分的单位技能
-function InitActiveAbilitys takes nothing returns nothing
+function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A2NT', 0, "W5V")
 	call SaveStr(ObjectHashTable,'A0ES', 0, "W6V")
 	call SaveStr(ObjectHashTable,'A0MT', 0, "W7V")
@@ -3021,8 +3030,8 @@ function InitActiveAbilitys takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'Z31K', 0, "YYV")
 	call SaveStr(ObjectHashTable,'A1NI', 0, "YZV")
 	call SaveStr(ObjectHashTable,'A0E3', 0, "Y_V")
-	call SaveStr(ObjectHashTable,'AEbl', 0, "Y0V")
-	call SaveStr(ObjectHashTable,'QB08', 0, "Y0V")
+	call SaveStr(ObjectHashTable,'AEbl', 0, "BlinkOnSpellEffect")
+	call SaveStr(ObjectHashTable,'QB08', 0, "BlinkOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A0O1', 0, "WildAxesOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A0O2', 0, "Y2V")
 	call SaveStr(ObjectHashTable,'A289', 0, "Y2V")
@@ -3308,8 +3317,8 @@ function InitActiveAbilitys takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A1D8', 0, "AZE")
 	call SaveStr(ObjectHashTable,'A07Q', 0, "ATB")
 	call SaveStr(ObjectHashTable,'A0H4', 0, "A1E")
-	call SaveStr(ObjectHashTable,'A046', 0, "NXE")
-	call SaveStr(ObjectHashTable,'A3OH', 0, "a_chaoxi")
+	call SaveStr(ObjectHashTable,'A046', 0, "GushOnSpellEffect")
+	call SaveStr(ObjectHashTable,'A3OH', 0, "GushOnSpellEffect")
 	
 	call SaveStr(ObjectHashTable,'A29I', 0, "NNE")
 	call SaveStr(ObjectHashTable,'A226', 0, "NCE")
@@ -3593,8 +3602,8 @@ function InitActiveAbilitys takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A3DM', 3, "KXE")	//时光倒流
 	call SaveStr(ObjectHashTable,'A2LK', 3, "KVE")
 	call SaveStr(ObjectHashTable,'A11N', 3, "KOE")
-	call SaveStr(ObjectHashTable,'AEbl', 3, "KRE")
-	call SaveStr(ObjectHashTable,'QB08', 3, "KRE")
+	call SaveStr(ObjectHashTable,'AEbl', 3, "BlinkOnSpellCast")
+	call SaveStr(ObjectHashTable,'QB08', 3, "BlinkOnSpellCast")
 	call SaveStr(ObjectHashTable,'A3DF', 3, "KNE")
 	call SaveStr(ObjectHashTable,'A00L', 3, "KBE")
 	call SaveStr(ObjectHashTable,'A361', 3, "KCE")
@@ -3915,7 +3924,7 @@ function S6E takes nothing returns nothing
 	set CK[0]= 2
 	set CK[1]= 2
 	call UIV() // 玩家退出
-	call InitActiveAbilitys() // 初始化大部分技能
+	call InitAbilityCastMethodTable() // 初始化大部分技能
 	call S5E()
 	call W3V() // 再装填和潮汐使者
 	call SetAllPlayerAbilityUnavailable('A509')
@@ -8045,7 +8054,7 @@ function BPX takes nothing returns boolean
 	set t = null
 	return false
 endfunction
-function BQX takes unit u, real d returns nothing
+function RemoveUnitToTimed takes unit u, real d returns nothing
 	local timer t = CreateTimer()
 	local integer h = GetHandleId(t)
 	call TimerStart(t, d, false, function BPX)
@@ -22773,16 +22782,19 @@ endfunction
 function FSO takes nothing returns boolean
 	local integer id = GetSpellAbilityId()
 	// 如果是变身技能就返回
-	if WQV() then
+	if IsSpellingMorph() then
 		return false
 	endif
 	if WTF__Status then
 		call FPO()
 	endif
 	call FRO()
+
+	// 12 = OnSpellEffect
 	if HaveSavedString(ObjectHashTable, id, 12) then
 		call ExecuteFunc(LoadStr(ObjectHashTable, id, 12))
 	endif
+
 	if GetUnitTypeId(GetTriggerUnit())=='e00E' then
 		return false
 	endif
@@ -37804,7 +37816,7 @@ function FSR takes nothing returns boolean
 	set trigUnit = null
 	return false
 endfunction
-function Y0V takes nothing returns nothing
+function BlinkOnSpellEffect takes nothing returns nothing
 	local unit trigUnit = GetTriggerUnit()
 	local unit dummyCaster =(LoadUnitHandle(HY,(GetHandleId(trigUnit)), 293))
 	local trigger t = CreateTrigger()
@@ -37828,7 +37840,7 @@ function Y0V takes nothing returns nothing
 	set dummyCaster = null
 	set t = null
 endfunction
-function KRE takes nothing returns nothing
+function BlinkOnSpellCast takes nothing returns nothing
 	local unit trigUnit = GetTriggerUnit()
 	local unit dummyCaster
 	local integer h = GetHandleId(trigUnit)
@@ -37836,9 +37848,9 @@ function KRE takes nothing returns nothing
 	local real x = GetUnitX(trigUnit)
 	local real y = GetUnitY(trigUnit)
 	call SetUnitPathing(trigUnit, false)
-	call UnitAddPermanentAbility(trigUnit,'Aeth')
+	call UnitAddPermanentAbility(trigUnit,'Aeth') // ???
 	set dummyCaster = CreateUnit(GetOwningPlayer(trigUnit),'h06K', GetUnitX(trigUnit), GetUnitY(trigUnit), a)
-	call BQX(dummyCaster, 5)
+	call RemoveUnitToTimed(dummyCaster, 5.)
 	call SetUnitPathing(dummyCaster, false)
 	call UnitAddPermanentAbility(dummyCaster,'Aeth')
 	call UnitAddPermanentAbility(dummyCaster,'Aloc')
@@ -37850,7 +37862,7 @@ function KRE takes nothing returns nothing
 	call SetUnitY(trigUnit, y)
 	call SetUnitAnimation(dummyCaster, "Spell Throw")
 	call SetUnitPathing(trigUnit, true)
-	call UnitRemoveAbility(trigUnit,'Aeth')
+	call UnitRemoveAbility(trigUnit, 'Aeth') // ???
 	call SaveUnitHandle(HY, h, 293,(dummyCaster))
 	set trigUnit = null
 	set dummyCaster = null
@@ -47551,16 +47563,6 @@ function EHI takes unit d, unit u returns nothing
 endfunction
 
 
-
-function GushUpgraded_Actions takes nothing returns nothing
-	local unit u = Wave_U
-	local integer lv = Wave_LV
-	call DestroyEffect(AddSpecialEffectTarget("Objects\\Spawnmodels\\Naga\\NagaDeath\\NagaDeath.mdl", u, "origin"))
-	call UnitAddAbilityToTimed(u,'A3JR', lv, 4, 0)
-	call UnitAddAbilityToTimed(u,'A3JS', 1, 4,'B3JS')
-	set u = null
-endfunction
-
 function Group_Condition takes unit u returns boolean
 	return IsUnitType(u, UNIT_TYPE_STRUCTURE) == false and UnitAlive(u) and GetUnitAbilityLevel(u,'A04R') == 0
 endfunction
@@ -47863,9 +47865,9 @@ function EJI takes nothing returns boolean
 					set d = d  -10
 				endloop
 			endif
-			if id =='A3OH' then
-				call LaunchWaveSimple(dummyCaster,'h08O', 60 + 50 * lv, 1200, 240, 240, tx, ty, ux, uy, 1500, 1, false, "GushUpgraded_Actions", lv)
-			endif
+			//if id =='A3OH' then
+			//	call LaunchWaveSimple(dummyCaster,'h08O', 60 + 50 * lv, 1200, 240, 240, tx, ty, ux, uy, 1500, 1, false, "GushUpgraded_Actions", lv)
+			//endif
 			if id =='A12K' then
 				set S7V = RMinBJ((GetGameTime())-(LoadReal(HY,(GetHandleId(u)), 358))-(.3 * GetTriggerEvalCount(t)), 1.05)
 				set tt = CreateTrigger()
@@ -68262,32 +68264,7 @@ function Q5E takes nothing returns nothing
 	call UnitAddPermanentAbility(u, id)
 	set u = null
 endfunction
-function RMA takes nothing returns nothing
-	local unit whichUnit = U2
-	local unit targetUnit = MissileHitTargetUnit
-	local integer level = GetUnitAbilityLevel(whichUnit,'A046')
-	call DestroyEffect(AddSpecialEffectTarget("Objects\\Spawnmodels\\Naga\\NagaDeath\\NagaDeath.mdl", targetUnit, "chest"))
-	call UnitAddAbilityToTimed(targetUnit,'A3JR', level, 4, 0)
-	call UnitAddAbilityToTimed(targetUnit,'A3JS', 1, 4,'B3JS')
-	call UnitDamageTargetEx(whichUnit, targetUnit, 1, 60. + level * 50.)
-	set whichUnit = null
-	set targetUnit = null
-endfunction
 
-function a_chaoxi takes nothing returns nothing
-	local unit u = GetTriggerUnit()
-	local integer lv = GetUnitAbilityLevel(u, GetSpellAbilityId())
-	local real x = GetUnitX(u)
-	local real y = GetUnitY(u)
-	local real range = 1200.
-	call LaunchWaveSimple(u,'h08O', 60 + 50 * lv, range, 240, 240, x, y, GetSpellTargetX(), GetSpellTargetY(), 1500, 1, false, "GushUpgraded_Actions", lv)
-	set u = null
-endfunction
-function NXE takes nothing returns nothing
-	if not UnitHasSpellShield(GetSpellTargetUnit()) then
-		call LaunchMissileByUnitDummy(GetTriggerUnit(), GetSpellTargetUnit(),'h0EN', "RMA", 4000, false)
-	endif
-endfunction
 function RPA takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
@@ -79535,7 +79512,7 @@ function CreateLodTrigger takes nothing returns nothing
 	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_HERO_LEVEL)
 	call TriggerAddAction(t, function HeroLevelUp)
 
-	if LOD_DEBUGMODE then
+	/*if LOD_DEBUGMODE then*/ if DEBUG_MODE then
 		// debug Order
 		set t = CreateTrigger()
 		call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER)
@@ -83109,6 +83086,8 @@ function W6A takes unit u returns nothing
 		call EXStopUnit(u)
 	endif
 endfunction
+
+// 应该是多用于英雄的
 function W7A takes nothing returns boolean
 	local unit u = null
 	local integer i = GetSpellAbilityId()
@@ -83117,11 +83096,12 @@ function W7A takes nothing returns boolean
 	if i != 0 then
 		if id == EVENT_UNIT_SPELL_EFFECT then
 			// 发动技能效果
-			//	if WQV() == false then
+			//	if IsSpellingMorph() == false then
 			if G then
 				call BJDebugMsg(GetUnitName(u)+ " has used " + GetObjectName(i)+ " [" + UGV(i)+ "]")
 			endif
 			call UTA(GetTriggerUnit(), i)
+			// 0 == OnSpellEffect 
 			if HaveSavedString(ObjectHashTable, i, 0) then
 				call ExecuteFunc(LoadStr(ObjectHashTable, i, 0))
 			endif
@@ -87142,7 +87122,7 @@ function InitHeroSkillsData takes nothing returns nothing
 	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "drain"),'A0CC','A02Z','Y292', "d")
 	set HeroSkillsIcon[i * 4 + 4]= "ReplaceableTextures\\CommandButtons\\BTNLifeDrain.blp"
 	set i = 74 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "acidbomb"),'A046','A3OH','Y293', "g")
+	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbiltiyOrder('A046')),'A046','A3OH','Y293', "g")
 	call RegisterHeroSkill(i * 4 + 2, null,'A04E','QP10','Y294', null)
 	set IsPassiveSkill[i * 4 + 2]= true
 	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "roar"),'A226', 0,'Y295', "c")
@@ -90439,6 +90419,23 @@ function main takes nothing returns nothing
 	call MHUI_DrawMoveSpeed(true)
 	call MHDrawCooldown_Initialize()
 	call MHDrawCooldown_SetDivide(1.)
+
+	call MHConst_SetOPLimit(3000000)
+	call MHConst_UnlockBlpSizeLimit(true)
+
+	// BUFF叠加
+	call MHBuff_SetOverlay(BUFF_TEMPLATE_BINF, true)
+	call MHBuff_SetOverlay(BUFF_TEMPLATE_BSLO, true)
+	call MHBuff_SetOverlay(BUFF_TEMPLATE_BBLO, true)
+	call MHBuff_SetOverlay(BUFF_TEMPLATE_BFAE, true)
+	call MHBuff_SetOverlay(BUFF_TEMPLATE_BUFA, true)
+	call MHBuff_SetOverlay(BUFF_TEMPLATE_BCRI, true)
+	call MHBuff_SetOverlay(BUFF_TEMPLATE_BUHF, true)
+	call MHBuff_SetOverlay(BUFF_TEMPLATE_BROA, true)
+	call MHBuff_SetOverlay(BUFF_TEMPLATE_BNHT, true)
+	call MHBuff_SetOverlay(BUFF_TEMPLATE_BNSO, true)
+	
+	call InitAbilityCustomOrderId()
 
 	set LocalPlayer   = GetLocalPlayer()
 	set LocalPlayerId = GetPlayerId(LocalPlayer)
