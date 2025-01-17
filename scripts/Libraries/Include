@@ -14,3 +14,5 @@
 #include "ShockWave.j"
 #include "AbilityUtils.j"
 #include "AbilityOrderId.j"
+#include "Unit\\UnitLimitation.j"
+#include "Unit\\UnitModel.j"

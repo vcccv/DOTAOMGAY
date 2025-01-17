@@ -368,8 +368,8 @@ library ShockwaveLib /*
                 return
             endif
 
-            static if thistype.onRemove.exists then
-                call thistype.onRemove(node)
+            static if thistype.OnRemove.exists then
+                call thistype.OnRemove(shockwave)
             endif
 
             set prevNode = shockwave.prev
