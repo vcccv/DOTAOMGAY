@@ -15,6 +15,8 @@ scope Morphling
         integer data
 
         static method OnRemove takes Shockwave sw returns boolean
+            local real x = CoordinateX50(sw.x)
+            local real y = CoordinateY50(sw.y)
             if not IsUnitType(sw.owner, UNIT_TYPE_HERO) then
                 return false
             endif
@@ -28,6 +30,11 @@ scope Morphling
             call UnitSubHideByColorCount(sw.owner)
             call UnitSubPathingCount(sw.owner)
             call UnitSubInvulnerableCount(sw.owner)
+
+            set x = MHUnit_ModifyPositionX(sw.owner, x, y)
+            set y = MHUnit_ModifyPositionY(sw.owenr, x, y)
+            call SetUnitX(sw.owner, x)
+            call SetUnitY(sw.owner, y)
             return false
         endmethod
 

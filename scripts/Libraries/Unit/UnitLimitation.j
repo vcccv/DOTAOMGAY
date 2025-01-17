@@ -101,4 +101,24 @@ library UnitLimitation requires UnitModel
         endif
     endfunction
 
+    globals
+        private constant key UNIT_DISABLE_ATTACK_COUNT
+    endglobals
+    function UnitAddDisableAttackCount takes unit whichUnit returns nothing
+        local integer h     = GetHandleId(whichUnit)
+        local integer count = Table[h][UNIT_DISABLE_ATTACK_COUNT] + 1
+        set Table[h][UNIT_DISABLE_ATTACK_COUNT] = count
+        if count == 1 then
+            call MHAbility_Disable(whichUnit, 'Aatk', true)
+        endif
+    endfunction
+    function UnitSubDisableAttackCount takes unit whichUnit returns nothing
+        local integer h     = GetHandleId(whichUnit)
+        local integer count = Table[h][UNIT_DISABLE_ATTACK_COUNT] - 1
+        set Table[h][UNIT_DISABLE_ATTACK_COUNT] = count
+        if count == 0 then
+            call MHAbility_Disable(whichUnit, 'Aatk', false)
+        endif
+    endfunction
+
 endlibrary
