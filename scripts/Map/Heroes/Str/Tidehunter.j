@@ -88,25 +88,4 @@ scope Tidehunter
         set whichUnit = null
     endfunction
 
-    /*
-        function GushUpgraded_Actions takes nothing returns nothing
-            local unit u = Wave_U
-            local integer lv = Wave_LV
-            call DestroyEffect(AddSpecialEffectTarget("Objects\\Spawnmodels\\Naga\\NagaDeath\\NagaDeath.mdl", u, "origin"))
-            call UnitAddAbilityToTimed(u,'A3JR', lv, 4, 0)
-            call UnitAddAbilityToTimed(u,'A3JS', 1, 4,'B3JS')
-            set u = null
-        endfunction
-
-        function GushUpgradeOnSpellEffect takes nothing returns nothing
-            local unit u = GetTriggerUnit()
-            local integer lv = GetUnitAbilityLevel(u, GetSpellAbilityId())
-            local real x = GetUnitX(u)
-            local real y = GetUnitY(u)
-            local real range = 1200.
-            call LaunchWaveSimple(u,'h08O', 60 + 50 * lv, range, 240, 240, x, y, GetSpellTargetX(), GetSpellTargetY(), 1500, 1, false, "GushUpgraded_Actions", lv)
-            set u = null
-        endfunction
-    */
-
 endscope

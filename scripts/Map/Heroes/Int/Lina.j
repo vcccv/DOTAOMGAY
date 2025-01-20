@@ -70,18 +70,4 @@ scope Lina
         set whichUnit = null
     endfunction
 
-    /*
-function DragonSlaveOnSpellEffect takes nothing returns nothing
-	local unit d = CreateUnit(GetOwningPlayer(GetTriggerUnit()),'e00E', GetUnitX(GetTriggerUnit()), GetUnitY(GetTriggerUnit()), GetUnitFacing(GetTriggerUnit()))
-	call UnitAddAbility(d,'A3IJ')
-	call SetUnitAbilityLevel(d,'A3IJ', GetUnitAbilityLevel(GetTriggerUnit(),'A01F'))
-	if GetSpellTargetUnit() == GetTriggerUnit() then
-		call B1R(d, "carrionswarm", GetUnitX(GetTriggerUnit())+ 1 * Cos(bj_DEGTORAD * GetUnitFacing(GetTriggerUnit())), GetUnitY(GetTriggerUnit())+ 1 * Sin(bj_DEGTORAD * GetUnitFacing(GetTriggerUnit())))
-	else
-		call B1R(d, "carrionswarm", GetSpellTargetX(), GetSpellTargetY())
-	endif
-	set d = null
-endfunction
-    */
-
 endscope
