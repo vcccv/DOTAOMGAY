@@ -64,13 +64,14 @@ scope Invoker
 
     private struct UpgradeDeafeningBlast
         
-        group targGroup
+        static TableArray table = 0
         static method Create takes nothing returns thistype
-            call BJDebugMsg("Create")
+            if thistype.table == 0 then
+                set thistype.table = TableArray[JASS_MAX_ARRAY_SIZE]
+            endif
             return thistype.allocate()
         endmethod
         method Destroy takes nothing returns nothing
-            call BJDebugMsg("Destroy")
             call this.deallocate()
         endmethod
 
@@ -85,7 +86,7 @@ scope Invoker
 
         static method OnRemove takes Shockwave sw returns nothing
             if thistype(sw).last then
-                call DeallocateGroup(thistype(sw).instance.targGroup)
+                call UpgradeDeafeningBlast.table[thistype(sw).instance].flush()
                 call thistype(sw).instance.Destroy()
                 set thistype(sw).last = false
             endif
@@ -95,13 +96,11 @@ scope Invoker
             // 敌对存活非魔免非无敌非守卫非建筑
             if UnitAlive(targ) and IsUnitEnemy(sw.owner, GetOwningPlayer(targ)) and not IsUnitMagicImmune(targ) and not IsUnitInvulnerable(targ) and not IsUnitWard(targ) and not IsUnitStructure(targ) then
                 if thistype(sw).instance != 0 then
-                    if IsUnitInGroup(targ, thistype(sw).instance.targGroup) then
-                        call BJDebugMsg("返回了")
-                       return false 
+                    if UpgradeDeafeningBlast.table[thistype(sw).instance].handle.has(GetHandleId(targ)) then
+                        return false 
                     endif
-                    call GroupAddUnit(thistype(sw).instance.targGroup, targ)
+                    set UpgradeDeafeningBlast.table[thistype(sw).instance].unit[GetHandleId(targ)] = targ
                 endif
-                call BJDebugMsg("击中流程")
                 // 'B033'
                 // 击退
                 call CreateBuffByPolarity(targ, 'B033', 1 + thistype(sw).level * 0.5, false, BUFF_LEVEL1)
@@ -117,7 +116,6 @@ scope Invoker
     
     function DeafeningBlastOnSpellEffect takes nothing returns nothing
         local unit      whichUnit = GetRealSpellUnit(GetTriggerUnit())
-        local unit      targUnit  = GetSpellTargetUnit()
         local real      x         = GetUnitX(whichUnit)
         local real      y         = GetUnitY(whichUnit)
         local real      tx
@@ -136,21 +134,16 @@ scope Invoker
         call SetAbilityAddAction('B033', "InvokerOnAddDeafeningBlastBuff")
         call SetAbilityRemoveAction('B033', "InvokerOnRemoveDeafeningBlastBuff")
 
+        set tx = GetSpellTargetX()
+        set ty = GetSpellTargetY()
+        set angle = RadianBetweenXY(x, y, tx, ty)
+        if x == tx and y == ty then
+            set angle = GetUnitFacing(whichUnit) * bj_DEGTORAD
+        else
+            set angle = RadianBetweenXY(x, y, tx, ty)
+        endif
+
         if not isUpgrade then
-            if targUnit == null then
-                set tx = GetSpellTargetX()
-                set ty = GetSpellTargetY()
-                set angle = RadianBetweenXY(x, y, tx, ty)
-            else
-                set tx = GetUnitX(targUnit)
-                set ty = GetUnitY(targUnit)
-                if targUnit == whichUnit then
-                    set angle = GetUnitFacing(whichUnit) * bj_DEGTORAD
-                else
-                    set angle = RadianBetweenXY(x, y, tx, ty)
-                endif
-                set targUnit = null
-            endif
             set sw = Shockwave.CreateByDistance(whichUnit, x, y, angle, distance)
             call sw.SetSpeed(1100.)
             call sw.SetModelScale(4.)
@@ -164,13 +157,10 @@ scope Invoker
             call DeafeningBlast.Launch(sw)
         else
             set instance = UpgradeDeafeningBlast.Create()
-            set instance.targGroup = AllocationGroup(90)
             set i   = 0
             set max = 12
             loop
-                set angle = 30 * i
-
-                set sw = Shockwave.CreateByDistance(whichUnit, x, y, angle, distance)
+                set sw = Shockwave.CreateByDistance(whichUnit, x, y, angle + 30. * bj_DEGTORAD * i, distance)
                 call sw.SetSpeed(1100.)
                 call sw.SetModelScale(4.)
                 set DeafeningBlast(sw).instance = instance

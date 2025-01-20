@@ -48,7 +48,6 @@ scope QueenOfPain
 
         set tx = GetSpellTargetX()
         set ty = GetSpellTargetY()
-        set angle = RadianBetweenXY(x, y, tx, ty)
         if x == tx and y == ty then
             set angle = GetUnitFacing(whichUnit) * bj_DEGTORAD
         else
