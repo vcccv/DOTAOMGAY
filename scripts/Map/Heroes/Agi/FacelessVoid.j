@@ -56,9 +56,6 @@ scope FacelessVoid
         call SaveReal(HY, h, 24, y * 1.)
         call SetUnitPosition(trigUnit, x, y)
         if (x == x2 and y == y2) or count > LoadInteger(HY, h, 0) then
-            if IsUnitType(dummyCaster, UNIT_TYPE_HERO) then
-                call SaveBoolean(OtherHashTable, GetHandleId(dummyCaster), 99, true)
-            endif
             call SetUnitX(dummyCaster, CoordinateX50(x))
             call SetUnitY(dummyCaster, CoordinateY50(y))
             call IssueImmediateOrderById(dummyCaster, 852096)

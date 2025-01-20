@@ -406,7 +406,7 @@ globals
 	real ER
 	constant integer HotKeyStringHash = StringHash("hotkey")
 	unit PreloadeHero
-	integer RR = 0
+	integer NoLimitMoveCount = 0
 	unit IR
 	integer array BR
 	real array DisplayTextDuration
@@ -481,7 +481,7 @@ globals
 	integer TN = 0
 	unit UN
 	boolean WN = false
-	real YN = .015
+	real CUSTOM_MOVE_TIME_OUT = .015
 	unit array VB
 	real Local__TextTagzOffset = .0
 	unit XB
@@ -2627,7 +2627,7 @@ function U1V takes unit d, integer S6V, unit u returns boolean
 	endif
 	return U2V
 endfunction
-function U3V takes unit u returns integer
+function GetUnitMoveSpeedBonus takes unit u returns integer
 	local integer level = GetUnitAbilityLevel(u,'EUL1')
 	local integer U4V = GetUnitAbilityLevel(u,'EUL2')
 	local integer U5V
@@ -2656,7 +2656,7 @@ function U3V takes unit u returns integer
 		return U5V
 	endif
 	if GetUnitAbilityLevel(u,'A00D')> 0 then
-		return  100 
+		return 100 
 	elseif GetUnitAbilityLevel(u,'A2HR')> 0 then
 		return 85
 	elseif GetUnitAbilityLevel(u,'A1VR')> 0 then
@@ -7067,88 +7067,15 @@ function I0X takes unit whichUnit, location targetUnit returns real
 	endif
 	return 1.
 endfunction
-function I1X takes nothing returns nothing
-	local timer t = GetExpiredTimer()
-	local integer h = GetHandleId(t)
-	local unit u = LoadUnitHandle(HY, h, 0)
-	local real I2X = I2R(LoadInteger(HY, h, 0))
-	local integer WOV = LoadInteger(HY, h, 1)
-	local real x
-	local real y
-	local real dx
-	local real dy
-	local real I3X
-	local real ms
-	local real d
-	local real I4X = GetUnitDefaultMoveSpeed(u)+ I2R(U3V(u))
-	local real I5X
-	local integer I6X
-	local integer c = LoadInteger(HY, h,-1)+ 1
-	if WOV == 0 then
-		set WOV = 9999
-	endif
-	set I5X = RMinBJ(I4X *(100. + I2X)/ 100., WOV)-GetUnitMoveSpeed(u)
-	call SaveInteger(HY, h,-1, c)
-	call SaveReal(OtherHashTable, GetHandleId(u), 99, R2I(I5X))
-	if I5X > 0 and UnitAlive(u) then
-		set x = GetUnitX(u)
-		set y = GetUnitY(u)
-		set dx = LoadReal(HY, h, 10)
-		set dy = LoadReal(HY, h, 11)
-		set d = GetDistanceBetween(dx, dy, x, y)
-		if LoadBoolean(OtherHashTable, GetHandleId(u), 99) == false then
-			set I6X = GetUnitCurrentOrder(u)
-			if (d < 100  and d > 1) and I6X != 851993 and I6X != 851972 and I6X != 851973 then
-				set I3X = Atan2(y -dy, x -dx)
-				set ms = I5X * YN
-				call SaveReal(OtherHashTable, GetHandleId(u), 99, R2I(ms / YN))
-				call SetUnitX(u, CoordinateX50(x + ms * Cos(I3X)))
-				call SetUnitY(u, CoordinateY50(y + ms * Sin(I3X)))
-			endif
-		else
-			call SaveBoolean(OtherHashTable, GetHandleId(u), 99, false)
-		endif
-		call SaveReal(HY, h, 10, GetUnitX(u))
-		call SaveReal(HY, h, 11, GetUnitY(u))
-	endif
-	set t = null
-	set u = null
-endfunction
 // 模拟移动 可突破522
-function SetUnitImitateMoveSpeed takes unit u, integer I2X, integer WOV returns nothing
-	local timer t
-	local integer h
-	if HaveSavedHandle(OtherHashTable, GetHandleId(u),'MVSP') == false then
-		set t = CreateTimer()
-		set h = GetHandleId(t)
-		call TimerStart(t, YN, true, function I1X)
-		set RR = RR + 1
-		call SaveUnitHandle(HY, h, 0, u)
-		call SaveReal(HY, h, 10, GetUnitX(u))
-		call SaveReal(HY, h, 11, GetUnitY(u))
-		call SaveBoolean(HY, h, 100, true)
-		call SaveTimerHandle(OtherHashTable, GetHandleId(u),'MVSP', t)
+function SetUnitNoLimitMoveSpeed takes unit whichUnit, integer I2X, integer moveSpeed returns nothing
+	if moveSpeed == 0 then
+		call MHUnit_ResetMoveSpeedLimit(whichUnit)
+		call SetUnitMoveSpeed(whichUnit, GetUnitDefaultMoveSpeed(whichUnit) + GetUnitMoveSpeedBonus(whichUnit))
 	else
-		set t = LoadTimerHandle(OtherHashTable, GetHandleId(u),'MVSP')
-		set h = GetHandleId(t)
+		call MHUnit_SetMoveSpeedLimit(whichUnit, moveSpeed)
+		call SetUnitMoveSpeed(whichUnit, moveSpeed)
 	endif
-	if I2X == LoadInteger(HY, h, 0) and WOV == LoadInteger(HY, h, 1) then
-		set t = null
-		return
-	endif
-	call SaveInteger(HY, h, 1, WOV)
-	call SaveInteger(HY, h, 0, I2X)
-	if I2X == 0 then
-		call PauseTimer(t)
-		set RR = RR -1
-		call SaveReal(OtherHashTable, GetHandleId(u), 99, 0)
-		call SaveBoolean(HY, h, 100, false)
-	elseif LoadBoolean(HY, h, 100) == false then
-		call TimerStart(t, YN, true, function I1X)
-		set RR = RR + 1
-		call SaveBoolean(HY, h, 100, true)
-	endif
-	set t = null
 endfunction
 function I8X takes unit u returns nothing
 	call SetUnitState(u, UNIT_STATE_MANA, GetUnitState(u, UNIT_STATE_MAX_MANA))
@@ -22629,7 +22556,7 @@ endfunction
 function FKO takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer h = GetHandleId(t)
-	call SetUnitImitateMoveSpeed(LoadUnitHandle(HY, h, 0), 0, 0)
+	call SetUnitNoLimitMoveSpeed(LoadUnitHandle(HY, h, 0), 0, 0)
 	call FlushChildHashtable(HY, h)
 	call PauseTimer(t)
 	call DestroyTimer(t)
@@ -22639,7 +22566,7 @@ function FLO takes unit u returns nothing
 	local timer t = CreateTimer()
 	local integer h = GetHandleId(t)
 	call SaveUnitHandle(HY, h, 0, u)
-	call SetUnitImitateMoveSpeed(u, 999, 800)
+	call SetUnitNoLimitMoveSpeed(u, 999, 800)
 	call TimerStart(t, 4., false, function FKO)
 	set t = null
 endfunction
@@ -48111,7 +48038,7 @@ endfunction
 function XDI takes unit u, integer hu, trigger t returns nothing
 	local integer h = GetHandleId(t)
 	if GetUnitAbilityLevel(u,'A46D')> 0 and LoadBoolean(HY, h, 5) then
-		call SetUnitImitateMoveSpeed(u, 0, 0)
+		call SetUnitNoLimitMoveSpeed(u, 0, 0)
 		call SetUnitPathing(u, true)
 	endif
 	call UnitRemoveAbility(u,'A46F')
@@ -48174,7 +48101,7 @@ function XFI takes nothing returns boolean
 			elseif LoadBoolean(HY, h, 5) == false then
 				if LoadBoolean(HY, h, 0) == false and GetUnitAbilityLevel(u,'A46F') == 0 and EOX <= XGI and GetUnitAbilityLevel(u,'A46D')> 0 then
 					call UnitAddPermanentAbility(u,'A46F')
-					call SetUnitImitateMoveSpeed(u, 999, 800)
+					call SetUnitNoLimitMoveSpeed(u, 999, 800)
 					if GetUnitAbilityLevel(u,'A46D')> 0 then
 						call SaveReal(HY, GetHandleId(u),'A46E', GetGameTime())
 					endif
@@ -55716,50 +55643,7 @@ function G8I takes nothing returns boolean
 	set u = null
 	return false
 endfunction
-function HII takes nothing returns nothing
-	local timer t = GetExpiredTimer()
-	local integer h = GetHandleId(t)
-	local unit u = LoadUnitHandle(HY, h, 0)
-	local integer I2X = LoadInteger(HY, h, 0)
-	local real x
-	local real y
-	local real dx
-	local real dy
-	local real I3X
-	local real ms
-	local real d
-	local real i = 1
-	local real I4X = GetUnitDefaultMoveSpeed(u)+ U3V(u)
-	if I4X > 1000 then
-		set I4X = 1000-522
-	endif
-	if LoadBoolean(HY, h, 0) then
-		set I2X = 100 
-	endif
-	call SaveReal(OtherHashTable, GetHandleId(u), 99, R2I(I4X * I2X / 100 ))
-	if I2X > 0 and UnitAlive(u) then
-		set x = GetUnitX(u)
-		set y = GetUnitY(u)
-		set dx = LoadReal(HY, h, 10)
-		set dy = LoadReal(HY, h, 11)
-		set d = GetDistanceBetween(dx, dy, x, y)
-		if LoadBoolean(OtherHashTable, GetHandleId(u), 99) == false then
-			if (d < 100  and d > 1) and GetUnitCurrentOrder(u)!= 851993 and GetUnitCurrentOrder(u)!= 851972 and GetUnitCurrentOrder(u)!= 851973 then
-				set I3X = Atan2(y -dy, x -dx)
-				set ms = I4X * I2X * YN / 100 
-				call SaveReal(OtherHashTable, GetHandleId(u), 99, R2I(ms *(1 / YN)))
-				call SetUnitX(u, CoordinateX50(x + ms * Cos(I3X)))
-				call SetUnitY(u, CoordinateY50(y + ms * Sin(I3X)))
-			endif
-		else
-			call SaveBoolean(OtherHashTable, GetHandleId(u), 99, false)
-		endif
-		call SaveReal(HY, h, 10, GetUnitX(u))
-		call SaveReal(HY, h, 11, GetUnitY(u))
-	endif
-	set t = null
-	set u = null
-endfunction
+
 function HAI takes nothing returns nothing
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
@@ -55780,7 +55664,7 @@ function HAI takes nothing returns nothing
 		endif
 	exitwhen i > 11
 	endloop
-	call SetUnitImitateMoveSpeed(u, I2X, 0)
+	call SetUnitNoLimitMoveSpeed(u, I2X, 0)
 	set t = null
 	set u = null
 endfunction
@@ -57857,9 +57741,9 @@ function LQI takes nothing returns nothing
 		set c = c + 1
 		call SaveInteger(HY, h, 28, c)
 		if GetUnitDistanceEx(trigUnit, d)< 435 then
-			call SetUnitImitateMoveSpeed(trigUnit, 999, 700)
+			call SetUnitNoLimitMoveSpeed(trigUnit, 999, 700)
 		else
-			call SetUnitImitateMoveSpeed(trigUnit, 0, 0)
+			call SetUnitNoLimitMoveSpeed(trigUnit, 0, 0)
 		endif
 		set gg = AllocationGroup(329)
 		call ForGroup(g, function LPI)
@@ -57881,7 +57765,7 @@ function LQI takes nothing returns nothing
 		if IsGameEnd == false then
 			call ForGroup(g, function LPI)
 		endif
-		call SetUnitImitateMoveSpeed(trigUnit, 0, 0)
+		call SetUnitNoLimitMoveSpeed(trigUnit, 0, 0)
 		call KillUnit(d)
 		call RemoveUnit(d)
 		call KillUnit(LoadUnitHandle(HY, h, 18))
@@ -61340,7 +61224,7 @@ function UZI takes nothing returns boolean
 	//call ResetUnitVertexColor(whichUnit)
 	//call SetUnitVertexColorEx(whichUnit,-1,-1,-1, 255)
 	call RemoveUnit(LoadUnitHandle(HY, h, 15))
-	call SetUnitImitateMoveSpeed(whichUnit, 0, 0)
+	call SetUnitNoLimitMoveSpeed(whichUnit, 0, 0)
 	call UnitAddMaxLife(whichUnit,-1 * LoadInteger(HY, h, 16))
 	call FlushChildHashtable(HY, h)
 	call CleanCurrentTrigger(t)
@@ -61366,7 +61250,7 @@ function Shapeshift_CallBack takes nothing returns boolean
 	call SaveUnitHandle(HY, h, 14,(whichUnit))
 	call SaveUnitHandle(HY, h, 15, d)
 	call SaveInteger(HY, h, 16, I2X)
-	call SetUnitImitateMoveSpeed(whichUnit, 999, 650)
+	call SetUnitNoLimitMoveSpeed(whichUnit, 999, 650)
 	set d = null
 	set t = null
 	set whichUnit = null

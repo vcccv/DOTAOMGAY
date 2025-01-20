@@ -151,14 +151,15 @@ scope Magnus
         local real     tx        = (LoadReal(HY, h, 47))
         local real     ty        = (LoadReal(HY, h, 48))
         local real     a         = (LoadReal(HY, h, 13))
-        local real     GRR       = (LoadReal(HY, h, 6))
-        local real     GIR       = (LoadReal(HY, h, 7))
-        local real     targetX       = CoordinateX75(GRR + 19 * Cos(a))
-        local real     targetY       = CoordinateY75(GIR + 19 * Sin(a))
+        local real     ux        = (LoadReal(HY, h, 6))
+        local real     uy        = (LoadReal(HY, h, 7))
+        local real     targetX   = CoordinateX75(ux + 19 * Cos(a))
+        local real     targetY   = CoordinateY75(uy + 19 * Sin(a))
         local group    g
         local group    gg        = LoadGroupHandle(HY, h, 0)
-        local integer  WUI       =(LoadInteger(HY, h, 12))
+        local integer  max       =(LoadInteger(HY, h, 12))
         local location l
+        local unit     first
         if IsUnitType(whichUnit, UNIT_TYPE_HERO) then
             call SaveBoolean(OtherHashTable, GetHandleId(whichUnit), 99, true)
         endif
@@ -186,7 +187,7 @@ scope Magnus
         if ModuloInteger(GetTriggerEvalCount(t), 3) == 0 then
             call KillTreeByCircle(targetX, targetY, 200)
         endif
-        if GetTriggerEventId() == EVENT_WIDGET_DEATH or GetTriggerEvalCount(t)> WUI then
+        if GetTriggerEventId() == EVENT_WIDGET_DEATH or GetTriggerEvalCount(t)> max then
             call DestroyEffect((LoadEffectHandle(HY, h, 175)))
             call SetUnitAnimationByIndex(whichUnit, 0)
             call SetUnitTimeScale(whichUnit, 1.)

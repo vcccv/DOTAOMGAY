@@ -21,15 +21,14 @@ scope Morphling
                 return false
             endif
             if IsUnitType(sw.owner, UNIT_TYPE_HERO) then
-                set Table[GetHandleId(sw.owner)][WAVEFORM_COUNT] = Table[GetHandleId(sw.owner)][WAVEFORM_COUNT] - 1
-                if Table[GetHandleId(sw.owner)][WAVEFORM_COUNT] == 0 then
-                    call SaveBoolean(OtherHashTable, GetHandleId(sw.owner), 99, false)
-                endif
+                //set Table[GetHandleId(sw.owner)][WAVEFORM_COUNT] = Table[GetHandleId(sw.owner)][WAVEFORM_COUNT] - 1
+                //if Table[GetHandleId(sw.owner)][WAVEFORM_COUNT] == 0 then
+                    call UnitSubCantSelectCount(sw.owner)
+                    call UnitSubHideByColorCount(sw.owner)
+                    call UnitSubPathingCount(sw.owner)
+                    call UnitSubInvulnerableCount(sw.owner)
+                //endif
             endif
-            call UnitSubCantSelectCount(sw.owner)
-            call UnitSubHideByColorCount(sw.owner)
-            call UnitSubPathingCount(sw.owner)
-            call UnitSubInvulnerableCount(sw.owner)
 
             set x = MHUnit_ModifyPositionX(sw.owner, x, y)
             set y = MHUnit_ModifyPositionY(sw.owner, x, y)
@@ -98,20 +97,18 @@ scope Morphling
         set MorphlingWave(sw).damage = 25. + 75. * level
         call MorphlingWave.Launch(sw)
 
-        if IsUnitType(whichUnit, UNIT_TYPE_HERO) then
-            call UnitAddInvulnerableCount(whichUnit)
-            call UnitAddPathingCount(whichUnit)
-            call UnitAddCantSelectCount(whichUnit)
-            call UnitAddHideByColorCount(whichUnit)
+        if IsUnitType(whichUnit, UNIT_TYPE_HERO) then         
+            //set Table[GetHandleId(whichUnit)][WAVEFORM_COUNT] = Table[GetHandleId(whichUnit)][WAVEFORM_COUNT] + 1
+            //if Table[GetHandleId(whichUnit)][WAVEFORM_COUNT] == 1 then
+                call UnitAddInvulnerableCount(whichUnit)
+                call UnitAddPathingCount(whichUnit)
+                call UnitAddCantSelectCount(whichUnit)
+                call UnitAddHideByColorCount(whichUnit)
+            //endif
             
             call ShowUnit(whichUnit, false)
             call ShowUnit(whichUnit, true)
             call SelectUnitAddForPlayer(whichUnit, GetOwningPlayer(whichUnit))
-
-            set Table[GetHandleId(whichUnit)][WAVEFORM_COUNT] = Table[GetHandleId(whichUnit)][WAVEFORM_COUNT] + 1
-            if Table[GetHandleId(whichUnit)][WAVEFORM_COUNT] == 1 then
-                call SaveBoolean(OtherHashTable, GetHandleId(whichUnit), 99, true)
-            endif
         endif
 
         set whichUnit = null
