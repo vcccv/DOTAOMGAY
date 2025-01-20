@@ -142,31 +142,32 @@ scope Magnus
         call KillTreeByCircle(GetUnitX(u), GetUnitY(u), 300)
         set u = null
     endfunction
-    function WTI takes nothing returns boolean
-        local trigger t = GetTriggeringTrigger()
-        local integer h = GetHandleId(t)
-        local unit whichUnit =(LoadUnitHandle(HY, h, 2))
-        local integer level =(LoadInteger(HY, h, 5))
-        local real tx =(LoadReal(HY, h, 47))
-        local real ty =(LoadReal(HY, h, 48))
-        local real a =(LoadReal(HY, h, 13))
-        local real GRR =(LoadReal(HY, h, 6))
-        local real GIR =(LoadReal(HY, h, 7))
-        local real NBX = CoordinateX75(GRR + 19 * Cos(a))
-        local real NCX = CoordinateY75(GIR + 19 * Sin(a))
-        local group g
-        local group gg = LoadGroupHandle(HY, h, 0)
-        local integer WUI =(LoadInteger(HY, h, 12))
+
+    function SkewerOnMoveUpdate takes nothing returns boolean
+        local trigger  t         = GetTriggeringTrigger()
+        local integer  h         = GetHandleId(t)
+        local unit     whichUnit = (LoadUnitHandle(HY, h, 2))
+        local integer  level     = (LoadInteger(HY, h, 5))
+        local real     tx        = (LoadReal(HY, h, 47))
+        local real     ty        = (LoadReal(HY, h, 48))
+        local real     a         = (LoadReal(HY, h, 13))
+        local real     GRR       = (LoadReal(HY, h, 6))
+        local real     GIR       = (LoadReal(HY, h, 7))
+        local real     targetX       = CoordinateX75(GRR + 19 * Cos(a))
+        local real     targetY       = CoordinateY75(GIR + 19 * Sin(a))
+        local group    g
+        local group    gg        = LoadGroupHandle(HY, h, 0)
+        local integer  WUI       =(LoadInteger(HY, h, 12))
         local location l
         if IsUnitType(whichUnit, UNIT_TYPE_HERO) then
             call SaveBoolean(OtherHashTable, GetHandleId(whichUnit), 99, true)
         endif
-        call SetUnitPosition(whichUnit, NBX, NCX)
+        call SetUnitPosition(whichUnit, targetX, targetY)
         call SetUnitFacing(whichUnit, a * bj_RADTODEG)
-        call SaveReal(HY, h, 6,((NBX)* 1.))
-        call SaveReal(HY, h, 7,((NCX)* 1.))
+        call SaveReal(HY, h, 6,((targetX)* 1.))
+        call SaveReal(HY, h, 7,((targetY)* 1.))
         if ModuloInteger(GetTriggerEvalCount(t), 4) == 0 then
-            call DestroyEffect(AddSpecialEffect("Abilities\\Weapons\\AncientProtectorMissile\\AncientProtectorMissile.mdl", NBX, NCX))
+            call DestroyEffect(AddSpecialEffect("Abilities\\Weapons\\AncientProtectorMissile\\AncientProtectorMissile.mdl", targetX, targetY))
         endif
         if GetTriggerEvalCount(t) == 2 then
             call SetUnitAnimationByIndex(whichUnit, 3)
@@ -174,16 +175,16 @@ scope Magnus
         set g = AllocationGroup(358)
         set U2 = whichUnit
         set LB = gg
-        call GroupEnumUnitsInRange(g, NBX, NCX, 150+ 25, Condition(function WPI))
+        call GroupEnumUnitsInRange(g, targetX, targetY, 150+ 25, Condition(function WPI))
         if FirstOfGroup(g)!= null then
             call GroupAddGroup(g, gg)
         endif
         call DeallocateGroup(g)
-        set ZI = NBX
-        set VA = NCX
+        set ZI = targetX
+        set VA = targetY
         call ForGroup(gg, function WQI)
         if ModuloInteger(GetTriggerEvalCount(t), 3) == 0 then
-            call KillTreeByCircle(NBX, NCX, 200)
+            call KillTreeByCircle(targetX, targetY, 200)
         endif
         if GetTriggerEventId() == EVENT_WIDGET_DEATH or GetTriggerEvalCount(t)> WUI then
             call DestroyEffect((LoadEffectHandle(HY, h, 175)))
@@ -196,7 +197,7 @@ scope Magnus
             set WI = whichUnit
             call IssueTargetOrderById(whichUnit, 851983, FirstOfGroup(gg))
             call ForGroup(gg, function WSI)
-            call KillTreeByCircle(NBX, NCX, 375)
+            call KillTreeByCircle(targetX, targetY, 375)
             if IsPointInRegion(TerrainCliffRegion, GetUnitX(whichUnit), GetUnitY(whichUnit)) then
                 set l = DEX(GetUnitX(whichUnit), GetUnitY(whichUnit))
                 if IsUnitType(whichUnit, UNIT_TYPE_HERO) then
@@ -227,17 +228,17 @@ scope Magnus
         local real sy = GetUnitY(whichUnit)
         local integer level = GetUnitAbilityLevel(whichUnit,'A1RD')
         local real a = AngleBetweenXY(sx, sy, tx, ty)* bj_DEGTORAD
-        local real ZRO = level * 150+ 625
-        if GetDistanceBetween(sx, sy, tx, ty)> ZRO then
-            set tx = CoordinateX75(sx + ZRO * Cos(a))
-            set ty = CoordinateY75(sy + ZRO * Sin(a))
+        local real distance = level * 150. + 625. + GetUnitCastRangeBonus(whichUnit) 
+        if GetDistanceBetween(sx, sy, tx, ty)> distance then
+            set tx = CoordinateX75(sx + distance * Cos(a))
+            set ty = CoordinateY75(sy + distance * Sin(a))
         endif
         call SetUnitPathing(whichUnit, false)
         call SetUnitAnimationByIndex(whichUnit, 3)
         call SetUnitTimeScale(whichUnit, 1.5)
         call TriggerRegisterTimerEvent(t, .02, true)
         call TriggerRegisterDeathEvent(t, whichUnit)
-        call TriggerAddCondition(t, Condition(function WTI))
+        call TriggerAddCondition(t, Condition(function SkewerOnMoveUpdate))
         call SaveUnitHandle(HY, h, 2,(whichUnit))
         call SaveInteger(HY, h, 5,(level))
         call SaveUnitHandle(HY, h, 393,(null))

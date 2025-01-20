@@ -7418,8 +7418,8 @@ function NOX takes nothing returns boolean
 	local real ty
 	local real NAX
 	local real NNX
-	local real NBX
-	local real NCX
+	local real targetX
+	local real targetY
 	local boolean NDX
 	local real NFX
 	local real NGX
@@ -7444,16 +7444,16 @@ function NOX takes nothing returns boolean
 			set ty = LoadReal(HY, h,-2)
 		endif
 		set NNX = AngleBetweenXY(x, y, tx, ty)
-		set NBX = x + NAX * Cos(NNX * bj_DEGTORAD)
-		set NCX = y + NAX * Sin(NNX * bj_DEGTORAD)
-		call SetUnitX(missileDummy, NBX)
-		call SetUnitY(missileDummy, NCX)
+		set targetX = x + NAX * Cos(NNX * bj_DEGTORAD)
+		set targetY = y + NAX * Sin(NNX * bj_DEGTORAD)
+		call SetUnitX(missileDummy, targetX)
+		call SetUnitY(missileDummy, targetY)
 		call EXSetUnitFacing(missileDummy, NNX)
 		if UnitIsDead(targetUnit) then
 			call KillUnit(missileDummy)
 			call FlushChildHashtable(HY, h)
 			call CleanCurrentTrigger(t)
-		elseif GetDistanceBetween(tx, ty, NBX, NCX)<= NAX then
+		elseif GetDistanceBetween(tx, ty, targetX, targetY)<= NAX then
 			call KillUnit(missileDummy)
 			set U2 = whichUnit
 			set MissileHitTargetUnit = targetUnit
@@ -8468,30 +8468,30 @@ function DVX takes unit u returns boolean
 	return false
 endfunction
 function DEX takes real x, real y returns location
-	local real NBX
-	local real NCX
+	local real targetX
+	local real targetY
 	local integer i = 0
 	loop
 	exitwhen i > 40
-		set NBX = x + i * 20
-		set NCX = y + i * 20
-		if IsPointInRegion(TerrainCliffRegion, NBX, NCX) == false then
-			return Location(NBX, NCX)
+		set targetX = x + i * 20
+		set targetY = y + i * 20
+		if IsPointInRegion(TerrainCliffRegion, targetX, targetY) == false then
+			return Location(targetX, targetY)
 		endif
-		set NBX = x + i * 20
-		set NCX = y -i * 20
-		if IsPointInRegion(TerrainCliffRegion, NBX, NCX) == false then
-			return Location(NBX, NCX)
+		set targetX = x + i * 20
+		set targetY = y -i * 20
+		if IsPointInRegion(TerrainCliffRegion, targetX, targetY) == false then
+			return Location(targetX, targetY)
 		endif
-		set NBX = x -i * 20
-		set NCX = y + i * 20
-		if IsPointInRegion(TerrainCliffRegion, NBX, NCX) == false then
-			return Location(NBX, NCX)
+		set targetX = x -i * 20
+		set targetY = y + i * 20
+		if IsPointInRegion(TerrainCliffRegion, targetX, targetY) == false then
+			return Location(targetX, targetY)
 		endif
-		set NBX = x -i * 20
-		set NCX = y -i * 20
-		if IsPointInRegion(TerrainCliffRegion, NBX, NCX) == false then
-			return Location(NBX, NCX)
+		set targetX = x -i * 20
+		set targetY = y -i * 20
+		if IsPointInRegion(TerrainCliffRegion, targetX, targetY) == false then
+			return Location(targetX, targetY)
 		endif
 		set i = i + 1
 	endloop
@@ -37143,8 +37143,8 @@ function D5R takes nothing returns boolean
 	local real tx =(LoadReal(HY, h, 66))
 	local real ty =(LoadReal(HY, h, 67))
 	local integer count = GetTriggerEvalCount(t)
-	local real NBX = CoordinateX50(tx + 13.33 * count * Cos(a))
-	local real NCX = CoordinateY50(ty + 13.33 * count * Sin(a))
+	local real targetX = CoordinateX50(tx + 13.33 * count * Cos(a))
+	local real targetY = CoordinateY50(ty + 13.33 * count * Sin(a))
 	local integer lv =(LoadInteger(HY, h, 5))
 	local group D7R =(LoadGroupHandle(HY, h, 187))
 	local group g
@@ -37176,22 +37176,22 @@ function D5R takes nothing returns boolean
 	call GroupEnumUnitsInRange(g, GetUnitX(missileDummy), GetUnitY(missileDummy), 425, Condition(function D3R))
 	call ForGroup(g, function D2R)
 	call DeallocateGroup(g)
-	call SetUnitX(missileDummy, NBX)
-	call SetUnitY(missileDummy, NCX)
+	call SetUnitX(missileDummy, targetX)
+	call SetUnitY(missileDummy, targetY)
 	if b then
 		set g2 = AllocationGroup(124)
 		set TYIPP = 70
-		call GroupEnumUnitsInRange(g2, NBX, NCX, 225, Condition(function YOI1))
+		call GroupEnumUnitsInRange(g2, targetX, targetY, 225, Condition(function YOI1))
 		loop
 			set u = FirstOfGroup(g2)
 		exitwhen u == null
-			call SetUnitX(u, NBX)
-			call SetUnitY(u, NCX)
+			call SetUnitX(u, targetX)
+			call SetUnitY(u, targetY)
 			call GroupRemoveUnit(g2, u)
 		endloop
 		call DeallocateGroup(g2)
 		if ModuloInteger(count, 10) == 1 then
-			call KillTreeByCircle(NBX, NCX, 325)
+			call KillTreeByCircle(targetX, targetY, 325)
 		endif
 	else
 		set TYIPP = 140
@@ -37201,13 +37201,13 @@ function D5R takes nothing returns boolean
 		call KillUnit(D6R)
 	elseif count < TYIPP then
 		set D6R =(LoadUnitHandle(HY, h, 186))
-		call SetUnitX(D6R, NBX)
-		call SetUnitY(D6R, NCX)
+		call SetUnitX(D6R, targetX)
+		call SetUnitY(D6R, targetY)
 	endif
 	if count == LoadInteger(HY, h, 6) then
 		set g = AllocationGroup(125)
 		set U2 = missileDummy
-		call GroupEnumUnitsInRange(g, NBX, NCX, 450, Condition(function DHX))
+		call GroupEnumUnitsInRange(g, targetX, targetY, 450, Condition(function DHX))
 		call ForGroup(g, function D4R)
 		call DeallocateGroup(g)
 		call KillUnit(missileDummy)
@@ -39633,19 +39633,19 @@ function JNR takes nothing returns boolean
 	local real a = LoadReal(HY, h, 13)
 	local real sx = LoadReal(HY, h, 189)
 	local real sy = LoadReal(HY, h, 190)
-	local real NBX = CoordinateX50(sx + 44 * Cos(a))
-	local real NCX = CoordinateY50(sy + 44 * Sin(a))
+	local real targetX = CoordinateX50(sx + 44 * Cos(a))
+	local real targetY = CoordinateY50(sy + 44 * Sin(a))
 	local real JBR
 	local real JCR
 	local integer level = LoadInteger(HY, h, 0)
-	call SetUnitX(missileDummy, NBX)
-	call SetUnitY(missileDummy, NCX)
-	call SaveReal(HY, h, 189, NBX * 1.)
-	call SaveReal(HY, h, 190, NCX * 1.)
-	if GetDistanceBetween(tx, ty, NBX, NCX)<= 35 then
+	call SetUnitX(missileDummy, targetX)
+	call SetUnitY(missileDummy, targetY)
+	call SaveReal(HY, h, 189, targetX * 1.)
+	call SaveReal(HY, h, 190, targetY * 1.)
+	if GetDistanceBetween(tx, ty, targetX, targetY)<= 35 then
 		call KillUnit(missileDummy)
 		set trigUnit = LoadUnitHandle(HY, h, 14)
-		call JAR(trigUnit, NBX, NCX, level)
+		call JAR(trigUnit, targetX, targetY, level)
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 	endif
@@ -41349,8 +41349,8 @@ function MAR takes nothing returns boolean
 	local real GIR = GetUnitY(whichUnit)
 	local real a = Atan2(ty -GIR, tx -GRR)
 	local real LMR = LoadReal(HY, h, 0)
-	local real NBX = GRR +(LMR)* Cos(a)
-	local real NCX = GIR +(LMR)* Sin(a)
+	local real targetX = GRR +(LMR)* Cos(a)
+	local real targetY = GIR +(LMR)* Sin(a)
 	local lightning APX =(LoadLightningHandle(HY, h, 196))
 	local real lx =(LoadReal(HY, h, 197))
 	local real ly =(LoadReal(HY, h, 198))
@@ -41373,20 +41373,20 @@ function MAR takes nothing returns boolean
 		call SaveReal(HY, h, 198,((ly)* 1.))
 	endif
 	call SetUnitState(whichUnit, UNIT_STATE_MANA, RMaxBJ(DDO -MBR, 0))
-	call MoveLightning(APX, true, lx, ly, NBX, NCX)
+	call MoveLightning(APX, true, lx, ly, targetX, targetY)
 	if IsUnitType(whichUnit, UNIT_TYPE_HERO) then
 		call SaveBoolean(OtherHashTable, GetHandleId(whichUnit), 99, true)
 	endif
-	call SetUnitX(whichUnit, NBX)
-	call SetUnitY(whichUnit, NCX)
-	call SetUnitPosition(dummyCaster, NBX, NCX)
-	call SetUnitPosition(MNR, NBX, NCX)
+	call SetUnitX(whichUnit, targetX)
+	call SetUnitY(whichUnit, targetY)
+	call SetUnitPosition(dummyCaster, targetX, targetY)
+	call SetUnitPosition(MNR, targetX, targetY)
 	set U2 = whichUnit
 	set HZV = whichUnit
 	set HWV = h
 	set HYV = level
 	set H_V = MCR
-	call GroupEnumUnitsInRange(g, NBX, NCX, 75 + 75 * level, Condition(function DHX))
+	call GroupEnumUnitsInRange(g, targetX, targetY, 75 + 75 * level, Condition(function DHX))
 	call ForGroup(g, function MIR)
 	call DeallocateGroup(g)
 	set Y2X = Y2X -1
@@ -41394,7 +41394,7 @@ function MAR takes nothing returns boolean
 	call SetUnitVertexColorEx(whichUnit,-1,-1,-1, 0)
 	if Y2X == 0 or GetUnitState(whichUnit, UNIT_STATE_MANA)< 1 then
 		call DestroyLightning(APX)
-		call KillTreeByCircle(NBX, NCX, 75)
+		call KillTreeByCircle(targetX, targetY, 75)
 		call DestroyEffect((LoadEffectHandle(HY, h, 32)))
 		call RemoveUnit(dummyCaster)
 		call RemoveUnit(MNR)
@@ -41404,7 +41404,7 @@ function MAR takes nothing returns boolean
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 	else
-		call KillTreeByCircle(NBX, NCX, 75)
+		call KillTreeByCircle(targetX, targetY, 75)
 	endif
 	set t = null
 	set dummyCaster = null
@@ -46131,8 +46131,8 @@ function ZAR takes nothing returns nothing
 	local real ZNR = LoadReal(HY, h, 212)
 	local real ZBR = LoadReal(HY, h, 213)
 	local real a = LoadReal(HY, h, 13)
-	local real NBX = GetUnitX(trigUnit)+ 30 * Cos(a * bj_DEGTORAD)
-	local real NCX = GetUnitY(trigUnit)+ 30 * Sin(a * bj_DEGTORAD)
+	local real targetX = GetUnitX(trigUnit)+ 30 * Cos(a * bj_DEGTORAD)
+	local real targetY = GetUnitY(trigUnit)+ 30 * Sin(a * bj_DEGTORAD)
 	local real ZCR = 200
 	local real ZDR =(1 -ZNR / ZBR)* ZCR * 2
 	if ZDR > ZCR then
@@ -46144,8 +46144,8 @@ function ZAR takes nothing returns nothing
 	if IsUnitType(trigUnit, UNIT_TYPE_HERO) then
 		call SaveBoolean(OtherHashTable, GetHandleId(trigUnit), 99, true)
 	endif
-	call SetUnitX(trigUnit, CoordinateX50(NBX))
-	call SetUnitY(trigUnit, CoordinateY50(NCX))
+	call SetUnitX(trigUnit, CoordinateX50(targetX))
+	call SetUnitY(trigUnit, CoordinateY50(targetY))
 	call SetUnitFacing(trigUnit, a)
 	call SaveReal(HY, h, 212,(ZNR -20)* 1.)
 	if ZDR < 1 and ZNR -ZBR != 0 then
@@ -47949,8 +47949,8 @@ function XXI takes nothing returns boolean
 	local real ty
 	local real NAX
 	local real NNX
-	local real NBX
-	local real NCX
+	local real targetX
+	local real targetY
 	local boolean NDX
 	local real NFX
 	local real NGX
@@ -47977,12 +47977,12 @@ function XXI takes nothing returns boolean
 			set ty = LoadReal(HY, h, 1)
 		endif
 		set NNX = AngleBetweenXY(x, y, tx, ty)
-		set NBX = x + NAX * Cos(NNX * bj_DEGTORAD)
-		set NCX = y + NAX * Sin(NNX * bj_DEGTORAD)
-		call SetUnitX(missileDummy, NBX)
-		call SetUnitY(missileDummy, NCX)
+		set targetX = x + NAX * Cos(NNX * bj_DEGTORAD)
+		set targetY = y + NAX * Sin(NNX * bj_DEGTORAD)
+		call SetUnitX(missileDummy, targetX)
+		call SetUnitY(missileDummy, targetY)
 		call SetUnitFacing(missileDummy, NNX)
-		if GetDistanceBetween(tx, ty, NBX, NCX)<= NAX then
+		if GetDistanceBetween(tx, ty, targetX, targetY)<= NAX then
 			if NDX == false then
 				call E9I(LoadUnitHandle(HY, h, 31), p, targetUnit, level, F0X)
 			endif
@@ -49970,8 +49970,8 @@ function RPI takes nothing returns boolean
 	local real NGX
 	local real NAX
 	local real NNX
-	local real NBX
-	local real NCX
+	local real targetX
+	local real targetY
 	local boolean I1O
 	if GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT then
 		if OXX(GetSpellAbilityId()) then
@@ -49997,13 +49997,13 @@ function RPI takes nothing returns boolean
 			set ty = NGX
 		endif
 		set NNX = AngleBetweenXY(x, y, tx, ty)
-		set NBX = x + NAX * Cos(NNX * bj_DEGTORAD)
-		set NCX = y + NAX * Sin(NNX * bj_DEGTORAD)
+		set targetX = x + NAX * Cos(NNX * bj_DEGTORAD)
+		set targetY = y + NAX * Sin(NNX * bj_DEGTORAD)
 		set I1O =(LoadBoolean(HY, h, 249))
-		call SetUnitX(missileDummy, NBX)
-		call SetUnitY(missileDummy, NCX)
+		call SetUnitX(missileDummy, targetX)
+		call SetUnitY(missileDummy, targetY)
 		call SetUnitFacing(missileDummy, NNX)
-		if GetDistanceBetween(tx, ty, NBX, NCX)<= NAX then
+		if GetDistanceBetween(tx, ty, targetX, targetY)<= NAX then
 			if RQI == false and I1O then
 				call RLI(LoadUnitHandle(HY, h, 31), p, targetUnit, level)
 			endif
@@ -51586,8 +51586,8 @@ function NNI takes nothing returns boolean
 	local real NBI
 	local real J0R
 	local real DFR
-	local real NBX
-	local real NCX
+	local real targetX
+	local real targetY
 	local location l
 	local integer level = GetUnitAbilityLevel(trigUnit,'A0CY')
 	local integer NCI = LoadInteger(HY, h, 0)
@@ -51603,8 +51603,8 @@ function NNI takes nothing returns boolean
 	set NBI = GetDistanceBetween(x1, y1, x2, y2)
 	set J0R = NBI / IMaxBJ((58 -count), 1)
 	set DFR =(count -29)*(count -29)
-	set NBX = x1 + J0R * Cos(a * bj_DEGTORAD)
-	set NCX = y1 + J0R * Sin(a * bj_DEGTORAD)
+	set targetX = x1 + J0R * Cos(a * bj_DEGTORAD)
+	set targetY = y1 + J0R * Sin(a * bj_DEGTORAD)
 	if count < 58 then
 		if O0X(whichUnit) == false then
 			call SetUnitFlyHeight(whichUnit, 775 -DFR, 0)
@@ -51612,7 +51612,7 @@ function NNI takes nothing returns boolean
 		if IsUnitType(whichUnit, UNIT_TYPE_HERO) then
 			call SaveBoolean(OtherHashTable, GetHandleId(whichUnit), 99, true)
 		endif
-		call SetUnitPosition(whichUnit, NBX, NCX)
+		call SetUnitPosition(whichUnit, targetX, targetY)
 	else
 		if O0X(whichUnit) == false then
 			call SetUnitFlyHeight(whichUnit, GetUnitDefaultFlyHeight(whichUnit), 0)
@@ -56242,34 +56242,34 @@ function H7I takes unit whichUnit, unit targetUnit, integer level returns nothin
 	local real a = AngleBetweenXY(sx, sy, tx, ty)
 	local real GIX = GetDistanceBetween(sx, sy, tx, ty)
 	local real d = GetRandomReal(GIX * .3, GIX * .8)
-	local real NBX = sx + d * Cos(a * bj_DEGTORAD)
-	local real NCX = sy + d * Sin(a * bj_DEGTORAD)
-	local unit u = CreateUnit(GetOwningPlayer(whichUnit),'h06J', NBX, NCX, 0)
+	local real targetX = sx + d * Cos(a * bj_DEGTORAD)
+	local real targetY = sy + d * Sin(a * bj_DEGTORAD)
+	local unit u = CreateUnit(GetOwningPlayer(whichUnit),'h06J', targetX, targetY, 0)
 	local unit u2
 	local group g
 	local trigger t
 	local integer h
-	call SetUnitX(whichUnit, NBX)
-	call SetUnitY(whichUnit, NCX)
+	call SetUnitX(whichUnit, targetX)
+	call SetUnitY(whichUnit, targetY)
 	call SetUnitFacing(whichUnit,-a)
 	call PlaySoundOnUnitBJ(OC, 100, targetUnit)
 	if targetUnit != CT then
 		call UnitAddAbilityToTimed(whichUnit,'A3K9', level, 1.2, 0)
-		set NBX = sx +(d -25)* Cos(a * bj_DEGTORAD)
-		set NCX = sy +(d -25)* Sin(a * bj_DEGTORAD)
+		set targetX = sx +(d -25)* Cos(a * bj_DEGTORAD)
+		set targetY = sy +(d -25)* Sin(a * bj_DEGTORAD)
 		call EPX(targetUnit, 4405, 1)
-		call SetUnitX(targetUnit, NBX)
-		call SetUnitY(targetUnit, NCX)
+		call SetUnitX(targetUnit, targetX)
+		call SetUnitY(targetUnit, targetY)
 		call SetUnitFacing(targetUnit, a)
 		call IssueTargetOrderById(whichUnit, 851983, targetUnit)
 		set g = AllocationGroup(313)
-		set LIV = NBX
-		set LAV = NCX
+		set LIV = targetX
+		set LAV = targetY
 		set LNV = whichUnit
 		set LBV = targetUnit
 		call GroupEnumUnitsInRange(g, sx, sy, 1400, Condition(function H6I))
 		call DeallocateGroup(g)
-		call KillUnit(CreateUnit(GetOwningPlayer(whichUnit),'h06J', NBX, NCX, 0))
+		call KillUnit(CreateUnit(GetOwningPlayer(whichUnit),'h06J', targetX, targetY, 0))
 	endif
 	call KillUnit(u)
 	set whichUnit = null
@@ -58612,8 +58612,8 @@ function M7I takes nothing returns boolean
 	local integer level =(LoadInteger(HY, h, 5))
 	local integer count = GetTriggerEvalCount(t)-26
 	local unit whichUnit =(LoadUnitHandle(HY, h, 2))
-	local real NBX
-	local real NCX
+	local real targetX
+	local real targetY
 	local unit dummyCaster
 	local group g
 	if count == 1 then
@@ -58623,19 +58623,19 @@ function M7I takes nothing returns boolean
 		set dummyCaster =(LoadUnitHandle(HY, h, 19))
 	endif
 	if count > 0 then
-		set NBX = CoordinateX50(GetUnitX(dummyCaster)+ 15* Cos(a))
-		set NCX = CoordinateY50(GetUnitY(dummyCaster)+ 15* Sin(a))
-		call SetUnitX(dummyCaster, NBX)
-		call SetUnitY(dummyCaster, NCX)
+		set targetX = CoordinateX50(GetUnitX(dummyCaster)+ 15* Cos(a))
+		set targetY = CoordinateY50(GetUnitY(dummyCaster)+ 15* Sin(a))
+		call SetUnitX(dummyCaster, targetX)
+		call SetUnitY(dummyCaster, targetY)
 		if (count > 1 and ModuloInteger(count, 10) == 0) or count == 1 then
 			set g = AllocationGroup(341)
 			set U2 = whichUnit
 			set S2 = 40 + 20 * level
-			call GroupEnumUnitsInRange(g, NBX, NCX, 300, Condition(function DHX))
+			call GroupEnumUnitsInRange(g, targetX, targetY, 300, Condition(function DHX))
 			set X3 = count > LoadInteger(HY, h, 7)
 			call ForGroup(g, function M6I)
 			call DeallocateGroup(g)
-			call DestroyEffect(AddSpecialEffect("Objects\\Spawnmodels\\Other\\NeutralBuildingExplosion\\NeutralBuildingExplosion.mdl", NBX, NCX))
+			call DestroyEffect(AddSpecialEffect("Objects\\Spawnmodels\\Other\\NeutralBuildingExplosion\\NeutralBuildingExplosion.mdl", targetX, targetY))
 		endif
 		if count > LoadInteger(HY, h, 7) then
 			call FlushChildHashtable(HY, h)
@@ -59906,9 +59906,9 @@ function QCI takes nothing returns nothing
 	local real tx = LoadReal(HY, h, 47)
 	local real ty = LoadReal(HY, h, 48)
 	local real a = LoadReal(HY, h, 13)
-	local real NBX = GetUnitX(missileDummy)+ 30 * Cos(a)
-	local real NCX = GetUnitY(missileDummy)+ 30 * Sin(a)
-	if (NBX -tx)*(NBX -tx)+(NCX -ty)*(NCX -ty)< 1200 then
+	local real targetX = GetUnitX(missileDummy)+ 30 * Cos(a)
+	local real targetY = GetUnitY(missileDummy)+ 30 * Sin(a)
+	if (targetX -tx)*(targetX -tx)+(targetY -ty)*(targetY -ty)< 1200 then
 		call SetUnitX(missileDummy, tx)
 		call SetUnitY(missileDummy, ty)
 		call QBI(missileDummy, tx, ty, LoadInteger(HY, h, 0))
@@ -59917,8 +59917,8 @@ function QCI takes nothing returns nothing
 		call KillUnit(missileDummy)
 		call DestroyTimer(t)
 	else
-		call SetUnitX(missileDummy, NBX)
-		call SetUnitY(missileDummy, NCX)
+		call SetUnitX(missileDummy, targetX)
+		call SetUnitY(missileDummy, targetY)
 	endif
 	set t = null
 	set missileDummy = null
@@ -65908,15 +65908,15 @@ function X1A takes nothing returns nothing
 	local integer level = LoadInteger(HY, h, 0)
 	local real X3A =(LoadReal(HY, h, 6))
 	local real X4A =(LoadReal(HY, h, 7))
-	local real NBX = GetUnitX(u)
-	local real NCX = GetUnitY(u)
-	if (NBX -X3A)*(NBX -X3A)+(NCX -X4A)*(NCX -X4A)> 900 then
+	local real targetX = GetUnitX(u)
+	local real targetY = GetUnitY(u)
+	if (targetX -X3A)*(targetX -X3A)+(targetY -X4A)*(targetY -X4A)> 900 then
 		set dummyCaster = CreateUnit(GetOwningPlayer(X2A),('h002'), GetUnitX(u), GetUnitY(u), 0)
 		call SetUnitAbilityLevel(dummyCaster,('A0I2'), level)
 		call SetUnitAbilityLevel(dummyCaster,('A0HY'), level)
 		call UnitApplyTimedLife(dummyCaster,'BTLF', 7)
-		call SaveReal(HY, h, 6,((NBX)* 1.))
-		call SaveReal(HY, h, 7,((NCX)* 1.))
+		call SaveReal(HY, h, 6,((targetX)* 1.))
+		call SaveReal(HY, h, 7,((targetY)* 1.))
 	endif
 	set N5O = N5O + .2
 	call SaveReal(HY, h, 57,((N5O)* 1.))
@@ -65970,8 +65970,8 @@ function X8A takes nothing returns nothing
 	local real sx = GetUnitX(missileDummy)
 	local real sy = GetUnitY(missileDummy)
 	local real I3X = Atan2(ty -sy, tx -sx)
-	local real NBX = CoordinateX50(GetUnitX(missileDummy)+ 30 * Cos(I3X))
-	local real NCX = CoordinateY50(GetUnitY(missileDummy)+ 30 * Sin(I3X))
+	local real targetX = CoordinateX50(GetUnitX(missileDummy)+ 30 * Cos(I3X))
+	local real targetY = CoordinateY50(GetUnitY(missileDummy)+ 30 * Sin(I3X))
 	local unit dummyCaster
 	local integer level = LoadInteger(HY, h, 0)
 	if (LoadBoolean(HY, h, 384)) then
@@ -65983,17 +65983,17 @@ function X8A takes nothing returns nothing
 	else
 		call SaveBoolean(HY, h, 384, true)
 	endif
-	call SetUnitX(missileDummy, NBX)
-	call SetUnitY(missileDummy, NCX)
+	call SetUnitX(missileDummy, targetX)
+	call SetUnitY(missileDummy, targetY)
 	call SetUnitFacing(missileDummy, I3X * bj_RADTODEG)
 	set LW = gg
 	set GW = trigUnit
 	set JW = 50 * level
 	set Q2 = level
-	call GroupEnumUnitsInRange(g, NBX, NCX, 150, Condition(function X7A))
+	call GroupEnumUnitsInRange(g, targetX, targetY, 150, Condition(function X7A))
 	call ForGroup(g, function X5A)
 	call DeallocateGroup(g)
-	if (NBX -tx)*(NBX -tx)+(NCX -ty)*(NCX -ty)< 1600 then
+	if (targetX -tx)*(targetX -tx)+(targetY -ty)*(targetY -ty)< 1600 then
 		call PauseTimer(t)
 		call FlushChildHashtable(HY, h)
 		call KillUnit(missileDummy)
@@ -69651,8 +69651,8 @@ function N8E takes nothing returns nothing
 	local real y = GetUnitY(whichUnit)
 	local real a = AngleBetweenXY(x, y, tx, ty)* bj_DEGTORAD
 	local unit dummyCaster
-	local real NBX = CoordinateX50(x + 3000* Cos(a))
-	local real NCX = CoordinateY50(y + 3000* Sin(a))
+	local real targetX = CoordinateX50(x + 3000* Cos(a))
+	local real targetY = CoordinateY50(y + 3000* Sin(a))
 	local integer i = 1
 	local trigger t = CreateTrigger()
 	local integer h = GetHandleId(t)
@@ -69685,8 +69685,8 @@ function N8E takes nothing returns nothing
 	call SaveReal(HY, h, 6, x * 1.)
 	call SaveReal(HY, h, 7, y * 1.)
 	call SaveReal(HY, h, 137, a * 1.)
-	call SaveReal(HY, h, 47, NBX * 1.)
-	call SaveReal(HY, h, 48, NCX * 1.)
+	call SaveReal(HY, h, 47, targetX * 1.)
+	call SaveReal(HY, h, 48, targetY * 1.)
 	call SaveInteger(HY, h, 0, level)
 	set whichUnit = null
 	set dummyCaster = null
@@ -71013,8 +71013,8 @@ function CSA takes nothing returns boolean
 	local real sy = LoadReal(HY, h, 190)
 	local real tx = GetUnitX(targetUnit)
 	local real ty = GetUnitY(targetUnit)
-	local real NBX
-	local real NCX
+	local real targetX
+	local real targetY
 	local real GXR = LoadReal(HY, h, 23)
 	local real GOR = LoadReal(HY, h, 24)
 	local real a
@@ -71029,10 +71029,10 @@ function CSA takes nothing returns boolean
 		call MoveLightning(APX, true, sx, sy, tx, ty)
 		if GetDistanceBetween(sx, sy, tx, ty)> 325 then
 			set a = Atan2(ty -sy, tx -sx)
-			set NBX = sx + 325 * Cos(a)
-			set NCX = sy + 325 * Sin(a)
-			call SetUnitX(targetUnit, NBX)
-			call SetUnitY(targetUnit, NCX)
+			set targetX = sx + 325 * Cos(a)
+			set targetY = sy + 325 * Sin(a)
+			call SetUnitX(targetUnit, targetX)
+			call SetUnitY(targetUnit, targetY)
 		endif
 	endif
 	set t = null
@@ -71073,9 +71073,9 @@ function CUA takes nothing returns boolean
 	local real JCR = LoadReal(HY, h, 190)
 	local real tx = LoadReal(HY, h, 47)
 	local real ty = LoadReal(HY, h, 48)
-	local real NBX = JBR +(30 *(20 + 4 * 2)/ 30)* count * Cos(a * bj_DEGTORAD)
-	local real NCX = JCR +(30 *(20 + 4 * 2)/ 30)* count * Sin(a * bj_DEGTORAD)
-	local real ZNR = SquareRoot((NBX -tx)*(NBX -tx)+(NCX -ty)*(NCX -ty))
+	local real targetX = JBR +(30 *(20 + 4 * 2)/ 30)* count * Cos(a * bj_DEGTORAD)
+	local real targetY = JCR +(30 *(20 + 4 * 2)/ 30)* count * Sin(a * bj_DEGTORAD)
+	local real ZNR = SquareRoot((targetX -tx)*(targetX -tx)+(targetY -ty)*(targetY -ty))
 	local real ZBR = 700
 	local real ZCR = 175
 	local real ZDR =(1 -ZNR / ZBR)* ZCR * 2
@@ -71093,11 +71093,11 @@ function CUA takes nothing returns boolean
 	if IsUnitType(whichUnit, UNIT_TYPE_HERO) then
 		call SaveBoolean(OtherHashTable, GetHandleId(whichUnit), 99, true)
 	endif
-	call SetUnitX(whichUnit, CoordinateX50(NBX))
-	call SetUnitY(whichUnit, CoordinateY50(NCX))
+	call SetUnitX(whichUnit, CoordinateX50(targetX))
+	call SetUnitY(whichUnit, CoordinateY50(targetY))
 	call EXSetUnitFacing(whichUnit, a)
 	set U2 = whichUnit
-	call GroupEnumUnitsInRange(g, NBX, NCX, 120, Condition(function D8X))
+	call GroupEnumUnitsInRange(g, targetX, targetY, 120, Condition(function D8X))
 	set targetUnit = FirstOfGroup(g)
 	call DeallocateGroup(g)
 	if ZNR < 30 or targetUnit != null or GetTriggerEvalCount(t)> 75 then
@@ -76492,7 +76492,7 @@ function K4A takes nothing returns boolean
 	set whichUnit = null
 	return false
 endfunction
-function K6A takes integer h, integer K5A, real NBX, real NCX returns boolean
+function K6A takes integer h, integer K5A, real targetX, real targetY returns boolean
 	local real x
 	local real y
 	local real t
@@ -76504,7 +76504,7 @@ function K6A takes integer h, integer K5A, real NBX, real NCX returns boolean
 		if t + 10> ECX then
 			set x =(LoadReal(HY, h,( 11000+ i)))
 			set y =(LoadReal(HY, h,( 12000+ i)))
-			if GetDistanceBetween(x, y, NBX, NCX)< 75 then
+			if GetDistanceBetween(x, y, targetX, targetY)< 75 then
 				return true
 			endif
 		endif
@@ -76622,8 +76622,8 @@ function LBA takes nothing returns boolean
 	local real tx =(LoadReal(HY, h, 47))
 	local real ty =(LoadReal(HY, h, 48))
 	local real a = AngleBetweenXY(GRR, GIR, tx, ty)* bj_DEGTORAD
-	local real NBX
-	local real NCX
+	local real targetX
+	local real targetY
 	local real d = GetDistanceBetween(GRR, GIR, tx, ty)
 	local real VEI = U6V(whichUnit)* 2.5 * .02
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
@@ -76641,14 +76641,14 @@ function LBA takes nothing returns boolean
 		call SetUnitAnimationByIndex(L3R, 1)
 	else
 		if d < VEI then
-			set NBX = tx
-			set NCX = ty
+			set targetX = tx
+			set targetY = ty
 		else
-			set NBX = GRR + VEI * Cos(a)
-			set NCX = GIR + VEI * Sin(a)
+			set targetX = GRR + VEI * Cos(a)
+			set targetY = GIR + VEI * Sin(a)
 		endif
-		call SetUnitX(L3R, NBX)
-		call SetUnitY(L3R, NCX)
+		call SetUnitX(L3R, targetX)
+		call SetUnitY(L3R, targetY)
 	endif
 	set t = null
 	set whichUnit = null
@@ -76746,8 +76746,8 @@ function LKA takes nothing returns boolean
 	local real tx =(LoadReal(HY, h, 6))
 	local real ty =(LoadReal(HY, h, 7))
 	local real a
-	local real NBX
-	local real NCX
+	local real targetX
+	local real targetY
 	local real d
 	local real speed =(LoadReal(HY, h, 44))
 	local real VEI = speed * .02
@@ -76806,15 +76806,15 @@ function LKA takes nothing returns boolean
 	else
 		call SetUnitAnimationByIndex(whichUnit, 0)
 		call SetUnitPathing(whichUnit, false)
-		set NBX = GRR + VEI * Cos(a)
-		set NCX = GIR + VEI * Sin(a)
+		set targetX = GRR + VEI * Cos(a)
+		set targetY = GIR + VEI * Sin(a)
 		if IsUnitType(whichUnit, UNIT_TYPE_HERO) then
 			call SaveBoolean(OtherHashTable, GetHandleId(whichUnit), 99, true)
 		endif
-		call SetUnitX(whichUnit,(NBX))
-		call SetUnitY(whichUnit, NCX)
+		call SetUnitX(whichUnit,(targetX))
+		call SetUnitY(whichUnit, targetY)
 		call SaveBoolean(OtherHashTable, GetHandleId(whichUnit), 99, true)
-		call KillTreeByCircle(NBX, NCX, 100)
+		call KillTreeByCircle(targetX, targetY, 100)
 		call SetUnitFacing(whichUnit, a * bj_RADTODEG)
 	endif
 	call K8A(whichUnit, count, GetUnitX(whichUnit), GetUnitY(whichUnit))
