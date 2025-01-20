@@ -32,7 +32,7 @@ scope Morphling
             call UnitSubInvulnerableCount(sw.owner)
 
             set x = MHUnit_ModifyPositionX(sw.owner, x, y)
-            set y = MHUnit_ModifyPositionY(sw.owenr, x, y)
+            set y = MHUnit_ModifyPositionY(sw.owner, x, y)
             call SetUnitX(sw.owner, x)
             call SetUnitY(sw.owner, y)
             return false

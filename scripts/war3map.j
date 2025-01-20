@@ -7324,7 +7324,7 @@ function A2X takes nothing returns nothing
 		call KillDestructable(GetEnumDestructable())
 	endif
 endfunction
-function A3X takes real x, real y, real d returns integer
+function KillTreeByCircle takes real x, real y, real d returns integer
 	local rect r = Rect(x -d, y -d, x + d, y + d)
 	set P2 = 0
 	call EnumDestructablesInRect(r, null, function A2X)
@@ -19800,7 +19800,7 @@ function tp_scroll_cast takes nothing returns boolean
 			call SetUnitY(trigUnit, y)
 			call PauseUnit(trigUnit, true)
 			call PauseUnit(trigUnit, false)
-			call A3X(x, y, 240)
+			call KillTreeByCircle(x, y, 240)
 		endif
 	elseif GetTriggerEventId() == EVENT_UNIT_DEATH or GetSpellAbilityId() == 'A1R5'  then
 		call SaveInteger(HY,(GetHandleId((trigUnit))),(4256), 2)
@@ -19883,7 +19883,7 @@ function tp_boots_cast takes nothing returns boolean
 			call SetUnitY(trigUnit, GetUnitY(stg_u)-1)
 			call PauseUnit(trigUnit, true)
 			call PauseUnit(trigUnit, false)
-			call A3X(x, y, 240)
+			call KillTreeByCircle(x, y, 240)
 			call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Human\\MassTeleport\\MassTeleportTarget.mdl", GetUnitX(trigUnit), GetUnitY(trigUnit)))
 			if LocalPlayer== GetOwningPlayer(trigUnit) then
 				call SelectUnit(CirclesUnit[GetPlayerId(GetOwningPlayer(trigUnit))], false)
@@ -21294,7 +21294,7 @@ function C1O takes nothing returns boolean
 	else
 		call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Human\\FlakCannons\\FlakTarget.mdl", x, y))
 		if ((LoadInteger(HY,(GetHandleId((stg_u))),(4306)))!= 1) and GetUnitAbilityLevel(stg_u,'B08V') == 0 then
-			call A3X(x, y, 150)
+			call KillTreeByCircle(x, y, 150)
 			if IsUnitType(stg_u, UNIT_TYPE_HERO) then
 				call SaveBoolean(OtherHashTable, GetHandleId(stg_u), 99, true)
 			endif
@@ -35972,7 +35972,7 @@ function CGR takes nothing returns nothing
 	else
 		call SetUnitPosition(u, CoordinateX50(GetUnitX(u)+ N3X * Cos(I3X)), CoordinateY50(GetUnitY(u)+ N3X * Sin(I3X)))
 		if ModuloInteger(GetTriggerEvalCount(t), 10) == 0 then
-			call A3X(GetUnitX(u), GetUnitY(u), 150)
+			call KillTreeByCircle(GetUnitX(u), GetUnitY(u), 150)
 		endif
 		call SetUnitFacing(u, I3X * bj_RADTODEG)
 		if GetDistanceBetween(x, y, GetUnitX(u), GetUnitY(u))< 50 or GetDistanceBetween(x, y, GetUnitX(u), GetUnitY(u))> 1200 or GetTriggerEvalCount(t)> 1200. / N3X then
@@ -36563,10 +36563,10 @@ function DNR takes nothing returns nothing
 			call UnitDamageTargetEx(whichUnit, LoadUnitHandle(HY, h, 1), 1, 50 + 50 * GetUnitAbilityLevel(whichUnit,'A461'))
 			call DIR(LoadUnitHandle(HY, h, 1), true)
 			call EYX("Abilities\\Spells\\Orc\\Ensnare\\ensnare_AirTarget.mdl", LoadUnitHandle(HY, h, 1), "origin", 1)
-			call A3X(GetUnitX(LoadUnitHandle(HY, h, 1)), GetUnitY(LoadUnitHandle(HY, h, 1)), 200)
+			call KillTreeByCircle(GetUnitX(LoadUnitHandle(HY, h, 1)), GetUnitY(LoadUnitHandle(HY, h, 1)), 200)
 		endif
 		call SetUnitFlyHeight(whichUnit, LoadReal(HY, h, 290), 0)
-		call A3X(GetUnitX(whichUnit), GetUnitY(whichUnit), 200)
+		call KillTreeByCircle(GetUnitX(whichUnit), GetUnitY(whichUnit), 200)
 		call PauseTimer(GetExpiredTimer())
 		call FlushChildHashtable(HY, h)
 		call DestroyTimer(GetExpiredTimer())
@@ -37195,7 +37195,7 @@ function D5R takes nothing returns boolean
 		endloop
 		call DeallocateGroup(g2)
 		if ModuloInteger(count, 10) == 1 then
-			call A3X(NBX, NCX, 325)
+			call KillTreeByCircle(NBX, NCX, 325)
 		endif
 	else
 		set TYIPP = 140
@@ -37803,7 +37803,7 @@ endfunction
 function F0R takes unit u, real x, real y, group CNO, integer level returns nothing
 	local group g = AllocationGroup(129)
 	local unit u2
-	call A3X(x, y, 150)
+	call KillTreeByCircle(x, y, 150)
 	call GroupEnumUnitsInRange(g, x, y, 150, null)
 	loop
 		set u2 = FirstOfGroup(g)
@@ -39130,7 +39130,7 @@ function HKR takes nothing returns boolean
 	set XK[1]= LoadInteger(HY, WFV, 1)* GerHeroMainAttributesValue(u)
 	call SaveInteger(HY, WFV, 0, UYX + 1)
 	call GroupEnumUnitsInRange(AK, GetWidgetX(u), GetWidgetY(u), 175, Condition(function HJR))
-	call A3X(GetUnitX(u), GetUnitY(u), 150)
+	call KillTreeByCircle(GetUnitX(u), GetUnitY(u), 150)
 	set trig = null
 	set u = null
 	set g = null
@@ -39825,7 +39825,7 @@ function J_R takes nothing returns boolean
 		call SetUnitState(targetUnit, UNIT_STATE_MANA, RMaxBJ(GetUnitState(targetUnit, UNIT_STATE_MANA)-J1R, 0))
 	else
 		call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Human\\ManaFlare\\ManaFlareBoltImpact.mdl", x, y))
-		call A3X(x, y, 150)
+		call KillTreeByCircle(x, y, 150)
 		if ((LoadInteger(HY,(GetHandleId((targetUnit))),(4261))) == 1) == false then
 			call SetUnitPosition(targetUnit, x + J0R * Cos(a * bj_DEGTORAD), y + J0R * Sin(a * bj_DEGTORAD))
 		endif
@@ -41398,7 +41398,7 @@ function MAR takes nothing returns boolean
 	call SetUnitVertexColorEx(whichUnit,-1,-1,-1, 0)
 	if Y2X == 0 or GetUnitState(whichUnit, UNIT_STATE_MANA)< 1 then
 		call DestroyLightning(APX)
-		call A3X(NBX, NCX, 75)
+		call KillTreeByCircle(NBX, NCX, 75)
 		call DestroyEffect((LoadEffectHandle(HY, h, 32)))
 		call RemoveUnit(dummyCaster)
 		call RemoveUnit(MNR)
@@ -41408,7 +41408,7 @@ function MAR takes nothing returns boolean
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 	else
-		call A3X(NBX, NCX, 75)
+		call KillTreeByCircle(NBX, NCX, 75)
 	endif
 	set t = null
 	set dummyCaster = null
@@ -41517,7 +41517,7 @@ function MGR takes nothing returns nothing
 endfunction
 function MHR takes nothing returns nothing
 	call SetUnitPosition(GetEnumUnit(), GetUnitX(GetEnumUnit())+ 40 * Cos(LA), GetUnitY(GetEnumUnit())+ 40 * Sin(LA))
-	call A3X(GetUnitX(GetEnumUnit()), GetUnitY(GetEnumUnit()), 200)
+	call KillTreeByCircle(GetUnitX(GetEnumUnit()), GetUnitY(GetEnumUnit()), 200)
 	call SetUnitPathing(GetEnumUnit(), false)
 endfunction
 function MJR takes nothing returns nothing
@@ -41538,7 +41538,7 @@ function MJR takes nothing returns nothing
 		call GroupAddGroup(g, LoadGroupHandle(HY, h, 10))
 		call ForGroup(LoadGroupHandle(HY, h, 10), function MGR)
 		call DeallocateGroup(g)
-		call A3X(x, y, 200)
+		call KillTreeByCircle(x, y, 200)
 		call DestroyLightning(LoadLightningHandle(HY, h, 11))
 		call DeallocateGroup(LoadGroupHandle(HY, h, 10))
 		call DestroyTimerAndFlushHT_HY(t)
@@ -41898,7 +41898,7 @@ function M7R takes nothing returns nothing
 	else
 		call SetUnitX(u, M8R)
 		call SetUnitY(u, M9R)
-		call A3X(M8R, M9R, 100)
+		call KillTreeByCircle(M8R, M9R, 100)
 	endif
 	set u = null
 endfunction
@@ -42148,7 +42148,7 @@ function PKR takes nothing returns boolean
 		call SaveReal(HY, h, 7,((GetUnitY(whichUnit))* 1.))
 		call SetUnitX(dummyUnit, GetUnitX(whichUnit))
 		call SetUnitY(dummyUnit, GetUnitY(whichUnit))
-		call A3X(GetUnitX(whichUnit), GetUnitY(whichUnit), 100)
+		call KillTreeByCircle(GetUnitX(whichUnit), GetUnitY(whichUnit), 100)
 		set PPR = GetDistanceBetween(x, y, GetUnitX(whichUnit), GetUnitY(whichUnit))
 		set PTR = PTR + PPR
 		call SaveReal(HY, h, 138,((PTR)* 1.))
@@ -42445,7 +42445,7 @@ function QXR takes nothing returns boolean
 			call SetUnitX(targetUnit, CoordinateX50(M8R))
 			call SetUnitY(targetUnit, CoordinateY50(M9R))
 		endif
-		call A3X(M8R, M9R, 150)
+		call KillTreeByCircle(M8R, M9R, 150)
 		call SaveReal(HY, h, 23,((M8R)* 1.))
 		call SaveReal(HY, h, 24,((M9R)* 1.))
 		set gg = AllocationGroup(181)
@@ -45284,7 +45284,7 @@ function W6R takes nothing returns nothing
 	local real a = Atan2(y -JJV, x -JHV)
 	set x = CoordinateX50(x + 40 * Cos(a))
 	set y = CoordinateY50(y + 40 * Sin(a))
-	call A3X(x, y, 150)
+	call KillTreeByCircle(x, y, 150)
 	call SetUnitX(targetUnit, x)
 	call SetUnitY(targetUnit, y)
 	set targetUnit = null
@@ -45463,7 +45463,7 @@ function YRR takes nothing returns nothing
 		endif
 		call GroupRemoveUnit(g, u)
 	endloop
-	call A3X(LoadReal(HY, h, 10), LoadReal(HY, h, 11), 225)
+	call KillTreeByCircle(LoadReal(HY, h, 10), LoadReal(HY, h, 11), 225)
 	call FlushChildHashtable(HY, h)
 	call DestroyTimer(t)
 	set whichUnit = null
@@ -48488,7 +48488,7 @@ function XPI takes nothing returns nothing
 			call UnitRemoveAbility(u,'Avul')
 			set nx = LoadReal(HY, h, 100 * i)
 			set ny = LoadReal(HY, h, 100 * i + 1)
-			call A3X(nx, ny, 200)
+			call KillTreeByCircle(nx, ny, 200)
 			call SetUnitPosition(u, nx, ny)
 			if IsUnitIllusion(u) then
 				call UnitPauseTimedLife(u, false)
@@ -51826,7 +51826,7 @@ function NNI takes nothing returns boolean
 			call SaveUnitHandle(OtherHashTable2,'A3E9', 1, trigUnit)
 			call ExecuteFunc("NDI")
 		endif
-		call A3X(x2, y2, 300)
+		call KillTreeByCircle(x2, y2, 300)
 		call NRI(trigUnit, x2, y2, 300, 75 * NCI)
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
@@ -52721,8 +52721,8 @@ function XDE takes nothing returns nothing
 		call TriggerRegisterTimerEvent(t, 0, false)
 		call TriggerAddCondition(t, Condition(function BSI))
 		call ALX("SPLK", x1, y1, x2, y2, .5, 0, 1, 1, .3)
-		call A3X(x1, y1, 300)
-		call A3X(x2, y2, 300)
+		call KillTreeByCircle(x1, y1, 300)
+		call KillTreeByCircle(x2, y2, 300)
 	endif
 	set whichUnit = null
 	set targetUnit = null
@@ -53637,7 +53637,7 @@ function DVI takes nothing returns boolean
 		set d = 75
 	endif
 	call DestroyEffect(AddSpecialEffect("effects\\Tornado.mdx", x, y))
-	set DEI = DEI + A3X(x, y, 75)
+	set DEI = DEI + KillTreeByCircle(x, y, 75)
 	call SaveInteger(HY, h, 354,(DEI))
 	set KQV = D7R
 	set KSV = missileDummy
@@ -55191,7 +55191,7 @@ function F8I takes nothing returns boolean
 	local real x
 	local real y
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH or GetTriggerEvalCount(t)> 10 then
-		call A3X(GetUnitX(targetUnit), GetUnitY(targetUnit), 200)
+		call KillTreeByCircle(GetUnitX(targetUnit), GetUnitY(targetUnit), 200)
 		call DestroyEffect((LoadEffectHandle(HY, h, 32)))
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
@@ -55431,7 +55431,7 @@ function GCI takes nothing returns boolean
 		set LEV = false
 	endif
 	if UnitIsDead(whichUnit) == false then
-		call A3X(x, y, 100)
+		call KillTreeByCircle(x, y, 100)
 	endif
 	set whichUnit = null
 	set t = null
@@ -55510,7 +55510,7 @@ function GHI takes nothing returns boolean
 		call CleanCurrentTrigger(t)
 		call KillUnit(dummyCaster)
 		call SetUnitPathing(targetUnit, true)
-		call A3X(GetUnitX(targetUnit), GetUnitY(targetUnit), 175)
+		call KillTreeByCircle(GetUnitX(targetUnit), GetUnitY(targetUnit), 175)
 		if MDR == false then
 			call UnitRemoveAbility(whichUnit,'Abun')
 		endif
@@ -55527,7 +55527,7 @@ function GHI takes nothing returns boolean
 			call CleanCurrentTrigger(t)
 			call KillUnit(dummyCaster)
 			call SetUnitPathing(targetUnit, true)
-			call A3X(GetUnitX(targetUnit), GetUnitY(targetUnit), 175)
+			call KillTreeByCircle(GetUnitX(targetUnit), GetUnitY(targetUnit), 175)
 			if MDR == false then
 				call UnitRemoveAbility(whichUnit,'Abun')
 			endif
@@ -57040,7 +57040,7 @@ function OFE takes nothing returns nothing
 	set LGV = y
 	set LHV = lv
 	call ForGroup(g, function J_I)
-	call A3X(x, y, 200)
+	call KillTreeByCircle(x, y, 200)
 	call DeallocateGroup(g)
 	set g = null
 endfunction
@@ -57734,7 +57734,7 @@ function OME takes nothing returns nothing
 	endif
 	call SetUnitPosition(K3I, CoordinateX50(x), CoordinateY50(y))
 	call UnitApplyTimedLife(K3I,'BTLF', 10+ 5 * level)
-	call A3X(x, y, 300)
+	call KillTreeByCircle(x, y, 300)
 	set dx = x + 200* Cos(0 * bj_DEGTORAD)
 	set dy = y + 200* Sin(0 * bj_DEGTORAD)
 	set K4I = AngleBetweenXY(dx, dy, x, y)
@@ -59053,7 +59053,7 @@ function PNI takes nothing returns boolean
 	local real M9R
 	local integer c = GetTriggerEvalCount(t)
 	if c > O3O or GetTriggerEventId() == EVENT_WIDGET_DEATH then
-		call A3X(GetUnitX(targetUnit), GetUnitY(targetUnit), 100)
+		call KillTreeByCircle(GetUnitX(targetUnit), GetUnitY(targetUnit), 100)
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 	else
@@ -62305,7 +62305,7 @@ function WSI takes nothing returns nothing
 	endif
 	call SetUnitPathing(u, true)
 	call WMI(WI, u, YI)
-	call A3X(GetUnitX(u), GetUnitY(u), 300)
+	call KillTreeByCircle(GetUnitX(u), GetUnitY(u), 300)
 	set u = null
 endfunction
 function WTI takes nothing returns boolean
@@ -62349,7 +62349,7 @@ function WTI takes nothing returns boolean
 	set VA = NCX
 	call ForGroup(gg, function WQI)
 	if ModuloInteger(GetTriggerEvalCount(t), 3) == 0 then
-		call A3X(NBX, NCX, 200)
+		call KillTreeByCircle(NBX, NCX, 200)
 	endif
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH or GetTriggerEvalCount(t)> WUI then
 		call DestroyEffect((LoadEffectHandle(HY, h, 175)))
@@ -62362,7 +62362,7 @@ function WTI takes nothing returns boolean
 		set WI = whichUnit
 		call IssueTargetOrderById(whichUnit, 851983, FirstOfGroup(gg))
 		call ForGroup(gg, function WSI)
-		call A3X(NBX, NCX, 375)
+		call KillTreeByCircle(NBX, NCX, 375)
 		if IsPointInRegion(TerrainCliffRegion, GetUnitX(whichUnit), GetUnitY(whichUnit)) then
 			set l = DEX(GetUnitX(whichUnit), GetUnitY(whichUnit))
 			if IsUnitType(whichUnit, UNIT_TYPE_HERO) then
@@ -66792,7 +66792,7 @@ function OSA takes nothing returns boolean
 		call CleanCurrentTrigger(t)
 	else
 		call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Human\\FlakCannons\\FlakTarget.mdl", x, y))
-		call A3X(x, y, 150)
+		call KillTreeByCircle(x, y, 150)
 		set x = CoordinateX50(x + EOX * Cos(I3X))
 		set y = CoordinateY50(y + EOX * Sin(I3X))
 		if (IsPointInRegion(TerrainCliffRegion,((x)* 1.),((y)* 1.))) == false then
@@ -71452,7 +71452,7 @@ function CUA takes nothing returns boolean
 		call SetUnitAnimation(whichUnit, "stand")
 		call SetUnitPathing(whichUnit, true)
 		call UnitRemoveAbility(whichUnit,'A1J6')
-		call A3X(GetUnitX(whichUnit), GetUnitY(whichUnit), 100)
+		call KillTreeByCircle(GetUnitX(whichUnit), GetUnitY(whichUnit), 100)
 		if targetUnit != null and IsUnitMagicImmune(targetUnit) == false then
 			call EPX(targetUnit, 4408, 5)
 			call CTA(whichUnit, targetUnit, level)
@@ -71702,7 +71702,7 @@ function DRA takes nothing returns boolean
 	local group g
 	local integer level = LoadInteger(HY, h, 0)
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH or(GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT and GetSpellAbilityId()!='A1Z2' and count > 0) or count > 100  or C6X(whichUnit) then
-		call A3X(x, y, 300)
+		call KillTreeByCircle(x, y, 300)
 		call SetUnitVertexColorEx(whichUnit,-1,-1,-1, 255)
 		if  Rubick_AbilityFilter(whichUnit , 'A1RJ') then
 			call SetPlayerAbilityAvailableEx(GetOwningPlayer(whichUnit),'A1RJ', true)
@@ -71714,7 +71714,7 @@ function DRA takes nothing returns boolean
 		call CleanCurrentTrigger(t)
 	else
 		if ModuloInteger(count, 10) == 0 then
-			call A3X(x, y, 200)
+			call KillTreeByCircle(x, y, 200)
 		endif
 		call SaveInteger(HY, h, 34,(count + 1))
 		if IsUnitType(whichUnit, UNIT_TYPE_HERO) then
@@ -71980,7 +71980,7 @@ function DKA takes nothing returns nothing
 		call ClearSelection()
 		call SelectUnit(DFA, true)
 	endif
-	call A3X(x, y, 400)
+	call KillTreeByCircle(x, y, 400)
 	call SetUnitInvulnerable(whichUnit, true)
 	call ShowUnit(whichUnit, false)
 	call UnitAddPermanentAbility(whichUnit,'A04R')
@@ -72219,7 +72219,7 @@ function DTA takes nothing returns nothing
 	if LoadBoolean(ObjectHashTable, WFV, 1) then
 		set x1 = CoordinateX50(x1 + 5 * Cos(I3X))
 		set y1 = CoordinateY50(y1 + 5 * Sin(I3X))
-		call A3X(x1, y1, 200)
+		call KillTreeByCircle(x1, y1, 200)
 		if IsUnitType(u, UNIT_TYPE_HERO) then
 			call SaveBoolean(OtherHashTable, GetHandleId(u), 99, true)
 		endif
@@ -74403,7 +74403,7 @@ function G7A takes nothing returns boolean
 		endif
 		call SetUnitX(whichUnit, CoordinateX50(x))
 		call SetUnitY(whichUnit, CoordinateY50(y))
-		call A3X(x, y, 350)
+		call KillTreeByCircle(x, y, 350)
 		call RemoveLocation(l)
 		set l = null
 		call DestroyEffect((LoadEffectHandle(HY, h, 32)))
@@ -74612,8 +74612,8 @@ function HBA takes nothing returns boolean
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 	else
-		call A3X(tx, ty, 250)
-		call A3X(sx, sy, 250)
+		call KillTreeByCircle(tx, ty, 250)
+		call KillTreeByCircle(sx, sy, 250)
 		set s = "Objects\\Spawnmodels\\NightElf\\NECancelDeath\\NECancelDeath.mdl"
 		if GetTriggerEvalCount(t) == 1 then
 			if UnitIsDead(whichUnit) == false then
@@ -74772,27 +74772,27 @@ function HDA takes unit whichUnit, unit targetUnit, real sx, real sy, real a2 re
 	set x = tx + 200* Cos(HFA * bj_DEGTORAD)
 	set y = ty + 200* Sin(HFA * bj_DEGTORAD)
 	call RemoveDestructableToTimed(CreateDestructable('B006', x, y,-1 * HFA, .6, 1), 7)
-	call A3X(x, y, 300)
+	call KillTreeByCircle(x, y, 300)
 	set HFA = a -40
 	set x = tx + 200* Cos(HFA * bj_DEGTORAD)
 	set y = ty + 200* Sin(HFA * bj_DEGTORAD)
 	call RemoveDestructableToTimed(CreateDestructable('B006', x, y,-1 * HFA, .6, 1), 7)
-	call A3X(x, y, 300)
+	call KillTreeByCircle(x, y, 300)
 	set HFA = a -80
 	set x = tx + 200* Cos(HFA * bj_DEGTORAD)
 	set y = ty + 200* Sin(HFA * bj_DEGTORAD)
 	call RemoveDestructableToTimed(CreateDestructable('B006', x, y,-1 * HFA, .6, 1), 7)
-	call A3X(x, y, 300)
+	call KillTreeByCircle(x, y, 300)
 	set HFA = a + 40
 	set x = tx + 200* Cos(HFA * bj_DEGTORAD)
 	set y = ty + 200* Sin(HFA * bj_DEGTORAD)
 	call RemoveDestructableToTimed(CreateDestructable('B006', x, y,-1 * HFA, .6, 1), 7)
-	call A3X(x, y, 300)
+	call KillTreeByCircle(x, y, 300)
 	set HFA = a + 80
 	set x = tx + 200* Cos(HFA * bj_DEGTORAD)
 	set y = ty + 200* Sin(HFA * bj_DEGTORAD)
 	call RemoveDestructableToTimed(CreateDestructable('B006', x, y,-1 * HFA, .6, 1), 7)
-	call A3X(x, y, 300)
+	call KillTreeByCircle(x, y, 300)
 endfunction
 function HGA takes nothing returns nothing
 	if IsUnitInGroup(GetEnumUnit(), P3V) == false then
@@ -75076,7 +75076,7 @@ function HWA takes nothing returns boolean
 		call SetUnitPosition(targetUnit, nX, nY)
 		call SetUnitX(targetUnit, nX)
 		call SetUnitY(targetUnit, nY)
-		call A3X(nX, nY, 120)
+		call KillTreeByCircle(nX, nY, 120)
 		call SaveReal(HY,(h), 23,((nX)* 1.))
 		call SaveReal(HY,(h), 24,((nY)* 1.))
 	endif
@@ -75201,7 +75201,7 @@ function H5A takes nothing returns boolean
 	call SetUnitFacing(d, a * bj_RADTODEG  -180)
 	call SetUnitScale(d, REI, REI, REI)
 	if GetDistanceBetween(x, y, tx, ty)< r * 2 or c == 150 then
-		call A3X(x, y, 200)
+		call KillTreeByCircle(x, y, 200)
 		set g = AllocationGroup(452)
 		call GroupEnumUnitsInRange(g, x, y, KJR, Condition(function DHX))
 		call ForGroup(g, function H4A)
@@ -75224,7 +75224,7 @@ function H5A takes nothing returns boolean
 		call FlushChildHashtable(HY,(h))
 	else
 		if ModuloInteger(GetTriggerEvalCount(t), 5) == 0 then
-			call A3X(x, y, 200)
+			call KillTreeByCircle(x, y, 200)
 			set g = AllocationGroup(453)
 			call GroupEnumUnitsInRange(g, x, y, KJR, Condition(function DHX))
 			call ForGroup(g, function H4A)
@@ -75586,7 +75586,7 @@ function JHA takes nothing returns boolean
 		set LI = LoadInteger(HY, h, 0)
 		call ForGroup(g, function JGA)
 		call DeallocateGroup(g)
-		call A3X(GetUnitX(targetUnit), GetUnitY(targetUnit), 150)
+		call KillTreeByCircle(GetUnitX(targetUnit), GetUnitY(targetUnit), 150)
 		call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Orc\\WarStomp\\WarStompCaster.mdl", GetUnitX(targetUnit), GetUnitY(targetUnit)))
 		call DestroyEffect(LoadEffectHandle(HY, h, 32))
 		call DestroyEffect(LoadEffectHandle(HY, h, 176))
@@ -77121,7 +77121,7 @@ function LKA takes nothing returns boolean
 	elseif d < VEI then
 		call SetUnitX(whichUnit, tx)
 		call SetUnitY(whichUnit,(ty))
-		call A3X(tx, ty, 100)
+		call KillTreeByCircle(tx, ty, 100)
 		call SaveBoolean(OtherHashTable, GetHandleId(whichUnit), 99, true)
 		call LOA(whichUnit, L3R, tx, ty)
 		set L3R = LGA(whichUnit, XVA, XEA)
@@ -77157,7 +77157,7 @@ function LKA takes nothing returns boolean
 		call SetUnitX(whichUnit,(NBX))
 		call SetUnitY(whichUnit, NCX)
 		call SaveBoolean(OtherHashTable, GetHandleId(whichUnit), 99, true)
-		call A3X(NBX, NCX, 100)
+		call KillTreeByCircle(NBX, NCX, 100)
 		call SetUnitFacing(whichUnit, a * bj_RADTODEG)
 	endif
 	call K8A(whichUnit, count, GetUnitX(whichUnit), GetUnitY(whichUnit))
@@ -77923,7 +77923,7 @@ function D2E takes nothing returns nothing
 	local real a = AngleBetweenXY(GetUnitX(whichUnit), GetUnitY(whichUnit), x, y)* bj_DEGTORAD
 	set x = GetUnitX(whichUnit)
 	set y = GetUnitY(whichUnit)
-	if A3X(x, y, 300)> 0 then
+	if KillTreeByCircle(x, y, 300)> 0 then
 		set QWV = 3
 	else
 		set QWV = 1
@@ -77984,7 +77984,7 @@ function MHA takes nothing returns boolean
 		call DeallocateGroup(g)
 	endif
 	if count ==(KFR) then
-		call A3X(GetUnitX(trigUnit), GetUnitY(trigUnit), 90)
+		call KillTreeByCircle(GetUnitX(trigUnit), GetUnitY(trigUnit), 90)
 		call DeallocateGroup(KHR)
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
@@ -78246,7 +78246,7 @@ function M1A takes nothing returns boolean
 		set a = AngleBetweenXY(GetUnitX(missileDummy), GetUnitY(missileDummy), tx, ty)* bj_DEGTORAD
 		set x = GetUnitX(missileDummy)+ 18 * Cos(a)
 		set y = GetUnitY(missileDummy)+ 18 * Sin(a)
-		call A3X(x, y, 175)
+		call KillTreeByCircle(x, y, 175)
 		if GetDistanceBetween(x, y, tx, ty)< 40 then
 			set x = tx
 			set y = ty
@@ -78270,7 +78270,7 @@ function M1A takes nothing returns boolean
 		if count == 25 then
 			set x = GetUnitX(missileDummy)
 			set y = GetUnitY(missileDummy)
-			call A3X(x, y, 175)
+			call KillTreeByCircle(x, y, 175)
 			set count = 0
 			set U2 = whichUnit
 			set Q_V = whichUnit
@@ -78295,7 +78295,7 @@ function M1A takes nothing returns boolean
 		set a = AngleBetweenXY(GetUnitX(missileDummy), GetUnitY(missileDummy), GetUnitX(whichUnit), GetUnitY(whichUnit))* bj_DEGTORAD
 		set x = GetUnitX(missileDummy)+ 16 * Cos(a)
 		set y = GetUnitY(missileDummy)+ 16 * Sin(a)
-		call A3X(x, y, 175)
+		call KillTreeByCircle(x, y, 175)
 		call SetUnitX(missileDummy, x)
 		call SetUnitY(missileDummy, y)
 		set U2 = whichUnit
@@ -79353,7 +79353,7 @@ function P5A takes nothing returns nothing
 	if UnitAlive(u) and LoadBoolean(ObjectHashTable, GetHandleId(u), StringHash("morphedburn")) then
 		call RAX(u, LoadInteger(ObjectHashTable, WFV, 1))
 		call RAX(u, LoadInteger(ObjectHashTable, WFV, 0))
-		call A3X(GetWidgetX(u), GetWidgetY(u), 150)
+		call KillTreeByCircle(GetWidgetX(u), GetWidgetY(u), 150)
 		call SaveBoolean(ObjectHashTable, GetHandleId(u), StringHash("morphedburn"), false)
 		call SaveInteger(ObjectHashTable, GetHandleId(u), StringHash("morphedburn"), 0)
 		call FixUnitSkillsBug(u)
@@ -79374,7 +79374,7 @@ function YQV takes nothing returns nothing
 		call FixUnitSkillsBug(u)
 		call WJV(u,'C029','D029', 6)
 	else
-		call A3X(GetUnitX(u), GetUnitY(u), 200)
+		call KillTreeByCircle(GetUnitX(u), GetUnitY(u), 200)
 	endif
 	set u = null
 endfunction

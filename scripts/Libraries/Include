@@ -12,7 +12,8 @@
 #include "Utilities\\Line Segment Enumeration.j"
 
 #include "ShockWave.j"
-#include "AbilityUtils.j"
-#include "AbilityOrderId.j"
+#include "Ability\\BuffUtils.j"
+#include "Ability\\AbilityUtils.j"
+#include "Ability\\AbilityOrderId.j"
 #include "Unit\\UnitLimitation.j"
 #include "Unit\\UnitModel.j"

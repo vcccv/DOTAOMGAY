@@ -59,7 +59,7 @@ scope Clockwerk
             if targetUnit != null then
                 call PauseUnit(targetUnit, false)
             endif
-            call A3X(GetUnitX(trigUnit), GetUnitY(trigUnit), 100)
+            call KillTreeByCircle(GetUnitX(trigUnit), GetUnitY(trigUnit), 100)
             call DeallocateGroup(KHR)
             call FlushChildHashtable(HY, h)
             call CleanCurrentTrigger(t)

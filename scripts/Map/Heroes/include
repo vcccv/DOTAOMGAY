@@ -10,6 +10,7 @@
 #include "Int\\DeathProphet.j"
 #include "Int\\Lina.j"
 #include "Int\\QueenOfPain.j"
+#include "Int\\Invoker.j"
 
 #include "Agi\\VengefulSpirit.j"
 #include "Agi\\FacelessVoid.j"

@@ -109,7 +109,7 @@ library UnitLimitation requires UnitModel
         local integer count = Table[h][UNIT_DISABLE_ATTACK_COUNT] + 1
         set Table[h][UNIT_DISABLE_ATTACK_COUNT] = count
         if count == 1 then
-            call MHAbility_Disable(whichUnit, 'Aatk', true)
+            call MHAbility_Disable(whichUnit, 'Aatk', true, false)
         endif
     endfunction
     function UnitSubDisableAttackCount takes unit whichUnit returns nothing
@@ -117,7 +117,7 @@ library UnitLimitation requires UnitModel
         local integer count = Table[h][UNIT_DISABLE_ATTACK_COUNT] - 1
         set Table[h][UNIT_DISABLE_ATTACK_COUNT] = count
         if count == 0 then
-            call MHAbility_Disable(whichUnit, 'Aatk', false)
+            call MHAbility_Disable(whichUnit, 'Aatk', false, false)
         endif
     endfunction
 

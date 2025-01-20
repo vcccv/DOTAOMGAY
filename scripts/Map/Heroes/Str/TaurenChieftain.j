@@ -54,7 +54,7 @@ scope TaurenChieftain
             call DestroyEffect(AddSpecialEffect("Abilities\\Weapons\\AncientProtectorMissile\\AncientProtectorMissile.mdl", x, y  -250))
             call DestroyEffect(AddSpecialEffect("Abilities\\Weapons\\AncientProtectorMissile\\AncientProtectorMissile.mdl", x, y))
             call DestroyEffect(AddSpecialEffect("Abilities\\Weapons\\AncientProtectorMissile\\AncientProtectorMissile.mdl", x + 250, y))
-            call A3X(x, y, 300)
+            call KillTreeByCircle(x, y, 300)
 
             call GroupEnumUnitsInRange(g, x, y, 315 + MAX_UNIT_COLLISION, null)
             loop

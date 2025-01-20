@@ -157,6 +157,19 @@ library PlayerUtils
             return OriginalHex[GetHandleId(this.color)]
         endmethod
    
+        method colorUnits takes playercolor c returns nothing
+            local unit u
+       
+            call GroupEnumUnitsOfPlayer(ENUM_GROUP, this.handle, null)
+       
+            loop
+                set u = FirstOfGroup(ENUM_GROUP)
+                exitwhen u == null
+                call SetUnitColor(u, c)
+                call GroupRemoveUnit(ENUM_GROUP, u)
+            endloop
+        endmethod
+
         method operator color= takes playercolor c returns nothing
             call SetPlayerColor(this.handle, c)
        
@@ -176,19 +189,6 @@ library PlayerUtils
    
         method operator nameColored takes nothing returns string
             return hex + this.name + "|r"
-        endmethod
-   
-        method colorUnits takes playercolor c returns nothing
-            local unit u
-       
-            call GroupEnumUnitsOfPlayer(ENUM_GROUP, this.handle, null)
-       
-            loop
-                set u = FirstOfGroup(ENUM_GROUP)
-                exitwhen u == null
-                call SetUnitColor(u, c)
-                call GroupRemoveUnit(ENUM_GROUP, u)
-            endloop
         endmethod
    
         static method onLeave takes nothing returns boolean

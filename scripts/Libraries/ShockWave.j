@@ -338,9 +338,7 @@ library ShockwaveLib /*
             if duration != 0. then
                 set shockwave.radiusGrowth = ( shockwave.maxRadius - shockwave.minRadius ) * ( TIMER_TIMEOUT / duration )
             endif
-            if shockwave.minRadius == shockwave.maxRadius then
-                set shockwave.radius = shockwave.maxRadius
-            endif
+            set shockwave.radius = shockwave.minRadius
 
             // 插入头节点时，链表为空
             if tailNode == 0 then
