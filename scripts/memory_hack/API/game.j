@@ -1,5 +1,5 @@
-// by Asphodelus
 #pragma once
+// by Asphodelus
 #include "../memory_hack_constant.j"
 
 
@@ -62,6 +62,12 @@ library AMHGame
     function MHGame_IsReplay takes nothing returns boolean
         JapiPlaceHolder false
     endfunction
+    function MHGame_GetGameStamp takes nothing returns integer
+        JapiPlaceHolder 0
+    endfunction
+    function MHGame_GetLocalStamp takes nothing returns integer
+        JapiPlaceHolder 0
+    endfunction
 endlibrary
 
 
@@ -89,9 +95,6 @@ library AMHGameEvent
         JapiPlaceHolder
     endfunction
     function MHGameExitEvent_Register takes trigger trig returns nothing
-        JapiPlaceHolder
-    endfunction
-    function MHGameDesyncEvent_Register takes trigger trig returns nothing
         JapiPlaceHolder
     endfunction
 endlibrary

@@ -1,5 +1,5 @@
-// by Asphodelus
 #pragma once
+// by Asphodelus
 #include "../memory_hack_constant.j"
 
 

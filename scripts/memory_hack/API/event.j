@@ -1,5 +1,5 @@
-// by Asphodelus
 #pragma once
+// by Asphodelus
 #include "../memory_hack_constant.j"
 
 
@@ -55,5 +55,11 @@ library AMHEvent
     endfunction
     function MHEvent_SetFrame takes integer frame returns nothing
         JapiPlaceHolder
+    endfunction
+    function MHEvent_GetAudio takes nothing returns integer
+        JapiPlaceHolder -1
+    endfunction
+    function MHEvent_SetAudio takes integer audio returns boolean
+        JapiPlaceHolder false
     endfunction
 endlibrary

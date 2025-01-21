@@ -1,5 +1,5 @@
-// by Asphodelus
 #pragma once
+// by Asphodelus
 #include "../memory_hack_constant.j"
 
 
@@ -149,6 +149,9 @@ library AMHGameUI
     function MHUI_GetChatEditBar takes nothing returns integer
         JapiPlaceHolder 0
     endfunction
+    function MHUI_GetChatEditBox takes nothing returns integer
+        JapiPlaceHolder 0
+    endfunction
     function MHUI_IsChatEditBarOn takes nothing returns boolean
         JapiPlaceHolder false
     endfunction
@@ -192,11 +195,6 @@ library AMHGameUIEvent
     endfunction
     function MHUIHPBarEvent_Register takes trigger trig returns nothing
         JapiPlaceHolder
-    endfunction
-    #define MHUIHPBarEvent_GetHPBar()       MHEvent_GetFrame()
-    #define MHUIHPBarEvent_GetUnit()        MHEvent_GetUnit()
-    function MHUIHPBarEvent_GetPoint takes nothing returns integer
-        JapiPlaceHolder 0
     endfunction
     function MHUIHPBarEvent_GetX takes nothing returns real
         JapiPlaceHolder 0.

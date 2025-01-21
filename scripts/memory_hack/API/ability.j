@@ -1,5 +1,5 @@
-// by Asphodelus
 #pragma once
+// by Asphodelus
 #include "../memory_hack_constant.j"
 
 
@@ -357,28 +357,18 @@ library AMHAbilityEvent
     function MHAbilityAddEvent_Register takes trigger trig returns nothing
         JapiPlaceHolder
     endfunction
-    #define MHAbilityAddEvent_GetUnit()                     MHEvent_GetUnit()
-    #define MHAbilityAddEvent_GetAbility()                  MHEvent_GetAbility()
     function MHAbilityRemoveEvent_Register takes trigger trig returns nothing
         JapiPlaceHolder
     endfunction
-    #define MHAbilityRemoveEvent_GetUnit()                  MHEvent_GetUnit()
-    #define MHAbilityRemoveEvent_GetAbility()               MHEvent_GetAbility()
     function MHAbilityStartCooldownEvent_Register takes trigger trig returns nothing
         JapiPlaceHolder
     endfunction
-    #define MHAbilityStartCooldownEvent_GetUnit()           MHEvent_GetUnit()
-    #define MHAbilityStartCooldownEvent_GetAbility()        MHEvent_GetAbility()
     function MHAbilityEndCooldownEvent_Register takes trigger trig returns nothing
         JapiPlaceHolder
     endfunction
-    #define MHAbilityEndCooldownEvent_GetUnit()             MHEvent_GetUnit()
-    #define MHAbilityEndCooldownEvent_GetAbility()          MHEvent_GetAbility()
     function MHAbilityRefreshAuraEvent_Register takes trigger trig returns nothing
         JapiPlaceHolder
     endfunction
-    #define MHAbilityRefreshAuraEvent_GetSource()           MHEvent_GetUnit()
-    #define MHAbilityRefreshAuraEvent_GetAbility()          MHEvent_GetAbility()
     function MHAbilityRefreshAuraEvent_GetTarget takes nothing returns unit
         JapiPlaceHolder null
     endfunction

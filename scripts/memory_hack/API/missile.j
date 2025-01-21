@@ -1,5 +1,5 @@
-// by Asphodelus
 #pragma once
+// by Asphodelus
 #include "../memory_hack_constant.j"
 
 
@@ -74,11 +74,9 @@ library AMHMissileEvent
     function MHMissileLaunchEvent_Register takes trigger trig returns nothing
         JapiPlaceHolder
     endfunction
-    #define MHMissileLaunchEvent_GetMissile()       MHEvent_GetMissile()
     function MHMissileHitEvent_Register takes trigger trig returns nothing
         JapiPlaceHolder
     endfunction
-    #define MHMissileHitEvent_GetMissile()          MHEvent_GetMissile()
     function MHMissileHitEvent_GetTargetUnit takes nothing returns unit
         JapiPlaceHolder null
     endfunction

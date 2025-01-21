@@ -36458,6 +36458,10 @@ Researchtip=学习 暗影之舞[|cffffcc00D|r] - [|cffffcc00等级 %d|r]|n(Shado
 Researchubertip=鱼人夜行者变成潜行形态，持续时间内任何反隐形手段都不会使其显形。|n从学习该技能开始，当在敌人视线之外时，鱼人夜行者会被动地提升移动速度和生命回复速度。生命回复效果对力量英雄有所衰减。|n|n|cff99ccff施法延迟：|r0.5|n|cff99ccff持续时间：|r3/4/4|n|cff99ccff冷却时间：|r75|n|cff99ccff魔法消耗：|r150/200/250|n|n|cffffcc00等级 1|r - 提升30%的移动速度和每秒3%的生命回复速度|n|cffffcc00等级 2|r - 提升35%的移动速度和每秒4%的生命回复速度|n|cffffcc00等级 3|r - 提升40%的移动速度和每秒5%的生命回复速度
 researchhotkey="D"
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNShadowDance.blp
+[B1IN]
+buffart=ReplaceableTextures\CommandButtons\BTNShadowDance
+Bufftip=暗影之舞
+Buffubertip=该单位正在隐形，将保持隐身状态直到进行移动
 [A1MP]
 art=ReplaceableTextures\CommandButtons\BTNDizzy
 researchart=ReplaceableTextures\CommandButtons\BTNDizzy

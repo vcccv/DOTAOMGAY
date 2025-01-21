@@ -1,5 +1,5 @@
-// by Asphodelus
 #pragma once
+// by Asphodelus
 #include "../memory_hack_constant.j"
 
 
@@ -15,33 +15,6 @@ endlibrary
 
 #include "event.j"
 library AMHDamageEvent
-    function MHDamageEvent_SetDamage takes real value returns boolean
-        JapiPlaceHolder false
-    endfunction
-    function MHDamageEvent_IsPhysical takes nothing returns boolean
-        JapiPlaceHolder false
-    endfunction
-    function MHDamageEvent_GetAtkType takes nothing returns attacktype
-        JapiPlaceHolder null
-    endfunction
-    function MHDamageEvent_GetDmgType takes nothing returns damagetype
-        JapiPlaceHolder null
-    endfunction
-    function MHDamageEvent_GetWeapType takes nothing returns weapontype
-        JapiPlaceHolder null
-    endfunction
-    function MHDamageEvent_GetAtkTypeInt takes nothing returns integer
-        JapiPlaceHolder 0
-    endfunction
-    function MHDamageEvent_GetDmgTypeInt takes nothing returns integer
-        JapiPlaceHolder 0
-    endfunction
-    function MHDamageEvent_GetWeapTypeInt takes nothing returns integer
-        JapiPlaceHolder 0
-    endfunction
-    function MHDamageEvent_GetFlag takes nothing returns integer
-        JapiPlaceHolder 0
-    endfunction
     function MHDamagingEvent_Register takes trigger trig returns nothing
         JapiPlaceHolder
     endfunction
@@ -51,8 +24,6 @@ library AMHDamageEvent
     function MHDamagingEvent_GetDamage takes nothing returns real
         JapiPlaceHolder 0.
     endfunction
-    #define MHDamagingEvent_GetTarget()             MHEvent_GetUnit()
-    #define MHDamagingEvent_SetTarget(t)            MHEvent_SetUnit(t)
     function MHDamagingEvent_SetDamage takes real value returns nothing
         JapiPlaceHolder
     endfunction
@@ -95,14 +66,83 @@ library AMHDamageEvent
     function MHDamagingEvent_SetWeapType takes weapontype weap_type returns nothing
         JapiPlaceHolder
     endfunction
+    function MHDamageEvent_Register takes trigger trig returns nothing
+        JapiPlaceHolder
+    endfunction
+    function MHDamageEvent_IsPhysical takes nothing returns boolean
+        JapiPlaceHolder false
+    endfunction
+    function MHDamageEvent_GetDamage takes nothing returns real
+        JapiPlaceHolder 0.
+    endfunction
+    function MHDamageEvent_SetDamage takes real value returns nothing
+        JapiPlaceHolder
+    endfunction
+    function MHDamageEvent_GetSource takes nothing returns unit
+        JapiPlaceHolder null
+    endfunction
+    function MHDamageEvent_SetSource takes unit u returns nothing
+        JapiPlaceHolder
+    endfunction
+    function MHDamageEvent_GetFlag takes nothing returns integer
+        JapiPlaceHolder 0
+    endfunction
+    function MHDamageEvent_GetAtkType takes nothing returns attacktype
+        JapiPlaceHolder null
+    endfunction
+    function MHDamageEvent_GetAtkTypeInt takes nothing returns integer
+        JapiPlaceHolder 0
+    endfunction
+    function MHDamageEvent_GetDmgType takes nothing returns damagetype
+        JapiPlaceHolder null
+    endfunction
+    function MHDamageEvent_GetDmgTypeInt takes nothing returns integer
+        JapiPlaceHolder 0
+    endfunction
+    function MHDamageEvent_GetWeapType takes nothing returns weapontype
+        JapiPlaceHolder null
+    endfunction
+    function MHDamageEvent_GetWeapTypeInt takes nothing returns integer
+        JapiPlaceHolder 0
+    endfunction
+    function MHNativeDamageEvent_IsPhysical takes nothing returns boolean
+        JapiPlaceHolder false
+    endfunction
+    function MHNativeDamageEvent_GetDamage takes nothing returns real
+        JapiPlaceHolder 0.
+    endfunction
+    function MHNativeDamageEvent_SetDamage takes real value returns nothing
+        JapiPlaceHolder
+    endfunction
+    function MHNativeDamageEvent_GetFlag takes nothing returns integer
+        JapiPlaceHolder 0
+    endfunction
+    function MHNativeDamageEvent_GetAtkType takes nothing returns attacktype
+        JapiPlaceHolder null
+    endfunction
+    function MHNativeDamageEvent_GetAtkTypeInt takes nothing returns integer
+        JapiPlaceHolder 0
+    endfunction
+    function MHNativeDamageEvent_GetDmgType takes nothing returns damagetype
+        JapiPlaceHolder null
+    endfunction
+    function MHNativeDamageEvent_GetDmgTypeInt takes nothing returns integer
+        JapiPlaceHolder 0
+    endfunction
+    function MHNativeDamageEvent_GetWeapType takes nothing returns weapontype
+        JapiPlaceHolder null
+    endfunction
+    function MHNativeDamageEvent_GetWeapTypeInt takes nothing returns integer
+        JapiPlaceHolder 0
+    endfunction
 
 
 
-    #define YDWEIsEventPhysicalDamage() MHDamageEvent_IsPhysical()
-    #define YDWEIsEventAttackDamage()   MHMath_IsBitSet(MHDamageEvent_GetFlag(), 0x100)
-    #define YDWEIsEventRangedDamage()   MHMath_IsBitSet(MHDamageEvent_GetFlag(), 0x1)
-    #define YDWEIsEventDamageType(a)    (MHDamageEvent_GetDmgType() == a)
-    #define YDWEIsEventWeaponType(a)    (MHDamageEvent_GetWeapType() == a)
-    #define YDWEIsEventAttackType(a)    (MHDamageEvent_GetAtkType() == a)
-    #define YDWESetEventDamage(a)       MHDamageEvent_SetDamage(a)
+    #define YDWEIsEventPhysicalDamage() MHNativeDamageEvent_IsPhysical()
+    #define YDWEIsEventAttackDamage()   MHMath_IsBitSet(MHNativeDamageEvent_GetFlag(), 0x100)
+    #define YDWEIsEventRangedDamage()   MHMath_IsBitSet(MHNativeDamageEvent_GetFlag(), 0x1)
+    #define YDWEIsEventDamageType(a)    (MHNativeDamageEvent_GetDmgType() == a)
+    #define YDWEIsEventWeaponType(a)    (MHNativeDamageEvent_GetWeapType() == a)
+    #define YDWEIsEventAttackType(a)    (MHNativeDamageEvent_GetAtkType() == a)
+    #define YDWESetEventDamage(a)       MHNativeDamageEvent_SetDamage(a)
 endlibrary

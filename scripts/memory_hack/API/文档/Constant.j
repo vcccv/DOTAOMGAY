@@ -12,115 +12,207 @@ constant integer FLAG_OPERATOR_REMOVE                       = 0x0
 
 
 
-// 事件ID：开始地图
-constant integer EVENT_ID_GAME_START                        = 0x0
-// 事件ID：游戏帧
-constant integer EVENT_ID_GAME_TICK                         = 0x1
-// 事件ID：停止地图
-constant integer EVENT_ID_GAME_STOP                         = 0x2
-// 事件ID：退出地图
-constant integer EVENT_ID_GAME_EXIT                         = 0x3
-// 事件ID：玩家离开
-constant integer EVENT_ID_GAME_LEAVE                        = 0x4
-// 事件ID：玩家掉线
-constant integer EVENT_ID_GAME_DESYNC                       = 0x5
+// 事件ID：游戏开始
+// @Tip：进度条满进入地图的一瞬间, 与0s事件基本等同
+constant integer EVENT_ID_GAME_START					    = 0x0
+// 事件ID：游戏Tick
+// @Tip：同步帧
+constant integer EVENT_ID_GAME_TICK					        = 0x1
 // 事件ID：任意单位被创建
-// @Tip：可以用来替代进入地图事件
-constant integer EVENT_ID_UNIT_CREATE                       = 0x6
+constant integer EVENT_ID_UNIT_CREATE				        = 0x2
 // 事件ID：任意单位被删除
-constant integer EVENT_ID_UNIT_REMOVE				        = 0x7
+constant integer EVENT_ID_UNIT_REMOVE				        = 0x3
 // 事件ID：任意单位攻击出手
-constant integer EVENT_ID_UNIT_ATTACK_LAUNCH			    = 0x8
-// 事件ID：任意单位获取仇恨目标
-constant integer EVENT_ID_UNIT_SEARCH_TARGET                = 0x9
+// @Tip：前摇结束弹道出现/近战命中的一瞬间
+constant integer EVENT_ID_UNIT_ATTACK_LAUNCH			    = 0x4
+// 事件ID：任意单位切换仇恨目标
+constant integer EVENT_ID_UNIT_SEARCH_TARGET			    = 0x5
 // 事件ID：任意单位恢复生命值
-// @Tip：不包括自然回血
-constant integer EVENT_ID_UNIT_RESTORE_LIFE			        = 0xA
+constant integer EVENT_ID_UNIT_RESTORE_LIFE			        = 0x6
 // 事件ID：任意单位恢复魔法值
-// @Tip：不包括自然回蓝
-constant integer EVENT_ID_UNIT_RESTORE_MANA			        = 0xB
+constant integer EVENT_ID_UNIT_RESTORE_MANA			        = 0x7
 // 事件ID：任意单位被驱散魔法效果
-constant integer EVENT_ID_UNIT_DISPEL_BUFF			        = 0xC
+constant integer EVENT_ID_UNIT_DISPEL_BUFF			        = 0x8
 // 事件ID：任意单位送回资源
-constant integer EVENT_ID_UNIT_HARVEST				        = 0xD
+constant integer EVENT_ID_UNIT_HARVEST				        = 0x9
 // 事件ID：任意英雄获取经验值
-constant integer EVENT_ID_HERO_GET_EXP				        = 0xE
+constant integer EVENT_ID_HERO_GET_EXP				        = 0xA
+// 事件ID：任意单位接受伤害
+// @Tip：可以看做YD伤害事件的替代, 没有泄漏
+constant integer EVENT_ID_UNIT_DAMAGE				        = 0xB
 // 事件ID：任意单位即将受伤
-// @Tip：指前伤害事件，此时伤害并未被结算为最终伤害
-// 可在此事件中修改伤害来源、受伤单位、攻击类型和伤害类型等
-constant integer EVENT_ID_UNIT_DAMAGING				        = 0xF
+// @Tip：发生在伤害命中还未开始计算的一瞬间
+// 在此事件中获取不到最终伤害
+// 在此事件中可以修改伤害来源、受伤单位、攻击类型和伤害类型
+constant integer EVENT_ID_UNIT_DAMAGING				        = 0xC
 // 事件ID：任意技能被添加
-constant integer EVENT_ID_ABILITY_ADD				        = 0x10
+// @Tip：包括魔法效果
+constant integer EVENT_ID_ABILITY_ADD				        = 0xD
 // 事件ID：任意技能被删除
-constant integer EVENT_ID_ABILITY_REMOVE				    = 0x11
+// @Tip：包括魔法效果
+constant integer EVENT_ID_ABILITY_REMOVE				    = 0xE
 // 事件ID：任意技能进入冷却
-constant integer EVENT_ID_ABILITY_START_COOLDOWN		    = 0x12
+constant integer EVENT_ID_ABILITY_START_COOLDOWN		    = 0xF
 // 事件ID：任意技能结束冷却
-constant integer EVENT_ID_ABILITY_END_COOLDOWN		        = 0x13
+constant integer EVENT_ID_ABILITY_END_COOLDOWN		        = 0x10
 // 事件ID：任意光环技能刷新
-constant integer EVENT_ID_ABILITY_REFRESH_AURA		        = 0x14
+constant integer EVENT_ID_ABILITY_REFRESH_AURA		        = 0x11
 // 事件ID：任意物品被删除
-constant integer EVENT_ID_ITEM_REMOVE		                = 0x15
+constant integer EVENT_ID_ITEM_REMOVE				        = 0x12
 // 事件ID：任意玩家黄金变动
-constant integer EVENT_ID_PLAYER_GOLD_CHANGE			    = 0x16
+constant integer EVENT_ID_PLAYER_GOLD_CHANGE			    = 0x13
 // 事件ID：任意玩家木材变动
-constant integer EVENT_ID_PLAYER_LUMBER_CHANGE		        = 0x17
+constant integer EVENT_ID_PLAYER_LUMBER_CHANGE		        = 0x14
 // 事件ID：任意投射物发射
-constant integer EVENT_ID_MISSILE_LAUNCH				    = 0x18
+// @Tip：不建议使用
+constant integer EVENT_ID_MISSILE_LAUNCH				    = 0x15
 // 事件ID：任意投射物命中
-constant integer EVENT_ID_MISSILE_HIT				        = 0x19
+// @Tip：不建议使用
+constant integer EVENT_ID_MISSILE_HIT				        = 0x16
 // 事件ID：数据同步
-constant integer EVENT_ID_SYNC						        = 0x1A
-// 事件ID：鼠标进入指定Frame
-constant integer EVENT_ID_FRAMEEVENT_MOUSE_ENTER			        = 0x1B
-// 事件ID：鼠标离开指定Frame
-constant integer EVENT_ID_FRAMEEVENT_MOUSE_LEAVE			        = 0x1C
-// 事件ID：鼠标按下指定Frame
+// @Tip：同dz的同步
+constant integer EVENT_ID_SYNC						        = 0x17
+// 事件ID：游戏停止
+// 异步事件
+constant integer EVENT_ID_GAME_STOP					        = 0x18
+// 事件ID：游戏退出
+// 异步事件
+constant integer EVENT_ID_GAME_EXIT					        = 0x19
+// 事件ID：任意玩家离开游戏
+// @Tip：包括正常退出和掉线
+// 异步事件
+constant integer EVENT_ID_PLAYER_LEAVE				        = 0x1A
+// 事件ID：鼠标进入Frame
+// 异步事件
+constant integer EVENT_ID_FRAME_MOUSE_ENTER			        = 0x1B
+// 事件ID：鼠标离开Frame
+// 异步事件
+constant integer EVENT_ID_FRAME_MOUSE_LEAVE			        = 0x1C
+// 事件ID：鼠标按下Frame
+// @Tip：支持左右键和中键
+// 异步事件
 constant integer EVENT_ID_FRAME_MOUSE_DOWN			        = 0x1D
-// 事件ID：鼠标弹起指定Frame2
-constant integer EVENT_ID_FRAME_MOUSE_UP			        = 0x1E
-// 事件ID：鼠标点击指定Frame
-constant integer EVENT_ID_FRAME_MOUSE_CLICK				    = 0x1F
-// 事件ID：鼠标双击指定Frame
-constant integer EVENT_ID_FRAME_MOUSE_DOUBLE_CLICK          = 0x20
-// 事件ID：鼠标滚动指定Frame
-constant integer EVENT_ID_FRAME_MOUSE_SCROLL	            = 0x21
-// 事件ID：本地玩家弹起按键
+// 事件ID：鼠标弹起Frame
+// @Tip：支持左右键和中键
+// 异步事件
+constant integer EVENT_ID_FRAME_MOUSE_UP				    = 0x1E
+// 事件ID：鼠标点击Frame
+// @Tip：支持左右键和中键
+// 异步事件
+constant integer EVENT_ID_FRAME_MOUSE_CLICK			        = 0x1F
+// 事件ID：鼠标双击Frame
+// @Tip：支持左右键和中键
+// 异步事件
+constant integer EVENT_ID_FRAME_MOUSE_DOUBLE_CLICK	        = 0x20
+// 事件ID：鼠标滚动Frame
+// @Tip：即鼠标滚轮
+// 异步事件
+constant integer EVENT_ID_FRAME_MOUSE_SCROLL			    = 0x21
+// 事件ID：本地玩家键盘弹起
+// 异步事件
 constant integer EVENT_ID_KEY_UP						    = 0x22
-// 事件ID：本地玩家按下按键
+// 事件ID：本地玩家键盘按下
+// 异步事件
 constant integer EVENT_ID_KEY_DOWN					        = 0x23
-// 事件ID：本地玩家按住按键
+// 事件ID：本地玩家键盘按住
+// 异步事件
 constant integer EVENT_ID_KEY_HOLD					        = 0x24
-// 事件ID：本地玩家弹起鼠标
+// 事件ID：本地玩家鼠标弹起
+// 异步事件
 constant integer EVENT_ID_MOUSE_UP					        = 0x25
-// 事件ID：本地玩家按下鼠标
-constant integer EVENT_ID_MOUSE_DOWN				        = 0x26
-// 事件ID：本地玩家滚动鼠标
+// 事件ID：本地玩家鼠标按下
+// 异步事件
+constant integer EVENT_ID_MOUSE_DOWN					    = 0x26
+// 事件ID：本地玩家鼠标滚动
+// 异步事件
 constant integer EVENT_ID_MOUSE_SCROLL				        = 0x27
-// 事件ID：本地玩家移动鼠标
-constant integer EVENT_ID_MOUSE_MOVE				        = 0x28
+// 事件ID：本地玩家鼠标移动
+// 异步事件
+constant integer EVENT_ID_MOUSE_MOVE					    = 0x28
 // 事件ID：本地玩家按下目标指示器
+// @Tip：目标指示器即攻击、技能目标、技能目标点等指示器
+// 异步事件
 constant integer EVENT_ID_TARGET_INDICATOR			        = 0x29
-// 事件ID：本地玩家按下目标选择器
-constant integer EVENT_ID_TARGET_SELECTOR			        = 0x2A
-// 事件ID：本地玩家调起指示器/选择器
-constant integer EVENT_ID_CALL_TARGET_MODE			        = 0x2B
+// 事件ID：本地玩家调起目标指示器
+// @Tip：目标指示器即攻击、技能目标、技能目标点等指示器
+// 异步事件
+constant integer EVENT_ID_CALL_TARGET_MODE			        = 0x2A
 // 事件ID：本地玩家调起建造指示器
-constant integer EVENT_ID_CALL_BUILD_MODE			        = 0x2C
-// 事件ID：本地玩家取消指示器/选择器
-constant integer EVENT_ID_CANCEL_INDICATOR			        = 0x2D
+// @Tip：建造指示器即用于表示建造位置的虚影
+// 异步事件
+constant integer EVENT_ID_CALL_BUILD_MODE			        = 0x2B
+// 事件ID：本地玩家取消指示器
+// @Tip：包括各种类型的指示器
+// 异步事件
+constant integer EVENT_ID_CANCEL_INDICATOR			        = 0x2C
 // 事件ID：本地玩家发布无目标命令
-constant integer EVENT_ID_LOCAL_IMMEDIATE_ORDER		        = 0x2E
-// 事件ID：本地玩家点击命令按钮
-constant integer EVENT_ID_CLICK_COMMAND_BUTTON		        = 0x2F
+// 异步事件
+constant integer EVENT_ID_LOCAL_IMMEDIATE_ORDER		        = 0x2D
 // 事件ID：本地玩家帧绘制
-constant integer EVENT_ID_FRAME_TICK					    = 0x30
-// 事件ID：本地玩家刷新血条
-constant integer EVENT_ID_REFRESH_HPBAR				        = 0x31
-// 事件ID：本地玩家窗口渲染
-constant integer EVENT_ID_RENDER				            = 0x32
-// 事件ID：本地玩家窗口大小变化
-constant integer EVENT_ID_WINDOW_RESIZE				        = 0x33
+// 异步事件
+constant integer EVENT_ID_FRAME_TICK					    = 0x2E
+// 事件ID：血条刷新
+// @Tip：Hook了血条设置位置的一瞬间
+// 异步事件
+constant integer EVENT_ID_REFRESH_HPBAR				        = 0x2F
+// 事件ID：预渲染
+// @Tip：在此事件中有血条更新, 可以作为血条刷新的替代
+// 异步事件
+constant integer EVENT_ID_PRERENDER					        = 0x30
+// 事件ID：本地玩家改变窗口大小
+// 异步事件
+constant integer EVENT_ID_WINDOW_RESIZE				        = 0x31
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

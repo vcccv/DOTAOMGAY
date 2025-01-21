@@ -500,34 +500,10 @@
     function MHAbilityAddEvent_Register takes trigger trig returns nothing
     endfunction
 
-    // 获取添加技能的单位
-    // @Tip：响应 任意单位添加技能 事件
-    // 等价于 MHEvent_GetUnit
-    function MHAbilityAddEvent_GetUnit takes nothing returns unit
-    endfunction
-
-    // 获取被添加的技能
-    // @Tip：响应 任意单位添加技能 事件
-    // 等价于 MHEvent_GetAbility
-    function MHAbilityAddEvent_GetAbility takes nothing returns integer
-    endfunction
-
     // 注册任意技能被删除事件
     // @Tip：EVENT_ID_ABILITY_REMOVE
     // 包括删除魔法效果
     function MHAbilityRemoveEvent_Register takes trigger trig returns nothing
-    endfunction
-
-    // 获取删除技能的单位
-    // @Tip：响应 任意单位删除技能 事件
-    // 等价于 MHEvent_GetUnit
-    function MHAbilityRemoveEvent_GetUnit takes nothing returns unit
-    endfunction
-
-    // 获取被删除的技能
-    // @Tip：响应 任意单位删除技能 事件
-    // 等价于 MHEvent_GetAbility
-    function MHAbilityRemoveEvent_GetAbility takes nothing returns unit
     endfunction
 
     // 注册任意技能进入冷却事件
@@ -535,49 +511,13 @@
     function MHAbilityStartCooldownEvent_Register takes trigger trig returns nothing
     endfunction
 
-    // 获取触发技能冷却的单位
-    // @Tip：响应 任意单位技能进入冷却 事件
-    // 等价于 MHEvent_GetUnit
-    function MHAbilityStartCooldownEvent_GetUnit takes nothing returns unit
-    endfunction
-
-    // 获取触发技能冷却的技能
-    // @Tip：响应 任意单位技能进入冷却 事件
-    // 等价于 MHEvent_GetAbility
-    function MHAbilityStartCooldownEvent_GetAbility takes nothing returns unit
-    endfunction
-
     // 注册任意技能结束冷却事件
     // @Tip：EVENT_ID_ABILITY_END_COOLDOWN
     function MHAbilityEndCooldownEvent_Register takes trigger trig returns nothing
     endfunction
 
-    // 获取结束技能冷却的单位
-    // @Tip：响应 任意单位技能结束冷却 事件
-    // 等价于 MHEvent_GetUnit
-    function MHAbilityEndCooldownEvent_GetUnit takes nothing returns unit
-    endfunction
-
-    // 获取结束技能冷却的技能
-    // @Tip：响应 任意单位技能结束冷却 事件
-    // 等价于 MHEvent_GetAbility
-    function MHAbilityEndCooldownEvent_GetAbility takes nothing returns unit
-    endfunction
-
     // 注册任意光环技能刷新事件
     function MHAbilityRefreshAuraEvent_Register takes trigger trig returns nothing
-    endfunction
-
-    // 获取光环刷新的来源
-    // @Tip：响应 任意光环技能刷新 事件
-    // 等价于 MHEvent_GetUnit
-    function MHAbilityRefreshAuraEvent_GetSource takes nothing returns unit
-    endfunction
-
-    // 获取刷新的光环技能
-    // @Tip：响应 任意光环技能刷新 事件
-    // 等价于 MHEvent_GetAbility
-    function MHAbilityRefreshAuraEvent_GetAbility takes nothing returns integer
     endfunction
 
     // 获取光环刷新的目标
@@ -836,7 +776,7 @@
 
     // 判定目标允许
     // @Tip：u 能否对 target 进行目标允许为 target_allow 的行为
-    function MHUnit_CheckTargetAllow takes unit u, widget target integer target_allow returns boolean
+    function MHUnit_CheckTargetAllow takes unit u, widget target, integer target_allow returns boolean
     endfunction
     
     // 获取单位标志1
@@ -912,7 +852,6 @@
     endfunction
 
     // 复活单位
-    // @Tip：如果要复活英雄，使用原版的复活英雄函数。
     function MHUnit_Revive takes unit u, real x, real y returns boolean
     endfunction
 
@@ -1327,22 +1266,10 @@
     function MHUnitCreateEvent_Register takes trigger trig returns nothing
     endfunction
 
-    // 获取被创建的单位
-    // @Tip：响应 任意单位被创建 事件
-    // 等价于 MHEvent_GetUnit
-    function MHUnitCreateEvent_GetUnit takes nothing returns unit
-    endfunction
-
     // 注册任意单位被删除事件
     // @Tip：EVENT_ID_UNIT_REMOVE
     // 包括触发器删除和尸体自然消失
     function MHUnitRemoveEvent_Register takes trigger trig returns nothing
-    endfunction
-
-    // 获取被删除的单位
-    // @Tip：响应 任意单位被删除 事件
-    // 等价于 MHEvent_GetUnit
-    function MHUnitRemoveEvent_GetUnit takes nothing returns unit
     endfunction
 
     // 注册任意单位攻击出手事件
@@ -1350,12 +1277,6 @@
     // 指攻击后摇结束，攻击伤害/弹道即将出手的时候
     // 如果是近战或者立即，则该事件过后直接进入伤害结算
     function MHUnitAttackLaunchEvent_Register takes trigger trig returns nothing
-    endfunction
-
-    // 获取攻击来源单位
-    // @Tip：响应 任意单位攻击出手 事件
-    // 等价于 MHEvent_GetUnit
-    function MHUnitAttackLaunchEvent_GetSource takes nothing returns unit
     endfunction
 
     // 获取攻击目标单位
@@ -1400,12 +1321,6 @@
     function MHUnitSearchTargetEvent_Register takes trigger trig returns nothing
     endfunction
 
-    // 获取仇恨来源
-    // @Tip：响应 任意单位切换仇恨目标 事件
-    // 等价于 MHEvent_GetUnit
-    function MHUnitSearchTargetEvent_GetSource takes nothing returns nothing
-    endfunction
-
     // 获取仇恨目标
     // @Tip：响应 任意单位切换仇恨目标 事件
     function MHUnitSearchTargetEvent_GetTarget takes nothing returns unit
@@ -1423,12 +1338,6 @@
     // 当需要用到真实生命值的时候，才会计算：基础生命值 + (当前时间戳 - 上次的时间戳) * 生命恢复速度
     // 当受到伤害、治疗或者触发器等外界因素影响生命值时就会更新基础生命值和时间戳
     function MHUnitRestoreLifeEvent_Register takes trigger trig returns nothing
-    endfunction
-
-    // 获取恢复生命值的单位
-    // @Tip：响应 任意单位恢复生命值 事件
-    // 等价于 MHEvent_GetUnit
-    function MHUnitRestoreLifeEvent_GetUnit takes nothing returns unit
     endfunction
 
     // 获取恢复的生命值
@@ -1452,12 +1361,6 @@
     function MHUnitRestoreManaEvent_Register takes trigger trig returns nothing
     endfunction
 
-    // 获取恢复魔法值的单位
-    // @Tip：响应 任意单位恢复魔法值 事件
-    // 等价于 MHEvent_GetUnit
-    function MHUnitRestoreManaEvent_GetUnit takes nothing returns unit
-    endfunction
-
     // 获取恢复的魔法值
     // @Tip：响应 任意单位恢复魔法值 事件
     // 正数为回蓝，负数为扣蓝
@@ -1474,13 +1377,6 @@
     // @Tip：EVENT_ID_BUFF_DISPEL
     // 指被驱散类技能命中的一瞬间，此时获取不到被驱散的buff
     function MHUnitDispelEvent_Register takes trigger trig returns nothing
-    endfunction
-
-    // 获取被驱散buff的单位
-    // @Tip：响应 任意单位被驱散Buff 事件
-    // 等价于 MHEvent_GetUnit
-    // 指被驱散类技能命中的单位
-    function MHUnitDispelEvent_GetTarget takes nothing returns unit
     endfunction
 
     // 获取驱散buff的单位
@@ -1504,13 +1400,6 @@
     // 注册任意单位送回资源事件
     // @Tip：EVENT_ID_UNIT_HARVEST
     function MHUnitHarvestEvent_Register takes trigger trig returns nothing
-    endfunction
-
-    // 获取送回资源的单位
-    // @Tip：响应 任意单位送回资源 事件
-    // 对于侍僧/小精灵采矿返回金矿
-    // 等价于 MHEvent_GetUnit
-    function MHUnitHarvestEvent_GetUnit takes nothing returns unit
     endfunction
 
     // 获取送回的资源量
@@ -1812,7 +1701,7 @@
 
     // 伤害目标
     // @Tip：与 UnitDamageTarget 并无本质区别，只是开放了可以设置攻击伤害以及伤害标志的接口
-    // @param is_physical：是攻击伤害
+    // @param is_physical：是物理伤害
     // @param flag：伤害标志。疑似BitSet，取值参考表格
     function MHDamage_DamageTarget takes unit u, widget target, real dmg, attacktype atk_type, damagetype dmg_type, boolean is_physical, integer flag returns real
     endfunction
@@ -1823,103 +1712,43 @@
 
 
 
-    // 是攻击伤害 (后伤害事件)
-    // @Tip：响应YD和原版的受伤事件
-    function MHDamageEvent_IsPhysical takes nothing returns boolean
-    endfunction
-
-    // 获取伤害标志 (后伤害事件)
-    // @Tip：响应YD和原版的受伤事件
-    // 疑似BitSet
-    // 某些技能或者特殊伤害会将特殊的标志放入伤害事件中
-    // 例如疾风步破隐一击的标志为0x500，远程攻击的标志为0x1
-    function MHDamageEvent_GetFlag takes nothing returns integer
-    endfunction
-
-    // 获取攻击类型 (后伤害事件)
-    // @Tip：响应YD和原版的受伤事件
-    function MHDamageEvent_GetAtkType takes nothing returns attacktype
-    endfunction
-
-    // 获取伤害类型 (后伤害事件)
-    // @Tip：响应YD和原版的受伤事件
-    function MHDamageEvent_GetDmgType takes nothing returns damagetype
-    endfunction
-
-    // 获取武器类型 (后伤害事件)
-    // @Tip：响应YD和原版的受伤事件
-    function MHDamageEvent_GetWeapType takes nothing returns weapontype
-    endfunction
-
-    // 获取攻击类型 (整数) (后伤害事件)
-    // @Tip：响应YD和原版的受伤事件
-    function MHDamageEvent_GetAtkTypeInt takes nothing returns integer
-    endfunction
-
-    // 获取伤害类型 (整数) (后伤害事件)
-    // @Tip：响应YD和原版的受伤事件
-    function MHDamageEvent_GetDmgTypeInt takes nothing returns integer
-    endfunction
-
-    // 获取武器类型 (整数) (后伤害事件)
-    // @Tip：响应YD和原版的受伤事件
-    function MHDamageEvent_GetWeapTypeInt takes nothing returns integer
-    endfunction
-
-    // 设置伤害值 (后伤害事件)
-    // @Tip：响应YD和原版的受伤事件
-    // 修复了ydjapi设置伤害值会使得吸血变扣血的bug
-    function MHDamageEvent_SetDamage takes real value returns nothing
-    endfunction
-
-    // 注册任意接收伤害事件 (前伤害事件)
+    // 注册任意即将受伤事件 (前伤害事件)
     // @Tip：EVENT_ID_DAMAGING
     // 指伤害刚作用于单位的时候，此时还未结算为最终伤害
     // 发生在在伤害流程中灵魂锁链之后，反魔法外壳之前
     function MHDamagingEvent_Register takes trigger trig returns nothing
     endfunction
 
-    // 是攻击伤害 (前伤害事件)
-    // @Tip：响应MH的受伤事件
+    // 是物理伤害 (前伤害事件)
+    // @Tip：响应 任意单位即将受伤 事件
+    // 用于判定普攻
     function MHDamagingEvent_IsPhysical takes nothing returns boolean
     endfunction
 
     // 获取伤害值 (前伤害事件)
-    // @Tip：响应MH的受伤事件
+    // @Tip：响应 任意单位即将受伤 事件
     // 指未被结算为最终伤害的初始伤害值
     function MHDamagingEvent_GetDamage takes nothing returns real
     endfunction
 
     // 设置伤害值 (前伤害事件)
-    // @Tip：响应MH的受伤事件
+    // @Tip：响应 任意单位即将受伤 事件
     // 指未被结算为最终伤害的初始伤害值
     function MHDamagingEvent_SetDamage takes real value returns nothing
     endfunction
 
     // 获取伤害来源 (前伤害事件)
-    // @Tip：响应MH的受伤事件
+    // @Tip：响应 任意单位即将受伤 事件
     function MHDamagingEvent_GetSource takes nothing returns unit
     endfunction
 
     // 设置伤害来源 (前伤害事件)
-    // @Tip：响应MH的受伤事件
+    // @Tip：响应 任意单位即将受伤 事件
     function MHDamagingEvent_SetSource takes unit u returns nothing
     endfunction
 
-    // 获取伤害目标 (前伤害事件)
-    // @Tip：响应MH的受伤事件
-    // 等价于 MHEvent_GetUnit
-    function MHDamagingEvent_GetTarget takes nothing returns unit
-    endfunction
-
-    // 设置伤害目标 (前伤害事件)
-    // @Tip：响应MH的受伤事件
-    // 等价于 MHEvent_SetUnit
-    function MHDamagingEvent_SetTarget takes unit u returns nothing
-    endfunction
-
     // 获取伤害标志 (前伤害事件)
-    // @Tip：响应MH的受伤事件
+    // @Tip：响应 任意单位即将受伤 事件
     // 疑似BitSet
     // 某些技能或者特殊伤害会将特殊的标志放入伤害事件中
     // 例如疾风步破隐一击的标志为0x500，远程攻击的标志为0x1
@@ -1927,54 +1756,175 @@
     endfunction
 
     // 设置伤害标志 (前伤害事件)
-    // @Tip：响应MH的受伤事件
+    // @Tip：响应 任意单位即将受伤 事件
     // 疑似BitSet。取值参考表格
     function MHDamagingEvent_SetFlag takes integer value returns nothing
     endfunction
 
     // 获取攻击类型 (前伤害事件)
-    // @Tip：响应MH的受伤事件
+    // @Tip：响应 任意单位即将受伤 事件
     function MHDamagingEvent_GetAtkType takes nothing returns attacktype
     endfunction
 
     // 获取攻击类型 (整数) (前伤害事件)
-    // @Tip：响应MH的受伤事件
+    // @Tip：响应 任意单位即将受伤 事件
     function MHDamagingEvent_GetAtkTypeInt takes nothing returns integer
     endfunction
 
     // 设置攻击类型 (前伤害事件)
-    // @Tip：响应MH的受伤事件
+    // @Tip：响应 任意单位即将受伤 事件
     function MHDamagingEvent_SetAtkType takes attacktype atk_type returns nothing
     endfunction
 
     // 获取伤害类型 (前伤害事件)
-    // @Tip：响应MH的受伤事件
+    // @Tip：响应 任意单位即将受伤 事件
     function MHDamagingEvent_GetDmgType takes nothing returns damagetype
     endfunction
 
     // 获取伤害类型 (整数) (前伤害事件)
-    // @Tip：响应MH的受伤事件
+    // @Tip：响应 任意单位即将受伤 事件
     function MHDamagingEvent_GetDmgTypeInt takes nothing returns integer
     endfunction
 
     // 设置伤害类型 (前伤害事件)
-    // @Tip：响应MH的受伤事件
+    // @Tip：响应 任意单位即将受伤 事件
     function MHDamagingEvent_SetDmgType takes damagetype dmg_type returns nothing
     endfunction
 
     // 获取武器类型 (前伤害事件)
-    // @Tip：响应MH的受伤事件
+    // @Tip：响应 任意单位即将受伤 事件
     function MHDamagingEvent_GetWeapType takes nothing returns weapontype
     endfunction
 
     // 获取武器类型 (整数) (前伤害事件)
-    // @Tip：响应MH的受伤事件
+    // @Tip：响应 任意单位即将受伤 事件
     function MHDamagingEvent_GetWeapTypeInt takes nothing returns integer
     endfunction
 
     // 设置武器类型 (前伤害事件)
-    // @Tip：响应MH的受伤事件
+    // @Tip：响应 任意单位即将受伤 事件
     function MHDamagingEvent_SetWeapType takes weapontype weap_type returns nothing
+    endfunction
+
+    // 注册任意接受伤害事件 (后伤害事件)
+    // @Tip：EVENT_ID_DAMAGE
+    // 可用于替代YD的任意单位受伤, 无泄漏
+    function MHDamageEvent_Register takes trigger trig returns nothing
+    endfunction
+
+    // 是物理伤害 (后伤害事件)
+    // @Tip：响应 任意单位接受伤害(MH) 事件
+    // 用于判定普攻
+    function MHDamageEvent_IsPhysical takes nothing returns boolean
+    endfunction
+
+    // 获取伤害值 (后伤害事件)
+    // @Tip：响应 任意单位接受伤害(MH) 事件
+    function MHDamageEvent_GetDamage takes nothing returns real
+    endfunction
+
+    // 设置伤害值 (后伤害事件)
+    // @Tip：响应 任意单位接受伤害(MH) 事件
+    // 修复了ydjapi设置伤害值会使得吸血变扣血的bug
+    function MHDamageEvent_SetDamage takes real value returns nothing
+    endfunction
+
+    // 获取伤害来源 (后伤害事件)
+    // @Tip：响应 任意单位接受伤害(MH) 事件
+    function MHDamageEvent_GetSource takes nothing returns unit
+    endfunction
+
+    // 设置伤害来源 (后伤害事件)
+    // @Tip：响应 任意单位接受伤害(MH) 事件
+    function MHDamageEvent_SetSource takes unit u returns nothing
+    endfunction
+
+    // 获取伤害标志 (后伤害事件)
+    // @Tip：响应 任意单位接受伤害(MH) 事件
+    // BitSet
+    // 某些技能或者特殊伤害会将特殊的标志放入伤害事件中
+    // 例如疾风步破隐一击的标志为0x500，远程攻击的标志为0x1
+    function MHDamageEvent_GetFlag takes nothing returns integer
+    endfunction
+
+    // 获取攻击类型 (后伤害事件)
+    // @Tip：响应 任意单位接受伤害(MH) 事件
+    function MHDamageEvent_GetAtkType takes nothing returns attacktype
+    endfunction
+
+    // 获取伤害类型 (后伤害事件)
+    // @Tip：响应 任意单位接受伤害(MH) 事件
+    function MHDamageEvent_GetDmgType takes nothing returns damagetype
+    endfunction
+
+    // 获取武器类型 (后伤害事件)
+    // @Tip：响应 任意单位接受伤害(MH) 事件
+    function MHDamageEvent_GetWeapType takes nothing returns weapontype
+    endfunction
+
+    // 获取攻击类型 (整数) (后伤害事件)
+    // @Tip：响应 任意单位接受伤害(MH) 事件
+    function MHDamageEvent_GetAtkTypeInt takes nothing returns integer
+    endfunction
+
+    // 获取伤害类型 (整数) (后伤害事件)
+    // @Tip：响应 任意单位接受伤害(MH) 事件
+    function MHDamageEvent_GetDmgTypeInt takes nothing returns integer
+    endfunction
+
+    // 获取武器类型 (整数) (后伤害事件)
+    // @Tip：响应 任意单位接受伤害(MH) 事件
+    function MHDamageEvent_GetWeapTypeInt takes nothing returns integer
+    endfunction
+
+    // 是物理伤害 (YD和原生伤害事件)
+    // @Tip：响应 YD和原生的伤害事件
+    // 用于判定普攻
+    function MHNativeDamageEvent_IsPhysical takes nothing returns boolean
+    endfunction
+
+    // 设置伤害值 (YD和原生伤害事件)
+    // @Tip：响应 YD和原生的伤害事件
+    // 修复了ydjapi设置伤害值会使得吸血变扣血的bug
+    function MHNativeDamageEvent_SetDamage takes real value returns nothing
+    endfunction
+
+    // 获取伤害标志 (YD和原生伤害事件)
+    // @Tip：响应 YD和原生的伤害事件
+    // BitSet
+    // 某些技能或者特殊伤害会将特殊的标志放入伤害事件中
+    // 例如疾风步破隐一击的标志为0x500，远程攻击的标志为0x1
+    function MHNativeDamageEvent_GetFlag takes nothing returns integer
+    endfunction
+
+    // 获取攻击类型 (YD和原生伤害事件)
+    // @Tip：响应 YD和原生的伤害事件
+    function MHNativeDamageEvent_GetAtkType takes nothing returns attacktype
+    endfunction
+
+    // 获取伤害类型 (YD和原生伤害事件)
+    // @Tip：响应 YD和原生的伤害事件
+    function MHNativeDamageEvent_GetDmgType takes nothing returns damagetype
+    endfunction
+
+    // 获取武器类型 (YD和原生伤害事件)
+    // @Tip：响应 YD和原生的伤害事件
+    function MHNativeDamageEvent_GetWeapType takes nothing returns weapontype
+    endfunction
+
+    // 获取攻击类型 (整数) (YD和原生伤害事件)
+    // @Tip：响应 YD和原生的伤害事件
+    function MHNativeDamageEvent_GetAtkTypeInt takes nothing returns integer
+    endfunction
+
+    // 获取伤害类型 (整数) (YD和原生伤害事件)
+    // @Tip：响应 YD和原生的伤害事件
+    function MHNativeDamageEvent_GetDmgTypeInt takes nothing returns integer
+    endfunction
+
+    // 获取武器类型 (整数) (YD和原生伤害事件)
+    // @Tip：响应 YD和原生的伤害事件
+    function MHNativeDamageEvent_GetWeapTypeInt takes nothing returns integer
     endfunction
 
 
@@ -2003,13 +1953,18 @@
     function MHDebug_GetHandleMaxCount takes nothing returns integer
     endfunction
 
-    // 发送泄漏信息
-    function MHDebug_SendLeakMessage takes nothing returns nothing
+    // 允许崩溃跟踪
+    // @Tip：崩溃后会自动生成日志
+    // @param is_enable：true - 开启; false - 关闭
+    function MHDebug_EnableCrashTracer takes boolean is_enable returns nothing
     endfunction
 
-    // 允许崩溃跟踪
-    // @Tip：启动后无法关闭。会在调用native崩溃后生成日志
-    function MHDebug_EnableCrashTraceback takes nothing returns nothing
+    // 允许崩溃转储
+    // @Tip：崩溃后追加生成内存转储, 用于调试
+    // 游戏流程长的话转储文件会特别大, 非必要不开启
+    // 必须先开启崩溃追踪
+    // @param is_enable：true - 开启; false - 关闭
+    function MHDebug_EnableCrashTracerDump takes boolean is_enable returns nothing
     endfunction
 
     // 允许异步检测
@@ -2157,17 +2112,17 @@
 
     // 获取方向向量X坐标
     // @Tip：向量形式。(1, 0, 0) 表示初始方向 (正东)。已归一化
-    function MHEffect_GetVectorX takes effect returns real
+    function MHEffect_GetVectorX takes effect eff returns real
     endfunction
 
     // 获取方向向量Y坐标
     // @Tip：向量形式。(1, 0, 0) 表示初始方向 (正东)。已归一化
-    function MHEffect_GetVectorY takes effect returns real
+    function MHEffect_GetVectorY takes effect eff returns real
     endfunction
 
     // 获取方向向量Z坐标
     // @Tip：向量形式。(1, 0, 0) 表示初始方向 (正东)。已归一化
-    function MHEffect_GetVectorZ takes effect returns real
+    function MHEffect_GetVectorZ takes effect eff returns real
     endfunction
 
     // 镜像操作
@@ -2438,20 +2393,8 @@
     function MHMissileLaunchEvent_Register takes trigger trig returns nothing
     endfunction
 
-    // 获取发射的投射物
-    // @Tip：响应 任意投射物发射 事件
-    // 等价于 MHEvent_GetMissile
-    function MHMissileLaunchEvent_GetMissile takes nothing returns integer
-    endfunction
-
     // 注册任意投射物命中事件
     function MHMissileHitEvent_Register takes trigger trig returns nothing
-    endfunction
-
-    // 获取命中的投射物
-    // @Tip：响应 任意投射物命中 事件
-    // 等价于 MHEvent_GetMissile
-    function MHMissileHitEvent_GetMissile takes nothing returns integer
     endfunction
 
     // 获取目标单位
@@ -3110,7 +3053,7 @@
 
 
     // 注册Frame事件
-    // @Tip：EVENT_ID_FRAMEEVENT_MOUSE_ENTER ~ EVENT_ID_FRAME_MOUSE_DOUBLECLICK
+    // @Tip：EVENT_ID_FRAME_MOUSE_ENTER ~ EVENT_ID_FRAME_MOUSE_DOUBLECLICK
     // 为 frame 注册 event_id
     // @param event_id：frame事件ID。EVENT_ID_FRAME
     function MHFrameEvent_Register takes trigger trig, integer frame, integer event_id returns nothing
@@ -3353,7 +3296,7 @@
     endfunction
 
     // 获取CPortraitButton
-    // @Tip：肖像(Frame) 可以用在调起指示器/选择器时 对肖像Frame使用MHFrame_Click来达到对自己施法的效果
+    // @Tip：肖像(Frame) 可以用在调起指示器时 对肖像Frame使用MHFrame_Click来达到对自己施法的效果
     function MHUI_GetPortraitButton takes nothing returns integer
     endfunction
 
@@ -3388,11 +3331,19 @@
     function MHUI_SetCursorItemIcon takes string texture_path returns nothing
     endfunction
 
-    // 获取聊天框
+    // 获取聊天栏
+    // @Tip：返回一个CChatEditBar
     function MHUI_GetChatEditBar takes nothing returns integer
     endfunction
+    
+    // 获取聊天框
+    // @Tip：聊天框的CEditBox
+    // 返回一个CChatEditBox, 继承自CEditBox
+    // 可通过读写该控件的文本来读写聊天框里的内容
+    function MHUI_GetChatEditBox takes nothing returns integer
+    endfunction
 
-    // 聊天框打开
+    // 聊天栏打开
     function MHUI_IsChatEditBarOn takes nothing returns boolean
     endfunction
 
@@ -3454,17 +3405,6 @@
 
     // 注册血条刷新事件
     function MHUIHPBarEvent_Register takes trigger trig returns nothing
-    endfunction
-
-    // 获取刷新的血条
-    // @Tip：CStatBar，也是CSimpleStatusBar
-    // 等价于 MHEvent_GetFrame
-    function MHUIHPBarEvent_GetHPBar takes nothing returns integer
-    endfunction
-
-    // 获取刷新血条的单位
-    // @Tip：等价于 MHEvent_GetUnit
-    function MHUIHPBarEvent_GetUnit takes nothing returns unit
     endfunction
 
     // 获取刷新血条的锚点
@@ -3825,6 +3765,19 @@
 
     // 是录像模式
     function MHGame_IsReplay takes nothing returns boolean
+    endfunction
+
+    // 获取游戏时间戳
+    // @Tip：从游戏开始到现在经过的时间
+    // 等同于tick事件中的同步帧
+    // 同步的时间戳, 单位为毫秒。最小刻度5毫秒
+    function MHGame_GetGameStamp takes nothing returns integer
+    endfunction
+    
+    // 获取本地时间戳
+    // @Tip：unix的秒级时间戳, 异步的
+    // 魔兽用的有符号整数, 还有13年左右失效(
+    function MHGame_GetLocalStamp takes nothing returns integer
     endfunction
 
 
@@ -4301,9 +4254,9 @@
     function MHMsg_InScreen takes real x, real y returns boolean
     endfunction
 
-    // 调起指示器/选择器
-    // @Tip：强制调起指示器/选择器，进入选择目标模式
-    // 需要拥有对应的技能。会触发 本地玩家调起指示器/选择器 事件
+    // 调起指示器
+    // @Tip：强制调起指示器，进入选择目标模式
+    // 需要拥有对应的技能。会触发 本地玩家调起指示器 事件
     // 调起基本命令时，技能id填0，如调起移动指示器：MHMsg_CallTargetMode(0, 0xD0032, 0x6)
     // @param aid：技能ID
     // @param oid：命令ID
@@ -4311,9 +4264,9 @@
     function MHMsg_CallTargetMode takes integer aid, integer oid, integer flag returns nothing
     endfunction
 
-    // 调起指示器/选择器
-    // @Tip：强制调起指示器/选择器，进入选择目标模式
-    // 无需拥有对应的技能，但不一定能点下去。不会触发 本地玩家调起指示器/选择器 事件
+    // 调起指示器
+    // @Tip：强制调起指示器，进入选择目标模式
+    // 无需拥有对应的技能，但不一定能点下去。不会触发 本地玩家调起指示器 事件
     // 调起基本命令时，技能id填0，如调起移动指示器：MHMsg_CallTargetModeEx(0, 0xD0032, 0x6)
     // @param aid：技能ID
     // @param oid：命令ID
@@ -4433,36 +4386,10 @@
     function MHMsgKeyUpEvent_Register takes trigger trig returns nothing
     endfunction
 
-    // 获取弹起的按键
-    // @Tip：响应 本地玩家按键弹起 事件
-    // 等价于 MHEvent_GetKey
-    function MHMsgKeyUpEvent_GetKey takes nothing returns integer
-    endfunction
-
-    // 设置弹起的按键
-    // @Tip：响应 本地玩家按键弹起 事件
-    // 等价于 MHEvent_SetKey
-    // 设置为一个无效值即可屏蔽事件。例如设置按键为 -1
-    function MHMsgKeyUpEvent_SetKey takes integer key returns nothing
-    endfunction
-
     // 注册本地玩家按键按下事件
     // @Tip：EVENT_ID_KEY_DOWN
     // 异步事件仅支持触发器条件！
     function MHMsgKeyDownEvent_Register takes trigger trig returns nothing
-    endfunction
-
-    // 获取按下的按键
-    // @Tip：响应 本地玩家按键按下 事件
-    // 等价于 MHEvent_GetKey
-    function MHMsgKeyDownEvent_GetKey takes nothing returns integer
-    endfunction
-
-    // 设置按下的按键
-    // @Tip：响应 本地玩家按键按下 事件
-    // 等价于 MHEvent_SetKey
-    // 设置为一个无效值即可屏蔽事件。例如设置按键为 -1
-    function MHMsgKeyDownEvent_SetKey takes integer key returns nothing
     endfunction
 
     // 注册本地玩家按键按住事件
@@ -4471,55 +4398,16 @@
     function MHMsgKeyHoldEvent_Register takes trigger trig returns nothing
     endfunction
 
-    // 获取按住的按键
-    // @Tip：响应 本地玩家按键按住 事件
-    // 等价于 MHEvent_GetKey
-    function MHMsgKeyHoldEvent_GetKey takes nothing returns integer
-    endfunction
-
-    // 设置按住的按键
-    // @Tip：响应 本地玩家按键按住 事件
-    // 等价于 MHEvent_SetKey
-    // 设置为一个无效值即可屏蔽事件。例如设置按键为 -1
-    function MHMsgKeyHoldEvent_SetKey takes integer key returns nothing
-    endfunction
-
     // 注册本地玩家鼠标弹起事件
     // @Tip：EVENT_ID_MOUSE_UP
     // 异步事件仅支持触发器条件！
     function MHMsgMouseUpEvent_Register takes trigger trig returns nothing
     endfunction
 
-    // 获取弹起的鼠标按键
-    // @Tip：响应 本地玩家鼠标弹起 事件
-    // 等价于 MHEvent_GetKey
-    function MHMsgMouseUpEvent_GetKey takes nothing returns integer
-    endfunction
-
-    // 设置弹起的鼠标按键
-    // @Tip：响应 本地玩家鼠标弹起 事件
-    // 等价于 MHEvent_SetKey
-    // 设置为一个无效值即可屏蔽事件。例如设置按键为 -1
-    function MHMsgMouseUpEvent_SetKey takes integer key returns nothing
-    endfunction
-
     // 注册本地玩家鼠标按键按下事件
     // @Tip：EVENT_ID_MOUSE_DOWN
     // 异步事件仅支持触发器条件！
     function MHMsgMouseDownEvent_Register takes trigger trig returns nothing
-    endfunction
-
-    // 获取按下的鼠标按键
-    // @Tip：响应 本地玩家鼠标按下 事件
-    // 等价于 MHEvent_GetKey
-    function MHMsgMouseDownEvent_GetKey takes nothing returns integer
-    endfunction
-
-    // 设置按下的鼠标按键
-    // @Tip：响应 本地玩家鼠标按下 事件
-    // 等价于 MHEvent_SetKey
-    // 设置为一个无效值即可屏蔽事件。例如设置按键为 -1
-    function MHMsgMouseDownEvent_SetKey takes integer key returns nothing
     endfunction
 
     // 注册本地玩家鼠标滚动事件
@@ -4573,28 +4461,9 @@
     function MHMsgIndicatorEvent_GetTargetY takes nothing returns real
     endfunction
 
-    // 获取指示器按键
-    // @Tip：响应 本地玩家按下目标指示器 事件
-    // 等价于 MHEvent_GetKey
-    function MHMsgIndicatorEvent_GetKey takes nothing returns integer
-    endfunction
-
-    // 设置指示器按键
-    // @Tip：响应 本地玩家按下目标指示器 事件
-    // 等价于 MHEvent_SetKey
-    // 设置为一个无效值即可屏蔽事件。例如设置按键为 -1
-    function MHMsgIndicatorEvent_SetKey takes integer key returns nothing
-    endfunction
-
     // 获取指示器技能
     // @Tip：响应 本地玩家按下目标指示器 事件
     function MHMsgIndicatorEvent_GetAbility takes nothing returns integer
-    endfunction
-
-    // 获取指示器命令
-    // @Tip：响应 本地玩家按下目标指示器 事件
-    // 等价于 MHEvent_GetOrder
-    function MHMsgIndicatorEvent_GetOrder takes nothing returns integer
     endfunction
 
     // 注册本地玩家按下目标选择器事件
@@ -4613,55 +4482,30 @@
     function MHMsgSelectorEvent_GetTargetY takes nothing returns real
     endfunction
 
-    // 获取选择器按键
-    // @Tip：响应 本地玩家按下目标选择器 事件
-    // 等价于 MHEvent_GetKey
-    function MHMsgSelectorEvent_GetKey takes nothing returns integer
-    endfunction
-
-    // 设置选择器按键
-    // @Tip：响应 本地玩家按下目标选择器 事件
-    // 等价于 MHEvent_SetKey
-    // 设置为一个无效值即可屏蔽事件。例如设置按键为 -1
-    function MHMsgSelectorEvent_SetKey takes integer key returns nothing
-    endfunction
-
     // 获取选择器技能
     // @Tip：响应 本地玩家按下目标选择器 事件
     function MHMsgSelectorEvent_GetAbility takes nothing returns integer
     endfunction
 
-    // 获取选择器命令
-    // @Tip：响应 本地玩家按下目标选择器 事件
-    // 等价于 MHEvent_GetOrder
-    function MHMsgSelectorEvent_GetOrder takes nothing returns integer
-    endfunction
-
-    // 注册本地玩家调起指示器/选择器事件
+    // 注册本地玩家调起指示器事件
     // @Tip：EVENT_ID_CALL_TARGET_MODE
     // 异步事件仅支持触发器条件！
     function MHMsgCallTargetModeEvent_Register takes trigger trig returns nothing
     endfunction
 
-    // 获取指示器/选择器技能
-    // @Tip：响应 本地玩家调起指示器/选择器 事件
+    // 获取指示器技能
+    // @Tip：响应 本地玩家调起指示器 事件
     function MHMsgCallTargetModeEvent_GetAbility takes nothing returns integer
     endfunction
 
-    // 获取指示器/选择器命令
-    // @Tip：响应 本地玩家调起指示器/选择器 事件
-    // 等价于 MHEvent_GetOrder
-    function MHMsgCallTargetModeEvent_GetOrder takes nothing returns integer
-    endfunction
-
-    // 获取指示器/选择器释放类型
-    // @Tip：响应 本地玩家调起指示器/选择器 事件
+    // 获取指示器释放类型
+    // @Tip：响应 本地玩家调起指示器 事件
     // BitSet。ABILITY_CAST_TYPE
     function MHMsgCallTargetModeEvent_GetCastType takes nothing returns integer
     endfunction
 
-    // 设置指示器/选择器释放类型
-    // @Tip：响应 本地玩家调起指示器/选择器 事件
+    // 设置指示器释放类型
+    // @Tip：响应 本地玩家调起指示器 事件
     // @param cast_type：释放类型。BitSet。ABILITY_CAST_TYPE
     function MHMsgCallTargetModeEvent_SetCastType takes integer cast_type returns nothing
     endfunction
@@ -4672,14 +4516,7 @@
     function MHMsgCallBuildModeEvent_Register takes trigger trig returns nothing
     endfunction
 
-    // 获取建造指示器命令
-    // @Tip：响应 本地玩家调起建造指示器 事件
-    // 等价于 MHEvent_GetOrder
-    // 即建筑的单位类型
-    function MHMsgCallBuildModeEvent_GetOrder takes nothing returns integer
-    endfunction
-
-    // 注册本地玩家取消指示器/选择器事件
+    // 注册本地玩家取消指示器事件
     // @Tip：EVENT_ID_CANCEL_INDICATOR
     // 异步事件仅支持触发器条件！
     function MHMsgCancelIndicatorEvent_Register takes trigger trig returns nothing
@@ -4692,47 +4529,10 @@
     function MHMsgClickButtonEvent_Register takes trigger trig returns nothing
     endfunction
 
-    // 获取点击的按钮
-    // @Tip：响应 本地玩家点击命令按钮 事件
-    // 等价于 MHEvent_GetFrame
-    function MHMsgClickButtonEvent_GetButton takes nothing returns integer
-    endfunction
-
-    // 获取点击按钮的技能
-    // @Tip：响应 本地玩家点击命令按钮 事件
-    // 等价于 MHEvent_GetAbility
-    function MHMsgClickButtonEvent_GetAbility takes nothing returns integer
-    endfunction
-
-    // 获取点击按钮的按键
-    // @Tip：响应 本地玩家点击命令按钮 事件
-    // 等价于 MHEvent_GetKey
-    function MHMsgClickButtonEvent_GetKey takes nothing returns integer
-    endfunction
-
-    // 设置点击按钮的按键
-    // @Tip：响应 本地玩家点击命令按钮 事件
-    // 等价于 MHEvent_SetKey
-    // 设置为一个无效值即可屏蔽事件。例如设置按键为 -1
-    function MHMsgClickButtonEvent_SetKey takes integer key returns nothing
-    endfunction
-
     // 注册本地玩家发布无目标命令事件
     // @Tip：EVENT_ID_LOCAL_IMMEDIATE_ORDER
     // 异步事件仅支持触发器条件！
     function MHMsgImmediateOrderEvent_Register takes trigger trig returns nothing
-    endfunction
-
-    // 获取本地命令事件的命令
-    // @Tip：响应 本地玩家发布命令 事件
-    // 等价于 MHEvent_GetOrder
-    function MHMsgLocalOrderEvent_GetOrder takes nothing returns integer
-    endfunction
-
-    // 设置本地命令事件的命令
-    // @Tip：响应 本地玩家发布命令 事件
-    // 等价于 MHEvent_SetOrder
-    function MHMsgLocalOrderEvent_SetOrder takes integer oid returns nothing
     endfunction
 
     // 获取本地命令事件的标志
@@ -4799,21 +4599,21 @@
 
 
 
+    // 注册任意玩家离开游戏事件
+    // @Tip：EVENT_ID_PLAYER_LEAVE
+    // 包括正常离开和掉线
+    function MHPlayerLeaveEvent_Register takes trigger trig returns boolean
+    endfunction
+
+    // 获取玩家离开原因
+    // @Tip：响应 任意玩家离开游戏 事件
+    // 0代表正常离开, 1代表掉线
+    function MHPlayerLeaveEvent_GetReason takes nothing returns integer
+    endfunction
+
     // 注册任意玩家黄金变动事件
     // @Tip：EVENT_ID_PLAYER_GOLD_CHANGE
     function MHPlayerGoldChangeEvent_Register takes trigger trig returns nothing
-    endfunction
-
-    // 获取黄金变动的玩家
-    // @Tip：响应 任意玩家黄金变动 事件
-    // 等价于 MHEvent_GetPlayer
-    function MHPlayerGoldChangeEvent_GetPlayer takes nothing returns player
-    endfunction
-
-    // 设置资源变动的玩家
-    // @Tip：响应 任意玩家黄金变动 事件
-    // 等价于 MHEvent_SetPlayer
-    function MHPlayerGoldChangeEvent_SetPlayer takes player p returns nothing
     endfunction
 
     // 获取黄金变动的数值
@@ -4839,18 +4639,6 @@
     // 注册任意玩家木材变动事件
     // @Tip：EVENT_ID_PLAYER_LUMBER_CHANGE
     function MHPlayerLumberChangeEvent_Register takes trigger trig returns nothing
-    endfunction
-
-    // 获取木材变动的玩家
-    // @Tip：响应 任意玩家木材变动 事件
-    // 等价于 MHEvent_GetPlayer
-    function MHPlayerLumberChangeEvent_GetPlayer takes nothing returns player
-    endfunction
-
-    // 设置资源变动的玩家
-    // @Tip：响应 任意玩家木材变动 事件
-    // 等价于 MHEvent_SetPlayer
-    function MHPlayerLumberChangeEvent_SetPlayer takes player p returns nothing
     endfunction
 
     // 获取木材变动的数值
@@ -5094,12 +4882,6 @@
     function MHSyncEvent_GetData takes nothing returns string
     endfunction
 
-    // 获取来源玩家
-    // @Tip：响应 数据同步 事件
-    // 等价于 MHEvent_GetPlayer
-    function MHSyncEvent_GetPlayer takes nothing returns player
-    endfunction
-
 
 
 
@@ -5156,6 +4938,153 @@
     function MHTrigger_ClearEvent takes trigger trig returns nothing
     endfunction
 
+
+
+
+
+
+
+//==================================================================================
+//
+// [哈希表] trigger.j 
+//
+//==================================================================================
+
+
+
+// 基本库
+
+
+    
+    // 遍历哈希表 (整数)
+    function MHHashtable_EnumInteger takes hashtable ht, code callback returns nothing
+    endfunction
+    
+    // 遍历哈希表 (实数)
+    function MHHashtable_EnumReal takes hashtable ht, code callback returns nothing
+    endfunction
+    
+    // 遍历哈希表 (布尔值)
+    function MHHashtable_EnumBoolean takes hashtable ht, code callback returns nothing
+    endfunction
+    
+    // 遍历哈希表 (字符串)
+    function MHHashtable_EnumStr takes hashtable ht, code callback returns nothing
+    endfunction
+    
+    // 遍历哈希表 (句柄)
+    function MHHashtable_EnumHandle takes hashtable ht, code callback returns nothing
+    endfunction
+    
+    // 遍历子哈希表 (整数)
+    // @param parent_key：哈希表主键
+    function MHHashtable_ScopedEnumInteger takes hashtable ht, integer parent_key, code callback returns nothing
+    endfunction
+    
+    // 遍历子哈希表 (实数)
+    // @param parent_key：哈希表主键
+    function MHHashtable_ScopedEnumReal takes hashtable ht, integer parent_key, code callback returns nothing
+    endfunction
+    
+    // 遍历子哈希表 (布尔值)
+    // @param parent_key：哈希表主键
+    function MHHashtable_ScopedEnumBoolean takes hashtable ht, integer parent_key, code callback returns nothing
+    endfunction
+    
+    // 遍历子哈希表 (字符串)
+    // @param parent_key：哈希表主键
+    function MHHashtable_ScopedEnumStr takes hashtable ht, integer parent_key, code callback returns nothing
+    endfunction
+    
+    // 遍历子哈希表 (句柄)
+    // @param parent_key：哈希表主键
+    function MHHashtable_ScopedEnumHandle takes hashtable ht, integer parent_key, code callback returns nothing
+    endfunction
+
+    // 获取当前哈希表
+    // 指代 遍历哈希表 做动作中当前遍历的哈希表
+    function MHHashtable_GetEnumHashtable takes nothing returns hashtable
+    endfunction
+    
+    // 获取当前哈希表主键
+    // 指代 遍历哈希表 做动作中当前遍历的哈希表主键
+    function MHHashtable_GetEnumParentKey takes nothing returns integer
+    endfunction
+    
+    // 获取当前哈希表子键
+    // 指代 遍历哈希表 做动作中当前遍历的哈希表子键
+    function MHHashtable_GetEnumChildKey takes nothing returns integer
+    endfunction
+    
+    // 获取当前整数哈希项
+    // 指代 遍历哈希表 做动作中当前整数哈希项
+    function MHHashtable_GetEnumInteger takes nothing returns integer
+    endfunction
+    
+    // 获取当前实数哈希项
+    // 指代 遍历哈希表 做动作中当前实数哈希项
+    function MHHashtable_GetEnumReal takes nothing returns real
+    endfunction
+    
+    // 获取当前布尔值哈希项
+    // 指代 遍历哈希表 做动作中当前布尔值哈希项
+    function MHHashtable_GetEnumBoolean takes nothing returns boolean
+    endfunction
+    
+    // 获取当前字符串哈希项
+    // 指代 遍历哈希表 做动作中当前字符串哈希项
+    function MHHashtable_GetEnumStr takes nothing returns string
+    endfunction
+    
+    // 获取当前句柄哈希项
+    // 指代 遍历哈希表 做动作中当前句柄哈希项
+    function MHHashtable_GetEnumHandle takes nothing returns handle
+    endfunction
+    
+    // 获取当前单位哈希项
+    // 指代 遍历哈希表 做动作中当前单位哈希项
+    function MHHashtable_GetEnumUnit takes nothing returns unit
+    endfunction
+    
+    // 获取当前物品哈希项
+    // 指代 遍历哈希表 做动作中当前物品哈希项
+    function MHHashtable_GetEnumItem takes nothing returns item
+    endfunction
+    
+    // 获取当前计时器哈希项
+    // 指代 遍历哈希表 做动作中当前计时器哈希项
+    function MHHashtable_GetEnumTimer takes nothing returns timer
+    endfunction
+    
+    // 获取当前单位组哈希项
+    // 指代 遍历哈希表 做动作中当前单位组哈希项
+    function MHHashtable_GetEnumGroup takes nothing returns group
+    endfunction
+    
+    // 获取当前玩家组哈希项
+    // 指代 遍历哈希表 做动作中当前玩家组哈希项
+    function MHHashtable_GetEnumForce takes nothing returns force
+    endfunction
+    
+    // 获取当前玩家哈希项
+    // 指代 遍历哈希表 做动作中当前玩家哈希项
+    function MHHashtable_GetEnumPlayer takes nothing returns player
+    endfunction
+    
+    // 获取当前特效哈希项
+    // 指代 遍历哈希表 做动作中当前特效哈希项
+    function MHHashtable_GetEnumEffect takes nothing returns effect
+    endfunction
+    
+    // 获取当前触发器哈希项
+    // 指代 遍历哈希表 做动作中当前触发器哈希项
+    function MHHashtable_GetEnumTrigger takes nothing returns trigger
+    endfunction
+    
+    // 获取当前点哈希项
+    // 指代 遍历哈希表 做动作中当前点哈希项
+    function MHHashtable_GetEnumLocation takes nothing returns location
+    endfunction
 
 
 

@@ -24,11 +24,15 @@ endlibrary
 
 #include "event.j"
 library AMHPlayerEvent
-    function MHPlayerGoldChangeEvent_Register takes trigger trig returns nothing
-        JapiPlaceHolder
+    function MHPlayerLeaveEvent_Register takes trigger trig returns boolean
+        JapiPlaceHolder false
     endfunction
-    #define MHPlayerGoldChangeEvent_GetPlayer()         MHEvent_GetPlayer()
-    #define MHPlayerGoldChangeEvent_SetPlayer(p)        MHEvent_SetPlayer(p)
+    function MHPlayerLeaveEvent_GetReason takes nothing returns integer
+        JapiPlaceHolder -1
+    endfunction
+    function MHPlayerGoldChangeEvent_Register takes trigger trig returns boolean
+        JapiPlaceHolder false
+    endfunction
     function MHPlayerGoldChangeEvent_GetValue takes nothing returns integer
         JapiPlaceHolder 0
     endfunction
@@ -41,11 +45,9 @@ library AMHPlayerEvent
     function MHPlayerGoldChangeEvent_SetTax takes boolean is_tax returns nothing
         JapiPlaceHolder
     endfunction
-    function MHPlayerLumberChangeEvent_Register takes trigger trig returns nothing
-        JapiPlaceHolder
+    function MHPlayerLumberChangeEvent_Register takes trigger trig returns boolean
+        JapiPlaceHolder false
     endfunction
-    #define MHPlayerLumberChangeEvent_GetPlayer()       MHEvent_GetPlayer()
-    #define MHPlayerLumberChangeEvent_SetPlayer(p)      MHEvent_SetPlayer(p)
     function MHPlayerLumberChangeEvent_GetValue takes nothing returns integer
         JapiPlaceHolder 0
     endfunction

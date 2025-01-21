@@ -11,8 +11,15 @@
 #include "Int\\Lina.j"
 #include "Int\\QueenOfPain.j"
 #include "Int\\Invoker.j"
+#include "Int\\Puck.j"
+#include "Int\\ShadowDemon.j"
+#include "Int\\ObsidianDestroyer.j"
 
 #include "Agi\\VengefulSpirit.j"
 #include "Agi\\FacelessVoid.j"
 #include "Agi\\Morphling.j"
 #include "Agi\\Bloodseeker.j"
+#include "Agi\\Slark.j"
+#include "Agi\\EmberSpirit.j"
+#include "Agi\\Juggernaut.j"
+

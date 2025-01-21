@@ -187,7 +187,7 @@ scope CommandButtonHelper
         local integer y
         local integer frame
         local trigger trig = CreateTrigger()
-        call MHMsgClickButtonEvent_Register(trig)
+        //call MHMsgClickButtonEvent_Register(trig)
         call TriggerAddCondition(trig, Condition(function onClickCommandButton))
 
         // 鼠标进入和离开右下角技能栏

@@ -11,6 +11,8 @@
 
 #include "Utilities\\Line Segment Enumeration.j"
 
+#include "Utilities\\StringUtils.j"
+
 #include "ShockWave.j"
 #include "Ability\\BuffUtils.j"
 #include "Ability\\AbilityUtils.j"
@@ -21,3 +23,4 @@
 #include "Unit\\UnitMove.j"
 
 #include "Memory\\MemoryUtils.j"
+

@@ -17,12 +17,12 @@ library MemoryUtils initializer Init
         return MHTool_ReadInt(addr)
     endfunction
 
-    function WriteRealMemory takes integer addr, integer value returns integer
-        return MHTool_WriteInt(addr, value)
+    function WriteRealMemory takes integer addr, integer value returns nothing
+        call MHTool_WriteInt(addr, value)
     endfunction
 
     function ConvertHandle takes handle h returns integer
-        return MHTool_ToObject(u)
+        return MHTool_ToObject(h)
     endfunction
 
     function GetTempestThread takes nothing returns integer
@@ -71,7 +71,7 @@ library MemoryUtils initializer Init
         return 0
     endfunction
 
-
+    
     function UnitEnableTruesightImmunity takes unit u returns nothing
         local integer pData = ConvertHandle( u )
 
@@ -80,7 +80,7 @@ library MemoryUtils initializer Init
             set pData = GetAddressLocustFlags( ReadRealMemory( pData ), ReadRealMemory( pData + 4 ) )
 
             if pData > 0 then
-                call WriteRealMemory( pData + 0x34, MHMath_AddBit(ReadRealMemory( pData + 0x34 )), 0x08000000 )
+                call WriteRealMemory( pData + 0x34, MHMath_AddBit(ReadRealMemory( pData + 0x34 ), 0x08000000) )
             endif
         endif
     endfunction
@@ -93,7 +93,7 @@ library MemoryUtils initializer Init
             set pData = GetAddressLocustFlags( ReadRealMemory( pData ), ReadRealMemory( pData + 4 ) )
 
             if pData > 0 then
-                call WriteRealMemory( pData + 0x34, MHMath_RemoveBit(ReadRealMemory( pData + 0x34 )), 0x08000000 )
+                call WriteRealMemory( pData + 0x34, MHMath_RemoveBit(ReadRealMemory( pData + 0x34 ), 0x08000000) )
             endif
         endif
     endfunction

@@ -17,7 +17,7 @@ scope TwinHeadDragon
         call UnitDamageTargetEx(owner, targ, 1, damage)
 
         set tick.data = tick.data + 1
-        call BJDebugMsg("造成伤害了次数："+I2S(tick.data))
+        //call BJDebugMsg("造成伤害了次数："+I2S(tick.data))
 
         set owner = null
         set targ  = null
@@ -30,7 +30,7 @@ scope TwinHeadDragon
         
         set tick = Table[h]['BUFF']
 
-        call BJDebugMsg("TwinHeadDragonBreathFireOnBuffRemove : " + I2S(h))
+        //call BJDebugMsg("TwinHeadDragonBreathFireOnBuffRemove : " + I2S(h))
 
         call tick.Destroy()
         call Table[h].remove('BUFF')

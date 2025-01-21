@@ -1,0 +1,6 @@
+
+scope DamageSystem
+
+    
+
+endscope

@@ -1,5 +1,5 @@
-// by Asphodelus
 #pragma once
+// by Asphodelus
 #include "../memory_hack_constant.j"
 
 
@@ -451,15 +451,12 @@ library AMHUnitEvent
     function MHUnitCreateEvent_Register takes trigger trig returns nothing
         JapiPlaceHolder
     endfunction
-    #define MHUnitCreateEvent_GetUnit()                 MHEvent_GetUnit()
     function MHUnitRemoveEvent_Register takes trigger trig returns nothing
         JapiPlaceHolder
     endfunction
-    #define MHUnitRemoveEvent_GetUnit()                 MHEvent_GetUnit()
     function MHUnitAttackLaunchEvent_Register takes trigger trig returns nothing
         JapiPlaceHolder
     endfunction
-    #define MHUnitAttackLaunchEvent_GetSource()         MHEvent_GetUnit()
     function MHUnitAttackLaunchEvent_GetTargetUnit takes nothing returns unit
         JapiPlaceHolder null
     endfunction
@@ -484,7 +481,6 @@ library AMHUnitEvent
     function MHUnitRestoreLifeEvent_Register takes trigger trig returns nothing
         JapiPlaceHolder
     endfunction
-    #define MHUnitRestoreLifeEvent_GetUnit()            MHEvent_GetUnit()
     function MHUnitRestoreLifeEvent_GetValue takes nothing returns real
         JapiPlaceHolder 0.
     endfunction
@@ -494,7 +490,6 @@ library AMHUnitEvent
     function MHUnitRestoreManaEvent_Register takes trigger trig returns nothing
         JapiPlaceHolder
     endfunction
-    #define MHUnitRestoreManaEvent_GetUnit()            MHEvent_GetUnit()
     function MHUnitRestoreManaEvent_GetValue takes nothing returns real
         JapiPlaceHolder 0.
     endfunction
@@ -504,7 +499,6 @@ library AMHUnitEvent
     function MHUnitDispelEvent_Register takes trigger trig returns nothing
         JapiPlaceHolder
     endfunction
-    #define MHUnitDispelEvent_GetTarget()       MHEvent_GetUnit()
     function MHUnitDispelEvent_GetSource takes nothing returns unit
         JapiPlaceHolder null
     endfunction
@@ -517,7 +511,6 @@ library AMHUnitEvent
     function MHUnitHarvestEvent_Register takes trigger trig returns nothing
         JapiPlaceHolder
     endfunction
-    #define MHUnitHarvestEvent_GetUnit()        MHEvent_GetUnit()
     function MHUnitHarvestEvent_GetValue takes nothing returns integer
         JapiPlaceHolder 0
     endfunction
@@ -533,7 +526,6 @@ library AMHUnitEvent
     function MHUnitSearchTargetEvent_Register takes trigger trig returns nothing
         JapiPlaceHolder
     endfunction
-    #define MHUnitSearchTargetEvent_GetSource()     MHEvent_GetUnit()
     function MHUnitSearchTargetEvent_GetTarget takes nothing returns unit
         JapiPlaceHolder null
     endfunction
