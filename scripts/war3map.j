@@ -1638,7 +1638,7 @@ globals
 	boolean LEV = false
 	integer LXV
 	unit LOV
-	unit LRV
+	
 	real LIV
 	real LAV
 	unit LNV
@@ -1946,7 +1946,8 @@ native EXExecuteScript takes string script returns string
 // yd japi ==================================================================
 // 技能----------------------------------------------------
 
-#include "memory_hack\memory_hack_init.j"
+#include "memory_hack\\API\\japi_dev.j"
+#include "memory_hack\\memory_hack_init.j"
 #include "Libraries\\include"
 //#include "UI\\include"
 
@@ -5740,9 +5741,7 @@ function X0X takes nothing returns integer
 	set VO = VO -1
 	return X2X
 endfunction
-function IsUnitSilence takes unit u returns boolean
-	return GetUnitAbilityLevel(u,'B01T')> 0 or GetUnitAbilityLevel(u,'BNsi')> 0 or GetUnitAbilityLevel(u,'B01X')> 0 or GetUnitAbilityLevel(u,'BNdo')> 0 or GetUnitAbilityLevel(u,'B02M')> 0 or GetUnitAbilityLevel(u,'Bhea')> 0 or GetUnitAbilityLevel(u,'B07V')> 0 or GetUnitAbilityLevel(u,'B0BY')> 0 or GetUnitAbilityLevel(u,'B08O')> 0 or GetUnitAbilityLevel(u,'B07U')> 0 or GetUnitAbilityLevel(u,'B0DL')> 0 or GetUnitAbilityLevel(u,'B08V')> 0 or GetUnitAbilityLevel(u,'B031')> 0 or GetUnitAbilityLevel(u,'B0FT')> 0 or GetUnitAbilityLevel(u,'B0FG')> 0 or GetUnitAbilityLevel(u,'B450')> 0 or GetUnitAbilityLevel(u,'B463')> 0
-endfunction
+
 function X4X takes unit u returns boolean
 	return IsUnitType(u, UNIT_TYPE_MELEE_ATTACKER) == false and(GetUnitAbilityLevel(u,'A1N3')> 0 or GetUnitAbilityLevel(u,'A12Q') == 1 or UnitGetStateBonus(u, UNIT_BONUS_ATTACK)> 200)
 endfunction
@@ -6936,16 +6935,9 @@ function I0X takes unit whichUnit, location targetUnit returns real
 	endif
 	return 1.
 endfunction
-// 模拟移动 可突破522
-function SetUnitNoLimitMoveSpeed takes unit whichUnit, integer moveSpeed returns nothing
-	if moveSpeed <= 522. then
-		call MHUnit_ResetMoveSpeedLimit(whichUnit)
-		call SetUnitMoveSpeed(whichUnit, GetUnitDefaultMoveSpeed(whichUnit) + GetUnitMoveSpeedBonus(whichUnit))
-	else
-		call MHUnit_SetMoveSpeedLimit(whichUnit, moveSpeed)
-		call SetUnitMoveSpeed(whichUnit, moveSpeed)
-	endif
-endfunction
+
+
+
 function I8X takes unit u returns nothing
 	call SetUnitState(u, UNIT_STATE_MANA, GetUnitState(u, UNIT_STATE_MAX_MANA))
 endfunction
@@ -8227,11 +8219,26 @@ function C2X takes player p returns nothing
 	set trigUnit = null
 	set C1X = null
 endfunction
+function IsUnitBreak takes unit u returns boolean
+	return GetUnitAbilityLevel(u,'A36D') == 1
+endfunction
 function IsUnitWard takes unit u returns boolean
 	return GetUnitAbilityLevel(u,'A04R') > 0
 endfunction
 function IsUnitInvision takes unit u returns boolean
 	return MHUnit_GetInvisionCount(u) > 0
+	//return GetUnitAbilityLevel(u,'B068')> 0 or GetUnitAbilityLevel(u,'B07T')> 0 or GetUnitAbilityLevel(u,'B076')> 0 or GetUnitAbilityLevel(u,'BOwk')> 0 or GetUnitAbilityLevel(u,'B04R')> 0 or GetUnitAbilityLevel(u,'B0A5')> 0 or GetUnitAbilityLevel(u,'B01Q')> 0 or GetUnitAbilityLevel(u,'B006')> 0 or GetUnitAbilityLevel(u,'Binv')> 0 or GetUnitAbilityLevel(u,'Apiv')> 0 or GetUnitAbilityLevel(u,'A021')> 0 or GetUnitAbilityLevel(u,'A0K4')> 0 or GetUnitAbilityLevel(u,'A0XB')> 0 or GetUnitAbilityLevel(u,'A0Z2')> 0 or GetUnitAbilityLevel(u,'A1GA')> 0 or GetUnitAbilityLevel(u,'A1HW')> 0 or GetUnitAbilityLevel(u,'A1HX')> 0 or GetUnitAbilityLevel(u,'A00J')> 0 or GetUnitAbilityLevel(u,'B08K')> 0 or GetUnitAbilityLevel(u,'B08X')> 0 or GetUnitAbilityLevel(u,'B039')> 0 or GetUnitAbilityLevel(u,'B00K')> 0 or GetUnitAbilityLevel(u,'BHfs')> 0 or GetUnitAbilityLevel(u,'A140')> 0 or GetUnitAbilityLevel(u,'B021')> 0 or GetUnitAbilityLevel(u,'A0ZD')> 0 or GetUnitAbilityLevel(u,'A0KT')> 0
+endfunction
+function MHUnit_GetSilenceCount takes unit u returns integer
+    local integer ptr = MHTool_ToObject(u)
+    if (ptr > 0) then
+        return MHTool_ReadInt(ptr + 0x1D0)
+    endif
+    return 0
+endfunction
+function IsUnitSilence takes unit u returns boolean
+	return MHUnit_GetSilenceCount(u) > 0
+	//return GetUnitAbilityLevel(u,'B01T')> 0 or GetUnitAbilityLevel(u,'BNsi')> 0 or GetUnitAbilityLevel(u,'B01X')> 0 or GetUnitAbilityLevel(u,'BNdo')> 0 or GetUnitAbilityLevel(u,'B02M')> 0 or GetUnitAbilityLevel(u,'Bhea')> 0 or GetUnitAbilityLevel(u,'B07V')> 0 or GetUnitAbilityLevel(u,'B0BY')> 0 or GetUnitAbilityLevel(u,'B08O')> 0 or GetUnitAbilityLevel(u,'B07U')> 0 or GetUnitAbilityLevel(u,'B0DL')> 0 or GetUnitAbilityLevel(u,'B08V')> 0 or GetUnitAbilityLevel(u,'B031')> 0 or GetUnitAbilityLevel(u,'B0FT')> 0 or GetUnitAbilityLevel(u,'B0FG')> 0 or GetUnitAbilityLevel(u,'B450')> 0 or GetUnitAbilityLevel(u,'B463')> 0
 endfunction
 function IsUnitEthereal takes unit u returns boolean
 	return MHUnit_GetEtherealCount(u) > 0
@@ -8296,16 +8303,10 @@ endfunction
 function DXX takes unit u returns boolean
 	return IsUnitVisible(u, NeutralCreepPlayer) == false
 endfunction
-function DOX takes unit u returns boolean
-	return GetUnitAbilityLevel(u,'B068')> 0 or GetUnitAbilityLevel(u,'B07T')> 0 or GetUnitAbilityLevel(u,'B076')> 0 or GetUnitAbilityLevel(u,'BOwk')> 0 or GetUnitAbilityLevel(u,'B04R')> 0 or GetUnitAbilityLevel(u,'B0A5')> 0 or GetUnitAbilityLevel(u,'B01Q')> 0 or GetUnitAbilityLevel(u,'B006')> 0 or GetUnitAbilityLevel(u,'Binv')> 0 or GetUnitAbilityLevel(u,'Apiv')> 0 or GetUnitAbilityLevel(u,'A021')> 0 or GetUnitAbilityLevel(u,'A0K4')> 0 or GetUnitAbilityLevel(u,'A0XB')> 0 or GetUnitAbilityLevel(u,'A0Z2')> 0 or GetUnitAbilityLevel(u,'A1GA')> 0 or GetUnitAbilityLevel(u,'A1HW')> 0 or GetUnitAbilityLevel(u,'A1HX')> 0 or GetUnitAbilityLevel(u,'A00J')> 0 or GetUnitAbilityLevel(u,'B08K')> 0 or GetUnitAbilityLevel(u,'B08X')> 0 or GetUnitAbilityLevel(u,'B039')> 0 or GetUnitAbilityLevel(u,'B00K')> 0 or GetUnitAbilityLevel(u,'BHfs')> 0 or GetUnitAbilityLevel(u,'A140')> 0 or GetUnitAbilityLevel(u,'B021')> 0 or GetUnitAbilityLevel(u,'A0ZD')> 0 or GetUnitAbilityLevel(u,'A0KT')> 0
-endfunction
+
 function DRX takes unit whichUnit returns boolean
 	local integer DIX = GetUnitTypeId(whichUnit)
 	return DIX =='n004' or DIX =='n01G' or DIX =='n01C' or DIX =='n018'
-endfunction
-
-function GEXX takes unit u returns boolean
-	return IsUnitType(u, UNIT_TYPE_DEAD) or 0.405 > GetWidgetLife(u)
 endfunction
 
 // IsAliveNotStrucNotWard
@@ -8397,7 +8398,7 @@ function D5X takes nothing returns boolean
 	return((IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and IsUnitEnemy(GetTriggerUnit(), GetOwningPlayer(GetFilterUnit())) and(IsAliveNotStrucNotWard(GetFilterUnit())) and IsNotAncientOrBear(GetFilterUnit())))
 endfunction
 function D6X takes nothing returns boolean
-	return(((DOX(GetFilterUnit()) == false or UnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(U2))) and(IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and IsUnitEnemy(GetTriggerUnit(), GetOwningPlayer(GetFilterUnit())) and(IsAliveNotStrucNotWard(GetFilterUnit())) and IsNotAncientOrBear(GetFilterUnit()))))
+	return(((IsUnitInvision(GetFilterUnit()) == false or UnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(U2))) and(IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and IsUnitEnemy(GetTriggerUnit(), GetOwningPlayer(GetFilterUnit())) and(IsAliveNotStrucNotWard(GetFilterUnit())) and IsNotAncientOrBear(GetFilterUnit()))))
 endfunction
 function D7X takes nothing returns boolean
 	return((IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and(IsAliveNotStrucNotWard(GetFilterUnit())) and IsNotAncientOrBear(GetFilterUnit())))
@@ -17591,7 +17592,7 @@ function IMO takes nothing returns nothing
 	loop
 	exitwhen x > IQO
 		set i = UnitItemInSlot(IPO, x)
-		if GetItemIndex(i) == OYV and TKV(IPO,'JAVL', 20) and DOX(IPO) == false then
+		if GetItemIndex(i) == OYV and TKV(IPO,'JAVL', 20) and IsUnitInvision(IPO) == false then
 			if IsBearUnit(IPO) then
 				if ILO(IPO) == false then
 					if GetUnitAbilityLevel(GetTriggerUnit(),'A04R') == 0 then
@@ -21964,7 +21965,7 @@ function D4O takes nothing returns boolean
 		call FlushChildHashtable(HY, h)
 		call CleanCurrentTrigger(t)
 	else
-		if DOX(u) then
+		if IsUnitInvision(u) then
 			if GetUnitAbilityLevel(u,'B0GR') == 0 then
 				call UnitAddPermanentAbility(u,'A2SJ')
 			endif
@@ -55398,18 +55399,7 @@ function X9E takes nothing returns nothing
 		call G4I()
 	endif
 endfunction
-function G5I takes unit u returns boolean
-	local real L2O
-	local real WOV = .3
-	if UnitIsDead(u) then
-		return false
-	endif
-	if UnitIsDead(LRV) == false then
-		set L2O = GetWidgetLife(u)/ GetUnitState(u, UNIT_STATE_MAX_LIFE)
-		return .25 > L2O or(L2O < WOV and DOX(u) == false)
-	endif
-	return false
-endfunction
+
 
 function OVE takes nothing returns nothing
 	local unit targetUnit
@@ -59489,7 +59479,7 @@ function RXE takes nothing returns nothing
 	set targetUnit = null
 endfunction
 function QAI takes nothing returns boolean
-	return(IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(GW)) and IsUnitMagicImmune(GetFilterUnit()) == false and(DOX(GetFilterUnit()) == false or IsUnitVisible(GetFilterUnit(), GetOwningPlayer(GW))) and IsAliveNotStrucNotWard(GetFilterUnit()) and GetFilterUnit()!= Roshan)!= null
+	return(IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(GW)) and IsUnitMagicImmune(GetFilterUnit()) == false and(IsUnitInvision(GetFilterUnit()) == false or IsUnitVisible(GetFilterUnit(), GetOwningPlayer(GW))) and IsAliveNotStrucNotWard(GetFilterUnit()) and GetFilterUnit()!= Roshan)!= null
 endfunction
 function QNI takes nothing returns nothing
 	local unit dummyCaster = CreateUnit(GetOwningPlayer(GW),'e00E', GetUnitX(GetEnumUnit()), GetUnitY(GetEnumUnit()), 0)
@@ -60526,7 +60516,7 @@ function RQE takes nothing returns nothing
 	set t = null
 endfunction
 function UII takes nothing returns boolean
-	return IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and(IsAliveNotStrucNotWard(GetFilterUnit())) and(DOX(GetFilterUnit()) == false or UnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(U2))) and RFX(GetFilterUnit()) == false
+	return IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and(IsAliveNotStrucNotWard(GetFilterUnit())) and(IsUnitInvision(GetFilterUnit()) == false or UnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(U2))) and RFX(GetFilterUnit()) == false
 endfunction
 function UAI takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
@@ -62515,7 +62505,7 @@ function Y5I takes nothing returns nothing
 	set t = null
 endfunction
 function Y6I takes nothing returns nothing
-	if UnitVisibleToPlayer(GetEnumUnit(), GetOwningPlayer(U2)) or(IsUnitFogged(GetEnumUnit(), GetOwningPlayer(U2)) and DOX(GetEnumUnit()) == false) then
+	if UnitVisibleToPlayer(GetEnumUnit(), GetOwningPlayer(U2)) or(IsUnitFogged(GetEnumUnit(), GetOwningPlayer(U2)) and IsUnitInvision(GetEnumUnit()) == false) then
 		call Y5I()
 	endif
 endfunction
@@ -69145,7 +69135,7 @@ function N3A takes nothing returns boolean
 	else
 		call SetUnitX(whichUnit, GetUnitX(targetUnit)-40)
 		call SetUnitY(whichUnit, GetUnitY(targetUnit)-40)
-		if DOX(targetUnit) and UnitVisibleToPlayer(targetUnit, GetOwningPlayer(whichUnit)) == false then
+		if IsUnitInvision(targetUnit) and UnitVisibleToPlayer(targetUnit, GetOwningPlayer(whichUnit)) == false then
 			call KillUnit(whichUnit)
 		elseif ModuloInteger(GetTriggerEvalCount(t), 5) == 0 then
 			call IssueTargetOrderById(whichUnit, 851983, targetUnit)
@@ -69179,7 +69169,7 @@ function N4A takes unit N5A, unit targetUnit, integer level returns nothing
 	set t = null
 endfunction
 function N6A takes nothing returns boolean
-	return DHX() and LoadInteger(HY, GetHandleId(GetFilterUnit()), 4290)!= 1 and(UnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(U2)) or DOX(GetFilterUnit()) == false)
+	return DHX() and LoadInteger(HY, GetHandleId(GetFilterUnit()), 4290)!= 1 and(UnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(U2)) or IsUnitInvision(GetFilterUnit()) == false)
 endfunction
 function N7A takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
@@ -81279,9 +81269,9 @@ function UUA takes unit u, integer S6V, eventid id returns nothing
 endfunction
 
 function UWA takes unit u, unit t returns nothing	//单位被攻击
-	//if CGA(u, t) then
-	//	return
-	//endif
+	if CGA(u, t) then
+		return
+	endif
 	call TZA(u, t, false)
 
 	// 泉水

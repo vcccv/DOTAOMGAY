@@ -140,5 +140,25 @@ library UnitLimitation requires UnitModel
             call MHUnit_Stun(whichUnit, false)
         endif
     endfunction
+    
+    globals
+        private constant key UNIT_TRUESIGHT_IMMUNITY_COUNT
+    endglobals
+    function UnitAddTruesightImmunityCount takes unit whichUnit returns nothing
+        local integer h     = GetHandleId(whichUnit)
+        local integer count = Table[h][UNIT_TRUESIGHT_IMMUNITY_COUNT] + 1
+        set Table[h][UNIT_TRUESIGHT_IMMUNITY_COUNT] = count
+        if count == 1 then
+            call UnitEnableTruesightImmunity(whichUnit)
+        endif
+    endfunction
+    function UnitSubTruesightImmunityCount takes unit whichUnit returns nothing
+        local integer h     = GetHandleId(whichUnit)
+        local integer count = Table[h][UNIT_TRUESIGHT_IMMUNITY_COUNT] - 1
+        set Table[h][UNIT_TRUESIGHT_IMMUNITY_COUNT] = count
+        if count == 0 then
+            call UnitDisableTruesightImmunity(whichUnit)
+        endif
+    endfunction
 
 endlibrary

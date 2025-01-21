@@ -18,4 +18,6 @@
 #include "Unit\\UnitLimitation.j"
 #include "Unit\\UnitModel.j"
 #include "Unit\\UnitUtils.j"
+#include "Unit\\UnitMove.j"
 
+#include "Memory\\MemoryUtils.j"

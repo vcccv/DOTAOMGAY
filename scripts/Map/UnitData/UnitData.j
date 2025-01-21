@@ -109,4 +109,13 @@ library UnitData requires UnitUtils
         return value
     endfunction
 
+    function UnitAddMoveSpeedBonusPercent takes unit whichUnit, real percent returns nothing
+        set percent = percent * 0.01
+        call MHUnit_SetData(whichUnit, UNIT_DATA_BONUS_MOVESPEED, MHUnit_GetData(whichUnit, UNIT_DATA_BONUS_MOVESPEED) + percent)
+    endfunction
+    function UnitReduceMoveSpeedBonusPercent takes unit whichUnit, real percent returns nothing
+        set percent = percent * 0.01
+        call MHUnit_SetData(whichUnit, UNIT_DATA_BONUS_MOVESPEED, MHUnit_GetData(whichUnit, UNIT_DATA_BONUS_MOVESPEED) - percent)
+    endfunction
+
 endlibrary
