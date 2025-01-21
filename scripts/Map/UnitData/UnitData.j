@@ -49,9 +49,7 @@ library UnitData requires UnitUtils
     function UnitAddStateBonus takes unit whichUnit, real addValue, integer abilId returns real
         local real    value
         local integer h
-        if not UnitAddPermanentAbility(whichUnit, abilId) then
-            return 0
-        endif
+        call UnitAddPermanentAbility(whichUnit, abilId)
         if abilId == UNIT_BONUS_ATTACK then
             set addValue = (addValue * 1.) * 0.01
         endif
@@ -70,9 +68,7 @@ library UnitData requires UnitUtils
     function UnitSetStateBonus takes unit whichUnit, real newValue, integer abilId returns real
         local real    value
         local integer h
-        if not UnitAddPermanentAbility(whichUnit, abilId) then
-            return 0
-        endif
+        call UnitAddPermanentAbility(whichUnit, abilId)
         if abilId == UNIT_BONUS_ATTACK then
             set newValue = (newValue * 1.) * 0.01
         endif
@@ -90,9 +86,7 @@ library UnitData requires UnitUtils
     function UnitReduceStateBonus takes unit whichUnit, real reduceValue, integer abilId returns real
         local real    value
         local integer h
-        if not UnitAddPermanentAbility(whichUnit, abilId) then
-            return 0
-        endif
+        call UnitAddPermanentAbility(whichUnit, abilId)
         if abilId == UNIT_BONUS_ATTACK then
             set reduceValue = (reduceValue * 1.) * 0.01
         endif

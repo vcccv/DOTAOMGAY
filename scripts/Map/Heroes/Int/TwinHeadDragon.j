@@ -167,9 +167,9 @@ scope TwinHeadDragon
 
 // 冰火交加
 function DualBreathDamagedEvent takes nothing returns nothing
-	local integer i = GetUnitAbilityLevel(DamagedEventSourceUnit,'A0OB')
-	if i > 0 and GetUnitAbilityLevel(DamagedEventSourceUnit,'A3JI'-1 + i) == 0 then
-		call UnitAddAbilityToTimed(DamagedEventTargetUnit,'A3JI'-1 + GetUnitAbilityLevel(DamagedEventSourceUnit,'A0OB'), 1, 5,'B3J1')
+	local integer i = GetUnitAbilityLevel(DamageEvent.Source[DamageEvent.INDEX],'A0OB')
+	if i > 0 and GetUnitAbilityLevel(DamageEvent.Source[DamageEvent.INDEX],'A3JI'-1 + i) == 0 then
+		call UnitAddAbilityToTimed(DETarget,'A3JI'-1 + GetUnitAbilityLevel(DamageEvent.Source[DamageEvent.INDEX],'A0OB'), 1, 5,'B3J1')
 	endif
 endfunction
 function U9R takes nothing returns nothing
