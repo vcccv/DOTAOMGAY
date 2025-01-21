@@ -82,22 +82,22 @@ library UnitLimitation requires UnitModel
     endfunction
 
     globals
-        private constant key UNIT_PATHING_COUNT
+        private constant key UNIT_NOPATHING_COUNT
     endglobals
-    function UnitAddPathingCount takes unit whichUnit returns nothing
+    function UnitAddNoPathingCount takes unit whichUnit returns nothing
         local integer h     = GetHandleId(whichUnit)
-        local integer count = Table[h][UNIT_PATHING_COUNT] + 1
-        set Table[h][UNIT_PATHING_COUNT] = count
+        local integer count = Table[h][UNIT_NOPATHING_COUNT] + 1
+        set Table[h][UNIT_NOPATHING_COUNT] = count
         if count == 1 then
-            call SetUnitInvulnerable(whichUnit, true)
+            call SetUnitPathing(whichUnit, false)
         endif
     endfunction
-    function UnitSubPathingCount takes unit whichUnit returns nothing
+    function UnitSubNoPathingCount takes unit whichUnit returns nothing
         local integer h     = GetHandleId(whichUnit)
-        local integer count = Table[h][UNIT_PATHING_COUNT] - 1
-        set Table[h][UNIT_PATHING_COUNT] = count
+        local integer count = Table[h][UNIT_NOPATHING_COUNT] - 1
+        set Table[h][UNIT_NOPATHING_COUNT] = count
         if count == 0 then
-            call SetUnitInvulnerable(whichUnit, false)
+            call SetUnitPathing(whichUnit, true)
         endif
     endfunction
 
@@ -118,6 +118,26 @@ library UnitLimitation requires UnitModel
         set Table[h][UNIT_DISABLE_ATTACK_COUNT] = count
         if count == 0 then
             call MHAbility_Disable(whichUnit, 'Aatk', false, false)
+        endif
+    endfunction
+
+    globals
+        private constant key UNIT_PAUSE_COUNT
+    endglobals
+    function UnitAddStunCount takes unit whichUnit returns nothing
+        local integer h     = GetHandleId(whichUnit)
+        local integer count = Table[h][UNIT_PAUSE_COUNT] + 1
+        set Table[h][UNIT_PAUSE_COUNT] = count
+        if count == 1 then
+            call MHUnit_Stun(whichUnit, true)
+        endif
+    endfunction
+    function UnitSubStunCount takes unit whichUnit returns nothing
+        local integer h     = GetHandleId(whichUnit)
+        local integer count = Table[h][UNIT_PAUSE_COUNT] - 1
+        set Table[h][UNIT_PAUSE_COUNT] = count
+        if count == 0 then
+            call MHUnit_Stun(whichUnit, false)
         endif
     endfunction
 

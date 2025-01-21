@@ -25,7 +25,7 @@ scope Morphling
                 //if Table[GetHandleId(sw.owner)][WAVEFORM_COUNT] == 0 then
                     call UnitSubCantSelectCount(sw.owner)
                     call UnitSubHideByColorCount(sw.owner)
-                    call UnitSubPathingCount(sw.owner)
+                    call UnitSubNoPathingCount(sw.owner)
                     call UnitSubInvulnerableCount(sw.owner)
                 //endif
             endif
@@ -101,7 +101,7 @@ scope Morphling
             //set Table[GetHandleId(whichUnit)][WAVEFORM_COUNT] = Table[GetHandleId(whichUnit)][WAVEFORM_COUNT] + 1
             //if Table[GetHandleId(whichUnit)][WAVEFORM_COUNT] == 1 then
                 call UnitAddInvulnerableCount(whichUnit)
-                call UnitAddPathingCount(whichUnit)
+                call UnitAddNoPathingCount(whichUnit)
                 call UnitAddCantSelectCount(whichUnit)
                 call UnitAddHideByColorCount(whichUnit)
             //endif

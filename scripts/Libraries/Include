@@ -17,3 +17,5 @@
 #include "Ability\\AbilityOrderId.j"
 #include "Unit\\UnitLimitation.j"
 #include "Unit\\UnitModel.j"
+#include "Unit\\UnitUtils.j"
+

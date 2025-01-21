@@ -113,36 +113,6 @@ scope Magnus
     //*  獠牙冲刺
     //*
     //***************************************************************************
-    
-    function WPI takes nothing returns boolean
-        return(IsUnitEnemy(U2, GetOwningPlayer(GetFilterUnit())) and IsUnitIdType(GetUnitTypeId(GetFilterUnit()), UNIT_TYPE_HERO) and IsUnitInGroup(GetFilterUnit(), LB) == false and CT != GetFilterUnit() and GXX(GetFilterUnit()) )!= null 
-    endfunction
-    function WQI takes nothing returns nothing
-        call SetUnitPosition(GetEnumUnit(), ZI, VA)
-        call SaveBoolean(OtherHashTable, GetHandleId(GetEnumUnit()), 99, true)
-        call SetUnitPathing(GetEnumUnit(), false)
-    endfunction
-    function WSI takes nothing returns nothing
-        local unit u = GetEnumUnit()
-        local location l
-        local real x
-        local real y
-        if IsPointInRegion(TerrainCliffRegion, GetUnitX(u), GetUnitY(u)) then
-            set l = DEX(GetUnitX(u), GetUnitY(u))
-            set x = CoordinateX75(GetLocationX(l))
-            set y = CoordinateY75(GetLocationY(l))
-            call SaveBoolean(OtherHashTable, GetHandleId(u), 99, true)
-            call SetUnitX(u, x)
-            call SetUnitY(u, y)
-            call RemoveLocation(l)
-            set l = null
-        endif
-        call SetUnitPathing(u, true)
-        call WMI(WI, u, YI)
-        call KillTreeByCircle(GetUnitX(u), GetUnitY(u), 300)
-        set u = null
-    endfunction
-
     function SkewerOnMoveUpdate takes nothing returns boolean
         local trigger  t         = GetTriggeringTrigger()
         local integer  h         = GetHandleId(t)
@@ -156,17 +126,19 @@ scope Magnus
         local real     targetX   = CoordinateX75(ux + 19 * Cos(a))
         local real     targetY   = CoordinateY75(uy + 19 * Sin(a))
         local group    g
-        local group    gg        = LoadGroupHandle(HY, h, 0)
-        local integer  max       =(LoadInteger(HY, h, 12))
-        local location l
+        local group    targGroup = LoadGroupHandle(HY, h, 0)
+        local integer  maxCount  =(LoadInteger(HY, h, 12))
         local unit     first
-        if IsUnitType(whichUnit, UNIT_TYPE_HERO) then
-            call SaveBoolean(OtherHashTable, GetHandleId(whichUnit), 99, true)
-        endif
-        call SetUnitPosition(whichUnit, targetX, targetY)
+        local real     area      = 150.
+        local integer  i
+        local integer  max
+
+        call SetUnitX(whichUnit, targetX)
+        call SetUnitY(whichUnit, targetY)
         call SetUnitFacing(whichUnit, a * bj_RADTODEG)
         call SaveReal(HY, h, 6,((targetX)* 1.))
         call SaveReal(HY, h, 7,((targetY)* 1.))
+
         if ModuloInteger(GetTriggerEvalCount(t), 4) == 0 then
             call DestroyEffect(AddSpecialEffect("Abilities\\Weapons\\AncientProtectorMissile\\AncientProtectorMissile.mdl", targetX, targetY))
         endif
@@ -174,48 +146,69 @@ scope Magnus
             call SetUnitAnimationByIndex(whichUnit, 3)
         endif
         set g = AllocationGroup(358)
-        set U2 = whichUnit
-        set LB = gg
-        call GroupEnumUnitsInRange(g, targetX, targetY, 150+ 25, Condition(function WPI))
-        if FirstOfGroup(g)!= null then
-            call GroupAddGroup(g, gg)
-        endif
+
+        call GroupEnumUnitsInRange(g, targetX, targetY, area + MAX_UNIT_COLLISION, null)
+        loop
+            set first = FirstOfGroup(g)
+            exitwhen first == null
+            call GroupRemoveUnit(g, first)
+            
+            if IsUnitInRangeXY(first, targetX, targetY, area) and first != Roshan and UnitAlive(first) and not IsUnitInGroup(first, targGroup) and IsUnitEnemy(whichUnit, GetOwningPlayer(first)) and IsHeroUnitId(GetUnitTypeId(first)) then
+                call GroupAddUnit(targGroup, first)
+                call UnitAddStunCount(first)
+                call UnitAddNoPathingCount(first)
+            endif
+
+        endloop
+
+        set i   = 1
+        set max = MHGroup_GetSize(targGroup)
+        loop
+            exitwhen i > max
+            set first = MHGroup_GetUnit(targGroup, i)
+            if UnitAlive(first) then
+                call SetUnitPosition(first, targetX, targetY)
+            endif
+            set i = i + 1
+        endloop
+
         call DeallocateGroup(g)
-        set ZI = targetX
-        set VA = targetY
-        call ForGroup(gg, function WQI)
+
         if ModuloInteger(GetTriggerEvalCount(t), 3) == 0 then
             call KillTreeByCircle(targetX, targetY, 200)
         endif
-        if GetTriggerEventId() == EVENT_WIDGET_DEATH or GetTriggerEvalCount(t)> max then
+        if GetTriggerEventId() == EVENT_WIDGET_DEATH or GetTriggerEvalCount(t)> maxCount then
             call DestroyEffect((LoadEffectHandle(HY, h, 175)))
             call SetUnitAnimationByIndex(whichUnit, 0)
             call SetUnitTimeScale(whichUnit, 1.)
-            call SetUnitPathing(whichUnit, true)
+            
+            call UnitSubStunCount(whichUnit)
+            call UnitSubNoPathingCount(whichUnit)
+
             call FlushChildHashtable(HY, h)
             call CleanCurrentTrigger(t)
-            set YI = level
-            set WI = whichUnit
-            call IssueTargetOrderById(whichUnit, 851983, FirstOfGroup(gg))
-            call ForGroup(gg, function WSI)
-            call KillTreeByCircle(targetX, targetY, 375)
-            if IsPointInRegion(TerrainCliffRegion, GetUnitX(whichUnit), GetUnitY(whichUnit)) then
-                set l = DEX(GetUnitX(whichUnit), GetUnitY(whichUnit))
-                if IsUnitType(whichUnit, UNIT_TYPE_HERO) then
-                    call SaveBoolean(OtherHashTable, GetHandleId(whichUnit), 99, true)
-                endif
-                call SetUnitX(whichUnit, CoordinateX75(GetLocationX(l)))
-                call SetUnitY(whichUnit, CoordinateY75(GetLocationY(l)))
-                call RemoveLocation(l)
-                set l = null
-            endif
+
+            set i   = 1
+            set max = MHGroup_GetSize(targGroup)
+            loop
+                exitwhen i > max
+                set first = MHGroup_GetUnit(targGroup, i)
+                call UnitSubStunCount(first)
+                call UnitSubNoPathingCount(first)
+                call UnitDamageTargetEx(whichUnit, first, 1, 70 * level)
+                call UnitAddAbilityToTimed(first, 'A1Q5', 1, 2.5, 'B0CX')
+                call KillTreeByCircle(GetUnitX(first), GetUnitY(first), 300.)
+                set i = i + 1
+            endloop
+
+            call DeallocateGroup(targGroup)
+            call KillTreeByCircle(targetX, targetY, 375.)
         endif
         set t = null
         set whichUnit = null
-        call DeallocateGroup(gg)
-        call DeallocateGroup(g)
+        set first = null
         set g = null
-        set gg = null
+        set targGroup = null
         return false
     endfunction
 
@@ -234,7 +227,10 @@ scope Magnus
             set tx = CoordinateX75(sx + distance * Cos(a))
             set ty = CoordinateY75(sy + distance * Sin(a))
         endif
-        call SetUnitPathing(whichUnit, false)
+
+        call UnitAddStunCount(whichUnit)
+        call UnitAddNoPathingCount(whichUnit)
+
         call SetUnitAnimationByIndex(whichUnit, 3)
         call SetUnitTimeScale(whichUnit, 1.5)
         call TriggerRegisterTimerEvent(t, .02, true)
@@ -242,11 +238,6 @@ scope Magnus
         call TriggerAddCondition(t, Condition(function SkewerOnMoveUpdate))
         call SaveUnitHandle(HY, h, 2,(whichUnit))
         call SaveInteger(HY, h, 5,(level))
-        call SaveUnitHandle(HY, h, 393,(null))
-        call SaveUnitHandle(HY, h, 394,(null))
-        call SaveUnitHandle(HY, h, 395,(null))
-        call SaveUnitHandle(HY, h, 396,(null))
-        call SaveUnitHandle(HY, h, 397,(null))
         call SaveReal(HY, h, 47,((tx)* 1.))
         call SaveReal(HY, h, 48,((ty)* 1.))
         call SaveGroupHandle(HY, h, 0, AllocationGroup(359))
