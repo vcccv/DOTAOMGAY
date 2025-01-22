@@ -72,7 +72,6 @@ library UnitLimitation requires UnitModel
             call SetUnitInvulnerable(whichUnit, true)
             call UnitMakeAbilityPermanent(whichUnit, true, 'Avul')
         endif
-        call BJDebugMsg("Add:" + I2S(count))
     endfunction
     function UnitSubInvulnerableCount takes unit whichUnit returns nothing
         local integer h     = GetHandleId(whichUnit)
@@ -81,7 +80,6 @@ library UnitLimitation requires UnitModel
         if count == 0 then
             call SetUnitInvulnerable(whichUnit, false)
         endif
-        call BJDebugMsg("Sub:" + I2S(count))
     endfunction
 
     globals
