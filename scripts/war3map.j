@@ -3293,8 +3293,8 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A40M', 0, "F2E")
 	call SaveStr(ObjectHashTable,'A40N', 0, "F2E")
 	call SaveStr(ObjectHashTable,'A2TI', 0, "F3E")
-	call SaveStr(ObjectHashTable,'A29J', 0, "F4E")
-	call SaveStr(ObjectHashTable,'A3OJ', 0, "F4E")
+	call SaveStr(ObjectHashTable,'A29J', 0, "RequiemOfSoulsOnSpellEffect")
+	call SaveStr(ObjectHashTable,'A3OJ', 0, "RequiemOfSoulsOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A02A', 0, "F5E")
 	call SaveStr(ObjectHashTable,'A06M', 0, "F6E")
 	call SaveStr(ObjectHashTable,'A08V', 0, "F7E")
@@ -62278,110 +62278,7 @@ function PDE takes nothing returns nothing
 	endif
 	set u = null
 endfunction
-function ZGI takes nothing returns boolean
-	return IsAliveNotStrucNotWard(GetFilterUnit()) and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(U2))
-endfunction
-function ZHI takes unit u returns nothing
-	local group g
-	local unit u2
-	local integer level
-	local unit d = CreateUnit(GetOwningPlayer(u),'e00E', GetUnitX(u), GetUnitY(u), 0)
-	call UnitAddAbility(d,'A0HH')
-	set g = AllocationGroup(370)
-	set U2 = u
-	call GroupEnumUnitsInRange(g, GetUnitX(u), GetUnitY(u), 700, Condition(function ZGI))
-	loop
-		set u2 = FirstOfGroup(g)
-	exitwhen u2 == null
-		call SetUnitX(d, GetUnitX(u2))
-		call SetUnitY(d, GetUnitY(u2))
-		call SetUnitOwner(d, GetOwningPlayer(u2), false)
-		call IssueTargetOrderById(d, 852189, u2)
-		call GroupRemoveUnit(g, u2)
-	endloop
-	call UnitRemoveAbility(d,'A0HH')
-	set d = null
-	call DeallocateGroup(g)
-endfunction
 
-function IYRPI takes nothing returns nothing
-	local timer t = GetExpiredTimer()
-	local integer h = GetHandleId(t)
-	local unit u = LoadUnitHandle(HY, h, 0)
-	local integer OTRTO = LoadInteger(HY, h, 1)
-	local integer IYRUI = LoadInteger(HY, h, 0)
-	local integer i
-	local integer k
-	local real a
-	local real x = GetUnitX(u)
-	local real y = GetUnitY(u)
-	local real r
-	local unit d = CreateUnit(GetOwningPlayer(u),'e00E', x, y, 0)
-	local real dx
-	local real dy
-	local integer id ='S0HG'
-	call UnitAddAbility(d, id)
-	call SetUnitAbilityLevel(d, id, OTRTO)
-	set a = 360. /(IYRUI * 1.)
-	set i = 1
-	set k = IYRUI
-	loop
-	exitwhen i > k
-		set r = i * a * bj_DEGTORAD
-		set dx = CoordinateX50(x +(1060)*(Cos(r)))
-		set dy = CoordinateY50(y +(1060)*(Sin(r)))
-		call SetUnitX(d, dx)
-		call SetUnitY(d, dy)
-		call IssuePointOrderById(d, 852218, x, y)
-		set i = i + 1
-	endloop
-	set d = null
-	call PauseTimer(t)
-	call FlushChildHashtable(HY, GetHandleId(t))
-	call DestroyTimer(t)
-	set u = null
-	set t = null
-endfunction
-
-function IYRYI takes unit u, integer IYRII, integer OTRTO returns nothing
-	local timer t = CreateTimer()
-	local integer h = GetHandleId(t)
-	call SaveUnitHandle(HY, h, 0, u)
-	call SaveInteger(HY, h, 0, IYRII)
-	call SaveInteger(HY, h, 1, OTRTO)
-	call TimerStart(t, 1.4, false, function IYRPI)
-	set t = null
-endfunction
-
-function ZJI takes unit u, integer UJV returns nothing
-	local real x = GetWidgetX(u)
-	local real y = GetWidgetY(u)
-	local unit d = CreateUnit(GetOwningPlayer(u),'e00E', x, y, 0)
-	local integer count = 0
-	local integer I3X = 360 / UJV
-	local integer WUV = GetUnitAbilityLevel(u,'A29J')
-	local boolean is_a = GetUnitAbilityLevel(u,'A3OJ')> 0
-	call UnitAddAbility(d,'A0HG')
-	call SetUnitAbilityLevel(d,'A0HG', WUV)
-	loop
-	exitwhen count > UJV
-		call IssuePointOrderById(d, 852218, x + 50 * Cos(bj_DEGTORAD * count * I3X), y + 50 * Sin(bj_DEGTORAD * count * I3X))
-		set count = count + 1
-	endloop
-	call ZHI(u)
-	if is_a then
-		call IYRYI(u, UJV, WUV)
-	endif
-	set d = null
-endfunction
-function ZKI takes nothing returns nothing
-	if GetUnitAbilityLevel(GetTriggerUnit(),'A29J')> 0 then
-		call ZJI(GetTriggerUnit(), 9)
-	endif
-endfunction
-function F4E takes nothing returns nothing
-	call ZJI(GetTriggerUnit(), 18)
-endfunction
 function I5E takes nothing returns nothing
 	local unit dummyCaster
 	if (O6X() == false) then
@@ -79354,6 +79251,10 @@ function RegisterOtherEvent takes unit whichUnit returns nothing
 	exitwhen i > PassiveAbilityMaxCount
 	endloop
 	set trig = null
+endfunction
+
+function ZKI takes nothing returns nothing
+	call ExecuteFunc("RequiemOfSoulsOnDeath")
 endfunction
 
 // 英雄死亡的触发器

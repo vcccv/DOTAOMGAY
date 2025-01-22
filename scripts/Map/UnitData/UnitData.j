@@ -112,4 +112,11 @@ library UnitData requires UnitUtils
         call MHUnit_SetData(whichUnit, UNIT_DATA_BONUS_MOVESPEED, MHUnit_GetData(whichUnit, UNIT_DATA_BONUS_MOVESPEED) - percent)
     endfunction
 
+    function UnitRegenLife takes unit source, unit target, real value returns nothing
+        call MHUnit_RestoreLife(target, value)
+    endfunction
+    function UnitRegenMana takes unit source, unit target, real value returns nothing
+        call MHUnit_RestoreMana(target, value)
+    endfunction
+
 endlibrary

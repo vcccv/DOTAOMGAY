@@ -23,4 +23,4 @@
 #include "Agi\\Slark.j"
 #include "Agi\\EmberSpirit.j"
 #include "Agi\\Juggernaut.j"
-
+#include "Agi\\ShadowFiend.j"

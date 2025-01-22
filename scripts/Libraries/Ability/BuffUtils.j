@@ -16,4 +16,8 @@ library BuffUtils requires Table
         return Temp
     endfunction
 
+    function CreateBuffByTemplate takes unit whichUnit, integer buffId, real duration, integer template returns buff
+        return MHBuff_Create(whichUnit, buffId, template, duration)
+    endfunction
+
 endlibrary

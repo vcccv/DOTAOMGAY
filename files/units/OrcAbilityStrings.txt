@@ -8945,24 +8945,6 @@ Name=神行太保
 Tip=神行太保 - [|cffffcc00等级 1|r],神行太保 - [|cffffcc00等级 2|r],神行太保 - [|cffffcc00等级 3|r],神行太保 - [|cffffcc00 等级 4|r]
 Ubertip=裂魂人给予周围友军8%移动速度提升光环，增加自身移动速度3%的攻击力。,裂魂人给予周围友军10%移动速度提升光环，增加自身移动速度6%的攻击力。,裂魂人给予周围友军12%移动速度提升光环，增加自身移动速度9%的攻击力。,裂魂人给予周围友军14%移动速度提升光环，增加自身移动速度12%的攻击力。
 requires=e00L
-[A0HG]
-art=ReplaceableTextures\CommandButtons\BTNDizzy
-researchart=ReplaceableTextures\CommandButtons\BTNDizzy
-buttonpos=,2
-missileart=Objects\Spawnmodels\Undead\UndeadDissipate\UndeadDissipate.mdl
-missilespeed=700
-specialart=Objects\Spawnmodels\Undead\UndeadDissipate\UndeadDissipate.mdl
-animnames=attack,slam
-name="Requiem of Souls Effect"
-[S0HG]
-art=ReplaceableTextures\CommandButtons\BTNDizzy
-researchart=ReplaceableTextures\CommandButtons\BTNDizzy
-buttonpos=0,2
-missileart=Objects\Spawnmodels\Undead\UndeadDissipate\UndeadDissipate.mdl
-missilespeed=700
-specialart=Objects\Spawnmodels\Undead\UndeadDissipate\UndeadDissipate.mdl
-animnames=attack,slam
-name="Requiem of Souls Effect"
 [A0HH]
 art=ReplaceableTextures\CommandButtons\BTNCripple
 requiresamount=2
@@ -14836,9 +14818,9 @@ Name=魂之挽歌
 researchhotkey="R"
 hotkey=R
 Researchtip=学习 魂之挽歌[|cffffcc00R|r] - [|cffffcc00等级 %d|r]|n(Requiem of Souls)
-Researchubertip=召唤恶灵以均匀的角度向周围发射，造成|cFF00B9FF魔法伤害|r，越近的单位受到越多恶灵的打击。同时降低700范围内敌方单位的移动速度和攻击力，持续5秒。减速效果无视魔法免疫。发射出的恶灵数目为18个，英雄死亡时发射的恶灵数目为9个。|n|n|cffffcc00等级 1|r - 每个恶灵对一条直线上的敌方单位造成80点伤害，降低敌方单位20%的移动速度和50%的攻击力|n|cffffcc00等级 2|r - 每个恶灵对一条直线上的敌方单位造成120点伤害，降低敌方单位20%的移动速度和50%的攻击力|n|cffffcc00等级 3|r - 每个恶灵对一条直线上的敌方单位造成160点伤害，降低敌方单位20%的移动速度和50%的攻击力|n|n|cff99ccff施法时间：|r1|n|cff99ccff冷却时间：|r120/110/100|n|cff99ccff魔法消耗：|r150/175/200|n|n|c00fffc01神杖升级：魂之挽歌可以回归影魔。回归的伤害波造成40%的伤害|r
+Researchubertip=召唤恶灵以均匀的角度向周围发射，造成|cFF00B9FF魔法伤害|r，越近的单位受到越多恶灵的打击。同时降低700范围内敌方单位的移动速度和攻击力，持续5秒。减速效果无视魔法免疫。发射出的恶灵数目为18个，英雄死亡时发射的恶灵数目为9个。|n|n|cffffcc00等级 1|r - 每个恶灵对一条直线上的敌方单位造成80点伤害，降低敌方单位20%的移动速度。|n|cffffcc00等级 2|r - 每个恶灵对一条直线上的敌方单位造成120点伤害，降低敌方单位20%的移动速度。|n|cffffcc00等级 3|r - 每个恶灵对一条直线上的敌方单位造成160点伤害，降低敌方单位20%的移动速度。|n|n|cff99ccff施法时间：|r1|n|cff99ccff冷却时间：|r120/110/100|n|cff99ccff魔法消耗：|r150/175/200|n|n|c00fffc01神杖升级：魂之挽歌可以回归影魔。回归的伤害波造成40%的伤害，并为施法者回复与伤害相等的生命值|r
 Tip=魂之挽歌[|cffffcc00R|r] - [|cffffcc00等级 1|r],魂之挽歌[|cffffcc00R|r] - [|cffffcc00等级 2|r],魂之挽歌[|cffffcc00R|r] - [|cffffcc00等级 3|r]
-Ubertip=召唤恶灵以均匀的角度向周围发射，每个恶灵对一条直线上的敌方单位造成80点|cFF00B9FF魔法伤害|r，同时降低700范围内的敌方单位20%的移动速度和50%的攻击力，持续5秒。|n|n|cff99ccff施法时间：|r1|n|cff99ccff冷却时间：|r120|n|n|c00fffc01神杖升级：魂之挽歌可以回归影魔。回归的伤害波造成40%的伤害|r,召唤恶灵以均匀的角度向周围发射，每个恶灵对一条直线上的敌方单位造成120点|cFF00B9FF魔法伤害|r，同时降低700范围内的敌方单位20%的移动速度和50%的攻击力，持续5秒。|n|n|cff99ccff施法时间：|r1|n|cff99ccff冷却时间：|r110|n|n|c00fffc01神杖升级：魂之挽歌可以回归影魔。回归的伤害波造成40%的伤害|r,召唤恶灵以均匀的角度向周围发射，每个恶灵对一条直线上的敌方单位造成160点|cFF00B9FF魔法伤害|r，同时降低700范围内的敌方单位20%的移动速度和50%的攻击力，持续5秒。|n|n|cff99ccff施法时间：|r1|n|cff99ccff冷却时间：|r100|n|n|c00fffc01神杖升级：魂之挽歌可以回归影魔。回归的伤害波造成40%的伤害|r
+Ubertip=召唤恶灵以均匀的角度向周围发射，每个恶灵对一条直线上的敌方单位造成80点|cFF00B9FF魔法伤害|r，同时降低700范围内的敌方单位20%的移动速度。，持续5秒。|n|n|cff99ccff施法时间：|r1|n|cff99ccff冷却时间：|r120|n|n|c00fffc01神杖升级：魂之挽歌可以回归影魔。回归的伤害波造成40%的伤害，并为施法者回复与伤害相等的生命值|r,召唤恶灵以均匀的角度向周围发射，每个恶灵对一条直线上的敌方单位造成120点|cFF00B9FF魔法伤害|r，同时降低700范围内的敌方单位20%的移动速度。，持续5秒。|n|n|cff99ccff施法时间：|r1|n|cff99ccff冷却时间：|r110|n|n|c00fffc01神杖升级：魂之挽歌可以回归影魔。回归的伤害波造成40%的伤害，并为施法者回复与伤害相等的生命值|r,召唤恶灵以均匀的角度向周围发射，每个恶灵对一条直线上的敌方单位造成160点|cFF00B9FF魔法伤害|r，同时降低700范围内的敌方单位20%的移动速度。，持续5秒。|n|n|cff99ccff施法时间：|r1|n|cff99ccff冷却时间：|r100|n|n|c00fffc01神杖升级：魂之挽歌可以回归影魔。回归的伤害波造成40%的伤害，并为施法者回复与伤害相等的生命值|r
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNRequiemOfSouls.blp
 [A3OJ]
 art=ReplaceableTextures\CommandButtons\BTNRequiemOfSouls
@@ -14851,9 +14833,9 @@ Name=魂之挽歌 - 神杖升级
 Researchhotkey=R
 Hotkey=R
 Researchtip=学习 魂之挽歌[|cffffcc00R|r] - [|cffffcc00等级 %d|r]|n(Requiem of Souls)
-Researchubertip=召唤恶灵以均匀的角度向周围发射，造成|cFF00B9FF魔法伤害|r，越近的单位受到越多恶灵的打击。同时降低700范围内敌方单位的移动速度和攻击力，持续5秒。减速效果无视魔法免疫。发射出的恶灵数目为18个，英雄死亡时发射的恶灵数目为9个。魂之挽歌会在伤害波到达最远距离后回归影魔，造成40%的伤害。|n|n|cffffcc00等级 1|r - 每个恶灵对一条直线上的敌方单位造成80点伤害，降低敌方单位20%的移动速度和50%的攻击力|n|cffffcc00等级 2|r - 每个恶灵对一条直线上的敌方单位造成120点伤害，降低敌方单位20%的移动速度和50%的攻击力|n|cffffcc00等级 3|r - 每个恶灵对一条直线上的敌方单位造成160点伤害，降低敌方单位20%的移动速度和50%的攻击力|n|n|cff99ccff施法时间：|r1|n|cff99ccff冷却时间：|r120/110/100|n|cff99ccff魔法消耗：|r150/175/200
+Researchubertip=召唤恶灵以均匀的角度向周围发射，造成|cFF00B9FF魔法伤害|r，越近的单位受到越多恶灵的打击。同时降低700范围内敌方单位的移动速度和攻击力，持续5秒。减速效果无视魔法免疫。发射出的恶灵数目为18个，英雄死亡时发射的恶灵数目为9个。魂之挽歌会在伤害波到达最远距离后回归影魔，，恶灵每击中一个敌人会为施法者回复与伤害值相等的生命。|n|n|cffffcc00等级 1|r - 每个恶灵对一条直线上的敌方单位造成80点伤害，降低敌方单位20%的移动速度。|n|cffffcc00等级 2|r - 每个恶灵对一条直线上的敌方单位造成120点伤害，降低敌方单位20%的移动速度。|n|cffffcc00等级 3|r - 每个恶灵对一条直线上的敌方单位造成160点伤害，降低敌方单位20%的移动速度。|n|n|cff99ccff施法时间：|r1|n|cff99ccff冷却时间：|r120/110/100|n|cff99ccff魔法消耗：|r150/175/200
 Tip=魂之挽歌[|cffffcc00R|r] - [|cffffcc00等级 1|r],魂之挽歌[|cffffcc00R|r] - [|cffffcc00等级 2|r],魂之挽歌[|cffffcc00R|r] - [|cffffcc00等级 3|r]
-Ubertip=召唤恶灵以均匀的角度向周围发射，每个恶灵对一条直线上的敌方单位造成80点|cFF00B9FF魔法伤害|r，同时降低700范围内的敌方单位20%的移动速度和50%的攻击力，持续5秒。魂之挽歌会在伤害波到达最远距离后回归影魔，造成40%的伤害。|n|n|cff99ccff施法时间：|r1|n|cff99ccff冷却时间：|r120,召唤恶灵以均匀的角度向周围发射，每个恶灵对一条直线上的敌方单位造成120点|cFF00B9FF魔法伤害|r，同时降低700范围内的敌方单位20%的移动速度和50%的攻击力，持续5秒。魂之挽歌会在伤害波到达最远距离后回归影魔，造成40%的伤害。|n|n|cff99ccff施法时间：|r1|n|cff99ccff冷却时间：|r110,召唤恶灵以均匀的角度向周围发射，每个恶灵对一条直线上的敌方单位造成160点|cFF00B9FF魔法伤害|r，同时降低700范围内的敌方单位20%的移动速度和50%的攻击力，持续5秒。魂之挽歌会在伤害波到达最远距离后回归影魔，造成40%的伤害。|n|n|cff99ccff施法时间：|r1|n|cff99ccff冷却时间：|r100
+Ubertip=召唤恶灵以均匀的角度向周围发射，每个恶灵对一条直线上的敌方单位造成80点|cFF00B9FF魔法伤害|r，同时降低700范围内的敌方单位20%的移动速度。，持续5秒。魂之挽歌会在伤害波到达最远距离后回归影魔，，恶灵每击中一个敌人会为施法者回复与伤害值相等的生命。|n|n|cff99ccff施法时间：|r1|n|cff99ccff冷却时间：|r120,召唤恶灵以均匀的角度向周围发射，每个恶灵对一条直线上的敌方单位造成120点|cFF00B9FF魔法伤害|r，同时降低700范围内的敌方单位20%的移动速度。，持续5秒。魂之挽歌会在伤害波到达最远距离后回归影魔，，恶灵每击中一个敌人会为施法者回复与伤害值相等的生命。|n|n|cff99ccff施法时间：|r1|n|cff99ccff冷却时间：|r110,召唤恶灵以均匀的角度向周围发射，每个恶灵对一条直线上的敌方单位造成160点|cFF00B9FF魔法伤害|r，同时降低700范围内的敌方单位20%的移动速度。，持续5秒。魂之挽歌会在伤害波到达最远距离后回归影魔，，恶灵每击中一个敌人会为施法者回复与伤害值相等的生命。|n|n|cff99ccff施法时间：|r1|n|cff99ccff冷却时间：|r100
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNRequiemOfSouls.blp
 [A29X]
 art=ReplaceableTextures\CommandButtons\BTNSpellShieldAmulet
