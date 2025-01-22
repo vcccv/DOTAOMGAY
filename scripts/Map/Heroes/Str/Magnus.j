@@ -26,10 +26,9 @@ scope Magnus
         implement ShockwaveStruct
     endstruct
 
-    
     private struct MShockWave extends array
         
-        real damage
+        real    damage
         boolean isUpgrade
 
         static method OnRemove takes Shockwave sw returns boolean
@@ -127,7 +126,7 @@ scope Magnus
         local real     targetY   = CoordinateY75(uy + 19 * Sin(a))
         local group    g
         local group    targGroup = LoadGroupHandle(HY, h, 0)
-        local integer  maxCount  =(LoadInteger(HY, h, 12))
+        local integer  maxCount  = (LoadInteger(HY, h, 12))
         local unit     first
         local real     area      = 150.
         local integer  i
@@ -244,10 +243,97 @@ scope Magnus
         call SaveReal(HY, h, 6,((sx)* 1.))
         call SaveReal(HY, h, 7,((sy)* 1.))
         call SaveReal(HY, h, 13,((Atan2(ty -sy, tx -sx))* 1.))
-        call SaveInteger(HY, h, 12,(R2I(GetDistanceBetween(sx, sy, tx, ty)/ 19.)))
+        call SaveInteger(HY, h, 12,(R2I(GetDistanceBetween(sx, sy, tx, ty)/ 19.))) // dota2每次30
         call SaveEffectHandle(HY, h, 175,(AddSpecialEffectTarget("war3mapImported\\SkewerTuskGlow_1.mdx", whichUnit, "head")))
         set t = null
         set whichUnit = null
+    endfunction
+
+    //***************************************************************************
+    //*
+    //*  两级反转
+    //*
+    //***************************************************************************
+    function WKI takes nothing returns boolean
+        local real x
+        local real y
+        if (IsUnitEnemy(GetTriggerUnit(), GetOwningPlayer(GetFilterUnit())) and(IsAliveNotStrucNotWard(GetFilterUnit()))) and GetFilterUnit()!= Roshan then
+            set x = L8V + GetRandomReal(20, 70)* Cos(GetUnitFacing(GetTriggerUnit())* bj_DEGTORAD)
+            set y = L9V + GetRandomReal(20, 70)* Sin(GetUnitFacing(GetTriggerUnit())* bj_DEGTORAD)
+            call SetUnitPosition(GetFilterUnit(), x, y)
+        endif
+        return false
+    endfunction
+    function ReversePolarityOnSpellEffect takes nothing returns nothing
+        local unit      u         = GetRealSpellUnit(GetTriggerUnit())
+        local real      x         = GetUnitX(u)
+        local real      y         = GetUnitY(u)
+        local group     g         = AllocationGroup(357)
+        local unit      d         = CreateUnit(GetOwningPlayer(u),'e00E', x, y, 0)
+        local integer   level     = GetUnitAbilityLevel(u, GetSpellAbilityId())
+        local boolean   isUpgrade = GetSpellAbilityId() == 'A447'
+        local real      angle     = GetUnitFacing(u) * bj_DEGTORAD
+        local unit      first
+        local real      area      = 410.
+        local real      distance  = 1000.
+        local real      tx
+        local real      ty
+        local Shockwave sw
+
+        set tx = GetUnitX(u) + 100 * Cos(angle)
+        set ty = GetUnitY(u) + 100 * Sin(angle)
+
+        call GroupEnumUnitsInRange(g, x, y, area + MAX_UNIT_COLLISION, null)
+        loop
+            set first = FirstOfGroup(g)
+            exitwhen first == null
+            call GroupRemoveUnit(g, first)
+
+            if IsUnitInRangeXY(first, x, y, area) and IsUnitEnemy(u, GetOwningPlayer(first)) and(IsAliveNotStrucNotWard(first)) and first!= Roshan then
+                set x = tx + GetRandomReal(20, 70)* Cos(angle)
+                set y = ty + GetRandomReal(20, 70)* Sin(angle)
+                call SetUnitPosition(first, x, y)
+            endif
+            
+        endloop
+        call DeallocateGroup(g)
+
+        call UnitAddPermanentAbility(d,'A06F')
+        call SetUnitAbilityLevel(d,'A06F', level)
+        call IssueImmediateOrderById(d, 852127)
+
+        if isUpgrade then
+            set sw = Shockwave.CreateByDistance(u, x, y, angle, distance)
+            call sw.SetSpeed(1050.)
+            set sw.minRadius = 150.
+            set sw.maxRadius = 150.
+            set sw.model     = "Abilities\\Spells\\Orc\\Shockwave\\ShockwaveMissile.mdl"
+            set MShockWave(sw).isUpgrade = false
+            set MShockWave(sw).damage = 175
+            call MShockWave.Launch(sw)
+
+            set sw = Shockwave.CreateByDistance(u, x, y, angle + 15.* bj_DEGTORAD, distance)
+            call sw.SetSpeed(1050.)
+            set sw.minRadius = 150.
+            set sw.maxRadius = 150.
+            set sw.model     = "Abilities\\Spells\\Orc\\Shockwave\\ShockwaveMissile.mdl"
+            set MShockWave(sw).isUpgrade = false
+            set MShockWave(sw).damage = 175
+            call MShockWave.Launch(sw)
+
+            set sw = Shockwave.CreateByDistance(u, x, y, angle - 15.* bj_DEGTORAD, distance)
+            call sw.SetSpeed(1050.)
+            set sw.minRadius = 150.
+            set sw.maxRadius = 150.
+            set sw.model     = "Abilities\\Spells\\Orc\\Shockwave\\ShockwaveMissile.mdl"
+            set MShockWave(sw).isUpgrade = false
+            set MShockWave(sw).damage = 175
+            call MShockWave.Launch(sw)
+        endif
+
+        set u = null
+        set g = null
+        set d = null
     endfunction
 
 endscope

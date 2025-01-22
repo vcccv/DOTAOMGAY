@@ -3089,8 +3089,8 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A1OP', 0, "IRE")
 	call SaveStr(ObjectHashTable,'A0A2', 0, "IAE")
 	call SaveStr(ObjectHashTable,'A0MU', 0, "IBE")
-	call SaveStr(ObjectHashTable,'A29L', 0, "ICE")
-	call SaveStr(ObjectHashTable,'A447', 0, "ICE")
+	call SaveStr(ObjectHashTable,'A29L', 0, "ReversePolarityOnSpellEffect")
+	call SaveStr(ObjectHashTable,'A447', 0, "ReversePolarityOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A037', 0, "IKE")
 	call SaveStr(ObjectHashTable,'A1RD', 0, "SkewerOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A02S', 0, "MagnusShockWaveOnSpellEffect")
@@ -61019,42 +61019,6 @@ function IAE takes nothing returns nothing
 	if not UnitHasSpellShield(GetSpellTargetUnit()) then
 		call WJI()
 	endif
-endfunction
-function WKI takes nothing returns boolean
-	local real x
-	local real y
-	if (IsUnitEnemy(GetTriggerUnit(), GetOwningPlayer(GetFilterUnit())) and(IsAliveNotStrucNotWard(GetFilterUnit()))) and GetFilterUnit()!= Roshan then
-		set x = L8V + GetRandomReal(20, 70)* Cos(GetUnitFacing(GetTriggerUnit())* bj_DEGTORAD)
-		set y = L9V + GetRandomReal(20, 70)* Sin(GetUnitFacing(GetTriggerUnit())* bj_DEGTORAD)
-		call SetUnitPosition(GetFilterUnit(), x, y)
-	endif
-	return false
-endfunction
-function ICE takes nothing returns nothing
-	local unit u = GetTriggerUnit()
-	local real x = GetUnitX(u)
-	local real y = GetUnitY(u)
-	local group g = AllocationGroup(357)
-	local unit d = CreateUnit(GetOwningPlayer(u),'e00E', x, y, 0)
-	local integer level = GetUnitAbilityLevel(u,'A29L')+ GetUnitAbilityLevel(u,'A447')
-	local real a = GetUnitFacing(u)
-	set L8V = GetUnitX(u)+ 100 * Cos(a * bj_DEGTORAD)
-	set L9V = GetUnitY(u)+ 100 * Sin(a * bj_DEGTORAD)
-	call GroupEnumUnitsInRange(g, x, y, 410 + 24, Condition(function WKI))
-	call DeallocateGroup(g)
-	call UnitAddPermanentAbility(d,'A06F')
-	call SetUnitAbilityLevel(d,'A06F', level)
-	call IssueImmediateOrderById(d, 852127)
-	if GetUnitAbilityLevel(u,'A447')> 0 then
-		call UnitAddPermanentAbility(d,'A446')
-		call SetUnitAbilityLevel(d,'A446', level)
-		call IssuePointOrderById(d, 852218, x + 100 * Cos((a + 15)* bj_DEGTORAD), y + 100 * Sin((a + 15)* bj_DEGTORAD))
-		call IssuePointOrderById(d, 852218, x + 100 * Cos((a  -15)* bj_DEGTORAD), y + 100 * Sin((a  -15)* bj_DEGTORAD))
-		call IssuePointOrderById(d, 852218, x + 100 * Cos(a * bj_DEGTORAD), y + 100 * Sin(a * bj_DEGTORAD))
-	endif
-	set u = null
-	set g = null
-	set d = null
 endfunction
 function LTF takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
