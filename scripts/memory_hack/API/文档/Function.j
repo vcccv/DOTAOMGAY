@@ -1028,6 +1028,10 @@
     function MHUnit_Silence takes unit u, boolean is_silence returns nothing
     endfunction
 
+    // 获取沉默计数
+    function MHUnit_GetSilenceCount takes unit u returns integer
+    endfunction
+
     // 禁用技能
     function MHUnit_DisableAbility takes unit u, boolean is_disable, boolean is_hide, boolean disable_magic, boolean disable_physical returns nothing
     endfunction
@@ -4179,6 +4183,16 @@
 
     // 设置窗口大小
     function MHMsg_SetWindowSize takes integer width, integer height returns boolean
+    endfunction
+
+    // 获取客户区宽度
+    // @Tip：指不含边框和滚动条等的窗口宽度
+    function MHMsg_GetClientWidth takes nothing returns integer
+    endfunction
+
+    // 获取客户区高度
+    // @Tip：指不含边框和滚动条等的窗口高度
+    function MHMsg_GetClientHeight takes nothing returns integer
     endfunction
 
     // 获取鼠标的屏幕坐标X

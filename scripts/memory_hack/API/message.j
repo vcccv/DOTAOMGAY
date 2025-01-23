@@ -14,6 +14,12 @@ library AMHMessage
     function MHMsg_SetWindowSize takes integer width, integer height returns boolean
         JapiPlaceHolder false
     endfunction
+    function MHMsg_GetClientWidth takes nothing returns integer
+        JapiPlaceHolder 0
+    endfunction
+    function MHMsg_GetClientHeight takes nothing returns integer
+        JapiPlaceHolder 0
+    endfunction
     function MHMsg_GetCursorX takes nothing returns real
         JapiPlaceHolder 0.
     endfunction

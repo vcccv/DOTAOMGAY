@@ -305,6 +305,9 @@ library AMHUnit
     function MHUnit_Silence takes unit u, boolean is_silence returns nothing
         JapiPlaceHolder
     endfunction
+    function MHUnit_GetSilenceCount takes unit u returns integer
+        JapiPlaceHolder 0
+    endfunction
     function MHUnit_DisableAbility takes unit u, boolean is_disable, boolean is_hide, boolean disable_magic, boolean disable_physical returns nothing
         JapiPlaceHolder
     endfunction
