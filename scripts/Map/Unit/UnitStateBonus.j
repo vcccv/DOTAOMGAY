@@ -1,5 +1,5 @@
 
-library UnitData requires UnitUtils
+library UnitStateBonus requires UnitUtils
    
     globals
         hashtable UnitDataHashTable = InitHashtable()

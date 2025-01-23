@@ -28,7 +28,7 @@ scope CentaurWarchief
             call DestroyEffect(LoadEffectHandle(HY, h, 2))
             call DeallocateGroup(targGroup)
             call FlushChildHashtable(HY, h)
-            call CleanCurrentTrigger(trig)
+            call AddTriggerToDestroyQueue(trig)
             set trig = null
             set u = null
             set targGroup = null

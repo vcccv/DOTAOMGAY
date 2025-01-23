@@ -21,8 +21,6 @@ library TimerUtils /*
     struct GameTimer extends array
     
         private static timer MainTimer
-        
-        private static constant string PREFIX = "CHAT"
     
         // 获取中心计时器逝去时间
         static method GetElapsed takes nothing returns real

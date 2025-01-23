@@ -12,15 +12,11 @@
 #include "Utilities\\Line Segment Enumeration.j"
 
 #include "Utilities\\StringUtils.j"
+#include "Utilities\\GroupUtils.j"
+
 
 #include "ShockWave.j"
-#include "Ability\\BuffUtils.j"
-#include "Ability\\AbilityUtils.j"
-#include "Ability\\AbilityOrderId.j"
-#include "Unit\\UnitLimitation.j"
-#include "Unit\\UnitModel.j"
-#include "Unit\\UnitUtils.j"
-#include "Unit\\UnitMove.j"
+#include "AbilityOrderId.j"
 
 #include "Memory\\MemoryUtils.j"
 

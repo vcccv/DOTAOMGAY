@@ -14,7 +14,7 @@ scope ShadowDemon
         local unit FFA = GetSummonedUnit()
         if GetTriggerEventId()!= EVENT_PLAYER_UNIT_SUMMON then
             call FlushChildHashtable(HY, h)
-            call CleanCurrentTrigger(t)
+            call AddTriggerToDestroyQueue(t)
         elseif GetUnitAbilityLevel(FFA,'B0DA')> 0 and GetOwningPlayer(GetSummoningUnit()) == GetOwningPlayer(whichUnit) then
             if IsUnitAlly(targetUnit, GetOwningPlayer(whichUnit)) then
                 call SelectUnitAddForPlayer(FFA, GetOwningPlayer(whichUnit))
@@ -44,7 +44,7 @@ scope ShadowDemon
 
         call RemoveSavedHandle(HY, GetHandleId(targetUnit), 673)
         call FlushChildHashtable(HY, h)
-        call CleanCurrentTrigger(t)
+        call AddTriggerToDestroyQueue(t)
         if GetTriggerEventId()!= EVENT_WIDGET_DEATH then
             call ClearSelectionForPlayer(GetOwningPlayer(targetUnit))
             call SelectUnitAddForPlayer(targetUnit, GetOwningPlayer(targetUnit))

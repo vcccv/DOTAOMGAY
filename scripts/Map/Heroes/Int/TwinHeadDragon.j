@@ -303,7 +303,7 @@ endfunction
         private static method OnDelayEnd takes nothing returns nothing
             local thistype   this = SimpleTick.GetExpired().data
             call Table[thistype.KEY].remove(GetHandleId(this.pathTrig))
-            call CleanCurrentTrigger(this.pathTrig)
+            call AddTriggerToDestroyQueue(this.pathTrig)
             set this.remaining = this.duration
             call this.delayTick.Start(TWIN_HEAD_DRAGON_ICE_PATH_FRAME, true, function thistype.OnIcePathUpdate)
         endmethod
@@ -411,7 +411,7 @@ endfunction
         call IssuePointOrderById(MacropyreCasters[id], 852488, tx, ty)
         if(count * 150. >= maxDistance) then
             call FlushChildHashtable(HY, h)
-            call CleanCurrentTrigger(t)
+            call AddTriggerToDestroyQueue(t)
             call SetUnitAnimation(whichUnit, "stand")
         endif
         set t = null

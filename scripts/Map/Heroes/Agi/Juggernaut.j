@@ -22,7 +22,7 @@ scope Juggernaut
             call KillUnit(fovd)
             call DestroyEffect((LoadEffectHandle(HY, h, 32)))
             call FlushChildHashtable(HY, h)
-            call CleanCurrentTrigger(t)
+            call AddTriggerToDestroyQueue(t)
             
             call SaveInteger(HY,(GetHandleId((u))),(4253), 2)
             call SetUnitVertexColorEx(u,-1,-1,-1, 255)
@@ -39,7 +39,7 @@ scope Juggernaut
                 call KillUnit(fovd)
                 call DestroyEffect((LoadEffectHandle(HY, h, 32)))
                 call FlushChildHashtable(HY, h)
-                call CleanCurrentTrigger(t)
+                call AddTriggerToDestroyQueue(t)
                 
                 call SaveInteger(HY,(GetHandleId((u))),(4253), 2)
                 call SetUnitVertexColorEx(u,-1,-1,-1, 255)

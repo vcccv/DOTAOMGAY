@@ -62,7 +62,7 @@ scope Clockwerk
             call KillTreeByCircle(GetUnitX(trigUnit), GetUnitY(trigUnit), 100)
             call DeallocateGroup(KHR)
             call FlushChildHashtable(HY, h)
-            call CleanCurrentTrigger(t)
+            call AddTriggerToDestroyQueue(t)
         endif
         set t = null
         set trigUnit = null
@@ -108,7 +108,7 @@ scope Clockwerk
                 set targetUnit = null
             endif
             call FlushChildHashtable(HY, h)
-            call CleanCurrentTrigger(t)
+            call AddTriggerToDestroyQueue(t)
             if targetUnit != null and IsUnitAlly(targetUnit, GetOwningPlayer(trigUnit)) == false then
                 call PauseUnit(targetUnit, true)
             endif
@@ -122,7 +122,7 @@ scope Clockwerk
         elseif count > KLR then
             set targetUnit = null
             call FlushChildHashtable(HY, h)
-            call CleanCurrentTrigger(t)
+            call AddTriggerToDestroyQueue(t)
             call TriggerRegisterTimerEvent(KQR, .5 / KLR, true)
             call TriggerAddCondition(KQR, Condition(function KDR))
             call SaveInteger(HY, KSR, 18, count)
