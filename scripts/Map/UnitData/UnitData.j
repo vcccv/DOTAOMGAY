@@ -1,6 +1,4 @@
 
-#include "UnitWeapon.j"
-
 library UnitData requires UnitUtils
    
     globals

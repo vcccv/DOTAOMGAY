@@ -2162,8 +2162,6 @@ Tip=虚空假面
 Ubertip="|cffdaa520|n基础攻击: 58-64|n护甲: 3.9|n攻击前摇: 0.4|n攻击间隔: 1.5|r|n|cff00ff7f生命回复速度: 0.75|r|n|cff4169e1魔法回复速度: 0.01|r|n|n|cff0042ff力量|r: 23 + 1.9|n|c00ff0303敏捷|r: 22 + 2.8|n|cff0042ff智力|r: 15 + 1.8|n|n攻击距离 128 (近战).|n移动速度 300.|n施法前摇 0.3s."
 Propernames=|c00FFFF00Justin Bieber|r,|c00FFFF00Gorzerk|r,|c00FFFF00基霸脸|r,暗惧者
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNFacelessOne.blp
-[e00I]
-name="六技能模式"
 [E002]
 art=ReplaceableTextures\CommandButtons\BTNRevenant
 missileart=Abilities\Spells\Demon\DemonBoltImpact\DemonBoltImpact.mdl
@@ -22832,7 +22830,7 @@ Tip=奔袭冲撞[|cffffcc00T|r] - [|cffffcc00等级 1|r],奔袭冲撞[|cffffcc00
 Ubertip=3.75秒内你和所有友方玩家控制的单位移动速度提升至上限，并且碰撞体积为0。任何被你们冲撞到的敌方单位都将受到英雄主属性值3倍的|cFF00B9FF魔法伤害|r并且被减速1.5秒。敌人只能受到一次冲撞的影响。|n|n|cff99ccff冷却时间：|r50|r|n|n|c00fffc01神杖升级：效果期间友军只会受到60%的伤害|r,3.75秒内你和所有友方玩家控制的单位移动速度提升至上限，并且碰撞体积为0。任何被你们冲撞到的敌方单位都将受到英雄主属性值3倍的|cFF00B9FF魔法伤害|r并且被减速2秒。敌人只能受到一次冲撞的影响。|n|n|cff99ccff冷却时间：|r50|r|n|n|c00fffc01神杖升级：效果期间友军只会受到60%的伤害|r,3.75秒内你和所有友方玩家控制的单位移动速度提升至上限，并且碰撞体积为0。任何被你们冲撞到的敌方单位都将受到英雄主属性值3倍的|cFF00B9FF魔法伤害|r并且被减速2.5秒。敌人只能受到一次冲撞的影响。|n|n|cff99ccff冷却时间：|r50|r|n|n|c00fffc01神杖升级：效果期间友军只会受到60%的伤害|r
 hotkey=T
 Researchtip=学习 奔袭冲撞[|cffffcc00T|r] - [|cffffcc00等级 %d|r]|n(Stampede)
-Researchubertip=持续时间内你和所有友方玩家控制的单位移动速度提升至上限，并且碰撞体积为0。任何被你们冲撞到的敌方单位都将受到一定的|cFF00B9FF魔法伤害|r并被减速。敌人只能受到一次冲撞的影响。|n|n|cffffcc00等级 1|r - 造成1.5秒的减速效果|n|cffffcc00等级 2|r -造成2秒的减速效果|n|cffffcc00等级 3|r - 造成2.5秒的减速效果|n|cff99ccff持续时间：|r3.75|n|n|cff99ccff冷却时间：|r50|n|cff99ccff魔法消耗：|r80 |r|n|n|c00fffc01神杖升级：效果期间友军只会受到60%的伤害
+Researchubertip=持续时间内你和所有友方玩家控制的单位移动速度提升至上限，并且碰撞体积为0。任何被你们冲撞到的敌方单位都将受到一定的|cFF00B9FF魔法伤害|r并被减速。敌人只能受到一次冲撞的影响。|n|n|cffffcc00等级 1|r - 造成1.5秒的减速效果|n|cffffcc00等级 2|r - 造成2秒的减速效果|n|cffffcc00等级 3|r - 造成2.5秒的减速效果|n|cff99ccff持续时间：|r3.75|n|n|cff99ccff冷却时间：|r50|n|cff99ccff魔法消耗：|r80 |r|n|n|c00fffc01神杖升级：效果期间友军只会受到60%的伤害
 researchhotkey="T"
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNStampede.blp
 [B00T]
@@ -34162,6 +34160,11 @@ Buffubertip=该单位的移动速度降低
 buffart=ReplaceableTextures\CommandButtons\BTNStampede
 Bufftip=奔袭冲撞
 Buffubertip=该单位的移动速度得到了提升
+// 神杖升级
+[B0GH]
+buffart=ReplaceableTextures\CommandButtons\BTNStampede
+Bufftip=奔袭冲撞
+Buffubertip=该单位的移动速度得到了提升，并且降低受到的伤害
 [B0GC]
 buffart=ReplaceableTextures\CommandButtons\BTNDash
 targetattach=chest
@@ -42825,12 +42828,11 @@ buttonpos=3,2
 [A3J3]
 targetart=Abilities\Spells\Items\AIsp\SpeedTarget.mdl
 [A3J6]
-name="Mode S6 tower damage demolish"
+name="对塔伤害削减"
 tip=对塔伤害削减
 ubertip=该单位对敌方建筑物造成的伤害降低了25%
 art=ReplaceableTextures\PassiveButtons\PASBTNResistantSkin
 buttonpos=3,2
-requires=e00I
 [A3J8]
 targetart=Abilities\Weapons\ProcMissile\ProcMissile.mdl
 targetattach=weapon

@@ -1,7 +1,5 @@
 #pragma once
-// by Asphodelus
-#include <boost/preprocessor/cat.hpp>
-
+// by Asphodelu
 
 
 #ifdef JapiPlaceHolder

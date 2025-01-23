@@ -6,88 +6,107 @@ scope CentaurWarchief
     //*  奔袭冲撞
     //*
     //***************************************************************************
-    function HJR takes nothing returns boolean
-        local unit t = GetFilterUnit()
-        local unit u = Temp__ArrayUnit[0]
-        local group g = LoadGroupHandle(HY, XK[0], 1)
-        if IsUnitInGroup(t, g) == false and IsUnitEnemy(u, GetOwningPlayer(t)) and UnitAlive(t) and IsUnitMagicImmune(t) == false and GetUnitAbilityLevel(t,'A04R') == 0 and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and GetUnitTypeId(t)!='n00L' then
-            call GroupAddUnit(g, t)
-            call WJV(t,'C017','D017', 1. + .5 * GetUnitAbilityLevel(u,'A2O4'))
-            call UnitDamageTargetEx(u, t, 1, XK[1])
-        endif
-        set g = null
-        set u = null
-        set t = null
-        return false
-    endfunction
-    function HKR takes nothing returns boolean
-        local trigger trig = GetTriggeringTrigger()
-        local integer WFV = GetHandleId(trig)
-        local integer UYX = LoadInteger(HY, WFV, 0)
-        local unit u = LoadUnitHandle(HY, WFV, 0)
-        local group g = LoadGroupHandle(HY, WFV, 1)
-        if GetTriggerEventId() == EVENT_WIDGET_DEATH or UYX == 76 then
-            call SetUnitPathing(u, true)
-            call UnitRemoveAbility(u,'A2O4')
-            call UnitRemoveAbility(u,'B0GB')
-            call DestroyEffect(LoadEffectHandle(HY, WFV, 3))
-            call DestroyEffect(LoadEffectHandle(HY, WFV, 2))
-            call DeallocateGroup(g)
-            call FlushChildHashtable(HY, WFV)
+    function OnStampedeUpdate takes nothing returns boolean
+        local trigger trig      = GetTriggeringTrigger()
+        local integer h         = GetHandleId(trig)
+        local integer count     = LoadInteger(HY, h, 0)
+        local unit    u         = LoadUnitHandle(HY, h, 0)
+        local group   targGroup = LoadGroupHandle(HY, h, 1)
+        local group   g
+        local real    x
+        local real    y
+        local real    area      = 175.
+        local unit    first
+        local real    damage
+        local integer level     = LoadInteger(HY, h, 1)
+        if GetTriggerEventId() == EVENT_WIDGET_DEATH or count == 76 then
+            call UnitRemoveAbility(u, 'A2O4')
+            call UnitRemoveAbility(u, 'B0GB')
+            call UnitRemoveAbility(u, 'A2O5')
+            call UnitRemoveAbility(u, 'B0GH')
+            call DestroyEffect(LoadEffectHandle(HY, h, 3))
+            call DestroyEffect(LoadEffectHandle(HY, h, 2))
+            call DeallocateGroup(targGroup)
+            call FlushChildHashtable(HY, h)
             call CleanCurrentTrigger(trig)
             set trig = null
             set u = null
-            set g = null
+            set targGroup = null
             return false
         endif
-        set Temp__ArrayUnit[0]= u
-        set XK[0]= WFV
-        set XK[1]= LoadInteger(HY, WFV, 1)* GerHeroMainAttributesValue(u)
-        call SaveInteger(HY, WFV, 0, UYX + 1)
-        call GroupEnumUnitsInRange(AK, GetWidgetX(u), GetWidgetY(u), 175, Condition(function HJR))
+
+        set damage = LoadInteger(HY, h, 1) * GerHeroMainAttributesValue(LoadUnitHandle(HY, h, 10))
+        set g = AllocationGroup(45)
+        //call BJDebugMsg("伤害是："+R2S(damage))
+
+        set x = GetUnitX(u)
+        set y = GetUnitY(u)
+        call GroupEnumUnitsInRange(g, x, y, area + MAX_UNIT_COLLISION, null)
+        loop
+            set first = FirstOfGroup(g)
+            exitwhen first == null
+            call GroupRemoveUnit(g, first)
+            
+            if UnitAlive(first) and not IsUnitInGroup(first, targGroup)/*
+                */ and IsUnitEnemy(u, GetOwningPlayer(first)) and not IsUnitMagicImmune(first)/*
+                */ and not IsUnitWard(first) and not IsUnitType(first, UNIT_TYPE_STRUCTURE) then
+        
+                call GroupAddUnit(targGroup, first)
+                call UnitAddAbilityLevel1ToTimed(first,'C017','D017', 1. + .5 * level)
+                call UnitDamageTargetEx(u, first, 1, damage)
+
+            endif
+        endloop
+
+        call DeallocateGroup(g)
+
+        call SaveInteger(HY, h, 0, count + 1)
         call KillTreeByCircle(GetUnitX(u), GetUnitY(u), 150)
         set trig = null
         set u = null
-        set g = null
+        set targGroup = null
         return false
     endfunction
-    function HMR takes unit u, integer level returns nothing
-        local trigger trig = CreateTrigger()
-        local integer WFV = GetHandleId(trig)
-        local boolean HPR = GetUnitAbilityLevel(Temp__ArrayUnit[0],'A384')> 0
-        call SetUnitPathing(u, false)
-        call UnitAddPermanentAbility(u,'A2O4')
-        call SetUnitAbilityLevel(u,'A2O4', level) // 2级时无论如何都享受减伤效果？
-        if HPR then
-            call SetUnitAbilityLevel(u,'A2O4', 2)
+    function UnitAddStampedeBuff takes unit owner, unit u, integer level, boolean isUpgrade returns nothing
+        local trigger trig        = CreateTrigger()
+        local integer h           = GetHandleId(trig)
+        local integer dummyAbilId = 'A2O4'
+
+        // 死亡驱散
+        if isUpgrade then
+            set dummyAbilId = 'A2O5'
         endif
+        call UnitAddPermanentAbility(u, dummyAbilId)
+
         call TriggerRegisterTimerEvent(trig, .05, true)
         call TriggerRegisterDeathEvent(trig, u)
-        call TriggerAddCondition(trig, Condition(function HKR))
-        call SaveUnitHandle(HY, WFV, 0, u)
-        call SaveGroupHandle(HY, WFV, 1, AllocationGroup(139))
-        call SaveEffectHandle(HY, WFV, 2, AddSpecialEffectTarget("war3mapImported\\SandBreathDamageSmall.mdx", u, GetHeroFootAttachPointName(u)))
-        call SaveEffectHandle(HY, WFV, 3, AddSpecialEffectTarget("war3mapImported\\SandBreathDamageSmall.mdx", u, GetHeroFootAttachPointName(u)))
-        call SaveInteger(HY, WFV, 0, 0)
-        call SaveInteger(HY, WFV, 1, 3)
+        call TriggerAddCondition(trig, Condition(function OnStampedeUpdate))
+        call SaveUnitHandle(HY, h, 0, u)
+        call SaveUnitHandle(HY, h, 10, owner)
+        call SaveGroupHandle(HY, h, 1, AllocationGroup(139))
+        call SaveEffectHandle(HY, h, 2, AddSpecialEffectTarget("war3mapImported\\SandBreathDamageSmall.mdx", u, GetHeroFootAttachPointName(u)))
+        call SaveEffectHandle(HY, h, 3, AddSpecialEffectTarget("war3mapImported\\SandBreathDamageSmall.mdx", u, GetHeroFootAttachPointName(u)))
+        call SaveInteger(HY, h, 0, 0)
+        call SaveInteger(HY, h, 1, 3)
+        call SaveInteger(HY, h, 2, level)
         set trig = null
     endfunction
-    function HQR takes nothing returns boolean
-        local unit t = GetFilterUnit()
-        local unit u = Temp__ArrayUnit[0]
-        if (IsUnitType(t, UNIT_TYPE_HERO))!= null and IsUnitAlly(u, GetOwningPlayer(t)) and UnitAlive(t) and(IsUnitHaveRearmAbility(u) == false or LoadInteger(HY, GetHandleId(t),'STMP')!= 1) then
-            if t != u then
-                call EPX(t,'STMP', 45)
-            endif
-            // debug call SingleDebug( GetUnitName( t ) + " 添加奔袭冲撞 " )
-            call HMR(t, GetUnitAbilityLevel(u,'A2O6')+ GetUnitAbilityLevel(u,'A384'))
-        endif
-        set t = null
+
+    function CentaurWarchiefStampedeBuffOnAdd takes nothing returns nothing
+        local unit u = MHEvent_GetUnit()
+        call UnitAddMoveSpeedBonusPercent(u, 1000)
+        call UnitAddPhasedMovementCount(u)
         set u = null
-        return false
     endfunction
+    function CentaurWarchiefStampedeBuffOnRemove takes nothing returns nothing
+        local unit u = MHEvent_GetUnit()
+        call UnitReduceMoveSpeedBonusPercent(u, 1000)
+        call UnitSubPhasedMovementCount(u)
+        set u = null
+    endfunction
+
     function StampedeOnSpellEffect takes nothing returns nothing
-        local unit    whichUnit = GetRealSpellUnit(whichUnit)
+        local unit    whichUnit = GetRealSpellUnit(GetTriggerUnit())
         local integer level     = GetUnitAbilityLevel(whichUnit, GetSpellAbilityId())
         local boolean isUpgrade = GetSpellAbilityId() == 'A384'
 
@@ -96,11 +115,16 @@ scope CentaurWarchief
         local group   g = AllocationGroup(96)
         local player  p = GetOwningPlayer(whichUnit)
         local integer i 
+        local unit    first
 
         set s = CreateSound("abilities\\Spells\\Other\\Stampede\\StampedeCaster1.wav", false, false, false, 10, 10, "DefaultEAXON")
         call StartSound(s)
         call KillSoundWhenDone(s)
-        
+        set s = null
+
+        call SetAbilityAddAction('B0GB', "CentaurWarchiefStampedeBuffOnAdd")
+        call SetAbilityRemoveAction('B0GB', "CentaurWarchiefStampedeBuffOnRemove")
+
         set i = 0
         loop
             exitwhen i > bj_MAX_PLAYERS
@@ -113,12 +137,8 @@ scope CentaurWarchief
                     exitwhen first == null
                     call GroupRemoveUnit(g, first)
 
-                    if UnitAlive(first) and not IsUnitWard(first) and not  then
-                        if t != u then
-                            call EPX(first,'STMP', 45)
-                        endif
-                        // debug call SingleDebug( GetUnitName( t ) + " 添加奔袭冲撞 " )
-                        call HMR(first, GetUnitAbilityLevel(u,'A2O6')+ GetUnitAbilityLevel(u,'A384'))
+                    if UnitAlive(first) and not IsUnitWard(first) and not IsUnitMessenger(first) and not IsUnitType(first, UNIT_TYPE_STRUCTURE) then
+                        call UnitAddStampedeBuff(whichUnit, first, level, isUpgrade)
                     endif
                     
                 endloop
@@ -127,13 +147,8 @@ scope CentaurWarchief
 
             set i = i + 1
         endloop
-  
-        set Temp__ArrayUnit[0]= GetTriggerUnit()
-        set XK[0]= GetUnitAbilityLevel(Temp__ArrayUnit[0],'A2O6')+ GetUnitAbilityLevel(Temp__ArrayUnit[0],'A384')
-        call GroupEnumUnitsInRange(AK, 0, 0, 99999, Condition(function HQR))
 
         call DeallocateGroup(g)
-        set s = null
     endfunction
 
 endscope

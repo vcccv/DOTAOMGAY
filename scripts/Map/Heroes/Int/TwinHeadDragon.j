@@ -30,8 +30,6 @@ scope TwinHeadDragon
         
         set tick = Table[h]['BUFF']
 
-        //call BJDebugMsg("TwinHeadDragonBreathFireOnBuffRemove : " + I2S(h))
-
         call tick.Destroy()
         call Table[h].remove('BUFF')
 
@@ -62,8 +60,7 @@ scope TwinHeadDragon
                     set table[tick].unit[1] = sw.owner
                     set table[tick].unit[2] = targ
                     set Table[h]['BUFF'] = tick
-                    call SetAbilityRemoveAction('B06R', "TwinHeadDragonBreathFireOnBuffRemove")
-                    call BJDebugMsg("中了1")
+
                     set b = null
                 endif
             endif
@@ -82,7 +79,7 @@ scope TwinHeadDragon
             if UnitAlive(targ) and IsUnitEnemy(sw.owner, GetOwningPlayer(targ)) and not IsUnitMagicImmune(targ) and not IsUnitInvulnerable(targ) and not IsUnitWard(targ) and not IsUnitStructure(targ) then
                 call AlarmDamage(sw.owner, targ)
                 call UnitAddAbilityToTimed(targ,'A3JI'-1 + thistype(sw).level, 1, 5.,'B3J1')
-                call BJDebugMsg("中了1")
+
             endif
             return false
         endmethod
@@ -128,6 +125,8 @@ scope TwinHeadDragon
         local SimpleTick tick     = SimpleTick.Create(0)
         local TableArray table
         
+        call SetAbilityRemoveAction('B06R', "TwinHeadDragonBreathFireOnBuffRemove")
+
         if targUnit == null then
             set tx = GetSpellTargetX()
             set ty = GetSpellTargetY()
