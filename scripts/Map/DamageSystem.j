@@ -218,6 +218,7 @@ scope DamageSystem
                 // 奔袭冲撞 0.6
                 if GetUnitAbilityLevel(DETarget,'A2O4') == 2 then
                     set rReducedDamage = rReducedDamage + DEDamage * .6
+                    call BJDebugMsg("我说我伤害减少了。")
                     //set DEDamage = DEDamage - DEDamage * .6
                 endif
                 // 冰龙大的减伤 被诅咒的单位被攻击时 0.7

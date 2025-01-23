@@ -4,6 +4,7 @@
 #include "Str\\Magnus.j"
 #include "Str\\DragonKnight.j"
 #include "Str\\Tidehunter.j"
+#include "Str\\CentaurWarchief.j"
 
 #include "Int\\TwinHeadDragon.j"
 #include "Int\\Ezalor.j"
