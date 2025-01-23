@@ -83,6 +83,27 @@ library UnitLimitation requires UnitModel
     endfunction
 
     globals
+        private constant key UNIT_PHASED_MOVEMENT_COUNT
+    endglobals
+    function UnitAddPhasedMovementCount takes unit whichUnit returns nothing
+        local integer h     = GetHandleId(whichUnit)
+        local integer count = Table[h][UNIT_NOPATHING_COUNT] + 1
+        set Table[h][UNIT_PHASED_MOVEMENT_COUNT] = count
+        if count == 1 then
+            call MHUnit_SetCollisionType(UNIT_COLLISION_TYPE_HARVESTER, UNIT_COLLISION_TYPE_BUILDING)
+        endif
+    endfunction
+    function UnitSubPhasedMovementCount takes unit whichUnit returns nothing
+        local integer id    = GetUnitTypeId(whichUnit)
+        local integer h     = GetHandleId(whichUnit)
+        local integer count = Table[h][UNIT_PHASED_MOVEMENT_COUNT] - 1
+        set Table[h][UNIT_PHASED_MOVEMENT_COUNT] = count
+        if count == 0 then
+            call MHUnit_SetCollisionType(MHUnit_GetDefDataInt(id, UNIT_DEF_DATA_COLLISION_TYPE_TO_OTHER), MHUnit_GetDefDataInt(id, UNIT_DEF_DATA_COLLISION_TYPE_FROM_OTHER))
+        endif
+    endfunction
+
+    globals
         private constant key UNIT_NOPATHING_COUNT
     endglobals
     function UnitAddNoPathingCount takes unit whichUnit returns nothing
@@ -90,6 +111,7 @@ library UnitLimitation requires UnitModel
         local integer count = Table[h][UNIT_NOPATHING_COUNT] + 1
         set Table[h][UNIT_NOPATHING_COUNT] = count
         if count == 1 then
+            call UnitAddPhasedMovementCount(whichUnit)
             call SetUnitPathing(whichUnit, false)
         endif
     endfunction
@@ -98,6 +120,7 @@ library UnitLimitation requires UnitModel
         local integer count = Table[h][UNIT_NOPATHING_COUNT] - 1
         set Table[h][UNIT_NOPATHING_COUNT] = count
         if count == 0 then
+            call UnitSubPhasedMovementCount(whichUnit)
             call SetUnitPathing(whichUnit, true)
         endif
     endfunction

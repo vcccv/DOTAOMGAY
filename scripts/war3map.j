@@ -2035,7 +2035,7 @@ function YDWEGetItemDataString takes integer itemcode, integer data_type returns
 endfunction
 
 function GetPlayerSelectedUnit takes nothing returns unit
-	return GetDetectedUnit()
+	return MHPlayer_GetSelectUnit()
 endfunction
 
 // 获取玩家技能栏里的技能
@@ -8176,13 +8176,6 @@ endfunction
 function IsUnitInvision takes unit u returns boolean
 	return MHUnit_GetInvisionCount(u) > 0
 	//return GetUnitAbilityLevel(u,'B068')> 0 or GetUnitAbilityLevel(u,'B07T')> 0 or GetUnitAbilityLevel(u,'B076')> 0 or GetUnitAbilityLevel(u,'BOwk')> 0 or GetUnitAbilityLevel(u,'B04R')> 0 or GetUnitAbilityLevel(u,'B0A5')> 0 or GetUnitAbilityLevel(u,'B01Q')> 0 or GetUnitAbilityLevel(u,'B006')> 0 or GetUnitAbilityLevel(u,'Binv')> 0 or GetUnitAbilityLevel(u,'Apiv')> 0 or GetUnitAbilityLevel(u,'A021')> 0 or GetUnitAbilityLevel(u,'A0K4')> 0 or GetUnitAbilityLevel(u,'A0XB')> 0 or GetUnitAbilityLevel(u,'A0Z2')> 0 or GetUnitAbilityLevel(u,'A1GA')> 0 or GetUnitAbilityLevel(u,'A1HW')> 0 or GetUnitAbilityLevel(u,'A1HX')> 0 or GetUnitAbilityLevel(u,'A00J')> 0 or GetUnitAbilityLevel(u,'B08K')> 0 or GetUnitAbilityLevel(u,'B08X')> 0 or GetUnitAbilityLevel(u,'B039')> 0 or GetUnitAbilityLevel(u,'B00K')> 0 or GetUnitAbilityLevel(u,'BHfs')> 0 or GetUnitAbilityLevel(u,'A140')> 0 or GetUnitAbilityLevel(u,'B021')> 0 or GetUnitAbilityLevel(u,'A0ZD')> 0 or GetUnitAbilityLevel(u,'A0KT')> 0
-endfunction
-function MHUnit_GetSilenceCount takes unit u returns integer
-    local integer ptr = MHTool_ToObject(u)
-    if (ptr > 0) then
-        return MHTool_ReadInt(ptr + 0x1D0)
-    endif
-    return 0
 endfunction
 function IsUnitSilence takes unit u returns boolean
 	return MHUnit_GetSilenceCount(u) > 0
@@ -28063,6 +28056,17 @@ function TestEfficiency takes nothing returns nothing
 
 endfunction
 
+function DebugUnitCollisionType takes nothing returns nothing
+	local unit u = GetPlayerSelectedUnit()
+	local integer from_other = MHUnit_GetDefDataInt(GetUnitTypeId(u), UNIT_DEF_DATA_COLLISION_TYPE_FROM_OTHER)
+	local integer to_other   = MHUnit_GetDefDataInt(GetUnitTypeId(u), UNIT_DEF_DATA_COLLISION_TYPE_TO_OTHER)
+
+	call BJDebugMsg("from_other:" + I2S(from_other))
+	call BJDebugMsg("to_other  :" + I2S(to_other))
+
+	set u = null
+endfunction
+
 function WCO takes string s returns nothing
 	local boolean WDO = SubString(s, 0, 4) == "-aa "
 	local boolean WFO = SubString(s, 0, 4) == "-au "
@@ -28105,10 +28109,12 @@ function WCO takes string s returns nothing
 	local boolean YDO = s == "-fog"
 	local boolean getId = s == "-all"
 	local boolean testEfficiency = s == "-效率"
+	local boolean gct = s == "-gct"
 	if YDO then
 		call Cheat("iseedeadpeople")
 	endif
 	
+	call INX("DebugUnitCollisionType", gct)
 	call INX("EXGetUnitAllAbilityId", getId)
 	call INX("TestEfficiency", testEfficiency)
 
