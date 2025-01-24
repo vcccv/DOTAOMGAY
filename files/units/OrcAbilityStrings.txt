@@ -32540,13 +32540,6 @@ Researchhotkey=C
 Researchtip=学习 灵魂猎手[|cffffcc00C|r] - [|cffffcc00等级 %d|r]|n(Soul Catcher)
 Researchubertip=暗影恶魔在目标区域内降下诅咒，使其中随机一个敌方单位遭殃，受到攻击承受额外的伤害，持续12秒。|n|n|cffff8000纯粹伤害|r|n|n|cff99ccff作用范围：|r500|n|cff99ccff施法距离：|r600|n|cff99ccff冷却时间：|r13|n|cff99ccff魔法消耗：|r50/60/70/80|n|n|cffffcc00等级 1|r - 额外承受20%的伤害|n|cffffcc00等级 2|r - 额外承受30%的伤害|n|cffffcc00等级 3|r - 额外承受40%的伤害|n|cffffcc00等级 4|r - 额外承受50%的伤害
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNSoulCatcher.blp
-[A1SJ]
-art=ReplaceableTextures\CommandButtons\BTNStrongDrink
-researchart=ReplaceableTextures\CommandButtons\BTNStrongDrink
-buttonpos=1,2
-researchbuttonpos=1
-missilearc=0.15
-name="Dash - NoAttack"
 [A1ST]
 art=ReplaceableTextures\CommandButtons\BTNGhostBlade
 name="CallDown MS 1"
@@ -33304,7 +33297,7 @@ buffart=ReplaceableTextures\CommandButtons\BTNScatterRockets
 targetart=Abilities\Spells\Other\TalkToMe\TalkToMe.mdl
 targetattach=overhead
 Bufftip=超震声波
-Buffubertip=该单位被超震声波击中，无法使用技能
+Buffubertip=该单位被超震声波击中，无法进行攻击
 [B03J]
 buffart=ReplaceableTextures\CommandButtons\BTNLiquidFire
 targetart=Environment\LargeBuildingFire\LargeBuildingFire1.mdl

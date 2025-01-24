@@ -5,7 +5,7 @@ library BuffUtils requires Table
         private buff Temp = null
         constant integer BUFF_LEVEL1 = 1
         constant integer BUFF_LEVEL2 = 2
-        constant integer BUFF_LEVEL3 = 2
+        constant integer BUFF_LEVEL3 = 3
     endglobals
 
     // positive为正面负面，polarity以后再说
@@ -13,6 +13,9 @@ library BuffUtils requires Table
         set Temp = MHBuff_Create(whichUnit, buffId, BUFF_TEMPLATE_BNAB, duration)
         call MHBuff_SetPolarity(whichUnit, buffId, BUFF_POLARITY_POSITIVE, positive)
         call MHBuff_SetPolarity(whichUnit, buffId, BUFF_POLARITY_NEGATIVE, not positive)
+        if polarity == BUFF_LEVEL3 then
+            call MHBuff_SetPolarity(whichUnit, buffId, BUFF_POLARITY_AURA, true)
+        endif
         return Temp
     endfunction
 
