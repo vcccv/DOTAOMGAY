@@ -98,6 +98,103 @@ library AbilityCustomOrderId
 
         // 命运敕令
         call AllocAbilityOrderId('A2T5')
+
+        //***************************************************************************
+        //*
+        //*  fanofknives
+        //*
+        //***************************************************************************
+        // 战吼
+        call AllocAbilityOrderId('A2IS')
+
+        // 激流
+        call AllocAbilityOrderId('A2KU')
+
+        // 回音击
+        call AllocAbilityOrderId('A0DH')
+        call AllocAbilityOrderId('A1OB')
+
+        // 狂猛
+        call AllocAbilityOrderId('A1EG')
+
+        // 超强力量
+        call AllocAbilityOrderId('QB0P')
+
+        // 热导飞弹
+        call AllocAbilityOrderId('A05E')
+
+        // 战斗专注
+        call AllocAbilityOrderId('A1EJ')
+
+        // 幽魂
+        call AllocAbilityOrderId('A1T8')
+        
+        // 奔袭冲撞
+        call AllocAbilityOrderId('A2O6')
+        call AllocAbilityOrderId('A384')
+
+        // 不稳定化合物
+        call AllocAbilityOrderId('A1NI')
+
+        // 残影
+        call AllocAbilityOrderId('A14P')
+
+        // 折光
+        call AllocAbilityOrderId('A1EA')
+
+        // 高射火炮
+        call AllocAbilityOrderId('A229')
+
+        // 风行者
+        call AllocAbilityOrderId('A14I')
+
+        // 海象挥击
+        call AllocAbilityOrderId('A1YQ')
+        call AllocAbilityOrderId('A3DE')
+
+        // 刺针扫射
+        call AllocAbilityOrderId('A0GP')
+
+        // 炽热锁链
+        call AllocAbilityOrderId('A2H3')
+
+        // 震荡射击
+        call AllocAbilityOrderId('A2IT')
+
+        // 死亡旋风
+        call AllocAbilityOrderId('A2FK')
+
+        // 焦土
+        call AllocAbilityOrderId('A1OP')
+
+        // 尖刺外壳
+        call AllocAbilityOrderId('A2KO')
+
+        // 痛苦尖叫
+        call AllocAbilityOrderId('A04A')
+
+        // 等离子场
+        call AllocAbilityOrderId('A1E7')
+
+        // 死亡脉冲
+        call AllocAbilityOrderId('A05V')
+
+        // 冰晶爆轰 - 激活
+        call AllocAbilityOrderId('A1MN')
+
+        // 黑暗契约
+        call AllocAbilityOrderId('A1IM')
+
+        // 恶魔敕令
+        call AllocAbilityOrderId('A20T')
+
+        // 召唤佣兽
+        call AllocAbilityOrderId('A1NE')
+        call AllocAbilityOrderId('A2IG')
+        
+        // 地狱
+        call AllocAbilityOrderId('A456')
+
         //***************************************************************************
         //*
         //*  carrionswarm
