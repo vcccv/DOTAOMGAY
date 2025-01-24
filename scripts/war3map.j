@@ -3411,7 +3411,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A0M3', 4, "MXE")
 	call SaveStr(ObjectHashTable,'A06B', 4, "MOE")
 	call SaveStr(ObjectHashTable,'A471', 4, "MOE")
-	call SaveStr(ObjectHashTable,'A01N', 4, "MAE")
+	call SaveStr(ObjectHashTable,'A01N', 4, "HeartstopperAuraOnLearn")
 	call SaveStr(ObjectHashTable,'A0BR', 4, "MNE")
 	call SaveStr(ObjectHashTable,'A03P', 4, "MBE")
 	call SaveStr(ObjectHashTable,'A06D', 4, "MCE")
@@ -3497,7 +3497,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A04E', 1000, "MDE")
 	call SaveStr(ObjectHashTable,'A06D', 1000, "MCE")
 	call SaveStr(ObjectHashTable,'A03P', 1000, "MBE")
-	call SaveStr(ObjectHashTable,'A01N', 1000, "MAE")
+	call SaveStr(ObjectHashTable,'A01N', 1000, "HeartstopperAuraOnLearn")
 	call SaveStr(ObjectHashTable,'A0I8', 1000, "StrygwyrThirstOnLearn")
 	call SaveStr(ObjectHashTable,'A06B', 1000, "MOE")
 	call SaveStr(ObjectHashTable,'A1IQ', 1000, "P4E")
@@ -61158,38 +61158,6 @@ function YYI takes unit u, unit targetUnit, integer level returns nothing
 	call SaveUnitHandle(ObjectHashTable, h, 0, u)
 	set t = null
 endfunction
-function YZI takes nothing returns nothing
-	local unit targetUnit = GetEnumUnit()
-	local real hp = GetWidgetLife(targetUnit)-1
-	local real Y_I = GetUnitState(targetUnit, UNIT_STATE_MAX_LIFE)
-	local real damageValue = .003 * MBV * Y_I / 2
-	call UnitDamageTargetEx(MNV, targetUnit, 11, damageValue)
-	set targetUnit = null
-endfunction
-function Y0I takes nothing returns boolean
-	return DKX() and GetUnitAbilityLevel(GetFilterUnit(),'B084')> 0
-endfunction
-function Y1I takes nothing returns nothing
-	local integer h = GetHandleId(GetExpiredTimer())
-	local unit whichUnit = LoadUnitHandle(HY, h, 2)
-	local group g
-	if UnitIsDead(whichUnit) == false and GetUnitAbilityLevel(whichUnit,'A36D') == 0 then
-		set g = AllocationGroup(366)
-		set MNV = whichUnit
-		set MBV = GetUnitAbilityLevel(whichUnit,'P302')+ 1
-		call GroupEnumUnitsInRange(g, GetUnitX(whichUnit), GetUnitY(whichUnit), 1225, Condition(function Y0I))
-		call ForGroup(g, function YZI)
-		call DeallocateGroup(g)
-	endif
-	set g = null
-	set whichUnit = null
-endfunction
-function MAE takes nothing returns nothing
-	local timer t = CreateTimer()
-	call TimerStart(t, .5, true, function Y1I)
-	call SaveUnitHandle(HY, GetHandleId(t), 2, GetTriggerUnit())
-	set t = null
-endfunction
 function Y2I takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer WFV = GetHandleId(t)
@@ -81180,6 +81148,8 @@ function Init_BuffsId takes nothing returns nothing
 	call SetBuffAbilityId('B06Z','PRGS')
 	call SetBuffAbilityId('B08Q','PRGS')
 	call SetBuffAbilityId('B031','PRGI')
+
+	// 血棘 - 灵魂撕裂
 	call SetBuffAbilityId('A4TP','PRGI')
 	
 	call SetBuffAbilityId('B0C1','PRGN')
@@ -83674,7 +83644,7 @@ function InitHeroSkillsData takes nothing returns nothing
 	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "curse"),'A32C', 0,'A32U', "w")
 	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "eattree")+ SaveSkillOrder(i * 4 + 3, "controlmagic"),'A32E', 0,'A32V', "d")
 	set IsMultiIconSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "absorb"),'A32G', 0,'A32W', "r")
+	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, GetAbilityOrder('A32G')),'A32G', 0,'A32W', "r")
 	set i = 95 -1
 	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "townbellon"),'A0I7', 0,'Y377', "f")
 	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "autoentangleinstant"),'A180', 0,'Y378', "c")

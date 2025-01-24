@@ -269,6 +269,16 @@ library AbilityCustomOrderId
         // 冰封路径
         call AllocAbilityOrderId('A0O6')
 
+        //***************************************************************************
+        //*
+        //*  absorb
+        //*
+        //***************************************************************************
+        // 刷逼之力
+        call AllocAbilityOrderId('A32G')
+
+        // 召唤巨石
+        call AllocAbilityOrderId('A2TH')
     endfunction
 
 endlibrary

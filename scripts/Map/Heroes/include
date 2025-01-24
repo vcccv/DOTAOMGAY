@@ -16,6 +16,7 @@
 #include "Int\\ShadowDemon.j"
 #include "Int\\ObsidianDestroyer.j"
 #include "Int\\StormSpirit.j"
+#include "Int\\Necrolyte.j"
 
 #include "Agi\\VengefulSpirit.j"
 #include "Agi\\FacelessVoid.j"
