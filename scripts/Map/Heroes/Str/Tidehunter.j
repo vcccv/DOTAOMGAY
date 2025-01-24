@@ -52,8 +52,6 @@ scope Tidehunter
         local real    distance  = 1200. + GetUnitCastRangeBonus(whichUnit)
         local real    damage
 
-        call InitAbilityCustomOrderId()
-
         if not isUpgrade then
             if not UnitHasSpellShield(targUnit) then
                 call LaunchMissileByUnitDummy(whichUnit, targUnit, 'h0EN', "GushMissileOnHit", 4000, false)

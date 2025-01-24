@@ -22,7 +22,7 @@ library AbilityCustomOrderId
         return MHAbility_GetHookOrder(abilId)
     endfunction
 
-    function InitAbilityCustomOrderId takes nothing returns nothing
+    function AbilityCustomOrderId_Init takes nothing returns nothing
         //***************************************************************************
         //*
         //*  chainlightning

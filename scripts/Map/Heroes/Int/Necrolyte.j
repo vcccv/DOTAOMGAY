@@ -6,15 +6,6 @@ scope Necrolyte
     //*  竭心光环
     //*
     //***************************************************************************
-    function YZI takes nothing returns nothing
-        local unit targetUnit = GetEnumUnit()
-        local real hp  = GetWidgetLife(targetUnit)-1
-        local real Y_I = GetUnitState(targetUnit, UNIT_STATE_MAX_LIFE)
-        local real damageValue = .003 * level * Y_I / 2
-        call UnitDamageTargetEx(MNV, targetUnit, 11, damageValue)
-        set targetUnit = null
-    endfunction
-    
     function HeartstopperAuraOnUpdate takes nothing returns nothing
         local integer h         = GetHandleId(GetExpiredTimer())
         local unit    whichUnit = LoadUnitHandle(HY, h, 'A01N')
@@ -26,20 +17,20 @@ scope Necrolyte
         local integer level
         local real    hp
         local real    max
-        if UnitAlive(whichUnit) and not IsUnitBreak(whichiUnit) then
+        if UnitAlive(whichUnit) and not IsUnitBreak(whichUnit) then
             set g = AllocationGroup(366)
             set level = GetUnitAbilityLevel(whichUnit,'P302')+ 1
 
             set x = GetUnitX(whichUnit)
             set y = GetUnitY(whichUnit)
-            call GroupEnumUnitsInRange(g, x, y, area + MAX_UNIT_COLLISION, Condition(function Y0I))
+            call GroupEnumUnitsInRange(g, x, y, area + MAX_UNIT_COLLISION, null)
 
             loop
                 set first = FirstOfGroup(g)
                 exitwhen first == null
-                call GroupRemoveUnit(g)
+                call GroupRemoveUnit(g, first)
 
-                if UnitAlive(first) and IsUnitInRange(first, x, y, area) and IsUnitEnemy(whichUnit, GetOwningPlayer(first)) /*
+                if UnitAlive(first) and IsUnitInRangeXY(first, x, y, area) and IsUnitEnemy(whichUnit, GetOwningPlayer(first)) /*
                     */ and IsAliveNotStrucNotWard(first) and IsNotAncientOrBear(first) then
                     set hp  = GetWidgetLife(first) - 1.
                     set max = GetUnitState(first, UNIT_STATE_MAX_LIFE)
@@ -58,6 +49,5 @@ scope Necrolyte
         call SaveUnitHandle(HY, GetHandleId(t), 'A01N', GetTriggerUnit())
         set t = null
     endfunction
-
 
 endscope

@@ -86771,7 +86771,7 @@ function main takes nothing returns nothing
 	call MHBuff_SetOverlay(BUFF_TEMPLATE_BNHT, true)
 	call MHBuff_SetOverlay(BUFF_TEMPLATE_BNSO, true)
 	
-	call InitAbilityCustomOrderId()
+	call AbilityCustomOrderId_Init()
 
 	set LocalPlayer   = GetLocalPlayer()
 	set LocalPlayerId = GetPlayerId(LocalPlayer)
