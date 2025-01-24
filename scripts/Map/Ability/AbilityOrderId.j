@@ -1,12 +1,23 @@
-library AbilityCustomOrderId
+library AbilityCustomOrderId requires Base
 
     globals
         private integer OrderIdBase = 950000
+
     endglobals
+
+    static if DEBUG_MODE then
+        globals
+            private constant key KEY
+        endglobals
+    endif
 
     function AllocAbilityOrderId takes integer abilId returns integer 
         set OrderIdBase = OrderIdBase + 1
         call MHAbility_SetHookOrder(abilId, OrderIdBase)
+        static if DEBUG_MODE then
+            call ThrowError(Table[KEY].has(abilId), "AbilityCustomOrderId", "AllocAbilityOrderId", Id2String(abilId), abilId, "重复的技能Id被分配命令Id:" + GetObjectName(abilId))
+            set Table[KEY][abilId] = OrderIdBase
+        endif
         return OrderIdBase
     endfunction
 

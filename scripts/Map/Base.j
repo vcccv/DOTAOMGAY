@@ -1,5 +1,5 @@
 
-library Base requires TriggerDestroyQueue, GroupAlloc
+library Base requires TriggerDestroyQueue, GroupAlloc, ErrorMessage
     
     //创建一个一次性计时器，返回值是计时器的整数地址，需要手动销毁。
     function TimerStartSingle takes real timeout, code callback returns integer
