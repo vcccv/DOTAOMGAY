@@ -37,7 +37,7 @@ scope TaurenChieftain
         local real area = 315.
 
         call FlushChildHashtable(HY, h)
-        call AddTriggerToDestroyQueue(t)
+        call DestroyTrigger(t)
         set J1V = CreateUnit(GetOwningPlayer(whichUnit),'e00E', x0, y0, 0)
         call UnitAddPermanentAbility(J1V,'A43M')
         call SetUnitAbilityLevel(J1V,'A43M', level)
@@ -168,7 +168,7 @@ scope TaurenChieftain
             set a0 = LoadReal(HY, h, 341)
             set level = LoadInteger(HY, h, 0)
             call FlushChildHashtable(HY, h)
-            call AddTriggerToDestroyQueue(t)
+            call DestroyTrigger(t)
             set t = CreateTrigger()
             set h = GetHandleId(t)
             call TriggerRegisterTimerEvent(t, .5, false)

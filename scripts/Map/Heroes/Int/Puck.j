@@ -17,7 +17,7 @@ scope Puck
             call UnitSubInvulnerableCount(trigUnit)
             call UnitRemoveAbility(trigUnit,'A04R')
             call FlushChildHashtable(HY, h)
-            call AddTriggerToDestroyQueue(t)
+            call DestroyTrigger(t)
         else
             set level =(LoadInteger(HY, h, 5))
             set d = 3 * level
@@ -31,7 +31,7 @@ scope Puck
                 call UnitSubInvulnerableCount(trigUnit)
                 call UnitRemoveAbility(trigUnit, 'A04R')
                 call FlushChildHashtable(HY, h)
-                call AddTriggerToDestroyQueue(t)
+                call DestroyTrigger(t)
             endif
         endif
         set t = null
@@ -74,7 +74,7 @@ scope Puck
         local unit trigUnit =(LoadUnitHandle(HY, h, 14))
         call IssueImmediateOrderById(trigUnit, 852516)
         call FlushChildHashtable(HY, h)
-        call AddTriggerToDestroyQueue(t)
+        call DestroyTrigger(t)
         set t = null
         set trigUnit = null
         return false

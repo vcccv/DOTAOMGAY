@@ -82,7 +82,7 @@ scope StormSpirit
             call UnitSubInvulnerableCount(whichUnit)
 
             call FlushChildHashtable(HY, h)
-            call AddTriggerToDestroyQueue(t)
+            call DestroyTrigger(t)
         else
             call KillTreeByCircle(targetX, targetY, 75)
         endif

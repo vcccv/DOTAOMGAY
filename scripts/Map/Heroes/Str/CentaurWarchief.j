@@ -28,7 +28,7 @@ scope CentaurWarchief
             call DestroyEffect(LoadEffectHandle(HY, h, 2))
             call DeallocateGroup(targGroup)
             call FlushChildHashtable(HY, h)
-            call AddTriggerToDestroyQueue(trig)
+            call DestroyTrigger(trig)
             set trig = null
             set u = null
             set targGroup = null
@@ -127,7 +127,6 @@ scope CentaurWarchief
 
         set i = 0
         loop
-            exitwhen i > bj_MAX_PLAYERS
             
             if IsPlayerAlly(p, Player(i)) then
                 
@@ -146,6 +145,7 @@ scope CentaurWarchief
             endif
 
             set i = i + 1
+            exitwhen i == bj_MAX_PLAYERS
         endloop
 
         call DeallocateGroup(g)

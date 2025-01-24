@@ -33,7 +33,7 @@ scope Invoker
         endif
         if count > max or GetTriggerEventId() == EVENT_WIDGET_DEATH then
             call FlushChildHashtable(HY, h)
-            call AddTriggerToDestroyQueue(t)
+            call DestroyTrigger(t)
         else
             set x = CoordinateX50(GetUnitX(targetUnit) + speed * Cos(angle))
             set y = CoordinateY50(GetUnitY(targetUnit) + speed * Sin(angle))

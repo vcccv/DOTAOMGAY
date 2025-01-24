@@ -509,7 +509,6 @@ globals
 	constant integer HC = StringHash("expirience")
 	real MC
 	integer PC = 5
-	integer TC
 	integer TempInt
 	timer ZC = CreateTimer()
 	boolean array XD
@@ -2060,21 +2059,6 @@ function FixUnitSkillsBug takes unit u returns nothing
 	endloop
 endfunction
 
-// 单位逆变身
-function YDWEUnitTransform takes unit whichUnit, integer targetid returns nothing
-	if GetUnitTypeId(whichUnit) != targetid then
-		call UnitAddAbility(whichUnit, 'M000')
-		call YDWESetUnitAbilityDataInteger(whichUnit, 'M000', 1, 117, GetUnitTypeId(whichUnit))
-		call EXSetAbilityAEmeDataA(EXGetUnitAbility(whichUnit, 'M000'), GetUnitTypeId(whichUnit))
-		call UnitRemoveAbility(whichUnit, 'M000')
-		call UnitAddAbility(whichUnit, 'M000')
-		call EXSetAbilityAEmeDataA(EXGetUnitAbility(whichUnit, 'M000'), targetid)
-		call UnitRemoveAbility(whichUnit, 'M000')
-		// 修正单位的 技能
-		call FixUnitSkillsBug(whichUnit)
-	endif
-endfunction
-
 // 修正过后的BJ
 function YDWETriggerRegisterEnterRectSimpleNull takes trigger trig, rect r returns event
     local region rectRegion = CreateRegion()
@@ -2296,12 +2280,6 @@ function UnitVisibleToPlayer takes unit u, player p returns boolean
 	return IsUnitVisible(u, p) and(GetUnitAbilityLevel(u,'A1HX') == 0 or IsUnitAlly(u, p))
 endfunction
 
-function UnitAddPermanentAbilitySetLevel takes unit u, integer id, integer lv returns nothing
-	if GetUnitAbilityLevel(u, id) == 0 then
-		call UnitAddPermanentAbility(u, id)
-	endif
-	call SetUnitAbilityLevel(u, id, lv)
-endfunction
 function GetHeroWeaponAttachPointName takes unit u returns string
 	local integer i = GetUnitTypeId(u)
 	if i =='EC57' or i =='Hamg' or i =='E01Y' or i =='H00K' or i =='N0HP' or i =='Ucrl' then
@@ -2643,45 +2621,7 @@ function UnitAddAbilityLevel1ToTimed takes unit u, integer abilId, integer buffI
 	endif
 	set t = null
 endfunction
-function WTB takes unit u returns boolean
-	local integer unitTypeId = GetUnitTypeId(u)
-	if unitTypeId =='Eevm' or unitTypeId =='E02V' or unitTypeId =='E02W' or unitTypeId =='E02U' then
-		return true
-	endif
-	return false
-endfunction
 
-// 单位类型是否是变身单位
-function UnitTypeIsMetamorphosis takes unit u returns boolean
-	local integer typeId = GetUnitTypeId(u)
-	set TC = 0
-	if typeId =='N01J' or typeId =='N01T' or typeId =='N0HT' or typeId =='H600' or typeId =='H601' or typeId =='H602' then
-		if Mode__BalanceOff then
-			set TC ='ANcr'
-		else
-			set TC ='QB0K'
-		endif
-	elseif typeId =='N017' or typeId =='N02B' or typeId =='QTW2' or typeId =='QTW3' then
-		set TC ='A0BE'
-	elseif typeId =='N013' or typeId =='N014' or typeId =='N015' then
-		set TC ='A0AG'
-	elseif typeId =='H00F' or typeId =='H00E' or typeId =='H00F' then
-		set TC ='QM00'
-	elseif typeId =='E015' then
-		set TC ='QM02'
-	elseif typeId =='H06X' or typeId =='H06Y' or typeId =='H06W' then
-		set TC ='QM01'
-	elseif typeId =='H07I' then
-		set TC ='QM03'
-	elseif typeId =='O017' then
-		set TC ='QM04'
-	elseif typeId =='H08D' or typeId =='H08C' or typeId =='H08B' or typeId =='H084' then
-		return true
-	elseif typeId =='N0MA' or typeId =='N0MB' or typeId =='N0MC' or typeId =='N0MO' then
-		return true
-	endif
-	return TC > 0
-endfunction
 function IsSpellingMorph takes nothing returns boolean //变身技能
 	local integer id = GetSpellAbilityId()
 	if id =='QM00' or id =='QM01' or id =='QB0K' or id =='QM02' or id =='QM03' or id =='QM04' or id =='A1RI' or id =='A332' then
@@ -5213,7 +5153,7 @@ function EDX takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	call SaveInteger(HY, GetHandleId(LoadTriggerHandle(HY, h, 35)), LoadInteger(HY, h, 33), 2)
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	return false
 endfunction
@@ -5251,7 +5191,7 @@ function EMX takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	call SaveInteger(HY, GetHandleId(LoadUnitHandle(HY, h, 14)), LoadInteger(HY, h, 33), 2)
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	return false
 endfunction
@@ -5918,7 +5858,7 @@ function O8X takes nothing returns boolean
 	//call SetUnitVertexColorEx(u, -1, -1, -1, -1)
 	call ResetUnitVertexColor(u)
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	call TriggerEvaluate(IO)
 	//endif
 	set Q5V = u
@@ -5948,7 +5888,7 @@ function RVX takes nothing returns nothing
 		call SaveUnitHandle(HY, iNewTrigHandleId, 0, hTriggerUnit)
 		call SaveInteger(HY, iNewTrigHandleId, 0, id)
 		// 保存单位是否为变身单位布尔
-		call SaveBoolean(HY, iNewTrigHandleId, 3, UnitTypeIsMetamorphosis(hTriggerUnit))
+		call SaveBoolean(HY, iNewTrigHandleId, 3, IsUnitMetamorphosis(hTriggerUnit))
 		set rDur = YDWEGetUnitAbilityDataReal(hTriggerUnit, id, GetUnitAbilityLevel(hTriggerUnit, id), 102)
 		// GetTriggerEventId()!= EVENT_UNIT_SPELL_ENDCAST
 		// call BJDebugMsg("触发器运行"+R2S(GetGameTime()))
@@ -6359,7 +6299,7 @@ function Japi_ReduceUnitAbilityCoolDownActions takes nothing returns boolean
 		//call RefreshUnitAbilityCoolDownTimer(u, id, 0.00)
 	endif
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set u = null
 	return false
@@ -6387,7 +6327,7 @@ function Japi_SetUnitAbilityCoolDown2 takes nothing returns boolean
 	local real cd = LoadReal(PassiveAbilityCooldown, id, lv)
 	call YDWESetUnitAbilityDataReal(u, id, lv, 105, cd)
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set u = null
 	return false
@@ -6480,7 +6420,7 @@ function IVX takes nothing returns boolean
 	local real IXX = LoadReal(HY, h, 20)
 	call UnitDamageTargetEx(whichUnit, targetUnit, IEX, IXX)
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set whichUnit = null
 	set targetUnit = null
@@ -6736,7 +6676,7 @@ function AOX takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	call DestroyEffect((LoadEffectHandle(HY, h, 32)))
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue((t))
+	call DestroyTrigger((t))
 	set t = null
 	return false
 endfunction
@@ -6756,7 +6696,7 @@ function ANX takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	call DestroyEffect((LoadEffectHandle(HY, h, 32)))
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue((t))
+	call DestroyTrigger((t))
 	set t = null
 	return false
 endfunction
@@ -6854,23 +6794,6 @@ function AYX takes player p, string ATX, real EHX, unit AUX, real AWX, integer r
 	call SetTextTagVisibility(tt, IsPlayerAlly(LocalPlayer, p) or IsObserverPlayer(LocalPlayer))
 	set tt = null
 endfunction
-function TriggerRegisterPlayerUnitEventBJ takes trigger t, playerunitevent whichEvent returns nothing
-	local integer i = 0
-	loop
-		call TriggerRegisterPlayerUnitEvent(t, Player(i), whichEvent, null)
-		set i = i + 1
-	exitwhen i == 16
-	endloop
-endfunction  
-function TriggerRegisterUserUnitEvent takes trigger t, playerunitevent whichEvent returns nothing
-	local integer i = 1
-	loop
-	exitwhen i > 5
-		call TriggerRegisterPlayerUnitEvent(t, SentinelPlayers[i], whichEvent, null)
-		call TriggerRegisterPlayerUnitEvent(t, ScourgePlayers[i], whichEvent, null)
-		set i = i + 1
-	endloop
-endfunction
 function A2X takes nothing returns nothing
 	if IsTreeDestructable(GetEnumDestructable()) and IsDestructableAliveBJ(GetEnumDestructable()) then
 		set P2 = P2 + 1
@@ -6903,7 +6826,7 @@ function A7X takes nothing returns boolean
 	call FogModifierStop(f)
 	call DestroyFogModifier(f)
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set f = null
 	return false
@@ -7009,7 +6932,7 @@ function NOX takes nothing returns boolean
 		if UnitIsDead(targetUnit) then
 			call KillUnit(missileDummy)
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		elseif GetDistanceBetween(tx, ty, targetX, targetY)<= NAX then
 			call KillUnit(missileDummy)
 			set U2 = whichUnit
@@ -7020,7 +6943,7 @@ function NOX takes nothing returns boolean
 				endif
 			endif
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		endif
 	endif
 	set t = null
@@ -7083,7 +7006,7 @@ function EffectMissileMoveCallBack takes nothing returns boolean
 			call ExecuteFunc( LoadStr( HY, h, 30 ) )
 		endif
 		call FlushChildHashtable( HY, h )
-		call AddTriggerToDestroyQueue( trig )
+		call DestroyTrigger( trig )
 	else
 		set missileX = CoordinateX75( missileX + speed * Cos( radian ) )
 		set missileY = CoordinateY75( missileY + speed * Sin( radian ) )
@@ -7155,7 +7078,7 @@ function SetUnitModelScaleByDuration__Remove takes nothing returns boolean
 		call DestroyTimer( tempTimer )
 		set tempTimer = null
 		call FlushChildHashtable( HY, GetHandleId( addTrig ) )
-		call AddTriggerToDestroyQueue( addTrig )
+		call DestroyTrigger( addTrig )
 		set addTrig = null
 	endif
 	if reduceTrig != null then
@@ -7164,7 +7087,7 @@ function SetUnitModelScaleByDuration__Remove takes nothing returns boolean
 		call SetUnitCurrentScaleEx( whichUnit, GetUnitCurrentScale(whichUnit) - fixScale )
 		// 修正缩放 然后删除缩小触发
 		call FlushChildHashtable( HY, GetHandleId( reduceTrig ) )
-		call AddTriggerToDestroyQueue( reduceTrig )
+		call DestroyTrigger( reduceTrig )
 		set reduceTrig = null
 	endif
 	call DestroyTimer( LoadTimerHandle( HY, h, 40 ) ) // 持续时间计时器
@@ -7172,7 +7095,7 @@ function SetUnitModelScaleByDuration__Remove takes nothing returns boolean
 	call RemoveSavedHandle( ExtraHT, GetHandleId( whichUnit ), LoadInteger( HY, h, 10 ) )
 	// debug call SingleDebug( "移除Buff 当前缩放" + R2S( GetUnitCurrentScale(whichUnit) ) + " key " + I2S( LoadInteger( HY, h, 10 ) ) + GetUnitName( whichUnit ) )
 	call FlushChildHashtable( HY, h )
-	call AddTriggerToDestroyQueue( trig )
+	call DestroyTrigger( trig )
 
 	set trig = null
 	set whichUnit = null
@@ -7191,7 +7114,7 @@ function SetUnitModelScaleReduce__CallBack takes nothing returns boolean
 	if iEvalCount > 40 then
 		call SetUnitCurrentScaleEx( whichUnit, GetUnitCurrentScale(whichUnit) )
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		set currentScale = currentScale - addScale
 		call SaveReal( HY, h, 0, currentScale )
@@ -7250,7 +7173,7 @@ function SetUnitModelScaleAdd__CallBack takes nothing returns boolean
 
 		call SetUnitCurrentScaleEx( whichUnit, GetUnitCurrentScale(whichUnit) )
 		call FlushChildHashtable( HY, h )
-		call AddTriggerToDestroyQueue( trig )
+		call DestroyTrigger( trig )
 		set durationTimer = null
 	else
 		set currentScale = currentScale + addScale
@@ -7345,7 +7268,7 @@ function N_X takes nothing returns boolean
 		call UnitRemoveAbility(u, 'B041')
 	endif
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set u = null
 	return false
@@ -7539,7 +7462,7 @@ function BSX takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	call RemoveUnit((LoadUnitHandle(HY, h, 26)))
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	return false
 endfunction
@@ -7548,7 +7471,7 @@ function BTX takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	call KillUnit((LoadUnitHandle(HY, h, 26)))
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	return false
 endfunction
@@ -7649,7 +7572,7 @@ function B9X takes nothing returns boolean
 	local integer CVX =(LoadInteger(HY, h, 59))
 	if UnitRemoveAbility(targetUnit, CVX) or GetUnitAbilityLevel(targetUnit, CVX) == 0 then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set targetUnit = null
@@ -7661,7 +7584,7 @@ function CEX takes nothing returns boolean
 	local unit targetUnit =(LoadUnitHandle(HY, h, 17))
 	local integer CVX =(LoadInteger(HY, h, 59))
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	if UnitRemoveAbility(targetUnit, CVX) == false then
 		set t = CreateTrigger()
 		set h = GetHandleId(t)
@@ -7696,7 +7619,7 @@ function COX takes nothing returns boolean
 	call UnitRemoveAbility(targetUnit, CRX)
 	if UnitRemoveAbility(targetUnit, CVX) or GetUnitAbilityLevel(targetUnit, CVX) == 0 then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set targetUnit = null
@@ -7709,7 +7632,7 @@ function CIX takes nothing returns boolean
 	local integer T0V =(LoadInteger(HY, h, 59))
 	local integer CAX =(LoadInteger(HY, h, 60))
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	call UnitRemoveAbility(targetUnit, CAX)
 	if UnitRemoveAbility(targetUnit, T0V) == false then
 		set t = CreateTrigger()
@@ -7748,7 +7671,7 @@ function UnitAddAbilityTimedEx_RemoveFix takes nothing returns boolean
 	if UnitRemoveAbility(u, CAX) or GetUnitAbilityLevel(u, CAX) == 0 then
 		call RemoveSavedHandle(ObjectHashTable, GetHandleId(u), 0 -T0V)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set u = null
@@ -7766,7 +7689,7 @@ function CBX takes nothing returns boolean
 	call UnitRemoveAbility(u, T0V)
 	if GetUnitAbilityLevel(u, T0V) == 0 then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call DestroyTimer(tt)
 		call RemoveSavedHandle(ObjectHashTable, GetHandleId(u), 0 -T0V)
 	else
@@ -7893,7 +7816,7 @@ function CGX takes nothing returns boolean
 	if I2R(GetTriggerEvalCount(t))* .025 > EHX then
 		call DestroyLightning(APX)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		call MoveLightning(APX, true, GetUnitX(u1), GetUnitY(u1), GetUnitX(u2), GetUnitY(u2))
 	endif
@@ -8454,7 +8377,7 @@ function impale_fly takes nothing returns boolean
 		call UnitDamageTargetEx((LoadUnitHandle(HY, h, 2)), target, 1,(LoadReal(HY, h, 20)))
 		call CommonUnitAddStun(target,(LoadReal(HY, h, 57)), false)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set target = null
@@ -8534,7 +8457,7 @@ function impale_enumunit takes nothing returns boolean
 			call DeallocateGroup(g1)
 		endif
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set g1 = null
 	set g2 = null
@@ -8616,7 +8539,7 @@ function GDX takes nothing returns nothing
 		call UnitShareVision(u, p, false)
 		call FlushChildHashtable(HY, h)
 		call RemoveSavedHandle(ObjectHashTable, GetHandleId(u), GFX)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		if GetUnitAbilityLevel(u, GFX)> 0 then
 			if GGX then
@@ -8637,7 +8560,7 @@ function GDX takes nothing returns nothing
 			call UnitShareVision(u, p, false)
 			call FlushChildHashtable(HY, h)
 			call RemoveSavedHandle(ObjectHashTable, GetHandleId(u), GFX)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		endif
 	endif
 	set t = null
@@ -8689,11 +8612,11 @@ function GPX takes nothing returns nothing
 		call UnitRemoveAbility(u, id)
 		call UnitRemoveAbility(u, GFX)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif GetTriggerEventId() == EVENT_PLAYER_UNIT_SPELL_EFFECT then
 		if GetUnitAbilityLevel(u, id) == 0 then
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		else
 			set TPE = GetSpellAbilityId()
 			if GetTriggerUnit() == u then
@@ -8701,14 +8624,14 @@ function GPX takes nothing returns nothing
 					call UnitRemoveAbility(u, id)
 					call UnitRemoveAbility(u, GFX)
 					call FlushChildHashtable(HY, h)
-					call AddTriggerToDestroyQueue(t)
+					call DestroyTrigger(t)
 				endif
 			else
 				if GetSpellTargetUnit() == u and(IsPlayerAlly(GetOwningPlayer(GetTriggerUnit()), GetOwningPlayer(u)) or UnitHasSpellShield(u) == false) and GMX(TPE) then
 					call UnitRemoveAbility(u, id)
 					call UnitRemoveAbility(u, GFX)
 					call FlushChildHashtable(HY, h)
-					call AddTriggerToDestroyQueue(t)
+					call DestroyTrigger(t)
 				endif
 			endif
 		endif
@@ -8783,23 +8706,6 @@ function GZX takes unit u, integer id, item it returns item
 		set i = i + 1
 	endloop
 	set G_X = null
-	return null
-endfunction
-// 按类型 从单位身上获取物品
-function GetItemOfTypeFromUnit takes unit u, integer id returns item
-	local integer i
-	local item it
-	set i = 0
-	loop
-	exitwhen i > 5
-		set it = UnitItemInSlot(u, i)
-		if it != null and GetItemTypeId(it) == id then
-			set it = null
-			return UnitItemInSlot(u, i)
-		endif
-		set i = i + 1
-	endloop
-	set it = null
 	return null
 endfunction
 function G1X takes player p, unit u, integer GTX, item G_X returns item
@@ -9222,7 +9128,7 @@ function HSX takes nothing returns boolean
 		call HMX(HWX, p)
 	endif
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set p = null
 	set HWX = null
@@ -9719,7 +9625,7 @@ function KNX takes nothing returns boolean
 	if GetTriggerEventId() == EVENT_UNIT_DEATH then
 		call KillUnit(dummyCaster)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		call SetUnitX(dummyCaster, GetUnitX(whichUnit))
 		call SetUnitY(dummyCaster, GetUnitY(whichUnit))
@@ -10783,7 +10689,7 @@ function SetTopMessageText_FadeOut takes nothing returns boolean
 	if c > 40 then
 		call TriggerEvaluate(LoadTriggerHandle(HY, h, 0)) //结束后运行一次父级触发器
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		call DzFrameSetAlpha(frame, 255 - R2I(6.375 * c)) //淡出
 	endif
@@ -10812,7 +10718,7 @@ function SetTopMessageText_CallBack takes nothing returns boolean
     	call DzFrameSetAlpha(frame, 255)
 		set TopMessageTextTrg[LoadInteger(HY, h, 1)] = null
     	call FlushChildHashtable(HY, h)
-    	call AddTriggerToDestroyQueue(t)
+    	call DestroyTrigger(t)
 	endif
 	set t = null
 	return false
@@ -10839,14 +10745,14 @@ function RemoveTopMsgTriggerByIndex takes integer i returns nothing
 	if HaveSavedHandle(HY, h, 0) then
 		set newtrg = LoadTriggerHandle(HY, h, 0)
 		call FlushChildHashtable(HY, GetHandleId(newtrg))
-		call AddTriggerToDestroyQueue(newtrg)
+		call DestroyTrigger(newtrg)
 		set newtrg = null
 	endif
 	call DzFrameSetText(frame, "" )
 	call DzFrameShow(frame, false)
 	call DzFrameSetAlpha(frame, 255)
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set TopMessageTextTrg[i] = null
 	set t = null
 endfunction
@@ -11055,7 +10961,7 @@ endfunction
 function P8X takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	set IsChooseHeroEnd = true
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	call DestroyFogModifier(CreateFogModifierRadius(SentinelPlayers[0], FOG_OF_WAR_MASKED,-6950, 6750, 700, false, false))
 	call DestroyFogModifier(CreateFogModifierRadius(ScourgePlayers[0], FOG_OF_WAR_MASKED,-6950, 6750, 700, false, false))
 	set t = null
@@ -11850,7 +11756,7 @@ function HideMianbanCoolDownTimer takes nothing returns nothing
 		call TimerStart(ETV[pid], cd, false, null)
 	endif
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set u = null
 	set t = null
 endfunction
@@ -12371,7 +12277,7 @@ function THX takes nothing returns boolean
 	local real a
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		if GetTriggerUnit()!= TJX then
 			call KillUnit(TJX)
 		endif
@@ -12397,7 +12303,7 @@ function TKX takes nothing returns boolean
 	local unit TJX
 	if GetSummoningUnit() == dummyCaster then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		set TJX = GetSummonedUnit()
 		set t = CreateTrigger()
 		set h = GetHandleId(t)
@@ -12483,7 +12389,7 @@ function TTX takes nothing returns boolean
 		set i = i + 1
 	endloop
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set p = null
 	return false
@@ -12514,7 +12420,7 @@ function TZX takes nothing returns boolean
 	call SetTopMessageText(TWX, 8.)
 	//call DisplayTimedTextToAllPlayer(AllPlayerForce, DisplayTextDuration[LocalPlayerId], TWX)
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	return false
 endfunction
@@ -13374,7 +13280,7 @@ function W9X takes nothing returns nothing
 	endif
 	if c > 5 / .05 or(GetTriggerEventId() == EVENT_UNIT_DAMAGED and GetEventDamage()> 20) or GetUnitAbilityLevel(u,'A3KL') == 0 then
 		call FlushChildHashtable(HY,(h))
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		call SetUnitState(u, UNIT_STATE_LIFE, GetUnitState(u, UNIT_STATE_LIFE)+ .2 * GetUnitState(u, UNIT_STATE_MAX_LIFE)* .05)
 		call SetUnitState(u, UNIT_STATE_MANA, GetUnitState(u, UNIT_STATE_MANA)+ .2 * GetUnitState(u, UNIT_STATE_MAX_MANA)* .05)
@@ -13504,7 +13410,7 @@ function YQX takes nothing returns boolean
 	if GetTriggerEventId() == EVENT_UNIT_DEATH then
 		call ExecuteFunc("YSX")
 		call FlushChildHashtable(HY,(h))
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT then
 		call YCX()
 	else
@@ -13568,7 +13474,7 @@ function YWX takes nothing returns boolean
 		call YUX()
 		call YHX()
 		call SetPlayerTechResearched(GetOwningPlayer(Roshan),'R00F', E9V)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif GetTriggerEvalCount(t) == 300 then
 		call YXX()
 	endif
@@ -13638,7 +13544,7 @@ function YZX takes nothing returns boolean
 	local real y =(LoadReal(HY, h, 7))
 	call SetTerrainPathable(x, y, PATHING_TYPE_WALKABILITY, false)
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	return false
 endfunction
@@ -13687,7 +13593,7 @@ function Y0X takes nothing returns boolean
 	endif
 	if Y2X == 0 then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set Y1X = null
@@ -14081,7 +13987,7 @@ function ZQX takes nothing returns boolean
 	local rect r = Rect(x -300, y -300, x + 300, y + 300)
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		set CMV = p
 		set CPV = trigUnit
 		set CQV = ZSX
@@ -14089,7 +13995,7 @@ function ZQX takes nothing returns boolean
 	else
 		if GetTriggerEvalCount(t)> 9 then
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 			set CMV = p
 			set CPV = trigUnit
 			set CQV = ZSX
@@ -14333,20 +14239,20 @@ function Z9X takes nothing returns boolean
 			call ZLX(ZSX)
 		endif
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif GetTriggerEventId() == EVENT_UNIT_ISSUED_ORDER or GetTriggerEventId() == EVENT_UNIT_ISSUED_TARGET_ORDER or GetTriggerEventId() == EVENT_UNIT_ISSUED_POINT_ORDER then
 		set i = GetIssuedOrderId()
 		if (LoadInteger(HY, h, 679)) == 1 then
 			call SaveInteger(HY, h, 679, 0)
 		elseif i != 852100 and i != 852090 and i != 851973 and i != 851986 and not(i >= 852002 and i <= 852013) then
 			call FlushChildHashtable(HY, h)	//不确定新增
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 			call UPV(ZSX, "被中断")
 		endif
 	else
 		if GetUnitDistanceEx(ZSX, trigUnit)< 350 then
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 			if UnitIsDead(trigUnit) == false then
 				call Z3X(ZSX, trigUnit, false, 0)
 				call ZTX(ZSX, trigUnit)
@@ -14418,7 +14324,7 @@ function VRO takes nothing returns boolean
 	if GetTriggerEvalCount(t) == 3 then
 		call KillUnit(u)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set u = null
@@ -15778,7 +15684,7 @@ function XZO takes nothing returns boolean
 	endif
 	if X0O == false and C1X == null then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call EnableTrigger(C3V)
 		set t = null
 		set ZWX = null
@@ -15947,7 +15853,7 @@ function XZO takes nothing returns boolean
 		endif
 	endif
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	call EnableTrigger(C3V)
 	set t = null
 	set C1X = null
@@ -16510,7 +16416,7 @@ function O4O takes nothing returns boolean
 		call UnitRemoveAbility(trigUnit,'B01S')
 		call UnitRemoveAbility(trigUnit,'B04A')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set trigUnit = null
@@ -16601,7 +16507,7 @@ function RXO takes nothing returns boolean
 		call SetItemPlayer(Z2, E3, false)
 		call SetItemUserData(Z2, 1)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call UZV(u, id)
 	endif
 	set t = null
@@ -17105,7 +17011,7 @@ function R8O takes nothing returns boolean
 	endif
 	if GetTriggerEvalCount(t) == 2 then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set u = null
@@ -17383,12 +17289,12 @@ function ITO takes nothing returns boolean
 	local unit targetUnit =(LoadUnitHandle(HY, h, 17))
 	if GetTriggerEventId()!= EVENT_UNIT_DAMAGED then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		if GetEventDamageSource() == whichUnit and GetEventDamage()> 0 then
 			if FK then
 				call FlushChildHashtable(HY, h)
-				call AddTriggerToDestroyQueue(t)
+				call DestroyTrigger(t)
 				call ISO(targetUnit)
 			endif
 		endif
@@ -17430,7 +17336,7 @@ function DVD takes nothing returns boolean
 		call SaveReal(HY,(GetHandleId(whichUnit)), 693,(0 * 1.))
 	endif
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set whichUnit = null
 	return false
@@ -17445,12 +17351,12 @@ function IZO takes nothing returns boolean
 	local unit targetUnit =(LoadUnitHandle(HY, h, 17))
 	if GetTriggerEventId()!= EVENT_UNIT_DAMAGED then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		if GetEventDamageSource() == whichUnit and GetEventDamage()> 0 and(EXGetEventDamageData(1) != 0) then
 			if FK then
 				call FlushChildHashtable(HY, h)
-				call AddTriggerToDestroyQueue(t)
+				call DestroyTrigger(t)
 				call IYO(targetUnit)
 			endif
 		endif
@@ -17686,7 +17592,7 @@ function AEO takes nothing returns nothing
 			call SaveInteger(OtherHashTable, GetHandleId(u),'ARML', 0)
 			if IsTriggerEnabled(t) then
 				call FlushChildHashtable(ObjectHashTable, h)
-				call AddTriggerToDestroyQueue(t)
+				call DestroyTrigger(t)
 			endif
 			set t = null
 			set u = null
@@ -17703,7 +17609,7 @@ function AEO takes nothing returns nothing
 		call SaveInteger(OtherHashTable, GetHandleId(u),'ARML', 0)
 		if IsTriggerEnabled(t) then
 			call FlushChildHashtable(ObjectHashTable, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		endif
 	endif
 	set t = null
@@ -17778,7 +17684,7 @@ function AIO takes nothing returns boolean
 	local item C1X =(LoadItemHandle(HY, h, 96))
 	if GetTriggerEventId() == EVENT_UNIT_DROP_ITEM and GetManipulatedItem() == C1X then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif GetTriggerEventId()!= EVENT_UNIT_DROP_ITEM then
 		if LoadInteger(HY, GetHandleId(trigUnit), 4310)!= 1 and IsUnitMessenger(trigUnit) == false and RFX(trigUnit) == false then
 			call SetWidgetLife(trigUnit, RMaxBJ(GetWidgetLife(trigUnit)-40., 1))
@@ -17861,7 +17767,7 @@ function AFO takes nothing returns boolean
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call SaveBoolean(HY,(GetHandleId(u)),'f',(false))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif ABO(u) == false then
 		call TriggerRegisterTimerEvent(t, 5.5, false)
 	else
@@ -17897,7 +17803,7 @@ function AFO takes nothing returns boolean
 		endloop
 		call EnableTrigger(CUV)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set u = null
@@ -18587,7 +18493,7 @@ function AYO takes nothing returns boolean
 			call UnitAddType(u, UNIT_TYPE_PEON)
 		endif
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	call EnableTrigger(CUV)
 	call UnitMakeAbilityPermanent(u, true,'A29M')
@@ -18634,7 +18540,7 @@ function A1O takes nothing returns boolean
 	local item C1X
 	local integer i
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	if A2O == null or UnitIsDead(A2O) then
 		set t = null
 		set A2O = null
@@ -18896,7 +18802,7 @@ function NGO takes nothing returns boolean
 		endif
 		call SetUnitFlyHeight(NHO, 240, 0)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	call EnableTrigger(CUV)
 	set t = null
@@ -19072,7 +18978,7 @@ function NLO takes nothing returns boolean
 		call InterfaceErrorForPlayer(GetOwningPlayer(whichUnit), GetObjectName('n02Q'))
 	endif
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set whichUnit = null
 	set NMO = null
@@ -19385,7 +19291,7 @@ function tp_scroll_cast takes nothing returns boolean
 		call KillUnit(N3O)
 		call DestroyUbersplat(tp_ube)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set u = null
 	set t = null
@@ -19435,7 +19341,7 @@ function tp_boots_cast takes nothing returns boolean
 			endif
 			call DestroyUbersplat(tp_ube)
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 			call UnitRemoveType(stg_u, UNIT_TYPE_PEON)
 			call SetUnitX(trigUnit, GetUnitX(stg_u)-1)
 			call SetUnitY(trigUnit, GetUnitY(stg_u)-1)
@@ -19464,7 +19370,7 @@ function tp_boots_cast takes nothing returns boolean
 		call IssueImmediateOrderById(trigUnit, 851972)
 		call DestroyUbersplat(tp_ube)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		if LocalPlayer== GetOwningPlayer(trigUnit) then
 			call SelectUnit(CirclesUnit[GetPlayerId(GetOwningPlayer(trigUnit))], false)
 		endif
@@ -20045,7 +19951,7 @@ function BQO takes nothing returns boolean
 	if GetTriggerEventId()!= EVENT_UNIT_DAMAGED or GetUnitAbilityLevel(GetTriggerUnit(), bid) == 0 then
 		call DestroyEffect((LoadEffectHandle(HY, h, 32)))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call UnitDamageTargetEx(whichUnit, targetUnit, 1, IXX)
 		if IXX > 0 then
 			call CommonTextTag("+" + I2S(R2I(IXX)), 1, targetUnit, .023, 255, 0, 0, 216)
@@ -20073,7 +19979,7 @@ function BTO takes nothing returns boolean
 	local unit targetUnit =(LoadUnitHandle(HY, h, 17))
 	local integer id = LoadInteger(HY, h, 10)
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = CreateTrigger()
 	set h = GetHandleId(t)
 	call SaveUnitHandle(HY, h, 2,(whichUnit))
@@ -20141,7 +20047,7 @@ function B_O takes nothing returns nothing
 	local group g
 	if GetUnitAbilityLevel(u,'A3KI') == 0 then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif GetTriggerEventId() == EVENT_UNIT_DAMAGED then
 		set g = AllocationGroup(29)
 		set u =(LoadUnitHandle(HY, h, 2))
@@ -20470,7 +20376,7 @@ function CBO takes nothing returns boolean
 		call KillUnit(dummyCaster)
 		call DeallocateGroup(CNO)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		set d = count * 21
 		set i = 0
@@ -20640,13 +20546,13 @@ function CQO takes nothing returns boolean
 	if GetTriggerEventId() == EVENT_UNIT_DEATH then
 		call DestroyEffect((LoadEffectHandle(HY, h, 32)))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		call UnitRemoveAbility(CSO,'A17R')
 		call UnitRemoveAbility(CSO,'A24F')
 		call DestroyEffect((LoadEffectHandle(HY, h, 32)))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set CSO = null
@@ -20715,7 +20621,7 @@ function GlyphCoolDown_Actions takes nothing returns boolean
 	endif
 	if cd == 0 then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set u = null
@@ -20769,7 +20675,7 @@ function CYO takes nothing returns boolean
 	endif
 	call SetUnitPhaseMove( u, false )
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set u = null
 	set t = null
 	return false
@@ -20820,7 +20726,7 @@ function C0O takes nothing returns boolean
 		call SaveInteger(HY, GetHandleId(u),'BMON', c)
 	endif
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set u = null
 	set t = null
 	return false
@@ -20848,7 +20754,7 @@ function C1O takes nothing returns boolean
 	local real y = CoordinateY50(GetUnitY(stg_u)+ d / 10 * Sin(a * bj_DEGTORAD))
 	if GetTriggerEvalCount(t) == 11 or GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Human\\FlakCannons\\FlakTarget.mdl", x, y))
 		if ((LoadInteger(HY,(GetHandleId((stg_u))),(4306)))!= 1) and GetUnitAbilityLevel(stg_u,'B08V') == 0 then
@@ -20950,7 +20856,7 @@ function QTUEW takes nothing returns nothing
 	endif
 	if int == 4 or GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call QTUWW(u, false)
 		if GetUnitAbilityLevel(u,'A3UC')> 0 then
 			call UnitRemoveAbility(u,'A3UC')
@@ -20992,7 +20898,7 @@ function QTTQW takes nothing returns boolean
 	local integer c = GetTriggerEvalCount(t)
 	local integer hu = GetHandleId(WWUTQ)
 	if c == 11 or GetTriggerEventId() == EVENT_WIDGET_DEATH or LoadInteger(HY, hu, 4260) == 1 or LoadInteger(HY, hu,'ublo') == 1 then
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		if (not QTRUW(WWUTQ)) and(LoadInteger(HY, hu, 4324)!= 1) then
 			//call CreateSentinelCreeps4(WWUTQ,4414,0.1)
@@ -21140,7 +21046,7 @@ function C7O takes nothing returns boolean
 		call UnitRemoveAbility(whichUnit,'A1QC')
 		call UnitRemoveAbility(whichUnit,'B0CY')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set whichUnit = null
 	set t = null
@@ -21152,7 +21058,7 @@ function C8O takes nothing returns boolean
 	local unit whichUnit =(LoadUnitHandle(HY, h, 2))
 	if (GetTriggerEvalCount(t)> LoadInteger(HY, h, 2)) then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set whichUnit = null
 	set t = null
@@ -21244,11 +21150,11 @@ function DIO takes nothing returns boolean
 	local unit whichUnit =(LoadUnitHandle(HY, h, 2))
 	if GetTriggerEvalCount(t)> 40 then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif (IsUnitMagicImmune(whichUnit) and IsUnitType(whichUnit, UNIT_TYPE_HERO)) then
 		call UnitRemoveAbility(whichUnit,'Aetl')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set whichUnit = null
 	set t = null
@@ -21288,10 +21194,10 @@ function DNO takes nothing returns boolean
 	local real DJO =(DGO -DHO)/  100 
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif GetTriggerEvalCount(t) == 20 * 10 then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		if DBO < 150 then
 			call SetUnitState(whichUnit, UNIT_STATE_MANA, DDO -( 150-DBO -DCO))
 		endif
@@ -21395,7 +21301,7 @@ function DMO takes nothing returns boolean
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH or(GetTriggerEventId() == EVENT_UNIT_DAMAGED and(IsSoldierTypeId(GetUnitTypeId(GetEventDamageSource())) == false and(GetOwningPlayer(GetEventDamageSource())!= NeutralCreepPlayer) and GetEventDamage()> 0) or DMV) then
 		call UnitRemoveAbility(targetUnit,'B0CG')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set targetUnit = null
@@ -21574,7 +21480,7 @@ function DYO takes nothing returns boolean
 			endif
 			call DestroyEffect((LoadEffectHandle(HY, h, 32)))
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		endif
 	else
 		set DZO =(LoadBoolean(HY, h, 671))
@@ -21601,7 +21507,7 @@ function DYO takes nothing returns boolean
 			endif
 			call DestroyEffect(LoadEffectHandle(HY, h, 32))
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		endif
 		call DeallocateGroup(g)
 	endif
@@ -21726,7 +21632,7 @@ function D4O takes nothing returns boolean
 		call UnitRemoveAbility(u,'B0GR')
 		call UnitRemoveAbility(u,'Bdet')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		if IsUnitInvision(u) then
 			if GetUnitAbilityLevel(u,'B0GR') == 0 then
@@ -21771,7 +21677,7 @@ function D6O takes nothing returns boolean
 	call SetItemCharges(GetItemOfTypeFromUnit(u, XOV[NIV]), GetItemCharges(GetItemOfTypeFromUnit(u, XOV[NIV]))+ 1)
 	call FlushChildHashtable(HY, h)
 	call SaveBoolean(HY, GetHandleId(u),'suic', true)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	call KillUnit(u)
 	set u = null
 	set t = null
@@ -21878,7 +21784,7 @@ function D9O takes nothing returns nothing
 		call UnitRemoveAbility(u,'B0BI')
 		call DestroyEffect(LoadEffectHandle(HY, h, 1))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set u = null
@@ -22068,7 +21974,7 @@ function FDO takes nothing returns boolean
 		call BMX(GetOwningPlayer(whichUnit), targetUnit, 190)
 		set PlayersReliableGold[GetPlayerId(GetOwningPlayer(whichUnit))]= PlayersReliableGold[GetPlayerId(GetOwningPlayer(whichUnit))] + 190
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call KillUnit(targetUnit)
 	endif
 	set t = null
@@ -22106,7 +22012,7 @@ function FGO takes nothing returns boolean
 	call ForGroup(g, function FFO)
 	call DeallocateGroup(g)
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set g = null
 	set whichUnit = null
 	set t = null
@@ -22295,7 +22201,7 @@ function FUO takes nothing returns boolean
 	call SelectUnitAddForPlayer(u, GetOwningPlayer(u))
 	call KPX(u)
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set u = null
 	return false
@@ -22444,7 +22350,7 @@ function F4O takes nothing returns boolean
 		call EnableTrigger(CUV)
 	endif
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	call SaveBoolean(HY,(GetHandleId(whichUnit)), 129,(false))
 	set t = null
 	set whichUnit = null
@@ -25340,7 +25246,7 @@ function ResumeCreepAttackOrder takes nothing returns nothing
 endfunction
 
 function MVO takes nothing returns boolean
-	call AddTriggerToDestroyQueue(GetTriggeringTrigger())
+	call DestroyTrigger(GetTriggeringTrigger())
 	call TriggerEvaluate(SpawnAllCreepsTrig)
 	return false
 endfunction
@@ -25430,7 +25336,7 @@ function MRO takes nothing returns boolean
 		call SetResourceBarTime(minute, second, true)
 		set B3 = true
 		set PickModeElapsed = GetGameTime()
-		call AddTriggerToDestroyQueue(GetTriggeringTrigger())
+		call DestroyTrigger(GetTriggeringTrigger())
 		call SetFloatGameState(GAME_STATE_TIME_OF_DAY, 6.)
 		call SuspendTimeOfDay(false)
 		if JT == false then
@@ -25630,14 +25536,14 @@ function M3O takes nothing returns boolean
 			call UnitRemoveAbility(trigUnit,'Avul')
 			call PauseUnit(trigUnit, false)
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		elseif GetSpellTargetUnit() == trigUnit and GetSpellAbilityId() == FJV and(GetPlayerSlotState(GetOwningPlayer(trigUnit)) == PLAYER_SLOT_STATE_LEFT) and LoadInteger(HY, GetHandleId(trigUnit), 4259) == 1 then
 			call SaveInteger(HY, GetHandleId(trigUnit), 4259, 2)
 			call UnitRemoveAbility(trigUnit,'A04R')
 			call UnitRemoveAbility(trigUnit,'Avul')
 			call PauseUnit(trigUnit, false)
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		endif
 	elseif UnitIsDead(trigUnit) == false then
 		call SetUnitX(trigUnit, x)
@@ -26092,7 +25998,7 @@ function QIO takes nothing returns boolean
 		call SetUnitManaPercentBJ(ZWX, 100)
 	endif
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set ZWX = null
 	return false
@@ -26132,7 +26038,7 @@ endfunction
 function QDO takes nothing returns nothing
 	if GGV == false then
 		call QXO()
-		call AddTriggerToDestroyQueue(GetTriggeringTrigger())
+		call DestroyTrigger(GetTriggeringTrigger())
 	endif
 endfunction
 function QFO takes nothing returns boolean
@@ -26476,7 +26382,7 @@ function SEO takes nothing returns boolean
 		call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ATTACKED)
 		call TriggerAddCondition(t, Condition(function SVO))
 	endif
-	call AddTriggerToDestroyQueue(GetTriggeringTrigger())
+	call DestroyTrigger(GetTriggeringTrigger())
 	set t = null
 	set g = null
 	set u = null
@@ -27382,7 +27288,7 @@ function URO takes nothing returns nothing
 			call TriggerRegisterTimerEvent(QK, 2, true)
 			call TriggerAddCondition(QK, Condition(function SDO))
 		else
-			call AddTriggerToDestroyQueue(QK)
+			call DestroyTrigger(QK)
 		endif
 	endif
 endfunction
@@ -28505,7 +28411,7 @@ function ZNO takes nothing returns boolean
 		call DisplayTimedTextToPlayer(p, 0, 0, DisplayTextDuration[LocalPlayerId], GetObjectName('n079'))
 	endif
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set p = null
 	return false
@@ -29492,7 +29398,7 @@ function VIR takes nothing returns boolean
 			call ShowUnit(trigUnit, true)
 		endif
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		call PauseUnit(trigUnit, true)
 	endif
@@ -29528,7 +29434,7 @@ function VNR takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local player p =(LoadPlayerHandle(HY, h, 54))
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	if GetTriggerEventId()!= EVENT_UNIT_DAMAGED then
 		call VAR(p)
 	endif
@@ -30961,7 +30867,7 @@ function XTR takes nothing returns boolean
 		set HM[i]= false
 		set i = i + 1
 	endloop
-	call AddTriggerToDestroyQueue(GetTriggeringTrigger())
+	call DestroyTrigger(GetTriggeringTrigger())
 	set XM = null
 	return false
 endfunction
@@ -34194,7 +34100,7 @@ function N0R takes nothing returns boolean
 	endif
 	if BOX > 10 then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		if not Mode__DeathMatch  then
 			set IY = true
 		endif
@@ -34742,7 +34648,7 @@ function BBR takes nothing returns boolean
 		set x = x + 1
 	endloop
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set p = null
 	return false
@@ -35022,12 +34928,12 @@ function BMR takes nothing returns boolean
 		call AYR("-sdd3s6fnabborcdusculsp", 2)
 	endif
 	call BLR()
-	call AddTriggerToDestroyQueue(GetTriggeringTrigger())
+	call DestroyTrigger(GetTriggeringTrigger())
 	return false
 endfunction
 function BPR takes nothing returns boolean
 	set GS = true
-	call AddTriggerToDestroyQueue(GetTriggeringTrigger())
+	call DestroyTrigger(GetTriggeringTrigger())
 	return false
 endfunction
 function BQR takes nothing returns nothing
@@ -35063,13 +34969,13 @@ function BTR takes nothing returns nothing
 		call RemoveSavedHandle(HY, GetHandleId(u),'STFU')
 		call BSR(u,'B463')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
 		if BUR < GetGameTime() or GetUnitAbilityLevel(u, GFX) == 0 or LoadBoolean(HY, h,'SLDR') then
 			call RemoveSavedHandle(HY, GetHandleId(u),'STFU')
 			call UnitRemoveAbility(u,'B463')
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		elseif GetUnitAbilityLevel(u, GFX)> 0 and GetUnitAbilityLevel(u,'B463') == 0 then
 			set d = CreateUnit(GetOwningPlayer(u),'e00E', GetUnitX(u), GetUnitY(u), 0)
 			call UnitAddAbility(d,'A463')
@@ -35389,7 +35295,7 @@ function CGR takes nothing returns nothing
 		call DestroyEffect(LoadEffectHandle(HY, h, 5))
 		call DeallocateGroup(AIR)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		call SetUnitPosition(u, CoordinateX50(GetUnitX(u)+ N3X * Cos(I3X)), CoordinateY50(GetUnitY(u)+ N3X * Sin(I3X)))
 		if ModuloInteger(GetTriggerEvalCount(t), 10) == 0 then
@@ -35403,7 +35309,7 @@ function CGR takes nothing returns nothing
 			call SetUnitPosition(u, CoordinateX50(GetUnitX(u)), CoordinateY50(GetUnitY(u)))
 			call DeallocateGroup(AIR)
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		else
 			call SetUnitAnimationByIndex(u, LoadInteger(ObjectHashTable, GetUnitTypeId(u),'A1P8'))
 			set cx = GetUnitX(u)
@@ -36059,7 +35965,7 @@ function DDR takes nothing returns boolean
 		endif
 		call SetUnitPathing(targetUnit, true)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set whichUnit = null
@@ -36108,7 +36014,7 @@ function DHR takes nothing returns boolean
 	call DestroyEffect(LoadEffectHandle(HY, h, 179))
 	call DestroyEffect(LoadEffectHandle(HY, h, 180))
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	call DestroyEffect(AddSpecialEffect("Objects\\Spawnmodels\\Naga\\NagaDeath\\NagaDeath.mdl", x, y))
 	call DestroyEffect(AddSpecialEffect("effects\\TidalErruption.mdx", x, y))
 	set U2 = trigUnit
@@ -36196,7 +36102,7 @@ function Fix_Tidebringer_Add takes nothing returns boolean
 		// debug call SingleDebug( "存活，可再加技能" )
 		call SaveBoolean(ExtraHT, iUnitHandleId, HTKEY_SKILL_TIDEBRINGER, true)
 		call SaveEffectHandle(ExtraHT, iUnitHandleId, HTKEY_SKILL_TIDEBRINGER, AddSpecialEffectTarget("effects\\WaterHands.mdx", whichUnit, GetHeroWeaponAttachPointName(whichUnit)))
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call FlushChildHashtable(HY, h)
 	endif
 	set t = null
@@ -36387,7 +36293,7 @@ function DWR takes nothing returns boolean
 		call ShowImage(i, false)
 		call DestroyImage(i)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set target = null
@@ -36467,7 +36373,7 @@ function DZR takes nothing returns boolean
 	local integer N5O = LoadInteger(HY, h, 188)
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH or GetTriggerEvalCount(t)> N5O then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		loop
 		exitwhen BOX > D_R
@@ -36495,7 +36401,7 @@ function D0R takes nothing returns boolean
 	local integer BOX = GetTriggerEvalCount(t)
 	if GetTriggerEventId()!= EVENT_UNIT_DAMAGED then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call TriggerRegisterTimerEvent(D1R, 1, true)
 		call TriggerAddCondition(D1R, Condition(function DZR))
 		call UnitRemoveAbility(targetUnit,'B09U')
@@ -36638,7 +36544,7 @@ function D5R takes nothing returns boolean
 		call KillUnit(missileDummy)
 		call DeallocateGroup(D7R)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set missileDummy = null
@@ -36773,7 +36679,7 @@ function FOR takes nothing returns boolean
 		call KillUnit(missileDummy)
 		call FER(whichUnit, SAX, x, y, false, level, LoadBoolean(HY, h, 0))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set whichUnit = null
@@ -36842,7 +36748,7 @@ function FCR takes nothing returns boolean
 		call ResetUnitVertexColor(whichUnit)
 		call DestroyEffect(LoadEffectHandle(HY, h, 32))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT then
 		if GetSpellAbilityId()=='A1NH' then
 			call FRR(whichUnit, GetSpellTargetUnit(), time, level, false)
@@ -36853,7 +36759,7 @@ function FCR takes nothing returns boolean
 			call ResetUnitVertexColor(whichUnit)
 			call DestroyEffect(LoadEffectHandle(HY, h, 32))
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		endif
 	else
 		call SaveInteger(HY, h, 34, count)
@@ -36880,7 +36786,7 @@ function FCR takes nothing returns boolean
 			call ResetUnitVertexColor(whichUnit)
 			call DestroyEffect(LoadEffectHandle(HY, h, 32))
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		endif
 	endif
 	set t = null
@@ -37145,7 +37051,7 @@ function FSR takes nothing returns boolean
 		call SetUnitVertexColorEx(trigUnit,-1,-1,-1, 255)
 		call ShowUnit(dummyCaster, false)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		call SetUnitVertexColor(dummyCaster, 255, 255, 255, 175 -FUR * count)
 		call SetUnitX(dummyCaster, x)
@@ -37379,7 +37285,7 @@ function F6R takes nothing returns boolean
 	if GetTriggerEvalCount(t)> 20 then
 		call DeallocateGroup(g)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		set S2 = x
 		set TJ = y
@@ -37479,7 +37385,7 @@ function F9R takes nothing returns boolean
 	local unit whichUnit =(LoadUnitHandle(HY, h, 2))
 	call UnitRemoveAbility(whichUnit,'A140')
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set whichUnit = null
 	return false
@@ -37507,7 +37413,7 @@ function GVR takes nothing returns boolean
 	call SaveReal(HY, h, 7,((GIR)* 1.))
 	if GetTriggerEventId() == EVENT_UNIT_DEATH then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		if GXR == GRR and GOR == GIR then
 			if GetUnitAbilityLevel(GER,'A1WG') == 0 then
@@ -37691,7 +37597,7 @@ function GDR takes nothing returns boolean
 		call KillUnit(dummyCaster)
 		call RemoveUnit(dummyCaster)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set targetUnit = null
@@ -37739,7 +37645,7 @@ function NRE takes nothing returns boolean
 	call UnitRemoveAbility(targetUnit,'A1IW')
 	call UnitRemoveAbility(targetUnit,'B0CA')
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set targetUnit = null
 	return false
@@ -37763,13 +37669,13 @@ function GGR takes nothing returns boolean
 			call UnitRemoveAbility(whichUnit,'A1J5')
 			call UnitRemoveAbility(whichUnit,'A1IU')
 			call FlushChildHashtable(HY, GetHandleId(LoadTriggerHandle(HY, h, 35)))
-			call AddTriggerToDestroyQueue(LoadTriggerHandle(HY, h, 35))
+			call DestroyTrigger(LoadTriggerHandle(HY, h, 35))
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		endif
 	else
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set whichUnit = null
@@ -37810,7 +37716,7 @@ function GKR takes nothing returns boolean
 		call UnitRemoveAbility(GetTriggerUnit(),'A1J5')
 		call UnitRemoveAbility(GetTriggerUnit(),'A1IU')
 		call FlushChildHashtable(HY, GetHandleId(GetTriggeringTrigger()))
-		call AddTriggerToDestroyQueue(GetTriggeringTrigger())
+		call DestroyTrigger(GetTriggeringTrigger())
 	elseif GetAttacker()==(LoadUnitHandle(HY, GetHandleId(GetTriggeringTrigger()), 182)) then
 		if IsUnitAlly(GetAttacker(), GetOwningPlayer(GetTriggerUnit())) == false and IsUnitType(GetTriggerUnit(), UNIT_TYPE_STRUCTURE) == false and GetUnitAbilityLevel(GetAttacker(),'A36D') == 0 then
 			set t = CreateTrigger()
@@ -37947,7 +37853,7 @@ function GSR takes nothing returns boolean
 	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
 		if GetEventDamageSource() == whichUnit then
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 			if ((LoadInteger(HY,(GetHandleId((whichUnit))),( 2487))) == 1) == false then
 				call EPX(whichUnit, 2487, .5)
 				if IsUnitType(targetUnit, UNIT_TYPE_STRUCTURE) == false and IsUnitEnemy(targetUnit, GetOwningPlayer(whichUnit)) then
@@ -37958,7 +37864,7 @@ function GSR takes nothing returns boolean
 		endif
 	else
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set whichUnit = null
@@ -38016,12 +37922,12 @@ function GUR takes nothing returns boolean
 			call UnitRemoveAbility(u,'A1IU')
 		endif
 		call FlushChildHashtable(HY,(GetHandleId(GetTriggeringTrigger())))
-		call AddTriggerToDestroyQueue(GetTriggeringTrigger())
+		call DestroyTrigger(GetTriggeringTrigger())
 	elseif GetTriggerEventId() == EVENT_PLAYER_UNIT_ATTACKED then
 		if GetAttacker()==(LoadUnitHandle(HY,(GetHandleId(GetTriggeringTrigger())), 14)) then
 			if ((LoadInteger(HY,(GetHandleId((GetAttacker()))),( 2488))) == 1) == false then
 				call FlushChildHashtable(HY,(GetHandleId(GetTriggeringTrigger())))
-				call AddTriggerToDestroyQueue(GetTriggeringTrigger())
+				call DestroyTrigger(GetTriggeringTrigger())
 				call GTR()
 			endif
 			if (LoadBoolean(HY,(GetHandleId(GetAttacker())),('A1IQ' +183))) then
@@ -38070,7 +37976,7 @@ function GUR takes nothing returns boolean
 				call UnitRemoveAbility(u,'A1IU')
 			endif
 			call FlushChildHashtable(HY,(GetHandleId(GetTriggeringTrigger())))
-			call AddTriggerToDestroyQueue(GetTriggeringTrigger())
+			call DestroyTrigger(GetTriggeringTrigger())
 		endif
 	endif
 	set u = null
@@ -38285,7 +38191,7 @@ function G5R takes nothing returns boolean
 		endif
 	endloop
 	call FlushChildHashtable(HY,(ht))
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set u = null
 	set whichUnit = null
 	set t = null
@@ -38592,7 +38498,7 @@ function HYR takes nothing returns nothing
 	endif
 	call UnitRemoveAbility(u,'A3KA')
 	call FlushChildHashtable(ObjectHashTable, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set u = null
 endfunction
@@ -38752,7 +38658,7 @@ function H6R takes nothing returns nothing
 		call UnitRemoveAbility(targetUnit, LoadInteger(HY, h, 1))
 		call UnitRemoveAbility(targetUnit,'B05H')
 		call FlushChildHashtable(HY,(h))
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set targetUnit = null
@@ -38986,7 +38892,7 @@ function JNR takes nothing returns boolean
 		set trigUnit = LoadUnitHandle(HY, h, 14)
 		call JAR(trigUnit, targetX, targetY, level)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set trigUnit = null
@@ -39154,7 +39060,7 @@ function J_R takes nothing returns boolean
 	local integer J1R = 40 + 40 * level
 	if GetTriggerEvalCount(t)> 34 then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call SaveInteger(HY,(GetHandleId((targetUnit))),(4260), 2)
 		call UnitDamageTargetEx(whichUnit, targetUnit, 1, J1R)
 		call SetUnitState(targetUnit, UNIT_STATE_MANA, RMaxBJ(GetUnitState(targetUnit, UNIT_STATE_MANA)-J1R, 0))
@@ -39252,7 +39158,7 @@ function J8R takes nothing returns boolean
 	local player p =(LoadPlayerHandle(HY, h, 54))
 	local boolean J9R =(LoadBoolean(HY, h, 155))
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	if J9R then
 		call A8X(p, .2, x, y, 500)
 	endif
@@ -39325,7 +39231,7 @@ function KRR takes nothing returns boolean
 	if count > R2I(N5O * 10) then
 		call KXR(h,(LoadReal(HY, h, 6)),(LoadReal(HY, h, 7)),(LoadBoolean(HY, h, 155)),(LoadPlayerHandle(HY, h, 154)))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		call J6R(t,(LoadUnitHandle(HY, h, 14)),(LoadReal(HY, h, 6)),(LoadReal(HY, h, 7)),(LoadReal(HY, h, 138)),(LoadInteger(HY, h, 5)))
 	endif
@@ -39363,7 +39269,7 @@ function KAR takes nothing returns boolean
 		set XSR = SentinelPlayers[0]
 	endif
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = CreateTrigger()
 	set h = GetHandleId(t)
 	call SaveBoolean(HY, h, 155,(false))
@@ -39480,7 +39386,7 @@ function KZR takes nothing returns boolean
 	local unit trigUnit = LoadUnitHandle(HY, h, 14)
 	if count > 14 or GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		call KYR(trigUnit, LoadInteger(HY, h, 0))
 	endif
@@ -39547,7 +39453,7 @@ function K2R takes nothing returns boolean
 		endif
 		call UnitRemoveAbility(trigUnit,'A347')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call StopSound(AC, false, true)
 	else
 		if LoadBoolean(HY, h, 0) == false and(R2I(2 / LoadReal(HY, h, 5))< GetTriggerEvalCount(t)) then
@@ -39606,7 +39512,7 @@ function K4R takes nothing returns nothing
 		endif
 	else
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set u = null
@@ -40029,7 +39935,7 @@ function LDR takes nothing returns boolean
 			call FlushChildHashtable(HY, h)
 			call RemoveSavedHandle(ObjectHashTable, GetHandleId(u),'A2X9')
 			call RemoveSavedReal(HY, GetHandleId(u),'A2X9')
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		endif
 		set LFR = null
 	elseif GetTriggerEventId() == EVENT_UNIT_DAMAGED then
@@ -40047,7 +39953,7 @@ function LDR takes nothing returns boolean
 			call FlushChildHashtable(HY, h)
 			call RemoveSavedHandle(ObjectHashTable, GetHandleId(u),'A2X9')
 			call RemoveSavedReal(HY, GetHandleId(u),'A2X9')
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		endif
 	endif
 	set t = null
@@ -40353,7 +40259,7 @@ function LYR takes nothing returns boolean
 	local unit whichUnit =(LoadUnitHandle(HY, h, 2))
 	call SetUnitAnimationByIndex(whichUnit, 8)
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set whichUnit = null
 	return false
@@ -40390,9 +40296,9 @@ function L1R takes nothing returns boolean
 		call ShowUnit(L3R, false)
 		call KillUnit(L3R)
 		call FlushChildHashtable(HY,(L2R))
-		call AddTriggerToDestroyQueue(t1)
+		call DestroyTrigger(t1)
 		call FlushChildHashtable(HY,(DOO))
-		call AddTriggerToDestroyQueue(t2)
+		call DestroyTrigger(t2)
 	elseif IsUnitEnemy(GetTriggerUnit(), GetOwningPlayer(L3R)) and IsUnitType(GetTriggerUnit(), UNIT_TYPE_STRUCTURE) == false and GetUnitAbilityLevel(GetTriggerUnit(),'A04R') == 0 then
 		set g = AllocationGroup(164)
 		set U2 = L3R
@@ -40406,9 +40312,9 @@ function L1R takes nothing returns boolean
 		call ShowUnit(L3R, false)
 		call KillUnit(L3R)
 		call FlushChildHashtable(HY,(L2R))
-		call AddTriggerToDestroyQueue(t1)
+		call DestroyTrigger(t1)
 		call FlushChildHashtable(HY,(DOO))
-		call AddTriggerToDestroyQueue(t2)
+		call DestroyTrigger(t2)
 	endif
 	set t1 = null
 	set t2 = null
@@ -40503,13 +40409,13 @@ function L7R takes nothing returns boolean
 			call DisableTrigger(t)
 			call L6R(whichUnit, targetUnit)
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 			call FlushChildHashtable(HY,(GetHandleId(L8R)))
-			call AddTriggerToDestroyQueue(L8R)
+			call DestroyTrigger(L8R)
 		endif
 	else
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set targetUnit = null
@@ -40588,7 +40494,7 @@ function MOR takes nothing returns boolean
 	call SetUnitY(u, y)
 	if GetTriggerEvalCount(t)==( 10+ 10* lv) or GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set u = null
@@ -40967,7 +40873,7 @@ function M0R takes nothing returns boolean
 	local unit whichUnit =(LoadUnitHandle(HY, h, 2))
 	call MWR(whichUnit)
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set whichUnit = null
 	return false
@@ -40978,7 +40884,7 @@ function M1R takes nothing returns boolean
 	local unit whichUnit =(LoadUnitHandle(HY, h, 2))
 	call MWR(whichUnit)
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set whichUnit = null
 	return false
@@ -41015,7 +40921,7 @@ function M2R takes nothing returns boolean
 		call UnitRemoveAbility(target,'A0O4')
 		call UnitRemoveAbility(target,'B0O4')
 		call FlushChildHashtable(HY,(h))
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set u = null
@@ -41142,7 +41048,7 @@ function PER takes nothing returns boolean
 		call ForGroup(g, function M4R)
 		call DestroyEffect((LoadEffectHandle(HY, h, 32)))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call DeallocateGroup(gg)
 		call DeallocateGroup(g)
 	endif
@@ -41378,7 +41284,7 @@ function PKR takes nothing returns boolean
 		call DeallocateGroup(g)
 		call DestroyEffect(LoadEffectHandle(HY, h, 5))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call SetUnitTimeScale(whichUnit, 1)
 		if FH then
 			set M8R = GetUnitX(MH)+ 50 * Cos(PQR * bj_DEGTORAD)
@@ -41652,7 +41558,7 @@ function QXR takes nothing returns boolean
 			call SetUnitPathing(targetUnit, true)
 		endif
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call DeallocateGroup(g)
 		call SaveInteger(HY,(GetHandleId((targetUnit))),(4335), 2)
 		if GetTriggerEventId()!= EVENT_WIDGET_DEATH then
@@ -41735,7 +41641,7 @@ function QNR takes nothing returns boolean
 	local integer QBR = GetUnitCurrentOrder(u)
 	if QBR != LoadInteger(HY, h, 0) then
 		if QBR != 851973 then
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 			call FlushChildHashtable(HY, h)
 			call RemoveSavedHandle(HY, hu,'A2UU')
 		else
@@ -41743,7 +41649,7 @@ function QNR takes nothing returns boolean
 		endif
 	else
 		if GetUnitDistanceEx(u, targetUnit)<= 200 then
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 			call FlushChildHashtable(HY, h)
 			call RemoveSavedHandle(HY, hu,'A2UU')
 			call IssueTargetOrderById(u, 852189, targetUnit)
@@ -41843,7 +41749,7 @@ function QKR takes nothing returns boolean
 		call SaveInteger(HY, GetHandleId(triggerUnit), 809, 2)
 		call DestroyEffect(LoadEffectHandle(HY, h, 32))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set whichUnit = null
@@ -42004,7 +41910,7 @@ function Q3R takes nothing returns boolean
 		call SaveReal(HY,(GetHandleId(whichUnit)), 357,((GetUnitY(targetUnit))* 1.))
 	endif
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set whichUnit = null
 	set targetUnit = null
@@ -42053,7 +41959,7 @@ function Q5R takes nothing returns boolean
 		endif
 	elseif GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call UnitRemoveAbility(targetUnit,'A2T4')
 		call UnitRemoveAbility(targetUnit,'A3KE')
 		call UnitRemoveAbility(targetUnit,'B3KE')
@@ -42061,7 +41967,7 @@ function Q5R takes nothing returns boolean
 		call RemoveSavedHandle(HY, GetHandleId(targetUnit),'A2T5')
 	elseif c >(level + 2)* 10 or GetUnitAbilityLevel(targetUnit,'A2T4') == 0 then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call UnitRemoveAbility(targetUnit,'A2T4')
 		call UnitRemoveAbility(targetUnit,'A3KE')
 		call UnitRemoveAbility(targetUnit,'B3KE')
@@ -42119,7 +42025,7 @@ function Q7R takes nothing returns boolean
 		call DestroyEffect((LoadEffectHandle(HY, h, 32)))
 		call SaveInteger(HY, GetHandleId(targetUnit),'A2SG', IMaxBJ(LoadInteger(HY, GetHandleId(targetUnit),'A2SG')-1, 0))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		set C2R = C2R + 1
 		call SaveInteger(HY, h, 34,(C2R))
@@ -42211,7 +42117,7 @@ function FalsePromise_CallBack takes nothing returns boolean
 			set restoreLife = restoreLife -SNR
 		endif
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif GetTriggerEventId() == EVENT_UNIT_DAMAGED and IsEffectiveDamage(GetEventDamage()) then
 		set damagedCount = damagedCount + 1
 		call SaveInteger(HY, h, 34,(damagedCount))
@@ -42358,7 +42264,7 @@ function SKR takes nothing returns boolean
 	local unit whichUnit =(LoadUnitHandle(HY, h, 2))
 	call UnitRemoveAbility(whichUnit,'Broa')
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set whichUnit = null
 	return false
@@ -42525,7 +42431,7 @@ function S3R takes nothing returns boolean
 	local unit S5R
 	if S4R > 10 then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		call SaveInteger(HY, h, 28,(S4R + 1))
 		set U2 = whichUnit
@@ -42547,7 +42453,7 @@ function S6R takes nothing returns boolean
 	local unit whichUnit =(LoadUnitHandle(HY, h, 2))
 	call AddUnitAnimationProperties(whichUnit, "alternate", false)
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set whichUnit = null
 	return false
@@ -42594,7 +42500,7 @@ function S9R takes nothing returns boolean
 	local unit targetUnit =(LoadUnitHandle(HY, h, 17))
 	call UnitRemoveAbility(targetUnit,'Bslo')
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set targetUnit = null
 	return false
@@ -42673,7 +42579,7 @@ function TOR takes nothing returns boolean
 	local integer level =(LoadInteger(HY, h, 5))
 	call TER(whichUnit, targetUnit, level)
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set whichUnit = null
 	set targetUnit = null
@@ -42781,7 +42687,7 @@ function TED takes nothing returns boolean
 	endif
 	set u = null
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	return false
 endfunction
@@ -42822,9 +42728,9 @@ function TKR takes nothing returns boolean
 		call UnitApplyTimedLife(LoadUnitHandle(HY, h, 252),'BTLF', 1)
 		call UnitApplyTimedLife(LoadUnitHandle(HY, h, 253),'BTLF', 1)
 		
-		call AddTriggerToDestroyQueue(LoadTriggerHandle(HY, h, 10))
+		call DestroyTrigger(LoadTriggerHandle(HY, h, 10))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call KillUnit(dummyCaster)
 	elseif GetTriggerEvalCount(t)> 90 then
 		set dummyCaster = LoadUnitHandle(HY, h, 19)
@@ -42832,9 +42738,9 @@ function TKR takes nothing returns boolean
 		call UnitApplyTimedLife(LoadUnitHandle(HY, h, 251),'BTLF', 1)
 		call UnitApplyTimedLife(LoadUnitHandle(HY, h, 252),'BTLF', 1)
 		call UnitApplyTimedLife(LoadUnitHandle(HY, h, 253),'BTLF', 1)
-		call AddTriggerToDestroyQueue(LoadTriggerHandle(HY, h, 10))
+		call DestroyTrigger(LoadTriggerHandle(HY, h, 10))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		
 		call KillUnit(bh)
 		call KillUnit(dummyCaster)
@@ -42959,7 +42865,7 @@ function TPR takes nothing returns boolean
 	local real a
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		set targetUnit =(LoadUnitHandle(HY, h, 17))
 		set d =(LoadReal(HY, h, 138))
@@ -42973,7 +42879,7 @@ function TPR takes nothing returns boolean
 		call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Human\\FlakCannons\\FlakTarget.mdl", x1, y1))
 		if GetTriggerEvalCount(t)> 15 then
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		endif
 		set targetUnit = null
 	endif
@@ -43028,13 +42934,13 @@ function TWR takes nothing returns boolean
 		endif
 		call DestroyLightning(APX)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		call MoveLightning(APX, true, GetUnitX(whichUnit), GetUnitY(whichUnit), GetUnitX(targetUnit), GetUnitY(targetUnit))
 		if GetDistanceBetween(GetUnitX(whichUnit), GetUnitY(whichUnit), GetUnitX(targetUnit), GetUnitY(targetUnit))> 600 then
 			call DestroyLightning(APX)
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 			call TTR(whichUnit, targetUnit, level, A_R)
 			if A_R == 2 then
 				call TQR(targetUnit, whichUnit)
@@ -43129,12 +43035,12 @@ function T6R takes nothing returns boolean
 		set H5V[GetPlayerId(GetOwningPlayer(dummyCaster))]= null
 		call DeallocateGroup(g)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif GetTriggerEvalCount(t)> 120 then
 		set H5V[GetPlayerId(GetOwningPlayer(dummyCaster))]= null
 		call DeallocateGroup(g)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call SetUnitScale(dummyCaster, 2.5, 2.5, 2.5)
 		call KillUnit(dummyCaster)
 	else
@@ -43412,14 +43318,14 @@ function UHR takes nothing returns boolean
 		call UnitRemoveAbility(whichUnit,'A0ST')
 		call SetUnitTimeScale(whichUnit, 1.)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif GetDistanceBetween(sx, sy, tx, ty)< 125 then
 		call SetUnitPathing(whichUnit, true)
 		call DestroyEffect(LoadEffectHandle(HY, h, 175))
 		call DestroyEffect(LoadEffectHandle(HY, h, 176))
 		call UnitRemoveAbility(whichUnit,'A0ST')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call SetUnitTimeScale(whichUnit, 1.)
 		if targetUnit != null and UnitIsDead(targetUnit) == false then
 			call IssueTargetOrderById(whichUnit, 851983, targetUnit)
@@ -43520,7 +43426,7 @@ function ULR takes nothing returns boolean
 		call UnitRemoveAbility(targetUnit,'A0QO')
 		call UnitRemoveAbility(targetUnit,'B080')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		call SetWidgetLife(targetUnit, L2O + YVX)
 		call SaveInteger(HY, h, 0, c)
@@ -43563,7 +43469,7 @@ function UMR takes nothing returns boolean
 	if GetTriggerEvalCount(t)> 8 or UnitIsDead(targetUnit) then
 		call DestroyEffect(LoadEffectHandle(HY, h, 31))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		call UnitDamageTargetEx(whichUnit, targetUnit, 1, 5 * GetUnitAbilityLevel(whichUnit,'A0QN'))
 	endif
@@ -43874,7 +43780,7 @@ function WXR takes nothing returns boolean
 	local unit target =(LoadUnitHandle(HY, h, 17))
 	call WVR(u, target)
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set u = null
 	set target = null
@@ -43897,7 +43803,7 @@ function WGR takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local unit whichUnit =(LoadUnitHandle(HY, h, 2))
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	call SetUnitAnimationByIndex(whichUnit, 4)
 	set t = null
 	set whichUnit = null
@@ -43926,7 +43832,7 @@ function WJR takes nothing returns boolean
 		call DestroyEffect(LoadEffectHandle(HY, h, 32))
 		call FlushChildHashtable(HY, h)
 		//call SetUnitPathing(whichUnit, true)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		set U2 = whichUnit
 		set JAV = whichUnit
@@ -43985,7 +43891,7 @@ function WMR takes nothing returns boolean
 		call DestroyEffect((LoadEffectHandle(HY, h, 175)))
 		call DestroyEffect((LoadEffectHandle(HY, h, 176)))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif GetTriggerEventId()!= EVENT_UNIT_DAMAGED and GetTriggerEventId()!= EVENT_WIDGET_DEATH then
 		set x1 = GetUnitX(whichUnit)
 		set y1 = GetUnitY(whichUnit)
@@ -43998,7 +43904,7 @@ function WMR takes nothing returns boolean
 		call DestroyEffect(LoadEffectHandle(HY, h, 175))
 		call DestroyEffect(LoadEffectHandle(HY, h, 176))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set whichUnit = null
@@ -44118,14 +44024,14 @@ function ManaLeak_Fx takes nothing returns boolean
 		call UnitRemoveAbility(targetUnit, GetManaLeakBuffFromLevel(level))
 		call DestroyEffect(LoadEffectHandle(HY, h, 32))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(trig)
+		call DestroyTrigger(trig)
 	elseif GetUnitState(targetUnit, UNIT_STATE_MANA)< 1 then
 		call CommonUnitAddStun(targetUnit, 1 + .5 * level, false)
 		call UnitRemoveAbility(targetUnit, GetManaLeakAbilityFromLevel(level))
 		call UnitRemoveAbility(targetUnit, GetManaLeakBuffFromLevel(level))
 		call DestroyEffect(LoadEffectHandle(HY, h, 32))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(trig)
+		call DestroyTrigger(trig)
 	endif
 	set trig = null
 	set targetUnit = null
@@ -44221,7 +44127,7 @@ function W4R takes nothing returns boolean
 	call UnitAddAbilityToTimed(targetUnit,'A3DU'-1 + LoadInteger(HY, h, 5), 1, 12,'B3DU')
 	call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Items\\AIim\\AIimTarget.mdl", targetUnit, "origin"))
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set targetUnit = null
 	set t = null
 	return false
@@ -44273,7 +44179,7 @@ function W8R takes nothing returns boolean
 		call ForGroup(g, function W7R)
 		call DeallocateGroup(g)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set p = null
@@ -44289,7 +44195,7 @@ function W9R takes nothing returns boolean
 	local integer CVX =(LoadInteger(HY, h, 59))
 	local group g =(LoadGroupHandle(HY, h, 22))
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = CreateTrigger()
 	set h = GetHandleId(t)
 	call TriggerRegisterTimerEvent(t, .04, true)
@@ -44350,7 +44256,7 @@ function YVR takes nothing returns nothing
 		call UnitRemoveAbility(u,'C021')
 		call UnitRemoveAbility(u,'D021')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		set u = null
 	endif
 	set t = null
@@ -44787,7 +44693,7 @@ function YQR takes nothing returns boolean
 	endif
 	if (GetTriggerEvalCount(t)+ 1) == WAR or b == false then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set whichUnit = null
@@ -44851,7 +44757,7 @@ function YYR takes nothing returns boolean
 	local unit targetUnit = LoadUnitHandle(HY, h, 30)
 	call UnitDamageTargetEx(trigUnit, targetUnit, 1, LoadInteger(HY, h, 0)* 56.25)
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set trigUnit = null
 	set targetUnit = null
@@ -44876,7 +44782,7 @@ function YZR takes nothing returns boolean
 	call DestroyEffect(LoadEffectHandle(HY, h, 32))
 	call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\NightElf\\Starfall\\StarfallTarget.mdl", targetUnit, "origin"))
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = CreateTrigger()
 	set h = GetHandleId(t)
 	call SaveUnitHandle(HY, h, 14, trigUnit)
@@ -44902,7 +44808,7 @@ function Y0R takes nothing returns boolean
 	call ForGroup(g, function Y_R)
 	call DeallocateGroup(g)
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set trigUnit = null
 	set g = null
@@ -45331,7 +45237,7 @@ function Z1R takes nothing returns boolean
 	endif
 	if GetTriggerEventId() == EVENT_UNIT_DEATH then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		set tt = CreateTextTag()
 		call SetTextTagText(tt, I2S(count), .03)
@@ -45369,7 +45275,7 @@ function Z2R takes nothing returns nothing
 		call SetPlayerAbilityAvailableEx(GetOwningPlayer(trigUnit),('A0G8'), true)
 	endif
 	call FlushChildHashtable(HY,(GetHandleId(t)))
-	call AddTriggerToDestroyQueue((t))
+	call DestroyTrigger((t))
 	set trigUnit = null
 	set Z3R = null
 	set t = null
@@ -45520,7 +45426,7 @@ function VRI takes nothing returns boolean
 	if GetIssuedOrderId()== 852549 then
 		if VII != null then
 			call FlushChildHashtable(HY,(GetHandleId(VII)))
-			call AddTriggerToDestroyQueue(VII)
+			call DestroyTrigger(VII)
 		endif
 		set VII = CreateTrigger()
 		call TriggerRegisterTimerEvent(VII, VEI, true)
@@ -45533,7 +45439,7 @@ function VRI takes nothing returns boolean
 	elseif GetIssuedOrderId()== 852546 then
 		if VII != null then
 			call FlushChildHashtable(HY,(GetHandleId(VII)))
-			call AddTriggerToDestroyQueue(VII)
+			call DestroyTrigger(VII)
 		endif
 		set VII = CreateTrigger()
 		call TriggerRegisterTimerEvent(VII, VEI, true)
@@ -45546,7 +45452,7 @@ function VRI takes nothing returns boolean
 	elseif GetIssuedOrderId()== 852550 then
 		if VII != null then
 			call FlushChildHashtable(HY,(GetHandleId(VII)))
-			call AddTriggerToDestroyQueue(VII)
+			call DestroyTrigger(VII)
 		endif
 		call SaveTriggerHandle(HY, h, 226,(null))
 		call SaveInteger(HY, h, 227,(GetIssuedOrderId()))
@@ -45555,7 +45461,7 @@ function VRI takes nothing returns boolean
 	elseif GetIssuedOrderId()== 852547 then
 		if VII != null then
 			call FlushChildHashtable(HY,(GetHandleId(VII)))
-			call AddTriggerToDestroyQueue(VII)
+			call DestroyTrigger(VII)
 		endif
 		call SaveTriggerHandle(HY, h, 226,(null))
 		call SaveInteger(HY, h, 227,(GetIssuedOrderId()))
@@ -45757,7 +45663,7 @@ function VTI takes nothing returns boolean
 		call DeallocateGroup(D7R)
 		call DestroyEffect((LoadEffectHandle(HY, h, 32)))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		set g = AllocationGroup(226)
 		set U2 = whichUnit
@@ -45959,11 +45865,11 @@ function V6I takes nothing returns nothing
 		if GetEventDamageSource() == LoadUnitHandle(HY, h, 1) then
 			call CommonUnitAddStun(GetTriggerUnit(), 1.5, false)
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		endif
 	else
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 endfunction
@@ -46157,7 +46063,7 @@ function ECI takes nothing returns boolean
 	local unit u = LoadUnitHandle(HY, h, 0)
 	call IssueImmediateOrderById(u, 851972)
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set u = null
 	set t = null
 	return false
@@ -46216,7 +46122,7 @@ function EJI takes nothing returns boolean
 	local group g = null
 	if GetTriggerEvalCount(t)> ELI then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		set dummyCaster = CreateUnit(p,'e00E', GetWidgetX(u), GetWidgetY(u), 0)
 		call SaveBoolean(HY, GetHandleId(dummyCaster),'REFL', true)
@@ -46955,7 +46861,7 @@ function XXI takes nothing returns boolean
 			endif
 			call KillUnit(missileDummy)
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		endif
 	endif
 	set t = null
@@ -47089,7 +46995,7 @@ function XDI takes unit u, integer hu, trigger t returns nothing
 		call RemoveSavedHandle(HY, LoadInteger(HY, h, 0),'A46E')
 	endif
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 endfunction
 function XFI takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
@@ -47574,7 +47480,7 @@ function X4I takes nothing returns boolean
 		call DestroyUbersplat(LoadUbersplatHandle(HY, h, 3))
 		call KillUnit(u)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		loop
 			set i = i + 1
 		exitwhen HaveSavedHandle(HY, hu,'EinF'+ i + 1) == false
@@ -47832,7 +47738,7 @@ function ONI takes nothing returns nothing
 		call UnitRemoveAbility(u,'A3KF')
 		call UnitRemoveAbility(u,'B3KF')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		call SaveInteger(HY, h, 1, c)
 		call SetWidgetLife(u, GetWidgetLife(u)+ LoadReal(HY, h, 1))
@@ -47893,13 +47799,13 @@ function OFI takes nothing returns boolean
 	local group g
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call UnitRemoveAbility(targetUnit,'A272')
 		call UnitRemoveAbility(targetUnit,'B0EL')
 	else
 		if GetTriggerEvalCount(t)> 6 then
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 			call UnitRemoveAbility(targetUnit,'A272')
 			call UnitRemoveAbility(targetUnit,'B0EL')
 		endif
@@ -47962,14 +47868,14 @@ function OHI takes nothing returns nothing
 			call IssueTargetOrderById(OJI, 852585, targetUnit)
 			call DestroyEffect(LoadEffectHandle(HY, h, 4))
 			call RemoveUnit(dummyUnit)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 			call FlushChildHashtable(HY, h)
 		endif
 	elseif OKI == EVENT_WIDGET_DEATH then
 		call DestroyEffect(LoadEffectHandle(HY, h, 4))
 		call RemoveUnit(dummyUnit)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif LoadReal(HY, h, 5)+ 5 <= GetGameTime() then
 		call UnitDamageTargetEx(whichUnit, targetUnit, 1, level * 50 + 100 )
 		call DestroyEffect(AddSpecialEffectTarget("war3mapImported\\LastWordDamageSpell.mdx", targetUnit, "overhead"))
@@ -47980,7 +47886,7 @@ function OHI takes nothing returns nothing
 		call DestroyEffect(LoadEffectHandle(HY, h, 4))
 		call RemoveUnit(dummyUnit)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		call SetUnitX(dummyUnit, GetUnitX(targetUnit))
 		call SetUnitY(dummyUnit, GetUnitY(targetUnit))
@@ -48082,7 +47988,7 @@ function OUI takes nothing returns boolean
 		call UnitRemoveAbility(targetUnit,'A1PS')
 		call UnitRemoveAbility(targetUnit,'B0CQ')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set whichUnit = null
@@ -48125,7 +48031,7 @@ endfunction
 function OZI takes nothing returns boolean
 	local player p = LoadPlayerHandle(HY, GetHandleId(GetTriggeringTrigger()), 0)
 	call RemoveSavedHandle(HY, GetHandleId(GetTriggeringTrigger()), 0)
-	call AddTriggerToDestroyQueue(GetTriggeringTrigger())
+	call DestroyTrigger(GetTriggeringTrigger())
 	if IsPlayerEnemy(p, LocalPlayer) then
 		call VolumeGroupReset()
 	endif
@@ -48234,7 +48140,7 @@ function O3I takes nothing returns boolean
 	call DestroyEffect(LoadEffectHandle(HY, h, 331))
 	if GetTriggerEvalCount(t) == 11 then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		set d = 0
 		set a = 0
@@ -48318,7 +48224,7 @@ function O4I takes nothing returns boolean
 		endloop
 	else
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		set t = CreateTrigger()
 		set h = GetHandleId(t)
 		call SaveUnitHandle(HY, h, 2, whichUnit)
@@ -48458,7 +48364,7 @@ function O9I takes nothing returns boolean
 	call UnitRemoveAbility(targetUnit,'B06H')
 	call UnitRemoveAbility(targetUnit,'A313')
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set trigUnit = null
 	set dummyCaster = null
@@ -48764,7 +48670,7 @@ function RDI takes nothing returns nothing
 		if GetUnitTypeId(u) == 0 then
 			call FlushChildHashtable(OtherHashTable, GetHandleId(u))
 			call FlushChildHashtable(ObjectHashTable, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		else
 			if LoadBoolean(OtherHashTable, GetHandleId(u), 23) and DXX(u) then
 				if GetUnitAbilityLevel(u,'A30F') == 0 then
@@ -48812,7 +48718,7 @@ function RGI takes nothing returns nothing
 		call UnitRemoveAbility(u,'D025')
 		call FlushChildHashtable(HY, h)
 		call RemoveSavedHandle(HY, GetHandleId(u),'A2IS')
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		call SaveInteger(HY, h, 0, c -1)
 	endif
@@ -48976,7 +48882,7 @@ function RPI takes nothing returns boolean
 			endif
 			call KillUnit(missileDummy)
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		endif
 	endif
 	set t = null
@@ -49085,7 +48991,7 @@ function RYI takes nothing returns boolean
 	local real time
 	if GetTriggerEventId() == EVENT_UNIT_DEATH then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif GetTriggerEventId() == EVENT_UNIT_DAMAGED then
 		if GetEventDamage()> 2 and GetEventDamageSource()!= GetTriggerUnit() and XFX(GetOwningPlayer(GetEventDamageSource())) then
 			call SaveReal(HY, h, 785, GetGameTime()* 1.)
@@ -49463,7 +49369,7 @@ function INI takes nothing returns boolean
 			if J8V == false then
 				call UnitRemoveAbility(GetTriggerUnit(),'B0BM')
 				call FlushChildHashtable(HY, h)
-				call AddTriggerToDestroyQueue(t)
+				call DestroyTrigger(t)
 			endif
 		endif
 		if J8V then
@@ -49477,7 +49383,7 @@ function INI takes nothing returns boolean
 		call SaveInteger(HY, h, 100, UYX)
 		if UYX > level * 2 then
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(GetTriggeringTrigger())
+			call DestroyTrigger(GetTriggeringTrigger())
 		else
 			call IAI(LoadUnitHandle(HY, h, 0))
 		endif
@@ -49597,7 +49503,7 @@ function IGI takes nothing returns boolean
 			call KillUnit(TJX)
 		endif
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		if IHI then
 			call SetUnitFacing(TJX, GetUnitFacing(whichUnit))
@@ -49730,7 +49636,7 @@ function IPI takes nothing returns boolean
 	local unit u = LoadUnitHandle(ObjectHashTable, GetHandleId(whichUnit),'A1A8')
 	if whichUnit == null then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call DeallocateGroup(IQI)
 		call DeallocateGroup(g)
 		set g = null
@@ -50180,7 +50086,7 @@ function AYI takes nothing returns boolean
 			call SetUnitAnimationByIndex(GetTriggerUnit(), 4)
 		endif
 		call FlushChildHashtable(HY,(h))
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
 		if LoadBoolean(HY, h, 0) == false then
 			if LoadInteger(HY, h, 0) == 0 then
@@ -50199,7 +50105,7 @@ function AYI takes nothing returns boolean
 		else
 			call AWI(u, .3)
 			call FlushChildHashtable(HY,(h))
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		endif
 	else
 		if IsUnitEnemy(GetTriggerUnit(), GetOwningPlayer(u)) and(GetUnitAbilityLevel(GetTriggerUnit(),'A04R') == 0 or OPX(GetTriggerUnit())) and R0X(GetTriggerUnit()) == false and RFX(GetTriggerUnit()) == false then
@@ -50609,7 +50515,7 @@ function NNI takes nothing returns boolean
 		call KillTreeByCircle(x2, y2, 300)
 		call NRI(trigUnit, x2, y2, 300, 75 * NCI)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set trigUnit = null
@@ -50837,7 +50743,7 @@ function NTI takes nothing returns boolean
 	call DeallocateGroup(g)
 	if GetTriggerEvalCount(t)> 6 then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set trigUnit = null
@@ -51002,7 +50908,7 @@ function N5I takes nothing returns boolean
 		call KillUnit(dummyCaster)
 		call DeallocateGroup(D7R)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set whichUnit = null
@@ -51105,7 +51011,7 @@ function BVI takes nothing returns boolean
 		call KillUnit(dummyUnit)
 		call DeallocateGroup(D7R)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set whichUnit = null
@@ -51201,7 +51107,7 @@ function KMF takes nothing returns boolean
 		call UnitRemoveAbility(whichUnit,'A1N7')
 		call UnitRemoveAbility(whichUnit,'B0CH')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif GetTriggerEventId() == EVENT_PLAYER_UNIT_ATTACKED then
 		if GetAttacker() == whichUnit then
 			set count = count + 1
@@ -51211,7 +51117,7 @@ function KMF takes nothing returns boolean
 				call UnitRemoveAbility(whichUnit,'A1N7')
 				call UnitRemoveAbility(whichUnit,'B0CH')
 				call FlushChildHashtable(HY, h)
-				call AddTriggerToDestroyQueue(t)
+				call DestroyTrigger(t)
 			endif
 		endif
 	else
@@ -51219,7 +51125,7 @@ function KMF takes nothing returns boolean
 		call UnitRemoveAbility(whichUnit,'A1N7')
 		call UnitRemoveAbility(whichUnit,'B0CH')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set whichUnit = null
@@ -51296,7 +51202,7 @@ function BDI takes nothing returns nothing
 		call UnitRemoveAbility(triggerUnit,'A349')
 		call UnitRemoveAbility(triggerUnit,'B02N')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call RemoveSavedHandle(HY, GetHandleId(triggerUnit),'FRSW'+ GetPlayerId(GetOwningPlayer(BCI)))
 		call RemoveSavedBoolean(HY, GetHandleId(triggerUnit),'FRSW'+ GetPlayerId(GetOwningPlayer(BCI)))
 	else
@@ -51313,7 +51219,7 @@ function BDI takes nothing returns nothing
 			call UnitRemoveAbility(triggerUnit,'B02N')
 			call DestroyEffect(LoadEffectHandle(HY, h, 10))
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 			call RemoveSavedHandle(HY, GetHandleId(triggerUnit),'FRSW'+ GetPlayerId(GetOwningPlayer(BCI)))
 			call RemoveSavedBoolean(HY, GetHandleId(triggerUnit),'FRSW'+ GetPlayerId(GetOwningPlayer(BCI)))
 		endif
@@ -51368,7 +51274,7 @@ function BGI takes nothing returns boolean
 	local integer BHI
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH or(GetUnitAbilityLevel(whichUnit,'B02H') == 0 and GetTriggerEvalCount(t)> 4) or(GetTriggerEventId() == EVENT_PLAYER_UNIT_SPELL_EFFECT and GetSpellTargetUnit() == whichUnit and FDX(GetSpellAbilityId())) then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call UnitRemoveAbility(whichUnit,'B02H')
 		call SaveInteger(HY, GetHandleId(whichUnit),'a068', 0)
 		call KVX(whichUnit)
@@ -51410,7 +51316,7 @@ function BMI takes nothing returns nothing
 		call UnitRemoveAbility(u, LoadInteger(HY, h, 1))
 		call UnitRemoveAbility(u,'B0HB')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set u = null
 	set t = null
@@ -51437,7 +51343,7 @@ function BQI takes nothing returns nothing
 		call SetUnitPathing(u, true)
 	endif
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set u = null
 	set t = null
 endfunction
@@ -51462,7 +51368,7 @@ function BSI takes nothing returns boolean
 	endif
 	call SetUnitPosition(targetUnit, x1, y1)
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set whichUnit = null
 	set targetUnit = null
@@ -51846,13 +51752,13 @@ function CCI takes nothing returns boolean
 			call DisableTrigger(trig)
 			call CBI(u, 575 +(GetUnitAbilityLevel(u,'A0RO'))* 40, Atan2(y -LoadReal(ObjectHashTable, WFV, 1), x -LoadReal(ObjectHashTable, WFV, 0)), CJR, x, y)
 			call FlushChildHashtable(ObjectHashTable, WFV)
-			call AddTriggerToDestroyQueue(trig)
+			call DestroyTrigger(trig)
 		endif
 		set t = null
 		set u = null
 	endif
 	call FlushChildHashtable(ObjectHashTable, WFV)
-	call AddTriggerToDestroyQueue(trig)
+	call DestroyTrigger(trig)
 	set trig = null
 	return false
 endfunction
@@ -51977,7 +51883,7 @@ function CLI takes nothing returns boolean
 		call UnitRemoveAbility(u,'A0RM')
 		call UnitRemoveAbility(u,'A0RN')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		call SaveInteger(HY, h, 0, LoadInteger(HY, h, 0)-1)
 	endif
@@ -52034,7 +51940,7 @@ function CMI takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	call UnitRemoveAbility(LoadUnitHandle(HY, GetHandleId(t), 14),'A0RC')
 	call FlushChildHashtable(HY, GetHandleId(t))
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	return false
 endfunction
@@ -52061,10 +51967,10 @@ function CQI takes nothing returns boolean
 		if GetEventDamageSource() == whichUnit and AD < 1 and FK then
 			call DisableTrigger(t)
 			call FlushChildHashtable(HY, GetHandleId(CSI))
-			call AddTriggerToDestroyQueue(CSI)
+			call DestroyTrigger(CSI)
 			call CPI(whichUnit, targetUnit, level)
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		endif
 	elseif GetTriggerEventId() == EVENT_UNIT_ATTACKED then
 		if GetAttacker() == whichUnit then
@@ -52076,13 +51982,13 @@ function CQI takes nothing returns boolean
 		if LoadInteger(HY, h, 1) == 0 then
 			if LoadBoolean(HY, h, 0) == false then
 				call FlushChildHashtable(HY, h)
-				call AddTriggerToDestroyQueue(t)
+				call DestroyTrigger(t)
 			else
 				call SaveInteger(HY, h, 1, 1)
 			endif
 		else
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		endif
 	endif
 	set t = null
@@ -52118,24 +52024,24 @@ function CUI takes nothing returns boolean
 			call CTI(trigUnit, GetTriggerUnit(), t, level)
 			call UnitRemoveAbility(trigUnit,'B08K')
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		endif
 		if GetTriggerEventId() == EVENT_WIDGET_DEATH or GetTriggerEventId() == EVENT_UNIT_SPELL_CAST then
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		endif
 	elseif GetTriggerEventId() == EVENT_UNIT_ISSUED_TARGET_ORDER then
 		if (GetIssuedOrderId()== 851983 or GetIssuedOrderId()==851971) and IsUnitEnemy(GetOrderTargetUnit(), GetOwningPlayer(GetTriggerUnit())) and IsUnitType(GetOrderTargetUnit(), UNIT_TYPE_STRUCTURE) == false then
 			call CTI(GetTriggerUnit(), GetOrderTargetUnit(), t, level)
 			call UnitRemoveAbility(trigUnit,'B08K')
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		endif
 	elseif GetTriggerEventId()!= EVENT_PLAYER_UNIT_ATTACKED then
 		if (x != GetUnitX(trigUnit) or y != GetUnitY(trigUnit)) then
 			call UnitRemoveAbility(trigUnit,'B08K')
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		endif
 	endif
 	set t = null
@@ -52173,7 +52079,7 @@ function CWI takes nothing returns boolean
 		call DestroyEffect((LoadEffectHandle(HY, h, 175)))
 		call DestroyEffect((LoadEffectHandle(HY, h, 176)))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set whichUnit = null
@@ -52267,7 +52173,7 @@ function C2III takes nothing returns boolean
 		call DestroyLightning((LoadLightningHandle(HY, h, 196)))
 	endif
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	return false
 endfunction
@@ -52292,7 +52198,7 @@ function C3I takes nothing returns boolean
 	local unit whichUnit
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call KillUnit(missileDummy)
 	else
 		call SetUnitX(missileDummy, x)
@@ -52304,7 +52210,7 @@ function C3I takes nothing returns boolean
 			set FAR = LoadBoolean(HY, h, 0)
 			set whichUnit = LoadUnitHandle(HY, h, 44)
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 			if GetUnitTypeId(targetUnit)!='n00L' and I1O then
 				if GetUnitAbilityLevel(targetUnit,'A3E9') == 1 and IsUnitMagicImmune(whichUnit) == false and FAR == false then
 					call SaveUnitHandle(OtherHashTable2,'A3E9', 0, targetUnit)
@@ -52435,7 +52341,7 @@ function DVI takes nothing returns boolean
 		call KillUnit(missileDummy)
 		call DeallocateGroup(D7R)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set missileDummy = null
@@ -52479,7 +52385,7 @@ function DII takes nothing returns boolean
 	local unit trigUnit =(LoadUnitHandle(HY, h, 14))
 	call SetUnitTimeScale(trigUnit, 1)
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set trigUnit = null
 	return false
@@ -52561,7 +52467,7 @@ function DBI takes nothing returns boolean
 		//				call UnitRemoveAbility(whichUnit,'A12R')
 		//			endif
 		//			call FlushChildHashtable(HY, h)
-		//			call AddTriggerToDestroyQueue(t)
+		//			call DestroyTrigger(t)
 		//		endif
 	else
 		//		call UnitAddAbility(u, 'A33Z')
@@ -52570,7 +52476,7 @@ function DBI takes nothing returns boolean
 		call UnitRemoveAbility(whichUnit,'B09X')
 		call RemoveSavedHandle(HY, GetHandleId(whichUnit), 'trig')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call UnitRemoveAbility(whichUnit,'A1FK')
 		call UnitRemoveAbility(whichUnit,'A1FL')
 		call UnitRemoveAbility(whichUnit,'A1FJ')
@@ -52595,7 +52501,7 @@ function DCI takes nothing returns nothing
 	if (HaveSavedHandle(HY, l__K, 'trig') ) then
 		set trg = LoadTriggerHandle(HY, l__K, 'trig')
 		call FlushChildHashtable(HY, GetHandleId(trg))
-		call AddTriggerToDestroyQueue(trg)
+		call DestroyTrigger(trg)
 	endif
 	set trg = CreateTrigger()
 	set h = GetHandleId(trg)
@@ -52902,7 +52808,7 @@ function D_I takes nothing returns boolean
 				set level =(LoadInteger(HY, h, 5))
 				call SaveBoolean(HY,(GetHandleId(targetUnit)), 363,(false))
 				call FlushChildHashtable(HY, h)
-				call AddTriggerToDestroyQueue(t)
+				call DestroyTrigger(t)
 				call UnitRemoveAbility(targetUnit,'C000')
 				call UnitRemoveAbility(targetUnit,'D000')
 				call SetUnitToReduceDamage(GetTriggerUnit(), D0I)
@@ -52918,7 +52824,7 @@ function D_I takes nothing returns boolean
 			set level =(LoadInteger(HY, h, 5))
 			call SaveBoolean(HY,(GetHandleId(targetUnit)), 363,(false))
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 			call DZI(whichUnit, targetUnit, level)
 			call UnitRemoveAbility(targetUnit,'C000')
 			call UnitRemoveAbility(targetUnit,'D000')
@@ -53128,12 +53034,12 @@ function D7I takes nothing returns boolean
 	if GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT then
 		if GetTriggerEvalCount(t)> 1 and GetSpellAbilityId()=='A0S1' and not UnitHasSpellShield(GetSpellTargetUnit()) and targetUnit == GetSpellTargetUnit() then
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		endif
 	elseif GetTriggerEventId() == EVENT_PLAYER_UNIT_SPELL_EFFECT then
 		if FDX(GetSpellAbilityId()) and GetSpellTargetUnit() == targetUnit then
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		endif
 	elseif GetTriggerEventId() == EVENT_PLAYER_UNIT_DEATH then
 		if IsUnitIllusion(GetTriggerUnit()) == false and GetUnitTypeId(GetTriggerUnit())!='u00S' then
@@ -53143,7 +53049,7 @@ function D7I takes nothing returns boolean
 			endif
 			if GetTriggerUnit() == targetUnit or TMX == targetUnit then
 				call FlushChildHashtable(HY, h)
-				call AddTriggerToDestroyQueue(t)
+				call DestroyTrigger(t)
 				call UnitRemoveAbility(targetUnit,'A1W2')
 				call UnitRemoveAbility(targetUnit,'B0DO')
 			endif
@@ -53153,7 +53059,7 @@ function D7I takes nothing returns boolean
 		call SaveInteger(HY, h, 34,(count))
 		if GetUnitAbilityLevel(targetUnit,'A1W2') == 0 or count == N5O then
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 			call UnitRemoveAbility(targetUnit,'A1W2')
 			call UnitRemoveAbility(targetUnit,'B0DO')
 		endif
@@ -53273,7 +53179,7 @@ function FAI takes nothing returns boolean
 			call DeallocateGroup(g)
 			call FXI(h, FOI)
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		else
 			call DisableTrigger(t)
 			set K1V = trigUnit
@@ -53506,7 +53412,7 @@ function FMI takes nothing returns boolean
 			call UnitAddAbilityToTimed(LoadUnitHandle(HY, GetHandleId(R3O),'VisD'),'A3CA', 1, 1,'A3CA')
 		endif
 		call FlushChildHashtable(HY,(h))
-		call AddTriggerToDestroyQueue(FPI)
+		call DestroyTrigger(FPI)
 	elseif b == false and GetTriggerUnit() == R3O then
 		call SetPlayerAbilityAvailable(GetOwningPlayer(R3O),'A04Y', true)
 		call SetPlayerAbilityAvailable(GetOwningPlayer(R3O),'A2O9', false)
@@ -53524,7 +53430,7 @@ function FMI takes nothing returns boolean
 		call SetUnitAbilityLevel(FTI,'A04Y', FSI)
 		call IssueTargetOrderById(FTI, 852227, GetAttacker())
 		call FlushChildHashtable(HY,(h))
-		call AddTriggerToDestroyQueue(FPI)
+		call DestroyTrigger(FPI)
 	elseif b then
 		call SaveInteger(HY, h, 0, LoadInteger(HY, h, 0)+ 1)
 		if LoadInteger(HY, h, 0) == 9 then
@@ -53550,7 +53456,7 @@ function FMI takes nothing returns boolean
 				call UnitAddAbilityToTimed(R3O,'A3CA', 1, 1,'A3CA')
 				call UnitDamageTargetEx(R4O, R3O, 1, 50)
 				call FlushChildHashtable(HY,(h))
-				call AddTriggerToDestroyQueue(FPI)
+				call DestroyTrigger(FPI)
 			endif
 		endif
 	endif
@@ -53672,14 +53578,14 @@ function F0I takes nothing returns boolean
 		call FogModifierStop(fm)
 		call DestroyFogModifier(fm)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call SaveBoolean(ObjectHashTable, GetHandleId(whichUnit),'Grip', false)
 		call FIX(targetUnit)
 	elseif GetTriggerEvalCount(t)> count or(GetTriggerEvalCount(t) == 1 and GetUnitAbilityLevel(targetUnit,'A3E9') == 1) then
 		call FogModifierStop(fm)
 		call DestroyFogModifier(fm)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call EXStopUnit(whichUnit)
 		call SaveBoolean(ObjectHashTable, GetHandleId(whichUnit),'Grip', false)
 		call FIX(targetUnit)
@@ -53779,13 +53685,13 @@ function F4I takes nothing returns boolean
 		call SetUnitTurnSpeed(targetUnit, GetUnitDefaultTurnSpeed(targetUnit))
 		call SaveInteger(HY,(GetHandleId(targetUnit)), 281, 0)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call FNX(targetUnit, 0, 0)
 	elseif count == 0 then
 		call SetUnitTurnSpeed(targetUnit, GetUnitDefaultTurnSpeed(targetUnit))
 		call SaveInteger(HY,(GetHandleId(targetUnit)), 281, 0)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif GetTriggerEventId() == EVENT_UNIT_DAMAGED and F5I == false then
 		if count > 0 and GetUnitAbilityLevel(GetEventDamageSource(),'A1EL')> 0 and whichUnit == GetEventDamageSource() and FK then
 			call SaveBoolean(HY, h, 280,(true))
@@ -53823,7 +53729,7 @@ function F6I takes nothing returns boolean
 		call FNX(targetUnit, 0, 0)
 	endif
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set whichUnit = null
 	set targetUnit = null
@@ -53974,7 +53880,7 @@ function F8I takes nothing returns boolean
 		call KillTreeByCircle(GetUnitX(targetUnit), GetUnitY(targetUnit), 200)
 		call DestroyEffect((LoadEffectHandle(HY, h, 32)))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		set x2 = x1 + d * Cos(a)
 		set y2 = y1 + d * Sin(a)
@@ -54081,7 +53987,7 @@ function GXI takes nothing returns boolean
 		call KillUnit(dummyCaster)
 		call DeallocateGroup(g)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set targetUnit = null
@@ -54186,7 +54092,7 @@ function GCI takes nothing returns boolean
 			set i = i + 1
 		endloop
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		set t = null
 		return false
 	endif
@@ -54242,7 +54148,7 @@ function GFI takes nothing returns boolean
 	local real y = LoadReal(HY, h, 7)
 	call SetTerrainPathable(x, y, PATHING_TYPE_WALKABILITY, false)
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	return false
 endfunction
@@ -54287,7 +54193,7 @@ function GHI takes nothing returns boolean
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH or GetTriggerEvalCount(t)> R2I(20 * N5O) then
 		call DestroyEffect(LoadEffectHandle(HY, h, 32))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call KillUnit(dummyCaster)
 		call SetUnitPathing(targetUnit, true)
 		call KillTreeByCircle(GetUnitX(targetUnit), GetUnitY(targetUnit), 175)
@@ -54304,7 +54210,7 @@ function GHI takes nothing returns boolean
 		if GetDistanceBetween(x0, y0, GetUnitX(whichUnit), GetUnitY(whichUnit))> 400 then
 			call DestroyEffect(LoadEffectHandle(HY, h, 32))
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 			call KillUnit(dummyCaster)
 			call SetUnitPathing(targetUnit, true)
 			call KillTreeByCircle(GetUnitX(targetUnit), GetUnitY(targetUnit), 175)
@@ -54528,12 +54434,12 @@ function G2I takes nothing returns boolean
 		call UnitRemoveAbility(targetUnit,'A0IH')
 		call UnitRemoveAbility(targetUnit,'B08L')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif G3I > 4 *(6 + level) then
 		call UnitRemoveAbility(targetUnit,'A0IH')
 		call UnitRemoveAbility(targetUnit,'B08L')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set whichUnit = null
@@ -54717,7 +54623,7 @@ function HPI takes nothing returns nothing//织网
 	if GetTriggerEventId() == EVENT_UNIT_DEATH then
 		call DestroyGroup(LoadGroupHandle(HY, h, 1))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		if LoadBoolean(HY, h, 0) == false then
 			set g = CreateGroup()
@@ -54774,7 +54680,7 @@ function RQF takes nothing returns boolean
 			call UnitRemoveAbility(u,'B01E')
 		endif
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set u = null
@@ -54794,7 +54700,7 @@ function HTI takes nothing returns boolean
 		call UnitRemoveAbility(u,'B01E')
 		//endif
 		call FlushChildHashtable(HY,(h))
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		call SaveInteger(HY, h, 1, c)
 	endif
@@ -54917,7 +54823,7 @@ function H1I takes nothing returns boolean
 	local real d
 	if GetTriggerEventId()!= EVENT_UNIT_DAMAGED then
 		call FlushChildHashtable(ObjectHashTable, WFV)
-		call AddTriggerToDestroyQueue(trig)
+		call DestroyTrigger(trig)
 	elseif GetEventDamageSource() == LoadUnitHandle(ObjectHashTable, WFV, 0) then
 		call DisableTrigger(trig)
 		set tag = CreateTextTag()
@@ -54943,7 +54849,7 @@ function H1I takes nothing returns boolean
 		call CommonTextTag(R2SW(i, 1, 1), i, u, .03, 127, 127, 255, 255)
 		call UnitDamageTargetEx(LoadUnitHandle(ObjectHashTable, WFV, 1), u, 1, d)
 		call FlushChildHashtable(ObjectHashTable, WFV)
-		call AddTriggerToDestroyQueue(trig)
+		call DestroyTrigger(trig)
 		set tag = null
 		set u = null
 	endif
@@ -54992,7 +54898,7 @@ function RAF takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local unit whichUnit =(LoadUnitHandle(HY, h, 2))
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set whichUnit = null
 	return false
@@ -55135,7 +55041,7 @@ function JVI takes nothing returns boolean
 	call PlaySoundOnUnitBJ(OC, 100, trigUnit)
 	call KillUnit(u)
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set u = null
 	set t = null
 	set trigUnit = null
@@ -55173,7 +55079,7 @@ function JEI takes nothing returns boolean
 	endif
 	call SetWidgetLife(whichUnit, hp)
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set whichUnit = null
 	return false
@@ -55315,7 +55221,7 @@ function JKI takes nothing returns boolean
 	call SetHeroInt(targetUnit, GetHeroInt(targetUnit, false)+ JLI, true)
 	call SetHeroInt(whichUnit, GetHeroInt(whichUnit, false)-JLI, true)
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set whichUnit = null
 	set targetUnit = null
@@ -55341,11 +55247,11 @@ function JYI takes nothing returns boolean
 		call WHV(targetUnit,'D001')
 		call DestroyEffect((LoadEffectHandle(HY, h, 31)))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif GetTriggerEventId() == EVENT_PLAYER_UNIT_SPELL_EFFECT and GetSpellAbilityId()=='A0QG' and GetSpellTargetUnit() == targetUnit then
 		call DestroyEffect((LoadEffectHandle(HY, h, 31)))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		if count == 1 then
 			call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
@@ -55400,7 +55306,7 @@ function JZI takes nothing returns boolean
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call SetUnitPathing(LoadUnitHandle(HY, h, 17), true)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		set targetUnit =(LoadUnitHandle(HY, h, 17))
 		set d =(LoadReal(HY, h, 138))
@@ -55420,7 +55326,7 @@ function JZI takes nothing returns boolean
 			set whichUnit =(LoadUnitHandle(HY, h, 2))
 			set level =(LoadInteger(HY, h, 5))
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 			call SetUnitPathing(targetUnit, true)
 			call UnitDamageTargetEx(whichUnit, targetUnit, 1, level * 40)
 			set whichUnit = null
@@ -55606,7 +55512,7 @@ function KEI takes nothing returns boolean
 	exitwhen i > J9I
 		set u = LoadUnitHandle(HY, uh, 2800 + i)
 		call FlushChildHashtable(HY, GetHandleId(LoadTriggerHandle(HY, uh, 2900+ i)))
-		call AddTriggerToDestroyQueue(LoadTriggerHandle(HY, uh, 2900+ i))
+		call DestroyTrigger(LoadTriggerHandle(HY, uh, 2900+ i))
 		if IsUnitIllusion(u) then
 			call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Orc\\MirrorImage\\MirrorImageCaster.mdl", GetUnitX(u), GetUnitY(u)))
 			call RemoveUnit(u)
@@ -55619,9 +55525,9 @@ function KEI takes nothing returns boolean
 	call RemoveUnit(u2)
 	call DeallocateGroup(g1)
 	call DeallocateGroup(g2)
-	call AddTriggerToDestroyQueue(t2)
-	call AddTriggerToDestroyQueue(t3)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t2)
+	call DestroyTrigger(t3)
+	call DestroyTrigger(t)
 	set t = null
 	set t2 = null
 	set t3 = null
@@ -55839,7 +55745,7 @@ function KFI takes nothing returns boolean
 			call SetHeroStr(targetUnit, GetHeroStr(targetUnit, false)+ str, true)
 		endif
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set whichUnit = null
@@ -55984,13 +55890,13 @@ function KSI takes nothing returns boolean
 	local unit KTI =(LoadUnitHandle(HY, h, 269))
 	if GetTriggerEventId() == EVENT_UNIT_DEATH or GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		if GetTriggerUnit() == targetUnit then
 			call KillUnit(KTI)
 		endif
 	elseif IsGameEnd then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call PauseUnit(KTI, true)
 	elseif GetTriggerEventId() == EVENT_UNIT_ISSUED_ORDER or GetTriggerEventId() == EVENT_UNIT_ISSUED_POINT_ORDER or GetTriggerEventId() == EVENT_UNIT_ISSUED_TARGET_ORDER then
 		call DisableTrigger(t)
@@ -56003,7 +55909,7 @@ function KSI takes nothing returns boolean
 			if (LoadBoolean(HY, h, 271)) then
 				if (LoadBoolean(HY, h, 272)) then
 					call FlushChildHashtable(HY, h)
-					call AddTriggerToDestroyQueue(t)
+					call DestroyTrigger(t)
 					call KillUnit(KTI)
 				else
 					call SaveBoolean(HY, h, 272,(true))
@@ -56078,7 +55984,7 @@ function KZI takes nothing returns boolean
 		endif
 		call DestroyEffect(AddSpecialEffect("Objects\\Spawnmodels\\Undead\\UDeathMedium\\UDeath.mdl", GetUnitX(whichUnit), GetUnitY(whichUnit)))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call S9V(whichUnit, 2)
 		call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Undead\\Darksummoning\\DarkSummonTarget.mdl", GetUnitX(K_I), GetUnitY(K_I)))
 		call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Undead\\Darksummoning\\DarkSummonTarget.mdl", GetUnitX(K0I), GetUnitY(K0I)))
@@ -56114,7 +56020,7 @@ function K2I takes nothing returns nothing
 	local integer h = GetHandleId(GetTriggeringTrigger())
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call RemoveSavedBoolean(HY, h, 0)
-		call AddTriggerToDestroyQueue(GetTriggeringTrigger())
+		call DestroyTrigger(GetTriggeringTrigger())
 	elseif IsUnitIdType(GetUnitTypeId(GetEventDamageSource()), UNIT_TYPE_HERO) == false or GetUnitAbilityLevel(GetEventDamageSource(),'A1W4')> 0 then
 		if (GetUnitTypeId(GetEventDamageSource())=='n01G' or GetUnitAbilityLevel(GetEventDamageSource(),'A1W4')> 0) then
 			if LoadBoolean(HY, h, 0) == false then
@@ -56317,8 +56223,8 @@ function LII takes nothing returns boolean
 		call LRI(LoadGroupHandle(HY, h2, 30))
 		call FlushChildHashtable(HY, h)
 		call FlushChildHashtable(HY, h2)
-		call AddTriggerToDestroyQueue(t1)
-		call AddTriggerToDestroyQueue(t2)
+		call DestroyTrigger(t1)
+		call DestroyTrigger(t2)
 	elseif GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
 		call LXI(whichUnit, LoadGroupHandle(HY, h2, 30))
 	elseif GetTriggerEventId() == EVENT_UNIT_DAMAGED then
@@ -56507,7 +56413,7 @@ function LQI takes nothing returns nothing
 		call KillUnit(LoadUnitHandle(HY, h, 18))
 		call DeallocateGroup(g)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set d = null
@@ -56590,7 +56496,7 @@ function LWI takes nothing returns nothing
 		call UnitAddStateBonus(u, LoadInteger(HY, h, 2), UNIT_BONUS_ARMOR)
 		call RemoveSavedHandle(HY, hu,'A0VW')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		call SaveInteger(HY, h, 1, c -1)
 	endif
@@ -56630,7 +56536,7 @@ function LZI takes nothing returns boolean
 		call DisableTrigger(GetTriggeringTrigger())
 		call LYI(GetTriggerUnit())
 		call FlushChildHashtable(HY,(GetHandleId(GetTriggeringTrigger())))
-		call AddTriggerToDestroyQueue(GetTriggeringTrigger())
+		call DestroyTrigger(GetTriggeringTrigger())
 	endif
 	return false
 endfunction
@@ -56753,7 +56659,7 @@ function MBI takes nothing returns boolean
 		call RemoveUnit(dummyCaster)
 		call KillUnit(MCI)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set dummyCaster = null
@@ -56827,7 +56733,7 @@ function MKI takes nothing returns boolean
 		call DeallocateGroup(g)
 		call KillUnit(dummyCaster)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set dummyCaster = null
@@ -56908,7 +56814,7 @@ function MQI takes nothing returns boolean
 	local unit targetUnit =(LoadUnitHandle(HY, h, 17))
 	local real MSI =(LoadReal(HY,(GetHandleId(targetUnit)), 681))
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH or MSI <(GetGameTime()) then
 		call MPI(targetUnit)
 	endif
@@ -56949,7 +56855,7 @@ function MUI takes nothing returns boolean
 	local group g
 	if count * .1 > MWI then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		set g = AllocationGroup(339)
 		set U2 = whichUnit
@@ -57052,7 +56958,7 @@ function MZI takes nothing returns boolean
 		endif
 		call KillUnit(dummyCaster)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		call SetUnitX(dummyCaster, GetUnitX(trigUnit))
 		call SetUnitY(dummyCaster, GetUnitY(trigUnit))
@@ -57106,7 +57012,7 @@ function M0I takes nothing returns boolean
 	else
 		call DestroyEffect((LoadEffectHandle(HY, h, 32)))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set targetUnit = null
@@ -57196,7 +57102,7 @@ function M3I takes nothing returns boolean
 			call UnitRemoveAbility(targetUnit,'B0HI')
 		endif
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call DestroyEffect(FX)
 	endif
 	set t = null
@@ -57259,7 +57165,7 @@ function M7I takes nothing returns boolean
 		endif
 		if count > LoadInteger(HY, h, 7) then
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 			call KillUnit(dummyCaster)
 		endif
 	endif
@@ -57316,7 +57222,7 @@ function PVI takes nothing returns boolean
 	call DeallocateGroup(g)
 	call DestroyEffect((LoadEffectHandle(HY, h, 32)))
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set trigUnit = null
 	set g = null
@@ -57488,7 +57394,7 @@ function PNI takes nothing returns boolean
 	if c > O3O or GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call KillTreeByCircle(GetUnitX(targetUnit), GetUnitY(targetUnit), 100)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		set M8R = CoordinateX50(GetUnitX(targetUnit)+ PBI * Cos(I3X))
 		set M9R = CoordinateY50(GetUnitY(targetUnit)+ PBI * Sin(I3X))
@@ -57573,7 +57479,7 @@ function PGI takes nothing returns boolean
 		call ForGroup(gg, function PFI)
 		call DeallocateGroup(gg)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call KillUnit(dummyUnit)
 		call DeallocateGroup(g)
 	endif
@@ -57942,7 +57848,7 @@ function PTI takes nothing returns boolean
 		call UnitRemoveAbility(targetUnit,'A1VS')
 		call UnitRemoveAbility(targetUnit,'B0DN')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set whichUnit = null
@@ -58062,7 +57968,7 @@ function AhalimReincarnation_Actions takes nothing returns boolean
 			call UnitRemoveAbility(u,'A3DA')
 			call UnitRemoveAbility(u,'B3DA')
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 			call ResetUnitVertexColor(u)
 			call BZR(u)
 		elseif GetUnitAbilityLevel(u,'A3D9') == 1 then
@@ -58071,7 +57977,7 @@ function AhalimReincarnation_Actions takes nothing returns boolean
 				call UnitRemoveAbility(u,'A3DK')
 				call UnitRemoveAbility(u,'B3I9')
 				call FlushChildHashtable(HY, h)
-				call AddTriggerToDestroyQueue(t)
+				call DestroyTrigger(t)
 			else
 				// 正常死亡 0 0.1 4 秒计时器
 				call TriggerRegisterTimerEvent(t, 0, false)
@@ -58082,7 +57988,7 @@ function AhalimReincarnation_Actions takes nothing returns boolean
 			endif
 		else
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		endif
 		call RemoveSavedHandle(HY, GetHandleId(u),'Leor')
 	else
@@ -58138,7 +58044,7 @@ function AhalimReincarnation_Actions takes nothing returns boolean
 			call BZR(u)
 			if not UnitAlive(u) then
 				call FlushChildHashtable(HY, h)
-				call AddTriggerToDestroyQueue(t)
+				call DestroyTrigger(t)
 			else
 				call TriggerRegisterTimerEvent(t, .02, true)
 			endif
@@ -58280,7 +58186,7 @@ function P6I takes nothing returns boolean
 		endif
 		// call FixUnitSkillsBug(u)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		set h = GetHandleId(u)
 		if LoadBoolean(ObjectHashTable, h, StringHash("morphedburn")) then
 			call RAX(u, LoadInteger(ObjectHashTable, h, StringHash("second")))
@@ -58375,14 +58281,14 @@ function P8I takes nothing returns boolean
 		call DestroyEffect(LoadEffectHandle(HY, h, 175))
 		call DestroyEffect(LoadEffectHandle(HY, h, 176))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif P9I > 0 then
 		call SaveInteger(HY, GetHandleId(whichUnit), 4338, 2)
 		call SetPlayerAbilityAvailable(GetOwningPlayer(whichUnit),'AOcr', true)
 		call DestroyEffect(LoadEffectHandle(HY, h, 175))
 		call DestroyEffect(LoadEffectHandle(HY, h, 176))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		if UnitIsDead(whichUnit) == false then
 			call SetWidgetLife(whichUnit, RMaxBJ(1, GetWidgetLife(whichUnit)-P9I))
 		endif
@@ -59411,7 +59317,7 @@ function UXI takes nothing returns boolean
 	local unit dummyCaster =(LoadUnitHandle(HY, h, 19))
 	if GetTriggerEvalCount(t)> 40 then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		set g = AllocationGroup(353)
 		set U2 = trigUnit
@@ -59497,7 +59403,7 @@ function URI takes nothing returns boolean
 		call UnitRemoveAbility(u,'A345')
 		call SetPlayerAbilityAvailableEx(GetOwningPlayer(u),'A21H', false)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif GetTriggerEventId()!= EVENT_UNIT_SPELL_EFFECT then
 		call SetUnitState(u, UNIT_STATE_MANA, GetUnitState(u, UNIT_STATE_MANA)-20 * lv)
 		set U2 = u
@@ -59597,7 +59503,7 @@ function UAI takes nothing returns boolean
 		if UBI > KLR then
 			call RemoveUnit(UNI)
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		else
 			set g = AllocationGroup(355)
 			set U2 = whichUnit
@@ -59608,7 +59514,7 @@ function UAI takes nothing returns boolean
 			if targetUnit == null then
 				call RemoveUnit(UNI)
 				call FlushChildHashtable(HY, h)
-				call AddTriggerToDestroyQueue(t)
+				call DestroyTrigger(t)
 			else
 				call SaveInteger(HY, h, 720, 10)
 				call SaveInteger(HY, h, 233,(UBI + 1))
@@ -59715,7 +59621,7 @@ function UJI takes nothing returns nothing
 	local real mp = LoadReal(HY, h, 0)
 	call SetUnitState(u, UNIT_STATE_MANA, GetUnitState(u, UNIT_STATE_MANA)+ mp)
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set u = null
 endfunction
@@ -59892,7 +59798,7 @@ function VoodooCallBack takes nothing returns boolean
 	set whichUnit = null
 	
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(trig)
+	call DestroyTrigger(trig)
 	set trig = null
 	return false
 endfunction
@@ -59963,7 +59869,7 @@ function UZI takes nothing returns boolean
 	call SetUnitNoLimitMoveSpeed(whichUnit, 0)
 	call UnitAddMaxLife(whichUnit,-1 * LoadInteger(HY, h, 16))
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set whichUnit = null
 	return false
@@ -59975,7 +59881,7 @@ function Shapeshift_CallBack takes nothing returns boolean
 	local unit d = LoadUnitHandle(HY, h, 15)
 	local integer I2X = LoadInteger(HY, h, 16)
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Human\\MarkOfChaos\\MarkOfChaosDone.mdl", whichUnit, "origin"))
 	call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Orc\\FeralSpirit\\feralspirittarget.mdl", whichUnit, "origin"))
 	set t = CreateTrigger()
@@ -60409,7 +60315,7 @@ function WAI takes nothing returns boolean
 		call SetPlayerAbilityAvailableEx(GetOwningPlayer(trigUnit),'A10R', true)
 		call UnitRemoveAbility(trigUnit,'A10S')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call DestroyTextTag(tt)
 	endif
 	set t = null
@@ -60492,7 +60398,7 @@ function WBI takes nothing returns boolean
 			call UnitRemoveAbility(whichUnit,'A1OM')
 			call UnitRemoveAbility(whichUnit,'B04J')
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 			call RemoveSavedHandle(HY, GetHandleId(whichUnit),'SCRD')
 		else
 			call SaveInteger(HY, h, 0, LoadInteger(HY, h, 0)-1)
@@ -60575,7 +60481,7 @@ function WHI takes nothing returns boolean
 	if time > 150 or(GetUnitAbilityLevel(stg_u,'BNdo') == 0 and GetTriggerEvalCount(t)> 2) then
 		call UnitRemoveAbility(stg_u,'BNdo')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		call CIO(stg_u, 0.10)
 	endif
@@ -60624,7 +60530,7 @@ function LTF takes nothing returns boolean
 		call UnitRemoveAbility(targetUnit,'A1Q2')
 		call UnitRemoveAbility(targetUnit,'A1Q3')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set targetUnit = null
@@ -60668,7 +60574,7 @@ function LWF takes nothing returns boolean
 	call UnitRemoveAbility(targetUnit,'A1Q6')
 	call UnitRemoveAbility(targetUnit,'B0CX')
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set targetUnit = null
 	return false
@@ -60720,7 +60626,7 @@ function WYI takes nothing returns boolean
 			call KillUnit(dummyCaster)
 			call DeallocateGroup(D7R)
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		else
 			if UnitVisibleToPlayer(targetUnit, GetOwningPlayer(dummyCaster)) then
 				set b = UnitHasSpellShield(targetUnit)
@@ -60862,7 +60768,7 @@ function W4I takes nothing returns boolean
 	else
 		call DestroyEffect(LoadEffectHandle(HY, h, 32))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call UnitRemoveAbility(triggerUnit,'A2S1')
 		call UnitRemoveAbility(triggerUnit,'A2TL')
 	endif
@@ -60971,7 +60877,7 @@ function YBI takes nothing returns boolean
 	call DestroyEffect(LoadEffectHandle(HY, h, 32))
 	if GetTriggerEvalCount(t)> R2I(6 / .02) then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call ForGroup(ag, function W3I)
 		call ForGroup(ag, function W2I)
 		call DeallocateGroup(ag)
@@ -61029,7 +60935,7 @@ function YDI takes nothing returns boolean
 		call YCI(count, whichUnit, targetUnit)
 		if count == 9 then
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		else
 			call SaveInteger(HY, h, 34,(count))
 		endif
@@ -61131,7 +61037,7 @@ function Infest_Actions takes nothing returns boolean
 		call RemoveUnit(ghoul)
 		call UnitRemoveAbility(u,'A3L7')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call YKI(u, target, lv)
 		call SaveInteger(HY,(GetHandleId((u))),(4310), 2)
 	elseif IsUnitType(target, UNIT_TYPE_HERO) and IsUnitEnemy(target, p) then
@@ -61149,7 +61055,7 @@ function Infest_Actions takes nothing returns boolean
 		call DestroyEffect((LoadEffectHandle(HY, h, 177)))
 		call RemoveUnit(ghoul)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call YKI(u, target, lv)
 		call SaveInteger(HY,(GetHandleId((u))),(4310), 2)
 	elseif GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT or(GetTriggerEventId() == EVENT_UNIT_ISSUED_ORDER and GetIssuedOrderId() == 852129) then
@@ -61173,7 +61079,7 @@ function Infest_Actions takes nothing returns boolean
 			call DestroyEffect((LoadEffectHandle(HY, h, 177)))
 			call RemoveUnit(ghoul)
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 			call YKI(u, target, lv)
 			if IsUnitType(target, UNIT_TYPE_HERO) == false then
 				if IsUnitType(target, UNIT_TYPE_SUMMONED) == false then
@@ -61297,7 +61203,7 @@ function YSI takes nothing returns boolean
 	call UnitRemoveAbility(trigUnit,'A0SR')
 	call UnitRemoveAbility(trigUnit,'A0ST')
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set trigUnit = null
 	return false
@@ -61523,7 +61429,7 @@ function Y7I takes nothing returns boolean
 	local unit targetUnit =(LoadUnitHandle(HY, h, 17))
 	local real YFI =(LoadReal(HY, h, 680))
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Undead\\AnimateDead\\AnimateDeadTarget.mdl", targetUnit, "origin"))
 	call UnitDamageTargetEx(whichUnit, targetUnit, 1, YFI *(GetUnitState(targetUnit, UNIT_STATE_MAX_LIFE)-GetWidgetLife(targetUnit)))
 	set t = null
@@ -61639,7 +61545,7 @@ function ZOI takes trigger trig, unit u, integer WFV returns nothing
 	call DestroyEffect(LoadEffectHandle(HY, WFV, 6))
 	call DeallocateGroup(LoadGroupHandle(HY, WFV, 7))
 	call FlushChildHashtable(HY, WFV)
-	call AddTriggerToDestroyQueue(trig)
+	call DestroyTrigger(trig)
 endfunction
 
 // 尖刺外壳事件
@@ -61858,7 +61764,7 @@ function ZLI takes nothing returns boolean
 	call ResetUnitAnimation(whichUnit)
 	call RemoveUnit(dummyCaster)
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set whichUnit = null
 	set dummyCaster = null
 	set t = null
@@ -62000,7 +61906,7 @@ function Z_I takes nothing returns nothing
 	endif
 	if WOV <-20 then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	call DeallocateGroup(g)
 	call DeallocateGroup(gg)
@@ -62136,14 +62042,14 @@ function Z5I takes nothing returns boolean
 		call UnitRemoveAbility(whichUnit,'A1CO')
 		call UnitRemoveAbility(whichUnit,'B1CO')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif GetTriggerEventId() == EVENT_PLAYER_UNIT_ATTACKED then
 		if GetAttacker() == whichUnit then
 			if GetTriggerUnit()!= targetUnit then
 				call UnitRemoveAbility(whichUnit,'A1CO')
 				call UnitRemoveAbility(whichUnit,'B1CO')
 				call FlushChildHashtable(HY, h)
-				call AddTriggerToDestroyQueue(t)
+				call DestroyTrigger(t)
 			else
 				set count = count + 1
 				call SaveInteger(HY, h, 34,(count))
@@ -62151,7 +62057,7 @@ function Z5I takes nothing returns boolean
 					call UnitRemoveAbility(whichUnit,'A1CO')
 					call UnitRemoveAbility(whichUnit,'B1CO')
 					call FlushChildHashtable(HY, h)
-					call AddTriggerToDestroyQueue(t)
+					call DestroyTrigger(t)
 				endif
 			endif
 		endif
@@ -62159,7 +62065,7 @@ function Z5I takes nothing returns boolean
 		call UnitRemoveAbility(whichUnit,'A1CO')
 		call UnitRemoveAbility(whichUnit,'B1CO')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set whichUnit = null
@@ -62329,7 +62235,7 @@ function VOA takes nothing returns boolean
 		endloop
 		call DeallocateGroup(g)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set g = null
@@ -62441,7 +62347,7 @@ function VHA takes nothing returns boolean
 		call SetPlayerAbilityAvailableEx(p,'A2MB', false)
 		call SetPlayerAbilityAvailableEx(p,'A0R0', true)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		set t = null
 		set whichUnit = null
 		set targetUnit = null
@@ -62451,7 +62357,7 @@ function VHA takes nothing returns boolean
 		call DestroyEffect((LoadEffectHandle(HY, h, 32)))
 		call VGA(whichUnit, targetUnit)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set whichUnit = null
@@ -62503,7 +62409,7 @@ function VNA takes nothing returns boolean
 	if GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT and GetSpellAbilityId() == 'A2MB' then
 		call KillUnit(dummyCaster)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		set t = null
 		set dummyCaster = null
 		set whichUnit = null
@@ -62519,7 +62425,7 @@ function VNA takes nothing returns boolean
 	if count > FTR then
 		call KillUnit(dummyCaster)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif count == 30 then
 		call UnitRemoveAbility(dummyCaster, 'Aloc')
 		call ShowUnit(dummyCaster, true)
@@ -62856,7 +62762,7 @@ function V1A takes nothing returns boolean
 		call ShowUnit(u, false)
 	elseif GetTriggerEvalCount(t)> 80 then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set u = null
@@ -62908,7 +62814,7 @@ function V2A takes nothing returns boolean
 	local integer V4A = R2I(I2R(SI[GetPlayerId(GetOwningPlayer(u))])*(.5 * lv))
 	if u == null then
 		call FlushChildHashtable(HY, GetHandleId(t))
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	if V4A > V3A then
 		call ModifyHeroStat(0, u, 0, V4A -V3A)
@@ -62943,7 +62849,7 @@ function V5A takes nothing returns nothing
 		call SetUnitPathing(u, true)
 	endif
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set u = null
 	set t = null
 endfunction
@@ -63000,7 +62906,7 @@ function V7A takes nothing returns boolean
 		//	call SetUnitPathing(u, true)
 		//endif
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set u = null
@@ -63044,7 +62950,7 @@ function EEA takes nothing returns boolean
 		call DeallocateGroup(g)
 		if target != null then
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 			call TriggerRegisterTimerEvent(trg2, .025, true)
 			call TriggerRegisterDeathEvent(trg2, target)
 			call TriggerAddCondition(trg2, Condition(function V7A))
@@ -63065,7 +62971,7 @@ function EEA takes nothing returns boolean
 		endif
 	else
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call TriggerRegisterTimerEvent(trg2, .025, true)
 		call TriggerAddCondition(trg2, Condition(function V7A))
 		call SaveInteger(HY,(h2), 376,(i))
@@ -63108,13 +63014,13 @@ function dismember_upgraded_effect takes nothing returns boolean
 		if GetTriggerEventId() == EVENT_UNIT_DEATH or(GetTriggerEventId() == EVENT_UNIT_SPELL_ENDCAST and GetSpellAbilityId()=='A1CX') then
 			call FIX(target)
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		endif
 	elseif GetTriggerEvalCount(t)> 7 then
 		call FIX(target)
 		call EXStopUnit(u)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		if lv > 0 then
 			set c = c + 1
@@ -63170,13 +63076,13 @@ function dismember_effect takes nothing returns boolean
 		if GetTriggerEventId() == EVENT_UNIT_DEATH or(GetTriggerEventId() == EVENT_UNIT_SPELL_ENDCAST and GetSpellAbilityId()=='A0FL') then
 			call FIX(target)
 			call FlushChildHashtable(HY,(h))
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		endif
 	elseif GetTriggerEvalCount(t)> 7 then
 		call FIX(target)
 		call EXStopUnit(u)
 		call FlushChildHashtable(HY,(h))
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		if lv > 0 then
 			set c = c + 1
@@ -63244,7 +63150,7 @@ function EBA takes nothing returns nothing
 			call EAA(GetTriggerUnit(), GetEventDamage()-1)
 		endif
 	elseif GetTriggerEventId() == EVENT_UNIT_DEATH then
-		call AddTriggerToDestroyQueue(GetTriggeringTrigger())
+		call DestroyTrigger(GetTriggeringTrigger())
 	endif
 endfunction
 function ECA takes nothing returns boolean
@@ -63255,7 +63161,7 @@ function ECA takes nothing returns boolean
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call SetUnitAnimation(FAO, "death")
 		call FlushChildHashtable(HY,(h))
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif GetTriggerEventId() == EVENT_UNIT_DAMAGED then
 		if IsUnitIdType(GetUnitTypeId(GetEventDamageSource()), UNIT_TYPE_HERO) then
 			call SetUnitToReduceDamage(FAO, GetEventDamage()-1)
@@ -63310,7 +63216,7 @@ function EDA takes nothing returns nothing
 	local real targetsMana = 0
 	if GetUnitAbilityLevel(u,'Bdcl') == 0 or(GetTriggerEventId() == EVENT_UNIT_SPELL_ENDCAST and(GetSpellAbilityId()=='A0CC' or GetSpellAbilityId()=='A02Z')) then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		if HPR then
 			set EFA = 30 + 15* level
@@ -63358,7 +63264,7 @@ function EGA takes nothing returns boolean
 	call UnitRemoveAbility(targetUnit,'A30D')
 	call UnitRemoveAbility(targetUnit,'A30E')
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set targetUnit = null
 	return false
@@ -63511,7 +63417,7 @@ function EPA takes nothing returns boolean
 		call DeallocateGroup(CNO)
 		call DestroyEffect(LoadEffectHandle(HY, h, 32))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif count == 20 then
 		call GroupClear(CNO)
 		set fx = null
@@ -63778,7 +63684,7 @@ function E8A takes nothing returns boolean
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call E_A(h)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		if GetTriggerUnit() == whichUnit then
 			call KillUnit(dummyCaster)
 		endif
@@ -63855,7 +63761,7 @@ function E9A takes nothing returns boolean
 	call YDWEUnitRemoveStun( whichUnit )
 
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set whichUnit = null
 	return false
@@ -63868,7 +63774,7 @@ function EXUnitAddStunCallBack takes nothing returns boolean
 	call YDWEUnitAddStun( LoadUnitHandle( HY, h, 0 ) )
 
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(trig)
+	call DestroyTrigger(trig)
 	set trig = null
 	return false
 endfunction
@@ -63969,7 +63875,7 @@ function XIA takes nothing returns boolean
 	endif
 	if WWR > XAA then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		if trigUnit != null and UnitIsDead(trigUnit) == false then
 			set x = GetUnitX(trigUnit)
@@ -64077,7 +63983,7 @@ function XJA takes nothing returns nothing
 		call XGA(sk, triggerUnit, level, false)
 		call DestroyEffect(LoadEffectHandle(HY, h, 10))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call RemoveSavedHandle(HY, GetHandleId(triggerUnit),'CFNL')
 		call RemoveSavedBoolean(HY, GetHandleId(triggerUnit),'CFNL')
 	elseif GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
@@ -64087,7 +63993,7 @@ function XJA takes nothing returns nothing
 			call UnitRemoveAbility(triggerUnit,'B03F')
 			call DestroyEffect(LoadEffectHandle(HY, h, 10))
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 			call RemoveSavedHandle(HY, GetHandleId(triggerUnit),'CFNL')
 			call RemoveSavedBoolean(HY, GetHandleId(triggerUnit),'CFNL')
 		endif
@@ -64141,7 +64047,7 @@ function XLA takes nothing returns boolean
 	call RemoveUnit((LoadUnitHandle(HY, h, 381)))
 	call RemoveUnit((LoadUnitHandle(HY, h, 382)))
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set trigUnit = null
 	return false
@@ -64181,7 +64087,7 @@ function XWA takes nothing returns boolean
 	if GetTriggerEventId() == EVENT_UNIT_SPELL_ENDCAST or count > level * 40 then
 		call XMA(trigUnit, level, XPA, XQA, XSA, XTA)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		set g = AllocationGroup(386)
 		set U2 = trigUnit
@@ -64325,14 +64231,14 @@ function X0A takes nothing returns nothing
 		call UnitRemoveAbility(targetUnit,'B30Z')
 		call FlushChildHashtable(HY, h)
 		call RemoveSavedHandle(ObjectHashTable, GetHandleId(targetUnit),'A034')
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		if time > WOV then
 			call UnitRemoveAbility(targetUnit,'A310')
 			call UnitRemoveAbility(targetUnit,'B30Z')
 			call FlushChildHashtable(HY, h)
 			call RemoveSavedHandle(ObjectHashTable, GetHandleId(targetUnit),'A034')
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		endif
 	endif
 	set t = null
@@ -64757,7 +64663,7 @@ function ODA takes nothing returns nothing
 		if targetUnit == GetTriggerUnit() then
 			call KillUnit(TJX)
 		endif
-		call AddTriggerToDestroyQueue(trig)
+		call DestroyTrigger(trig)
 	elseif IsUnitPaused(TJX) == false then
 		if OFA == 2 then
 			call SetUnitVertexColor(TJX, 255, 255, 255, 255)
@@ -64924,7 +64830,7 @@ function OSA takes nothing returns boolean
 		set i = LoadInteger(ObjectHashTable, h,'A0G5')-1
 		call SaveInteger(ObjectHashTable, h,'A0G5', i)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Human\\FlakCannons\\FlakTarget.mdl", x, y))
 		call KillTreeByCircle(x, y, 150)
@@ -65297,7 +65203,7 @@ function RXA takes nothing returns boolean
 		call UnitRemoveAbility(targetUnit,'A314')
 		call UnitRemoveAbility(whichUnit,'A179')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		set ROA = 50 + count * 2
 		call SetUnitVertexColorEx(whichUnit,-1,-1,-1, ROA)
@@ -65395,7 +65301,7 @@ function RAA takes nothing returns nothing
 	endif
 	if GetTriggerEvalCount(t) == 2 then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set whichUnit = null
 	set targetUnit = null
@@ -65576,12 +65482,12 @@ function RJA takes nothing returns boolean
 	local integer level =(LoadInteger(HY, h, 5))
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH or GetTriggerEvalCount(t)> 28or IsUnitSilence(whichUnit) or GetUnitDistanceEx(whichUnit, targetUnit)> 600 or UnitVisibleToPlayer(targetUnit, GetOwningPlayer(whichUnit)) == false then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call KillUnit(d)
 	elseif GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT then
 		if GetTriggerEvalCount(t)> 1 and GetSpellAbilityId()=='A1RA' then
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 			call UnitRemoveAbility(whichUnit,'A1RA')
 			call KillUnit(d)
 		endif
@@ -65611,7 +65517,7 @@ function RKA takes nothing returns boolean
 			call RemoveUnit(LoadUnitHandle(HY, h, 21))
 		endif
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		if GetTriggerEvalCount(t) == 1 then
 			call IssueImmediateOrderById(whichUnit, 851993)
@@ -65778,7 +65684,7 @@ function RTA takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	call DeallocateGroup(LoadGroupHandle(HY, h, 22))
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	return false
 endfunction
@@ -65852,7 +65758,7 @@ function RWA takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local unit whichUnit =(LoadUnitHandle(HY, h, 2))
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	call SetUnitTimeScale(whichUnit, 1)
 	set t = null
 	set whichUnit = null
@@ -65994,7 +65900,7 @@ function IEA takes nothing returns nothing
 	if GetUnitAbilityLevel(targetUnit,'A0OW') == 0 or c > 6 then
 		call UnitRemoveAbility(targetUnit,'A0OW')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		call UnitDamageTargetEx(dummyCaster, targetUnit, 2, IXX)
 		if level == 1 then
@@ -66124,7 +66030,7 @@ function IBA takes nothing returns boolean
 		call ForGroup(g, function IIA)
 		call DeallocateGroup(g)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		call ForGroup(g, function IAA)
 	endif
@@ -66229,7 +66135,7 @@ function IGA takes nothing returns boolean
 	local integer count = GetTriggerEvalCount(t)
 	if count > 11 then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		call IDA(IFA(5.5 -0.5 * count), targetUnit, targetUnit)
 	endif
@@ -66247,7 +66153,7 @@ function IHA takes nothing returns boolean
 	call SetWidgetLife(targetUnit, IJA)
 	call SaveReal(HY,(GetHandleId(targetUnit)), 243,((IKA -IXX)* 1.))
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set targetUnit = null
 	return false
@@ -66299,7 +66205,7 @@ function IMA takes nothing returns boolean
 		call UnitRemoveAbility((LoadUnitHandle(HY, h, 17)),'A21I')
 		call UnitRemoveAbility((LoadUnitHandle(HY, h, 17)),'B07D')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set targetUnit = null
 	set t = null
@@ -66361,7 +66267,7 @@ function ITA takes nothing returns boolean
 	if GetTriggerEvalCount(t)> 28 then
 		call DeallocateGroup(g)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call ShowUnit(dummyCaster, false)
 		call KillUnit(dummyCaster)
 	else
@@ -66553,7 +66459,7 @@ function I4A takes nothing returns nothing
 	local unit u2
 	if c > 23 then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call DeallocateGroup(g2)
 	else
 		set U2 = u
@@ -66664,7 +66570,7 @@ function I8A takes nothing returns boolean
 	local real MSI = LoadReal(HY, GetHandleId(targetUnit), 684)
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH or MSI <(GetGameTime()) or IsUnitMagicImmune(targetUnit) then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call SaveReal(HY, GetHandleId(targetUnit), 684, .0)
 		call UnitRemoveAbility(targetUnit,'A23S')
 		call UnitRemoveAbility(targetUnit,'A23P')
@@ -66864,7 +66770,7 @@ function AAA takes nothing returns boolean
 	call SaveInteger(HY,(ANA), 425,(AIA))
 	call ARA(whichUnit, level, AIA)
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set whichUnit = null
 	return false
@@ -66991,7 +66897,7 @@ function AJA takes nothing returns boolean
 	local integer Y2X =(LoadInteger(HY, h, 194))
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif GetTriggerEventId() == EVENT_PLAYER_UNIT_ATTACKED then
 		if GetAttacker() == AGA then
 			set Y2X = IMaxBJ(Y2X -1, 0)
@@ -67401,7 +67307,7 @@ function A1A takes nothing returns boolean
 	local unit whichUnit =(LoadUnitHandle(HY, h, 2))
 	call AWA(whichUnit,(LoadReal(HY,(GetHandleId(whichUnit)), 443)))
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set whichUnit = null
 	return false
@@ -67488,12 +67394,12 @@ function NRA takes nothing returns nothing
 	//if GetTriggerEventId() == EVENT_UNIT_SPELL_ENDCAST then
 	//call KillUnit(dummyCaster)
 	//call FlushChildHashtable(HY, h)
-	//call AddTriggerToDestroyQueue(t)
+	//call DestroyTrigger(t)
 	//elseif GetTriggerEvalCount(t)> 22 then
 	if GetTriggerEvalCount(t)> 22 then
 		call KillUnit(dummyCaster)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call EXStopUnit(LoadUnitHandle(HY, h, 14))
 	else
 		call SetUnitAnimation(dummyCaster, "birth")
@@ -67555,7 +67461,7 @@ function NFA takes nothing returns nothing
 		call ForGroup(g, function NAA)
 		call FlushChildHashtable(HY, h)
 		call DeallocateGroup(g)
-		call AddTriggerToDestroyQueue((t))
+		call DestroyTrigger((t))
 	elseif GetEventDamage()> 10 and GetEventDamage()< 6000 and FK then
 		call DisableTrigger(t)
 		call ForGroup(g, function NDA)
@@ -67639,7 +67545,7 @@ function NKA takes nothing returns boolean
 		call UnitRemoveAbility(targetUnit,'A17K')
 		call UnitRemoveAbility(targetUnit,'B0AP')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		call UnitDamageTargetEx(whichUnit, targetUnit, 1, level * 10+ 10)
 	endif
@@ -67658,7 +67564,7 @@ function NLA takes nothing returns boolean
 		call UnitRemoveAbility(targetUnit,'A0P0')
 		call UnitRemoveAbility(targetUnit,'B073')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		call SetWidgetLife(targetUnit, GetWidgetLife(targetUnit)+ level * 10+ 10)
 	endif
@@ -67740,7 +67646,7 @@ function NMA takes nothing returns boolean
 		endif
 		set whichUnit = null
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		set U2 = whichUnit
 		set M0V = whichUnit
@@ -67803,7 +67709,7 @@ function NSA takes nothing returns boolean
 	call SetUnitAbilityLevel(dummyCaster,'S00U', level)
 	call IssuePointOrderById(dummyCaster, 852224, x, y)
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set whichUnit = null
 	set dummyCaster = null
 	set t = null
@@ -67930,7 +67836,7 @@ function N_A takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	call SetUnitState((LoadUnitHandle(HY, h, 26)), UNIT_STATE_MANA,(LoadReal(HY, h, 242)))
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	return false
 endfunction
@@ -68000,7 +67906,7 @@ function N3A takes nothing returns boolean
 		call UnitAddStateBonus(targetUnit, c, UNIT_BONUS_ARMOR)
 		call SaveInteger(HY,(GetHandleId((targetUnit))),(4290), 2)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		if GetTriggerUnit() == targetUnit then
 			call KillUnit(whichUnit)
 		endif
@@ -68075,7 +67981,7 @@ function N7A takes nothing returns boolean
 			set i = i + 1
 		endloop
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		set g = AllocationGroup(418)
 		set U2 = whichUnit
@@ -68213,12 +68119,12 @@ function N9A takes nothing returns nothing
 			else
 				call FlushChildHashtable(OtherHashTable2,'cask')
 			endif
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 			call FlushChildHashtable(HY, h)
 		endif
 	else
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set dummyUnit = null
 	set targetUnit = null
@@ -68292,7 +68198,7 @@ function BAA takes nothing returns boolean
 	call UnitAddPermanentAbility(trigUnit,'A0NE')
 	call SetUnitAbilityLevel(trigUnit,'A0NE', level)
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set trigUnit = null
 	return false
@@ -68333,7 +68239,7 @@ function BHA takes nothing returns boolean
 	if GetTriggerEventId() == EVENT_UNIT_ISSUED_ORDER then
 		if GetIssuedOrderId()== 852178 then
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 			set t = CreateTrigger()
 			set h = GetHandleId(t)
 			call SaveUnitHandle(HY, h, 14,(trigUnit))
@@ -68372,13 +68278,13 @@ function BJA takes nothing returns boolean
 		call WHV(targetUnit,'D002')
 		call DestroyEffect(LoadEffectHandle(HY, h, 32))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		if count == 4 or count == 8 or count == 12 then
 			call DestroyEffect(LoadEffectHandle(HY, h, 32))
 			if count == 12 then
 				call FlushChildHashtable(HY, h)
-				call AddTriggerToDestroyQueue(t)
+				call DestroyTrigger(t)
 			elseif count == 4 or count == 8 then
 				call DestroyEffect(LoadEffectHandle(HY, h, 32))
 				call SaveEffectHandle(HY, h, 32, AddSpecialEffectTarget("effects\\NetherInferno.mdx", targetUnit, "origin"))
@@ -68429,7 +68335,7 @@ function BQA takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local unit whichUnit =(LoadUnitHandle(HY, h, 2))
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	if GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
 		call EXStopUnit(whichUnit)
 	endif
@@ -68515,7 +68421,7 @@ function BUA takes nothing returns boolean
 		call UnitRemoveAbility(targetUnit,'B0CD')
 		call RemoveSavedHandle(HY, GetHandleId(targetUnit),'A1MI')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		// debug call SingleDebug("dest 1")
 	elseif GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
 		if GetGameTime()> BWA then
@@ -68660,7 +68566,7 @@ function B1A takes nothing returns boolean
 		call DeallocateGroup(g)
 		call DeallocateGroup(IQI)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call ShowUnit(dummyCaster, false)
 		set t = null
 		set whichUnit = null
@@ -68723,7 +68629,7 @@ function B2A takes nothing returns boolean
 		call UnitRemoveAbility(targetUnit,'A1J9')
 		call UnitRemoveAbility(targetUnit,'B0CC')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif i == 8 or i == 16 or i == 25 or i == 34 then
 		call DestroyEffect(LoadEffectHandle(HY, h, 32))
 		call SaveEffectHandle(HY, h, 32, AddSpecialEffectTarget("war3mapImported\\ShivasEnchantment.mdx", targetUnit, "overhead"))
@@ -68733,7 +68639,7 @@ function B2A takes nothing returns boolean
 		call UnitRemoveAbility(targetUnit,'A1J9')
 		call UnitRemoveAbility(targetUnit,'B0CC')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call CommonUnitAddStun(targetUnit, .5 + .75 * level, false)
 	endif
 	set t = null
@@ -68815,7 +68721,7 @@ function B6A takes nothing returns boolean
 		call DestroyFogModifier(fm)
 		set fm = null
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call KillUnit(missileDummy)
 		set U2 = whichUnit
 		set M9V = whichUnit
@@ -68900,7 +68806,7 @@ function B8A takes nothing returns boolean
 	call SetUnitY(missileDummy, y)
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH or(GetTriggerEventId() == EVENT_PLAYER_UNIT_SPELL_EFFECT and GetSpellAbilityId()=='A1MN') or x != B9A or y != CVA then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call RemoveUnit(missileDummy)
 		set PJZ= RMinBJ(25+250+50*DRI,1000)
 		set s = ""
@@ -68966,11 +68872,11 @@ function CEA takes nothing returns boolean
 				call UnitDamageTargetEx(whichUnit, targetUnit, 1, 40 + 10* level)
 			endif
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		endif
 	else
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set whichUnit = null
@@ -68985,7 +68891,7 @@ function COA takes nothing returns boolean
 	if GetTriggerEventId()!= EVENT_PLAYER_UNIT_ATTACKED or(LoadInteger(HY, GetHandleId(whichUnit), 449)) == 0 or GetUnitAbilityLevel(whichUnit,'A1HN') == 0 then
 		call SaveInteger(HY, GetHandleId(whichUnit), 449, 0)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call UnitRemoveAbility(whichUnit,'A1HN')
 		call UnitRemoveAbility(whichUnit,'B0CJ')
 	elseif GetAttacker() == whichUnit and(LoadInteger(HY, GetHandleId(whichUnit), 4289)!= 1) then
@@ -69049,7 +68955,7 @@ function CIA takes nothing returns nothing
 		call UnitRemoveAbility(u,'A1HN')
 		call UnitRemoveAbility(u,'B0CJ')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set u = null
 	set t = null
@@ -69110,7 +69016,7 @@ function CBA takes nothing returns boolean
 	local boolean b = LoadBoolean(HY, h, 0)
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		set whichUnit = null
 		return false
 	else
@@ -69120,7 +69026,7 @@ function CBA takes nothing returns boolean
 			call TriggerRegisterTimerEvent(t, .1, true)
 		elseif i == 10 then
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		endif
 		call GBX(whichUnit)
 		set g = AllocationGroup(427)
@@ -69353,7 +69259,7 @@ function CJA takes nothing returns boolean
 			call SetHeroInt(targetUnit, GetHeroInt(targetUnit, false)+ int, true)
 		endif
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set whichUnit = null
@@ -69412,7 +69318,7 @@ function CLA takes nothing returns boolean
 		call CKA(u, target)
 	endif
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set target = null
 	return false
@@ -69452,7 +69358,7 @@ function CSA takes nothing returns boolean
 	if GIX > 100  or count >(3.5 / .03) or IsUnitMagicImmune(targetUnit) or GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call DestroyLightning(APX)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		call MoveLightning(APX, true, sx, sy, tx, ty)
 		if GetDistanceBetween(sx, sy, tx, ty)> 325 then
@@ -69543,7 +69449,7 @@ function CUA takes nothing returns boolean
 			call CTA(whichUnit, targetUnit, level)
 		endif
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set whichUnit = null
@@ -69639,11 +69545,11 @@ function C7A takes nothing returns boolean
 	if GetTriggerEventId() == EVENT_UNIT_SPELL_ENDCAST then
 		call FIX(targetUnit)
 		call FlushChildHashtable(HY,(h))
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif r <= 0 then
 		call FIX(targetUnit)
 		call FlushChildHashtable(HY,(h))
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call EXStopUnit(whichUnit)
 	else
 		call SaveReal(HY, h, 0, r)
@@ -69709,7 +69615,7 @@ function C9A takes nothing returns boolean
 		call WHV(targetUnit,'D011')
 		call DestroyEffect((LoadEffectHandle(HY, h, 32)))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	if GetTriggerEventId()!= EVENT_WIDGET_DEATH then
 		call UnitDamageTargetEx(whichUnit, targetUnit, 1, 10+(level -1)* 20)
@@ -69796,7 +69702,7 @@ function DRA takes nothing returns boolean
 		call SetUnitPathing(whichUnit, true)
 		call DeallocateGroup(CNO)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		if ModuloInteger(count, 10) == 0 then
 			call KillTreeByCircle(x, y, 200)
@@ -69872,7 +69778,7 @@ function DCA takes nothing returns boolean
 	local group g
 	if GetTriggerEventId() == EVENT_UNIT_DEATH then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		set U2 = whichUnit
 		set POV = whichUnit
@@ -69897,7 +69803,7 @@ function DDA takes nothing returns boolean
 	local real y = LoadReal(HY, h, 7)
 	if GetTriggerEventId() == EVENT_UNIT_DEATH then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif GetTriggerEventId() == EVENT_UNIT_DAMAGED then
 		if AD > 0 or IsUnitIllusion(GetEventDamageSource()) then
 			call SetUnitToReduceDamage(DFA, GetEventDamage())
@@ -69943,7 +69849,7 @@ function DGA takes nothing returns boolean
 		call ShowUnit(DHA, false)
 		call ShowUnit(DJA, false)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call ShowUnit(whichUnit, true)
 		call UnitRemoveAbility(whichUnit,'A04R')
 		call SetUnitInvulnerable(whichUnit, false)
@@ -69987,7 +69893,7 @@ function DGA takes nothing returns boolean
 			call StartSound(OF)
 			call DestroyEffect(AddSpecialEffect("war3mapImported\\FireNova2.mdx", GetUnitX(DHA), GetUnitY(DHA)))
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 			call ShowUnit(whichUnit, true)
 			call UnitRemoveAbility(whichUnit,'A04R')
 			call GBX(targetUnit)
@@ -70524,7 +70430,7 @@ function D6A takes nothing returns boolean
 	if GetDistanceBetween(x, y, tx, ty)< r * 2 then
 		call D5A(whichUnit, D7A, x, y, level)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set whichUnit = null
@@ -70599,7 +70505,7 @@ function FVA takes nothing returns boolean
 					call SetPlayerAbilityAvailableEx(GetOwningPlayer(whichUnit),'A1YX', true)
 				endif
 				call FlushChildHashtable(HY, h)
-				call AddTriggerToDestroyQueue(t)
+				call DestroyTrigger(t)
 			endif
 		elseif GetSpellAbilityId()=='A1RK' or GetSpellAbilityId()=='A43H' then
 			if FEA != null and UnitIsDead(FEA) == false then
@@ -70619,7 +70525,7 @@ function FVA takes nothing returns boolean
 				call SetPlayerAbilityAvailableEx(GetOwningPlayer(whichUnit),'A1YX', true)
 			endif
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		endif
 	else
 		set count = count + 1
@@ -70678,7 +70584,7 @@ function FVA takes nothing returns boolean
 				call SetPlayerAbilityAvailableEx(GetOwningPlayer(whichUnit),'A1YX', true)
 			endif
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		else
 			call SaveReal(HY, h, 685, RMinBJ(.25 + .75 *(I2R(count)/ 500.), 1))
 			if count == 625 then
@@ -70780,14 +70686,14 @@ function FIA takes nothing returns boolean
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call DestroyEffect((LoadEffectHandle(HY, h, 32)))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call SaveInteger(HY,(GetHandleId(targetUnit)), 627, 0)
 		call SaveReal(HY,(GetHandleId(targetUnit)), 628,(0 * 1.))
 	elseif GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT then
 		if GetSpellAbilityId()=='A1S9' then
 			call DestroyEffect((LoadEffectHandle(HY, h, 32)))
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 			call SaveInteger(HY,(GetHandleId(targetUnit)), 627, 0)
 			call SaveReal(HY,(GetHandleId(targetUnit)), 628,(0 * 1.))
 			if ((LoadInteger(HY,(GetHandleId((targetUnit))),(4293))) == 1) then
@@ -70802,7 +70708,7 @@ function FIA takes nothing returns boolean
 	elseif (GetGameTime())> FAA then
 		call DestroyEffect((LoadEffectHandle(HY, h, 32)))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call SaveInteger(HY,(GetHandleId(targetUnit)), 627, 0)
 		call SaveReal(HY,(GetHandleId(targetUnit)), 628,(0 * 1.))
 		if ((LoadInteger(HY,(GetHandleId((targetUnit))),(4293))) == 1) then
@@ -70871,7 +70777,7 @@ function FCA takes nothing returns boolean
 		call DeallocateGroup(CNO)
 		call KillUnit(missileDummy)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		set U2 = whichUnit
 		set PIV = whichUnit
@@ -70938,7 +70844,7 @@ function FJA takes nothing returns boolean
 	else
 		call DestroyEffect(LoadEffectHandle(HY, h, 32))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	return false
@@ -70995,7 +70901,7 @@ function time_effect_demonic_purge takes nothing returns boolean
 			call SetUnitInvulnerable(stg_u, true)
 		endif
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set trigUnit = null
@@ -71129,7 +71035,7 @@ function FUA takes nothing returns boolean
 		call UnitRemoveAbility(LoadUnitHandle(HY, h, 2),'A1SP')
 		call KillUnit(LoadUnitHandle(HY, h, 19))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		call SetUnitX(LoadUnitHandle(HY, h, 19), GetUnitX(LoadUnitHandle(HY, h, 2)))
 		call SetUnitY(LoadUnitHandle(HY, h, 19), GetUnitY(LoadUnitHandle(HY, h, 2)))
@@ -71176,7 +71082,7 @@ function FWA takes nothing returns boolean
 		call UnitShareVision(missileDummy, GetOwningPlayer(targetUnit), false)
 		call DestroyEffect(LoadEffectHandle(HY, h, 32))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		if GetTriggerUnit()!= missileDummy then
 			call KillUnit(missileDummy)
 		endif
@@ -71202,7 +71108,7 @@ function FWA takes nothing returns boolean
 			call KillUnit(missileDummy)
 			call DestroyEffect(LoadEffectHandle(HY, h, 32))
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 			call UnitDamageTargetEx(whichUnit, targetUnit, 1, F0X)
 			call CommonUnitAddStun(targetUnit, 2 + .2 * x, false)
 		endif
@@ -71316,7 +71222,7 @@ function FZA takes nothing returns boolean
 		call FogModifierStop(fm)
 		call DestroyFogModifier(fm)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set whichUnit = null
@@ -71367,11 +71273,11 @@ function F_A takes nothing returns boolean
 				call SaveInteger(HY, F0A, 34, count + 1)
 			endif
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		endif
 	else
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set whichUnit = null
@@ -71383,7 +71289,7 @@ function F1A takes nothing returns boolean
 	local unit whichUnit = LoadUnitHandle(HY, h, 2)
 	if R5X(whichUnit) == false then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call UnitRemoveAbility(whichUnit,'A237')
 		call UnitAddAbility(whichUnit,'A22B')
 		call UnitRemoveAbility(whichUnit,'A22B')
@@ -71427,7 +71333,7 @@ function F3A takes nothing returns boolean
 				call UnitRemoveAbility(whichUnit,'B0DJ')
 				call F2A(whichUnit)
 				call FlushChildHashtable(HY, h)
-				call AddTriggerToDestroyQueue(t)
+				call DestroyTrigger(t)
 			else
 				set t = CreateTrigger()
 				set h = GetHandleId(t)
@@ -71443,7 +71349,7 @@ function F3A takes nothing returns boolean
 		call UnitRemoveAbility(whichUnit,'B0DJ')
 		call F2A(whichUnit)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set whichUnit = null
@@ -71512,7 +71418,7 @@ function F5A takes nothing returns boolean
 		endloop
 		call DestroyEffect(LoadEffectHandle(HY, h, 32))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		set g = AllocationGroup(442)
 		set PBV = sx
@@ -71547,7 +71453,7 @@ function F6A takes nothing returns boolean
 	local integer level = LoadInteger(HY, h, 0)
 	call DestroyEffect(LoadEffectHandle(HY, h, 32))
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = CreateTrigger()
 	set h = GetHandleId(t)
 	loop
@@ -71606,7 +71512,7 @@ function F7A takes nothing returns boolean
 		call DestroyEffect((LoadEffectHandle(HY, h, 175)))
 		call DestroyEffect((LoadEffectHandle(HY, h, 176)))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call EPX(targetUnit, 4411, 1)
 		call SetUnitPosition(targetUnit, tx, ty)
 		call PanCameraToTimedForPlayer(GetOwningPlayer(targetUnit), tx, ty, 0)
@@ -71615,7 +71521,7 @@ function F7A takes nothing returns boolean
 		call DestroyEffect((LoadEffectHandle(HY, h, 175)))
 		call DestroyEffect((LoadEffectHandle(HY, h, 176)))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set targetUnit = null
@@ -71728,7 +71634,7 @@ function GXA takes nothing returns boolean
 		call UnitRemoveAbility(targetUnit,'B0HH')
 		call KillUnit(dummyCaster)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set whichUnit = null
@@ -71779,11 +71685,11 @@ function Disruptor_StaticStormClear takes nothing returns nothing
 	local unit u = LoadUnitHandle(HY, GetHandleId(t), 0)
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call FlushChildHashtable(HY, GetHandleId(t))
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		if GetUnitAbilityLevel(u,'B0DL') == 0 then
 			call FlushChildHashtable(HY, GetHandleId(t))
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		endif
 	endif
 	set t = null
@@ -71819,7 +71725,7 @@ function GNA takes nothing returns boolean
 		call ShowUnit(missileDummy, false)
 		call KillUnit(dummyCaster)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		set g = AllocationGroup(445)
 		set U2 = whichUnit
@@ -72015,7 +71921,7 @@ function GKA takes nothing returns boolean
 			call UnitRemoveAbility(whichUnit,'A24B')
 		endif
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		if UnitIsDead(GLA) == false then
 			call GHA(whichUnit, GLA)
 		endif
@@ -72227,7 +72133,7 @@ function GYA takes unit u returns nothing
 		call SaveBoolean(ExtraHT, GetHandleId(u), HTKEY_DAMAGE_OVERCHARGE,(false))
 		//set t =(LoadTriggerHandle(HY,(GetHandleId(u)), 709))
 		//call FlushChildHashtable(HY,(GetHandleId(t)))
-		//call AddTriggerToDestroyQueue(t)
+		//call DestroyTrigger(t)
 		//call RemoveSavedHandle(HY,(GetHandleId(u)), 709)
 		//set t = null
 	endif
@@ -72238,7 +72144,7 @@ function GZA takes nothing returns boolean
 	local unit whichUnit =(LoadUnitHandle(HY, h, 2))
 	call GYA(whichUnit)
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set whichUnit = null
 	return false
@@ -72397,7 +72303,7 @@ function G7A takes nothing returns boolean
 		set l = null
 		call DestroyEffect((LoadEffectHandle(HY, h, 32)))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call SaveInteger(HY,(GetHandleId((whichUnit))),(4295), 2)
 	else
 		if IsUnitType(whichUnit, UNIT_TYPE_HERO) then
@@ -72436,7 +72342,7 @@ function G8A takes nothing returns boolean
 		call UnitRemoveAbility(targetUnit,'A1TN')
 		call UnitRemoveAbility(targetUnit,'B0DH')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call UnitRemoveAbility(whichUnit,'A1TM')
 		call UnitRemoveAbility(whichUnit,'A1TL')
 		call UnitRemoveAbility(whichUnit,'A1TK')
@@ -72576,7 +72482,7 @@ function HNA takes nothing returns boolean
 	endif
 	if count == 12 then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set whichUnit = null
@@ -72599,7 +72505,7 @@ function HBA takes nothing returns boolean
 		call FogModifierStop(fm)
 		call DestroyFogModifier(fm)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		call KillTreeByCircle(tx, ty, 250)
 		call KillTreeByCircle(sx, sy, 250)
@@ -72641,7 +72547,7 @@ function HBA takes nothing returns boolean
 			call FogModifierStop(fm)
 			call DestroyFogModifier(fm)
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		endif
 	endif
 	set t = null
@@ -72662,13 +72568,13 @@ function HCA takes nothing returns boolean
 		call SaveInteger(HY,(GetHandleId((whichUnit))),(4294), 2)
 		call DestroyEffect((LoadEffectHandle(HY, h, 32)))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif GetTriggerEvalCount(t)==(2.75 -0.25 * level)/ .05 then
 		set fm = null
 		call FogModifierStart(fm)
 		call DestroyEffect((LoadEffectHandle(HY, h, 32)))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		set t = CreateTrigger()
 		set h = GetHandleId(t)
 		call SaveUnitHandle(HY, h, 2,(whichUnit))
@@ -72821,7 +72727,7 @@ function HHA takes nothing returns boolean
 		call HDA(whichUnit, null, nx, ny, I3X * bj_RADTODEG)
 		call DeallocateGroup(gg)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set whichUnit = null
 	set targetUnit = null
@@ -72891,7 +72797,7 @@ function HMA takes nothing returns boolean
 		endif
 		call DestroyEffect(LoadEffectHandle(HY, h, 175))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call CNX(targetUnit,'A204', 1, 1 + level,'B0DY')
 		call SetPlayerAbilityAvailableEx(GetOwningPlayer(targetUnit),'A204', false)
 	endif
@@ -72948,22 +72854,22 @@ function HSA takes nothing returns boolean
 			if GetEventDamageSource() == u and EXGetEventDamageData(1) != 0 and FK then
 				call CXX(u,'A1UH', 1, .1)
 				call DestroyEffect(eff)
-				call AddTriggerToDestroyQueue(t2)
+				call DestroyTrigger(t2)
 				call FlushChildHashtable(HY, h2)
-				call AddTriggerToDestroyQueue(t)
+				call DestroyTrigger(t)
 				call FlushChildHashtable(HY, h)
 				call HPA(u, target, LoadInteger(HY, h2, 0))
 			endif
 		elseif GetTriggerEventId() == EVENT_PLAYER_UNIT_ATTACKED then
 			if GetAttacker() == u and GetTriggerUnit()!= target then
 				call FlushChildHashtable(HY, h2)
-				call AddTriggerToDestroyQueue(t2)
+				call DestroyTrigger(t2)
 			endif
 		else
 			call UnitRemoveAbility(u,'A1UH')
 			call RemoveSavedHandle(HY, h, 17)
 			call FlushChildHashtable(HY, h2)
-			call AddTriggerToDestroyQueue(t2)
+			call DestroyTrigger(t2)
 		endif
 	endif
 	set t2 = null
@@ -72985,7 +72891,7 @@ function HUA takes nothing returns boolean
 		call DestroyEffect(eff)
 		call UnitRemoveAbility(u,'A1UH')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif GetAttacker() == u and GetTriggerUnit()!=(LoadUnitHandle(HY, h, 17)) and IsUnitAlly(GetTriggerUnit(), GetOwningPlayer(u)) == false and IsUnitType(GetTriggerUnit(), UNIT_TYPE_STRUCTURE) == false and GetUnitTypeId(u)!='N0MH' then
 		set target = GetTriggerUnit()
 		call SaveUnitHandle(HY, h, 17, target)
@@ -73072,7 +72978,7 @@ function HWA takes nothing returns boolean
 	if X_A then
 		call SetUnitPathing(targetUnit, true)
 		call FlushChildHashtable(HY,(h))
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set targetUnit = null
 	set t = null
@@ -73203,7 +73109,7 @@ function H5A takes nothing returns boolean
 		call DeallocateGroup(g)
 		call DeallocateGroup(CNO)
 		call KillUnit(d)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		if GetUnitAbilityLevel(targetUnit,'A3E9') == 1 and IsUnitMagicImmune(u) == false then
 			call SaveUnitHandle(OtherHashTable2,'A3E9', 0, targetUnit)
 			call SaveUnitHandle(OtherHashTable2,'A3E9', 1, u)
@@ -73345,7 +73251,7 @@ function JXA takes nothing returns boolean
 	else
 		call DestroyEffect(AddSpecialEffect("Abilities\\Weapons\\FrostWyrmMissile\\FrostWyrmMissile.mdl", GetUnitX(JOA), GetUnitY(JOA)))
 		call FlushChildHashtable(HY,(h))
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set JOA = null
@@ -73384,7 +73290,7 @@ function JAA takes nothing returns boolean
 	local unit dummyCaster =(LoadUnitHandle(HY, h, 19))
 	if GetTriggerEventId() == EVENT_UNIT_DEATH then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif GetTriggerEventId() == EVENT_UNIT_DAMAGED and FK then
 		set QEV = GetEventDamageSource()
 	else
@@ -73406,7 +73312,7 @@ function JNA takes nothing returns boolean
 	local unit targetUnit =(LoadUnitHandle(HY, h, 17))
 	if GetTriggerEventId() == EVENT_UNIT_DEATH then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif GetTriggerEventId() == EVENT_UNIT_DAMAGED then
 		set QEV = GetEventDamageSource()
 	endif
@@ -73580,7 +73486,7 @@ function JHA takes nothing returns boolean
 		call DestroyEffect(LoadEffectHandle(HY, h, 32))
 		call DestroyEffect(LoadEffectHandle(HY, h, 176))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		if O0X(targetUnit) == false then
 			call SetUnitFlyHeight(targetUnit, GetUnitDefaultFlyHeight(targetUnit), 0)
 		endif
@@ -73632,7 +73538,7 @@ function JPA takes nothing returns boolean
 		call SetPlayerAbilityAvailableEx(GetOwningPlayer(whichUnit),'A27X', false)
 		call JJA(whichUnit, targetUnit, LoadUnitHandle(HY, h, 711), tx, ty, LoadEffectHandle(HY, h, 32), LoadEffectHandle(HY, h, 176), LoadInteger(HY, h, 0))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT then
 		if GetSpellAbilityId()=='A27X' then
 			call DestroyEffect((LoadEffectHandle(HY, h, 176)))
@@ -73680,7 +73586,7 @@ function JPA takes nothing returns boolean
 			call SetPlayerAbilityAvailableEx(GetOwningPlayer(whichUnit),'A27X', false)
 			call JJA(whichUnit, targetUnit, LoadUnitHandle(HY, h, 711), tx, ty, LoadEffectHandle(HY, h, 32), LoadEffectHandle(HY, h, 176), LoadInteger(HY, h, 0))
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		endif
 	endif
 	set t = null
@@ -73792,7 +73698,7 @@ function JWA takes nothing returns boolean
 	if QXV == null or GetTriggerEvalCount(t)> 26 then
 		call DeallocateGroup(D7R)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		set targetUnit = QXV
 		call SaveUnitHandle(HY, h, 17, targetUnit)
@@ -73870,11 +73776,11 @@ function J1A takes nothing returns boolean
 	local integer time = (LoadInteger(HY, h, 713))
 	if id ==(LoadInteger(HY,(GetHandleId(u)), 704) ) then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif GetTriggerEvalCount(t)>(15 - time) and UnitAlive(u) then
 		call UnitRemoveAbility(u, id)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set u = null
@@ -73906,7 +73812,7 @@ function J5A takes nothing returns boolean
 			//call BYR(u)
 			call SetPlayerAbilityAvailableEx(GetOwningPlayer(u), id, false)
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 			call J4A(u, id, r)
 		endif
 	elseif GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT then
@@ -73916,7 +73822,7 @@ function J5A takes nothing returns boolean
 				call J4A(u, id, r)
 			endif
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		elseif GetSpellAbilityId() == id then
 		//if GetSpellAbilityId() == id then
 			call SaveReal(HY, h, 411, GetGameTime()* 1.)
@@ -73925,7 +73831,7 @@ function J5A takes nothing returns boolean
 		//call BYR(u)
 		call SetPlayerAbilityAvailableEx(GetOwningPlayer(u), id, false)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call J4A(u, id, r)
 	endif
 	set t = null
@@ -74181,7 +74087,7 @@ function KAAA takes nothing returns boolean
 	local group g = AllocationGroup(461)
 	if whichUnit == null then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call DeallocateGroup(g)
 		return false
 	endif
@@ -74209,7 +74115,7 @@ function KAA takes nothing returns boolean
 	local group g = AllocationGroup(462)
 	if whichUnit == null or GetUnitTypeId(whichUnit) == 0 then //or GetUnitTypeId(whichUnit)!='E02X' 
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call ForGroup(IQI, function KRA)
 		call DeallocateGroup(IQI)
 		call DeallocateGroup(g)
@@ -74311,7 +74217,7 @@ function KCA takes nothing returns nothing
 	endif
 	call DestroyTimer(tt)
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set tt = null
 	set t = null
 endfunction
@@ -74369,7 +74275,7 @@ function KJA takes nothing returns boolean
 	if (GetUnitAbilityLevel(whichUnit,'B0FP') == 0 and GetUnitAbilityLevel(whichUnit,'B0FQ') == 0) or(GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT and GetSpellAbilityId()=='A2HS') then
 		call DestroyEffect(LoadEffectHandle(HY, h, 32))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call UnitRemoveAbility(whichUnit,'A2H7')
 		call UnitRemoveAbility(whichUnit,'B0FO')
 		call UnitRemoveAbility(whichUnit,'A2IX')
@@ -74479,7 +74385,7 @@ function K2A takes nothing returns boolean
 	endif
 	if GetTriggerEvalCount(t) == KLR then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	call UnitDamageTargetEx(whichUnit, targetUnit, 1, 20 + 20 * level)
 	set t = null
@@ -74720,7 +74626,7 @@ function LBA takes nothing returns boolean
 		call DestroyEffect((LoadEffectHandle(HY, h, 176)))
 		call DestroyEffect((LoadEffectHandle(HY, h, 177)))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif d < 2 then
 		call FireRemnatTimeText(L3R , 45 - GetTriggerEvalCount(t) * .02)
 		call SetUnitAnimationByIndex(L3R, 1)
@@ -74859,7 +74765,7 @@ function LKA takes nothing returns boolean
 		call DestroyEffect((LoadEffectHandle(HY, h, 176)))
 		call DestroyEffect((LoadEffectHandle(HY, h, 177)))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif d < VEI then
 		call SetUnitX(whichUnit, tx)
 		call SetUnitY(whichUnit,(ty))
@@ -74880,7 +74786,7 @@ function LKA takes nothing returns boolean
 			call DestroyEffect((LoadEffectHandle(HY, h, 176)))
 			call DestroyEffect((LoadEffectHandle(HY, h, 177)))
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		else
 			call SaveInteger(HY, h, 34,(count + 1))
 			call SaveUnitHandle(HY, h, 19,(L3R))
@@ -74915,7 +74821,7 @@ function LLA takes nothing returns boolean
 	local unit whichUnit =(LoadUnitHandle(HY, h, 2))
 	call SetUnitState(whichUnit, UNIT_STATE_MANA, GetUnitState(whichUnit, UNIT_STATE_MANA)+ 100)
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set whichUnit = null
 	return false
@@ -75018,7 +74924,7 @@ function LQA takes nothing returns boolean
 	local unit whichUnit =(LoadUnitHandle(HY, h, 2))
 	local integer CVX =(LoadInteger(HY, h, 59))
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	call UnitRemoveAbility(whichUnit, CVX)
 	call UnitRemoveAbility(whichUnit,'B0FJ')
 	call UnitRemoveAbility(whichUnit,'B0FK')
@@ -75143,7 +75049,7 @@ function UnitRemoveLocked takes unit whichUnit returns nothing
 		if buffCount == 0 then
 			call RemoveSavedHandle( ExtraHT, uHandleId, HTKEY_LOCKED_BUFF_TRIGGER )
 			call FlushChildHashtable( HY, tHandleId )
-			call AddTriggerToDestroyQueue( trig )
+			call DestroyTrigger( trig )
 		else
 			call SaveInteger( HY, tHandleId, 0, buffCount )
 		endif
@@ -75190,7 +75096,7 @@ function LZA takes nothing returns boolean
 		call UnitRemoveAbility(targetUnit,'A467')
 		call UnitRemoveAbility(targetUnit,'B467')
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call SetUnitPathing(whichUnit, true)
 		call SetUnitPathing(targetUnit, true)
 	elseif GetIssuedOrderId()!= 851973 then
@@ -75284,7 +75190,7 @@ function L1A takes nothing returns boolean
 		call UnitRemoveAbility(targetUnit,'A2J4')
 		call FlushChildHashtable(HY, h)
 		call RemoveSavedHandle(HY, GetHandleId(targetUnit),'A2J2')
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		call SetWidgetLife(targetUnit, GetWidgetLife(targetUnit)+ 2 + 1 * level)
 		if ModuloInteger(count, 10) == 1 then
@@ -75416,7 +75322,7 @@ function L6A takes nothing returns boolean
 	if GetTriggerEvalCount(t)> 20 then
 		call DestroyEffect((LoadEffectHandle(HY, h, 32)))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	else
 		set g = AllocationGroup(471)
 		set U2 = u
@@ -75510,7 +75416,7 @@ function MVA takes nothing returns boolean
 	call UnitRemoveAbility(targetUnit,'A2HY')
 	call UnitRemoveAbility(targetUnit,'A2HZ')
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set targetUnit = null
 	set t = null
 	return false
@@ -75604,7 +75510,7 @@ function MAA takes nothing returns boolean
 		call SetHeroStr(targetUnit, GetHeroStr(targetUnit, false)+ MBA, true)
 		call SetHeroInt(targetUnit, GetHeroInt(targetUnit, false)+ JLI, true)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set targetUnit = null
@@ -75729,7 +75635,7 @@ function MHA takes nothing returns boolean
 		call KillTreeByCircle(GetUnitX(trigUnit), GetUnitY(trigUnit), 90)
 		call DeallocateGroup(KHR)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set trigUnit = null
@@ -75772,7 +75678,7 @@ function MLA takes nothing returns boolean
 	call SaveUnitHandle(HY, KSR, 700 + count, KPR)
 	if QYV > 0 then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call TriggerRegisterTimerEvent(KQR, .5 / KLR, true)
 		call TriggerAddCondition(KQR, Condition(function MHA))
 		call SaveInteger(HY, KSR, 18, count)
@@ -75785,7 +75691,7 @@ function MLA takes nothing returns boolean
 		call SaveBoolean(HY, KSR, 740, false)
 	elseif count > KLR then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call TriggerRegisterTimerEvent(KQR, .5 / KLR, true)
 		call TriggerAddCondition(KQR, Condition(function MHA))
 		call SaveInteger(HY, KSR, 18, count)
@@ -75839,7 +75745,7 @@ function MMA takes nothing returns boolean
 		call SetAbilitydataD(u,'QP1P', LoadInteger(HY, uh,'A2E5'))
 	endif
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set u = null
 	return false
@@ -75875,7 +75781,7 @@ function MTA takes nothing returns boolean
 	call UnitRemoveAbility(whichUnit,'BEia')
 	call UnitRemoveAbility(whichUnit,'BNms')
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set whichUnit = null
 	return false
@@ -75983,7 +75889,7 @@ function M1A takes nothing returns boolean
 		call KillUnit(missileDummy)
 		call DeallocateGroup(D7R)
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif M2A == 0 then //前进
 		set a = AngleBetweenXY(GetUnitX(missileDummy), GetUnitY(missileDummy), tx, ty)* bj_DEGTORAD
 		set x = GetUnitX(missileDummy)+ 18 * Cos(a)
@@ -76053,7 +75959,7 @@ function M1A takes nothing returns boolean
 			call KillUnit(missileDummy)
 			call DeallocateGroup(D7R)
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 			if Rubick_AbilityFilter(whichUnit , 'A2E5') or(LoadInteger(HY,(GetHandleId(whichUnit)), 704)) == FJI then
 				if FJI =='A43Q' then
 					//这里判断一下是否选了此技能 没选并且是偷的就可以重新显示
@@ -76350,7 +76256,7 @@ function PEA takes unit u, integer TPE, integer PXA returns boolean
 		set xx = xx + 1
 	exitwhen xx > 6
 	endloop
-	if CheckAbilityIdFormIndex(PXA,-1, "metamorphosis", null) and(UnitTypeIsMetamorphosis(u) or LoadBoolean(ObjectHashTable, GetHandleId(u),'A40K') or LoadBoolean(ObjectHashTable, GetHandleId(u),'A40K'+ 1) or LoadBoolean(ObjectHashTable, GetHandleId(u),'A40K'+ 2) or LoadBoolean(ObjectHashTable, GetHandleId(u),'A40K'+ 3)) then
+	if CheckAbilityIdFormIndex(PXA,-1, "metamorphosis", null) and(IsUnitMetamorphosis(u) or LoadBoolean(ObjectHashTable, GetHandleId(u),'A40K') or LoadBoolean(ObjectHashTable, GetHandleId(u),'A40K'+ 1) or LoadBoolean(ObjectHashTable, GetHandleId(u),'A40K'+ 2) or LoadBoolean(ObjectHashTable, GetHandleId(u),'A40K'+ 3)) then
 		return false
 	endif
 	if (LoadInteger(ObjectHashTable, GetHandleId(u),'A40K') == TPE or LoadInteger(ObjectHashTable, GetHandleId(u),'A40K'+ 1) == TPE or LoadInteger(ObjectHashTable, GetHandleId(u),'A40K'+ 2) == TPE or LoadInteger(ObjectHashTable, GetHandleId(u),'A40K'+ 3) == TPE) then
@@ -76868,7 +76774,7 @@ function PTA takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local unit PUA =(LoadUnitHandle(HY, h, 17))
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	call FlushChildHashtable(HY,(GetHandleId(PUA)))
 	call RemoveUnit(PUA)
 	set t = null
@@ -76880,7 +76786,7 @@ function PWA takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local unit PUA =(LoadUnitHandle(HY, h, 2))
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	call FlushChildHashtable(HY,(GetHandleId(PUA)))
 	call ShowUnit(PUA, false)
 	set t = null
@@ -76895,7 +76801,7 @@ function PYA takes nothing returns boolean
 	local integer level = GetUnitAbilityLevel(whichUnit,'A2M0')
 	if GetTriggerEvalCount(t)== 200 or GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call KillUnit(PUA)
 		call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Orc\\FeralSpirit\\feralspirittarget.mdl", GetUnitX(PUA), GetUnitX(PUA)))
 		set t = CreateTrigger()
@@ -77055,7 +76961,7 @@ function P2A takes nothing returns nothing
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	if GetTriggerEventId()!= EVENT_UNIT_DAMAGED then
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call FlushChildHashtable(ObjectHashTable, h)
 		set t = null
 		return
@@ -77065,7 +76971,7 @@ function P2A takes nothing returns nothing
 		if P_A(GetTriggerUnit()) == false then
 			call P1A(u, GetTriggerUnit(), LoadInteger(ObjectHashTable, h, 0)-1)
 		endif
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call FlushChildHashtable(ObjectHashTable, h)
 	endif
 	set t = null
@@ -77170,7 +77076,7 @@ function QEA takes nothing returns boolean
 		call KillUnit(HJA)
 		call P9A(whichUnit, targetUnit, LoadInteger(HY, h, 0), LoadBoolean(HY, h, 0))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	endif
 	set t = null
 	set targetUnit = null
@@ -77332,7 +77238,7 @@ function QBA takes nothing returns boolean
 			call DeallocateGroup(g)
 			call DestroyEffect((LoadEffectHandle(HY, h, 176)))
 			call FlushChildHashtable(HY, h)
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		else
 			set FG = t
 			set GG = targetUnit
@@ -77697,7 +77603,7 @@ function QSA takes nothing returns nothing
 		set d = null
 	endif
 	call FlushChildHashtable(HY, h)
-	call AddTriggerToDestroyQueue(t)
+	call DestroyTrigger(t)
 	set t = null
 	set whichUnit = null
 	set QTA = null
@@ -78409,7 +78315,7 @@ function TUA takes nothing returns nothing
 		call PauseTimer(LoadTimerHandle(HY, h, 3))
 		call DestroyTimer(LoadTimerHandle(HY, h, 3))
 		call FlushChildHashtable(HY, h)
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		set LX = LX -1
 	endif
 	set t = null
@@ -78942,7 +78848,7 @@ function RegisterHeroEventWait0sFilter takes nothing returns boolean
 		endif
 	endif
 	call FlushChildHashtable(HY, iHandleId)
-	call AddTriggerToDestroyQueue(trig)
+	call DestroyTrigger(trig)
 	set whichUnit = null
 	set trig = null
 	return false
@@ -80045,12 +79951,12 @@ function YCA takes nothing returns boolean //辉耀，此物品本身自带龙�
 	if GetTriggerEventId() == EVENT_UNIT_DROP_ITEM then
 		if GetManipulatedItem() == LoadItemHandle(HY, h , 96) then
 			call FlushChildHashtable(HY,(h))
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		endif
 	else
 		if u == null then
 			call FlushChildHashtable(HY,(h))
-			call AddTriggerToDestroyQueue(t)
+			call DestroyTrigger(t)
 		endif
 		if UnitAlive(u) then
 			set g = AllocationGroup(495)
@@ -80114,7 +80020,7 @@ function YJA takes nothing returns boolean
 	local group gg
 	if u == null or(GetTriggerEventId() == EVENT_UNIT_DROP_ITEM and GetManipulatedItem() == LoadItemHandle(HY,(h), 96)) then
 		call FlushChildHashtable(HY,(h))
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call ForGroup(g, function YGA)
 		call DeallocateGroup(g)
 		set t = null
@@ -80172,7 +80078,7 @@ function YQA takes nothing returns boolean
 	local group gg
 	if u == null or(GetTriggerEventId() == EVENT_UNIT_DROP_ITEM and GetManipulatedItem() == LoadItemHandle(HY,(h), 96)) then
 		call FlushChildHashtable(HY,(h))
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 		call ForGroup(g, function YMA)
 		call DeallocateGroup(g)
 		set t = null
@@ -80393,7 +80299,7 @@ function BMe takes nothing returns nothing
 	local unit u = LoadUnitHandle(HY, key, 0)
 	call RemoveSavedHandle( ExtraHT, GetHandleId(u), HTKEY_UNIT_SPLIT_ITEM0_5 + LoadInteger(HY, key, 0) )
 	call FlushChildHashtable(HY, key)
-	call AddTriggerToDestroyQueue(trg)
+	call DestroyTrigger(trg)
 	set u = null
 	set trg = null
 endfunction
@@ -80409,7 +80315,7 @@ function RightDoubleClickItemAction takes unit u, item it, integer Ez returns no
 		set key = GetHandleId(trg)
 		if Ez == LoadInteger(HY, key, 0) and it == LoadItemHandle(HY, key, 1) then
 			call FlushChildHashtable(HY, key)
-			call AddTriggerToDestroyQueue(trg)
+			call DestroyTrigger(trg)
 			call RemoveSavedHandle(ExtraHT, GetHandleId(u), HTKEY_UNIT_SPLIT_ITEM0_5 + Ez)
 			call YUA(u , it , Ez)
 		endif
@@ -85910,7 +85816,7 @@ function fj_Actions takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local unit u = GetTriggerUnit()
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH or GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
-		call AddTriggerToDestroyQueue(t)
+		call DestroyTrigger(t)
 	elseif GetTriggerEventId() == EVENT_UNIT_DAMAGED then
 		if (EXGetEventDamageData(1) != 0) and GetUnitAbilityLevel(u,'A3W0')> 0 and GetEventDamage() > 1.00 then
 			call UnitAddAbilityToTimed(u,'A3W9', 1, 0.4,'B3W9')
@@ -86982,7 +86888,6 @@ function BlzFunction_Init takes nothing returns nothing
 endfunction
 
 #include "Map\\Heroes\\include"
-#include "Map\\include.j"
 
 function main takes nothing returns nothing
 	local weathereffect we

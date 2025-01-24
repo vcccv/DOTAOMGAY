@@ -18,11 +18,11 @@ scope EmberSpirit
                 call GroupAddUnit(g, targetUnit)
                 call GroupRemoveUnit(gg, targetUnit)
                 call FlushChildHashtable(HY, h)
-                call AddTriggerToDestroyQueue(t)
+                call DestroyTrigger(t)
             endif
         else
             call FlushChildHashtable(HY, h)
-            call AddTriggerToDestroyQueue(t)
+            call DestroyTrigger(t)
         endif
         set whichUnit = null
         set targetUnit = null
@@ -144,7 +144,7 @@ scope EmberSpirit
             call FogModifierStop(fm)
             call DestroyFogModifier(fm)
             call FlushChildHashtable(HY, h)
-            call AddTriggerToDestroyQueue(t)
+            call DestroyTrigger(t)
         else
             call GroupAddUnit(targGroup, target)
             call KYA(u, target, LoadInteger(HY, h, 0) )

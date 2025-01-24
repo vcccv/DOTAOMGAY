@@ -185,7 +185,7 @@ scope Magnus
             call UnitSubNoPathingCount(whichUnit)
 
             call FlushChildHashtable(HY, h)
-            call AddTriggerToDestroyQueue(t)
+            call DestroyTrigger(t)
 
             set i   = 1
             set max = MHGroup_GetSize(targGroup)

@@ -23,7 +23,7 @@ scope ObsidianDestroyer
         call SelectUnitAddForPlayer(targetUnit, GetOwningPlayer(targetUnit))
         call RemoveSavedHandle(HY,(GetHandleId(whichUnit)), 748)
         call FlushChildHashtable(HY, h)
-        call AddTriggerToDestroyQueue(t)
+        call DestroyTrigger(t)
         set t = null
         set whichUnit = null
         set targetUnit = null

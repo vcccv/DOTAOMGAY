@@ -145,7 +145,7 @@ scope Structures
         call SetUnitVertexColorBJ(FrozenThrone, 100, 100, 100, GetTriggerEvalCount(GetTriggeringTrigger()))
         if GetTriggerEvalCount(GetTriggeringTrigger()) == 100  then
             call ShowUnit(FrozenThrone, false)
-            call AddTriggerToDestroyQueue(GetTriggeringTrigger())
+            call DestroyTrigger(GetTriggeringTrigger())
         endif
         return false
     endfunction

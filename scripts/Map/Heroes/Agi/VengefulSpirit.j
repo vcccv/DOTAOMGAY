@@ -33,7 +33,7 @@ scope VengefulSpirit
         if distance > maxDistance then
             call DeallocateGroup(targGroup)
             call FlushChildHashtable(HY, h)
-            call AddTriggerToDestroyQueue(t)
+            call DestroyTrigger(t)
         else
 
             set g = AllocationGroup(292)

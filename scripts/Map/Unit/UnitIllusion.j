@@ -1,5 +1,45 @@
 
 library UnitIllusion requires UnitUtils, UnitWeapon
+        
+    // 单位类型是否是变身单位
+    function IsUnitMetamorphosis takes unit u returns boolean
+        local integer typeId = GetUnitTypeId(u)
+        local integer abilId = 0
+        if typeId =='N01J' or typeId =='N01T' or typeId =='N0HT' or typeId =='H600' or typeId =='H601' or typeId =='H602' then
+            if Mode__BalanceOff then
+                set abilId ='ANcr'
+            else
+                set abilId ='QB0K'
+            endif
+        elseif typeId =='N017' or typeId =='N02B' or typeId =='QTW2' or typeId =='QTW3' then
+            set abilId ='A0BE'
+        elseif typeId =='N013' or typeId =='N014' or typeId =='N015' then
+            set abilId ='A0AG'
+        elseif typeId =='H00F' or typeId =='H00E' or typeId =='H00F' then
+            set abilId ='QM00'
+        elseif typeId =='E015' then
+            set abilId ='QM02'
+        elseif typeId =='H06X' or typeId =='H06Y' or typeId =='H06W' then
+            set abilId ='QM01'
+        elseif typeId =='H07I' then
+            set abilId ='QM03'
+        elseif typeId =='O017' then
+            set abilId ='QM04'
+        elseif typeId =='H08D' or typeId =='H08C' or typeId =='H08B' or typeId =='H084' then
+            return true
+        elseif typeId =='N0MA' or typeId =='N0MB' or typeId =='N0MC' or typeId =='N0MO' then
+            return true
+        endif
+        return abilId > 0
+    endfunction
+    
+    function WTB takes unit u returns boolean
+        local integer typeId = GetUnitTypeId(u)
+        if typeId =='Eevm' or typeId =='E02V' or typeId =='E02W' or typeId =='E02U' then
+            return true
+        endif
+        return false
+    endfunction
 
     // 设置幻象的技能
     function SyncIllusionUnitSkills takes unit illusion, unit summoning returns nothing
@@ -49,8 +89,7 @@ library UnitIllusion requires UnitUtils, UnitWeapon
         endloop
         call RefreshUnitRange(illusion)
         // 如果幻象是变身单位 直接播放单位的变身Stand 否则被认出来太蠢
-        if UnitTypeIsMetamorphosis(illusion) or WTB(illusion) then
-            // call BJDebugMsg("幻象是变身单位")
+        if IsUnitMetamorphosis(illusion) or WTB(illusion) then
             call AddUnitAnimationProperties(illusion, "alternate", true)
             call SetUnitAnimation(illusion, "stand alternate")
         endif
@@ -65,7 +104,7 @@ library UnitIllusion requires UnitUtils, UnitWeapon
         call SetUnitCurrentScaleEx( whichUnit, GetUnitCurrentScale(whichUnit) )
         // call SetUnitAnimation( whichUnit, "stand upgrade" )
         call FlushChildHashtable(HY, iHandleId)
-        call AddTriggerToDestroyQueue(trig)
+        call DestroyTrigger(trig)
         set trig = null
         return false
     endfunction
@@ -94,7 +133,7 @@ library UnitIllusion requires UnitUtils, UnitWeapon
         set typeId = GetUnitTypeId(summoning)
         if GetUnitTypeId(illusion) != typeId then
             set hp = GetUnitState(illusion, UNIT_STATE_MAX_LIFE)
-            call UnitMakeAbilityPermanent(illusion, true,'A09J')
+            call UnitMakeAbilityPermanent(illusion, true, 'A09J')
             // 原本是极低效率的一大堆马甲技能，改成了japi的逆变身
             call YDWEUnitTransform(illusion, typeId)
             // 然后同步下最大生命值
@@ -126,7 +165,7 @@ library UnitIllusion requires UnitUtils, UnitWeapon
             // 模型缩放
             // call SetUnitCurrentScaleEx(illusion, )
         endif
-        if ( GetItemOfTypeFromUnit(illusion, XOV[it_mlq]) != null ) or ( GetItemOfTypeFromUnit(illusion, XOV[Item_HurricanePike]) != null ) then
+        if ( UnitHasItemOfType(illusion, XOV[it_mlq]) ) or ( UnitHasItemOfType(illusion, XOV[Item_HurricanePike]) ) then
             call AddUnitBonusRange(illusion, 140., true)
         endif
         set illusion  = null

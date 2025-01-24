@@ -61,7 +61,7 @@ scope FacelessVoid
             call IssueImmediateOrderById(dummyCaster, 852096)
             call DeallocateGroup(D7R)
             call FlushChildHashtable(HY, h)
-            call AddTriggerToDestroyQueue(t)
+            call DestroyTrigger(t)
             call SetUnitAnimation(whichUnit, "stand")
 
             call ResetUnitVertexColor(whichUnit)

@@ -38,7 +38,7 @@ scope DamageSystem
             endif
             call AWA(whichUnit,(LoadReal(HY,(GetHandleId(whichUnit)), 443)))
             call FlushChildHashtable(HY, h)
-            call AddTriggerToDestroyQueue(t)
+            call DestroyTrigger(t)
         endif
         set t = null
         set whichUnit = null

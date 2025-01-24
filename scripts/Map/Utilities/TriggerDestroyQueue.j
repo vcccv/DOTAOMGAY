@@ -11,8 +11,10 @@ library TriggerDestroyQueue requires TimerUtils, ErrorMessage
         set MAX = MAX + 1
         set Trig[MAX]= t
         set Time[MAX]= GameTimer.GetElapsed() + 60.
-        call ThrowWarning(MAX > 8000, "AddTriggerToDestroyQueue", "AddTriggerToDestroyQueue", null, 0, "MAX > 8000")
+        call ThrowWarning(MAX > 8000, "DestroyTrigger", "DestroyTrigger", null, 0, "MAX > 8000")
     endfunction
+
+    #define DestroyTrigger(t) AddTriggerToDestroyQueue(t)
     
     // 好像不是队列
     private function Dequeue takes integer i returns nothing

@@ -15,7 +15,7 @@ scope Slark
             call KillUnit(d)
             call UnitSubTruesightImmunityCount(u)
             call FlushChildHashtable(HY, h)
-            call AddTriggerToDestroyQueue(t)
+            call DestroyTrigger(t)
         else
             call SetUnitX(d, GetUnitX(u))
             call SetUnitY(d, GetUnitY(u))

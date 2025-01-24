@@ -21,7 +21,7 @@ library UnitWeapon requires Base, UnitUtils
             call EXPauseUnit(whichUnit, false)
         endif
         call FlushChildHashtable(HY, h)
-        call AddTriggerToDestroyQueue(trig)
+        call DestroyTrigger(trig)
 
         set whichUnit = null
         set trig      = null
