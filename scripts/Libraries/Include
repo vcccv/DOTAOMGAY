@@ -16,7 +16,6 @@
 
 
 #include "ShockWave.j"
-#include "AbilityOrderId.j"
 
 #include "Memory\\MemoryUtils.j"
 

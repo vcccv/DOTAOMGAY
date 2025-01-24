@@ -82968,7 +82968,7 @@ function InitHeroSkillsData takes nothing returns nothing
 	set IsPassiveSkill[i * 4 + 3]= true
 	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "forkedlightning"),'A0IN','A1AW','Y004', "w")
 	set i = 2 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "chainlightning"),'A020', 0,'Y005', "c")
+	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A020')),'A020', 0,'Y005', "c")
 	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "thunderbolt"),'A0JC', 0,'Y006', "g")
 	call RegisterHeroSkill(i * 4 + 3, null,'A0N5','QP1T','Y007', null)
 	set IsPassiveSkill[i * 4 + 3]= true
@@ -82984,8 +82984,8 @@ function InitHeroSkillsData takes nothing returns nothing
 	endif
 	//set IsNoDeathMatchSkill[i * 4 + 4]= true
 	set i = 4 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "carrionswarm"),'QB02', 0,'QY02', "w")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "acidbomb"),'A0G6', 0,'Y014', "e")
+	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbiltiyOrder('QB02')), 'QB02', 0,'QY02', "w")
+	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A0G6')),'A0G6', 0,'Y014', "e")
 	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "replenishmana")+ SaveSkillOrder(i * 4 + 3, "replenishlife")+ SaveSkillOrder(i * 4 + 3, "abuz agi")+ SaveSkillOrder(i * 4 + 3, "str bug"),'A0KX', 0,'Y015', null)
 	set IsMultiIconSkill[i * 4 + 3]= true
 	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "item 16")+ SaveSkillOrder(i * 4 + 4, "coldarrows"),'A0G8', 0,'Y016', "r")
@@ -83039,12 +83039,12 @@ function InitHeroSkillsData takes nothing returns nothing
 	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "bearform")+ SaveSkillOrder(i * 4 + 4, "unbearform")+ SaveSkillOrder(i * 4 + 4, "battleroar")+ SaveSkillOrder(i * 4 + 4, "metamorphosis")+ SaveSkillOrder(i * 4 + 4, "melee morph"),'A0AG', 0,'Y040', "f")
 	set IsMultiIconSkill[i * 4 + 4]= true
 	set i = DB -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "carrionswarm"),'A01F', 0,'Y041', "d")
+	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbiltiyOrder('A01F')),'A01F', 0,'Y041', "d")
 	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "restorationoff"),'QB0E', 0,'QY0E', "t")
 	call RegisterHeroSkill(i * 4 + 3, null,'A18X','QP1U','Y043', null)
 	set IsPassiveSkill[i * 4 + 3]= true
 	set NoRearmCombosTips[i * 4 + 3]= "冷却时间3秒及以下的技能每施放2次才会触发1次炽魂"
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "chainlightning"),'A01P','A09Z','Y044', "g")
+	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, GetAbilityOrder('A01P')),'A01P','A09Z','Y044', "g")
 	set i = FB -1
 	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "whirlwind"),'A05G', 0,'Y045', "f")
 	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "healingward"),'A047', 0,'Y046', "g")
@@ -83081,7 +83081,7 @@ function InitHeroSkillsData takes nothing returns nothing
 	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "berserk"),'A0LC','A443','Y068', "r")
 	set i = 18 -1
 	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "thunderbolt"),'QB0J', 0,'QY0J', "f")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "acidbomb"),'A011', 0,'Y070', "g")
+	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A011')),'A011', 0,'Y070', "g")
 	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "bloodlust"),'A083', 0,'Y071', "b")
 	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "carrionscarabsoff"),'A088','QP24','Y072', null)
 	if (not Mode__RearmCombos) then
@@ -83113,7 +83113,7 @@ function InitHeroSkillsData takes nothing returns nothing
 	call Z1E(i, "r30")
 	call Z1E(i, "r31")
 	set i = 20 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "carrionswarm"),'A21E', 0,'Y077', "t")
+	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A21E')),'A21E', 0,'Y077', "t")
 	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "blink"),'A01O', 0,'Y078', "r")
 	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "forceofnature"),'AEfn', 0,'Y079', "f")
 	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "stampede")+ SaveSkillOrder(i * 4 + 4, "r55"),'A1W8','A1W9','Y080', "w")
@@ -83146,7 +83146,7 @@ function InitHeroSkillsData takes nothing returns nothing
 	//endif
 	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "stasistrap"),'A06H', 0,'Y090', "t")
 	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "selfdestruct"),'A06B','A471','Y091', "c")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "ward")+ SaveSkillOrder(i * 4 + 4, "chainlightning"),'A0AK','A1FY','Y092', "r")
+	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "ward"),'A0AK','A1FY','Y092', "r")
 	set IsMultiIconSkill[i * 4 + 4]= true
 	set i = 24 -1
 	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "drunkenhaze"),'A0KM', 0,'Y093', "e")
@@ -83188,7 +83188,7 @@ function InitHeroSkillsData takes nothing returns nothing
 		set ZTP[i * 4 + 4]= "该技能在此模式下会减少对建筑25%伤害"
 	endif
 	set i = 29 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "chainlightning")+ SaveSkillOrder(i * 4 + 1, "frenzyoff"),'A1TA', 0,'Y113', "t")
+	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A1TA'))+ SaveSkillOrder(i * 4 + 1, "frenzyoff"),'A1TA', 0,'Y113', "t")
 	//set IsDisabledSkill[i * 4 + 1]= true
 	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "fanofknives")+ SaveSkillOrder(i * 4 + 2, "battleroar")+ SaveSkillOrder(i * 4 + 2, "roar"),'A1T8', 0,'Y114', "w")
 	set IsMultiIconSkill[i * 4 + 2]= true
@@ -83227,7 +83227,7 @@ function InitHeroSkillsData takes nothing returns nothing
 	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "windwalk"),'A07A', 0,'Y127', "w")
 	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "faeriefire"),'A0B4', 0,'Y128', "r")
 	set i = 33 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "breathoffire"),'A03F', 0,'Y129', "f")
+	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A03F')),'A03F', 0,'Y129', "f")
 	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "thunderbolt"),'A0AR', 0,'Y130', "t")
 	set s = SaveSkillOrder(i * 4 + 2, "HXLongqilanmao")
 	call RegisterHeroSkill(i * 4 + 3, null,'A0CL','QP0J','Y131', null)
@@ -83265,10 +83265,10 @@ function InitHeroSkillsData takes nothing returns nothing
 	set IsPassiveSkill[i * 4 + 3]= true
 	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "thunderbolt"),'A0O2','A289','Y148', "r")
 	set i = 38 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "carrionswarm"),'A0O7', 0,'Y149', "d")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "breathoffire"),'A0O6', 0,'Y150', "t")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "acidbomb"),'A30T', 0,'Y151', "e")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "shockwave"),'A0O5','A1B1','Y152', "r")
+	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A0O7')),'A0O7', 0,'Y149', "d")
+	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A0O6')),'A0O6', 0,'Y150', "t")
+	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, GetAbilityOrder('A30T')),'A30T', 0,'Y151', "e")
+	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, GetAbilityOrder('A0O5')),'A0O5','A1B1','Y152', "r")
 	set i = 39 -1
 	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "preservation"),'A0IL', 0,'Y153', "d")
 	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "fanofknives")+ SaveSkillOrder(i * 4 + 2, "corrosivebreath"),'A1NI', 0,'Y154', "e")
@@ -83282,7 +83282,7 @@ function InitHeroSkillsData takes nothing returns nothing
 	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "corporealform")+ SaveSkillOrder(i * 4 + 4, "r11"),'A0KU', 0,'Y160', "w")
 	set i = 41 -1
 	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "fanofknives"),'A14P', 0,'Y161', "r")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "chainlightning"),'A14R','A3WT','Y162', "e")
+	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A14R')),'A14R','A3WT','Y162', "e")
 	call RegisterHeroSkill(i * 4 + 3, null,'A0QW','QP1V','Y163', null)
 	set IsPassiveSkill[i * 4 + 3]= true
 	set NoRearmCombosTips[i * 4 + 3]= "冷却时间3秒及以下的技能每施放2次才会触发1次超负荷（球形闪电除外）"
@@ -83340,18 +83340,18 @@ function InitHeroSkillsData takes nothing returns nothing
 	set IsMultiIconSkill[i * 4 + 3]= true
 	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "spiritofvengeance"),'A11K','Z31K','Y184', "t")
 	set i = 47 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "chainlightning"),'A12J', 0,'Y185', "e")
+	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A12J')),'A12J', 0,'Y185', "e")
 	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "spirittroll"),'A12K', 0,'Y186', "r")
 	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "fanofknives"),'A14I', 0,'Y187', "w")
 	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "incineratearrowon"),'A12P','A1D6','Y188', "f")
 	set i = 48 -1
 	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "creepthunderbolt"),'A1SO', 0,'Y189', "r")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "chainlightning"),'A1SQ', 0,'Y190', "g")
+	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A1SQ')),'A1SQ', 0,'Y190', "g")
 	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "orb effect")+ SaveSkillOrder(i * 4 + 3, "range only")+ SaveSkillOrder(i * 4 + 3, "fanofknives")+ SaveSkillOrder(i * 4 + 3, "multi-attack"),'A229', 0,'Y191', "f")
 	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "silence"),'A1T5','A235','Y192', "c")
 	set i = 49 -1
 	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "autodispel"),'A1TV', 0,'Y193', "c")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "chainlightning"),'A1SW', 0,'Y194', "d")
+	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A1SW')),'A1SW', 0,'Y194', "d")
 	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "rechargeoff"),'A1SU', 0,'Y195', "e")
 	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "deathpact"),'A1U6','A30N','Y196', "r")
 	set i = 50 -1
@@ -83397,7 +83397,7 @@ function InitHeroSkillsData takes nothing returns nothing
 		set s = SaveSkillOrder(i * 4 + 2, "HXLianji")//+ SaveSkillOrder(i * 4 + 2, "melee morph")
 	endif
 	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "darksummoning")+ SaveSkillOrder(i * 4 + 2, "r27"),'A2HS', 0,'Y215', "e")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "ancestralspirit")+ SaveSkillOrder(i * 4 + 4, "acolyteharvest")+ SaveSkillOrder(i * 4 + 4, "acidbomb"),'A2JR','A2JL','Y216', "f")
+	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "ancestralspirit")+ SaveSkillOrder(i * 4 + 4, "acolyteharvest"),'A2JR','A2JL','Y216', "f")
 	set IsMultiIconSkill[i * 4 + 4]= true
 	//	set IsDisabledSkill[i * 4 + 4]= true
 	set i = 55 -1
@@ -83407,7 +83407,7 @@ function InitHeroSkillsData takes nothing returns nothing
 	set IsPassiveSkill[i * 4 + 3]= true
 	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "autodispeloff"),'A2CI','A38C','Y220', "d")
 	set i = 56 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "chainlightning"),'A2BE', 0,'Y221', "c")
+	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A2BE')),'A2BE', 0,'Y221', "c")
 	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "fanofknives"),'A2IT', 0,'Y222', "t")
 	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "soulburn"),'A2HN', 0,'Y223', "d")
 	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "submerge"),'A2BG','A30H','Y224', "e")
@@ -83442,7 +83442,7 @@ function InitHeroSkillsData takes nothing returns nothing
 	set IsPassiveSkill[i * 4 + 4]= true
 	set i = 61 -1
 	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "range only")+ SaveSkillOrder(i * 4 + 1, "immolation")+ SaveSkillOrder(i * 4 + 1, "unimmolation"),'A1C0','A418','Y241', "r")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "chainlightning"),'A0G2', 0,'Y242', "c")
+	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A0G2')),'A0G2', 0,'Y242', "c")
 	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "manashieldon")+ SaveSkillOrder(i * 4 + 3, "manashieldoff")+ SaveSkillOrder(i * 4 + 3, "shbug"),'A0MP', 0,'Y243', "e")
 	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "lavamonster"),'A1AT', 0,'Y244', "g")
 	set i = 62 -1
@@ -83465,7 +83465,7 @@ function InitHeroSkillsData takes nothing returns nothing
 	set IsPassiveSkill[i * 4 + 4]= true
 	set i = 64 -1
 	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "channel")+ SaveSkillOrder(i * 4 + 1, "animatedead")+ SaveSkillOrder(i * 4 + 1, "stomp")+ SaveSkillOrder(i * 4 + 1, "tornado")+ SaveSkillOrder(i * 4 + 1, "ensnare")+ SaveSkillOrder(i * 4 + 1, "thunderclap")+ SaveSkillOrder(i * 4 + 1, "purge"),'A10R','A32Z','Y253', "e")
-	set s = SaveSkillOrder(i * 4 + 1, "shockwave")+ SaveSkillOrder(i * 4 + 1, "frostarmor")+ SaveSkillOrder(i * 4 + 1, "manaburn")+ SaveSkillOrder(i * 4 + 1, "heal")+ SaveSkillOrder(i * 4 + 1, "chainlightning")+ SaveSkillOrder(i * 4 + 1, "raisedead")+ SaveSkillOrder(i * 4 + 1, "thunderbolt")
+	set s = SaveSkillOrder(i * 4 + 1, "frostarmor")+ SaveSkillOrder(i * 4 + 1, "manaburn")+ SaveSkillOrder(i * 4 + 1, "heal")+ SaveSkillOrder(i * 4 + 1, "raisedead")+ SaveSkillOrder(i * 4 + 1, "thunderbolt")
 	set IsMultiIconSkill[i * 4 + 1]= true
 	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "fanofknives"),'A1OP', 0,'Y254', "t")
 	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "firebolt"),'A094', 0,'Y255', "v")
@@ -83489,14 +83489,14 @@ function InitHeroSkillsData takes nothing returns nothing
 		set s = SaveSkillOrder(i * 4 + 2, "HXshijianmanbu")
 	endif
 	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "fanofknives"),'A04A', 0,'Y267', "f")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "shockwave"),'A28R','A28S','Y268', "w")
+	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, GetAbilityOrder('A28R')),'A28R','A28S','Y268', "w")
 	set i = 68 -1
 	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "berserk"),'A030', 0,'Y269', "t")
 	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "arrows")+ SaveSkillOrder(i * 4 + 2, "range only")+ SaveSkillOrder(i * 4 + 2, "channel"),'AHfa', 0,'Y270', "r")
 	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "windwalk"),'QB0A', 0,'QY0A', "w")
 	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "innerfire"),'A04Q', 0,'Y272', "e")
 	set i = 69 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "carrionswarm"),'A0LK', 0,'Y273', "w")
+	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A0LK')),'A0LK', 0,'Y273', "w")
 	if (not Mode__RearmCombos) then
 		set s = SaveSkillOrder(i * 4 + 1, "HXshijianmanbu")
 	endif
@@ -83524,7 +83524,7 @@ function InitHeroSkillsData takes nothing returns nothing
 	call RegisterHeroSkill(i * 4 + 2, null,'A0SS','QP1W','Y286', null)
 	set IsPassiveSkill[i * 4 + 2]= true
 	set NoBalanceOffTips[i * 4 + 2]= "远程模型使用盛宴只造成/回复 1.75/2.75/3.75/4.75% 生命值的伤害"
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "chainlightning"),'A194', 0,'Y287', "w")
+	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, GetAbiiltyOrder('A194')),'A194', 0,'Y287', "w")
 	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "decouple"),'A0SW', 0,'Y288', "t")
 	set i = 73 -1
 	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "grabtree"),'A0MT', 0,'Y289', "b")
@@ -83540,7 +83540,7 @@ function InitHeroSkillsData takes nothing returns nothing
 	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "howlofterror"),'A29I', 0,'Y296', "v")
 	set i = 75 -1
 	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "innerfire"),'A04V', 0,'Y297', "e")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "chainlightning"),'A0GK', 0,'Y298', "b")
+	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A0GK')),'A0GK', 0,'Y298', "b")
 	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "sleep"),'A04Y', 0,'Y299', "t")
 	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "magicleash"),'A02Q','A1D9','Y300', "f")
 	set i = 76 -1
@@ -83596,7 +83596,7 @@ function InitHeroSkillsData takes nothing returns nothing
 	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "creepheal"),'A0S1', 0,'Y326', "r")
 	call RegisterHeroSkill(i * 4 + 3, null,'A0C6','QP17','Y327', null)
 	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "chainlightning"),'A0E2','A1MR','Y328', "c")
+	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, GetAbilityOrder('A0E2')),'A0E2','A1MR','Y328', "c")
 	set i = 83 -1
 	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "farsight"),'A44X', 0,'Y61A', "d")
 	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "creepheal"),'A44Z', 0,'Y61B', "b")
@@ -83605,7 +83605,7 @@ function InitHeroSkillsData takes nothing returns nothing
 	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "shadowsight"),'A0LH', 0,'Y332', "r")
 	set i = 84 -1
 	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "townbelloff"),'A0I3', 0,'Y333', "d")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "chainlightning"),'A0MF', 0,'Y334', "g")
+	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A0MF')),'A0MF', 0,'Y334', "g")
 	call RegisterHeroSkill(i * 4 + 3, null,'A0MG','QP18','Y335', null)
 	set IsPassiveSkill[i * 4 + 3]= true
 	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "windwalk")+ SaveSkillOrder(i * 4 + 4, "r17"),'A0NS','A1DA','Y336', "b")
@@ -83623,13 +83623,13 @@ function InitHeroSkillsData takes nothing returns nothing
 	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "healingspray")+ SaveSkillOrder(i * 4 + 4, "healingwave")+ SaveSkillOrder(i * 4 + 4, "r18"),'A0H9', 0,'Y340', "t")
 	set IsMultiIconSkill[i * 4 + 4]= true
 	set i = 86 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "chainlightning"),'A0NM', 0,'Y341', "c")
+	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A0NM')),'A0NM', 0,'Y341', "c")
 	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "unimmolation"),'A0NE', 0,'Y342', "v")
 	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "renew"),'A0NO', 0,'Y343', "e")
 	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "tornado"),'A0NT','A0NX','Y344', "d")
 	set i = 87 -1
 	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "arrows")+ SaveSkillOrder(i * 4 + 1, "range only"),'A0OI', 0,'Y345', "r")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "chainlightning"),'A0OJ', 0,'Y346', "t")
+	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A0OJ')),'A0OJ', 0,'Y346', "t")
 	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "r19"),'A0IF','QP1A','Y347', null)
 	set IsPassiveSkill[i * 4 + 3]= true
 	set NoRearmCombosTips[i * 4 + 3]= "若同时学习了球状闪电，则精气光环触发时只恢复8/10/12/14%的最大魔法"
@@ -83684,7 +83684,7 @@ function InitHeroSkillsData takes nothing returns nothing
 	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "repairon"),'A1EL', 0,'Y381', "c")
 	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "autoharvestgold"),'A19V', 0,'Y382', "r")
 	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "metamorphosis")+ SaveSkillOrder(i * 4 + 3, "range morph")+ SaveSkillOrder(i * 4 + 3, "r3"),'QM04', 0,'Y383', "e")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "chainlightning"),'A19O','A1MV','Y384', "f")
+	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, GetAbilityOrder('A19O')),'A19O','A1MV','Y384', "f")
 	set i = 97 -1
 	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "etherealform"),'A1MG', 0,'Y385', "c")
 	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "replenish"),'A1HS', 0,'Y386', "e")
@@ -83701,14 +83701,14 @@ function InitHeroSkillsData takes nothing returns nothing
 	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "replenishoff"),'A2KZ', 0,'Y393', "c")
 	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "board"),'A0H4', 0,'Y394', "e")
 	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "metamorphosis")+ SaveSkillOrder(i * 4 + 3, "range morph")+ SaveSkillOrder(i * 4 + 3, "chemicalrage"),'A1RI', 0,'Y395', "t")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "chainlightning"),'A07Q', 0,'Y396', "r")
+	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, GetAbilityOrder('A07Q')),'A07Q', 0,'Y396', "r")
 	set i = 100 -1
 	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "requestsacrifice"),'QB0F', 0,'QY0F', "t")
 	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "fanofknives"),'A20T', 0,'Y398', "c")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "chainlightning"),'A06V', 0,'Y399', "g")
+	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, GetAbilityOrder('A06V')),'A06V', 0,'Y399', "g")
 	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "berserk"),'A21F','A21G','Y400', "v")
 	set i ='e'-1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "chainlightning"),'A1S8', 0,'Y401', "d")
+	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A1S8')),'A1S8', 0,'Y401', "d")
 	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "replenishon"),'A1SB', 0,'Y402', "c")
 	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "fingerofdeath")+ SaveSkillOrder(i * 4 + 3, "flare"),'A1S4', 0,'Y403', "w")
 	set IsMultiIconSkill[i * 4 + 3]= true
@@ -83719,7 +83719,7 @@ function InitHeroSkillsData takes nothing returns nothing
 	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "innerfire"),'A053', 0,'Y407', "e")
 	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "thunderbolt"),'A05T','A08H','Y408', "c")
 	set i ='g'-1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "carrionswarm"),'A078', 0,'Y409', "r")
+	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbiltiyOrder('A078')),'A078', 0,'Y409', "r")
 	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "silence"),'A07M', 0,'Y410', "e")
 	call RegisterHeroSkill(i * 4 + 3, null,'A02C', 0,'Y411', null)
 	set IsPassiveSkill[i * 4 + 3]= true
@@ -83733,7 +83733,7 @@ function InitHeroSkillsData takes nothing returns nothing
 	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "hex"),'A0MN', 0,'Y414', "d")
 	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "drain"),'A02N', 0,'Y415', "r")
 	set HeroSkillsIcon[i * 4 + 3]= "ReplaceableTextures\\CommandButtons\\BTNManaDrain.blp"
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "chainlightning"),'A095','A09W','Y416', "f")
+	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, GetAbilityOrder('A095')),'A095','A09W','Y416', "f")
 	set i ='i'-1
 	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "magicdefense"),'A173', 0,'Y417', "e")
 	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "buff placer"),'A0MY','QP1D','Y418', null)
@@ -83741,7 +83741,7 @@ function InitHeroSkillsData takes nothing returns nothing
 	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "ward"),'A0MS', 0,'Y419', "w")
 	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "summongrizzly"),'A013','A0A6','Y420', "v")
 	set i ='j'-1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "carrionswarm"),'A02S','A3Y8','Y421', "w")
+	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbiltiyOrder('A02S')),'A02S','A3Y8','Y421', "w")
 	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "innerfire"),'A037', 0,'Y422', "e")
 	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "blackarrowon"),'A1RD', 0,'Y423', "d")
 	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "roar"),'A29L','A447','Y424', "v")
@@ -83783,11 +83783,11 @@ function InitHeroSkillsData takes nothing returns nothing
 	set IsMultiIconSkill[i * 4 + 4]= true
 	set i ='p'-1
 	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "webon"),'A2QT', 0,'Y453', "t")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "chainlightning"),'A2T5', 0,'Y454', "f")
+	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A2T5')),'A2T5', 0,'Y454', "f")
 	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "avengerform"),'A2SG', 0,'Y455', "e")
 	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "lavamonster"),'A2TF', 0,'Y456', "r")
 	set i ='q'-1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "acidbomb"),'A1PH', 0,'Y458', "e")
+	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A1PH')),'A1PH', 0,'Y458', "e")
 	call RegisterHeroSkill(i * 4 + 2, null,'A33Q','A33R','Y459', null)
 	set IsPassiveSkill[i * 4 + 2]= true
 	//	if (not Mode__RearmCombos) then
