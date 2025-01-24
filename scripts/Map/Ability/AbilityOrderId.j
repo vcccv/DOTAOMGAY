@@ -10,7 +10,7 @@ library AbilityCustomOrderId
         return OrderIdBase
     endfunction
 
-    function GetAbiltiyOrder takes integer abilId returns string
+    function GetAbilityOrder takes integer abilId returns string
         local integer id = MHAbility_GetHookOrder(abilId)
         if id == 0 then
             return ""
@@ -18,7 +18,7 @@ library AbilityCustomOrderId
         return I2S(id)
     endfunction
 
-    function GetAbiltiyOrderId takes integer abilId returns integer
+    function GetAbilityOrderId takes integer abilId returns integer
         return MHAbility_GetHookOrder(abilId)
     endfunction
 

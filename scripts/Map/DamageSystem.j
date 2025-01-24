@@ -186,7 +186,7 @@ scope DamageSystem
                             //set DEDamage = 0
                             return rReducedDamage
                         endif
-                    elseif TKV(DETarget,'A0CZ', 5 + 5 *(GetUnitAbilityLevel(DETarget,'A0CZ'))) then
+                    elseif GetUnitPseudoRandom(DETarget,'A0CZ', 5 + 5 *(GetUnitAbilityLevel(DETarget,'A0CZ'))) then
                         call DestroyEffect(AddSpecialEffectTarget("Abilities\\Weapons\\WingedSerpentMissile\\WingedSerpentMissile.mdl", DETarget, "hand,left"))
                         set rReducedDamage = DEDamage
                         //set DEDamage = 0

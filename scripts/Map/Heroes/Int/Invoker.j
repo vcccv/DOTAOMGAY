@@ -104,7 +104,7 @@ scope Invoker
                 // 'B033'
                 // 击退
                 //call UnitAddAbilityToTimed(targ, 'A2O7', 1, 1 + thistype(sw).level * 0.5, 'B033')
-                call CreateBuffByPolarity(targ, 'B033', 1 + thistype(sw).level * 0.5, false, BUFF_LEVEL3)
+                call CreateBuffByPolarity(targ, 'B033', thistype(sw).level, 1 + thistype(sw).level * 0.5, false, BUFF_LEVEL3)
                 call UnitAddDeafeningBlastKnockback(sw.owner, targ, RadianBetweenXY(sw.x, sw.y, GetUnitX(targ), GetUnitY(targ)), thistype(sw).level)
                 call UnitDamageTargetEx(sw.owner, targ, 1, thistype(sw).damage)
             endif

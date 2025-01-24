@@ -2245,7 +2245,7 @@ function SetAllPlayerAbilityUnavailable takes integer id returns nothing
 	call SetPlayerAbilityAvailable(Player(11), id, false)
 endfunction
 
-function TKV takes unit u, integer id, real i returns boolean
+function GetUnitPseudoRandom takes unit u, integer id, real i returns boolean
 	local integer h = GetHandleId(u)
 	local real TPV = R2I(i / 5.)* 5.
 	local real TQV = LoadReal(PrdRandomHashTable,-1, R2I(TPV / 5.)-1)
@@ -17261,7 +17261,7 @@ function IMO takes nothing returns nothing
 	loop
 	exitwhen x > IQO
 		set i = UnitItemInSlot(IPO, x)
-		if GetItemIndex(i) == OYV and TKV(IPO,'JAVL', 20) and IsUnitInvision(IPO) == false then
+		if GetItemIndex(i) == OYV and GetUnitPseudoRandom(IPO,'JAVL', 20) and IsUnitInvision(IPO) == false then
 			if IsBearUnit(IPO) then
 				if ILO(IPO) == false then
 					if GetUnitAbilityLevel(GetTriggerUnit(),'A04R') == 0 then
@@ -17311,7 +17311,7 @@ function IUO takes nothing returns nothing
 	local integer h
 	if ((LoadInteger(HY,(GetHandleId((whichUnit))),(4309)))!= 1) then
 		call EPX(whichUnit, 4309, .2)
-		if TKV(whichUnit,'MAIM'+ 1, 16) then
+		if GetUnitPseudoRandom(whichUnit,'MAIM'+ 1, 16) then
 			set t = CreateTrigger()
 			set h = GetHandleId(t)
 			call TriggerRegisterUnitEvent(t, targetUnit, EVENT_UNIT_DAMAGED)
@@ -17373,7 +17373,7 @@ function I_O takes nothing returns nothing
 	local integer h
 	if ((LoadInteger(HY,(GetHandleId((whichUnit))),(4309))) == 1) == false then
 		call EPX(whichUnit, 4309, .2)
-		if TKV(whichUnit,'MAIM', 15) then
+		if GetUnitPseudoRandom(whichUnit,'MAIM', 15) then
 			set t = CreateTrigger()
 			set h = GetHandleId(t)
 			call TriggerRegisterUnitEvent(t, targetUnit, EVENT_UNIT_DAMAGED)
@@ -17401,7 +17401,7 @@ function CraniumBasherWrapper takes nothing returns nothing
 	if IsUnitType(u, UNIT_TYPE_MELEE_ATTACKER) == false then
 		set probability = 10
 	endif
-	if TKV(u,'BASH', probability) then
+	if GetUnitPseudoRandom(u,'BASH', probability) then
 		set I4O = true
 	endif
 	if GetUnitAbilityLevel(u,'A340')> 0 or GetUnitAbilityLevel(u,'A0JJ')> 0 or GetUnitAbilityLevel(u,'A081')> 0 or GetUnitAbilityLevel(u,'A0G5')> 0 or GetUnitAbilityLevel(u,'A09E')> 0 then
@@ -20105,7 +20105,7 @@ function B1O takes unit R8X, unit targetUnit returns nothing
 		set id ='A0FK'
 		set probability = 25
 	endif
-	if TKV(R8X, id, probability) then
+	if GetUnitPseudoRandom(R8X, id, probability) then
 		set dummyUnit = CreateUnit(GetOwningPlayer(R8X),'e00E', GetUnitX(R8X), GetUnitY(R8X), 0)
 		call UnitAddAbility(dummyUnit, id)
 		call IssueTargetOrderById(dummyUnit, 852119, targetUnit)
@@ -35791,7 +35791,7 @@ endfunction
 function DOR takes unit R8X, unit targetUnit returns nothing //致命创伤属于 英雄攻击 普通伤害 即物理伤害
 	local timer tt = null
 	local integer ht
-	if GetEventDamage()> 20 and DV == false and GetUnitAbilityLevel(R8X,'A36D') == 0 and TKV(R8X,'A460', 30) then
+	if GetEventDamage()> 20 and DV == false and GetUnitAbilityLevel(R8X,'A36D') == 0 and GetUnitPseudoRandom(R8X,'A460', 30) then
 		set tt = CreateTimer()
 		set ht = GetHandleId(tt)
 		call TimerStart(tt, 1, true, function DER)
@@ -40221,7 +40221,7 @@ function LUR takes nothing returns nothing
 	else
 		set probability = level * 5 + 5
 	endif
-	if TKV(DESource,'A455', probability) then
+	if GetUnitPseudoRandom(DESource,'A455', probability) then
 		set a = AngleBetweenUnit(DESource, DETarget)
 		set g = AllocationGroup(163)
 		set U2 = DESource
@@ -45947,7 +45947,7 @@ function F9E takes nothing returns nothing
 	endif
 endfunction
 function EVI takes unit u, integer ETX, real EEI, real EXI returns boolean
-	return(Mode__BalanceOff and TKV(u, ETX, EEI)) or(Mode__BalanceOff == false and TKV(u, ETX, EXI))
+	return(Mode__BalanceOff and GetUnitPseudoRandom(u, ETX, EEI)) or(Mode__BalanceOff == false and GetUnitPseudoRandom(u, ETX, EXI))
 endfunction
 function EOI takes nothing returns boolean
 	local integer id = LoadInteger(OtherHashTable2,'MULT', 0)
@@ -48094,7 +48094,7 @@ function PTE takes nothing returns nothing
 endfunction
 
 function O1I takes nothing returns nothing
-	if GetUnitAbilityLevel(DESource,'P102')!= 0 and GetUnitAbilityLevel(DESource,'A36D') == 0 and TKV(DESource,'P102', 40) then
+	if GetUnitAbilityLevel(DESource,'P102')!= 0 and GetUnitAbilityLevel(DESource,'A36D') == 0 and GetUnitPseudoRandom(DESource,'P102', 40) then
 		call UnitAddAbilityToTimed(DETarget,'A469', 1, .5,'B469')
 		call UnitDamageTargetEx(DESource, DETarget, 2, 25 * GetUnitAbilityLevel(DESource,'P102') -10)
 	endif
@@ -49062,7 +49062,7 @@ function R0I takes unit X1O, unit targetUnit returns nothing
 	set t = null
 endfunction
 function R1I takes unit R8X, unit targetUnit returns nothing
-	if GetUnitAbilityLevel(R8X,'A33C')> 0 and GetUnitAbilityLevel(R8X,'A36D') == 0 and GetGameTime()> LoadReal(ObjectHashTable, GetHandleId(R8X),'A33C') and TKV(R8X,'A33C', 20) then
+	if GetUnitAbilityLevel(R8X,'A33C')> 0 and GetUnitAbilityLevel(R8X,'A36D') == 0 and GetGameTime()> LoadReal(ObjectHashTable, GetHandleId(R8X),'A33C') and GetUnitPseudoRandom(R8X,'A33C', 20) then
 		call SaveReal(ObjectHashTable, GetHandleId(R8X),'A33C', GetGameTime()+ 5)
 		call R0I(R8X, targetUnit)
 	endif
@@ -50685,7 +50685,7 @@ function NQI takes nothing returns boolean
 		set targetUnit = GetAttacker()
 	endif
 	set level =(GetUnitAbilityLevel(whichUnit,'A19Q'))
-	if level > 0 and GetUnitAbilityLevel(whichUnit,'A36D') == 0 and IsAliveNotStrucNotWard(targetUnit) and GetUnitDistanceEx(whichUnit, targetUnit)< 500 and TKV(whichUnit,'A19Q', 15) then
+	if level > 0 and GetUnitAbilityLevel(whichUnit,'A36D') == 0 and IsAliveNotStrucNotWard(targetUnit) and GetUnitDistanceEx(whichUnit, targetUnit)< 500 and GetUnitPseudoRandom(whichUnit,'A19Q', 15) then
 		call UnitDamageTargetEx(whichUnit, targetUnit, 1, 25 + 25 * level)
 		call DestroyEffect(AddSpecialEffectTarget("Abilities\\Weapons\\RockBoltMissile\\RockBoltMissile.mdl", targetUnit, "origin"))
 		call CommonUnitAddStun(targetUnit, 1.1 + .1 * level, false)
@@ -53280,7 +53280,7 @@ function FDI takes unit trigUnit returns nothing
 	call DeallocateGroup(g)
 endfunction
 function FFI takes unit R8X, unit targetUnit returns nothing
-	if GetUnitAbilityLevel(targetUnit,'B03P')> 0 and IsUnitType(R8X, UNIT_TYPE_STRUCTURE) == false and(IsUnitType(R8X, UNIT_TYPE_MECHANICAL) == false and GetUnitAbilityLevel(R8X,'A04R') == 0 or IsFortDefenseTypeUnit(R8X)) and IsUnitEnemy(R8X, GetOwningPlayer(targetUnit)) and LoadInteger(HY, GetHandleId(targetUnit), 4267)!= 1 and GetUnitAbilityLevel(targetUnit,'A1HX') == 0 and GetUnitAbilityLevel(targetUnit,'A36D') == 0 and TKV(targetUnit,'B03P', 20) then
+	if GetUnitAbilityLevel(targetUnit,'B03P')> 0 and IsUnitType(R8X, UNIT_TYPE_STRUCTURE) == false and(IsUnitType(R8X, UNIT_TYPE_MECHANICAL) == false and GetUnitAbilityLevel(R8X,'A04R') == 0 or IsFortDefenseTypeUnit(R8X)) and IsUnitEnemy(R8X, GetOwningPlayer(targetUnit)) and LoadInteger(HY, GetHandleId(targetUnit), 4267)!= 1 and GetUnitAbilityLevel(targetUnit,'A1HX') == 0 and GetUnitAbilityLevel(targetUnit,'A36D') == 0 and GetUnitPseudoRandom(targetUnit,'B03P', 20) then
 		call FDI(targetUnit)
 	endif
 endfunction
@@ -55040,7 +55040,7 @@ function JFI takes nothing returns nothing
 	local unit JGI =(LoadUnitHandle(HY, h, 254))
 	local integer level = GetUnitAbilityLevel(JGI,'P347')
 	local timer t
-	if GetUnitAbilityLevel(JGI,'A36D') == 0 and GetUnitDistanceEx(u, JGI)< 1400 and TKV(u,'P347', 40) then
+	if GetUnitAbilityLevel(JGI,'A36D') == 0 and GetUnitDistanceEx(u, JGI)< 1400 and GetUnitPseudoRandom(u,'P347', 40) then
 		set t = CreateTimer()
 		call TimerStart(t, 0, false, function JDI)
 		call SaveUnitHandle(HY, GetHandleId(t), 0, u)
@@ -55083,7 +55083,7 @@ function JHI takes unit u, unit t, boolean b returns nothing
 	endif
 	call CommonTextTag("+" + I2S(R2I(d)), 1, t, .023, 191, 64, 255, 216)
 	call UnitDamageTargetEx(u, t, 3, d)
-	if b == false and TKV(u,'P347', GetUnitAbilityLevel(u,'P347')* 10) then
+	if b == false and GetUnitPseudoRandom(u,'P347', GetUnitAbilityLevel(u,'P347')* 10) then
 		call SetUnitState(u, UNIT_STATE_MANA, GetUnitState(u, UNIT_STATE_MANA)+ .25 * GetUnitState(u, UNIT_STATE_MAX_MANA))
 		call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Undead\\ReplenishMana\\ReplenishManaCasterOverhead.mdl", u, "overhead"))
 	endif
@@ -56183,7 +56183,7 @@ function LFI takes nothing returns nothing
 				call SetWidgetLife(u, GetWidgetLife(u)+ d)
 				call DestroyEffect(AddSpecialEffectTarget("Abilities\\Weapons\\WingedSerpentMissile\\WingedSerpentMissile.mdl", u, "hand,left"))
 			endif
-		elseif TKV(u,'A0CZ', 5 + 5 *(GetUnitAbilityLevel(u,'A0CZ'))) then
+		elseif GetUnitPseudoRandom(u,'A0CZ', 5 + 5 *(GetUnitAbilityLevel(u,'A0CZ'))) then
 			call SetWidgetLife(u, GetWidgetLife(u)+ d)
 			call DestroyEffect(AddSpecialEffectTarget("Abilities\\Weapons\\WingedSerpentMissile\\WingedSerpentMissile.mdl", u, "hand,left"))
 		endif
@@ -57571,16 +57571,16 @@ function Z1I takes unit u, unit t returns nothing
 	local unit d
 	local integer i
 	if GetUnitAbilityLevel(u,'A061') == 1 then
-		if TKV(u, 'A061', 35) then	//金箍棒
+		if GetUnitPseudoRandom(u, 'A061', 35) then	//金箍棒
 			call TGA(u, t, 5)
 		endif
 	endif
 	if GetItemOfTypeFromUnit(u, XOV[I5V])!= null then	//散夜对剑
-		if TKV(u, XOV[I5V], 16) then
+		if GetUnitPseudoRandom(u, XOV[I5V], 16) then
 			call ISO(t)
 		endif
 	elseif GetItemOfTypeFromUnit(u, XOV[IPV])!= null or GetItemOfTypeFromUnit(u, XOV[RLV])!= null or GetItemOfTypeFromUnit(u, XOV[N1V])!= null then
-		if TKV(u, XOV[IPV], 15) then	//散华和天堂之戟和白银之锋
+		if GetUnitPseudoRandom(u, XOV[IPV], 15) then	//散华和天堂之戟和白银之锋
 			call IYO(t)
 		endif
 	endif
@@ -57590,7 +57590,7 @@ function Z1I takes unit u, unit t returns nothing
 		else
 			set i = 10
 		endif
-		if LoadInteger(HY, GetHandleId(u),'bash')!= 1 and TKV(u,'A3L2', i) then
+		if LoadInteger(HY, GetHandleId(u),'bash')!= 1 and GetUnitPseudoRandom(u,'A3L2', i) then
 			if GetUnitAbilityLevel(u,'A3TZ') == 1 then
 				call YDWESetUnitAbilityState(u,'A3TZ', 1, 2.3)
 			endif
@@ -61888,7 +61888,7 @@ function StiflingDaggerOnMissileLaunch takes unit trigUnit, unit targetUnit, int
 
 	call SaveInteger(HY, h, 5, level)
 	call SaveInteger(HY, h, 6, level -1)
-	if level > 1 and TKV(trigUnit,'P240', 15) then
+	if level > 1 and GetUnitPseudoRandom(trigUnit,'P240', 15) then
 		call SaveBoolean(HY, h, 6, true)
 		call SaveReal(HY, h, 6, .5 + level * 1.)
 		call SetUnitScale(u, 2.5, 0, 0)
@@ -64776,7 +64776,7 @@ function OWA takes unit u, unit t, boolean b, integer i returns nothing
 endfunction
 function OYA takes unit u, unit t returns nothing
 	if IsUnitIllusion(u) == false and(Mode__BalanceOff or LoadReal(ObjectHashTable, GetHandleId(u),'A0G5')< GetGameTime()) then
-		if GetUnitAbilityLevel(u,'A36D') == 0 and GetUnitAbilityLevel(u,'A3L2') == 0 and TKV(u,'A0G5', 17) then
+		if GetUnitAbilityLevel(u,'A36D') == 0 and GetUnitAbilityLevel(u,'A3L2') == 0 and GetUnitPseudoRandom(u,'A0G5', 17) then
 			call SaveReal(ObjectHashTable, GetHandleId(u),'A0G5', GetGameTime()+ 1.5)
 			call OWA(u, t, true, 1)
 		endif
@@ -74123,7 +74123,7 @@ function KFA takes nothing returns nothing
 			set probability = GetUnitAbilityLevel(u,'A02C')* 5 + 5
 		endif
 		if probability > 0 and IsMetamorphosisSkill(id) == false and X8R(id) then
-			if TKV(u,'A02C', probability) or JE then
+			if GetUnitPseudoRandom(u,'A02C', probability) or JE then
 				call KDA(u, id)
 			endif
 		endif
@@ -74840,7 +74840,7 @@ function LUA takes unit targetUnit returns nothing
 	if IsUnitType(DESource, UNIT_TYPE_HERO) then
 		set probability = 35
 	endif
-	if TKV(targetUnit,'A2EY', probability) then
+	if GetUnitPseudoRandom(targetUnit,'A2EY', probability) then
 		call EPX(targetUnit, 4316, 3.3 -0.6 * level)
 		call YDWESetUnitAbilityState(targetUnit,'QP1O', 1, 3.31 - level * 0.6)
 		if level == 1 then
@@ -76233,7 +76233,7 @@ function SCE takes nothing returns nothing
 	endif
 endfunction
 function PAA takes unit R8X, unit targetUnit returns nothing
-	if IsUnitType(targetUnit, UNIT_TYPE_HERO) == false and IsUnitType(targetUnit, UNIT_TYPE_ANCIENT) == false and IsUnitIllusion(targetUnit) == false and TKV(R8X,'A43Z', 10) then
+	if IsUnitType(targetUnit, UNIT_TYPE_HERO) == false and IsUnitType(targetUnit, UNIT_TYPE_ANCIENT) == false and IsUnitIllusion(targetUnit) == false and GetUnitPseudoRandom(R8X,'A43Z', 10) then
 		call UnitDamageTargetEx(R8X, targetUnit, 1, 10000)
 	endif
 endfunction
@@ -78069,7 +78069,7 @@ endfunction
 function TLA takes unit u, unit t, real dmg returns nothing
 	local integer id
 	local real r1 = 0
-	if TKV(u,'P431', 15) then
+	if GetUnitPseudoRandom(u,'P431', 15) then
 		set r1 = .75 + .5 * GetUnitAbilityLevel(u,'P431')
 	endif
 	if r1 != 0 then
@@ -78094,7 +78094,7 @@ function TPA takes nothing returns nothing
 		else
 			set probability = 10
 		endif
-		if LoadInteger(HY, GetHandleId(DESource),'bash')!= 1 and TKV(DESource,'A3L2', probability) then
+		if LoadInteger(HY, GetHandleId(DESource),'bash')!= 1 and GetUnitPseudoRandom(DESource,'A3L2', probability) then
 			if GetUnitAbilityLevel(DESource,'A3TZ') == 1 then
 				call YDWESetUnitAbilityState(DESource,'A3TZ', 1, 2.3)
 			endif
@@ -78104,26 +78104,26 @@ function TPA takes nothing returns nothing
 	elseif GetUnitAbilityLevel(DESource,'A36D') == 0 then
 		if GetUnitAbilityLevel(DESource,'A0JJ')> 0 then	//重击
 			if isMeleeAttacker then
-				if TKV(DESource,'A0JJ', 5 + 5 * GetUnitAbilityLevel(DESource,'A0JJ')) then
+				if GetUnitPseudoRandom(DESource,'A0JJ', 5 + 5 * GetUnitAbilityLevel(DESource,'A0JJ')) then
 					call TGA(DESource, DETarget, 1)
 				endif
 			else
-				if TKV(DESource,'A0JJ', 4 * GetUnitAbilityLevel(DESource,'A0JJ')) then
+				if GetUnitPseudoRandom(DESource,'A0JJ', 4 * GetUnitAbilityLevel(DESource,'A0JJ')) then
 					call TGA(DESource, DETarget, 1)
 				endif
 			endif
 		elseif GetUnitAbilityLevel(DESource,'A081')> 0 then	//时间锁定
 			if isMeleeAttacker then
-				if TKV(DESource,'A081', 5 + 5 * GetUnitAbilityLevel(DESource,'A081')) then
+				if GetUnitPseudoRandom(DESource,'A081', 5 + 5 * GetUnitAbilityLevel(DESource,'A081')) then
 					call TGA(DESource, DETarget, 2)
 				endif
 			else
-				if TKV(DESource,'A081', 4 * GetUnitAbilityLevel(DESource,'A081')) then
+				if GetUnitPseudoRandom(DESource,'A081', 4 * GetUnitAbilityLevel(DESource,'A081')) then
 					call TGA(DESource, DETarget, 2)
 				endif
 			endif
 		elseif GetUnitAbilityLevel(DESource,'A09E')> 0 then	//狂战士之怒
-			if TKV(DESource,'A09E', 10) then
+			if GetUnitPseudoRandom(DESource,'A09E', 10) then
 				call TGA(DESource, DETarget, 3)
 			endif
 		elseif GetUnitAbilityLevel(DESource,'A340')> 0 then	//极度饥渴
@@ -78132,13 +78132,13 @@ function TPA takes nothing returns nothing
 			else
 				set probability = 10
 			endif
-			if TKV(DESource,'A340', probability) then
+			if GetUnitPseudoRandom(DESource,'A340', probability) then
 				call TGA(DESource, DETarget, 6)
 			endif
 		endif
 	endif
 	if GetUnitAbilityLevel(DESource,'A061') == 1 then	//金箍棒
-		if TKV(DESource,'A061', 35) then
+		if GetUnitPseudoRandom(DESource,'A061', 35) then
 			call TGA(DESource, DETarget, 5)
 		endif
 	endif
@@ -82984,7 +82984,7 @@ function InitHeroSkillsData takes nothing returns nothing
 	endif
 	//set IsNoDeathMatchSkill[i * 4 + 4]= true
 	set i = 4 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbiltiyOrder('QB02')), 'QB02', 0,'QY02', "w")
+	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('QB02')), 'QB02', 0,'QY02', "w")
 	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A0G6')),'A0G6', 0,'Y014', "e")
 	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "replenishmana")+ SaveSkillOrder(i * 4 + 3, "replenishlife")+ SaveSkillOrder(i * 4 + 3, "abuz agi")+ SaveSkillOrder(i * 4 + 3, "str bug"),'A0KX', 0,'Y015', null)
 	set IsMultiIconSkill[i * 4 + 3]= true
@@ -83039,7 +83039,7 @@ function InitHeroSkillsData takes nothing returns nothing
 	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "bearform")+ SaveSkillOrder(i * 4 + 4, "unbearform")+ SaveSkillOrder(i * 4 + 4, "battleroar")+ SaveSkillOrder(i * 4 + 4, "metamorphosis")+ SaveSkillOrder(i * 4 + 4, "melee morph"),'A0AG', 0,'Y040', "f")
 	set IsMultiIconSkill[i * 4 + 4]= true
 	set i = DB -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbiltiyOrder('A01F')),'A01F', 0,'Y041', "d")
+	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A01F')),'A01F', 0,'Y041', "d")
 	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "restorationoff"),'QB0E', 0,'QY0E', "t")
 	call RegisterHeroSkill(i * 4 + 3, null,'A18X','QP1U','Y043', null)
 	set IsPassiveSkill[i * 4 + 3]= true
@@ -83524,7 +83524,7 @@ function InitHeroSkillsData takes nothing returns nothing
 	call RegisterHeroSkill(i * 4 + 2, null,'A0SS','QP1W','Y286', null)
 	set IsPassiveSkill[i * 4 + 2]= true
 	set NoBalanceOffTips[i * 4 + 2]= "远程模型使用盛宴只造成/回复 1.75/2.75/3.75/4.75% 生命值的伤害"
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, GetAbiiltyOrder('A194')),'A194', 0,'Y287', "w")
+	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, GetAbilityOrder('A194')),'A194', 0,'Y287', "w")
 	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "decouple"),'A0SW', 0,'Y288', "t")
 	set i = 73 -1
 	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "grabtree"),'A0MT', 0,'Y289', "b")
@@ -83533,7 +83533,7 @@ function InitHeroSkillsData takes nothing returns nothing
 	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "drain"),'A0CC','A02Z','Y292', "d")
 	set HeroSkillsIcon[i * 4 + 4]= "ReplaceableTextures\\CommandButtons\\BTNLifeDrain.blp"
 	set i = 74 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbiltiyOrder('A046')),'A046','A3OH','Y293', "g")
+	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A046')),'A046','A3OH','Y293', "g")
 	call RegisterHeroSkill(i * 4 + 2, null,'A04E','QP10','Y294', null)
 	set IsPassiveSkill[i * 4 + 2]= true
 	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "roar"),'A226', 0,'Y295', "c")
@@ -83719,7 +83719,7 @@ function InitHeroSkillsData takes nothing returns nothing
 	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "innerfire"),'A053', 0,'Y407', "e")
 	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "thunderbolt"),'A05T','A08H','Y408', "c")
 	set i ='g'-1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbiltiyOrder('A078')),'A078', 0,'Y409', "r")
+	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A078')),'A078', 0,'Y409', "r")
 	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "silence"),'A07M', 0,'Y410', "e")
 	call RegisterHeroSkill(i * 4 + 3, null,'A02C', 0,'Y411', null)
 	set IsPassiveSkill[i * 4 + 3]= true
@@ -83741,7 +83741,7 @@ function InitHeroSkillsData takes nothing returns nothing
 	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "ward"),'A0MS', 0,'Y419', "w")
 	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "summongrizzly"),'A013','A0A6','Y420', "v")
 	set i ='j'-1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbiltiyOrder('A02S')),'A02S','A3Y8','Y421', "w")
+	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A02S')),'A02S','A3Y8','Y421', "w")
 	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "innerfire"),'A037', 0,'Y422', "e")
 	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "blackarrowon"),'A1RD', 0,'Y423', "d")
 	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "roar"),'A29L','A447','Y424', "v")
