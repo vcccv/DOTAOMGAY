@@ -77,7 +77,7 @@ scope EmberSpirit
     endfunction
     // 移除所有缠绕效果
     function KZA takes unit u returns nothing
-        call FHX(u)
+        call UnitDispelDisableMoveBuff(u)
     endfunction
     function SleightOfFistUpdateAttack takes nothing returns boolean
         local trigger     t = GetTriggeringTrigger()

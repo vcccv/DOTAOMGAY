@@ -8122,7 +8122,7 @@ function FAX takes unit whichUnit, unit targetUnit returns nothing
 	call KillUnit(d)
 	set d = null
 endfunction
-function FNX takes unit whichUnit, integer level, integer FBX returns nothing
+function SetStickyNapalmStack takes unit whichUnit, integer level, integer FBX returns nothing
 	local integer i
 	if K2V[1]== 0 then
 		return
@@ -8184,44 +8184,54 @@ function SetStunBuffId takes integer id returns nothing
 	set I4[A4]= id
 endfunction
 
-function FHX takes unit u returns nothing
+globals
+	constant integer DISABLE_MOVE_BUFF_KEY = 'PRGN'
+	constant integer DISARM_BUFF_KEY 	   = 'PRGH'
+	constant integer SILENCE_BUFF_KEY 	   = 'PRGI'
+
+endglobals
+
+// 移除缠绕类效果
+function UnitDispelDisableMoveBuff takes unit u returns nothing
 	local integer i = 1
 	loop
-	exitwhen HaveSavedInteger(AbilityDataHashTable,'PRGN', i) == false
-		call UnitRemoveAbility(u, LoadInteger(AbilityDataHashTable,'PRGN', i))
+	exitwhen HaveSavedInteger(AbilityDataHashTable, DISABLE_MOVE_BUFF_KEY, i) == false
+		call UnitRemoveAbility(u, LoadInteger(AbilityDataHashTable, DISABLE_MOVE_BUFF_KEY, i))
 		set i = i + 1
 	endloop
 endfunction
 
 // 移除缴械类状态
-function FJX takes unit u returns nothing
+function UnitDispelDisarmBuff takes unit u returns nothing
 	local integer i = 1
 	loop
-	exitwhen not HaveSavedInteger(AbilityDataHashTable,'PRGH', i)
-		call UnitRemoveAbility(u, LoadInteger(AbilityDataHashTable,'PRGH', i))
+	exitwhen not HaveSavedInteger(AbilityDataHashTable, DISARM_BUFF_KEY, i)
+		call UnitRemoveAbility(u, LoadInteger(AbilityDataHashTable, DISARM_BUFF_KEY, i))
 		set i = i + 1
 	endloop
 endfunction
 
 // 驱散Buff
-function DispelUnit takes unit u, boolean strongDispel returns nothing
+function UnitDispelBuffs takes unit u, boolean basicDispel returns nothing
 	local integer i = 1
 	loop
 	exitwhen not HaveSavedInteger(AbilityDataHashTable,'PRGC', i)
 		call UnitRemoveAbility(u, LoadInteger(AbilityDataHashTable,'PRGC', i))
 		set i = i + 1
 	endloop
-	// 强驱散
-	if strongDispel then
+	// 普通驱散
+	if basicDispel then
 		set i = 1
-		// 所有强驱散标志的
+		// 仅普通驱散？ 为什么会有这个类别
 		loop
 		exitwhen not HaveSavedInteger(AbilityDataHashTable,'PRGA', i)
 			call UnitRemoveAbility(u, LoadInteger(AbilityDataHashTable,'PRGA', i))
 			set i = i + 1
 		endloop
 		call RemoveSavedInteger(HY, GetHandleId(u),'A2SG')
+		call BJDebugMsg("驱散1")
 	else
+		// 这里可能是强驱散
 		set i = 1
 		loop
 		exitwhen not HaveSavedInteger(AbilityDataHashTable,'PRGE', i)
@@ -8230,8 +8240,8 @@ function DispelUnit takes unit u, boolean strongDispel returns nothing
 		endloop
 		set i = 1
 		loop
-		exitwhen not HaveSavedInteger(AbilityDataHashTable,'PRGI', i)
-			call UnitRemoveAbility(u, LoadInteger(AbilityDataHashTable,'PRGI', i))
+		exitwhen not HaveSavedInteger(AbilityDataHashTable,SILENCE_BUFF_KEY, i)
+			call UnitRemoveAbility(u, LoadInteger(AbilityDataHashTable,SILENCE_BUFF_KEY, i))
 			set i = i + 1
 		endloop
 		set i = 1
@@ -8242,15 +8252,16 @@ function DispelUnit takes unit u, boolean strongDispel returns nothing
 		endloop
 		set i = 1
 		loop
-		exitwhen not HaveSavedInteger(AbilityDataHashTable,'PRGN', i)
-			call UnitRemoveAbility(u, LoadInteger(AbilityDataHashTable,'PRGN', i))
+		exitwhen not HaveSavedInteger(AbilityDataHashTable, DISABLE_MOVE_BUFF_KEY, i)
+			call UnitRemoveAbility(u, LoadInteger(AbilityDataHashTable, DISABLE_MOVE_BUFF_KEY, i))
 			set i = i + 1
 		endloop
-		call FNX(u, 0, 0)
+		call SetStickyNapalmStack(u, 0, 0)
 		call RemoveSavedReal(HY, GetHandleId(u),'AItb')
 		if LoadInteger(HY, GetHandleId(u), 627)> 0 then
 			call SaveInteger(HY, GetHandleId(u), 627, 0)
 		endif
+		call BJDebugMsg("驱散2")
 	endif
 	call UnitRemoveAbility(u, 'Bblo')
 	call UnitRemoveAbility(u, 'B016')
@@ -8514,6 +8525,7 @@ function UnitSpellEffectImpale takes unit u, unit target, real d, real dur, real
 	set g2 = null
 endfunction
 
+// 死亡驱散也许 又也许是强驱散
 function GBX takes unit u returns nothing
 	local integer i = 1
 	loop
@@ -8521,10 +8533,10 @@ function GBX takes unit u returns nothing
 		call UnitRemoveAbility(u, I4[i])
 		set i = i + 1
 	endloop
-	call DispelUnit(u, false)
+	call UnitDispelBuffs(u, false)
 endfunction
 function GCX takes unit u returns nothing
-	call DispelUnit(u, true)
+	call UnitDispelBuffs(u, true)
 endfunction
 function GDX takes nothing returns nothing
 	local trigger t = GetTriggeringTrigger()
@@ -10498,7 +10510,7 @@ function L8X takes unit u returns nothing
 	// 修正模型缩放
 	call SetUnitCurrentScaleEx(u, GetUnitCurrentScale(u))
 	call GBX(u)
-	call DispelUnit(u, true)
+	call UnitDispelBuffs(u, true)
 	if LoadInteger(ObjectHashTable, GetHandleId(u),'A32D')> 0 then
 		call SaveInteger(ObjectHashTable, GetHandleId(u),'A32D', 0)
 		call SaveBoolean(ObjectHashTable, GetHandleId(u),'A32D', false)
@@ -19863,9 +19875,9 @@ function BKO takes nothing returns nothing
 	//call UnitAddAbility(dummy, BGO(GetSpellAbilityId()))
 	//call IssueTargetOrderById(dummy, 852186, whichUnit)
 	// 驱散负面Buff
-	call DispelUnit(whichUnit, false)
+	call UnitDispelBuffs(whichUnit, false)
 	// 驱散缴械
-	call FJX(whichUnit)
+	call UnitDispelDisarmBuff(whichUnit)
 	// 小鸡BKB 3倍缩放
 	if IsUnitMessenger(whichUnit) then
 		call AddUnitModelScalePercentByDuration(whichUnit, duration, 2, 'A0S2', HTKEY_SCALE_BLACK_KING_BAR)
@@ -21035,7 +21047,7 @@ function HOE takes nothing returns nothing
 		set d = CreateUnit(GetOwningPlayer(GetTriggerUnit()),'e00E', GetUnitX(GetTriggerUnit()), GetUnitY(GetTriggerUnit()), 0)
 		call UnitAddAbility(d,'AIpg')
 		call IssueTargetOrderById(d, 852111, GetTriggerUnit())
-		call DispelUnit(d, false)
+		call UnitDispelBuffs(d, false)
 		set d = null
 	endif
 endfunction
@@ -25579,7 +25591,7 @@ endfunction
 function M5O takes nothing returns nothing
 	local integer i = GetSpellAbilityId()
 	if i =='A1WE' or i =='A0B8' or i =='A063' or i =='A03O' or i =='A1AY' or i =='A0MQ' or i =='A1B6' then
-		call DispelUnit(GetTriggerUnit(), false)
+		call UnitDispelBuffs(GetTriggerUnit(), false)
 	endif
 endfunction
 function M6O takes nothing returns boolean
@@ -25590,9 +25602,9 @@ function M6O takes nothing returns boolean
 	endif
 	if FDX(GetSpellAbilityId()) then
 		if FCX(GetSpellAbilityId()) == false then
-			call DispelUnit(GetSpellTargetUnit(), IsUnitEnemy(GetSpellTargetUnit(), GetTriggerPlayer()))
+			call UnitDispelBuffs(GetSpellTargetUnit(), IsUnitEnemy(GetSpellTargetUnit(), GetTriggerPlayer()))
 		else
-			call DispelUnit(GetSpellTargetUnit(), IsUnitEnemy(GetSpellTargetUnit(), GetOwningPlayer(LoadUnitHandle(HY, GetHandleId(GetTriggerUnit()), 0))))
+			call UnitDispelBuffs(GetSpellTargetUnit(), IsUnitEnemy(GetSpellTargetUnit(), GetOwningPlayer(LoadUnitHandle(HY, GetHandleId(GetTriggerUnit()), 0))))
 		endif
 	else
 		call M5O()
@@ -27707,70 +27719,12 @@ function EXGetUnitAllAbilityId takes nothing returns nothing
 endfunction
 
 
-// 驱散Buff
-// EXGetAbilityId( EXGetUnitAbilityByIndex( whichUnit, Index ) )
-// 可以通过这个来遍历单位所有技能查询Buff 而不必遍历Buff表
-// 效率是按单位的技能数量来比 不过即使是60个技能也比正常的遍历Buff表快2倍
-// 写法可再优化 减少If
-function RemoveUnitBuff takes unit u, boolean FLX returns nothing
-	local integer abilityId = 0
-	local integer loop__Index = 0
-	loop
-		set abilityId = EXGetAbilityId( EXGetUnitAbilityByIndex( u, loop__Index ) )
-		exitwhen abilityId == 0
-
-		// debug call SingleDebug( I2S( loop__Index ) + " 号技能为 " + GetObjectName(abilityId) + " " + YDWEId2S( abilityId ) )
-		if LoadInteger(AbilityDataHashTable,'PRGC', abilityId) != 0 then
-			call UnitRemoveAbility(u, abilityId)
-		endif
-		if FLX then
-			if LoadInteger(AbilityDataHashTable,'PRGA', abilityId) != 0 then
-				call UnitRemoveAbility(u, abilityId)
-			endif
-		else
-			if LoadInteger(AbilityDataHashTable,'PRGE', abilityId) != 0 then
-				call UnitRemoveAbility(u, abilityId)
-			endif
-			if LoadInteger(AbilityDataHashTable,'PRGI', abilityId) != 0 then
-				call UnitRemoveAbility(u, abilityId)
-			endif
-			if LoadInteger(AbilityDataHashTable,'PRGS', abilityId) != 0 then
-				call UnitRemoveAbility(u, abilityId)
-			endif
-			if LoadInteger(AbilityDataHashTable,'PRGN', abilityId) != 0 then
-				call UnitRemoveAbility(u, abilityId)
-			endif
-		endif
-
-		set loop__Index = loop__Index + 1
-	endloop
-
-	call FNX(u, 0, 0)
-	call RemoveSavedReal(HY, GetHandleId(u),'AItb')
-	if LoadInteger(HY, GetHandleId(u), 627)> 0 then
-		call SaveInteger(HY, GetHandleId(u), 627, 0)
-	endif
-	
-	call UnitRemoveAbility(u, 'Bblo')
-	call UnitRemoveAbility(u, 'B016')
-	// 嗜血Buff删除
-	if HaveSavedHandle( ExtraHT, GetHandleId(u), HTKEY_SCALE_BLOODLUST_TRIGGER ) then
-		// debug call SingleDebug( " 强制运行缩放触发器 " )
-		call TriggerEvaluate( LoadTriggerHandle( ExtraHT, GetHandleId(u), HTKEY_SCALE_BLOODLUST_TRIGGER ) )
-	endif
-	// 狂猛Buff删除
-	if HaveSavedHandle( ExtraHT, GetHandleId(u), HTKEY_SCALE_RABID_TRIGGER ) then
-		// debug call SingleDebug( " 强制运行缩放触发器 " )
-		call TriggerEvaluate( LoadTriggerHandle( ExtraHT , GetHandleId(u) , HTKEY_SCALE_RABID_TRIGGER ) )
-	endif
-endfunction
 
 // 10000 loop
 function TestEfficiencyActions takes nothing returns nothing
 	local integer i = 0
 	loop
 	exitwhen i == 100
-		call RemoveUnitBuff(GetPlayerSelectedUnit(), false)
 		set i = i + 1
 	endloop
 
@@ -43369,8 +43323,8 @@ function UJR takes unit whichUnit, unit targetUnit, integer id, integer level re
 	call UnitAddPermanentAbility(whichUnit,'A0ST')
 	call SetPlayerAbilityAvailableEx(GetOwningPlayer(whichUnit),'A0ST', false)
 	call SetUnitAnimationByIndex(whichUnit, LoadInteger(ObjectHashTable, GetUnitTypeId(whichUnit),'A1P8'))
-	call DispelUnit(whichUnit, false)
-	call FJX(whichUnit)
+	call UnitDispelBuffs(whichUnit, false)
+	call UnitDispelDisarmBuff(whichUnit)
 	call SetUnitTimeScale(whichUnit, 3.)
 	set t = null
 endfunction
@@ -43862,8 +43816,8 @@ function VLE takes nothing returns nothing
 	endif
 	call TriggerEvaluate(t)
 	call EPX(GetTriggerUnit(), 4252, 5)
-	call DispelUnit(GetTriggerUnit(), false)
-	call FJX(GetTriggerUnit())
+	call UnitDispelBuffs(GetTriggerUnit(), false)
+	call UnitDispelDisarmBuff(GetTriggerUnit())
 	set t = null
 endfunction
 function WKR takes nothing returns boolean
@@ -46715,8 +46669,8 @@ function EGE takes nothing returns nothing
 	set g = null
 endfunction
 function F7E takes nothing returns nothing
-	call FJX(GetSpellTargetUnit())
-	call DispelUnit(GetSpellTargetUnit(), false)
+	call UnitDispelDisarmBuff(GetSpellTargetUnit())
+	call UnitDispelBuffs(GetSpellTargetUnit(), false)
 endfunction
 function E4I takes nothing returns boolean
 	return IsUnitAlly(GetFilterUnit(), GetOwningPlayer(U2)) and GetUnitAbilityLevel(GetFilterUnit(),'B00G')> 0 and GetUnitDistanceEx(GetFilterUnit(), U2)> 2000
@@ -47266,7 +47220,7 @@ function EJE takes nothing returns nothing
 	local real EOX
 	local real nx
 	local real ny
-	call DispelUnit(u, false)
+	call UnitDispelBuffs(u, false)
 	call UnitAddAbility(d,'A46G')
 	call IssueTargetOrderById(d, 852274, u)
 	call SetUnitAbilityLevel(d,'A46G', 2)
@@ -53563,7 +53517,7 @@ function F4I takes nothing returns boolean
 		call SaveInteger(HY,(GetHandleId(targetUnit)), 281, 0)
 		call FlushChildHashtable(HY, h)
 		call DestroyTrigger(t)
-		call FNX(targetUnit, 0, 0)
+		call SetStickyNapalmStack(targetUnit, 0, 0)
 	elseif count == 0 then
 		call SetUnitTurnSpeed(targetUnit, GetUnitDefaultTurnSpeed(targetUnit))
 		call SaveInteger(HY,(GetHandleId(targetUnit)), 281, 0)
@@ -53603,7 +53557,7 @@ function F6I takes nothing returns boolean
 	if (GetGameTime())-IWO >= 8 then
 		call SetUnitTurnSpeed(targetUnit, GetUnitDefaultTurnSpeed(targetUnit))
 		call SaveInteger(HY,(GetHandleId(targetUnit)), 281, 0)
-		call FNX(targetUnit, 0, 0)
+		call SetStickyNapalmStack(targetUnit, 0, 0)
 	endif
 	call FlushChildHashtable(HY, h)
 	call DestroyTrigger(t)
@@ -53624,7 +53578,7 @@ function F7I takes nothing returns nothing
 		set targetUnit = null
 		return
 	endif
-	call FNX(targetUnit, level, count)
+	call SetStickyNapalmStack(targetUnit, level, count)
 	call SaveInteger(HY,(GetHandleId(targetUnit)), 281,(count))
 	call SaveReal(HY,(GetHandleId(targetUnit)), 675,(((GetGameTime()))* 1.))
 	call SetUnitTurnSpeed(targetUnit, GetUnitDefaultTurnSpeed(targetUnit)* .3)
@@ -61013,7 +60967,7 @@ function Infest takes nothing returns nothing
 		set YPI = ""
 		set YQI = ""
 	endif
-	call DispelUnit(u, false)
+	call UnitDispelBuffs(u, false)
 	if IsUnitType(u, UNIT_TYPE_SUMMONED) == false then
 		call UnitRemoveBuffs(u, true, true)
 	endif
@@ -61096,8 +61050,8 @@ function IYE takes nothing returns nothing
 	call UnitAddPermanentAbility(trigUnit,'A0ST')
 	call UnitAddPermanentAbility(trigUnit,'A0SR')
 	call SetUnitAbilityLevel(trigUnit,'A0SR', level)
-	call DispelUnit(trigUnit, false)
-	call FJX(trigUnit)
+	call UnitDispelBuffs(trigUnit, false)
+	call UnitDispelDisarmBuff(trigUnit)
 	call SaveUnitHandle(HY, h, 14, trigUnit)
 	call TriggerRegisterTimerEvent(t, 2 + level, false)
 	call TriggerAddCondition(t, Condition(function YSI))
@@ -73257,7 +73211,7 @@ function CreatePrimalSplitTrigger takes nothing returns nothing
 endfunction
 function JFA takes nothing returns boolean
 	if UnitIsDead(GetFilterUnit()) == false and IsAliveNotStrucNotWard(GetFilterUnit()) then
-		call DispelUnit(GetFilterUnit(), IsUnitEnemy(GetFilterUnit(), E3))
+		call UnitDispelBuffs(GetFilterUnit(), IsUnitEnemy(GetFilterUnit(), E3))
 	endif
 	return false
 endfunction
@@ -77347,7 +77301,7 @@ endfunction
 function GDE takes nothing returns nothing
 	local group g = AllocationGroup(488)
 	local unit u
-	call DispelUnit(GetTriggerUnit(), false)
+	call UnitDispelBuffs(GetTriggerUnit(), false)
 	set U2 = GetTriggerUnit()
 	call GroupEnumUnitsInRange(g, GetUnitX(GetTriggerUnit()), GetUnitY(GetTriggerUnit()), 775, Condition(function QPA))
 	loop
@@ -77431,7 +77385,7 @@ function GBE takes nothing returns nothing
 		set targetUnit = GetSpellTargetUnit()
 	endif
 	call UnitAddAbilityToTimed(targetUnit,'A3E9', 1, 5.,'B3E9')
-	call DispelUnit(targetUnit, false)
+	call UnitDispelBuffs(targetUnit, false)
 	set targetUnit = null
 endfunction
 function QSA takes nothing returns nothing
@@ -81128,15 +81082,18 @@ function Init_BuffsId takes nothing returns nothing
 	call SetBuffAbilityId('D016','PRGS')
 	call SetBuffAbilityId('B09Q','PRGS')
 	call SetBuffAbilityId('B06Q','PRGS')
-	call SetBuffAbilityId('A44Y','PRGC')
-	call SetBuffAbilityId('B44Y','PRGC')
-	call SetBuffAbilityId('C033','PRGH')
-	call SetBuffAbilityId('D033','PRGH')
-	call SetBuffAbilityId('A3KC','PRGH')
+
+	call SetBuffAbilityId('C033', DISARM_BUFF_KEY)
+	call SetBuffAbilityId('D033', DISARM_BUFF_KEY)
+	call SetBuffAbilityId('A3KC', DISARM_BUFF_KEY)
+	call SetBuffAbilityId('B033', DISARM_BUFF_KEY)
+
 	call SetBuffAbilityId('A3KE','PRGE')
 	call SetBuffAbilityId('B3KE','PRGE')
 	call SetBuffAbilityId('A3KD','PRGE')
 	call SetBuffAbilityId('A2T4','PRGE')
+
+	// 衰老
 	call SetBuffAbilityId('B01N','PRGC')
 	call SetBuffAbilityId('A30D','PRGC')
 	call SetBuffAbilityId('A44I','PRGC')
@@ -81146,15 +81103,11 @@ function Init_BuffsId takes nothing returns nothing
 	call SetBuffAbilityId('A3C2','PRGC')
 	call SetBuffAbilityId('A3C3','PRGC')
 	call SetBuffAbilityId('B38G','PRGC')
+	call SetBuffAbilityId('Aetl','PRGC')
+
 	call SetBuffAbilityId('B06Z','PRGS')
 	call SetBuffAbilityId('B08Q','PRGS')
-	call SetBuffAbilityId('B031','PRGI')
-
-	// 血棘 - 灵魂撕裂
-	call SetBuffAbilityId('A4TP','PRGI')
 	
-	call SetBuffAbilityId('B0C1','PRGN')
-	call SetBuffAbilityId('BEer','PRGN')
 	call SetBuffAbilityId('BHca','PRGS')
 	call SetBuffAbilityId('Bcsd','PRGS')
 	call SetBuffAbilityId('B0BQ','PRGS')
@@ -81166,9 +81119,6 @@ function Init_BuffsId takes nothing returns nothing
 	call SetBuffAbilityId('B03J','PRGS')
 	call SetBuffAbilityId('Bslo','PRGS')
 	call SetBuffAbilityId('BNdh','PRGS')
-	call SetBuffAbilityId('B07U','PRGI')
-	call SetBuffAbilityId('BNsi','PRGI')
-	call SetBuffAbilityId('BNso','PRGI')
 	call SetBuffAbilityId('B01N','PRGE')
 	//call SetBuffAbilityId('B033','PRGE')
 	call SetBuffAbilityId('Bpoi','PRGS')
@@ -81249,7 +81199,6 @@ function Init_BuffsId takes nothing returns nothing
 	call SetBuffAbilityId('B01D','PRGS')
 	call SetBuffAbilityId('B092','PRGS')
 	call SetBuffAbilityId('BEsh','PRGS')
-	call SetBuffAbilityId('B017','PRGN')
 	call SetBuffAbilityId('B0AE','PRGE')
 	call SetBuffAbilityId('B0AD','PRGE')
 	call SetBuffAbilityId('B08O','PRGE')
@@ -81263,21 +81212,38 @@ function Init_BuffsId takes nothing returns nothing
 	call SetBuffAbilityId('B0BF','PRGE')
 	call SetBuffAbilityId('B0BE','PRGE')
 	call SetBuffAbilityId('B0CC','PRGE')
-	call SetBuffAbilityId('B078','PRGN')
-	
-	call SetBuffAbilityId('B0FU','PRGN')	//阿托斯缠绕
-	
-	
 	call SetBuffAbilityId('B00T','PRGE')
-	call SetBuffAbilityId('B07V','PRGI')
+
+	call SetBuffAbilityId('B0C1', DISABLE_MOVE_BUFF_KEY)
+	call SetBuffAbilityId('BEer', DISABLE_MOVE_BUFF_KEY)
+	call SetBuffAbilityId('B017', DISABLE_MOVE_BUFF_KEY)
+	call SetBuffAbilityId('B078', DISABLE_MOVE_BUFF_KEY)
+	call SetBuffAbilityId('B0FU', DISABLE_MOVE_BUFF_KEY)	//阿托斯缠绕
+	call SetBuffAbilityId('B08F', DISABLE_MOVE_BUFF_KEY)
+	call SetBuffAbilityId('B08E', DISABLE_MOVE_BUFF_KEY)
+	call SetBuffAbilityId('B0ER', DISABLE_MOVE_BUFF_KEY)
+	call SetBuffAbilityId('B0FN', DISABLE_MOVE_BUFF_KEY)
+	call SetBuffAbilityId('Bena', DISABLE_MOVE_BUFF_KEY)
+	call SetBuffAbilityId('Beng', DISABLE_MOVE_BUFF_KEY)
+	
+
+	call SetBuffAbilityId('B031', SILENCE_BUFF_KEY)
+	// 血棘 - 灵魂撕裂
+	call SetBuffAbilityId('A4TP', SILENCE_BUFF_KEY)
+	call SetBuffAbilityId('B07U', SILENCE_BUFF_KEY)
+	call SetBuffAbilityId('BNsi', SILENCE_BUFF_KEY)
+	call SetBuffAbilityId('BNso', SILENCE_BUFF_KEY)
+	call SetBuffAbilityId('B07V', SILENCE_BUFF_KEY)
+	call SetBuffAbilityId('B02M', SILENCE_BUFF_KEY)
+	call SetBuffAbilityId('B0BY', SILENCE_BUFF_KEY)
+	call SetBuffAbilityId('B0FT', SILENCE_BUFF_KEY)
+	call SetBuffAbilityId('B0G0', SILENCE_BUFF_KEY)
+
 	call SetBuffAbilityId('B00P','PRGS')
-	call SetBuffAbilityId('B02M','PRGI')
 	call SetBuffAbilityId('B043','PRGS')
 	call SetBuffAbilityId('B04Q','PRGS')
 	call SetBuffAbilityId('B00C','PRGE')
 	call SetBuffAbilityId('B09K','PRGE')
-	call SetBuffAbilityId('B08F','PRGN')
-	call SetBuffAbilityId('B08E','PRGN')
 	call SetBuffAbilityId('B0AM','PRGS')
 	call SetBuffAbilityId('C009','PRGE')
 	call SetBuffAbilityId('D009','PRGE')
@@ -81288,19 +81254,11 @@ function Init_BuffsId takes nothing returns nothing
 	call SetBuffAbilityId('B0AF','PRGE')
 	call SetBuffAbilityId('B08N','PRGS')
 	call SetBuffAbilityId('B02I','PRGS')
-	call SetBuffAbilityId('B0BY','PRGI')
 	call SetBuffAbilityId('B02P','PRGE')
 	call SetBuffAbilityId('B0EP','PRGS')
-	call SetBuffAbilityId('B0ER','PRGN')
 	call SetBuffAbilityId('B0ET','PRGS')
-	call SetBuffAbilityId('B0FN','PRGN')
 	call SetBuffAbilityId('B0FY','PRGS')
-	call SetBuffAbilityId('B0FT','PRGI')
-	call SetBuffAbilityId('B0G0','PRGI')
-	call SetBuffAbilityId('Bena','PRGN')
-	call SetBuffAbilityId('Beng','PRGN')
 	call SetBuffAbilityId('A39F','PRGE')
-	call SetBuffAbilityId('Aetl','PRGC')
 	call SetBuffAbilityId('A3QU','PRGE')
 	call SetBuffAbilityId('A3QV','PRGE')
 	call SetBuffAbilityId('A3QW','PRGE')
@@ -81354,7 +81312,7 @@ function Init_BuffsId takes nothing returns nothing
 	call SetBuffAbilityId('A3W9','PRGE')
 	call SetBuffAbilityId('B3W9','PRGE')
 
-	// PRGA 仅强驱散？
+	// PRGA 可能是普通驱散
 
 	// 猛犸波神杖升级致残
 	call SetBuffAbilityId('A3Y9','PRGA')
@@ -85684,7 +85642,7 @@ function fj_exec takes nothing returns nothing
 	local unit u = U2
 	local unit u2 = MissileHitTargetUnit
 	local trigger t
-	call DispelUnit(u2, true)
+	call UnitDispelBuffs(u2, true)
 	if not IsUnitIllusion(u2) then
 		set t = CreateTrigger()
 		call UnitAddAbilityToTimed(u2,'A3W0', 1, 6.0,'B3W0')
