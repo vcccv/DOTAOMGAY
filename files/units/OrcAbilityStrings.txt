@@ -34664,11 +34664,6 @@ buffart=ReplaceableTextures\CommandButtons\BTNMirrorImage
 specialart=Abilities\Spells\Orc\MirrorImage\MirrorImageDeathCaster.mdl
 Bufftip=镜像
 Buffubertip=制造本体的幻象
-[BO40]
-buffart=ReplaceableTextures\CommandButtons\BTNMirrorImage
-specialart=Abilities\Spells\Orc\MirrorImage\MirrorImageDeathCaster.mdl
-Bufftip=镜像
-Buffubertip=制造本体的幻象
 [BO50]
 buffart=ReplaceableTextures\CommandButtons\BTNMirrorImage
 specialart=Abilities\Spells\Orc\MirrorImage\MirrorImageDeathCaster.mdl
@@ -36578,12 +36573,6 @@ name="Courier Morph - To Zeppelin"
 name="Courier Morph - To Crow"
 [S014]
 name="Courier Morph - To Vulture"
-[A1WE]
-targetart=Abilities\Spells\Other\Levelup\LevelupCaster.mdl
-specialart=Abilities\Spells\Orc\MirrorImage\MirrorImageCaster.mdl
-missileart=Abilities\Spells\Orc\MirrorImage\MirrorImageMissile.mdl
-missilespeed=1000
-name="Manta Image (ranged)"
 [S015]
 name="Courier Morph - Pack to Chicken"
 [S0JH]

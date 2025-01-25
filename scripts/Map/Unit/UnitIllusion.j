@@ -173,6 +173,203 @@ library UnitIllusion requires UnitUtils, UnitWeapon
         return false
     endfunction
 
+    globals
+        private constant key ILLUSION_OWNER
+    endglobals
+
+    function CreateIllusion takes player whichPlayer, unit whichUnit, real damageDealt, real damageTaken, real x, real y, integer buffId, real dur returns unit
+        set bj_lastCreatedUnit = MHUnit_CreateIllusion(whichPlayer, whichUnit, x, y)
+        call MHUnit_ApplyTimedLife(bj_lastCreatedUnit, buffId, dur)
+        call MHUnit_SetIllusionDamageDeal(bj_lastCreatedUnit, damageDealt)
+        call MHUnit_SetIllusionDamageReceive(bj_lastCreatedUnit, damageTaken)
+        set Table[GetHandleId(bj_lastCreatedUnit)].unit[ILLUSION_OWNER] = whichUnit
+        return bj_lastCreatedUnit
+    endfunction
+
+    function GetIllusionDamageDealt takes unit illusion returns real
+        return MHUnit_GetIllusionDamageDeal(illusion)
+    endfunction
+    function GetIllusionDamageTaken takes unit illusion returns real
+        return MHUnit_GetIllusionDamageReceive(illusion)
+    endfunction
+    function GetIllusionOwner takes unit illusion returns unit
+        return Table[GetHandleId(illusion)].unit[ILLUSION_OWNER]
+    endfunction
+
+    #define MIRROR_IMAGE_FRAME 0.02
+    private function MirrorImageOnUpdate takes nothing returns nothing
+        local SimpleTick tick  = SimpleTick.GetExpired()
+        local TableArray table = SimpleTick.GetTable()
+        local integer    h     = tick
+        local integer    max
+        local integer    i
+        local effect     missileEffect
+        local real       vel
+        local real       dist
+        local real       angle
+        local real       rng
+        local real       x
+        local real       y
+        local unit       whichUnit
+        local player     whichPlayer
+        local real       damageDealt
+        local real       damageTaken
+        local integer    buffId
+        local real       dur 
+        local integer    ownerIndex
+
+        set rng  = table[h][4]
+        set vel  = table[h][5]
+        set dist = table[h][6] + vel
+        set max  = table[h]['M'] + 1
+        set i = 1
+        set angle = 360. / ( max * 1. )
+        if dist >= rng then
+            set whichUnit   = table[h].unit['U']
+            set whichPlayer = GetOwningPlayer(whichUnit)
+            set damageDealt = table[h].real['1']
+            set damageTaken = table[h].real['2']
+            set dur         = table[h].real['3']
+            set buffId      = table[h]['B']
+            set ownerIndex  = GetRandomInt(1, max)
+
+            call DestroyFogModifier(table[h].fogmodifier['F'])
+            loop
+                exitwhen i > max
+                set missileEffect = table[h].effect[-i]
+                set x = GetUnitX(whichUnit) + rng * Cos(angle * i * bj_DEGTORAD)
+                set y = GetUnitY(whichUnit) + rng * Sin(angle * i * bj_DEGTORAD)
+                call MHEffect_SetPosition(missileEffect, x, y, MHGame_GetAxisZ(x, y))
+                call DestroyEffect(missileEffect)
+                if i != ownerIndex then
+                    call CreateIllusion(whichPlayer, whichUnit, damageDealt, damageTaken, x, y, buffId, dur)
+                else
+                    set x = MHUnit_ModifyPositionX(whichUnit, x, y)
+                    set y = MHUnit_ModifyPositionY(whichUnit, x, y)
+                    call UnitSubInvulnerableCount(whichUnit)
+                    call UnitSubStunCount(whichUnit)
+                    call UnitSubHideExCount(whichUnit)
+                    call SetUnitX(whichUnit, x)
+                    call SetUnitY(whichUnit, y)
+                endif
+                set i = i + 1
+            endloop
+
+            call tick.Destroy()
+            set whichUnit = null
+        else
+            loop
+                exitwhen i > max
+                set missileEffect = table[h].effect[-i]
+                set x = MHEffect_GetX(missileEffect) + vel * Cos(angle * i * bj_DEGTORAD)
+                set y = MHEffect_GetY(missileEffect) + vel * Sin(angle * i * bj_DEGTORAD)
+                call MHEffect_SetPosition(missileEffect, x, y, MHGame_GetAxisZ(x, y))
+                set i = i + 1
+            endloop
+            set table[h].real[6] = dist
+        endif
+    endfunction
+
+    private function MirrorImageOnDelayEnd takes nothing returns nothing
+        local SimpleTick tick  = SimpleTick.GetExpired()
+        local TableArray table = SimpleTick.GetTable()
+        local integer    h     = tick
+        local integer    max
+        local integer    i
+        local effect     missileEffect
+        local string     missileArt
+        local unit       whichUnit
+        local real       scale
+        local real       angle
+        local real       x
+        local real       y
+
+        call DestroyEffect(table[h].effect['E'])
+        set whichUnit = table[h].unit['U']
+        set missileArt = table[h].string['M']
+        set max   = table[h]['M'] + 1
+        set scale = GetUnitCurrentScale(whichUnit)
+        
+        set x = GetUnitX(whichUnit)
+        set y = GetUnitY(whichUnit)
+        set angle = 360. / ( max * 1. )
+        set i = 1
+        loop
+            exitwhen i > max
+            set missileEffect = AddSpecialEffect(missileArt, x, y)
+            call MHEffect_SetScale(missileEffect, scale)
+            call MHEffect_SetYaw(bj_lastCreatedEffect, angle * i)
+            set table[h].effect[-i] = missileEffect
+            set i = i + 1
+        endloop
+
+        call tick.Start(MIRROR_IMAGE_FRAME, true, function MirrorImageOnUpdate)
+        set whichUnit     = null
+        set missileEffect = null
+    endfunction
+
+    function UnitMirrorImage takes unit whichUnit, integer max, real damageDealt, real damageTaken, integer buffId, real dur, real delay, string specialArt, string missileArt, real missileSpeed, real rng, real area returns nothing
+        local SimpleTick  tick
+        local TableArray  table
+        local integer     h
+        local fogmodifier imageFog
+        local unit        first
+        local group       g
+        local real        x
+        local real        y
+
+        set table = SimpleTick.GetTable()
+        set tick  = SimpleTick.Create(0)
+        set h     = tick
+        call tick.Start(delay, false, function MirrorImageOnDelayEnd)
+
+        set g = AllocationGroup(187)
+
+        call GroupEnumUnitsOfPlayer(g, GetOwningPlayer(whichUnit), null)
+        loop
+            set first = FirstOfGroup(g)
+            exitwhen first == null
+            call GroupRemoveUnit(g, first)
+            
+            if UnitAlive(first) and IsUnitIllusion(first) and GetUnitAbilityLevel(first, buffId) > 0 and GetIllusionOwner(first) == whichUnit then
+                call KillUnit(first)
+            endif
+            
+        endloop
+        call DeallocateGroup(g)
+
+        set x = GetUnitX(whichUnit)
+        set y = GetUnitY(whichUnit)
+
+        set imageFog = CreateFogModifierRadius(GetOwningPlayer(whichUnit), FOG_OF_WAR_VISIBLE, x, y, area, true, false)
+		call FogModifierStart(imageFog)
+        set table[h].fogmodifier['F'] = imageFog
+		set imageFog = null
+
+        if specialArt != null then
+            set bj_lastCreatedEffect = AddSpecialEffect(specialArt, x, y)
+            call MHEffect_SetYaw(bj_lastCreatedEffect, GetUnitFacing(whichUnit))
+            call MHEffect_SetScale(bj_lastCreatedEffect, GetUnitCurrentScale(whichUnit))
+            set table[h].effect['E'] = bj_lastCreatedEffect
+        endif
+        
+        set table[h].real[1] = damageDealt
+        set table[h].real[2] = damageTaken
+        set table[h].real[3] = dur
+        set table[h].real[4] = rng
+        set table[h].real[5] = missileSpeed * MIRROR_IMAGE_FRAME
+
+        set table[h]['M'] = max
+        set table[h]['B'] = buffId
+        set table[h].string['S'] = specialArt
+        set table[h].string['M'] = missileArt
+        set table[h].unit['U'] = whichUnit
+
+        call UnitAddInvulnerableCount(whichUnit)
+        call UnitAddStunCount(whichUnit)
+        call UnitAddHideExCount(whichUnit)
+    endfunction
+
     function UnitIllusion_Init takes nothing returns nothing
         local trigger trig = CreateTrigger()
         call TriggerRegisterPlayerUnitEventBJ(trig, EVENT_PLAYER_UNIT_SUMMON)

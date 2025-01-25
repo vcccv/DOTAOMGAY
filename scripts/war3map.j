@@ -3284,8 +3284,8 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A2KS', 12, "HNE")
 	call SaveStr(ObjectHashTable,'A0GD', 12, "HDE")
 	call SaveStr(ObjectHashTable,'A1EW', 12, "HFE")
-	call SaveStr(ObjectHashTable,'A0B8', 12, "HGE")
-	call SaveStr(ObjectHashTable,'A1WE', 12, "HGE")
+	call SaveStr(ObjectHashTable,'A0B8', 12, "ItemMantaImageOnSpellEffect")
+	call SaveStr(ObjectHashTable,'A1WE', 12, "ItemMantaImageOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A1MO', 12, "HHE")
 	call SaveStr(ObjectHashTable,'A1Q8', 12, "HJE")
 	call SaveStr(ObjectHashTable,'A1QD', 12, "HKE")
@@ -8173,8 +8173,8 @@ function FDX takes integer id returns boolean
 endfunction
 
 // 注册一个Buff 
-function SetBuffAbilityId takes integer id, integer buffType returns nothing
-	call SaveInteger(AbilityDataHashTable, buffType, LoadInteger(AbilityDataHashTable, buffType, 0)+ 1, id)
+function SetBuffAbilityId takes integer buffId, integer buffType returns nothing
+	call SaveInteger(AbilityDataHashTable, buffType, LoadInteger(AbilityDataHashTable, buffType, 0)+ 1, buffId)
 	call SaveInteger(AbilityDataHashTable, buffType, 0, LoadInteger(AbilityDataHashTable, buffType, 0)+ 1)
 endfunction
 
@@ -8204,7 +8204,7 @@ function FJX takes unit u returns nothing
 endfunction
 
 // 驱散Buff
-function FKX takes unit u, boolean strongDispel returns nothing
+function DispelUnit takes unit u, boolean strongDispel returns nothing
 	local integer i = 1
 	loop
 	exitwhen not HaveSavedInteger(AbilityDataHashTable,'PRGC', i)
@@ -8214,6 +8214,7 @@ function FKX takes unit u, boolean strongDispel returns nothing
 	// 强驱散
 	if strongDispel then
 		set i = 1
+		// 所有强驱散标志的
 		loop
 		exitwhen not HaveSavedInteger(AbilityDataHashTable,'PRGA', i)
 			call UnitRemoveAbility(u, LoadInteger(AbilityDataHashTable,'PRGA', i))
@@ -8520,10 +8521,10 @@ function GBX takes unit u returns nothing
 		call UnitRemoveAbility(u, I4[i])
 		set i = i + 1
 	endloop
-	call FKX(u, false)
+	call DispelUnit(u, false)
 endfunction
 function GCX takes unit u returns nothing
-	call FKX(u, true)
+	call DispelUnit(u, true)
 endfunction
 function GDX takes nothing returns nothing
 	local trigger t = GetTriggeringTrigger()
@@ -10497,7 +10498,7 @@ function L8X takes unit u returns nothing
 	// 修正模型缩放
 	call SetUnitCurrentScaleEx(u, GetUnitCurrentScale(u))
 	call GBX(u)
-	call FKX(u, true)
+	call DispelUnit(u, true)
 	if LoadInteger(ObjectHashTable, GetHandleId(u),'A32D')> 0 then
 		call SaveInteger(ObjectHashTable, GetHandleId(u),'A32D', 0)
 		call SaveBoolean(ObjectHashTable, GetHandleId(u),'A32D', false)
@@ -10921,7 +10922,7 @@ function MDX takes integer i, integer k returns nothing
 	elseif i == 78 then
 		call ExecuteFunc("PMX")
 	elseif i == 72 then
-		call ExecuteFunc("PPX")
+		call ExecuteFunc("InitLifestealerBuffTable")
 	elseif i == 46 then
 		call ExecuteFunc("PQX")
 	elseif i == 47 then
@@ -19862,7 +19863,7 @@ function BKO takes nothing returns nothing
 	//call UnitAddAbility(dummy, BGO(GetSpellAbilityId()))
 	//call IssueTargetOrderById(dummy, 852186, whichUnit)
 	// 驱散负面Buff
-	call FKX(whichUnit, false)
+	call DispelUnit(whichUnit, false)
 	// 驱散缴械
 	call FJX(whichUnit)
 	// 小鸡BKB 3倍缩放
@@ -21034,7 +21035,7 @@ function HOE takes nothing returns nothing
 		set d = CreateUnit(GetOwningPlayer(GetTriggerUnit()),'e00E', GetUnitX(GetTriggerUnit()), GetUnitY(GetTriggerUnit()), 0)
 		call UnitAddAbility(d,'AIpg')
 		call IssueTargetOrderById(d, 852111, GetTriggerUnit())
-		call FKX(d, false)
+		call DispelUnit(d, false)
 		set d = null
 	endif
 endfunction
@@ -21289,7 +21290,7 @@ function DLO takes nothing returns nothing//分身斧分身技能
 	call SaveBoolean(HY,(GetHandleId(u)), 129,(true))
 	set u = null
 endfunction
-function HGE takes nothing returns nothing
+function ItemMantaImageOnSpellEffect takes nothing returns nothing
 	if (GetSpellAbilityId()=='A0B8' or GetSpellAbilityId()=='A1WE') and UnitHasSpellShield(GetTriggerUnit()) then
 		call DLO()
 	endif
@@ -25578,7 +25579,7 @@ endfunction
 function M5O takes nothing returns nothing
 	local integer i = GetSpellAbilityId()
 	if i =='A1WE' or i =='A0B8' or i =='A063' or i =='A03O' or i =='A1AY' or i =='A0MQ' or i =='A1B6' then
-		call FKX(GetTriggerUnit(), false)
+		call DispelUnit(GetTriggerUnit(), false)
 	endif
 endfunction
 function M6O takes nothing returns boolean
@@ -25589,9 +25590,9 @@ function M6O takes nothing returns boolean
 	endif
 	if FDX(GetSpellAbilityId()) then
 		if FCX(GetSpellAbilityId()) == false then
-			call FKX(GetSpellTargetUnit(), IsUnitEnemy(GetSpellTargetUnit(), GetTriggerPlayer()))
+			call DispelUnit(GetSpellTargetUnit(), IsUnitEnemy(GetSpellTargetUnit(), GetTriggerPlayer()))
 		else
-			call FKX(GetSpellTargetUnit(), IsUnitEnemy(GetSpellTargetUnit(), GetOwningPlayer(LoadUnitHandle(HY, GetHandleId(GetTriggerUnit()), 0))))
+			call DispelUnit(GetSpellTargetUnit(), IsUnitEnemy(GetSpellTargetUnit(), GetOwningPlayer(LoadUnitHandle(HY, GetHandleId(GetTriggerUnit()), 0))))
 		endif
 	else
 		call M5O()
@@ -43368,7 +43369,7 @@ function UJR takes unit whichUnit, unit targetUnit, integer id, integer level re
 	call UnitAddPermanentAbility(whichUnit,'A0ST')
 	call SetPlayerAbilityAvailableEx(GetOwningPlayer(whichUnit),'A0ST', false)
 	call SetUnitAnimationByIndex(whichUnit, LoadInteger(ObjectHashTable, GetUnitTypeId(whichUnit),'A1P8'))
-	call FKX(whichUnit, false)
+	call DispelUnit(whichUnit, false)
 	call FJX(whichUnit)
 	call SetUnitTimeScale(whichUnit, 3.)
 	set t = null
@@ -43861,7 +43862,7 @@ function VLE takes nothing returns nothing
 	endif
 	call TriggerEvaluate(t)
 	call EPX(GetTriggerUnit(), 4252, 5)
-	call FKX(GetTriggerUnit(), false)
+	call DispelUnit(GetTriggerUnit(), false)
 	call FJX(GetTriggerUnit())
 	set t = null
 endfunction
@@ -46715,7 +46716,7 @@ function EGE takes nothing returns nothing
 endfunction
 function F7E takes nothing returns nothing
 	call FJX(GetSpellTargetUnit())
-	call FKX(GetSpellTargetUnit(), false)
+	call DispelUnit(GetSpellTargetUnit(), false)
 endfunction
 function E4I takes nothing returns boolean
 	return IsUnitAlly(GetFilterUnit(), GetOwningPlayer(U2)) and GetUnitAbilityLevel(GetFilterUnit(),'B00G')> 0 and GetUnitDistanceEx(GetFilterUnit(), U2)> 2000
@@ -47265,7 +47266,7 @@ function EJE takes nothing returns nothing
 	local real EOX
 	local real nx
 	local real ny
-	call FKX(u, false)
+	call DispelUnit(u, false)
 	call UnitAddAbility(d,'A46G')
 	call IssueTargetOrderById(d, 852274, u)
 	call SetUnitAbilityLevel(d,'A46G', 2)
@@ -60854,7 +60855,7 @@ function IUE takes nothing returns nothing
 		call YGI()
 	endif
 endfunction
-function PPX takes nothing returns nothing
+function InitLifestealerBuffTable takes nothing returns nothing
 	call SetBuffAbilityId('A3EC','PRGE')
 	call SetBuffAbilityId('A3ED','PRGE')
 	call SetBuffAbilityId('A3EE','PRGE')
@@ -61012,7 +61013,7 @@ function Infest takes nothing returns nothing
 		set YPI = ""
 		set YQI = ""
 	endif
-	call FKX(u, false)
+	call DispelUnit(u, false)
 	if IsUnitType(u, UNIT_TYPE_SUMMONED) == false then
 		call UnitRemoveBuffs(u, true, true)
 	endif
@@ -61095,7 +61096,7 @@ function IYE takes nothing returns nothing
 	call UnitAddPermanentAbility(trigUnit,'A0ST')
 	call UnitAddPermanentAbility(trigUnit,'A0SR')
 	call SetUnitAbilityLevel(trigUnit,'A0SR', level)
-	call FKX(trigUnit, false)
+	call DispelUnit(trigUnit, false)
 	call FJX(trigUnit)
 	call SaveUnitHandle(HY, h, 14, trigUnit)
 	call TriggerRegisterTimerEvent(t, 2 + level, false)
@@ -73256,7 +73257,7 @@ function CreatePrimalSplitTrigger takes nothing returns nothing
 endfunction
 function JFA takes nothing returns boolean
 	if UnitIsDead(GetFilterUnit()) == false and IsAliveNotStrucNotWard(GetFilterUnit()) then
-		call FKX(GetFilterUnit(), IsUnitEnemy(GetFilterUnit(), E3))
+		call DispelUnit(GetFilterUnit(), IsUnitEnemy(GetFilterUnit(), E3))
 	endif
 	return false
 endfunction
@@ -77346,7 +77347,7 @@ endfunction
 function GDE takes nothing returns nothing
 	local group g = AllocationGroup(488)
 	local unit u
-	call FKX(GetTriggerUnit(), false)
+	call DispelUnit(GetTriggerUnit(), false)
 	set U2 = GetTriggerUnit()
 	call GroupEnumUnitsInRange(g, GetUnitX(GetTriggerUnit()), GetUnitY(GetTriggerUnit()), 775, Condition(function QPA))
 	loop
@@ -77430,7 +77431,7 @@ function GBE takes nothing returns nothing
 		set targetUnit = GetSpellTargetUnit()
 	endif
 	call UnitAddAbilityToTimed(targetUnit,'A3E9', 1, 5.,'B3E9')
-	call FKX(targetUnit, false)
+	call DispelUnit(targetUnit, false)
 	set targetUnit = null
 endfunction
 function QSA takes nothing returns nothing
@@ -85683,7 +85684,7 @@ function fj_exec takes nothing returns nothing
 	local unit u = U2
 	local unit u2 = MissileHitTargetUnit
 	local trigger t
-	call FKX(u2, true)
+	call DispelUnit(u2, true)
 	if not IsUnitIllusion(u2) then
 		set t = CreateTrigger()
 		call UnitAddAbilityToTimed(u2,'A3W0', 1, 6.0,'B3W0')

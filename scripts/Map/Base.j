@@ -11,6 +11,12 @@ library Base requires TriggerDestroyQueue, GroupAlloc, ErrorMessage
         return h
     endfunction
 
+    function CreateTimerStartSimple takes real timeout, boolean periodic, code handlerFunc returns integer
+        set bj_lastStartedTimer = CreateTimer()
+        call TimerStart(bj_lastStartedTimer, timeout, periodic, handlerFunc)
+        return GetHandleId(bj_lastStartedTimer)
+    endfunction
+
     //创建一个计时器事件触发器，返回值是触发器的整数地址，需要手动销毁。注意func为触发器的条件Condition而不是动作Action。
     function CreateTimerEventTrigger takes real timeout, boolean periodic, code func returns integer
         local trigger trig = CreateTrigger()
