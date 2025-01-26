@@ -227,7 +227,7 @@ scope Magnus
             set ty = CoordinateY75(sy + distance * Sin(a))
         endif
 
-        call UnitAddStunCount(whichUnit)
+        call UnitAddStunCountSafe(whichUnit)
         call UnitAddNoPathingCount(whichUnit)
 
         call SetUnitAnimationByIndex(whichUnit, 3)

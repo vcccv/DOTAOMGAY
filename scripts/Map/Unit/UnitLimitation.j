@@ -1,5 +1,5 @@
 
-library UnitLimitation requires UnitModel
+library UnitLimitation requires Base, UnitModel
 
     globals
         private constant key UNIT_CANT_SELECT_COUNT
@@ -165,6 +165,7 @@ library UnitLimitation requires UnitModel
     globals
         private constant key UNIT_PAUSE_COUNT
     endglobals
+  
     function UnitAddStunCount takes unit whichUnit returns nothing
         local integer h     = GetHandleId(whichUnit)
         local integer count = Table[h][UNIT_PAUSE_COUNT] + 1
@@ -179,6 +180,21 @@ library UnitLimitation requires UnitModel
         set Table[h][UNIT_PAUSE_COUNT] = count
         if count == 0 then
             call MHUnit_Stun(whichUnit, false)
+        endif
+    endfunction  
+    private function OnAddStunCountSafeEnd takes nothing returns nothing
+        local SimpleTick tick      = SimpleTick.GetExpired()
+        local unit       whichUnit = SimpleTick.GetTable()[tick].unit['U']
+        call UnitAddStunCount(whichUnit)
+        call tick.Destroy()
+        set whichUnit = null
+    endfunction
+    function UnitAddStunCountSafe takes unit whichUnit returns nothing
+        local SimpleTick tick
+        if GetTriggerEventId() == EVENT_PLAYER_UNIT_SPELL_EFFECT or GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT then
+            set tick = SimpleTick.Create(0)
+            set SimpleTick.GetTable()[tick].unit['U'] = whichUnit
+            call tick.Start(0., false, function OnAddStunCountSafeEnd)
         endif
     endfunction
     

@@ -357,9 +357,9 @@ library UnitIllusion requires UnitUtils, UnitWeapon, BuffSystem
         set table[h].string['M'] = missileArt
         set table[h].unit['U'] = whichUnit
 
-        call UnitDispelBuffs(whichUnit, true)
         call UnitAddInvulnerableCount(whichUnit)
-        call UnitAddStunCount(whichUnit)
+        call UnitDispelBuffs(whichUnit, false)
+        call UnitAddStunCountSafe(whichUnit)
         call UnitAddHideExCount(whichUnit)
     endfunction
 

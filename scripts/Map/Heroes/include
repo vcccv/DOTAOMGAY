@@ -5,6 +5,7 @@
 #include "Str\\DragonKnight.j"
 #include "Str\\Tidehunter.j"
 #include "Str\\CentaurWarchief.j"
+#include "Str\\ChaosKnight.j"
 
 #include "Int\\TwinHeadDragon.j"
 #include "Int\\Ezalor.j"
@@ -26,3 +27,4 @@
 #include "Agi\\EmberSpirit.j"
 #include "Agi\\Juggernaut.j"
 #include "Agi\\ShadowFiend.j"
+#include "Agi\\Terrorblade.j"

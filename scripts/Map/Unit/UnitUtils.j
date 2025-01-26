@@ -11,4 +11,8 @@ library UnitUtils
         call SetUnitAbilityLevel(u, id, lv)
     endfunction
 
+    function GetUnitCollisionSize takes unit whichUnit returns real
+        return MHUnit_GetDefDataReal(GetUnitTypeId(whichUnit), UNIT_DEF_DATA_COLLISION)
+    endfunction
+    
 endlibrary

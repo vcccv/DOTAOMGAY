@@ -2946,7 +2946,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A0WQ', 0, "OXE")
 	call SaveStr(ObjectHashTable,'A0BH', 0, "OOE")
 	call SaveStr(ObjectHashTable,'A0RW', 0, "ORE")
-	call SaveStr(ObjectHashTable,'A03O', 0, "OIE")
+	call SaveStr(ObjectHashTable,'A03O', 0, "PhantasmOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A04Q', 0, "ONE")
 	call SaveStr(ObjectHashTable,'A0OJ', 0, "AstralImprisonmentOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A0OK', 0, "OCE")
@@ -3052,7 +3052,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A0G4', 0, "AZE")
 	call SaveStr(ObjectHashTable,'A1D8', 0, "AZE")
 	call SaveStr(ObjectHashTable,'A07Q', 0, "ATB")
-	call SaveStr(ObjectHashTable,'A0H4', 0, "A1E")
+	call SaveStr(ObjectHashTable,'A0H4', 0, "ConjureImageOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A046', 0, "GushOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A3OH', 0, "GushOnSpellEffect")
 	
@@ -54670,20 +54670,6 @@ function ORE takes nothing returns nothing
 		set t = null
 	endif
 endfunction
-function H9I takes nothing returns nothing
-	local timer t = GetExpiredTimer()
-	local unit u = LoadUnitHandle(HY, GetHandleId(t), 0)
-	call UnitRemoveAbility(u,'A40D')
-	if GetUnitAbilityLevel(u,'A40D') == 0 then
-		call DestroyTimerAndFlushHT_HY(t)
-		
-	elseif LoadBoolean(HY, GetHandleId(t), 0) == false then
-		call SaveBoolean(HY, GetHandleId(t), 0, true)
-		call TimerStart(t, 1, true, function H9I)
-	endif
-	set u = null
-	set t = null
-endfunction
 function Naga_MirrorImage takes nothing returns nothing
 	local unit u = GetTriggerUnit()
 	local trigger trg
@@ -54694,27 +54680,6 @@ function Naga_MirrorImage takes nothing returns nothing
 		call TriggerAddCondition(trg, Condition(function F4O))
 		call SaveUnitHandle(HY, GetHandleId(trg), 2, u)
 		set trg = null
-	endif
-	set u = null
-endfunction
-function OIE takes nothing returns nothing
-	local timer t
-	local unit u = GetTriggerUnit()
-	local trigger trg
-	if UnitHasSpellShield(u) then
-		set trg = CreateTrigger()
-		call SaveBoolean(HY, GetHandleId(u),  129, true)
-		call TriggerRegisterTimerEvent(trg, .81, false)
-		call TriggerAddCondition(trg, Condition(function F4O))
-		call SaveUnitHandle(HY, GetHandleId(trg), 2, u)
-		set trg = null
-	endif
-	if GetRandomInt(0, 1) == 1 then
-		set t = CreateTimer()
-		call TimerStart(t, .51, false, function H9I)
-		call UnitAddPermanentAbility(u,'A40D')
-		call SaveUnitHandle(HY, GetHandleId(t), 0, u)
-		set t = null
 	endif
 	set u = null
 endfunction
@@ -65253,19 +65218,7 @@ function DRE takes nothing returns boolean
 	endif
 	return false
 endfunction
-function A1E takes nothing returns nothing
-	local unit u = GetTriggerUnit()
-	local integer lv = GetUnitAbilityLevel(u,'A0H4')
-	local unit d = CreateUnit(GetOwningPlayer(u),'e00E', GetUnitX(u), GetUnitY(u), 0)
-	if GetUnitTypeId(u)=='e00E' then
-		set u = Player__Hero[GetPlayerId(GetOwningPlayer(u))]
-	endif
-	call UnitAddAbility(d,'A2JN')
-	call SetUnitAbilityLevel(d,'A2JN', lv)
-	call IssueTargetOrderById(d, 852274, u)
-	set d = null
-	set u = null
-endfunction
+
 function Q5E takes nothing returns nothing
 	local unit u = GetTriggerUnit()
 	local integer level = GetUnitAbilityLevel(u,'A0H4')

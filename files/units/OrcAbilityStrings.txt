@@ -15857,7 +15857,7 @@ researchart=ReplaceableTextures\CommandButtons\BTNTimelock
 researchbuttonpos=2
 Name=时间锁定
 Researchtip=学习 时间锁定[|cffffcc00E|r] - [|cffffcc00等级 %d|r]|n(Time Lock)
-Researchubertip=攻击有一定概率将目标锁定在时间中，持续1秒，并造成额外的|cFF00B9FF魔法伤害|r。（括号内为远程英雄的触发几率）|n|n|cffffcc00等级 1|r - 有10%(4%)的概率锁定，并造成40点的额外伤害|n|cffffcc00等级 2|r - 有15%(8%)的概率锁定，并造成50点的额外伤害|n|cffffcc00等级 3|r - 有20%(12%)的概率锁定，并造成60点的额外伤害|n|cffffcc00等级 4|r - 有25%(16%)的概率锁定，并造成70点的额外伤害
+Researchubertip=攻击有一定概率将目标锁定在时间中，持续1秒，并造成额外的|cFF00B9FF魔法伤害|r。(括号内为远程英雄的触发几率)|n|n|cffffcc00等级 1|r - 有10%(4%)的概率锁定，并造成40点的额外伤害|n|cffffcc00等级 2|r - 有15%(8%)的概率锁定，并造成50点的额外伤害|n|cffffcc00等级 3|r - 有20%(12%)的概率锁定，并造成60点的额外伤害|n|cffffcc00等级 4|r - 有25%(16%)的概率锁定，并造成70点的额外伤害
 Researchhotkey=E
 effectsoundlooped=ReplaceableTextures\PassiveButtons\BTNTimelock.blp
 [QP0X]
@@ -15865,7 +15865,7 @@ art=ReplaceableTextures\PassiveButtons\BTNTimelock
 buttonpos=2,2
 Name=时间锁定
 Tip=时间锁定 - [|cffffcc00等级 1|r],时间锁定 - [|cffffcc00等级 2|r],时间锁定 - [|cffffcc00等级 3|r],时间锁定 - [|cffffcc00等级 4|r]
-Ubertip=攻击有10%(5%)的概率将目标锁定在时间中，持续1秒，并造成额外的40点|cFF00B9FF魔法伤害|r。（括号内为远程英雄的触发几率）|n|n|cffff0303晕眩效果无视魔法免疫|r,攻击有15%(10%)的概率将目标锁定在时间中，持续1秒，并造成额外的50点|cFF00B9FF魔法伤害|r。（括号内为远程英雄的触发几率）|n|n|cffff0303晕眩效果无视魔法免疫|r,攻击有20%(10%)的概率将目标锁定在时间中，持续1秒，并造成额外的60点|cFF00B9FF魔法伤害|r。（括号内为远程英雄的触发几率）|n|n|cffff0303晕眩效果无视魔法免疫|r,攻击有25%(15%)的概率将目标锁定在时间中，持续1秒，并造成额外的70点|cFF00B9FF魔法伤害|r。（括号内为远程英雄的触发几率）|n|n|cffff0303晕眩效果无视魔法免疫|r
+Ubertip=攻击有10%(5%)的概率将目标锁定在时间中，持续1秒，并造成额外的40点|cFF00B9FF魔法伤害|r。(括号内为远程英雄的触发几率)|n|n|cffff0303晕眩效果无视魔法免疫|r,攻击有15%(10%)的概率将目标锁定在时间中，持续1秒，并造成额外的50点|cFF00B9FF魔法伤害|r。(括号内为远程英雄的触发几率)|n|n|cffff0303晕眩效果无视魔法免疫|r,攻击有20%(10%)的概率将目标锁定在时间中，持续1秒，并造成额外的60点|cFF00B9FF魔法伤害|r。(括号内为远程英雄的触发几率)|n|n|cffff0303晕眩效果无视魔法免疫|r,攻击有25%(15%)的概率将目标锁定在时间中，持续1秒，并造成额外的70点|cFF00B9FF魔法伤害|r。(括号内为远程英雄的触发几率)|n|n|cffff0303晕眩效果无视魔法免疫|r
 requires=e00L
 [A061]
 art=ReplaceableTextures\PassiveButtons\PASBTNBash
@@ -16473,7 +16473,7 @@ researchart=ReplaceableTextures\CommandButtons\BTNSlardarBash
 researchbuttonpos=2
 Name=重击
 Researchtip=学习 重击[|cffffcc00B|r] - [|cffffcc00等级 %d|r]|n(Bash)
-Researchubertip=攻击时有一定概率对目标造成额外的|cFF00DC00物理伤害|r，和1秒的眩晕。（括号内为远程英雄的触发几率）|n|n|cffff0303晕眩效果无视魔法免疫|r|n|n|cffffcc00等级 1|r - 10%(4%)的概率晕眩并造成60点额外伤害|n|cffffcc00等级 2|r - 15%(8%)的概率晕眩并造成80点额外伤害|n|cffffcc00等级 3|r - 20%(12%)的概率晕眩并造成100点额外伤害|n|cffffcc00等级 4|r - 25%(16%)的概率晕眩并造成120点额外伤害
+Researchubertip=攻击时有一定概率对目标造成额外的|cFF00DC00物理伤害|r，和1秒的眩晕。(括号内为远程英雄的触发几率)|n|n|cffff0303晕眩效果无视魔法免疫|r|n|n|cffffcc00等级 1|r - 10%(4%)的概率晕眩并造成60点额外伤害|n|cffffcc00等级 2|r - 15%(8%)的概率晕眩并造成80点额外伤害|n|cffffcc00等级 3|r - 20%(12%)的概率晕眩并造成100点额外伤害|n|cffffcc00等级 4|r - 25%(16%)的概率晕眩并造成120点额外伤害
 Researchhotkey=B
 effectsoundlooped=ReplaceableTextures\PassiveButtons\BTNSlardarBash.blp
 [QP0V]
@@ -16481,7 +16481,7 @@ art=ReplaceableTextures\PassiveButtons\BTNSlardarBash
 buttonpos=2,2
 Name=重击
 Tip=重击 - [|cffffcc00等级 1|r],重击 - [|cffffcc00等级 2|r],重击 - [|cffffcc00等级 3|r],重击 - [|cffffcc00等级 4|r]
-Ubertip=攻击时有10%(5%)的概率对目标造成60点额外|cFF00DC00物理伤害|r，和1秒的眩晕。（括号内为远程英雄的触发几率）|n|n|cffff0303晕眩效果无视魔法免疫|r,攻击时有15%(10%)的概率对目标造成80点额外|cFF00DC00物理伤害|r，和1秒的眩晕。（括号内为远程英雄的触发几率）|n|n|cffff0303晕眩效果无视魔法免疫|r,攻击时有20%(10%)的概率对目标造成100点额外|cFF00DC00物理伤害|r，和1秒的眩晕。（括号内为远程英雄的触发几率）|n|n|cffff0303晕眩效果无视魔法免疫|r,攻击时有25%(15%)的概率对目标造成120点额外|cFF00DC00物理伤害|r，和1秒的眩晕。（括号内为远程英雄的触发几率）|n|n|cffff0303晕眩效果无视魔法免疫|r
+Ubertip=攻击时有10%(5%)的概率对目标造成60点额外|cFF00DC00物理伤害|r，和1秒的眩晕。(括号内为远程英雄的触发几率)|n|n|cffff0303晕眩效果无视魔法免疫|r,攻击时有15%(10%)的概率对目标造成80点额外|cFF00DC00物理伤害|r，和1秒的眩晕。(括号内为远程英雄的触发几率)|n|n|cffff0303晕眩效果无视魔法免疫|r,攻击时有20%(10%)的概率对目标造成100点额外|cFF00DC00物理伤害|r，和1秒的眩晕。(括号内为远程英雄的触发几率)|n|n|cffff0303晕眩效果无视魔法免疫|r,攻击时有25%(15%)的概率对目标造成120点额外|cFF00DC00物理伤害|r，和1秒的眩晕。(括号内为远程英雄的触发几率)|n|n|cffff0303晕眩效果无视魔法免疫|r
 requires=e00L
 [A0JN]
 targetart=Abilities\Spells\Other\Drain\DrainTarget.mdl
@@ -24974,11 +24974,11 @@ researchart=ReplaceableTextures\CommandButtons\BTNConjure
 researchbuttonpos=1
 Name=魔法镜像
 Tip=魔法镜像[|cffffcc00E|r] - [|cffffcc00等级 1|r],魔法镜像[|cffffcc00E|r] - [|cffffcc00等级 2|r],魔法镜像[|cffffcc00E|r] - [|cffffcc00等级 3|r],魔法镜像[|cffffcc00E|r] - [|cffffcc00等级 4|r]
-Ubertip=增加15的攻击速度和1.5的生命回复速度。制造一个英雄的镜像。镜像受到300%的伤害拥有本体30%的攻击力。|n|n|cff99ccff持续时间：|r32|n|cff99ccff冷却时间：|r16|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,增加20的攻击速度和2.0的生命回复速度。制造一个英雄的镜像。镜像受到300%的伤害拥有本体40%的攻击力。|n|n|cff99ccff持续时间：|r32|n|cff99ccff冷却时间：|r16|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,增加25的攻击速度和2.5的生命回复速度。制造一个英雄的镜像。镜像受到300%的伤害拥有本体50%的攻击力。|n|n|cff99ccff持续时间：|r32|n|cff99ccff冷却时间：|r16|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,增加30的攻击速度和3.0的生命回复速度。制造一个英雄的镜像。镜像受到300%的伤害拥有本体60%的攻击力。|n|n|cff99ccff持续时间：|r32|n|cff99ccff冷却时间：|r16|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r
+Ubertip=增加15的攻击速度和1.5的生命回复速度。制造一个英雄的镜像。镜像受到300%(350%)的伤害拥有本体30%(20%)的攻击力。|n|n|cff99ccff持续时间：|r32|n|cff99ccff冷却时间：|r16(18)|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,增加20的攻击速度和2.0的生命回复速度。制造一个英雄的镜像。镜像受到300%(350%)的伤害拥有本体40%(30%)的攻击力。|n|n|cff99ccff持续时间：|r32|n|cff99ccff冷却时间：|r16(18)|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,增加25的攻击速度和2.5的生命回复速度。制造一个英雄的镜像。镜像受到300%(350%)的伤害拥有本体50%(40%)的攻击力。|n|n|cff99ccff持续时间：|r32|n|cff99ccff冷却时间：|r16(18)|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,增加30的攻击速度和3.0的生命回复速度。制造一个英雄的镜像。镜像受到300%(350%)的伤害拥有本体60%(50%)的攻击力。|n|n|cff99ccff持续时间：|r32|n|cff99ccff冷却时间：|r16(18)|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r
 Hotkey=E
 Researchhotkey=E
 Researchtip=学习 魔法镜像[|cffffcc00C|r] - [|cffffcc00等级 %d|r]|n(Conjure Image)
-Researchubertip=被动增加一定的攻击速度和生命回复速度。制造一个英雄的镜像，镜像受到300%的伤害。|n|n|cff99ccff持续时间：|r32|n|cff99ccff冷却时间：|r16|n|cff99ccff魔法消耗：|r80|n|n|cffffcc00等级 1|r - 增加15攻击速度，1.5生命回复速度；镜像拥有本体30%的攻击力|n|cffffcc00等级 2|r - 增加20攻击速度，2生命回复速度；镜像拥有本体40%的攻击力|n|cffffcc00等级 3|r - 增加25攻击速度，2.5生命回复速度；镜像拥有本体50%的攻击力|n|cffffcc00等级 4|r - 增加30攻击速度，3生命回复速度；镜像拥有本体60%的攻击力|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r
+Researchubertip=被动增加一定的攻击速度和生命回复速度。制造一个英雄的镜像，镜像受到300%(350%)的伤害。(括号内为远程英雄的数值)|n|n|cff99ccff持续时间：|r32|n|cff99ccff冷却时间：|r16(18)|n|cff99ccff魔法消耗：|r80|n|n|cffffcc00等级 1|r - 增加15攻击速度，1.5生命回复速度；镜像拥有本体30%(20%)的攻击力|n|cffffcc00等级 2|r - 增加20攻击速度，2生命回复速度；镜像拥有本体40%(30%)的攻击力|n|cffffcc00等级 3|r - 增加25攻击速度，2.5生命回复速度；镜像拥有本体50%(40%)的攻击力|n|cffffcc00等级 4|r - 增加30攻击速度，3生命回复速度；镜像拥有本体60%(50%)的攻击力|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNConjure.blp
 [A0GC]
 art=ReplaceableTextures\CommandButtons\BTNManaStone
@@ -34659,21 +34659,11 @@ buffart=ReplaceableTextures\CommandButtons\BTNMirrorImage
 specialart=Abilities\Spells\Orc\MirrorImage\MirrorImageDeathCaster.mdl
 Bufftip=镜像
 Buffubertip=幻影斧镜像
-[BO35]
+[BTci]
 buffart=ReplaceableTextures\CommandButtons\BTNMirrorImage
 specialart=Abilities\Spells\Orc\MirrorImage\MirrorImageDeathCaster.mdl
-Bufftip=镜像
-Buffubertip=制造本体的幻象
-[BO50]
-buffart=ReplaceableTextures\CommandButtons\BTNMirrorImage
-specialart=Abilities\Spells\Orc\MirrorImage\MirrorImageDeathCaster.mdl
-Bufftip=镜像
-Buffubertip=制造本体的幻象
-[BO60]
-buffart=ReplaceableTextures\CommandButtons\BTNMirrorImage
-specialart=Abilities\Spells\Orc\MirrorImage\MirrorImageDeathCaster.mdl
-Bufftip=镜像
-Buffubertip=制造本体的幻象
+Bufftip=魔法镜像
+Buffubertip=魔法镜像
 [AOcr]
 requires=e00L
 [AOww]
@@ -34957,12 +34947,12 @@ targetart=Abilities\Spells\Other\Levelup\LevelupCaster.mdl
 specialart=war3mapImported\MirrorImageCKCaster_7.mdx
 missileart=Abilities\Spells\Orc\MirrorImage\MirrorImageMissile.mdl
 missilespeed=1000
-Name=幻象
-Tip=幻象[|cffffcc00T|r] - [|cffffcc00等级 1|r],幻象[|cffffcc00T|r] - [|cffffcc00等级 2|r],幻象[|cffffcc00T|r] - [|cffffcc00等级 3|r]
-Ubertip=制造一个自身的幻象，幻象拥有本体90%的攻击力，不过受到200%的伤害。施法时有50%几率再造一个幻象。|n|n|cff99ccff持续时间：|r34|n|cff99ccff冷却时间：|r100|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,制造两个自身的幻象，幻象拥有本体90%的攻击力，不过受到200%的伤害。施法时有50%几率再造一个幻象。|n|n|cff99ccff持续时间：|r34|n|cff99ccff冷却时间：|r100|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,制造三个自身的幻象，幻象拥有本体90%的攻击力，不过受到200%的伤害。施法时有50%几率再造一个幻象。|n|n|cff99ccff持续时间：|r34|n|cff99ccff冷却时间：|r100|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r
+Name=混沌之军
+Tip=混沌之军[|cffffcc00T|r] - [|cffffcc00等级 1|r],混沌之军[|cffffcc00T|r] - [|cffffcc00等级 2|r],混沌之军[|cffffcc00T|r] - [|cffffcc00等级 3|r]
+Ubertip=制造一个自身的幻象，幻象拥有本体100%(80%)的攻击力，不过受到200%(235%)的伤害。施法时有50%几率再造一个幻象。|n|n|cff99ccff持续时间：|r34|n|cff99ccff冷却时间：|r85(110)|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,制造两个自身的幻象，幻象拥有本体100%(80%)的攻击力，不过受到200%(235%)的伤害。施法时有50%几率再造一个幻象。|n|n|cff99ccff持续时间：|r34|n|cff99ccff冷却时间：|r100(115)|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,制造三个自身的幻象，幻象拥有本体100%(80%)的攻击力，不过受到200%(235%)的伤害。施法时有50%几率再造一个幻象。|n|n|cff99ccff持续时间：|r34|n|cff99ccff冷却时间：|r85(110)|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r
 Hotkey=T
-Researchtip=学习 幻象[|cffffcc00T|r] - [|cffffcc00等级 %d|r]|n(Phantasm)
-Researchubertip=制造几个自身的幻象。幻象拥有本体90%的攻击力，不过受到200%的伤害。施法时有50%几率再造一个幻象。|n|n|cff99ccff持续时间：|r34|n|cff99ccff冷却时间：|r100|n|cff99ccff魔法消耗：|r125/175/225|n|n|cffffcc00等级 1|r - 制造一个幻象|n|cffffcc00等级 2|r - 制造两个幻象|n|cffffcc00等级 3|r - 制造三个幻象|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r
+Researchtip=学习 混沌之军[|cffffcc00T|r] - [|cffffcc00等级 %d|r]|n(Phantasm)
+Researchubertip=制造几个自身的幻象。幻象拥有本体100%(80%)的攻击力，不过受到200%(235%)的伤害。施法时有50%几率再造一个幻象。(括号内为远程英雄的数值)|n|n|cff99ccff持续时间：|r34|n|cff99ccff冷却时间：|r85(110)|n|cff99ccff魔法消耗：|r125/175/225|n|n|cffffcc00等级 1|r - 制造一个幻象|n|cffffcc00等级 2|r - 制造两个幻象|n|cffffcc00等级 3|r - 制造三个幻象|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r
 researchhotkey="T"
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNPhantasm.blp
 [A40C]
@@ -36349,22 +36339,6 @@ targetart=Abilities\Weapons\Bolt\BoltImpact.mdl
 animnames=spell,chain
 lightningeffect=CLPB,CLSB
 name="Lightning Sentry Bolt"
-[A1AY]
-art=ReplaceableTextures\CommandButtons\BTNMirrorImage
-researchart=ReplaceableTextures\CommandButtons\BTNMirrorImage
-buttonpos=3,2
-researchbuttonpos=3
-targetart=Abilities\Spells\Other\Levelup\LevelupCaster.mdl
-specialart=Abilities\Spells\Orc\MirrorImage\MirrorImageCaster.mdl
-missileart=Abilities\Spells\Orc\MirrorImage\MirrorImageMissile.mdl
-missilespeed=1000
-Name=混沌之军
-Tip=混沌之军[|cffffcc00R|r] - [|cffffcc00等级 1|r],混沌之军[|cffffcc00R|r] - [|cffffcc00等级 2|r],混沌之军[|cffffcc00R|r] - [|cffffcc00等级 3|r]
-Ubertip=混沌骑士制造一个自身的幻象，幻象拥有本体全部的攻击力，不过受到200%的伤害。|n|n|cff99ccff持续时间：|r30|n|cff99ccff冷却时间：|r90,混沌骑士制造两个自身的幻象，幻象拥有本体全部的攻击力，不过受到200%的伤害。|n|n|cff99ccff持续时间：|r30|n|cff99ccff冷却时间：|r90,混沌骑士制造三个自身的幻象，幻象拥有本体全部的攻击力，不过受到200%的伤害。|n|n|cff99ccff持续时间：|r30|n|cff99ccff冷却时间：|r90
-Hotkey=T
-Researchtip=学习 幻象[|cffffcc00R|r] - [|cffffcc00等级 %d|r]|n(Phantasm)
-Researchubertip=制造几个混沌骑士的幻象。幻象拥有本体全部的攻击力，不过受到200%的伤害。|n|n|cff99ccff持续时间：|r24|n|cff99ccff冷却时间：|r90|n|n|cffffcc00等级 1|r - 制造一个幻象|n|cffffcc00等级 2|r - 制造两个幻象|n|cffffcc00等级 3|r - 制造三个幻象
-researchhotkey="T"
 [A1B1]
 art=ReplaceableTextures\CommandButtons\BTNBreathOfFireNew
 researchart=ReplaceableTextures\CommandButtons\BTNBreathOfFireNew

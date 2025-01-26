@@ -85,7 +85,7 @@ scope ShadowDemon
         endif
 
         call UnitAddInvulnerableCount(targetUnit)
-        call UnitAddStunCount(targetUnit)
+        call UnitAddStunCountSafe(targetUnit)
         call UnitAddHideExCount(targetUnit)
 
         call SaveEffectHandle(HY, h, 32, AddSpecialEffect("war3mapImported\\WILLTHEALMIGHTY-Void5.mdx", GetUnitX(targetUnit), GetUnitY(targetUnit)))
