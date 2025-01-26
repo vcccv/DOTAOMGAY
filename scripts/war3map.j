@@ -3285,7 +3285,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A0GD', 12, "HDE")
 	call SaveStr(ObjectHashTable,'A1EW', 12, "HFE")
 	call SaveStr(ObjectHashTable,'A0B8', 12, "ItemMantaImageOnSpellEffect")
-	call SaveStr(ObjectHashTable,'A1WE', 12, "ItemMantaImageOnSpellEffect")
+	
 	call SaveStr(ObjectHashTable,'A1MO', 12, "HHE")
 	call SaveStr(ObjectHashTable,'A1Q8', 12, "HJE")
 	call SaveStr(ObjectHashTable,'A1QD', 12, "HKE")
@@ -5831,23 +5831,23 @@ function O8X takes nothing returns boolean
 		call SetUnitPhaseMove( u, true )
 	endif
 
-	if IsUnitType(u, UNIT_TYPE_MELEE_ATTACKER) then
-		if GetUnitAbilityLevel(u,'A1WE')> 0 then
-			call UnitRemoveAbility(u,'A3FH')
-		endif
-		if GetUnitAbilityLevel(u,'A1WE')> 0 then
-			call UnitAddPermanentAbility(u,'A3FH')
-			call SetAllPlayerAbilityUnavailable('A3FH')
-		endif
-	else
-		if GetUnitAbilityLevel(u,'A0B8')> 0 then
-			call UnitRemoveAbility(u,'A3FI')
-		endif
-		if GetUnitAbilityLevel(u,'A0B8')> 0 then
-			call UnitAddPermanentAbility(u,'A3FI')
-			call SetAllPlayerAbilityUnavailable('A3FI')
-		endif
-	endif
+	//if IsUnitType(u, UNIT_TYPE_MELEE_ATTACKER) then
+	//	if GetUnitAbilityLevel(u,'A1WE')> 0 then
+	//		call UnitRemoveAbility(u,'A3FH')
+	//	endif
+	//	if GetUnitAbilityLevel(u,'A1WE')> 0 then
+	//		call UnitAddPermanentAbility(u,'A3FH')
+	//		call SetAllPlayerAbilityUnavailable('A3FH')
+	//	endif
+	//else
+	//	if GetUnitAbilityLevel(u,'A0B8')> 0 then
+	//		call UnitRemoveAbility(u,'A3FI')
+	//	endif
+	//	if GetUnitAbilityLevel(u,'A0B8')> 0 then
+	//		call UnitAddPermanentAbility(u,'A3FI')
+	//		call SetAllPlayerAbilityUnavailable('A3FI')
+	//	endif
+	//endif
 	// 修正高度
 	call SetUnitFlyHeight(u, GetUnitDefaultFlyHeight(u), 0)
 	// 修正射程
@@ -8122,49 +8122,6 @@ function FAX takes unit whichUnit, unit targetUnit returns nothing
 	call KillUnit(d)
 	set d = null
 endfunction
-function SetStickyNapalmStack takes unit whichUnit, integer level, integer FBX returns nothing
-	local integer i
-	if K2V[1]== 0 then
-		return
-	endif
-	set i = 1
-	loop
-	exitwhen i > 10
-		call UnitRemoveAbility(whichUnit, K2V[i])
-		set i = i + 1
-	endloop
-	set i = 1
-	loop
-	exitwhen i > 10
-		call UnitRemoveAbility(whichUnit, K3V[i])
-		set i = i + 1
-	endloop
-	set i = 1
-	loop
-	exitwhen i > 10
-		call UnitRemoveAbility(whichUnit, K4V[i])
-		set i = i + 1
-	endloop
-	set i = 1
-	loop
-	exitwhen i > 10
-		call UnitRemoveAbility(whichUnit, K5V[i])
-		set i = i + 1
-	endloop
-	call UnitRemoveAbility(whichUnit,'B0BS')
-	if level == 0 and FBX == 0 then
-		call SaveInteger(HY, GetHandleId(whichUnit), 281, 0)
-	endif
-	if level == 1 then
-		call UnitAddAbility(whichUnit, K2V[FBX])
-	elseif level == 2 then
-		call UnitAddAbility(whichUnit, K3V[FBX])
-	elseif level == 3 then
-		call UnitAddAbility(whichUnit, K4V[FBX])
-	elseif level == 4 then
-		call UnitAddAbility(whichUnit, K5V[FBX])
-	endif
-endfunction
 function FCX takes integer id returns boolean
 	return id =='A0XK' or id =='A3G5' or id =='A13V' or id =='A3G2' or id =='A2TN'
 endfunction
@@ -8172,142 +8129,6 @@ function FDX takes integer id returns boolean
 	return FCX(id) or id =='AIpg' or id =='A1SA' or id =='A594' or id =='A595' or id =='A02V' or id =='ACpu' or id =='A18D' or id =='A1OU'
 endfunction
 
-// 注册一个Buff 
-function SetBuffAbilityId takes integer buffId, integer buffType returns nothing
-	call SaveInteger(AbilityDataHashTable, buffType, LoadInteger(AbilityDataHashTable, buffType, 0)+ 1, buffId)
-	call SaveInteger(AbilityDataHashTable, buffType, 0, LoadInteger(AbilityDataHashTable, buffType, 0)+ 1)
-endfunction
-
-// 注册物理Buff
-function SetStunBuffId takes integer id returns nothing
-	set A4 = A4 + 1
-	set I4[A4]= id
-endfunction
-
-globals
-	constant integer DISABLE_MOVE_BUFF_KEY = 'PRGN'
-	constant integer DISARM_BUFF_KEY 	   = 'PRGH'
-	constant integer SILENCE_BUFF_KEY 	   = 'PRGI'
-
-endglobals
-
-// 移除缠绕类效果
-function UnitDispelDisableMoveBuff takes unit u returns nothing
-	local integer i = 1
-	loop
-	exitwhen HaveSavedInteger(AbilityDataHashTable, DISABLE_MOVE_BUFF_KEY, i) == false
-		call UnitRemoveAbility(u, LoadInteger(AbilityDataHashTable, DISABLE_MOVE_BUFF_KEY, i))
-		set i = i + 1
-	endloop
-endfunction
-
-// 移除缴械类状态
-function UnitDispelDisarmBuff takes unit u returns nothing
-	local integer i = 1
-	loop
-	exitwhen not HaveSavedInteger(AbilityDataHashTable, DISARM_BUFF_KEY, i)
-		call UnitRemoveAbility(u, LoadInteger(AbilityDataHashTable, DISARM_BUFF_KEY, i))
-		set i = i + 1
-	endloop
-endfunction
-
-// 驱散Buff
-function UnitDispelBuffs takes unit u, boolean basicDispel returns nothing
-	local integer i = 1
-	loop
-	exitwhen not HaveSavedInteger(AbilityDataHashTable,'PRGC', i)
-		call UnitRemoveAbility(u, LoadInteger(AbilityDataHashTable,'PRGC', i))
-		set i = i + 1
-	endloop
-	// 普通驱散
-	if basicDispel then
-		set i = 1
-		// 仅普通驱散？ 为什么会有这个类别
-		loop
-		exitwhen not HaveSavedInteger(AbilityDataHashTable,'PRGA', i)
-			call UnitRemoveAbility(u, LoadInteger(AbilityDataHashTable,'PRGA', i))
-			set i = i + 1
-		endloop
-		call RemoveSavedInteger(HY, GetHandleId(u),'A2SG')
-		call BJDebugMsg("驱散1")
-	else
-		// 这里可能是强驱散
-		set i = 1
-		loop
-		exitwhen not HaveSavedInteger(AbilityDataHashTable,'PRGE', i)
-			call UnitRemoveAbility(u, LoadInteger(AbilityDataHashTable,'PRGE', i))
-			set i = i + 1
-		endloop
-		set i = 1
-		loop
-		exitwhen not HaveSavedInteger(AbilityDataHashTable,SILENCE_BUFF_KEY, i)
-			call UnitRemoveAbility(u, LoadInteger(AbilityDataHashTable,SILENCE_BUFF_KEY, i))
-			set i = i + 1
-		endloop
-		set i = 1
-		loop
-		exitwhen not HaveSavedInteger(AbilityDataHashTable,'PRGS', i)
-			call UnitRemoveAbility(u, LoadInteger(AbilityDataHashTable,'PRGS', i))
-			set i = i + 1
-		endloop
-		set i = 1
-		loop
-		exitwhen not HaveSavedInteger(AbilityDataHashTable, DISABLE_MOVE_BUFF_KEY, i)
-			call UnitRemoveAbility(u, LoadInteger(AbilityDataHashTable, DISABLE_MOVE_BUFF_KEY, i))
-			set i = i + 1
-		endloop
-		call SetStickyNapalmStack(u, 0, 0)
-		call RemoveSavedReal(HY, GetHandleId(u),'AItb')
-		if LoadInteger(HY, GetHandleId(u), 627)> 0 then
-			call SaveInteger(HY, GetHandleId(u), 627, 0)
-		endif
-		call BJDebugMsg("驱散2")
-	endif
-	call UnitRemoveAbility(u, 'Bblo')
-	call UnitRemoveAbility(u, 'B016')
-	// 嗜血Buff删除
-	if HaveSavedHandle( ExtraHT, GetHandleId(u), HTKEY_SCALE_BLOODLUST_TRIGGER ) then
-		// debug call SingleDebug( " 强制运行缩放触发器 " )
-		call TriggerEvaluate( LoadTriggerHandle( ExtraHT, GetHandleId(u), HTKEY_SCALE_BLOODLUST_TRIGGER ) )
-	endif
-	// 狂猛Buff删除
-	if HaveSavedHandle( ExtraHT, GetHandleId(u), HTKEY_SCALE_RABID_TRIGGER ) then
-		// debug call SingleDebug( " 强制运行缩放触发器 " )
-		call TriggerEvaluate( LoadTriggerHandle( ExtraHT , GetHandleId(u) , HTKEY_SCALE_RABID_TRIGGER ) )
-	endif
-endfunction
-
-function GetBashlv takes real s returns integer
-	set s = s * 1.
-	if s < .5 then
-		return R2I(s * 10)
-	elseif s < .9 then
-		return R2I((s -0.4)* 10)
-	elseif s < 1.3 then
-		return R2I((s -0.8)* 10)
-	elseif s < 1.7 then
-		return R2I((s -1.2)* 10)
-	elseif s < 2.1 then
-		return R2I((s -1.6)* 10)
-	elseif s < 2.5 then
-		return R2I((s -2.)* 10)
-	elseif s < 2.9 then
-		return R2I((s -2.4)* 10)
-	elseif s < 3.3 then
-		return R2I((s -2.8)* 10)
-	elseif s < 3.7 then
-		return R2I((s -3.2)* 10)
-	elseif s < 4.1 then
-		return R2I((s -3.6)* 10)
-	elseif s < 4.5 then
-		return R2I((s -4.)* 10)
-	elseif s < 4.9 then
-		return R2I((s -4.4)* 10)
-	elseif s < 5.3 then
-		return R2I((s -4.8)* 10)
-	endif
-	return 0
-endfunction
 function FQX takes unit u, real dur returns real
 	local integer h
 	local real FSX
@@ -8316,10 +8137,10 @@ function FQX takes unit u, real dur returns real
 	if Mode__BalanceOff or not IsUnitType(u, UNIT_TYPE_HERO) then
 		return dur
 	endif
-	set h = GetHandleId(u)
-	set c = LoadInteger(OtherHashTable, h, 32)
+	set h 	  = GetHandleId(u)
+	set c 	  = LoadInteger(OtherHashTable, h, 32)
 	set ratio = 1
-	if GetGameTime()-LoadReal(OtherHashTable, h, 32)< 6 and LoadReal(OtherHashTable, h, 32)!= 0 then
+	if GetGameTime() - LoadReal(OtherHashTable, h, 32) < 6 and LoadReal(OtherHashTable, h, 32)!= 0 then
 		if c == 1 then
 			set ratio = .75
 		elseif c == 2 then
@@ -21303,9 +21124,44 @@ function DLO takes nothing returns nothing//分身斧分身技能
 	set u = null
 endfunction
 function ItemMantaImageOnSpellEffect takes nothing returns nothing
-	if (GetSpellAbilityId()=='A0B8' or GetSpellAbilityId()=='A1WE') and UnitHasSpellShield(GetTriggerUnit()) then
-		call DLO()
+	local unit 	  whichUnit 	= GetTriggerUnit()
+	local integer level			= GetUnitAbilityLevel(whichUnit, GetSpellAbilityId())
+	local integer max
+	local real    damageDealt
+	local real    damageTaken
+	local integer buffId
+	local real 	  dur
+	local real 	  delay
+	local string  specialArt
+	local string  missileArt
+	local real 	  missileSpeed
+	local real 	  rng
+	local real 	  area
+
+	set max		     = 2
+	set damageDealt  = 0.33
+	set damageTaken  = 3.00
+	set buffId       = 'BImi'
+	set dur			 = 14.
+	set delay		 = 0.1
+	set missileSpeed = 1000
+	set rng		     = 128.
+	set area		 = 1000.
+	set specialArt   = "Abilities\\Spells\\Orc\\MirrorImage\\MirrorImageCaster.mdl"
+ 	set missileArt   = "Abilities\\Spells\\Orc\\MirrorImage\\MirrorImageMissile.mdl"
+	if not IsUnitType(whichUnit, UNIT_TYPE_MELEE_ATTACKER) then
+		set damageDealt = 0.28
+		set damageTaken = 4.00
+		call MHAbility_SetAbilityCustomLevelDataReal(GetSpellAbility(), level, ABILITY_LEVEL_DEF_DATA_COOLDOWN, 50.)
+	else
+		call MHAbility_SetAbilityCustomLevelDataReal(GetSpellAbility(), level, ABILITY_LEVEL_DEF_DATA_COOLDOWN, 35.)
 	endif
+
+	call UnitMirrorImage(whichUnit, max, damageDealt, damageTaken, buffId, dur, delay, specialArt, missileArt, missileSpeed, rng, area)
+	//if UnitHasSpellShield() then
+	//	call DLO()
+	//endif
+	set whichUnit = null
 endfunction
 function DMO takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
@@ -33906,8 +33762,6 @@ function AYR takes string AZR, integer A_R returns nothing
 	call INX("NTR", FR)
 	call INX("NUR", ZM)
 	call INX("NWR", AH)
-	// 初始化镜像召唤事件 英雄进入地图事件
-	call UnitIllusion_Init()
 	call ExecuteFunc("NYR")
 	// 初始化神杖升级 0.5秒后
 	call ExecuteFunc("AWR")
@@ -81027,384 +80881,6 @@ function SaveHeroModelData takes integer id, integer heroId, integer KLX, intege
 		set RangeHeroList[RangeHeroMax]= heroId
 	endif
 endfunction
-function InitItemBuffId takes nothing returns nothing
-	call SetBuffAbilityId('A3K2','PRGE')
-	call SetBuffAbilityId('A3K3','PRGE')
-	call SetBuffAbilityId('BIcb','PRGE')
-	call SetBuffAbilityId('A2EC','PRGE')
-	call SetBuffAbilityId('B0F5','PRGE')
-	call SetBuffAbilityId('B08N','PRGE')
-	call SetBuffAbilityId('B02I','PRGE')
-	call SetBuffAbilityId('A3FL','PRGA')
-	call SetBuffAbilityId('B01P','PRGA')
-endfunction
-function Init_BuffsId takes nothing returns nothing
-	call InitItemBuffId()
-	// 初始化晕眩BUFF表
-	call SetStunBuffId('BPSE')
-	call SetStunBuffId('BSTN')
-	call SetStunBuffId('B0BM')
-	call SetStunBuffId('B0CF')
-	call SetStunBuffId('B07N')
-	call SetStunBuffId('B00Q')
-	call SetStunBuffId('B095')
-	call SetStunBuffId('B0C2')
-	call SetStunBuffId('B02S')
-	call SetStunBuffId('B02F')
-	call SetStunBuffId('BUsp')
-	call SetStunBuffId('Bust')
-	call SetStunBuffId('B0AQ')
-	call SetStunBuffId('BUan')
-	call SetStunBuffId('B0GG')
-	call SetBuffAbilityId('C010','PRGE')
-	call SetBuffAbilityId('D010','PRGE')
-	call SetBuffAbilityId('A45O','PRGE')
-	call SetBuffAbilityId('A45P','PRGE')
-	call SetBuffAbilityId('A45Q','PRGE')
-	call SetBuffAbilityId('A45R','PRGE')
-	call SetBuffAbilityId('A44Y','PRGC')
-	call SetBuffAbilityId('B44Y','PRGC')
-	call SetBuffAbilityId('A45Y','PRGS')
-	call SetBuffAbilityId('A45Z','PRGS')
-	call SetBuffAbilityId('B45Y','PRGS')
-	call SetBuffAbilityId('A32F','PRGS')
-	call SetBuffAbilityId('B32F','PRGS')
-	call SetBuffAbilityId('A3A0','PRGS')
-	call SetBuffAbilityId('A3A1','PRGS')
-	call SetBuffAbilityId('A3A2','PRGS')
-	call SetBuffAbilityId('A3A3','PRGS')
-	call SetBuffAbilityId('A3A4','PRGS')
-	call SetBuffAbilityId('A3A5','PRGS')
-	call SetBuffAbilityId('A3A6','PRGS')
-	call SetBuffAbilityId('A3A7','PRGS')
-	call SetBuffAbilityId('B079','PRGS')
-	call SetBuffAbilityId('C016','PRGS')
-	call SetBuffAbilityId('D016','PRGS')
-	call SetBuffAbilityId('B09Q','PRGS')
-	call SetBuffAbilityId('B06Q','PRGS')
-
-	call SetBuffAbilityId('C033', DISARM_BUFF_KEY)
-	call SetBuffAbilityId('D033', DISARM_BUFF_KEY)
-	call SetBuffAbilityId('A3KC', DISARM_BUFF_KEY)
-	call SetBuffAbilityId('B033', DISARM_BUFF_KEY)
-
-	call SetBuffAbilityId('A3KE','PRGE')
-	call SetBuffAbilityId('B3KE','PRGE')
-	call SetBuffAbilityId('A3KD','PRGE')
-	call SetBuffAbilityId('A2T4','PRGE')
-
-	// 衰老
-	call SetBuffAbilityId('B01N','PRGC')
-	call SetBuffAbilityId('A30D','PRGC')
-	call SetBuffAbilityId('A44I','PRGC')
-	call SetBuffAbilityId('A30E','PRGC')
-	call SetBuffAbilityId('A3C0','PRGC')
-	call SetBuffAbilityId('A3C1','PRGC')
-	call SetBuffAbilityId('A3C2','PRGC')
-	call SetBuffAbilityId('A3C3','PRGC')
-	call SetBuffAbilityId('B38G','PRGC')
-	call SetBuffAbilityId('Aetl','PRGC')
-
-	call SetBuffAbilityId('B06Z','PRGS')
-	call SetBuffAbilityId('B08Q','PRGS')
-	
-	call SetBuffAbilityId('BHca','PRGS')
-	call SetBuffAbilityId('Bcsd','PRGS')
-	call SetBuffAbilityId('B0BQ','PRGS')
-	call SetBuffAbilityId('Bprg','PRGS')
-	call SetBuffAbilityId('Bcri','PRGS')
-	call SetBuffAbilityId('B090','PRGE')
-	call SetBuffAbilityId('B008','PRGE')
-	call SetBuffAbilityId('B04B','PRGE')
-	call SetBuffAbilityId('B03J','PRGS')
-	call SetBuffAbilityId('Bslo','PRGS')
-	call SetBuffAbilityId('BNdh','PRGS')
-	call SetBuffAbilityId('B01N','PRGE')
-	//call SetBuffAbilityId('B033','PRGE')
-	call SetBuffAbilityId('Bpoi','PRGS')
-	call SetBuffAbilityId('B00H','PRGE')
-	call SetBuffAbilityId('BOhx','PRGE')
-	call SetBuffAbilityId('A3B8','PRGE')
-	call SetBuffAbilityId('B3B8','PRGE')
-	call SetBuffAbilityId('B06D','PRGS')
-	call SetBuffAbilityId('B0BN','PRGS')
-	call SetBuffAbilityId('B071','PRGS')
-	call SetBuffAbilityId('B02W','PRGE')
-	call SetBuffAbilityId('A294','PRGS')
-	call SetBuffAbilityId('A295','PRGS')
-	call SetBuffAbilityId('A296','PRGS')
-	call SetBuffAbilityId('A297','PRGS')
-	call SetBuffAbilityId('B05Q','PRGS')
-	call SetBuffAbilityId('B0GT','PRGS')
-	call SetBuffAbilityId('A37T','PRGE')
-	call SetBuffAbilityId('B37T','PRGE')
-	call SetBuffAbilityId('QH00','PRGS')
-	call SetBuffAbilityId('A1W2','PRGS')
-	call SetBuffAbilityId('B0DO','PRGS')
-	call SetBuffAbilityId('A42R','PRGE')
-	call SetBuffAbilityId('B0HI','PRGE')
-	call SetBuffAbilityId('B00L','PRGE')
-	call SetBuffAbilityId('A30Y','PRGE')
-	call SetBuffAbilityId('B307','PRGE')
-	call SetBuffAbilityId('A334','PRGS')
-	call SetBuffAbilityId('B083','PRGS')
-	call SetBuffAbilityId('B079','PRGS')
-	call SetBuffAbilityId('A335','PRGS')
-	call SetBuffAbilityId('B08B','PRGS')
-	call SetBuffAbilityId('B0GR','PRGE')
-	call SetBuffAbilityId('Bdet','PRGE')
-	call SetBuffAbilityId('B0GK','PRGS')
-	call SetBuffAbilityId('B06Q','PRGS')
-	call SetBuffAbilityId('BHtc','PRGS')
-	call SetBuffAbilityId('B0BR','PRGS')
-	call SetBuffAbilityId('A37U','PRGS')
-	call SetBuffAbilityId('A37V','PRGS')
-	call SetBuffAbilityId('A37W','PRGS')
-	call SetBuffAbilityId('A37X','PRGS')
-	call SetBuffAbilityId('A3F0'+ 0,'PRGS')
-	call SetBuffAbilityId('A3F0'+ 1,'PRGS')
-	call SetBuffAbilityId('A3F0'+ 2,'PRGS')
-	call SetBuffAbilityId('A3F0'+ 3,'PRGS')
-	call SetBuffAbilityId('A3F0'+ 4,'PRGS')
-	call SetBuffAbilityId('A3F0'+ 5,'PRGS')
-	call SetBuffAbilityId('A3F0'+ 6,'PRGS')
-	call SetBuffAbilityId('A3F0'+ 7,'PRGS')
-	call SetBuffAbilityId('A3F0'+ 8,'PRGS')
-	call SetBuffAbilityId('A3F0'+ 9,'PRGS')
-	call SetBuffAbilityId('A3F0'+ 10,'PRGS')
-	call SetBuffAbilityId('A3F0'+ 11,'PRGS')
-	call SetBuffAbilityId('A3F0'+ 12,'PRGS')
-	call SetBuffAbilityId('A3F0'+ 13,'PRGS')
-	call SetBuffAbilityId('A3F0'+ 14,'PRGS')
-	call SetBuffAbilityId('A3F0'+ 15,'PRGS')
-	call SetBuffAbilityId('A3EO'+ 0,'PRGS')
-	call SetBuffAbilityId('A3EO'+ 1,'PRGS')
-	call SetBuffAbilityId('A3EO'+ 2,'PRGS')
-	call SetBuffAbilityId('A3EO'+ 3,'PRGS')
-	call SetBuffAbilityId('B386','PRGS')
-	call SetBuffAbilityId('A3EK','PRGE')
-	call SetBuffAbilityId('A3EL','PRGE')
-	call SetBuffAbilityId('A3EM','PRGE')
-	call SetBuffAbilityId('A3EN','PRGE')
-	call SetBuffAbilityId('B38B','PRGE')
-	call SetBuffAbilityId('B37Y','PRGS')
-	call SetBuffAbilityId('B07E','PRGS')
-	call SetBuffAbilityId('B02V','PRGS')
-	call SetBuffAbilityId('BNab','PRGS')
-	call SetBuffAbilityId('B03I','PRGE')
-	call SetBuffAbilityId('B063','PRGS')
-	call SetBuffAbilityId('B03C','PRGS')
-	call SetBuffAbilityId('B08M','PRGS')
-	call SetBuffAbilityId('B02G','PRGS')
-	call SetBuffAbilityId('B01D','PRGS')
-	call SetBuffAbilityId('B092','PRGS')
-	call SetBuffAbilityId('BEsh','PRGS')
-	call SetBuffAbilityId('B0AE','PRGE')
-	call SetBuffAbilityId('B0AD','PRGE')
-	call SetBuffAbilityId('B08O','PRGE')
-	call SetBuffAbilityId('Bfro','PRGS')
-	call SetBuffAbilityId('B05H','PRGS')
-	call SetBuffAbilityId('A3QU','PRGS')
-	call SetBuffAbilityId('A3QV','PRGS')
-	call SetBuffAbilityId('A3QW','PRGS')
-	call SetBuffAbilityId('A3QX','PRGS')
-	call SetBuffAbilityId('B0BS','PRGS')
-	call SetBuffAbilityId('B0BF','PRGE')
-	call SetBuffAbilityId('B0BE','PRGE')
-	call SetBuffAbilityId('B0CC','PRGE')
-	call SetBuffAbilityId('B00T','PRGE')
-
-	call SetBuffAbilityId('B0C1', DISABLE_MOVE_BUFF_KEY)
-	call SetBuffAbilityId('BEer', DISABLE_MOVE_BUFF_KEY)
-	call SetBuffAbilityId('B017', DISABLE_MOVE_BUFF_KEY)
-	call SetBuffAbilityId('B078', DISABLE_MOVE_BUFF_KEY)
-	call SetBuffAbilityId('B0FU', DISABLE_MOVE_BUFF_KEY)	//阿托斯缠绕
-	call SetBuffAbilityId('B08F', DISABLE_MOVE_BUFF_KEY)
-	call SetBuffAbilityId('B08E', DISABLE_MOVE_BUFF_KEY)
-	call SetBuffAbilityId('B0ER', DISABLE_MOVE_BUFF_KEY)
-	call SetBuffAbilityId('B0FN', DISABLE_MOVE_BUFF_KEY)
-	call SetBuffAbilityId('Bena', DISABLE_MOVE_BUFF_KEY)
-	call SetBuffAbilityId('Beng', DISABLE_MOVE_BUFF_KEY)
-	
-
-	call SetBuffAbilityId('B031', SILENCE_BUFF_KEY)
-	// 血棘 - 灵魂撕裂
-	call SetBuffAbilityId('A4TP', SILENCE_BUFF_KEY)
-	call SetBuffAbilityId('B07U', SILENCE_BUFF_KEY)
-	call SetBuffAbilityId('BNsi', SILENCE_BUFF_KEY)
-	call SetBuffAbilityId('BNso', SILENCE_BUFF_KEY)
-	call SetBuffAbilityId('B07V', SILENCE_BUFF_KEY)
-	call SetBuffAbilityId('B02M', SILENCE_BUFF_KEY)
-	call SetBuffAbilityId('B0BY', SILENCE_BUFF_KEY)
-	call SetBuffAbilityId('B0FT', SILENCE_BUFF_KEY)
-	call SetBuffAbilityId('B0G0', SILENCE_BUFF_KEY)
-
-	call SetBuffAbilityId('B00P','PRGS')
-	call SetBuffAbilityId('B043','PRGS')
-	call SetBuffAbilityId('B04Q','PRGS')
-	call SetBuffAbilityId('B00C','PRGE')
-	call SetBuffAbilityId('B09K','PRGE')
-	call SetBuffAbilityId('B0AM','PRGS')
-	call SetBuffAbilityId('C009','PRGE')
-	call SetBuffAbilityId('D009','PRGE')
-	call SetBuffAbilityId('B38I','PRGS')
-	call SetBuffAbilityId('B09Q','PRGS')
-	call SetBuffAbilityId('B0DI','PRGS')
-	call SetBuffAbilityId('B0BB','PRGS')
-	call SetBuffAbilityId('B0AF','PRGE')
-	call SetBuffAbilityId('B08N','PRGS')
-	call SetBuffAbilityId('B02I','PRGS')
-	call SetBuffAbilityId('B02P','PRGE')
-	call SetBuffAbilityId('B0EP','PRGS')
-	call SetBuffAbilityId('B0ET','PRGS')
-	call SetBuffAbilityId('B0FY','PRGS')
-	call SetBuffAbilityId('A39F','PRGE')
-	call SetBuffAbilityId('A3QU','PRGE')
-	call SetBuffAbilityId('A3QV','PRGE')
-	call SetBuffAbilityId('A3QW','PRGE')
-	call SetBuffAbilityId('A3QX','PRGE')
-	call SetBuffAbilityId('A3Q2','PRGE')
-	call SetBuffAbilityId('A3Q1','PRGE')
-	call SetBuffAbilityId('B3DJ','PRGE')
-	call SetBuffAbilityId('A3Q0','PRGE')
-	call SetBuffAbilityId('A3PZ','PRGE')
-	call SetBuffAbilityId('A3PV','PRGE')
-	call SetBuffAbilityId('A3PW','PRGE')
-	call SetBuffAbilityId('A3PX','PRGE')
-	call SetBuffAbilityId('A3PY','PRGE')
-	call SetBuffAbilityId('A3PR','PRGE')
-	call SetBuffAbilityId('A3PS','PRGE')
-	call SetBuffAbilityId('A3PT','PRGE')
-	call SetBuffAbilityId('A3PU','PRGE')
-	call SetBuffAbilityId('A42Q','PRGE')
-	call SetBuffAbilityId('B0HH','PRGE')
-	call SetBuffAbilityId('A17K','PRGE')
-	call SetBuffAbilityId('B0AP','PRGE')
-	call SetBuffAbilityId('B307','PRGE')
-	call SetBuffAbilityId('A10Z','PRGE')
-	call SetBuffAbilityId('A111','PRGE')
-	call SetBuffAbilityId('A10Y','PRGE')
-	call SetBuffAbilityId('A110','PRGE')
-	call SetBuffAbilityId('B09M','PRGE')
-	call SetBuffAbilityId('B09N','PRGE')
-	call SetBuffAbilityId('B09O','PRGE')
-	call SetBuffAbilityId('B09L','PRGE')
-	call SetBuffAbilityId('A1PS','PRGS')
-	call SetBuffAbilityId('B0CQ','PRGS')
-	call SetBuffAbilityId('A0OW','PRGS')
-	call SetBuffAbilityId('A42S','PRGE')
-	call SetBuffAbilityId('B0HJ','PRGE')
-	call SetBuffAbilityId('A204','PRGS')
-	call SetBuffAbilityId('B0DY','PRGS')
-	call SetBuffAbilityId('A30B','PRGS')
-	call SetBuffAbilityId('B30A','PRGS')
-	call SetBuffAbilityId('A304','PRGS')
-	call SetBuffAbilityId('B304','PRGS')
-	call SetBuffAbilityId('A0RC','PRGE')
-	call SetBuffAbilityId('A228','PRGE')
-	call SetBuffAbilityId('B0E8','PRGE')
-	call SetBuffAbilityId('A264','PRGE')
-	call SetBuffAbilityId('B02I','PRGE')
-	call SetBuffAbilityId('A263','PRGE')
-	call SetBuffAbilityId('B08N','PRGE')
-	call SetBuffAbilityId('A3W0','PRGE')
-	call SetBuffAbilityId('B3W0','PRGE')
-	call SetBuffAbilityId('A3W9','PRGE')
-	call SetBuffAbilityId('B3W9','PRGE')
-
-	// PRGA 可能是普通驱散
-
-	// 猛犸波神杖升级致残
-	call SetBuffAbilityId('A3Y9','PRGA')
-	call SetBuffAbilityId('a3Y9','PRGA')
-
-	call SetBuffAbilityId('A1HN','PRGA')
-	call SetBuffAbilityId('B0CJ','PRGA')
-	call SetBuffAbilityId('A0QO','PRGA')
-	call SetBuffAbilityId('B080','PRGA')
-	call SetBuffAbilityId('A0VJ','PRGA')
-	call SetBuffAbilityId('A109','PRGA')
-	call SetBuffAbilityId('A0P0','PRGA')
-	call SetBuffAbilityId('B073','PRGA')
-	call SetBuffAbilityId('C025','PRGA')
-	call SetBuffAbilityId('D025','PRGA')
-	call SetBuffAbilityId('A2J4','PRGA')
-	
-	call SetBuffAbilityId('Broa','PRGA')
-	call SetBuffAbilityId('B014','PRGA')
-	call SetBuffAbilityId('B00G','PRGA')
-	// 狂猛
-	call SetBuffAbilityId('B016','PRGA')
-	call SetBuffAbilityId('B077','PRGA')
-	call SetBuffAbilityId('B0FP','PRGA')
-	call SetBuffAbilityId('B0FQ','PRGA')
-	// 嗜血术
-	call SetBuffAbilityId('Bblo','PRGA')
-	call SetBuffAbilityId('B013','PRGA')
-	call SetBuffAbilityId('A308','PRGA')
-	call SetBuffAbilityId('B308','PRGA')
-	
-	call SetBuffAbilityId('C000','PRGA')
-	call SetBuffAbilityId('D000','PRGA')
-	call SetBuffAbilityId('C108','PRGA')
-	call SetBuffAbilityId('C109','PRGA')
-	call SetBuffAbilityId('C10:','PRGA')
-	call SetBuffAbilityId('C10;','PRGA')
-	call SetBuffAbilityId('D105','PRGA')
-	call SetBuffAbilityId('A2IB','PRGA')
-	call SetBuffAbilityId('B0FV','PRGA')
-	call SetBuffAbilityId('A0WR','PRGA')
-	call SetBuffAbilityId('B01E','PRGA')
-	call SetBuffAbilityId('A3K9','PRGA')
-	call SetBuffAbilityId('A3KA','PRGA')
-	call SetBuffAbilityId('B00S','PRGA')
-	call SetBuffAbilityId('A3KB','PRGA')
-	call SetBuffAbilityId('B07W','PRGA')
-	call SetBuffAbilityId('Broa','PRGA')
-	call SetBuffAbilityId('A3DU','PRGA')
-	call SetBuffAbilityId('A3DV','PRGA')
-	call SetBuffAbilityId('A3DW','PRGA')
-	call SetBuffAbilityId('A3DX','PRGA')
-	call SetBuffAbilityId('B3DU','PRGA')
-	call SetBuffAbilityId('C020','PRGA')
-	call SetBuffAbilityId('D020','PRGA')
-	call SetBuffAbilityId('B0H6','PRGA')
-	call SetBuffAbilityId('B016','PRGA')
-	call SetBuffAbilityId('B019','PRGA')
-	call SetBuffAbilityId('B00U','PRGA')
-	call SetBuffAbilityId('A1Q0','PRGA')
-	call SetBuffAbilityId('A1Q1','PRGA')
-	call SetBuffAbilityId('A1Q2','PRGA')
-	call SetBuffAbilityId('A1Q3','PRGA')
-	call SetBuffAbilityId('A1CO','PRGA')
-	call SetBuffAbilityId('B1CO','PRGA')
-	call SetBuffAbilityId('A46F','PRGA')
-	call SetBuffAbilityId('B46F','PRGA')
-	call SetBuffAbilityId('A24G','PRGA')
-	call SetBuffAbilityId('B0EC','PRGA')
-	call SetBuffAbilityId('A23N','PRGA')
-	call SetBuffAbilityId('B0E9','PRGA')
-	call SetBuffAbilityId('A1GA','PRGA')
-	call SetBuffAbilityId('B021','PRGA')
-	call SetBuffAbilityId('A3KF','PRGA')
-	call SetBuffAbilityId('B3KF','PRGA')
-	call SetBuffAbilityId('A1N3','PRGA')
-	call SetBuffAbilityId('A1N7','PRGA')
-	call SetBuffAbilityId('B0CH','PRGA')
-	call SetBuffAbilityId('B02H','PRGA')
-	call SetBuffAbilityId('A1ZY','PRGA')
-	call SetBuffAbilityId('B0DX','PRGA')
-	call SetBuffAbilityId('B0CG','PRGA')
-	call SetBuffAbilityId('Bcyc','PRGA')
-	call SetBuffAbilityId('Bcy2','PRGA')
-	call SetBuffAbilityId('Aetl','PRGA')
-	call SetBuffAbilityId('A42L','PRGA')
-	call SetBuffAbilityId('A42N','PRGA')
-	call SetBuffAbilityId('B0HG','PRGA')
-	call SetBuffAbilityId('B07S','PRGA')
-	call SetBuffAbilityId('A3KI','PRGA')
-	call SetBuffAbilityId('B3KI','PRGA')
-endfunction
 function Z8A takes nothing returns nothing
 	call RegisterUnitAttackEvent("TIA",-2)	//幽冥剧毒
 endfunction
@@ -87446,7 +86922,7 @@ function main takes nothing returns nothing
 	// 阴间计时器和阴间马甲 idk
 	call ExecuteFunc("SOX")
 	// 初始化常用Buff表
-	call ExecuteFunc("Init_BuffsId")
+	call ExecuteFunc("BuffSystem_Init")
 	// 树木再生
 	set TreeDestructableDeathTrig = CreateTrigger()
 	call TriggerAddCondition(TreeDestructableDeathTrig, Condition(function TreeDestructableDeathAction))

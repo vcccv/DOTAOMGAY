@@ -1,5 +1,5 @@
 
-library UnitIllusion requires UnitUtils, UnitWeapon
+library UnitIllusion requires UnitUtils, UnitWeapon, BuffSystem
         
     // 单位类型是否是变身单位
     function IsUnitMetamorphosis takes unit u returns boolean
@@ -42,44 +42,44 @@ library UnitIllusion requires UnitUtils, UnitWeapon
     endfunction
 
     // 设置幻象的技能
-    function SyncIllusionUnitSkills takes unit illusion, unit summoning returns nothing
+    function SyncIllusionUnitSkills takes unit illusionUnit, unit sourceUnit returns nothing
         local integer i = 1
         local integer lv
         loop
-            set lv = GetUnitAbilityLevel(summoning, PassiveSkills_Learned[i])
+            set lv = GetUnitAbilityLevel(sourceUnit, PassiveSkills_Learned[i])
             if PassiveSkills_Real[i]=='P084' then
-                set lv = GetUnitAbilityLevel(summoning, 'A0DB')
+                set lv = GetUnitAbilityLevel(sourceUnit, 'A0DB')
             endif
             if lv > 0 then
                 if PassiveSkills_SpellBook[i]> 0 or PassiveSkills_Real[i]> 0 then
-                    call UnitAddPermanentAbility(illusion, PassiveSkills_SpellBook[i])
-                    call UnitMakeAbilityPermanent(illusion, true, PassiveSkills_Real[i])
-                    call UnitAddPermanentAbility(illusion, PassiveSkills_Show[i])
+                    call UnitAddPermanentAbility(illusionUnit, PassiveSkills_SpellBook[i])
+                    call UnitMakeAbilityPermanent(illusionUnit, true, PassiveSkills_Real[i])
+                    call UnitAddPermanentAbility(illusionUnit, PassiveSkills_Show[i])
                     if PassiveSkills_illusion[i]> 0 then
-                        call UnitAddPermanentAbility(illusion, PassiveSkills_illusion[i])
-                        call SetUnitAbilityLevel(illusion, PassiveSkills_illusion[i], lv)
+                        call UnitAddPermanentAbility(illusionUnit, PassiveSkills_illusion[i])
+                        call SetUnitAbilityLevel(illusionUnit, PassiveSkills_illusion[i], lv)
                     endif
-                    call SetUnitAbilityLevel(illusion, PassiveSkills_Real[i], lv)
-                    call MHAbility_Disable(illusion, PassiveSkills_Real[i], false, false)
+                    call SetUnitAbilityLevel(illusionUnit, PassiveSkills_Real[i], lv)
+                    call MHAbility_Disable(illusionUnit, PassiveSkills_Real[i], false, false)
                     if PassiveSkills_SpellBook[i] == 'A23F' then
-                        call SetUnitAbilityLevel(illusion,'A1ER', lv)
-                        call UnitAddPermanentAbility(illusion,'A1ER')
-                        call SetUnitAbilityLevel(illusion,'A1ER', lv)
-                        call BJDebugMsg("我有分裂箭，那我的禁用计数是多少？："+I2S(MHAbility_GetDisableCount(illusion, 'A1ER')))
+                        call SetUnitAbilityLevel(illusionUnit,'A1ER', lv)
+                        call UnitAddPermanentAbility(illusionUnit,'A1ER')
+                        call SetUnitAbilityLevel(illusionUnit,'A1ER', lv)
+                        call BJDebugMsg("我有分裂箭，那我的禁用计数是多少？："+I2S(MHAbility_GetDisableCount(illusionUnit, 'A1ER')))
                     endif
                 endif
                 // 瞄准
                 if PassiveSkills_Learned[i] == 'A03U' then
-                    set U2 = illusion
+                    set U2 = illusionUnit
                     set Q2 = lv
                     call ExecuteFunc("range_Take_Aim")
                 elseif PassiveSkills_Learned[i] == 'A0RO' then
                     // ta被动
-                    set U2 = illusion
+                    set U2 = illusionUnit
                     set Q2 = lv
                     call ExecuteFunc("range_Psi_Blades")
                 elseif PassiveSkills_Learned[i]=='A0CL' then
-                    set U2 = illusion
+                    set U2 = illusionUnit
                     set Q2 = lv
                     call ExecuteFunc("SyncIllusionUnitDragonBlood")
                 endif
@@ -87,11 +87,11 @@ library UnitIllusion requires UnitUtils, UnitWeapon
             set i = i + 1
         exitwhen i > PassiveAbilityMaxCount
         endloop
-        call RefreshUnitRange(illusion)
+        call RefreshUnitRange(illusionUnit)
         // 如果幻象是变身单位 直接播放单位的变身Stand 否则被认出来太蠢
-        if IsUnitMetamorphosis(illusion) or WTB(illusion) then
-            call AddUnitAnimationProperties(illusion, "alternate", true)
-            call SetUnitAnimation(illusion, "stand alternate")
+        if IsUnitMetamorphosis(illusionUnit) or WTB(illusionUnit) then
+            call AddUnitAnimationProperties(illusionUnit, "alternate", true)
+            call SetUnitAnimation(illusionUnit, "stand alternate")
         endif
     endfunction
 
@@ -108,92 +108,82 @@ library UnitIllusion requires UnitUtils, UnitWeapon
         set trig = null
         return false
     endfunction
-    // 镜像被召唤事件
-    function OnIllusionSummoned takes nothing returns boolean
-        local unit    illusion  = GetSummonedUnit()
-        local integer pid       = GetPlayerId(GetOwningPlayer(illusion))
-        local unit    summoning = null
+
+    // ownerPlayer 来源玩家；sourceUnit来源单位(镜像来源)；illusionUnit镜像单位
+    function OnIllusionSummoned takes player ownerPlayer, unit sourceUnit, unit illusionUnit returns boolean
+        local integer pid    = GetPlayerId(ownerPlayer)
         local integer typeId
         local real    hp
-        if not IsUnitIllusion(illusion) or GetUnitTypeId(illusion)< 1 then
-            set illusion = null
-            return false
-        endif
-        set summoning = LoadUnitHandle(HY, GetHandleId(GetSummoningUnit()),'0ILU')
-        if GetUnitAbilityLevel(illusion,'B0EN')> 0 then
-            set pid = TempInt
-        endif
-        if summoning != null then
-            set pid = GetPlayerId(GetOwningPlayer(summoning))
-        else
-            set summoning = Player__Hero[pid]
-        endif
-        call SaveUnitHandle(HY, GetHandleId(illusion),'0ILU', summoning)
-        // 这里似乎是判断一下是否有变体精灵的镜像
-        set typeId = GetUnitTypeId(summoning)
-        if GetUnitTypeId(illusion) != typeId then
-            set hp = GetUnitState(illusion, UNIT_STATE_MAX_LIFE)
-            call UnitMakeAbilityPermanent(illusion, true, 'A09J')
+
+        // 判一下类型
+        set typeId = GetUnitTypeId(sourceUnit)
+        call BJDebugMsg("typeId:" + Id2String(typeId))
+        if GetUnitTypeId(illusionUnit) != typeId then
+            set hp = GetUnitState(illusionUnit, UNIT_STATE_MAX_LIFE)
+            call UnitMakeAbilityPermanent(illusionUnit, true, 'A09J')
             // 原本是极低效率的一大堆马甲技能，改成了japi的逆变身
-            call YDWEUnitTransform(illusion, typeId)
+            call YDWEUnitTransform(illusionUnit, typeId)
             // 然后同步下最大生命值
-            call SetUnitState(illusion, UNIT_STATE_MAX_LIFE, hp)
+            call SetUnitState(illusionUnit, UNIT_STATE_MAX_LIFE, hp)
         endif
         // 同步一下幻象单位的技能 不然可能会有奇怪现象(一堆被动技能)
-        call SyncIllusionUnitSkills(illusion, summoning)
+        call SyncIllusionUnitSkills(illusionUnit, sourceUnit)
         // 同步射手天赋给幻象
-        if GetUnitAbilityLevel(summoning,'A0VC')> 0 then
-            call SaveUnitHandle(OtherHashTable2,'ILLU', 0, illusion)
-            call SaveUnitHandle(OtherHashTable2,'ILLU', 1, summoning)
+        if GetUnitAbilityLevel(sourceUnit,'A0VC')> 0 then
+            call SaveUnitHandle(OtherHashTable2,'ILLU', 0, illusionUnit)
+            call SaveUnitHandle(OtherHashTable2,'ILLU', 1, sourceUnit)
             call ExecuteFunc("I8R")
         endif
         // 幻象的协同升级
         if GetUnitAbilityLevel(Player__Hero[pid],'A0A8')> 0 then
-            call UnitAddPermanentAbilitySetLevel(illusion,'A3L3', GetUnitAbilityLevel(Player__Hero[pid],'A0A8'))
+            call UnitAddPermanentAbilitySetLevel(illusionUnit,'A3L3', GetUnitAbilityLevel(Player__Hero[pid],'A0A8'))
         endif
         // 同步长大技能
-        if a_fx_b[pid] and GetUnitTypeId(illusion) == 'Ucrl' and GetUnitAbilityLevel(summoning,'A2KK')> 0 then
+        if a_fx_b[pid] and GetUnitTypeId(illusionUnit) == 'Ucrl' and GetUnitAbilityLevel(sourceUnit,'A2KK')> 0 then
             // 小小模型有A就拿棒子
-            call AddUnitAnimationProperties(illusion, "upgrade", true)
+            call AddUnitAnimationProperties(illusionUnit, "upgrade", true)
         endif
         // 长大等级
-        if GetUnitAbilityLevel(summoning,'A0CY')> 0 then
-            set Temp__Int = CreateTimerEventTrigger( .0, false, function Wait0sSetUnitScale ) 
-            call SaveUnitHandle( HY, Temp__Int, 0, illusion )
-            // call SaveReal( HY, Temp__Int, 1, 1 + .25 *  GetUnitAbilityLevel(summoning,'A0CY') )
-            call SaveReal( ExtraHT, GetHandleId(illusion), HTKEY_UNIT_CURRENT_ADDSCALE, GetUnitAbilityLevel(summoning,'A0CY') * 0.25 )
+        if GetUnitAbilityLevel(sourceUnit,'A0CY')> 0 then
+            call SetUnitCurrentScaleEx(illusionUnit, GetUnitCurrentScale(sourceUnit))
+            //set Temp__Int = CreateTimerEventTrigger( .0, false, function Wait0sSetUnitScale ) 
+            call SaveUnitHandle( HY, Temp__Int, 0, illusionUnit )
+            // call SaveReal( HY, Temp__Int, 1, 1 + .25 *  GetUnitAbilityLevel(sourceUnit,'A0CY') )
+            call SaveReal( ExtraHT, GetHandleId(illusionUnit), HTKEY_UNIT_CURRENT_ADDSCALE, GetUnitAbilityLevel(sourceUnit,'A0CY') * 0.25 )
             // 模型缩放
-            // call SetUnitCurrentScaleEx(illusion, )
+            // call SetUnitCurrentScaleEx(illusionUnit, )
         endif
-        if ( UnitHasItemOfType(illusion, XOV[it_mlq]) ) or ( UnitHasItemOfType(illusion, XOV[Item_HurricanePike]) ) then
-            call AddUnitBonusRange(illusion, 140., true)
+        if ( UnitHasItemOfType(illusionUnit, XOV[it_mlq]) ) or ( UnitHasItemOfType(illusionUnit, XOV[Item_HurricanePike]) ) then
+            call AddUnitBonusRange(illusionUnit, 140., true)
         endif
-        set illusion  = null
-        set summoning = null
         return false
     endfunction
 
     globals
-        private constant key ILLUSION_OWNER
+        private constant key ILLUSION_SOURCE
     endglobals
 
     function CreateIllusion takes player whichPlayer, unit whichUnit, real damageDealt, real damageTaken, real x, real y, integer buffId, real dur returns unit
         set bj_lastCreatedUnit = MHUnit_CreateIllusion(whichPlayer, whichUnit, x, y)
+        if bj_lastCreatedUnit == null then
+            return null
+        endif
         call MHUnit_ApplyTimedLife(bj_lastCreatedUnit, buffId, dur)
         call MHUnit_SetIllusionDamageDeal(bj_lastCreatedUnit, damageDealt)
         call MHUnit_SetIllusionDamageReceive(bj_lastCreatedUnit, damageTaken)
-        set Table[GetHandleId(bj_lastCreatedUnit)].unit[ILLUSION_OWNER] = whichUnit
+        set Table[GetHandleId(bj_lastCreatedUnit)].unit[ILLUSION_SOURCE] = whichUnit
+        call OnIllusionSummoned(whichPlayer, whichUnit, bj_lastCreatedUnit)
         return bj_lastCreatedUnit
     endfunction
 
-    function GetIllusionDamageDealt takes unit illusion returns real
-        return MHUnit_GetIllusionDamageDeal(illusion)
+    function GetIllusionDamageDealt takes unit illusionUnit returns real
+        return MHUnit_GetIllusionDamageDeal(illusionUnit)
     endfunction
-    function GetIllusionDamageTaken takes unit illusion returns real
-        return MHUnit_GetIllusionDamageReceive(illusion)
+    function GetIllusionDamageTaken takes unit illusionUnit returns real
+        return MHUnit_GetIllusionDamageReceive(illusionUnit)
     endfunction
-    function GetIllusionOwner takes unit illusion returns unit
-        return Table[GetHandleId(illusion)].unit[ILLUSION_OWNER]
+    function GetIllusionSourceUnit takes unit illusionUnit returns unit
+        return Table[GetHandleId(illusionUnit)].unit[ILLUSION_SOURCE]
     endfunction
 
     #define MIRROR_IMAGE_FRAME 0.02
@@ -227,9 +217,9 @@ library UnitIllusion requires UnitUtils, UnitWeapon
         if dist >= rng then
             set whichUnit   = table[h].unit['U']
             set whichPlayer = GetOwningPlayer(whichUnit)
-            set damageDealt = table[h].real['1']
-            set damageTaken = table[h].real['2']
-            set dur         = table[h].real['3']
+            set damageDealt = table[h].real[1]
+            set damageTaken = table[h].real[2]
+            set dur         = table[h].real[3]
             set buffId      = table[h]['B']
             set ownerIndex  = GetRandomInt(1, max)
 
@@ -240,7 +230,9 @@ library UnitIllusion requires UnitUtils, UnitWeapon
                 set x = GetUnitX(whichUnit) + rng * Cos(angle * i * bj_DEGTORAD)
                 set y = GetUnitY(whichUnit) + rng * Sin(angle * i * bj_DEGTORAD)
                 call MHEffect_SetPosition(missileEffect, x, y, MHGame_GetAxisZ(x, y))
+                call MHEffect_Hide(missileEffect, true)
                 call DestroyEffect(missileEffect)
+                call BJDebugMsg(R2S(damageDealt) + ":damageDealt")
                 if i != ownerIndex then
                     call CreateIllusion(whichPlayer, whichUnit, damageDealt, damageTaken, x, y, buffId, dur)
                 else
@@ -298,7 +290,7 @@ library UnitIllusion requires UnitUtils, UnitWeapon
             exitwhen i > max
             set missileEffect = AddSpecialEffect(missileArt, x, y)
             call MHEffect_SetScale(missileEffect, scale)
-            call MHEffect_SetYaw(bj_lastCreatedEffect, angle * i)
+            call MHEffect_SetYaw(missileEffect, angle * i)
             set table[h].effect[-i] = missileEffect
             set i = i + 1
         endloop
@@ -331,7 +323,7 @@ library UnitIllusion requires UnitUtils, UnitWeapon
             exitwhen first == null
             call GroupRemoveUnit(g, first)
             
-            if UnitAlive(first) and IsUnitIllusion(first) and GetUnitAbilityLevel(first, buffId) > 0 and GetIllusionOwner(first) == whichUnit then
+            if UnitAlive(first) and IsUnitIllusion(first) and GetUnitAbilityLevel(first, buffId) > 0 and GetIllusionSourceUnit(first) == whichUnit then
                 call KillUnit(first)
             endif
             
@@ -365,16 +357,10 @@ library UnitIllusion requires UnitUtils, UnitWeapon
         set table[h].string['M'] = missileArt
         set table[h].unit['U'] = whichUnit
 
-        call UnitDispelBuffs(whichUnit)
+        call UnitDispelBuffs(whichUnit, true)
         call UnitAddInvulnerableCount(whichUnit)
         call UnitAddStunCount(whichUnit)
         call UnitAddHideExCount(whichUnit)
-    endfunction
-
-    function UnitIllusion_Init takes nothing returns nothing
-        local trigger trig = CreateTrigger()
-        call TriggerRegisterPlayerUnitEventBJ(trig, EVENT_PLAYER_UNIT_SUMMON)
-        call TriggerAddCondition(trig, Condition(function OnIllusionSummoned))
     endfunction
 
 endlibrary

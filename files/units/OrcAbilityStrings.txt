@@ -10605,7 +10605,7 @@ Name=黑皇杖（8）|nBlack King Bar (8)
 [I09F]
 art=ReplaceableTextures\CommandButtons\BTNINV_ThrowingAxe_02
 Name=幻影斧|nManta Style
-Ubertip=|cffffcc00属性：|r|n提升15的攻击速度|n增加10点所有属性|n增加16点敏捷|n提升10%的移动速度|n|n|cffff8000幻影：|r|n制造两个幻影，拥有本体33%(28%)的攻击力，承受350%(400%)的伤害。|n|cff99ccff持续时间：|r20|n|cff99ccff冷却时间：|r35(50)|n|n|c00fffc01右键点击四次可拆分|r|n|n|c00838B8B一把花哨的斧子|r
+Ubertip=|cffffcc00属性：|r|n提升15的攻击速度|n增加10点所有属性|n增加16点敏捷|n提升10%的移动速度|n|n|cffff8000幻影：|r|n制造两个幻影，拥有本体33%(28%)的攻击力，承受300%(400%)的伤害。|n|cff99ccff持续时间：|r20|n|cff99ccff冷却时间：|r35(50)|n|n|c00fffc01右键点击四次可拆分|r|n|n|c00838B8B一把花哨的斧子|r
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNINV_ThrowingAxe_02.blp
 [I09G]
 Name=幻影斧|nManta Style
@@ -12268,7 +12268,7 @@ Ubertip=|cffffcc00属性：|r|n|cff0033cc真视：|r|n显现附近的隐形单�
 [I0MU]
 art=ReplaceableTextures\CommandButtons\BTNINV_ThrowingAxe_02
 Name=幻影斧|nManta Style
-Ubertip=|cffffcc00属性：|r|n提升15的攻击速度|n增加10点所有属性|n增加16点敏捷|n提升10%的移动速度|n|n|cffff8000幻影：|r|n制造两个幻影，拥有本体33%（28%）的攻击力，承受300（350）%的伤害。|n|cff99ccff持续时间：|r20|n|cff99ccff冷却时间：|r35(50)|n|n|c00fffc01右键点击四次可拆分|r|n|n|c00838B8B一把花哨的斧子|r
+Ubertip=|cffffcc00属性：|r|n提升15的攻击速度|n增加10点所有属性|n增加16点敏捷|n提升10%的移动速度|n|n|cffff8000幻影：|r|n制造两个幻影，拥有本体33%（28%）的攻击力，承受300（400）%的伤害。|n|cff99ccff持续时间：|r20|n|cff99ccff冷却时间：|r35(50)|n|n|c00fffc01右键点击四次可拆分|r|n|n|c00838B8B一把花哨的斧子|r
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNINV_ThrowingAxe_02.blp
 [I0MV]
 Name=幻影斧|nManta Style
@@ -12513,11 +12513,11 @@ Ubertip=|cffffcc00属性：|r|n增加25%的吸血|n增加20点攻击力|n增加2
 [J001]
 art=ReplaceableTextures\CommandButtons\BTNINV_ThrowingAxe_02
 Name=幻影斧
-Ubertip=|cffffcc00属性：|r|n提升15的攻击速度|n增加10点所有属性|n增加16点敏捷|n提升10%的移动速度|n|n|cffff8000幻影：|r|n制造两个幻影，拥有本体33%(28%)的攻击力，承受350%(300%)的伤害|n|cff99ccff持续时间：|r20|n|cff99ccff冷却时间：|r35(50)|n|n|c00fffc01右键点击四次可拆分|r|n|n|c00838B8B一把花哨的斧子|r
+Ubertip=|cffffcc00属性：|r|n提升15的攻击速度|n增加10点所有属性|n增加16点敏捷|n提升10%的移动速度|n|n|cffff8000幻影：|r|n制造两个幻影，拥有本体33%(28%)的攻击力，承受300%(400%)的伤害|n|cff99ccff持续时间：|r20|n|cff99ccff冷却时间：|r35(50)|n|n|c00fffc01右键点击四次可拆分|r|n|n|c00838B8B一把花哨的斧子|r
 [J002]
 art=ReplaceableTextures\CommandButtons\BTNINV_ThrowingAxe_02
 Name=幻影斧（远程）|nManta Style (ranged)
-Ubertip=|cffffcc00属性：|r|n提升15的攻击速度|n增加10点所有属性|n增加16点敏捷|n提升10%的移动速度|n|n|cffff8000幻影：|r|n制造两个幻影，拥有本体33%(28%)的攻击力，承受350%(300%)的伤害|n|cff99ccff持续时间：|r20|n|cff99ccff冷却时间：|r35(50)|n|n|c00fffc01右键点击四次可拆分|r|n|n|c00838B8B一把花哨的斧子|r
+Ubertip=|cffffcc00属性：|r|n提升15的攻击速度|n增加10点所有属性|n增加16点敏捷|n提升10%的移动速度|n|n|cffff8000幻影：|r|n制造两个幻影，拥有本体33%(28%)的攻击力，承受300%(400%)的伤害|n|cff99ccff持续时间：|r20|n|cff99ccff冷却时间：|r35(50)|n|n|c00fffc01右键点击四次可拆分|r|n|n|c00838B8B一把花哨的斧子|r
 [I0P6]
 Name=黑皇杖（4）|nBlack King Bar (4)
 [I0P9]
@@ -34654,11 +34654,11 @@ buffart=ReplaceableTextures\CommandButtons\BTNMirrorImage
 specialart=Abilities\Spells\Orc\MirrorImage\MirrorImageDeathCaster.mdl
 Bufftip=镜像
 Buffubertip=制造本体的幻象
-[BO30]
+[BImi]
 buffart=ReplaceableTextures\CommandButtons\BTNMirrorImage
 specialart=Abilities\Spells\Orc\MirrorImage\MirrorImageDeathCaster.mdl
 Bufftip=镜像
-Buffubertip=制造本体的幻象
+Buffubertip=幻影斧镜像
 [BO35]
 buffart=ReplaceableTextures\CommandButtons\BTNMirrorImage
 specialart=Abilities\Spells\Orc\MirrorImage\MirrorImageDeathCaster.mdl
