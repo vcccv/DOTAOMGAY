@@ -30338,7 +30338,7 @@ researchart=ReplaceableTextures\CommandButtons\BTNWitchDoctorMaster
 researchbuttonpos=3
 Name=狗运
 Researchtip=学习 狗运[|cffffcc00C|r] - [|cffffcc00等级 %d|r]|n(Multi Cast)
-Researchubertip="狗运让菊花能更快更有效地使用技能。|n|n|cffffcc00等级 1|r - 18%概率x2|n|cffffcc00等级 2|r - 29.5%概率x2，13%概率x3|n|cffffcc00等级 3|r - 39.5%概率x2，14.5%概率x3，5.5%概率x4|n|n成功狗运时，魔法会额外消耗|cffff0303 50%/75%/100%|r|n|n输入|c00ff0505-mc|r 以查看自身能触发狗运的技能|n|n|c00fffc01神杖升级：让你另一个脑袋施放火焰爆轰。"
+Researchubertip="狗运让菊花能更快更有效地使用技能。|n|n|cffffcc00等级 1|r - 18%概率x2|n|cffffcc00等级 2|r - 30%概率x2，13%概率x3|n|cffffcc00等级 3|r - 40%概率x2，15%概率x3，5%概率x4|n|n成功狗运时，每下额外施法会多消耗|cffff0303 35% |r的魔法值。|r|n|n输入|c00ff0505-mc|r 以查看自身能触发狗运的技能|n|n|c00fffc01神杖升级：让你另一个脑袋施放火焰爆轰。"
 researchhotkey="C"
 effectsoundlooped=ReplaceableTextures\PassiveButtons\BTNWitchDoctorMaster.blp
 [QP24]
@@ -30346,7 +30346,7 @@ art=ReplaceableTextures\PassiveButtons\BTNWitchDoctorMaster
 buttonpos=3,2
 Name=狗运
 Tip=狗运 - [|cffffcc00等级 1|r],狗运 - [|cffffcc00等级 2|r],狗运 - [|cffffcc00等级 3|r]
-Ubertip=有18%的概率连续施展两次法术|n|n成功狗运时，魔法会额外消耗|cffff0303 50% |r|n|n输入|c00ff0505-mc|r 以查看自身能触发狗运的技能|n|n|c00fffc01神杖升级：让你另一个脑袋施放火焰爆轰。,有29.5%的概率连续施展两次法术；有13%的概率连续施展三次法术|n|n成功狗运时，魔法会额外消耗|cffff0303 75% |r|n|n输入|c00ff0505-mc|r 以查看自身能触发狗运的技能|n|n|c00fffc01神杖升级：让你另一个脑袋施放火焰爆轰。,有39.5%的概率连续施展两次法术；有14.5%的概率连续施展三次法术；有5.5%的概率连续施展四次法术|n|n成功狗运时，魔法会额外消耗|cffff0303 100% |r|n|n输入|c00ff0505-mc|r 以查看自身能触发狗运的技能|n|n|c00fffc01神杖升级：让你另一个脑袋施放火焰爆轰。
+Ubertip=有18%的概率连续施展两次法术|n|n成功狗运时，魔法会额外消耗|cffff0303 50% |r|n|n输入|c00ff0505-mc|r 以查看自身能触发狗运的技能|n|n|c00fffc01神杖升级：让你另一个脑袋施放火焰爆轰。,有30%的概率连续施展两次法术；有13%的概率连续施展三次法术|n|n成功狗运时，魔法会额外消耗|cffff0303 75% |r|n|n输入|c00ff0505-mc|r 以查看自身能触发狗运的技能|n|n|c00fffc01神杖升级：让你另一个脑袋施放火焰爆轰。,有40%的概率连续施展两次法术；有15%的概率连续施展三次法术；有5%的概率连续施展四次法术|n|n成功狗运时，每下额外施法会多消耗|cffff0303 35% |r的魔法值。|n|n输入|c00ff0505-mc|r 以查看自身能触发狗运的技能|n|n|c00fffc01神杖升级：让你另一个脑袋施放火焰爆轰。
 [A06T]
 art=ReplaceableTextures\CommandButtons\BTNOvergrowth
 buttonpos=,2

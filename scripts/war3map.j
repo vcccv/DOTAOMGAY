@@ -2242,22 +2242,22 @@ function SetAllPlayerAbilityUnavailable takes integer id returns nothing
 	call SetPlayerAbilityAvailable(Player(11), id, false)
 endfunction
 
-function GetUnitPseudoRandom takes unit u, integer id, real i returns boolean
-	local integer h = GetHandleId(u)
-	local real TPV = R2I(i / 5.)* 5.
-	local real TQV = LoadReal(PrdRandomHashTable,-1, R2I(TPV / 5.)-1)
-	local real TSV = LoadReal(PrdRandomHashTable, h, id)
-	if not IsUnitType(u, UNIT_TYPE_HERO) then
-		return GetRandomInt(1, 100)< i	//如果不是英雄 则直接返回随机数
-	endif
-	if GetRandomReal(.0, 1.) < TSV + TQV then
-		call SaveReal(PrdRandomHashTable, h, id, .0)
-		return true
-	else
-		call SaveReal(PrdRandomHashTable, h, id, TSV + TQV)
-		return false
-	endif
-endfunction
+//function GetUnitPseudoRandom takes unit u, integer id, real i returns boolean
+//	local integer h = GetHandleId(u)
+//	local real TPV = R2I(i / 5.)* 5.
+//	local real TQV = LoadReal(PrdRandomHashTable,-1, R2I(TPV / 5.)-1)
+//	local real TSV = LoadReal(PrdRandomHashTable, h, id)
+//	if not IsUnitType(u, UNIT_TYPE_HERO) then
+//		return GetRandomInt(1, 100)< i	//如果不是英雄 则直接返回随机数
+//	endif
+//	if GetRandomReal(.0, 1.) < TSV + TQV then
+//		call SaveReal(PrdRandomHashTable, h, id, .0)
+//		return true
+//	else
+//		call SaveReal(PrdRandomHashTable, h, id, TSV + TQV)
+//		return false
+//	endif
+//endfunction
 
 
 function TUV takes trigger t, string s, boolean TWV returns nothing
@@ -11039,30 +11039,11 @@ endfunction
 
 function SetAbilityStringByMode takes unit u, integer id returns nothing
 	if id == 'QP24' then
-		if Mode__BalanceOff and Mode__RearmCombos then
-			call YDWESetUnitAbilityDataString(u, id, 1, 218, "有25%的概率连续施展两次法术|n|n输入|c00ff0505-mc|r 以查看自身能触发狗运的技能|n|n|c00fffc01神杖升级：让你另一个脑袋施放火焰爆轰。")
-			call YDWESetUnitAbilityDataString(u, id, 2, 218, "有40%的概率连续施展两次法术；有20%的概率连续施展三次法术|n|n输入|c00ff0505-mc|r 以查看自身能触发狗运的技能|n|n|c00fffc01神杖升级：让你另一个脑袋施放火焰爆轰。")
-			call YDWESetUnitAbilityDataString(u, id, 3, 218, "有50%的概率连续施展两次法术；有25%的概率连续施展三次法术；有12.5%的概率连续施展四次法术|n|n输入|c00ff0505-mc|r 以查看自身能触发狗运的技能|n|n|c00fffc01神杖升级：让你另一个脑袋施放火焰爆轰。")
-			set id = 'A088'
-			call UnitAddAbility(u, id)
-			call YDWESetUnitAbilityDataString(u, id, 1, 217, "狗运让菊花能更快更有效地使用技能。|n|n|cffffcc00等级 1|r - 25%概率x2|n|cffffcc00等级 2|r - 40%概率x2，20%概率x3|n|cffffcc00等级 3|r - 50%概率x2，25%概率x3，12.5%概率x4|n|n输入|c00ff0505-mc|r 以查看自身能触发狗运的技能|n|n|c00fffc01神杖升级：让你另一个脑袋施放火焰爆轰。")
-			call UnitRemoveAbility(u, id)
-		elseif Mode__BalanceOff and not Mode__RearmCombos then
-			call YDWESetUnitAbilityDataString(u, id, 1, 218, "有25%的概率连续施展两次法术|n|n成功狗运时，魔法会额外消耗|cffff0303 50% |r|n|n输入|c00ff0505-mc|r 以查看自身能触发狗运的技能|n|n|c00fffc01神杖升级：让你另一个脑袋施放火焰爆轰。")
-			call YDWESetUnitAbilityDataString(u, id, 2, 218, "有40%的概率连续施展两次法术；有20%的概率连续施展三次法术|n|n成功狗运时，魔法会额外消耗|cffff0303 75% |r|n|n输入|c00ff0505-mc|r 以查看自身能触发狗运的技能|n|n|c00fffc01神杖升级：让你另一个脑袋施放火焰爆轰。")
-			call YDWESetUnitAbilityDataString(u, id, 3, 218, "有50%的概率连续施展两次法术；有25%的概率连续施展三次法术；有12.5%的概率连续施展四次法术|n|n成功狗运时，魔法会额外消耗|cffff0303 100% |r|n|n输入|c00ff0505-mc|r 以查看自身能触发狗运的技能|n|n|c00fffc01神杖升级：让你另一个脑袋施放火焰爆轰。")
-			set id = 'A088'
-			call UnitAddAbility(u, id)
-			call YDWESetUnitAbilityDataString(u, id, 1, 217, "狗运让菊花能更快更有效地使用技能。|n|n成功狗运时，魔法会额外消耗|cffff0303 50%/75%/100%|r|n|n|cffffcc00等级 1|r - 25%概率x2|n|cffffcc00等级 2|r - 40%概率x2，20%概率x3|n|cffffcc00等级 3|r - 50%概率x2，25%概率x3，12.5%概率x4|n|n输入|c00ff0505-mc|r 以查看自身能触发狗运的技能|n|n|c00fffc01神杖升级：让你另一个脑袋施放火焰爆轰。")
-			call UnitRemoveAbility(u, id)
-		elseif not Mode__BalanceOff and Mode__RearmCombos then
-			call YDWESetUnitAbilityDataString(u, id, 1, 218, "有18%的概率连续施展两次法术|n|n输入|c00ff0505-mc|r 以查看自身能触发狗运的技能|n|n|c00fffc01神杖升级：让你另一个脑袋施放火焰爆轰。")
-			call YDWESetUnitAbilityDataString(u, id, 2, 218, "有29.5%的概率连续施展两次法术；有13%的概率连续施展三次法术|n|n输入|c00ff0505-mc|r 以查看自身能触发狗运的技能|n|n|c00fffc01神杖升级：让你另一个脑袋施放火焰爆轰。")
-			call YDWESetUnitAbilityDataString(u, id, 3, 218, "有39.5%的概率连续施展两次法术；有14.5%的概率连续施展三次法术；有5.5%的概率连续施展四次法术|n|n输入|c00ff0505-mc|r 以查看自身能触发狗运的技能|n|n|c00fffc01神杖升级：让你另一个脑袋施放火焰爆轰。")
-			set id = 'A088'
-			call UnitAddAbility(u, id)
-			call YDWESetUnitAbilityDataString(u, id, 1, 217, "狗运让菊花能更快更有效地使用技能。|n|n|cffffcc00等级 1|r - 18%概率x2|n|cffffcc00等级 2|r - 29.5%概率x2，13%概率x3|n|cffffcc00等级 3|r - 39.5%概率x2，14.5%概率x3，5.5%概率x4|n|n输入|c00ff0505-mc|r 以查看自身能触发狗运的技能|n|n|c00fffc01神杖升级：让你另一个脑袋施放火焰爆轰。")
-			call UnitRemoveAbility(u, id)
+		if Mode__BalanceOff then
+			call MHAbility_SetLevelDefDataStr('QP24', 1, ABILITY_LEVEL_DEF_DATA_UBERTIP, "有25%的概率连续施展两次法术|n|n输入|c00ff0505-mc|r 以查看自身能触发狗运的技能|n|n|c00fffc01神杖升级：让你另一个脑袋施放火焰爆轰。")
+			call MHAbility_SetLevelDefDataStr('QP24', 2, ABILITY_LEVEL_DEF_DATA_UBERTIP, "有40%的概率连续施展两次法术；有20%的概率连续施展三次法术|n|n输入|c00ff0505-mc|r 以查看自身能触发狗运的技能|n|n|c00fffc01神杖升级：让你另一个脑袋施放火焰爆轰。")
+			call MHAbility_SetLevelDefDataStr('QP24', 3, ABILITY_LEVEL_DEF_DATA_UBERTIP, "有50%的概率连续施展两次法术；有25%的概率连续施展三次法术；有12%的概率连续施展四次法术|n|n输入|c00ff0505-mc|r 以查看自身能触发狗运的技能|n|n|c00fffc01神杖升级：让你另一个脑袋施放火焰爆轰。")
+			call MHAbility_SetDefDataStr('A088', ABILITY_DEF_DATA_RESEARCH_UBERTIP, "狗运让菊花能更快更有效地使用技能。|n|n|cffffcc00等级 1|r - 25%概率x2|n|cffffcc00等级 2|r - 40%概率x2，20%概率x3|n|cffffcc00等级 3|r - 50%概率x2，25%概率x3，12%概率x4|n|n输入|c00ff0505-mc|r 以查看自身能触发狗运的技能|n|n|c00fffc01神杖升级：让你另一个脑袋施放火焰爆轰。")
 		endif
 	endif
 endfunction
@@ -45563,8 +45544,8 @@ function F9E takes nothing returns nothing
 		call V9I()
 	endif
 endfunction
-function EVI takes unit u, integer ETX, real EEI, real EXI returns boolean
-	return(Mode__BalanceOff and GetUnitPseudoRandom(u, ETX, EEI)) or(Mode__BalanceOff == false and GetUnitPseudoRandom(u, ETX, EXI))
+function GetMultiCastPseudoRandom takes unit u, integer ETX, integer r1, integer r2 returns boolean
+	return(Mode__BalanceOff and GetUnitPseudoRandom(u, ETX, r1)) or(not Mode__BalanceOff and GetUnitPseudoRandom(u, ETX, r2))
 endfunction
 function EOI takes nothing returns boolean
 	local integer id = LoadInteger(OtherHashTable2,'MULT', 0)
@@ -45613,30 +45594,30 @@ function ERI takes nothing returns nothing
 	endloop
 endfunction
 
-function EII takes unit u, integer lv returns integer
+function GetUnitMultiCastCount takes unit u, integer lv returns integer
 	local integer i = GetPlayerId(GetOwningPlayer(u))
 	call SaveInteger(OtherHashTable, i,'MC_T', LoadInteger(OtherHashTable, i,'MC_T')+ 1)
 	if lv == 1 then
-		if EVI(u,'A088', 25, 18) then
+		if GetMultiCastPseudoRandom(u,'A088', 25, 18) then
 			call SaveInteger(OtherHashTable, i,'MC_2', LoadInteger(OtherHashTable, i,'MC_2')+ 1)
 			return 2
 		endif
 	elseif lv == 2 then
-		if EVI(u,'A088'+ 1, 20, 13) then
+		if GetMultiCastPseudoRandom(u,'A088'+ 1, 20, 13) then
 			call SaveInteger(OtherHashTable, i,'MC_3', LoadInteger(OtherHashTable, i,'MC_3')+ 1)
 			return 3
-		elseif EVI(u,'A088', 40, 29.5) then
+		elseif GetMultiCastPseudoRandom(u,'A088', 40, 30) then
 			call SaveInteger(OtherHashTable, i,'MC_2', LoadInteger(OtherHashTable, i,'MC_2')+ 1)
 			return 2
 		endif
 	elseif lv == 3 then
-		if EVI(u,'A088'+ 2, 12.5, 5.5) then
+		if GetMultiCastPseudoRandom(u,'A088'+ 2, 12, 5) then
 			call SaveInteger(OtherHashTable, i,'MC_4', LoadInteger(OtherHashTable, i,'MC_4')+ 1)
 			return 4
-		elseif EVI(u,'A088'+ 1, 25, 14.5) then
+		elseif GetMultiCastPseudoRandom(u,'A088'+ 1, 25, 15) then
 			call SaveInteger(OtherHashTable, i,'MC_3', LoadInteger(OtherHashTable, i,'MC_3')+ 1)
 			return 3
-		elseif EVI(u,'A088', 50, 39.5) then
+		elseif GetMultiCastPseudoRandom(u,'A088', 50, 40) then
 			call SaveInteger(OtherHashTable, i,'MC_2', LoadInteger(OtherHashTable, i,'MC_2')+ 1)
 			return 2
 		endif
@@ -45656,14 +45637,14 @@ function EAI takes unit u returns integer
 	if not(X9R(id, GetSpellAbilityId())) then
 		return 0
 	endif
-	return EII(u, GetUnitAbilityLevel(u,'A088'))
+	return GetUnitMultiCastCount(u, GetUnitAbilityLevel(u,'A088'))
 endfunction
 function EBI takes nothing returns nothing
 	set Q2 = 0
 	if GetUnitAbilityLevel(U2,'A088') == 0 or EOI() == false then
 		return
 	endif
-	set Q2 = EII(U2, GetUnitAbilityLevel(U2,'A088'))
+	set Q2 = GetUnitMultiCastCount(U2, GetUnitAbilityLevel(U2,'A088'))
 	if Q2 > 0 then
 		if Q2 == 2 then
 			call CommonTextTag(GetObjectName('n0K7'), 5, U2, .03, 255, 0, 0, 255)
@@ -45873,21 +45854,18 @@ function EUI takes integer r returns nothing
 	local integer i = LoadInteger(HY, uh,'ORDT')
 	local real cost
 	if r == 2 then
-		set cost = 0.5
 		call CommonTextTag(GetObjectName('n0K7'), 5, GetTriggerUnit(), .03, 255, 0, 0, 255)
 	elseif r == 3 then
-		set cost = 0.75
 		call CommonTextTag(GetObjectName('n0JT'), 5, GetTriggerUnit(), .03, 255, 0, 0, 255)
 	elseif r == 4 then
-		set cost = 1.00
 		call CommonTextTag(GetObjectName('n0K8'), 5, GetTriggerUnit(), .03, 255, 0, 0, 255)
 	elseif r == 5 then
-		set cost = 2.00
 		call CommonTextTag(GetObjectName('n0JO'), 5, GetTriggerUnit(), .03, 255, 0, 0, 255)
 	endif
 	if not Mode__RearmCombos then
-		set cost = (YDWEGetUnitAbilityDataInteger(u, id, lv, 104))* cost
+		set cost = MHAbility_GetLevelDefDataInt(id, lv, ABILITY_LEVEL_DEF_DATA_MANA_COST) * ( r - 1) * 0.35
 		call SetUnitState(u, UNIT_STATE_MANA, (GetUnitState(u, UNIT_STATE_MANA) - cost))
+		call BJDebugMsg("额外消耗了"+R2S(cost))
 	endif
 	set r = r -1
 	call SaveUnitHandle(HY, h, 2,(u))
