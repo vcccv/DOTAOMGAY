@@ -3166,7 +3166,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A07F', 0, "D8E")
 	call SaveStr(ObjectHashTable,'A0CC', 0, "D9E")
 	call SaveStr(ObjectHashTable,'A02Z', 0, "D9E")
-	call SaveStr(ObjectHashTable,'A32A', 0, "FVE")
+	call SaveStr(ObjectHashTable,'A32A', 0, "SpitOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A32C', 0, "FEE")
 	call SaveStr(ObjectHashTable,'A32E', 0, "FXE")
 	call SaveStr(ObjectHashTable,'A32D', 0, "FOE")
@@ -34984,89 +34984,6 @@ function CXR takes unit u, real SYV returns nothing
 	endif
 	call SaveReal(HY, h, 1, SYV + GetGameTime())
 	set t = null
-endfunction
-function COR takes nothing returns nothing
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit u = LoadUnitHandle(HY, h, 0)
-	if GetTriggerEventId() == EVENT_WIDGET_DEATH or GetTriggerEvalCount(t) == 60 or GetUnitAbilityLevel(u,'A3K6') == 0 then
-		call SetHeroStr(u, GetHeroStr(u, false)+ LoadInteger(HY, h, 0), true)
-		call SetHeroAgi(u, GetHeroAgi(u, false)+ LoadInteger(HY, h, 1), true)
-		call SetHeroInt(u, GetHeroInt(u, false)+ LoadInteger(HY, h, 2), true)
-		call FlushChildHashtable(HY, h)
-		call DestroyTrigger(t)
-	endif
-	set u = null
-	set t = null
-endfunction
-function CRR takes nothing returns nothing
-	local real WLV = 0
-	local unit u = GetEnumUnit()
-	local trigger t
-	local real SYV = 12.
-	local integer stolen = 0
-	local integer curstat = 0
-	local integer level = GetUnitAbilityLevel(UN,'A32A')
-	local integer CIR = 0
-	local integer CAR
-	local integer CNR
-	local integer CBR
-	local integer h
-	if IsUnitType(u, UNIT_TYPE_HERO) then
-		set t = CreateTrigger()
-		set h = GetHandleId(t)
-		call TriggerRegisterTimerEvent(t, .2, true)
-		call TriggerRegisterDeathEvent(t, u)
-		set CIR = 3
-		set CAR = IMinBJ(GetHeroStr(u, false)-1, level * 2)
-		set CNR = IMinBJ(GetHeroAgi(u, false)-1, level * 2)
-		set CBR = IMinBJ(GetHeroInt(u, false)-1, level * 2)
-		call SetHeroStr(u, GetHeroStr(u, false)-CAR, true)
-		call SetHeroAgi(u, GetHeroAgi(u, false)-CNR, true)
-		call SetHeroInt(u, GetHeroInt(u, false)-CBR, true)
-		call TriggerAddCondition(t, Condition(function COR))
-		call UnitAddAbilityToTimed(u,'A3K6', 1, 12,'B3K6')
-		call SaveUnitHandle(HY, h, 0, u)
-		call SaveInteger(HY, h, 0, CAR)
-		call SaveInteger(HY, h, 1, CNR)
-		call SaveInteger(HY, h, 2, CBR)
-		set t = null
-	endif
-	call UnitDamageTargetEx(UN, u, 3, 50 + 25 * level)
-	set u = null
-	set t = null
-endfunction
-function CCR takes nothing returns boolean
-	return IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(UN)) and IsAliveNotStrucNotWard(GetFilterUnit()) and IsUnitMagicImmune(GetFilterUnit()) == false
-endfunction
-function FVE takes nothing returns nothing
-	local unit whichUnit = GetTriggerUnit()
-	local group g = AllocationGroup(116)
-	local group gg = AllocationGroup(117)
-	local integer level = GetUnitAbilityLevel(whichUnit, GetSpellAbilityId())
-	local real I3X = AngleBetweenXY(GetUnitX(whichUnit), GetUnitY(whichUnit), GetSpellTargetX(), GetSpellTargetY())* bj_DEGTORAD
-	local real x = GetUnitX(whichUnit)
-	local real y = GetUnitY(whichUnit)
-	local unit dummyUnit = CreateUnit(GetOwningPlayer(whichUnit),'e00E', GetUnitX(whichUnit), GetUnitY(whichUnit), I3X * bj_RADTODEG)
-	call UnitAddAbility(dummyUnit,'A32X')
-	call IssuePointOrderById(dummyUnit, 852580, x + 125 * Cos(I3X), y + 125 * Sin(I3X))
-	set dummyUnit = null
-	set UN = whichUnit
-	call GroupEnumUnitsInRange(g, x + 125 * Cos(I3X), y + 125 * Sin(I3X), 175, Condition(function CCR))
-	call GroupAddGroup(g, gg)
-	call GroupEnumUnitsInRange(g, x + 300 * Cos(I3X), y + 300 * Sin(I3X), 200, Condition(function CCR))
-	call GroupAddGroup(g, gg)
-	call GroupEnumUnitsInRange(g, x + 500 * Cos(I3X), y + 500 * Sin(I3X), 200, Condition(function CCR))
-	call GroupAddGroup(g, gg)
-	call GroupEnumUnitsInRange(g, x + 700 * Cos(I3X), y + 700 * Sin(I3X), 250, Condition(function CCR))
-	call GroupAddGroup(g, gg)
-	set UN = whichUnit
-	call ForGroup(gg, function CRR)
-	call DeallocateGroup(g)
-	call DeallocateGroup(gg)
-	set whichUnit = null
-	set g = null
-	set gg = null
 endfunction
 function CDR takes nothing returns boolean
 	return(IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(UN)) and IsAliveNotStrucNotWard(GetFilterUnit()) and IsUnitType(GetFilterUnit(), UNIT_TYPE_MECHANICAL) == false and IsUnitInGroup(GetFilterUnit(), GI) == false)!= null

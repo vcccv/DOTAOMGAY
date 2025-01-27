@@ -38706,11 +38706,11 @@ buttonpos=,2
 researchart=ReplaceableTextures\CommandButtons\BTNPoisonAbility66
 Name=酸液
 Tip=酸液[|cffffcc00F|r] - [|cffffcc00等级 1|r],酸液[|cffffcc00F|r] - [|cffffcc00等级 2|r],酸液[|cffffcc00F|r] - [|cffffcc00等级 3|r],酸液[|cffffcc00F|r] - [|cffffcc00等级 4|r]
-Ubertip=快速地对前方圆锥范围内的敌人喷射一阵酸液，造成75点伤害，并在12秒内减少他们2点三围。|n|n|cFFFF6800纯粹伤害|r|n|n|cff99ccff施法距离：|r1000|n|cff99ccff冷却时间：|r12,快速地对前方圆锥范围内的敌人喷射一阵酸液，造成100点伤害，并在12秒内减少他们4点三围。|n|n|cFFFF6800纯粹伤害|r|n|n|cff99ccff施法距离：|r1000|n|cff99ccff冷却时间：|r12,快速地对前方圆锥范围内的敌人喷射一阵酸液，造成125点伤害，并在12秒内减少他们6点三围。|n|n|cFFFF6800纯粹伤害|r|n|n|cff99ccff施法距离：|r1000|n|cff99ccff冷却时间：|r12,快速地对前方圆锥范围内的敌人喷射一阵酸液，造成150点伤害，并在12秒内减少他们8点三围。|n|n|cFFFF6800纯粹伤害|r|n|n|cff99ccff施法距离：|r1000|n|cff99ccff冷却时间：|r12
+Ubertip=快速地对前方圆锥范围内的敌人喷射一阵酸液，造成75点伤害，并在12秒内减少他们2点三围。|n|n|cFFFF6800纯粹伤害|r|n|n|cff99ccff施法距离：|r1000|n|cff99ccff前进距离：|r700|n|cff99ccff冷却时间：|r12,快速地对前方圆锥范围内的敌人喷射一阵酸液，造成100点伤害，并在12秒内减少他们4点三围。|n|n|cFFFF6800纯粹伤害|r|n|n|cff99ccff施法距离：|r1000|n|cff99ccff前进距离：|r700|n|cff99ccff冷却时间：|r12,快速地对前方圆锥范围内的敌人喷射一阵酸液，造成125点伤害，并在12秒内减少他们6点三围。|n|n|cFFFF6800纯粹伤害|r|n|n|cff99ccff施法距离：|r1000|n|cff99ccff前进距离：|r700|n|cff99ccff冷却时间：|r12,快速地对前方圆锥范围内的敌人喷射一阵酸液，造成150点伤害，并在12秒内减少他们8点三围。|n|n|cFFFF6800纯粹伤害|r|n|n|cff99ccff施法距离：|r1000|n|cff99ccff前进距离：|r700|n|cff99ccff冷却时间：|r12
 Hotkey=F
 ResearchHotkey=F
 Researchtip=学习 酸液[|cffffcc00F|r] - [|cffffcc00等级 %d|r]|n(Spit)
-Researchubertip=快速地对前方圆锥范围内的敌人喷射一阵酸液，对其造成伤害并在12秒内减少他们的三围。|n|n|cFFFF6800纯粹伤害|r|n|n|cff99ccff施法距离：|r1000|n|cff99ccff冷却时间：|r12|n|cff99ccff魔法消耗：|r100/110/120/130|n|n|cffffcc00等级 1|r - 75点伤害，减少2点三围|n|cffffcc00等级 2|r - 100点伤害，减少4点三围|n|cffffcc00等级 3|r - 125点伤害，减少6点三围|n|cffffcc00等级 4|r - 150点伤害，减少8点三围
+Researchubertip=快速地对前方圆锥范围内的敌人喷射一阵酸液，对其造成伤害并在12秒内减少他们的三围。|n|n|cFFFF6800纯粹伤害|r|n|n|cff99ccff施法距离：|r1000|n|cff99ccff前进距离：|r700|n|cff99ccff冷却时间：|r12|n|cff99ccff魔法消耗：|r100/110/120/130|n|n|cffffcc00等级 1|r - 75点伤害，减少2点三围|n|cffffcc00等级 2|r - 100点伤害，减少4点三围|n|cffffcc00等级 3|r - 125点伤害，减少6点三围|n|cffffcc00等级 4|r - 150点伤害，减少8点三围
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNPoisonAbility66.blp
 [A32C]
 art=ReplaceableTextures\CommandButtons\BTNMammothStomp
@@ -38769,9 +38769,6 @@ ResearchHotkey=R
 Researchtip=学习 刷逼之力[|cffffcc00R|r] - [|cffffcc00等级 %d|r]
 Researchubertip=远古的刷逼神力附体，道具栏中每有一个价值超过2000的装备，则会被动地提升太鼓达人的攻击和攻击速度。主动使用时，可在8秒内提升附近的盟友的全属性，对友方英雄的力量加成将会减半。|n|n|cffffcc00等级 1|r - 8点全属性加成；10点伤害和6攻速加成|n|cffffcc00等级 2|r - 10点全属性加成；15点伤害和8攻速加成|n|cffffcc00等级 3|r - 12点全属性加成；20点伤害和10攻速加成|n|cff99ccff作用范围：|r900|n|n|cff99ccff冷却时间：|r90/80/70
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNDrum.blp
-[A32X]
-missileart=effects\DeathFumesBreath.mdx
-missilespeed=1500
 [A32N]
 targetart=effects\BlightwalkerAura.mdx
 [A32O]

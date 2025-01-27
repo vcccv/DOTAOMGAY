@@ -142,7 +142,7 @@ scope DamageSystem
 
         // 获取英雄的减伤值
         static method GerHeroReducedDamage takes nothing returns real
-            local real reduceDamage = .0
+            local real reducedDamage = .0
             // set KE[DamagedEventSourcePlayerId] = KE[DamagedEventSourcePlayerId] + R2I(DEDamage)
             // 判断小鸡的击杀来源? (相当奇怪为什么在这里判断)
             if GetUnitAbilityLevel(DETarget,'A3D9') == 1 then
@@ -152,28 +152,28 @@ scope DamageSystem
             if GetUnitAbilityLevel(DETarget,'A3KF') == 1 then
                 set MC = RMinBJ(GetLivingArmorBlock(), DEDamage)
                 if MC > 0 then
-                    set reduceDamage = reduceDamage + MC
+                    set reducedDamage = reducedDamage + MC
                     // set DEDamage = DEDamage - MC
                 endif
             endif
             // 其实这一块应该是末端伤害减免 互相独立计算
             // 骷髅王绿魂
             if GetUnitAbilityLevel(DETarget,'A3DA') == 1 then
-                set reduceDamage = DEDamage
+                set reducedDamage = DEDamage
                 //set DEDamage = 0
                 // Loa回光返照
             elseif GetUnitAbilityLevel(DETarget,'C022') == 1 then
-                set reduceDamage = DEDamage
+                set reducedDamage = DEDamage
                 call SetUnitToReduceDamage(DETarget, DEDamage)
                 // 自己先回一下 回2次血 效果大抵是一致的
                 //set DEDamage = 0
                 // 虚妄诺言
             elseif GetUnitAbilityLevel(DETarget,'A3KN') == 1 then
-                set reduceDamage = DEDamage
+                set reducedDamage = DEDamage
                 //set DEDamage = 0
                 // 折光 需要伤害 > 5 才减免
             elseif GetUnitAbilityLevel(DETarget,'A0RN') > 0 and DEDamage > 5 then
-                set reduceDamage = DEDamage
+                set reducedDamage = DEDamage
                 //set DEDamage = 0
             else
                 // 回到过去
@@ -182,65 +182,65 @@ scope DamageSystem
                     if (DEDamage <= 20) then
                         if GetRandomInt(1, 100) < 5 + 5 *(GetUnitAbilityLevel(DETarget,'A0CZ')) then
                             call DestroyEffect(AddSpecialEffectTarget("Abilities\\Weapons\\WingedSerpentMissile\\WingedSerpentMissile.mdl", DETarget, "hand,left"))
-                            set reduceDamage = DEDamage
+                            set reducedDamage = DEDamage
                             //set DEDamage = 0
-                            return reduceDamage
+                            return reducedDamage
                         endif
                     elseif GetUnitPseudoRandom(DETarget,'A0CZ', 5 + 5 *(GetUnitAbilityLevel(DETarget,'A0CZ'))) then
                         call DestroyEffect(AddSpecialEffectTarget("Abilities\\Weapons\\WingedSerpentMissile\\WingedSerpentMissile.mdl", DETarget, "hand,left"))
-                        set reduceDamage = DEDamage
+                        set reducedDamage = DEDamage
                         //set DEDamage = 0
-                        return reduceDamage
+                        return reducedDamage
                     endif
                 endif
                 // 不是完全减免的
                 // 船油 0.5
                 if GetUnitAbilityLevel(DETarget,'A12D') == 1 then
-                    set reduceDamage = reduceDamage + DEDamage * .5
+                    set reducedDamage = reducedDamage + DEDamage * .5
                     //set DEDamage = DEDamage - DEDamage * .5
                 endif
                 // 回光返照的A杖光环 0.5
                 if GetUnitAbilityLevel(DETarget,'A3KG') == 1 then
-                    set reduceDamage = reduceDamage + DEDamage * .5
+                    set reducedDamage = reducedDamage + DEDamage * .5
                     call SetUnitToReduceDamage(LoadUnitHandle(HY, GetHandleId(DETarget),'A3KG'), DEDamage * .5)
                     //set DEDamage = DEDamage - DEDamage * .5
                 endif
                 // 折射 需要检查是否被破被动 而且还会根据模型主属性和谐减伤值
                 if GetUnitAbilityLevel(DETarget,'A0NA') > 0 and GetUnitAbilityLevel(DETarget,'A36D') == 0 then
                     if not Mode__RearmCombos and GetHeroMainAttributesType(DETarget) == HERO_ATTRIBUTE_STR then
-                        set reduceDamage = reduceDamage + DEDamage *(.06 + .02 * GetUnitAbilityLevel(DETarget,'A0NA'))
+                        set reducedDamage = reducedDamage + DEDamage *(.06 + .02 * GetUnitAbilityLevel(DETarget,'A0NA'))
                         //set DEDamage = DEDamage - DEDamage *(.06 + .02 * GetUnitAbilityLevel(DETarget,'A0NA'))
                     else
-                        set reduceDamage = reduceDamage + DEDamage *(.06 + .04 * GetUnitAbilityLevel(DETarget,'A0NA'))
+                        set reducedDamage = reducedDamage + DEDamage *(.06 + .04 * GetUnitAbilityLevel(DETarget,'A0NA'))
                         //set DEDamage = DEDamage - DEDamage *(.06 + .04 * GetUnitAbilityLevel(DETarget,'A0NA'))
                     endif
                 endif
                 // 奔袭冲撞 0.6
                 if GetUnitAbilityLevel(DETarget,'A2O5') == 1 then
-                    set reduceDamage = reduceDamage + DEDamage * .6
+                    set reducedDamage = reducedDamage + DEDamage * .6
                     //set DEDamage = DEDamage - DEDamage * .6
                 endif
                 // 冰龙大的减伤 被诅咒的单位被攻击时 0.7
                 if LoadInteger(HY, GetHandleId(DESource), 4328) == 1 then
-                    set reduceDamage = reduceDamage + DEDamage * .7
+                    set reducedDamage = reducedDamage + DEDamage * .7
                     //set DEDamage = DEDamage - DEDamage * .7
                 endif
                 // 过载
                 if LoadBoolean( ExtraHT, GetHandleId(DETarget), HTKEY_DAMAGE_OVERCHARGE ) then
-                    set reduceDamage = reduceDamage + DEDamage *(.05 * GetUnitAbilityLevel(DETarget,'A1VM'))
+                    set reducedDamage = reducedDamage + DEDamage *(.05 * GetUnitAbilityLevel(DETarget,'A1VM'))
                     // set DEDamage = DEDamage -DEDamage *(.05 * GetUnitAbilityLevel(DETarget,'A1VM'))
                 endif
                 //if GetUnitAbilityLevel(DETarget,'A1VM')> 0 then
-                //	set reduceDamage = reduceDamage + DEDamage *(.05 * GetUnitAbilityLevel(DETarget,'A1VM'))
+                //	set reducedDamage = reducedDamage + DEDamage *(.05 * GetUnitAbilityLevel(DETarget,'A1VM'))
                 //	set DEDamage = DEDamage -DEDamage *(.05 * GetUnitAbilityLevel(DETarget,'A1VM'))
                 //endif
                 // 大隐刀 造成的伤害减少40%
                 if GetUnitAbilityLevel(DESource,'A39D') == 1 then
-                    set reduceDamage = reduceDamage + DEDamage * .4
+                    set reducedDamage = reducedDamage + DEDamage * .4
                     //set DEDamage = DEDamage - DEDamage * .4
                 endif
             endif
-            return RMinBJ( reduceDamage, DEDamage )
+            return RMinBJ( reducedDamage, DEDamage )
         endmethod
 
         // 设置助攻
@@ -257,12 +257,12 @@ scope DamageSystem
         static method AnyUnitDamagedEvent takes nothing returns boolean
             local integer hu = 0
             local real    extraDamage
-            local real    reduceDamage
+            local real    reducedDamage
             local player  p = null
             if not FK then
                 return false
             endif
-            set reduceDamage = 0.
+            set reducedDamage = 0.
 
             set DamageEvent.INDEX = DamageEvent.INDEX + 1
             set DESource = MHDamageEvent_GetSource()
@@ -305,39 +305,39 @@ scope DamageSystem
                 endif
                 if IsUnitType(DETarget, UNIT_TYPE_HERO) then
                     call BJDebugMsg("1")
-                    set reduceDamage = GerHeroReducedDamage()
+                    set reducedDamage = GerHeroReducedDamage()
                     //if IsUnitType(DESource, UNIT_TYPE_HERO) then
-                        // debug call SingleDebug( "伤害值:" + R2S(DEDamage) +" 减免伤害值:"  + R2S(reduceDamage) + " 比例：" + R2S( ( reduceDamage / DEDamage ) * 100.0 ) )
+                        // debug call SingleDebug( "伤害值:" + R2S(DEDamage) +" 减免伤害值:"  + R2S(reducedDamage) + " 比例：" + R2S( ( reducedDamage / DEDamage ) * 100.0 ) )
                     //endif
                 else
                     if GetUnitAbilityLevel(DESource,'A39D') == 1 then
-                        set reduceDamage = reduceDamage + DEDamage * .4
+                        set reducedDamage = reducedDamage + DEDamage * .4
                     endif
                     if IsUnitIllusion(DESource) and MHDamageEvent_IsPhysical() then
                         if IsUnitStructure(DETarget) then
-                            set reduceDamage = reduceDamage + DEDamage * 0.6
+                            set reducedDamage = reducedDamage + DEDamage * 0.6
                         elseif DETarget == Roshan then
-                            set reduceDamage = reduceDamage + DEDamage * 0.8
+                            set reducedDamage = reducedDamage + DEDamage * 0.8
                         endif
                     endif
                     if GetUnitAbilityLevel(DETarget,'A3KF') == 1 then
                         set MC = RMinBJ(GetLivingArmorBlock(), DEDamage)
                         if MC > 0 then
-                            set reduceDamage = reduceDamage + MC
+                            set reducedDamage = reducedDamage + MC
                         endif
                     endif
                 endif
-                if reduceDamage > 0 then
+                if reducedDamage > 0 then
                     // 判断受伤者有没有资格减免伤害
                     // 墓碑 蝗虫 冰球 追踪导弹 一类的单位不接受伤害减免
                     // 傻卵减伤以后优化
                     if not(CMX(YO[0]) or RQX(YO[0]) or RTX(YO[0]) or RJX(YO[0]) or R3X(YO[0]) or IsBeetleUnitTypeId(YO[0]) or R1X(YO[0])) then
                         // 给受伤者减免伤害
-                        call SetUnitToReduceDamage(DETarget, reduceDamage)
+                        call SetUnitToReduceDamage(DETarget, reducedDamage)
                     endif
                 endif
-                call BJDebugMsg("伤害："+R2S(DEDamage) + " reduceDamage:" + R2S(reduceDamage))
-                set DEDamage = DEDamage - reduceDamage
+                call BJDebugMsg("伤害："+R2S(DEDamage) + " reducedDamage:" + R2S(reducedDamage))
+                set DEDamage = DEDamage - reducedDamage
                 //call MHDamageEvent_SetDamage(DEDamage)
                 call BJDebugMsg("实际伤害："+R2S(DEDamage))
                 // 数值减少
@@ -348,7 +348,7 @@ scope DamageSystem
                 endif
                 // 额外的伤害事件 关于镜头震动和伤害显示 要在额外伤害打出之前运行
                 if IsSinglePlayerMode then
-                    call OtherDamagedEvent(DETarget, DESource, DEDamage - reduceDamage)
+                    call OtherDamagedEvent(DETarget, DESource, DEDamage - reducedDamage)
                 endif
                 // 打断物品
                 if IsUnitType(DETarget, UNIT_TYPE_HERO) and ( DEDamage ) > 10 and (XFX( GetOwningPlayer( DESource ) ) or  DESource == Roshan ) then
