@@ -1,7 +1,7 @@
 
 scope DamageSystem
 
-    /*
+    
     // 学习 1 级技能 - 灵魂超度 为什么在伤害事件里
     function LearnLevel1Skill_SoulAssumption takes nothing returns nothing
         // 因为 有 2 个事件可能触发， 升级事件和 学习事件 所以用TriggerUnit
@@ -77,7 +77,7 @@ scope DamageSystem
         endloop
     endfunction
 
-    */
+    
     struct DamageEvent extends array
         
         static integer INDEX = 0
@@ -304,7 +304,6 @@ scope DamageSystem
                     set DESource = Player__Hero[DamagedEventSourcePlayerId]
                 endif
                 if IsUnitType(DETarget, UNIT_TYPE_HERO) then
-                    call BJDebugMsg("1")
                     set reducedDamage = GerHeroReducedDamage()
                     //if IsUnitType(DESource, UNIT_TYPE_HERO) then
                         // debug call SingleDebug( "伤害值:" + R2S(DEDamage) +" 减免伤害值:"  + R2S(reducedDamage) + " 比例：" + R2S( ( reducedDamage / DEDamage ) * 100.0 ) )
@@ -336,10 +335,8 @@ scope DamageSystem
                         call SetUnitToReduceDamage(DETarget, reducedDamage)
                     endif
                 endif
-                call BJDebugMsg("伤害："+R2S(DEDamage) + " reducedDamage:" + R2S(reducedDamage))
                 set DEDamage = DEDamage - reducedDamage
                 //call MHDamageEvent_SetDamage(DEDamage)
-                call BJDebugMsg("实际伤害："+R2S(DEDamage))
                 // 数值减少
                 // 如果减伤减完了就直接返回
                 if DEDamage <= 0 then
@@ -357,7 +354,7 @@ scope DamageSystem
                 endif
                 // 灵魂超度
                 if HaveVisage and not M_V then
-                    //call SoulAssumptionDamagedEvent()
+                    call SoulAssumptionDamagedEvent()
                 endif
                 // 玲珑心
                 // 直接用Japi来判断是否是技能伤害
