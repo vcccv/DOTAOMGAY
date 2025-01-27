@@ -3,7 +3,7 @@ scope ChaosKnight
 
     //***************************************************************************
     //*
-    //*  混乱之军
+    //*  混沌之军
     //*
     //***************************************************************************
 
@@ -24,9 +24,9 @@ scope ChaosKnight
 
         set max		     = level + GetRandomInt(0, 1)
         set damageDealt  = 1.0
-        set damageTaken  = 2.00
-        set buffId       = 'BImi'
-        set dur			 = 30.
+        set damageTaken  = 2.25
+        set buffId       = 'Bcki'
+        set dur			 = 34.
         set delay		 = 0.5
         set missileSpeed = 1000
         set rng		     = 128.
@@ -35,10 +35,10 @@ scope ChaosKnight
         set missileArt   = "Abilities\\Spells\\Orc\\MirrorImage\\MirrorImageMissile.mdl"
         if not IsUnitType(whichUnit, UNIT_TYPE_MELEE_ATTACKER) then
             set damageDealt = 0.80
-            set damageTaken = 2.35
-            call MHAbility_SetAbilityCustomLevelDataReal(GetSpellAbility(), level, ABILITY_LEVEL_DEF_DATA_COOLDOWN, 110.)
+            set damageTaken = 2.50
+            call MHAbility_SetAbilityCustomLevelDataReal(GetSpellAbility(), level, ABILITY_LEVEL_DEF_DATA_COOLDOWN, 100.)
         else
-            call MHAbility_SetAbilityCustomLevelDataReal(GetSpellAbility(), level, ABILITY_LEVEL_DEF_DATA_COOLDOWN, 85.)
+            call MHAbility_SetAbilityCustomLevelDataReal(GetSpellAbility(), level, ABILITY_LEVEL_DEF_DATA_COOLDOWN, 80.)
         endif
 
         call UnitMirrorImage(whichUnit, max, damageDealt, damageTaken, buffId, dur, delay, specialArt, missileArt, missileSpeed, rng, area)

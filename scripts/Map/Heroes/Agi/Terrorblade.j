@@ -21,15 +21,17 @@ scope Terrorblade
         set damageDealt = 0.2 + 0.1 * level
         set damageTaken = 3.0
         set duration    = 32.
-        if not IsUnitType(whichUnit, UNIT_TYPE_RANGED_ATTACKER) then
+        if not IsUnitType(whichUnit, UNIT_TYPE_MELEE_ATTACKER) then
             set damageDealt = 0.1 + 0.1 * level
             set damageTaken = 3.5
-            call MHAbility_SetAbilityCustomLevelDataReal(GetSpellAbility(), level, ABILITY_LEVEL_DEF_DATA_COOLDOWN, 18.)
+            call MHAbility_SetAbilityCustomLevelDataReal(GetSpellAbility(), level, ABILITY_LEVEL_DEF_DATA_COOLDOWN, 20.)
         else
             call MHAbility_SetAbilityCustomLevelDataReal(GetSpellAbility(), level, ABILITY_LEVEL_DEF_DATA_COOLDOWN, 16.)
         endif
-        set illusionUnit = CreateIllusion(GetOwningPlayer(whichUnit), whichUnit, damageDealt, damageTaken, x, y, 'BTci', duration)
+        set illusionUnit = CreateIllusion(GetOwningPlayer(whichUnit), whichUnit, damageDealt, damageTaken, x, y, 'Btbi', duration)
         call SetUnitVertexColor(illusionUnit, 150, 150, 150, 200) 
+
+        call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Items\\AIil\\AIilTarget.mdl", illusionUnit, "origin"))
 
         set illusionUnit = null
         set whichUnit = null

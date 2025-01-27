@@ -42,11 +42,11 @@ scope MenuOptionCheckBox
                 call GetSetupText("多面板显示物品", IsPlayersEnableItemInfo[id])
             endif
         elseif data == 7 then //自动选择召唤物
-            if F_V[id] then
-                set F_V[id]= false
+            if IsPlayerAutoSelectSummoned[id] then
+                set IsPlayerAutoSelectSummoned[id]= false
                 call DisplayTimedTextToPlayer(p, 0, 0, 5, GetObjectName('n0JZ'))
             else
-                set F_V[id]= true
+                set IsPlayerAutoSelectSummoned[id]= true
                 call DisplayTimedTextToPlayer(p, 0, 0, 5, GetObjectName('n0K0'))
             endif
         elseif data == 8 then //自动装置神符

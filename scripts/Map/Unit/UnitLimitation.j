@@ -29,6 +29,7 @@ library UnitLimitation requires Base, UnitModel
         local integer count = Table[h][UNIT_HIDEEX_COUNT] + 1
         set Table[h][UNIT_HIDEEX_COUNT] = count
         if count == 1 then
+            //call UnitDodgeMissile(whichUnit)
             call MHUnit_Flag1Operator(whichUnit, FLAG_OPERATOR_ADD, UNIT_FLAG1_HIDE)
         endif
     endfunction
@@ -195,6 +196,8 @@ library UnitLimitation requires Base, UnitModel
             set tick = SimpleTick.Create(0)
             set SimpleTick.GetTable()[tick].unit['U'] = whichUnit
             call tick.Start(0., false, function OnAddStunCountSafeEnd)
+        else
+            call UnitAddStunCount(whichUnit)
         endif
     endfunction
     

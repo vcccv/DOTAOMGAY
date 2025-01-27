@@ -290,6 +290,17 @@ library AbilityCustomOrderId requires Base
 
         // 召唤巨石
         call AllocAbilityOrderId('A2TH')
+        
+        //***************************************************************************
+        //*
+        //*  mirrorimage
+        //*
+        //***************************************************************************
+        // 镜像
+        call AllocAbilityOrderId('A063')
+
+        // 混沌之军
+        call AllocAbilityOrderId('A03O')
     endfunction
 
 endlibrary

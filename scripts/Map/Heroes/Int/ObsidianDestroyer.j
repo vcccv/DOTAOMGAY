@@ -6,7 +6,6 @@ scope ObsidianDestroyer
     //*  星体禁锢
     //*
     //***************************************************************************
-
     function JMI takes nothing returns boolean
         local trigger t = GetTriggeringTrigger()
         local integer h = GetHandleId(t)

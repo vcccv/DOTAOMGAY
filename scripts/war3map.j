@@ -213,9 +213,6 @@ globals
 	integer DamagedEventPlayerId
 	// 伤害来源的玩家的Id
 	integer DamagedEventSourcePlayerId
-
-	// 减少的伤害值
-	real DamagedEventReducedDamage
 	//======================================================================
 
 	//======================================================================
@@ -1458,7 +1455,7 @@ globals
 	integer FWV
 	integer FYV = 0
 	integer array FZV
-	boolean array F_V
+	boolean array IsPlayerAutoSelectSummoned
 	boolean array F0V
 	boolean F1V = true
 	boolean array F2V
@@ -2875,7 +2872,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A2KU', 0, "EDE")
 	call SaveStr(ObjectHashTable,'A24D', 0, "EFE")
 	call SaveStr(ObjectHashTable,'A08N', 0, "EGE")
-	call SaveStr(ObjectHashTable,'A10D', 0, "EHE")
+	call SaveStr(ObjectHashTable,'A10D', 0, "SpiritLanceOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A46H', 0, "EJE")
 	call SaveStr(ObjectHashTable,'QB0B', 0, "EKE")
 	call SaveStr(ObjectHashTable,'A0D7', 0, "EKE")
@@ -2886,7 +2883,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A064', 0, "EQE")
 	call SaveStr(ObjectHashTable,'A0RG', 0, "ESE")
 	call SaveStr(ObjectHashTable,'A0K9', 0, "ETE")
-	call SaveStr(ObjectHashTable,'A063', 0, "Naga_MirrorImage") //小娜迦分身
+	call SaveStr(ObjectHashTable,'A063', 0, "MirrorImageOnSpellEffect") //小娜迦分身
 	call SaveStr(ObjectHashTable,'A0WP', 0, "EUE")
 	call SaveStr(ObjectHashTable,'A43D', 0, "EUE")
 	call SaveStr(ObjectHashTable,'A190', 0, "EWE")
@@ -4276,7 +4273,7 @@ function GetUnitDistanceEx takes unit whichUnit, unit targetUnit returns real
 	return 1.
 endfunction
 function W1E takes unit u returns nothing	//召唤单位是否选择
-	if F_V[GetPlayerId(GetOwningPlayer(u))]and GetUnitAbilityLevel(u,'B06L') == 0 and GetUnitAbilityLevel(u,'B098') == 0 and GetUnitDistanceEx(Player__Hero[GetPlayerId(GetOwningPlayer(u))], u)< 1000 then
+	if IsPlayerAutoSelectSummoned[GetPlayerId(GetOwningPlayer(u))]and GetUnitAbilityLevel(u,'B06L') == 0 and GetUnitAbilityLevel(u,'B098') == 0 and GetUnitDistanceEx(Player__Hero[GetPlayerId(GetOwningPlayer(u))], u)< 1000 then
 		if IsUnitHidden(u) == false then
 			call SelectUnitAddForPlayer(u, GetOwningPlayer(u))
 		else
@@ -10696,7 +10693,6 @@ function MDX takes integer i, integer k returns nothing
 		// 神出鬼没
 		call ExecuteFunc("MYX")
 		// 预读技能
-		call ExecuteFunc("MZX")
 		call ExecuteFunc("RegisterPhantomLancerTrigger")
 	elseif (i == 26) then
 		call ExecuteFunc("M0X")
@@ -22008,30 +22004,6 @@ function FPO takes nothing returns nothing
 	call SaveUnitHandle(HY, GetHandleId(t), 0, GetTriggerUnit())
 	set t = null
 endfunction
-function UnitDodgeMissile takes unit u returns nothing
-	local boolean array b
-	local player p
-	local integer i = 1
-	loop
-		if IsUnitSelected(u, Player(i)) then
-			set b[i]= true
-		else
-			set b[i]= false
-		endif
-		set i = i + 1
-	exitwhen i > 12
-	endloop
-	call ShowUnit(u, false)
-	call ShowUnit(u, true)
-	set i = 1
-	loop
-		if b[i] then
-			call SelectUnitAddForPlayer(u, Player(i))
-		endif
-		set i = i + 1
-	exitwhen i > 12
-	endloop
-endfunction
 function FSO takes nothing returns boolean
 	local integer id = GetSpellAbilityId()
 	// 如果是变身技能就返回
@@ -25492,11 +25464,10 @@ endfunction
 function PVO takes nothing returns nothing
 	call EnumDestructablesInRectAll(bj_mapInitialPlayableArea, function M9O)
 endfunction
-function PEO takes nothing returns boolean
+
+function RoshanAttackedTrig takes nothing returns boolean
 	if GetUnitTypeId(GetTriggerUnit())=='n00L' then
-		if IsUnitIllusion(GetAttacker()) then
-			call KillUnit(GetAttacker())
-		elseif IsUnitInRegion(FLV, GetAttacker()) == false or RectContainsUnit(ZV, GetAttacker()) then
+		if IsUnitInRegion(FLV, GetAttacker()) == false or RectContainsUnit(ZV, GetAttacker()) then
 			call InterfaceErrorForPlayer(GetOwningPlayer(GetAttacker()), GetObjectName('n035'))
 			call IssueImmediateOrderById(GetAttacker(), 851972)
 		endif
@@ -27558,16 +27529,16 @@ endfunction
 
 // 获取当前选择的单位的所有技能
 function EXGetUnitAllAbilityId takes nothing returns nothing
-	local unit whichUnit = GetPlayerSelectedUnit()
-	local integer abilityId   = 0
-	local integer loop__Index = 0
+	local unit 	  whichUnit = GetPlayerSelectedUnit()
+	local integer abilityId = 0
+	local integer index 	= 0
 
 	call BJDebugMsg("|cffff6600" + GetUnitName(whichUnit) + " - Abilitys Start|r")
 	loop
-		set abilityId = EXGetAbilityId( EXGetUnitAbilityByIndex( whichUnit, loop__Index ) )
+		set abilityId = EXGetAbilityId( EXGetUnitAbilityByIndex( whichUnit, index ) )
 		exitwhen abilityId == 0
-		call BJDebugMsg("|cffffff00 技能[" + I2S(loop__Index) + "] " + Id2String(abilityId) + " " + GetObjectName(abilityId))
-		set loop__Index = loop__Index + 1
+		call BJDebugMsg("|cffffff00 技能[" + I2S(index) + "] " + Id2String(abilityId) + " " + GetObjectName(abilityId) + " DisableCount:" + I2S(MHAbility_GetDisableCount(whichUnit, abilityId)))
+		set index = index + 1
 	endloop
 	call BJDebugMsg("|cffff6600" + GetUnitName(whichUnit) + " - Abilitys End|r")
 
@@ -27604,8 +27575,19 @@ function DebugUnitCollisionType takes nothing returns nothing
 	local integer from_other = MHUnit_GetDefDataInt(GetUnitTypeId(u), UNIT_DEF_DATA_COLLISION_TYPE_FROM_OTHER)
 	local integer to_other   = MHUnit_GetDefDataInt(GetUnitTypeId(u), UNIT_DEF_DATA_COLLISION_TYPE_TO_OTHER)
 
+	call ClearTextMessages()
 	call BJDebugMsg("from_other:" + I2S(from_other))
 	call BJDebugMsg("to_other  :" + I2S(to_other))
+
+	set u = null
+endfunction
+
+function DebugIllusionUnitData takes nothing returns nothing
+	local unit u = GetPlayerSelectedUnit()
+
+	call ClearTextMessages()
+	call BJDebugMsg("DamageDealt:" + R2S(GetIllusionDamageDealt(u)))
+	call BJDebugMsg("DamageTaken:"  + R2S(GetIllusionDamageTaken(u)))
 
 	set u = null
 endfunction
@@ -27653,10 +27635,12 @@ function WCO takes string s returns nothing
 	local boolean getId = s == "-all"
 	local boolean testEfficiency = s == "-效率"
 	local boolean gct = s == "-gct"
+	local boolean img = s == "-img"
 	if YDO then
 		call Cheat("iseedeadpeople")
 	endif
-	
+
+	call INX("DebugIllusionUnitData", img)
 	call INX("DebugUnitCollisionType", gct)
 	call INX("EXGetUnitAllAbilityId", getId)
 	call INX("TestEfficiency", testEfficiency)
@@ -29386,7 +29370,7 @@ function VPR takes nothing returns nothing
 endfunction
 function Set_Disableselection takes player p returns nothing
 	call Set_CheckBox_Nothing(p, 7, false)
-	set F_V[GetPlayerId(p)]= false
+	set IsPlayerAutoSelectSummoned[GetPlayerId(p)]= false
 	call DisplayTimedTextToPlayer(p, 0, 0, 5, GetObjectName('n0JZ'))
 endfunction
 function VQR takes nothing returns nothing
@@ -29394,7 +29378,7 @@ function VQR takes nothing returns nothing
 endfunction
 function Set_Enableselection takes player p returns nothing
 	call Set_CheckBox_Nothing(p, 7, true)
-	set F_V[GetPlayerId(p)]= true
+	set IsPlayerAutoSelectSummoned[GetPlayerId(p)]= true
 	call DisplayTimedTextToPlayer(p, 0, 0, 5, GetObjectName('n0K0'))
 endfunction
 function VSR takes nothing returns nothing
@@ -35874,27 +35858,6 @@ function YWV takes nothing returns nothing
 	set t = null
 endfunction
 
-// 幻象的受伤害系数 很憨批的穷举 等模拟分身后再改
-function GetIllusionUnitData takes unit d returns real
-	//小娜迦幻象 鬼影重重 混沌之军 魔法镜像 崩裂禁锢 幻影斧 灵魂之矛 神行百变 并列
-	if GetUnitAbilityLevel(d,'B0DA') > 0 then
-		return 1.5
-	elseif GetUnitAbilityLevel(d,'B06L') > 0 or GetUnitAbilityLevel(d,'B012') > 0 then
-		return 2.
-	elseif GetUnitAbilityLevel(d,'BO30') > 0 or GetUnitAbilityLevel(d,'BIil') > 0 or GetUnitAbilityLevel(d,'B0EB') > 0 or GetUnitAbilityLevel(d,'B07Z') > 0 then
-		return 3.
-	elseif GetUnitAbilityLevel(d,'BO35') > 0 then
-		return 3.5
-	elseif GetUnitAbilityLevel(d,'B40D') > 0 or GetUnitAbilityLevel(d,'B098') > 0 or GetUnitAbilityLevel(d,'BO40') > 0 then
-		return 4.
-	elseif GetUnitAbilityLevel(d,'BO50') > 0 then
-		return 5.
-	elseif GetUnitAbilityLevel(d,'B46G') > 0 or GetUnitAbilityLevel(d,'BO60') > 0 then
-		return 6.
-	endif
-	return .0
-endfunction
-
 // 2022/1/12 A13T 和 A522 数据互换 不必使用魔法护盾来实现技能cd 重生已经可以
 function Fix_Tidebringer_Add takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
@@ -35968,7 +35931,7 @@ function Tidebringer_Ranged takes unit whichUnit, unit targetUnit, real attackDm
 	endif
 	set attackDmg = attackDmg / reduceRatio
 	if IsUnitIllusion(targetUnit) then
-		set attackDmg = attackDmg / GetIllusionUnitData(targetUnit)
+		set attackDmg = attackDmg / GetIllusionDamageTaken(targetUnit)
 	endif
 	if Mode__RearmCombos then
 		set Temp__ArrayReal[0]= attackDmg
@@ -46559,166 +46522,6 @@ function VPE takes nothing returns nothing
 	endif
 	set t = null
 endfunction
-function E6I takes nothing returns boolean
-	local unit TJX = GetSummonedUnit()
-	local unit dummyCaster
-	local unit targetUnit
-	if IsUnitIllusion(TJX) then
-		set dummyCaster = GetSummoningUnit()
-		set targetUnit =(LoadUnitHandle(HY,(GetHandleId(dummyCaster)), 303))
-		if targetUnit == null or GetUnitX(targetUnit) == .0 or GetUnitY(targetUnit) == .0 then
-			set TJX = null
-			set dummyCaster = null
-			set targetUnit = null
-			return false
-		endif
-		call SetUnitX(TJX, GetUnitX(targetUnit))
-		call SetUnitY(TJX, GetUnitY(targetUnit))
-		call IssueTargetOrderById(TJX, 851983, targetUnit)
-	endif
-	set TJX = null
-	set dummyCaster = null
-	set targetUnit = null
-	return false
-endfunction
-function E7I takes player p, unit targetUnit, integer lv returns nothing
-	local unit dummyCaster = CreateUnit(p,'e00E', GetUnitX(targetUnit), GetUnitY(targetUnit), 0)
-	local integer E8I
-	call SaveUnitHandle(HY,(GetHandleId(dummyCaster)), 303,(targetUnit))
-	if lv == 1 then
-		set E8I ='A10H'
-	elseif lv == 2 then
-		set E8I ='A10G'
-	elseif lv == 3 then
-		set E8I ='A10I'
-	else
-		set E8I ='A10F'
-	endif
-	call UnitAddAbility(dummyCaster, E8I)
-	call IssueTargetOrderById(dummyCaster, 852274, Player__Hero[GetPlayerId(p)])
-	set dummyCaster = null
-endfunction
-function E9I takes unit whichUnit, player p, unit targetUnit, integer level, boolean XVI returns nothing
-	local unit dummyCaster
-	if XVI then
-		set dummyCaster = CreateUnit(p,'e00E', GetUnitX(targetUnit), GetUnitY(targetUnit), 0)
-		call UnitAddAbility(dummyCaster,'A10C')
-		call SetUnitAbilityLevel(dummyCaster,'A10C', level)
-		call IssueTargetOrderById(dummyCaster, 852189, targetUnit)
-		call UnitDamageTargetEx(dummyCaster, targetUnit, 1, 50 + 50 * level)
-		call E7I(p, targetUnit, level)
-		set dummyCaster = null
-		if GetUnitAbilityLevel(targetUnit,'A3E9') == 1 and IsUnitMagicImmune(whichUnit) == false and HaveSavedHandle(HY, GetHandleId(whichUnit), 0) == false then
-			call SaveUnitHandle(OtherHashTable2,'A3E9', 0, targetUnit)
-			call SaveUnitHandle(OtherHashTable2,'A3E9', 1, whichUnit)
-			call SaveInteger(OtherHashTable2,'A3E9', 0, level)
-			call ExecuteFunc("XEI")
-		endif
-	endif
-	call DestroyEffect(AddSpecialEffectTarget("Abilities\\Weapons\\IllidanMissile\\IllidanMissile.mdl", targetUnit, "origin"))
-endfunction
-function XXI takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local player p
-	local unit targetUnit
-	local integer level
-	local boolean F0X
-	local unit missileDummy
-	local real x
-	local real y
-	local real tx
-	local real ty
-	local real NAX
-	local real NNX
-	local real targetX
-	local real targetY
-	local boolean NDX
-	local real NFX
-	local real NGX
-	if GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT then
-		if OXX(GetSpellAbilityId()) then
-			call SaveBoolean(HY, h, 0, true)
-			call SaveReal(HY, h, 0, GetUnitX(GetTriggerUnit()))
-			call SaveReal(HY, h, 1, GetUnitY(GetTriggerUnit()))
-		endif
-	else
-		set p = LoadPlayerHandle(HY, h, 54)
-		set targetUnit = LoadUnitHandle(HY, h, 30)
-		set level = LoadInteger(HY, h, 5)
-		set F0X = LoadBoolean(HY, h, 302)
-		set missileDummy = LoadUnitHandle(HY, h, 45)
-		set x = GetUnitX(missileDummy)
-		set y = GetUnitY(missileDummy)
-		set tx = GetUnitX(targetUnit)
-		set ty = GetUnitY(targetUnit)
-		set NAX = 1000* .035
-		set NDX = LoadBoolean(HY, h, 0)
-		if NDX then
-			set tx = LoadReal(HY, h, 0)
-			set ty = LoadReal(HY, h, 1)
-		endif
-		set NNX = AngleBetweenXY(x, y, tx, ty)
-		set targetX = x + NAX * Cos(NNX * bj_DEGTORAD)
-		set targetY = y + NAX * Sin(NNX * bj_DEGTORAD)
-		call SetUnitX(missileDummy, targetX)
-		call SetUnitY(missileDummy, targetY)
-		call SetUnitFacing(missileDummy, NNX)
-		if GetDistanceBetween(tx, ty, targetX, targetY)<= NAX then
-			if NDX == false then
-				call E9I(LoadUnitHandle(HY, h, 31), p, targetUnit, level, F0X)
-			endif
-			call KillUnit(missileDummy)
-			call FlushChildHashtable(HY, h)
-			call DestroyTrigger(t)
-		endif
-	endif
-	set t = null
-	set targetUnit = null
-	set missileDummy = null
-	return false
-endfunction
-function XOI takes unit whichUnit, integer level, unit targetUnit, boolean F0X returns nothing
-	local trigger t = CreateTrigger()
-	local integer h = GetHandleId(t)
-	local unit missileDummy = CreateUnit(GetOwningPlayer(whichUnit),'h06L', GetUnitX(whichUnit), GetUnitY(whichUnit), AngleBetweenXY(GetUnitX(whichUnit), GetUnitY(whichUnit), GetUnitX(targetUnit), GetUnitY(targetUnit)))
-	call SavePlayerHandle(HY, h, 54, GetOwningPlayer(whichUnit))
-	call SaveUnitHandle(HY, h, 30,(targetUnit))
-	call SaveUnitHandle(HY, h, 31,(whichUnit))
-	call SaveBoolean(HY, h, 302, F0X)
-	call SaveUnitHandle(HY, h, 45, missileDummy)
-	call SaveInteger(HY, h, 5, level)
-	call TriggerRegisterTimerEvent(t, .035, true)
-	call SaveBoolean(HY, h, 0, false)
-	call SaveReal(HY, h, 0, 0)
-	call SaveReal(HY, h, 1, 0)
-	call TriggerAddCondition(t, Condition(function XXI))
-	call TriggerRegisterUnitEvent(t, targetUnit, EVENT_UNIT_SPELL_EFFECT)
-	set t = null
-	set missileDummy = null
-endfunction
-function XRI takes nothing returns boolean
-	if IsUnitIllusion(GetFilterUnit()) and IsPlayerHasSkill(GetOwningPlayer(GetFilterUnit()), 83) and GetOwningPlayer(GetFilterUnit()) == GetOwningPlayer(GetTriggerUnit()) then
-		call XOI(GetFilterUnit(), 3, GetSpellTargetUnit(), false)
-	endif
-	return false
-endfunction
-function EHE takes nothing returns nothing
-	local unit trigUnit = GetTriggerUnit()
-	local unit targetUnit = GetSpellTargetUnit()
-	local integer level = GetUnitAbilityLevel(trigUnit,'A10D')
-	local group g = AllocationGroup(244)
-	call GroupEnumUnitsInRange(g, GetUnitX(trigUnit), GetUnitY(trigUnit), 700, Condition(function XRI))
-	call DeallocateGroup(g)
-	call XOI(trigUnit, level, targetUnit, not UnitHasSpellShield(GetSpellTargetUnit()))
-	set trigUnit = null
-	set targetUnit = null
-endfunction
-function XEI takes nothing returns nothing
-	call T4V(LoadUnitHandle(OtherHashTable2,'A3E9', 0))
-	call XOI(LoadUnitHandle(OtherHashTable2,'A3E9', 0), LoadInteger(OtherHashTable2,'A3E9', 0), LoadUnitHandle(OtherHashTable2,'A3E9', 1), UnitHasSpellShield(LoadUnitHandle(OtherHashTable2,'A3E9', 1)) == false)
-	call FlushChildHashtable(OtherHashTable2,'A3E9')
-endfunction
 function XII takes nothing returns boolean
 	if IsUnitIllusion(GetFilterUnit()) and IsPlayerHasSkill(GetOwningPlayer(GetFilterUnit()), 83) and GetOwningPlayer(GetFilterUnit()) == GetOwningPlayer(GetTriggerUnit()) then
 		call SetUnitFacing(GetFilterUnit(), S2)
@@ -46734,17 +46537,6 @@ function KWE takes nothing returns nothing
 	call DeallocateGroup(g)
 	set trigUnit = null
 	set g = null
-endfunction
-function MZX takes nothing returns nothing
-	local trigger t = CreateTrigger()
-	call AddAbilityIDToPreloadQueue('A10C')
-	call AddAbilityIDToPreloadQueue('A10H')
-	call AddAbilityIDToPreloadQueue('A10G')
-	call AddAbilityIDToPreloadQueue('A10I')
-	call AddAbilityIDToPreloadQueue('A10F')
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SUMMON)
-	call TriggerAddCondition(t, Condition(function E6I))
-	set t = null
 endfunction
 function XAI takes nothing returns boolean
 	if (GetUnitAbilityLevel(GetFilterUnit(),'B03B')> 0 or GetUnitAbilityLevel(GetFilterUnit(),'P084')> 0) and UnitIsDead(GetFilterUnit()) == false then
@@ -47522,12 +47314,12 @@ function ORI takes unit u returns unit
 	call GroupEnumUnitsInRange(AK, 0, 0, 99999, Condition(function OOI))
 	return Temp__ArrayUnit[1]
 endfunction
-function OII takes nothing returns real
-	local trigger t = LoadTriggerHandle(HY, GetHandleId(GetTriggerUnit()),'A2ML')
+function GetLivingArmorBlock takes nothing returns real
+	local trigger t = LoadTriggerHandle(HY, GetHandleId(DETarget),'A2ML')
 	local integer h = GetHandleId(t)
 	local real damageValue = LoadReal(HY, h, 0)
 	local integer HUX = LoadInteger(HY, h, 0)
-	local real d = GetEventDamage()
+	local real d = DEDamage
 	local real OAI = .0
 	if d > 5 and HUX > 0 then
 		call SaveInteger(HY, h, 0, HUX -1)
@@ -54669,19 +54461,6 @@ function ORE takes nothing returns nothing
 		call TimerStart(t, 0, false, function H8I)
 		set t = null
 	endif
-endfunction
-function Naga_MirrorImage takes nothing returns nothing
-	local unit u = GetTriggerUnit()
-	local trigger trg
-	if UnitHasSpellShield(u) then
-		set trg = CreateTrigger()
-		call SaveBoolean(HY, GetHandleId(u),  129, true)
-		call TriggerRegisterTimerEvent(trg, .61, false)
-		call TriggerAddCondition(trg, Condition(function F4O))
-		call SaveUnitHandle(HY, GetHandleId(trg), 2, u)
-		set trg = null
-	endif
-	set u = null
 endfunction
 function JVI takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
@@ -79038,11 +78817,11 @@ function U8A takes nothing returns boolean
 			return false
 		endif
 	endif
-	if IsUnitIllusion(whichUnit) then
-		// 自动选择召唤物
-		// set hTmpTrigUnit = Player__Hero[GetPlayerId(p)]
-		call W1E(whichUnit)
-	endif
+	//if IsUnitIllusion(whichUnit) then
+	//	// 自动选择召唤物
+	//	// set hTmpTrigUnit = Player__Hero[GetPlayerId(p)]
+	//	call W1E(whichUnit)
+	//endif
 	set whichUnit = null
 	return false
 endfunction
@@ -82360,7 +82139,7 @@ function InitHeroSkillsData takes nothing returns nothing
 	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, GetAbilityOrder('A2IS')),'A2IS', 0,'Y023', "w")
 	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "roar"),'A0WP','A43D','Y024', "r")
 	set i = 7 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "mirrorimage"),'A063', 0,'Y025', "r")
+	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A063')),'A063', 0,'Y025', "r")
 	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "unavatar"),'A24D', 0,'Y026', "e")
 	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, GetAbilityOrder('A2KU')),'A2KU', 0,'Y027', "d")
 	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "awaken")+ SaveSkillOrder(i * 4 + 4, "avengerform")+ SaveSkillOrder(i * 4 + 4, "r2"),'A07U','A38E','Y028', "g")
@@ -82390,7 +82169,7 @@ function InitHeroSkillsData takes nothing returns nothing
 	set i = CB -1
 	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "summongrizzly"),'A0A5', 0,'Y037', "b")
 	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A1EG')),'A1EG', 0,'Y038', "r")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "youjimaoyong"),'A0A8', 0,'Y039', null) //协同
+	call RegisterHeroSkill(i * 4 + 3, null, 'A0A8', 0, 'Y039', null) //协同
 	if Mode__SixSkills and(not Mode__RearmCombos) then
 		set IsDisabledSkill[i * 4 + 3]= true
 	endif
@@ -83115,7 +82894,7 @@ function InitHeroSkillsData takes nothing returns nothing
 	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "forceboard"),'A0RW', 0,'Y430', "e")
 	call RegisterHeroSkill(i * 4 + 3, null,'A03N','QP1E','Y431', null)
 	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "mirrorimage"),'A03O', 0,'Y432', "t")
+	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, GetAbilityOrder('A03O')),'A03O', 0,'Y432', "t")
 	set i ='m'-1
 	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "stomp")+ SaveSkillOrder(i * 4 + 1, "range morph")+ SaveSkillOrder(i * 4 + 1, "r44")+ SaveSkillOrder(i * 4 + 1, "metamorphosis")+ SaveSkillOrder(i * 4 + 1, "yongjiu3"),'A332', 0,'Y437', "r")
 	if (not Mode__RearmCombos) then
@@ -86650,7 +86429,7 @@ function main takes nothing returns nothing
 	call TriggerAddAction(FKV, function PVO)
 	set t = CreateTrigger()
 	call TriggerRegisterPlayerUnitEvent(t, NeutralCreepPlayer, EVENT_PLAYER_UNIT_ATTACKED, null)
-	call TriggerAddCondition(t, Condition(function PEO))
+	call TriggerAddCondition(t, Condition(function RoshanAttackedTrig))
 	set FLV = CreateRegion()
 	call RegionAddRect(FLV, Rect( 3456, -2016, 4448, -2624))
 	set ZV = Rect( 3456-64, -2016+ 64, 3456+ 128, -2016 -128)
@@ -86717,7 +86496,7 @@ function main takes nothing returns nothing
 	loop
 		set PlayerShowKDA[i]= true
 		set F6V[i]= true
-		set F_V[i]= true
+		set IsPlayerAutoSelectSummoned[i]= true
 		set S3[i]= true
 		// set ZR[i]= true
 		set PlayerOnlineStateString[i]= "Here"

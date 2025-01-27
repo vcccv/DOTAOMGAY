@@ -12268,7 +12268,7 @@ Ubertip=|cffffcc00属性：|r|n|cff0033cc真视：|r|n显现附近的隐形单�
 [I0MU]
 art=ReplaceableTextures\CommandButtons\BTNINV_ThrowingAxe_02
 Name=幻影斧|nManta Style
-Ubertip=|cffffcc00属性：|r|n提升15的攻击速度|n增加10点所有属性|n增加16点敏捷|n提升10%的移动速度|n|n|cffff8000幻影：|r|n制造两个幻影，拥有本体33%（28%）的攻击力，承受300（400）%的伤害。|n|cff99ccff持续时间：|r20|n|cff99ccff冷却时间：|r35(50)|n|n|c00fffc01右键点击四次可拆分|r|n|n|c00838B8B一把花哨的斧子|r
+Ubertip=|cffffcc00属性：|r|n提升15的攻击速度|n增加10点所有属性|n增加16点敏捷|n提升10%的移动速度|n|n|cffff8000幻影：|r|n制造两个幻影，拥有本体33%(28%)的攻击力，承受300%(400%)%的伤害。|n|cff99ccff持续时间：|r20|n|cff99ccff冷却时间：|r35(50)|n|n|c00fffc01右键点击四次可拆分|r|n|n|c00838B8B一把花哨的斧子|r
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNINV_ThrowingAxe_02.blp
 [I0MV]
 Name=幻影斧|nManta Style
@@ -14070,18 +14070,6 @@ name="Lycan Damage - Creep - 2 (negative)"
 [A109]
 name="Alacrity Damage Bonus"
 targetart=Abilities\Spells\Items\AIsp\SpeedTarget.mdl
-[A10F]
-art=ReplaceableTextures\CommandButtons\BTNHaunt
-name="Spirit Lance Image lvl 4"
-[A10G]
-art=ReplaceableTextures\CommandButtons\BTNHaunt
-name="Spirit Lance Image lvl 2"
-[A10H]
-art=ReplaceableTextures\CommandButtons\BTNHaunt
-name="Spirit Lance Image lvl 1"
-[A10I]
-art=ReplaceableTextures\CommandButtons\BTNHaunt
-name="Spirit Lance Image lvl 3"
 [A116]
 targetart=Abilities\Spells\Undead\DevourMagic\DevourMagicBirthMissile.mdl
 targetattach=hand,left
@@ -15027,11 +15015,6 @@ buffubertip=This unit has a vampiric attack and bonus damage.
 buffart=ReplaceableTextures\CommandButtons\BTNDemonGate
 Bufftip=复制之墙
 Buffubertip=复制之墙所产生的镜像，拥有本体35%的攻击力并受到200%的额外伤害
-[B098]
-buffart=ReplaceableTextures\CommandButtons\BTNWindsArrows
-specialart=Abilities\Spells\Orc\MirrorImage\MirrorImageDeathCaster.mdl
-Bufftip=幻象
-Buffubertip=该单位是一个幻象，它在被攻击时受到额外400%的伤害
 [B0CB]
 buffart=ReplaceableTextures\CommandButtons\BTNHaunt
 Bufftip=幻象
@@ -24974,11 +24957,11 @@ researchart=ReplaceableTextures\CommandButtons\BTNConjure
 researchbuttonpos=1
 Name=魔法镜像
 Tip=魔法镜像[|cffffcc00E|r] - [|cffffcc00等级 1|r],魔法镜像[|cffffcc00E|r] - [|cffffcc00等级 2|r],魔法镜像[|cffffcc00E|r] - [|cffffcc00等级 3|r],魔法镜像[|cffffcc00E|r] - [|cffffcc00等级 4|r]
-Ubertip=增加15的攻击速度和1.5的生命回复速度。制造一个英雄的镜像。镜像受到300%(350%)的伤害拥有本体30%(20%)的攻击力。|n|n|cff99ccff持续时间：|r32|n|cff99ccff冷却时间：|r16(18)|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,增加20的攻击速度和2.0的生命回复速度。制造一个英雄的镜像。镜像受到300%(350%)的伤害拥有本体40%(30%)的攻击力。|n|n|cff99ccff持续时间：|r32|n|cff99ccff冷却时间：|r16(18)|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,增加25的攻击速度和2.5的生命回复速度。制造一个英雄的镜像。镜像受到300%(350%)的伤害拥有本体50%(40%)的攻击力。|n|n|cff99ccff持续时间：|r32|n|cff99ccff冷却时间：|r16(18)|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,增加30的攻击速度和3.0的生命回复速度。制造一个英雄的镜像。镜像受到300%(350%)的伤害拥有本体60%(50%)的攻击力。|n|n|cff99ccff持续时间：|r32|n|cff99ccff冷却时间：|r16(18)|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r
+Ubertip=增加15的攻击速度和1.5的生命回复速度。制造一个英雄的镜像。镜像受到300%(350%)的伤害拥有本体30%(20%)的攻击力。|n|n|cff99ccff持续时间：|r32|n|cff99ccff冷却时间：|r16(20)|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,增加20的攻击速度和2.0的生命回复速度。制造一个英雄的镜像。镜像受到300%(350%)的伤害拥有本体40%(30%)的攻击力。|n|n|cff99ccff持续时间：|r32|n|cff99ccff冷却时间：|r16(20)|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,增加25的攻击速度和2.5的生命回复速度。制造一个英雄的镜像。镜像受到300%(350%)的伤害拥有本体50%(40%)的攻击力。|n|n|cff99ccff持续时间：|r32|n|cff99ccff冷却时间：|r16(20)|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,增加30的攻击速度和3.0的生命回复速度。制造一个英雄的镜像。镜像受到300%(350%)的伤害拥有本体60%(50%)的攻击力。|n|n|cff99ccff持续时间：|r32|n|cff99ccff冷却时间：|r16(20)|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r
 Hotkey=E
 Researchhotkey=E
 Researchtip=学习 魔法镜像[|cffffcc00C|r] - [|cffffcc00等级 %d|r]|n(Conjure Image)
-Researchubertip=被动增加一定的攻击速度和生命回复速度。制造一个英雄的镜像，镜像受到300%(350%)的伤害。(括号内为远程英雄的数值)|n|n|cff99ccff持续时间：|r32|n|cff99ccff冷却时间：|r16(18)|n|cff99ccff魔法消耗：|r80|n|n|cffffcc00等级 1|r - 增加15攻击速度，1.5生命回复速度；镜像拥有本体30%(20%)的攻击力|n|cffffcc00等级 2|r - 增加20攻击速度，2生命回复速度；镜像拥有本体40%(30%)的攻击力|n|cffffcc00等级 3|r - 增加25攻击速度，2.5生命回复速度；镜像拥有本体50%(40%)的攻击力|n|cffffcc00等级 4|r - 增加30攻击速度，3生命回复速度；镜像拥有本体60%(50%)的攻击力|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r
+Researchubertip=被动增加一定的攻击速度和生命回复速度。制造一个英雄的镜像，镜像受到300%(350%)的伤害。(括号内为远程英雄的数值)|n|n|cff99ccff持续时间：|r32|n|cff99ccff冷却时间：|r16(20)|n|cff99ccff魔法消耗：|r80|n|n|cffffcc00等级 1|r - 增加15攻击速度，1.5生命回复速度；镜像拥有本体30%(20%)的攻击力|n|cffffcc00等级 2|r - 增加20攻击速度，2生命回复速度；镜像拥有本体40%(30%)的攻击力|n|cffffcc00等级 3|r - 增加25攻击速度，2.5生命回复速度；镜像拥有本体50%(40%)的攻击力|n|cffffcc00等级 4|r - 增加30攻击速度，3生命回复速度；镜像拥有本体60%(50%)的攻击力|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNConjure.blp
 [A0GC]
 art=ReplaceableTextures\CommandButtons\BTNManaStone
@@ -25939,10 +25922,10 @@ animnames=spell
 researchart=ReplaceableTextures\CommandButtons\BTNWindsArrows
 Name=灵魂之矛
 Tip=灵魂之矛[|cffffcc00T|r] - [|cffffcc00等级 1|r],灵魂之矛[|cffffcc00T|r] - [|cffffcc00等级 2|r],灵魂之矛[|cffffcc00T|r] - [|cffffcc00等级 3|r],灵魂之矛[|cffffcc00T|r] - [|cffffcc00等级 4|r]
-Ubertip=掷出一支附有精神力量的矛，对目标造成100点|cff6495ed魔法伤害|r，同时降低10%的攻击和移动速度，持续3.25秒。投掷出长矛后会产生一个拥有本体20%攻击力的幻象对目标进行攻击，幻象持续2秒。|n|n|cff99ccff施法距离：|r700|n|cff99ccff冷却时间：|r7|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,掷出一支附有精神力量的矛，对目标造成150点|cff6495ed魔法伤害|r，同时降低20%的攻击和移动速度，持续3.25秒。投掷出长矛后会产生一个拥有本体20%攻击力的幻象对目标进行攻击，幻象持续4秒。|n|n|cff99ccff施法距离：|r700|n|cff99ccff冷却时间：|r7|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,掷出一支附有精神力量的矛，对目标造成200点|cff6495ed魔法伤害|r，同时降低30%的攻击和移动速度，持续3.25秒。投掷出长矛后会产生一个拥有本体20%攻击力的幻象对目标进行攻击，幻象持续6秒。|n|n|cff99ccff施法距离：|r700|n|cff99ccff冷却时间：|r7|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,掷出一支附有精神力量的矛，对目标造成250点|cff6495ed魔法伤害|r，同时降低40%的攻击和移动速度，持续3.25秒。投掷出长矛后会产生一个拥有本体20%攻击力的幻象对目标进行攻击，幻象持续8秒。|n|n|cff99ccff施法距离：|r700|n|cff99ccff冷却时间：|r7|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r
+Ubertip=掷出一支附有精神力量的矛，对目标造成100点|cff6495ed魔法伤害|r，同时降低10%的攻击和移动速度，持续3.25秒。投掷出长矛后会产生一个拥有本体20%攻击力，承受400%伤害的幻象对目标进行攻击，幻象持续2秒。|n|n|cff99ccff施法距离：|r700|n|cff99ccff冷却时间：|r7|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,掷出一支附有精神力量的矛，对目标造成150点|cff6495ed魔法伤害|r，同时降低20%的攻击和移动速度，持续3.25秒。投掷出长矛后会产生一个拥有本体20%攻击力，承受400%伤害的幻象对目标进行攻击，幻象持续4秒。|n|n|cff99ccff施法距离：|r700|n|cff99ccff冷却时间：|r7|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,掷出一支附有精神力量的矛，对目标造成200点|cff6495ed魔法伤害|r，同时降低30%的攻击和移动速度，持续3.25秒。投掷出长矛后会产生一个拥有本体20%攻击力，承受400%伤害的幻象对目标进行攻击，幻象持续6秒。|n|n|cff99ccff施法距离：|r700|n|cff99ccff冷却时间：|r7|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,掷出一支附有精神力量的矛，对目标造成250点|cff6495ed魔法伤害|r，同时降低40%的攻击和移动速度，持续3.25秒。投掷出长矛后会产生一个拥有本体20%攻击力，承受400%伤害的幻象对目标进行攻击，幻象持续8秒。|n|n|cff99ccff施法距离：|r700|n|cff99ccff冷却时间：|r7|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r
 Hotkey=T
 Researchtip=学习 灵魂之矛[|cffffcc00T|r] - [|cffffcc00等级 %d|r]|n(Spirit Lance)
-Researchubertip=掷出一支附有精神力量的矛，对目标造成|cff6495ed魔法伤害|r，同时降低其攻击速度和移动速度，持续3.25秒。投掷出长矛后会产生一个拥有本体25%攻击力的幻象对目标进行攻击。|n|n|cff99ccff施法距离：|r700|n|cff99ccff冷却时间：|r7|n|cff99ccff魔法消耗：|r125/130/135/140|n|n|cffffcc00等级 1|r - 造成100点伤害，降低10%的攻击和移动速度；幻象持续2秒|n|cffffcc00等级 2|r - 造成150点伤害，降低20%的攻击和移动速度；幻象持续4秒|n|cffffcc00等级 3|r - 造成200点伤害，降低30%的攻击和移动速度；幻象持续6秒|n|cffffcc00等级 4|r - 造成250点伤害，降低40%的攻击和移动速度；幻象持续8秒|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r
+Researchubertip=掷出一支附有精神力量的矛，对目标造成|cff6495ed魔法伤害|r，同时降低其攻击速度和移动速度，持续3.25秒。投掷出长矛后会产生一个拥有本体20%攻击力，承受400%伤害的幻象对目标进行攻击。|n|n|cff99ccff施法距离：|r700|n|cff99ccff冷却时间：|r7|n|cff99ccff魔法消耗：|r125/130/135/140|n|n|cffffcc00等级 1|r - 造成100点伤害，降低10%的攻击和移动速度；幻象持续2秒|n|cffffcc00等级 2|r - 造成150点伤害，降低20%的攻击和移动速度；幻象持续4秒|n|cffffcc00等级 3|r - 造成200点伤害，降低30%的攻击和移动速度；幻象持续6秒|n|cffffcc00等级 4|r - 造成250点伤害，降低40%的攻击和移动速度；幻象持续8秒|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r
 researchhotkey="T"
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNWindsArrows.blp
 [A10L]
@@ -34659,11 +34642,26 @@ buffart=ReplaceableTextures\CommandButtons\BTNMirrorImage
 specialart=Abilities\Spells\Orc\MirrorImage\MirrorImageDeathCaster.mdl
 Bufftip=镜像
 Buffubertip=幻影斧镜像
-[BTci]
+[Btbi]
 buffart=ReplaceableTextures\CommandButtons\BTNMirrorImage
 specialart=Abilities\Spells\Orc\MirrorImage\MirrorImageDeathCaster.mdl
 Bufftip=魔法镜像
 Buffubertip=魔法镜像
+[Bcki]
+buffart=ReplaceableTextures\CommandButtons\BTNMirrorImage
+specialart=Abilities\Spells\Orc\MirrorImage\MirrorImageDeathCaster.mdl
+Bufftip=混沌之军
+Buffubertip=混沌之军
+[Bpli]
+buffart=ReplaceableTextures\CommandButtons\BTNMirrorImage
+specialart=Abilities\Spells\Orc\MirrorImage\MirrorImageDeathCaster.mdl
+Bufftip=混沌之军
+Buffubertip=混沌之军
+[Bngi]
+buffart=ReplaceableTextures\CommandButtons\BTNMirrorImage
+specialart=Abilities\Spells\Orc\MirrorImage\MirrorImageDeathCaster.mdl
+Bufftip=镜像
+Buffubertip=镜像
 [AOcr]
 requires=e00L
 [AOww]
@@ -34949,10 +34947,10 @@ missileart=Abilities\Spells\Orc\MirrorImage\MirrorImageMissile.mdl
 missilespeed=1000
 Name=混沌之军
 Tip=混沌之军[|cffffcc00T|r] - [|cffffcc00等级 1|r],混沌之军[|cffffcc00T|r] - [|cffffcc00等级 2|r],混沌之军[|cffffcc00T|r] - [|cffffcc00等级 3|r]
-Ubertip=制造一个自身的幻象，幻象拥有本体100%(80%)的攻击力，不过受到200%(235%)的伤害。施法时有50%几率再造一个幻象。|n|n|cff99ccff持续时间：|r34|n|cff99ccff冷却时间：|r85(110)|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,制造两个自身的幻象，幻象拥有本体100%(80%)的攻击力，不过受到200%(235%)的伤害。施法时有50%几率再造一个幻象。|n|n|cff99ccff持续时间：|r34|n|cff99ccff冷却时间：|r100(115)|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,制造三个自身的幻象，幻象拥有本体100%(80%)的攻击力，不过受到200%(235%)的伤害。施法时有50%几率再造一个幻象。|n|n|cff99ccff持续时间：|r34|n|cff99ccff冷却时间：|r85(110)|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r
+Ubertip=制造一个自身的幻象，幻象拥有本体100%(80%)的攻击力，不过受到225%(250%)的伤害。施法时有50%几率再造一个幻象。|n|n|cff99ccff持续时间：|r34|n|cff99ccff冷却时间：|r80(100)|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,制造两个自身的幻象，幻象拥有本体100%(80%)的攻击力，不过受到225%(250%)的伤害。施法时有50%几率再造一个幻象。|n|n|cff99ccff持续时间：|r34|n|cff99ccff冷却时间：|r80(100)|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,制造三个自身的幻象，幻象拥有本体100%(80%)的攻击力，不过受到225%(250%)的伤害。施法时有50%几率再造一个幻象。|n|n|cff99ccff持续时间：|r34|n|cff99ccff冷却时间：|r80(100)|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r
 Hotkey=T
 Researchtip=学习 混沌之军[|cffffcc00T|r] - [|cffffcc00等级 %d|r]|n(Phantasm)
-Researchubertip=制造几个自身的幻象。幻象拥有本体100%(80%)的攻击力，不过受到200%(235%)的伤害。施法时有50%几率再造一个幻象。(括号内为远程英雄的数值)|n|n|cff99ccff持续时间：|r34|n|cff99ccff冷却时间：|r85(110)|n|cff99ccff魔法消耗：|r125/175/225|n|n|cffffcc00等级 1|r - 制造一个幻象|n|cffffcc00等级 2|r - 制造两个幻象|n|cffffcc00等级 3|r - 制造三个幻象|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r
+Researchubertip=制造几个自身的幻象。幻象拥有本体100%(80%)的攻击力，不过受到225%(250%)的伤害。施法时有50%几率再造一个幻象。(括号内为远程英雄的数值)|n|n|cff99ccff持续时间：|r34|n|cff99ccff冷却时间：|r80(100)|n|cff99ccff魔法消耗：|r125/175/225|n|n|cffffcc00等级 1|r - 制造一个幻象|n|cffffcc00等级 2|r - 制造两个幻象|n|cffffcc00等级 3|r - 制造三个幻象|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r
 researchhotkey="T"
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNPhantasm.blp
 [A40C]
@@ -35041,10 +35039,10 @@ missileart=Abilities\Spells\Orc\MirrorImage\MirrorImageMissile.mdl
 missilespeed=1000
 Name=镜像
 Tip=镜像[|cffffcc00R|r] - [|cffffcc00等级 1|r],镜像[|cffffcc00R|r] - [|cffffcc00等级 2|r],镜像[|cffffcc00R|r] - [|cffffcc00等级 3|r],镜像[|cffffcc00R|r] - [|cffffcc00等级 4|r]
-Ubertip=创造三个自身的镜像来迷惑敌人。镜像拥有本体30%的攻击力，受到600%的伤害。|n|n|cff99ccff持续时间：|r30|n|cff99ccff冷却时间：|r40|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,创造三个自身的镜像来迷惑敌人。镜像拥有本体35%的攻击力，受到500%的伤害。|n|n|cff99ccff持续时间：|r30|n|cff99ccff冷却时间：|r40|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,创造三个自身的镜像来迷惑敌人。镜像拥有本体40%的攻击力，受到400%的伤害。|n|n|cff99ccff持续时间：|r30|n|cff99ccff冷却时间：|r40|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,创造三个自身的镜像来迷惑敌人。镜像拥有本体45%的攻击力，受到300%的伤害。|n|n|cff99ccff持续时间：|r30|n|cff99ccff冷却时间：|r40|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r
+Ubertip=创造三个自身的镜像来迷惑敌人。镜像拥有本体30%(25%)的攻击力，受到600%(650%)的伤害。|n|n|cff99ccff持续时间：|r30|n|cff99ccff冷却时间：|r40|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,创造三个自身的镜像来迷惑敌人。镜像拥有本体35%(30%)的攻击力，受到500%(550%)的伤害。|n|n|cff99ccff持续时间：|r30|n|cff99ccff冷却时间：|r40|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,创造三个自身的镜像来迷惑敌人。镜像拥有本体40%(35%)的攻击力，受到400%(450%)的伤害。|n|n|cff99ccff持续时间：|r30|n|cff99ccff冷却时间：|r40(50)|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,创造三个自身的镜像来迷惑敌人。镜像拥有本体45%(40%)的攻击力，受到300%(350%)的伤害。|n|n|cff99ccff持续时间：|r30|n|cff99ccff冷却时间：|r40|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r
 Hotkey=R
 Researchtip=学习 镜像[|cffffcc00R|r] - [|cffffcc00等级 %d|r]|n(Mirror Image)
-Researchubertip=创造三个自身的镜像来迷惑敌人。镜像拥有攻击力，受到额外的伤害。|n|n|cff99ccff持续时间：|r30|n|cff99ccff冷却时间：|r40|n|cff99ccff魔法消耗：|r70/80/90/100|n|n|cffffcc00等级 1|r - 镜像拥有本体30%的攻击力，受到600%的伤害|n|cffffcc00等级 2|r - 镜像拥有本体35%的攻击力，受到500%的伤害|n|cffffcc00等级 3|r - 镜像拥有本体40%的攻击力，受到400%的伤害|n|cffffcc00等级 4|r - 镜像拥有本体45%的攻击力，受到300%的伤害|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r
+Researchubertip=创造三个自身的镜像来迷惑敌人。镜像拥有攻击力，受到额外的伤害。(括号内为远程英雄的数值)|n|n|cff99ccff持续时间：|r30|n|cff99ccff冷却时间：|r40(50)|n|cff99ccff魔法消耗：|r70/80/90/100|n|n|cffffcc00等级 1|r - 镜像拥有本体30%(25%)的攻击力，受到600%(650%)的伤害|n|cffffcc00等级 2|r - 镜像拥有本体35%(30%)的攻击力，受到500%(550%)的伤害|n|cffffcc00等级 3|r - 镜像拥有本体40%(35%)的攻击力，受到400%(450%)的伤害|n|cffffcc00等级 4|r - 镜像拥有本体45%(40%)的攻击力，受到300%(350%)的伤害|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r
 researchhotkey=R
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNSirenMirrorImage.blp
 [A06F]

@@ -65,7 +65,7 @@ library UnitIllusion requires UnitUtils, UnitWeapon, BuffSystem
                         call SetUnitAbilityLevel(illusionUnit,'A1ER', lv)
                         call UnitAddPermanentAbility(illusionUnit,'A1ER')
                         call SetUnitAbilityLevel(illusionUnit,'A1ER', lv)
-                        call BJDebugMsg("我有分裂箭，那我的禁用计数是多少？："+I2S(MHAbility_GetDisableCount(illusionUnit, 'A1ER')))
+                        call MHAbility_Disable(illusionUnit, 'A1ER', false, false)
                     endif
                 endif
                 // 瞄准
@@ -136,7 +136,9 @@ library UnitIllusion requires UnitUtils, UnitWeapon, BuffSystem
         endif
         // 幻象的协同升级
         if GetUnitAbilityLevel(Player__Hero[pid],'A0A8')> 0 then
-            call UnitAddPermanentAbilitySetLevel(illusionUnit,'A3L3', GetUnitAbilityLevel(Player__Hero[pid],'A0A8'))
+            call UnitAddPermanentAbilitySetLevel(illusionUnit, 'A3L3', GetUnitAbilityLevel(Player__Hero[pid],'A0A8'))
+            call MHAbility_Disable(illusionUnit, 'A3L3', false, false)
+            call BJDebugMsg("我有协同升级，那我的禁用计数是多少？："+I2S(MHAbility_GetDisableCount(illusionUnit, 'A3L3')))
         endif
         // 同步长大技能
         if a_fx_b[pid] and GetUnitTypeId(illusionUnit) == 'Ucrl' and GetUnitAbilityLevel(sourceUnit,'A2KK')> 0 then
@@ -155,6 +157,9 @@ library UnitIllusion requires UnitUtils, UnitWeapon, BuffSystem
         endif
         if ( UnitHasItemOfType(illusionUnit, XOV[it_mlq]) ) or ( UnitHasItemOfType(illusionUnit, XOV[Item_HurricanePike]) ) then
             call AddUnitBonusRange(illusionUnit, 140., true)
+        endif
+        if IsPlayerAutoSelectSummoned[pid] then
+            call SelectUnitAddForPlayer(illusionUnit, ownerPlayer)
         endif
         return false
     endfunction
@@ -232,7 +237,7 @@ library UnitIllusion requires UnitUtils, UnitWeapon, BuffSystem
                 call MHEffect_SetPosition(missileEffect, x, y, MHGame_GetAxisZ(x, y))
                 call MHEffect_Hide(missileEffect, true)
                 call DestroyEffect(missileEffect)
-                call BJDebugMsg(R2S(damageDealt) + ":damageDealt")
+                //call BJDebugMsg(R2S(damageDealt) + ":damageDealt")
                 if i != ownerIndex then
                     call CreateIllusion(whichPlayer, whichUnit, damageDealt, damageTaken, x, y, buffId, dur)
                 else
@@ -241,6 +246,7 @@ library UnitIllusion requires UnitUtils, UnitWeapon, BuffSystem
                     call UnitSubInvulnerableCount(whichUnit)
                     call UnitSubStunCount(whichUnit)
                     call UnitSubHideExCount(whichUnit)
+                    call IssueImmediateOrderById(whichUnit, 851972)
                     call SetUnitX(whichUnit, x)
                     call SetUnitY(whichUnit, y)
                 endif
@@ -292,6 +298,7 @@ library UnitIllusion requires UnitUtils, UnitWeapon, BuffSystem
             call MHEffect_SetScale(missileEffect, scale)
             call MHEffect_SetYaw(missileEffect, angle * i)
             set table[h].effect[-i] = missileEffect
+            
             set i = i + 1
         endloop
 

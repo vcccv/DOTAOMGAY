@@ -28,3 +28,5 @@
 #include "Agi\\Juggernaut.j"
 #include "Agi\\ShadowFiend.j"
 #include "Agi\\Terrorblade.j"
+#include "Agi\\NagaSiren.j"
+#include "Agi\\PhantomLancer.j"
