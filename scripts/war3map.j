@@ -3602,6 +3602,9 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'AEbl', 7, "BlinkOnSpellChannel")
 	
 	call SaveStr(ObjectHashTable,'A24K', 9, "S2E")
+
+	call SaveStr(ObjectHashTable,'A1OV', 0, "CreepShockwaveOnSpellEffect")
+	
 	call SaveStr(ObjectHashTable, StringHash("-display"), 10, "S3E")
 endfunction
 function S5E takes nothing returns nothing
@@ -11045,9 +11048,6 @@ function SetAbilityStringByMode takes unit u, integer id returns nothing
 			call MHAbility_SetLevelDefDataStr('QP24', 2, ABILITY_LEVEL_DEF_DATA_UBERTIP, "有40%的概率连续施展两次法术；有20%的概率连续施展三次法术|n|n输入|c00ff0505-mc|r 以查看自身能触发狗运的技能|n|n|c00fffc01神杖升级：让你另一个脑袋施放火焰爆轰。")
 			call MHAbility_SetLevelDefDataStr('QP24', 3, ABILITY_LEVEL_DEF_DATA_UBERTIP, "有50%的概率连续施展两次法术；有25%的概率连续施展三次法术；有12%的概率连续施展四次法术|n|n输入|c00ff0505-mc|r 以查看自身能触发狗运的技能|n|n|c00fffc01神杖升级：让你另一个脑袋施放火焰爆轰。")
 			call MHAbility_SetDefDataStr('A088', ABILITY_DEF_DATA_RESEARCH_UBERTIP, "狗运让菊花能更快更有效地使用技能。|n|n|cffffcc00等级 1|r - 25%概率x2|n|cffffcc00等级 2|r - 40%概率x2，20%概率x3|n|cffffcc00等级 3|r - 50%概率x2，25%概率x3，12%概率x4|n|n输入|c00ff0505-mc|r 以查看自身能触发狗运的技能|n|n|c00fffc01神杖升级：让你另一个脑袋施放火焰爆轰。")
-			call UnitAddAbility(u, id)
-			call YDWESetUnitAbilityDataString(u, id, 1, 217, "狗运让菊花能更快更有效地使用技能。|n|n|cffffcc00等级 1|r - 25%概率x2|n|cffffcc00等级 2|r - 40%概率x2，20%概率x3|n|cffffcc00等级 3|r - 50%概率x2，25%概率x3，12%概率x4|n|n输入|c00ff0505-mc|r 以查看自身能触发狗运的技能|n|n|c00fffc01神杖升级：让你另一个脑袋施放火焰爆轰。")
-			call UnitRemoveAbility(u, id)
 		endif
 	endif
 endfunction
@@ -85744,6 +85744,7 @@ function main takes nothing returns nothing
 	local timer tt
 
 	call memhack_init()
+	call MHUI_DrawAttackSpeed(true)
 	call MHUI_DrawMoveSpeed(true)
 	call MHDrawCooldown_Initialize()
 	call MHDrawCooldown_SetDivide(1.)
@@ -85763,7 +85764,7 @@ function main takes nothing returns nothing
 	call MHBuff_SetOverlay(BUFF_TEMPLATE_BNHT, true)
 	call MHBuff_SetOverlay(BUFF_TEMPLATE_BNSO, true)
 	
-	call AbilityCustomOrderId_Init()
+	call ExecuteFunc("AbilityCustomOrderId_Init")
 
 	set LocalPlayer   = GetLocalPlayer()
 	set LocalPlayerId = GetPlayerId(LocalPlayer)

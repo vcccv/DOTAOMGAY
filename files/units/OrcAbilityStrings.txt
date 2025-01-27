@@ -32230,7 +32230,6 @@ hotkey=F
 [A1OV]
 art=ReplaceableTextures\CommandButtons\BTNShockWave
 buttonpos=1,1
-missileart=Abilities\Spells\Orc\Shockwave\ShockwaveMissile.mdl
 missilespeed=1050
 animnames=attack,slam
 unbuttonpos=1,1

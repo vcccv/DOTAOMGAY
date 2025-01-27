@@ -15,7 +15,8 @@ library AbilityCustomOrderId requires Base
         set OrderIdBase = OrderIdBase + 1
         call MHAbility_SetHookOrder(abilId, OrderIdBase)
         static if DEBUG_MODE then
-            call ThrowError(Table[KEY].has(abilId), "AbilityCustomOrderId", "AllocAbilityOrderId", Id2String(abilId), abilId, "重复的技能Id被分配命令Id:" + GetObjectName(abilId))
+            call ThrowWarning(MHAbility_GetHookOrder(abilId) == 0, "AbilityCustomOrderId", "AllocAbilityOrderId", Id2String(abilId), abilId, "该技能无法被分配命令Id:" + GetObjectName(abilId))
+            call ThrowError(Table[KEY].has(abilId), "AbilityCustomOrderId", "AllocAbilityOrderId", Id2String(abilId), abilId, "重复的技能被分配命令Id:" + GetObjectName(abilId))
             set Table[KEY][abilId] = OrderIdBase
         endif
         return OrderIdBase
@@ -265,6 +266,7 @@ library AbilityCustomOrderId requires Base
 
         // 烈火焚身
         call AllocAbilityOrderId('A0O5')
+        call AllocAbilityOrderId('A1B1')
 
         // 吞噬 - 冲击波
         call AllocAbilityOrderId('A1OV')
