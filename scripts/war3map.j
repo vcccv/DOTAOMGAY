@@ -11040,10 +11040,14 @@ endfunction
 function SetAbilityStringByMode takes unit u, integer id returns nothing
 	if id == 'QP24' then
 		if Mode__BalanceOff then
+			call UnitAddAbility(u, id)
 			call MHAbility_SetLevelDefDataStr('QP24', 1, ABILITY_LEVEL_DEF_DATA_UBERTIP, "有25%的概率连续施展两次法术|n|n输入|c00ff0505-mc|r 以查看自身能触发狗运的技能|n|n|c00fffc01神杖升级：让你另一个脑袋施放火焰爆轰。")
 			call MHAbility_SetLevelDefDataStr('QP24', 2, ABILITY_LEVEL_DEF_DATA_UBERTIP, "有40%的概率连续施展两次法术；有20%的概率连续施展三次法术|n|n输入|c00ff0505-mc|r 以查看自身能触发狗运的技能|n|n|c00fffc01神杖升级：让你另一个脑袋施放火焰爆轰。")
 			call MHAbility_SetLevelDefDataStr('QP24', 3, ABILITY_LEVEL_DEF_DATA_UBERTIP, "有50%的概率连续施展两次法术；有25%的概率连续施展三次法术；有12%的概率连续施展四次法术|n|n输入|c00ff0505-mc|r 以查看自身能触发狗运的技能|n|n|c00fffc01神杖升级：让你另一个脑袋施放火焰爆轰。")
 			call MHAbility_SetDefDataStr('A088', ABILITY_DEF_DATA_RESEARCH_UBERTIP, "狗运让菊花能更快更有效地使用技能。|n|n|cffffcc00等级 1|r - 25%概率x2|n|cffffcc00等级 2|r - 40%概率x2，20%概率x3|n|cffffcc00等级 3|r - 50%概率x2，25%概率x3，12%概率x4|n|n输入|c00ff0505-mc|r 以查看自身能触发狗运的技能|n|n|c00fffc01神杖升级：让你另一个脑袋施放火焰爆轰。")
+			call UnitAddAbility(u, id)
+			call YDWESetUnitAbilityDataString(u, id, 1, 217, "狗运让菊花能更快更有效地使用技能。|n|n|cffffcc00等级 1|r - 25%概率x2|n|cffffcc00等级 2|r - 40%概率x2，20%概率x3|n|cffffcc00等级 3|r - 50%概率x2，25%概率x3，12%概率x4|n|n输入|c00ff0505-mc|r 以查看自身能触发狗运的技能|n|n|c00fffc01神杖升级：让你另一个脑袋施放火焰爆轰。")
+			call UnitRemoveAbility(u, id)
 		endif
 	endif
 endfunction
@@ -45862,10 +45866,9 @@ function EUI takes integer r returns nothing
 	elseif r == 5 then
 		call CommonTextTag(GetObjectName('n0JO'), 5, GetTriggerUnit(), .03, 255, 0, 0, 255)
 	endif
-	if not Mode__RearmCombos then
+	if not Mode__BalanceOff then
 		set cost = MHAbility_GetLevelDefDataInt(id, lv, ABILITY_LEVEL_DEF_DATA_MANA_COST) * ( r - 1) * 0.35
 		call SetUnitState(u, UNIT_STATE_MANA, (GetUnitState(u, UNIT_STATE_MANA) - cost))
-		call BJDebugMsg("额外消耗了"+R2S(cost))
 	endif
 	set r = r -1
 	call SaveUnitHandle(HY, h, 2,(u))
@@ -82048,8 +82051,7 @@ function InitHeroSkillsData takes nothing returns nothing
 		set s = SaveSkillOrder(i * 4 + 4, "HXmines")
 	endif
 	set IsPassiveSkill[i * 4 + 4]= true
-	set NoBalanceOffTips[i * 4 + 4]= "多重施法的触发几率调整为：18%/29.5%/39.5%概率x2，0%/13%/14.5%概率x3，0%/0/%5.5%概率x4"
-	set NoRearmCombosTips[i * 4 + 4]= "多重施法会额外消耗50%/75%/100%的魔法值。"
+	set NoBalanceOffTips[i * 4 + 4]= "多重施法的触发几率调整为：18%/30%/40%概率x2，0%/13%/15%概率x3，0%/0/%5%概率x4。每下施法会额外消耗35%魔法值。"
 	set i = 19 -1
 	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "drunkenhaze"),'A049','A33G','Y073', "e")
 	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A05E')),'A05E','A33F','Y074', "t")
