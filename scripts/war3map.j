@@ -2765,6 +2765,8 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A0E3', 0, "Y_V")
 	call SaveStr(ObjectHashTable,'AEbl', 0, "BlinkOnSpellEffect")
 	call SaveStr(ObjectHashTable,'QB08', 0, "BlinkOnSpellEffect")
+
+	
 	call SaveStr(ObjectHashTable,'A0O1', 0, "WildAxesOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A0O2', 0, "Y2V")
 	call SaveStr(ObjectHashTable,'A289', 0, "Y2V")
@@ -3337,6 +3339,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A11N', 3, "KOE")
 	call SaveStr(ObjectHashTable,'AEbl', 3, "BlinkOnSpellCast")
 	call SaveStr(ObjectHashTable,'QB08', 3, "BlinkOnSpellCast")
+	
 	call SaveStr(ObjectHashTable,'A3DF', 3, "KNE")
 	call SaveStr(ObjectHashTable,'A00L', 3, "KBE")
 	call SaveStr(ObjectHashTable,'A361', 3, "KCE")
@@ -3594,6 +3597,10 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A04P', 7, "S0E")
 	call SaveStr(ObjectHashTable,'A1AU', 7, "S0E")
 	call SaveStr(ObjectHashTable,'A454', 7, "S1E")
+
+	call SaveStr(ObjectHashTable,'A0ME', 7, "QopBlinkOnSpellChannel")
+	call SaveStr(ObjectHashTable,'AEbl', 7, "BlinkOnSpellChannel")
+	
 	call SaveStr(ObjectHashTable,'A24K', 9, "S2E")
 	call SaveStr(ObjectHashTable, StringHash("-display"), 10, "S3E")
 endfunction
@@ -36806,85 +36813,6 @@ function Y_V takes nothing returns nothing
 	call SaveUnitHandle(HY, h, 1, GetSpellTargetUnit())
 	call TimerStart(t, 0, false, function FQR)
 	set t = null
-endfunction
-function FSR takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit dummyCaster =(LoadUnitHandle(HY, h, 19))
-	local integer count = GetTriggerEvalCount(t)
-	local integer FTR = R2I(((.9 -0.3)/ .5)/ .03)
-	local integer FUR = R2I((175 / FTR))
-	local integer FWR = R2I(( 255/ FTR)* 1.75)
-	local unit trigUnit =(LoadUnitHandle(HY, h, 14))
-	local real x =(LoadReal(HY, h, 6))
-	local real y =(LoadReal(HY, h, 7))
-	if count > FTR then
-		call SetUnitVertexColor(dummyCaster, 255, 255, 255, 0)
-		call SetUnitVertexColorEx(trigUnit,-1,-1,-1, 255)
-		call ShowUnit(dummyCaster, false)
-		call FlushChildHashtable(HY, h)
-		call DestroyTrigger(t)
-	else
-		call SetUnitVertexColor(dummyCaster, 255, 255, 255, 175 -FUR * count)
-		call SetUnitX(dummyCaster, x)
-		call SetUnitY(dummyCaster, y)
-		call SetUnitVertexColorEx(trigUnit,-1,-1,-1, FWR * count)
-	endif
-	set t = null
-	set dummyCaster = null
-	set trigUnit = null
-	return false
-endfunction
-function BlinkOnSpellEffect takes nothing returns nothing
-	local unit trigUnit = GetTriggerUnit()
-	local unit dummyCaster =(LoadUnitHandle(HY,(GetHandleId(trigUnit)), 293))
-	local trigger t = CreateTrigger()
-	local integer h = GetHandleId(t)
-	local real x = GetUnitX(trigUnit)
-	local real y = GetUnitY(trigUnit)
-	call SetUnitX(dummyCaster, x)
-	call SetUnitY(dummyCaster, y)
-	call SetUnitX(trigUnit, x)
-	call SetUnitY(trigUnit, y)
-	call SetUnitVertexColorEx(trigUnit,-1,-1,-1, 0)
-	call SetUnitVertexColor(dummyCaster, 255, 255, 255, 175)
-	call SetUnitTimeScale(dummyCaster, .5)
-	call SaveUnitHandle(HY, h, 19,(dummyCaster))
-	call SaveUnitHandle(HY, h, 14,(trigUnit))
-	call SaveReal(HY, h, 6,((x)* 1.))
-	call SaveReal(HY, h, 7,((y)* 1.))
-	call TriggerRegisterTimerEvent(t, .03, true)
-	call TriggerAddCondition(t, Condition(function FSR))
-	set trigUnit = null
-	set dummyCaster = null
-	set t = null
-endfunction
-function BlinkOnSpellCast takes nothing returns nothing
-	local unit trigUnit = GetTriggerUnit()
-	local unit dummyCaster
-	local integer h = GetHandleId(trigUnit)
-	local real a = AngleBetweenXY(GetUnitX(trigUnit), GetUnitY(trigUnit), GetSpellTargetX(), GetSpellTargetY())
-	local real x = GetUnitX(trigUnit)
-	local real y = GetUnitY(trigUnit)
-	call SetUnitPathing(trigUnit, false)
-	call UnitAddPermanentAbility(trigUnit,'Aeth') // ???
-	set dummyCaster = CreateUnit(GetOwningPlayer(trigUnit),'h06K', GetUnitX(trigUnit), GetUnitY(trigUnit), a)
-	call RemoveUnitToTimed(dummyCaster, 5.)
-	call SetUnitPathing(dummyCaster, false)
-	call UnitAddPermanentAbility(dummyCaster,'Aeth')
-	call UnitAddPermanentAbility(dummyCaster,'Aloc')
-	call UnitAddPermanentAbility(dummyCaster,'A04R')
-	call SetUnitVertexColor(dummyCaster, 255, 255, 255, 0)
-	call SetUnitX(dummyCaster, x)
-	call SetUnitY(dummyCaster, y)
-	call SetUnitX(trigUnit, x)
-	call SetUnitY(trigUnit, y)
-	call SetUnitAnimation(dummyCaster, "Spell Throw")
-	call SetUnitPathing(trigUnit, true)
-	call UnitRemoveAbility(trigUnit, 'Aeth') // ???
-	call SaveUnitHandle(HY, h, 293,(dummyCaster))
-	set trigUnit = null
-	set dummyCaster = null
 endfunction
 function FYR takes nothing returns nothing
 	if GetUnitAbilityLevel(DESource,'P133')> 0 and GetUnitAbilityLevel(DESource,'A36D') == 0 and GetUnitState(DETarget, UNIT_STATE_MANA)> 0 then
@@ -82251,7 +82179,7 @@ function InitHeroSkillsData takes nothing returns nothing
 	call Z1E(i, "r31")
 	set i = 20 -1
 	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A21E')),'A21E', 0,'Y077', "t")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "blink"),'A01O', 0,'Y078', "r")
+	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A01O')),'A01O', 0,'Y078', "r")
 	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "forceofnature"),'AEfn', 0,'Y079', "f")
 	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "stampede")+ SaveSkillOrder(i * 4 + 4, "r55"),'A1W8','A1W9','Y080', "w")
 	set i = 21 -1
@@ -82374,7 +82302,7 @@ function InitHeroSkillsData takes nothing returns nothing
 	set i = 34 -1
 	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "orb effect"),'A022','QP0K','Y133', null)
 	set IsPassiveSkill[i * 4 + 1]= true
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "blink"),'AEbl', 0,'Y134', "b")
+	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('AEbl')),'AEbl', 0,'Y134', "b")
 	if (not Mode__RearmCombos) then
 		set s = SaveSkillOrder(i * 4 + 2, "HXshijianmanbu")
 	endif
@@ -82621,7 +82549,7 @@ function InitHeroSkillsData takes nothing returns nothing
 	set i = 67 -1
 	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "shadowstrike"),'A0Q7', 0,'Y265', "d")
 	
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "blink"),'A0ME', 0,'Y266', "b")
+	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A0ME')),'A0ME', 0,'Y266', "b")
 	if (not Mode__RearmCombos) then
 		set s = SaveSkillOrder(i * 4 + 2, "HXshijianmanbu")
 	endif

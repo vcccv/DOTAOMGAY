@@ -301,6 +301,20 @@ library AbilityCustomOrderId requires Base
 
         // 混沌之军
         call AllocAbilityOrderId('A03O')
+
+        //***************************************************************************
+        //*
+        //*  blink
+        //*
+        //***************************************************************************
+        // 传送
+        call AllocAbilityOrderId('A01O')
+
+        // 敌法b
+        call AllocAbilityOrderId('AEbl')
+
+        // 闪烁(痛苦女王)
+        call AllocAbilityOrderId('A0ME')
     endfunction
 
 endlibrary

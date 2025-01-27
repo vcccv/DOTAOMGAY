@@ -30,3 +30,4 @@
 #include "Agi\\Terrorblade.j"
 #include "Agi\\NagaSiren.j"
 #include "Agi\\PhantomLancer.j"
+#include "Agi\\AntiMage.j"
