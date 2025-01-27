@@ -81,7 +81,7 @@ scope VengefulSpirit
         local integer level = GetUnitAbilityLevel(whichUnit,'A17O')
         local unit dummyCaster = CreateUnit(GetOwningPlayer(whichUnit),'e00E', x1, y1, 0)
         local real maxDistance = 1400. + GetUnitCastRangeBonus(whichUnit) + ( ModuloReal(GetUnitCastRangeBonus(whichUnit), 200.) )
-        //call BJDebugMsg("我有余数啊：" + R2S( ModuloReal(GetUnitCastRangeBonus(whichUnit), 200.)))
+        
         call UnitAddPermanentAbility(dummyCaster,'A0AP')
         call SetUnitAbilityLevel(dummyCaster,'A0AP', level)
         call SaveUnitHandle(HY, h, 2,(whichUnit))

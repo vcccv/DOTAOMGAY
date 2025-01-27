@@ -138,7 +138,6 @@ library UnitIllusion requires UnitUtils, UnitWeapon, BuffSystem
         if GetUnitAbilityLevel(Player__Hero[pid],'A0A8')> 0 then
             call UnitAddPermanentAbilitySetLevel(illusionUnit, 'A3L3', GetUnitAbilityLevel(Player__Hero[pid],'A0A8'))
             call MHAbility_Disable(illusionUnit, 'A3L3', false, false)
-            call BJDebugMsg("我有协同升级，那我的禁用计数是多少？："+I2S(MHAbility_GetDisableCount(illusionUnit, 'A3L3')))
         endif
         // 同步长大技能
         if a_fx_b[pid] and GetUnitTypeId(illusionUnit) == 'Ucrl' and GetUnitAbilityLevel(sourceUnit,'A2KK')> 0 then

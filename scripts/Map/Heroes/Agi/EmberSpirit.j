@@ -186,7 +186,6 @@ scope EmberSpirit
         call FogModifierStart(fm)
         call SaveInteger(HY, GetHandleId(u), 4318, 1)
 
-        call BJDebugMsg("1")
         call GroupEnumUnitsInRange(g, x, y, area, null)
         loop
             set first = FirstOfGroup(g)

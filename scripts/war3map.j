@@ -3258,6 +3258,9 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A0CK', 12, "GZE")
 	call SaveStr(ObjectHashTable,'A1FP', 12, "G_E")
 	call SaveStr(ObjectHashTable,'A02W', 12, "G0E")
+	
+	call SaveStr(ObjectHashTable,'AIbk', 7, "ItemKelenDaggerOnSpellChannel")
+
 	call SaveStr(ObjectHashTable,'A397', 12, "Item_SpellEffect_MoonShard")
 	call SaveStr(ObjectHashTable,'AZSZ', 12, "Item_SpellEffect_IronwoodBranch")
 	call SaveStr(ObjectHashTable,'A0FD', 12, "G1E")
@@ -8223,7 +8226,7 @@ function impale_fly takes nothing returns boolean
 	set target = null
 	return false
 endfunction
-function impale_actions takes unit target, unit u, real dur, real d, real r returns nothing
+function OnImpaleHitUnit takes unit target, unit u, real dur, real d, real r returns nothing
 	local trigger t = CreateTrigger()
 	local integer h = GetHandleId(t)
 	call PauseUnit(target, true)
@@ -8241,7 +8244,7 @@ function impale_actions takes unit target, unit u, real dur, real d, real r retu
 	set t = null
 endfunction
 
-function impale_enumunit takes nothing returns boolean
+function OnImpaleUpdate takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local real x1 =(LoadReal(HY, h, 64))
@@ -8279,7 +8282,7 @@ function impale_enumunit takes nothing returns boolean
 		if not IsUnitMagicImmune(firstUnit) and IsUnitEnemy(U2, GetOwningPlayer(firstUnit)) and IsAliveNotStrucNotWard(firstUnit) then
 			if not IsUnitInGroup(firstUnit, DK) and LoadInteger(HY, GetHandleId(firstUnit), 4253)!= 1 then
 				call GroupAddUnit(DK, firstUnit)
-				call impale_actions(firstUnit, U2, TJ, S2, RJ)
+				call OnImpaleHitUnit(firstUnit, U2, TJ, S2, RJ)
 			endif
 		endif
 	endloop
@@ -8348,7 +8351,7 @@ function UnitSpellEffectImpale takes unit u, unit target, real d, real dur, real
 	call SaveReal(HY, h, 71,((x1)* 1.))
 	call SaveReal(HY, h, 72,((y1)* 1.))
 	call TriggerRegisterTimerEvent(t, .0625, true)
-	call TriggerAddCondition(t, Condition(function impale_enumunit))
+	call TriggerAddCondition(t, Condition(function OnImpaleUpdate))
 	set t = null
 	set g2 = null
 endfunction
@@ -15829,7 +15832,7 @@ function AetherLensOnPick takes unit whichUnit returns nothing
 	if not LoadBoolean(HY, GetHandleId(p),'A3O3') then
 		call SaveBoolean(HY, GetHandleId(p),'A3O3', true)
 		call MHUnit_AddSpellRange(whichUnit, GetUnitCastRangeBonus(whichUnit) + AETHER_LENS_CAST_RANGE_BONUS)	
-		call BJDebugMsg("我说我加了施法射程你耳聋吗？现在是：" + R2S(GetUnitCastRangeBonus(whichUnit)))
+		//call BJDebugMsg("我说我加了施法射程你耳聋吗？现在是：" + R2S(GetUnitCastRangeBonus(whichUnit)))
 	endif
 endfunction
 function AetherLensOnDrop takes unit whichUnit returns nothing
@@ -15837,7 +15840,7 @@ function AetherLensOnDrop takes unit whichUnit returns nothing
 	if LoadBoolean(HY, GetHandleId(p),'A3O3') then
 		call RemoveSavedBoolean(HY, GetHandleId(p),'A3O3')
 		call MHUnit_AddSpellRange(whichUnit, GetUnitCastRangeBonus(whichUnit) - AETHER_LENS_CAST_RANGE_BONUS)
-		call BJDebugMsg("一点施法射程不要也罢，现在是：" + R2S(GetUnitCastRangeBonus(whichUnit)))
+		//call BJDebugMsg("一点施法射程不要也罢，现在是：" + R2S(GetUnitCastRangeBonus(whichUnit)))
 	endif
 endfunction
 
@@ -25695,15 +25698,6 @@ function P6O takes nothing returns nothing
 	set u = null
 	set p = null
 endfunction
-function GetCurrentMaxHandleId takes nothing returns nothing
-	local timer t = CreateTimer()
-	local integer i = GetHandleId(t)
-
-	call BJDebugMsg("当前游戏中最大HandleId为 " + I2S(i))
-
-	call DestroyTimer(t)
-	set t = null
-endfunction
 
 function ydweleak takes nothing returns nothing
 	call GetLocalizedHotkey("yd_leak_monitor::create_report")
@@ -25809,9 +25803,6 @@ function QXO takes nothing returns nothing
 	call TUV(t, "-d", true)
 	call TUV(t, "-d ", false)
 	call TriggerAddAction(t, function P6O)
-	set t = CreateTrigger()
-	call TUV(t, "-h ", false)
-	call TriggerAddAction(t, function GetCurrentMaxHandleId)
 	set t = CreateTrigger()
 	call TUV(t, "-ydweleak ", true)
 	call TriggerAddAction(t, function ydweleak)
@@ -59012,6 +59003,7 @@ function RUE takes nothing returns nothing
 	local real damage
 	local real dur
 	local unit target = null
+	local real distance = 700. + GetUnitCastRangeBonus(u)
 	if GetSpellTargetUnit()!= null then
 		set x2 = GetUnitX(GetSpellTargetUnit())
 		set y2 = GetUnitY(GetSpellTargetUnit())
@@ -59020,8 +59012,8 @@ function RUE takes nothing returns nothing
 		set y2 = GetSpellTargetY()
 	endif
 	set a = Atan2(y2 -y1, x2 -x1)
-	set x2 = x1 + 700 * Cos(a)
-	set y2 = y1 + 700 * Sin(a)
+	set x2 = x1 + distance * Cos(a)
+	set y2 = y1 + distance * Sin(a)
 	if lv == 1 then
 		set damage = 60
 		set dur = .5
@@ -60710,6 +60702,7 @@ function I0E takes nothing returns nothing
 	local real damage
 	local real dur
 	local unit target = null
+	local real distance = 700. + GetUnitCastRangeBonus(u)
 	if GetSpellTargetUnit()!= null then
 		set x2 = GetUnitX(GetSpellTargetUnit())
 		set y2 = GetUnitY(GetSpellTargetUnit())
@@ -60718,8 +60711,8 @@ function I0E takes nothing returns nothing
 		set y2 = GetSpellTargetY()
 	endif
 	set a = Atan2(y2 -y1, x2 -x1)
-	set x2 = x1 + 700 * Cos(a)
-	set y2 = y1 + 700 * Sin(a)
+	set x2 = x1 + distance * Cos(a)
+	set y2 = y1 + distance * Sin(a)
 	if lv == 1 then
 		set damage = 80
 		set dur = .75

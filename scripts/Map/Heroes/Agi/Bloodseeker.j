@@ -21,16 +21,13 @@ scope Bloodseeker
             call SetUnitY(dummyUnit, GetUnitY(u))
             if IsUnitInvision(u) then
                 if GetUnitAbilityLevel(u,'A1HX')> 0 then
-                    call BJDebugMsg("我有小鱼大")
                     call UnitRemoveAbility(dummyUnit,'A30X')
                 elseif GetUnitAbilityLevel(dummyUnit,'A30X') == 0 then
                     call UnitAddAbility(dummyUnit,'A30X')
-                    call BJDebugMsg("我被反隐了")
                 endif
             else
                 if GetUnitAbilityLevel(dummyUnit,'A30X')> 0 then
                     call UnitRemoveAbility(dummyUnit,'A30X')
-                    call BJDebugMsg("没隐身了")
                 endif
             endif
         endif
@@ -88,7 +85,6 @@ scope Bloodseeker
                 if not isBreak and ThirstHeroFilter(whichUnit, u) then
                     call CreateVisionDummy(u, whichUnit)
                     set count = count + 1
-                    call BJDebugMsg("有一个了")
                 elseif (LoadBoolean(OtherHashTable, GetHandleId(u), 24)) then
                     call RemoveVisionDummy(u, whichUnit)
                 endif

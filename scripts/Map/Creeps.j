@@ -35,8 +35,6 @@ scope Creeps
         local integer   level     = GetUnitAbilityLevel(whichUnit, GetSpellAbilityId())
         local real      distance  = 800. + GetUnitCastRangeBonus(whichUnit)
 
-        call BJDebugMsg("GetAbilityOrder('A1OV'):" + GetAbilityOrder('A1OV'))
-        call BJDebugMsg("GetAbilityOrder('A0O5'):" + GetAbilityOrder('A0O5'))
         if targUnit == null then
             set tx = GetSpellTargetX()
             set ty = GetSpellTargetY()

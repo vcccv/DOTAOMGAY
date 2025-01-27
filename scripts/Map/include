@@ -1,5 +1,6 @@
 #include "Base.j"
 #include "Creeps.j"
+#include "ItemAbility.j"
 #include "Unit\\include"
 #include "Ability\\include"
 #include "Utilities\\include"
