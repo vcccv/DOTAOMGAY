@@ -85428,6 +85428,8 @@ function main takes nothing returns nothing
 	call MHDrawCooldown_Initialize()
 	call MHDrawCooldown_SetDivide(1.)
 
+	call MHDebug_EnableCrashTracer(true)
+
 	call MHConst_SetOPLimit(3000000)
 	call MHConst_UnlockBlpSizeLimit(true)
 
