@@ -231,24 +231,24 @@ local function ability_tip(u, ability)
 end
 
 --本地消息
-function message.hook(msg)
-    if msg.type == 'mouse_ability' then
-        if globals.DownAlt then
-            return false
-        end
-        local ability = msg.ability
-        if ability == 1364209990 then
-            return false
-        end
-        if ability == 1364209971 then
-            return false
-        end
-        if ability == 1364210000 then
-            return false
-        end
-    end
-    return true
-end
+--function message.hook(msg)
+--    if msg.type == 'mouse_ability' then
+--        if globals.DownAlt then
+--            return false
+--        end
+--        local ability = msg.ability
+--        if ability == 1364209990 then
+--            return false
+--        end
+--        if ability == 1364209971 then
+--            return false
+--        end
+--        if ability == 1364210000 then
+--            return false
+--        end
+--    end
+--    return true
+--end
 
 function hook.SetStartLocPrioCount(x, y)
     local ability, order = message.button(x, y)

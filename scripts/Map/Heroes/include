@@ -7,6 +7,7 @@
 #include "Str\\CentaurWarchief.j"
 #include "Str\\ChaosKnight.j"
 #include "Str\\ChaosKotoBeast.j"
+#include "Str\\Pudge.j"
 
 #include "Int\\TwinHeadDragon.j"
 #include "Int\\Ezalor.j"
@@ -32,3 +33,4 @@
 #include "Agi\\NagaSiren.j"
 #include "Agi\\PhantomLancer.j"
 #include "Agi\\AntiMage.j"
+#include "Agi\\Broodmother.j"

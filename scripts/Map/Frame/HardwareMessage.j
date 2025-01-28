@@ -195,9 +195,9 @@ scope HardwareMessage22
                 set tip_string = null
             endif
           
-            if CommandButtonItemFousc >= 0 then
-                call onClickItemCommandButton(CommandButtonItemFousc)
-            endif
+           // if CommandButtonItemFousc >= 0 then
+           //     call onClickItemCommandButton(CommandButtonItemFousc)
+           // endif
         endif
     endfunction
 

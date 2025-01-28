@@ -95,13 +95,13 @@ scope CentaurWarchief
     function CentaurWarchiefStampedeBuffOnAdd takes nothing returns nothing
         local unit u = MHEvent_GetUnit()
         call UnitAddMoveSpeedBonusPercent(u, 1000)
-        call UnitAddPhasedMovementCount(u)
+        call UnitAddNoPathingCount(u)
         set u = null
     endfunction
     function CentaurWarchiefStampedeBuffOnRemove takes nothing returns nothing
         local unit u = MHEvent_GetUnit()
         call UnitReduceMoveSpeedBonusPercent(u, 1000)
-        call UnitSubPhasedMovementCount(u)
+        call UnitSubNoPathingCount(u)
         set u = null
     endfunction
 

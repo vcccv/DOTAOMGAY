@@ -132,27 +132,33 @@ scope CommandButtonHelper
         set it = null
     endfunction
 
-    function onClickCommandButton takes nothing returns nothing
+    function OnClickItemButton takes nothing returns boolean
         local integer abilId
         local integer orderId
         local integer commandButton
+        local integer i
 
         if not MHMsg_IsKeyDown(OSKEY_ALT) or MHEvent_GetKey() == 4 then
-            return
+            return false
         endif
 
+        //set i = 1
+        //set commandButton = MHEvent_GetFrame()
+        //loop
+        //    exitwhen commandButton == ItemBarButton[i]
+        //    set i = i + 1
+        //endloop
+//
         call MHEvent_SetKey(-1)
 
-        //set commandButton = MHEvent_GetFrame()
-        //set abilId  = MHUIData_GetCommandButtonAbility(commandButton)
-        //set orderId = MHUIData_GetCommandButtonOrderId(commandButton)
-        //
-        //if orderId >=852008 and orderId <=852013 then
-        //    //call BJDebugMsg("commandbutton" + I2S(commandButton))
-        //    //call BJDebugMsg("abilId:" + I2S(abilId))
-        //    //call BJDebugMsg("orderId" + I2S(orderId))
-        //endif
+        set commandButton = MHEvent_GetFrame()
+        set abilId  = MHUIData_GetCommandButtonAbility(commandButton)
+        set orderId = MHUIData_GetCommandButtonOrderId(commandButton)
         
+        if orderId >=852008 and orderId <=852013 then
+            call onClickItemCommandButton(orderId - 852008)
+        endif
+        return false
     endfunction
 
     globals
@@ -165,18 +171,7 @@ scope CommandButtonHelper
     function EntherCommandButtonCallback takes nothing returns nothing
         set CommandButtonSkillFousc = (DzGetTriggerUIEventFrame() - FirstCommandBarButton) / ButtonInterval
     endfunction
-    function EntherItemCommandButtonCallback takes nothing returns nothing
-        local integer frame = DzGetTriggerUIEventFrame()
-        local integer i = 0
-        loop
-            exitwhen i > 5
-            if ItemBarButton[i] == frame then
-                set CommandButtonItemFousc = i
-                return
-            endif
-            set i = i + 1
-        endloop
-    endfunction
+    
     // 鼠标离开命令按钮
     function LeaveCommandButtonCallback takes nothing returns nothing
         set CommandButtonSkillFousc = - 1
@@ -188,8 +183,8 @@ scope CommandButtonHelper
         local integer frame
         local trigger trig = CreateTrigger()
         //call MHMsgClickButtonEvent_Register(trig)
-        call TriggerAddCondition(trig, Condition(function onClickCommandButton))
-
+        call TriggerAddCondition(trig, Condition(function OnClickItemButton))
+        
         // 鼠标进入和离开右下角技能栏
         set x = 0
         set y = 0
@@ -199,6 +194,7 @@ scope CommandButtonHelper
             loop
                 exitwhen y > 2
                 set frame = DzFrameGetCommandBarButton(y, x)
+                call MHFrameEvent_Register(trig, frame, EVENT_ID_FRAME_MOUSE_CLICK)
                 call DzFrameSetScriptByCode(frame, FRAMEEVENT_MOUSE_ENTER, function EntherCommandButtonCallback, false)
                 call DzFrameSetScriptByCode(frame, FRAMEEVENT_MOUSE_LEAVE, function LeaveCommandButtonCallback, false)
                 set y = y + 1
@@ -206,14 +202,15 @@ scope CommandButtonHelper
             set x = x + 1
         endloop
 
-        set x = 0
+        set x = 1
         loop
-            exitwhen x > 5
-            set ItemBarButton[x] = DzFrameGetItemBarButton(x)
-            call DzFrameSetScriptByCode(ItemBarButton[x], FRAMEEVENT_MOUSE_ENTER, function EntherItemCommandButtonCallback, false)
+            exitwhen x > 6
+            set ItemBarButton[x] = MHUI_GetItemBarButton(x)
+            if ItemBarButton[x] != 0 then
+                call MHFrameEvent_Register(trig, ItemBarButton[x], EVENT_ID_FRAME_MOUSE_CLICK)
+            endif
             set x = x + 1
         endloop
-        
     endfunction
 
 endscope

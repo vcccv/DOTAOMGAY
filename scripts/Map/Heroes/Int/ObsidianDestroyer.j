@@ -15,8 +15,8 @@ scope ObsidianDestroyer
         call DestroyEffect((LoadEffectHandle(HY, h, 32)))
 
         call UnitSubInvulnerableCount(targetUnit)
-        call UnitSubStunCount(targetUnit)
         call UnitSubHideExCount(targetUnit)
+        call UnitSubStunCount(targetUnit)
 
         call ClearSelectionForPlayer(GetOwningPlayer(targetUnit))
         call SelectUnitAddForPlayer(targetUnit, GetOwningPlayer(targetUnit))

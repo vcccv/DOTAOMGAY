@@ -117,7 +117,6 @@ library UnitIllusion requires UnitUtils, UnitWeapon, BuffSystem
 
         // 判一下类型
         set typeId = GetUnitTypeId(sourceUnit)
-        call BJDebugMsg("typeId:" + Id2String(typeId))
         if GetUnitTypeId(illusionUnit) != typeId then
             set hp = GetUnitState(illusionUnit, UNIT_STATE_MAX_LIFE)
             call UnitMakeAbilityPermanent(illusionUnit, true, 'A09J')
@@ -316,8 +315,8 @@ library UnitIllusion requires UnitUtils, UnitWeapon, BuffSystem
         local real        x
         local real        y
 
-        set table = SimpleTick.GetTable()
         set tick  = SimpleTick.Create(0)
+        set table = SimpleTick.GetTable()
         set h     = tick
         call tick.Start(delay, false, function MirrorImageOnDelayEnd)
 
