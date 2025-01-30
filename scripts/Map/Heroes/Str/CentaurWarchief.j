@@ -105,6 +105,7 @@ scope CentaurWarchief
         set u = null
     endfunction
 
+    // 还要重写，一个单位组解决而不是独立单位组独立tick
     function StampedeOnSpellEffect takes nothing returns nothing
         local unit    whichUnit = GetRealSpellUnit(GetTriggerUnit())
         local integer level     = GetUnitAbilityLevel(whichUnit, GetSpellAbilityId())

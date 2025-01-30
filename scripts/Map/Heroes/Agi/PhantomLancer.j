@@ -143,4 +143,187 @@ scope PhantomLancer
         call FlushChildHashtable(OtherHashTable2,'A3E9')
     endfunction
 
+    //***************************************************************************
+    //*
+    //*  幻影冲锋
+    //*
+    //***************************************************************************
+    function PhantomRushEnd takes unit u, integer hu, trigger t returns nothing
+        local integer h = GetHandleId(t)
+        call UnitRemoveAbility(u,'A46F')
+        call UnitRemoveAbility(u,'B46F')
+        if GetUnitAbilityLevel(u,'A46D')> 0 and LoadBoolean(HY, h, 5) then
+            call SetUnitNoLimitMoveSpeed(u, 0)
+            call UnitSubPhasedMovementCount(u)
+            call BJDebugMsg("不加速了")
+        endif
+        if GetHandleId(u)> 0 then
+            call RemoveSavedHandle(HY, GetHandleId(u),'A46E')
+        else
+            call RemoveSavedHandle(HY, LoadInteger(HY, h, 0),'A46E')
+        endif
+        call FlushChildHashtable(HY, h)
+        call DestroyTrigger(t)
+    endfunction
+    function PhantomRushOnUpdate takes nothing returns boolean
+        local trigger t          = GetTriggeringTrigger()
+        local integer h          = GetHandleId(t)
+        local unit    u          = LoadUnitHandle(HY, h, 0)
+        local integer hu         = LoadInteger(HY, h, 0)
+        local unit    targetUnit = LoadUnitHandle(HY, h, 1)
+        local real    distance
+        local real    maxDist    = LoadReal(HY, h, 0)
+        local real    x
+        local real    y
+        if GetTriggerEventId() == EVENT_WIDGET_DEATH then
+            if GetTriggerUnit() == u then
+                // 我死了 停了
+                call PhantomRushEnd(u, hu, t)
+            else
+                if GetUnitCurrentOrder(u) != ORDER_move then
+                    // 对面死了，奔现最后地点
+                    call DisableTrigger(t)
+                    call IssuePointOrderById(u, ORDER_move, LoadReal(HY, h, 10), LoadReal(HY, h, 11))
+                    call EnableTrigger(t)
+                endif
+            endif
+        elseif GetTriggerEventId() == EVENT_UNIT_ATTACKED then
+            // 我进入射程就停了
+            if GetAttacker() == u then
+                call PhantomRushEnd(u, hu, t)
+            endif
+        elseif GetTriggerEventId() == EVENT_UNIT_ISSUED_ORDER or GetTriggerEventId() == EVENT_UNIT_ISSUED_TARGET_ORDER or GetTriggerEventId() == EVENT_UNIT_ISSUED_POINT_ORDER then
+            // 转移目标就停了
+            if GetIssuedOrderId()!= ORDER_attack and not(GetIssuedOrderId()==ORDER_smart and GetOrderTargetUnit()!= null and IsUnitEnemy(GetOrderTargetUnit(), GetOwningPlayer(u))) then
+                call PhantomRushEnd(u, hu, t)
+            endif
+        else
+            // 目标晕 隐藏 妖术 就停了
+            if IsUnitStun(u) or IsUnitHidden(u) or IsUnitHex(u) or(LoadBoolean(HY, h, 5) and GetUnitAbilityLevel(u,'A46F') == 0) then
+                call PhantomRushEnd(u, hu, t)
+            else
+                set distance = GetUnitDistanceEx(u, targetUnit)
+                // 目标看不见了或无敌 就追到最后一次的位置
+                if LoadBoolean(HY, h, 5) and(distance > (maxDist + 150) or not UnitVisibleToPlayer(targetUnit, GetOwningPlayer(u)) or IsUnitInvulnerable(targetUnit)) then
+                    // 就走到那里
+                    if GetUnitCurrentOrder(u)!= ORDER_move then
+                        if LoadBoolean(HY, h, 0) then
+                            // 已经发布过移动命令了 我就停止了
+                            call PhantomRushEnd(u, hu, t)
+                        else
+                            // 还是处于攻击命令就到最后的地点
+                            call DisableTrigger(t)
+                            call SaveBoolean(HY, h, 0, true)
+                            call IssuePointOrderById(u, ORDER_move, LoadReal(HY, h, 10), LoadReal(HY, h, 11))
+                            call EnableTrigger(t)
+                        endif
+                    elseif GetDistanceBetween(GetUnitX(u), GetUnitY(u), LoadReal(HY, h, 10), LoadReal(HY, h, 11))<= 120 then
+                        call PhantomRushEnd(u, hu, t)
+                    endif
+                elseif not LoadBoolean(HY, h, 5) then
+                    if not LoadBoolean(HY, h, 0) and GetUnitAbilityLevel(u,'A46F') == 0 and distance <= maxDist and GetUnitAbilityLevel(u,'A46D')> 0 then
+                        call UnitAddPermanentAbility(u,'A46F')
+                        // 相位移动
+                        call SetUnitNoLimitMoveSpeed(u, 800)
+                        call StartUnitAbilityCooldown(u, 'A46D')
+                        //if GetUnitAbilityLevel(u,'A46D')> 0 then
+                        //    call SaveReal(HY, GetHandleId(u),'A46E', GetGameTime())
+                        //endif
+                        call UnitAddPhasedMovementCount(u)
+                        call SaveBoolean(HY, h, 5, true)
+                        call BJDebugMsg("加速了")
+                    endif
+                elseif GetDistanceBetween(GetUnitX(u), GetUnitY(u), LoadReal(HY, h, 10), LoadReal(HY, h, 11))<= 100 then
+                    call PhantomRushEnd(u, hu, t)
+                else
+                    // 存敌人最后的位置
+                    call SaveReal(HY, h, 10, GetUnitX(targetUnit))
+                    call SaveReal(HY, h, 11, GetUnitY(targetUnit))
+                    call SaveBoolean(HY, h, 0, false)
+                endif
+            endif
+        endif
+        set t = null
+        return false
+    endfunction
+    function OnPhantomRush takes nothing returns nothing
+        local trigger t
+        local integer h
+        local unit    u          = GetTriggerUnit()
+        local integer hu         = GetHandleId(u)
+        local integer level      = GetUnitAbilityLevel(u,'A46D')
+        local unit    targetUnit = GetOrderTargetUnit()
+        local real    distance   = GetUnitDistanceEx(u, targetUnit)
+        local real    maxDist    = 500 + 100 * level
+        local unit    lastTarget
+        if distance > 200. and MHAbility_GetCooldown(u, 'A46D') == 0. then
+            if HaveSavedHandle(HY, hu,'A46E') then
+                set t = LoadTriggerHandle(HY, hu,'A46E')
+                set h = GetHandleId(t)
+                set lastTarget = LoadUnitHandle(HY, h, 1)
+                if lastTarget != targetUnit then
+                    call PhantomRushEnd(u, hu, t)
+                endif
+            else
+                set t = CreateTrigger()
+                set h = GetHandleId(t)
+                call SaveTriggerHandle(HY, hu,'A46E', t)
+                call SaveUnitHandle(HY, h, 0, u)
+                call SaveInteger(HY, h, 0, hu)
+                call SaveUnitHandle(HY, h, 1, targetUnit)
+                call TriggerRegisterTimerEvent(t, .02, true)
+                call TriggerRegisterTimerEvent(t, 0, false)
+                call TriggerRegisterUnitEvent(t, targetUnit, EVENT_UNIT_ATTACKED)
+                call TriggerRegisterDeathEvent(t, targetUnit)
+                call TriggerRegisterDeathEvent(t, u)
+                call TriggerRegisterUnitEvent(t, u, EVENT_UNIT_ISSUED_ORDER)
+                call TriggerRegisterUnitEvent(t, u, EVENT_UNIT_ISSUED_POINT_ORDER)
+                call TriggerRegisterUnitEvent(t, u, EVENT_UNIT_ISSUED_TARGET_ORDER)
+                call TriggerAddCondition(t, Condition(function PhantomRushOnUpdate))
+            endif
+            call SaveReal(HY, h, 0, maxDist)
+            call SaveReal(HY, h, 10, GetUnitX(targetUnit))
+            call SaveReal(HY, h, 11, GetUnitY(targetUnit))
+        endif
+        set u = null
+        set targetUnit = null
+        set t = null
+    endfunction
+    // 幻影冲锋 右键
+    function PhantomLancerOnTargetOrder takes nothing returns boolean
+        local unit source = GetTriggerUnit()
+        local unit target = GetOrderTargetUnit()
+        if target != null and IsUnitEnemy(target, GetOwningPlayer(source)) and(GetIssuedOrderId()== ORDER_attack or GetIssuedOrderId()== ORDER_smart) then
+            if GetUnitAbilityLevel(source,'A46D')> 0 and not IsUnitBreak(source) then
+                call OnPhantomRush()
+            endif
+        endif
+        set source = null
+        set target = null
+        return false
+    endfunction
+    // 幻影冲锋
+    function XLI takes nothing returns boolean
+        local unit u
+        if IsUnitIllusion(GetTriggerUnit()) then
+            set u = Player__Hero[GetPlayerId(GetOwningPlayer(GetTriggerUnit()))]
+            if GetUnitAbilityLevel(u,'A46E')> 0 and GetUnitTypeId(GetTriggerUnit()) == GetUnitTypeId(u) then
+                call UnitAddPermanentAbility(GetTriggerUnit(),'A46D')
+                call SetUnitAbilityLevel(GetTriggerUnit(),'A46D', GetUnitAbilityLevel(u,'A46E'))
+            endif
+        endif
+        set u = null
+        return false
+    endfunction
+    // 注册幻影长矛手触发器
+    function RegisterPhantomLancerTrigger takes nothing returns nothing
+        local trigger t = CreateTrigger()
+        call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER)
+        call TriggerAddCondition(t, Condition(function PhantomLancerOnTargetOrder))
+        set t = CreateTrigger()
+        call YDWETriggerRegisterEnterRectSimpleNull(t, GetWorldBounds())
+        call TriggerAddCondition(t, Condition(function XLI))
+        set t = null
+    endfunction
+
 endscope

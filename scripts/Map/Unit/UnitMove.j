@@ -50,20 +50,29 @@ library UnitMove
         return 0
     endfunction
 
+    function GetUnitNoLimitMoveSpeed takes unit whichUnit returns integer
+        if GetUnitAbilityLevel(whichUnit, 'A46F') > 0 then
+            return 800
+        elseif GetUnitAbilityLevel(whichUnit, 'B00V') > 0 then
+            return 650
+        endif
+        return Table[GetHandleId(whichUnit)][NO_LIMIT_MOVE_SPEED]
+    endfunction
+
     // 强制性的无上限移速设置
     function UpdateUnitNoLimitMoveSpeed takes unit whichUnit returns nothing
         local integer h            = GetHandleId(whichUnit)
         local integer percentSpeed = Table[h][NO_LIMIT_MOVE_SPEED_PERCENT]
-        local integer moveSpeed    = Table[h][NO_LIMIT_MOVE_SPEED]
+        local integer moveSpeed    = GetUnitNoLimitMoveSpeed(whichUnit)
         local real    value        = GetUnitDefaultMoveSpeed(whichUnit) + GetUnitMoveSpeedBonus(whichUnit)
 
-        if percentSpeed == 0 and moveSpeed == 0 then
+        if percentSpeed == 0 and moveSpeed == 0. then
             call MHUnit_ResetMoveSpeedLimit(whichUnit)
             call SetUnitMoveSpeed(whichUnit, value)
             return
         endif
 
-        set value = RMinBJ(value *(100. + percentSpeed)/ 100., value)
+        set value = RMaxBJ(value *(100. + percentSpeed)/ 100., moveSpeed * 1.)
 
         call MHUnit_SetMoveSpeedLimit(whichUnit, value)
         call SetUnitMoveSpeed(whichUnit, value)

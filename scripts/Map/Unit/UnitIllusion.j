@@ -145,10 +145,10 @@ library UnitIllusion requires UnitUtils, UnitWeapon, BuffSystem
         endif
         // 长大等级
         if GetUnitAbilityLevel(sourceUnit,'A0CY')> 0 then
-            call SetUnitCurrentScaleEx(illusionUnit, GetUnitCurrentScale(sourceUnit))
-            //set Temp__Int = CreateTimerEventTrigger( .0, false, function Wait0sSetUnitScale ) 
-            //call SaveUnitHandle( HY, Temp__Int, 0, illusionUnit )
-            // call SaveReal( HY, Temp__Int, 1, 1 + .25 *  GetUnitAbilityLevel(sourceUnit,'A0CY') )
+            //call SetUnitCurrentScaleEx(illusionUnit, GetUnitCurrentScale(sourceUnit))
+            set Temp__Int = CreateTimerEventTrigger( .0, false, function Wait0sSetUnitScale ) 
+            call SaveUnitHandle( HY, Temp__Int, 0, illusionUnit )
+            //call SaveReal( HY, Temp__Int, 1, 1 + .25 *  GetUnitAbilityLevel(sourceUnit,'A0CY') )
             call SaveReal( ExtraHT, GetHandleId(illusionUnit), HTKEY_UNIT_CURRENT_ADDSCALE, GetUnitAbilityLevel(sourceUnit,'A0CY') * 0.25 )
             // 模型缩放
             // call SetUnitCurrentScaleEx(illusionUnit, )

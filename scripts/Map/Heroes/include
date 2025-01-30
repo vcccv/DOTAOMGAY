@@ -1,4 +1,3 @@
-
 #include "Str\\Earthshaker.j"
 #include "Str\\TaurenChieftain.j"
 #include "Str\\Magnus.j"
@@ -34,3 +33,4 @@
 #include "Agi\\PhantomLancer.j"
 #include "Agi\\AntiMage.j"
 #include "Agi\\Broodmother.j"
+#include "Agi\\Spectre.j"

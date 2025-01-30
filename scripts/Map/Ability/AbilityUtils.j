@@ -1,6 +1,6 @@
 
 // 继续堆屎
-library AbilityUtils initializer Init requires Table
+library AbilityUtils initializer Init requires Table, Base
 
     globals
         key ABILITY_ADD_KEY

@@ -2041,19 +2041,19 @@ endfunction
 
 // 修正单位的技能 变身会导致单位非法拥有被动技能
 function FixUnitSkillsBug takes unit u returns nothing
-	local integer i = 1
-	local integer lv
-	loop
-		set lv = GetUnitAbilityLevel(u, PassiveSkills_Learned[i])
-		if lv == 0 and(GetUnitAbilityLevel(u, PassiveSkills_Real[i])> 0 or GetUnitAbilityLevel(u, PassiveSkills_SpellBook[i])> 0 or GetUnitAbilityLevel(u, PassiveSkills_Buff[i])> 0) then
-			call UnitRemoveAbility(u, PassiveSkills_Real[i])
-			call UnitRemoveAbility(u, PassiveSkills_SpellBook[i])
-			call UnitRemoveAbility(u, PassiveSkills_Buff[i])
-			call UnitRemoveAbility(u, PassiveSkills_Show[i])
-		endif
-		set i = i + 1
-	exitwhen i > PassiveAbilityMaxCount
-	endloop
+	//local integer i = 1
+	//local integer lv
+	//loop
+	//	set lv = GetUnitAbilityLevel(u, PassiveSkills_Learned[i])
+	//	if lv == 0 and(GetUnitAbilityLevel(u, PassiveSkills_Real[i])> 0 or GetUnitAbilityLevel(u, PassiveSkills_SpellBook[i])> 0 or GetUnitAbilityLevel(u, PassiveSkills_Buff[i])> 0) then
+	//		call UnitRemoveAbility(u, PassiveSkills_Real[i])
+	//		call UnitRemoveAbility(u, PassiveSkills_SpellBook[i])
+	//		call UnitRemoveAbility(u, PassiveSkills_Buff[i])
+	//		call UnitRemoveAbility(u, PassiveSkills_Show[i])
+	//	endif
+	//	set i = i + 1
+	//exitwhen i > PassiveAbilityMaxCount
+	//endloop
 endfunction
 
 // 修正过后的BJ
@@ -3431,10 +3431,6 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A01Y', 4, "SKill_Learn_Reincarnation")
 	call SaveStr(ObjectHashTable,'A1AZ', 4, "SKill_Learn_Reincarnation")
 	
-	call SaveStr(ObjectHashTable,'A0DJ', 4, "Learn_HaveCoolDownSkill") //余震
-	call SaveStr(ObjectHashTable,'A0C6', 4, "Learn_HaveCoolDownSkill") //反击螺旋
-	call SaveStr(ObjectHashTable,'A2EY', 4, "Learn_HaveCoolDownSkill") //勇气之霎
-	//	call SaveStr(ObjectHashTable,'A522', 4, "Learn_HaveCoolDownSkill") //水刀
 	//学习
 	
 	call SaveStr(ObjectHashTable,'A18X', 4, "M4E")
@@ -3484,11 +3480,6 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A11N', 1000, "PZE")
 	call SaveStr(ObjectHashTable,'A01Y', 1000, "SKill_Learn_Reincarnation")
 	call SaveStr(ObjectHashTable,'A1AZ', 1000, "SKill_Learn_Reincarnation")
-	//被动学习技能
-	call SaveStr(ObjectHashTable,'A0DJ', 1000, "Learn_HaveCoolDownSkill") //余震
-	//	call SaveStr(ObjectHashTable,'A522',1000, "Learn_HaveCoolDownSkill") //水刀
-	call SaveStr(ObjectHashTable,'A0C6', 1000, "Learn_HaveCoolDownSkill") //反击
-	call SaveStr(ObjectHashTable,'A2EY', 1000, "Learn_HaveCoolDownSkill") //勇气之霎
 	
 	call SaveStr(ObjectHashTable,'A0RO', 1000, "P_E")
 	call SaveStr(ObjectHashTable,'A0QW', 1000, "MZE")
@@ -6055,14 +6046,15 @@ endfunction
 function IsObserverPlayer takes player p returns boolean
 	return IsGameHaveObserver and(ObserverPlayer1 == p or ObserverPlayer2 == p)
 endfunction
-function RCX takes unit u returns boolean
+function IsUnitCyclone takes unit u returns boolean
 	return GetUnitAbilityLevel(u,'Bcyc')> 0 or GetUnitAbilityLevel(u,'Bcy2')> 0
 endfunction
-function RDX takes unit u returns boolean
+function IsUnitSleeping takes unit u returns boolean
 	return(GetUnitAbilityLevel(u,('B02F'))> 0) or(GetUnitAbilityLevel(u,('BUsp'))> 0) or(GetUnitAbilityLevel(u,('BUst'))> 0)
 endfunction
+// IsUnitCantAttack
 function RFX takes unit u returns boolean
-	return GetUnitAbilityLevel(u,'B02J')> 0 or RCX(u) or RDX(u) or GetUnitAbilityLevel(u,'Avul')> 0
+	return GetUnitAbilityLevel(u,'B02J')> 0 or IsUnitCyclone(u) or IsUnitSleeping(u) or GetUnitAbilityLevel(u,'Avul')> 0
 endfunction
 function RGX takes unit u, integer level returns nothing
 	call SetUnitAbilityLevel(u,'A1NB', level)
@@ -6140,9 +6132,7 @@ endfunction
 function R4X takes unit u returns boolean
 	return IsUnitType(u, UNIT_TYPE_SUMMONED) and IsUnitType(u, UNIT_TYPE_MELEE_ATTACKER) == false and IsUnitType(u, UNIT_TYPE_RANGED_ATTACKER) == false
 endfunction
-function R5X takes unit u returns boolean
-	return GetUnitAbilityLevel(u,'BOhx')> 0 or GetUnitAbilityLevel(u,'B00H')> 0
-endfunction
+
 
 function AlarmDamage takes unit s, unit t returns nothing
 	call UnitDamageTarget(s, t, 0., false, false, null, null, null)
@@ -7750,60 +7740,6 @@ function UnitAddAbilityToTimed takes unit u, integer abilityId, integer level, r
 	call UnitAddPermanentAbilitySetLevel(u, abilityId, level)
 endfunction
 
-function PasSkillCoolDownTimer takes nothing returns nothing
-	local timer t = GetExpiredTimer()
-	local integer h = GetHandleId(t)
-	local player p = LoadPlayerHandle(HY, h, 1)
-	if not SPCDB[GetPlayerId(p)] then
-		call SetPlayerAbilityAvailable(p, 'QP1G', true)
-		call SetPlayerAbilityAvailable(p, 'A522', true)
-		call SetPlayerAbilityAvailable(p, 'QP17', true)
-		call SetPlayerAbilityAvailable(p, 'QP1O', true)
-		call SetPlayerAbilityAvailable(p, 'A3UF', true)
-	endif
-	call FlushChildHashtable(HY, h)
-	call DestroyTimer(t)
-	set t = null
-	set p = null
-endfunction
-
-function PasSkillCoolDownActions takes nothing returns boolean
-	local trigger tri = GetTriggeringTrigger()
-	local timer t = CreateTimer()
-	local integer tri_h = GetHandleId(tri)
-	local integer h = GetHandleId(t)
-	local player p = LoadPlayerHandle(HY, tri_h, 1)
-	call SetPlayerAbilityAvailable(p, 'QP1G', false)
-	call SetPlayerAbilityAvailable(p, 'A522', false)
-	call SetPlayerAbilityAvailable(p, 'QP17', false)
-	call SetPlayerAbilityAvailable(p, 'QP1O', false)
-	call SetPlayerAbilityAvailable(p, 'A3UF', false)
-	
-	call SavePlayerHandle(HY, h, 1, p)
-	call TimerStart(t, 0.00, false, function PasSkillCoolDownTimer)
-	set p = null
-	set t = null
-	set tri = null
-	return false
-endfunction
-
-function PasSkillCoolDownTrigger takes unit u returns nothing
-	local trigger t = CreateTrigger()
-	local integer h = GetHandleId(t)
-	
-	call SavePlayerHandle(HY, h, 1, GetOwningPlayer(u))
-	call TriggerRegisterDeathEvent(t, u)
-	call TriggerAddCondition(t, Condition(function PasSkillCoolDownActions))
-	call SaveTriggerHandle(PassiveAbilityCooldown, GetHandleId(u),'PACD', t)
-	set t = null
-endfunction
-
-function Learn_HaveCoolDownSkill takes nothing returns nothing
-	if not HaveSavedHandle(PassiveAbilityCooldown, GetHandleId(GetTriggerUnit()),'PACD') then
-		call PasSkillCoolDownTrigger(GetTriggerUnit())
-	endif
-endfunction
-
 function CFX takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer h = GetHandleId(t)
@@ -7930,6 +7866,12 @@ endfunction
 function IsUnitDummy takes unit u returns boolean
 	return GetUnitAbilityLevel(u, 'Aloc') > 0
 endfunction
+function IsUnitStun takes unit u returns boolean
+	return MHUnit_GetStunCount(u) > 0
+endfunction
+function IsUnitHex takes unit u returns boolean
+	return GetUnitAbilityLevel(u,'BOhx')> 0 or GetUnitAbilityLevel(u,'B00H')> 0
+endfunction
 function IsUnitInvision takes unit u returns boolean
 	return MHUnit_GetInvisionCount(u) > 0
 	//return GetUnitAbilityLevel(u,'B068')> 0 or GetUnitAbilityLevel(u,'B07T')> 0 or GetUnitAbilityLevel(u,'B076')> 0 or GetUnitAbilityLevel(u,'BOwk')> 0 or GetUnitAbilityLevel(u,'B04R')> 0 or GetUnitAbilityLevel(u,'B0A5')> 0 or GetUnitAbilityLevel(u,'B01Q')> 0 or GetUnitAbilityLevel(u,'B006')> 0 or GetUnitAbilityLevel(u,'Binv')> 0 or GetUnitAbilityLevel(u,'Apiv')> 0 or GetUnitAbilityLevel(u,'A021')> 0 or GetUnitAbilityLevel(u,'A0K4')> 0 or GetUnitAbilityLevel(u,'A0XB')> 0 or GetUnitAbilityLevel(u,'A0Z2')> 0 or GetUnitAbilityLevel(u,'A1GA')> 0 or GetUnitAbilityLevel(u,'A1HW')> 0 or GetUnitAbilityLevel(u,'A1HX')> 0 or GetUnitAbilityLevel(u,'A00J')> 0 or GetUnitAbilityLevel(u,'B08K')> 0 or GetUnitAbilityLevel(u,'B08X')> 0 or GetUnitAbilityLevel(u,'B039')> 0 or GetUnitAbilityLevel(u,'B00K')> 0 or GetUnitAbilityLevel(u,'BHfs')> 0 or GetUnitAbilityLevel(u,'A140')> 0 or GetUnitAbilityLevel(u,'B021')> 0 or GetUnitAbilityLevel(u,'A0ZD')> 0 or GetUnitAbilityLevel(u,'A0KT')> 0
@@ -7954,7 +7896,7 @@ function C5X takes unit u returns boolean
 	return GetUnitAbilityLevel(u,'B00H')> 0 or GetUnitAbilityLevel(u,'BOhx')> 0 or GetUnitAbilityLevel(u,'BPSE')> 0 or GetUnitAbilityLevel(u,'B099')> 0 or GetUnitAbilityLevel(u,'BSTN')> 0 or GetUnitAbilityLevel(u,'B0CF')> 0 or GetUnitAbilityLevel(u,'B0BM')> 0 or GetUnitAbilityLevel(u,'B07N')> 0 or GetUnitAbilityLevel(u,'B08S')> 0 or GetUnitAbilityLevel(u,'B00Q')> 0 or GetUnitAbilityLevel(u,'B04V')> 0 or GetUnitAbilityLevel(u,'B072')> 0 or GetUnitAbilityLevel(u,'BUan')> 0 or GetUnitAbilityLevel(u,'B095')> 0 or GetUnitAbilityLevel(u,'B03I')> 0 or GetUnitAbilityLevel(u,'B0AD')> 0 or GetUnitAbilityLevel(u,'B0AE')> 0 or GetUnitAbilityLevel(u,'B0BE')> 0 or GetUnitAbilityLevel(u,'B0BF')> 0 or GetUnitAbilityLevel(u,'B008')> 0 or GetUnitAbilityLevel(u,'B04B')> 0 or GetUnitAbilityLevel(u,'B02F')> 0 or GetUnitAbilityLevel(u,'BUsp')> 0 or GetUnitAbilityLevel(u,'BUst')> 0 or GetUnitAbilityLevel(u,'B0DD')> 0 or GetUnitAbilityLevel(u,'B0C2')> 0 or GetUnitAbilityLevel(u,'B06S')> 0 or GetUnitAbilityLevel(u,'B02S')> 0 or GetUnitAbilityLevel(u,'B00Q')> 0 or LoadInteger(HY, GetHandleId(u), 4293) == 1 or LoadInteger(HY, GetHandleId(u), 4303) == 1
 endfunction
 function C6X takes unit u returns boolean
-	return C5X(u) or C4X(u) or IsUnitPaused(u) or RCX(u)
+	return C5X(u) or C4X(u) or IsUnitPaused(u) or IsUnitCyclone(u)
 endfunction
 function SetResourceBarTime takes integer minute, integer second, boolean extraColor returns nothing
 	local integer x = 0
@@ -26314,7 +26256,7 @@ function SDO takes nothing returns boolean
 	loop
 	exitwhen WWV > 11
 		set trigUnit = Player__Hero[WWV]
-		if trigUnit != null and UnitIsDead(trigUnit) == false and GetUnitTypeId(trigUnit) == PlayerHeroTypeId[WWV]and R5X(trigUnit) == false then
+		if trigUnit != null and UnitIsDead(trigUnit) == false and GetUnitTypeId(trigUnit) == PlayerHeroTypeId[WWV]and IsUnitHex(trigUnit) == false then
 			loop
 				set i = GetRandomInt(1,'l')
 			exitwhen(IsUnitIdType(HeroListTypeId[i], UNIT_TYPE_MELEE_ATTACKER) and IsUnitIdType(PlayerHeroTypeId[WWV], UNIT_TYPE_MELEE_ATTACKER)) or(IsUnitIdType(HeroListTypeId[i], UNIT_TYPE_RANGED_ATTACKER) and IsUnitIdType(PlayerHeroTypeId[WWV], UNIT_TYPE_RANGED_ATTACKER))
@@ -35895,8 +35837,6 @@ function LearnSkill__Tidebringer takes nothing returns nothing
 	if LoadBoolean(ExtraHT, h, HTKEY_SKILL_TIDEBRINGER) and not isDestroyEffect then
 		call UnitAddStateBonus(u, 15, UNIT_BONUS_DAMAGE)
 	elseif GetUnitAbilityLevel(u,'A13T') == 1 then
-		// 第一次学习
-		call Learn_HaveCoolDownSkill()
 		if not isDestroyEffect then
 			call UnitAddStateBonus(u, 15 + 5, UNIT_BONUS_DAMAGE)
 			call SaveEffectHandle(ExtraHT, h, HTKEY_SKILL_TIDEBRINGER, AddSpecialEffectTarget("effects\\WaterHands.mdx", u, GetHeroWeaponAttachPointName(u)))
@@ -46391,164 +46331,7 @@ function XCI takes unit u, unit targetUnit returns nothing
 		call XNI(u)
 	endif
 endfunction
-function EKE takes nothing returns nothing
-	local unit u = GetTriggerUnit()
-	local unit dummyCaster = CreateUnit(GetOwningPlayer(u),'e00E', GetUnitX(u), GetUnitY(u), 0)
-	call UnitAddPermanentAbility(dummyCaster,'A0DC')
-	call IssueTargetOrderById(dummyCaster, 852274, u)
-	set u = null
-	set dummyCaster = null
-endfunction
-function XDI takes unit u, integer hu, trigger t returns nothing
-	local integer h = GetHandleId(t)
-	if GetUnitAbilityLevel(u,'A46D')> 0 and LoadBoolean(HY, h, 5) then
-		call SetUnitNoLimitMoveSpeed(u, 0)
-		call SetUnitPathing(u, true)
-	endif
-	call UnitRemoveAbility(u,'A46F')
-	call UnitRemoveAbility(u,'B46F')
-	if GetHandleId(u)> 0 then
-		call RemoveSavedHandle(HY, GetHandleId(u),'A46E')
-	else
-		call RemoveSavedHandle(HY, LoadInteger(HY, h, 0),'A46E')
-	endif
-	call FlushChildHashtable(HY, h)
-	call DestroyTrigger(t)
-endfunction
-function XFI takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit u = LoadUnitHandle(HY, h, 0)
-	local integer hu = LoadInteger(HY, h, 0)
-	local unit targetUnit = LoadUnitHandle(HY, h, 1)
-	local real EOX
-	local real XGI = LoadReal(HY, h, 0)
-	local boolean ESI = false
-	local real x
-	local real y
-	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
-		if GetTriggerUnit() == u then
-			call XDI(u, hu, t)
-		else
-			if GetUnitCurrentOrder(u)!= 851986 then
-				call DisableTrigger(t)
-				call IssuePointOrderById(u, 851986, LoadReal(HY, h, 10), LoadReal(HY, h, 11))
-				call EnableTrigger(t)
-			endif
-		endif
-	elseif GetTriggerEventId() == EVENT_UNIT_ATTACKED then
-		if GetAttacker() == u then
-			call XDI(u, hu, t)
-		endif
-	elseif GetTriggerEventId() == EVENT_UNIT_ISSUED_ORDER or GetTriggerEventId() == EVENT_UNIT_ISSUED_TARGET_ORDER or GetTriggerEventId() == EVENT_UNIT_ISSUED_POINT_ORDER then
-		if GetIssuedOrderId()!= 851983 and not(GetIssuedOrderId()==851971 and GetOrderTargetUnit()!= null and IsUnitEnemy(GetOrderTargetUnit(), GetOwningPlayer(u))) then
-			call XDI(u, hu, t)
-		endif
-	else
-		if C6X(u) or(LoadBoolean(HY, h, 5) and GetUnitAbilityLevel(u,'A46F') == 0) then
-			call XDI(u, hu, t)
-		else
-			set EOX = GetUnitDistanceEx(u, targetUnit)
-			if LoadBoolean(HY, h, 5) and(EOX > XGI + 150 or UnitVisibleToPlayer(targetUnit, GetOwningPlayer(u)) == false or RFX(targetUnit)) then
-				if GetUnitCurrentOrder(u)!= 851986 then
-					if LoadBoolean(HY, h, 0) then
-						call XDI(u, hu, t)
-					else
-						call DisableTrigger(t)
-						call SaveBoolean(HY, h, 0, true)
-						call IssuePointOrderById(u, 851986, LoadReal(HY, h, 10), LoadReal(HY, h, 11))
-						call EnableTrigger(t)
-					endif
-				elseif GetDistanceBetween(GetUnitX(u), GetUnitY(u), LoadReal(HY, h, 10), LoadReal(HY, h, 11))<= 120 then
-					call XDI(u, hu, t)
-				endif
-			elseif LoadBoolean(HY, h, 5) == false then
-				if LoadBoolean(HY, h, 0) == false and GetUnitAbilityLevel(u,'A46F') == 0 and EOX <= XGI and GetUnitAbilityLevel(u,'A46D')> 0 then
-					call UnitAddPermanentAbility(u,'A46F')
-					call SetUnitNoLimitMoveSpeed(u, 800)
-					if GetUnitAbilityLevel(u,'A46D')> 0 then
-						call SaveReal(HY, GetHandleId(u),'A46E', GetGameTime())
-					endif
-					call SetUnitPathing(u, false)
-					call SaveBoolean(HY, h, 5, true)
-				endif
-			elseif GetDistanceBetween(GetUnitX(u), GetUnitY(u), LoadReal(HY, h, 10), LoadReal(HY, h, 11))<= 100  then
-				call XDI(u, hu, t)
-			else
-				call SaveReal(HY, h, 10, GetUnitX(targetUnit))
-				call SaveReal(HY, h, 11, GetUnitY(targetUnit))
-				call SaveBoolean(HY, h, 0, false)
-			endif
-		endif
-	endif
-	set t = null
-	return false
-endfunction
-function XHI takes nothing returns nothing
-	local trigger t
-	local integer h
-	local unit u = GetTriggerUnit()
-	local integer hu = GetHandleId(u)
-	local integer level = GetUnitAbilityLevel(u,'A46D')
-	local unit targetUnit = GetOrderTargetUnit()
-	local real EOX = GetUnitDistanceEx(u, targetUnit)
-	local real XGI = 500 + 100 * level
-	local unit XJI
-	if EOX > 300 and LoadReal(HY, hu,'A46E')+ 20 -4 * level < GetGameTime() then
-		if HaveSavedHandle(HY, hu,'A46E') then
-			set t = LoadTriggerHandle(HY, hu,'A46E')
-			set h = GetHandleId(t)
-			set XJI = LoadUnitHandle(HY, h, 1)
-			if XJI != targetUnit then
-				call XDI(u, hu, t)
-			endif
-		else
-			set t = CreateTrigger()
-			set h = GetHandleId(t)
-			call SaveTriggerHandle(HY, hu,'A46E', t)
-			call SaveUnitHandle(HY, h, 0, u)
-			call SaveInteger(HY, h, 0, hu)
-			call SaveUnitHandle(HY, h, 1, targetUnit)
-			call TriggerRegisterTimerEvent(t, .02, true)
-			call TriggerRegisterTimerEvent(t, 0, false)
-			call TriggerRegisterUnitEvent(t, targetUnit, EVENT_UNIT_ATTACKED)
-			call TriggerRegisterDeathEvent(t, targetUnit)
-			call TriggerRegisterDeathEvent(t, u)
-			call TriggerRegisterUnitEvent(t, u, EVENT_UNIT_ISSUED_ORDER)
-			call TriggerRegisterUnitEvent(t, u, EVENT_UNIT_ISSUED_POINT_ORDER)
-			call TriggerRegisterUnitEvent(t, u, EVENT_UNIT_ISSUED_TARGET_ORDER)
-			call TriggerAddCondition(t, Condition(function XFI))
-		endif
-		call SaveReal(HY, h, 0, XGI)
-		call SaveReal(HY, h, 10, GetUnitX(targetUnit))
-		call SaveReal(HY, h, 11, GetUnitY(targetUnit))
-	endif
-	set u = null
-	set targetUnit = null
-	set t = null
-endfunction
-// 幻影冲锋 右键
-function XKI takes nothing returns boolean
-	if GetOrderTargetUnit()!= null and IsUnitEnemy(GetOrderTargetUnit(), GetOwningPlayer(GetTriggerUnit())) and(GetIssuedOrderId()== 851983 or GetIssuedOrderId()==851971) then
-		if GetUnitAbilityLevel(GetTriggerUnit(),'A46D')> 0 and GetUnitAbilityLevel(GetTriggerUnit(),'A36D') == 0 then
-			call XHI()
-		endif
-	endif
-	return false
-endfunction
-// 幻影冲锋
-function XLI takes nothing returns boolean
-	local unit u
-	if IsUnitIllusion(GetTriggerUnit()) then
-		set u = Player__Hero[GetPlayerId(GetOwningPlayer(GetTriggerUnit()))]
-		if GetUnitAbilityLevel(u,'A46E')> 0 and GetUnitTypeId(GetTriggerUnit()) == GetUnitTypeId(u) then
-			call UnitAddPermanentAbility(GetTriggerUnit(),'A46D')
-			call SetUnitAbilityLevel(GetTriggerUnit(),'A46D', GetUnitAbilityLevel(u,'A46E'))
-		endif
-	endif
-	set u = null
-	return false
-endfunction
+
 function POE takes nothing returns boolean
 	call UnitAddPermanentAbility(GetTriggerUnit(),'A46D')
 	call SetUnitAbilityLevel(GetTriggerUnit(),'A46D', GetUnitAbilityLevel(GetTriggerUnit(),'A46E'))
@@ -46571,7 +46354,7 @@ function XPI takes nothing returns nothing
 	local real nx
 	local real ny
 	local real I3X
-	local real EOX
+	local real distance
 	local integer c = LoadInteger(HY, h, 0)+ 1
 	local real N3X
 	local unit XSI
@@ -46680,7 +46463,7 @@ function EJE takes nothing returns nothing
 	local real y = GetSpellTargetY()
 	local unit d = CreateUnit(GetOwningPlayer(u),'e00E', GetUnitX(u), GetUnitY(u), 0)
 	local real I3X
-	local real EOX
+	local real distance
 	local real nx
 	local real ny
 	call UnitDispelBuffs(u, false)
@@ -46705,9 +46488,9 @@ function EJE takes nothing returns nothing
 		set d = CreateUnit(GetOwningPlayer(u2),'h07W', GetUnitX(u2), GetUnitY(u2), GetUnitFacing(u2))
 		call SaveUnitHandle(HY, h, 300 + i, d)
 		set I3X = GetRandomReal(0, 360)* bj_DEGTORAD
-		set EOX = GetRandomReal( 10, 325)
-		set nx = CoordinateX50(x + EOX * Cos(I3X))
-		set ny = CoordinateY50(y + EOX * Sin(I3X))
+		set distance = GetRandomReal( 10, 325)
+		set nx = CoordinateX50(x + distance * Cos(I3X))
+		set ny = CoordinateY50(y + distance * Sin(I3X))
 		call SaveReal(HY, h, 100 * i + 0, nx)
 		call SaveReal(HY, h, 100 * i + 1, ny)
 		call SaveReal(HY, h, 100 * i + 2, GetDistanceBetween(GetUnitX(d), GetUnitY(d), nx, ny)/ .4 * .02)
@@ -46725,15 +46508,13 @@ function EJE takes nothing returns nothing
 	set t = null
 	set u = null
 endfunction
-// 注册幻影长矛手触发器
-function RegisterPhantomLancerTrigger takes nothing returns nothing
-	local trigger t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER)
-	call TriggerAddCondition(t, Condition(function XKI))
-	set t = CreateTrigger()
-	call YDWETriggerRegisterEnterRectSimpleNull(t, GetWorldBounds())
-	call TriggerAddCondition(t, Condition(function XLI))
-	set t = null
+function EKE takes nothing returns nothing
+	local unit u = GetTriggerUnit()
+	local unit dummyCaster = CreateUnit(GetOwningPlayer(u),'e00E', GetUnitX(u), GetUnitY(u), 0)
+	call UnitAddPermanentAbility(dummyCaster,'A0DC')
+	call IssueTargetOrderById(dummyCaster, 852274, u)
+	set u = null
+	set dummyCaster = null
 endfunction
 function XUI takes nothing returns boolean
 	if GetUnitTypeId(GetFilterUnit()) == HeroListTypeId[21]and GetOwningPlayer(GetFilterUnit()) == GetOwningPlayer(GetTriggerUnit()) and IsUnitIllusion(GetFilterUnit()) == false then
@@ -55416,7 +55197,7 @@ function LLI takes unit u returns nothing
 			if IssueTargetOrderById(LoadUnitHandle(OtherHashTable2,'CHRN', 0), 852095, u) == false then
 				call UnitShareVision(u, GetOwningPlayer(LoadUnitHandle(OtherHashTable2,'CHRN', 0)), true)
 				if IssueTargetOrderById(LoadUnitHandle(OtherHashTable2,'CHRN', 0), 852095, u) == false then
-					if RCX(u) == false and RDX(u) == false then
+					if IsUnitCyclone(u) == false and IsUnitSleeping(u) == false then
 						call PauseUnit(u, true)
 					endif
 				endif
@@ -55674,7 +55455,7 @@ function MXI takes unit whichUnit, unit targetUnit, integer MOI returns nothing
 	local real MRI = RMaxBJ(RMinBJ(GetUnitState(targetUnit, UNIT_STATE_MANA), MOI), 0)
 	local real MII = MRI * .5
 	local real MAI = 0
-	if IsUnitMagicImmune(targetUnit) == false and MRI > 0 and RCX(targetUnit) == false then
+	if IsUnitMagicImmune(targetUnit) == false and MRI > 0 and IsUnitCyclone(targetUnit) == false then
 		if IsUnitIllusion(targetUnit) == false then
 			if GetUnitState(targetUnit, UNIT_STATE_MANA)> MRI then
 				set MAI = MAI + MRI
@@ -68585,7 +68366,7 @@ function DRA takes nothing returns boolean
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH or(GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT and GetSpellAbilityId()!='A1Z2' and count > 0) or count > 100  or C6X(whichUnit) then
 		call KillTreeByCircle(x, y, 300)
 		call SetUnitVertexColorEx(whichUnit,-1,-1,-1, 255)
-		if  Rubick_AbilityFilter(whichUnit , 'A1RJ') then
+		if Rubick_AbilityFilter(whichUnit , 'A1RJ') then
 			call SetPlayerAbilityAvailableEx(GetOwningPlayer(whichUnit),'A1RJ', true)
 		endif
 		call SetPlayerAbilityAvailableEx(GetOwningPlayer(whichUnit),'A20N', false)
@@ -69055,7 +68836,7 @@ function DTA takes nothing returns nothing
 		endif
 	endif 
 	set DSR = GetHandleId(u)
-	if UnitIsDead(u) or C5X(u) or IsUnitSilence(u) or IsUnitPaused(u) or RCX(u) or active or UYX > 239 or LoadBoolean(ObjectHashTable, DSR,'A1YY') then
+	if UnitIsDead(u) or C5X(u) or IsUnitSilence(u) or IsUnitPaused(u) or IsUnitCyclone(u) or active or UYX > 239 or LoadBoolean(ObjectHashTable, DSR,'A1YY') then
 		call DLA(u, t, WFV)
 		set t = null
 		set u = null
@@ -70177,7 +69958,7 @@ function F1A takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local unit whichUnit = LoadUnitHandle(HY, h, 2)
-	if R5X(whichUnit) == false then
+	if IsUnitHex(whichUnit) == false then
 		call FlushChildHashtable(HY, h)
 		call DestroyTrigger(t)
 		call UnitRemoveAbility(whichUnit,'A237')
@@ -70191,7 +69972,7 @@ endfunction
 function F2A takes unit whichUnit returns nothing
 	local trigger t
 	local integer h
-	if R5X(whichUnit) == false then
+	if IsUnitHex(whichUnit) == false then
 		call UnitRemoveAbility(whichUnit,'A237')
 		call UnitAddAbility(whichUnit,'A22B')
 		call UnitRemoveAbility(whichUnit,'A22B')
@@ -74928,9 +74709,9 @@ function addXL takes nothing returns nothing
 	local unit u = U2
 	call UnitAddAbility(u,'A3UF')
 	call UnitMakeAbilityPermanent(u, true,'A3UF')
-	if HaveSavedHandle(PassiveAbilityCooldown, GetHandleId(u),'PACD') == false then
-		call PasSkillCoolDownTrigger(u)
-	endif
+	//if HaveSavedHandle(PassiveAbilityCooldown, GetHandleId(u),'PACD') == false then
+	//	call PasSkillCoolDownTrigger(u)
+	//endif
 	if not HaveSavedHandle(HY, GetHandleId(u),'A3UF') then
 		call XJVXX()
 	endif
@@ -76624,10 +76405,10 @@ function Q5A takes unit u, unit tar, real d returns nothing
 	set t = null
 endfunction
 function CustomUnitBountyAllyFilter takes nothing returns boolean
-	return(IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and IsUnitAlly(GetFilterUnit(), GetOwningPlayer(SB)) and UnitIsDead(GetFilterUnit()) == false and R5X(GetFilterUnit()) == false)!= null
+	return(IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and IsUnitAlly(GetFilterUnit(), GetOwningPlayer(SB)) and UnitIsDead(GetFilterUnit()) == false and IsUnitHex(GetFilterUnit()) == false)!= null
 endfunction
 function CustomUnitBountyEnemyFilter takes nothing returns boolean
-	return(IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(SB)) and UnitIsDead(GetFilterUnit()) == false and R5X(GetFilterUnit()) == false)!= null
+	return(IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(SB)) and UnitIsDead(GetFilterUnit()) == false and IsUnitHex(GetFilterUnit()) == false)!= null
 endfunction
 function Q6A takes unit killingUnit, unit Q7A returns nothing
 	local integer i = 0
@@ -77627,21 +77408,21 @@ function U3A takes nothing returns nothing
 	set t = null
 endfunction
 
-function U4A takes nothing returns nothing
-	local timer t = GetExpiredTimer()
-	local integer h = GetHandleId(t)
-	local unit u = LoadUnitHandle(HY, h, 0)
-	call FixUnitSkillsBug(u)
-	call FlushChildHashtable(HY, h)
-	call DestroyTimer(t)
-	set t = null
-	set u = null
-endfunction
-
-function WaitToFixUnitSkills takes unit whichUnit, real timeout returns nothing
-	local integer h = TimerStartSingle(timeout, function U4A)
-	call SaveUnitHandle(HY, h, 0, whichUnit)
-endfunction
+//function U4A takes nothing returns nothing
+//	local timer t = GetExpiredTimer()
+//	local integer h = GetHandleId(t)
+//	local unit u = LoadUnitHandle(HY, h, 0)
+//	call FixUnitSkillsBug(u)
+//	call FlushChildHashtable(HY, h)
+//	call DestroyTimer(t)
+//	set t = null
+//	set u = null
+//endfunction
+//
+//function WaitToFixUnitSkills takes unit whichUnit, real timeout returns nothing
+//	local integer h = TimerStartSingle(timeout, function U4A)
+//	call SaveUnitHandle(HY, h, 0, whichUnit)
+//endfunction
 
 // 英雄单位死亡
 function HeroReincarnationEvent takes nothing returns boolean
@@ -77652,9 +77433,10 @@ function HeroReincarnationEvent takes nothing returns boolean
 	local real duration = .0
 	local integer reincarnationLevel = GetUnitAbilityLevel(whichUnit,'A01Y')+ GetUnitAbilityLevel(whichUnit,'A1AZ')
 	
+	call DisableUnitSpecialPassiveAbility(whichUnit)
 	// debug call SingleDebug("英雄单位死亡 包括重生U6A" + GetUnitName( whichUnit ) + YDWEId2S(GetUnitTypeId( whichUnit )) )
 	// 清除一些buff
-	call GBX(whichUnit)
+	call GBX(whichUnit) // 死亡驱散
 	// 不朽盾(AIrc) 骷髅王冥魂(A3DK) 重生和A杖(A01Y,A1AZ) 真实视野(A14K)?
 	if reincarnationLevel > 0 or GetUnitAbilityLevel(whichUnit,'AIrc') == 1 or GetUnitAbilityLevel(whichUnit,'A3DK')> 0 or GetUnitAbilityLevel(whichUnit,'A46S') == 1 or GetUnitAbilityLevel(whichUnit,'A14K') == 1 then
 		if GetUnitAbilityLevel(whichUnit,'AIrc') == 1 then
@@ -77666,7 +77448,7 @@ function HeroReincarnationEvent takes nothing returns boolean
 			set duration = .01
 		endif
 		// 等待一段时间后修正单位的技能
-		call WaitToFixUnitSkills(whichUnit, duration)
+		//call WaitToFixUnitSkills(whichUnit, duration)
 		set x = GetUnitX(whichUnit)
 		set y = GetUnitY(whichUnit)
 		// 视野马甲修正
@@ -78103,7 +77885,7 @@ function UUA takes unit u, integer S6V, eventid id returns nothing
 				call UnitRemoveAbility(u,'A40H')
 			endif
 		endif
-		if S6V ==852129 and(C5X(u) or RCX(u)) then
+		if S6V ==852129 and(C5X(u) or IsUnitCyclone(u)) then
 			if GetUnitAbilityLevel(u,'A0NS')> 0 or GetUnitAbilityLevel(u,'A1DA')> 0 then
 				if YDWEGetUnitAbilityState(u, 'A0NS', 1) == 0. and YDWEGetUnitAbilityState(u, 'A1DA', 1) == 0. then
 					call UnitSpellEffect__BorrowedTime(u, GetHandleId(u))
@@ -85446,6 +85228,7 @@ function main takes nothing returns nothing
 	call MHBuff_SetOverlay(BUFF_TEMPLATE_BNSO, true)
 	
 	call ExecuteFunc("AbilityCustomOrderId_Init")
+	call ExecuteFunc("SpecialPassiveAbility_Init")
 
 	set LocalPlayer   = GetLocalPlayer()
 	set LocalPlayerId = GetPlayerId(LocalPlayer)

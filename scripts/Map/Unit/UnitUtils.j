@@ -4,11 +4,21 @@ library UnitUtils
         return UnitAddAbility(whichUnit, ab) and UnitMakeAbilityPermanent(whichUnit, true, ab)
     endfunction
 
-    function UnitAddPermanentAbilitySetLevel takes unit u, integer id, integer lv returns nothing
-        if GetUnitAbilityLevel(u, id) == 0 then
-            call UnitAddPermanentAbility(u, id)
+    function UnitAddPermanentAbilitySetLevel takes unit whichUnit, integer id, integer level returns nothing
+        if GetUnitAbilityLevel(whichUnit, id) == 0 then
+            call UnitAddPermanentAbility(whichUnit, id)
         endif
-        call SetUnitAbilityLevel(u, id, lv)
+        call SetUnitAbilityLevel(whichUnit, id, level)
+    endfunction
+
+    function StartUnitAbilityCooldown takes unit whichUnit, integer abilId returns boolean
+        local integer level = GetUnitAbilityLevel(whichUnit, abilId)
+        local real cooldown = MHAbility_GetCustomLevelDataReal(whichUnit, abilId, level, ABILITY_LEVEL_DEF_DATA_COOLDOWN)
+        if level == 0 then
+            return false
+        endif
+        call MHAbility_SetCooldown(whichUnit, abilId, cooldown)
+        return true 
     endfunction
 
     function GetUnitCollisionSize takes unit whichUnit returns real
