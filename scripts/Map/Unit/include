@@ -7,3 +7,4 @@
 #include "UnitWeapon.j"
 #include "UnitMoprh.j"
 #include "UnitIllusion.j"
+#include "UnitRemove.j"

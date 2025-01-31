@@ -2961,8 +2961,8 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A15V', 0, "OME")
 	call SaveStr(ObjectHashTable,'QM03', 0, "OPE")
 	call SaveStr(ObjectHashTable,'A0LK', 0, "TimeWalkOnSpellEffect")
-	call SaveStr(ObjectHashTable,'A0J1', 0, "OSE")
-	call SaveStr(ObjectHashTable,'A1D7', 0, "OSE")
+	call SaveStr(ObjectHashTable,'A0J1', 0, "ChronosphereOnSpellEffect")
+	call SaveStr(ObjectHashTable,'A1D7', 0, "ChronosphereOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A333', 0, "OTE")
 	call SaveStr(ObjectHashTable,'Z610', 0, "DeafeningBlastOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A3K5', 0, "DeafeningBlastOnSpellEffect")
@@ -3100,7 +3100,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A00P', 0, "B3E")
 	call SaveStr(ObjectHashTable,'A010', 0, "B4E")
 	call SaveStr(ObjectHashTable,'A1RJ', 0, "B6E")
-	call SaveStr(ObjectHashTable,'A461', 0, "B7E")
+	call SaveStr(ObjectHashTable,'A461', 0, "SwoopDownOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A1RK', 0, "CNE")
 	call SaveStr(ObjectHashTable,'A43H', 0, "CNE")
 	call SaveStr(ObjectHashTable,'A1YX', 0, "CFE")
@@ -3309,7 +3309,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A2TK', 12, "H7E") //血精石
 	call SaveStr(ObjectHashTable,'AItb', 12, "H8E")
 	call SaveStr(ObjectHashTable,'A1FD', 12, "H9E")
-	call SaveStr(ObjectHashTable,'A0JZ', 12, "JVE")
+	call SaveStr(ObjectHashTable,'A0JZ', 12, "SpeedBurstOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A2K7', 12, "AbyssalBlade_Overwhelm") // 深渊之刃
 	
 
@@ -5234,23 +5234,6 @@ function EUX takes unit u, integer ETX, integer i, real SYV returns nothing
 	call TimerStart(t, SYV, false, function ESX)
 	set t = null
 endfunction
-function EWX takes nothing returns nothing
-	local timer t = GetExpiredTimer()
-	local integer h = GetHandleId(t)
-	call DestroyEffect(LoadEffectHandle(HY, h, 1))
-	call FlushChildHashtable(HY, h)
-	call DestroyTimer(t)
-	set t = null
-endfunction
-function EYX takes string EZX, unit u, string E_X, real SYV returns nothing
-	local timer t = CreateTimer()
-	local integer h = GetHandleId(t)
-	local effect e = AddSpecialEffectTarget(EZX, u, E_X)
-	call TimerStart(t, SYV, false, function EWX)
-	call SaveEffectHandle(HY, h, 1, e)
-	set e = null
-	set t = null
-endfunction
 function E0X takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer h = GetHandleId(t)
@@ -5689,7 +5672,7 @@ function OSX takes unit u returns boolean
 	return OQX(GetUnitTypeId(u))
 endfunction
 // 是信使单位
-function IsUnitMessenger takes unit u returns boolean
+function IsUnitCourier takes unit u returns boolean
 	return OPX(u) or OSX(u)
 endfunction
 function IsTreeDestructable takes destructable d returns boolean
@@ -5705,11 +5688,11 @@ endfunction
 function OZX takes unit O_X returns boolean
 	return GetUnitAbilityLevel(O_X,'A04R')> 0 and XFX(GetOwningPlayer(O_X))
 endfunction
-function O0X takes unit u returns boolean
+function IsUnitModelFlying takes unit u returns boolean
 	local integer i = GetUnitTypeId(u)
 	return i =='H00F' or i =='H00E' or i =='H00G' or i =='O017' or i =='N0MA' or i =='N0MB' or i =='N0MC' or i =='N0MO'
 endfunction
-function IsEffectiveDamage takes real d returns boolean
+function IsDamageWithinThreshold takes real d returns boolean
 	return 2 < d and d < 3000
 endfunction
 function GetHostPlayer takes nothing returns nothing
@@ -8151,12 +8134,12 @@ function impale_fly takes nothing returns boolean
 	local unit target = LoadUnitHandle(HY, h, 73)
 	local integer c = GetTriggerEvalCount(t)
 	if c < 26 then
-		if O0X(target) == false then
+		if IsUnitModelFlying(target) == false then
 			call SetUnitFlyHeight(target, 375 - (c -13)*(c -13) , 0)
 		endif
 	else
 		call PauseUnit(target, false)
-		if O0X(target) == false then
+		if IsUnitModelFlying(target) == false then
 			call SetUnitFlyHeight(target, GetUnitDefaultFlyHeight(target), 0)
 		endif
 		call UnitDamageTargetEx((LoadUnitHandle(HY, h, 2)), target, 1,(LoadReal(HY, h, 20)))
@@ -8172,7 +8155,7 @@ function OnImpaleHitUnit takes unit target, unit u, real dur, real d, real r ret
 	local trigger t = CreateTrigger()
 	local integer h = GetHandleId(t)
 	call PauseUnit(target, true)
-	if O0X(target) == false then
+	if IsUnitModelFlying(target) == false then
 		call UnitAddAbility(target,'Amrf')
 		call UnitRemoveAbility(target,'Amrf')
 	endif
@@ -13594,7 +13577,7 @@ endfunction
 function ZRX takes unit u returns nothing
 	local player p = GetOwningPlayer(u)
 	local integer pid = GetPlayerId(p)
-	if IsUnitMessenger(u) and IsUnitIllusion(u) == false then
+	if IsUnitCourier(u) and IsUnitIllusion(u) == false then
 		call DisplayTimedTextToAllPlayer(AllPlayerForce, 10., PlayersColoerText[pid] + PlayersName[pid] + "|r的信使被 |c00ff0000永久地|r 杀死了.它不会再复活.")
 		call PingMinimapEx(GetUnitX(u), GetUnitY(u), 6, 255, 0, 0, false)
 	endif
@@ -14495,7 +14478,7 @@ function ECO takes player whichPlayer, unit whichUnit, integer GTX returns boole
 endfunction
 function EDO takes nothing returns boolean
 	if IsUnitAlly(GetFilterUnit(), GetOwningPlayer(U2)) and GetUnitAbilityLevel(GetFilterUnit(),'Aloc') == 0 and UnitInventorySize(GetFilterUnit())> 1 and GetUnitTypeId(GetFilterUnit())!='ncop' and GetPlayerAlliance(GetOwningPlayer(GetFilterUnit()), GetOwningPlayer(U2), ALLIANCE_SHARED_CONTROL) and GetOwningPlayer(U2)!= GetOwningPlayer(GetFilterUnit()) and IsUnitIllusion(GetFilterUnit()) == false and UnitIsDead(GetFilterUnit()) == false then
-		if IsUnitMessenger(GetFilterUnit()) then
+		if IsUnitCourier(GetFilterUnit()) then
 			set Q2 = Q2 + 1
 			set MissileHitTargetUnit = GetFilterUnit()
 		endif
@@ -14701,7 +14684,7 @@ function E4O takes unit u returns nothing
 	local item it
 	local integer pid = GetPlayerId(GetOwningPlayer(u))
 	local region r = CreateRegion()
-	local boolean b = IsUnitMessenger(u) or GetUnitTypeId(u)=='ncop'
+	local boolean b = IsUnitCourier(u) or GetUnitTypeId(u)=='ncop'
 	if IsSentinelPlayer(GetOwningPlayer(u)) then
 		call RegionAddRect(r, gg_rct_SentinelFountainOfLifeRange)
 	else
@@ -15317,8 +15300,8 @@ function XLO takes unit trigUnit, item C1X returns boolean
 		call SetItemPlayer(Z2, E3, false)
 		call SetItemUserData(Z2, 1)
 	endif
-	if (GTX == AIV) and(IsUnitMessenger(u) or IsBearUnit(u)) then
-		if IsUnitMessenger(u) then
+	if (GTX == AIV) and(IsUnitCourier(u) or IsBearUnit(u)) then
+		if IsUnitCourier(u) then
 			call InterfaceErrorForPlayer(GetOwningPlayer(u), GetObjectName('n02K'))
 		endif
 		set E3 = GetItemPlayer(C1X)
@@ -16622,7 +16605,7 @@ function RSO takes nothing returns nothing
 	endif
 endfunction
 function RTO takes nothing returns boolean
-	if GetItemType(GetManipulatedItem()) == ITEM_TYPE_PERMANENT and RQO(GetItemIndex(GetManipulatedItem())) and IsUnitMessenger(GetTriggerUnit()) then
+	if GetItemType(GetManipulatedItem()) == ITEM_TYPE_PERMANENT and RQO(GetItemIndex(GetManipulatedItem())) and IsUnitCourier(GetTriggerUnit()) then
 		call RSO()
 	endif
 	return false
@@ -16785,7 +16768,7 @@ function R8O takes nothing returns boolean
 	return false
 endfunction
 function R9O takes nothing returns boolean
-	return IsUnitMessenger(GetFilterUnit())
+	return IsUnitCourier(GetFilterUnit())
 endfunction
 
 function G7E takes nothing returns nothing
@@ -17453,7 +17436,7 @@ function AIO takes nothing returns boolean
 		call FlushChildHashtable(HY, h)
 		call DestroyTrigger(t)
 	elseif GetTriggerEventId()!= EVENT_UNIT_DROP_ITEM then
-		if LoadInteger(HY, GetHandleId(trigUnit), 4310)!= 1 and IsUnitMessenger(trigUnit) == false and RFX(trigUnit) == false then
+		if LoadInteger(HY, GetHandleId(trigUnit), 4310)!= 1 and IsUnitCourier(trigUnit) == false and RFX(trigUnit) == false then
 			call SetWidgetLife(trigUnit, RMaxBJ(GetWidgetLife(trigUnit)-40., 1))
 		endif
 	endif
@@ -18780,7 +18763,7 @@ function NQO takes nothing returns boolean
 		set DVV[GetPlayerId(GetOwningPlayer(trigUnit))]= GetItemY(C1X)
 	endif
 	call RCO(trigUnit, C1X)
-	if (GetItemTypeId(C1X) == XOV[NBV]or GetItemTypeId(C1X) == XOV[NCV]) and IsUnitMessenger(trigUnit) then
+	if (GetItemTypeId(C1X) == XOV[NBV]or GetItemTypeId(C1X) == XOV[NCV]) and IsUnitCourier(trigUnit) then
 		call UnitRemoveItem(trigUnit, C1X)
 	elseif (GetItemTypeId(C1X)) == XOV[Item_MagicWand]and IsUnitType(trigUnit, UNIT_TYPE_HERO) then
 		// 如果拿了魔杖 还是英雄 设置
@@ -19485,7 +19468,7 @@ function boots_of_travel_recipe takes nothing returns nothing
 	set utx = null
 endfunction
 function town_portal takes nothing returns nothing
-	if GetSpellAbilityId()=='A1R5' and IsUnitMessenger(GetTriggerUnit()) == false then
+	if GetSpellAbilityId()=='A1R5' and IsUnitCourier(GetTriggerUnit()) == false then
 		call scroll_of_town_portal()
 	endif
 	if GetSpellAbilityId()=='A231' or GetSpellAbilityId()=='A3AG' then
@@ -19633,7 +19616,7 @@ function BKO takes nothing returns nothing
 	// 驱散缴械
 	call UnitDispelDisarmBuff(whichUnit)
 	// 小鸡BKB 3倍缩放
-	if IsUnitMessenger(whichUnit) then
+	if IsUnitCourier(whichUnit) then
 		call AddUnitModelScalePercentByDuration(whichUnit, duration, 2, 'A0S2', HTKEY_SCALE_BLACK_KING_BAR)
 	else
 		call AddUnitModelScalePercentByDuration(whichUnit, duration, 0.4, 'A0S2', HTKEY_SCALE_BLACK_KING_BAR)
@@ -20931,7 +20914,7 @@ function DAO takes nothing returns nothing
 	local unit whichUnit = GetTriggerUnit()
 	local trigger t
 	local integer h
-	if IsUnitMessenger(whichUnit) == false then
+	if IsUnitCourier(whichUnit) == false then
 		set t = CreateTrigger()
 		set h = GetHandleId(t)
 		call UnitAddAbilityToTimed(whichUnit,'Aetl', 1, 4, 0)
@@ -21913,7 +21896,7 @@ function FLO takes unit u returns nothing
 	call TimerStart(t, 4., false, function FKO)
 	set t = null
 endfunction
-function JVE takes nothing returns nothing
+function SpeedBurstOnSpellEffect takes nothing returns nothing
 	call FLO(GetTriggerUnit())
 endfunction
 function AbyssalBlade_Overwhelm takes nothing returns nothing
@@ -23040,12 +23023,12 @@ function CreateSentinelAncientCreeps takes real x, real y returns nothing
 	endif
 endfunction
 function H9O takes nothing returns nothing
-	if GetUnitAbilityLevel(GetEnumUnit(),'A0P4')!= 0 or GetUnitTypeId(GetEnumUnit())=='o003' or GetUnitTypeId(GetEnumUnit())=='o01X' or UnitIsDead(GetEnumUnit()) or IsUnitMessenger(GetEnumUnit()) then
+	if GetUnitAbilityLevel(GetEnumUnit(),'A0P4')!= 0 or GetUnitTypeId(GetEnumUnit())=='o003' or GetUnitTypeId(GetEnumUnit())=='o01X' or UnitIsDead(GetEnumUnit()) or IsUnitCourier(GetEnumUnit()) then
 		call GroupRemoveUnit(LW, GetEnumUnit())
 	endif
 endfunction
 function JVO takes nothing returns boolean
-	return(not(GetUnitAbilityLevel(GetFilterUnit(),'A0P4')!= 0 or GetUnitTypeId(GetFilterUnit())=='o003' or GetUnitTypeId(GetFilterUnit())=='o01X' or UnitIsDead(GetFilterUnit()) or IsUnitMessenger(GetFilterUnit())))
+	return(not(GetUnitAbilityLevel(GetFilterUnit(),'A0P4')!= 0 or GetUnitTypeId(GetFilterUnit())=='o003' or GetUnitTypeId(GetFilterUnit())=='o01X' or UnitIsDead(GetFilterUnit()) or IsUnitCourier(GetFilterUnit())))
 endfunction
 function GetTempGroup takes nothing returns group
 	return TempGroup
@@ -23058,7 +23041,7 @@ function CheckRectCanRefreshCreeps takes rect r returns boolean
 		set firstUnit = FirstOfGroup(GetTempGroup())
 		exitwhen firstUnit == null
 		call GroupRemoveUnit(GetTempGroup(), firstUnit)
-		if not (GetUnitAbilityLevel(firstUnit,'A0P4')!= 0 or GetUnitTypeId(firstUnit) == 'o003' or GetUnitTypeId(firstUnit) == 'o01X' or UnitIsDead(firstUnit) or IsUnitMessenger(firstUnit)) then
+		if not (GetUnitAbilityLevel(firstUnit,'A0P4')!= 0 or GetUnitTypeId(firstUnit) == 'o003' or GetUnitTypeId(firstUnit) == 'o01X' or UnitIsDead(firstUnit) or IsUnitCourier(firstUnit)) then
 			set firstUnit = null
 			return false
 		endif
@@ -25210,13 +25193,13 @@ endfunction
 //endfunction
 
 function MJO takes nothing returns nothing
-	if IsUnitMessenger(GetEnumUnit()) and IsUnitAlly(GetEnumUnit(), SentinelPlayers[0]) == false and GetWidgetLife(GetEnumUnit())> .5 then
+	if IsUnitCourier(GetEnumUnit()) and IsUnitAlly(GetEnumUnit(), SentinelPlayers[0]) == false and GetWidgetLife(GetEnumUnit())> .5 then
 		call UnitRemoveAbility(GetEnumUnit(),'B08H')
 		call UnitDamageTargetEx(SentinelFountainOfLifeUnit, GetEnumUnit(), 2, 500)
 	endif
 endfunction
 function MKO takes nothing returns nothing
-	if IsUnitMessenger(GetEnumUnit()) and IsUnitAlly(GetEnumUnit(), ScourgePlayers[0]) == false and GetWidgetLife(GetEnumUnit())> .5 then
+	if IsUnitCourier(GetEnumUnit()) and IsUnitAlly(GetEnumUnit(), ScourgePlayers[0]) == false and GetWidgetLife(GetEnumUnit())> .5 then
 		call UnitRemoveAbility(GetEnumUnit(),'B08H')
 		call UnitDamageTargetEx(ScourgeFountainOfLifeUnit, GetEnumUnit(), 2, 500)
 	endif
@@ -29885,7 +29868,7 @@ function ELR takes nothing returns boolean
 	return false
 endfunction
 function EMR takes nothing returns boolean
-	return IsUnitMessenger(GetFilterUnit()) and GetOwningPlayer(GetFilterUnit()) == GetTriggerPlayer()
+	return IsUnitCourier(GetFilterUnit()) and GetOwningPlayer(GetFilterUnit()) == GetTriggerPlayer()
 endfunction
 function EPR takes nothing returns nothing
 	local group g = AllocationGroup(108)
@@ -30258,7 +30241,7 @@ function XIR takes unit u, player p returns nothing
 	endif
 	call SetUnitX(u, x1)
 	call SetUnitY(u, y1)
-	if IsUnitMessenger(u) then
+	if IsUnitCourier(u) then
 		call IssueImmediateOrderById(u, 852246)
 	endif
 	if IsUnitType(u, UNIT_TYPE_HERO) then
@@ -30283,7 +30266,7 @@ function XIR takes unit u, player p returns nothing
 	set C1X = null
 endfunction
 function XAR takes nothing returns boolean
-	if IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) or IsUnitMessenger(GetFilterUnit()) then
+	if IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) or IsUnitCourier(GetFilterUnit()) then
 		call XIR(GetFilterUnit(), WM)
 	elseif GetUnitTypeId(GetFilterUnit())=='ncop' then
 		call IssueImmediateOrderById(GetFilterUnit(), 852246)
@@ -35447,129 +35430,6 @@ function DRR takes nothing returns boolean
 	endif
 	return false
 endfunction
-function DIR takes unit u, boolean DAR returns nothing
-	local unit d = CreateUnit(GetOwningPlayer(u),'e00E', GetUnitX(u), GetUnitY(u), 0)
-	local integer T0V ='A462'
-	local integer level = 1
-	if DAR then
-		set level = 2
-	endif
-	call UnitAddAbility(d, T0V)
-	call SetUnitAbilityLevel(d, T0V, level)
-	call IssueTargetOrderById(d, 852095, u)
-	call EYX("Abilities\\Spells\\Orc\\Ensnare\\ensnare_AirTarget.mdl", u, "origin", .5)
-	set d = null
-endfunction
-function DNR takes nothing returns nothing
-	local integer h = GetHandleId(GetExpiredTimer())
-	local unit whichUnit =(LoadUnitHandle(HY, h, 290))
-	local unit trigUnit =(LoadUnitHandle(HY, h, 14))
-	local real sx =(LoadReal(HY, h, 284))
-	local real sy =(LoadReal(HY, h, 285))
-	local real tx =(LoadReal(HY, h, 286))
-	local real ty =(LoadReal(HY, h, 287))
-	local real Bx =(LoadReal(HY, h, 288))
-	local real By =(LoadReal(HY, h, 289))
-	local real a =(LoadReal(HY, h, 137))
-	local real b = 1 -a
-	local boolean DBR =(LoadBoolean(HY, h, 291))
-	local real DCR = RMaxBJ(GetDistanceBetween(sx, sy, tx, ty)/  1300, .2)
-	local boolean bb = LoadBoolean(HY, h, 0)
-	local group g = null
-	local real x = CoordinateX50(sx * a * a + Bx * 2 * a * b + tx * b * b)
-	local real y = CoordinateY50(sy * a * a + By * 2 * a * b + ty * b * b)
-	local unit u
-	local real ILX
-	call SetUnitFacing(whichUnit, AngleBetweenXY(GetUnitX(whichUnit), GetUnitY(whichUnit), x, y))
-	call SetUnitX(whichUnit, x)
-	call SetUnitY(whichUnit, y)
-	if GetDistanceBetween(x, y, tx, ty)< 50 and bb == false then
-		call SaveBoolean(HY, h, 0, true)
-		set g = AllocationGroup(121)
-		set QN = whichUnit
-		set SN = GetUnitAbilityLevel(whichUnit,'A461')
-		set MN = null
-		set LN = 999999
-		call GroupEnumUnitsInRange(g, x, y, 300, Condition(function DRR))
-		if MN != null then
-			call SaveBoolean(HY, h, 1, true)
-			call SaveUnitHandle(HY, h, 1, MN)
-		endif
-		loop
-			set u = FirstOfGroup(g)
-		exitwhen u == null
-			call UnitDamageTargetEx(whichUnit, u, 1, SN * 50 + 50)
-			call DIR(u, false)
-			call GroupRemoveUnit(g, u)
-		endloop
-		call DeallocateGroup(g)
-		set g = null
-	endif
-	if LoadBoolean(HY, h, 1) then
-		call SetUnitPosition(LoadUnitHandle(HY, h, 1), x, y)
-	endif
-	if (DBR) then
-		call SaveReal(HY, h, 137,((a -0.02 / DCR)* 1.))
-		call SetUnitFlyHeight(whichUnit, GetUnitFlyHeight(whichUnit)+ LoadReal(HY, h, 291), 0)
-	else
-		call SaveReal(HY, h, 137,((a + .02 / DCR)* 1.))
-		call SetUnitFlyHeight(whichUnit, GetUnitFlyHeight(whichUnit)-LoadReal(HY, h, 291), 0)
-	endif
-	if (a < 0 and DBR) then
-		call SaveBoolean(HY, h, 291,(false))
-		call SaveReal(HY, h, 288,((sx + 300 * Cos(Atan2(ty -sy, tx -sx)+(LoadReal(HY, h, 292))))* 1.))
-		call SaveReal(HY, h, 289,((sy + 300 * Sin(Atan2(ty -sy, tx -sx)+(LoadReal(HY, h, 292))))* 1.))
-	endif
-	if (a > 1 and DBR == false) then
-		if LoadBoolean(HY, h, 1) then
-			call UnitDamageTargetEx(whichUnit, LoadUnitHandle(HY, h, 1), 1, 50 + 50 * GetUnitAbilityLevel(whichUnit,'A461'))
-			call DIR(LoadUnitHandle(HY, h, 1), true)
-			call EYX("Abilities\\Spells\\Orc\\Ensnare\\ensnare_AirTarget.mdl", LoadUnitHandle(HY, h, 1), "origin", 1)
-			call KillTreeByCircle(GetUnitX(LoadUnitHandle(HY, h, 1)), GetUnitY(LoadUnitHandle(HY, h, 1)), 200)
-		endif
-		call SetUnitFlyHeight(whichUnit, LoadReal(HY, h, 290), 0)
-		call KillTreeByCircle(GetUnitX(whichUnit), GetUnitY(whichUnit), 200)
-		call PauseTimer(GetExpiredTimer())
-		call FlushChildHashtable(HY, h)
-		call DestroyTimer(GetExpiredTimer())
-	endif
-	set whichUnit = null
-	set trigUnit = null
-endfunction
-function B7E takes nothing returns nothing
-	local unit whichUnit = GetTriggerUnit()
-	local real sx = GetUnitX(whichUnit)
-	local real sy = GetUnitY(whichUnit)
-	local real tx = CoordinateX50(GetSpellTargetX())
-	local real ty = CoordinateY50(GetSpellTargetY())
-	local timer t = CreateTimer()
-	local integer h = GetHandleId(t)
-	local real a = AngleBetweenXY(sx, sy, tx, ty)* bj_DEGTORAD
-	if GetDistanceBetween(sx, sy, tx, ty)< 300 then
-		set tx = CoordinateX50(sx + 300 * Cos(a))
-		set ty = CoordinateY50(sy + 300 * Sin(a))
-	endif
-	call SaveUnitHandle(HY, h, 14,(whichUnit))
-	call SaveUnitHandle(HY, h, 290,(whichUnit))
-	call SaveReal(HY, h, 284,((sx)* 1.))
-	call SaveReal(HY, h, 285,((sy)* 1.))
-	call SaveReal(HY, h, 286,((tx)* 1.))
-	call SaveReal(HY, h, 287,((ty)* 1.))
-	call SaveReal(HY, h, 288,((sx + 300 * Cos(Atan2(ty -sy, tx -sx)-45))* 1.))
-	call SaveReal(HY, h, 289,((sy + 300 * Sin(Atan2(ty -sy, tx -sx)-45))* 1.))
-	call SaveReal(HY, h, 137, 1.)
-	call SaveReal(HY, h, 292, 45.)
-	call SaveBoolean(HY, h, 291, true)
-	call SaveReal(HY, h, 290, GetUnitFlyHeight(whichUnit))
-	call SaveReal(HY, h, 291, 1300/ GetDistanceBetween(sx, sy, tx, ty))
-	if O0X(whichUnit) == false then
-		call UnitAddPermanentAbility(whichUnit,'Amrf')
-		call UnitRemoveAbility(whichUnit,'Amrf')
-	endif
-	call TimerStart(t, .02, true, function DNR)
-	set whichUnit = null
-	set t = null
-endfunction
 function DDR takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
@@ -35584,7 +35444,7 @@ function DDR takes nothing returns boolean
 		if ModuloInteger(count, 5) == 0 then
 			call UnitDamageTargetEx(whichUnit, targetUnit, 1, 3 + 3 * level)
 		endif
-		if O0X(targetUnit) == false then
+		if IsUnitModelFlying(targetUnit) == false then
 			call SetUnitFlyHeight(targetUnit, 500 -DFR, 0)
 		endif
 	else
@@ -35592,7 +35452,7 @@ function DDR takes nothing returns boolean
 		call UnitAddPermanentAbility(dummyCaster,'A11L')
 		call SetUnitAbilityLevel(dummyCaster,'A11L', level)
 		call IssueTargetOrderById(dummyCaster, 852075, targetUnit)
-		if O0X(targetUnit) == false then
+		if IsUnitModelFlying(targetUnit) == false then
 			call SetUnitFlyHeight(targetUnit, GetUnitDefaultFlyHeight(targetUnit), 0)
 		endif
 		if IsGameEnd == false then
@@ -35616,7 +35476,7 @@ function DGR takes nothing returns nothing
 	local integer level = Q2
 	call PauseUnit(targetUnit, true)
 	call SetUnitPathing(targetUnit, false)
-	if O0X(targetUnit) == false then
+	if IsUnitModelFlying(targetUnit) == false then
 		call UnitAddPermanentAbility(targetUnit,'Amrf')
 		call UnitRemoveAbility(targetUnit,'Amrf')
 	endif
@@ -38368,7 +38228,7 @@ function ZRV takes nothing returns nothing
 	set u2 = null
 endfunction
 function JIR takes nothing returns nothing
-	if IsUnitMessenger(GetEnumUnit()) == false then
+	if IsUnitCourier(GetEnumUnit()) == false then
 		call UnitDamageTargetEx(HKV, GetEnumUnit(), 1, HJV)
 	endif
 endfunction
@@ -41651,7 +41511,7 @@ function FalsePromise_CallBack takes nothing returns boolean
 		endif
 		call FlushChildHashtable(HY, h)
 		call DestroyTrigger(t)
-	elseif GetTriggerEventId() == EVENT_UNIT_DAMAGED and IsEffectiveDamage(GetEventDamage()) then
+	elseif GetTriggerEventId() == EVENT_UNIT_DAMAGED and IsDamageWithinThreshold(GetEventDamage()) then
 		set damagedCount = damagedCount + 1
 		call SaveInteger(HY, h, 34,(damagedCount))
 		call SaveUnitHandle(HY, h,(22000+ damagedCount),(GetEventDamageSource()))
@@ -44258,7 +44118,7 @@ function V8E takes nothing returns nothing
 			call E1X("Abilities\\Spells\\NightElf\\Tranquility\\Tranquility.mdx", GetSpellTargetX(), GetSpellTargetY(), 2)
 		else
 			set whichUnit = GetSpellTargetUnit()
-			call EYX("Units\\NightElf\\Owl\\Owl.mdl", whichUnit, "origin", 4)
+			call AddTimedEffectToUnit("Units\\NightElf\\Owl\\Owl.mdl", whichUnit, "origin", 4)
 			call E1X("Abilities\\Spells\\NightElf\\Tranquility\\Tranquility.mdx", GetUnitX(whichUnit), GetUnitY(whichUnit), 2)
 		endif
 	endif
@@ -44472,7 +44332,7 @@ function EEE takes nothing returns nothing
 		if IsPlayerAlly(GetOwningPlayer(u), LocalPlayer) or IsObserverPlayer(LocalPlayer) then
 			set s = "Moonlight_Shadow.mdx"
 		endif
-		call EYX(s, u, "overhead", 15.)
+		call AddTimedEffectToUnit(s, u, "overhead", 15.)
 		call GroupRemoveUnit(g, u)
 	endloop
 	call SaveGroupHandle(HY,(Y6R), 220,(g))
@@ -44544,7 +44404,7 @@ function ZAR takes nothing returns nothing
 	if ZDR > ZCR then
 		set ZDR = ZCR * 2 -ZDR
 	endif
-	if O0X(trigUnit) == false then
+	if IsUnitModelFlying(trigUnit) == false then
 		call SetUnitFlyHeight(trigUnit, GetUnitDefaultFlyHeight(trigUnit)+ RMaxBJ(ZDR, 0), 0)
 	endif
 	if IsUnitType(trigUnit, UNIT_TYPE_HERO) then
@@ -44560,7 +44420,7 @@ function ZAR takes nothing returns nothing
 		call SetUnitAnimation(trigUnit, "stand")
 		call SetUnitPathing(trigUnit, true)
 		//call ZER(trigUnit) 也许想让单位恢复动作
-		if O0X(trigUnit) == false then
+		if IsUnitModelFlying(trigUnit) == false then
 			call SetUnitFlyHeight(trigUnit, GetUnitDefaultFlyHeight(trigUnit), 0)
 		endif
 		call PauseTimer(t)
@@ -49678,7 +49538,7 @@ function NNI takes nothing returns boolean
 	set targetX = x1 + J0R * Cos(a * bj_DEGTORAD)
 	set targetY = y1 + J0R * Sin(a * bj_DEGTORAD)
 	if count < 58 then
-		if O0X(whichUnit) == false then
+		if not IsUnitModelFlying(whichUnit) then
 			call SetUnitFlyHeight(whichUnit, 775 -DFR, 0)
 		endif
 		if IsUnitType(whichUnit, UNIT_TYPE_HERO) then
@@ -49686,7 +49546,7 @@ function NNI takes nothing returns boolean
 		endif
 		call SetUnitPosition(whichUnit, targetX, targetY)
 	else
-		if O0X(whichUnit) == false then
+		if not IsUnitModelFlying(whichUnit) then
 			call SetUnitFlyHeight(whichUnit, GetUnitDefaultFlyHeight(whichUnit), 0)
 		endif
 		call PauseUnit(whichUnit, false)
@@ -49753,7 +49613,7 @@ function NFI takes unit trigUnit, unit targetUnit, integer level, boolean FAR re
 	endif
 	call PauseUnit(whichUnit, true)
 	call SetUnitPathing(whichUnit, false)
-	if O0X(whichUnit) == false then
+	if not IsUnitModelFlying(whichUnit) then
 		call UnitAddPermanentAbility(whichUnit,'Amrf')
 		call UnitRemoveAbility(whichUnit,'Amrf')
 	endif
@@ -53544,7 +53404,7 @@ function G4I takes nothing returns nothing
 	set t = null
 endfunction
 function X9E takes nothing returns nothing
-	if not UnitHasSpellShield(GetSpellTargetUnit()) and IsUnitMessenger(GetSpellTargetUnit()) == false then
+	if not UnitHasSpellShield(GetSpellTargetUnit()) and IsUnitCourier(GetSpellTargetUnit()) == false then
 		call G4I()
 	endif
 endfunction
@@ -53968,7 +53828,7 @@ function JRI takes nothing returns nothing
 	set t = null
 endfunction
 function ONE takes nothing returns nothing
-	if GetWidgetLife(GetTriggerUnit())> .5 and IsUnitMessenger(GetSpellTargetUnit()) == false then
+	if GetWidgetLife(GetTriggerUnit())> .5 and IsUnitCourier(GetSpellTargetUnit()) == false then
 		call JRI()
 	endif
 endfunction
@@ -55183,130 +55043,7 @@ function U1F takes nothing returns nothing
 	set t = null
 	set LHI = null
 endfunction
-function LJI takes nothing returns boolean
-	return GetUnitTypeId(GetFilterUnit()) != 'ewsp' and UnitIsDead(GetFilterUnit()) == false and GetOwningPlayer(GetFilterUnit())!= GetOwningPlayer(U2) and GetOwningPlayer(GetFilterUnit())!= NEUTRAL_PASSIVE_PLAYER
-endfunction
-function LKI takes nothing returns boolean
-	return GetUnitTypeId(GetTriggerUnit()) != 'ewsp' and UnitIsDead(GetTriggerUnit()) == false and GetOwningPlayer(GetTriggerUnit())!= GetOwningPlayer(U2) and GetOwningPlayer(GetTriggerUnit())!= NEUTRAL_PASSIVE_PLAYER
-endfunction
-function LLI takes unit u returns nothing
-	call SetUnitTimeScale(u, 0)
-	call SaveBoolean(HY, GetHandleId(u), 4306, true)
-	if IsHeroUnitId(GetUnitTypeId(u)) or IsUnitIllusion(u) then
-		if IsUnitPaused(u) == false then
-			if IssueTargetOrderById(LoadUnitHandle(OtherHashTable2,'CHRN', 0), 852095, u) == false then
-				call UnitShareVision(u, GetOwningPlayer(LoadUnitHandle(OtherHashTable2,'CHRN', 0)), true)
-				if IssueTargetOrderById(LoadUnitHandle(OtherHashTable2,'CHRN', 0), 852095, u) == false then
-					if IsUnitCyclone(u) == false and IsUnitSleeping(u) == false then
-						call PauseUnit(u, true)
-					endif
-				endif
-				call UnitShareVision(u, GetOwningPlayer(LoadUnitHandle(OtherHashTable2,'CHRN', 0)), false)
-			endif
-		endif
-	else
-		call PauseUnit(u, true)
-	endif
-endfunction
-function LMI takes nothing returns nothing
-	call LLI(GetEnumUnit())
-endfunction
-function LPI takes nothing returns nothing
-	local unit u = GetEnumUnit()
-	call SaveBoolean(HY, GetHandleId(u), 4306, false)
-	call PauseUnit(u, false)
-	call SetUnitTimeScale(u, 1)
-	set u = null
-endfunction
-function LQI takes nothing returns nothing
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit d = LoadUnitHandle(HY, h, 19)
-	local unit trigUnit = LoadUnitHandle(HY, h, 14)
-	local integer level = LoadInteger(HY, h, 5)
-	local group g = LoadGroupHandle(HY, h, 220)
-	local integer c = LoadInteger(HY, h, 28)
-	local real tx = GetUnitX(d)
-	local real ty = GetUnitY(d)
-	local group gg
-	local integer SYV = LoadInteger(HY, h, 6)
-	call SaveUnitHandle(OtherHashTable2,'CHRN', 0, d)
-	if GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
-		set c = c + 1
-		call SaveInteger(HY, h, 28, c)
-		if GetUnitDistanceEx(trigUnit, d)< 435 then
-			call SetUnitNoLimitMoveSpeed(trigUnit, 700)
-		else
-			call SetUnitNoLimitMoveSpeed(trigUnit, 0)
-		endif
-		set gg = AllocationGroup(329)
-		call ForGroup(g, function LPI)
-		set U2 = trigUnit
-		call GroupEnumUnitsInRange(gg, tx, ty, 475, Condition(function LJI))
-		call GroupClear(g)
-		call GroupAddGroup(gg, g)
-		call ForGroup(gg, function LMI)
-		call DeallocateGroup(gg)
-	else
-		set U2 = trigUnit
-		if LKI() and GetUnitAbilityLevel(GetTriggerUnit(),'Aloc') == 0 and GetUnitAbilityLevel(GetTriggerUnit(),'A04R') == 0 and IsUnitInGroup(GetTriggerUnit(), g) == false then
-			call GroupAddUnit(g, GetTriggerUnit())
-			call LLI(GetTriggerUnit())
-		endif
-	endif
-	call RemoveSavedHandle(OtherHashTable2,'CHRN', 0)
-	if c > SYV then
-		if IsGameEnd == false then
-			call ForGroup(g, function LPI)
-		endif
-		call SetUnitNoLimitMoveSpeed(trigUnit, 0)
-		call KillUnit(d)
-		call RemoveUnit(d)
-		call KillUnit(LoadUnitHandle(HY, h, 18))
-		call DeallocateGroup(g)
-		call FlushChildHashtable(HY, h)
-		call DestroyTrigger(t)
-	endif
-	set t = null
-	set d = null
-	set trigUnit = null
-	set g = null
-	set gg = null
-endfunction
-function OSE takes nothing returns nothing
-	local unit trigUnit = GetTriggerUnit()
-	local integer level = GetUnitAbilityLevel(trigUnit,'A0J1')+ GetUnitAbilityLevel(trigUnit,'A1D7')
-	local real tx = GetSpellTargetX()
-	local real ty = GetSpellTargetY()
-	local unit d = CreateUnit(GetOwningPlayer(trigUnit),'u00L', tx, ty, 0)
-	local integer h
-	local trigger tt
-	local unit Q2R = CreateUnit(GetOwningPlayer(trigUnit),'e00E', tx, ty, 0)
-	call UnitAddAbility(Q2R,'A21K')
-	set tt = CreateTrigger()
-	set h = GetHandleId(tt)
-	call SaveUnitHandle(HY, h, 19, d)
-	call SaveUnitHandle(HY, h, 18, Q2R)
-	call SaveUnitHandle(HY, h, 14, trigUnit)
-	call SaveGroupHandle(HY, h, 220, AllocationGroup(330))
-	call SaveInteger(HY, h, 28, 0)
-	call SaveInteger(HY, h, 5, level)
-	if GetUnitAbilityLevel(trigUnit,'A1D7')> 0 then
-		call SaveInteger(HY, h, 6, 33 + level * 2)
-	else
-		call SaveInteger(HY, h, 6, 28 + level * 2)
-	endif
-	call SavePlayerHandle(HY, h, 0, GetOwningPlayer(trigUnit))
-	call TriggerRegisterTimerEvent(tt, .1, true)
-	call TriggerRegisterTimerEvent(tt, 0, false)
-	call TriggerRegisterUnitInRange(tt, d, 425, Condition(function LJI))
-	call TriggerAddCondition(tt, Condition(function LQI))
-	call UnitAddAbility(d,'A45D')
-	set trigUnit = null
-	set d = null
-	set tt = null
-	set Q2R = null
-endfunction
+
 function LSI takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local unit u = LoadUnitHandle(ObjectHashTable, GetHandleId(t), 0)
@@ -58503,7 +58240,7 @@ function UKI takes nothing returns nothing
 	set targetUnit = null
 endfunction
 function R_E takes nothing returns nothing
-	if IsUnitMessenger(GetSpellTargetUnit()) == false then
+	if IsUnitCourier(GetSpellTargetUnit()) == false then
 		call UKI()
 	endif
 endfunction
@@ -59792,7 +59529,7 @@ function YDI takes nothing returns boolean
 		else
 			call SaveInteger(HY, h, 34,(count))
 		endif
-	elseif IsEffectiveDamage(GetEventDamage()) and IsUnitEnemy(GetTriggerUnit(), GetOwningPlayer(u)) and IsUnitType(u, UNIT_TYPE_STRUCTURE) == false then
+	elseif IsDamageWithinThreshold(GetEventDamage()) and IsUnitEnemy(GetTriggerUnit(), GetOwningPlayer(u)) and IsUnitType(u, UNIT_TYPE_STRUCTURE) == false then
 		if IsUnitType(u, UNIT_TYPE_HERO) or GetUnitAbilityLevel(u,'A04R') == 0 then
 			call SetWidgetLife(u, GetWidgetLife(u)+ GetEventDamage()* YFI)
 		else
@@ -60039,7 +59776,7 @@ endfunction
 
 //感染目标条件
 function InfestTargetCondition takes unit u returns boolean
-	return ( IsUnitEnemy(u, GetOwningPlayer(GetTriggerUnit())) and( IsUnitType(u, UNIT_TYPE_HERO) or IsUnitIllusion(u) or u== Roshan or IsBearUnit(u) ) ) or IsUnitMessenger(u) 
+	return ( IsUnitEnemy(u, GetOwningPlayer(GetTriggerUnit())) and( IsUnitType(u, UNIT_TYPE_HERO) or IsUnitIllusion(u) or u== Roshan or IsBearUnit(u) ) ) or IsUnitCourier(u) 
 endfunction
 
 function JYE takes nothing returns nothing
@@ -60379,7 +60116,7 @@ function ZRI takes nothing returns boolean
 	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
 		if GetEventDamage()> 0 and IsPlayerEnemy(GetOwningPlayer(GetEventDamageSource()), GetOwningPlayer(whichUnit)) and FK and IsUnitInGroup(Player__Hero[GetPlayerId(GetOwningPlayer(GetEventDamageSource()))], LoadGroupHandle(HY, h, 7)) == false then
 			// 判断是否玩家单位
-			if XFX(GetOwningPlayer(GetEventDamageSource())) and IsEffectiveDamage(GetEventDamage()) then
+			if XFX(GetOwningPlayer(GetEventDamageSource())) and IsDamageWithinThreshold(GetEventDamage()) then
 				// 减伤
 				call SetUnitToReduceDamage(whichUnit, GetEventDamage())
 				if GetUnitAbilityLevel(GetEventDamageSource(),'A04R')> 0 or GetUnitAbilityLevel(GetEventDamageSource(),'Aloc')> 0 then
@@ -63275,7 +63012,7 @@ function OAA takes nothing returns boolean
 	local real ENI
 	local real ONA
 	local unit firstUnit = null
-	if IsEffectiveDamage(rDamageValue) and FK and UnitAlive(damagedUnit) and GetUnitAbilityLevel(damagedUnit,'A36D') == 0 then
+	if IsDamageWithinThreshold(rDamageValue) and FK and UnitAlive(damagedUnit) and GetUnitAbilityLevel(damagedUnit,'A36D') == 0 then
 		set g = AllocationGroup(392)
 		if not Mode__RearmCombos and GetHeroMainAttributesType(damagedUnit) == HERO_ATTRIBUTE_STR then
 			set ONA = rDamageValue *(.06 + .02 * level)
@@ -68092,7 +67829,7 @@ function CUA takes nothing returns boolean
 	if ZDR > ZCR then
 		set ZDR = ZCR * 2 -ZDR
 	endif
-	if O0X(whichUnit) == false then
+	if not IsUnitModelFlying(whichUnit) then
 		call SetUnitFlyHeight(whichUnit, GetUnitDefaultFlyHeight(whichUnit)+ RMaxBJ(ZDR, 0), 0)
 	endif
 	if IsUnitType(whichUnit, UNIT_TYPE_HERO) then
@@ -68106,7 +67843,7 @@ function CUA takes nothing returns boolean
 	set targetUnit = FirstOfGroup(g)
 	call DeallocateGroup(g)
 	if ZNR < 30 or targetUnit != null or GetTriggerEvalCount(t)> 75 then
-		if O0X(whichUnit) == false then
+		if not IsUnitModelFlying(whichUnit) then
 			call SetUnitFlyHeight(whichUnit, GetUnitDefaultFlyHeight(whichUnit), 0)
 		endif
 		call SetUnitFacing(whichUnit, a)
@@ -71455,15 +71192,15 @@ function HMA takes nothing returns boolean
 		call IssueTargetOrderById(whichUnit, 851983, targetUnit)
 	endif
 	if count < 50 then
-		if O0X(targetUnit) == false then
+		if IsUnitModelFlying(targetUnit) == false then
 			call SetUnitFlyHeight(targetUnit, 700 * count / 50, 0)
 		endif
 	elseif count < 100  then
-		if O0X(targetUnit) == false then
+		if IsUnitModelFlying(targetUnit) == false then
 			call SetUnitFlyHeight(targetUnit, 700 -700 *(count -50)/ 50, 0)
 		endif
 	else
-		if O0X(targetUnit) == false then
+		if IsUnitModelFlying(targetUnit) == false then
 			call SetUnitFlyHeight(targetUnit, GetUnitDefaultFlyHeight(targetUnit), 0)
 		endif
 		call DestroyEffect(LoadEffectHandle(HY, h, 175))
@@ -71483,7 +71220,7 @@ function HPA takes unit whichUnit, unit targetUnit, integer level returns nothin
 	call CommonTextTag("WALRUS PUNCH !!", 3.5, whichUnit, .03, 255, 0, 0, 255)
 	call A5X(VF, GetUnitX(targetUnit), GetUnitY(targetUnit))
 	call CommonUnitAddStun(targetUnit, 1., false)
-	if O0X(targetUnit) == false then
+	if IsUnitModelFlying(targetUnit) == false then
 		call UnitAddPermanentAbility(targetUnit,'Amrf')
 		call UnitRemoveAbility(targetUnit,'Amrf')
 	endif
@@ -71704,7 +71441,7 @@ function KNE takes nothing returns nothing
 		call EXStopUnit(GetTriggerUnit())
 		call InterfaceErrorForPlayer(GetOwningPlayer(GetTriggerUnit()), GetObjectName('n0K9'))
 	else
-		call EYX("Abilities\\Weapons\\FrostWyrmMissile\\FrostWyrmMissile.mdl", GetTriggerUnit(), "hand", .2)
+		call AddTimedEffectToUnit("Abilities\\Weapons\\FrostWyrmMissile\\FrostWyrmMissile.mdl", GetTriggerUnit(), "hand", .2)
 	endif
 endfunction
 function DDE takes nothing returns nothing
@@ -72126,7 +71863,7 @@ function JHA takes nothing returns boolean
 	endif
 	call SetUnitX(targetUnit, CoordinateX50(x))
 	call SetUnitY(targetUnit, CoordinateY50(y))
-	if O0X(targetUnit) == false then
+	if IsUnitModelFlying(targetUnit) == false then
 		call SetUnitFlyHeight(targetUnit, 325  -13* count, 0)
 	endif
 	if count == 25 then
@@ -72158,7 +71895,7 @@ function JHA takes nothing returns boolean
 		call DestroyEffect(LoadEffectHandle(HY, h, 176))
 		call FlushChildHashtable(HY, h)
 		call DestroyTrigger(t)
-		if O0X(targetUnit) == false then
+		if IsUnitModelFlying(targetUnit) == false then
 			call SetUnitFlyHeight(targetUnit, GetUnitDefaultFlyHeight(targetUnit), 0)
 		endif
 		call SetUnitPathing(targetUnit, true)
@@ -72242,7 +71979,7 @@ function JPA takes nothing returns boolean
 		elseif JQA ==-30 then
 			call SaveInteger(HY, h, 707, 1)
 		endif
-		if O0X(targetUnit) == false then
+		if IsUnitModelFlying(targetUnit) == false then
 			if count < 15 then
 				call SetUnitFlyHeight(targetUnit, count * 20, 0)
 			else
@@ -72250,7 +71987,7 @@ function JPA takes nothing returns boolean
 			endif
 		endif
 		if count >(KLR -25) then
-			if O0X(targetUnit) == false then
+			if IsUnitModelFlying(targetUnit) == false then
 				call SetUnitFlyHeight(targetUnit, 300, 0)
 			endif
 			call SetPlayerAbilityAvailableEx(GetOwningPlayer(whichUnit),'A27F', true)
@@ -72278,7 +72015,7 @@ function JSA takes nothing returns nothing
 	call SetPlayerAbilityAvailableEx(GetOwningPlayer(whichUnit),'A27X', true)
 	call UnitAddAbility(whichUnit,'A27X')
 	call SetUnitPathing(targetUnit, false)
-	if O0X(targetUnit) == false then
+	if IsUnitModelFlying(targetUnit) == false then
 		call UnitAddPermanentAbility(targetUnit,'Amrf')
 		call UnitRemoveAbility(targetUnit,'Amrf')
 	endif
@@ -79728,7 +79465,7 @@ function ZUA takes nothing returns nothing
 		call GroupRemoveUnit(bj_lastCreatedGroup, u)
 		call GroupRemoveUnit(AV, u)
 	endif
-	if IsUnitMessenger(u) then
+	if IsUnitCourier(u) then
 		if HaveSavedReal(HY, hu,'FnLv') then
 			call UnitRemoveAbility(u,'Avul')
 		elseif GetUnitAbilityLevel(u,'Avul') == 0 then
@@ -85229,6 +84966,7 @@ function main takes nothing returns nothing
 	
 	call ExecuteFunc("AbilityCustomOrderId_Init")
 	call ExecuteFunc("SpecialPassiveAbility_Init")
+	call UnitRemove_Init()
 
 	set LocalPlayer   = GetLocalPlayer()
 	set LocalPlayerId = GetPlayerId(LocalPlayer)

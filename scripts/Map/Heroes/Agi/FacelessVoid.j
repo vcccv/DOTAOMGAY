@@ -122,4 +122,142 @@ scope FacelessVoid
         set dummyCaster = null
     endfunction
 
+    //***************************************************************************
+    //*
+    //*  时间结界
+    //*
+    //***************************************************************************
+    function ChronosphereFilter takes unit source, unit target returns boolean
+        return UnitAlive(target) //and 
+    endfunction
+
+    function ChronosphereOnUpdate takes nothing returns nothing
+        local trigger t = GetTriggeringTrigger()
+        local integer h = GetHandleId(t)
+        local unit    d = LoadUnitHandle(HY, h, 19)
+        local unit    whichUnit = LoadUnitHandle(HY, h, 14)
+        local integer level = LoadInteger(HY, h, 5)
+        local group   g = LoadGroupHandle(HY, h, 220)
+        local integer c = LoadInteger(HY, h, 28)
+        local real    tx = GetUnitX(d)
+        local real    ty = GetUnitY(d)
+        local group   enumGroup
+        local integer max = LoadInteger(HY, h, 6)
+        local unit    first
+        local integer size
+        local integer i
+        local real    area = 450.
+        
+        if GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
+            set c = c + 1
+            call SaveInteger(HY, h, 28, c)
+            if GetUnitDistanceEx(whichUnit, d) < area then
+                call UnitAddBuffByPolarity(whichUnit, 'B0J1', level, 5., true, BUFF_LEVEL3)
+                call UpdateUnitNoLimitMoveSpeed(whichUnit)
+            else
+                call UnitRemoveAbility(whichUnit, 'B0J1')
+                call UpdateUnitNoLimitMoveSpeed(whichUnit)
+            endif
+
+            set enumGroup = AllocationGroup(329)
+            call GroupAddGroupFast(g, enumGroup)
+            loop
+                set first = FirstOfGroup(enumGroup)
+                exitwhen first == null
+                call GroupRemoveUnit(enumGroup, first)
+
+                if not IsUnitInRangeXY(first, tx, ty, area) then
+                    call GroupRemoveUnit(g, first)
+                    call UnitSubStunCount(first)
+                    call SetUnitTimeScale(first, 1.)
+                endif
+            endloop
+            
+            call GroupEnumUnitsInRange(enumGroup, tx, ty, area + MAX_UNIT_COLLISION, null)
+            loop
+                set first = FirstOfGroup(enumGroup)
+                exitwhen first == null
+                call GroupRemoveUnit(enumGroup, first)
+                
+                // 存活，不在单位组，非自己单位，非中立被动单位
+                if IsUnitInRangeXY(first, tx, ty, area) and UnitAlive(first) and not IsUnitCourier(first) and not IsUnitInGroup(first, g) and not IsUnitOwnedByPlayer(first, GetOwningPlayer(whichUnit)) and GetOwningPlayer(first)!= NEUTRAL_PASSIVE_PLAYER then
+                    call GroupAddUnit(g, first)
+                    call UnitAddStunCount(first)
+                    call SetUnitTimeScale(first, 0.)
+                endif
+            endloop
+            call DeallocateGroup(enumGroup)
+        //else
+        //    set U2 = whichUnit
+        //    if LKI() and GetUnitAbilityLevel(GetTriggerUnit(),'Aloc') == 0 and GetUnitAbilityLevel(GetTriggerUnit(),'A04R') == 0 and IsUnitInGroup(GetTriggerUnit(), g) == false then
+        //        call GroupAddUnit(g, GetTriggerUnit())
+        //        call LLI(GetTriggerUnit())
+        //    endif
+        endif
+        if c > max then
+            if not IsGameEnd then
+
+                loop
+                    set first = FirstOfGroup(g)
+                    exitwhen first == null
+                    call GroupRemoveUnit(g, first)
+    
+                    call UnitSubStunCount(first)
+                    call SetUnitTimeScale(first, 1.)
+                endloop
+
+            endif
+            call UnitRemoveAbility(whichUnit, 'B0J1')
+            call UpdateUnitNoLimitMoveSpeed(whichUnit)
+            
+            call KillUnit(d)
+            call RemoveUnit(d)
+            call KillUnit(LoadUnitHandle(HY, h, 18))
+            call DeallocateGroup(g)
+
+            call FlushChildHashtable(HY, h)
+            call DestroyTrigger(t)
+        endif
+        set t = null
+        set d = null
+        set whichUnit = null
+        set g = null
+        set enumGroup = null
+    endfunction
+    function ChronosphereOnSpellEffect takes nothing returns nothing
+        local unit    whichUnit    = GetTriggerUnit()
+        local integer level        = GetUnitAbilityLevel(whichUnit, GetSpellAbilityId())
+        local real    tx           = GetSpellTargetX()
+        local real    ty           = GetSpellTargetY()
+        local unit    chronosphere = CreateUnit(GetOwningPlayer(whichUnit),'u00L', tx, ty, 0)
+        local integer h
+        local trigger trig
+        local unit    dummy = CreateUnit(GetOwningPlayer(whichUnit),'e00E', tx, ty, 0)
+        // 粉
+        call UnitAddAbility(dummy,'A21K')
+        set trig = CreateTrigger()
+        set h = GetHandleId(trig)
+        call SaveUnitHandle(HY, h, 19, chronosphere)
+        call SaveUnitHandle(HY, h, 18, dummy)
+        call SaveUnitHandle(HY, h, 14, whichUnit)
+        call SaveGroupHandle(HY, h, 220, AllocationGroup(330))
+        call SaveInteger(HY, h, 28, 0)
+        call SaveInteger(HY, h, 5, level)
+        if GetUnitAbilityLevel(whichUnit, 'A1D7')> 0 then
+            call SaveInteger(HY, h, 6, 33 + level * 2)
+        else
+            call SaveInteger(HY, h, 6, 28 + level * 2)
+        endif
+        call SavePlayerHandle(HY, h, 0, GetOwningPlayer(whichUnit))
+        call TriggerRegisterTimerEvent(trig, .1, true)
+        call TriggerRegisterTimerEvent(trig, 0, false)
+        //call TriggerRegisterUnitInRange(trig, d, 425, Condition(function LJI))
+        call TriggerAddCondition(trig, Condition(function ChronosphereOnUpdate))
+        call UnitAddAbility(chronosphere, 'A45D')
+        set whichUnit = null
+        set chronosphere = null
+        set trig = null
+        set dummy = null
+    endfunction
+
 endscope

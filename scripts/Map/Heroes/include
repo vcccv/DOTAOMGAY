@@ -34,3 +34,4 @@
 #include "Agi\\AntiMage.j"
 #include "Agi\\Broodmother.j"
 #include "Agi\\Spectre.j"
+#include "Agi\\RiddenHippogryph.j"

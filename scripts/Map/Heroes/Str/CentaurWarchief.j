@@ -137,7 +137,7 @@ scope CentaurWarchief
                     exitwhen first == null
                     call GroupRemoveUnit(g, first)
 
-                    if GetUnitAbilityLevel(first, 'Aloc') == 0 and UnitAlive(first) and not IsUnitWard(first) and not IsUnitMessenger(first) and not IsUnitType(first, UNIT_TYPE_STRUCTURE) then
+                    if GetUnitAbilityLevel(first, 'Aloc') == 0 and UnitAlive(first) and not IsUnitWard(first) and not IsUnitCourier(first) and not IsUnitType(first, UNIT_TYPE_STRUCTURE) then
                         call UnitAddStampedeBuff(whichUnit, first, level, isUpgrade)
                     endif
                     

@@ -52,8 +52,13 @@ library UnitMove
 
     function GetUnitNoLimitMoveSpeed takes unit whichUnit returns integer
         if GetUnitAbilityLevel(whichUnit, 'A46F') > 0 then
+            // 幻影冲锋
             return 800
+        elseif GetUnitAbilityLevel(whichUnit, 'B0J1') > 0 then
+            // 时间结界
+            return 700
         elseif GetUnitAbilityLevel(whichUnit, 'B00V') > 0 then
+            // 变狼
             return 650
         endif
         return Table[GetHandleId(whichUnit)][NO_LIMIT_MOVE_SPEED]
@@ -75,7 +80,7 @@ library UnitMove
         set value = RMaxBJ(value *(100. + percentSpeed)/ 100., moveSpeed * 1.)
 
         call MHUnit_SetMoveSpeedLimit(whichUnit, value)
-        call SetUnitMoveSpeed(whichUnit, value)
+        call SetUnitMoveSpeed(whichUnit, value * 100.)
     endfunction
 
     function SetUnitNoLimitMoveSpeed takes unit whichUnit, integer moveSpeed returns nothing

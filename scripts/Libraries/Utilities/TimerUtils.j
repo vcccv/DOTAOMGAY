@@ -68,6 +68,15 @@ library TimerUtils /*
             set this.data = data
             return this
         endmethod
+        static method CreateEx takes nothing returns thistype
+            local thistype this = thistype.allocate()
+            set MAX = MAX + 1
+            if this.handle == null then
+                set this.handle = CreateTimer()
+                set Table[KEY][GetHandleId(this.handle)] = this
+            endif
+            return this
+        endmethod
         method GetHandle takes nothing returns timer
             return this.handle
         endmethod

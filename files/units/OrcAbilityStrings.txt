@@ -39587,6 +39587,10 @@ targetattach=chest
 buffart=ReplaceableTextures\CommandButtons\BTNChronosphere
 Bufftip=时间结界
 Buffubertip=该单位什么也不能做
+[B0J1]
+buffart=ReplaceableTextures\CommandButtons\BTNChronosphere
+Bufftip=时间结界
+Buffubertip=该单位在时间结界内，因此拥有相位状态并且移动速度很快
 [A45D]
 missilespeed=99999
 missilehoming=1

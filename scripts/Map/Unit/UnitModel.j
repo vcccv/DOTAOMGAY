@@ -1,6 +1,24 @@
 
-library UnitModel
+library UnitModel requires Table, SimpleTick
     
+    function DestroyAttachedEffectOnTimerExpire takes nothing returns nothing
+        local timer t = GetExpiredTimer()
+        local integer h = GetHandleId(t)
+        call DestroyEffect(LoadEffectHandle(HY, h, 1))
+        call FlushChildHashtable(HY, h)
+        call DestroyTimer(t)
+        set t = null
+    endfunction
+    function AddTimedEffectToUnit takes string modelName, unit target, string attachPointName, real duration returns nothing
+        local SimpleTick tick
+        if target == null then
+            return
+        endif
+        set tick = SimpleTick.CreateEx()
+        set SimpleTick.GetTable()[tick]['E'] = AddSpecialEffectTarget(modelName, target, attachPointName)
+        call tick.Start(duration, false, function DestroyAttachedEffectOnTimerExpire)
+    endfunction
+
     function SaveHeroModelScale takes integer heroTypeId, real scaleData, integer unitTypeId returns nothing
         //set DJ = DJ + 1
         call SaveReal( ObjectData, OBJ_HTKEY_UNIT_ORIGIN_SCALE, heroTypeId, scaleData )

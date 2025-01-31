@@ -121,7 +121,7 @@ scope BaneElemental
     function NightmareOnSpellEffect takes nothing returns nothing
         local timer t
         local integer h
-        if IsUnitMessenger(GetSpellTargetUnit()) == false and not UnitHasSpellShield(GetSpellTargetUnit()) then
+        if IsUnitCourier(GetSpellTargetUnit()) == false and not UnitHasSpellShield(GetSpellTargetUnit()) then
             set t = CreateTimer()
             set h = GetHandleId(t)
             call TimerStart(t, 0, false, function FWI)
