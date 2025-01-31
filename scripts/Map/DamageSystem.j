@@ -50,7 +50,7 @@ scope DamageSystem
         local real A7A =(LoadReal(HY,(GetHandleId(visageUnit)), 443))
         local trigger t
         local integer h
-        if IsEffectiveDamage(DEDamage) and ( XFX( Player( DamagedEventSourcePlayerId ) ) or DESource == Roshan ) then
+        if IsDamageValidForProcessing(DEDamage) and ( XFX( Player( DamagedEventSourcePlayerId ) ) or DESource == Roshan ) then
             set A7A = A7A + DEDamage
             call SaveReal(HY,(GetHandleId(visageUnit)), 443,((A7A)* 1.))
             set t = CreateTrigger()

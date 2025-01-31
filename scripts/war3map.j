@@ -467,8 +467,6 @@ globals
 	real array HN
 	real array JN
 	boolean KN
-	real LN = 999999
-	unit MN = null
 	unit QN = null
 	integer SN = 0
 	integer TN = 0
@@ -5692,7 +5690,7 @@ function IsUnitModelFlying takes unit u returns boolean
 	local integer i = GetUnitTypeId(u)
 	return i =='H00F' or i =='H00E' or i =='H00G' or i =='O017' or i =='N0MA' or i =='N0MB' or i =='N0MC' or i =='N0MO'
 endfunction
-function IsDamageWithinThreshold takes real d returns boolean
+function IsDamageValidForProcessing takes real d returns boolean
 	return 2 < d and d < 3000
 endfunction
 function GetHostPlayer takes nothing returns nothing
@@ -35420,16 +35418,6 @@ function DOR takes unit R8X, unit targetUnit returns nothing //致命创伤属�
 		set tt = null
 	endif
 endfunction
-function DRR takes nothing returns boolean
-	if IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and UnitIsDead(GetFilterUnit()) == false and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(QN)) and GetUnitAbilityLevel(GetFilterUnit(),'Avul') == 0 and GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0 then
-		if GetWidgetLife(GetFilterUnit())< LN then
-			set LN = GetWidgetLife(GetFilterUnit())
-			set MN = GetFilterUnit()
-		endif
-		return true
-	endif
-	return false
-endfunction
 function DDR takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
@@ -41511,7 +41499,7 @@ function FalsePromise_CallBack takes nothing returns boolean
 		endif
 		call FlushChildHashtable(HY, h)
 		call DestroyTrigger(t)
-	elseif GetTriggerEventId() == EVENT_UNIT_DAMAGED and IsDamageWithinThreshold(GetEventDamage()) then
+	elseif GetTriggerEventId() == EVENT_UNIT_DAMAGED and IsDamageValidForProcessing(GetEventDamage()) then
 		set damagedCount = damagedCount + 1
 		call SaveInteger(HY, h, 34,(damagedCount))
 		call SaveUnitHandle(HY, h,(22000+ damagedCount),(GetEventDamageSource()))
@@ -59529,7 +59517,7 @@ function YDI takes nothing returns boolean
 		else
 			call SaveInteger(HY, h, 34,(count))
 		endif
-	elseif IsDamageWithinThreshold(GetEventDamage()) and IsUnitEnemy(GetTriggerUnit(), GetOwningPlayer(u)) and IsUnitType(u, UNIT_TYPE_STRUCTURE) == false then
+	elseif IsDamageValidForProcessing(GetEventDamage()) and IsUnitEnemy(GetTriggerUnit(), GetOwningPlayer(u)) and IsUnitType(u, UNIT_TYPE_STRUCTURE) == false then
 		if IsUnitType(u, UNIT_TYPE_HERO) or GetUnitAbilityLevel(u,'A04R') == 0 then
 			call SetWidgetLife(u, GetWidgetLife(u)+ GetEventDamage()* YFI)
 		else
@@ -60116,7 +60104,7 @@ function ZRI takes nothing returns boolean
 	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
 		if GetEventDamage()> 0 and IsPlayerEnemy(GetOwningPlayer(GetEventDamageSource()), GetOwningPlayer(whichUnit)) and FK and IsUnitInGroup(Player__Hero[GetPlayerId(GetOwningPlayer(GetEventDamageSource()))], LoadGroupHandle(HY, h, 7)) == false then
 			// 判断是否玩家单位
-			if XFX(GetOwningPlayer(GetEventDamageSource())) and IsDamageWithinThreshold(GetEventDamage()) then
+			if XFX(GetOwningPlayer(GetEventDamageSource())) and IsDamageValidForProcessing(GetEventDamage()) then
 				// 减伤
 				call SetUnitToReduceDamage(whichUnit, GetEventDamage())
 				if GetUnitAbilityLevel(GetEventDamageSource(),'A04R')> 0 or GetUnitAbilityLevel(GetEventDamageSource(),'Aloc')> 0 then
@@ -63012,7 +63000,7 @@ function OAA takes nothing returns boolean
 	local real ENI
 	local real ONA
 	local unit firstUnit = null
-	if IsDamageWithinThreshold(rDamageValue) and FK and UnitAlive(damagedUnit) and GetUnitAbilityLevel(damagedUnit,'A36D') == 0 then
+	if IsDamageValidForProcessing(rDamageValue) and FK and UnitAlive(damagedUnit) and GetUnitAbilityLevel(damagedUnit,'A36D') == 0 then
 		set g = AllocationGroup(392)
 		if not Mode__RearmCombos and GetHeroMainAttributesType(damagedUnit) == HERO_ATTRIBUTE_STR then
 			set ONA = rDamageValue *(.06 + .02 * level)

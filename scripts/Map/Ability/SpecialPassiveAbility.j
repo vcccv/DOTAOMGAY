@@ -8,14 +8,14 @@ library SpecialPassiveAbility
 
     private function OnEnable takes nothing returns nothing
         local SimpleTick tick  = SimpleTick.GetExpired()
-        local TableArray table = SimpleTick.GetTable()
-        local unit       whichUnit = table[tick].unit['U']
+        local unit       whichUnit = SimpleTickTable[tick].unit['U']
+        local player     whichPlayer = GetOwningPlayer(whichUnit)
         local integer    i
 
         set i = 1
         loop
             exitwhen i > Max
-            call MHAbility_Disable(whichUnit, List[i], false, false)
+            call SetPlayerAbilityAvailable(whichPlayer, List[i], true)
             set i = i + 1
         endloop
 
@@ -23,19 +23,18 @@ library SpecialPassiveAbility
         set whichUnit = null
     endfunction
     function DisableUnitSpecialPassiveAbility takes unit whichUnit returns nothing
-        local SimpleTick tick  = SimpleTick.Create(0)
-        local TableArray table = SimpleTick.GetTable()
-
+        local SimpleTick tick  = SimpleTick.CreateEx()
         local integer    i
+        local player     whichPlayer = GetOwningPlayer(whichUnit)
 
         set i = 1
         loop
             exitwhen i > Max
-            call MHAbility_Disable(whichUnit, List[i], true, false)
+            call SetPlayerAbilityAvailable(whichPlayer, List[i], false)
             set i = i + 1
         endloop
 
-        set table[tick].unit['U'] = whichUnit
+        set SimpleTickTable[tick].unit['U'] = whichUnit
         call tick.Start(0., false, function OnEnable) 
     endfunction
 

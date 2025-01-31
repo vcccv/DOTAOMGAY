@@ -37,6 +37,8 @@ library TimerUtils /*
         endmethod
     endmodule
 
+    #define SimpleTickTable SimpleTick.GetTable()
+
     private keyword SimpleTickInit
     // 简易Tick，Create方法中可以携带一个结构实例data
     struct SimpleTick

@@ -2,7 +2,7 @@
 library UnitRemove requires Table
     
     globals
-        private trigger Trig
+        private trigger Trig = null
     endglobals
 
     private function OnRemove takes nothing returns nothing
@@ -15,8 +15,8 @@ library UnitRemove requires Table
 
     function UnitRemove_Init takes nothing returns nothing
         set Trig = CreateTrigger()
-        call MHUnitRemoveEvent_Register(trig)
-        call TriggerAddCondition(trig, Condition(function OnRemove))
+        call MHUnitRemoveEvent_Register(Trig)
+        call TriggerAddCondition(Trig, Condition(function OnRemove))
     endfunction
 
 endlibrary

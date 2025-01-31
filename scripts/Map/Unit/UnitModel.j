@@ -1,13 +1,10 @@
 
-library UnitModel requires Table, SimpleTick
+library UnitModel requires Table, TimerUtils
     
     function DestroyAttachedEffectOnTimerExpire takes nothing returns nothing
-        local timer t = GetExpiredTimer()
-        local integer h = GetHandleId(t)
-        call DestroyEffect(LoadEffectHandle(HY, h, 1))
-        call FlushChildHashtable(HY, h)
-        call DestroyTimer(t)
-        set t = null
+        local SimpleTick tick = SimpleTick.GetExpired()
+        call DestroyEffect(SimpleTickTable[tick].effect['E'])
+        call tick.Destroy()
     endfunction
     function AddTimedEffectToUnit takes string modelName, unit target, string attachPointName, real duration returns nothing
         local SimpleTick tick
@@ -15,7 +12,7 @@ library UnitModel requires Table, SimpleTick
             return
         endif
         set tick = SimpleTick.CreateEx()
-        set SimpleTick.GetTable()[tick]['E'] = AddSpecialEffectTarget(modelName, target, attachPointName)
+        set SimpleTickTable[tick].effect['E'] = AddSpecialEffectTarget(modelName, target, attachPointName)
         call tick.Start(duration, false, function DestroyAttachedEffectOnTimerExpire)
     endfunction
 
