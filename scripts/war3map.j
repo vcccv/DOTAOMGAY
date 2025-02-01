@@ -668,12 +668,12 @@ globals
 	integer DeathMatch__MaxLives 
 
 	boolean Mode__SwitchOn = false
-	boolean VT = false
+	boolean Mode__AllRandom = false
 	boolean Mode__RandomDraft = false
 	integer XT = 14
 	boolean OT = false
 	boolean Mode__AllPick = false
-	boolean IT = false
+	boolean Mode__ItemDrop = false
 	boolean Mode__AntiHack = false
 	multiboard MainMultiboard = null
 	unit Roshan = null
@@ -681,8 +681,8 @@ globals
 	integer GT = 150
 	boolean Mode__HolyShitLimit = false
 	boolean Mode__EasyMode = false
-	boolean JT = false
-	boolean KT = false
+	boolean Mode__NoPowerups = false
+	boolean Mode__SuperCreeps = false
 	location AttackToScourgeLocation = null
 	location AttackToSentinelLocation = null
 	location AttackToMidLocation   = null
@@ -722,7 +722,7 @@ globals
 	
 	player NeutralCreepPlayer = null
 	constant player NEUTRAL_PASSIVE_PLAYER = Player(15)
-	boolean DW = false
+	boolean Mode__ShufflePlayers = false
 	integer VO = 0
 	integer array WO
 
@@ -734,10 +734,10 @@ globals
 	location array CreepNextWaypoint
 	group LW = null
 	boolean IsGameHaveObserver = false
-	boolean PW = false
-	boolean QW = false
-	boolean SW = false
-	boolean TW = false
+	boolean Mode__DuplicateMode = false
+	boolean Mode__AllAgility = false
+	boolean Mode__AllIntelligence = false
+	boolean Mode__AllStrength = false
 	string UW = ""
 	// 相同英雄
 	boolean Mode__SameHero = false
@@ -941,9 +941,9 @@ globals
 	boolean B3 = false
 	boolean PK = false
 	string GameModeString = "No Mode"
-	boolean F3 = false
-	boolean J3 = false
-	boolean L3 = false
+	boolean Mode__NoRepick = false
+	boolean Mode__NoSwap = false
+	boolean Mode__PoolMode = false
 	boolean BL = false
 	boolean M3 = false
 
@@ -1464,21 +1464,21 @@ globals
 	integer GFV
 	boolean GGV = false
 	trigger GHV
-	boolean GJV = false
-	boolean GKV = false
-	boolean GLV = false
-	boolean GMV = false
+	boolean Mode__RandomDraft = false
+	boolean Mode__SingleDraft = false
+	boolean Mode__MeleeOnly = false
+	boolean Mode__RangeOnly = false
 	boolean Mode__OnlyMid = false
 	boolean Mode__NotBot = false
 	boolean Mode__NoMid = false
 	boolean Mode__NotTop = false
 	boolean GUV = false
-	boolean GWV = false
-	boolean GYV = false
-	boolean GZV = false
+	boolean Mode__ObserverInfo = false
+	boolean Mode__FastRespawn = false
+	boolean Mode__ZoomMode = false
 	camerasetup G_V = null
-	boolean G0V = false
-	boolean G1V = false
+	boolean Mode__UnlimitedLevel = false
+	boolean Mode__SeeSkills = false
 	boolean Mode__AntiBackdoor = false
 	boolean Mode__FiveSkills = false
 	boolean Mode__SixSkills = false
@@ -5512,7 +5512,7 @@ function OFX takes player p, integer at returns nothing
 		endif
 	exitwhen ZQ[TTV]== false and(PP[pid]== 0 or(IsUnitIdType(HeroListTypeId[TTV], UNIT_TYPE_RANGED_ATTACKER) and PP[pid]== 2) or(IsUnitIdType(HeroListTypeId[TTV], UNIT_TYPE_MELEE_ATTACKER) and PP[pid]== 1))
 	endloop
-	if PW == false then
+	if Mode__DuplicateMode == false then
 		call XTX(HeroListTypeId[TTV])
 		set YQ[TTV]= true
 		set ZQ[TTV]= true
@@ -5551,7 +5551,7 @@ function OHX takes player p, integer OJX returns nothing
 		call SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)+ 150)
 		set FT[GetPlayerId(p)]= false
 	else
-		if PW == false then
+		if Mode__DuplicateMode == false then
 			call XTX(HeroListTypeId[TTV])
 			set YQ[TTV]= true
 			set ZQ[TTV]= true
@@ -5577,7 +5577,7 @@ function OKX takes player p returns nothing
 		set TTV = GetRandomInt(1, HeroTypeMaxCount)
 	exitwhen ZQ[TTV]== false and(PP[pid]== 0 or(IsUnitIdType(HeroListTypeId[TTV], UNIT_TYPE_RANGED_ATTACKER) and PP[pid]== 2) or(IsUnitIdType(HeroListTypeId[TTV], UNIT_TYPE_MELEE_ATTACKER) and PP[pid]== 1))
 	endloop
-	if PW == false then
+	if Mode__DuplicateMode == false then
 		call XTX(HeroListTypeId[TTV])
 		set YQ[TTV]= true
 		set ZQ[TTV]= true
@@ -10684,7 +10684,7 @@ function QOX takes nothing returns boolean
 	return GetUnitTypeId(GetFilterUnit())=='ncop'
 endfunction
 function QRX takes nothing returns nothing
-	if GKV then
+	if Mode__SingleDraft then
 		call UnitRemoveAbility(CirclesUnit[GetPlayerId(GetOwningPlayer(GetEnumUnit()))],'A14F')
 		call UnitRemoveAbility(CirclesUnit[GetPlayerId(GetOwningPlayer(GetEnumUnit()))],'A14E')
 		//call UnitRemoveAbility(CirclesUnit[GetPlayerId(GetOwningPlayer(GetEnumUnit()))],'A14H')
@@ -10931,7 +10931,7 @@ function PlayerPickHero takes unit u, integer playerId, unit QKX returns nothing
 	set PlayerNowPackedHeroIndex[playerId]= GetUnitPointValue(u)
 	call RemoveUnit(u)
 	call SetPlayerState( whichPlayer , PLAYER_STATE_RESOURCE_GOLD, GetPlayerState( whichPlayer , PLAYER_STATE_RESOURCE_GOLD)+ 250 )
-	if GKV or Mode__MirrorDraft then
+	if Mode__SingleDraft or Mode__MirrorDraft then
 		set QTX = LoadBoolean(HY, GetHandleId( whichPlayer ), unitTypeId)
 		if not QTX then
 			call UVE( whichPlayer , true, "这些是你友军的技能，你无法选择他们。你的技能在 " + QHX(playerId)+ "|c006699CC 酒馆|r")
@@ -11273,7 +11273,7 @@ function PlayerChooseHeroUnit takes unit whichUnit returns boolean
 
 	set AY[playerId]= true
 	// GVJ = rd   v4不知道什么东西
-	if not GJV and not V4 then
+	if not Mode__RandomDraft and not V4 then
 		call PanCameraToTimedForPlayer(whichPlayer, x, y, 0)
 	endif
 	call ClearSelectionForPlayer(whichPlayer)
@@ -11287,7 +11287,7 @@ function PlayerChooseHeroUnit takes unit whichUnit returns boolean
 	call XUX(whichPlayer) // 设置科技 意味不明
 	call SaveBoolean(HY,(GetHandleId(whichUnit)), 85,(true))
 	
-	if not PW and not IsPickingHero and not X3 then
+	if not Mode__DuplicateMode and not IsPickingHero and not X3 then
 		set YQ[GetUnitPointValue(whichUnit)]= true
 		set ZQ[GetUnitPointValue(whichUnit)]= true
 		call XSX(GetUnitTypeId(whichUnit))
@@ -11328,7 +11328,7 @@ function PlayerChooseHeroUnit takes unit whichUnit returns boolean
 	if not Mode__SameHero or whichPlayer == HostPlayer then
 		if (KS[playerId]and not Mode__SameHero) then
 			call P7X(whichPlayer, GetObjectName('n0D5')+ " " + GetUnitName(whichUnit)+ ".")
-		elseif ((FT[playerId]and not Mode__DeathMatch ) or VT or OT) then
+		elseif ((FT[playerId]and not Mode__DeathMatch ) or Mode__AllRandom or OT) then
 			call P7X(whichPlayer, GetObjectName('n0D3')+ " " + GetUnitName(whichUnit)+ ".")
 		else
 			call P7X(whichPlayer, GetObjectName('n0D2')+ " " + GetUnitName(whichUnit)+ ".")
@@ -11338,7 +11338,7 @@ function PlayerChooseHeroUnit takes unit whichUnit returns boolean
 	if IsNoHeroLimit then // 移除区域指示器 推测是英雄购买者
 		call KillPlayerAllZoneIndicator(whichPlayer)
 	endif
-	if (GJV or V4) and IsNoHeroLimit then
+	if (Mode__RandomDraft or V4) and IsNoHeroLimit then
 		call KillPlayerAllZoneIndicator(whichPlayer)
 	endif
 	// 让能量圈可用
@@ -11361,7 +11361,7 @@ function PlayerChooseHeroUnit takes unit whichUnit returns boolean
 	if not NeedHideHeroNames[LocalPlayerId] then
 		call SetPlayerName(whichPlayer,(PlayersName[playerId])+ " (" + EJX(Player__Hero[playerId])+ ")")
 	endif
-	if Mode__MirrorDraft or GKV then
+	if Mode__MirrorDraft or Mode__SingleDraft then
 		call HidePlayerTavern(whichPlayer)
 	endif
 	call KVX(whichUnit) // 同步决斗的额外攻击力
@@ -12573,7 +12573,7 @@ function U7X takes nothing returns nothing
 	if IsPlayerEnemy(WEX, WXX) and WEX != Player(12) then
 		call UGX(WVX)
 	endif
-	if IT and GetUnitTypeId(U9X)!='H00J' then
+	if Mode__ItemDrop and GetUnitTypeId(U9X)!='H00J' then
 		set it = UnitRemoveItemFromSlot(U9X, GetRandomInt(0, 5))
 		if GetItemTypeId(it)=='I00K' then
 			call CreateItem('I00G', GetItemX(it), GetItemY(it))
@@ -12821,7 +12821,7 @@ function U7X takes nothing returns nothing
 		endif
 	endif
 	set WTX =((GetHeroLevel(U9X)* 3.8 + 5 + R2I(LoadReal(OtherHashTable, GetHandleId(U9X), 26)))* WPX + WSX)+ R2I(WQX)
-	if GYV then
+	if Mode__FastRespawn then
 		set WTX = WTX * .5
 	endif
 	if M3 then
@@ -13281,7 +13281,7 @@ function Y0X takes nothing returns boolean
 	return false
 endfunction
 function Y3X takes nothing returns nothing
-	if ((GetUnitLevel(GetEnumUnit())< 25 or G0V) and GetUnitAbilityLevel(GetEnumUnit(),'Aloc') == 0) then
+	if ((GetUnitLevel(GetEnumUnit())< 25 or Mode__UnlimitedLevel) and GetUnitAbilityLevel(GetEnumUnit(),'Aloc') == 0) then
 		call AddHeroXPSimple(GetEnumUnit(), WB, true)
 	endif
 endfunction
@@ -14266,37 +14266,37 @@ function VHO takes player p, unit whichUnit, integer GTX returns boolean
 	exitwhen k > VPO
 		set whichPlayer = VQO[k]
 		set i = 0
-		if VSO != null and V5O == 1 and(V_O == whichPlayer or L3 or(GetPlayerSlotState((V_O)) == PLAYER_SLOT_STATE_LEFT)) then
+		if VSO != null and V5O == 1 and(V_O == whichPlayer or Mode__PoolMode or(GetPlayerSlotState((V_O)) == PLAYER_SLOT_STATE_LEFT)) then
 			set VJO[i + 1]= EEO
 		else
 			set VJO[i + 1]= 0
 		endif
 		set i = 1
-		if VTO != null and V6O == 1 and(V0O == whichPlayer or L3 or(GetPlayerSlotState((V0O)) == PLAYER_SLOT_STATE_LEFT)) then
+		if VTO != null and V6O == 1 and(V0O == whichPlayer or Mode__PoolMode or(GetPlayerSlotState((V0O)) == PLAYER_SLOT_STATE_LEFT)) then
 			set VJO[i + 1]= EXO
 		else
 			set VJO[i + 1]= 0
 		endif
 		set i = 2
-		if VUO != null and V7O == 1 and(V1O == whichPlayer or L3 or(GetPlayerSlotState((V1O)) == PLAYER_SLOT_STATE_LEFT)) then
+		if VUO != null and V7O == 1 and(V1O == whichPlayer or Mode__PoolMode or(GetPlayerSlotState((V1O)) == PLAYER_SLOT_STATE_LEFT)) then
 			set VJO[i + 1]= EOO
 		else
 			set VJO[i + 1]= 0
 		endif
 		set i = 3
-		if VWO != null and V8O == 1 and(V2O == whichPlayer or L3 or(GetPlayerSlotState((V2O)) == PLAYER_SLOT_STATE_LEFT)) then
+		if VWO != null and V8O == 1 and(V2O == whichPlayer or Mode__PoolMode or(GetPlayerSlotState((V2O)) == PLAYER_SLOT_STATE_LEFT)) then
 			set VJO[i + 1]= ERO
 		else
 			set VJO[i + 1]= 0
 		endif
 		set i = 4
-		if VYO != null and V9O == 1 and(V3O == whichPlayer or L3 or(GetPlayerSlotState((V3O)) == PLAYER_SLOT_STATE_LEFT)) then
+		if VYO != null and V9O == 1 and(V3O == whichPlayer or Mode__PoolMode or(GetPlayerSlotState((V3O)) == PLAYER_SLOT_STATE_LEFT)) then
 			set VJO[i + 1]= EIO
 		else
 			set VJO[i + 1]= 0
 		endif
 		set i = 5
-		if VZO != null and EVO == 1 and(V4O == whichPlayer or L3 or(GetPlayerSlotState((V4O)) == PLAYER_SLOT_STATE_LEFT)) then
+		if VZO != null and EVO == 1 and(V4O == whichPlayer or Mode__PoolMode or(GetPlayerSlotState((V4O)) == PLAYER_SLOT_STATE_LEFT)) then
 			set VJO[i + 1]= EAO
 		else
 			set VJO[i + 1]= 0
@@ -15387,7 +15387,7 @@ function XZO takes nothing returns boolean
 				set X4O = true
 				call HZX(C1X)
 			endif
-		elseif L3 == false and X0O == false and GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and H2X(C1X)!= 0 and(p == X1O or(GetPlayerSlotState(X1O) == PLAYER_SLOT_STATE_LEFT)) then
+		elseif Mode__PoolMode == false and X0O == false and GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and H2X(C1X)!= 0 and(p == X1O or(GetPlayerSlotState(X1O) == PLAYER_SLOT_STATE_LEFT)) then
 			if HHX(GTX) then
 				set HTX = true
 			else
@@ -15404,7 +15404,7 @@ function XZO takes nothing returns boolean
 					call SetItemCharges(HWX, HUX)
 				endif
 			endif
-		elseif L3 == false and X0O == false and GetItemType(C1X) == ITEM_TYPE_PERMANENT and p != X1O and XIV[GetItemIndexEx(C1X)]!= 0 and(GetPlayerSlotState(X1O) == PLAYER_SLOT_STATE_LEFT) == false then
+		elseif Mode__PoolMode == false and X0O == false and GetItemType(C1X) == ITEM_TYPE_PERMANENT and p != X1O and XIV[GetItemIndexEx(C1X)]!= 0 and(GetPlayerSlotState(X1O) == PLAYER_SLOT_STATE_LEFT) == false then
 			if HHX(GTX) then
 				set HTX = true
 			else
@@ -24974,7 +24974,7 @@ function MXO takes nothing returns nothing
 	set g = null
 endfunction
 function MOO takes nothing returns nothing
-	if GKV or Mode__MirrorDraft then
+	if Mode__SingleDraft or Mode__MirrorDraft then
 		call TimerStart(CreateTimer(), 5, true, function MXO)
 	endif
 endfunction
@@ -25031,7 +25031,7 @@ function MRO takes nothing returns boolean
 		call DestroyTrigger(GetTriggeringTrigger())
 		call SetFloatGameState(GAME_STATE_TIME_OF_DAY, 6.)
 		call SuspendTimeOfDay(false)
-		if JT == false then
+		if Mode__NoPowerups == false then
 			call TriggerRegisterTimerEvent(RuneRefreshTrigger, 120, true)
 			call TriggerEvaluate(RuneRefreshTrigger)
 		endif
@@ -25053,7 +25053,7 @@ function MRO takes nothing returns boolean
 		call TriggerRegisterTimerEvent(FKV, 300, true)
 		call TriggerRegisterTimerEvent(PN, 30, true)
 		call TriggerEvaluate(PN)
-		if KT then
+		if Mode__SuperCreeps then
 			call TriggerRegisterTimerEvent(SpawnSuperCreepsTrig, 600, true)
 		endif
 	elseif r == 7 and not IsPickingHero then
@@ -27983,7 +27983,7 @@ function ZEO takes player p, integer ZXO returns nothing
 	exitwhen GetPlayerTechMaxAllowed(p, HeroListTypeId[TTV])> 0 and ZQ[TTV]== false
 		set i = i + 1
 	endloop
-	if PW == false then
+	if Mode__DuplicateMode == false then
 		call XTX(HeroListTypeId[TTV])
 		set YQ[TTV]= true
 		set ZQ[TTV]= true
@@ -28111,7 +28111,7 @@ function ZCO takes nothing returns boolean
 		return false
 	endif
 	if IY == false then
-		if GKV == false and GJV == false and V4 == false then
+		if Mode__SingleDraft == false and Mode__RandomDraft == false and V4 == false then
 			call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10, "-repick " + GetObjectName('n05B'))
 		endif
 		return false
@@ -28126,7 +28126,7 @@ function ZCO takes nothing returns boolean
 		call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10, GetObjectName('n050'))
 		return false
 	endif
-	if (GetPlayerState(GetTriggerPlayer(), PLAYER_STATE_RESOURCE_GOLD)< GT) or(GetPlayerState(GetTriggerPlayer(), PLAYER_STATE_RESOURCE_GOLD)< 400 and(Mode__AllPick or GKV) and FT[GetPlayerId(GetTriggerPlayer())]) then
+	if (GetPlayerState(GetTriggerPlayer(), PLAYER_STATE_RESOURCE_GOLD)< GT) or(GetPlayerState(GetTriggerPlayer(), PLAYER_STATE_RESOURCE_GOLD)< 400 and(Mode__AllPick or Mode__SingleDraft) and FT[GetPlayerId(GetTriggerPlayer())]) then
 		call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10, GetObjectName('n059'))
 		return false
 	endif
@@ -28167,7 +28167,7 @@ function ZFO takes player p, integer i returns nothing
 	local integer k = 1
 	local integer h = GetHandleId(p)
 	local integer playerIndex = GetPlayerId(p)
-	if GKV or Mode__MirrorDraft then
+	if Mode__SingleDraft or Mode__MirrorDraft then
 		set k = 1
 		loop
 			if LoadBoolean(HY, h, HeroListTypeId[k]) and DP[playerIndex * GL + k]and ZQ[k]== false and YQ[k]== false then
@@ -28239,7 +28239,7 @@ function ZJO takes nothing returns nothing
 		set ZLO = HeroTypeMaxCount
 		set ZMO = GetRectCenter(gg_rct_ScourgeBuyArea)
 	endif
-	if VT then
+	if Mode__AllRandom then
 		if (GetRandomInt(1, 2) == 1) then
 			set ZKO = 1
 			set ZLO = VWV
@@ -28248,7 +28248,7 @@ function ZJO takes nothing returns nothing
 			set ZLO = HeroTypeMaxCount
 		endif
 	endif
-	if Mode__AllPick or GKV then
+	if Mode__AllPick or Mode__SingleDraft then
 		set GT = 0
 	endif
 	set ZPO =(LoadUnitHandle(HY,(GetHandleId(GetTriggerPlayer())), 147))
@@ -28256,7 +28256,7 @@ function ZJO takes nothing returns nothing
 		call RemoveUnit(ZPO)
 	endif
 	call AdjustPlayerStateBJ(-1 * GT, p, PLAYER_STATE_RESOURCE_GOLD)
-	if (Mode__AllPick or GKV) and FT[GetPlayerId(GetTriggerPlayer())] then
+	if (Mode__AllPick or Mode__SingleDraft) and FT[GetPlayerId(GetTriggerPlayer())] then
 		call AdjustPlayerStateBJ( -150, p, PLAYER_STATE_RESOURCE_GOLD)
 	endif
 	set KS[playerIndex]= true
@@ -28269,9 +28269,9 @@ function ZJO takes nothing returns nothing
 	call EXRemoveHero(Player__Hero[playerIndex])
 	set PlayerHeroTypeId[playerIndex]= 0
 	set Player__Hero[GetPlayerId(GetTriggerPlayer())]= null
-	if Mode__AllPick or GKV or Mode__MirrorDraft then
+	if Mode__AllPick or Mode__SingleDraft or Mode__MirrorDraft then
 		call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 60, GetObjectName('n05Y'))
-		if Mode__AllPick or GKV or Mode__MirrorDraft then
+		if Mode__AllPick or Mode__SingleDraft or Mode__MirrorDraft then
 			set loop_i = 1
 			set loop_max = HeroTypeMaxCount
 		endif
@@ -28281,7 +28281,7 @@ function ZJO takes nothing returns nothing
 		else
 			call PanCameraToTimedLocForPlayer(p, LAX, 0)
 		endif
-		if GKV or Mode__MirrorDraft then
+		if Mode__SingleDraft or Mode__MirrorDraft then
 			call ZHO(p)
 		endif
 		loop
@@ -28292,7 +28292,7 @@ function ZJO takes nothing returns nothing
 				else
 					call SetPlayerTechMaxAllowed(p, HeroListTypeId[loop_i], 0)
 				endif
-			elseif GKV or Mode__MirrorDraft then
+			elseif Mode__SingleDraft or Mode__MirrorDraft then
 				if DP[playerIndex * GL + loop_i]and ZQ[loop_i]== false and YQ[loop_i]== false then
 					call SetPlayerTechMaxAllowed(p, HeroListTypeId[loop_i], 999)
 				else
@@ -28350,46 +28350,46 @@ function DisplayGameInfo takes nothing returns nothing
 	if Mode__SwitchOn then
 		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Switch On" + "|r:				 " + "允许玩家通过 -switch 指令变更队伍。使用 - unlock 指令解锁遗留的装备.")
 	endif
-	if GJV then
+	if Mode__RandomDraft then
 		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Random Draft" + "|r:				 " + GetObjectName('n072'))
 	endif
-	if GKV then
+	if Mode__SingleDraft then
 		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Single Draft" + "|r:				 每位玩家随机分配相应数量的英雄")
 	endif
 	if Mode__RearmCombos then
 		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Rearm combos" + "|r:				 解除部分技能的冲突限制")
 	endif
-	if VT then
+	if Mode__AllRandom then
 		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "All Random" + "|r:		  " + GetObjectName('n071'))
 	endif
-	if DW then
+	if Mode__ShufflePlayers then
 		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Shuffle Players" + "|r:	 " + GetObjectName('n07H'))
 	endif
-	if QW then
+	if Mode__AllAgility then
 		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "All Agility" + "|r:			 " + GetObjectName('n07L'))
 	endif
-	if TW then
+	if Mode__AllStrength then
 		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "All Strength" + "|r:		 " + GetObjectName('n07K'))
 	endif
-	if SW then
+	if Mode__AllIntelligence then
 		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "All Intelligence" + "|r:	" + GetObjectName('n07J'))
 	endif
-	if GMV then
+	if Mode__RangeOnly then
 		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Range Only" + "|r:	" + GetObjectName('n0G4'))
 	endif
-	if GLV then
+	if Mode__MeleeOnly then
 		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Melee Only" + "|r:	" + GetObjectName('n0G5'))
 	endif
-	if PW then
+	if Mode__DuplicateMode then
 		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Duplicate Mode" + "|r:   " + GetObjectName('n07I'))
 	endif
-	if IT then
+	if Mode__ItemDrop then
 		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Item Drop" + "|r:			 " + GetObjectName('n07F'))
 	endif
-	if JT then
+	if Mode__NoPowerups then
 		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "No Powerups" + "|r:		" + GetObjectName('n07M'))
 	endif
-	if KT then
+	if Mode__SuperCreeps then
 		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Super Creeps" + "|r:		" + GetObjectName('n07N'))
 		call DisplayTimedTextToPlayer(p, 0, 0, 20, "							 " + GetObjectName('n07O'))
 	endif
@@ -28411,28 +28411,28 @@ function DisplayGameInfo takes nothing returns nothing
 	if Mode__NotTop then
 		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "No Top" + "|r:		   " + GetObjectName('n07R'))
 	endif
-	if J3 then
+	if Mode__NoSwap then
 		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "No Swap" + "|r:		   " + GetObjectName('n07X'))
 	endif
-	if F3 then
+	if Mode__NoRepick then
 		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "No Repick" + "|r:		   " + GetObjectName('n07Q'))
 	endif
-	if L3 then
+	if Mode__PoolMode then
 		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Pool Mode" + "|r:		   " + GetObjectName('n07Y'))
 	endif
-	if GWV then
+	if Mode__ObserverInfo then
 		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Observer Info" + "|r:		   " + GetObjectName('n07Z'))
 	endif
-	if GYV then
+	if Mode__FastRespawn then
 		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Fast Respawn" + "|r:		   " + GetObjectName('n0DP'))
 	endif
-	if GZV then
+	if Mode__ZoomMode then
 		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Zoom mode" + "|r:		   " + GetObjectName('n0KI'))
 	endif
-	if G0V then
+	if Mode__UnlimitedLevel then
 		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Unlimited Level" + "|r:		   英雄的等级上限提升至 ∞")
 	endif
-	if G1V then
+	if Mode__SeeSkills then
 		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "See skills" + "|r:		   你能看见敌方选择的技能")
 	endif
 	if Mode__AntiBackdoor then
@@ -28773,7 +28773,7 @@ function ZUO takes unit u1, unit u2, player p1, player p2 returns nothing
 	call StoreDrCacheData("SWAP_" + I2S(GetPlayerId(GetOwningPlayer(u2)))+ "_" + I2S(GetPlayerId(GetOwningPlayer(u1))), GetUnitTypeId(u2))
 	call KTX(p1)
 	call KTX(p2)
-	if GKV or Mode__MirrorDraft then
+	if Mode__SingleDraft or Mode__MirrorDraft then
 		set KS[GetPlayerId(p1)]= true
 		set KS[GetPlayerId(p2)]= true
 	endif
@@ -28810,14 +28810,14 @@ function Z4O takes unit u1, unit u2, boolean Z5O, player p1, player p2 returns b
 			call DisplayTimedTextToPlayer(GetOwningPlayer(u2), 0, 0, 30, "  ")
 			call DisplayTimedTextToPlayer(GetOwningPlayer(u2), 0, 0, 30, "						 " + PlayersColoerText[GetPlayerId(GetOwningPlayer(u1))] + GetUnitName(u1)+ "|r |cff99ccff" + GetObjectName('n082')+ " " + GetObjectName('n083')+ "|r |c00ff0303-swap " + I2S(Z3O(GetOwningPlayer(u1)))+ "|r |cff99ccff" + GetObjectName('n081')+ "|r")
 			call DisplayTimedTextToPlayer(GetOwningPlayer(u2), 0, 0, 30, "  ")
-			if GKV or Mode__MirrorDraft then
+			if Mode__SingleDraft or Mode__MirrorDraft then
 				call DisplayTimedTextToPlayer(GetOwningPlayer(u2), 0, 0, 30, "|c00ff0000WARNING:|r 所选模式禁止repick之后交换英雄.")
 			endif
 			if Z5O then
 				call DisplayTimedTextToPlayer(GetOwningPlayer(u1), 0, 0, 30, "  ")
 				call DisplayTimedTextToPlayer(GetOwningPlayer(u1), 0, 0, 30, "|cff99ccff" + GetObjectName('n08C')+ " |r" + PlayersColoerText[GetPlayerId(GetOwningPlayer(u2))] + GetUnitName(u2)+ "|r")
 				call DisplayTimedTextToPlayer(GetOwningPlayer(u1), 0, 0, 30, "  ")
-				if GKV or Mode__MirrorDraft then
+				if Mode__SingleDraft or Mode__MirrorDraft then
 					call DisplayTimedTextToPlayer(GetOwningPlayer(u1), 0, 0, 30, "|c00ff0000WARNING:|r 所选模式禁止repick之后交换英雄.")
 				endif
 			endif
@@ -28884,7 +28884,7 @@ function Z6O takes nothing returns nothing
 	endif
 	set U2 = Player__Hero[GetPlayerId(E3)]
 	if IsPickingHero then
-		if not((GKV or Mode__MirrorDraft) and IsPlayingPlayer(E3) and E3 != p) then
+		if not((Mode__SingleDraft or Mode__MirrorDraft) and IsPlayingPlayer(E3) and E3 != p) then
 			call InterfaceErrorForPlayer(p, GetObjectName('n02Z'))
 			return
 		endif
@@ -28956,7 +28956,7 @@ function Z8O takes player whichPlayer returns boolean
 	endif
 endfunction
 function VVR takes nothing returns boolean
-	if F3 or J3 then
+	if Mode__NoRepick or Mode__NoSwap then
 		call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10, "-swaphero " + GetObjectName('n088'))
 		return false
 	endif
@@ -28970,7 +28970,7 @@ function VVR takes nothing returns boolean
 	// 	 call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10, "由于你选择了某些技能，所以不能swap。")
 	// 	 return false
 	// endif
-	if GetWidgetLife(Player__Hero[GetPlayerId(GetTriggerPlayer())])< 1 and(not IsPickingHero or not(GKV or Mode__MirrorDraft)) then
+	if GetWidgetLife(Player__Hero[GetPlayerId(GetTriggerPlayer())])< 1 and(not IsPickingHero or not(Mode__SingleDraft or Mode__MirrorDraft)) then
 		call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10, GetObjectName('n08F'))
 		return false
 	endif
@@ -28978,7 +28978,7 @@ function VVR takes nothing returns boolean
 		call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10, GetObjectName('n08G')+ " -swaphero.")
 		return false
 	endif
-	if Z8O(GetTriggerPlayer()) == false and(not IsPickingHero or not(GKV or Mode__MirrorDraft)) then
+	if Z8O(GetTriggerPlayer()) == false and(not IsPickingHero or not(Mode__SingleDraft or Mode__MirrorDraft)) then
 		call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10, GetObjectName('n08H'))
 		return false
 	endif
@@ -30651,7 +30651,7 @@ function X0R takes nothing returns nothing
 	set Q3V[1]= false
 	set Q3V[2]= false
 	set Q3V[3]= false
-	if VT == false and Mode__RandomDraft == false then
+	if Mode__AllRandom == false and Mode__RandomDraft == false then
 		call ExecuteFunc("X1R")
 	endif
 	set t = null
@@ -30944,7 +30944,7 @@ function OMR takes integer pid, integer sn, integer T0V returns nothing
 	else
 		set mi = MultiboardGetItem(JP, D2V[pid]-1, sn -1)
 	endif
-	if IsSentinelPlayer(Player(pid)) and G1V == false then
+	if IsSentinelPlayer(Player(pid)) and Mode__SeeSkills == false then
 		if IsScourgePlayer(LocalPlayer) then
 			if T0V == 0 then
 				set s = HeroAbility_Icon[0]
@@ -30952,7 +30952,7 @@ function OMR takes integer pid, integer sn, integer T0V returns nothing
 				set s = "ReplaceableTextures\\CommandButtons\\BTNQuestion.blp"
 			endif
 		endif
-	elseif IsScourgePlayer(Player(pid)) and G1V == false then
+	elseif IsScourgePlayer(Player(pid)) and Mode__SeeSkills == false then
 		if IsSentinelPlayer(LocalPlayer) then
 			if T0V == 0 then
 				set s = HeroAbility_Icon[0]
@@ -31281,7 +31281,7 @@ function OnPlayerPickAbility takes integer abilityIndex, integer playerIndex, bo
 			if PlayerAbilityList[ROR + xx]> 0 and HaveSavedString(AbilityDataHashTable, HeroAbility_Base[PlayerAbilityList[ROR + xx]], HotKeyStringHash) then
 				if LoadStr(AbilityDataHashTable, HeroAbility_Base[abilityIndex], HotKeyStringHash) == LoadStr(AbilityDataHashTable, HeroAbility_Base[PlayerAbilityList[ROR + xx]], HotKeyStringHash) then
 					call DisplayLoDWarningForPlayer(p, OZR, "快捷键冲突 : " + GetObjectName(HeroAbility_Base[PlayerAbilityList[ROR + xx]]))
-					if HaveSavedBoolean(OtherHashTable, GetHandleId(Player(playerIndex)),'NSHK') and VT then
+					if HaveSavedBoolean(OtherHashTable, GetHandleId(Player(playerIndex)),'NSHK') and Mode__AllRandom then
 						return false
 					endif
 				endif
@@ -31653,7 +31653,7 @@ function RGR takes player p, integer iHeroTypeId, integer i2 returns nothing
 	if p == Player(12) then
 		return
 	endif
-	if DW then
+	if Mode__ShufflePlayers then
 		loop
 		exitwhen j > 5
 			if SentinelPlayers[j]== p or ScourgePlayers[j]== p then
@@ -31700,19 +31700,19 @@ function RKR takes nothing returns nothing
 	local integer f
 	local integer WOV = GL
 	local boolean RLR = true
-	if QW then
+	if Mode__AllAgility then
 		loop
 			set QP[i]= V_V[i]
 			set i = i + 1
 		exitwhen V_V[i]== 0
 		endloop
-	elseif SW then
+	elseif Mode__AllIntelligence then
 		loop
 			set QP[i]= V3V[i]
 			set i = i + 1
 		exitwhen V3V[i]== 0
 		endloop
-	elseif TW then
+	elseif Mode__AllStrength then
 		loop
 			set QP[i]= V1V[i]
 			set i = i + 1
@@ -33354,7 +33354,7 @@ function AYR takes string AZR, integer A_R returns nothing
 	endif
 	if SD then
 		call AddMainModeName(GetObjectName('n0J0'))
-		set GKV = true
+		set Mode__SingleDraft = true
 		
 		set Mode__FastFinish = true
 		call AddModeName("快速结束")
@@ -33449,11 +33449,11 @@ function AYR takes string AZR, integer A_R returns nothing
 	if UL then
 		call AddModeName("无限等级")
 		set TL = 2048
-		set G0V = true
+		set Mode__UnlimitedLevel = true
 	endif
 	if SS then
 		call AddModeName("技能可见")
-		set G1V = true
+		set Mode__SeeSkills = true
 	endif
 	if AB then
 		call AddModeName("防偷塔")
@@ -33685,7 +33685,7 @@ function N0R takes nothing returns boolean
 			exitwhen Player__Hero[GetPlayerId(p)]!= null
 				set X1X = X0X()
 				if ZQ[X1X]== false then
-					if not PW then
+					if not Mode__DuplicateMode then
 						set YQ[X1X]= true
 						set ZQ[X1X]= true
 					endif
@@ -33703,7 +33703,7 @@ function N0R takes nothing returns boolean
 			exitwhen Player__Hero[GetPlayerId(p)]!= null
 				set X1X = X0X()
 				if ZQ[X1X]== false then
-					if not PW then
+					if not Mode__DuplicateMode then
 						set YQ[X1X]= true
 						set ZQ[X1X]= true
 					endif
@@ -33730,9 +33730,9 @@ function NNR takes nothing returns nothing
 	local integer loop_max = 5
 	local integer X1X
 	local trigger t
-	set VT = true
+	set Mode__AllRandom = true
 	set RY = false
-	if not PW then
+	if not Mode__DuplicateMode then
 		call XWX()
 	endif
 	set GT = 250
@@ -33881,7 +33881,7 @@ function BVR takes nothing returns nothing
 	set loop_max = HeroTypeMaxCount
 	call YCE(Player(BER))
 	set Q2 = BER
-	if not VT then
+	if not Mode__AllRandom then
 		loop
 		exitwhen loop_i > loop_max
 			if ZQ[loop_i]== false then
@@ -33915,7 +33915,7 @@ function BVR takes nothing returns nothing
 	call TimerStart(PlayerUltimateAbility2Timer[BER], 0, false, null)
 	call RemoveLocation(LIX)
 	call RemoveLocation(LAX)
-	if not VT then
+	if not Mode__AllRandom then
 	endif
 	set LIX = null
 	set LAX = null
@@ -33957,7 +33957,7 @@ function A9R takes nothing returns nothing
 	set t = null
 endfunction
 function NAR takes nothing returns nothing
-	set PW = true
+	set Mode__DuplicateMode = true
 endfunction
 function A8R takes nothing returns nothing
 	local integer BRR = XKX(SentinelForce)
@@ -33976,7 +33976,7 @@ function A8R takes nothing returns nothing
 	local location LIX = GetRectCenter(gg_rct_SentinelTavernCamera)
 	local location LAX = GetRectCenter(gg_rct_ScourgeTavernCamera)
 	local integer i
-	set DW = true
+	set Mode__ShufflePlayers = true
 	call KillPlayerAllZoneIndicator(SentinelPlayers[1])
 	call KillPlayerAllZoneIndicator(SentinelPlayers[2])
 	call KillPlayerAllZoneIndicator(SentinelPlayers[3])
@@ -34181,7 +34181,7 @@ endfunction
 function NER takes nothing returns nothing
 	local integer i
 	local integer k
-	set QW = true
+	set Mode__AllAgility = true
 	set i = 1
 	set k = V4V
 	loop
@@ -34234,7 +34234,7 @@ function BCR takes nothing returns nothing
 	local integer h
 	if (GetOwningPlayer(trigUnit) == HostPlayer and IsUnitType(trigUnit, UNIT_TYPE_HERO)) then
 		call DisableTrigger(GetTriggeringTrigger())
-		if FT[GetPlayerId(HostPlayer)]== false and VT == false and OT == false then
+		if FT[GetPlayerId(HostPlayer)]== false and Mode__AllRandom == false and OT == false then
 			call SetPlayerState(HostPlayer, PLAYER_STATE_RESOURCE_GOLD, 250+ GetPlayerState(HostPlayer, PLAYER_STATE_RESOURCE_GOLD))
 		endif
 		set KS[GetPlayerId(HostPlayer)]= true
@@ -34276,7 +34276,7 @@ endfunction
 function NOR takes nothing returns nothing
 	local integer i
 	local integer k
-	set TW = true
+	set Mode__AllStrength = true
 	set i = 1
 	set k = V4V
 	loop
@@ -34297,7 +34297,7 @@ endfunction
 function NXR takes nothing returns nothing
 	local integer i
 	local integer k
-	set SW = true
+	set Mode__AllIntelligence = true
 	set i = 1
 	set k = V0V
 	loop
@@ -34320,7 +34320,7 @@ endfunction
 function NIR takes nothing returns nothing
 	local integer i
 	local integer k
-	set GLV = true
+	set Mode__MeleeOnly = true
 	set i = 1
 	set k = RangeHeroMax
 	loop
@@ -34334,7 +34334,7 @@ endfunction
 function NRR takes nothing returns nothing
 	local integer i
 	local integer k
-	set GMV = true
+	set Mode__RangeOnly = true
 	set i = 1
 	set k = MeleeHeroMax
 	loop
@@ -34346,7 +34346,7 @@ function NRR takes nothing returns nothing
 	endloop
 endfunction
 function NCR takes nothing returns nothing
-	set IT = true
+	set Mode__ItemDrop = true
 endfunction
 function NGR takes nothing returns nothing
 	set Mode__EasyMode = true
@@ -34367,11 +34367,11 @@ function NGR takes nothing returns nothing
 	//call SetPlayerHandicapXP(ScourgePlayers[5], 1.5)
 endfunction
 function NDR takes nothing returns nothing
-	set JT = true
+	set Mode__NoPowerups = true
 	call DestroyTrigger(RuneRefreshTrigger)
 endfunction
 function NFR takes nothing returns nothing
-	set KT = true
+	set Mode__SuperCreeps = true
 endfunction
 function BDR takes nothing returns nothing
 	call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, 10, GetObjectName('n0HA'))
@@ -34410,14 +34410,14 @@ function PickMode_NotTop takes nothing returns nothing
 	set Mode__NotTop = true
 endfunction
 function NMR takes nothing returns nothing
-	set F3 = true
-	set J3 = true
+	set Mode__NoRepick = true
+	set Mode__NoSwap = true
 endfunction
 function NPR takes nothing returns nothing
 	set GUV = true
 endfunction
 function NQR takes nothing returns nothing
-	set L3 = true
+	set Mode__PoolMode = true
 endfunction
 function BHR takes nothing returns nothing
 	local integer i = 0
@@ -34432,7 +34432,7 @@ function BHR takes nothing returns nothing
 	endloop
 endfunction
 function BJR takes nothing returns boolean
-	if GWV == false then
+	if Mode__ObserverInfo == false then
 		if LocalPlayer== ObserverPlayer1 or LocalPlayer== ObserverPlayer2 then
 			call BHR()
 		endif
@@ -34440,10 +34440,10 @@ function BJR takes nothing returns boolean
 	return false
 endfunction
 function NSR takes nothing returns nothing
-	set GWV = true
+	set Mode__ObserverInfo = true
 endfunction
 function NTR takes nothing returns nothing
-	set GYV = true
+	set Mode__FastRespawn = true
 endfunction
 function BKR takes nothing returns boolean
 	if LocalPlayer== ObserverPlayer1 or LocalPlayer== ObserverPlayer2 then
@@ -34459,7 +34459,7 @@ function BKR takes nothing returns boolean
 endfunction
 function NUR takes nothing returns nothing
 	local trigger t = CreateTrigger()
-	set GZV = true
+	set Mode__ZoomMode = true
 	set G_V = CreateCameraSetup()
 	call CameraSetupSetField(G_V, CAMERA_FIELD_ZOFFSET, .0, .0)
 	call CameraSetupSetField(G_V, CAMERA_FIELD_ROTATION, 90., .0)
@@ -78014,7 +78014,7 @@ function YVA takes nothing returns nothing
 		call FlushChildHashtable(HY, h)
 		call DestroyTrigger(t)
 	else
-		if (GKV or Mode__MirrorDraft) and(Mode__Draft30 or Mode__Draft40 or Mode__Draft50) then
+		if (Mode__SingleDraft or Mode__MirrorDraft) and(Mode__Draft30 or Mode__Draft40 or Mode__Draft50) then
 			call W9A(i, 255, 2, 2, 255,-6454, 6945, h)
 		else
 			call W9A(i, 255, 2, 2, 255,-6970, 6726, h)
@@ -78032,7 +78032,7 @@ function X1R takes nothing returns nothing
 	call TriggerRegisterTimerEvent(Q4V, 1, true)
 	call TriggerAddCondition(Q4V, Condition(function YVA))
 	call TriggerEvaluate(Q4V)
-	if GKV or Mode__MirrorDraft then
+	if Mode__SingleDraft or Mode__MirrorDraft then
 		set HR = CreateUnit(Player(15),'h302',-7200, 7300, 270)
 		set JR = CreateUnit(Player(15),'h302',-7400, 7300, 270)
 		set KR = CreateUnit(Player(15),'h303',-6600, 7300, 270)

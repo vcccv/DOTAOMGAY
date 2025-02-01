@@ -987,7 +987,7 @@ library HeroAbilityLib requires AbilityCustomOrderId
         call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "magicdefense"),'A34A','QP28','A34B', null)
         set IsPassiveSkill[i * 4 + 3]= true
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "barkskinoff"),'A33U', 0,'Y460', "g")
-        if (GKV or Mode__MirrorDraft or VT) == false then
+        if (Mode__SingleDraft or Mode__MirrorDraft or Mode__AllRandom) == false then
             set i = 114 -1
             call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "request_hero")+ SaveSkillOrder(i * 4 + 1, "r23"),'Z601', 0,'Y601', "t")
             call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "mechanicalcritter"),'Z602', 0,'Y602', "d")
@@ -1043,7 +1043,7 @@ library HeroAbilityLib requires AbilityCustomOrderId
         set IsPassiveSkill[i * 4 + 3]= true
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "creepthunderclap"),'A461', 0,'Y61J', "d")
         set GL = 121
-        if GKV or Mode__MirrorDraft or VT then
+        if Mode__SingleDraft or Mode__MirrorDraft or Mode__AllRandom then
             call ExecuteFunc("R1R")
         endif
     endfunction
