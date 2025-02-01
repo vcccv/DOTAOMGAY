@@ -479,12 +479,7 @@ globals
 	boolean OB = false
 	integer array RB
 	integer IB = 0
-	constant integer CB = 10
-	constant integer DB = 11
-	constant integer FB = 12
-	constant integer GB = 13
-	constant integer HB = 14
-	constant integer JB = 15
+	
 	boolean IsSinglePlayerMode = false
 	group LB
 	boolean IsNotUpgraded = true
@@ -600,7 +595,7 @@ globals
 	unit DL = null
 	group FL = null
 	integer GL ='w'
-	integer HL = 6
+	constant integer HL = 6
 	integer JL = 90
 	integer KL = 150
 	integer LL = 150
@@ -628,21 +623,11 @@ globals
 	multiboard JP = null
 	unit array KP
 	boolean array LP
-	integer array MP
+	integer array PlayerNowPackedHeroIndex
 	integer array PP
 	integer array QP
-	string array HeroSkillsIcon
-	integer array PlayerSkillIndex
-	integer array HeroCommonSkills
-	integer array HeroUpgradeSkills
-	integer array HeroChangeAbilitySkills
-	string array NoBalanceOffTips
-	string array NoRearmCombosTips
-	string array ZTP
-	boolean array IsPassiveSkill
-	boolean array IsMultiIconSkill
-	boolean array IsNoDeathMatchSkill
-	boolean array IsDisabledSkill
+	
+
 
 	integer array PlayerKillHerosCount
 	integer array PlayerHeroDeathCount
@@ -682,12 +667,12 @@ globals
 	// 死亡竞赛 最大生命数
 	integer DeathMatch__MaxLives 
 
-	boolean YS = false
+	boolean Mode__SwitchOn = false
 	boolean VT = false
-	boolean ET = false
+	boolean Mode__RandomDraft = false
 	integer XT = 14
 	boolean OT = false
-	boolean RT = false
+	boolean Mode__AllPick = false
 	boolean IT = false
 	boolean Mode__AntiHack = false
 	multiboard MainMultiboard = null
@@ -977,7 +962,7 @@ globals
 	integer VM
 	player WM
 	trigger XM = null
-	boolean YM = false
+	boolean HaveAnyPlayersSwitchedTeams = false
 	integer JM
 	integer KM
 	boolean V4 = false
@@ -1061,8 +1046,8 @@ globals
 	player EMV
 	trigger AddGoldForIntervalTrig
 	trigger EQV
-	timer array ESV
-	timer array ETV
+	timer array PlayerUltimateAbility1Timer
+	timer array PlayerUltimateAbility2Timer
 	// 可靠金钱
 	integer array PlayersReliableGold
 	real array AssistListTime
@@ -1429,7 +1414,7 @@ globals
 	integer array D8V
 	player array D9V
 	integer FVV = 0
-	multiboard FEV
+	multiboard ObserverMultiboard
 	trigger FXV
 	boolean FRV = false
 	unit FIV = null
@@ -1503,14 +1488,14 @@ globals
 	boolean Mode__Draft30 = false
 	boolean Mode__Draft40 = false
 	boolean Mode__Draft50 = false
-	boolean HVV = false
+	boolean Mode__OneSkill = false
 	// 小模式 - 关闭平衡
 	boolean Mode__BalanceOff = false
 	boolean Mode__RearmCombos = false
-	boolean HOV = false
+	boolean Mode__MirrorDraft = false
 	boolean Mode__RandomExtraAbilities = false
-	boolean HIV = false
-	boolean HAV = false
+	boolean Mode__LimitSkills3 = false
+	boolean Mode__LimitSkills = false
 	// 小模式 - 快速结束
 	boolean Mode__FastFinish = false
 	// 小模式 - 无野怪
@@ -2483,8 +2468,8 @@ function ThrowLog takes nothing returns nothing
 		set s = s +"
 		"+I2S(i)+" :"
 		loop
-			if HeroCommonSkills[PlayerSkillIndex[i * HL + k]]!= 0 then
-				set s = s + UGV(HeroCommonSkills[PlayerSkillIndex[i * HL + k]])+ " "
+			if HeroAbility_Base[PlayerAbilityList[i * HL + k]]!= 0 then
+				set s = s + UGV(HeroAbility_Base[PlayerAbilityList[i * HL + k]])+ " "
 			endif
 			set k = k + 1
 		exitwhen k > HL
@@ -2631,8 +2616,8 @@ function WSV takes nothing returns nothing
 	local unit u = LoadUnitHandle(ObjectHashTable, WFV, 0)
 	local integer WUV = GetUnitAbilityLevel(u, LoadInteger(ObjectHashTable, WFV, 2))
 	local boolean b = UnitRemoveAbility(u, LoadInteger(ObjectHashTable, WFV, 1)) == false
-	local integer WWV = GetPlayerId(GetOwningPlayer(u))
-	if WTV =='A065' and HeroCommonSkills[PlayerSkillIndex[WWV * HL + 6]]=='A065' then
+	local integer playerIndex = GetPlayerId(GetOwningPlayer(u))
+	if WTV =='A065' and HeroAbility_Base[PlayerAbilityList[playerIndex * HL + 6]]=='A065' then
 		set WUV = IP[GetPlayerId(GetOwningPlayer(u))* 2 + 2]
 	endif
 	set FK = false
@@ -3836,8 +3821,8 @@ function TFE takes unit u returns nothing
 	exitwhen i > k
 	endloop
 	call UnitResetCooldownEx(u)
-	call TimerStart(ESV[GetPlayerId(p)], 0, false, null)
-	call TimerStart(ETV[GetPlayerId(p)], 0, false, null)
+	call TimerStart(PlayerUltimateAbility1Timer[GetPlayerId(p)], 0, false, null)
+	call TimerStart(PlayerUltimateAbility2Timer[GetPlayerId(p)], 0, false, null)
 	call FlushChildHashtable(PassiveAbilityCooldown, GetHandleId(u))
 	set i = 0
 	set k = 5
@@ -3869,23 +3854,26 @@ function T4E takes nothing returns nothing
 	endif
 endfunction
 
-function T6E takes integer WWV returns boolean
+function T6E takes integer playerIndex returns boolean
 	if LOD_DEBUGMODE then
 		return true
 	endif
-	return((GetPlayerController(Player(WWV)) == MAP_CONTROL_USER) and(GetPlayerSlotState(Player(WWV)) == PLAYER_SLOT_STATE_PLAYING))
+	return((GetPlayerController(Player(playerIndex)) == MAP_CONTROL_USER) and(GetPlayerSlotState(Player(playerIndex)) == PLAYER_SLOT_STATE_PLAYING))
 endfunction
-function T7E takes player p, boolean b returns nothing
-	local sound s = CreateSoundFromLabel("InterfaceError", false, false, false, 10, 10)
-	if b then
-		if (LocalPlayer== p) then
-			call StartSound(s)
-		endif
+function PlayerInterfaceErrorSoundForPlayer takes player p, boolean b returns nothing
+	if b and User.Local == p then
+		call MHUI_PlayErrorSound()
 	endif
-	call KillSoundWhenDone(s)
-	set s = null
+	//local sound s = CreateSoundFromLabel("InterfaceError", false, false, false, 10, 10)
+	//if b then
+	//	if (LocalPlayer== p) then
+	//		call StartSound(s)
+	//	endif
+	//endif
+	//call KillSoundWhenDone(s)
+	//set s = null
 endfunction
-function T9E takes player p, boolean b, string s returns nothing
+function DisplayLoDTipForPlayer takes player p, boolean b, string s returns nothing
 	if not(b) then
 		return
 	endif
@@ -3896,8 +3884,8 @@ function T9E takes player p, boolean b, string s returns nothing
 		endif
 	endif
 endfunction
-function UVE takes player p, boolean UEE, string s returns nothing
-	if not(UEE) then
+function UVE takes player p, boolean expression, string s returns nothing
+	if not(expression) then
 		return
 	endif
 	if (LocalPlayer== p) then
@@ -3906,12 +3894,12 @@ function UVE takes player p, boolean UEE, string s returns nothing
 		endif
 	endif
 endfunction
-function URE takes player p, boolean UEE, string s returns nothing
-	if not(UEE) then
+function DisplayLoDWarningForPlayer takes player p, boolean expression, string s returns nothing
+	if not(expression) then
 		return
 	endif
-	call T7E(p, UEE)
-	call T9E(p, UEE, s)
+	call PlayerInterfaceErrorSoundForPlayer(p, expression)
+	call DisplayLoDTipForPlayer(p, expression, s)
 endfunction
 function UIE takes integer UDE returns integer
 	return UDE
@@ -4481,7 +4469,7 @@ function HeroLevelUp takes nothing returns nothing
 	// 如果有1个额外技能 代表有第5格技能
 	if ExtraSkillsNumber >= 1 then
 		if heroLevel >= 5 then
-			set abilityId = HeroCommonSkills[PlayerSkillIndex[playerId * HL + 5]]
+			set abilityId = HeroAbility_Base[PlayerAbilityList[playerId * HL + 5]]
 			set abilityId = W7E(abilityId)
 			set YRE = W8E(abilityId)
 			set i = TBE(abilityId)
@@ -4512,7 +4500,7 @@ function HeroLevelUp takes nothing returns nothing
 				endif
 				call SetUnitAbilityLevel(u, abilityId, extraSkillLevel)
 				if (abilityId =='A1C0' and GetUnitAbilityLevel(u,'A418')> 0) then
-					call SetUnitAbilityLevel(u, HeroUpgradeSkills[PlayerSkillIndex[playerId * HL + 5]], extraSkillLevel)
+					call SetUnitAbilityLevel(u, HeroAbility_Special[PlayerAbilityList[playerId * HL + 5]], extraSkillLevel)
 				endif
 				//if YRE > 0 then
 				//	call SetUnitAbilityLevel(u, PassiveSkills_Show[YRE], extraSkillLevel)
@@ -4550,7 +4538,7 @@ function HeroLevelUp takes nothing returns nothing
 	// 如果有2个额外技能 代表有第6格额外大招
 	if ExtraSkillsNumber >= 2 then
 		if heroLevel >= 8 then
-			set abilityId = HeroCommonSkills[PlayerSkillIndex[playerId * HL + 6]]
+			set abilityId = HeroAbility_Base[PlayerAbilityList[playerId * HL + 6]]
 			set YRE = W8E(abilityId)
 			set abilityId = W7E(abilityId)
 			set i = TBE(abilityId)
@@ -4669,10 +4657,10 @@ function YQE takes integer YTE returns nothing
 	call DestroyGroup(g)
 	set g = null
 endfunction
-function YUE takes integer WWV returns integer
+function YUE takes integer playerIndex returns integer
 	local integer xx = 0
 	loop
-		if ZL[xx]== WWV then
+		if ZL[xx]== playerIndex then
 			return xx
 		endif
 		set xx = xx + 1
@@ -4717,18 +4705,18 @@ function YWE takes nothing returns nothing
 	endif
 endfunction
 // b为false时 为-ff指令 
-function YYE takes integer WWV, boolean b returns nothing
-	local player p = Player(WWV)
+function YYE takes integer playerIndex, boolean b returns nothing
+	local player p = Player(playerIndex)
 	if not(SM) and Mode__FastFinish then
 		if b then
-			set RM[WWV]= true
+			set RM[playerIndex]= true
 			call YWE()
 			return
 		endif
 		if GetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER)>= 10 then
-			if not(RM[WWV]) then
-				call DisplayTimedTextToPlayer(LocalPlayer, .0, .0, 10., "|c00FF0000[FF] |r" + "|c006699CC" + "玩家 " + PlayersColoerText[WWV] + PlayersName[WWV] + "|r" + "|c006699CC" + " 投票决定快速结束." + "|r")
-				set RM[WWV]= true
+			if not(RM[playerIndex]) then
+				call DisplayTimedTextToPlayer(LocalPlayer, .0, .0, 10., "|c00FF0000[FF] |r" + "|c006699CC" + "玩家 " + PlayersColoerText[playerIndex] + PlayersName[playerIndex] + "|r" + "|c006699CC" + " 投票决定快速结束." + "|r")
+				set RM[playerIndex]= true
 				call YWE()
 			else
 				call DisplayTimedTextToPlayer(p, .0, .0, 10., "|c00FF0000[FF] |r" + "|c006699CC" + "您已投票." + "|r")
@@ -4822,10 +4810,10 @@ function ZGE takes nothing returns nothing
 endfunction
 // 判断玩家是否拥有指定索引的技能
 function IsPlayerHasSkill takes player p, integer index returns boolean
-	local integer WWV = GetPlayerId(p)
+	local integer playerIndex = GetPlayerId(p)
 	local integer xx = 1
 	loop
-		if (PlayerSkillIndex[WWV * HL + xx]== index) then
+		if (PlayerAbilityList[playerIndex * HL + xx]== index) then
 			return true
 		endif
 		set xx = xx + 1
@@ -4838,12 +4826,12 @@ endfunction
 function IsUnitHaveRearmAbility takes unit u returns boolean
 	return GetUnitAbilityLevel(u,'Y076') == 1 or GetUnitAbilityLevel(u,'A065')> 0 or GetUnitAbilityLevel(u,'A527')> 0 or GetUnitAbilityLevel(u,'A528')> 0 or IsPlayerHasSkill(GetOwningPlayer(u), 76)
 endfunction
-function ZME takes integer WWV, integer ZSE returns integer
+function ZME takes integer playerIndex, integer ZSE returns integer
 	local integer xx = 1
 	loop
 		set ZSE = W7E(ZSE)
-		if (HeroCommonSkills[PlayerSkillIndex[WWV * HL + xx]]== ZSE) then
-			return PlayerSkillIndex[WWV * HL + xx]
+		if (HeroAbility_Base[PlayerAbilityList[playerIndex * HL + xx]]== ZSE) then
+			return PlayerAbilityList[playerIndex * HL + xx]
 		endif
 		set xx = xx + 1
 	exitwhen xx > 4 + ExtraSkillsNumber
@@ -4852,8 +4840,8 @@ function ZME takes integer WWV, integer ZSE returns integer
 endfunction
 function ZTE takes unit trigUnit, integer id returns integer
 	local integer i = GetPlayerId(GetOwningPlayer(trigUnit))
-	local integer Z_E = HeroUpgradeSkills[PlayerSkillIndex[i * HL + id]]
-	local integer Z0E = HeroCommonSkills[PlayerSkillIndex[i * HL + id]]
+	local integer Z_E = HeroAbility_Special[PlayerAbilityList[i * HL + id]]
+	local integer Z0E = HeroAbility_Base[PlayerAbilityList[i * HL + id]]
 	if Z_E != null then
 		if GetUnitAbilityLevel(trigUnit, Z_E)> 0 then
 			return GetUnitAbilityLevel(trigUnit, Z_E)
@@ -4861,63 +4849,7 @@ function ZTE takes unit trigUnit, integer id returns integer
 	endif
 	return GetUnitAbilityLevel(trigUnit, Z0E)
 endfunction
-function SaveSkillOrder takes integer id, string s returns string
-	local integer i = 0
-	if s == null or s == "" then
-		return null
-	endif
-	loop
-	exitwhen not HaveSavedString(AbilityDataHashTable, id, i)
-		set i = i + 1
-	endloop
-	call SaveStr(AbilityDataHashTable, id, i, s)
-	return null
-endfunction
-function Z1E takes integer id, string Z5E returns nothing
-	if Mode__BalanceOff == false then
-		call SaveSkillOrder(id, Z5E)
-	endif
-endfunction
-function Z6E takes integer id, string Z8E returns nothing
-	if Mode__BalanceOff == false then
-		call SaveSkillOrder(id, Z8E)
-	endif
-endfunction
-function GetNormalSkillIndex takes integer id returns integer
-	local integer i = 1
-	loop
-		if HeroCommonSkills[i]== id then
-			return i
-		endif
-		set i = i + 1
-	exitwhen i > MaxHeroSkillsNumber
-	endloop
-	return -1
-endfunction
-function GetSkillIndex takes integer id returns integer	//返回普通+A杖
-	local integer i = 1
-	loop
-		if HeroCommonSkills[i]== id or HeroUpgradeSkills[i] == id then
-			return i
-		endif
-		set i = i + 1
-	exitwhen i > MaxHeroSkillsNumber
-	endloop
-	return -1
-endfunction
-// Id 字符? 普通技能 神杖技能 工程升级技能 
-function RegisterHeroSkill takes integer id, string StackLim, integer commonSkill, integer upgradeSkill, integer changeSkill, string sHotKey returns nothing
-	if commonSkill > 0 then
-		set HeroSkillsIcon[id]= GetAbilitySoundById(commonSkill, SOUND_TYPE_EFFECT_LOOPED)
-	endif
-	set HeroCommonSkills[id]= commonSkill
-	set HeroUpgradeSkills[id]= upgradeSkill
-	set HeroChangeAbilitySkills[id]= changeSkill
-	if sHotKey != "_" and sHotKey != "" and sHotKey != null then
-		call SaveStr(AbilityDataHashTable, commonSkill, HotKeyStringHash, sHotKey)
-	endif
-	set MaxHeroSkillsNumber = id
-endfunction
+
 function VIX takes location l, real d, real a returns location
 	return Location(GetLocationX(l)+ d * Cos(a * bj_DEGTORAD), GetLocationY(l)+ d * Sin(a * bj_DEGTORAD))
 endfunction
@@ -6191,6 +6123,7 @@ function GetAbilityreqLevel takes integer id returns integer
 	endif
 endfunction
 
+
 function IsNotItemAbility takes integer abilityId returns boolean
 	//local integer i = 1
 	//loop
@@ -6217,13 +6150,13 @@ function GetAbilityTimerNumber takes unit u, integer id returns integer
 	if not IsNotItemAbility(id) then
 		return 0
 	endif
-	set abbb = PlayerSkillIndex[GetPlayerId(GetOwningPlayer(u))* 6 + 4]
+	set abbb = PlayerAbilityList[GetPlayerId(GetOwningPlayer(u))* 6 + 4]
 	if not Mode__SixSkills then
 		return 1
 	else
-		if id == HeroCommonSkills[abbb] then
+		if id == HeroAbility_Base[abbb] then
 			return 1
-		elseif id == HeroUpgradeSkills[abbb] then
+		elseif id == HeroAbility_Special[abbb] then
 			return 2
 		endif
 	endif
@@ -6232,9 +6165,9 @@ endfunction
 
 function RefreshUnitAbilityCoolDownTimer takes unit u, integer id, real cd returns nothing
 	if GetAbilityTimerNumber(u, id) == 1 then
-		call TimerStart(ESV[GetPlayerId(GetOwningPlayer(u))], cd, false, null)
+		call TimerStart(PlayerUltimateAbility1Timer[GetPlayerId(GetOwningPlayer(u))], cd, false, null)
 	elseif GetAbilityTimerNumber(u, id) == 2 then
-		call TimerStart(ETV[GetPlayerId(GetOwningPlayer(u))], cd, false, null)
+		call TimerStart(PlayerUltimateAbility2Timer[GetPlayerId(GetOwningPlayer(u))], cd, false, null)
 	endif
 endfunction
 
@@ -6362,8 +6295,8 @@ function TWE takes unit u, boolean TYE returns nothing
 		return
 	endif
 	loop
-		set TZE = PlayerSkillIndex[pid * HL + xx]
-		set TPE = HeroCommonSkills[TZE]
+		set TZE = PlayerAbilityList[pid * HL + xx]
+		set TPE = HeroAbility_Base[TZE]
 		set i = TBE(TPE)
 		if i > 0 and GetUnitAbilityLevel(u, AghanimUpgradeChangeId[i])> 0 then
 			set TPE = AghanimUpgradeUpgradeId[i]
@@ -8743,9 +8676,9 @@ endfunction
 function get_a_c takes unit u returns integer
 	local integer id = GetPlayerId(GetOwningPlayer(u))
 	local integer ret = 0
-	set ret = get_a_fx(HeroCommonSkills[PlayerSkillIndex[id * 6 + 4]])
+	set ret = get_a_fx(HeroAbility_Base[PlayerAbilityList[id * 6 + 4]])
 	if ret == 0 then
-		set ret = get_a_fx(HeroCommonSkills[PlayerSkillIndex[id * 6 + 6]])
+		set ret = get_a_fx(HeroAbility_Base[PlayerAbilityList[id * 6 + 6]])
 	endif
 	return ret
 endfunction
@@ -8778,7 +8711,7 @@ function HDX takes unit u, boolean G6X returns boolean
 	//	endif
 	//endif
 	loop
-		if HeroCommonSkills[PlayerSkillIndex[pid * HL + i]] == 'QF88' then
+		if HeroAbility_Base[PlayerAbilityList[pid * HL + i]] == 'QF88' then
 			if G6X then
 				set U2 = u
 				call UnitRemoveAbility(u,'S3UR')	//小黑A杖
@@ -8786,7 +8719,7 @@ function HDX takes unit u, boolean G6X returns boolean
 				call UnitAddPermanentAbility(u,'S3UR')
 			endif
 		endif
-		if HeroCommonSkills[PlayerSkillIndex[pid * HL + i]] == 'A229' then
+		if HeroAbility_Base[PlayerAbilityList[pid * HL + i]] == 'A229' then
 			if G6X then
 				set U2 = u
 				call ExecuteFunc("FlakCannonOnRemoveAghanimUpgrade")
@@ -8796,14 +8729,14 @@ function HDX takes unit u, boolean G6X returns boolean
 			endif
 		endif
 	
-		set k = TBE(HeroCommonSkills[PlayerSkillIndex[pid * HL + i]])
+		set k = TBE(HeroAbility_Base[PlayerAbilityList[pid * HL + i]])
 		if k > 0 then
 			if G6X then
 				call OnUnitRemoveAbilityAghanimUpgrade(k, u, 1)
 			else
 				set b = OnUnitAddAbilityAghanimUpgrade(k, u, 1) or b
 			endif
-			call G5X(HeroCommonSkills[PlayerSkillIndex[pid * HL + i]], u, G6X)
+			call G5X(HeroAbility_Base[PlayerAbilityList[pid * HL + i]], u, G6X)
 		endif
 		set i = i + 1
 	exitwhen i > 4 + ExtraSkillsNumber
@@ -10088,7 +10021,7 @@ function LWX takes nothing returns boolean
 	local integer loop_i = 1
 	local integer LZX
 	local integer L_X = GetPlayerState(LYX, PLAYER_STATE_RESOURCE_GOLD)
-	if F0V[GetPlayerId(LYX)]== false and YS then
+	if F0V[GetPlayerId(LYX)]== false and Mode__SwitchOn then
 		if GetTriggerEvalCount(t) == 1 then
 			if IsPlayerAlly(LocalPlayer, LYX) then
 				call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 6, GetObjectName('n0J3'))
@@ -10195,7 +10128,7 @@ function L2X takes nothing returns nothing
 		call StoreDrCacheData("C" + "K" + I2S(PlayerCreepLastHitCount[GetPlayerId(GetTriggerPlayer())])+ "D" + I2S(PlayerCreepDenyCount[GetPlayerId(GetTriggerPlayer())])+ "N" + I2S((LoadInteger(HY,(400 + GetPlayerId(GetTriggerPlayer())), 79))), GetPlayerId(GetTriggerPlayer()))
 		set FFV = GetTriggerPlayer()
 		call ExecuteFunc("L4X")
-		if YS then
+		if Mode__SwitchOn then
 			call C0X(GetTriggerPlayer())
 		endif
 		set EJV[GetPlayerId(GetTriggerPlayer())]= true
@@ -10596,7 +10529,7 @@ function MDX takes integer i, integer k returns nothing
 		call ExecuteFunc("MFX")
 	elseif i == 83 then
 		set IX = true
-	elseif i =='o' then
+	elseif i ==111 then
 		call ExecuteFunc("MGX")
 	elseif (i == 38) then
 		call ExecuteFunc("MHX")
@@ -10609,7 +10542,7 @@ function MDX takes integer i, integer k returns nothing
 		call ExecuteFunc("MMX")
 	elseif (i == 95) then
 		call ExecuteFunc("MPX")
-	elseif (i == FB) then
+	elseif (i == 12) then
 		call ExecuteFunc("MQX")
 	elseif i == 52 then
 		call SetAllPlayerAbilityUnavailable('A30P')
@@ -10632,7 +10565,7 @@ function MDX takes integer i, integer k returns nothing
 		call ExecuteFunc("RegisterPhantomLancerTrigger")
 	elseif (i == 26) then
 		call ExecuteFunc("M0X")
-	elseif (i == CB) then
+	elseif (i == 10) then
 		call ExecuteFunc("M1X")
 	elseif (i == 23) then
 		// 地精工程师
@@ -10850,7 +10783,7 @@ function QBX takes nothing returns nothing
 				call MultiboardSetItemValue(mi, TM + PlayersColoerText[GetPlayerId((SentinelUsers[d]))] + PlayersName[GetPlayerId((SentinelUsers[d]))] + "|r")
 			else
 				call MultiboardSetItemStyle(mi, false, true)
-				call MultiboardSetItemIcon(mi, HeroSkillsIcon[0])
+				call MultiboardSetItemIcon(mi, HeroAbility_Icon[0])
 			endif
 			set i = i + 1
 			if i >(5 + ExtraSkillsNumber) then
@@ -10872,7 +10805,7 @@ function QBX takes nothing returns nothing
 				call MultiboardSetItemValue(mi, TM + PlayersColoerText[GetPlayerId((ScourgeUsers[d -1 -SentinelUserCount]))] + PlayersName[GetPlayerId((ScourgeUsers[d -1 -SentinelUserCount]))] + "|r")
 			else
 				call MultiboardSetItemStyle(mi, false, true)
-				call MultiboardSetItemIcon(mi, HeroSkillsIcon[0])
+				call MultiboardSetItemIcon(mi, HeroAbility_Icon[0])
 			endif
 			set i = i + 1
 			if i >(5 + ExtraSkillsNumber) then
@@ -10888,17 +10821,17 @@ function QBX takes nothing returns nothing
 	set mi = null
 endfunction
 function AddHeroSkills takes unit u, player p returns nothing
-	local integer WWV = GetPlayerId(p)
+	local integer playerIndex = GetPlayerId(p)
 	local integer xx = 0
 	local integer QDX
 	local integer QFX
 	local integer id
 	set xx = 1
 	loop
-		if PlayerSkillIndex[WWV * HL + xx]!= 0 then
-			set QFX = PlayerSkillIndex[WWV * HL + xx]
-			set id = HeroCommonSkills[QFX]
-			set QDX = HeroChangeAbilitySkills[QFX]
+		if PlayerAbilityList[playerIndex * HL + xx]!= 0 then
+			set QFX = PlayerAbilityList[playerIndex * HL + xx]
+			set id = HeroAbility_Base[QFX]
+			set QDX = HeroAbility_Modify[QFX]
 			call UnitAddPermanentAbility(u, QDX)
 			call SetPlayerAbilityAvailable(p, QDX, false)
 		endif
@@ -10995,10 +10928,10 @@ function PlayerPickHero takes unit u, integer playerId, unit QKX returns nothing
 	set QSX[2]= heroIndex + 2
 	set QSX[3]= heroIndex + 3
 	set QSX[4]= heroIndex + 4
-	set MP[playerId]= GetUnitPointValue(u)
+	set PlayerNowPackedHeroIndex[playerId]= GetUnitPointValue(u)
 	call RemoveUnit(u)
 	call SetPlayerState( whichPlayer , PLAYER_STATE_RESOURCE_GOLD, GetPlayerState( whichPlayer , PLAYER_STATE_RESOURCE_GOLD)+ 250 )
-	if GKV or HOV then
+	if GKV or Mode__MirrorDraft then
 		set QTX = LoadBoolean(HY, GetHandleId( whichPlayer ), unitTypeId)
 		if not QTX then
 			call UVE( whichPlayer , true, "这些是你友军的技能，你无法选择他们。你的技能在 " + QHX(playerId)+ "|c006699CC 酒馆|r")
@@ -11023,14 +10956,14 @@ function PlayerPickHero takes unit u, integer playerId, unit QKX returns nothing
 	set xx = 1
 	loop
 		if IsDisabledSkill[heroIndex + xx]== false then
-			set tempAbilityId = HeroCommonSkills[heroIndex + xx]
+			set tempAbilityId = HeroAbility_Base[heroIndex + xx]
 			set tempAbilityId = QGX(tempAbilityId)
 			call UnitAddAbility(KP[playerId], tempAbilityId)
-			if not IsPassiveSkill[heroIndex + xx] and HeroUpgradeSkills[heroIndex + xx] != 0 then
+			if not IsPassiveSkill[heroIndex + xx] and HeroAbility_Special[heroIndex + xx] != 0 then
 				// 预读神杖技能
-				call UnitAddAbility(KP[playerId], HeroUpgradeSkills[heroIndex + xx])
-				call UnitRemoveAbility(KP[playerId], HeroUpgradeSkills[heroIndex + xx])
-				//call SingleDebug( "预读 " + I2S(xx) + " 号神杖升级技能 " + GetObjectName( HeroUpgradeSkills[heroIndex + xx] ) )
+				call UnitAddAbility(KP[playerId], HeroAbility_Special[heroIndex + xx])
+				call UnitRemoveAbility(KP[playerId], HeroAbility_Special[heroIndex + xx])
+				//call SingleDebug( "预读 " + I2S(xx) + " 号神杖升级技能 " + GetObjectName( HeroAbility_Special[heroIndex + xx] ) )
 			endif
 			//if not Mode__RearmCombos then
 			call SetAbilityStringByMode(KP[playerId], tempAbilityId) 	//根据模式更改技能文本
@@ -11047,7 +10980,7 @@ function PlayerPickHero takes unit u, integer playerId, unit QKX returns nothing
 			endif
 			if QTX then
 				if ( not IsPlayerHasSkill( whichPlayer , QSX[xx]) ) then
-					if HVV then
+					if Mode__OneSkill then
 						if XP[teamId * OP + QSX[xx]]== 0 then
 							call UnitAddAbility(KP[playerId],'Z000'+ xx -1)
 						else
@@ -11274,16 +11207,16 @@ function PlayerChooseHeroUnit takes unit whichUnit returns boolean
 		set loop_i = 1
 		set message = GetPlayerName(whichPlayer)+ ": "
 		loop
-			set id = PlayerSkillIndex[playerId * HL + loop_i]
+			set id = PlayerAbilityList[playerId * HL + loop_i]
 			if id > 600 then
-				call DisplayTimedTextToPlayer(whichPlayer, 0, 0, 15, "	" + GetObjectName(HeroCommonSkills[id])+ "|cffffcc00 (Invoker)|r")
+				call DisplayTimedTextToPlayer(whichPlayer, 0, 0, 15, "	" + GetObjectName(HeroAbility_Base[id])+ "|cffffcc00 (Invoker)|r")
 			else
 				if loop_i == 4 or loop_i == 6 then
-					call DisplayTimedTextToPlayer(whichPlayer, 0, 0, 15, "	" + "|c00ff0303" + GetObjectName(HeroCommonSkills[id])+ "|r" + "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(id + 3)/ 4])+ ")" + "|r")
-					set message = message + GetObjectName(HeroCommonSkills[id])+ ", "
+					call DisplayTimedTextToPlayer(whichPlayer, 0, 0, 15, "	" + "|c00ff0303" + GetObjectName(HeroAbility_Base[id])+ "|r" + "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(id + 3)/ 4])+ ")" + "|r")
+					set message = message + GetObjectName(HeroAbility_Base[id])+ ", "
 				else
-					call DisplayTimedTextToPlayer(whichPlayer, 0, 0, 15, "	" + GetObjectName(HeroCommonSkills[id])+ "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(id + 3)/ 4])+ ")" + "|r")
-					set message = message + GetObjectName(HeroCommonSkills[id])+ ", "
+					call DisplayTimedTextToPlayer(whichPlayer, 0, 0, 15, "	" + GetObjectName(HeroAbility_Base[id])+ "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(id + 3)/ 4])+ ")" + "|r")
+					set message = message + GetObjectName(HeroAbility_Base[id])+ ", "
 				endif
 			endif
 			set loop_i = loop_i + 1
@@ -11294,11 +11227,11 @@ function PlayerChooseHeroUnit takes unit whichUnit returns boolean
 		call DisplayTimedTextToPlayer(whichPlayer, 0, 0, 15, "|cff99ccff你的技能:|r")
 		set loop_i = 1
 		loop
-			set id = PlayerSkillIndex[playerId * HL + loop_i]
+			set id = PlayerAbilityList[playerId * HL + loop_i]
 			if loop_i == 4 or loop_i == 6 then
-				call DisplayTimedTextToPlayer(whichPlayer, 0, 0, 15, "	" + "|c00ff0303" + GetObjectName(HeroCommonSkills[id])+ "|r" + "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(id + 3)/ 4])+ ")" + "|r")
+				call DisplayTimedTextToPlayer(whichPlayer, 0, 0, 15, "	" + "|c00ff0303" + GetObjectName(HeroAbility_Base[id])+ "|r" + "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(id + 3)/ 4])+ ")" + "|r")
 			else
-				call DisplayTimedTextToPlayer(whichPlayer, 0, 0, 15, "	" + GetObjectName(HeroCommonSkills[id])+ "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(id + 3)/ 4])+ ")" + "|r")
+				call DisplayTimedTextToPlayer(whichPlayer, 0, 0, 15, "	" + GetObjectName(HeroAbility_Base[id])+ "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(id + 3)/ 4])+ ")" + "|r")
 			endif
 			set loop_i = loop_i + 1
 		exitwhen loop_i > 4 + ExtraSkillsNumber
@@ -11428,7 +11361,7 @@ function PlayerChooseHeroUnit takes unit whichUnit returns boolean
 	if not NeedHideHeroNames[LocalPlayerId] then
 		call SetPlayerName(whichPlayer,(PlayersName[playerId])+ " (" + EJX(Player__Hero[playerId])+ ")")
 	endif
-	if HOV or GKV then
+	if Mode__MirrorDraft or GKV then
 		call HidePlayerTavern(whichPlayer)
 	endif
 	call KVX(whichUnit) // 同步决斗的额外攻击力
@@ -11496,12 +11429,12 @@ function HideMianbanCoolDownTimer takes nothing returns nothing
 	local unit u = LoadUnitHandle(HY, h, 1)
 	local integer id = LoadInteger(HY, h, 2)
 	local integer pid = GetPlayerId(GetOwningPlayer(u))
-	local integer TPE = PlayerSkillIndex[pid * HL + 4]
+	local integer TPE = PlayerAbilityList[pid * HL + 4]
 	local real cd = YDWEGetUnitAbilityState(u, id, 1)
-	if id == HeroCommonSkills[TPE]or(HeroUpgradeSkills[TPE]!= null and id == HeroUpgradeSkills[TPE]) then
-		call TimerStart(ESV[pid], cd, false, null)
+	if id == HeroAbility_Base[TPE]or(HeroAbility_Special[TPE]!= null and id == HeroAbility_Special[TPE]) then
+		call TimerStart(PlayerUltimateAbility1Timer[pid], cd, false, null)
 	elseif Mode__SixSkills then
-		call TimerStart(ETV[pid], cd, false, null)
+		call TimerStart(PlayerUltimateAbility2Timer[pid], cd, false, null)
 	endif
 	call FlushChildHashtable(HY, h)
 	call DestroyTrigger(t)
@@ -11522,11 +11455,11 @@ function SXX takes nothing returns nothing
 	local unit whichUnit = GetTriggerUnit()
 	local integer id = GetSpellAbilityId()
 	local integer pid = GetPlayerId(GetOwningPlayer(whichUnit))
-	local integer TPE = PlayerSkillIndex[pid * HL + 4]
+	local integer TPE = PlayerAbilityList[pid * HL + 4]
 	local real cd = 0.00
 	if id =='A02W' then
-		call TimerStart(ESV[pid], 0, false, null)
-		call TimerStart(ETV[pid], 0, false, null)
+		call TimerStart(PlayerUltimateAbility1Timer[pid], 0, false, null)
+		call TimerStart(PlayerUltimateAbility2Timer[pid], 0, false, null)
 	elseif IsUnitType(whichUnit, UNIT_TYPE_HERO) and IsUltimateSkill(id) then
 		set cd = YDWEGetUnitAbilityDataReal(whichUnit, id, GetUnitAbilityLevel(whichUnit, id), 105)
 		if cd > 0 then
@@ -11539,8 +11472,8 @@ function SOX takes nothing returns nothing
 	local integer i = 0
 	loop
 	exitwhen(i > 13)
-		set ESV[i]= CreateTimer()
-		set ETV[i]= CreateTimer()
+		set PlayerUltimateAbility1Timer[i]= CreateTimer()
+		set PlayerUltimateAbility2Timer[i]= CreateTimer()
 		set E[i]= CreateUnit(Player(i),'e00E', 0, 0, 0)
 		set i = i + 1
 	endloop
@@ -12155,7 +12088,7 @@ function TZX takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local integer T_X =(LoadInteger(HY, h, 89))
 	local string TWX =(LoadStr(HY, h, 90))
-	local integer WWV = LoadInteger(HY,'0SND','0PID')
+	local integer playerIndex = LoadInteger(HY,'0SND','0PID')
 	if T_X == 1 then
 		call BWX(M0)
 	elseif T_X == 2 then
@@ -17141,7 +17074,7 @@ function CraniumBasherWrapper takes nothing returns nothing
 	local integer id = GetPlayerId(GetOwningPlayer(GetAttacker()))
 	local integer h = GetHandleId(u)
 	local real time =(GetGameTime())
-	local real I0O =(LoadReal(HY, h,'e'))
+	local real I0O =(LoadReal(HY, h,101))
 	local boolean I1O =(LoadBoolean(HY, h, 99))
 	local boolean I2O =(LoadBoolean(HY, h, 100))
 	local boolean I3O = time < I0O
@@ -17158,7 +17091,7 @@ function CraniumBasherWrapper takes nothing returns nothing
 		return
 	endif
 	if I1O and I3O == false and I2O == false then
-		call SaveReal(HY, h,'e',((time + 2.3)* 1.))
+		call SaveReal(HY, h,101,((time + 2.3)* 1.))
 		if I4O == false then
 			call SaveBoolean(HY, h, 100,(true))
 		endif
@@ -17637,13 +17570,13 @@ function GLE takes nothing returns boolean
 		set u = GetTriggerUnit()
 		set h = GetHandleId(u)
 		call SaveUnitHandle(HY, h,'g', null)
-		call SaveInteger(HY, h,'h', 0)
+		call SaveInteger(HY, h,104, 0)
 		if (GetItemOfTypeFromUnit(GetTriggerUnit(), XOV[O_V])!= null or GetItemOfTypeFromUnit(GetTriggerUnit(), XIV[O_V])!= null) and(GetUnitTypeId(GetSpellTargetUnit())=='nfoh' or GetUnitTypeId(GetSpellTargetUnit())=='ndfl') then
 			call SaveUnitHandle(HY, h,'g', GetSpellTargetUnit())
 		elseif ZNX(GetItemTypeId(GetSpellTargetItem())) then
 			set id = ZAX(GetItemTypeId(GetSpellTargetItem()))
 			call OQO(GetTriggerUnit(), id, true)
-			call SaveInteger(HY, h,'h', id)
+			call SaveInteger(HY, h,104, id)
 			call HZX(GetSpellTargetItem())
 		endif
 	endif
@@ -17663,7 +17596,7 @@ function AKO takes nothing returns nothing
 	if GTX == O_V then
 		set JNX = B2X(u, C1X)
 		set ALO =(LoadUnitHandle(HY,(GetHandleId(u)),'g'))
-		set AMO =(LoadInteger(HY,(GetHandleId(u)),'h'))
+		set AMO =(LoadInteger(HY,(GetHandleId(u)),104))
 		if GetUnitTypeId(ALO)=='nfoh' or GetUnitTypeId(ALO)=='ndfl' then
 			call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Undead\\ReplenishMana\\SpiritTouchTarget.mdl", u, "overhead"))
 			call IRX(GetOwningPlayer(u), "Abilities\\Spells\\Human\\Heal\\HealTarget.wav")
@@ -18201,13 +18134,13 @@ function AYO takes nothing returns boolean
 	local integer array AZO
 	local integer array HUX
 	local integer A_O = LoadInteger(HY, h, 125)
-	set AZO[1]= LoadInteger(HY, h,'j')
+	set AZO[1]= LoadInteger(HY, h,106)
 	set AZO[2]= LoadInteger(HY, h,'k')
-	set AZO[3]= LoadInteger(HY, h,'l')
-	set AZO[4]= LoadInteger(HY, h,'m')
+	set AZO[3]= LoadInteger(HY, h,108)
+	set AZO[4]= LoadInteger(HY, h,109)
 	set AZO[5]= LoadInteger(HY, h, 110)
-	set AZO[6]= LoadInteger(HY, h,'o')
-	set HUX[1]= LoadInteger(HY, h,'p')
+	set AZO[6]= LoadInteger(HY, h,111)
+	set HUX[1]= LoadInteger(HY, h,112)
 	set HUX[2]= LoadInteger(HY, h,'q')
 	set HUX[3]= LoadInteger(HY, h, 114)
 	set HUX[4]= LoadInteger(HY, h, 115)
@@ -18416,13 +18349,13 @@ function A1O takes nothing returns boolean
 	call SavePlayerHandle(HY, h, 121,(p3))
 	call SavePlayerHandle(HY, h,'z',(p4))
 	call SavePlayerHandle(HY, h,'{',(p5))
-	call SaveInteger(HY, h,'j',(NVO))
+	call SaveInteger(HY, h,106,(NVO))
 	call SaveInteger(HY, h,'k',(NEO))
-	call SaveInteger(HY, h,'l',(NXO))
-	call SaveInteger(HY, h,'m',(NOO))
+	call SaveInteger(HY, h,108,(NXO))
+	call SaveInteger(HY, h,109,(NOO))
 	call SaveInteger(HY, h, 110,(NRO))
-	call SaveInteger(HY, h,'o',(NIO))
-	call SaveInteger(HY, h,'p',(NAO))
+	call SaveInteger(HY, h,111,(NIO))
+	call SaveInteger(HY, h,112,(NAO))
 	call SaveInteger(HY, h,'q',(NNO))
 	call SaveInteger(HY, h, 114,(NBO))
 	call SaveInteger(HY, h, 115,(NCO))
@@ -18462,19 +18395,19 @@ function NGO takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local unit NHO =(LoadUnitHandle(HY, h,'|'))
 	local integer A_O =(LoadInteger(HY, h, 125))
-	local integer NVO =(LoadInteger(HY, h,'j'))
+	local integer NVO =(LoadInteger(HY, h,106))
 	local integer NEO =(LoadInteger(HY, h,'k'))
-	local integer NXO =(LoadInteger(HY, h,'l'))
-	local integer NOO =(LoadInteger(HY, h,'m'))
+	local integer NXO =(LoadInteger(HY, h,108))
+	local integer NOO =(LoadInteger(HY, h,109))
 	local integer NRO =(LoadInteger(HY, h, 110))
-	local integer NIO =(LoadInteger(HY, h,'o'))
+	local integer NIO =(LoadInteger(HY, h,111))
 	local player p0 =(LoadPlayerHandle(HY, h,'v'))
 	local player p1 =(LoadPlayerHandle(HY, h,'w'))
 	local player p2 =(LoadPlayerHandle(HY, h, 120))
 	local player p3 =(LoadPlayerHandle(HY, h, 121))
 	local player p4 =(LoadPlayerHandle(HY, h,'z'))
 	local player p5 =(LoadPlayerHandle(HY, h,'{'))
-	local integer NAO =(LoadInteger(HY, h,'p'))
+	local integer NAO =(LoadInteger(HY, h,112))
 	local integer NNO =(LoadInteger(HY, h,'q'))
 	local integer NBO =(LoadInteger(HY, h, 114))
 	local integer NCO =(LoadInteger(HY, h, 115))
@@ -18673,13 +18606,13 @@ function NJO takes unit A2O returns nothing
 	call SavePlayerHandle(HY, h, 121,(p3))
 	call SavePlayerHandle(HY, h,'z',(p4))
 	call SavePlayerHandle(HY, h,'{',(p5))
-	call SaveInteger(HY, h,'j',(NVO))
+	call SaveInteger(HY, h,106,(NVO))
 	call SaveInteger(HY, h,'k',(NEO))
-	call SaveInteger(HY, h,'l',(NXO))
-	call SaveInteger(HY, h,'m',(NOO))
+	call SaveInteger(HY, h,108,(NXO))
+	call SaveInteger(HY, h,109,(NOO))
 	call SaveInteger(HY, h, 110,(NRO))
-	call SaveInteger(HY, h,'o',(NIO))
-	call SaveInteger(HY, h,'p',(NAO))
+	call SaveInteger(HY, h,111,(NIO))
+	call SaveInteger(HY, h,112,(NAO))
 	call SaveInteger(HY, h,'q',(NNO))
 	call SaveInteger(HY, h, 114,(NBO))
 	call SaveInteger(HY, h, 115,(NCO))
@@ -23210,7 +23143,7 @@ function JIO takes nothing returns nothing
 		endif
 		set i = i + 1
 	endloop
-	if YM == false then
+	if HaveAnyPlayersSwitchedTeams == false then
 		set IM1 = SentinelUserCount
 		set N1 = ScourgeUserCount
 	endif
@@ -23403,7 +23336,7 @@ function GetPlayerInfoIconBySlot takes player p, integer k returns string
 	if IsPlayerAlly(LocalPlayer, p) then
 		if IsPlayersEnableSkillInfo[LocalPlayerId] then
 			if k <= 4 + ExtraSkillsNumber then
-				return HeroSkillsIcon[PlayerSkillIndex[GetPlayerId(p)* HL + k]]
+				return HeroAbility_Icon[PlayerAbilityList[GetPlayerId(p)* HL + k]]
 			else
 				return "UI\\Widgets\\Console\\Undead\\undead-inventory-slotfiller.blp"
 			endif
@@ -23697,13 +23630,13 @@ function UpdateMainMultiboardLoopAction takes nothing returns nothing
 		else
 			call SetMultiboardItemText(MainMultiboard, 1, loop_i + 2, TM +(PlayersName[pid])+ J1O)
 		endif
-		set cooldown1Value =(TimerGetRemaining(ESV[pid]))
+		set cooldown1Value =(TimerGetRemaining(PlayerUltimateAbility1Timer[pid]))
 		if cooldown1Value > 0 then
 			set s = I2S(R2I(cooldown1Value))
 		else
 			set s = " "
 		endif
-		set cooldown2Value =(TimerGetRemaining(ETV[pid]))
+		set cooldown2Value =(TimerGetRemaining(PlayerUltimateAbility2Timer[pid]))
 		if cooldown2Value > 0 then
 			set cooldown2Text = I2S(R2I(cooldown2Value))
 		else
@@ -23833,13 +23766,13 @@ function UpdateMainMultiboardLoopAction takes nothing returns nothing
 		else
 			call SetMultiboardItemText(MainMultiboard, 1, loop_i + 3 + SentinelUserCount, TM +(PlayersName[pid])+ J1O)
 		endif
-		set cooldown1Value = TimerGetRemaining(ESV[pid])
+		set cooldown1Value = TimerGetRemaining(PlayerUltimateAbility1Timer[pid])
 		if cooldown1Value > 0 then
 			set s = I2S(R2I(cooldown1Value))
 		else
 			set s = " "
 		endif
-		set cooldown2Value = TimerGetRemaining(ETV[pid])
+		set cooldown2Value = TimerGetRemaining(PlayerUltimateAbility2Timer[pid])
 		if cooldown2Value > 0 then
 			set cooldown2Text = I2S(R2I(cooldown2Value))
 		else
@@ -23896,41 +23829,41 @@ function LEO takes player whichUnit, player targetUnit returns string
 	endif
 	return I2S(k)+ "/" + I2S(d)
 endfunction
-function LXO takes player whichUnit returns string
-	local string LOO
-	if UnitIsDead(Player__Hero[GetPlayerId(whichUnit)]) then
-		set LOO = I2S(R2I(TimerGetRemaining(PS[GetPlayerId(whichUnit)])))
+function LXO takes player whichPlayer returns string
+	local string s
+	if UnitIsDead(Player__Hero[GetPlayerId(whichPlayer)]) then
+		set s = I2S(R2I(TimerGetRemaining(PS[GetPlayerId(whichPlayer)])))
 	else
-		set LOO = " "
+		set s = " "
 	endif
-	return LOO
+	return s
 endfunction
-function LRO takes player whichUnit returns string
-	local real r =(TimerGetRemaining(ESV[GetPlayerId((whichUnit))]))
-	local string LOO
+function GetPlayerUltimate1CooldownText takes player whichPlayer returns string
+	local real r =(TimerGetRemaining(PlayerUltimateAbility1Timer[GetPlayerId((whichPlayer))]))
+	local string s
 	if r > 0 then
-		set LOO = I2S(R2I(r))
+		set s = I2S(R2I(r))
 	else
-		set LOO = " "
+		set s = " "
 	endif
-	return LOO
+	return s
 endfunction
 function ob_tab0 takes nothing returns nothing
-	call MultiboardMinimize(FEV, true)
+	call MultiboardMinimize(ObserverMultiboard, true)
 endfunction
 function ob_tab1 takes nothing returns nothing
-	call MultiboardMinimize(FEV, false)
+	call MultiboardMinimize(ObserverMultiboard, false)
 endfunction
-function LIO takes integer LAO, integer LNO returns nothing		//Ob的Tab切换多面板
-	set FEV = CreateMultiboard()
-	call MultiboardSetItemsWidth(FEV, 0)
-	call MultiboardSetRowCount(FEV, LAO)
-	call MultiboardSetColumnCount(FEV, LNO)
-	call MultiboardSetTitleText(FEV, GetObjectName('n0E3')+ " " + " - " +(GameModeString))
-	call MultiboardMinimize(FEV, true)
-	call MultiboardSetItemsStyle(FEV, false, false)
-	if (LocalPlayer== ObserverPlayer1 or LocalPlayer== ObserverPlayer2) then
-		call MultiboardDisplay(FEV, true)
+function CreateObserverMultiboard takes integer row, integer column returns nothing		//Ob的Tab切换多面板
+	set ObserverMultiboard = CreateMultiboard()
+	call MultiboardSetItemsWidth(ObserverMultiboard, 0)
+	call MultiboardSetRowCount(ObserverMultiboard, row)
+	call MultiboardSetColumnCount(ObserverMultiboard, column)
+	call MultiboardSetTitleText(ObserverMultiboard, GetObjectName('n0E3')+ " " + " - " +(GameModeString))
+	call MultiboardMinimize(ObserverMultiboard, true)
+	call MultiboardSetItemsStyle(ObserverMultiboard, false, false)
+	if (LocalPlayer == ObserverPlayer1 or LocalPlayer == ObserverPlayer2) then
+		call MultiboardDisplay(ObserverMultiboard, true)
 		call DzTriggerRegisterKeyEventByCode(null, 9, 0, false, function ob_tab0)
 		call DzTriggerRegisterKeyEventByCode(null, 9, 1, false, function ob_tab1)
 	endif
@@ -23942,8 +23875,8 @@ function LBO takes nothing returns nothing
 	local player array K1O
 	local integer K2O
 	local integer K3O
-	local integer K4O = 1 + 21 + IMaxBJ(LCO, LDO)
-	local integer K5O = 1 +(LCO + LDO)* 2
+	local integer row = 1 + 21 + IMaxBJ(LCO, LDO)
+	local integer column  = 1 +(LCO + LDO)* 2
 	local multiboarditem mbt
 	local integer i
 	local integer x
@@ -23962,13 +23895,13 @@ function LBO takes nothing returns nothing
 	local integer scourgesReviveCount = 0
 	local integer r
 	if LCO > 0 and LDO > 0 then
-		set K4O = K4O + 2
+		set row = row + 2
 	endif
 	if GetTriggerExecCount(GetTriggeringTrigger()) == 1 then
-		call LIO(K4O, K5O)
+		call CreateObserverMultiboard(row, column )
 	endif
 	if IsGameHaveObserver and(LocalPlayer== ObserverPlayer1 or LocalPlayer== ObserverPlayer2) then
-		call MultiboardDisplay(FEV, true)
+		call MultiboardDisplay(ObserverMultiboard, true)
 	endif
 	set i = 1
 	loop
@@ -24022,7 +23955,7 @@ function LBO takes nothing returns nothing
 	if scourgesReviveCount > 0 then
 		set scourgesReviveText = "|c00ffffff" + "[天灾: |r" + scourgesReviveText + "|c00ffffff" + "]|r"
 	endif
-	call MultiboardSetTitleText(FEV, sentinelsReviveText + " " + scourgesReviveText + " " + GetObjectName('n0E3')+ "  - " + GameModeString + " - " +("|c00ff0303" + I2S(PlayerKillHerosCount[GetPlayerId(SentinelPlayers[0])])+ "|r/|c0020c000" + I2S(PlayerHeroDeathCount[GetPlayerId(SentinelPlayers[0])])+ "|r"))
+	call MultiboardSetTitleText(ObserverMultiboard, sentinelsReviveText + " " + scourgesReviveText + " " + GetObjectName('n0E3')+ "  - " + GameModeString + " - " +("|c00ff0303" + I2S(PlayerKillHerosCount[GetPlayerId(SentinelPlayers[0])])+ "|r/|c0020c000" + I2S(PlayerHeroDeathCount[GetPlayerId(SentinelPlayers[0])])+ "|r"))
 	set x = 1
 	set i = 1
 	loop
@@ -24046,20 +23979,20 @@ function LBO takes nothing returns nothing
 	set i = 0
 	set K3O = 0
 	loop
-	exitwhen i > K4O
-		set mbt = MultiboardGetItem(FEV, i, K3O)
+	exitwhen i > row
+		set mbt = MultiboardGetItem(ObserverMultiboard, i, K3O)
 		call MultiboardSetItemWidth(mbt, .075)
 		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K2O = 0
 	set K3O = 0
-	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 	call MultiboardSetItemStyle(mbt, true, false)
 	call MultiboardSetItemValue(mbt, " ")
 	call MultiboardReleaseItem(mbt)
 	set K3O = 0
-	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 	call MultiboardSetItemStyle(mbt, false, false)
 	call MultiboardReleaseItem(mbt)
 	set K3O = 0
@@ -24067,7 +24000,7 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, true, false)
 		call MultiboardSetItemValue(mbt, K8O(K0O[i]))
 		call MultiboardSetItemWidth(mbt, .07)
@@ -24078,7 +24011,7 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, true, false)
 		call MultiboardSetItemValue(mbt, K8O(K1O[i]))
 		call MultiboardSetItemWidth(mbt, .07)
@@ -24087,14 +24020,14 @@ function LBO takes nothing returns nothing
 	endloop
 	set K2O = K2O + 1
 	set K3O = 0
-	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 	call MultiboardSetItemStyle(mbt, false, false)
 	call MultiboardReleaseItem(mbt)
 	set i = 1
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, true, true)
 		call MultiboardSetItemValue(mbt, "(" +(I2S(GetUnitLevel(Player__Hero[GetPlayerId((K0O[i]))])))+ ")")
 		call MultiboardSetItemIcon(mbt,(GetHeroIconFilePath(Player__Hero[GetPlayerId((K0O[i]))])))
@@ -24106,7 +24039,7 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, true, true)
 		call MultiboardSetItemValue(mbt, "(" + I2S(GetUnitLevel(Player__Hero[GetPlayerId(K1O[i])]))+ ")")
 		call MultiboardSetItemIcon(mbt,(GetHeroIconFilePath(Player__Hero[GetPlayerId(K1O[i])])))
@@ -24117,7 +24050,7 @@ function LBO takes nothing returns nothing
 	set K2O = K2O + 1
 	set K3O = 0
 	set K2O = K2O + 1
-	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 	call MultiboardSetItemStyle(mbt, true, false)
 	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0EB')+ e)
 	call MultiboardReleaseItem(mbt)
@@ -24126,13 +24059,13 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, false, true)
 		call MultiboardSetItemIcon(mbt, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(K0O[i])], 1 -1)))
 		call MultiboardSetItemWidth(mbt, .015)
 		call MultiboardReleaseItem(mbt)
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, false, true)
 		call MultiboardSetItemIcon(mbt, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(K0O[i])], 2 -1)))
 		call MultiboardSetItemWidth(mbt, .054)
@@ -24143,13 +24076,13 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, false, true)
 		call MultiboardSetItemIcon(mbt, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(K1O[i])], 1 -1)))
 		call MultiboardSetItemWidth(mbt, .015)
 		call MultiboardReleaseItem(mbt)
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, false, true)
 		call MultiboardSetItemIcon(mbt, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(K1O[i])], 2 -1)))
 		call MultiboardSetItemWidth(mbt, .054)
@@ -24158,7 +24091,7 @@ function LBO takes nothing returns nothing
 	endloop
 	set K2O = K2O + 1
 	set K3O = 0
-	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 	call MultiboardSetItemStyle(mbt, true, false)
 	call MultiboardSetItemValue(mbt, c0 + " " + e)
 	call MultiboardReleaseItem(mbt)
@@ -24166,13 +24099,13 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, false, true)
 		call MultiboardSetItemIcon(mbt, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(K0O[i])], 3 -1)))
 		call MultiboardSetItemWidth(mbt, .015)
 		call MultiboardReleaseItem(mbt)
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, false, true)
 		call MultiboardSetItemIcon(mbt, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(K0O[i])], 4 -1)))
 		call MultiboardSetItemWidth(mbt, .054)
@@ -24183,13 +24116,13 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, false, true)
 		call MultiboardSetItemIcon(mbt, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(K1O[i])], 3 -1)))
 		call MultiboardSetItemWidth(mbt, .015)
 		call MultiboardReleaseItem(mbt)
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, false, true)
 		call MultiboardSetItemIcon(mbt, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(K1O[i])], 4 -1)))
 		call MultiboardSetItemWidth(mbt, .054)
@@ -24198,7 +24131,7 @@ function LBO takes nothing returns nothing
 	endloop
 	set K2O = K2O + 1
 	set K3O = 0
-	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 	call MultiboardSetItemStyle(mbt, true, false)
 	call MultiboardSetItemValue(mbt, c0 + " " + e)
 	call MultiboardReleaseItem(mbt)
@@ -24206,13 +24139,13 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, false, true)
 		call MultiboardSetItemIcon(mbt, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(K0O[i])], 5 -1)))
 		call MultiboardSetItemWidth(mbt, .015)
 		call MultiboardReleaseItem(mbt)
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, false, true)
 		call MultiboardSetItemIcon(mbt, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(K0O[i])], 6 -1)))
 		call MultiboardSetItemWidth(mbt, .054)
@@ -24223,13 +24156,13 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, false, true)
 		call MultiboardSetItemIcon(mbt, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(K1O[i])], 5 -1)))
 		call MultiboardSetItemWidth(mbt, .015)
 		call MultiboardReleaseItem(mbt)
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, false, true)
 		call MultiboardSetItemIcon(mbt, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(K1O[i])], 6 -1)))
 		call MultiboardSetItemWidth(mbt, .054)
@@ -24238,7 +24171,7 @@ function LBO takes nothing returns nothing
 	endloop
 	set K3O = 0
 	set K2O = K2O + 1
-	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 	call MultiboardSetItemStyle(mbt, true, false)
 	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0E2')+ e)
 	call MultiboardReleaseItem(mbt)
@@ -24247,7 +24180,7 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, true, false)
 		call MultiboardSetItemValue(mbt, I2S(GetPlayerState(K0O[i], PLAYER_STATE_RESOURCE_GOLD)))
 		call MultiboardSetItemWidth(mbt, .07)
@@ -24258,7 +24191,7 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, true, false)
 		call MultiboardSetItemValue(mbt,(I2S(GetPlayerState(K1O[i], PLAYER_STATE_RESOURCE_GOLD))))
 		call MultiboardSetItemWidth(mbt, .07)
@@ -24267,7 +24200,7 @@ function LBO takes nothing returns nothing
 	endloop
 	set K3O = 0
 	set K2O = K2O + 1
-	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 	call MultiboardSetItemStyle(mbt, true, false)
 	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0LT')+ e)
 	call MultiboardReleaseItem(mbt)
@@ -24276,7 +24209,7 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemValueColor(mbt, LFO, LGO, LHO, LJO)
 		call MultiboardSetItemStyle(mbt, true, false)
 		call MultiboardSetItemValue(mbt,(I2S(Y4[KFX(GetHeroLevel(Player__Hero[GetPlayerId((K0O[i]))]))])))
@@ -24288,7 +24221,7 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemValueColor(mbt, LFO, LGO, LHO, LJO)
 		call MultiboardSetItemStyle(mbt, true, false)
 		call MultiboardSetItemValue(mbt,(I2S(Y4[KFX(GetHeroLevel(Player__Hero[GetPlayerId(K1O[i])]))])))
@@ -24298,7 +24231,7 @@ function LBO takes nothing returns nothing
 	endloop
 	set K3O = 0
 	set K2O = K2O + 1
-	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 	call MultiboardSetItemStyle(mbt, true, false)
 	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0DZ')+ e)
 	call MultiboardReleaseItem(mbt)
@@ -24307,7 +24240,7 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, true, false)
 		call MultiboardSetItemValue(mbt,(I2S(PlayerCreepLastHitCount[GetPlayerId((K0O[i]))]))+ "/" +(I2S(PlayerCreepDenyCount[GetPlayerId((K0O[i]))]))+ "/" +(I2S((LoadInteger(HY,(400 + GetPlayerId((K0O[i]))), 79)))))
 		call MultiboardSetItemWidth(mbt, .07)
@@ -24318,7 +24251,7 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, true, false)
 		call MultiboardSetItemValue(mbt,(I2S(PlayerCreepLastHitCount[GetPlayerId(K1O[i])]))+ "/" +(I2S(PlayerCreepDenyCount[GetPlayerId(K1O[i])]))+ "/" +(I2S((LoadInteger(HY,(400 + GetPlayerId(K1O[i])), 79)))))
 		call MultiboardSetItemWidth(mbt, .07)
@@ -24327,7 +24260,7 @@ function LBO takes nothing returns nothing
 	endloop
 	set K3O = 0
 	set K2O = K2O + 1
-	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 	call MultiboardSetItemStyle(mbt, true, false)
 	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0E1')+ e)
 	call MultiboardReleaseItem(mbt)
@@ -24336,7 +24269,7 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemValueColor(mbt, LFO, LGO, LHO, LJO)
 		call MultiboardSetItemStyle(mbt, true, false)
 		call MultiboardSetItemValue(mbt,(I2S(PlayerKillHerosCount[GetPlayerId((K0O[i]))]))+ "/" +(I2S(PlayerHeroDeathCount[GetPlayerId((K0O[i]))]))+ "/" +(I2S(PlayerAssistCount[GetPlayerId((K0O[i]))])))
@@ -24348,7 +24281,7 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemValueColor(mbt, LFO, LGO, LHO, LJO)
 		call MultiboardSetItemStyle(mbt, true, false)
 		call MultiboardSetItemValue(mbt,(I2S(PlayerKillHerosCount[GetPlayerId(K1O[i])]))+ "/" +(I2S(PlayerHeroDeathCount[GetPlayerId(K1O[i])]))+ "/" +(I2S(PlayerAssistCount[GetPlayerId(K1O[i])])))
@@ -24358,7 +24291,7 @@ function LBO takes nothing returns nothing
 	endloop
 	set K3O = 0
 	set K2O = K2O + 1
-	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 	call MultiboardSetItemStyle(mbt, true, false)
 	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0E0')+ e)
 	call MultiboardReleaseItem(mbt)
@@ -24367,7 +24300,7 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, true, false)
 		call MultiboardSetItemValue(mbt,(I2S(PlayerWardCount[GetPlayerId((K0O[i]))])))
 		call MultiboardSetItemWidth(mbt, .07)
@@ -24378,7 +24311,7 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, true, false)
 		call MultiboardSetItemValue(mbt,(I2S(PlayerWardCount[GetPlayerId(K1O[i])])))
 		call MultiboardSetItemWidth(mbt, .07)
@@ -24387,7 +24320,7 @@ function LBO takes nothing returns nothing
 	endloop
 	set K3O = 0
 	set K2O = K2O + 1
-	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 	call MultiboardSetItemStyle(mbt, true, false)
 	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0DT')+ e)
 	call MultiboardReleaseItem(mbt)
@@ -24396,7 +24329,7 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemValueColor(mbt, LFO, LGO, LHO, LJO)
 		call MultiboardSetItemStyle(mbt, true, false)
 		call MultiboardSetItemValue(mbt, K9O(K0O[i]))
@@ -24408,7 +24341,7 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemValueColor(mbt, LFO, LGO, LHO, LJO)
 		call MultiboardSetItemStyle(mbt, true, false)
 		call MultiboardSetItemValue(mbt, K9O(K1O[i]))
@@ -24418,7 +24351,7 @@ function LBO takes nothing returns nothing
 	endloop
 	set K3O = 0
 	set K2O = K2O + 1
-	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 	call MultiboardSetItemStyle(mbt, true, false)
 	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0DU')+ e)
 	call MultiboardReleaseItem(mbt)
@@ -24427,7 +24360,7 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, true, false)
 		call MultiboardSetItemValue(mbt,(I2S(PlayerKillHeroBonus[GetPlayerId((K0O[i]))])))
 		call MultiboardSetItemWidth(mbt, .07)
@@ -24438,7 +24371,7 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, true, false)
 		call MultiboardSetItemValue(mbt,(I2S(PlayerKillHeroBonus[GetPlayerId(K1O[i])])))
 		call MultiboardSetItemWidth(mbt, .07)
@@ -24448,7 +24381,7 @@ function LBO takes nothing returns nothing
 	set K2O = K2O + 1
 	set K3O = 0
 	set K2O = K2O + 1
-	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 	call MultiboardSetItemStyle(mbt, true, false)
 	call MultiboardSetItemValue(mbt, c0 + "技能" + e)
 	call MultiboardReleaseItem(mbt)
@@ -24457,13 +24390,13 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, false, true)
-		call MultiboardSetItemIcon(mbt, HeroSkillsIcon[PlayerSkillIndex[GetPlayerId(K0O[i])* HL + 1]])
+		call MultiboardSetItemIcon(mbt, HeroAbility_Icon[PlayerAbilityList[GetPlayerId(K0O[i])* HL + 1]])
 		call MultiboardSetItemWidth(mbt, .015)
 		call MultiboardReleaseItem(mbt)
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, true, false)
 		call MultiboardSetItemValue(mbt, I2S(ZTE(Player__Hero[GetPlayerId((K0O[i]))], 1)))
 		call MultiboardSetItemWidth(mbt, .054)
@@ -24474,13 +24407,13 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, false, true)
-		call MultiboardSetItemIcon(mbt, HeroSkillsIcon[PlayerSkillIndex[GetPlayerId(K1O[i])* HL + 1]])
+		call MultiboardSetItemIcon(mbt, HeroAbility_Icon[PlayerAbilityList[GetPlayerId(K1O[i])* HL + 1]])
 		call MultiboardSetItemWidth(mbt, .015)
 		call MultiboardReleaseItem(mbt)
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, true, false)
 		call MultiboardSetItemValue(mbt, I2S(ZTE(Player__Hero[GetPlayerId(K1O[i])], 1)))
 		call MultiboardSetItemWidth(mbt, .054)
@@ -24489,7 +24422,7 @@ function LBO takes nothing returns nothing
 	endloop
 	set K2O = K2O + 1
 	set K3O = 0
-	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 	call MultiboardSetItemStyle(mbt, true, false)
 	call MultiboardSetItemValue(mbt, c0 + " " + e)
 	call MultiboardReleaseItem(mbt)
@@ -24497,13 +24430,13 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, false, true)
-		call MultiboardSetItemIcon(mbt, HeroSkillsIcon[PlayerSkillIndex[GetPlayerId(K0O[i])* HL + 2]])
+		call MultiboardSetItemIcon(mbt, HeroAbility_Icon[PlayerAbilityList[GetPlayerId(K0O[i])* HL + 2]])
 		call MultiboardSetItemWidth(mbt, .015)
 		call MultiboardReleaseItem(mbt)
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, true, false)
 		call MultiboardSetItemValue(mbt, I2S(ZTE(Player__Hero[GetPlayerId((K0O[i]))], 2)))
 		call MultiboardSetItemWidth(mbt, .054)
@@ -24514,13 +24447,13 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, false, true)
-		call MultiboardSetItemIcon(mbt, HeroSkillsIcon[PlayerSkillIndex[GetPlayerId(K1O[i])* HL + 2]])
+		call MultiboardSetItemIcon(mbt, HeroAbility_Icon[PlayerAbilityList[GetPlayerId(K1O[i])* HL + 2]])
 		call MultiboardSetItemWidth(mbt, .015)
 		call MultiboardReleaseItem(mbt)
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, true, false)
 		call MultiboardSetItemValue(mbt, I2S(ZTE(Player__Hero[GetPlayerId(K1O[i])], 2)))
 		call MultiboardSetItemWidth(mbt, .054)
@@ -24529,7 +24462,7 @@ function LBO takes nothing returns nothing
 	endloop
 	set K2O = K2O + 1
 	set K3O = 0
-	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 	call MultiboardSetItemStyle(mbt, true, false)
 	call MultiboardSetItemValue(mbt, c0 + " " + e)
 	call MultiboardReleaseItem(mbt)
@@ -24537,13 +24470,13 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, false, true)
-		call MultiboardSetItemIcon(mbt, HeroSkillsIcon[PlayerSkillIndex[GetPlayerId(K0O[i])* HL + 3]])
+		call MultiboardSetItemIcon(mbt, HeroAbility_Icon[PlayerAbilityList[GetPlayerId(K0O[i])* HL + 3]])
 		call MultiboardSetItemWidth(mbt, .015)
 		call MultiboardReleaseItem(mbt)
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, true, false)
 		call MultiboardSetItemValue(mbt, I2S(ZTE(Player__Hero[GetPlayerId((K0O[i]))], 3)))
 		call MultiboardSetItemWidth(mbt, .054)
@@ -24554,13 +24487,13 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, false, true)
-		call MultiboardSetItemIcon(mbt, HeroSkillsIcon[PlayerSkillIndex[GetPlayerId(K1O[i])* HL + 3]])
+		call MultiboardSetItemIcon(mbt, HeroAbility_Icon[PlayerAbilityList[GetPlayerId(K1O[i])* HL + 3]])
 		call MultiboardSetItemWidth(mbt, .015)
 		call MultiboardReleaseItem(mbt)
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, true, false)
 		call MultiboardSetItemValue(mbt, I2S(ZTE(Player__Hero[GetPlayerId(K1O[i])], 3)))
 		call MultiboardSetItemWidth(mbt, .054)
@@ -24569,7 +24502,7 @@ function LBO takes nothing returns nothing
 	endloop
 	set K2O = K2O + 1
 	set K3O = 0
-	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 	call MultiboardSetItemStyle(mbt, true, false)
 	call MultiboardSetItemValue(mbt, c0 + " " + e)
 	call MultiboardReleaseItem(mbt)
@@ -24577,13 +24510,13 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, false, true)
-		call MultiboardSetItemIcon(mbt, HeroSkillsIcon[PlayerSkillIndex[GetPlayerId(K0O[i])* HL + 4]])
+		call MultiboardSetItemIcon(mbt, HeroAbility_Icon[PlayerAbilityList[GetPlayerId(K0O[i])* HL + 4]])
 		call MultiboardSetItemWidth(mbt, .015)
 		call MultiboardReleaseItem(mbt)
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, true, false)
 		call MultiboardSetItemValue(mbt, I2S(ZTE(Player__Hero[GetPlayerId((K0O[i]))], 4)))
 		call MultiboardSetItemWidth(mbt, .054)
@@ -24594,13 +24527,13 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, false, true)
-		call MultiboardSetItemIcon(mbt, HeroSkillsIcon[PlayerSkillIndex[GetPlayerId(K1O[i])* HL + 4]])
+		call MultiboardSetItemIcon(mbt, HeroAbility_Icon[PlayerAbilityList[GetPlayerId(K1O[i])* HL + 4]])
 		call MultiboardSetItemWidth(mbt, .015)
 		call MultiboardReleaseItem(mbt)
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, true, false)
 		call MultiboardSetItemValue(mbt, I2S(ZTE(Player__Hero[GetPlayerId(K1O[i])], 4)))
 		call MultiboardSetItemWidth(mbt, .054)
@@ -24610,7 +24543,7 @@ function LBO takes nothing returns nothing
 	if ExtraSkillsNumber >= 1 then
 		set K2O = K2O + 1
 		set K3O = 0
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, true, false)
 		call MultiboardSetItemValue(mbt, c0 + " " + e)
 		call MultiboardReleaseItem(mbt)
@@ -24618,13 +24551,13 @@ function LBO takes nothing returns nothing
 		loop
 		exitwhen i > LCO
 			set K3O = K3O + 1
-			set mbt = MultiboardGetItem(FEV, K2O, K3O)
+			set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 			call MultiboardSetItemStyle(mbt, false, true)
-			call MultiboardSetItemIcon(mbt, HeroSkillsIcon[PlayerSkillIndex[GetPlayerId(K0O[i])* HL + 5]])
+			call MultiboardSetItemIcon(mbt, HeroAbility_Icon[PlayerAbilityList[GetPlayerId(K0O[i])* HL + 5]])
 			call MultiboardSetItemWidth(mbt, .015)
 			call MultiboardReleaseItem(mbt)
 			set K3O = K3O + 1
-			set mbt = MultiboardGetItem(FEV, K2O, K3O)
+			set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 			call MultiboardSetItemStyle(mbt, true, false)
 			call MultiboardSetItemValue(mbt, I2S(ZTE(Player__Hero[GetPlayerId((K0O[i]))], 5)))
 			call MultiboardSetItemWidth(mbt, .054)
@@ -24635,13 +24568,13 @@ function LBO takes nothing returns nothing
 		loop
 		exitwhen i > LDO
 			set K3O = K3O + 1
-			set mbt = MultiboardGetItem(FEV, K2O, K3O)
+			set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 			call MultiboardSetItemStyle(mbt, false, true)
-			call MultiboardSetItemIcon(mbt, HeroSkillsIcon[PlayerSkillIndex[GetPlayerId(K1O[i])* HL + 5]])
+			call MultiboardSetItemIcon(mbt, HeroAbility_Icon[PlayerAbilityList[GetPlayerId(K1O[i])* HL + 5]])
 			call MultiboardSetItemWidth(mbt, .015)
 			call MultiboardReleaseItem(mbt)
 			set K3O = K3O + 1
-			set mbt = MultiboardGetItem(FEV, K2O, K3O)
+			set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 			call MultiboardSetItemStyle(mbt, true, false)
 			call MultiboardSetItemValue(mbt, I2S(ZTE(Player__Hero[GetPlayerId(K1O[i])], 5)))
 			call MultiboardSetItemWidth(mbt, .054)
@@ -24652,7 +24585,7 @@ function LBO takes nothing returns nothing
 	if ExtraSkillsNumber >= 2 then
 		set K2O = K2O + 1
 		set K3O = 0
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, true, false)
 		call MultiboardSetItemValue(mbt, c0 + " " + e)
 		call MultiboardReleaseItem(mbt)
@@ -24660,13 +24593,13 @@ function LBO takes nothing returns nothing
 		loop
 		exitwhen i > LCO
 			set K3O = K3O + 1
-			set mbt = MultiboardGetItem(FEV, K2O, K3O)
+			set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 			call MultiboardSetItemStyle(mbt, false, true)
-			call MultiboardSetItemIcon(mbt, HeroSkillsIcon[PlayerSkillIndex[GetPlayerId(K0O[i])* HL + 6]])
+			call MultiboardSetItemIcon(mbt, HeroAbility_Icon[PlayerAbilityList[GetPlayerId(K0O[i])* HL + 6]])
 			call MultiboardSetItemWidth(mbt, .015)
 			call MultiboardReleaseItem(mbt)
 			set K3O = K3O + 1
-			set mbt = MultiboardGetItem(FEV, K2O, K3O)
+			set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 			call MultiboardSetItemStyle(mbt, true, false)
 			call MultiboardSetItemValue(mbt, I2S(ZTE(Player__Hero[GetPlayerId((K0O[i]))], 6)))
 			call MultiboardSetItemWidth(mbt, .054)
@@ -24677,13 +24610,13 @@ function LBO takes nothing returns nothing
 		loop
 		exitwhen i > LDO
 			set K3O = K3O + 1
-			set mbt = MultiboardGetItem(FEV, K2O, K3O)
+			set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 			call MultiboardSetItemStyle(mbt, false, true)
-			call MultiboardSetItemIcon(mbt, HeroSkillsIcon[PlayerSkillIndex[GetPlayerId(K1O[i])* HL + 6]])
+			call MultiboardSetItemIcon(mbt, HeroAbility_Icon[PlayerAbilityList[GetPlayerId(K1O[i])* HL + 6]])
 			call MultiboardSetItemWidth(mbt, .015)
 			call MultiboardReleaseItem(mbt)
 			set K3O = K3O + 1
-			set mbt = MultiboardGetItem(FEV, K2O, K3O)
+			set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 			call MultiboardSetItemStyle(mbt, true, false)
 			call MultiboardSetItemValue(mbt, I2S(ZTE(Player__Hero[GetPlayerId(K1O[i])], 6)))
 			call MultiboardSetItemWidth(mbt, .054)
@@ -24693,7 +24626,7 @@ function LBO takes nothing returns nothing
 	endif
 	set K3O = 0
 	set K2O = K2O + 1
-	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 	call MultiboardSetItemStyle(mbt, true, false)
 	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0DV')+ e)
 	call MultiboardReleaseItem(mbt)
@@ -24702,7 +24635,7 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, true, false)
 		call MultiboardSetItemValue(mbt, LVO(K0O[i]))
 		call MultiboardSetItemWidth(mbt, .07)
@@ -24713,7 +24646,7 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, true, false)
 		call MultiboardSetItemValue(mbt, LVO(K1O[i]))
 		call MultiboardSetItemWidth(mbt, .07)
@@ -24722,7 +24655,7 @@ function LBO takes nothing returns nothing
 	endloop
 	set K3O = 0
 	set K2O = K2O + 1
-	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 	call MultiboardSetItemStyle(mbt, true, false)
 	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0DW')+ e)
 	call MultiboardReleaseItem(mbt)
@@ -24731,7 +24664,7 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemValueColor(mbt, LFO, LGO, LHO, LJO)
 		call MultiboardSetItemStyle(mbt, true, false)
 		call MultiboardSetItemValue(mbt,(I2S(PlayerHeroDeathLossGold[GetPlayerId((K0O[i]))])))
@@ -24743,7 +24676,7 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemValueColor(mbt, LFO, LGO, LHO, LJO)
 		call MultiboardSetItemStyle(mbt, true, false)
 		call MultiboardSetItemValue(mbt,(I2S(PlayerHeroDeathLossGold[GetPlayerId(K1O[i])])))
@@ -24753,7 +24686,7 @@ function LBO takes nothing returns nothing
 	endloop
 	set K3O = 0
 	set K2O = K2O + 1
-	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 	call MultiboardSetItemStyle(mbt, true, false)
 	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0DN')+ e)
 	call MultiboardReleaseItem(mbt)
@@ -24762,7 +24695,7 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, true, false)
 		call MultiboardSetItemValue(mbt,(I2S(PlayerConsumablesCount[GetPlayerId((K0O[i]))])))
 		call MultiboardSetItemWidth(mbt, .07)
@@ -24773,7 +24706,7 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, true, false)
 		call MultiboardSetItemValue(mbt,(I2S(PlayerConsumablesCount[GetPlayerId(K1O[i])])))
 		call MultiboardSetItemWidth(mbt, .07)
@@ -24785,7 +24718,7 @@ function LBO takes nothing returns nothing
 		set K6O = K2O
 		set K7O = K3O
 		set K2O = K2O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemStyle(mbt, true, false)
 		call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0DL')+ e)
 		call MultiboardReleaseItem(mbt)
@@ -24800,13 +24733,13 @@ function LBO takes nothing returns nothing
 			exitwhen i > LDO
 				set K3O = x +(x -1)
 				set K2O = K2O + 1
-				set mbt = MultiboardGetItem(FEV, K2O, K3O)
+				set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 				call MultiboardSetItemStyle(mbt, false, true)
 				call MultiboardSetItemIcon(mbt,(GetHeroIconFilePath(Player__Hero[GetPlayerId((K0O[x]))])))
 				call MultiboardSetItemWidth(mbt, .01)
 				call MultiboardReleaseItem(mbt)
 				set K3O = K3O + 1
-				set mbt = MultiboardGetItem(FEV, K2O, K3O)
+				set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 				call MultiboardSetItemStyle(mbt, true, true)
 				call MultiboardSetItemIcon(mbt,(GetHeroIconFilePath(Player__Hero[GetPlayerId(K1O[i])])))
 				call MultiboardSetItemValue(mbt, " " + LEO(K0O[x], K1O[i]))
@@ -24826,13 +24759,13 @@ function LBO takes nothing returns nothing
 			exitwhen i > LCO
 				set K3O = x +(x -1)
 				set K2O = K2O + 1
-				set mbt = MultiboardGetItem(FEV, K2O, K3O)
+				set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 				call MultiboardSetItemStyle(mbt, false, true)
 				call MultiboardSetItemIcon(mbt,(GetHeroIconFilePath(Player__Hero[GetPlayerId((K1O[x -LCO]))])))
 				call MultiboardSetItemWidth(mbt, .01)
 				call MultiboardReleaseItem(mbt)
 				set K3O = K3O + 1
-				set mbt = MultiboardGetItem(FEV, K2O, K3O)
+				set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 				call MultiboardSetItemStyle(mbt, true, true)
 				call MultiboardSetItemIcon(mbt,(GetHeroIconFilePath(Player__Hero[GetPlayerId((K0O[i]))])))
 				call MultiboardSetItemValue(mbt, " " + LEO(K1O[x -LCO], K0O[i]))
@@ -24846,7 +24779,7 @@ function LBO takes nothing returns nothing
 	set K2O = K2O + 1
 	set K3O = 0
 	set K2O = K2O + 1
-	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 	call MultiboardSetItemStyle(mbt, true, false)
 	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0HS')+ e)
 	call MultiboardReleaseItem(mbt)
@@ -24855,7 +24788,7 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemValueColor(mbt, LFO, LGO, LHO, LJO)
 		if LXO(K0O[i]) == " "then
 			call MultiboardSetItemStyle(mbt, true, false)
@@ -24863,7 +24796,7 @@ function LBO takes nothing returns nothing
 			call MultiboardSetItemStyle(mbt, true, false)
 			call MultiboardSetItemIcon(mbt,(GetHeroIconFilePath(Player__Hero[GetPlayerId((K0O[i]))])))
 		endif
-		call MultiboardSetItemValue(mbt, LRO(K0O[i]))
+		call MultiboardSetItemValue(mbt, GetPlayerUltimate1CooldownText(K0O[i]))
 		call MultiboardSetItemWidth(mbt, .07)
 		call MultiboardReleaseItem(mbt)
 		set i = i + 1
@@ -24872,7 +24805,7 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemValueColor(mbt, LFO, LGO, LHO, LJO)
 		if LXO(K1O[i]) == " "then
 			call MultiboardSetItemStyle(mbt, true, false)
@@ -24880,14 +24813,14 @@ function LBO takes nothing returns nothing
 			call MultiboardSetItemStyle(mbt, true, false)
 			call MultiboardSetItemIcon(mbt,(GetHeroIconFilePath(Player__Hero[GetPlayerId(K1O[i])])))
 		endif
-		call MultiboardSetItemValue(mbt, LRO(K1O[i]))
+		call MultiboardSetItemValue(mbt, GetPlayerUltimate1CooldownText(K1O[i]))
 		call MultiboardSetItemWidth(mbt, .07)
 		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
 	set K3O = 0
 	set K2O = K2O + 1
-	set mbt = MultiboardGetItem(FEV, K2O, K3O)
+	set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 	call MultiboardSetItemStyle(mbt, true, false)
 	call MultiboardSetItemValue(mbt, c0 + GetObjectName('n0E4')+ e)
 	call MultiboardReleaseItem(mbt)
@@ -24896,7 +24829,7 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LCO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		if LXO(K0O[i]) == " "then
 			call MultiboardSetItemStyle(mbt, true, false)
 		else
@@ -24912,7 +24845,7 @@ function LBO takes nothing returns nothing
 	loop
 	exitwhen i > LDO
 		set K3O = K3O + 1
-		set mbt = MultiboardGetItem(FEV, K2O, K3O)
+		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		if LXO(K1O[i]) == " "then
 			call MultiboardSetItemStyle(mbt, true, false)
 		else
@@ -25041,7 +24974,7 @@ function MXO takes nothing returns nothing
 	set g = null
 endfunction
 function MOO takes nothing returns nothing
-	if GKV or HOV then
+	if GKV or Mode__MirrorDraft then
 		call TimerStart(CreateTimer(), 5, true, function MXO)
 	endif
 endfunction
@@ -25075,15 +25008,15 @@ function MRO takes nothing returns boolean
 		loop
 			if IsPlayingPlayer(Player(i)) then
 				set pid = GetPlayerId(Player(i))
-				call StoreDrCacheData("SP1_" + I2S(i), HeroCommonSkills[PlayerSkillIndex[pid * HL + 1]])
-				call StoreDrCacheData("SP2_" + I2S(i), HeroCommonSkills[PlayerSkillIndex[pid * HL + 2]])
-				call StoreDrCacheData("SP3_" + I2S(i), HeroCommonSkills[PlayerSkillIndex[pid * HL + 3]])
-				call StoreDrCacheData("SP4_" + I2S(i), HeroCommonSkills[PlayerSkillIndex[pid * HL + 4]])
+				call StoreDrCacheData("SP1_" + I2S(i), HeroAbility_Base[PlayerAbilityList[pid * HL + 1]])
+				call StoreDrCacheData("SP2_" + I2S(i), HeroAbility_Base[PlayerAbilityList[pid * HL + 2]])
+				call StoreDrCacheData("SP3_" + I2S(i), HeroAbility_Base[PlayerAbilityList[pid * HL + 3]])
+				call StoreDrCacheData("SP4_" + I2S(i), HeroAbility_Base[PlayerAbilityList[pid * HL + 4]])
 				if ExtraSkillsNumber >= 1 then
-					call StoreDrCacheData("SP5_" + I2S(i), HeroCommonSkills[PlayerSkillIndex[pid * HL + 5]])
+					call StoreDrCacheData("SP5_" + I2S(i), HeroAbility_Base[PlayerAbilityList[pid * HL + 5]])
 				endif
 				if ExtraSkillsNumber >= 2 then
-					call StoreDrCacheData("SP6_" + I2S(i), HeroCommonSkills[PlayerSkillIndex[pid * HL + 6]])
+					call StoreDrCacheData("SP6_" + I2S(i), HeroAbility_Base[PlayerAbilityList[pid * HL + 6]])
 				endif
 			endif
 			set i = i + 1
@@ -25535,8 +25468,8 @@ function P_O takes nothing returns boolean
 	local unit u = GetFilterUnit()
 	if IsUnitType(u, UNIT_TYPE_HERO) then
 		call UnitResetCooldownEx(u)
-		call TimerStart(ESV[GetPlayerId((GetOwningPlayer(u)))], 0, false, null)
-		call TimerStart(ETV[GetPlayerId((GetOwningPlayer(u)))], 0, false, null)
+		call TimerStart(PlayerUltimateAbility1Timer[GetPlayerId((GetOwningPlayer(u)))], 0, false, null)
+		call TimerStart(PlayerUltimateAbility2Timer[GetPlayerId((GetOwningPlayer(u)))], 0, false, null)
 		call SetWidgetLife(u, GetUnitState(u, UNIT_STATE_MAX_LIFE))
 		call SetUnitState(u, UNIT_STATE_MANA, GetUnitState(u, UNIT_STATE_MAX_MANA))
 	endif
@@ -26229,30 +26162,30 @@ function SCO takes nothing returns nothing
 	set t = null
 endfunction
 function SDO takes nothing returns boolean
-	local integer WWV = 1
+	local integer playerIndex = 1
 	local integer i
 	local unit trigUnit
 	local integer SFO
 	local integer SGO
 	loop
-	exitwhen WWV > 11
-		set trigUnit = Player__Hero[WWV]
-		if trigUnit != null and UnitIsDead(trigUnit) == false and GetUnitTypeId(trigUnit) == PlayerHeroTypeId[WWV]and IsUnitHex(trigUnit) == false then
+	exitwhen playerIndex > 11
+		set trigUnit = Player__Hero[playerIndex]
+		if trigUnit != null and UnitIsDead(trigUnit) == false and GetUnitTypeId(trigUnit) == PlayerHeroTypeId[playerIndex]and IsUnitHex(trigUnit) == false then
 			loop
-				set i = GetRandomInt(1,'l')
-			exitwhen(IsUnitIdType(HeroListTypeId[i], UNIT_TYPE_MELEE_ATTACKER) and IsUnitIdType(PlayerHeroTypeId[WWV], UNIT_TYPE_MELEE_ATTACKER)) or(IsUnitIdType(HeroListTypeId[i], UNIT_TYPE_RANGED_ATTACKER) and IsUnitIdType(PlayerHeroTypeId[WWV], UNIT_TYPE_RANGED_ATTACKER))
+				set i = GetRandomInt(1,108)
+			exitwhen(IsUnitIdType(HeroListTypeId[i], UNIT_TYPE_MELEE_ATTACKER) and IsUnitIdType(PlayerHeroTypeId[playerIndex], UNIT_TYPE_MELEE_ATTACKER)) or(IsUnitIdType(HeroListTypeId[i], UNIT_TYPE_RANGED_ATTACKER) and IsUnitIdType(PlayerHeroTypeId[playerIndex], UNIT_TYPE_RANGED_ATTACKER))
 			endloop
 			call SaveInteger(HY, GetHandleId(LoadTriggerHandle(HY, GetHandleId(trigUnit),'0PAS')), 100, 1)
 			call TriggerEvaluate(LoadTriggerHandle(HY, GetHandleId(trigUnit),'0PAS'))
-			set SFO = REX(PlayerHeroTypeId[WWV])
+			set SFO = REX(PlayerHeroTypeId[playerIndex])
 			set SGO = REX(HeroListTypeId[i])
 			call UnitAddAbility(trigUnit, SFO)
 			call UnitRemoveAbility(trigUnit, SFO)
 			call UnitAddAbility(trigUnit, SGO + 1)
 			call UnitRemoveAbility(trigUnit, SGO + 1)
-			set PlayerHeroTypeId[WWV]= HeroListTypeId[i]
+			set PlayerHeroTypeId[playerIndex]= HeroListTypeId[i]
 		endif
-		set WWV = WWV + 1
+		set playerIndex = playerIndex + 1
 	endloop
 	set trigUnit = null
 	return false
@@ -26294,15 +26227,15 @@ function ShowSkillsOnSelecting takes nothing returns nothing
 	local player t = GetOwningPlayer(GetTriggerUnit())
 	local integer i
 	if p != t and JI[GetPlayerId(p)]and GetTriggerUnit() == Player__Hero[GetPlayerId(t)]and IsPlayerAlly(p, t) then
-		set i = PlayerSkillIndex[GetPlayerId(t)* HL]
-		call DisplayTimedTextToPlayer(p, 0, 0, 10, "|c00a0a0f8" + GetObjectName(HeroCommonSkills[i + 1])+ "|r level: |c00f8a0a0" + I2S(ZTE(GetTriggerUnit(), 1))+ "|r")
-		call DisplayTimedTextToPlayer(p, 0, 0, 10, "|c00a0a0f8" + GetObjectName(HeroCommonSkills[i + 2])+ "|r level: |c00f8a0a0" + I2S(ZTE(GetTriggerUnit(), 2))+ "|r")
-		call DisplayTimedTextToPlayer(p, 0, 0, 10, "|c00a0a0f8" + GetObjectName(HeroCommonSkills[i + 3])+ "|r level: |c00f8a0a0" + I2S(ZTE(GetTriggerUnit(), 3))+ "|r")
-		call DisplayTimedTextToPlayer(p, 0, 0, 10, "|c00ff54f2" + GetObjectName(HeroCommonSkills[i + 4])+ "|r level: |c00f8a0a0" + I2S(ZTE(GetTriggerUnit(), 4))+ "|r")
+		set i = PlayerAbilityList[GetPlayerId(t)* HL]
+		call DisplayTimedTextToPlayer(p, 0, 0, 10, "|c00a0a0f8" + GetObjectName(HeroAbility_Base[i + 1])+ "|r level: |c00f8a0a0" + I2S(ZTE(GetTriggerUnit(), 1))+ "|r")
+		call DisplayTimedTextToPlayer(p, 0, 0, 10, "|c00a0a0f8" + GetObjectName(HeroAbility_Base[i + 2])+ "|r level: |c00f8a0a0" + I2S(ZTE(GetTriggerUnit(), 2))+ "|r")
+		call DisplayTimedTextToPlayer(p, 0, 0, 10, "|c00a0a0f8" + GetObjectName(HeroAbility_Base[i + 3])+ "|r level: |c00f8a0a0" + I2S(ZTE(GetTriggerUnit(), 3))+ "|r")
+		call DisplayTimedTextToPlayer(p, 0, 0, 10, "|c00ff54f2" + GetObjectName(HeroAbility_Base[i + 4])+ "|r level: |c00f8a0a0" + I2S(ZTE(GetTriggerUnit(), 4))+ "|r")
 		if ExtraSkillsNumber > 0 then
-			call DisplayTimedTextToPlayer(p, 0, 0, 10, "|c00a0a0f8" + GetObjectName(HeroCommonSkills[i + 5])+ "|r level: |c00f8a0a0" + I2S(ZTE(GetTriggerUnit(), 5))+ "|r")
-			if (HeroCommonSkills[PlayerSkillIndex[GetPlayerId(p)* HL + 6]]> 0) then
-				call DisplayTimedTextToPlayer(p, 0, 0, 10, "|c00ff54f2" + GetObjectName(HeroCommonSkills[i + 6])+ "|r level: |c00f8a0a0" + I2S(ZTE(GetTriggerUnit(), 6))+ "|r")
+			call DisplayTimedTextToPlayer(p, 0, 0, 10, "|c00a0a0f8" + GetObjectName(HeroAbility_Base[i + 5])+ "|r level: |c00f8a0a0" + I2S(ZTE(GetTriggerUnit(), 5))+ "|r")
+			if (HeroAbility_Base[PlayerAbilityList[GetPlayerId(p)* HL + 6]]> 0) then
+				call DisplayTimedTextToPlayer(p, 0, 0, 10, "|c00ff54f2" + GetObjectName(HeroAbility_Base[i + 6])+ "|r level: |c00f8a0a0" + I2S(ZTE(GetTriggerUnit(), 6))+ "|r")
 			endif
 		endif
 	endif
@@ -27108,8 +27041,8 @@ function UPO takes nothing returns nothing
 	call UnitResetCooldownEx(GetEnumUnit())
 	call SetWidgetLife(GetEnumUnit(), 99999999)
 	call SetUnitState(GetEnumUnit(), UNIT_STATE_MANA, 99999999)
-	call TimerStart(ESV[GetPlayerId(GetOwningPlayer(GetEnumUnit()))], 0, false, null)
-	call TimerStart(ETV[GetPlayerId(GetOwningPlayer(GetEnumUnit()))], 0, false, null)
+	call TimerStart(PlayerUltimateAbility1Timer[GetPlayerId(GetOwningPlayer(GetEnumUnit()))], 0, false, null)
+	call TimerStart(PlayerUltimateAbility2Timer[GetPlayerId(GetOwningPlayer(GetEnumUnit()))], 0, false, null)
 endfunction
 function UQO takes nothing returns nothing
 	local group g
@@ -27852,8 +27785,8 @@ function Ike_Sht takes player p, integer i, integer hotkey returns nothing
 	local integer IkeyID
 	local integer f
 	local unit u = CirclesUnit[GetPlayerId(p)]
-	if IsPassiveSkill[PlayerSkillIndex[pid * HL + i]] then
-		set id = HeroCommonSkills[PlayerSkillIndex[pid * HL + i]]
+	if IsPassiveSkill[PlayerAbilityList[pid * HL + i]] then
+		set id = HeroAbility_Base[PlayerAbilityList[pid * HL + i]]
 		if id != 0 then
 			call UnitAddAbility(u, id)
 			call SetPasAbilityHotKey(u, id, hotkey, p)
@@ -27866,7 +27799,7 @@ function Ike_Sht takes player p, integer i, integer hotkey returns nothing
 			endif
 		endif
 	else
-		set id = HeroCommonSkills[PlayerSkillIndex[pid * HL + i]]
+		set id = HeroAbility_Base[PlayerAbilityList[pid * HL + i]]
 		if FireRemnat_Hk(u, id, hotkey, p) then
 			set u = null
 			return
@@ -27883,7 +27816,7 @@ function Ike_Sht takes player p, integer i, integer hotkey returns nothing
 			set id = 'A08Q'
 		endif
 		set IkeyID = LoadInteger(ExtraHT, HTKEY_SWITCHING_SKILLS, id)
-		set AghanimID = HeroUpgradeSkills[PlayerSkillIndex[pid * HL + i]]
+		set AghanimID = HeroAbility_Special[PlayerAbilityList[pid * HL + i]]
 		if AghanimID != 0 then
 			set b1 = true
 		endif
@@ -27903,7 +27836,7 @@ function Ike_Sht takes player p, integer i, integer hotkey returns nothing
 			loop
 			exitwhen e > f
 				if e == 1 then
-					set id = HeroCommonSkills[PlayerSkillIndex[pid * HL + i]]
+					set id = HeroAbility_Base[PlayerAbilityList[pid * HL + i]]
 				elseif b2 then
 					set id = IkeyID
 				elseif b1 then
@@ -28193,11 +28126,11 @@ function ZCO takes nothing returns boolean
 		call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10, GetObjectName('n050'))
 		return false
 	endif
-	if (GetPlayerState(GetTriggerPlayer(), PLAYER_STATE_RESOURCE_GOLD)< GT) or(GetPlayerState(GetTriggerPlayer(), PLAYER_STATE_RESOURCE_GOLD)< 400 and(RT or GKV) and FT[GetPlayerId(GetTriggerPlayer())]) then
+	if (GetPlayerState(GetTriggerPlayer(), PLAYER_STATE_RESOURCE_GOLD)< GT) or(GetPlayerState(GetTriggerPlayer(), PLAYER_STATE_RESOURCE_GOLD)< 400 and(Mode__AllPick or GKV) and FT[GetPlayerId(GetTriggerPlayer())]) then
 		call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10, GetObjectName('n059'))
 		return false
 	endif
-	if GetPlayerState(GetTriggerPlayer(), PLAYER_STATE_RESOURCE_GOLD)< 250 and RT then
+	if GetPlayerState(GetTriggerPlayer(), PLAYER_STATE_RESOURCE_GOLD)< 250 and Mode__AllPick then
 		call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10, GetObjectName('n05U'))
 		return false
 	endif
@@ -28233,11 +28166,11 @@ endfunction
 function ZFO takes player p, integer i returns nothing
 	local integer k = 1
 	local integer h = GetHandleId(p)
-	local integer WWV = GetPlayerId(p)
-	if GKV or HOV then
+	local integer playerIndex = GetPlayerId(p)
+	if GKV or Mode__MirrorDraft then
 		set k = 1
 		loop
-			if LoadBoolean(HY, h, HeroListTypeId[k]) and DP[WWV * GL + k]and ZQ[k]== false and YQ[k]== false then
+			if LoadBoolean(HY, h, HeroListTypeId[k]) and DP[playerIndex * GL + k]and ZQ[k]== false and YQ[k]== false then
 				call SetPlayerTechMaxAllowed(p, HeroListTypeId[k], 999)
 			else
 				call SetPlayerTechMaxAllowed(p, HeroListTypeId[k], 0)
@@ -28290,11 +28223,11 @@ function ZJO takes nothing returns nothing
 	local integer loop_i
 	local integer loop_max
 	local unit ZPO
-	local integer WWV = GetPlayerId(p)
+	local integer playerIndex = GetPlayerId(p)
 	local location LIX = GetRectCenter(gg_rct_SentinelTavernCamera)
 	local location LAX = GetRectCenter(gg_rct_ScourgeTavernCamera)
 	local integer i = 0
-	set Q2 = WWV
+	set Q2 = playerIndex
 	set bj_groupEnumOwningPlayer = p
 	call GroupEnumUnitsInRect(g, GetWorldBounds(), filterGetUnitsInRectOfPlayer)
 	if (IsSentinelPlayer(p)) then
@@ -28315,7 +28248,7 @@ function ZJO takes nothing returns nothing
 			set ZLO = HeroTypeMaxCount
 		endif
 	endif
-	if RT or GKV then
+	if Mode__AllPick or GKV then
 		set GT = 0
 	endif
 	set ZPO =(LoadUnitHandle(HY,(GetHandleId(GetTriggerPlayer())), 147))
@@ -28323,22 +28256,22 @@ function ZJO takes nothing returns nothing
 		call RemoveUnit(ZPO)
 	endif
 	call AdjustPlayerStateBJ(-1 * GT, p, PLAYER_STATE_RESOURCE_GOLD)
-	if (RT or GKV) and FT[GetPlayerId(GetTriggerPlayer())] then
+	if (Mode__AllPick or GKV) and FT[GetPlayerId(GetTriggerPlayer())] then
 		call AdjustPlayerStateBJ( -150, p, PLAYER_STATE_RESOURCE_GOLD)
 	endif
-	set KS[WWV]= true
-	set IN[WWV]= false
+	set KS[playerIndex]= true
+	set IN[playerIndex]= false
 	call ForGroup(g, function ZDO)
-	set i = GetUnitPointValueByType(GetUnitTypeId(Player__Hero[WWV]))
+	set i = GetUnitPointValueByType(GetUnitTypeId(Player__Hero[playerIndex]))
 	set YQ[i]= false
 	set ZQ[i]= false
-	set DP[WWV * GL + i]= false
-	call EXRemoveHero(Player__Hero[WWV])
-	set PlayerHeroTypeId[WWV]= 0
+	set DP[playerIndex * GL + i]= false
+	call EXRemoveHero(Player__Hero[playerIndex])
+	set PlayerHeroTypeId[playerIndex]= 0
 	set Player__Hero[GetPlayerId(GetTriggerPlayer())]= null
-	if RT or GKV or HOV then
+	if Mode__AllPick or GKV or Mode__MirrorDraft then
 		call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 60, GetObjectName('n05Y'))
-		if RT or GKV or HOV then
+		if Mode__AllPick or GKV or Mode__MirrorDraft then
 			set loop_i = 1
 			set loop_max = HeroTypeMaxCount
 		endif
@@ -28348,19 +28281,19 @@ function ZJO takes nothing returns nothing
 		else
 			call PanCameraToTimedLocForPlayer(p, LAX, 0)
 		endif
-		if GKV or HOV then
+		if GKV or Mode__MirrorDraft then
 			call ZHO(p)
 		endif
 		loop
 		exitwhen loop_i > loop_max
-			if RT then
+			if Mode__AllPick then
 				if ZQ[loop_i]== false then
 					call SetPlayerTechMaxAllowed(p, HeroListTypeId[loop_i], 999)
 				else
 					call SetPlayerTechMaxAllowed(p, HeroListTypeId[loop_i], 0)
 				endif
-			elseif GKV or HOV then
-				if DP[WWV * GL + loop_i]and ZQ[loop_i]== false and YQ[loop_i]== false then
+			elseif GKV or Mode__MirrorDraft then
+				if DP[playerIndex * GL + loop_i]and ZQ[loop_i]== false and YQ[loop_i]== false then
 					call SetPlayerTechMaxAllowed(p, HeroListTypeId[loop_i], 999)
 				else
 					call SetPlayerTechMaxAllowed(p, HeroListTypeId[loop_i], 0)
@@ -28368,7 +28301,7 @@ function ZJO takes nothing returns nothing
 			endif
 			set loop_i = loop_i + 1
 		endloop
-		call ZFO(Player(WWV), PP[WWV])
+		call ZFO(Player(playerIndex), PP[playerIndex])
 		call RemoveLocation(LIX)
 		call RemoveLocation(LAX)
 		return
@@ -28378,11 +28311,11 @@ function ZJO takes nothing returns nothing
 		if (ZQ[X1X]== false) then
 			set YQ[X1X]= true
 			set ZQ[X1X]= true
-			set Player__Hero[WWV]= CreateUnitAtLoc(p, HeroListTypeId[X1X], ZMO, bj_UNIT_FACING)
-			set PlayerHeroTypeId[WWV]= HeroListTypeId[X1X]
+			set Player__Hero[playerIndex]= CreateUnitAtLoc(p, HeroListTypeId[X1X], ZMO, bj_UNIT_FACING)
+			set PlayerHeroTypeId[playerIndex]= HeroListTypeId[X1X]
 			call XSX(HeroListTypeId[X1X])
 		endif
-	exitwhen Player__Hero[WWV]!= null
+	exitwhen Player__Hero[playerIndex]!= null
 	endloop
 	call DeallocateGroup(g)
 	call RemoveLocation(ZMO)
@@ -28398,157 +28331,157 @@ function UBO takes nothing returns nothing
 		call ZJO()
 	endif
 endfunction
-function ZQO takes nothing returns nothing
+function DisplayGameInfo takes nothing returns nothing
 	local player p = GetTriggerPlayer()
-	local string ZSO = "|c006699CC"
+	local string color = "|c006699CC"
 	if Mode__DeathMatch then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "Death Match" + "|r:		" + GetObjectName('n06Z'))
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Death Match" + "|r:		" + GetObjectName('n06Z'))
 		call DisplayTimedTextToPlayer(p, 0, 0, 20, "							  " + GetObjectName('n06Y')+ " " + I2S(IMinBJ(VWV, HeroTypeMaxCount -VYV + 1))+ " " + GetObjectName('n07C'))
 	endif
-	if ET then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "Random Draft|r:				 你将在24个随机分配了技能的英雄中选取一个英雄")
+	if Mode__RandomDraft then
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Random Draft|r:				 你将在24个随机分配了技能的英雄中选取一个英雄")
 	endif
-	if HOV then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "Mirror Draft|r:				 对楼双方获得同样的英雄 (玩家 1 对 6, 2 对 7……)")
+	if Mode__MirrorDraft then
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Mirror Draft|r:				 对楼双方获得同样的英雄 (玩家 1 对 6, 2 对 7……)")
 	endif
-	if RT then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "All Pick" + "|r:				 " + GetObjectName('n06V'))
+	if Mode__AllPick then
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "All Pick" + "|r:				 " + GetObjectName('n06V'))
 	endif
-	if YS then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "Switch On" + "|r:				 " + "允许玩家通过 -switch 指令变更队伍。使用 - unlock 指令解锁遗留的装备.")
+	if Mode__SwitchOn then
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Switch On" + "|r:				 " + "允许玩家通过 -switch 指令变更队伍。使用 - unlock 指令解锁遗留的装备.")
 	endif
 	if GJV then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "Random Draft" + "|r:				 " + GetObjectName('n072'))
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Random Draft" + "|r:				 " + GetObjectName('n072'))
 	endif
 	if GKV then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "Single Draft" + "|r:				 每位玩家随机分配相应数量的英雄")
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Single Draft" + "|r:				 每位玩家随机分配相应数量的英雄")
 	endif
 	if Mode__RearmCombos then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "Rearm combos" + "|r:				 解除部分技能的冲突限制")
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Rearm combos" + "|r:				 解除部分技能的冲突限制")
 	endif
 	if VT then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "All Random" + "|r:		  " + GetObjectName('n071'))
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "All Random" + "|r:		  " + GetObjectName('n071'))
 	endif
 	if DW then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "Shuffle Players" + "|r:	 " + GetObjectName('n07H'))
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Shuffle Players" + "|r:	 " + GetObjectName('n07H'))
 	endif
 	if QW then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "All Agility" + "|r:			 " + GetObjectName('n07L'))
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "All Agility" + "|r:			 " + GetObjectName('n07L'))
 	endif
 	if TW then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "All Strength" + "|r:		 " + GetObjectName('n07K'))
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "All Strength" + "|r:		 " + GetObjectName('n07K'))
 	endif
 	if SW then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "All Intelligence" + "|r:	" + GetObjectName('n07J'))
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "All Intelligence" + "|r:	" + GetObjectName('n07J'))
 	endif
 	if GMV then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "Range Only" + "|r:	" + GetObjectName('n0G4'))
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Range Only" + "|r:	" + GetObjectName('n0G4'))
 	endif
 	if GLV then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "Melee Only" + "|r:	" + GetObjectName('n0G5'))
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Melee Only" + "|r:	" + GetObjectName('n0G5'))
 	endif
 	if PW then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "Duplicate Mode" + "|r:   " + GetObjectName('n07I'))
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Duplicate Mode" + "|r:   " + GetObjectName('n07I'))
 	endif
 	if IT then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "Item Drop" + "|r:			 " + GetObjectName('n07F'))
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Item Drop" + "|r:			 " + GetObjectName('n07F'))
 	endif
 	if JT then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "No Powerups" + "|r:		" + GetObjectName('n07M'))
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "No Powerups" + "|r:		" + GetObjectName('n07M'))
 	endif
 	if KT then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "Super Creeps" + "|r:		" + GetObjectName('n07N'))
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Super Creeps" + "|r:		" + GetObjectName('n07N'))
 		call DisplayTimedTextToPlayer(p, 0, 0, 20, "							 " + GetObjectName('n07O'))
 	endif
 	if Mode__EasyMode then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "Easy Mode" + "|r:		   " + GetObjectName('n07T'))
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Easy Mode" + "|r:		   " + GetObjectName('n07T'))
 	endif
 	if Mode__SameHero then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "Same Hero" + "|r:		   " + GetObjectName('n07U')+ " " +(PlayersName[GetPlayerId((HostPlayer))])+ "|r" + " " + GetObjectName('n07W'))
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Same Hero" + "|r:		   " + GetObjectName('n07U')+ " " +(PlayersName[GetPlayerId((HostPlayer))])+ "|r" + " " + GetObjectName('n07W'))
 	endif
 	if Mode__OnlyMid then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "Only Mid" + "|r:		   " + GetObjectName('n080'))
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Only Mid" + "|r:		   " + GetObjectName('n080'))
 	endif
 	if Mode__NotBot then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "No Bot" + "|r:		   " + GetObjectName('n07V'))
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "No Bot" + "|r:		   " + GetObjectName('n07V'))
 	endif
 	if Mode__NoMid then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "No Mid" + "|r:		   " + GetObjectName('n07S'))
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "No Mid" + "|r:		   " + GetObjectName('n07S'))
 	endif
 	if Mode__NotTop then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "No Top" + "|r:		   " + GetObjectName('n07R'))
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "No Top" + "|r:		   " + GetObjectName('n07R'))
 	endif
 	if J3 then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "No Swap" + "|r:		   " + GetObjectName('n07X'))
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "No Swap" + "|r:		   " + GetObjectName('n07X'))
 	endif
 	if F3 then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "No Repick" + "|r:		   " + GetObjectName('n07Q'))
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "No Repick" + "|r:		   " + GetObjectName('n07Q'))
 	endif
 	if L3 then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "Pool Mode" + "|r:		   " + GetObjectName('n07Y'))
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Pool Mode" + "|r:		   " + GetObjectName('n07Y'))
 	endif
 	if GWV then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "Observer Info" + "|r:		   " + GetObjectName('n07Z'))
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Observer Info" + "|r:		   " + GetObjectName('n07Z'))
 	endif
 	if GYV then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "Fast Respawn" + "|r:		   " + GetObjectName('n0DP'))
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Fast Respawn" + "|r:		   " + GetObjectName('n0DP'))
 	endif
 	if GZV then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "Zoom mode" + "|r:		   " + GetObjectName('n0KI'))
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Zoom mode" + "|r:		   " + GetObjectName('n0KI'))
 	endif
 	if G0V then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "Unlimited Level" + "|r:		   英雄的等级上限提升至 ∞")
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Unlimited Level" + "|r:		   英雄的等级上限提升至 ∞")
 	endif
 	if G1V then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "See skills" + "|r:		   你能看见敌方选择的技能")
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "See skills" + "|r:		   你能看见敌方选择的技能")
 	endif
 	if Mode__AntiBackdoor then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "Antibackdoor" + "|r:		   当攻击塔时若被系统判定为偷塔则塔受到的伤害变为极小")
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Antibackdoor" + "|r:		   当攻击塔时若被系统判定为偷塔则塔受到的伤害变为极小")
 	endif
 	if Mode__FiveSkills then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "Five skills" + "|r:		   你可以选择第五个技能")
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Five skills" + "|r:		   你可以选择第五个技能")
 	endif
 	if Mode__SixSkills then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "Six skills" + "|r:		   你可以选择六个技能：四个普通技能、两个终极奥义")
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Six skills" + "|r:		   你可以选择六个技能：四个普通技能、两个终极奥义")
 	endif
 	if Mode__FastNeutrals then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "Fast neutrals" + "|r:		   游戏一开始即刷新野怪")
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Fast neutrals" + "|r:		   游戏一开始即刷新野怪")
 	endif
 	if Mode__Draft20 then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "Draft 20" + "|r:		   在所有酒馆中征召20名英雄用于技能及模型选择")
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Draft 20" + "|r:		   在所有酒馆中征召20名英雄用于技能及模型选择")
 	endif
 	if Mode__Draft30 then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "Draft 30" + "|r:		   在所有酒馆中征召30名英雄用于技能及模型选择")
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Draft 30" + "|r:		   在所有酒馆中征召30名英雄用于技能及模型选择")
 	endif
 	if Mode__Draft40 then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "Draft 40" + "|r:		   在所有酒馆中征召40名英雄用于技能及模型选择")
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Draft 40" + "|r:		   在所有酒馆中征召40名英雄用于技能及模型选择")
 	endif
 	if Mode__Draft50 then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "Draft 50" + "|r:				在所有酒馆中征召50名英雄用于技能及模型选择")
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Draft 50" + "|r:				在所有酒馆中征召50名英雄用于技能及模型选择")
 	endif
-	if HVV then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "One skill" + "|r:		   一个技能在同一队伍中只能选择一次")
+	if Mode__OneSkill then
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "One skill" + "|r:		   一个技能在同一队伍中只能选择一次")
 	endif
 	if Mode__BalanceOff then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "Balance off" + "|r:		   关闭内置平衡模式")
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Balance off" + "|r:		   关闭内置平衡模式")
 	endif
 	if Mode__RandomExtraAbilities then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "Random extra abilities" + "|r:		   你的第五个和第六个技能是随机得到的")
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Random extra abilities" + "|r:		   你的第五个和第六个技能是随机得到的")
 	endif
-	if HIV then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "Limit skills 3" + "|r:		   你最多能选择同一个英雄的3个技能")
+	if Mode__LimitSkills3 then
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Limit skills 3" + "|r:		   你最多能选择同一个英雄的3个技能")
 	endif
-	if HAV then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "Limit skills" + "|r:		   你最多能选择同一个英雄的2个技能")
+	if Mode__LimitSkills then
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Limit skills" + "|r:		   你最多能选择同一个英雄的2个技能")
 	endif
 	if Mode__FastFinish then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "Fast Finish" + "|r:		   你可以使用 -ff 命令来投票游戏快速结束（其实是投降）也可以使用 -wff 命令来查看已投票情况")
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Fast Finish" + "|r:		   你可以使用 -ff 命令来投票游戏快速结束（其实是投降）也可以使用 -wff 命令来查看已投票情况")
 	endif
 	if Mode__AntiHack then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "Anti Hack|r:				 反开图作弊")
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "Anti Hack|r:				 反开图作弊")
 	endif
 	if Mode__NoNeutrals then
-		call DisplayTimedTextToPlayer(p, 0, 0, 20, ZSO + "No Neutrals|r:				 不会刷新野怪")
+		call DisplayTimedTextToPlayer(p, 0, 0, 20, color + "No Neutrals|r:				 不会刷新野怪")
 	endif
 endfunction
 function ZTO takes nothing returns nothing
@@ -28813,19 +28746,19 @@ function ZUO takes unit u1, unit u2, player p1, player p2 returns nothing
 	endif
 	call RemoveUnit(d)
 	call EnableTrigger(CUV)
-	call SetPlayerAbilityAvailableEx(p1, HeroChangeAbilitySkills[PlayerSkillIndex[GetPlayerId(p2)* HL + 1]], false)
-	call SetPlayerAbilityAvailableEx(p1, HeroChangeAbilitySkills[PlayerSkillIndex[GetPlayerId(p2)* HL + 2]], false)
-	call SetPlayerAbilityAvailableEx(p1, HeroChangeAbilitySkills[PlayerSkillIndex[GetPlayerId(p2)* HL + 3]], false)
-	call SetPlayerAbilityAvailableEx(p1, HeroChangeAbilitySkills[PlayerSkillIndex[GetPlayerId(p2)* HL + 4]], false)
-	call SetPlayerAbilityAvailableEx(p2, HeroChangeAbilitySkills[PlayerSkillIndex[GetPlayerId(p1)* HL + 1]], false)
-	call SetPlayerAbilityAvailableEx(p2, HeroChangeAbilitySkills[PlayerSkillIndex[GetPlayerId(p1)* HL + 2]], false)
-	call SetPlayerAbilityAvailableEx(p2, HeroChangeAbilitySkills[PlayerSkillIndex[GetPlayerId(p1)* HL + 3]], false)
-	call SetPlayerAbilityAvailableEx(p2, HeroChangeAbilitySkills[PlayerSkillIndex[GetPlayerId(p1)* HL + 4]], false)
+	call SetPlayerAbilityAvailableEx(p1, HeroAbility_Modify[PlayerAbilityList[GetPlayerId(p2)* HL + 1]], false)
+	call SetPlayerAbilityAvailableEx(p1, HeroAbility_Modify[PlayerAbilityList[GetPlayerId(p2)* HL + 2]], false)
+	call SetPlayerAbilityAvailableEx(p1, HeroAbility_Modify[PlayerAbilityList[GetPlayerId(p2)* HL + 3]], false)
+	call SetPlayerAbilityAvailableEx(p1, HeroAbility_Modify[PlayerAbilityList[GetPlayerId(p2)* HL + 4]], false)
+	call SetPlayerAbilityAvailableEx(p2, HeroAbility_Modify[PlayerAbilityList[GetPlayerId(p1)* HL + 1]], false)
+	call SetPlayerAbilityAvailableEx(p2, HeroAbility_Modify[PlayerAbilityList[GetPlayerId(p1)* HL + 2]], false)
+	call SetPlayerAbilityAvailableEx(p2, HeroAbility_Modify[PlayerAbilityList[GetPlayerId(p1)* HL + 3]], false)
+	call SetPlayerAbilityAvailableEx(p2, HeroAbility_Modify[PlayerAbilityList[GetPlayerId(p1)* HL + 4]], false)
 	loop
 	exitwhen i > 4 + ExtraSkillsNumber
-		set Z_O[i]= PlayerSkillIndex[GetPlayerId(p1)* HL + i]
-		set PlayerSkillIndex[GetPlayerId(p1)* HL + i]= PlayerSkillIndex[GetPlayerId(p2)* HL + i]
-		set PlayerSkillIndex[GetPlayerId(p2)* HL + i]= Z_O[i]
+		set Z_O[i]= PlayerAbilityList[GetPlayerId(p1)* HL + i]
+		set PlayerAbilityList[GetPlayerId(p1)* HL + i]= PlayerAbilityList[GetPlayerId(p2)* HL + i]
+		set PlayerAbilityList[GetPlayerId(p2)* HL + i]= Z_O[i]
 		set i = i + 1
 	endloop
 	call ClearSelectionForPlayer(p1)
@@ -28840,7 +28773,7 @@ function ZUO takes unit u1, unit u2, player p1, player p2 returns nothing
 	call StoreDrCacheData("SWAP_" + I2S(GetPlayerId(GetOwningPlayer(u2)))+ "_" + I2S(GetPlayerId(GetOwningPlayer(u1))), GetUnitTypeId(u2))
 	call KTX(p1)
 	call KTX(p2)
-	if GKV or HOV then
+	if GKV or Mode__MirrorDraft then
 		set KS[GetPlayerId(p1)]= true
 		set KS[GetPlayerId(p2)]= true
 	endif
@@ -28877,14 +28810,14 @@ function Z4O takes unit u1, unit u2, boolean Z5O, player p1, player p2 returns b
 			call DisplayTimedTextToPlayer(GetOwningPlayer(u2), 0, 0, 30, "  ")
 			call DisplayTimedTextToPlayer(GetOwningPlayer(u2), 0, 0, 30, "						 " + PlayersColoerText[GetPlayerId(GetOwningPlayer(u1))] + GetUnitName(u1)+ "|r |cff99ccff" + GetObjectName('n082')+ " " + GetObjectName('n083')+ "|r |c00ff0303-swap " + I2S(Z3O(GetOwningPlayer(u1)))+ "|r |cff99ccff" + GetObjectName('n081')+ "|r")
 			call DisplayTimedTextToPlayer(GetOwningPlayer(u2), 0, 0, 30, "  ")
-			if GKV or HOV then
+			if GKV or Mode__MirrorDraft then
 				call DisplayTimedTextToPlayer(GetOwningPlayer(u2), 0, 0, 30, "|c00ff0000WARNING:|r 所选模式禁止repick之后交换英雄.")
 			endif
 			if Z5O then
 				call DisplayTimedTextToPlayer(GetOwningPlayer(u1), 0, 0, 30, "  ")
 				call DisplayTimedTextToPlayer(GetOwningPlayer(u1), 0, 0, 30, "|cff99ccff" + GetObjectName('n08C')+ " |r" + PlayersColoerText[GetPlayerId(GetOwningPlayer(u2))] + GetUnitName(u2)+ "|r")
 				call DisplayTimedTextToPlayer(GetOwningPlayer(u1), 0, 0, 30, "  ")
-				if GKV or HOV then
+				if GKV or Mode__MirrorDraft then
 					call DisplayTimedTextToPlayer(GetOwningPlayer(u1), 0, 0, 30, "|c00ff0000WARNING:|r 所选模式禁止repick之后交换英雄.")
 				endif
 			endif
@@ -28951,7 +28884,7 @@ function Z6O takes nothing returns nothing
 	endif
 	set U2 = Player__Hero[GetPlayerId(E3)]
 	if IsPickingHero then
-		if not((GKV or HOV) and IsPlayingPlayer(E3) and E3 != p) then
+		if not((GKV or Mode__MirrorDraft) and IsPlayingPlayer(E3) and E3 != p) then
 			call InterfaceErrorForPlayer(p, GetObjectName('n02Z'))
 			return
 		endif
@@ -29037,7 +28970,7 @@ function VVR takes nothing returns boolean
 	// 	 call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10, "由于你选择了某些技能，所以不能swap。")
 	// 	 return false
 	// endif
-	if GetWidgetLife(Player__Hero[GetPlayerId(GetTriggerPlayer())])< 1 and(not IsPickingHero or not(GKV or HOV)) then
+	if GetWidgetLife(Player__Hero[GetPlayerId(GetTriggerPlayer())])< 1 and(not IsPickingHero or not(GKV or Mode__MirrorDraft)) then
 		call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10, GetObjectName('n08F'))
 		return false
 	endif
@@ -29045,7 +28978,7 @@ function VVR takes nothing returns boolean
 		call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10, GetObjectName('n08G')+ " -swaphero.")
 		return false
 	endif
-	if Z8O(GetTriggerPlayer()) == false and(not IsPickingHero or not(GKV or HOV)) then
+	if Z8O(GetTriggerPlayer()) == false and(not IsPickingHero or not(GKV or Mode__MirrorDraft)) then
 		call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10, GetObjectName('n08H'))
 		return false
 	endif
@@ -29296,7 +29229,7 @@ function VTR takes nothing returns nothing
 	local integer count = 0
 	local integer VUR = 0
 	local player p
-	if F1V == false or YS == false then
+	if F1V == false or Mode__SwitchOn == false then
 		return
 	endif
 	if F3V + 90 <(GetGameTime()) then
@@ -29752,7 +29685,7 @@ function Y3O takes nothing returns nothing
 			set PlayerOnlineStateString[GetPlayerId(Player(index))]= "|c00555555" + KGX + "|r"
 			call RemovePlayer(Player(index), PLAYER_GAME_RESULT_DEFEAT)
 			call EFR(Player(index))
-			if YS then
+			if Mode__SwitchOn then
 				call C0X(Player(index))
 			endif
 			set EJV[GetPlayerId(Player(index))]= true
@@ -30310,7 +30243,7 @@ function XCR takes player p1, player p2 returns nothing
 	set g1 = null
 	set g2 = null
 endfunction
-function XDR takes player p1, player p2 returns nothing
+function SwitchPlayer takes player p1, player p2 returns nothing
 	local integer x
 	local integer y
 	local integer i
@@ -30407,7 +30340,7 @@ function XDR takes player p1, player p2 returns nothing
 	call ForceAddPlayer(ScourgeForce, ScourgePlayers[5])
 	call ExecuteFunc("K1X")
 	call XCR(p1, p2)
-	set YM = true
+	set HaveAnyPlayersSwitchedTeams = true
 	if JP == null then
 		call PanCameraToTimedForPlayer(p1, x1, y1, 0)
 		call PanCameraToTimedForPlayer(p2, x2, y2, 0)
@@ -30523,7 +30456,7 @@ function XKR takes nothing returns nothing
 	endloop
 	if XLR < 2 and XMR >= R2I(XPR / 2) then
 		if (XPR == 2 and XMR > 1) or XPR != 2 then
-			call XDR(FM, GM)
+			call SwitchPlayer(FM, GM)
 		endif
 	endif
 	set p = null
@@ -30617,7 +30550,7 @@ function XUR takes player p1, player p2 returns nothing
 	set p = null
 endfunction
 function Y8O takes nothing returns nothing
-	if YS == false then
+	if Mode__SwitchOn == false then
 		call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10, GetObjectName('n0GX'))
 		return
 	endif
@@ -30718,7 +30651,7 @@ function X0R takes nothing returns nothing
 	set Q3V[1]= false
 	set Q3V[2]= false
 	set Q3V[3]= false
-	if VT == false and ET == false then
+	if VT == false and Mode__RandomDraft == false then
 		call ExecuteFunc("X1R")
 	endif
 	set t = null
@@ -30750,7 +30683,7 @@ function X8R takes integer WTV returns boolean
 	return WTV != 0 and X4R(WTV) and IsAttackSpecialEffects(WTV) == false and X5R(WTV) == false and LNX(WTV) == false and IsNotItemAbility(WTV) and GetUnitAbilityLevel(GetTriggerUnit(),'A04R') == 0 and X6R(WTV) == false and X7R(WTV) == false
 endfunction
 
-function X9R takes integer WWV, integer abilityId returns boolean
+function X9R takes integer playerIndex, integer abilityId returns boolean
 	local integer SQV
 	if abilityId == 0 then
 		return false
@@ -30759,7 +30692,7 @@ function X9R takes integer WWV, integer abilityId returns boolean
 	if LoadBoolean(AbilityDataHashTable,'MCRS', abilityId) or X5R(abilityId) or IsAttackSpecialEffects(abilityId) or not IsNotItemAbility(abilityId) or X6R(abilityId) then
 		return false
 	endif
-	set SQV = ZME(WWV, abilityId)
+	set SQV = ZME(playerIndex, abilityId)
 	if SQV != 0 then
 		// 如果是变身 或者 灼热之箭类技能 就返回
 		if CheckAbilityIdFormIndex(SQV,-1, "metamorphosis", null) then
@@ -30780,53 +30713,53 @@ function OXR takes integer si returns boolean
 	return OVR(si) == false and X5R(si) == false and LNX(si) == false and IsNotItemAbility(si) and si !='A2M0' and si !='A32G' and si !='A32E' and si !='A32D' and si !='A32C' and si !='A32A' and si !='A0ZF'
 endfunction
 function OOR takes nothing returns nothing
-	local integer WWV
+	local integer playerIndex
 	local integer hn
 	local integer xx
 	local integer id
-	set WWV = 0
+	set playerIndex = 0
 	if IsObserverPlayer(LocalPlayer) == false then
 		call ClearSelection()
 	endif
 	loop
-		if IsObserverPlayer(Player(WWV)) == false then
-			call ShowAbilityCd_Actions(Player(WWV), true)
-			call Q_X(Player(WWV), true)
-			call B4X(Player(WWV))
-			call DisplayTimedTextToPlayer(Player(WWV), 0, 0, 15, "|cff99ccff" + " " + "你的技能:" + "|r")
+		if IsObserverPlayer(Player(playerIndex)) == false then
+			call ShowAbilityCd_Actions(Player(playerIndex), true)
+			call Q_X(Player(playerIndex), true)
+			call B4X(Player(playerIndex))
+			call DisplayTimedTextToPlayer(Player(playerIndex), 0, 0, 15, "|cff99ccff" + " " + "你的技能:" + "|r")
 			set xx = 1
 			loop
-				set id = PlayerSkillIndex[WWV * HL + xx]
+				set id = PlayerAbilityList[playerIndex * HL + xx]
 				if id > 600 then
-					call DisplayTimedTextToPlayer(Player(WWV), 0, 0, 15, "	" + GetObjectName(HeroCommonSkills[id])+ "|cffffcc00" + " (" + "Invoker" + ")" + "|r")
+					call DisplayTimedTextToPlayer(Player(playerIndex), 0, 0, 15, "	" + GetObjectName(HeroAbility_Base[id])+ "|cffffcc00" + " (" + "Invoker" + ")" + "|r")
 				else
 					if xx == 4 or xx == 6 then
-						call DisplayTimedTextToPlayer(Player(WWV), 0, 0, 15, "	" + "|c00ff0303" + GetObjectName(HeroCommonSkills[id])+ "|r" + "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(id + 3)/ 4])+ ")" + "|r")
+						call DisplayTimedTextToPlayer(Player(playerIndex), 0, 0, 15, "	" + "|c00ff0303" + GetObjectName(HeroAbility_Base[id])+ "|r" + "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(id + 3)/ 4])+ ")" + "|r")
 					else
-						call DisplayTimedTextToPlayer(Player(WWV), 0, 0, 15, "	" + GetObjectName(HeroCommonSkills[id])+ "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(id + 3)/ 4])+ ")" + "|r")
+						call DisplayTimedTextToPlayer(Player(playerIndex), 0, 0, 15, "	" + GetObjectName(HeroAbility_Base[id])+ "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(id + 3)/ 4])+ ")" + "|r")
 					endif
 				endif
 				set xx = xx + 1
 			exitwhen xx > 4 + ExtraSkillsNumber
 			endloop
-			if PP[WWV]== 1 then
-				call DisplayTimedTextToPlayer(Player(WWV), 0, 0, 15, " ")
-				call DisplayTimedTextToPlayer(Player(WWV), 0, 0, 15, "|c00FF0000[LoD]|r|c006699CC" + " " + "你只能选择近战英雄." + "|r")
-			elseif PP[WWV]== 2 then
-				call DisplayTimedTextToPlayer(Player(WWV), 0, 0, 15, " ")
-				call DisplayTimedTextToPlayer(Player(WWV), 0, 0, 15, "|c00FF0000[LoD]|r|c006699CC" + " " + "你只能选择远程英雄." + "|r")
+			if PP[playerIndex]== 1 then
+				call DisplayTimedTextToPlayer(Player(playerIndex), 0, 0, 15, " ")
+				call DisplayTimedTextToPlayer(Player(playerIndex), 0, 0, 15, "|c00FF0000[LoD]|r|c006699CC" + " " + "你只能选择近战英雄." + "|r")
+			elseif PP[playerIndex]== 2 then
+				call DisplayTimedTextToPlayer(Player(playerIndex), 0, 0, 15, " ")
+				call DisplayTimedTextToPlayer(Player(playerIndex), 0, 0, 15, "|c00FF0000[LoD]|r|c006699CC" + " " + "你只能选择远程英雄." + "|r")
 			endif
-			call DisplayTimedTextToPlayer(Player(WWV), 0, 0, 15, " ")
-			call DisplayTimedTextToPlayer(Player(WWV), 0, 0, 15, " ")
-			call DisplayTimedTextToPlayer(Player(WWV), 0, 0, 15, "|cff99ccff" + "你现在能选择英雄模型了." + "|r")
-			call DisplayTimedTextToPlayer(Player(WWV), 0, 0, 15, " ")
-			call IRX(Player(WWV), "Sound\\Interface\\Rescue.wav")
+			call DisplayTimedTextToPlayer(Player(playerIndex), 0, 0, 15, " ")
+			call DisplayTimedTextToPlayer(Player(playerIndex), 0, 0, 15, " ")
+			call DisplayTimedTextToPlayer(Player(playerIndex), 0, 0, 15, "|cff99ccff" + "你现在能选择英雄模型了." + "|r")
+			call DisplayTimedTextToPlayer(Player(playerIndex), 0, 0, 15, " ")
+			call IRX(Player(playerIndex), "Sound\\Interface\\Rescue.wav")
 			call SuspendTimeOfDay(false)
 			set hn = 1
-			call ZFO(Player(WWV), PP[WWV])
+			call ZFO(Player(playerIndex), PP[playerIndex])
 		endif
-		set WWV = WWV + 1
-	exitwhen WWV > 11
+		set playerIndex = playerIndex + 1
+	exitwhen playerIndex > 11
 	endloop
 endfunction
 function ORR takes integer i returns nothing
@@ -30838,19 +30771,19 @@ function ORR takes integer i returns nothing
 		call MDX(k, i)
 		set LP[k]= true
 	endif
-	if HaveSavedString(ObjectHashTable, HeroCommonSkills[i], 600) and LoadBoolean(ObjectHashTable, HeroCommonSkills[i], 600) == false then
-		call SaveBoolean(ObjectHashTable, HeroCommonSkills[i], 600, true)
-		call ExecuteFunc(LoadStr(ObjectHashTable, HeroCommonSkills[i], 600))
+	if HaveSavedString(ObjectHashTable, HeroAbility_Base[i], 600) and LoadBoolean(ObjectHashTable, HeroAbility_Base[i], 600) == false then
+		call SaveBoolean(ObjectHashTable, HeroAbility_Base[i], 600, true)
+		call ExecuteFunc(LoadStr(ObjectHashTable, HeroAbility_Base[i], 600))
 	endif
-	if HaveSavedString(ObjectHashTable, HeroCommonSkills[i], 601) and LoadBoolean(ObjectHashTable, HeroCommonSkills[i], 601) == false then
-		call SaveBoolean(ObjectHashTable, HeroCommonSkills[i], 601, true)
-		call ExecuteFunc(LoadStr(ObjectHashTable, HeroCommonSkills[i], 601))
+	if HaveSavedString(ObjectHashTable, HeroAbility_Base[i], 601) and LoadBoolean(ObjectHashTable, HeroAbility_Base[i], 601) == false then
+		call SaveBoolean(ObjectHashTable, HeroAbility_Base[i], 601, true)
+		call ExecuteFunc(LoadStr(ObjectHashTable, HeroAbility_Base[i], 601))
 	endif
 endfunction
-function OIR takes integer WWV returns nothing
+function OIR takes integer playerIndex returns nothing
 	local integer xx = 1
 	loop
-		call ORR(PlayerSkillIndex[WWV * HL + xx])
+		call ORR(PlayerAbilityList[playerIndex * HL + xx])
 		set xx = xx + 1
 	exitwhen xx > 4 + ExtraSkillsNumber
 	endloop
@@ -30933,38 +30866,38 @@ function OKR takes integer pid returns nothing
 endfunction
 function SQO takes nothing returns nothing
 	local trigger t
-	local integer WWV
+	local integer playerIndex
 	local timer OLR
-	if ET then
+	if Mode__RandomDraft then
 		return
 	endif
-	set WWV = 0
+	set playerIndex = 0
 	if TimerGetRemaining(NK)> 0 then
 		loop
-			if T6E(WWV) then
-				if not(FP[WWV]) then
+			if T6E(playerIndex) then
+				if not(FP[playerIndex]) then
 					return
 				endif
 			endif
-			set WWV = WWV + 1
-		exitwhen WWV > 12
+			set playerIndex = playerIndex + 1
+		exitwhen playerIndex > 12
 		endloop
 	endif
 	set GP = true
-	set WWV = 0
+	set playerIndex = 0
 	loop
-		if T6E(WWV) then
-			call KillPlayerAllZoneIndicator(Player(WWV))
-			call YCE(Player(WWV))
-			call OIR(WWV)
+		if T6E(playerIndex) then
+			call KillPlayerAllZoneIndicator(Player(playerIndex))
+			call YCE(Player(playerIndex))
+			call OIR(playerIndex)
 		endif
 		if bj_isSinglePlayer == false then
-			call OKR(WWV)
+			call OKR(playerIndex)
 		endif
-		call FlushChildHashtable(HY, GetHandleId(KP[WWV]))
-		call RemoveUnit(KP[WWV])
-		set WWV = WWV + 1
-	exitwhen WWV > 12
+		call FlushChildHashtable(HY, GetHandleId(KP[playerIndex]))
+		call RemoveUnit(KP[playerIndex])
+		set playerIndex = playerIndex + 1
+	exitwhen playerIndex > 12
 	endloop
 	call PanCameraToTimed(-6990., 6840., .0)
 	call RemoveUnit(HR)
@@ -31001,7 +30934,7 @@ function SQO takes nothing returns nothing
 endfunction
 function OMR takes integer pid, integer sn, integer T0V returns nothing
 	local multiboarditem mi
-	local string s = HeroSkillsIcon[T0V]
+	local string s = HeroAbility_Icon[T0V]
 	if LOD_DEBUGMODE then
 		if IsScourgePlayer(Player(pid)) then
 			set mi = MultiboardGetItem(JP,(pid + 2)-1, sn -1)
@@ -31014,7 +30947,7 @@ function OMR takes integer pid, integer sn, integer T0V returns nothing
 	if IsSentinelPlayer(Player(pid)) and G1V == false then
 		if IsScourgePlayer(LocalPlayer) then
 			if T0V == 0 then
-				set s = HeroSkillsIcon[0]
+				set s = HeroAbility_Icon[0]
 			else
 				set s = "ReplaceableTextures\\CommandButtons\\BTNQuestion.blp"
 			endif
@@ -31022,7 +30955,7 @@ function OMR takes integer pid, integer sn, integer T0V returns nothing
 	elseif IsScourgePlayer(Player(pid)) and G1V == false then
 		if IsSentinelPlayer(LocalPlayer) then
 			if T0V == 0 then
-				set s = HeroSkillsIcon[0]
+				set s = HeroAbility_Icon[0]
 			else
 				set s = "ReplaceableTextures\\CommandButtons\\BTNQuestion.blp"
 			endif
@@ -31035,9 +30968,10 @@ endfunction
 function OPR takes integer pid returns integer
 	local integer k = 0
 	local integer c = 0
+	// 遍历RB表，如果玩家已经有已选择的某个技能在RB表内 则计数器+1 获得计数器
 	loop
 		if RB[k]!= 0 then
-			if PlayerSkillIndex[pid * HL + 1]== RB[k]or PlayerSkillIndex[pid * HL + 2]== RB[k]or PlayerSkillIndex[pid * HL + 3]== RB[k]or PlayerSkillIndex[pid * HL + 4]== RB[k]or(ExtraSkillsNumber >= 1 and PlayerSkillIndex[pid * HL + 5]== RB[k]) or(ExtraSkillsNumber >= 2 and PlayerSkillIndex[pid * HL + 6]== RB[k]) then
+			if PlayerAbilityList[pid * HL + 1]== RB[k]or PlayerAbilityList[pid * HL + 2]== RB[k]or PlayerAbilityList[pid * HL + 3]== RB[k]or PlayerAbilityList[pid * HL + 4]== RB[k]or(ExtraSkillsNumber >= 1 and PlayerAbilityList[pid * HL + 5]== RB[k]) or(ExtraSkillsNumber >= 2 and PlayerAbilityList[pid * HL + 6]== RB[k]) then
 				set c = c + 1
 			endif
 		endif
@@ -31049,7 +30983,7 @@ endfunction
 function OQR takes integer pid returns boolean
 	local integer id = 34 * 4 + 3
 	local integer d = pid * HL
-	if PlayerSkillIndex[d + 1]== id or PlayerSkillIndex[d + 2]== id or PlayerSkillIndex[d + 3]== id or PlayerSkillIndex[d + 4]== id or(ExtraSkillsNumber >= 1 and PlayerSkillIndex[d + 5]== id) or(ExtraSkillsNumber >= 2 and PlayerSkillIndex[d + 6]== id) then
+	if PlayerAbilityList[d + 1]== id or PlayerAbilityList[d + 2]== id or PlayerAbilityList[d + 3]== id or PlayerAbilityList[d + 4]== id or(ExtraSkillsNumber >= 1 and PlayerAbilityList[d + 5]== id) or(ExtraSkillsNumber >= 2 and PlayerAbilityList[d + 6]== id) then
 		return true
 	endif
 	return false
@@ -31077,8 +31011,8 @@ function OUR takes integer XQX returns boolean
 	endloop
 	return false
 endfunction
-function OWR takes integer OYR, integer WWV, boolean OZR returns boolean
-	local boolean O_R = I2R(OYR / 4) == I2R(OYR)/ 4.
+function OnPlayerPickAbility takes integer abilityIndex, integer playerIndex, boolean OZR returns boolean
+	local boolean O_R = I2R(abilityIndex / 4) == I2R(abilityIndex)/ 4.
 	local boolean pr = true
 	local integer ns = 0
 	local integer O0R = 0
@@ -31092,41 +31026,41 @@ function OWR takes integer OYR, integer WWV, boolean OZR returns boolean
 	local integer O6R = 0
 	local boolean O7R = false
 	local boolean O8R = false
-	local player p = Player(WWV)
+	local player p = Player(playerIndex)
 	local boolean O9R
 	local boolean RVR
 	local boolean RER
 	local boolean RXR
-	local integer ROR = WWV * HL
+	local integer ROR = playerIndex * HL
 	local integer RRR
 	local unit u
-	if PlayerSkillIndex[ROR + 1]== OYR or PlayerSkillIndex[ROR + 2]== OYR or PlayerSkillIndex[ROR + 3]== OYR or PlayerSkillIndex[ROR + 4]== OYR or PlayerSkillIndex[ROR + 5]== OYR or PlayerSkillIndex[ROR + 6]== OYR then
+	if PlayerAbilityList[ROR + 1]== abilityIndex or PlayerAbilityList[ROR + 2]== abilityIndex or PlayerAbilityList[ROR + 3]== abilityIndex or PlayerAbilityList[ROR + 4]== abilityIndex or PlayerAbilityList[ROR + 5]== abilityIndex or PlayerAbilityList[ROR + 6]== abilityIndex then
 		return false
 	endif
-	if OYR ==(116 -1)* 4 + 4 or OYR ==(115 -1)* 4 + 4 or OYR ==(114 -1)* 4 + 4 then
+	if abilityIndex ==(116 -1)* 4 + 4 or abilityIndex ==(115 -1)* 4 + 4 or abilityIndex ==(114 -1)* 4 + 4 then
 		set O_R = false
 	endif
-	if FP[WWV] then
-		call URE(p, OZR, "你已经准备好了")
+	if FP[playerIndex] then
+		call DisplayLoDWarningForPlayer(p, OZR, "你已经准备好了")
 		return false
 	endif
-	if IsDisabledSkill[OYR] then
-		call URE(p, OZR, "该技能无法被选择 :(")
+	if IsDisabledSkill[abilityIndex] then
+		call DisplayLoDWarningForPlayer(p, OZR, "该技能无法被选择 :(")
 		return false
 	endif
 	if Mode__DeathMatch or MainModeName =="ar" then
-		if IsNoDeathMatchSkill[OYR] then
+		if IsNoDeathMatchSkill[abilityIndex] then
 			return false
 		endif
 	endif
-	if HVV then
+	if Mode__OneSkill then
 		if IsSentinelPlayer(p) then
 			set YTE = 1
 		else
 			set YTE = 2
 		endif
-		if XP[YTE * OP + OYR]!= 0 then
-			call URE(p, OZR, "一个玩家已经选择了这个技能: " + PlayersColoerText[XP[YTE * OP + OYR]] + PlayersName[XP[YTE * OP + OYR]] + "|r")
+		if XP[YTE * OP + abilityIndex]!= 0 then
+			call DisplayLoDWarningForPlayer(p, OZR, "一个玩家已经选择了这个技能: " + PlayersColoerText[XP[YTE * OP + abilityIndex]] + PlayersName[XP[YTE * OP + abilityIndex]] + "|r")
 			return false
 		endif
 	endif
@@ -31134,14 +31068,14 @@ function OWR takes integer OYR, integer WWV, boolean OZR returns boolean
 	loop
 		if O_R then
 			if xx == 4 or xx == 6 then
-				if PlayerSkillIndex[ROR + xx]== 0 then
+				if PlayerAbilityList[ROR + xx]== 0 then
 					set O3R = xx
 				exitwhen true
 				endif
 			endif
 		else
 			if not(xx == 4 or xx == 6) then
-				if PlayerSkillIndex[ROR + xx]== 0 then
+				if PlayerAbilityList[ROR + xx]== 0 then
 					set O2R = xx
 				exitwhen true
 				endif
@@ -31151,26 +31085,26 @@ function OWR takes integer OYR, integer WWV, boolean OZR returns boolean
 	exitwhen xx > 4 + ExtraSkillsNumber
 	endloop
 	if O3R == 0 and O_R then
-		call URE(p, OZR, "你必须选择一个小技能（非最终技能）.")
+		call DisplayLoDWarningForPlayer(p, OZR, "你必须选择一个小技能（非最终技能）.")
 		return false
 	endif
 	if O2R == 0 and not(O_R) then
-		call URE(p, OZR, "你必须选择一个最终技能.")
+		call DisplayLoDWarningForPlayer(p, OZR, "你必须选择一个最终技能.")
 		return false
 	endif
 	if Mode__RandomExtraAbilities then
-		if PlayerSkillIndex[ROR + 5]== 0 and ExtraSkillsNumber >= 1 then
+		if PlayerAbilityList[ROR + 5]== 0 and ExtraSkillsNumber >= 1 then
 			set O2R = 5
 		endif
-		if PlayerSkillIndex[ROR + 6]== 0 and ExtraSkillsNumber >= 2 then
+		if PlayerAbilityList[ROR + 6]== 0 and ExtraSkillsNumber >= 2 then
 			set O3R = 6
 		endif
 	endif
-	set RER = CheckAbilityIdFormIndex(OYR,-1, "melee only", null)
-	set O9R = CheckAbilityIdFormIndex(OYR,-1, "melee morph", null)
-	set RXR = CheckAbilityIdFormIndex(OYR,-1, "range only", null)
-	set RVR = CheckAbilityIdFormIndex(OYR,-1, "range morph", null)
-	if WWV == 0 then
+	set RER = CheckAbilityIdFormIndex(abilityIndex,-1, "melee only", null)
+	set O9R = CheckAbilityIdFormIndex(abilityIndex,-1, "melee morph", null)
+	set RXR = CheckAbilityIdFormIndex(abilityIndex,-1, "range only", null)
+	set RVR = CheckAbilityIdFormIndex(abilityIndex,-1, "range morph", null)
+	if playerIndex == 0 then
 		set u = LoadUnitHandle(HY,'0REA','000U')
 		if u != null then
 			if OUR(GetUnitUserData(u)) then
@@ -31189,7 +31123,7 @@ function OWR takes integer OYR, integer WWV, boolean OZR returns boolean
 	if RER or O9R then
 		set xx = 1
 		loop
-			if CheckAbilityIdFormIndex(PlayerSkillIndex[ROR + xx],-1, "range only", null) or CheckAbilityIdFormIndex(PlayerSkillIndex[ROR + xx],-1, "range morph", null) then
+			if CheckAbilityIdFormIndex(PlayerAbilityList[ROR + xx],-1, "range only", null) or CheckAbilityIdFormIndex(PlayerAbilityList[ROR + xx],-1, "range morph", null) then
 				set ns = xx
 				if O9R then
 					set O4R = "你不能选择一个近战变身技能"
@@ -31203,7 +31137,7 @@ function OWR takes integer OYR, integer WWV, boolean OZR returns boolean
 		endloop
 		set xx = 1
 		loop
-			if CheckAbilityIdFormIndex(PlayerSkillIndex[ROR + xx], OYR, null, "melee only") then
+			if CheckAbilityIdFormIndex(PlayerAbilityList[ROR + xx], abilityIndex, null, "melee only") then
 				set ns = xx
 				set O4R = "buggy/orderids"
 			exitwhen true
@@ -31214,7 +31148,7 @@ function OWR takes integer OYR, integer WWV, boolean OZR returns boolean
 	elseif RXR or RVR then
 		set xx = 1
 		loop
-			if CheckAbilityIdFormIndex(PlayerSkillIndex[ROR + xx],-1, "melee only", null) or CheckAbilityIdFormIndex(PlayerSkillIndex[ROR + xx],-1, "melee morph", null) then
+			if CheckAbilityIdFormIndex(PlayerAbilityList[ROR + xx],-1, "melee only", null) or CheckAbilityIdFormIndex(PlayerAbilityList[ROR + xx],-1, "melee morph", null) then
 				set ns = xx
 				if RVR then
 					set O4R = "你不能选择一个远程变身技能"
@@ -31228,7 +31162,7 @@ function OWR takes integer OYR, integer WWV, boolean OZR returns boolean
 		endloop
 		set xx = 1
 		loop
-			if CheckAbilityIdFormIndex(PlayerSkillIndex[ROR + xx], OYR, null, "range only") then
+			if CheckAbilityIdFormIndex(PlayerAbilityList[ROR + xx], abilityIndex, null, "range only") then
 				set ns = xx
 				set O4R = "buggy/orderids"
 			exitwhen true
@@ -31239,7 +31173,7 @@ function OWR takes integer OYR, integer WWV, boolean OZR returns boolean
 	else
 		set xx = 1
 		loop
-			if CheckAbilityIdFormIndex(PlayerSkillIndex[ROR + xx], OYR, null, null) then
+			if CheckAbilityIdFormIndex(PlayerAbilityList[ROR + xx], abilityIndex, null, null) then
 				set ns = xx
 				set O4R = "buggy/orderids"
 			exitwhen true
@@ -31248,18 +31182,18 @@ function OWR takes integer OYR, integer WWV, boolean OZR returns boolean
 		exitwhen xx > 4 + ExtraSkillsNumber
 		endloop
 	endif
-	if IsMultiIconSkill[OYR]and(Mode__FiveSkills or Mode__SixSkills) then
-		call T9E(p, OZR, "注意：该技能是多图标技能。建议用命令改键来修改额外技能快捷键。")
+	if IsMultiIconSkill[abilityIndex]and(Mode__FiveSkills or Mode__SixSkills) then
+		call DisplayLoDTipForPlayer(p, OZR, "注意：该技能是多图标技能。建议用命令改键来修改额外技能快捷键。")
 	endif
-	if OYR ==(35 -1)* 4 + 3 then
+	if abilityIndex ==(35 -1)* 4 + 3 then
 		if IsSentinelPlayer(p) then
 			if OQR(GetPlayerId(SentinelPlayers[1])) or OQR(GetPlayerId(SentinelPlayers[2])) or OQR(GetPlayerId(SentinelPlayers[3])) or OQR(GetPlayerId(SentinelPlayers[4])) or OQR(GetPlayerId(SentinelPlayers[5])) then
-				call URE(p, OZR, "你的队友已经选择了这个技能，不能再选择一个了。")
+				call DisplayLoDWarningForPlayer(p, OZR, "你的队友已经选择了这个技能，不能再选择一个了。")
 				return false
 			endif
 		else
 			if OQR(GetPlayerId(ScourgePlayers[1])) or OQR(GetPlayerId(ScourgePlayers[2])) or OQR(GetPlayerId(ScourgePlayers[3])) or OQR(GetPlayerId(ScourgePlayers[4])) or OQR(GetPlayerId(ScourgePlayers[5])) then
-				call URE(p, OZR, "你的队友已经选择了这个技能，不能再选择一个了。")
+				call DisplayLoDWarningForPlayer(p, OZR, "你的队友已经选择了这个技能，不能再选择一个了。")
 				return false
 			endif
 		endif
@@ -31269,8 +31203,9 @@ function OWR takes integer OYR, integer WWV, boolean OZR returns boolean
 	else
 		set RRR = 2
 	endif
-	if OSR(OYR) then
-		set O7R = OPR(WWV)>= RRR
+	// 是允许限制的技能
+	if OSR(abilityIndex) then
+		set O7R = OPR(playerIndex)>= RRR
 		if O7R == false then
 			if IsSentinelPlayer(p) then
 				set O7R =(OPR(GetPlayerId(SentinelPlayers[1]))+ OPR(GetPlayerId(SentinelPlayers[2]))+ OPR(GetPlayerId(SentinelPlayers[3]))+ OPR(GetPlayerId(SentinelPlayers[4]))+ OPR(GetPlayerId(SentinelPlayers[5])))>= 7
@@ -31281,19 +31216,19 @@ function OWR takes integer OYR, integer WWV, boolean OZR returns boolean
 		endif
 	endif
 	if ns == 0 then
-		if (HAV) then
+		if (Mode__LimitSkills) then
 			if O7R == false then
 				set O0R = 0
 				set O1R = 0
-				set O5R =(OYR -1)/ 4
+				set O5R =(abilityIndex -1)/ 4
 				set xx = 1
 				loop
-					if PlayerSkillIndex[ROR + xx]!= 0 then
-						set O6R =(PlayerSkillIndex[ROR + xx]-1)/ 4
+					if PlayerAbilityList[ROR + xx]!= 0 then
+						set O6R =(PlayerAbilityList[ROR + xx]-1)/ 4
 						if (O6R == O5R) then
 							if O0R == 0 then
 								set O0R = xx
-							elseif HIV then
+							elseif Mode__LimitSkills3 then
 								if O1R == 0 then
 									set O1R = xx
 								else
@@ -31317,36 +31252,36 @@ function OWR takes integer OYR, integer WWV, boolean OZR returns boolean
 	if ns != 0 then
 		if O4R != "" then
 			if O1R != 0 then
-				call URE(p, OZR, "不兼容 : " + GetObjectName(HeroCommonSkills[PlayerSkillIndex[ROR + ns]])+ "/" + GetObjectName(HeroCommonSkills[PlayerSkillIndex[ROR + O0R]])+ "/" + GetObjectName(HeroCommonSkills[PlayerSkillIndex[ROR + O1R]])+ " (" + O4R + ")")
+				call DisplayLoDWarningForPlayer(p, OZR, "不兼容 : " + GetObjectName(HeroAbility_Base[PlayerAbilityList[ROR + ns]])+ "/" + GetObjectName(HeroAbility_Base[PlayerAbilityList[ROR + O0R]])+ "/" + GetObjectName(HeroAbility_Base[PlayerAbilityList[ROR + O1R]])+ " (" + O4R + ")")
 			elseif O0R != 0 then
-				call URE(p, OZR, "不兼容 : " + GetObjectName(HeroCommonSkills[PlayerSkillIndex[ROR + ns]])+ "/" + GetObjectName(HeroCommonSkills[PlayerSkillIndex[ROR + O0R]])+ " (" + O4R + ")")
+				call DisplayLoDWarningForPlayer(p, OZR, "不兼容 : " + GetObjectName(HeroAbility_Base[PlayerAbilityList[ROR + ns]])+ "/" + GetObjectName(HeroAbility_Base[PlayerAbilityList[ROR + O0R]])+ " (" + O4R + ")")
 			else
-				call URE(p, OZR, "不兼容 : " + GetObjectName(HeroCommonSkills[PlayerSkillIndex[ROR + ns]])+ " (" + O4R + ")")
+				call DisplayLoDWarningForPlayer(p, OZR, "不兼容 : " + GetObjectName(HeroAbility_Base[PlayerAbilityList[ROR + ns]])+ " (" + O4R + ")")
 			endif
 		else
-			call URE(p, OZR, "不兼容 : " + GetObjectName(HeroCommonSkills[PlayerSkillIndex[ROR + ns]]))
+			call DisplayLoDWarningForPlayer(p, OZR, "不兼容 : " + GetObjectName(HeroAbility_Base[PlayerAbilityList[ROR + ns]]))
 		endif
 		return false
 	endif
 	if O7R then
 		if O8R == false then
 			if RRR == 2 then
-				call URE(p, OZR, "不能选择该技能，你已经有2个控制技能了！")
+				call DisplayLoDWarningForPlayer(p, OZR, "不能选择该技能，你已经有2个控制技能了！")
 			else
-				call URE(p, OZR, "不能选择该技能，你已经有1个控制技能了！")
+				call DisplayLoDWarningForPlayer(p, OZR, "不能选择该技能，你已经有1个控制技能了！")
 			endif
 		else
-			call URE(p, OZR, "不能选择该技能，你的队伍已经选择7个控制技能了！")
+			call DisplayLoDWarningForPlayer(p, OZR, "不能选择该技能，你的队伍已经选择7个控制技能了！")
 		endif
 		return false
 	endif
-	if HaveSavedString(AbilityDataHashTable, HeroCommonSkills[OYR], HotKeyStringHash) then
+	if HaveSavedString(AbilityDataHashTable, HeroAbility_Base[abilityIndex], HotKeyStringHash) then
 		set xx = 1
 		loop
-			if PlayerSkillIndex[ROR + xx]> 0 and HaveSavedString(AbilityDataHashTable, HeroCommonSkills[PlayerSkillIndex[ROR + xx]], HotKeyStringHash) then
-				if LoadStr(AbilityDataHashTable, HeroCommonSkills[OYR], HotKeyStringHash) == LoadStr(AbilityDataHashTable, HeroCommonSkills[PlayerSkillIndex[ROR + xx]], HotKeyStringHash) then
-					call URE(p, OZR, "快捷键冲突 : " + GetObjectName(HeroCommonSkills[PlayerSkillIndex[ROR + xx]]))
-					if HaveSavedBoolean(OtherHashTable, GetHandleId(Player(WWV)),'NSHK') and VT then
+			if PlayerAbilityList[ROR + xx]> 0 and HaveSavedString(AbilityDataHashTable, HeroAbility_Base[PlayerAbilityList[ROR + xx]], HotKeyStringHash) then
+				if LoadStr(AbilityDataHashTable, HeroAbility_Base[abilityIndex], HotKeyStringHash) == LoadStr(AbilityDataHashTable, HeroAbility_Base[PlayerAbilityList[ROR + xx]], HotKeyStringHash) then
+					call DisplayLoDWarningForPlayer(p, OZR, "快捷键冲突 : " + GetObjectName(HeroAbility_Base[PlayerAbilityList[ROR + xx]]))
+					if HaveSavedBoolean(OtherHashTable, GetHandleId(Player(playerIndex)),'NSHK') and VT then
 						return false
 					endif
 				endif
@@ -31356,32 +31291,32 @@ function OWR takes integer OYR, integer WWV, boolean OZR returns boolean
 		endloop
 	endif
 	if O_R then
-		set PlayerSkillIndex[ROR + O3R]= OYR
-		call OMR(WWV, O3R, OYR)
+		set PlayerAbilityList[ROR + O3R]= abilityIndex
+		call OMR(playerIndex, O3R, abilityIndex)
 	else
-		set PlayerSkillIndex[ROR + O2R]= OYR
-		call OMR(WWV, O2R, OYR)
+		set PlayerAbilityList[ROR + O2R]= abilityIndex
+		call OMR(playerIndex, O2R, abilityIndex)
 	endif
-	if HVV then
-		if XP[YTE * OP + OYR]== 0 then
-			set XP[YTE * OP + OYR]= WWV
+	if Mode__OneSkill then
+		if XP[YTE * OP + abilityIndex]== 0 then
+			set XP[YTE * OP + abilityIndex]= playerIndex
 		endif
 	endif
 	set xx = 1
 	loop
-		if PlayerSkillIndex[ROR + xx]== 0 then
+		if PlayerAbilityList[ROR + xx]== 0 then
 			set pr = false
 		exitwhen true
 		endif
 		set xx = xx + 1
 	exitwhen xx > 4 + ExtraSkillsNumber
 	endloop
-	set FP[WWV]= pr
+	set FP[playerIndex]= pr
 	if RER then
-		set PP[WWV]= 1
+		set PP[playerIndex]= 1
 		call UVE(p, OZR, "注意：该技能是近战限定技能.")
 	elseif RXR then
-		set PP[WWV]= 2
+		set PP[playerIndex]= 2
 		call UVE(p, OZR, "注意：该技能是远程限定技能.")
 	endif
 	if O9R then
@@ -31389,86 +31324,86 @@ function OWR takes integer OYR, integer WWV, boolean OZR returns boolean
 	elseif RVR then
 		call UVE(p, OZR, "注意：该技能是远程变身技能.")
 	endif
-	if ( not Mode__BalanceOff and NoBalanceOffTips[OYR]!= null ) then
-		call UVE(p, OZR, "平衡改动(BO)：" + NoBalanceOffTips[OYR]) // BalanceOff
+	if ( not Mode__BalanceOff and NoBalanceOffTips[abilityIndex]!= null ) then
+		call UVE(p, OZR, "平衡改动(BO)：" + NoBalanceOffTips[abilityIndex]) // BalanceOff
 	endif
-	if ( not Mode__RearmCombos and NoRearmCombosTips[OYR]!= null ) then
-		call UVE(p, OZR, "平衡改动(RC)：" + NoRearmCombosTips[OYR]) // RearmCombos
+	if ( not Mode__RearmCombos and NoRearmCombosTips[abilityIndex]!= null ) then
+		call UVE(p, OZR, "平衡改动(RC)：" + NoRearmCombosTips[abilityIndex]) // RearmCombos
 	endif
-	if ZTP[OYR]!= null then
-		call UVE(p, OZR, "注意：" + ZTP[OYR])
+	if ZTP[abilityIndex]!= null then
+		call UVE(p, OZR, "注意：" + ZTP[abilityIndex])
 	endif
 	return true
 endfunction
 function Q7X takes nothing returns nothing
 	local unit u = LoadUnitHandle(HY,'hRUT', 1)
-	local integer WWV = GetPlayerId(GetOwningPlayer(u))
+	local integer playerIndex = GetPlayerId(GetOwningPlayer(u))
 	local integer ZKE
 	local integer i = 0
 	local integer te
-	set PlayerSkillIndex[WWV * HL + 1]= LoadInteger(HY,'hRUT', 2)
-	set PlayerSkillIndex[WWV * HL + 2]= LoadInteger(HY,'hRUT', 3)
-	set PlayerSkillIndex[WWV * HL + 3]= LoadInteger(HY,'hRUT', 4)
-	set PlayerSkillIndex[WWV * HL + 4]= LoadInteger(HY,'hRUT', 5)
-	set PlayerSkillIndex[WWV * HL + 5]= LoadInteger(HY,'hRUT', 6)
-	set PlayerSkillIndex[WWV * HL + 6]= LoadInteger(HY,'hRUT', 7)
-	set IP[WWV * 2 + 1]= LoadInteger(HY,'hRUT', 8)
-	set IP[WWV * 2 + 2]= LoadInteger(HY,'hRUT', 9)
+	set PlayerAbilityList[playerIndex * HL + 1]= LoadInteger(HY,'hRUT', 2)
+	set PlayerAbilityList[playerIndex * HL + 2]= LoadInteger(HY,'hRUT', 3)
+	set PlayerAbilityList[playerIndex * HL + 3]= LoadInteger(HY,'hRUT', 4)
+	set PlayerAbilityList[playerIndex * HL + 4]= LoadInteger(HY,'hRUT', 5)
+	set PlayerAbilityList[playerIndex * HL + 5]= LoadInteger(HY,'hRUT', 6)
+	set PlayerAbilityList[playerIndex * HL + 6]= LoadInteger(HY,'hRUT', 7)
+	set IP[playerIndex * 2 + 1]= LoadInteger(HY,'hRUT', 8)
+	set IP[playerIndex * 2 + 2]= LoadInteger(HY,'hRUT', 9)
 	loop
 		set ZKE =(GetRandomInt(1, GL * 4))
 		if IsUnitType(u, UNIT_TYPE_MELEE_ATTACKER) then
 			if not CheckAbilityIdFormIndex(ZKE,-1, "range only", null) then
-				call SaveInteger(HY,'0REA','0PID', WWV)
+				call SaveInteger(HY,'0REA','0PID', playerIndex)
 				call SaveInteger(HY,'0REA','0SID', ZKE)
 				call SaveBoolean(HY,'0REA','000B', false)
 				call ExecuteFunc("SPO")
 			endif
 		else
 			if not CheckAbilityIdFormIndex(ZKE,-1, "melee only", null) then
-				call SaveInteger(HY,'0REA','0PID', WWV)
+				call SaveInteger(HY,'0REA','0PID', playerIndex)
 				call SaveInteger(HY,'0REA','0SID', ZKE)
 				call SaveBoolean(HY,'0REA','000B', false)
 				call ExecuteFunc("SPO")
 			endif
 		endif
 		set i = i + 1
-	exitwhen FP[WWV]
+	exitwhen FP[playerIndex]
 	endloop
-	if not FP[WWV] then
-		call SaveInteger(HY,'hRUT', 2, PlayerSkillIndex[WWV * HL + 1])
-		call SaveInteger(HY,'hRUT', 3, PlayerSkillIndex[WWV * HL + 2])
-		call SaveInteger(HY,'hRUT', 4, PlayerSkillIndex[WWV * HL + 3])
-		call SaveInteger(HY,'hRUT', 5, PlayerSkillIndex[WWV * HL + 4])
-		call SaveInteger(HY,'hRUT', 6, PlayerSkillIndex[WWV * HL + 5])
-		call SaveInteger(HY,'hRUT', 7, PlayerSkillIndex[WWV * HL + 6])
-		call SaveInteger(HY,'hRUT', 8, IP[WWV * 2 + 1])
-		call SaveInteger(HY,'hRUT', 9, IP[WWV * 2 + 2])
+	if not FP[playerIndex] then
+		call SaveInteger(HY,'hRUT', 2, PlayerAbilityList[playerIndex * HL + 1])
+		call SaveInteger(HY,'hRUT', 3, PlayerAbilityList[playerIndex * HL + 2])
+		call SaveInteger(HY,'hRUT', 4, PlayerAbilityList[playerIndex * HL + 3])
+		call SaveInteger(HY,'hRUT', 5, PlayerAbilityList[playerIndex * HL + 4])
+		call SaveInteger(HY,'hRUT', 6, PlayerAbilityList[playerIndex * HL + 5])
+		call SaveInteger(HY,'hRUT', 7, PlayerAbilityList[playerIndex * HL + 6])
+		call SaveInteger(HY,'hRUT', 8, IP[playerIndex * 2 + 1])
+		call SaveInteger(HY,'hRUT', 9, IP[playerIndex * 2 + 2])
 		call ExecuteFunc("Q7X")
 	endif
 	call FlushChildHashtable(HY,'hRUT')
-	call AddHeroSkills(u, Player(WWV))
-	call OIR(WWV)
-	set FP[WWV]= false
+	call AddHeroSkills(u, Player(playerIndex))
+	call OIR(playerIndex)
+	set FP[playerIndex]= false
 	set u = null
 endfunction
 function MIO takes nothing returns nothing
 	local integer ZKE
 	local integer UXO
-	local integer WWV
+	local integer playerIndex
 	local integer te
-	set WWV = 0
+	set playerIndex = 0
 	loop
-		if T6E(WWV) then
+		if T6E(playerIndex) then
 			loop
-			exitwhen FP[WWV]
+			exitwhen FP[playerIndex]
 				if MainModeName =="sd" or MainModeName =="md" then
 					loop
 						set UXO = UIE(GetRandomInt(1, GL))
-					exitwhen(DP[WWV * GL + UXO]and ZQ[UXO]== false)
+					exitwhen(DP[playerIndex * GL + UXO]and ZQ[UXO]== false)
 					endloop
 					set ZKE =(UXO * 4)-4
 					set ZKE = ZKE + GetRandomInt(1, 4)
-					call SaveInteger(HY,'0REA','0PID', WWV)
+					call SaveInteger(HY,'0REA','0PID', playerIndex)
 					call SaveInteger(HY,'0REA','0SID', ZKE)
 					call SaveBoolean(HY,'0REA','000B', false)
 					call ExecuteFunc("SPO")
@@ -31478,7 +31413,7 @@ function MIO takes nothing returns nothing
 						set te = UIE((ZKE + 3)/ 4)
 					exitwhen(ZQ[te]== false and GetPlayerTechMaxAllowed(GetTriggerPlayer(), HeroListTypeId[te])> 0)
 					endloop
-					call SaveInteger(HY,'0REA','0PID', WWV)
+					call SaveInteger(HY,'0REA','0PID', playerIndex)
 					call SaveInteger(HY,'0REA','0SID', ZKE)
 					call SaveBoolean(HY,'0REA','000B', false)
 					call ExecuteFunc("SPO")
@@ -31486,8 +31421,8 @@ function MIO takes nothing returns nothing
 			endloop
 			call SQO()
 		endif
-		set WWV = WWV + 1
-	exitwhen WWV > 12
+		set playerIndex = playerIndex + 1
+	exitwhen playerIndex > 12
 	endloop
 endfunction
 function RIR takes integer pid, integer TPE returns boolean
@@ -31499,19 +31434,19 @@ function RIR takes integer pid, integer TPE returns boolean
 	set sn = R2I((I2R(TPE)+ 3.)/ 4.)
 	set sn = TPE -((sn -1)* 4)
 	if Mode__RandomExtraAbilities then
-		if PlayerSkillIndex[pid * HL + 5]== TPE and ExtraSkillsNumber >= 1 then
-			call URE(Player(pid), true, "你不能在\"额外随机技能\"模式下移除该技能.")
+		if PlayerAbilityList[pid * HL + 5]== TPE and ExtraSkillsNumber >= 1 then
+			call DisplayLoDWarningForPlayer(Player(pid), true, "你不能在\"额外随机技能\"模式下移除该技能.")
 			return false
 		endif
-		if PlayerSkillIndex[pid * HL + 6]== TPE and ExtraSkillsNumber >= 2 then
-			call URE(Player(pid), true, "你不能在\"额外随机技能\"模式下移除该技能.")
+		if PlayerAbilityList[pid * HL + 6]== TPE and ExtraSkillsNumber >= 2 then
+			call DisplayLoDWarningForPlayer(Player(pid), true, "你不能在\"额外随机技能\"模式下移除该技能.")
 			return false
 		endif
 	endif
 	set xx = 1
 	loop
-		if (PlayerSkillIndex[pid * HL + xx]== TPE) then
-			set PlayerSkillIndex[pid * HL + xx]= 0
+		if (PlayerAbilityList[pid * HL + xx]== TPE) then
+			set PlayerAbilityList[pid * HL + xx]= 0
 			call OMR(pid, xx, 0)
 		exitwhen true
 		endif
@@ -31521,10 +31456,10 @@ function RIR takes integer pid, integer TPE returns boolean
 	set PP[pid]= 0
 	set xx = 1
 	loop
-		if CheckAbilityIdFormIndex(PlayerSkillIndex[pid * HL + xx],-1, "melee only", null) then
+		if CheckAbilityIdFormIndex(PlayerAbilityList[pid * HL + xx],-1, "melee only", null) then
 			set PP[pid]= 1
 		exitwhen true
-		elseif CheckAbilityIdFormIndex(PlayerSkillIndex[pid * HL + xx],-1, "range only", null) then
+		elseif CheckAbilityIdFormIndex(PlayerAbilityList[pid * HL + xx],-1, "range only", null) then
 			set PP[pid]= 2
 		exitwhen true
 		endif
@@ -31535,7 +31470,7 @@ function RIR takes integer pid, integer TPE returns boolean
 		call UnitRemoveAbility(KP[pid],('Z004'-1)+ sn)
 		call UnitAddAbility(KP[pid],('Z000'-1)+ sn)
 	endif
-	if HVV then
+	if Mode__OneSkill then
 		set xx = 0
 		loop
 			if IsSentinelPlayer(Player(pid)) then
@@ -31544,7 +31479,7 @@ function RIR takes integer pid, integer TPE returns boolean
 				set V0R = GetPlayerId(ScourgePlayers[xx])
 			endif
 			if LoadBoolean(HY, GetHandleId(Player(V0R)), unitTypeId) then
-				if GetUnitAbilityLevel(KP[V0R], HeroCommonSkills[TPE])> 0 then
+				if GetUnitAbilityLevel(KP[V0R], HeroAbility_Base[TPE])> 0 then
 					call UnitRemoveAbility(KP[V0R],('Z010'-1)+ sn)
 					call UnitAddAbility(KP[V0R],('Z000'-1)+ sn)
 				endif
@@ -31564,17 +31499,17 @@ function RIR takes integer pid, integer TPE returns boolean
 	return true
 endfunction
 function Y4O takes nothing returns nothing
-	local integer WWV = GetPlayerId(GetTriggerPlayer())
+	local integer playerIndex = GetPlayerId(GetTriggerPlayer())
 	local integer i = S2I(SubString(GetEventPlayerChatString(), 2, 3))
 	if i == 0 then
 		set i = S2I(SubString(GetEventPlayerChatString(), 3, 4))
 	endif
 	if IsPickingHero then
-		if GetGameTime()> HN[WWV] + 2 then
+		if GetGameTime()> HN[playerIndex] + 2 then
 			if i < 7 and i > 0 then
-				set HN[WWV]= GetGameTime()
-				call RIR(WWV, PlayerSkillIndex[WWV * HL + i])
-				set FP[WWV]= false
+				set HN[playerIndex]= GetGameTime()
+				call RIR(playerIndex, PlayerAbilityList[playerIndex * HL + i])
+				set FP[playerIndex]= false
 			else
 				call InterfaceErrorForPlayer(GetTriggerPlayer(), "Wrong index, try [1-6]")
 			endif
@@ -31588,12 +31523,12 @@ function reset_choice takes player p, boolean b returns nothing
 	if IsPickingHero then
 		if b or GetGameTime()> HN[id] + 2 then
 			set HN[id]= GetGameTime()
-			call RIR(id, PlayerSkillIndex[id * HL + 1])
-			call RIR(id, PlayerSkillIndex[id * HL + 2])
-			call RIR(id, PlayerSkillIndex[id * HL + 3])
-			call RIR(id, PlayerSkillIndex[id * HL + 4])
-			call RIR(id, PlayerSkillIndex[id * HL + 5])
-			call RIR(id, PlayerSkillIndex[id * HL + 6])
+			call RIR(id, PlayerAbilityList[id * HL + 1])
+			call RIR(id, PlayerAbilityList[id * HL + 2])
+			call RIR(id, PlayerAbilityList[id * HL + 3])
+			call RIR(id, PlayerAbilityList[id * HL + 4])
+			call RIR(id, PlayerAbilityList[id * HL + 5])
+			call RIR(id, PlayerAbilityList[id * HL + 6])
 			set FP[id]= false
 		else
 			call InterfaceErrorForPlayer(p, "Do not spam. Try later.")
@@ -31614,13 +31549,13 @@ function RNR takes nothing returns boolean
 	return false
 endfunction
 function RBR takes nothing returns nothing
-	local integer WWV = GetPlayerId(GetTriggerPlayer())
+	local integer playerIndex = GetPlayerId(GetTriggerPlayer())
 	local integer xx
 	local group g = AllocationGroup(112)
 	if not(GP) and MainModeName != "ar" then
 		set xx = 1
 		loop
-			call RIR(WWV, PlayerSkillIndex[WWV * HL + xx])
+			call RIR(playerIndex, PlayerAbilityList[playerIndex * HL + xx])
 			set xx = xx + 1
 		exitwhen xx > 4 + ExtraSkillsNumber
 		endloop
@@ -31630,31 +31565,31 @@ function RBR takes nothing returns nothing
 	set g = null
 endfunction
 function RCR takes nothing returns nothing
-	local integer WWV = GetPlayerId(GetOwningPlayer(GetSpellAbilityUnit()))
-	local integer QLX =(MP[WWV]* 4)-4
+	local integer playerIndex = GetPlayerId(GetOwningPlayer(GetSpellAbilityUnit()))
+	local integer index =(PlayerNowPackedHeroIndex[playerIndex]* 4)-4
 	local integer sn
 	if GetSpellAbilityId()=='Z004' then
-		set QLX = QLX + 1
+		set index = index + 1
 		set sn = 1
 	elseif GetSpellAbilityId()=='Z005' then
-		set QLX = QLX + 2
+		set index = index + 2
 		set sn = 2
 	elseif GetSpellAbilityId()=='Z006' then
-		set QLX = QLX + 3
+		set index = index + 3
 		set sn = 3
 	elseif GetSpellAbilityId()=='Z007' then
-		set QLX = QLX + 4
+		set index = index + 4
 		set sn = 4
 	else
 		return
 	endif
-	if RIR(WWV, QLX) then
-		set FP[WWV]= false
+	if RIR(playerIndex, index) then
+		set FP[playerIndex]= false
 	endif
 endfunction
 function RDR takes nothing returns nothing
 	local integer pid = GetPlayerId(GetOwningPlayer(GetSpellAbilityUnit()))
-	local integer QLX =(MP[pid]* 4)-4
+	local integer index = (PlayerNowPackedHeroIndex[pid]* 4)-4
 	local integer sn
 	local integer xx
 	local integer RFR
@@ -31662,27 +31597,27 @@ function RDR takes nothing returns nothing
 		return
 	endif
 	if GetSpellAbilityId()=='Z000' or GetSpellAbilityId()=='Z010' then
-		set QLX = QLX + 1
+		set index = index + 1
 		set sn = 1
 	elseif GetSpellAbilityId()=='Z001' or GetSpellAbilityId()=='Z011' then
-		set QLX = QLX + 2
+		set index = index + 2
 		set sn = 2
 	elseif GetSpellAbilityId()=='Z002' or GetSpellAbilityId()=='Z012' then
-		set QLX = QLX + 3
+		set index = index + 3
 		set sn = 3
 	elseif GetSpellAbilityId()=='Z003' or GetSpellAbilityId()=='Z013' then
-		set QLX = QLX + 4
+		set index = index + 4
 		set sn = 4
 	else
 		return
 	endif
-	if not OWR(QLX, pid, true) then
+	if not OnPlayerPickAbility(index, pid, true) then
 		return
 	endif
-	if IsPlayerHasSkill(Player(pid), QLX) then
+	if IsPlayerHasSkill(Player(pid), index) then
 		call UnitRemoveAbility(KP[pid],('Z000'-1)+ sn)
 		call UnitAddAbility(KP[pid],('Z004'-1)+ sn)
-		if HVV then
+		if Mode__OneSkill then
 			set xx = 1
 			loop
 				if IsSentinelPlayer(Player(pid)) then
@@ -31690,7 +31625,7 @@ function RDR takes nothing returns nothing
 				else
 					set RFR = GetPlayerId(ScourgePlayers[xx])
 				endif
-				if GetUnitAbilityLevel(KP[RFR], HeroCommonSkills[QLX])> 0 and pid != RFR and GetUnitAbilityLevel(KP[RFR],'Z000'-1 + sn)> 0 then
+				if GetUnitAbilityLevel(KP[RFR], HeroAbility_Base[index])> 0 and pid != RFR and GetUnitAbilityLevel(KP[RFR],'Z000'-1 + sn)> 0 then
 					call UnitRemoveAbility(KP[RFR],('Z000'-1)+ sn)
 					call UnitAddAbility(KP[RFR],('Z010'-1)+ sn)
 				endif
@@ -31758,7 +31693,7 @@ function RGR takes player p, integer iHeroTypeId, integer i2 returns nothing
 	call SaveInteger(HY, h,'bapl'+ c, i2)
 endfunction
 function RKR takes nothing returns nothing
-	local integer WWV = 0
+	local integer playerIndex = 0
 	local integer i = 1
 	local integer j
 	local integer n
@@ -31805,7 +31740,7 @@ function RKR takes nothing returns nothing
 		set i = i + 1
 	exitwhen i > WOV
 	endloop
-	set UV = RLR == false and(Mode__Draft20 == false or HOV) and Mode__Draft30 == false and Mode__Draft40 == false and Mode__Draft50 == false
+	set UV = RLR == false and(Mode__Draft20 == false or Mode__MirrorDraft) and Mode__Draft30 == false and Mode__Draft40 == false and Mode__Draft50 == false
 	if RLR == false then
 		return
 	endif
@@ -31816,7 +31751,7 @@ function RKR takes nothing returns nothing
 	exitwhen QP[i]== 0
 	endloop
 endfunction
-function RMR takes integer WWV, integer i returns boolean
+function RMR takes integer playerIndex, integer i returns boolean
 	local boolean b = false
 	set b = DP[GetPlayerId(SentinelPlayers[1])* GL + i]== false and DP[GetPlayerId(SentinelPlayers[2])* GL + i]== false and DP[GetPlayerId(SentinelPlayers[3])* GL + i]== false and DP[GetPlayerId(SentinelPlayers[4])* GL + i]== false and DP[GetPlayerId(SentinelPlayers[5])* GL + i]== false
 	set b = b and(DP[GetPlayerId(ScourgePlayers[1])* GL + i]== false and DP[GetPlayerId(ScourgePlayers[2])* GL + i]== false and DP[GetPlayerId(ScourgePlayers[3])* GL + i]== false and DP[GetPlayerId(ScourgePlayers[4])* GL + i]== false and DP[GetPlayerId(ScourgePlayers[5])* GL + i]== false)
@@ -31947,68 +31882,6 @@ function RYR takes nothing returns nothing
 	call ExecuteFunc("QUX")
 	call PanCameraToTimed(-7008., 6816., .0)
 endfunction
-function RZR takes integer id returns nothing
-	set RB[IB]= id
-	set IB = IB + 1
-endfunction
-function R_R takes nothing returns nothing
-	call RZR((8 -1)* 4 + 1)
-	call RZR((6 -1)* 4 + 1)
-	call RZR((95 -1)* 4 + 4)
-	call RZR((22 -1)* 4 + 1)
-	call RZR((46 -1)* 4 + 1)
-	call RZR((37 -1)* 4 + 4)
-	call RZR((33 -1)* 4 + 2)
-	call RZR((39 -1)* 4 + 2)
-	call RZR((HB -1)* 4 + 4)
-	call RZR((77 -1)* 4 + 4)
-	call RZR((81 -1)* 4 + 1)
-	call RZR((66 -1)* 4 + 2)
-	call RZR((74 -1)* 4 + 4)
-	call RZR((63 -1)* 4 + 1)
-	call RZR(('l'-1)* 4 + 1)
-	call RZR(('j'-1)* 4 + 4)
-	call RZR((1 -1)* 4 + 1)
-	call RZR((40 -1)* 4 + 2)
-	call RZR((48 -1)* 4 + 2)
-	call RZR((7 -1)* 4 + 2)
-	call RZR((54 -1)* 4 + 1)
-	call RZR((69 -1)* 4 + 4)
-	call RZR((89 -1)* 4 + 1)
-	call RZR((65 -1)* 4 + 1)
-	call RZR((61 -1)* 4 + 4)
-	call RZR((5 -1)* 4 + 2)
-	call RZR((41 -1)* 4 + 2)
-	call RZR((47 -1)* 4 + 1)
-	call RZR((DB -1)* 4 + 2)
-	call RZR((28 -1)* 4 + 2)
-	call RZR((28 -1)* 4 + 3)
-	call RZR((38 -1)* 4 + 2)
-	call RZR((18 -1)* 4 + 1)
-	call RZR((53 -1)* 4 + 1)
-	call RZR((75 -1)* 4 + 3)
-	call RZR((75 -1)* 4 + 4)
-	call RZR(('h'-1)* 4 + 1)
-	call RZR(('h'-1)* 4 + 2)
-	call RZR((86 -1)* 4 + 1)
-	call RZR((95 -1)* 4 + 1)
-	call RZR(( 100 -1)* 4 + 1)
-	call RZR((97 -1)* 4 + 1)
-	call RZR((87 -1)* 4 + 2)
-	call RZR(('e'-1)* 4 + 1)
-	call RZR(('p'-1)* 4 + 1)
-	call RZR((31 -1)* 4 + 1)
-	call RZR((46 -1)* 4 + 4)
-	call RZR(('o'-1)* 4 + 1)
-	call RZR((78 -1)* 4 + 1)
-	call RZR((4 -1)* 4 + 2)
-	call RZR(( 120-1)* 4 + 2)
-	call RZR((91 -1)* 4 + 2)
-	call RZR((78 -1)* 4 + 4)
-	call RZR((82 -1)* 4 + 1)
-	call RZR(('m'-1)* 4 + 4)
-	call RZR((96 -1)* 4 + 4)
-endfunction
 function R0R takes integer id, integer TXE, integer TOE, integer QMX, integer QPX returns nothing
 	if Mode__RearmCombos == false and Mode__BalanceOff == false then
 		if TXE =='Z601' then
@@ -32107,16 +31980,16 @@ function R1R takes nothing returns nothing
 	set i = 114 -1
 	loop
 	exitwhen i > 116 -1
-		if HeroCommonSkills[i * 4 + 1]=='Z610' then
+		if HeroAbility_Base[i * 4 + 1]=='Z610' then
 			call RZR(i * 4 + 1)
 			set i = 1231
-		elseif HeroCommonSkills[i * 4 + 2]=='Z610' then
+		elseif HeroAbility_Base[i * 4 + 2]=='Z610' then
 			call RZR(i * 4 + 2)
 			set i = 1231
-		elseif HeroCommonSkills[i * 4 + 3]=='Z610' then
+		elseif HeroAbility_Base[i * 4 + 3]=='Z610' then
 			call RZR(i * 4 + 3)
 			set i = 1231
-		elseif HeroCommonSkills[i * 4 + 4]=='Z610' then
+		elseif HeroAbility_Base[i * 4 + 4]=='Z610' then
 			call RZR(i * 4 + 4)
 			set i = 1231
 		endif
@@ -32172,39 +32045,39 @@ function R9R takes nothing returns nothing
 	call PanCameraToTimed(-7008., 6816., .0)
 endfunction
 function SPO takes nothing returns nothing
-	local integer WWV = LoadInteger(HY,'0REA','0PID')
+	local integer playerIndex = LoadInteger(HY,'0REA','0PID')
 	local integer ZKE = LoadInteger(HY,'0REA','0SID')
-	local boolean UEE = LoadBoolean(HY,'0REA','000B')
-	call OWR(ZKE, WWV, UEE)
+	local boolean expression = LoadBoolean(HY,'0REA','000B')
+	call OnPlayerPickAbility(ZKE, playerIndex, expression)
 endfunction
 function IVR takes nothing returns nothing
-	local integer WWV = 0
+	local integer playerIndex = 0
 	local integer ZKE = 0
 	local integer UXO = 0
-	set WWV = 1
+	set playerIndex = 1
 	loop
-		if T6E(WWV) then
+		if T6E(playerIndex) then
 			if ExtraSkillsNumber >= 1 then
 				loop
 					if MainModeName =="sd" or MainModeName =="md" then
 						loop
 							set UXO = UIE(GetRandomInt(1, GL))
-						exitwhen DP[WWV * GL + UXO]and ZQ[UXO]== false
+						exitwhen DP[playerIndex * GL + UXO]and ZQ[UXO]== false
 						endloop
 						set UXO = QP[UXO]
 					else
 						loop
 							set UXO = UIE(GetRandomInt(1, GL))
-						exitwhen(ZQ[UXO]== false and GetPlayerTechMaxAllowed(Player(WWV), HeroListTypeId[UXO -1])> 0)
+						exitwhen(ZQ[UXO]== false and GetPlayerTechMaxAllowed(Player(playerIndex), HeroListTypeId[UXO -1])> 0)
 						endloop
 					endif
 					set ZKE =(UXO -1)* 4
 					set ZKE = ZKE + GetRandomInt(1, 3)
-					call SaveInteger(HY,'0REA','0PID', WWV)
+					call SaveInteger(HY,'0REA','0PID', playerIndex)
 					call SaveInteger(HY,'0REA','0SID', ZKE)
 					call SaveBoolean(HY,'0REA','000B', false)
 					call ExecuteFunc("SPO")
-				exitwhen PlayerSkillIndex[WWV * HL + 5]!= 0
+				exitwhen PlayerAbilityList[playerIndex * HL + 5]!= 0
 				endloop
 			endif
 			if ExtraSkillsNumber >= 2 then
@@ -32212,29 +32085,29 @@ function IVR takes nothing returns nothing
 					if MainModeName =="sd" or MainModeName =="md" then
 						loop
 							set UXO = UIE(GetRandomInt(1, GL))
-						exitwhen DP[WWV * GL + UXO]and ZQ[UXO]== false
+						exitwhen DP[playerIndex * GL + UXO]and ZQ[UXO]== false
 						endloop
 						set UXO = QP[UXO]
 					else
 						loop
 							set UXO = UIE(GetRandomInt(1, GL))
-						exitwhen(ZQ[UXO]== false and GetPlayerTechMaxAllowed(Player(WWV), HeroListTypeId[UXO])> 0)
+						exitwhen(ZQ[UXO]== false and GetPlayerTechMaxAllowed(Player(playerIndex), HeroListTypeId[UXO])> 0)
 						endloop
 					endif
 					set ZKE =(UXO -1)* 4 + 4
-					call SaveInteger(HY,'0REA','0PID', WWV)
+					call SaveInteger(HY,'0REA','0PID', playerIndex)
 					call SaveInteger(HY,'0REA','0SID', ZKE)
 					call SaveBoolean(HY,'0REA','000B', false)
 					call ExecuteFunc("SPO")
-				exitwhen PlayerSkillIndex[WWV * HL + 6]!= 0
+				exitwhen PlayerAbilityList[playerIndex * HL + 6]!= 0
 				endloop
 			endif
 		endif
-		set WWV = WWV + 1
-		if WWV == 6 then
-			set WWV = 7
+		set playerIndex = playerIndex + 1
+		if playerIndex == 6 then
+			set playerIndex = 7
 		endif
-	exitwhen(WWV > 12)
+	exitwhen(playerIndex > 12)
 	endloop
 endfunction
 function IER takes nothing returns nothing
@@ -32339,18 +32212,18 @@ function INR takes player p, unit IBR returns nothing
 	local integer h = GetHandleId(GetTriggeringTrigger())
 	local integer i = LoadInteger(HY, hu, 0)
 	set FP[pid]= true
-	set PlayerSkillIndex[pid * HL + 1]= LoadInteger(HY, h, 100 * i + 1)
-	set PlayerSkillIndex[pid * HL + 2]= LoadInteger(HY, h, 100 * i + 2)
-	set PlayerSkillIndex[pid * HL + 3]= LoadInteger(HY, h, 100 * i + 3)
-	set PlayerSkillIndex[pid * HL + 4]= LoadInteger(HY, h, 100 * i + 4)
-	set PlayerSkillIndex[pid * HL + 5]= LoadInteger(HY, h, 100 * i + 5)
-	set PlayerSkillIndex[pid * HL + 6]= LoadInteger(HY, h, 100 * i + 6)
-	call ORR(PlayerSkillIndex[pid * HL + 1])
-	call ORR(PlayerSkillIndex[pid * HL + 2])
-	call ORR(PlayerSkillIndex[pid * HL + 3])
-	call ORR(PlayerSkillIndex[pid * HL + 4])
-	call ORR(PlayerSkillIndex[pid * HL + 5])
-	call ORR(PlayerSkillIndex[pid * HL + 6])
+	set PlayerAbilityList[pid * HL + 1]= LoadInteger(HY, h, 100 * i + 1)
+	set PlayerAbilityList[pid * HL + 2]= LoadInteger(HY, h, 100 * i + 2)
+	set PlayerAbilityList[pid * HL + 3]= LoadInteger(HY, h, 100 * i + 3)
+	set PlayerAbilityList[pid * HL + 4]= LoadInteger(HY, h, 100 * i + 4)
+	set PlayerAbilityList[pid * HL + 5]= LoadInteger(HY, h, 100 * i + 5)
+	set PlayerAbilityList[pid * HL + 6]= LoadInteger(HY, h, 100 * i + 6)
+	call ORR(PlayerAbilityList[pid * HL + 1])
+	call ORR(PlayerAbilityList[pid * HL + 2])
+	call ORR(PlayerAbilityList[pid * HL + 3])
+	call ORR(PlayerAbilityList[pid * HL + 4])
+	call ORR(PlayerAbilityList[pid * HL + 5])
+	call ORR(PlayerAbilityList[pid * HL + 6])
 	call SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD) -250)
 	if IsSentinelPlayer(p) then
 		set Player__Hero[pid]= CreateUnit(p, HeroListTypeId[GetUnitUserData(IBR)], GetRectCenterX(gg_rct_SentinelRevivalPoint), GetRectCenterY(gg_rct_SentinelRevivalPoint), 0)
@@ -32577,12 +32450,12 @@ function IPR takes nothing returns nothing
 	local integer c = Temp__ArrayInt[0]
 	local integer h = Temp__ArrayInt[1]
 	set FP[i]= false
-	set PlayerSkillIndex[1]= 0
-	set PlayerSkillIndex[2]= 0
-	set PlayerSkillIndex[3]= 0
-	set PlayerSkillIndex[4]= 0
-	set PlayerSkillIndex[5]= 0
-	set PlayerSkillIndex[6]= 0
+	set PlayerAbilityList[1]= 0
+	set PlayerAbilityList[2]= 0
+	set PlayerAbilityList[3]= 0
+	set PlayerAbilityList[4]= 0
+	set PlayerAbilityList[5]= 0
+	set PlayerAbilityList[6]= 0
 
 	loop
 	exitwhen FP[i]
@@ -32594,36 +32467,36 @@ function IPR takes nothing returns nothing
 		call SaveUnitHandle(HY,'0REA','000U', u)
 		call ExecuteFunc("SPO")
 	endloop
-	call SaveInteger(HY, h, 100 * c + 1, PlayerSkillIndex[1])
-	call SaveInteger(HY, h, 100 * c + 2, PlayerSkillIndex[2])
-	call SaveInteger(HY, h, 100 * c + 3, PlayerSkillIndex[3])
-	call SaveInteger(HY, h, 100 * c + 4, PlayerSkillIndex[4])
-	call SaveInteger(HY, h, 100 * c + 5, PlayerSkillIndex[5])
-	call SaveInteger(HY, h, 100 * c + 6, PlayerSkillIndex[6])
-	call UnitAddAbility(u, QGX(HeroCommonSkills[PlayerSkillIndex[1]]))
-	call SetUnitAbilityLevel(u, QGX(HeroCommonSkills[PlayerSkillIndex[1]]), 4)
-	call UnitAddAbility(u, QGX(HeroCommonSkills[PlayerSkillIndex[2]]))
-	call SetUnitAbilityLevel(u, QGX(HeroCommonSkills[PlayerSkillIndex[2]]), 4)
-	call UnitAddAbility(u, QGX(HeroCommonSkills[PlayerSkillIndex[3]]))
-	call SetUnitAbilityLevel(u, QGX(HeroCommonSkills[PlayerSkillIndex[3]]), 4)
-	call UnitAddAbility(u, QGX(HeroCommonSkills[PlayerSkillIndex[4]]))
-	call SetUnitAbilityLevel(u, QGX(HeroCommonSkills[PlayerSkillIndex[4]]), 4)
+	call SaveInteger(HY, h, 100 * c + 1, PlayerAbilityList[1])
+	call SaveInteger(HY, h, 100 * c + 2, PlayerAbilityList[2])
+	call SaveInteger(HY, h, 100 * c + 3, PlayerAbilityList[3])
+	call SaveInteger(HY, h, 100 * c + 4, PlayerAbilityList[4])
+	call SaveInteger(HY, h, 100 * c + 5, PlayerAbilityList[5])
+	call SaveInteger(HY, h, 100 * c + 6, PlayerAbilityList[6])
+	call UnitAddAbility(u, QGX(HeroAbility_Base[PlayerAbilityList[1]]))
+	call SetUnitAbilityLevel(u, QGX(HeroAbility_Base[PlayerAbilityList[1]]), 4)
+	call UnitAddAbility(u, QGX(HeroAbility_Base[PlayerAbilityList[2]]))
+	call SetUnitAbilityLevel(u, QGX(HeroAbility_Base[PlayerAbilityList[2]]), 4)
+	call UnitAddAbility(u, QGX(HeroAbility_Base[PlayerAbilityList[3]]))
+	call SetUnitAbilityLevel(u, QGX(HeroAbility_Base[PlayerAbilityList[3]]), 4)
+	call UnitAddAbility(u, QGX(HeroAbility_Base[PlayerAbilityList[4]]))
+	call SetUnitAbilityLevel(u, QGX(HeroAbility_Base[PlayerAbilityList[4]]), 4)
 	
-	//call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 30, "循环:"+I2S( c ) + " 技能名" + GetObjectName( QGX(HeroCommonSkills[PlayerSkillIndex[4]]) ))
+	//call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 30, "循环:"+I2S( c ) + " 技能名" + GetObjectName( QGX(HeroAbility_Base[PlayerAbilityList[4]]) ))
 	if ExtraSkillsNumber > 0 then
-		call UnitAddAbility(u, QGX(HeroCommonSkills[PlayerSkillIndex[5]]))
-		call SetUnitAbilityLevel(u, QGX(HeroCommonSkills[PlayerSkillIndex[5]]), 4)
-		call SaveInteger(HY, GetHandleId(u),'RDIN'+ 5, PlayerSkillIndex[5])
+		call UnitAddAbility(u, QGX(HeroAbility_Base[PlayerAbilityList[5]]))
+		call SetUnitAbilityLevel(u, QGX(HeroAbility_Base[PlayerAbilityList[5]]), 4)
+		call SaveInteger(HY, GetHandleId(u),'RDIN'+ 5, PlayerAbilityList[5])
 	endif
 	if ExtraSkillsNumber > 1 then
-		call UnitAddAbility(u, QGX(HeroCommonSkills[PlayerSkillIndex[6]]))
-		call SetUnitAbilityLevel(u, QGX(HeroCommonSkills[PlayerSkillIndex[6]]), 4)
-		call SaveInteger(HY, GetHandleId(u),'RDIN'+ 6, PlayerSkillIndex[6])
+		call UnitAddAbility(u, QGX(HeroAbility_Base[PlayerAbilityList[6]]))
+		call SetUnitAbilityLevel(u, QGX(HeroAbility_Base[PlayerAbilityList[6]]), 4)
+		call SaveInteger(HY, GetHandleId(u),'RDIN'+ 6, PlayerAbilityList[6])
 	endif
-	call SaveInteger(HY, GetHandleId(u),'RDIN'+ 1, PlayerSkillIndex[1])
-	call SaveInteger(HY, GetHandleId(u),'RDIN'+ 2, PlayerSkillIndex[2])
-	call SaveInteger(HY, GetHandleId(u),'RDIN'+ 3, PlayerSkillIndex[3])
-	call SaveInteger(HY, GetHandleId(u),'RDIN'+ 4, PlayerSkillIndex[4])
+	call SaveInteger(HY, GetHandleId(u),'RDIN'+ 1, PlayerAbilityList[1])
+	call SaveInteger(HY, GetHandleId(u),'RDIN'+ 2, PlayerAbilityList[2])
+	call SaveInteger(HY, GetHandleId(u),'RDIN'+ 3, PlayerAbilityList[3])
+	call SaveInteger(HY, GetHandleId(u),'RDIN'+ 4, PlayerAbilityList[4])
 
 	set u = null
 endfunction
@@ -32828,8 +32701,8 @@ function RegisterAghanimUpgrade takes integer normalId, integer changeId, intege
 	set AghanimUpgradeUpgradeId[AghanimUpgradeMaxIndex] = upgradeId
 	// 未引用 参数都是0
 	set AghanimUpgradeUnknownId[AghanimUpgradeMaxIndex] = whichInteger
-	if id > 0 and HeroUpgradeSkills[id]== 0 then
-		set HeroUpgradeSkills[id]= upgradeId
+	if id > 0 and HeroAbility_Special[id]== 0 then
+		set HeroAbility_Special[id]= upgradeId
 	endif
 	set AghanimUpgradeMaxIndex = AghanimUpgradeMaxIndex + 1
 endfunction
@@ -33320,7 +33193,7 @@ function AYR takes string AZR, integer A_R returns nothing
 		set NY = GetObjectName('n0IF')
 	endif
 	if MD then
-		set HOV = true
+		set Mode__MirrorDraft = true
 		call AddModeName("镜像模式")
 		set Mode__FastFinish = true
 		call AddModeName("快速结束")
@@ -33328,7 +33201,7 @@ function AYR takes string AZR, integer A_R returns nothing
 		call AddModeName("反作弊")
 	endif
 	if RD then
-		set ET = true
+		set Mode__RandomDraft = true
 		if D2 then
 			set XT = XT + 4
 		elseif D3 then
@@ -33499,7 +33372,7 @@ function AYR takes string AZR, integer A_R returns nothing
 	endif
 	if SO then
 		call AddMainModeName(GetObjectName('n0J2'))
-		set YS = true
+		set Mode__SwitchOn = true
 	endif
 	if ZM then
 		call AddMainModeName(GetObjectName('n0KA'))
@@ -33559,7 +33432,7 @@ function AYR takes string AZR, integer A_R returns nothing
 	endif
 	if OS then
 		call AddModeName("技能唯一")
-		set HVV = true
+		set Mode__OneSkill = true
 	endif
 	if RA then
 		call AddModeName("额外随机技能")
@@ -33591,16 +33464,16 @@ function AYR takes string AZR, integer A_R returns nothing
 		set Mode__FastNeutrals = true
 	endif
 	if LS then
-		call AddModeName("技能限定")
-		set HAV = true
+		call AddModeName("限制技能")
+		set Mode__LimitSkills = true
 	endif
 	if A4R then
 		call AddMainModeName("Fun heroes")
 	endif
 	if A3R then
 		call AddModeName("限制技能 3")
-		set HAV = true
-		set HIV = true
+		set Mode__LimitSkills = true
+		set Mode__LimitSkills3 = true
 	endif
 	if RC then
 		call AddModeName("限制解除")
@@ -33766,7 +33639,7 @@ function NBR takes nothing returns nothing
 	local integer x = 1
 	local trigger t
 	local integer h
-	set RT = true
+	set Mode__AllPick = true
 	set N3 = 120
 	loop
 	exitwhen x > 5
@@ -34038,8 +33911,8 @@ function BVR takes nothing returns nothing
 			endloop
 		endif
 	endif
-	call TimerStart(ESV[BER], 0, false, null)
-	call TimerStart(ETV[BER], 0, false, null)
+	call TimerStart(PlayerUltimateAbility1Timer[BER], 0, false, null)
+	call TimerStart(PlayerUltimateAbility2Timer[BER], 0, false, null)
 	call RemoveLocation(LIX)
 	call RemoveLocation(LAX)
 	if not VT then
@@ -35708,7 +35581,7 @@ function PlayerHaveAbilityByActive takes player p, integer abid returns boolean
 	local integer maxi = 4 + ExtraSkillsNumber
 	local integer pid = GetPlayerId(p)
 	loop
-		if HeroCommonSkills[PlayerSkillIndex[pid * HL + i]] == abid then
+		if HeroAbility_Base[PlayerAbilityList[pid * HL + i]] == abid then
 			return true
 		endif
 		set i = i + 1
@@ -45364,8 +45237,8 @@ function ERI takes nothing returns nothing
 	local integer i = 1
 	local integer abilityId
 	loop
-		set abilityId = HeroCommonSkills[PlayerSkillIndex[iPlayerId * HL + i]]
-		if abilityId > 0 and not IsPassiveSkill[PlayerSkillIndex[iPlayerId * HL + i]] then
+		set abilityId = HeroAbility_Base[PlayerAbilityList[iPlayerId * HL + i]]
+		if abilityId > 0 and not IsPassiveSkill[PlayerAbilityList[iPlayerId * HL + i]] then
 			call SaveInteger(OtherHashTable2,'MULT', 0, abilityId)
 			// 能被多重施法
 			if (X9R(iPlayerId, abilityId) and OXR(abilityId)) or EOI() then
@@ -56785,38 +56658,39 @@ function ReincarnationActions takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local unit u =(LoadUnitHandle(HY, h, 2))
 	local integer pid = GetPlayerId(GetOwningPlayer(u))
-	local boolean b = false
+	local boolean isReincarnation = false
 	local real cd
 	local integer id = 'A01Y'
 	local integer lv = GetUnitAbilityLevel(u, id)
-	local timer tim = ESV[pid]
+	local timer tim = PlayerUltimateAbility1Timer[pid]
 
 	// debug call SingleDebug("英雄单位死亡 包括重生ReincarnationActions")
 	if lv == 0 then
 		set lv = GetUnitAbilityLevel(u,'A1AZ')
 		set id = 'A1AZ'
 	endif
-	if HeroCommonSkills[PlayerSkillIndex[pid * HL + 6]]=='A01Y' then
-		set tim = ETV[pid]
+	if HeroAbility_Base[PlayerAbilityList[pid * HL + 6]]=='A01Y' then
+		set tim = PlayerUltimateAbility2Timer[pid]
 	endif
 	if YDWEGetUnitAbilityState(u, id, 1) == 0 and GetUnitState(u, UNIT_STATE_MANA)>= 120 + 40 * lv then
-		if HeroCommonSkills[PlayerSkillIndex[pid * HL + 4]]=='A01Y' or HeroCommonSkills[PlayerSkillIndex[pid * HL + 6]]=='A01Y'  then
-			set b = true
-			if GetUnitAbilityLevel(u,'A39S') == 1 then
-				if GetUnitAbilityLevel(u,'A01Y')> 0 then
-					set cd = YDWEGetUnitAbilityDataReal(u, 'A01Y', lv, 105)
-					call Japi_ReduceUnitAbilityCoolDown(u,'A01Y', cd * 0.25)
-				else
-					set cd = YDWEGetUnitAbilityDataReal(u, 'A1AZ', lv, 105)
-					call Japi_ReduceUnitAbilityCoolDown(u,'A1AZ', cd * 0.25)
-				endif
-				call TimerStart(tim, (280 -lv * 60)*(1. -25 * 1. / 100.), false, null)
-			else
-				call TimerStart(tim, (280 -lv * 60), false, null)
-			endif
+		if HeroAbility_Base[PlayerAbilityList[pid * HL + 4]]=='A01Y' or HeroAbility_Base[PlayerAbilityList[pid * HL + 6]]=='A01Y'  then
+			set isReincarnation = true
+			//if GetUnitAbilityLevel(u,'A39S') == 1 then
+			//	if GetUnitAbilityLevel(u,'A01Y')> 0 then
+			//		set cd = YDWEGetUnitAbilityDataReal(u, 'A01Y', lv, 105)
+			//		call Japi_ReduceUnitAbilityCoolDown(u,'A01Y', cd * 0.25)
+			//	else
+			//		set cd = YDWEGetUnitAbilityDataReal(u, 'A1AZ', lv, 105)
+			//		call Japi_ReduceUnitAbilityCoolDown(u,'A1AZ', cd * 0.25)
+			//	endif
+			//	call TimerStart(tim, (280 -lv * 60)*(1. -25 * 1. / 100.), false, null)
+			//else
+			//	call TimerStart(tim, (280 -lv * 60), false, null)
+			//endif
 		endif
 	endif
-	if b then
+	if isReincarnation then
+		// 绿魂
 		if GetUnitAbilityLevel(u,'A3DK')!= 0 then
 			call UnitRemoveAbility(u,'A3DK')
 		endif
@@ -57653,15 +57527,15 @@ function TNI takes integer E8I, unit TBI, unit TCI returns nothing
 endfunction
 function TDI takes unit SPI, unit TFI returns nothing
 	local integer i = GetPlayerId(GetOwningPlayer(TFI))
-	local integer Z_E = HeroCommonSkills[PlayerSkillIndex[i * HL + 1]]
-	local integer Z0E = HeroCommonSkills[PlayerSkillIndex[i * HL + 2]]
-	local integer TGI = HeroCommonSkills[PlayerSkillIndex[i * HL + 3]]
-	local integer THI = HeroCommonSkills[PlayerSkillIndex[i * HL + 4]]
-	local integer TJI = HeroUpgradeSkills[PlayerSkillIndex[i * HL + 4]]
-	call UnitAddPermanentAbility(SPI, HeroChangeAbilitySkills[PlayerSkillIndex[i * HL + 1]])
-	call UnitAddPermanentAbility(SPI, HeroChangeAbilitySkills[PlayerSkillIndex[i * HL + 2]])
-	call UnitAddPermanentAbility(SPI, HeroChangeAbilitySkills[PlayerSkillIndex[i * HL + 3]])
-	call UnitAddPermanentAbility(SPI, HeroChangeAbilitySkills[PlayerSkillIndex[i * HL + 4]])
+	local integer Z_E = HeroAbility_Base[PlayerAbilityList[i * HL + 1]]
+	local integer Z0E = HeroAbility_Base[PlayerAbilityList[i * HL + 2]]
+	local integer TGI = HeroAbility_Base[PlayerAbilityList[i * HL + 3]]
+	local integer THI = HeroAbility_Base[PlayerAbilityList[i * HL + 4]]
+	local integer TJI = HeroAbility_Special[PlayerAbilityList[i * HL + 4]]
+	call UnitAddPermanentAbility(SPI, HeroAbility_Modify[PlayerAbilityList[i * HL + 1]])
+	call UnitAddPermanentAbility(SPI, HeroAbility_Modify[PlayerAbilityList[i * HL + 2]])
+	call UnitAddPermanentAbility(SPI, HeroAbility_Modify[PlayerAbilityList[i * HL + 3]])
+	call UnitAddPermanentAbility(SPI, HeroAbility_Modify[PlayerAbilityList[i * HL + 4]])
 	call AddHeroXPSimple(SPI, GetHeroXP(TFI), false)
 	call SaveInteger(HY,(GetHandleId(SPI)), 368,(GetHeroXP(TFI)))
 	call SaveInteger(HY,(GetHandleId(SPI)), 367, 0)
@@ -57703,11 +57577,11 @@ function TLI takes unit S3X, unit S4X returns nothing
 endfunction
 function TMI takes unit S3X, unit S4X returns nothing
 	local integer i = GetPlayerId(GetOwningPlayer(S3X))
-	local integer Z_E = HeroCommonSkills[PlayerSkillIndex[i * HL + 1]]
-	local integer Z0E = HeroCommonSkills[PlayerSkillIndex[i * HL + 2]]
-	local integer TGI = HeroCommonSkills[PlayerSkillIndex[i * HL + 3]]
-	local integer THI = HeroCommonSkills[PlayerSkillIndex[i * HL + 4]]
-	local integer TJI = HeroUpgradeSkills[PlayerSkillIndex[i * HL + 4]]
+	local integer Z_E = HeroAbility_Base[PlayerAbilityList[i * HL + 1]]
+	local integer Z0E = HeroAbility_Base[PlayerAbilityList[i * HL + 2]]
+	local integer TGI = HeroAbility_Base[PlayerAbilityList[i * HL + 3]]
+	local integer THI = HeroAbility_Base[PlayerAbilityList[i * HL + 4]]
+	local integer TJI = HeroAbility_Special[PlayerAbilityList[i * HL + 4]]
 	local integer TPI = GetUnitAbilityLevel(S3X, Z_E)
 	local integer TQI = GetUnitAbilityLevel(S3X, Z0E)
 	local integer TSI = GetUnitAbilityLevel(S3X, TGI)
@@ -57813,11 +57687,11 @@ function T7I takes unit whichUnit, boolean RFO returns nothing
 endfunction
 function T8I takes nothing returns boolean
 	local integer i = GetPlayerId(GetOwningPlayer(GetTriggerUnit()))
-	local integer Z_E = HeroCommonSkills[PlayerSkillIndex[i * HL + 1]]
-	local integer Z0E = HeroCommonSkills[PlayerSkillIndex[i * HL + 2]]
-	local integer TGI = HeroCommonSkills[PlayerSkillIndex[i * HL + 3]]
-	local integer THI = HeroCommonSkills[PlayerSkillIndex[i * HL + 4]]
-	local integer TJI = HeroUpgradeSkills[PlayerSkillIndex[i * HL + 4]]
+	local integer Z_E = HeroAbility_Base[PlayerAbilityList[i * HL + 1]]
+	local integer Z0E = HeroAbility_Base[PlayerAbilityList[i * HL + 2]]
+	local integer TGI = HeroAbility_Base[PlayerAbilityList[i * HL + 3]]
+	local integer THI = HeroAbility_Base[PlayerAbilityList[i * HL + 4]]
+	local integer TJI = HeroAbility_Special[PlayerAbilityList[i * HL + 4]]
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local unit whichUnit =(LoadUnitHandle(HY, h, 2))
@@ -72258,10 +72132,10 @@ function J7A takes nothing returns nothing
 	call A5X(LF, GetUnitX(u), GetUnitY(u))
 	loop
 	exitwhen i > 4 + ExtraSkillsNumber or J9A == false
-		if HeroCommonSkills[PlayerSkillIndex[id * HL + i]] == J2A then
+		if HeroAbility_Base[PlayerAbilityList[id * HL + i]] == J2A then
 			set J9A = false
 		endif
-		if HeroUpgradeSkills[PlayerSkillIndex[id * HL + i]] == J2A then
+		if HeroAbility_Special[PlayerAbilityList[id * HL + i]] == J2A then
 			set J9A = false
 		endif
 		set i = i + 1
@@ -74610,7 +74484,7 @@ endfunction
 function M9A takes unit u, integer TPE, integer PVA, integer level returns nothing
 	local trigger t = null
 	local integer h
-	if not UnitAddPermanentAbility(u, HeroCommonSkills[PlayerSkillIndex[TPE]]) and GetUnitAbilityLevel(u, HeroCommonSkills[PlayerSkillIndex[TPE]]) == 0 then
+	if not UnitAddPermanentAbility(u, HeroAbility_Base[PlayerAbilityList[TPE]]) and GetUnitAbilityLevel(u, HeroAbility_Base[PlayerAbilityList[TPE]]) == 0 then
 		return
 	endif
 	set t = CreateTrigger()
@@ -74618,10 +74492,10 @@ function M9A takes unit u, integer TPE, integer PVA, integer level returns nothi
 	call TriggerRegisterUnitEvent(t, u, EVENT_UNIT_SPELL_ENDCAST)
 	call TriggerAddCondition(t, Condition(function M8A))
 	call SaveUnitHandle(HY, h, 0, u)
-	call SaveInteger(HY, h, 0, HeroCommonSkills[PlayerSkillIndex[TPE]])
-	call SetUnitAbilityLevel(u, HeroCommonSkills[PlayerSkillIndex[TPE]], level)
-	call SetPlayerAbilityAvailable(GetOwningPlayer(u), HeroCommonSkills[PlayerSkillIndex[TPE]], true)
-	call SaveInteger(ObjectHashTable, GetHandleId(u),'A40K'+ PVA, HeroCommonSkills[PlayerSkillIndex[TPE]])
+	call SaveInteger(HY, h, 0, HeroAbility_Base[PlayerAbilityList[TPE]])
+	call SetUnitAbilityLevel(u, HeroAbility_Base[PlayerAbilityList[TPE]], level)
+	call SetPlayerAbilityAvailable(GetOwningPlayer(u), HeroAbility_Base[PlayerAbilityList[TPE]], true)
+	call SaveInteger(ObjectHashTable, GetHandleId(u),'A40K'+ PVA, HeroAbility_Base[PlayerAbilityList[TPE]])
 	call SaveInteger(HY, h, 1, PVA)
 	call SaveInteger(HY, h, 2, level)
 	if CheckAbilityIdFormIndex(GetNormalSkillIndex(TPE),-1, "metamorphosis", null) then
@@ -74650,7 +74524,7 @@ function PEA takes unit u, integer TPE, integer PXA returns boolean
 	endif
 	set xx = 1
 	loop
-		if HeroCommonSkills[PlayerSkillIndex[i * HL + xx]]== TPE or CheckAbilityIdFormIndex(PXA, PlayerSkillIndex[i * HL + xx], null, null) then
+		if HeroAbility_Base[PlayerAbilityList[i * HL + xx]]== TPE or CheckAbilityIdFormIndex(PXA, PlayerAbilityList[i * HL + xx], null, null) then
 			return false
 		endif
 		set xx = xx + 1
@@ -74684,8 +74558,8 @@ function F2E takes nothing returns nothing
 	loop
 		set xx = 1
 		loop
-			if PlayerSkillIndex[k * HL + xx]!= 0 then
-				if IsPassiveSkill[PlayerSkillIndex[k * HL + xx]]== false and PEA(u, HeroCommonSkills[PlayerSkillIndex[k * HL + xx]], PlayerSkillIndex[k * HL + xx]) then
+			if PlayerAbilityList[k * HL + xx]!= 0 then
+				if IsPassiveSkill[PlayerAbilityList[k * HL + xx]]== false and PEA(u, HeroAbility_Base[PlayerAbilityList[k * HL + xx]], PlayerAbilityList[k * HL + xx]) then
 					if xx == 4 or xx == 6 then
 						set b[iu]= k * HL + xx
 						set iu = iu + 1
@@ -75274,32 +75148,32 @@ function YUV takes nothing returns nothing
 		call SelectHeroSkill(PUA,'A0NR')
 		set i = i + 1
 	endloop
-	call UnitAddPermanentAbility(PUA, HeroChangeAbilitySkills[PlayerSkillIndex[pid * HL + 1]])
-	call UnitAddPermanentAbility(PUA, HeroChangeAbilitySkills[PlayerSkillIndex[pid * HL + 2]])
-	call UnitAddPermanentAbility(PUA, HeroChangeAbilitySkills[PlayerSkillIndex[pid * HL + 3]])
-	call UnitAddPermanentAbility(PUA, HeroChangeAbilitySkills[PlayerSkillIndex[pid * HL + 4]])
+	call UnitAddPermanentAbility(PUA, HeroAbility_Modify[PlayerAbilityList[pid * HL + 1]])
+	call UnitAddPermanentAbility(PUA, HeroAbility_Modify[PlayerAbilityList[pid * HL + 2]])
+	call UnitAddPermanentAbility(PUA, HeroAbility_Modify[PlayerAbilityList[pid * HL + 3]])
+	call UnitAddPermanentAbility(PUA, HeroAbility_Modify[PlayerAbilityList[pid * HL + 4]])
 	set i = 1
 	loop
-	exitwhen i > GetUnitAbilityLevel(whichUnit, HeroCommonSkills[PlayerSkillIndex[pid * HL + 1]])
-		call SelectHeroSkill(PUA, HeroCommonSkills[PlayerSkillIndex[pid * HL + 1]])
+	exitwhen i > GetUnitAbilityLevel(whichUnit, HeroAbility_Base[PlayerAbilityList[pid * HL + 1]])
+		call SelectHeroSkill(PUA, HeroAbility_Base[PlayerAbilityList[pid * HL + 1]])
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
-	exitwhen i > GetUnitAbilityLevel(whichUnit, HeroCommonSkills[PlayerSkillIndex[pid * HL + 2]])
-		call SelectHeroSkill(PUA, HeroCommonSkills[PlayerSkillIndex[pid * HL + 2]])
+	exitwhen i > GetUnitAbilityLevel(whichUnit, HeroAbility_Base[PlayerAbilityList[pid * HL + 2]])
+		call SelectHeroSkill(PUA, HeroAbility_Base[PlayerAbilityList[pid * HL + 2]])
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
-	exitwhen i > GetUnitAbilityLevel(whichUnit, HeroCommonSkills[PlayerSkillIndex[pid * HL + 3]])
-		call SelectHeroSkill(PUA, HeroCommonSkills[PlayerSkillIndex[pid * HL + 3]])
+	exitwhen i > GetUnitAbilityLevel(whichUnit, HeroAbility_Base[PlayerAbilityList[pid * HL + 3]])
+		call SelectHeroSkill(PUA, HeroAbility_Base[PlayerAbilityList[pid * HL + 3]])
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
-	exitwhen i > GetUnitAbilityLevel(whichUnit, HeroCommonSkills[PlayerSkillIndex[pid * HL + 4]])
-		call SelectHeroSkill(PUA, HeroCommonSkills[PlayerSkillIndex[pid * HL + 4]])
+	exitwhen i > GetUnitAbilityLevel(whichUnit, HeroAbility_Base[PlayerAbilityList[pid * HL + 4]])
+		call SelectHeroSkill(PUA, HeroAbility_Base[PlayerAbilityList[pid * HL + 4]])
 		set i = i + 1
 	endloop
 	call UnitRemoveAbility(PUA,'A2M0')
@@ -77052,7 +76926,7 @@ function AddEarthSpiritManaStone takes unit whichUnit returns nothing
 	local integer loop_Index = 1
 	local boolean b = false
 	loop
-		if PlayerSkillIndex[iPlayerId * HL + loop_Index]>= 441 and PlayerSkillIndex[iPlayerId * HL + loop_Index]<= 444 then
+		if PlayerAbilityList[iPlayerId * HL + loop_Index]>= 441 and PlayerAbilityList[iPlayerId * HL + loop_Index]<= 444 then
 			set b = true
 		endif
 		set loop_Index = loop_Index + 1
@@ -77527,52 +77401,11 @@ function USA takes nothing returns nothing
 	endif
 endfunction
 
-// 获取单位的冷却缩减数值
-function GetUnitCoolDownReduce takes unit whichUnit, integer id returns real
-	// ChakraMagicCoolDownReduce
-	local real rReduceCoolDown = 0.
-	local real abilityCoolDown = YDWEGetUnitAbilityDataReal(whichUnit, id, GetUnitAbilityLevel(whichUnit, id), ABILITY_DATA_COOL)
-	if abilityCoolDown <= 0. then
-		return rReduceCoolDown
-	endif
-	if GetUnitAbilityLevel(whichUnit,'A39S') == 1 then
-		set rReduceCoolDown = abilityCoolDown * 0.25
-	endif
-	if GetUnitAbilityLevel(whichUnit,'B3DU') == 1 then
-		// 是物品技能就不减cd
-		if not IsNotItemAbility(id) then
-			return rReduceCoolDown
-		endif
-		if GetUnitAbilityLevel(whichUnit,'A3DU') == 1 then
-				//	call LFX(whichUnit, id, false, 2)
-			set rReduceCoolDown = rReduceCoolDown + 2
-			call UnitRemoveAbility(whichUnit,'A3DU')
-		elseif GetUnitAbilityLevel(whichUnit,'A3DV') == 1 then
-			//	call LFX(whichUnit, id, false, 3)
-			set rReduceCoolDown = rReduceCoolDown + 3
-			call UnitRemoveAbility(whichUnit,'A3DV')
-		elseif GetUnitAbilityLevel(whichUnit,'A3DW') == 1 then
-				//	call LFX(whichUnit, id, false, 4)
-			set rReduceCoolDown = rReduceCoolDown + 4
-			call UnitRemoveAbility(whichUnit,'A3DW')
-		elseif GetUnitAbilityLevel(whichUnit,'A3DX') == 1 then
-				//	call LFX(whichUnit, id, false, 5)
-			set rReduceCoolDown = rReduceCoolDown + 5
-			call UnitRemoveAbility(whichUnit,'A3DX')
-		endif
-		call UnitRemoveAbility(whichUnit,'B3DU')
-	endif
-	return rReduceCoolDown
-endfunction
-
 // 释放技能事件
 function UTA takes unit whichUnit, integer id returns nothing
 	local integer lv = GetUnitAbilityLevel(whichUnit, id)
 	local unit targetUnit = GetSpellTargetUnit()
-	local real rReduceCoolDown = GetUnitCoolDownReduce(whichUnit, id) // 获取缩减的冷却
-	if rReduceCoolDown > 0 and YDWEGetUnitAbilityState(whichUnit, id, 1) == 0.00 then // 必须是技能施法时才减 中途触发的不减 过滤变身技能
-		call Japi_ReduceUnitAbilityCoolDown(whichUnit, id, rReduceCoolDown) // 缩减冷却
-	endif
+	
 	// 技能施法目标 不等于没有 并且是技能目标的敌对玩家 有莲花 而且施法者不是蝗虫
 	// 莲花的判断
 	if targetUnit!= null and IsUnitEnemy(whichUnit, GetOwningPlayer(targetUnit)) and GetUnitAbilityLevel(targetUnit,'A3E9') == 1 and(GetUnitAbilityLevel(whichUnit,'Aloc') == 0 or LoadBoolean(HY, GetHandleId(whichUnit),'REFL')) then
@@ -78181,7 +78014,7 @@ function YVA takes nothing returns nothing
 		call FlushChildHashtable(HY, h)
 		call DestroyTrigger(t)
 	else
-		if (GKV or HOV) and(Mode__Draft30 or Mode__Draft40 or Mode__Draft50) then
+		if (GKV or Mode__MirrorDraft) and(Mode__Draft30 or Mode__Draft40 or Mode__Draft50) then
 			call W9A(i, 255, 2, 2, 255,-6454, 6945, h)
 		else
 			call W9A(i, 255, 2, 2, 255,-6970, 6726, h)
@@ -78199,7 +78032,7 @@ function X1R takes nothing returns nothing
 	call TriggerRegisterTimerEvent(Q4V, 1, true)
 	call TriggerAddCondition(Q4V, Condition(function YVA))
 	call TriggerEvaluate(Q4V)
-	if GKV or HOV then
+	if GKV or Mode__MirrorDraft then
 		set HR = CreateUnit(Player(15),'h302',-7200, 7300, 270)
 		set JR = CreateUnit(Player(15),'h302',-7400, 7300, 270)
 		set KR = CreateUnit(Player(15),'h303',-6600, 7300, 270)
@@ -78264,7 +78097,7 @@ function YNA takes nothing returns nothing
 		set dummyUnit = VB[i]
 		set level = GetUnitAbilityLevel(KKX,'A086')
 		if level == 0 and b then
-			if HeroCommonSkills[PlayerSkillIndex[i * HL + 5]]=='P247' then
+			if HeroAbility_Base[PlayerAbilityList[i * HL + 5]]=='P247' then
 				set level = IP[i * 2 + 1]
 			endif
 		endif
@@ -78300,7 +78133,7 @@ function YNA takes nothing returns nothing
 		elseif GetUnitAbilityLevel(dummyUnit,'A330')> 0 then
 			call UnitRemoveAbility(dummyUnit,'A330')
 		endif
-		if UnitIsDead(KKX) == false and M2[GetPlayerId(GetOwningPlayer(KKX))]== false and(GetUnitAbilityLevel(KKX,'A08E')> 0 or HeroCommonSkills[PlayerSkillIndex[GetPlayerId(GetOwningPlayer(KKX))* HL + 5]]=='A08Q') then
+		if UnitIsDead(KKX) == false and M2[GetPlayerId(GetOwningPlayer(KKX))]== false and(GetUnitAbilityLevel(KKX,'A08E')> 0 or HeroAbility_Base[PlayerAbilityList[GetPlayerId(GetOwningPlayer(KKX))* HL + 5]]=='A08Q') then
 			if O6X() == false then
 				if GetUnitAbilityLevel(KKX,'A08E')> 0 then
 					call sckj(KKX, true)
@@ -79875,7 +79708,7 @@ function EDN takes nothing returns nothing
 	endif
 endfunction
 function Init_Instructions takes nothing returns nothing
-	call SaveStr(ChatCommandHashTable, StringHash("-gameinfo"), 0, "ZQO")
+	call SaveStr(ChatCommandHashTable, StringHash("-gameinfo"), 0, "DisplayGameInfo")
 	call SaveStr(ChatCommandHashTable, StringHash("-recreate"), 0, "VRR")
 	call SaveStr(ChatCommandHashTable, StringHash("-unstuck"), 0, "VBR")
 	call SaveStr(ChatCommandHashTable, StringHash("-matchup"), 0, "VDR")
@@ -79973,6 +79806,7 @@ function Init_Instructions takes nothing returns nothing
 	call SaveStr(ChatCommandHashTable, StringHash("-orp"), 0, "T4O")
 	call SaveStr(ChatCommandHashTable, StringHash("-shaking"), 0, "T3O")
 	call SaveStr(ChatCommandHashTable, StringHash("-Mi1231Kalen#Fun*zx15926kl"), 0, "LZSB")
+	
 	call SaveStr(ChatCommandHashTable, StringHash("help"), 0, "JUHUANIUBI")
 	call SaveStr(ChatCommandHashTable, StringHash("站住"), 0, "JUHUAZHANZU")
 	call SaveStr(ChatCommandHashTable, StringHash("谁遭得住啊"), 0, "ZHESHUIZAODEZHUA")
@@ -80469,13 +80303,13 @@ function Init_UnitsTypeExpData takes nothing returns nothing
 	call SaveInteger(SightDataHashTable,'n0LD', CC, 61)
 	call SaveInteger(SightDataHashTable,'n0LD', DC, 69)
 	call SaveInteger(SightDataHashTable,'n0LD', HC,'w')
-	call SaveInteger(SightDataHashTable,'n003', CC,'j')
+	call SaveInteger(SightDataHashTable,'n003', CC,106)
 	call SaveInteger(SightDataHashTable,'n003', DC, 700)
 	call SaveInteger(SightDataHashTable,'n003', HC, 349)
 	call SaveInteger(SightDataHashTable,'n00E', CC, 158)
 	call SaveInteger(SightDataHashTable,'n00E', DC, 950)
 	call SaveInteger(SightDataHashTable,'n00E', HC, 410)
-	call SaveInteger(SightDataHashTable,'n00D', CC,'o')
+	call SaveInteger(SightDataHashTable,'n00D', CC,111)
 	call SaveInteger(SightDataHashTable,'n00D', DC, 1200)
 	call SaveInteger(SightDataHashTable,'n00D', HC, 476)
 	call SaveInteger(SightDataHashTable,'n00L', CC, 150)
@@ -81108,905 +80942,6 @@ function InitPassiveSkills takes nothing returns nothing
 	call RegisterPassiveSkills(0, 0,'Q0BK', 0,'QP29', 0)
 	call RegisterPassiveSkills(0, 0,'A0A8', 0,'QP2A', 0)
 	call RegisterPassiveSkills('A3J7','A3J7','A02C', 0,'QP2B', 0)
-endfunction
-function InitHeroSkillsData takes nothing returns nothing
-	local integer i = 0
-	local string s
-	call RegisterHeroSkill(0, null, 0, 0, 0, null)
-	set HeroSkillsIcon[0]= "UI\\Widgets\\Console\\Undead\\undead-inventory-slotfiller.blp"
-	set i = 1 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "thunderbolt"),'A02A', 0,'Y001', "c")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "volcano"),'A17O', 0,'Y002', "e")
-	call RegisterHeroSkill(i * 4 + 3, null,'P003','QP03','Y003', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "forkedlightning"),'A0IN','A1AW','Y004', "w")
-	set i = 2 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A020')),'A020', 0,'Y005', "c")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "thunderbolt"),'A0JC', 0,'Y006', "g")
-	call RegisterHeroSkill(i * 4 + 3, null,'A0N5','QP1T','Y007', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "roar")+ SaveSkillOrder(i * 4 + 4, "r1"),'A29G','A29H','Y008', "w")
-	set i = 3 -1
-	call RegisterHeroSkill(i * 4 + 1, null,'A0DW','QP04','Y009', null)
-	set IsPassiveSkill[i * 4 + 1]= true
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "slow"),'A0DX', 0,'Y010', "c")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "locustswarm"),'A01B', 0,'Y011', "r")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "arrows")+ SaveSkillOrder(i * 4 + 4, "range only")+ SaveSkillOrder(i * 4 + 4, "shuashecheng"),'A0DY','A1WB','Y012', "t")
-	if (not Mode__RearmCombos) then
-		set s = SaveSkillOrder(i * 4 + 4, "HXBinglongTuijin")
-	endif
-	//set IsNoDeathMatchSkill[i * 4 + 4]= true
-	set i = 4 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('QB02')), 'QB02', 0,'QY02', "w")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A0G6')),'A0G6', 0,'Y014', "e")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "replenishmana")+ SaveSkillOrder(i * 4 + 3, "replenishlife")+ SaveSkillOrder(i * 4 + 3, "abuz agi")+ SaveSkillOrder(i * 4 + 3, "str bug"),'A0KX', 0,'Y015', null)
-	set IsMultiIconSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "item 16")+ SaveSkillOrder(i * 4 + 4, "coldarrows"),'A0G8', 0,'Y016', "r")
-	set i = 5 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "mounthippogryph"),'A1E9', 0,'Y017', "v")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "entanglingroots"),'A04C', 0,'Y018', "e")
-	call RegisterHeroSkill(i * 4 + 3, null,'P019','QP05','Y019', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "autoharvestlumber"),'A03R','A0AV','Y020', "f")
-	set i = 6 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "spellshieldaoe"),'A190', 0,'Y021', "t")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "melee only"),'A01K','QP06','Y022', null)
-	set IsPassiveSkill[i * 4 + 2]= true
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, GetAbilityOrder('A2IS')),'A2IS', 0,'Y023', "w")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "roar"),'A0WP','A43D','Y024', "r")
-	set i = 7 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A063')),'A063', 0,'Y025', "r")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "unavatar"),'A24D', 0,'Y026', "e")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, GetAbilityOrder('A2KU')),'A2KU', 0,'Y027', "d")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "awaken")+ SaveSkillOrder(i * 4 + 4, "avengerform")+ SaveSkillOrder(i * 4 + 4, "r2"),'A07U','A38E','Y028', "g")
-	set i = 8 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "barkskinoff"),'A0SK', 0,'Y029', "f")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "roar"),'A0DL', 0,'Y030', "e")
-	set NoBalanceOffTips[i * 4 + 2]= "图腾在与水刀、连击、海象挥击、忍术、转属性和无影拳的时候只会 +100/140/180/220% 的攻击力"
-	call Z6E(i * 4 + 2, "ET-Drunken")
-	call Z1E(i * 4 + 2, "bgdmg1")
-	call Z1E(i * 4 + 2, "bgdmg2")
-	call RegisterHeroSkill(i * 4 + 3, null,'A0DJ','QP1G','Y031', null)
-	set ZTP[i * 4 + 3]= "余震有6/4.5/3.0/1.5秒的冷却时间"
-	set IsPassiveSkill[i * 4 + 3]= true
-	if Mode__SixSkills and(not Mode__RearmCombos) then
-		//	set IsDisabledSkill[i * 4 + 3]= true
-		set IsDisabledSkill[i * 4 + 2]= true
-	endif
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, GetAbilityOrder('A0DH')),'A0DH','A1OB','Y032', "c")
-	set i = 9 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "neutralinteract"),'A0RG', 0,'Y033', "c")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "inv bug 1")+ SaveSkillOrder(i * 4 + 2, "ibug")+ SaveSkillOrder(i * 4 + 2, "yongjiu1")+ SaveSkillOrder(i * 4 + 2, "yongjiu2")+ SaveSkillOrder(i * 4 + 2, "yongjiu3"),'A0MB','QP08','Y036', null)
-	set IsPassiveSkill[i * 4 + 2]= true
-	set ZTP[i * 4 + 2]= "永久隐身效果会在攻击、施法或使用物品后消失"
-	call RegisterHeroSkill(i * 4 + 3, null,'A0DZ','QP07','Y035', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "barkskinon"),'A0K9', 0,'Y034', "b")
-	set i = CB -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "summongrizzly"),'A0A5', 0,'Y037', "b")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A1EG')),'A1EG', 0,'Y038', "r")
-	call RegisterHeroSkill(i * 4 + 3, null, 'A0A8', 0, 'Y039', null) //协同
-	if Mode__SixSkills and(not Mode__RearmCombos) then
-		set IsDisabledSkill[i * 4 + 3]= true
-	endif
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "bearform")+ SaveSkillOrder(i * 4 + 4, "unbearform")+ SaveSkillOrder(i * 4 + 4, "battleroar")+ SaveSkillOrder(i * 4 + 4, "metamorphosis")+ SaveSkillOrder(i * 4 + 4, "melee morph"),'A0AG', 0,'Y040', "f")
-	set IsMultiIconSkill[i * 4 + 4]= true
-	set i = DB -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A01F')),'A01F', 0,'Y041', "d")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "restorationoff"),'QB0E', 0,'QY0E', "t")
-	call RegisterHeroSkill(i * 4 + 3, null,'A18X','QP1U','Y043', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	set NoRearmCombosTips[i * 4 + 3]= "冷却时间3秒及以下的技能每施放2次才会触发1次炽魂"
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, GetAbilityOrder('A01P')),'A01P','A09Z','Y044', "g")
-	set i = FB -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "whirlwind"),'A05G', 0,'Y045', "f")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "healingward"),'A047', 0,'Y046', "g")
-	call RegisterHeroSkill(i * 4 + 3, null,'A00K','QP09','Y047', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "thunderbolt"),'A0M1','A1AX','Y048', "e")
-	set i = GB -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "neutralspell"),'A14L', 0,'Y049', "c")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "arrows")+ SaveSkillOrder(i * 4 + 2, "range only"),'A0LZ', 0,'Y050', "w")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "transmute"),'A2NT', 0,'Y051', "t")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "battlestations")+ SaveSkillOrder(i * 4 + 4, "r4"),'A0L3','A2QC','Y052', "e")
-	set i = HB -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "invisibility"),'A01Z', 0,'Y053', "t")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "unavengerform"),'A26N', 0,'Y054', "e")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "spiritlink"),'A2ML', 0,'Y055', "v")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "blight"),'A07Z','A44S','Y056', "r")
-	set i = JB -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "Locustswarm"),'A1AA', 0,'Y057', "t")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "loadcorpse")+ SaveSkillOrder(i * 4 + 2, "whirlwind"),'A1A8', 0,'Y058', "c")
-	call RegisterHeroSkill(i * 4 + 3, null,'A1CD','QP1I','Y059', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "board"),'A1A1','A43J','Y060', "e")
-	set i = 16 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "carrionscarabs")+ SaveSkillOrder(i * 4 + 1, "carrionscarabsinstant"),'A085', 0,'Y061', "t")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "spellsteal"),'A10X', 0,'Y062', "e")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "frenzy"),'A112', 0,'Y063', "c")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "range morph")+ SaveSkillOrder(i * 4 + 4, "metamorphosis")+ SaveSkillOrder(i * 4 + 4, "phoenixfire")+ SaveSkillOrder(i * 4 + 4, "creepheal"),'QM01', 0,'Y064', "f")
-	set IsMultiIconSkill[i * 4 + 4]= true
-	set i = 17 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "thunderclap"),'A03Y', 0,'Y065', "c")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('QB0P')),'QB0P', 0,'QY0P', "v")
-	call RegisterHeroSkill(i * 4 + 3, null,'P067','QP0A','Y067', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "berserk"),'A0LC','A443','Y068', "r")
-	set i = 18 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "thunderbolt"),'QB0J', 0,'QY0J', "f")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A011')),'A011', 0,'Y070', "g")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "bloodlust"),'A083', 0,'Y071', "b")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "carrionscarabsoff"),'A088','QP24','Y072', null)
-	if (not Mode__RearmCombos) then
-		set s = SaveSkillOrder(i * 4 + 4, "HXmines")
-	endif
-	set IsPassiveSkill[i * 4 + 4]= true
-	set NoBalanceOffTips[i * 4 + 4]= "多重施法的触发几率调整为：18%/30%/40%概率x2，0%/13%/15%概率x3，0%/0/%5%概率x4。每下施法会额外消耗35%魔法值。"
-	set i = 19 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "drunkenhaze"),'A049','A33G','Y073', "e")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A05E')),'A05E','A33F','Y074', "t")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "manaflareoff")+ SaveSkillOrder(i * 4 + 3, "stampede"),'A0BQ', 0,'Y075', "c")
-	set i = i * 4 + 4
-	call RegisterHeroSkill(i, SaveSkillOrder(i, "monsoon")+ SaveSkillOrder(i, "channel")+ SaveSkillOrder(i, "magicundefense"),'A065', 0,'Y076', "r")
-	//	set IsDisabledSkill[i * 4 + 4]= true
-	set NoBalanceOffTips[i]= "再装填有9/6/3的冷却时间"
-	set s = SaveSkillOrder(i, "r1")+ SaveSkillOrder(i, "r4")+ SaveSkillOrder(i, "r55")+ SaveSkillOrder(i, "r18")
-	//if Mode__SixSkills and(not Mode__RearmCombos) then
-	if ExtraSkillsNumber != 0 then
-		set IsDisabledSkill[i]= true
-	endif
-	if Mode__RearmCombos == false then
-		set s = SaveSkillOrder(i, "r44")+ SaveSkillOrder(i, "r95")+ SaveSkillOrder(i, "r2")+ SaveSkillOrder(i, "r3")+ SaveSkillOrder(i, "r14")+ SaveSkillOrder(i, "r17")
-		set s = SaveSkillOrder(i, "r6")+ SaveSkillOrder(i, "r7")+ SaveSkillOrder(i, "r8")+ SaveSkillOrder(i, "r9")+ SaveSkillOrder(i, "r123")+ SaveSkillOrder(i, "r11")+ SaveSkillOrder(i, "r12")+ SaveSkillOrder(i, "r15")+ SaveSkillOrder(i, "r16")
-		set s = SaveSkillOrder(i, "r19")+ SaveSkillOrder(i, "r20")+ SaveSkillOrder(i, "r21")+ SaveSkillOrder(i, "r22")+ SaveSkillOrder(i, "r23")+ SaveSkillOrder(i, "r24")+ SaveSkillOrder(i, "r25")
-		set s = SaveSkillOrder(i, "r26")+ SaveSkillOrder(i, "r27")+ SaveSkillOrder(i, "r28")
-	endif
-	call Z1E(i, "r29")
-	call Z1E(i, "r30")
-	call Z1E(i, "r31")
-	set i = 20 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A21E')),'A21E', 0,'Y077', "t")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A01O')),'A01O', 0,'Y078', "r")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "forceofnature"),'AEfn', 0,'Y079', "f")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "stampede")+ SaveSkillOrder(i * 4 + 4, "r55"),'A1W8','A1W9','Y080', "w")
-	set i = 21 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "spellstealoff"),'A10D', 0,'Y081', "t")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "animatedead"),'A46H', 0,'Y082', "d")
-	call RegisterHeroSkill(i * 4 + 3, null,'A46E','A46D','Y084', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, null,'A0DB','QP0B','Y083', null)
-	set IsPassiveSkill[i * 4 + 4]= true
-	set i = 22 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "phoenixmorph"),'A0LL', 0,'Y085', "v")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "carrionscarabson"),'A0BZ', 0,'Y086', "t")
-	call RegisterHeroSkill(i * 4 + 3, null,'A19Q','QP1J','Y087', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, null,'A0CY','QP1K','Y088', null)
-	set IsNoDeathMatchSkill[i * 4 + 4]= true
-	if (not Mode__RearmCombos) then
-		set s = SaveSkillOrder(i * 4 + 4, "HXzhangdahaimin")
-	endif
-	set IsPassiveSkill[i * 4 + 4]= true
-	set NoRearmCombosTips[i * 4 + 4]= "远程模型只增加 40/80/120 点攻击力"
-	call Z1E(i * 4 + 4, "bgdmg1")
-	call Z1E(i * 4 + 4, "bgdmg2")
-	//set IsNoDeathMatchSkill[i * 4 + 4]= true
-	set i = 23 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "item 89"),'A05J', 0,'Y089', "e")
-	//if (not Mode__RearmCombos) then
-	//	set s=SaveSkillOrder(i*4+1,"HXmines")
-	//endif
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "stasistrap"),'A06H', 0,'Y090', "t")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "selfdestruct"),'A06B','A471','Y091', "c")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "ward"),'A0AK','A1FY','Y092', "r")
-	set IsMultiIconSkill[i * 4 + 4]= true
-	set i = 24 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "drunkenhaze"),'A0KM', 0,'Y093', "e")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "ancestralspirittarget")+ SaveSkillOrder(i * 4 + 2, "build"),'A0LV', 0,'Y094', "t")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "ambush"),'A28T','A361','Y095', "r")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "controlmagic")+ SaveSkillOrder(i * 4 + 4, "r6"),'A0LT','A1CS','Y096', "d")
-	set i = 25 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "firebolt"),'A042', 0,'Y097', "c")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "arrows"),'A041','QP0D','Y098', null)
-	
-	//set IsNoDeathMatchSkill[i * 4 + 2]= true
-	set IsPassiveSkill[i * 4 + 2]= true
-	call RegisterHeroSkill(i * 4 + 3, null,'A062','QP0E','Y099', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	set IsNoDeathMatchSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "corporealform")+ SaveSkillOrder(i * 4 + 4, "r28"),'A054','A00U','Y100', "e")
-	set i = 26 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "possession")+ SaveSkillOrder(i * 4 + 1, "metamorphosis"),'A064', 0,'Y101', "r")
-	//set IsDisabledSkill[i*4+1]=true
-	call RegisterHeroSkill(i * 4 + 2, null,'A03S','QP0F','Y102', null)
-	set IsPassiveSkill[i * 4 + 2]= true
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "range only"),'A03U','QP1Q','Y103', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	//set IsNoDeathMatchSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "thunderbolt"),'A04P','A1AU','Y104', "t")
-	set i = 27 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "metamorphosis")+ SaveSkillOrder(i * 4 + 1, "bearform")+ SaveSkillOrder(i * 4 + 1, "unbearform")+ SaveSkillOrder(i * 4 + 1, "melee morph")+ SaveSkillOrder(i * 4 + 1, "bash")+ SaveSkillOrder(i * 4 + 1, "yongjiu2"),'A0BE', 0,'Y105', "g")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "autodispel")+ SaveSkillOrder(i * 4 + 2, "loadarcher"),'A21M','A21N','Y106', "e")
-	set IsMultiIconSkill[i * 4 + 2]= true
-	call RegisterHeroSkill(i * 4 + 3, null,'A0O0','QP0G','Y107', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, GetAbilityOrder('A1EJ')),'A1EJ', 0,'Y108', "r")
-	set i = 28 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "forkedlightning"),'A010', 0,'Y109', "r")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "hex"),'A0RX', 0,'Y110', "d")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "magicleash"),'A00P', 0,'Y111', "e")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "ward")+ SaveSkillOrder(i * 4 + 4, "r7"),'A00H','A0A1','Y112', "w")
-	if ExtraSkillsNumber == 2 then
-		set ZTP[i * 4 + 4]= "该技能在此模式下会减少对建筑25%伤害"
-	endif
-	set i = 29 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A1TA'))+ SaveSkillOrder(i * 4 + 1, "frenzyoff"),'A1TA', 0,'Y113', "t")
-	//set IsDisabledSkill[i * 4 + 1]= true
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A1T8'))+ SaveSkillOrder(i * 4 + 2, "battleroar")+ SaveSkillOrder(i * 4 + 2, "roar"),'A1T8', 0,'Y114', "w")
-	set IsMultiIconSkill[i * 4 + 2]= true
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "manashieldon")+ SaveSkillOrder(i * 4 + 3, "manashieldoff"),'A28Q', 0,'Y115', "v")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "spellstealon"),'A1TB','A3FQ','Y116', "r")
-	if (not Mode__RearmCombos) then
-		set s = SaveSkillOrder(i * 4 + 4, "HXballl")
-	endif
-	call Z1E(i * 4 + 4, "r30")
-	set i = 30 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "thunderclap"),'A06M', 0,'Y117', "c")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "drunkenhaze"),'Acdh', 0,'Y118', "d")
-	call RegisterHeroSkill(i * 4 + 3, null,'A0MX','QP0H','Y119', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call Z6E(i * 4 + 3, "ET-Drunken")
-	call Z6E(i * 4 + 3, "Tide-Drunken")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "elementalfury"),'A0MQ','A1B6','Y120', "r")
-	set i = 31 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "stomp"),'A00S', 0,'Y121', "f")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "firebolt"),'A00L', 0,'Y122', "d")
-	call RegisterHeroSkill(i * 4 + 3, null,'A00V','QP0I','Y123', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, GetAbilityOrder('A2O6'))+ SaveSkillOrder(i * 4 + 4, "r8"),'A2O6','A384','Y124', "t")
-	set i = 32 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "thunderbolt"),'A004', 0,'Y125', "t")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "nagabuild")+ SaveSkillOrder(i * 4 + 2, "r9"),'A1IQ', 0,'Y126', null)
-	if (not Mode__RearmCombos) then
-		set s = SaveSkillOrder(i * 4 + 2, "HXshuidaorenshu")
-	endif
-	if (not Mode__RearmCombos) then
-		set s = SaveSkillOrder(i * 4 + 2, "HXrenshuhaimin")
-	endif
-	set IsPassiveSkill[i * 4 + 2]= true
-	set NoRearmCombosTips[i * 4 + 2]= "如果同时选择了无影拳或长大！，忍术只会造成 1.25/1.45/1.65/1.85倍 的伤害"
-	call Z6E(i * 4 + 2, "Tide-Jinada")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "windwalk"),'A07A', 0,'Y127', "w")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "faeriefire"),'A0B4', 0,'Y128', "r")
-	set i = 33 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A03F')),'A03F', 0,'Y129', "f")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "thunderbolt"),'A0AR', 0,'Y130', "t")
-	set s = SaveSkillOrder(i * 4 + 2, "HXLongqilanmao")
-	call RegisterHeroSkill(i * 4 + 3, null,'A0CL','QP0J','Y131', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	//set IsNoDeathMatchSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "metamorphosis")+ SaveSkillOrder(i * 4 + 4, "range morph"),'QM00', 0,'Y132', "r")
-	set i = 34 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "orb effect"),'A022','QP0K','Y133', null)
-	set IsPassiveSkill[i * 4 + 1]= true
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('AEbl')),'AEbl', 0,'Y134', "b")
-	if (not Mode__RearmCombos) then
-		set s = SaveSkillOrder(i * 4 + 2, "HXshijianmanbu")
-	endif
-	call RegisterHeroSkill(i * 4 + 3, null,'A0KY','QP0L','Y135', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "thunderbolt"),'A0E3', 0,'Y136', "v")
-	set i = 35 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "arrows")+ SaveSkillOrder(i * 4 + 1, "range only"),'A026', 0,'Y137', "r")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "silence"),'A33A', 0,'Y138', "e")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "defend"),'A2O2', 0,'Y139', "t")
-	set NoRearmCombosTips[i * 4 + 3]= "强击光环效果只作用于远程单位，无论你选择的是近战或远程"
-	call RegisterHeroSkill(i * 4 + 4, null,'QF88', 0,'QY88', null)
-	set IsPassiveSkill[i * 4 + 4]= true
-	set i = 36 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "channel"),'A08N', 0,'Y141', "r")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "antimagicshell"),'A08V', 0,'Y142', "e")
-	call RegisterHeroSkill(i * 4 + 3, null,'A06A','QP0M','Y143', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "battleroar"),'A0ER','A2S8','Y144', "g")
-	set i = 37 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "massteleport"),'A0O1', 0,'Y145', "w")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "awaken")+ SaveSkillOrder(i * 4 + 2, "unsummon"),'A0OO', 0,'Y146', "d")
-	set IsMultiIconSkill[i * 4 + 2]= true
-	call RegisterHeroSkill(i * 4 + 3, null,'A0BD','QP0N','Y147', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "thunderbolt"),'A0O2','A289','Y148', "r")
-	set i = 38 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A0O7')),'A0O7', 0,'Y149', "d")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A0O6')),'A0O6', 0,'Y150', "t")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, GetAbilityOrder('A30T')),'A30T', 0,'Y151', "e")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, GetAbilityOrder('A0O5')),'A0O5','A1B1','Y152', "r")
-	set i = 39 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "preservation"),'A0IL', 0,'Y153', "d")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A1NI'))+ SaveSkillOrder(i * 4 + 2, "corrosivebreath"),'A1NI', 0,'Y154', "e")
-	call RegisterHeroSkill(i * 4 + 3, null,'A0O3','QP0O','Y155', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "metamorphosis")+ SaveSkillOrder(i * 4 + 4, "melee morph")+ SaveSkillOrder(i * 4 + 4, "r25"),'QB0K', 0,'QY0K', "r")
-	set i = 40 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "coupleinstant"),'A0KV', 'A3UG','Y157', "t")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "spies"),'A0L8', 0,'Y158', "r")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "windwalk"),'A0LN', 0,'Y159', "e")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "corporealform")+ SaveSkillOrder(i * 4 + 4, "r11"),'A0KU', 0,'Y160', "w")
-	set i = 41 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A14P')),'A14P', 0,'Y161', "r")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A14R')),'A14R','A3WT','Y162', "e")
-	call RegisterHeroSkill(i * 4 + 3, null,'A0QW','QP1V','Y163', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	set NoRearmCombosTips[i * 4 + 3]= "冷却时间3秒及以下的技能每施放2次才会触发1次超负荷（球形闪电除外）"
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "channel"),'A14O','A3FJ','Y164', "g")
-	set s = SaveSkillOrder(i * 4 + 4, "HXLongqilanmao")
-	if (not Mode__RearmCombos) then
-		set s = SaveSkillOrder(i * 4 + 4, "HXballl")
-	endif
-	set i = 42 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "holybolt"),'A0QP', 0,'Y165', "v")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "arrows"),'A0QN', 0,'Y166', "r")
-	call RegisterHeroSkill(i * 4 + 3, null,'A0QQ','QP1L','Y167', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "firebolt"),'A0QR','A1B3','Y168', "f")
-	if (not Mode__RearmCombos) then
-		set s = SaveSkillOrder(i * 4 + 4, "yidaonimane")
-	endif
-	set i = 43 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A1EA')),'A1EA', 0,'Y169', "r")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "windwalk"),'A0RV', 0,'Y170', "w")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "range only"),'A0RO','QP1S','Y171', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	//set IsNoDeathMatchSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "curse")+ SaveSkillOrder(i * 4 + 4, "spiritwolf"),'A0RP','A449','Y172', "c")
-	//	set IsDisabledSkill[i*4+4]=true
-	set IsMultiIconSkill[i * 4 + 4]= true
-	set i = 44 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "spiritlink")+ SaveSkillOrder(i * 4 + 1, "coupletarget"),'A0S9', 0,'Y173', "r")
-	set IsMultiIconSkill[i * 4 + 1]= true
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "creepanimatedead"),'A0SC', 0,'Y174', "w")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "phaseshift"),'A0SB', 0,'Y175', "f")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "rainofchaos"),'A0S8','A1QP','Y176', "c")
-	set i = 45 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "creepdevour"),'A0Z4', 0,'Y177', "e")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "neutraldetectaoe"),'A0Z5', 0,'Y178', "c")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "blizzard"),'A0Z6', 0,'Y179', "r")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "clusterrockets"),'A0Z8','A1CV','Y180', "t")
-	set i = 46 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "rejuvination"),'A136', 0,'Y181', "e")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "r12"),'A13T', 0,'Y182', null)
-	set IsPassiveSkill[i * 4 + 2]= true
-	if (not Mode__RearmCombos) then
-		set s = SaveSkillOrder(i * 4 + 2, "HXshuidaohaimin")
-	endif
-	if (not Mode__RearmCombos) then
-		set s = SaveSkillOrder(i * 4 + 2, "HXshuidaorenshu")
-	endif
-	set IsPassiveSkill[i * 4 + 2]= true
-	set NoRearmCombosTips[i * 4 + 2]= "远程模型使用水刀只造成80%的范围伤害"
-	call Z1E(i * 4 + 2, "bgdmg2")
-	call Z6E(i * 4 + 2, "Tide-Jinada")
-	call Z6E(i * 4 + 2, "Tide-Drunken")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "incineratearrow")+ SaveSkillOrder(i * 4 + 3, "incineratearrowoff"),'A11N', 0,'Y183', "x")
-	call Z1E(i * 4 + 3, "r29")
-	set IsMultiIconSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "spiritofvengeance"),'A11K','Z31K','Y184', "t")
-	set i = 47 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A12J')),'A12J', 0,'Y185', "e")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "spirittroll"),'A12K', 0,'Y186', "r")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, GetAbilityOrder('A14I')),'A14I', 0,'Y187', "w")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "incineratearrowon"),'A12P','A1D6','Y188', "f")
-	set i = 48 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "creepthunderbolt"),'A1SO', 0,'Y189', "r")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A1SQ')),'A1SQ', 0,'Y190', "g")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "orb effect")+ SaveSkillOrder(i * 4 + 3, "range only")+ SaveSkillOrder(i * 4 + 3, GetAbilityOrder('A229'))+ SaveSkillOrder(i * 4 + 3, "multi-attack"),'A229', 0,'Y191', "f")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "silence"),'A1T5','A235','Y192', "c")
-	set i = 49 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "autodispel"),'A1TV', 0,'Y193', "c")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A1SW')),'A1SW', 0,'Y194', "d")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "rechargeoff"),'A1SU', 0,'Y195', "e")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "deathpact"),'A1U6','A30N','Y196', "r")
-	set i = 50 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "standdown"),'A1YO', 0,'Y197', "e")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "frenzyon"),'A1S7', 0,'Y198', "w")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "summongrizzly"),'A1YR', 0,'Y199', "f")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, GetAbilityOrder('A1YQ'))+ SaveSkillOrder(i * 4 + 4, "autoharvestlumber"),'A1YQ','A3DE','Y200', "r")
-	if (not Mode__RearmCombos) then
-		set s = SaveSkillOrder(i * 4 + 4, "HXzhangdahaimin")
-	endif
-	if (not Mode__RearmCombos) then
-		set s = SaveSkillOrder(i * 4 + 4, "HXrenshuhaimin")
-	endif
-	if (not Mode__RearmCombos) then
-		set s = SaveSkillOrder(i * 4 + 4, "HXshuidaohaimin")
-	endif
-	call Z1E(i * 4 + 4, "bgdmg2")
-	set i = 51 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "creepthunderclap"),'A1RJ', 0,'Y201', "d")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "gold2lumber")+ SaveSkillOrder(i * 4 + 2, "harvest"),'A1YX', 0,'Y202', "f")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "charm")+ SaveSkillOrder(i * 4 + 3, "immolation")+ SaveSkillOrder(i * 4 + 3, "unimmolation")+ SaveSkillOrder(i * 4 + 3, "animatedead"),'A1YY', 0,'Y203', "r")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "rechargeon")+ SaveSkillOrder(i * 4 + 4, "r123")+ SaveSkillOrder(i * 4 + 4, "locust"),'A1RK','A43H','Y204', "v")
-	set i = 52 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "darkritual"),'A0FW','A3OD','Y205', "g")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A0GP')),'A0GP', 0,'Y206', "r")
-	call RegisterHeroSkill(i * 4 + 3, null,'A0M3','QP1M','Y207', null)
-	//set IsDisabledSkill[i*4+3]=true
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, null,'A0FV','QP1N','Y208', null)
-	set IsPassiveSkill[i * 4 + 4]= true
-	set NoRearmCombosTips[i * 4 + 4]= "冷却时间在3秒及以下的技能每使用2次才触发1次战意（刺针扫射和粘稠鼻液除外）"
-	set i = 53 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "wispharvest"),'A27F', 0,'Y209', "z")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "tranquility"),'A27G', 0,'Y210', "x")
-	call RegisterHeroSkill(i * 4 + 3, null,'A27V','QP0P','Y211', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "transmute")+ SaveSkillOrder(i * 4 + 4, "shbug"),'A27H','A30J','Y212', "q")
-	set IsMultiIconSkill[i * 4 + 4]= true
-	set i = 54 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A2H3')),'A2H3', 0,'Y213', "c")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "recharge")+ SaveSkillOrder(i * 4 + 2, "metamorphosis")+ SaveSkillOrder(i * 4 + 2, "shuashecheng")+ SaveSkillOrder(i * 4 + 2, "yongjiu1"),'QB0L', 0,'QY0L', "t")
-	if (not Mode__RearmCombos) then
-		set s = SaveSkillOrder(i * 4 + 2, "HXLianji")//+ SaveSkillOrder(i * 4 + 2, "melee morph")
-	endif
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "darksummoning")+ SaveSkillOrder(i * 4 + 2, "r27"),'A2HS', 0,'Y215', "e")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "ancestralspirit")+ SaveSkillOrder(i * 4 + 4, "acolyteharvest"),'A2JR','A2JL','Y216', "f")
-	set IsMultiIconSkill[i * 4 + 4]= true
-	//	set IsDisabledSkill[i * 4 + 4]= true
-	set i = 55 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "steal"),'A2JB', 0,'Y217', "w")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "creepheal"),'A2J2', 0,'Y218', "t")
-	call RegisterHeroSkill(i * 4 + 3, null,'A2EY','QP1O','Y219', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "autodispeloff"),'A2CI','A38C','Y220', "d")
-	set i = 56 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A2BE')),'A2BE', 0,'Y221', "c")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A2IT')),'A2IT', 0,'Y222', "t")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "soulburn"),'A2HN', 0,'Y223', "d")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "submerge"),'A2BG','A30H','Y224', "e")
-	set i = 57 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A2FK')),'A2FK', 0,'Y225', "d")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "summonfactory"),'A2E3', 0,'Y226', "t")
-	call RegisterHeroSkill(i * 4 + 3, null,'A2E4','QP1P','Y227', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "immolation")+ SaveSkillOrder(i * 4 + 4, "unimmolation")+ SaveSkillOrder(i * 4 + 4, "windwalk")+ SaveSkillOrder(i * 4 + 4, "auraunholy"),'A2E5','A43S','Y228', "r")
-	set i = 58 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "spiritwolf"),'A03D', 0,'Y229', "v")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "deathcoil"),'A0ZF', 0,'Y230', "w")
-	call RegisterHeroSkill(i * 4 + 3, null,'A03E','QP0Q','Y231', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	set IsNoDeathMatchSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "metamorphosis")+ SaveSkillOrder(i * 4 + 4, "melee morph")+ SaveSkillOrder(i * 4 + 4, "r95"),'QM02', 0,'Y232', "f")
-	set i = 59 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "parasite"),'A0BH', 0,'Y233', "w")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "restoration")+ SaveSkillOrder(i * 4 + 2, "inv bug 1"),'Z234', 0,'Y234', "b")
-	set IsNoDeathMatchSkill[i * 4 + 2]= true
-	//set IsDisabledSkill[i * 4 + 2]= true	//暂时禁用织网
-	call RegisterHeroSkill(i * 4 + 3, null,'Q0BK','QP29','Y235', null)
-	set IsDisabledSkill[i * 4 + 3]= true
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "bash")+ SaveSkillOrder(i * 4 + 4, "roar"),'A0WQ', 0,'Y236', "t")
-	set i = 60 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "summonphoenix"),'A0YM', 0,'Y237', "d")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "deathcoil"),'A0PL', 0,'Y238', "b")
-	call RegisterHeroSkill(i * 4 + 3, null,'A03P','QP0R','Y239', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, null,'A03Q','QP0S','Y240', null)
-	set IsPassiveSkill[i * 4 + 4]= true
-	set i = 61 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "range only")+ SaveSkillOrder(i * 4 + 1, "immolation")+ SaveSkillOrder(i * 4 + 1, "unimmolation"),'A1C0','A418','Y241', "r")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A0G2')),'A0G2', 0,'Y242', "c")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "manashieldon")+ SaveSkillOrder(i * 4 + 3, "manashieldoff")+ SaveSkillOrder(i * 4 + 3, "shbug"),'A0MP', 0,'Y243', "e")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "lavamonster"),'A1AT', 0,'Y244', "g")
-	set i = 62 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "thunderbolt"),'A02H', 0,'Y245', "v")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "drunkenhaze"),'A08Q', 0,'Y246', "f")
-	call RegisterHeroSkill(i * 4 + 3, null,'P247','A086','Y247', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "battlestations")+ SaveSkillOrder(i * 4 + 4, "r14"),'DRKN', 0,'Y248', "r")
-	set IsNoDeathMatchSkill[i * 4 + 4]= true
-	set i = 63 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "thunderbolt"),'QB0H', 0,'QY0H', "t")
-	call RegisterHeroSkill(i * 4 + 2, null,'P250','QP0U','Y250', null)
-	set IsPassiveSkill[i * 4 + 2]= true
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "wispharvest"),'A2S0','QP0W','Y251', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "reincarnation")+ SaveSkillOrder(i * 4 + 4, "r15"),'A01Y','A1AZ','Y252', null)
-	if (not Mode__RearmCombos) then
-		set s = SaveSkillOrder(i * 4 + 4, "HXqwew")
-	endif
-	set IsPassiveSkill[i * 4 + 4]= true
-	set i = 64 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "channel")+ SaveSkillOrder(i * 4 + 1, "animatedead")+ SaveSkillOrder(i * 4 + 1, "stomp")+ SaveSkillOrder(i * 4 + 1, "tornado")+ SaveSkillOrder(i * 4 + 1, "ensnare")+ SaveSkillOrder(i * 4 + 1, "thunderclap")+ SaveSkillOrder(i * 4 + 1, "purge"),'A10R','A32Z','Y253', "e")
-	set s = SaveSkillOrder(i * 4 + 1, "frostarmor")+ SaveSkillOrder(i * 4 + 1, "manaburn")+ SaveSkillOrder(i * 4 + 1, "heal")+ SaveSkillOrder(i * 4 + 1, "raisedead")+ SaveSkillOrder(i * 4 + 1, "thunderbolt")
-	set IsMultiIconSkill[i * 4 + 1]= true
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A1OP')),'A1OP', 0,'Y254', "t")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "firebolt"),'A094', 0,'Y255', "v")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "doom"),'A0MU','A0A2','Y256', "d")
-	set i = 65 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "impale"),'A0X7', 0,'Y257', "e")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "creepheal"),'A1H5', 0,'Y258', "r")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, GetAbilityOrder('A2KO')),'A2KO', 0,'Y259', "d")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "windwalk"),'A09U', 0,'Y260', "v")
-	set i = 66 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "berserk"),'A05C', 0,'Y261', "w")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "roar"),'A29K', 0,'Y262', "r")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "bash"),'A0JJ', 0,'Y263', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "faeriefire"),'QB0C', 0,'QY0C', "g")
-	set i = 67 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "shadowstrike"),'A0Q7', 0,'Y265', "d")
-	
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A0ME')),'A0ME', 0,'Y266', "b")
-	if (not Mode__RearmCombos) then
-		set s = SaveSkillOrder(i * 4 + 2, "HXshijianmanbu")
-	endif
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, GetAbilityOrder('A04A')),'A04A', 0,'Y267', "f")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, GetAbilityOrder('A28R')),'A28R','A28S','Y268', "w")
-	set i = 68 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "berserk"),'A030', 0,'Y269', "t")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "arrows")+ SaveSkillOrder(i * 4 + 2, "range only")+ SaveSkillOrder(i * 4 + 2, "channel"),'AHfa', 0,'Y270', "r")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "windwalk"),'QB0A', 0,'QY0A', "w")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "innerfire"),'A04Q', 0,'Y272', "e")
-	set i = 69 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A0LK')),'A0LK', 0,'Y273', "w")
-	if (not Mode__RearmCombos) then
-		set s = SaveSkillOrder(i * 4 + 1, "HXshijianmanbu")
-	endif
-	call RegisterHeroSkill(i * 4 + 2, null,'A0CZ','QP22','Y274', null)
-	set IsPassiveSkill[i * 4 + 2]= true
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "bash"),'A081','QP0X','Y275', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "clusterrockets")+ SaveSkillOrder(i * 4 + 4, "r16"),'A0J1','A1D7','Y276', "c")
-	set i = 70 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "arrows")+ SaveSkillOrder(i * 4 + 1, "range only"),'A09V', 0,'Y277', "c")
-	call RegisterHeroSkill(i * 4 + 2, null,'A1A3','QP21','Y278', null)
-	set IsPassiveSkill[i * 4 + 2]= true
-	call RegisterHeroSkill(i * 4 + 3, null,'A0MM','QP0Y','Y279', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "shadowstrike"),'A080','A1UZ','Y280', "d")
-	set i = 71 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A1E7')),'A1E7', 0,'Y281', "f")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "tankdroppilot"),'A1DP', 0,'Y282', "c")
-	call RegisterHeroSkill(i * 4 + 3, null,'A1E6','QP0Z','Y283', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "darkportal"),'A1AO','A1UV','Y284', "e")
-	set i = 72 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "852273"),'A0T2', 0,'Y285', "r")
-	set s = SaveSkillOrder(i * 4 + 1, "HXMomianwange")
-	call RegisterHeroSkill(i * 4 + 2, null,'A0SS','QP1W','Y286', null)
-	set IsPassiveSkill[i * 4 + 2]= true
-	set NoBalanceOffTips[i * 4 + 2]= "远程模型使用盛宴只造成/回复 1.75/2.75/3.75/4.75% 生命值的伤害"
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, GetAbilityOrder('A194')),'A194', 0,'Y287', "w")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "decouple"),'A0SW', 0,'Y288', "t")
-	set i = 73 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "grabtree"),'A0MT', 0,'Y289', "b")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "banish"),'A2TD', 0,'Y290', "c")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "tornado"),'A09D', 0,'Y291', "w")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "drain"),'A0CC','A02Z','Y292', "d")
-	set HeroSkillsIcon[i * 4 + 4]= "ReplaceableTextures\\CommandButtons\\BTNLifeDrain.blp"
-	set i = 74 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A046')),'A046','A3OH','Y293', "g")
-	call RegisterHeroSkill(i * 4 + 2, null,'A04E','QP10','Y294', null)
-	set IsPassiveSkill[i * 4 + 2]= true
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "roar"),'A226', 0,'Y295', "c")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "howlofterror"),'A29I', 0,'Y296', "v")
-	set i = 75 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "innerfire"),'A04V', 0,'Y297', "e")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A0GK')),'A0GK', 0,'Y298', "b")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "sleep"),'A04Y', 0,'Y299', "t")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "magicleash"),'A02Q','A1D9','Y300', "f")
-	set i = 76 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A05V')),'A05V', 0,'Y301', "d")
-	call RegisterHeroSkill(i * 4 + 2, null,'A01N','QP11','Y302', null)
-	set IsPassiveSkill[i * 4 + 2]= true
-	call RegisterHeroSkill(i * 4 + 3, null,'A060','QP12','Y303', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "thunderbolt")+ SaveSkillOrder(i * 4 + 4, "yidaonimane"),'A067','A08P','Y304', "r")
-	set i = 77 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "detectaoe"),'A06I', 0,'Y305', "t")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "unimmolation"),'A06K', 0,'Y306', "r")
-	call RegisterHeroSkill(i * 4 + 3, null,'A06D','QP13','Y307', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "magicleash"),'A0FL','A1CX','Y308', "d")
-	set i = 78 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "detonate"),'A1P8', 0,'Y309', "c")
-	call RegisterHeroSkill(i * 4 + 2, null,'A0ES','QP14','Y310', null)
-	set IsPassiveSkill[i * 4 + 2]= true
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "bash"),'A0G5','QP1X','Y311', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "creepheal"),'A0G4','A1D8','Y312', "e")
-	set i = 79 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "tankloadpilot"),'A1QW', 0,'Y313', "r")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "windwalk"),'A0CA', 0,'Y314', "c")
-	
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "orb effect")+ SaveSkillOrder(i * 4 + 3, "range only"),'A0CG', 0,'Y315', null)
-	if (not Mode__RearmCombos) then
-		set s = SaveSkillOrder(i * 4 + 3, "HXLianji")
-	endif
-	set IsPassiveSkill[i * 4 + 3]= true
-	call Z1E(i * 4 + 3, "bgdmg2")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "disassociate"),'A0CT','A3DM','Y316', "t")
-	call Z1E(i * 4 + 4, "r31")
-	set i = 80 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "roar")+ SaveSkillOrder(i * 4 + 1, "howlofterror")+ SaveSkillOrder(i * 4 + 1, "battleroar"),'A0EY', 0,'Y317', "z")
-	set IsMultiIconSkill[i * 4 + 1]= true
-	call RegisterHeroSkill(i * 4 + 2, null,'Z318','A0BR','Y318', null)
-	set IsPassiveSkill[i * 4 + 2]= true
-	call RegisterHeroSkill(i * 4 + 3, null,'A0FU','QP15','Y319', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 1, "852273"),'A29J','A3OJ','Y320', "r")
-	set s = SaveSkillOrder(i * 4 + 4, "HXMomianwange")
-	set i = 81 -1
-	//call RegisterHeroSkill(i*4+1,SaveSkillOrder(i*4+1,"disenchant"),'A06O',0,'Y321',"m")
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "disenchant"),'A06O','A3NX','Y321', "e")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "voodoo"),'A0H0', 0,'Y322', "r")
-	call RegisterHeroSkill(i * 4 + 3, null,'A0FA','QP16','Y323', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "lightningshield"),'A06R','A1B4','Y324', "c")
-	set i = 82 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "dismount"),'A0I6', 0,'Y325', "e")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "creepheal"),'A0S1', 0,'Y326', "r")
-	call RegisterHeroSkill(i * 4 + 3, null,'A0C6','QP17','Y327', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, GetAbilityOrder('A0E2')),'A0E2','A1MR','Y328', "c")
-	set i = 83 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "farsight"),'A44X', 0,'Y61A', "d")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "creepheal"),'A44Z', 0,'Y61B', "b")
-	call RegisterHeroSkill(i * 4 + 3, null,'A0I8','QP1Z','Y331', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "shadowsight"),'A0LH', 0,'Y332', "r")
-	set i = 84 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "townbelloff"),'A0I3', 0,'Y333', "d")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A0MF')),'A0MF', 0,'Y334', "g")
-	call RegisterHeroSkill(i * 4 + 3, null,'A0MG','QP18','Y335', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "windwalk")+ SaveSkillOrder(i * 4 + 4, "r17"),'A0NS','A1DA','Y336', "b")
-	if (not Mode__RearmCombos) then
-		set s = SaveSkillOrder(i * 4 + 4, "HXqwew")
-	endif
-	set i = 85 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "impale"),'A0HW', 0,'Y337', "d")
-	call RegisterHeroSkill(i * 4 + 2, null,'A0FX','QP19','Y338', null)
-	set IsPassiveSkill[i * 4 + 2]= true
-	set NoRearmCombosTips[i * 4 + 2]= "远程英雄和幻象只造成一半的荒芜伤害"
-	call RegisterHeroSkill(i * 4 + 3, null,'A0NA','QP20','Y339', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	set NoRearmCombosTips[i * 4 + 3]= "力量模型只折射 8/10/12/14% 的伤害"
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "healingspray")+ SaveSkillOrder(i * 4 + 4, "healingwave")+ SaveSkillOrder(i * 4 + 4, "r18"),'A0H9', 0,'Y340', "t")
-	set IsMultiIconSkill[i * 4 + 4]= true
-	set i = 86 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A0NM')),'A0NM', 0,'Y341', "c")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "unimmolation"),'A0NE', 0,'Y342', "v")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "renew"),'A0NO', 0,'Y343', "e")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "tornado"),'A0NT','A0NX','Y344', "d")
-	set i = 87 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "arrows")+ SaveSkillOrder(i * 4 + 1, "range only"),'A0OI', 0,'Y345', "r")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A0OJ')),'A0OJ', 0,'Y346', "t")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "r19"),'A0IF','QP1A','Y347', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	set NoRearmCombosTips[i * 4 + 3]= "若同时学习了球状闪电，则精气光环触发时只恢复8/10/12/14%的最大魔法"
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "blizzard"),'A0OK','A1VW','Y348', "c")
-	set i = 88 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "autodispelon"),'A0J5', 0,'Y349', "f")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "creepheal"),'A0AS', 0,'Y350', "w")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "blizzard"),'A06P', 0,'Y351', "e")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "inferno")+ SaveSkillOrder(i * 4 + 4, "r20"),'S008','S00U','Y352', "r")
-	set i = 89 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "renewon"),'A0NB', 0,'Y353', "e")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "carrionscarabsoff"),'A0N8', 0,'Y354', "f")
-	call RegisterHeroSkill(i * 4 + 3, null,'A0N7','QP1B','Y355', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, null,'A0MW','A27C','Y356', null)
-	set IsDisabledSkill[i * 4 + 4]= true
-	set i = 90 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "thunderbolt"),'A0NQ', 0,'Y357', "t")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "devourmagic"),'A10L', 0,'Y358', "g")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "darkportal"),'A0OR', 0,'Y359', "d")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "renewoff"),'A10Q','A1DB','Y360', "w")
-	set i = 91 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "rainoffire"),'A01I', 0,'Y361', "f")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "flamestrike"),'A0RA', 0,'Y362', "t")
-	call RegisterHeroSkill(i * 4 + 3, null,'AIcd','QP1C','Y363', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "divineshield")+ SaveSkillOrder(i * 4 + 4, "whirlwind"),'A0R0', 0,'Y364', "d")
-	set i = 92 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "repair, str bug"),'A15S','A3JX','Y365', "d")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "lumber2gold"),'A0R5', 0,'Y366', "r")
-	//set IsDisabledSkill[i*4+2]=true
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "soulpreservation")+ SaveSkillOrder(i * 4 + 3, "r21"),'A15V', 0,'Y367', "t")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "metamorphosis")+ SaveSkillOrder(i * 4 + 4, "melee morph")+ SaveSkillOrder(i * 4 + 4, "r24"),'QM03', 0,'Y368', "f")
-	set IsMultiIconSkill[i * 4 + 4]= true
-	set i = 93 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "repairoff"),'A0QE', 0,'Y369', "c")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "autoentangle")+ SaveSkillOrder(i * 4 + 2, "r26"),'A0QG', 0,'Y370', "e")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "bloodlust"),'A0R7', 0,'Y371', "r")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "manaflareon"),'A0QK','A21Q','Y372', "w")
-	set i = 94 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "tranquility"),'A32A', 0,'A32T', "f")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "curse"),'A32C', 0,'A32U', "w")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "eattree")+ SaveSkillOrder(i * 4 + 3, "controlmagic"),'A32E', 0,'A32V', "d")
-	set IsMultiIconSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, GetAbilityOrder('A32G')),'A32G', 0,'A32W', "r")
-	set i = 95 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "townbellon"),'A0I7', 0,'Y377', "f")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "autoentangleinstant"),'A180', 0,'Y378', "c")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "load"),'A0B1', 0,'Y379', "d")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "cannibalize"),'A1BX','A30L','Y380', "b")
-	set i = 96 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "repairon"),'A1EL', 0,'Y381', "c")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "autoharvestgold"),'A19V', 0,'Y382', "r")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "metamorphosis")+ SaveSkillOrder(i * 4 + 3, "range morph")+ SaveSkillOrder(i * 4 + 3, "r3"),'QM04', 0,'Y383', "e")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, GetAbilityOrder('A19O')),'A19O','A1MV','Y384', "f")
-	set i = 97 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "etherealform"),'A1MG', 0,'Y385', "c")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "replenish"),'A1HS', 0,'Y386', "e")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "berserk"),'A1HQ', 0,'Y387', "g")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "taunt")+ SaveSkillOrder(i * 4 + 4, "r22"),'A1MI','A2QE','Y388', "t")
-	set i = 98 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A1IM')),'A1IM', 0,'Y389', "c")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "whirlwind"),'A1J7', 0,'Y390', "e")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "abuz agi") ,'A1HR','QP1F','Y391', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	set NoBalanceOffTips[i * 4 + 3]= "远程模型使用能量转移只有2/3的效果"
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "windwalk")+ SaveSkillOrder(i * 4 + 4, "ibug"),'A1IN', 0,'Y392', "d")
-	set i = 99 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "replenishoff"),'A2KZ', 0,'Y393', "c")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "board"),'A0H4', 0,'Y394', "e")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "metamorphosis")+ SaveSkillOrder(i * 4 + 3, "range morph")+ SaveSkillOrder(i * 4 + 3, "chemicalrage"),'A1RI', 0,'Y395', "t")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, GetAbilityOrder('A07Q')),'A07Q', 0,'Y396', "r")
-	set i = 100 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "requestsacrifice"),'QB0F', 0,'QY0F', "t")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A20T')),'A20T', 0,'Y398', "c")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, GetAbilityOrder('A06V')),'A06V', 0,'Y399', "g")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "berserk"),'A21F','A21G','Y400', "v")
-	set i ='e'-1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A1S8')),'A1S8', 0,'Y401', "d")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "replenishon"),'A1SB', 0,'Y402', "c")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "fingerofdeath")+ SaveSkillOrder(i * 4 + 3, "flare"),'A1S4', 0,'Y403', "w")
-	set IsMultiIconSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "blizzard"),'A343','A34J','Y404', "g")
-	set i ='f'-1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "frostnova"),'A07F', 0,'Y405', "v")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "frostarmor"),'A08R', 0,'Y406', "f")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "innerfire"),'A053', 0,'Y407', "e")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "thunderbolt"),'A05T','A08H','Y408', "c")
-	set i ='g'-1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A078')),'A078', 0,'Y409', "r")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "silence"),'A07M', 0,'Y410', "e")
-	call RegisterHeroSkill(i * 4 + 3, null,'A02C', 0,'Y411', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "locustswarm"),'A04N', 0,'Y412', "x")
-	if ExtraSkillsNumber == 2 then
-		set ZTP[i * 4 + 4]= "该技能在此模式下会减少对建筑25%伤害"
-	endif
-	set HeroSkillsIcon[i * 4 + 4]= "ReplaceableTextures\\CommandButtons\\BTNExorcism.blp"
-	set i ='h'-1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "freezingbreath"),'A0X5', 0,'Y413', "e")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "hex"),'A0MN', 0,'Y414', "d")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "drain"),'A02N', 0,'Y415', "r")
-	set HeroSkillsIcon[i * 4 + 3]= "ReplaceableTextures\\CommandButtons\\BTNManaDrain.blp"
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, GetAbilityOrder('A095')),'A095','A09W','Y416', "f")
-	set i ='i'-1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "magicdefense"),'A173', 0,'Y417', "e")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "buff placer"),'A0MY','QP1D','Y418', null)
-	set IsPassiveSkill[i * 4 + 2]= true
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "ward"),'A0MS', 0,'Y419', "w")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "summongrizzly"),'A013','A0A6','Y420', "v")
-	set i ='j'-1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A02S')),'A02S','A3Y8','Y421', "w")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "innerfire"),'A037', 0,'Y422', "e")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "blackarrowon"),'A1RD', 0,'Y423', "d")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "roar"),'A29L','A447','Y424', "v")
-	set i ='k'-1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "cripple"),'A08X', 0,'Y425', "g")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "creepheal"),'A1NA', 0,'Y426', "c")
-	set IsMultiIconSkill[i * 4 + 2]= true
-	call RegisterHeroSkill(i * 4 + 3, null,'A0VX','QP23','Y427', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, GetAbilityOrder('A1NE')),'A1NE','A2IG','Y428', "t")
-	set i ='l'-1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "tankpilot"),'A055', 0,'Y429', "c")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "forceboard"),'A0RW', 0,'Y430', "e")
-	call RegisterHeroSkill(i * 4 + 3, null,'A03N','QP1E','Y431', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, GetAbilityOrder('A03O')),'A03O', 0,'Y432', "t")
-	set i ='m'-1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "stomp")+ SaveSkillOrder(i * 4 + 1, "range morph")+ SaveSkillOrder(i * 4 + 1, "r44")+ SaveSkillOrder(i * 4 + 1, "metamorphosis")+ SaveSkillOrder(i * 4 + 1, "yongjiu3"),'A332', 0,'Y437', "r")
-	if (not Mode__RearmCombos) then
-		set s = SaveSkillOrder(i * 4 + 1, "HXBinglongTuijin")
-	endif
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "unstoneform"),'A2LA', 0,'Y438', "t")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "townbellon"),'A2LB', 0,'Y439', "e")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "unwindwalk"),'A0Z0', 0,'Y440', "w")
-	set i = 110 -1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "unravenform"),'A2M1', 0,'Y433', "c")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "unrobogoblin"),'A2LM', 0,'Y434', "f")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "undeadbuild"),'A2LL', 0,'Y435', "r")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "metamorphosis")+ SaveSkillOrder(i * 4 + 4, "summongrizzly"),'A2M0', 0,'Y436', "d")
-	set IsDisabledSkill[i * 4 + 4]= true
-	set i ='o'-1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "cripple"),'A2QM', 0,'Y443', "d")
-	set IsMultiIconSkill[i * 4 + 1]= true
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "unsubmerge"),'A2TJ', 0,'Y444', "f")
-	set IsMultiIconSkill[i * 4 + 2]= true
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "unflamingarrows"),'A2QI', 0,'Y445', "r")
-	set IsMultiIconSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "summonwareagle"),'A2TI', 0,'Y446', "t")
-	set IsMultiIconSkill[i * 4 + 4]= true
-	set i ='p'-1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "webon"),'A2QT', 0,'Y453', "t")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A2T5')),'A2T5', 0,'Y454', "f")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "avengerform"),'A2SG', 0,'Y455', "e")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "lavamonster"),'A2TF', 0,'Y456', "r")
-	set i ='q'-1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A1PH')),'A1PH', 0,'Y458', "e")
-	call RegisterHeroSkill(i * 4 + 2, null,'A33Q','A33R','Y459', null)
-	set IsPassiveSkill[i * 4 + 2]= true
-	//	if (not Mode__RearmCombos) then
-	//		set IsDisabledSkill[i * 4 + 2]= true
-	//	endif
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "magicdefense"),'A34A','QP28','A34B', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "barkskinoff"),'A33U', 0,'Y460', "g")
-	if (GKV or HOV or VT) == false then
-		set i = 114 -1
-		call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "request_hero")+ SaveSkillOrder(i * 4 + 1, "r23"),'Z601', 0,'Y601', "t")
-		call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "mechanicalcritter"),'Z602', 0,'Y602', "d")
-		call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "militia"),'Z603', 0,'Y603', "f")
-		call RegisterHeroSkill(i * 4 + 4, null, 0, 0, 0, null)
-		set IsDisabledSkill[i * 4 + 4]= true
-		set i = 115 -1
-		call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "militiaconvert"),'Z604', 0,'Y604', "y")
-		call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "windwalk"),'Z605', 0,'Y605', "v")
-		call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "militiaoff"),'Z606', 0,'Y606', "g")
-		call RegisterHeroSkill(i * 4 + 4, null, 0, 0, 0, null)
-		set IsDisabledSkill[i * 4 + 4]= true
-		set i = 116 -1
-		call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "militiaunconvert"),'Z607', 0,'Y607', "Z")
-		call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "mindrot"),'Z608', 0,'Y608', "x")
-		call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "monsoon"),'Z609', 0,'Y609', "c")
-		call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "mount"),'Z610','A3K5','Y610', "b")
-		call RZR(i * 4 + 4)
-		call ExecuteFunc("PreloadKael_Ability")
-	endif
-	set i ='u'-1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "unload"),'A40K','A40S','Y500', "j")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "unloadall"),'A40L','A40T','Y501', "k")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "unloadallcorpses"),'A40M','A40U','Y502', "l")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "undeadbuild"),'A40N','A40V','Y503', "i")
-	//set IsDisabledSkill[i * 4 + 4]= true	无形
-	set i ='v'-1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "lavamonster"),'A0QV', 0,'Y614', "d")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "carrionscarabs")+ SaveSkillOrder(i * 4 + 2, "carrionscarabsoff")+ SaveSkillOrder(i * 4 + 2, "carrionscarabson"),'A43Y', 0,'Y615', "q")
-	call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "carrionscarabs")+ SaveSkillOrder(i * 4 + 3, "carrionscarabsoff")+ SaveSkillOrder(i * 4 + 3, "carrionscarabson"),'A00T', 0,'Y616', "q")
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "renew"),'A46J', 0,'Y61K', "c")
-	set i ='w'-1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "soulburn"),'A0EC', 0,'Y329', "d")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "lumber2gold"),'A44U', 0,'Y618', "e")
-	//set IsDisabledSkill[i * 4 + 2]= true	下注
-	if Mode__SixSkills and(not Mode__RearmCombos) then
-		set IsDisabledSkill[i * 4 + 2]= true
-	endif
-	call RegisterHeroSkill(i * 4 + 3, null,'A0LE','QP1Y','Y330', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, null,'A440','QP25','Y617', null)
-	set IsPassiveSkill[i * 4 + 4]= true
-	set i = 120-1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "volcano"),'A451', 0,'Y61C', "w")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "stomp"),'A454', 0,'Y61D', "t")
-	call RegisterHeroSkill(i * 4 + 3, null,'A45B','QP26','Y61E', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, GetAbilityOrder('A456')),'A456', 0,'Y61F', "r")
-	set i = 121-1
-	call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "curse"),'A45W', 0,'Y61G', "q")
-	call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "volcano"),'A45X', 0,'Y61H', "w")
-	call RegisterHeroSkill(i * 4 + 3, null,'A460','QP27','Y61I', null)
-	set IsPassiveSkill[i * 4 + 3]= true
-	call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "creepthunderclap"),'A461', 0,'Y61J', "d")
-	set GL = 121
-	if GKV or HOV or VT then
-		call ExecuteFunc("R1R")
-	endif
 endfunction
 
 function RegisterItem takes integer EUN, integer EWN, integer EYN, integer EZN returns integer
@@ -83095,21 +82030,21 @@ function SaveHerosData takes nothing returns nothing
 	call SaveHeroModelScale('E02W', 1.1, 0)
 	call SaveHeroModelScale('E02U', 1.1, 0)
 	call SaveHeroModelData( 100 ,'Ekee','h059','n0AW', "stand victory", 1.)
-	call SaveHeroModelData('e','E02H','h0CB','n0KL', "stand 3", 1.25)
+	call SaveHeroModelData(101,'E02H','h0CB','n0KL', "stand 3", 1.25)
 	call SaveHeroModelData('f','Ulic','h05A','n0AX', "stand channel", 1.3)
 	call SaveHeroModelData('g','UC76','h05B','n0AY', "spell wail", 1.35)
-	call SaveHeroModelData('h','UC18','h05C','n0AZ', "spell callstorm", 1.3)
-	call JDX(HeroListTypeId['h'], 50, 100, 255)
+	call SaveHeroModelData(104,'UC18','h05C','n0AZ', "spell callstorm", 1.3)
+	call JDX(HeroListTypeId[104], 50, 100, 255)
 	call SaveHeroModelData('i','EC57','h05D','n0B0', "attack", 1.)
 	call JDX(HeroListTypeId['i'], 150, 200, 255)
-	call SaveHeroModelData('j','UC11','h05E','n0A2', "stand channel", 1.)
-	call JDX(HeroListTypeId['j'], 150, 150, 100)
+	call SaveHeroModelData(106,'UC11','h05E','n0A2', "stand channel", 1.)
+	call JDX(HeroListTypeId[106], 150, 150, 100)
 	call SaveHeroModelData('k','UC60','h05F','n0B1', "stand victory", 1.)
 	call JDX(HeroListTypeId['k'], 150, 150, 150)
-	call SaveHeroModelData('l','U00A','h05G','n0B2', "stand victory", 1.05)
+	call SaveHeroModelData(108,'U00A','h05G','n0B2', "stand victory", 1.05)
 	call SaveHeroModelData(110,'N0MK','h0EF','n0ML', "stand victory", 1.5)
-	call SaveHeroModelData('o','N0MU','ho04', 0, "stand 3", 1.)
-	call SaveHeroModelData('p','N0MD','ho05', 0, "stand victory", 1.25)
+	call SaveHeroModelData(111,'N0MU','ho04', 0, "stand 3", 1.)
+	call SaveHeroModelData(112,'N0MD','ho05', 0, "stand victory", 1.25)
 	call SaveHeroModelData('q','H503','ho06', 0, "spell", 1.)
 	call SaveHeroModelData(114,'H501','ho07', 0, "attack", 1.0)
 	call SaveHeroModelData(115,'H502','ho08', 0, "spell channel", 1.)
@@ -83121,7 +82056,7 @@ function SaveHerosData takes nothing returns nothing
 	call SaveHeroModelData( 121,'H507','ho0F', 0, "attack", 1.)
 
 	// 冰龙变身
-	call SaveHeroModelData('m','N0M7','h0DW','n0M8', "stand victory", .9)
+	call SaveHeroModelData(109,'N0M7','h0DW','n0M8', "stand victory", .9)
 	call SaveHeroModelScale('N0MB', 1.1, 0)
 	call SaveHeroModelScale('N0MC', 1.2, 0)
 	call SaveHeroModelScale('N0MO', 1.3, 0)
@@ -83729,12 +82664,12 @@ function Init_HerosTypeAghanimEffectAbilityId takes nothing returns nothing
 	call E7N(HeroListTypeId[7], 0)
 	call E7N(HeroListTypeId[8],'A1OC')
 	call E7N(HeroListTypeId[9], 0)
-	call E7N(HeroListTypeId[CB], 0)
-	call E7N(HeroListTypeId[DB],'A0PC')
-	call E7N(HeroListTypeId[FB],'A1QL')
-	call E7N(HeroListTypeId[GB], 0)
-	call E7N(HeroListTypeId[HB], 0)
-	call E7N(HeroListTypeId[JB], 0)
+	call E7N(HeroListTypeId[10], 0)
+	call E7N(HeroListTypeId[11],'A0PC')
+	call E7N(HeroListTypeId[12],'A1QL')
+	call E7N(HeroListTypeId[13], 0)
+	call E7N(HeroListTypeId[14], 0)
+	call E7N(HeroListTypeId[15], 0)
 	call E7N(HeroListTypeId[16], 0)
 	call E7N(HeroListTypeId[17], 0)
 	call E7N(HeroListTypeId[18],'A0P9')
@@ -83820,18 +82755,18 @@ function Init_HerosTypeAghanimEffectAbilityId takes nothing returns nothing
 	call E7N(HeroListTypeId[98], 0)
 	call E7N(HeroListTypeId[99], 0)
 	call E7N(HeroListTypeId[ 100 ], 0)
-	call E7N(HeroListTypeId['e'], 0)
+	call E7N(HeroListTypeId[101], 0)
 	call E7N(HeroListTypeId['f'],'A0PE')
 	call E7N(HeroListTypeId['g'], 0)
-	call E7N(HeroListTypeId['h'],'A0PA')
+	call E7N(HeroListTypeId[104],'A0PA')
 	call E7N(HeroListTypeId['i'], 0)
-	call E7N(HeroListTypeId['j'], 0)
+	call E7N(HeroListTypeId[106], 0)
 	call E7N(HeroListTypeId['k'], 0)
-	call E7N(HeroListTypeId['l'], 0)
-	call E7N(HeroListTypeId['m'], 0)
+	call E7N(HeroListTypeId[108], 0)
+	call E7N(HeroListTypeId[109], 0)
 	call E7N(HeroListTypeId[110], 0)
-	call E7N(HeroListTypeId['o'], 0)
-	call E7N(HeroListTypeId['p'], 0)
+	call E7N(HeroListTypeId[111], 0)
+	call E7N(HeroListTypeId[112], 0)
 	call E7N(HeroListTypeId['q'], 0)
 	call E7N(HeroListTypeId[114], 0)
 	call E7N(HeroListTypeId[115], 0)
@@ -84959,6 +83894,7 @@ function main takes nothing returns nothing
 	call ExecuteFunc("AbilityCustomOrderId_Init")
 	call ExecuteFunc("SpecialPassiveAbility_Init")
 	call UnitRemove_Init()
+	call UnitAbility_Init()
 
 	set LocalPlayer   = GetLocalPlayer()
 	set LocalPlayerId = GetPlayerId(LocalPlayer)

@@ -7,6 +7,14 @@ library AbilityUtils initializer Init requires Table, Base
         key ABILITY_REMOVE_KEY
     endglobals
 
+    function IsAbilityPassive takes integer abilId returns boolean
+        return MHGame_CheckInherit(abilId, 'APas')
+    endfunction
+    
+    function UnitAbilityFromItem takes unit whichUnit, integer abilId returns boolean
+        return MHAbility_IsFlag(whichUnit, abilId, ABILITY_FLAG_FROM_ITEM)
+    endfunction
+
     private function OnAbilityAdd takes nothing returns boolean
         local integer abilId = MHEvent_GetAbility()
         if Table[ABILITY_ADD_KEY].string.has(abilId) then

@@ -8,3 +8,5 @@
 #include "UnitMoprh.j"
 #include "UnitIllusion.j"
 #include "UnitRemove.j"
+#include "UnitAbility.j"
+#include "HeroAbility.j"

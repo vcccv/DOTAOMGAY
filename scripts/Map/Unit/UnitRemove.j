@@ -7,8 +7,11 @@ library UnitRemove requires Table
 
     private function OnRemove takes nothing returns nothing
         local unit whichUnit = MHEvent_GetUnit()
+        local integer h      = GetHandleId(whichUnit)
 
         call Table[GetHandleId(whichUnit)].flush()
+        call FlushChildHashtable(HY, h)
+        call FlushChildHashtable(ObjectHashTable, h)
 
         set whichUnit = null
     endfunction
