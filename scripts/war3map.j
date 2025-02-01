@@ -2064,8 +2064,8 @@ function YDWETriggerRegisterEnterRectSimpleNull takes trigger trig, rect r retur
 endfunction
 
 function GetRealSpellUnit takes unit u returns unit
-	if GetUnitAbilityLevel(u,'Aloc') == 1 and HaveSavedHandle(HY, GetHandleId(u), 0) then
-		return LoadUnitHandle(HY, GetHandleId(u), 0)
+	if GetUnitAbilityLevel(u,'Aloc') > 0 and HaveSavedHandle(ObjectHashTable, GetHandleId(u), 0) then
+		return LoadUnitHandle(ObjectHashTable, GetHandleId(u), 0)
 	endif
 	return u
 endfunction
@@ -45511,8 +45511,9 @@ function EJI takes nothing returns boolean
 		call SetUnitX(dummyCaster, GetWidgetX(u))
 		call SetUnitY(dummyCaster, GetWidgetY(u))
 		call SaveUnitHandle(ObjectHashTable, GetHandleId(dummyCaster), 0, LoadUnitHandle(HY, h, 2))
+		//call BJDebugMsg("绑定多重施法主人：" + GetUnitName(LoadUnitHandle(HY, h, 2)))
 		call TriggerRegisterUnitEvent(UnitEventMainTrig, dummyCaster, EVENT_UNIT_SPELL_EFFECT)
-		call RemoveSavedHandle(ObjectHashTable, GetHandleId(dummyCaster), 0)
+		//call RemoveSavedHandle(ObjectHashTable, GetHandleId(dummyCaster), 0)
 		if HaveSavedInteger(ObjectHashTable, id, 0) then
 			set id = LoadInteger(ObjectHashTable, id, 0)
 		endif
@@ -45627,6 +45628,8 @@ function EJI takes nothing returns boolean
 	set p = null
 	return false
 endfunction
+
+// 正常多重释放逻辑
 function EUI takes integer r returns nothing
 	local unit u = GetTriggerUnit()
 	local integer id = GetSpellAbilityId()
@@ -46000,6 +46003,7 @@ function E1I takes integer r returns nothing
 			set b = t == null
 			if b == false then
 				set d = CreateUnit(GetOwningPlayer(u),'e00C', GetUnitX(u), GetUnitY(u), 270)
+				call SaveUnitHandle(HY, GetHandleId(d), 0, u)
 				call TriggerRegisterUnitEvent(UnitEventMainTrig, d, EVENT_UNIT_SPELL_EFFECT)
 				call UnitAddPermanentAbility(d, id)
 				call SetUnitAbilityLevel(d, id, GetUnitAbilityLevel(u, id))
