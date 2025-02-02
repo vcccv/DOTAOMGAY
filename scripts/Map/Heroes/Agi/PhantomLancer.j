@@ -306,7 +306,7 @@ scope PhantomLancer
     function XLI takes nothing returns boolean
         local unit u
         if IsUnitIllusion(GetTriggerUnit()) then
-            set u = Player__Hero[GetPlayerId(GetOwningPlayer(GetTriggerUnit()))]
+            set u = PlayerHeroes[GetPlayerId(GetOwningPlayer(GetTriggerUnit()))]
             if GetUnitAbilityLevel(u,'A46E')> 0 and GetUnitTypeId(GetTriggerUnit()) == GetUnitTypeId(u) then
                 call UnitAddPermanentAbility(GetTriggerUnit(),'A46D')
                 call SetUnitAbilityLevel(GetTriggerUnit(),'A46D', GetUnitAbilityLevel(u,'A46E'))

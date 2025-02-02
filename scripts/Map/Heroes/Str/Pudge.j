@@ -90,7 +90,7 @@ scope Pudge
             call GroupEnumUnitsInRange(g, x, y, QTR, Condition(function D9X))
             call GroupRemoveUnit(g, u)
             if GetUnitTypeId(u)=='e00E' then
-                call GroupRemoveUnit(g, Player__Hero[GetPlayerId(GetOwningPlayer(u))])
+                call GroupRemoveUnit(g, PlayerHeroes[GetPlayerId(GetOwningPlayer(u))])
             endif
             set target = GroupPickRandomUnit(g)
             call DeallocateGroup(g)

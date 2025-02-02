@@ -77,9 +77,9 @@ scope Bloodseeker
         set i = start
         loop
             if isSentinel then
-                set u = Player__Hero[GetPlayerId(ScourgePlayers[i])]
+                set u = PlayerHeroes[GetPlayerId(ScourgePlayers[i])]
             else
-                set u = Player__Hero[GetPlayerId(SentinelPlayers[i])]
+                set u = PlayerHeroes[GetPlayerId(SentinelPlayers[i])]
             endif
             if u != null then
                 if not isBreak and ThirstHeroFilter(whichUnit, u) then
@@ -124,11 +124,11 @@ scope Bloodseeker
 
         set i = 1
         loop
-            if (LoadBoolean(OtherHashTable, GetHandleId(Player__Hero[i]), 24)) then
-                call SetUnitX(LoadUnitHandle(OtherHashTable, GetHandleId(Player__Hero[i]), 24), GetUnitX(Player__Hero[i]))
-                call SetUnitY(LoadUnitHandle(OtherHashTable, GetHandleId(Player__Hero[i]), 24), GetUnitY(Player__Hero[i]))
+            if (LoadBoolean(OtherHashTable, GetHandleId(PlayerHeroes[i]), 24)) then
+                call SetUnitX(LoadUnitHandle(OtherHashTable, GetHandleId(PlayerHeroes[i]), 24), GetUnitX(PlayerHeroes[i]))
+                call SetUnitY(LoadUnitHandle(OtherHashTable, GetHandleId(PlayerHeroes[i]), 24), GetUnitY(PlayerHeroes[i]))
                 // 让视野马甲跟随英雄
-                call IssueTargetOrderById(LoadUnitHandle(OtherHashTable, GetHandleId(Player__Hero[i]), 24), 851986, Player__Hero[i])
+                call IssueTargetOrderById(LoadUnitHandle(OtherHashTable, GetHandleId(PlayerHeroes[i]), 24), 851986, PlayerHeroes[i])
             endif
             set i = i + 1
             if i == 6 then

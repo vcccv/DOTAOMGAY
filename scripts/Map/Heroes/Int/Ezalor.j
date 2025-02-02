@@ -118,8 +118,8 @@ scope Ezalor
         call SaveReal(ObjectHashTable, WFV, 3, 26.25 * Cos(a))
         call SaveReal(ObjectHashTable, WFV, 4, 26.25 * Sin(a))
         if GetUnitTypeId(u)=='e00E' then
-            call SaveUnitHandle(ObjectHashTable, WFV, 1, Player__Hero[GetPlayerId(p)])
-            call SaveBoolean(ObjectHashTable, GetHandleId(Player__Hero[GetPlayerId(p)]),'A085', true)
+            call SaveUnitHandle(ObjectHashTable, WFV, 1, PlayerHeroes[GetPlayerId(p)])
+            call SaveBoolean(ObjectHashTable, GetHandleId(PlayerHeroes[GetPlayerId(p)]),'A085', true)
         else
             call SaveUnitHandle(ObjectHashTable, WFV, 1, u)
             call SaveBoolean(ObjectHashTable, GetHandleId(u),'A085', true)

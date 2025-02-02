@@ -146,7 +146,7 @@ scope DamageSystem
             // set KE[DamagedEventSourcePlayerId] = KE[DamagedEventSourcePlayerId] + R2I(DEDamage)
             // 判断小鸡的击杀来源? (相当奇怪为什么在这里判断)
             if GetUnitAbilityLevel(DETarget,'A3D9') == 1 then
-                call SaveUnitHandle(HY, GetHandleId(DETarget),'lstd', Player__Hero[DamagedEventSourcePlayerId])
+                call SaveUnitHandle(HY, GetHandleId(DETarget),'lstd', PlayerHeroes[DamagedEventSourcePlayerId])
             endif
             // 树甲
             if GetUnitAbilityLevel(DETarget,'A3KF') == 1 then
@@ -301,7 +301,7 @@ scope DamageSystem
                 set YO[0]= GetUnitTypeId(DETarget)
                 // 设置真正的伤害来源 排除掉马甲
                 if (GetUnitAbilityLevel(DESource,'Aloc') == 1) then
-                    set DESource = Player__Hero[DamagedEventSourcePlayerId]
+                    set DESource = PlayerHeroes[DamagedEventSourcePlayerId]
                 endif
                 if IsUnitType(DETarget, UNIT_TYPE_HERO) then
                     set reducedDamage = GerHeroReducedDamage()
@@ -358,7 +358,7 @@ scope DamageSystem
                 endif
                 // 玲珑心
                 // 直接用Japi来判断是否是技能伤害
-                if HaveSpellLifesteal and not MHDamageEvent_IsPhysical() then
+                if HasOctarineCore and not MHDamageEvent_IsPhysical() then
                     set p = GetOwningPlayer(DESource)
                     // 伤害来源是否是 非电脑 玩家的单位
                     if p != SentinelPlayers[0] and p != ScourgePlayers[0] and p != NeutralCreepPlayer then
@@ -376,7 +376,7 @@ scope DamageSystem
                     endif
                     if IX then
                         if (GetUnitAbilityLevel(DESource,'Aloc')> 0 or GetUnitAbilityLevel(DESource,'A04R')> 0) and not IsUnitType(DESource, UNIT_TYPE_HERO) then
-                            set DESource = Player__Hero[DamagedEventSourcePlayerId]
+                            set DESource = PlayerHeroes[DamagedEventSourcePlayerId]
                         else
                             set DESource = DESource
                         endif
@@ -408,7 +408,7 @@ scope DamageSystem
                 //if AD < 1 then
                 //endif
             endif
-            if JE then
+            if TEST_MODE then
                 call AQX("+" + I2S(R2I(DEDamage)), 1, DETarget, .028, 64, 255, 0, 0, 216)
             endif
             set DamageEvent.INDEX = DamageEvent.INDEX - 1

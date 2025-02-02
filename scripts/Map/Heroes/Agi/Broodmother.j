@@ -12,7 +12,7 @@ scope Broodmother
     endfunction
     function HCI takes nothing returns nothing
         local unit HDI = GetSummonedUnit()
-        local unit HFI = Player__Hero[GetPlayerId(GetOwningPlayer(GetSummoningUnit()))]
+        local unit HFI = PlayerHeroes[GetPlayerId(GetOwningPlayer(GetSummoningUnit()))]
         local integer h = GetHandleId(HFI)
         local integer level = GetUnitAbilityLevel(HFI,'Z234')
         local integer HGI =(LoadInteger(HY, h, 279))
@@ -39,7 +39,7 @@ scope Broodmother
     endfunction
     function SpinWebOnSpellEffect takes nothing returns nothing
         local unit d = CreateUnit(GetOwningPlayer(GetTriggerUnit()),'o003', GetSpellTargetX(), GetSpellTargetY(), 0)
-        local unit u = Player__Hero[GetPlayerId(GetOwningPlayer(d))]
+        local unit u = PlayerHeroes[GetPlayerId(GetOwningPlayer(d))]
         local integer h = GetHandleId(u)
         local integer lv = GetUnitAbilityLevel(u,'Z234')
         local integer maxi =(LoadInteger(HY, h, 279))
@@ -84,7 +84,7 @@ scope Broodmother
         local integer i = 1
         local unit u = GetEnumUnit()
         local boolean b = false
-        if Player__Hero[GetPlayerId(GetOwningPlayer(u))] != null then
+        if PlayerHeroes[GetPlayerId(GetOwningPlayer(u))] != null then
             loop
                 set web = LoadUnitHandle(HY, GetHandleId(u), 1400 + i)
                 if web != null then

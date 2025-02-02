@@ -53,7 +53,7 @@ scope GameEnd
         return locString
     endfunction
     function GetPlayerHeroLevelString takes player p returns string
-        local string str = I2S(GetUnitLevel(Player__Hero[GetPlayerId(p)]))
+        local string str = I2S(GetUnitLevel(PlayerHeroes[GetPlayerId(p)]))
         local string locString = str
         if p == LocalPlayer then
             set locString = "|c00FF6600" + str + "|r"
@@ -334,7 +334,7 @@ scope GameEnd
         exitwhen i > sentinelCount
             set loop_column = loop_column + 1
             set mbt = MultiboardGetItem(GameEndScoresMultiboard, loop_row, loop_column)
-            call SetMultiboardItemDatas(mbt, true, true, GetPlayerHeroLevelString(sentinelUserList[i]), GetHeroIconFilePath(Player__Hero[GetPlayerId(sentinelUserList[i])]), .07)
+            call SetMultiboardItemDatas(mbt, true, true, GetPlayerHeroLevelString(sentinelUserList[i]), GetHeroIconFilePath(PlayerHeroes[GetPlayerId(sentinelUserList[i])]), .07)
             call MultiboardReleaseItem(mbt)
             set i = i + 1
         endloop
@@ -343,7 +343,7 @@ scope GameEnd
         exitwhen i > scourgeCount
             set loop_column = loop_column + 1
             set mbt = MultiboardGetItem(GameEndScoresMultiboard, loop_row, loop_column)
-            call SetMultiboardItemDatas(mbt, true, true, GetPlayerHeroLevelString(scourgeUserList[i]), GetHeroIconFilePath(Player__Hero[GetPlayerId(scourgeUserList[i])]), .07)
+            call SetMultiboardItemDatas(mbt, true, true, GetPlayerHeroLevelString(scourgeUserList[i]), GetHeroIconFilePath(PlayerHeroes[GetPlayerId(scourgeUserList[i])]), .07)
             call MultiboardReleaseItem(mbt)
             set i = i + 1
         endloop
@@ -360,11 +360,11 @@ scope GameEnd
         exitwhen i > sentinelCount
             set loop_column = loop_column + 1
             set mbt = MultiboardGetItem(GameEndScoresMultiboard, loop_row, loop_column)
-            call SetMultiboardItemDatas(mbt, false, true, null, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(sentinelUserList[i])], 0)), .015)
+            call SetMultiboardItemDatas(mbt, false, true, null, GetItemIcon(UnitItemInSlot(PlayerHeroes[GetPlayerId(sentinelUserList[i])], 0)), .015)
             call MultiboardReleaseItem(mbt)
             set loop_column = loop_column + 1
             set mbt = MultiboardGetItem(GameEndScoresMultiboard, loop_row, loop_column)
-            call SetMultiboardItemDatas(mbt, false, true, null, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(sentinelUserList[i])], 1)), .054)
+            call SetMultiboardItemDatas(mbt, false, true, null, GetItemIcon(UnitItemInSlot(PlayerHeroes[GetPlayerId(sentinelUserList[i])], 1)), .054)
             call MultiboardReleaseItem(mbt)
             set i = i + 1
         endloop
@@ -373,11 +373,11 @@ scope GameEnd
         exitwhen i > scourgeCount
             set loop_column = loop_column + 1
             set mbt = MultiboardGetItem(GameEndScoresMultiboard, loop_row, loop_column)
-            call SetMultiboardItemDatas(mbt, false, true, null, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(scourgeUserList[i])], 0)), .015)
+            call SetMultiboardItemDatas(mbt, false, true, null, GetItemIcon(UnitItemInSlot(PlayerHeroes[GetPlayerId(scourgeUserList[i])], 0)), .015)
             call MultiboardReleaseItem(mbt)
             set loop_column = loop_column + 1
             set mbt = MultiboardGetItem(GameEndScoresMultiboard, loop_row, loop_column)
-            call SetMultiboardItemDatas(mbt, false, true, null, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(scourgeUserList[i])], 1)), .054)
+            call SetMultiboardItemDatas(mbt, false, true, null, GetItemIcon(UnitItemInSlot(PlayerHeroes[GetPlayerId(scourgeUserList[i])], 1)), .054)
             call MultiboardReleaseItem(mbt)
             set i = i + 1
         endloop
@@ -392,11 +392,11 @@ scope GameEnd
         exitwhen i > sentinelCount
             set loop_column = loop_column + 1
             set mbt = MultiboardGetItem(GameEndScoresMultiboard, loop_row, loop_column)
-            call SetMultiboardItemDatas(mbt, false, true, null, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(sentinelUserList[i])], 2)), .015)
+            call SetMultiboardItemDatas(mbt, false, true, null, GetItemIcon(UnitItemInSlot(PlayerHeroes[GetPlayerId(sentinelUserList[i])], 2)), .015)
             call MultiboardReleaseItem(mbt)
             set loop_column = loop_column + 1
             set mbt = MultiboardGetItem(GameEndScoresMultiboard, loop_row, loop_column)
-            call SetMultiboardItemDatas(mbt, false, true, null, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(sentinelUserList[i])], 3)), .054)
+            call SetMultiboardItemDatas(mbt, false, true, null, GetItemIcon(UnitItemInSlot(PlayerHeroes[GetPlayerId(sentinelUserList[i])], 3)), .054)
             call MultiboardReleaseItem(mbt)
             set i = i + 1
         endloop
@@ -405,11 +405,11 @@ scope GameEnd
         exitwhen i > scourgeCount
             set loop_column = loop_column + 1
             set mbt = MultiboardGetItem(GameEndScoresMultiboard, loop_row, loop_column)
-            call SetMultiboardItemDatas(mbt, false, true, null, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(scourgeUserList[i])], 2)), .015)
+            call SetMultiboardItemDatas(mbt, false, true, null, GetItemIcon(UnitItemInSlot(PlayerHeroes[GetPlayerId(scourgeUserList[i])], 2)), .015)
             call MultiboardReleaseItem(mbt)
             set loop_column = loop_column + 1
             set mbt = MultiboardGetItem(GameEndScoresMultiboard, loop_row, loop_column)
-            call SetMultiboardItemDatas(mbt, false, true, null, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(scourgeUserList[i])], 3)), .054)
+            call SetMultiboardItemDatas(mbt, false, true, null, GetItemIcon(UnitItemInSlot(PlayerHeroes[GetPlayerId(scourgeUserList[i])], 3)), .054)
             call MultiboardReleaseItem(mbt)
             set i = i + 1
         endloop
@@ -424,11 +424,11 @@ scope GameEnd
         exitwhen i > sentinelCount
             set loop_column = loop_column + 1
             set mbt = MultiboardGetItem(GameEndScoresMultiboard, loop_row, loop_column)
-            call SetMultiboardItemDatas(mbt, false, true, null, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(sentinelUserList[i])], 4)), .015)
+            call SetMultiboardItemDatas(mbt, false, true, null, GetItemIcon(UnitItemInSlot(PlayerHeroes[GetPlayerId(sentinelUserList[i])], 4)), .015)
             call MultiboardReleaseItem(mbt)
             set loop_column = loop_column + 1
             set mbt = MultiboardGetItem(GameEndScoresMultiboard, loop_row, loop_column)
-            call SetMultiboardItemDatas(mbt, false, true, null, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(sentinelUserList[i])], 5)), .054)
+            call SetMultiboardItemDatas(mbt, false, true, null, GetItemIcon(UnitItemInSlot(PlayerHeroes[GetPlayerId(sentinelUserList[i])], 5)), .054)
             call MultiboardReleaseItem(mbt)
             set i = i + 1
         endloop
@@ -437,11 +437,11 @@ scope GameEnd
         exitwhen i > scourgeCount
             set loop_column = loop_column + 1
             set mbt = MultiboardGetItem(GameEndScoresMultiboard, loop_row, loop_column)
-            call SetMultiboardItemDatas(mbt, false, true, null, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(scourgeUserList[i])], 4)), .015)
+            call SetMultiboardItemDatas(mbt, false, true, null, GetItemIcon(UnitItemInSlot(PlayerHeroes[GetPlayerId(scourgeUserList[i])], 4)), .015)
             call MultiboardReleaseItem(mbt)
             set loop_column = loop_column + 1
             set mbt = MultiboardGetItem(GameEndScoresMultiboard, loop_row, loop_column)
-            call SetMultiboardItemDatas(mbt, false, true, null, GetItemIcon(UnitItemInSlot(Player__Hero[GetPlayerId(sentinelUserList[i])], 5)), .054)
+            call SetMultiboardItemDatas(mbt, false, true, null, GetItemIcon(UnitItemInSlot(PlayerHeroes[GetPlayerId(sentinelUserList[i])], 5)), .054)
             call MultiboardReleaseItem(mbt)
             set i = i + 1
         endloop
@@ -841,11 +841,11 @@ scope GameEnd
                     set loop_column = x +(x -1)
                     set loop_row = loop_row + 1
                     set mbt = MultiboardGetItem(GameEndScoresMultiboard, loop_row, loop_column)
-                    call SetMultiboardItemDatas(mbt, false, true, null, GetHeroIconFilePath(Player__Hero[GetPlayerId(sentinelUserList[x])]), .01)
+                    call SetMultiboardItemDatas(mbt, false, true, null, GetHeroIconFilePath(PlayerHeroes[GetPlayerId(sentinelUserList[x])]), .01)
                     call MultiboardReleaseItem(mbt)
                     set loop_column = loop_column + 1
                     set mbt = MultiboardGetItem(GameEndScoresMultiboard, loop_row, loop_column)
-                    call SetMultiboardItemDatas(mbt, true, true, " " + GetPlayerKillDetailsString(sentinelUserList[x], scourgeUserList[i]), GetHeroIconFilePath(Player__Hero[GetPlayerId(scourgeUserList[i])]), .059)
+                    call SetMultiboardItemDatas(mbt, true, true, " " + GetPlayerKillDetailsString(sentinelUserList[x], scourgeUserList[i]), GetHeroIconFilePath(PlayerHeroes[GetPlayerId(scourgeUserList[i])]), .059)
                     call MultiboardReleaseItem(mbt)
                     set i = i + 1
                 endloop
@@ -862,11 +862,11 @@ scope GameEnd
                     set loop_column = x +(x -1)
                     set loop_row = loop_row + 1
                     set mbt = MultiboardGetItem(GameEndScoresMultiboard, loop_row, loop_column)
-                    call SetMultiboardItemDatas(mbt, false, true, null, GetHeroIconFilePath(Player__Hero[GetPlayerId(scourgeUserList[x -sentinelCount])]), .01)
+                    call SetMultiboardItemDatas(mbt, false, true, null, GetHeroIconFilePath(PlayerHeroes[GetPlayerId(scourgeUserList[x -sentinelCount])]), .01)
                     call MultiboardReleaseItem(mbt)
                     set loop_column = loop_column + 1
                     set mbt = MultiboardGetItem(GameEndScoresMultiboard, loop_row, loop_column)
-                    call SetMultiboardItemDatas(mbt, true, true, " " + GetPlayerKillDetailsString(scourgeUserList[x -sentinelCount], sentinelUserList[i]), GetHeroIconFilePath(Player__Hero[GetPlayerId(sentinelUserList[i])]), .059)
+                    call SetMultiboardItemDatas(mbt, true, true, " " + GetPlayerKillDetailsString(scourgeUserList[x -sentinelCount], sentinelUserList[i]), GetHeroIconFilePath(PlayerHeroes[GetPlayerId(sentinelUserList[i])]), .059)
                     call MultiboardReleaseItem(mbt)
                     set i = i + 1
                 endloop
@@ -953,12 +953,12 @@ scope GameEnd
             call StoreInteger(DrCache, id, "5", PlayerAssistCount[pid])
             call StoreInteger(DrCache, id, "6", GetPlayerState((p), PLAYER_STATE_RESOURCE_GOLD))
             call StoreInteger(DrCache, id, "7", LoadInteger(HY, 400 + pid, 79))
-            call StoreInteger(DrCache, id, "8_0", GetItemTypeId(UnitItemInSlot(Player__Hero[pid], 0)))
-            call StoreInteger(DrCache, id, "8_1", GetItemTypeId(UnitItemInSlot(Player__Hero[pid], 1)))
-            call StoreInteger(DrCache, id, "8_2", GetItemTypeId(UnitItemInSlot(Player__Hero[pid], 2)))
-            call StoreInteger(DrCache, id, "8_3", GetItemTypeId(UnitItemInSlot(Player__Hero[pid], 3)))
-            call StoreInteger(DrCache, id, "8_4", GetItemTypeId(UnitItemInSlot(Player__Hero[pid], 4)))
-            call StoreInteger(DrCache, id, "8_5", GetItemTypeId(UnitItemInSlot(Player__Hero[pid], 5)))
+            call StoreInteger(DrCache, id, "8_0", GetItemTypeId(UnitItemInSlot(PlayerHeroes[pid], 0)))
+            call StoreInteger(DrCache, id, "8_1", GetItemTypeId(UnitItemInSlot(PlayerHeroes[pid], 1)))
+            call StoreInteger(DrCache, id, "8_2", GetItemTypeId(UnitItemInSlot(PlayerHeroes[pid], 2)))
+            call StoreInteger(DrCache, id, "8_3", GetItemTypeId(UnitItemInSlot(PlayerHeroes[pid], 3)))
+            call StoreInteger(DrCache, id, "8_4", GetItemTypeId(UnitItemInSlot(PlayerHeroes[pid], 4)))
+            call StoreInteger(DrCache, id, "8_5", GetItemTypeId(UnitItemInSlot(PlayerHeroes[pid], 5)))
             call StoreInteger(DrCache, id, "9", PlayerHeroTypeId[pid])
             call StoreInteger(DrCache, id, "id", i)
             set p = ScourgePlayers[i]
@@ -971,12 +971,12 @@ scope GameEnd
             call StoreInteger(DrCache, id, "5", PlayerAssistCount[pid])
             call StoreInteger(DrCache, id, "6", GetPlayerState((p), PLAYER_STATE_RESOURCE_GOLD))
             call StoreInteger(DrCache, id, "7", LoadInteger(HY, 400 + pid, 79))
-            call StoreInteger(DrCache, id, "8_0", GetItemTypeId(UnitItemInSlot(Player__Hero[pid], 0)))
-            call StoreInteger(DrCache, id, "8_1", GetItemTypeId(UnitItemInSlot(Player__Hero[pid], 1)))
-            call StoreInteger(DrCache, id, "8_2", GetItemTypeId(UnitItemInSlot(Player__Hero[pid], 2)))
-            call StoreInteger(DrCache, id, "8_3", GetItemTypeId(UnitItemInSlot(Player__Hero[pid], 3)))
-            call StoreInteger(DrCache, id, "8_4", GetItemTypeId(UnitItemInSlot(Player__Hero[pid], 4)))
-            call StoreInteger(DrCache, id, "8_5", GetItemTypeId(UnitItemInSlot(Player__Hero[pid], 5)))
+            call StoreInteger(DrCache, id, "8_0", GetItemTypeId(UnitItemInSlot(PlayerHeroes[pid], 0)))
+            call StoreInteger(DrCache, id, "8_1", GetItemTypeId(UnitItemInSlot(PlayerHeroes[pid], 1)))
+            call StoreInteger(DrCache, id, "8_2", GetItemTypeId(UnitItemInSlot(PlayerHeroes[pid], 2)))
+            call StoreInteger(DrCache, id, "8_3", GetItemTypeId(UnitItemInSlot(PlayerHeroes[pid], 3)))
+            call StoreInteger(DrCache, id, "8_4", GetItemTypeId(UnitItemInSlot(PlayerHeroes[pid], 4)))
+            call StoreInteger(DrCache, id, "8_5", GetItemTypeId(UnitItemInSlot(PlayerHeroes[pid], 5)))
             call StoreInteger(DrCache, id, "9", PlayerHeroTypeId[pid])
             call StoreInteger(DrCache, id, "id", i + 5)
             if LocalPlayer== HostPlayer then

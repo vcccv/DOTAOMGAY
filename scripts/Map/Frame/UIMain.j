@@ -39,7 +39,7 @@ scope MainUI
             if u != null and GetUnitAbilityLevel(u, 'AHer') > 0 then
                 if IsUnitAlly(u, LocalPlayer) and IsUnitType(u, UNIT_TYPE_HERO) then
                     if GetChat_times() then
-                        if u == Player__Hero[i] then 
+                        if u == PlayerHeroes[i] then 
                             call DzSyncData("t", "我拥有" + UnitLP(u, true)+ UnitMP(u))
                         else
                             set p = GetOwningPlayer(u)

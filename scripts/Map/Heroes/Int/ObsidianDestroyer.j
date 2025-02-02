@@ -41,7 +41,7 @@ scope ObsidianDestroyer
                     call UnitRemoveSpellShield(targetUnit)
                 endif
             else
-                set whichUnit = Player__Hero[GetPlayerId(GetOwningPlayer(whichUnit))]
+                set whichUnit = PlayerHeroes[GetPlayerId(GetOwningPlayer(whichUnit))]
             endif
         endif
         if (IsUnitEnemy(targetUnit, GetOwningPlayer(whichUnit))) == false or b == false then
@@ -103,10 +103,10 @@ scope ObsidianDestroyer
         local unit d
         local unit JSI = targetUnit
         if IsUnitIllusion(targetUnit) then
-            set JSI = Player__Hero[GetPlayerId(GetOwningPlayer(targetUnit))]
+            set JSI = PlayerHeroes[GetPlayerId(GetOwningPlayer(targetUnit))]
         endif
         if GetHeroInt(whichUnit, true) == 0 then
-            set whichUnit = Player__Hero[GetPlayerId(GetOwningPlayer(whichUnit))]
+            set whichUnit = PlayerHeroes[GetPlayerId(GetOwningPlayer(whichUnit))]
         endif
         set i = GetHeroMainAttributesType(whichUnit)
         if i == HERO_ATTRIBUTE_INT then

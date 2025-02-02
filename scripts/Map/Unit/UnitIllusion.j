@@ -134,8 +134,8 @@ library UnitIllusion requires UnitUtils, UnitWeapon, BuffSystem
             call ExecuteFunc("I8R")
         endif
         // 幻象的协同升级
-        if GetUnitAbilityLevel(Player__Hero[pid],'A0A8')> 0 then
-            call UnitAddPermanentAbilitySetLevel(illusionUnit, 'A3L3', GetUnitAbilityLevel(Player__Hero[pid],'A0A8'))
+        if GetUnitAbilityLevel(PlayerHeroes[pid],'A0A8')> 0 then
+            call UnitAddPermanentAbilitySetLevel(illusionUnit, 'A3L3', GetUnitAbilityLevel(PlayerHeroes[pid],'A0A8'))
             call MHAbility_Disable(illusionUnit, 'A3L3', false, false)
         endif
         // 同步长大技能
