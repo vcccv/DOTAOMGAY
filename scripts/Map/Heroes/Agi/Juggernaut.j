@@ -67,7 +67,7 @@ scope Juggernaut
         local unit    fovd = CreateUnit(GetOwningPlayer(u),'o00D', GetUnitX(u), GetUnitY(u), 0)
         local integer WDR
         local integer WFR
-        if GetUnitAbilityLevel(u,'Aloc') == 1 and HaveSavedHandle(HY, GetHandleId(u), 0) then
+        if IsUnitDummy(u) and HaveSavedHandle(HY, GetHandleId(u), 0) then
             set u = LoadUnitHandle(HY, GetHandleId(u), 0)
         endif
         set WDR = IMaxBJ(GetHeroStr(u, true), IMaxBJ(GetHeroAgi(u, true), GetHeroInt(u, true)))

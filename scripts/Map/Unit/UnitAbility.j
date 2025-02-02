@@ -6,6 +6,39 @@ library UnitAbility requires AbilityUtils
         private trigger StartCooldownTrig = null
     endglobals
 
+    function ReduceUnitAbilityFixOnExpired takes nothing returns nothing
+        local SimpleTick tick           = SimpleTick.GetExpired()
+        local integer    abilId
+        local unit       whichUnit
+        local real       reduceCooldown
+
+        set abilId         = SimpleTickTable[tick]['A']
+        set whichUnit      = SimpleTickTable[tick].unit['U']
+        set reduceCooldown = SimpleTickTable[tick].real['R']
+
+        call MHAbility_SetCooldown(whichUnit, abilId, MHAbility_GetCooldown(whichUnit, abilId) - reduceCooldown) 
+
+        call tick.Destroy()
+
+        set whichUnit = null
+    endfunction
+
+    function ReduceUnitAbilityCooldown takes unit whichUnit, integer abilId, real reduceCooldown returns nothing
+        local SimpleTick tick
+        if GetUnitAbilityLevel(whichUnit, abilId) <= 0 then
+            return
+        endif
+        if ( GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT or GetTriggerEventId() == EVENT_PLAYER_UNIT_SPELL_EFFECT) or GetTriggerUnit() == whichUnit then
+            set tick = SimpleTick.CreateEx()
+            call tick.Start(0., false, function ReduceUnitAbilityFixOnExpired)
+            set SimpleTickTable[tick]['A']     = abilId
+            set SimpleTickTable[tick].unit['U'] = whichUnit
+            set SimpleTickTable[tick].real['R'] = reduceCooldown
+        else
+            call MHAbility_SetCooldown(whichUnit, abilId, MHAbility_GetCooldown(whichUnit, abilId) - reduceCooldown) 
+        endif
+    endfunction
+
     function EndUnitAbilityCooldown takes unit whichUnit, integer abilId returns nothing
         call MHAbility_SetCooldown(whichUnit, abilId, 0.)
     endfunction
@@ -28,27 +61,6 @@ library UnitAbility requires AbilityUtils
         if HasOctarineCore and GetUnitAbilityLevel(whichUnit, 'A39S') == 1 then
             set cooldown = cooldown * 0.75
             set isChange = true
-        endif
-
-        if GetUnitAbilityLevel(whichUnit, 'B3DU') == 1 then
-            // 是物品技能就不减cd 被动也不减
-            if not UnitAbilityFromItem(whichUnit, id) and not IsAbilityPassive(id) then
-                if GetUnitAbilityLevel(whichUnit, 'A3DU') == 1 then
-                    set cooldown = cooldown + 2.
-                    call UnitRemoveAbility(whichUnit, 'A3DU')
-                elseif GetUnitAbilityLevel(whichUnit, 'A3DV') == 1 then
-                    set cooldown = cooldown + 3.
-                    call UnitRemoveAbility(whichUnit, 'A3DV')
-                elseif GetUnitAbilityLevel(whichUnit, 'A3DW') == 1 then
-                    set cooldown = cooldown + 4.
-                    call UnitRemoveAbility(whichUnit, 'A3DW')
-                elseif GetUnitAbilityLevel(whichUnit, 'A3DX') == 1 then
-                    set cooldown = cooldown + 5.
-                    call UnitRemoveAbility(whichUnit, 'A3DX')
-                endif
-                call UnitRemoveAbility(whichUnit, 'B3DU')
-                set isChange = true
-            endif
         endif
 
         if cooldown > 0.5 then

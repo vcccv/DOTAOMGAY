@@ -17,7 +17,7 @@ scope Necrolyte
         local integer level
         local real    hp
         local real    max
-        if UnitAlive(whichUnit) and not IsUnitBreak(whichUnit) then
+        if UnitAlive(whichUnit) and not IsUnitBroken(whichUnit) then
             set g = AllocationGroup(366)
             set level = GetUnitAbilityLevel(whichUnit,'P302')+ 1
 

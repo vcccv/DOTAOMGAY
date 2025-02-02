@@ -9,4 +9,5 @@
 #include "UnitIllusion.j"
 #include "UnitRemove.j"
 #include "UnitAbility.j"
+#include "UnitStatus.j"
 #include "HeroSkill.j"

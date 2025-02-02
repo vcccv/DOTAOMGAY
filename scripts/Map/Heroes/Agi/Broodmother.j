@@ -75,7 +75,7 @@ scope Broodmother
     endfunction
 
     function HJI takes nothing returns boolean
-        return GetOwningPlayer(GetFilterUnit()) == GetOwningPlayer(XB) and(GetUnitAbilityLevel(GetFilterUnit(),'Aloc') == 0 and GetUnitAbilityLevel(GetFilterUnit(),'A04R') == 0)
+        return GetOwningPlayer(GetFilterUnit()) == GetOwningPlayer(XB) and(not IsUnitDummy(GetFilterUnit()) and not IsUnitWard(GetFilterUnit()))
     endfunction
     function HKI takes nothing returns nothing
         local real x

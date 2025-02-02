@@ -2,3 +2,6 @@
 **/backups
 **/temp
 war3map.j
+files/*.ai
+files/*.blp
+**/war3map.w3x

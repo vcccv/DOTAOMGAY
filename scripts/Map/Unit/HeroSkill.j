@@ -6,14 +6,14 @@ library HeroAbilityLib requires AbilityCustomOrderId
         if PlayerHeroes[id] == null then
             return 0.
         endif
-        return MHAbility_GetCooldown(PlayerHeroes[id], HeroSkill_Base[PlayerAbilityList[id * MAX_SKILL_SLOTS + 4]])
+        return MHAbility_GetCooldown(PlayerHeroes[id], HeroSkill_Base[PlayerSkillIndices[id * MAX_SKILL_SLOTS + 4]])
     endfunction
     function GetPlayerUltimate2Cooldown takes player whichPlayer returns real
         local integer id = GetPlayerId(whichPlayer)
         if PlayerHeroes[id] == null then
             return 0.
         endif
-        return MHAbility_GetCooldown(PlayerHeroes[id], HeroSkill_Base[PlayerAbilityList[id * MAX_SKILL_SLOTS + 6]])
+        return MHAbility_GetCooldown(PlayerHeroes[id], HeroSkill_Base[PlayerSkillIndices[id * MAX_SKILL_SLOTS + 6]])
     endfunction
     
     function GetPlayerUltimate1CooldownText takes player whichPlayer returns string
@@ -36,7 +36,7 @@ library HeroAbilityLib requires AbilityCustomOrderId
     endstruct
 
     globals
-        integer array PlayerAbilityList
+        integer array PlayerSkillIndices
 
         string  array HeroSkill_Icon
         integer array HeroSkill_Base

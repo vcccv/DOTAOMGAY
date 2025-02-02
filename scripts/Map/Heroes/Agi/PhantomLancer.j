@@ -199,7 +199,7 @@ scope PhantomLancer
             endif
         else
             // 目标晕 隐藏 妖术 就停了
-            if IsUnitStun(u) or IsUnitHidden(u) or IsUnitHex(u) or(LoadBoolean(HY, h, 5) and GetUnitAbilityLevel(u,'A46F') == 0) then
+            if IsUnitStunned(u) or IsUnitHidden(u) or IsUnitHexed(u) or(LoadBoolean(HY, h, 5) and GetUnitAbilityLevel(u,'A46F') == 0) then
                 call PhantomRushEnd(u, hu, t)
             else
                 set distance = GetUnitDistanceEx(u, targetUnit)
@@ -294,7 +294,7 @@ scope PhantomLancer
         local unit source = GetTriggerUnit()
         local unit target = GetOrderTargetUnit()
         if target != null and IsUnitEnemy(target, GetOwningPlayer(source)) and(GetIssuedOrderId()== ORDER_attack or GetIssuedOrderId()== ORDER_smart) then
-            if GetUnitAbilityLevel(source,'A46D')> 0 and not IsUnitBreak(source) then
+            if GetUnitAbilityLevel(source,'A46D')> 0 and not IsUnitBroken(source) then
                 call OnPhantomRush()
             endif
         endif

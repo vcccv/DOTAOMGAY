@@ -189,7 +189,7 @@ scope FacelessVoid
             call DeallocateGroup(enumGroup)
         //else
         //    set U2 = whichUnit
-        //    if LKI() and GetUnitAbilityLevel(GetTriggerUnit(),'Aloc') == 0 and GetUnitAbilityLevel(GetTriggerUnit(),'A04R') == 0 and IsUnitInGroup(GetTriggerUnit(), g) == false then
+        //    if LKI() and not IsUnitDummy(GetTriggerUnit()) and not IsUnitWard(GetTriggerUnit()) and IsUnitInGroup(GetTriggerUnit(), g) == false then
         //        call GroupAddUnit(g, GetTriggerUnit())
         //        call LLI(GetTriggerUnit())
         //    endif

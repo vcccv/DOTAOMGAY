@@ -19,7 +19,7 @@ scope Bloodseeker
             set dummyUnit = LoadUnitHandle(OtherHashTable, h, 24)
             call SetUnitX(dummyUnit, GetUnitX(u))
             call SetUnitY(dummyUnit, GetUnitY(u))
-            if IsUnitInvision(u) then
+            if IsUnitInvisible(u) then
                 if GetUnitAbilityLevel(u,'A1HX')> 0 then
                     call UnitRemoveAbility(dummyUnit,'A30X')
                 elseif GetUnitAbilityLevel(dummyUnit,'A30X') == 0 then
@@ -50,7 +50,7 @@ scope Bloodseeker
         if UnitAlive(strygwry) and UnitAlive(hero) then
             set lifePercent = GetUnitLifePercent(hero)
             // 25~30 时不看隐身
-            return 25. > lifePercent or (lifePercent < needPercent and not IsUnitInvision(hero))
+            return 25. > lifePercent or (lifePercent < needPercent and not IsUnitInvisible(hero))
         endif
         return false
     endfunction
@@ -71,7 +71,7 @@ scope Bloodseeker
         local integer i
         local unit    u
         local boolean isSentinel = IsSentinelPlayer(GetOwningPlayer(whichUnit))
-        local boolean isBreak    = IsUnitBreak(whichUnit)
+        local boolean isBreak    = IsUnitBroken(whichUnit)
         local real    moveBonus
 
         set i = start

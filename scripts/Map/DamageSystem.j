@@ -177,7 +177,7 @@ scope DamageSystem
                 //set DEDamage = 0
             else
                 // 回到过去
-                if HaveBacktrack and GetUnitAbilityLevel(DETarget,'A0CZ') > 0 and GetUnitAbilityLevel(DETarget,'A36D') == 0 then
+                if HaveBacktrack and GetUnitAbilityLevel(DETarget,'A0CZ') > 0 and not IsUnitBroken(DETarget) then
                     // 伤害值 <= 20 则完全随机数 可能是怕计算量过大?
                     if (DEDamage <= 20) then
                         if GetRandomInt(1, 100) < 5 + 5 *(GetUnitAbilityLevel(DETarget,'A0CZ')) then
@@ -206,7 +206,7 @@ scope DamageSystem
                     //set DEDamage = DEDamage - DEDamage * .5
                 endif
                 // 折射 需要检查是否被破被动 而且还会根据模型主属性和谐减伤值
-                if GetUnitAbilityLevel(DETarget,'A0NA') > 0 and GetUnitAbilityLevel(DETarget,'A36D') == 0 then
+                if GetUnitAbilityLevel(DETarget,'A0NA') > 0 and not IsUnitBroken(DETarget) then
                     if not Mode__RearmCombos and GetHeroMainAttributesType(DETarget) == HERO_ATTRIBUTE_STR then
                         set reducedDamage = reducedDamage + DEDamage *(.06 + .02 * GetUnitAbilityLevel(DETarget,'A0NA'))
                         //set DEDamage = DEDamage - DEDamage *(.06 + .02 * GetUnitAbilityLevel(DETarget,'A0NA'))
@@ -300,7 +300,7 @@ scope DamageSystem
                 set hu = GetHandleId(DETarget)
                 set YO[0]= GetUnitTypeId(DETarget)
                 // 设置真正的伤害来源 排除掉马甲
-                if (GetUnitAbilityLevel(DESource,'Aloc') == 1) then
+                if (IsUnitDummy(DESource)) then
                     set DESource = PlayerHeroes[DamagedEventSourcePlayerId]
                 endif
                 if IsUnitType(DETarget, UNIT_TYPE_HERO) then
@@ -375,7 +375,7 @@ scope DamageSystem
                         call DOR(DESource, DETarget)
                     endif
                     if IX then
-                        if (GetUnitAbilityLevel(DESource,'Aloc')> 0 or GetUnitAbilityLevel(DESource,'A04R')> 0) and not IsUnitType(DESource, UNIT_TYPE_HERO) then
+                        if (IsUnitDummy(DESource) or IsUnitWard(DESource)) and not IsUnitType(DESource, UNIT_TYPE_HERO) then
                             set DESource = PlayerHeroes[DamagedEventSourcePlayerId]
                         else
                             set DESource = DESource
