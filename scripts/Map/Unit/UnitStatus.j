@@ -22,7 +22,7 @@ library UnitStatus
         return GetUnitAbilityLevel(whichUnit, 'BOhx')> 0 or GetUnitAbilityLevel(whichUnit, 'B00H')> 0
     endfunction
     // 该单位是否处于隐身状态
-    function IsUnitInvisible takes unit whichUnit returns boolean
+    function IsUnitCloaked takes unit whichUnit returns boolean
         return MHUnit_GetInvisionCount(whichUnit) > 0
     endfunction
     // 该单位是否处于沉默状态

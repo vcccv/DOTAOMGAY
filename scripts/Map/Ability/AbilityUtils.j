@@ -6,12 +6,16 @@ library AbilityUtils initializer Init requires Table, Base
         key ABILITY_ADD_KEY
         key ABILITY_REMOVE_KEY
     endglobals
-
-    function IsAbilityPassive takes integer abilId returns boolean
-        return MHGame_CheckInherit(abilId, 'APas')
+    
+    function IsUnitAbilityPassive takes unit whichUnit, integer abilId returns boolean
+        local integer baseId = MHAbility_GetBaseId(whichUnit, abilId)
+        if baseId == 0 then
+            return false
+        endif
+        return MHGame_CheckInherit(baseId, 'APas')
     endfunction
     
-    function UnitAbilityFromItem takes unit whichUnit, integer abilId returns boolean
+    function IsUnitAbilityFromItem takes unit whichUnit, integer abilId returns boolean
         return MHAbility_IsFlag(whichUnit, abilId, ABILITY_FLAG_FROM_ITEM)
     endfunction
 
