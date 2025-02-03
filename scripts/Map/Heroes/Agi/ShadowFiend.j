@@ -64,7 +64,7 @@ scope ShadowFiend
             if UnitAlive(targ) and IsUnitEnemy(sw.owner, GetOwningPlayer(targ)) and not IsUnitMagicImmune(targ) and not IsUnitInvulnerable(targ) and not IsUnitWard(targ) and not IsUnitStructure(targ) then
                 call UnitDamageTargetEx(sw.owner, targ, 1, thistype(sw).damage)
                 call DestroyEffect(AddSpecialEffect("Objects\\Spawnmodels\\Undead\\UndeadDissipate\\UndeadDissipate.mdl", sw.x, sw.y))
-                call CreateBuffByTemplate(targ, 'B04Q', 5., BUFF_TEMPLATE_BCRI)
+                call CreateBuffByTemplate(sw.owner, targ, 'B04Q', 5., BUFF_TEMPLATE_BCRI)
             endif
             return false
         endmethod

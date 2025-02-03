@@ -152,7 +152,7 @@ scope FacelessVoid
             set c = c + 1
             call SaveInteger(HY, h, 28, c)
             if GetUnitDistanceEx(whichUnit, d) < area then
-                call UnitAddBuffByPolarity(whichUnit, 'B0J1', level, 5., true, BUFF_LEVEL3)
+                call UnitAddBuffByPolarity(whichUnit, whichUnit, 'B0J1', level, 5., true, BUFF_LEVEL3)
                 call UpdateUnitNoLimitMoveSpeed(whichUnit)
             else
                 call UnitRemoveAbility(whichUnit, 'B0J1')

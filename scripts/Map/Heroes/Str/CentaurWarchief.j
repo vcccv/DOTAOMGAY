@@ -175,7 +175,7 @@ scope CentaurWarchief
 
                     if not IsUnitDummy(first) and UnitAlive(first) and not IsUnitWard(first) and not IsUnitCourier(first) and not IsUnitType(first, UNIT_TYPE_STRUCTURE) then
                         //
-                        call UnitAddBuffByPolarity(first, buffId, level, 3.75, true, BUFF_LEVEL3)
+                        call UnitAddBuffByPolarity(whichUnit, first, buffId, level, 3.75, true, BUFF_LEVEL3)
                         call TriggerRegisterDeathEvent(trig, first)
                         call GroupAddUnit(allyGroup, first)
 

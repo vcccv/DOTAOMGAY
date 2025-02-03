@@ -73,4 +73,60 @@ scope DeathProphet
         set whichUnit = null
     endfunction
 
+    //***************************************************************************
+    //*
+    //*  巫术精研
+    //*
+    //***************************************************************************
+    //function OnWitchcraftSetCooldown takes nothing returns nothing
+    //    local SimpleTick tick         = SimpleTick.GetExpired()
+    //    local unit       whichUnit
+    //    local ability    whichAbility
+//
+    //    set whichUnit    = SimpleTickTable[tick].ability['A']
+    //    set whichAbility = SimpleTickTable[tick].unit['U']
+//
+    //    if MHAbility_GetAbilityCooldown(whichAbility) > 0.5 then
+    //        call SetAbilityCooldownAbsolute(whichAbility, 0.5)
+    //    endif
+//
+    //    call tick.Destroy()
+//
+    //    set whichUnit = null
+    //    set whichAbility = null
+    //endfunction
+    //function OnWitchcraft takes unit u, ability a returns nothing
+    //    local SimpleTick tick = SimpleTick.CreateEx()
+//
+    //    call tick.Start(0., false, function OnWitchcraftSetCooldown)
+    //    set SimpleTickTable[tick].ability['A'] = a
+    //    set SimpleTickTable[tick].unit['U'] = u
+//
+    //    set t = null
+    //endfunction
+    function WitchcraftOnSpellEffect takes nothing returns nothing
+        local integer probability 
+        local unit 	  whichUnit    = GetTriggerUnit()
+        local ability whichAbility = GetSpellAbility()
+        local integer level    	   = GetUnitAbilityLevel(whichUnit, 'A02C')   
+        local integer id 	 	   = GetSpellAbilityId()	  
+        call BJDebugMsg("cooldown:"+R2S(MHAbility_GetAbilityCustomLevelDataReal(whichAbility, GetUnitAbilityLevel(whichUnit, id), ABILITY_LEVEL_DEF_DATA_COOLDOWN)))
+        if level != 0 and MHAbility_GetAbilityCustomLevelDataReal(whichAbility, GetUnitAbilityLevel(whichUnit, id), ABILITY_LEVEL_DEF_DATA_COOLDOWN) > 0.5 then
+            if IsUltimateSkill(id) then
+                set probability = level * 5 - 5
+            else
+                set probability = level * 5 + 5
+            endif
+            // X8R = 有效技能
+            if probability > 0 and not IsMetamorphosisSkill(id) and X8R(id) then
+                if GetUnitPseudoRandom(whichUnit, 'A02C', probability) or TEST_MODE then
+                    call SetAbilityCooldownAbsolute(whichAbility, 0.5)
+                    call CommonTextTag("傻了吧!爷还有!", 3.5, whichUnit, .03, 255, 0, 0, 255)
+                endif
+            endif
+        endif
+        set whichUnit    = null
+        set whichAbility = null
+    endfunction
+
 endscope

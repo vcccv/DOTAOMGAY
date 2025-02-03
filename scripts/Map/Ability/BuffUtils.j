@@ -9,7 +9,7 @@ library BuffUtils requires Table
     endglobals
 
     // positive为正面负面，polarity以后再说
-    function UnitAddBuffByPolarity takes unit whichUnit, integer buffId, integer level, real duration, boolean positive, integer polarity returns buff
+    function UnitAddBuffByPolarity takes unit source, unit target, integer buffId, integer level, real duration, boolean positive, integer polarity returns buff
         set Temp = MHBuff_Create(whichUnit, buffId, BUFF_TEMPLATE_BNAB, duration)
         call MHBuff_SetLevel(whichUnit, buffId, level)
         call MHBuff_SetPolarity(whichUnit, buffId, BUFF_POLARITY_POSITIVE, positive)
@@ -20,7 +20,7 @@ library BuffUtils requires Table
         return Temp
     endfunction
 
-    function CreateBuffByTemplate takes unit whichUnit, integer buffId, real duration, integer template returns buff
+    function CreateBuffByTemplate takes unit source, unit target, integer buffId, real duration, integer template returns buff
         return MHBuff_Create(whichUnit, buffId, template, duration)
     endfunction
 

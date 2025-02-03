@@ -72143,57 +72143,6 @@ function DLE takes nothing returns nothing
 	set u = null
 	set d = null
 endfunction
-function KCA takes nothing returns nothing
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit u = LoadUnitHandle(HY, h, 0)
-	local integer id = LoadInteger(HY, h, 0)
-	local timer tt = LoadTimerHandle(HY, h, 0)
-	if YDWEGetUnitAbilityState(u, id, 1) > 0.5 then
-		call Japi_SetUnitAbilityCoolDown1(u, id, 0.5)
-		call CommonTextTag("傻了吧!爷还有!", 3.5, u, .03, 255, 0, 0, 255)
-	endif
-	call DestroyTimer(tt)
-	call FlushChildHashtable(HY, h)
-	call DestroyTrigger(t)
-	set tt = null
-	set t = null
-endfunction
-function KDA takes unit u, integer id returns nothing
-	local trigger t = CreateTrigger()
-	local integer h = GetHandleId(t)
-	local timer tt = CreateTimer()
-	call TimerStart(tt, 0., false, null)
-	call SaveBoolean(HY, h, 0, true)
-	call TriggerRegisterTimerExpireEvent(t, tt)
-	call SaveTimerHandle(HY, h, 0, tt)
-	call TriggerAddCondition(t, Condition(function KCA))
-	call SaveUnitHandle(HY, h, 0, u)
-	call SaveInteger(HY, h, 0, id)
-	set t = null
-	set tt = null
-endfunction
-function WitchcraftOnSpellEffect takes nothing returns nothing
-	local integer probability 
-	local unit 	  whichUnit    = GetTriggerUnit()
-	local integer level    	   = GetUnitAbilityLevel(whichUnit, 'A02C')   
-	local integer id 		  
-	if level != 0 and MHAbility_GetAbilityCooldown(GetSpellAbility()) > 0.5 then
-		set id 		  = GetSpellAbilityId()
-		if IsUltimateSkill(id) then
-			set probability = level * 5 - 5
-		else
-			set probability = level * 5 + 5
-		endif
-		// X8R = 有效技能
-		if probability > 0 and not IsMetamorphosisSkill(id) and X8R(id) then
-			if GetUnitPseudoRandom(whichUnit, 'A02C', probability) or TEST_MODE then
-				call KDA(whichUnit, id)
-			endif
-		endif
-	endif
-	set whichUnit = null
-endfunction
 function KGA takes nothing returns nothing
 	local unit u = GetTriggerUnit()
 	if GetUnitTypeId(u)=='H00S' then
@@ -77075,7 +77024,6 @@ function OnHeroSpellEffect takes unit whichUnit, integer id returns nothing
 	// 查克拉魔法
 	if GetUnitAbilityLevel(whichUnit, 'B3DU') == 1 then
 		// 是物品技能就不减cd
-		call MHGame_CheckInherit(id, 'ANcl')
 		if not IsUnitAbilityFromItem(whichUnit, id) then
 			if GetUnitAbilityLevel(whichUnit, 'A3DU') == 1 then
 				set reduceCooldown = reduceCooldown + 2.
@@ -77093,7 +77041,7 @@ function OnHeroSpellEffect takes unit whichUnit, integer id returns nothing
 			call UnitRemoveAbility(whichUnit, 'B3DU')
 		endif
 		if reduceCooldown > 0. then
-			call ReduceUnitAbilityCooldown(whichUnit, id, reduceCooldown)
+			call ReduceAbilityCooldown(GetSpellAbility(), reduceCooldown)
 		endif
 	endif
 
