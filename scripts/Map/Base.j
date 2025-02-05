@@ -29,7 +29,7 @@ library Base requires TriggerDestroyQueue, GroupAlloc, ErrorMessage
         return h
     endfunction
 
-    function TriggerRegisterPlayerUnitEventBJ takes trigger t, playerunitevent whichEvent returns nothing
+    function TriggerRegisterAnyUnitEvent takes trigger t, playerunitevent whichEvent returns nothing
         local integer i = 0
         loop
             call TriggerRegisterPlayerUnitEvent(t, Player(i), whichEvent, null)

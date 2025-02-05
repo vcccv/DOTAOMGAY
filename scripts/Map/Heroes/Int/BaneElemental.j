@@ -91,7 +91,7 @@ scope BaneElemental
         call SaveUnitHandle(HY,(Y6R), 2,(R3O))
         call SavePlayerHandle(HY,(Y6R), 54,(GetOwningPlayer(R3O)))
         call SaveInteger(HY,(Y6R), 5,(GetUnitAbilityLevel(R3O,'A04Y')))
-        call TriggerRegisterPlayerUnitEventBJ(FPI, EVENT_PLAYER_UNIT_ATTACKED)
+        call TriggerRegisterAnyUnitEvent(FPI, EVENT_PLAYER_UNIT_ATTACKED)
         call TriggerRegisterTimerEvent(FPI, .1, true)
         call TriggerAddCondition(FPI, Condition(function FMI))
         if GetUnitAbilityLevel(R4O,'A04Y')> 0 then

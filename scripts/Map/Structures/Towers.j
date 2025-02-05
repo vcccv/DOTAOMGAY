@@ -214,7 +214,7 @@ scope Towers
             trigger SentinelTowersDeathTrig = null
         endglobals
         set SentinelTowersDeathTrig = CreateTrigger()
-        call TriggerRegisterPlayerUnitEventBJ(SentinelTowersDeathTrig, EVENT_PLAYER_UNIT_DEATH)
+        call TriggerRegisterAnyUnitEvent(SentinelTowersDeathTrig, EVENT_PLAYER_UNIT_DEATH)
         call TriggerAddCondition(SentinelTowersDeathTrig, Condition(function SentinelTowersDeathCondition))
         call TriggerAddAction(SentinelTowersDeathTrig, function SentinelTowersDeathAction)
     endfunction
@@ -353,7 +353,7 @@ scope Towers
             trigger ScourgeTowersDeathTrig = null
         endglobals
         set ScourgeTowersDeathTrig = CreateTrigger()
-        call TriggerRegisterPlayerUnitEventBJ(ScourgeTowersDeathTrig, EVENT_PLAYER_UNIT_DEATH)
+        call TriggerRegisterAnyUnitEvent(ScourgeTowersDeathTrig, EVENT_PLAYER_UNIT_DEATH)
         call TriggerAddCondition(ScourgeTowersDeathTrig, Condition(function ScourgeTowersDeathCondition))
         call TriggerAddAction(ScourgeTowersDeathTrig, function ScourgeTowersDeathAction)
     endfunction

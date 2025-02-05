@@ -5720,11 +5720,11 @@ function O8X takes nothing returns boolean
 		endloop
 	endif
 
-	// 如果单位有冲刺状态
-	if HaveSavedHandle(HY, GetHandleId(u),'A05C') then
-		// 变身后是地面单位 就重置碰撞类型和移动类型
-		call SetUnitPhaseMove( u, true )
-	endif
+	//// 如果单位有冲刺状态
+	//if HaveSavedHandle(HY, GetHandleId(u),'A05C') then
+	//	// 变身后是地面单位 就重置碰撞类型和移动类型
+	//	call SetUnitPhaseMove( u, true )
+	//endif
 
 	//if IsUnitType(u, UNIT_TYPE_MELEE_ATTACKER) then
 	//	if GetUnitAbilityLevel(u,'A1WE')> 0 then
@@ -5746,7 +5746,7 @@ function O8X takes nothing returns boolean
 	// 修正高度
 	call SetUnitFlyHeight(u, GetUnitDefaultFlyHeight(u), 0)
 	// 修正射程
-	call RefreshUnitRange(u)
+	call UpdateUnitAttackRangeBonus(u)
 	// 修正缩放
 	call SetUnitCurrentScaleEx(u, GetUnitCurrentScale(u))
 	// 修正颜色
@@ -8173,7 +8173,7 @@ endfunction
 function GQX takes unit u, integer id, integer GFX returns nothing
 	local trigger t = CreateTrigger()
 	local integer h = GetHandleId(t)
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
 	call TriggerRegisterUnitEvent(t, u, EVENT_UNIT_DEATH)
 	call TriggerAddCondition(t, Condition(function GPX))
 	call SaveUnitHandle(HY, h, 0, u)
@@ -9837,7 +9837,7 @@ function LLX takes nothing returns boolean
 endfunction
 function LMX takes nothing returns nothing
 	local trigger t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_HERO_SKILL)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_HERO_SKILL)
 	call TriggerAddCondition(t, Condition(function LLX))
 	set t = null
 endfunction
@@ -10207,7 +10207,7 @@ function MCX takes nothing returns nothing
 	endif
 	call UnitSetStateBonus(u, 0, UNIT_BONUS_ARMOR)
 	call FixUnitSkillsBug(u)
-	call RefreshUnitRange(u)
+	call UpdateUnitAttackRangeBonus(u)
 	set u = null
 endfunction
 
@@ -11801,7 +11801,7 @@ function TLX takes unit whichUnit, unit TMX returns nothing
 		set targetUnit =(PlayerHeroes[GetPlayerId(GetOwningPlayer((targetUnit)))])
 	endif
 	set dummyCaster = CreateUnit(GetOwningPlayer(whichUnit),'e00E', GetUnitX(targetUnit), GetUnitY(targetUnit), 0)
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SUMMON)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SUMMON)
 	call TriggerAddCondition(t, Condition(function TKX))
 	call SaveUnitHandle(HY, h, 2,(whichUnit))
 	call SaveUnitHandle(HY, h, 17,(targetUnit))
@@ -21039,7 +21039,7 @@ function D_O takes nothing returns nothing
 		call SaveUnitHandle(HY, h, 2,(whichUnit))
 		call SaveBoolean(HY, h, 671,(false))
 		call SaveEffectHandle(HY, h, 32,(AddSpecialEffectTarget("war3mapImported\\SmokeOfDeceit.mdx", whichUnit, "chest")))
-		call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ATTACKED)
+		call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ATTACKED)
 		call TriggerRegisterTimerEvent(t, .1, true)
 		call TriggerAddCondition(t, Condition(function DYO))
 		set t = null
@@ -25037,7 +25037,7 @@ function M4O takes nothing returns nothing
 	call SaveReal(HY, h, 6, GetUnitX(trigUnit)* 1.)
 	call SaveReal(HY, h, 7, GetUnitY(trigUnit)* 1.)
 	call TriggerRegisterTimerEvent(t, 1, true)
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
 	call TriggerAddCondition(t, Condition(function M3O))
 	set t = null
 	set trigUnit = null
@@ -25476,7 +25476,7 @@ function QNO takes nothing returns nothing
 		call DisplayTimedTextToForce(bj_FORCE_ALL_PLAYERS, 90., GetObjectName('n077'))
 		call DisplayTimedTextToForce(bj_FORCE_ALL_PLAYERS, 90., GetObjectName('n078'))
 		set t = CreateTrigger()
-		call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
+		call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
 		call TriggerAddAction(t, function QAO)
 	endif
 	set t = null
@@ -25833,7 +25833,7 @@ function SEO takes nothing returns boolean
 		call DeallocateGroup(g)
 		call TriggerAddCondition(t, Condition(function Q7O))
 		set t = CreateTrigger()
-		call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ATTACKED)
+		call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ATTACKED)
 		call TriggerAddCondition(t, Condition(function SVO))
 	endif
 	call DestroyTrigger(GetTriggeringTrigger())
@@ -36687,7 +36687,7 @@ function GLR takes nothing returns boolean
 		call SaveBoolean(HY, GetHandleId(trigUnit),'A1IQ'+ 183, true)
 		set t = CreateTrigger()
 		set h = GetHandleId(t)
-		call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ATTACKED)
+		call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ATTACKED)
 		call TriggerRegisterDeathEvent(t, trigUnit)
 		call TriggerAddCondition(t, Condition(function GKR))
 		call SaveUnitHandle(HY, h, 182, trigUnit)
@@ -36900,7 +36900,7 @@ function Y5V takes nothing returns nothing
 	local integer level = GetUnitAbilityLevel(whichUnit, GetSpellAbilityId())
 	call EPX(whichUnit, 2488, 1.25 -0.25 * level -0.01)
 	call TriggerRegisterTimerEvent(t, 10+ 5 * level, false)
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ATTACKED)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ATTACKED)
 	call TriggerRegisterUnitEvent(t, whichUnit, EVENT_UNIT_SPELL_CAST)
 	call TriggerRegisterDeathEvent(t, whichUnit)
 	call TriggerRegisterTimerEvent(t, 0, false)
@@ -38893,7 +38893,7 @@ function LGR takes nothing returns nothing
 		call TriggerRegisterTimerEvent(t, .1, true)
 		call SaveUnitHandle(HY, h, 0, targetUnit)
 		call SaveTriggerHandle(ObjectHashTable, GetHandleId(targetUnit),'A2X9', t)
-		call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_DEATH)
+		call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_DEATH)
 		call TriggerAddCondition(t, Condition(function LDR))
 		call TriggerRegisterUnitEvent(t, targetUnit, EVENT_UNIT_DAMAGED)
 		call SaveReal(HY, GetHandleId(targetUnit),'A2X9', LHR)
@@ -39364,7 +39364,7 @@ function MER takes nothing returns nothing
 	endif
 	call SaveEffectHandle(HY, h, 200,(AddSpecialEffectTarget(fx, whichUnit, "right hand")))
 	call SaveEffectHandle(HY, h, 201,(AddSpecialEffectTarget(fx, whichUnit, "left hand")))
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ATTACKED)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ATTACKED)
 	call TriggerAddCondition(t, Condition(function MVR))
 	call SaveUnitHandle(HY,(GetHandleId(t)), 2,(whichUnit))
 	set t = null
@@ -40359,7 +40359,7 @@ function Kaolin_Stones_Summon takes nothing returns boolean
 endfunction
 function MGX takes nothing returns nothing
 	local trigger t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_DEATH)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_DEATH)
 	call TriggerAddCondition(t, Condition(function P5R))
 	set t = null
 endfunction
@@ -41197,7 +41197,7 @@ function SLR takes nothing returns boolean
 endfunction
 function MLX takes nothing returns nothing
 	local trigger t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
 	call TriggerAddCondition(t, Condition(function SLR))
 	set t = null
 endfunction
@@ -41323,8 +41323,8 @@ function S0R takes nothing returns boolean
 endfunction
 function MMX takes nothing returns nothing
 	local trigger t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ATTACKED)
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ATTACKED)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
 	call TriggerAddCondition(t, Condition(function S0R))
 	call TriggerAddAction(t, function S_R)
 	set t = null
@@ -41711,9 +41711,9 @@ function Z5V takes nothing returns nothing
 	call TriggerRegisterTimerEvent(t, .05, true)
 	call TriggerAddCondition(t, Condition(function TKR))
 	
-	call TriggerRegisterPlayerUnitEventBJ(tt, EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER)
-	call TriggerRegisterPlayerUnitEventBJ(tt, EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER)
-	call TriggerRegisterPlayerUnitEventBJ(tt, EVENT_PLAYER_UNIT_ISSUED_ORDER)
+	call TriggerRegisterAnyUnitEvent(tt, EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER)
+	call TriggerRegisterAnyUnitEvent(tt, EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER)
+	call TriggerRegisterAnyUnitEvent(tt, EVENT_PLAYER_UNIT_ISSUED_ORDER)
 	call TriggerAddCondition(tt, Condition(function BlackHoleSealed))
 	
 	set whichUnit = null
@@ -42784,7 +42784,7 @@ function WLR takes nothing returns nothing
 endfunction
 function MQX takes nothing returns nothing
 	local trigger t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SUMMON)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SUMMON)
 	call TriggerAddCondition(t, Condition(function WKR))
 	call TriggerAddAction(t, function WLR)
 	set t = null
@@ -44281,7 +44281,7 @@ endfunction
 function MTX takes nothing returns nothing
 	local trigger t
 	set t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SUMMON)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SUMMON)
 	call TriggerAddCondition(t, Condition(function Z7R))
 	call TriggerAddAction(t, function Z8R)
 	set t = null
@@ -45270,10 +45270,10 @@ function EYI takes nothing returns boolean
 endfunction
 function MUX takes nothing returns nothing
 	local trigger t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER)
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER)
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ISSUED_ORDER)
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ISSUED_ORDER)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
 	call TriggerAddCondition(t, Condition(function EYI))
 	set t = null
 endfunction
@@ -45584,10 +45584,10 @@ function E2I takes nothing returns boolean
 endfunction
 function MWX takes nothing returns nothing
 	local trigger t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER)
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER)
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ISSUED_ORDER)
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ISSUED_ORDER)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
 	call TriggerAddCondition(t, Condition(function E2I))
 	set t = null
 endfunction
@@ -47280,7 +47280,7 @@ function LTE takes nothing returns nothing
 	call TriggerRegisterTimerEvent(t, .2, true)
 	call SaveUnitHandle(ObjectHashTable, h, 0, u)
 	call SaveBoolean(OtherHashTable, GetHandleId(u), 23, true)
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ATTACKED)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ATTACKED)
 	call TriggerRegisterUnitEvent(t, u, EVENT_UNIT_SPELL_CAST)
 	call TriggerAddCondition(t, Condition(function RDI))
 	set u = null
@@ -47856,7 +47856,7 @@ endfunction
 
 function M1X takes nothing returns nothing
 	local trigger t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
 	call TriggerAddCondition(t, Condition(function R8I))
 	set t = null
 endfunction
@@ -48593,7 +48593,7 @@ function API takes nothing returns nothing
 endfunction
 function M2X takes nothing returns nothing
 	local trigger t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SUMMON)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SUMMON)
 	call TriggerAddCondition(t, Condition(function API))
 	call CJX("Units\\Creeps\\GoblinSapper\\GoblinSapperYesAttack1.wav")
 	set t = null
@@ -49285,7 +49285,7 @@ function PPE takes nothing returns nothing
 	if GetUnitAbilityLevel(whichUnit,'A19Q') == 1 then
 		set t = CreateTrigger()
 		call TriggerRegisterUnitEvent(t, whichUnit, EVENT_UNIT_ATTACKED)
-		call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
+		call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
 		call SaveUnitHandle(HY, GetHandleId(t), 0, whichUnit)
 		call TriggerAddCondition(t, Condition(function NQI))
 		call UnitAddStateBonus(GetTriggerUnit(), 1, UNIT_BONUS_ARMOR)
@@ -50510,7 +50510,7 @@ function M_E takes nothing returns nothing
 	call TriggerAddCondition(t, Condition(function CJI))
 	call SaveInteger(HY,(GetHandleId(trigUnit)), 352, 0)
 	set t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ATTACKED)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ATTACKED)
 	call TriggerRegisterDeathEvent(t, trigUnit)
 	call TriggerAddCondition(t, Condition(function CKI))
 	call SaveUnitHandle(HY,(GetHandleId(t)), 14,(trigUnit))
@@ -50636,7 +50636,7 @@ function XGE takes nothing returns nothing
 	local integer h = GetHandleId(t)
 	call DestroyEffect(AddSpecialEffectTarget("effects\\PurpleAura.mdx", trigUnit, "origin"))
 	call A5X(Y0, GetUnitX(trigUnit), GetUnitY(trigUnit))
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ATTACKED)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ATTACKED)
 	call TriggerRegisterDeathEvent(t, trigUnit)
 	call TriggerRegisterUnitEvent(t, trigUnit, EVENT_UNIT_SPELL_CAST)
 	call TriggerRegisterUnitEvent(t, trigUnit, EVENT_UNIT_ISSUED_TARGET_ORDER)
@@ -51009,7 +51009,7 @@ function XKE takes nothing returns nothing
 endfunction
 function PSX takes nothing returns nothing
 	local trigger t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_ENDCAST)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SPELL_ENDCAST)
 	call TriggerAddCondition(t, Condition(function DNI))
 	set t = null
 endfunction
@@ -51108,7 +51108,7 @@ function DCI takes nothing returns nothing
 	call SaveInteger(HY, h, 361, 0)
 	call SaveTriggerHandle(HY, l__K, 'trig', trg)
 	call TriggerRegisterTimerEvent(trg, 20, false)
-	call TriggerRegisterPlayerUnitEventBJ(trg, EVENT_PLAYER_UNIT_ATTACKED)
+	call TriggerRegisterAnyUnitEvent(trg, EVENT_PLAYER_UNIT_ATTACKED)
 	call TriggerRegisterUnitEvent(trg, targetUnit, EVENT_UNIT_DAMAGED)
 	call TriggerRegisterDeathEvent(trg, whichUnit)
 	call TriggerRegisterDeathEvent(trg, targetUnit)
@@ -51664,9 +51664,9 @@ function D8I takes nothing returns nothing
 	call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Demon\\ReviveDemon\\ReviveDemon.mdl", targetUnit, "overhead"))
 	call UnitAddPermanentAbility(targetUnit,'A1W2')
 	call TriggerRegisterTimerEvent(t, 1, true)
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_DEATH)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_DEATH)
 	call TriggerRegisterUnitEvent(t, whichUnit, EVENT_UNIT_SPELL_EFFECT)
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
 	call TriggerAddCondition(t, Condition(function D7I))
 	call SaveUnitHandle(HY, h, 2,(whichUnit))
 	call SaveUnitHandle(HY, h, 17,(targetUnit))
@@ -51822,9 +51822,9 @@ function XWE takes nothing returns nothing
 	call SaveInteger(HY, h, 34, 0)
 	call TriggerRegisterTimerEvent(t, .2, true)
 	call TriggerRegisterDeathEvent(t, trigUnit)
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER)
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER)
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ISSUED_ORDER)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ISSUED_ORDER)
 	call TriggerAddCondition(t, Condition(function FAI))
 	set t = null
 	set g = null
@@ -52005,7 +52005,7 @@ function FZI takes nothing returns boolean
 endfunction
 function M4X takes nothing returns nothing
 	local trigger t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ISSUED_ORDER)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ISSUED_ORDER)
 	call TriggerAddCondition(t, Condition(function FZI))
 	set t = null
 endfunction
@@ -53417,7 +53417,7 @@ function P5E takes nothing returns nothing
 	local trigger t
 	if (level == 1) then
 		set t = CreateTrigger()
-		call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
+		call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
 		call TriggerAddCondition(t, Condition(function JCI))
 		call TriggerAddAction(t, function JFI)
 		call SaveUnitHandle(HY, GetHandleId(t), 254, u)
@@ -53489,7 +53489,7 @@ function JYI takes nothing returns boolean
 		call DestroyTrigger(t)
 	else
 		if count == 1 then
-			call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
+			call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
 		endif
 		set count = count + 1
 		call SaveInteger(HY, h, 34, count)
@@ -53908,12 +53908,12 @@ function LearnSkill__DrunkenBrawler takes nothing returns nothing
 	call EnableAttackEffectByTime(1, 0)
 	// 被攻击和 主动法球 - 闪避
 	call TriggerRegisterUnitEvent(t, u, EVENT_UNIT_ATTACKED)
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
 	call TriggerAddCondition(t, Condition(function KBI))
 	call SaveUnitHandle(HY, GetHandleId(t), 0, u)
 	// 攻击 - 暴击
 	set t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ATTACKED)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ATTACKED)
 	call TriggerAddCondition(t, Condition(function KCI))
 	call SaveUnitHandle(HY, GetHandleId(t), 0, u)
 	call TimerStart(tt, 1, true, function KDI)
@@ -54691,7 +54691,7 @@ function L0I takes nothing returns boolean
 endfunction
 function L1I takes unit whichUnit returns nothing
 	local trigger t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ATTACKED)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ATTACKED)
 	call TriggerRegisterUnitEvent(t, whichUnit, EVENT_UNIT_SPELL_EFFECT)
 	call TriggerRegisterUnitEvent(t, whichUnit, EVENT_UNIT_ISSUED_ORDER)
 	call TriggerAddCondition(t, Condition(function L0I))
@@ -57305,8 +57305,8 @@ function T6I takes unit whichUnit returns nothing
 	call SavePlayerHandle(HY,(GetHandleId(t)), 370,(GetOwningPlayer(whichUnit)))
 	call SaveTriggerHandle(HY,(GetHandleId(GetOwningPlayer(whichUnit))), 372,(t))
 	set t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_PICKUP_ITEM)
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_DROP_ITEM)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_PICKUP_ITEM)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_DROP_ITEM)
 	call TriggerAddAction(t, function S1I)
 	call TriggerAddCondition(t, Condition(function SLI))
 	call SaveTriggerHandle(HY,(GetHandleId(GetOwningPlayer(whichUnit))), 369,(t))
@@ -57368,7 +57368,7 @@ function L3I takes nothing returns nothing
 	set L3V = CreateTrigger()
 	set L4V = L3V
 	set h = GetHandleId(L3V)
-	call TriggerRegisterPlayerUnitEventBJ(L3V, EVENT_PLAYER_HERO_SKILL)
+	call TriggerRegisterAnyUnitEvent(L3V, EVENT_PLAYER_HERO_SKILL)
 	call TriggerAddCondition(L3V, Condition(function T8I))
 	call SaveUnitHandle(HY, h, 2,(whichUnit))
 	set whichUnit = null
@@ -60159,7 +60159,7 @@ function Z6I takes unit u, unit targetUnit returns nothing
 		call UnitAddPermanentAbility(u,'A1CO')
 		call WPE(u, targetUnit)
 		call TriggerRegisterTimerEvent(t, 3, false)
-		call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ATTACKED)
+		call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ATTACKED)
 		call TriggerRegisterDeathEvent(t, u)
 		call TriggerRegisterDeathEvent(t, targetUnit)
 		call TriggerAddCondition(t, Condition(function Z5I))
@@ -60719,7 +60719,7 @@ function L0E takes nothing returns nothing
 		return
 	endif
 	set trig = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(trig, EVENT_PLAYER_UNIT_DEATH)
+	call TriggerRegisterAnyUnitEvent(trig, EVENT_PLAYER_UNIT_DEATH)
 	call TriggerAddCondition(trig, Condition(function VWA))
 	call SaveBoolean(ObjectHashTable,'AIcd', 0, true)
 	set trig = null
@@ -61419,7 +61419,7 @@ function MWE takes nothing returns nothing
 	local unit whichUnit = GetTriggerUnit()
 	local trigger t = CreateTrigger()
 	local integer h = GetHandleId(t)
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
 	call TriggerAddCondition(t, Condition(function EWA))
 	call SaveUnitHandle(HY, h, 2,(whichUnit))
 	set whichUnit = null
@@ -61869,7 +61869,7 @@ function XBA takes nothing returns boolean
 endfunction
 function M8X takes nothing returns nothing
 	local trigger t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_FINISH)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SPELL_FINISH)
 	call TriggerAddCondition(t, Condition(function XBA))
 	call AddAbilityIDToPreloadQueue('A17B')
 	set t = null
@@ -62413,7 +62413,7 @@ function MPE takes nothing returns nothing
 endfunction
 function PAX takes nothing returns nothing
 	local trigger t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SUMMON)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SUMMON)
 	call TriggerAddCondition(t, Condition(function OGA))
 	call TriggerAddAction(t, function OHA)
 	call CreateSound("Abilities\\Spells\\Other\\ANsa\\SacrificeUnit.wav", false, false, false, 10, 10, "DefaultEAXON")
@@ -64009,7 +64009,7 @@ function IZA takes nothing returns nothing
 endfunction
 function M9X takes nothing returns nothing
 	local trigger t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SUMMON)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SUMMON)
 	call TriggerAddCondition(t, Condition(function IZA))
 	set t = null
 	set XO = Rect( -1104,-7248, -1474,-6668)
@@ -64628,7 +64628,7 @@ function N0E takes nothing returns nothing
 	call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Undead\\RaiseSkeletonWarrior\\RaiseSkeleton.mdl", AMA, "origin"))
 	set t = CreateTrigger()
 	set h = GetHandleId(t)
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ATTACKED)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ATTACKED)
 	call TriggerRegisterTimerEvent(t, 1, true)
 	call TriggerRegisterDeathEvent(t, ALA)
 	call TriggerAddCondition(t, Condition(function AJA))
@@ -64639,7 +64639,7 @@ function N0E takes nothing returns nothing
 	call AFA(ALA, 7, level)
 	set t = CreateTrigger()
 	set h = GetHandleId(t)
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ATTACKED)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ATTACKED)
 	call TriggerRegisterTimerEvent(t, 1, true)
 	call TriggerRegisterDeathEvent(t, AMA)
 	call TriggerAddCondition(t, Condition(function AJA))
@@ -64660,7 +64660,7 @@ function N0E takes nothing returns nothing
 		call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Undead\\RaiseSkeletonWarrior\\RaiseSkeleton.mdl", APA, "origin"))
 		set t = CreateTrigger()
 		set h = GetHandleId(t)
-		call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ATTACKED)
+		call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ATTACKED)
 		call TriggerRegisterTimerEvent(t, 1, true)
 		call TriggerRegisterDeathEvent(t, APA)
 		call TriggerAddCondition(t, Condition(function AJA))
@@ -64690,7 +64690,7 @@ function AQA takes nothing returns boolean
 endfunction
 function PEX takes nothing returns nothing
 	local trigger t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
 	call TriggerAddCondition(t, Condition(function AQA))
 	set t = null
 endfunction
@@ -66025,7 +66025,7 @@ function BSA takes nothing returns boolean
 endfunction
 function PNX takes nothing returns nothing
 	local trigger t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SUMMON)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SUMMON)
 	call TriggerAddCondition(t, Condition(function BSA))
 	set t = null
 endfunction
@@ -66505,7 +66505,7 @@ function BDE takes nothing returns nothing
 	call TriggerRegisterTimerEvent(t, .02, true)
 	call SaveInteger(HY, h, 0, GetUnitAbilityLevel(whichUnit, GetSpellAbilityId()))
 	call SaveInteger(HY, h, 1, GetSpellAbilityId())
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
 	call TriggerRegisterDeathEvent(t, whichUnit)
 	call TriggerAddCondition(t, Condition(function B8A))
 	call SetUnitColor(missileDummy, GetPlayerColor(Player( 14)))
@@ -66589,7 +66589,7 @@ function T7G takes nothing returns nothing
 	call SaveInteger(HY, h, 5, level)
 	call TriggerRegisterTimerEvent(t, 30, false)
 	call TriggerRegisterDeathEvent(t, targetUnit)
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ATTACKED)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ATTACKED)
 	call TriggerAddCondition(t, Condition(function COA))
 	set whichUnit = null
 	set targetUnit = null
@@ -66876,7 +66876,7 @@ function CHA takes nothing returns nothing
 endfunction
 function PLX takes nothing returns nothing
 	local trigger t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_CAST)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SPELL_CAST)
 	call TriggerAddCondition(t, Condition(function CHA))
 	set t = null
 endfunction
@@ -69024,7 +69024,7 @@ function C8E takes nothing returns nothing
 	call UnitMakeAbilityPermanent(whichUnit, true,'A1TW')
 	call TriggerRegisterTimerEvent(t, 15, false)
 	call TriggerRegisterDeathEvent(t, whichUnit)
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ATTACKED)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ATTACKED)
 	call TriggerAddCondition(t, Condition(function F3A))
 	call SaveUnitHandle(HY, h, 2, whichUnit)
 	call SaveInteger(HY, h, 34, 1)
@@ -70561,7 +70561,7 @@ function HUA takes nothing returns boolean
 		call TriggerRegisterTimerEvent(t2, 0, false)
 		call TriggerRegisterTimerEvent(t2, 2, false)
 		call TriggerRegisterUnitEvent(t2, target, EVENT_UNIT_DAMAGED)
-		call TriggerRegisterPlayerUnitEventBJ(t2, EVENT_PLAYER_UNIT_ATTACKED)
+		call TriggerRegisterAnyUnitEvent(t2, EVENT_PLAYER_UNIT_ATTACKED)
 		call TriggerAddCondition(t2, Condition(function HSA))
 		call SaveUnitHandle(HY, h2, 2, u)
 		call SaveUnitHandle(HY, h2, 17, target)
@@ -70581,7 +70581,7 @@ function DCE takes nothing returns nothing
 	local unit u = GetTriggerUnit()
 	local trigger t = CreateTrigger()
 	local integer h = GetHandleId(t)
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ATTACKED)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ATTACKED)
 	call TriggerRegisterTimerEvent(t, 10, false)
 	call TriggerAddCondition(t, Condition(function HUA))
 	call SaveUnitHandle(HY, h, 2, u)
@@ -70939,7 +70939,7 @@ function JIA takes nothing returns boolean
 endfunction
 function P_X takes nothing returns nothing
 	local trigger t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SUMMON)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SUMMON)
 	call TriggerAddCondition(t, Condition(function JIA))
 	set t = null
 endfunction
@@ -71067,7 +71067,7 @@ function PrimalSplitCondition takes nothing returns boolean
 endfunction
 function CreatePrimalSplitTrigger takes nothing returns nothing
 	local trigger t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SUMMON)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SUMMON)
 	call TriggerAddCondition(t, Condition(function PrimalSplitCondition))
 	set t = null
 endfunction
@@ -71678,7 +71678,7 @@ function KOA takes nothing returns nothing
 endfunction
 function P2X takes nothing returns nothing
 	local trigger t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
 	call TriggerAddCondition(t, Condition(function J0A))
 	set t = null
 	call KOA()
@@ -71980,7 +71980,7 @@ function LCE takes nothing returns nothing
 endfunction
 function P3X takes nothing returns nothing
 	local trigger t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SUMMON)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SUMMON)
 	call TriggerAddCondition(t, Condition(function K1A))
 	set t = null
 endfunction
@@ -74064,41 +74064,41 @@ function CreateLodTrigger takes nothing returns nothing
 
 	// 等级上限
 	set t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_HERO_LEVEL)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_HERO_LEVEL)
 	call TriggerAddAction(t, function Y9E)
 
 	// 选择技能
 	set t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
 	call TriggerAddAction(t, function RDR)
 
 	// 取消技能
 	set t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
 	call TriggerAddAction(t, function RCR)
 
 	// 禁止选择技能马甲释放技能
 	set t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ISSUED_ORDER)
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER)
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ISSUED_ORDER)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER)
 	call TriggerAddAction(t, function YAE)
 
 	// 英雄升级时增加技能
 	set t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_HERO_LEVEL)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_HERO_LEVEL)
 	call TriggerAddAction(t, function HeroLevelUp)
 
 	if LOD_DEBUGMODE then
 		// debug Order
 		set t = CreateTrigger()
-		call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER)
-		call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER)
-		call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ISSUED_ORDER)
+		call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER)
+		call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER)
+		call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ISSUED_ORDER)
 		call TriggerAddAction(t, function T4E)
 		// debug skillName
 		set t = CreateTrigger()
-		call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
+		call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
 		call TriggerAddAction(t, function T3E)
 		// debg unitName
 		set t = CreateTrigger()
@@ -75082,7 +75082,7 @@ function QMA takes unit u returns nothing
 	local integer h = GetHandleId(t)
 	call TriggerRegisterDeathEvent(t, u)
 	call TriggerRegisterUnitEvent(t, u, EVENT_UNIT_SPELL_EFFECT)
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ATTACKED)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ATTACKED)
 	call TriggerRegisterTimerEvent(t, .1, true)
 	call L6X(u)
 	call SetAllPlayerAbilityUnavailable('A38T')
@@ -76286,8 +76286,8 @@ function RegisterOtherEvent takes unit whichUnit returns nothing
 	// 给英雄注册变身事件
 	set trig = CreateTrigger()
 	//call TriggerRegisterUnitEvent(trig, u, EVENT_UNIT_SPELL_ENDCAST)
-	call TriggerRegisterUnitEvent(trig, whichUnit, EVENT_UNIT_SPELL_EFFECT)
-	call TriggerAddCondition(trig, Condition(function RVX))
+	// call TriggerRegisterUnitEvent(trig, whichUnit, EVENT_UNIT_SPELL_EFFECT)
+	// call TriggerAddCondition(trig, Condition(function RVX))
 	call SaveUnitHandle(HY, GetHandleId(trig), 0, whichUnit)
 	set i = 1
 	loop
@@ -83257,6 +83257,7 @@ function main takes nothing returns nothing
 	call ExecuteFunc("SpecialPassiveAbility_Init")
 	call UnitRemove_Init()
 	call UnitAbility_Init()
+	call UnitMorph_Init()
 
 	set LocalPlayer   = GetLocalPlayer()
 	set LocalPlayerId = GetPlayerId(LocalPlayer)
@@ -83474,14 +83475,14 @@ function main takes nothing returns nothing
 		call TriggerAddAction(t, function LUX)
 	endif
 	set t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_HERO_REVIVE_FINISH)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_HERO_REVIVE_FINISH)
 	call TriggerAddAction(t, function MCX)
 	set hChooseHeroTrigger = CreateTrigger()
 	// 选择的英雄入场
 	//call YDWETriggerRegisterEnterRectSimpleNull(hChooseHeroTrigger, GetWorldBounds())
 	// call TriggerAddCondition(hChooseHeroTrigger, Condition(function PlayerChooseHeroUnit))
 	set t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SELL)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SELL)
 	call TriggerAddAction(t, function Q9X)
 	call TriggerAddCondition(t, Condition(function Q8X))
 
@@ -83510,7 +83511,7 @@ function main takes nothing returns nothing
 	call SetResourceBarTime(0, 0, false)
 	set t = CreateTrigger()
 	call TriggerRegisterTimerEvent(t, .5, true)
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SELL)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SELL)
 	call TriggerAddCondition(t, Condition(function SRX))
 
 	set XVV = CreateTrigger()
@@ -83540,19 +83541,19 @@ function main takes nothing returns nothing
 	call TriggerAddCondition(RuneRefreshTrigger, Condition(function RuneRefresh__CallBack))
 
 	set t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SELL)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SELL)
 	call TriggerAddCondition(t, Condition(function XFO))
 
 	set CUV = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(CUV, EVENT_PLAYER_UNIT_PICKUP_ITEM)
-	call TriggerRegisterPlayerUnitEventBJ(CUV, EVENT_PLAYER_UNIT_DROP_ITEM)
-	call TriggerRegisterPlayerUnitEventBJ(CUV, EVENT_PLAYER_UNIT_PAWN_ITEM)
+	call TriggerRegisterAnyUnitEvent(CUV, EVENT_PLAYER_UNIT_PICKUP_ITEM)
+	call TriggerRegisterAnyUnitEvent(CUV, EVENT_PLAYER_UNIT_DROP_ITEM)
+	call TriggerRegisterAnyUnitEvent(CUV, EVENT_PLAYER_UNIT_PAWN_ITEM)
 	call TriggerAddCondition(CUV, Condition(function OMO))
 
 	set C3V = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(C3V, EVENT_PLAYER_UNIT_PICKUP_ITEM)
-	call TriggerRegisterPlayerUnitEventBJ(C3V, EVENT_PLAYER_UNIT_DROP_ITEM)
-	call TriggerRegisterPlayerUnitEventBJ(C3V, EVENT_PLAYER_UNIT_PAWN_ITEM)
+	call TriggerRegisterAnyUnitEvent(C3V, EVENT_PLAYER_UNIT_PICKUP_ITEM)
+	call TriggerRegisterAnyUnitEvent(C3V, EVENT_PLAYER_UNIT_DROP_ITEM)
+	call TriggerRegisterAnyUnitEvent(C3V, EVENT_PLAYER_UNIT_PAWN_ITEM)
 	call TriggerAddCondition(C3V, Condition(function RJO))
 
 	// 物品拆分
@@ -83572,7 +83573,7 @@ function main takes nothing returns nothing
 
 	// 自动选择召唤物 可能有点多余
 	set t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SUMMON)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SUMMON)
 	call TriggerAddAction(t, function R5O)
 	call TriggerAddCondition(t, null)
 
@@ -83583,20 +83584,20 @@ function main takes nothing returns nothing
 	
 	// 增加移动速度 - 物品
 	set t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_PICKUP_ITEM)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_PICKUP_ITEM)
 	call TriggerAddCondition(t, Condition(function I9O))
 	set t = CreateTrigger()
 	// 减少移动速度 - 物品
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_DROP_ITEM)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_DROP_ITEM)
 	call TriggerAddCondition(t, Condition(function I7O))
 
 	set t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_PICKUP_ITEM)
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_DROP_ITEM)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_PICKUP_ITEM)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_DROP_ITEM)
 	call TriggerAddCondition(t, Condition(function ARO))
 
 	set t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_PICKUP_ITEM)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_PICKUP_ITEM)
 	call TriggerAddCondition(t, Condition(function ANO))
 
 	set t = CreateTrigger()	// 添加林肯
@@ -83604,15 +83605,15 @@ function main takes nothing returns nothing
 	call TriggerAddCondition(t, Condition(function AHO))
 
 	set t = CreateTrigger() // 其他的一些拾取物品
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_PICKUP_ITEM)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_PICKUP_ITEM)
 	call TriggerAddCondition(t, Condition(function NQO))
 
 	set t = CreateTrigger() // 魔棒 -wtf 
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
 	call TriggerAddCondition(t, Condition(function FSO))
 
 	set t = CreateTrigger() // 常用的使用物品触发器
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_USE_ITEM)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_USE_ITEM)
 	call TriggerAddCondition(t, Condition(function F9O))
 
 	// 初始化肉山
@@ -83692,10 +83693,10 @@ function main takes nothing returns nothing
 	call TriggerAddAction(SpawnAttackCreepTrigger, function SpawnAttackCreepAction)
 
 	set SentinelSuperCreepCheckTrig = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(SentinelSuperCreepCheckTrig, EVENT_PLAYER_UNIT_DEATH)
+	call TriggerRegisterAnyUnitEvent(SentinelSuperCreepCheckTrig, EVENT_PLAYER_UNIT_DEATH)
 	call TriggerAddCondition(SentinelSuperCreepCheckTrig, Condition(function SentinelSuperCreepCheckAction))
 	set ScourgeSuperCreepCheckTrig = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(ScourgeSuperCreepCheckTrig, EVENT_PLAYER_UNIT_DEATH)
+	call TriggerRegisterAnyUnitEvent(ScourgeSuperCreepCheckTrig, EVENT_PLAYER_UNIT_DEATH)
 	call TriggerAddCondition(ScourgeSuperCreepCheckTrig, Condition(function ScourgeSuperCreepCheckAction))
 
 	set CreepUpgerTrig = CreateTrigger()
@@ -83738,10 +83739,10 @@ function main takes nothing returns nothing
 	call DestroyFogModifier(CreateFogModifierRect(SentinelPlayers[0], FOG_OF_WAR_VISIBLE, bj_mapInitialPlayableArea, true, true))
 	call DestroyFogModifier(CreateFogModifierRect(ScourgePlayers[0], FOG_OF_WAR_VISIBLE, bj_mapInitialPlayableArea, true, true))
 	set t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ATTACKED)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ATTACKED)
 	call TriggerAddCondition(t, Condition(function M2O))
 	set t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
 	call TriggerAddCondition(t, Condition(function M6O))
 	set FKV = CreateTrigger()
 	call TriggerAddAction(FKV, function PVO)
@@ -83890,12 +83891,12 @@ function main takes nothing returns nothing
 
 	// 单位改变所属时 删除图b鉴定技能 防止选取后暴毙
 	set t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_CHANGE_OWNER)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_CHANGE_OWNER)
 	call TriggerAddCondition(t, Condition(function SLO))
 	
 	set t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_PICKUP_ITEM)
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SUMMON)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_PICKUP_ITEM)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SUMMON)
 	call TriggerAddCondition(t, Condition(function YTA))
 
 	if bj_isSinglePlayer and(PlayersName[1]== "df" or PlayersName[2]== "df" or PlayersName[3]== "df" or PlayersName[4]== "df" or PlayersName[5]== "df" or PlayersName[6]== "df" or PlayersName[8]== "df" or PlayersName[7]== "df" or PlayersName[8]== "df" or PlayersName[9]== "df" or PlayersName[10]== "df" or PlayersName[11]== "df") then
@@ -83918,10 +83919,10 @@ function main takes nothing returns nothing
 
 	// 最后施法信息
 	set t = CreateTrigger()
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_CAST)
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_CHANNEL)
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
-	call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SPELL_ENDCAST)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SPELL_CAST)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SPELL_CHANNEL)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
+	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SPELL_ENDCAST)
 	call TriggerAddCondition(t, Condition(function LastSpellStateCondition))
 	
 	set t = null

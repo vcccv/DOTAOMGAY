@@ -147,8 +147,8 @@ scope Merchants
         call CreateScourgeMerchants()
 
         set t = CreateTrigger()
-        call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_DESELECTED)
-        call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SELECTED  )
+        call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_DESELECTED)
+        call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SELECTED  )
         call TriggerAddCondition(t, Condition(function SelectedMerchantsUnitAction))
     endfunction
 

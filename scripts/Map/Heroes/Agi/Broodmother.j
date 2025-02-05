@@ -68,7 +68,7 @@ scope Broodmother
     endfunction
     function M5X takes nothing returns nothing
         local trigger t = CreateTrigger()
-        call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SUMMON)
+        call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SUMMON)
         call TriggerAddCondition(t, Condition(function HBI))
         call TriggerAddAction(t, function HCI)
         set t = null

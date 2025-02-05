@@ -52,7 +52,7 @@ library UnitWeapon requires Base, UnitUtils
         return LoadReal(UnitDataHashTable, GetHandleId(whichUnit), UNIT_BONUS_RANGE)
     endfunction
 
-    function RefreshUnitRange takes unit whichUnit returns nothing
+    function UpdateUnitAttackRangeBonus takes unit whichUnit returns nothing
         local real bonusRange = GetUnitBonusRange(whichUnit, false)
         if IsUnitType(whichUnit, UNIT_TYPE_RANGED_ATTACKER) then
             set bonusRange = bonusRange + GetUnitBonusRange(whichUnit, true)
@@ -69,7 +69,7 @@ library UnitWeapon requires Base, UnitUtils
         else
             call SaveReal(UnitDataHashTable, GetHandleId(whichUnit), UNIT_BONUS_RANGE, newValue)
         endif
-        call RefreshUnitRange(whichUnit)
+        call UpdateUnitAttackRangeBonus(whichUnit)
     endfunction
 
 endlibrary

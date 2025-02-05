@@ -52,7 +52,7 @@ scope ShadowDemon
             set t = CreateTrigger()
             set h = GetHandleId(t)
             call TriggerRegisterTimerEvent(t, 3, false)
-            call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_SUMMON)
+            call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SUMMON)
             call TriggerAddCondition(t, Condition(function FDA))
             call SaveUnitHandle(HY, h, 2, whichUnit)
             call SaveUnitHandle(HY, h, 17, targetUnit)

@@ -1,5 +1,5 @@
 
-library UnitIllusion requires UnitUtils, UnitWeapon, BuffSystem
+library UnitIllusion requires UnitUtils, UnitWeapon, UnitMorph, BuffSystem
         
     // 单位类型是否是变身单位
     function IsUnitMetamorphosis takes unit u returns boolean
@@ -87,7 +87,7 @@ library UnitIllusion requires UnitUtils, UnitWeapon, BuffSystem
             set i = i + 1
         exitwhen i > PassiveAbilityMaxCount
         endloop
-        call RefreshUnitRange(illusionUnit)
+        call UpdateUnitAttackRangeBonus(illusionUnit)
         // 如果幻象是变身单位 直接播放单位的变身Stand 否则被认出来太蠢
         if IsUnitMetamorphosis(illusionUnit) or WTB(illusionUnit) then
             call AddUnitAnimationProperties(illusionUnit, "alternate", true)

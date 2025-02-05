@@ -243,9 +243,9 @@ library UnitLimitation requires Base, UnitModel
         endif
         // 无路径
         if IsUnitNoPathing(whichUnit) then
-            call SetUnitPathing(whichUnit, false)
+            call UnitEnableNoPathing(whichUnit)
         else
-            call SetUnitPathing(whichUnit, true)
+            call UnitDisableNoPathing(whichUnit)
         endif
     endfunction
 

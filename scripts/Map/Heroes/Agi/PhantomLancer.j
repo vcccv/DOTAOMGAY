@@ -318,7 +318,7 @@ scope PhantomLancer
     // 注册幻影长矛手触发器
     function RegisterPhantomLancerTrigger takes nothing returns nothing
         local trigger t = CreateTrigger()
-        call TriggerRegisterPlayerUnitEventBJ(t, EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER)
+        call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER)
         call TriggerAddCondition(t, Condition(function PhantomLancerOnTargetOrder))
         set t = CreateTrigger()
         call YDWETriggerRegisterEnterRectSimpleNull(t, GetWorldBounds())
