@@ -3,6 +3,19 @@ scope Invoker
 
     //***************************************************************************
     //*
+    //*  灵动迅捷
+    //*
+    //***************************************************************************
+    function OnSpellEffectAlacrity takes nothing returns nothing
+        local unit 	  targetUnit = GetSpellTargetUnit()
+        local integer level 	 = GetUnitAbilityLevel(GetTriggerUnit(),'Z607')
+        call UnitAddAbilityToTimed(targetUnit, 'A0VJ', level, 13, 0)
+        call UnitAddAbilityToTimed(targetUnit, 'A109', level, 13, 0)
+        set targetUnit = null
+    endfunction
+
+    //***************************************************************************
+    //*
     //*  超震声波
     //*
     //***************************************************************************

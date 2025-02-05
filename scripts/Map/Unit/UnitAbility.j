@@ -196,10 +196,10 @@ library UnitAbility requires AbilityUtils
             set isChange = true
         endif
 
-        call BJDebugMsg("我触发了不骗你啊")
+       // call BJDebugMsg("我触发了不骗你啊")
 
         if isChange then
-            call BJDebugMsg("冷却真的改了啊不骗你现在是：" + R2S(cooldown))
+        //    call BJDebugMsg("冷却真的改了啊不骗你现在是：" + R2S(cooldown))
             call MHAbility_SetCooldown(whichUnit, id, cooldown)
         endif
 

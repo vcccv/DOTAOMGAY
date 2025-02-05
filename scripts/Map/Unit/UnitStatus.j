@@ -1,6 +1,18 @@
 
 library UnitStatus
     
+    // types
+    function IsUnitNecronomicon takes unit u returns boolean
+        local integer id = GetUnitTypeId(u)
+        return id =='n00J' or id =='n00H' or id =='n00A' or id =='n00G' or id =='n006' or id =='n00K'
+    endfunction
+    function IsUnitBear takes unit u returns boolean
+        local integer i = GetUnitTypeId(u)
+        return i =='n004' or i =='n018' or i =='n01C' or i =='n01G'
+    endfunction
+
+    // status
+
     // 该单位是否是守卫单位
     function IsUnitWard takes unit whichUnit returns boolean
         return GetUnitAbilityLevel(whichUnit, 'A04R') > 0
@@ -40,6 +52,9 @@ library UnitStatus
     // 该单位是否处于无敌状态
     function IsUnitInvulnerable takes unit whichUnit returns boolean
         return MHUnit_IsInvulnerable(whichUnit)
+    endfunction
+    function IsUnitHeroLevel takes unit whichUnit returns boolean
+        return IsHeroUnitId(GetUnitTypeId(whichUnit)) or IsUnitBear(whichUnit)
     endfunction
 
 endlibrary

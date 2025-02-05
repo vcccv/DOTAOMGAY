@@ -1,4 +1,8 @@
 library UnitMoprh
+
+    globals
+        private trigger SpellEffectTrig
+    endglobals
     
     // 单位逆变身
     function YDWEUnitTransform takes unit whichUnit, integer typeId returns nothing
@@ -13,6 +17,10 @@ library UnitMoprh
             // 修正单位的 技能
             //call FixUnitSkillsBug(whichUnit)
         endif
+    endfunction
+
+    function UnitMoprh_Init takes nothing returns nothing
+        
     endfunction
 
 endlibrary

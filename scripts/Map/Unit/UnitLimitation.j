@@ -121,13 +121,25 @@ library UnitLimitation requires Base, UnitModel
     globals
         private constant key UNIT_NOPATHING_COUNT
     endglobals
+    function UnitEnableNoPathing takes unit whichUnit returns nothing
+        call SetUnitPathing(whichUnit, false)
+        call MHUnit_SetPathType(whichUnit, UNIT_PATH_TYPE_FLY)
+    endfunction
+    function UnitDisableNoPathing takes unit whichUnit returns nothing
+        call SetUnitPathing(whichUnit, true)
+        if IsUnitType(whichUnit, UNIT_TYPE_FLYING) then
+            call MHUnit_SetPathType(whichUnit, UNIT_PATH_TYPE_FLY)
+        else
+            call MHUnit_SetPathType(whichUnit, UNIT_PATH_TYPE_FOOT)
+        endif
+    endfunction
     function UnitAddNoPathingCount takes unit whichUnit returns nothing
         local integer h     = GetHandleId(whichUnit)
         local integer count = Table[h][UNIT_NOPATHING_COUNT] + 1
         set Table[h][UNIT_NOPATHING_COUNT] = count
         if count == 1 then
             call UnitAddPhasedMovementCount(whichUnit)
-            call SetUnitPathing(whichUnit, false)
+            call UnitEnableNoPathing(whichUnit)
         endif
     endfunction
     function UnitSubNoPathingCount takes unit whichUnit returns nothing
@@ -136,7 +148,7 @@ library UnitLimitation requires Base, UnitModel
         set Table[h][UNIT_NOPATHING_COUNT] = count
         if count == 0 then
             call UnitSubPhasedMovementCount(whichUnit)
-            call SetUnitPathing(whichUnit, true)
+            call UnitDisableNoPathing(whichUnit)
         endif
     endfunction
     function IsUnitNoPathing takes unit whichUnit returns boolean
