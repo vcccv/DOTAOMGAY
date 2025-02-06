@@ -30,6 +30,7 @@ library UnitLimitation requires Base, UnitModel
         set Table[h][UNIT_HIDEEX_COUNT] = count
         if count == 1 then
             //call UnitDodgeMissile(whichUnit)
+            call UnitAdd0x60Flag(whichUnit, 0x20)
             call MHUnit_Flag1Operator(whichUnit, FLAG_OPERATOR_ADD, UNIT_FLAG1_HIDE)
         endif
     endfunction
@@ -38,6 +39,7 @@ library UnitLimitation requires Base, UnitModel
         local integer count = Table[h][UNIT_HIDEEX_COUNT] - 1
         set Table[h][UNIT_HIDEEX_COUNT] = count
         if count == 0 then
+            call UnitRemove0x60Flag(whichUnit, 0x20)
             call MHUnit_Flag1Operator(whichUnit, FLAG_OPERATOR_REMOVE, UNIT_FLAG1_HIDE)
         endif
     endfunction

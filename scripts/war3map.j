@@ -341,7 +341,8 @@ globals
 	boolean UV = true
 	integer WV = 0
 	// lod的Debug变量
-	constant boolean LOD_DEBUGMODE = false
+	constant boolean LOD_DEBUGMODE 		  = false
+	constant boolean LOD_DEBUG_ORDER_MODE = true
 	rect ZV
 	boolean VE = false
 	boolean EE = false
@@ -74089,7 +74090,7 @@ function CreateLodTrigger takes nothing returns nothing
 	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_HERO_LEVEL)
 	call TriggerAddAction(t, function HeroLevelUp)
 
-	if LOD_DEBUGMODE then
+	if LOD_DEBUG_ORDER_MODE then
 		// debug Order
 		set t = CreateTrigger()
 		call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER)

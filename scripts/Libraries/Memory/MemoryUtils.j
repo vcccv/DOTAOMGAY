@@ -71,6 +71,34 @@ library MemoryUtils initializer Init
         return 0
     endfunction
 
+    function UnitAdd0x60Flag takes unit whichUnit, integer bit returns nothing
+        local integer pData = ConvertHandle(whichUnit)
+
+        if pData > 0 then
+            set pData = pData + 0x60
+            
+            if pData > 0 then
+                //call BJDebugMsg("改之前"+MHMath_ToHex(ReadRealMemory(pData)))
+                call ThrowWarning(MHMath_IsBitSet(ReadRealMemory(pData), bit), "MemoryUtils", "UnitAdd0x60Flag", "unit", GetHandleId(whichUnit), "has flag " + MHMath_ToHex(bit))
+                call WriteRealMemory(pData, MHMath_AddBit(ReadRealMemory(pData), bit))
+                //call BJDebugMsg("改之后"+MHMath_ToHex(ReadRealMemory(pData)))
+            endif
+        endif
+    endfunction
+    function UnitRemove0x60Flag takes unit whichUnit, integer bit returns nothing
+        local integer pData = ConvertHandle(whichUnit)
+
+        if pData > 0 then
+            set pData = pData + 0x60
+            
+            if pData > 0 then
+                //call BJDebugMsg("改之前"+MHMath_ToHex(ReadRealMemory(pData)))
+                call ThrowWarning(not MHMath_IsBitSet(ReadRealMemory(pData), bit), "MemoryUtils", "UnitRemove0x60Flag", "unit", GetHandleId(whichUnit), "not flag " + MHMath_ToHex(bit))
+                call WriteRealMemory(pData, MHMath_RemoveBit(ReadRealMemory(pData), bit))
+                //call BJDebugMsg("改之后"+MHMath_ToHex(ReadRealMemory(pData)))
+            endif
+        endif
+    endfunction
     
     function UnitEnableTruesightImmunity takes unit u returns nothing
         local integer pData = ConvertHandle( u )

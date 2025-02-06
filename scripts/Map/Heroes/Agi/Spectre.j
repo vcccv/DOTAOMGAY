@@ -273,8 +273,8 @@ scope Spectre
             set ty = GetSpellTargetY()
             set angle = Atan2(ty -sy, tx -sx)
             call SetUnitFacing(dummy, angle * bj_RADTODEG)
-            set tx = CoordinateX50(sx + 2100. * Cos(angle))
-            set ty = CoordinateY50(sy + 2100. * Sin(angle))
+            set tx = CoordinateX50(sx + 2000. * Cos(angle))
+            set ty = CoordinateY50(sy + 2000. * Sin(angle))
             set SimpleTickTable[tick].real['x'] = tx
             set SimpleTickTable[tick].real['y'] = ty
             set SimpleTickTable[tick].real['a'] = angle
