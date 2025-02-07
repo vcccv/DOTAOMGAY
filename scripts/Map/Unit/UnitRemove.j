@@ -6,7 +6,7 @@ library UnitRemove requires Table
     endglobals
 
     private function OnRemove takes nothing returns nothing
-        local unit whichUnit = MHEvent_GetUnit()
+        local unit    whichUnit = MHEvent_GetUnit()
         local integer h      = GetHandleId(whichUnit)
 
         call Table[GetHandleId(whichUnit)].flush()

@@ -99,13 +99,15 @@ scope Broodmother
 
 
     private function SpinWebOnDebuffExpired takes nothing returns nothing
-        local SimpleTick tick = SimpleTick.GetExpired()
+        local SimpleTick tick      = SimpleTick.GetExpired()
+        local unit       whichUnit = SimpleTickTable[tick].unit['u']
 
-        call UnitAddNoPathingCount(SimpleTickTable[tick].unit['u'])
-        call Table[GetHandleId(DETarget)].remove(SPIN_WEB_TICK)
+        call UnitAddNoPathingCount(whichUnit)
+        call Table[GetHandleId(whichUnit)].remove(SPIN_WEB_TICK)
         //call BJDebugMsg("SpinWebOnDebuffExpired")
-
         call tick.Destroy()
+
+        set whichUnit = null
     endfunction
 
     function BroodmotherSpinWebOnDamaged takes nothing returns nothing
@@ -119,8 +121,9 @@ scope Broodmother
                 call UnitSubNoPathingCount(DETarget)
                 call UnitModifyPostion(DETarget)
                 call KillTreeByCircle(GetUnitX(DETarget), GetUnitY(DETarget), 150.)
-                //call BJDebugMsg("受伤了 失去无视地形状态")
+                //call BJDebugMsg(GetUnitName(DETarget) + "受伤了 失去无视地形状态")
             endif
+            //call BJDebugMsg(GetUnitName(DETarget) + "受伤了 刷新时间")
             call tick.Start(6., false, function SpinWebOnDebuffExpired)
         endif
     endfunction
@@ -134,12 +137,12 @@ scope Broodmother
 
         if ( GetUnitLastDamagedTime(whichUnit) + 6. ) < ( GameTimer.GetElapsed() ) then
             call UnitAddNoPathingCount(whichUnit)
-           //call BJDebugMsg("没受伤 添加了" + R2S(GetUnitLastDamagedTime(whichUnit)))
+            //call BJDebugMsg("没受伤 添加了" + R2S(GetUnitLastDamagedTime(whichUnit)))
         else
             set tick = SimpleTick.CreateEx()
-            set SimpleTickTable[tick].unit['u'] = DETarget
-            set Table[GetHandleId(DETarget)][SPIN_WEB_TICK] = tick
-           //call BJDebugMsg("受伤了 开始计时器:" + R2S(( GetUnitLastDamagedTime(whichUnit) + 6. ) - GameTimer.GetElapsed()))
+            set SimpleTickTable[tick].unit['u'] = whichUnit
+            set Table[GetHandleId(whichUnit)][SPIN_WEB_TICK] = tick
+            //call BJDebugMsg("受伤了 开始计时器:" + R2S(( GetUnitLastDamagedTime(whichUnit) + 6. ) - GameTimer.GetElapsed()))
             call tick.Start(( GetUnitLastDamagedTime(whichUnit) + 6. ) - GameTimer.GetElapsed(), false, function SpinWebOnDebuffExpired)
         endif
 
@@ -160,8 +163,8 @@ scope Broodmother
             call KillTreeByCircle(GetUnitX(whichUnit), GetUnitY(whichUnit), 150.)
             //call BJDebugMsg("失去buff，移除无视地形状态")
         else
-            call tick.Destroy()
             call Table[GetHandleId(whichUnit)].remove(SPIN_WEB_TICK)
+            call tick.Destroy()
             //call BJDebugMsg("失去buff，移除计时器")
         endif
 
