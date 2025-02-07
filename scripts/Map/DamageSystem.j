@@ -77,21 +77,20 @@ scope DamageSystem
         endloop
     endfunction
 
+
+    globals
+        private key UNIT_LAST_DAMGED_TIME
+    endglobals
+
+    function GetUnitLastDamagedTime takes unit whichUnit returns real
+        return Table[GetHandleId(whichUnit)].real[UNIT_LAST_DAMGED_TIME]
+    endfunction
     
     struct DamageEvent extends array
         
         static integer INDEX = 0
 
-        static unit array Source
-        static unit array Target
-        static unit array Owner
-
-        static real       array EventDamage
-        static damagetype array DamageType
-        static attacktype array AttackType
-        static boolean    array IsAttackDamage
-        static integer    array Flag1
-    
+        
         // 镜头震动和伤害显示
         static method OtherDamagedEvent takes unit damageTarget, unit damageSource, real rDamageValue returns nothing
             local texttag tt = null
@@ -245,7 +244,7 @@ scope DamageSystem
 
         // 设置助攻
         static method SetAssistList takes nothing returns nothing
-            set AssistListTime[AssistListCurrentMaxNumber]= (GetGameTime())
+            set AssistListTime[AssistListCurrentMaxNumber]= (GameTimer.GetElapsed())
             set AssistListSourcePlayerId[AssistListCurrentMaxNumber] = DamagedEventSourcePlayerId
             set AssistListTargetPlayerId[AssistListCurrentMaxNumber] = DamagedEventPlayerId
             set AssistListCurrentMaxNumber = AssistListCurrentMaxNumber + 1
@@ -264,7 +263,7 @@ scope DamageSystem
             endif
             set reducedDamage = 0.
 
-            set DamageEvent.INDEX = DamageEvent.INDEX + 1
+            set Event.INDEX = Event.INDEX + 1
             set DESource = MHDamageEvent_GetSource()
             set DETarget = MHEvent_GetUnit()
             set DEDamage = MHDamageEvent_GetDamage()
@@ -340,9 +339,16 @@ scope DamageSystem
                 // 数值减少
                 // 如果减伤减完了就直接返回
                 if DEDamage <= 0 then
-                    set DamageEvent.INDEX = DamageEvent.INDEX - 1
+                    set Event.INDEX = Event.INDEX - 1
                     return false
                 endif
+                
+                // 记录单位最后受伤事件
+                //if IsUnitHeroLevel(whichUnit) then
+                    set Table[GetHandleId(DETarget)].real[UNIT_LAST_DAMGED_TIME] = GameTimer.GetElapsed()
+                //endif
+                call AnyUnitEvent.ExecuteEvent(DETarget, ANY_UNIT_EVENT_DAMAGED)
+
                 // 额外的伤害事件 关于镜头震动和伤害显示 要在额外伤害打出之前运行
                 if IsSinglePlayerMode then
                     call OtherDamagedEvent(DETarget, DESource, DEDamage - reducedDamage)
@@ -411,7 +417,7 @@ scope DamageSystem
             if TEST_MODE then
                 call AQX("+" + I2S(R2I(DEDamage)), 1, DETarget, .028, 64, 255, 0, 0, 216)
             endif
-            set DamageEvent.INDEX = DamageEvent.INDEX - 1
+            set Event.INDEX = Event.INDEX - 1
             //set DETarget = null
             //set DESource = null
             //set DESource = null
@@ -419,5 +425,7 @@ scope DamageSystem
         endmethod
     
     endstruct
+
+
 
 endscope

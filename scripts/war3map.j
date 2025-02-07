@@ -1,8 +1,7 @@
 
-#define DETarget DamageEvent.Target[DamageEvent.INDEX]
-#define DESource DamageEvent.Source[DamageEvent.INDEX]
-#define DEDamage DamageEvent.EventDamage[DamageEvent.INDEX]
-#define DEOwner  DamageEvent.Owner[DamageEvent.INDEX]
+#define DETarget Event.DamageTarget[Event.INDEX]
+#define DESource Event.DamageSource[Event.INDEX]
+#define DEDamage Event.EventDamage[Event.INDEX]
 
 globals
 	location ScourgeMidMeleeSpawnLocatio   = null
@@ -9977,17 +9976,6 @@ function L2X takes nothing returns nothing
 	endif
 	set hPlayerHeroUnit = null
 endfunction
-function L6X takes unit u returns nothing
-	if GetUnitAbilityLevel(u,'A40E') == 1 then
-		call UnitRemoveAbility(u,'A40E')
-	endif
-	//if GetUnitAbilityLevel(u,'B09Y') == 1 then
-	//	call UnitRemoveAbility(u,'B09Y')
-	//endif
-	//if GetUnitAbilityLevel(u,'B3JQ') == 1 then
-	//	call UnitRemoveAbility(u,'B3JQ')
-	//endif
-endfunction
 function L7X takes unit u returns nothing
 	local integer i
 	if IsSentinelPlayer(GetOwningPlayer(u)) then
@@ -10406,9 +10394,9 @@ function MDX takes integer i, integer k returns nothing
 	elseif (i == 75) then
 		call ExecuteFunc("M4X")
 	elseif (i == 59) then
-		call ExecuteFunc("M5X")
+		//call ExecuteFunc("M5X")
 		// 蜘蛛网
-		call ExecuteFunc("M6X")
+		call ExecuteFunc("BroodmotherSpinWeb_Init")
 	elseif (i == 77) then
 		call ExecuteFunc("M7X")
 	elseif (i == 81) then
@@ -21018,6 +21006,18 @@ function DYO takes nothing returns boolean
 	set g = null
 	return false
 endfunction
+function L6X takes unit u returns nothing
+	if GetUnitAbilityLevel(u,'A40E') == 1 then
+		call UnitRemoveAbility(u,'A40E')
+	endif
+	//if GetUnitAbilityLevel(u,'B09Y') == 1 then
+	//	call UnitRemoveAbility(u,'B09Y')
+	//endif
+	//if GetUnitAbilityLevel(u,'B3JQ') == 1 then
+	//	call UnitRemoveAbility(u,'B3JQ')
+	//endif
+endfunction
+
 function D_O takes nothing returns nothing
 	local unit whichUnit = GetEnumUnit()
 	local trigger t = null
@@ -45331,9 +45331,12 @@ function InitMultiCast takes nothing returns nothing
 	
 	call SetAbilityCanNotMultiCast('Z607')
 	call SetAbilityCanNotMultiCast('A01Z')
-	call SetAbilityCanNotMultiCast('A01V')	//森林之眼
-	call SetAbilityCanNotMultiCast('A05G')	//剑刃风暴
-	call SetAbilityCanNotMultiCast('A0T2')	//狂暴
+	call SetAbilityCanNotMultiCast('A01V')	// 森林之眼
+	call SetAbilityCanNotMultiCast('A05G')	// 剑刃风暴
+	call SetAbilityCanNotMultiCast('A0T2')	// 狂暴
+
+	call SetAbilityCanNotMultiCast('A0BG')	// 蜘蛛网
+	
 	
 	call SetAbilityCanNotMultiCast('A05G')
 	call SetAbilityCanNotMultiCast('A0M1')
@@ -70796,14 +70799,7 @@ function H5A takes nothing returns boolean
 	set targetUnit = null
 	return false
 endfunction
-function Web_removestate takes unit u returns nothing
-	if IsUnitType(u, UNIT_TYPE_HERO) then//防止蜘蛛网检测不到，先删了蜘蛛网隐身。
-		call UnitRemoveAbility(u,'A021')
-	else
-		call UnitRemoveAbility(u,'A29C')
-	endif
-	call UnitRemoveAbility(u,'B01C')
-endfunction
+
 function H7A takes nothing returns nothing
 	local unit u = GetEnumUnit()
 	call DestroyEffect(AddSpecialEffect("war3mapImported\\ChainFreeze_F6.mdx", GetUnitX(u), GetUnitY(u)))
@@ -70812,7 +70808,7 @@ function H7A takes nothing returns nothing
 	call UnitAddPermanentAbility(u,'A04R')
 	call SetUnitInvulnerable(u, true)
 	call PauseUnit(u, true)
-	call Web_removestate(u)
+	
 	set u = null
 endfunction
 function H8A takes nothing returns boolean
@@ -72453,7 +72449,7 @@ function DTE takes nothing returns nothing
 		call SetUnitPathing(whichUnit, false)
 		call SetUnitInvulnerable(whichUnit, true)
 		call UnitAddPermanentAbility(whichUnit,'A04R')
-		call Web_removestate(whichUnit) //删除蜘蛛网状态
+		
 		call SaveInteger(HY, GetHandleId(whichUnit), 4319, 1)
 		call TriggerRegisterTimerEvent(t, .02, true)
 		call TriggerAddCondition(t, Condition(function LKA))

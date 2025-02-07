@@ -6,182 +6,193 @@ scope Broodmother
     //*  织网
     //*
     //***************************************************************************
-
-    function HBI takes nothing returns boolean
-        return GetUnitTypeId(GetSummonedUnit())=='o003'
-    endfunction
-    function HCI takes nothing returns nothing
-        local unit HDI = GetSummonedUnit()
-        local unit HFI = PlayerHeroes[GetPlayerId(GetOwningPlayer(GetSummoningUnit()))]
-        local integer h = GetHandleId(HFI)
-        local integer level = GetUnitAbilityLevel(HFI,'Z234')
-        local integer HGI =(LoadInteger(HY, h, 279))
-        local unit HHI =(LoadUnitHandle(HY, h,( 1400+ 1)))
-        local integer x = 1
-        set HGI = HGI + 1
-        call SetUnitVertexColorBJ(HDI, 100, 100, 100, 85)
-        call UnitAddPermanentAbility(HDI,'Aloc')
-        call SaveUnitHandle(HY, h,( 1400+ HGI),(HDI))
-        if (HGI > level * 2) then
-            call KillUnit(HHI)
-            loop
-            exitwhen x == HGI
-                call SaveUnitHandle(HY, h,( 1400+ x),((LoadUnitHandle(HY, h,( 1400+ x + 1)))))
-                set x = x + 1
-            endloop
-            set HGI = HGI -1
-        endif
-        call SaveInteger(HY, h, 279,(HGI))
-        call SetUnitAbilityLevel(HDI,'A0BF', level)
-        set HDI = null
-        set HFI = null
-        set HHI = null
-    endfunction
     function SpinWebOnSpellEffect takes nothing returns nothing
-        local unit d = CreateUnit(GetOwningPlayer(GetTriggerUnit()),'o003', GetSpellTargetX(), GetSpellTargetY(), 0)
-        local unit u = PlayerHeroes[GetPlayerId(GetOwningPlayer(d))]
-        local integer h = GetHandleId(u)
-        local integer lv = GetUnitAbilityLevel(u,'Z234')
-        local integer maxi =(LoadInteger(HY, h, 279))
-        local unit HHI =(LoadUnitHandle(HY, h,(1400 + 1)))
-        local integer x = 1
-        call SetUnitAnimation(d, "birth")
-        call QueueUnitAnimation(d, "stand")
-        set maxi = maxi + 1
-        call SetUnitVertexColorBJ(d, 100, 100, 100, 85)
-        call UnitAddPermanentAbility(d,'Aloc')
-        call SaveUnitHandle(HY, h,(1400 + maxi),(d))
-        if (maxi > lv * 2) then
-            call KillUnit(HHI)
+        local player  p
+        local unit    trigUnit
+        local unit    webUnit
+        local integer level
+        local integer max
+        local integer count
+
+        local group   g
+        local unit    first
+
+        set trigUnit = GetTriggerUnit()
+        set p        = GetOwningPlayer(trigUnit)
+        set level    = GetUnitAbilityLevel(trigUnit, GetSpellAbilityId())
+        set max      = level * 2
+        set count    = GetPlayerTechCount(p, 'o003', false)
+
+        if count > max then
+            set g = AllocationGroup(1777)
+            call GroupEnumUnitsOfPlayer(g, p, null)
             loop
-            exitwhen x == maxi
-                call SaveUnitHandle(HY, h,(1400 + x),((LoadUnitHandle(HY, h,(1400 + x + 1)))))
-                set x = x + 1
+                set first = FirstOfGroup(g)
+                exitwhen first == null
+                call GroupRemoveUnit(g, first)
+                
+                if GetUnitTypeId(first) == 'o003' and UnitAlive(first) then
+                    call KillUnit(first)
+                    set first = null
+                    exitwhen true
+                endif
             endloop
-            set maxi = maxi -1
+            set g = null
         endif
-        call SaveInteger(HY, h, 279,(maxi))
-        call SetUnitAbilityLevel(d,'A0BF', lv)
-        set d = null
-        set u = null
-        set HHI = null
-    endfunction
-    function M5X takes nothing returns nothing
-        local trigger t = CreateTrigger()
-        call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SUMMON)
-        call TriggerAddCondition(t, Condition(function HBI))
-        call TriggerAddAction(t, function HCI)
-        set t = null
+        set webUnit = CreateUnit(p, 'o003', GetSpellTargetX(), GetSpellTargetY(), 0)
+        
+        call SetUnitAnimation(webUnit, "birth")
+        call QueueUnitAnimation(webUnit, "stand")
+        call SetUnitVertexColorBJ(webUnit, 100, 100, 100, 85)
+        call SetUnitAbilityLevel(webUnit, 'A0BF', level)
+        call UnitAddAbility(webUnit, 'Aloc')
+        call UnitAddInvulnerableCount(webUnit)
+        
+        if User.Local != p then
+            call UnitAddCantSelectCount(webUnit)
+        endif
+        set webUnit = null
     endfunction
 
-    function HJI takes nothing returns boolean
-        return GetOwningPlayer(GetFilterUnit()) == GetOwningPlayer(XB) and(not IsUnitDummy(GetFilterUnit()) and not IsUnitWard(GetFilterUnit()))
-    endfunction
-    function HKI takes nothing returns nothing
-        local real x
-        local real y
-        local unit web
-        local integer i = 1
-        local unit u = GetEnumUnit()
-        local boolean b = false
-        if PlayerHeroes[GetPlayerId(GetOwningPlayer(u))] != null then
-            loop
-                set web = LoadUnitHandle(HY, GetHandleId(u), 1400 + i)
-                if web != null then
-                    set x = GetUnitX(web)
-                    set y = GetUnitY(web)
-                    if (GetDistanceBetween(x, y, GetUnitX(u), GetUnitY(u))< 875) then
-                        set b = true
-                    endif
+    function SpinWebOnUpdate takes nothing returns nothing
+        local SimpleTick tick       = SimpleTick.GetExpired()
+        local unit       sourceUnit = SimpleTickTable[tick].unit['u']
+       // local group      lastGroup  = SimpleTickTable[tick].unit['g']
+        local group      g          
+        local unit       first
+        local player     p          = GetOwningPlayer(sourceUnit)
+        local real       x          = GetUnitX(sourceUnit)
+        local real       y          = GetUnitY(sourceUnit)
+        local real       area       = 900.
+        local integer    level      = GetUnitAbilityLevel(sourceUnit, 'A0BF')
+
+        if not UnitAlive(sourceUnit) then
+           // call DeallocateGroup(lastGroup)
+            call tick.Destroy()
+            return
+        endif
+
+        set g = AllocationGroup(1977)
+        call GroupEnumUnitsInRange(g, x, y, area + MAX_UNIT_COLLISION, null)
+        loop
+            set first = FirstOfGroup(g)
+            exitwhen first == null
+            call GroupRemoveUnit(g, first)
+
+            if IsUnitInRangeXY(first, x, y, area) and UnitAlive(first)    /*
+                */ and not IsUnitWard(first) and not IsUnitCourier(first) /*
+                */ and not IsUnitStructure(first) and IsUnitOwnedByPlayer(first, p) then
+                if MHBuff_GetLevel(first, 'B01G') == 0 then
+                    call UnitAddAreaBuff(sourceUnit, first, 'B01G', level, 0.3 + 0.15, true)
                 else
-                    set i = 9
+                    call MHBuff_SetRemain(first, 'B01G', 0.3 + 0.15)
                 endif
-                set i = i + 1
-            exitwhen i > 9 or b
-            endloop
-        endif
-        if b == false then
-            if IsUnitType(u, UNIT_TYPE_HERO) then
-                call UnitRemoveAbility(u,'A021')
-            else
-                call UnitRemoveAbility(u,'A29C')
             endif
-            call UnitRemoveAbility(u,'B01C')
-            call SetUnitPathingEx(u, true)
-        endif
-        set web = null
-        set u = null
+        endloop
+
+        call DeallocateGroup(g)
     endfunction
-    function HMI takes nothing returns nothing	//如果三秒内没被打则设置无视地形。
-        local unit u = GetEnumUnit()
-        if IsUnitType(u, UNIT_TYPE_HERO) then
-            if GetUnitAbilityLevel(u,'A021') == 0 then
-                call L6X(u)
-                call UnitAddAbility(u,'A021')
+
+    globals
+        private key SPIN_WEB_TICK
+    endglobals
+
+
+    private function SpinWebOnDebuffExpired takes nothing returns nothing
+        local SimpleTick tick = SimpleTick.GetExpired()
+
+        call UnitAddNoPathingCount(SimpleTickTable[tick].unit['u'])
+        call Table[GetHandleId(DETarget)].remove(SPIN_WEB_TICK)
+        //call BJDebugMsg("SpinWebOnDebuffExpired")
+
+        call tick.Destroy()
+    endfunction
+
+    function BroodmotherSpinWebOnDamaged takes nothing returns nothing
+        local SimpleTick tick
+        if DEDamage > 0 and MHBuff_GetLevel(DETarget, 'B01G') > 0 then
+            set tick = Table[GetHandleId(DETarget)][SPIN_WEB_TICK]
+            if tick == 0 then
+                set tick = SimpleTick.CreateEx()
+                set SimpleTickTable[tick].unit['u'] = DETarget
+                set Table[GetHandleId(DETarget)][SPIN_WEB_TICK] = tick
+                call UnitSubNoPathingCount(DETarget)
+                call UnitModifyPostion(DETarget)
+                call KillTreeByCircle(GetUnitX(DETarget), GetUnitY(DETarget), 150.)
+                //call BJDebugMsg("受伤了 失去无视地形状态")
             endif
+            call tick.Start(6., false, function SpinWebOnDebuffExpired)
+        endif
+    endfunction
+
+    function BroodmotherSpinWebBuffOnAdd takes nothing returns nothing
+        local unit       whichUnit = MHEvent_GetUnit()
+        local SimpleTick tick
+        
+        call UnitRemoveAbility(whichUnit, 'A40E')
+        call UnitAddPermanentAbility(whichUnit, 'A021')
+
+        if ( GetUnitLastDamagedTime(whichUnit) + 6. ) < ( GameTimer.GetElapsed() ) then
+            call UnitAddNoPathingCount(whichUnit)
+           //call BJDebugMsg("没受伤 添加了" + R2S(GetUnitLastDamagedTime(whichUnit)))
         else
-            if GetUnitAbilityLevel(u,'A29C') == 0 then
-                call UnitAddAbility(u,'A29C')
-            endif
+            set tick = SimpleTick.CreateEx()
+            set SimpleTickTable[tick].unit['u'] = DETarget
+            set Table[GetHandleId(DETarget)][SPIN_WEB_TICK] = tick
+           //call BJDebugMsg("受伤了 开始计时器:" + R2S(( GetUnitLastDamagedTime(whichUnit) + 6. ) - GameTimer.GetElapsed()))
+            call tick.Start(( GetUnitLastDamagedTime(whichUnit) + 6. ) - GameTimer.GetElapsed(), false, function SpinWebOnDebuffExpired)
         endif
-        call SetUnitPathingEx(u, LoadReal(HY, GetHandleId(u), 785) + 3 > GetGameTime())
-        set u = null
+
+        set whichUnit = null
     endfunction
-    function HPI takes nothing returns nothing//织网
-        local trigger t = GetTriggeringTrigger()
-        local integer h = GetHandleId(t)
-        local group g
-        local group gg = null
-        local unit u
-        if GetTriggerEventId() == EVENT_UNIT_DEATH then
-            call DestroyGroup(LoadGroupHandle(HY, h, 1))
-            call FlushChildHashtable(HY, h)
-            call DestroyTrigger(t)
+
+    function BroodmotherSpinWebBuffOnRemove takes nothing returns nothing
+        local unit       whichUnit = MHEvent_GetUnit()
+        local SimpleTick tick
+
+        call UnitRemoveAbility(whichUnit, 'A021')
+        call UnitRemoveAbility(whichUnit, 'B01C')
+
+        set tick = Table[GetHandleId(whichUnit)][SPIN_WEB_TICK]
+        if tick == 0 then
+            call UnitSubNoPathingCount(whichUnit)
+            call UnitModifyPostion(whichUnit)
+            call KillTreeByCircle(GetUnitX(whichUnit), GetUnitY(whichUnit), 150.)
+            //call BJDebugMsg("失去buff，移除无视地形状态")
         else
-            if LoadBoolean(HY, h, 0) == false then
-                set g = CreateGroup()
-                call SaveBoolean(HY, h, 0, true)
-                call SaveGroupHandle(HY, h, 1, g)
-            endif
-            set u = LoadUnitHandle(HY, h, 0)
-            set g = LoadGroupHandle(HY, h, 1)
-            set gg = AllocationGroup(312)
-            set XB = u
-            call GroupEnumUnitsInRange(gg, GetUnitX(u), GetUnitY(u), 900, Condition(function HJI))
-            call GroupRemoveGroup(gg, g)
-            set XB = u
-            call ForGroup(g, function HKI)
-            call ForGroup(gg, function HMI)
-            call GroupClear(g)
-            call GroupAddGroup(gg, g)
-            call DeallocateGroup(gg)
-            set gg = null
+            call tick.Destroy()
+            call Table[GetHandleId(whichUnit)].remove(SPIN_WEB_TICK)
+            //call BJDebugMsg("失去buff，移除计时器")
         endif
-        set t = null
-        set g = null
-        set u = null
+
+        set whichUnit = null
     endfunction
-    function HQI takes nothing returns nothing
-        local trigger t = CreateTrigger()
-        local integer h = GetHandleId(t)
-        call TriggerRegisterTimerEvent(t, .3, true)
-        call TriggerRegisterUnitEvent(t, GetTriggerUnit(), EVENT_UNIT_DEATH)
-        call TriggerAddCondition(t, Condition(function HPI))
-        call SaveUnitHandle(HY, h, 0, GetTriggerUnit())
-        call SaveBoolean(HY, h, 0, false)
-        set t = null
+
+    function SpinWebOnEnter takes nothing returns nothing
+        local SimpleTick tick
+
+        set tick = SimpleTick.CreateEx()
+        call tick.Start(0.3, true, function SpinWebOnUpdate)
+
+        set SimpleTickTable[tick].unit['u']  = GetTriggerUnit()
     endfunction
-    function HSI takes nothing returns nothing
+
+    private function OnEnter takes nothing returns nothing
         if GetUnitTypeId(GetTriggerUnit())=='o003' then
-            call HQI()
+            call SpinWebOnEnter()
         endif
     endfunction
+
     // 蜘蛛网
-    function M6X takes nothing returns nothing
+    function BroodmotherSpinWeb_Init takes nothing returns nothing
         local trigger t = CreateTrigger()
         call YDWETriggerRegisterEnterRectSimpleNull(t, GetWorldBounds())
-        call TriggerAddCondition(t, Condition(function HSI))
-        set t = null
+        call TriggerAddCondition(t, Condition(function OnEnter))
+        
+        call SetAbilityAddAction('B01G', "BroodmotherSpinWebBuffOnAdd")
+        call SetAbilityRemoveAction('B01G', "BroodmotherSpinWebBuffOnRemove")
+
+        call AnyUnitEvent.CreateEvent(ANY_UNIT_EVENT_DAMAGED, function BroodmotherSpinWebOnDamaged)
     endfunction
     
 endscope

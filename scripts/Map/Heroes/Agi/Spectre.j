@@ -293,13 +293,8 @@ scope Spectre
     endfunction
     function SpectralPathBuffOnRemove takes nothing returns nothing
         local unit whichUnit = MHEvent_GetUnit()
-        local real x
-        local real y
         call UnitSubNoPathingCount(whichUnit)
-        set x = GetUnitX(whichUnit)
-        set y = GetUnitY(whichUnit)
-        call SetUnitX(whichUnit, MHUnit_ModifyPositionX(whichUnit, x, y))
-        call SetUnitY(whichUnit, MHUnit_ModifyPositionY(whichUnit, x, y))
+        call UnitModifyPostion(whichUnit)
         set whichUnit = null
     endfunction
     function SpectralDaggerOnSpellEffect takes nothing returns nothing

@@ -9450,7 +9450,12 @@ Buffubertip=该单位被致盲了，其攻击有一定几率落空
 spelldetail=2
 buffart=ReplaceableTextures\CommandButtons\BTNWeb
 Bufftip=隐匿于蛛网
-Buffubertip=该单位隐匿于蛛网中，处于隐身状态，并且移动速度得到了提升
+Buffubertip=该单位隐匿于蛛网中，移动速度得到了提升。
+[B01G]
+spelldetail=2
+buffart=ReplaceableTextures\CommandButtons\BTNWeb
+Bufftip=隐匿于蛛网
+Buffubertip=该单位隐匿于蛛网中，处于隐身状态，如果短时间没有收到攻击，它还会处于无视地形状态。
 [B01M]
 buffart=ReplaceableTextures\CommandButtons\BTNCripple
 targetart=Abilities\Spells\Undead\Cripple\CrippleTarget.mdl

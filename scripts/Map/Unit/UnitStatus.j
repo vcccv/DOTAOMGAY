@@ -53,6 +53,7 @@ library UnitStatus
     function IsUnitInvulnerable takes unit whichUnit returns boolean
         return MHUnit_IsInvulnerable(whichUnit)
     endfunction
+    // 英雄级单位 计算镜像或熊灵
     function IsUnitHeroLevel takes unit whichUnit returns boolean
         return IsHeroUnitId(GetUnitTypeId(whichUnit)) or IsUnitBear(whichUnit)
     endfunction

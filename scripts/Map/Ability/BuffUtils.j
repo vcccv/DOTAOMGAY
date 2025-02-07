@@ -20,6 +20,16 @@ library BuffUtils requires Table
         return Temp
     endfunction
 
+    // 添加光环buff
+    function UnitAddAreaBuff takes unit source, unit target, integer buffId, integer level, real duration, boolean positive returns buff
+        set Temp = MHBuff_Create(target, buffId, BUFF_TEMPLATE_BNAB, duration)
+        call MHBuff_SetLevel(target, buffId, level)
+        call MHBuff_SetPolarity(target, buffId, BUFF_POLARITY_POSITIVE, positive)
+        call MHBuff_SetPolarity(target, buffId, BUFF_POLARITY_NEGATIVE, not positive)
+        call MHBuff_SetPolarity(target, buffId, BUFF_POLARITY_AURA, true)
+        return Temp
+    endfunction
+
     function CreateBuffByTemplate takes unit source, unit target, integer buffId, real duration, integer template returns buff
         return MHBuff_Create(target, buffId, template, duration)
     endfunction

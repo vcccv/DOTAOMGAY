@@ -143,6 +143,7 @@ library UnitLimitation requires Base, UnitModel
             call UnitAddPhasedMovementCount(whichUnit)
             call UnitEnableNoPathing(whichUnit)
         endif
+        call BJDebugMsg("now count:" + I2S(count))
     endfunction
     function UnitSubNoPathingCount takes unit whichUnit returns nothing
         local integer h     = GetHandleId(whichUnit)
@@ -152,6 +153,7 @@ library UnitLimitation requires Base, UnitModel
             call UnitSubPhasedMovementCount(whichUnit)
             call UnitDisableNoPathing(whichUnit)
         endif
+        call BJDebugMsg("now count:" + I2S(count))
     endfunction
     function IsUnitNoPathing takes unit whichUnit returns boolean
         return Table[GetHandleId(whichUnit)][UNIT_NOPATHING_COUNT] > 0
