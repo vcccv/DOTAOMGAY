@@ -35322,11 +35322,11 @@ researchart=ReplaceableTextures\CommandButtons\BTNSirenMaster
 unart=ReplaceableTextures\CommandButtons\BTNNagaMyrmidonRoyalGuard
 Name=冲刺
 Tip=冲刺[|cffffcc00W|r] - [|cffffcc00等级 1|r],冲刺[|cffffcc00W|r] - [|cffffcc00等级 2|r],冲刺[|cffffcc00W|r] - [|cffffcc00等级 3|r],冲刺[|cffffcc00W|r] - [|cffffcc00等级 4|r]
-Ubertip=通过冲刺进入相位状态，提升20%的移动速度和20%的攻击速度，不过被攻击时额外受到15%的伤害。|n|n|c00ff0000冲刺激活时和暴击兼容|r|n|n|cff99ccff持续时间：|r16|n|cff99ccff冷却时间：|r23,通过冲刺进入相位状态，提升28%的移动速度和30%的攻击速度，不过被攻击时额外受到15%的伤害。|n|n|c00ff0000冲刺激活时和暴击兼容|r|n|n|cff99ccff持续时间：|r16|n|cff99ccff冷却时间：|r23,通过冲刺进入相位状态，提升36%的移动速度和40%的攻击速度，不过被攻击时额外受到15%的伤害。|n|n|c00ff0000冲刺激活时和暴击兼容|r|n|n|cff99ccff持续时间：|r16|n|cff99ccff冷却时间：|r23,通过冲刺进入相位状态，提升44%的移动速度和50%的攻击速度，不过被攻击时额外受到15%的伤害。|n|n|c00ff0000冲刺激活时和暴击兼容|r|n|n|cff99ccff持续时间：|r16|n|cff99ccff冷却时间：|r23
+Ubertip=通过冲刺进入相位状态，提升20%的移动速度和20%的攻击速度，不过被攻击时额外受到15%的伤害。|n|n|cff99ccff持续时间：|r16|n|cff99ccff冷却时间：|r23,通过冲刺进入相位状态，提升28%的移动速度和30%的攻击速度，不过被攻击时额外受到15%的伤害。|n|n|cff99ccff持续时间：|r16|n|cff99ccff冷却时间：|r23,通过冲刺进入相位状态，提升36%的移动速度和40%的攻击速度，不过被攻击时额外受到15%的伤害。|n|n|cff99ccff持续时间：|r16|n|cff99ccff冷却时间：|r23,通过冲刺进入相位状态，提升44%的移动速度和50%的攻击速度，不过被攻击时额外受到15%的伤害。|n|n|cff99ccff持续时间：|r16|n|cff99ccff冷却时间：|r23
 Hotkey=W
 Unhotkey=W
 Researchtip=学习 冲刺[|cffffcc00W|r] - [|cffffcc00等级 %d|r]|n(Sprint)
-Researchubertip=英雄在短时间内进入相位状态，大幅提升他的移动速度和攻击速度，不过被攻击时额外受到15%的伤害。|n|n|c00ff0000冲刺激活时和暴击兼容|r|n|n|cff99ccff持续时间：|r16|n|cff99ccff冷却时间：|r23|n|n|cffffcc00等级 1|r - 提升20%的移动速度和20%的攻击速度|n|cffffcc00等级 2|r - 提升28%的移动速度和30%的攻击速度|n|cffffcc00等级 3|r - 提升36%的移动速度和40%的攻击速度|n|cffffcc00等级 4|r - 提升44%的移动速度和50%的攻击速度
+Researchubertip=英雄在短时间内进入相位状态，大幅提升他的移动速度和攻击速度，不过被攻击时额外受到15%的伤害。|n|n|cff99ccff持续时间：|r16|n|cff99ccff冷却时间：|r23|n|n|cffffcc00等级 1|r - 提升20%的移动速度和20%的攻击速度|n|cffffcc00等级 2|r - 提升28%的移动速度和30%的攻击速度|n|cffffcc00等级 3|r - 提升36%的移动速度和40%的攻击速度|n|cffffcc00等级 4|r - 提升44%的移动速度和50%的攻击速度
 researchhotkey="W"
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNSirenMaster.blp
 [A09U]

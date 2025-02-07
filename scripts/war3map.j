@@ -1109,8 +1109,8 @@ globals
 	integer X6V
 	integer X7V
 	integer Item_IronwoodBranch
-	integer X9V
-	integer OVV
+	integer Item_KelenDagger
+	integer Item_DisabledKelenDagger
 	integer OEV
 	integer OXV
 	integer OOV
@@ -3025,9 +3025,9 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A06O', 0, "APE")
 	call SaveStr(ObjectHashTable,'A3NX', 0, "APE")
 	call SaveStr(ObjectHashTable,'A0H0', 0, "AQE")
-	call SaveStr(ObjectHashTable,'A05C', 0, "ASE")
-	call SaveStr(ObjectHashTable,'A29K', 0, "ATE")
-	call SaveStr(ObjectHashTable,'QB0I', 0, "ATE")
+	call SaveStr(ObjectHashTable,'A05C', 0, "SlardarSprintOnSpellEffect")
+	call SaveStr(ObjectHashTable,'A29K', 0, "SlithereenCrushOnSpellEffect")
+	call SaveStr(ObjectHashTable,'QB0I', 0, "SlithereenCrushOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A0HW', 0, "SpectralDaggerOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A0H9', 0, "AWE")
 	call SaveStr(ObjectHashTable,'A0HA', 0, "AYE")
@@ -14482,7 +14482,7 @@ function XEO takes unit u returns boolean
 endfunction
 function XXO takes item it returns boolean
 	local integer id = GetItemIndexEx(it)
-	return id == OQV or id == OTV or id == XPV or id == XQV or id == XTV or id == XWV or id == X6V or id == X9V or id == OXV or id == ODV or id == OFV or id == OHV or id == OJV or id == OLV or id == OMV or id == Item_MagicStick or id == RVV or id == RXV or id == OWV or id == R4V or id == X2V or id == XMV or id == XKV or id == XZV or id == XYV or id == ONV
+	return id == OQV or id == OTV or id == XPV or id == XQV or id == XTV or id == XWV or id == X6V or id == Item_KelenDagger or id == OXV or id == ODV or id == OFV or id == OHV or id == OJV or id == OLV or id == OMV or id == Item_MagicStick or id == RVV or id == RXV or id == OWV or id == R4V or id == X2V or id == XMV or id == XKV or id == XZV or id == XYV or id == ONV
 endfunction
 function XOO takes unit KKX, integer XRO, player p returns nothing
 	local integer i = 0
@@ -15574,7 +15574,7 @@ function OMO takes nothing returns boolean
 			endif
 			if i == XOV[OYV] then
 				set CDV[id]= CDV[id] + 1
-			elseif i == XOV[X9V] then
+			elseif i == XOV[Item_KelenDagger] then
 				set HaveBlinkDaggerCount = HaveBlinkDaggerCount + 1
 				set CFV[id]= CFV[id] + 1
 			elseif i == XOV[AWV]or i == XOV[AYV] then
@@ -15651,7 +15651,7 @@ function OMO takes nothing returns boolean
 		elseif GetTriggerEventId() == EVENT_PLAYER_UNIT_DROP_ITEM then
 			if i == XOV[OYV] then
 				set CDV[id]= CDV[id]-1
-			elseif i == XOV[X9V] then
+			elseif i == XOV[Item_KelenDagger] then
 				set CFV[id]= CFV[id]-1
 				set HaveBlinkDaggerCount = HaveBlinkDaggerCount -1
 			elseif i == XOV[RNV] then
@@ -16607,7 +16607,7 @@ function IFO takes unit u, item it, integer JOX returns nothing
 	set E3 = GetItemPlayer(it)
 	call RemoveItem(it)
 	call UnitAddAbility(d,'AInv')
-	set it = UnitAddItemById(d, XOV[OVV])
+	set it = UnitAddItemById(d, XOV[Item_DisabledKelenDagger])
 	call UnitUseItem(d, it)
 	call JXX(u, it, JOX)
 	call SetItemPlayer(it, E3, false)
@@ -16619,7 +16619,7 @@ endfunction
 function IGO takes unit u returns nothing
 	local integer i = 0
 	local item it
-	local integer GTX
+	local integer itemIndex
 	local boolean b = false
 	local real time = (LoadReal(HY, GetHandleId(u), 785) + 3) - GetGameTime() 
 	if ( (LoadReal(HY, GetHandleId(u), 785) ) + 3) > GetGameTime() then
@@ -16627,23 +16627,23 @@ function IGO takes unit u returns nothing
 	endif
 	loop
 		set it = UnitItemInSlot(u, i)
-		set GTX = GetItemIndex(it)
-		if (GTX == X9V and b) or(GTX == OVV and time >= 2.9) then
+		set itemIndex = GetItemIndex(it)
+		if (itemIndex == Item_KelenDagger and b) or(itemIndex == Item_DisabledKelenDagger and time >= 2.9) then
 			call DisableTrigger(CUV)
 			//call IFO(u, it, i)
 			set E3 = GetItemPlayer(it)
 			call RemoveItem(it)
-			set Z2 = JIX(u, XOV[OVV], i)
+			set Z2 = JIX(u, XOV[Item_DisabledKelenDagger], i)
 			call StartUnitAbilityCooldownAbsolute(u, 'A445')
 			call SetItemPlayer(Z2, E3, false)
 			call SetItemUserData(Z2, 1)
 			call EnableTrigger(CUV)
 		endif
-		if GTX == OVV and b == false then
+		if itemIndex == Item_DisabledKelenDagger and b == false then
 			call DisableTrigger(CUV)
 			set E3 = GetItemPlayer(it)
 			call RemoveItem(it)
-			set Z2 = JIX(u, XOV[X9V], i)
+			set Z2 = JIX(u, XOV[Item_KelenDagger], i)
 			call SetItemPlayer(Z2, E3, false)
 			call SetItemUserData(Z2, 1)
 			call EnableTrigger(CUV)
@@ -20128,13 +20128,24 @@ function CYO takes nothing returns boolean
 		call UnitRemoveAbility(GetTriggerUnit(),'A3K1')
 		call UnitRemoveAbility(GetTriggerUnit(),'B09Y')
 	endif
-	call SetUnitPhaseMove( u, false )
 	call FlushChildHashtable(HY, h)
 	call DestroyTrigger(t)
 	set u = null
 	set t = null
 	return false
 endfunction
+
+function PhaseBootsBuffOnAdd takes nothing returns nothing
+	local unit whichUnit = MHEvent_GetUnit()
+	call UnitAddPhasedMovementCount(whichUnit)
+	set whichUnit = null
+endfunction
+function PhaseBootsBuffOnRemove takes nothing returns nothing
+	local unit whichUnit = MHEvent_GetUnit()
+	call UnitSubPhasedMovementCount(whichUnit)
+	set whichUnit = null
+endfunction
+
 function CZO takes unit u returns nothing
 	local trigger t = CreateTrigger()
 	call TriggerRegisterUnitEvent(t, u, EVENT_UNIT_SPELL_CAST)
@@ -20142,7 +20153,10 @@ function CZO takes unit u returns nothing
 	call TriggerRegisterDeathEvent(t, u)
 	call TriggerAddCondition(t, Condition(function CYO))
 	call SaveUnitHandle(HY, GetHandleId(t), 0, u)
-	call SetUnitPhaseMove( u, true )
+
+	call SetAbilityAddAction('A05C', "PhaseBootsBuffOnAdd")
+	call SetAbilityRemoveAction('A05C', "PhaseBootsBuffOnRemove")
+
 	if IsUnitType(u, UNIT_TYPE_MELEE_ATTACKER) then
 		call UnitAddAbilityToTimed(u,'A3K1', 1, 2.5,'B09Y')
 	else
@@ -62086,80 +62100,7 @@ function AQE takes nothing returns nothing
 	set XSA = null
 	set XTA = null
 endfunction
-function ATE takes nothing returns nothing
-	local unit whichUnit = GetTriggerUnit()
-	local real x = GetUnitX(whichUnit)
-	local real y = GetUnitY(whichUnit)
-	local unit dummyCaster = CreateUnit(GetOwningPlayer(whichUnit),'e00E', x, y, 0)
-	local group g = AllocationGroup(387)
-	local integer level = GetUnitAbilityLevel(whichUnit, GetSpellAbilityId())
-	local unit u
-	call UnitAddPermanentAbility(dummyCaster,'A0M9')
-	call SetUnitAbilityLevel(dummyCaster,'A0M9', level)
-	call IssueImmediateOrderById(dummyCaster, 852096)
-	set U2 = whichUnit
-	call GroupEnumUnitsInRange(g, x, y, 350 + 25, Condition(function DHX))
-	loop
-		set u = FirstOfGroup(g)
-	exitwhen u == null
-		call UnitDamageTargetEx(dummyCaster, u, 2, 50 * level)
-		call CommonUnitAddStun(u, .5 + level * 1. * .5, false)
-		call GroupRemoveUnit(g, u)
-	endloop
-	call DeallocateGroup(g)
-	set whichUnit = null
-	set dummyCaster = null
-	set g = null
-endfunction
 
-function XZA takes nothing returns nothing
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit u = LoadUnitHandle(HY, h, 0)
-	local integer hu = GetHandleId(u)
-	local real X_A = LoadReal(HY, h, 0)
-	if GetTriggerEventId() == EVENT_WIDGET_DEATH or(GetUnitAbilityLevel(u,'B013') == 0 and GetTriggerEvalCount(t)> 2) or GetGameTime()>= X_A then
-		call RemoveSavedHandle(HY, hu,'A05C')
-		//call UnitRemoveAbility(u,'B3JQ')
-		call SetUnitPhaseMove( u, false )
-		call FlushChildHashtable(HY, h)
-		call DestroyTrigger(t)
-	else
-		//if GetUnitAbilityLevel(u,'B3JQ')==0 and GetUnitAbilityLevel(u,'B07T')==0 and GetUnitAbilityLevel(u,'B39C')==0 then
-		//		call UZV(u,'I0T9')
-		//	endif
-	endif
-	set t = null
-	set u = null
-endfunction
-function ASE takes nothing returns nothing
-	local unit u = GetTriggerUnit()
-	local trigger t
-	local integer h
-	local integer hu = GetHandleId(u)
-	if HaveSavedHandle(HY, hu,'A05C') then
-		set t = LoadTriggerHandle(HY, hu,'A05C')
-		set h = GetHandleId(t)
-	else
-		set t = CreateTrigger()
-		set h = GetHandleId(t)
-		//call UnitRemoveAbility(u,'B3JQ')
-		call SetUnitPhaseMove( u, true )
-		//if not IsUnitType(u, UNIT_TYPE_FLYING) then
-		//	call EXSetUnitMoveType(u, MOVE_TYPE_FOOT )
-	//		call EXSetUnitCollisionType(false, u, COLLISION_TYPE_UNIT)
-	//	endif
-		call TriggerRegisterTimerEvent(t, .02, true)
-		call TriggerRegisterDeathEvent(t, u)
-		call TriggerAddCondition(t, Condition(function XZA))
-		call SaveTriggerHandle(HY, hu,'A05C', t)
-		//call UZV(u,'I0T9')
-		call SaveUnitHandle(HY, h, 0, u)
-	endif
-	call SaveReal(HY, h, 0, GetGameTime()+ 12.)
-	set u = null
-	set t = null
-endfunction
 function X0A takes nothing returns nothing
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
@@ -78152,7 +78093,7 @@ function UnitIssuedItemOrder takes nothing returns nothing // 发布物品命令
 		// 不指向单位的操作
 		if id == R4V or id == IAV or id == INV then // tp
 			call ZEA(whichUnit, it)
-		elseif id == OVV or id == AQV or id == RBV or id == A1V then // 禁止使用破碎的物品?
+		elseif id == Item_DisabledKelenDagger or id == AQV or id == RBV or id == A1V then // 禁止使用破碎的物品?
 			if GetUnitTypeId(whichUnit) !='e00E'then 
 				call EXStopUnit(whichUnit)
 			endif
@@ -80354,8 +80295,8 @@ function InitItemsSystem takes nothing returns nothing
 	set X6V = RegisterItem('I03B','I04E','h01H','I0DA')
 	set X7V = RegisterItem('I03C','I04F','h01I','I0CQ')
 	set Item_IronwoodBranch = RegisterItem('I03D','I04G','h01J','I0CU')
-	set X9V = RegisterItem('I03E','I04H','h01K','I0C7')
-	set OVV = RegisterItem('I03E','I04I','h01K','I0DH')
+	set Item_KelenDagger = RegisterItem('I03E','I04H','h01K','I0C7')
+	set Item_DisabledKelenDagger = RegisterItem('I03E','I04I','h01K','I0DH')
 	set OEV = RegisterItem('I03F','I04J','h01L','I0CM')
 	set OXV = RegisterItem('I03G','I04K','h01M','I0CD')
 	set OOV = RegisterItem('I03H','I04L','h01N','I0CG')
@@ -80664,7 +80605,7 @@ function InitItemsSystem takes nothing returns nothing
 	set XNV[RegisterItem('I02Z','I043','h08Q','I0CV')]= XTV
 	set XNV[RegisterItem('I031','I045','h08T','I0D5')]= XWV
 	set XNV[RegisterItem('I03B','I04E','h08N','I0DA')]= X6V
-	set XNV[RegisterItem('I03E','I04H','h08W','I0C7')]= X9V
+	set XNV[RegisterItem('I03E','I04H','h08W','I0C7')]= Item_KelenDagger
 	set XNV[RegisterItem('I03G','I04K','h08O','I0CD')]= OXV
 	set XNV[RegisterItem('I03P','I04S','h08U','I0CY')]= ODV
 	set XNV[RegisterItem('I03Q','I04T','h08G','I0DI')]= OFV
@@ -83251,6 +83192,7 @@ function main takes nothing returns nothing
 	call MHBuff_SetOverlay(BUFF_TEMPLATE_BNSO, true)
 	
 	call ExecuteFunc("AbilityCustomOrderId_Init")
+	call ExecuteFunc("AbilityCustomCastType_Init")
 	call ExecuteFunc("SpecialPassiveAbility_Init")
 	call UnitRemove_Init()
 	call UnitAbility_Init()

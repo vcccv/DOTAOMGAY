@@ -1,5 +1,6 @@
 #include "AbilityUtils.j"
 #include "AbilityCustomOrderId.j"
+#include "AbilityCustomCastType.j"
 #include "BuffUtils.j"
 #include "BuffSystem.j"
 #include "SpecialPassiveAbility.j"
