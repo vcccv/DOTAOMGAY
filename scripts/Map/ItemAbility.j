@@ -14,4 +14,14 @@ scope ItemAbility
         set whichUnit = null
     endfunction
     
+
+    function ItemKelenDaggerOnPickup takes nothing returns nothing
+        
+    endfunction
+
+    function ItemKelenDaggerOnDrop takes nothing returns nothing
+        
+    endfunction
+
+
 endscope

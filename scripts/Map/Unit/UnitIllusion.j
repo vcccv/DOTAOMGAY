@@ -153,7 +153,7 @@ library UnitIllusion requires UnitUtils, UnitWeapon, UnitMorph, BuffSystem
             // 模型缩放
             // call SetUnitCurrentScaleEx(illusionUnit, )
         endif
-        if ( UnitHasItemOfType(illusionUnit, XOV[it_mlq]) ) or ( UnitHasItemOfType(illusionUnit, XOV[Item_HurricanePike]) ) then
+        if ( UnitHasItemOfType(illusionUnit, RealItem[it_mlq]) ) or ( UnitHasItemOfType(illusionUnit, RealItem[Item_HurricanePike]) ) then
             call AddUnitBonusRange(illusionUnit, 140., true)
         endif
         if IsPlayerAutoSelectSummoned[pid] then

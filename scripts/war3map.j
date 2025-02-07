@@ -920,11 +920,11 @@ globals
 	unit U2
 	unit MissileHitTargetUnit
 	unit Y2
-	item Z2 = null
+	item TempItem = null
 	trigger V3
 	group DK
 	group EK
-	player E3
+	player TempPlayer
 	boolean X3 = false
 	image R3 = null
 	unit VK = null
@@ -1067,7 +1067,7 @@ globals
 	trigger XVV
 	integer XEV = 0
 	integer array XXV
-	integer array XOV
+	integer array RealItem
 	integer array XRV
 	integer array XIV
 	string array ItemsIconFilePath
@@ -1154,7 +1154,7 @@ globals
 	integer RRV
 	integer RIV
 	integer RAV
-	integer RNV
+	integer Item_TranquilBoots
 	integer RBV
 	integer RCV
 	integer Item_MoonShard
@@ -1240,7 +1240,7 @@ globals
 	integer AKV
 	integer ALV
 	integer AMV
-	integer APV
+	integer Item_LinkenSphere
 	integer AQV
 	integer ASV
 	integer ATV
@@ -1249,12 +1249,12 @@ globals
 	integer AYV
 	integer AZV
 	integer A_V
-	integer A0V
+	integer Item_HeartOfTarrasque
 	integer A1V
 	integer A2V
 	integer A3V
 	integer A4V
-	integer A5V
+	integer Item_TheButterfly
 	integer A6V
 	integer A7V
 	integer A8V
@@ -1358,12 +1358,12 @@ globals
 	integer CSV
 	unit CTV
 	integer CTVV
-	trigger CUV
+	trigger UnitManipulatItemTrig
 	integer CWV = 0
-	integer HaveBlinkDaggerCount = 0
+	integer KelenDaggerCount = 0
 	integer CZV = 0
-	integer HaveHeartofTarrasqueCount = 0
-	integer HaveTranquilBootsCount = 0
+	integer HeartOfTarrasqueCount = 0
+	integer TranquilBootsCount = 0
 	integer array C1V
 	integer array C1Z
 	boolean C2V = false
@@ -2515,7 +2515,7 @@ function GetItemIndexEx takes item UWV returns integer
 	endif
 	set UYV = GetItemTypeId(UWV)
 	loop
-		if XXV[i]== UYV or XOV[i]== UYV or XIV[i]== UYV then
+		if XXV[i]== UYV or RealItem[i]== UYV or XIV[i]== UYV then
 			return i
 		endif
 		set i = i + 1
@@ -3752,7 +3752,7 @@ function GetItemIndex takes item it returns integer
 	endif
 	set id = GetItemTypeId(it)
 	loop
-		if XXV[i]== id or XOV[i]== id then
+		if XXV[i]== id or RealItem[i]== id then
 			return i
 		endif
 		set i = i + 1
@@ -3808,7 +3808,7 @@ function TFE takes unit u returns nothing
 	set TGE[3]= 0
 	set TGE[4]= 0
 	set TGE[5]= 0
-	call DisableTrigger(CUV)
+	call DisableTrigger(UnitManipulatItemTrig)
 	loop
 		set it = UnitItemInSlot(u, i)
 		set id = GetItemIndex(it)
@@ -3836,7 +3836,7 @@ function TFE takes unit u returns nothing
 		set i = i + 1
 	exitwhen i > k
 	endloop
-	call EnableTrigger(CUV)
+	call EnableTrigger(UnitManipulatItemTrig)
 	set it = null
 	set p = null
 endfunction
@@ -3944,7 +3944,7 @@ function GetUnitMissProbability takes unit whichUnit returns integer
 		exitwhen i > inventorySize
 			set it = UnitItemInSlot(whichUnit, i)
 			if it != null then
-				if GetItemIndex(it) == A5V then
+				if GetItemIndex(it) == Item_TheButterfly then
 					// 蝴蝶 35%
 					if GetUnitAbilityLevel(whichUnit,'AIev') > 0 then
 						set probability = probability * .65
@@ -7611,28 +7611,28 @@ endfunction
 function C0X takes player p returns nothing
 	local unit trigUnit = PlayerHeroes[GetPlayerId(p)]
 	local integer i = 0
-	local item C1X
+	local item whichItem
 	loop
 	exitwhen i > 5
-		set C1X = UnitItemInSlot(trigUnit, i)
-		call SetItemDroppable(C1X, false)
+		set whichItem = UnitItemInSlot(trigUnit, i)
+		call SetItemDroppable(whichItem, false)
 		set i = i + 1
 	endloop
 	set trigUnit = null
-	set C1X = null
+	set whichItem = null
 endfunction
 function C2X takes player p returns nothing
 	local unit trigUnit = PlayerHeroes[GetPlayerId(p)]
 	local integer i = 0
-	local item C1X
+	local item whichItem
 	loop
 	exitwhen i > 5
-		set C1X = UnitItemInSlot(trigUnit, i)
-		call SetItemDroppable(C1X, true)
+		set whichItem = UnitItemInSlot(trigUnit, i)
+		call SetItemDroppable(whichItem, true)
 		set i = i + 1
 	endloop
 	set trigUnit = null
-	set C1X = null
+	set whichItem = null
 endfunction
 function C4X takes unit u returns boolean
 	return GetUnitAbilityLevel(u,'B0C1')> 0 or GetUnitAbilityLevel(u,'BEer')> 0 or GetUnitAbilityLevel(u,'Beng')> 0 or GetUnitAbilityLevel(u,'Bena')> 0 or GetUnitAbilityLevel(u,'B017')> 0 or GetUnitAbilityLevel(u,'B078')> 0 or GetUnitAbilityLevel(u,'B08F')> 0 or GetUnitAbilityLevel(u,'B08E')> 0 or GetUnitAbilityLevel(u,'B0ER')> 0 or GetUnitAbilityLevel(u,'B0FN')> 0
@@ -8577,7 +8577,7 @@ endfunction
 function HFX takes item it returns boolean
 	local integer i = GetItemIndexEx(it)
 	local integer id = GetItemTypeId(it)
-	if id == XOV[XCV]or id == XOV[XFV]or id == XOV[XDV] then
+	if id == RealItem[XCV]or id == RealItem[XFV]or id == RealItem[XDV] then
 		return true
 	endif
 	return false
@@ -8679,9 +8679,9 @@ function HYX takes integer UYV, real x, real y, player p, boolean HTX, integer H
 	set t = null
 endfunction
 function HZX takes item UWV returns nothing
-	call DisableTrigger(CUV)
+	call DisableTrigger(UnitManipulatItemTrig)
 	call RemoveItem(UWV)
-	call EnableTrigger(CUV)
+	call EnableTrigger(UnitManipulatItemTrig)
 endfunction
 function H_X takes unit whichUnit returns integer
 	local integer i = 0
@@ -8722,7 +8722,7 @@ function H2X takes item UWV returns integer
 	loop
 	exitwhen i > MaxItemsNumber
 		if XIV[i]== UYV then
-			return XOV[i]
+			return RealItem[i]
 		endif
 		set i = i + 1
 	endloop
@@ -8762,44 +8762,46 @@ endfunction
 function H8X takes item UWV returns boolean
 	return GetItemType(UWV) == ITEM_TYPE_POWERUP or GetItemType(UWV) == ITEM_TYPE_PURCHASABLE or GetItemType(UWV) == ITEM_TYPE_MISCELLANEOUS
 endfunction
-function H9X takes unit trigUnit returns real
-	local real JVX
+function GetHeroRevivalPointX takes unit trigUnit returns real
+	local real x
 	if IsSentinelPlayer(GetOwningPlayer(trigUnit)) then
-		set JVX = GetRectCenterX(gg_rct_SentinelRevivalPoint)
+		set x = GetRectCenterX(gg_rct_SentinelRevivalPoint)
 	else
-		set JVX = GetRectCenterX(gg_rct_ScourgeRevivalPoint)
+		set x = GetRectCenterX(gg_rct_ScourgeRevivalPoint)
 	endif
-	return JVX
+	return x
 endfunction
-function JEX takes unit trigUnit returns real
-	local real JVX
+function GetHeroRevivalPointY takes unit trigUnit returns real
+	local real y
 	if IsSentinelPlayer(GetOwningPlayer(trigUnit)) then
-		set JVX = GetRectCenterY(gg_rct_SentinelRevivalPoint)
+		set y = GetRectCenterY(gg_rct_SentinelRevivalPoint)
 	else
-		set JVX = GetRectCenterY(gg_rct_ScourgeRevivalPoint)
+		set y = GetRectCenterY(gg_rct_ScourgeRevivalPoint)
 	endif
-	return JVX
+	return y
 endfunction
-function JXX takes unit trigUnit, item C1X, integer JOX returns nothing
-	local real x = H9X(trigUnit)
-	local real y = JEX(trigUnit)
+
+// 直接添加物品到单位
+function AddItemToUnitSlot takes unit trigUnit, item whichItem, integer itemSlot returns nothing
+	local real x = GetHeroRevivalPointX(trigUnit)
+	local real y = GetHeroRevivalPointY(trigUnit)
 	local integer i = 0
 	local boolean array b
-	local item JRX
-	call DisableTrigger(CUV)
+	local item dummyItem
+	call DisableTrigger(UnitManipulatItemTrig)
 	loop
 	exitwhen i >(UnitInventorySize(trigUnit)-1)
-		if UnitItemInSlot(trigUnit, i) == null and i != JOX then
-			set JRX = CreateItem('I02M', x, y)
-			call UnitAddItem(trigUnit, JRX)
-			set b[i]= true
+		if UnitItemInSlot(trigUnit, i) == null and i != itemSlot then
+			set dummyItem = CreateItem('I02M', x, y)
+			call UnitAddItem(trigUnit, dummyItem)
+			set b[i] = true
 		else
-			set b[i]= false
+			set b[i] = false
 		endif
-		if i == JOX then
-			call EnableTrigger(CUV)
-			call UnitAddItem(trigUnit, C1X)
-			call DisableTrigger(CUV)
+		if i == itemSlot then
+			call EnableTrigger(UnitManipulatItemTrig)
+			call UnitAddItem(trigUnit, whichItem)
+			call DisableTrigger(UnitManipulatItemTrig)
 		endif
 		set i = i + 1
 	endloop
@@ -8811,50 +8813,53 @@ function JXX takes unit trigUnit, item C1X, integer JOX returns nothing
 		endif
 		set i = i + 1
 	endloop
-	call EnableTrigger(CUV)
-	set Z2 = C1X
-	set C1X = null
-	set JRX = null
+	call EnableTrigger(UnitManipulatItemTrig)
+	set TempItem  = whichItem
+	set whichItem = null
+	set dummyItem = null
 endfunction
-function JIX takes unit trigUnit, integer JAX, integer JNX returns item
-	local real x = H9X(trigUnit)
-	local real y = JEX(trigUnit)
-	local item C1X = CreateItem(JAX, x, y)
+
+// 创建失败了也会掉到己方泉水
+function CreateItemToUnitSlotByIndex takes unit trigUnit, integer itemId, integer itemSlot returns item
+	local real x = GetHeroRevivalPointX(trigUnit)
+	local real y = GetHeroRevivalPointY(trigUnit)
+	local item whichItem = CreateItem(itemId, x, y)
 	local integer i = 0
-	local boolean array JBX
-	local item JCX
-	call DisableTrigger(CUV)
-	if JAX > 0 then
+	local boolean array hasDummyItem
+	local item dummyItem
+	call DisableTrigger(UnitManipulatItemTrig)
+	// 如果位置上没有物品 则用空物品挤占
+	if itemId > 0 then
 		loop
 		exitwhen i >(UnitInventorySize(trigUnit)-1)
-			if UnitItemInSlot(trigUnit, i) == null and i != JNX then
-				set JCX = CreateItem('I02M', x, y)
-				call UnitAddItem(trigUnit, JCX)
-				set JBX[i]= true
+			if UnitItemInSlot(trigUnit, i) == null and i != itemSlot then
+				set dummyItem = CreateItem('I02M', x, y)
+				call UnitAddItem(trigUnit, dummyItem)
+				set hasDummyItem[i]= true
 			else
-				set JBX[i]= false
+				set hasDummyItem[i]= false
 			endif
-			if i == JNX then
-				call EnableTrigger(CUV)
-				call UnitAddItem(trigUnit, C1X)
-				call DisableTrigger(CUV)
+			if i == itemSlot then
+				call EnableTrigger(UnitManipulatItemTrig)
+				call UnitAddItem(trigUnit, whichItem)
+				call DisableTrigger(UnitManipulatItemTrig)
 			endif
 			set i = i + 1
 		endloop
 		set i = 0
 		loop
 		exitwhen i > 5
-			if JBX[i] then
+			if hasDummyItem[i] then
 				call RemoveItem(UnitItemInSlot(trigUnit, i))
 			endif
 			set i = i + 1
 		endloop
 	endif
-	call EnableTrigger(CUV)
-	set Z2 = C1X
-	set C1X = null
-	set JCX = null
-	return Z2
+	call EnableTrigger(UnitManipulatItemTrig)
+	set TempItem = whichItem
+	set whichItem = null
+	set dummyItem = null
+	return TempItem
 endfunction
 // 储存单位的RGB
 function JDX takes integer unitTypeId, integer r, integer g, integer b returns nothing
@@ -10130,9 +10135,9 @@ function IsNotDummyHero takes unit u returns boolean
 endfunction
 function MIX takes unit whichUnit returns nothing
 	local integer charges
-	if GetItemOfTypeFromUnit(whichUnit, XOV[NIV])!= null and GetUnitTypeId(whichUnit)!='H00J' then
-		set charges = R2I(GetItemCharges(GetItemOfTypeFromUnit(whichUnit, XOV[NIV]))* .67)
-		if GetItemCharges(GetItemOfTypeFromUnit(whichUnit, XOV[NIV])) == 1 then
+	if GetItemOfTypeFromUnit(whichUnit, RealItem[NIV])!= null and GetUnitTypeId(whichUnit)!='H00J' then
+		set charges = R2I(GetItemCharges(GetItemOfTypeFromUnit(whichUnit, RealItem[NIV]))* .67)
+		if GetItemCharges(GetItemOfTypeFromUnit(whichUnit, RealItem[NIV])) == 1 then
 			set charges = 0
 		endif
 	endif
@@ -10183,12 +10188,12 @@ function MCX takes nothing returns nothing
 	call SetUnitX(u, x)
 	call SetUnitY(u, y)
 	call L8X(u)
-	if GetItemOfTypeFromUnit(u, XOV[NIV])!= null and GetUnitTypeId(u)!='H00J' then
-		set c = R2I(GetItemCharges(GetItemOfTypeFromUnit(u, XOV[NIV]))* .67 * 1.)
-		if GetItemCharges(GetItemOfTypeFromUnit(u, XOV[NIV])) == 1 then
+	if GetItemOfTypeFromUnit(u, RealItem[NIV])!= null and GetUnitTypeId(u)!='H00J' then
+		set c = R2I(GetItemCharges(GetItemOfTypeFromUnit(u, RealItem[NIV]))* .67 * 1.)
+		if GetItemCharges(GetItemOfTypeFromUnit(u, RealItem[NIV])) == 1 then
 			set c = 0
 		endif
-		call SetItemCharges(GetItemOfTypeFromUnit(u, XOV[NIV]), c)
+		call SetItemCharges(GetItemOfTypeFromUnit(u, RealItem[NIV]), c)
 	endif
 	if GetUnitAbilityLevel(u,'A2AI')> 0 then
 		call UnitRemoveAbility(u,'QF0O')
@@ -11690,8 +11695,8 @@ function TCX takes nothing returns nothing
 endfunction
 function TDX takes nothing returns boolean
 	if (IsAliveNotStrucNotWard(GetFilterUnit())) and IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and IsUnitIllusion(GetFilterUnit()) == false then
-		if IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(E2V)) and GetItemOfTypeFromUnit(GetFilterUnit(), XOV[NIV])!= null then
-			call SetItemCharges(GetItemOfTypeFromUnit(GetFilterUnit(), XOV[NIV]), GetItemCharges(GetItemOfTypeFromUnit(GetFilterUnit(), XOV[NIV]))+ 1)
+		if IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(E2V)) and GetItemOfTypeFromUnit(GetFilterUnit(), RealItem[NIV])!= null then
+			call SetItemCharges(GetItemOfTypeFromUnit(GetFilterUnit(), RealItem[NIV]), GetItemCharges(GetItemOfTypeFromUnit(GetFilterUnit(), RealItem[NIV]))+ 1)
 		endif
 	endif
 	return false
@@ -11700,7 +11705,7 @@ function TFX takes nothing returns boolean
 	local item i
 	local integer HUX
 	if E4V == 0 and(IsAliveNotStrucNotWard(GetFilterUnit())) and IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and IsUnitIllusion(GetFilterUnit()) == false and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(E3V)) then
-		set i = GetItemOfTypeFromUnit(GetFilterUnit(), XOV[NUV])
+		set i = GetItemOfTypeFromUnit(GetFilterUnit(), RealItem[NUV])
 		if i != null then
 			set E4V = E4V + 1
 			set HUX = GetItemCharges(i)
@@ -11803,7 +11808,7 @@ function TLX takes unit whichUnit, unit TMX returns nothing
 endfunction
 function TPX takes nothing returns boolean
 	if (IsAliveNotStrucNotWard(GetFilterUnit())) and IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and IsUnitIllusion(GetFilterUnit()) == false then
-		if IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(E2V)) == false and GetItemOfTypeFromUnit(GetFilterUnit(), XOV[RAV])!= null then
+		if IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(E2V)) == false and GetItemOfTypeFromUnit(GetFilterUnit(), RealItem[RAV])!= null then
 		endif
 	endif
 	return false
@@ -12522,17 +12527,17 @@ function U7X takes nothing returns nothing
 		endif
 	endif
 	set WAX = GetHeroLevel(U9X)* 30
-	if GetItemOfTypeFromUnit(U9X, XOV[NIV])!= null then
-		if GetItemCharges(GetItemOfTypeFromUnit(U9X, XOV[NIV]))> 0 then
-			set WQX =-1 *(3 * GetItemCharges(GetItemOfTypeFromUnit(U9X, XOV[NIV])))
+	if GetItemOfTypeFromUnit(U9X, RealItem[NIV])!= null then
+		if GetItemCharges(GetItemOfTypeFromUnit(U9X, RealItem[NIV]))> 0 then
+			set WQX =-1 *(3 * GetItemCharges(GetItemOfTypeFromUnit(U9X, RealItem[NIV])))
 		endif
 	endif
 	if WAX > WYX then
 		set WAX = WYX
 	endif
 	call TGX(U9X)
-	if GetItemOfTypeFromUnit(WVX, XOV[NIV])!= null and GetUnitDistanceEx(WVX, U9X)> 1600 then
-		call SetItemCharges(GetItemOfTypeFromUnit(WVX, XOV[NIV]), GetItemCharges(GetItemOfTypeFromUnit(WVX, XOV[NIV]))+ 1)
+	if GetItemOfTypeFromUnit(WVX, RealItem[NIV])!= null and GetUnitDistanceEx(WVX, U9X)> 1600 then
+		call SetItemCharges(GetItemOfTypeFromUnit(WVX, RealItem[NIV]), GetItemCharges(GetItemOfTypeFromUnit(WVX, RealItem[NIV]))+ 1)
 	endif
 	call TSX(U9X)
 	call TQX(U9X)
@@ -12761,19 +12766,19 @@ function YXX takes nothing returns nothing
 	loop
 	exitwhen i > 5
 		set u = PlayerHeroes[GetPlayerId(SentinelPlayers[i])]
-		if u != null and GetItemOfTypeFromUnit(u, XOV[AIV])!= null then
-			call DisableTrigger(CUV)
+		if u != null and GetItemOfTypeFromUnit(u, RealItem[AIV])!= null then
+			call DisableTrigger(UnitManipulatItemTrig)
 			call StoreDrCacheData("AegisOff", GetPlayerId(GetOwningPlayer(u)))
-			call RemoveItem(GetItemOfTypeFromUnit(u, XOV[AIV]))
-			call EnableTrigger(CUV)
+			call RemoveItem(GetItemOfTypeFromUnit(u, RealItem[AIV]))
+			call EnableTrigger(UnitManipulatItemTrig)
 			call YEX(u)
 		endif
 		set u = PlayerHeroes[GetPlayerId(ScourgePlayers[i])]
-		if u != null and GetItemOfTypeFromUnit(u, XOV[AIV])!= null then
-			call DisableTrigger(CUV)
+		if u != null and GetItemOfTypeFromUnit(u, RealItem[AIV])!= null then
+			call DisableTrigger(UnitManipulatItemTrig)
 			call StoreDrCacheData("AegisOff", GetPlayerId(GetOwningPlayer(u)))
-			call RemoveItem(GetItemOfTypeFromUnit(u, XOV[AIV]))
-			call EnableTrigger(CUV)
+			call RemoveItem(GetItemOfTypeFromUnit(u, RealItem[AIV]))
+			call EnableTrigger(UnitManipulatItemTrig)
 			call YEX(u)
 		endif
 		set i = i + 1
@@ -12914,9 +12919,9 @@ function YUX takes nothing returns nothing
 	if XEV > 1 then
 		call UnitRemoveAbility(Roshan,'A0K2')
 		call UnitAddAbility(Roshan,'A0Q6')
-		call UnitAddItem(Roshan, CreateItem(XOV[R7V], 0, 0))
+		call UnitAddItem(Roshan, CreateItem(RealItem[R7V], 0, 0))
 	endif
-	call UnitAddItem(Roshan, CreateItem(XOV[AAV], 0, 0))
+	call UnitAddItem(Roshan, CreateItem(RealItem[AAV], 0, 0))
 	call YKX()
 endfunction
 function YWX takes nothing returns boolean
@@ -13328,7 +13333,7 @@ function ZBX takes integer i returns boolean
 endfunction
 function ZCX takes nothing returns nothing
 	if GetWidgetLife(GetEnumItem())> 0 and ZNX(GetItemTypeId(GetEnumItem())) then
-		set Z2 = GetEnumItem()
+		set TempItem = GetEnumItem()
 	endif
 endfunction
 function ZDX takes nothing returns integer
@@ -13359,17 +13364,17 @@ function RuneRefresh__CallBack takes nothing returns boolean
 	set y1 = GetLocationY(LeftTopRuneLocatio)
 	set x2 = GetLocationX(RightBottomRuneLocatio)
 	set y2 = GetLocationY(RightBottomRuneLocatio)
-	set Z2 = null
+	set TempItem = null
 	call EnumItemsInRect(gg_rct_LeftTopRune, null, function ZCX)
 	set ZHX = true
-	if Z2 != null then
-		call RemoveItem(Z2)
+	if TempItem != null then
+		call RemoveItem(TempItem)
 	endif
-	set Z2 = null
+	set TempItem = null
 	call EnumItemsInRect(gg_rct_RightBottomRune, null, function ZCX)
 	set ZJX = true
-	if Z2 != null then
-		call RemoveItem(Z2)
+	if TempItem != null then
+		call RemoveItem(TempItem)
 	endif
 	set ZKX = ZDX()
 	if GetRandomInt(1, 2) == 1 then
@@ -13418,19 +13423,19 @@ function ZLX takes unit u returns nothing
 	call UPV(u, "回家")
 endfunction
 function ZMX takes nothing returns nothing
-	local item C1X = GetEnumItem()
-	if GetWidgetLife(C1X)> 0 and GetItemPlayer(C1X) == CMV and CSV == 0 then
+	local item whichItem = GetEnumItem()
+	if GetWidgetLife(whichItem)> 0 and GetItemPlayer(whichItem) == CMV and CSV == 0 then
 		set CSV = CSV + 1
-		call UnitAddItem(CPV, C1X)
+		call UnitAddItem(CPV, whichItem)
 	endif
-	set C1X = null
+	set whichItem = null
 endfunction
 function ZPX takes nothing returns nothing
-	local item C1X = GetEnumItem()
-	if GetWidgetLife(C1X)> 0 and GetItemPlayer(C1X) == CMV then
-		call UnitAddItem(CQV, C1X)
+	local item whichItem = GetEnumItem()
+	if GetWidgetLife(whichItem)> 0 and GetItemPlayer(whichItem) == CMV then
+		call UnitAddItem(CQV, whichItem)
 	endif
-	set C1X = null
+	set whichItem = null
 endfunction
 function ZQX takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
@@ -13473,7 +13478,7 @@ endfunction
 function ZTX takes unit ZSX, unit trigUnit returns nothing
 	local player p = GetOwningPlayer(trigUnit)
 	local integer i
-	local item C1X
+	local item whichItem
 	local trigger t = CreateTrigger()
 	local integer h = GetHandleId(t)
 	local real x = GetUnitX(ZSX)
@@ -13494,16 +13499,16 @@ function ZTX takes unit ZSX, unit trigUnit returns nothing
 	set i = 0
 	loop
 	exitwhen i > 5
-		set C1X = UnitItemInSlot(ZSX, i)
-		set GTX = GetItemIndexEx(C1X)
-		if C1X != null and GetItemPlayer(C1X) == p and(GTX != O3V and GTX != O4V and GTX != O5V and GTX != O6V and GTX != O7V) then
-			call UnitRemoveItem(ZSX, C1X)
-			call SetItemPosition(C1X, x, y)
+		set whichItem = UnitItemInSlot(ZSX, i)
+		set GTX = GetItemIndexEx(whichItem)
+		if whichItem != null and GetItemPlayer(whichItem) == p and(GTX != O3V and GTX != O4V and GTX != O5V and GTX != O6V and GTX != O7V) then
+			call UnitRemoveItem(ZSX, whichItem)
+			call SetItemPosition(whichItem, x, y)
 		endif
 		set i = i + 1
 	endloop
 	set t = null
-	set C1X = null
+	set whichItem = null
 endfunction
 function ZUX takes unit ZWX returns boolean
 	local integer i = GetUnitCurrentOrder(ZWX)
@@ -13650,7 +13655,7 @@ function Z3X takes unit Y1X, unit KKX, boolean Z4X, integer Z5X returns nothing
 		endif
 		if Z8X == Z7X then
 			if Z4X == false then
-				set it = UnitAddItemById(KKX, XOV[CombinedIndex[k]])
+				set it = UnitAddItemById(KKX, RealItem[CombinedIndex[k]])
 				if CombinedIndex[k]== NIV or CombinedIndex[k]== Item_MagicWand or CombinedIndex[k]== IUV or CombinedIndex[k]== IWV then
 					if HaveSavedInteger(HY,'ITEM', 300) then
 						call SetItemCharges(it, LoadInteger(HY,'ITEM', 300))
@@ -13689,7 +13694,7 @@ function Z9X takes nothing returns boolean
 	local real y
 	local integer i
 	local player p = GetOwningPlayer(trigUnit)
-	local item C1X
+	local item whichItem
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		if GetTriggerUnit() == trigUnit or UnitIsDead(trigUnit) then
 			call ZLX(ZSX)
@@ -13723,7 +13728,7 @@ function Z9X takes nothing returns boolean
 	set t = null
 	set ZSX = null
 	set trigUnit = null
-	set C1X = null
+	set whichItem = null
 	return false
 endfunction
 function VVO takes unit u, boolean b returns nothing
@@ -13754,14 +13759,14 @@ function VVO takes unit u, boolean b returns nothing
 	set mns = null
 endfunction
 function VOO takes nothing returns nothing
-	local item C1X = GetEnumItem()
+	local item whichItem = GetEnumItem()
 	local player p = ZO
 	local integer id = GetPlayerId(p)
-	if GetWidgetLife(C1X)> 0 and GetItemPlayer(C1X) == p and IsItemVisible(C1X) then
-		call SetItemPosition(C1X, CirclesX[id], CirclesY[id])
-		call UnitAddItem(CTV, C1X)
+	if GetWidgetLife(whichItem)> 0 and GetItemPlayer(whichItem) == p and IsItemVisible(whichItem) then
+		call SetItemPosition(whichItem, CirclesX[id], CirclesY[id])
+		call UnitAddItem(CTV, whichItem)
 	endif
-	set C1X = null
+	set whichItem = null
 	set p = null
 endfunction
 function VRO takes nothing returns boolean
@@ -13790,7 +13795,7 @@ endfunction
 function VIO takes unit trigUnit returns nothing
 	local unit u = GetSoldUnit()
 	local integer i = 0
-	local item C1X
+	local item whichItem
 	local integer id = GetPlayerId(GetOwningPlayer(u))
 	local region r = CreateRegion()
 	local trigger t
@@ -13812,12 +13817,12 @@ function VIO takes unit trigUnit returns nothing
 		call SaveUnitHandle(HY, h, 2,(whichUnit))
 		loop
 		exitwhen i > 5
-			set C1X = UnitItemInSlot(whichUnit, i)
-			if GUX(GetItemIndexEx(C1X)) == false and GetItemIndexEx(C1X)!= AIV then
+			set whichItem = UnitItemInSlot(whichUnit, i)
+			if GUX(GetItemIndexEx(whichItem)) == false and GetItemIndexEx(whichItem)!= AIV then
 				call UnitRemoveItemFromSlot(whichUnit, i)
-				if IsUnitInRegion(r, whichUnit) and IsPlayerAlly(GetItemPlayer(C1X), GetOwningPlayer(whichUnit)) then
-					set id = GetPlayerId(GetItemPlayer(C1X))
-					call SetItemPosition(C1X, CirclesX[id], CirclesY[id])
+				if IsUnitInRegion(r, whichUnit) and IsPlayerAlly(GetItemPlayer(whichItem), GetOwningPlayer(whichUnit)) then
+					set id = GetPlayerId(GetItemPlayer(whichItem))
+					call SetItemPosition(whichItem, CirclesX[id], CirclesY[id])
 				endif
 			endif
 			set i = i + 1
@@ -13827,7 +13832,7 @@ function VIO takes unit trigUnit returns nothing
 	set u = null
 	set r = null
 	set t = null
-	set C1X = null
+	set whichItem = null
 	set whichUnit = null
 endfunction
 function VAO takes unit u returns string
@@ -13904,38 +13909,38 @@ function VDO takes nothing returns nothing
 	set u = null
 endfunction
 function VFO takes player whichPlayer, unit whichUnit, integer VGO, integer i0, integer i1, integer i2, integer i3, integer i4, integer i5 returns nothing
-	local item C1X
+	local item whichItem
 	call DisableTrigger(C3V)
 	if i0 > 0 then
-		set C1X = UnitItemInSlot(whichUnit, 0)
-		call HZX(C1X)
+		set whichItem = UnitItemInSlot(whichUnit, 0)
+		call HZX(whichItem)
 	endif
 	if i1 > 0 then
-		set C1X = UnitItemInSlot(whichUnit, 1)
-		call HZX(C1X)
+		set whichItem = UnitItemInSlot(whichUnit, 1)
+		call HZX(whichItem)
 	endif
 	if i2 > 0 then
-		set C1X = UnitItemInSlot(whichUnit, 2)
-		call HZX(C1X)
+		set whichItem = UnitItemInSlot(whichUnit, 2)
+		call HZX(whichItem)
 	endif
 	if i3 > 0 then
-		set C1X = UnitItemInSlot(whichUnit, 3)
-		call HZX(C1X)
+		set whichItem = UnitItemInSlot(whichUnit, 3)
+		call HZX(whichItem)
 	endif
 	if i4 > 0 then
-		set C1X = UnitItemInSlot(whichUnit, 4)
-		call HZX(C1X)
+		set whichItem = UnitItemInSlot(whichUnit, 4)
+		call HZX(whichItem)
 	endif
 	if i5 > 0 then
-		set C1X = UnitItemInSlot(whichUnit, 5)
-		call HZX(C1X)
+		set whichItem = UnitItemInSlot(whichUnit, 5)
+		call HZX(whichItem)
 	endif
-	set C1X = UnitAddItemById(whichUnit, XOV[VGO])
-	call SetItemPlayer(C1X, whichPlayer, true)
-	call SetItemUserData(C1X, 0)
+	set whichItem = UnitAddItemById(whichUnit, RealItem[VGO])
+	call SetItemPlayer(whichItem, whichPlayer, true)
+	call SetItemUserData(whichItem, 0)
 	call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Items\\AIem\\AIemTarget.mdl", whichUnit, "origin"))
-	if GetItemIndexEx(C1X) == NIV then
-		call SetItemCharges(C1X, 8)
+	if GetItemIndexEx(whichItem) == NIV then
+		call SetItemCharges(whichItem, 8)
 	endif
 	call EnableTrigger(C3V)
 	if IsPlayerAlly(LocalPlayer, whichPlayer) then
@@ -13945,7 +13950,7 @@ function VFO takes player whichPlayer, unit whichUnit, integer VGO, integer i0, 
 			call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 4, PlayersColoerText[GetPlayerId(whichPlayer)] +(PlayersName[GetPlayerId((whichPlayer))])+ "|r |c00ffff00" + GetObjectName('n0LY')+ "|r")
 		endif
 	endif
-	set C1X = null
+	set whichItem = null
 endfunction
 function VHO takes player p, unit whichUnit, integer GTX returns boolean
 	local integer i
@@ -14252,13 +14257,13 @@ function EJO takes player whichPlayer, unit whichUnit, unit EKO, integer GTX, re
 					call HYX(XXV[GTX], x, y, whichPlayer, true, HUX)
 				endif
 			else
-				set HWX = UnitAddItemById(EMO, XOV[GTX])
+				set HWX = UnitAddItemById(EMO, RealItem[GTX])
 				call SetItemCharges(HWX, HUX)
 				call SetItemPlayer(HWX, whichPlayer, true)
 				call SetItemUserData(HWX, ELO)
 			endif
 		elseif HGX(GSX(GTX)) then
-			if EMO == null or(H_X(EMO) == 0 and GetItemOfTypeFromUnit(EMO, XOV[GTX]) == null) then
+			if EMO == null or(H_X(EMO) == 0 and GetItemOfTypeFromUnit(EMO, RealItem[GTX]) == null) then
 				call HYX(XXV[GTX], x, y, whichPlayer, true, H7X(GTX))
 			else
 				set HWX = CreateItem(XXV[GTX], x, y)
@@ -14281,7 +14286,7 @@ function EJO takes player whichPlayer, unit whichUnit, unit EKO, integer GTX, re
 				endif
 			else
 				if GTX != NXV then
-					set HWX = UnitAddItemById(EMO, XOV[GTX])
+					set HWX = UnitAddItemById(EMO, RealItem[GTX])
 					call SetItemPlayer(HWX, whichPlayer, true)
 					call SetItemUserData(HWX, 0)
 				else
@@ -14292,7 +14297,7 @@ function EJO takes player whichPlayer, unit whichUnit, unit EKO, integer GTX, re
 	else
 		if IsUnitType(EMO, UNIT_TYPE_HERO) then
 			if ELO == 0 then
-				call StoreDrCacheData("PUI_" + I2S(GetPlayerId(GetOwningPlayer(EMO))), XOV[GSX(GTX)])
+				call StoreDrCacheData("PUI_" + I2S(GetPlayerId(GetOwningPlayer(EMO))), RealItem[GSX(GTX)])
 			endif
 		endif
 	endif
@@ -14449,11 +14454,11 @@ function E7O takes integer id returns boolean
 endfunction
 function E8O takes unit u, integer id returns boolean
 	local unit d = E6O(u)
-	local integer TBX = TEX(XOV[id])
+	local integer TBX = TEX(RealItem[id])
 	local player p = GetOwningPlayer(u)
 	local boolean b = false
 	if E7O(id) then
-		call DisplayTimedTextToPlayer(p, 0, 0, 10, StringReplace(GetObjectName('TX1A'), "$item", "|c00ffff00" + GetObjectName(XOV[id])+ "|r"))
+		call DisplayTimedTextToPlayer(p, 0, 0, 10, StringReplace(GetObjectName('TX1A'), "$item", "|c00ffff00" + GetObjectName(RealItem[id])+ "|r"))
 		set d = null
 		return false
 	endif
@@ -14462,13 +14467,13 @@ function E8O takes unit u, integer id returns boolean
 		call SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)-TBX)
 		call E5O(d, id)
 	else
-		call DisplayTimedTextToPlayer(p, 0, 0, 10, StringReplace(GetObjectName('TX1B'), "$item", "|c00ffff00" + GetObjectName(XOV[id])+ "|r"))
+		call DisplayTimedTextToPlayer(p, 0, 0, 10, StringReplace(GetObjectName('TX1B'), "$item", "|c00ffff00" + GetObjectName(RealItem[id])+ "|r"))
 	endif
 	set d = null
 	return b
 endfunction
 function E9O takes nothing returns boolean
-	if Q2 < 6 and GetItemPlayer(GetFilterItem()) == E3 and GetItemUserData(GetFilterItem())>= 0 and GetWidgetLife(GetFilterItem())> 1 then
+	if Q2 < 6 and GetItemPlayer(GetFilterItem()) == TempPlayer and GetItemUserData(GetFilterItem())>= 0 and GetWidgetLife(GetFilterItem())> 1 then
 		set Q2 = Q2 + 1
 		return true
 	endif
@@ -14534,7 +14539,7 @@ function XOO takes unit KKX, integer XRO, player p returns nothing
 		set i = i + 1
 	exitwhen i > 5
 	endloop
-	set E3 = p
+	set TempPlayer = p
 	set Q2 = 0
 	if IsSentinelPlayer(p) then
 		call EnumItemsInRect(WA, Condition(function E9O), function XVO)
@@ -14738,8 +14743,8 @@ function XNO takes nothing returns nothing
 		set u = null
 		return
 	endif
-	if HGX(GTX) == false and XOV[GTX]!= 0 then
-		call SaveInteger(ObjectHashTable,'ITEM', GetPlayerId(p), XOV[GTX])
+	if HGX(GTX) == false and RealItem[GTX]!= 0 then
+		call SaveInteger(ObjectHashTable,'ITEM', GetPlayerId(p), RealItem[GTX])
 		call SaveReal(ObjectHashTable,'ITEM', GetPlayerId(p), GetGameTime())
 	endif
 	if EQO(GetSellingUnit(), u) then
@@ -14754,7 +14759,7 @@ function XNO takes nothing returns nothing
 		call HYX(XXV[H3X(u)], x, y, p, true, H7X(H3X(u)))
 	else
 		call EPO(p, GSX(GTX))
-		if XOV[GTX]== 0 then
+		if RealItem[GTX]== 0 then
 			set i = XIO(GTX, false)
 			if i ==-1 then
 				call InterfaceErrorForPlayer(p, GetObjectName('n02H'))
@@ -14824,7 +14829,7 @@ function XFO takes nothing returns boolean
 		endif
 		call RemoveUnit(u)
 	elseif GetUnitTypeId(u)=='h307' then
-		set E3 = GetOwningPlayer(u)
+		set TempPlayer = GetOwningPlayer(u)
 		call ExecuteFunc("XGO")
 		call RemoveUnit(u)
 	endif
@@ -14884,52 +14889,52 @@ function XKO takes unit u, item it returns nothing
 		if TZE == A4V then
 			set p = GetItemPlayer(it)
 			call HZX(it)
-			call TDE(u, XOV[A3V], p, false, 1)
+			call TDE(u, RealItem[A3V], p, false, 1)
 		elseif TZE == OSV then
 			set p = GetItemPlayer(it)
 			call HZX(it)
-			call TDE(u, XOV[OQV], p, false, 1)
+			call TDE(u, RealItem[OQV], p, false, 1)
 		elseif TZE == NSV then
 			set p = GetItemPlayer(it)
 			call HZX(it)
-			call TDE(u, XOV[NQV], p, false, 1)
+			call TDE(u, RealItem[NQV], p, false, 1)
 		elseif TZE == A9V then
 			set p = GetItemPlayer(it)
 			call HZX(it)
-			call TDE(u, XOV[A8V], p, false, 1)
+			call TDE(u, RealItem[A8V], p, false, 1)
 		elseif TZE == XLV then
 			set p = GetItemPlayer(it)
 			call HZX(it)
-			call TDE(u, XOV[XKV], p, false, 1)
+			call TDE(u, RealItem[XKV], p, false, 1)
 		endif
 	else
 		if TZE == A3V then
 			set p = GetItemPlayer(it)
 			call HZX(it)
-			call TDE(u, XOV[A4V], p, false, 1)
+			call TDE(u, RealItem[A4V], p, false, 1)
 		elseif TZE == OQV then
 			set p = GetItemPlayer(it)
 			call HZX(it)
-			call TDE(u, XOV[OSV], p, false, 1)
+			call TDE(u, RealItem[OSV], p, false, 1)
 		elseif TZE == NQV then
 			set p = GetItemPlayer(it)
 			call HZX(it)
-			call TDE(u, XOV[NSV], p, false, 1)
+			call TDE(u, RealItem[NSV], p, false, 1)
 		elseif TZE == A8V then
 			set p = GetItemPlayer(it)
 			call HZX(it)
-			call TDE(u, XOV[A9V], p, false, 1)
+			call TDE(u, RealItem[A9V], p, false, 1)
 		elseif TZE == XKV then
 			set p = GetItemPlayer(it)
 			call HZX(it)
-			call TDE(u, XOV[XLV], p, false, 1)
+			call TDE(u, RealItem[XLV], p, false, 1)
 		endif
 	endif
 endfunction
-function XLO takes unit trigUnit, item C1X returns boolean
+function XLO takes unit trigUnit, item whichItem returns boolean
 	local unit u = trigUnit
 	local integer H4X = GetUnitTypeId(u)
-	local integer GTX = GetItemIndexEx(C1X)
+	local integer GTX = GetItemIndexEx(whichItem)
 	local real x
 	local real y
 	local integer i
@@ -14939,93 +14944,93 @@ function XLO takes unit trigUnit, item C1X returns boolean
 	if GTX == OZV then
 		call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Undead\\ReplenishMana\\SpiritTouchTarget.mdl", u, "overhead"))
 		call IRX(GetOwningPlayer(u), "Abilities\\Spells\\Human\\Heal\\HealTarget.wav")
-		set E3 = GetItemPlayer(C1X)
-		call HZX(C1X)
-		call TDE(trigUnit, XOV[O2V], E3, false, 1)
+		set TempPlayer = GetItemPlayer(whichItem)
+		call HZX(whichItem)
+		call TDE(trigUnit, RealItem[O2V], TempPlayer, false, 1)
 		call UnitRemoveAbility(u,'B0GI')
 	endif
-	if (GTX) == IUV and GetItemCharges(C1X) == 0 then
-		set E3 = GetItemPlayer(C1X)
-		call HZX(C1X)
-		call TDE(trigUnit, XOV[IYV], E3, false, 1)
+	if (GTX) == IUV and GetItemCharges(whichItem) == 0 then
+		set TempPlayer = GetItemPlayer(whichItem)
+		call HZX(whichItem)
+		call TDE(trigUnit, RealItem[IYV], TempPlayer, false, 1)
 	endif
-	if GTX == RRV and GetItemCharges(C1X) == 0 then
-		set E3 = GetItemPlayer(C1X)
-		call HZX(C1X)
-		call TDE(trigUnit, XOV[RIV], E3, false, 1)
+	if GTX == RRV and GetItemCharges(whichItem) == 0 then
+		set TempPlayer = GetItemPlayer(whichItem)
+		call HZX(whichItem)
+		call TDE(trigUnit, RealItem[RIV], TempPlayer, false, 1)
 	endif
-	call DisableTrigger(CUV)
-	if (GTX == ICV or GTX == IBV or GTX == IDV) and(GZX(u, XOV[ICV], C1X)!= null or GZX(u, XOV[IBV], C1X)!= null or GZX(u, XOV[IDV], C1X)!= null) then
+	call DisableTrigger(UnitManipulatItemTrig)
+	if (GTX == ICV or GTX == IBV or GTX == IDV) and(GZX(u, RealItem[ICV], whichItem)!= null or GZX(u, RealItem[IBV], whichItem)!= null or GZX(u, RealItem[IDV], whichItem)!= null) then
 		call InterfaceErrorForPlayer(GetOwningPlayer(u), GetObjectName('n02L'))
-		set E3 = GetItemPlayer(C1X)
-		call RemoveItem(C1X)
-		set Z2 = CreateItem(XXV[GTX], x, y)
-		call SetItemPlayer(Z2, E3, false)
-		call SetItemUserData(Z2, 1)
+		set TempPlayer = GetItemPlayer(whichItem)
+		call RemoveItem(whichItem)
+		set TempItem = CreateItem(XXV[GTX], x, y)
+		call SetItemPlayer(TempItem, TempPlayer, false)
+		call SetItemUserData(TempItem, 1)
 	endif
-	if (GTX == NCV or GTX == NBV or GTX == NFV or GTX == NDV) and(GZX(u, XOV[NCV], C1X)!= null or GZX(u, XOV[NBV], C1X)!= null or GZX(u, XOV[NFV], C1X)!= null or GZX(u, XOV[NDV], C1X)!= null) then
+	if (GTX == NCV or GTX == NBV or GTX == NFV or GTX == NDV) and(GZX(u, RealItem[NCV], whichItem)!= null or GZX(u, RealItem[NBV], whichItem)!= null or GZX(u, RealItem[NFV], whichItem)!= null or GZX(u, RealItem[NDV], whichItem)!= null) then
 		call InterfaceErrorForPlayer(GetOwningPlayer(u), GetObjectName('n02C'))
-		set E3 = GetItemPlayer(C1X)
-		call RemoveItem(C1X)
-		set Z2 = CreateItem(XXV[GTX], x, y)
-		call SetItemPlayer(Z2, E3, false)
-		call SetItemUserData(Z2, 1)
+		set TempPlayer = GetItemPlayer(whichItem)
+		call RemoveItem(whichItem)
+		set TempItem = CreateItem(XXV[GTX], x, y)
+		call SetItemPlayer(TempItem, TempPlayer, false)
+		call SetItemUserData(TempItem, 1)
 	endif
 	if (GTX == I9V or GTX == AVV or GTX == AEV or GTX == AXV or GTX == AOV or GTX == ARV) then
 		set i = LoadInteger(OtherHashTable, GetHandleId(GetOwningPlayer(u)),'0BKB')
 		if i == 0 and GTX != I9V then
-			set E3 = GetItemPlayer(C1X)
-			call HZX(C1X)
-			call TDE(trigUnit, XOV[I9V], E3, false, 1)
+			set TempPlayer = GetItemPlayer(whichItem)
+			call HZX(whichItem)
+			call TDE(trigUnit, RealItem[I9V], TempPlayer, false, 1)
 		elseif i == 9 and GTX != AVV then
-			set E3 = GetItemPlayer(C1X)
-			call HZX(C1X)
-			call TDE(trigUnit, XOV[AVV], E3, false, 1)
+			set TempPlayer = GetItemPlayer(whichItem)
+			call HZX(whichItem)
+			call TDE(trigUnit, RealItem[AVV], TempPlayer, false, 1)
 		elseif i == 8 and GTX != AEV then
-			set E3 = GetItemPlayer(C1X)
-			call HZX(C1X)
-			call TDE(trigUnit, XOV[AEV], E3, false, 1)
+			set TempPlayer = GetItemPlayer(whichItem)
+			call HZX(whichItem)
+			call TDE(trigUnit, RealItem[AEV], TempPlayer, false, 1)
 		elseif i == 7 and GTX != AXV then
-			set E3 = GetItemPlayer(C1X)
-			call HZX(C1X)
-			call TDE(trigUnit, XOV[AXV], E3, false, 1)
+			set TempPlayer = GetItemPlayer(whichItem)
+			call HZX(whichItem)
+			call TDE(trigUnit, RealItem[AXV], TempPlayer, false, 1)
 		elseif i == 6 and GTX != AOV then
-			set E3 = GetItemPlayer(C1X)
-			call HZX(C1X)
-			call TDE(trigUnit, XOV[AOV], E3, false, 1)
+			set TempPlayer = GetItemPlayer(whichItem)
+			call HZX(whichItem)
+			call TDE(trigUnit, RealItem[AOV], TempPlayer, false, 1)
 		elseif i == 5 and GTX != ARV then
-			set E3 = GetItemPlayer(C1X)
-			call HZX(C1X)
-			call TDE(trigUnit, XOV[ARV], E3, false, 1)
+			set TempPlayer = GetItemPlayer(whichItem)
+			call HZX(whichItem)
+			call TDE(trigUnit, RealItem[ARV], TempPlayer, false, 1)
 		endif
 	endif
-	if (GTX == ASV and IsPlayerEnemy(GetItemPlayer(C1X), GetOwningPlayer(u))) then
-		set E3 = GetItemPlayer(C1X)
-		call HZX(C1X)
-		set Z2 = UnitAddItemById(u, XOV[ATV])
-		call SetItemPlayer(Z2, E3, false)
-		call SetItemUserData(Z2, 1)
+	if (GTX == ASV and IsPlayerEnemy(GetItemPlayer(whichItem), GetOwningPlayer(u))) then
+		set TempPlayer = GetItemPlayer(whichItem)
+		call HZX(whichItem)
+		set TempItem = UnitAddItemById(u, RealItem[ATV])
+		call SetItemPlayer(TempItem, TempPlayer, false)
+		call SetItemUserData(TempItem, 1)
 	endif
 	if (GTX == AIV) and(IsUnitCourier(u) or IsUnitBear(u)) then
 		if IsUnitCourier(u) then
 			call InterfaceErrorForPlayer(GetOwningPlayer(u), GetObjectName('n02K'))
 		endif
-		set E3 = GetItemPlayer(C1X)
-		set Q2 = GetItemCharges(C1X)
-		call RemoveItem(C1X)
+		set TempPlayer = GetItemPlayer(whichItem)
+		set Q2 = GetItemCharges(whichItem)
+		call RemoveItem(whichItem)
 		if GTX == AIV then
-			set Z2 = CreateItem(XXV[GTX], GetRectCenterX(gg_rct_RoshanSpawn), GetRectCenterY(gg_rct_RoshanSpawn))
-			call SetItemCharges(Z2, Q2)
+			set TempItem = CreateItem(XXV[GTX], GetRectCenterX(gg_rct_RoshanSpawn), GetRectCenterY(gg_rct_RoshanSpawn))
+			call SetItemCharges(TempItem, Q2)
 		endif
-		call SetItemPlayer(Z2, E3, false)
-		call SetItemUserData(Z2, 1)
+		call SetItemPlayer(TempItem, TempPlayer, false)
+		call SetItemUserData(TempItem, 1)
 	endif
-	call EnableTrigger(CUV)
+	call EnableTrigger(UnitManipulatItemTrig)
 	if XMO then
-		call XKO(trigUnit, C1X)
+		call XKO(trigUnit, whichItem)
 	endif
 	set u = null
-	set C1X = null
+	set whichItem = null
 	return false
 endfunction
 function XPO takes integer GTX returns boolean
@@ -15034,9 +15039,9 @@ endfunction
 function XQO takes integer GTX returns boolean
 	return GTX == X4V or GTX == X5V
 endfunction
-function XSO takes unit trigUnit, item C1X returns boolean
-	local integer JAX = 0
-	local item UWV = C1X
+function XSO takes unit trigUnit, item whichItem returns boolean
+	local integer itemId = 0
+	local item UWV = whichItem
 	local integer GTX = GetItemIndex(UWV)
 	local integer XTO = 0
 	local boolean JVX = false
@@ -15061,15 +15066,15 @@ function XSO takes unit trigUnit, item C1X returns boolean
 			set XWO = true
 		endif
 		if XTO != 0 then
-			set E3 = GetItemPlayer(UWV)
+			set TempPlayer = GetItemPlayer(UWV)
 			call HZX(UWV)
 			if XWO then
-				set Z2 = UnitAddItemById(trigUnit, XIV[XTO])
+				set TempItem = UnitAddItemById(trigUnit, XIV[XTO])
 			else
-				set Z2 = UnitAddItemById(trigUnit, XOV[XTO])
+				set TempItem = UnitAddItemById(trigUnit, RealItem[XTO])
 			endif
-			call SetItemPlayer(Z2, E3, false)
-			call SetItemUserData(Z2, 1)
+			call SetItemPlayer(TempItem, TempPlayer, false)
+			call SetItemUserData(TempItem, 1)
 			set JVX = true
 		endif
 	else
@@ -15081,24 +15086,24 @@ function XSO takes unit trigUnit, item C1X returns boolean
 			set XWO = true
 		endif
 		if XTO != 0 then
-			set E3 = GetItemPlayer(UWV)
+			set TempPlayer = GetItemPlayer(UWV)
 			call HZX(UWV)
 			if XWO then
-				set Z2 = UnitAddItemById(trigUnit, XIV[XTO])
+				set TempItem = UnitAddItemById(trigUnit, XIV[XTO])
 			else
-				set Z2 = UnitAddItemById(trigUnit, XOV[XTO])
+				set TempItem = UnitAddItemById(trigUnit, RealItem[XTO])
 			endif
-			call SetItemPlayer(Z2, E3, false)
-			call SetItemUserData(Z2, 1)
+			call SetItemPlayer(TempItem, TempPlayer, false)
+			call SetItemUserData(TempItem, 1)
 			set JVX = true
 		endif
 	endif
 	set UWV = null
 	return JVX
 endfunction
-function XYO takes unit trigUnit, item C1X returns boolean
-	if XPO(GetItemIndex(C1X)) or XQO(H1X(C1X)) then
-		return XSO(trigUnit, C1X)
+function XYO takes unit trigUnit, item whichItem returns boolean
+	if XPO(GetItemIndex(whichItem)) or XQO(H1X(whichItem)) then
+		return XSO(trigUnit, whichItem)
 	endif
 	return false
 endfunction
@@ -15109,7 +15114,7 @@ function XZO takes nothing returns boolean
 	local integer X_O =(LoadInteger(HY, h, 97))
 	local integer GTX =(LoadInteger(HY, h, 93))
 	local boolean X0O =(LoadBoolean(HY, h, 95))
-	local item C1X
+	local item whichItem
 	local player p = GetOwningPlayer(ZWX)
 	local player X1O
 	local integer HUX
@@ -15133,12 +15138,12 @@ function XZO takes nothing returns boolean
 		set X1O =(LoadPlayerHandle(HY, h, 54))
 		set HUX =(LoadInteger(HY, h, 76))
 	else
-		set C1X =(LoadItemHandle(HY, h, 96))
-		set X3O = C1X
-		set X1O = GetItemPlayer(C1X)
-		set HUX = GetItemCharges(C1X)
+		set whichItem =(LoadItemHandle(HY, h, 96))
+		set X3O = whichItem
+		set X1O = GetItemPlayer(whichItem)
+		set HUX = GetItemCharges(whichItem)
 	endif
-	if X0O == false and C1X == null then
+	if X0O == false and whichItem == null then
 		call FlushChildHashtable(HY, h)
 		call DestroyTrigger(t)
 		call EnableTrigger(C3V)
@@ -15160,18 +15165,18 @@ function XZO takes nothing returns boolean
 			call InterfaceErrorForPlayer(p, GetObjectName('n0DR'))
 			if X0O == false then
 				set X4O = true
-				call HZX(C1X)
+				call HZX(whichItem)
 			endif
-		elseif Mode__PoolMode == false and X0O == false and GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and H2X(C1X)!= 0 and(p == X1O or(GetPlayerSlotState(X1O) == PLAYER_SLOT_STATE_LEFT)) then
+		elseif Mode__PoolMode == false and X0O == false and GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and H2X(whichItem)!= 0 and(p == X1O or(GetPlayerSlotState(X1O) == PLAYER_SLOT_STATE_LEFT)) then
 			if HHX(GTX) then
 				set HTX = true
 			else
 				set HTX = false
 			endif
 			if not(GetPlayerSlotState(X1O) == PLAYER_SLOT_STATE_LEFT and GUX(GTX)) then
-				call HZX(C1X)
+				call HZX(whichItem)
 				set X4O = true
-				set HWX = UnitAddItemById(ZWX, XOV[GTX])
+				set HWX = UnitAddItemById(ZWX, RealItem[GTX])
 				set X3O = HWX
 				call SetItemPlayer(HWX, X1O, false)
 				call SetItemUserData(HWX, 0)
@@ -15179,13 +15184,13 @@ function XZO takes nothing returns boolean
 					call SetItemCharges(HWX, HUX)
 				endif
 			endif
-		elseif Mode__PoolMode == false and X0O == false and GetItemType(C1X) == ITEM_TYPE_PERMANENT and p != X1O and XIV[GetItemIndexEx(C1X)]!= 0 and(GetPlayerSlotState(X1O) == PLAYER_SLOT_STATE_LEFT) == false then
+		elseif Mode__PoolMode == false and X0O == false and GetItemType(whichItem) == ITEM_TYPE_PERMANENT and p != X1O and XIV[GetItemIndexEx(whichItem)]!= 0 and(GetPlayerSlotState(X1O) == PLAYER_SLOT_STATE_LEFT) == false then
 			if HHX(GTX) then
 				set HTX = true
 			else
 				set HTX = false
 			endif
-			call HZX(C1X)
+			call HZX(whichItem)
 			set X4O = true
 			set HWX = UnitAddItemById(ZWX, XIV[GTX])
 			set X3O = HWX
@@ -15194,14 +15199,14 @@ function XZO takes nothing returns boolean
 			if HTX then
 				call SetItemCharges(HWX, HUX)
 			endif
-		elseif X0O == false and GetItemType(C1X) == ITEM_TYPE_PERMANENT and HFX(C1X) and IsUnitType(ZWX, UNIT_TYPE_HERO) then
+		elseif X0O == false and GetItemType(whichItem) == ITEM_TYPE_PERMANENT and HFX(whichItem) and IsUnitType(ZWX, UNIT_TYPE_HERO) then
 			if HDX(ZWX, false) then
 				if GTX == XFV or(IsPlayerHasSkill(X1O,(39 -1)* 4 + 3) and GTX != XDV) then
-					call HZX(C1X)
+					call HZX(whichItem)
 					if IsPlayerHasSkill(X1O,(39 -1)* 4 + 3) then
-						set HWX = UnitAddItemById(ZWX, XOV[XDV])
+						set HWX = UnitAddItemById(ZWX, RealItem[XDV])
 					else
-						set HWX = UnitAddItemById(ZWX, XOV[XCV])
+						set HWX = UnitAddItemById(ZWX, RealItem[XCV])
 					endif
 					set X3O = HWX
 					call SetItemPlayer(HWX, X1O, false)
@@ -15209,45 +15214,45 @@ function XZO takes nothing returns boolean
 				endif
 			else
 				if GTX != XFV then
-					call HZX(C1X)
-					set HWX = UnitAddItemById(ZWX, XOV[XFV])
+					call HZX(whichItem)
+					set HWX = UnitAddItemById(ZWX, RealItem[XFV])
 					set X3O = HWX
 					call SetItemPlayer(HWX, X1O, false)
 					call SetItemUserData(HWX, 1)
 				endif
 			endif
-		elseif X0O == false and GetItemType(C1X) == ITEM_TYPE_ARTIFACT then
+		elseif X0O == false and GetItemType(whichItem) == ITEM_TYPE_ARTIFACT then
 			if (p != X1O and IsOfflinePlayer(X1O) == false and(GTX == R0V or GTX == R_V or GTX == RYV)) then
-				call DisableTrigger(CUV)
-				call HZX(C1X)
+				call DisableTrigger(UnitManipulatItemTrig)
+				call HZX(whichItem)
 				set HWX = UnitAddItemById(ZWX, XIV[GTX])
 				set X3O = HWX
 				call SetItemPlayer(HWX, X1O, false)
 				call SetItemUserData(HWX, 1)
 				call SetItemCharges(HWX, HUX)
-				call EnableTrigger(CUV)
+				call EnableTrigger(UnitManipulatItemTrig)
 			else
-				call DisableTrigger(CUV)
-				set X2O = G1X(X1O, ZWX, GTX, C1X)
+				call DisableTrigger(UnitManipulatItemTrig)
+				set X2O = G1X(X1O, ZWX, GTX, whichItem)
 				if X2O == null then
 				else
 					call SetItemCharges(X2O, HUX + GetItemCharges(X2O))
-					call HZX(C1X)
+					call HZX(whichItem)
 					set X3O = null
 				endif
-				call EnableTrigger(CUV)
+				call EnableTrigger(UnitManipulatItemTrig)
 			endif
 		elseif X0O and HGX(GSX(GTX)) then
 			if (p == X1O) then
-				call DisableTrigger(CUV)
+				call DisableTrigger(UnitManipulatItemTrig)
 				if H_X(ZWX) == 0 and G2X(X1O, ZWX, GTX) == null then
 					call InterfaceErrorForPlayer(p, GetObjectName('n02O'))
 					call HYX(XXV[(GTX)],(((LoadReal(HY, h, 6)))* 1.),(((LoadReal(HY, h, 7)))* 1.),(X1O),(true),(HUX))
 				else
 					set X2O = G2X(X1O, ZWX, GTX)
 					if X2O == null then
-						call DisableTrigger(CUV)
-						set HWX = UnitAddItemById(ZWX, XOV[GTX])
+						call DisableTrigger(UnitManipulatItemTrig)
+						set HWX = UnitAddItemById(ZWX, RealItem[GTX])
 						set X3O = HWX
 						call SetItemPlayer(HWX, X1O, false)
 						call SetItemUserData(HWX, 1)
@@ -15256,14 +15261,14 @@ function XZO takes nothing returns boolean
 						call SetItemCharges(X2O, HUX + GetItemCharges(X2O))
 					endif
 				endif
-				call EnableTrigger(CUV)
+				call EnableTrigger(UnitManipulatItemTrig)
 			else
 				if XIV[GTX]> 0 then
 					set Q2 = XIV[GTX]
 				else
-					set Q2 = XOV[GTX]
+					set Q2 = RealItem[GTX]
 				endif
-				call DisableTrigger(CUV)
+				call DisableTrigger(UnitManipulatItemTrig)
 				set X2O = G2X(X1O, ZWX, GTX)
 				if X2O == null and H_X(ZWX)!= 0 then
 					set HWX = UnitAddItemById(ZWX, Q2)
@@ -15277,12 +15282,12 @@ function XZO takes nothing returns boolean
 				else
 					call SetItemCharges(X2O, HUX + GetItemCharges(X2O))
 				endif
-				call EnableTrigger(CUV)
+				call EnableTrigger(UnitManipulatItemTrig)
 			endif
 		elseif X0O then
 			call EJO(X1O, ZWX, null, GTX, LoadReal(HY, h, 6), LoadReal(HY, h, 7), HUX, 1)
-		elseif X0O == false and(GetItemType(C1X) == ITEM_TYPE_PERMANENT or GetItemType(C1X) == ITEM_TYPE_CAMPAIGN) then
-			call SetItemUserData(C1X, 1)
+		elseif X0O == false and(GetItemType(whichItem) == ITEM_TYPE_PERMANENT or GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN) then
+			call SetItemUserData(whichItem, 1)
 			set X4O = ECO(X1O, ZWX, 0)
 		endif
 		if X4O == false and X3O != null and H8X(X3O) == false then
@@ -15292,19 +15297,19 @@ function XZO takes nothing returns boolean
 			call XLO(ZWX, X3O)
 		endif
 	else
-		if GetWidgetLife(C1X)> 0 then
-			set Z2 = C1X
-			if HFX(C1X) then
+		if GetWidgetLife(whichItem)> 0 then
+			set TempItem = whichItem
+			if HFX(whichItem) then
 				call HDX(ZWX, true)
 			endif
-			if GetItemUserData(C1X)==-500 then
-				call RemoveItem(C1X)
-			elseif IsItemOwned(C1X) == false then
-				if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(GTX) or GTX == R_V or GTX == RYV or GTX == R0V or GTX == it_jys then
+			if GetItemUserData(whichItem)==-500 then
+				call RemoveItem(whichItem)
+			elseif IsItemOwned(whichItem) == false then
+				if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or HHX(GTX) or GTX == R_V or GTX == RYV or GTX == R0V or GTX == it_jys then
 					set HTX = true
 				endif
-				call HYX(XXV[GTX], GetItemX(C1X), GetItemY(C1X), X1O, HTX, HUX)
-				call HZX(C1X)
+				call HYX(XXV[GTX], GetItemX(whichItem), GetItemY(whichItem), X1O, HTX, HUX)
+				call HZX(whichItem)
 			endif
 		endif
 	endif
@@ -15312,7 +15317,7 @@ function XZO takes nothing returns boolean
 	call DestroyTrigger(t)
 	call EnableTrigger(C3V)
 	set t = null
-	set C1X = null
+	set whichItem = null
 	set ZWX = null
 	set p = null
 	set X1O = null
@@ -15407,13 +15412,13 @@ function OHO takes nothing returns nothing
 	set t = null
 endfunction
 function OKO takes item it returns boolean
-	return XOV[GetItemIndexEx(it)]== XOV[OFV]
+	return RealItem[GetItemIndexEx(it)]== RealItem[OFV]
 endfunction
 function OLO takes player p, item it returns nothing
 	local timer t
 	local integer goldBonus
 	local integer pid = GetPlayerId(p)
-	if XOV[GetItemIndexEx(it)]== LoadInteger(ObjectHashTable,'ITEM', pid) and GetGameTime()-LoadReal(ObjectHashTable,'ITEM', pid)< 10. and OKO(it) == false and HaveSavedHandle(OtherHashTable2,'ITEM', GetPlayerId(p)) == false then
+	if RealItem[GetItemIndexEx(it)]== LoadInteger(ObjectHashTable,'ITEM', pid) and GetGameTime()-LoadReal(ObjectHashTable,'ITEM', pid)< 10. and OKO(it) == false and HaveSavedHandle(OtherHashTable2,'ITEM', GetPlayerId(p)) == false then
 		set t = CreateTimer()
 		set goldBonus = GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)
 		call TimerStart(t, 0, false, function OHO)
@@ -15443,7 +15448,7 @@ endfunction
 
 function Item_dragonlance takes boolean MCBCZ returns nothing
 	if MCBCZ then
-		if GZX(GetTriggerUnit(), XOV[it_mlq], GetManipulatedItem()) == null and GZX(GetTriggerUnit(), XOV[Item_HurricanePike], GetManipulatedItem()) == null then
+		if GZX(GetTriggerUnit(), RealItem[it_mlq], GetManipulatedItem()) == null and GZX(GetTriggerUnit(), RealItem[Item_HurricanePike], GetManipulatedItem()) == null then
 			//("丢弃")
 			call MCBZZ(GetTriggerPlayer(), 0, GetTriggerUnit())
 		endif
@@ -15540,7 +15545,7 @@ endfunction
 
 // 获取装备和丢弃装备
 function OMO takes nothing returns boolean
-	local item C1X
+	local item whichItem
 	local integer X_O
 	local unit u = GetTriggerUnit()
 	local trigger t
@@ -15556,148 +15561,148 @@ function OMO takes nothing returns boolean
 	// 非镜像 英雄或者熊灵
 	if (IsUnitType(u, UNIT_TYPE_HERO) or IsUnitBear(u)) and not IsUnitIllusion(u) then
 		if GetTriggerEventId() == EVENT_PLAYER_UNIT_PICKUP_ITEM then
-			if i == XOV[A5V]or i == XOV[RXV]or i == XOV[AWV]or i == XOV[N1V]or i == XOV[RJV] or i == XOV[ASV] then
-				if i == XOV[A5V] then
+			if i == RealItem[Item_TheButterfly]or i == RealItem[RXV]or i == RealItem[AWV]or i == RealItem[N1V]or i == RealItem[RJV] or i == RealItem[ASV] then
+				if i == RealItem[Item_TheButterfly] then
 					call EnableAttackEffectByTime(2, 0)
-				elseif i == XOV[RXV] then
+				elseif i == RealItem[RXV] then
 					call EnableAttackEffectByTime(6, 0)
-				elseif i == XOV[N1V] then
+				elseif i == RealItem[N1V] then
 					call EnableAttackEffectByTime(3, 0)
-				elseif i == XOV[RJV] then
+				elseif i == RealItem[RJV] then
 					call EnableAttackEffectByTime(5, 0)
-				elseif i == XOV[AWV] or i == XOV[ASV] then
+				elseif i == RealItem[AWV] or i == RealItem[ASV] then
 					call EnableAttackEffectByTime(17, 0)
 				endif
 			endif
-			if i == XOV[OXV] or i == XOV[I1V] or i == XOV[I_V] or i == XOV[A2V]  then
+			if i == RealItem[OXV] or i == RealItem[I1V] or i == RealItem[I_V] or i == RealItem[A2V]  then
 				call OOZ()
 			endif
-			if i == XOV[OYV] then
+			if i == RealItem[OYV] then
 				set CDV[id]= CDV[id] + 1
-			elseif i == XOV[Item_KelenDagger] then
-				set HaveBlinkDaggerCount = HaveBlinkDaggerCount + 1
+			elseif i == RealItem[Item_KelenDagger] then
+				set KelenDaggerCount = KelenDaggerCount + 1
 				set CFV[id]= CFV[id] + 1
-			elseif i == XOV[AWV]or i == XOV[AYV] then
+				call ItemKelenDaggerOnPickup(u, it)
+			elseif i == RealItem[AWV]or i == RealItem[AYV] then
 				call ExecuteFunc("OPO")
-			elseif i == XOV[NIV] then
+			elseif i == RealItem[NIV] then
 				set CZV = CZV + 1
 				set CGV[id]= CGV[id] + 1
-			elseif i == XOV[IQV]or(i) == XOV[N2V] then
+			elseif i == RealItem[IQV]or(i) == RealItem[N2V] then
 				set CHV[id]= CHV[id] + 1
 				call ExecuteFunc("OPO")
-			elseif i == XOV[I6V] or i == XOV[it_fj] then
+			elseif i == RealItem[I6V] or i == RealItem[it_fj] then
 				call OOO()
-			elseif i == XOV[A0V] then
-				set HaveHeartofTarrasqueCount = HaveHeartofTarrasqueCount + 1
+			elseif i == RealItem[Item_HeartOfTarrasque] then
+				set HeartOfTarrasqueCount = HeartOfTarrasqueCount + 1
 				set C7V[id]= C7V[id] + 1
-			elseif i == XOV[APV] then
+			elseif i == RealItem[Item_LinkenSphere] then
 				set CWV = CWV + 1
 				set CJV[id]= CJV[id] + 1
-				call DisableTrigger(CUV)
+				call DisableTrigger(UnitManipulatItemTrig)
 				set it = CreateItem('I0HM', GetUnitX(u), GetUnitY(u))
 				call UnitAddItem(u, it)
 				if GetWidgetLife(it)> 0 then
 					call RemoveItem(it)
 				endif
 				set it = null
-				call EnableTrigger(CUV)
-			elseif i == XOV[I5V] then
+				call EnableTrigger(UnitManipulatItemTrig)
+			elseif i == RealItem[I5V] then
 				set CKV[id]= CKV[id] + 1
-			elseif i == XOV[IPV] then
+			elseif i == RealItem[IPV] then
 				set CLV[id]= CLV[id] + 1
-			elseif i == XOV[N1V] then
+			elseif i == RealItem[N1V] then
 				set C1V[id]= C1V[id] + 1
-			elseif i == XOV[RLV] then
+			elseif i == RealItem[RLV] then
 				set C1Z[id]= C1Z[id] + 1
 				call OCO()
-			elseif i == XOV[RNV] then
-				set HaveTranquilBootsCount = HaveTranquilBootsCount + 1
+			elseif i == RealItem[Item_TranquilBoots] then
+				set TranquilBootsCount = TranquilBootsCount + 1
 				call X5O()
 				set C8V[id]= C8V[id] + 1
-			elseif i == XOV[RFV] then //玲珑心
-				if HasOctarineCore == false then
-					set HasOctarineCore = true
-				endif
-			elseif i == XOV[it_hyzr] then
+			elseif i == RealItem[RFV] then //玲珑心
+				set HasOctarineCore = true
+			elseif i == RealItem[it_hyzr] then
 				call XHYZR()
-			elseif i == XOV[RVV]or i == XOV[REV] then
+			elseif i == RealItem[RVV]or i == RealItem[REV] then
 				call X9O()
-			elseif i == XOV[IUV]or i == XOV[IWV]or id == XOV[IYV] then
+			elseif i == RealItem[IUV]or i == RealItem[IWV]or id == RealItem[IYV] then
 				call OEO()
-			elseif i == XOV[A3V]or i == XOV[A4V] then
+			elseif i == RealItem[A3V]or i == RealItem[A4V] then
 				call ONO()
-			elseif i == XOV[XKV]or i == XOV[XLV] then
+			elseif i == RealItem[XKV]or i == RealItem[XLV] then
 				call OIO()
-			elseif i == XOV[NEV]or i == XOV[ITV] then	//漩涡and雷神之锤
+			elseif i == RealItem[NEV]or i == RealItem[ITV] then	//漩涡and雷神之锤
 				call X7O()
-			elseif i == XOV[A5V] then
+			elseif i == RealItem[Item_TheButterfly] then
 				if HaveSavedHandle(HY, GetHandleId(u),'AIev') == false then
 					call UnitAddPermanentAbility(u,'A431')
 					call UnitMakeAbilityPermanent(u, true,'AIev')
 				endif
-			elseif i == XOV[NOV] then
+			elseif i == RealItem[NOV] then
 				call OFO()
-			elseif i == XOV[it_mlq] or i == XOV[Item_HurricanePike] then //拾取魔龙枪
+			elseif i == RealItem[it_mlq] or i == RealItem[Item_HurricanePike] then //拾取魔龙枪
 				if not IsUnitBear(u) then
 					call Item_dragonlance(false)
-					if i == XOV[Item_HurricanePike] then
+					if i == RealItem[Item_HurricanePike] then
 						call RegisterUnitAttackFunc("UYYEQ",-1)
 						call RegisterUnitAttackFunc("UYYRQ", 2)
 					endif
 				endif
-			elseif i == XOV[Item_AetherLens] then
+			elseif i == RealItem[Item_AetherLens] then
 				call AetherLensOnPick(u)
 			endif
 		elseif GetTriggerEventId() == EVENT_PLAYER_UNIT_DROP_ITEM then
-			if i == XOV[OYV] then
+			if i == RealItem[OYV] then
 				set CDV[id]= CDV[id]-1
-			elseif i == XOV[Item_KelenDagger] then
+			elseif i == RealItem[Item_KelenDagger] then
 				set CFV[id]= CFV[id]-1
-				set HaveBlinkDaggerCount = HaveBlinkDaggerCount -1
-			elseif i == XOV[RNV] then
+				set KelenDaggerCount = KelenDaggerCount -1
+				call ItemKelenDaggerOnDrop(u, it)
+			elseif i == RealItem[Item_TranquilBoots] then
 				set C8V[id]= C8V[id]-1
-				set HaveTranquilBootsCount = HaveTranquilBootsCount -1
-			elseif i == XOV[NIV] then
+				set TranquilBootsCount = TranquilBootsCount -1
+			elseif i == RealItem[NIV] then
 				set CGV[id]= CGV[id]-1
 				set CZV = CZV -1
-			elseif i == XOV[IQV]or(i) == XOV[N2V] then
+			elseif i == RealItem[IQV]or(i) == RealItem[N2V] then
 				set CHV[id]= CHV[id]-1
-				if CHV[id]< 1 or GZX(u, XOV[IQV], GetManipulatedItem()) == null or GZX(u, XOV[N2V], GetManipulatedItem()) == null then
+				if CHV[id]< 1 or GZX(u, RealItem[IQV], GetManipulatedItem()) == null or GZX(u, RealItem[N2V], GetManipulatedItem()) == null then
 					call UnitRemoveAbility(u,'A174')
 				endif
-			elseif i == XOV[A0V] then
+			elseif i == RealItem[Item_HeartOfTarrasque] then
 				set C7V[id]= C7V[id]-1
-				set HaveHeartofTarrasqueCount = HaveHeartofTarrasqueCount -1
-			elseif i == XOV[APV]or i == XIV[APV] then
+				set HeartOfTarrasqueCount = HeartOfTarrasqueCount -1
+			elseif i == RealItem[Item_LinkenSphere]or i == XIV[Item_LinkenSphere] then
 				set CWV = IMaxBJ(CWV -1, 0)
 				set CJV[id]= IMaxBJ(CJV[id]-1, 0)
 				call UnitRemoveAbility(u,'B0BI')
-			elseif i == XOV[A5V] then
-				if GZX(u, XOV[A5V], GetManipulatedItem()) == null then
+			elseif i == RealItem[Item_TheButterfly] then
+				if GZX(u, RealItem[Item_TheButterfly], GetManipulatedItem()) == null then
 					call UnitRemoveAbility(u,'A431')
 				endif
 				//魔龙枪和飓风长戟
-			elseif i == XOV[it_mlq] or i == XOV[Item_HurricanePike]  then 
+			elseif i == RealItem[it_mlq] or i == RealItem[Item_HurricanePike]  then 
 				if not IsUnitBear(u) then
 					call Item_dragonlance(true)
 				endif
-			elseif i == XOV[Item_AetherLens] then
+			elseif i == RealItem[Item_AetherLens] then
 				call AetherLensOnDrop(u)
 			endif
 		endif
 	endif
 	if GetTriggerEventId() == EVENT_PLAYER_UNIT_PAWN_ITEM then
-		set C1X = GetSoldItem()
-		call SetItemUserData(C1X,-2)
-		call OLO(GetOwningPlayer(u), C1X)
-		set Z2 = C1X
-		if HFX(C1X) then
+		set whichItem = GetSoldItem()
+		call SetItemUserData(whichItem,-2)
+		call OLO(GetOwningPlayer(u), whichItem)
+		set TempItem = whichItem
+		if HFX(whichItem) then
 			call HDX(u, true)
 		endif
 	elseif GetItemTypeId(GetManipulatedItem())!='I02M' then
-		set C1X = GetManipulatedItem()
-		if IsUnitIllusion(u) or GetItemUserData(C1X)==-2 then
-			set C1X = null
+		set whichItem = GetManipulatedItem()
+		if IsUnitIllusion(u) or GetItemUserData(whichItem)==-2 then
+			set whichItem = null
 			set u = null
 			set t = null
 			return false
@@ -15707,9 +15712,9 @@ function OMO takes nothing returns boolean
 		else
 			set X_O = 2
 		endif
-		if ((X_O == 1) or(X_O == 2 and H8X(C1X) == false and GetWidgetLife(C1X)> 0)) and GetUnitTypeId(u)!='H00J' then
-			if ZBX(GetItemTypeId(C1X)) or ZNX(GetItemTypeId(C1X)) or GetItemTypeId(C1X)=='I0HM' then
-				set C1X = null
+		if ((X_O == 1) or(X_O == 2 and H8X(whichItem) == false and GetWidgetLife(whichItem)> 0)) and GetUnitTypeId(u)!='H00J' then
+			if ZBX(GetItemTypeId(whichItem)) or ZNX(GetItemTypeId(whichItem)) or GetItemTypeId(whichItem)=='I0HM' then
+				set whichItem = null
 				set u = null
 				set t = null
 				return false
@@ -15720,23 +15725,23 @@ function OMO takes nothing returns boolean
 			call TriggerAddCondition(t, Condition(function XZO))
 			call SaveUnitHandle(HY, h, 26,(u))
 			call SaveInteger(HY, h, 97,(X_O))
-			call SaveInteger(HY, h, 93,(GetItemIndexEx(C1X)))
-			call SaveItemHandle(HY, h, 0, C1X)
-			if H8X(C1X) then
+			call SaveInteger(HY, h, 93,(GetItemIndexEx(whichItem)))
+			call SaveItemHandle(HY, h, 0, whichItem)
+			if H8X(whichItem) then
 				call SaveBoolean(HY, h, 95,(true))
-				call SavePlayerHandle(HY, h, 54,(GetItemPlayer(C1X)))
-				call SaveInteger(HY, h, 76,(GetItemCharges(C1X)))
-				call SaveReal(HY, h, 6,((GetItemX(C1X))* 1.))
-				call SaveReal(HY, h, 7,((GetItemY(C1X))* 1.))
-				call HZX(C1X)
+				call SavePlayerHandle(HY, h, 54,(GetItemPlayer(whichItem)))
+				call SaveInteger(HY, h, 76,(GetItemCharges(whichItem)))
+				call SaveReal(HY, h, 6,((GetItemX(whichItem))* 1.))
+				call SaveReal(HY, h, 7,((GetItemY(whichItem))* 1.))
+				call HZX(whichItem)
 			else
 				call SaveBoolean(HY, h, 95,(false))
-				call SaveItemHandle(HY, h, 96,(C1X))
-				call SetItemUserData(C1X, 0)
+				call SaveItemHandle(HY, h, 96,(whichItem))
+				call SetItemUserData(whichItem, 0)
 			endif
 		endif
 	endif
-	set C1X = null
+	set whichItem = null
 	set u = null
 	set t = null
 	return false
@@ -15878,7 +15883,7 @@ function O4O takes nothing returns boolean
 	set trigUnit = null
 	return false
 endfunction
-function O5O takes unit trigUnit, item C1X returns nothing
+function O5O takes unit trigUnit, item whichItem returns nothing
 	local trigger t = CreateTrigger()
 	local integer h = GetHandleId(t)
 	call TriggerRegisterTimerEvent(t, .5, true)
@@ -15889,7 +15894,7 @@ function O5O takes unit trigUnit, item C1X returns nothing
 		call O0O( 3000, 2000, 30,'B01S', trigUnit)
 	endif
 endfunction
-function O6O takes unit trigUnit, item C1X returns nothing
+function O6O takes unit trigUnit, item whichItem returns nothing
 	local unit u = trigUnit
 	local real x = GetUnitX(u)
 	local real y = GetUnitY(u)
@@ -15948,27 +15953,27 @@ function RXO takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local unit u =(LoadUnitHandle(HY, h, 26))
 	local integer ROO =(LoadInteger(HY, h, 98))
-	local item C1X = UnitItemInSlot(u, ROO)
+	local item whichItem = UnitItemInSlot(u, ROO)
 	local integer RRO =(LoadInteger(HY, h,'i'))
 	local item RIO
-	local integer JNX
+	local integer itemSlot
 	local integer id
-	local integer TZE = GetItemIndexEx(C1X)
-	if C1X != null and GUX(TZE) and GetHandleId(C1X) == RRO and UnitAlive(u) and UnitAlive(u) then
+	local integer TZE = GetItemIndexEx(whichItem)
+	if whichItem != null and GUX(TZE) and GetHandleId(whichItem) == RRO and UnitAlive(u) and UnitAlive(u) then
 		set id = GWX(TZE)
-		set JNX = B2X(u, C1X)
-		set E3 = GetItemPlayer(C1X)
-		call HZX(C1X)
-		set Z2 = JIX(u, XOV[O2V], JNX)
-		call SetItemPlayer(Z2, E3, false)
-		call SetItemUserData(Z2, 1)
+		set itemSlot = B2X(u, whichItem)
+		set TempPlayer = GetItemPlayer(whichItem)
+		call HZX(whichItem)
+		set TempItem = CreateItemToUnitSlotByIndex(u, RealItem[O2V], itemSlot)
+		call SetItemPlayer(TempItem, TempPlayer, false)
+		call SetItemUserData(TempItem, 1)
 		call FlushChildHashtable(HY, h)
 		call DestroyTrigger(t)
 		call UZV(u, id)
 	endif
 	set t = null
 	set u = null
-	set C1X = null
+	set whichItem = null
 	set RIO = null
 	return false
 endfunction
@@ -15983,18 +15988,18 @@ function RAO takes unit u, item RIO returns nothing
 	call TriggerAddCondition(t, Condition(function RXO))
 	set t = null
 endfunction
-function RNO takes integer JAX returns integer
-	if JAX =='I006' then
+function RNO takes integer itemId returns integer
+	if itemId =='I006' then
 		return O5V
-	elseif JAX =='I008' then
+	elseif itemId =='I008' then
 		return O6V
-	elseif JAX =='I00J' then
+	elseif itemId =='I00J' then
 		return O3V
-	elseif JAX =='I00K' then
+	elseif itemId =='I00K' then
 		return O4V
-	elseif JAX =='I007' then
+	elseif itemId =='I007' then
 		return O7V
-	elseif JAX =='I0QA' then
+	elseif itemId =='I0QA' then
 		return O8V
 	endif
 	return -1
@@ -16004,21 +16009,21 @@ function RBO takes unit u returns nothing
 	call UnitMakeAbilityPermanent(u, true,'A3FK')
 	call SetAllPlayerAbilityUnavailable('A3FL')
 endfunction
-function RCO takes unit trigUnit, item C1X returns nothing
+function RCO takes unit trigUnit, item whichItem returns nothing
 	local item it
 	local integer i
 	local integer k
 	local boolean borrowed = false
-	if ZNX(GetItemTypeId(C1X)) then
-		set it = GetItemOfTypeFromUnit(trigUnit, XOV[O_V])
+	if ZNX(GetItemTypeId(whichItem)) then
+		set it = GetItemOfTypeFromUnit(trigUnit, RealItem[O_V])
 		if it == null then
-			set it = GetItemOfTypeFromUnit(trigUnit, XOV[O0V])
+			set it = GetItemOfTypeFromUnit(trigUnit, RealItem[O0V])
 		endif
 		if it == null then
-			set it = GetItemOfTypeFromUnit(trigUnit, XOV[O1V])
+			set it = GetItemOfTypeFromUnit(trigUnit, RealItem[O1V])
 		endif
 		if it == null then
-			set it = GetItemOfTypeFromUnit(trigUnit, XOV[O2V])
+			set it = GetItemOfTypeFromUnit(trigUnit, RealItem[O2V])
 		endif
 		if it == null then
 			set it = GetItemOfTypeFromUnit(trigUnit, XIV[O_V])
@@ -16035,50 +16040,50 @@ function RCO takes unit trigUnit, item C1X returns nothing
 		if it != null then
 			if XI[GetPlayerId(GetOwningPlayer(trigUnit))]== false then
 				set i = B2X(trigUnit, it)
-				set k = RNO(ZAX(GetItemTypeId(C1X)))
+				set k = RNO(ZAX(GetItemTypeId(whichItem)))
 				call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Undead\\ReplenishMana\\SpiritTouchTarget.mdl", trigUnit, "overhead"))
-				set E3 = GetItemPlayer(it)
+				set TempPlayer = GetItemPlayer(it)
 				call HZX(it)
-				call DisableTrigger(CUV)
-				if GetOwningPlayer(trigUnit) == E3 then
-					set Z2 = JIX(trigUnit, XOV[k], i)
+				call DisableTrigger(UnitManipulatItemTrig)
+				if GetOwningPlayer(trigUnit) == TempPlayer then
+					set TempItem = CreateItemToUnitSlotByIndex(trigUnit, RealItem[k], i)
 				else
-					set Z2 = JIX(trigUnit, XIV[k], i)
+					set TempItem = CreateItemToUnitSlotByIndex(trigUnit, XIV[k], i)
 				endif
-				call EnableTrigger(CUV)
-				call SetItemPlayer(Z2, E3, false)
-				call SetItemUserData(Z2, 1)
+				call EnableTrigger(UnitManipulatItemTrig)
+				call SetItemPlayer(TempItem, TempPlayer, false)
+				call SetItemUserData(TempItem, 1)
 				set it = UnitItemInSlot(trigUnit, i)
 				call RAO(trigUnit, it)
-				call OQO(trigUnit, GetItemTypeId(C1X), true)
+				call OQO(trigUnit, GetItemTypeId(whichItem), true)
 			else
 				set i = B2X(trigUnit, it)
 				set k = O2V
 				call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Undead\\ReplenishMana\\SpiritTouchTarget.mdl", trigUnit, "overhead"))
-				set E3 = GetItemPlayer(it)
+				set TempPlayer = GetItemPlayer(it)
 				call HZX(it)
-				call DisableTrigger(CUV)
-				if GetOwningPlayer(trigUnit) == E3 then
-					set Z2 = JIX(trigUnit, XOV[k], i)
+				call DisableTrigger(UnitManipulatItemTrig)
+				if GetOwningPlayer(trigUnit) == TempPlayer then
+					set TempItem = CreateItemToUnitSlotByIndex(trigUnit, RealItem[k], i)
 				else
-					set Z2 = JIX(trigUnit, XIV[k], i)
+					set TempItem = CreateItemToUnitSlotByIndex(trigUnit, XIV[k], i)
 				endif
-				call EnableTrigger(CUV)
-				call SetItemPlayer(Z2, E3, false)
-				call SetItemUserData(Z2, 1)
-				call REO(trigUnit, GetItemTypeId(C1X))
+				call EnableTrigger(UnitManipulatItemTrig)
+				call SetItemPlayer(TempItem, TempPlayer, false)
+				call SetItemUserData(TempItem, 1)
+				call REO(trigUnit, GetItemTypeId(whichItem))
 			endif
 		else
-			call REO(trigUnit, GetItemTypeId(C1X))
+			call REO(trigUnit, GetItemTypeId(whichItem))
 		endif
-	elseif ZBX(GetItemTypeId(C1X)) then
-		call OQO(trigUnit, GetItemTypeId(C1X), false)
+	elseif ZBX(GetItemTypeId(whichItem)) then
+		call OQO(trigUnit, GetItemTypeId(whichItem), false)
 	endif
-	if GetItemTypeId(C1X)=='I007' then
-		call O6O(trigUnit, C1X)
-	elseif GetItemTypeId(C1X)=='I0QA' then
+	if GetItemTypeId(whichItem)=='I007' then
+		call O6O(trigUnit, whichItem)
+	elseif GetItemTypeId(whichItem)=='I0QA' then
 		call RVO(trigUnit)
-	elseif GetItemTypeId(C1X)=='I00J' then
+	elseif GetItemTypeId(whichItem)=='I00J' then
 		if GetUnitAbilityLevel(trigUnit,'B09Y')> 0 then
 			call UnitRemoveAbility(trigUnit,'B09Y')
 			call UnitRemoveAbility(trigUnit,'B01Q')
@@ -16086,24 +16091,24 @@ function RCO takes unit trigUnit, item C1X returns nothing
 			call UnitAddItemById(trigUnit,'I00J')
 			call EnableTrigger(GetTriggeringTrigger())
 		endif
-	elseif GetItemTypeId(C1X)=='I008' then
-		call O5O(trigUnit, C1X)
-	elseif GetItemTypeId(C1X)=='I00K' then
+	elseif GetItemTypeId(whichItem)=='I008' then
+		call O5O(trigUnit, whichItem)
+	elseif GetItemTypeId(whichItem)=='I00K' then
 		call RBO(trigUnit)
 	endif
 	set it = null
 endfunction
-function RDO takes item C1X, unit whichUnit, boolean RFO returns nothing
-	local integer GTX = GetItemIndexEx(C1X)
+function RDO takes item whichItem, unit whichUnit, boolean RFO returns nothing
+	local integer GTX = GetItemIndexEx(whichItem)
 	local integer h = GetHandleId(whichUnit)
 	local string s = ""
 	// 宝石
-	if (GTX == X4V and GZX(whichUnit, X4V, C1X) == null) or(GTX == X5V and GZX(whichUnit, X5V, C1X) == null) then
+	if (GTX == X4V and GZX(whichUnit, X4V, whichItem) == null) or(GTX == X5V and GZX(whichUnit, X5V, whichItem) == null) then
 		if IsPlayerAlly(LocalPlayer, GetOwningPlayer(whichUnit)) or IsObserverPlayer(LocalPlayer) then
 			set s = "Abilities\\Spells\\Human\\MagicSentry\\MagicSentryCaster.mdl"
 		endif
 		if RFO then
-			if H_X(whichUnit)> 0 or GetItemType(C1X) == ITEM_TYPE_PERMANENT or GetItemType(C1X) == ITEM_TYPE_CAMPAIGN then
+			if H_X(whichUnit)> 0 or GetItemType(whichItem) == ITEM_TYPE_PERMANENT or GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN then
 				if GetUnitAbilityLevel(whichUnit,'A26A') == 0 and GetUnitAbilityLevel(whichUnit,'A26B') == 0 then
 					if s == "Abilities\\Spells\\Human\\MagicSentry\\MagicSentryCaster.mdl" then
 						call UnitAddPermanentAbility(whichUnit,'A26A')
@@ -16174,11 +16179,11 @@ function RJO takes nothing returns boolean
 	if GetItemIndexEx(whichItem)> 0 then
 		if (GetTriggerEventId() == EVENT_PLAYER_UNIT_DROP_ITEM and GetItemType(whichItem)!= ITEM_TYPE_PURCHASABLE) or GetTriggerEventId() == EVENT_PLAYER_UNIT_PAWN_ITEM then
 			call RDO(whichItem, whichUnit, false)
-			call StoreDrCacheData("DRI_" + I2S(GetPlayerId(GetOwningPlayer(whichUnit))), XOV[GSX(GetItemIndexEx(whichItem))])
+			call StoreDrCacheData("DRI_" + I2S(GetPlayerId(GetOwningPlayer(whichUnit))), RealItem[GSX(GetItemIndexEx(whichItem))])
 			call RHO(whichUnit)
 		elseif GetTriggerEventId() == EVENT_PLAYER_UNIT_PICKUP_ITEM then
 			call RDO(whichItem, whichUnit, true)
-			call StoreDrCacheData("PUI_" + I2S(GetPlayerId(GetOwningPlayer(whichUnit))), XOV[GSX(GetItemIndexEx(whichItem))])
+			call StoreDrCacheData("PUI_" + I2S(GetPlayerId(GetOwningPlayer(whichUnit))), RealItem[GSX(GetItemIndexEx(whichItem))])
 			call RHO(whichUnit)
 		endif
 	endif
@@ -16201,7 +16206,7 @@ function DisassembleItems takes nothing returns nothing
 	local real y = GetUnitY(u)
 	local integer TZE
 	local player p
-	call DisableTrigger(CUV)
+	call DisableTrigger(UnitManipulatItemTrig)
 	loop
 	exitwhen i > 5
 		set it = UnitItemInSlot(u, i)
@@ -16290,7 +16295,7 @@ function DisassembleItems takes nothing returns nothing
 		endif
 		set i = i + 1
 	endloop
-	call EnableTrigger(CUV)
+	call EnableTrigger(UnitManipulatItemTrig)
 	set u = null
 	set it = null
 endfunction
@@ -16322,7 +16327,7 @@ endfunction
 function RYO takes unit u returns nothing
 	local group g = AllocationGroup(20)
 	local unit u2
-	local real r = 500 + 30 * GetItemCharges(GetItemOfTypeFromUnit(u, XOV[NIV]))
+	local real r = 500 + 30 * GetItemCharges(GetItemOfTypeFromUnit(u, RealItem[NIV]))
 	call GroupEnumUnitsInRange(g, GetUnitX(u), GetUnitY(u), 1700, Condition(function RWO))
 	loop
 		set u2 = FirstOfGroup(g)
@@ -16339,12 +16344,12 @@ function RZO takes unit trigUnit returns nothing
 	call RYO(trigUnit)
 endfunction
 function R_O takes nothing returns nothing
-	if GetItemOfTypeFromUnit(GetTriggerUnit(), XOV[NIV])!= null then
+	if GetItemOfTypeFromUnit(GetTriggerUnit(), RealItem[NIV])!= null then
 		call RZO(GetTriggerUnit())
 	endif
 endfunction
 function R0O takes unit u returns nothing
-	local integer c = GetItemCharges(GetItemOfTypeFromUnit(u, XOV[NIV]))
+	local integer c = GetItemCharges(GetItemOfTypeFromUnit(u, RealItem[NIV]))
 	if c > 0 then
 		call SetUnitState(u, UNIT_STATE_MANA, GetUnitState(u, UNIT_STATE_MANA)+ c)
 	endif
@@ -16427,31 +16432,31 @@ function R6O takes nothing returns nothing
 	local unit u = GetEnumUnit()
 	local integer i = 0
 	local player p = GetOwningPlayer(GetTriggerUnit())
-	local item C1X
+	local item whichItem
 	local integer id = GetPlayerId(p)
 	loop
 	exitwhen i > 5
-		set C1X = UnitItemInSlot(u, i)
-		if C1X != null and GetItemPlayer(C1X) == p then
-			call UnitRemoveItem(u, C1X)
-			call SetItemPosition(C1X, CirclesX[id], CirclesY[id])
+		set whichItem = UnitItemInSlot(u, i)
+		if whichItem != null and GetItemPlayer(whichItem) == p then
+			call UnitRemoveItem(u, whichItem)
+			call SetItemPosition(whichItem, CirclesX[id], CirclesY[id])
 		endif
 		set i = i + 1
 	endloop
 	set u = null
 	set p = null
-	set C1X = null
+	set whichItem = null
 endfunction
 function R7O takes nothing returns nothing
-	local item C1X = GetEnumItem()
+	local item whichItem = GetEnumItem()
 	local unit u = C4V
 	local player p = GetOwningPlayer(u)
 	local integer id = GetPlayerId(p)
-	if GetWidgetLife(C1X)> 0 and GetItemPlayer(C1X) == p then
-		call SetItemPosition(C1X, CirclesX[id], CirclesY[id])
-		call UnitAddItem(CirclesUnit[id], C1X)
+	if GetWidgetLife(whichItem)> 0 and GetItemPlayer(whichItem) == p then
+		call SetItemPosition(whichItem, CirclesX[id], CirclesY[id])
+		call UnitAddItem(CirclesUnit[id], whichItem)
 	endif
-	set C1X = null
+	set whichItem = null
 	set u = null
 	set p = null
 endfunction
@@ -16496,7 +16501,7 @@ endfunction
 function G6E takes nothing returns nothing
 	local unit u = GetTriggerUnit()
 	local integer i = 0
-	local item C1X
+	local item whichItem
 	local integer id = GetPlayerId(GetOwningPlayer(u))
 	local region r = CreateRegion()
 	if IsSentinelPlayer(GetOwningPlayer(u)) then
@@ -16506,19 +16511,19 @@ function G6E takes nothing returns nothing
 	endif
 	loop
 	exitwhen i > 5
-		set C1X = UnitItemInSlot(u, i)
-		if GUX(GetItemIndexEx(C1X)) == false and GetItemIndexEx(C1X)!= AIV then
+		set whichItem = UnitItemInSlot(u, i)
+		if GUX(GetItemIndexEx(whichItem)) == false and GetItemIndexEx(whichItem)!= AIV then
 			call UnitRemoveItemFromSlot(u, i)
-			if (GetUnitTypeId(u)=='ncop' or IsUnitInRegion(r, u)) and IsPlayerAlly(GetItemPlayer(C1X), GetOwningPlayer(u)) then
-				set id = GetPlayerId(GetItemPlayer(C1X))
-				call SetItemPosition(C1X, CirclesX[id], CirclesY[id])
+			if (GetUnitTypeId(u)=='ncop' or IsUnitInRegion(r, u)) and IsPlayerAlly(GetItemPlayer(whichItem), GetOwningPlayer(u)) then
+				set id = GetPlayerId(GetItemPlayer(whichItem))
+				call SetItemPosition(whichItem, CirclesX[id], CirclesY[id])
 			endif
 		endif
 		set i = i + 1
 	endloop
 	call RemoveRegion(r)
 	set u = null
-	set C1X = null
+	set whichItem = null
 	set r = null
 endfunction
 
@@ -16535,23 +16540,23 @@ function IOO takes unit trigUnit returns nothing
 	exitwhen i > 5
 		set IRO = UnitItemInSlot(trigUnit, i)
 		set GTX = GetItemIndex(IRO)
-		if GTX == RNV and IIO then
-			call DisableTrigger(CUV)
-			set E3 = GetItemPlayer(IRO)
+		if GTX == Item_TranquilBoots and IIO then
+			call DisableTrigger(UnitManipulatItemTrig)
+			set TempPlayer = GetItemPlayer(IRO)
 			call RemoveItem(IRO)
-			set Z2 = JIX(trigUnit, XOV[RBV], i)
-			call SetItemPlayer(Z2, E3, false)
-			call SetItemUserData(Z2, 1)
-			call EnableTrigger(CUV)
+			set TempItem = CreateItemToUnitSlotByIndex(trigUnit, RealItem[RBV], i)
+			call SetItemPlayer(TempItem, TempPlayer, false)
+			call SetItemUserData(TempItem, 1)
+			call EnableTrigger(UnitManipulatItemTrig)
 		endif
 		if GTX == RBV and IIO == false then
-			call DisableTrigger(CUV)
-			set E3 = GetItemPlayer(IRO)
+			call DisableTrigger(UnitManipulatItemTrig)
+			set TempPlayer = GetItemPlayer(IRO)
 			call RemoveItem(IRO)
-			set Z2 = JIX(trigUnit, XOV[RNV], i)
-			call SetItemPlayer(Z2, E3, false)
-			call SetItemUserData(Z2, 1)
-			call EnableTrigger(CUV)
+			set TempItem = CreateItemToUnitSlotByIndex(trigUnit, RealItem[Item_TranquilBoots], i)
+			call SetItemPlayer(TempItem, TempPlayer, false)
+			call SetItemUserData(TempItem, 1)
+			call EnableTrigger(UnitManipulatItemTrig)
 		endif
 		set i = i + 1
 	endloop
@@ -16575,44 +16580,28 @@ function IAO takes unit trigUnit returns nothing
 	exitwhen i > 5
 		set INO = UnitItemInSlot(trigUnit, i)
 		set GTX = GetItemIndex(INO)
-		if GTX == A0V and IBO then
-			call DisableTrigger(CUV)
-			set E3 = GetItemPlayer(INO)
+		if GTX == Item_HeartOfTarrasque and IBO then
+			call DisableTrigger(UnitManipulatItemTrig)
+			set TempPlayer = GetItemPlayer(INO)
 			call RemoveItem(INO)
-			set Z2 = JIX(trigUnit, XOV[A1V], i)
-			call SetItemPlayer(Z2, E3, false)
-			call SetItemUserData(Z2, 1)
-			call EnableTrigger(CUV)
+			set TempItem = CreateItemToUnitSlotByIndex(trigUnit, RealItem[A1V], i)
+			call SetItemPlayer(TempItem, TempPlayer, false)
+			call SetItemUserData(TempItem, 1)
+			call EnableTrigger(UnitManipulatItemTrig)
 		endif
 		if GTX == A1V and IBO == false then
-			call DisableTrigger(CUV)
-			set E3 = GetItemPlayer(INO)
+			call DisableTrigger(UnitManipulatItemTrig)
+			set TempPlayer = GetItemPlayer(INO)
 			call RemoveItem(INO)
-			set Z2 = JIX(trigUnit, XOV[A0V], i)
-			call SetItemPlayer(Z2, E3, false)
-			call SetItemUserData(Z2, 1)
-			call EnableTrigger(CUV)
+			set TempItem = CreateItemToUnitSlotByIndex(trigUnit, RealItem[Item_HeartOfTarrasque], i)
+			call SetItemPlayer(TempItem, TempPlayer, false)
+			call SetItemUserData(TempItem, 1)
+			call EnableTrigger(UnitManipulatItemTrig)
 		endif
 		set i = i + 1
 	endloop
 	set trigUnit = null
 	set INO = null
-endfunction
-
-
-
-function IFO takes unit u, item it, integer JOX returns nothing
-	local integer i
-	local unit d = CreateUnit(GetOwningPlayer(u),'e00E', GetUnitX(u), GetUnitY(u), 0)
-	set E3 = GetItemPlayer(it)
-	call RemoveItem(it)
-	call UnitAddAbility(d,'AInv')
-	set it = UnitAddItemById(d, XOV[Item_DisabledKelenDagger])
-	call UnitUseItem(d, it)
-	call JXX(u, it, JOX)
-	call SetItemPlayer(it, E3, false)
-	call SetItemUserData(it, 1)
-	set d = null
 endfunction
 
 // 跳刀
@@ -16629,24 +16618,27 @@ function IGO takes unit u returns nothing
 		set it = UnitItemInSlot(u, i)
 		set itemIndex = GetItemIndex(it)
 		if (itemIndex == Item_KelenDagger and b) or(itemIndex == Item_DisabledKelenDagger and time >= 2.9) then
-			call DisableTrigger(CUV)
-			//call IFO(u, it, i)
-			set E3 = GetItemPlayer(it)
+			call DisableTrigger(UnitManipulatItemTrig)
+			set TempPlayer = GetItemPlayer(it)
 			call RemoveItem(it)
-			set Z2 = JIX(u, XOV[Item_DisabledKelenDagger], i)
+			set TempItem = CreateItemToUnitSlotByIndex(u, RealItem[Item_DisabledKelenDagger], i)
 			call StartUnitAbilityCooldownAbsolute(u, 'A445')
-			call SetItemPlayer(Z2, E3, false)
-			call SetItemUserData(Z2, 1)
-			call EnableTrigger(CUV)
+			call SetItemPlayer(TempItem, TempPlayer, false)
+			call SetItemUserData(TempItem, 1)
+			call EnableTrigger(UnitManipulatItemTrig)
 		endif
 		if itemIndex == Item_DisabledKelenDagger and b == false then
-			call DisableTrigger(CUV)
-			set E3 = GetItemPlayer(it)
+			call DisableTrigger(UnitManipulatItemTrig)
+			set TempPlayer = GetItemPlayer(it)
 			call RemoveItem(it)
-			set Z2 = JIX(u, XOV[Item_KelenDagger], i)
-			call SetItemPlayer(Z2, E3, false)
-			call SetItemUserData(Z2, 1)
-			call EnableTrigger(CUV)
+			// 防止重新触发玲珑心
+			call DisableEndCooldownTrigger()
+			set TempItem = CreateItemToUnitSlotByIndex(u, RealItem[Item_KelenDagger], i)
+			call EnableEndCooldownTrigger()
+			// 
+			call SetItemPlayer(TempItem, TempPlayer, false)
+			call SetItemUserData(TempItem, 1)
+			call EnableTrigger(UnitManipulatItemTrig)
 		endif
 		set i = i + 1
 	exitwhen i > 5
@@ -16674,7 +16666,7 @@ function IHO takes nothing returns boolean
 	local integer i = 1
 	local unit u
 	local integer id
-	if HaveBlinkDaggerCount > 0 or HaveTranquilBootsCount > 0 or HaveHeartofTarrasqueCount > 0 then
+	if KelenDaggerCount > 0 or TranquilBootsCount > 0 or HeartOfTarrasqueCount > 0 then
 		//绿鞋
 		loop
 		exitwhen i > 5
@@ -16932,30 +16924,30 @@ function I7O takes nothing returns boolean
 	local unit whichUnit = GetTriggerUnit()
 	local integer level = 1
 	local integer id ='EUL1'
-	if GetItemOfTypeFromUnit(whichUnit, XOV[RBV])!= null then
+	if GetItemOfTypeFromUnit(whichUnit, RealItem[RBV])!= null then
 		set level = 4
 	endif
-	if GZX(whichUnit, XOV[XMV], GetManipulatedItem())!= null then
+	if GZX(whichUnit, RealItem[XMV], GetManipulatedItem())!= null then
 		set level = 2
 	endif
-	if GZX(whichUnit, XOV[NKV], GetManipulatedItem())!= null then
+	if GZX(whichUnit, RealItem[NKV], GetManipulatedItem())!= null then
 		set level = 2
 	endif
-	if GZX(whichUnit, XOV[IBV], GetManipulatedItem())!= null or GZX(whichUnit, XOV[ICV], GetManipulatedItem())!= null or GZX(whichUnit, XOV[IDV], GetManipulatedItem())!= null then
+	if GZX(whichUnit, RealItem[IBV], GetManipulatedItem())!= null or GZX(whichUnit, RealItem[ICV], GetManipulatedItem())!= null or GZX(whichUnit, RealItem[IDV], GetManipulatedItem())!= null then
 		set level = 2
 	endif
-	if GZX(whichUnit, XOV[NZV], GetManipulatedItem())!= null then
+	if GZX(whichUnit, RealItem[NZV], GetManipulatedItem())!= null then
 		set level = 3
 	endif
-	if GZX(whichUnit, XOV[RNV], GetManipulatedItem())!= null then
+	if GZX(whichUnit, RealItem[Item_TranquilBoots], GetManipulatedItem())!= null then
 		set id ='EUL2'
 		set level = 1
 	endif
-	if GZX(whichUnit, XOV[IAV], GetManipulatedItem())!= null then
+	if GZX(whichUnit, RealItem[IAV], GetManipulatedItem())!= null then
 		set id ='EUL2'
 		set level = 2
 	endif
-	if GZX(whichUnit, XOV[Item_EulScepterOfDivinity], GetManipulatedItem())!= null then
+	if GZX(whichUnit, RealItem[Item_EulScepterOfDivinity], GetManipulatedItem())!= null then
 		call UnitAddPermanentAbility(whichUnit, id)
 		call SetUnitAbilityLevel(whichUnit, id, level)
 	else
@@ -16969,30 +16961,30 @@ function I9O takes nothing returns boolean
 	local unit whichUnit = GetTriggerUnit()
 	local integer level = 1
 	local integer id ='EUL1'
-	if GetItemOfTypeFromUnit(whichUnit, XOV[RBV])!= null then
+	if GetItemOfTypeFromUnit(whichUnit, RealItem[RBV])!= null then
 		set level = 4
 	endif
-	if GetItemOfTypeFromUnit(whichUnit, XOV[XMV])!= null then
+	if GetItemOfTypeFromUnit(whichUnit, RealItem[XMV])!= null then
 		set level = 2
 	endif
-	if GetItemOfTypeFromUnit(whichUnit, XOV[NKV])!= null then
+	if GetItemOfTypeFromUnit(whichUnit, RealItem[NKV])!= null then
 		set level = 2
 	endif
-	if GetItemOfTypeFromUnit(whichUnit, XOV[IBV])!= null or GetItemOfTypeFromUnit(whichUnit, XOV[ICV])!= null or GetItemOfTypeFromUnit(whichUnit, XOV[IDV])!= null then
+	if GetItemOfTypeFromUnit(whichUnit, RealItem[IBV])!= null or GetItemOfTypeFromUnit(whichUnit, RealItem[ICV])!= null or GetItemOfTypeFromUnit(whichUnit, RealItem[IDV])!= null then
 		set level = 2
 	endif
-	if GetItemOfTypeFromUnit(whichUnit, XOV[NZV])!= null then
+	if GetItemOfTypeFromUnit(whichUnit, RealItem[NZV])!= null then
 		set level = 3
 	endif
-	if GetItemOfTypeFromUnit(whichUnit, XOV[RNV])!= null then
+	if GetItemOfTypeFromUnit(whichUnit, RealItem[Item_TranquilBoots])!= null then
 		set level = 1
 		set id ='EUL2'
 	endif
-	if GetItemOfTypeFromUnit(whichUnit, XOV[IAV])!= null then
+	if GetItemOfTypeFromUnit(whichUnit, RealItem[IAV])!= null then
 		set level = 2
 		set id ='EUL2'
 	endif
-	if GetItemOfTypeFromUnit(whichUnit, XOV[Item_EulScepterOfDivinity])!= null then
+	if GetItemOfTypeFromUnit(whichUnit, RealItem[Item_EulScepterOfDivinity])!= null then
 		call UnitAddPermanentAbility(whichUnit, id)
 		call SetUnitAbilityLevel(whichUnit, id, level)
 	endif
@@ -17043,7 +17035,7 @@ function AEO takes nothing returns nothing
 	local unit u = LoadUnitHandle(ObjectHashTable, h, 0)
 	local real AXO = LoadReal(ObjectHashTable, h, 0)
 	if GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
-		if GetItemOfTypeFromUnit(u, XOV[NBV]) == null then
+		if GetItemOfTypeFromUnit(u, RealItem[NBV]) == null then
 			call SetHeroStr(u, IMaxBJ(GetHeroStr(u, false)-LoadInteger(OtherHashTable, GetHandleId(u),'ARML'), 1), true)
 			call SaveInteger(OtherHashTable, GetHandleId(u),'ARML', 0)
 			if IsTriggerEnabled(t) then
@@ -17137,8 +17129,8 @@ function AIO takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local unit trigUnit =(LoadUnitHandle(HY, h, 14))
-	local item C1X =(LoadItemHandle(HY, h, 96))
-	if GetTriggerEventId() == EVENT_UNIT_DROP_ITEM and GetManipulatedItem() == C1X then
+	local item whichItem =(LoadItemHandle(HY, h, 96))
+	if GetTriggerEventId() == EVENT_UNIT_DROP_ITEM and GetManipulatedItem() == whichItem then
 		call FlushChildHashtable(HY, h)
 		call DestroyTrigger(t)
 	elseif GetTriggerEventId()!= EVENT_UNIT_DROP_ITEM then
@@ -17148,7 +17140,7 @@ function AIO takes nothing returns boolean
 	endif
 	set t = null
 	set trigUnit = null
-	set C1X = null
+	set whichItem = null
 	return false
 endfunction
 function AAO takes nothing returns nothing
@@ -17178,37 +17170,37 @@ function ABO takes unit u returns boolean
 	set ACO = null
 	return JVX
 endfunction
-function ADO takes unit trigUnit, item C1X, integer JNX returns item
-	local real x = H9X(trigUnit)
-	local real y = JEX(trigUnit)
+function ADO takes unit trigUnit, item whichItem, integer itemSlot returns item
+	local real x = GetHeroRevivalPointX(trigUnit)
+	local real y = GetHeroRevivalPointY(trigUnit)
 	local integer i = 0
-	local boolean array JBX
-	local item JCX
+	local boolean array hasDummyItem
+	local item dummyItem
 	loop
 	exitwhen i >(UnitInventorySize(trigUnit)-1)
-		if UnitItemInSlot(trigUnit, i) == null and i != JNX then
-			set JCX = CreateItem('I02M', x, y)
-			call UnitAddItem(trigUnit, JCX)
-			set JBX[i]= true
+		if UnitItemInSlot(trigUnit, i) == null and i != itemSlot then
+			set dummyItem = CreateItem('I02M', x, y)
+			call UnitAddItem(trigUnit, dummyItem)
+			set hasDummyItem[i]= true
 		else
-			set JBX[i]= false
+			set hasDummyItem[i]= false
 		endif
-		if i == JNX then
-			call UnitAddItem(trigUnit, C1X)
+		if i == itemSlot then
+			call UnitAddItem(trigUnit, whichItem)
 		endif
 		set i = i + 1
 	endloop
 	set i = 0
 	loop
 	exitwhen i > 5
-		if JBX[i] then
+		if hasDummyItem[i] then
 			call RemoveItem(UnitItemInSlot(trigUnit, i))
 		endif
 		set i = i + 1
 	endloop
-	set Z2 = C1X
-	set JCX = null
-	return Z2
+	set TempItem = whichItem
+	set dummyItem = null
+	return TempItem
 endfunction
 function AFO takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
@@ -17228,7 +17220,7 @@ function AFO takes nothing returns boolean
 		call TriggerRegisterTimerEvent(t, 5.5, false)
 	else
 		call SaveBoolean(HY,(GetHandleId(u)),'f',(false))
-		call DisableTrigger(CUV)
+		call DisableTrigger(UnitManipulatItemTrig)
 		if CJV[GetPlayerId(GetOwningPlayer(u))]> 0 then
 			set it = UnitAddItemById(u,'I0HM')
 			if GetWidgetLife(it)> 0 then
@@ -17241,14 +17233,14 @@ function AFO takes nothing returns boolean
 			set WNE = UnitItemInSlot(u, i)
 			set GTX = GetItemIndex(WNE)
 			if GTX == AQV then
-				set E3 = GetItemPlayer(WNE)
+				set TempPlayer = GetItemPlayer(WNE)
 				call RemoveItem(WNE)
 				set dummyCaster = CreateUnit(GetOwningPlayer(u),'e00E', GetUnitX(u), GetUnitY(u), 0)
 				call UnitAddAbility(dummyCaster,'AInv')
-				set RIO = UnitAddItemById(dummyCaster, XOV[APV])
+				set RIO = UnitAddItemById(dummyCaster, RealItem[Item_LinkenSphere])
 				call UnitUseItem(dummyCaster, RIO)
-				set Z2 = ADO(u, RIO, i)
-				call SetItemPlayer(RIO, E3, false)
+				set TempItem = ADO(u, RIO, i)
+				call SetItemPlayer(RIO, TempPlayer, false)
 				call SetItemUserData(RIO, 1)
 				call UnitRemoveAbility(dummyCaster,'AInv')
 				set dummyCaster = null
@@ -17257,7 +17249,7 @@ function AFO takes nothing returns boolean
 			set WNE = null
 			set i = i + 1
 		endloop
-		call EnableTrigger(CUV)
+		call EnableTrigger(UnitManipulatItemTrig)
 		call FlushChildHashtable(HY, h)
 		call DestroyTrigger(t)
 	endif
@@ -17276,7 +17268,7 @@ function AGO takes unit u returns nothing
 	local integer GTX
 	local unit dummyCaster = null
 	local item RIO = null
-	call DisableTrigger(CUV)
+	call DisableTrigger(UnitManipulatItemTrig)
 	call SaveBoolean(HY,(GetHandleId(u)),'f',(true))
 	call TriggerRegisterTimerEvent(t, 17, false)
 	call TriggerRegisterDeathEvent(t, u)
@@ -17286,15 +17278,15 @@ function AGO takes unit u returns nothing
 	exitwhen i > 5
 		set WNE = UnitItemInSlot(u, i)
 		set GTX = GetItemIndex(WNE)
-		if GTX == APV or GTX == AQV then
-			set E3 = GetItemPlayer(WNE)
+		if GTX == Item_LinkenSphere or GTX == AQV then
+			set TempPlayer = GetItemPlayer(WNE)
 			call RemoveItem(WNE)
 			set dummyCaster = CreateUnit(GetOwningPlayer(u),'e00E', GetUnitX(u), GetUnitY(u), 0)
 			call UnitAddAbility(dummyCaster,'AInv')
-			set RIO = UnitAddItemById(dummyCaster, XOV[AQV])
+			set RIO = UnitAddItemById(dummyCaster, RealItem[AQV])
 			call UnitUseItem(dummyCaster, RIO)
-			set Z2 = ADO(u, RIO, i)
-			call SetItemPlayer(RIO, E3, false)
+			set TempItem = ADO(u, RIO, i)
+			call SetItemPlayer(RIO, TempPlayer, false)
 			call SetItemUserData(RIO, 1)
 			call UnitRemoveAbility(dummyCaster,'AInv')
 			call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Human\\DispelMagic\\DispelMagicTarget.mdl", u, "origin"))
@@ -17304,7 +17296,7 @@ function AGO takes unit u returns nothing
 		set WNE = null
 		set i = i + 1
 	endloop
-	call EnableTrigger(CUV)
+	call EnableTrigger(UnitManipulatItemTrig)
 	set t = null
 endfunction
 function AHO takes nothing returns boolean
@@ -17346,7 +17338,7 @@ function GLE takes nothing returns boolean
 		set h = GetHandleId(u)
 		call SaveUnitHandle(HY, h,'g', null)
 		call SaveInteger(HY, h,104, 0)
-		if (GetItemOfTypeFromUnit(GetTriggerUnit(), XOV[O_V])!= null or GetItemOfTypeFromUnit(GetTriggerUnit(), XIV[O_V])!= null) and(GetUnitTypeId(GetSpellTargetUnit())=='nfoh' or GetUnitTypeId(GetSpellTargetUnit())=='ndfl') then
+		if (GetItemOfTypeFromUnit(GetTriggerUnit(), RealItem[O_V])!= null or GetItemOfTypeFromUnit(GetTriggerUnit(), XIV[O_V])!= null) and(GetUnitTypeId(GetSpellTargetUnit())=='nfoh' or GetUnitTypeId(GetSpellTargetUnit())=='ndfl') then
 			call SaveUnitHandle(HY, h,'g', GetSpellTargetUnit())
 		elseif ZNX(GetItemTypeId(GetSpellTargetItem())) then
 			set id = ZAX(GetItemTypeId(GetSpellTargetItem()))
@@ -17360,83 +17352,83 @@ function GLE takes nothing returns boolean
 endfunction
 function AKO takes nothing returns nothing
 	local unit u = GetTriggerUnit()
-	local item C1X = GetManipulatedItem()
-	local integer GTX = GetItemIndexEx(C1X)
+	local item whichItem = GetManipulatedItem()
+	local integer GTX = GetItemIndexEx(whichItem)
 	local unit ALO
 	local integer AMO
-	local integer JNX
+	local integer itemSlot
 	local item RIO = null
 	local integer APO
 	local integer id
 	if GTX == O_V then
-		set JNX = B2X(u, C1X)
+		set itemSlot = B2X(u, whichItem)
 		set ALO =(LoadUnitHandle(HY,(GetHandleId(u)),'g'))
 		set AMO =(LoadInteger(HY,(GetHandleId(u)),104))
 		if GetUnitTypeId(ALO)=='nfoh' or GetUnitTypeId(ALO)=='ndfl' then
 			call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Undead\\ReplenishMana\\SpiritTouchTarget.mdl", u, "overhead"))
 			call IRX(GetOwningPlayer(u), "Abilities\\Spells\\Human\\Heal\\HealTarget.wav")
-			set E3 = GetItemPlayer(C1X)
-			call HZX(C1X)
-			set Z2 = JIX(u, XOV[O2V], JNX)
-			call SetItemPlayer(Z2, E3, false)
-			call SetItemUserData(Z2, 1)
+			set TempPlayer = GetItemPlayer(whichItem)
+			call HZX(whichItem)
+			set TempItem = CreateItemToUnitSlotByIndex(u, RealItem[O2V], itemSlot)
+			call SetItemPlayer(TempItem, TempPlayer, false)
+			call SetItemUserData(TempItem, 1)
 		elseif ZBX(AMO) then
 			set APO = RNO(AMO)
 			call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Undead\\ReplenishMana\\SpiritTouchTarget.mdl", u, "overhead"))
-			set E3 = GetItemPlayer(C1X)
-			call HZX(C1X)
-			call DisableTrigger(CUV)
-			if GetOwningPlayer(u) == E3 then
-				set Z2 = JIX(u, XOV[APO], JNX)
+			set TempPlayer = GetItemPlayer(whichItem)
+			call HZX(whichItem)
+			call DisableTrigger(UnitManipulatItemTrig)
+			if GetOwningPlayer(u) == TempPlayer then
+				set TempItem = CreateItemToUnitSlotByIndex(u, RealItem[APO], itemSlot)
 			else
-				set Z2 = JIX(u, XIV[APO], JNX)
+				set TempItem = CreateItemToUnitSlotByIndex(u, XIV[APO], itemSlot)
 			endif
-			call EnableTrigger(CUV)
-			call SetItemPlayer(Z2, E3, false)
-			call SetItemUserData(Z2, 1)
-			set RIO = UnitItemInSlot(u, JNX)
+			call EnableTrigger(UnitManipulatItemTrig)
+			call SetItemPlayer(TempItem, TempPlayer, false)
+			call SetItemUserData(TempItem, 1)
+			set RIO = UnitItemInSlot(u, itemSlot)
 			call RAO(u, RIO)
 		endif
 	elseif GTX == O2V then
-		set JNX = B2X(u, C1X)
-		set E3 = GetItemPlayer(C1X)
-		call HZX(C1X)
-		set Z2 = JIX(u, XOV[O1V], JNX)
-		call SetItemPlayer(Z2, E3, false)
-		call SetItemUserData(Z2, 1)
+		set itemSlot = B2X(u, whichItem)
+		set TempPlayer = GetItemPlayer(whichItem)
+		call HZX(whichItem)
+		set TempItem = CreateItemToUnitSlotByIndex(u, RealItem[O1V], itemSlot)
+		call SetItemPlayer(TempItem, TempPlayer, false)
+		call SetItemUserData(TempItem, 1)
 	elseif GTX == O1V then
-		set JNX = B2X(u, C1X)
-		set E3 = GetItemPlayer(C1X)
-		call HZX(C1X)
-		set Z2 = JIX(u, XOV[O0V], JNX)
-		call SetItemPlayer(Z2, E3, false)
-		call SetItemUserData(Z2, 1)
+		set itemSlot = B2X(u, whichItem)
+		set TempPlayer = GetItemPlayer(whichItem)
+		call HZX(whichItem)
+		set TempItem = CreateItemToUnitSlotByIndex(u, RealItem[O0V], itemSlot)
+		call SetItemPlayer(TempItem, TempPlayer, false)
+		call SetItemUserData(TempItem, 1)
 	elseif GTX == O0V then
-		set JNX = B2X(u, C1X)
-		set E3 = GetItemPlayer(C1X)
-		call HZX(C1X)
-		set Z2 = JIX(u, XOV[O_V], JNX)
-		call SetItemPlayer(Z2, E3, false)
-		call SetItemUserData(Z2, 0)
+		set itemSlot = B2X(u, whichItem)
+		set TempPlayer = GetItemPlayer(whichItem)
+		call HZX(whichItem)
+		set TempItem = CreateItemToUnitSlotByIndex(u, RealItem[O_V], itemSlot)
+		call SetItemPlayer(TempItem, TempPlayer, false)
+		call SetItemUserData(TempItem, 0)
 	elseif GUX(GTX) then
 		set C2V = true
-		set JNX = B2X(u, C1X)
+		set itemSlot = B2X(u, whichItem)
 		set id = GWX(GTX)
 		if id > 0 then
 			set RIO = CreateItem(id, GetUnitX(u), GetUnitY(u))
 		else
 			set RIO = null
 		endif
-		set E3 = GetItemPlayer(C1X)
-		call HZX(C1X)
-		set Z2 = JIX(u, XOV[O2V], JNX)
-		call SetItemPlayer(Z2, E3, false)
-		call SetItemUserData(Z2, 1)
+		set TempPlayer = GetItemPlayer(whichItem)
+		call HZX(whichItem)
+		set TempItem = CreateItemToUnitSlotByIndex(u, RealItem[O2V], itemSlot)
+		call SetItemPlayer(TempItem, TempPlayer, false)
+		call SetItemUserData(TempItem, 1)
 		call UnitAddItem(u, RIO)
 		set C2V = false
 	endif
 	set u = null
-	set C1X = null
+	set whichItem = null
 	set ALO = null
 	set RIO = null
 endfunction
@@ -17749,7 +17741,7 @@ function MUSyncDummyMessenger takes nothing returns nothing
 		endif
 	elseif GetTriggerEventId() == EVENT_UNIT_CHANGE_OWNER then
 		// 删除马甲身上的物品
-		call DisableTrigger(CUV)
+		call DisableTrigger(UnitManipulatItemTrig)
 		set i = 0
 		loop
 			set it = UnitItemInSlot(dummy, i)
@@ -17760,7 +17752,7 @@ function MUSyncDummyMessenger takes nothing returns nothing
 		exitwhen i > 5
 		endloop
 		set it = null
-		call EnableTrigger(CUV)
+		call EnableTrigger(UnitManipulatItemTrig)
 		// 删除马甲并清空
 		call RemoveUnit(dummy)
 		call DestroyTrigger(trg)
@@ -17771,7 +17763,7 @@ function MUSyncDummyMessenger takes nothing returns nothing
 	if need_sync_items and GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
 		call SaveBoolean(HY, GetHandleId(trg), 5, false)
 		// 同步马甲身上的物品
-		call DisableTrigger(CUV)
+		call DisableTrigger(UnitManipulatItemTrig)
 		// 先删掉马甲身上的物品
 		set i = 0
 		loop
@@ -17809,7 +17801,7 @@ function MUSyncDummyMessenger takes nothing returns nothing
 		exitwhen i > 5
 		endloop
 		set it = null
-		call EnableTrigger(CUV)
+		call EnableTrigger(UnitManipulatItemTrig)
 	endif
 	set trg = null
 	set dummy = null
@@ -17921,7 +17913,7 @@ function AYO takes nothing returns boolean
 	set HUX[4]= LoadInteger(HY, h, 115)
 	set HUX[5]= LoadInteger(HY, h, 116)
 	set HUX[6]= LoadInteger(HY, h, 117)
-	call DisableTrigger(CUV)
+	call DisableTrigger(UnitManipulatItemTrig)
 	if GetTriggerEvalCount(t) == 1 then
 		call UnitAddAbility(u, A_O)
 		if W3[GetPlayerId(GetOwningPlayer(u))]== false then
@@ -17932,12 +17924,12 @@ function AYO takes nothing returns boolean
 	else
 		loop
 			if AZO[i]> 0 then
-				set Z2 = CreateItem(AZO[i], GetUnitX(u), GetUnitY(u))
-				call UnitAddItem(u, Z2)
-				call SetItemPlayer(Z2, LoadPlayerHandle(HY, h, 117+ i), false)
-				call SetItemUserData(Z2, 1)
+				set TempItem = CreateItem(AZO[i], GetUnitX(u), GetUnitY(u))
+				call UnitAddItem(u, TempItem)
+				call SetItemPlayer(TempItem, LoadPlayerHandle(HY, h, 117+ i), false)
+				call SetItemUserData(TempItem, 1)
 				if HUX[i]> 0 then
-					call SetItemCharges(Z2, HUX[i])
+					call SetItemCharges(TempItem, HUX[i])
 				endif
 			endif
 			set i = i + 1
@@ -17951,7 +17943,7 @@ function AYO takes nothing returns boolean
 		call FlushChildHashtable(HY, h)
 		call DestroyTrigger(t)
 	endif
-	call EnableTrigger(CUV)
+	call EnableTrigger(UnitManipulatItemTrig)
 	call UnitMakeAbilityPermanent(u, true,'A29M')
 	call UnitMakeAbilityPermanent(u, true,'A413')
 	set t = null
@@ -17993,7 +17985,7 @@ function A1O takes nothing returns boolean
 	local integer NDO =-1
 	local integer NFO =-1
 	local integer A_O
-	local item C1X
+	local item whichItem
 	local integer i
 	call FlushChildHashtable(HY, h)
 	call DestroyTrigger(t)
@@ -18022,35 +18014,35 @@ function A1O takes nothing returns boolean
 	set p3 = GetItemPlayer(A7O)
 	set p4 = GetItemPlayer(A8O)
 	set p5 = GetItemPlayer(A9O)
-	set C1X = A4O
-	set i = GetItemIndexEx(C1X)
-	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(i) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(i)) then
-		set NAO = GetItemCharges(C1X)
+	set whichItem = A4O
+	set i = GetItemIndexEx(whichItem)
+	if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or HHX(i) or(GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and A0O(i)) then
+		set NAO = GetItemCharges(whichItem)
 	endif
-	set C1X = A5O
-	set i = GetItemIndexEx(C1X)
-	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(i) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(i)) then
-		set NNO = GetItemCharges(C1X)
+	set whichItem = A5O
+	set i = GetItemIndexEx(whichItem)
+	if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or HHX(i) or(GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and A0O(i)) then
+		set NNO = GetItemCharges(whichItem)
 	endif
-	set C1X = A6O
-	set i = GetItemIndexEx(C1X)
-	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(i) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(i)) then
-		set NBO = GetItemCharges(C1X)
+	set whichItem = A6O
+	set i = GetItemIndexEx(whichItem)
+	if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or HHX(i) or(GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and A0O(i)) then
+		set NBO = GetItemCharges(whichItem)
 	endif
-	set C1X = A7O
-	set i = GetItemIndexEx(C1X)
-	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(i) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(i)) then
-		set NCO = GetItemCharges(C1X)
+	set whichItem = A7O
+	set i = GetItemIndexEx(whichItem)
+	if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or HHX(i) or(GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and A0O(i)) then
+		set NCO = GetItemCharges(whichItem)
 	endif
-	set C1X = A8O
-	set i = GetItemIndexEx(C1X)
-	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(i) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(i)) then
-		set NDO = GetItemCharges(C1X)
+	set whichItem = A8O
+	set i = GetItemIndexEx(whichItem)
+	if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or HHX(i) or(GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and A0O(i)) then
+		set NDO = GetItemCharges(whichItem)
 	endif
-	set C1X = A9O
-	set i = GetItemIndexEx(C1X)
-	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(i) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(i)) then
-		set NFO = GetItemCharges(C1X)
+	set whichItem = A9O
+	set i = GetItemIndexEx(whichItem)
+	if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or HHX(i) or(GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and A0O(i)) then
+		set NFO = GetItemCharges(whichItem)
 	endif
 	call HZX(A4O)
 	call HZX(A5O)
@@ -18154,7 +18146,7 @@ function A1O takes nothing returns boolean
 	set p3 = null
 	set p4 = null
 	set p5 = null
-	set C1X = null
+	set whichItem = null
 	return false
 endfunction
 function GQE takes nothing returns nothing
@@ -18188,7 +18180,7 @@ function NGO takes nothing returns boolean
 	local integer NCO =(LoadInteger(HY, h, 115))
 	local integer NDO =(LoadInteger(HY, h, 116))
 	local integer NFO =(LoadInteger(HY, h, 117))
-	call DisableTrigger(CUV)
+	call DisableTrigger(UnitManipulatItemTrig)
 	if GetTriggerEvalCount(t) == 1 then
 		call UnitAddAbility(NHO, A_O)
 		if W3[GetPlayerId(GetOwningPlayer(NHO))]== false then
@@ -18198,58 +18190,58 @@ function NGO takes nothing returns boolean
 		endif
 	else
 		if NVO > 0 then
-			set Z2 = CreateItem(NVO, GetUnitX(NHO), GetUnitY(NHO))
-			call UnitAddItem(NHO, Z2)
-			call SetItemPlayer(Z2, p0, false)
-			call SetItemUserData(Z2, 1)
+			set TempItem = CreateItem(NVO, GetUnitX(NHO), GetUnitY(NHO))
+			call UnitAddItem(NHO, TempItem)
+			call SetItemPlayer(TempItem, p0, false)
+			call SetItemUserData(TempItem, 1)
 		endif
 		if NAO > 0 then
-			call SetItemCharges(Z2, NAO)
+			call SetItemCharges(TempItem, NAO)
 		endif
 		if NEO > 0 then
-			set Z2 = CreateItem(NEO, GetUnitX(NHO), GetUnitY(NHO))
-			call UnitAddItem(NHO, Z2)
-			call SetItemPlayer(Z2, p1, false)
-			call SetItemUserData(Z2, 1)
+			set TempItem = CreateItem(NEO, GetUnitX(NHO), GetUnitY(NHO))
+			call UnitAddItem(NHO, TempItem)
+			call SetItemPlayer(TempItem, p1, false)
+			call SetItemUserData(TempItem, 1)
 		endif
 		if NNO > 0 then
-			call SetItemCharges(Z2, NNO)
+			call SetItemCharges(TempItem, NNO)
 		endif
 		if NXO > 0 then
-			set Z2 = CreateItem(NXO, GetUnitX(NHO), GetUnitY(NHO))
-			call UnitAddItem(NHO, Z2)
-			call SetItemPlayer(Z2, p2, false)
-			call SetItemUserData(Z2, 1)
+			set TempItem = CreateItem(NXO, GetUnitX(NHO), GetUnitY(NHO))
+			call UnitAddItem(NHO, TempItem)
+			call SetItemPlayer(TempItem, p2, false)
+			call SetItemUserData(TempItem, 1)
 		endif
 		if NBO > 0 then
-			call SetItemCharges(Z2, NBO)
+			call SetItemCharges(TempItem, NBO)
 		endif
 		if NOO > 0 then
-			set Z2 = CreateItem(NOO, GetUnitX(NHO), GetUnitY(NHO))
-			call UnitAddItem(NHO, Z2)
-			call SetItemPlayer(Z2, p3, false)
-			call SetItemUserData(Z2, 1)
+			set TempItem = CreateItem(NOO, GetUnitX(NHO), GetUnitY(NHO))
+			call UnitAddItem(NHO, TempItem)
+			call SetItemPlayer(TempItem, p3, false)
+			call SetItemUserData(TempItem, 1)
 		endif
 		if NCO > 0 then
-			call SetItemCharges(Z2, NCO)
+			call SetItemCharges(TempItem, NCO)
 		endif
 		if NRO > 0 then
-			set Z2 = CreateItem(NRO, GetUnitX(NHO), GetUnitY(NHO))
-			call UnitAddItem(NHO, Z2)
-			call SetItemPlayer(Z2, p4, false)
-			call SetItemUserData(Z2, 1)
+			set TempItem = CreateItem(NRO, GetUnitX(NHO), GetUnitY(NHO))
+			call UnitAddItem(NHO, TempItem)
+			call SetItemPlayer(TempItem, p4, false)
+			call SetItemUserData(TempItem, 1)
 		endif
 		if NDO > 0 then
-			call SetItemCharges(Z2, NDO)
+			call SetItemCharges(TempItem, NDO)
 		endif
 		if NIO > 0 then
-			set Z2 = CreateItem(NIO, GetUnitX(NHO), GetUnitY(NHO))
-			call UnitAddItem(NHO, Z2)
-			call SetItemPlayer(Z2, p5, false)
-			call SetItemUserData(Z2, 1)
+			set TempItem = CreateItem(NIO, GetUnitX(NHO), GetUnitY(NHO))
+			call UnitAddItem(NHO, TempItem)
+			call SetItemPlayer(TempItem, p5, false)
+			call SetItemUserData(TempItem, 1)
 		endif
 		if NFO > 0 then
-			call SetItemCharges(Z2, NFO)
+			call SetItemCharges(TempItem, NFO)
 		endif
 		if W3[GetPlayerId(GetOwningPlayer(NHO))]== false then
 			call UnitRemoveType(NHO, UNIT_TYPE_PEON)
@@ -18260,7 +18252,7 @@ function NGO takes nothing returns boolean
 		call FlushChildHashtable(HY, h)
 		call DestroyTrigger(t)
 	endif
-	call EnableTrigger(CUV)
+	call EnableTrigger(UnitManipulatItemTrig)
 	set t = null
 	set NHO = null
 	set p0 = null
@@ -18302,7 +18294,7 @@ function NJO takes unit A2O returns nothing
 	local trigger t = CreateTrigger()
 	local integer h = GetHandleId(t)
 	local integer A_O
-	local item C1X
+	local item whichItem
 	local integer i
 	local item NKO
 	set i = 0
@@ -18332,29 +18324,29 @@ function NJO takes unit A2O returns nothing
 	set p3 = GetItemPlayer(A7O)
 	set p4 = GetItemPlayer(A8O)
 	set p5 = GetItemPlayer(A9O)
-	set C1X = A4O
-	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(GetItemIndexEx(C1X)) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(GetItemIndexEx(C1X))) then
-		set NAO = GetItemCharges(C1X)
+	set whichItem = A4O
+	if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or HHX(GetItemIndexEx(whichItem)) or(GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and A0O(GetItemIndexEx(whichItem))) then
+		set NAO = GetItemCharges(whichItem)
 	endif
-	set C1X = A5O
-	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(GetItemIndexEx(C1X)) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(GetItemIndexEx(C1X))) then
-		set NNO = GetItemCharges(C1X)
+	set whichItem = A5O
+	if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or HHX(GetItemIndexEx(whichItem)) or(GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and A0O(GetItemIndexEx(whichItem))) then
+		set NNO = GetItemCharges(whichItem)
 	endif
-	set C1X = A6O
-	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(GetItemIndexEx(C1X)) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(GetItemIndexEx(C1X))) then
-		set NBO = GetItemCharges(C1X)
+	set whichItem = A6O
+	if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or HHX(GetItemIndexEx(whichItem)) or(GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and A0O(GetItemIndexEx(whichItem))) then
+		set NBO = GetItemCharges(whichItem)
 	endif
-	set C1X = A7O
-	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(GetItemIndexEx(C1X)) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(GetItemIndexEx(C1X))) then
-		set NCO = GetItemCharges(C1X)
+	set whichItem = A7O
+	if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or HHX(GetItemIndexEx(whichItem)) or(GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and A0O(GetItemIndexEx(whichItem))) then
+		set NCO = GetItemCharges(whichItem)
 	endif
-	set C1X = A8O
-	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(GetItemIndexEx(C1X)) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(GetItemIndexEx(C1X))) then
-		set NDO = GetItemCharges(C1X)
+	set whichItem = A8O
+	if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or HHX(GetItemIndexEx(whichItem)) or(GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and A0O(GetItemIndexEx(whichItem))) then
+		set NDO = GetItemCharges(whichItem)
 	endif
-	set C1X = A9O
-	if GetItemType(C1X) == ITEM_TYPE_ARTIFACT or HHX(GetItemIndexEx(C1X)) or(GetItemType(C1X) == ITEM_TYPE_CAMPAIGN and A0O(GetItemIndexEx(C1X))) then
-		set NFO = GetItemCharges(C1X)
+	set whichItem = A9O
+	if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or HHX(GetItemIndexEx(whichItem)) or(GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and A0O(GetItemIndexEx(whichItem))) then
+		set NFO = GetItemCharges(whichItem)
 	endif
 	call HZX(A4O)
 	call HZX(A5O)
@@ -18411,14 +18403,14 @@ function NJO takes unit A2O returns nothing
 	set p3 = null
 	set p4 = null
 	set p5 = null
-	set C1X = null
+	set whichItem = null
 	set NKO = null
 endfunction
 function NLO takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local unit whichUnit =(LoadUnitHandle(HY, h, 2))
-	local item NMO = ACX(whichUnit, XOV[BUV])
+	local item NMO = ACX(whichUnit, RealItem[BUV])
 	local boolean Q0X = LoadBoolean(HY, h, 0)
 	if Q0X == false then
 		if NMO == null then
@@ -18461,26 +18453,26 @@ function HDE takes nothing returns boolean
 endfunction
 function NQO takes nothing returns boolean
 	local unit trigUnit = GetTriggerUnit()
-	local item C1X = GetManipulatedItem()
-	local integer id = GetItemTypeId(C1X)
+	local item whichItem = GetManipulatedItem()
+	local integer id = GetItemTypeId(whichItem)
 	local integer i
-	if (id == XOV[R4V]or id == XOV[IAV]or id == XOV[INV]) and IsUnitType(trigUnit, UNIT_TYPE_HERO) then
-		set C9V[GetPlayerId(GetOwningPlayer(trigUnit))]= GetItemX(C1X)
-		set DVV[GetPlayerId(GetOwningPlayer(trigUnit))]= GetItemY(C1X)
+	if (id == RealItem[R4V]or id == RealItem[IAV]or id == RealItem[INV]) and IsUnitType(trigUnit, UNIT_TYPE_HERO) then
+		set C9V[GetPlayerId(GetOwningPlayer(trigUnit))]= GetItemX(whichItem)
+		set DVV[GetPlayerId(GetOwningPlayer(trigUnit))]= GetItemY(whichItem)
 	endif
-	call RCO(trigUnit, C1X)
-	if (GetItemTypeId(C1X) == XOV[NBV]or GetItemTypeId(C1X) == XOV[NCV]) and IsUnitCourier(trigUnit) then
-		call UnitRemoveItem(trigUnit, C1X)
-	elseif (GetItemTypeId(C1X)) == XOV[Item_MagicWand]and IsUnitType(trigUnit, UNIT_TYPE_HERO) then
+	call RCO(trigUnit, whichItem)
+	if (GetItemTypeId(whichItem) == RealItem[NBV]or GetItemTypeId(whichItem) == RealItem[NCV]) and IsUnitCourier(trigUnit) then
+		call UnitRemoveItem(trigUnit, whichItem)
+	elseif (GetItemTypeId(whichItem)) == RealItem[Item_MagicWand]and IsUnitType(trigUnit, UNIT_TYPE_HERO) then
 		// 如果拿了魔杖 还是英雄 设置
 		set i = LoadInteger(HY, GetHandleId(trigUnit), 750)
 		if i > 0 then
 			if (LoadBoolean(HY, GetHandleId(trigUnit), 751)) == false then
 				call SaveBoolean(HY, GetHandleId(trigUnit), 751, true)
-				call SetItemCharges(C1X, i)
+				call SetItemCharges(whichItem, i)
 			endif
 		endif
-	elseif GetItemTypeId(C1X) == XOV[AIV]and GetUnitTypeId(trigUnit)!='n00L' and E8V == false then
+	elseif GetItemTypeId(whichItem) == RealItem[AIV]and GetUnitTypeId(trigUnit)!='n00L' and E8V == false then
 		set E7V = trigUnit
 		set E8V = true
 		call StoreDrCacheData("AegisOn", GetPlayerId(GetOwningPlayer(trigUnit)))
@@ -18489,11 +18481,11 @@ function NQO takes nothing returns boolean
 		else
 			call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, DisplayTextDuration[LocalPlayerId], PlayersColoerText[GetPlayerId(GetOwningPlayer(trigUnit))] + GetUnitName(trigUnit)+ "|r " + "获得了不朽的守护!")
 		endif
-	elseif GetItemTypeId(C1X) == XOV[BUV]and OPX(trigUnit) then
+	elseif GetItemTypeId(whichItem) == RealItem[BUV]and OPX(trigUnit) then
 		call NPO(trigUnit, false)
 	endif
 	set trigUnit = null
-	set C1X = null
+	set whichItem = null
 	return false
 endfunction
 function NSO takes nothing returns boolean
@@ -19585,7 +19577,7 @@ function B4O takes unit R8X, unit targetUnit returns nothing	//净魂之刃
 endfunction
 function G4E takes nothing returns nothing
 	local unit B5O = GetTriggerUnit()
-	local item NMO = ACX(B5O, XOV[BUV])
+	local item NMO = ACX(B5O, RealItem[BUV])
 	if NMO == null then
 		set NMO = ACX(B5O, XIV[BUV])
 	endif
@@ -20918,9 +20910,9 @@ function H5E takes nothing returns nothing
 			endif
 			set i = i + 1
 		endloop
-		set XX[GetPlayerId(GetOwningPlayer(u))]= XX[GetPlayerId(GetOwningPlayer(u))] + TEX(XOV[XFV])
+		set XX[GetPlayerId(GetOwningPlayer(u))]= XX[GetPlayerId(GetOwningPlayer(u))] + TEX(RealItem[XFV])
 		if GetOwningPlayer(u)!= GetOwningPlayer(GetTriggerUnit()) then
-			set XX[GetPlayerId(GetOwningPlayer(GetTriggerUnit()))]= XX[GetPlayerId(GetOwningPlayer(GetTriggerUnit()))] + TEX(XOV[XFV])
+			set XX[GetPlayerId(GetOwningPlayer(GetTriggerUnit()))]= XX[GetPlayerId(GetOwningPlayer(GetTriggerUnit()))] + TEX(RealItem[XFV])
 		endif
 		set GR[GetPlayerId(GetOwningPlayer(GetTriggerUnit()))]= true
 		set GR[GetPlayerId(GetOwningPlayer(u))]= true
@@ -21190,7 +21182,7 @@ function D6O takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local unit u =(LoadUnitHandle(HY, h, 2))
-	call SetItemCharges(GetItemOfTypeFromUnit(u, XOV[NIV]), GetItemCharges(GetItemOfTypeFromUnit(u, XOV[NIV]))+ 1)
+	call SetItemCharges(GetItemOfTypeFromUnit(u, RealItem[NIV]), GetItemCharges(GetItemOfTypeFromUnit(u, RealItem[NIV]))+ 1)
 	call FlushChildHashtable(HY, h)
 	call SaveBoolean(HY, GetHandleId(u),'suic', true)
 	call DestroyTrigger(t)
@@ -21278,14 +21270,14 @@ function D8O takes nothing returns nothing
 	local integer h = GetHandleId(t)
 	local item it
 	local unit u = LoadUnitHandle(HY, h, 0)
-	call DisableTrigger(CUV)
+	call DisableTrigger(UnitManipulatItemTrig)
 	set it = CreateItem('I0HM', GetUnitX(u), GetUnitY(u))
 	call UnitAddItem(u, it)
 	if GetWidgetLife(it)> 0 then
 		call RemoveItem(it)
 	endif
 	set it = null
-	call EnableTrigger(CUV)
+	call EnableTrigger(UnitManipulatItemTrig)
 	call PauseTimer(t)
 	call FlushChildHashtable(HY, h)
 	call DestroyTimer(t)
@@ -21313,7 +21305,7 @@ function FVO takes unit u, boolean b returns nothing
 			call AGO(GetTriggerUnit())
 			call UnitRemoveAbility(GetTriggerUnit(),'B0BI')
 		endif
-		call DisableTrigger(CUV)
+		call DisableTrigger(UnitManipulatItemTrig)
 		set it = CreateItem('I0HM', GetUnitX(u), GetUnitY(u))
 		if UnitAddItem(u, it) and GetWidgetLife(it)<= 0 then
 			set t = CreateTrigger()
@@ -21325,7 +21317,7 @@ function FVO takes unit u, boolean b returns nothing
 		else
 			call RemoveItem(it)
 		endif
-		call EnableTrigger(CUV)
+		call EnableTrigger(UnitManipulatItemTrig)
 	endif
 	set it = null
 	set t = null
@@ -21400,22 +21392,22 @@ function FIO takes unit trigUnit, integer FAO returns nothing
 	local integer FNO
 	local item it
 	if FAO =='o004' then
-		set FNO = XOV[R2V]
+		set FNO = RealItem[R2V]
 	else
-		set FNO = XOV[R3V]
+		set FNO = RealItem[R3V]
 	endif
-	call DisableTrigger(CUV)
+	call DisableTrigger(UnitManipulatItemTrig)
 	set it = GetItemOfTypeFromUnit(trigUnit, FNO)
 	if it == null then
-		set E3 = GetOwningPlayer(trigUnit)
-		set Z2 = CreateItem(FNO, 0, 0)
-		call UnitAddItem(trigUnit, Z2)
-		call SetItemPlayer(Z2, E3, false)
-		call SetItemUserData(Z2, 1)
+		set TempPlayer = GetOwningPlayer(trigUnit)
+		set TempItem = CreateItem(FNO, 0, 0)
+		call UnitAddItem(trigUnit, TempItem)
+		call SetItemPlayer(TempItem, TempPlayer, false)
+		call SetItemUserData(TempItem, 1)
 	else
 		call SetItemCharges(it, GetItemCharges(it)+ 1)
 	endif
-	call EnableTrigger(CUV)
+	call EnableTrigger(UnitManipulatItemTrig)
 	set it = null
 endfunction
 function GHE takes nothing returns nothing
@@ -21461,7 +21453,7 @@ function GHE takes nothing returns nothing
 			if it != null then
 				call SetItemCharges(it, GetItemCharges(it)+ 1)
 			elseif H_X(d)> 0 then
-				set it = CreateItem(XOV[SQV], 0, 0)
+				set it = CreateItem(RealItem[SQV], 0, 0)
 				call SetItemCharges(it, 1)
 				call UnitAddItem(d, it)
 			else
@@ -21723,12 +21715,12 @@ function FZO takes unit u, integer id, integer RLO, item F_O returns nothing
 	local item it
 	local integer JOX = B2X(u, F_O)
 	local player p = GetItemPlayer(F_O)
-	call DisableTrigger(CUV)
+	call DisableTrigger(UnitManipulatItemTrig)
 	call RemoveItem(F_O)
-	set it = JIX(u, XOV[id], JOX)
+	set it = CreateItemToUnitSlotByIndex(u, RealItem[id], JOX)
 	call SetItemPlayer(it, p, false)
 	call SetItemUserData(it, RLO)
-	call EnableTrigger(CUV)
+	call EnableTrigger(UnitManipulatItemTrig)
 	set it = null
 endfunction
 function F0O takes integer GTX returns nothing
@@ -21832,14 +21824,14 @@ function F4O takes nothing returns boolean
 	local unit whichUnit =(LoadUnitHandle(HY, h, 2))
 	local item it
 	if ABO(whichUnit) then
-		call DisableTrigger(CUV)
+		call DisableTrigger(UnitManipulatItemTrig)
 		set it = CreateItem('I0HM', GetUnitX(whichUnit), GetUnitY(whichUnit))
 		call UnitAddItem(whichUnit, it)
 		if GetWidgetLife(it)> 0 then
 			call RemoveItem(it)
 		endif
 		set it = null
-		call EnableTrigger(CUV)
+		call EnableTrigger(UnitManipulatItemTrig)
 	endif
 	call FlushChildHashtable(HY, h)
 	call DestroyTrigger(t)
@@ -21935,10 +21927,10 @@ function F9O takes nothing returns boolean
 	endif
 	if id == ADV or id == AFV or id == AGV or id == AHV or id == AJV then
 		call SetItemCharges(GetManipulatedItem(), GetItemCharges(GetManipulatedItem()) + 1)
-	elseif TZE == XOV[RPV] or TZE == XOV[Item_IronwoodBranch] or TZE == XOV[Item_MoonShard] then
+	elseif TZE == RealItem[RPV] or TZE == RealItem[Item_IronwoodBranch] or TZE == RealItem[Item_MoonShard] then
 		// 使用芒果 树枝 银月 那就删了
 		call RemoveItem(GetManipulatedItem())
-	elseif TZE == XOV[XDV] then
+	elseif TZE == RealItem[XDV] then
 		if bj_playerIsCrippled[0] then
 			call RemoveItem(GetManipulatedItem())
 			call HDX(GetTriggerUnit(), true)
@@ -24991,12 +24983,12 @@ function M2O takes nothing returns boolean
 	elseif IsUnitType(GetAttacker(), UNIT_TYPE_HERO) or IsUnitBear(GetAttacker()) then
 		set b = IsUnitType(GetTriggerUnit(), UNIT_TYPE_STRUCTURE) == false and IsUnitIllusion(GetAttacker()) == false
 		set FGV = GetPlayerId(GetOwningPlayer(GetAttacker()))
-		if CDV[FGV]> 0 and b and GetUnitTypeId(GetTriggerUnit())!='n00L'and GYX(GetAttacker(), XOV[OYV]) then
+		if CDV[FGV]> 0 and b and GetUnitTypeId(GetTriggerUnit())!='n00L'and GYX(GetAttacker(), RealItem[OYV]) then
 			call IMO()
 		endif
-		if CKV[FGV]> 0 and b and GYX(GetAttacker(), XOV[I5V]) then
+		if CKV[FGV]> 0 and b and GYX(GetAttacker(), RealItem[I5V]) then
 			call IUO()
-		elseif (CLV[FGV]> 0 or C1V[FGV]> 0 or C1Z[FGV]> 0) and b and(GYX(GetAttacker(), XOV[IPV]) or GYX(GetAttacker(), XOV[RLV]) or GYX(GetAttacker(), XOV[N1V])) then
+		elseif (CLV[FGV]> 0 or C1V[FGV]> 0 or C1Z[FGV]> 0) and b and(GYX(GetAttacker(), RealItem[IPV]) or GYX(GetAttacker(), RealItem[RLV]) or GYX(GetAttacker(), RealItem[N1V])) then
 			call I_O()
 		endif
 	elseif GetUnitAbilityLevel(GetAttacker(),'A17S')> 0 and IsUnitType(GetTriggerUnit(), UNIT_TYPE_STRUCTURE) == false then
@@ -26746,7 +26738,7 @@ function UOO takes nothing returns nothing
 	call UEO(GetTriggerPlayer())
 endfunction
 function XGO takes nothing returns nothing
-	call UEO(E3)
+	call UEO(TempPlayer)
 endfunction
 function URO takes nothing returns nothing
 	if false then
@@ -27318,19 +27310,19 @@ endfunction
 function YGO takes unit u, integer s1, integer s2 returns nothing
 	local item YHO = null
 	local item YJO = null
-	call DisableTrigger(CUV)
+	call DisableTrigger(UnitManipulatItemTrig)
 	if UnitItemInSlot(u, s2 -1)!= null and GUX(GetItemIndexEx(UnitItemInSlot(u, s2 -1))) == false and GetItemIndex(UnitItemInSlot(u, s2 -1)) == XCV then
 		set YJO = UnitRemoveItemFromSlot(u, s2 -1)
 	endif
 	if UnitItemInSlot(u, s1 -1)!= null and GUX(GetItemIndexEx(UnitItemInSlot(u, s1 -1))) == false and GetItemIndex(UnitItemInSlot(u, s1 -1)) == XCV then
 		set YHO = UnitRemoveItemFromSlot(u, s1 -1)
 	endif
-	call EnableTrigger(CUV)
+	call EnableTrigger(UnitManipulatItemTrig)
 	if YHO != null then
-		call JXX(u, YHO, s2 -1)
+		call AddItemToUnitSlot(u, YHO, s2 -1)
 	endif
 	if YJO != null then
-		call JXX(u, YJO, s1 -1)
+		call AddItemToUnitSlot(u, YJO, s1 -1)
 	endif
 	set YHO = null
 	set YJO = null
@@ -28284,9 +28276,9 @@ endfunction
 
 function ZTJ takes nothing returns nothing
 	local integer h = GetHandleId(GetExpiredTimer())
-	set E3 = LoadPlayerHandle(HY, h, 0)
+	set TempPlayer = LoadPlayerHandle(HY, h, 0)
 	call ExecuteFunc("Reset_Ability")
-	set E3 = LoadPlayerHandle(HY, h, 1)
+	set TempPlayer = LoadPlayerHandle(HY, h, 1)
 	call ExecuteFunc("Reset_Ability")
 	call DestroyTimerAndFlushHT_HY(GetExpiredTimer())
 endfunction
@@ -28310,9 +28302,9 @@ function PlayerSwap takes player p1, player p2 returns nothing
 	local integer h
 	local integer k
 	local integer j
-	set E3 = p1
+	set TempPlayer = p1
 	call ExecuteFunc("Reset_Ability")
-	set E3 = p2
+	set TempPlayer = p2
 	call ExecuteFunc("Reset_Ability")
 	call ZTQ(p1, p2)
 	loop
@@ -28413,7 +28405,7 @@ function ZUO takes unit u1, unit u2, player p1, player p2 returns nothing
 	set ZZO = PlayersReliableGold[GetPlayerId(p1)]
 	set PlayersReliableGold[GetPlayerId(p1)]= PlayersReliableGold[GetPlayerId(p2)]
 	set PlayersReliableGold[GetPlayerId(p2)]= ZZO
-	call DisableTrigger(CUV)
+	call DisableTrigger(UnitManipulatItemTrig)
 	if GetUnitAbilityLevel(u1,'A03E')> 0 then
 		set IM = u1
 		set AM = u2
@@ -28534,7 +28526,7 @@ function ZUO takes unit u1, unit u2, player p1, player p2 returns nothing
 		call UnitAddItem(u1, NKO)
 	endif
 	call RemoveUnit(d)
-	call EnableTrigger(CUV)
+	call EnableTrigger(UnitManipulatItemTrig)
 	call SetPlayerAbilityAvailableEx(p1, HeroSkill_Modify[PlayerSkillIndices[GetPlayerId(p2)* MAX_SKILL_SLOTS + 1]], false)
 	call SetPlayerAbilityAvailableEx(p1, HeroSkill_Modify[PlayerSkillIndices[GetPlayerId(p2)* MAX_SKILL_SLOTS + 2]], false)
 	call SetPlayerAbilityAvailableEx(p1, HeroSkill_Modify[PlayerSkillIndices[GetPlayerId(p2)* MAX_SKILL_SLOTS + 3]], false)
@@ -28638,13 +28630,13 @@ function Z6O takes nothing returns nothing
 		loop
 		exitwhen i > 5
 			if IsSentinelPlayer(p) then
-				set E3 = SentinelPlayers[i]
+				set TempPlayer = SentinelPlayers[i]
 			else
-				set E3 = ScourgePlayers[i]
+				set TempPlayer = ScourgePlayers[i]
 			endif
-			set U2 = PlayerHeroes[GetPlayerId(E3)]
-			if not(MissileHitTargetUnit == null or GetOwningPlayer(MissileHitTargetUnit)!= p or U2 == null or GetOwningPlayer(U2)!= E3 or E3 == p) then
-				if Z4O(MissileHitTargetUnit, U2, false, p, E3) then
+			set U2 = PlayerHeroes[GetPlayerId(TempPlayer)]
+			if not(MissileHitTargetUnit == null or GetOwningPlayer(MissileHitTargetUnit)!= p or U2 == null or GetOwningPlayer(U2)!= TempPlayer or TempPlayer == p) then
+				if Z4O(MissileHitTargetUnit, U2, false, p, TempPlayer) then
 					return
 				endif
 			endif
@@ -28656,32 +28648,32 @@ function Z6O takes nothing returns nothing
 		return
 	elseif IsPickingHero then
 		if IsSentinelPlayer(p) then
-			set E3 = SentinelPlayers[i]
+			set TempPlayer = SentinelPlayers[i]
 		else
-			set E3 = ScourgePlayers[i]
+			set TempPlayer = ScourgePlayers[i]
 		endif
-		if not IsPlayingPlayer(E3) or E3 == p then
+		if not IsPlayingPlayer(TempPlayer) or TempPlayer == p then
 			call InterfaceErrorForPlayer(p, GetObjectName('n02Z'))
 			return
 		endif
 	endif
 	set MissileHitTargetUnit = PlayerHeroes[GetPlayerId(p)]
 	if IsSentinelPlayer(p) then
-		set E3 = SentinelPlayers[i]
+		set TempPlayer = SentinelPlayers[i]
 	else
-		set E3 = ScourgePlayers[i]
+		set TempPlayer = ScourgePlayers[i]
 	endif
-	set U2 = PlayerHeroes[GetPlayerId(E3)]
+	set U2 = PlayerHeroes[GetPlayerId(TempPlayer)]
 	if IsPickingHero then
-		if not((Mode__SingleDraft or Mode__MirrorDraft) and IsPlayingPlayer(E3) and E3 != p) then
+		if not((Mode__SingleDraft or Mode__MirrorDraft) and IsPlayingPlayer(TempPlayer) and TempPlayer != p) then
 			call InterfaceErrorForPlayer(p, GetObjectName('n02Z'))
 			return
 		endif
-	elseif MissileHitTargetUnit == null or GetOwningPlayer(MissileHitTargetUnit)!= p or U2 == null or GetOwningPlayer(U2)!= E3 or E3 == p then
+	elseif MissileHitTargetUnit == null or GetOwningPlayer(MissileHitTargetUnit)!= p or U2 == null or GetOwningPlayer(U2)!= TempPlayer or TempPlayer == p then
 		call InterfaceErrorForPlayer(p, GetObjectName('n02Z'))
 		return
 	endif
-	call Z4O(MissileHitTargetUnit, U2, true, p, E3)
+	call Z4O(MissileHitTargetUnit, U2, true, p, TempPlayer)
 endfunction
 function Z7O takes nothing returns nothing
 	local integer i
@@ -29947,7 +29939,7 @@ function XIR takes unit u, player p returns nothing
 	local real x2
 	local real y2
 	local integer i
-	local item C1X
+	local item whichItem
 	if IsSentinelPlayer(p) then
 		set x1 = GetRectCenterX(gg_rct_ScourgeRevivalPoint)
 		set y1 = GetRectCenterY(gg_rct_ScourgeRevivalPoint)
@@ -29973,9 +29965,9 @@ function XIR takes unit u, player p returns nothing
 		set i = 0
 		loop
 		exitwhen i > 5
-			set C1X = UnitItemInSlot(u, i)
-			if GetUnitTypeId(u)!='H00J' and C1X != null and(GetItemPlayer(C1X)!= GetOwningPlayer(u) and GetItemIndexEx(C1X)!= ASV and GetItemIndexEx(C1X)!= ATV) and GetItemTypeId(C1X)!= XOV[AIV] then
-				call UnitRemoveItem(u, C1X)
+			set whichItem = UnitItemInSlot(u, i)
+			if GetUnitTypeId(u)!='H00J' and whichItem != null and(GetItemPlayer(whichItem)!= GetOwningPlayer(u) and GetItemIndexEx(whichItem)!= ASV and GetItemIndexEx(whichItem)!= ATV) and GetItemTypeId(whichItem)!= RealItem[AIV] then
+				call UnitRemoveItem(u, whichItem)
 			endif
 			set i = i + 1
 		endloop
@@ -29983,7 +29975,7 @@ function XIR takes unit u, player p returns nothing
 	call SetUnitX(u, x2)
 	call SetUnitY(u, y2)
 	call SetUnitColor(u, GetPlayerColor(p))
-	set C1X = null
+	set whichItem = null
 endfunction
 function XAR takes nothing returns boolean
 	if IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) or IsUnitCourier(GetFilterUnit()) then
@@ -30016,10 +30008,10 @@ function XCR takes player p1, player p2 returns nothing
 	local group g1 = AllocationGroup(109)
 	local group g2 = AllocationGroup(110)
 	set WM = p1
-	set E3 = p2
+	set TempPlayer = p2
 	call GroupEnumUnitsOfPlayer(g1, p1, Condition(function XAR))
 	set WM = p2
-	set E3 = p1
+	set TempPlayer = p1
 	call GroupEnumUnitsOfPlayer(g2, p2, Condition(function XAR))
 	call ForGroup(g1, function XRR)
 	call ForGroup(g2, function XRR)
@@ -31331,7 +31323,7 @@ function RAR takes nothing returns nothing
 	call reset_choice(GetTriggerPlayer(), false)
 endfunction
 function Reset_Ability takes nothing returns nothing
-	call reset_choice(E3, true)
+	call reset_choice(TempPlayer, true)
 endfunction
 function RNR takes nothing returns boolean
 	if GetUnitTypeId(GetFilterUnit())=='n00C' or GetUnitTypeId(GetFilterUnit())=='ntav' then
@@ -32433,7 +32425,7 @@ function AXR takes unit u returns nothing
 	set t = null
 endfunction
 function AOR takes nothing returns boolean
-	return GetUnitAbilityLevel(GetFilterUnit(),'B0HL')> 0 and IsUnitAlly(GetFilterUnit(), E3) and IsAliveNotStrucNotWard(GetFilterUnit())
+	return GetUnitAbilityLevel(GetFilterUnit(),'B0HL')> 0 and IsUnitAlly(GetFilterUnit(), TempPlayer) and IsAliveNotStrucNotWard(GetFilterUnit())
 endfunction
 function GraniteAura__Actions takes nothing returns nothing
 	local timer t = GetExpiredTimer()
@@ -32460,7 +32452,7 @@ function GraniteAura__Actions takes nothing returns nothing
 		call DeallocateGroup(AIR)
 	else
 		set g = AllocationGroup(113)
-		set E3 = GetOwningPlayer(u)
+		set TempPlayer = GetOwningPlayer(u)
 		call GroupEnumUnitsInRange(g, GetUnitX(u), GetUnitY(u), 925, Condition(function AOR))
 		set gg = AllocationGroup(114)
 		call GroupAddGroup(AIR, gg)
@@ -43101,7 +43093,7 @@ function W8R takes nothing returns boolean
 	call ForGroup(g, function W6R)
 	if count == 10 then
 		set JGV = CVX
-		set E3 = p
+		set TempPlayer = p
 		call ForGroup(g, function W7R)
 		call DeallocateGroup(g)
 		call FlushChildHashtable(HY, h)
@@ -46722,10 +46714,10 @@ function O3I takes nothing returns boolean
 		set u = FirstOfGroup(g)
 	exitwhen u == null
 		call UnitDamageTargetEx(whichUnit, u, 1, level * 12)
-		set E3 = GetOwningPlayer(dummyCaster)
+		set TempPlayer = GetOwningPlayer(dummyCaster)
 		call SetUnitOwner(dummyCaster, GetOwningPlayer(u), false)
 		call IssueTargetOrderById(dummyCaster, 852075, u)
-		call SetUnitOwner(dummyCaster, E3, false)
+		call SetUnitOwner(dummyCaster, TempPlayer, false)
 		call GroupRemoveUnit(g, u)
 	endloop
 	call DeallocateGroup(g)
@@ -55822,12 +55814,12 @@ function Z1I takes unit u, unit t returns nothing
 			call TGA(u, t, 5)
 		endif
 	endif
-	if GetItemOfTypeFromUnit(u, XOV[I5V])!= null then	//散夜对剑
-		if GetUnitPseudoRandom(u, XOV[I5V], 16) then
+	if GetItemOfTypeFromUnit(u, RealItem[I5V])!= null then	//散夜对剑
+		if GetUnitPseudoRandom(u, RealItem[I5V], 16) then
 			call ISO(t)
 		endif
-	elseif GetItemOfTypeFromUnit(u, XOV[IPV])!= null or GetItemOfTypeFromUnit(u, XOV[RLV])!= null or GetItemOfTypeFromUnit(u, XOV[N1V])!= null then
-		if GetUnitPseudoRandom(u, XOV[IPV], 15) then	//散华和天堂之戟和白银之锋
+	elseif GetItemOfTypeFromUnit(u, RealItem[IPV])!= null or GetItemOfTypeFromUnit(u, RealItem[RLV])!= null or GetItemOfTypeFromUnit(u, RealItem[N1V])!= null then
+		if GetUnitPseudoRandom(u, RealItem[IPV], 15) then	//散华和天堂之戟和白银之锋
 			call IYO(t)
 		endif
 	endif
@@ -56880,59 +56872,59 @@ function SMI takes unit SPI, unit trigUnit returns nothing
 	local boolean S_I = false
 	local boolean S0I = false
 	call DisableTrigger(t)
-	call DisableTrigger(CUV)
+	call DisableTrigger(UnitManipulatItemTrig)
 	loop
 	exitwhen i > 5
-		if GetItemTypeId(UnitItemInSlot(trigUnit, i))==(XOV[XMV]) then
+		if GetItemTypeId(UnitItemInSlot(trigUnit, i))==(RealItem[XMV]) then
 			set SQI = true
 		endif
-		if (GetItemTypeId(UnitItemInSlot(trigUnit, i)))==(XOV[IAV]) then
+		if (GetItemTypeId(UnitItemInSlot(trigUnit, i)))==(RealItem[IAV]) then
 			set SSI = true
 		endif
-		if GetItemTypeId(UnitItemInSlot(trigUnit, i))==(XOV[IDV]) then
+		if GetItemTypeId(UnitItemInSlot(trigUnit, i))==(RealItem[IDV]) then
 			set STI = true
 		endif
-		if GetItemTypeId(UnitItemInSlot(trigUnit, i))==(XOV[ICV]) then
+		if GetItemTypeId(UnitItemInSlot(trigUnit, i))==(RealItem[ICV]) then
 			set SUI = true
 		endif
-		if GetItemTypeId(UnitItemInSlot(trigUnit, i))==(XOV[IBV]) then
+		if GetItemTypeId(UnitItemInSlot(trigUnit, i))==(RealItem[IBV]) then
 			set SWI = true
 		endif
-		if GetItemTypeId(UnitItemInSlot(trigUnit, i))==(XOV[NKV]) then
+		if GetItemTypeId(UnitItemInSlot(trigUnit, i))==(RealItem[NKV]) then
 			set SYI = true
 		endif
-		if GetItemTypeId(UnitItemInSlot(trigUnit, i))==(XOV[NZV]) then
+		if GetItemTypeId(UnitItemInSlot(trigUnit, i))==(RealItem[NZV]) then
 			set SZI = true
 		endif
-		if GetItemTypeId(UnitItemInSlot(trigUnit, i))==(XOV[RNV]) then
+		if GetItemTypeId(UnitItemInSlot(trigUnit, i))==(RealItem[Item_TranquilBoots]) then
 			set S_I = true
 		endif
-		if GetItemTypeId(UnitItemInSlot(trigUnit, i))==(XOV[RBV]) then
+		if GetItemTypeId(UnitItemInSlot(trigUnit, i))==(RealItem[RBV]) then
 			set S0I = true
 		endif
 		set i = i + 1
 	endloop
 	if S0I then
-		call UnitAddItem(SPI, CreateItem((XOV[RBV]), 0, 0))
+		call UnitAddItem(SPI, CreateItem((RealItem[RBV]), 0, 0))
 	elseif S_I then
-		call UnitAddItem(SPI, CreateItem((XOV[RNV]), 0, 0))
+		call UnitAddItem(SPI, CreateItem((RealItem[Item_TranquilBoots]), 0, 0))
 	elseif SZI then
-		call UnitAddItem(SPI, CreateItem((XOV[NZV]), 0, 0))
+		call UnitAddItem(SPI, CreateItem((RealItem[NZV]), 0, 0))
 	elseif SYI then
-		call UnitAddItem(SPI, CreateItem((XOV[NKV]), 0, 0))
+		call UnitAddItem(SPI, CreateItem((RealItem[NKV]), 0, 0))
 	elseif SWI then
-		call UnitAddItem(SPI, CreateItem((XOV[IBV]), 0, 0))
+		call UnitAddItem(SPI, CreateItem((RealItem[IBV]), 0, 0))
 	elseif SUI then
-		call UnitAddItem(SPI, CreateItem((XOV[ICV]), 0, 0))
+		call UnitAddItem(SPI, CreateItem((RealItem[ICV]), 0, 0))
 	elseif STI then
-		call UnitAddItem(SPI, CreateItem((XOV[IDV]), 0, 0))
+		call UnitAddItem(SPI, CreateItem((RealItem[IDV]), 0, 0))
 	elseif SSI then
-		call UnitAddItem(SPI, CreateItem((XOV[IAV]), 0, 0))
+		call UnitAddItem(SPI, CreateItem((RealItem[IAV]), 0, 0))
 	elseif SQI then
-		call UnitAddItem(SPI, CreateItem((XOV[XMV]), 0, 0))
+		call UnitAddItem(SPI, CreateItem((RealItem[XMV]), 0, 0))
 	endif
 	call EnableTrigger(t)
-	call EnableTrigger(CUV)
+	call EnableTrigger(UnitManipulatItemTrig)
 	set t = null
 endfunction
 function S1I takes nothing returns nothing
@@ -56970,66 +56962,66 @@ function S1I takes nothing returns nothing
 		call EnableTrigger(GetTriggeringTrigger())
 		return
 	endif
-	if not(GetItemTypeId(GetManipulatedItem())==(XOV[XMV]) or(GetItemTypeId(GetManipulatedItem()))==(XOV[IAV]) or GetItemTypeId(GetManipulatedItem())==(XOV[IDV]) or GetItemTypeId(GetManipulatedItem())==(XOV[ICV]) or GetItemTypeId(GetManipulatedItem())==(XOV[IBV]) or(GetItemTypeId(GetManipulatedItem()))==(XOV[NKV]) or GetItemTypeId(GetManipulatedItem())==(XOV[NZV]) or GetItemTypeId(GetManipulatedItem())==(XOV[RNV]) or GetItemTypeId(GetManipulatedItem())==(XOV[RBV])) then
+	if not(GetItemTypeId(GetManipulatedItem())==(RealItem[XMV]) or(GetItemTypeId(GetManipulatedItem()))==(RealItem[IAV]) or GetItemTypeId(GetManipulatedItem())==(RealItem[IDV]) or GetItemTypeId(GetManipulatedItem())==(RealItem[ICV]) or GetItemTypeId(GetManipulatedItem())==(RealItem[IBV]) or(GetItemTypeId(GetManipulatedItem()))==(RealItem[NKV]) or GetItemTypeId(GetManipulatedItem())==(RealItem[NZV]) or GetItemTypeId(GetManipulatedItem())==(RealItem[Item_TranquilBoots]) or GetItemTypeId(GetManipulatedItem())==(RealItem[RBV])) then
 		call EnableTrigger(GetTriggeringTrigger())
 		return
 	endif
-	call DisableTrigger(CUV)
+	call DisableTrigger(UnitManipulatItemTrig)
 	if GetTriggerEventId() == EVENT_PLAYER_UNIT_DROP_ITEM then
 		set S4I = true
 	endif
 	loop
 	exitwhen i > 5
 		set JCX = GetItemTypeId(UnitItemInSlot(S3I, i))
-		if JCX ==(XOV[XMV]) then
+		if JCX ==(RealItem[XMV]) then
 			set S5I = S5I + 1
 			if (not(S4I and JCX == GetItemTypeId(GetManipulatedItem()))) or(S5I > 1 and JCX == GetItemTypeId(GetManipulatedItem())) then
 				set SQI = true
 			endif
 		endif
-		if (JCX)==(XOV[IAV]) then
+		if (JCX)==(RealItem[IAV]) then
 			set S6I = S6I + 1
 			if (not(S4I and JCX == GetItemTypeId(GetManipulatedItem()))) or(S6I > 1 and JCX == GetItemTypeId(GetManipulatedItem())) then
 				set SSI = true
 			endif
 		endif
-		if JCX ==(XOV[IDV]) then
+		if JCX ==(RealItem[IDV]) then
 			set S7I = S7I + 1
 			if (not(S4I and JCX == GetItemTypeId(GetManipulatedItem()))) or(S7I > 1 and JCX == GetItemTypeId(GetManipulatedItem())) then
 				set STI = true
 			endif
 		endif
-		if JCX ==(XOV[ICV]) then
+		if JCX ==(RealItem[ICV]) then
 			set S8I = S8I + 1
 			if (not(S4I and JCX == GetItemTypeId(GetManipulatedItem()))) or(S8I > 1 and JCX == GetItemTypeId(GetManipulatedItem())) then
 				set SUI = true
 			endif
 		endif
-		if JCX ==(XOV[IBV]) then
+		if JCX ==(RealItem[IBV]) then
 			set S9I = S9I + 1
 			if (not(S4I and JCX == GetItemTypeId(GetManipulatedItem()))) or(S9I > 1 and JCX == GetItemTypeId(GetManipulatedItem())) then
 				set SWI = true
 			endif
 		endif
-		if (JCX)==(XOV[NKV]) then
+		if (JCX)==(RealItem[NKV]) then
 			set TVI = TVI + 1
 			if (not(S4I and JCX == GetItemTypeId(GetManipulatedItem()))) or(TVI > 1 and JCX == GetItemTypeId(GetManipulatedItem())) then
 				set SYI = true
 			endif
 		endif
-		if JCX ==(XOV[NZV]) then
+		if JCX ==(RealItem[NZV]) then
 			set TEI = TEI + 1
 			if (not(S4I and JCX == GetItemTypeId(GetManipulatedItem()))) or(TEI > 1 and JCX == GetItemTypeId(GetManipulatedItem())) then
 				set SZI = true
 			endif
 		endif
-		if JCX ==(XOV[RNV]) then
+		if JCX ==(RealItem[Item_TranquilBoots]) then
 			set TXI = TXI + 1
 			if (not(S4I and JCX == GetItemTypeId(GetManipulatedItem()))) or(TXI > 1 and JCX == GetItemTypeId(GetManipulatedItem())) then
 				set S_I = true
 			endif
 		endif
-		if JCX ==(XOV[RBV]) then
+		if JCX ==(RealItem[RBV]) then
 			set TOI = TOI + 1
 			if (not(S4I and JCX == GetItemTypeId(GetManipulatedItem()))) or(TXI > 1 and JCX == GetItemTypeId(GetManipulatedItem())) then
 				set S0I = true
@@ -57048,107 +57040,107 @@ function S1I takes nothing returns nothing
 		call RemoveItem(UnitRemoveItemFromSlot(S6X, 0))
 	endif
 	if S0I then
-		call UnitAddItem(S3X, CreateItem((XOV[RBV]), 0, 0))
+		call UnitAddItem(S3X, CreateItem((RealItem[RBV]), 0, 0))
 		if S4X != null then
-			call UnitAddItem(S4X, CreateItem((XOV[RBV]), 0, 0))
+			call UnitAddItem(S4X, CreateItem((RealItem[RBV]), 0, 0))
 		endif
 		if S5X != null then
-			call UnitAddItem(S5X, CreateItem((XOV[RBV]), 0, 0))
+			call UnitAddItem(S5X, CreateItem((RealItem[RBV]), 0, 0))
 		endif
 		if S6X != null then
-			call UnitAddItem(S6X, CreateItem((XOV[RBV]), 0, 0))
+			call UnitAddItem(S6X, CreateItem((RealItem[RBV]), 0, 0))
 		endif
 	elseif S_I then
-		call UnitAddItem(S3X, CreateItem((XOV[RNV]), 0, 0))
+		call UnitAddItem(S3X, CreateItem((RealItem[Item_TranquilBoots]), 0, 0))
 		if S4X != null then
-			call UnitAddItem(S4X, CreateItem((XOV[RNV]), 0, 0))
+			call UnitAddItem(S4X, CreateItem((RealItem[Item_TranquilBoots]), 0, 0))
 		endif
 		if S5X != null then
-			call UnitAddItem(S5X, CreateItem((XOV[RNV]), 0, 0))
+			call UnitAddItem(S5X, CreateItem((RealItem[Item_TranquilBoots]), 0, 0))
 		endif
 		if S6X != null then
-			call UnitAddItem(S6X, CreateItem((XOV[RNV]), 0, 0))
+			call UnitAddItem(S6X, CreateItem((RealItem[Item_TranquilBoots]), 0, 0))
 		endif
 	elseif SZI then
-		call UnitAddItem(S3X, CreateItem((XOV[NZV]), 0, 0))
+		call UnitAddItem(S3X, CreateItem((RealItem[NZV]), 0, 0))
 		if S4X != null then
-			call UnitAddItem(S4X, CreateItem((XOV[NZV]), 0, 0))
+			call UnitAddItem(S4X, CreateItem((RealItem[NZV]), 0, 0))
 		endif
 		if S5X != null then
-			call UnitAddItem(S5X, CreateItem((XOV[NZV]), 0, 0))
+			call UnitAddItem(S5X, CreateItem((RealItem[NZV]), 0, 0))
 		endif
 		if S6X != null then
-			call UnitAddItem(S6X, CreateItem((XOV[NZV]), 0, 0))
+			call UnitAddItem(S6X, CreateItem((RealItem[NZV]), 0, 0))
 		endif
 	elseif SYI then
-		call UnitAddItem(S3X, CreateItem((XOV[NKV]), 0, 0))
+		call UnitAddItem(S3X, CreateItem((RealItem[NKV]), 0, 0))
 		if S4X != null then
-			call UnitAddItem(S4X, CreateItem((XOV[NKV]), 0, 0))
+			call UnitAddItem(S4X, CreateItem((RealItem[NKV]), 0, 0))
 		endif
 		if S5X != null then
-			call UnitAddItem(S5X, CreateItem((XOV[NKV]), 0, 0))
+			call UnitAddItem(S5X, CreateItem((RealItem[NKV]), 0, 0))
 		endif
 		if S6X != null then
-			call UnitAddItem(S6X, CreateItem((XOV[NKV]), 0, 0))
+			call UnitAddItem(S6X, CreateItem((RealItem[NKV]), 0, 0))
 		endif
 	elseif SWI then
-		call UnitAddItem(S3X, CreateItem((XOV[IBV]), 0, 0))
+		call UnitAddItem(S3X, CreateItem((RealItem[IBV]), 0, 0))
 		if S4X != null then
-			call UnitAddItem(S4X, CreateItem((XOV[IBV]), 0, 0))
+			call UnitAddItem(S4X, CreateItem((RealItem[IBV]), 0, 0))
 		endif
 		if S5X != null then
-			call UnitAddItem(S5X, CreateItem((XOV[IBV]), 0, 0))
+			call UnitAddItem(S5X, CreateItem((RealItem[IBV]), 0, 0))
 		endif
 		if S6X != null then
-			call UnitAddItem(S6X, CreateItem((XOV[IBV]), 0, 0))
+			call UnitAddItem(S6X, CreateItem((RealItem[IBV]), 0, 0))
 		endif
 	elseif SUI then
-		call UnitAddItem(S3X, CreateItem((XOV[ICV]), 0, 0))
+		call UnitAddItem(S3X, CreateItem((RealItem[ICV]), 0, 0))
 		if S4X != null then
-			call UnitAddItem(S4X, CreateItem((XOV[ICV]), 0, 0))
+			call UnitAddItem(S4X, CreateItem((RealItem[ICV]), 0, 0))
 		endif
 		if S5X != null then
-			call UnitAddItem(S5X, CreateItem((XOV[ICV]), 0, 0))
+			call UnitAddItem(S5X, CreateItem((RealItem[ICV]), 0, 0))
 		endif
 		if S6X != null then
-			call UnitAddItem(S6X, CreateItem((XOV[ICV]), 0, 0))
+			call UnitAddItem(S6X, CreateItem((RealItem[ICV]), 0, 0))
 		endif
 	elseif STI then
-		call UnitAddItem(S3X, CreateItem((XOV[IDV]), 0, 0))
+		call UnitAddItem(S3X, CreateItem((RealItem[IDV]), 0, 0))
 		if S4X != null then
-			call UnitAddItem(S4X, CreateItem((XOV[IDV]), 0, 0))
+			call UnitAddItem(S4X, CreateItem((RealItem[IDV]), 0, 0))
 		endif
 		if S5X != null then
-			call UnitAddItem(S5X, CreateItem((XOV[IDV]), 0, 0))
+			call UnitAddItem(S5X, CreateItem((RealItem[IDV]), 0, 0))
 		endif
 		if S6X != null then
-			call UnitAddItem(S6X, CreateItem((XOV[IDV]), 0, 0))
+			call UnitAddItem(S6X, CreateItem((RealItem[IDV]), 0, 0))
 		endif
 	elseif SSI then
-		call UnitAddItem(S3X, CreateItem((XOV[IAV]), 0, 0))
+		call UnitAddItem(S3X, CreateItem((RealItem[IAV]), 0, 0))
 		if S4X != null then
-			call UnitAddItem(S4X, CreateItem((XOV[IAV]), 0, 0))
+			call UnitAddItem(S4X, CreateItem((RealItem[IAV]), 0, 0))
 		endif
 		if S5X != null then
-			call UnitAddItem(S5X, CreateItem((XOV[IAV]), 0, 0))
+			call UnitAddItem(S5X, CreateItem((RealItem[IAV]), 0, 0))
 		endif
 		if S6X != null then
-			call UnitAddItem(S6X, CreateItem((XOV[IAV]), 0, 0))
+			call UnitAddItem(S6X, CreateItem((RealItem[IAV]), 0, 0))
 		endif
 	elseif SQI then
-		call UnitAddItem(S3X, CreateItem((XOV[XMV]), 0, 0))
+		call UnitAddItem(S3X, CreateItem((RealItem[XMV]), 0, 0))
 		if S4X != null then
-			call UnitAddItem(S4X, CreateItem((XOV[XMV]), 0, 0))
+			call UnitAddItem(S4X, CreateItem((RealItem[XMV]), 0, 0))
 		endif
 		if S5X != null then
-			call UnitAddItem(S5X, CreateItem((XOV[XMV]), 0, 0))
+			call UnitAddItem(S5X, CreateItem((RealItem[XMV]), 0, 0))
 		endif
 		if S6X != null then
-			call UnitAddItem(S6X, CreateItem((XOV[XMV]), 0, 0))
+			call UnitAddItem(S6X, CreateItem((RealItem[XMV]), 0, 0))
 		endif
 	endif
 	call EnableTrigger(GetTriggeringTrigger())
-	call EnableTrigger(CUV)
+	call EnableTrigger(UnitManipulatItemTrig)
 	set S3I = null
 	set S4X = null
 	set S5X = null
@@ -59991,7 +59983,7 @@ function Z_I takes nothing returns nothing
 	exitwhen i > 15
 	endloop
 	call SaveReal(HY, h, 0, WOV)
-	set E3 = p
+	set TempPlayer = p
 	if WOV > 0 then
 		call ForGroup(g, function ZSI)
 	else
@@ -63590,7 +63582,7 @@ endfunction
 function IIA takes nothing returns nothing
 	local unit targetUnit = GetEnumUnit()
 	local integer HCR = LoadInteger(OtherHashTable, GetHandleId(targetUnit), GetHandleId(GetTriggeringTrigger()))
-	if IsUnitAlly(targetUnit, E3) == false then
+	if IsUnitAlly(targetUnit, TempPlayer) == false then
 		call UnitAddStateBonus(targetUnit, HCR, UNIT_BONUS_ARMOR)
 	else
 		call UnitReduceStateBonus(targetUnit, HCR, UNIT_BONUS_ARMOR)
@@ -63604,14 +63596,14 @@ function IAA takes nothing returns nothing
 	local integer INA
 	if Q2 > 0 then
 		set INA = R2I((Q2 -1)* S2)
-		if IsUnitAlly(targetUnit, E3) == false then
+		if IsUnitAlly(targetUnit, TempPlayer) == false then
 			call UnitAddStateBonus(targetUnit, INA, UNIT_BONUS_ARMOR)
 		else
 			call UnitReduceStateBonus(targetUnit, INA, UNIT_BONUS_ARMOR)
 		endif
 	endif
 	if UnitIsDead(targetUnit) == false then
-		if IsUnitAlly(targetUnit, E3) == false then
+		if IsUnitAlly(targetUnit, TempPlayer) == false then
 			call UnitReduceStateBonus(targetUnit, HCR, UNIT_BONUS_ARMOR)
 			call SaveInteger(OtherHashTable, GetHandleId(targetUnit), GetHandleId(GetTriggeringTrigger()), HCR)
 		else
@@ -63629,7 +63621,7 @@ function IBA takes nothing returns boolean
 	local integer count = GetTriggerEvalCount(t)
 	local integer N5O =(LoadInteger(HY, h, 188))
 	local real HCR = LoadReal(HY, h, 0)
-	set E3 = p
+	set TempPlayer = p
 	set Q2 = count
 	set S2 = HCR
 	if count == N5O then
@@ -70812,7 +70804,7 @@ function JVA takes unit u returns nothing
 	set t = null
 endfunction
 function JEA takes nothing returns boolean
-	if IsUnitEnemy(GetFilterUnit(), E3) and IsAliveNotStrucNotWard(GetFilterUnit()) and IsUnitMagicImmune(GetFilterUnit()) == false then
+	if IsUnitEnemy(GetFilterUnit(), TempPlayer) and IsAliveNotStrucNotWard(GetFilterUnit()) and IsUnitMagicImmune(GetFilterUnit()) == false then
 		call UnitAddAbilityToTimed(GetFilterUnit(), Q2, 1, 2, Q22)
 	endif
 	return false
@@ -70829,7 +70821,7 @@ function JXA takes nothing returns boolean
 			call IssueTargetOrderById(JOA, 851986, whichUnit)
 			call TriggerRegisterDeathEvent(t, JOA)
 		endif
-		set E3 = GetOwningPlayer(JOA)
+		set TempPlayer = GetOwningPlayer(JOA)
 		if level == 1 then
 			set Q2 = 'A3JT'
 			set Q22 ='B0DT'
@@ -71011,14 +71003,14 @@ function CreatePrimalSplitTrigger takes nothing returns nothing
 endfunction
 function JFA takes nothing returns boolean
 	if UnitIsDead(GetFilterUnit()) == false and IsAliveNotStrucNotWard(GetFilterUnit()) then
-		call UnitDispelBuffs(GetFilterUnit(), IsUnitEnemy(GetFilterUnit(), E3))
+		call UnitDispelBuffs(GetFilterUnit(), IsUnitEnemy(GetFilterUnit(), TempPlayer))
 	endif
 	return false
 endfunction
 function JXE takes nothing returns nothing
 	local unit u = GetTriggerUnit()
 	local group g = AllocationGroup(457)
-	set E3 = GetOwningPlayer(u)
+	set TempPlayer = GetOwningPlayer(u)
 	call GroupEnumUnitsInRange(g, GetSpellTargetX(), GetSpellTargetY(), 625, Condition(function JFA))
 	call DeallocateGroup(g)
 	set u = null
@@ -74388,17 +74380,17 @@ function YUV takes nothing returns nothing
 	call SaveBoolean(HY, GetHandleId(PUA), QR, true)
 	call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Orc\\FeralSpirit\\feralspirittarget.mdl", PUA, "chest"))
 	call SelectUnitAddForPlayer(PUA, GetOwningPlayer(whichUnit))
-	call DisableTrigger(CUV)
+	call DisableTrigger(UnitManipulatItemTrig)
 	loop
 	exitwhen i > 5
-		if UnitItemInSlot(whichUnit, i)!= null and GetItemTypeId(UnitItemInSlot(whichUnit, i))!= XOV[AIV]and GetItemTypeId(UnitItemInSlot(whichUnit, i))!= XOV[A6V]and GetItemTypeId(UnitItemInSlot(whichUnit, i))!= XOV[R2V]and GetItemTypeId(UnitItemInSlot(whichUnit, i))!= XOV[R3V]and GetItemTypeId(UnitItemInSlot(whichUnit, i))!= XOV[IVV] then
+		if UnitItemInSlot(whichUnit, i)!= null and GetItemTypeId(UnitItemInSlot(whichUnit, i))!= RealItem[AIV]and GetItemTypeId(UnitItemInSlot(whichUnit, i))!= RealItem[A6V]and GetItemTypeId(UnitItemInSlot(whichUnit, i))!= RealItem[R2V]and GetItemTypeId(UnitItemInSlot(whichUnit, i))!= RealItem[R3V]and GetItemTypeId(UnitItemInSlot(whichUnit, i))!= RealItem[IVV] then
 			set it = CreateItem(GetItemTypeId(UnitItemInSlot(whichUnit, i)), 0, 0)
 			if GetItemCharges(UnitItemInSlot(whichUnit, i))> 0 then
 				call SetItemCharges(it, GetItemCharges(UnitItemInSlot(whichUnit, i)))
 			endif
 			call UnitAddItem(PUA, it)
 			call SetItemPlayer(it, GetOwningPlayer(PUA), false)
-			if GetItemTypeId(it) == XOV[ASV]or GetItemTypeId(it) == XOV[ATV]or GetItemTypeId(it) == XOV[X4V] then
+			if GetItemTypeId(it) == RealItem[ASV]or GetItemTypeId(it) == RealItem[ATV]or GetItemTypeId(it) == RealItem[X4V] then
 				call SetItemDropOnDeath(it, false)
 			endif
 		else
@@ -74406,7 +74398,7 @@ function YUV takes nothing returns nothing
 		endif
 		set i = i + 1
 	endloop
-	call EnableTrigger(CUV)
+	call EnableTrigger(UnitManipulatItemTrig)
 	call SetHeroLevel(PUA, GetHeroLevel(whichUnit), false)
 	set i = 1
 	loop
@@ -74936,7 +74928,7 @@ function QKA takes nothing returns nothing
 	if LoadReal(HY, h, 0)< GetGameTime() then
 		call UnitRemoveAbility(u,'A42Y')
 		call UnitRemoveAbility(u,'B0HK')
-		if GetItemOfTypeFromUnit(u, XOV[A5V])!= null then
+		if GetItemOfTypeFromUnit(u, RealItem[Item_TheButterfly])!= null then
 			call UnitAddPermanentAbility(u,'A431')
 			call UnitMakeAbilityPermanent(u, true,'AIev')
 		endif
@@ -76817,7 +76809,7 @@ function UZA takes nothing returns nothing
 endfunction
 
 function U0A takes nothing returns boolean
-	return GetUnitAbilityLevel(GetFilterUnit(),'B3JF')> 0 and IsUnitAlly(GetFilterUnit(), E3) and IsAliveNotStrucNotWard(GetFilterUnit()) and GetFilterUnit()!= Roshan
+	return GetUnitAbilityLevel(GetFilterUnit(),'B3JF')> 0 and IsUnitAlly(GetFilterUnit(), TempPlayer) and IsAliveNotStrucNotWard(GetFilterUnit()) and GetFilterUnit()!= Roshan
 endfunction
 
 function DragonHideAura__Actions takes nothing returns nothing
@@ -76843,7 +76835,7 @@ function DragonHideAura__Actions takes nothing returns nothing
 		call DeallocateGroup(AIR)
 	else
 		set g = AllocationGroup(492)
-		set E3 = GetOwningPlayer(u)
+		set TempPlayer = GetOwningPlayer(u)
 		call GroupEnumUnitsInRange(g, GetUnitX(u), GetUnitY(u), 925, Condition(function U0A))
 		set gg = AllocationGroup(493)
 		call GroupAddGroup(AIR, gg)
@@ -77661,7 +77653,7 @@ function YTA takes nothing returns boolean
 				call PickPipeItem(GetTriggerUnit())
 			endif
 		endif
-	elseif UnitInventorySize(GetSummonedUnit())> 0 and GetItemOfTypeFromUnit(GetSummonedUnit(), XOV[AZV])!= null then
+	elseif UnitInventorySize(GetSummonedUnit())> 0 and GetItemOfTypeFromUnit(GetSummonedUnit(), RealItem[AZV])!= null then
 		// 幻象获得辉耀
 		call PickRadianceItem(GetSummonedUnit())
 	endif
@@ -77683,136 +77675,136 @@ function YUA takes unit u, item it, integer JOX returns nothing
 	endloop
 	if SQV == it_hyzr or SQV == IEV or SQV == Item_MoonShard or SQV == N1V or SQV == IRV or SQV == IIV or SQV == NZV or SQV == I_V or SQV == I0V or SQV == ROV or SQV == I5V or SQV == RUV or SQV == RWV or SQV == N2V or SQV == RQV or SQV == RJV or SQV == I1V then
 		set YYA = 2
-	elseif SQV == it_mlq or SQV == NGV or SQV == IBV or SQV == ICV or SQV == IDV or SQV == NHV or SQV == NEV or SQV == ANV or SQV == ABV or SQV == NKV or SQV == A8V or SQV == A9V or SQV == NQV or SQV == NSV or SQV == RNV or SQV == RCV or SQV == ISV or SQV == A5V or SQV == AWV then
+	elseif SQV == it_mlq or SQV == NGV or SQV == IBV or SQV == ICV or SQV == IDV or SQV == NHV or SQV == NEV or SQV == ANV or SQV == ABV or SQV == NKV or SQV == A8V or SQV == A9V or SQV == NQV or SQV == NSV or SQV == Item_TranquilBoots or SQV == RCV or SQV == ISV or SQV == Item_TheButterfly or SQV == AWV then
 		set YYA = 3
 	elseif SQV == NNV or SQV == I7V or SQV == RGV then
 		set YYA = 4
 	endif
 	if YWA >= YYA then
-		call DisableTrigger(CUV)
+		call DisableTrigger(UnitManipulatItemTrig)
 		set p = GetItemPlayer(it)
 		call RemoveItem(it)
 		if SQV == IEV then
-			call TDE(u, XOV[OFV], p, false, 1)
-			call TDE(u, XOV[OWV], p, false, 1)
+			call TDE(u, RealItem[OFV], p, false, 1)
+			call TDE(u, RealItem[OWV], p, false, 1)
 		elseif SQV == IRV or SQV == IIV then
-			call TDE(u, XOV[OGV], p, false, 1)
-			call TDE(u, XOV[OMV], p, false, 1)
+			call TDE(u, RealItem[OGV], p, false, 1)
+			call TDE(u, RealItem[OMV], p, false, 1)
 		elseif SQV == it_hyzr then //回音战刃
-			call TDE(u, XOV[IHV], p, false, 1)
-			call TDE(u, XOV[OAV], p, false, 1)
+			call TDE(u, RealItem[IHV], p, false, 1)
+			call TDE(u, RealItem[OAV], p, false, 1)
 		elseif SQV == it_mlq then //魔龙枪
 			//call Item_dragonlance(true)
-			if ( GetItemOfTypeFromUnit(u, XOV[it_mlq]) == null ) and ( GetItemOfTypeFromUnit(u, XOV[Item_HurricanePike]) == null ) then
+			if ( GetItemOfTypeFromUnit(u, RealItem[it_mlq]) == null ) and ( GetItemOfTypeFromUnit(u, RealItem[Item_HurricanePike]) == null ) then
 				call MCBZZ(GetOwningPlayer(u), 0, u)
 			endif
-			call TDE(u, XOV[OAV], p, false, 1)
-			call TDE(u, XOV[XQV], p, false, 1)
-			call TDE(u, XOV[XQV], p, false, 1)
+			call TDE(u, RealItem[OAV], p, false, 1)
+			call TDE(u, RealItem[XQV], p, false, 1)
+			call TDE(u, RealItem[XQV], p, false, 1)
 		elseif SQV == NGV or SQV == NHV then
-			call TDE(u, XOV[OBV], p, false, 1)
-			call TDE(u, XOV[OIV], p, false, 1)
-			call TDE(u, XOV[B_V], p, false, 1)
+			call TDE(u, RealItem[OBV], p, false, 1)
+			call TDE(u, RealItem[OIV], p, false, 1)
+			call TDE(u, RealItem[B_V], p, false, 1)
 		elseif SQV == NEV then
-			call TDE(u, XOV[X7V], p, false, 1)
-			call TDE(u, XOV[ITV], p, false, 1)
-			call TDE(u, XOV[B3V], p, false, 1)
+			call TDE(u, RealItem[X7V], p, false, 1)
+			call TDE(u, RealItem[ITV], p, false, 1)
+			call TDE(u, RealItem[B3V], p, false, 1)
 		elseif SQV == NZV then
-			call TDE(u, XOV[XMV], p, false, 1)
-			call TDE(u, XOV[X2V], p, false, 1)
-		elseif SQV == A5V then //蝴蝶
-			call TDE(u, XOV[X1V], p, false, 1)
-			call TDE(u, XOV[RXV], p, false, 1)
-			call TDE(u, XOV[ODV], p, false, 1)
+			call TDE(u, RealItem[XMV], p, false, 1)
+			call TDE(u, RealItem[X2V], p, false, 1)
+		elseif SQV == Item_TheButterfly then //蝴蝶
+			call TDE(u, RealItem[X1V], p, false, 1)
+			call TDE(u, RealItem[RXV], p, false, 1)
+			call TDE(u, RealItem[ODV], p, false, 1)
 		elseif SQV == AWV then //金箍棒
-			call TDE(u, XOV[X0V], p, false, 1)
-			call TDE(u, XOV[OYV], p, false, 1)
-			call TDE(u, XOV[OYV], p, false, 1)
+			call TDE(u, RealItem[X0V], p, false, 1)
+			call TDE(u, RealItem[OYV], p, false, 1)
+			call TDE(u, RealItem[OYV], p, false, 1)
 		elseif SQV == ISV then //刃甲
-			call TDE(u, XOV[XYV], p, false, 1)
-			call TDE(u, XOV[OJV], p, false, 1)
-			call TDE(u, XOV[XZV], p, false, 1)
+			call TDE(u, RealItem[XYV], p, false, 1)
+			call TDE(u, RealItem[OJV], p, false, 1)
+			call TDE(u, RealItem[XZV], p, false, 1)
 		elseif SQV == RCV then //阿托斯之棍
-			call TDE(u, XOV[OUV], p, false, 1)
-			call TDE(u, XOV[OPV], p, false, 1)
-			call TDE(u, XOV[OPV], p, false, 1)
-		elseif SQV == RNV then //绿鞋
-			call TDE(u, XOV[OGV], p, false, 1)
-			call TDE(u, XOV[XMV], p, false, 1)
-			call TDE(u, XOV[OHV], p, false, 1)
+			call TDE(u, RealItem[OUV], p, false, 1)
+			call TDE(u, RealItem[OPV], p, false, 1)
+			call TDE(u, RealItem[OPV], p, false, 1)
+		elseif SQV == Item_TranquilBoots then //绿鞋
+			call TDE(u, RealItem[OGV], p, false, 1)
+			call TDE(u, RealItem[XMV], p, false, 1)
+			call TDE(u, RealItem[OHV], p, false, 1)
 		elseif SQV == I_V or SQV == I0V then
-			call TDE(u, XOV[X6V], p, false, 1)
-			call TDE(u, XOV[OXV], p, false, 1)
+			call TDE(u, RealItem[X6V], p, false, 1)
+			call TDE(u, RealItem[OXV], p, false, 1)
 		elseif SQV == ANV or SQV == ABV then //分身斧
-			call TDE(u, XOV[IMV], p, false, 1)
-			call TDE(u, XOV[OTV], p, false, 1)
-			call TDE(u, XOV[BGV], p, false, 1)
+			call TDE(u, RealItem[IMV], p, false, 1)
+			call TDE(u, RealItem[OTV], p, false, 1)
+			call TDE(u, RealItem[BGV], p, false, 1)
 		elseif SQV == NQV or SQV == NSV then
-			call TDE(u, XOV[OQV], p, false, 1)
-			call TDE(u, XOV[OLV], p, false, 1)
-			call TDE(u, XOV[OLV], p, false, 1)
+			call TDE(u, RealItem[OQV], p, false, 1)
+			call TDE(u, RealItem[OLV], p, false, 1)
+			call TDE(u, RealItem[OLV], p, false, 1)
 		elseif SQV == ROV then
-			call TDE(u, XOV[X1V], p, false, 1)
-			call TDE(u, XOV[NTV], p, false, 1)
+			call TDE(u, RealItem[X1V], p, false, 1)
+			call TDE(u, RealItem[NTV], p, false, 1)
 		elseif SQV == I5V then
-			call TDE(u, XOV[IPV], p, false, 1)
-			call TDE(u, XOV[IMV], p, false, 1)
+			call TDE(u, RealItem[IPV], p, false, 1)
+			call TDE(u, RealItem[IMV], p, false, 1)
 		elseif SQV == RUV or SQV == RWV then
-			call TDE(u, XOV[IKV], p, false, 1)
-			call TDE(u, XOV[IRV], p, false, 1)
+			call TDE(u, RealItem[IKV], p, false, 1)
+			call TDE(u, RealItem[IRV], p, false, 1)
 		elseif SQV == N2V then
-			call TDE(u, XOV[IQV], p, false, 1)
-			call TDE(u, XOV[OKV], p, false, 1)
+			call TDE(u, RealItem[IQV], p, false, 1)
+			call TDE(u, RealItem[OKV], p, false, 1)
 		elseif SQV == RGV then
-			call TDE(u, XOV[IEV], p, false, 1)
-			call TDE(u, XOV[XZV], p, false, 1)
-			call TDE(u, XOV[XZV], p, false, 1)
-			call TDE(u, XOV[RHV], p, false, 1)
+			call TDE(u, RealItem[IEV], p, false, 1)
+			call TDE(u, RealItem[XZV], p, false, 1)
+			call TDE(u, RealItem[XZV], p, false, 1)
+			call TDE(u, RealItem[RHV], p, false, 1)
 		elseif SQV == RQV then
-			call TDE(u, XOV[ONV], p, false, 1)
-			call TDE(u, XOV[XGV], p, false, 1)
+			call TDE(u, RealItem[ONV], p, false, 1)
+			call TDE(u, RealItem[XGV], p, false, 1)
 		elseif SQV == RJV then
-			call TDE(u, XOV[RXV], p, false, 1)
-			call TDE(u, XOV[N_V], p, false, 1)
+			call TDE(u, RealItem[RXV], p, false, 1)
+			call TDE(u, RealItem[N_V], p, false, 1)
 		elseif SQV == N1V then
-			call TDE(u, XOV[RXV], p, false, 1)
-			call TDE(u, XOV[IPV], p, false, 1)
+			call TDE(u, RealItem[RXV], p, false, 1)
+			call TDE(u, RealItem[IPV], p, false, 1)
 		elseif SQV == Item_MoonShard then
-			call TDE(u, XOV[X7V], p, false, 1)
-			call TDE(u, XOV[X7V], p, false, 1)
+			call TDE(u, RealItem[X7V], p, false, 1)
+			call TDE(u, RealItem[X7V], p, false, 1)
 		elseif SQV == I1V then
-			call TDE(u, XOV[ODV], p, false, 1)
-			call TDE(u, XOV[OXV], p, false, 1)
+			call TDE(u, RealItem[ODV], p, false, 1)
+			call TDE(u, RealItem[OXV], p, false, 1)
 		elseif SQV == NKV then
-			call TDE(u, XOV[XWV], p, false, 1)
-			call TDE(u, XOV[XWV], p, false, 1)
-			call TDE(u, XOV[XMV], p, false, 1)
+			call TDE(u, RealItem[XWV], p, false, 1)
+			call TDE(u, RealItem[XWV], p, false, 1)
+			call TDE(u, RealItem[XMV], p, false, 1)
 		elseif SQV == A8V or SQV == A9V then
-			call TDE(u, XOV[OUV], p, false, 1)
-			call TDE(u, XOV[OFV], p, false, 1)
-			call TDE(u, XOV[OSV], p, false, 1)
+			call TDE(u, RealItem[OUV], p, false, 1)
+			call TDE(u, RealItem[OFV], p, false, 1)
+			call TDE(u, RealItem[OSV], p, false, 1)
 		elseif SQV == I7V then
-			call TDE(u, XOV[IEV], p, false, 1)
-			call TDE(u, XOV[XYV], p, false, 1)
-			call TDE(u, XOV[X_V], p, false, 1)
-			call TDE(u, XOV[REV], p, false, 1)
+			call TDE(u, RealItem[IEV], p, false, 1)
+			call TDE(u, RealItem[XYV], p, false, 1)
+			call TDE(u, RealItem[X_V], p, false, 1)
+			call TDE(u, RealItem[REV], p, false, 1)
 		elseif SQV == NNV then
-			call TDE(u, XOV[OHV], p, false, 1)
-			call TDE(u, XOV[OHV], p, false, 1)
-			call TDE(u, XOV[OFV], p, false, 1)
-			call TDE(u, XOV[ONV], p, false, 1)
+			call TDE(u, RealItem[OHV], p, false, 1)
+			call TDE(u, RealItem[OHV], p, false, 1)
+			call TDE(u, RealItem[OFV], p, false, 1)
+			call TDE(u, RealItem[ONV], p, false, 1)
 		elseif SQV == IBV or SQV == IDV or SQV == ICV then
-			call TDE(u, XOV[XMV], p, false, 1)
-			call TDE(u, XOV[XPV], p, false, 1)
+			call TDE(u, RealItem[XMV], p, false, 1)
+			call TDE(u, RealItem[XPV], p, false, 1)
 			if SQV == IBV then
-				call TDE(u, XOV[XQV], p, false, 1)
+				call TDE(u, RealItem[XQV], p, false, 1)
 			elseif SQV == ICV then
-				call TDE(u, XOV[XTV], p, false, 1)
+				call TDE(u, RealItem[XTV], p, false, 1)
 			else
-				call TDE(u, XOV[OJV], p, false, 1)
+				call TDE(u, RealItem[OJV], p, false, 1)
 			endif
 		endif
-		call EnableTrigger(CUV)
+		call EnableTrigger(UnitManipulatItemTrig)
 	else
 		call InterfaceErrorForPlayer(GetOwningPlayer(u), "没有足够的空间，拆分装备需要至少 " + I2S(YYA)+ " 个格子.")
 	endif
@@ -77820,7 +77812,7 @@ function YUA takes unit u, item it, integer JOX returns nothing
 endfunction
 function Bke takes item it returns boolean
 	local integer id = GetItemIndexEx(it)
-	if id == it_hyzr or id == it_mlq or id == IEV or id == IBV or id == ICV or id == IDV or id == Item_MoonShard or id == IRV or id == IIV or id == NGV or id == NHV or id == NEV or id == NZV or id == N1V or id == I_V or id == I0V or id == ANV or id == ABV or id == ROV or id == I5V or id == RUV or id == RWV or id == N2V or id == RGV or id == RQV or id == RJV or id == NKV or id == I1V or id == I7V or id == A8V or id == A9V or id == NNV or id == NQV or id == NSV or id == RNV or id == RCV or id == ISV or id == A5V or id == AWV then
+	if id == it_hyzr or id == it_mlq or id == IEV or id == IBV or id == ICV or id == IDV or id == Item_MoonShard or id == IRV or id == IIV or id == NGV or id == NHV or id == NEV or id == NZV or id == N1V or id == I_V or id == I0V or id == ANV or id == ABV or id == ROV or id == I5V or id == RUV or id == RWV or id == N2V or id == RGV or id == RQV or id == RJV or id == NKV or id == I1V or id == I7V or id == A8V or id == A9V or id == NNV or id == NQV or id == NSV or id == Item_TranquilBoots or id == RCV or id == ISV or id == Item_TheButterfly or id == AWV then
 		return true
 	endif
 	return false
@@ -78185,7 +78177,7 @@ function UnitIssuedItemOrder takes nothing returns nothing // 发布物品命令
 				call EXStopUnit(whichUnit)
 				call InterfaceErrorForPlayer(trigPlayer, GetObjectName('TX19'))
 			endif
-		elseif id == APV then
+		elseif id == Item_LinkenSphere then
 			// 林肯法球 不能作用于幻象
 			if IsUnitIllusion(targetUnit) then
 				call EXStopUnit(whichUnit)
@@ -78544,11 +78536,11 @@ function ZTA takes unit u returns nothing
 		if (id == O_V or id == O0V or id == O1V) and GetItemUserData(it)> 0 then
 			call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Undead\\ReplenishMana\\SpiritTouchTarget.mdl", u, "overhead"))
 			call IRX(GetOwningPlayer(u), "Abilities\\Spells\\Human\\Heal\\HealTarget.wav")
-			set E3 = GetItemPlayer(it)
+			set TempPlayer = GetItemPlayer(it)
 			call HZX(it)
-			set Z2 = JIX(u, XOV[O2V], i)
-			call SetItemPlayer(Z2, E3, false)
-			call SetItemUserData(Z2, 1)
+			set TempItem = CreateItemToUnitSlotByIndex(u, RealItem[O2V], i)
+			call SetItemPlayer(TempItem, TempPlayer, false)
+			call SetItemUserData(TempItem, 1)
 			call UnitRemoveAbility(u,'B0GI')
 		endif
 		set i = i + 1
@@ -79284,45 +79276,45 @@ endfunction
 
 // 初始化物品技能 (用来莲花反弹)
 function Init_ItemsAbilityAndOrder takes nothing returns nothing
-	//call SaveInteger(AbilityDataHashTable,'A3E9', XOV[Item_IronwoodBranch],'AZSZ')
-	//call SaveStr(AbilityDataHashTable,'A3E9', XOV[Item_IronwoodBranch], "carrionswarm")
-	call SaveInteger(AbilityDataHashTable,'A3E9', XOV[A7V],'AChx')
-	call SaveStr(AbilityDataHashTable,'A3E9', XOV[A7V], "hex")
-	call SaveInteger(AbilityDataHashTable,'A3E9', XOV[NJV],'A0FD')
-	call SaveStr(AbilityDataHashTable,'A3E9', XOV[NJV], "soulburn")
-	call SaveInteger(AbilityDataHashTable,'A3E9', XOV[it_xj],'A3TP')
-	call SaveStr(AbilityDataHashTable,'A3E9', XOV[it_xj], "soulburn")
-	call SaveInteger(AbilityDataHashTable,'A3E9', XOV[Item_EulScepterOfDivinity],'A1T7')
-	call SaveStr(AbilityDataHashTable,'A3E9', XOV[Item_EulScepterOfDivinity], "channel")
-	call SaveInteger(AbilityDataHashTable,'A3E9', XOV[NMV],'A19M')
-	call SaveStr(AbilityDataHashTable,'A3E9', XOV[NMV], "852609")
-	call SaveBoolean(AbilityDataHashTable,'A3E9', XOV[NMV], true)
-	call SaveInteger(AbilityDataHashTable,'A3E9', XOV[ADV],'A02O')
-	call SaveStr(AbilityDataHashTable,'A3E9', XOV[ADV], "fingerofdeath")
-	call SaveInteger(AbilityDataHashTable,'A3E9', XOV[AFV],'A08Y')
-	call SaveStr(AbilityDataHashTable,'A3E9', XOV[AFV], "fingerofdeath")
-	call SaveInteger(AbilityDataHashTable,'A3E9', XOV[AGV],'A08Z')
-	call SaveStr(AbilityDataHashTable,'A3E9', XOV[AGV], "fingerofdeath")
-	call SaveInteger(AbilityDataHashTable,'A3E9', XOV[AHV],'A090')
-	call SaveStr(AbilityDataHashTable,'A3E9', XOV[AHV], "fingerofdeath")
-	call SaveInteger(AbilityDataHashTable,'A3E9', XOV[AJV],'A092')
-	call SaveStr(AbilityDataHashTable,'A3E9', XOV[AJV], "fingerofdeath")
-	call SaveInteger(AbilityDataHashTable,'A3E9', XOV[RCV],'A2K3')
-	call SaveStr(AbilityDataHashTable,'A3E9', XOV[RCV], "852171")
-	call SaveBoolean(AbilityDataHashTable,'A3E9', XOV[RCV], true)
-	call SaveInteger(AbilityDataHashTable,'A3E9', XOV[N2V],'A2K7')
-	call SaveStr(AbilityDataHashTable,'A3E9', XOV[N2V], "thunderbolt")
-	call SaveInteger(AbilityDataHashTable,'A3E9', XOV[ROV],'A1QD')
-	call SaveStr(AbilityDataHashTable,'A3E9', XOV[ROV], "creepheal")
-	call SaveInteger(AbilityDataHashTable,'A3E9', XOV[IUV],'AIpg')
-	call SaveStr(AbilityDataHashTable,'A3E9', XOV[IUV], "purge")
-	call SaveInteger(AbilityDataHashTable,'A3E9', XOV[IWV],'AIpg')
-	call SaveStr(AbilityDataHashTable,'A3E9', XOV[IWV], "purge")
-	call SaveInteger(AbilityDataHashTable,'A3E9', XOV[N1V],'A2K4')
-	call SaveStr(AbilityDataHashTable,'A3E9', XOV[N1V], "852609")
-	call SaveBoolean(AbilityDataHashTable,'A3E9', XOV[N1V], true)
-	call SaveInteger(AbilityDataHashTable,'A3E9', XOV[it_fj],'A3W8')
-	call SaveStr(AbilityDataHashTable,'A3E9', XOV[it_fj], "creepheal")
+	//call SaveInteger(AbilityDataHashTable,'A3E9', RealItem[Item_IronwoodBranch],'AZSZ')
+	//call SaveStr(AbilityDataHashTable,'A3E9', RealItem[Item_IronwoodBranch], "carrionswarm")
+	call SaveInteger(AbilityDataHashTable,'A3E9', RealItem[A7V],'AChx')
+	call SaveStr(AbilityDataHashTable,'A3E9', RealItem[A7V], "hex")
+	call SaveInteger(AbilityDataHashTable,'A3E9', RealItem[NJV],'A0FD')
+	call SaveStr(AbilityDataHashTable,'A3E9', RealItem[NJV], "soulburn")
+	call SaveInteger(AbilityDataHashTable,'A3E9', RealItem[it_xj],'A3TP')
+	call SaveStr(AbilityDataHashTable,'A3E9', RealItem[it_xj], "soulburn")
+	call SaveInteger(AbilityDataHashTable,'A3E9', RealItem[Item_EulScepterOfDivinity],'A1T7')
+	call SaveStr(AbilityDataHashTable,'A3E9', RealItem[Item_EulScepterOfDivinity], "channel")
+	call SaveInteger(AbilityDataHashTable,'A3E9', RealItem[NMV],'A19M')
+	call SaveStr(AbilityDataHashTable,'A3E9', RealItem[NMV], "852609")
+	call SaveBoolean(AbilityDataHashTable,'A3E9', RealItem[NMV], true)
+	call SaveInteger(AbilityDataHashTable,'A3E9', RealItem[ADV],'A02O')
+	call SaveStr(AbilityDataHashTable,'A3E9', RealItem[ADV], "fingerofdeath")
+	call SaveInteger(AbilityDataHashTable,'A3E9', RealItem[AFV],'A08Y')
+	call SaveStr(AbilityDataHashTable,'A3E9', RealItem[AFV], "fingerofdeath")
+	call SaveInteger(AbilityDataHashTable,'A3E9', RealItem[AGV],'A08Z')
+	call SaveStr(AbilityDataHashTable,'A3E9', RealItem[AGV], "fingerofdeath")
+	call SaveInteger(AbilityDataHashTable,'A3E9', RealItem[AHV],'A090')
+	call SaveStr(AbilityDataHashTable,'A3E9', RealItem[AHV], "fingerofdeath")
+	call SaveInteger(AbilityDataHashTable,'A3E9', RealItem[AJV],'A092')
+	call SaveStr(AbilityDataHashTable,'A3E9', RealItem[AJV], "fingerofdeath")
+	call SaveInteger(AbilityDataHashTable,'A3E9', RealItem[RCV],'A2K3')
+	call SaveStr(AbilityDataHashTable,'A3E9', RealItem[RCV], "852171")
+	call SaveBoolean(AbilityDataHashTable,'A3E9', RealItem[RCV], true)
+	call SaveInteger(AbilityDataHashTable,'A3E9', RealItem[N2V],'A2K7')
+	call SaveStr(AbilityDataHashTable,'A3E9', RealItem[N2V], "thunderbolt")
+	call SaveInteger(AbilityDataHashTable,'A3E9', RealItem[ROV],'A1QD')
+	call SaveStr(AbilityDataHashTable,'A3E9', RealItem[ROV], "creepheal")
+	call SaveInteger(AbilityDataHashTable,'A3E9', RealItem[IUV],'AIpg')
+	call SaveStr(AbilityDataHashTable,'A3E9', RealItem[IUV], "purge")
+	call SaveInteger(AbilityDataHashTable,'A3E9', RealItem[IWV],'AIpg')
+	call SaveStr(AbilityDataHashTable,'A3E9', RealItem[IWV], "purge")
+	call SaveInteger(AbilityDataHashTable,'A3E9', RealItem[N1V],'A2K4')
+	call SaveStr(AbilityDataHashTable,'A3E9', RealItem[N1V], "852609")
+	call SaveBoolean(AbilityDataHashTable,'A3E9', RealItem[N1V], true)
+	call SaveInteger(AbilityDataHashTable,'A3E9', RealItem[it_fj],'A3W8')
+	call SaveStr(AbilityDataHashTable,'A3E9', RealItem[it_fj], "creepheal")
 endfunction
 function Init_UnitsTypeSightData takes nothing returns nothing
 	call SaveInteger(SightDataHashTable,'ugho', SightHash, 850)
@@ -80247,7 +80239,7 @@ endfunction
 function RegisterItem takes integer EUN, integer EWN, integer EYN, integer EZN returns integer
 	set MaxItemsNumber = MaxItemsNumber + 1
 	set XXV[MaxItemsNumber]= EUN
-	set XOV[MaxItemsNumber]= EWN
+	set RealItem[MaxItemsNumber]= EWN
 	set XRV[MaxItemsNumber]= EYN
 	call SaveBoolean(SightDataHashTable, XRV[MaxItemsNumber], 0, true)
 	set XIV[MaxItemsNumber]= EZN
@@ -80411,7 +80403,7 @@ function InitItemsSystem takes nothing returns nothing
 	set AKV = RegisterItem('I09U','I09T', 0,'I02H')
 	set ALV = RegisterItem('I09V','I09X', 0,'I02I')
 	set AMV = RegisterItem('I09W','I09Y', 0,'I02J')
-	set APV = RegisterItem('I0A0','I09Z', 0,'I0BO')
+	set Item_LinkenSphere = RegisterItem('I0A0','I09Z', 0,'I0BO')
 	set AQV = RegisterItem('I0HK','I0HJ', 0,'I0HL')
 	set ASV = RegisterItem('I0A2','I0A1', 0,'I0BP')
 	set ATV = RegisterItem('I0LI','I0LJ', 0,'I0LK')
@@ -80420,12 +80412,12 @@ function InitItemsSystem takes nothing returns nothing
 	set AYV = RegisterItem('I0K8','I0K7', 0,'I0K9')
 	set AZV = RegisterItem('I0A7','I0A8', 0,'I0BS')
 	set A_V = RegisterItem('I0KQ','I0KP', 0,'I0KR')
-	set A0V = RegisterItem('I0AA','I0A9', 0,'I0BT')
+	set Item_HeartOfTarrasque = RegisterItem('I0AA','I0A9', 0,'I0BT')
 	set A1V = RegisterItem('I0AA','I0KL', 0,'I0KM')
 	set A2V = RegisterItem('I0AC','I0AB', 0,'I0BU')
 	set A3V = RegisterItem('I0AD','I0AE', 0,'I0BV')
 	set A4V = RegisterItem('I0AG','I0AF', 0,'I0CT')
-	set A5V = RegisterItem('I0AH','I0AI', 0,'I0BW')
+	set Item_TheButterfly = RegisterItem('I0AH','I0AI', 0,'I0BW')
 	set XFV = RegisterItem('I0B8','I0AY', 0,'I00B')
 	set XCV = RegisterItem('I0QT','I0QS', 0,'I0QU')
 	set XDV = RegisterItem('I0QT','I0TB', 0,'I0QU')
@@ -80462,7 +80454,7 @@ function InitItemsSystem takes nothing returns nothing
 	set RIV = RegisterItem('I0NL','I0NK', 0,'I0NM')
 	set N0V = RegisterItem('I0O2','I0O3', 0,'I0O4')
 	set RAV = RegisterItem('I0OC','I0OE', 0,'I0OD')
-	set RNV = RegisterItem('I0OF','I0OG', 0,'I0OH')
+	set Item_TranquilBoots = RegisterItem('I0OF','I0OG', 0,'I0OH')
 	set RBV = RegisterItem('I0OJ','I0OI', 0,'I0OK')
 	set RCV = RegisterItem('I0OM','I0OL', 0,'I0ON')
 	set Item_MoonShard = RegisterItem('I0SI','I0SJ', 0,'I0SK')
@@ -80553,51 +80545,51 @@ function InitItemsSystem takes nothing returns nothing
 	set B8V = RegisterItem('I0O5','I0O6','h0DD','I0O7')
 	set B9V = RegisterItem('I0OB','I0OA','h03X','I0O9')
 	set CVV = RegisterItem(0, 0,'h0DU', 0)
-	call SaveInteger(HY,'ITDB', CVV, RNV)
+	call SaveInteger(HY,'ITDB', CVV, Item_TranquilBoots)
 	call SaveInteger(HY,'ITDB', RegisterItem(0, 0,'h0E9', 0), N1V)
 	call SaveInteger(HY,'ITDB', RegisterItem(0, 0,'h0DV', 0), RCV)
 	call SaveInteger(HY,'ITDB', RegisterItem(0, 0,'h0EN', 0), RQV)
 	call RegisterItem(0, 0,'h0EA', 0)
 	call SaveInteger(HY,'ITDB', RegisterItem(0, 0,'h0EC', 0), RWV)
-	call SaveInteger(ItemCooldownHashTable, XOV[ARV],'00CD', 55)
-	call SaveInteger(ItemCooldownHashTable, XOV[NGV],'00CD', 30)
-	call SaveInteger(ItemCooldownHashTable, XOV[ISV],'00CD', 15)
-	call SaveInteger(ItemCooldownHashTable, XOV[ANV],'00CD', 50)
-	call SaveInteger(ItemCooldownHashTable, XOV[ABV],'00CD', 50)
-	call SaveInteger(ItemCooldownHashTable, XOV[A7V],'00CD', 30)
-	call SaveInteger(ItemCooldownHashTable, XOV[NJV],'00CD', 18)
-	call SaveInteger(ItemCooldownHashTable, XOV[Item_EulScepterOfDivinity],'00CD', 23)
-	call SaveInteger(ItemCooldownHashTable, XOV[NMV],'00CD', 20)
-	call SaveInteger(ItemCooldownHashTable, XOV[ADV],'00CD', 35)
-	call SaveInteger(ItemCooldownHashTable, XOV[AFV],'00CD', 30)
-	call SaveInteger(ItemCooldownHashTable, XOV[AGV],'00CD', 25)
-	call SaveInteger(ItemCooldownHashTable, XOV[AHV],'00CD', 20)
-	call SaveInteger(ItemCooldownHashTable, XOV[AJV],'00CD', 15)
-	call SaveInteger(ItemCooldownHashTable, XOV[AKV],'00CD', 95)
-	call SaveInteger(ItemCooldownHashTable, XOV[ALV],'00CD', 95)
-	call SaveInteger(ItemCooldownHashTable, XOV[AMV],'00CD', 95)
-	call SaveInteger(ItemCooldownHashTable, XOV[N0V],'00CD', 30)
-	call SaveInteger(ItemCooldownHashTable, XOV[RCV],'00CD', 16)
-	call SaveInteger(ItemCooldownHashTable, XOV[I4V],'00CD', 45)
-	call SaveInteger(ItemCooldownHashTable, XOV[NPV],'00CD', 60)
-	call SaveInteger(ItemCooldownHashTable, XOV[N_V],'00CD', 7)
-	call SaveInteger(ItemCooldownHashTable, XOV[ROV],'00CD', 30)
-	call SaveInteger(ItemCooldownHashTable, XOV[N2V],'00CD', 60)
-	call SaveInteger(ItemCooldownHashTable, XOV[ACV],'00CD', 28)
-	call SaveInteger(ItemCooldownHashTable, XOV[A2V],'00CD', 35)
-	call SaveInteger(ItemCooldownHashTable, XOV[NEV],'00CD', 35)
-	call SaveInteger(ItemCooldownHashTable, XOV[I1V],'00CD', 25)
-	call SaveInteger(ItemCooldownHashTable, XOV[I_V],'00CD', 60)
-	call SaveInteger(ItemCooldownHashTable, XOV[N1V],'00CD', 30)
-	call SaveInteger(ItemCooldownHashTable, XOV[IAV],'00CD', 45)
-	call SaveInteger(ItemCooldownHashTable, XOV[INV],'00CD', 45)
-	call SaveInteger(ItemCooldownHashTable, XOV[IFV],'00CD', 100)
-	call SaveInteger(ItemCooldownHashTable, XOV[R8V],'00CD', 50)
-	call SaveInteger(ItemCooldownHashTable, XOV[RTV],'00CD', 40)
-	call SaveInteger(ItemCooldownHashTable, XOV[RQV],'00CD', 16)
-	call SaveInteger(ItemCooldownHashTable, XOV[RJV],'00CD', 7)
-	call SaveInteger(ItemCooldownHashTable, XOV[RLV],'00CD', 28)
-	call SaveInteger(ItemCooldownHashTable, XOV[RGV],'00CD', 15)
+	call SaveInteger(ItemCooldownHashTable, RealItem[ARV],'00CD', 55)
+	call SaveInteger(ItemCooldownHashTable, RealItem[NGV],'00CD', 30)
+	call SaveInteger(ItemCooldownHashTable, RealItem[ISV],'00CD', 15)
+	call SaveInteger(ItemCooldownHashTable, RealItem[ANV],'00CD', 50)
+	call SaveInteger(ItemCooldownHashTable, RealItem[ABV],'00CD', 50)
+	call SaveInteger(ItemCooldownHashTable, RealItem[A7V],'00CD', 30)
+	call SaveInteger(ItemCooldownHashTable, RealItem[NJV],'00CD', 18)
+	call SaveInteger(ItemCooldownHashTable, RealItem[Item_EulScepterOfDivinity],'00CD', 23)
+	call SaveInteger(ItemCooldownHashTable, RealItem[NMV],'00CD', 20)
+	call SaveInteger(ItemCooldownHashTable, RealItem[ADV],'00CD', 35)
+	call SaveInteger(ItemCooldownHashTable, RealItem[AFV],'00CD', 30)
+	call SaveInteger(ItemCooldownHashTable, RealItem[AGV],'00CD', 25)
+	call SaveInteger(ItemCooldownHashTable, RealItem[AHV],'00CD', 20)
+	call SaveInteger(ItemCooldownHashTable, RealItem[AJV],'00CD', 15)
+	call SaveInteger(ItemCooldownHashTable, RealItem[AKV],'00CD', 95)
+	call SaveInteger(ItemCooldownHashTable, RealItem[ALV],'00CD', 95)
+	call SaveInteger(ItemCooldownHashTable, RealItem[AMV],'00CD', 95)
+	call SaveInteger(ItemCooldownHashTable, RealItem[N0V],'00CD', 30)
+	call SaveInteger(ItemCooldownHashTable, RealItem[RCV],'00CD', 16)
+	call SaveInteger(ItemCooldownHashTable, RealItem[I4V],'00CD', 45)
+	call SaveInteger(ItemCooldownHashTable, RealItem[NPV],'00CD', 60)
+	call SaveInteger(ItemCooldownHashTable, RealItem[N_V],'00CD', 7)
+	call SaveInteger(ItemCooldownHashTable, RealItem[ROV],'00CD', 30)
+	call SaveInteger(ItemCooldownHashTable, RealItem[N2V],'00CD', 60)
+	call SaveInteger(ItemCooldownHashTable, RealItem[ACV],'00CD', 28)
+	call SaveInteger(ItemCooldownHashTable, RealItem[A2V],'00CD', 35)
+	call SaveInteger(ItemCooldownHashTable, RealItem[NEV],'00CD', 35)
+	call SaveInteger(ItemCooldownHashTable, RealItem[I1V],'00CD', 25)
+	call SaveInteger(ItemCooldownHashTable, RealItem[I_V],'00CD', 60)
+	call SaveInteger(ItemCooldownHashTable, RealItem[N1V],'00CD', 30)
+	call SaveInteger(ItemCooldownHashTable, RealItem[IAV],'00CD', 45)
+	call SaveInteger(ItemCooldownHashTable, RealItem[INV],'00CD', 45)
+	call SaveInteger(ItemCooldownHashTable, RealItem[IFV],'00CD', 100)
+	call SaveInteger(ItemCooldownHashTable, RealItem[R8V],'00CD', 50)
+	call SaveInteger(ItemCooldownHashTable, RealItem[RTV],'00CD', 40)
+	call SaveInteger(ItemCooldownHashTable, RealItem[RQV],'00CD', 16)
+	call SaveInteger(ItemCooldownHashTable, RealItem[RJV],'00CD', 7)
+	call SaveInteger(ItemCooldownHashTable, RealItem[RLV],'00CD', 28)
+	call SaveInteger(ItemCooldownHashTable, RealItem[RGV],'00CD', 15)
 	set XNV[RegisterItem('I03A','I051','h08K','I0D9')]= OQV
 	set XNV[RegisterItem('I03Y','I052','h08X','I0C9')]= OTV
 	set XNV[RegisterItem('I02S','I02P','h08S','I0CA')]= XPV
@@ -80861,7 +80853,7 @@ function InitItemsSystem takes nothing returns nothing
 	set CombineIndex1[CombineMaxIndex]= OTV
 	set CombineIndex2[CombineMaxIndex]= IEV
 	set CombineIndex3[CombineMaxIndex]= BKV
-	set CombinedIndex[CombineMaxIndex]= APV
+	set CombinedIndex[CombineMaxIndex]= Item_LinkenSphere
 	set CombineMaxIndex = CombineMaxIndex + 1
 	set CombineIndex1[CombineMaxIndex]= X0V
 	set CombineIndex2[CombineMaxIndex]= OKV
@@ -80884,7 +80876,7 @@ function InitItemsSystem takes nothing returns nothing
 	set CombineIndex1[CombineMaxIndex]= OOV
 	set CombineIndex2[CombineMaxIndex]= OUV
 	set CombineIndex3[CombineMaxIndex]= BPV
-	set CombinedIndex[CombineMaxIndex]= A0V
+	set CombinedIndex[CombineMaxIndex]= Item_HeartOfTarrasque
 	set CombineMaxIndex = CombineMaxIndex + 1
 	set CombineIndex1[CombineMaxIndex]= OOV
 	set CombineIndex2[CombineMaxIndex]= I_V
@@ -80921,7 +80913,7 @@ function InitItemsSystem takes nothing returns nothing
 	set CombineIndex1[CombineMaxIndex]= X1V
 	set CombineIndex2[CombineMaxIndex]= ODV
 	set CombineIndex3[CombineMaxIndex]= RXV
-	set CombinedIndex[CombineMaxIndex]= A5V
+	set CombinedIndex[CombineMaxIndex]= Item_TheButterfly
 	set CombineMaxIndex = CombineMaxIndex + 1
 	set CombineIndex1[CombineMaxIndex]= OMV
 	set CombineIndex2[CombineMaxIndex]= XZV
@@ -81084,7 +81076,7 @@ function InitItemsSystem takes nothing returns nothing
 	set CombineIndex1[CombineMaxIndex]= XMV
 	set CombineIndex2[CombineMaxIndex]= OGV
 	set CombineIndex3[CombineMaxIndex]= OHV
-	set CombinedIndex[CombineMaxIndex]= RNV
+	set CombinedIndex[CombineMaxIndex]= Item_TranquilBoots
 	set CombineMaxIndex = CombineMaxIndex + 1
 	set CombineIndex1[CombineMaxIndex]= OPV
 	set CombineIndex2[CombineMaxIndex]= OPV
@@ -82125,7 +82117,7 @@ function jys_changeDesc takes integer team returns nothing
 	local string s = "使用后直接获得%d经验。再次使用将额外增加135点经验。|n|n|cFF99CCFF商店最大储量：|r 3|n|cFF99CCFF商店刷新时间：|r 10 分钟|n|n|cFF99CCFF开局后10分钟才可购买|r"
 	if (team == 0 and IsSentinelPlayer(LocalPlayer)) or(team == 1 and IsScourgePlayer(LocalPlayer)) then
 		set s = StringReplace(s, "%d", I2S(jys_calc(team)))
-		call YDWESetItemDataString(XOV[it_jys], 3, s)
+		call YDWESetItemDataString(RealItem[it_jys], 3, s)
 		//set s = j5j(K1V[it_jys], 2)
 		//set s = huh(s, jys_calc(team))
 		//call ovk(K1V[it_jys], s)
@@ -83483,11 +83475,11 @@ function main takes nothing returns nothing
 	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SELL)
 	call TriggerAddCondition(t, Condition(function XFO))
 
-	set CUV = CreateTrigger()
-	call TriggerRegisterAnyUnitEvent(CUV, EVENT_PLAYER_UNIT_PICKUP_ITEM)
-	call TriggerRegisterAnyUnitEvent(CUV, EVENT_PLAYER_UNIT_DROP_ITEM)
-	call TriggerRegisterAnyUnitEvent(CUV, EVENT_PLAYER_UNIT_PAWN_ITEM)
-	call TriggerAddCondition(CUV, Condition(function OMO))
+	set UnitManipulatItemTrig = CreateTrigger()
+	call TriggerRegisterAnyUnitEvent(UnitManipulatItemTrig, EVENT_PLAYER_UNIT_PICKUP_ITEM)
+	call TriggerRegisterAnyUnitEvent(UnitManipulatItemTrig, EVENT_PLAYER_UNIT_DROP_ITEM)
+	call TriggerRegisterAnyUnitEvent(UnitManipulatItemTrig, EVENT_PLAYER_UNIT_PAWN_ITEM)
+	call TriggerAddCondition(UnitManipulatItemTrig, Condition(function OMO))
 
 	set C3V = CreateTrigger()
 	call TriggerRegisterAnyUnitEvent(C3V, EVENT_PLAYER_UNIT_PICKUP_ITEM)
@@ -83516,10 +83508,10 @@ function main takes nothing returns nothing
 	call TriggerAddAction(t, function R5O)
 	call TriggerAddCondition(t, null)
 
-	// 物品打断中心计时器
-	set t = CreateTrigger()
-	call TriggerRegisterTimerEvent(t, .1, true)
-	call TriggerAddCondition(t, Condition(function IHO))
+	// // 物品打断中心计时器
+	// set t = CreateTrigger()
+	// call TriggerRegisterTimerEvent(t, .1, true)
+	// call TriggerAddCondition(t, Condition(function IHO))
 	
 	// 增加移动速度 - 物品
 	set t = CreateTrigger()
@@ -83563,9 +83555,9 @@ function main takes nothing returns nothing
 	if XEV > 1 then
 		call UnitRemoveAbility(Roshan,'A0K2')
 		call UnitAddAbility(Roshan,'A0Q6')
-		call UnitAddItem(Roshan, CreateItem(XOV[R7V], 0, 0))
+		call UnitAddItem(Roshan, CreateItem(RealItem[R7V], 0, 0))
 	endif
-	call UnitAddItem(Roshan, CreateItem(XOV[AAV], 0, 0))
+	call UnitAddItem(Roshan, CreateItem(RealItem[AAV], 0, 0))
 	call YKX()
 	call PauseUnit(CreateUnit(Player(12),'o00G', GetUnitX(Roshan), GetUnitY(Roshan), 0), true)
 

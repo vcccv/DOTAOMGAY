@@ -9,6 +9,13 @@ library UnitAbility requires AbilityUtils
         private key ABSOLUTE_COOLDOWN
     endglobals
 
+    function DisableEndCooldownTrigger takes nothing returns nothing
+        call DisableTrigger(EndCooldownTrig)
+    endfunction
+    function EnableEndCooldownTrigger takes nothing returns nothing
+        call EnableTrigger(EndCooldownTrig)
+    endfunction
+
     function UnitAddPermanentAbility takes unit whichUnit, integer ab returns boolean
         return UnitAddAbility(whichUnit, ab) and UnitMakeAbilityPermanent(whichUnit, true, ab)
     endfunction
