@@ -1,9 +1,13 @@
 
-library UnitAbility requires AbilityUtils
+library UnitAbility requires AbilityUtils, UnitLimitation
     
     globals
-        private trigger EndCooldownTrig = null
+        private trigger SpellEffectTrig   = null
+        private trigger EndCooldownTrig   = null
         private trigger StartCooldownTrig = null
+
+        private trigger AddAbilityTrig    = null
+        private trigger RemoveAbilityTrig = null
 
         private key NEXT_COOLDOWN
         private key ABSOLUTE_COOLDOWN
@@ -14,6 +18,13 @@ library UnitAbility requires AbilityUtils
     endfunction
     function EnableEndCooldownTrigger takes nothing returns nothing
         call EnableTrigger(EndCooldownTrig)
+    endfunction
+
+    function DisableStartCooldownTrigger takes nothing returns nothing
+        call DisableTrigger(StartCooldownTrig)
+    endfunction
+    function EnableStartCooldownTrigger takes nothing returns nothing
+        call EnableTrigger(StartCooldownTrig)
     endfunction
 
     function UnitAddPermanentAbility takes unit whichUnit, integer ab returns boolean
@@ -183,38 +194,162 @@ library UnitAbility requires AbilityUtils
     endfunction
 
 
-    function OnEndCooldown takes nothing returns boolean
+    private function OnEndCooldown takes nothing returns boolean
         local unit whichUnit = MHEvent_GetUnit()
         local integer id     = MHEvent_GetAbility()
 
+        set Event.INDEX = Event.INDEX + 1
+        set Event.TriggerAbilityId[Event.INDEX] = id
+        call AnyUnitEvent.ExecuteEvent(whichUnit, ANY_UNIT_EVENT_ABILITY_END_COOLDOWN)
+        set Event.INDEX = Event.INDEX - 1
 
         set whichUnit = null
         return false
     endfunction
 
-    function OnStartCooldown takes nothing returns boolean
-        local unit    whichUnit = MHEvent_GetUnit()
-        local integer id        = MHEvent_GetAbility()
-        local real    cooldown  = GetUnitAbilityCooldownRemaining(whichUnit, id)
-        local boolean isChange  = false
+    private function OnStartCooldown takes nothing returns boolean
+        local unit    whichUnit    = MHEvent_GetUnit()
+        local ability whichAbility = MHEvent_GetAbilityHandle()
+        local integer id           = MHEvent_GetAbility()
+        local real    cooldown     = GetAbilityCooldownRemaining(whichAbility)
+        local boolean isChanged    = false
 
-        if HasOctarineCore and GetUnitAbilityLevel(whichUnit, 'A39S') == 1 then
-            set cooldown = cooldown * 0.75
-            set isChange = true
-        endif
-
-       // call BJDebugMsg("我触发了不骗你啊")
-
-        if isChange then
+        //if HasOctarineCore and GetUnitAbilityLevel(whichUnit, 'A39S') == 1  then
+        //    set cooldown = cooldown * 0.75
+        //    set isChanged = true
+        //endif
+//
+        //if isChanged then
         //    call BJDebugMsg("冷却真的改了啊不骗你现在是：" + R2S(cooldown))
-            call MHAbility_SetCooldown(whichUnit, id, cooldown)
+        //    call MHAbility_SetAbilityCooldown(whichAbility, cooldown)
+        //endif
+
+        set whichAbility = null
+        set whichUnit    = null
+        return false
+    endfunction
+
+    // 对于主动技能？
+    private function OnSpellEffect takes nothing returns boolean
+        //local unit    whichUnit    = GetTriggerUnit()
+        //local ability whichAbility = GetSpellAbility()
+        //local integer level        = GetUnitAbilityLevel(whichUnit, GetSpellAbilityId())
+        //local real    cooldown     = MHAbility_GetAbilityCustomLevelDataReal(whichAbility, level, ABILITY_LEVEL_DEF_DATA_COOLDOWN)
+        //local boolean isChanged    = false
+        //
+        //if HasOctarineCore and GetUnitAbilityLevel(whichUnit, 'A39S') == 1  then
+        //    set cooldown = cooldown * 0.75
+        //    set isChanged = true
+        //endif
+        //if isChanged then
+        //    call BJDebugMsg("冷却真的改了啊不骗你现在是：" + R2S(cooldown))
+        //    call MHAbility_SetAbilityCustomLevelDataReal(whichAbility, level, ABILITY_LEVEL_DEF_DATA_COOLDOWN, cooldown)
+        //endif
+//
+        //set whichAbility = null
+        //set whichUnit    = null
+        return false
+    endfunction
+    
+    function GetUnitCooldownReduceMultiplier takes unit whichUnit returns real
+        if GetUnitAbilityLevel(whichUnit, 'A39S') == 1 then
+            return 0.25
+        endif
+        return 0.
+    endfunction
+
+    // 更新单个技能
+    function UpdateAbilityCooldown takes unit whichUnit, ability whichAbility returns nothing
+        local integer abilId   = GetAbilityId(whichAbility)
+        local integer maxLevel = GetAbilityMaxLevelById(abilId)
+        local real    cooldown
+        local integer i
+        local real    multiplier = ( 1. - GetUnitCooldownReduceMultiplier(whichUnit) )
+
+        set i = 1
+        loop
+            exitwhen i > maxLevel
+
+            set cooldown = MHAbility_GetLevelDefDataReal(abilId, i, ABILITY_LEVEL_DEF_DATA_COOLDOWN)
+            if cooldown > 0. then
+                call MHAbility_SetAbilityCustomLevelDataReal(whichAbility, i, ABILITY_LEVEL_DEF_DATA_COOLDOWN, cooldown * multiplier)
+            endif
+
+            set i = i + 1
+        endloop
+    endfunction
+
+    globals
+        real TempReduceMultiplier = 0.
+    endglobals
+
+    private function UpdateCooldownOnEnum takes nothing returns nothing
+        local ability enumAbility = MHUnit_GetEnumAbility()
+        local integer abilId      = GetAbilityId(enumAbility)
+        local integer maxLevel    = GetAbilityMaxLevelById(abilId)
+        local real    cooldown
+        local integer i
+        local real    multiplier  = TempReduceMultiplier
+
+        set i = 1
+        loop
+            exitwhen i > maxLevel
+
+            set cooldown = MHAbility_GetLevelDefDataReal(abilId, i, ABILITY_LEVEL_DEF_DATA_COOLDOWN)
+            if cooldown > 0. then
+                call MHAbility_SetAbilityCustomLevelDataReal(enumAbility, i, ABILITY_LEVEL_DEF_DATA_COOLDOWN, cooldown * multiplier)
+                //call BJDebugMsg("|cffffff00 技能[" + Id2String(abilId) + "] " +  "(" + I2S(i) + ")"  +  " " + GetObjectName(abilId) + " cooldown:" + R2S(cooldown) + " new cooldown:" + R2S(cooldown * multiplier))
+            endif
+
+            set i = i + 1
+        endloop
+
+        set enumAbility = null
+    endfunction
+
+    // 更新单位所有技能
+    function UpdateUnitAbilityCooldown takes unit whichUnit returns nothing
+        if whichUnit == null then
+            call ThrowWarning(true, "UnitAbility", "UpdateUnitAbilityCooldown", "unit", 0, "whichUnit == null")
+            return
+        endif
+        set TempReduceMultiplier = ( 1. - GetUnitCooldownReduceMultiplier(whichUnit) )
+        call MHUnit_EnumAbility(whichUnit, function UpdateCooldownOnEnum)
+    endfunction
+
+    private function OnAbilityAdd takes nothing returns boolean
+        local unit    whichUnit    = MHEvent_GetUnit()
+        local ability whichAbility = MHEvent_GetAbilityHandle()
+        local real    cooldown     = GetAbilityCooldownRemaining(whichAbility)
+        local boolean isChanged    = false
+
+        if HasOctarineCore and GetUnitAbilityLevel(whichUnit, 'A39S') == 1  then
+            call UpdateAbilityCooldown(whichUnit, whichAbility)
         endif
 
-        set whichUnit = null
+        set whichAbility = null
+        set whichUnit    = null
+        return false
+    endfunction
+
+    private function OnAbilityRemove takes nothing returns boolean
+        
         return false
     endfunction
 
     function UnitAbility_Init takes nothing returns nothing
+        set SpellEffectTrig = CreateTrigger()
+        call TriggerRegisterAnyUnitEvent(SpellEffectTrig, EVENT_PLAYER_UNIT_SPELL_EFFECT)
+        call TriggerAddCondition(SpellEffectTrig, Condition(function OnSpellEffect))
+
+        set AddAbilityTrig = CreateTrigger()
+        call TriggerAddCondition(AddAbilityTrig, Condition(function OnAbilityAdd))
+        call MHAbilityAddEvent_Register(AddAbilityTrig)
+
+        set RemoveAbilityTrig = CreateTrigger()
+        call TriggerAddCondition(RemoveAbilityTrig, Condition(function OnAbilityRemove))
+        call MHAbilityRemoveEvent_Register(RemoveAbilityTrig)
+
         set EndCooldownTrig = CreateTrigger()
         call MHAbilityEndCooldownEvent_Register(EndCooldownTrig)
         call TriggerAddCondition(EndCooldownTrig, Condition(function OnEndCooldown))
@@ -222,6 +357,7 @@ library UnitAbility requires AbilityUtils
         set StartCooldownTrig = CreateTrigger()
         call MHAbilityStartCooldownEvent_Register(StartCooldownTrig)
         call TriggerAddCondition(StartCooldownTrig, Condition(function OnStartCooldown))
+
     endfunction
 
 endlibrary

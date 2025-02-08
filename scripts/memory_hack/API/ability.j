@@ -5,6 +5,9 @@
 
 
 library AMHAbility
+    function MHAbility_GetId takes ability abil returns integer
+        JapiPlaceHolder 0
+    endfunction
     function MHAbility_GetDefDataInt takes integer aid, integer flag returns integer
         JapiPlaceHolder 0
     endfunction
@@ -46,9 +49,6 @@ library AMHAbility
     endfunction
     function MHAbility_SetLevelDefDataStr takes integer aid, integer level, integer flag, string value returns nothing
         JapiPlaceHolder
-    endfunction
-    function MHAbility_GetAll takes unit u, hashtable ht returns integer
-        JapiPlaceHolder 0
     endfunction
     function MHAbility_GetHeroAll takes unit u, hashtable ht returns integer
         JapiPlaceHolder 0
@@ -150,6 +150,9 @@ library AMHAbility
         JapiPlaceHolder 0
     endfunction
     function MHAbility_Disable takes unit u, integer aid, boolean is_disable, boolean is_hide returns nothing
+        JapiPlaceHolder
+    endfunction
+    function MHAbility_DisableAbility takes ability abil, boolean is_disable, boolean is_hide returns nothing
         JapiPlaceHolder
     endfunction
     function MHAbility_GetDisableCount takes unit u, integer aid returns integer

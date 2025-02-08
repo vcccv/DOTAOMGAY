@@ -18,6 +18,10 @@
 
 
 
+    // 获取id
+    function MHAbility_GetId takes ability abil returns integer
+    endfunction
+
     // 获取物编数据 (整数)
     // @param flag：ABILITY_DEF_DATA
     function MHAbility_GetDefDataInt takes integer aid, integer flag returns integer
@@ -86,11 +90,6 @@
     // 设置物编等级数据 (字符串)
     // @param flag：ABILITY_LEVEL_DEF_DATA
     function MHAbility_SetLevelDefDataStr takes integer aid, integer level, integer flag, string value returns nothing
-    endfunction
-
-    // 遍历所有技能
-    // @Tip：返回值为单位拥有的技能数量，包括魔法效果
-    function MHAbility_GetAll takes unit u, hashtable ht returns integer
     endfunction
 
     // 遍历英雄技能
@@ -242,6 +241,11 @@
     // @param is_disable：true - 禁用; false - 启用
     // @param is_hide：true - 隐藏UI; false - 显示UI
     function MHAbility_Disable takes unit u, integer aid, boolean is_disable, boolean is_hide returns nothing
+    endfunction
+
+    // 禁用
+    // @Tip：MHAbility_Disable的实例版本
+    function MHAbility_DisableAbility takes ability abil, boolean is_disable, boolean is_hide returns nothing
     endfunction
 
     // 获取禁用计数器
@@ -589,6 +593,21 @@
     // 获取指定序号的技能
     // @Tip：包括魔法效果
     function MHUnit_GetAbilityByIndex takes unit u, integer index returns integer
+    endfunction
+
+    // 选取单位技能做动作
+    // @Tip：不要在回调中添加/删除技能
+    function MHUnit_EnumAbility takes unit u, code callback returns boolean
+    endfunction
+
+    // 获取选取的技能
+    // @Tip：指代 MHUnit_EnumAbility 中, 被选取的技能
+    function MHUnit_GetEnumAbility takes nothing returns ability
+    endfunction
+
+    // 获取选取的技能ID
+    // @Tip：指代 MHUnit_EnumAbility 中, 被选取的技能ID
+    function MHUnit_GetEnumAbilityId takes nothing returns integer
     endfunction
 
     // 获取单位数据
@@ -2484,6 +2503,18 @@
     function MHEvent_SetAbility takes integer aid returns nothing
     endfunction
 
+    // 获取事件技能实例
+    // @Tip：响应MH的相关事件
+    // 指代触发MH事件的技能
+    function MHEvent_GetAbilityHandle takes nothing returns ability
+    endfunction
+
+    // 设置事件技能实例
+    // @Tip：响应MH的相关事件
+    // 指代触发MH事件的技能
+    function MHEvent_SetAbilityHandle takes ability abil returns nothing
+    endfunction
+
     // 获取事件物品
     // @Tip：响应MH的相关事件
     // 指代触发MH事件的物品
@@ -4015,6 +4046,11 @@
 // 事件库
 
 
+
+    // 注册任意物品被创建事件
+    // @Tip：EVENT_ID_ITEM_CREATE
+    function MHItemCreateEvent_Register takes trigger trig returns nothing
+    endfunction
 
     // 注册任意物品被删除事件
     // @Tip：EVENT_ID_ITEM_REMOVE

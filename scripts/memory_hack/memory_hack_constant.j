@@ -1,5 +1,6 @@
 #pragma once
-// by Asphodelu
+// by Asphodelus
+
 
 
 #ifdef JapiPlaceHolder
@@ -43,38 +44,39 @@
 #define EVENT_ID_ABILITY_START_COOLDOWN		        0xF
 #define EVENT_ID_ABILITY_END_COOLDOWN		        0x10
 #define EVENT_ID_ABILITY_REFRESH_AURA		        0x11
-#define EVENT_ID_ITEM_REMOVE				        0x12
-#define EVENT_ID_PLAYER_GOLD_CHANGE			        0x13
-#define EVENT_ID_PLAYER_LUMBER_CHANGE		        0x14
-#define EVENT_ID_MISSILE_LAUNCH				        0x15
-#define EVENT_ID_MISSILE_HIT				        0x16
-#define EVENT_ID_SYNC						        0x17
-#define EVENT_ID_GAME_STOP					        0x18
-#define EVENT_ID_GAME_EXIT					        0x19
-#define EVENT_ID_PLAYER_LEAVE				        0x1A
-#define EVENT_ID_FRAME_MOUSE_ENTER			        0x1B
-#define EVENT_ID_FRAME_MOUSE_LEAVE			        0x1C
-#define EVENT_ID_FRAME_MOUSE_DOWN			        0x1D
-#define EVENT_ID_FRAME_MOUSE_UP				        0x1E
-#define EVENT_ID_FRAME_MOUSE_CLICK			        0x1F
-#define EVENT_ID_FRAME_MOUSE_DOUBLE_CLICK	        0x20
-#define EVENT_ID_FRAME_MOUSE_SCROLL			        0x21
-#define EVENT_ID_KEY_UP						        0x22
-#define EVENT_ID_KEY_DOWN					        0x23
-#define EVENT_ID_KEY_HOLD					        0x24
-#define EVENT_ID_MOUSE_UP					        0x25
-#define EVENT_ID_MOUSE_DOWN					        0x26
-#define EVENT_ID_MOUSE_SCROLL				        0x27
-#define EVENT_ID_MOUSE_MOVE					        0x28
-#define EVENT_ID_TARGET_INDICATOR			        0x29
-#define EVENT_ID_CALL_TARGET_MODE			        0x2A
-#define EVENT_ID_CALL_BUILD_MODE			        0x2B
-#define EVENT_ID_CANCEL_INDICATOR			        0x2C
-#define EVENT_ID_LOCAL_IMMEDIATE_ORDER		        0x2D
-#define EVENT_ID_FRAME_TICK					        0x2E
-#define EVENT_ID_REFRESH_HPBAR				        0x2F
-#define EVENT_ID_PRERENDER					        0x30
-#define EVENT_ID_WINDOW_RESIZE				        0x31
+#define EVENT_ID_ITEM_CREATE				        0x12
+#define EVENT_ID_ITEM_REMOVE				        0x13
+#define EVENT_ID_PLAYER_GOLD_CHANGE			        0x14
+#define EVENT_ID_PLAYER_LUMBER_CHANGE		        0x15
+#define EVENT_ID_MISSILE_LAUNCH				        0x16
+#define EVENT_ID_MISSILE_HIT				        0x17
+#define EVENT_ID_SYNC						        0x18
+#define EVENT_ID_GAME_STOP					        0x19
+#define EVENT_ID_GAME_EXIT					        0x1A
+#define EVENT_ID_PLAYER_LEAVE				        0x1B
+#define EVENT_ID_FRAME_MOUSE_ENTER			        0x1C
+#define EVENT_ID_FRAME_MOUSE_LEAVE			        0x1D
+#define EVENT_ID_FRAME_MOUSE_DOWN			        0x1E
+#define EVENT_ID_FRAME_MOUSE_UP				        0x1F
+#define EVENT_ID_FRAME_MOUSE_CLICK			        0x20
+#define EVENT_ID_FRAME_MOUSE_DOUBLE_CLICK	        0x21
+#define EVENT_ID_FRAME_MOUSE_SCROLL			        0x22
+#define EVENT_ID_KEY_UP						        0x23
+#define EVENT_ID_KEY_DOWN					        0x24
+#define EVENT_ID_KEY_HOLD					        0x25
+#define EVENT_ID_MOUSE_UP					        0x26
+#define EVENT_ID_MOUSE_DOWN					        0x27
+#define EVENT_ID_MOUSE_SCROLL				        0x28
+#define EVENT_ID_MOUSE_MOVE					        0x29
+#define EVENT_ID_TARGET_INDICATOR			        0x2A
+#define EVENT_ID_CALL_TARGET_MODE			        0x2B
+#define EVENT_ID_CALL_BUILD_MODE			        0x2C
+#define EVENT_ID_CANCEL_INDICATOR			        0x2D
+#define EVENT_ID_LOCAL_IMMEDIATE_ORDER		        0x2E
+#define EVENT_ID_FRAME_TICK					        0x2F
+#define EVENT_ID_REFRESH_HPBAR				        0x30
+#define EVENT_ID_PRERENDER					        0x31
+#define EVENT_ID_WINDOW_RESIZE				        0x32
 
 
 

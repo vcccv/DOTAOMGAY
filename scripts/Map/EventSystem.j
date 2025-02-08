@@ -7,6 +7,8 @@ library EventSystem
 
     
         constant integer ANY_UNIT_EVENT_PICKUP_REAL_ITEM = 3
+
+        constant integer ANY_UNIT_EVENT_ABILITY_END_COOLDOWN = 4
     endglobals
     
     struct Event extends array 
@@ -29,12 +31,16 @@ library EventSystem
         static integer      array Flag1
 
         static item         array ManipulatedItem
+        static integer      array TriggerAbilityId
 
         static method GetTriggerUnit takes nothing returns unit
             return thistype.TrigUnit[thistype.INDEX]
         endmethod
         static method GetTManipulatedItem takes nothing returns item
             return thistype.ManipulatedItem[thistype.INDEX]
+        endmethod
+        static method GetTriggerAbilityId takes nothing returns integer
+            return thistype.TriggerAbilityId[thistype.INDEX]
         endmethod
 
     endstruct

@@ -143,7 +143,6 @@ library UnitLimitation requires Base, UnitModel
             call UnitAddPhasedMovementCount(whichUnit)
             call UnitEnableNoPathing(whichUnit)
         endif
-        call BJDebugMsg("now count:" + I2S(count))
     endfunction
     function UnitSubNoPathingCount takes unit whichUnit returns nothing
         local integer h     = GetHandleId(whichUnit)
@@ -153,7 +152,6 @@ library UnitLimitation requires Base, UnitModel
             call UnitSubPhasedMovementCount(whichUnit)
             call UnitDisableNoPathing(whichUnit)
         endif
-        call BJDebugMsg("now count:" + I2S(count))
     endfunction
     function IsUnitNoPathing takes unit whichUnit returns boolean
         return Table[GetHandleId(whichUnit)][UNIT_NOPATHING_COUNT] > 0
@@ -235,6 +233,107 @@ library UnitLimitation requires Base, UnitModel
         if count == 0 then
             call UnitDisableTruesightImmunity(whichUnit)
         endif
+    endfunction
+
+    // 物品沉默
+    globals
+        private constant key UNIT_MUTE_COUNT
+    endglobals
+    function UnitEnableMute takes unit whichUnit returns nothing
+        local integer i
+        local integer j
+        local integer abilCount
+        local item    whichItem
+        local ability whichAbility
+        local integer abilId
+
+        set i = 0
+        loop
+            exitwhen i > 5
+
+            set whichItem = UnitItemInSlot(whichUnit, i)
+            if whichItem != null then
+                set j = 1
+
+                set abilCount = MHItem_GetAbilityCount(whichItem)
+                loop
+                    exitwhen j > abilCount
+                    
+                    set whichAbility = MHItem_GetAbility(whichItem, j)
+                    set abilId       = GetAbilityId(whichAbility)
+                    // 禁用物品主动技能
+                    if not IsAbilityPassiveById(abilId) then
+                        call MHAbility_Disable(whichUnit, abilId, true, false)
+                    endif
+
+                    set j = j + 1
+                endloop
+
+            endif
+
+            set i = i + 1
+        endloop
+
+        set whichAbility = null
+        set whichItem = null
+    endfunction
+    function UnitDisableMute takes unit whichUnit returns nothing
+        local integer i
+        local integer j
+        local integer abilCount
+        local item    whichItem
+        local ability whichAbility
+        local integer abilId
+
+        set i = 0
+        loop
+            exitwhen i > 5
+
+            set whichItem = UnitItemInSlot(whichUnit, i)
+            if whichItem != null then
+                set j = 1
+
+                set abilCount = MHItem_GetAbilityCount(whichItem)
+                loop
+                    exitwhen j > abilCount
+                    
+                    set whichAbility = MHItem_GetAbility(whichItem, j)
+                    set abilId       = GetAbilityId(whichAbility)
+                    // 启用物品主动技能
+                    if not IsAbilityPassiveById(abilId) then
+                        call MHAbility_DisableAbility(whichAbility, false, false)
+                    endif
+
+                    set j = j + 1
+                endloop
+
+            endif
+
+            set i = i + 1
+        endloop
+
+        set whichAbility = null
+        set whichItem = null
+    endfunction
+
+    function UnitAddMuteCount takes unit whichUnit returns nothing
+        local integer h     = GetHandleId(whichUnit)
+        local integer count = Table[h][UNIT_MUTE_COUNT] + 1
+        set Table[h][UNIT_MUTE_COUNT] = count
+        if count == 1 then
+            call UnitEnableMute(whichUnit)
+        endif
+    endfunction
+    function UnitSubMuteCount takes unit whichUnit returns nothing
+        local integer h     = GetHandleId(whichUnit)
+        local integer count = Table[h][UNIT_MUTE_COUNT] - 1
+        set Table[h][UNIT_MUTE_COUNT] = count
+        if count == 0 then
+            call UnitDisableMute(whichUnit)
+        endif
+    endfunction
+    function IsUnitMuting takes unit whichUnit returns boolean
+        return Table[GetHandleId(whichUnit)][UNIT_MUTE_COUNT] > 0
     endfunction
 
     // 通常在变身后刷新

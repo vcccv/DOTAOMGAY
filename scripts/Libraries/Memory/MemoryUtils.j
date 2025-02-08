@@ -126,5 +126,20 @@ library MemoryUtils initializer Init
         endif
     endfunction
 
-endlibrary
+    function GetAbilityId takes ability whichAbility returns integer
+        local integer pAbility = ConvertHandle(whichAbility)
+        if pAbility > 0 then
+            return ReadRealMemory(pAbility + 0x34)
+        endif
+        return 0
+    endfunction
 
+    function GetAbilityLevel takes ability whichAbility returns integer
+        local integer pAbility = ConvertHandle(whichAbility)
+        if pAbility > 0 then
+            return (ReadRealMemory(pAbility + 0x50) + 1)
+        endif
+        return 0
+    endfunction
+
+endlibrary

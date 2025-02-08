@@ -311,7 +311,9 @@ library ItemSystem requires Base, TimerUtils
         set RBV = RegisterItem('I0OJ','I0OI', 0,'I0OK')
         set RCV = RegisterItem('I0OM','I0OL', 0,'I0ON')
         set Item_MoonShard = RegisterItem('I0SI','I0SJ', 0,'I0SK')
-        set RFV = RegisterItem('I0SU','I0SV', 0,'I0SW')
+        set Item_OctarineCore = RegisterItem('I0SU','I0SV', 0,'I0SW')
+        call SetRealItemFuncSimple(Item_OctarineCore, "ItemOctarineCoreOnPickup", "ItemOctarineCoreOnDrop")
+        
         set RLV = RegisterItem('I0SL','I0SM', 0,'I0SN')
         set RJV = RegisterItem('I0SR','I0SS', 0,'I0ST')
         set RGV = RegisterItem('I0T5','I0T6', 0,'I0T7')
@@ -518,7 +520,7 @@ library ItemSystem requires Base, TimerUtils
         set CombineMaxIndex = CombineMaxIndex + 1
         set CombineIndex1[CombineMaxIndex]= I3V
         set CombineIndex2[CombineMaxIndex]= OIV
-        set CombinedIndex[CombineMaxIndex]= RFV
+        set CombinedIndex[CombineMaxIndex]= Item_OctarineCore
         set CombineMaxIndex = CombineMaxIndex + 1
         set CombineIndex1[CombineMaxIndex]= XMV
         set CombineIndex2[CombineMaxIndex]= XQV
@@ -1072,7 +1074,7 @@ library ItemSystem requires Base, TimerUtils
         integer RBV
         integer RCV
         integer Item_MoonShard
-        integer RFV
+        integer Item_OctarineCore
         integer RGV
         integer RHV
         integer RJV
@@ -1248,6 +1250,6 @@ library ItemSystem requires Base, TimerUtils
         integer B9V
         integer CVV
     endglobals
-    
+
 endlibrary
 

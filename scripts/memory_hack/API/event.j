@@ -20,6 +20,12 @@ library AMHEvent
     function MHEvent_SetAbility takes integer aid returns nothing
         JapiPlaceHolder
     endfunction
+    function MHEvent_GetAbilityHandle takes nothing returns ability
+        JapiPlaceHolder null
+    endfunction
+    function MHEvent_SetAbilityHandle takes ability abil returns nothing
+        JapiPlaceHolder
+    endfunction
     function MHEvent_GetItem takes nothing returns item
         JapiPlaceHolder null
     endfunction

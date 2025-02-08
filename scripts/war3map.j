@@ -15341,7 +15341,7 @@ function OnManipulatItem takes nothing returns boolean
 				set TranquilBootsCount = TranquilBootsCount + 1
 				call X5O()
 				set C8V[id]= C8V[id] + 1
-			elseif i == RealItem[RFV] then //玲珑心
+			elseif i == RealItem[Item_OctarineCore] then //玲珑心
 				set HasOctarineCore = true
 			elseif i == RealItem[it_hyzr] then
 				call XHYZR()

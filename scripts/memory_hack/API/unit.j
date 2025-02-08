@@ -41,6 +41,15 @@ library AMHUnit
     function MHUnit_GetAbilityByIndex takes unit u, integer index returns integer
         JapiPlaceHolder 0
     endfunction
+    function MHUnit_EnumAbility takes unit u, code callback returns boolean
+        JapiPlaceHolder false
+    endfunction
+    function MHUnit_GetEnumAbility takes nothing returns ability
+        JapiPlaceHolder null
+    endfunction
+    function MHUnit_GetEnumAbilityId takes nothing returns integer
+        JapiPlaceHolder 0
+    endfunction
     function MHUnit_GetData takes unit u, integer flag returns real
         JapiPlaceHolder 0.
     endfunction

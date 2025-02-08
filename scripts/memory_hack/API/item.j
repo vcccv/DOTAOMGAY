@@ -87,6 +87,9 @@ endlibrary
 
 
 library AMHItemEvent
+    function MHItemCreateEvent_Register takes trigger trig returns nothing
+        JapiPlaceHolder
+    endfunction
     function MHItemRemoveEvent_Register takes trigger trig returns nothing
         JapiPlaceHolder
     endfunction
