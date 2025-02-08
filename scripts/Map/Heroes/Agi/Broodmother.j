@@ -132,6 +132,7 @@ scope Broodmother
         local unit       whichUnit = MHEvent_GetUnit()
         local SimpleTick tick
         
+        //call BJDebugMsg("level:" + I2S(MHBuff_GetLevel(whichUnit, MHEvent_GetAbility())))
         call UnitRemoveAbility(whichUnit, 'A40E')
         call UnitAddPermanentAbility(whichUnit, 'A021')
 

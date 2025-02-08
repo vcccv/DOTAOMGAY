@@ -3,6 +3,9 @@
 #define DESource Event.DamageSource[Event.INDEX]
 #define DEDamage Event.EventDamage[Event.INDEX]
 
+#define C2I(c) MHTool_CodeToInt(c)
+#define I2C(i) MHTool_IntToCode(i)
+
 globals
 	location ScourgeMidMeleeSpawnLocatio   = null
 	location ScourgeTopMeleeSpawnLocatio   = null
@@ -1066,274 +1069,8 @@ globals
 	integer E9V = 1
 	trigger XVV
 	integer XEV = 0
-	integer array XXV
-	integer array RealItem
-	integer array XRV
-	integer array XIV
-	string array ItemsIconFilePath
-	integer array XNV
-	integer MaxItemsNumber = 0
-	integer XCV
-	integer XDV
-	integer XFV
-	integer XGV
-	integer XHV
-	integer XJV
-	integer XKV
-	integer XLV
-	integer XMV
-	integer it_hyzr
-	integer it_fj
-	integer it_mlq
-	integer it_xj
-	integer jz_xj
-	integer Recipe_AetherLens
-	integer Item_AetherLens
-	integer Item_HurricanePike
-	integer Recipe_HurricanePike
-	integer XPV
-	integer XQV
-	integer XSV
-	integer XTV
-	integer XUV
-	integer XWV
-	integer XYV
-	integer XZV
-	integer X_V
-	integer X0V
-	integer X1V
-	integer X2V
-	integer X3V
-	integer X4V
-	integer X5V
-	integer X6V
-	integer X7V
-	integer Item_IronwoodBranch
-	integer Item_KelenDagger
-	integer Item_DisabledKelenDagger
-	integer OEV
-	integer OXV
-	integer OOV
-	integer ORV
-	integer OIV
-	integer OAV
-	integer ONV
-	integer OBV
-	integer OCV
-	integer ODV
-	integer OFV
-	integer OGV
-	integer OHV
-	integer OJV
-	integer OKV
-	integer OLV
-	integer OMV
-	integer OPV
-	integer OQV
-	integer OSV
-	integer OTV
-	integer OUV
-	integer OWV
-	integer OYV
-	integer OZV
-	integer O_V
-	integer O0V
-	integer O1V
-	integer O2V
-	integer O3V
-	integer O4V
-	integer O5V
-	integer O6V
-	integer O7V
-	integer O8V
-	integer Item_MagicStick
-	integer RVV
-	integer REV
-	integer RXV
-	integer ROV
-	integer RRV
-	integer RIV
-	integer RAV
-	integer Item_TranquilBoots
-	integer RBV
-	integer RCV
-	integer Item_MoonShard
-	integer RFV
-	integer RGV
-	integer RHV
-	integer RJV
-	integer RKV
-	integer RLV
-	integer RMV
-	integer RPV
-	integer RQV
-	integer RSV
-	integer RTV
-	integer RUV
-	integer RWV
-	integer RYV
-	integer RZV
-	integer R_V
-	integer R0V
-	integer R1V
-	integer R2V
-	integer R3V
-	integer R4V
-	integer R5V
-	integer R6V
-	integer R7V
-	integer R8V
-	integer R9V
-	integer IVV
-	integer IEV
-	integer IXV
-	integer IOV
-	integer IRV
-	integer IIV
-	integer IAV
-	integer INV
-	integer IBV
-	integer ICV
-	integer IDV
-	integer IFV
-	integer IGV
-	integer IHV
-	integer IJV
-	integer IKV
-	integer ILV
-	integer IMV
-	integer IPV
-	integer IQV
-	integer ISV
-	integer ITV
-	integer IUV
-	integer IWV
-	integer IYV
-	integer IZV
-	integer I_V
-	integer I0V
-	integer I1V
-	integer Item_EulScepterOfDivinity
-	integer I3V
-	integer I4V
-	integer I5V
-	unit array I5VV
-	integer I6V
-	integer I7V
-	integer I8V
-	integer I9V
-	integer AVV
-	integer AEV
-	integer AXV
-	integer AOV
-	integer ARV
-	integer AIV
-	integer AAV
-	integer ANV
-	integer ABV
-	integer ACV
-	integer ADV
-	integer AFV
-	integer AGV
-	integer AHV
-	integer AJV
-	integer AKV
-	integer ALV
-	integer AMV
-	integer Item_LinkenSphere
-	integer AQV
-	integer ASV
-	integer ATV
-	integer AUV
-	integer AWV
-	integer AYV
-	integer AZV
-	integer A_V
-	integer Item_HeartOfTarrasque
-	integer A1V
-	integer A2V
-	integer A3V
-	integer A4V
-	integer Item_TheButterfly
-	integer A6V
-	integer A7V
-	integer A8V
-	integer A9V
-	integer NVV
-	integer NEV
-	integer NXV
-	integer NOV
-	integer NRV
-	integer NIV
-	integer NAV
-	integer NNV
-	integer NBV
-	integer NCV
-	integer NDV
-	integer NFV
-	integer NGV
-	integer NHV
-	integer NJV
-	integer NKV
-	integer Item_MagicWand
-	integer NMV
-	integer NPV
-	integer NQV
-	integer NSV
-	integer NTV
-	integer NUV
-	integer NWV
-	integer NYV
-	integer NZV
-	integer N_V
-	integer N0V
-	integer N1V
-	integer N2V
-	integer N3V
-	integer N4V
-	integer N5V
-	integer N6V
-	integer N7V
-	integer N8V
-	integer N9V
-	integer BVV
-	integer BEV
-	integer BXV
-	integer BOV
-	integer BRV
-	integer BIV
-	integer BAV
-	integer BNV
-	integer BBV
-	integer BCV
-	integer BDV
-	integer BFV
-	integer BGV
-	integer BHV
-	integer BJV
-	integer BKV
-	integer BLV
-	integer BMV
-	integer BPV
-	integer BQV
-	integer BSV
-	integer BTV
-	integer BUV
-	integer BWV
-	integer BYV
-	integer BZV
-	integer B_V
-	integer B0V
-	integer B1V
-	integer B2V
-	integer B3V
-	integer B4V
-	integer B5V
-	integer B6V
-	integer B7V
-	integer B8V
-	integer B9V
-	integer CVV
+
+
 	trigger RuneRefreshTrigger
 	integer CXV = 0
 	integer array CombineIndex1
@@ -1344,7 +1081,7 @@ globals
 	integer array CombinedIndex
 	integer CombineMaxIndex = 0
 	integer array CDV
-	integer array CFV
+	integer array PlayerKelenDaggerCount
 	integer array CGV
 	integer array CHV
 	integer array CJV
@@ -2506,22 +2243,6 @@ function USV takes unit u, integer UTV, real x, real y returns boolean
 	set b = IssuePointOrderById(u, UTV, x, y)
 	call SaveBoolean(OtherHashTable, GetHandleId(u),'ORDR', false)
 	return b
-endfunction
-function GetItemIndexEx takes item UWV returns integer
-	local integer UYV
-	local integer i = 1
-	if UWV == null then
-		return -2
-	endif
-	set UYV = GetItemTypeId(UWV)
-	loop
-		if XXV[i]== UYV or RealItem[i]== UYV or XIV[i]== UYV then
-			return i
-		endif
-		set i = i + 1
-	exitwhen i > MaxItemsNumber
-	endloop
-	return -1
 endfunction
 function UZV takes unit u, integer id returns boolean
 	local item it
@@ -3743,23 +3464,8 @@ function TBE takes integer id returns integer
 	endloop
 	return -1
 endfunction
-// 获取物品的索引
-function GetItemIndex takes item it returns integer
-	local integer id
-	local integer i = 1
-	if it == null then
-		return -2
-	endif
-	set id = GetItemTypeId(it)
-	loop
-		if XXV[i]== id or RealItem[i]== id then
-			return i
-		endif
-		set i = i + 1
-	exitwhen i > MaxItemsNumber
-	endloop
-	return -1
-endfunction
+
+
 function TDE takes unit u, integer id, player p, boolean b, integer i returns nothing
 	local item it = UnitAddItemById(u, id)
 	call SetItemPlayer(it, p, b)
@@ -8655,7 +8361,7 @@ function HSX takes nothing returns boolean
 	if HTX then
 		call SetItemCharges(HWX, HUX)
 	endif
-	if UYV == XXV[BUV] then
+	if UYV == PowerupItem[BUV] then
 		call HMX(HWX, p)
 	endif
 	call FlushChildHashtable(HY, h)
@@ -8704,8 +8410,8 @@ function H1X takes item UWV returns integer
 	endif
 	set UYV = GetItemTypeId(UWV)
 	loop
-	exitwhen i > MaxItemsNumber
-		if XIV[i]== UYV then
+	exitwhen i > MaxItemCount
+		if DisabledItem[i]== UYV then
 			return i
 		endif
 		set i = i + 1
@@ -8720,8 +8426,8 @@ function H2X takes item UWV returns integer
 	endif
 	set UYV = GetItemTypeId(UWV)
 	loop
-	exitwhen i > MaxItemsNumber
-		if XIV[i]== UYV then
+	exitwhen i > MaxItemCount
+		if DisabledItem[i]== UYV then
 			return RealItem[i]
 		endif
 		set i = i + 1
@@ -8729,15 +8435,15 @@ function H2X takes item UWV returns integer
 	return -1
 endfunction
 function H3X takes unit whichUnit returns integer
-	local integer H4X
+	local integer typeId
 	local integer i = 0
 	if whichUnit == null then
 		return -2
 	endif
-	set H4X = GetUnitTypeId(whichUnit)
+	set typeId = GetUnitTypeId(whichUnit)
 	loop
-	exitwhen i > MaxItemsNumber
-		if XRV[i]== H4X then
+	exitwhen i > MaxItemCount
+		if ItemSellDummy[i]== typeId then
 			return i
 		endif
 		set i = i + 1
@@ -8788,6 +8494,7 @@ function AddItemToUnitSlot takes unit trigUnit, item whichItem, integer itemSlot
 	local integer i = 0
 	local boolean array b
 	local item dummyItem
+	local boolean isEnabled = IsTriggerEnabled(UnitManipulatItemTrig)
 	call DisableTrigger(UnitManipulatItemTrig)
 	loop
 	exitwhen i >(UnitInventorySize(trigUnit)-1)
@@ -8799,9 +8506,13 @@ function AddItemToUnitSlot takes unit trigUnit, item whichItem, integer itemSlot
 			set b[i] = false
 		endif
 		if i == itemSlot then
-			call EnableTrigger(UnitManipulatItemTrig)
-			call UnitAddItem(trigUnit, whichItem)
-			call DisableTrigger(UnitManipulatItemTrig)
+			if isEnabled then 
+				call EnableTrigger(UnitManipulatItemTrig)
+				call UnitAddItem(trigUnit, whichItem)
+				call DisableTrigger(UnitManipulatItemTrig)
+			else
+				call UnitAddItem(trigUnit, whichItem)
+			endif
 		endif
 		set i = i + 1
 	endloop
@@ -8813,7 +8524,9 @@ function AddItemToUnitSlot takes unit trigUnit, item whichItem, integer itemSlot
 		endif
 		set i = i + 1
 	endloop
-	call EnableTrigger(UnitManipulatItemTrig)
+	if isEnabled then 
+		call EnableTrigger(UnitManipulatItemTrig)
+	endif
 	set TempItem  = whichItem
 	set whichItem = null
 	set dummyItem = null
@@ -8827,6 +8540,7 @@ function CreateItemToUnitSlotByIndex takes unit trigUnit, integer itemId, intege
 	local integer i = 0
 	local boolean array hasDummyItem
 	local item dummyItem
+	local boolean isEnabled = IsTriggerEnabled(UnitManipulatItemTrig)
 	call DisableTrigger(UnitManipulatItemTrig)
 	// 如果位置上没有物品 则用空物品挤占
 	if itemId > 0 then
@@ -8840,9 +8554,13 @@ function CreateItemToUnitSlotByIndex takes unit trigUnit, integer itemId, intege
 				set hasDummyItem[i]= false
 			endif
 			if i == itemSlot then
-				call EnableTrigger(UnitManipulatItemTrig)
-				call UnitAddItem(trigUnit, whichItem)
-				call DisableTrigger(UnitManipulatItemTrig)
+				if isEnabled then
+					call EnableTrigger(UnitManipulatItemTrig)
+					call UnitAddItem(trigUnit, whichItem)
+					call DisableTrigger(UnitManipulatItemTrig)
+				else
+					call UnitAddItem(trigUnit, whichItem)
+				endif
 			endif
 			set i = i + 1
 		endloop
@@ -8855,7 +8573,9 @@ function CreateItemToUnitSlotByIndex takes unit trigUnit, integer itemId, intege
 			set i = i + 1
 		endloop
 	endif
-	call EnableTrigger(UnitManipulatItemTrig)
+	if isEnabled then
+		call EnableTrigger(UnitManipulatItemTrig)
+	endif
 	set TempItem = whichItem
 	set whichItem = null
 	set dummyItem = null
@@ -12954,10 +12674,10 @@ function YSX takes nothing returns nothing
 	endif
 	set FPV = false
 	set E8V = false
-	set it = CreateItem(XXV[AIV], GetUnitX(Roshan), GetUnitY(Roshan))
+	set it = CreateItem(PowerupItem[AIV], GetUnitX(Roshan), GetUnitY(Roshan))
 	call SetItemCharges(it, 1)
 	if GetUnitAbilityLevel(Roshan,'A0Q6') == 1 then
-		set it = CreateItem(XXV[R6V], GetUnitX(Roshan), GetUnitY(Roshan))
+		set it = CreateItem(PowerupItem[R6V], GetUnitX(Roshan), GetUnitY(Roshan))
 		call SetItemCharges(it, 1)
 	endif
 	call RemoveItem(UnitRemoveItemFromSlot(Roshan, 0))
@@ -13667,7 +13387,7 @@ function Z3X takes unit Y1X, unit KKX, boolean Z4X, integer Z5X returns nothing
 				call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Items\\AIem\\AIemTarget.mdl", KKX, "origin"))
 				set it = null
 			else
-				set it = CreateItem(XXV[CombinedIndex[k]], GetUnitX(KKX), GetUnitY(KKX))
+				set it = CreateItem(PowerupItem[CombinedIndex[k]], GetUnitX(KKX), GetUnitY(KKX))
 				if CombinedIndex[k]== NIV or CombinedIndex[k]== Item_MagicWand or CombinedIndex[k]== IUV or CombinedIndex[k]== IWV then
 					if HaveSavedInteger(HY,'ITEM', 300) then
 						call SetItemCharges(it, LoadInteger(HY,'ITEM', 300))
@@ -14247,14 +13967,14 @@ function EJO takes player whichPlayer, unit whichUnit, unit EKO, integer GTX, re
 		if HHX(GSX(GTX)) then
 			if H_X(EMO) == 0 or EMO == null then
 				if EMO == null then
-					call HYX(XXV[GTX], x, y, whichPlayer, true, HUX)
+					call HYX(PowerupItem[GTX], x, y, whichPlayer, true, HUX)
 				else
 					if GetDistanceBetween(GetUnitX(EMO), GetUnitY(EMO), x, y)> 2000 then
 						set x = GetUnitX(EMO)
 						set y = GetUnitY(EMO)
 						call InterfaceErrorForPlayer(whichPlayer, "Inventory is full!")
 					endif
-					call HYX(XXV[GTX], x, y, whichPlayer, true, HUX)
+					call HYX(PowerupItem[GTX], x, y, whichPlayer, true, HUX)
 				endif
 			else
 				set HWX = UnitAddItemById(EMO, RealItem[GTX])
@@ -14264,9 +13984,9 @@ function EJO takes player whichPlayer, unit whichUnit, unit EKO, integer GTX, re
 			endif
 		elseif HGX(GSX(GTX)) then
 			if EMO == null or(H_X(EMO) == 0 and GetItemOfTypeFromUnit(EMO, RealItem[GTX]) == null) then
-				call HYX(XXV[GTX], x, y, whichPlayer, true, H7X(GTX))
+				call HYX(PowerupItem[GTX], x, y, whichPlayer, true, H7X(GTX))
 			else
-				set HWX = CreateItem(XXV[GTX], x, y)
+				set HWX = CreateItem(PowerupItem[GTX], x, y)
 				call SetItemPlayer(HWX, whichPlayer, true)
 				call SetItemUserData(HWX, ELO)
 				call SetItemCharges(HWX, H7X(GTX))
@@ -14275,14 +13995,14 @@ function EJO takes player whichPlayer, unit whichUnit, unit EKO, integer GTX, re
 		else
 			if H_X(EMO) == 0 or EMO == null then
 				if EMO == null then
-					call HYX(XXV[GTX], x, y, whichPlayer, true, 0)
+					call HYX(PowerupItem[GTX], x, y, whichPlayer, true, 0)
 				else
 					if GetDistanceBetween(GetUnitX(EMO), GetUnitY(EMO), x, y)> 2000 then
 						set x = GetUnitX(EMO)
 						set y = GetUnitY(EMO)
 						call InterfaceErrorForPlayer(whichPlayer, "Inventory is full!")
 					endif
-					call HYX(XXV[GTX], x, y, whichPlayer, true, 0)
+					call HYX(PowerupItem[GTX], x, y, whichPlayer, true, 0)
 				endif
 			else
 				if GTX != NXV then
@@ -14756,7 +14476,7 @@ function XNO takes nothing returns nothing
 		endif
 		set x = E2O(GetSellingUnit(), u)
 		set y = E3O(GetSellingUnit(), u)
-		call HYX(XXV[H3X(u)], x, y, p, true, H7X(H3X(u)))
+		call HYX(PowerupItem[H3X(u)], x, y, p, true, H7X(H3X(u)))
 	else
 		call EPO(p, GSX(GTX))
 		if RealItem[GTX]== 0 then
@@ -14964,7 +14684,7 @@ function XLO takes unit trigUnit, item whichItem returns boolean
 		call InterfaceErrorForPlayer(GetOwningPlayer(u), GetObjectName('n02L'))
 		set TempPlayer = GetItemPlayer(whichItem)
 		call RemoveItem(whichItem)
-		set TempItem = CreateItem(XXV[GTX], x, y)
+		set TempItem = CreateItem(PowerupItem[GTX], x, y)
 		call SetItemPlayer(TempItem, TempPlayer, false)
 		call SetItemUserData(TempItem, 1)
 	endif
@@ -14972,7 +14692,7 @@ function XLO takes unit trigUnit, item whichItem returns boolean
 		call InterfaceErrorForPlayer(GetOwningPlayer(u), GetObjectName('n02C'))
 		set TempPlayer = GetItemPlayer(whichItem)
 		call RemoveItem(whichItem)
-		set TempItem = CreateItem(XXV[GTX], x, y)
+		set TempItem = CreateItem(PowerupItem[GTX], x, y)
 		call SetItemPlayer(TempItem, TempPlayer, false)
 		call SetItemUserData(TempItem, 1)
 	endif
@@ -15019,7 +14739,7 @@ function XLO takes unit trigUnit, item whichItem returns boolean
 		set Q2 = GetItemCharges(whichItem)
 		call RemoveItem(whichItem)
 		if GTX == AIV then
-			set TempItem = CreateItem(XXV[GTX], GetRectCenterX(gg_rct_RoshanSpawn), GetRectCenterY(gg_rct_RoshanSpawn))
+			set TempItem = CreateItem(PowerupItem[GTX], GetRectCenterX(gg_rct_RoshanSpawn), GetRectCenterY(gg_rct_RoshanSpawn))
 			call SetItemCharges(TempItem, Q2)
 		endif
 		call SetItemPlayer(TempItem, TempPlayer, false)
@@ -15069,7 +14789,7 @@ function XSO takes unit trigUnit, item whichItem returns boolean
 			set TempPlayer = GetItemPlayer(UWV)
 			call HZX(UWV)
 			if XWO then
-				set TempItem = UnitAddItemById(trigUnit, XIV[XTO])
+				set TempItem = UnitAddItemById(trigUnit, DisabledItem[XTO])
 			else
 				set TempItem = UnitAddItemById(trigUnit, RealItem[XTO])
 			endif
@@ -15089,7 +14809,7 @@ function XSO takes unit trigUnit, item whichItem returns boolean
 			set TempPlayer = GetItemPlayer(UWV)
 			call HZX(UWV)
 			if XWO then
-				set TempItem = UnitAddItemById(trigUnit, XIV[XTO])
+				set TempItem = UnitAddItemById(trigUnit, DisabledItem[XTO])
 			else
 				set TempItem = UnitAddItemById(trigUnit, RealItem[XTO])
 			endif
@@ -15158,9 +14878,9 @@ function XZO takes nothing returns boolean
 				set HTX = true
 			endif
 			if IsPlayerEnemy(p, X1O) then
-				call HYX(XXV[GTX], CirclesX[GetPlayerId(p)], CirclesY[GetPlayerId(p)], X1O, HTX, HUX)
+				call HYX(PowerupItem[GTX], CirclesX[GetPlayerId(p)], CirclesY[GetPlayerId(p)], X1O, HTX, HUX)
 			else
-				call HYX(XXV[GTX], CirclesX[GetPlayerId(X1O)], CirclesY[GetPlayerId(X1O)], X1O, HTX, HUX)
+				call HYX(PowerupItem[GTX], CirclesX[GetPlayerId(X1O)], CirclesY[GetPlayerId(X1O)], X1O, HTX, HUX)
 			endif
 			call InterfaceErrorForPlayer(p, GetObjectName('n0DR'))
 			if X0O == false then
@@ -15184,7 +14904,7 @@ function XZO takes nothing returns boolean
 					call SetItemCharges(HWX, HUX)
 				endif
 			endif
-		elseif Mode__PoolMode == false and X0O == false and GetItemType(whichItem) == ITEM_TYPE_PERMANENT and p != X1O and XIV[GetItemIndexEx(whichItem)]!= 0 and(GetPlayerSlotState(X1O) == PLAYER_SLOT_STATE_LEFT) == false then
+		elseif Mode__PoolMode == false and X0O == false and GetItemType(whichItem) == ITEM_TYPE_PERMANENT and p != X1O and DisabledItem[GetItemIndexEx(whichItem)]!= 0 and(GetPlayerSlotState(X1O) == PLAYER_SLOT_STATE_LEFT) == false then
 			if HHX(GTX) then
 				set HTX = true
 			else
@@ -15192,7 +14912,7 @@ function XZO takes nothing returns boolean
 			endif
 			call HZX(whichItem)
 			set X4O = true
-			set HWX = UnitAddItemById(ZWX, XIV[GTX])
+			set HWX = UnitAddItemById(ZWX, DisabledItem[GTX])
 			set X3O = HWX
 			call SetItemPlayer(HWX, X1O, false)
 			call SetItemUserData(HWX, 0)
@@ -15225,7 +14945,7 @@ function XZO takes nothing returns boolean
 			if (p != X1O and IsOfflinePlayer(X1O) == false and(GTX == R0V or GTX == R_V or GTX == RYV)) then
 				call DisableTrigger(UnitManipulatItemTrig)
 				call HZX(whichItem)
-				set HWX = UnitAddItemById(ZWX, XIV[GTX])
+				set HWX = UnitAddItemById(ZWX, DisabledItem[GTX])
 				set X3O = HWX
 				call SetItemPlayer(HWX, X1O, false)
 				call SetItemUserData(HWX, 1)
@@ -15247,7 +14967,7 @@ function XZO takes nothing returns boolean
 				call DisableTrigger(UnitManipulatItemTrig)
 				if H_X(ZWX) == 0 and G2X(X1O, ZWX, GTX) == null then
 					call InterfaceErrorForPlayer(p, GetObjectName('n02O'))
-					call HYX(XXV[(GTX)],(((LoadReal(HY, h, 6)))* 1.),(((LoadReal(HY, h, 7)))* 1.),(X1O),(true),(HUX))
+					call HYX(PowerupItem[(GTX)],(((LoadReal(HY, h, 6)))* 1.),(((LoadReal(HY, h, 7)))* 1.),(X1O),(true),(HUX))
 				else
 					set X2O = G2X(X1O, ZWX, GTX)
 					if X2O == null then
@@ -15263,8 +14983,8 @@ function XZO takes nothing returns boolean
 				endif
 				call EnableTrigger(UnitManipulatItemTrig)
 			else
-				if XIV[GTX]> 0 then
-					set Q2 = XIV[GTX]
+				if DisabledItem[GTX]> 0 then
+					set Q2 = DisabledItem[GTX]
 				else
 					set Q2 = RealItem[GTX]
 				endif
@@ -15278,7 +14998,7 @@ function XZO takes nothing returns boolean
 					call SetItemCharges(HWX, HUX)
 				elseif X2O == null and H_X(ZWX) == 0 then
 					call InterfaceErrorForPlayer(p, GetObjectName('n02O'))
-					call HYX(XXV[(GTX)],(((LoadReal(HY, h, 6)))* 1.),(((LoadReal(HY, h, 7)))* 1.),(X1O),(true),(HUX))
+					call HYX(PowerupItem[(GTX)],(((LoadReal(HY, h, 6)))* 1.),(((LoadReal(HY, h, 7)))* 1.),(X1O),(true),(HUX))
 				else
 					call SetItemCharges(X2O, HUX + GetItemCharges(X2O))
 				endif
@@ -15308,7 +15028,7 @@ function XZO takes nothing returns boolean
 				if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or HHX(GTX) or GTX == R_V or GTX == RYV or GTX == R0V or GTX == it_jys then
 					set HTX = true
 				endif
-				call HYX(XXV[GTX], GetItemX(whichItem), GetItemY(whichItem), X1O, HTX, HUX)
+				call HYX(PowerupItem[GTX], GetItemX(whichItem), GetItemY(whichItem), X1O, HTX, HUX)
 				call HZX(whichItem)
 			endif
 		endif
@@ -15544,7 +15264,7 @@ function UYYRQ takes nothing returns nothing
 endfunction
 
 // 获取装备和丢弃装备
-function OMO takes nothing returns boolean
+function OnManipulatItem takes nothing returns boolean
 	local item whichItem
 	local integer X_O
 	local unit u = GetTriggerUnit()
@@ -15561,6 +15281,7 @@ function OMO takes nothing returns boolean
 	// 非镜像 英雄或者熊灵
 	if (IsUnitType(u, UNIT_TYPE_HERO) or IsUnitBear(u)) and not IsUnitIllusion(u) then
 		if GetTriggerEventId() == EVENT_PLAYER_UNIT_PICKUP_ITEM then
+			call ItemSystem_OnPickup(u, GetManipulatedItem())
 			if i == RealItem[Item_TheButterfly]or i == RealItem[RXV]or i == RealItem[AWV]or i == RealItem[N1V]or i == RealItem[RJV] or i == RealItem[ASV] then
 				if i == RealItem[Item_TheButterfly] then
 					call EnableAttackEffectByTime(2, 0)
@@ -15580,9 +15301,9 @@ function OMO takes nothing returns boolean
 			if i == RealItem[OYV] then
 				set CDV[id]= CDV[id] + 1
 			elseif i == RealItem[Item_KelenDagger] then
-				set KelenDaggerCount = KelenDaggerCount + 1
-				set CFV[id]= CFV[id] + 1
-				call ItemKelenDaggerOnPickup(u, it)
+				//set KelenDaggerCount = KelenDaggerCount + 1
+				//set PlayerKelenDaggerCount[id]= PlayerKelenDaggerCount[id] + 1
+				//call ItemKelenDaggerOnPickup(u, it)
 			elseif i == RealItem[AWV]or i == RealItem[AYV] then
 				call ExecuteFunc("OPO")
 			elseif i == RealItem[NIV] then
@@ -15653,12 +15374,13 @@ function OMO takes nothing returns boolean
 				call AetherLensOnPick(u)
 			endif
 		elseif GetTriggerEventId() == EVENT_PLAYER_UNIT_DROP_ITEM then
+			call ItemSystem_OnDrop(u, GetManipulatedItem())
 			if i == RealItem[OYV] then
 				set CDV[id]= CDV[id]-1
 			elseif i == RealItem[Item_KelenDagger] then
-				set CFV[id]= CFV[id]-1
-				set KelenDaggerCount = KelenDaggerCount -1
-				call ItemKelenDaggerOnDrop(u, it)
+				//set PlayerKelenDaggerCount[id]= PlayerKelenDaggerCount[id]-1
+				//set KelenDaggerCount = KelenDaggerCount -1
+				//call ItemKelenDaggerOnDrop(u, it)
 			elseif i == RealItem[Item_TranquilBoots] then
 				set C8V[id]= C8V[id]-1
 				set TranquilBootsCount = TranquilBootsCount -1
@@ -15673,7 +15395,7 @@ function OMO takes nothing returns boolean
 			elseif i == RealItem[Item_HeartOfTarrasque] then
 				set C7V[id]= C7V[id]-1
 				set HeartOfTarrasqueCount = HeartOfTarrasqueCount -1
-			elseif i == RealItem[Item_LinkenSphere]or i == XIV[Item_LinkenSphere] then
+			elseif i == RealItem[Item_LinkenSphere]or i == DisabledItem[Item_LinkenSphere] then
 				set CWV = IMaxBJ(CWV -1, 0)
 				set CJV[id]= IMaxBJ(CJV[id]-1, 0)
 				call UnitRemoveAbility(u,'B0BI')
@@ -16026,16 +15748,16 @@ function RCO takes unit trigUnit, item whichItem returns nothing
 			set it = GetItemOfTypeFromUnit(trigUnit, RealItem[O2V])
 		endif
 		if it == null then
-			set it = GetItemOfTypeFromUnit(trigUnit, XIV[O_V])
+			set it = GetItemOfTypeFromUnit(trigUnit, DisabledItem[O_V])
 		endif
 		if it == null then
-			set it = GetItemOfTypeFromUnit(trigUnit, XIV[O0V])
+			set it = GetItemOfTypeFromUnit(trigUnit, DisabledItem[O0V])
 		endif
 		if it == null then
-			set it = GetItemOfTypeFromUnit(trigUnit, XIV[O1V])
+			set it = GetItemOfTypeFromUnit(trigUnit, DisabledItem[O1V])
 		endif
 		if it == null then
-			set it = GetItemOfTypeFromUnit(trigUnit, XIV[O2V])
+			set it = GetItemOfTypeFromUnit(trigUnit, DisabledItem[O2V])
 		endif
 		if it != null then
 			if XI[GetPlayerId(GetOwningPlayer(trigUnit))]== false then
@@ -16048,7 +15770,7 @@ function RCO takes unit trigUnit, item whichItem returns nothing
 				if GetOwningPlayer(trigUnit) == TempPlayer then
 					set TempItem = CreateItemToUnitSlotByIndex(trigUnit, RealItem[k], i)
 				else
-					set TempItem = CreateItemToUnitSlotByIndex(trigUnit, XIV[k], i)
+					set TempItem = CreateItemToUnitSlotByIndex(trigUnit, DisabledItem[k], i)
 				endif
 				call EnableTrigger(UnitManipulatItemTrig)
 				call SetItemPlayer(TempItem, TempPlayer, false)
@@ -16066,7 +15788,7 @@ function RCO takes unit trigUnit, item whichItem returns nothing
 				if GetOwningPlayer(trigUnit) == TempPlayer then
 					set TempItem = CreateItemToUnitSlotByIndex(trigUnit, RealItem[k], i)
 				else
-					set TempItem = CreateItemToUnitSlotByIndex(trigUnit, XIV[k], i)
+					set TempItem = CreateItemToUnitSlotByIndex(trigUnit, DisabledItem[k], i)
 				endif
 				call EnableTrigger(UnitManipulatItemTrig)
 				call SetItemPlayer(TempItem, TempPlayer, false)
@@ -16193,7 +15915,7 @@ function RJO takes nothing returns boolean
 endfunction
 
 function RKO takes player p, integer RLO, integer id, real x, real y returns nothing
-	local item it = CreateItem(XXV[id], x, y)
+	local item it = CreateItem(PowerupItem[id], x, y)
 	call SetItemPlayer(it, p, false)
 	call SetItemUserData(it, RLO)
 	set it = null
@@ -16613,14 +16335,16 @@ function IGO takes unit u returns nothing
 	local real time = (LoadReal(HY, GetHandleId(u), 785) + 3) - GetGameTime() 
 	if ( (LoadReal(HY, GetHandleId(u), 785) ) + 3) > GetGameTime() then
 		set b = true
+		//call BJDebugMsg("我受伤了我要换跳刀")
 	endif
 	loop
 		set it = UnitItemInSlot(u, i)
 		set itemIndex = GetItemIndex(it)
 		if (itemIndex == Item_KelenDagger and b) or(itemIndex == Item_DisabledKelenDagger and time >= 2.9) then
+			call BJDebugMsg("坏了")
 			call DisableTrigger(UnitManipulatItemTrig)
 			set TempPlayer = GetItemPlayer(it)
-			call RemoveItem(it)
+			call RemoveItem(it) // 这里不触发丢弃 但是只触发拾取
 			set TempItem = CreateItemToUnitSlotByIndex(u, RealItem[Item_DisabledKelenDagger], i)
 			call StartUnitAbilityCooldownAbsolute(u, 'A445')
 			call SetItemPlayer(TempItem, TempPlayer, false)
@@ -16628,6 +16352,7 @@ function IGO takes unit u returns nothing
 			call EnableTrigger(UnitManipulatItemTrig)
 		endif
 		if itemIndex == Item_DisabledKelenDagger and b == false then
+			call BJDebugMsg("好了")
 			call DisableTrigger(UnitManipulatItemTrig)
 			set TempPlayer = GetItemPlayer(it)
 			call RemoveItem(it)
@@ -16649,8 +16374,9 @@ endfunction
 
 function DHNO takes unit u, integer id returns nothing
 	//if GetUnitAbilityLevel(u,'A0RN') == 0 then
-	if CFV[id]> 0 then
+	if PlayerKelenDaggerCount[id]> 0 then
 		call IGO(u)
+		//call BJDebugMsg("我说玩家"+I2S(id)+"you跳刀你耳聋吗")
 	endif
 	if C8V[id]> 0 then
 		call IOO(u)
@@ -16667,6 +16393,7 @@ function IHO takes nothing returns boolean
 	local unit u
 	local integer id
 	if KelenDaggerCount > 0 or TranquilBootsCount > 0 or HeartOfTarrasqueCount > 0 then
+		//call BJDebugMsg("我在遍历了")
 		//绿鞋
 		loop
 		exitwhen i > 5
@@ -17338,7 +17065,7 @@ function GLE takes nothing returns boolean
 		set h = GetHandleId(u)
 		call SaveUnitHandle(HY, h,'g', null)
 		call SaveInteger(HY, h,104, 0)
-		if (GetItemOfTypeFromUnit(GetTriggerUnit(), RealItem[O_V])!= null or GetItemOfTypeFromUnit(GetTriggerUnit(), XIV[O_V])!= null) and(GetUnitTypeId(GetSpellTargetUnit())=='nfoh' or GetUnitTypeId(GetSpellTargetUnit())=='ndfl') then
+		if (GetItemOfTypeFromUnit(GetTriggerUnit(), RealItem[O_V])!= null or GetItemOfTypeFromUnit(GetTriggerUnit(), DisabledItem[O_V])!= null) and(GetUnitTypeId(GetSpellTargetUnit())=='nfoh' or GetUnitTypeId(GetSpellTargetUnit())=='ndfl') then
 			call SaveUnitHandle(HY, h,'g', GetSpellTargetUnit())
 		elseif ZNX(GetItemTypeId(GetSpellTargetItem())) then
 			set id = ZAX(GetItemTypeId(GetSpellTargetItem()))
@@ -17381,7 +17108,7 @@ function AKO takes nothing returns nothing
 			if GetOwningPlayer(u) == TempPlayer then
 				set TempItem = CreateItemToUnitSlotByIndex(u, RealItem[APO], itemSlot)
 			else
-				set TempItem = CreateItemToUnitSlotByIndex(u, XIV[APO], itemSlot)
+				set TempItem = CreateItemToUnitSlotByIndex(u, DisabledItem[APO], itemSlot)
 			endif
 			call EnableTrigger(UnitManipulatItemTrig)
 			call SetItemPlayer(TempItem, TempPlayer, false)
@@ -18414,7 +18141,7 @@ function NLO takes nothing returns boolean
 	local boolean Q0X = LoadBoolean(HY, h, 0)
 	if Q0X == false then
 		if NMO == null then
-			set NMO = ACX(whichUnit, XIV[BUV])
+			set NMO = ACX(whichUnit, DisabledItem[BUV])
 		endif
 	endif
 	if NMO != null or Q0X then
@@ -18548,12 +18275,12 @@ function GSE takes nothing returns nothing
 		endif
 	elseif GetSpellTargetUnit()!= null then
 		if IsUnitAlly(GetTriggerUnit(), GetOwningPlayer(GetSpellTargetUnit())) and(IsUnitType(GetSpellTargetUnit(), UNIT_TYPE_HERO) or IsUnitBear(GetSpellTargetUnit())) then
-			call UnitAddItemById(GetSpellTargetUnit(), XXV[R1V])
+			call UnitAddItemById(GetSpellTargetUnit(), PowerupItem[R1V])
 		elseif IsUnitEnemy(GetTriggerUnit(), GetOwningPlayer(GetSpellTargetUnit())) and(GetUnitTypeId(GetSpellTargetUnit())=='oeye' or GetUnitTypeId(GetSpellTargetUnit())=='o004') then
 			call NTO(230)
 			call IOX(GetTriggerUnit(), GetSpellTargetUnit(), 2, 500, .0)
 		else
-			call CreateItem(XXV[R1V], GetUnitX(GetSpellTargetUnit()), GetUnitY(GetSpellTargetUnit()))
+			call CreateItem(PowerupItem[R1V], GetUnitX(GetSpellTargetUnit()), GetUnitY(GetSpellTargetUnit()))
 		endif
 	endif
 endfunction
@@ -19579,7 +19306,7 @@ function G4E takes nothing returns nothing
 	local unit B5O = GetTriggerUnit()
 	local item NMO = ACX(B5O, RealItem[BUV])
 	if NMO == null then
-		set NMO = ACX(B5O, XIV[BUV])
+		set NMO = ACX(B5O, DisabledItem[BUV])
 	endif
 	if NMO != null then
 		call HZX(NMO)
@@ -78369,8 +78096,8 @@ function ZHA takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	call RemoveItem(CreateItem('I006'+ GetRandomInt(0, 2), GetLocationX(LeftTopRuneLocatio), GetLocationY(LeftTopRuneLocatio)))
 	call RemoveItem(CreateItem('I006'+ GetRandomInt(0, 2), GetLocationX(RightBottomRuneLocatio), GetLocationY(RightBottomRuneLocatio)))
-	call RemoveItem(CreateItem(XXV[ASV], GetRandomReal(-6000, 6000), GetRandomReal(-6000, 6000)))
-	call RemoveItem(CreateItem(XXV[X4V], GetRandomReal(-6000, 6000), GetRandomReal(-6000, 6000)))
+	call RemoveItem(CreateItem(PowerupItem[ASV], GetRandomReal(-6000, 6000), GetRandomReal(-6000, 6000)))
+	call RemoveItem(CreateItem(PowerupItem[X4V], GetRandomReal(-6000, 6000), GetRandomReal(-6000, 6000)))
 	call TimerStart(t, GetRandomReal(1.5, 3), false, function ZHA)
 	set t = null
 endfunction
@@ -80236,898 +79963,6 @@ function InitPassiveSkills takes nothing returns nothing
 	call RegisterPassiveSkills('A3J7','A3J7','A02C', 0,'QP2B', 0)
 endfunction
 
-function RegisterItem takes integer EUN, integer EWN, integer EYN, integer EZN returns integer
-	set MaxItemsNumber = MaxItemsNumber + 1
-	set XXV[MaxItemsNumber]= EUN
-	set RealItem[MaxItemsNumber]= EWN
-	set XRV[MaxItemsNumber]= EYN
-	call SaveBoolean(SightDataHashTable, XRV[MaxItemsNumber], 0, true)
-	set XIV[MaxItemsNumber]= EZN
-	if EWN > 0 then
-		set ItemsIconFilePath[MaxItemsNumber]= GetAbilitySoundById(EWN, SOUND_TYPE_EFFECT_LOOPED)
-		if StringLength(ItemsIconFilePath[MaxItemsNumber])< 20 then
-		endif
-	endif
-	return MaxItemsNumber
-endfunction
-function InitItemsSystem takes nothing returns nothing
-	local string s = ""
-	call RegisterItem('I0FF','I0FG', 0, 0)
-	set it_mlq = RegisterItem('I0UB','I0UC', 0,'I0UD')
-	call SaveInteger(HY,'ITDB', RegisterItem(0, 0,'n12V', 0), it_mlq)
-	set it_xj = RegisterItem('I0VJ','I0VK', 0,'I0VL')
-	set jz_xj = RegisterItem('I0VG','I0VH','h0EU','I0VI')
-	set Recipe_HurricanePike = RegisterItem('I0VX','I0VY','n138','I0VZ')
-	set Item_HurricanePike = RegisterItem('I0W0','I0W1', 0,'I0W2')
-	set it_hyzr = RegisterItem('I0VM','I0VN', 0,'I0VO')
-	call SaveInteger(HY,'ITDB', RegisterItem(0, 0,'n134', 0), it_hyzr)
-	set it_jys = RegisterItem('I0RC','I0RD','n139', 0)
-	set it_fj = RegisterItem('IZPS','IZPD', 0,'IZPE')
-	call SaveInteger(HY,'ITDB', RegisterItem(0, 0,'n125', 0), it_fj)//否决一键购买
-
-	set Recipe_AetherLens = RegisterItem('I0V3','I0V4','n12W','I0V5')
-	set Item_AetherLens   = RegisterItem('I0UE','I0UF',     0,'I0UG')
-
-	set XMV = RegisterItem('I02Q','I02O','h011','I00A')
-	set XPV = RegisterItem('I02S','I02P','h012','I0CA')
-	set XQV = RegisterItem('I02N','I02R','h013','I0CS')
-	set XSV = RegisterItem('I02X','I02Y','h015','I0D4')
-	set XTV = RegisterItem('I02Z','I043','h016','I0CV')
-	set XUV = RegisterItem('I030','I044','h017','I0D2')
-	set XWV = RegisterItem('I031','I045','h018','I0D5')
-	set XYV = RegisterItem('I032','I046','h019','I0CZ')
-	set XZV = RegisterItem('I033','I047','h01A','I0D7')
-	set X_V = RegisterItem('I034','I048','h01B','I0CX')
-	set X0V = RegisterItem('I035','I049','h01C','I0CI')
-	set X1V = RegisterItem('I036','I04A','h01D','I0CH')
-	set X2V = RegisterItem('I037','I04B','h01E','I0CR')
-	set X3V = RegisterItem('I038','I04C','h01F','I0CJ')
-	set X4V = RegisterItem('I039','I04D','h01G','I0DG')
-	set X5V = RegisterItem('I0MS','I0MR', 0,'I0MT')
-	set X6V = RegisterItem('I03B','I04E','h01H','I0DA')
-	set X7V = RegisterItem('I03C','I04F','h01I','I0CQ')
-	set Item_IronwoodBranch = RegisterItem('I03D','I04G','h01J','I0CU')
-	set Item_KelenDagger = RegisterItem('I03E','I04H','h01K','I0C7')
-	set Item_DisabledKelenDagger = RegisterItem('I03E','I04I','h01K','I0DH')
-	set OEV = RegisterItem('I03F','I04J','h01L','I0CM')
-	set OXV = RegisterItem('I03G','I04K','h01M','I0CD')
-	set OOV = RegisterItem('I03H','I04L','h01N','I0CG')
-	set ORV = RegisterItem('I03I','I04M','h01O','I0D0')
-	set OIV = RegisterItem('I03J','I04N','h01P','I0CN')
-	set OAV = RegisterItem('I03K','I04O','h01Q','I0D8')
-	set ONV = RegisterItem('I03L','I04P','h01R','I0CE')
-	set OBV = RegisterItem('I03M','I04Q','h01S','I0DB')
-	set OCV = RegisterItem('I03N','I04R','h01T','I0CL')
-	set ODV = RegisterItem('I03P','I04S','h01U','I0CY')
-	set OFV = RegisterItem('I03Q','I04T','h01V','I0DI')
-	set OGV = RegisterItem('I03R','I04U','h01W','I0CW')
-	set OHV = RegisterItem('I03S','I04V','h01X','I0DJ')
-	set OJV = RegisterItem('I03T','I04W','h01Y','I0CP')
-	set OKV = RegisterItem('I03U','I04X','h01Z','I0CC')
-	set OLV = RegisterItem('I03V','I04Y','h020','I0C5')
-	set OMV = RegisterItem('I03W','I04Z','h021','I0DK')
-	set OPV = RegisterItem('I03X','I050','h022','I0D1')
-	set OQV = RegisterItem('I03A','I051','h023','I0D9')
-	set OSV = RegisterItem('I0KB','I0KA', 0,'I0KC')
-	set OTV = RegisterItem('I03Y','I052','h024','I0C9')
-	set OUV = RegisterItem('I03Z','I053','h025','I0CK')
-	set OWV = RegisterItem('I040','I054','h026','I0DL')
-	set OYV = RegisterItem('I041','I055','h027','I0D6')
-	set OZV = RegisterItem('I00L','I0AV','h02B', 0)
-	set O_V = RegisterItem('I05E','I0AM', 0,'I0DN')
-	set O0V = RegisterItem('I0AU','I0AN', 0,'I0DO')
-	set O1V = RegisterItem('I0AS','I0AO', 0,'I0DP')
-	set O2V = RegisterItem('I0AT','I0AP', 0,'I0DQ')
-	set O7V = RegisterItem('I0GW','I0GY', 0,'I0H3')
-	set O6V = RegisterItem('I0H2','I0GX', 0,'I0DR')
-	set O5V = RegisterItem('I0GV','I0H1', 0,'I0H4')
-	set O8V = RegisterItem('I0Q8','I0Q7', 0,'I0Q9')
-	set O4V = RegisterItem('I0AR','I0H0', 0,'I0H6')
-	set O3V = RegisterItem('I0AQ','I0GZ', 0,'I0H5')
-	set Item_MagicStick = RegisterItem('I0GD','I0GC','h074','I0GE')
-	set Item_MagicWand = RegisterItem('I0HC','I0HB', 0,'I0HA')
-	call SaveInteger(HY,'ITDB', RegisterItem(0, 0,'h07S', 0), Item_MagicWand)
-	set RVV = RegisterItem('I0HT','I0HR','h07W','I0HV')
-	set REV = RegisterItem('I0HU','I0HP', 0,'I0HW')
-	set RXV = RegisterItem('I0J7','I0J6','h083','I0J8')
-	set NTV = RegisterItem('I0JJ','I0JI','h087','I0JK')
-	set XKV = RegisterItem('I0MA','I0M9','h0CM','I0MB')
-	set XLV = RegisterItem('I0MD','I0ME', 0,'I0MC')
-	set R0V = RegisterItem('I057','I05C','h02A','ITGB')
-	set XHV = RegisterItem('I0QI','I0QH', 0,'I0QJ')
-	set XJV = RegisterItem('I0QL','I0QK','ho02','I0QM')
-	set R1V = RegisterItem('INTD','INTG', 0, 0)
-	set RYV = RegisterItem('I042','I05D','h028','INCP')
-	set RZV = RegisterItem('I0HO','I0HN','h07V', 0)
-	set R_V = RegisterItem('I056','I05F','h029','INHS')
-	set R2V = RegisterItem('I058','I05G','h02C', 0)
-	set R3V = RegisterItem('I059','I05H','h02D', 0)
-	set R4V = RegisterItem('I05A','I05I','h02E', 0)
-	set R5V = RegisterItem('I05B','I05J','h02F', 0)
-	set R6V = RegisterItem('I0B0','I0B1', 0, 0)
-	set R7V = RegisterItem('I0TC','I0TD', 0, 0)
-	set R8V = RegisterItem('I0GI','I0GH','h076', 0)
-	set R9V = RegisterItem('I0KT','I0KS','h0B9', 0)
-	set IVV = RegisterItem('I0NF','I0NG','h0D3', 0)
-	set IEV = RegisterItem('I061','I062', 0,'I01J')
-	set IXV = RegisterItem('I064','I063', 0,'I01K')
-	set IOV = RegisterItem('I065','I066', 0,'I01L')
-	set IRV = RegisterItem('I068','I067', 0,'I01M')
-	set IIV = RegisterItem('I069','I06A', 0,'I0C6')
-	set IAV = RegisterItem('I06C','I06B', 0,'I01P')
-	set IBV = RegisterItem('I03O','I02T', 0,'I01R')
-	set ICV = RegisterItem('I02U','I05Y', 0,'I01Q')
-	set IDV = RegisterItem('I060','I05Z', 0,'I01S')
-	set IFV = RegisterItem('I06E','I06D', 0,'I01T')
-	set IGV = RegisterItem('I0NO','I0NN', 0,'I0NP')
-	set IHV = RegisterItem('I06G','I06F', 0,'I01U')
-	set IJV = RegisterItem('I06I','I06H', 0,'I01V')
-	set IKV = RegisterItem('I06K','I06J', 0,'I01W')
-	set ILV = RegisterItem('I06M','I06L', 0,'I01X')
-	set IMV = RegisterItem('I08F','I08G', 0,'I01Y')
-	set IPV = RegisterItem('I08I','I08H', 0,'I01Z')
-	set IQV = RegisterItem('I08J','I08K', 0,'I020')
-	set ISV = RegisterItem('I08N','I08O', 0,'I021')
-	set ITV = RegisterItem('I08Q','I08P', 0,'I022')
-	set IUV = RegisterItem('I08S','I08R', 0,'I023')
-	set IWV = RegisterItem('I0JB','I0J9', 0,'I0JD')
-	set IYV = RegisterItem('I0EW','I0EV', 0,'I0EX')
-	set IZV = RegisterItem('I0JC','I0JA', 0,'I0JE')
-	set I_V = RegisterItem('I08U','I08T', 0,'I024')
-	set I0V = RegisterItem('I08W','I08V', 0,'I0CO')
-	set I1V = RegisterItem('I08X','I08Y', 0,'I025')
-	set Item_EulScepterOfDivinity = RegisterItem('I090','I08Z', 0,'I026')
-	set I3V = RegisterItem('I092','I091', 0,'I027')
-	set I4V = RegisterItem('I094','I093', 0,'I028')
-	set I5V = RegisterItem('I096','I095', 0,'I029')
-	set I6V = RegisterItem('I098','I097', 0,'I02A')
-	set I7V = RegisterItem('I09A','I099', 0,'I02B')
-	set I8V = RegisterItem('I09B','I09C', 0,'I02C')
-	// BKB 6 种
-	set I9V = RegisterItem('I0G2','I0FZ', 0,'I0G8')// 10
-	set AVV = RegisterItem('I0G6','I0G0', 0,'I0G9')// 9
-	set AEV = RegisterItem('I09E','I0FY', 0,'I0G7')// 8
-	set AXV = RegisterItem('I0G5','I0FS', 0,'I02D')// 7
-	set AOV = RegisterItem('I0G3','I09D', 0,'I0GB')// 6
-	set ARV = RegisterItem('I0G4','I0G1', 0,'I0GA')// 5
-	set AIV = RegisterItem('I0AX','I0AW', 0, 0)
-	set AAV = RegisterItem('I0TE','I0TF', 0, 0)
-	set ANV = RegisterItem('I09G','I09F', 0,'I02E')	//近战分身斧
-	set ABV = RegisterItem('I0MV','I0MU', 0,'I0MW')	//远程分身斧
-	set ACV = RegisterItem('I09I','I09H', 0,'I02F')
-	set ADV = RegisterItem('I09K','I09M', 0,'I01G')//1
-	set AFV = RegisterItem('I09J','I09P', 0,'I02G')//2
-	set AGV = RegisterItem('I09Q','I09N', 0,'I0DC')//3
-	set AHV = RegisterItem('I09S','I09O', 0,'I0DD')//4
-	set AJV = RegisterItem('I09R','I09L', 0,'I0D3')//5级大根
-	set AKV = RegisterItem('I09U','I09T', 0,'I02H')
-	set ALV = RegisterItem('I09V','I09X', 0,'I02I')
-	set AMV = RegisterItem('I09W','I09Y', 0,'I02J')
-	set Item_LinkenSphere = RegisterItem('I0A0','I09Z', 0,'I0BO')
-	set AQV = RegisterItem('I0HK','I0HJ', 0,'I0HL')
-	set ASV = RegisterItem('I0A2','I0A1', 0,'I0BP')
-	set ATV = RegisterItem('I0LI','I0LJ', 0,'I0LK')
-	set AUV = RegisterItem('I0A4','I0A3', 0,'I0BQ')
-	set AWV = RegisterItem('I0A6','I0A5', 0,'I0BR')
-	set AYV = RegisterItem('I0K8','I0K7', 0,'I0K9')
-	set AZV = RegisterItem('I0A7','I0A8', 0,'I0BS')
-	set A_V = RegisterItem('I0KQ','I0KP', 0,'I0KR')
-	set Item_HeartOfTarrasque = RegisterItem('I0AA','I0A9', 0,'I0BT')
-	set A1V = RegisterItem('I0AA','I0KL', 0,'I0KM')
-	set A2V = RegisterItem('I0AC','I0AB', 0,'I0BU')
-	set A3V = RegisterItem('I0AD','I0AE', 0,'I0BV')
-	set A4V = RegisterItem('I0AG','I0AF', 0,'I0CT')
-	set Item_TheButterfly = RegisterItem('I0AH','I0AI', 0,'I0BW')
-	set XFV = RegisterItem('I0B8','I0AY', 0,'I00B')
-	set XCV = RegisterItem('I0QT','I0QS', 0,'I0QU')
-	set XDV = RegisterItem('I0QT','I0TB', 0,'I0QU')
-	set A6V = RegisterItem('I0AK','I0AJ', 0,'I0BX')
-	set A7V = RegisterItem('I07K','I0AL', 0,'I0BY')
-	set A8V = RegisterItem('I0BB','I0BA', 0,'I0BZ')
-	set A9V = RegisterItem('I0LE','I0LC', 0,'I0LD')
-	set NVV = RegisterItem('I0BC','I0BD', 0,'I00C')
-	set NEV = RegisterItem('I0BF','I0BE', 0,'I0C0')
-	set NXV = RegisterItem('I014','I01D', 0, 0)
-	set NOV = RegisterItem('I0BH','I0BG', 0,'I0C1')
-	set NRV = RegisterItem('I0BI','I0BJ', 0,'I0C2')
-	set NIV = RegisterItem('I0BL','I0BK', 0,'I0C3')
-	set NNV = RegisterItem('I0BN','I0BM', 0,'I0C4')
-	set NBV = RegisterItem('I00S','I00M', 0,'I01C')
-	set NCV = RegisterItem('I00T','I00Q', 0,'I01E')
-	set NDV = RegisterItem('I00V','I00N', 0,'I01F')
-	set NFV = RegisterItem('I00W','I00R', 0,'I0DE')
-	set NGV = RegisterItem('I00X','I00Z', 0,'I0CF')
-	set NHV = RegisterItem('I00Y','I010', 0,'I0DF')
-	set NJV = RegisterItem('I013','I012', 0,'I0CB')
-	set NKV = RegisterItem('I0GK','I0GJ', 0,'I0GL')
-	set NMV = RegisterItem('I0HG','I0HI', 0,'I0HH')
-	set NPV = RegisterItem('I0I0','I0K6', 0,'I0I2')
-	set NQV = RegisterItem('I0JG','I0JF', 0,'I0JH')
-	set NSV = RegisterItem('I0KD','I0KF', 0,'I0KE')
-	set NUV = RegisterItem('I0KX','I0KY', 0,'I0KZ')
-	set NWV = RegisterItem('I0LG','I0LF', 0,'I0LH')
-	set NYV = RegisterItem('I0LP','I0LL', 0,'I0LQ')
-	set ROV = RegisterItem('I0LR','I0LT', 0,'I0LS')
-	set NZV = RegisterItem('I0MJ','I0MI', 0,'I0MK')
-	set N_V = RegisterItem('I0N1','I0N0', 0,'I0N2')
-	set RRV = RegisterItem('I0ND','I0NE', 0,'I0NC')
-	set RIV = RegisterItem('I0NL','I0NK', 0,'I0NM')
-	set N0V = RegisterItem('I0O2','I0O3', 0,'I0O4')
-	set RAV = RegisterItem('I0OC','I0OE', 0,'I0OD')
-	set Item_TranquilBoots = RegisterItem('I0OF','I0OG', 0,'I0OH')
-	set RBV = RegisterItem('I0OJ','I0OI', 0,'I0OK')
-	set RCV = RegisterItem('I0OM','I0OL', 0,'I0ON')
-	set Item_MoonShard = RegisterItem('I0SI','I0SJ', 0,'I0SK')
-	set RFV = RegisterItem('I0SU','I0SV', 0,'I0SW')
-	set RLV = RegisterItem('I0SL','I0SM', 0,'I0SN')
-	set RJV = RegisterItem('I0SR','I0SS', 0,'I0ST')
-	set RGV = RegisterItem('I0T5','I0T6', 0,'I0T7')
-	set RPV = RegisterItem('I0S6','I0S7','n12A','I0S8')
-	set RTV = RegisterItem('I0SC','I0SD', 0,'I0SE')
-	set RQV = RegisterItem('I0S9','I0SA', 0,'I0SB')
-	set INV = RegisterItem('I0SZ','I0T0', 0,'I0T1')
-	set XGV = RegisterItem('I0P9','I0PB','h0EI','I0PA')
-	set N1V = RegisterItem('I0OU','I0OV', 0,'I0OW')
-	set N2V = RegisterItem('I0OY','I0OX', 0,'I0OZ')
-	set RUV = RegisterItem('I0P0','I0P1', 0,'I0P2')
-	set RWV = RegisterItem('I0P3','I0P4', 0,'I0P5')
-	call SaveInteger(HY,'ITDB', RegisterItem(0, 0,'h02G', 0), IEV)
-	call SaveInteger(HY,'ITDB', RegisterItem(0, 0,'h086', 0), NQV)
-	set s = "ReplaceableTextures\\CommandButtons\\BTNSnazzyScroll.blp"
-	set RKV = RegisterItem(0, 0,'h0DY', 0)
-	set RHV = RegisterItem('I0T2','I0T3','n12H','I0T4')
-	set RMV = RegisterItem('I0SO','I0SP','n12D','I0SQ')
-	set RSV = RegisterItem('I0SF','I0SG','n12C','I0SH')
-	set N3V = RegisterItem('I05L','I05R','h02H','I0DS')
-	set N4V = RegisterItem('I05M','I05S','h02I','I0DT')
-	call SaveInteger(HY,'ITDB', RegisterItem(0, 0,'h02J', 0), IIV)
-	call SaveInteger(HY,'ITDB', RegisterItem(0, 0,'h014', 0), IBV)
-	set N5V = RegisterItem('I05O','I05T','h02K','I0DU')
-	set N6V = RegisterItem('I05P','I05U','h02L','I0DW')
-	call SaveInteger(HY,'ITDB', RegisterItem(0, 0,'h02M', 0), IHV)
-	set N7V = RegisterItem('I05K','I05V','h02N','I0DX')
-	set N8V = RegisterItem('I05N','I05W','h02O','I0DY')
-	set N9V = RegisterItem('I05Q','I05X','h02P','I0DZ')
-	set BVV = RegisterItem('I06N','I06O','h02Q','I0E0')
-	set BEV = RegisterItem('I06Q','I06P','h02R','I0E1')
-	set BXV = RegisterItem('I06R','I06S','h02S','I0E2')
-	call SaveInteger(HY,'ITDB', RegisterItem(0, 0,'h02T', 0), ISV)
-	set BOV = RegisterItem('I06W','I06V','h02U','I0E4')
-	set BRV = RegisterItem('I06X','I06Y','h02V','I0E5')
-	//	set BIV = RegisterItem('I070','I06Z','h02X','I0E6')
-	call SaveInteger(HY,'ITDB', RegisterItem(0, 0,'h02W', 0), I_V)
-	call SaveInteger(HY,'ITDB', RegisterItem(0, 0,'h02X', 0), I1V) //疯脸
-	set BAV = RegisterItem('I071','I072','h02Y','I0E7')
-	call RegisterItem(0, 0,'h02Z', 0)
-	set BNV = RegisterItem('I074','I073','h030','I0E8')
-	set BBV = RegisterItem(0, 0,'h031', 0)
-	call SaveInteger(HY,'ITDB', BBV, I5V)
-	set BCV = RegisterItem('I076','I07V','h032','I0EA')
-	call SaveInteger(HY,'ITDB', RegisterItem(0, 0,'h033', 0), I7V)
-
-
-	set BDV = RegisterItem('I077','I07W','h034','I0EB')
-	// 黑皇杖
-	set BFV = RegisterItem('I078','I07X','h035','I0EC')
-	
-	set BGV = RegisterItem('I079','I07Y','h036','I0ED')
-	call SaveInteger(HY,'ITDB', RegisterItem(0, 0,'h037', 0), ACV)
-	set BHV = RegisterItem('I07B','I080','h038','I0EF')
-	set BJV = RegisterItem('I07C','I081','h039','I0EG')
-	set BKV = RegisterItem('I07D','I082','h03A','I0EH')
-	call RegisterItem(0, 0,'h03C', 0)
-	set BLV = RegisterItem('I07E','I083','h03D','I0EI')
-	call SaveInteger(HY,'ITDB', RegisterItem(0, 0,'h03E', 0), AWV)
-	set BMV = RegisterItem('I07G','I07F','h03F','I0EJ')
-	set BPV = RegisterItem('I07H','I084','h03G','I0EK')
-	set BQV = RegisterItem('I07O','I085','h03H','I0EL')
-	set B2V = RegisterItem(0, 0,'h03K', 0)
-	call SaveInteger(HY,'ITDB', B2V, XFV)
-	set BSV = RegisterItem('I07J','I088','h03L','I0EO')
-	call SaveInteger(HY,'ITDB', RegisterItem(0, 0,'h03M', 0), A7V)
-	call SaveInteger(HY,'ITDB', RegisterItem(0, 0,'h03N', 0), A8V)
-	set BTV = RegisterItem('I07M','I089','h03O','I0EP')
-	set BUV = RegisterItem('I07P','I08A','h03Q','I0EQ')
-	set BWV = RegisterItem('I07Q','I08B','h03R','I0ER')
-	set BYV = RegisterItem('I07R','I08C','h03S','I0ES')
-	set NAV = RegisterItem('I0QQ','I0QN','h03T','I0QR')
-	call SaveInteger(HY,'ITDB', RegisterItem(0, 0,'h03U', 0), NNV)
-	set BZV = RegisterItem('I07S','I08D','h03V','I0ET')
-	set B_V = RegisterItem('I07T','I08E','h03W','I0EU')
-	call SaveInteger(HY,'ITDB', RegisterItem(0, 0,'h079', 0), NKV)
-	set B0V = RegisterItem('I0HD','I0HF','h07T','I0HE')
-	set B1V = RegisterItem('I0HX','I0HZ','h07X','I0HY')
-	set B3V = RegisterItem('I07L','I0KN','h03P','I0KO')
-	set B4V = RegisterItem('I0KW','I0KV','h0BA','I0KU')
-	set B5V = RegisterItem('I0LM','I0LN','h0BQ','I0LO')
-	set B6V = RegisterItem('I0N9','I0NA','h0D1','I0NB')
-	set B7V = RegisterItem('I0NH','I0NI','h0CY','I0NJ')
-	set B8V = RegisterItem('I0O5','I0O6','h0DD','I0O7')
-	set B9V = RegisterItem('I0OB','I0OA','h03X','I0O9')
-	set CVV = RegisterItem(0, 0,'h0DU', 0)
-	call SaveInteger(HY,'ITDB', CVV, Item_TranquilBoots)
-	call SaveInteger(HY,'ITDB', RegisterItem(0, 0,'h0E9', 0), N1V)
-	call SaveInteger(HY,'ITDB', RegisterItem(0, 0,'h0DV', 0), RCV)
-	call SaveInteger(HY,'ITDB', RegisterItem(0, 0,'h0EN', 0), RQV)
-	call RegisterItem(0, 0,'h0EA', 0)
-	call SaveInteger(HY,'ITDB', RegisterItem(0, 0,'h0EC', 0), RWV)
-	call SaveInteger(ItemCooldownHashTable, RealItem[ARV],'00CD', 55)
-	call SaveInteger(ItemCooldownHashTable, RealItem[NGV],'00CD', 30)
-	call SaveInteger(ItemCooldownHashTable, RealItem[ISV],'00CD', 15)
-	call SaveInteger(ItemCooldownHashTable, RealItem[ANV],'00CD', 50)
-	call SaveInteger(ItemCooldownHashTable, RealItem[ABV],'00CD', 50)
-	call SaveInteger(ItemCooldownHashTable, RealItem[A7V],'00CD', 30)
-	call SaveInteger(ItemCooldownHashTable, RealItem[NJV],'00CD', 18)
-	call SaveInteger(ItemCooldownHashTable, RealItem[Item_EulScepterOfDivinity],'00CD', 23)
-	call SaveInteger(ItemCooldownHashTable, RealItem[NMV],'00CD', 20)
-	call SaveInteger(ItemCooldownHashTable, RealItem[ADV],'00CD', 35)
-	call SaveInteger(ItemCooldownHashTable, RealItem[AFV],'00CD', 30)
-	call SaveInteger(ItemCooldownHashTable, RealItem[AGV],'00CD', 25)
-	call SaveInteger(ItemCooldownHashTable, RealItem[AHV],'00CD', 20)
-	call SaveInteger(ItemCooldownHashTable, RealItem[AJV],'00CD', 15)
-	call SaveInteger(ItemCooldownHashTable, RealItem[AKV],'00CD', 95)
-	call SaveInteger(ItemCooldownHashTable, RealItem[ALV],'00CD', 95)
-	call SaveInteger(ItemCooldownHashTable, RealItem[AMV],'00CD', 95)
-	call SaveInteger(ItemCooldownHashTable, RealItem[N0V],'00CD', 30)
-	call SaveInteger(ItemCooldownHashTable, RealItem[RCV],'00CD', 16)
-	call SaveInteger(ItemCooldownHashTable, RealItem[I4V],'00CD', 45)
-	call SaveInteger(ItemCooldownHashTable, RealItem[NPV],'00CD', 60)
-	call SaveInteger(ItemCooldownHashTable, RealItem[N_V],'00CD', 7)
-	call SaveInteger(ItemCooldownHashTable, RealItem[ROV],'00CD', 30)
-	call SaveInteger(ItemCooldownHashTable, RealItem[N2V],'00CD', 60)
-	call SaveInteger(ItemCooldownHashTable, RealItem[ACV],'00CD', 28)
-	call SaveInteger(ItemCooldownHashTable, RealItem[A2V],'00CD', 35)
-	call SaveInteger(ItemCooldownHashTable, RealItem[NEV],'00CD', 35)
-	call SaveInteger(ItemCooldownHashTable, RealItem[I1V],'00CD', 25)
-	call SaveInteger(ItemCooldownHashTable, RealItem[I_V],'00CD', 60)
-	call SaveInteger(ItemCooldownHashTable, RealItem[N1V],'00CD', 30)
-	call SaveInteger(ItemCooldownHashTable, RealItem[IAV],'00CD', 45)
-	call SaveInteger(ItemCooldownHashTable, RealItem[INV],'00CD', 45)
-	call SaveInteger(ItemCooldownHashTable, RealItem[IFV],'00CD', 100)
-	call SaveInteger(ItemCooldownHashTable, RealItem[R8V],'00CD', 50)
-	call SaveInteger(ItemCooldownHashTable, RealItem[RTV],'00CD', 40)
-	call SaveInteger(ItemCooldownHashTable, RealItem[RQV],'00CD', 16)
-	call SaveInteger(ItemCooldownHashTable, RealItem[RJV],'00CD', 7)
-	call SaveInteger(ItemCooldownHashTable, RealItem[RLV],'00CD', 28)
-	call SaveInteger(ItemCooldownHashTable, RealItem[RGV],'00CD', 15)
-	set XNV[RegisterItem('I03A','I051','h08K','I0D9')]= OQV
-	set XNV[RegisterItem('I03Y','I052','h08X','I0C9')]= OTV
-	set XNV[RegisterItem('I02S','I02P','h08S','I0CA')]= XPV
-	set XNV[RegisterItem('I02N','I02R','h08P','I0CS')]= XQV
-	set XNV[RegisterItem('I02Z','I043','h08Q','I0CV')]= XTV
-	set XNV[RegisterItem('I031','I045','h08T','I0D5')]= XWV
-	set XNV[RegisterItem('I03B','I04E','h08N','I0DA')]= X6V
-	set XNV[RegisterItem('I03E','I04H','h08W','I0C7')]= Item_KelenDagger
-	set XNV[RegisterItem('I03G','I04K','h08O','I0CD')]= OXV
-	set XNV[RegisterItem('I03P','I04S','h08U','I0CY')]= ODV
-	set XNV[RegisterItem('I03Q','I04T','h08G','I0DI')]= OFV
-	set XNV[RegisterItem('I03S','I04V','h08L','I0DJ')]= OHV
-	set XNV[RegisterItem('I03T','I04W','h08R','I0CP')]= OJV
-	set XNV[RegisterItem('I03V','I04Y','h08E','I0C5')]= OLV
-	set XNV[RegisterItem('I03W','I04Z','h08J','I0DK')]= OMV
-	set XNV[RegisterItem('I0GD','I0GC','h08I','I0GE')]= Item_MagicStick
-	set XNV[RegisterItem('I0HT','I0HR','h08F','I0HW')]= RVV
-	set XNV[RegisterItem('I0J7','I0J6','h08V','I0J8')]= RXV
-	set XNV[RegisterItem('I040','I054','h08M','I0DL')]= OWV
-	set XNV[RegisterItem('I05A','I05I','h08H', 0)]= R4V
-	set XNV[RegisterItem('I037','I04B','h093','I0CR')]= X2V
-	set XNV[RegisterItem('I02Q','I02O','h0BO','I00A')]= XMV
-	set XNV[RegisterItem('I0MA','I0M9','h0CN','I0MB')]= XKV
-	set XNV[RegisterItem('I033','I047','h0D0','I0D7')]= XZV
-	set XNV[RegisterItem('I032','I046','u025','I0CZ')]= XYV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= OFV
-	set CombineIndex2[CombineMaxIndex]= OWV
-	set CombinedIndex[CombineMaxIndex]= IEV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= IEV
-	set CombineIndex2[CombineMaxIndex]= XZV
-	set CombineIndex3[CombineMaxIndex]= RHV
-	set CombineIndex4[CombineMaxIndex]= XZV
-	set CombinedIndex[CombineMaxIndex]= RGV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= X7V
-	set CombineIndex2[CombineMaxIndex]= X7V
-	set CombinedIndex[CombineMaxIndex]= Item_MoonShard
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= ONV
-	set CombineIndex2[CombineMaxIndex]= XGV
-	set CombinedIndex[CombineMaxIndex]= RQV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= N_V
-	set CombineIndex2[CombineMaxIndex]= RXV
-	set CombinedIndex[CombineMaxIndex]= RJV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= OHV
-	set CombineIndex2[CombineMaxIndex]= Item_IronwoodBranch
-	set CombineIndex3[CombineMaxIndex]= N3V
-	set CombinedIndex[CombineMaxIndex]= IXV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= XZV
-	set CombineIndex2[CombineMaxIndex]= Item_IronwoodBranch
-	set CombineIndex3[CombineMaxIndex]= N4V
-	set CombinedIndex[CombineMaxIndex]= IOV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= OGV
-	set CombineIndex2[CombineMaxIndex]= OMV
-	set CombinedIndex[CombineMaxIndex]= IIV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= XMV
-	set CombineIndex2[CombineMaxIndex]= N5V
-	set CombinedIndex[CombineMaxIndex]= IAV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= IAV
-	set CombineIndex2[CombineMaxIndex]= N5V
-	set CombinedIndex[CombineMaxIndex]= INV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= I3V
-	set CombineIndex2[CombineMaxIndex]= OIV
-	set CombinedIndex[CombineMaxIndex]= RFV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= XMV
-	set CombineIndex2[CombineMaxIndex]= XQV
-	set CombineIndex3[CombineMaxIndex]= XPV
-	set CombinedIndex[CombineMaxIndex]= IBV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= XMV
-	set CombineIndex2[CombineMaxIndex]= XTV
-	set CombineIndex3[CombineMaxIndex]= XPV
-	set CombinedIndex[CombineMaxIndex]= ICV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= XMV
-	set CombineIndex2[CombineMaxIndex]= OJV
-	set CombineIndex3[CombineMaxIndex]= XPV
-	set CombinedIndex[CombineMaxIndex]= IDV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= XPV
-	set CombineIndex2[CombineMaxIndex]= N6V
-	set CombinedIndex[CombineMaxIndex]= IFV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= ODV
-	set CombineIndex2[CombineMaxIndex]= OJV
-	set CombineIndex3[CombineMaxIndex]= OMV
-	set CombinedIndex[CombineMaxIndex]= IHV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= XSV
-	set CombineIndex2[CombineMaxIndex]= X3V
-	set CombineIndex3[CombineMaxIndex]= N7V
-	set CombinedIndex[CombineMaxIndex]= IJV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= XSV
-	set CombineIndex2[CombineMaxIndex]= OLV
-	set CombineIndex3[CombineMaxIndex]= N8V
-	set CombinedIndex[CombineMaxIndex]= IKV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= XSV
-	set CombineIndex2[CombineMaxIndex]= OEV
-	set CombineIndex3[CombineMaxIndex]= N9V
-	set CombinedIndex[CombineMaxIndex]= ILV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= XUV
-	set CombineIndex2[CombineMaxIndex]= XQV
-	set CombineIndex3[CombineMaxIndex]= BVV
-	set CombinedIndex[CombineMaxIndex]= IMV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= OAV
-	set CombineIndex2[CombineMaxIndex]= XTV
-	set CombineIndex3[CombineMaxIndex]= BEV
-	set CombinedIndex[CombineMaxIndex]= IPV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= OYV
-	set CombineIndex2[CombineMaxIndex]= XTV
-	set CombineIndex3[CombineMaxIndex]= BXV
-	set CombinedIndex[CombineMaxIndex]= IQV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= ACV	//大隐刀
-	set CombineIndex2[CombineMaxIndex]= IPV
-	set CombineIndex3[CombineMaxIndex]= RMV
-	set CombinedIndex[CombineMaxIndex]= RLV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= I4V
-	set CombineIndex2[CombineMaxIndex]= NZV
-	set CombineIndex3[CombineMaxIndex]= RSV
-	set CombinedIndex[CombineMaxIndex]= RTV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= XYV
-	set CombineIndex2[CombineMaxIndex]= XZV
-	set CombineIndex3[CombineMaxIndex]= OJV
-	set CombinedIndex[CombineMaxIndex]= ISV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= ORV
-	set CombineIndex2[CombineMaxIndex]= XPV
-	set CombineIndex3[CombineMaxIndex]= BOV
-	set CombinedIndex[CombineMaxIndex]= ITV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= XUV
-	set CombineIndex2[CombineMaxIndex]= XUV
-	set CombineIndex3[CombineMaxIndex]= OJV
-	set CombineIndex4[CombineMaxIndex]= BRV
-	set CombinedIndex[CombineMaxIndex]= IUV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= IUV
-	set CombineIndex2[CombineMaxIndex]= BRV
-	set CombinedIndex[CombineMaxIndex]= IWV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= IYV
-	set CombineIndex2[CombineMaxIndex]= BRV
-	set CombinedIndex[CombineMaxIndex]= IWV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= X6V
-	set CombineIndex2[CombineMaxIndex]= OXV
-	set CombinedIndex[CombineMaxIndex]= I_V
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= OXV
-	set CombineIndex2[CombineMaxIndex]= ODV
-	set CombinedIndex[CombineMaxIndex]= I1V
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= OMV
-	set CombineIndex2[CombineMaxIndex]= OPV
-	set CombineIndex3[CombineMaxIndex]= OWV
-	set CombineIndex4[CombineMaxIndex]= BAV
-	set CombinedIndex[CombineMaxIndex]= Item_EulScepterOfDivinity
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= OCV
-	set CombineIndex2[CombineMaxIndex]= X2V
-	set CombineIndex3[CombineMaxIndex]= OUV
-	set CombinedIndex[CombineMaxIndex]= I3V
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= IXV
-	set CombineIndex2[CombineMaxIndex]= IOV
-	set CombineIndex3[CombineMaxIndex]= BNV
-	set CombinedIndex[CombineMaxIndex]= I4V
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= IPV
-	set CombineIndex2[CombineMaxIndex]= IMV
-	set CombinedIndex[CombineMaxIndex]= I5V
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= ORV
-	set CombineIndex2[CombineMaxIndex]= ORV
-	set CombineIndex3[CombineMaxIndex]= BCV
-	set CombinedIndex[CombineMaxIndex]= I6V
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= IEV
-	set CombineIndex2[CombineMaxIndex]= XYV
-	set CombineIndex3[CombineMaxIndex]= X_V
-	set CombineIndex4[CombineMaxIndex]= RVV
-	set CombinedIndex[CombineMaxIndex]= I7V
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= IEV
-	set CombineIndex2[CombineMaxIndex]= XYV
-	set CombineIndex3[CombineMaxIndex]= X_V
-	set CombineIndex4[CombineMaxIndex]= REV
-	set CombinedIndex[CombineMaxIndex]= I7V
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= XWV
-	set CombineIndex2[CombineMaxIndex]= XYV
-	set CombineIndex3[CombineMaxIndex]= BDV
-	set CombinedIndex[CombineMaxIndex]= I8V
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= ORV
-	set CombineIndex2[CombineMaxIndex]= OAV
-	set CombineIndex3[CombineMaxIndex]= BFV
-	set CombinedIndex[CombineMaxIndex]= I9V
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= IMV
-	set CombineIndex2[CombineMaxIndex]= OTV
-	set CombineIndex3[CombineMaxIndex]= BGV
-	set CombinedIndex[CombineMaxIndex]= ABV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= XGV
-	set CombineIndex2[CombineMaxIndex]= X_V
-	set CombinedIndex[CombineMaxIndex]= ACV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= OPV
-	set CombineIndex2[CombineMaxIndex]= ILV
-	set CombineIndex3[CombineMaxIndex]= BHV
-	set CombinedIndex[CombineMaxIndex]= ADV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= ADV
-	set CombineIndex2[CombineMaxIndex]= BHV
-	set CombinedIndex[CombineMaxIndex]= AFV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= AFV
-	set CombineIndex2[CombineMaxIndex]= BHV
-	set CombinedIndex[CombineMaxIndex]= AGV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= AGV
-	set CombineIndex2[CombineMaxIndex]= BHV
-	set CombinedIndex[CombineMaxIndex]= AHV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= AHV
-	set CombineIndex2[CombineMaxIndex]= BHV
-	set CombinedIndex[CombineMaxIndex]= AJV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= OPV
-	set CombineIndex2[CombineMaxIndex]= XTV
-	set CombineIndex3[CombineMaxIndex]= BJV
-	set CombinedIndex[CombineMaxIndex]= AKV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= AKV
-	set CombineIndex2[CombineMaxIndex]= BJV
-	set CombinedIndex[CombineMaxIndex]= ALV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= ALV
-	set CombineIndex2[CombineMaxIndex]= BJV
-	set CombinedIndex[CombineMaxIndex]= AMV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= OTV
-	set CombineIndex2[CombineMaxIndex]= IEV
-	set CombineIndex3[CombineMaxIndex]= BKV
-	set CombinedIndex[CombineMaxIndex]= Item_LinkenSphere
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= X0V
-	set CombineIndex2[CombineMaxIndex]= OKV
-	set CombinedIndex[CombineMaxIndex]= ASV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= I8V
-	set CombineIndex2[CombineMaxIndex]= X0V
-	set CombineIndex3[CombineMaxIndex]= BLV
-	set CombinedIndex[CombineMaxIndex]= AUV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= X0V
-	set CombineIndex2[CombineMaxIndex]= OYV
-	set CombineIndex3[CombineMaxIndex]= OYV
-	set CombinedIndex[CombineMaxIndex]= AWV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= OKV
-	set CombineIndex2[CombineMaxIndex]= BMV
-	set CombinedIndex[CombineMaxIndex]= AZV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= OOV
-	set CombineIndex2[CombineMaxIndex]= OUV
-	set CombineIndex3[CombineMaxIndex]= BPV
-	set CombinedIndex[CombineMaxIndex]= Item_HeartOfTarrasque
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= OOV
-	set CombineIndex2[CombineMaxIndex]= I_V
-	set CombineIndex3[CombineMaxIndex]= BQV
-	set CombinedIndex[CombineMaxIndex]= A2V
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= OOV
-	set CombineIndex2[CombineMaxIndex]= I0V
-	set CombineIndex3[CombineMaxIndex]= BQV
-	set CombinedIndex[CombineMaxIndex]= A2V
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= OTV
-	set CombineIndex2[CombineMaxIndex]= OTV
-	set CombineIndex3[CombineMaxIndex]= OCV
-	set CombineIndex4[CombineMaxIndex]= XKV
-	set CombinedIndex[CombineMaxIndex]= A3V
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= OTV
-	set CombineIndex2[CombineMaxIndex]= OTV
-	set CombineIndex3[CombineMaxIndex]= OCV
-	set CombineIndex4[CombineMaxIndex]= XLV
-	set CombinedIndex[CombineMaxIndex]= A3V
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= XJV
-	set CombineIndex2[CombineMaxIndex]= IOV
-	set CombineIndex3[CombineMaxIndex]= A8V
-	set CombinedIndex[CombineMaxIndex]= XHV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= XJV
-	set CombineIndex2[CombineMaxIndex]= IOV
-	set CombineIndex3[CombineMaxIndex]= A9V
-	set CombinedIndex[CombineMaxIndex]= XHV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= X1V
-	set CombineIndex2[CombineMaxIndex]= ODV
-	set CombineIndex3[CombineMaxIndex]= RXV
-	set CombinedIndex[CombineMaxIndex]= Item_TheButterfly
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= OMV
-	set CombineIndex2[CombineMaxIndex]= XZV
-	set CombineIndex3[CombineMaxIndex]= B7V
-	set CombinedIndex[CombineMaxIndex]= N_V
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= OCV
-	set CombineIndex2[CombineMaxIndex]= OAV
-	set CombineIndex3[CombineMaxIndex]= XUV
-	set CombineIndex4[CombineMaxIndex]= OPV
-	set CombinedIndex[CombineMaxIndex]= XFV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= IEV
-	set CombineIndex2[CombineMaxIndex]= IEV
-	set CombineIndex3[CombineMaxIndex]= BSV
-	set CombinedIndex[CombineMaxIndex]= A6V
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= OTV
-	set CombineIndex2[CombineMaxIndex]= OIV
-	set CombineIndex3[CombineMaxIndex]= OWV
-	set CombinedIndex[CombineMaxIndex]= A7V
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= OUV
-	set CombineIndex2[CombineMaxIndex]= OFV
-	set CombineIndex3[CombineMaxIndex]= OQV
-	set CombinedIndex[CombineMaxIndex]= A8V
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= OUV
-	set CombineIndex2[CombineMaxIndex]= OFV
-	set CombineIndex3[CombineMaxIndex]= OSV
-	set CombinedIndex[CombineMaxIndex]= A8V
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= X2V
-	set CombineIndex2[CombineMaxIndex]= OGV
-	set CombineIndex3[CombineMaxIndex]= BTV
-	set CombinedIndex[CombineMaxIndex]= NVV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= X7V
-	set CombineIndex2[CombineMaxIndex]= ITV
-	set CombineIndex3[CombineMaxIndex]= B3V
-	set CombinedIndex[CombineMaxIndex]= NEV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= R5V
-	set CombineIndex3[CombineMaxIndex]= BUV
-	set CombinedIndex[CombineMaxIndex]= NXV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= IXV
-	set CombineIndex2[CombineMaxIndex]= IRV
-	set CombineIndex3[CombineMaxIndex]= OXV
-	set CombineIndex4[CombineMaxIndex]= BWV
-	set CombinedIndex[CombineMaxIndex]= NOV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= IXV
-	set CombineIndex2[CombineMaxIndex]= IIV
-	set CombineIndex3[CombineMaxIndex]= OXV
-	set CombineIndex4[CombineMaxIndex]= BWV
-	set CombinedIndex[CombineMaxIndex]= NOV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= X7V
-	set CombineIndex2[CombineMaxIndex]= OBV
-	set CombineIndex3[CombineMaxIndex]= XZV
-	set CombineIndex4[CombineMaxIndex]= BYV
-	set CombinedIndex[CombineMaxIndex]= NRV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= I3V
-	set CombineIndex2[CombineMaxIndex]= NAV
-	set CombineIndex3[CombineMaxIndex]= NYV
-	set CombinedIndex[CombineMaxIndex]= NIV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= OHV
-	set CombineIndex2[CombineMaxIndex]= OHV
-	set CombineIndex3[CombineMaxIndex]= OFV
-	set CombineIndex4[CombineMaxIndex]= ONV
-	set CombinedIndex[CombineMaxIndex]= NNV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= XPV
-	set CombineIndex2[CombineMaxIndex]= X6V
-	set CombineIndex3[CombineMaxIndex]= XWV
-	set CombineIndex4[CombineMaxIndex]= BZV
-	set CombinedIndex[CombineMaxIndex]= NFV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= OIV
-	set CombineIndex2[CombineMaxIndex]= OBV
-	set CombineIndex3[CombineMaxIndex]= B_V
-	set CombinedIndex[CombineMaxIndex]= NGV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= IHV
-	set CombineIndex2[CombineMaxIndex]= IHV
-	set CombineIndex3[CombineMaxIndex]= B9V
-	set CombinedIndex[CombineMaxIndex]= NJV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= XMV
-	set CombineIndex2[CombineMaxIndex]= XWV
-	set CombineIndex3[CombineMaxIndex]= XWV
-	set CombinedIndex[CombineMaxIndex]= NKV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= Item_MagicStick
-	set CombineIndex2[CombineMaxIndex]= Item_IronwoodBranch
-	set CombineIndex3[CombineMaxIndex]= Item_IronwoodBranch
-	set CombineIndex4[CombineMaxIndex]= XSV
-	set CombinedIndex[CombineMaxIndex]= Item_MagicWand
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= OHV
-	set CombineIndex2[CombineMaxIndex]= OPV
-	set CombineIndex3[CombineMaxIndex]= B0V
-	set CombinedIndex[CombineMaxIndex]= NMV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= NNV
-	set CombineIndex2[CombineMaxIndex]= IXV
-	set CombineIndex3[CombineMaxIndex]= B1V
-	set CombinedIndex[CombineMaxIndex]= NPV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= OQV
-	set CombineIndex2[CombineMaxIndex]= OLV
-	set CombineIndex3[CombineMaxIndex]= OLV
-	set CombinedIndex[CombineMaxIndex]= NQV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= OSV
-	set CombineIndex2[CombineMaxIndex]= OLV
-	set CombineIndex3[CombineMaxIndex]= OLV
-	set CombinedIndex[CombineMaxIndex]= NQV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= OMV
-	set CombineIndex2[CombineMaxIndex]= X3V
-	set CombineIndex3[CombineMaxIndex]= X3V
-	set CombineIndex4[CombineMaxIndex]= B4V
-	set CombinedIndex[CombineMaxIndex]= NUV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= OMV
-	set CombineIndex2[CombineMaxIndex]= OHV
-	set CombineIndex3[CombineMaxIndex]= B5V
-	set CombinedIndex[CombineMaxIndex]= NYV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= X1V
-	set CombineIndex2[CombineMaxIndex]= NTV
-	set CombinedIndex[CombineMaxIndex]= ROV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= XMV
-	set CombineIndex2[CombineMaxIndex]= X2V
-	set CombinedIndex[CombineMaxIndex]= NZV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= OJV
-	set CombineIndex2[CombineMaxIndex]= IJV
-	set CombineIndex3[CombineMaxIndex]= B6V
-	set CombinedIndex[CombineMaxIndex]= RRV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= RRV
-	set CombineIndex2[CombineMaxIndex]= B6V
-	set CombinedIndex[CombineMaxIndex]= RRV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= RIV
-	set CombineIndex2[CombineMaxIndex]= B6V
-	set CombinedIndex[CombineMaxIndex]= RRV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= X6V
-	set CombineIndex2[CombineMaxIndex]= ILV
-	set CombineIndex3[CombineMaxIndex]= B8V
-	set CombinedIndex[CombineMaxIndex]= N0V
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= XMV
-	set CombineIndex2[CombineMaxIndex]= OGV
-	set CombineIndex3[CombineMaxIndex]= OHV
-	set CombinedIndex[CombineMaxIndex]= Item_TranquilBoots
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= OPV
-	set CombineIndex2[CombineMaxIndex]= OPV
-	set CombineIndex3[CombineMaxIndex]= OUV
-	set CombinedIndex[CombineMaxIndex]= RCV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= IPV
-	set CombineIndex2[CombineMaxIndex]= RXV
-	set CombinedIndex[CombineMaxIndex]= N1V
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= IQV
-	set CombineIndex2[CombineMaxIndex]= OKV
-	set CombinedIndex[CombineMaxIndex]= N2V
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= IKV
-	set CombineIndex2[CombineMaxIndex]= IRV
-	set CombinedIndex[CombineMaxIndex]= RUV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= IKV
-	set CombineIndex2[CombineMaxIndex]= IIV
-	set CombinedIndex[CombineMaxIndex]= RWV
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= OAV
-	set CombineIndex2[CombineMaxIndex]= XQV
-	set CombineIndex3[CombineMaxIndex]= XQV
-	set CombinedIndex[CombineMaxIndex]= it_mlq
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= NJV
-	set CombineIndex2[CombineMaxIndex]= I8V
-	set CombineIndex3[CombineMaxIndex]= jz_xj
-	set CombinedIndex[CombineMaxIndex]= it_xj
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= OAV
-	set CombineIndex2[CombineMaxIndex]= IHV
-	set CombinedIndex[CombineMaxIndex]= it_hyzr
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= it_mlq
-	set CombineIndex2[CombineMaxIndex]= NMV
-	set CombineIndex3[CombineMaxIndex]= Recipe_HurricanePike
-	set CombinedIndex[CombineMaxIndex]= Item_HurricanePike
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= X6V
-	set CombineIndex2[CombineMaxIndex]= I6V
-	set CombinedIndex[CombineMaxIndex]= it_fj 
-
-	set CombineMaxIndex = CombineMaxIndex + 1
-	set CombineIndex1[CombineMaxIndex]= X2V
-	set CombineIndex2[CombineMaxIndex]= OWV
-	set CombineIndex3[CombineMaxIndex]= Recipe_AetherLens
-	set CombinedIndex[CombineMaxIndex]= Item_AetherLens
-endfunction
 function Init_SpecialAbilityId takes nothing returns nothing //储存切换型技能
 	
 	call SaveInteger(ExtraHT, HTKEY_SWITCHING_SKILLS,'A1RJ','A20N') //凤凰冲击
@@ -83143,6 +81978,7 @@ function BlzFunction_Init takes nothing returns nothing
 endfunction
 
 #include "Map\\Heroes\\include"
+#include "Map\\Items\\include"
 
 function main takes nothing returns nothing
 	local weathereffect we
@@ -83370,7 +82206,7 @@ function main takes nothing returns nothing
 	call XUX(ScourgePlayers[4])
 	call XUX(ScourgePlayers[5])
 	call ExecuteFunc("InitTaverns")
-	call ExecuteFunc("InitItemsSystem")
+	call ExecuteFunc("ItemSystem_Init")
 	call ExecuteFunc("InitBuyBack")
 	set t = CreateTrigger()
 	call TriggerRegisterTimerEvent(t, .01, false)
@@ -83479,7 +82315,7 @@ function main takes nothing returns nothing
 	call TriggerRegisterAnyUnitEvent(UnitManipulatItemTrig, EVENT_PLAYER_UNIT_PICKUP_ITEM)
 	call TriggerRegisterAnyUnitEvent(UnitManipulatItemTrig, EVENT_PLAYER_UNIT_DROP_ITEM)
 	call TriggerRegisterAnyUnitEvent(UnitManipulatItemTrig, EVENT_PLAYER_UNIT_PAWN_ITEM)
-	call TriggerAddCondition(UnitManipulatItemTrig, Condition(function OMO))
+	call TriggerAddCondition(UnitManipulatItemTrig, Condition(function OnManipulatItem))
 
 	set C3V = CreateTrigger()
 	call TriggerRegisterAnyUnitEvent(C3V, EVENT_PLAYER_UNIT_PICKUP_ITEM)
@@ -83509,9 +82345,9 @@ function main takes nothing returns nothing
 	call TriggerAddCondition(t, null)
 
 	// // 物品打断中心计时器
-	// set t = CreateTrigger()
-	// call TriggerRegisterTimerEvent(t, .1, true)
-	// call TriggerAddCondition(t, Condition(function IHO))
+ 	set t = CreateTrigger()
+ 	call TriggerRegisterTimerEvent(t, .1, true)
+ 	call TriggerAddCondition(t, Condition(function IHO))
 	
 	// 增加移动速度 - 物品
 	set t = CreateTrigger()

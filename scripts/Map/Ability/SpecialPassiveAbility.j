@@ -1,5 +1,5 @@
 
-library SpecialPassiveAbility
+library SpecialPassiveAbility requires TimerUtils
     
     globals
         private integer       Max  = 0

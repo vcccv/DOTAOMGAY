@@ -4,6 +4,9 @@ library EventSystem
     globals
         constant integer ANY_UNIT_EVENT_DAMAGED  = 1
         constant integer ANY_UNIT_EVENT_DAMAGING = 2
+
+    
+        constant integer ANY_UNIT_EVENT_PICKUP_REAL_ITEM = 3
     endglobals
     
     struct Event extends array 
@@ -24,6 +27,15 @@ library EventSystem
         static attacktype   array AttackType
         static boolean      array IsAttackDamage
         static integer      array Flag1
+
+        static item         array ManipulatedItem
+
+        static method GetTriggerUnit takes nothing returns unit
+            return thistype.TrigUnit[thistype.INDEX]
+        endmethod
+        static method GetTManipulatedItem takes nothing returns item
+            return thistype.ManipulatedItem[thistype.INDEX]
+        endmethod
 
     endstruct
 
@@ -47,7 +59,9 @@ library EventSystem
 
             set this = thistype.allocate()
             set this.id = id
-            set this.executableCode = MHTool_CodeToInt(func)
+            set this.executableCode = C2I(func)
+
+            call ThrowWarning(func == null, "Event", "AnyUnitEvent.Create", "func", id, "func == null")
 
             if thistype.ListHead[id] == 0 then
                 set thistype.ListHead[id] = this
@@ -65,10 +79,7 @@ library EventSystem
         endmethod
 
         method Destroy takes nothing returns nothing
-
             if this.prev == 0 then
-                // 删除头部节点
-                // 此时 ListHead[id] == this
                 set thistype.ListHead[id] = this.next
                 if thistype.ListHead[id] != 0 then
                     set thistype.ListHead[id].prev = 0
@@ -76,14 +87,15 @@ library EventSystem
                     set thistype.ListTail[id] = 0
                 endif
             elseif this.next == 0 then
-                // 删除尾部节点
-                // 此时 thistype.ListTail[id] == this
                 set this.prev.next = this.next
                 set thistype.ListTail[id] = this.prev
             else
                 set this.next.prev = this.prev
                 set this.prev.next = this.next
             endif
+    
+            set this.prev = 0
+            set this.next = 0
 
             call this.deallocate()
         endmethod
