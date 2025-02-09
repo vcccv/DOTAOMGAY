@@ -12431,14 +12431,14 @@ art=ReplaceableTextures\CommandButtons\BTNTranquilBoots
 Name=静谧之鞋|nTranquil Boots
 Ubertip="|cffff0303这件物品不属于你，它失去了效果|r"
 [I0OI]
-art=ReplaceableTextures\CommandButtons\BTNCancel
+art=ReplaceableTextures\CommandButtons\BTNTranquilBootsOff
 Name=静谧之鞋（破损）|nTranquil Boots (broken)
 Ubertip=|cffffcc00属性：|r|n增加90点移动速度|n增加4点护甲|n提升12点/秒的生命恢复速率|n提高50%的魔法恢复速率|n|n|cffff0303受到攻击将会破损，失去25点移动速度加成以及生命/魔法恢复效果，持续13秒。|r|n|n|c00ff0303移动速度提升效果不与其他任何鞋子叠加|r
-effectsoundlooped=ReplaceableTextures\CommandButtons\BTNCancel.blp
+effectsoundlooped=ReplaceableTextures\CommandButtons\BTNTranquilBootsOff.blp
 [I0OJ]
 Name=静谧之鞋（禁用）|nTranquil Boots Disabled
 [I0OK]
-art=ReplaceableTextures\CommandButtons\BTNTranquilBoots
+art=ReplaceableTextures\CommandButtons\BTNTranquilBootsOff
 Name=静谧之鞋（禁用）|nTranquil Boots Disabled
 Ubertip="|cffff0303这件物品不属于你，它失去了效果|r"
 [I0OL]

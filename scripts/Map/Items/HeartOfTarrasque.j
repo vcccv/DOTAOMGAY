@@ -9,8 +9,16 @@ scope HeartOfTarrasque
     globals
         private AnyUnitEvent OnDamagedEvent     = 0
         private AnyUnitEvent OnEndCooldownEvent = 0
-        private key COUNT
+        private key KEY
     endglobals
+
+    function IsUnitHeartOfTarrasqueDisabled takes unit whichUnit returns boolean
+        return Table[GetHandleId(whichUnit)].real[KEY] > GameTimer.GetElapsed()
+    endfunction
+
+    function GetUnitHeartOfTarrasqueCooldownRemaining takes unit whichUnit returns real
+        return RMaxBJ(Table[GetHandleId(whichUnit)].real[KEY] - GameTimer.GetElapsed(), 0.)
+    endfunction
 
     private function OnDamaged takes nothing returns nothing
         local integer    i          = 0
@@ -18,9 +26,17 @@ scope HeartOfTarrasque
         local integer    itemIndex
         local SimpleTick tick
         local boolean    isEnabled
-        if Table[GetHandleId(DETarget)][COUNT] <= 0 then
+        local real       cooldown
+        if Table[GetHandleId(DETarget)].integer[KEY] <= 0 then
             return
         endif
+
+        if IsUnitMeleeAttacker(DETarget) then
+            set cooldown = 4.
+        else
+            set cooldown = 6.
+        endif
+        set Table[GetHandleId(DETarget)].real[KEY] = GameTimer.GetElapsed() + cooldown
 
         set isEnabled = IsTriggerEnabled(UnitManipulatItemTrig)
         call DisableTrigger(UnitManipulatItemTrig)
@@ -34,17 +50,9 @@ scope HeartOfTarrasque
                     set TempItem = CreateItemToUnitSlotByIndex(DETarget, RealItem[Item_DisabledHeartOfTarrasque], i)
                     call SetItemPlayer(TempItem, TempPlayer, false)
                     call SetItemUserData(TempItem, 1)
-                    if IsUnitMeleeAttacker(DETarget) then
-                        call StartAbilityCooldownAbsoluteEx(MHItem_GetAbility(TempItem, 1), 4.)
-                    else
-                        call StartAbilityCooldownAbsoluteEx(MHItem_GetAbility(TempItem, 1), 6.)
-                    endif
+                    call StartAbilityCooldownAbsoluteEx(MHItem_GetAbility(TempItem, 1), cooldown)
                 elseif ( itemIndex == Item_DisabledHeartOfTarrasque ) then
-                    if IsUnitMeleeAttacker(DETarget) then
-                        call StartAbilityCooldownAbsoluteEx(MHItem_GetAbility(whichItem, 1), 4.)
-                    else
-                        call StartAbilityCooldownAbsoluteEx(MHItem_GetAbility(whichItem, 1), 6.)
-                    endif
+                    call StartAbilityCooldownAbsoluteEx(MHItem_GetAbility(whichItem, 1), cooldown)
                 endif
                 set i = i + 1
             exitwhen i > 5
@@ -67,10 +75,12 @@ scope HeartOfTarrasque
         local integer    id        = Event.GetTriggerAbilityId()
         local boolean    isEnabled
 
-        if Table[GetHandleId(whichUnit)][COUNT] <= 0 or not IsUnitHeroLevel(whichUnit) or id != 'A473' then
+        if Table[GetHandleId(whichUnit)].integer[KEY] <= 0 or not IsUnitHeroLevel(whichUnit) or id != 'A473' then
             set whichUnit = null
             return
         endif
+
+        set Table[GetHandleId(whichUnit)].real[KEY] = 0.
 
         set isEnabled = IsTriggerEnabled(UnitManipulatItemTrig)
         call DisableTrigger(UnitManipulatItemTrig)
@@ -97,21 +107,57 @@ scope HeartOfTarrasque
         set whichUnit = null
     endfunction
 
-    function ItemHeartOfTarrasqueOnPickup takes nothing returns nothing
-        local unit whichUnit = Event.GetTriggerUnit()
-        set Table[GetHandleId(whichUnit)][COUNT] = Table[GetHandleId(whichUnit)][COUNT] + 1
-        set whichUnit = null
+    private function PickupDelayOnExpired takes nothing returns nothing
+        local SimpleTick tick              = SimpleTick.GetExpired()
+        local unit       whichUnit         = SimpleTickTable[tick].unit['u']
+        local item       whichItem         = SimpleTickTable[tick].item['i']
+        local integer    itemIndex         = GetItemIndex(whichItem)
+        local real       cooldownRemaining = GetUnitHeartOfTarrasqueCooldownRemaining(whichUnit)
+        local integer    slot              = GetUnitItemSlot(whichUnit, whichItem)
+        
+        // 处于禁用状态
+        if cooldownRemaining > 0. then
+            if ( itemIndex == Item_HeartOfTarrasque ) then
+                // 换成禁用版本
+                set TempPlayer = GetItemPlayer(whichItem)
+                call RemoveItem(whichItem)
+                set TempItem = CreateItemToUnitSlotByIndex(whichUnit, RealItem[Item_DisabledHeartOfTarrasque], slot)
+                call SetItemPlayer(TempItem, TempPlayer, false)
+                call SetItemUserData(TempItem, 1)
+                call StartAbilityCooldownAbsoluteEx(MHItem_GetAbility(TempItem, 1), cooldownRemaining)
+            else
+                // 更新冷却时间
+                call StartAbilityCooldownAbsoluteEx(MHItem_GetAbility(whichItem, 1), cooldownRemaining)
+            endif
+        endif
 
+        call tick.Destroy()
+        set whichItem = null
+        set whichUnit = null
+    endfunction
+
+    function ItemHeartOfTarrasqueOnPickup takes nothing returns nothing
+        local unit       whichUnit = Event.GetTriggerUnit()
+        local item       whichItem = Event.GetManipulatedItem()
+        local SimpleTick tick      = SimpleTick.CreateEx()
+
+        call tick.Start(0., false, function PickupDelayOnExpired)
+        set SimpleTickTable[tick].unit['u'] = whichUnit
+        set SimpleTickTable[tick].item['i'] = whichItem
+        
+        set Table[GetHandleId(whichUnit)].integer[KEY] = Table[GetHandleId(whichUnit)].integer[KEY] + 1
         set HeartOfTarrasqueCount = HeartOfTarrasqueCount + 1
         if HeartOfTarrasqueCount == 1 then
             set OnDamagedEvent = AnyUnitEvent.CreateEvent(ANY_UNIT_EVENT_DAMAGED, function OnDamaged)
             set OnEndCooldownEvent = AnyUnitEvent.CreateEvent(ANY_UNIT_EVENT_ABILITY_END_COOLDOWN, function OnEndCooldown)
         endif
+        set whichItem = null
+        set whichUnit = null
     endfunction
 
     function ItemHeartOfTarrasqueOnDrop takes nothing returns nothing
         local unit whichUnit = Event.GetTriggerUnit()
-        set Table[GetHandleId(whichUnit)][COUNT] = Table[GetHandleId(whichUnit)][COUNT] - 1
+        set Table[GetHandleId(whichUnit)].integer[KEY] = Table[GetHandleId(whichUnit)].integer[KEY] - 1
         set whichUnit = null
 
         set HeartOfTarrasqueCount = HeartOfTarrasqueCount - 1

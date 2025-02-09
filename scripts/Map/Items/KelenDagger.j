@@ -17,8 +17,16 @@ scope KelenDagger
     globals
         private AnyUnitEvent OnDamagedEvent     = 0
         private AnyUnitEvent OnEndCooldownEvent = 0
-        private key COUNT
+        private key KEY
     endglobals
+    
+    function IsUnitKelenDaggerDisabled takes unit whichUnit returns boolean
+        return Table[GetHandleId(whichUnit)].real[KEY] > GameTimer.GetElapsed()
+    endfunction
+
+    function GetUnitKelenDaggerCooldownRemaining takes unit whichUnit returns real
+        return RMaxBJ(Table[GetHandleId(whichUnit)].real[KEY] - GameTimer.GetElapsed(), 0.)
+    endfunction
 
     private function OnDamaged takes nothing returns nothing
         local integer    i          = 0
@@ -26,9 +34,14 @@ scope KelenDagger
         local integer    itemIndex
         local SimpleTick tick
         local boolean    isEnabled
-        if Table[GetHandleId(DETarget)][COUNT] <= 0 then
+        local real       cooldown
+
+        if Table[GetHandleId(DETarget)].integer[KEY] <= 0 then
             return
         endif
+
+        set cooldown = 3.
+        set Table[GetHandleId(DETarget)].real[KEY] = GameTimer.GetElapsed() + cooldown
 
         set isEnabled = IsTriggerEnabled(UnitManipulatItemTrig)
         call DisableTrigger(UnitManipulatItemTrig)
@@ -42,9 +55,9 @@ scope KelenDagger
                     set TempItem = CreateItemToUnitSlotByIndex(DETarget, RealItem[Item_DisabledKelenDagger], i)
                     call SetItemPlayer(TempItem, TempPlayer, false)
                     call SetItemUserData(TempItem, 1)
-                    call StartAbilityCooldownAbsoluteEx(MHItem_GetAbility(TempItem, 1), 3.)
+                    call StartAbilityCooldownAbsoluteEx(MHItem_GetAbility(TempItem, 1), cooldown)
                 elseif ( itemIndex == Item_DisabledKelenDagger ) then
-                    call StartAbilityCooldownAbsoluteEx(MHItem_GetAbility(whichItem, 1), 3.)
+                    call StartAbilityCooldownAbsoluteEx(MHItem_GetAbility(whichItem, 1), cooldown)
                 endif
                 set i = i + 1
             exitwhen i > 5
@@ -68,10 +81,12 @@ scope KelenDagger
         local boolean    isEnabled
 
        // call BJDebugMsg("触发冷却结束")
-        if Table[GetHandleId(whichUnit)][COUNT] <= 0 or not IsUnitHeroLevel(whichUnit) or id != 'A445' then
+        if Table[GetHandleId(whichUnit)].integer[KEY] <= 0 or not IsUnitHeroLevel(whichUnit) or id != 'A445' then
             set whichUnit = null
             return
         endif
+
+        set Table[GetHandleId(whichUnit)].real[KEY] = 0.
 
         set isEnabled = IsTriggerEnabled(UnitManipulatItemTrig)
         call DisableTrigger(UnitManipulatItemTrig)
@@ -100,21 +115,58 @@ scope KelenDagger
         set whichUnit = null
     endfunction
 
-    function ItemKelenDaggerOnPickup takes nothing returns nothing
-        local unit whichUnit = Event.GetTriggerUnit()
-        set Table[GetHandleId(whichUnit)][COUNT] = Table[GetHandleId(whichUnit)][COUNT] + 1
-        set whichUnit = null
+    private function PickupDelayOnExpired takes nothing returns nothing
+        local SimpleTick tick              = SimpleTick.GetExpired()
+        local unit       whichUnit         = SimpleTickTable[tick].unit['u']
+        local item       whichItem         = SimpleTickTable[tick].item['i']
+        local integer    itemIndex         = GetItemIndex(whichItem)
+        local real       cooldownRemaining = GetUnitKelenDaggerCooldownRemaining(whichUnit)
+        local integer    slot              = GetUnitItemSlot(whichUnit, whichItem)
+        
+        // 处于禁用状态
+        if cooldownRemaining > 0. then
+            if ( itemIndex == Item_KelenDagger ) then
+                // 换成禁用版本
+                set TempPlayer = GetItemPlayer(whichItem)
+                call RemoveItem(whichItem)
+                set TempItem = CreateItemToUnitSlotByIndex(whichUnit, RealItem[Item_DisabledKelenDagger], slot)
+                call SetItemPlayer(TempItem, TempPlayer, false)
+                call SetItemUserData(TempItem, 1)
+                call StartAbilityCooldownAbsoluteEx(MHItem_GetAbility(TempItem, 1), cooldownRemaining)
+            else
+                // 更新冷却时间
+                call StartAbilityCooldownAbsoluteEx(MHItem_GetAbility(whichItem, 1), cooldownRemaining)
+            endif
+        endif
 
+        call tick.Destroy()
+        set whichItem = null
+        set whichUnit = null
+    endfunction
+
+    function ItemKelenDaggerOnPickup takes nothing returns nothing
+        local unit       whichUnit = Event.GetTriggerUnit()
+        local item       whichItem = Event.GetManipulatedItem()
+        local SimpleTick tick      = SimpleTick.CreateEx()
+
+        call tick.Start(0., false, function PickupDelayOnExpired)
+        set SimpleTickTable[tick].unit['u'] = whichUnit
+        set SimpleTickTable[tick].item['i'] = whichItem
+
+        set Table[GetHandleId(whichUnit)].integer[KEY] = Table[GetHandleId(whichUnit)].integer[KEY] + 1
         set KelenDaggerCount = KelenDaggerCount + 1
         if KelenDaggerCount == 1 then
             set OnDamagedEvent = AnyUnitEvent.CreateEvent(ANY_UNIT_EVENT_DAMAGED, function OnDamaged)
             set OnEndCooldownEvent = AnyUnitEvent.CreateEvent(ANY_UNIT_EVENT_ABILITY_END_COOLDOWN, function OnEndCooldown)
         endif
+        call BJDebugMsg("+1 KelenDaggerCount：" + I2S(KelenDaggerCount))
+        set whichItem = null
+        set whichUnit = null
     endfunction
 
     function ItemKelenDaggerOnDrop takes nothing returns nothing
         local unit whichUnit = Event.GetTriggerUnit()
-        set Table[GetHandleId(whichUnit)][COUNT] = Table[GetHandleId(whichUnit)][COUNT] - 1
+        set Table[GetHandleId(whichUnit)].integer[KEY] = Table[GetHandleId(whichUnit)].integer[KEY] - 1
         set whichUnit = null
 
         set KelenDaggerCount = KelenDaggerCount - 1
@@ -122,6 +174,7 @@ scope KelenDagger
             call OnDamagedEvent.Destroy()
             call OnEndCooldownEvent.Destroy()
         endif
+        call BJDebugMsg("-1 KelenDaggerCount：" + I2S(KelenDaggerCount))
     endfunction
 
 endscope

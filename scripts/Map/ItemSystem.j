@@ -67,7 +67,7 @@ library ItemSystem requires Base, TimerUtils
 
     function ItemSystem_OnPickup takes unit whichUnit, item whichItem returns nothing
         local integer itemIndex = GetItemIndex(whichItem)
-        if itemIndex > 0 and RealItemPickupCode[itemIndex] != 0 then
+        if itemIndex > 0 and GetItemTypeId(whichItem) == RealItem[itemIndex] and RealItemPickupCode[itemIndex] != 0 then
             set Event.INDEX = Event.INDEX + 1
             set Event.TrigUnit[Event.INDEX] = whichUnit
             set Event.ManipulatedItem[Event.INDEX] = whichItem
@@ -77,7 +77,7 @@ library ItemSystem requires Base, TimerUtils
     endfunction
     function ItemSystem_OnDrop takes unit whichUnit, item whichItem returns nothing
         local integer itemIndex = GetItemIndex(whichItem)
-        if itemIndex > 0 and RealItemDropCode[itemIndex] != 0 then
+        if itemIndex > 0 and GetItemTypeId(whichItem) == RealItem[itemIndex] and RealItemDropCode[itemIndex] != 0 then
             set Event.INDEX = Event.INDEX + 1
             set Event.TrigUnit[Event.INDEX] = whichUnit
             set Event.ManipulatedItem[Event.INDEX] = whichItem
@@ -138,10 +138,12 @@ library ItemSystem requires Base, TimerUtils
         set X6V = RegisterItem('I03B','I04E','h01H','I0DA')
         set X7V = RegisterItem('I03C','I04F','h01I','I0CQ')
         set Item_IronwoodBranch = RegisterItem('I03D','I04G','h01J','I0CU')
-        set Item_KelenDagger = RegisterItem('I03E','I04H','h01K','I0C7')
-        call SetRealItemFuncSimple(Item_KelenDagger, "ItemKelenDaggerOnPickup", "ItemKelenDaggerOnDrop")
 
+        set Item_KelenDagger = RegisterItem('I03E','I04H','h01K','I0C7')
         set Item_DisabledKelenDagger = RegisterItem('I03E','I04I','h01K','I0DH')
+        call SetRealItemFuncSimple(Item_KelenDagger, "ItemKelenDaggerOnPickup", "ItemKelenDaggerOnDrop")
+        call SetRealItemFuncSimple(Item_DisabledKelenDagger, "ItemKelenDaggerOnPickup", "ItemKelenDaggerOnDrop")
+
         set OEV = RegisterItem('I03F','I04J','h01L','I0CM')
         set OXV = RegisterItem('I03G','I04K','h01M','I0CD')
         set OOV = RegisterItem('I03H','I04L','h01N','I0CG')
@@ -270,7 +272,8 @@ library ItemSystem requires Base, TimerUtils
         set Item_HeartOfTarrasque = RegisterItem('I0AA','I0A9', 0,'I0BT')
         set Item_DisabledHeartOfTarrasque = RegisterItem('I0AA','I0KL', 0,'I0KM')
         call SetRealItemFuncSimple(Item_HeartOfTarrasque, "ItemHeartOfTarrasqueOnPickup", "ItemHeartOfTarrasqueOnDrop")
-
+        call SetRealItemFuncSimple(Item_DisabledHeartOfTarrasque, "ItemHeartOfTarrasqueOnPickup", "ItemHeartOfTarrasqueOnDrop")
+        
         set A2V = RegisterItem('I0AC','I0AB', 0,'I0BU')
         set A3V = RegisterItem('I0AD','I0AE', 0,'I0BV')
         set A4V = RegisterItem('I0AG','I0AF', 0,'I0CT')
