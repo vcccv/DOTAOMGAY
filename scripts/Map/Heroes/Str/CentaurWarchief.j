@@ -165,7 +165,7 @@ scope CentaurWarchief
         set i = 0
         loop
             
-            if IsPlayerAlly(p, Player(i)) and IsUserPlayer(Player(i)) then
+            if IsPlayerAlly(p, Player(i)) and IsPlayerUser(Player(i)) then
                 
                 call GroupEnumUnitsOfPlayer(g, Player(i), null)
                 loop

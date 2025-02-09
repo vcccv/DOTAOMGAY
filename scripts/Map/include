@@ -5,5 +5,4 @@
 #include "Ability\\include"
 #include "Utilities\\include"
 #include "EventSystem.j"
-#include "DamageSystem.j"
 #include "ItemSystem.j"

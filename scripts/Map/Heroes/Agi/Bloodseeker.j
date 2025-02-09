@@ -70,7 +70,7 @@ scope Bloodseeker
         local integer maxPlayer = 5
         local integer i
         local unit    u
-        local boolean isSentinel = IsSentinelPlayer(GetOwningPlayer(whichUnit))
+        local boolean isSentinel = IsPlayerSentinel(GetOwningPlayer(whichUnit))
         local boolean isBreak    = IsUnitBroken(whichUnit)
         local real    moveBonus
 

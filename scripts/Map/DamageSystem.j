@@ -54,7 +54,7 @@ scope DamageSystem
         local real A7A =(LoadReal(HY,(GetHandleId(visageUnit)), 443))
         local trigger t
         local integer h
-        if IsDamageValidForProcessing(DEDamage) and ( XFX( Player( DamagedEventSourcePlayerId ) ) or DESource == Roshan ) then
+        if IsDamageValidForProcessing(DEDamage) and ( IsPlayerValid( Player( DamagedEventSourcePlayerId ) ) or DESource == Roshan ) then
             set A7A = A7A + DEDamage
             call SaveReal(HY,(GetHandleId(visageUnit)), 443,((A7A)* 1.))
             set t = CreateTrigger()
@@ -80,15 +80,6 @@ scope DamageSystem
             set i = i + 1
         endloop
     endfunction
-
-
-    globals
-        private key UNIT_LAST_DAMGED_TIME
-    endglobals
-
-    function GetUnitLastDamagedTime takes unit whichUnit returns real
-        return Table[GetHandleId(whichUnit)].real[UNIT_LAST_DAMGED_TIME]
-    endfunction
     
     struct DamageEvent extends array
         
@@ -102,7 +93,7 @@ scope DamageSystem
             local player t = GetOwningPlayer(damageTarget)
             local player a = GetOwningPlayer(damageSource)
             // 镜头震动
-            if IsPlayingPlayer(t) and IsUnitType(DETarget, UNIT_TYPE_HERO) and rDamageValue>= 5 and ZR[GetPlayerId(t)] then
+            if IsPlayerPlaying(t) and IsUnitType(DETarget, UNIT_TYPE_HERO) and rDamageValue>= 5 and ZR[GetPlayerId(t)] then
                 call ZBE(damageTarget, rDamageValue)
             endif
             if d == "0" or( not EnableMapSetup__ShowDamageTextTag[GetPlayerId(t)] and not EnableMapSetup__ShowDamageTextTag[GetPlayerId(a)]) then
@@ -352,6 +343,15 @@ scope DamageSystem
                 //if IsUnitHeroLevel(whichUnit) then
                     set Table[GetHandleId(DETarget)].real[UNIT_LAST_DAMGED_TIME] = GameTimer.GetElapsed()
                 //endif
+
+                if IsPlayerValid(GetOwningPlayer(DESource)) then
+                    call UpdateUnitKelenDaggerDamagedCooldown(DETarget)
+                    call UpdateUnitHeartOfTarrasqueDamagedCooldown(DETarget)
+                endif
+
+                // 绿鞋
+                call TranquilBootsOnDamaged()
+
                 call AnyUnitEvent.ExecuteEvent(DETarget, ANY_UNIT_EVENT_DAMAGED)
 
                 // 额外的伤害事件 关于镜头震动和伤害显示 要在额外伤害打出之前运行
@@ -359,7 +359,7 @@ scope DamageSystem
                     call OtherDamagedEvent(DETarget, DESource, DEDamage - reducedDamage)
                 endif
                 // 打断物品
-                //if IsUnitType(DETarget, UNIT_TYPE_HERO) and ( DEDamage ) > 10 and (XFX( GetOwningPlayer( DESource ) ) or  DESource == Roshan ) then
+                //if IsUnitType(DETarget, UNIT_TYPE_HERO) and ( DEDamage ) > 10 and (IsPlayerValid( GetOwningPlayer( DESource ) ) or  DESource == Roshan ) then
                 //    // 这里计算了减伤再打断
                 //    call SaveReal(HY, GetHandleId( DETarget ), 785, GetGameTime())
                 //endif

@@ -21,4 +21,11 @@ library UnitUtils
         endif
     endfunction
     
+    globals
+        key UNIT_LAST_DAMGED_TIME
+    endglobals
+    function GetUnitLastDamagedTime takes unit whichUnit returns real
+        return Table[GetHandleId(whichUnit)].real[UNIT_LAST_DAMGED_TIME]
+    endfunction
+    
 endlibrary

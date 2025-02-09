@@ -19,6 +19,15 @@ scope HeartOfTarrasque
     function GetUnitHeartOfTarrasqueCooldownRemaining takes unit whichUnit returns real
         return RMaxBJ(Table[GetHandleId(whichUnit)].real[KEY] - GameTimer.GetElapsed(), 0.)
     endfunction
+    function UpdateUnitHeartOfTarrasqueDamagedCooldown takes unit whichUnit returns nothing
+        local real cooldown
+        if IsUnitMeleeAttacker(whichUnit) then
+            set cooldown = 4.
+        else
+            set cooldown = 6.
+        endif
+        set Table[GetHandleId(whichUnit)].real[KEY] = GameTimer.GetElapsed() + cooldown
+    endfunction
 
     private function OnDamaged takes nothing returns nothing
         local integer    i          = 0
@@ -31,12 +40,7 @@ scope HeartOfTarrasque
             return
         endif
 
-        if IsUnitMeleeAttacker(DETarget) then
-            set cooldown = 4.
-        else
-            set cooldown = 6.
-        endif
-        set Table[GetHandleId(DETarget)].real[KEY] = GameTimer.GetElapsed() + cooldown
+        set cooldown = GetUnitHeartOfTarrasqueCooldownRemaining(DETarget)
 
         set isEnabled = IsTriggerEnabled(UnitManipulatItemTrig)
         call DisableTrigger(UnitManipulatItemTrig)

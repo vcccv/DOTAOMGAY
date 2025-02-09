@@ -7,7 +7,6 @@ scope TranquilBoots
     //*
     //***************************************************************************
     globals
-        private AnyUnitEvent OnDamagedEvent     = 0
         private AnyUnitEvent OnEndCooldownEvent = 0
         private key KEY
     endglobals
@@ -19,6 +18,9 @@ scope TranquilBoots
     function GetUnitTranquilBootsCooldownRemaining takes unit whichUnit returns real
         return RMaxBJ(Table[GetHandleId(whichUnit)].real[KEY] - GameTimer.GetElapsed(), 0.)
     endfunction
+    function UpdateUnitTranquilBootsDamagedCooldown takes unit whichUnit returns nothing
+        set Table[GetHandleId(whichUnit)].real[KEY] = GameTimer.GetElapsed() + 13.
+    endfunction
 
     private function UnitDisableTranquilBoots takes unit whichUnit returns nothing
         local integer    i          = 0
@@ -26,8 +28,9 @@ scope TranquilBoots
         local integer    itemIndex
         local SimpleTick tick
         local boolean    isEnabled
+        local real       cooldown
 
-        set Table[GetHandleId(whichUnit)].real[KEY] = GameTimer.GetElapsed() + 13.
+        set cooldown = GetUnitTranquilBootsCooldownRemaining(whichUnit)
 
         set isEnabled = IsTriggerEnabled(UnitManipulatItemTrig)
         call DisableTrigger(UnitManipulatItemTrig)
@@ -41,9 +44,9 @@ scope TranquilBoots
                     set TempItem = CreateItemToUnitSlotByIndex(whichUnit, RealItem[Item_DisabledTranquilBoots], i)
                     call SetItemPlayer(TempItem, TempPlayer, false)
                     call SetItemUserData(TempItem, 1)
-                    call StartAbilityCooldownAbsoluteEx(MHItem_GetAbility(TempItem, 1), 13.)
+                    call StartAbilityCooldownAbsoluteEx(MHItem_GetAbility(TempItem, 1), cooldown)
                 elseif ( itemIndex == Item_DisabledTranquilBoots ) then
-                    call StartAbilityCooldownAbsoluteEx(MHItem_GetAbility(whichItem, 1), 13.)
+                    call StartAbilityCooldownAbsoluteEx(MHItem_GetAbility(whichItem, 1), cooldown)
                 endif
                 set i = i + 1
             exitwhen i > 5
@@ -57,21 +60,23 @@ scope TranquilBoots
         set whichItem = null
     endfunction
 
-    private function OnDamaged takes nothing returns nothing
-        if not Event.IsAttackDamage() then
-            return
-        endif
-
-        // 被攻击就中断
-        if Table[GetHandleId(DETarget)].integer[KEY] > 0 then
-            call UnitDisableTranquilBoots(DETarget)
-        endif
-        // 攻击英雄时才会中断(不是英雄级单位)
-        if Table[GetHandleId(DESource)].integer[KEY] > 0 and IsHeroUnitId(GetUnitTypeId(DETarget)) then
-            call UnitDisableTranquilBoots(DESource)
+    function TranquilBootsOnDamaged takes nothing returns nothing
+        if Event.IsAttackDamage() then
+            // 被攻击就中断
+            call UpdateUnitTranquilBootsDamagedCooldown(DETarget)
+            if Table[GetHandleId(DETarget)].integer[KEY] > 0 then
+                call UnitDisableTranquilBoots(DETarget)
+            endif
+            // 攻击英雄时才会中断(不是英雄级单位)
+            if IsHeroUnitId(GetUnitTypeId(DETarget)) and IsPlayerValid(GetOwningPlayer(DETarget)) then
+                call UpdateUnitTranquilBootsDamagedCooldown(DESource)
+                if Table[GetHandleId(DESource)].integer[KEY] > 0 then
+                    call UnitDisableTranquilBoots(DESource)
+                endif
+            endif
         endif
     endfunction
-
+    
     private function OnEndCooldown takes nothing returns nothing
         local integer    i         = 0
         local item       whichItem         
@@ -165,7 +170,6 @@ scope TranquilBoots
         set Table[GetHandleId(whichUnit)].integer[KEY] = Table[GetHandleId(whichUnit)].integer[KEY] + 1
         set TranquilBootsCount = TranquilBootsCount + 1
         if TranquilBootsCount == 1 then
-            set OnDamagedEvent = AnyUnitEvent.CreateEvent(ANY_UNIT_EVENT_DAMAGED, function OnDamaged)
             set OnEndCooldownEvent = AnyUnitEvent.CreateEvent(ANY_UNIT_EVENT_ABILITY_END_COOLDOWN, function OnEndCooldown)
         endif
         //call BJDebugMsg("+ 1now TranquilBootsCount:" + I2S(TranquilBootsCount))
@@ -181,7 +185,6 @@ scope TranquilBoots
 
         set TranquilBootsCount = TranquilBootsCount - 1
         if TranquilBootsCount == 0 then
-            call OnDamagedEvent.Destroy()
             call OnEndCooldownEvent.Destroy()
         endif
         //call BJDebugMsg("- 1now TranquilBootsCount:" + I2S(TranquilBootsCount))

@@ -268,7 +268,7 @@ scope GameEnd
         set i = 1
         loop
         exitwhen i > 5
-            if IsPlayingPlayer(SentinelPlayers[i]) or GetPlayerSlotState(SentinelPlayers[i]) == PLAYER_SLOT_STATE_LEFT then
+            if IsPlayerPlaying(SentinelPlayers[i]) or GetPlayerSlotState(SentinelPlayers[i]) == PLAYER_SLOT_STATE_LEFT then
                 set sentinelUserList[x]= SentinelPlayers[i]
                 set x = x + 1
             endif
@@ -278,7 +278,7 @@ scope GameEnd
         set i = 1
         loop
         exitwhen i > 5
-            if IsPlayingPlayer(ScourgePlayers[i]) or GetPlayerSlotState(ScourgePlayers[i]) == PLAYER_SLOT_STATE_LEFT then
+            if IsPlayerPlaying(ScourgePlayers[i]) or GetPlayerSlotState(ScourgePlayers[i]) == PLAYER_SLOT_STATE_LEFT then
                 set scourgeUserList[x]= ScourgePlayers[i]
                 set x = x + 1
             endif

@@ -139,6 +139,7 @@ library ItemSystem requires Base, TimerUtils
         set X7V = RegisterItem('I03C','I04F','h01I','I0CQ')
         set Item_IronwoodBranch = RegisterItem('I03D','I04G','h01J','I0CU')
 
+        // 跳刀
         set Item_KelenDagger = RegisterItem('I03E','I04H','h01K','I0C7')
         set Item_DisabledKelenDagger = RegisterItem('I03E','I04I','h01K','I0DH')
         call SetRealItemFuncSimple(Item_KelenDagger, "ItemKelenDaggerOnPickup", "ItemKelenDaggerOnDrop")
@@ -315,6 +316,7 @@ library ItemSystem requires Base, TimerUtils
         set N0V = RegisterItem('I0O2','I0O3', 0,'I0O4')
         set RAV = RegisterItem('I0OC','I0OE', 0,'I0OD')
 
+        // 绿鞋
         set Item_TranquilBoots = RegisterItem('I0OF','I0OG', 0,'I0OH')
         set Item_DisabledTranquilBoots = RegisterItem('I0OJ','I0OI', 0,'I0OK')
         call SetRealItemFuncSimple(Item_TranquilBoots, "ItemTranquilBootsOnPickup", "ItemTranquilBootsOnDrop")

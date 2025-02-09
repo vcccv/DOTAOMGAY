@@ -27,6 +27,9 @@ scope KelenDagger
     function GetUnitKelenDaggerCooldownRemaining takes unit whichUnit returns real
         return RMaxBJ(Table[GetHandleId(whichUnit)].real[KEY] - GameTimer.GetElapsed(), 0.)
     endfunction
+    function UpdateUnitKelenDaggerDamagedCooldown takes unit whichUnit returns nothing
+        set Table[GetHandleId(whichUnit)].real[KEY] = GameTimer.GetElapsed() + 3.
+    endfunction
 
     private function OnDamaged takes nothing returns nothing
         local integer    i          = 0
@@ -40,8 +43,7 @@ scope KelenDagger
             return
         endif
 
-        set cooldown = 3.
-        set Table[GetHandleId(DETarget)].real[KEY] = GameTimer.GetElapsed() + cooldown
+        set cooldown = GetUnitKelenDaggerCooldownRemaining(DETarget)
 
         set isEnabled = IsTriggerEnabled(UnitManipulatItemTrig)
         call DisableTrigger(UnitManipulatItemTrig)
@@ -159,7 +161,7 @@ scope KelenDagger
             set OnDamagedEvent = AnyUnitEvent.CreateEvent(ANY_UNIT_EVENT_DAMAGED, function OnDamaged)
             set OnEndCooldownEvent = AnyUnitEvent.CreateEvent(ANY_UNIT_EVENT_ABILITY_END_COOLDOWN, function OnEndCooldown)
         endif
-        call BJDebugMsg("+1 KelenDaggerCount：" + I2S(KelenDaggerCount))
+        //call BJDebugMsg("+1 KelenDaggerCount：" + I2S(KelenDaggerCount))
         set whichItem = null
         set whichUnit = null
     endfunction
@@ -174,7 +176,7 @@ scope KelenDagger
             call OnDamagedEvent.Destroy()
             call OnEndCooldownEvent.Destroy()
         endif
-        call BJDebugMsg("-1 KelenDaggerCount：" + I2S(KelenDaggerCount))
+        //call BJDebugMsg("-1 KelenDaggerCount：" + I2S(KelenDaggerCount))
     endfunction
 
 endscope
