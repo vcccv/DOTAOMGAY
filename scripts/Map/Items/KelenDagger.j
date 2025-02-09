@@ -22,7 +22,7 @@ scope KelenDagger
 
     private function OnDamaged takes nothing returns nothing
         local integer    i          = 0
-        local item       whichItem         
+        local item       whichItem
         local integer    itemIndex
         local SimpleTick tick
         local boolean    isEnabled
@@ -37,20 +37,20 @@ scope KelenDagger
                 set whichItem = UnitItemInSlot(DETarget, i)
                 set itemIndex = GetItemIndex(whichItem)
                 if ( itemIndex == Item_KelenDagger ) then
-                // call BJDebugMsg("坏了")
                     set TempPlayer = GetItemPlayer(whichItem)
-                   // call BJDebugMsg("破损了当前冷却时间是：" + R2S(GetUnitAbilityCooldownRemaining(DETarget, 'AIbk')))
                     call RemoveItem(whichItem)
                     set TempItem = CreateItemToUnitSlotByIndex(DETarget, RealItem[Item_DisabledKelenDagger], i)
-                    call StartUnitAbilityCooldownAbsolute(DETarget, 'A445')
-                   // call BJDebugMsg("破损了破的冷却时间是：" + R2S(GetUnitAbilityCooldownRemaining(DETarget, 'A445')))
                     call SetItemPlayer(TempItem, TempPlayer, false)
                     call SetItemUserData(TempItem, 1)
+                    call StartAbilityCooldownAbsoluteEx(MHItem_GetAbility(TempItem, 1), 3.)
+                elseif ( itemIndex == Item_DisabledKelenDagger ) then
+                    call StartAbilityCooldownAbsoluteEx(MHItem_GetAbility(whichItem, 1), 3.)
                 endif
                 set i = i + 1
             exitwhen i > 5
             endloop
         endif
+
         if isEnabled then
             call EnableTrigger(UnitManipulatItemTrig)
         endif

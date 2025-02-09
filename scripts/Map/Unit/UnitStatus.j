@@ -57,5 +57,9 @@ library UnitStatus
     function IsUnitHeroLevel takes unit whichUnit returns boolean
         return IsHeroUnitId(GetUnitTypeId(whichUnit)) or IsUnitBear(whichUnit)
     endfunction
+    // 近战
+    function IsUnitMeleeAttacker takes unit whichUnit returns boolean
+        return IsUnitType(whichUnit, UNIT_TYPE_MELEE_ATTACKER)
+    endfunction
 
 endlibrary

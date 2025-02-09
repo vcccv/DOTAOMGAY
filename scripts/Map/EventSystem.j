@@ -27,7 +27,7 @@ library EventSystem
         static damagetype   array DamageType
 
         static attacktype   array AttackType
-        static boolean      array IsAttackDamage
+        static boolean      array IsAttack
         static integer      array Flag1
 
         static item         array ManipulatedItem
@@ -36,11 +36,14 @@ library EventSystem
         static method GetTriggerUnit takes nothing returns unit
             return thistype.TrigUnit[thistype.INDEX]
         endmethod
-        static method GetTManipulatedItem takes nothing returns item
+        static method GetManipulatedItem takes nothing returns item
             return thistype.ManipulatedItem[thistype.INDEX]
         endmethod
         static method GetTriggerAbilityId takes nothing returns integer
             return thistype.TriggerAbilityId[thistype.INDEX]
+        endmethod
+        static method IsAttackDamage takes nothing returns boolean
+            return MHDamageEvent_IsPhysical()// thistype.IsAttack[thistype.INDEX]
         endmethod
 
     endstruct

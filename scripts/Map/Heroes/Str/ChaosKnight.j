@@ -36,9 +36,9 @@ scope ChaosKnight
         if not IsUnitType(whichUnit, UNIT_TYPE_MELEE_ATTACKER) then
             set damageDealt = 0.80
             set damageTaken = 2.50
-            call MHAbility_SetAbilityCustomLevelDataReal(GetSpellAbility(), level, ABILITY_LEVEL_DEF_DATA_COOLDOWN, 100.)
+            call SetUnitAbilityLevelCooldown(whichUnit, GetSpellAbility(), level, 100.)
         else
-            call MHAbility_SetAbilityCustomLevelDataReal(GetSpellAbility(), level, ABILITY_LEVEL_DEF_DATA_COOLDOWN, 80.)
+            call SetUnitAbilityLevelCooldown(whichUnit, GetSpellAbility(), level, 80.)
         endif
 
         call UnitMirrorImage(whichUnit, max, damageDealt, damageTaken, buffId, dur, delay, specialArt, missileArt, missileSpeed, rng, area)

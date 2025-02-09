@@ -364,8 +364,7 @@ globals
 	integer array RX
 	boolean IX = false
 	boolean AX = false
-	// 任意单位受伤的触发器
-	trigger AnyUnitDamagedTrig
+	
 	region BX = null
 	region CX = null
 	integer GX = 0
@@ -378,7 +377,6 @@ globals
 	boolean QX = false
 	boolean SX = false
 	boolean TX = false
-	boolean UX = false
 	boolean BHYZR = false
 
 	integer EO
@@ -7007,11 +7005,11 @@ function B1X takes unit whichUnit, sound A6X, real x, real y, real r returns not
 	call DeallocateGroup(g)
 	set g = null
 endfunction
-function B2X takes unit whichUnit, item UWV returns integer
+function GetUnitItemSlot takes unit whichUnit, item whichItem returns integer
 	local integer i = 0
 	loop
 	exitwhen i > 5
-		if UnitItemInSlot(whichUnit, i) == UWV then
+		if UnitItemInSlot(whichUnit, i) == whichItem then
 			return i
 		endif
 		set i = i + 1
@@ -15054,13 +15052,6 @@ function XHYZR takes nothing returns nothing
 	endif
 endfunction
 
-function X5O takes nothing returns nothing
-	if UX == false then
-		call RegisterUnitAttackFunc("X6O", 0)	//静谧之鞋
-		set UX = true
-	endif
-endfunction
-
 function X7O takes nothing returns nothing
 	if BV == false then
 		call RegisterUnitAttackFunc("X8O", 1)	//雷神之锤and漩涡
@@ -15300,7 +15291,7 @@ function OnManipulatItem takes nothing returns boolean
 			endif
 			if i == RealItem[OYV] then
 				set CDV[id]= CDV[id] + 1
-			elseif i == RealItem[Item_KelenDagger] then
+			//elseif i == RealItem[Item_KelenDagger] then
 				//set KelenDaggerCount = KelenDaggerCount + 1
 				//set PlayerKelenDaggerCount[id]= PlayerKelenDaggerCount[id] + 1
 				//call ItemKelenDaggerOnPickup(u, it)
@@ -15314,9 +15305,9 @@ function OnManipulatItem takes nothing returns boolean
 				call ExecuteFunc("OPO")
 			elseif i == RealItem[I6V] or i == RealItem[it_fj] then
 				call OOO()
-			elseif i == RealItem[Item_HeartOfTarrasque] then
-				set HeartOfTarrasqueCount = HeartOfTarrasqueCount + 1
-				set C7V[id]= C7V[id] + 1
+			//elseif i == RealItem[Item_HeartOfTarrasque] then
+			//	set HeartOfTarrasqueCount = HeartOfTarrasqueCount + 1
+			//	set C7V[id]= C7V[id] + 1
 			elseif i == RealItem[Item_LinkenSphere] then
 				set CWV = CWV + 1
 				set CJV[id]= CJV[id] + 1
@@ -15337,10 +15328,9 @@ function OnManipulatItem takes nothing returns boolean
 			elseif i == RealItem[RLV] then
 				set C1Z[id]= C1Z[id] + 1
 				call OCO()
-			elseif i == RealItem[Item_TranquilBoots] then
-				set TranquilBootsCount = TranquilBootsCount + 1
-				call X5O()
-				set C8V[id]= C8V[id] + 1
+			//elseif i == RealItem[Item_TranquilBoots] then
+			//	set TranquilBootsCount = TranquilBootsCount + 1
+			//	set C8V[id]= C8V[id] + 1
 			elseif i == RealItem[Item_OctarineCore] then //玲珑心
 				set HasOctarineCore = true
 			elseif i == RealItem[it_hyzr] then
@@ -15377,13 +15367,13 @@ function OnManipulatItem takes nothing returns boolean
 			call ItemSystem_OnDrop(u, GetManipulatedItem())
 			if i == RealItem[OYV] then
 				set CDV[id]= CDV[id]-1
-			elseif i == RealItem[Item_KelenDagger] then
+			//elseif i == RealItem[Item_KelenDagger] then
 				//set PlayerKelenDaggerCount[id]= PlayerKelenDaggerCount[id]-1
 				//set KelenDaggerCount = KelenDaggerCount -1
 				//call ItemKelenDaggerOnDrop(u, it)
-			elseif i == RealItem[Item_TranquilBoots] then
-				set C8V[id]= C8V[id]-1
-				set TranquilBootsCount = TranquilBootsCount -1
+			//elseif i == RealItem[Item_TranquilBoots] then
+			//	set C8V[id]= C8V[id]-1
+			//	set TranquilBootsCount = TranquilBootsCount -1
 			elseif i == RealItem[NIV] then
 				set CGV[id]= CGV[id]-1
 				set CZV = CZV -1
@@ -15392,9 +15382,9 @@ function OnManipulatItem takes nothing returns boolean
 				if CHV[id]< 1 or GZX(u, RealItem[IQV], GetManipulatedItem()) == null or GZX(u, RealItem[N2V], GetManipulatedItem()) == null then
 					call UnitRemoveAbility(u,'A174')
 				endif
-			elseif i == RealItem[Item_HeartOfTarrasque] then
-				set C7V[id]= C7V[id]-1
-				set HeartOfTarrasqueCount = HeartOfTarrasqueCount -1
+			//elseif i == RealItem[Item_HeartOfTarrasque] then
+			//	set C7V[id]= C7V[id]-1
+			//	set HeartOfTarrasqueCount = HeartOfTarrasqueCount -1
 			elseif i == RealItem[Item_LinkenSphere]or i == DisabledItem[Item_LinkenSphere] then
 				set CWV = IMaxBJ(CWV -1, 0)
 				set CJV[id]= IMaxBJ(CJV[id]-1, 0)
@@ -15683,7 +15673,7 @@ function RXO takes nothing returns boolean
 	local integer TZE = GetItemIndexEx(whichItem)
 	if whichItem != null and GUX(TZE) and GetHandleId(whichItem) == RRO and UnitAlive(u) and UnitAlive(u) then
 		set id = GWX(TZE)
-		set itemSlot = B2X(u, whichItem)
+		set itemSlot = GetUnitItemSlot(u, whichItem)
 		set TempPlayer = GetItemPlayer(whichItem)
 		call HZX(whichItem)
 		set TempItem = CreateItemToUnitSlotByIndex(u, RealItem[O2V], itemSlot)
@@ -15702,7 +15692,7 @@ endfunction
 function RAO takes unit u, item RIO returns nothing
 	local trigger t = CreateTrigger()
 	local integer h = GetHandleId(t)
-	local integer ROO = B2X(u, RIO)
+	local integer ROO = GetUnitItemSlot(u, RIO)
 	call SaveInteger(HY, h, 98,(ROO))
 	call SaveInteger(HY, h,'i',(GetHandleId(RIO)))
 	call SaveUnitHandle(HY, h, 26,(u))
@@ -15761,7 +15751,7 @@ function RCO takes unit trigUnit, item whichItem returns nothing
 		endif
 		if it != null then
 			if XI[GetPlayerId(GetOwningPlayer(trigUnit))]== false then
-				set i = B2X(trigUnit, it)
+				set i = GetUnitItemSlot(trigUnit, it)
 				set k = RNO(ZAX(GetItemTypeId(whichItem)))
 				call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Undead\\ReplenishMana\\SpiritTouchTarget.mdl", trigUnit, "overhead"))
 				set TempPlayer = GetItemPlayer(it)
@@ -15779,7 +15769,7 @@ function RCO takes unit trigUnit, item whichItem returns nothing
 				call RAO(trigUnit, it)
 				call OQO(trigUnit, GetItemTypeId(whichItem), true)
 			else
-				set i = B2X(trigUnit, it)
+				set i = GetUnitItemSlot(trigUnit, it)
 				set k = O2V
 				call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Undead\\ReplenishMana\\SpiritTouchTarget.mdl", trigUnit, "overhead"))
 				set TempPlayer = GetItemPlayer(it)
@@ -16266,12 +16256,12 @@ function IOO takes unit trigUnit returns nothing
 			call DisableTrigger(UnitManipulatItemTrig)
 			set TempPlayer = GetItemPlayer(IRO)
 			call RemoveItem(IRO)
-			set TempItem = CreateItemToUnitSlotByIndex(trigUnit, RealItem[RBV], i)
+			set TempItem = CreateItemToUnitSlotByIndex(trigUnit, RealItem[Item_DisabledTranquilBoots], i)
 			call SetItemPlayer(TempItem, TempPlayer, false)
 			call SetItemUserData(TempItem, 1)
 			call EnableTrigger(UnitManipulatItemTrig)
 		endif
-		if GTX == RBV and IIO == false then
+		if GTX == Item_DisabledTranquilBoots and IIO == false then
 			call DisableTrigger(UnitManipulatItemTrig)
 			set TempPlayer = GetItemPlayer(IRO)
 			call RemoveItem(IRO)
@@ -16306,12 +16296,12 @@ function IAO takes unit trigUnit returns nothing
 			call DisableTrigger(UnitManipulatItemTrig)
 			set TempPlayer = GetItemPlayer(INO)
 			call RemoveItem(INO)
-			set TempItem = CreateItemToUnitSlotByIndex(trigUnit, RealItem[A1V], i)
+			set TempItem = CreateItemToUnitSlotByIndex(trigUnit, RealItem[Item_DisabledHeartOfTarrasque], i)
 			call SetItemPlayer(TempItem, TempPlayer, false)
 			call SetItemUserData(TempItem, 1)
 			call EnableTrigger(UnitManipulatItemTrig)
 		endif
-		if GTX == A1V and IBO == false then
+		if GTX == Item_DisabledHeartOfTarrasque and IBO == false then
 			call DisableTrigger(UnitManipulatItemTrig)
 			set TempPlayer = GetItemPlayer(INO)
 			call RemoveItem(INO)
@@ -16651,7 +16641,7 @@ function I7O takes nothing returns boolean
 	local unit whichUnit = GetTriggerUnit()
 	local integer level = 1
 	local integer id ='EUL1'
-	if GetItemOfTypeFromUnit(whichUnit, RealItem[RBV])!= null then
+	if GetItemOfTypeFromUnit(whichUnit, RealItem[Item_DisabledTranquilBoots])!= null then
 		set level = 4
 	endif
 	if GZX(whichUnit, RealItem[XMV], GetManipulatedItem())!= null then
@@ -16688,7 +16678,7 @@ function I9O takes nothing returns boolean
 	local unit whichUnit = GetTriggerUnit()
 	local integer level = 1
 	local integer id ='EUL1'
-	if GetItemOfTypeFromUnit(whichUnit, RealItem[RBV])!= null then
+	if GetItemOfTypeFromUnit(whichUnit, RealItem[Item_DisabledTranquilBoots])!= null then
 		set level = 4
 	endif
 	if GetItemOfTypeFromUnit(whichUnit, RealItem[XMV])!= null then
@@ -17088,7 +17078,7 @@ function AKO takes nothing returns nothing
 	local integer APO
 	local integer id
 	if GTX == O_V then
-		set itemSlot = B2X(u, whichItem)
+		set itemSlot = GetUnitItemSlot(u, whichItem)
 		set ALO =(LoadUnitHandle(HY,(GetHandleId(u)),'g'))
 		set AMO =(LoadInteger(HY,(GetHandleId(u)),104))
 		if GetUnitTypeId(ALO)=='nfoh' or GetUnitTypeId(ALO)=='ndfl' then
@@ -17117,21 +17107,21 @@ function AKO takes nothing returns nothing
 			call RAO(u, RIO)
 		endif
 	elseif GTX == O2V then
-		set itemSlot = B2X(u, whichItem)
+		set itemSlot = GetUnitItemSlot(u, whichItem)
 		set TempPlayer = GetItemPlayer(whichItem)
 		call HZX(whichItem)
 		set TempItem = CreateItemToUnitSlotByIndex(u, RealItem[O1V], itemSlot)
 		call SetItemPlayer(TempItem, TempPlayer, false)
 		call SetItemUserData(TempItem, 1)
 	elseif GTX == O1V then
-		set itemSlot = B2X(u, whichItem)
+		set itemSlot = GetUnitItemSlot(u, whichItem)
 		set TempPlayer = GetItemPlayer(whichItem)
 		call HZX(whichItem)
 		set TempItem = CreateItemToUnitSlotByIndex(u, RealItem[O0V], itemSlot)
 		call SetItemPlayer(TempItem, TempPlayer, false)
 		call SetItemUserData(TempItem, 1)
 	elseif GTX == O0V then
-		set itemSlot = B2X(u, whichItem)
+		set itemSlot = GetUnitItemSlot(u, whichItem)
 		set TempPlayer = GetItemPlayer(whichItem)
 		call HZX(whichItem)
 		set TempItem = CreateItemToUnitSlotByIndex(u, RealItem[O_V], itemSlot)
@@ -17139,7 +17129,7 @@ function AKO takes nothing returns nothing
 		call SetItemUserData(TempItem, 0)
 	elseif GUX(GTX) then
 		set C2V = true
-		set itemSlot = B2X(u, whichItem)
+		set itemSlot = GetUnitItemSlot(u, whichItem)
 		set id = GWX(GTX)
 		if id > 0 then
 			set RIO = CreateItem(id, GetUnitX(u), GetUnitY(u))
@@ -20506,9 +20496,9 @@ function ItemMantaImageOnSpellEffect takes nothing returns nothing
 	if not IsUnitType(whichUnit, UNIT_TYPE_MELEE_ATTACKER) then
 		set damageDealt = 0.28
 		set damageTaken = 4.00
-		call MHAbility_SetAbilityCustomLevelDataReal(GetSpellAbility(), level, ABILITY_LEVEL_DEF_DATA_COOLDOWN, 50.)
+		call SetUnitAbilityLevelCooldown(whichUnit, GetSpellAbility(), level, 50.)
 	else
-		call MHAbility_SetAbilityCustomLevelDataReal(GetSpellAbility(), level, ABILITY_LEVEL_DEF_DATA_COOLDOWN, 35.)
+		call SetUnitAbilityLevelCooldown(whichUnit, GetSpellAbility(), level, 35.)
 	endif
 
 	call UnitMirrorImage(whichUnit, max, damageDealt, damageTaken, buffId, dur, delay, specialArt, missileArt, missileSpeed, rng, area)
@@ -21440,7 +21430,7 @@ function FYO takes nothing returns nothing
 endfunction
 function FZO takes unit u, integer id, integer RLO, item F_O returns nothing
 	local item it
-	local integer JOX = B2X(u, F_O)
+	local integer JOX = GetUnitItemSlot(u, F_O)
 	local player p = GetItemPlayer(F_O)
 	call DisableTrigger(UnitManipulatItemTrig)
 	call RemoveItem(F_O)
@@ -53096,7 +53086,7 @@ function JNI takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer h = GetHandleId(t)
 	call L6X(LoadUnitHandle(HY, h, 0))
-	call UZV(LoadUnitHandle(HY, h, 0),'I0TH')
+	call UZV(LoadUnitHandle(HY, h, 0),'I0TH') // 通过吃书来让单位有2个疾风步技能 不知道为什么用意
 	call FlushChildHashtable(HY, h)
 	call DestroyTimer(t)
 	set t = null
@@ -56626,13 +56616,13 @@ function SMI takes unit SPI, unit trigUnit returns nothing
 		if GetItemTypeId(UnitItemInSlot(trigUnit, i))==(RealItem[Item_TranquilBoots]) then
 			set S_I = true
 		endif
-		if GetItemTypeId(UnitItemInSlot(trigUnit, i))==(RealItem[RBV]) then
+		if GetItemTypeId(UnitItemInSlot(trigUnit, i))==(RealItem[Item_DisabledTranquilBoots]) then
 			set S0I = true
 		endif
 		set i = i + 1
 	endloop
 	if S0I then
-		call UnitAddItem(SPI, CreateItem((RealItem[RBV]), 0, 0))
+		call UnitAddItem(SPI, CreateItem((RealItem[Item_DisabledTranquilBoots]), 0, 0))
 	elseif S_I then
 		call UnitAddItem(SPI, CreateItem((RealItem[Item_TranquilBoots]), 0, 0))
 	elseif SZI then
@@ -56689,7 +56679,7 @@ function S1I takes nothing returns nothing
 		call EnableTrigger(GetTriggeringTrigger())
 		return
 	endif
-	if not(GetItemTypeId(GetManipulatedItem())==(RealItem[XMV]) or(GetItemTypeId(GetManipulatedItem()))==(RealItem[IAV]) or GetItemTypeId(GetManipulatedItem())==(RealItem[IDV]) or GetItemTypeId(GetManipulatedItem())==(RealItem[ICV]) or GetItemTypeId(GetManipulatedItem())==(RealItem[IBV]) or(GetItemTypeId(GetManipulatedItem()))==(RealItem[NKV]) or GetItemTypeId(GetManipulatedItem())==(RealItem[NZV]) or GetItemTypeId(GetManipulatedItem())==(RealItem[Item_TranquilBoots]) or GetItemTypeId(GetManipulatedItem())==(RealItem[RBV])) then
+	if not(GetItemTypeId(GetManipulatedItem())==(RealItem[XMV]) or(GetItemTypeId(GetManipulatedItem()))==(RealItem[IAV]) or GetItemTypeId(GetManipulatedItem())==(RealItem[IDV]) or GetItemTypeId(GetManipulatedItem())==(RealItem[ICV]) or GetItemTypeId(GetManipulatedItem())==(RealItem[IBV]) or(GetItemTypeId(GetManipulatedItem()))==(RealItem[NKV]) or GetItemTypeId(GetManipulatedItem())==(RealItem[NZV]) or GetItemTypeId(GetManipulatedItem())==(RealItem[Item_TranquilBoots]) or GetItemTypeId(GetManipulatedItem())==(RealItem[Item_DisabledTranquilBoots])) then
 		call EnableTrigger(GetTriggeringTrigger())
 		return
 	endif
@@ -56748,7 +56738,7 @@ function S1I takes nothing returns nothing
 				set S_I = true
 			endif
 		endif
-		if JCX ==(RealItem[RBV]) then
+		if JCX ==(RealItem[Item_DisabledTranquilBoots]) then
 			set TOI = TOI + 1
 			if (not(S4I and JCX == GetItemTypeId(GetManipulatedItem()))) or(TXI > 1 and JCX == GetItemTypeId(GetManipulatedItem())) then
 				set S0I = true
@@ -56767,15 +56757,15 @@ function S1I takes nothing returns nothing
 		call RemoveItem(UnitRemoveItemFromSlot(S6X, 0))
 	endif
 	if S0I then
-		call UnitAddItem(S3X, CreateItem((RealItem[RBV]), 0, 0))
+		call UnitAddItem(S3X, CreateItem((RealItem[Item_DisabledTranquilBoots]), 0, 0))
 		if S4X != null then
-			call UnitAddItem(S4X, CreateItem((RealItem[RBV]), 0, 0))
+			call UnitAddItem(S4X, CreateItem((RealItem[Item_DisabledTranquilBoots]), 0, 0))
 		endif
 		if S5X != null then
-			call UnitAddItem(S5X, CreateItem((RealItem[RBV]), 0, 0))
+			call UnitAddItem(S5X, CreateItem((RealItem[Item_DisabledTranquilBoots]), 0, 0))
 		endif
 		if S6X != null then
-			call UnitAddItem(S6X, CreateItem((RealItem[RBV]), 0, 0))
+			call UnitAddItem(S6X, CreateItem((RealItem[Item_DisabledTranquilBoots]), 0, 0))
 		endif
 	elseif S_I then
 		call UnitAddItem(S3X, CreateItem((RealItem[Item_TranquilBoots]), 0, 0))
@@ -75139,11 +75129,6 @@ function OGO takes nothing returns nothing	//祭品
 	endif
 endfunction
 
-function IXO takes unit whichUnit returns nothing
-	local integer h = GetHandleId(whichUnit)
-	call SaveReal(HY, h, 730, GetGameTime())
-endfunction
-
 function hyzrcd takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer h = GetHandleId(t)
@@ -75184,15 +75169,6 @@ function Hyzr takes nothing returns nothing
 	endif
 endfunction
 
-
-function X6O takes nothing returns nothing	//静谧之鞋
-	if IsUnitType(DETarget, UNIT_TYPE_HERO) or IsUnitBear(DETarget) then
-		call IXO(DETarget)
-	endif
-	//	if IsUnitType(DESource, UNIT_TYPE_HERO) or IsUnitBear(DESource) then
-	//		call IXO(DESource)
-	//	endif
-endfunction
 
 function OVO takes nothing returns nothing	//压制之刃
 	if IsUnitType(DETarget, UNIT_TYPE_STRUCTURE) == false and IsUnitIllusion(DETarget) == false and IsUnitEnemy(DETarget, GetOwningPlayer(DESource)) and IsUnitType(DETarget, UNIT_TYPE_HERO) == false and(GetUnitAbilityLevel(DESource,'A1AB')> 0) and DETarget != Roshan then
@@ -76079,8 +76055,6 @@ function RegisterHeroEventWait0sFilter takes nothing returns boolean
 	local integer iHandleId = GetHandleId(trig)
 	local unit whichUnit = LoadUnitHandle(HY, iHandleId, 0)
 	if whichUnit != null and not IsUnitDummy(whichUnit) then
-		// 伤害事件
-		//call TriggerRegisterUnitEvent(AnyUnitDamagedTrig, whichUnit, EVENT_UNIT_DAMAGED)
 		// 视野和状态记录
 		call RegisterHeroVisionAndState(whichUnit)
 		// 土猫的召唤巨石
@@ -76143,9 +76117,8 @@ function AnyUnitEventRegisterFilter takes nothing returns boolean
 				call SaveUnitHandle(HY, GetHandleId(trig), 0, whichUnit)
 				set trig = null
 			endif
-		else
-			// debug call SingleDebug("给 " + GetUnitName(whichUnit) + " 单位注册任意单位受伤事件" )
-			call TriggerRegisterUnitEvent(AnyUnitDamagedTrig, whichUnit, EVENT_UNIT_DAMAGED)
+		//else
+			
 		endif
 	endif
 	set whichUnit = null
@@ -77812,7 +77785,7 @@ function UnitIssuedItemOrder takes nothing returns nothing // 发布物品命令
 		// 不指向单位的操作
 		if id == R4V or id == IAV or id == INV then // tp
 			call ZEA(whichUnit, it)
-		elseif id == Item_DisabledKelenDagger or id == AQV or id == RBV or id == A1V then // 禁止使用破碎的物品?
+		elseif id == Item_DisabledKelenDagger or id == AQV or id == Item_DisabledTranquilBoots or id == Item_DisabledHeartOfTarrasque then // 禁止使用破碎的物品?
 			if GetUnitTypeId(whichUnit) !='e00E'then 
 				call EXStopUnit(whichUnit)
 			endif
@@ -82022,6 +81995,7 @@ function main takes nothing returns nothing
 	call ExecuteFunc("AbilityCustomOrderId_Init")
 	call ExecuteFunc("AbilityCustomCastType_Init")
 	call ExecuteFunc("SpecialPassiveAbility_Init")
+	call ExecuteFunc("UnitWindWalk_Init")
 	call UnitRemove_Init()
 	call UnitAbility_Init()
 	call UnitMorph_Init()
@@ -82173,9 +82147,7 @@ function main takes nothing returns nothing
 	set t = CreateTrigger()
 	call YDWETriggerRegisterEnterRectSimpleNull(t, GetWorldBounds())
 	call TriggerAddCondition(t, Condition(function AnyUnitEventRegisterFilter))	//原本的全图单位受伤害捕捉
-	set AnyUnitDamagedTrig = CreateTrigger()
-	call TriggerAddCondition(AnyUnitDamagedTrig, Condition(function DamageEvent.AnyUnitDamagedEvent))
-	call MHDamageEvent_Register(AnyUnitDamagedTrig)
+	call DamageSystem_Init()
 
 	call SetAltMinimapIcon("war3mapImported\\black.blp")
 	call RegisterUnitAttackFunc("SetUnitMiss",-1)
@@ -82345,9 +82317,9 @@ function main takes nothing returns nothing
 	call TriggerAddCondition(t, null)
 
 	// // 物品打断中心计时器
- 	set t = CreateTrigger()
- 	call TriggerRegisterTimerEvent(t, .1, true)
- 	call TriggerAddCondition(t, Condition(function IHO))
+ 	//set t = CreateTrigger()
+ 	//call TriggerRegisterTimerEvent(t, .1, true)
+ 	//call TriggerAddCondition(t, Condition(function IHO))
 	
 	// 增加移动速度 - 物品
 	set t = CreateTrigger()

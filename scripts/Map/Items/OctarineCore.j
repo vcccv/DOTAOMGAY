@@ -1,6 +1,11 @@
 
 scope OctarineCore
 
+    //***************************************************************************
+    //*
+    //*  玲珑心
+    //*
+    //***************************************************************************
     function ItemOctarineCoreOnPickup takes nothing returns nothing
         local unit whichUnit = Event.GetTriggerUnit()
          

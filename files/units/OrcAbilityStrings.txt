@@ -10715,7 +10715,7 @@ effectsoundlooped=ReplaceableTextures\CommandButtons\BTNTransmute.blp
 [I0A9]
 art=ReplaceableTextures\CommandButtons\BTNHeartOfAszune
 Name=恐鳌之心|nHeart of Tarrasque
-Ubertip=|cffffcc00属性：|r|n增加40点力量|n提高300点生命上限|n|n|cff0033cc治愈伤口：|r|n提升最大生命值*4%点/秒的生命恢复速率；受到来自玩家的攻击会失去恢复效果，持续5秒（远程英雄7秒）|n|n|c00838B8B已经绝种的怪物的心脏，能提升携带者的耐久力|r
+Ubertip=|cffffcc00属性：|r|n增加40点力量|n提高300点生命上限|n|n|cff0033cc治愈伤口：|r|n提升最大生命值*4%点/秒的生命恢复速率；受到来自玩家的攻击会失去恢复效果，持续4秒（远程英雄6秒）|n|n|c00838B8B已经绝种的怪物的心脏，能提升携带者的耐久力|r
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNHeartOfAszune.blp
 [I0AA]
 Name=恐鳌之心|nHeart of Tarrasque
@@ -12074,7 +12074,7 @@ name="Aegis Check"
 [I0KL]
 art=ReplaceableTextures\CommandButtons\BTNInactiveHeart
 Name=恐鳌之心 - |cffff0303禁用|r
-Ubertip=|cffffcc00属性：|r|n增加40点力量|n提高300点生命上限|n|n|cff0033cc治愈伤口：|r|n提升最大生命值*4%点/秒的生命恢复速率；受到来自玩家的攻击会失去恢复效果，持续5秒（远程英雄7秒）|n|n|c00838B8B已经绝种的怪物的心脏，能提升携带者的耐久力|r
+Ubertip=|cffffcc00属性：|r|n增加40点力量|n提高300点生命上限|n|n|cff0033cc治愈伤口：|r|n提升最大生命值*4%点/秒的生命恢复速率；受到来自玩家的攻击会失去恢复效果，持续4秒（远程英雄6秒）|n|n|c00838B8B已经绝种的怪物的心脏，能提升携带者的耐久力|r
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNInactiveHeart.blp
 [I0KM]
 art=ReplaceableTextures\CommandButtons\BTNHeartOfAszune
@@ -12424,7 +12424,7 @@ Name=静谧之鞋|nTranquil Boots
 [I0OG]
 art=ReplaceableTextures\CommandButtons\BTNTranquilBoots
 Name=静谧之鞋|nTranquil Boots
-Ubertip=|cffffcc00属性：|r|n增加90点移动速度|n增加4点护甲|n提升12点/秒的生命恢复速率|n提高50%的魔法恢复速率|n|n|cffff0303受到攻击将会破损，失去25点移动速度加成以及生命/魔法恢复效果|r|n|n|c00ff0303移动速度提升效果不与其他任何鞋子叠加|r|n|n|c00fffc01右键点击四次可拆分|r
+Ubertip=|cffffcc00属性：|r|n增加90点移动速度|n增加4点护甲|n提升12点/秒的生命恢复速率|n提高50%的魔法恢复速率|n|n|cffff0303受到攻击将会破损，失去25点移动速度加成以及生命/魔法恢复效果，持续13秒。|r|n|n|c00ff0303移动速度提升效果不与其他任何鞋子叠加|r|n|n|c00fffc01右键点击四次可拆分|r
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNTranquilBoots.blp
 [I0OH]
 art=ReplaceableTextures\CommandButtons\BTNTranquilBoots
@@ -12433,7 +12433,7 @@ Ubertip="|cffff0303这件物品不属于你，它失去了效果|r"
 [I0OI]
 art=ReplaceableTextures\CommandButtons\BTNCancel
 Name=静谧之鞋（破损）|nTranquil Boots (broken)
-Ubertip=|cffffcc00属性：|r|n增加90点移动速度|n增加4点护甲|n提升12点/秒的生命恢复速率|n提高50%的魔法恢复速率|n|n|cffff0303受到攻击将会破损，失去25点移动速度加成以及生命/魔法恢复效果|r|n|n|c00ff0303移动速度提升效果不与其他任何鞋子叠加|r
+Ubertip=|cffffcc00属性：|r|n增加90点移动速度|n增加4点护甲|n提升12点/秒的生命恢复速率|n提高50%的魔法恢复速率|n|n|cffff0303受到攻击将会破损，失去25点移动速度加成以及生命/魔法恢复效果，持续13秒。|r|n|n|c00ff0303移动速度提升效果不与其他任何鞋子叠加|r
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNCancel.blp
 [I0OJ]
 Name=静谧之鞋（禁用）|nTranquil Boots Disabled
@@ -35043,7 +35043,7 @@ missileart=Abilities\Spells\Orc\MirrorImage\MirrorImageMissile.mdl
 missilespeed=1000
 Name=镜像
 Tip=镜像[|cffffcc00R|r] - [|cffffcc00等级 1|r],镜像[|cffffcc00R|r] - [|cffffcc00等级 2|r],镜像[|cffffcc00R|r] - [|cffffcc00等级 3|r],镜像[|cffffcc00R|r] - [|cffffcc00等级 4|r]
-Ubertip=创造三个自身的镜像来迷惑敌人。镜像拥有本体30%(25%)的攻击力，受到600%(650%)的伤害。|n|n|cff99ccff持续时间：|r30|n|cff99ccff冷却时间：|r40|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,创造三个自身的镜像来迷惑敌人。镜像拥有本体35%(30%)的攻击力，受到500%(550%)的伤害。|n|n|cff99ccff持续时间：|r30|n|cff99ccff冷却时间：|r40|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,创造三个自身的镜像来迷惑敌人。镜像拥有本体40%(35%)的攻击力，受到400%(450%)的伤害。|n|n|cff99ccff持续时间：|r30|n|cff99ccff冷却时间：|r40(50)|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,创造三个自身的镜像来迷惑敌人。镜像拥有本体45%(40%)的攻击力，受到300%(350%)的伤害。|n|n|cff99ccff持续时间：|r30|n|cff99ccff冷却时间：|r40|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r
+Ubertip=创造三个自身的镜像来迷惑敌人。镜像拥有本体30%(25%)的攻击力，受到600%(650%)的伤害。|n|n|cff99ccff持续时间：|r30|n|cff99ccff冷却时间：|r40(50)|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,创造三个自身的镜像来迷惑敌人。镜像拥有本体35%(30%)的攻击力，受到500%(550%)的伤害。|n|n|cff99ccff持续时间：|r30|n|cff99ccff冷却时间：|r40(50)|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,创造三个自身的镜像来迷惑敌人。镜像拥有本体40%(35%)的攻击力，受到400%(450%)的伤害。|n|n|cff99ccff持续时间：|r30|n|cff99ccff冷却时间：|r40(50)|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,创造三个自身的镜像来迷惑敌人。镜像拥有本体45%(40%)的攻击力，受到300%(350%)的伤害。|n|n|cff99ccff持续时间：|r30|n|cff99ccff冷却时间：|r40(50)|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r
 Hotkey=R
 Researchtip=学习 镜像[|cffffcc00R|r] - [|cffffcc00等级 %d|r]|n(Mirror Image)
 Researchubertip=创造三个自身的镜像来迷惑敌人。镜像拥有攻击力，受到额外的伤害。(括号内为远程英雄的数值)|n|n|cff99ccff持续时间：|r30|n|cff99ccff冷却时间：|r40(50)|n|cff99ccff魔法消耗：|r70/80/90/100|n|n|cffffcc00等级 1|r - 镜像拥有本体30%(25%)的攻击力，受到600%(650%)的伤害|n|cffffcc00等级 2|r - 镜像拥有本体35%(30%)的攻击力，受到500%(550%)的伤害|n|cffffcc00等级 3|r - 镜像拥有本体40%(35%)的攻击力，受到400%(450%)的伤害|n|cffffcc00等级 4|r - 镜像拥有本体45%(40%)的攻击力，受到300%(350%)的伤害|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r
@@ -37149,10 +37149,6 @@ Buffubertip=狼人和他控制的单位的攻击力得到了提升
 buffart=ReplaceableTextures\CommandButtons\BTNAuraofDarkness
 Bufftip=鱼人夜行者
 buffubertip="This unit is invisible, moves faster, and applies damage over time to nearby units."
-[B09Y]
-buffart=ReplaceableTextures\CommandButtons\BTNPhaseBoots
-Bufftip=相位行走
-Buffubertip=该单位在移动时能够能够穿透其他单位，同时移动速度也有所提升
 [B0A5]
 buffart=ReplaceableTextures\CommandButtons\BTNWindWalkOn
 Bufftip=隐身
@@ -37506,15 +37502,6 @@ targetart=Abilities\Spells\Undead\Curse\CurseTarget.mdl
 targetattach=overhead
 Bufftip=衰弱
 Buffubertip=该单位的战斗能力受到了大幅削弱
-[QQQQ]
-art=ReplaceableTextures\CommandButtons\BTNWindWalkOn
-researchart=ReplaceableTextures\CommandButtons\BTNWindWalkOn
-buttonpos=,2
-effectsound=WindWalk
-name="WW"
-tip="Mine WW"
-ubertip="Deactivates the casting of Dark Rift."
-hotkey=W
 [QB01]
 art=ReplaceableTextures\CommandButtons\BTNWeaverShukuchi
 buttonpos=1,2
@@ -39170,7 +39157,7 @@ buttonpos=3,2
 researchbuttonpos=3
 Name=终末
 Tip=终末[|cffffcc00I|r] - [|cffffcc00等级 1|r],终末[|cffffcc00I|r] - [|cffffcc00等级 2|r],终末[|cffffcc00I|r] - [|cffffcc00等级 3|r],终末[|cffffcc00I|r] - [|cffffcc00等级 4|r]
-Ubertip=随机复制全地图范围内任意英雄的一个1级大招，可使用1次。|n|n|cff99ccff冷却时间：|r60,随机复制全地图范围内任意英雄的一个2级大招，可使用2次。|n|n|cff99ccff冷却时间：|r60,随机复制全地图范围内任意英雄的一个3级大招，可使用3次。|n|n|cff99ccff冷却时间：|r60
+Ubertip=随机复制全地图范围内任意英雄的一个1级大招，可使用1次。|n|n|cff99ccff冷却时间：|r100,随机复制全地图范围内任意英雄的一个2级大招，可使用2次。|n|n|cff99ccff冷却时间：|r100,随机复制全地图范围内任意英雄的一个3级大招，可使用3次。|n|n|cff99ccff冷却时间：|r100
 Hotkey=I
 Researchtip=学习 终末 [|cffffcc00I|r] - [|cffffcc00等级 %d|r]
 Researchubertip=随机复制全地图范围内任意英雄的一个大招，可使用数次。|n|n|cffffcc00等级 1|r - 复制1级大招，可使用1次|n|cffffcc00等级 2|r - 复制2级大招，可使用2次|n|cffffcc00等级 3|r - 复制3级大招，可使用3次|n|n|cff99ccff冷却时间：|r100|n|cff99ccff魔法消耗：|r150/250/350
@@ -42858,10 +42845,6 @@ requires=e00L
 bufftip=自然之怒
 buffubertip=该单位在自然之怒的影响下，当他死亡的时候会生出一个树人
 buffart=ReplaceableTextures\CommandButtons\BTNTreeOfEternity
-[B3JQ]
-bufftip=冲刺
-buffubertip=该单位在相位状态中，他的移动速度提升了并可穿越单位
-buffart=ReplaceableTextures\CommandButtons\BTNSirenMaster
 [A3JS]
 targetart=Abilities\Spells\Undead\FrostArmor\FrostArmorDamage.mdl
 [B3JS]

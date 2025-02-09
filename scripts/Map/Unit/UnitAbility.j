@@ -54,7 +54,7 @@ library UnitAbility requires AbilityUtils, UnitLimitation
         local ability    whichAbility
         local real       cooldown
 
-        set whichAbility = SimpleTickTable[tick].ability['A']
+        set whichAbility = SimpleTickTable[tick].ability['a']
         set cooldown     = SimpleTickTable[tick].real['C']
 
         call MHAbility_SetAbilityCooldown(whichAbility, cooldown)
@@ -68,7 +68,7 @@ library UnitAbility requires AbilityUtils, UnitLimitation
         local ability    whichAbility
         local real       cooldown
 
-        set whichAbility = SimpleTickTable[tick].ability['A']
+        set whichAbility = SimpleTickTable[tick].ability['a']
         set cooldown     = SimpleTickTable[tick].real['C']
 
         call DisableTrigger(StartCooldownTrig)
@@ -89,7 +89,7 @@ library UnitAbility requires AbilityUtils, UnitLimitation
         if ( GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT or GetTriggerEventId() == EVENT_PLAYER_UNIT_SPELL_EFFECT) and GetSpellAbility() == whichAbility then
             set tick = SimpleTick.CreateEx()
             call tick.Start(0., false, function SetAbilityCooldownFixOnExpired)
-            set SimpleTickTable[tick].ability['A'] = whichAbility
+            set SimpleTickTable[tick].ability['a'] = whichAbility
             set SimpleTickTable[tick].real['C']    = cooldown
         else
             call MHAbility_SetAbilityCooldown(whichAbility, cooldown)
@@ -104,7 +104,7 @@ library UnitAbility requires AbilityUtils, UnitLimitation
         if ( GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT or GetTriggerEventId() == EVENT_PLAYER_UNIT_SPELL_EFFECT) and GetSpellAbility() == whichAbility then
             set tick = SimpleTick.CreateEx()
             call tick.Start(0., false, function SetAbilityCooldownAbsoluteFixOnExpired)
-            set SimpleTickTable[tick].ability['A'] = whichAbility
+            set SimpleTickTable[tick].ability['a'] = whichAbility
             set SimpleTickTable[tick].real['C']    = cooldown
         else
             call DisableTrigger(StartCooldownTrig)
@@ -135,8 +135,8 @@ library UnitAbility requires AbilityUtils, UnitLimitation
         local ability    whichAbility
         local real       reduceCooldown
 
-        set whichAbility   = SimpleTickTable[tick].ability['A']
-        set reduceCooldown = SimpleTickTable[tick].real['R']
+        set whichAbility   = SimpleTickTable[tick].ability['a']
+        set reduceCooldown = SimpleTickTable[tick].real['r']
     
         call MHAbility_SetAbilityCooldown(whichAbility, GetAbilityCooldownRemaining(whichAbility) - reduceCooldown)
 
@@ -153,8 +153,8 @@ library UnitAbility requires AbilityUtils, UnitLimitation
         if ( GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT or GetTriggerEventId() == EVENT_PLAYER_UNIT_SPELL_EFFECT) and GetSpellAbility() == whichAbility then
             set tick = SimpleTick.CreateEx()
             call tick.Start(0., false, function ReduceAbilityFixOnExpired)
-            set SimpleTickTable[tick].ability['A'] = whichAbility
-            set SimpleTickTable[tick].real['R']    = reduceCooldown
+            set SimpleTickTable[tick].ability['a'] = whichAbility
+            set SimpleTickTable[tick].real['r']    = reduceCooldown
         else
             call SetAbilityCooldownAbsolute(whichAbility, GetAbilityCooldownRemaining(whichAbility) - reduceCooldown) 
         endif
@@ -168,30 +168,53 @@ library UnitAbility requires AbilityUtils, UnitLimitation
         set whichAbility = null
     endfunction
 
-    function StartUnitAbilityCooldown takes unit whichUnit, integer abilId returns nothing
-        local ability whichAbility = MHUnit_GetAbility(whichUnit, abilId, false)
+    function StartAbilityCooldown takes ability whichAbility returns nothing
         local integer level        
         local real    cooldown     
         if whichAbility == null then
             return
         endif
-        set level    = GetUnitAbilityLevel(whichUnit, abilId)
+        set level    = GetAbilityLevel(whichAbility)
         set cooldown = MHAbility_GetAbilityCustomLevelDataReal(whichAbility, level, ABILITY_LEVEL_DEF_DATA_COOLDOWN)
-        call SetAbilityCooldown(whichAbility, cooldown)
+        call SetAbilityCooldownAbsolute(whichAbility, cooldown)
+    endfunction
+    function StartAbilityCooldownAbsolute takes ability whichAbility returns nothing
+        local integer level        
+        local real    cooldown     
+        if whichAbility == null then
+            return
+        endif
+        set level    = GetAbilityLevel(whichAbility)
+        set cooldown = MHAbility_GetAbilityCustomLevelDataReal(whichAbility, level, ABILITY_LEVEL_DEF_DATA_COOLDOWN)
+        call SetAbilityCooldownAbsolute(whichAbility, cooldown)
+    endfunction
+    
+    // 指定当前冷却时间进入绝对冷却时间(不触发冷却缩减)
+    function StartAbilityCooldownAbsoluteEx takes ability whichAbility, real cooldown returns nothing
+        if whichAbility == null then
+            return
+        endif
+        call MHAbility_SetAbilityCustomLevelDataReal(whichAbility, GetAbilityLevel(whichAbility), ABILITY_LEVEL_DEF_DATA_COOLDOWN, cooldown)
+        call SetAbilityCooldownAbsolute(whichAbility, cooldown)
+    endfunction
+
+    function StartUnitAbilityCooldown takes unit whichUnit, integer abilId returns nothing
+        local ability whichAbility = MHUnit_GetAbility(whichUnit, abilId, false)
+        if whichAbility == null then
+            return
+        endif
+        call StartAbilityCooldown(whichAbility)
         set whichAbility = null
     endfunction
     function StartUnitAbilityCooldownAbsolute takes unit whichUnit, integer abilId returns nothing
         local ability whichAbility = MHUnit_GetAbility(whichUnit, abilId, false)
-        local integer level        
-        local real    cooldown     
         if whichAbility == null then
             return
         endif
-        set level    = GetUnitAbilityLevel(whichUnit, abilId)
-        set cooldown = MHAbility_GetAbilityCustomLevelDataReal(whichAbility, level, ABILITY_LEVEL_DEF_DATA_COOLDOWN)
-        call SetAbilityCooldownAbsolute(whichAbility, cooldown)
+        call StartAbilityCooldownAbsolute(whichAbility)
         set whichAbility = null
     endfunction
+
 
 
     private function OnEndCooldown takes nothing returns boolean
@@ -256,6 +279,27 @@ library UnitAbility requires AbilityUtils, UnitLimitation
             return 0.25
         endif
         return 0.
+    endfunction
+
+    function SetUnitAbilityLevelCooldown takes unit whichUnit, ability whichAbility, integer level, real cooldown returns nothing
+        local real multiplier
+        if whichUnit == null or whichAbility == null then
+           return
+        endif
+        set multiplier = ( 1. - GetUnitCooldownReduceMultiplier(whichUnit) )
+        call MHAbility_SetAbilityCustomLevelDataReal(whichAbility, level, ABILITY_LEVEL_DEF_DATA_COOLDOWN, cooldown * multiplier)
+    endfunction
+    function SetUnitAbilityLevelCooldownAbsolute takes unit whichUnit, ability whichAbility, integer level, real cooldown returns nothing
+        if whichUnit == null or whichAbility == null then
+           return
+        endif
+        call MHAbility_SetAbilityCustomLevelDataReal(whichAbility, level, ABILITY_LEVEL_DEF_DATA_COOLDOWN, cooldown)
+    endfunction
+    function SetAbilityLevelCooldownAbsolute takes ability whichAbility, integer level, real cooldown returns nothing
+        if whichAbility == null then
+           return
+        endif
+        call MHAbility_SetAbilityCustomLevelDataReal(whichAbility, level, ABILITY_LEVEL_DEF_DATA_COOLDOWN, cooldown)
     endfunction
 
     // 更新单个技能

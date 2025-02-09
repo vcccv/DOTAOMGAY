@@ -1,6 +1,10 @@
 
 scope DamageSystem
 
+    globals
+	    trigger AnyUnitDamagedTrig
+        trigger AnyUnitDamagingTrig
+    endglobals
     
     // 学习 1 级技能 - 灵魂超度 为什么在伤害事件里
     function LearnLevel1Skill_SoulAssumption takes nothing returns nothing
@@ -267,6 +271,7 @@ scope DamageSystem
             set DESource = MHDamageEvent_GetSource()
             set DETarget = MHEvent_GetUnit()
             set DEDamage = MHDamageEvent_GetDamage()
+            set Event.IsAttack[Event.INDEX] = MHDamageEvent_IsPhysical()
 
             set extraDamage = .0
             // 捕捉马甲伤害
@@ -311,7 +316,7 @@ scope DamageSystem
                     if GetUnitAbilityLevel(DESource,'A39D') == 1 then
                         set reducedDamage = reducedDamage + DEDamage * .4
                     endif
-                    if IsUnitIllusion(DESource) and MHDamageEvent_IsPhysical() then
+                    if IsUnitIllusion(DESource) and Event.IsAttackDamage() then
                         if IsUnitStructure(DETarget) then
                             set reducedDamage = reducedDamage + DEDamage * 0.6
                         elseif DETarget == Roshan then
@@ -354,17 +359,17 @@ scope DamageSystem
                     call OtherDamagedEvent(DETarget, DESource, DEDamage - reducedDamage)
                 endif
                 // 打断物品
-                if IsUnitType(DETarget, UNIT_TYPE_HERO) and ( DEDamage ) > 10 and (XFX( GetOwningPlayer( DESource ) ) or  DESource == Roshan ) then
-                    // 这里计算了减伤再打断
-                    call SaveReal(HY, GetHandleId( DETarget ), 785, GetGameTime())
-                endif
+                //if IsUnitType(DETarget, UNIT_TYPE_HERO) and ( DEDamage ) > 10 and (XFX( GetOwningPlayer( DESource ) ) or  DESource == Roshan ) then
+                //    // 这里计算了减伤再打断
+                //    call SaveReal(HY, GetHandleId( DETarget ), 785, GetGameTime())
+                //endif
                 // 灵魂超度
                 if HaveVisage and not M_V then
                     call SoulAssumptionDamagedEvent()
                 endif
                 // 玲珑心
                 // 直接用Japi来判断是否是技能伤害
-                if HasOctarineCore and not MHDamageEvent_IsPhysical() then
+                if HasOctarineCore and not Event.IsAttackDamage() then
                     set p = GetOwningPlayer(DESource)
                     // 伤害来源是否是 非电脑 玩家的单位
                     if p != SentinelPlayers[0] and p != ScourgePlayers[0] and p != NeutralCreepPlayer then
@@ -424,8 +429,23 @@ scope DamageSystem
             return false
         endmethod
     
+        static method AnyUnitDamagingEvent takes nothing returns boolean
+            
+
+            return false
+        endmethod
+
     endstruct
 
+    function DamageSystem_Init takes nothing returns nothing
+        set AnyUnitDamagedTrig = CreateTrigger()
+        call TriggerAddCondition(AnyUnitDamagedTrig, Condition(function DamageEvent.AnyUnitDamagedEvent))
+        call MHDamageEvent_Register(AnyUnitDamagedTrig)
 
+        set AnyUnitDamagingTrig = CreateTrigger()
+        call TriggerAddCondition(AnyUnitDamagingTrig, Condition(function DamageEvent.AnyUnitDamagingEvent))
+        call MHDamagingEvent_Register(AnyUnitDamagingTrig)
+
+    endfunction
 
 endscope

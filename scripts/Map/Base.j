@@ -64,7 +64,7 @@ library Base requires TriggerDestroyQueue, GroupAlloc, ErrorMessage
             endif
 
             set index = index + 1
-            exitwhen index >= bj_MAX_INVENTORY
+            exitwhen index >= 5
         endloop
 
         set indexItem = null

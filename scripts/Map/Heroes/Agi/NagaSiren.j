@@ -35,9 +35,9 @@ scope NagaSiren
         if not IsUnitType(whichUnit, UNIT_TYPE_MELEE_ATTACKER) then
             set damageDealt = 0.20 + level * 0.05
             set damageTaken = 7.50 - level * 1.
-            call MHAbility_SetAbilityCustomLevelDataReal(GetSpellAbility(), level, ABILITY_LEVEL_DEF_DATA_COOLDOWN, 50.)
+            call SetUnitAbilityLevelCooldown(whichUnit, GetSpellAbility(), level, 50.)
         else
-            call MHAbility_SetAbilityCustomLevelDataReal(GetSpellAbility(), level, ABILITY_LEVEL_DEF_DATA_COOLDOWN, 40.)
+            call SetUnitAbilityLevelCooldown(whichUnit, GetSpellAbility(), level, 40.)
         endif
 
         call UnitMirrorImage(whichUnit, max, damageDealt, damageTaken, buffId, dur, delay, specialArt, missileArt, missileSpeed, rng, area)

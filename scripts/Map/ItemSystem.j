@@ -265,8 +265,12 @@ library ItemSystem requires Base, TimerUtils
         set AYV = RegisterItem('I0K8','I0K7', 0,'I0K9')
         set AZV = RegisterItem('I0A7','I0A8', 0,'I0BS')
         set A_V = RegisterItem('I0KQ','I0KP', 0,'I0KR')
+
+        // 龙心
         set Item_HeartOfTarrasque = RegisterItem('I0AA','I0A9', 0,'I0BT')
-        set A1V = RegisterItem('I0AA','I0KL', 0,'I0KM')
+        set Item_DisabledHeartOfTarrasque = RegisterItem('I0AA','I0KL', 0,'I0KM')
+        call SetRealItemFuncSimple(Item_HeartOfTarrasque, "ItemHeartOfTarrasqueOnPickup", "ItemHeartOfTarrasqueOnDrop")
+
         set A2V = RegisterItem('I0AC','I0AB', 0,'I0BU')
         set A3V = RegisterItem('I0AD','I0AE', 0,'I0BV')
         set A4V = RegisterItem('I0AG','I0AF', 0,'I0CT')
@@ -307,8 +311,12 @@ library ItemSystem requires Base, TimerUtils
         set RIV = RegisterItem('I0NL','I0NK', 0,'I0NM')
         set N0V = RegisterItem('I0O2','I0O3', 0,'I0O4')
         set RAV = RegisterItem('I0OC','I0OE', 0,'I0OD')
+
         set Item_TranquilBoots = RegisterItem('I0OF','I0OG', 0,'I0OH')
-        set RBV = RegisterItem('I0OJ','I0OI', 0,'I0OK')
+        set Item_DisabledTranquilBoots = RegisterItem('I0OJ','I0OI', 0,'I0OK')
+        call SetRealItemFuncSimple(Item_TranquilBoots, "ItemTranquilBootsOnPickup", "ItemTranquilBootsOnDrop")
+        call SetRealItemFuncSimple(Item_DisabledTranquilBoots, "ItemTranquilBootsOnPickup", "ItemTranquilBootsOnDrop")
+
         set RCV = RegisterItem('I0OM','I0OL', 0,'I0ON')
         set Item_MoonShard = RegisterItem('I0SI','I0SJ', 0,'I0SK')
         set Item_OctarineCore = RegisterItem('I0SU','I0SV', 0,'I0SW')
@@ -1071,7 +1079,7 @@ library ItemSystem requires Base, TimerUtils
         integer RIV
         integer RAV
         integer Item_TranquilBoots
-        integer RBV
+        integer Item_DisabledTranquilBoots
         integer RCV
         integer Item_MoonShard
         integer Item_OctarineCore
@@ -1165,7 +1173,7 @@ library ItemSystem requires Base, TimerUtils
         integer AZV
         integer A_V
         integer Item_HeartOfTarrasque
-        integer A1V
+        integer Item_DisabledHeartOfTarrasque
         integer A2V
         integer A3V
         integer A4V
