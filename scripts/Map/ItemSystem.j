@@ -1,53 +1,104 @@
 
-library ItemSystem requires Base, TimerUtils
+library ItemSystem requires Base, TimerUtils, AbilityUtils
 
     globals
         integer array PowerupItem
         integer array RealItem
+        
         integer array ItemSellDummy
+
         integer array DisabledItem
-        string array ItemsIconFilePath
+
+        string  array ItemsIconFilePath
         integer array XNV
-        integer MaxItemCount = 0
+
+        integer       MaxItemCount = 0
 
         integer array RealItemPickupCode
         integer array RealItemDropCode
 
         // 按索引记录物品的存在计数
         integer array ItemCount
+
+        private key ITEM_INDEX
+        private key ITEM_SELL_DUMMY_INDEX
     endglobals
 
+    //function SaveItemAbilityCooldown takes integer itemId, real cooldown returns nothing
+    //    local string  abilList = MHItem_GetDefDataStr(itemId, ITEM_DEF_DATA_ABIL_LIST)
+    //    local integer abilId   = String2Id(MHString_Sub(abilList, 0, 4))
+    //    local real    c2       = MHAbility_GetLevelDefDataReal(abilId, 1, ABILITY_LEVEL_DEF_DATA_COOLDOWN)
+//
+    //    call BJDebugMsg(MHString_Sub(abilList, 0, 4))
+//
+    //    call ThrowError(c2 != cooldown, "ItemSystem", "SaveItemAbilityCooldown", GetObjectName(itemId), itemId, "target cooldown:" + R2S(cooldown) + "  real cooldown:" + R2S(c2))
+//
+    //    call SaveInteger(ItemCooldownHashTable, itemId, '00CD', R2I(cooldown))
+    //endfunction
+
+    function GetItemIndexById takes integer itemId returns integer
+        return Table[ITEM_INDEX].integer[itemId]
+    endfunction
+
     function GetItemIndexEx takes item whichItem returns integer
-        local integer typeId
+        local integer itemId
+        local integer itemIndex
         local integer i = 1
         if whichItem == null then
             return -2
         endif
-        set typeId = GetItemTypeId(whichItem)
-        loop
-            if PowerupItem[i]== typeId or RealItem[i]== typeId or DisabledItem[i]== typeId then
-                return i
-            endif
-            set i = i + 1
-        exitwhen i > MaxItemCount
-        endloop
+        set itemId    = GetItemTypeId(whichItem)
+        set itemIndex = GetItemIndexById(itemId)
+  
+        if itemIndex > 0 then
+            return itemIndex
+        endif
+
+        call BJDebugMsg("GetItemIndexEx - 1")
+
         return -1
     endfunction
-    // 获取物品的索引 不包含禁用状态
-    function GetItemIndex takes item it returns integer
-        local integer id
+    
+    
+    // 获取物品的索引 不包含禁用状态禁用状态时会返回-1
+    function GetItemIndex takes item whichItem returns integer
+        local integer itemId
+        local integer itemIndex
         local integer i = 1
-        if it == null then
+        if whichItem == null then
             return -2
         endif
-        set id = GetItemTypeId(it)
-        loop
-            if PowerupItem[i]== id or RealItem[i]== id then
-                return i
+        set itemId    = GetItemTypeId(whichItem)
+        set itemIndex = GetItemIndexById(itemId)
+        
+        if itemIndex > 0 then
+            if DisabledItem[itemIndex] == itemId then
+                return -1
             endif
-            set i = i + 1
-        exitwhen i > MaxItemCount
-        endloop
+            return itemIndex
+        endif
+
+        call BJDebugMsg("GetItemIndex - 1")
+
+        return -1
+    endfunction
+
+    function GetItemSellDummyUnitIndex takes unit whichUnit returns integer
+        local integer unitId
+        local integer itemIndex
+        local integer i = 0
+        if whichUnit == null then
+            return -2
+        endif
+        set unitId    = GetUnitTypeId(whichUnit)
+        set itemIndex = Table[ITEM_SELL_DUMMY_INDEX].integer[unitId]
+        
+        if itemIndex > 0 then
+            return itemIndex
+        endif
+
+        call BJDebugMsg("GetItemSellDummyUnitIndex - 1")
+
         return -1
     endfunction
 
@@ -88,15 +139,31 @@ library ItemSystem requires Base, TimerUtils
 
     function RegisterItem takes integer powerupId, integer realId, integer sellDummyId, integer disabledId returns integer
         set MaxItemCount = MaxItemCount + 1
-        set PowerupItem[MaxItemCount]= powerupId
-        set RealItem[MaxItemCount]= realId
-        set ItemSellDummy[MaxItemCount]= sellDummyId
+
+        set PowerupItem[MaxItemCount]   = powerupId
+        set RealItem[MaxItemCount]      = realId
+        set ItemSellDummy[MaxItemCount] = sellDummyId
+        set DisabledItem[MaxItemCount]  = disabledId
         call SaveBoolean(SightDataHashTable, ItemSellDummy[MaxItemCount], 0, true)
-        set DisabledItem[MaxItemCount]= disabledId
+
+        // 如果有多个物品对象使用的id相同 则只取第一个
+        if not Table[ITEM_INDEX].integer.has(powerupId) then
+            set Table[ITEM_INDEX].integer[powerupId]  = MaxItemCount
+        endif
+        if not Table[ITEM_INDEX].integer.has(realId) then
+            set Table[ITEM_INDEX].integer[realId]     = MaxItemCount
+        endif
+        if not Table[ITEM_INDEX].integer.has(disabledId) then
+            set Table[ITEM_INDEX].integer[disabledId] = MaxItemCount
+        endif
+        if not Table[ITEM_SELL_DUMMY_INDEX].integer.has(sellDummyId) then
+            set Table[ITEM_SELL_DUMMY_INDEX].integer[sellDummyId] = MaxItemCount
+        endif
+
         if realId > 0 then
-            set ItemsIconFilePath[MaxItemCount]= GetAbilitySoundById(realId, SOUND_TYPE_EFFECT_LOOPED)
-            if StringLength(ItemsIconFilePath[MaxItemCount])< 20 then
-            endif
+            set ItemsIconFilePath[MaxItemCount] = MHItem_GetDefDataStr(realId, ITEM_DEF_DATA_ART)// GetAbilitySoundById(realId, SOUND_TYPE_EFFECT_LOOPED)
+            //if StringLength(ItemsIconFilePath[MaxItemCount])< 20 then
+            //endif
         endif
         return MaxItemCount
     endfunction
@@ -421,46 +488,47 @@ library ItemSystem requires Base, TimerUtils
         call SaveInteger(HY,'ITDB', RegisterItem(0, 0,'h0EC', 0), RWV)
 
         // 物品技能冷却表
-        call SaveInteger(ItemCooldownHashTable, RealItem[ARV],'00CD', 55)
-        call SaveInteger(ItemCooldownHashTable, RealItem[NGV],'00CD', 30)
-        call SaveInteger(ItemCooldownHashTable, RealItem[ISV],'00CD', 15)
-        call SaveInteger(ItemCooldownHashTable, RealItem[ANV],'00CD', 50)
-        call SaveInteger(ItemCooldownHashTable, RealItem[ABV],'00CD', 50)
-        call SaveInteger(ItemCooldownHashTable, RealItem[A7V],'00CD', 30)
-        call SaveInteger(ItemCooldownHashTable, RealItem[NJV],'00CD', 18)
-        call SaveInteger(ItemCooldownHashTable, RealItem[Item_EulScepterOfDivinity],'00CD', 23)
-        call SaveInteger(ItemCooldownHashTable, RealItem[NMV],'00CD', 20)
-        call SaveInteger(ItemCooldownHashTable, RealItem[ADV],'00CD', 35)
-        call SaveInteger(ItemCooldownHashTable, RealItem[AFV],'00CD', 30)
-        call SaveInteger(ItemCooldownHashTable, RealItem[AGV],'00CD', 25)
-        call SaveInteger(ItemCooldownHashTable, RealItem[AHV],'00CD', 20)
-        call SaveInteger(ItemCooldownHashTable, RealItem[AJV],'00CD', 15)
-        call SaveInteger(ItemCooldownHashTable, RealItem[AKV],'00CD', 95)
-        call SaveInteger(ItemCooldownHashTable, RealItem[ALV],'00CD', 95)
-        call SaveInteger(ItemCooldownHashTable, RealItem[AMV],'00CD', 95)
-        call SaveInteger(ItemCooldownHashTable, RealItem[N0V],'00CD', 30)
-        call SaveInteger(ItemCooldownHashTable, RealItem[RCV],'00CD', 16)
-        call SaveInteger(ItemCooldownHashTable, RealItem[I4V],'00CD', 45)
-        call SaveInteger(ItemCooldownHashTable, RealItem[NPV],'00CD', 60)
-        call SaveInteger(ItemCooldownHashTable, RealItem[N_V],'00CD', 7)
-        call SaveInteger(ItemCooldownHashTable, RealItem[ROV],'00CD', 30)
-        call SaveInteger(ItemCooldownHashTable, RealItem[N2V],'00CD', 60)
-        call SaveInteger(ItemCooldownHashTable, RealItem[ACV],'00CD', 28)
-        call SaveInteger(ItemCooldownHashTable, RealItem[A2V],'00CD', 35)
-        call SaveInteger(ItemCooldownHashTable, RealItem[NEV],'00CD', 35)
-        call SaveInteger(ItemCooldownHashTable, RealItem[I1V],'00CD', 25)
-        call SaveInteger(ItemCooldownHashTable, RealItem[I_V],'00CD', 60)
-        call SaveInteger(ItemCooldownHashTable, RealItem[N1V],'00CD', 30)
-        call SaveInteger(ItemCooldownHashTable, RealItem[IAV],'00CD', 45)
-        call SaveInteger(ItemCooldownHashTable, RealItem[INV],'00CD', 45)
-        call SaveInteger(ItemCooldownHashTable, RealItem[IFV],'00CD', 100)
-        call SaveInteger(ItemCooldownHashTable, RealItem[R8V],'00CD', 50)
-        call SaveInteger(ItemCooldownHashTable, RealItem[RTV],'00CD', 40)
-        call SaveInteger(ItemCooldownHashTable, RealItem[RQV],'00CD', 16)
-        call SaveInteger(ItemCooldownHashTable, RealItem[RJV],'00CD', 7)
-        call SaveInteger(ItemCooldownHashTable, RealItem[RLV],'00CD', 28)
-        call SaveInteger(ItemCooldownHashTable, RealItem[RGV],'00CD', 15)
+        // call SaveItemAbilityCooldown(RealItem[ARV],55)
+        // call SaveItemAbilityCooldown(RealItem[NGV],30)
+        // call SaveItemAbilityCooldown(RealItem[ISV],15)
+        // call SaveItemAbilityCooldown(RealItem[ANV],50)
+        // call SaveItemAbilityCooldown(RealItem[ABV],50)
+        // call SaveItemAbilityCooldown(RealItem[A7V],30)
+        // call SaveItemAbilityCooldown(RealItem[NJV],18)
+        // call SaveItemAbilityCooldown(RealItem[Item_EulScepterOfDivinity],23)
+        // call SaveItemAbilityCooldown(RealItem[NMV],20)
+        // call SaveItemAbilityCooldown(RealItem[ADV],35)
+        // call SaveItemAbilityCooldown(RealItem[AFV],30)
+        // call SaveItemAbilityCooldown(RealItem[AGV],25)
+        // call SaveItemAbilityCooldown(RealItem[AHV],20)
+        // call SaveItemAbilityCooldown(RealItem[AJV],15)
+        // call SaveItemAbilityCooldown(RealItem[AKV],95)
+        // call SaveItemAbilityCooldown(RealItem[ALV],95)
+        // call SaveItemAbilityCooldown(RealItem[AMV],95)
+        // call SaveItemAbilityCooldown(RealItem[N0V],30)
+        // call SaveItemAbilityCooldown(RealItem[RCV],16)
+        // call SaveItemAbilityCooldown(RealItem[I4V],45)
+        // call SaveItemAbilityCooldown(RealItem[NPV],60)
+        // call SaveItemAbilityCooldown(RealItem[N_V],7)
+        // call SaveItemAbilityCooldown(RealItem[ROV],30)
+        // call SaveItemAbilityCooldown(RealItem[N2V],60)
+        // call SaveItemAbilityCooldown(RealItem[ACV],28)
+        // call SaveItemAbilityCooldown(RealItem[A2V],35)
+        // call SaveItemAbilityCooldown(RealItem[NEV],35)
+        // call SaveItemAbilityCooldown(RealItem[I1V],25)
+        // call SaveItemAbilityCooldown(RealItem[I_V],60)
+        // call SaveItemAbilityCooldown(RealItem[N1V],30)
+        // call SaveItemAbilityCooldown(RealItem[IAV],45)
+        // call SaveItemAbilityCooldown(RealItem[INV],45)
+        // call SaveItemAbilityCooldown(RealItem[IFV],100)
+        // call SaveItemAbilityCooldown(RealItem[R8V],50)
+        // call SaveItemAbilityCooldown(RealItem[RTV],40)
+        // call SaveItemAbilityCooldown(RealItem[RQV],16)
+        // call SaveItemAbilityCooldown(RealItem[RJV],7)
+        // call SaveItemAbilityCooldown(RealItem[RLV],28)
+        // call SaveItemAbilityCooldown(RealItem[RGV],15)
 
+        // 边路野点卖的版本
         set XNV[RegisterItem('I03A','I051','h08K','I0D9')]= OQV
         set XNV[RegisterItem('I03Y','I052','h08X','I0C9')]= OTV
         set XNV[RegisterItem('I02S','I02P','h08S','I0CA')]= XPV

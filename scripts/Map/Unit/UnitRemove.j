@@ -1,5 +1,5 @@
 
-library UnitRemove requires Table
+library UnitRemove requires Table, EventSystem
     
     globals
         private trigger Trig = null

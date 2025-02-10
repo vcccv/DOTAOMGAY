@@ -63,12 +63,14 @@ scope TranquilBoots
     function TranquilBootsOnDamaged takes nothing returns nothing
         if Event.IsAttackDamage() then
             // 被攻击就中断
-            call UpdateUnitTranquilBootsDamagedCooldown(DETarget)
-            if Table[GetHandleId(DETarget)].integer[KEY] > 0 then
-                call UnitDisableTranquilBoots(DETarget)
+            if not IsUnitIllusion(DETarget) and IsUnitHeroLevel(DETarget) then
+                call UpdateUnitTranquilBootsDamagedCooldown(DETarget)
+                if Table[GetHandleId(DETarget)].integer[KEY] > 0 then
+                    call UnitDisableTranquilBoots(DETarget)
+                endif
             endif
             // 攻击英雄时才会中断(不是英雄级单位)
-            if IsHeroUnitId(GetUnitTypeId(DETarget)) and IsPlayerValid(GetOwningPlayer(DETarget)) then
+            if not IsUnitIllusion(DESource) and IsHeroUnitId(GetUnitTypeId(DETarget)) and IsPlayerValid(GetOwningPlayer(DETarget)) then
                 call UpdateUnitTranquilBootsDamagedCooldown(DESource)
                 if Table[GetHandleId(DESource)].integer[KEY] > 0 then
                     call UnitDisableTranquilBoots(DESource)

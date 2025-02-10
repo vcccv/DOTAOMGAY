@@ -7310,7 +7310,7 @@ function CZX takes integer i returns boolean
 	return CWX(i) or CUX(i) or CTX(i)
 endfunction
 function C_X takes unit u returns boolean
-	return IsUnitBear(u) or CSX(u) or CYX(u) or u == Roshan
+	return IsUnitSpiritBear(u) or CSX(u) or CYX(u) or u == Roshan
 endfunction
 function C0X takes player p returns nothing
 	local unit trigUnit = PlayerHeroes[GetPlayerId(p)]
@@ -8427,22 +8427,6 @@ function H2X takes item UWV returns integer
 	exitwhen i > MaxItemCount
 		if DisabledItem[i]== UYV then
 			return RealItem[i]
-		endif
-		set i = i + 1
-	endloop
-	return -1
-endfunction
-function H3X takes unit whichUnit returns integer
-	local integer typeId
-	local integer i = 0
-	if whichUnit == null then
-		return -2
-	endif
-	set typeId = GetUnitTypeId(whichUnit)
-	loop
-	exitwhen i > MaxItemCount
-		if ItemSellDummy[i]== typeId then
-			return i
 		endif
 		set i = i + 1
 	endloop
@@ -14054,7 +14038,7 @@ function EQO takes unit ESO, unit ETO returns boolean
 	elseif (ESO == SentinelAncientOfWonders or ESO == SentinelCacheOfTheQuelThelan or ESO == SentinelPigKing) and IsUnitAlly(ETO, SentinelPlayers[0]) then
 		return false
 	endif
-	set GTX = H3X(ETO)
+	set GTX = GetItemSellDummyUnitIndex(ETO)
 	if GTX == R2V or GTX == X4V or GTX == IVV or GTX == it_jys then
 		return true
 	endif
@@ -14448,7 +14432,7 @@ endfunction
 function XNO takes nothing returns nothing
 	local unit u = GetSoldUnit()
 	local player p = GetOwningPlayer(u)
-	local integer GTX = H3X(u)
+	local integer GTX = GetItemSellDummyUnitIndex(u)
 	local real x
 	local real y
 	local integer i
@@ -14474,7 +14458,7 @@ function XNO takes nothing returns nothing
 		endif
 		set x = E2O(GetSellingUnit(), u)
 		set y = E3O(GetSellingUnit(), u)
-		call HYX(PowerupItem[H3X(u)], x, y, p, true, H7X(H3X(u)))
+		call HYX(PowerupItem[GetItemSellDummyUnitIndex(u)], x, y, p, true, H7X(GetItemSellDummyUnitIndex(u)))
 	else
 		call EPO(p, GSX(GTX))
 		if RealItem[GTX]== 0 then
@@ -14537,7 +14521,7 @@ function XFO takes nothing returns boolean
 	local player p = LocalPlayer
 	local player ETO = GetOwningPlayer(u)
 	local integer pid = GetPlayerId(ETO)
-	local integer unitTypeId = H3X(u)
+	local integer unitTypeId = GetItemSellDummyUnitIndex(u)
 	if GetUnitTypeId(u)=='h304' or GetUnitTypeId(u)=='h305' then
 		if (IsPlayerSentinel(ETO) and GetUnitTypeId(u)=='h304') or(IsPlayerScourge(ETO) and GetUnitTypeId(u)=='h305') then
 			call KillUnit(GetSellingUnit())
@@ -14729,7 +14713,7 @@ function XLO takes unit trigUnit, item whichItem returns boolean
 		call SetItemPlayer(TempItem, TempPlayer, false)
 		call SetItemUserData(TempItem, 1)
 	endif
-	if (GTX == AIV) and(IsUnitCourier(u) or IsUnitBear(u)) then
+	if (GTX == AIV) and(IsUnitCourier(u) or IsUnitSpiritBear(u)) then
 		if IsUnitCourier(u) then
 			call InterfaceErrorForPlayer(GetOwningPlayer(u), GetObjectName('n02K'))
 		endif
@@ -15270,7 +15254,7 @@ function OnManipulatItem takes nothing returns boolean
 	set GR[GetPlayerId(GetOwningPlayer(u))]= true
 	set id = GetPlayerId(GetOwningPlayer(u))
 	// 非镜像 英雄或者熊灵
-	if (IsUnitType(u, UNIT_TYPE_HERO) or IsUnitBear(u)) and not IsUnitIllusion(u) then
+	if (IsUnitType(u, UNIT_TYPE_HERO) or IsUnitSpiritBear(u)) and not IsUnitIllusion(u) then
 		if GetTriggerEventId() == EVENT_PLAYER_UNIT_PICKUP_ITEM then
 			call ItemSystem_OnPickup(u, GetManipulatedItem())
 			if i == RealItem[Item_TheButterfly]or i == RealItem[RXV]or i == RealItem[AWV]or i == RealItem[N1V]or i == RealItem[RJV] or i == RealItem[ASV] then
@@ -15353,7 +15337,7 @@ function OnManipulatItem takes nothing returns boolean
 			elseif i == RealItem[NOV] then
 				call OFO()
 			elseif i == RealItem[it_mlq] or i == RealItem[Item_HurricanePike] then //拾取魔龙枪
-				if not IsUnitBear(u) then
+				if not IsUnitSpiritBear(u) then
 					call Item_dragonlance(false)
 					if i == RealItem[Item_HurricanePike] then
 						call RegisterUnitAttackFunc("UYYEQ",-1)
@@ -15395,7 +15379,7 @@ function OnManipulatItem takes nothing returns boolean
 				endif
 				//魔龙枪和飓风长戟
 			elseif i == RealItem[it_mlq] or i == RealItem[Item_HurricanePike]  then 
-				if not IsUnitBear(u) then
+				if not IsUnitSpiritBear(u) then
 					call Item_dragonlance(true)
 				endif
 			elseif i == RealItem[Item_AetherLens] then
@@ -16251,7 +16235,7 @@ function IMO takes nothing returns nothing
 	exitwhen x > IQO
 		set i = UnitItemInSlot(IPO, x)
 		if GetItemIndex(i) == OYV and GetUnitPseudoRandom(IPO,'JAVL', 20) and IsUnitCloaked(IPO) == false then
-			if IsUnitBear(IPO) then
+			if IsUnitSpiritBear(IPO) then
 				if ILO(IPO) == false then
 					if not IsUnitWard(GetTriggerUnit()) then
 						call UnitDamageTargetEx(IPO, GetTriggerUnit(), 2, 40)
@@ -18088,7 +18072,7 @@ function GSE takes nothing returns nothing
 			call NTO(115)
 		endif
 	elseif GetSpellTargetUnit()!= null then
-		if IsUnitAlly(GetTriggerUnit(), GetOwningPlayer(GetSpellTargetUnit())) and(IsUnitType(GetSpellTargetUnit(), UNIT_TYPE_HERO) or IsUnitBear(GetSpellTargetUnit())) then
+		if IsUnitAlly(GetTriggerUnit(), GetOwningPlayer(GetSpellTargetUnit())) and(IsUnitType(GetSpellTargetUnit(), UNIT_TYPE_HERO) or IsUnitSpiritBear(GetSpellTargetUnit())) then
 			call UnitAddItemById(GetSpellTargetUnit(), PowerupItem[R1V])
 		elseif IsUnitEnemy(GetTriggerUnit(), GetOwningPlayer(GetSpellTargetUnit())) and(GetUnitTypeId(GetSpellTargetUnit())=='oeye' or GetUnitTypeId(GetSpellTargetUnit())=='o004') then
 			call NTO(230)
@@ -18260,7 +18244,7 @@ function tp_scroll_cast takes nothing returns boolean
 		call EXSetEffectZ(LoadEffectHandle(HY, h, 'effe'),-9999)
 		call DestroyEffect((LoadEffectHandle(HY, h, 'effe')))
 		set u = LoadUnitHandle(HY, h,'Uutx')
-		if IsUnitBear(u) == false then
+		if IsUnitSpiritBear(u) == false then
 			call ShowUnit(u, false)
 			call SetUnitX(u,-7488)
 			call SetUnitY(u, 7296)
@@ -18321,7 +18305,7 @@ function tp_boots_cast takes nothing returns boolean
 			call DestroyEffect((LoadEffectHandle(HY, h, 'effe')))
 			call SaveInteger(HY,(GetHandleId((trigUnit))),(4256), 2)
 			set u = LoadUnitHandle(HY, h,'Uutx')
-			if IsUnitBear(u) == false then
+			if IsUnitSpiritBear(u) == false then
 				call ShowUnit(u, false)
 				call SetUnitX(u,-7488)
 				call SetUnitY(u, 7296)
@@ -18351,7 +18335,7 @@ function tp_boots_cast takes nothing returns boolean
 		call EXSetEffectZ(LoadEffectHandle(HY, h, 'effe'),-9999)
 		call DestroyEffect((LoadEffectHandle(HY, h, 'effe')))
 		set u = LoadUnitHandle(HY, h,'Uutx')
-		if IsUnitBear(u) == false then
+		if IsUnitSpiritBear(u) == false then
 			call ShowUnit(u, false)
 		else
 			call RemoveUnit(u)
@@ -18464,9 +18448,9 @@ function scroll_of_town_portal takes nothing returns nothing
 	set N2O = CreateUnit(GetOwningPlayer(trigUnit),'h0AX', GetUnitX(trigUnit), GetUnitY(trigUnit), 0)
 	set tp_ube = CreateUbersplat(GetUnitX(trigUnit)+ 25 * Cos(225 * bj_DEGTORAD), GetUnitY(trigUnit)+ 20 * Sin(225 * bj_DEGTORAD), "SCTP", 255, 255, 255, 255, false, false)
 	call SetUbersplatRenderAlways(tp_ube, UnitVisibleToPlayer(trigUnit, LocalPlayer))
-	if Tp_Dummy[id]	== null or IsUnitBear(trigUnit) then
+	if Tp_Dummy[id]	== null or IsUnitSpiritBear(trigUnit) then
 		set utx = CreateUnit(Player(PLAYER_NEUTRAL_PASSIVE), GetUnitTypeId(trigUnit), x, y, jd)
-		if IsUnitBear(trigUnit) == false then
+		if IsUnitSpiritBear(trigUnit) == false then
 			set Tp_Dummy[id] = utx
 			call SuspendHeroXP(utx, true)	
 		endif
@@ -18645,9 +18629,9 @@ function boots_of_travel_recipe takes nothing returns nothing
 	endif
 	set tp_ube = CreateUbersplat(GetUnitX(trigUnit)+ 25 * Cos(225 * bj_DEGTORAD), GetUnitY(trigUnit)+ 20 * Sin(225 * bj_DEGTORAD), "SCTP", 255, 255, 255, 255, false, false)
 	call SetUbersplatRenderAlways(tp_ube, UnitVisibleToPlayer(trigUnit, LocalPlayer))
-	if Tp_Dummy[id]	== null or IsUnitBear(trigUnit) then
+	if Tp_Dummy[id]	== null or IsUnitSpiritBear(trigUnit) then
 		set utx = CreateUnit(Player(PLAYER_NEUTRAL_PASSIVE), GetUnitTypeId(trigUnit), x, y, jd)
-		if IsUnitBear(trigUnit) == false then
+		if IsUnitSpiritBear(trigUnit) == false then
 			set Tp_Dummy[id] = utx
 			call SuspendHeroXP(utx, true)	
 		endif
@@ -21396,24 +21380,6 @@ function F5O takes integer GTX returns nothing
 	set UWV = null
 endfunction
 
-function F6O takes nothing returns nothing
-	local timer t = GetExpiredTimer()
-	local integer h = GetHandleId(t)
-	call SetItemDroppable(LoadItemHandle(HY, h, 0), true)
-	call FlushChildHashtable(HY, h)
-	call DestroyTimer(t)
-	set t = null
-endfunction
-
-function F7O takes nothing returns boolean
-	local timer t = CreateTimer()
-	local integer h = GetHandleId(t)
-	call TimerStart(t, LoadInteger(ItemCooldownHashTable, GetItemTypeId(GetManipulatedItem()),'00CD'), false, function F6O)
-	call SetItemDroppable(GetManipulatedItem(), false)
-	call SaveItemHandle(HY, h, 0, GetManipulatedItem())
-	set t = null
-	return false
-endfunction
 
 function IronwoodBranchExpire takes nothing returns nothing
 	local timer t = GetExpiredTimer()
@@ -21457,37 +21423,62 @@ function Item_SpellEffect_MoonShard takes nothing returns nothing
 endfunction
 
 
+function F6O takes nothing returns nothing
+	local timer t = GetExpiredTimer()
+	local integer h = GetHandleId(t)
+	call SetItemDroppable(LoadItemHandle(HY, h, 0), true)
+	call FlushChildHashtable(HY, h)
+	call DestroyTimer(t)
+	set t = null
+endfunction
+
+function F7O takes nothing returns boolean
+	local timer t = CreateTimer()
+	local integer h = GetHandleId(t)
+	call TimerStart(t, LoadInteger(ItemCooldownHashTable, GetItemTypeId(GetManipulatedItem()),'00CD'), false, function F6O)
+	call SetItemDroppable(GetManipulatedItem(), false)
+	call SaveItemHandle(HY, h, 0, GetManipulatedItem())
+	set t = null
+	return false
+endfunction
+
+// 实际上，物品换手是可以继承冷却，但如果丢在地上再被其他人捡起来，则物品不会进入cd，因为DOTA把丢在地上的物品删除新建了个可拾取版本的物品。
+// 先禁止物品丢弃，更好的优化方法是将冷却时间结束的时间戳存在被丢弃的可拾取物品上，拿取时再进行判断和设置冷却时间。
+
+
 function F9O takes nothing returns boolean
-	local real x
-	local real y
-	local real a
-	local integer id = GetItemIndex(GetManipulatedItem())
-	local integer TZE = GetItemTypeId(GetManipulatedItem())
-	if GetUnitTypeId(GetTriggerUnit())!='e00E' and(LoadInteger(ItemCooldownHashTable, TZE,'00CD'))> 0 and(GetUnitAbilityLevel(GetTriggerUnit(),'A0A5')> 0 or IsUnitBear(GetTriggerUnit())) then
-		call F7O()
+	local unit    whichUnit = GetTriggerUnit()
+	local item    whichItem = GetManipulatedItem()
+	local integer itemIndex = GetItemIndex(whichItem)
+	local integer itemId 	= GetItemTypeId(whichItem)
+	// 管熊灵物品换手的
+	if GetUnitTypeId(whichUnit)!='e00E' and (GetUnitAbilityLevel(whichUnit,'A0A5')> 0 or IsUnitSpiritBear(whichUnit)) then
+		call SpiritBearOnUseItem(whichUnit, whichItem)
 	endif
-	if id == ADV or id == AFV or id == AGV or id == AHV or id == AJV then
-		call SetItemCharges(GetManipulatedItem(), GetItemCharges(GetManipulatedItem()) + 1)
-	elseif TZE == RealItem[RPV] or TZE == RealItem[Item_IronwoodBranch] or TZE == RealItem[Item_MoonShard] then
+	if itemIndex == ADV or itemIndex == AFV or itemIndex == AGV or itemIndex == AHV or itemIndex == AJV then
+		call SetItemCharges(whichItem, GetItemCharges(whichItem) + 1)
+	elseif itemId == RealItem[RPV] or itemId == RealItem[Item_IronwoodBranch] or itemId == RealItem[Item_MoonShard] then
 		// 使用芒果 树枝 银月 那就删了
-		call RemoveItem(GetManipulatedItem())
-	elseif TZE == RealItem[XDV] then
+		call RemoveItem(whichItem)
+	elseif itemId == RealItem[XDV] then
 		if bj_playerIsCrippled[0] then
-			call RemoveItem(GetManipulatedItem())
-			call HDX(GetTriggerUnit(), true)
+			call RemoveItem(whichItem)
+			call HDX(whichUnit, true)
 		endif
 		set bj_playerIsCrippled[0]= false
 	endif
 	if VE then
-		call XOO(GetTriggerUnit(), XIO(GetItemIndexEx(GetManipulatedItem()), true), GetItemPlayer(GetManipulatedItem()))
+		call XOO(whichUnit, XIO(GetItemIndexEx(whichItem), true), GetItemPlayer(whichItem))
 		set VE = false
 	endif
-	call F0O(id)
+	call F0O(itemIndex)
 	call AKO()
 	call FYO()
-	call F3O(id)
-	call F1O(id)
-	call F5O(id)
+	call F3O(itemIndex)
+	call F1O(itemIndex)
+	call F5O(itemIndex)
+	set whichItem = null
+	set whichUnit = null
 	return false
 endfunction
 function CreepAttackToBase takes nothing returns boolean
@@ -24521,7 +24512,7 @@ function M2O takes nothing returns boolean
 	local boolean b
 	if IsUnitAlly(GetTriggerUnit(), GetOwningPlayer(GetAttacker())) then
 		call M1O()
-	elseif IsUnitType(GetAttacker(), UNIT_TYPE_HERO) or IsUnitBear(GetAttacker()) then
+	elseif IsUnitType(GetAttacker(), UNIT_TYPE_HERO) or IsUnitSpiritBear(GetAttacker()) then
 		set b = IsUnitType(GetTriggerUnit(), UNIT_TYPE_STRUCTURE) == false and IsUnitIllusion(GetAttacker()) == false
 		set FGV = GetPlayerId(GetOwningPlayer(GetAttacker()))
 		if CDV[FGV]> 0 and b and GetUnitTypeId(GetTriggerUnit())!='n00L'and GYX(GetAttacker(), RealItem[OYV]) then
@@ -27480,7 +27471,7 @@ function ZDO takes nothing returns nothing
 		endif
 		call DisplayTimedTextToAllPlayer(VNX(GetTriggerPlayer()), 10., GetObjectName('n05L')+ " " + EJX(u)+ ".")
 	endif
-	if IsUnitBear(u) or GetUnitTypeId(u)=='o01X' then
+	if IsUnitSpiritBear(u) or GetUnitTypeId(u)=='o01X' then
 		call RemoveUnit(u)
 	endif
 	set u = null
@@ -38153,7 +38144,7 @@ function LXR takes unit d, unit t, real dur, integer life returns nothing
 endfunction
 // 宇宙兽人大第一次filter 敌对、非建筑、非守卫、存活、非英雄、非熊灵、非元素、非佣兽、非地狱火
 function MindControl_Filter takes unit u returns boolean
-	return (IsUnitEnemy(u, GetOwningPlayer(U2)) and IsAliveNotStrucNotWard(u) and not IsUnitType(u, UNIT_TYPE_HERO) and not IsUnitBear(u) and not CZX(GetUnitTypeId(u)) and not RHX(GetUnitTypeId(u)) and not CSX(u))
+	return (IsUnitEnemy(u, GetOwningPlayer(U2)) and IsAliveNotStrucNotWard(u) and not IsUnitType(u, UNIT_TYPE_HERO) and not IsUnitSpiritBear(u) and not CZX(GetUnitTypeId(u)) and not RHX(GetUnitTypeId(u)) and not CSX(u))
 endfunction
 function LRR takes nothing returns boolean
 	return MindControl_Filter(GetFilterUnit())
@@ -41165,7 +41156,7 @@ function TDR takes nothing returns nothing
 		call UnitDamageTargetEx(Q6V, GetEnumUnit(), 7, GetUnitState(GetEnumUnit(), UNIT_STATE_MAX_LIFE)/ 100 *(7))
 		call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Undead\\DeathandDecay\\DeathandDecayTarget.mdl", GetEnumUnit(), "origin"))
 	endif
-	if IsUnitBear(GetEnumUnit()) then
+	if IsUnitSpiritBear(GetEnumUnit()) then
 		call BWR(GetEnumUnit(),'B463', 0.06)
 	endif
 	
@@ -47084,7 +47075,7 @@ function EYE takes nothing returns nothing
 	set dummyCaster = null
 endfunction
 function RUI takes nothing returns boolean
-	return IsUnitBear(GetFilterUnit()) and IsUnitIllusion(GetFilterUnit()) == false and UnitIsDead(GetFilterUnit()) == false
+	return IsUnitSpiritBear(GetFilterUnit()) and IsUnitIllusion(GetFilterUnit()) == false and UnitIsDead(GetFilterUnit()) == false
 endfunction
 function SLE takes nothing returns nothing
 	local integer level = GetUnitAbilityLevel(GetTriggerUnit(),'A0A8')
@@ -47201,7 +47192,7 @@ function R1I takes unit R8X, unit targetUnit returns nothing
 	endif
 endfunction
 function R3I takes nothing returns boolean
-	return IsUnitBear(GetFilterUnit()) and GetUnitTypeId(GetFilterUnit())!='n01G' and UnitIsDead(GetFilterUnit()) == false
+	return IsUnitSpiritBear(GetFilterUnit()) and GetUnitTypeId(GetFilterUnit())!='n01G' and UnitIsDead(GetFilterUnit()) == false
 endfunction
 function R4I takes nothing returns nothing
 	local integer h = GetHandleId(GetOwningPlayer(GetTriggerUnit()))
@@ -47371,7 +47362,7 @@ function I4E takes nothing returns nothing
 	call UnitAddAbility(d,'A1ED')
 	call SetUnitAbilityLevel(d,'A1ED', GetUnitAbilityLevel(hTriggerUnit,'A344')+ GetUnitAbilityLevel(hTriggerUnit,'A34C'))
 	call IssueImmediateOrderById(d, 852599)
-	if IsUnitBear(hTriggerUnit) then
+	if IsUnitSpiritBear(hTriggerUnit) then
 		set hTriggerUnit = PlayerHeroes[GetPlayerId(GetOwningPlayer(hTriggerUnit))]
 	//else
 	//	set hFindBearGroup = AllocationGroup(267)
@@ -47482,7 +47473,7 @@ function IRI takes unit R8X, unit triggerUnit returns nothing
 	set u = null
 endfunction
 function III takes unit R8X, unit triggerUnit returns nothing
-	if IsUnitBear(triggerUnit) then
+	if IsUnitSpiritBear(triggerUnit) then
 		call IRI(R8X, triggerUnit)
 	endif
 endfunction
@@ -52988,7 +52979,7 @@ endfunction
 function JHI takes unit u, unit t, boolean b returns nothing
 	local real d = .01 *(5 + GetUnitAbilityLevel(u,'A0OI'))*(GetUnitState(u, UNIT_STATE_MANA)+ 100 )
 	call UnitRemoveAbility(t,'B06Y')
-	if (IsUnitType(t, UNIT_TYPE_SUMMONED) or IsUnitIllusion(t)) and IsUnitBear(t) == false and CSX(t) == false then
+	if (IsUnitType(t, UNIT_TYPE_SUMMONED) or IsUnitIllusion(t)) and IsUnitSpiritBear(t) == false and CSX(t) == false then
 		set d = d + 100 * GetUnitAbilityLevel(u,'A0OI')
 	endif
 	call CommonTextTag("+" + I2S(R2I(d)), 1, t, .023, 191, 64, 255, 216)
@@ -57805,7 +57796,7 @@ endfunction
 function U8I takes nothing returns nothing
 	local unit whichUnit = GetTriggerUnit()
 	local unit targetUnit = GetOrderTargetUnit()
-	if IsUnitType(targetUnit, UNIT_TYPE_ANCIENT) and not IsUnitBear(targetUnit) then
+	if IsUnitType(targetUnit, UNIT_TYPE_ANCIENT) and not IsUnitSpiritBear(targetUnit) then
 		call EXStopUnit(whichUnit)
 		call InterfaceErrorForPlayer(GetOwningPlayer(whichUnit), GetObjectName('n0K9'))
 	endif
@@ -58843,7 +58834,7 @@ endfunction
 
 //感染目标条件
 function InfestTargetCondition takes unit u returns boolean
-	return ( IsUnitEnemy(u, GetOwningPlayer(GetTriggerUnit())) and( IsUnitType(u, UNIT_TYPE_HERO) or IsUnitIllusion(u) or u== Roshan or IsUnitBear(u) ) ) or IsUnitCourier(u) 
+	return ( IsUnitEnemy(u, GetOwningPlayer(GetTriggerUnit())) and( IsUnitType(u, UNIT_TYPE_HERO) or IsUnitIllusion(u) or u== Roshan or IsUnitSpiritBear(u) ) ) or IsUnitCourier(u) 
 endfunction
 
 function JYE takes nothing returns nothing
@@ -75147,7 +75138,7 @@ function S_A takes nothing returns nothing
 	endif
 endfunction
 function S0A takes nothing returns nothing
-	if IsUnitBear(DESource) and IsUnitIllusion(DESource) == false then
+	if IsUnitSpiritBear(DESource) and IsUnitIllusion(DESource) == false then
 		call R1I(DESource, DETarget)
 	endif
 endfunction
@@ -75481,7 +75472,7 @@ function TZA takes unit attackerUnit, unit targetUnit, boolean isAbility returns
 		call SaveInteger(HY, h, 10, GetHandleId(attackerUnit))
 		call SaveInteger(HY, h, 11, GetHandleId(targetUnit))
 		// 攻击单位是否是英雄或者是熊
-		call SaveBoolean(HY, h, 10, IsUnitType(attackerUnit, UNIT_TYPE_HERO) or IsUnitBear(attackerUnit) )
+		call SaveBoolean(HY, h, 10, IsUnitType(attackerUnit, UNIT_TYPE_HERO) or IsUnitSpiritBear(attackerUnit) )
 		// 目标单位是否是建筑
 		call SaveBoolean(HY, h, 11, IsUnitType(targetUnit, UNIT_TYPE_STRUCTURE))
 		// 目标单位不是守卫单位
@@ -77631,7 +77622,7 @@ function UnitIssuedItemOrder takes nothing returns nothing // 发布物品命令
 				if IsUnitEnemy(targetUnit, trigPlayer) then
 					call EXStopUnit(whichUnit)
 					call InterfaceErrorForPlayer(trigPlayer, GetObjectName('TX10'))
-				elseif not (IsUnitType(targetUnit, UNIT_TYPE_HERO) or IsUnitBear(targetUnit)) then
+				elseif not (IsUnitType(targetUnit, UNIT_TYPE_HERO) or IsUnitSpiritBear(targetUnit)) then
 					call EXStopUnit(whichUnit)
 					call InterfaceErrorForPlayer(trigPlayer, GetObjectName('TX11'))
 				else
@@ -77708,7 +77699,7 @@ function UnitIssuedItemOrder takes nothing returns nothing // 发布物品命令
 				call InterfaceErrorForPlayer(trigPlayer, GetObjectName('TX0V'))
 			endif
 		elseif id == Item_MoonShard then
-			if IsUnitIllusion(targetUnit) or not ( IsUnitType(targetUnit, UNIT_TYPE_HERO) or IsUnitBear( targetUnit ) ) then
+			if IsUnitIllusion(targetUnit) or not ( IsUnitType(targetUnit, UNIT_TYPE_HERO) or IsUnitSpiritBear( targetUnit ) ) then
 				call InterfaceErrorForPlayer( trigPlayer, "不能给目标使用银月之晶")
 				call EXStopUnit(whichUnit)
 			elseif GetUnitAbilityLevel(targetUnit,'A398') == 1 then
@@ -77723,7 +77714,7 @@ function UnitIssuedItemOrder takes nothing returns nothing // 发布物品命令
 	if id == R2V or id == R3V then
 		if targetUnit != null then
 			// 如果目标是英雄 或者不是熊灵
-			if (IsUnitType(targetUnit, UNIT_TYPE_HERO) or not IsUnitBear(targetUnit)) then
+			if (IsUnitType(targetUnit, UNIT_TYPE_HERO) or not IsUnitSpiritBear(targetUnit)) then
 				call EXStopUnit(whichUnit)
 				call InterfaceErrorForPlayer(trigPlayer, GetObjectName('TX16'))
 			else

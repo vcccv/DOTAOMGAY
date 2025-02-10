@@ -6,7 +6,7 @@ library UnitStatus
         local integer id = GetUnitTypeId(u)
         return id =='n00J' or id =='n00H' or id =='n00A' or id =='n00G' or id =='n006' or id =='n00K'
     endfunction
-    function IsUnitBear takes unit u returns boolean
+    function IsUnitSpiritBear takes unit u returns boolean
         local integer i = GetUnitTypeId(u)
         return i =='n004' or i =='n018' or i =='n01C' or i =='n01G'
     endfunction
@@ -55,7 +55,7 @@ library UnitStatus
     endfunction
     // 英雄级单位 计算镜像或熊灵
     function IsUnitHeroLevel takes unit whichUnit returns boolean
-        return IsHeroUnitId(GetUnitTypeId(whichUnit)) or IsUnitBear(whichUnit)
+        return IsHeroUnitId(GetUnitTypeId(whichUnit)) or IsUnitSpiritBear(whichUnit)
     endfunction
     // 近战
     function IsUnitMeleeAttacker takes unit whichUnit returns boolean

@@ -11,6 +11,9 @@ library UnitAbility requires AbilityUtils, UnitLimitation
 
         private key NEXT_COOLDOWN
         private key ABSOLUTE_COOLDOWN
+
+        // 熊灵的
+        private key ITEM_ABILITY_OWNER
     endglobals
 
     function DisableEndCooldownTrigger takes nothing returns nothing
@@ -38,6 +41,10 @@ library UnitAbility requires AbilityUtils, UnitLimitation
         call SetUnitAbilityLevel(whichUnit, id, level)
     endfunction
     
+    function GetAbilityCooldown takes ability whichAbility returns real
+        return MHAbility_GetAbilityCustomLevelDataReal(whichAbility, GetAbilityLevel(whichAbility), ABILITY_LEVEL_DEF_DATA_COOLDOWN)
+    endfunction
+
     function GetAbilityCooldownRemaining takes ability whichAbility returns real
         return MHAbility_GetAbilityCooldown(whichAbility)
     endfunction
@@ -179,13 +186,11 @@ library UnitAbility requires AbilityUtils, UnitLimitation
         call SetAbilityCooldownAbsolute(whichAbility, cooldown)
     endfunction
     function StartAbilityCooldownAbsolute takes ability whichAbility returns nothing
-        local integer level        
         local real    cooldown     
         if whichAbility == null then
             return
         endif
-        set level    = GetAbilityLevel(whichAbility)
-        set cooldown = MHAbility_GetAbilityCustomLevelDataReal(whichAbility, level, ABILITY_LEVEL_DEF_DATA_COOLDOWN)
+        set cooldown = MHAbility_GetAbilityCustomLevelDataReal(whichAbility, GetAbilityLevel(whichAbility), ABILITY_LEVEL_DEF_DATA_COOLDOWN)
         call SetAbilityCooldownAbsolute(whichAbility, cooldown)
     endfunction
     
@@ -213,65 +218,6 @@ library UnitAbility requires AbilityUtils, UnitLimitation
         endif
         call StartAbilityCooldownAbsolute(whichAbility)
         set whichAbility = null
-    endfunction
-
-
-
-    private function OnEndCooldown takes nothing returns boolean
-        local unit whichUnit = MHEvent_GetUnit()
-        local integer id     = MHEvent_GetAbility()
-
-        set Event.INDEX = Event.INDEX + 1
-        set Event.TriggerAbilityId[Event.INDEX] = id
-        call AnyUnitEvent.ExecuteEvent(whichUnit, ANY_UNIT_EVENT_ABILITY_END_COOLDOWN)
-        set Event.INDEX = Event.INDEX - 1
-
-        set whichUnit = null
-        return false
-    endfunction
-
-    private function OnStartCooldown takes nothing returns boolean
-        local unit    whichUnit    = MHEvent_GetUnit()
-        local ability whichAbility = MHEvent_GetAbilityHandle()
-        local integer id           = MHEvent_GetAbility()
-        local real    cooldown     = GetAbilityCooldownRemaining(whichAbility)
-        local boolean isChanged    = false
-
-        //if HasOctarineCore and GetUnitAbilityLevel(whichUnit, 'A39S') == 1  then
-        //    set cooldown = cooldown * 0.75
-        //    set isChanged = true
-        //endif
-//
-        //if isChanged then
-        //    call BJDebugMsg("冷却真的改了啊不骗你现在是：" + R2S(cooldown))
-        //    call MHAbility_SetAbilityCooldown(whichAbility, cooldown)
-        //endif
-
-        set whichAbility = null
-        set whichUnit    = null
-        return false
-    endfunction
-
-    // 对于主动技能？
-    private function OnSpellEffect takes nothing returns boolean
-        //local unit    whichUnit    = GetTriggerUnit()
-        //local ability whichAbility = GetSpellAbility()
-        //local integer level        = GetUnitAbilityLevel(whichUnit, GetSpellAbilityId())
-        //local real    cooldown     = MHAbility_GetAbilityCustomLevelDataReal(whichAbility, level, ABILITY_LEVEL_DEF_DATA_COOLDOWN)
-        //local boolean isChanged    = false
-        //
-        //if HasOctarineCore and GetUnitAbilityLevel(whichUnit, 'A39S') == 1  then
-        //    set cooldown = cooldown * 0.75
-        //    set isChanged = true
-        //endif
-        //if isChanged then
-        //    call BJDebugMsg("冷却真的改了啊不骗你现在是：" + R2S(cooldown))
-        //    call MHAbility_SetAbilityCustomLevelDataReal(whichAbility, level, ABILITY_LEVEL_DEF_DATA_COOLDOWN, cooldown)
-        //endif
-//
-        //set whichAbility = null
-        //set whichUnit    = null
-        return false
     endfunction
     
     function GetUnitCooldownReduceMultiplier takes unit whichUnit returns real
@@ -361,6 +307,70 @@ library UnitAbility requires AbilityUtils, UnitLimitation
         call MHUnit_EnumAbility(whichUnit, function UpdateCooldownOnEnum)
     endfunction
 
+    private function OnEndCooldown takes nothing returns boolean
+        local unit    whichUnit    = MHEvent_GetUnit()
+        local ability whichAbility = MHEvent_GetAbilityHandle()
+        local integer id     = MHEvent_GetAbility()
+
+        set Event.INDEX = Event.INDEX + 1
+        set Event.TriggerAbilityId[Event.INDEX] = id
+        call AnyUnitEvent.ExecuteEvent(whichUnit, ANY_UNIT_EVENT_ABILITY_END_COOLDOWN)
+        set Event.INDEX = Event.INDEX - 1
+
+        if Table[GetHandleId(whichAbility)].item.has(ITEM_ABILITY_OWNER) then
+            call SetItemDroppable(Table[GetHandleId(whichAbility)].item[ITEM_ABILITY_OWNER], true)
+            call Table[GetHandleId(whichAbility)].item.remove(ITEM_ABILITY_OWNER)
+        endif
+
+        set whichAbility = null
+        set whichUnit    = null
+        return false
+    endfunction
+
+    private function OnStartCooldown takes nothing returns boolean
+        local unit    whichUnit    = MHEvent_GetUnit()
+        local ability whichAbility = MHEvent_GetAbilityHandle()
+        local integer id           = MHEvent_GetAbility()
+        local real    cooldown     = GetAbilityCooldownRemaining(whichAbility)
+        local boolean isChanged    = false
+
+        //if HasOctarineCore and GetUnitAbilityLevel(whichUnit, 'A39S') == 1  then
+        //    set cooldown = cooldown * 0.75
+        //    set isChanged = true
+        //endif
+//
+        //if isChanged then
+        //    call BJDebugMsg("冷却真的改了啊不骗你现在是：" + R2S(cooldown))
+        //    call MHAbility_SetAbilityCooldown(whichAbility, cooldown)
+        //endif
+
+        set whichAbility = null
+        set whichUnit    = null
+        return false
+    endfunction
+
+    // 对于主动技能？
+    private function OnSpellEffect takes nothing returns boolean
+        //local unit    whichUnit    = GetTriggerUnit()
+        //local ability whichAbility = GetSpellAbility()
+        //local integer level        = GetUnitAbilityLevel(whichUnit, GetSpellAbilityId())
+        //local real    cooldown     = MHAbility_GetAbilityCustomLevelDataReal(whichAbility, level, ABILITY_LEVEL_DEF_DATA_COOLDOWN)
+        //local boolean isChanged    = false
+        //
+        //if HasOctarineCore and GetUnitAbilityLevel(whichUnit, 'A39S') == 1  then
+        //    set cooldown = cooldown * 0.75
+        //    set isChanged = true
+        //endif
+        //if isChanged then
+        //    call BJDebugMsg("冷却真的改了啊不骗你现在是：" + R2S(cooldown))
+        //    call MHAbility_SetAbilityCustomLevelDataReal(whichAbility, level, ABILITY_LEVEL_DEF_DATA_COOLDOWN, cooldown)
+        //endif
+//
+        //set whichAbility = null
+        //set whichUnit    = null
+        return false
+    endfunction
+
     private function OnAbilityAdd takes nothing returns boolean
         local unit    whichUnit    = MHEvent_GetUnit()
         local ability whichAbility = MHEvent_GetAbilityHandle()
@@ -377,8 +387,27 @@ library UnitAbility requires AbilityUtils, UnitLimitation
     endfunction
 
     private function OnAbilityRemove takes nothing returns boolean
+        local ability whichAbility = MHEvent_GetAbilityHandle()
         
+        call Table[GetHandleId(whichAbility)].flush()
+        
+        set whichAbility = null
         return false
+    endfunction
+
+    function SpiritBearOnUseItem takes unit whichUnit, item whichItem returns nothing
+        local ability whichAbility = MHItem_GetAbility(whichItem, 1)
+        local real    cooldown
+    
+        if whichAbility != null then
+            set cooldown = GetAbilityCooldown(whichAbility)
+            if cooldown > 0. then
+                set Table[GetHandleId(whichAbility)].item[ITEM_ABILITY_OWNER] = whichItem
+                call SetItemDroppable(whichItem, false)
+            endif
+        endif
+    
+        set whichAbility = null
     endfunction
 
     function UnitAbility_Init takes nothing returns nothing
