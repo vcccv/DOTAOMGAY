@@ -8,6 +8,7 @@
 #include "Str\\ChaosKotoBeast.j"
 #include "Str\\Pudge.j"
 #include "Str\\Slardar.j"
+#include "Str\\Kunkka.j"
 
 #include "Int\\TwinHeadDragon.j"
 #include "Int\\Ezalor.j"

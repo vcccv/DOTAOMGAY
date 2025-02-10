@@ -17,9 +17,6 @@ library UnitDex uses optional WorldBounds, optional GroupUtils, Table
     *   ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
     */
     private module UnitDexConfig
-  
-        // The raw code of the leave detection ability.
-        static constant integer DETECT_LEAVE_ABILITY = 'Adef'
       
         // Allow debug messages (debug mode must also be on)
         static constant boolean ALLOW_DEBUGGING = true
@@ -281,10 +278,6 @@ library UnitDex uses optional WorldBounds, optional GroupUtils, Table
               
                 // Add to group of indexed units
                 call GroupAddUnit(thistype.Group, u)
-              
-                // Give unit the leave detection ability
-                call UnitAddAbility(u, thistype.DETECT_LEAVE_ABILITY)
-                call UnitMakeAbilityPermanent(u, true, thistype.DETECT_LEAVE_ABILITY)
                 
                 // Allocate index
                 if(Index != 0) then

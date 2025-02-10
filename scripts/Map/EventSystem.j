@@ -1,5 +1,5 @@
 
-library EventSystem
+library EventSystem requires UnitDex
 
     globals
         constant integer ANY_UNIT_EVENT_DAMAGED              = 1
@@ -57,7 +57,7 @@ library EventSystem
     // 单一事件
     struct UnitEvent
 
-        private Unit    owner
+        private integer owner
         private integer id
         private integer executableCode
 
@@ -74,7 +74,7 @@ library EventSystem
             return MHGame_ExecuteCodeEx(this.executableCode)
         endmethod
 
-        private static method Create takes Unit u, integer id, code func returns thistype
+        private static method Create takes integer u, integer id, code func returns thistype
             local thistype this
 
             if u == 0 then
@@ -102,7 +102,7 @@ library EventSystem
         endmethod
 
         method Destroy takes nothing returns nothing
-            local Unit u = this.owner
+            local integer u = this.owner
 
             if this.prev == 0 then
                 // 删除头部节点
@@ -137,7 +137,7 @@ library EventSystem
         static method ExecuteEvent takes unit whichUnit, integer id returns nothing
             local thistype node
             local thistype next
-            local Unit     u    = GetUnitId()
+            local integer  u    = GetUnitId(whichUnit)
 
             if u == 0 then
                 return
@@ -145,8 +145,8 @@ library EventSystem
 
             set node = thistype.ListHeadTable[u][id]
 
-            set Event.TrigUnit[Event.INDEX] = u
-            set Event.TrigEventId[Event.INDEX]  = id
+            set Event.TrigUnit[Event.INDEX]    = whichUnit
+            set Event.TrigEventId[Event.INDEX] = id
             
             loop
                 exitwhen node == 0

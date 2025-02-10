@@ -117,4 +117,27 @@ library UnitStateBonus requires UnitUtils, UnitAbility
         call MHUnit_RestoreMana(target, value)
     endfunction
 
+    globals
+        private key SPELL_DAMAGE_AMP
+    endglobals
+    // 乘数
+    function UnitAddSpellDamageAmplification takes unit whichUnit, real value returns nothing
+        if whichUnit == null then
+            return
+        endif
+        set Table[GetHandleId(whichUnit)].real[SPELL_DAMAGE_AMP] = Table[GetHandleId(whichUnit)].real[SPELL_DAMAGE_AMP] + value
+    endfunction
+    function UnitReduceSpellDamageAmplification takes unit whichUnit, real value returns nothing
+        if whichUnit == null then
+            return
+        endif
+        set Table[GetHandleId(whichUnit)].real[SPELL_DAMAGE_AMP] = Table[GetHandleId(whichUnit)].real[SPELL_DAMAGE_AMP] - value
+    endfunction
+    function GetUnitSpellDamageAmplification takes unit whichUnit returns real
+        if whichUnit == null then
+            return 0.
+        endif
+        return Table[GetHandleId(whichUnit)].real[SPELL_DAMAGE_AMP]
+    endfunction
+
 endlibrary

@@ -54,8 +54,6 @@ library ItemSystem requires Base, TimerUtils, AbilityUtils
             return itemIndex
         endif
 
-        call BJDebugMsg("GetItemIndexEx - 1")
-
         return -1
     endfunction
     
@@ -78,8 +76,6 @@ library ItemSystem requires Base, TimerUtils, AbilityUtils
             return itemIndex
         endif
 
-        call BJDebugMsg("GetItemIndex - 1")
-
         return -1
     endfunction
 
@@ -96,8 +92,6 @@ library ItemSystem requires Base, TimerUtils, AbilityUtils
         if itemIndex > 0 then
             return itemIndex
         endif
-
-        call BJDebugMsg("GetItemSellDummyUnitIndex - 1")
 
         return -1
     endfunction
@@ -185,7 +179,8 @@ library ItemSystem requires Base, TimerUtils, AbilityUtils
     
         set Recipe_AetherLens = RegisterItem('I0V3','I0V4','n12W','I0V5')
         set Item_AetherLens   = RegisterItem('I0UE','I0UF',     0,'I0UG')
-    
+        call SetRealItemFuncSimple(Item_AetherLens, "ItemAetherLensOnPickup", "ItemAetherLensOnDrop")
+        
         set XMV = RegisterItem('I02Q','I02O','h011','I00A')
         set XPV = RegisterItem('I02S','I02P','h012','I0CA')
         set XQV = RegisterItem('I02N','I02R','h013','I0CS')

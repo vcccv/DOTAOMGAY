@@ -167,4 +167,112 @@ scope StormSpirit
         set APX = null
     endfunction
 
+    //***************************************************************************
+    //*
+    //*  雷电牵引
+    //*
+    //***************************************************************************
+    function MGR takes nothing returns nothing
+        if IsUnitEnemy(GetEnumUnit(), GetOwningPlayer(MA)) then
+            call UnitDamageTargetEx(MA, GetEnumUnit(), 1, QA)
+            call UnitAddAbilityToTimed(GetEnumUnit(),'A3B7', 1, 1.,'B3B7')
+            call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Human\\ManaFlare\\ManaFlareBoltImpact.mdl", GetEnumUnit(), "origin"))
+        endif
+        call UnitSubNoPathingCount(GetEnumUnit())
+    endfunction
+    function MHR takes nothing returns nothing
+        call SetUnitPosition(GetEnumUnit(), GetUnitX(GetEnumUnit())+ 40 * Cos(LA), GetUnitY(GetEnumUnit())+ 40 * Sin(LA))
+        call KillTreeByCircle(GetUnitX(GetEnumUnit()), GetUnitY(GetEnumUnit()), 200)
+    endfunction
+
+    function MJR takes nothing returns nothing
+        local timer t = GetExpiredTimer()
+        local integer h = GetHandleId(t)
+        local real a = LoadReal(HY, h, 0)
+        local integer c = LoadInteger(HY, h, 0)-1
+        local unit whichUnit = LoadUnitHandle(HY, h, 0)
+        local real x = GetUnitX(whichUnit)
+        local real y = GetUnitY(whichUnit)
+        local group g = null
+        if c < 1 or GetDistanceBetween(x, y, LoadReal(HY, h, 1), LoadReal(HY, h, 2))< 50 then
+            set MA = whichUnit
+            set QA = LoadInteger(HY, h, 5)* 50 + 50
+            set g = AllocationGroup(168)
+            set U2 = whichUnit
+            call GroupEnumUnitsInRange(g, x, y, 275, Condition(function DHX))
+            call GroupAddGroup(g, LoadGroupHandle(HY, h, 10))
+            call ForGroup(LoadGroupHandle(HY, h, 10), function MGR)
+            call DeallocateGroup(g)
+            call KillTreeByCircle(x, y, 200)
+            call DestroyLightning(LoadLightningHandle(HY, h, 11))
+            call DeallocateGroup(LoadGroupHandle(HY, h, 10))
+            call DestroyTimerAndFlushHT_HY(t)
+        else
+            set LA = a
+            call ForGroup(LoadGroupHandle(HY, h, 10), function MHR)
+            call MoveLightning(LoadLightningHandle(HY, h, 11), true, x, y, LoadReal(HY, h, 1), LoadReal(HY, h, 2))
+            call SaveInteger(HY, h, 0, c)
+        endif
+        set whichUnit = null
+        set t = null
+    endfunction
+    function MKR takes nothing returns boolean
+        return (IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and UnitIsDead(GetFilterUnit()) == false)!= null
+    endfunction
+    function LightningGrappleOnSpellEffect takes nothing returns nothing
+        local unit      whichUnit = GetTriggerUnit()
+        local real      x = GetUnitX(whichUnit)
+        local real      y = GetUnitY(whichUnit)
+        local real      dx = GetSpellTargetX()
+        local real      dy = GetSpellTargetY()
+        local real      angle = AngleBetweenXY(x, y, dx, dy) * bj_DEGTORAD
+        local group     g = AllocationGroup(169)
+        local timer     t = CreateTimer()
+        local integer   h = GetHandleId(t)
+        local lightning l
+        local real      maxDistance
+        local group     enumGroup
+        local unit      first
+        local real      area = 350.
+        
+        set maxDistance = 800 + 200 * GetUnitAbilityLevel(whichUnit, GetSpellAbilityId()) + GetUnitCastRangeBonus(whichUnit)
+        if GetDistanceBetween(x, y, dx, dy) > maxDistance then
+            set dx = x + maxDistance * Cos(angle)
+            set dy = y + maxDistance * Sin(angle)
+        endif
+        set l = AddLightning("CLPB", true, x, y, dx, dy)
+        call SetLightningColor(l, .75, .75, 1, .75)
+
+        set enumGroup = AllocationGroup(2466)
+        call GroupEnumUnitsInRange(enumGroup, x, y, area + MAX_UNIT_COLLISION, Condition(function MKR))
+
+        loop
+            set first = FirstOfGroup(enumGroup)
+            exitwhen first == null
+            call GroupRemoveUnit(enumGroup, first)
+
+            if IsUnitType(first, UNIT_TYPE_HERO) and IsUnitInRangeXY(first, x, y, area) and UnitAlive(first) then
+                call GroupAddUnit(g, first)
+                call UnitAddNoPathingCount(first)
+            endif
+            
+        endloop
+
+        call DeallocateGroup(enumGroup)
+
+        call TimerStart(t, .03, true, function MJR)
+        call SaveInteger(HY, h, 0, R2I(GetDistanceBetween(x, y, dx, dy)/ 40)+ 1)
+        call SaveReal(HY, h, 0, angle)
+        call SaveInteger(HY, h, 5, GetUnitAbilityLevel(whichUnit, GetSpellAbilityId()))
+        call SaveGroupHandle(HY, h, 10, g)
+        call SaveLightningHandle(HY, h, 11, l)
+        call SaveUnitHandle(HY, h, 0, whichUnit)
+        call SaveReal(HY, h, 1, dx)
+        call SaveReal(HY, h, 2, dy)
+        set l = null
+        set t = null
+        set whichUnit = null
+        set g = null
+    endfunction
+
 endscope

@@ -2565,7 +2565,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A0KU', 0, "EEE")
 	call SaveStr(ObjectHashTable,'A0LN', 0, "EXE")
 	call SaveStr(ObjectHashTable,'A0L8', 0, "EOE")
-	call SaveStr(ObjectHashTable,'A33U', 0, "ERE")
+	call SaveStr(ObjectHashTable,'A33U', 0, "LightningGrappleOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A0FN', 0, "WaveformOnSpellEffect")
 	call SaveStr(ObjectHashTable,'QB02', 0, "WaveformOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A0G8', 0, "EAE")
@@ -5740,9 +5740,13 @@ endfunction
 // 2 英雄攻击伤害(物理伤害)
 // 3 英雄攻击魔法伤害(纯粹伤害)
 function UnitDamageTargetEx takes unit u, unit t, integer damageType, real d returns nothing
+	local real amp
 	if damageType == 0 or d < 0 then
 		return
 	endif
+	set amp = 1. + GetUnitSpellDamageAmplification(u)
+	set d = d * amp
+
 	set AD = AD + 1
 	set GX = damageType
 	if damageType == 1 then
@@ -8752,47 +8756,6 @@ function KVX takes unit u returns nothing
 	set i = i + LoadInteger(HY, h,'axxx')
 	set i = i + LoadInteger(OtherHashTable, GetHandleId(GetOwningPlayer(u)),'DDUE')
 	call J9X(u, i)
-endfunction
-
-function KEX takes unit u, integer d returns nothing
-	local integer array b
-	local integer a = d
-	local integer c = 1
-	local integer i = 0
-	local integer H0X
-
-	if d < 1 then
-		call UnitRemoveAbility(u, S4[0])
-		call UnitRemoveAbility(u, S4[1])
-		call UnitRemoveAbility(u, S4[2])
-		call UnitRemoveAbility(u, S4[3])
-		call UnitRemoveAbility(u, S4[4])
-		call UnitRemoveAbility(u, S4[5])
-		call UnitRemoveAbility(u, S4[6])
-		call UnitRemoveAbility(u, S4[7])
-		call UnitRemoveAbility(u, S4[8])
-		call UnitRemoveAbility(u, S4[9])
-		call UnitRemoveAbility(u, S4[10])
-		return
-	endif
-	loop
-	exitwhen c == 0
-		set c = a / 2
-		set b[i]= a -c * 2
-		set a = c
-		set i = i + 1
-	endloop
-	set H0X = 10
-	set i = 0
-	loop
-	exitwhen i > H0X
-		if b[i]== 1 then
-			call UnitAddPermanentAbility(u, S4[i])
-		else
-			call UnitRemoveAbility(u, S4[i])
-		endif
-		set i = i + 1
-	endloop
 endfunction
 
 // 二进制属性系统增加生命值
@@ -15153,27 +15116,11 @@ function Item_dragonlance takes boolean MCBCZ returns nothing
 	endif
 endfunction
 
-#define AETHER_LENS_CAST_RANGE_BONUS 150.
 
 function GetUnitCastRangeBonus takes unit whichUnit returns real
 	return MHUnit_GetSpellRange(whichUnit)
 endfunction
-function AetherLensOnPick takes unit whichUnit returns nothing
-	local player p = GetOwningPlayer(whichUnit)
-	if not LoadBoolean(HY, GetHandleId(p),'A3O3') then
-		call SaveBoolean(HY, GetHandleId(p),'A3O3', true)
-		call MHUnit_AddSpellRange(whichUnit, GetUnitCastRangeBonus(whichUnit) + AETHER_LENS_CAST_RANGE_BONUS)	
-		//call BJDebugMsg("我说我加了施法射程你耳聋吗？现在是：" + R2S(GetUnitCastRangeBonus(whichUnit)))
-	endif
-endfunction
-function AetherLensOnDrop takes unit whichUnit returns nothing
-	local player p = GetOwningPlayer(whichUnit)
-	if LoadBoolean(HY, GetHandleId(p),'A3O3') then
-		call RemoveSavedBoolean(HY, GetHandleId(p),'A3O3')
-		call MHUnit_AddSpellRange(whichUnit, GetUnitCastRangeBonus(whichUnit) - AETHER_LENS_CAST_RANGE_BONUS)
-		//call BJDebugMsg("一点施法射程不要也罢，现在是：" + R2S(GetUnitCastRangeBonus(whichUnit)))
-	endif
-endfunction
+
 
 function QTUWW takes unit u, boolean WEWQQ returns nothing
 	local real r = GetUnitState(u, UNIT_STATE_ATTACK1_RANGE) 
@@ -15344,8 +15291,8 @@ function OnManipulatItem takes nothing returns boolean
 						call RegisterUnitAttackFunc("UYYRQ", 2)
 					endif
 				endif
-			elseif i == RealItem[Item_AetherLens] then
-				call AetherLensOnPick(u)
+			//elseif i == RealItem[Item_AetherLens] then
+			//	call AetherLensOnPick(u)
 			endif
 		elseif GetTriggerEventId() == EVENT_PLAYER_UNIT_DROP_ITEM then
 			call ItemSystem_OnDrop(u, GetManipulatedItem())
@@ -15382,8 +15329,8 @@ function OnManipulatItem takes nothing returns boolean
 				if not IsUnitSpiritBear(u) then
 					call Item_dragonlance(true)
 				endif
-			elseif i == RealItem[Item_AetherLens] then
-				call AetherLensOnDrop(u)
+			//elseif i == RealItem[Item_AetherLens] then
+			//	call AetherLensOnDrop(u)
 			endif
 		endif
 	endif
@@ -34614,161 +34561,6 @@ function YWV takes nothing returns nothing
 	set t = null
 endfunction
 
-// 2022/1/12 A13T 和 A522 数据互换 不必使用魔法护盾来实现技能cd 重生已经可以
-function Fix_Tidebringer_Add takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit whichUnit = LoadUnitHandle(HY, h, 0)
-	local integer level = LoadInteger(HY, h, 1)
-	local integer iUnitHandleId = GetHandleId(whichUnit)
-	if UnitAlive(whichUnit) then
-		call UnitAddStateBonus(whichUnit, 15 * level + 5, UNIT_BONUS_DAMAGE)
-		call UnitAddPermanentAbility(whichUnit,'A147')
-		call SetUnitAbilityLevel(whichUnit,'A146', level)
-		call UnitMakeAbilityPermanent(whichUnit, true,'A146')
-
-		// debug call SingleDebug( "存活，可再加技能" )
-		call SaveBoolean(ExtraHT, iUnitHandleId, HTKEY_SKILL_TIDEBRINGER, true)
-		call SaveEffectHandle(ExtraHT, iUnitHandleId, HTKEY_SKILL_TIDEBRINGER, AddSpecialEffectTarget("effects\\WaterHands.mdx", whichUnit, GetHeroWeaponAttachPointName(whichUnit)))
-		call DestroyTrigger(t)
-		call FlushChildHashtable(HY, h)
-	endif
-	set t = null
-	set whichUnit = null
-	return false
-endfunction
-// 添加潮汐使者效果
-function Tidebringer_Add takes nothing returns nothing
-	local timer t = GetExpiredTimer()
-	local trigger trig = null
-	local unit whichUnit = LoadUnitHandle(HY, GetHandleId(t), 0)
-	local integer level = GetUnitAbilityLevel(whichUnit,'A13T')
-	local integer iHandleId = GetHandleId(whichUnit)
-	if not UnitAlive(whichUnit) then
-		set trig = CreateTrigger()
-		call TriggerRegisterTimerEvent(trig, 1, true)
-		call TriggerAddCondition(trig, Condition(function Fix_Tidebringer_Add))
-		call SaveUnitHandle(HY, GetHandleId(trig), 0, whichUnit)
-		call SaveInteger(HY, GetHandleId(trig), 1, level)
-		set trig = null
-	else
-		call UnitAddStateBonus(whichUnit, 15 * level + 5, UNIT_BONUS_DAMAGE)
-		call UnitAddPermanentAbility(whichUnit,'A147')
-		call SetUnitAbilityLevel(whichUnit,'A146', level)
-		call UnitMakeAbilityPermanent(whichUnit, true,'A146')
-		set iHandleId = GetHandleId(whichUnit)
-		call SaveBoolean(ExtraHT, iHandleId, HTKEY_SKILL_TIDEBRINGER, true)
-		call SaveEffectHandle(ExtraHT, iHandleId, HTKEY_SKILL_TIDEBRINGER, AddSpecialEffectTarget("effects\\WaterHands.mdx", whichUnit, GetHeroWeaponAttachPointName(whichUnit)))
-	endif
-	call DestroyTimerAndFlushHT_P(t)
-	set t = null
-	set whichUnit = null
-endfunction
-
-function Tidebringer_Ranged takes unit whichUnit, unit targetUnit, real attackDmg, integer level returns nothing
-	local real x1 = GetUnitX(whichUnit)
-	local real y1 = GetUnitY(whichUnit)
-	local real range = 525 + 100 *(level / 4)
-	local real radian = GetUnitFacing(whichUnit) * bj_DEGTORAD
-	local real x2 = x1 + range * Cos(radian)
-	local real y2 = y1 + range * Sin(radian)
-	local real targetUnitArmor = GetUnitState(targetUnit, UNIT_STATE_ARMOR)
-	local real reduceRatio = 1
-	local unit firstUnit = null
-	// 逆推税前伤害
-	if IsFortDefenseTypeUnit(targetUnit) then
-		set attackDmg = attackDmg * 2
-	endif
-	if targetUnitArmor >= 0 then
-		set reduceRatio = 0.06 * targetUnitArmor / (0.06 * targetUnitArmor + 1)
-		set reduceRatio = 1 - reduceRatio
-	elseif targetUnitArmor < 0 then
-		set reduceRatio = 2 - Pow(1 -0.06, -targetUnitArmor)
-	endif
-	set attackDmg = attackDmg / reduceRatio
-	if IsUnitIllusion(targetUnit) then
-		set attackDmg = attackDmg / GetIllusionDamageTaken(targetUnit)
-	endif
-	if Mode__RearmCombos then
-		set Temp__ArrayReal[0]= attackDmg
-	else
-		set Temp__ArrayReal[0]= attackDmg * .8
-	endif
-	set Temp__ArrayUnit[0]= whichUnit
-	set Temp__ArrayUnit[1]= targetUnit
-	set Temp__Player = GetOwningPlayer(whichUnit)
-	call GroupEnumUnitsInRange( AK, x2, y2, range, null )
-	call GroupRemoveUnit( AK, targetUnit ) // 移除攻击目标 防止造成第二次伤害
-	loop
-		set firstUnit = FirstOfGroup(AK)
-	exitwhen firstUnit == null
-		call GroupRemoveUnit(AK, firstUnit)
-		// 敌对 非守卫 非建筑 存活
-		if IsUnitEnemy(firstUnit, Temp__Player) and not IsUnitWard(firstUnit) and not IsUnitType(firstUnit, UNIT_TYPE_STRUCTURE) and UnitAlive(firstUnit) then
-			call UnitDamageTargetEx(Temp__ArrayUnit[0], firstUnit, 2, Temp__ArrayReal[0])
-			call DestroyEffect(AddSpecialEffectTarget("Abilities\\Weapons\\WaterElementalMissile\\WaterElementalMissile.mdl", firstUnit, "chest"))
-		endif
-	endloop
-	set firstUnit = null
-endfunction
-
-function IsUnitTidebringerAvailable takes unit whichUnit returns boolean
-	return (YDWEGetUnitAbilityState(whichUnit, 'A522', 1) == 0)
-endfunction
-
-function Tidebringer_Actions takes unit whichUnit, unit targetUnit, real attackDmg returns nothing
-	local integer iHandleId = GetHandleId(whichUnit)
-	local integer level = GetUnitAbilityLevel(whichUnit,'A522')
-	local real cooldown = 16 - 3 * level
-	local integer timerHandleId = TimerStartSingle( cooldown, function Tidebringer_Add )
-	call SaveUnitHandle(HY, timerHandleId, 0, whichUnit)
-	// 移除潮汐使者效果
-	call SaveBoolean(ExtraHT, iHandleId, HTKEY_SKILL_TIDEBRINGER, false)
-	call DestroyTimerAndFlushHT_P(LoadTimerHandle(ExtraHT, iHandleId, HTKEY_SKILL_TIDEBRINGER))
-	call DestroyEffect(LoadEffectHandle(ExtraHT, iHandleId, HTKEY_SKILL_TIDEBRINGER))
-	call RemoveSavedHandle(ExtraHT, iHandleId, HTKEY_SKILL_TIDEBRINGER)
-
-	call UnitReduceStateBonus(whichUnit, level * 15+ 5, UNIT_BONUS_DAMAGE)
-	call UnitRemoveAbility(whichUnit,'A147')
-	//call YDWESetUnitAbilityState(whichUnit,'A522', 1, cooldown)
-
-	call StartUnitAbilityCooldown(whichUnit, 'A522')
-
-	if IsUnitType(whichUnit, UNIT_TYPE_RANGED_ATTACKER) then
-		call Tidebringer_Ranged(whichUnit, targetUnit, attackDmg, level) // 远程
-	endif
-endfunction
-
-function DamagedEvent__Tidebringer takes nothing returns nothing
-	local integer h = GetHandleId(DESource)
-	if IsUnitTidebringerAvailable(DESource) and LoadBoolean(ExtraHT, h, HTKEY_SKILL_TIDEBRINGER) and IsUnitEnemy(DESource, GetOwningPlayer(DETarget)) and(IsUnitType(DESource, UNIT_TYPE_MELEE_ATTACKER) or not IsUnitIllusion(DETarget)) then
-		call Tidebringer_Actions(DESource, DETarget, DEDamage)
-	endif
-endfunction
-function LearnSkill__Tidebringer takes nothing returns nothing
-	local unit u = GetTriggerUnit()
-	local integer h = GetHandleId(u)
-	local boolean isDestroyEffect = IsUnitBroken(u) // 破坏效果
-	// 如果有水刀 而且不是禁用技能状态 + 15 攻击力
-	if LoadBoolean(ExtraHT, h, HTKEY_SKILL_TIDEBRINGER) and not isDestroyEffect then
-		call UnitAddStateBonus(u, 15, UNIT_BONUS_DAMAGE)
-	elseif GetUnitAbilityLevel(u,'A13T') == 1 then
-		if not isDestroyEffect then
-			call UnitAddStateBonus(u, 15 + 5, UNIT_BONUS_DAMAGE)
-			call SaveEffectHandle(ExtraHT, h, HTKEY_SKILL_TIDEBRINGER, AddSpecialEffectTarget("effects\\WaterHands.mdx", u, GetHeroWeaponAttachPointName(u)))
-		endif
-		call SaveBoolean(ExtraHT, h, HTKEY_SKILL_TIDEBRINGER, true)
-		if not isDestroyEffect then
-			if IsUnitType(u, UNIT_TYPE_MELEE_ATTACKER) then // 如果是近战 就加分裂技能
-				call UnitAddPermanentAbility(u,'A147')
-				call UnitMakeAbilityPermanent(u, true,'A146')
-			endif
-		endif
-	endif
-	call SetUnitAbilityLevel(u,'A146', GetUnitAbilityLevel(u,'A13T'))
-	set u = null
-	set u = null
-endfunction
 
 //玩家是否选择了此技能
 function PlayerHaveAbilityByActive takes player p, integer abid returns boolean
@@ -39041,86 +38833,7 @@ function KDE takes nothing returns nothing
 	endif
 	set u = null
 endfunction
-function MGR takes nothing returns nothing
-	call SetUnitPathing(GetEnumUnit(), true)
-	if IsUnitEnemy(GetEnumUnit(), GetOwningPlayer(MA)) then
-		call UnitDamageTargetEx(MA, GetEnumUnit(), 1, QA)
-		call UnitAddAbilityToTimed(GetEnumUnit(),'A3B7', 1, 1.,'B3B7')
-		call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Human\\ManaFlare\\ManaFlareBoltImpact.mdl", GetEnumUnit(), "origin"))
-	endif
-endfunction
-function MHR takes nothing returns nothing
-	call SetUnitPosition(GetEnumUnit(), GetUnitX(GetEnumUnit())+ 40 * Cos(LA), GetUnitY(GetEnumUnit())+ 40 * Sin(LA))
-	call KillTreeByCircle(GetUnitX(GetEnumUnit()), GetUnitY(GetEnumUnit()), 200)
-	call SetUnitPathing(GetEnumUnit(), false)
-endfunction
-function MJR takes nothing returns nothing
-	local timer t = GetExpiredTimer()
-	local integer h = GetHandleId(t)
-	local real a = LoadReal(HY, h, 0)
-	local integer c = LoadInteger(HY, h, 0)-1
-	local unit whichUnit = LoadUnitHandle(HY, h, 0)
-	local real x = GetUnitX(whichUnit)
-	local real y = GetUnitY(whichUnit)
-	local group g = null
-	if c < 1 or GetDistanceBetween(x, y, LoadReal(HY, h, 1), LoadReal(HY, h, 2))< 50 then
-		set MA = whichUnit
-		set QA = LoadInteger(HY, h, 5)* 50 + 50
-		set g = AllocationGroup(168)
-		set U2 = whichUnit
-		call GroupEnumUnitsInRange(g, x, y, 275, Condition(function DHX))
-		call GroupAddGroup(g, LoadGroupHandle(HY, h, 10))
-		call ForGroup(LoadGroupHandle(HY, h, 10), function MGR)
-		call DeallocateGroup(g)
-		call KillTreeByCircle(x, y, 200)
-		call DestroyLightning(LoadLightningHandle(HY, h, 11))
-		call DeallocateGroup(LoadGroupHandle(HY, h, 10))
-		call DestroyTimerAndFlushHT_HY(t)
-	else
-		set LA = a
-		call ForGroup(LoadGroupHandle(HY, h, 10), function MHR)
-		call MoveLightning(LoadLightningHandle(HY, h, 11), true, x, y, LoadReal(HY, h, 1), LoadReal(HY, h, 2))
-		call SaveInteger(HY, h, 0, c)
-	endif
-	set whichUnit = null
-	set t = null
-endfunction
-function MKR takes nothing returns boolean
-	return(IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and UnitIsDead(GetFilterUnit()) == false)!= null
-endfunction
-function ERE takes nothing returns nothing
-	local unit whichUnit = GetTriggerUnit()
-	local real x = GetUnitX(whichUnit)
-	local real y = GetUnitY(whichUnit)
-	local real dx = GetSpellTargetX()
-	local real dy = GetSpellTargetY()
-	local real I3X = AngleBetweenXY(x, y, dx, dy)* bj_DEGTORAD
-	local group g = AllocationGroup(169)
-	local timer t = CreateTimer()
-	local integer h = GetHandleId(t)
-	local lightning l
-	local real WOV = 800 + 200* GetUnitAbilityLevel(whichUnit, GetSpellAbilityId())
-	if GetDistanceBetween(x, y, dx, dy)> WOV then
-		set dx = x + WOV * Cos(I3X)
-		set dy = y + WOV * Sin(I3X)
-	endif
-	set l = AddLightning("CLPB", true, x, y, dx, dy)
-	call SetLightningColor(l, .75, .75, 1, .75)
-	call GroupEnumUnitsInRange(g, x, y, 350, Condition(function MKR))
-	call TimerStart(t, .03, true, function MJR)
-	call SaveInteger(HY, h, 0, R2I(GetDistanceBetween(x, y, dx, dy)/ 40)+ 1)
-	call SaveReal(HY, h, 0, I3X)
-	call SaveInteger(HY, h, 5, GetUnitAbilityLevel(whichUnit, GetSpellAbilityId()))
-	call SaveGroupHandle(HY, h, 10, g)
-	call SaveLightningHandle(HY, h, 11, l)
-	call SaveUnitHandle(HY, h, 0, whichUnit)
-	call SaveReal(HY, h, 1, dx)
-	call SaveReal(HY, h, 2, dy)
-	set l = null
-	set t = null
-	set whichUnit = null
-	set g = null
-endfunction
+
 function MLR takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local unit u = LoadUnitHandle(HY, GetHandleId(t), 0)
@@ -75156,14 +74869,6 @@ endfunction
 function S4A takes nothing returns nothing
 	call LUI(DESource, DETarget)
 endfunction
-function S5A takes nothing returns nothing
-	if AD < 1 and DEDamage > 40 or IsUnitType(DETarget, UNIT_TYPE_STRUCTURE) then
-		call Tidebringer_Actions(DESource, DETarget, DEDamage)
-	endif
-endfunction
-function S6A takes nothing returns nothing
-	//	call DamagedEvent__Tidebringer(DESource, DETarget)
-endfunction
 function S7A takes nothing returns nothing
 	call CGI(DESource, DETarget, DEDamage)	//灵能之刃
 endfunction
@@ -80378,18 +80083,6 @@ function Init_PreloadAbilitys takes nothing returns nothing
 	call SetAllPlayerAbilityUnavailable(EC[9])
 	call SetAllPlayerAbilityUnavailable('A431')
 
-
-	call AddAbilityIDToPreloadQueue(S4[0])
-	call AddAbilityIDToPreloadQueue(S4[1])
-	call AddAbilityIDToPreloadQueue(S4[2])
-	call AddAbilityIDToPreloadQueue(S4[3])
-	call AddAbilityIDToPreloadQueue(S4[4])
-	call AddAbilityIDToPreloadQueue(S4[5])
-	call AddAbilityIDToPreloadQueue(S4[6])
-	call AddAbilityIDToPreloadQueue(S4[7])
-	call AddAbilityIDToPreloadQueue(S4[8])
-	call AddAbilityIDToPreloadQueue(S4[9])
-	call AddAbilityIDToPreloadQueue(S4[10])
 endfunction
 function Init_PRDRandom takes nothing returns nothing
 	call SaveReal(PrdRandomHashTable,-1, 0, .0038)
