@@ -21,6 +21,7 @@
 #include "Int\\ObsidianDestroyer.j"
 #include "Int\\StormSpirit.j"
 #include "Int\\Necrolyte.j"
+#include "Int\\Visage.j"
 
 #include "Agi\\VengefulSpirit.j"
 #include "Agi\\FacelessVoid.j"

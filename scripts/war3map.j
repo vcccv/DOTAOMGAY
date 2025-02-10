@@ -2770,8 +2770,8 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A1UZ', 0, "NQE")
 	call SaveStr(ObjectHashTable,'A080', 0, "NYE")
 	call SaveStr(ObjectHashTable,'A08X', 0, "N_E")
-	call SaveStr(ObjectHashTable,'A1NE', 0, "N0E")
-	call SaveStr(ObjectHashTable,'A2IG', 0, "N0E")
+	call SaveStr(ObjectHashTable,'A1NE', 0, "FamiliarsOnSpellEffect")
+	call SaveStr(ObjectHashTable,'A2IG', 0, "FamiliarsOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A1NA', 0, "N1E")
 	call SaveStr(ObjectHashTable,'A06P', 0, "SpellEffect__Upheaval")
 	call SaveStr(ObjectHashTable,'A0J5', 0, "N3E")
@@ -8707,55 +8707,29 @@ function J8X takes unit u, integer d returns nothing
 		call SaveInteger(ObjectHashTable, h,'MSPC', J7X -d)
 	endif
 endfunction
-function J9X takes unit u, integer d returns nothing
-	local integer array b
-	local integer a = d
-	local integer c = 1
-	local integer i = 0
-	local integer k
-	if d < 1 then
-		call UnitRemoveAbility(u, Q4[0])
-		call UnitRemoveAbility(u, Q4[1])
-		call UnitRemoveAbility(u, Q4[2])
-		call UnitRemoveAbility(u, Q4[3])
-		call UnitRemoveAbility(u, Q4[4])
-		call UnitRemoveAbility(u, Q4[5])
-		call UnitRemoveAbility(u, Q4[6])
-		call UnitRemoveAbility(u, Q4[7])
-		call UnitRemoveAbility(u, Q4[8])
-		call UnitRemoveAbility(u, Q4[9])
-		call UnitRemoveAbility(u, Q4[10])
-		call UnitRemoveAbility(u, Q4[11])
+
+globals
+	key UNIT_COMMON_ATTACK_DAMAGE_BONUS
+endglobals
+function UnitUpdateCommonAttackDamageBonus takes unit whichUnit returns nothing
+	local integer h 	= GetHandleId(whichUnit)
+	local integer i     = 0
+	local integer bonus = 0
+	if whichUnit == null then
 		return
 	endif
-	loop
-	exitwhen c == 0
-		set c = a / 2
-		set b[i]= a -c * 2
-		set a = c
-		set i = i + 1
-	endloop
-	set k = 11
-	set i = 0
-	loop
-	exitwhen i > k
-		if b[i]== 1 then
-			call UnitAddPermanentAbility(u, Q4[i])
-		else
-			call UnitRemoveAbility(u, Q4[i])
-		endif
-		set i = i + 1
-	endloop
-endfunction
-function KVX takes unit u returns nothing
-	local integer h = GetHandleId(u)
-	local integer i = 0
+	set bonus = Table[GetHandleId(whichUnit)].integer[UNIT_COMMON_ATTACK_DAMAGE_BONUS]
+	call UnitReduceStateBonus(whichUnit, bonus, UNIT_BONUS_DAMAGE)
+
 	set i = i + LoadInteger(HY, h,'a068')
 	set i = i + LoadInteger(HY, h,'a272')
 	set i = i + LoadInteger(HY, h,'a430')
 	set i = i + LoadInteger(HY, h,'axxx')
-	set i = i + LoadInteger(OtherHashTable, GetHandleId(GetOwningPlayer(u)),'DDUE')
-	call J9X(u, i)
+	set i = i + LoadInteger(OtherHashTable, GetHandleId(GetOwningPlayer(whichUnit)),'DDUE')
+
+	set bonus = i
+	call UnitAddStateBonus(whichUnit, bonus, UNIT_BONUS_DAMAGE)
+	set Table[GetHandleId(whichUnit)].integer[UNIT_COMMON_ATTACK_DAMAGE_BONUS] = bonus
 endfunction
 
 // 二进制属性系统增加生命值
@@ -10854,7 +10828,7 @@ function PlayerChooseHeroUnit takes unit whichUnit returns boolean
 	if Mode__MirrorDraft or Mode__SingleDraft then
 		call HidePlayerTavern(whichPlayer)
 	endif
-	call KVX(whichUnit) // 同步决斗的额外攻击力
+	call UnitUpdateCommonAttackDamageBonus(whichUnit) // 同步决斗的额外攻击力
 	call RemoveRegion(r)
 	set r = null
 	//set whichUnit = null
@@ -49114,7 +49088,7 @@ function BGI takes nothing returns boolean
 		call DestroyTrigger(t)
 		call UnitRemoveAbility(whichUnit,'B02H')
 		call SaveInteger(HY, GetHandleId(whichUnit),'a068', 0)
-		call KVX(whichUnit)
+		call UnitUpdateCommonAttackDamageBonus(whichUnit)
 	else
 		if LoadBoolean(HY, h, 0) then
 			set damageValue = R2I(GetUnitState(whichUnit, UNIT_STATE_MAX_LIFE)*(.04 + .01 * LoadInteger(HY, h, 0)))
@@ -49125,7 +49099,7 @@ function BGI takes nothing returns boolean
 		if damageValue != BHI then
 			call SaveInteger(HY, h, 238, damageValue)
 			call SaveInteger(HY, GetHandleId(whichUnit),'a068', damageValue)
-			call KVX(whichUnit)
+			call UnitUpdateCommonAttackDamageBonus(whichUnit)
 		endif
 	endif
 	set t = null
@@ -52560,7 +52534,7 @@ function JEI takes nothing returns boolean
 	local integer JXI = LoadInteger(HY, h, 10)
 	local integer JOI = LoadInteger(HY, h, 11)
 	call SaveInteger(HY, GetHandleId(whichUnit),'a272', LoadInteger(HY, GetHandleId(whichUnit),'a272')-JXI)
-	call KVX(whichUnit)
+	call UnitUpdateCommonAttackDamageBonus(whichUnit)
 	call UnitAddMaxLife(whichUnit,-1 * JOI)
 	call SaveInteger(HY, GetHandleId(whichUnit),'h272', LoadInteger(HY, GetHandleId(whichUnit),'a272')-JOI)
 	if LoadInteger(HY, GetHandleId(whichUnit),'a272') == 0 then
@@ -52587,7 +52561,7 @@ function JRI takes nothing returns nothing
 	call SaveInteger(HY, h, 10, JXI)
 	call SaveInteger(HY, h, 11, JOI)
 	call SaveInteger(HY, GetHandleId(whichUnit),'a272', LoadInteger(HY, GetHandleId(whichUnit),'a272')+ JXI)
-	call KVX(whichUnit)
+	call UnitUpdateCommonAttackDamageBonus(whichUnit)
 	call SaveInteger(HY, GetHandleId(whichUnit),'h272', LoadInteger(HY, GetHandleId(whichUnit),'h272')+ JOI)
 	call UnitAddMaxLife(whichUnit, JOI)
 	call UnitAddPermanentAbility(whichUnit,'A1R0')
@@ -60153,7 +60127,7 @@ function V2A takes nothing returns boolean
 		call CommonTextTag("+" + I2S(V4A -V3A)+ " " + GetObjectName('n0MJ'), 3, u, .023, 0, 255, 0, 230)
 		if GetHeroMainAttributesType(u)!= HERO_ATTRIBUTE_STR then
 			call SaveInteger(HY, GetHandleId(u),'axxx', V4A)
-			call KVX(u)
+			call UnitUpdateCommonAttackDamageBonus(u)
 		endif
 	endif
 	set t = null
@@ -63698,184 +63672,7 @@ function POX takes nothing returns nothing
 	call SetAllPlayerAbilityUnavailable('A1L9')
 	call SetAllPlayerAbilityUnavailable('A1LB')
 endfunction
-function ADA takes nothing returns nothing
-	local integer level
-	local unit whichUnit = GetTriggerUnit()
-	local unit dummyCaster
-	if GetUnitTypeId(whichUnit)=='u017' or GetUnitTypeId(whichUnit)=='u019' or GetUnitTypeId(whichUnit)=='u018' or GetUnitTypeId(whichUnit)=='u01A' or GetUnitTypeId(whichUnit)=='u01B' or GetUnitTypeId(whichUnit)=='u01C' or GetUnitTypeId(whichUnit)=='u01U' or GetUnitTypeId(whichUnit)=='u01V' or GetUnitTypeId(whichUnit)=='u01W' then
-		return
-	endif
-	set dummyCaster = CreateUnit(GetOwningPlayer(whichUnit),'e00E', GetUnitX(whichUnit), GetUnitY(whichUnit), 0)
-	if GetUnitTypeId(whichUnit)=='u014' or GetUnitTypeId(whichUnit)=='u01D' or GetUnitTypeId(whichUnit)=='u01R' then
-		set level = 1
-	elseif GetUnitTypeId(whichUnit)=='u015' or GetUnitTypeId(whichUnit)=='u01E' or GetUnitTypeId(whichUnit)=='u01S' then
-		set level = 2
-	else
-		set level = 3
-	endif
-	call UnitAddPermanentAbility(dummyCaster,'A1NF')
-	call SetUnitAbilityLevel(dummyCaster,'A1NF', level)
-	call IssueImmediateOrderById(dummyCaster, 852127)
-	set whichUnit = null
-	set dummyCaster = null
-endfunction
-function AFA takes unit AGA, integer Y2X, integer level returns nothing
-	local integer AHA
-	if level == 1 then
-		set AHA = 8
-	elseif level == 2 then
-		set AHA = 14
-	elseif level == 3 then
-		set AHA = 22
-	endif
-	call J9X(AGA, Y2X * AHA)
-endfunction
-function AJA takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit AGA =(LoadUnitHandle(HY, h, 2))
-	local unit whichUnit = AGA
-	local integer level =(LoadInteger(HY, h, 5))
-	local integer S4R =(LoadInteger(HY, h, 28))
-	local integer Y2X =(LoadInteger(HY, h, 194))
-	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
-		call FlushChildHashtable(HY, h)
-		call DestroyTrigger(t)
-	elseif GetTriggerEventId() == EVENT_PLAYER_UNIT_ATTACKED then
-		if GetAttacker() == AGA then
-			set Y2X = IMaxBJ(Y2X -1, 0)
-			call SaveInteger(HY, h, 194,(Y2X))
-			call AFA(AGA, Y2X, level)
-		endif
-	else
-		set S4R = S4R + 1
-		call SaveInteger(HY, h, 28,(S4R))
-		if ModuloInteger(S4R, 15) == 0 then
-			set Y2X = IMinBJ(Y2X + 1, 7)
-			call SaveInteger(HY, h, 194,(Y2X))
-		endif
-		if GetUnitTypeId(whichUnit)=='u017' or GetUnitTypeId(whichUnit)=='u019' or GetUnitTypeId(whichUnit)=='u018' or GetUnitTypeId(whichUnit)=='u01A' or GetUnitTypeId(whichUnit)=='u01B' or GetUnitTypeId(whichUnit)=='u01C' or GetUnitTypeId(whichUnit)=='u01U' or GetUnitTypeId(whichUnit)=='u01V' or GetUnitTypeId(whichUnit)=='u01W' then
-			set Y2X = 7
-			call SaveInteger(HY, h, 194,(Y2X))
-		endif
-		call AFA(AGA, Y2X, level)
-		if GetUnitTypeId(AGA)=='u017' or GetUnitTypeId(AGA)=='u019' or GetUnitTypeId(AGA)=='u018' or GetUnitTypeId(AGA)=='u01A' or GetUnitTypeId(AGA)=='u01B' or GetUnitTypeId(AGA)=='u01C' or GetUnitTypeId(AGA)=='u01U' or GetUnitTypeId(AGA)=='u01V' or GetUnitTypeId(AGA)=='u01W' then
-			call SetWidgetLife(AGA, GetWidgetLife(AGA)+ 31.25 + 18.75 * level)
-		endif
-	endif
-	set t = null
-	set AGA = null
-	set whichUnit = null
-	return false
-endfunction
-function AKA takes nothing returns boolean
-	if GetUnitTypeId(GetFilterUnit())=='u014' or GetUnitTypeId(GetFilterUnit())=='u015' or GetUnitTypeId(GetFilterUnit())=='u016' or GetUnitTypeId(GetFilterUnit())=='u01D' or GetUnitTypeId(GetFilterUnit())=='u01E' or GetUnitTypeId(GetFilterUnit())=='u01F' or GetUnitTypeId(GetFilterUnit())=='u01R' or GetUnitTypeId(GetFilterUnit())=='u01S' or GetUnitTypeId(GetFilterUnit())=='u01T' or GetUnitTypeId(GetFilterUnit())=='u017' or GetUnitTypeId(GetFilterUnit())=='u019' or GetUnitTypeId(GetFilterUnit())=='u018' or GetUnitTypeId(GetFilterUnit())=='u01A' or GetUnitTypeId(GetFilterUnit())=='u01B' or GetUnitTypeId(GetFilterUnit())=='u01C' or GetUnitTypeId(GetFilterUnit())=='u01U' or GetUnitTypeId(GetFilterUnit())=='u01V' or GetUnitTypeId(GetFilterUnit())=='u01W' then
-		call KillUnit(GetFilterUnit())
-	endif
-	return false
-endfunction
-function N0E takes nothing returns nothing
-	local group g = AllocationGroup(409)
-	local unit whichUnit = GetTriggerUnit()
-	local real x = GetUnitX(whichUnit)
-	local real y = GetUnitY(whichUnit)
-	local integer level = GetUnitAbilityLevel(whichUnit,'A1NE')
-	local unit ALA
-	local unit AMA
-	local unit APA = null
-	local trigger t
-	local integer h
-	local boolean FKI = false
-	local integer i
-	call GroupEnumUnitsOfPlayer(g, GetOwningPlayer(whichUnit), Condition(function AKA))
-	call DeallocateGroup(g)
-	if level == 0 then
-		set level = GetUnitAbilityLevel(whichUnit,'A2IG')
-		set FKI = true
-	endif
-	if level == 1 then
-		set ALA = CreateUnit(GetOwningPlayer(whichUnit),'u014', x + 75, y + 75, GetUnitFacing(whichUnit))
-		set AMA = CreateUnit(GetOwningPlayer(whichUnit),'u01D', x -75, y -75, GetUnitFacing(whichUnit))
-	elseif level == 2 then
-		set ALA = CreateUnit(GetOwningPlayer(whichUnit),'u015', x + 75, y + 75, GetUnitFacing(whichUnit))
-		set AMA = CreateUnit(GetOwningPlayer(whichUnit),'u01E', x -75, y -75, GetUnitFacing(whichUnit))
-	elseif level == 3 then
-		set ALA = CreateUnit(GetOwningPlayer(whichUnit),'u016', x + 75, y + 75, GetUnitFacing(whichUnit))
-		set AMA = CreateUnit(GetOwningPlayer(whichUnit),'u01F', x -75, y -75, GetUnitFacing(whichUnit))
-	endif
-	set i = GetUnitAbilityLevel(whichUnit,'A0A8')
-	call SelectUnitAddForPlayer(ALA, GetOwningPlayer(whichUnit))
-	call SelectUnitAddForPlayer(AMA, GetOwningPlayer(whichUnit))
-	call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Undead\\RaiseSkeletonWarrior\\RaiseSkeleton.mdl", ALA, "origin"))
-	call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Undead\\RaiseSkeletonWarrior\\RaiseSkeleton.mdl", AMA, "origin"))
-	set t = CreateTrigger()
-	set h = GetHandleId(t)
-	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ATTACKED)
-	call TriggerRegisterTimerEvent(t, 1, true)
-	call TriggerRegisterDeathEvent(t, ALA)
-	call TriggerAddCondition(t, Condition(function AJA))
-	call SaveUnitHandle(HY, h, 2,(ALA))
-	call SaveInteger(HY, h, 5,(level))
-	call SaveInteger(HY, h, 28, 0)
-	call SaveInteger(HY, h, 194, 7)
-	call AFA(ALA, 7, level)
-	set t = CreateTrigger()
-	set h = GetHandleId(t)
-	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ATTACKED)
-	call TriggerRegisterTimerEvent(t, 1, true)
-	call TriggerRegisterDeathEvent(t, AMA)
-	call TriggerAddCondition(t, Condition(function AJA))
-	call SaveUnitHandle(HY, h, 2,(AMA))
-	call SaveInteger(HY, h, 5,(level))
-	call SaveInteger(HY, h, 28, 0)
-	call SaveInteger(HY, h, 194, 7)
-	call AFA(AMA, 7, level)
-	if FKI then
-		if level == 1 then
-			set APA = CreateUnit(GetOwningPlayer(whichUnit),'u01R', x + 75, y, GetUnitFacing(whichUnit))
-		elseif level == 2 then
-			set APA = CreateUnit(GetOwningPlayer(whichUnit),'u01S', x + 75, y, GetUnitFacing(whichUnit))
-		elseif level == 3 then
-			set APA = CreateUnit(GetOwningPlayer(whichUnit),'u01T', x + 75, y, GetUnitFacing(whichUnit))
-		endif
-		call SelectUnitAddForPlayer(APA, GetOwningPlayer(whichUnit))
-		call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Undead\\RaiseSkeletonWarrior\\RaiseSkeleton.mdl", APA, "origin"))
-		set t = CreateTrigger()
-		set h = GetHandleId(t)
-		call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ATTACKED)
-		call TriggerRegisterTimerEvent(t, 1, true)
-		call TriggerRegisterDeathEvent(t, APA)
-		call TriggerAddCondition(t, Condition(function AJA))
-		call SaveUnitHandle(HY, h, 2,(APA))
-		call SaveInteger(HY, h, 5,(level))
-		call SaveInteger(HY, h, 28, 0)
-		call SaveInteger(HY, h, 194, 7)
-		call AFA(APA, 7, level)
-	endif
-	if i > 0 then
-		call RGX(ALA, i)
-		call RGX(AMA, i)
-		call RGX(APA, i)
-	endif
-	set g = null
-	set whichUnit = null
-	set ALA = null
-	set AMA = null
-	set APA = null
-	set t = null
-endfunction
-function AQA takes nothing returns boolean
-	if GetSpellAbilityId()=='A1NB' or GetSpellAbilityId()=='A1NC' or GetSpellAbilityId()=='A1ND' or GetSpellAbilityId()=='A1NL' or GetSpellAbilityId()=='A1NM' or GetSpellAbilityId()=='A1NN' or GetSpellAbilityId()=='A2IZ' or GetSpellAbilityId()=='A2J0' or GetSpellAbilityId()=='A2J1' then
-		call ADA()
-	endif
-	return false
-endfunction
-function PEX takes nothing returns nothing
-	local trigger t = CreateTrigger()
-	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
-	call TriggerAddCondition(t, Condition(function AQA))
-	set t = null
-endfunction
+
 function ASA takes unit whichUnit, integer CHO, integer ATA returns nothing
 	local string c1 = "|c0000cc00"
 	local string c = "||"
@@ -71788,7 +71585,7 @@ function LYA takes unit whichUnit, integer level, unit targetUnit returns nothin
 		call SaveInteger(OtherHashTable, ph,'DUEL', LoadInteger(OtherHashTable, ph,'DUEL')+ 1)
 		call SaveInteger(OtherHashTable, ph,'DDUE', LoadInteger(OtherHashTable, ph,'DDUE')+ 6 + 4 * level)
 		call CommonTextTag(GetUnitName(whichUnit)+ " 获得了胜利!!", 5, whichUnit, .03, 255, 0, 0, 255)
-		call KVX(whichUnit)
+		call UnitUpdateCommonAttackDamageBonus(whichUnit)
 	endif
 endfunction
 
@@ -79984,18 +79781,6 @@ function Init_PreloadAbilitys takes nothing returns nothing
 	
 	// 预加载技能，以固定技能位置，防止跳键位。
 	call PreloadAbilityLockPos()
-	set Q4[0]='A17F'
-	set Q4[1]='A17G'
-	set Q4[2]='A17H'
-	set Q4[3]='A17C'
-	set Q4[4]='A17D'
-	set Q4[5]='A17E'
-	set Q4[6]='A17J'
-	set Q4[7]='A17I'
-	set Q4[8]='A17L'
-	set Q4[9]='A439'
-	set Q4[10]='A43A'
-	set Q4[11]='A43B'
 	//
 	// 二进制属性系统初始化 - 生命值
 	//
