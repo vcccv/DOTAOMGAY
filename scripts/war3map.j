@@ -5242,38 +5242,16 @@ endfunction
 function OLX takes player p returns boolean
 	return LoadBoolean(V, 0, VPV[GetPlayerId(p)])
 endfunction
-function OMX takes integer i returns boolean
-	return i =='np00' or i =='n00I' or i =='n022' or i =='n021' or i =='n0KY' or i =='n0KZ' or i =='n0LE' or i =='n023' or i =='n024' or i =='n025' or i =='n0L0' or i =='n0L1' or i =='n0M4' or i =='n00M' or i =='n0HV' or i =='n0LS'
-endfunction
-function OPX takes unit u returns boolean
-	return OMX(GetUnitTypeId(u))
-endfunction
-function OQX takes integer i returns boolean
-	return i =='np01' or i =='e01H' or i =='e01Z' or i =='e02R' or i =='e02T' or i =='e02S' or i =='e030'
-endfunction
-function OSX takes unit u returns boolean
-	return OQX(GetUnitTypeId(u))
-endfunction
-// 是信使单位
-function IsUnitCourier takes unit u returns boolean
-	return OPX(u) or OSX(u)
-endfunction
+
 function IsTreeDestructable takes destructable d returns boolean
 	return GetDestructableTypeId(d)=='CTtr' or GetDestructableTypeId(d)=='NTtc' or GetDestructableTypeId(d)=='NTtw' or GetDestructableTypeId(d)=='ATtr' or GetDestructableTypeId(d)=='B002' or GetDestructableTypeId(d)=='B003' or GetDestructableTypeId(d)=='B005' or GetDestructableTypeId(d)=='ITtw' or GetDestructableTypeId(d)=='CTtr'
 endfunction
-// 是魔法免疫单位
-function IsUnitMagicImmune takes unit u returns boolean
-	return IsUnitType(u, UNIT_TYPE_MAGIC_IMMUNE) or LoadInteger(HY, GetHandleId(u), 4252) == 1
-endfunction
+
 function OYX takes unit u returns boolean
 	return HaveSavedHandle(HY, GetHandleId(u),'FRZH')
 endfunction
 function OZX takes unit O_X returns boolean
 	return IsUnitWard(O_X) and IsPlayerValid(GetOwningPlayer(O_X))
-endfunction
-function IsUnitModelFlying takes unit u returns boolean
-	local integer i = GetUnitTypeId(u)
-	return i =='H00F' or i =='H00E' or i =='H00G' or i =='O017' or i =='N0MA' or i =='N0MB' or i =='N0MC' or i =='N0MO'
 endfunction
 function IsDamageValidForProcessing takes real d returns boolean
 	return 2 < d and d < 3000
@@ -5464,16 +5442,7 @@ endfunction
 function IsObserverPlayer takes player p returns boolean
 	return IsGameHaveObserver and(ObserverPlayer1 == p or ObserverPlayer2 == p)
 endfunction
-function IsUnitCyclone takes unit u returns boolean
-	return GetUnitAbilityLevel(u,'Bcyc')> 0 or GetUnitAbilityLevel(u,'Bcy2')> 0
-endfunction
-function IsUnitSleeping takes unit u returns boolean
-	return(GetUnitAbilityLevel(u,('B02F'))> 0) or(GetUnitAbilityLevel(u,('BUsp'))> 0) or(GetUnitAbilityLevel(u,('BUst'))> 0)
-endfunction
-// IsUnitCantAttack
-function RFX takes unit u returns boolean
-	return GetUnitAbilityLevel(u,'B02J')> 0 or IsUnitCyclone(u) or IsUnitSleeping(u) or GetUnitAbilityLevel(u,'Avul')> 0
-endfunction
+
 function RGX takes unit u, integer level returns nothing
 	call SetUnitAbilityLevel(u,'A1NB', level)
 	call SetUnitAbilityLevel(u,'A1NC', level)
@@ -5484,71 +5453,6 @@ function RGX takes unit u, integer level returns nothing
 	call SetUnitAbilityLevel(u,'A2IZ', level)
 	call SetUnitAbilityLevel(u,'A2J0', level)
 	call SetUnitAbilityLevel(u,'A2J1', level)
-endfunction
-function RHX takes integer id returns boolean
-	return id =='u014' or id =='u015' or id =='u016' or id =='u01D' or id =='u01E' or id =='u01F' or id =='u01R' or id =='u01S' or id =='u01T' or id =='u017' or id =='u019' or id =='u018' or id =='u01A' or id =='u01B' or id =='u01C' or id =='u01U' or id =='u01V' or id =='u01W'
-endfunction
-function RJX takes integer id returns boolean
-	return id =='n0FJ' or id =='n0FI' or id =='n0F6' or id =='n0FH'
-endfunction
-function RKX takes unit u returns boolean
-	return RJX(GetUnitTypeId(u))
-endfunction
-function RLX takes unit u returns boolean
-	local integer id = GetUnitTypeId(u)
-	return id =='o018' or id =='o002' or id =='o00B' or id =='o01B'
-endfunction
-function RMX takes unit u returns boolean
-	local integer id = GetUnitTypeId(u)
-	return id =='n00Q' or id =='n00O' or id =='n00P' or id =='n00N'
-endfunction
-function RPX takes unit u returns boolean
-	local integer id = GetUnitTypeId(u)
-	return RLX(u) or RMX(u) or id =='otot'
-endfunction
-function RQX takes integer id returns boolean
-	return id =='o00L' or id =='o00M' or id =='o00N' or id =='o00O'
-endfunction
-function RSX takes unit u returns boolean
-	return RQX(GetUnitTypeId(u))
-endfunction
-function RTX takes integer id returns boolean
-	return id =='h0CV' or id =='h0CX' or id =='h0CW'
-endfunction
-function RUX takes unit u returns boolean
-	local integer id = GetUnitTypeId(u)
-	return id =='o00V' or id =='o00T' or id =='o00W' or id =='o00U'
-endfunction
-function RWX takes unit u returns boolean
-	local integer id = GetUnitTypeId(u)
-	return id =='o000' or id =='o001' or id =='o00A' or id =='o00X' or id =='n12O'
-endfunction
-function RYX takes unit u returns boolean
-	local integer id = GetUnitTypeId(u)
-	return id =='o01C' or id =='o01D' or id =='o01E' or id =='osp4' or id =='o008' or id =='o009'
-endfunction
-function IsFortDefenseTypeUnit takes unit u returns boolean
-	local integer i = GetUnitTypeId(u)
-	return i =='umtw' or i =='ebal' or i =='u00R' or i =='e026' or i == 'n003'
-endfunction
-function R_X takes unit u returns boolean
-	return RSX(u) or RUX(u) or RWX(u) or RYX(u) or RPX(u)
-endfunction
-function R0X takes unit u returns boolean
-	local integer i = GetUnitTypeId(u)
-	return i =='O017' or i =='QTW8' or i =='N0MA' or i =='N0MB' or i =='N0MC' or i =='N0MO' or RHX(i) or OSX(u)
-endfunction
-function R1X takes integer i returns boolean
-	return i =='u00S'
-endfunction
-function IsBeetleUnitTypeId takes integer i returns boolean
-	return i =='u01K' or i =='u01H' or i =='u01J' or i =='u01L'
-endfunction
-function R3X takes integer i returns boolean
-	return i =='h0CH' or i =='h0CF' or i =='h0C1' or i =='h0CG'
-endfunction
-function R4X takes unit u returns boolean
-	return IsUnitType(u, UNIT_TYPE_SUMMONED) and IsUnitType(u, UNIT_TYPE_MELEE_ATTACKER) == false and IsUnitType(u, UNIT_TYPE_RANGED_ATTACKER) == false
 endfunction
 
 
@@ -5575,7 +5479,7 @@ function UnitDamageTargetEx takes unit u, unit t, integer damageType, real d ret
 	elseif damageType == 2 then
 		call UnitDamageTarget(u, t, d, true, true, ATTACK_TYPE_HERO, DAMAGE_TYPE_NORMAL, WEAPON_TYPE_WHOKNOWS)
 	elseif damageType == 3 then
-		if IsFortDefenseTypeUnit(t) then
+		if IsUnitDefenseTypeFort(t) then
 			set d = d * 2
 		endif
 		call UnitDamageTarget(u, t, d, true, true, ATTACK_TYPE_HERO, DAMAGE_TYPE_MAGIC, WEAPON_TYPE_WHOKNOWS)
@@ -7675,11 +7579,11 @@ function GQX takes unit u, integer id, integer GFX returns nothing
 	call SaveInteger(HY, h, 1, GFX)
 	set t = null
 endfunction
-function GSX takes integer GTX returns integer
-	if XNV[GTX]== 0 then
-		return GTX
+function GSX takes integer itemIndex returns integer
+	if XNV[itemIndex]== 0 then
+		return itemIndex
 	else
-		return XNV[GTX]
+		return XNV[itemIndex]
 	endif
 endfunction
 function GUX takes integer id returns boolean
@@ -7733,14 +7637,14 @@ function GZX takes unit u, integer id, item it returns item
 	set G_X = null
 	return null
 endfunction
-function G1X takes player p, unit u, integer GTX, item G_X returns item
+function G1X takes player p, unit u, integer itemIndex, item G_X returns item
 	local integer i
 	local item it
 	set i = 0
 	loop
 	exitwhen i > 5
 		set it = UnitItemInSlot(u, i)
-		if it != null and it != G_X and GetItemIndexEx(it) == GTX and(GetItemPlayer(it) == p or GTX == R2V or GTX == R3V) then
+		if it != null and it != G_X and GetItemIndexEx(it) == itemIndex and(GetItemPlayer(it) == p or itemIndex == R2V or itemIndex == R3V) then
 			set it = null
 			return UnitItemInSlot(u, i)
 		endif
@@ -7749,14 +7653,14 @@ function G1X takes player p, unit u, integer GTX, item G_X returns item
 	set it = null
 	return null
 endfunction
-function G2X takes player p, unit u, integer GTX returns item
+function G2X takes player p, unit u, integer itemIndex returns item
 	local integer i
 	local item it
 	set i = 0
 	loop
 	exitwhen i > 5
 		set it = UnitItemInSlot(u, i)
-		if (it != null) and GetItemIndexEx(it) == GTX and(GetItemPlayer(it) == p or GTX == R2V or GTX == R3V) then
+		if (it != null) and GetItemIndexEx(it) == itemIndex and(GetItemPlayer(it) == p or itemIndex == R2V or itemIndex == R3V) then
 			set it = null
 			return UnitItemInSlot(u, i)
 		endif
@@ -8094,7 +7998,7 @@ function HJX takes player p returns unit
 	loop
 		set u = FirstOfGroup(g)
 	exitwhen u == null
-		if OPX(u) and UnitAlive(u) then
+		if IsUnitGroundCourier(u) and UnitAlive(u) then
 			if GetOwningPlayer(u) == p then
 				set HKX = u
 			exitwhen true
@@ -12518,7 +12422,7 @@ function Y5X takes nothing returns boolean
 	local integer Y6X = 175
 	local trigger t = CreateTrigger()
 	local integer h = GetHandleId(t)
-	if OPX(Y1X) then
+	if IsUnitGroundCourier(Y1X) then
 		set Y6X = 150
 		call SaveInteger(HY, h, 0, 140)
 		call SaveReal(HY, GetHandleId(Y1X),'DEAD', GetGameTime()+ 140)
@@ -14161,7 +14065,7 @@ endfunction
 function XNO takes nothing returns nothing
 	local unit u = GetSoldUnit()
 	local player p = GetOwningPlayer(u)
-	local integer GTX = GetItemSellDummyUnitIndex(u)
+	local integer itemIndex = GetItemSellDummyUnitIndex(u)
 	local real x
 	local real y
 	local integer i
@@ -14174,8 +14078,8 @@ function XNO takes nothing returns nothing
 		set u = null
 		return
 	endif
-	if HGX(GTX) == false and RealItem[GTX]!= 0 then
-		call SaveInteger(ObjectHashTable,'ITEM', GetPlayerId(p), RealItem[GTX])
+	if HGX(itemIndex) == false and RealItem[itemIndex]!= 0 then
+		call SaveInteger(ObjectHashTable,'ITEM', GetPlayerId(p), RealItem[itemIndex])
 		call SaveReal(ObjectHashTable,'ITEM', GetPlayerId(p), GetGameTime())
 	endif
 	if EQO(GetSellingUnit(), u) then
@@ -14189,9 +14093,9 @@ function XNO takes nothing returns nothing
 		set y = E3O(GetSellingUnit(), u)
 		call HYX(PowerupItem[GetItemSellDummyUnitIndex(u)], x, y, p, true, H7X(GetItemSellDummyUnitIndex(u)))
 	else
-		call EPO(p, GSX(GTX))
-		if RealItem[GTX]== 0 then
-			set i = XIO(GTX, false)
+		call EPO(p, GSX(itemIndex))
+		if RealItem[itemIndex]== 0 then
+			set i = XIO(itemIndex, false)
 			if i ==-1 then
 				call InterfaceErrorForPlayer(p, GetObjectName('n02H'))
 			else
@@ -14200,10 +14104,10 @@ function XNO takes nothing returns nothing
 		else
 			set x = E_O(GetSellingUnit(), u)
 			set y = E1O(GetSellingUnit(), u)
-			if GTX == R8V then
-				call EJO(p, u, GetSellingUnit(), GSX(GTX), x, y, 2, 0)
+			if itemIndex == R8V then
+				call EJO(p, u, GetSellingUnit(), GSX(itemIndex), x, y, 2, 0)
 			else
-				call EJO(p, u, GetSellingUnit(), GSX(GTX), x, y, 0, 0)
+				call EJO(p, u, GetSellingUnit(), GSX(itemIndex), x, y, 0, 0)
 			endif
 		endif
 	endif
@@ -14365,14 +14269,14 @@ endfunction
 function XLO takes unit trigUnit, item whichItem returns boolean
 	local unit u = trigUnit
 	local integer H4X = GetUnitTypeId(u)
-	local integer GTX = GetItemIndexEx(whichItem)
+	local integer itemIndex = GetItemIndexEx(whichItem)
 	local real x
 	local real y
 	local integer i
 	local boolean XMO = true
 	set x = GetUnitX(u)
 	set y = GetUnitY(u)
-	if GTX == OZV then
+	if itemIndex == OZV then
 		call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Undead\\ReplenishMana\\SpiritTouchTarget.mdl", u, "overhead"))
 		call IRX(GetOwningPlayer(u), "Abilities\\Spells\\Human\\Heal\\HealTarget.wav")
 		set TempPlayer = GetItemPlayer(whichItem)
@@ -14380,77 +14284,77 @@ function XLO takes unit trigUnit, item whichItem returns boolean
 		call TDE(trigUnit, RealItem[O2V], TempPlayer, false, 1)
 		call UnitRemoveAbility(u,'B0GI')
 	endif
-	if (GTX) == IUV and GetItemCharges(whichItem) == 0 then
+	if (itemIndex) == IUV and GetItemCharges(whichItem) == 0 then
 		set TempPlayer = GetItemPlayer(whichItem)
 		call HZX(whichItem)
 		call TDE(trigUnit, RealItem[IYV], TempPlayer, false, 1)
 	endif
-	if GTX == RRV and GetItemCharges(whichItem) == 0 then
+	if itemIndex == RRV and GetItemCharges(whichItem) == 0 then
 		set TempPlayer = GetItemPlayer(whichItem)
 		call HZX(whichItem)
 		call TDE(trigUnit, RealItem[RIV], TempPlayer, false, 1)
 	endif
 	call DisableTrigger(UnitManipulatItemTrig)
-	if (GTX == ICV or GTX == IBV or GTX == IDV) and(GZX(u, RealItem[ICV], whichItem)!= null or GZX(u, RealItem[IBV], whichItem)!= null or GZX(u, RealItem[IDV], whichItem)!= null) then
+	if (itemIndex == ICV or itemIndex == IBV or itemIndex == IDV) and(GZX(u, RealItem[ICV], whichItem)!= null or GZX(u, RealItem[IBV], whichItem)!= null or GZX(u, RealItem[IDV], whichItem)!= null) then
 		call InterfaceErrorForPlayer(GetOwningPlayer(u), GetObjectName('n02L'))
 		set TempPlayer = GetItemPlayer(whichItem)
 		call RemoveItem(whichItem)
-		set TempItem = CreateItem(PowerupItem[GTX], x, y)
+		set TempItem = CreateItem(PowerupItem[itemIndex], x, y)
 		call SetItemPlayer(TempItem, TempPlayer, false)
 		call SetItemUserData(TempItem, 1)
 	endif
-	if (GTX == NCV or GTX == NBV or GTX == NFV or GTX == NDV) and(GZX(u, RealItem[NCV], whichItem)!= null or GZX(u, RealItem[NBV], whichItem)!= null or GZX(u, RealItem[NFV], whichItem)!= null or GZX(u, RealItem[NDV], whichItem)!= null) then
+	if (itemIndex == NCV or itemIndex == NBV or itemIndex == NFV or itemIndex == NDV) and(GZX(u, RealItem[NCV], whichItem)!= null or GZX(u, RealItem[NBV], whichItem)!= null or GZX(u, RealItem[NFV], whichItem)!= null or GZX(u, RealItem[NDV], whichItem)!= null) then
 		call InterfaceErrorForPlayer(GetOwningPlayer(u), GetObjectName('n02C'))
 		set TempPlayer = GetItemPlayer(whichItem)
 		call RemoveItem(whichItem)
-		set TempItem = CreateItem(PowerupItem[GTX], x, y)
+		set TempItem = CreateItem(PowerupItem[itemIndex], x, y)
 		call SetItemPlayer(TempItem, TempPlayer, false)
 		call SetItemUserData(TempItem, 1)
 	endif
-	if (GTX == I9V or GTX == AVV or GTX == AEV or GTX == AXV or GTX == AOV or GTX == ARV) then
+	if (itemIndex == I9V or itemIndex == AVV or itemIndex == AEV or itemIndex == AXV or itemIndex == AOV or itemIndex == ARV) then
 		set i = LoadInteger(OtherHashTable, GetHandleId(GetOwningPlayer(u)),'0BKB')
-		if i == 0 and GTX != I9V then
+		if i == 0 and itemIndex != I9V then
 			set TempPlayer = GetItemPlayer(whichItem)
 			call HZX(whichItem)
 			call TDE(trigUnit, RealItem[I9V], TempPlayer, false, 1)
-		elseif i == 9 and GTX != AVV then
+		elseif i == 9 and itemIndex != AVV then
 			set TempPlayer = GetItemPlayer(whichItem)
 			call HZX(whichItem)
 			call TDE(trigUnit, RealItem[AVV], TempPlayer, false, 1)
-		elseif i == 8 and GTX != AEV then
+		elseif i == 8 and itemIndex != AEV then
 			set TempPlayer = GetItemPlayer(whichItem)
 			call HZX(whichItem)
 			call TDE(trigUnit, RealItem[AEV], TempPlayer, false, 1)
-		elseif i == 7 and GTX != AXV then
+		elseif i == 7 and itemIndex != AXV then
 			set TempPlayer = GetItemPlayer(whichItem)
 			call HZX(whichItem)
 			call TDE(trigUnit, RealItem[AXV], TempPlayer, false, 1)
-		elseif i == 6 and GTX != AOV then
+		elseif i == 6 and itemIndex != AOV then
 			set TempPlayer = GetItemPlayer(whichItem)
 			call HZX(whichItem)
 			call TDE(trigUnit, RealItem[AOV], TempPlayer, false, 1)
-		elseif i == 5 and GTX != ARV then
+		elseif i == 5 and itemIndex != ARV then
 			set TempPlayer = GetItemPlayer(whichItem)
 			call HZX(whichItem)
 			call TDE(trigUnit, RealItem[ARV], TempPlayer, false, 1)
 		endif
 	endif
-	if (GTX == ASV and IsPlayerEnemy(GetItemPlayer(whichItem), GetOwningPlayer(u))) then
+	if (itemIndex == ASV and IsPlayerEnemy(GetItemPlayer(whichItem), GetOwningPlayer(u))) then
 		set TempPlayer = GetItemPlayer(whichItem)
 		call HZX(whichItem)
 		set TempItem = UnitAddItemById(u, RealItem[ATV])
 		call SetItemPlayer(TempItem, TempPlayer, false)
 		call SetItemUserData(TempItem, 1)
 	endif
-	if (GTX == AIV) and(IsUnitCourier(u) or IsUnitSpiritBear(u)) then
+	if (itemIndex == AIV) and(IsUnitCourier(u) or IsUnitSpiritBear(u)) then
 		if IsUnitCourier(u) then
 			call InterfaceErrorForPlayer(GetOwningPlayer(u), GetObjectName('n02K'))
 		endif
 		set TempPlayer = GetItemPlayer(whichItem)
 		set Q2 = GetItemCharges(whichItem)
 		call RemoveItem(whichItem)
-		if GTX == AIV then
-			set TempItem = CreateItem(PowerupItem[GTX], GetRectCenterX(gg_rct_RoshanSpawn), GetRectCenterY(gg_rct_RoshanSpawn))
+		if itemIndex == AIV then
+			set TempItem = CreateItem(PowerupItem[itemIndex], GetRectCenterX(gg_rct_RoshanSpawn), GetRectCenterY(gg_rct_RoshanSpawn))
 			call SetItemCharges(TempItem, Q2)
 		endif
 		call SetItemPlayer(TempItem, TempPlayer, false)
@@ -14464,32 +14368,32 @@ function XLO takes unit trigUnit, item whichItem returns boolean
 	set whichItem = null
 	return false
 endfunction
-function XPO takes integer GTX returns boolean
-	return GTX == I0V or GTX == NDV or GTX == NFV or GTX == NHV or GTX == I_V or GTX == NBV or GTX == NCV or GTX == NGV or GTX == X4V or GTX == X5V or GTX == IFV or GTX == IGV
+function XPO takes integer itemIndex returns boolean
+	return itemIndex == I0V or itemIndex == NDV or itemIndex == NFV or itemIndex == NHV or itemIndex == I_V or itemIndex == NBV or itemIndex == NCV or itemIndex == NGV or itemIndex == X4V or itemIndex == X5V or itemIndex == IFV or itemIndex == IGV
 endfunction
-function XQO takes integer GTX returns boolean
-	return GTX == X4V or GTX == X5V
+function XQO takes integer itemIndex returns boolean
+	return itemIndex == X4V or itemIndex == X5V
 endfunction
 function XSO takes unit trigUnit, item whichItem returns boolean
 	local integer itemId = 0
 	local item UWV = whichItem
-	local integer GTX = GetItemIndex(UWV)
+	local integer itemIndex = GetItemIndex(UWV)
 	local integer XTO = 0
 	local boolean JVX = false
 	local integer XUO = H1X(UWV)
 	local boolean XWO = false
 	if IsUnitType(trigUnit, UNIT_TYPE_HERO) then
-		if GTX == I0V then
+		if itemIndex == I0V then
 			set XTO = I_V
-		elseif GTX == IGV then
+		elseif itemIndex == IGV then
 			set XTO = IFV
-		elseif GTX == NDV then
+		elseif itemIndex == NDV then
 			set XTO = NBV
-		elseif GTX == NFV then
+		elseif itemIndex == NFV then
 			set XTO = NCV
-		elseif GTX == NHV then
+		elseif itemIndex == NHV then
 			set XTO = NGV
-		elseif GTX == X5V then
+		elseif itemIndex == X5V then
 			set XTO = X4V
 		endif
 		if XUO == X5V then
@@ -14509,7 +14413,7 @@ function XSO takes unit trigUnit, item whichItem returns boolean
 			set JVX = true
 		endif
 	else
-		if GTX == X4V then
+		if itemIndex == X4V then
 			set XTO = X5V
 		endif
 		if XUO == X4V then
@@ -14543,7 +14447,7 @@ function XZO takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local unit ZWX =(LoadUnitHandle(HY, h, 26))
 	local integer X_O =(LoadInteger(HY, h, 97))
-	local integer GTX =(LoadInteger(HY, h, 93))
+	local integer itemIndex =(LoadInteger(HY, h, 93))
 	local boolean X0O =(LoadBoolean(HY, h, 95))
 	local item whichItem
 	local player p = GetOwningPlayer(ZWX)
@@ -14585,13 +14489,13 @@ function XZO takes nothing returns boolean
 	endif
 	if X_O == 1 then
 		if p != X1O and GetUnitTypeId(ZWX)=='ncop' then
-			if HGX(GSX(GTX)) or HHX(GSX(GTX)) then
+			if HGX(GSX(itemIndex)) or HHX(GSX(itemIndex)) then
 				set HTX = true
 			endif
 			if IsPlayerEnemy(p, X1O) then
-				call HYX(PowerupItem[GTX], CirclesX[GetPlayerId(p)], CirclesY[GetPlayerId(p)], X1O, HTX, HUX)
+				call HYX(PowerupItem[itemIndex], CirclesX[GetPlayerId(p)], CirclesY[GetPlayerId(p)], X1O, HTX, HUX)
 			else
-				call HYX(PowerupItem[GTX], CirclesX[GetPlayerId(X1O)], CirclesY[GetPlayerId(X1O)], X1O, HTX, HUX)
+				call HYX(PowerupItem[itemIndex], CirclesX[GetPlayerId(X1O)], CirclesY[GetPlayerId(X1O)], X1O, HTX, HUX)
 			endif
 			call InterfaceErrorForPlayer(p, GetObjectName('n0DR'))
 			if X0O == false then
@@ -14599,31 +14503,31 @@ function XZO takes nothing returns boolean
 				call HZX(whichItem)
 			endif
 		elseif Mode__PoolMode == false and X0O == false and GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and H2X(whichItem)!= 0 and(p == X1O or(GetPlayerSlotState(X1O) == PLAYER_SLOT_STATE_LEFT)) then
-			if HHX(GTX) then
+			if HHX(itemIndex) then
 				set HTX = true
 			else
 				set HTX = false
 			endif
-			if not(GetPlayerSlotState(X1O) == PLAYER_SLOT_STATE_LEFT and GUX(GTX)) then
+			if not(GetPlayerSlotState(X1O) == PLAYER_SLOT_STATE_LEFT and GUX(itemIndex)) then
 				call HZX(whichItem)
 				set X4O = true
-				set HWX = UnitAddItemById(ZWX, RealItem[GTX])
+				set HWX = UnitAddItemById(ZWX, RealItem[itemIndex])
 				set X3O = HWX
 				call SetItemPlayer(HWX, X1O, false)
 				call SetItemUserData(HWX, 0)
-				if HTX or GTX == R0V or GTX == R_V or GTX == RYV then
+				if HTX or itemIndex == R0V or itemIndex == R_V or itemIndex == RYV then
 					call SetItemCharges(HWX, HUX)
 				endif
 			endif
 		elseif Mode__PoolMode == false and X0O == false and GetItemType(whichItem) == ITEM_TYPE_PERMANENT and p != X1O and DisabledItem[GetItemIndexEx(whichItem)]!= 0 and(GetPlayerSlotState(X1O) == PLAYER_SLOT_STATE_LEFT) == false then
-			if HHX(GTX) then
+			if HHX(itemIndex) then
 				set HTX = true
 			else
 				set HTX = false
 			endif
 			call HZX(whichItem)
 			set X4O = true
-			set HWX = UnitAddItemById(ZWX, DisabledItem[GTX])
+			set HWX = UnitAddItemById(ZWX, DisabledItem[itemIndex])
 			set X3O = HWX
 			call SetItemPlayer(HWX, X1O, false)
 			call SetItemUserData(HWX, 0)
@@ -14632,7 +14536,7 @@ function XZO takes nothing returns boolean
 			endif
 		elseif X0O == false and GetItemType(whichItem) == ITEM_TYPE_PERMANENT and IsItemAghanimScepter(whichItem) and IsUnitType(ZWX, UNIT_TYPE_HERO) then
 			if HDX(ZWX, false) then
-				if GTX == Item_AghanimScepterBasis or(IsPlayerHasSkill(X1O,(39 -1)* 4 + 3) and GTX != Item_AghanimScepterGiftable) then
+				if itemIndex == Item_AghanimScepterBasis or(IsPlayerHasSkill(X1O,(39 -1)* 4 + 3) and itemIndex != Item_AghanimScepterGiftable) then
 					call HZX(whichItem)
 					if IsPlayerHasSkill(X1O,(39 -1)* 4 + 3) then
 						set HWX = UnitAddItemById(ZWX, RealItem[Item_AghanimScepterGiftable])
@@ -14644,7 +14548,7 @@ function XZO takes nothing returns boolean
 					call SetItemUserData(HWX, 1)
 				endif
 			else
-				if GTX != Item_AghanimScepterBasis then
+				if itemIndex != Item_AghanimScepterBasis then
 					call HZX(whichItem)
 					set HWX = UnitAddItemById(ZWX, RealItem[Item_AghanimScepterBasis])
 					set X3O = HWX
@@ -14653,10 +14557,10 @@ function XZO takes nothing returns boolean
 				endif
 			endif
 		elseif X0O == false and GetItemType(whichItem) == ITEM_TYPE_ARTIFACT then
-			if (p != X1O and IsPlayerOffline(X1O) == false and(GTX == R0V or GTX == R_V or GTX == RYV)) then
+			if (p != X1O and IsPlayerOffline(X1O) == false and(itemIndex == R0V or itemIndex == R_V or itemIndex == RYV)) then
 				call DisableTrigger(UnitManipulatItemTrig)
 				call HZX(whichItem)
-				set HWX = UnitAddItemById(ZWX, DisabledItem[GTX])
+				set HWX = UnitAddItemById(ZWX, DisabledItem[itemIndex])
 				set X3O = HWX
 				call SetItemPlayer(HWX, X1O, false)
 				call SetItemUserData(HWX, 1)
@@ -14664,7 +14568,7 @@ function XZO takes nothing returns boolean
 				call EnableTrigger(UnitManipulatItemTrig)
 			else
 				call DisableTrigger(UnitManipulatItemTrig)
-				set X2O = G1X(X1O, ZWX, GTX, whichItem)
+				set X2O = G1X(X1O, ZWX, itemIndex, whichItem)
 				if X2O == null then
 				else
 					call SetItemCharges(X2O, HUX + GetItemCharges(X2O))
@@ -14673,17 +14577,17 @@ function XZO takes nothing returns boolean
 				endif
 				call EnableTrigger(UnitManipulatItemTrig)
 			endif
-		elseif X0O and HGX(GSX(GTX)) then
+		elseif X0O and HGX(GSX(itemIndex)) then
 			if (p == X1O) then
 				call DisableTrigger(UnitManipulatItemTrig)
-				if H_X(ZWX) == 0 and G2X(X1O, ZWX, GTX) == null then
+				if H_X(ZWX) == 0 and G2X(X1O, ZWX, itemIndex) == null then
 					call InterfaceErrorForPlayer(p, GetObjectName('n02O'))
-					call HYX(PowerupItem[(GTX)],(((LoadReal(HY, h, 6)))* 1.),(((LoadReal(HY, h, 7)))* 1.),(X1O),(true),(HUX))
+					call HYX(PowerupItem[(itemIndex)],(((LoadReal(HY, h, 6)))* 1.),(((LoadReal(HY, h, 7)))* 1.),(X1O),(true),(HUX))
 				else
-					set X2O = G2X(X1O, ZWX, GTX)
+					set X2O = G2X(X1O, ZWX, itemIndex)
 					if X2O == null then
 						call DisableTrigger(UnitManipulatItemTrig)
-						set HWX = UnitAddItemById(ZWX, RealItem[GTX])
+						set HWX = UnitAddItemById(ZWX, RealItem[itemIndex])
 						set X3O = HWX
 						call SetItemPlayer(HWX, X1O, false)
 						call SetItemUserData(HWX, 1)
@@ -14694,13 +14598,13 @@ function XZO takes nothing returns boolean
 				endif
 				call EnableTrigger(UnitManipulatItemTrig)
 			else
-				if DisabledItem[GTX]> 0 then
-					set Q2 = DisabledItem[GTX]
+				if DisabledItem[itemIndex]> 0 then
+					set Q2 = DisabledItem[itemIndex]
 				else
-					set Q2 = RealItem[GTX]
+					set Q2 = RealItem[itemIndex]
 				endif
 				call DisableTrigger(UnitManipulatItemTrig)
-				set X2O = G2X(X1O, ZWX, GTX)
+				set X2O = G2X(X1O, ZWX, itemIndex)
 				if X2O == null and H_X(ZWX)!= 0 then
 					set HWX = UnitAddItemById(ZWX, Q2)
 					set X3O = HWX
@@ -14709,14 +14613,14 @@ function XZO takes nothing returns boolean
 					call SetItemCharges(HWX, HUX)
 				elseif X2O == null and H_X(ZWX) == 0 then
 					call InterfaceErrorForPlayer(p, GetObjectName('n02O'))
-					call HYX(PowerupItem[(GTX)],(((LoadReal(HY, h, 6)))* 1.),(((LoadReal(HY, h, 7)))* 1.),(X1O),(true),(HUX))
+					call HYX(PowerupItem[(itemIndex)],(((LoadReal(HY, h, 6)))* 1.),(((LoadReal(HY, h, 7)))* 1.),(X1O),(true),(HUX))
 				else
 					call SetItemCharges(X2O, HUX + GetItemCharges(X2O))
 				endif
 				call EnableTrigger(UnitManipulatItemTrig)
 			endif
 		elseif X0O then
-			call EJO(X1O, ZWX, null, GTX, LoadReal(HY, h, 6), LoadReal(HY, h, 7), HUX, 1)
+			call EJO(X1O, ZWX, null, itemIndex, LoadReal(HY, h, 6), LoadReal(HY, h, 7), HUX, 1)
 		elseif X0O == false and(GetItemType(whichItem) == ITEM_TYPE_PERMANENT or GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN) then
 			call SetItemUserData(whichItem, 1)
 			set X4O = ECO(X1O, ZWX, 0)
@@ -14736,10 +14640,10 @@ function XZO takes nothing returns boolean
 			if GetItemUserData(whichItem)==-500 then
 				call RemoveItem(whichItem)
 			elseif IsItemOwned(whichItem) == false then
-				if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or HHX(GTX) or GTX == R_V or GTX == RYV or GTX == R0V or GTX == it_jys then
+				if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or HHX(itemIndex) or itemIndex == R_V or itemIndex == RYV or itemIndex == R0V or itemIndex == it_jys then
 					set HTX = true
 				endif
-				call HYX(PowerupItem[GTX], GetItemX(whichItem), GetItemY(whichItem), X1O, HTX, HUX)
+				call HYX(PowerupItem[itemIndex], GetItemX(whichItem), GetItemY(whichItem), X1O, HTX, HUX)
 				call HZX(whichItem)
 			endif
 		endif
@@ -15479,11 +15383,11 @@ function RCO takes unit trigUnit, item whichItem returns nothing
 	set it = null
 endfunction
 function RDO takes item whichItem, unit whichUnit, boolean RFO returns nothing
-	local integer GTX = GetItemIndexEx(whichItem)
+	local integer itemIndex = GetItemIndexEx(whichItem)
 	local integer h = GetHandleId(whichUnit)
 	local string s = ""
 	// 宝石
-	if (GTX == X4V and GZX(whichUnit, X4V, whichItem) == null) or(GTX == X5V and GZX(whichUnit, X5V, whichItem) == null) then
+	if (itemIndex == X4V and GZX(whichUnit, X4V, whichItem) == null) or(itemIndex == X5V and GZX(whichUnit, X5V, whichItem) == null) then
 		if IsPlayerAlly(LocalPlayer, GetOwningPlayer(whichUnit)) or IsObserverPlayer(LocalPlayer) then
 			set s = "Abilities\\Spells\\Human\\MagicSentry\\MagicSentryCaster.mdl"
 		endif
@@ -15685,8 +15589,8 @@ function RPO takes nothing returns boolean
 	endif
 	return false
 endfunction
-function RQO takes integer GTX returns boolean
-	return GTX != ASV and GTX != NIV and GTX != X4V and GTX != AIV
+function RQO takes integer itemIndex returns boolean
+	return itemIndex != ASV and itemIndex != NIV and itemIndex != X4V and itemIndex != AIV
 endfunction
 function RSO takes nothing returns nothing
 	if GetTriggerEventId() == EVENT_PLAYER_UNIT_PICKUP_ITEM then
@@ -16417,7 +16321,7 @@ function AFO takes nothing returns boolean
 	local unit u =(LoadUnitHandle(HY, h, 14))
 	local integer i = 0
 	local item WNE
-	local integer GTX
+	local integer itemIndex
 	local unit dummyCaster
 	local item RIO
 	local item it = null
@@ -16440,8 +16344,8 @@ function AFO takes nothing returns boolean
 		loop
 		exitwhen i > 5
 			set WNE = UnitItemInSlot(u, i)
-			set GTX = GetItemIndex(WNE)
-			if GTX == AQV then
+			set itemIndex = GetItemIndex(WNE)
+			if itemIndex == AQV then
 				set TempPlayer = GetItemPlayer(WNE)
 				call RemoveItem(WNE)
 				set dummyCaster = CreateUnit(GetOwningPlayer(u),'e00E', GetUnitX(u), GetUnitY(u), 0)
@@ -16474,7 +16378,7 @@ function AGO takes unit u returns nothing
 	local integer h = GetHandleId(t)
 	local integer i = 0
 	local item WNE = null
-	local integer GTX
+	local integer itemIndex
 	local unit dummyCaster = null
 	local item RIO = null
 	call DisableTrigger(UnitManipulatItemTrig)
@@ -16486,8 +16390,8 @@ function AGO takes unit u returns nothing
 	loop
 	exitwhen i > 5
 		set WNE = UnitItemInSlot(u, i)
-		set GTX = GetItemIndex(WNE)
-		if GTX == Item_LinkenSphere or GTX == AQV then
+		set itemIndex = GetItemIndex(WNE)
+		if itemIndex == Item_LinkenSphere or itemIndex == AQV then
 			set TempPlayer = GetItemPlayer(WNE)
 			call RemoveItem(WNE)
 			set dummyCaster = CreateUnit(GetOwningPlayer(u),'e00E', GetUnitX(u), GetUnitY(u), 0)
@@ -16562,14 +16466,14 @@ endfunction
 function AKO takes nothing returns nothing
 	local unit u = GetTriggerUnit()
 	local item whichItem = GetManipulatedItem()
-	local integer GTX = GetItemIndexEx(whichItem)
+	local integer itemIndex = GetItemIndexEx(whichItem)
 	local unit ALO
 	local integer AMO
 	local integer itemSlot
 	local item RIO = null
 	local integer APO
 	local integer id
-	if GTX == O_V then
+	if itemIndex == O_V then
 		set itemSlot = GetUnitItemSlot(u, whichItem)
 		set ALO =(LoadUnitHandle(HY,(GetHandleId(u)),103))
 		set AMO =(LoadInteger(HY,(GetHandleId(u)),104))
@@ -16598,31 +16502,31 @@ function AKO takes nothing returns nothing
 			set RIO = UnitItemInSlot(u, itemSlot)
 			call RAO(u, RIO)
 		endif
-	elseif GTX == O2V then
+	elseif itemIndex == O2V then
 		set itemSlot = GetUnitItemSlot(u, whichItem)
 		set TempPlayer = GetItemPlayer(whichItem)
 		call HZX(whichItem)
 		set TempItem = CreateItemToUnitSlotByIndex(u, RealItem[O1V], itemSlot)
 		call SetItemPlayer(TempItem, TempPlayer, false)
 		call SetItemUserData(TempItem, 1)
-	elseif GTX == O1V then
+	elseif itemIndex == O1V then
 		set itemSlot = GetUnitItemSlot(u, whichItem)
 		set TempPlayer = GetItemPlayer(whichItem)
 		call HZX(whichItem)
 		set TempItem = CreateItemToUnitSlotByIndex(u, RealItem[O0V], itemSlot)
 		call SetItemPlayer(TempItem, TempPlayer, false)
 		call SetItemUserData(TempItem, 1)
-	elseif GTX == O0V then
+	elseif itemIndex == O0V then
 		set itemSlot = GetUnitItemSlot(u, whichItem)
 		set TempPlayer = GetItemPlayer(whichItem)
 		call HZX(whichItem)
 		set TempItem = CreateItemToUnitSlotByIndex(u, RealItem[O_V], itemSlot)
 		call SetItemPlayer(TempItem, TempPlayer, false)
 		call SetItemUserData(TempItem, 0)
-	elseif GUX(GTX) then
+	elseif GUX(itemIndex) then
 		set C2V = true
 		set itemSlot = GetUnitItemSlot(u, whichItem)
-		set id = GWX(GTX)
+		set id = GWX(itemIndex)
 		if id > 0 then
 			set RIO = CreateItem(id, GetUnitX(u), GetUnitY(u))
 		else
@@ -17690,7 +17594,7 @@ function NQO takes nothing returns boolean
 		else
 			call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, DisplayTextDuration[LocalPlayerId], PlayersColoerText[GetPlayerId(GetOwningPlayer(trigUnit))] + GetUnitName(trigUnit)+ "|r " + "获得了不朽的守护!")
 		endif
-	elseif GetItemTypeId(whichItem) == RealItem[BUV]and OPX(trigUnit) then
+	elseif GetItemTypeId(whichItem) == RealItem[BUV]and IsUnitGroundCourier(trigUnit) then
 		call NPO(trigUnit, false)
 	endif
 	set trigUnit = null
@@ -19673,7 +19577,7 @@ function Item_SpellEffect_ForceStaff takes nothing returns nothing
 	if GetSpellTargetItem()!= null then
 		set u = whichUnit
 	endif
-	set C6O = R3X(GetUnitTypeId(u))
+	set C6O = IsUnitHomingMissileById(GetUnitTypeId(u))
 	if GetUnitTypeId(u)!='n00L' and GetUnitAbilityLevel(u,'B0FG') == 0 and LoadBoolean(HY, GetHandleId(u), 4306) == false then
 		if C6O then
 			call C2O(u)
@@ -20294,7 +20198,7 @@ function D1O takes nothing returns nothing
 	endif
 endfunction
 function H9E takes nothing returns nothing
-	if (GetUnitTypeId(GetSpellTargetUnit())=='o004' or GetUnitTypeId(GetSpellTargetUnit())=='oeye' or RMX(GetSpellTargetUnit())) then
+	if (GetUnitTypeId(GetSpellTargetUnit())=='o004' or GetUnitTypeId(GetSpellTargetUnit())=='oeye' or IsUnitGoblinLandMine(GetSpellTargetUnit())) then
 		call D1O()
 	endif
 endfunction
@@ -20932,47 +20836,47 @@ function FZO takes unit u, integer id, integer RLO, item F_O returns nothing
 	call EnableTrigger(UnitManipulatItemTrig)
 	set it = null
 endfunction
-function F0O takes integer GTX returns nothing
+function F0O takes integer itemIndex returns nothing
 	local unit u = GetTriggerUnit()
 	local item it = GetManipulatedItem()
 	local integer JOX
 	local player p
-	if GTX == IRV then
+	if itemIndex == IRV then
 		call FZO(u, IIV, 1, it)
-	elseif GTX == IIV then
+	elseif itemIndex == IIV then
 		call FZO(u, IRV, 1, it)
-	elseif GTX == RUV then
+	elseif itemIndex == RUV then
 		call FZO(u, RWV, 1, it)
-	elseif GTX == RWV then
+	elseif itemIndex == RWV then
 		call FZO(u, RUV, 1, it)
-	elseif GTX == AWV then
+	elseif itemIndex == AWV then
 		call FZO(u, AYV, 1, it)
-	elseif GTX == AYV then
+	elseif itemIndex == AYV then
 		call FZO(u, AWV, 1, it)
 	endif
-	if GTX == AZV then
+	if itemIndex == AZV then
 		call FZO(u, A_V, 1, it)
-	elseif GTX == A_V then
+	elseif itemIndex == A_V then
 		call FZO(u, AZV, 1, it)
 	endif
-	if GTX == IBV then
+	if itemIndex == IBV then
 		call FZO(u, ICV, 1, it)
-	elseif GTX == ICV then
+	elseif itemIndex == ICV then
 		call FZO(u, IDV, 1, it)
-	elseif GTX == IDV then
+	elseif itemIndex == IDV then
 		call FZO(u, IBV, 1, it)
 	endif
-	if GTX == IUV and GetItemCharges(it) == 0 then
+	if itemIndex == IUV and GetItemCharges(it) == 0 then
 		call FZO(u, IYV, 1, it)
-	elseif GTX == IWV and GetItemCharges(it) == 0 then
+	elseif itemIndex == IWV and GetItemCharges(it) == 0 then
 		call FZO(u, IZV, 1, it)
-	elseif GTX == RRV and GetItemCharges(it) == 0 then
+	elseif itemIndex == RRV and GetItemCharges(it) == 0 then
 		call FZO(u, RIV, 1, it)
 	endif
 	set u = null
 	set it = null
 endfunction
-function F1O takes integer GTX returns nothing
+function F1O takes integer itemIndex returns nothing
 	local unit u = GetTriggerUnit()
 	local item it = GetManipulatedItem()
 	local player p = GetItemPlayer(it)
@@ -20989,10 +20893,10 @@ function F1O takes integer GTX returns nothing
 	elseif i == 6 then
 		set F2O = ARV
 	endif
-	if GTX == ARV then
+	if itemIndex == ARV then
 		call SetItemCharges(it, 5)
 	endif
-	if GTX == I9V or GTX == AVV or GTX == AEV or GTX == AXV or GTX == AOV then
+	if itemIndex == I9V or itemIndex == AVV or itemIndex == AEV or itemIndex == AXV or itemIndex == AOV then
 		call FZO(u, F2O, 1, it)
 		if i == 0 then
 			call SaveInteger(OtherHashTable, GetHandleId(p),'0BKB', 9)
@@ -21049,11 +20953,11 @@ function F4O takes nothing returns boolean
 	set whichUnit = null
 	return false
 endfunction
-function F5O takes integer GTX returns nothing
+function F5O takes integer itemIndex returns nothing
 	local unit whichUnit = GetTriggerUnit()
 	local item UWV = GetManipulatedItem()
 	local trigger t
-	if (GTX == ANV or GTX == ABV) and(LoadBoolean(HY,(GetHandleId(whichUnit)), 129)) then
+	if (itemIndex == ANV or itemIndex == ABV) and(LoadBoolean(HY,(GetHandleId(whichUnit)), 129)) then
 		set t = CreateTrigger()
 		call TriggerRegisterTimerEvent(t, .41, false)
 		call TriggerAddCondition(t, Condition(function F4O))
@@ -37625,7 +37529,7 @@ function LXR takes unit d, unit t, real dur, integer life returns nothing
 endfunction
 // 宇宙兽人大第一次filter 敌对、非建筑、非守卫、存活、非英雄、非熊灵、非元素、非佣兽、非地狱火
 function MindControl_Filter takes unit u returns boolean
-	return (IsUnitEnemy(u, GetOwningPlayer(U2)) and IsAliveNotStrucNotWard(u) and not IsUnitType(u, UNIT_TYPE_HERO) and not IsUnitSpiritBear(u) and not CZX(GetUnitTypeId(u)) and not RHX(GetUnitTypeId(u)) and not CSX(u))
+	return (IsUnitEnemy(u, GetOwningPlayer(U2)) and IsAliveNotStrucNotWard(u) and not IsUnitType(u, UNIT_TYPE_HERO) and not IsUnitSpiritBear(u) and not CZX(GetUnitTypeId(u)) and not IsUnitFamiliarById(GetUnitTypeId(u)) and not CSX(u))
 endfunction
 function LRR takes nothing returns boolean
 	return MindControl_Filter(GetFilterUnit())
@@ -40528,7 +40432,7 @@ function TBR takes real y returns real
 	return y
 endfunction
 function TCR takes nothing returns boolean
-	return((UnitAlive(GetFilterUnit()) and not IsUnitWard(GetFilterUnit()) and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and(IsUnitType(GetFilterUnit(), UNIT_TYPE_ANCIENT) == false or CZX(GetUnitTypeId(GetFilterUnit())) or DRX(GetFilterUnit()) or GetUnitTypeId(GetFilterUnit())=='n00U' or GetUnitTypeId(GetFilterUnit())=='n00Y' or GetUnitTypeId(GetFilterUnit())=='n00Z' or GetUnitTypeId(GetFilterUnit())=='n0KU' or GetUnitTypeId(GetFilterUnit())=='n0KV' or GetUnitTypeId(GetFilterUnit())=='n0KW' or RHX(GetUnitTypeId(GetFilterUnit()))) and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer((LoadUnitHandle(HY,(GetHandleId(GetTriggeringTrigger())), 318))))))
+	return((UnitAlive(GetFilterUnit()) and not IsUnitWard(GetFilterUnit()) and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and(IsUnitType(GetFilterUnit(), UNIT_TYPE_ANCIENT) == false or CZX(GetUnitTypeId(GetFilterUnit())) or DRX(GetFilterUnit()) or GetUnitTypeId(GetFilterUnit())=='n00U' or GetUnitTypeId(GetFilterUnit())=='n00Y' or GetUnitTypeId(GetFilterUnit())=='n00Z' or GetUnitTypeId(GetFilterUnit())=='n0KU' or GetUnitTypeId(GetFilterUnit())=='n0KV' or GetUnitTypeId(GetFilterUnit())=='n0KW' or IsUnitFamiliarById(GetUnitTypeId(GetFilterUnit()))) and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer((LoadUnitHandle(HY,(GetHandleId(GetTriggeringTrigger())), 318))))))
 endfunction
 function TED takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
@@ -46502,7 +46406,7 @@ function SLE takes nothing returns nothing
 		if GetUnitAbilityLevel(u,'A0KO')> 0 then
 			call SetUnitMoveSpeed(u, GetUnitDefaultMoveSpeed(u)+ 20 + 10* level)
 		endif
-		if RHX(GetUnitTypeId(u)) then
+		if IsUnitFamiliarById(GetUnitTypeId(u)) then
 			call RGX(u, level)
 		endif
 		call GroupRemoveUnit(g, u)
@@ -46851,8 +46755,8 @@ function IEI takes nothing returns nothing
 	set RWI = null
 endfunction
 function IOI takes nothing returns nothing
-	local integer GTX = GetItemIndexEx(GetEnumItem())
-	if GetWidgetLife(GetEnumItem())> 0 and GTX != AIV then
+	local integer itemIndex = GetItemIndexEx(GetEnumItem())
+	if GetWidgetLife(GetEnumItem())> 0 and itemIndex != AIV then
 		if Mode__DeathMatch then
 			call IVI()
 		else
@@ -47507,14 +47411,14 @@ function AGI takes unit u, boolean AHI returns nothing
 	set g = null
 endfunction
 function AJI takes unit AKI returns nothing
-	if RLX(AKI) then
+	if IsUnitRemoteMines(AKI) then
 	endif
 endfunction
 function JQE takes nothing returns nothing
 	call AGI(GetTriggerUnit(), false)
 endfunction
 function ALI takes nothing returns boolean
-	return GetOwningPlayer(GetFilterUnit()) == LoadPlayerHandle(OtherHashTable2,'A0AN', 0) and UnitIsDead(GetFilterUnit()) == false and RLX(GetFilterUnit())
+	return GetOwningPlayer(GetFilterUnit()) == LoadPlayerHandle(OtherHashTable2,'A0AN', 0) and UnitIsDead(GetFilterUnit()) == false and IsUnitRemoteMines(GetFilterUnit())
 endfunction
 function AMI takes nothing returns nothing
 	call IssueImmediateOrderById(GetEnumUnit(), 852556)
@@ -47531,7 +47435,7 @@ function JTE takes nothing returns nothing
 	set g = null
 endfunction
 function API takes nothing returns nothing
-	if RLX(GetSummonedUnit()) then
+	if IsUnitRemoteMines(GetSummonedUnit()) then
 		call TriggerRegisterUnitEvent(UnitEventMainTrig, GetSummonedUnit(), EVENT_UNIT_SPELL_CAST)
 	endif
 endfunction
@@ -47543,13 +47447,13 @@ function M2X takes nothing returns nothing
 	set t = null
 endfunction
 function AQI takes nothing returns boolean
-	return RMX(GetTriggerUnit())
+	return IsUnitGoblinLandMine(GetTriggerUnit())
 endfunction
 function ASI takes nothing returns boolean
-	return IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(U2)) and(not IsUnitWard(GetFilterUnit()) or OPX(GetFilterUnit())) and R0X(GetFilterUnit()) == false and RFX(GetFilterUnit()) == false
+	return IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(U2)) and(not IsUnitWard(GetFilterUnit()) or IsUnitGroundCourier(GetFilterUnit())) and IsUnitFlying(GetFilterUnit()) == false and RFX(GetFilterUnit()) == false
 endfunction
 function ATI takes nothing returns boolean
-	return IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(U2)) and(not IsUnitWard(GetFilterUnit()) or OPX(GetFilterUnit())) and R0X(GetFilterUnit()) == false and RFX(GetFilterUnit()) == false and((IsUnitAliveBJ(GetEnumUnit()) == true))
+	return IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(U2)) and(not IsUnitWard(GetFilterUnit()) or IsUnitGroundCourier(GetFilterUnit())) and IsUnitFlying(GetFilterUnit()) == false and RFX(GetFilterUnit()) == false and((IsUnitAliveBJ(GetEnumUnit()) == true))
 endfunction
 function AUI takes nothing returns nothing
 	local timer t = GetExpiredTimer()
@@ -47634,7 +47538,7 @@ function AYI takes nothing returns boolean
 			call DestroyTrigger(t)
 		endif
 	else
-		if IsUnitEnemy(GetTriggerUnit(), GetOwningPlayer(u)) and(not IsUnitWard(GetTriggerUnit()) or OPX(GetTriggerUnit())) and R0X(GetTriggerUnit()) == false and RFX(GetTriggerUnit()) == false then
+		if IsUnitEnemy(GetTriggerUnit(), GetOwningPlayer(u)) and(not IsUnitWard(GetTriggerUnit()) or IsUnitGroundCourier(GetTriggerUnit())) and IsUnitFlying(GetTriggerUnit()) == false and RFX(GetTriggerUnit()) == false then
 			call TriggerRegisterTimerEvent(t, .3, false)
 			call SaveBoolean(HY, h, 0, true)
 		endif
@@ -50807,7 +50711,7 @@ function FDI takes unit trigUnit returns nothing
 	call DeallocateGroup(g)
 endfunction
 function FFI takes unit R8X, unit targetUnit returns nothing
-	if GetUnitAbilityLevel(targetUnit,'B03P')> 0 and IsUnitType(R8X, UNIT_TYPE_STRUCTURE) == false and(IsUnitType(R8X, UNIT_TYPE_MECHANICAL) == false and not IsUnitWard(R8X) or IsFortDefenseTypeUnit(R8X)) and IsUnitEnemy(R8X, GetOwningPlayer(targetUnit)) and LoadInteger(HY, GetHandleId(targetUnit), 4267)!= 1 and GetUnitAbilityLevel(targetUnit,'A1HX') == 0 and not IsUnitBroken(targetUnit) and GetUnitPseudoRandom(targetUnit,'B03P', 20) then
+	if GetUnitAbilityLevel(targetUnit,'B03P')> 0 and IsUnitType(R8X, UNIT_TYPE_STRUCTURE) == false and(IsUnitType(R8X, UNIT_TYPE_MECHANICAL) == false and not IsUnitWard(R8X) or IsUnitDefenseTypeFort(R8X)) and IsUnitEnemy(R8X, GetOwningPlayer(targetUnit)) and LoadInteger(HY, GetHandleId(targetUnit), 4267)!= 1 and GetUnitAbilityLevel(targetUnit,'A1HX') == 0 and not IsUnitBroken(targetUnit) and GetUnitPseudoRandom(targetUnit,'B03P', 20) then
 		call FDI(targetUnit)
 	endif
 endfunction
@@ -53001,7 +52905,7 @@ function KLI takes unit u, unit t returns nothing
 	call ALX("SPLK", GetUnitX(u), GetUnitY(u), GetUnitX(t), GetUnitY(t), .1, .6, .44, .9, .6)
 endfunction
 function KMI takes nothing returns nothing
-	if RKX(LSV) then
+	if IsUnitTombstone(LSV) then
 		if LUV > 0 then
 			set LUV = LUV -1
 			call SetUnitState(LSV, UNIT_STATE_LIFE, GetUnitState(LSV, UNIT_STATE_LIFE)+ 1.)
@@ -58278,7 +58182,7 @@ function IYE takes nothing returns nothing
 	set t = null
 endfunction
 function YTI takes nothing returns boolean
-	return(IsUnitEnemy(DESource, GetOwningPlayer(DETarget)) and(GetUnitAbilityLevel(DESource,'A0SS')> 0) and GetUnitTypeId(DETarget)!='n00L' and GetUnitTypeId(DETarget)!='n0F5' and RHX(GetUnitTypeId(DETarget)) == false and not IsUnitBroken(DESource) and IsUnitType(DETarget, UNIT_TYPE_STRUCTURE) == false and not IsUnitWard(DETarget))!= null
+	return(IsUnitEnemy(DESource, GetOwningPlayer(DETarget)) and(GetUnitAbilityLevel(DESource,'A0SS')> 0) and GetUnitTypeId(DETarget)!='n00L' and GetUnitTypeId(DETarget)!='n0F5' and IsUnitFamiliarById(GetUnitTypeId(DETarget)) == false and not IsUnitBroken(DESource) and IsUnitType(DETarget, UNIT_TYPE_STRUCTURE) == false and not IsUnitWard(DETarget))!= null
 endfunction
 function YUI takes unit whichUnit, unit targetUnit returns nothing
 	local integer level = GetUnitAbilityLevel(whichUnit,'A0SS')
@@ -74125,7 +74029,7 @@ function SXA takes nothing returns nothing
 	endif
 endfunction
 function PVX takes nothing returns nothing
-	if RHX(GetUnitTypeId(DETarget)) then
+	if IsUnitFamiliarById(GetUnitTypeId(DETarget)) then
 		call SXA()
 	endif
 endfunction
@@ -75702,7 +75606,7 @@ function NYR takes nothing returns nothing
 	call TriggerAddCondition(t, Condition(function U8A))
 
 	// 初始化被动技能表
-	call ExecuteFunc("HeroPassiveSkill_Init")
+	call ExecuteFunc("HeroPassiveSkills_Init")
 	set t = null
 endfunction
 function WEA takes string s returns nothing
@@ -76859,7 +76763,7 @@ function UnitIssuedItemOrder takes nothing returns nothing // 发布物品命令
 			endif
 		elseif id == RVV or id == REV or id == I7V then
 			// 拆地雷 真假眼时 射程提高
-			if (GetUnitTypeId(targetUnit)=='oeye' or GetUnitTypeId(targetUnit)=='o004' or RMX(targetUnit)) then
+			if (GetUnitTypeId(targetUnit)=='oeye' or GetUnitTypeId(targetUnit)=='o004' or IsUnitGoblinLandMine(targetUnit)) then
 				call SetUnitAbilityLevel(whichUnit,'A1FD', 2)
 			else
 				call SetUnitAbilityLevel(whichUnit,'A1FD', 1)
@@ -76889,8 +76793,8 @@ function UnitIssuedItemOrder takes nothing returns nothing // 发布物品命令
 					endif
 				endif
 			endif
-			if R4X(targetUnit) or IsBeetleUnitTypeId(GetUnitTypeId(targetUnit)) then // 不能对守卫单位使用
-				if not R3X(GetUnitTypeId(targetUnit)) then // 但可以对追踪导弹使用?
+			if R4X(targetUnit) or IsUnitBeetleById(GetUnitTypeId(targetUnit)) then // 不能对守卫单位使用
+				if not IsUnitHomingMissileById(GetUnitTypeId(targetUnit)) then // 但可以对追踪导弹使用?
 					call EXStopUnit(whichUnit)
 					call InterfaceErrorForPlayer(trigPlayer, GetObjectName('TX15'))
 				endif

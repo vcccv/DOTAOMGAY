@@ -325,7 +325,7 @@ scope DamageSystem
                     // 判断受伤者有没有资格减免伤害
                     // 墓碑 蝗虫 冰球 追踪导弹 一类的单位不接受伤害减免
                     // 傻卵减伤以后优化
-                    if not(CMX(YO[0]) or RQX(YO[0]) or RTX(YO[0]) or RJX(YO[0]) or R3X(YO[0]) or IsBeetleUnitTypeId(YO[0]) or R1X(YO[0])) then
+                    if not(CMX(YO[0]) or IsUnitNetherWardById(YO[0]) or IsUnitPhoenixSunById(YO[0]) or IsUnitTombstoneById(YO[0]) or IsUnitHomingMissileById(YO[0]) or IsUnitBeetleById(YO[0]) or IsUnitPowerCogById(YO[0])) then
                         // 给受伤者减免伤害
                         call SetUnitToReduceDamage(DETarget, reducedDamage)
                     endif

@@ -1235,7 +1235,7 @@ library HeroAbilityLib requires AbilityCustomOrderId
         call SetAllPlayerAbilityUnavailable(iSpellBookSkill)
     endfunction
 
-    function HeroPassiveSkill_Init takes nothing returns nothing
+    function HeroPassiveSkills_Init takes nothing returns nothing
         // 注意：第五个参数的技能Id最好不要为光环类 (因为这只是用作于显示技能 模板应该为AEev)
         // 2022/1/1 将ability.slk的
         // 替换为

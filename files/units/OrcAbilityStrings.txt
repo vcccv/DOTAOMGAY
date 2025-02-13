@@ -1735,7 +1735,7 @@ name="Soulsteal Dummy"
 [u01H]
 art=ReplaceableTextures\CommandButtons\BTNCarrionScarabs
 missilespeed=3000
-name="Beetle - Level 2"
+name="蝗虫 - 等级2"
 [u01I]
 art=ReplaceableTextures\CommandButtons\BTNsckj
 missileart=Abilities\Weapons\LocustMissile\LocustMissile.mdl

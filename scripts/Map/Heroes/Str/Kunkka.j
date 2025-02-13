@@ -68,7 +68,7 @@ scope Kunkka
         local real reduceRatio = 1
         local unit firstUnit = null
         // 逆推税前伤害
-        if IsFortDefenseTypeUnit(targetUnit) then
+        if IsUnitDefenseTypeFort(targetUnit) then
             set attackDmg = attackDmg * 2
         endif
         if targetUnitArmor >= 0 then
