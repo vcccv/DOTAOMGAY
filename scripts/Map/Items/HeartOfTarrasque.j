@@ -51,7 +51,7 @@ scope HeartOfTarrasque
                 if ( itemIndex == Item_HeartOfTarrasque ) then
                     set TempPlayer = GetItemPlayer(whichItem)
                     call RemoveItem(whichItem)
-                    set TempItem = CreateItemToUnitSlotByIndex(DETarget, RealItem[Item_DisabledHeartOfTarrasque], i)
+                    set TempItem = CreateItemToUnitSlotByIndex(DETarget, ItemRealId[Item_DisabledHeartOfTarrasque], i)
                     call SetItemPlayer(TempItem, TempPlayer, false)
                     call SetItemUserData(TempItem, 1)
                     call StartAbilityCooldownAbsoluteEx(MHItem_GetAbility(TempItem, 1), cooldown)
@@ -95,7 +95,7 @@ scope HeartOfTarrasque
                 set TempPlayer = GetItemPlayer(whichItem)
                 call RemoveItem(whichItem)
                 call DisableStartCooldownTrigger()
-                set TempItem = CreateItemToUnitSlotByIndex(whichUnit, RealItem[Item_HeartOfTarrasque], i)
+                set TempItem = CreateItemToUnitSlotByIndex(whichUnit, ItemRealId[Item_HeartOfTarrasque], i)
                 call EnableStartCooldownTrigger()
                 call SetItemPlayer(TempItem, TempPlayer, false)
                 call SetItemUserData(TempItem, 1)
@@ -125,7 +125,7 @@ scope HeartOfTarrasque
                 // 换成禁用版本
                 set TempPlayer = GetItemPlayer(whichItem)
                 call RemoveItem(whichItem)
-                set TempItem = CreateItemToUnitSlotByIndex(whichUnit, RealItem[Item_DisabledHeartOfTarrasque], slot)
+                set TempItem = CreateItemToUnitSlotByIndex(whichUnit, ItemRealId[Item_DisabledHeartOfTarrasque], slot)
                 call SetItemPlayer(TempItem, TempPlayer, false)
                 call SetItemUserData(TempItem, 1)
                 call StartAbilityCooldownAbsoluteEx(MHItem_GetAbility(TempItem, 1), cooldownRemaining)

@@ -54,7 +54,7 @@ scope KelenDagger
                 if ( itemIndex == Item_KelenDagger ) then
                     set TempPlayer = GetItemPlayer(whichItem)
                     call RemoveItem(whichItem)
-                    set TempItem = CreateItemToUnitSlotByIndex(DETarget, RealItem[Item_DisabledKelenDagger], i)
+                    set TempItem = CreateItemToUnitSlotByIndex(DETarget, ItemRealId[Item_DisabledKelenDagger], i)
                     call SetItemPlayer(TempItem, TempPlayer, false)
                     call SetItemUserData(TempItem, 1)
                     call StartAbilityCooldownAbsoluteEx(MHItem_GetAbility(TempItem, 1), cooldown)
@@ -99,7 +99,7 @@ scope KelenDagger
                 set TempPlayer = GetItemPlayer(whichItem)
                 call RemoveItem(whichItem)
                 call DisableStartCooldownTrigger()
-                set TempItem = CreateItemToUnitSlotByIndex(whichUnit, RealItem[Item_KelenDagger], i)
+                set TempItem = CreateItemToUnitSlotByIndex(whichUnit, ItemRealId[Item_KelenDagger], i)
                 call EnableStartCooldownTrigger()
                // call BJDebugMsg("恢复了，现在冷却时间是：" + R2S(GetUnitAbilityCooldownRemaining(whichUnit, 'AIbk')))
                 // 
@@ -131,7 +131,7 @@ scope KelenDagger
                 // 换成禁用版本
                 set TempPlayer = GetItemPlayer(whichItem)
                 call RemoveItem(whichItem)
-                set TempItem = CreateItemToUnitSlotByIndex(whichUnit, RealItem[Item_DisabledKelenDagger], slot)
+                set TempItem = CreateItemToUnitSlotByIndex(whichUnit, ItemRealId[Item_DisabledKelenDagger], slot)
                 call SetItemPlayer(TempItem, TempPlayer, false)
                 call SetItemUserData(TempItem, 1)
                 call StartAbilityCooldownAbsoluteEx(MHItem_GetAbility(TempItem, 1), cooldownRemaining)

@@ -129,7 +129,7 @@ library UnitStateBonus requires UnitUtils, UnitAbility, UnitWeapon
     // 攻击距离奖励
     globals
         private key UNIT_ATTACK_RANGE_BONUS
-        private key UNIT_ATTACK_RANGE_RANGED_ATTACKER_ONLY_BONUS
+        private key UNIT_RANGED_ATTACK_RANGE_BONUS
     endglobals
 
     // 攻击距离奖励
@@ -137,8 +137,8 @@ library UnitStateBonus requires UnitUtils, UnitAbility, UnitWeapon
         return Table[GetHandleId(whichUnit)].real[UNIT_ATTACK_RANGE_BONUS]
     endfunction
     // 攻击距离奖励 远程限定
-    function GetUnitAttackRangeRangedAttackerOnlyBonus takes unit whichUnit returns real
-        return Table[GetHandleId(whichUnit)].real[UNIT_ATTACK_RANGE_RANGED_ATTACKER_ONLY_BONUS]
+    function GetUnitRangedAttackRangeBonus takes unit whichUnit returns real
+        return Table[GetHandleId(whichUnit)].real[UNIT_RANGED_ATTACK_RANGE_BONUS]
     endfunction
 
     function UnitUpdateAttackRangeBonus takes unit whichUnit returns nothing
@@ -148,7 +148,7 @@ library UnitStateBonus requires UnitUtils, UnitAbility, UnitWeapon
         endif
         set attackRangeBonus = GetUnitAttackRangeBonus(whichUnit)
         if IsUnitMeleeAttacker(whichUnit) then
-            set attackRangeBonus = attackRangeBonus + GetUnitAttackRangeRangedAttackerOnlyBonus(whichUnit)
+            set attackRangeBonus = attackRangeBonus + GetUnitRangedAttackRangeBonus(whichUnit)
         endif
         // 物编攻击距离 + 攻击距离奖励
         call MHUnit_SetAtkDataReal(whichUnit, UNIT_ATK_DATA_ATTACK_RANGE1, MHUnit_GetDefDataReal(GetUnitTypeId(whichUnit), UNIT_DEF_DATA_ATTACK_RANGE1) + attackRangeBonus)
@@ -169,8 +169,8 @@ library UnitStateBonus requires UnitUtils, UnitAbility, UnitWeapon
         if whichUnit == null then
             return
         endif
-        set attackRangeBonus = Table[GetHandleId(whichUnit)].real[UNIT_ATTACK_RANGE_RANGED_ATTACKER_ONLY_BONUS]
-        set Table[GetHandleId(whichUnit)].real[UNIT_ATTACK_RANGE_RANGED_ATTACKER_ONLY_BONUS] = attackRangeBonus + addValue
+        set attackRangeBonus = Table[GetHandleId(whichUnit)].real[UNIT_RANGED_ATTACK_RANGE_BONUS]
+        set Table[GetHandleId(whichUnit)].real[UNIT_RANGED_ATTACK_RANGE_BONUS] = attackRangeBonus + addValue
         call UnitUpdateAttackRangeBonus(whichUnit)
     endfunction
 

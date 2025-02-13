@@ -353,3 +353,5 @@
 - [ ] 玲珑心支持充能技能，刷新球支持充能技能。
 - [ ] 佣兽固定攻击力
 - [ ] 彻底干死所有二进制属性系统
+- [ ] 分离HeroSkill(HeroSkill, HeroSkillDefine, HeroPassiveSkill, HeroAghanimScepterUpgrade)和ItemSys(ItemSys, ItemDefine, Item合成)
+- [ ] 修改AddAbility和RemoveAbility
