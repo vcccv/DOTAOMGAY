@@ -80997,7 +80997,7 @@ function main takes nothing returns nothing
 	call ExecuteFunc("AbilityCustomCastType_Init")
 	call ExecuteFunc("SpecialPassiveAbility_Init")
 	call ExecuteFunc("UnitWindWalk_Init")
-	call ExecuteFunc("DoubleClickSelfCast_Init")
+	call ExecuteFunc("DoubleTapAbilityToSelfCast_Init")
 	call UnitRemove_Init()
 	call UnitAbility_Init()
 	call UnitMorph_Init()

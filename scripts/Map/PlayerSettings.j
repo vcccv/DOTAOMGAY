@@ -3,9 +3,16 @@ library PlayerSettingsManager
 
     struct PlayerSettings extends array
 
-        method IsDoubleClickSelfCastEnabled takes nothing returns boolean
+        // 双击对己施法
+        method IsDoubleTapAbilityToSelfCastEnabled takes nothing returns boolean
             return true
         endmethod
+
+        // 自动选择召唤物
+        method AutoSelectSummonedUnits takes nothing returns boolean
+            return true
+        endmethod
+        
 
     endstruct
 
