@@ -1,6 +1,19 @@
 
 library Base requires TriggerDestroyQueue, GroupAlloc, ErrorMessage
     
+    function SetAllPlayerAbilityUnavailable takes integer id returns nothing
+        call SetPlayerAbilityAvailable(Player(1), id, false)
+        call SetPlayerAbilityAvailable(Player(2), id, false)
+        call SetPlayerAbilityAvailable(Player(3), id, false)
+        call SetPlayerAbilityAvailable(Player(4), id, false)
+        call SetPlayerAbilityAvailable(Player(5), id, false)
+        call SetPlayerAbilityAvailable(Player(7), id, false)
+        call SetPlayerAbilityAvailable(Player(8), id, false)
+        call SetPlayerAbilityAvailable(Player(9), id, false)
+        call SetPlayerAbilityAvailable(Player(10), id, false)
+        call SetPlayerAbilityAvailable(Player(11), id, false)
+    endfunction
+
     //创建一个一次性计时器，返回值是计时器的整数地址，需要手动销毁。
     function TimerStartSingle takes real timeout, code callback returns integer
         local timer   t = CreateTimer()

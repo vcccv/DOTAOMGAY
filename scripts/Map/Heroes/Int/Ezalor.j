@@ -56,7 +56,7 @@ scope Ezalor
         set Temp__ArrayUnit[0]= O8O
         set XK[0]= LoadInteger(ObjectHashTable, h, 1)
         set Q7V = LoadGroupHandle(ObjectHashTable, h, 3)
-        set X3 = G3X(u)
+        set X3 = IsUnitAghanimScepterUpgraded(u)
         call GroupEnumUnitsInRange(AK, x, y, 375, Condition(function W1R))
         set O8O = null
         set t = null

@@ -22,6 +22,7 @@
 #include "Int\\StormSpirit.j"
 #include "Int\\Necrolyte.j"
 #include "Int\\Visage.j"
+#include "Int\\Enchantress.j"
 
 #include "Agi\\VengefulSpirit.j"
 #include "Agi\\FacelessVoid.j"

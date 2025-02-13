@@ -1,7 +1,6 @@
-library UnitMorph requires UnitWeapon, UnitLimitation
+library UnitMorph requires UnitWeapon, UnitLimitation, UnitUpdate
 
     globals
-        private trigger SpellEffectTrig
         private trigger SpellFinishTrig
         private trigger SpellEndCastTrig
     endglobals
@@ -22,20 +21,7 @@ library UnitMorph requires UnitWeapon, UnitLimitation
     endfunction
 
     private function MorphUpdateUnit takes unit whichUnit returns nothing
-        //call BJDebugMsg("更新了啊啊噢噢噢蛤蛤蛤whichUnit:" + Id2String(GetUnitTypeId(whichUnit)) + GetObjectName(GetUnitTypeId(whichUnit)))
-        // 修正高度
-        call SetUnitFlyHeight(whichUnit, GetUnitDefaultFlyHeight(whichUnit), 0)
-        // 修正射程
-        call UpdateUnitAttackRangeBonus(whichUnit)
-        // 修正缩放
-        call SetUnitCurrentScaleEx(whichUnit, GetUnitCurrentScale(whichUnit))
-        // 更新移速
-        call UpdateUnitNoLimitMoveSpeed(whichUnit)
-        // 更新状态
-        call UpdateUnitLimitation(whichUnit)
-        // 修正颜色
-        //call SetUnitVertexColorEx(whichUnit, -1, -1, -1, -1)
-        call ResetUnitVertexColor(whichUnit)
+        call UnitUpdateData(whichUnit)
     endfunction
 
     private function MorphUpdateUnitOnExpired takes nothing returns nothing
@@ -50,10 +36,6 @@ library UnitMorph requires UnitWeapon, UnitLimitation
         set tick = SimpleTick.CreateEx()
         call tick.Start(timeout, false, function MorphUpdateUnitOnExpired)
         set SimpleTickTable[tick].unit['u'] = whichUnit     
-    endfunction
-
-    private function OnSpellEffect takes nothing returns nothing
-        
     endfunction
 
     private function OnSpellFinish takes nothing returns nothing
@@ -87,12 +69,8 @@ library UnitMorph requires UnitWeapon, UnitLimitation
     endfunction
 
     function UnitMorph_Init takes nothing returns nothing
-        set SpellEffectTrig  = CreateTrigger()
         set SpellFinishTrig  = CreateTrigger()
         set SpellEndCastTrig = CreateTrigger()
-
-        call TriggerRegisterAnyUnitEvent(SpellEffectTrig, EVENT_PLAYER_UNIT_SPELL_EFFECT)
-        call TriggerAddCondition(SpellEffectTrig, Condition(function OnSpellEffect))
         
         call TriggerRegisterAnyUnitEvent(SpellFinishTrig, EVENT_PLAYER_UNIT_SPELL_FINISH)
         call TriggerAddCondition(SpellFinishTrig, Condition(function OnSpellFinish))

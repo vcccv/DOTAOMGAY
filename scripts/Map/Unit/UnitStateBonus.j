@@ -1,38 +1,6 @@
 
-library UnitStateBonus requires UnitUtils, UnitAbility
-   
-    globals
-        hashtable UnitDataHashTable = InitHashtable()
-        key UNIT_PATHING
-    endglobals
-    
-    function SetUnitPathingEx takes unit u, boolean flag returns nothing
-        local integer h = GetHandleId(u)
-        if flag and LoadBoolean(UnitDataHashTable, h, UNIT_PATHING) then
-            if IsUnitType(u, UNIT_TYPE_FLYING) then
-                call MHUnit_SetPathType(u, UNIT_PATH_TYPE_FLY)
-                call MHUnit_SetCollisionType(u, UNIT_COLLISION_TYPE_AIR, UNIT_COLLISION_TYPE_NONE)
-            elseif IsUnitType(u, UNIT_TYPE_GROUND) then
-                call MHUnit_SetPathType(u, UNIT_PATH_TYPE_FOOT)
-                call MHUnit_SetCollisionType(u, UNIT_COLLISION_TYPE_FOOT, UNIT_COLLISION_TYPE_GROUND)
-            endif
-            call RemoveSavedBoolean(UnitDataHashTable, h, UNIT_PATHING)
-            call SetUnitPathing(u, true)
-        elseif not flag and not LoadBoolean(UnitDataHashTable, h, UNIT_PATHING) then
-            call MHUnit_SetPathType(u, UNIT_PATH_TYPE_FLY)
-            call MHUnit_SetCollisionType(u, UNIT_COLLISION_TYPE_AIR, UNIT_COLLISION_TYPE_NONE)
-            call SaveBoolean(UnitDataHashTable, h, UNIT_PATHING, true)
-            call SetUnitPathing(u, false)
-        endif
-    endfunction
-    
-    function FlushUnitData takes unit whichUnit returns nothing
-        if whichUnit == null then
-            return
-        endif
-        call FlushChildHashtable(UnitDataHashTable, GetHandleId(whichUnit))
-    endfunction
-    
+library UnitStateBonus requires UnitUtils, UnitAbility, UnitWeapon
+
     globals
         constant integer UNIT_BONUS_DAMAGE     = 'AUdb'
         constant integer UNIT_BONUS_ATTACK     = 'AUab'
@@ -47,6 +15,9 @@ library UnitStateBonus requires UnitUtils, UnitAbility
     function UnitAddStateBonus takes unit whichUnit, real addValue, integer abilId returns real
         local real    value
         local integer h
+        if whichUnit == null then
+            return 0.
+        endif
         call UnitAddPermanentAbility(whichUnit, abilId)
         if abilId == UNIT_BONUS_ATTACK then
             set addValue = (addValue * 1.) * 0.01
@@ -66,6 +37,9 @@ library UnitStateBonus requires UnitUtils, UnitAbility
     function UnitSetStateBonus takes unit whichUnit, real newValue, integer abilId returns real
         local real    value
         local integer h
+        if whichUnit == null then
+            return 0.
+        endif
         call UnitAddPermanentAbility(whichUnit, abilId)
         if abilId == UNIT_BONUS_ATTACK then
             set newValue = (newValue * 1.) * 0.01
@@ -84,6 +58,9 @@ library UnitStateBonus requires UnitUtils, UnitAbility
     function UnitReduceStateBonus takes unit whichUnit, real reduceValue, integer abilId returns real
         local real    value
         local integer h
+        if whichUnit == null then
+            return 0.
+        endif
         call UnitAddPermanentAbility(whichUnit, abilId)
         if abilId == UNIT_BONUS_ATTACK then
             set reduceValue = (reduceValue * 1.) * 0.01
@@ -101,30 +78,41 @@ library UnitStateBonus requires UnitUtils, UnitAbility
         return value
     endfunction
 
+    // 百分比移速奖励
     function UnitAddMoveSpeedBonusPercent takes unit whichUnit, real percent returns nothing
+        if whichUnit == null then
+            return
+        endif
         set percent = percent * 0.01
         call MHUnit_SetData(whichUnit, UNIT_DATA_BONUS_MOVESPEED, MHUnit_GetData(whichUnit, UNIT_DATA_BONUS_MOVESPEED) + percent)
     endfunction
     function UnitReduceMoveSpeedBonusPercent takes unit whichUnit, real percent returns nothing
+        if whichUnit == null then
+            return
+        endif
         set percent = percent * 0.01
         call MHUnit_SetData(whichUnit, UNIT_DATA_BONUS_MOVESPEED, MHUnit_GetData(whichUnit, UNIT_DATA_BONUS_MOVESPEED) - percent)
     endfunction
 
-    function UnitRegenLife takes unit source, unit target, real value returns nothing
-        call MHUnit_RestoreLife(target, value)
-    endfunction
-    function UnitRegenMana takes unit source, unit target, real value returns nothing
-        call MHUnit_RestoreMana(target, value)
-    endfunction
-
+    // 基础护甲奖励
     function UnitAddBaseArmorBonus takes unit whichUnit, real addArmor returns nothing
+        if whichUnit == null then
+            return
+        endif
         call MHUnit_SetData(whichUnit, UNIT_DATA_DEF_VALUE, MHUnit_GetData(whichUnit, UNIT_DATA_DEF_VALUE) + addArmor)
     endfunction
 
+    // 技能增强
     globals
         private key SPELL_DAMAGE_AMP
     endglobals
     // 乘数
+    function GetUnitSpellDamageAmplificationBonus takes unit whichUnit returns real
+        if whichUnit == null then
+            return 0.
+        endif
+        return Table[GetHandleId(whichUnit)].real[SPELL_DAMAGE_AMP]
+    endfunction
     function UnitAddSpellDamageAmplificationBonus takes unit whichUnit, real value returns nothing
         if whichUnit == null then
             return
@@ -137,11 +125,58 @@ library UnitStateBonus requires UnitUtils, UnitAbility
         endif
         set Table[GetHandleId(whichUnit)].real[SPELL_DAMAGE_AMP] = Table[GetHandleId(whichUnit)].real[SPELL_DAMAGE_AMP] - value
     endfunction
-    function GetUnitSpellDamageAmplificationBonus takes unit whichUnit returns real
+
+    // 攻击距离奖励
+    globals
+        private key UNIT_ATTACK_RANGE_BONUS
+        private key UNIT_ATTACK_RANGE_RANGED_ATTACKER_ONLY_BONUS
+    endglobals
+
+    // 攻击距离奖励
+    function GetUnitAttackRangeBonus takes unit whichUnit returns real
+        return Table[GetHandleId(whichUnit)].real[UNIT_ATTACK_RANGE_BONUS]
+    endfunction
+    // 攻击距离奖励 远程限定
+    function GetUnitAttackRangeRangedAttackerOnlyBonus takes unit whichUnit returns real
+        return Table[GetHandleId(whichUnit)].real[UNIT_ATTACK_RANGE_RANGED_ATTACKER_ONLY_BONUS]
+    endfunction
+
+    function UnitUpdateAttackRangeBonus takes unit whichUnit returns nothing
+        local real attackRangeBonus
         if whichUnit == null then
-            return 0.
+            return
         endif
-        return Table[GetHandleId(whichUnit)].real[SPELL_DAMAGE_AMP]
+        set attackRangeBonus = GetUnitAttackRangeBonus(whichUnit)
+        if IsUnitMeleeAttacker(whichUnit) then
+            set attackRangeBonus = attackRangeBonus + GetUnitAttackRangeRangedAttackerOnlyBonus(whichUnit)
+        endif
+        // 物编攻击距离 + 攻击距离奖励
+        call MHUnit_SetAtkDataReal(whichUnit, UNIT_ATK_DATA_ATTACK_RANGE1, MHUnit_GetDefDataReal(GetUnitTypeId(whichUnit), UNIT_DEF_DATA_ATTACK_RANGE1) + attackRangeBonus)
+        call UnitUpdateAttackOrder(whichUnit)
+    endfunction
+
+    function UnitAddAttackRangeBonus takes unit whichUnit, real addValue returns nothing
+        local real attackRangeBonus
+        if whichUnit == null then
+            return
+        endif
+        set attackRangeBonus = Table[GetHandleId(whichUnit)].real[UNIT_ATTACK_RANGE_BONUS]
+        set Table[GetHandleId(whichUnit)].real[UNIT_ATTACK_RANGE_BONUS] = attackRangeBonus + addValue
+        call UnitUpdateAttackRangeBonus(whichUnit)
+    endfunction
+    function UnitAddAttackRangeRangedAttackerOnlyBonus takes unit whichUnit, real addValue returns nothing
+        local real attackRangeBonus
+        if whichUnit == null then
+            return
+        endif
+        set attackRangeBonus = Table[GetHandleId(whichUnit)].real[UNIT_ATTACK_RANGE_RANGED_ATTACKER_ONLY_BONUS]
+        set Table[GetHandleId(whichUnit)].real[UNIT_ATTACK_RANGE_RANGED_ATTACKER_ONLY_BONUS] = attackRangeBonus + addValue
+        call UnitUpdateAttackRangeBonus(whichUnit)
+    endfunction
+
+    // 更新属性奖励
+    function UnitUpdateStateBonus takes unit whichUnit returns nothing
+        call UnitUpdateAttackRangeBonus(whichUnit)
     endfunction
 
 endlibrary

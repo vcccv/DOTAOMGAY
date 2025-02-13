@@ -57,7 +57,6 @@ library ItemSystem requires Base, TimerUtils, AbilityUtils
         return -1
     endfunction
     
-    
     // 获取物品的索引 不包含禁用状态禁用状态时会返回-1
     function GetItemIndex takes item whichItem returns integer
         local integer itemId
@@ -341,9 +340,14 @@ library ItemSystem requires Base, TimerUtils, AbilityUtils
         set A3V = RegisterItem('I0AD','I0AE', 0,'I0BV')
         set A4V = RegisterItem('I0AG','I0AF', 0,'I0CT')
         set Item_TheButterfly = RegisterItem('I0AH','I0AI', 0,'I0BW')
-        set XFV = RegisterItem('I0B8','I0AY', 0,'I00B')
-        set XCV = RegisterItem('I0QT','I0QS', 0,'I0QU')
-        set XDV = RegisterItem('I0QT','I0TB', 0,'I0QU')
+
+        // 基础 Item_AghanimScepterBasis
+        set Item_AghanimScepterBasis = RegisterItem('I0B8','I0AY', 0,'I00B')
+        // 通用的 Item_AghanimScepter
+        set Item_AghanimScepter = RegisterItem('I0QT','I0QS', 0,'I0QU')
+        // 炼金的 Item_AghanimScepterGiftable
+        set Item_AghanimScepterGiftable = RegisterItem('I0QT','I0TB', 0,'I0QU')
+
         set A6V = RegisterItem('I0AK','I0AJ', 0,'I0BX')
         set A7V = RegisterItem('I07K','I0AL', 0,'I0BY')
         set A8V = RegisterItem('I0BB','I0BA', 0,'I0BZ')
@@ -452,7 +456,7 @@ library ItemSystem requires Base, TimerUtils, AbilityUtils
         set BPV = RegisterItem('I07H','I084','h03G','I0EK')
         set BQV = RegisterItem('I07O','I085','h03H','I0EL')
         set B2V = RegisterItem(0, 0,'h03K', 0)
-        call SaveInteger(HY,'ITDB', B2V, XFV)
+        call SaveInteger(HY,'ITDB', B2V, Item_AghanimScepterBasis)
         set BSV = RegisterItem('I07J','I088','h03L','I0EO')
         call SaveInteger(HY,'ITDB', RegisterItem(0, 0,'h03M', 0), A7V)
         call SaveInteger(HY,'ITDB', RegisterItem(0, 0,'h03N', 0), A8V)
@@ -858,7 +862,7 @@ library ItemSystem requires Base, TimerUtils, AbilityUtils
         set CombineIndex2[CombineMaxIndex]= OAV
         set CombineIndex3[CombineMaxIndex]= XUV
         set CombineIndex4[CombineMaxIndex]= OPV
-        set CombinedIndex[CombineMaxIndex]= XFV
+        set CombinedIndex[CombineMaxIndex]= Item_AghanimScepterBasis
         set CombineMaxIndex = CombineMaxIndex + 1
         set CombineIndex1[CombineMaxIndex]= IEV
         set CombineIndex2[CombineMaxIndex]= IEV
@@ -1065,9 +1069,9 @@ library ItemSystem requires Base, TimerUtils, AbilityUtils
 
       // 物品索引
       globals
-        integer XCV
-        integer XDV
-        integer XFV
+        integer Item_AghanimScepter
+        integer Item_AghanimScepterGiftable
+        integer Item_AghanimScepterBasis
         integer XGV
         integer XHV
         integer XJV

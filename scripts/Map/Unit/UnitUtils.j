@@ -21,6 +21,14 @@ library UnitUtils
         endif
     endfunction
     
+    // 生命恢复
+    function UnitRegenLife takes unit source, unit target, real value returns nothing
+        call MHUnit_RestoreLife(target, value)
+    endfunction
+    function UnitRegenMana takes unit source, unit target, real value returns nothing
+        call MHUnit_RestoreMana(target, value)
+    endfunction
+    
     globals
         key UNIT_LAST_DAMGED_TIME
     endglobals

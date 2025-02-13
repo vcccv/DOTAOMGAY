@@ -46,22 +46,22 @@ library UnitIllusion requires UnitUtils, UnitWeapon, UnitMorph, BuffSystem
         local integer i = 1
         local integer lv
         loop
-            set lv = GetUnitAbilityLevel(sourceUnit, PassiveSkills_Learned[i])
-            if PassiveSkills_Real[i]=='P084' then
+            set lv = GetUnitAbilityLevel(sourceUnit, PassiveSkill_Learned[i])
+            if PassiveSkill_Real[i]=='P084' then
                 set lv = GetUnitAbilityLevel(sourceUnit, 'A0DB')
             endif
             if lv > 0 then
-                if PassiveSkills_SpellBook[i]> 0 or PassiveSkills_Real[i]> 0 then
-                    call UnitAddPermanentAbility(illusionUnit, PassiveSkills_SpellBook[i])
-                    call UnitMakeAbilityPermanent(illusionUnit, true, PassiveSkills_Real[i])
-                    call UnitAddPermanentAbility(illusionUnit, PassiveSkills_Show[i])
-                    if PassiveSkills_illusion[i]> 0 then
-                        call UnitAddPermanentAbility(illusionUnit, PassiveSkills_illusion[i])
-                        call SetUnitAbilityLevel(illusionUnit, PassiveSkills_illusion[i], lv)
+                if PassiveSkill_SpellBook[i]> 0 or PassiveSkill_Real[i]> 0 then
+                    call UnitAddPermanentAbility(illusionUnit, PassiveSkill_SpellBook[i])
+                    call UnitMakeAbilityPermanent(illusionUnit, true, PassiveSkill_Real[i])
+                    call UnitAddPermanentAbility(illusionUnit, PassiveSkill_Show[i])
+                    if PassiveSkill_Illusion[i]> 0 then
+                        call UnitAddPermanentAbility(illusionUnit, PassiveSkill_Illusion[i])
+                        call SetUnitAbilityLevel(illusionUnit, PassiveSkill_Illusion[i], lv)
                     endif
-                    call SetUnitAbilityLevel(illusionUnit, PassiveSkills_Real[i], lv)
-                    call MHAbility_Disable(illusionUnit, PassiveSkills_Real[i], false, false)
-                    if PassiveSkills_SpellBook[i] == 'A23F' then
+                    call SetUnitAbilityLevel(illusionUnit, PassiveSkill_Real[i], lv)
+                    call MHAbility_Disable(illusionUnit, PassiveSkill_Real[i], false, false)
+                    if PassiveSkill_SpellBook[i] == 'A23F' then
                         call SetUnitAbilityLevel(illusionUnit,'A1ER', lv)
                         call UnitAddPermanentAbility(illusionUnit,'A1ER')
                         call SetUnitAbilityLevel(illusionUnit,'A1ER', lv)
@@ -69,16 +69,16 @@ library UnitIllusion requires UnitUtils, UnitWeapon, UnitMorph, BuffSystem
                     endif
                 endif
                 // 瞄准
-                if PassiveSkills_Learned[i] == 'A03U' then
+                if PassiveSkill_Learned[i] == 'A03U' then
                     set U2 = illusionUnit
                     set Q2 = lv
                     call ExecuteFunc("range_Take_Aim")
-                elseif PassiveSkills_Learned[i] == 'A0RO' then
+                elseif PassiveSkill_Learned[i] == 'A0RO' then
                     // ta被动
                     set U2 = illusionUnit
                     set Q2 = lv
                     call ExecuteFunc("range_Psi_Blades")
-                elseif PassiveSkills_Learned[i]=='A0CL' then
+                elseif PassiveSkill_Learned[i]=='A0CL' then
                     set U2 = illusionUnit
                     set Q2 = lv
                     call ExecuteFunc("SyncIllusionUnitDragonBlood")
@@ -87,7 +87,8 @@ library UnitIllusion requires UnitUtils, UnitWeapon, UnitMorph, BuffSystem
             set i = i + 1
         exitwhen i > PassiveAbilityMaxCount
         endloop
-        call UpdateUnitAttackRangeBonus(illusionUnit)
+        // 更新属性
+        call UnitUpdateStateBonus(illusionUnit)
         // 如果幻象是变身单位 直接播放单位的变身Stand 否则被认出来太蠢
         if IsUnitMetamorphosis(illusionUnit) or WTB(illusionUnit) then
             call AddUnitAnimationProperties(illusionUnit, "alternate", true)
@@ -154,7 +155,7 @@ library UnitIllusion requires UnitUtils, UnitWeapon, UnitMorph, BuffSystem
             // call SetUnitCurrentScaleEx(illusionUnit, )
         endif
         if ( UnitHasItemOfType(illusionUnit, RealItem[it_mlq]) ) or ( UnitHasItemOfType(illusionUnit, RealItem[Item_HurricanePike]) ) then
-            call AddUnitBonusRange(illusionUnit, 140., true)
+            // call UnitAddAttackRangeRangedAttackerOnlyBonus(illusionUnit, 140.)
         endif
         if IsPlayerAutoSelectSummoned[pid] then
             call SelectUnitAddForPlayer(illusionUnit, ownerPlayer)

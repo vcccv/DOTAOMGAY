@@ -500,18 +500,8 @@ globals
 	timer ZC = CreateTimer()
 	boolean array XD
 	integer SpellDamageCount = 0
-	integer array PassiveSkills_Real
-	integer array PassiveSkills_SpellBook
-	integer array PassiveSkills_Learned
-	integer array PassiveSkills_Buff
-	integer array PassiveSkills_Show
-	integer array PassiveSkills_illusion
-	integer PassiveAbilityMaxCount = 0
-	integer array AghanimUpgradeChangeId
-	integer array AghanimUpgradeNormalId
-	integer array AghanimUpgradeUpgradeId
-	integer array AghanimUpgradeUnknownId
-	integer AghanimUpgradeMaxIndex = 1
+
+
 	real PF
 	unit QF
 	integer array TF
@@ -1753,12 +1743,12 @@ function FixUnitSkillsBug takes unit u returns nothing
 	//local integer i = 1
 	//local integer lv
 	//loop
-	//	set lv = GetUnitAbilityLevel(u, PassiveSkills_Learned[i])
-	//	if lv == 0 and(GetUnitAbilityLevel(u, PassiveSkills_Real[i])> 0 or GetUnitAbilityLevel(u, PassiveSkills_SpellBook[i])> 0 or GetUnitAbilityLevel(u, PassiveSkills_Buff[i])> 0) then
-	//		call UnitRemoveAbility(u, PassiveSkills_Real[i])
-	//		call UnitRemoveAbility(u, PassiveSkills_SpellBook[i])
-	//		call UnitRemoveAbility(u, PassiveSkills_Buff[i])
-	//		call UnitRemoveAbility(u, PassiveSkills_Show[i])
+	//	set lv = GetUnitAbilityLevel(u, PassiveSkill_Learned[i])
+	//	if lv == 0 and(GetUnitAbilityLevel(u, PassiveSkill_Real[i])> 0 or GetUnitAbilityLevel(u, PassiveSkill_SpellBook[i])> 0 or GetUnitAbilityLevel(u, PassiveSkill_Buff[i])> 0) then
+	//		call UnitRemoveAbility(u, PassiveSkill_Real[i])
+	//		call UnitRemoveAbility(u, PassiveSkill_SpellBook[i])
+	//		call UnitRemoveAbility(u, PassiveSkill_Buff[i])
+	//		call UnitRemoveAbility(u, PassiveSkill_Show[i])
 	//	endif
 	//	set i = i + 1
 	//exitwhen i > PassiveAbilityMaxCount
@@ -1938,19 +1928,6 @@ function THV takes unit d, string S6V, unit t returns boolean
 	endif
 	return b
 endfunction
-function SetAllPlayerAbilityUnavailable takes integer id returns nothing
-	call SetPlayerAbilityAvailable(Player(1), id, false)
-	call SetPlayerAbilityAvailable(Player(2), id, false)
-	call SetPlayerAbilityAvailable(Player(3), id, false)
-	call SetPlayerAbilityAvailable(Player(4), id, false)
-	call SetPlayerAbilityAvailable(Player(5), id, false)
-	call SetPlayerAbilityAvailable(Player(7), id, false)
-	call SetPlayerAbilityAvailable(Player(8), id, false)
-	call SetPlayerAbilityAvailable(Player(9), id, false)
-	call SetPlayerAbilityAvailable(Player(10), id, false)
-	call SetPlayerAbilityAvailable(Player(11), id, false)
-endfunction
-
 //function GetUnitPseudoRandom takes unit u, integer id, real i returns boolean
 //	local integer h = GetHandleId(u)
 //	local real TPV = R2I(i / 5.)* 5.
@@ -3449,7 +3426,7 @@ function TBE takes integer id returns integer
 			return i
 		endif
 		set i = i + 1
-	exitwhen i > AghanimUpgradeMaxIndex
+	exitwhen i > AghanimUpgradeMaxCount
 	endloop
 	return -1
 endfunction
@@ -3887,7 +3864,7 @@ endfunction
 function WBE takes integer WDE returns integer
 	local integer i = 1
 	loop
-		if WDE == PassiveSkills_Learned[i] then
+		if WDE == PassiveSkill_Learned[i] then
 			return i
 		endif
 		set i = i + 1
@@ -3973,9 +3950,9 @@ function W2E takes nothing returns nothing
 	local integer k = LoadInteger(HY, h, 0)
 	local integer level = LoadInteger(HY, h, 1)
 	if UnitAlive(u) then
-		if GetUnitAbilityLevel(u, PassiveSkills_Real[k])< level then
-			call SetUnitAbilityLevel(u, PassiveSkills_Real[k], level)
-			call SetUnitAbilityLevel(u, PassiveSkills_Show[k], level)
+		if GetUnitAbilityLevel(u, PassiveSkill_Real[k])< level then
+			call SetUnitAbilityLevel(u, PassiveSkill_Real[k], level)
+			call SetUnitAbilityLevel(u, PassiveSkill_Show[k], level)
 		endif
 		call FlushChildHashtable(HY, h)
 		call PauseTimer(t)
@@ -3999,16 +3976,16 @@ function W4E takes integer id returns nothing
 	local integer k = WBE(id)
 	local integer level
 	if k > 0 then
-		set level = GetUnitAbilityLevel(u, PassiveSkills_Learned[k])
+		set level = GetUnitAbilityLevel(u, PassiveSkill_Learned[k])
 		if level == 1 then
-			call UnitAddPermanentAbility(u, PassiveSkills_SpellBook[k])
-			call UnitMakeAbilityPermanent(u, true, PassiveSkills_Real[k])
-			call UnitAddPermanentAbility(u, PassiveSkills_Show[k])
+			call UnitAddPermanentAbility(u, PassiveSkill_SpellBook[k])
+			call UnitMakeAbilityPermanent(u, true, PassiveSkill_Real[k])
+			call UnitAddPermanentAbility(u, PassiveSkill_Show[k])
 		else//如果单位死了 那不直接升级技能 而不是开个计时器循环检查单位是否存活
 			if UnitAlive(u) then
-				call SetUnitAbilityLevel(u, PassiveSkills_Real[k], level)
-				call SetUnitAbilityLevel(u, PassiveSkills_Show[k], level)
-				if PassiveSkills_Learned[k]=='Q0BK'then
+				call SetUnitAbilityLevel(u, PassiveSkill_Real[k], level)
+				call SetUnitAbilityLevel(u, PassiveSkill_Show[k], level)
+				if PassiveSkill_Learned[k]=='Q0BK'then
 					call SetUnitAbilityLevel(u,'A0BM', level)
 				endif
 			elseif not Mode__DeathMatch  then
@@ -4027,18 +4004,18 @@ function W5E takes nothing returns nothing
 	local integer k = WBE(id)
 	local integer level
 	if k > 0 then
-		set level = GetUnitAbilityLevel(u, PassiveSkills_Learned[k])
+		set level = GetUnitAbilityLevel(u, PassiveSkill_Learned[k])
 		if level == 1 then
 			if id !='A086' then
-				call UnitAddPermanentAbility(u, PassiveSkills_SpellBook[k])
-				call UnitMakeAbilityPermanent(u, true, PassiveSkills_Real[k])
-				call UnitAddPermanentAbility(u, PassiveSkills_Show[k])
+				call UnitAddPermanentAbility(u, PassiveSkill_SpellBook[k])
+				call UnitMakeAbilityPermanent(u, true, PassiveSkill_Real[k])
+				call UnitAddPermanentAbility(u, PassiveSkill_Show[k])
 			endif
 		elseif level > 0 then
 			if id !='A086' then
-				call SetUnitAbilityLevel(u, PassiveSkills_Real[k], level)
-				call SetUnitAbilityLevel(u, PassiveSkills_Show[k], level)
-				if PassiveSkills_Learned[k]=='Q0BK'then
+				call SetUnitAbilityLevel(u, PassiveSkill_Real[k], level)
+				call SetUnitAbilityLevel(u, PassiveSkill_Show[k], level)
+				if PassiveSkill_Learned[k]=='Q0BK'then
 					call SetUnitAbilityLevel(u,'A0BM', level)
 				endif
 			endif
@@ -4087,7 +4064,7 @@ function W8E takes integer W9E returns integer
 	local integer i = 1
 	local integer k = 0
 	loop
-		if W9E == PassiveSkills_Learned[i]or W9E == PassiveSkills_Show[i]or W9E == PassiveSkills_Real[i]or W9E == PassiveSkills_SpellBook[i] then
+		if W9E == PassiveSkill_Learned[i]or W9E == PassiveSkill_Show[i]or W9E == PassiveSkill_Real[i]or W9E == PassiveSkill_SpellBook[i] then
 			set k = i
 		endif
 		set i = i + 1
@@ -4099,7 +4076,7 @@ function W8EP takes integer W9E returns integer
 	local integer i = 1
 	local integer k = 0
 	loop
-		if W9E == PassiveSkills_Learned[i]or W9E == PassiveSkills_Show[i]or W9E == PassiveSkills_illusion[i] or W9E == PassiveSkills_Real[i]or W9E == PassiveSkills_SpellBook[i] then
+		if W9E == PassiveSkill_Learned[i]or W9E == PassiveSkill_Show[i]or W9E == PassiveSkill_Illusion[i] or W9E == PassiveSkill_Real[i]or W9E == PassiveSkill_SpellBook[i] then
 			set k = i
 		endif
 		set i = i + 1
@@ -4198,7 +4175,7 @@ function HeroLevelUp takes nothing returns nothing
 					call SetUnitAbilityLevel(u, HeroSkill_Special[PlayerSkillIndices[playerId * MAX_SKILL_SLOTS + 5]], extraSkillLevel)
 				endif
 				//if YRE > 0 then
-				//	call SetUnitAbilityLevel(u, PassiveSkills_Show[YRE], extraSkillLevel)
+				//	call SetUnitAbilityLevel(u, PassiveSkill_Show[YRE], extraSkillLevel)
 				//endif
 			endif
 			if abilityId >='A40K' and abilityId <='A40N' then
@@ -4261,7 +4238,7 @@ function HeroLevelUp takes nothing returns nothing
 			if extraSkillLevel > 1 then
 				call SetUnitAbilityLevel(u, abilityId, extraSkillLevel)
 				if YRE > 0 then
-					call SetUnitAbilityLevel(u, PassiveSkills_Show[YRE], extraSkillLevel)
+					call SetUnitAbilityLevel(u, PassiveSkill_Show[YRE], extraSkillLevel)
 				endif
 			endif
 			call SetUnitAbilityLevel(u, abilityId, extraSkillLevel)
@@ -6168,15 +6145,15 @@ function NXX takes nothing returns nothing
 	local unit u = PlayerHeroes[pid]
 	if u != null and UnitAlive(u) then
 		loop
-			set level = GetUnitAbilityLevel(u, PassiveSkills_Learned[i])
+			set level = GetUnitAbilityLevel(u, PassiveSkill_Learned[i])
 			if level == 0 then
-				set level = GetUnitAbilityLevel(u, PassiveSkills_Show[i])
+				set level = GetUnitAbilityLevel(u, PassiveSkill_Show[i])
 			endif
-			if level == 0 and(GetUnitAbilityLevel(u, PassiveSkills_Real[i])> 0 or GetUnitAbilityLevel(u, PassiveSkills_SpellBook[i])> 0) then
-				call UnitRemoveAbility(u, PassiveSkills_Real[i])
-				call UnitRemoveAbility(u, PassiveSkills_SpellBook[i])
-				call UnitRemoveAbility(u, PassiveSkills_Buff[i])
-				call UnitRemoveAbility(u, PassiveSkills_Show[i])
+			if level == 0 and(GetUnitAbilityLevel(u, PassiveSkill_Real[i])> 0 or GetUnitAbilityLevel(u, PassiveSkill_SpellBook[i])> 0) then
+				call UnitRemoveAbility(u, PassiveSkill_Real[i])
+				call UnitRemoveAbility(u, PassiveSkill_SpellBook[i])
+				call UnitRemoveAbility(u, PassiveSkill_Buff[i])
+				call UnitRemoveAbility(u, PassiveSkill_Show[i])
 			endif
 			set i = i + 1
 		exitwhen i > PassiveAbilityMaxCount
@@ -7788,19 +7765,20 @@ function G2X takes player p, unit u, integer GTX returns item
 	set it = null
 	return null
 endfunction
-function G3X takes unit u returns boolean
-	local item it
+
+// 是否神杖升级
+function IsUnitAghanimScepterUpgraded takes unit u returns boolean
+	local item 	  it
 	local integer i = 0
 	local integer id
-	if GetUnitAbilityLevel(u,'A3E7') == 1 then
-		set it = null
+	if GetUnitAbilityLevel(u, 'A3E7') == 1 then
 		return true
 	endif
 	loop
 		set it = UnitItemInSlot(u, i)
 		if it != null then
 			set id = GetItemIndex(it)
-			if (id == XFV or id == XCV or id == XDV) and GetItemUserData(it)!=-2 then
+			if (id == Item_AghanimScepterBasis or id == Item_AghanimScepter or id == Item_AghanimScepterGiftable) and GetItemUserData(it) != -2 then
 				set it = null
 				return true
 			endif
@@ -7836,7 +7814,7 @@ function G5X takes integer id, unit u, boolean G6X returns nothing
 		elseif id =='A0DY' then
 		endif
 	else
-		if G3X(u) == false then
+		if IsUnitAghanimScepterUpgraded(u) == false then
 		endif
 	endif
 	if id =='A0CY' and GetUnitTypeId(u)=='Ucrl' then
@@ -7886,13 +7864,14 @@ function OnUnitAddAbilityAghanimUpgrade takes integer k, unit u, integer G8X ret
 		set U2 = u
 		call ExecuteFunc("HRX")
 	elseif AghanimUpgradeNormalId[k]=='A0DY' then
+		// 推进
 		if LoadBoolean(HY, GetHandleId(GetOwningPlayer(u)),'R00J') == false then
-			call AddUnitBonusRange(u, 190., true)
+			call UnitAddAttackRangeBonus(u, 190.)
 			call SaveBoolean(HY, GetHandleId(GetOwningPlayer(u)),'R00J', true)
 		endif
 	elseif AghanimUpgradeNormalId[k]=='A0CY' then
 		if LoadBoolean(HY, GetHandleId(GetOwningPlayer(u)),'R0L3') == false then
-			call AddUnitBonusRange(u, 107., false)
+			call UnitAddAttackRangeBonus(u, 107.)
 			call SaveBoolean(HY, GetHandleId(GetOwningPlayer(u)),'R0L3', true)
 			call UnitAddPermanentAbility(u,'A2KK')
 			call UnitMakeAbilityPermanent(u, true,'A1W0')
@@ -7909,7 +7888,7 @@ function OnUnitAddAbilityAghanimUpgrade takes integer k, unit u, integer G8X ret
 endfunction
 function OnUnitRemoveAbilityAghanimUpgrade takes integer k, unit u, integer G8X returns nothing
 	local player p = GetOwningPlayer(u)
-	if G3X(u) then
+	if IsUnitAghanimScepterUpgraded(u) then
 		return
 	endif
 	if AghanimUpgradeNormalId[k]=='A088' then
@@ -7929,12 +7908,12 @@ function OnUnitRemoveAbilityAghanimUpgrade takes integer k, unit u, integer G8X 
 		call ExecuteFunc("HCX")
 	elseif AghanimUpgradeNormalId[k]=='A0DY' then
 		if LoadBoolean(HY, GetHandleId(GetOwningPlayer(u)),'R00J') then
-			call AddUnitBonusRange(u, -190., true)
+			call UnitAddAttackRangeBonus(u, -190.)
 			call SaveBoolean(HY, GetHandleId(GetOwningPlayer(u)),'R00J', false)
 		endif
 	elseif AghanimUpgradeNormalId[k]=='A0CY' then
 		if LoadBoolean(HY, GetHandleId(GetOwningPlayer(u)),'R0L3') then
-			call AddUnitBonusRange(u, -107., false)
+			call UnitAddAttackRangeBonus(u, -107.)
 			call SaveBoolean(HY, GetHandleId(GetOwningPlayer(u)),'R0L3', false)
 			call UnitRemoveAbility(u,'A2KK')
 		endif
@@ -8037,7 +8016,7 @@ function HDX takes unit u, boolean G6X returns boolean
 	local integer z
 	local boolean b = false
 	local integer i = 1
-	if IsUnitType(u, UNIT_TYPE_HERO) == false or(G6X and G3X(u)) then
+	if IsUnitType(u, UNIT_TYPE_HERO) == false or(G6X and IsUnitAghanimScepterUpgraded(u)) then
 		return false
 	endif
 	//// 给单位添加A杖效果技能
@@ -8091,19 +8070,20 @@ function HDX takes unit u, boolean G6X returns boolean
 	endloop
 	return b
 endfunction
-function HFX takes item it returns boolean
+function IsItemAghanimScepter takes item it returns boolean
 	local integer i = GetItemIndexEx(it)
 	local integer id = GetItemTypeId(it)
-	if id == RealItem[XCV]or id == RealItem[XFV]or id == RealItem[XDV] then
+	if id == RealItem[Item_AghanimScepter]or id == RealItem[Item_AghanimScepterBasis]or id == RealItem[Item_AghanimScepterGiftable] then
 		return true
 	endif
 	return false
 endfunction
-function HGX takes integer GTX returns boolean
-	return GTX == NXV or GTX == R6V or GTX == R8V or GTX == RYV or GTX == R_V or GTX == R0V or GTX == R2V or GTX == R3V or GTX == R4V or GTX == RZV or GTX == R9V or GTX == IVV or GTX == it_jys
+// 消耗品？
+function HGX takes integer itemIndex returns boolean
+	return itemIndex == NXV or itemIndex == R6V or itemIndex == R8V or itemIndex == RYV or itemIndex == R_V or itemIndex == R0V or itemIndex == R2V or itemIndex == R3V or itemIndex == R4V or itemIndex == RZV or itemIndex == R9V or itemIndex == IVV or itemIndex == it_jys
 endfunction
-function HHX takes integer GTX returns boolean
-	return(GTX) == NUV or GTX == RRV or(GTX) == IUV or(GTX) == IWV or GTX == NIV or GTX == AIV or(GTX) == Item_MagicStick or(GTX) == Item_MagicWand or GTX == RAV
+function HHX takes integer itemIndex returns boolean
+	return(itemIndex) == NUV or itemIndex == RRV or(itemIndex) == IUV or(itemIndex) == IWV or itemIndex == NIV or itemIndex == AIV or(itemIndex) == Item_MagicStick or(itemIndex) == Item_MagicWand or itemIndex == RAV
 endfunction
 function HJX takes player p returns unit
 	local unit u
@@ -8251,11 +8231,12 @@ function GetItemIcon takes item it returns string
 	endif
 	return ItemsIconFilePath[GetItemIndexEx(it)]
 endfunction
-function H7X takes integer GTX returns integer
-	if R0V == GTX then
+
+function H7X takes integer itemIndex returns integer
+	if R0V == itemIndex then
 		return 4
 	endif
-	if R3V == GTX or R8V == GTX then
+	if R3V == itemIndex or R8V == itemIndex then
 		return 2
 	endif
 	return 1
@@ -9459,7 +9440,7 @@ function L8X takes unit u returns nothing
 	endif
 	call BYX(XE, GetOwningPlayer(u))
 	call SetUnitState(u, UNIT_STATE_MANA, 999999)
-	if G3X(u) then
+	if IsUnitAghanimScepterUpgraded(u) then
 		call HDX(u, false)
 	endif
 	call SetUnitInvulnerable(u, false)
@@ -9647,9 +9628,9 @@ function MCX takes nothing returns nothing
 		call UnitRemoveAbility(u,'QF0O')
 		call SetUnitAbilityLevel(u,'QB0G', GetUnitAbilityLevel(u,'A2AI'))
 	endif
-	call UnitSetStateBonus(u, 0, UNIT_BONUS_ARMOR)
-	call FixUnitSkillsBug(u)
-	call UpdateUnitAttackRangeBonus(u)
+	
+	call UnitUpdateData(u)
+
 	set u = null
 endfunction
 
@@ -9812,6 +9793,8 @@ function MDX takes integer i, integer k returns nothing
 		call ExecuteFunc("MKX")
 		call ExecuteFunc("MLX")
 	elseif (i == 3) then
+		// 魅惑魔女
+		//call ExecuteFunc("Impetus_Init")()
 		call ExecuteFunc("MMX")
 	elseif (i == 95) then
 		call ExecuteFunc("MPX")
@@ -10142,8 +10125,8 @@ function QGX takes integer id returns integer
 		return'A46D'
 	endif
 	set k = WBE(id)
-	if k > 0 and PassiveSkills_Show[k]> 0 then
-		return PassiveSkills_Show[k]
+	if k > 0 and PassiveSkill_Show[k]> 0 then
+		return PassiveSkill_Show[k]
 	endif
 	return id
 endfunction
@@ -10383,7 +10366,7 @@ function Q_X takes player p, boolean isOrder returns nothing
 		return
 	endif
 	loop
-		call SetPlayerAbilityAvailable(p, PassiveSkills_Show[i], b)
+		call SetPlayerAbilityAvailable(p, PassiveSkill_Show[i], b)
 		set i = i + 1
 	exitwhen i > PassiveAbilityMaxCount
 	endloop
@@ -12931,7 +12914,7 @@ function ZTX takes unit ZSX, unit trigUnit returns nothing
 	local integer h = GetHandleId(t)
 	local real x = GetUnitX(ZSX)
 	local real y = GetUnitY(ZSX)
-	local integer GTX
+	local integer itemIndex
 	if IsTerrainPathable(x, y, PATHING_TYPE_WALKABILITY) then
 		set x = GetUnitX(trigUnit)
 		set y = GetUnitY(trigUnit)
@@ -12948,8 +12931,8 @@ function ZTX takes unit ZSX, unit trigUnit returns nothing
 	loop
 	exitwhen i > 5
 		set whichItem = UnitItemInSlot(ZSX, i)
-		set GTX = GetItemIndexEx(whichItem)
-		if whichItem != null and GetItemPlayer(whichItem) == p and(GTX != O3V and GTX != O4V and GTX != O5V and GTX != O6V and GTX != O7V) then
+		set itemIndex = GetItemIndexEx(whichItem)
+		if whichItem != null and GetItemPlayer(whichItem) == p and(itemIndex != O3V and itemIndex != O4V and itemIndex != O5V and itemIndex != O6V and itemIndex != O7V) then
 			call UnitRemoveItem(ZSX, whichItem)
 			call SetItemPosition(whichItem, x, y)
 		endif
@@ -13400,7 +13383,7 @@ function VFO takes player whichPlayer, unit whichUnit, integer VGO, integer i0, 
 	endif
 	set whichItem = null
 endfunction
-function VHO takes player p, unit whichUnit, integer GTX returns boolean
+function VHO takes player p, unit whichUnit, integer itemIndex returns boolean
 	local integer i
 	local integer x
 	local integer y
@@ -13529,7 +13512,7 @@ function VHO takes player p, unit whichUnit, integer GTX returns boolean
 		else
 			set VJO[i + 1]= 0
 		endif
-		set VJO[0]= GTX
+		set VJO[0]= itemIndex
 		set i = 1
 		loop
 		exitwhen i >(CombineMaxIndex)
@@ -13628,11 +13611,11 @@ function VHO takes player p, unit whichUnit, integer GTX returns boolean
 	set whichPlayer = null
 	return false
 endfunction
-function ECO takes player whichPlayer, unit whichUnit, integer GTX returns boolean
+function ECO takes player whichPlayer, unit whichUnit, integer itemIndex returns boolean
 	local integer i = 1
 	local boolean JVX
 	set X3 = false
-	set JVX = VHO(whichPlayer, whichUnit, GTX)
+	set JVX = VHO(whichPlayer, whichUnit, itemIndex)
 	return JVX
 endfunction
 function EDO takes nothing returns boolean
@@ -13676,11 +13659,11 @@ function EGO takes unit whichUnit, integer EHO returns unit
 	set g = null
 	return MissileHitTargetUnit
 endfunction
-function EJO takes player whichPlayer, unit whichUnit, unit EKO, integer GTX, real x, real y, integer HUX, integer ELO returns nothing
+function EJO takes player whichPlayer, unit whichUnit, unit EKO, integer itemIndex, real x, real y, integer HUX, integer ELO returns nothing
 	local unit EMO = null
 	local item HWX = null
 	set Y2 = EKO
-	if GTX < 0 then
+	if itemIndex < 0 then
 		return
 	endif
 	if GetUnitPointValue(whichUnit)== 200 then
@@ -13691,50 +13674,50 @@ function EJO takes player whichPlayer, unit whichUnit, unit EKO, integer GTX, re
 	else
 		set EMO = whichUnit
 	endif
-	if EMO == null or ECO(whichPlayer, EMO, GSX(GTX)) == false or X3 == false then
-		if HHX(GSX(GTX)) then
+	if EMO == null or ECO(whichPlayer, EMO, GSX(itemIndex)) == false or X3 == false then
+		if HHX(GSX(itemIndex)) then
 			if H_X(EMO) == 0 or EMO == null then
 				if EMO == null then
-					call HYX(PowerupItem[GTX], x, y, whichPlayer, true, HUX)
+					call HYX(PowerupItem[itemIndex], x, y, whichPlayer, true, HUX)
 				else
 					if GetDistanceBetween(GetUnitX(EMO), GetUnitY(EMO), x, y)> 2000 then
 						set x = GetUnitX(EMO)
 						set y = GetUnitY(EMO)
 						call InterfaceErrorForPlayer(whichPlayer, "Inventory is full!")
 					endif
-					call HYX(PowerupItem[GTX], x, y, whichPlayer, true, HUX)
+					call HYX(PowerupItem[itemIndex], x, y, whichPlayer, true, HUX)
 				endif
 			else
-				set HWX = UnitAddItemById(EMO, RealItem[GTX])
+				set HWX = UnitAddItemById(EMO, RealItem[itemIndex])
 				call SetItemCharges(HWX, HUX)
 				call SetItemPlayer(HWX, whichPlayer, true)
 				call SetItemUserData(HWX, ELO)
 			endif
-		elseif HGX(GSX(GTX)) then
-			if EMO == null or(H_X(EMO) == 0 and GetItemOfTypeFromUnit(EMO, RealItem[GTX]) == null) then
-				call HYX(PowerupItem[GTX], x, y, whichPlayer, true, H7X(GTX))
+		elseif HGX(GSX(itemIndex)) then
+			if EMO == null or(H_X(EMO) == 0 and GetItemOfTypeFromUnit(EMO, RealItem[itemIndex]) == null) then
+				call HYX(PowerupItem[itemIndex], x, y, whichPlayer, true, H7X(itemIndex))
 			else
-				set HWX = CreateItem(PowerupItem[GTX], x, y)
+				set HWX = CreateItem(PowerupItem[itemIndex], x, y)
 				call SetItemPlayer(HWX, whichPlayer, true)
 				call SetItemUserData(HWX, ELO)
-				call SetItemCharges(HWX, H7X(GTX))
+				call SetItemCharges(HWX, H7X(itemIndex))
 				call UnitAddItem(EMO, HWX)
 			endif
 		else
 			if H_X(EMO) == 0 or EMO == null then
 				if EMO == null then
-					call HYX(PowerupItem[GTX], x, y, whichPlayer, true, 0)
+					call HYX(PowerupItem[itemIndex], x, y, whichPlayer, true, 0)
 				else
 					if GetDistanceBetween(GetUnitX(EMO), GetUnitY(EMO), x, y)> 2000 then
 						set x = GetUnitX(EMO)
 						set y = GetUnitY(EMO)
 						call InterfaceErrorForPlayer(whichPlayer, "Inventory is full!")
 					endif
-					call HYX(PowerupItem[GTX], x, y, whichPlayer, true, 0)
+					call HYX(PowerupItem[itemIndex], x, y, whichPlayer, true, 0)
 				endif
 			else
-				if GTX != NXV then
-					set HWX = UnitAddItemById(EMO, RealItem[GTX])
+				if itemIndex != NXV then
+					set HWX = UnitAddItemById(EMO, RealItem[itemIndex])
 					call SetItemPlayer(HWX, whichPlayer, true)
 					call SetItemUserData(HWX, 0)
 				else
@@ -13745,7 +13728,7 @@ function EJO takes player whichPlayer, unit whichUnit, unit EKO, integer GTX, re
 	else
 		if IsUnitType(EMO, UNIT_TYPE_HERO) then
 			if ELO == 0 then
-				call StoreDrCacheData("PUI_" + I2S(GetPlayerId(GetOwningPlayer(EMO))), RealItem[GSX(GTX)])
+				call StoreDrCacheData("PUI_" + I2S(GetPlayerId(GetOwningPlayer(EMO))), RealItem[GSX(itemIndex)])
 			endif
 		endif
 	endif
@@ -13753,39 +13736,39 @@ function EJO takes player whichPlayer, unit whichUnit, unit EKO, integer GTX, re
 	set HWX = null
 endfunction
 // 消耗品计数判定
-function EPO takes player p, integer GTX returns nothing
+function EPO takes player p, integer itemIndex returns nothing
 	local integer i = GetPlayerId(p)
-	if GTX == RYV then
+	if itemIndex == RYV then
 		set PlayerConsumablesCount[i]= PlayerConsumablesCount[i] + 1
-	elseif GTX == R_V then
+	elseif itemIndex == R_V then
 		set PlayerConsumablesCount[i]= PlayerConsumablesCount[i] + 1
-	elseif GTX == R0V then
+	elseif itemIndex == R0V then
 		set PlayerConsumablesCount[i]= PlayerConsumablesCount[i] + 4
-	elseif GTX == R2V then
+	elseif itemIndex == R2V then
 		set PlayerConsumablesCount[i]= PlayerConsumablesCount[i] + 1
 		set PlayerWardCount[i]= PlayerWardCount[i] + 1
-	elseif GTX == R3V then
+	elseif itemIndex == R3V then
 		set PlayerConsumablesCount[i]= PlayerConsumablesCount[i] + 2
 		set PlayerWardCount[i]= PlayerWardCount[i] + 2
-	elseif GTX == R4V then
+	elseif itemIndex == R4V then
 		set PlayerConsumablesCount[i]= PlayerConsumablesCount[i] + 1
-	elseif GTX == R8V then
+	elseif itemIndex == R8V then
 		set PlayerConsumablesCount[i]= PlayerConsumablesCount[i] + 2
-	elseif GTX == RZV then
+	elseif itemIndex == RZV then
 		set PlayerConsumablesCount[i]= PlayerConsumablesCount[i] + 2
-	elseif GTX == R9V then
+	elseif itemIndex == R9V then
 		set PlayerConsumablesCount[i]= PlayerConsumablesCount[i] + 2
 	endif
 endfunction
 function EQO takes unit ESO, unit ETO returns boolean
-	local integer GTX
+	local integer itemIndex
 	if (ESO == ScourgeTombOfRelics or ESO == ScourgeDemonicArtifacts or ESO == ScourgePigKing) and IsUnitAlly(ETO, ScourgePlayers[0]) then
 		return false
 	elseif (ESO == SentinelAncientOfWonders or ESO == SentinelCacheOfTheQuelThelan or ESO == SentinelPigKing) and IsUnitAlly(ETO, SentinelPlayers[0]) then
 		return false
 	endif
-	set GTX = GetItemSellDummyUnitIndex(ETO)
-	if GTX == R2V or GTX == X4V or GTX == IVV or GTX == it_jys then
+	set itemIndex = GetItemSellDummyUnitIndex(ETO)
+	if itemIndex == R2V or itemIndex == X4V or itemIndex == IVV or itemIndex == it_jys then
 		return true
 	endif
 	return false
@@ -14647,23 +14630,23 @@ function XZO takes nothing returns boolean
 			if HTX then
 				call SetItemCharges(HWX, HUX)
 			endif
-		elseif X0O == false and GetItemType(whichItem) == ITEM_TYPE_PERMANENT and HFX(whichItem) and IsUnitType(ZWX, UNIT_TYPE_HERO) then
+		elseif X0O == false and GetItemType(whichItem) == ITEM_TYPE_PERMANENT and IsItemAghanimScepter(whichItem) and IsUnitType(ZWX, UNIT_TYPE_HERO) then
 			if HDX(ZWX, false) then
-				if GTX == XFV or(IsPlayerHasSkill(X1O,(39 -1)* 4 + 3) and GTX != XDV) then
+				if GTX == Item_AghanimScepterBasis or(IsPlayerHasSkill(X1O,(39 -1)* 4 + 3) and GTX != Item_AghanimScepterGiftable) then
 					call HZX(whichItem)
 					if IsPlayerHasSkill(X1O,(39 -1)* 4 + 3) then
-						set HWX = UnitAddItemById(ZWX, RealItem[XDV])
+						set HWX = UnitAddItemById(ZWX, RealItem[Item_AghanimScepterGiftable])
 					else
-						set HWX = UnitAddItemById(ZWX, RealItem[XCV])
+						set HWX = UnitAddItemById(ZWX, RealItem[Item_AghanimScepter])
 					endif
 					set X3O = HWX
 					call SetItemPlayer(HWX, X1O, false)
 					call SetItemUserData(HWX, 1)
 				endif
 			else
-				if GTX != XFV then
+				if GTX != Item_AghanimScepterBasis then
 					call HZX(whichItem)
-					set HWX = UnitAddItemById(ZWX, RealItem[XFV])
+					set HWX = UnitAddItemById(ZWX, RealItem[Item_AghanimScepterBasis])
 					set X3O = HWX
 					call SetItemPlayer(HWX, X1O, false)
 					call SetItemUserData(HWX, 1)
@@ -14747,7 +14730,7 @@ function XZO takes nothing returns boolean
 	else
 		if GetWidgetLife(whichItem)> 0 then
 			set TempItem = whichItem
-			if HFX(whichItem) then
+			if IsItemAghanimScepter(whichItem) then
 				call HDX(ZWX, true)
 			endif
 			if GetItemUserData(whichItem)==-500 then
@@ -15093,7 +15076,7 @@ function OnManipulatItem takes nothing returns boolean
 		call SetItemUserData(whichItem,-2)
 		call OLO(GetOwningPlayer(u), whichItem)
 		set TempItem = whichItem
-		if HFX(whichItem) then
+		if IsItemAghanimScepter(whichItem) then
 			call HDX(u, true)
 		endif
 	elseif GetItemTypeId(GetManipulatedItem())!='I02M' then
@@ -16439,13 +16422,13 @@ function AFO takes nothing returns boolean
 	local item RIO
 	local item it = null
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
-		call SaveBoolean(HY,(GetHandleId(u)),'f',(false))
+		call SaveBoolean(HY,(GetHandleId(u)),102,(false))
 		call FlushChildHashtable(HY, h)
 		call DestroyTrigger(t)
 	elseif ABO(u) == false then
 		call TriggerRegisterTimerEvent(t, 5.5, false)
 	else
-		call SaveBoolean(HY,(GetHandleId(u)),'f',(false))
+		call SaveBoolean(HY,(GetHandleId(u)),102,(false))
 		call DisableTrigger(UnitManipulatItemTrig)
 		if CJV[GetPlayerId(GetOwningPlayer(u))]> 0 then
 			set it = UnitAddItemById(u,'I0HM')
@@ -16495,7 +16478,7 @@ function AGO takes unit u returns nothing
 	local unit dummyCaster = null
 	local item RIO = null
 	call DisableTrigger(UnitManipulatItemTrig)
-	call SaveBoolean(HY,(GetHandleId(u)),'f',(true))
+	call SaveBoolean(HY,(GetHandleId(u)),102,(true))
 	call TriggerRegisterTimerEvent(t, 17, false)
 	call TriggerRegisterDeathEvent(t, u)
 	call TriggerAddCondition(t, Condition(function AFO))
@@ -16537,12 +16520,12 @@ function AHO takes nothing returns boolean
 		exitwhen i > 5
 			set id = GetPlayerId(SentinelPlayers[i])
 			set u = PlayerHeroes[id]
-			if CJV[id]> 0 and u != null and UnitAlive(u) and LoadBoolean(HY, GetHandleId(u),'f') == false and UnitHasSpellShield(u) == false and LoadBoolean(HY, GetHandleId(u), 129) == false then
+			if CJV[id]> 0 and u != null and UnitAlive(u) and LoadBoolean(HY, GetHandleId(u),102) == false and UnitHasSpellShield(u) == false and LoadBoolean(HY, GetHandleId(u), 129) == false then
 				call AGO(u)
 			endif
 			set id = GetPlayerId(ScourgePlayers[i])
 			set u = PlayerHeroes[id]
-			if CJV[id]> 0 and u != null and UnitAlive(u) and LoadBoolean(HY, GetHandleId(u),'f') == false and UnitHasSpellShield(u) == false and LoadBoolean(HY, GetHandleId(u), 129) == false then
+			if CJV[id]> 0 and u != null and UnitAlive(u) and LoadBoolean(HY, GetHandleId(u),102) == false and UnitHasSpellShield(u) == false and LoadBoolean(HY, GetHandleId(u), 129) == false then
 				call AGO(u)
 			endif
 			set i = i + 1
@@ -16562,10 +16545,10 @@ function GLE takes nothing returns boolean
 	if GetSpellAbilityId()=='A0H6' then
 		set u = GetTriggerUnit()
 		set h = GetHandleId(u)
-		call SaveUnitHandle(HY, h,'g', null)
+		call SaveUnitHandle(HY, h,103, null)
 		call SaveInteger(HY, h,104, 0)
 		if (GetItemOfTypeFromUnit(GetTriggerUnit(), RealItem[O_V])!= null or GetItemOfTypeFromUnit(GetTriggerUnit(), DisabledItem[O_V])!= null) and(GetUnitTypeId(GetSpellTargetUnit())=='nfoh' or GetUnitTypeId(GetSpellTargetUnit())=='ndfl') then
-			call SaveUnitHandle(HY, h,'g', GetSpellTargetUnit())
+			call SaveUnitHandle(HY, h,103, GetSpellTargetUnit())
 		elseif ZNX(GetItemTypeId(GetSpellTargetItem())) then
 			set id = ZAX(GetItemTypeId(GetSpellTargetItem()))
 			call OQO(GetTriggerUnit(), id, true)
@@ -16588,7 +16571,7 @@ function AKO takes nothing returns nothing
 	local integer id
 	if GTX == O_V then
 		set itemSlot = GetUnitItemSlot(u, whichItem)
-		set ALO =(LoadUnitHandle(HY,(GetHandleId(u)),'g'))
+		set ALO =(LoadUnitHandle(HY,(GetHandleId(u)),103))
 		set AMO =(LoadInteger(HY,(GetHandleId(u)),104))
 		if GetUnitTypeId(ALO)=='nfoh' or GetUnitTypeId(ALO)=='ndfl' then
 			call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Undead\\ReplenishMana\\SpiritTouchTarget.mdl", u, "overhead"))
@@ -20131,14 +20114,14 @@ function H5E takes nothing returns nothing
 		set i = 0
 		loop
 		exitwhen i > 5
-			if HFX(UnitItemInSlot(u, i)) and IsItemPawnable(UnitItemInSlot(u, i)) == false then
+			if IsItemAghanimScepter(UnitItemInSlot(u, i)) and IsItemPawnable(UnitItemInSlot(u, i)) == false then
 				call SetItemDroppable(UnitItemInSlot(u, i), true)
 			endif
 			set i = i + 1
 		endloop
-		set XX[GetPlayerId(GetOwningPlayer(u))]= XX[GetPlayerId(GetOwningPlayer(u))] + TEX(RealItem[XFV])
+		set XX[GetPlayerId(GetOwningPlayer(u))]= XX[GetPlayerId(GetOwningPlayer(u))] + TEX(RealItem[Item_AghanimScepterBasis])
 		if GetOwningPlayer(u)!= GetOwningPlayer(GetTriggerUnit()) then
-			set XX[GetPlayerId(GetOwningPlayer(GetTriggerUnit()))]= XX[GetPlayerId(GetOwningPlayer(GetTriggerUnit()))] + TEX(RealItem[XFV])
+			set XX[GetPlayerId(GetOwningPlayer(GetTriggerUnit()))]= XX[GetPlayerId(GetOwningPlayer(GetTriggerUnit()))] + TEX(RealItem[Item_AghanimScepterBasis])
 		endif
 		set GR[GetPlayerId(GetOwningPlayer(GetTriggerUnit()))]= true
 		set GR[GetPlayerId(GetOwningPlayer(u))]= true
@@ -21161,7 +21144,7 @@ function F9O takes nothing returns boolean
 	elseif itemId == RealItem[RPV] or itemId == RealItem[Item_IronwoodBranch] or itemId == RealItem[Item_MoonShard] then
 		// 使用芒果 树枝 银月 那就删了
 		call RemoveItem(whichItem)
-	elseif itemId == RealItem[XDV] then
+	elseif itemId == RealItem[Item_AghanimScepterGiftable] then
 		if bj_playerIsCrippled[0] then
 			call RemoveItem(whichItem)
 			call HDX(whichUnit, true)
@@ -26544,10 +26527,10 @@ function YGO takes unit u, integer s1, integer s2 returns nothing
 	local item YHO = null
 	local item YJO = null
 	call DisableTrigger(UnitManipulatItemTrig)
-	if UnitItemInSlot(u, s2 -1)!= null and GUX(GetItemIndexEx(UnitItemInSlot(u, s2 -1))) == false and GetItemIndex(UnitItemInSlot(u, s2 -1)) == XCV then
+	if UnitItemInSlot(u, s2 -1)!= null and GUX(GetItemIndexEx(UnitItemInSlot(u, s2 -1))) == false and GetItemIndex(UnitItemInSlot(u, s2 -1)) == Item_AghanimScepter then
 		set YJO = UnitRemoveItemFromSlot(u, s2 -1)
 	endif
-	if UnitItemInSlot(u, s1 -1)!= null and GUX(GetItemIndexEx(UnitItemInSlot(u, s1 -1))) == false and GetItemIndex(UnitItemInSlot(u, s1 -1)) == XCV then
+	if UnitItemInSlot(u, s1 -1)!= null and GUX(GetItemIndexEx(UnitItemInSlot(u, s1 -1))) == false and GetItemIndex(UnitItemInSlot(u, s1 -1)) == Item_AghanimScepter then
 		set YHO = UnitRemoveItemFromSlot(u, s1 -1)
 	endif
 	call EnableTrigger(UnitManipulatItemTrig)
@@ -26580,18 +26563,6 @@ function YKO takes nothing returns nothing
 	else
 		call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 5, "不正确的数值.请在1-6之间输入.")
 	endif
-endfunction
-// 获得技能的阿哈利姆神杖升级索引 没有神杖升级就是返回 0 
-function GetSkillAghanimUpgradeIndex takes integer id returns integer
-	local integer i = 1
-	loop
-	exitwhen i > AghanimUpgradeMaxIndex
-		if id == AghanimUpgradeUpgradeId[i]or id == AghanimUpgradeNormalId[i] then
-			return i
-		endif
-		set i = i + 1
-	endloop
-	return 0
 endfunction
 
 // 有等级区分
@@ -31581,43 +31552,8 @@ function IWR takes unit u, unit t returns nothing
 		endif
 	endif
 endfunction
-// 注册A杖升级 normalId changeId upgradeId AghanimUpgradeMaxIndex
-// 通过GetSkillAghanimUpgradeIndex来获得技能的神杖升级索引
-function RegisterAghanimUpgrade takes integer normalId, integer changeId, integer upgradeId, integer whichInteger returns nothing
-	// 获取原本技能的索引()
-	local integer id = GetNormalSkillIndex(normalId)
-	// 原本技能
-	set AghanimUpgradeNormalId[AghanimUpgradeMaxIndex] = normalId
-	// 神杖升级的工程升级技能
-	set AghanimUpgradeChangeId[AghanimUpgradeMaxIndex] = changeId
-	call SetAllPlayerAbilityUnavailable(changeId)
-	// 神杖升级后的技能
-	set AghanimUpgradeUpgradeId[AghanimUpgradeMaxIndex] = upgradeId
-	// 未引用 参数都是0
-	set AghanimUpgradeUnknownId[AghanimUpgradeMaxIndex] = whichInteger
-	if id > 0 and HeroSkill_Special[id]== 0 then
-		set HeroSkill_Special[id]= upgradeId
-	endif
-	set AghanimUpgradeMaxIndex = AghanimUpgradeMaxIndex + 1
-endfunction
-// 注册被动技能
-// 第一个参数为真实的技能(用这个判断)(在魔法书里面不显示)
-// 第二个参数为魔法书马甲技能(会被禁用)
-// 第三个参数为被学习的技能 被学习技能等级为0就说明没这个技能
-// 第四个参数为技能提供的Buff(没有就是0)
-// 第五个参数为显示的马甲技能(没有作用只是显示，会被-sp隐藏)
-// 第六个参数为幻象出生时添加的技能
-// PassiveAbilityMaxCount为最大被动数量
-function RegisterPassiveSkills takes integer iRealSkill, integer iSpellBookSkill, integer iLearnedSkill, integer iSkillBuff, integer iShowSkill, integer iillusionUnitSkill returns nothing
-	set PassiveAbilityMaxCount = PassiveAbilityMaxCount + 1
-	set PassiveSkills_Real[PassiveAbilityMaxCount]= iRealSkill
-	set PassiveSkills_SpellBook[PassiveAbilityMaxCount]= iSpellBookSkill
-	set PassiveSkills_Learned[PassiveAbilityMaxCount]= iLearnedSkill
-	set PassiveSkills_Buff[PassiveAbilityMaxCount]= iSkillBuff
-	set PassiveSkills_Show[PassiveAbilityMaxCount]= iShowSkill
-	set PassiveSkills_illusion[PassiveAbilityMaxCount]= iillusionUnitSkill
-	call SetAllPlayerAbilityUnavailable(iSpellBookSkill)
-endfunction
+
+
 
 
 function AER takes nothing returns nothing
@@ -31768,8 +31704,7 @@ endfunction
 function ASR takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	//local string s = LoadStr(HY, GetHandleId(t), 0)
-	call ExecuteFunc("InitAghanimScepterUpgrade1")
-	call ExecuteFunc("InitAghanimScepterUpgrade2")
+	call ExecuteFunc("HeroSkillsAghanimScepterUpgrade_Init")
 	//call FlushChildHashtable(HY, GetHandleId(t))
 	call DestroyTimer(t)
 	set t = null
@@ -32390,7 +32325,7 @@ function AYR takes string AZR, integer A_R returns nothing
 	call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, 20., "地图内置了二种命令改键方式，详细可在能量圈查看。")
 	call ShowGameStartTopTips()
 	// 初始化技能表
-	call ExecuteFunc("InitHeroSkillsData")
+	call ExecuteFunc("HeroSkills_Init")
 	// 初始化技能双击施法
 	call ExecuteFunc("DoubleClickSkill__Init")
 	call INX("A8R", SP)
@@ -45674,13 +45609,13 @@ endfunction
 function range_Take_Aim takes nothing returns nothing
 	local unit u = U2
 	local integer lv = Q2
-	call AddUnitBonusRange(u, 100. * lv, true)
+	call UnitAddAttackRangeBonus(u, 100. * lv)
 	set u = null
 endfunction
 
 function PTE takes nothing returns nothing
 	local unit u = GetTriggerUnit()
-	call AddUnitBonusRange(u, 100., true)
+	call UnitAddAttackRangeBonus(u, 100.)
 	set u = null
 endfunction
 
@@ -46735,7 +46670,7 @@ function R6I takes nothing returns nothing
 		call DestroyTimer(t)
 		call FlushChildHashtable(HY, h)
 	else
-		if GetUnitDistanceEx(RWI, KKX)> 1425 and G3X(KKX) == false then
+		if GetUnitDistanceEx(RWI, KKX)> 1425 and IsUnitAghanimScepterUpgraded(KKX) == false then
 			call UnitAddPermanentAbility(RWI,'A44D')
 			call UnitAddPermanentAbility(RWI,'A44E')
 		elseif GetUnitAbilityLevel(RWI,'A44D')> 0 then
@@ -46871,7 +46806,7 @@ function M1X takes nothing returns nothing
 endfunction
 function R9I takes unit triggerUnit returns nothing
 	local integer pid = GetPlayerId(GetOwningPlayer(triggerUnit))
-	if triggerUnit == PlayerHeroes[pid]and HaveSavedHandle(HY, GetHandleId(GetOwningPlayer(triggerUnit)), 333) and UnitIsDead(LoadUnitHandle(HY, GetHandleId(GetOwningPlayer(triggerUnit)), 333)) == false and G3X(triggerUnit) == false then
+	if triggerUnit == PlayerHeroes[pid]and HaveSavedHandle(HY, GetHandleId(GetOwningPlayer(triggerUnit)), 333) and UnitIsDead(LoadUnitHandle(HY, GetHandleId(GetOwningPlayer(triggerUnit)), 333)) == false and IsUnitAghanimScepterUpgraded(triggerUnit) == false then
 		call KillUnit(LoadUnitHandle(HY, GetHandleId(GetOwningPlayer(triggerUnit)), 333))
 	endif
 endfunction
@@ -48091,7 +48026,7 @@ function NNI takes nothing returns boolean
 		call DestroyEffect(LoadEffectHandle(HY, h, 32))
 		call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Orc\\WarStomp\\WarStompCaster.mdl", GetUnitX(whichUnit), GetUnitY(whichUnit)))
 		if IsUnitEnemy(whichUnit, GetOwningPlayer(trigUnit)) then
-			if G3X(trigUnit) then
+			if IsUnitAghanimScepterUpgraded(trigUnit) then
 				call UnitDamageTargetEx(trigUnit, whichUnit, 1,(.2 + .15 *(level + 1))* 75 * NCI)
 			else
 				call UnitDamageTargetEx(trigUnit, whichUnit, 1,(.2 + .15 * level)* 75 * NCI)
@@ -49411,14 +49346,14 @@ endfunction
 function range_Psi_Blades takes nothing returns nothing
 	local unit u = U2
 	local integer lv = Q2
-	call AddUnitBonusRange(u, 60. * lv, true)
+	call UnitAddAttackRangeBonus(u, 60. * lv)
 	set u = null
 endfunction
 
 function P_E takes nothing returns nothing
 	local unit u = GetTriggerUnit()
 	local integer lv =(GetUnitAbilityLevel(u,'A0RO'))
-	call AddUnitBonusRange(u, 60., true)
+	call UnitAddAttackRangeBonus(u, 60.)
 	if lv == 1 then
 		call CHI(u)
 		call SaveBoolean(ObjectHashTable, GetHandleId(u),'A0RO', true)
@@ -59028,9 +58963,9 @@ function UnitLaunchAttack takes unit source, unit target returns nothing
 	set AttackReadySource = source
 	set AttackReadyTarget = target
 	call MHGame_ExecuteFunc("ExecteAttackReady")
-	call AddUnitBonusRange(source, 99999, false)
+	call UnitAddAttackRangeBonus(source, 99999)
 	call MHUnit_LaunchAttack(source, 1, target)
-	call AddUnitBonusRange(source, - 99999, false)
+	call UnitAddAttackRangeBonus(source, - 99999)
 endfunction
 // 窒息之刃
 function StiflingDaggerOnMissileHit takes nothing returns nothing
@@ -70324,7 +70259,7 @@ function KXA takes nothing returns nothing
 	local boolean b = GetSpellAbilityId()=='A30J'
 	local integer key = 0
 	if id != 0 then
-		set key = GetSkillAghanimUpgradeIndex(id)
+		set key = GetSkillAghanimUpgradeIndexById(id)
 		if b then
 			if key> 0 and AghanimUpgradeUpgradeId[key]> 0 then
 				set id = AghanimUpgradeUpgradeId[key]
@@ -72588,7 +72523,7 @@ function M9A takes unit u, integer TPE, integer PVA, integer level returns nothi
 	call SaveInteger(ObjectHashTable, GetHandleId(u),'A40K'+ PVA, HeroSkill_Base[PlayerSkillIndices[TPE]])
 	call SaveInteger(HY, h, 1, PVA)
 	call SaveInteger(HY, h, 2, level)
-	if CheckAbilityIdFormIndex(GetNormalSkillIndex(TPE),-1, "metamorphosis", null) then
+	if CheckAbilityIdFormIndex(GetBaseSkillIndexById(TPE),-1, "metamorphosis", null) then
 		call SaveBoolean(ObjectHashTable, GetHandleId(u),'A40K'+ PVA, true)
 	endif
 	if PVA == 3 then
@@ -75019,10 +74954,10 @@ function RegisterOtherEvent takes unit whichUnit returns nothing
 	/*
 	set i = 1
 	loop
-		set level = GetUnitAbilityLevel(whichUnit, PassiveSkills_Learned[i])
-		if level == 0 and PassiveSkills_SpellBook[i]> 0 then
-			call UnitRemoveAbility(whichUnit, PassiveSkills_SpellBook[i])
-			call UnitRemoveAbility(whichUnit, PassiveSkills_Buff[i])
+		set level = GetUnitAbilityLevel(whichUnit, PassiveSkill_Learned[i])
+		if level == 0 and PassiveSkill_SpellBook[i]> 0 then
+			call UnitRemoveAbility(whichUnit, PassiveSkill_SpellBook[i])
+			call UnitRemoveAbility(whichUnit, PassiveSkill_Buff[i])
 		endif
 		set i = i + 1
 	exitwhen i > PassiveAbilityMaxCount
@@ -75767,7 +75702,7 @@ function NYR takes nothing returns nothing
 	call TriggerAddCondition(t, Condition(function U8A))
 
 	// 初始化被动技能表
-	call ExecuteFunc("InitPassiveSkills")
+	call ExecuteFunc("HeroPassiveSkill_Init")
 	set t = null
 endfunction
 function WEA takes string s returns nothing
@@ -75887,7 +75822,6 @@ function W2A takes nothing returns nothing
 	endloop
 endfunction
 function W3A takes unit killingUnit, unit triggerUnit returns nothing
-	call FlushUnitData(triggerUnit)
 	if LoadBoolean(SightDataHashTable, GetUnitTypeId(triggerUnit), 0) or IsUnitIllusion(triggerUnit) then
 		return
 	endif
@@ -78236,13 +78170,13 @@ function Init_UnitsTypeExpData takes nothing returns nothing
 	call SaveInteger(SightDataHashTable,'eaoe', CC, 100)
 	call SaveInteger(SightDataHashTable,'eaoe', DC, 150)
 	call SaveInteger(SightDataHashTable,'eaoe', HC, 25)
-	call SaveInteger(SightDataHashTable,'edob', CC,'f')
+	call SaveInteger(SightDataHashTable,'edob', CC,102)
 	call SaveInteger(SightDataHashTable,'edob', DC, 120)
 	call SaveInteger(SightDataHashTable,'edob', HC, 25)
-	call SaveInteger(SightDataHashTable,'eaow', CC,'f')
+	call SaveInteger(SightDataHashTable,'eaow', CC,102)
 	call SaveInteger(SightDataHashTable,'eaow', DC, 120)
 	call SaveInteger(SightDataHashTable,'eaow', HC, 25)
-	call SaveInteger(SightDataHashTable,'emow', CC,'f')
+	call SaveInteger(SightDataHashTable,'emow', CC,102)
 	call SaveInteger(SightDataHashTable,'emow', DC, 120)
 	call SaveInteger(SightDataHashTable,'emow', HC, 25)
 	call SaveInteger(SightDataHashTable,'u00T', CC, 150)
@@ -78263,13 +78197,13 @@ function Init_UnitsTypeExpData takes nothing returns nothing
 	call SaveInteger(SightDataHashTable,'utod', CC, 100)
 	call SaveInteger(SightDataHashTable,'utod', DC, 150)
 	call SaveInteger(SightDataHashTable,'utod', HC, 25)
-	call SaveInteger(SightDataHashTable,'ubon', CC,'f')
+	call SaveInteger(SightDataHashTable,'ubon', CC,102)
 	call SaveInteger(SightDataHashTable,'ubon', DC, 120)
 	call SaveInteger(SightDataHashTable,'ubon', HC, 25)
-	call SaveInteger(SightDataHashTable,'usap', CC,'f')
+	call SaveInteger(SightDataHashTable,'usap', CC,102)
 	call SaveInteger(SightDataHashTable,'usap', DC, 120)
 	call SaveInteger(SightDataHashTable,'usap', HC, 25)
-	call SaveInteger(SightDataHashTable,'uzig', CC,'f')
+	call SaveInteger(SightDataHashTable,'uzig', CC,102)
 	call SaveInteger(SightDataHashTable,'uzig', DC, 120)
 	call SaveInteger(SightDataHashTable,'uzig', HC, 25)
 	call SaveInteger(SightDataHashTable,'ndtw', CC, 54)
@@ -78838,199 +78772,6 @@ function Init_UnitsColor takes nothing returns nothing
 	call SaveColorToUnitType('U00C', 100, 100, 100)
 	call SaveColorToUnitType('EC57', 150, 200, 255)
 endfunction
-// 注册神杖升级
-function InitAghanimScepterUpgrade1 takes nothing returns nothing
-	call RegisterAghanimUpgrade('A0O2','A28A','A289', 0)
-	call RegisterAghanimUpgrade('A0DH','A1MZ','A1OB', 0)
-	call RegisterAghanimUpgrade('A0ER','A2S7','A2S8', 0)
-	call RegisterAghanimUpgrade('A0MQ','A1BS','A1B6', 0)
-	call RegisterAghanimUpgrade('A0Z8','A1CW','A1CV', 0)
-	call RegisterAghanimUpgrade('A0QR','A1BL','A1B3', 0)
-	call RegisterAghanimUpgrade('A0M1','A1BR','A1AX', 0)
-	call RegisterAghanimUpgrade('A29L','A448','A447', 0)
-	call RegisterAghanimUpgrade('A0RP','A44A','A449', 0)
-	call RegisterAghanimUpgrade('A054','A0UE','A00U', 0)
-	call RegisterAghanimUpgrade('A1T5','A236','A235', 0)
-	call RegisterAghanimUpgrade('A0IN','A1BT','A1AW', 0)
-	call RegisterAghanimUpgrade('A03R','A0U2','A0AV', 0)
-	call RegisterAghanimUpgrade('A0S8','A1QR','A1QP', 0)
-	call RegisterAghanimUpgrade('A0LT','A1CT','A1CS', 0)
-	call RegisterAghanimUpgrade('A29G','A0U0','A29H', 0)
-	call RegisterAghanimUpgrade('A1W8','A0U8','A1W9', 0)
-	call RegisterAghanimUpgrade('A0L3','A2QB','A2QC', 0)
-	call RegisterAghanimUpgrade('A01P','A0TO','A09Z', 0)
-	call RegisterAghanimUpgrade('A12P','A1DC','A1D6', 0)
-	call RegisterAghanimUpgrade('A0AK','A1G0','A1FY', 0)
-	call RegisterAghanimUpgrade('A0O5','A1BN','A1B1', 0)
-	call RegisterAghanimUpgrade('A00H','A0TY','A0A1', 0)
-	call RegisterAghanimUpgrade('A04P','A1BV','A1AU', 0)
-	call RegisterAghanimUpgrade('A0LC','A444','A443', 0)
-	call RegisterAghanimUpgrade('A0E2','A1MS','A1MR', 0)
-	call RegisterAghanimUpgrade('A0MU','A0UI','A0A2', 0)
-	call RegisterAghanimUpgrade('A0NS','A1DE','A1DA', 0)
-	call RegisterAghanimUpgrade('A0FL','A1D5','A1CX', 0)
-	call RegisterAghanimUpgrade('A0G4','A1DG','A1D8', 0)
-	call RegisterAghanimUpgrade('A06R','A1BM','A1B4', 0)
-	call RegisterAghanimUpgrade('A013','A0UA','A0A6', 0)
-	call RegisterAghanimUpgrade('A080','A1V0','A1UZ', 0)
-	call RegisterAghanimUpgrade('A1AO','A1UW','A1UV', 0)
-	call RegisterAghanimUpgrade('A0J1','A1DD','A1D7', 0)
-	call RegisterAghanimUpgrade('A02Q','A1DH','A1D9', 0)
-	call RegisterAghanimUpgrade('A0QK','A21R','A21Q', 0)
-	call RegisterAghanimUpgrade('A095','A0TQ','A09W', 0)
-	call RegisterAghanimUpgrade('A05T','A0U4','A08H', 0)
-	call RegisterAghanimUpgrade('A067','A0UC','A08P', 0)
-	call RegisterAghanimUpgrade('A0CC','A0TU','A02Z', 0)
-	call RegisterAghanimUpgrade('A0OK','A1VX','A1VW', 0)
-	call RegisterAghanimUpgrade('A28R','A0TW','A28S', 0)
-endfunction
-
-function InitAghanimScepterUpgrade2 takes nothing returns nothing
-	call RegisterAghanimUpgrade('S008','A1US','S00U', 0)
-	call RegisterAghanimUpgrade('A10Q','A1DF','A1DB', 0)
-	call RegisterAghanimUpgrade('A1NE','A2IH','A2IG', 0)
-	call RegisterAghanimUpgrade('A21F','A0U6','A21G', 0)
-	call RegisterAghanimUpgrade('A0NT','A0UG','A0NX', 0)
-	call RegisterAghanimUpgrade('A1MI','A2QF','A2QE', 0)
-	call RegisterAghanimUpgrade('A2BG','A30I','A30H', 0)
-	call RegisterAghanimUpgrade('A27H','A30K','A30J', 0)
-	call RegisterAghanimUpgrade('A1BX','A30M','A30L', 0)
-	call RegisterAghanimUpgrade('A1U6','A30O','A30N', 0)
-	call RegisterAghanimUpgrade('A343','A34K','A34J', 0)
-	call RegisterAghanimUpgrade('A0DY','A1WC','A1WB', 0)
-	call RegisterAghanimUpgrade('A0WP','A43E','A43D', 0)
-	call RegisterAghanimUpgrade('A1RK','A43I','A43H', 0)
-	call RegisterAghanimUpgrade('A1A1','A43K','A43J', 0)
-	call RegisterAghanimUpgrade('A2E5','A43R','A43S', 0)
-	call RegisterAghanimUpgrade('A07Z','A44R','A44S', 0)
-	call RegisterAghanimUpgrade('A2O6','A3G0','A384', 0)
-	call RegisterAghanimUpgrade('A2CI','A38D','A38C', 0)
-	call RegisterAghanimUpgrade('A07U','A38F','A38E', 0)
-	call RegisterAghanimUpgrade('A1YQ','A3DD','A3DE', 0)
-	call RegisterAghanimUpgrade('A0CT','A3DN','A3DM', 0)
-	call RegisterAghanimUpgrade('A01Y','A1BP','A1AZ', 0)
-	call RegisterAghanimUpgrade('A14O','A3FP','A3FJ', 0)
-	call RegisterAghanimUpgrade('A19O','A1MW','A1MV', 0)
-	call RegisterAghanimUpgrade('A06B','A472','A471', 0)
-	call RegisterAghanimUpgrade('A15S','A3JY','A3JX', 0)
-	call RegisterAghanimUpgrade('A05E','A3JZ','A33F', 0)
-	call RegisterAghanimUpgrade('A049','A33H','A33G', 0)
-	call RegisterAghanimUpgrade('A28T','A3JA','A361', 0)
-	call RegisterAghanimUpgrade('Z610','A3K4','A3K5', 0)
-	
-	
-	
-	call RegisterAghanimUpgrade('A0FW','S3OD','A3OD', 0) //刚被兽 粘稠鼻液
-	call RegisterAghanimUpgrade('A0KV','S3UG','A3UG', 0) //
-	call RegisterAghanimUpgrade('A11K','S31K','Z31K', 0) //舰队统帅 幽灵船
-	call RegisterAghanimUpgrade('A046','S3OH','A3OH', 0) //潮汐猎人 巨浪
-	call RegisterAghanimUpgrade('A06O','S3NX','A3NX', 0) //沙王 掘地穿刺
-	call RegisterAghanimUpgrade('A02S','A3Y7','A3Y8', 0) //猛犸 震荡波
-	call RegisterAghanimUpgrade('A14R','S3WT','A3WT', 0) //蓝猫 电子漩涡
-	call RegisterAghanimUpgrade('A29J','S3OJ','A3OJ', 0) //影魔r
-	
-	call RegisterAghanimUpgrade('A1TB','A470','A3FQ', 0)
-	call RegisterAghanimUpgrade('A0O3', 0,'A0O3', 0)
-	call RegisterAghanimUpgrade('QM03', 0, 0, 0)
-	call RegisterAghanimUpgrade('A0A5', 0, 0, 0)
-	call RegisterAghanimUpgrade('A0CY', 0, 0, 0)
-	call RegisterAghanimUpgrade('A088', 0, 0, 0)
-	call RegisterAghanimUpgrade('A085', 0, 0, 0)
-endfunction
-function InitPassiveSkills takes nothing returns nothing
-	// 注意：第五个参数的技能Id最好不要为光环类 (因为这只是用作于显示技能 模板应该为AEev)
-	// 2022/1/1 将ability.slk的
-	// 替换为
-	// C;X2;K"AOac"  |   C;X2;K"AEev"
-	// C;X11;K4      |	 C;X11;K4
-	// C;X10;K1      |	 C;X10;K1
-	// C;Y     		 |	 C;Y
-	// AOac的父级Id为ACac  命令光环 如果更改以此为模板的技能等级 在单位死亡时候会导致崩溃
-	// 所以将其全部更改为AEev 闪避 与命令光环相同一样可以修改技能等级
-	call RegisterPassiveSkills('ACac','Q003','P003','BOac','QP03','QP03')
-	call RegisterPassiveSkills(0, 0,'A0DW', 0,'QP04', 0)
-	call RegisterPassiveSkills('AHab','Q019','P019','B07M','QP05', 0)
-	call RegisterPassiveSkills('P022','Q022','A01K', 0,'QP06', 0)
-	call RegisterPassiveSkills('P035','Q035','A0DZ', 0,'QP07', 0)
-	call RegisterPassiveSkills('A00J','Q036','A0MB', 0,'QP08','QP08')
-	call RegisterPassiveSkills('P047','Q047','A00K', 0,'QP09','QP09')
-	call RegisterPassiveSkills(0,'Q067','P067', 0,'QP0A', 0)
-	call RegisterPassiveSkills('P083','Q083','A0DB','B03B','QP0B','QP0B')
-	call RegisterPassiveSkills('P098','Q098','A041', 0,'QP0D','QP0D') //月刃
-	call RegisterPassiveSkills('P099','Q099','A062','B01W','QP0E', 0)
-	call RegisterPassiveSkills('P102','Q102','A03S', 0,'QP0F', 0)
-	call RegisterPassiveSkills('P107','Q107','A0O0', 0,'QP0G', 0)
-	call RegisterPassiveSkills('P119','Q119','A0MX', 0,'QP0H','QP0H')
-	call RegisterPassiveSkills('P123','Q123','A00V','B00M','QP0I','QP0I')
-	call RegisterPassiveSkills('P131','Q131','A0CL','B04D','QP0J', 0)
-	call RegisterPassiveSkills('P133','Q133','A022', 0,'QP0K','QP0K')
-	call RegisterPassiveSkills('P135','Q135','A0KY', 0,'QP0L','QP0L')
-	call RegisterPassiveSkills('P143','Q143','A06A','B01B','QP0M','QP0M')
-	call RegisterPassiveSkills('P147','Q147','A0BD','B00E','QP0N','QP0N')
-	call RegisterPassiveSkills('P155','Q155','A0O3','B00X','QP0O', 0)
-	call RegisterPassiveSkills('P211','Q211','A27V','B0EO','QP0P', 0)
-	call RegisterPassiveSkills('P231','Q231','A03E','B096','QP0Q', 0)
-	call RegisterPassiveSkills('P239','Q239','A03P', 0,'QP0R','QP0R')
-	call RegisterPassiveSkills('P240','Q240','A03Q', 0,'QP0S','QP0S')
-	call RegisterPassiveSkills(0, 0,'A086','B02L','P247', 0)
-	call RegisterPassiveSkills('AUav','Q250','P250','BVA1','QP0U','QP0U')
-	call RegisterPassiveSkills('AOcr','Q251','A2S0', 0,'QP0W','QP0W')
-	call RegisterPassiveSkills(0, 0,'A0JJ', 0,'QP0V','QP0V')
-	call RegisterPassiveSkills(0, 0,'A081', 0,'QP0X','QP0X')
-	call RegisterPassiveSkills('P279','Q279','A0MM', 0,'QP0Y', 0)
-	call RegisterPassiveSkills('P283','Q283','A1E6','B03X','QP0Z', 0)
-	call RegisterPassiveSkills('P294','Q294','A04E', 0,'QP10', 0)
-	call RegisterPassiveSkills('P302','Q302','A01N','B084','QP11', 0)
-	call RegisterPassiveSkills('P303','Q303','A060', 0,'QP12', 0)
-	call RegisterPassiveSkills('P307','Q307','A06D', 0,'QP13', 0)
-	call RegisterPassiveSkills('P310','Q310','A0ES','B03Y','QP14','QP14')
-	call RegisterPassiveSkills('P319','Q319','A0FU', 0,'QP15','QP15')
-	call RegisterPassiveSkills(0, 0,'A0FA', 0,'QP16','QP16')
-	call RegisterPassiveSkills('P327','Q327','A0C6','B03P','QP17','QP17')
-	call RegisterPassiveSkills(0, 0,'A0MG', 0,'QP18', 0)
-	call RegisterPassiveSkills('P338','Q338','A0FX', 0,'QP19','QP19')
-	call RegisterPassiveSkills('P347','Q347','A0IF','B06X','QP1A', 0)
-	call RegisterPassiveSkills('P355','Q355','A0N7', 0,'QP1B', 0)
-	call RegisterPassiveSkills('P363','Q363','AIcd', 0,'QP1C','QP1C')
-	call RegisterPassiveSkills('P418','Q418','A0MY', 0,'QP1D', 0)
-	call RegisterPassiveSkills('P431','Q431','A03N', 0,'QP1E','QP1E')
-	call RegisterPassiveSkills(0, 0,'A1HR', 0,'QP1F', 0)
-	call RegisterPassiveSkills(0, 0,'A0DJ', 0,'QP1G', 0)
-	call RegisterPassiveSkills(0, 0,'QF85', 0,'QP1H', 0)
-	call RegisterPassiveSkills(0, 0,'A1CD', 0,'QP1I', 0)
-	call RegisterPassiveSkills(0, 0,'A19Q', 0,'QP1J', 0)
-	call RegisterPassiveSkills(0, 0,'A0CY', 0,'QP1K', 0)
-	call RegisterPassiveSkills(0, 0,'A0QQ', 0,'QP1L', 0)
-	call RegisterPassiveSkills(0, 0,'A0M3', 0,'QP1M', 0)
-	call RegisterPassiveSkills(0, 0,'A0FV', 0,'QP1N', 0)
-	call RegisterPassiveSkills(0, 0,'A2EY', 0,'QP1O', 0)
-	call RegisterPassiveSkills(0, 0,'A13T', 0,'A522', 0)
-	call RegisterPassiveSkills(0, 0,'A2E4', 0,'QP1P', 0)
-	call RegisterPassiveSkills(0, 0,'A03U', 0,'QP1Q', 0)
-	call RegisterPassiveSkills(0, 0,'A0RO', 0,'QP1S', 0)
-	call RegisterPassiveSkills(0, 0,'A0N5', 0,'QP1T', 0)
-	call RegisterPassiveSkills(0, 0,'A18X', 0,'QP1U', 0)
-	call RegisterPassiveSkills(0, 0,'A0QW', 0,'QP1V', 0)
-	call RegisterPassiveSkills(0, 0,'A0SS', 0,'QP1W', 0)
-	call RegisterPassiveSkills(0, 0,'A0G5', 0,'QP1X', 0)
-	call RegisterPassiveSkills(0, 0,'A0LE', 0,'QP1Y', 0)
-	call RegisterPassiveSkills(0, 0,'A0I8', 0,'QP1Z', 0)
-	call RegisterPassiveSkills(0, 0,'A0NA', 0,'QP20', 0)
-	call RegisterPassiveSkills(0, 0,'A1A3', 0,'QP21', 0)
-	call RegisterPassiveSkills(0, 0,'A0CZ', 0,'QP22', 0)
-	call RegisterPassiveSkills(0, 0,'A0VX', 0,'QP23', 0)
-	call RegisterPassiveSkills(0, 0,'A088', 0,'QP24', 0)
-	call RegisterPassiveSkills('A33O','A33P','A33Q', 0,'A33R', 0)
-	call RegisterPassiveSkills('A09J','A23F','A417', 0, 0, 0)
-	call RegisterPassiveSkills('A43Z','A442','A440', 0,'QP25', 0)
-	call RegisterPassiveSkills(0, 0,'QF88', 0,'A0VC', 0)
-	call RegisterPassiveSkills('A455','A45C','A45B', 0,'QP26', 0)
-	call RegisterPassiveSkills(0, 0,'A460', 0,'QP27', 0)
-	call RegisterPassiveSkills(0, 0,'A34A', 0,'QP28', 0)
-	call RegisterPassiveSkills(0, 0,'Q0BK', 0,'QP29', 0)
-	call RegisterPassiveSkills(0, 0,'A0A8', 0,'QP2A', 0)
-	call RegisterPassiveSkills('A3J7','A3J7','A02C', 0,'QP2B', 0)
-endfunction
 
 function Init_SpecialAbilityId takes nothing returns nothing //储存切换型技能
 	
@@ -79227,8 +78968,8 @@ function SaveHerosData takes nothing returns nothing
 	call SaveHeroModelScale('E02U', 1.1, 0)
 	call SaveHeroModelData( 100 ,'Ekee','h059','n0AW', "stand victory", 1.)
 	call SaveHeroModelData(101,'E02H','h0CB','n0KL', "stand 3", 1.25)
-	call SaveHeroModelData('f','Ulic','h05A','n0AX', "stand channel", 1.3)
-	call SaveHeroModelData('g','UC76','h05B','n0AY', "spell wail", 1.35)
+	call SaveHeroModelData(102,'Ulic','h05A','n0AX', "stand channel", 1.3)
+	call SaveHeroModelData(103,'UC76','h05B','n0AY', "spell wail", 1.35)
 	call SaveHeroModelData(104,'UC18','h05C','n0AZ', "spell callstorm", 1.3)
 	call JDX(HeroListTypeId[104], 50, 100, 255)
 	call SaveHeroModelData('i','EC57','h05D','n0B0', "attack", 1.)
@@ -79823,130 +79564,6 @@ function Init_ChargeOfDarknessAnimation takes nothing returns nothing
 	call SaveInteger(ObjectHashTable,'N0MO','A1P8', 3)
 	call SaveInteger(ObjectHashTable,'N0MA','A1P8', 3)
 endfunction
-function E7N takes integer unitTypeId, integer T0V returns nothing
-	call SaveInteger(UnitRGBHashTable, unitTypeId, 5, T0V)
-endfunction
-function Init_HerosTypeAghanimEffectAbilityId takes nothing returns nothing
-	call E7N(HeroListTypeId[1],'A1NR')
-	call E7N(HeroListTypeId[2],'A0PF')
-	call E7N(HeroListTypeId[3],'A1X2')
-	call E7N(HeroListTypeId[4], 0)
-	call E7N(HeroListTypeId[5],'A0Q9')
-	call E7N(HeroListTypeId[6], 0)
-	call E7N(HeroListTypeId[7], 0)
-	call E7N(HeroListTypeId[8],'A1OC')
-	call E7N(HeroListTypeId[9], 0)
-	call E7N(HeroListTypeId[10], 0)
-	call E7N(HeroListTypeId[11],'A0PC')
-	call E7N(HeroListTypeId[12],'A1QL')
-	call E7N(HeroListTypeId[13], 0)
-	call E7N(HeroListTypeId[14], 0)
-	call E7N(HeroListTypeId[15], 0)
-	call E7N(HeroListTypeId[16], 0)
-	call E7N(HeroListTypeId[17], 0)
-	call E7N(HeroListTypeId[18],'A0P9')
-	call E7N(HeroListTypeId[19], 0)
-	call E7N(HeroListTypeId[20],'A20M')
-	call E7N(HeroListTypeId[21], 0)
-	call E7N(HeroListTypeId[22], 0)
-	call E7N(HeroListTypeId[23],'A1R7')
-	call E7N(HeroListTypeId[24],'A20V')
-	call E7N(HeroListTypeId[25],'A1NQ')
-	call E7N(HeroListTypeId[26], 0)
-	call E7N(HeroListTypeId[27], 0)
-	call E7N(HeroListTypeId[28],'A0P8')
-	call E7N(HeroListTypeId[29], 0)
-	call E7N(HeroListTypeId[30], 0)
-	call E7N(HeroListTypeId[31], 0)
-	call E7N(HeroListTypeId[32], 0)
-	call E7N(HeroListTypeId[33], 0)
-	call E7N(HeroListTypeId[34], 0)
-	call E7N(HeroListTypeId[35], 0)
-	call E7N(HeroListTypeId[36], 0)
-	call E7N(HeroListTypeId[37],'A29E')
-	call E7N(HeroListTypeId[38],'A1VF')
-	call E7N(HeroListTypeId[39], 0)
-	call E7N(HeroListTypeId[40], 0)
-	call E7N(HeroListTypeId[41], 0)
-	call E7N(HeroListTypeId[42],'A1NS')
-	call E7N(HeroListTypeId[43], 0)
-	call E7N(HeroListTypeId[44],'A1RG')
-	call E7N(HeroListTypeId[45],'A220')
-	call E7N(HeroListTypeId[46], 0)
-	call E7N(HeroListTypeId[47], 0)
-	call E7N(HeroListTypeId[48],'A23E')
-	call E7N(HeroListTypeId[49], 0)
-	call E7N(HeroListTypeId[50], 0)
-	call E7N(HeroListTypeId[51], 0)
-	call E7N(HeroListTypeId[52], 0)
-	call E7N(HeroListTypeId[53], 0)
-	call E7N(HeroListTypeId[54], 0)
-	call E7N(HeroListTypeId[55], 0)
-	call E7N(HeroListTypeId[56], 0)
-	call E7N(HeroListTypeId[57], 0)
-	call E7N(HeroListTypeId[58], 0)
-	call E7N(HeroListTypeId[59], 0)
-	call E7N(HeroListTypeId[60], 0)
-	call E7N(HeroListTypeId[61], 0)
-	call E7N(HeroListTypeId[62], 0)
-	call E7N(HeroListTypeId[63], 0)
-	call E7N(HeroListTypeId[64], 0)
-	call E7N(HeroListTypeId[65], 0)
-	call E7N(HeroListTypeId[66], 0)
-	call E7N(HeroListTypeId[67],'A0P7')
-	call E7N(HeroListTypeId[68], 0)
-	call E7N(HeroListTypeId[69],'A1R3')
-	call E7N(HeroListTypeId[70], 0)
-	call E7N(HeroListTypeId[71], 0)
-	call E7N(HeroListTypeId[72], 0)
-	call E7N(HeroListTypeId[73],'A0PB')
-	call E7N(HeroListTypeId[74], 0)
-	call E7N(HeroListTypeId[75],'A1R8')
-	call E7N(HeroListTypeId[76],'A1R9')
-	call E7N(HeroListTypeId[77],'A1VB')
-	call E7N(HeroListTypeId[78],'A1VE')
-	call E7N(HeroListTypeId[79], 0)
-	call E7N(HeroListTypeId[80], 0)
-	call E7N(HeroListTypeId[81],'A1NX')
-	call E7N(HeroListTypeId[82],'A1V9')
-	call E7N(HeroListTypeId[83], 0)
-	call E7N(HeroListTypeId[84], 0)
-	call E7N(HeroListTypeId[85], 0)
-	call E7N(HeroListTypeId[86],'A1V5')
-	call E7N(HeroListTypeId[87],'A1VZ')
-	call E7N(HeroListTypeId[88],'A1UY')
-	call E7N(HeroListTypeId[89], 0)
-	call E7N(HeroListTypeId[90], 0)
-	call E7N(HeroListTypeId[91], 0)
-	call E7N(HeroListTypeId[92], 0)
-	call E7N(HeroListTypeId[93],'A21Z')
-	call E7N(HeroListTypeId[94], 0)
-	call E7N(HeroListTypeId[95], 0)
-	call E7N(HeroListTypeId[96], 0)
-	call E7N(HeroListTypeId[97], 0)
-	call E7N(HeroListTypeId[98], 0)
-	call E7N(HeroListTypeId[99], 0)
-	call E7N(HeroListTypeId[ 100 ], 0)
-	call E7N(HeroListTypeId[101], 0)
-	call E7N(HeroListTypeId['f'],'A0PE')
-	call E7N(HeroListTypeId['g'], 0)
-	call E7N(HeroListTypeId[104],'A0PA')
-	call E7N(HeroListTypeId['i'], 0)
-	call E7N(HeroListTypeId[106], 0)
-	call E7N(HeroListTypeId['k'], 0)
-	call E7N(HeroListTypeId[108], 0)
-	call E7N(HeroListTypeId[109], 0)
-	call E7N(HeroListTypeId[110], 0)
-	call E7N(HeroListTypeId[111], 0)
-	call E7N(HeroListTypeId[112], 0)
-	call E7N(HeroListTypeId['q'], 0)
-	call E7N(HeroListTypeId[114], 0)
-	call E7N(HeroListTypeId[115], 0)
-	call E7N(HeroListTypeId[116], 0)
-	call E7N(HeroListTypeId[ 117], 0)
-	call E7N(HeroListTypeId[ 118], 0)
-endfunction
-
 function fj_Actions takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local unit u = GetTriggerUnit()

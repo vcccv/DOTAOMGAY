@@ -12,3 +12,4 @@
 #include "UnitStatus.j"
 #include "HeroSkill.j"
 #include "UnitWindWalk.j"
+#include "UnitUpdate.j"
