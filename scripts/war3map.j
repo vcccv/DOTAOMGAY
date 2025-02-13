@@ -169,11 +169,10 @@ globals
 
 	// 异步哈希表
 	hashtable LocalHashTable = InitHashtable()
-	integer DoubleClickKey = 0
-	real DoubleClickKeyTime = 0.
+	
+
 	// 哈希表的Key值
 	constant integer KEY_USE_DOUBLECLICK_SPELL = 1
-
 	boolean IsEnableDoubleClickSystem = false
 
 	// 单位大头像
@@ -306,9 +305,6 @@ globals
 	hashtable ObjectData = InitHashtable()
 
 	// 物体数据的Key一般为父Key 子Key为ObjectId
-
-	// 哈希表KEY 技能需求等级
-	constant integer OBJ_HTKEY_ABILITY_REQLEVEL = 1
 
 	// 哈希表KEY 单位的原生缩放
 	constant integer OBJ_HTKEY_UNIT_ORIGIN_SCALE = 100
@@ -503,7 +499,7 @@ globals
 	integer TempInt
 	timer ZC = CreateTimer()
 	boolean array XD
-	integer AD = 0
+	integer SpellDamageCount = 0
 	integer array PassiveSkills_Real
 	integer array PassiveSkills_SpellBook
 	integer array PassiveSkills_Learned
@@ -1649,6 +1645,8 @@ native EXExecuteScript takes string script returns string
 // yd japi ==================================================================
 // 技能----------------------------------------------------
 
+#define MEMHACK_DISABLE_WENHAO 1
+#define MEMHACK_DISABLE_MAIN_HOOK 1
 #include "memory_hack\\API\\japi_dev.j"
 #include "memory_hack\\memory_hack_init.j"
 #include "Libraries\\include"
@@ -1748,13 +1746,6 @@ endfunction
 // 获取玩家技能栏里的技能
 function GetLocalAbilityId takes integer x, integer y returns integer
     return GetStartLocPrioSlot(x, y) // lua hook了此函数 返回的是message.button(x, y)
-endfunction
-
-// 与lua交互获得Slk数据
-function GetObjectDataBySlk takes integer objectId, string tableName, string dataType returns string
-    set SlkType = tableName
-    set SlkdataType = dataType
-    return AbilityId2String(objectId) // lua hook了此函数 调用slk库
 endfunction
 
 // 修正单位的技能 变身会导致单位非法拥有被动技能
@@ -5347,159 +5338,11 @@ function O6X takes nothing returns boolean
 	return GetTimeOfDay()> 6. and GetTimeOfDay()< 18.
 endfunction
 
-function AddUnitState takes unit whichUnit, unitstate whichUnitState, real addVal returns nothing
-	call SetUnitState(whichUnit, whichUnitState, GetUnitState(whichUnit, whichUnitState) + addVal )
-endfunction
-
-function Unit_Setrange takes unit u, real r returns nothing
-	call SetUnitState(u, UNIT_STATE_ATTACK1_RANGE, r)
-endfunction
-
-function Unit_Addrange takes unit u, real r returns nothing
-	local real range = (GetUnitState(u, UNIT_STATE_ATTACK1_RANGE) + r) 
-	call Unit_Setrange(u, range)
-	call SaveReal(HY, GetHandleId(u),'AtkR', LoadReal(HY, GetHandleId(u),'AtkR')+ r)
-endfunction
-
-function lua_UnitIdGetRange takes unit u returns real
-	local integer typeId = GetUnitTypeId(u)
-	local real data = 0
-	if not HaveSavedReal( ObjectData, OBJ_HTKEY_UNIT_ORIGIN_RANGEN1, typeId ) then
-		set data = S2R( GetObjectDataBySlk( typeId, "unit", "rangeN1" ) )
-		call SaveReal( ObjectData, OBJ_HTKEY_UNIT_ORIGIN_RANGEN1, typeId, data )
-		// debug call SingleDebug( " 从slk库读取单位射程 " + GetUnitName( u )  + " rangeN1" + R2S(data))
-	else
-		set data = LoadReal( ObjectData, OBJ_HTKEY_UNIT_ORIGIN_RANGEN1, typeId )
-	endif
-
-	return data
-endfunction
-
-function mlq_addrange takes unit u returns nothing
-	if not IsUnitType(u, UNIT_TYPE_MELEE_ATTACKER) then
-		call AddUnitBonusRange(u, 140., true)
-		call SaveBoolean(HY, GetHandleId(u),'R00P', true)
-	endif
-endfunction
-
-function mlq_reducerange takes unit u returns nothing
-	if LoadBoolean(HY, GetHandleId(u),'R00P') then
-		call AddUnitBonusRange(u,-140., true)
-		call SaveBoolean(HY, GetHandleId(u),'R00P', false)
-	endif
-endfunction
-
-// 相位移动
-function SetUnitPhaseMove takes unit whichUnit, boolean open returns nothing
-	if open then
-		if not IsUnitType(whichUnit, UNIT_TYPE_FLYING) then
-			call MHUnit_SetCollisionType(whichUnit, UNIT_COLLISION_TYPE_HARVESTER, UNIT_COLLISION_TYPE_BUILDING)
-		endif
-		// 没相位buff并且冲刺也没了 那再移除
-	elseif GetUnitAbilityLevel( whichUnit, 'B09Y' ) == 0 and not HaveSavedHandle(HY, GetHandleId(whichUnit),'A05C') then
-		if not IsUnitType(whichUnit, UNIT_TYPE_FLYING) then
-			call MHUnit_SetCollisionType(whichUnit, UNIT_COLLISION_TYPE_FOOT, UNIT_COLLISION_TYPE_GROUND)
-		endif
-	endif
-endfunction
-
-function O8X takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit u = LoadUnitHandle(HY, h, 0)
-	local integer i = 1
-	local integer iSkillLevel
-	if UnitAlive(u) then
-		// call BJDebugMsg("删除技能"+R2S(GetGameTime()))
-		loop
-			set iSkillLevel = GetUnitAbilityLevel(u, PassiveSkills_Learned[i])
-			if iSkillLevel == 0 and(GetUnitAbilityLevel(u, PassiveSkills_Real[i])> 0 or GetUnitAbilityLevel(u, PassiveSkills_SpellBook[i])> 0 or GetUnitAbilityLevel(u, PassiveSkills_Buff[i])> 0) then
-				call UnitRemoveAbility(u, PassiveSkills_Real[i])
-				call UnitRemoveAbility(u, PassiveSkills_SpellBook[i])
-				call UnitRemoveAbility(u, PassiveSkills_Buff[i])
-				call UnitRemoveAbility(u, PassiveSkills_Show[i])
-			endif
-			set i = i + 1
-		exitwhen i > PassiveAbilityMaxCount
-		endloop
-	endif
-
-	//// 如果单位有冲刺状态
-	//if HaveSavedHandle(HY, GetHandleId(u),'A05C') then
-	//	// 变身后是地面单位 就重置碰撞类型和移动类型
-	//	call SetUnitPhaseMove( u, true )
-	//endif
-
-	//if IsUnitType(u, UNIT_TYPE_MELEE_ATTACKER) then
-	//	if GetUnitAbilityLevel(u,'A1WE')> 0 then
-	//		call UnitRemoveAbility(u,'A3FH')
-	//	endif
-	//	if GetUnitAbilityLevel(u,'A1WE')> 0 then
-	//		call UnitAddPermanentAbility(u,'A3FH')
-	//		call SetAllPlayerAbilityUnavailable('A3FH')
-	//	endif
-	//else
-	//	if GetUnitAbilityLevel(u,'A0B8')> 0 then
-	//		call UnitRemoveAbility(u,'A3FI')
-	//	endif
-	//	if GetUnitAbilityLevel(u,'A0B8')> 0 then
-	//		call UnitAddPermanentAbility(u,'A3FI')
-	//		call SetAllPlayerAbilityUnavailable('A3FI')
-	//	endif
-	//endif
-	// 修正高度
-	call SetUnitFlyHeight(u, GetUnitDefaultFlyHeight(u), 0)
-	// 修正射程
-	call UpdateUnitAttackRangeBonus(u)
-	// 修正缩放
-	call SetUnitCurrentScaleEx(u, GetUnitCurrentScale(u))
-	// 修正颜色
-	//call SetUnitVertexColorEx(u, -1, -1, -1, -1)
-	call ResetUnitVertexColor(u)
-	call FlushChildHashtable(HY, h)
-	call DestroyTrigger(t)
-	call TriggerEvaluate(IO)
-	//endif
-	set Q5V = u
-	set t = null
-	set u = null
-	return false
-endfunction
-
 // 判断技能Id是否为变身技能
 function IsMetamorphosisSkill takes integer id returns boolean
 	return id =='A0AG' or id =='QM01' or id =='A0BE' or id =='QM00' or id =='QB0K' or id =='ANcr' or id =='QB0L' or id =='A2H0' or id =='QM02' or id =='QM03' or id =='QM04' or id =='A1RI' or id =='A332' or id =='A2M0' or id =='A2H1'
 endfunction
 
-// 单位变身事件
-function RVX takes nothing returns nothing
-	local integer iTrigHandleId
-	local unit hTriggerUnit
-	local trigger hTrig
-	local integer iNewTrigHandleId
-	local real rDur
-	local integer id = GetSpellAbilityId()
-	if IsMetamorphosisSkill(id) then
-		set iTrigHandleId = GetHandleId(GetTriggeringTrigger())
-		set hTrig = CreateTrigger()
-		set iNewTrigHandleId = GetHandleId(hTrig)
-		set hTriggerUnit = LoadUnitHandle(HY, iTrigHandleId, 0)
-		call SaveUnitHandle(HY, iNewTrigHandleId, 0, hTriggerUnit)
-		call SaveInteger(HY, iNewTrigHandleId, 0, id)
-		// 保存单位是否为变身单位布尔
-		call SaveBoolean(HY, iNewTrigHandleId, 3, IsUnitMetamorphosis(hTriggerUnit))
-		set rDur = YDWEGetUnitAbilityDataReal(hTriggerUnit, id, GetUnitAbilityLevel(hTriggerUnit, id), 102)
-		// GetTriggerEventId()!= EVENT_UNIT_SPELL_ENDCAST
-		// call BJDebugMsg("触发器运行"+R2S(GetGameTime()))
-		// call BJDebugMsg("变身时间"+ R2S( rDur ) )
-		// 需要 + 0.001 而不是0.0001 否则还会全光环
-		call TriggerRegisterTimerEvent(hTrig, rDur + 0.001, false) // 
-		call TriggerAddCondition(hTrig, Condition(function O8X))
-		//call SaveBoolean(HY, iNewTrigHandleId, 0, GetTriggerEventId() == EVENT_UNIT_SPELL_ENDCAST)
-		set hTrig = null
-		set hTriggerUnit = null
-	endif
-endfunction
 
 function REX takes integer RXX returns integer
 	local integer id = O5X(RXX)
@@ -5744,10 +5587,10 @@ function UnitDamageTargetEx takes unit u, unit t, integer damageType, real d ret
 	if damageType == 0 or d < 0 then
 		return
 	endif
-	set amp = 1. + GetUnitSpellDamageAmplification(u)
+	set amp = 1. + GetUnitSpellDamageAmplificationBonus(u)
 	set d = d * amp
 
-	set AD = AD + 1
+	set SpellDamageCount = SpellDamageCount + 1
 	set GX = damageType
 	if damageType == 1 then
 		// 普通攻击 法术伤害
@@ -5794,31 +5637,15 @@ function UnitDamageTargetEx takes unit u, unit t, integer damageType, real d ret
 		call UnitDamageTarget(u, t, d, true, true, ATTACK_TYPE_HERO, DAMAGE_TYPE_ENHANCED, WEAPON_TYPE_WHOKNOWS)
 	endif
 	set GX = 0
-	set AD = AD -1
+	set SpellDamageCount = SpellDamageCount -1
 endfunction
-
-// 获取技能的需求等级
-function GetAbilityreqLevel takes integer id returns integer
-	local integer i = 0
-	if HaveSavedInteger(ObjectData, OBJ_HTKEY_ABILITY_REQLEVEL, id) then
-		return LoadInteger(ObjectData, OBJ_HTKEY_ABILITY_REQLEVEL, id)
-	else
-		set i = S2I( GetObjectDataBySlk( id, "ability", "reqLevel" ) )
-		call SaveInteger(ObjectData, OBJ_HTKEY_ABILITY_REQLEVEL, id, i)
-		if i == null or i <= 0 then
-			return 0
-		endif
-		return i
-	endif
-endfunction
-
 
 function IsNotItemAbility takes integer abilityId returns boolean
 	//local integer i = 1
 	//loop
 	//exitwhen i > EY
 		//if T0V == VY[i] then
-		return not LoadBoolean( ObjectData, OBJ_HTKEY_IS_ITEM_ABILITY, abilityId )	
+		return not LoadBoolean(ObjectData, OBJ_HTKEY_IS_ITEM_ABILITY, abilityId)	
 		//	return false
 		//endif
 	//	set i = i + 1
@@ -5831,25 +5658,7 @@ function IsUltimateSkill takes integer id returns boolean
 	if not IsNotItemAbility(id) then
 		return false
 	endif
-	return GetAbilityreqLevel(id) == 6
-endfunction
-
-function GetAbilityTimerNumber takes unit u, integer id returns integer
-	local integer abbb
-	if not IsNotItemAbility(id) then
-		return 0
-	endif
-	set abbb = PlayerSkillIndices[GetPlayerId(GetOwningPlayer(u))* 6 + 4]
-	if not Mode__SixSkills then
-		return 1
-	else
-		if id == HeroSkill_Base[abbb] then
-			return 1
-		elseif id == HeroSkill_Special[abbb] then
-			return 2
-		endif
-	endif
-	return 0
+	return GetAbilityReqLevelById(id) == 6
 endfunction
 
 //设置技能冷却
@@ -12891,7 +12700,7 @@ function ZXX takes nothing returns nothing
 	local unit R8X = GetEventDamageSource()
 	if GetEventDamage()> 0 then
 		call SaveUnitHandle(HY, GetHandleId(targetUnit),'lstd', R8X)
-		if AD < 1 and IsUnitType(R8X, UNIT_TYPE_MELEE_ATTACKER) and IsUnitIdType(GetUnitTypeId(R8X), UNIT_TYPE_HERO) then
+		if SpellDamageCount < 1 and IsUnitType(R8X, UNIT_TYPE_MELEE_ATTACKER) and IsUnitIdType(GetUnitTypeId(R8X), UNIT_TYPE_HERO) then
 			call IOX(R8X, targetUnit, 10, GetEventDamage()* .5, .0)
 		endif
 	endif
@@ -15062,35 +14871,6 @@ function OLO takes player p, item it returns nothing
 	endif
 endfunction
 
-function MCBZZ takes player p, integer st , unit u returns nothing
-	if st == 0 then
-		if LoadBoolean(HY, GetHandleId(p),'R00O') then
-			//	("丢弃时减射程")
-			call RemoveSavedBoolean(HY, GetHandleId(p),'R00O')
-			call mlq_reducerange(u)
-		endif
-	else
-		if not LoadBoolean(HY, GetHandleId(p),'R00O') then
-			//	("拾取时加射程")
-			call SaveBoolean(HY, GetHandleId(p),'R00O', true)
-			call mlq_addrange(u)
-		endif
-	endif
-endfunction
-
-function Item_dragonlance takes boolean MCBCZ returns nothing
-	if MCBCZ then
-		if GZX(GetTriggerUnit(), RealItem[it_mlq], GetManipulatedItem()) == null and GZX(GetTriggerUnit(), RealItem[Item_HurricanePike], GetManipulatedItem()) == null then
-			//("丢弃")
-			call MCBZZ(GetTriggerPlayer(), 0, GetTriggerUnit())
-		endif
-	else
-		//("拾取")
-		call MCBZZ(GetTriggerPlayer(), 1, GetTriggerUnit())
-	endif
-endfunction
-
-
 function GetUnitCastRangeBonus takes unit whichUnit returns real
 	return MHUnit_GetSpellRange(whichUnit)
 endfunction
@@ -15101,11 +14881,11 @@ function QTUWW takes unit u, boolean WEWQQ returns nothing
 	if not IsUnitType(u, UNIT_TYPE_MELEE_ATTACKER) then
 		if WEWQQ then
 			if r < 90000 then
-				call Unit_Setrange(u, r + 90000)
+				//call Unit_Setrange(u, r + 90000)
 			endif
 		else
 			if r > 90000 then
-				call Unit_Setrange(u, r -90000)
+				//call Unit_Setrange(u, r -90000)
 			endif
 		endif
 	endif
@@ -15259,7 +15039,7 @@ function OnManipulatItem takes nothing returns boolean
 				call OFO()
 			elseif i == RealItem[it_mlq] or i == RealItem[Item_HurricanePike] then //拾取魔龙枪
 				if not IsUnitSpiritBear(u) then
-					call Item_dragonlance(false)
+					//call Item_dragonlance(false)
 					if i == RealItem[Item_HurricanePike] then
 						call RegisterUnitAttackFunc("UYYEQ",-1)
 						call RegisterUnitAttackFunc("UYYRQ", 2)
@@ -15298,10 +15078,10 @@ function OnManipulatItem takes nothing returns boolean
 				if GZX(u, RealItem[Item_TheButterfly], GetManipulatedItem()) == null then
 					call UnitRemoveAbility(u,'A431')
 				endif
-				//魔龙枪和飓风长戟
+				// 魔龙枪和飓风长戟
 			elseif i == RealItem[it_mlq] or i == RealItem[Item_HurricanePike]  then 
 				if not IsUnitSpiritBear(u) then
-					call Item_dragonlance(true)
+					//call Item_dragonlance(true)
 				endif
 			//elseif i == RealItem[Item_AetherLens] then
 			//	call AetherLensOnDrop(u)
@@ -38992,13 +38772,13 @@ endfunction
 function SyncIllusionUnitDragonBlood takes nothing returns nothing
 	local unit u = U2
 	local integer lv = Q2
-	call AddUnitState(u, UNIT_STATE_ARMOR, 3 * lv)
+	call UnitAddBaseArmorBonus(u, 3 * lv)
 	set u = null
 endfunction
 function Q_E takes nothing returns nothing
 	local unit u = GetTriggerUnit()
 	local integer level = GetUnitAbilityLevel(u,'A0CL')
-	call AddUnitState(u, UNIT_STATE_ARMOR, 3)
+	call UnitAddBaseArmorBonus(u, 3)
 	//call SetPlayerTechResearched(GetOwningPlayer(u),'R006', level)
 	set u = null
 endfunction
@@ -46302,7 +46082,7 @@ function RXI takes nothing returns nothing
 		call DestroyTrigger(t)
 		call RemoveSavedHandle(ObjectHashTable, GetHandleId(whichUnit),'BACK')
 	elseif GetTriggerEventId() == EVENT_UNIT_DAMAGED then
-		if GetEventDamageSource() == whichUnit and AD < 1 and GetEventDamage()> 0 then
+		if GetEventDamageSource() == whichUnit and SpellDamageCount < 1 and GetEventDamage()> 0 then
 			call SaveInteger(ObjectHashTable, GetHandleId(whichUnit),'BACK', 0)
 			call RemoveSavedHandle(ObjectHashTable, GetHandleId(whichUnit),'BACK')
 			call FlushChildHashtable(HY, h)
@@ -49557,7 +49337,7 @@ function CCI takes nothing returns boolean
 		set t = GetTriggerUnit()
 		set u = GetEventDamageSource()
 		set CJR = GetEventDamage()
-		if LoadUnitHandle(ObjectHashTable, h, 0) == u and CJR > 1 and AD < 1 and FK and UnitAlive(t) then
+		if LoadUnitHandle(ObjectHashTable, h, 0) == u and CJR > 1 and SpellDamageCount < 1 and FK and UnitAlive(t) then
 			set x = GetWidgetX(t)
 			set y = GetWidgetY(t)
 			call DisableTrigger(trig)
@@ -49775,7 +49555,7 @@ function CQI takes nothing returns boolean
 	local trigger CSI = LoadTriggerHandle(HY, h, 353)
 	local integer level = LoadInteger(HY, h, 0)
 	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
-		if GetEventDamageSource() == whichUnit and AD < 1 and FK then
+		if GetEventDamageSource() == whichUnit and SpellDamageCount < 1 and FK then
 			call DisableTrigger(t)
 			call FlushChildHashtable(HY, GetHandleId(CSI))
 			call DestroyTrigger(CSI)
@@ -62467,7 +62247,7 @@ function RPA takes nothing returns boolean
 		call SaveReal(HY, h, 412, RQA)
 		call SaveReal(HY, h, 411, time)
 	endif
-	if AD > 0 and(GX == 2 or GX == 3) then
+	if SpellDamageCount > 0 and(GX == 2 or GX == 3) then
 		call SetUnitToReduceDamage(whichUnit, RMinBJ(12. * level, GetEventDamage()))
 	endif
 	set t = null
@@ -66445,7 +66225,7 @@ function DDA takes nothing returns boolean
 		call FlushChildHashtable(HY, h)
 		call DestroyTrigger(t)
 	elseif GetTriggerEventId() == EVENT_UNIT_DAMAGED then
-		if AD > 0 or IsUnitIllusion(GetEventDamageSource()) then
+		if SpellDamageCount > 0 or IsUnitIllusion(GetEventDamageSource()) then
 			call SetUnitToReduceDamage(DFA, GetEventDamage())
 		endif
 	else
@@ -75233,12 +75013,10 @@ function RegisterOtherEvent takes unit whichUnit returns nothing
 	set trig = CreateTrigger()
 	call TriggerRegisterUnitEvent(trig, whichUnit, EVENT_UNIT_HERO_SKILL)
 	call TriggerAddCondition(trig, Condition(function W5E))
-	// 给英雄注册变身事件
-	set trig = CreateTrigger()
-	//call TriggerRegisterUnitEvent(trig, u, EVENT_UNIT_SPELL_ENDCAST)
-	// call TriggerRegisterUnitEvent(trig, whichUnit, EVENT_UNIT_SPELL_EFFECT)
-	// call TriggerAddCondition(trig, Condition(function RVX))
+	
 	call SaveUnitHandle(HY, GetHandleId(trig), 0, whichUnit)
+
+	/*
 	set i = 1
 	loop
 		set level = GetUnitAbilityLevel(whichUnit, PassiveSkills_Learned[i])
@@ -75249,6 +75027,7 @@ function RegisterOtherEvent takes unit whichUnit returns nothing
 		set i = i + 1
 	exitwhen i > PassiveAbilityMaxCount
 	endloop
+	*/
 	set trig = null
 endfunction
 
@@ -76713,7 +76492,7 @@ function YUA takes unit u, item it, integer JOX returns nothing
 		elseif SQV == it_mlq then //魔龙枪
 			//call Item_dragonlance(true)
 			if ( GetItemOfTypeFromUnit(u, RealItem[it_mlq]) == null ) and ( GetItemOfTypeFromUnit(u, RealItem[Item_HurricanePike]) == null ) then
-				call MCBZZ(GetOwningPlayer(u), 0, u)
+				//call MCBZZ(GetOwningPlayer(u), 0, u)
 			endif
 			call TDE(u, RealItem[OAV], p, false, 1)
 			call TDE(u, RealItem[XQV], p, false, 1)
@@ -80554,9 +80333,9 @@ function InitSyncTrigger takes nothing returns nothing
 	call DzTriggerRegisterSyncData(trig, "t", false)
 	call TriggerAddAction(trig, function Trig_SynsT)
 
-	set trig = CreateTrigger()
-	call DzTriggerRegisterSyncData(trig, "FogClick", false)
-    call TriggerAddCondition(trig, Condition( function SyncFogClickData))
+	//set trig = CreateTrigger()
+	//call DzTriggerRegisterSyncData(trig, "FogClick", false)
+    //call TriggerAddCondition(trig, Condition( function SyncFogClickData))
 
 	// 同步学习技能快捷键
 	set trig = CreateTrigger()
@@ -80657,78 +80436,6 @@ function RefreshUnitAbilityHotKey takes unit whichUnit returns nothing
         exitwhen ChangeKeyLoopIndex == 11
         set ChangeKeyLoopIndex = ChangeKeyLoopIndex + 1
     endloop
-endfunction
-
-
-// 进行是否双击的判断 如果shift按住则强制ESC
-function DoubleClickSkill takes nothing returns nothing
-	local real CurrentTime = GetGameTime()
-	if (CurrentTime - DoubleClickKeyTime) < 0.5 then
-		set DoubleClickKey = 0
-		set DoubleClickKeyTime = 0.
-		call DzClickFrame(PortraitFrame)
-		if DzIsKeyDown(16) then
-			call ForceUICancel()
-		endif
-	else
-		set DoubleClickKeyTime = GetGameTime()
-	endif
-endfunction
-
-// 将技能设置为可双击施法
-function AddDoubleClickSkillID takes integer iSkillId returns nothing
-	local string sHotKey = LoadStr(AbilityDataHashTable, iSkillId, HotKeyStringHash)
-	local integer iHotKey
-	// 因为没有可靠的记录技能快捷键 所以还是从slk里面读
-	if sHotKey == null then
-		set sHotKey = GetObjectDataBySlk(iSkillId, "ability", "HotKey")
-	endif
-	set sHotKey = StringCase(sHotKey, true)
-	set iHotKey = Str2Key(sHotKey)
-	set KeyCanDoubleClickSpell[iHotKey] = KeyCanDoubleClickSpell[iHotKey] + 1
-	call SaveBoolean(LocalHashTable, iSkillId, KEY_USE_DOUBLECLICK_SPELL, true)
-	call SaveInteger(LocalHashTable, iSkillId, HotKeyStringHash, iHotKey)
-endfunction
-
-// 初始化技能双击施法
-function DoubleClickSkill__Init takes nothing returns nothing
-	call AddDoubleClickSkillID('A11N') // X标记
-	call AddDoubleClickSkillID('A08V') // 全能魔免
-	call AddDoubleClickSkillID('A08N') // 全能加血
-	call AddDoubleClickSkillID('A2ML') // 大树护甲
-	call AddDoubleClickSkillID('A0QP') // 神灵活血术
-	call AddDoubleClickSkillID('A2J2') // 军团加血
-	call AddDoubleClickSkillID('A0MF') // 死骑套子
-	call AddDoubleClickSkillID('A037') // 猛犸授予力量
-	call AddDoubleClickSkillID('A047') // 剑圣棒子
-	call AddDoubleClickSkillID('A44X') // 血魔d
-	call AddDoubleClickSkillID('A3DM') // A杖蚂蚁大
-	call AddDoubleClickSkillID('A0N8') // 地卜师忽悠
-	call AddDoubleClickSkillID('A112') // 光法加魔
-	call AddDoubleClickSkillID('A21E') // 先知发芽
-	call AddDoubleClickSkillID('A0QG') // 兔子套子
-	call AddDoubleClickSkillID('A0R7') // 兔子加速
-	call AddDoubleClickSkillID('A08R') // 巫妖冰甲
-	call AddDoubleClickSkillID('A2TD') // 骨法虚无
-	call AddDoubleClickSkillID('A0OJ') // 黑鸟t
-	call AddDoubleClickSkillID('A0AS') // 术士暗言术
-	call AddDoubleClickSkillID('A1S8') // 毒狗关人
-	call AddDoubleClickSkillID('A10L') // 薄葬
-	call AddDoubleClickSkillID('A0OR') // 暗牧加血
-	call AddDoubleClickSkillID('Z607') // 灵动迅捷
-	call AddDoubleClickSkillID('A2LB') // 冰龙加血
-	call AddDoubleClickSkillID('A01Z') // 大自然的掩护
-	call AddDoubleClickSkillID('A0AS') // 暗言术
-	call AddDoubleClickSkillID('A2T5') // 命运敕令
-	call AddDoubleClickSkillID('A2SG') // 涤罪之焰
-	call AddDoubleClickSkillID('A2TF') // 虚妄诺言
-	call AddDoubleClickSkillID('A0G8') // 复制
-	call AddDoubleClickSkillID('A04Y') // 噩梦
-	call AddDoubleClickSkillID('A00U') // 月蚀
-	call AddDoubleClickSkillID('A43H') // 超新星
-	call AddDoubleClickSkillID('A083') // 嗜血术
-	call AddDoubleClickSkillID('A06B') // 自爆
-	call AddDoubleClickSkillID('A471') // A杖自爆
 endfunction
 
 #include "Map\\Frame\UIMain.j"
@@ -81290,6 +80997,7 @@ function main takes nothing returns nothing
 	call ExecuteFunc("AbilityCustomCastType_Init")
 	call ExecuteFunc("SpecialPassiveAbility_Init")
 	call ExecuteFunc("UnitWindWalk_Init")
+	call ExecuteFunc("DoubleClickSelfCast_Init")
 	call UnitRemove_Init()
 	call UnitAbility_Init()
 	call UnitMorph_Init()

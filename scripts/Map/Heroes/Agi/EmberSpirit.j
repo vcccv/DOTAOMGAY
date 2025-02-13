@@ -14,7 +14,7 @@ scope EmberSpirit
         local group g = LoadGroupHandle(HY, h, 2)
         local group gg = LoadGroupHandle(HY, h, 3)
         if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
-            if GetEventDamageSource() == whichUnit and AD < 1 then
+            if GetEventDamageSource() == whichUnit and SpellDamageCount < 1 then
                 call GroupAddUnit(g, targetUnit)
                 call GroupRemoveUnit(gg, targetUnit)
                 call FlushChildHashtable(HY, h)

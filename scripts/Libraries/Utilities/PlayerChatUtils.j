@@ -36,6 +36,9 @@ library PlayerChatUtils /*
         // 限制在同时最多发SEND_CHAT_MAX条 SEND_CHAT_TIMEOUT限制时间
         private static constant real    SEND_CHAT_TIMEOUT = 10.
         private static constant integer SEND_CHAT_MAX     = 10
+   
+        private static constant integer SEND_TYPE_ALL_PLAYERS    = 1
+        private static constant integer SEND_TYPE_ALLIED_PLAYERS = 2
 
         private static real array sendChatTime
         
@@ -57,10 +60,17 @@ library PlayerChatUtils /*
             return true
         endmethod
 
-        // 本地使用，发送同步信息
-        static method SendChatToAll takes string msg, integer channel returns nothing
+        // 本地使用，发送同步信息给所有玩家
+        static method SendChatToAllPlayers takes string msg, integer channel returns nothing
             if not GetSendLimit() then
-                call DzSyncData(PREFIX, msg + "#" + R2S(DEFAULT_TIME) + "#" + I2S(channel))
+                call DzSyncData(PREFIX, msg + "#" + R2S(DEFAULT_TIME) + "#" + I2S(channel) + "#" + I2S(SEND_TYPE_ALL_PLAYERS))
+            endif
+        endmethod
+
+        // 本地使用，发送同步信息给盟友玩家
+        static method SendChatToAlliedPlayers takes string msg, integer channel returns nothing
+            if not GetSendLimit() then
+                call DzSyncData(PREFIX, msg + "#" + R2S(DEFAULT_TIME) + "#" + I2S(channel) + "#" + I2S(SEND_TYPE_ALLIED_PLAYERS))
             endif
         endmethod
 

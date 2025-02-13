@@ -6,3 +6,5 @@
 #include "Utilities\\include"
 #include "EventSystem.j"
 #include "ItemSystem.j"
+#include "DoubleClickSelfCast.j"
+#include "PlayerSettings.j"

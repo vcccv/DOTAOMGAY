@@ -78,52 +78,6 @@ scope HardwareMessage22
                 else
                     call MHMsg_SendImmediateOrder(851993, 0x0)
                 endif
-            elseif IsEnableDoubleClickSystem then
-                if KeyCanDoubleClickSpell[key] > 0 then
-                    // 因为取消按键在右下角
-                    call GetLocalAbilityId(3, 2)
-                    if MessageAbilityOrder == 851979 then
-                        if DoubleClickKey == key then
-                            if (DoubleClickKeyTime != 0. ) then
-                                call DoubleClickSkill()
-                                return
-                            else
-                                set DoubleClickKeyTime = GetGameTime()
-                            endif
-                        else
-                            set DoubleClickKeyTime = 0.
-                        endif
-                    endif
-                    set abilityId = GetLocalAbilityId(0, 0)
-                    if LoadBoolean(LocalHashTable, abilityId, KEY_USE_DOUBLECLICK_SPELL) then
-                        if LoadInteger(LocalHashTable, abilityId, HotKeyStringHash) == key then
-                            set DoubleClickKey = key
-                            set DoubleClickKeyTime = GetGameTime()
-                            return
-                        endif
-                    else
-                        loop
-                            exitwhen x > 3
-                            set abilityId = GetLocalAbilityId(x, 2)
-                            if LoadBoolean(LocalHashTable, abilityId, KEY_USE_DOUBLECLICK_SPELL) then
-                                if LoadInteger(LocalHashTable, abilityId, HotKeyStringHash) == key then
-                                    set DoubleClickKey = key
-                                    set DoubleClickKeyTime = GetGameTime()
-                                    return
-                                endif
-                            endif
-                            set abilityId = GetLocalAbilityId(x, 1)
-                            if LoadBoolean(LocalHashTable, abilityId, KEY_USE_DOUBLECLICK_SPELL) then
-                                if LoadInteger(LocalHashTable, abilityId, HotKeyStringHash) == key then
-                                    set DoubleClickKey = key
-                                    set DoubleClickKeyTime = GetGameTime()
-                                    return
-                                endif
-                            endif
-                            set x = x + 1
-                        endloop
-                    endif
-                endif
             endif
         endif
     endfunction

@@ -416,7 +416,7 @@ scope DamageSystem
                 if GetUnitAbilityLevel(DETarget,'A43C')> 0 and IsUnitEnemy(DESource, GetOwningPlayer(DETarget)) and WE == 0 then
                     call T4A(DESource, DETarget, DEDamage)
                 endif
-                //if AD < 1 then
+                //if SpellDamageCount < 1 then
                 //endif
             endif
             if TEST_MODE then

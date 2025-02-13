@@ -32,7 +32,7 @@ scope AetherLens
         if count == 1 then
             call MHUnit_AddSpellRange(whichUnit, GetUnitCastRangeBonus(whichUnit) + AETHER_LENS_CAST_RANGE_BONUS)	
         endif
-        call UnitAddSpellDamageAmplification(whichUnit, 0.05)
+        call UnitAddSpellDamageAmplificationBonus(whichUnit, 0.05)
 
         set whichUnit = null
         set whichItem = null
@@ -47,7 +47,7 @@ scope AetherLens
         if count == 0 then
             call MHUnit_AddSpellRange(whichUnit, GetUnitCastRangeBonus(whichUnit) - AETHER_LENS_CAST_RANGE_BONUS)	
         endif
-        call UnitReduceSpellDamageAmplification(whichUnit, 0.05)
+        call UnitReduceSpellDamageAmplificationBonus(whichUnit, 0.05)
 
         set whichUnit = null
         set whichItem = null

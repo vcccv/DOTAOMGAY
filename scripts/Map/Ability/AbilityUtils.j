@@ -11,6 +11,10 @@ library AbilityUtils initializer Init requires Table, Base
         return MHAbility_GetDefDataInt(abilId, ABILITY_DEF_DATA_BASE_ID)
     endfunction
 
+    function GetAbilityReqLevelById takes integer abilId returns integer
+        return MHAbility_GetDefDataInt(abilId, ABILITY_DEF_DATA_REQ_LEVEL)
+    endfunction
+
     function IsUnitAbilityPassive takes unit whichUnit, integer abilId returns boolean
         local integer baseId = MHAbility_GetBaseId(whichUnit, abilId)
         if baseId == 0 then

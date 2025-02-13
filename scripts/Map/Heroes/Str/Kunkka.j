@@ -163,7 +163,7 @@ scope Kunkka
         set u = null
     endfunction
     function S5A takes nothing returns nothing
-        if AD < 1 and DEDamage > 40 or IsUnitType(DETarget, UNIT_TYPE_STRUCTURE) then
+        if SpellDamageCount < 1 and DEDamage > 40 or IsUnitType(DETarget, UNIT_TYPE_STRUCTURE) then
             call Tidebringer_Actions(DESource, DETarget, DEDamage)
         endif
     endfunction

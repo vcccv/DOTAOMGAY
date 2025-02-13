@@ -155,6 +155,8 @@ scope CommandButtonHelper
         set abilId  = MHUIData_GetCommandButtonAbility(commandButton)
         set orderId = MHUIData_GetCommandButtonOrderId(commandButton)
         
+        call BJDebugMsg("按了啊， abilId：" + I2S(abilId) + " orderId:" + I2S(orderId))
+        
         if orderId >=852008 and orderId <=852013 then
             call onClickItemCommandButton(orderId - 852008)
         endif
