@@ -1,271 +1,31 @@
 
 library ItemDefine requires ItemSystem
 
-    // 物品索引
-    globals
-        integer Item_AghanimScepter
-        integer Item_AghanimScepterGiftable
-        integer Item_AghanimScepterBasis
-        integer XGV
-        integer XHV
-        integer XJV
-        integer XKV
-        integer XLV
-        integer XMV
-        integer it_hyzr
-        integer it_fj
-        integer it_mlq
-        integer it_xj
-        integer jz_xj
-        integer Recipe_AetherLens
-        integer Item_AetherLens
-        integer Item_HurricanePike
-        integer Recipe_HurricanePike
-        integer XPV
-        integer XQV
-        integer XSV
-        integer XTV
-        integer XUV
-        integer XWV
-        integer XYV
-        integer XZV
-        integer X_V
-        integer X0V
-        integer X1V
-        integer X2V
-        integer X3V
-        integer X4V
-        integer X5V
-        integer X6V
-        integer X7V
-        integer Item_IronwoodBranch
-        integer Item_KelenDagger
-        integer Item_DisabledKelenDagger
-        integer OEV
-        integer OXV
-        integer OOV
-        integer ORV
-        integer OIV
-        integer OAV
-        integer ONV
-        integer OBV
-        integer OCV
-        integer ODV
-        integer OFV
-        integer OGV
-        integer OHV
-        integer OJV
-        integer OKV
-        integer OLV
-        integer OMV
-        integer OPV
-        integer OQV
-        integer OSV
-        integer OTV
-        integer OUV
-        integer OWV
-        integer OYV
-        integer OZV
-        integer O_V
-        integer O0V
-        integer O1V
-        integer O2V
-        integer O3V
-        integer O4V
-        integer O5V
-        integer O6V
-        integer O7V
-        integer O8V
-        integer Item_MagicStick
-        integer RVV
-        integer REV
-        integer RXV
-        integer ROV
-        integer RRV
-        integer RIV
-        integer RAV
-        integer Item_TranquilBoots
-        integer Item_DisabledTranquilBoots
-        integer RCV
-        integer Item_MoonShard
-        integer Item_OctarineCore
-        integer RGV
-        integer RHV
-        integer RJV
-        integer RKV
-        integer RLV
-        integer RMV
-        integer RPV
-        integer RQV
-        integer RSV
-        integer RTV
-        integer RUV
-        integer RWV
-        integer RYV
-        integer RZV
-        integer R_V
-        integer R0V
-        integer R1V
-        integer R2V
-        integer R3V
-        integer R4V
-        integer R5V
-        integer R6V
-        integer R7V
-        integer R8V
-        integer R9V
-        integer IVV
-        integer IEV
-        integer IXV
-        integer IOV
-        integer IRV
-        integer IIV
-        integer IAV
-        integer INV
-        integer IBV
-        integer ICV
-        integer IDV
-        integer IFV
-        integer IGV
-        integer IHV
-        integer IJV
-        integer IKV
-        integer ILV
-        integer IMV
-        integer IPV
-        integer IQV
-        integer ISV
-        integer ITV
-        integer IUV
-        integer IWV
-        integer IYV
-        integer IZV
-        integer I_V
-        integer I0V
-        integer I1V
-        integer Item_EulScepterOfDivinity
-        integer I3V
-        integer I4V
-        integer I5V
-        integer I6V
-        integer I7V
-        integer I8V
-        integer I9V
-        integer AVV
-        integer AEV
-        integer AXV
-        integer AOV
-        integer ARV
-        integer AIV
-        integer AAV
-        integer ANV
-        integer ABV
-        integer ACV
-        integer ADV
-        integer AFV
-        integer AGV
-        integer AHV
-        integer AJV
-        integer AKV
-        integer ALV
-        integer AMV
-        integer Item_LinkenSphere
-        integer AQV
-        integer ASV
-        integer ATV
-        integer AUV
-        integer AWV
-        integer AYV
-        integer AZV
-        integer A_V
-        integer Item_HeartOfTarrasque
-        integer Item_DisabledHeartOfTarrasque
-        integer A2V
-        integer A3V
-        integer A4V
-        integer Item_TheButterfly
-        integer A6V
-        integer A7V
-        integer A8V
-        integer A9V
-        integer NVV
-        integer NEV
-        integer NXV
-        integer NOV
-        integer NRV
-        integer NIV
-        integer NAV
-        integer NNV
-        integer NBV
-        integer NCV
-        integer NDV
-        integer NFV
-        integer NGV
-        integer NHV
-        integer NJV
-        integer NKV
-        integer Item_MagicWand
-        integer NMV
-        integer NPV
-        integer NQV
-        integer NSV
-        integer NTV
-        integer NUV
-        integer NWV
-        integer NYV
-        integer NZV
-        integer N_V
-        integer N0V
-        integer N1V
-        integer N2V
-        integer N3V
-        integer N4V
-        integer N5V
-        integer N6V
-        integer N7V
-        integer N8V
-        integer N9V
-        integer BVV
-        integer BEV
-        integer BXV
-        integer BOV
-        integer BRV
-        integer BIV
-        integer BAV
-        integer BNV
-        integer BBV
-        integer BCV
-        integer BDV
-        integer BFV
-        integer BGV
-        integer BHV
-        integer BJV
-        integer BKV
-        integer BLV
-        integer BMV
-        integer BPV
-        integer BQV
-        integer BSV
-        integer BTV
-        integer BUV
-        integer BWV
-        integer BYV
-        integer BZV
-        integer B_V
-        integer B0V
-        integer B1V
-        integer B2V
-        integer B3V
-        integer B4V
-        integer B5V
-        integer B6V
-        integer B7V
-        integer B8V
-        integer B9V
-        integer CVV
-    endglobals
+  
 
-    function ItemSystem_Init takes nothing returns nothing
+    // RemoveItemNoTrig
+    function HZX takes item whichItem returns nothing
+        call DisableTrigger(UnitManipulatItemTrig)
+        call RemoveItem(whichItem)
+        call EnableTrigger(UnitManipulatItemTrig)
+    endfunction
+    // 获取剩余格子
+    function H_X takes unit whichUnit returns integer
+        local integer i = 0
+        local integer n = 0
+        local integer size = UnitInventorySize(whichUnit)-1
+        loop
+        exitwhen i > size
+            if UnitItemInSlot(whichUnit, i) == null then
+                set n = n + 1
+            endif
+            set i = i + 1
+        endloop
+        return n
+    endfunction
+
+
+    function ItemDefine_Init takes nothing returns nothing
         local string s = ""
         call RegisterItem('I0FF','I0FG', 0, 0)
         set it_mlq = RegisterItem('I0UB','I0UC', 0,'I0UD')
@@ -298,8 +58,11 @@ library ItemDefine requires ItemSystem
         set X1V = RegisterItem('I036','I04A','h01D','I0CH')
         set X2V = RegisterItem('I037','I04B','h01E','I0CR')
         set X3V = RegisterItem('I038','I04C','h01F','I0CJ')
-        set X4V = RegisterItem('I039','I04D','h01G','I0DG')
-        set X5V = RegisterItem('I0MS','I0MR', 0,'I0MT')
+
+        // 宝石
+        set ITem_GemOfTrueSight = RegisterItem('I039','I04D','h01G','I0DG')
+        set ITem_GemOfTrueSight_CourierEdition = RegisterItem('I0MS','I0MR', 0,'I0MT')
+
         set X6V = RegisterItem('I03B','I04E','h01H','I0DA')
         set X7V = RegisterItem('I03C','I04F','h01I','I0CQ')
         set Item_IronwoodBranch = RegisterItem('I03D','I04G','h01J','I0CU')
@@ -354,7 +117,7 @@ library ItemDefine requires ItemSystem
         set NTV = RegisterItem('I0JJ','I0JI','h087','I0JK')
         set XKV = RegisterItem('I0MA','I0M9','h0CM','I0MB')
         set XLV = RegisterItem('I0MD','I0ME', 0,'I0MC')
-        set R0V = RegisterItem('I057','I05C','h02A','ITGB')
+        set Item_AncientTangoOfEssifation = RegisterItem('I057','I05C','h02A','ITGB')
         set XHV = RegisterItem('I0QI','I0QH', 0,'I0QJ')
         set XJV = RegisterItem('I0QL','I0QK','ho02','I0QM')
         set R1V = RegisterItem('INTD','INTG', 0, 0)
@@ -362,12 +125,12 @@ library ItemDefine requires ItemSystem
         set RZV = RegisterItem('I0HO','I0HN','h07V', 0)
         set R_V = RegisterItem('I056','I05F','h029','INHS')
         set R2V = RegisterItem('I058','I05G','h02C', 0)
-        set R3V = RegisterItem('I059','I05H','h02D', 0)
+        set Item_SentryWard = RegisterItem('I059','I05H','h02D', 0)
         set R4V = RegisterItem('I05A','I05I','h02E', 0)
         set R5V = RegisterItem('I05B','I05J','h02F', 0)
         set R6V = RegisterItem('I0B0','I0B1', 0, 0)
         set R7V = RegisterItem('I0TC','I0TD', 0, 0)
-        set R8V = RegisterItem('I0GI','I0GH','h076', 0)
+        set Item_DustOfAppearance = RegisterItem('I0GI','I0GH','h076', 0)
         set R9V = RegisterItem('I0KT','I0KS','h0B9', 0)
         set IVV = RegisterItem('I0NF','I0NG','h0D3', 0)
         set IEV = RegisterItem('I061','I062', 0,'I01J')
@@ -426,8 +189,12 @@ library ItemDefine requires ItemSystem
         set AMV = RegisterItem('I09W','I09Y', 0,'I02J')
         set Item_LinkenSphere = RegisterItem('I0A0','I09Z', 0,'I0BO')
         set AQV = RegisterItem('I0HK','I0HJ', 0,'I0HL')
+
+        // 自己的圣剑 Item_DivineRapier
         set ASV = RegisterItem('I0A2','I0A1', 0,'I0BP')
+        // 被人捡过的圣剑
         set ATV = RegisterItem('I0LI','I0LJ', 0,'I0LK')
+
         set AUV = RegisterItem('I0A4','I0A3', 0,'I0BQ')
         set AWV = RegisterItem('I0A6','I0A5', 0,'I0BR')
         set AYV = RegisterItem('I0K8','I0K7', 0,'I0K9')
@@ -444,9 +211,9 @@ library ItemDefine requires ItemSystem
         set A3V = RegisterItem('I0AD','I0AE', 0,'I0BV')
         set A4V = RegisterItem('I0AG','I0AF', 0,'I0CT')
         set Item_TheButterfly = RegisterItem('I0AH','I0AI', 0,'I0BW')
-
-        // 基础 Item_AghanimScepterBasis
-        set Item_AghanimScepterBasis = RegisterItem('I0B8','I0AY', 0,'I00B')
+        
+        // 基础 Item_AghanimScepterBasic
+        set Item_AghanimScepterBasic = RegisterItem('I0B8','I0AY', 0,'I00B')
         // 通用的 Item_AghanimScepter
         set Item_AghanimScepter = RegisterItem('I0QT','I0QS', 0,'I0QU')
         // 炼金的 Item_AghanimScepterGiftable
@@ -560,7 +327,7 @@ library ItemDefine requires ItemSystem
         set BPV = RegisterItem('I07H','I084','h03G','I0EK')
         set BQV = RegisterItem('I07O','I085','h03H','I0EL')
         set B2V = RegisterItem(0, 0,'h03K', 0)
-        call SaveInteger(HY,'ITDB', B2V, Item_AghanimScepterBasis)
+        call SaveInteger(HY,'ITDB', B2V, Item_AghanimScepterBasic)
         set BSV = RegisterItem('I07J','I088','h03L','I0EO')
         call SaveInteger(HY,'ITDB', RegisterItem(0, 0,'h03M', 0), A7V)
         call SaveInteger(HY,'ITDB', RegisterItem(0, 0,'h03N', 0), A8V)
@@ -589,47 +356,6 @@ library ItemDefine requires ItemSystem
         call SaveInteger(HY,'ITDB', RegisterItem(0, 0,'h0EN', 0), RQV)
         call RegisterItem(0, 0,'h0EA', 0)
         call SaveInteger(HY,'ITDB', RegisterItem(0, 0,'h0EC', 0), RWV)
-
-        // 物品技能冷却表
-        // call SaveItemAbilityCooldown(ItemRealId[ARV],55)
-        // call SaveItemAbilityCooldown(ItemRealId[NGV],30)
-        // call SaveItemAbilityCooldown(ItemRealId[ISV],15)
-        // call SaveItemAbilityCooldown(ItemRealId[ANV],50)
-        // call SaveItemAbilityCooldown(ItemRealId[ABV],50)
-        // call SaveItemAbilityCooldown(ItemRealId[A7V],30)
-        // call SaveItemAbilityCooldown(ItemRealId[NJV],18)
-        // call SaveItemAbilityCooldown(ItemRealId[Item_EulScepterOfDivinity],23)
-        // call SaveItemAbilityCooldown(ItemRealId[NMV],20)
-        // call SaveItemAbilityCooldown(ItemRealId[ADV],35)
-        // call SaveItemAbilityCooldown(ItemRealId[AFV],30)
-        // call SaveItemAbilityCooldown(ItemRealId[AGV],25)
-        // call SaveItemAbilityCooldown(ItemRealId[AHV],20)
-        // call SaveItemAbilityCooldown(ItemRealId[AJV],15)
-        // call SaveItemAbilityCooldown(ItemRealId[AKV],95)
-        // call SaveItemAbilityCooldown(ItemRealId[ALV],95)
-        // call SaveItemAbilityCooldown(ItemRealId[AMV],95)
-        // call SaveItemAbilityCooldown(ItemRealId[N0V],30)
-        // call SaveItemAbilityCooldown(ItemRealId[RCV],16)
-        // call SaveItemAbilityCooldown(ItemRealId[I4V],45)
-        // call SaveItemAbilityCooldown(ItemRealId[NPV],60)
-        // call SaveItemAbilityCooldown(ItemRealId[N_V],7)
-        // call SaveItemAbilityCooldown(ItemRealId[ROV],30)
-        // call SaveItemAbilityCooldown(ItemRealId[N2V],60)
-        // call SaveItemAbilityCooldown(ItemRealId[ACV],28)
-        // call SaveItemAbilityCooldown(ItemRealId[A2V],35)
-        // call SaveItemAbilityCooldown(ItemRealId[NEV],35)
-        // call SaveItemAbilityCooldown(ItemRealId[I1V],25)
-        // call SaveItemAbilityCooldown(ItemRealId[I_V],60)
-        // call SaveItemAbilityCooldown(ItemRealId[N1V],30)
-        // call SaveItemAbilityCooldown(ItemRealId[IAV],45)
-        // call SaveItemAbilityCooldown(ItemRealId[INV],45)
-        // call SaveItemAbilityCooldown(ItemRealId[IFV],100)
-        // call SaveItemAbilityCooldown(ItemRealId[R8V],50)
-        // call SaveItemAbilityCooldown(ItemRealId[RTV],40)
-        // call SaveItemAbilityCooldown(ItemRealId[RQV],16)
-        // call SaveItemAbilityCooldown(ItemRealId[RJV],7)
-        // call SaveItemAbilityCooldown(ItemRealId[RLV],28)
-        // call SaveItemAbilityCooldown(ItemRealId[RGV],15)
 
         // 边路野店卖的版本
         set ItemSideLaneShopId[RegisterItem('I03A','I051','h08K','I0D9')]= OQV
@@ -966,7 +692,7 @@ library ItemDefine requires ItemSystem
         set CombineIndex2[CombineMaxIndex]= OAV
         set CombineIndex3[CombineMaxIndex]= XUV
         set CombineIndex4[CombineMaxIndex]= OPV
-        set CombinedIndex[CombineMaxIndex]= Item_AghanimScepterBasis
+        set CombinedIndex[CombineMaxIndex]= Item_AghanimScepterBasic
         set CombineMaxIndex = CombineMaxIndex + 1
         set CombineIndex1[CombineMaxIndex]= IEV
         set CombineIndex2[CombineMaxIndex]= IEV
@@ -1171,5 +897,269 @@ library ItemDefine requires ItemSystem
         set CombinedIndex[CombineMaxIndex]= Item_AetherLens
     endfunction
 
+
+    // 物品索引
+    globals
+        integer Item_AghanimScepter
+        integer Item_AghanimScepterGiftable
+        integer Item_AghanimScepterBasic
+        integer XGV
+        integer XHV
+        integer XJV
+        integer XKV
+        integer XLV
+        integer XMV
+        integer it_hyzr
+        integer it_fj
+        integer it_mlq
+        integer it_xj
+        integer jz_xj
+        integer Recipe_AetherLens
+        integer Item_AetherLens
+        integer Item_HurricanePike
+        integer Recipe_HurricanePike
+        integer XPV
+        integer XQV
+        integer XSV
+        integer XTV
+        integer XUV
+        integer XWV
+        integer XYV
+        integer XZV
+        integer X_V
+        integer X0V
+        integer X1V
+        integer X2V
+        integer X3V
+        integer ITem_GemOfTrueSight
+        integer ITem_GemOfTrueSight_CourierEdition
+        integer X6V
+        integer X7V
+        integer Item_IronwoodBranch
+        integer Item_KelenDagger
+        integer Item_DisabledKelenDagger
+        integer OEV
+        integer OXV
+        integer OOV
+        integer ORV
+        integer OIV
+        integer OAV
+        integer ONV
+        integer OBV
+        integer OCV
+        integer ODV
+        integer OFV
+        integer OGV
+        integer OHV
+        integer OJV
+        integer OKV
+        integer OLV
+        integer OMV
+        integer OPV
+        integer OQV
+        integer OSV
+        integer OTV
+        integer OUV
+        integer OWV
+        integer OYV
+        integer OZV
+        integer O_V
+        integer O0V
+        integer O1V
+        integer O2V
+        integer O3V
+        integer O4V
+        integer O5V
+        integer O6V
+        integer O7V
+        integer O8V
+        integer Item_MagicStick
+        integer RVV
+        integer REV
+        integer RXV
+        integer ROV
+        integer RRV
+        integer RIV
+        integer RAV
+        integer Item_TranquilBoots
+        integer Item_DisabledTranquilBoots
+        integer RCV
+        integer Item_MoonShard
+        integer Item_OctarineCore
+        integer RGV
+        integer RHV
+        integer RJV
+        integer RKV
+        integer RLV
+        integer RMV
+        integer RPV
+        integer RQV
+        integer RSV
+        integer RTV
+        integer RUV
+        integer RWV
+        integer RYV
+        integer RZV
+        integer R_V
+        integer Item_AncientTangoOfEssifation
+        integer R1V
+        integer R2V
+        integer Item_SentryWard
+        integer R4V
+        integer R5V
+        integer R6V
+        integer R7V
+        integer Item_DustOfAppearance
+        integer R9V
+        integer IVV
+        integer IEV
+        integer IXV
+        integer IOV
+        integer IRV
+        integer IIV
+        integer IAV
+        integer INV
+        integer IBV
+        integer ICV
+        integer IDV
+        integer IFV
+        integer IGV
+        integer IHV
+        integer IJV
+        integer IKV
+        integer ILV
+        integer IMV
+        integer IPV
+        integer IQV
+        integer ISV
+        integer ITV
+        integer IUV
+        integer IWV
+        integer IYV
+        integer IZV
+        integer I_V
+        integer I0V
+        integer I1V
+        integer Item_EulScepterOfDivinity
+        integer I3V
+        integer I4V
+        integer I5V
+        integer I6V
+        integer I7V
+        integer I8V
+        integer I9V
+        integer AVV
+        integer AEV
+        integer AXV
+        integer AOV
+        integer ARV
+        integer AIV
+        integer AAV
+        integer ANV
+        integer ABV
+        integer ACV
+        integer ADV
+        integer AFV
+        integer AGV
+        integer AHV
+        integer AJV
+        integer AKV
+        integer ALV
+        integer AMV
+        integer Item_LinkenSphere
+        integer AQV
+        integer ASV
+        integer ATV
+        integer AUV
+        integer AWV
+        integer AYV
+        integer AZV
+        integer A_V
+        integer Item_HeartOfTarrasque
+        integer Item_DisabledHeartOfTarrasque
+        integer A2V
+        integer A3V
+        integer A4V
+        integer Item_TheButterfly
+        integer A6V
+        integer A7V
+        integer A8V
+        integer A9V
+        integer NVV
+        integer NEV
+        integer NXV
+        integer NOV
+        integer NRV
+        integer NIV
+        integer NAV
+        integer NNV
+        integer NBV
+        integer NCV
+        integer NDV
+        integer NFV
+        integer NGV
+        integer NHV
+        integer NJV
+        integer NKV
+        integer Item_MagicWand
+        integer NMV
+        integer NPV
+        integer NQV
+        integer NSV
+        integer NTV
+        integer NUV
+        integer NWV
+        integer NYV
+        integer NZV
+        integer N_V
+        integer N0V
+        integer N1V
+        integer N2V
+        integer N3V
+        integer N4V
+        integer N5V
+        integer N6V
+        integer N7V
+        integer N8V
+        integer N9V
+        integer BVV
+        integer BEV
+        integer BXV
+        integer BOV
+        integer BRV
+        integer BIV
+        integer BAV
+        integer BNV
+        integer BBV
+        integer BCV
+        integer BDV
+        integer BFV
+        integer BGV
+        integer BHV
+        integer BJV
+        integer BKV
+        integer BLV
+        integer BMV
+        integer BPV
+        integer BQV
+        integer BSV
+        integer BTV
+        integer BUV
+        integer BWV
+        integer BYV
+        integer BZV
+        integer B_V
+        integer B0V
+        integer B1V
+        integer B2V
+        integer B3V
+        integer B4V
+        integer B5V
+        integer B6V
+        integer B7V
+        integer B8V
+        integer B9V
+        integer CVV
+    endglobals
 
 endlibrary

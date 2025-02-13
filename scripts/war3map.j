@@ -2171,8 +2171,8 @@ function ThrowLog takes nothing returns nothing
 		set s = s +"
 		"+I2S(i)+" :"
 		loop
-			if HeroSkill_Base[PlayerSkillIndices[i * MAX_SKILL_SLOTS + k]]!= 0 then
-				set s = s + UGV(HeroSkill_Base[PlayerSkillIndices[i * MAX_SKILL_SLOTS + k]])+ " "
+			if HeroSkill_BasicId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + k]]!= 0 then
+				set s = s + UGV(HeroSkill_BasicId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + k]])+ " "
 			endif
 			set k = k + 1
 		exitwhen k > MAX_SKILL_SLOTS
@@ -2304,7 +2304,7 @@ function WSV takes nothing returns nothing
 	local integer abilLevel = GetUnitAbilityLevel(u, LoadInteger(ObjectHashTable, h, 2))
 	local boolean b = UnitRemoveAbility(u, LoadInteger(ObjectHashTable, h, 1)) == false
 	local integer playerIndex = GetPlayerId(GetOwningPlayer(u))
-	if abilId =='A065' and HeroSkill_Base[PlayerSkillIndices[playerIndex * MAX_SKILL_SLOTS + 6]]=='A065' then
+	if abilId =='A065' and HeroSkill_BasicId[PlayerSkillIndices[playerIndex * MAX_SKILL_SLOTS + 6]]=='A065' then
 		set abilLevel = IP[GetPlayerId(GetOwningPlayer(u))* 2 + 2]
 	endif
 	set FK = false
@@ -3419,18 +3419,6 @@ function CheckAbilityIdFormIndex takes integer abilIndex, integer TOE, string or
 	endif
 	return true
 endfunction
-function TBE takes integer id returns integer
-	local integer i = 1
-	loop
-		if AghanimUpgradeNormalId[i]== id then
-			return i
-		endif
-		set i = i + 1
-	exitwhen i > AghanimUpgradeMaxCount
-	endloop
-	return -1
-endfunction
-
 
 function TDE takes unit u, integer id, player p, boolean b, integer i returns nothing
 	local item it = UnitAddItemById(u, id)
@@ -3447,23 +3435,23 @@ endfunction
 
 // 重置单位技能 但有一些技能是不会被重置的
 function UnitResetCooldownEx takes unit whichUnit returns nothing
-	local integer i = 0
-	loop
-	exitwhen i > DisableRefreshCoolDownSkillId[0]
-		if GetUnitAbilityLevel(whichUnit, DisableRefreshCoolDownSkillId[i]) > 0 then
-			set Temp__ArrayReal[i] = YDWEGetUnitAbilityState(whichUnit, DisableRefreshCoolDownSkillId[i], 1)
-		endif
-		set i = i + 1
-	endloop
+	//local integer i = 0
+	//loop
+	//exitwhen i > DisableRefreshCoolDownSkillId[0]
+	//	if GetUnitAbilityLevel(whichUnit, DisableRefreshCoolDownSkillId[i]) > 0 then
+	//		set Temp__ArrayReal[i] = YDWEGetUnitAbilityState(whichUnit, DisableRefreshCoolDownSkillId[i], 1)
+	//	endif
+	//	set i = i + 1
+	//endloop
 	call UnitResetCooldown(whichUnit)
-	set i = 0
-	loop
-	exitwhen i > DisableRefreshCoolDownSkillId[0]
-		if Temp__ArrayReal[i] > 0 then
-			call YDWESetUnitAbilityState(whichUnit, DisableRefreshCoolDownSkillId[i], 1, Temp__ArrayReal[i])
-		endif
-		set i = i + 1
-	endloop
+	//set i = 0
+	//loop
+	//exitwhen i > DisableRefreshCoolDownSkillId[0]
+	//	if Temp__ArrayReal[i] > 0 then
+	//		call YDWESetUnitAbilityState(whichUnit, DisableRefreshCoolDownSkillId[i], 1, Temp__ArrayReal[i])
+	//	endif
+	//	set i = i + 1
+	//endloop
 endfunction
 
 function TFE takes unit u returns nothing
@@ -4141,10 +4129,10 @@ function HeroLevelUp takes nothing returns nothing
 	// 如果有1个额外技能 代表有第5格技能
 	if ExtraSkillsNumber >= 1 then
 		if heroLevel >= 5 then
-			set abilityId = HeroSkill_Base[PlayerSkillIndices[playerId * MAX_SKILL_SLOTS + 5]]
+			set abilityId = HeroSkill_BasicId[PlayerSkillIndices[playerId * MAX_SKILL_SLOTS + 5]]
 			set abilityId = W7E(abilityId)
 			set YRE = W8E(abilityId)
-			set i = TBE(abilityId)
+			set i = GetAghanimUpgradeIndexByBasicId(abilityId)
 		endif
 		if heroLevel >= 5 and IP[playerId * 2 + 1]== 0 then
 			call UnitAddPermanentAbility(u, abilityId)
@@ -4167,12 +4155,12 @@ function HeroLevelUp takes nothing returns nothing
 			if extraSkillLevel > 1 then
 				// debug call SingleDebug(" 1 技能名 " + GetObjectName(abilityId) )
 				call SetUnitAbilityLevel(u, abilityId, extraSkillLevel)
-				if i > 0 and GetUnitAbilityLevel(u, AghanimUpgradeChangeId[i])> 0 then
-					set abilityId = AghanimUpgradeUpgradeId[i]
+				if i > 0 and GetUnitAbilityLevel(u, AghanimUpgrade_ModifyId[i])> 0 then
+					set abilityId = AghanimUpgrade_UpgradedId[i]
 				endif
 				call SetUnitAbilityLevel(u, abilityId, extraSkillLevel)
 				if (abilityId =='A1C0' and GetUnitAbilityLevel(u,'A418')> 0) then
-					call SetUnitAbilityLevel(u, HeroSkill_Special[PlayerSkillIndices[playerId * MAX_SKILL_SLOTS + 5]], extraSkillLevel)
+					call SetUnitAbilityLevel(u, HeroSkill_SpecialId[PlayerSkillIndices[playerId * MAX_SKILL_SLOTS + 5]], extraSkillLevel)
 				endif
 				//if YRE > 0 then
 				//	call SetUnitAbilityLevel(u, PassiveSkill_Show[YRE], extraSkillLevel)
@@ -4210,21 +4198,21 @@ function HeroLevelUp takes nothing returns nothing
 	// 如果有2个额外技能 代表有第6格额外大招
 	if ExtraSkillsNumber >= 2 then
 		if heroLevel >= 8 then
-			set abilityId = HeroSkill_Base[PlayerSkillIndices[playerId * MAX_SKILL_SLOTS + 6]]
+			set abilityId = HeroSkill_BasicId[PlayerSkillIndices[playerId * MAX_SKILL_SLOTS + 6]]
 			set YRE = W8E(abilityId)
 			set abilityId = W7E(abilityId)
-			set i = TBE(abilityId)
+			set i = GetAghanimUpgradeIndexByBasicId(abilityId)
 		endif
 		if heroLevel >= 8 and IP[playerId * 2 + 2]== 0 then
 			call UnitAddPermanentAbility(u, abilityId)
 			if i > 0 then
-				call UnitMakeAbilityPermanent(u, true, AghanimUpgradeUpgradeId[i])
+				call UnitMakeAbilityPermanent(u, true, AghanimUpgrade_UpgradedId[i])
 			endif
 			set b = true
 			set extraSkillLevel = 1
 		endif
-		if i > 0 and GetUnitAbilityLevel(u, AghanimUpgradeChangeId[i])> 0 then
-			set abilityId = AghanimUpgradeUpgradeId[i]
+		if i > 0 and GetUnitAbilityLevel(u, AghanimUpgrade_ModifyId[i])> 0 then
+			set abilityId = AghanimUpgrade_UpgradedId[i]
 		endif
 		if heroLevel >= 13 and IP[playerId * 2 + 2]== 1 then
 			set b = true
@@ -4242,8 +4230,8 @@ function HeroLevelUp takes nothing returns nothing
 				endif
 			endif
 			call SetUnitAbilityLevel(u, abilityId, extraSkillLevel)
-			if i > 0 and GetUnitAbilityLevel(u, AghanimUpgradeChangeId[i])> 0 then
-				set abilityId = AghanimUpgradeUpgradeId[i]
+			if i > 0 and GetUnitAbilityLevel(u, AghanimUpgrade_ModifyId[i])> 0 then
+				set abilityId = AghanimUpgrade_UpgradedId[i]
 			endif
 			call SetUnitAbilityLevel(u, abilityId, extraSkillLevel)
 			if abilityId >='A40K' and abilityId <='A40N' and GetUnitAbilityLevel(u, abilityId + 8)> 0 then
@@ -4483,7 +4471,7 @@ function ZME takes integer playerIndex, integer ZSE returns integer
 	local integer xx = 1
 	loop
 		set ZSE = W7E(ZSE)
-		if (HeroSkill_Base[PlayerSkillIndices[playerIndex * MAX_SKILL_SLOTS + xx]]== ZSE) then
+		if (HeroSkill_BasicId[PlayerSkillIndices[playerIndex * MAX_SKILL_SLOTS + xx]]== ZSE) then
 			return PlayerSkillIndices[playerIndex * MAX_SKILL_SLOTS + xx]
 		endif
 		set xx = xx + 1
@@ -4493,8 +4481,8 @@ function ZME takes integer playerIndex, integer ZSE returns integer
 endfunction
 function ZTE takes unit trigUnit, integer id returns integer
 	local integer i = GetPlayerId(GetOwningPlayer(trigUnit))
-	local integer Z_E = HeroSkill_Special[PlayerSkillIndices[i * MAX_SKILL_SLOTS + id]]
-	local integer Z0E = HeroSkill_Base[PlayerSkillIndices[i * MAX_SKILL_SLOTS + id]]
+	local integer Z_E = HeroSkill_SpecialId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + id]]
+	local integer Z0E = HeroSkill_BasicId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + id]]
 	if Z_E != null then
 		if GetUnitAbilityLevel(trigUnit, Z_E)> 0 then
 			return GetUnitAbilityLevel(trigUnit, Z_E)
@@ -5565,10 +5553,10 @@ function TWE takes unit u, boolean TYE returns nothing
 	endif
 	loop
 		set TZE = PlayerSkillIndices[pid * MAX_SKILL_SLOTS + xx]
-		set abilId = HeroSkill_Base[TZE]
-		set i = TBE(abilId)
-		if i > 0 and GetUnitAbilityLevel(u, AghanimUpgradeChangeId[i])> 0 then
-			set abilId = AghanimUpgradeUpgradeId[i]
+		set abilId = HeroSkill_BasicId[TZE]
+		set i = GetAghanimUpgradeIndexByBasicId(abilId)
+		if i > 0 and GetUnitAbilityLevel(u, AghanimUpgrade_ModifyId[i])> 0 then
+			set abilId = AghanimUpgrade_UpgradedId[i]
 		endif
 		if HeroSkill_IsPassive[TZE]== false and LoadBoolean(ObjectHashTable, 0, abilId) == false and abilId !='A1RK' and abilId !='A43H' and abilId !='A065' then
 			call EndUnitAbilityCooldown(u, abilId)
@@ -7644,7 +7632,7 @@ function G1X takes player p, unit u, integer itemIndex, item G_X returns item
 	loop
 	exitwhen i > 5
 		set it = UnitItemInSlot(u, i)
-		if it != null and it != G_X and GetItemIndexEx(it) == itemIndex and(GetItemPlayer(it) == p or itemIndex == R2V or itemIndex == R3V) then
+		if it != null and it != G_X and GetItemIndexEx(it) == itemIndex and(GetItemPlayer(it) == p or itemIndex == R2V or itemIndex == Item_SentryWard) then
 			set it = null
 			return UnitItemInSlot(u, i)
 		endif
@@ -7660,7 +7648,7 @@ function G2X takes player p, unit u, integer itemIndex returns item
 	loop
 	exitwhen i > 5
 		set it = UnitItemInSlot(u, i)
-		if (it != null) and GetItemIndexEx(it) == itemIndex and(GetItemPlayer(it) == p or itemIndex == R2V or itemIndex == R3V) then
+		if (it != null) and GetItemIndexEx(it) == itemIndex and(GetItemPlayer(it) == p or itemIndex == R2V or itemIndex == Item_SentryWard) then
 			set it = null
 			return UnitItemInSlot(u, i)
 		endif
@@ -7682,7 +7670,7 @@ function IsUnitAghanimScepterUpgraded takes unit u returns boolean
 		set it = UnitItemInSlot(u, i)
 		if it != null then
 			set id = GetItemIndex(it)
-			if (id == Item_AghanimScepterBasis or id == Item_AghanimScepter or id == Item_AghanimScepterGiftable) and GetItemUserData(it) != -2 then
+			if (id == Item_AghanimScepterBasic or id == Item_AghanimScepter or id == Item_AghanimScepterGiftable) and GetItemUserData(it) != -2 then
 				set it = null
 				return true
 			endif
@@ -7731,49 +7719,49 @@ endfunction
 function OnUnitAddAbilityAghanimUpgrade takes integer k, unit u, integer G8X returns boolean
 	local player p = GetOwningPlayer(u)
 	if Mode__RearmCombos == false then
-		if (AghanimUpgradeChangeId[k]=='A2S7' or AghanimUpgradeChangeId[k]=='A236') then
+		if (AghanimUpgrade_ModifyId[k]=='A2S7' or AghanimUpgrade_ModifyId[k]=='A236') then
 			if IsUnitHaveRearmAbility(u) then
 				return false
 			endif
 		endif
 	else
-		if AghanimUpgradeChangeId[k]=='A236' then
+		if AghanimUpgrade_ModifyId[k]=='A236' then
 			if IsUnitHaveRearmAbility(u) then
 				return false
 			endif
 		endif
 	endif
 
-	//call BJDebugMsg("NMML:" + MHString_FromId(AghanimUpgradeNormalId[k]))
+	//call BJDebugMsg("NMML:" + MHString_FromId(AghanimUpgrade_BasicId[k]))
 	
-	if AghanimUpgradeNormalId[k]=='A343'then
+	if AghanimUpgrade_BasicId[k]=='A343'then
 		set U2 = u
 		call ExecuteFunc("G9X")
-	elseif AghanimUpgradeNormalId[k]=='A088' then
+	elseif AghanimUpgrade_BasicId[k]=='A088' then
 		set U2 = u
 		call ExecuteFunc("HVX")
-	elseif AghanimUpgradeNormalId[k]=='A2E5' then
+	elseif AghanimUpgrade_BasicId[k]=='A2E5' then
 		set U2 = u
 		call ExecuteFunc("HEX")
-	elseif AghanimUpgradeNormalId[k]=='A0KV' then
+	elseif AghanimUpgrade_BasicId[k]=='A0KV' then
 		set U2 = u
 		call ExecuteFunc("addXL")
-	elseif AghanimUpgradeNormalId[k]=='A07Z' then
+	elseif AghanimUpgrade_BasicId[k]=='A07Z' then
 		set U2 = u
 		call ExecuteFunc("HXX")
-	elseif AghanimUpgradeNormalId[k]=='A1YQ' then
+	elseif AghanimUpgrade_BasicId[k]=='A1YQ' then
 		set U2 = u
 		call ExecuteFunc("HOX")
-	elseif AghanimUpgradeNormalId[k]=='A01Y' then
+	elseif AghanimUpgrade_BasicId[k]=='A01Y' then
 		set U2 = u
 		call ExecuteFunc("HRX")
-	elseif AghanimUpgradeNormalId[k]=='A0DY' then
+	elseif AghanimUpgrade_BasicId[k]=='A0DY' then
 		// 推进
 		if LoadBoolean(HY, GetHandleId(GetOwningPlayer(u)),'R00J') == false then
 			call UnitAddAttackRangeBonus(u, 190.)
 			call SaveBoolean(HY, GetHandleId(GetOwningPlayer(u)),'R00J', true)
 		endif
-	elseif AghanimUpgradeNormalId[k]=='A0CY' then
+	elseif AghanimUpgrade_BasicId[k]=='A0CY' then
 		if LoadBoolean(HY, GetHandleId(GetOwningPlayer(u)),'R0L3') == false then
 			call UnitAddAttackRangeBonus(u, 107.)
 			call SaveBoolean(HY, GetHandleId(GetOwningPlayer(u)),'R0L3', true)
@@ -7783,11 +7771,11 @@ function OnUnitAddAbilityAghanimUpgrade takes integer k, unit u, integer G8X ret
 			call SetPlayerAbilityAvailable(GetOwningPlayer(u),'A2KK', false)
 		endif
 	endif
-	if AghanimUpgradeChangeId[k]> 0 then
-		call UnitAddPermanentAbility(u, AghanimUpgradeChangeId[k])
-		call UnitMakeAbilityPermanent(u, true, AghanimUpgradeUpgradeId[k])
+	if AghanimUpgrade_ModifyId[k]> 0 then
+		call UnitAddPermanentAbility(u, AghanimUpgrade_ModifyId[k])
+		call UnitMakeAbilityPermanent(u, true, AghanimUpgrade_UpgradedId[k])
 	endif
-	call SaveInteger(OtherHashTable, GetHandleId(u),'AGH0'+ G8X, AghanimUpgradeNormalId[k])
+	call SaveInteger(OtherHashTable, GetHandleId(u),'AGH0'+ G8X, AghanimUpgrade_BasicId[k])
 	return true
 endfunction
 function OnUnitRemoveAbilityAghanimUpgrade takes integer k, unit u, integer G8X returns nothing
@@ -7795,36 +7783,36 @@ function OnUnitRemoveAbilityAghanimUpgrade takes integer k, unit u, integer G8X 
 	if IsUnitAghanimScepterUpgraded(u) then
 		return
 	endif
-	if AghanimUpgradeNormalId[k]=='A088' then
+	if AghanimUpgrade_BasicId[k]=='A088' then
 		set U2 = u
 		call ExecuteFunc("HAX")
-	elseif AghanimUpgradeNormalId[k]=='A2E5' then
+	elseif AghanimUpgrade_BasicId[k]=='A2E5' then
 		set U2 = u
 		call ExecuteFunc("HNX")
-	elseif AghanimUpgradeNormalId[k]=='A0KV' then
+	elseif AghanimUpgrade_BasicId[k]=='A0KV' then
 		set U2 = u
 		call ExecuteFunc("delXL")
-	elseif AghanimUpgradeNormalId[k]=='A07Z' then
+	elseif AghanimUpgrade_BasicId[k]=='A07Z' then
 		set U2 = u
 		call ExecuteFunc("HBX")
-	elseif AghanimUpgradeNormalId[k]=='A1YQ' then
+	elseif AghanimUpgrade_BasicId[k]=='A1YQ' then
 		set U2 = u
 		call ExecuteFunc("HCX")
-	elseif AghanimUpgradeNormalId[k]=='A0DY' then
+	elseif AghanimUpgrade_BasicId[k]=='A0DY' then
 		if LoadBoolean(HY, GetHandleId(GetOwningPlayer(u)),'R00J') then
 			call UnitAddAttackRangeBonus(u, -190.)
 			call SaveBoolean(HY, GetHandleId(GetOwningPlayer(u)),'R00J', false)
 		endif
-	elseif AghanimUpgradeNormalId[k]=='A0CY' then
+	elseif AghanimUpgrade_BasicId[k]=='A0CY' then
 		if LoadBoolean(HY, GetHandleId(GetOwningPlayer(u)),'R0L3') then
 			call UnitAddAttackRangeBonus(u, -107.)
 			call SaveBoolean(HY, GetHandleId(GetOwningPlayer(u)),'R0L3', false)
 			call UnitRemoveAbility(u,'A2KK')
 		endif
 	endif
-	call UnitRemoveAbility(u, AghanimUpgradeChangeId[k])
-	if AghanimUpgradeUpgradeId[k]!= AghanimUpgradeNormalId[k] then
-		call UnitRemoveAbility(u, AghanimUpgradeUpgradeId[k])
+	call UnitRemoveAbility(u, AghanimUpgrade_ModifyId[k])
+	if AghanimUpgrade_UpgradedId[k]!= AghanimUpgrade_BasicId[k] then
+		call UnitRemoveAbility(u, AghanimUpgrade_UpgradedId[k])
 	endif
 	call SaveInteger(OtherHashTable, GetHandleId(u),'AGH0'+ G8X, 0)
 endfunction
@@ -7907,20 +7895,21 @@ endfunction
 function get_a_c takes unit u returns integer
 	local integer id = GetPlayerId(GetOwningPlayer(u))
 	local integer ret = 0
-	set ret = get_a_fx(HeroSkill_Base[PlayerSkillIndices[id * 6 + 4]])
+	set ret = get_a_fx(HeroSkill_BasicId[PlayerSkillIndices[id * 6 + 4]])
 	if ret == 0 then
-		set ret = get_a_fx(HeroSkill_Base[PlayerSkillIndices[id * 6 + 6]])
+		set ret = get_a_fx(HeroSkill_BasicId[PlayerSkillIndices[id * 6 + 6]])
 	endif
 	return ret
 endfunction
 
+// G6X == remove
 function HDX takes unit u, boolean G6X returns boolean
 	local integer pid = GetPlayerId(GetOwningPlayer(u))
 	local integer k
 	local integer z
 	local boolean b = false
 	local integer i = 1
-	if IsUnitType(u, UNIT_TYPE_HERO) == false or(G6X and IsUnitAghanimScepterUpgraded(u)) then
+	if not IsUnitType(u, UNIT_TYPE_HERO) or (G6X and IsUnitAghanimScepterUpgraded(u)) then
 		return false
 	endif
 	//// 给单位添加A杖效果技能
@@ -7942,7 +7931,7 @@ function HDX takes unit u, boolean G6X returns boolean
 	//	endif
 	//endif
 	loop
-		if HeroSkill_Base[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]] == 'QF88' then
+		if HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]] == 'QF88' then
 			if G6X then
 				set U2 = u
 				call UnitRemoveAbility(u,'S3UR')	//小黑A杖
@@ -7950,7 +7939,7 @@ function HDX takes unit u, boolean G6X returns boolean
 				call UnitAddPermanentAbility(u,'S3UR')
 			endif
 		endif
-		if HeroSkill_Base[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]] == 'A229' then
+		if HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]] == 'A229' then
 			if G6X then
 				set U2 = u
 				call ExecuteFunc("FlakCannonOnRemoveAghanimUpgrade")
@@ -7960,14 +7949,14 @@ function HDX takes unit u, boolean G6X returns boolean
 			endif
 		endif
 	
-		set k = TBE(HeroSkill_Base[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]])
+		set k = GetAghanimUpgradeIndexByBasicId(HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]])
 		if k > 0 then
 			if G6X then
 				call OnUnitRemoveAbilityAghanimUpgrade(k, u, 1)
 			else
 				set b = OnUnitAddAbilityAghanimUpgrade(k, u, 1) or b
 			endif
-			call G5X(HeroSkill_Base[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]], u, G6X)
+			call G5X(HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]], u, G6X)
 		endif
 		set i = i + 1
 	exitwhen i > 4 + ExtraSkillsNumber
@@ -7975,21 +7964,6 @@ function HDX takes unit u, boolean G6X returns boolean
 	return b
 endfunction
 
-function IsItemAghanimScepter takes item it returns boolean
-	local integer i = GetItemIndexEx(it)
-	local integer id = GetItemTypeId(it)
-	if id == ItemRealId[Item_AghanimScepter]or id == ItemRealId[Item_AghanimScepterBasis]or id == ItemRealId[Item_AghanimScepterGiftable] then
-		return true
-	endif
-	return false
-endfunction
-// 消耗品？
-function HGX takes integer itemIndex returns boolean
-	return itemIndex == NXV or itemIndex == R6V or itemIndex == R8V or itemIndex == RYV or itemIndex == R_V or itemIndex == R0V or itemIndex == R2V or itemIndex == R3V or itemIndex == R4V or itemIndex == RZV or itemIndex == R9V or itemIndex == IVV or itemIndex == it_jys
-endfunction
-function HHX takes integer itemIndex returns boolean
-	return(itemIndex) == NUV or itemIndex == RRV or(itemIndex) == IUV or(itemIndex) == IWV or itemIndex == NIV or itemIndex == AIV or(itemIndex) == Item_MagicStick or(itemIndex) == Item_MagicWand or itemIndex == RAV
-endfunction
 function HJX takes player p returns unit
 	local unit u
 	local group g = AllocationGroup(6)
@@ -8036,9 +8010,6 @@ function HMX takes item it, player p returns nothing
 	endif
 	set u = null
 endfunction
-function HQX takes item UWV returns boolean
-	return GetItemIndexEx(UWV) == ASV or GetItemIndexEx(UWV) == ATV or GetItemIndexEx(UWV) == X4V or GetItemIndexEx(UWV) == X5V
-endfunction
 function HSX takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
@@ -8051,7 +8022,7 @@ function HSX takes nothing returns boolean
 	local item HWX = CreateItem(UYV, x, y)
 	call SetItemPlayer(HWX, p, true)
 	call SetItemUserData(HWX, 0)
-	if HQX(HWX) then
+	if IsItemDeathDrop(HWX) then
 		call SetItemInvulnerable(HWX, true)
 	endif
 	if HTX then
@@ -8079,72 +8050,6 @@ function HYX takes integer UYV, real x, real y, player p, boolean HTX, integer H
 	call TriggerAddCondition(t, Condition(function HSX))
 	call TriggerRegisterTimerEvent(t, 0, false)
 	set t = null
-endfunction
-function HZX takes item UWV returns nothing
-	call DisableTrigger(UnitManipulatItemTrig)
-	call RemoveItem(UWV)
-	call EnableTrigger(UnitManipulatItemTrig)
-endfunction
-function H_X takes unit whichUnit returns integer
-	local integer i = 0
-	local integer n = 0
-	local integer H0X = UnitInventorySize(whichUnit)-1
-	loop
-	exitwhen i > H0X
-		if UnitItemInSlot(whichUnit, i) == null then
-			set n = n + 1
-		endif
-		set i = i + 1
-	endloop
-	return n
-endfunction
-function H1X takes item UWV returns integer
-	local integer UYV
-	local integer i = 1
-	if UWV == null then
-		return -2
-	endif
-	set UYV = GetItemTypeId(UWV)
-	loop
-	exitwhen i > MaxItemCount
-		if ItemDisabledId[i]== UYV then
-			return i
-		endif
-		set i = i + 1
-	endloop
-	return -1
-endfunction
-function H2X takes item UWV returns integer
-	local integer UYV
-	local integer i = 1
-	if UWV == null then
-		return -2
-	endif
-	set UYV = GetItemTypeId(UWV)
-	loop
-	exitwhen i > MaxItemCount
-		if ItemDisabledId[i]== UYV then
-			return ItemRealId[i]
-		endif
-		set i = i + 1
-	endloop
-	return -1
-endfunction
-function GetItemIcon takes item it returns string
-	if it == null then
-		return "UI\\Widgets\\Console\\Undead\\undead-inventory-slotfiller.blp"
-	endif
-	return ItemsIconFilePath[GetItemIndexEx(it)]
-endfunction
-
-function H7X takes integer itemIndex returns integer
-	if R0V == itemIndex then
-		return 4
-	endif
-	if R3V == itemIndex or R8V == itemIndex then
-		return 2
-	endif
-	return 1
 endfunction
 function H8X takes item UWV returns boolean
 	return GetItemType(UWV) == ITEM_TYPE_POWERUP or GetItemType(UWV) == ITEM_TYPE_PURCHASABLE or GetItemType(UWV) == ITEM_TYPE_MISCELLANEOUS
@@ -9345,9 +9250,11 @@ function L8X takes unit u returns nothing
 	endif
 	call BYX(XE, GetOwningPlayer(u))
 	call SetUnitState(u, UNIT_STATE_MANA, 999999)
+
 	if IsUnitAghanimScepterUpgraded(u) then
 		call HDX(u, false)
 	endif
+
 	call SetUnitInvulnerable(u, false)
 	call SetUnitPathing(u, true)
 	call PauseUnit(u, false)
@@ -9991,7 +9898,7 @@ function AddHeroSkills takes unit u, player p returns nothing
 	loop
 		if PlayerSkillIndices[playerIndex * MAX_SKILL_SLOTS + xx]!= 0 then
 			set QFX = PlayerSkillIndices[playerIndex * MAX_SKILL_SLOTS + xx]
-			set id = HeroSkill_Base[QFX]
+			set id = HeroSkill_BasicId[QFX]
 			set QDX = HeroSkill_Modify[QFX]
 			call UnitAddPermanentAbility(u, QDX)
 			call SetPlayerAbilityAvailable(p, QDX, false)
@@ -10117,14 +10024,14 @@ function PlayerPickHero takes unit u, integer playerId, unit QKX returns nothing
 	set xx = 1
 	loop
 		if HeroSkill_Disabled[heroIndex + xx]== false then
-			set tempAbilityId = HeroSkill_Base[heroIndex + xx]
+			set tempAbilityId = HeroSkill_BasicId[heroIndex + xx]
 			set tempAbilityId = QGX(tempAbilityId)
 			call UnitAddAbility(KP[playerId], tempAbilityId)
-			if not HeroSkill_IsPassive[heroIndex + xx] and HeroSkill_Special[heroIndex + xx] != 0 then
+			if not HeroSkill_IsPassive[heroIndex + xx] and HeroSkill_SpecialId[heroIndex + xx] != 0 then
 				// 预读神杖技能
-				call UnitAddAbility(KP[playerId], HeroSkill_Special[heroIndex + xx])
-				call UnitRemoveAbility(KP[playerId], HeroSkill_Special[heroIndex + xx])
-				//call SingleDebug( "预读 " + I2S(xx) + " 号神杖升级技能 " + GetObjectName( HeroSkill_Special[heroIndex + xx] ) )
+				call UnitAddAbility(KP[playerId], HeroSkill_SpecialId[heroIndex + xx])
+				call UnitRemoveAbility(KP[playerId], HeroSkill_SpecialId[heroIndex + xx])
+				//call SingleDebug( "预读 " + I2S(xx) + " 号神杖升级技能 " + GetObjectName( HeroSkill_SpecialId[heroIndex + xx] ) )
 			endif
 			//if not Mode__RearmCombos then
 			call SetAbilityStringByMode(KP[playerId], tempAbilityId) 	//根据模式更改技能文本
@@ -10370,14 +10277,14 @@ function PlayerChooseHeroUnit takes unit whichUnit returns boolean
 		loop
 			set id = PlayerSkillIndices[playerId * MAX_SKILL_SLOTS + loop_i]
 			if id > 600 then
-				call DisplayTimedTextToPlayer(whichPlayer, 0, 0, 15, "	" + GetObjectName(HeroSkill_Base[id])+ "|cffffcc00 (Invoker)|r")
+				call DisplayTimedTextToPlayer(whichPlayer, 0, 0, 15, "	" + GetObjectName(HeroSkill_BasicId[id])+ "|cffffcc00 (Invoker)|r")
 			else
 				if loop_i == 4 or loop_i == 6 then
-					call DisplayTimedTextToPlayer(whichPlayer, 0, 0, 15, "	" + "|c00ff0303" + GetObjectName(HeroSkill_Base[id])+ "|r" + "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(id + 3)/ 4])+ ")" + "|r")
-					set message = message + GetObjectName(HeroSkill_Base[id])+ ", "
+					call DisplayTimedTextToPlayer(whichPlayer, 0, 0, 15, "	" + "|c00ff0303" + GetObjectName(HeroSkill_BasicId[id])+ "|r" + "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(id + 3)/ 4])+ ")" + "|r")
+					set message = message + GetObjectName(HeroSkill_BasicId[id])+ ", "
 				else
-					call DisplayTimedTextToPlayer(whichPlayer, 0, 0, 15, "	" + GetObjectName(HeroSkill_Base[id])+ "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(id + 3)/ 4])+ ")" + "|r")
-					set message = message + GetObjectName(HeroSkill_Base[id])+ ", "
+					call DisplayTimedTextToPlayer(whichPlayer, 0, 0, 15, "	" + GetObjectName(HeroSkill_BasicId[id])+ "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(id + 3)/ 4])+ ")" + "|r")
+					set message = message + GetObjectName(HeroSkill_BasicId[id])+ ", "
 				endif
 			endif
 			set loop_i = loop_i + 1
@@ -10390,9 +10297,9 @@ function PlayerChooseHeroUnit takes unit whichUnit returns boolean
 		loop
 			set id = PlayerSkillIndices[playerId * MAX_SKILL_SLOTS + loop_i]
 			if loop_i == 4 or loop_i == 6 then
-				call DisplayTimedTextToPlayer(whichPlayer, 0, 0, 15, "	" + "|c00ff0303" + GetObjectName(HeroSkill_Base[id])+ "|r" + "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(id + 3)/ 4])+ ")" + "|r")
+				call DisplayTimedTextToPlayer(whichPlayer, 0, 0, 15, "	" + "|c00ff0303" + GetObjectName(HeroSkill_BasicId[id])+ "|r" + "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(id + 3)/ 4])+ ")" + "|r")
 			else
-				call DisplayTimedTextToPlayer(whichPlayer, 0, 0, 15, "	" + GetObjectName(HeroSkill_Base[id])+ "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(id + 3)/ 4])+ ")" + "|r")
+				call DisplayTimedTextToPlayer(whichPlayer, 0, 0, 15, "	" + GetObjectName(HeroSkill_BasicId[id])+ "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(id + 3)/ 4])+ ")" + "|r")
 			endif
 			set loop_i = loop_i + 1
 		exitwhen loop_i > 4 + ExtraSkillsNumber
@@ -13580,7 +13487,7 @@ function EJO takes player whichPlayer, unit whichUnit, unit EKO, integer itemInd
 		set EMO = whichUnit
 	endif
 	if EMO == null or ECO(whichPlayer, EMO, GSX(itemIndex)) == false or X3 == false then
-		if HHX(GSX(itemIndex)) then
+		if IsItemChargedByIndex(GSX(itemIndex)) then
 			if H_X(EMO) == 0 or EMO == null then
 				if EMO == null then
 					call HYX(ItemPowerupId[itemIndex], x, y, whichPlayer, true, HUX)
@@ -13598,14 +13505,14 @@ function EJO takes player whichPlayer, unit whichUnit, unit EKO, integer itemInd
 				call SetItemPlayer(HWX, whichPlayer, true)
 				call SetItemUserData(HWX, ELO)
 			endif
-		elseif HGX(GSX(itemIndex)) then
+		elseif IsItemPerishableByIndex(GSX(itemIndex)) then
 			if EMO == null or(H_X(EMO) == 0 and GetItemOfTypeFromUnit(EMO, ItemRealId[itemIndex]) == null) then
-				call HYX(ItemPowerupId[itemIndex], x, y, whichPlayer, true, H7X(itemIndex))
+				call HYX(ItemPowerupId[itemIndex], x, y, whichPlayer, true, GetPerishableItemChargesByIndex(itemIndex))
 			else
 				set HWX = CreateItem(ItemPowerupId[itemIndex], x, y)
 				call SetItemPlayer(HWX, whichPlayer, true)
 				call SetItemUserData(HWX, ELO)
-				call SetItemCharges(HWX, H7X(itemIndex))
+				call SetItemCharges(HWX, GetPerishableItemChargesByIndex(itemIndex))
 				call UnitAddItem(EMO, HWX)
 			endif
 		else
@@ -13647,17 +13554,17 @@ function EPO takes player p, integer itemIndex returns nothing
 		set PlayerConsumablesCount[i]= PlayerConsumablesCount[i] + 1
 	elseif itemIndex == R_V then
 		set PlayerConsumablesCount[i]= PlayerConsumablesCount[i] + 1
-	elseif itemIndex == R0V then
+	elseif itemIndex == Item_AncientTangoOfEssifation then
 		set PlayerConsumablesCount[i]= PlayerConsumablesCount[i] + 4
 	elseif itemIndex == R2V then
 		set PlayerConsumablesCount[i]= PlayerConsumablesCount[i] + 1
 		set PlayerWardCount[i]= PlayerWardCount[i] + 1
-	elseif itemIndex == R3V then
+	elseif itemIndex == Item_SentryWard then
 		set PlayerConsumablesCount[i]= PlayerConsumablesCount[i] + 2
 		set PlayerWardCount[i]= PlayerWardCount[i] + 2
 	elseif itemIndex == R4V then
 		set PlayerConsumablesCount[i]= PlayerConsumablesCount[i] + 1
-	elseif itemIndex == R8V then
+	elseif itemIndex == Item_DustOfAppearance then
 		set PlayerConsumablesCount[i]= PlayerConsumablesCount[i] + 2
 	elseif itemIndex == RZV then
 		set PlayerConsumablesCount[i]= PlayerConsumablesCount[i] + 2
@@ -13672,8 +13579,8 @@ function EQO takes unit ESO, unit ETO returns boolean
 	elseif (ESO == SentinelAncientOfWonders or ESO == SentinelCacheOfTheQuelThelan or ESO == SentinelPigKing) and IsUnitAlly(ETO, SentinelPlayers[0]) then
 		return false
 	endif
-	set itemIndex = GetItemSellDummyUnitIndex(ETO)
-	if itemIndex == R2V or itemIndex == X4V or itemIndex == IVV or itemIndex == it_jys then
+	set itemIndex = GetItemIndexBySellUnit(ETO)
+	if itemIndex == R2V or itemIndex == ITem_GemOfTrueSight or itemIndex == IVV or itemIndex == it_jys then
 		return true
 	endif
 	return false
@@ -14066,7 +13973,7 @@ endfunction
 function XNO takes nothing returns nothing
 	local unit u = GetSoldUnit()
 	local player p = GetOwningPlayer(u)
-	local integer itemIndex = GetItemSellDummyUnitIndex(u)
+	local integer itemIndex = GetItemIndexBySellUnit(u)
 	local real x
 	local real y
 	local integer i
@@ -14079,7 +13986,7 @@ function XNO takes nothing returns nothing
 		set u = null
 		return
 	endif
-	if HGX(itemIndex) == false and ItemRealId[itemIndex]!= 0 then
+	if IsItemPerishableByIndex(itemIndex) == false and ItemRealId[itemIndex]!= 0 then
 		call SaveInteger(ObjectHashTable,'ITEM', GetPlayerId(p), ItemRealId[itemIndex])
 		call SaveReal(ObjectHashTable,'ITEM', GetPlayerId(p), GetGameTime())
 	endif
@@ -14092,7 +13999,7 @@ function XNO takes nothing returns nothing
 		endif
 		set x = E2O(GetSellingUnit(), u)
 		set y = E3O(GetSellingUnit(), u)
-		call HYX(ItemPowerupId[GetItemSellDummyUnitIndex(u)], x, y, p, true, H7X(GetItemSellDummyUnitIndex(u)))
+		call HYX(ItemPowerupId[GetItemIndexBySellUnit(u)], x, y, p, true, GetPerishableItemChargesByIndex(GetItemIndexBySellUnit(u)))
 	else
 		call EPO(p, GSX(itemIndex))
 		if ItemRealId[itemIndex]== 0 then
@@ -14105,7 +14012,7 @@ function XNO takes nothing returns nothing
 		else
 			set x = E_O(GetSellingUnit(), u)
 			set y = E1O(GetSellingUnit(), u)
-			if itemIndex == R8V then
+			if itemIndex == Item_DustOfAppearance then
 				call EJO(p, u, GetSellingUnit(), GSX(itemIndex), x, y, 2, 0)
 			else
 				call EJO(p, u, GetSellingUnit(), GSX(itemIndex), x, y, 0, 0)
@@ -14155,7 +14062,7 @@ function XFO takes nothing returns boolean
 	local player p = LocalPlayer
 	local player ETO = GetOwningPlayer(u)
 	local integer pid = GetPlayerId(ETO)
-	local integer unitTypeId = GetItemSellDummyUnitIndex(u)
+	local integer unitTypeId = GetItemIndexBySellUnit(u)
 	if GetUnitTypeId(u)=='h304' or GetUnitTypeId(u)=='h305' then
 		if (IsPlayerSentinel(ETO) and GetUnitTypeId(u)=='h304') or(IsPlayerScourge(ETO) and GetUnitTypeId(u)=='h305') then
 			call KillUnit(GetSellingUnit())
@@ -14178,18 +14085,18 @@ function XFO takes nothing returns boolean
 			elseif unitTypeId == BUV and WN then
 				call PingMinimapEx(GetUnitX(u), GetUnitY(u), 3, 255, 255, 255, false)
 				call DisplayTimedTextToPlayer(p, 0, 0, DisplayTextDuration[LocalPlayerId], PlayersColoerText[pid] +(PlayersName[pid])+ "|r |c00ffff00" + GetObjectName('n0KG')+ "|r")
-			elseif unitTypeId == R8V then
+			elseif unitTypeId == Item_DustOfAppearance then
 				call DisplayTimedTextToPlayer(p, 0, 0, 4, PlayersColoerText[pid] +(PlayersName[pid])+ "|r |c00ffff00" + GetObjectName('n0KO')+ "|r")
 			elseif unitTypeId == R2V then
 				call PingMinimapEx(GetUnitX(u), GetUnitY(u), 3, 255, 255, 255, false)
 				call DisplayTimedTextToPlayer(p, 0, 0, 4, PlayersColoerText[pid] +(PlayersName[pid])+ "|r |c00ffff00" + GetObjectName('n0KP')+ "|r")
-			elseif unitTypeId == R3V then
+			elseif unitTypeId == Item_SentryWard then
 				call PingMinimapEx(GetUnitX(u), GetUnitY(u), 3, 255, 255, 255, false)
 				call DisplayTimedTextToPlayer(p, 0, 0, 4, PlayersColoerText[pid] +(PlayersName[pid])+ "|r |c00ffff00" + GetObjectName('n0KQ')+ "|r")
 			elseif unitTypeId == B4V then
 				call PingMinimapEx(GetUnitX(u), GetUnitY(u), 3, 255, 255, 255, false)
 				call DisplayTimedTextToPlayer(p, 0, 0, 4, PlayersColoerText[pid] +(PlayersName[pid])+ "|r |c00ffff00" + GetObjectName('n0KT')+ "|r")
-			elseif unitTypeId == X4V then
+			elseif unitTypeId == ITem_GemOfTrueSight then
 				call PingMinimapEx(GetUnitX(u), GetUnitY(u), 3, 255, 255, 255, false)
 				call DisplayTimedTextToPlayer(p, 0, 0, 4, PlayersColoerText[pid] +(PlayersName[pid])+ "|r |c00ffff00" + GetObjectName('n0LB')+ "|r")
 			elseif unitTypeId == IVV then
@@ -14370,10 +14277,10 @@ function XLO takes unit trigUnit, item whichItem returns boolean
 	return false
 endfunction
 function XPO takes integer itemIndex returns boolean
-	return itemIndex == I0V or itemIndex == NDV or itemIndex == NFV or itemIndex == NHV or itemIndex == I_V or itemIndex == NBV or itemIndex == NCV or itemIndex == NGV or itemIndex == X4V or itemIndex == X5V or itemIndex == IFV or itemIndex == IGV
+	return itemIndex == I0V or itemIndex == NDV or itemIndex == NFV or itemIndex == NHV or itemIndex == I_V or itemIndex == NBV or itemIndex == NCV or itemIndex == NGV or itemIndex == ITem_GemOfTrueSight or itemIndex == ITem_GemOfTrueSight_CourierEdition or itemIndex == IFV or itemIndex == IGV
 endfunction
 function XQO takes integer itemIndex returns boolean
-	return itemIndex == X4V or itemIndex == X5V
+	return itemIndex == ITem_GemOfTrueSight or itemIndex == ITem_GemOfTrueSight_CourierEdition
 endfunction
 function XSO takes unit trigUnit, item whichItem returns boolean
 	local integer itemId = 0
@@ -14381,7 +14288,7 @@ function XSO takes unit trigUnit, item whichItem returns boolean
 	local integer itemIndex = GetItemIndex(UWV)
 	local integer XTO = 0
 	local boolean JVX = false
-	local integer XUO = H1X(UWV)
+	local integer XUO = GetDisabledItemIndex(UWV)
 	local boolean XWO = false
 	if IsUnitType(trigUnit, UNIT_TYPE_HERO) then
 		if itemIndex == I0V then
@@ -14394,11 +14301,11 @@ function XSO takes unit trigUnit, item whichItem returns boolean
 			set XTO = NCV
 		elseif itemIndex == NHV then
 			set XTO = NGV
-		elseif itemIndex == X5V then
-			set XTO = X4V
+		elseif itemIndex == ITem_GemOfTrueSight_CourierEdition then
+			set XTO = ITem_GemOfTrueSight
 		endif
-		if XUO == X5V then
-			set XTO = X4V
+		if XUO == ITem_GemOfTrueSight_CourierEdition then
+			set XTO = ITem_GemOfTrueSight
 			set XWO = true
 		endif
 		if XTO != 0 then
@@ -14414,11 +14321,11 @@ function XSO takes unit trigUnit, item whichItem returns boolean
 			set JVX = true
 		endif
 	else
-		if itemIndex == X4V then
-			set XTO = X5V
+		if itemIndex == ITem_GemOfTrueSight then
+			set XTO = ITem_GemOfTrueSight_CourierEdition
 		endif
-		if XUO == X4V then
-			set XTO = X5V
+		if XUO == ITem_GemOfTrueSight then
+			set XTO = ITem_GemOfTrueSight_CourierEdition
 			set XWO = true
 		endif
 		if XTO != 0 then
@@ -14438,7 +14345,7 @@ function XSO takes unit trigUnit, item whichItem returns boolean
 	return JVX
 endfunction
 function XYO takes unit trigUnit, item whichItem returns boolean
-	if XPO(GetItemIndex(whichItem)) or XQO(H1X(whichItem)) then
+	if XPO(GetItemIndex(whichItem)) or XQO(GetDisabledItemIndex(whichItem)) then
 		return XSO(trigUnit, whichItem)
 	endif
 	return false
@@ -14490,7 +14397,7 @@ function XZO takes nothing returns boolean
 	endif
 	if X_O == 1 then
 		if p != X1O and GetUnitTypeId(ZWX)=='ncop' then
-			if HGX(GSX(itemIndex)) or HHX(GSX(itemIndex)) then
+			if IsItemPerishableByIndex(GSX(itemIndex)) or IsItemChargedByIndex(GSX(itemIndex)) then
 				set HTX = true
 			endif
 			if IsPlayerEnemy(p, X1O) then
@@ -14503,8 +14410,8 @@ function XZO takes nothing returns boolean
 				set X4O = true
 				call HZX(whichItem)
 			endif
-		elseif Mode__PoolMode == false and X0O == false and GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and H2X(whichItem)!= 0 and(p == X1O or(GetPlayerSlotState(X1O) == PLAYER_SLOT_STATE_LEFT)) then
-			if HHX(itemIndex) then
+		elseif Mode__PoolMode == false and X0O == false and GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and GetDisabledItemRealId(whichItem)!= 0 and(p == X1O or(GetPlayerSlotState(X1O) == PLAYER_SLOT_STATE_LEFT)) then
+			if IsItemChargedByIndex(itemIndex) then
 				set HTX = true
 			else
 				set HTX = false
@@ -14516,12 +14423,12 @@ function XZO takes nothing returns boolean
 				set X3O = HWX
 				call SetItemPlayer(HWX, X1O, false)
 				call SetItemUserData(HWX, 0)
-				if HTX or itemIndex == R0V or itemIndex == R_V or itemIndex == RYV then
+				if HTX or itemIndex == Item_AncientTangoOfEssifation or itemIndex == R_V or itemIndex == RYV then
 					call SetItemCharges(HWX, HUX)
 				endif
 			endif
 		elseif Mode__PoolMode == false and X0O == false and GetItemType(whichItem) == ITEM_TYPE_PERMANENT and p != X1O and ItemDisabledId[GetItemIndexEx(whichItem)]!= 0 and(GetPlayerSlotState(X1O) == PLAYER_SLOT_STATE_LEFT) == false then
-			if HHX(itemIndex) then
+			if IsItemChargedByIndex(itemIndex) then
 				set HTX = true
 			else
 				set HTX = false
@@ -14537,7 +14444,7 @@ function XZO takes nothing returns boolean
 			endif
 		elseif X0O == false and GetItemType(whichItem) == ITEM_TYPE_PERMANENT and IsItemAghanimScepter(whichItem) and IsUnitType(ZWX, UNIT_TYPE_HERO) then
 			if HDX(ZWX, false) then
-				if itemIndex == Item_AghanimScepterBasis or(IsPlayerHasSkill(X1O,(39 -1)* 4 + 3) and itemIndex != Item_AghanimScepterGiftable) then
+				if itemIndex == Item_AghanimScepterBasic or(IsPlayerHasSkill(X1O,(39 -1)* 4 + 3) and itemIndex != Item_AghanimScepterGiftable) then
 					call HZX(whichItem)
 					if IsPlayerHasSkill(X1O,(39 -1)* 4 + 3) then
 						set HWX = UnitAddItemById(ZWX, ItemRealId[Item_AghanimScepterGiftable])
@@ -14549,16 +14456,16 @@ function XZO takes nothing returns boolean
 					call SetItemUserData(HWX, 1)
 				endif
 			else
-				if itemIndex != Item_AghanimScepterBasis then
+				if itemIndex != Item_AghanimScepterBasic then
 					call HZX(whichItem)
-					set HWX = UnitAddItemById(ZWX, ItemRealId[Item_AghanimScepterBasis])
+					set HWX = UnitAddItemById(ZWX, ItemRealId[Item_AghanimScepterBasic])
 					set X3O = HWX
 					call SetItemPlayer(HWX, X1O, false)
 					call SetItemUserData(HWX, 1)
 				endif
 			endif
 		elseif X0O == false and GetItemType(whichItem) == ITEM_TYPE_ARTIFACT then
-			if (p != X1O and IsPlayerOffline(X1O) == false and(itemIndex == R0V or itemIndex == R_V or itemIndex == RYV)) then
+			if (p != X1O and IsPlayerOffline(X1O) == false and(itemIndex == Item_AncientTangoOfEssifation or itemIndex == R_V or itemIndex == RYV)) then
 				call DisableTrigger(UnitManipulatItemTrig)
 				call HZX(whichItem)
 				set HWX = UnitAddItemById(ZWX, ItemDisabledId[itemIndex])
@@ -14578,7 +14485,7 @@ function XZO takes nothing returns boolean
 				endif
 				call EnableTrigger(UnitManipulatItemTrig)
 			endif
-		elseif X0O and HGX(GSX(itemIndex)) then
+		elseif X0O and IsItemPerishableByIndex(GSX(itemIndex)) then
 			if (p == X1O) then
 				call DisableTrigger(UnitManipulatItemTrig)
 				if H_X(ZWX) == 0 and G2X(X1O, ZWX, itemIndex) == null then
@@ -14641,7 +14548,7 @@ function XZO takes nothing returns boolean
 			if GetItemUserData(whichItem)==-500 then
 				call RemoveItem(whichItem)
 			elseif IsItemOwned(whichItem) == false then
-				if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or HHX(itemIndex) or itemIndex == R_V or itemIndex == RYV or itemIndex == R0V or itemIndex == it_jys then
+				if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or IsItemChargedByIndex(itemIndex) or itemIndex == R_V or itemIndex == RYV or itemIndex == Item_AncientTangoOfEssifation or itemIndex == it_jys then
 					set HTX = true
 				endif
 				call HYX(ItemPowerupId[itemIndex], GetItemX(whichItem), GetItemY(whichItem), X1O, HTX, HUX)
@@ -15388,7 +15295,7 @@ function RDO takes item whichItem, unit whichUnit, boolean RFO returns nothing
 	local integer h = GetHandleId(whichUnit)
 	local string s = ""
 	// 宝石
-	if (itemIndex == X4V and GZX(whichUnit, X4V, whichItem) == null) or(itemIndex == X5V and GZX(whichUnit, X5V, whichItem) == null) then
+	if (itemIndex == ITem_GemOfTrueSight and GZX(whichUnit, ITem_GemOfTrueSight, whichItem) == null) or(itemIndex == ITem_GemOfTrueSight_CourierEdition and GZX(whichUnit, ITem_GemOfTrueSight_CourierEdition, whichItem) == null) then
 		if IsPlayerAlly(LocalPlayer, GetOwningPlayer(whichUnit)) or IsObserverPlayer(LocalPlayer) then
 			set s = "Abilities\\Spells\\Human\\MagicSentry\\MagicSentryCaster.mdl"
 		endif
@@ -15591,7 +15498,7 @@ function RPO takes nothing returns boolean
 	return false
 endfunction
 function RQO takes integer itemIndex returns boolean
-	return itemIndex != ASV and itemIndex != NIV and itemIndex != X4V and itemIndex != AIV
+	return itemIndex != ASV and itemIndex != NIV and itemIndex != ITem_GemOfTrueSight and itemIndex != AIV
 endfunction
 function RSO takes nothing returns nothing
 	if GetTriggerEventId() == EVENT_PLAYER_UNIT_PICKUP_ITEM then
@@ -17065,7 +16972,7 @@ function AYO takes nothing returns boolean
 	return false
 endfunction
 function A0O takes integer id returns boolean
-	return id == R0V or id == R_V or id == RYV
+	return id == Item_AncientTangoOfEssifation or id == R_V or id == RYV
 endfunction
 function A1O takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
@@ -17130,32 +17037,32 @@ function A1O takes nothing returns boolean
 	set p5 = GetItemPlayer(A9O)
 	set whichItem = A4O
 	set i = GetItemIndexEx(whichItem)
-	if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or HHX(i) or(GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and A0O(i)) then
+	if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or IsItemChargedByIndex(i) or(GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and A0O(i)) then
 		set NAO = GetItemCharges(whichItem)
 	endif
 	set whichItem = A5O
 	set i = GetItemIndexEx(whichItem)
-	if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or HHX(i) or(GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and A0O(i)) then
+	if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or IsItemChargedByIndex(i) or(GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and A0O(i)) then
 		set NNO = GetItemCharges(whichItem)
 	endif
 	set whichItem = A6O
 	set i = GetItemIndexEx(whichItem)
-	if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or HHX(i) or(GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and A0O(i)) then
+	if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or IsItemChargedByIndex(i) or(GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and A0O(i)) then
 		set NBO = GetItemCharges(whichItem)
 	endif
 	set whichItem = A7O
 	set i = GetItemIndexEx(whichItem)
-	if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or HHX(i) or(GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and A0O(i)) then
+	if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or IsItemChargedByIndex(i) or(GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and A0O(i)) then
 		set NCO = GetItemCharges(whichItem)
 	endif
 	set whichItem = A8O
 	set i = GetItemIndexEx(whichItem)
-	if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or HHX(i) or(GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and A0O(i)) then
+	if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or IsItemChargedByIndex(i) or(GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and A0O(i)) then
 		set NDO = GetItemCharges(whichItem)
 	endif
 	set whichItem = A9O
 	set i = GetItemIndexEx(whichItem)
-	if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or HHX(i) or(GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and A0O(i)) then
+	if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or IsItemChargedByIndex(i) or(GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and A0O(i)) then
 		set NFO = GetItemCharges(whichItem)
 	endif
 	call HZX(A4O)
@@ -17415,7 +17322,7 @@ function NJO takes unit A2O returns nothing
 	loop
 	exitwhen i > 5
 		set NKO = UnitItemInSlot(A2O, i)
-		if GetItemIndexEx(NKO) == X4V then
+		if GetItemIndexEx(NKO) == ITem_GemOfTrueSight then
 			call UnitRemoveItem(A2O, NKO)
 		endif
 		set i = i + 1
@@ -17439,27 +17346,27 @@ function NJO takes unit A2O returns nothing
 	set p4 = GetItemPlayer(A8O)
 	set p5 = GetItemPlayer(A9O)
 	set whichItem = A4O
-	if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or HHX(GetItemIndexEx(whichItem)) or(GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and A0O(GetItemIndexEx(whichItem))) then
+	if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or IsItemChargedByIndex(GetItemIndexEx(whichItem)) or(GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and A0O(GetItemIndexEx(whichItem))) then
 		set NAO = GetItemCharges(whichItem)
 	endif
 	set whichItem = A5O
-	if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or HHX(GetItemIndexEx(whichItem)) or(GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and A0O(GetItemIndexEx(whichItem))) then
+	if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or IsItemChargedByIndex(GetItemIndexEx(whichItem)) or(GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and A0O(GetItemIndexEx(whichItem))) then
 		set NNO = GetItemCharges(whichItem)
 	endif
 	set whichItem = A6O
-	if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or HHX(GetItemIndexEx(whichItem)) or(GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and A0O(GetItemIndexEx(whichItem))) then
+	if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or IsItemChargedByIndex(GetItemIndexEx(whichItem)) or(GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and A0O(GetItemIndexEx(whichItem))) then
 		set NBO = GetItemCharges(whichItem)
 	endif
 	set whichItem = A7O
-	if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or HHX(GetItemIndexEx(whichItem)) or(GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and A0O(GetItemIndexEx(whichItem))) then
+	if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or IsItemChargedByIndex(GetItemIndexEx(whichItem)) or(GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and A0O(GetItemIndexEx(whichItem))) then
 		set NCO = GetItemCharges(whichItem)
 	endif
 	set whichItem = A8O
-	if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or HHX(GetItemIndexEx(whichItem)) or(GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and A0O(GetItemIndexEx(whichItem))) then
+	if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or IsItemChargedByIndex(GetItemIndexEx(whichItem)) or(GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and A0O(GetItemIndexEx(whichItem))) then
 		set NDO = GetItemCharges(whichItem)
 	endif
 	set whichItem = A9O
-	if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or HHX(GetItemIndexEx(whichItem)) or(GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and A0O(GetItemIndexEx(whichItem))) then
+	if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or IsItemChargedByIndex(GetItemIndexEx(whichItem)) or(GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and A0O(GetItemIndexEx(whichItem))) then
 		set NFO = GetItemCharges(whichItem)
 	endif
 	call HZX(A4O)
@@ -20024,9 +19931,9 @@ function H5E takes nothing returns nothing
 			endif
 			set i = i + 1
 		endloop
-		set XX[GetPlayerId(GetOwningPlayer(u))]= XX[GetPlayerId(GetOwningPlayer(u))] + TEX(ItemRealId[Item_AghanimScepterBasis])
+		set XX[GetPlayerId(GetOwningPlayer(u))]= XX[GetPlayerId(GetOwningPlayer(u))] + TEX(ItemRealId[Item_AghanimScepterBasic])
 		if GetOwningPlayer(u)!= GetOwningPlayer(GetTriggerUnit()) then
-			set XX[GetPlayerId(GetOwningPlayer(GetTriggerUnit()))]= XX[GetPlayerId(GetOwningPlayer(GetTriggerUnit()))] + TEX(ItemRealId[Item_AghanimScepterBasis])
+			set XX[GetPlayerId(GetOwningPlayer(GetTriggerUnit()))]= XX[GetPlayerId(GetOwningPlayer(GetTriggerUnit()))] + TEX(ItemRealId[Item_AghanimScepterBasic])
 		endif
 		set GR[GetPlayerId(GetOwningPlayer(GetTriggerUnit()))]= true
 		set GR[GetPlayerId(GetOwningPlayer(u))]= true
@@ -20508,7 +20415,7 @@ function FIO takes unit trigUnit, integer FAO returns nothing
 	if FAO =='o004' then
 		set FNO = ItemRealId[R2V]
 	else
-		set FNO = ItemRealId[R3V]
+		set FNO = ItemRealId[Item_SentryWard]
 	endif
 	call DisableTrigger(UnitManipulatItemTrig)
 	set it = GetItemOfTypeFromUnit(trigUnit, FNO)
@@ -20545,7 +20452,7 @@ function GHE takes nothing returns nothing
 			set FBO ='oeye'
 			set FCO ='A33E'
 			set SYV = 240
-			set SQV = R3V
+			set SQV = Item_SentryWard
 		endif
 		set whichUnit = GetTriggerUnit()
 		set x = GetSpellTargetX()
@@ -23911,15 +23818,15 @@ function MRO takes nothing returns boolean
 		loop
 			if IsPlayerPlaying(Player(i)) then
 				set pid = GetPlayerId(Player(i))
-				call StoreDrCacheData("SP1_" + I2S(i), HeroSkill_Base[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 1]])
-				call StoreDrCacheData("SP2_" + I2S(i), HeroSkill_Base[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 2]])
-				call StoreDrCacheData("SP3_" + I2S(i), HeroSkill_Base[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 3]])
-				call StoreDrCacheData("SP4_" + I2S(i), HeroSkill_Base[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 4]])
+				call StoreDrCacheData("SP1_" + I2S(i), HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 1]])
+				call StoreDrCacheData("SP2_" + I2S(i), HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 2]])
+				call StoreDrCacheData("SP3_" + I2S(i), HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 3]])
+				call StoreDrCacheData("SP4_" + I2S(i), HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 4]])
 				if ExtraSkillsNumber >= 1 then
-					call StoreDrCacheData("SP5_" + I2S(i), HeroSkill_Base[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 5]])
+					call StoreDrCacheData("SP5_" + I2S(i), HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 5]])
 				endif
 				if ExtraSkillsNumber >= 2 then
-					call StoreDrCacheData("SP6_" + I2S(i), HeroSkill_Base[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 6]])
+					call StoreDrCacheData("SP6_" + I2S(i), HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 6]])
 				endif
 			endif
 			set i = i + 1
@@ -25131,14 +25038,14 @@ function ShowSkillsOnSelecting takes nothing returns nothing
 	local integer i
 	if p != t and JI[GetPlayerId(p)]and GetTriggerUnit() == PlayerHeroes[GetPlayerId(t)]and IsPlayerAlly(p, t) then
 		set i = PlayerSkillIndices[GetPlayerId(t)* MAX_SKILL_SLOTS]
-		call DisplayTimedTextToPlayer(p, 0, 0, 10, "|c00a0a0f8" + GetObjectName(HeroSkill_Base[i + 1])+ "|r level: |c00f8a0a0" + I2S(ZTE(GetTriggerUnit(), 1))+ "|r")
-		call DisplayTimedTextToPlayer(p, 0, 0, 10, "|c00a0a0f8" + GetObjectName(HeroSkill_Base[i + 2])+ "|r level: |c00f8a0a0" + I2S(ZTE(GetTriggerUnit(), 2))+ "|r")
-		call DisplayTimedTextToPlayer(p, 0, 0, 10, "|c00a0a0f8" + GetObjectName(HeroSkill_Base[i + 3])+ "|r level: |c00f8a0a0" + I2S(ZTE(GetTriggerUnit(), 3))+ "|r")
-		call DisplayTimedTextToPlayer(p, 0, 0, 10, "|c00ff54f2" + GetObjectName(HeroSkill_Base[i + 4])+ "|r level: |c00f8a0a0" + I2S(ZTE(GetTriggerUnit(), 4))+ "|r")
+		call DisplayTimedTextToPlayer(p, 0, 0, 10, "|c00a0a0f8" + GetObjectName(HeroSkill_BasicId[i + 1])+ "|r level: |c00f8a0a0" + I2S(ZTE(GetTriggerUnit(), 1))+ "|r")
+		call DisplayTimedTextToPlayer(p, 0, 0, 10, "|c00a0a0f8" + GetObjectName(HeroSkill_BasicId[i + 2])+ "|r level: |c00f8a0a0" + I2S(ZTE(GetTriggerUnit(), 2))+ "|r")
+		call DisplayTimedTextToPlayer(p, 0, 0, 10, "|c00a0a0f8" + GetObjectName(HeroSkill_BasicId[i + 3])+ "|r level: |c00f8a0a0" + I2S(ZTE(GetTriggerUnit(), 3))+ "|r")
+		call DisplayTimedTextToPlayer(p, 0, 0, 10, "|c00ff54f2" + GetObjectName(HeroSkill_BasicId[i + 4])+ "|r level: |c00f8a0a0" + I2S(ZTE(GetTriggerUnit(), 4))+ "|r")
 		if ExtraSkillsNumber > 0 then
-			call DisplayTimedTextToPlayer(p, 0, 0, 10, "|c00a0a0f8" + GetObjectName(HeroSkill_Base[i + 5])+ "|r level: |c00f8a0a0" + I2S(ZTE(GetTriggerUnit(), 5))+ "|r")
-			if (HeroSkill_Base[PlayerSkillIndices[GetPlayerId(p)* MAX_SKILL_SLOTS + 6]]> 0) then
-				call DisplayTimedTextToPlayer(p, 0, 0, 10, "|c00ff54f2" + GetObjectName(HeroSkill_Base[i + 6])+ "|r level: |c00f8a0a0" + I2S(ZTE(GetTriggerUnit(), 6))+ "|r")
+			call DisplayTimedTextToPlayer(p, 0, 0, 10, "|c00a0a0f8" + GetObjectName(HeroSkill_BasicId[i + 5])+ "|r level: |c00f8a0a0" + I2S(ZTE(GetTriggerUnit(), 5))+ "|r")
+			if (HeroSkill_BasicId[PlayerSkillIndices[GetPlayerId(p)* MAX_SKILL_SLOTS + 6]]> 0) then
+				call DisplayTimedTextToPlayer(p, 0, 0, 10, "|c00ff54f2" + GetObjectName(HeroSkill_BasicId[i + 6])+ "|r level: |c00f8a0a0" + I2S(ZTE(GetTriggerUnit(), 6))+ "|r")
 			endif
 		endif
 	endif
@@ -26676,7 +26583,7 @@ function Ike_Sht takes player p, integer i, integer hotkey returns nothing
 	local integer f
 	local unit u = CirclesUnit[GetPlayerId(p)]
 	if HeroSkill_IsPassive[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]] then
-		set id = HeroSkill_Base[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]]
+		set id = HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]]
 		if id != 0 then
 			call UnitAddAbility(u, id)
 			call SetPasAbilityHotKey(u, id, hotkey, p)
@@ -26689,7 +26596,7 @@ function Ike_Sht takes player p, integer i, integer hotkey returns nothing
 			endif
 		endif
 	else
-		set id = HeroSkill_Base[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]]
+		set id = HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]]
 		if FireRemnat_Hk(u, id, hotkey, p) then
 			set u = null
 			return
@@ -26706,7 +26613,7 @@ function Ike_Sht takes player p, integer i, integer hotkey returns nothing
 			set id = 'A08Q'
 		endif
 		set IkeyID = LoadInteger(ExtraHT, HTKEY_SWITCHING_SKILLS, id)
-		set AghanimID = HeroSkill_Special[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]]
+		set AghanimID = HeroSkill_SpecialId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]]
 		if AghanimID != 0 then
 			set b1 = true
 		endif
@@ -26726,7 +26633,7 @@ function Ike_Sht takes player p, integer i, integer hotkey returns nothing
 			loop
 			exitwhen e > f
 				if e == 1 then
-					set id = HeroSkill_Base[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]]
+					set id = HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]]
 				elseif b2 then
 					set id = IkeyID
 				elseif b1 then
@@ -29624,12 +29531,12 @@ function OOR takes nothing returns nothing
 			loop
 				set id = PlayerSkillIndices[playerIndex * MAX_SKILL_SLOTS + xx]
 				if id > 600 then
-					call DisplayTimedTextToPlayer(Player(playerIndex), 0, 0, 15, "	" + GetObjectName(HeroSkill_Base[id])+ "|cffffcc00" + " (" + "Invoker" + ")" + "|r")
+					call DisplayTimedTextToPlayer(Player(playerIndex), 0, 0, 15, "	" + GetObjectName(HeroSkill_BasicId[id])+ "|cffffcc00" + " (" + "Invoker" + ")" + "|r")
 				else
 					if xx == 4 or xx == 6 then
-						call DisplayTimedTextToPlayer(Player(playerIndex), 0, 0, 15, "	" + "|c00ff0303" + GetObjectName(HeroSkill_Base[id])+ "|r" + "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(id + 3)/ 4])+ ")" + "|r")
+						call DisplayTimedTextToPlayer(Player(playerIndex), 0, 0, 15, "	" + "|c00ff0303" + GetObjectName(HeroSkill_BasicId[id])+ "|r" + "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(id + 3)/ 4])+ ")" + "|r")
 					else
-						call DisplayTimedTextToPlayer(Player(playerIndex), 0, 0, 15, "	" + GetObjectName(HeroSkill_Base[id])+ "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(id + 3)/ 4])+ ")" + "|r")
+						call DisplayTimedTextToPlayer(Player(playerIndex), 0, 0, 15, "	" + GetObjectName(HeroSkill_BasicId[id])+ "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(id + 3)/ 4])+ ")" + "|r")
 					endif
 				endif
 				set xx = xx + 1
@@ -29664,13 +29571,13 @@ function ORR takes integer i returns nothing
 		call MDX(k, i)
 		set LP[k]= true
 	endif
-	if HaveSavedString(ObjectHashTable, HeroSkill_Base[i], 600) and LoadBoolean(ObjectHashTable, HeroSkill_Base[i], 600) == false then
-		call SaveBoolean(ObjectHashTable, HeroSkill_Base[i], 600, true)
-		call ExecuteFunc(LoadStr(ObjectHashTable, HeroSkill_Base[i], 600))
+	if HaveSavedString(ObjectHashTable, HeroSkill_BasicId[i], 600) and LoadBoolean(ObjectHashTable, HeroSkill_BasicId[i], 600) == false then
+		call SaveBoolean(ObjectHashTable, HeroSkill_BasicId[i], 600, true)
+		call ExecuteFunc(LoadStr(ObjectHashTable, HeroSkill_BasicId[i], 600))
 	endif
-	if HaveSavedString(ObjectHashTable, HeroSkill_Base[i], 601) and LoadBoolean(ObjectHashTable, HeroSkill_Base[i], 601) == false then
-		call SaveBoolean(ObjectHashTable, HeroSkill_Base[i], 601, true)
-		call ExecuteFunc(LoadStr(ObjectHashTable, HeroSkill_Base[i], 601))
+	if HaveSavedString(ObjectHashTable, HeroSkill_BasicId[i], 601) and LoadBoolean(ObjectHashTable, HeroSkill_BasicId[i], 601) == false then
+		call SaveBoolean(ObjectHashTable, HeroSkill_BasicId[i], 601, true)
+		call ExecuteFunc(LoadStr(ObjectHashTable, HeroSkill_BasicId[i], 601))
 	endif
 endfunction
 function OIR takes integer playerIndex returns nothing
@@ -30145,14 +30052,14 @@ function OnPlayerPickAbility takes integer abilityIndex, integer playerIndex, bo
 	if ns != 0 then
 		if O4R != "" then
 			if O1R != 0 then
-				call DisplayLoDWarningForPlayer(p, OZR, "不兼容 : " + GetObjectName(HeroSkill_Base[PlayerSkillIndices[ROR + ns]])+ "/" + GetObjectName(HeroSkill_Base[PlayerSkillIndices[ROR + O0R]])+ "/" + GetObjectName(HeroSkill_Base[PlayerSkillIndices[ROR + O1R]])+ " (" + O4R + ")")
+				call DisplayLoDWarningForPlayer(p, OZR, "不兼容 : " + GetObjectName(HeroSkill_BasicId[PlayerSkillIndices[ROR + ns]])+ "/" + GetObjectName(HeroSkill_BasicId[PlayerSkillIndices[ROR + O0R]])+ "/" + GetObjectName(HeroSkill_BasicId[PlayerSkillIndices[ROR + O1R]])+ " (" + O4R + ")")
 			elseif O0R != 0 then
-				call DisplayLoDWarningForPlayer(p, OZR, "不兼容 : " + GetObjectName(HeroSkill_Base[PlayerSkillIndices[ROR + ns]])+ "/" + GetObjectName(HeroSkill_Base[PlayerSkillIndices[ROR + O0R]])+ " (" + O4R + ")")
+				call DisplayLoDWarningForPlayer(p, OZR, "不兼容 : " + GetObjectName(HeroSkill_BasicId[PlayerSkillIndices[ROR + ns]])+ "/" + GetObjectName(HeroSkill_BasicId[PlayerSkillIndices[ROR + O0R]])+ " (" + O4R + ")")
 			else
-				call DisplayLoDWarningForPlayer(p, OZR, "不兼容 : " + GetObjectName(HeroSkill_Base[PlayerSkillIndices[ROR + ns]])+ " (" + O4R + ")")
+				call DisplayLoDWarningForPlayer(p, OZR, "不兼容 : " + GetObjectName(HeroSkill_BasicId[PlayerSkillIndices[ROR + ns]])+ " (" + O4R + ")")
 			endif
 		else
-			call DisplayLoDWarningForPlayer(p, OZR, "不兼容 : " + GetObjectName(HeroSkill_Base[PlayerSkillIndices[ROR + ns]]))
+			call DisplayLoDWarningForPlayer(p, OZR, "不兼容 : " + GetObjectName(HeroSkill_BasicId[PlayerSkillIndices[ROR + ns]]))
 		endif
 		return false
 	endif
@@ -30168,12 +30075,12 @@ function OnPlayerPickAbility takes integer abilityIndex, integer playerIndex, bo
 		endif
 		return false
 	endif
-	if HaveSavedString(AbilityDataHashTable, HeroSkill_Base[abilityIndex], HotKeyStringHash) then
+	if HaveSavedString(AbilityDataHashTable, HeroSkill_BasicId[abilityIndex], HotKeyStringHash) then
 		set xx = 1
 		loop
-			if PlayerSkillIndices[ROR + xx]> 0 and HaveSavedString(AbilityDataHashTable, HeroSkill_Base[PlayerSkillIndices[ROR + xx]], HotKeyStringHash) then
-				if LoadStr(AbilityDataHashTable, HeroSkill_Base[abilityIndex], HotKeyStringHash) == LoadStr(AbilityDataHashTable, HeroSkill_Base[PlayerSkillIndices[ROR + xx]], HotKeyStringHash) then
-					call DisplayLoDWarningForPlayer(p, OZR, "快捷键冲突 : " + GetObjectName(HeroSkill_Base[PlayerSkillIndices[ROR + xx]]))
+			if PlayerSkillIndices[ROR + xx]> 0 and HaveSavedString(AbilityDataHashTable, HeroSkill_BasicId[PlayerSkillIndices[ROR + xx]], HotKeyStringHash) then
+				if LoadStr(AbilityDataHashTable, HeroSkill_BasicId[abilityIndex], HotKeyStringHash) == LoadStr(AbilityDataHashTable, HeroSkill_BasicId[PlayerSkillIndices[ROR + xx]], HotKeyStringHash) then
+					call DisplayLoDWarningForPlayer(p, OZR, "快捷键冲突 : " + GetObjectName(HeroSkill_BasicId[PlayerSkillIndices[ROR + xx]]))
 					if HaveSavedBoolean(OtherHashTable, GetHandleId(Player(playerIndex)),'NSHK') and Mode__AllRandom then
 						return false
 					endif
@@ -30372,7 +30279,7 @@ function RIR takes integer pid, integer skillIndex returns boolean
 				set V0R = GetPlayerId(ScourgePlayers[xx])
 			endif
 			if LoadBoolean(HY, GetHandleId(Player(V0R)), unitTypeId) then
-				if GetUnitAbilityLevel(KP[V0R], HeroSkill_Base[skillIndex])> 0 then
+				if GetUnitAbilityLevel(KP[V0R], HeroSkill_BasicId[skillIndex])> 0 then
 					call UnitRemoveAbility(KP[V0R],('Z010'-1)+ sn)
 					call UnitAddAbility(KP[V0R],('Z000'-1)+ sn)
 				endif
@@ -30518,7 +30425,7 @@ function RDR takes nothing returns nothing
 				else
 					set RFR = GetPlayerId(ScourgePlayers[xx])
 				endif
-				if GetUnitAbilityLevel(KP[RFR], HeroSkill_Base[index])> 0 and pid != RFR and GetUnitAbilityLevel(KP[RFR],'Z000'-1 + sn)> 0 then
+				if GetUnitAbilityLevel(KP[RFR], HeroSkill_BasicId[index])> 0 and pid != RFR and GetUnitAbilityLevel(KP[RFR],'Z000'-1 + sn)> 0 then
 					call UnitRemoveAbility(KP[RFR],('Z000'-1)+ sn)
 					call UnitAddAbility(KP[RFR],('Z010'-1)+ sn)
 				endif
@@ -31243,24 +31150,24 @@ function IPR takes nothing returns nothing
 	call SaveInteger(HY, h, 100 * c + 4, PlayerSkillIndices[4])
 	call SaveInteger(HY, h, 100 * c + 5, PlayerSkillIndices[5])
 	call SaveInteger(HY, h, 100 * c + 6, PlayerSkillIndices[6])
-	call UnitAddAbility(u, QGX(HeroSkill_Base[PlayerSkillIndices[1]]))
-	call SetUnitAbilityLevel(u, QGX(HeroSkill_Base[PlayerSkillIndices[1]]), 4)
-	call UnitAddAbility(u, QGX(HeroSkill_Base[PlayerSkillIndices[2]]))
-	call SetUnitAbilityLevel(u, QGX(HeroSkill_Base[PlayerSkillIndices[2]]), 4)
-	call UnitAddAbility(u, QGX(HeroSkill_Base[PlayerSkillIndices[3]]))
-	call SetUnitAbilityLevel(u, QGX(HeroSkill_Base[PlayerSkillIndices[3]]), 4)
-	call UnitAddAbility(u, QGX(HeroSkill_Base[PlayerSkillIndices[4]]))
-	call SetUnitAbilityLevel(u, QGX(HeroSkill_Base[PlayerSkillIndices[4]]), 4)
+	call UnitAddAbility(u, QGX(HeroSkill_BasicId[PlayerSkillIndices[1]]))
+	call SetUnitAbilityLevel(u, QGX(HeroSkill_BasicId[PlayerSkillIndices[1]]), 4)
+	call UnitAddAbility(u, QGX(HeroSkill_BasicId[PlayerSkillIndices[2]]))
+	call SetUnitAbilityLevel(u, QGX(HeroSkill_BasicId[PlayerSkillIndices[2]]), 4)
+	call UnitAddAbility(u, QGX(HeroSkill_BasicId[PlayerSkillIndices[3]]))
+	call SetUnitAbilityLevel(u, QGX(HeroSkill_BasicId[PlayerSkillIndices[3]]), 4)
+	call UnitAddAbility(u, QGX(HeroSkill_BasicId[PlayerSkillIndices[4]]))
+	call SetUnitAbilityLevel(u, QGX(HeroSkill_BasicId[PlayerSkillIndices[4]]), 4)
 	
-	//call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 30, "循环:"+I2S( c ) + " 技能名" + GetObjectName( QGX(HeroSkill_Base[PlayerSkillIndices[4]]) ))
+	//call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 30, "循环:"+I2S( c ) + " 技能名" + GetObjectName( QGX(HeroSkill_BasicId[PlayerSkillIndices[4]]) ))
 	if ExtraSkillsNumber > 0 then
-		call UnitAddAbility(u, QGX(HeroSkill_Base[PlayerSkillIndices[5]]))
-		call SetUnitAbilityLevel(u, QGX(HeroSkill_Base[PlayerSkillIndices[5]]), 4)
+		call UnitAddAbility(u, QGX(HeroSkill_BasicId[PlayerSkillIndices[5]]))
+		call SetUnitAbilityLevel(u, QGX(HeroSkill_BasicId[PlayerSkillIndices[5]]), 4)
 		call SaveInteger(HY, GetHandleId(u),'RDIN'+ 5, PlayerSkillIndices[5])
 	endif
 	if ExtraSkillsNumber > 1 then
-		call UnitAddAbility(u, QGX(HeroSkill_Base[PlayerSkillIndices[6]]))
-		call SetUnitAbilityLevel(u, QGX(HeroSkill_Base[PlayerSkillIndices[6]]), 4)
+		call UnitAddAbility(u, QGX(HeroSkill_BasicId[PlayerSkillIndices[6]]))
+		call SetUnitAbilityLevel(u, QGX(HeroSkill_BasicId[PlayerSkillIndices[6]]), 4)
 		call SaveInteger(HY, GetHandleId(u),'RDIN'+ 6, PlayerSkillIndices[6])
 	endif
 	call SaveInteger(HY, GetHandleId(u),'RDIN'+ 1, PlayerSkillIndices[1])
@@ -34162,7 +34069,7 @@ function PlayerHaveAbilityByActive takes player p, integer abid returns boolean
 	local integer maxi = 4 + ExtraSkillsNumber
 	local integer pid = GetPlayerId(p)
 	loop
-		if HeroSkill_Base[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]] == abid then
+		if HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]] == abid then
 			return true
 		endif
 		set i = i + 1
@@ -43741,7 +43648,7 @@ function ERI takes nothing returns nothing
 	local integer i = 1
 	local integer abilityId
 	loop
-		set abilityId = HeroSkill_Base[PlayerSkillIndices[iPlayerId * MAX_SKILL_SLOTS + i]]
+		set abilityId = HeroSkill_BasicId[PlayerSkillIndices[iPlayerId * MAX_SKILL_SLOTS + i]]
 		if abilityId > 0 and not HeroSkill_IsPassive[PlayerSkillIndices[iPlayerId * MAX_SKILL_SLOTS + i]] then
 			call SaveInteger(OtherHashTable2,'MULT', 0, abilityId)
 			// 能被多重施法
@@ -46722,7 +46629,7 @@ function IVI takes nothing returns nothing
 	else
 		set l = GetRectCenter(gg_rct_ScourgeRevivalPoint)
 	endif
-	if HQX(GetEnumItem()) == false then
+	if IsItemDeathDrop(GetEnumItem()) == false then
 		call SetItemPositionLoc(GetEnumItem(), l)
 	endif
 	call RemoveLocation(l)
@@ -46745,7 +46652,7 @@ function IEI takes nothing returns nothing
 		set IXI = CreateUnit(GetOwningPlayer(GetTriggerUnit()),'e01F', x, y, 0)
 		call SaveUnitHandle(HY, h, 334, IXI)
 	endif
-	if HQX(GetEnumItem()) == false then
+	if IsItemDeathDrop(GetEnumItem()) == false then
 		call UnitAddItem(IXI, GetEnumItem())
 	endif
 	if GetUnitAbilityLevel(RWI,'A398')> 0 then
@@ -55172,7 +55079,7 @@ function ReincarnationActions takes nothing returns boolean
 	endif
 	
 	if YDWEGetUnitAbilityState(u, id, 1) == 0 and GetUnitState(u, UNIT_STATE_MANA)>= 120 + 40 * lv then
-		if HeroSkill_Base[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 4]]=='A01Y' or HeroSkill_Base[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 6]]=='A01Y'  then
+		if HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 4]]=='A01Y' or HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 6]]=='A01Y'  then
 			set isReincarnation = true
 			//if GetUnitAbilityLevel(u,'A39S') == 1 then
 			//	if GetUnitAbilityLevel(u,'A01Y')> 0 then
@@ -56026,11 +55933,11 @@ function TNI takes integer E8I, unit TBI, unit TCI returns nothing
 endfunction
 function TDI takes unit SPI, unit TFI returns nothing
 	local integer i = GetPlayerId(GetOwningPlayer(TFI))
-	local integer Z_E = HeroSkill_Base[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 1]]
-	local integer Z0E = HeroSkill_Base[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 2]]
-	local integer TGI = HeroSkill_Base[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 3]]
-	local integer THI = HeroSkill_Base[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 4]]
-	local integer TJI = HeroSkill_Special[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 4]]
+	local integer Z_E = HeroSkill_BasicId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 1]]
+	local integer Z0E = HeroSkill_BasicId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 2]]
+	local integer TGI = HeroSkill_BasicId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 3]]
+	local integer THI = HeroSkill_BasicId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 4]]
+	local integer TJI = HeroSkill_SpecialId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 4]]
 	call UnitAddPermanentAbility(SPI, HeroSkill_Modify[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 1]])
 	call UnitAddPermanentAbility(SPI, HeroSkill_Modify[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 2]])
 	call UnitAddPermanentAbility(SPI, HeroSkill_Modify[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 3]])
@@ -56076,11 +55983,11 @@ function TLI takes unit S3X, unit S4X returns nothing
 endfunction
 function TMI takes unit S3X, unit S4X returns nothing
 	local integer i = GetPlayerId(GetOwningPlayer(S3X))
-	local integer Z_E = HeroSkill_Base[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 1]]
-	local integer Z0E = HeroSkill_Base[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 2]]
-	local integer TGI = HeroSkill_Base[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 3]]
-	local integer THI = HeroSkill_Base[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 4]]
-	local integer TJI = HeroSkill_Special[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 4]]
+	local integer Z_E = HeroSkill_BasicId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 1]]
+	local integer Z0E = HeroSkill_BasicId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 2]]
+	local integer TGI = HeroSkill_BasicId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 3]]
+	local integer THI = HeroSkill_BasicId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 4]]
+	local integer TJI = HeroSkill_SpecialId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 4]]
 	local integer TPI = GetUnitAbilityLevel(S3X, Z_E)
 	local integer TQI = GetUnitAbilityLevel(S3X, Z0E)
 	local integer TSI = GetUnitAbilityLevel(S3X, TGI)
@@ -56186,11 +56093,11 @@ function T7I takes unit whichUnit, boolean RFO returns nothing
 endfunction
 function T8I takes nothing returns boolean
 	local integer i = GetPlayerId(GetOwningPlayer(GetTriggerUnit()))
-	local integer Z_E = HeroSkill_Base[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 1]]
-	local integer Z0E = HeroSkill_Base[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 2]]
-	local integer TGI = HeroSkill_Base[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 3]]
-	local integer THI = HeroSkill_Base[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 4]]
-	local integer TJI = HeroSkill_Special[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 4]]
+	local integer Z_E = HeroSkill_BasicId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 1]]
+	local integer Z0E = HeroSkill_BasicId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 2]]
+	local integer TGI = HeroSkill_BasicId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 3]]
+	local integer THI = HeroSkill_BasicId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 4]]
+	local integer TJI = HeroSkill_SpecialId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 4]]
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local unit whichUnit =(LoadUnitHandle(HY, h, 2))
@@ -70111,10 +70018,10 @@ function J7A takes nothing returns nothing
 	call A5X(LF, GetUnitX(u), GetUnitY(u))
 	loop
 	exitwhen i > 4 + ExtraSkillsNumber or J9A == false
-		if HeroSkill_Base[PlayerSkillIndices[id * MAX_SKILL_SLOTS + i]] == J2A then
+		if HeroSkill_BasicId[PlayerSkillIndices[id * MAX_SKILL_SLOTS + i]] == J2A then
 			set J9A = false
 		endif
-		if HeroSkill_Special[PlayerSkillIndices[id * MAX_SKILL_SLOTS + i]] == J2A then
+		if HeroSkill_SpecialId[PlayerSkillIndices[id * MAX_SKILL_SLOTS + i]] == J2A then
 			set J9A = false
 		endif
 		set i = i + 1
@@ -70166,12 +70073,12 @@ function KXA takes nothing returns nothing
 	if id != 0 then
 		set key = GetSkillAghanimUpgradeIndexById(id)
 		if b then
-			if key> 0 and AghanimUpgradeUpgradeId[key]> 0 then
-				set id = AghanimUpgradeUpgradeId[key]
+			if key> 0 and AghanimUpgrade_UpgradedId[key]> 0 then
+				set id = AghanimUpgrade_UpgradedId[key]
 			endif
 		else
-			if key> 0 and AghanimUpgradeNormalId[key]> 0 then
-				set id = AghanimUpgradeNormalId[key]
+			if key> 0 and AghanimUpgrade_BasicId[key]> 0 then
+				set id = AghanimUpgrade_BasicId[key]
 			endif
 		endif
 		call DestroyEffect(AddSpecialEffectTarget("war3mapImported\\Nebula.mdx", t, "origin"))
@@ -72414,7 +72321,7 @@ endfunction
 function M9A takes unit u, integer TPE, integer PVA, integer level returns nothing
 	local trigger t = null
 	local integer h
-	if not UnitAddPermanentAbility(u, HeroSkill_Base[PlayerSkillIndices[TPE]]) and GetUnitAbilityLevel(u, HeroSkill_Base[PlayerSkillIndices[TPE]]) == 0 then
+	if not UnitAddPermanentAbility(u, HeroSkill_BasicId[PlayerSkillIndices[TPE]]) and GetUnitAbilityLevel(u, HeroSkill_BasicId[PlayerSkillIndices[TPE]]) == 0 then
 		return
 	endif
 	set t = CreateTrigger()
@@ -72422,13 +72329,13 @@ function M9A takes unit u, integer TPE, integer PVA, integer level returns nothi
 	call TriggerRegisterUnitEvent(t, u, EVENT_UNIT_SPELL_ENDCAST)
 	call TriggerAddCondition(t, Condition(function M8A))
 	call SaveUnitHandle(HY, h, 0, u)
-	call SaveInteger(HY, h, 0, HeroSkill_Base[PlayerSkillIndices[TPE]])
-	call SetUnitAbilityLevel(u, HeroSkill_Base[PlayerSkillIndices[TPE]], level)
-	call SetPlayerAbilityAvailable(GetOwningPlayer(u), HeroSkill_Base[PlayerSkillIndices[TPE]], true)
-	call SaveInteger(ObjectHashTable, GetHandleId(u),'A40K'+ PVA, HeroSkill_Base[PlayerSkillIndices[TPE]])
+	call SaveInteger(HY, h, 0, HeroSkill_BasicId[PlayerSkillIndices[TPE]])
+	call SetUnitAbilityLevel(u, HeroSkill_BasicId[PlayerSkillIndices[TPE]], level)
+	call SetPlayerAbilityAvailable(GetOwningPlayer(u), HeroSkill_BasicId[PlayerSkillIndices[TPE]], true)
+	call SaveInteger(ObjectHashTable, GetHandleId(u),'A40K'+ PVA, HeroSkill_BasicId[PlayerSkillIndices[TPE]])
 	call SaveInteger(HY, h, 1, PVA)
 	call SaveInteger(HY, h, 2, level)
-	if CheckAbilityIdFormIndex(GetBaseSkillIndexById(TPE),-1, "metamorphosis", null) then
+	if CheckAbilityIdFormIndex(GetSkillIndexByBasicId(TPE),-1, "metamorphosis", null) then
 		call SaveBoolean(ObjectHashTable, GetHandleId(u),'A40K'+ PVA, true)
 	endif
 	if PVA == 3 then
@@ -72454,7 +72361,7 @@ function PEA takes unit u, integer abilId, integer PXA returns boolean
 	endif
 	set xx = 1
 	loop
-		if HeroSkill_Base[PlayerSkillIndices[i * MAX_SKILL_SLOTS + xx]]== abilId or CheckAbilityIdFormIndex(PXA, PlayerSkillIndices[i * MAX_SKILL_SLOTS + xx], null, null) then
+		if HeroSkill_BasicId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + xx]]== abilId or CheckAbilityIdFormIndex(PXA, PlayerSkillIndices[i * MAX_SKILL_SLOTS + xx], null, null) then
 			return false
 		endif
 		set xx = xx + 1
@@ -72489,7 +72396,7 @@ function F2E takes nothing returns nothing
 		set xx = 1
 		loop
 			if PlayerSkillIndices[k * MAX_SKILL_SLOTS + xx]!= 0 then
-				if HeroSkill_IsPassive[PlayerSkillIndices[k * MAX_SKILL_SLOTS + xx]]== false and PEA(u, HeroSkill_Base[PlayerSkillIndices[k * MAX_SKILL_SLOTS + xx]], PlayerSkillIndices[k * MAX_SKILL_SLOTS + xx]) then
+				if HeroSkill_IsPassive[PlayerSkillIndices[k * MAX_SKILL_SLOTS + xx]]== false and PEA(u, HeroSkill_BasicId[PlayerSkillIndices[k * MAX_SKILL_SLOTS + xx]], PlayerSkillIndices[k * MAX_SKILL_SLOTS + xx]) then
 					if xx == 4 or xx == 6 then
 						set b[iu]= k * MAX_SKILL_SLOTS + xx
 						set iu = iu + 1
@@ -73045,14 +72952,14 @@ function YUV takes nothing returns nothing
 	call DisableTrigger(UnitManipulatItemTrig)
 	loop
 	exitwhen i > 5
-		if UnitItemInSlot(whichUnit, i)!= null and GetItemTypeId(UnitItemInSlot(whichUnit, i))!= ItemRealId[AIV]and GetItemTypeId(UnitItemInSlot(whichUnit, i))!= ItemRealId[A6V]and GetItemTypeId(UnitItemInSlot(whichUnit, i))!= ItemRealId[R2V]and GetItemTypeId(UnitItemInSlot(whichUnit, i))!= ItemRealId[R3V]and GetItemTypeId(UnitItemInSlot(whichUnit, i))!= ItemRealId[IVV] then
+		if UnitItemInSlot(whichUnit, i)!= null and GetItemTypeId(UnitItemInSlot(whichUnit, i))!= ItemRealId[AIV]and GetItemTypeId(UnitItemInSlot(whichUnit, i))!= ItemRealId[A6V]and GetItemTypeId(UnitItemInSlot(whichUnit, i))!= ItemRealId[R2V]and GetItemTypeId(UnitItemInSlot(whichUnit, i))!= ItemRealId[Item_SentryWard]and GetItemTypeId(UnitItemInSlot(whichUnit, i))!= ItemRealId[IVV] then
 			set it = CreateItem(GetItemTypeId(UnitItemInSlot(whichUnit, i)), 0, 0)
 			if GetItemCharges(UnitItemInSlot(whichUnit, i))> 0 then
 				call SetItemCharges(it, GetItemCharges(UnitItemInSlot(whichUnit, i)))
 			endif
 			call UnitAddItem(PUA, it)
 			call SetItemPlayer(it, GetOwningPlayer(PUA), false)
-			if GetItemTypeId(it) == ItemRealId[ASV]or GetItemTypeId(it) == ItemRealId[ATV]or GetItemTypeId(it) == ItemRealId[X4V] then
+			if GetItemTypeId(it) == ItemRealId[ASV]or GetItemTypeId(it) == ItemRealId[ATV]or GetItemTypeId(it) == ItemRealId[ITem_GemOfTrueSight] then
 				call SetItemDropOnDeath(it, false)
 			endif
 		else
@@ -73080,26 +72987,26 @@ function YUV takes nothing returns nothing
 	call UnitAddPermanentAbility(PUA, HeroSkill_Modify[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 4]])
 	set i = 1
 	loop
-	exitwhen i > GetUnitAbilityLevel(whichUnit, HeroSkill_Base[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 1]])
-		call SelectHeroSkill(PUA, HeroSkill_Base[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 1]])
+	exitwhen i > GetUnitAbilityLevel(whichUnit, HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 1]])
+		call SelectHeroSkill(PUA, HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 1]])
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
-	exitwhen i > GetUnitAbilityLevel(whichUnit, HeroSkill_Base[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 2]])
-		call SelectHeroSkill(PUA, HeroSkill_Base[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 2]])
+	exitwhen i > GetUnitAbilityLevel(whichUnit, HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 2]])
+		call SelectHeroSkill(PUA, HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 2]])
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
-	exitwhen i > GetUnitAbilityLevel(whichUnit, HeroSkill_Base[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 3]])
-		call SelectHeroSkill(PUA, HeroSkill_Base[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 3]])
+	exitwhen i > GetUnitAbilityLevel(whichUnit, HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 3]])
+		call SelectHeroSkill(PUA, HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 3]])
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
-	exitwhen i > GetUnitAbilityLevel(whichUnit, HeroSkill_Base[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 4]])
-		call SelectHeroSkill(PUA, HeroSkill_Base[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 4]])
+	exitwhen i > GetUnitAbilityLevel(whichUnit, HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 4]])
+		call SelectHeroSkill(PUA, HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 4]])
 		set i = i + 1
 	endloop
 	call UnitRemoveAbility(PUA,'A2M0')
@@ -76022,7 +75929,7 @@ function YNA takes nothing returns nothing
 		set dummyUnit = VB[i]
 		set level = GetUnitAbilityLevel(KKX,'A086')
 		if level == 0 and b then
-			if HeroSkill_Base[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 5]]=='P247' then
+			if HeroSkill_BasicId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 5]]=='P247' then
 				set level = IP[i * 2 + 1]
 			endif
 		endif
@@ -76058,7 +75965,7 @@ function YNA takes nothing returns nothing
 		elseif GetUnitAbilityLevel(dummyUnit,'A330')> 0 then
 			call UnitRemoveAbility(dummyUnit,'A330')
 		endif
-		if UnitIsDead(KKX) == false and M2[GetPlayerId(GetOwningPlayer(KKX))]== false and(GetUnitAbilityLevel(KKX,'A08E')> 0 or HeroSkill_Base[PlayerSkillIndices[GetPlayerId(GetOwningPlayer(KKX))* MAX_SKILL_SLOTS + 5]]=='A08Q') then
+		if UnitIsDead(KKX) == false and M2[GetPlayerId(GetOwningPlayer(KKX))]== false and(GetUnitAbilityLevel(KKX,'A08E')> 0 or HeroSkill_BasicId[PlayerSkillIndices[GetPlayerId(GetOwningPlayer(KKX))* MAX_SKILL_SLOTS + 5]]=='A08Q') then
 			if O6X() == false then
 				if GetUnitAbilityLevel(KKX,'A08E')> 0 then
 					call sckj(KKX, true)
@@ -76726,7 +76633,7 @@ function UnitIssuedItemOrder takes nothing returns nothing // 发布物品命令
 			endif
 		endif
 	else	// 指向单位
-		if id == R0V or id == R1V then
+		if id == Item_AncientTangoOfEssifation or id == R1V then
 			call SetUnitAbilityLevel(whichUnit,'Aeat', 1)
 			call SetUnitAbilityLevel(whichUnit,'A2VG', 1)
 			// 如果吃了 真眼或者假眼 技能提升为2级 双倍恢复效果
@@ -76831,7 +76738,7 @@ function UnitIssuedItemOrder takes nothing returns nothing // 发布物品命令
 	endif
 
  	// 放置真假眼
-	if id == R2V or id == R3V then
+	if id == R2V or id == Item_SentryWard then
 		if targetUnit != null then
 			// 如果目标是英雄 或者不是熊灵
 			if (IsUnitType(targetUnit, UNIT_TYPE_HERO) or not IsUnitSpiritBear(targetUnit)) then
@@ -77005,7 +76912,7 @@ function ZHA takes nothing returns nothing
 	call RemoveItem(CreateItem('I006'+ GetRandomInt(0, 2), GetLocationX(LeftTopRuneLocatio), GetLocationY(LeftTopRuneLocatio)))
 	call RemoveItem(CreateItem('I006'+ GetRandomInt(0, 2), GetLocationX(RightBottomRuneLocatio), GetLocationY(RightBottomRuneLocatio)))
 	call RemoveItem(CreateItem(ItemPowerupId[ASV], GetRandomReal(-6000, 6000), GetRandomReal(-6000, 6000)))
-	call RemoveItem(CreateItem(ItemPowerupId[X4V], GetRandomReal(-6000, 6000), GetRandomReal(-6000, 6000)))
+	call RemoveItem(CreateItem(ItemPowerupId[ITem_GemOfTrueSight], GetRandomReal(-6000, 6000), GetRandomReal(-6000, 6000)))
 	call TimerStart(t, GetRandomReal(1.5, 3), false, function ZHA)
 	set t = null
 endfunction
@@ -79969,14 +79876,6 @@ function Init_ExtraTriggers takes nothing returns nothing
 	local trigger t
 	local integer hTempFrame
 
-	// 设置不能被改变cd的技能
-	call SetSkillDisableRefreshCoolDown('QP10') //勇气之霎
-	call SetSkillDisableRefreshCoolDown('A522') //潮汐使者
-	call SetSkillDisableRefreshCoolDown('QP1G') //余震
-	call SetSkillDisableRefreshCoolDown('QP17') //反击螺旋
-	call SetSkillDisableRefreshCoolDown('A3UF') //星落
-	call SetSkillDisableRefreshCoolDown('A3TY') //回音战刃
-	call SetSkillDisableRefreshCoolDown('A3TZ') //碎颅锤
 	// 初始化UI
 	call UIMain_Init()
 	// 初始化同步触发器
@@ -80702,7 +80601,7 @@ function main takes nothing returns nothing
 	call XUX(ScourgePlayers[4])
 	call XUX(ScourgePlayers[5])
 	call ExecuteFunc("InitTaverns")
-	call ExecuteFunc("ItemSystem_Init")
+	call ExecuteFunc("ItemDefine_Init")
 	call ExecuteFunc("InitBuyBack")
 	set t = CreateTrigger()
 	call TriggerRegisterTimerEvent(t, .01, false)

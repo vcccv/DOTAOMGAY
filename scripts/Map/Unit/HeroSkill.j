@@ -6,14 +6,14 @@ library HeroAbilityLib requires AbilityCustomOrderId
         if PlayerHeroes[id] == null then
             return 0.
         endif
-        return MHAbility_GetCooldown(PlayerHeroes[id], HeroSkill_Base[PlayerSkillIndices[id * MAX_SKILL_SLOTS + 4]])
+        return MHAbility_GetCooldown(PlayerHeroes[id], HeroSkill_BasicId[PlayerSkillIndices[id * MAX_SKILL_SLOTS + 4]])
     endfunction
     function GetPlayerUltimate2Cooldown takes player whichPlayer returns real
         local integer id = GetPlayerId(whichPlayer)
         if PlayerHeroes[id] == null then
             return 0.
         endif
-        return MHAbility_GetCooldown(PlayerHeroes[id], HeroSkill_Base[PlayerSkillIndices[id * MAX_SKILL_SLOTS + 6]])
+        return MHAbility_GetCooldown(PlayerHeroes[id], HeroSkill_BasicId[PlayerSkillIndices[id * MAX_SKILL_SLOTS + 6]])
     endfunction
     
     function GetPlayerUltimate1CooldownText takes player whichPlayer returns string
@@ -39,12 +39,12 @@ library HeroAbilityLib requires AbilityCustomOrderId
         integer array PlayerSkillIndices
 
         string  array HeroSkill_Icon
-        integer array HeroSkill_Base
-        integer array HeroSkill_Special
+
+        integer array HeroSkill_BasicId
+        integer array HeroSkill_SpecialId
         integer array HeroSkill_Modify
         boolean array HeroSkill_IsPassive
         
-
         string  array HeroSkill_BalanceOffDisabledTips
         string  array HeroSkill_RearmCombosDisabledTips
 
@@ -139,10 +139,10 @@ library HeroAbilityLib requires AbilityCustomOrderId
         endif
     endfunction
     
-    function GetBaseSkillIndexById takes integer id returns integer
+    function GetSkillIndexByBasicId takes integer id returns integer
         local integer i = 1
         loop
-            if HeroSkill_Base[i] == id then
+            if HeroSkill_BasicId[i] == id then
                 return i
             endif
             set i = i + 1
@@ -153,7 +153,7 @@ library HeroAbilityLib requires AbilityCustomOrderId
     function GetSkillIndexById takes integer id returns integer	//返回普通+A杖
         local integer i = 1
         loop
-            if HeroSkill_Base[i]== id or HeroSkill_Special[i] == id then
+            if HeroSkill_BasicId[i] == id or HeroSkill_SpecialId[i] == id then
                 return i
             endif
             set i = i + 1
@@ -179,8 +179,8 @@ library HeroAbilityLib requires AbilityCustomOrderId
         if commonSkill > 0 then
             set HeroSkill_Icon[id]= GetAbilitySoundById(commonSkill, SOUND_TYPE_EFFECT_LOOPED)
         endif
-        set HeroSkill_Base[id]= commonSkill
-        set HeroSkill_Special[id]= upgradeSkill
+        set HeroSkill_BasicId[id]= commonSkill
+        set HeroSkill_SpecialId[id]= upgradeSkill
         set HeroSkill_Modify[id]= changeSkill
         if sHotKey != "_" and sHotKey != "" and sHotKey != null then
             call SaveStr(AbilityDataHashTable, commonSkill, HotKeyStringHash, sHotKey)
@@ -1173,16 +1173,16 @@ library HeroAbilityLib requires AbilityCustomOrderId
         set i = 114 -1
         loop
         exitwhen i > 116 -1
-            if HeroSkill_Base[i * 4 + 1]=='Z610' then
+            if HeroSkill_BasicId[i * 4 + 1]=='Z610' then
                 call AddControlSkillIndex(i * 4 + 1)
                 set i = 1231
-            elseif HeroSkill_Base[i * 4 + 2]=='Z610' then
+            elseif HeroSkill_BasicId[i * 4 + 2]=='Z610' then
                 call AddControlSkillIndex(i * 4 + 2)
                 set i = 1231
-            elseif HeroSkill_Base[i * 4 + 3]=='Z610' then
+            elseif HeroSkill_BasicId[i * 4 + 3]=='Z610' then
                 call AddControlSkillIndex(i * 4 + 3)
                 set i = 1231
-            elseif HeroSkill_Base[i * 4 + 4]=='Z610' then
+            elseif HeroSkill_BasicId[i * 4 + 4]=='Z610' then
                 call AddControlSkillIndex(i * 4 + 4)
                 set i = 1231
             endif
@@ -1336,10 +1336,11 @@ library HeroAbilityLib requires AbilityCustomOrderId
     //*
     //***************************************************************************
     globals
-        integer array AghanimUpgradeChangeId
-        integer array AghanimUpgradeNormalId
-        integer array AghanimUpgradeUpgradeId
-        integer array AghanimUpgradeUnknownId
+        // 工程升级 用来转变技能
+        integer array AghanimUpgrade_ModifyId
+        integer array AghanimUpgrade_BasicId
+        integer array AghanimUpgrade_UpgradedId
+        integer array AghanimUpgrade_UnknownId
         integer AghanimUpgradeMaxCount = 1
     endglobals
 
@@ -1348,7 +1349,7 @@ library HeroAbilityLib requires AbilityCustomOrderId
         local integer i = 1
         loop
         exitwhen i > AghanimUpgradeMaxCount
-            if id == AghanimUpgradeUpgradeId[i] or id == AghanimUpgradeNormalId[i] then
+            if id == AghanimUpgrade_UpgradedId[i] or id == AghanimUpgrade_BasicId[i] then
                 return i
             endif
             set i = i + 1
@@ -1356,22 +1357,35 @@ library HeroAbilityLib requires AbilityCustomOrderId
         return 0
     endfunction
 
+    // 根据基础Id来找神杖升级
+    function GetAghanimUpgradeIndexByBasicId takes integer id returns integer
+        local integer i = 1
+        loop
+            if AghanimUpgrade_BasicId[i]== id then
+                return i
+            endif
+            set i = i + 1
+        exitwhen i > AghanimUpgradeMaxCount
+        endloop
+        return -1
+    endfunction
+
     // 注册A杖升级 normalId changeId upgradeId AghanimUpgradeMaxCount
     // 通过GetSkillAghanimUpgradeIndexById来获得技能的神杖升级索引
     private function RegisterAghanimUpgrade takes integer normalId, integer changeId, integer upgradeId, integer whichInteger returns nothing
         // 获取原本技能的索引()
-        local integer id = GetBaseSkillIndexById(normalId)
+        local integer id = GetSkillIndexByBasicId(normalId)
         // 原本技能
-        set AghanimUpgradeNormalId[AghanimUpgradeMaxCount] = normalId
+        set AghanimUpgrade_BasicId[AghanimUpgradeMaxCount] = normalId
         // 神杖升级的工程升级技能
-        set AghanimUpgradeChangeId[AghanimUpgradeMaxCount] = changeId
+        set AghanimUpgrade_ModifyId[AghanimUpgradeMaxCount] = changeId
         call SetAllPlayerAbilityUnavailable(changeId)
         // 神杖升级后的技能
-        set AghanimUpgradeUpgradeId[AghanimUpgradeMaxCount] = upgradeId
+        set AghanimUpgrade_UpgradedId[AghanimUpgradeMaxCount] = upgradeId
         // 未引用 参数都是0
-        set AghanimUpgradeUnknownId[AghanimUpgradeMaxCount] = whichInteger
-        if id > 0 and HeroSkill_Special[id]== 0 then
-            set HeroSkill_Special[id]= upgradeId
+        set AghanimUpgrade_UnknownId[AghanimUpgradeMaxCount] = whichInteger
+        if id > 0 and HeroSkill_SpecialId[id]== 0 then
+            set HeroSkill_SpecialId[id]= upgradeId
         endif
         set AghanimUpgradeMaxCount = AghanimUpgradeMaxCount + 1
     endfunction
