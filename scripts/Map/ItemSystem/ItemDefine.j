@@ -1,30 +1,6 @@
 
 library ItemDefine requires ItemSystem
 
-  
-
-    // RemoveItemNoTrig
-    function HZX takes item whichItem returns nothing
-        call DisableTrigger(UnitManipulatItemTrig)
-        call RemoveItem(whichItem)
-        call EnableTrigger(UnitManipulatItemTrig)
-    endfunction
-    // 获取剩余格子
-    function H_X takes unit whichUnit returns integer
-        local integer i = 0
-        local integer n = 0
-        local integer size = UnitInventorySize(whichUnit)-1
-        loop
-        exitwhen i > size
-            if UnitItemInSlot(whichUnit, i) == null then
-                set n = n + 1
-            endif
-            set i = i + 1
-        endloop
-        return n
-    endfunction
-
-
     function ItemDefine_Init takes nothing returns nothing
         local string s = ""
         call RegisterItem('I0FF','I0FG', 0, 0)
@@ -42,7 +18,7 @@ library ItemDefine requires ItemSystem
     
         set Recipe_AetherLens = RegisterItem('I0V3','I0V4','n12W','I0V5')
         set Item_AetherLens   = RegisterItem('I0UE','I0UF',     0,'I0UG')
-        call SetItemMethodByIndexSimple(Item_AetherLens, "ItemAetherLensOnPickup", "ItemAetherLensOnDrop")
+        call RegisterItemMethodSimple(Item_AetherLens, "ItemAetherLensOnPickup", "ItemAetherLensOnDrop")
         
         set XMV = RegisterItem('I02Q','I02O','h011','I00A')
         set XPV = RegisterItem('I02S','I02P','h012','I0CA')
@@ -70,8 +46,8 @@ library ItemDefine requires ItemSystem
         // 跳刀
         set Item_KelenDagger = RegisterItem('I03E','I04H','h01K','I0C7')
         set Item_DisabledKelenDagger = RegisterItem('I03E','I04I','h01K','I0DH')
-        call SetItemMethodByIndexSimple(Item_KelenDagger, "ItemKelenDaggerOnPickup", "ItemKelenDaggerOnDrop")
-        call SetItemMethodByIndexSimple(Item_DisabledKelenDagger, "ItemKelenDaggerOnPickup", "ItemKelenDaggerOnDrop")
+        call RegisterItemMethodSimple(Item_KelenDagger, "ItemKelenDaggerOnPickup", "ItemKelenDaggerOnDrop")
+        call RegisterItemMethodSimple(Item_DisabledKelenDagger, "ItemKelenDaggerOnPickup", "ItemKelenDaggerOnDrop")
 
         set OEV = RegisterItem('I03F','I04J','h01L','I0CM')
         set OXV = RegisterItem('I03G','I04K','h01M','I0CD')
@@ -204,8 +180,8 @@ library ItemDefine requires ItemSystem
         // 龙心
         set Item_HeartOfTarrasque = RegisterItem('I0AA','I0A9', 0,'I0BT')
         set Item_DisabledHeartOfTarrasque = RegisterItem('I0AA','I0KL', 0,'I0KM')
-        call SetItemMethodByIndexSimple(Item_HeartOfTarrasque, "ItemHeartOfTarrasqueOnPickup", "ItemHeartOfTarrasqueOnDrop")
-        call SetItemMethodByIndexSimple(Item_DisabledHeartOfTarrasque, "ItemHeartOfTarrasqueOnPickup", "ItemHeartOfTarrasqueOnDrop")
+        call RegisterItemMethodSimple(Item_HeartOfTarrasque, "ItemHeartOfTarrasqueOnPickup", "ItemHeartOfTarrasqueOnDrop")
+        call RegisterItemMethodSimple(Item_DisabledHeartOfTarrasque, "ItemHeartOfTarrasqueOnPickup", "ItemHeartOfTarrasqueOnDrop")
         
         set A2V = RegisterItem('I0AC','I0AB', 0,'I0BU')
         set A3V = RegisterItem('I0AD','I0AE', 0,'I0BV')
@@ -216,6 +192,7 @@ library ItemDefine requires ItemSystem
         set Item_AghanimScepterBasic = RegisterItem('I0B8','I0AY', 0,'I00B')
         // 通用的 Item_AghanimScepter
         set Item_AghanimScepter = RegisterItem('I0QT','I0QS', 0,'I0QU')
+        call RegisterItemMethodSimple(Item_AghanimScepter, "ItemAghanimScepterOnPickup", "ItemAghanimScepterOnDrop")
         // 炼金的 Item_AghanimScepterGiftable
         set Item_AghanimScepterGiftable = RegisterItem('I0QT','I0TB', 0,'I0QU')
 
@@ -256,13 +233,13 @@ library ItemDefine requires ItemSystem
         // 绿鞋
         set Item_TranquilBoots = RegisterItem('I0OF','I0OG', 0,'I0OH')
         set Item_DisabledTranquilBoots = RegisterItem('I0OJ','I0OI', 0,'I0OK')
-        call SetItemMethodByIndexSimple(Item_TranquilBoots, "ItemTranquilBootsOnPickup", "ItemTranquilBootsOnDrop")
-        call SetItemMethodByIndexSimple(Item_DisabledTranquilBoots, "ItemTranquilBootsOnPickup", "ItemTranquilBootsOnDrop")
+        call RegisterItemMethodSimple(Item_TranquilBoots, "ItemTranquilBootsOnPickup", "ItemTranquilBootsOnDrop")
+        call RegisterItemMethodSimple(Item_DisabledTranquilBoots, "ItemTranquilBootsOnPickup", "ItemTranquilBootsOnDrop")
 
         set RCV = RegisterItem('I0OM','I0OL', 0,'I0ON')
         set Item_MoonShard = RegisterItem('I0SI','I0SJ', 0,'I0SK')
         set Item_OctarineCore = RegisterItem('I0SU','I0SV', 0,'I0SW')
-        call SetItemMethodByIndexSimple(Item_OctarineCore, "ItemOctarineCoreOnPickup", "ItemOctarineCoreOnDrop")
+        call RegisterItemMethodSimple(Item_OctarineCore, "ItemOctarineCoreOnPickup", "ItemOctarineCoreOnDrop")
         
         set RLV = RegisterItem('I0SL','I0SM', 0,'I0SN')
         set RJV = RegisterItem('I0SR','I0SS', 0,'I0ST')

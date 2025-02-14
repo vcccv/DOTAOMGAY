@@ -15,9 +15,6 @@ library ItemSystem requires Base, TimerUtils, AbilityUtils
 
         integer       MaxItemCount = 0
 
-        integer array RealItemPickupCode
-        integer array RealItemDropCode
-
         // 按索引记录物品的存在计数
         integer array ItemCount
 
@@ -25,6 +22,9 @@ library ItemSystem requires Base, TimerUtils, AbilityUtils
         private key ITEM_SELL_DUMMY_INDEX
     endglobals
 
+    // powerup    = Purchasable
+    // realId     = Permanent
+    // disabledId = Campaign
     function RegisterItem takes integer powerupId, integer realId, integer sellDummyId, integer disabledId returns integer
         set MaxItemCount = MaxItemCount + 1
 
@@ -145,33 +145,39 @@ library ItemSystem requires Base, TimerUtils, AbilityUtils
         return -1
     endfunction
 
-    //***************************************************************************
-    //*
-    //*  Item Status
-    //*
-    //***************************************************************************
+    private function OnDealyTest takes nothing returns nothing
+        local SimpleTick tick = SimpleTick.GetExpired()
+        local item       whichItem
 
-    function IsItemAghanimScepter takes item it returns boolean
-        local integer i = GetItemIndexEx(it)
-        local integer id = GetItemTypeId(it)
-        if id == ItemRealId[Item_AghanimScepter]or id == ItemRealId[Item_AghanimScepterBasic]or id == ItemRealId[Item_AghanimScepterGiftable] then
-            return true
+
+        set whichItem = null
+    endfunction
+    // RemoveItemNoTrig
+    function HZX takes item whichItem returns nothing
+        local boolean isEnabled = IsTriggerEnabled(UnitManipulatItemTrig)
+        // 可能没删掉
+        call DisableTrigger(UnitManipulatItemTrig)
+        if GetWidgetLife(whichItem) < 0.405 then
+            call BJDebugMsg("删不掉啊")
         endif
-        return false
+        call RemoveItem(whichItem)
+        if isEnabled then
+            call EnableTrigger(UnitManipulatItemTrig)
+        endif
     endfunction
-    // 消耗物品 perishable
-    function IsItemPerishableByIndex takes integer itemIndex returns boolean
-        return itemIndex == NXV or itemIndex == R6V or itemIndex == Item_DustOfAppearance or itemIndex == RYV or itemIndex == R_V or itemIndex == Item_AncientTangoOfEssifation or itemIndex == R2V or itemIndex == Item_SentryWard or itemIndex == R4V or itemIndex == RZV or itemIndex == R9V or itemIndex == IVV or itemIndex == it_jys
-    endfunction
-    // 充能物品 Charged
-    function IsItemChargedByIndex takes integer itemIndex returns boolean
-        return(itemIndex) == NUV or itemIndex == RRV or(itemIndex) == IUV or(itemIndex) == IWV or itemIndex == NIV or itemIndex == AIV or(itemIndex) == Item_MagicStick or(itemIndex) == Item_MagicWand or itemIndex == RAV
-    endfunction
-
-    // 会死亡丢弃 DeathDrop
-    function IsItemDeathDrop takes item whichItem returns boolean
-        local integer itemIndex = GetItemIndexEx(whichItem)
-        return itemIndex == ASV or itemIndex == ATV or itemIndex == ITem_GemOfTrueSight or itemIndex == ITem_GemOfTrueSight_CourierEdition
+    // 获取剩余格子 GetUnitEmptyInventorySlotCount
+    function GetUnitEmptyInventorySlotCount takes unit whichUnit returns integer
+        local integer i = 0
+        local integer n = 0
+        local integer size = UnitInventorySize(whichUnit)-1
+        loop
+        exitwhen i > size
+            if UnitItemInSlot(whichUnit, i) == null then
+                set n = n + 1
+            endif
+            set i = i + 1
+        endloop
+        return n
     endfunction
 
     // 获取物品图标
@@ -181,54 +187,48 @@ library ItemSystem requires Base, TimerUtils, AbilityUtils
         endif
         return ItemsIconFilePath[GetItemIndexEx(whichItem)]
     endfunction
-
-    // 获取消耗品默认使用次数
-    function GetPerishableItemChargesByIndex takes integer itemIndex returns integer
-        if Item_AncientTangoOfEssifation == itemIndex then
-            return 4
-        endif
-        if Item_SentryWard == itemIndex or Item_DustOfAppearance == itemIndex then
-            return 2
-        endif
-        return 1
-    endfunction
     
     //***************************************************************************
     //*
     //*  Method
     //*
     //***************************************************************************
-    function SetItemPuckupMethodByIndex takes integer itemIndex, string func returns nothing
-        set RealItemPickupCode[itemIndex] = C2I(MHGame_GetCode(func))
-        call ThrowWarning(RealItemPickupCode[itemIndex] == 0, "ItemSystem", "SetItemPuckupMethodByIndex", "itemIndex", itemIndex, "func == 0")
+    globals
+        private integer array RealItemPickupMethod
+        private integer array RealItemDropMethod
+    endglobals
+
+    function RegisterItemPuckupMethodByIndex takes integer itemIndex, string func returns nothing
+        set RealItemPickupMethod[itemIndex] = C2I(MHGame_GetCode(func))
+        call ThrowWarning(RealItemPickupMethod[itemIndex] == 0, "ItemSystem", "RegisterItemPuckupMethodByIndex", "itemIndex", itemIndex, "func == 0")
     endfunction
-    function SetItemDropMethodByIndex takes integer itemIndex, string func returns nothing
-        set RealItemDropCode[itemIndex] = C2I(MHGame_GetCode(func))
-        call ThrowWarning(RealItemDropCode[itemIndex] == 0, "ItemSystem", "SetItemDropMethodByIndex", "itemIndex", itemIndex, "func == 0")
+    function RegisterItemDropMethodByIndex takes integer itemIndex, string func returns nothing
+        set RealItemDropMethod[itemIndex] = C2I(MHGame_GetCode(func))
+        call ThrowWarning(RealItemDropMethod[itemIndex] == 0, "ItemSystem", "RegisterItemDropMethodByIndex", "itemIndex", itemIndex, "func == 0")
     endfunction
     
-    function SetItemMethodByIndexSimple takes integer itemIndex, string puckupFunc, string dropFunc returns nothing
-        call SetItemPuckupMethodByIndex(itemIndex, puckupFunc)
-        call SetItemDropMethodByIndex(itemIndex, dropFunc)
+    function RegisterItemMethodSimple takes integer itemIndex, string puckupFunc, string dropFunc returns nothing
+        call RegisterItemPuckupMethodByIndex(itemIndex, puckupFunc)
+        call RegisterItemDropMethodByIndex(itemIndex, dropFunc)
     endfunction
 
     function ItemSystem_OnPickup takes unit whichUnit, item whichItem returns nothing
         local integer itemIndex = GetItemIndex(whichItem)
-        if itemIndex > 0 and GetItemTypeId(whichItem) == ItemRealId[itemIndex] and RealItemPickupCode[itemIndex] != 0 then
+        if itemIndex > 0 and GetItemTypeId(whichItem) == ItemRealId[itemIndex] and RealItemPickupMethod[itemIndex] != 0 then
             set Event.INDEX = Event.INDEX + 1
             set Event.TrigUnit[Event.INDEX] = whichUnit
             set Event.ManipulatedItem[Event.INDEX] = whichItem
-            call MHGame_ExecuteCodeEx(RealItemPickupCode[itemIndex])
+            call MHGame_ExecuteCodeEx(RealItemPickupMethod[itemIndex])
             set Event.INDEX = Event.INDEX - 1
         endif
     endfunction
     function ItemSystem_OnDrop takes unit whichUnit, item whichItem returns nothing
         local integer itemIndex = GetItemIndex(whichItem)
-        if itemIndex > 0 and GetItemTypeId(whichItem) == ItemRealId[itemIndex] and RealItemDropCode[itemIndex] != 0 then
+        if itemIndex > 0 and GetItemTypeId(whichItem) == ItemRealId[itemIndex] and RealItemDropMethod[itemIndex] != 0 then
             set Event.INDEX = Event.INDEX + 1
             set Event.TrigUnit[Event.INDEX] = whichUnit
             set Event.ManipulatedItem[Event.INDEX] = whichItem
-            call MHGame_ExecuteCodeEx(RealItemDropCode[itemIndex])
+            call MHGame_ExecuteCodeEx(RealItemDropMethod[itemIndex])
             set Event.INDEX = Event.INDEX - 1
         endif
     endfunction

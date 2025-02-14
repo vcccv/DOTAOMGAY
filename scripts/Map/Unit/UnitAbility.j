@@ -30,6 +30,13 @@ library UnitAbility requires AbilityUtils, UnitLimitation
         call EnableTrigger(StartCooldownTrig)
     endfunction
 
+    function UnitDisableAbility takes unit whichUnit, integer abilId, boolean flag, boolean hideUI returns nothing
+        call MHAbility_Disable(whichUnit, abilId, flag, hideUI)
+    endfunction
+    function UnitHideAbility takes unit whichUnit, integer abilId, boolean flag returns nothing
+        call MHAbility_Hide(whichUnit, abilId, flag)
+    endfunction
+
     function UnitAddPermanentAbility takes unit whichUnit, integer ab returns boolean
         return UnitAddAbility(whichUnit, ab) and UnitMakeAbilityPermanent(whichUnit, true, ab)
     endfunction

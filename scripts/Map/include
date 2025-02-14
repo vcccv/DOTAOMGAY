@@ -6,5 +6,6 @@
 #include "Utilities\\include"
 #include "EventSystem.j"
 #include "ItemSystem\\include"
+#include "HeroSkill\\include"
 #include "DoubleClickSelfCast.j"
 #include "PlayerSettings.j"

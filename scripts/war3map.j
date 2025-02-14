@@ -474,8 +474,6 @@ globals
 	real Local__TextTagzOffset = .0
 	unit XB
 	boolean OB = false
-	integer array CONTROL_SKILL_INDEX_LIST
-	integer CONTROL_SKILL_INDEX_LIST_SIZE = 0
 	
 	boolean IsSinglePlayerMode = false
 	group LB
@@ -601,7 +599,7 @@ globals
 	string EP
 	integer array XP
 	integer OP = 1000
-	integer ExtraSkillsNumber = 0
+	integer ExtraSkillsCount = 0
 	integer array IP
 	integer BP = 0
 	boolean array DP
@@ -2171,8 +2169,8 @@ function ThrowLog takes nothing returns nothing
 		set s = s +"
 		"+I2S(i)+" :"
 		loop
-			if HeroSkill_BasicId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + k]]!= 0 then
-				set s = s + UGV(HeroSkill_BasicId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + k]])+ " "
+			if HeroSkill_BaseId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + k]]!= 0 then
+				set s = s + UGV(HeroSkill_BaseId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + k]])+ " "
 			endif
 			set k = k + 1
 		exitwhen k > MAX_SKILL_SLOTS
@@ -2304,7 +2302,7 @@ function WSV takes nothing returns nothing
 	local integer abilLevel = GetUnitAbilityLevel(u, LoadInteger(ObjectHashTable, h, 2))
 	local boolean b = UnitRemoveAbility(u, LoadInteger(ObjectHashTable, h, 1)) == false
 	local integer playerIndex = GetPlayerId(GetOwningPlayer(u))
-	if abilId =='A065' and HeroSkill_BasicId[PlayerSkillIndices[playerIndex * MAX_SKILL_SLOTS + 6]]=='A065' then
+	if abilId =='A065' and HeroSkill_BaseId[PlayerSkillIndices[playerIndex * MAX_SKILL_SLOTS + 6]]=='A065' then
 		set abilLevel = IP[GetPlayerId(GetOwningPlayer(u))* 2 + 2]
 	endif
 	set FK = false
@@ -2629,7 +2627,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A3JX', 0, "OJE")
 	call SaveStr(ObjectHashTable,'A0R5', 0, "OKE")
 	call SaveStr(ObjectHashTable,'A15V', 0, "OME")
-	call SaveStr(ObjectHashTable,'QM03', 0, "OPE")
+	call SaveStr(ObjectHashTable,'QM03', 0, "FleshGolemOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A0LK', 0, "TimeWalkOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A0J1', 0, "ChronosphereOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A1D7', 0, "ChronosphereOnSpellEffect")
@@ -4127,12 +4125,12 @@ function HeroLevelUp takes nothing returns nothing
 	local integer passiveSkillIndex = 0 
 	local boolean bb = false
 	// 如果有1个额外技能 代表有第5格技能
-	if ExtraSkillsNumber >= 1 then
+	if ExtraSkillsCount >= 1 then
 		if heroLevel >= 5 then
-			set abilityId = HeroSkill_BasicId[PlayerSkillIndices[playerId * MAX_SKILL_SLOTS + 5]]
+			set abilityId = HeroSkill_BaseId[PlayerSkillIndices[playerId * MAX_SKILL_SLOTS + 5]]
 			set abilityId = W7E(abilityId)
 			set YRE = W8E(abilityId)
-			set i = GetAghanimUpgradeIndexByBasicId(abilityId)
+			set i = GetScepterUpgradeIndexByBaseId(abilityId)
 		endif
 		if heroLevel >= 5 and IP[playerId * 2 + 1]== 0 then
 			call UnitAddPermanentAbility(u, abilityId)
@@ -4155,8 +4153,8 @@ function HeroLevelUp takes nothing returns nothing
 			if extraSkillLevel > 1 then
 				// debug call SingleDebug(" 1 技能名 " + GetObjectName(abilityId) )
 				call SetUnitAbilityLevel(u, abilityId, extraSkillLevel)
-				if i > 0 and GetUnitAbilityLevel(u, AghanimUpgrade_ModifyId[i])> 0 then
-					set abilityId = AghanimUpgrade_UpgradedId[i]
+				if i > 0 and GetUnitAbilityLevel(u, ScepterUpgrade_ModifyId[i])> 0 then
+					set abilityId = ScepterUpgrade_UpgradedId[i]
 				endif
 				call SetUnitAbilityLevel(u, abilityId, extraSkillLevel)
 				if (abilityId =='A1C0' and GetUnitAbilityLevel(u,'A418')> 0) then
@@ -4196,23 +4194,23 @@ function HeroLevelUp takes nothing returns nothing
 	set extraSkillLevel = 0
 	//============================================
 	// 如果有2个额外技能 代表有第6格额外大招
-	if ExtraSkillsNumber >= 2 then
+	if ExtraSkillsCount >= 2 then
 		if heroLevel >= 8 then
-			set abilityId = HeroSkill_BasicId[PlayerSkillIndices[playerId * MAX_SKILL_SLOTS + 6]]
+			set abilityId = HeroSkill_BaseId[PlayerSkillIndices[playerId * MAX_SKILL_SLOTS + 6]]
 			set YRE = W8E(abilityId)
 			set abilityId = W7E(abilityId)
-			set i = GetAghanimUpgradeIndexByBasicId(abilityId)
+			set i = GetScepterUpgradeIndexByBaseId(abilityId)
 		endif
 		if heroLevel >= 8 and IP[playerId * 2 + 2]== 0 then
 			call UnitAddPermanentAbility(u, abilityId)
 			if i > 0 then
-				call UnitMakeAbilityPermanent(u, true, AghanimUpgrade_UpgradedId[i])
+				call UnitMakeAbilityPermanent(u, true, ScepterUpgrade_UpgradedId[i])
 			endif
 			set b = true
 			set extraSkillLevel = 1
 		endif
-		if i > 0 and GetUnitAbilityLevel(u, AghanimUpgrade_ModifyId[i])> 0 then
-			set abilityId = AghanimUpgrade_UpgradedId[i]
+		if i > 0 and GetUnitAbilityLevel(u, ScepterUpgrade_ModifyId[i])> 0 then
+			set abilityId = ScepterUpgrade_UpgradedId[i]
 		endif
 		if heroLevel >= 13 and IP[playerId * 2 + 2]== 1 then
 			set b = true
@@ -4230,8 +4228,8 @@ function HeroLevelUp takes nothing returns nothing
 				endif
 			endif
 			call SetUnitAbilityLevel(u, abilityId, extraSkillLevel)
-			if i > 0 and GetUnitAbilityLevel(u, AghanimUpgrade_ModifyId[i])> 0 then
-				set abilityId = AghanimUpgrade_UpgradedId[i]
+			if i > 0 and GetUnitAbilityLevel(u, ScepterUpgrade_ModifyId[i])> 0 then
+				set abilityId = ScepterUpgrade_UpgradedId[i]
 			endif
 			call SetUnitAbilityLevel(u, abilityId, extraSkillLevel)
 			if abilityId >='A40K' and abilityId <='A40N' and GetUnitAbilityLevel(u, abilityId + 8)> 0 then
@@ -4458,7 +4456,7 @@ function IsPlayerHasSkill takes player p, integer index returns boolean
 			return true
 		endif
 		set xx = xx + 1
-	exitwhen xx > 4 + ExtraSkillsNumber
+	exitwhen xx > 4 + ExtraSkillsCount
 	endloop
 	return false
 endfunction
@@ -4471,18 +4469,18 @@ function ZME takes integer playerIndex, integer ZSE returns integer
 	local integer xx = 1
 	loop
 		set ZSE = W7E(ZSE)
-		if (HeroSkill_BasicId[PlayerSkillIndices[playerIndex * MAX_SKILL_SLOTS + xx]]== ZSE) then
+		if (HeroSkill_BaseId[PlayerSkillIndices[playerIndex * MAX_SKILL_SLOTS + xx]]== ZSE) then
 			return PlayerSkillIndices[playerIndex * MAX_SKILL_SLOTS + xx]
 		endif
 		set xx = xx + 1
-	exitwhen xx > 4 + ExtraSkillsNumber
+	exitwhen xx > 4 + ExtraSkillsCount
 	endloop
 	return 0
 endfunction
 function ZTE takes unit trigUnit, integer id returns integer
 	local integer i = GetPlayerId(GetOwningPlayer(trigUnit))
 	local integer Z_E = HeroSkill_SpecialId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + id]]
-	local integer Z0E = HeroSkill_BasicId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + id]]
+	local integer Z0E = HeroSkill_BaseId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + id]]
 	if Z_E != null then
 		if GetUnitAbilityLevel(trigUnit, Z_E)> 0 then
 			return GetUnitAbilityLevel(trigUnit, Z_E)
@@ -5553,10 +5551,10 @@ function TWE takes unit u, boolean TYE returns nothing
 	endif
 	loop
 		set TZE = PlayerSkillIndices[pid * MAX_SKILL_SLOTS + xx]
-		set abilId = HeroSkill_BasicId[TZE]
-		set i = GetAghanimUpgradeIndexByBasicId(abilId)
-		if i > 0 and GetUnitAbilityLevel(u, AghanimUpgrade_ModifyId[i])> 0 then
-			set abilId = AghanimUpgrade_UpgradedId[i]
+		set abilId = HeroSkill_BaseId[TZE]
+		set i = GetScepterUpgradeIndexByBaseId(abilId)
+		if i > 0 and GetUnitAbilityLevel(u, ScepterUpgrade_ModifyId[i])> 0 then
+			set abilId = ScepterUpgrade_UpgradedId[i]
 		endif
 		if HeroSkill_IsPassive[TZE]== false and LoadBoolean(ObjectHashTable, 0, abilId) == false and abilId !='A1RK' and abilId !='A43H' and abilId !='A065' then
 			call EndUnitAbilityCooldown(u, abilId)
@@ -7694,9 +7692,9 @@ function G4X takes nothing returns nothing
 	call DestroyTimer(t)
 	set t = null
 endfunction
-function G5X takes integer id, unit u, boolean G6X returns nothing
+function G5X takes integer id, unit u, boolean isRemove returns nothing
 	local item it
-	if G6X == false then
+	if isRemove == false then
 		if id =='A0CY' then
 			// 分裂和拆建筑加成
 			call UnitAddPermanentAbility(u,'A2KK')
@@ -7711,57 +7709,59 @@ function G5X takes integer id, unit u, boolean G6X returns nothing
 	endif
 	if id =='A0CY' and GetUnitTypeId(u)=='Ucrl' then
 		//		set PlayerHeroTypeId[GetPlayerId(GetOwningPlayer(u))]='U01X'
-		call AddUnitAnimationProperties(u, "upgrade", not G6X)
+		call AddUnitAnimationProperties(u, "upgrade", not isRemove)
 	endif
 endfunction
 
 // k = abilIndex
-function OnUnitAddAbilityAghanimUpgrade takes integer k, unit u, integer G8X returns boolean
+function OnUnitAddAbilityScepterUpgrade takes integer k, unit u, integer G8X returns boolean
 	local player p = GetOwningPlayer(u)
-	if Mode__RearmCombos == false then
-		if (AghanimUpgrade_ModifyId[k]=='A2S7' or AghanimUpgrade_ModifyId[k]=='A236') then
+	if not Mode__RearmCombos then
+		// 再装填 守护天使和召唤飞弹
+		if (ScepterUpgrade_ModifyId[k]=='A2S7' or ScepterUpgrade_ModifyId[k]=='A236') then
 			if IsUnitHaveRearmAbility(u) then
 				return false
 			endif
 		endif
 	else
-		if AghanimUpgrade_ModifyId[k]=='A236' then
+		// 召唤飞弹加再装填
+		if ScepterUpgrade_ModifyId[k]=='A236' then
 			if IsUnitHaveRearmAbility(u) then
 				return false
 			endif
 		endif
 	endif
 
-	//call BJDebugMsg("NMML:" + MHString_FromId(AghanimUpgrade_BasicId[k]))
+	//call BJDebugMsg("NMML:" + MHString_FromId(ScepterUpgrade_BaseId[k]))
 	
-	if AghanimUpgrade_BasicId[k]=='A343'then
+	if ScepterUpgrade_BaseId[k]=='A343'then
 		set U2 = u
 		call ExecuteFunc("G9X")
-	elseif AghanimUpgrade_BasicId[k]=='A088' then
+	elseif ScepterUpgrade_BaseId[k]=='A088' then
 		set U2 = u
 		call ExecuteFunc("HVX")
-	elseif AghanimUpgrade_BasicId[k]=='A2E5' then
+	elseif ScepterUpgrade_BaseId[k]=='A2E5' then
 		set U2 = u
 		call ExecuteFunc("HEX")
-	elseif AghanimUpgrade_BasicId[k]=='A0KV' then
+	elseif ScepterUpgrade_BaseId[k]=='A0KV' then
 		set U2 = u
 		call ExecuteFunc("addXL")
-	elseif AghanimUpgrade_BasicId[k]=='A07Z' then
+	elseif ScepterUpgrade_BaseId[k]=='A07Z' then
 		set U2 = u
 		call ExecuteFunc("HXX")
-	elseif AghanimUpgrade_BasicId[k]=='A1YQ' then
+	elseif ScepterUpgrade_BaseId[k]=='A1YQ' then
 		set U2 = u
 		call ExecuteFunc("HOX")
-	elseif AghanimUpgrade_BasicId[k]=='A01Y' then
+	elseif ScepterUpgrade_BaseId[k]=='A01Y' then
 		set U2 = u
 		call ExecuteFunc("HRX")
-	elseif AghanimUpgrade_BasicId[k]=='A0DY' then
+	elseif ScepterUpgrade_BaseId[k]=='A0DY' then
 		// 推进
 		if LoadBoolean(HY, GetHandleId(GetOwningPlayer(u)),'R00J') == false then
 			call UnitAddAttackRangeBonus(u, 190.)
 			call SaveBoolean(HY, GetHandleId(GetOwningPlayer(u)),'R00J', true)
 		endif
-	elseif AghanimUpgrade_BasicId[k]=='A0CY' then
+	elseif ScepterUpgrade_BaseId[k]=='A0CY' then
 		if LoadBoolean(HY, GetHandleId(GetOwningPlayer(u)),'R0L3') == false then
 			call UnitAddAttackRangeBonus(u, 107.)
 			call SaveBoolean(HY, GetHandleId(GetOwningPlayer(u)),'R0L3', true)
@@ -7771,50 +7771,55 @@ function OnUnitAddAbilityAghanimUpgrade takes integer k, unit u, integer G8X ret
 			call SetPlayerAbilityAvailable(GetOwningPlayer(u),'A2KK', false)
 		endif
 	endif
-	if AghanimUpgrade_ModifyId[k]> 0 then
-		call UnitAddPermanentAbility(u, AghanimUpgrade_ModifyId[k])
-		call UnitMakeAbilityPermanent(u, true, AghanimUpgrade_UpgradedId[k])
+	if ScepterUpgrade_ModifyId[k]> 0 then
+		call UnitAddPermanentAbility(u, ScepterUpgrade_ModifyId[k])
+		call UnitMakeAbilityPermanent(u, true, ScepterUpgrade_UpgradedId[k])
 	endif
-	call SaveInteger(OtherHashTable, GetHandleId(u),'AGH0'+ G8X, AghanimUpgrade_BasicId[k])
 	return true
 endfunction
-function OnUnitRemoveAbilityAghanimUpgrade takes integer k, unit u, integer G8X returns nothing
+function OnUnitRemoveAbilityScepterUpgrade takes integer k, unit u, integer G8X returns nothing
 	local player p = GetOwningPlayer(u)
 	if IsUnitAghanimScepterUpgraded(u) then
 		return
 	endif
-	if AghanimUpgrade_BasicId[k]=='A088' then
+	// MultiCastOnLostScepterUpgrade
+	if ScepterUpgrade_BaseId[k]=='A088' then
 		set U2 = u
 		call ExecuteFunc("HAX")
-	elseif AghanimUpgrade_BasicId[k]=='A2E5' then
+	// ChakramOnLostScepterUpgrade
+	elseif ScepterUpgrade_BaseId[k]=='A2E5' then
 		set U2 = u
 		call ExecuteFunc("HNX")
-	elseif AghanimUpgrade_BasicId[k]=='A0KV' then
+	// StarfallOnLostScepterUpgrade
+	elseif ScepterUpgrade_BaseId[k]=='A0KV' then
 		set U2 = u
 		call ExecuteFunc("delXL")
-	elseif AghanimUpgrade_BasicId[k]=='A07Z' then
+	// OvevgrowthOnLostScepterUpgrade
+	elseif ScepterUpgrade_BaseId[k]=='A07Z' then
 		set U2 = u
 		call ExecuteFunc("HBX")
-	elseif AghanimUpgrade_BasicId[k]=='A1YQ' then
+	// WalrusPunchOnLostScepterUpgrade
+	elseif ScepterUpgrade_BaseId[k]=='A1YQ' then
 		set U2 = u
 		call ExecuteFunc("HCX")
-	elseif AghanimUpgrade_BasicId[k]=='A0DY' then
+	// ImpetusOnLostScepterUpgrade
+	elseif ScepterUpgrade_BaseId[k]=='A0DY' then
 		if LoadBoolean(HY, GetHandleId(GetOwningPlayer(u)),'R00J') then
 			call UnitAddAttackRangeBonus(u, -190.)
 			call SaveBoolean(HY, GetHandleId(GetOwningPlayer(u)),'R00J', false)
 		endif
-	elseif AghanimUpgrade_BasicId[k]=='A0CY' then
+	// GrowOnLostScepterUpgrade
+	elseif ScepterUpgrade_BaseId[k]=='A0CY' then
 		if LoadBoolean(HY, GetHandleId(GetOwningPlayer(u)),'R0L3') then
 			call UnitAddAttackRangeBonus(u, -107.)
 			call SaveBoolean(HY, GetHandleId(GetOwningPlayer(u)),'R0L3', false)
 			call UnitRemoveAbility(u,'A2KK')
 		endif
 	endif
-	call UnitRemoveAbility(u, AghanimUpgrade_ModifyId[k])
-	if AghanimUpgrade_UpgradedId[k]!= AghanimUpgrade_BasicId[k] then
-		call UnitRemoveAbility(u, AghanimUpgrade_UpgradedId[k])
+	call UnitRemoveAbility(u, ScepterUpgrade_ModifyId[k])
+	if ScepterUpgrade_UpgradedId[k]!= ScepterUpgrade_BaseId[k] then
+		call UnitRemoveAbility(u, ScepterUpgrade_UpgradedId[k])
 	endif
-	call SaveInteger(OtherHashTable, GetHandleId(u),'AGH0'+ G8X, 0)
 endfunction
 
 
@@ -7895,71 +7900,55 @@ endfunction
 function get_a_c takes unit u returns integer
 	local integer id = GetPlayerId(GetOwningPlayer(u))
 	local integer ret = 0
-	set ret = get_a_fx(HeroSkill_BasicId[PlayerSkillIndices[id * 6 + 4]])
+	set ret = get_a_fx(HeroSkill_BaseId[PlayerSkillIndices[id * 6 + 4]])
 	if ret == 0 then
-		set ret = get_a_fx(HeroSkill_BasicId[PlayerSkillIndices[id * 6 + 6]])
+		set ret = get_a_fx(HeroSkill_BaseId[PlayerSkillIndices[id * 6 + 6]])
 	endif
 	return ret
 endfunction
 
-// G6X == remove
-function HDX takes unit u, boolean G6X returns boolean
+
+function SetUnitAghanimScepterUpgradeState takes unit u, boolean isRemove returns boolean
 	local integer pid = GetPlayerId(GetOwningPlayer(u))
 	local integer k
 	local integer z
 	local boolean b = false
 	local integer i = 1
-	if not IsUnitType(u, UNIT_TYPE_HERO) or (G6X and IsUnitAghanimScepterUpgraded(u)) then
+	if not IsUnitType(u, UNIT_TYPE_HERO) or (isRemove and IsUnitAghanimScepterUpgraded(u)) then
 		return false
 	endif
-	//// 给单位添加A杖效果技能
-	//if a_fx[pid] == 0 then
-	//	set k = get_a_c(u)
-	//	set a_fx[pid]= k
-	//// 如果死亡竞赛或者全部随机 会重新检测A杖技能
-	//elseif Mode__DeathMatch or MainModeName =="ar" then
-	//	set k = get_a_c(u)
-	//else
-	//	set k = a_fx[pid]
-	//endif
-	//set a_fx_b[pid] = not G6X
-	//if k != 0 then
-	//	if G6X then
-	//		call UnitRemoveAbility(u, k)
-	//	else
-	//		call UnitAddPermanentAbility(u, k)
-	//	endif
-	//endif
+	return false
+
 	loop
-		if HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]] == 'QF88' then
-			if G6X then
+		if HeroSkill_BaseId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]] == 'QF88' then
+			if isRemove then
 				set U2 = u
 				call UnitRemoveAbility(u,'S3UR')	//小黑A杖
 			else
 				call UnitAddPermanentAbility(u,'S3UR')
 			endif
 		endif
-		if HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]] == 'A229' then
-			if G6X then
+		if HeroSkill_BaseId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]] == 'A229' then
+			if isRemove then
 				set U2 = u
-				call ExecuteFunc("FlakCannonOnRemoveAghanimUpgrade")
+				call ExecuteFunc("FlakCannonOnRemoveScepterUpgrade")
 			else
 				set U2 = u
-				call ExecuteFunc("FlakCannonOnAddAghanimUpgrade")
+				call ExecuteFunc("FlakCannonOnAddScepterUpgrade")
 			endif
 		endif
 	
-		set k = GetAghanimUpgradeIndexByBasicId(HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]])
+		set k = GetScepterUpgradeIndexByBaseId(HeroSkill_BaseId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]])
 		if k > 0 then
-			if G6X then
-				call OnUnitRemoveAbilityAghanimUpgrade(k, u, 1)
+			if isRemove then
+				call OnUnitRemoveAbilityScepterUpgrade(k, u, 1)
 			else
-				set b = OnUnitAddAbilityAghanimUpgrade(k, u, 1) or b
+				set b = OnUnitAddAbilityScepterUpgrade(k, u, 1) or b
 			endif
-			call G5X(HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]], u, G6X)
+			call G5X(HeroSkill_BaseId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]], u, isRemove)
 		endif
 		set i = i + 1
-	exitwhen i > 4 + ExtraSkillsNumber
+	exitwhen i > 4 + ExtraSkillsCount
 	endloop
 	return b
 endfunction
@@ -8051,9 +8040,7 @@ function HYX takes integer UYV, real x, real y, player p, boolean HTX, integer H
 	call TriggerRegisterTimerEvent(t, 0, false)
 	set t = null
 endfunction
-function H8X takes item UWV returns boolean
-	return GetItemType(UWV) == ITEM_TYPE_POWERUP or GetItemType(UWV) == ITEM_TYPE_PURCHASABLE or GetItemType(UWV) == ITEM_TYPE_MISCELLANEOUS
-endfunction
+
 function GetHeroRevivalPointX takes unit trigUnit returns real
 	local real x
 	if IsPlayerSentinel(GetOwningPlayer(trigUnit)) then
@@ -9252,7 +9239,7 @@ function L8X takes unit u returns nothing
 	call SetUnitState(u, UNIT_STATE_MANA, 999999)
 
 	if IsUnitAghanimScepterUpgraded(u) then
-		call HDX(u, false)
+		call SetUnitAghanimScepterUpgradeState(u, false)
 	endif
 
 	call SetUnitInvulnerable(u, false)
@@ -9776,7 +9763,7 @@ function QAX takes nothing returns nothing
 	local string s = ""
 	local real QNX = .12
 	if SentinelUserCount != 0 then
-		set i = 4 + ExtraSkillsNumber
+		set i = 4 + ExtraSkillsCount
 		set d = 1
 		loop
 			set mi = MultiboardGetItem(JP, d, i)
@@ -9787,7 +9774,7 @@ function QAX takes nothing returns nothing
 		endloop
 	endif
 	if ScourgeUserCount != 0 then
-		set i = 4 + ExtraSkillsNumber
+		set i = 4 + ExtraSkillsCount
 		set d = 2 + SentinelUserCount
 		loop
 			set mi = MultiboardGetItem(JP, d, i)
@@ -9813,7 +9800,7 @@ function QBX takes nothing returns nothing
 		set ScourgeUserCount = 5
 	endif
 	call MultiboardSetRowCount(JP, 2 + SentinelUserCount + ScourgeUserCount)
-	call MultiboardSetColumnCount(JP, 5 + ExtraSkillsNumber)
+	call MultiboardSetColumnCount(JP, 5 + ExtraSkillsCount)
 	call MultiboardSetItemsWidth(JP, .015)
 	call MultiboardSetTitleText(JP, "-" + StringCase(EP, true))
 	call MultiboardSetItemsStyle(JP, false, true)
@@ -9845,7 +9832,7 @@ function QBX takes nothing returns nothing
 		set d = 1
 		loop
 			set mi = MultiboardGetItem(JP, d, i)
-			if i ==(4 + ExtraSkillsNumber) then
+			if i ==(4 + ExtraSkillsCount) then
 				call MultiboardSetItemStyle(mi, true, false)
 				call MultiboardSetItemWidth(mi, QNX)
 				call MultiboardSetItemValue(mi, TM + PlayersColoerText[GetPlayerId((SentinelUsers[d]))] + PlayersName[GetPlayerId((SentinelUsers[d]))] + "|r")
@@ -9854,7 +9841,7 @@ function QBX takes nothing returns nothing
 				call MultiboardSetItemIcon(mi, HeroSkill_Icon[0])
 			endif
 			set i = i + 1
-			if i >(5 + ExtraSkillsNumber) then
+			if i >(5 + ExtraSkillsCount) then
 				set d = d + 1
 				set i = 0
 			endif
@@ -9867,7 +9854,7 @@ function QBX takes nothing returns nothing
 		set d = 2 + SentinelUserCount
 		loop
 			set mi = MultiboardGetItem(JP, d, i)
-			if i == 4 + ExtraSkillsNumber then
+			if i == 4 + ExtraSkillsCount then
 				call MultiboardSetItemStyle(mi, true, false)
 				call MultiboardSetItemWidth(mi, QNX)
 				call MultiboardSetItemValue(mi, TM + PlayersColoerText[GetPlayerId((ScourgeUsers[d -1 -SentinelUserCount]))] + PlayersName[GetPlayerId((ScourgeUsers[d -1 -SentinelUserCount]))] + "|r")
@@ -9876,7 +9863,7 @@ function QBX takes nothing returns nothing
 				call MultiboardSetItemIcon(mi, HeroSkill_Icon[0])
 			endif
 			set i = i + 1
-			if i >(5 + ExtraSkillsNumber) then
+			if i >(5 + ExtraSkillsCount) then
 				set d = d + 1
 				set i = 0
 			endif
@@ -9898,7 +9885,7 @@ function AddHeroSkills takes unit u, player p returns nothing
 	loop
 		if PlayerSkillIndices[playerIndex * MAX_SKILL_SLOTS + xx]!= 0 then
 			set QFX = PlayerSkillIndices[playerIndex * MAX_SKILL_SLOTS + xx]
-			set id = HeroSkill_BasicId[QFX]
+			set id = HeroSkill_BaseId[QFX]
 			set QDX = HeroSkill_Modify[QFX]
 			call UnitAddPermanentAbility(u, QDX)
 			call SetPlayerAbilityAvailable(p, QDX, false)
@@ -10024,7 +10011,7 @@ function PlayerPickHero takes unit u, integer playerId, unit QKX returns nothing
 	set xx = 1
 	loop
 		if HeroSkill_Disabled[heroIndex + xx]== false then
-			set tempAbilityId = HeroSkill_BasicId[heroIndex + xx]
+			set tempAbilityId = HeroSkill_BaseId[heroIndex + xx]
 			set tempAbilityId = QGX(tempAbilityId)
 			call UnitAddAbility(KP[playerId], tempAbilityId)
 			if not HeroSkill_IsPassive[heroIndex + xx] and HeroSkill_SpecialId[heroIndex + xx] != 0 then
@@ -10277,18 +10264,18 @@ function PlayerChooseHeroUnit takes unit whichUnit returns boolean
 		loop
 			set id = PlayerSkillIndices[playerId * MAX_SKILL_SLOTS + loop_i]
 			if id > 600 then
-				call DisplayTimedTextToPlayer(whichPlayer, 0, 0, 15, "	" + GetObjectName(HeroSkill_BasicId[id])+ "|cffffcc00 (Invoker)|r")
+				call DisplayTimedTextToPlayer(whichPlayer, 0, 0, 15, "	" + GetObjectName(HeroSkill_BaseId[id])+ "|cffffcc00 (Invoker)|r")
 			else
 				if loop_i == 4 or loop_i == 6 then
-					call DisplayTimedTextToPlayer(whichPlayer, 0, 0, 15, "	" + "|c00ff0303" + GetObjectName(HeroSkill_BasicId[id])+ "|r" + "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(id + 3)/ 4])+ ")" + "|r")
-					set message = message + GetObjectName(HeroSkill_BasicId[id])+ ", "
+					call DisplayTimedTextToPlayer(whichPlayer, 0, 0, 15, "	" + "|c00ff0303" + GetObjectName(HeroSkill_BaseId[id])+ "|r" + "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(id + 3)/ 4])+ ")" + "|r")
+					set message = message + GetObjectName(HeroSkill_BaseId[id])+ ", "
 				else
-					call DisplayTimedTextToPlayer(whichPlayer, 0, 0, 15, "	" + GetObjectName(HeroSkill_BasicId[id])+ "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(id + 3)/ 4])+ ")" + "|r")
-					set message = message + GetObjectName(HeroSkill_BasicId[id])+ ", "
+					call DisplayTimedTextToPlayer(whichPlayer, 0, 0, 15, "	" + GetObjectName(HeroSkill_BaseId[id])+ "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(id + 3)/ 4])+ ")" + "|r")
+					set message = message + GetObjectName(HeroSkill_BaseId[id])+ ", "
 				endif
 			endif
 			set loop_i = loop_i + 1
-		exitwhen loop_i > 4 + ExtraSkillsNumber
+		exitwhen loop_i > 4 + ExtraSkillsCount
 		endloop
 	elseif MainModeName =="rd"then // 随机征召 rd ? 憨批模式罢了 不好维护
 		call AddHeroSkills(whichUnit, whichPlayer)
@@ -10297,12 +10284,12 @@ function PlayerChooseHeroUnit takes unit whichUnit returns boolean
 		loop
 			set id = PlayerSkillIndices[playerId * MAX_SKILL_SLOTS + loop_i]
 			if loop_i == 4 or loop_i == 6 then
-				call DisplayTimedTextToPlayer(whichPlayer, 0, 0, 15, "	" + "|c00ff0303" + GetObjectName(HeroSkill_BasicId[id])+ "|r" + "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(id + 3)/ 4])+ ")" + "|r")
+				call DisplayTimedTextToPlayer(whichPlayer, 0, 0, 15, "	" + "|c00ff0303" + GetObjectName(HeroSkill_BaseId[id])+ "|r" + "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(id + 3)/ 4])+ ")" + "|r")
 			else
-				call DisplayTimedTextToPlayer(whichPlayer, 0, 0, 15, "	" + GetObjectName(HeroSkill_BasicId[id])+ "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(id + 3)/ 4])+ ")" + "|r")
+				call DisplayTimedTextToPlayer(whichPlayer, 0, 0, 15, "	" + GetObjectName(HeroSkill_BaseId[id])+ "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(id + 3)/ 4])+ ")" + "|r")
 			endif
 			set loop_i = loop_i + 1
-		exitwhen loop_i > 4 + ExtraSkillsNumber
+		exitwhen loop_i > 4 + ExtraSkillsCount
 		endloop
 	endif
 	//========================================================================
@@ -13488,7 +13475,7 @@ function EJO takes player whichPlayer, unit whichUnit, unit EKO, integer itemInd
 	endif
 	if EMO == null or ECO(whichPlayer, EMO, GSX(itemIndex)) == false or X3 == false then
 		if IsItemChargedByIndex(GSX(itemIndex)) then
-			if H_X(EMO) == 0 or EMO == null then
+			if GetUnitEmptyInventorySlotCount(EMO) == 0 or EMO == null then
 				if EMO == null then
 					call HYX(ItemPowerupId[itemIndex], x, y, whichPlayer, true, HUX)
 				else
@@ -13506,7 +13493,7 @@ function EJO takes player whichPlayer, unit whichUnit, unit EKO, integer itemInd
 				call SetItemUserData(HWX, ELO)
 			endif
 		elseif IsItemPerishableByIndex(GSX(itemIndex)) then
-			if EMO == null or(H_X(EMO) == 0 and GetItemOfTypeFromUnit(EMO, ItemRealId[itemIndex]) == null) then
+			if EMO == null or(GetUnitEmptyInventorySlotCount(EMO) == 0 and GetItemOfTypeFromUnit(EMO, ItemRealId[itemIndex]) == null) then
 				call HYX(ItemPowerupId[itemIndex], x, y, whichPlayer, true, GetPerishableItemChargesByIndex(itemIndex))
 			else
 				set HWX = CreateItem(ItemPowerupId[itemIndex], x, y)
@@ -13516,7 +13503,7 @@ function EJO takes player whichPlayer, unit whichUnit, unit EKO, integer itemInd
 				call UnitAddItem(EMO, HWX)
 			endif
 		else
-			if H_X(EMO) == 0 or EMO == null then
+			if GetUnitEmptyInventorySlotCount(EMO) == 0 or EMO == null then
 				if EMO == null then
 					call HYX(ItemPowerupId[itemIndex], x, y, whichPlayer, true, 0)
 				else
@@ -13887,63 +13874,63 @@ function XOO takes unit KKX, integer XRO, player p returns nothing
 			call SetUnitY(d, GetUnitY(KKX))
 			if UnitIsDead(KKX) == false and IsUnitInRange(KKX, SentinelFountainOfLifeUnit, 1600) or IsUnitInRange(KKX, ScourgeFountainOfLifeUnit, 1600) then
 				call Z3X(d, KKX, true, k)
-				if H_X(KKX)> 0 then
+				if GetUnitEmptyInventorySlotCount(KKX)> 0 then
 					call UnitDropItemTarget(d, UnitItemInSlot(d, 0), KKX)
 				endif
-				if H_X(KKX)> 0 then
+				if GetUnitEmptyInventorySlotCount(KKX)> 0 then
 					call UnitDropItemTarget(d, UnitItemInSlot(d, 1), KKX)
 				endif
-				if H_X(KKX)> 0 then
+				if GetUnitEmptyInventorySlotCount(KKX)> 0 then
 					call UnitDropItemTarget(d, UnitItemInSlot(d, 2), KKX)
 				endif
-				if H_X(KKX)> 0 then
+				if GetUnitEmptyInventorySlotCount(KKX)> 0 then
 					call UnitDropItemTarget(d, UnitItemInSlot(d, 3), KKX)
 				endif
-				if H_X(KKX)> 0 then
+				if GetUnitEmptyInventorySlotCount(KKX)> 0 then
 					call UnitDropItemTarget(d, UnitItemInSlot(d, 4), KKX)
 				endif
-				if H_X(KKX)> 0 then
+				if GetUnitEmptyInventorySlotCount(KKX)> 0 then
 					call UnitDropItemTarget(d, UnitItemInSlot(d, 5), KKX)
 				endif
 			elseif UnitIsDead(KKX) == false and XEO(KKX) then
-				if XXO(UnitItemInSlot(d, 0)) and H_X(KKX)> 0 then
+				if XXO(UnitItemInSlot(d, 0)) and GetUnitEmptyInventorySlotCount(KKX)> 0 then
 					call UnitDropItemTarget(d, UnitItemInSlot(d, 0), KKX)
 				endif
-				if XXO(UnitItemInSlot(d, 1)) and H_X(KKX)> 0 then
+				if XXO(UnitItemInSlot(d, 1)) and GetUnitEmptyInventorySlotCount(KKX)> 0 then
 					call UnitDropItemTarget(d, UnitItemInSlot(d, 1), KKX)
 				endif
-				if XXO(UnitItemInSlot(d, 2)) and H_X(KKX)> 0 then
+				if XXO(UnitItemInSlot(d, 2)) and GetUnitEmptyInventorySlotCount(KKX)> 0 then
 					call UnitDropItemTarget(d, UnitItemInSlot(d, 2), KKX)
 				endif
-				if XXO(UnitItemInSlot(d, 3)) and H_X(KKX)> 0 then
+				if XXO(UnitItemInSlot(d, 3)) and GetUnitEmptyInventorySlotCount(KKX)> 0 then
 					call UnitDropItemTarget(d, UnitItemInSlot(d, 3), KKX)
 				endif
-				if XXO(UnitItemInSlot(d, 4)) and H_X(KKX)> 0 then
+				if XXO(UnitItemInSlot(d, 4)) and GetUnitEmptyInventorySlotCount(KKX)> 0 then
 					call UnitDropItemTarget(d, UnitItemInSlot(d, 4), KKX)
 				endif
-				if XXO(UnitItemInSlot(d, 5)) and H_X(KKX)> 0 then
+				if XXO(UnitItemInSlot(d, 5)) and GetUnitEmptyInventorySlotCount(KKX)> 0 then
 					call UnitDropItemTarget(d, UnitItemInSlot(d, 5), KKX)
 				endif
 			elseif Y1X != null and UnitIsDead(Y1X) == false and(IsUnitInRangeXY(Y1X, GetRectCenterX(WA), GetRectCenterY(WA), 1600) or IsUnitInRangeXY(Y1X, GetRectCenterX(YA), GetRectCenterY(YA), 1600)) then
 				call SetUnitX(d, GetUnitX(Y1X))
 				call SetUnitY(d, GetUnitY(Y1X))
 				call Z3X(d, Y1X, true, k)
-				if H_X(Y1X)> 0 then
+				if GetUnitEmptyInventorySlotCount(Y1X)> 0 then
 					call UnitDropItemTarget(d, UnitItemInSlot(d, 0), Y1X)
 				endif
-				if H_X(Y1X)> 0 then
+				if GetUnitEmptyInventorySlotCount(Y1X)> 0 then
 					call UnitDropItemTarget(d, UnitItemInSlot(d, 1), Y1X)
 				endif
-				if H_X(Y1X)> 0 then
+				if GetUnitEmptyInventorySlotCount(Y1X)> 0 then
 					call UnitDropItemTarget(d, UnitItemInSlot(d, 2), Y1X)
 				endif
-				if H_X(Y1X)> 0 then
+				if GetUnitEmptyInventorySlotCount(Y1X)> 0 then
 					call UnitDropItemTarget(d, UnitItemInSlot(d, 3), Y1X)
 				endif
-				if H_X(Y1X)> 0 then
+				if GetUnitEmptyInventorySlotCount(Y1X)> 0 then
 					call UnitDropItemTarget(d, UnitItemInSlot(d, 4), Y1X)
 				endif
-				if H_X(Y1X)> 0 then
+				if GetUnitEmptyInventorySlotCount(Y1X)> 0 then
 					call UnitDropItemTarget(d, UnitItemInSlot(d, 5), Y1X)
 				endif
 			endif
@@ -14443,7 +14430,8 @@ function XZO takes nothing returns boolean
 				call SetItemCharges(HWX, HUX)
 			endif
 		elseif X0O == false and GetItemType(whichItem) == ITEM_TYPE_PERMANENT and IsItemAghanimScepter(whichItem) and IsUnitType(ZWX, UNIT_TYPE_HERO) then
-			if HDX(ZWX, false) then
+			// 拿神杖物品
+			if SetUnitAghanimScepterUpgradeState(ZWX, false) then
 				if itemIndex == Item_AghanimScepterBasic or(IsPlayerHasSkill(X1O,(39 -1)* 4 + 3) and itemIndex != Item_AghanimScepterGiftable) then
 					call HZX(whichItem)
 					if IsPlayerHasSkill(X1O,(39 -1)* 4 + 3) then
@@ -14488,7 +14476,7 @@ function XZO takes nothing returns boolean
 		elseif X0O and IsItemPerishableByIndex(GSX(itemIndex)) then
 			if (p == X1O) then
 				call DisableTrigger(UnitManipulatItemTrig)
-				if H_X(ZWX) == 0 and G2X(X1O, ZWX, itemIndex) == null then
+				if GetUnitEmptyInventorySlotCount(ZWX) == 0 and G2X(X1O, ZWX, itemIndex) == null then
 					call InterfaceErrorForPlayer(p, GetObjectName('n02O'))
 					call HYX(ItemPowerupId[(itemIndex)],(((LoadReal(HY, h, 6)))* 1.),(((LoadReal(HY, h, 7)))* 1.),(X1O),(true),(HUX))
 				else
@@ -14513,13 +14501,13 @@ function XZO takes nothing returns boolean
 				endif
 				call DisableTrigger(UnitManipulatItemTrig)
 				set X2O = G2X(X1O, ZWX, itemIndex)
-				if X2O == null and H_X(ZWX)!= 0 then
+				if X2O == null and GetUnitEmptyInventorySlotCount(ZWX)!= 0 then
 					set HWX = UnitAddItemById(ZWX, Q2)
 					set X3O = HWX
 					call SetItemPlayer(HWX, X1O, false)
 					call SetItemUserData(HWX, 1)
 					call SetItemCharges(HWX, HUX)
-				elseif X2O == null and H_X(ZWX) == 0 then
+				elseif X2O == null and GetUnitEmptyInventorySlotCount(ZWX) == 0 then
 					call InterfaceErrorForPlayer(p, GetObjectName('n02O'))
 					call HYX(ItemPowerupId[(itemIndex)],(((LoadReal(HY, h, 6)))* 1.),(((LoadReal(HY, h, 7)))* 1.),(X1O),(true),(HUX))
 				else
@@ -14543,7 +14531,7 @@ function XZO takes nothing returns boolean
 		if GetWidgetLife(whichItem)> 0 then
 			set TempItem = whichItem
 			if IsItemAghanimScepter(whichItem) then
-				call HDX(ZWX, true)
+				call SetUnitAghanimScepterUpgradeState(ZWX, true)
 			endif
 			if GetItemUserData(whichItem)==-500 then
 				call RemoveItem(whichItem)
@@ -14889,7 +14877,7 @@ function OnManipulatItem takes nothing returns boolean
 		call OLO(GetOwningPlayer(u), whichItem)
 		set TempItem = whichItem
 		if IsItemAghanimScepter(whichItem) then
-			call HDX(u, true)
+			call SetUnitAghanimScepterUpgradeState(u, true)
 		endif
 	elseif GetItemTypeId(GetManipulatedItem())!='I02M' then
 		set whichItem = GetManipulatedItem()
@@ -14925,7 +14913,7 @@ function OnManipulatItem takes nothing returns boolean
 				call SaveInteger(HY, h, 76,(GetItemCharges(whichItem)))
 				call SaveReal(HY, h, 6,((GetItemX(whichItem))* 1.))
 				call SaveReal(HY, h, 7,((GetItemY(whichItem))* 1.))
-				call HZX(whichItem)
+				call HZX(whichItem) // ? 立即删除？
 			else
 				call SaveBoolean(HY, h, 95,(false))
 				call SaveItemHandle(HY, h, 96,(whichItem))
@@ -15300,7 +15288,7 @@ function RDO takes item whichItem, unit whichUnit, boolean RFO returns nothing
 			set s = "Abilities\\Spells\\Human\\MagicSentry\\MagicSentryCaster.mdl"
 		endif
 		if RFO then
-			if H_X(whichUnit)> 0 or GetItemType(whichItem) == ITEM_TYPE_PERMANENT or GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN then
+			if GetUnitEmptyInventorySlotCount(whichUnit)> 0 or GetItemType(whichItem) == ITEM_TYPE_PERMANENT or GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN then
 				if GetUnitAbilityLevel(whichUnit,'A26A') == 0 and GetUnitAbilityLevel(whichUnit,'A26B') == 0 then
 					if s == "Abilities\\Spells\\Human\\MagicSentry\\MagicSentryCaster.mdl" then
 						call UnitAddPermanentAbility(whichUnit,'A26A')
@@ -19922,7 +19910,7 @@ function H5E takes nothing returns nothing
 	set bj_playerIsCrippled[0]= false
 	if IsUnitType(u, UNIT_TYPE_HERO) and HeroIsDummyUnit(u) == false and GetUnitAbilityLevel(u,'A3E7') == 0 then
 		call UnitAddPermanentAbility(u,'A3E7')
-		call HDX(u, false)
+		call SetUnitAghanimScepterUpgradeState(u, false)
 		set i = 0
 		loop
 		exitwhen i > 5
@@ -20473,7 +20461,7 @@ function GHE takes nothing returns nothing
 			set it = GetItemOfTypeFromUnit(d, SQV)
 			if it != null then
 				call SetItemCharges(it, GetItemCharges(it)+ 1)
-			elseif H_X(d)> 0 then
+			elseif GetUnitEmptyInventorySlotCount(d)> 0 then
 				set it = CreateItem(ItemRealId[SQV], 0, 0)
 				call SetItemCharges(it, 1)
 				call UnitAddItem(d, it)
@@ -20959,7 +20947,7 @@ function F9O takes nothing returns boolean
 	elseif itemId == ItemRealId[Item_AghanimScepterGiftable] then
 		if bj_playerIsCrippled[0] then
 			call RemoveItem(whichItem)
-			call HDX(whichUnit, true)
+			call SetUnitAghanimScepterUpgradeState(whichUnit, true)
 		endif
 		set bj_playerIsCrippled[0]= false
 	endif
@@ -21995,7 +21983,7 @@ function JIO takes nothing returns nothing
 		set MainMultiboard = CreateMultiboardBJ(8 + 6, 3 + ScourgeUserCount + SentinelUserCount, " ")
 		call MultiboardMinimize(MainMultiboard, true)
 	endif
-	if ExtraSkillsNumber >= 2 then
+	if ExtraSkillsCount >= 2 then
 		call SetMultiboardItemText(MainMultiboard, 2, 1, "CD1")
 		call SetMultiboardItemText(MainMultiboard, 3, 1, "CD2")
 	else
@@ -22022,7 +22010,7 @@ function JIO takes nothing returns nothing
 	exitwhen k > j
 		call SetMultiboardItemWidth(MainMultiboard, 1, k, 10.8)
 		call SetMultiboardItemWidth(MainMultiboard, 2, k, 2)
-		if ExtraSkillsNumber >= 2 then
+		if ExtraSkillsCount >= 2 then
 			call SetMultiboardItemWidth(MainMultiboard, 3, k, 2)
 		else
 			call SetMultiboardItemWidth(MainMultiboard, 3, k, .01)
@@ -22155,7 +22143,7 @@ endfunction
 function GetPlayerInfoIconBySlot takes player p, integer k returns string
 	if IsPlayerAlly(LocalPlayer, p) then
 		if IsPlayersEnableSkillInfo[LocalPlayerId] then
-			if k <= 4 + ExtraSkillsNumber then
+			if k <= 4 + ExtraSkillsCount then
 				return HeroSkill_Icon[PlayerSkillIndices[GetPlayerId(p)* MAX_SKILL_SLOTS + k]]
 			else
 				return "UI\\Widgets\\Console\\Undead\\undead-inventory-slotfiller.blp"
@@ -22380,12 +22368,12 @@ function UpdateMainMultiboardLoopAction takes nothing returns nothing
 			call SetMultiboardItemWidth(MainMultiboard, 9, loop_i + 2, 1.1)
 			call SetMultiboardItemWidth(MainMultiboard, 10, loop_i + 2, 1.1)
 			call SetMultiboardItemWidth(MainMultiboard, 11, loop_i + 2, 1.1)
-			if ExtraSkillsNumber >= 1 then
+			if ExtraSkillsCount >= 1 then
 				call SetMultiboardItemWidth(MainMultiboard, 12, loop_i + 2, 1.1)
 			else
 				call SetMultiboardItemWidth(MainMultiboard, 12, loop_i + 2, .1)
 			endif
-			if ExtraSkillsNumber >= 2 then
+			if ExtraSkillsCount >= 2 then
 				call SetMultiboardItemWidth(MainMultiboard, 13, loop_i + 2, 1.1)
 			else
 				call SetMultiboardItemWidth(MainMultiboard, 13, loop_i + 2, .1)
@@ -22395,12 +22383,12 @@ function UpdateMainMultiboardLoopAction takes nothing returns nothing
 			call SetMultiboardItemStyle(MainMultiboard, 10, loop_i + 2, false, true)
 			call SetMultiboardItemStyle(MainMultiboard, 11, loop_i + 2, false, true)
 			call SetMultiboardItemStyle(MainMultiboard, 12, loop_i + 2, false, true)
-			if ExtraSkillsNumber >= 1 then
+			if ExtraSkillsCount >= 1 then
 				call SetMultiboardItemStyle(MainMultiboard, 13, loop_i + 2, false, true)
 			else
 				call SetMultiboardItemStyle(MainMultiboard, 13, loop_i + 2, false, false)
 			endif
-			if ExtraSkillsNumber >= 2 then
+			if ExtraSkillsCount >= 2 then
 				call SetMultiboardItemStyle(MainMultiboard, 14, loop_i + 2, false, true)
 			else
 				call SetMultiboardItemStyle(MainMultiboard, 14, loop_i + 2, false, false)
@@ -22516,12 +22504,12 @@ function UpdateMainMultiboardLoopAction takes nothing returns nothing
 			call SetMultiboardItemWidth(MainMultiboard, 9,  loop_i + 3 + SentinelUserCount, 1.1)
 			call SetMultiboardItemWidth(MainMultiboard, 10, loop_i + 3 + SentinelUserCount, 1.1)
 			call SetMultiboardItemWidth(MainMultiboard, 11, loop_i + 3 + SentinelUserCount, 1.1)
-			if ExtraSkillsNumber >= 1 then
+			if ExtraSkillsCount >= 1 then
 				call SetMultiboardItemWidth(MainMultiboard, 12, loop_i + 3 + SentinelUserCount, 1.1)
 			else
 				call SetMultiboardItemWidth(MainMultiboard, 12, loop_i + 3 + SentinelUserCount, .1)
 			endif
-			if ExtraSkillsNumber >= 2 then
+			if ExtraSkillsCount >= 2 then
 				call SetMultiboardItemWidth(MainMultiboard, 13, loop_i + 3 + SentinelUserCount, 1.1)
 			else
 				call SetMultiboardItemWidth(MainMultiboard, 13, loop_i + 3 + SentinelUserCount, .1)
@@ -22531,12 +22519,12 @@ function UpdateMainMultiboardLoopAction takes nothing returns nothing
 			call SetMultiboardItemStyle(MainMultiboard, 10, loop_i + 3 + SentinelUserCount, false, true)
 			call SetMultiboardItemStyle(MainMultiboard, 11, loop_i + 3 + SentinelUserCount, false, true)
 			call SetMultiboardItemStyle(MainMultiboard, 12, loop_i + 3 + SentinelUserCount, false, true)
-			if ExtraSkillsNumber >= 1 then
+			if ExtraSkillsCount >= 1 then
 				call SetMultiboardItemStyle(MainMultiboard, 13, loop_i + 3 + SentinelUserCount, false, true)
 			else
 				call SetMultiboardItemStyle(MainMultiboard, 13, loop_i + 3 + SentinelUserCount, false, false)
 			endif
-			if ExtraSkillsNumber >= 2 then
+			if ExtraSkillsCount >= 2 then
 				call SetMultiboardItemStyle(MainMultiboard, 14, loop_i + 3 + SentinelUserCount, false, true)
 			else
 				call SetMultiboardItemStyle(MainMultiboard, 14, loop_i + 3 + SentinelUserCount, false, false)
@@ -23350,7 +23338,7 @@ function LBO takes nothing returns nothing
 		call MultiboardReleaseItem(mbt)
 		set i = i + 1
 	endloop
-	if ExtraSkillsNumber >= 1 then
+	if ExtraSkillsCount >= 1 then
 		set K2O = K2O + 1
 		set K3O = 0
 		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
@@ -23392,7 +23380,7 @@ function LBO takes nothing returns nothing
 			set i = i + 1
 		endloop
 	endif
-	if ExtraSkillsNumber >= 2 then
+	if ExtraSkillsCount >= 2 then
 		set K2O = K2O + 1
 		set K3O = 0
 		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
@@ -23818,15 +23806,15 @@ function MRO takes nothing returns boolean
 		loop
 			if IsPlayerPlaying(Player(i)) then
 				set pid = GetPlayerId(Player(i))
-				call StoreDrCacheData("SP1_" + I2S(i), HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 1]])
-				call StoreDrCacheData("SP2_" + I2S(i), HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 2]])
-				call StoreDrCacheData("SP3_" + I2S(i), HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 3]])
-				call StoreDrCacheData("SP4_" + I2S(i), HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 4]])
-				if ExtraSkillsNumber >= 1 then
-					call StoreDrCacheData("SP5_" + I2S(i), HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 5]])
+				call StoreDrCacheData("SP1_" + I2S(i), HeroSkill_BaseId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 1]])
+				call StoreDrCacheData("SP2_" + I2S(i), HeroSkill_BaseId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 2]])
+				call StoreDrCacheData("SP3_" + I2S(i), HeroSkill_BaseId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 3]])
+				call StoreDrCacheData("SP4_" + I2S(i), HeroSkill_BaseId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 4]])
+				if ExtraSkillsCount >= 1 then
+					call StoreDrCacheData("SP5_" + I2S(i), HeroSkill_BaseId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 5]])
 				endif
-				if ExtraSkillsNumber >= 2 then
-					call StoreDrCacheData("SP6_" + I2S(i), HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 6]])
+				if ExtraSkillsCount >= 2 then
+					call StoreDrCacheData("SP6_" + I2S(i), HeroSkill_BaseId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 6]])
 				endif
 			endif
 			set i = i + 1
@@ -25038,14 +25026,14 @@ function ShowSkillsOnSelecting takes nothing returns nothing
 	local integer i
 	if p != t and JI[GetPlayerId(p)]and GetTriggerUnit() == PlayerHeroes[GetPlayerId(t)]and IsPlayerAlly(p, t) then
 		set i = PlayerSkillIndices[GetPlayerId(t)* MAX_SKILL_SLOTS]
-		call DisplayTimedTextToPlayer(p, 0, 0, 10, "|c00a0a0f8" + GetObjectName(HeroSkill_BasicId[i + 1])+ "|r level: |c00f8a0a0" + I2S(ZTE(GetTriggerUnit(), 1))+ "|r")
-		call DisplayTimedTextToPlayer(p, 0, 0, 10, "|c00a0a0f8" + GetObjectName(HeroSkill_BasicId[i + 2])+ "|r level: |c00f8a0a0" + I2S(ZTE(GetTriggerUnit(), 2))+ "|r")
-		call DisplayTimedTextToPlayer(p, 0, 0, 10, "|c00a0a0f8" + GetObjectName(HeroSkill_BasicId[i + 3])+ "|r level: |c00f8a0a0" + I2S(ZTE(GetTriggerUnit(), 3))+ "|r")
-		call DisplayTimedTextToPlayer(p, 0, 0, 10, "|c00ff54f2" + GetObjectName(HeroSkill_BasicId[i + 4])+ "|r level: |c00f8a0a0" + I2S(ZTE(GetTriggerUnit(), 4))+ "|r")
-		if ExtraSkillsNumber > 0 then
-			call DisplayTimedTextToPlayer(p, 0, 0, 10, "|c00a0a0f8" + GetObjectName(HeroSkill_BasicId[i + 5])+ "|r level: |c00f8a0a0" + I2S(ZTE(GetTriggerUnit(), 5))+ "|r")
-			if (HeroSkill_BasicId[PlayerSkillIndices[GetPlayerId(p)* MAX_SKILL_SLOTS + 6]]> 0) then
-				call DisplayTimedTextToPlayer(p, 0, 0, 10, "|c00ff54f2" + GetObjectName(HeroSkill_BasicId[i + 6])+ "|r level: |c00f8a0a0" + I2S(ZTE(GetTriggerUnit(), 6))+ "|r")
+		call DisplayTimedTextToPlayer(p, 0, 0, 10, "|c00a0a0f8" + GetObjectName(HeroSkill_BaseId[i + 1])+ "|r level: |c00f8a0a0" + I2S(ZTE(GetTriggerUnit(), 1))+ "|r")
+		call DisplayTimedTextToPlayer(p, 0, 0, 10, "|c00a0a0f8" + GetObjectName(HeroSkill_BaseId[i + 2])+ "|r level: |c00f8a0a0" + I2S(ZTE(GetTriggerUnit(), 2))+ "|r")
+		call DisplayTimedTextToPlayer(p, 0, 0, 10, "|c00a0a0f8" + GetObjectName(HeroSkill_BaseId[i + 3])+ "|r level: |c00f8a0a0" + I2S(ZTE(GetTriggerUnit(), 3))+ "|r")
+		call DisplayTimedTextToPlayer(p, 0, 0, 10, "|c00ff54f2" + GetObjectName(HeroSkill_BaseId[i + 4])+ "|r level: |c00f8a0a0" + I2S(ZTE(GetTriggerUnit(), 4))+ "|r")
+		if ExtraSkillsCount > 0 then
+			call DisplayTimedTextToPlayer(p, 0, 0, 10, "|c00a0a0f8" + GetObjectName(HeroSkill_BaseId[i + 5])+ "|r level: |c00f8a0a0" + I2S(ZTE(GetTriggerUnit(), 5))+ "|r")
+			if (HeroSkill_BaseId[PlayerSkillIndices[GetPlayerId(p)* MAX_SKILL_SLOTS + 6]]> 0) then
+				call DisplayTimedTextToPlayer(p, 0, 0, 10, "|c00ff54f2" + GetObjectName(HeroSkill_BaseId[i + 6])+ "|r level: |c00f8a0a0" + I2S(ZTE(GetTriggerUnit(), 6))+ "|r")
 			endif
 		endif
 	endif
@@ -26583,7 +26571,7 @@ function Ike_Sht takes player p, integer i, integer hotkey returns nothing
 	local integer f
 	local unit u = CirclesUnit[GetPlayerId(p)]
 	if HeroSkill_IsPassive[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]] then
-		set id = HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]]
+		set id = HeroSkill_BaseId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]]
 		if id != 0 then
 			call UnitAddAbility(u, id)
 			call SetPasAbilityHotKey(u, id, hotkey, p)
@@ -26596,7 +26584,7 @@ function Ike_Sht takes player p, integer i, integer hotkey returns nothing
 			endif
 		endif
 	else
-		set id = HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]]
+		set id = HeroSkill_BaseId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]]
 		if FireRemnat_Hk(u, id, hotkey, p) then
 			set u = null
 			return
@@ -26633,7 +26621,7 @@ function Ike_Sht takes player p, integer i, integer hotkey returns nothing
 			loop
 			exitwhen e > f
 				if e == 1 then
-					set id = HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]]
+					set id = HeroSkill_BaseId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]]
 				elseif b2 then
 					set id = IkeyID
 				elseif b1 then
@@ -26670,7 +26658,7 @@ function IKY takes nothing returns nothing
 		call InterfaceErrorForPlayer(p, "错误的参数，快捷键的取值必须为26英文字母。")
 		return
 	endif
-	if i < 0 or i > (4 + ExtraSkillsNumber) then
+	if i < 0 or i > (4 + ExtraSkillsCount) then
 		call InterfaceErrorForPlayer(p, "错误的参数，技能编号的取值必须以-si面板中为准。")
 		return
 	endif
@@ -27552,7 +27540,7 @@ function ZUO takes unit u1, unit u2, player p1, player p2 returns nothing
 	call SetPlayerAbilityAvailableEx(p2, HeroSkill_Modify[PlayerSkillIndices[GetPlayerId(p1)* MAX_SKILL_SLOTS + 3]], false)
 	call SetPlayerAbilityAvailableEx(p2, HeroSkill_Modify[PlayerSkillIndices[GetPlayerId(p1)* MAX_SKILL_SLOTS + 4]], false)
 	loop
-	exitwhen i > 4 + ExtraSkillsNumber
+	exitwhen i > 4 + ExtraSkillsCount
 		set Z_O[i]= PlayerSkillIndices[GetPlayerId(p1)* MAX_SKILL_SLOTS + i]
 		set PlayerSkillIndices[GetPlayerId(p1)* MAX_SKILL_SLOTS + i]= PlayerSkillIndices[GetPlayerId(p2)* MAX_SKILL_SLOTS + i]
 		set PlayerSkillIndices[GetPlayerId(p2)* MAX_SKILL_SLOTS + i]= Z_O[i]
@@ -29426,16 +29414,16 @@ function X0R takes nothing returns nothing
 	set NK = CreateTimer()
 	if IsPickingHero then
 		if MainModeName =="sd" then
-			set N3 = KL +(ExtraSkillsNumber * 30)
+			set N3 = KL +(ExtraSkillsCount * 30)
 		elseif MainModeName =="md" then
-			set N3 = LL +(ExtraSkillsNumber * 30)
+			set N3 = LL +(ExtraSkillsCount * 30)
 		elseif MainModeName =="ap" then
-			set N3 = JL +(ExtraSkillsNumber * 30)
+			set N3 = JL +(ExtraSkillsCount * 30)
 		else
 			set N3 = 90
 		endif
 		if Mode__RandomExtraAbilities then
-			set N3 = N3 -(ExtraSkillsNumber * 30)
+			set N3 = N3 -(ExtraSkillsCount * 30)
 		endif
 	else
 		if MainModeName =="rd"then
@@ -29531,16 +29519,16 @@ function OOR takes nothing returns nothing
 			loop
 				set id = PlayerSkillIndices[playerIndex * MAX_SKILL_SLOTS + xx]
 				if id > 600 then
-					call DisplayTimedTextToPlayer(Player(playerIndex), 0, 0, 15, "	" + GetObjectName(HeroSkill_BasicId[id])+ "|cffffcc00" + " (" + "Invoker" + ")" + "|r")
+					call DisplayTimedTextToPlayer(Player(playerIndex), 0, 0, 15, "	" + GetObjectName(HeroSkill_BaseId[id])+ "|cffffcc00" + " (" + "Invoker" + ")" + "|r")
 				else
 					if xx == 4 or xx == 6 then
-						call DisplayTimedTextToPlayer(Player(playerIndex), 0, 0, 15, "	" + "|c00ff0303" + GetObjectName(HeroSkill_BasicId[id])+ "|r" + "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(id + 3)/ 4])+ ")" + "|r")
+						call DisplayTimedTextToPlayer(Player(playerIndex), 0, 0, 15, "	" + "|c00ff0303" + GetObjectName(HeroSkill_BaseId[id])+ "|r" + "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(id + 3)/ 4])+ ")" + "|r")
 					else
-						call DisplayTimedTextToPlayer(Player(playerIndex), 0, 0, 15, "	" + GetObjectName(HeroSkill_BasicId[id])+ "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(id + 3)/ 4])+ ")" + "|r")
+						call DisplayTimedTextToPlayer(Player(playerIndex), 0, 0, 15, "	" + GetObjectName(HeroSkill_BaseId[id])+ "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(id + 3)/ 4])+ ")" + "|r")
 					endif
 				endif
 				set xx = xx + 1
-			exitwhen xx > 4 + ExtraSkillsNumber
+			exitwhen xx > 4 + ExtraSkillsCount
 			endloop
 			if PP[playerIndex]== 1 then
 				call DisplayTimedTextToPlayer(Player(playerIndex), 0, 0, 15, " ")
@@ -29571,13 +29559,13 @@ function ORR takes integer i returns nothing
 		call MDX(k, i)
 		set LP[k]= true
 	endif
-	if HaveSavedString(ObjectHashTable, HeroSkill_BasicId[i], 600) and LoadBoolean(ObjectHashTable, HeroSkill_BasicId[i], 600) == false then
-		call SaveBoolean(ObjectHashTable, HeroSkill_BasicId[i], 600, true)
-		call ExecuteFunc(LoadStr(ObjectHashTable, HeroSkill_BasicId[i], 600))
+	if HaveSavedString(ObjectHashTable, HeroSkill_BaseId[i], 600) and LoadBoolean(ObjectHashTable, HeroSkill_BaseId[i], 600) == false then
+		call SaveBoolean(ObjectHashTable, HeroSkill_BaseId[i], 600, true)
+		call ExecuteFunc(LoadStr(ObjectHashTable, HeroSkill_BaseId[i], 600))
 	endif
-	if HaveSavedString(ObjectHashTable, HeroSkill_BasicId[i], 601) and LoadBoolean(ObjectHashTable, HeroSkill_BasicId[i], 601) == false then
-		call SaveBoolean(ObjectHashTable, HeroSkill_BasicId[i], 601, true)
-		call ExecuteFunc(LoadStr(ObjectHashTable, HeroSkill_BasicId[i], 601))
+	if HaveSavedString(ObjectHashTable, HeroSkill_BaseId[i], 601) and LoadBoolean(ObjectHashTable, HeroSkill_BaseId[i], 601) == false then
+		call SaveBoolean(ObjectHashTable, HeroSkill_BaseId[i], 601, true)
+		call ExecuteFunc(LoadStr(ObjectHashTable, HeroSkill_BaseId[i], 601))
 	endif
 endfunction
 function OIR takes integer playerIndex returns nothing
@@ -29585,7 +29573,7 @@ function OIR takes integer playerIndex returns nothing
 	loop
 		call ORR(PlayerSkillIndices[playerIndex * MAX_SKILL_SLOTS + xx])
 		set xx = xx + 1
-	exitwhen xx > 4 + ExtraSkillsNumber
+	exitwhen xx > 4 + ExtraSkillsCount
 	endloop
 endfunction
 function OAR takes nothing returns nothing
@@ -29771,7 +29759,7 @@ function OPR takes integer pid returns integer
 	// 遍历RB表，如果玩家已经有已选择的某个技能在RB表内 则计数器+1 获得计数器
 	loop
 		if CONTROL_SKILL_INDEX_LIST[k]!= 0 then
-			if PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 1]== CONTROL_SKILL_INDEX_LIST[k]or PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 2]== CONTROL_SKILL_INDEX_LIST[k]or PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 3]== CONTROL_SKILL_INDEX_LIST[k]or PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 4]== CONTROL_SKILL_INDEX_LIST[k]or(ExtraSkillsNumber >= 1 and PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 5]== CONTROL_SKILL_INDEX_LIST[k]) or(ExtraSkillsNumber >= 2 and PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 6]== CONTROL_SKILL_INDEX_LIST[k]) then
+			if PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 1]== CONTROL_SKILL_INDEX_LIST[k]or PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 2]== CONTROL_SKILL_INDEX_LIST[k]or PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 3]== CONTROL_SKILL_INDEX_LIST[k]or PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 4]== CONTROL_SKILL_INDEX_LIST[k]or(ExtraSkillsCount >= 1 and PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 5]== CONTROL_SKILL_INDEX_LIST[k]) or(ExtraSkillsCount >= 2 and PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 6]== CONTROL_SKILL_INDEX_LIST[k]) then
 				set c = c + 1
 			endif
 		endif
@@ -29783,7 +29771,7 @@ endfunction
 function OQR takes integer pid returns boolean
 	local integer id = 34 * 4 + 3
 	local integer d = pid * MAX_SKILL_SLOTS
-	if PlayerSkillIndices[d + 1]== id or PlayerSkillIndices[d + 2]== id or PlayerSkillIndices[d + 3]== id or PlayerSkillIndices[d + 4]== id or(ExtraSkillsNumber >= 1 and PlayerSkillIndices[d + 5]== id) or(ExtraSkillsNumber >= 2 and PlayerSkillIndices[d + 6]== id) then
+	if PlayerSkillIndices[d + 1]== id or PlayerSkillIndices[d + 2]== id or PlayerSkillIndices[d + 3]== id or PlayerSkillIndices[d + 4]== id or(ExtraSkillsCount >= 1 and PlayerSkillIndices[d + 5]== id) or(ExtraSkillsCount >= 2 and PlayerSkillIndices[d + 6]== id) then
 		return true
 	endif
 	return false
@@ -29882,7 +29870,7 @@ function OnPlayerPickAbility takes integer abilityIndex, integer playerIndex, bo
 			endif
 		endif
 		set xx = xx + 1
-	exitwhen xx > 4 + ExtraSkillsNumber
+	exitwhen xx > 4 + ExtraSkillsCount
 	endloop
 	if O3R == 0 and O_R then
 		call DisplayLoDWarningForPlayer(p, OZR, "你必须选择一个小技能（非最终技能）.")
@@ -29893,10 +29881,10 @@ function OnPlayerPickAbility takes integer abilityIndex, integer playerIndex, bo
 		return false
 	endif
 	if Mode__RandomExtraAbilities then
-		if PlayerSkillIndices[ROR + 5]== 0 and ExtraSkillsNumber >= 1 then
+		if PlayerSkillIndices[ROR + 5]== 0 and ExtraSkillsCount >= 1 then
 			set O2R = 5
 		endif
-		if PlayerSkillIndices[ROR + 6]== 0 and ExtraSkillsNumber >= 2 then
+		if PlayerSkillIndices[ROR + 6]== 0 and ExtraSkillsCount >= 2 then
 			set O3R = 6
 		endif
 	endif
@@ -29933,7 +29921,7 @@ function OnPlayerPickAbility takes integer abilityIndex, integer playerIndex, bo
 			exitwhen true
 			endif
 			set xx = xx + 1
-		exitwhen xx > 4 + ExtraSkillsNumber
+		exitwhen xx > 4 + ExtraSkillsCount
 		endloop
 		set xx = 1
 		loop
@@ -29943,7 +29931,7 @@ function OnPlayerPickAbility takes integer abilityIndex, integer playerIndex, bo
 			exitwhen true
 			endif
 			set xx = xx + 1
-		exitwhen xx > 4 + ExtraSkillsNumber
+		exitwhen xx > 4 + ExtraSkillsCount
 		endloop
 	elseif RXR or RVR then
 		set xx = 1
@@ -29958,7 +29946,7 @@ function OnPlayerPickAbility takes integer abilityIndex, integer playerIndex, bo
 			exitwhen true
 			endif
 			set xx = xx + 1
-		exitwhen xx > 4 + ExtraSkillsNumber
+		exitwhen xx > 4 + ExtraSkillsCount
 		endloop
 		set xx = 1
 		loop
@@ -29968,7 +29956,7 @@ function OnPlayerPickAbility takes integer abilityIndex, integer playerIndex, bo
 			exitwhen true
 			endif
 			set xx = xx + 1
-		exitwhen xx > 4 + ExtraSkillsNumber
+		exitwhen xx > 4 + ExtraSkillsCount
 		endloop
 	else
 		set xx = 1
@@ -29979,7 +29967,7 @@ function OnPlayerPickAbility takes integer abilityIndex, integer playerIndex, bo
 			exitwhen true
 			endif
 			set xx = xx + 1
-		exitwhen xx > 4 + ExtraSkillsNumber
+		exitwhen xx > 4 + ExtraSkillsCount
 		endloop
 	endif
 	if HeroSkill_HasMultipleAbilities[abilityIndex]and(Mode__FiveSkills or Mode__SixSkills) then
@@ -30044,7 +30032,7 @@ function OnPlayerPickAbility takes integer abilityIndex, integer playerIndex, bo
 						endif
 					endif
 					set xx = xx + 1
-				exitwhen(xx > 4 + ExtraSkillsNumber) or(xx > 4 and Mode__RandomExtraAbilities)
+				exitwhen(xx > 4 + ExtraSkillsCount) or(xx > 4 and Mode__RandomExtraAbilities)
 				endloop
 			endif
 		endif
@@ -30052,14 +30040,14 @@ function OnPlayerPickAbility takes integer abilityIndex, integer playerIndex, bo
 	if ns != 0 then
 		if O4R != "" then
 			if O1R != 0 then
-				call DisplayLoDWarningForPlayer(p, OZR, "不兼容 : " + GetObjectName(HeroSkill_BasicId[PlayerSkillIndices[ROR + ns]])+ "/" + GetObjectName(HeroSkill_BasicId[PlayerSkillIndices[ROR + O0R]])+ "/" + GetObjectName(HeroSkill_BasicId[PlayerSkillIndices[ROR + O1R]])+ " (" + O4R + ")")
+				call DisplayLoDWarningForPlayer(p, OZR, "不兼容 : " + GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[ROR + ns]])+ "/" + GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[ROR + O0R]])+ "/" + GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[ROR + O1R]])+ " (" + O4R + ")")
 			elseif O0R != 0 then
-				call DisplayLoDWarningForPlayer(p, OZR, "不兼容 : " + GetObjectName(HeroSkill_BasicId[PlayerSkillIndices[ROR + ns]])+ "/" + GetObjectName(HeroSkill_BasicId[PlayerSkillIndices[ROR + O0R]])+ " (" + O4R + ")")
+				call DisplayLoDWarningForPlayer(p, OZR, "不兼容 : " + GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[ROR + ns]])+ "/" + GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[ROR + O0R]])+ " (" + O4R + ")")
 			else
-				call DisplayLoDWarningForPlayer(p, OZR, "不兼容 : " + GetObjectName(HeroSkill_BasicId[PlayerSkillIndices[ROR + ns]])+ " (" + O4R + ")")
+				call DisplayLoDWarningForPlayer(p, OZR, "不兼容 : " + GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[ROR + ns]])+ " (" + O4R + ")")
 			endif
 		else
-			call DisplayLoDWarningForPlayer(p, OZR, "不兼容 : " + GetObjectName(HeroSkill_BasicId[PlayerSkillIndices[ROR + ns]]))
+			call DisplayLoDWarningForPlayer(p, OZR, "不兼容 : " + GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[ROR + ns]]))
 		endif
 		return false
 	endif
@@ -30075,19 +30063,19 @@ function OnPlayerPickAbility takes integer abilityIndex, integer playerIndex, bo
 		endif
 		return false
 	endif
-	if HaveSavedString(AbilityDataHashTable, HeroSkill_BasicId[abilityIndex], HotKeyStringHash) then
+	if HaveSavedString(AbilityDataHashTable, HeroSkill_BaseId[abilityIndex], HotKeyStringHash) then
 		set xx = 1
 		loop
-			if PlayerSkillIndices[ROR + xx]> 0 and HaveSavedString(AbilityDataHashTable, HeroSkill_BasicId[PlayerSkillIndices[ROR + xx]], HotKeyStringHash) then
-				if LoadStr(AbilityDataHashTable, HeroSkill_BasicId[abilityIndex], HotKeyStringHash) == LoadStr(AbilityDataHashTable, HeroSkill_BasicId[PlayerSkillIndices[ROR + xx]], HotKeyStringHash) then
-					call DisplayLoDWarningForPlayer(p, OZR, "快捷键冲突 : " + GetObjectName(HeroSkill_BasicId[PlayerSkillIndices[ROR + xx]]))
+			if PlayerSkillIndices[ROR + xx]> 0 and HaveSavedString(AbilityDataHashTable, HeroSkill_BaseId[PlayerSkillIndices[ROR + xx]], HotKeyStringHash) then
+				if LoadStr(AbilityDataHashTable, HeroSkill_BaseId[abilityIndex], HotKeyStringHash) == LoadStr(AbilityDataHashTable, HeroSkill_BaseId[PlayerSkillIndices[ROR + xx]], HotKeyStringHash) then
+					call DisplayLoDWarningForPlayer(p, OZR, "快捷键冲突 : " + GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[ROR + xx]]))
 					if HaveSavedBoolean(OtherHashTable, GetHandleId(Player(playerIndex)),'NSHK') and Mode__AllRandom then
 						return false
 					endif
 				endif
 			endif
 			set xx = xx + 1
-		exitwhen(xx > 4 + ExtraSkillsNumber)
+		exitwhen(xx > 4 + ExtraSkillsCount)
 		endloop
 	endif
 	if O_R then
@@ -30109,7 +30097,7 @@ function OnPlayerPickAbility takes integer abilityIndex, integer playerIndex, bo
 		exitwhen true
 		endif
 		set xx = xx + 1
-	exitwhen xx > 4 + ExtraSkillsNumber
+	exitwhen xx > 4 + ExtraSkillsCount
 	endloop
 	set FP[playerIndex]= pr
 	if RER then
@@ -30234,11 +30222,11 @@ function RIR takes integer pid, integer skillIndex returns boolean
 	set sn = R2I((I2R(skillIndex)+ 3.)/ 4.)
 	set sn = skillIndex -((sn -1)* 4)
 	if Mode__RandomExtraAbilities then
-		if PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 5]== skillIndex and ExtraSkillsNumber >= 1 then
+		if PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 5]== skillIndex and ExtraSkillsCount >= 1 then
 			call DisplayLoDWarningForPlayer(Player(pid), true, "你不能在\"额外随机技能\"模式下移除该技能.")
 			return false
 		endif
-		if PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 6]== skillIndex and ExtraSkillsNumber >= 2 then
+		if PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 6]== skillIndex and ExtraSkillsCount >= 2 then
 			call DisplayLoDWarningForPlayer(Player(pid), true, "你不能在\"额外随机技能\"模式下移除该技能.")
 			return false
 		endif
@@ -30251,7 +30239,7 @@ function RIR takes integer pid, integer skillIndex returns boolean
 		exitwhen true
 		endif
 		set xx = xx + 1
-	exitwhen xx > 4 + ExtraSkillsNumber
+	exitwhen xx > 4 + ExtraSkillsCount
 	endloop
 	set PP[pid]= 0
 	set xx = 1
@@ -30264,7 +30252,7 @@ function RIR takes integer pid, integer skillIndex returns boolean
 		exitwhen true
 		endif
 		set xx = xx + 1
-	exitwhen xx > 4 + ExtraSkillsNumber
+	exitwhen xx > 4 + ExtraSkillsCount
 	endloop
 	if GetUnitAbilityLevel(KP[pid],'Z004'-1 + sn)> 0 then
 		call UnitRemoveAbility(KP[pid],('Z004'-1)+ sn)
@@ -30279,7 +30267,7 @@ function RIR takes integer pid, integer skillIndex returns boolean
 				set V0R = GetPlayerId(ScourgePlayers[xx])
 			endif
 			if LoadBoolean(HY, GetHandleId(Player(V0R)), unitTypeId) then
-				if GetUnitAbilityLevel(KP[V0R], HeroSkill_BasicId[skillIndex])> 0 then
+				if GetUnitAbilityLevel(KP[V0R], HeroSkill_BaseId[skillIndex])> 0 then
 					call UnitRemoveAbility(KP[V0R],('Z010'-1)+ sn)
 					call UnitAddAbility(KP[V0R],('Z000'-1)+ sn)
 				endif
@@ -30357,7 +30345,7 @@ function RBR takes nothing returns nothing
 		loop
 			call RIR(playerIndex, PlayerSkillIndices[playerIndex * MAX_SKILL_SLOTS + xx])
 			set xx = xx + 1
-		exitwhen xx > 4 + ExtraSkillsNumber
+		exitwhen xx > 4 + ExtraSkillsCount
 		endloop
 	endif
 	call GroupEnumUnitsOfPlayer(g, GetTriggerPlayer(), Condition(function RNR))
@@ -30425,7 +30413,7 @@ function RDR takes nothing returns nothing
 				else
 					set RFR = GetPlayerId(ScourgePlayers[xx])
 				endif
-				if GetUnitAbilityLevel(KP[RFR], HeroSkill_BasicId[index])> 0 and pid != RFR and GetUnitAbilityLevel(KP[RFR],'Z000'-1 + sn)> 0 then
+				if GetUnitAbilityLevel(KP[RFR], HeroSkill_BaseId[index])> 0 and pid != RFR and GetUnitAbilityLevel(KP[RFR],'Z000'-1 + sn)> 0 then
 					call UnitRemoveAbility(KP[RFR],('Z000'-1)+ sn)
 					call UnitAddAbility(KP[RFR],('Z010'-1)+ sn)
 				endif
@@ -30734,7 +30722,7 @@ function IVR takes nothing returns nothing
 	set playerIndex = 1
 	loop
 		if T6E(playerIndex) then
-			if ExtraSkillsNumber >= 1 then
+			if ExtraSkillsCount >= 1 then
 				loop
 					if MainModeName =="sd" or MainModeName =="md" then
 						loop
@@ -30757,7 +30745,7 @@ function IVR takes nothing returns nothing
 				exitwhen PlayerSkillIndices[playerIndex * MAX_SKILL_SLOTS + 5]!= 0
 				endloop
 			endif
-			if ExtraSkillsNumber >= 2 then
+			if ExtraSkillsCount >= 2 then
 				loop
 					if MainModeName =="sd" or MainModeName =="md" then
 						loop
@@ -31150,24 +31138,24 @@ function IPR takes nothing returns nothing
 	call SaveInteger(HY, h, 100 * c + 4, PlayerSkillIndices[4])
 	call SaveInteger(HY, h, 100 * c + 5, PlayerSkillIndices[5])
 	call SaveInteger(HY, h, 100 * c + 6, PlayerSkillIndices[6])
-	call UnitAddAbility(u, QGX(HeroSkill_BasicId[PlayerSkillIndices[1]]))
-	call SetUnitAbilityLevel(u, QGX(HeroSkill_BasicId[PlayerSkillIndices[1]]), 4)
-	call UnitAddAbility(u, QGX(HeroSkill_BasicId[PlayerSkillIndices[2]]))
-	call SetUnitAbilityLevel(u, QGX(HeroSkill_BasicId[PlayerSkillIndices[2]]), 4)
-	call UnitAddAbility(u, QGX(HeroSkill_BasicId[PlayerSkillIndices[3]]))
-	call SetUnitAbilityLevel(u, QGX(HeroSkill_BasicId[PlayerSkillIndices[3]]), 4)
-	call UnitAddAbility(u, QGX(HeroSkill_BasicId[PlayerSkillIndices[4]]))
-	call SetUnitAbilityLevel(u, QGX(HeroSkill_BasicId[PlayerSkillIndices[4]]), 4)
+	call UnitAddAbility(u, QGX(HeroSkill_BaseId[PlayerSkillIndices[1]]))
+	call SetUnitAbilityLevel(u, QGX(HeroSkill_BaseId[PlayerSkillIndices[1]]), 4)
+	call UnitAddAbility(u, QGX(HeroSkill_BaseId[PlayerSkillIndices[2]]))
+	call SetUnitAbilityLevel(u, QGX(HeroSkill_BaseId[PlayerSkillIndices[2]]), 4)
+	call UnitAddAbility(u, QGX(HeroSkill_BaseId[PlayerSkillIndices[3]]))
+	call SetUnitAbilityLevel(u, QGX(HeroSkill_BaseId[PlayerSkillIndices[3]]), 4)
+	call UnitAddAbility(u, QGX(HeroSkill_BaseId[PlayerSkillIndices[4]]))
+	call SetUnitAbilityLevel(u, QGX(HeroSkill_BaseId[PlayerSkillIndices[4]]), 4)
 	
-	//call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 30, "循环:"+I2S( c ) + " 技能名" + GetObjectName( QGX(HeroSkill_BasicId[PlayerSkillIndices[4]]) ))
-	if ExtraSkillsNumber > 0 then
-		call UnitAddAbility(u, QGX(HeroSkill_BasicId[PlayerSkillIndices[5]]))
-		call SetUnitAbilityLevel(u, QGX(HeroSkill_BasicId[PlayerSkillIndices[5]]), 4)
+	//call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 30, "循环:"+I2S( c ) + " 技能名" + GetObjectName( QGX(HeroSkill_BaseId[PlayerSkillIndices[4]]) ))
+	if ExtraSkillsCount > 0 then
+		call UnitAddAbility(u, QGX(HeroSkill_BaseId[PlayerSkillIndices[5]]))
+		call SetUnitAbilityLevel(u, QGX(HeroSkill_BaseId[PlayerSkillIndices[5]]), 4)
 		call SaveInteger(HY, GetHandleId(u),'RDIN'+ 5, PlayerSkillIndices[5])
 	endif
-	if ExtraSkillsNumber > 1 then
-		call UnitAddAbility(u, QGX(HeroSkill_BasicId[PlayerSkillIndices[6]]))
-		call SetUnitAbilityLevel(u, QGX(HeroSkill_BasicId[PlayerSkillIndices[6]]), 4)
+	if ExtraSkillsCount > 1 then
+		call UnitAddAbility(u, QGX(HeroSkill_BaseId[PlayerSkillIndices[6]]))
+		call SetUnitAbilityLevel(u, QGX(HeroSkill_BaseId[PlayerSkillIndices[6]]), 4)
 		call SaveInteger(HY, GetHandleId(u),'RDIN'+ 6, PlayerSkillIndices[6])
 	endif
 	call SaveInteger(HY, GetHandleId(u),'RDIN'+ 1, PlayerSkillIndices[1])
@@ -31874,7 +31862,7 @@ function AYR takes string AZR, integer A_R returns nothing
 		call AddModeName("快速刷野")
 		set Mode__FastNeutrals = true
 		call AddModeName("六技能")
-		set ExtraSkillsNumber = 2
+		set ExtraSkillsCount = 2
 		call JIO()
 		set Mode__SixSkills = true
 		call UnitAddAbility(ScourgeFountainOfLifeUnit,'ACrk')
@@ -31899,7 +31887,7 @@ function AYR takes string AZR, integer A_R returns nothing
 		call AddModeName("快速刷野")
 		set Mode__FastNeutrals = true
 		call AddModeName("六技能")
-		set ExtraSkillsNumber = 2
+		set ExtraSkillsCount = 2
 		call JIO()
 		set Mode__SixSkills = true
 		call UnitAddAbility(ScourgeFountainOfLifeUnit,'ACrk')
@@ -31924,7 +31912,7 @@ function AYR takes string AZR, integer A_R returns nothing
 		call AddModeName("快速刷野")
 		set Mode__FastNeutrals = true
 		call AddModeName("六技能")
-		set ExtraSkillsNumber = 2
+		set ExtraSkillsCount = 2
 		call JIO()
 		set Mode__SixSkills = true
 		call UnitAddAbility(ScourgeFountainOfLifeUnit,'ACrk')
@@ -32040,7 +32028,7 @@ function AYR takes string AZR, integer A_R returns nothing
 	endif
 	if S5 then
 		call AddModeName("五技能")
-		set ExtraSkillsNumber = 1
+		set ExtraSkillsCount = 1
 		set Mode__FiveSkills = true
 		call UnitAddAbility(ScourgeFountainOfLifeUnit,'ACrk')
 		call UnitAddAbility(SentinelFountainOfLifeUnit,'ACrk')
@@ -32051,7 +32039,7 @@ function AYR takes string AZR, integer A_R returns nothing
 	endif
 	if S6 then
 		call AddModeName("六技能")
-		set ExtraSkillsNumber = 2
+		set ExtraSkillsCount = 2
 		call JIO()
 		set Mode__SixSkills = true
 		call UnitAddAbility(ScourgeFountainOfLifeUnit,'ACrk')
@@ -34066,10 +34054,10 @@ endfunction
 //玩家是否选择了此技能
 function PlayerHaveAbilityByActive takes player p, integer abid returns boolean
 	local integer i = 1
-	local integer maxi = 4 + ExtraSkillsNumber
+	local integer maxi = 4 + ExtraSkillsCount
 	local integer pid = GetPlayerId(p)
 	loop
-		if HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]] == abid then
+		if HeroSkill_BaseId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]] == abid then
 			return true
 		endif
 		set i = i + 1
@@ -43648,7 +43636,7 @@ function ERI takes nothing returns nothing
 	local integer i = 1
 	local integer abilityId
 	loop
-		set abilityId = HeroSkill_BasicId[PlayerSkillIndices[iPlayerId * MAX_SKILL_SLOTS + i]]
+		set abilityId = HeroSkill_BaseId[PlayerSkillIndices[iPlayerId * MAX_SKILL_SLOTS + i]]
 		if abilityId > 0 and not HeroSkill_IsPassive[PlayerSkillIndices[iPlayerId * MAX_SKILL_SLOTS + i]] then
 			call SaveInteger(OtherHashTable2,'MULT', 0, abilityId)
 			// 能被多重施法
@@ -43657,7 +43645,7 @@ function ERI takes nothing returns nothing
 			endif
 		endif
 		set i = i + 1
-	exitwhen i > 4 + ExtraSkillsNumber
+	exitwhen i > 4 + ExtraSkillsCount
 	endloop
 endfunction
 
@@ -53116,23 +53104,24 @@ function OME takes nothing returns nothing
 	set K7I = null
 	set t = null
 endfunction
-function K8I takes unit whichUnit returns boolean
-	return LoadInteger(OtherHashTable, GetHandleId(whichUnit),'AGH1')=='QM03' or LoadInteger(OtherHashTable, GetHandleId(whichUnit),'AGH2')=='QM03'
-endfunction
+// ? 神杖强化=血肉傀儡 ？？？？
+// function K8I takes unit whichUnit returns boolean
+// 	return LoadInteger(OtherHashTable, GetHandleId(whichUnit),'AGH1')=='QM03' or LoadInteger(OtherHashTable, GetHandleId(whichUnit),'AGH2')=='QM03'
+// endfunction
 function K9I takes nothing returns nothing
-	if IsUnitType(U2, UNIT_TYPE_HERO) then
-		if K8I(MissileHitTargetUnit) then
-			call SetWidgetLife(MissileHitTargetUnit, GetWidgetLife(MissileHitTargetUnit)+ GetUnitState(MissileHitTargetUnit, UNIT_STATE_MAX_LIFE)* .1)
-		else
-			call SetWidgetLife(MissileHitTargetUnit, GetWidgetLife(MissileHitTargetUnit)+ GetUnitState(MissileHitTargetUnit, UNIT_STATE_MAX_LIFE)* .06)
-		endif
-	else
-		if K8I(MissileHitTargetUnit) then
-			call SetWidgetLife(MissileHitTargetUnit, GetWidgetLife(MissileHitTargetUnit)+ GetUnitState(MissileHitTargetUnit, UNIT_STATE_MAX_LIFE)* .03)
-		else
-			call SetWidgetLife(MissileHitTargetUnit, GetWidgetLife(MissileHitTargetUnit)+ GetUnitState(MissileHitTargetUnit, UNIT_STATE_MAX_LIFE)* .02)
-		endif
-	endif
+	// if IsUnitType(U2, UNIT_TYPE_HERO) then
+	// 	if K8I(MissileHitTargetUnit) then
+	// 		call SetWidgetLife(MissileHitTargetUnit, GetWidgetLife(MissileHitTargetUnit)+ GetUnitState(MissileHitTargetUnit, UNIT_STATE_MAX_LIFE)* .1)
+	// 	else
+	// 		call SetWidgetLife(MissileHitTargetUnit, GetWidgetLife(MissileHitTargetUnit)+ GetUnitState(MissileHitTargetUnit, UNIT_STATE_MAX_LIFE)* .06)
+	// 	endif
+	// else
+	// 	if K8I(MissileHitTargetUnit) then
+	// 		call SetWidgetLife(MissileHitTargetUnit, GetWidgetLife(MissileHitTargetUnit)+ GetUnitState(MissileHitTargetUnit, UNIT_STATE_MAX_LIFE)* .03)
+	// 	else
+	// 		call SetWidgetLife(MissileHitTargetUnit, GetWidgetLife(MissileHitTargetUnit)+ GetUnitState(MissileHitTargetUnit, UNIT_STATE_MAX_LIFE)* .02)
+	// 	endif
+	// endif
 endfunction
 function LVI takes nothing returns nothing
 	local timer t = GetExpiredTimer()
@@ -53149,6 +53138,7 @@ function LEI takes unit u returns nothing
 	set t = null
 endfunction
 function LXI takes unit damageSource, group g returns nothing
+	/*
 	local group gg = AllocationGroup(325)
 	local unit u
 	local real LJR
@@ -53180,6 +53170,7 @@ function LXI takes unit damageSource, group g returns nothing
 		call GroupRemoveUnit(gg, u)
 	endloop
 	call DeallocateGroup(gg)
+	*/
 endfunction
 function LOI takes nothing returns nothing
 	local timer t = GetExpiredTimer()
@@ -53275,7 +53266,7 @@ function LBI takes nothing returns nothing
 	set t1 = null
 	set t2 = null
 endfunction
-function OPE takes nothing returns nothing
+function FleshGolemOnSpellEffect takes nothing returns nothing
 	if GetUnitTypeId(GetTriggerUnit())!='H07I' then
 		call LBI()
 		call GroupAddUnit(OX, GetTriggerUnit())
@@ -55079,7 +55070,7 @@ function ReincarnationActions takes nothing returns boolean
 	endif
 	
 	if YDWEGetUnitAbilityState(u, id, 1) == 0 and GetUnitState(u, UNIT_STATE_MANA)>= 120 + 40 * lv then
-		if HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 4]]=='A01Y' or HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 6]]=='A01Y'  then
+		if HeroSkill_BaseId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 4]]=='A01Y' or HeroSkill_BaseId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 6]]=='A01Y'  then
 			set isReincarnation = true
 			//if GetUnitAbilityLevel(u,'A39S') == 1 then
 			//	if GetUnitAbilityLevel(u,'A01Y')> 0 then
@@ -55933,10 +55924,10 @@ function TNI takes integer E8I, unit TBI, unit TCI returns nothing
 endfunction
 function TDI takes unit SPI, unit TFI returns nothing
 	local integer i = GetPlayerId(GetOwningPlayer(TFI))
-	local integer Z_E = HeroSkill_BasicId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 1]]
-	local integer Z0E = HeroSkill_BasicId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 2]]
-	local integer TGI = HeroSkill_BasicId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 3]]
-	local integer THI = HeroSkill_BasicId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 4]]
+	local integer Z_E = HeroSkill_BaseId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 1]]
+	local integer Z0E = HeroSkill_BaseId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 2]]
+	local integer TGI = HeroSkill_BaseId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 3]]
+	local integer THI = HeroSkill_BaseId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 4]]
 	local integer TJI = HeroSkill_SpecialId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 4]]
 	call UnitAddPermanentAbility(SPI, HeroSkill_Modify[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 1]])
 	call UnitAddPermanentAbility(SPI, HeroSkill_Modify[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 2]])
@@ -55983,10 +55974,10 @@ function TLI takes unit S3X, unit S4X returns nothing
 endfunction
 function TMI takes unit S3X, unit S4X returns nothing
 	local integer i = GetPlayerId(GetOwningPlayer(S3X))
-	local integer Z_E = HeroSkill_BasicId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 1]]
-	local integer Z0E = HeroSkill_BasicId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 2]]
-	local integer TGI = HeroSkill_BasicId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 3]]
-	local integer THI = HeroSkill_BasicId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 4]]
+	local integer Z_E = HeroSkill_BaseId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 1]]
+	local integer Z0E = HeroSkill_BaseId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 2]]
+	local integer TGI = HeroSkill_BaseId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 3]]
+	local integer THI = HeroSkill_BaseId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 4]]
 	local integer TJI = HeroSkill_SpecialId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 4]]
 	local integer TPI = GetUnitAbilityLevel(S3X, Z_E)
 	local integer TQI = GetUnitAbilityLevel(S3X, Z0E)
@@ -56093,10 +56084,10 @@ function T7I takes unit whichUnit, boolean RFO returns nothing
 endfunction
 function T8I takes nothing returns boolean
 	local integer i = GetPlayerId(GetOwningPlayer(GetTriggerUnit()))
-	local integer Z_E = HeroSkill_BasicId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 1]]
-	local integer Z0E = HeroSkill_BasicId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 2]]
-	local integer TGI = HeroSkill_BasicId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 3]]
-	local integer THI = HeroSkill_BasicId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 4]]
+	local integer Z_E = HeroSkill_BaseId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 1]]
+	local integer Z0E = HeroSkill_BaseId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 2]]
+	local integer TGI = HeroSkill_BaseId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 3]]
+	local integer THI = HeroSkill_BaseId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 4]]
 	local integer TJI = HeroSkill_SpecialId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 4]]
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
@@ -70017,8 +70008,8 @@ function J7A takes nothing returns nothing
 	local integer i = 1
 	call A5X(LF, GetUnitX(u), GetUnitY(u))
 	loop
-	exitwhen i > 4 + ExtraSkillsNumber or J9A == false
-		if HeroSkill_BasicId[PlayerSkillIndices[id * MAX_SKILL_SLOTS + i]] == J2A then
+	exitwhen i > 4 + ExtraSkillsCount or J9A == false
+		if HeroSkill_BaseId[PlayerSkillIndices[id * MAX_SKILL_SLOTS + i]] == J2A then
 			set J9A = false
 		endif
 		if HeroSkill_SpecialId[PlayerSkillIndices[id * MAX_SKILL_SLOTS + i]] == J2A then
@@ -70071,14 +70062,14 @@ function KXA takes nothing returns nothing
 	local boolean b = GetSpellAbilityId()=='A30J'
 	local integer key = 0
 	if id != 0 then
-		set key = GetSkillAghanimUpgradeIndexById(id)
+		set key = GetSkillScepterUpgradeIndexById(id)
 		if b then
-			if key> 0 and AghanimUpgrade_UpgradedId[key]> 0 then
-				set id = AghanimUpgrade_UpgradedId[key]
+			if key> 0 and ScepterUpgrade_UpgradedId[key]> 0 then
+				set id = ScepterUpgrade_UpgradedId[key]
 			endif
 		else
-			if key> 0 and AghanimUpgrade_BasicId[key]> 0 then
-				set id = AghanimUpgrade_BasicId[key]
+			if key> 0 and ScepterUpgrade_BaseId[key]> 0 then
+				set id = ScepterUpgrade_BaseId[key]
 			endif
 		endif
 		call DestroyEffect(AddSpecialEffectTarget("war3mapImported\\Nebula.mdx", t, "origin"))
@@ -72161,7 +72152,7 @@ function delXL takes nothing returns nothing
 	call UnitRemoveAbility(U2,'A3UF')
 endfunction
 
-function FlakCannonAghanimUpgradeOnUpdate takes nothing returns nothing
+function FlakCannonScepterUpgradeOnUpdate takes nothing returns nothing
 	local trigger trig = GetTriggeringTrigger()
 	local integer h    = GetHandleId(trig)
 	local unit    u    = LoadUnitHandle(HY, h, 0)
@@ -72214,7 +72205,7 @@ function FlakCannonAghanimUpgradeOnUpdate takes nothing returns nothing
 	set trig = null
 endfunction
 
-function FlakCannonOnAddAghanimUpgrade takes nothing returns nothing
+function FlakCannonOnAddScepterUpgrade takes nothing returns nothing
 	local unit 	  u = U2
 	local trigger trig 
 	local integer h
@@ -72222,7 +72213,7 @@ function FlakCannonOnAddAghanimUpgrade takes nothing returns nothing
 	if not HaveSavedHandle(HY, GetHandleId(u), 'A3UR')then
 		set trig = CreateTrigger()
 		set h = GetHandleId(trig)
-		call TriggerAddCondition(trig, Condition(function FlakCannonAghanimUpgradeOnUpdate))
+		call TriggerAddCondition(trig, Condition(function FlakCannonScepterUpgradeOnUpdate))
 		call TriggerRegisterTimerEvent(trig, 1.5, true)
 		call SaveTriggerHandle(HY, GetHandleId(u), 'A3UR', trig)
 		call SaveUnitHandle(HY, h, 0, u)
@@ -72231,7 +72222,7 @@ function FlakCannonOnAddAghanimUpgrade takes nothing returns nothing
 	endif
 	set u = null
 endfunction
-function FlakCannonOnRemoveAghanimUpgrade takes nothing returns nothing
+function FlakCannonOnRemoveScepterUpgrade takes nothing returns nothing
 	local unit u = U2
 	call BJDebugMsg("Bye")
 	call UnitRemoveAbility(u, 'A3UR')
@@ -72321,7 +72312,7 @@ endfunction
 function M9A takes unit u, integer TPE, integer PVA, integer level returns nothing
 	local trigger t = null
 	local integer h
-	if not UnitAddPermanentAbility(u, HeroSkill_BasicId[PlayerSkillIndices[TPE]]) and GetUnitAbilityLevel(u, HeroSkill_BasicId[PlayerSkillIndices[TPE]]) == 0 then
+	if not UnitAddPermanentAbility(u, HeroSkill_BaseId[PlayerSkillIndices[TPE]]) and GetUnitAbilityLevel(u, HeroSkill_BaseId[PlayerSkillIndices[TPE]]) == 0 then
 		return
 	endif
 	set t = CreateTrigger()
@@ -72329,13 +72320,13 @@ function M9A takes unit u, integer TPE, integer PVA, integer level returns nothi
 	call TriggerRegisterUnitEvent(t, u, EVENT_UNIT_SPELL_ENDCAST)
 	call TriggerAddCondition(t, Condition(function M8A))
 	call SaveUnitHandle(HY, h, 0, u)
-	call SaveInteger(HY, h, 0, HeroSkill_BasicId[PlayerSkillIndices[TPE]])
-	call SetUnitAbilityLevel(u, HeroSkill_BasicId[PlayerSkillIndices[TPE]], level)
-	call SetPlayerAbilityAvailable(GetOwningPlayer(u), HeroSkill_BasicId[PlayerSkillIndices[TPE]], true)
-	call SaveInteger(ObjectHashTable, GetHandleId(u),'A40K'+ PVA, HeroSkill_BasicId[PlayerSkillIndices[TPE]])
+	call SaveInteger(HY, h, 0, HeroSkill_BaseId[PlayerSkillIndices[TPE]])
+	call SetUnitAbilityLevel(u, HeroSkill_BaseId[PlayerSkillIndices[TPE]], level)
+	call SetPlayerAbilityAvailable(GetOwningPlayer(u), HeroSkill_BaseId[PlayerSkillIndices[TPE]], true)
+	call SaveInteger(ObjectHashTable, GetHandleId(u),'A40K'+ PVA, HeroSkill_BaseId[PlayerSkillIndices[TPE]])
 	call SaveInteger(HY, h, 1, PVA)
 	call SaveInteger(HY, h, 2, level)
-	if CheckAbilityIdFormIndex(GetSkillIndexByBasicId(TPE),-1, "metamorphosis", null) then
+	if CheckAbilityIdFormIndex(GetSkillIndexByBaseId(TPE),-1, "metamorphosis", null) then
 		call SaveBoolean(ObjectHashTable, GetHandleId(u),'A40K'+ PVA, true)
 	endif
 	if PVA == 3 then
@@ -72361,7 +72352,7 @@ function PEA takes unit u, integer abilId, integer PXA returns boolean
 	endif
 	set xx = 1
 	loop
-		if HeroSkill_BasicId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + xx]]== abilId or CheckAbilityIdFormIndex(PXA, PlayerSkillIndices[i * MAX_SKILL_SLOTS + xx], null, null) then
+		if HeroSkill_BaseId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + xx]]== abilId or CheckAbilityIdFormIndex(PXA, PlayerSkillIndices[i * MAX_SKILL_SLOTS + xx], null, null) then
 			return false
 		endif
 		set xx = xx + 1
@@ -72396,7 +72387,7 @@ function F2E takes nothing returns nothing
 		set xx = 1
 		loop
 			if PlayerSkillIndices[k * MAX_SKILL_SLOTS + xx]!= 0 then
-				if HeroSkill_IsPassive[PlayerSkillIndices[k * MAX_SKILL_SLOTS + xx]]== false and PEA(u, HeroSkill_BasicId[PlayerSkillIndices[k * MAX_SKILL_SLOTS + xx]], PlayerSkillIndices[k * MAX_SKILL_SLOTS + xx]) then
+				if HeroSkill_IsPassive[PlayerSkillIndices[k * MAX_SKILL_SLOTS + xx]]== false and PEA(u, HeroSkill_BaseId[PlayerSkillIndices[k * MAX_SKILL_SLOTS + xx]], PlayerSkillIndices[k * MAX_SKILL_SLOTS + xx]) then
 					if xx == 4 or xx == 6 then
 						set b[iu]= k * MAX_SKILL_SLOTS + xx
 						set iu = iu + 1
@@ -72987,26 +72978,26 @@ function YUV takes nothing returns nothing
 	call UnitAddPermanentAbility(PUA, HeroSkill_Modify[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 4]])
 	set i = 1
 	loop
-	exitwhen i > GetUnitAbilityLevel(whichUnit, HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 1]])
-		call SelectHeroSkill(PUA, HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 1]])
+	exitwhen i > GetUnitAbilityLevel(whichUnit, HeroSkill_BaseId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 1]])
+		call SelectHeroSkill(PUA, HeroSkill_BaseId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 1]])
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
-	exitwhen i > GetUnitAbilityLevel(whichUnit, HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 2]])
-		call SelectHeroSkill(PUA, HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 2]])
+	exitwhen i > GetUnitAbilityLevel(whichUnit, HeroSkill_BaseId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 2]])
+		call SelectHeroSkill(PUA, HeroSkill_BaseId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 2]])
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
-	exitwhen i > GetUnitAbilityLevel(whichUnit, HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 3]])
-		call SelectHeroSkill(PUA, HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 3]])
+	exitwhen i > GetUnitAbilityLevel(whichUnit, HeroSkill_BaseId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 3]])
+		call SelectHeroSkill(PUA, HeroSkill_BaseId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 3]])
 		set i = i + 1
 	endloop
 	set i = 1
 	loop
-	exitwhen i > GetUnitAbilityLevel(whichUnit, HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 4]])
-		call SelectHeroSkill(PUA, HeroSkill_BasicId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 4]])
+	exitwhen i > GetUnitAbilityLevel(whichUnit, HeroSkill_BaseId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 4]])
+		call SelectHeroSkill(PUA, HeroSkill_BaseId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 4]])
 		set i = i + 1
 	endloop
 	call UnitRemoveAbility(PUA,'A2M0')
@@ -74743,7 +74734,7 @@ function AddEarthSpiritManaStone takes unit whichUnit returns nothing
 			set b = true
 		endif
 		set loop_Index = loop_Index + 1
-	exitwhen b or loop_Index > 4 + ExtraSkillsNumber
+	exitwhen b or loop_Index > 4 + ExtraSkillsCount
 	endloop
 	if not LoadBoolean(HY, GetHandleId(whichUnit), StringHash("rolling stones")) and b then
 		call UnitAddPermanentAbility(whichUnit,'A2TH')
@@ -75929,7 +75920,7 @@ function YNA takes nothing returns nothing
 		set dummyUnit = VB[i]
 		set level = GetUnitAbilityLevel(KKX,'A086')
 		if level == 0 and b then
-			if HeroSkill_BasicId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 5]]=='P247' then
+			if HeroSkill_BaseId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + 5]]=='P247' then
 				set level = IP[i * 2 + 1]
 			endif
 		endif
@@ -75965,7 +75956,7 @@ function YNA takes nothing returns nothing
 		elseif GetUnitAbilityLevel(dummyUnit,'A330')> 0 then
 			call UnitRemoveAbility(dummyUnit,'A330')
 		endif
-		if UnitIsDead(KKX) == false and M2[GetPlayerId(GetOwningPlayer(KKX))]== false and(GetUnitAbilityLevel(KKX,'A08E')> 0 or HeroSkill_BasicId[PlayerSkillIndices[GetPlayerId(GetOwningPlayer(KKX))* MAX_SKILL_SLOTS + 5]]=='A08Q') then
+		if UnitIsDead(KKX) == false and M2[GetPlayerId(GetOwningPlayer(KKX))]== false and(GetUnitAbilityLevel(KKX,'A08E')> 0 or HeroSkill_BaseId[PlayerSkillIndices[GetPlayerId(GetOwningPlayer(KKX))* MAX_SKILL_SLOTS + 5]]=='A08Q') then
 			if O6X() == false then
 				if GetUnitAbilityLevel(KKX,'A08E')> 0 then
 					call sckj(KKX, true)
