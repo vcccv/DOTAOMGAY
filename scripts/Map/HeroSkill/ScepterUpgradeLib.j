@@ -195,7 +195,6 @@ library ScepterUpgradeLib requires HeroSkillLib
         local integer    count
         set count = Table[GetHandleId(whichUnit)].integer[UNIT_SCEPTER_COUNT] + 1
         set Table[GetHandleId(whichUnit)].integer[UNIT_SCEPTER_COUNT] = count
-        call BJDebugMsg("我加了啊")
         if count == 1 then
             call OnUnitGetScepterUpgrade(whichUnit)
         endif

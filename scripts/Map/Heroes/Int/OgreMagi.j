@@ -11,7 +11,6 @@ scope OgreMagi
     function MultiCastOnGetScepterUpgrade takes nothing returns nothing
         local unit       whichUnit = Event.GetTriggerUnit()
 
-        call BJDebugMsg("MultiCastOnGetScepterUpgrade")
         if not UnitAddPermanentAbility(whichUnit, UNREFINED_FIREBLAST_ABILITY_ID) then
             call UnitDisableAbility(whichUnit, UNREFINED_FIREBLAST_ABILITY_ID, false, false)
             call UnitHideAbility(whichUnit, UNREFINED_FIREBLAST_ABILITY_ID, false)
