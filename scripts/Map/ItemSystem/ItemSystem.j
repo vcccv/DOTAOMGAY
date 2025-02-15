@@ -145,23 +145,18 @@ library ItemSystem requires Base, TimerUtils, AbilityUtils
         return -1
     endfunction
 
-    private function OnDealyTest takes nothing returns nothing
-        local SimpleTick tick = SimpleTick.GetExpired()
-        local item       whichItem
-
-
-        set whichItem = null
-    endfunction
     // RemoveItemNoTrig
-    function HZX takes item whichItem returns nothing
+    function SilentRemoveItem takes item whichItem returns nothing
         local boolean isEnabled = IsTriggerEnabled(UnitManipulatItemTrig)
         // 可能没删掉
         call DisableTrigger(UnitManipulatItemTrig)
-        if GetWidgetLife(whichItem) < 0.405 then
+        if GetWidgetLife(whichItem) <= 0.405 then
+            call SetWidgetLife(whichItem, 1.)
             call BJDebugMsg("删不掉啊")
         endif
         call RemoveItem(whichItem)
         if isEnabled then
+            call BJDebugMsg("恢复了")
             call EnableTrigger(UnitManipulatItemTrig)
         endif
     endfunction
@@ -214,7 +209,9 @@ library ItemSystem requires Base, TimerUtils, AbilityUtils
 
     function ItemSystem_OnPickup takes unit whichUnit, item whichItem returns nothing
         local integer itemIndex = GetItemIndex(whichItem)
+        call BJDebugMsg("调了1:" + I2S(itemIndex))
         if itemIndex > 0 and GetItemTypeId(whichItem) == ItemRealId[itemIndex] and RealItemPickupMethod[itemIndex] != 0 then
+            call BJDebugMsg("调了2")
             set Event.INDEX = Event.INDEX + 1
             set Event.TrigUnit[Event.INDEX] = whichUnit
             set Event.ManipulatedItem[Event.INDEX] = whichItem

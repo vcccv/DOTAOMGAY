@@ -94,9 +94,11 @@ library ScepterUpgradeDefine requires ScepterUpgradeLib
         call RegisterScepterUpgrade('QM03', 0, 0, 0)
         call RegisterScepterUpgrade('A0A5', 0, 0, 0)
         call RegisterScepterUpgrade('A0CY', 0, 0, 0)
-        call RegisterScepterUpgrade('A088', 0, 0, 0)
-        set scepterUpgradeIndex = RegisterScepterUpgrade('A085', 0, 0, 0)
+        set scepterUpgradeIndex = RegisterScepterUpgrade('A088', 0, 0, 0)
         call RegisterSkillScepterUpgradeMethod(scepterUpgradeIndex, "MultiCastOnGetScepterUpgrade", "MultiCastOnLostScepterUpgrade")
+
+        set scepterUpgradeIndex = RegisterScepterUpgrade('A085', 0, 0, 0)
+        
     endfunction
 
     // 注册神杖特效技能

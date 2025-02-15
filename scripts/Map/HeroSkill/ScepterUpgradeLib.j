@@ -32,7 +32,7 @@ library ScepterUpgradeLib requires HeroSkillLib
     function GetScepterUpgradeIndexByBaseId takes integer id returns integer
         local integer i = 1
         loop
-            if ScepterUpgrade_BaseId[i]== id then
+            if ScepterUpgrade_BaseId[i] == id then
                 return i
             endif
             set i = i + 1
@@ -56,7 +56,7 @@ library ScepterUpgradeLib requires HeroSkillLib
         set ScepterUpgrade_UpgradedId[ScepterUpgradeMaxCount] = upgradeId
         // 未引用 参数都是0
         set ScepterUpgrade_UnknownId[ScepterUpgradeMaxCount] = whichInteger
-        if id > 0 and HeroSkill_SpecialId[id]== 0 then
+        if id > 0 and HeroSkill_SpecialId[id] == 0 then
             set HeroSkill_SpecialId[id]= upgradeId
         endif
         return ScepterUpgradeMaxCount
@@ -74,24 +74,51 @@ library ScepterUpgradeLib requires HeroSkillLib
         private integer array LostUpgradeMethod
     endglobals
 
-    function RegisterSkillGetScepterUpgradeMethod takes integer abilId, string func returns nothing
-        set GetUpgradeMethod[abilId] = C2I(MHGame_GetCode(func))
-        call ThrowWarning(GetUpgradeMethod[abilId] == 0, "ScepterUpgradeLib", "RegisterSkillGetScepterUpgradeMethod", "abilId", abilId, "func == 0")
+    function RegisterSkillGetScepterUpgradeMethod takes integer scepterUpgradeIndex, string func returns nothing
+        call BJDebugMsg("：" + I2S(scepterUpgradeIndex))
+        set GetUpgradeMethod[scepterUpgradeIndex] = C2I(MHGame_GetCode(func))
+        call BJDebugMsg("RegisterSkillGetScepterUpgradeMethod：" + I2S(scepterUpgradeIndex) + " codeId:" + I2S(GetUpgradeMethod[scepterUpgradeIndex]))
+        call ThrowError(GetUpgradeMethod[scepterUpgradeIndex] == 0, "ScepterUpgradeLib", "RegisterSkillGetScepterUpgradeMethod", "scepterUpgradeIndex", scepterUpgradeIndex, "func == 0")
+        call ThrowError(scepterUpgradeIndex == 0, "ScepterUpgradeLib", "RegisterSkillGetScepterUpgradeMethod", "scepterUpgradeIndex", scepterUpgradeIndex, "scepterUpgradeIndex == 0")
     endfunction
-    function RegisterSkillLostScepterUpgradeMethod takes integer abilId, string func returns nothing
-        set LostUpgradeMethod[abilId] = C2I(MHGame_GetCode(func))
-        call ThrowWarning(LostUpgradeMethod[abilId] == 0, "ScepterUpgradeLib", "RegisterSkillLostScepterUpgradeMethod", "abilId", abilId, "func == 0")
+    function RegisterSkillLostScepterUpgradeMethod takes integer scepterUpgradeIndex, string func returns nothing
+        set LostUpgradeMethod[scepterUpgradeIndex] = C2I(MHGame_GetCode(func))
+        call ThrowError(LostUpgradeMethod[scepterUpgradeIndex] == 0, "ScepterUpgradeLib", "RegisterSkillLostScepterUpgradeMethod", "scepterUpgradeIndex", scepterUpgradeIndex, "func == 0")
     endfunction
     
-    function RegisterSkillScepterUpgradeMethod takes integer abilId, string getMethod, string lostMethod returns nothing
-        call RegisterItemPuckupMethodByIndex(abilId, getMethod)
-        call RegisterItemDropMethodByIndex(abilId, lostMethod)
+    function RegisterSkillScepterUpgradeMethod takes integer scepterUpgradeIndex, string getMethod, string lostMethod returns nothing
+        call RegisterSkillGetScepterUpgradeMethod(scepterUpgradeIndex, getMethod)
+        call RegisterSkillLostScepterUpgradeMethod(scepterUpgradeIndex, lostMethod)
     endfunction
 
 
     globals
         private key UNIT_SCEPTER_COUNT
     endglobals
+
+    function GetUnitScepterUpgradeSkillCount takes unit whichUnit returns integer
+        local integer pid
+        local integer count
+        local integer i
+        local integer maxSlot
+        local integer scepterUpgradeIndex
+
+        set pid     = GetPlayerId(GetOwningPlayer(whichUnit))
+        set count   = 0
+        set maxSlot = 4 + ExtraSkillsCount
+        set i       = 1
+
+        loop
+            set scepterUpgradeIndex = GetScepterUpgradeIndexByBaseId(HeroSkill_BaseId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]])
+            if scepterUpgradeIndex > 0 then
+                set count = count + 1
+            endif
+            set i = i + 1
+        exitwhen i > 4 + ExtraSkillsCount
+        endloop
+
+        return count
+    endfunction
 
     private function OnUnitGetScepterUpgrade takes unit whichUnit returns nothing
         local integer pid
@@ -112,12 +139,13 @@ library ScepterUpgradeLib requires HeroSkillLib
                     call UnitAddPermanentAbility(whichUnit, ScepterUpgrade_ModifyId[scepterUpgradeIndex])
                     call UnitMakeAbilityPermanent(whichUnit, true, ScepterUpgrade_UpgradedId[scepterUpgradeIndex])
                 endif
-
-                set Event.INDEX = Event.INDEX + 1
-                set Event.TrigUnit[Event.INDEX] = whichUnit
-                set Event.TriggerIndex[Event.INDEX] = scepterUpgradeIndex
-                call MHGame_ExecuteCodeEx(GetUpgradeMethod[scepterUpgradeIndex])
-                set Event.INDEX = Event.INDEX - 1
+                if GetUpgradeMethod[scepterUpgradeIndex] != 0 then
+                    set Event.INDEX = Event.INDEX + 1
+                    set Event.TrigUnit[Event.INDEX] = whichUnit
+                    set Event.TriggerIndex[Event.INDEX] = scepterUpgradeIndex
+                    call MHGame_ExecuteCodeEx(GetUpgradeMethod[scepterUpgradeIndex])
+                    set Event.INDEX = Event.INDEX - 1
+                endif
             endif
             set i = i + 1
         exitwhen i > 4 + ExtraSkillsCount
@@ -144,11 +172,13 @@ library ScepterUpgradeLib requires HeroSkillLib
                     call UnitRemoveAbility(whichUnit, ScepterUpgrade_UpgradedId[scepterUpgradeIndex])
                 endif
 
-                set Event.INDEX = Event.INDEX + 1
-                set Event.TrigUnit[Event.INDEX] = whichUnit
-                set Event.TriggerIndex[Event.INDEX] = scepterUpgradeIndex
-                call MHGame_ExecuteCodeEx(LostUpgradeMethod[scepterUpgradeIndex])
-                set Event.INDEX = Event.INDEX - 1
+                if LostUpgradeMethod[scepterUpgradeIndex] != 0 then
+                    set Event.INDEX = Event.INDEX + 1
+                    set Event.TrigUnit[Event.INDEX] = whichUnit
+                    set Event.TriggerIndex[Event.INDEX] = scepterUpgradeIndex
+                    call MHGame_ExecuteCodeEx(LostUpgradeMethod[scepterUpgradeIndex])
+                    set Event.INDEX = Event.INDEX - 1
+                endif
             endif
             set i = i + 1
         exitwhen i > 4 + ExtraSkillsCount
@@ -165,6 +195,7 @@ library ScepterUpgradeLib requires HeroSkillLib
         local integer    count
         set count = Table[GetHandleId(whichUnit)].integer[UNIT_SCEPTER_COUNT] + 1
         set Table[GetHandleId(whichUnit)].integer[UNIT_SCEPTER_COUNT] = count
+        call BJDebugMsg("我加了啊")
         if count == 1 then
             call OnUnitGetScepterUpgrade(whichUnit)
         endif
