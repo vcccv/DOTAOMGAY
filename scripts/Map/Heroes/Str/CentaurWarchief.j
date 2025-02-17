@@ -113,16 +113,16 @@ scope CentaurWarchief
     endfunction
 
     function CentaurWarchiefStampedeBuffOnAdd takes nothing returns nothing
-        local unit u = MHEvent_GetUnit()
-        call UnitAddMoveSpeedBonusPercent(u, 1000)
-        call UnitAddNoPathingCount(u)
-        set u = null
+        local unit whichUnit = Event.GetTriggerUnit()
+        call UnitAddMoveSpeedBonusPercent(whichUnit, 1000)
+        call UnitAddNoPathingCount(whichUnit)
+        set whichUnit = null
     endfunction
     function CentaurWarchiefStampedeBuffOnRemove takes nothing returns nothing
-        local unit u = MHEvent_GetUnit()
-        call UnitReduceMoveSpeedBonusPercent(u, 1000)
-        call UnitSubNoPathingCount(u)
-        set u = null
+        local unit whichUnit = Event.GetTriggerUnit()
+        call UnitReduceMoveSpeedBonusPercent(whichUnit, 1000)
+        call UnitSubNoPathingCount(whichUnit)
+        set whichUnit = null
     endfunction
 
     // 还要重写，一个单位组解决而不是独立单位组独立tick
@@ -155,10 +155,10 @@ scope CentaurWarchief
         call KillSoundWhenDone(s)
         set s = null
 
-        call SetAbilityAddAction('B0GB', "CentaurWarchiefStampedeBuffOnAdd")
-        call SetAbilityRemoveAction('B0GB', "CentaurWarchiefStampedeBuffOnRemove")
-        call SetAbilityAddAction('B0GH', "CentaurWarchiefStampedeBuffOnAdd")
-        call SetAbilityRemoveAction('B0GH', "CentaurWarchiefStampedeBuffOnRemove")
+        call RegisterAbilityAddMethod('B0GB', "CentaurWarchiefStampedeBuffOnAdd")
+        call RegisterAbilityRemoveMethod('B0GB', "CentaurWarchiefStampedeBuffOnRemove")
+        call RegisterAbilityAddMethod('B0GH', "CentaurWarchiefStampedeBuffOnAdd")
+        call RegisterAbilityRemoveMethod('B0GH', "CentaurWarchiefStampedeBuffOnRemove")
 
         set g = AllocationGroup(96)
         set allyGroup= AllocationGroup(97)

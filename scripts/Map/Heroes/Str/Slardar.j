@@ -7,19 +7,19 @@ scope Slardar
     //*
     //***************************************************************************
     function SlardarSprintBuffOnAdd takes nothing returns nothing
-        local unit whichUnit = MHEvent_GetUnit()
+        local unit whichUnit = Event.GetTriggerUnit()
         call UnitAddPhasedMovementCount(whichUnit)
         set whichUnit = null
     endfunction
     function SlardarSprintBuffOnRemove takes nothing returns nothing
-        local unit whichUnit = MHEvent_GetUnit()
+        local unit whichUnit = Event.GetTriggerUnit()
         call UnitSubPhasedMovementCount(whichUnit)
         set whichUnit = null
     endfunction
 
     function SlardarSprintOnSpellEffect takes nothing returns nothing
-        call SetAbilityAddAction('B013', "SlardarSprintBuffOnAdd")
-        call SetAbilityRemoveAction('B013', "SlardarSprintBuffOnRemove")
+        call RegisterAbilityAddMethod('B013', "SlardarSprintBuffOnAdd")
+        call RegisterAbilityRemoveMethod('B013', "SlardarSprintBuffOnRemove")
     endfunction
 
     //***************************************************************************
@@ -38,7 +38,7 @@ scope Slardar
         call UnitAddPermanentAbility(dummyCaster,'A0M9')
         call SetUnitAbilityLevel(dummyCaster,'A0M9', level)
         call IssueImmediateOrderById(dummyCaster, 852096)
-        set U2 = whichUnit
+        set TempUnit = whichUnit
         call GroupEnumUnitsInRange(g, x, y, 350 + 25, Condition(function DHX))
         loop
             set u = FirstOfGroup(g)

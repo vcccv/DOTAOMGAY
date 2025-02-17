@@ -1,18 +1,25 @@
 
 // 继续堆屎
-library AbilityUtils initializer Init requires Table, Base
-
-    globals
-        key ABILITY_ADD_KEY
-        key ABILITY_REMOVE_KEY
-    endglobals
+library AbilityUtils requires Table, Base
     
+    function GetAbilityId takes ability whichAbility returns integer
+        return MHAbility_GetId(whichAbility)
+    endfunction
+
     function GetAbilityBaseIdById takes integer abilId returns integer
         return MHAbility_GetDefDataInt(abilId, ABILITY_DEF_DATA_BASE_ID)
     endfunction
 
     function GetAbilityReqLevelById takes integer abilId returns integer
         return MHAbility_GetDefDataInt(abilId, ABILITY_DEF_DATA_REQ_LEVEL)
+    endfunction
+
+    function IsUnitAbilityDisabled takes unit whichUnit, integer abilId returns boolean
+        return MHAbility_GetDisableCount(whichUnit, abilId) > 0
+    endfunction
+
+    function IsUnitAbilityHidden takes unit whichUnit, integer abilId returns boolean
+        return MHAbility_GetHideCount(whichUnit, abilId) > 0
     endfunction
 
     function IsUnitAbilityPassive takes unit whichUnit, integer abilId returns boolean
@@ -31,44 +38,16 @@ library AbilityUtils initializer Init requires Table, Base
         return MHGame_CheckInherit(baseId, 'APas')
     endfunction
 
-    function GetAbilityMaxLevelById takes integer abilId returns integer
-        return MHAbility_GetDefDataInt(abilId, ABILITY_DEF_DATA_MAX_LEVEL)
+    function GetAbilitySourceItem takes ability whichAbility returns item
+        return MHAbility_GetAbilitySourceItem(whichAbility)
     endfunction
     
-    function IsUnitAbilityFromItem takes unit whichUnit, integer abilId returns boolean
-        return MHAbility_IsFlag(whichUnit, abilId, ABILITY_FLAG_FROM_ITEM)
+    function IsAbilityFormItem takes ability whichAbility returns boolean
+        return GetAbilitySourceItem(whichAbility) != null
     endfunction
 
-    private function OnAbilityAdd takes nothing returns boolean
-        local integer abilId = MHEvent_GetAbility()
-        if Table[ABILITY_ADD_KEY].string.has(abilId) then
-            call MHGame_ExecuteFunc(Table[ABILITY_ADD_KEY].string[abilId])
-        endif
-        return false
-    endfunction
-
-    private function OnAbilityRemove takes nothing returns boolean
-        local integer abilId = MHEvent_GetAbility()
-        if Table[ABILITY_REMOVE_KEY].string.has(abilId) then
-            call MHGame_ExecuteFunc(Table[ABILITY_REMOVE_KEY].string[abilId])
-        endif
-        return false
-    endfunction
-
-    function SetAbilityRemoveAction takes integer abilId, string func returns nothing
-        set Table[ABILITY_REMOVE_KEY].string[abilId] = func
-    endfunction
-    function SetAbilityAddAction takes integer abilId, string func returns nothing
-        set Table[ABILITY_ADD_KEY].string[abilId] = func
-    endfunction
-
-    private function Init takes nothing returns nothing
-        local trigger trig = CreateTrigger()
-        call MHAbilityRemoveEvent_Register(trig)
-        call TriggerAddCondition(trig, Condition(function OnAbilityRemove))
-        set trig = CreateTrigger()
-        call MHAbilityAddEvent_Register(trig)
-        call TriggerAddCondition(trig, Condition(function OnAbilityAdd))
+    function GetAbilityMaxLevelById takes integer abilId returns integer
+        return MHAbility_GetDefDataInt(abilId, ABILITY_DEF_DATA_MAX_LEVEL)
     endfunction
 
 endlibrary

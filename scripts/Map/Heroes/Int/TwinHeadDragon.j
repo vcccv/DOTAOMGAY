@@ -125,7 +125,7 @@ scope TwinHeadDragon
         local SimpleTick tick     = SimpleTick.Create(0)
         local TableArray table
         
-        call SetAbilityRemoveAction('B06R', "TwinHeadDragonBreathFireOnBuffRemove")
+        call RegisterAbilityRemoveMethod('B06R', "TwinHeadDragonBreathFireOnBuffRemove")
 
         if targUnit == null then
             set tx = GetSpellTargetX()

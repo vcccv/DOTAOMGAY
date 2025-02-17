@@ -20,14 +20,14 @@ scope Invoker
     //*
     //***************************************************************************
     function InvokerOnAddDeafeningBlastBuff takes nothing returns nothing
-        local unit       u    = MHEvent_GetUnit()
-        call UnitAddDisableAttackCount(u)
-        set u = null
+        local unit whichUnit = Event.GetTriggerUnit()
+        call UnitAddDisableAttackCount(whichUnit)
+        set whichUnit = null
     endfunction
     function InvokerOnRemoveDeafeningBlastBuff takes nothing returns nothing
-        local unit       u    = MHEvent_GetUnit()
-        call UnitSubDisableAttackCount(u)
-        set u = null
+        local unit whichUnit = Event.GetTriggerUnit()
+        call UnitSubDisableAttackCount(whichUnit)
+        set whichUnit = null
     endfunction
     function DeafeningOnBlastKnockback takes nothing returns boolean
         local trigger t       = GetTriggeringTrigger()
@@ -145,8 +145,8 @@ scope Invoker
         local integer   max
         local UpgradeDeafeningBlast instance
 
-        call SetAbilityAddAction('B033', "InvokerOnAddDeafeningBlastBuff")
-        call SetAbilityRemoveAction('B033', "InvokerOnRemoveDeafeningBlastBuff")
+        call RegisterAbilityAddMethod('B033', "InvokerOnAddDeafeningBlastBuff")
+        call RegisterAbilityRemoveMethod('B033', "InvokerOnRemoveDeafeningBlastBuff")
 
         set tx = GetSpellTargetX()
         set ty = GetSpellTargetY()

@@ -122,7 +122,7 @@ scope ShadowFiend
     endfunction
 
     function ZGI takes nothing returns boolean
-        return IsAliveNotStrucNotWard(GetFilterUnit()) and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(U2))
+        return IsAliveNotStrucNotWard(GetFilterUnit()) and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(TempUnit))
     endfunction
 
     // 减速buff
@@ -134,7 +134,7 @@ scope ShadowFiend
         local unit d = CreateUnit(GetOwningPlayer(u),'e00E', GetUnitX(u), GetUnitY(u), 0)
         call UnitAddAbility(d,'A0HH')
         set g = AllocationGroup(370)
-        set U2 = u
+        set TempUnit = u
         call GroupEnumUnitsInRange(g, GetUnitX(u), GetUnitY(u), 700, Condition(function ZGI))
         loop
             set u2 = FirstOfGroup(g)
@@ -152,15 +152,15 @@ scope ShadowFiend
     */
 
     function ShadowFiendRequiemOfSoulsSlowBuffOnAdd takes nothing returns nothing
-        local unit       u    = MHEvent_GetUnit()
-        call UnitReduceMoveSpeedBonusPercent(u, 25)
-        set u = null
+        local unit whichUnit = Event.GetTriggerUnit()
+        call UnitReduceMoveSpeedBonusPercent(whichUnit, 25)
+        set whichUnit = null
     endfunction
 
     function ShadowFiendRequiemOfSoulsSlowBuffOnRemove takes nothing returns nothing
-        local unit       u    = MHEvent_GetUnit()
-        call UnitAddMoveSpeedBonusPercent(u, 25)
-        set u = null
+        local unit whichUnit = Event.GetTriggerUnit()
+        call UnitAddMoveSpeedBonusPercent(whichUnit, 25)
+        set whichUnit = null
     endfunction
 
     function UnitLaunchSoulwave takes unit u, integer max returns nothing
@@ -175,8 +175,8 @@ scope ShadowFiend
         local real      angle       
         local real      damage    = 40. + 40. * level
 
-        call SetAbilityAddAction('B04Q', "ShadowFiendRequiemOfSoulsSlowBuffOnAdd")
-        call SetAbilityRemoveAction('B04Q', "ShadowFiendRequiemOfSoulsSlowBuffOnRemove")
+        call RegisterAbilityAddMethod('B04Q', "ShadowFiendRequiemOfSoulsSlowBuffOnAdd")
+        call RegisterAbilityRemoveMethod('B04Q', "ShadowFiendRequiemOfSoulsSlowBuffOnRemove")
 
         loop
         exitwhen count > max

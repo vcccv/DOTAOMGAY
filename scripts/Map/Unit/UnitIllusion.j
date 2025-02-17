@@ -70,16 +70,16 @@ library UnitIllusion requires UnitUtils, UnitWeapon, UnitMorph, BuffSystem
                 endif
                 // 瞄准
                 if PassiveSkill_Learned[i] == 'A03U' then
-                    set U2 = illusionUnit
+                    set TempUnit = illusionUnit
                     set Q2 = lv
                     call ExecuteFunc("range_Take_Aim")
                 elseif PassiveSkill_Learned[i] == 'A0RO' then
                     // ta被动
-                    set U2 = illusionUnit
+                    set TempUnit = illusionUnit
                     set Q2 = lv
                     call ExecuteFunc("range_Psi_Blades")
                 elseif PassiveSkill_Learned[i]=='A0CL' then
-                    set U2 = illusionUnit
+                    set TempUnit = illusionUnit
                     set Q2 = lv
                     call ExecuteFunc("SyncIllusionUnitDragonBlood")
                 endif

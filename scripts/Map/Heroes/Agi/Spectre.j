@@ -287,12 +287,12 @@ scope Spectre
         set g      = null
     endfunction
     function SpectralPathBuffOnAdd takes nothing returns nothing
-        local unit whichUnit = MHEvent_GetUnit()
+        local unit whichUnit = Event.GetTriggerUnit()
         call UnitAddNoPathingCount(whichUnit)
         set whichUnit = null
     endfunction
     function SpectralPathBuffOnRemove takes nothing returns nothing
-        local unit whichUnit = MHEvent_GetUnit()
+        local unit whichUnit = Event.GetTriggerUnit()
         call UnitSubNoPathingCount(whichUnit)
         call UnitModifyPostion(whichUnit)
         set whichUnit = null
@@ -301,8 +301,8 @@ scope Spectre
         local unit    source = GetRealSpellUnit(GetTriggerUnit())
         local integer level     = GetUnitAbilityLevel(source, GetSpellAbilityId())
 
-        call SetAbilityAddAction('B047', "SpectralPathBuffOnAdd")
-        call SetAbilityRemoveAction('B047', "SpectralPathBuffOnRemove")
+        call RegisterAbilityAddMethod('B047', "SpectralPathBuffOnAdd")
+        call RegisterAbilityRemoveMethod('B047', "SpectralPathBuffOnRemove")
         call LaunchSpectralDagger(source, level)
         set source = null
     endfunction

@@ -191,7 +191,7 @@ scope EmberSpirit
             set first = FirstOfGroup(g)
             exitwhen first == null
             call GroupRemoveUnit(g, first)
-            if IsAliveNotStrucNotWard(first) and IsUnitInRangeXY(first, x, y, area) and UnitVisibleToPlayer(first, p) and IsUnitEnemy(first, p) then
+            if IsAliveNotStrucNotWard(first) and IsUnitInRangeXY(first, x, y, area) and IsUnitVisibleToPlayer(first, p) and IsUnitEnemy(first, p) then
                 call GroupAddUnit(targGroup, first)
             endif
         endloop

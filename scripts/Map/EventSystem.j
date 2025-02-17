@@ -35,6 +35,7 @@ library EventSystem requires UnitDex
 
         static item         array ManipulatedItem
         static integer      array TriggerAbilityId
+        static ability      array TriggerAbility
         static integer      array TriggerIndex
 
         static method GetTriggerUnit takes nothing returns unit
@@ -45,6 +46,9 @@ library EventSystem requires UnitDex
         endmethod
         static method GetTriggerAbilityId takes nothing returns integer
             return thistype.TriggerAbilityId[thistype.INDEX]
+        endmethod
+        static method GetTriggerAbility takes nothing returns ability
+            return thistype.TriggerAbility[thistype.INDEX]
         endmethod
         static method IsAttackDamage takes nothing returns boolean
             return MHDamageEvent_IsPhysical()// thistype.IsAttack[thistype.INDEX]

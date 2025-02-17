@@ -25159,12 +25159,12 @@ Researchubertip=召唤陨石对周围625范围内的敌方单位造成|cff6495ed
 Researchtip=学习 群星坠落[|cffffcc00T|r] - [|cffffcc00等级 %d|r]|n(Starfall)
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNStarfall.blp
 [A3UG]
-Name=群星坠落
+Name=群星坠落 - 神杖升级
 Tip=群星坠落[|cffffcc00T|r] - [|cffffcc00等级 1|r],群星坠落[|cffffcc00T|r] - [|cffffcc00等级 2|r],群星坠落[|cffffcc00T|r] - [|cffffcc00等级 3|r],群星坠落[|cffffcc00T|r] - [|cffffcc00等级 4|r]
-Ubertip=召唤流星对周围650范围内的敌方单位造成75点|cff6495ed魔法伤害|r。450范围内随机的一个敌方单位将额外受到一次75%伤害的打击。每12秒自动施放一次同等级的群星坠落|n|n|cff99ccff冷却时间：|r12,召唤流星对周围650范围内的敌方单位造成150点|cff6495ed魔法伤害|r。450范围内随机的一个敌方单位将额外受到一次75%伤害的打击。每12秒自动施放一次同等级的群星坠落|n|n|cff99ccff冷却时间：|r12,召唤流星对周围650范围内的敌方单位造成225点|cff6495ed魔法伤害|r。450范围内随机的一个敌方单位将额外受到一次75%伤害的打击。每12秒自动施放一次同等级的群星坠落|n|n|cff99ccff冷却时间：|r12,召唤流星对周围650范围内的敌方单位造成300点|cff6495ed魔法伤害|r。450范围内随机的一个敌方单位将额外受到一次75%伤害的打击。每12秒自动施放一次同等级的群星坠落|n|n|cff99ccff冷却时间：|r12
+Ubertip=召唤流星对周围650范围内的敌方单位造成75点|cff6495ed魔法伤害|r。425范围内最近的一个敌方单位将额外受到一次75%伤害的打击。每12秒自动施放一次同等级的群星坠落|n|n|cff99ccff冷却时间：|r12,召唤流星对周围650范围内的敌方单位造成150点|cff6495ed魔法伤害|r。425范围内最近的一个敌方单位将额外受到一次75%伤害的打击。每12秒自动施放一次同等级的群星坠落|n|n|cff99ccff冷却时间：|r12,召唤流星对周围650范围内的敌方单位造成225点|cff6495ed魔法伤害|r。425范围内最近的一个敌方单位将额外受到一次75%伤害的打击。每12秒自动施放一次同等级的群星坠落|n|n|cff99ccff冷却时间：|r12,召唤流星对周围650范围内的敌方单位造成300点|cff6495ed魔法伤害|r。425范围内最近的一个敌方单位将额外受到一次75%伤害的打击。每12秒自动施放一次同等级的群星坠落|n|n|cff99ccff冷却时间：|r12
 hotkey=T
 researchhotkey=T
-Researchubertip=召唤流星对周围650范围内的敌方单位造成|cff6495ed魔法伤害|r。450范围内随机的一个敌方单位将额外受到一次75%伤害的打击。每12秒自动施放一次同等级的群星坠落|n|n|cff99ccff冷却时间：|r12|n|cff99ccff魔法消耗：|r100/120/140/160|n|n|cffffcc00等级 1|r - 造成75点伤害|n|cffffcc00等级 2|r - 造成150点伤害|n|cffffcc00等级 3|r - 造成225点伤害|n|cffffcc00等级 4|r - 造成300点伤害
+Researchubertip=召唤流星对周围650范围内的敌方单位造成|cff6495ed魔法伤害|r。425范围内最近的一个敌方单位将额外受到一次75%伤害的打击。每12秒自动施放一次同等级的群星坠落|n|n|cff99ccff冷却时间：|r12|n|cff99ccff魔法消耗：|r100/120/140/160|n|n|cffffcc00等级 1|r - 造成75点伤害|n|cffffcc00等级 2|r - 造成150点伤害|n|cffffcc00等级 3|r - 造成225点伤害|n|cffffcc00等级 4|r - 造成300点伤害
 Researchtip=学习 群星坠落[|cffffcc00T|r] - [|cffffcc00等级 %d|r]|n(Starfall)
 art=ReplaceableTextures\CommandButtons\BTNStarfall
 buttonpos=0,2

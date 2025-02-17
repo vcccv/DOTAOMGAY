@@ -164,6 +164,15 @@ library UnitStateBonus requires UnitUtils, UnitAbility, UnitWeapon
         set Table[GetHandleId(whichUnit)].real[UNIT_ATTACK_RANGE_BONUS] = attackRangeBonus + addValue
         call UnitUpdateAttackRangeBonus(whichUnit)
     endfunction
+    function UnitReduceAttackRangeBonus takes unit whichUnit, real reduceValue returns nothing
+        local real attackRangeBonus
+        if whichUnit == null then
+            return
+        endif
+        set attackRangeBonus = Table[GetHandleId(whichUnit)].real[UNIT_ATTACK_RANGE_BONUS]
+        set Table[GetHandleId(whichUnit)].real[UNIT_ATTACK_RANGE_BONUS] = attackRangeBonus - reduceValue
+        call UnitUpdateAttackRangeBonus(whichUnit)
+    endfunction
     function UnitAddAttackRangeRangedAttackerOnlyBonus takes unit whichUnit, real addValue returns nothing
         local real attackRangeBonus
         if whichUnit == null then
@@ -171,6 +180,15 @@ library UnitStateBonus requires UnitUtils, UnitAbility, UnitWeapon
         endif
         set attackRangeBonus = Table[GetHandleId(whichUnit)].real[UNIT_RANGED_ATTACK_RANGE_BONUS]
         set Table[GetHandleId(whichUnit)].real[UNIT_RANGED_ATTACK_RANGE_BONUS] = attackRangeBonus + addValue
+        call UnitUpdateAttackRangeBonus(whichUnit)
+    endfunction
+    function UnitReduceAttackRangeRangedAttackerOnlyBonus takes unit whichUnit, real reduceValue returns nothing
+        local real attackRangeBonus
+        if whichUnit == null then
+            return
+        endif
+        set attackRangeBonus = Table[GetHandleId(whichUnit)].real[UNIT_RANGED_ATTACK_RANGE_BONUS]
+        set Table[GetHandleId(whichUnit)].real[UNIT_RANGED_ATTACK_RANGE_BONUS] = attackRangeBonus - reduceValue
         call UnitUpdateAttackRangeBonus(whichUnit)
     endfunction
 

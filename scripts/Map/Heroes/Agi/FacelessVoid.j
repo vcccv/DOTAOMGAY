@@ -47,7 +47,7 @@ scope FacelessVoid
         elseif level == 4 then
             set L0V ='A297'
         endif
-        set U2 = whichUnit
+        set TempUnit = whichUnit
         set L_V = D7R
         call GroupEnumUnitsInRange(g, x, y, 325, Condition(function DJX))
         call ForGroup(g, function LCI)
@@ -188,7 +188,7 @@ scope FacelessVoid
             endloop
             call DeallocateGroup(enumGroup)
         //else
-        //    set U2 = whichUnit
+        //    set TempUnit = whichUnit
         //    if LKI() and not IsUnitDummy(GetTriggerUnit()) and not IsUnitWard(GetTriggerUnit()) and IsUnitInGroup(GetTriggerUnit(), g) == false then
         //        call GroupAddUnit(g, GetTriggerUnit())
         //        call LLI(GetTriggerUnit())

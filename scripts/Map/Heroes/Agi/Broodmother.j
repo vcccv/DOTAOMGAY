@@ -129,7 +129,7 @@ scope Broodmother
     endfunction
 
     function BroodmotherSpinWebBuffOnAdd takes nothing returns nothing
-        local unit       whichUnit = MHEvent_GetUnit()
+        local unit       whichUnit = Event.GetTriggerUnit()
         local SimpleTick tick
         
         //call BJDebugMsg("level:" + I2S(MHBuff_GetLevel(whichUnit, MHEvent_GetAbility())))
@@ -151,7 +151,7 @@ scope Broodmother
     endfunction
 
     function BroodmotherSpinWebBuffOnRemove takes nothing returns nothing
-        local unit       whichUnit = MHEvent_GetUnit()
+        local unit       whichUnit = Event.GetTriggerUnit()
         local SimpleTick tick
 
         call UnitRemoveAbility(whichUnit, 'A021')
@@ -193,8 +193,8 @@ scope Broodmother
         call YDWETriggerRegisterEnterRectSimpleNull(t, GetWorldBounds())
         call TriggerAddCondition(t, Condition(function OnEnter))
         
-        call SetAbilityAddAction('B01G', "BroodmotherSpinWebBuffOnAdd")
-        call SetAbilityRemoveAction('B01G', "BroodmotherSpinWebBuffOnRemove")
+        call RegisterAbilityAddMethod('B01G', "BroodmotherSpinWebBuffOnAdd")
+        call RegisterAbilityRemoveMethod('B01G', "BroodmotherSpinWebBuffOnRemove")
 
         call AnyUnitEvent.CreateEvent(ANY_UNIT_EVENT_DAMAGED, function BroodmotherSpinWebOnDamaged)
     endfunction

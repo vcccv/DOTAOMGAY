@@ -20,7 +20,7 @@ scope Clockwerk
     function KCR takes nothing returns nothing
         if IsUnitInGroup(GetEnumUnit(), DK) == false then
             call GroupAddUnit(DK, GetEnumUnit())
-            call KBR(U2, GetEnumUnit())
+            call KBR(TempUnit, GetEnumUnit())
         endif
     endfunction
     function KDR takes nothing returns boolean
@@ -49,7 +49,7 @@ scope Clockwerk
                 set KJR = 225
             endif
             set g = AllocationGroup(150)
-            set U2 = trigUnit
+            set TempUnit = trigUnit
             set DK = KHR
             call GroupEnumUnitsInRange(g, GetUnitX(trigUnit), GetUnitY(trigUnit), KJR, Condition(function DMX))
             call ForGroup(g, function KCR)
@@ -93,7 +93,7 @@ scope Clockwerk
         if count == 1 then
             set KJR = 100 
         endif
-        set U2 = trigUnit
+        set TempUnit = trigUnit
         call GroupEnumUnitsInRange(g, x, y, KJR, Condition(function DNX))
         call GroupRemoveUnit(g, trigUnit)
         set targetUnit = GroupPickRandomUnit(g)

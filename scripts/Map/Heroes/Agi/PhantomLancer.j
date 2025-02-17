@@ -204,7 +204,7 @@ scope PhantomLancer
             else
                 set distance = GetUnitDistanceEx(u, targetUnit)
                 // 目标看不见了或无敌 就追到最后一次的位置
-                if LoadBoolean(HY, h, 5) and(distance > (maxDist + 150) or not UnitVisibleToPlayer(targetUnit, GetOwningPlayer(u)) or IsUnitInvulnerable(targetUnit)) then
+                if LoadBoolean(HY, h, 5) and(distance > (maxDist + 150) or not IsUnitVisibleToPlayer(targetUnit, GetOwningPlayer(u)) or IsUnitInvulnerable(targetUnit)) then
                     // 就走到那里
                     if GetUnitCurrentOrder(u)!= ORDER_move then
                         if LoadBoolean(HY, h, 0) then

@@ -378,13 +378,42 @@ library UnitAbility requires AbilityUtils, UnitLimitation
         return false
     endfunction
 
+    globals
+        private key ABILITY_ADD_KEY
+        private key ABILITY_REMOVE_KEY
+    endglobals
+    
+    function RegisterAbilityAddMethod takes integer abilId, string func returns nothing
+        set Table[ABILITY_ADD_KEY].string[abilId] = func
+        call ThrowWarning(C2I(MHGame_GetCode(func)) == 0, "AbilityUtils", "RegisterAbilityAddMethod", Id2String(abilId), abilId, "func == 0")
+    endfunction
+    function RegisterAbilityRemoveMethod takes integer abilId, string func returns nothing
+        set Table[ABILITY_REMOVE_KEY].string[abilId] = func
+        call ThrowWarning(C2I(MHGame_GetCode(func)) == 0, "AbilityUtils", "RegisterAbilityRemoveMethod", Id2String(abilId), abilId, "func == 0")
+    endfunction
+    function ResgiterAbilityMethodSimple takes integer abilId, string addMethod, string removeMethod returns nothing
+        call RegisterAbilityAddMethod(abilId, addMethod)
+        call RegisterAbilityRemoveMethod(abilId, removeMethod)
+    endfunction
+
     private function OnAbilityAdd takes nothing returns boolean
         local unit    whichUnit    = MHEvent_GetUnit()
         local ability whichAbility = MHEvent_GetAbilityHandle()
-        local real    cooldown     = GetAbilityCooldownRemaining(whichAbility)
-        local boolean isChanged    = false
+        local integer abilId       = MHEvent_GetAbility()
 
-        if HasOctarineCore and GetUnitAbilityLevel(whichUnit, 'A39S') == 1  then
+        if Table[ABILITY_ADD_KEY].string.has(abilId) then
+            set Event.INDEX = Event.INDEX + 1
+            set Event.TrigUnit[Event.INDEX] = whichUnit
+            set Event.TriggerAbilityId[Event.INDEX] = abilId
+            set Event.TriggerAbility[Event.INDEX] = whichAbility
+            call MHGame_ExecuteFunc(Table[ABILITY_ADD_KEY].string[abilId])
+            set Event.INDEX = Event.INDEX - 1
+        endif
+
+        // 如果是工程升级，则更新所有技能。
+        if GetAbilityBaseIdById(abilId) == 'ANeg' then
+            call UpdateUnitAbilityCooldown(whichUnit)
+        elseif HasOctarineCore and GetUnitAbilityLevel(whichUnit, 'A39S') == 1  then
             call UpdateAbilityCooldown(whichUnit, whichAbility)
         endif
 
@@ -394,11 +423,27 @@ library UnitAbility requires AbilityUtils, UnitLimitation
     endfunction
 
     private function OnAbilityRemove takes nothing returns boolean
+        local unit    whichUnit    = MHEvent_GetUnit()
         local ability whichAbility = MHEvent_GetAbilityHandle()
+        local integer abilId       = MHEvent_GetAbility()
         
+        if Table[ABILITY_REMOVE_KEY].string.has(abilId) then
+            set Event.INDEX = Event.INDEX + 1
+            set Event.TrigUnit[Event.INDEX] = whichUnit
+            set Event.TriggerAbilityId[Event.INDEX] = abilId
+            set Event.TriggerAbility[Event.INDEX] = whichAbility
+            call MHGame_ExecuteFunc(Table[ABILITY_REMOVE_KEY].string[abilId])
+            set Event.INDEX = Event.INDEX - 1
+        endif
+
+        // 如果是工程升级，则更新所有技能。
+        if GetAbilityBaseIdById(abilId) == 'ANeg' then
+            call UpdateUnitAbilityCooldown(whichUnit)
+        endif
         call Table[GetHandleId(whichAbility)].flush()
         
         set whichAbility = null
+        set whichUnit    = null
         return false
     endfunction
 

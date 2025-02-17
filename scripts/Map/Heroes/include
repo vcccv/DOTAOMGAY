@@ -10,6 +10,8 @@
 #include "Str\\Slardar.j"
 #include "Str\\Kunkka.j"
 #include "Str\\GoblinShredder.j"
+#include "Str\\TreantProtector.j"
+#include "Str\\Tuskarr.j"
 
 #include "Int\\TwinHeadDragon.j"
 #include "Int\\Ezalor.j"
@@ -41,3 +43,5 @@
 #include "Agi\\Broodmother.j"
 #include "Agi\\Spectre.j"
 #include "Agi\\RiddenHippogryph.j"
+#include "Agi\\Mirana.j"
+#include "Agi\\Gyrocopter.j"

@@ -12,8 +12,7 @@ scope GoblinShredder
         local unit whichUnit = Event.GetTriggerUnit()
 
         if not UnitAddPermanentAbility(whichUnit, SECOND_CHAKRAM_ABILITY_ID) then
-            call UnitDisableAbility(whichUnit, SECOND_CHAKRAM_ABILITY_ID, false, false)
-            call UnitHideAbility(whichUnit, SECOND_CHAKRAM_ABILITY_ID, false)
+            call UnitDisableAbility(whichUnit, SECOND_CHAKRAM_ABILITY_ID, false, true)
         endif
 
         set whichUnit = null
@@ -21,8 +20,7 @@ scope GoblinShredder
     function ChakramOnLostScepterUpgrade takes nothing returns nothing
         local unit whichUnit = Event.GetTriggerUnit()
 
-        call UnitDisableAbility(whichUnit, SECOND_CHAKRAM_ABILITY_ID, true, false)
-        call UnitHideAbility(whichUnit, SECOND_CHAKRAM_ABILITY_ID, true)
+        call UnitDisableAbility(whichUnit, SECOND_CHAKRAM_ABILITY_ID, true, true)
 
         set whichUnit = null
     endfunction

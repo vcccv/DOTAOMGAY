@@ -32,7 +32,7 @@ scope Juggernaut
         else
             call SaveInteger(HY, h, 28,(S4R + 1))
             call WOR(u)
-            if U2 == null then
+            if TempUnit == null then
                 if LoadInteger(HY, h, 0)> 0 then
                     call UnitReduceStateBonus(u, LoadInteger(HY, h, 0), UNIT_BONUS_ATTACK)
                 endif

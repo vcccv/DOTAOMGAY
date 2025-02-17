@@ -9,22 +9,18 @@ scope OgreMagi
     #define UNREFINED_FIREBLAST_ABILITY_ID 'A2KQ'
 
     function MultiCastOnGetScepterUpgrade takes nothing returns nothing
-        local unit       whichUnit = Event.GetTriggerUnit()
+        local unit whichUnit = Event.GetTriggerUnit()
 
         if not UnitAddPermanentAbility(whichUnit, UNREFINED_FIREBLAST_ABILITY_ID) then
-            call UnitDisableAbility(whichUnit, UNREFINED_FIREBLAST_ABILITY_ID, false, false)
-            call UnitHideAbility(whichUnit, UNREFINED_FIREBLAST_ABILITY_ID, false)
-            call BJDebugMsg(I2S(MHAbility_GetDisableCount(whichUnit, UNREFINED_FIREBLAST_ABILITY_ID)) + " 禁用计数器")
+            call UnitDisableAbility(whichUnit, UNREFINED_FIREBLAST_ABILITY_ID, false, true)
         endif
 
         set whichUnit = null
     endfunction
     function MultiCastOnLostScepterUpgrade takes nothing returns nothing
-        local unit       whichUnit = Event.GetTriggerUnit()
+        local unit whichUnit = Event.GetTriggerUnit()
 
-        call UnitDisableAbility(whichUnit, UNREFINED_FIREBLAST_ABILITY_ID, true, false)
-        call UnitHideAbility(whichUnit, UNREFINED_FIREBLAST_ABILITY_ID, true)
-        call BJDebugMsg(I2S(MHAbility_GetDisableCount(whichUnit, UNREFINED_FIREBLAST_ABILITY_ID)) + " 禁用计数器")
+        call UnitDisableAbility(whichUnit, UNREFINED_FIREBLAST_ABILITY_ID, true, true)
 
         set whichUnit = null
     endfunction

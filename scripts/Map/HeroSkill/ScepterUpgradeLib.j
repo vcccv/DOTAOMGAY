@@ -1,5 +1,5 @@
 
-library ScepterUpgradeLib requires HeroSkillLib
+library ScepterUpgradeLib requires HeroSkillLib, ItemSystem
     
     //***************************************************************************
     //*
@@ -40,6 +40,37 @@ library ScepterUpgradeLib requires HeroSkillLib
         endloop
         return -1
     endfunction
+
+    globals
+        private key UNIT_SCEPTER_COUNT
+    endglobals
+
+    // 单位是否神杖升级
+    function IsUnitAghanimScepterUpgraded takes unit whichUnit returns boolean
+        return Table[GetHandleId(whichUnit)].integer[UNIT_SCEPTER_COUNT] > 0
+        /*
+        local item 	  whichItem
+        local integer i = 0
+        local integer index
+        if GetUnitAbilityLevel(whichUnit, 'A3E7') == 1 then
+            return true
+        endif
+        loop
+            set whichItem = UnitItemInSlot(whichUnit, i)
+            if whichItem != null then
+                set index = GetItemIndex(whichItem)
+                if (index == Item_AghanimScepterBasic or index == Item_AghanimScepter or index == Item_AghanimScepterGiftable) and GetItemUserData(whichItem) != -2 then
+                    set whichItem = null
+                    return true
+                endif
+            endif
+            set i = i + 1
+        exitwhen i > 5
+        endloop
+        set whichItem = null
+        return false
+        */
+    endfunction
     
     // 注册A杖升级 normalId modifyId upgradeId ScepterUpgradeMaxCount
     // 通过GetSkillScepterUpgradeIndexById来获得技能的神杖升级索引
@@ -75,9 +106,7 @@ library ScepterUpgradeLib requires HeroSkillLib
     endglobals
 
     function RegisterSkillGetScepterUpgradeMethod takes integer scepterUpgradeIndex, string func returns nothing
-        call BJDebugMsg("：" + I2S(scepterUpgradeIndex))
         set GetUpgradeMethod[scepterUpgradeIndex] = C2I(MHGame_GetCode(func))
-        call BJDebugMsg("RegisterSkillGetScepterUpgradeMethod：" + I2S(scepterUpgradeIndex) + " codeId:" + I2S(GetUpgradeMethod[scepterUpgradeIndex]))
         call ThrowError(GetUpgradeMethod[scepterUpgradeIndex] == 0, "ScepterUpgradeLib", "RegisterSkillGetScepterUpgradeMethod", "scepterUpgradeIndex", scepterUpgradeIndex, "func == 0")
         call ThrowError(scepterUpgradeIndex == 0, "ScepterUpgradeLib", "RegisterSkillGetScepterUpgradeMethod", "scepterUpgradeIndex", scepterUpgradeIndex, "scepterUpgradeIndex == 0")
     endfunction
@@ -90,11 +119,6 @@ library ScepterUpgradeLib requires HeroSkillLib
         call RegisterSkillGetScepterUpgradeMethod(scepterUpgradeIndex, getMethod)
         call RegisterSkillLostScepterUpgradeMethod(scepterUpgradeIndex, lostMethod)
     endfunction
-
-
-    globals
-        private key UNIT_SCEPTER_COUNT
-    endglobals
 
     function GetUnitScepterUpgradeSkillCount takes unit whichUnit returns integer
         local integer pid

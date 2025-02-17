@@ -126,6 +126,7 @@ library MemoryUtils initializer Init
         endif
     endfunction
 
+    /*
     function GetAbilityId takes ability whichAbility returns integer
         local integer pAbility = ConvertHandle(whichAbility)
         if pAbility > 0 then
@@ -133,6 +134,7 @@ library MemoryUtils initializer Init
         endif
         return 0
     endfunction
+    */
 
     function GetAbilityLevel takes ability whichAbility returns integer
         local integer pAbility = ConvertHandle(whichAbility)

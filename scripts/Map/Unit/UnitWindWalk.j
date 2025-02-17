@@ -2,7 +2,7 @@
 library WindWalk requires UnitLimitation, AbilityUtils
     
     function UnitWindWalkBuffOnAdd takes nothing returns nothing
-        local unit whichUnit = MHEvent_GetUnit()
+        local unit whichUnit = Event.GetTriggerUnit()
         call UpdateUnitLimitation(whichUnit)
         set whichUnit = null
     endfunction
@@ -13,7 +13,7 @@ library WindWalk requires UnitLimitation, AbilityUtils
     endfunction
     function UnitWindWalkBuffOnRemove takes nothing returns nothing
         local SimpleTick tick
-        local unit       whichUnit = MHEvent_GetUnit()
+        local unit       whichUnit = Event.GetTriggerUnit()
 
         set tick = SimpleTick.CreateEx()
         call tick.Start(0., false, function UnitWindWalkDelayUpdateOnExpired)
@@ -24,40 +24,40 @@ library WindWalk requires UnitLimitation, AbilityUtils
 
     function UnitWindWalk_Init takes nothing returns nothing
         // 破碎暗影步
-        call SetAbilityAddAction('B39C', "UnitWindWalkBuffOnAdd")
-        call SetAbilityRemoveAction('B39C', "UnitWindWalkBuffOnRemove")
+        call RegisterAbilityAddMethod('B39C', "UnitWindWalkBuffOnAdd")
+        call RegisterAbilityRemoveMethod('B39C', "UnitWindWalkBuffOnRemove")
 
         // 隐刀
-        call SetAbilityAddAction('B07T', "UnitWindWalkBuffOnAdd")
-        call SetAbilityRemoveAction('B07T', "UnitWindWalkBuffOnRemove")
+        call RegisterAbilityAddMethod('B07T', "UnitWindWalkBuffOnAdd")
+        call RegisterAbilityRemoveMethod('B07T', "UnitWindWalkBuffOnRemove")
 
         // 马甲技能
-        call SetAbilityAddAction('BOwk', "UnitWindWalkBuffOnAdd")
-        call SetAbilityRemoveAction('BOwk', "UnitWindWalkBuffOnRemove")
+        call RegisterAbilityAddMethod('BOwk', "UnitWindWalkBuffOnAdd")
+        call RegisterAbilityRemoveMethod('BOwk', "UnitWindWalkBuffOnRemove")
 
         // 神出鬼没
-        call SetAbilityAddAction('B039', "UnitWindWalkBuffOnAdd")
-        call SetAbilityRemoveAction('B039', "UnitWindWalkBuffOnRemove")
+        call RegisterAbilityAddMethod('B039', "UnitWindWalkBuffOnAdd")
+        call RegisterAbilityRemoveMethod('B039', "UnitWindWalkBuffOnRemove")
 
         // 不知道谁的疾风步
-        call SetAbilityAddAction('B076', "UnitWindWalkBuffOnAdd")
-        call SetAbilityRemoveAction('B076', "UnitWindWalkBuffOnRemove")
+        call RegisterAbilityAddMethod('B076', "UnitWindWalkBuffOnAdd")
+        call RegisterAbilityRemoveMethod('B076', "UnitWindWalkBuffOnRemove")
 
         // 赏金猎人疾风步
-        call SetAbilityAddAction('B068', "UnitWindWalkBuffOnAdd")
-        call SetAbilityRemoveAction('B068', "UnitWindWalkBuffOnRemove")
+        call RegisterAbilityAddMethod('B068', "UnitWindWalkBuffOnAdd")
+        call RegisterAbilityRemoveMethod('B068', "UnitWindWalkBuffOnRemove")
 
         // 缩地
-        call SetAbilityAddAction('BHfs', "UnitWindWalkBuffOnAdd")
-        call SetAbilityRemoveAction('BHfs', "UnitWindWalkBuffOnRemove")
+        call RegisterAbilityAddMethod('BHfs', "UnitWindWalkBuffOnAdd")
+        call RegisterAbilityRemoveMethod('BHfs', "UnitWindWalkBuffOnRemove")
 
         // 隐匿
-        call SetAbilityAddAction('B08K', "UnitWindWalkBuffOnAdd")
-        call SetAbilityRemoveAction('B08K', "UnitWindWalkBuffOnRemove")
+        call RegisterAbilityAddMethod('B08K', "UnitWindWalkBuffOnAdd")
+        call RegisterAbilityRemoveMethod('B08K', "UnitWindWalkBuffOnRemove")
 
         // 幽灵漫步
-        call SetAbilityAddAction('B08X', "UnitWindWalkBuffOnAdd")
-        call SetAbilityRemoveAction('B08X', "UnitWindWalkBuffOnRemove")
+        call RegisterAbilityAddMethod('B08X', "UnitWindWalkBuffOnAdd")
+        call RegisterAbilityRemoveMethod('B08X', "UnitWindWalkBuffOnRemove")
     endfunction
 
 endlibrary

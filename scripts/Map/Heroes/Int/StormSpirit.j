@@ -59,7 +59,7 @@ scope StormSpirit
         call SetUnitY(whichUnit, targetY)
         call SetUnitPosition(dummyCaster, targetX, targetY)
         call SetUnitPosition(MNR, targetX, targetY)
-        set U2 = whichUnit
+        set TempUnit = whichUnit
         set HZV = whichUnit
         set HWV = h
         set HYV = level
@@ -198,7 +198,7 @@ scope StormSpirit
             set MA = whichUnit
             set QA = LoadInteger(HY, h, 5)* 50 + 50
             set g = AllocationGroup(168)
-            set U2 = whichUnit
+            set TempUnit = whichUnit
             call GroupEnumUnitsInRange(g, x, y, 275, Condition(function DHX))
             call GroupAddGroup(g, LoadGroupHandle(HY, h, 10))
             call ForGroup(LoadGroupHandle(HY, h, 10), function MGR)

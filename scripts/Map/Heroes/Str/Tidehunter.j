@@ -27,7 +27,7 @@ scope Tidehunter
     endstruct
 
     function GushMissileOnHit takes nothing returns nothing
-        local unit whichUnit = U2
+        local unit whichUnit = TempUnit
         local unit targetUnit = MissileHitTargetUnit
         local integer level = GetUnitAbilityLevel(whichUnit,'A046')
         call DestroyEffect(AddSpecialEffectTarget("Objects\\Spawnmodels\\Naga\\NagaDeath\\NagaDeath.mdl", targetUnit, "chest"))

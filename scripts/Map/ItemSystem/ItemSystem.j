@@ -156,7 +156,6 @@ library ItemSystem requires Base, TimerUtils, AbilityUtils
         endif
         call RemoveItem(whichItem)
         if isEnabled then
-            call BJDebugMsg("恢复了")
             call EnableTrigger(UnitManipulatItemTrig)
         endif
     endfunction
@@ -209,9 +208,7 @@ library ItemSystem requires Base, TimerUtils, AbilityUtils
 
     function ItemSystem_OnPickup takes unit whichUnit, item whichItem returns nothing
         local integer itemIndex = GetItemIndex(whichItem)
-        call BJDebugMsg("调了1:" + I2S(itemIndex))
         if itemIndex > 0 and GetItemTypeId(whichItem) == ItemRealId[itemIndex] and RealItemPickupMethod[itemIndex] != 0 then
-            call BJDebugMsg("调了2")
             set Event.INDEX = Event.INDEX + 1
             set Event.TrigUnit[Event.INDEX] = whichUnit
             set Event.ManipulatedItem[Event.INDEX] = whichItem

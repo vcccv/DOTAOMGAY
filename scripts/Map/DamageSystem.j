@@ -116,7 +116,7 @@ scope DamageSystem
                 call SetTextTagColor(tt, 250, 0, 0, 255)
                 call SetTextTagVisibility(tt, true)
             endif
-            if EnableMapSetup__ShowDamageTextTag[GetPlayerId(a)] and LocalPlayer == a and UnitVisibleToPlayer(damageTarget, a) then
+            if EnableMapSetup__ShowDamageTextTag[GetPlayerId(a)] and LocalPlayer == a and IsUnitVisibleToPlayer(damageTarget, a) then
                 call SetTextTagColor(tt, 0, 0, 250, 255 )
                 call SetTextTagVisibility(tt, true)
             endif
