@@ -44,6 +44,7 @@ effectsoundlooped=ReplaceableTextures\CommandButtons\BTNINV_Wand_05.blp
 Name=阿哈利姆神杖
 art=ReplaceableTextures\CommandButtons\BTNINV_Wand_05
 Ubertip=|c00ff0303该物品不属于你，它失去了效果.|r
+//
 [I00B]
 art=ReplaceableTextures\CommandButtons\BTNINV_Wand_05
 [I0B8]
@@ -42896,9 +42897,13 @@ bufftip=酸液
 buffubertip=该单位被酸液击中了，他的三围减少了
 buffart=ReplaceableTextures\CommandButtons\BTNPoisonAbility66
 [B3E7]
-bufftip=|cff00ff00蓝杖入体|r
-buffubertip=该单位受益于地精贪婪的效果，他得到了蓝杖的提升效果
+bufftip=|cff00ff00阿哈利姆福佑|r
+buffubertip=该单位受益于地精贪婪的效果，得到了阿哈利姆神杖的升级效果
 buffart=ReplaceableTextures\CommandButtons\BTNINV_Wand_05
+[B3E8]
+bufftip=|cff00ff00阿哈利姆福佑|r
+buffubertip=该单位升级了阿哈利姆神杖，得到了阿哈利姆神杖的升级效果
+buffart=ReplaceableTextures\CommandButtons\BTNVoidScepter
 [A3KA]
 targetart=effects\Test_of_Faith_FX.mdx
 targetattach=overhead

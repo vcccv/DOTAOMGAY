@@ -344,7 +344,8 @@ scope DamageSystem
                     set Table[GetHandleId(DETarget)].real[UNIT_LAST_DAMGED_TIME] = GameTimer.GetElapsed()
                 //endif
 
-                if IsPlayerValid(GetOwningPlayer(DESource)) or DESource == Roshan then
+                if ( IsPlayerValid(GetOwningPlayer(DESource)) or DESource == Roshan ) /*
+                    */ and not IsUnitIllusion(DETarget) and not IsUnitCourier(DETarget) then
                     call UpdateUnitKelenDaggerDamagedCooldown(DETarget)
                     call UpdateUnitHeartOfTarrasqueDamagedCooldown(DETarget)
                 endif

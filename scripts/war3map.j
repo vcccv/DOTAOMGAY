@@ -359,7 +359,7 @@ globals
 	sound ZE
 	sound VX
 	sound EX
-	integer array XX
+	integer array PlayersExtraNetWorth
 	group OX = CreateGroup()
 	integer array RX
 	boolean IX = false
@@ -404,8 +404,8 @@ globals
 	unit IR
 	integer array BR
 	real array DisplayTextDuration
-	integer array DR
-	boolean array GR
+	integer array LastItemTotalGoldCost
+	boolean array ItemTotalGoldCostDirty
 	unit HR
 	unit JR
 	unit KR
@@ -2965,7 +2965,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A08Z', 12, "H4E")
 	call SaveStr(ObjectHashTable,'A090', 12, "H4E")
 	call SaveStr(ObjectHashTable,'A092', 12, "H4E")
-	call SaveStr(ObjectHashTable,'A3K7', 12, "H5E")
+	call SaveStr(ObjectHashTable,'A3K7', 12, "AghanimScepterSynthOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A2TK', 12, "H7E") //血精石
 	call SaveStr(ObjectHashTable,'AItb', 12, "H8E")
 	call SaveStr(ObjectHashTable,'A1FD', 12, "H9E")
@@ -9304,7 +9304,7 @@ endfunction
 function MOX takes integer i returns boolean
 	return i =='H00J' or i =='N0MM'
 endfunction
-function HeroIsDummyUnit takes unit u returns boolean
+function IsHeroDummy takes unit u returns boolean
 	local integer i = GetUnitTypeId(u)
 	return MOX(i) or i =='H07G' or i =='H00M' or i =='H0B8' or i =='H0DL' or i =='H00Y'
 endfunction
@@ -10612,21 +10612,7 @@ endfunction
 function TVX takes nothing returns nothing
 	call EnumItemsInRect(NI, Filter(function S9X), null)
 endfunction
-function TOX takes unit u returns integer
-	local integer i = 0
-	local integer TRX = 0
-	local item it
-	loop
-		set it = UnitItemInSlot(u, i)
-		if it != null then
-			set TRX = TRX + GetItemGoldCostById(GetItemTypeId(it))
-		endif
-		set i = i + 1
-	exitwhen i > 5
-	endloop
-	set it = null
-	return TRX
-endfunction
+
 function TIX takes integer nw, unit TAX returns nothing
 	local texttag tt
 	local integer h
@@ -10654,48 +10640,48 @@ function TNX takes nothing returns nothing
 	local integer i = 1
 	local integer pid
 	local player p
-	local integer TBX
+	local integer gold
 	loop
-		set TBX = 0
+		set gold = 0
 		set p = SentinelPlayers[i]
 		if IsPlayerUser(p) then
 			set pid = GetPlayerId(p)
-			if GR[pid] then
+			if ItemTotalGoldCostDirty[pid] then // ItemTotalGoldCostDirty
 				if PlayerHeroes[pid]!= null then
-					set TBX = TBX + TOX(PlayerHeroes[pid])
-					set TBX = TBX + TOX(CirclesUnit[pid])
+					set gold = gold + GetUnitAllItemsGoldCost(PlayerHeroes[pid])
+					set gold = gold + GetUnitAllItemsGoldCost(CirclesUnit[pid])
 				endif
 				if HaveSavedHandle(HY, GetHandleId(p), 333) then
-					set TBX = TBX + TOX(LoadUnitHandle(HY, GetHandleId(p), 333))
+					set gold = gold + GetUnitAllItemsGoldCost(LoadUnitHandle(HY, GetHandleId(p), 333))
 				endif
-				set TBX = TBX + XX[pid]
-				set GR[pid] = false
-				set DR[pid] = TBX
+				set gold = gold + PlayersExtraNetWorth[pid] // A杖资产
+				set ItemTotalGoldCostDirty[pid] = false
+				set LastItemTotalGoldCost[pid] = gold
 			else
-				set TBX = DR[pid]
+				set gold = LastItemTotalGoldCost[pid] // LastItemTotalGoldCost
 			endif
-			set RI[pid] = TBX + GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)
+			set RI[pid] = gold + GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)
 			call TIX(RI[pid], CirclesUnit[pid])
 		endif
-		set TBX = 0
+		set gold = 0
 		set p = ScourgePlayers[i]
 		if IsPlayerUser(p) then
 			set pid = GetPlayerId(p)
-			if GR[pid] then
+			if ItemTotalGoldCostDirty[pid] then
 				if PlayerHeroes[pid]!= null then
-					set TBX = TBX + TOX(PlayerHeroes[pid])
-					set TBX = TBX + TOX(CirclesUnit[pid])
+					set gold = gold + GetUnitAllItemsGoldCost(PlayerHeroes[pid])
+					set gold = gold + GetUnitAllItemsGoldCost(CirclesUnit[pid])
 				endif
 				if HaveSavedHandle(HY, GetHandleId(p), 333) then
-					set TBX = TBX + TOX(LoadUnitHandle(HY, GetHandleId(p), 333))
+					set gold = gold + GetUnitAllItemsGoldCost(LoadUnitHandle(HY, GetHandleId(p), 333))
 				endif
-				set TBX = TBX + XX[pid]
-				set GR[pid] = false
-				set DR[pid] = TBX
+				set gold = gold + PlayersExtraNetWorth[pid]
+				set ItemTotalGoldCostDirty[pid] = false
+				set LastItemTotalGoldCost[pid] = gold
 			else
-				set TBX = DR[pid]
+				set gold = LastItemTotalGoldCost[pid]
 			endif
-			set RI[pid] = TBX + GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)
+			set RI[pid] = gold + GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)
 			call TIX(RI[pid], CirclesUnit[pid])
 		endif
 		set i = i + 1
@@ -11188,7 +11174,7 @@ function UGX takes unit killingUnit returns boolean
 		set SB = killingUnit
 		call UFX()
 		if IsUnitType(killingUnit, UNIT_TYPE_HERO) and not LoadBoolean(HY, GetHandleId(killingUnit), QR) then
-			if HeroIsDummyUnit(killingUnit) then
+			if IsHeroDummy(killingUnit) then
 				if UnitAlive(PlayerHeroes[GetPlayerId(GetOwningPlayer(killingUnit))]) then
 					call GroupAddUnit(IV, PlayerHeroes[GetPlayerId(GetOwningPlayer(killingUnit))])
 				endif
@@ -12973,6 +12959,7 @@ function VFO takes player whichPlayer, unit whichUnit, integer VGO, integer i0, 
 	endif
 	set whichItem = null
 endfunction
+// 合成流程之一
 function VHO takes player p, unit whichUnit, integer itemIndex returns boolean
 	local integer i
 	local integer x
@@ -13475,7 +13462,7 @@ function E7O takes integer id returns boolean
 endfunction
 function E8O takes unit u, integer id returns boolean
 	local unit d = E6O(u)
-	local integer TBX = GetItemGoldCostById(ItemRealId[id])
+	local integer goldCost = GetItemGoldCostById(ItemRealId[id])
 	local player p = GetOwningPlayer(u)
 	local boolean b = false
 	if E7O(id) then
@@ -13483,9 +13470,9 @@ function E8O takes unit u, integer id returns boolean
 		set d = null
 		return false
 	endif
-	if GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)>= TBX then
+	if GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)>= goldCost then
 		set b = true
-		call SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)-TBX)
+		call SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)-goldCost)
 		call E5O(d, id)
 	else
 		call DisplayTimedTextToPlayer(p, 0, 0, 10, StringReplace(GetObjectName('TX1B'), "$item", "|c00ffff00" + GetObjectName(ItemRealId[id])+ "|r"))
@@ -14236,7 +14223,10 @@ function ManipulatItemDelayOnExpired takes nothing returns boolean
 					endif
 					set X3O = newItem
 					call SetItemPlayer(newItem, X1O, false)
-					call SetItemUserData(newItem, 1)
+					call SetItemUserData(newItem, 1) // 合成时好像没触发丢弃
+					set X4O = ECO(X1O, whichUnit, 0)
+				else
+					call SetItemUserData(whichItem, 1)
 					set X4O = ECO(X1O, whichUnit, 0)
 				endif
 			else
@@ -14246,6 +14236,9 @@ function ManipulatItemDelayOnExpired takes nothing returns boolean
 					set X3O = newItem
 					call SetItemPlayer(newItem, X1O, false)
 					call SetItemUserData(newItem, 1)
+					set X4O = ECO(X1O, whichUnit, 0)
+				else
+					call SetItemUserData(whichItem, 1)
 					set X4O = ECO(X1O, whichUnit, 0)
 				endif
 			endif
@@ -14532,12 +14525,12 @@ function OnManipulatItem takes nothing returns boolean
 	local integer k
 	local item it
 	local integer i = GetItemTypeId(GetManipulatedItem())
-	set GR[GetPlayerId(GetOwningPlayer(u))] = true
+	set ItemTotalGoldCostDirty[GetPlayerId(GetOwningPlayer(u))] = true
 	set id = GetPlayerId(GetOwningPlayer(u))
 	// 非镜像 英雄或者熊灵
 	if (IsUnitType(u, UNIT_TYPE_HERO) or IsUnitSpiritBear(u)) and not IsUnitIllusion(u) then
 		if GetTriggerEventId() == EVENT_PLAYER_UNIT_PICKUP_ITEM then
-			call ItemSystem_OnPickup(u, GetManipulatedItem())
+			// call ItemSystem_OnPickup(u, GetManipulatedItem())
 			if i == ItemRealId[Item_TheButterfly]or i == ItemRealId[RXV]or i == ItemRealId[AWV]or i == ItemRealId[N1V]or i == ItemRealId[RJV] or i == ItemRealId[ASV] then
 				if i == ItemRealId[Item_TheButterfly] then
 					call EnableAttackEffectByTime(2, 0)
@@ -14579,7 +14572,7 @@ function OnManipulatItem takes nothing returns boolean
 				call DisableTrigger(UnitManipulatItemTrig)
 				set it = CreateItem('I0HM', GetUnitX(u), GetUnitY(u))
 				call UnitAddItem(u, it)
-				if GetWidgetLife(it)> 0 then
+				if GetWidgetLife(it) > 0 then
 					call RemoveItem(it)
 				endif
 				set it = null
@@ -14629,7 +14622,7 @@ function OnManipulatItem takes nothing returns boolean
 			//	call AetherLensOnPick(u)
 			endif
 		elseif GetTriggerEventId() == EVENT_PLAYER_UNIT_DROP_ITEM then
-			call ItemSystem_OnDrop(u, GetManipulatedItem())
+			// call ItemSystem_OnDrop(u, GetManipulatedItem())
 			if i == ItemRealId[OYV] then
 				set CDV[id] = CDV[id]-1
 			//elseif i == ItemRealId[Item_KelenDagger] then
@@ -19702,37 +19695,7 @@ function HHE takes nothing returns nothing
 	set targetUnit = null
 	set t = null
 endfunction
-function H5E takes nothing returns nothing
-	local unit u = GetSpellTargetUnit()
-	local integer i
-	set bj_playerIsCrippled[0] = false
-	if IsUnitType(u, UNIT_TYPE_HERO) and HeroIsDummyUnit(u) == false and GetUnitAbilityLevel(u,'A3E7') == 0 then
-		call UnitAddPermanentAbility(u,'A3E7')
-		call SetUnitAghanimScepterUpgradeState(u, false)
-		set i = 0
-		loop
-		exitwhen i > 5
-			if IsItemAghanimScepter(UnitItemInSlot(u, i)) and IsItemPawnable(UnitItemInSlot(u, i)) == false then
-				call SetItemDroppable(UnitItemInSlot(u, i), true)
-			endif
-			set i = i + 1
-		endloop
-		// XX = 可靠金钱
-		set XX[GetPlayerId(GetOwningPlayer(u))] = XX[GetPlayerId(GetOwningPlayer(u))] + GetItemGoldCostById(ItemRealId[Item_AghanimScepterBasic])
-		if GetOwningPlayer(u)!= GetOwningPlayer(GetTriggerUnit()) then
-			set XX[GetPlayerId(GetOwningPlayer(GetTriggerUnit()))] = XX[GetPlayerId(GetOwningPlayer(GetTriggerUnit()))] + GetItemGoldCostById(ItemRealId[Item_AghanimScepterBasic])
-		endif
-		set GR[GetPlayerId(GetOwningPlayer(GetTriggerUnit()))] = true
-		set GR[GetPlayerId(GetOwningPlayer(u))] = true
-		call SetHeroStr(u, GetHeroStr(u, false)+ 10, true)
-		call SetHeroInt(u, GetHeroInt(u, false)+ 10, true)
-		call SetHeroAgi(u, GetHeroAgi(u, false)+ 10, true)
-		call UnitAddPermanentAbility(u,'A3I2')
-		call UnitAddPermanentAbility(u,'A3I3')
-		set bj_playerIsCrippled[0] = true
-	endif
-	set u = null
-endfunction
+
 function DSO takes nothing returns nothing
 	call CNX(GetEnumUnit(),'A1ZY', 1, 6,'B0DX')
 endfunction
@@ -20743,12 +20706,12 @@ function F9O takes nothing returns boolean
 	elseif itemId == ItemRealId[RPV] or itemId == ItemRealId[Item_IronwoodBranch] or itemId == ItemRealId[Item_MoonShard] then
 		// 使用芒果 树枝 银月 那就删了
 		call RemoveItem(whichItem)
-	elseif itemId == ItemRealId[Item_AghanimScepterGiftable] then
-		if bj_playerIsCrippled[0] then
-			call RemoveItem(whichItem)
-			call SetUnitAghanimScepterUpgradeState(whichUnit, true)
-		endif
-		set bj_playerIsCrippled[0] = false
+	// elseif itemId == ItemRealId[Item_AghanimScepterGiftable] then
+	// 	if bj_playerIsCrippled[0] then
+	// 		call RemoveItem(whichItem)
+	// 		call SetUnitAghanimScepterUpgradeState(whichUnit, true)
+	// 	endif
+	// 	set bj_playerIsCrippled[0] = false
 	endif
 	if VE then
 		call XOO(whichUnit, XIO(GetItemIndexEx(whichItem), true), GetItemPlayer(whichItem))
@@ -78504,7 +78467,7 @@ function jys_trigger takes nothing returns nothing
 	endif
 	set xp = jys_calc(team)
 	call CDO(u)
-	if IsUnitType(u, UNIT_TYPE_HERO) and not HeroIsDummyUnit(u) then
+	if IsUnitType(u, UNIT_TYPE_HERO) and not IsHeroDummy(u) then
 		call AddHeroXPSimple(u, xp, true)
 	endif
 	set jys_count[team] = jys_count[team] + 1
@@ -79475,6 +79438,7 @@ function main takes nothing returns nothing
 	call ExecuteFunc("SpecialPassiveAbility_Init")
 	call ExecuteFunc("UnitWindWalk_Init")
 	call ExecuteFunc("DoubleTapAbilityToSelfCast_Init")
+	call ItemSystem_Init()
 	call UnitRemove_Init()
 	call UnitAbility_Init()
 	call UnitMorph_Init()

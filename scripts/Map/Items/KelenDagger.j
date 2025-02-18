@@ -45,8 +45,8 @@ scope KelenDagger
 
         set cooldown = GetUnitKelenDaggerCooldownRemaining(DETarget)
 
-        set isEnabled = IsTriggerEnabled(UnitManipulatItemTrig)
-        call DisableTrigger(UnitManipulatItemTrig)
+        set isEnabled = ItemSystem_IsManipulateMethodEnabled()
+        call ItemSystem_EnableItemManipulateMethod(false)
         if IsUnitHeroLevel(DETarget) and ( IsUnitHeroLevel(DESource) or DESource == Roshan ) then
             loop
                 set whichItem = UnitItemInSlot(DETarget, i)
@@ -67,7 +67,7 @@ scope KelenDagger
         endif
 
         if isEnabled then
-            call EnableTrigger(UnitManipulatItemTrig)
+            call ItemSystem_EnableItemManipulateMethod(true)
         endif
 
         set whichItem = null
@@ -90,8 +90,8 @@ scope KelenDagger
 
         set Table[GetHandleId(whichUnit)].real[KEY] = 0.
 
-        set isEnabled = IsTriggerEnabled(UnitManipulatItemTrig)
-        call DisableTrigger(UnitManipulatItemTrig)
+        set isEnabled = ItemSystem_IsManipulateMethodEnabled()
+        call ItemSystem_EnableItemManipulateMethod(false)
         loop
             set whichItem = UnitItemInSlot(whichUnit, i)
             set itemIndex = GetItemIndex(whichItem)
@@ -110,7 +110,7 @@ scope KelenDagger
         exitwhen i > 5
         endloop
         if isEnabled then
-            call EnableTrigger(UnitManipulatItemTrig)
+            call ItemSystem_EnableItemManipulateMethod(true)
         endif
    
         set whichItem = null
@@ -150,6 +150,11 @@ scope KelenDagger
         local unit       whichUnit = Event.GetTriggerUnit()
         local item       whichItem = Event.GetManipulatedItem()
         local SimpleTick tick      = SimpleTick.CreateEx()
+        if IsUnitIllusion(whichUnit) then
+            set whichItem = null
+            set whichUnit = null
+            return
+        endif
 
         call tick.Start(0., false, function PickupDelayOnExpired)
         set SimpleTickTable[tick].unit['u'] = whichUnit
@@ -168,6 +173,11 @@ scope KelenDagger
 
     function ItemKelenDaggerOnDrop takes nothing returns nothing
         local unit whichUnit = Event.GetTriggerUnit()
+        if IsUnitIllusion(whichUnit) then
+            set whichUnit = null
+            return
+        endif
+
         set Table[GetHandleId(whichUnit)].integer[KEY] = Table[GetHandleId(whichUnit)].integer[KEY] - 1
         set whichUnit = null
 

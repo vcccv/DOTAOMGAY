@@ -13,6 +13,7 @@
 #include "Str\\TreantProtector.j"
 #include "Str\\Tuskarr.j"
 #include "Str\\Tiny.j"
+#include "Str\\Alchemist.j"
 
 #include "Int\\TwinHeadDragon.j"
 #include "Int\\Ezalor.j"

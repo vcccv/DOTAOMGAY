@@ -206,7 +206,20 @@ library ItemSystem requires Base, TimerUtils, AbilityUtils
         call RegisterItemDropMethodByIndex(itemIndex, dropFunc)
     endfunction
 
-    function ItemSystem_OnPickup takes unit whichUnit, item whichItem returns nothing
+    globals
+        private boolean EnableManipulateMethod = true
+    endglobals
+
+    // 允许触发操作物品方法
+    function ItemSystem_EnableItemManipulateMethod takes boolean enable returns nothing
+        set EnableManipulateMethod = enable
+    endfunction
+
+    function ItemSystem_IsManipulateMethodEnabled takes nothing returns boolean
+        return EnableManipulateMethod
+    endfunction
+
+    function ExecutePickupItem takes unit whichUnit, item whichItem returns nothing
         local integer itemIndex = GetItemIndex(whichItem)
         if itemIndex > 0 and GetItemTypeId(whichItem) == ItemRealId[itemIndex] and RealItemPickupMethod[itemIndex] != 0 then
             set Event.INDEX = Event.INDEX + 1
@@ -216,7 +229,7 @@ library ItemSystem requires Base, TimerUtils, AbilityUtils
             set Event.INDEX = Event.INDEX - 1
         endif
     endfunction
-    function ItemSystem_OnDrop takes unit whichUnit, item whichItem returns nothing
+    function ExecuteDropItem takes unit whichUnit, item whichItem returns nothing
         local integer itemIndex = GetItemIndex(whichItem)
         if itemIndex > 0 and GetItemTypeId(whichItem) == ItemRealId[itemIndex] and RealItemDropMethod[itemIndex] != 0 then
             set Event.INDEX = Event.INDEX + 1
@@ -225,6 +238,54 @@ library ItemSystem requires Base, TimerUtils, AbilityUtils
             call MHGame_ExecuteCodeEx(RealItemDropMethod[itemIndex])
             set Event.INDEX = Event.INDEX - 1
         endif
+    endfunction
+
+    function OnPuckupItem takes nothing returns boolean
+        local unit whichUnit = GetTriggerUnit()
+        local item whichItem = GetManipulatedItem()
+
+        if ItemSystem_IsManipulateMethodEnabled() and not IsUnitCourier(whichUnit) then
+            call ExecutePickupItem(whichUnit, whichItem)
+        endif
+
+        set whichItem = null
+        set whichUnit = null
+        return false
+    endfunction
+
+    function OnDropItem takes nothing returns boolean
+        local unit whichUnit = GetTriggerUnit()
+        local item whichItem = GetManipulatedItem()
+
+        if ItemSystem_IsManipulateMethodEnabled() and not IsUnitCourier(whichUnit) then
+            call ExecuteDropItem(whichUnit, whichItem)
+        endif
+
+        set whichItem = null
+        set whichUnit = null
+        return false
+    endfunction
+
+    globals
+        private trigger PuckupItemTrig
+        private trigger DropItemTrig
+    endglobals
+
+    /*
+    call TriggerRegisterAnyUnitEvent(UnitManipulatItemTrig, EVENT_PLAYER_UNIT_PICKUP_ITEM)
+	call TriggerRegisterAnyUnitEvent(UnitManipulatItemTrig, EVENT_PLAYER_UNIT_DROP_ITEM)
+	call TriggerRegisterAnyUnitEvent(UnitManipulatItemTrig, EVENT_PLAYER_UNIT_PAWN_ITEM)
+    */
+
+    // 合成物品时移除物品不走地图内的操作物品事件，因此自己写一个
+    function ItemSystem_Init takes nothing returns nothing
+        set PuckupItemTrig = CreateTrigger()
+        set DropItemTrig = CreateTrigger()
+
+        call TriggerAddCondition(PuckupItemTrig, Condition(function OnPuckupItem))
+        call TriggerAddCondition(DropItemTrig, Condition(function OnDropItem))
+        call TriggerRegisterAnyUnitEvent(PuckupItemTrig, EVENT_PLAYER_UNIT_PICKUP_ITEM)
+        call TriggerRegisterAnyUnitEvent(DropItemTrig, EVENT_PLAYER_UNIT_DROP_ITEM)
     endfunction
     
 endlibrary

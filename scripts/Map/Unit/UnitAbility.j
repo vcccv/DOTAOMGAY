@@ -316,9 +316,9 @@ library UnitAbility requires AbilityUtils, UnitLimitation
     endfunction
 
     // 更新单位所有技能
-    function UpdateUnitAbilityCooldown takes unit whichUnit returns nothing
+    function UnitUpdateAbilityCooldown takes unit whichUnit returns nothing
         if whichUnit == null then
-            call ThrowWarning(true, "UnitAbility", "UpdateUnitAbilityCooldown", "unit", 0, "whichUnit == null")
+            call ThrowWarning(true, "UnitAbility", "UnitUpdateAbilityCooldown", "unit", 0, "whichUnit == null")
             return
         endif
         set TempReduceMultiplier = ( 1. - GetUnitCooldownReduceMultiplier(whichUnit) )
@@ -423,7 +423,7 @@ library UnitAbility requires AbilityUtils, UnitLimitation
 
         // 如果是工程升级，则更新所有技能。
         if GetAbilityBaseIdById(abilId) == 'ANeg' then
-            call UpdateUnitAbilityCooldown(whichUnit)
+            call UnitUpdateAbilityCooldown(whichUnit)
         elseif HasOctarineCore and GetUnitAbilityLevel(whichUnit, 'A39S') == 1  then
             call UpdateAbilityCooldown(whichUnit, whichAbility)
         endif
@@ -449,7 +449,7 @@ library UnitAbility requires AbilityUtils, UnitLimitation
 
         // 如果是工程升级，则更新所有技能。
         if GetAbilityBaseIdById(abilId) == 'ANeg' then
-            call UpdateUnitAbilityCooldown(whichUnit)
+            call UnitUpdateAbilityCooldown(whichUnit)
         endif
         call Table[GetHandleId(whichAbility)].flush()
         

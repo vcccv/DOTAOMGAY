@@ -6,23 +6,24 @@ scope OctarineCore
     //*  玲珑心
     //*
     //***************************************************************************
-    function ItemOctarineCoreOnPickup takes nothing returns nothing
-        local unit whichUnit = Event.GetTriggerUnit()
-         
-        if not IsUnitHeroLevel(whichUnit) then
-            set whichUnit = null
-        endif
-
-        call UpdateUnitAbilityCooldown(whichUnit)
-
-        set whichUnit = null
-    endfunction
-    function DelayUpdateUnitAbilityCooldownOnExpired takes nothing returns nothing
+    function DelayUnitUpdateAbilityCooldownOnExpired takes nothing returns nothing
         local SimpleTick tick = SimpleTick.GetExpired()
 
-        call UpdateUnitAbilityCooldown(SimpleTickTable[tick].unit['u'])
+        call UnitUpdateAbilityCooldown(SimpleTickTable[tick].unit['u'])
 
         call tick.Destroy()
+    endfunction
+    function ItemOctarineCoreOnPickup takes nothing returns nothing
+        local unit whichUnit = Event.GetTriggerUnit()
+        
+        if not IsUnitHeroLevel(whichUnit) then
+            set whichUnit = null
+            return
+        endif
+
+        call UnitUpdateAbilityCooldown(whichUnit)
+
+        set whichUnit = null
     endfunction
     function ItemOctarineCoreOnDrop takes nothing returns nothing
         local unit       whichUnit = Event.GetTriggerUnit()
@@ -30,12 +31,13 @@ scope OctarineCore
         
         if not IsUnitHeroLevel(whichUnit) then
             set whichUnit = null
+            return
         endif
 
         set tick = SimpleTick.CreateEx()
-        call tick.Start(0., false, function DelayUpdateUnitAbilityCooldownOnExpired)
+        call tick.Start(0., false, function DelayUnitUpdateAbilityCooldownOnExpired)
         set SimpleTickTable[tick].unit['u'] = whichUnit
-        call UpdateUnitAbilityCooldown(whichUnit)
+        call UnitUpdateAbilityCooldown(whichUnit)
 
         set whichUnit = null
     endfunction

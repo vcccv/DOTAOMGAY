@@ -230,6 +230,7 @@ library ScepterUpgradeLib requires HeroSkillLib, ItemSystem
             return
         endif
 
+        call BJDebugMsg("AghanimScepter拿了")
         call UnitAddScepterUpgrade(whichUnit)
 
         set whichUnit = null
@@ -241,6 +242,7 @@ library ScepterUpgradeLib requires HeroSkillLib, ItemSystem
             return
         endif
 
+        call BJDebugMsg("AghanimScepter丢了")
         set count = Table[GetHandleId(whichUnit)].integer[UNIT_SCEPTER_COUNT] - 1
         set Table[GetHandleId(whichUnit)].integer[UNIT_SCEPTER_COUNT] = count
         if count == 0 then
@@ -251,13 +253,27 @@ library ScepterUpgradeLib requires HeroSkillLib, ItemSystem
     endfunction
 
     function ItemAghanimBlessingOnPickup takes nothing returns nothing
-        local unit whichUnit = Event.GetTriggerUnit()
-        local item whichItem = Event.GetManipulatedItem()
+        local unit    whichUnit = Event.GetTriggerUnit()
+        local item    whichItem = Event.GetManipulatedItem()
+        local integer pid
+        call BJDebugMsg("触发了")
         if whichUnit == null or IsUnitScepterUpgraded(whichUnit) then
             return
         endif
 
+        call BJDebugMsg("我要删啊啊啊啊")
         call SilentRemoveItem(whichItem)
+
+        set pid = GetPlayerId(GetOwningPlayer(whichUnit))
+        set PlayersExtraNetWorth[pid] = PlayersExtraNetWorth[pid] + GetItemGoldCostById(ItemRealId[Item_AghanimBlessing])
+        set ItemTotalGoldCostDirty[pid] = true
+        
+        call UnitAddPermanentAbility(whichUnit, 'A3E8')
+        call SetHeroStr(whichUnit, GetHeroStr(whichUnit, false) + 10, true)
+        call SetHeroInt(whichUnit, GetHeroInt(whichUnit, false) + 10, true)
+        call SetHeroAgi(whichUnit, GetHeroAgi(whichUnit, false) + 10, true)
+        call UnitAddPermanentAbility(whichUnit,'A3I2')
+        call UnitAddPermanentAbility(whichUnit,'A3I3')
         call UnitAddScepterUpgrade(whichUnit)
   
         set whichUnit = null
