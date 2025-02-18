@@ -477,6 +477,7 @@ library HeroSkillDefine requires HeroSkillLib
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "metamorphosis")+ SaveSkillOrder(i * 4 + 4, "melee morph")+ SaveSkillOrder(i * 4 + 4, "r25"), 'QB0K', 0, 'QY0K', "r")
         set i = 40 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "coupleinstant"), 'A0KV', 'A3UG', 'Y157', "t")
+
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "spies"), 'A0L8', 0, 'Y158', "r")
         call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "windwalk"), 'A0LN', 0, 'Y159', "e")
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "corporealform")+ SaveSkillOrder(i * 4 + 4, "r11"), 'A0KU', 0, 'Y160', "w")
@@ -624,14 +625,17 @@ library HeroSkillDefine requires HeroSkillLib
         set HeroSkill_IsPassive[i * 4 + 3]= true
         set HeroSkill_IsDisabledInDeathMatch[i * 4 + 3]= true
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "metamorphosis")+ SaveSkillOrder(i * 4 + 4, "melee morph")+ SaveSkillOrder(i * 4 + 4, "r95"), 'QM02', 0, 'Y232', "f")
+        
         set i = 59 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "parasite"), 'A0BH', 0, 'Y233', "w")
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "restoration")+ SaveSkillOrder(i * 4 + 2, "inv bug 1"), 'Z234', 0, 'Y234', "b")
-        set HeroSkill_IsDisabledInDeathMatch[i * 4 + 2]= true
-        //set HeroSkill_Disabled[i * 4 + 2]= true	//暂时禁用织网
+        set HeroSkill_IsDisabledInDeathMatch[i * 4 + 2] = true
+
+        // 麻痹之咬
         call RegisterHeroSkill(i * 4 + 3, null, 'Q0BK', 'QP29', 'Y235', null)
-        set HeroSkill_Disabled[i * 4 + 3]= true
-        set HeroSkill_IsPassive[i * 4 + 3]= true
+        set HeroSkill_Disabled[i * 4 + 3] = true
+        set HeroSkill_IsPassive[i * 4 + 3] = true
+
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "bash")+ SaveSkillOrder(i * 4 + 4, "roar"), 'A0WQ', 0, 'Y236', "t")
         set i = 60 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "summonphoenix"), 'A0YM', 0, 'Y237', "d")
@@ -936,7 +940,7 @@ library HeroSkillDefine requires HeroSkillLib
         call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "drain"), 'A02N', 0, 'Y415', "r")
         set HeroSkill_Icon[i * 4 + 3]= "ReplaceableTextures\\CommandButtons\\BTNManaDrain.blp"
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, GetAbilityOrder('A095')), 'A095', 'A09W', 'Y416', "f")
-        set i ='i' - 1
+        set i = 105 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "magicdefense"), 'A173', 0, 'Y417', "e")
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "buff placer"), 'A0MY', 'QP1D', 'Y418', null)
         set HeroSkill_IsPassive[i * 4 + 2]= true

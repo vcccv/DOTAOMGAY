@@ -1,5 +1,156 @@
 
-library HeroSkillLib requires AbilityCustomOrderId
+library HeroSkillLib requires AbilityCustomOrderId, AbilityUtils, UnitAbility
+
+    function SkillOnInitializer takes integer skillIndex returns nothing
+        if skillIndex == SKILL_INDEX_STARFALL then
+            call ResgiterAbilityMethodSimple(STARFALL_UPGRADE_ABILITY_ID, "StarfallUpgradeAbilityOnAdd", "StarfallUpgradeAbilityOnRemove")
+        elseif skillIndex == SKILL_INDEX_FLAKCANNON then
+            call ResgiterAbilityMethodSimple(FLAKCANNON_UPGRADE_ABILITY_ID, "FlakCannonUpgradeAbilityOnAdd", "FlakCannonUpgradeAbilityOnRemove")
+        // ? elseif skillIndex == SKILL_INDEX_MARKSMANSHIP then
+
+        endif
+    endfunction
+
+    function HeroOnInitializer takes integer heroIndex returns nothing
+        if (heroIndex == 34) then
+            call PreloadUnit('h06K')
+        elseif heroIndex == 117 then
+            call SetAllPlayerAbilityUnavailable('A40O')
+            call SetAllPlayerAbilityUnavailable('A40P')
+            call SetAllPlayerAbilityUnavailable('A40Q')
+            call SetAllPlayerAbilityUnavailable('A40R')
+        elseif heroIndex == 16 then
+            call SetAllPlayerAbilityUnavailable('A10U')
+            call SetAllPlayerAbilityUnavailable('A11X')
+        elseif heroIndex == 62 then
+            call ExecuteFunc("MFX")
+        elseif heroIndex == 83 then
+            set IX = true
+        elseif heroIndex == 111 then
+            call ExecuteFunc("MGX")
+        elseif (heroIndex == 38) then
+            call ExecuteFunc("MHX")
+        elseif (heroIndex == 31) then
+            call ExecuteFunc("MJX")
+        elseif (heroIndex == 8) then
+            call ExecuteFunc("MKX")
+            call ExecuteFunc("MLX")
+        elseif (heroIndex == HERO_INDEX_ENCHANTRESS) then
+            // 魅惑魔女
+            //call ExecuteFunc("Impetus_Init")()
+            call ExecuteFunc("MMX")
+        elseif (heroIndex == 95) then
+            call ExecuteFunc("MPX")
+        elseif (heroIndex == 12) then
+            call ExecuteFunc("MQX")
+        elseif heroIndex == 52 then
+            call SetAllPlayerAbilityUnavailable('A30P')
+        elseif heroIndex == 61 then
+            call SetAllPlayerAbilityUnavailable('A419')
+        elseif (heroIndex == 4) then
+            // 变体精灵的变颜色
+            // call ExecuteFunc("MSX")
+            call ExecuteFunc("MTX")
+        elseif (heroIndex == 18) then
+            call ExecuteFunc("MUX")
+            call ExecuteFunc("MWX")
+        elseif heroIndex == 73 then
+            call SetAllPlayerAbilityUnavailable('A30D')
+            call SetAllPlayerAbilityUnavailable('A30E')
+        elseif (heroIndex == 21) then
+            // 神出鬼没
+            call ExecuteFunc("MYX")
+            // 预读技能
+            call ExecuteFunc("RegisterPhantomLancerTrigger")
+        elseif (heroIndex == 26) then
+            call ExecuteFunc("M0X")
+        elseif (heroIndex == 10) then
+            call ExecuteFunc("M1X")
+        elseif (heroIndex == 23) then
+            // 地精工程师
+            call ExecuteFunc("M2X")
+            call ExecuteFunc("M3X")
+        elseif (heroIndex == 75) then
+            call ExecuteFunc("M4X")
+        elseif (heroIndex == 59) then
+            //call ExecuteFunc("M5X")
+            // 蜘蛛网
+            call ExecuteFunc("BroodmotherSpinWeb_Init")
+        elseif (heroIndex == 77) then
+            call ExecuteFunc("M7X")
+        elseif (heroIndex == 81) then
+            call ExecuteFunc("M8X")
+        elseif (heroIndex == 105) then
+            call ExecuteFunc("M9X")
+        elseif (heroIndex == 107) then
+            call RegisterUnitAttackFunc("PVX", 0)
+            call ExecuteFunc("PEX")
+            // 灵魂超度
+            set HaveVisage = true
+            // call ExecuteFunc("PXX")
+            call ExecuteFunc("POX")
+        elseif (heroIndex == 79) then
+            call ExecuteFunc("PRX")
+        elseif (heroIndex == 85) then
+            call ExecuteFunc("SpectralDagger_Init")
+            call ExecuteFunc("PAX")
+        elseif (heroIndex == 86) then
+            call ExecuteFunc("PNX")
+        elseif (heroIndex == 33) then
+            call ExecuteFunc("PBX")
+        elseif (heroIndex == 88) then
+            // 术士
+            call ExecuteFunc("PCX")
+            call ExecuteFunc("PDX")
+            // 地狱火
+            call ExecuteFunc("PFX")
+        elseif heroIndex == 90 then
+            call ExecuteFunc("PGX")
+        elseif heroIndex == 71 then
+            call ExecuteFunc("PHX")
+        elseif heroIndex == 91 then
+            call ExecuteFunc("PJX")
+        elseif heroIndex == 44 then
+            call ExecuteFunc("PhaseShiftOnInit")
+        elseif heroIndex == 121 then
+            set AX = true
+            //elseif heroIndex == 98 then
+            //	call ExecuteFunc("PLX")
+        elseif heroIndex == 78 then
+            call ExecuteFunc("PMX")
+        elseif heroIndex == 72 then
+            call ExecuteFunc("InitLifestealerBuffTable")
+        elseif heroIndex == 46 then
+            call ExecuteFunc("PQX")
+        elseif heroIndex == 47 then
+            call ExecuteFunc("PSX")
+        elseif heroIndex == 96 then
+            call ExecuteFunc("PTX")
+        elseif heroIndex == 97 then
+            call ExecuteFunc("PUX")
+        elseif heroIndex == 51 then
+            call ExecuteFunc("PWX")
+        elseif heroIndex == 49 then
+            call ExecuteFunc("PYX")
+        elseif heroIndex == 29 then
+            call ExecuteFunc("PZX")
+        elseif heroIndex == 50 then
+            call ExecuteFunc("P_X")
+        elseif heroIndex == 30 then
+            call ExecuteFunc("CreatePrimalSplitTrigger")
+        elseif heroIndex == 53 then
+            call ExecuteFunc("P1X")
+            call ExecuteFunc("P2X")
+        elseif heroIndex == 54 then
+            //	call ExecuteFunc("P3X")
+            call ExecuteFunc("P4X")
+        elseif heroIndex == 55 then
+        elseif heroIndex == 56 then
+            call ExecuteFunc("P5X")
+        elseif heroIndex == 57 then
+            call ExecuteFunc("P6X")
+        endif
+    endfunction
 
     function GetPlayerUltimate1Cooldown takes player whichPlayer returns real
         local integer id = GetPlayerId(whichPlayer)
@@ -27,13 +178,15 @@ library HeroSkillLib requires AbilityCustomOrderId
         return s
     endfunction
 
+    /*
     struct HeroSkill extends array
         
-        integer base
+        integer baseId
         // 对于主动技能，是神杖升级，对于被动技能，是被动的提示
-        integer special
+        integer specialId
         
     endstruct
+    */
 
     globals
         integer array PlayerSkillIndices
@@ -165,6 +318,42 @@ library HeroSkillLib requires AbilityCustomOrderId
         set PassiveSkill_Show[PassiveAbilityMaxCount]= iShowSkill
         set PassiveSkill_Illusion[PassiveAbilityMaxCount]= iillusionUnitSkill
         call SetAllPlayerAbilityUnavailable(iSpellBookSkill)
+    endfunction
+
+    globals
+	    boolean array HeroIndexInitialized
+        boolean array SkillIndexInitialized
+    endglobals
+    // i = skillIndex
+    function HeroSkillInitializerByIndex takes integer skillIndex returns nothing
+        local integer heroIndex = R2I((I2R(skillIndex)+ 3.)/ 4.) // skillIndex2heroIndex
+        if heroIndex > 151 then
+            set heroIndex = 151
+        endif
+        if not (HeroIndexInitialized[heroIndex]) then
+            call HeroOnInitializer(heroIndex)
+            set HeroIndexInitialized[heroIndex] = true
+        endif
+        if not (SkillIndexInitialized[skillIndex]) then
+            call SkillOnInitializer(skillIndex)
+            set SkillIndexInitialized[skillIndex] = true
+        endif
+        if HaveSavedString(ObjectHashTable, HeroSkill_BaseId[skillIndex], 600) and LoadBoolean(ObjectHashTable, HeroSkill_BaseId[skillIndex], 600) == false then
+            call SaveBoolean(ObjectHashTable, HeroSkill_BaseId[skillIndex], 600, true)
+            call ExecuteFunc(LoadStr(ObjectHashTable, HeroSkill_BaseId[skillIndex], 600))
+        endif
+        if HaveSavedString(ObjectHashTable, HeroSkill_BaseId[skillIndex], 601) and LoadBoolean(ObjectHashTable, HeroSkill_BaseId[skillIndex], 601) == false then
+            call SaveBoolean(ObjectHashTable, HeroSkill_BaseId[skillIndex], 601, true)
+            call ExecuteFunc(LoadStr(ObjectHashTable, HeroSkill_BaseId[skillIndex], 601))
+        endif
+    endfunction
+    function HeroSkillInitializerByPlayerId takes integer playerIndex returns nothing
+        local integer slot = 1
+        loop
+            call HeroSkillInitializerByIndex(PlayerSkillIndices[playerIndex * MAX_SKILL_SLOTS + slot])
+            set slot = slot + 1
+        exitwhen slot > 4 + ExtraSkillsCount
+        endloop
     endfunction
 
 endlibrary

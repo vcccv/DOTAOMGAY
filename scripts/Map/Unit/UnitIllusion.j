@@ -129,7 +129,7 @@ library UnitIllusion requires UnitUtils, UnitWeapon, UnitMorph, BuffSystem
         // 同步一下幻象单位的技能 不然可能会有奇怪现象(一堆被动技能)
         call SyncIllusionUnitSkills(illusionUnit, sourceUnit)
         // 同步射手天赋给幻象
-        if GetUnitAbilityLevel(sourceUnit,'A0VC')> 0 then
+        if GetUnitAbilityLevel(sourceUnit, 'A0VC')> 0 then
             call SaveUnitHandle(OtherHashTable2,'ILLU', 0, illusionUnit)
             call SaveUnitHandle(OtherHashTable2,'ILLU', 1, sourceUnit)
             call ExecuteFunc("I8R")

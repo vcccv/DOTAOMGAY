@@ -1,11 +1,19 @@
 
 scope Mirana
 
+    globals
+        constant integer HERO_INDEX_MIRANA    = 40
+    endglobals
+
     //***************************************************************************
     //*
     //*  群星坠落
     //*
     //***************************************************************************
+    globals
+        constant integer SKILL_INDEX_STARFALL = GetHeroSKillIndexBySlot(HERO_INDEX_MIRANA, 1)
+        constant integer STARFALL_UPGRADE_ABILITY_ID = 'A3UF'
+    endglobals
     private function DelayDamageOnExpired takes nothing returns nothing
         local SimpleTick tick        = SimpleTick.GetExpired()
         local unit       whichUnit   = SimpleTickTable[tick].unit['u']
@@ -157,7 +165,6 @@ scope Mirana
         call StarfallOnEffectStart(GetTriggerUnit())
     endfunction
 
-    #define STARFALL_UPGRADE_ABILITY_ID 'A3UF'
     function StarfallUpgradedOnUpdate takes nothing returns nothing
         local SimpleTick tick      = SimpleTick.GetExpired()
         local unit       whichUnit = SimpleTickTable[tick].unit['u']
@@ -168,7 +175,7 @@ scope Mirana
         local real       area
         local integer    count
         
-        if UnitAlive(whichUnit) and IsUnitAghanimScepterUpgraded(whichUnit) /*
+        if UnitAlive(whichUnit) and IsUnitScepterUpgraded(whichUnit) /*
             */ and GetUnitAbilityCooldownRemaining(whichUnit, STARFALL_UPGRADE_ABILITY_ID) == 0. /*
             */ and ( ( GetUnitAbilityLevel(whichUnit,'A0KV') + GetUnitAbilityLevel(whichUnit,'A3UG') ) > 0 ) /*
             */ and not IsUnitBroken(whichUnit) then
@@ -238,10 +245,8 @@ scope Mirana
     function StarfallOnGetScepterUpgrade takes nothing returns nothing
         local unit whichUnit = Event.GetTriggerUnit()
 
-        call ResgiterAbilityMethodSimple(STARFALL_UPGRADE_ABILITY_ID, "StarfallUpgradeAbilityOnAdd", "StarfallUpgradeAbilityOnRemove")
         if not UnitAddPermanentAbility(whichUnit, STARFALL_UPGRADE_ABILITY_ID) then
             call UnitDisableAbility(whichUnit, STARFALL_UPGRADE_ABILITY_ID, false, true)
-            call UnitHideAbility(whichUnit, STARFALL_UPGRADE_ABILITY_ID, false)
         endif
 
         set whichUnit = null
@@ -250,7 +255,6 @@ scope Mirana
         local unit whichUnit = Event.GetTriggerUnit()
 
         call UnitDisableAbility(whichUnit, STARFALL_UPGRADE_ABILITY_ID, true, true)
-        call UnitHideAbility(whichUnit, STARFALL_UPGRADE_ABILITY_ID, true)
 
         set whichUnit = null
     endfunction

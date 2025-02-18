@@ -25173,12 +25173,12 @@ researchart=ReplaceableTextures\CommandButtons\BTNStarfall
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNStarfall.blp
 [A3UF]
 art=ReplaceableTextures\PassiveButtons\BTNStarfall
-name="Starfall (aghanim)"
-tip="天幕坠落 - 神杖升级"
+name="天幕坠落 - 神杖升级"
+tip="天幕坠落"
 ubertip="每12秒自动施放一次同等级的群星坠落，英雄隐身时不会触发"
 buttonpos=0,0
 [A3UR]
-name="侧面机枪 (Gyro Agh)"
+name="侧面机枪 - 神杖升级"
 tip="侧面机枪"
 ubertip="由阿哈利姆神杖提供。侧面机枪能在固定的时间间隔内发动随机性的即时攻击。它的攻击不影响正常攻击，不用瞄准目标，不会干扰英雄的其他操作，并能无视英雄的眩晕、控制、施法等状态。侧面机枪能触发任意的攻击效果。如果英雄被致盲了，侧面机枪也会被致盲，除非它拥有克敌机先效果，它的攻击也会被闪避效果所躲避。侧面机枪在英雄隐身时，或被破坏效果禁用后不会攻击。侧面机枪不会攻击守卫或信使，但能攻击建筑，且只会攻击英雄视野范围内的目标。|n|n|cff99ccff作用范围：|r700"
 buttonpos=1,0

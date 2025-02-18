@@ -46,7 +46,7 @@ library ScepterUpgradeLib requires HeroSkillLib, ItemSystem
     endglobals
 
     // 单位是否神杖升级
-    function IsUnitAghanimScepterUpgraded takes unit whichUnit returns boolean
+    function IsUnitScepterUpgraded takes unit whichUnit returns boolean
         return Table[GetHandleId(whichUnit)].integer[UNIT_SCEPTER_COUNT] > 0
         /*
         local item 	  whichItem

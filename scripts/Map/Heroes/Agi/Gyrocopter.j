@@ -1,31 +1,42 @@
 
 scope Gyrocopter
 
+    globals
+        constant integer HERO_INDEX_GRYOCOPTER = 48
+    endglobals
+
     //***************************************************************************
     //*
     //*  侧面机枪
     //*
     //***************************************************************************
-    #define FLAKCANNON_UPGRADE_ABILITY_ID 'A3UR'
-    function FlakCannonScepterUpgradeOnUpdate takes nothing returns nothing
-        local trigger trig = GetTriggeringTrigger()
-        local integer h    = GetHandleId(trig)
-        local unit    u    = LoadUnitHandle(HY, h, 0)
-        local player  p    
-        local real    x
-        local real    y
-        local group   enumGroup
-        local group   targGroup
-        local unit    first = null
-        local real    area  = 700.
+    globals
+        constant integer SKILL_INDEX_FLAKCANNON = GetHeroSKillIndexBySlot(HERO_INDEX_GRYOCOPTER, 3)
+        constant integer FLAKCANNON_UPGRADE_ABILITY_ID = 'A3UR'
+    endglobals
 
-        if UnitAlive(u) and GetUnitAbilityLevel(u, FLAKCANNON_UPGRADE_ABILITY_ID) > 0 and not IsUnitCloaked(u) and not IsUnitHidden(u) and not IsUnitBroken(u) then
+    function FlakCannonScepterUpgradeOnUpdate takes nothing returns nothing
+        local SimpleTick tick      = SimpleTick.GetExpired()
+        local unit       whichUnit = SimpleTickTable[tick].unit['u']
+        local player     p    
+        local real       x
+        local real       y
+        local group      enumGroup
+        local group      targGroup
+        local unit       first     = null
+        local real       area      = 700.
+
+        // 自己非隐身非破坏非隐藏
+        if UnitAlive(whichUnit) and IsUnitScepterUpgraded(whichUnit) /*
+            */ and not IsUnitCloaked(whichUnit) /*
+            */ and not IsUnitHidden(whichUnit) and not IsUnitBroken(whichUnit) then
+
             set enumGroup = AllocationGroup(79912)
             set targGroup = AllocationGroup(79913)
 
-            set x = GetUnitX(u)
-            set y = GetUnitY(u)
-            set p = GetOwningPlayer(u)
+            set x = GetUnitX(whichUnit)
+            set y = GetUnitY(whichUnit)
+            set p = GetOwningPlayer(whichUnit)
 
             call GroupEnumUnitsInRange(enumGroup, x, y, area + MAX_UNIT_COLLISION, null)
             loop
@@ -33,7 +44,9 @@ scope Gyrocopter
                 exitwhen first == null
                 call GroupRemoveUnit(enumGroup, first)
 
-                if UnitAlive(first) and IsUnitInRangeXY(first, x, y, area) and IsUnitEnemy(first, p) and not IsUnitWard(first) then
+                // 敌对 存活 非守卫
+                if UnitAlive(first) and IsUnitInRangeXY(first, x, y, area) and IsUnitEnemy(first, p)/*
+                    */ and not IsUnitWard(first) and not IsUnitCourier(first) then
                     call GroupAddUnit(targGroup, first)
                 endif
 
@@ -44,9 +57,10 @@ scope Gyrocopter
                 exitwhen first == null
                 call GroupRemoveUnit(targGroup, first)
 
-                if IsUnitVisible(first, p) and not IsUnitEthereal(first) and not IsUnitInvulnerable(first) then
-                    call UnitLaunchAttack(u, first)
-                    call StartAbilityCooldownAbsoluteEx(GetUnitAbility(u, FLAKCANNON_UPGRADE_ABILITY_ID), 1.5)
+                // 可见，非虚无，非无敌
+                if IsUnitVisibleToPlayer(first, p) and not IsUnitEthereal(first) and not IsUnitInvulnerable(first) then
+                    call UnitLaunchAttack(whichUnit, first)
+                    call StartAbilityCooldownAbsoluteEx(GetUnitAbility(whichUnit, FLAKCANNON_UPGRADE_ABILITY_ID), 1.5)
                     exitwhen true
                 endif
                 
@@ -56,31 +70,52 @@ scope Gyrocopter
             call DeallocateGroup(targGroup)
         endif
 
-        set u    = null
-        set trig = null
+        set whichUnit = null
+    endfunction
+
+    function FlakCannonUpgradeAbilityOnAdd takes nothing returns nothing
+        local unit       whichUnit    = Event.GetTriggerUnit()
+        local ability    whichAbility = Event.GetTriggerAbility()
+        local SimpleTick tick
+
+        set tick = SimpleTick.CreateEx()
+        call tick.Start(1.5, true, function FlakCannonScepterUpgradeOnUpdate)
+        set SimpleTickTable[tick].unit['u'] = whichUnit
+        // 父key unit 子key ability
+        set Table[GetHandleId(whichAbility)].integer[GetHandleId(whichUnit)] = tick
+
+        set whichAbility = null
+        set whichUnit    = null
+    endfunction
+
+    function FlakCannonUpgradeAbilityOnRemove takes nothing returns nothing
+        local unit       whichUnit    = Event.GetTriggerUnit()
+        local ability    whichAbility = Event.GetTriggerAbility()
+        local SimpleTick tick         = Table[GetHandleId(whichAbility)].integer[GetHandleId(whichUnit)]
+
+        call tick.Destroy()
+
+        call Table[GetHandleId(whichAbility)].integer.remove(GetHandleId(whichUnit))
+
+        set whichAbility = null
+        set whichUnit    = null
     endfunction
 
     function FlakCannonOnGetScepterUpgrade takes nothing returns nothing
-        local unit 	  u = TempUnit
-        local trigger trig 
-        local integer h
-        call UnitAddPermanentAbility(u, FLAKCANNON_UPGRADE_ABILITY_ID)
-        if not HaveSavedHandle(HY, GetHandleId(u), FLAKCANNON_UPGRADE_ABILITY_ID)then
-            set trig = CreateTrigger()
-            set h = GetHandleId(trig)
-            call TriggerAddCondition(trig, Condition(function FlakCannonScepterUpgradeOnUpdate))
-            call TriggerRegisterTimerEvent(trig, 1.5, true)
-            call SaveTriggerHandle(HY, GetHandleId(u), FLAKCANNON_UPGRADE_ABILITY_ID, trig)
-            call SaveUnitHandle(HY, h, 0, u)
-            call SetPlayerAbilityAvailable(GetOwningPlayer(u), FLAKCANNON_UPGRADE_ABILITY_ID, true)
-            set trig = null
+        local unit whichUnit = Event.GetTriggerUnit()
+
+        if not UnitAddPermanentAbility(whichUnit, FLAKCANNON_UPGRADE_ABILITY_ID) then
+            call UnitDisableAbility(whichUnit, FLAKCANNON_UPGRADE_ABILITY_ID, false, true)
         endif
-        set u = null
+
+        set whichUnit = null
     endfunction
     function FlakCannonOnLostScepterUpgrade takes nothing returns nothing
-        local unit u = TempUnit
-        
-        set u = null
+        local unit whichUnit = Event.GetTriggerUnit()
+
+        call UnitDisableAbility(whichUnit, FLAKCANNON_UPGRADE_ABILITY_ID, true, true)
+
+        set whichUnit = null
     endfunction
 
 endscope

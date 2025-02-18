@@ -13,8 +13,12 @@ library UnitAbility requires AbilityUtils, UnitLimitation
         private key ABSOLUTE_COOLDOWN
 
         // 熊灵的
-        private key ITEM_ABILITY_OWNER
+        private key SPIRIT_BEAR_ITEM_ABILITY
     endglobals
+
+    function GetUnitAbility takes unit whichUnit, integer abilId returns ability
+        return MHUnit_GetAbility(whichUnit, abilId, false)
+    endfunction
 
     function DisableEndCooldownTrigger takes nothing returns nothing
         call DisableTrigger(EndCooldownTrig)
@@ -31,7 +35,14 @@ library UnitAbility requires AbilityUtils, UnitLimitation
     endfunction
 
     function UnitDisableAbility takes unit whichUnit, integer abilId, boolean flag, boolean hideUI returns nothing
-        call MHAbility_Disable(whichUnit, abilId, flag, hideUI)
+        if GetAbilityBaseIdById(abilId) == 'AOre' then
+            call MHAbility_DisableEx(whichUnit, abilId, flag)
+            if hideUI then
+                call MHAbility_Hide(whichUnit, abilId, flag)
+            endif
+        else
+            call MHAbility_Disable(whichUnit, abilId, flag, hideUI)
+        endif
     endfunction
     function UnitHideAbility takes unit whichUnit, integer abilId, boolean flag returns nothing
         call MHAbility_Hide(whichUnit, abilId, flag)
@@ -324,9 +335,9 @@ library UnitAbility requires AbilityUtils, UnitLimitation
         call AnyUnitEvent.ExecuteEvent(whichUnit, ANY_UNIT_EVENT_ABILITY_END_COOLDOWN)
         set Event.INDEX = Event.INDEX - 1
 
-        if Table[GetHandleId(whichAbility)].item.has(ITEM_ABILITY_OWNER) then
-            call SetItemDroppable(Table[GetHandleId(whichAbility)].item[ITEM_ABILITY_OWNER], true)
-            call Table[GetHandleId(whichAbility)].item.remove(ITEM_ABILITY_OWNER)
+        if Table[GetHandleId(whichAbility)].item.has(SPIRIT_BEAR_ITEM_ABILITY) then
+            call SetItemDroppable(Table[GetHandleId(whichAbility)].item[SPIRIT_BEAR_ITEM_ABILITY], true)
+            call Table[GetHandleId(whichAbility)].item.remove(SPIRIT_BEAR_ITEM_ABILITY)
         endif
 
         set whichAbility = null
@@ -454,7 +465,7 @@ library UnitAbility requires AbilityUtils, UnitLimitation
         if whichAbility != null then
             set cooldown = GetAbilityCooldown(whichAbility)
             if cooldown > 0. then
-                set Table[GetHandleId(whichAbility)].item[ITEM_ABILITY_OWNER] = whichItem
+                set Table[GetHandleId(whichAbility)].item[SPIRIT_BEAR_ITEM_ABILITY] = whichItem
                 call SetItemDroppable(whichItem, false)
             endif
         endif

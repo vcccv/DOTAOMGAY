@@ -6,7 +6,9 @@ scope Tuskarr
     //*  海象飞踢
     //*
     //***************************************************************************
-    #define WALRUS_KICK_ABILITY_ID 'A3DF'
+    globals
+        constant integer WALRUS_KICK_ABILITY_ID = 'A3DF'
+    endglobals
 
     function WalrusPunchOnGetScepterUpgrade takes nothing returns nothing
         local unit whichUnit = Event.GetTriggerUnit()

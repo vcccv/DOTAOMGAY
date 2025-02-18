@@ -111,9 +111,13 @@ library ScepterUpgradeDefine requires ScepterUpgradeLib
         set scepterUpgradeIndex = RegisterScepterUpgrade('A0CY', 0, 0, 0)
         set scepterUpgradeIndex = RegisterScepterUpgrade('A088', 0, 0, 0)
         call RegisterSkillScepterUpgradeMethod(scepterUpgradeIndex, "MultiCastOnGetScepterUpgrade", "MultiCastOnLostScepterUpgrade")
-
+        
         set scepterUpgradeIndex = RegisterScepterUpgrade('A085', 0, 0, 0)
         
+        // 射手天赋
+        set scepterUpgradeIndex = RegisterScepterUpgrade('QF88', 0, 0, 0)
+        call RegisterSkillScepterUpgradeMethod(scepterUpgradeIndex, "MarksmanshipOnGetScepterUpgrade", "MarksmanshipOnLostScepterUpgrade")
+
         // 高射火炮 FlakCannon
         set scepterUpgradeIndex = RegisterScepterUpgrade('A229', 0, 0, 0)
         call RegisterSkillScepterUpgradeMethod(scepterUpgradeIndex, "FlakCannonOnGetScepterUpgrade", "FlakCannonOnLostScepterUpgrade")

@@ -1,6 +1,10 @@
 
 scope Enchantress
 
+    globals
+        constant integer HERO_INDEX_ENCHANTRESS = 3
+    endglobals
+
     //***************************************************************************
     //*
     //*  推进

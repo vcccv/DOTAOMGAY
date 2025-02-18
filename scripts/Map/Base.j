@@ -1,6 +1,23 @@
 
 library Base requires TriggerDestroyQueue, GroupAlloc, ErrorMessage
     
+    // 暂时丢这里
+    function RegisterUnitAttackFunc takes string s, integer level returns nothing
+        local integer i = 0
+        loop
+        exitwhen HaveSavedString(AbilityDataHashTable,'DMGE'+ level, i) == false
+            if LoadStr(AbilityDataHashTable,'DMGE'+ level, i) == s then
+                return
+            endif
+            set i = i + 1
+        endloop
+        call SaveStr(AbilityDataHashTable,'DMGE'+ level, i, s)
+    endfunction
+
+    function PreloadUnit takes integer unitId returns nothing
+        call RemoveUnit(CreateUnit(Player(15), unitId, 0, 0, 0))
+    endfunction
+
     function SetAllPlayerAbilityUnavailable takes integer id returns nothing
         call SetPlayerAbilityAvailable(Player(1), id, false)
         call SetPlayerAbilityAvailable(Player(2), id, false)
