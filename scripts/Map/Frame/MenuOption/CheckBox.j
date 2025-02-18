@@ -43,17 +43,17 @@ scope MenuOptionCheckBox
             endif
         elseif data == 7 then //自动选择召唤物
             if IsPlayerAutoSelectSummoned[id] then
-                set IsPlayerAutoSelectSummoned[id]= false
+                set IsPlayerAutoSelectSummoned[id] = false
                 call DisplayTimedTextToPlayer(p, 0, 0, 5, GetObjectName('n0JZ'))
             else
-                set IsPlayerAutoSelectSummoned[id]= true
+                set IsPlayerAutoSelectSummoned[id] = true
                 call DisplayTimedTextToPlayer(p, 0, 0, 5, GetObjectName('n0K0'))
             endif
         elseif data == 8 then //自动装置神符
             if LocalPlayer == p then
                 call GetSetupText("自动装置神符", XI[id])
             endif
-            set XI[id]= not XI[id]
+            set XI[id] = not XI[id]
         elseif data == 9 then //拒绝队友帮助技能
             set b = not LoadBoolean(HY, GetHandleId(p),  139)
             call SaveBoolean(HY, GetHandleId(p),  139, b)
@@ -83,7 +83,7 @@ scope MenuOptionCheckBox
                 endif
             endif
         elseif data == 14 then
-            set ZR[id]= not ZR[id]
+            set ZR[id] = not ZR[id]
             if LocalPlayer == p then
                 call GetSetupText("震动视角", ZR[id])
             endif
@@ -97,9 +97,9 @@ scope MenuOptionCheckBox
                 call GetSetupText("快速清理", DisplayTextDuration[id]== 10.)
             endif
             if DisplayTextDuration[id]== 1. then
-                set DisplayTextDuration[id]= 10.
+                set DisplayTextDuration[id] = 10.
             else
-                set DisplayTextDuration[id]= 1.
+                set DisplayTextDuration[id] = 1.
             endif
         elseif data == 18 then
             set b = LoadBoolean(OtherHashTable, GetHandleId(p),'UIds')

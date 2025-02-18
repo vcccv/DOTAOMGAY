@@ -3,6 +3,7 @@
 #include "ItemAbility.j"
 #include "Unit\\include"
 #include "Ability\\include"
+#include "Item\\include"
 #include "Utilities\\include"
 #include "EventSystem.j"
 #include "ItemSystem\\include"

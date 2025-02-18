@@ -82,12 +82,12 @@ scope Kunkka
             set attackDmg = attackDmg / GetIllusionDamageTaken(targetUnit)
         endif
         if Mode__RearmCombos then
-            set Temp__ArrayReal[0]= attackDmg
+            set Temp__ArrayReal[0] = attackDmg
         else
-            set Temp__ArrayReal[0]= attackDmg * .8
+            set Temp__ArrayReal[0] = attackDmg * .8
         endif
-        set Temp__ArrayUnit[0]= whichUnit
-        set Temp__ArrayUnit[1]= targetUnit
+        set Temp__ArrayUnit[0] = whichUnit
+        set Temp__ArrayUnit[1] = targetUnit
         set Temp__Player = GetOwningPlayer(whichUnit)
         call GroupEnumUnitsInRange( AK, x2, y2, range, null )
         call GroupRemoveUnit( AK, targetUnit ) // 移除攻击目标 防止造成第二次伤害

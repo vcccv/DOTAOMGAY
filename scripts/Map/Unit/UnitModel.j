@@ -22,9 +22,9 @@ library UnitModel requires Table, TimerUtils
         if unitTypeId != 0 and unitTypeId != heroTypeId then
             call SaveReal( ObjectData, OBJ_HTKEY_UNIT_ORIGIN_SCALE, unitTypeId, scaleData )
         endif
-        //set AJ[DJ]= XEX
-        //set BJ[DJ]= XVX
-        //set CJ[DJ]= XXX
+        //set AJ[DJ] = XEX
+        //set BJ[DJ] = XVX
+        //set CJ[DJ] = XXX
     endfunction
 
     function GetUnitModelScale takes unit whichUnit returns real

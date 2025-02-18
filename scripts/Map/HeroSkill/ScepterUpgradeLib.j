@@ -88,7 +88,7 @@ library ScepterUpgradeLib requires HeroSkillLib, ItemSystem
         // 未引用 参数都是0
         set ScepterUpgrade_UnknownId[ScepterUpgradeMaxCount] = whichInteger
         if id > 0 and HeroSkill_SpecialId[id] == 0 then
-            set HeroSkill_SpecialId[id]= upgradeId
+            set HeroSkill_SpecialId[id] = upgradeId
         endif
         return ScepterUpgradeMaxCount
     endfunction

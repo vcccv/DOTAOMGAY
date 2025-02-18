@@ -239,7 +239,7 @@ scope DamageSystem
 
         // 设置助攻
         static method SetAssistList takes nothing returns nothing
-            set AssistListTime[AssistListCurrentMaxNumber]= (GameTimer.GetElapsed())
+            set AssistListTime[AssistListCurrentMaxNumber] = (GameTimer.GetElapsed())
             set AssistListSourcePlayerId[AssistListCurrentMaxNumber] = DamagedEventSourcePlayerId
             set AssistListTargetPlayerId[AssistListCurrentMaxNumber] = DamagedEventPlayerId
             set AssistListCurrentMaxNumber = AssistListCurrentMaxNumber + 1
@@ -283,7 +283,7 @@ scope DamageSystem
             // =======================================================================
             // call SetAssistList()
             // 设置助攻列表
-            set AssistListTime[AssistListCurrentMaxNumber]= (GetGameTime())
+            set AssistListTime[AssistListCurrentMaxNumber] = (GetGameTime())
             set AssistListSourcePlayerId[AssistListCurrentMaxNumber] = DamagedEventSourcePlayerId
             set AssistListTargetPlayerId[AssistListCurrentMaxNumber] = DamagedEventPlayerId
             set AssistListCurrentMaxNumber = AssistListCurrentMaxNumber + 1
@@ -293,7 +293,7 @@ scope DamageSystem
             // =======================================================================
             if DEDamage > 0 and DEDamage < 9000 then
                 set hu = GetHandleId(DETarget)
-                set YO[0]= GetUnitTypeId(DETarget)
+                set YO[0] = GetUnitTypeId(DETarget)
                 // 设置真正的伤害来源 排除掉马甲
                 if (IsUnitDummy(DESource)) then
                     set DESource = PlayerHeroes[DamagedEventSourcePlayerId]

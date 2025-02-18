@@ -214,7 +214,7 @@ library HeroSkillLib requires AbilityCustomOrderId, AbilityUtils, UnitAbility
     endglobals
 
     function AddControlSkillIndex takes integer id returns nothing
-        set CONTROL_SKILL_INDEX_LIST[CONTROL_SKILL_INDEX_LIST_SIZE]= id
+        set CONTROL_SKILL_INDEX_LIST[CONTROL_SKILL_INDEX_LIST_SIZE] = id
         set CONTROL_SKILL_INDEX_LIST_SIZE = CONTROL_SKILL_INDEX_LIST_SIZE + 1
     endfunction
 
@@ -274,11 +274,11 @@ library HeroSkillLib requires AbilityCustomOrderId, AbilityUtils, UnitAbility
     // Id StackLim暂时无用 普通技能 神杖技能 工程升级技能 
     function RegisterHeroSkill takes integer id, string StackLim, integer commonSkill, integer upgradeSkill, integer changeSkill, string sHotKey returns nothing
         if commonSkill > 0 then
-            set HeroSkill_Icon[id]= GetAbilitySoundById(commonSkill, SOUND_TYPE_EFFECT_LOOPED)
+            set HeroSkill_Icon[id] = GetAbilitySoundById(commonSkill, SOUND_TYPE_EFFECT_LOOPED)
         endif
-        set HeroSkill_BaseId[id]= commonSkill
-        set HeroSkill_SpecialId[id]= upgradeSkill
-        set HeroSkill_Modify[id]= changeSkill
+        set HeroSkill_BaseId[id] = commonSkill
+        set HeroSkill_SpecialId[id] = upgradeSkill
+        set HeroSkill_Modify[id] = changeSkill
         if sHotKey != "_" and sHotKey != "" and sHotKey != null then
             call SaveStr(AbilityDataHashTable, commonSkill, HotKeyStringHash, sHotKey)
         endif
@@ -311,12 +311,12 @@ library HeroSkillLib requires AbilityCustomOrderId, AbilityUtils, UnitAbility
     // 实际上应该优化 但没事还是别改
     function RegisterPassiveSkill takes integer iRealSkill, integer iSpellBookSkill, integer iLearnedSkill, integer iSkillBuff, integer iShowSkill, integer iillusionUnitSkill returns nothing
         set PassiveAbilityMaxCount = PassiveAbilityMaxCount + 1
-        set PassiveSkill_Real[PassiveAbilityMaxCount]= iRealSkill
-        set PassiveSkill_SpellBook[PassiveAbilityMaxCount]= iSpellBookSkill
-        set PassiveSkill_Learned[PassiveAbilityMaxCount]= iLearnedSkill
-        set PassiveSkill_Buff[PassiveAbilityMaxCount]= iSkillBuff
-        set PassiveSkill_Show[PassiveAbilityMaxCount]= iShowSkill
-        set PassiveSkill_Illusion[PassiveAbilityMaxCount]= iillusionUnitSkill
+        set PassiveSkill_Real[PassiveAbilityMaxCount] = iRealSkill
+        set PassiveSkill_SpellBook[PassiveAbilityMaxCount] = iSpellBookSkill
+        set PassiveSkill_Learned[PassiveAbilityMaxCount] = iLearnedSkill
+        set PassiveSkill_Buff[PassiveAbilityMaxCount] = iSkillBuff
+        set PassiveSkill_Show[PassiveAbilityMaxCount] = iShowSkill
+        set PassiveSkill_Illusion[PassiveAbilityMaxCount] = iillusionUnitSkill
         call SetAllPlayerAbilityUnavailable(iSpellBookSkill)
     endfunction
 

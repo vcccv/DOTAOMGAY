@@ -269,7 +269,7 @@ scope GameEnd
         loop
         exitwhen i > 5
             if IsPlayerPlaying(SentinelPlayers[i]) or GetPlayerSlotState(SentinelPlayers[i]) == PLAYER_SLOT_STATE_LEFT then
-                set sentinelUserList[x]= SentinelPlayers[i]
+                set sentinelUserList[x] = SentinelPlayers[i]
                 set x = x + 1
             endif
             set i = i + 1
@@ -279,7 +279,7 @@ scope GameEnd
         loop
         exitwhen i > 5
             if IsPlayerPlaying(ScourgePlayers[i]) or GetPlayerSlotState(ScourgePlayers[i]) == PLAYER_SLOT_STATE_LEFT then
-                set scourgeUserList[x]= ScourgePlayers[i]
+                set scourgeUserList[x] = ScourgePlayers[i]
                 set x = x + 1
             endif
             set i = i + 1
@@ -889,9 +889,9 @@ scope GameEnd
             call SetMultiboardItemDatas(mbt, true, false, PlayerOnlineStateString[GetPlayerId(sentinelUserList[i])], null, .07)
             call MultiboardReleaseItem(mbt)
             set FVV = FVV + 1
-            set D7V[FVV]= loop_row
-            set D8V[FVV]= loop_column
-            set D9V[FVV]= sentinelUserList[i]
+            set D7V[FVV] = loop_row
+            set D8V[FVV] = loop_column
+            set D9V[FVV] = sentinelUserList[i]
             set i = i + 1
         endloop
         set i = 1
@@ -902,9 +902,9 @@ scope GameEnd
             call SetMultiboardItemDatas(mbt, true, false, PlayerOnlineStateString[GetPlayerId(scourgeUserList[i])], null, .07)
             call MultiboardReleaseItem(mbt)
             set FVV = FVV + 1
-            set D7V[FVV]= loop_row
-            set D8V[FVV]= loop_column
-            set D9V[FVV]= scourgeUserList[i]
+            set D7V[FVV] = loop_row
+            set D8V[FVV] = loop_column
+            set D9V[FVV] = scourgeUserList[i]
             set i = i + 1
         endloop
         set loop_column = 0

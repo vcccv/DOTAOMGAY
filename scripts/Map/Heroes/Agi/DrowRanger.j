@@ -29,7 +29,7 @@ scope DrowRanger
         local integer id ='A0VC'
         local unit u = LoadUnitHandle(HY, h, 0)
         if GetHandleId(u)> 0 then
-            set Temp__ArrayUnit[0]= u
+            set Temp__ArrayUnit[0] = u
             set OK = true
             if LoadBoolean(HY, h, 0) == false then
                 if GetUnitAbilityLevel(u, id)< GetUnitAbilityLevel(u,'QF88') then

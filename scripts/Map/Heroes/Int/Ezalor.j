@@ -53,8 +53,8 @@ scope Ezalor
         call SaveReal(ObjectHashTable, h, StringHash("scale"), s)
         call A8X(GetOwningPlayer(O8O), 2.5, x, y, 375)
         set Temp__Player = LoadPlayerHandle(ObjectHashTable, h, 2)
-        set Temp__ArrayUnit[0]= O8O
-        set XK[0]= LoadInteger(ObjectHashTable, h, 1)
+        set Temp__ArrayUnit[0] = O8O
+        set XK[0] = LoadInteger(ObjectHashTable, h, 1)
         set Q7V = LoadGroupHandle(ObjectHashTable, h, 3)
         set X3 = IsUnitScepterUpgraded(u)
         call GroupEnumUnitsInRange(AK, x, y, 375, Condition(function W1R))

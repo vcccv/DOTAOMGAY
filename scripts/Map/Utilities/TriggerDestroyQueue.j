@@ -9,8 +9,8 @@ library TriggerDestroyQueue requires TimerUtils, ErrorMessage
     function AddTriggerToDestroyQueue takes trigger t returns nothing
         call DisableTrigger(t)
         set MAX = MAX + 1
-        set Trig[MAX]= t
-        set Time[MAX]= GameTimer.GetElapsed() + 60.
+        set Trig[MAX] = t
+        set Time[MAX] = GameTimer.GetElapsed() + 60.
         call ThrowWarning(MAX > 8000, "DestroyTrigger", "DestroyTrigger", null, 0, "MAX > 8000")
     endfunction
 
@@ -19,8 +19,8 @@ library TriggerDestroyQueue requires TimerUtils, ErrorMessage
     // 好像不是队列
     private function Dequeue takes integer i returns nothing
         if i != MAX then
-            set Trig[i]= Trig[MAX]
-            set Time[i]= Time[MAX]
+            set Trig[i] = Trig[MAX]
+            set Time[i] = Time[MAX]
         endif
         set Trig[MAX] = null
         set Time[MAX] = 0

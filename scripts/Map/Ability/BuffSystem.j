@@ -55,7 +55,7 @@ library BuffSystem requires Base
     // 注册物理Buff
     function SetStunBuffId takes integer id returns nothing
         set A4 = A4 + 1
-        set I4[A4]= id
+        set I4[A4] = id
     endfunction
 
     globals
