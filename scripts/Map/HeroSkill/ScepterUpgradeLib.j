@@ -265,15 +265,10 @@ library ScepterUpgradeLib requires HeroSkillLib, ItemSystem
         call SilentRemoveItem(whichItem)
 
         set pid = GetPlayerId(GetOwningPlayer(whichUnit))
-        set PlayersExtraNetWorth[pid] = PlayersExtraNetWorth[pid] + GetItemGoldCostById(ItemRealId[Item_AghanimBlessing])
-        set ItemTotalGoldCostDirty[pid] = true
+        set PlayerExtraNetWorth[pid] = PlayerExtraNetWorth[pid] + GetItemGoldCostById(ItemRealId[Item_AghanimBlessing])
+        set PlayerItemTotalGoldCostDirty[pid] = true
         
         call UnitAddPermanentAbility(whichUnit, 'A3E8')
-        call SetHeroStr(whichUnit, GetHeroStr(whichUnit, false) + 10, true)
-        call SetHeroInt(whichUnit, GetHeroInt(whichUnit, false) + 10, true)
-        call SetHeroAgi(whichUnit, GetHeroAgi(whichUnit, false) + 10, true)
-        call UnitAddPermanentAbility(whichUnit,'A3I2')
-        call UnitAddPermanentAbility(whichUnit,'A3I3')
         call UnitAddScepterUpgrade(whichUnit)
   
         set whichUnit = null

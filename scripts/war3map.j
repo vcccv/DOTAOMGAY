@@ -359,7 +359,7 @@ globals
 	sound ZE
 	sound VX
 	sound EX
-	integer array PlayersExtraNetWorth
+	integer array PlayerExtraNetWorth
 	group OX = CreateGroup()
 	integer array RX
 	boolean IX = false
@@ -404,8 +404,8 @@ globals
 	unit IR
 	integer array BR
 	real array DisplayTextDuration
-	integer array LastItemTotalGoldCost
-	boolean array ItemTotalGoldCostDirty
+	integer array PlayerItemTotalGoldCost
+	boolean array PlayerItemTotalGoldCostDirty
 	unit HR
 	unit JR
 	unit KR
@@ -10646,7 +10646,7 @@ function TNX takes nothing returns nothing
 		set p = SentinelPlayers[i]
 		if IsPlayerUser(p) then
 			set pid = GetPlayerId(p)
-			if ItemTotalGoldCostDirty[pid] then // ItemTotalGoldCostDirty
+			if PlayerItemTotalGoldCostDirty[pid] then // PlayerItemTotalGoldCostDirty
 				if PlayerHeroes[pid]!= null then
 					set gold = gold + GetUnitAllItemsGoldCost(PlayerHeroes[pid])
 					set gold = gold + GetUnitAllItemsGoldCost(CirclesUnit[pid])
@@ -10654,11 +10654,11 @@ function TNX takes nothing returns nothing
 				if HaveSavedHandle(HY, GetHandleId(p), 333) then
 					set gold = gold + GetUnitAllItemsGoldCost(LoadUnitHandle(HY, GetHandleId(p), 333))
 				endif
-				set gold = gold + PlayersExtraNetWorth[pid] // A杖资产
-				set ItemTotalGoldCostDirty[pid] = false
-				set LastItemTotalGoldCost[pid] = gold
+				set gold = gold + PlayerExtraNetWorth[pid] // A杖资产
+				set PlayerItemTotalGoldCostDirty[pid] = false
+				set PlayerItemTotalGoldCost[pid] = gold
 			else
-				set gold = LastItemTotalGoldCost[pid] // LastItemTotalGoldCost
+				set gold = PlayerItemTotalGoldCost[pid] // PlayerItemTotalGoldCost
 			endif
 			set RI[pid] = gold + GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)
 			call TIX(RI[pid], CirclesUnit[pid])
@@ -10667,7 +10667,7 @@ function TNX takes nothing returns nothing
 		set p = ScourgePlayers[i]
 		if IsPlayerUser(p) then
 			set pid = GetPlayerId(p)
-			if ItemTotalGoldCostDirty[pid] then
+			if PlayerItemTotalGoldCostDirty[pid] then
 				if PlayerHeroes[pid]!= null then
 					set gold = gold + GetUnitAllItemsGoldCost(PlayerHeroes[pid])
 					set gold = gold + GetUnitAllItemsGoldCost(CirclesUnit[pid])
@@ -10675,11 +10675,11 @@ function TNX takes nothing returns nothing
 				if HaveSavedHandle(HY, GetHandleId(p), 333) then
 					set gold = gold + GetUnitAllItemsGoldCost(LoadUnitHandle(HY, GetHandleId(p), 333))
 				endif
-				set gold = gold + PlayersExtraNetWorth[pid]
-				set ItemTotalGoldCostDirty[pid] = false
-				set LastItemTotalGoldCost[pid] = gold
+				set gold = gold + PlayerExtraNetWorth[pid]
+				set PlayerItemTotalGoldCostDirty[pid] = false
+				set PlayerItemTotalGoldCost[pid] = gold
 			else
-				set gold = LastItemTotalGoldCost[pid]
+				set gold = PlayerItemTotalGoldCost[pid]
 			endif
 			set RI[pid] = gold + GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)
 			call TIX(RI[pid], CirclesUnit[pid])
@@ -14525,7 +14525,7 @@ function OnManipulatItem takes nothing returns boolean
 	local integer k
 	local item it
 	local integer i = GetItemTypeId(GetManipulatedItem())
-	set ItemTotalGoldCostDirty[GetPlayerId(GetOwningPlayer(u))] = true
+	set PlayerItemTotalGoldCostDirty[GetPlayerId(GetOwningPlayer(u))] = true
 	set id = GetPlayerId(GetOwningPlayer(u))
 	// 非镜像 英雄或者熊灵
 	if (IsUnitType(u, UNIT_TYPE_HERO) or IsUnitSpiritBear(u)) and not IsUnitIllusion(u) then
