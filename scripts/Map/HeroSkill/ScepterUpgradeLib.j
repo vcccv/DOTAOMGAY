@@ -216,7 +216,7 @@ library ScepterUpgradeLib requires HeroSkillLib, ItemSystem
 
     // 赠品直接调添加
     function UnitAddScepterUpgrade takes unit whichUnit returns nothing
-        local integer    count
+        local integer count
         set count = Table[GetHandleId(whichUnit)].integer[UNIT_SCEPTER_COUNT] + 1
         set Table[GetHandleId(whichUnit)].integer[UNIT_SCEPTER_COUNT] = count
         if count == 1 then
@@ -225,7 +225,7 @@ library ScepterUpgradeLib requires HeroSkillLib, ItemSystem
     endfunction
 
     function ItemAghanimScepterOnPickup takes nothing returns nothing
-        local unit       whichUnit = Event.GetTriggerUnit()
+        local unit whichUnit = Event.GetTriggerUnit()
         if whichUnit == null then
             return
         endif
@@ -234,10 +234,9 @@ library ScepterUpgradeLib requires HeroSkillLib, ItemSystem
 
         set whichUnit = null
     endfunction
-
     function ItemAghanimScepterOnDrop takes nothing returns nothing
-        local unit       whichUnit = Event.GetTriggerUnit()
-        local integer    count     
+        local unit    whichUnit = Event.GetTriggerUnit()
+        local integer count     
         if whichUnit == null then
             return
         endif
@@ -249,6 +248,20 @@ library ScepterUpgradeLib requires HeroSkillLib, ItemSystem
         endif
 
         set whichUnit = null
+    endfunction
+
+    function ItemAghanimBlessingOnPickup takes nothing returns nothing
+        local unit whichUnit = Event.GetTriggerUnit()
+        local item whichItem = Event.GetManipulatedItem()
+        if whichUnit == null or IsUnitScepterUpgraded(whichUnit) then
+            return
+        endif
+
+        call SilentRemoveItem(whichItem)
+        call UnitAddScepterUpgrade(whichUnit)
+  
+        set whichUnit = null
+        set whichItem = null
     endfunction
     
 endlibrary

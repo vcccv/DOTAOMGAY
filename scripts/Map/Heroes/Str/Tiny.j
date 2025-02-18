@@ -9,6 +9,9 @@ scope Tiny
     //*  长大
     //*
     //***************************************************************************
+    globals
+        constant integer SKILL_INDEX_GROW = GetHeroSKillIndexBySlot(HERO_INDEX_TINY, 4)
+    endglobals
     // 'A2KK' 魔法书
     // 'A1W0' 50%分裂
     // 'A1W4' 1.75粉碎对建筑

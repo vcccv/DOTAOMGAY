@@ -58,7 +58,7 @@
     - [x] 射手天赋
         - [x] 幻象的逻辑
     - [x] 高射火炮
-        - [ ] 整个被动图标
+        - [x] 整个被动图标
     - [x] 多重施法
     - [x] 锯齿飞轮
     - [x] 群星坠落
@@ -66,6 +66,10 @@
     - [x] 海象挥击
     - [x] 推进
     - [x] 长大
+    - [ ] 物品
+        - [ ] 卷轴类型
+        - [ ] 合成后的类型 
+        - [ ] 退款
 - [ ] **永恒之盘**
 
 ### 技能
@@ -371,3 +375,4 @@
 - [ ] 分离HeroSkill(HeroSkill, HeroSkillDefine, HeroPassiveSkill, HeroAghanimScepterUpgrade)和ItemSys(ItemSys, ItemDefine, Item合成)
 - [ ] 修改AddAbility和RemoveAbility
 - [ ] 锯齿飞轮神杖升级失去时自动收回
+- [ ] 做个脚本可以自动输出可用id

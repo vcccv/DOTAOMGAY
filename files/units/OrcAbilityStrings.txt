@@ -1,4 +1,34 @@
-﻿[I0QT]
+﻿[I0V6]
+Name="阿哈利姆神杖（可吞噬）"
+[I0V7]
+Name="阿哈利姆神杖（可吞噬）"
+Ubertip="这把神杖能给予英雄神奇的力量。|n可通过捡起该物品的方式将其吞噬，使英雄永久地获得阿哈利姆神杖的技能升级效果，同时永久增加175点生命值、175点魔法值和10点全属性。"
+art=ReplaceableTextures\CommandButtons\BTNINV_Wand_05
+[I0V8]
+art=ReplaceableTextures\CommandButtons\BTNVoidScepter
+name="阿哈利姆神杖（可吞噬）"
+ubertip="|c00ff0303这件物品不属于你，它失去了效果|r"
+//
+[I0VD]
+name=阿哈利姆神杖升级卷轴|nAghanim Upgrader Recipe
+[I0VE]
+art=ReplaceableTextures\CommandButtons\BTNSnazzyScroll
+name="阿哈利姆神杖升级卷轴"
+ubertip="|cffff8000吞噬神杖：|r|n将阿哈利姆神杖吞噬，以空出一个物品格子。|n|n可通过捡起该物品的方式将其吞噬，使英雄永久地获得阿哈利姆神杖的技能升级效果，同时永久增加175点生命值、175点魔法值和10点全属性。|n|n|cffffcc00需要：|r|n阿哈利姆神杖 - 4200 |n卷轴 - 1600 |n|n|c00838B8B总价：5800"
+effectsoundlooped=ReplaceableTextures\CommandButtons\BTNSnazzyScroll.blp
+[h0EQ]
+art=ReplaceableTextures\CommandButtons\BTNVoidScepter
+buttonpos=0,2
+name="阿哈利姆神杖升级卷轴"
+hotkey=A
+tip="阿哈利姆神杖升级卷轴(|cffffcc00A|r)|nAghanim Upgrader"
+ubertip="|n|cffff8000吞噬神杖：|r|n将阿哈利姆神杖吞噬，以空出一个物品格子。|n|n当英雄拥有阿哈利姆神杖时会立即消耗掉。|n永久增加175点生命值、175点魔法值和10点全属性。|n|n|cffffcc00需要：|r|n阿哈利姆神杖 - 4200 |n卷轴 - 1600 |n|n|c00838B8B总价：5800|n|n|cFF838B8B还没有蓝杖的请勿购买！|r"
+[I0VF]
+art=ReplaceableTextures\CommandButtons\BTNSnazzyScroll
+name="阿哈利姆神杖升级卷轴"
+ubertip="|c00ff0303这件物品不属于你，它失去了效果|r"
+//
+[I0QT]
 name=阿哈利姆神杖（升级）
 [I0QS] 
 art=ReplaceableTextures\CommandButtons\BTNINV_Wand_05
@@ -21176,7 +21206,7 @@ buffubertip="该单位被回音战刃减速了"
 buffart=ReplaceableTextures\CommandButtons\BTNEchoSaber
 [n999]
 art=ReplaceableTextures\CommandButtons\BTNMerchant
-sellunits=n134,h0EU,n138,n12V,n125,n12W
+sellunits=n134,h0EU,n138,n12V,n125,n12W,h0EQ
 name=Pig King
 [AU02]
 Name=共享信使
@@ -25182,7 +25212,7 @@ name="侧面机枪 - 神杖升级"
 tip="侧面机枪"
 ubertip="由阿哈利姆神杖提供。侧面机枪能在固定的时间间隔内发动随机性的即时攻击。它的攻击不影响正常攻击，不用瞄准目标，不会干扰英雄的其他操作，并能无视英雄的眩晕、控制、施法等状态。侧面机枪能触发任意的攻击效果。如果英雄被致盲了，侧面机枪也会被致盲，除非它拥有克敌机先效果，它的攻击也会被闪避效果所躲避。侧面机枪在英雄隐身时，或被破坏效果禁用后不会攻击。侧面机枪不会攻击守卫或信使，但能攻击建筑，且只会攻击英雄视野范围内的目标。|n|n|cff99ccff作用范围：|r700"
 buttonpos=1,0
-art=ReplaceableTextures\CommandButtons\BTNDwarfCar
+art=ReplaceableTextures\PassiveButtons\PASBTNFragmentationBombs
 [ANXL]
 art=ReplaceableTextures\PassiveButtons\BTNStarfall
 name="Starfall (aghanim)"

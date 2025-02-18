@@ -14239,6 +14239,7 @@ function ManipulatItemDelayOnExpired takes nothing returns boolean
 				call SetItemCharges(newItem, HUX)
 			endif
 		elseif X0O == false and GetItemType(whichItem) == ITEM_TYPE_PERMANENT and IsItemAghanimScepter(whichItem) and IsUnitType(whichUnit, UNIT_TYPE_HERO) then
+			// 好像拦截了合成流程？
 			// 拿神杖物品
 			if GetUnitScepterUpgradeSkillCount(whichUnit) > 0 then // 如果升级成功，则返回true，没有可升级的技能，单位就只会持有Item_AghanimScepterBasic
 				// 拿的是基础神杖或有贪婪被动 并且不是贪婪神杖
@@ -14254,6 +14255,7 @@ function ManipulatItemDelayOnExpired takes nothing returns boolean
 					set X3O = newItem
 					call SetItemPlayer(newItem, X1O, false)
 					call SetItemUserData(newItem, 1)
+					set X4O = ECO(X1O, whichUnit, 0)
 				endif
 			else
 				if itemIndex != Item_AghanimScepterBasic then
@@ -14262,6 +14264,7 @@ function ManipulatItemDelayOnExpired takes nothing returns boolean
 					set X3O = newItem
 					call SetItemPlayer(newItem, X1O, false)
 					call SetItemUserData(newItem, 1)
+					set X4O = ECO(X1O, whichUnit, 0)
 				endif
 			endif
 		elseif X0O == false and GetItemType(whichItem) == ITEM_TYPE_ARTIFACT then

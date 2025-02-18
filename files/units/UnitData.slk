@@ -1,5 +1,5 @@
 ID;PWXL;N;E
-B;Y1943;X31;
+B;Y1944;X31;
 C;Y1;X1;K"unitID"
 C;X2;K"sort"
 C;X3;K"comment(s)"
@@ -16212,4 +16212,17 @@ C;X19;K"air"
 C;X22;K0
 C;Y1943;X1;K"h0EF"
 C;X19;K"structure"
+C;Y1944;X1;K"h0EQ"
+C;X5;K1
+C;X6;K1
+C;X7;K1
+C;X8;K3
+C;X9;K3.34
+C;X12;K"foot"
+C;X15;K.6
+C;X16;K60
+C;X18;K4
+C;X19;K"ground"
+C;X22;K200
+C;X26;K1
 E
