@@ -257,7 +257,7 @@ library ScepterUpgradeLib requires HeroSkillLib, ItemSystem
         local item    whichItem = Event.GetManipulatedItem()
         local integer pid
         call BJDebugMsg("触发了")
-        if whichUnit == null or IsUnitScepterUpgraded(whichUnit) then
+        if whichUnit == null or ( GetUnitAbilityLevel(whichUnit, 'A3E7') > 0 or GetUnitAbilityLevel(whichUnit, 'A3E8') > 0 ) then
             return
         endif
 
