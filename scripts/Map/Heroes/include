@@ -12,6 +12,7 @@
 #include "Str\\GoblinShredder.j"
 #include "Str\\TreantProtector.j"
 #include "Str\\Tuskarr.j"
+#include "Str\\Tiny.j"
 
 #include "Int\\TwinHeadDragon.j"
 #include "Int\\Ezalor.j"

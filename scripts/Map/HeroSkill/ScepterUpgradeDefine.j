@@ -59,7 +59,11 @@ library ScepterUpgradeDefine requires ScepterUpgradeLib
         set scepterUpgradeIndex = RegisterScepterUpgrade('A1BX', 'A30M', 'A30L', 0)
         set scepterUpgradeIndex = RegisterScepterUpgrade('A1U6', 'A30O', 'A30N', 0)
         set scepterUpgradeIndex = RegisterScepterUpgrade('A343', 'A34K', 'A34J', 0)
+
+        // 推进
         set scepterUpgradeIndex = RegisterScepterUpgrade('A0DY', 'A1WC', 'A1WB', 0)
+        call RegisterSkillScepterUpgradeMethod(scepterUpgradeIndex, "ImpetusOnGetScepterUpgrade", "ImpetusOnLostScepterUpgrade")
+
         set scepterUpgradeIndex = RegisterScepterUpgrade('A0WP', 'A43E', 'A43D', 0)
         set scepterUpgradeIndex = RegisterScepterUpgrade('A1RK', 'A43I', 'A43H', 0)
         set scepterUpgradeIndex = RegisterScepterUpgrade('A1A1', 'A43K', 'A43J', 0)
@@ -108,7 +112,12 @@ library ScepterUpgradeDefine requires ScepterUpgradeLib
         set scepterUpgradeIndex = RegisterScepterUpgrade('A0O3', 0, 'A0O3', 0)
         set scepterUpgradeIndex = RegisterScepterUpgrade('QM03', 0, 0, 0)
         set scepterUpgradeIndex = RegisterScepterUpgrade('A0A5', 0, 0, 0)
+
+        // 长大
         set scepterUpgradeIndex = RegisterScepterUpgrade('A0CY', 0, 0, 0)
+        call RegisterSkillScepterUpgradeMethod(scepterUpgradeIndex, "GrowOnGetScepterUpgrade", "GrowOnLostScepterUpgrade")
+        
+        // 多重施法
         set scepterUpgradeIndex = RegisterScepterUpgrade('A088', 0, 0, 0)
         call RegisterSkillScepterUpgradeMethod(scepterUpgradeIndex, "MultiCastOnGetScepterUpgrade", "MultiCastOnLostScepterUpgrade")
         

@@ -140,7 +140,7 @@ library UnitIllusion requires UnitUtils, UnitWeapon, UnitMorph, BuffSystem
             call MHAbility_Disable(illusionUnit, 'A3L3', false, false)
         endif
         // 同步长大技能
-        if a_fx_b[pid] and GetUnitTypeId(illusionUnit) == 'Ucrl' and GetUnitAbilityLevel(sourceUnit,'A2KK')> 0 then
+        if IsUnitScepterUpgraded(sourceUnit) and GetUnitTypeId(illusionUnit) == 'Ucrl' and GetUnitAbilityLevel(sourceUnit,'A2KK') > 0 then
             // 小小模型有A就拿棒子
             call AddUnitAnimationProperties(illusionUnit, "upgrade", true)
         endif

@@ -7889,19 +7889,6 @@ function SetUnitAghanimScepterUpgradeState takes unit u, boolean isRemove return
 	return false
 
 	loop
-		if HeroSkill_BaseId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]] == 'QF88' then
-
-		endif
-		if HeroSkill_BaseId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]] == 'A229' then
-			if isRemove then
-				set TempUnit = u
-				call ExecuteFunc("FlakCannonOnRemoveScepterUpgrade")
-			else
-				set TempUnit = u
-				call ExecuteFunc("FlakCannonOnAddScepterUpgrade")
-			endif
-		endif
-	
 		set k = GetScepterUpgradeIndexByBaseId(HeroSkill_BaseId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + i]])
 		if k > 0 then
 			if isRemove then
