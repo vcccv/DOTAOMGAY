@@ -1077,7 +1077,7 @@ scope GameEnd
         set bj_changeLevelShowScores = true
         call DisableTrigger(FrozenThroneDeathTrig)
         call DisableTrigger(WorldTreeDeathTrig)
-        if IsGameHaveObserver then
+        if GameHasObservers then
             call DisableTrigger(FXV)
         endif
         call DisableTrigger(EQV)

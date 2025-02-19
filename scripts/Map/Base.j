@@ -1,6 +1,18 @@
 
-library Base requires TriggerDestroyQueue, GroupAlloc, ErrorMessage
+library Base requires TriggerDestroyQueue, GroupAlloc, ErrorMessage, TimerUtils
     
+    // GetBuybackGoldCostByLevel
+    function GetBuybackGoldCostByLevel takes integer level returns integer
+        local real    time   = GameTimer.GetElapsed() - PickModeElapsed
+        local real    minute = (R2I(time)/ 60) - (1 / 2)
+        local real    cost   = 100 + level * level * 1.5 + minute * 15
+        local integer index
+        set index = R2I(cost / 50)
+        set index = IMinBJ(index, 59)
+        set index = IMaxBJ(index, 0)
+        return index
+    endfunction
+
     // 暂时丢这里
     function RegisterUnitAttackFunc takes string s, integer level returns nothing
         local integer i = 0

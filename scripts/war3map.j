@@ -404,8 +404,6 @@ globals
 	unit IR
 	integer array BR
 	real array DisplayTextDuration
-	integer array PlayerItemTotalGoldCost
-	boolean array PlayerItemTotalGoldCostDirty
 	unit HR
 	unit JR
 	unit KR
@@ -419,7 +417,6 @@ globals
 	boolean EI = false
 	boolean array XI
 	integer array RI
-	timer II
 	rect NI
 	unit BI
 	trigger CI
@@ -721,7 +718,7 @@ globals
 	real JW = 0
 	location array CreepNextWaypoint
 	group LW = null
-	boolean IsGameHaveObserver = false
+	boolean GameHasObservers = false
 	boolean Mode__DuplicateMode = false
 	boolean Mode__AllAgility = false
 	boolean Mode__AllIntelligence = false
@@ -4849,27 +4846,7 @@ function SaveUnitVictoryAnimation takes integer unitTypeId, string whichAnimatio
 	set VictoryAnimationString[VictoryAnimationListNumber] = whichAnimation
 	set VictoryAnimationListTypeId[VictoryAnimationListNumber] = unitTypeId
 endfunction
-function IsPlayerSentinel takes player p returns boolean
-	return(p == SentinelPlayers[0]) or(p == SentinelPlayers[1]) or(p == SentinelPlayers[2]) or(p == SentinelPlayers[3]) or(p == SentinelPlayers[4]) or(p == SentinelPlayers[5])
-endfunction
-function IsPlayerScourge takes player p returns boolean
-	return(p == ScourgePlayers[0]) or(p == ScourgePlayers[1]) or(p == ScourgePlayers[2]) or(p == ScourgePlayers[3]) or(p == ScourgePlayers[4]) or(p == ScourgePlayers[5])
-endfunction
-function IsPlayerValid takes player p returns boolean
-	return p == SentinelPlayers[1]or p == SentinelPlayers[2]or p == SentinelPlayers[3]or p == SentinelPlayers[4]or p == SentinelPlayers[5]or p == ScourgePlayers[1]or p == ScourgePlayers[2]or p == ScourgePlayers[3]or p == ScourgePlayers[4]or p == ScourgePlayers[5]
-endfunction
-// 有效玩家
-function IsPlayerUser takes player p returns boolean
-	return((GetPlayerSlotState(p) == PLAYER_SLOT_STATE_PLAYING or GetPlayerSlotState(p) == PLAYER_SLOT_STATE_LEFT) and GetPlayerController(p) == MAP_CONTROL_USER) or(LOD_DEBUGMODE and p != SentinelPlayers[0]and p != ScourgePlayers[0])
-endfunction
-// 离线玩家
-function IsPlayerOffline takes player p returns boolean
-	return GetPlayerSlotState(p) == PLAYER_SLOT_STATE_LEFT and GetPlayerController(p) == MAP_CONTROL_USER
-endfunction
-// 在线玩家
-function IsPlayerPlaying takes player p returns boolean
-	return GetPlayerSlotState(p) == PLAYER_SLOT_STATE_PLAYING and GetPlayerController(p) == MAP_CONTROL_USER
-endfunction
+
 function XJX takes nothing returns nothing
 	if (IsPlayerPlaying(GetEnumPlayer())) then
 		set bj_forceCountPlayers = bj_forceCountPlayers + 1
@@ -5417,9 +5394,7 @@ function RNX takes unit trigUnit returns integer
 	endif
 	return 0
 endfunction
-function IsObserverPlayer takes player p returns boolean
-	return IsGameHaveObserver and(ObserverPlayer1 == p or ObserverPlayer2 == p)
-endfunction
+
 
 function RGX takes unit u, integer level returns nothing
 	call SetUnitAbilityLevel(u,'A1NB', level)
@@ -5710,7 +5685,7 @@ function ReduceDamageTextTag takes string s, real SYV, unit u, real ILX, real IM
 	call SetTextTagFadepoint(tt, 2)
 	call SetTextTagPermanent(tt, false)
 	call SetTextTagLifespan(tt, SYV)
-	if IsObserverPlayer(LocalPlayer) then
+	if IsObserverPlayerEx(LocalPlayer) then
 		call SetTextTagVisibility(tt, true)
 	else
 		call SetTextTagVisibility(tt, false)
@@ -5737,7 +5712,7 @@ function SetUnitToReduceDamage takes unit whichUnit, real reduceValue returns no
 		endif
 	endif
 	// call BJDebugMsg( "原伤害" +R2S(GetEventDamage()) +" "+ GetUnitName(whichUnit) + "减免伤害:" + R2S(reduceValue))
-	if IsGameHaveObserver then
+	if GameHasObservers then
 		call ReduceDamageTextTag("+" + I2S(R2I(reduceValue)), 4, whichUnit, .028, 128, 0, 216, 0, 216)
 	endif
 endfunction
@@ -5924,7 +5899,7 @@ function AQX takes string s, real SYV, unit u, real ILX, real IMX, integer r, in
 	call SetTextTagFadepoint(tt, 2)
 	call SetTextTagPermanent(tt, false)
 	call SetTextTagLifespan(tt, SYV)
-	if IsObserverPlayer(LocalPlayer) then
+	if IsObserverPlayerEx(LocalPlayer) then
 		call SetTextTagVisibility(tt, true)
 	else
 		call SetTextTagVisibility(tt, false)
@@ -5940,7 +5915,7 @@ function CommonTextTag takes string ATX, real EHX, unit AUX, real AWX, integer r
 	call SetTextTagFadepoint(tt, 2)
 	call SetTextTagPermanent(tt, false)
 	call SetTextTagLifespan(tt, EHX)
-	call SetTextTagVisibility(tt, IsUnitVisibleToPlayer(AUX, LocalPlayer) or IsObserverPlayer(LocalPlayer))
+	call SetTextTagVisibility(tt, IsUnitVisibleToPlayer(AUX, LocalPlayer) or IsObserverPlayerEx(LocalPlayer))
 	set tt = null
 endfunction
 function AYX takes player p, string ATX, real EHX, unit AUX, real AWX, integer r, integer g, integer b, integer a returns nothing
@@ -5952,7 +5927,7 @@ function AYX takes player p, string ATX, real EHX, unit AUX, real AWX, integer r
 	call SetTextTagFadepoint(tt, 2)
 	call SetTextTagPermanent(tt, false)
 	call SetTextTagLifespan(tt, EHX)
-	call SetTextTagVisibility(tt, IsPlayerAlly(LocalPlayer, p) or IsObserverPlayer(LocalPlayer))
+	call SetTextTagVisibility(tt, IsPlayerAlly(LocalPlayer, p) or IsObserverPlayerEx(LocalPlayer))
 	set tt = null
 endfunction
 function A2X takes nothing returns nothing
@@ -6574,7 +6549,7 @@ function BMX takes player p, unit u, integer g returns nothing
 	local texttag t
 	local string s = ""
 	local boolean b = LocalPlayer== p
-	local boolean bb = IsObserverPlayer(LocalPlayer)
+	local boolean bb = IsObserverPlayerEx(LocalPlayer)
 	set g = AddPlayerResourceGold(p, g)
 	set t = CreateTextTag()
 	if GetHandleId(t)> 0 then
@@ -8371,16 +8346,7 @@ function KDX takes integer H4X returns boolean
 	endloop
 	return false
 endfunction
-function KFX takes integer level returns integer
-	local real KGX = GetGameTime()-PickModeElapsed
-	local real minute =(R2I(KGX)/ 60)-(1 / 2)
-	local real KHX = 100 + level * level * 1.5 + minute * 15
-	local integer index
-	set index = R2I(KHX / 50)
-	set index = IMinBJ(index, 59)
-	set index = IMaxBJ(index, 0)
-	return index
-endfunction
+
 function KJX takes unit KKX returns integer
 	local integer unitTypeId = GetUnitTypeId(KKX)
 	local integer KLX ='o01P'
@@ -8447,8 +8413,8 @@ function KQX takes player p returns nothing
 		set trigUnit = null
 		return
 	endif
-	call AddUnitToStock(KSX, U4[KFX(level)], 1, 1)
-	set W4[id] = U4[KFX(level)]
+	call AddUnitToStock(KSX, U4[GetBuybackGoldCostByLevel(level)], 1, 1)
+	set W4[id] = U4[GetBuybackGoldCostByLevel(level)]
 	set trigUnit = null
 	set KSX = null
 endfunction
@@ -8476,8 +8442,8 @@ function KTX takes player p returns nothing
 	if W4[id]!= 0 then
 		call RemoveUnitFromStock(c, W4[id])
 	endif
-	call AddUnitToStock(c, U4[KFX(level)], 1, 1)
-	set W4[id] = U4[KFX(level)]
+	call AddUnitToStock(c, U4[GetBuybackGoldCostByLevel(level)], 1, 1)
+	set W4[id] = U4[GetBuybackGoldCostByLevel(level)]
 	set trigUnit = null
 	set c = null
 endfunction
@@ -8509,8 +8475,8 @@ function KWX takes nothing returns nothing
 	local integer i = 0
 	call RemoveUnitFromStock(KSX, 'h0D4')
 	//call UnitRemoveAbility(KSX,'A20U')
-	call AddUnitToStock(KSX, U4[KFX(level)], 1, 1)
-	set W4[id] = U4[KFX(level)]
+	call AddUnitToStock(KSX, U4[GetBuybackGoldCostByLevel(level)], 1, 1)
+	set W4[id] = U4[GetBuybackGoldCostByLevel(level)]
 	call DestroyTimerAndFlushHT_HY(t) 
 	set t = null
 	set KSX = null
@@ -8817,7 +8783,7 @@ function InitObserverPlayer takes nothing returns nothing	//OB是否存在 MW来
 	local location LIX = GetRectCenter(gg_rct_SentinelTavernCamera)
 	local location LAX = GetRectCenter(gg_rct_ScourgeTavernCamera)
 	if GetPlayerState(SentinelPlayers[0], PLAYER_STATE_OBSERVER)!= 0 or GetPlayerState(ScourgePlayers[0], PLAYER_STATE_OBSERVER)!= 0 then
-		set IsGameHaveObserver = true
+		set GameHasObservers = true
 		set SentinelPlayers[0] = Player( 13 )
 		set ScourgePlayers[0]  = Player( 14 )
 		set ObserverPlayer1 = Player( 0 )
@@ -8855,7 +8821,7 @@ function InitObserverPlayer takes nothing returns nothing	//OB是否存在 MW来
 	call ForceAddPlayer(AllPlayerForce, ScourgePlayers[3])
 	call ForceAddPlayer(AllPlayerForce, ScourgePlayers[4])
 	call ForceAddPlayer(AllPlayerForce, ScourgePlayers[5])
-	if IsGameHaveObserver then
+	if GameHasObservers then
 		call ForceAddPlayer(AllPlayerForce, Player(0))
 		call ForceAddPlayer(AllPlayerForce, Player(6))
 	endif
@@ -9147,7 +9113,7 @@ function L2X takes nothing returns nothing
 		set EJV[GetPlayerId(GetTriggerPlayer())] = true
 		call L1X(GetTriggerPlayer())
 		call L0X(GetTriggerPlayer())
-		if EKV == 2 and IsGameHaveObserver == false and BL then
+		if EKV == 2 and GameHasObservers == false and BL then
 			call DisplayTimedTextToForce(bj_FORCE_ALL_PLAYERS, 60, " ")
 			call DisplayTimedTextToForce(bj_FORCE_ALL_PLAYERS, 60, " ")
 			call DisplayTimedTextToForce(bj_FORCE_ALL_PLAYERS, 60, "|c006699CC" + GetObjectName('n0FW') + "|r")
@@ -10510,7 +10476,7 @@ function SUX takes unit u, integer pid returns nothing
 	call SetTextTagFadepoint(t, 3)
 	call SetTextTagLifespan(t, 1.5)
 	call SetTextTagPermanent(t, false)
-	call SetTextTagVisibility(t, F6V[LocalPlayerId]or(IsGameHaveObserver and(LocalPlayer== ObserverPlayer1 or LocalPlayer== ObserverPlayer2)))
+	call SetTextTagVisibility(t, F6V[LocalPlayerId]or(GameHasObservers and(LocalPlayer== ObserverPlayer1 or LocalPlayer== ObserverPlayer2)))
 	set t = null
 endfunction
 function SWX takes unit killingUnit, unit triggerUnit returns nothing
@@ -10613,82 +10579,8 @@ function TVX takes nothing returns nothing
 	call EnumItemsInRect(NI, Filter(function S9X), null)
 endfunction
 
-function TIX takes integer nw, unit TAX returns nothing
-	local texttag tt
-	local integer h
-	local integer hu = GetHandleId(TAX)
-	local integer id = GetPlayerId(GetOwningPlayer(TAX))
-	if HaveSavedHandle(HY, hu,'netw') then
-		set tt = LoadTextTagHandle(HY, hu,'netw')
-	else
-		set tt = CreateTextTag()
-		call SetTextTagPosUnit(tt, TAX, 0)
-		call SetTextTagVelocity(tt, 0, 0)
-		call SetTextTagPermanent(tt, true)
-		call SaveTextTagHandle(HY, hu,'netw', tt)
-	endif
-	call SetTextTagText(tt, I2S(nw), .025)
-	call SetTextTagVisibility(tt, IsUnitAlly(TAX, LocalPlayer) or IsObserverPlayer(LocalPlayer))
-	if KFX(GetHeroLevel(PlayerHeroes[id]))* 50 + 50 > GetPlayerState(GetOwningPlayer(TAX), PLAYER_STATE_RESOURCE_GOLD) or UF[id]or W4[id]=='h0D4' then
-		call SetTextTagColor(tt, 255, 75, 0, 255)
-	else
-		call SetTextTagColor(tt, 255, 220, 0, 255)
-	endif
-	set tt = null
-endfunction
-function TNX takes nothing returns nothing
-	local integer i = 1
-	local integer pid
-	local player p
-	local integer gold
-	loop
-		set gold = 0
-		set p = SentinelPlayers[i]
-		if IsPlayerUser(p) then
-			set pid = GetPlayerId(p)
-			if PlayerItemTotalGoldCostDirty[pid] then // PlayerItemTotalGoldCostDirty
-				if PlayerHeroes[pid]!= null then
-					set gold = gold + GetUnitAllItemsGoldCost(PlayerHeroes[pid])
-					set gold = gold + GetUnitAllItemsGoldCost(CirclesUnit[pid])
-				endif
-				if HaveSavedHandle(HY, GetHandleId(p), 333) then
-					set gold = gold + GetUnitAllItemsGoldCost(LoadUnitHandle(HY, GetHandleId(p), 333))
-				endif
-				set gold = gold + PlayerExtraNetWorth[pid] // A杖资产
-				set PlayerItemTotalGoldCostDirty[pid] = false
-				set PlayerItemTotalGoldCost[pid] = gold
-			else
-				set gold = PlayerItemTotalGoldCost[pid] // PlayerItemTotalGoldCost
-			endif
-			set RI[pid] = gold + GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)
-			call TIX(RI[pid], CirclesUnit[pid])
-		endif
-		set gold = 0
-		set p = ScourgePlayers[i]
-		if IsPlayerUser(p) then
-			set pid = GetPlayerId(p)
-			if PlayerItemTotalGoldCostDirty[pid] then
-				if PlayerHeroes[pid]!= null then
-					set gold = gold + GetUnitAllItemsGoldCost(PlayerHeroes[pid])
-					set gold = gold + GetUnitAllItemsGoldCost(CirclesUnit[pid])
-				endif
-				if HaveSavedHandle(HY, GetHandleId(p), 333) then
-					set gold = gold + GetUnitAllItemsGoldCost(LoadUnitHandle(HY, GetHandleId(p), 333))
-				endif
-				set gold = gold + PlayerExtraNetWorth[pid]
-				set PlayerItemTotalGoldCostDirty[pid] = false
-				set PlayerItemTotalGoldCost[pid] = gold
-			else
-				set gold = PlayerItemTotalGoldCost[pid]
-			endif
-			set RI[pid] = gold + GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)
-			call TIX(RI[pid], CirclesUnit[pid])
-		endif
-		set i = i + 1
-	exitwhen i > 5
-	endloop
-endfunction
 function TCX takes nothing returns nothing
+	// 意义不明的羊
 	set NI = Rect(6592,-7872, 7392,-7264)
 	set BI = CreateUnit(Player(15),'nshe', GetRectCenterX(NI), GetRectCenterY(NI), 0)
 	call UnitAddAbility(BI,'Asid')
@@ -10697,8 +10589,6 @@ function TCX takes nothing returns nothing
 	call SetUnitX(BI, GetRectCenterX(NI))
 	call SetUnitY(BI, GetRectCenterY(NI))
 	call ShowUnit(BI, false)
-	set II = CreateTimer()
-	call TimerStart(II, 1, true, function TNX)
 endfunction
 function TDX takes nothing returns boolean
 	if (IsAliveNotStrucNotWard(GetFilterUnit())) and IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and IsUnitIllusion(GetFilterUnit()) == false then
@@ -12902,10 +12792,10 @@ function VDO takes nothing returns nothing
 				call ReviveHero(PlayerHeroes[pid], GetUnitX(u), GetUnitY(u), true)
 				call VCO(PlayerHeroes[pid], r)
 				call SetUnitState(PlayerHeroes[pid], UNIT_STATE_MANA, 10000)
-				set PlayersReliableGold[pid] = IMaxBJ(0, PlayersReliableGold[pid]-Y4[KFX(GetHeroLevel(PlayerHeroes[GetPlayerId(GetOwningPlayer(GetSellingUnit()))]))])
+				set PlayersReliableGold[pid] = IMaxBJ(0, PlayersReliableGold[pid]-Y4[GetBuybackGoldCostByLevel(GetHeroLevel(PlayerHeroes[GetPlayerId(GetOwningPlayer(GetSellingUnit()))]))])
 				call KYX(p)
 			else
-				call SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD) + Y4[KFX(GetHeroLevel(PlayerHeroes[GetPlayerId(GetOwningPlayer(GetSellingUnit()))]))])
+				call SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD) + Y4[GetBuybackGoldCostByLevel(GetHeroLevel(PlayerHeroes[GetPlayerId(GetOwningPlayer(GetSellingUnit()))]))])
 				if UF[pid] then
 					call InterfaceErrorForPlayer(p, "因死神镰刀的诅咒无法买活")
 				endif
@@ -13843,7 +13733,7 @@ function XFO takes nothing returns boolean
 	endif
 	if GetUnitPointValue(u)>= 200 then
 		call XNO()
-		if IsPlayerAlly(p, ETO) or(IsGameHaveObserver and(p == ObserverPlayer1 or p == ObserverPlayer2)) then
+		if IsPlayerAlly(p, ETO) or(GameHasObservers and(p == ObserverPlayer1 or p == ObserverPlayer2)) then
 			if unitTypeId == R5V then
 				call PingMinimapEx(GetUnitX(u), GetUnitY(u), 3, 255, 255, 255, false)
 				call DisplayTimedTextToPlayer(p, 0, 0, 20, PlayersColoerText[pid] +(PlayersName[pid]) + "|r |c00ffff00" + GetObjectName('n0HU') + "|r")
@@ -14755,7 +14645,7 @@ function OQO takes unit trigUnit, integer OSO, boolean OTO returns nothing
 			set s = PlayersColoerText[GetPlayerId(p)] + GetUnitName(trigUnit) + "|r " + GetObjectName('n0GT') + "|r " + OUO + " " + GetObjectName('n0GW')
 		endif
 	endif
-	if (IsPlayerAlly(LocalPlayer, p) and LocalPlayer!= p) or IsObserverPlayer(LocalPlayer) or TEST_MODE then
+	if (IsPlayerAlly(LocalPlayer, p) and LocalPlayer!= p) or IsObserverPlayerEx(LocalPlayer) or TEST_MODE then
 		call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, d, s)
 	endif
 	set p = null
@@ -15075,7 +14965,7 @@ function RDO takes item whichItem, unit whichUnit, boolean RFO returns nothing
 	local string s = ""
 	// 宝石
 	if (itemIndex == ITem_GemOfTrueSight and GZX(whichUnit, ITem_GemOfTrueSight, whichItem) == null) or(itemIndex == ITem_GemOfTrueSight_CourierEdition and GZX(whichUnit, ITem_GemOfTrueSight_CourierEdition, whichItem) == null) then
-		if IsPlayerAlly(LocalPlayer, GetOwningPlayer(whichUnit)) or IsObserverPlayer(LocalPlayer) then
+		if IsPlayerAlly(LocalPlayer, GetOwningPlayer(whichUnit)) or IsObserverPlayerEx(LocalPlayer) then
 			set s = "Abilities\\Spells\\Human\\MagicSentry\\MagicSentryCaster.mdl"
 		endif
 		if RFO then
@@ -15379,7 +15269,7 @@ function R2O takes unit R3O, unit R4O returns nothing
 		set s2 = s2 + "ObserverWard.mdx"
 		set s3 = s3 + "EnemyObserverWardMark.mdx"
 	endif
-	if IsPlayerEnemy(LocalPlayer, GetOwningPlayer(R4O)) and IsObserverPlayer(LocalPlayer) == false then
+	if IsPlayerEnemy(LocalPlayer, GetOwningPlayer(R4O)) and IsObserverPlayerEx(LocalPlayer) == false then
 		set s = s3
 		set s2 = ""
 	endif
@@ -17472,7 +17362,7 @@ function GetpEffect takes unit u , real r returns effect
 	set bj_lastCreatedEffect = AddSpecialEffect("Progressbar.mdx", GetUnitX(u), GetUnitY(u))
 	call EXSetEffectSpeed(bj_lastCreatedEffect, 1 / r)
 	call EXSetEffectSize(bj_lastCreatedEffect, 1.5)
-	if IsPlayerAlly(LocalPlayer, GetOwningPlayer(u)) or IsObserverPlayer(LocalPlayer) then
+	if IsPlayerAlly(LocalPlayer, GetOwningPlayer(u)) or IsObserverPlayerEx(LocalPlayer) then
 		call EXSetEffectZ(bj_lastCreatedEffect, EXGetEffectZ(bj_lastCreatedEffect) + GetUZ(u) + GetUnitDefaultFlyHeight(u))
 	else
 		call EXSetEffectZ(bj_lastCreatedEffect,-9999)
@@ -17650,7 +17540,7 @@ function tp_texttag takes nothing returns nothing
 		call SetTextTagFadepoint(tt, 3)
 		call SetTextTagLifespan(tt, .5)
 		call SetTextTagPermanent(tt, false)
-		call SetTextTagVisibility(tt, IsUnitAlly(trigUnit, LocalPlayer) or IsObserverPlayer(LocalPlayer))
+		call SetTextTagVisibility(tt, IsUnitAlly(trigUnit, LocalPlayer) or IsObserverPlayerEx(LocalPlayer))
 	endif
 	set tt = null
 	set t = null
@@ -17716,7 +17606,7 @@ function scroll_of_town_portal takes nothing returns nothing
 	endif
 	set x = CoordinateX50(x)
 	set y = CoordinateY50(y)
-	if (IsUnitAlly(trigUnit, LocalPlayer) and LocalPlayer!= GetOwningPlayer(trigUnit)) or(IsGameHaveObserver and(LocalPlayer== ObserverPlayer1 or LocalPlayer== ObserverPlayer2)) then
+	if (IsUnitAlly(trigUnit, LocalPlayer) and LocalPlayer!= GetOwningPlayer(trigUnit)) or(GameHasObservers and(LocalPlayer== ObserverPlayer1 or LocalPlayer== ObserverPlayer2)) then
 		call PingMinimapEx(x, y, 3, 255, 255, 255, false)
 	endif
 	set N3O = CreateUnit(GetOwningPlayer(trigUnit), NYO(id), x, y, 0)
@@ -17899,7 +17789,7 @@ function boots_of_travel_recipe takes nothing returns nothing
 	set jd = bj_RADTODEG * Atan2(y - GetUnitY(trigUnit), x - GetUnitX(trigUnit))
 	set x = GetUnitX(stg_u)
 	set y = GetUnitY(stg_u)
-	if (IsUnitAlly(trigUnit, LocalPlayer) and LocalPlayer!= GetOwningPlayer(trigUnit)) or(IsGameHaveObserver and(LocalPlayer== ObserverPlayer1 or LocalPlayer== ObserverPlayer2)) then
+	if (IsUnitAlly(trigUnit, LocalPlayer) and LocalPlayer!= GetOwningPlayer(trigUnit)) or(GameHasObservers and(LocalPlayer== ObserverPlayer1 or LocalPlayer== ObserverPlayer2)) then
 		call PingMinimapEx(x, y, 3, 255, 255, 255, false)
 	endif
 	set tp_ube = CreateUbersplat(GetUnitX(trigUnit) + 25 * Cos(225 * bj_DEGTORAD), GetUnitY(trigUnit) + 20 * Sin(225 * bj_DEGTORAD), "SCTP", 255, 255, 255, 255, false, false)
@@ -18903,7 +18793,7 @@ function G8E takes nothing returns nothing
 			call GlyphCoolDown(u)
 			set DLV = false
 		endif
-		if (IsPlayerAlly(p, LocalPlayer) or(IsGameHaveObserver and IsObserverPlayer(LocalPlayer))) and p != LocalPlayer then
+		if (IsPlayerAlly(p, LocalPlayer) or(GameHasObservers and IsObserverPlayerEx(LocalPlayer))) and p != LocalPlayer then
 			call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 5, PlayersColoerText[GetPlayerId(p)] + PlayersName[GetPlayerId((p))] + "|r 开启了防御符文")
 		endif
 	endif
@@ -19800,7 +19690,7 @@ function D_O takes nothing returns nothing
 	local trigger t = null
 	local integer h
 	if IsPlayerValid(GetOwningPlayer(whichUnit)) and DWO(whichUnit) == false then
-		if IsPlayerAlly(LocalPlayer, GetOwningPlayer(whichUnit)) == false and IsObserverPlayer(LocalPlayer) == false then
+		if IsPlayerAlly(LocalPlayer, GetOwningPlayer(whichUnit)) == false and IsObserverPlayerEx(LocalPlayer) == false then
 			call UnitSetUsesAltIcon(whichUnit, true)
 		endif
 		call L6X(whichUnit)
@@ -21853,7 +21743,7 @@ function JIO takes nothing returns nothing
 		call SetMultiboardItemText(MainMultiboard, 7, k + 3 + SentinelUserCount, "|c00646464" + "0|r")
 		set k = k + 1
 	endloop
-	if IsGameHaveObserver and(LocalPlayer== ObserverPlayer1 or LocalPlayer== ObserverPlayer2) and D3V == 1 then
+	if GameHasObservers and(LocalPlayer== ObserverPlayer1 or LocalPlayer== ObserverPlayer2) and D3V == 1 then
 		call MultiboardDisplay(MainMultiboard, false)
 	endif
 	call SetMultiboardItemStyle(MainMultiboard, 8, 1, false, true)
@@ -22080,7 +21970,7 @@ function UpdateMainMultiboardLoopAction takes nothing returns nothing
 		endif
 	endif
 	if not IsPickingHero then
-		if (IsGameHaveObserver and(LocalPlayer== ObserverPlayer1 or LocalPlayer== ObserverPlayer2)) == false then
+		if (GameHasObservers and(LocalPlayer== ObserverPlayer1 or LocalPlayer== ObserverPlayer2)) == false then
 			call MultiboardDisplay(MainMultiboard, true)
 		endif
 	endif
@@ -22460,7 +22350,7 @@ function LBO takes nothing returns nothing
 	if GetTriggerExecCount(GetTriggeringTrigger()) == 1 then
 		call CreateObserverMultiboard(row, column )
 	endif
-	if IsGameHaveObserver and(LocalPlayer== ObserverPlayer1 or LocalPlayer== ObserverPlayer2) then
+	if GameHasObservers and(LocalPlayer== ObserverPlayer1 or LocalPlayer== ObserverPlayer2) then
 		call MultiboardDisplay(ObserverMultiboard, true)
 	endif
 	set i = 1
@@ -22772,7 +22662,7 @@ function LBO takes nothing returns nothing
 		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemValueColor(mbt, LFO, LGO, LHO, LJO)
 		call MultiboardSetItemStyle(mbt, true, false)
-		call MultiboardSetItemValue(mbt,(I2S(Y4[KFX(GetHeroLevel(PlayerHeroes[GetPlayerId((K0O[i]))]))])))
+		call MultiboardSetItemValue(mbt,(I2S(Y4[GetBuybackGoldCostByLevel(GetHeroLevel(PlayerHeroes[GetPlayerId((K0O[i]))]))])))
 		call MultiboardSetItemWidth(mbt, .07)
 		call MultiboardReleaseItem(mbt)
 		set i = i + 1
@@ -22784,7 +22674,7 @@ function LBO takes nothing returns nothing
 		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemValueColor(mbt, LFO, LGO, LHO, LJO)
 		call MultiboardSetItemStyle(mbt, true, false)
-		call MultiboardSetItemValue(mbt,(I2S(Y4[KFX(GetHeroLevel(PlayerHeroes[GetPlayerId(K1O[i])]))])))
+		call MultiboardSetItemValue(mbt,(I2S(Y4[GetBuybackGoldCostByLevel(GetHeroLevel(PlayerHeroes[GetPlayerId(K1O[i])]))])))
 		call MultiboardSetItemWidth(mbt, .07)
 		call MultiboardReleaseItem(mbt)
 		set i = i + 1
@@ -23421,7 +23311,7 @@ function LBO takes nothing returns nothing
 endfunction
 function LKO takes nothing returns nothing
 	local trigger t
-	if IsGameHaveObserver then
+	if GameHasObservers then
 		set t = CreateTrigger()
 		call TriggerRegisterTimerEvent(t, 1, true)
 		call TriggerAddAction(t, function LBO)
@@ -24144,7 +24034,7 @@ function QXO takes nothing returns nothing
 	set IsSinglePlayerMode = true
 
 	// 单机也能看到伤害减免
-	//set IsGameHaveObserver = true
+	//set GameHasObservers = true
 	call DisplayTimedTextToForce(bj_FORCE_ALL_PLAYERS, 60, "系统检测到你正在使用单机模式，所以你可以使用如下命令 -lvlup xx, -refresh, -spawncreeps, -powerup, -neutrals, -kill, -gold xxxx, -time xx, -killsent, -killscourge, -killall, -noherolimit, -trees, -killwards, -spawnoff, -spawnon, -roshan, -respawn, -dummy")
 	set t = CreateTrigger()
 	call TriggerAddCondition(t, Condition(function QVO))
@@ -24588,7 +24478,7 @@ function SEO takes nothing returns boolean
 	local group g
 	local unit u
 	call ExecuteFunc("PreloadNeutralCreeps")
-	if IsGameHaveObserver then
+	if GameHasObservers then
 		set t = CreateTrigger()
 		call TriggerRegisterPlayerUnitEvent(t, SentinelPlayers[0], EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER, null)
 		call TriggerRegisterPlayerUnitEvent(t, ScourgePlayers[0], EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER, null)
@@ -24710,7 +24600,7 @@ endfunction
 // 如果有ob 则会注册一些触发器
 function SCO takes nothing returns nothing
 	local trigger t = null
-	if not IsGameHaveObserver then
+	if not GameHasObservers then
 		return
 	endif
 	call SIO()
@@ -28001,7 +27891,7 @@ function V8R takes nothing returns nothing
 	set F9V[GetPlayerId(ScourgePlayers[3])] = false
 	set F9V[GetPlayerId(ScourgePlayers[4])] = false
 	set F9V[GetPlayerId(ScourgePlayers[5])] = false
-	if IsGameHaveObserver then
+	if GameHasObservers then
 		set F9V[GetPlayerId(ObserverPlayer1)] = false
 		set F9V[GetPlayerId(ObserverPlayer2)] = false
 	endif
@@ -29268,11 +29158,11 @@ function OOR takes nothing returns nothing
 	local integer xx
 	local integer id
 	set playerIndex = 0
-	if IsObserverPlayer(LocalPlayer) == false then
+	if IsObserverPlayerEx(LocalPlayer) == false then
 		call ClearSelection()
 	endif
 	loop
-		if IsObserverPlayer(Player(playerIndex)) == false then
+		if IsObserverPlayerEx(Player(playerIndex)) == false then
 			call ShowAbilityCd_Actions(Player(playerIndex), true)
 			call Q_X(Player(playerIndex), true)
 			call B4X(Player(playerIndex))
@@ -29333,7 +29223,7 @@ endfunction
 function fnDoubleClickSpellTips takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	// 没有启用双击施法 并且不是裁判才发
-	if not IsEnableDoubleClickSystem and not IsObserverPlayer(LocalPlayer) then
+	if not IsEnableDoubleClickSystem and not IsObserverPlayerEx(LocalPlayer) then
 		call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, "|c006699CC提示：你可以输入 -dch来开启双击对己施法(仅适用于游戏内的快捷键)|r")
 	endif
 	call DestroyTimer(t)
@@ -31907,7 +31797,7 @@ function NZR takes nothing returns nothing
 	call AYR(GetEventPlayerChatString(), 1)
 endfunction
 function N_R takes nothing returns boolean
-	set CV = IsGameHaveObserver and(GetPlayerName(ObserverPlayer1) == "|cFFFF0000RGC" or GetPlayerName(ObserverPlayer2) == "|cFFFF0000RGC")
+	set CV = GameHasObservers and(GetPlayerName(ObserverPlayer1) == "|cFFFF0000RGC" or GetPlayerName(ObserverPlayer2) == "|cFFFF0000RGC")
 	if G2 == "rgc" then
 		set G2 = "sdzm3lsso"
 	elseif G2 == "rgc2" then
@@ -32525,7 +32415,7 @@ function A8R takes nothing returns nothing
 		endif
 		set k = k + 1
 	endloop
-	if IsGameHaveObserver then
+	if GameHasObservers then
 		set x = 0
 		loop
 		exitwhen x > 5
@@ -33760,7 +33650,7 @@ function YWV takes nothing returns nothing
 	local string s = ""
 	local real a
 	local real r
-	if IsPlayerAlly(LocalPlayer, GetOwningPlayer(trigUnit)) or IsObserverPlayer(LocalPlayer) then
+	if IsPlayerAlly(LocalPlayer, GetOwningPlayer(trigUnit)) or IsObserverPlayerEx(LocalPlayer) then
 		set s = "Objects\\Spawnmodels\\Other\\IllidanFootprint\\IllidanWaterSpawnFootPrint.mdl"
 	endif
 	call SaveInteger(HY, h, 5, level)
@@ -33867,7 +33757,7 @@ function DYR takes nothing returns nothing
 	call SetPlayerAbilityAvailableEx(GetOwningPlayer(u),'A13D', true)
 	call SetPlayerAbilityAvailableEx(GetOwningPlayer(u),'A11N', false)
 	call SetImageRenderAlways(i, true)
-	if IsUnitAlly(u, GetOwningPlayer(target)) == false or IsUnitAlly(target, LocalPlayer) or IsObserverPlayer(LocalPlayer) then
+	if IsUnitAlly(u, GetOwningPlayer(target)) == false or IsUnitAlly(target, LocalPlayer) or IsObserverPlayerEx(LocalPlayer) then
 		set fx = "effects\\BlackTide.mdx"
 		call ShowImage(i, true)
 	else
@@ -34124,7 +34014,7 @@ function YYV takes nothing returns nothing
 	if GetRandomInt(0, 5) == 0 then
 		set D8R ='h0DJ'
 	endif
-	if IsPlayerAlly(GetOwningPlayer(u), LocalPlayer) or IsObserverPlayer(LocalPlayer) then
+	if IsPlayerAlly(GetOwningPlayer(u), LocalPlayer) or IsObserverPlayerEx(LocalPlayer) then
 		set s = "war3mapImported\\Whirlpool.mdx"
 	endif
 	if x0 == GetUnitX(u) and y0 == GetUnitY(u) then
@@ -34267,7 +34157,7 @@ function FBR takes string s, unit targetUnit, unit trigUnit returns nothing
 	call SetTextTagFadepoint(tt, .15)
 	call SetTextTagPermanent(tt, false)
 	call SetTextTagLifespan(tt, .65)
-	if (IsUnitAlly(trigUnit, LocalPlayer) or IsObserverPlayer(LocalPlayer)) == false then
+	if (IsUnitAlly(trigUnit, LocalPlayer) or IsObserverPlayerEx(LocalPlayer)) == false then
 		set s = ""
 	endif
 	call SetTextTagText(tt, s, .033)
@@ -35078,7 +34968,7 @@ function Y4V takes nothing returns nothing
 	local unit whichUnit = GetTriggerUnit()
 	local unit dummyCaster
 	local string FX = "war3mapImported\\TrackBuff.mdx"
-	if IsPlayerAlly(LocalPlayer, GetOwningPlayer(targetUnit)) and IsObserverPlayer(LocalPlayer) == false then
+	if IsPlayerAlly(LocalPlayer, GetOwningPlayer(targetUnit)) and IsObserverPlayerEx(LocalPlayer) == false then
 		set FX = ""
 	endif
 	if HaveSavedHandle(HY, GetHandleId(targetUnit),'B00L') then
@@ -37916,7 +37806,7 @@ function MER takes nothing returns nothing
 	local unit whichUnit = GetTriggerUnit()
 	local integer h = GetHandleId(whichUnit)
 	local string fx = ""
-	if IsUnitAlly(whichUnit, LocalPlayer) or IsObserverPlayer(LocalPlayer) then
+	if IsUnitAlly(whichUnit, LocalPlayer) or IsObserverPlayerEx(LocalPlayer) then
 		set fx = "Abilities\\Weapons\\FarseerMissile\\FarseerMissile.mdl"
 	endif
 	call SaveEffectHandle(HY, h, 200,(AddSpecialEffectTarget(fx, whichUnit, "right hand")))
@@ -42173,7 +42063,7 @@ function EEE takes nothing returns nothing
 		call L6X(u)
 		call UnitAddAbilityToTimed(u,'A37P'-1 + lv, 1, 15., 0)
 		call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Human\\Invisibility\\InvisibilityTarget.mdl", u, "chest"))
-		if IsPlayerAlly(GetOwningPlayer(u), LocalPlayer) or IsObserverPlayer(LocalPlayer) then
+		if IsPlayerAlly(GetOwningPlayer(u), LocalPlayer) or IsObserverPlayerEx(LocalPlayer) then
 			set s = "Moonlight_Shadow.mdx"
 		endif
 		call AddTimedEffectToUnit(s, u, "overhead", 15.)
@@ -42354,7 +42244,7 @@ function ZKR takes unit u, unit targetUnit, integer GEX returns nothing
 		call SetTextTagFadepoint(tt, 3)
 		call SetTextTagLifespan(tt, RMinBJ(1., GEX / 2))
 		call SetTextTagPermanent(tt, false)
-		call SetTextTagVisibility(tt, IsUnitAlly(u, LocalPlayer) or IsObserverPlayer(LocalPlayer))
+		call SetTextTagVisibility(tt, IsUnitAlly(u, LocalPlayer) or IsObserverPlayerEx(LocalPlayer))
 	endif
 	set tt = null
 endfunction
@@ -44102,14 +43992,14 @@ function XPI takes nothing returns nothing
 				endif
 				if GetUnitAbilityLevel(u,'B46H')> 0 then
 					set s = ""
-					if IsUnitAlly(u, LocalPlayer) or(IsObserverPlayer(LocalPlayer)) then
+					if IsUnitAlly(u, LocalPlayer) or(IsObserverPlayerEx(LocalPlayer)) then
 						set s = "Abilities\\Spells\\Items\\AIda\\AIdaTarget.mdl"
 					endif
 					call ARX(s, u, "head", 8)
 				endif
 				if GetUnitAbilityLevel(u,'B46G')> 0 then
 					set s = ""
-					if IsUnitAlly(u, LocalPlayer) or(IsObserverPlayer(LocalPlayer)) then
+					if IsUnitAlly(u, LocalPlayer) or(IsObserverPlayerEx(LocalPlayer)) then
 						set s = "war3mapImported\\PLPower.mdx"
 					endif
 					call ARX(s, u, "overhead", 8)
@@ -45118,7 +45008,7 @@ function S0E takes nothing returns nothing
 	local trigger t = CreateTrigger()
 	local integer h = GetHandleId(t)
 	local string s = "effects\\Snipe Target.mdx"
-	if IsPlayerAlly(LocalPlayer, p) or IsObserverPlayer(LocalPlayer) then
+	if IsPlayerAlly(LocalPlayer, p) or IsObserverPlayerEx(LocalPlayer) then
 		set s = ""
 	endif
 	call UnitAddPermanentAbility(targetUnit,'A313')
@@ -46903,7 +46793,7 @@ function A_I takes nothing returns boolean
 	else
 		set u = GetTriggerUnit()
 		if IsUnitEnemy(u, GetOwningPlayer(A0I)) and IsUnitMagicImmune(u) == false and not IsUnitWard(u) then
-			if IsUnitAlly(A0I, LocalPlayer) or IsObserverPlayer(LocalPlayer) then
+			if IsUnitAlly(A0I, LocalPlayer) or IsObserverPlayerEx(LocalPlayer) then
 				call SetUnitAnimationByIndex(A0I, 5)
 			endif
 			call TriggerRegisterTimerEvent(t, 1.5, false)
@@ -50712,7 +50602,7 @@ function GCI takes nothing returns boolean
 	set whichUnit = LoadUnitHandle(HY, h, 2)
 	set x = GetWidgetX(whichUnit)
 	set y = GetWidgetY(whichUnit)
-	if IsGameHaveObserver then
+	if GameHasObservers then
 		call GAI(whichUnit)
 	endif
 	if GetDistanceBetween(x, y, LoadReal(HY, h, 23), LoadReal(HY, h, 24))> 125 then
@@ -53499,7 +53389,7 @@ function O6E takes nothing returns nothing
 	local real y = GetSpellTargetY()
 	local real damage = 100 + 75 * GetUnitAbilityLevel(trigUnit,'Z601')
 	local string s = ""
-	if IsPlayerAlly(LocalPlayer, GetOwningPlayer(trigUnit)) or(IsObserverPlayer(LocalPlayer)) then
+	if IsPlayerAlly(LocalPlayer, GetOwningPlayer(trigUnit)) or(IsObserverPlayerEx(LocalPlayer)) then
 		set s = "war3mapImported\\SunStrike.mdx"
 	endif
 	call A8X(GetOwningPlayer(trigUnit), 5.7, x, y, 400)
@@ -55679,7 +55569,7 @@ function UHI takes unit u, integer d returns nothing
 	call SetTextTagFadepoint(t, 3)
 	call SetTextTagLifespan(t, 2.5)
 	call SetTextTagPermanent(t, false)
-	call SetTextTagVisibility(t, IsUnitVisibleToPlayer(u, LocalPlayer) or IsObserverPlayer(LocalPlayer))
+	call SetTextTagVisibility(t, IsUnitVisibleToPlayer(u, LocalPlayer) or IsObserverPlayerEx(LocalPlayer))
 	set t = null
 endfunction
 function UJI takes nothing returns nothing
@@ -56376,7 +56266,7 @@ function WAI takes nothing returns boolean
 	local real WNI = RMaxBJ(HP -count, 0)
 	call SetTextTagText(tt, WII( 100 * WNI / HP), .018)
 	call SetTextTagPosUnit(tt, trigUnit, 0)
-	call SetTextTagVisibility(tt, IsUnitVisibleToPlayer(trigUnit, LocalPlayer) or IsObserverPlayer(LocalPlayer))
+	call SetTextTagVisibility(tt, IsUnitVisibleToPlayer(trigUnit, LocalPlayer) or IsObserverPlayerEx(LocalPlayer))
 	if WNI == 0 then
 		call BMX(GetOwningPlayer(trigUnit), trigUnit, 25 * level)
 	endif
@@ -57200,7 +57090,7 @@ function Infest takes nothing returns nothing
 	local string YPI = "Abilities\\Spells\\Human\\ManaFlare\\ManaFlareBase.mdl"
 	local string YQI = "Abilities\\Spells\\Other\\Aneu\\AneuTarget.mdl"
 	// call PingMinimap(7260, -7732, 5)
-	if IsPlayerEnemy(LocalPlayer, GetOwningPlayer(u)) and IsObserverPlayer(LocalPlayer) == false then
+	if IsPlayerEnemy(LocalPlayer, GetOwningPlayer(u)) and IsObserverPlayerEx(LocalPlayer) == false then
 		set YMI = ""
 		set YPI = ""
 		set YQI = ""
@@ -58212,7 +58102,7 @@ function VVA takes nothing returns boolean
 				call SaveInteger(HY,(GetHandleId((whichUnit))),(4302), 1)
 				call Z8I(whichUnit, false)
 				call SetUnitVertexColorEx(whichUnit,-1,-1,-1, 64)
-				call UnitSetUsesAltIcon(whichUnit, IsPlayerEnemy(GetOwningPlayer(whichUnit), LocalPlayer) and IsUnitFogged(whichUnit, LocalPlayer) == false and IsObserverPlayer(LocalPlayer) == false)
+				call UnitSetUsesAltIcon(whichUnit, IsPlayerEnemy(GetOwningPlayer(whichUnit), LocalPlayer) and IsUnitFogged(whichUnit, LocalPlayer) == false and IsObserverPlayerEx(LocalPlayer) == false)
 			endif
 		endif
 		call DeallocateGroup(g)
@@ -58493,7 +58383,7 @@ function Effect_DarkRift takes unit trigUnit returns nothing
 	call UnitAddPermanentAbility(trigUnit,'A2MB')
 	set t = CreateTrigger()
 	set h = GetHandleId(t)
-	if IsPlayerAlly(LocalPlayer, GetOwningPlayer(trigUnit)) or IsObserverPlayer(LocalPlayer) then
+	if IsPlayerAlly(LocalPlayer, GetOwningPlayer(trigUnit)) or IsObserverPlayerEx(LocalPlayer) then
 		call PingMinimapEx(GetUnitX(stg_u), GetUnitY(stg_u), 3, 255, 255, 255, false)
 	endif
 	call TriggerRegisterTimerEvent(t, 7 -GetUnitAbilityLevel(trigUnit,'A0R0'), false)
@@ -60509,7 +60399,7 @@ function O0A takes unit u, unit t, integer i returns boolean
 		call GHX(Temp__ArrayUnit[1], u,'A315')
 		call SaveUnitHandle(ObjectHashTable, GetHandleId(u), StringHash("ChargedUnit"), Temp__ArrayUnit[1])
 	endif
-	if IsPlayerAlly(LocalPlayer, GetOwningPlayer(u)) or IsObserverPlayer(LocalPlayer) then
+	if IsPlayerAlly(LocalPlayer, GetOwningPlayer(u)) or IsObserverPlayerEx(LocalPlayer) then
 		set s = "Abilities\\Spells\\Other\\HowlOfTerror\\HowlTarget.mdl"
 	endif
 	call DestroyEffect(LoadEffectHandle(ObjectHashTable, i, 5))
@@ -60610,7 +60500,7 @@ function O4A takes unit whichUnit, integer abilLevel returns nothing
 	local integer h = GetHandleId(time)
 	local integer W0V = GetHandleId(whichUnit)
 	local string s = ""
-	if IsPlayerAlly(LocalPlayer, GetOwningPlayer(whichUnit)) or IsObserverPlayer(LocalPlayer) then
+	if IsPlayerAlly(LocalPlayer, GetOwningPlayer(whichUnit)) or IsObserverPlayerEx(LocalPlayer) then
 		set s = "Abilities\\Spells\\Other\\HowlOfTerror\\HowlTarget.mdl"
 		call PingMinimapEx(GetWidgetX(targetUnit), GetWidgetY(targetUnit), 2, 255, 255, 255, false)
 	endif
@@ -61647,7 +61537,7 @@ function IDA takes string ATX, unit targetUnit, unit trigUnit returns nothing
 		call SetTextTagFadepoint(tt, .15)
 		call SetTextTagPermanent(tt, false)
 		call SetTextTagLifespan(tt, .65)
-		call SetTextTagVisibility(tt, IsUnitAlly(trigUnit, LocalPlayer) or IsObserverPlayer(LocalPlayer))
+		call SetTextTagVisibility(tt, IsUnitAlly(trigUnit, LocalPlayer) or IsObserverPlayerEx(LocalPlayer))
 	else
 		call DestroyTextTag(tt)
 	endif
@@ -64131,14 +64021,14 @@ function B7A takes unit whichUnit, real x, real y, real DRI, effect FX, fogmodif
 	local real GIX = GetDistanceBetween(GetUnitX(whichUnit), GetUnitY(whichUnit), x, y)
 	local string s = ""
 	local effect eff = null
-	if IsPlayerAlly(LocalPlayer, GetOwningPlayer(whichUnit)) or IsObserverPlayer(LocalPlayer) then
+	if IsPlayerAlly(LocalPlayer, GetOwningPlayer(whichUnit)) or IsObserverPlayerEx(LocalPlayer) then
 		set s = "H\\AA\\IceBlastAoE.mdx"
 	endif
 	set eff= AddSpecialEffect(s, x,y)
 	call EXSetEffectSize(eff ,0.25*PJZ/100.)
 	call SaveEffectHandle(HY, h, 14, eff)
 	set eff = null
-	if IsUnitEnemy(missileDummy, LocalPlayer) and IsObserverPlayer(LocalPlayer) == false then
+	if IsUnitEnemy(missileDummy, LocalPlayer) and IsObserverPlayerEx(LocalPlayer) == false then
 		call UnitSetUsesAltIcon(missileDummy, true)
 	endif
 	call TriggerRegisterTimerEvent(t, RMinBJ(2. /(GIX / 30), .04), true)
@@ -64184,7 +64074,7 @@ function B8A takes nothing returns boolean
 		call RemoveUnit(missileDummy)
 		set PJZ= RMinBJ(25+250+50*DRI,1000)
 		set s = ""
-		if IsPlayerAlly(GetOwningPlayer(whichUnit), LocalPlayer) or IsObserverPlayer(LocalPlayer) then
+		if IsPlayerAlly(GetOwningPlayer(whichUnit), LocalPlayer) or IsObserverPlayerEx(LocalPlayer) then
 			set s = "war3mapImported\\IceWindGroundFX.mdl"
 		endif
 		set fm = CreateFogModifierRadius(GetOwningPlayer(whichUnit), FOG_OF_WAR_VISIBLE, x, y, 500, true, true)
@@ -64208,7 +64098,7 @@ function BDE takes nothing returns nothing
 	local trigger t = CreateTrigger()
 	local integer h = GetHandleId(t)
 	local unit missileDummy = CreateUnit(GetOwningPlayer(whichUnit),'H0B8', GetUnitX(whichUnit), GetUnitY(whichUnit), a * bj_RADTODEG)
-	if IsUnitEnemy(missileDummy, LocalPlayer) and IsObserverPlayer(LocalPlayer) == false then
+	if IsUnitEnemy(missileDummy, LocalPlayer) and IsObserverPlayerEx(LocalPlayer) == false then
 		call UnitSetUsesAltIcon(missileDummy, true)
 	endif
 	call SaveUnitHandle(HY, h, 45, missileDummy)
@@ -66505,7 +66395,7 @@ function FYA takes nothing returns nothing
 	local unit missileDummy
 	local integer OVX
 	local string s = "effects\\Snipe Target.mdx"
-	if IsPlayerAlly(LocalPlayer, GetOwningPlayer(whichUnit)) == false and IsObserverPlayer(LocalPlayer) == false then
+	if IsPlayerAlly(LocalPlayer, GetOwningPlayer(whichUnit)) == false and IsObserverPlayerEx(LocalPlayer) == false then
 		set s = ""
 	endif
 	if level == 1 then
@@ -66613,7 +66503,7 @@ function C3E takes nothing returns nothing
 	local string s = ""
 	local fogmodifier fm = CreateFogModifierRadius(GetOwningPlayer(whichUnit), FOG_OF_WAR_VISIBLE, x, y, 450, true, true)
 	call FogModifierStart(fm)
-	if IsPlayerAlly(LocalPlayer, GetOwningPlayer(whichUnit)) or IsObserverPlayer(LocalPlayer) then
+	if IsPlayerAlly(LocalPlayer, GetOwningPlayer(whichUnit)) or IsObserverPlayerEx(LocalPlayer) then
 		set s = "war3mapImported\\CallDown_4.mdx"
 	endif
 	call TriggerRegisterTimerEvent(t, .1, false)
@@ -67745,7 +67635,7 @@ function G8A takes nothing returns boolean
 		if IsUnitVisibleToPlayer(whichUnit, LocalPlayer) == false and IsUnitVisibleToPlayer(targetUnit, LocalPlayer) == false then
 			set a = 0
 		endif
-		if IsObserverPlayer(LocalPlayer) then
+		if IsObserverPlayerEx(LocalPlayer) then
 			set a = 1
 		endif
 		if d < 700 or((LoadInteger(HY,(GetHandleId((whichUnit))),(4295))) == 1) then
@@ -67984,7 +67874,7 @@ function DNE takes nothing returns nothing
 	local integer level = GetUnitAbilityLevel(whichUnit,'A1TB') + GetUnitAbilityLevel(whichUnit,'A3FQ')
 	//local boolean b = false
 	call DestroyEffect(AddSpecialEffectTarget("Objects\\Spawnmodels\\NightElf\\NECancelDeath\\NECancelDeath.mdl", whichUnit, "chest"))
-	//if IsPlayerAlly(GetOwningPlayer(whichUnit), LocalPlayer) or(IsGameHaveObserver and IsObserverPlayer(LocalPlayer)) or IsVisibleToPlayer(x, y, LocalPlayer) then
+	//if IsPlayerAlly(GetOwningPlayer(whichUnit), LocalPlayer) or(GameHasObservers and IsObserverPlayerEx(LocalPlayer)) or IsVisibleToPlayer(x, y, LocalPlayer) then
 		//set b = true
 		call PingMinimapEx(x, y, 4., 255, 0, 0, false)
 	//endif
@@ -69817,7 +69707,7 @@ function FireRemnatTimeText takes unit u, real s returns nothing
 	call SetTextTagPosUnit(tt, u, -32)
 	call SetTextTagColor(tt, 255, 200, 0, 255)
 	call SetTextTagVelocity(tt, 0, 0)
-	call SetTextTagVisibility(tt, IsUnitAlly(u, LocalPlayer) or IsObserverPlayer(LocalPlayer))
+	call SetTextTagVisibility(tt, IsUnitAlly(u, LocalPlayer) or IsObserverPlayerEx(LocalPlayer))
 	call SetTextTagPermanent(tt, true)
 	
 	set tt = null
@@ -78550,7 +78440,7 @@ endfunction
 function Trig_SynsL takes player p, integer id returns nothing
 	local unit u = PlayerHeroes[id]
 	local integer i = GetHeroLevel(u)
-	if IsPlayerAlly(LocalPlayer, p) or IsObserverPlayer(LocalPlayer) then
+	if IsPlayerAlly(LocalPlayer, p) or IsObserverPlayerEx(LocalPlayer) then
 		call EXDisplayChat(p, 1, "我还需要|c00FFFF00" + I2S(DzGetUnitNeededXP(u, i)-GetHeroXP(u)) + "|r点经验到达" + I2S(i + 1) + "级")
 	endif
 	set u = null
@@ -78565,7 +78455,7 @@ endfunction
 function Trig_SynsO takes nothing returns nothing
 	local player p = DzGetTriggerSyncPlayer()
 	local integer id = GetPlayerId(p)
-	if IsObserverPlayer(LocalPlayer) then
+	if IsObserverPlayerEx(LocalPlayer) then
 		call EXDisplayChat(p, 2, "近卫军团防御符文冷却：" + R2S(GetSeGlyphCd(1)))
 		call EXDisplayChat(p, 2, "天灾军团防御符文冷却：" + R2S(GetSeGlyphCd(2)))
 	endif
@@ -78574,7 +78464,7 @@ endfunction
 
 function Trig_SynsT takes nothing returns nothing
 	local player p = DzGetTriggerSyncPlayer()
-	if IsPlayerAlly(LocalPlayer, p) or IsObserverPlayer(LocalPlayer) then
+	if IsPlayerAlly(LocalPlayer, p) or IsObserverPlayerEx(LocalPlayer) then
 		call EXDisplayChat(p, 1, DzGetTriggerSyncData())
 	endif
 endfunction
@@ -78682,7 +78572,7 @@ function Trig_Synsp takes nothing returns nothing
 		call Trig_SynsL(p, id)
 	elseif s == "0" then
 		if IsPlayerSentinel(p) then
-			if IsPlayerAlly(LocalPlayer, p) or IsObserverPlayer(LocalPlayer) then
+			if IsPlayerAlly(LocalPlayer, p) or IsObserverPlayerEx(LocalPlayer) then
 				if GetSeGlyphCd(1) == 0.00 then
 					call EXDisplayChat(p, 1, "防御符文 > 已准备就绪")
 				else
@@ -78690,7 +78580,7 @@ function Trig_Synsp takes nothing returns nothing
 				endif
 			endif
 		elseif IsPlayerScourge(p) then
-			if IsPlayerAlly(LocalPlayer, p) or IsObserverPlayer(LocalPlayer) then
+			if IsPlayerAlly(LocalPlayer, p) or IsObserverPlayerEx(LocalPlayer) then
 				if GetSeGlyphCd(2) == 0.00 then
 					call EXDisplayChat(p, 1, "防御符文 > 准备就绪。")
 				else
@@ -78699,7 +78589,7 @@ function Trig_Synsp takes nothing returns nothing
 			endif
 		endif
 	else
-		if IsPlayerAlly(LocalPlayer, p) or IsObserverPlayer(LocalPlayer) then
+		if IsPlayerAlly(LocalPlayer, p) or IsObserverPlayerEx(LocalPlayer) then
 			call PromptEnemyState(p, s)
 		endif
 	endif
@@ -79643,7 +79533,7 @@ function main takes nothing returns nothing
 	call TriggerAddAction(t, function YWE)
 	call TriggerAddAction(t, function RBR)
 
-	if IsGameHaveObserver then
+	if GameHasObservers then
 		call LMX()
 		set t = CreateTrigger()
 		if IsPlayerObserver(ObserverPlayer1) then
@@ -80040,7 +79930,7 @@ function main takes nothing returns nothing
 	call TriggerAddAction(t, function NZR)
 	call TriggerAddCondition(t, Condition(function AFR))
 	set GHV = t
-	if IsGameHaveObserver then
+	if GameHasObservers then
 		set t = CreateTrigger()
 		call TriggerRegisterTimerEvent(t, 1, true)
 		call TriggerAddCondition(t, Condition(function BJR))
@@ -80147,8 +80037,9 @@ function main takes nothing returns nothing
 	call ExecuteFunc("Init_Instructions")
 	// 创建了一只羊 还有1秒计时器
 	call ExecuteFunc("TCX")
-	// 初始化神杖特效 按英雄Id
-	call ExecuteFunc("Init_HerosTypeAghanimEffectAbilityId")
+
+	call PlayerNetWorth_Init()
+	
 	// 一些排行榜
 	call ExecuteFunc("CreateLeaderboards")
 	// 会切换的技能Id

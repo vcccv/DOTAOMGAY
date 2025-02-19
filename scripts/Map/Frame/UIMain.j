@@ -187,7 +187,7 @@ scope MainUI
         call HardwareMessage_Init222()
         call CommandButtonHelper_Init()
 
-        if IsObserverPlayer(LocalPlayer) then
+        if IsObserverPlayerEx(LocalPlayer) then
             call DzFrameSetEnable(GlyphFrame, false)
             call DzFrameSetEnable(UIFrame__Button[0], false)
         endif

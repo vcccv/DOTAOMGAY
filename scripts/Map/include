@@ -9,4 +9,4 @@
 #include "ItemSystem\\include"
 #include "HeroSkill\\include"
 #include "DoubleClickSelfCast.j"
-#include "PlayerSettings.j"
+#include "Player\\include"

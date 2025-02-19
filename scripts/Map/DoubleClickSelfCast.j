@@ -1,5 +1,5 @@
 
-library DoubleTapAbilityToSelfCast
+library DoubleTapAbilityToSelfCast requires Table
 
     globals
         // 500ms

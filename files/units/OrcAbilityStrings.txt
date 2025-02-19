@@ -19,9 +19,9 @@ effectsoundlooped=ReplaceableTextures\CommandButtons\BTNSnazzyScroll.blp
 [h0EQ]
 art=ReplaceableTextures\CommandButtons\BTNVoidScepter
 buttonpos=0,2
-name="阿哈利姆福佑卷轴"
+name="阿哈利姆福佑"
 hotkey=A
-tip="阿哈利姆福佑卷轴(|cffffcc00A|r)|nAghanim Upgrader"
+tip="阿哈利姆福佑(|cffffcc00A|r)|nAghanim Upgrader"
 ubertip="|cffffcc00属性：|r|n|cff87cefa技能升级（被动）：|r|n获得物品后立即消耗物品，使英雄永久性获得技能升级效果，阿哈利姆福佑不会提供任何属性，只会提供技能升级效果。|n|n|cffffcc00需要：|r|n阿哈利姆神杖 - 4200 |n卷轴 - 1600 |n|n|c00838B8B总价：5800|r"
 [I0VF]
 art=ReplaceableTextures\CommandButtons\BTNSnazzyScroll
