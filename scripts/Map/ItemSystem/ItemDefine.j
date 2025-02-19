@@ -6,14 +6,22 @@ library ItemDefine requires ItemSystem
     function ItemDefine_Init takes nothing returns nothing
         local string s = ""
         call RegisterItem('I0FF', 'I0FG', 0, 0)
-        set it_mlq = RegisterItem('I0UB', 'I0UC', 0, 'I0UD')
-        call SaveInteger(HY, 'ITDB', RegisterItem(0, 0, 'n12V', 0), it_mlq)
-        set it_xj = RegisterItem('I0VJ', 'I0VK', 0, 'I0VL')
-        set jz_xj = RegisterItem('I0VG', 'I0VH', 'h0EU', 'I0VI')
+
+        // 魔龙枪
+        // Item_DragonLance
+        set Item_DragonLance = RegisterItem('I0UB', 'I0UC', 0, 'I0UD')
         set Recipe_HurricanePike = RegisterItem('I0VX', 'I0VY', 'n138', 'I0VZ')
         set Item_HurricanePike = RegisterItem('I0W0', 'I0W1', 0, 'I0W2')
+        call ResgiterAbilityMethodSimple('A3SH', "DragonReachOnAdd", "DragonReachOnRemove")
+        
+        call SaveInteger(HY, 'ITDB', RegisterItem(0, 0, 'n12V', 0), Item_DragonLance)
+
+        set Item_Bloodthorn = RegisterItem('I0VJ', 'I0VK', 0, 'I0VL')
+        set Recipe_Bloodthorn = RegisterItem('I0VG', 'I0VH', 'h0EU', 'I0VI')
+
         set it_hyzr = RegisterItem('I0VM', 'I0VN', 0, 'I0VO')
         call SaveInteger(HY, 'ITDB', RegisterItem(0, 0, 'n134', 0), it_hyzr)
+        // it_jys
         set it_jys = RegisterItem('I0RC', 'I0RD', 'n139', 0)
         set it_fj = RegisterItem('IZPS', 'IZPD', 0, 'IZPE')
         call SaveInteger(HY, 'ITDB', RegisterItem(0, 0, 'n125', 0), it_fj)//否决一键购买
@@ -974,13 +982,13 @@ library ItemDefine requires ItemSystem
         set CombineIndex1[CombineMaxIndex] = OAV
         set CombineIndex2[CombineMaxIndex] = XQV
         set CombineIndex3[CombineMaxIndex] = XQV
-        set CombinedIndex[CombineMaxIndex] = it_mlq
+        set CombinedIndex[CombineMaxIndex] = Item_DragonLance
         set CombineMaxIndex = CombineMaxIndex + 1
 
         set CombineIndex1[CombineMaxIndex] = NJV
         set CombineIndex2[CombineMaxIndex] = I8V
-        set CombineIndex3[CombineMaxIndex] = jz_xj
-        set CombinedIndex[CombineMaxIndex] = it_xj
+        set CombineIndex3[CombineMaxIndex] = Recipe_Bloodthorn
+        set CombinedIndex[CombineMaxIndex] = Item_Bloodthorn
         set CombineMaxIndex = CombineMaxIndex + 1
 
         set CombineIndex1[CombineMaxIndex] = OAV
@@ -988,7 +996,7 @@ library ItemDefine requires ItemSystem
         set CombinedIndex[CombineMaxIndex] = it_hyzr
         set CombineMaxIndex = CombineMaxIndex + 1
 
-        set CombineIndex1[CombineMaxIndex] = it_mlq
+        set CombineIndex1[CombineMaxIndex] = Item_DragonLance
         set CombineIndex2[CombineMaxIndex] = NMV
         set CombineIndex3[CombineMaxIndex] = Recipe_HurricanePike
         set CombinedIndex[CombineMaxIndex] = Item_HurricanePike
@@ -1024,9 +1032,9 @@ library ItemDefine requires ItemSystem
         integer XMV
         integer it_hyzr
         integer it_fj
-        integer it_mlq
-        integer it_xj
-        integer jz_xj
+        integer Item_DragonLance
+        integer Item_Bloodthorn
+        integer Recipe_Bloodthorn
         integer Recipe_AetherLens
         integer Item_AetherLens
         integer Item_HurricanePike

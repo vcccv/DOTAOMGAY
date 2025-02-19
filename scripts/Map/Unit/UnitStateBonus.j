@@ -55,7 +55,7 @@ library UnitStateBonus requires UnitUtils, UnitAbility, UnitWeapon
         endif
         return newValue
     endfunction
-    function UnitReduceStateBonus takes unit whichUnit, real reduceValue, integer abilId returns real
+    function UnitSubStateBonus takes unit whichUnit, real reduceValue, integer abilId returns real
         local real    value
         local integer h
         if whichUnit == null then
@@ -86,7 +86,7 @@ library UnitStateBonus requires UnitUtils, UnitAbility, UnitWeapon
         set percent = percent * 0.01
         call MHUnit_SetData(whichUnit, UNIT_DATA_BONUS_MOVESPEED, MHUnit_GetData(whichUnit, UNIT_DATA_BONUS_MOVESPEED) + percent)
     endfunction
-    function UnitReduceMoveSpeedBonusPercent takes unit whichUnit, real percent returns nothing
+    function UnitSubMoveSpeedBonusPercent takes unit whichUnit, real percent returns nothing
         if whichUnit == null then
             return
         endif
@@ -119,7 +119,7 @@ library UnitStateBonus requires UnitUtils, UnitAbility, UnitWeapon
         endif
         set Table[GetHandleId(whichUnit)].real[SPELL_DAMAGE_AMP] = Table[GetHandleId(whichUnit)].real[SPELL_DAMAGE_AMP] + value
     endfunction
-    function UnitReduceSpellDamageAmplificationBonus takes unit whichUnit, real value returns nothing
+    function UnitSubSpellDamageAmplificationBonus takes unit whichUnit, real value returns nothing
         if whichUnit == null then
             return
         endif
@@ -147,7 +147,7 @@ library UnitStateBonus requires UnitUtils, UnitAbility, UnitWeapon
             return
         endif
         set attackRangeBonus = GetUnitAttackRangeBonus(whichUnit)
-        if IsUnitMeleeAttacker(whichUnit) then
+        if not IsUnitMeleeAttacker(whichUnit) then
             set attackRangeBonus = attackRangeBonus + GetUnitRangedAttackRangeBonus(whichUnit)
         endif
         // 物编攻击距离 + 攻击距离奖励
@@ -182,7 +182,7 @@ library UnitStateBonus requires UnitUtils, UnitAbility, UnitWeapon
         set Table[GetHandleId(whichUnit)].real[UNIT_RANGED_ATTACK_RANGE_BONUS] = attackRangeBonus + addValue
         call UnitUpdateAttackRangeBonus(whichUnit)
     endfunction
-    function UnitReduceAttackRangeRangedAttackerOnlyBonus takes unit whichUnit, real reduceValue returns nothing
+    function UnitSubAttackRangeRangedAttackerOnlyBonus takes unit whichUnit, real reduceValue returns nothing
         local real attackRangeBonus
         if whichUnit == null then
             return

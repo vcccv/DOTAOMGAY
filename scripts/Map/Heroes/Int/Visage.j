@@ -38,7 +38,7 @@ scope Visage
             return
         endif
         set bonus = Table[GetHandleId(familiarUnit)].integer[FAMILIAR_ATTACK_DAMAGE_BONUS]
-        call UnitReduceStateBonus(familiarUnit, bonus, UNIT_BONUS_DAMAGE)
+        call UnitSubStateBonus(familiarUnit, bonus, UNIT_BONUS_DAMAGE)
         if level == 1 then
             set attackCount = 8
         elseif level == 2 then

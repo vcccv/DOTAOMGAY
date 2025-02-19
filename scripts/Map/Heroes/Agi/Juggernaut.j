@@ -17,7 +17,7 @@ scope Juggernaut
         local unit WBR
         if S4R > max then
             if LoadInteger(HY, h, 0)> 0 then
-                call UnitReduceStateBonus(u, LoadInteger(HY, h, 0), UNIT_BONUS_ATTACK)
+                call UnitSubStateBonus(u, LoadInteger(HY, h, 0), UNIT_BONUS_ATTACK)
             endif
             call KillUnit(fovd)
             call DestroyEffect((LoadEffectHandle(HY, h, 32)))
@@ -34,7 +34,7 @@ scope Juggernaut
             call WOR(u)
             if TempUnit == null then
                 if LoadInteger(HY, h, 0)> 0 then
-                    call UnitReduceStateBonus(u, LoadInteger(HY, h, 0), UNIT_BONUS_ATTACK)
+                    call UnitSubStateBonus(u, LoadInteger(HY, h, 0), UNIT_BONUS_ATTACK)
                 endif
                 call KillUnit(fovd)
                 call DestroyEffect((LoadEffectHandle(HY, h, 32)))

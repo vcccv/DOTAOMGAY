@@ -62,6 +62,8 @@ library SpecialPassiveAbility requires TimerUtils
         // 侧面机枪
         call RegisterSpecialPassiveAbilityById('A3UR')
         
+        // 天幕坠落
+        call RegisterSpecialPassiveAbilityById('ANXL')
     endfunction
 
 endlibrary

@@ -154,7 +154,7 @@ library UnitIllusion requires UnitUtils, UnitWeapon, UnitMorph, BuffSystem
             // 模型缩放
             // call SetUnitCurrentScaleEx(illusionUnit, )
         endif
-        if ( UnitHasItemOfType(illusionUnit, ItemRealId[it_mlq]) ) or ( UnitHasItemOfType(illusionUnit, ItemRealId[Item_HurricanePike]) ) then
+        if ( UnitHasItemOfType(illusionUnit, ItemRealId[Item_DragonLance]) ) or ( UnitHasItemOfType(illusionUnit, ItemRealId[Item_HurricanePike]) ) then
             // call UnitAddAttackRangeRangedAttackerOnlyBonus(illusionUnit, 140.)
         endif
         if IsPlayerAutoSelectSummoned[pid] then

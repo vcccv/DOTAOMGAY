@@ -95,7 +95,7 @@ scope Bloodseeker
         if count == 0 then
             call UnitRemoveAbility(whichUnit,'A214')
             if isHaveBonus then
-                call UnitReduceStateBonus(whichUnit, lastDamageBonus, UNIT_BONUS_DAMAGE)
+                call UnitSubStateBonus(whichUnit, lastDamageBonus, UNIT_BONUS_DAMAGE)
                 call SaveBoolean(HY, h, 0, false)
             endif
             call SaveInteger(OtherHashTable, GetHandleId(whichUnit),'A214', 0)
@@ -109,9 +109,9 @@ scope Bloodseeker
                 call SaveInteger(HY, h, 0, damageBonus)
                 call SaveInteger(HY, h, 1, moveSpeedBonus)
             elseif lastDamageBonus != damageBonus then
-                call UnitReduceMoveSpeedBonusPercent(whichUnit, lastMoveSpeedBonus)
+                call UnitSubMoveSpeedBonusPercent(whichUnit, lastMoveSpeedBonus)
                 call UnitAddMoveSpeedBonusPercent(whichUnit, moveSpeedBonus)
-                call UnitReduceStateBonus(whichUnit, lastDamageBonus, UNIT_BONUS_DAMAGE)
+                call UnitSubStateBonus(whichUnit, lastDamageBonus, UNIT_BONUS_DAMAGE)
                 call UnitAddStateBonus(whichUnit, damageBonus, UNIT_BONUS_DAMAGE)
                 call SaveInteger(HY, h, 0, damageBonus)
                 call SaveInteger(HY, h, 1, moveSpeedBonus)

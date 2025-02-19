@@ -21092,6 +21092,8 @@ name="血棘"
 ubertip="|cFFF00000这件物品不属于你，它失去了效果|r"
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNBloodthorn.blp
 art=ReplaceableTextures\CommandButtons\BTNBloodthorn
+[A3SH]
+name="魔龙之能"
 [I0UB]
 name="魔龙枪"
 [I0UC]

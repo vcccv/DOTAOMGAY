@@ -153,7 +153,7 @@ scope ShadowFiend
 
     function ShadowFiendRequiemOfSoulsSlowBuffOnAdd takes nothing returns nothing
         local unit whichUnit = Event.GetTriggerUnit()
-        call UnitReduceMoveSpeedBonusPercent(whichUnit, 25)
+        call UnitSubMoveSpeedBonusPercent(whichUnit, 25)
         set whichUnit = null
     endfunction
 

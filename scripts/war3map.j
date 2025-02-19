@@ -2935,8 +2935,8 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A1WI', 12, "G8E")
 	call SaveStr(ObjectHashTable,'A12W', 12, "G9E")
 	call SaveStr(ObjectHashTable,'A15W', 12, "HVE")
-	call SaveStr(ObjectHashTable,'A19M', 12, "Item_SpellEffect_ForceStaff")
-	call SaveStr(ObjectHashTable,'A3U8', 12, "Item_SpellEffect_HurricanePike")
+	call SaveStr(ObjectHashTable,'A19M', 12, "ItemAbility_ForceOnSpellEffect")
+	call SaveStr(ObjectHashTable,'A3U8', 12, "ItemAbility_HurricaneThrustOnSpellEffect")
 	call SaveStr(ObjectHashTable,'AIpg', 12, "HOE")
 	call SaveStr(ObjectHashTable,'A1AC', 12, "HRE")
 	call SaveStr(ObjectHashTable,'A1AS', 12, "HIE")
@@ -8232,7 +8232,7 @@ function UnitUpdateCommonAttackDamageBonus takes unit whichUnit returns nothing
 		return
 	endif
 	set bonus = Table[GetHandleId(whichUnit)].integer[UNIT_COMMON_ATTACK_DAMAGE_BONUS]
-	call UnitReduceStateBonus(whichUnit, bonus, UNIT_BONUS_DAMAGE)
+	call UnitSubStateBonus(whichUnit, bonus, UNIT_BONUS_DAMAGE)
 
 	set i = i + LoadInteger(HY, h,'a068')
 	set i = i + LoadInteger(HY, h,'a272')
@@ -14500,7 +14500,7 @@ function OnManipulatItem takes nothing returns boolean
 				endif
 			elseif i == ItemRealId[NOV] then
 				call OFO()
-			elseif i == ItemRealId[it_mlq] or i == ItemRealId[Item_HurricanePike] then //拾取魔龙枪
+			elseif i == ItemRealId[Item_DragonLance] or i == ItemRealId[Item_HurricanePike] then //拾取魔龙枪
 				if not IsUnitSpiritBear(u) then
 					//call Item_dragonlance(false)
 					if i == ItemRealId[Item_HurricanePike] then
@@ -14542,7 +14542,7 @@ function OnManipulatItem takes nothing returns boolean
 					call UnitRemoveAbility(u,'A431')
 				endif
 				// 魔龙枪和飓风长戟
-			elseif i == ItemRealId[it_mlq] or i == ItemRealId[Item_HurricanePike]  then 
+			elseif i == ItemRealId[Item_DragonLance] or i == ItemRealId[Item_HurricanePike]  then 
 				if not IsUnitSpiritBear(u) then
 					//call Item_dragonlance(true)
 				endif
@@ -18895,290 +18895,7 @@ function HVE takes nothing returns nothing
 	set t = null
 	set whichUnit = null
 endfunction
-function C1O takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit stg_u =(LoadUnitHandle(HY, h, 17))
-	local real a =(LoadReal(HY, h, 137))
-	local real d =(LoadReal(HY, h, 138))
-	local real x = CoordinateX50(GetUnitX(stg_u) + d / 10 * Cos(a * bj_DEGTORAD))
-	local real y = CoordinateY50(GetUnitY(stg_u) + d / 10 * Sin(a * bj_DEGTORAD))
-	if GetTriggerEvalCount(t) == 11 or GetTriggerEventId() == EVENT_WIDGET_DEATH then
-		call FlushChildHashtable(HY, h)
-		call DestroyTrigger(t)
-	else
-		call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Human\\FlakCannons\\FlakTarget.mdl", x, y))
-		if ((LoadInteger(HY,(GetHandleId((stg_u))),(4306)))!= 1) and GetUnitAbilityLevel(stg_u,'B08V') == 0 then
-			call KillTreeByCircle(x, y, 150)
-			if IsUnitType(stg_u, UNIT_TYPE_HERO) then
-				call SaveBoolean(OtherHashTable, GetHandleId(stg_u), 99, true)
-			endif
-			call SetUnitX(stg_u, x)
-			call SetUnitY(stg_u, y)
-		endif
-	endif
-	set stg_u = null
-	set t = null
-	return false
-endfunction
-function C2O takes unit stg_u returns nothing
-	local trigger t = CreateTrigger()
-	local integer h = GetHandleId(t)
-	local real x
-	local real y
-	local real d
-	local real a
-	local integer i =-1
-	local boolean C3O = false
-	call EPX(stg_u, 4414, 3)
-	set a = GetUnitFacing(stg_u)
-	loop
-	exitwhen C3O or i == 23
-		set x = CoordinateX50(GetUnitX(stg_u) +(600 -i * 25)* Cos(a * bj_DEGTORAD))
-		set y = CoordinateY50(GetUnitY(stg_u) +(600 -i * 25)* Sin(a * bj_DEGTORAD))
-		if (IsPointInRegion(TerrainCliffRegion,((x)* 1.),((y)* 1.))) == false then
-			set C3O = true
-		endif
-		set i = i + 1
-	endloop
-	set d = GetDistanceBetween(x, y, GetUnitX(stg_u), GetUnitY(stg_u))
-	call TriggerRegisterTimerEvent(t, .04, true)
-	call TriggerRegisterDeathEvent(t, stg_u)
-	call TriggerAddCondition(t, Condition(function C1O))
-	call SaveUnitHandle(HY, h, 17,(stg_u))
-	call SaveReal(HY, h, 137,((a)* 1.))
-	call SaveReal(HY, h, 138,((d)* 1.))
-	set t = null
-endfunction
-function C4O takes nothing returns boolean
-	return(IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO))!= null
-endfunction
-function C5O takes unit u returns nothing
-	local group g = AllocationGroup(35)
-	set TempUnit = GetTriggerUnit()
-	call GroupEnumUnitsInRange(g, GetUnitX(u), GetUnitY(u) + 70, 76, Condition(function C4O))
-	if FirstOfGroup(g)!= null then
-		call C2O(FirstOfGroup(g))
-	endif
-	call DeallocateGroup(g)
-endfunction
 
-function QTYUW takes nothing returns nothing
-	local timer t = GetExpiredTimer()
-	local integer h = GetHandleId(t)
-	local unit WEEUQ = LoadUnitHandle(HY, h, 0)
-	local unit WWUTQ = LoadUnitHandle(HY, h, 1)
-	if UnitAlive(WEEUQ) and UnitAlive(WWUTQ) then
-		call IssueTargetOrderById(WEEUQ, 851983, WWUTQ)
-	endif
-	call PauseTimer(t)
-	call FlushChildHashtable(HY, GetHandleId(t))
-	call DestroyTimer(t)
-	set WEEUQ = null
-	set WWUTQ = null
-	set t = null
-endfunction
-
-function QTUQW takes unit WEEUQ, unit WWUTQ returns nothing
-	local integer h = TimerStartSingle(0.02, function QTYUW)
-	call SaveUnitHandle(HY, h, 0, WEEUQ)
-	call SaveUnitHandle(HY, h, 1, WWUTQ)
-endfunction
-
-function QTUEW takes nothing returns nothing
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit u = LoadUnitHandle(HY, h, 0)
-	local unit target = LoadUnitHandle(HY, h, 1)
-	local integer hu = GetHandleId(u) 
-	local integer int = LoadInteger(HY, h, 10)
-	local integer id
-	if LoadReal(HY, hu,'A3UC')> 0 then
-		if GetTriggerEventId() == EVENT_UNIT_ACQUIRED_TARGET then
-			call QTUWW(u, GetEventTargetUnit() == target)
-		else
-			set id = GetIssuedOrderId()
-			if id == 851983 or (id == 851971 and GetOrderTargetUnit() == target)  then 
-				call QTUWW(u, GetOrderTargetUnit() == target)
-				set int = int + 1
-				call SaveInteger(HY, h, 10, int)
-			endif
-		endif
-	endif
-	if int == 4 or GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
-		call FlushChildHashtable(HY, h)
-		call DestroyTrigger(t)
-		call QTUWW(u, false)
-		if GetUnitAbilityLevel(u,'A3UC')> 0 then
-			call UnitRemoveAbility(u,'A3UC')
-			call UnitRemoveAbility(u,'a3UC')
-		endif
-	endif
-	set target = null
-	set u = null
-	set t = null
-endfunction
-function QTURW takes unit u, unit target returns nothing
-	local trigger t = CreateTrigger()
-	local integer h = GetHandleId(t)
-	call QTUWW(u, true)
-	call SaveInteger(HY, h, 10, 0)
-	call SaveUnitHandle(HY, h, 0, u)
-	call SaveUnitHandle(HY, h, 1, target)
-	call TriggerRegisterTimerEvent(t, 5., false)
-	call TriggerRegisterUnitEvent(t, u, EVENT_UNIT_ISSUED_TARGET_ORDER)
-	call TriggerRegisterUnitEvent(t, u, EVENT_UNIT_ISSUED_POINT_ORDER)
-	call TriggerRegisterUnitEvent(t, u, EVENT_UNIT_ACQUIRED_TARGET)
-	call TriggerAddCondition(t, Condition(function QTUEW))
-	set t = null
-endfunction
-function YRQEQ takes player p, player t returns nothing
-	call SaveReal(HY, GetHandleId(t), GetPlayerId(p) +'buff', GetGameTime())
-endfunction
-function QTRUW takes unit u returns boolean
-	return LoadBoolean(HY, GetHandleId(u), 4306) or LoadBoolean(HY, GetHandleId(u), 4307)
-endfunction
-function QTTQW takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit WWUTQ =(LoadUnitHandle(HY, h, 17))
-	local real TWQUQ =(LoadReal(HY, h, 137))
-	local real RTRWQ =(LoadReal(HY, h, 138))
-	local real dx
-	local real dy
-	local integer c = GetTriggerEvalCount(t)
-	local integer hu = GetHandleId(WWUTQ)
-	if c == 11 or GetTriggerEventId() == EVENT_WIDGET_DEATH or LoadInteger(HY, hu, 4260) == 1 or LoadInteger(HY, hu,'ublo') == 1 then
-		call DestroyTrigger(t)
-	else
-		if (not QTRUW(WWUTQ)) and(LoadInteger(HY, hu, 4324)!= 1) then
-			//call CreateSentinelCreeps4(WWUTQ,4414,0.1)
-			set dx = CoordinateX50(GetUnitX(WWUTQ) + RTRWQ / 10. * Cos(TWQUQ * bj_DEGTORAD))
-			set dy = CoordinateY50(GetUnitY(WWUTQ) + RTRWQ / 10. * Sin(TWQUQ * bj_DEGTORAD))
-			call DestroyEffect(AddSpecialEffect(LoadStr(HY, h, 12), dx, dy))
-			call SetUnitX(WWUTQ, dx)
-			call SetUnitY(WWUTQ, dy)
-			if c == 10 then
-				//call K2X(WWUTQ)
-			endif
-		endif
-	endif
-	set WWUTQ = null
-	set t = null
-	return false
-endfunction
-function QTTWW takes unit WEEUQ, unit WWUTQ, real TWRRQ, real QEEQQ, unit QTTEW returns nothing
-	local trigger t
-	local integer h
-	local real x
-	local real y
-	local real RTRWQ
-	local real TWQUQ
-	local integer i =-1
-	local boolean b = false
-	local real QTTRW
-	local real QTTTW
-	local real dx
-	local real dy
-	if GetUnitAbilityLevel(WWUTQ,'A32U')!= 0 then
-		return
-	endif
-	set t = CreateTrigger()
-	set h = GetHandleId(t)
-	if WWUTQ == null and GetSpellTargetItem()!= null then
-		set WWUTQ = WEEUQ
-	endif
-	if QTTEW != null then
-		set TWQUQ = AngleBetweenUnit(WEEUQ, WWUTQ)
-		if WEEUQ == WWUTQ then
-			set TWQUQ = AngleBetweenUnit(QTTEW, WEEUQ)
-		endif
-	else
-		set TWQUQ = GetUnitFacing(WWUTQ)
-	endif
-	set QTTRW = Cos(TWQUQ * bj_DEGTORAD)
-	set QTTTW = Sin(TWQUQ * bj_DEGTORAD)
-	set dx = GetUnitX(WWUTQ)
-	set dy = GetUnitY(WWUTQ)
-	set x = CoordinateX50(dx +(TWRRQ -i * 25)* QTTRW)
-	set y = CoordinateY50(dy +(TWRRQ -i * 25)* QTTTW)
-	if IsUnitAlly(WWUTQ, GetOwningPlayer(GetTriggerUnit())) then
-		if IsUnitType(WWUTQ, UNIT_TYPE_HERO) then
-			call YRQEQ(GetOwningPlayer(GetTriggerUnit()), GetOwningPlayer(WWUTQ))
-		endif
-	endif
-	set RTRWQ = SquareRoot((x -GetUnitX(WWUTQ))*(x -GetUnitX(WWUTQ)) +(y -GetUnitY(WWUTQ))*(y -GetUnitY(WWUTQ)))
-	call TriggerRegisterTimerEvent(t, QEEQQ / 10., true)
-	call TriggerRegisterDeathEvent(t, WWUTQ)
-	call TriggerAddCondition(t, Condition(function QTTQW))
-	call SaveUnitHandle(HY, h, 17,(WWUTQ))
-	call SaveReal(HY, h, 137,((TWQUQ)* 1.0))
-	call SaveReal(HY, h, 138,((RTRWQ)* 1.0))
-	call SaveStr(HY, h, 12, "Abilities\\Spells\\Human\\FlakCannons\\FlakTarget.mdl")
-	set WWUTQ = null
-	set t = null
-endfunction
-
-//大推推 目标敌人
-function QTUTW takes nothing returns nothing
-	local unit u = GetTriggerUnit()
-	local unit WWUTQ = GetSpellTargetUnit()
-	local integer h
-	if GetUnitTypeId(u)!='e00E'then
-		if GetUnitAbilityLevel(WWUTQ,'A32U') == 0 then
-			call QTTWW(u, WWUTQ, 450., 0.2, WWUTQ)
-			call QTTWW(u, u, 450., 0.2, WWUTQ)
-		endif
-	else
-		set u = LoadUnitHandle(HY, GetHandleId(u), 0)
-	endif
-	set h = GetHandleId(u)
-	if u != null then
-		call UnitAddAbilityToTimed(u,'A3UC', 1, 5.,'a3UC')
-		call SaveReal(HY, h,'A3UC', GetGameTime() + 5.)
-		if not IsUnitType(u, UNIT_TYPE_MELEE_ATTACKER) then
-			call QTUQW(u, WWUTQ)
-			call QTURW(u, WWUTQ)
-		endif
-		call SaveInteger(HY, h,'A3UC', 4)
-		call SaveUnitHandle(HY, h,'A3UC', WWUTQ)
-	endif
-	set u = null
-	set WWUTQ = null
-endfunction
-
-function Item_SpellEffect_ForceStaff takes nothing returns nothing
-	local unit u = GetSpellTargetUnit()
-	local unit whichUnit = GetTriggerUnit()
-	local boolean C6O
-	if GetSpellTargetItem()!= null then
-		set u = whichUnit
-	endif
-	set C6O = IsUnitHomingMissileById(GetUnitTypeId(u))
-	if GetUnitTypeId(u)!='n00L' and GetUnitAbilityLevel(u,'B0FG') == 0 and LoadBoolean(HY, GetHandleId(u), 4306) == false then
-		if C6O then
-			call C2O(u)
-		elseif IsUnitWard(u) and GetUnitMoveSpeed(u) == 0 then
-			call C5O(u)
-		elseif IsUnitEnemy(u, GetOwningPlayer(whichUnit)) then
-			if UnitHasSpellShield(u) == false then
-				call C2O(u)
-			endif
-		elseif IsUnitAlly(u, GetOwningPlayer(whichUnit)) and(LoadBoolean(HY, GetHandleId(GetOwningPlayer(u)), 139) == false or GetOwningPlayer(u) == GetOwningPlayer(whichUnit)) then
-			call C2O(u)
-		endif
-	endif
-	set u = null
-	set whichUnit = null
-endfunction
-//大推推
-function Item_SpellEffect_HurricanePike takes nothing returns nothing
-	if IsUnitAlly(GetSpellTargetUnit(), GetTriggerPlayer()) or GetSpellTargetItem()!= null or GetUnitTypeId(GetSpellTargetUnit())=='n00L' then
-		call Item_SpellEffect_ForceStaff() //推推棒
-	elseif GetUnitAbilityLevel(GetSpellTargetUnit(),'B0BI') == 0 then
-		call QTUTW()
-	endif
-endfunction
 function HOE takes nothing returns nothing
 	local unit d
 	if GetSpellTargetItem()!= null then
@@ -33200,8 +32917,8 @@ function CPR takes nothing returns nothing
 	local integer CUR = 0
 	if level == 0 then
 		if CSR > 0 then
-			call UnitReduceStateBonus(u, CSR, UNIT_BONUS_DAMAGE)
-			call UnitReduceStateBonus(u, CTR, UNIT_BONUS_ATTACK)
+			call UnitSubStateBonus(u, CSR, UNIT_BONUS_DAMAGE)
+			call UnitSubStateBonus(u, CTR, UNIT_BONUS_ATTACK)
 		endif
 		call PauseTimer(t)
 		call DestroyTimer(t)
@@ -33221,8 +32938,8 @@ function CPR takes nothing returns nothing
 		set CUR = UYX * I2X
 		set CQR = UYX * CQR
 		if CUR != CSR then
-			call UnitReduceStateBonus(u, CSR, UNIT_BONUS_DAMAGE)
-			call UnitReduceStateBonus(u, CTR, UNIT_BONUS_ATTACK)
+			call UnitSubStateBonus(u, CSR, UNIT_BONUS_DAMAGE)
+			call UnitSubStateBonus(u, CTR, UNIT_BONUS_ATTACK)
 			call UnitAddStateBonus(u, CUR, UNIT_BONUS_DAMAGE)
 			call UnitAddStateBonus(u, CQR, UNIT_BONUS_ATTACK)
 			call SaveInteger(ObjectHashTable, GetHandleId(u),'A32G', CUR)
@@ -34316,7 +34033,7 @@ function FKR takes nothing returns nothing
 		if IsUnitInGroup(t, IK) == false then
 			set h = GetHandleId(t)
 			set ETX = StringHash("acidspray_count")
-			call UnitReduceStateBonus(t, XK[1], UNIT_BONUS_ARMOR)
+			call UnitSubStateBonus(t, XK[1], UNIT_BONUS_ARMOR)
 			call SaveInteger(ObjectHashTable, GetHandleId(t), StringHash("acidspray"), LoadInteger(ObjectHashTable, GetHandleId(t), StringHash("acidspray") + XK[1]))
 			call UnitAddAbilityLevel1ToTimed(t,'C014','D014',-1)
 			call SaveInteger(ObjectHashTable, h, ETX, LoadInteger(ObjectHashTable, h, ETX) + 1)
@@ -35483,7 +35200,7 @@ function G0R takes nothing returns nothing
 		call UnitRemoveAbility(u,'A30P')
 	endif
 	call SaveInteger(ObjectHashTable, DSR,'A0FV', UYX)
-	call UnitReduceStateBonus(u, LoadInteger(ObjectHashTable, h, 1), UNIT_BONUS_DAMAGE)
+	call UnitSubStateBonus(u, LoadInteger(ObjectHashTable, h, 1), UNIT_BONUS_DAMAGE)
 	call DestroyTimerAndFlushHT_P(t)
 	set t = null
 	set u = null
@@ -37488,7 +37205,7 @@ function LSR takes nothing returns boolean
 	local group gg
 	if LoadBoolean(HY, h, 0) == false and GetTriggerEventId() == EVENT_UNIT_ATTACKED then
 		set damageValue = LoadInteger(HY, GetHandleId(GetAttacker()),'MDMG') + 5 + 5 * level
-		call UnitReduceStateBonus(GetAttacker(), 5 + 5 * level, UNIT_BONUS_ATTACK)
+		call UnitSubStateBonus(GetAttacker(), 5 + 5 * level, UNIT_BONUS_ATTACK)
 		call SaveInteger(HY, GetHandleId(GetAttacker()),'MDMG', damageValue)
 		call GroupAddUnit(g, GetAttacker())
 	elseif LoadBoolean(HY, h, 0) == false and GetGameTime()> LoadReal(HY, h, 0) or GetTriggerEventId() == EVENT_WIDGET_DEATH then
@@ -40838,7 +40555,7 @@ function UUR takes nothing returns boolean
 			if U_R -LoadInteger(HY, h, 0)> 0 then
 				call UnitAddStateBonus(trigUnit, U_R -LoadInteger(HY, h, 0), UNIT_BONUS_ATTACK)
 			else
-				call UnitReduceStateBonus(trigUnit, LoadInteger(HY, h, 0)-U_R, UNIT_BONUS_ATTACK)
+				call UnitSubStateBonus(trigUnit, LoadInteger(HY, h, 0)-U_R, UNIT_BONUS_ATTACK)
 			endif
 			call SaveInteger(HY, h, 0, U_R)
 		endif
@@ -41519,7 +41236,7 @@ function YVR takes nothing returns nothing
 	if GetGameTime()> LoadReal(HY, h, 0) then
 		set u = LoadUnitHandle(HY, h, 0)
 		call RemoveSavedHandle(HY, GetHandleId(u),'A18X')
-		call UnitReduceStateBonus(u, LoadInteger(HY, h, 1), UNIT_BONUS_ATTACK)
+		call UnitSubStateBonus(u, LoadInteger(HY, h, 1), UNIT_BONUS_ATTACK)
 		call J8X(u, LoadInteger(HY, h, 2))
 		set YER = LoadInteger(HY, h, 0)
 		call DestroyEffect(LoadEffectHandle(HY, h, 10+ 1))
@@ -41681,7 +41398,7 @@ function YAR takes nothing returns nothing
 		call GroupRemoveUnit(IK, u)
 		if LoadBoolean(ObjectHashTable, 99999, 99998) then
 			call UnitAddStateBonus(u, XK[1], UNIT_BONUS_DAMAGE)
-			call UnitReduceStateBonus(u, XK[0], UNIT_BONUS_DAMAGE)
+			call UnitSubStateBonus(u, XK[0], UNIT_BONUS_DAMAGE)
 		endif
 	endif
 	set u = null
@@ -41702,7 +41419,7 @@ function YNR takes nothing returns nothing
 				if LoadInteger(ObjectHashTable, h, ETX) == 0 then
 					call WHV(u,'D032')
 				endif
-				call UnitReduceStateBonus(u, XK[0], UNIT_BONUS_DAMAGE)
+				call UnitSubStateBonus(u, XK[0], UNIT_BONUS_DAMAGE)
 				call GroupRemoveUnit(IK, u)
 				set u = FirstOfGroup(IK)
 			exitwhen u == null
@@ -41729,7 +41446,7 @@ function YNR takes nothing returns nothing
 		if LoadInteger(ObjectHashTable, h, ETX) == 0 then
 			call WHV(u,'D032')
 		endif
-		call UnitReduceStateBonus(u, XK[0], UNIT_BONUS_DAMAGE)
+		call UnitSubStateBonus(u, XK[0], UNIT_BONUS_DAMAGE)
 		call GroupRemoveUnit(IK, u)
 	endloop
 	loop
@@ -45340,7 +45057,7 @@ function RGI takes nothing returns nothing
 	local integer c = LoadInteger(HY, h, 0)
 	local unit u = LoadUnitHandle(HY, h, 0)
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH or c <= 0 or GetUnitAbilityLevel(u,'C025') == 0 then
-		call UnitReduceStateBonus(u, LoadInteger(HY, h, 1), UNIT_BONUS_ARMOR)
+		call UnitSubStateBonus(u, LoadInteger(HY, h, 1), UNIT_BONUS_ARMOR)
 		call UnitRemoveAbility(u,'C025')
 		call UnitRemoveAbility(u,'D025')
 		call FlushChildHashtable(HY, h)
@@ -46311,7 +46028,7 @@ function I8I takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer h = GetHandleId(t)
 	local unit u = LoadUnitHandle(ObjectHashTable, h, 0)
-	call UnitReduceStateBonus(u, LoadInteger(ObjectHashTable, h, 3), UNIT_BONUS_DAMAGE)
+	call UnitSubStateBonus(u, LoadInteger(ObjectHashTable, h, 3), UNIT_BONUS_DAMAGE)
 	call J8X(u, R2I(LoadReal(ObjectHashTable, h, 0)))
 	call DestroyTimerAndFlushHT_P(t)
 	set t = null
@@ -47459,7 +47176,7 @@ function N_I takes unit u, unit targetUnit returns nothing
 		if N1I < WFR then
 			call UnitAddStateBonus(u, WFR -N1I, UNIT_BONUS_ATTACK)
 		else
-			call UnitReduceStateBonus(u, N1I -WFR, UNIT_BONUS_ATTACK)
+			call UnitSubStateBonus(u, N1I -WFR, UNIT_BONUS_ATTACK)
 		endif
 		call SaveInteger(ObjectHashTable, GetHandleId(u),'P107', WFR)
 	endif
@@ -49800,7 +49517,7 @@ function FAI takes nothing returns boolean
 		endif
 		call SaveInteger(HY, h, 34,(count))
 		if count >=(5 + 2.5 * level) then
-			call UnitReduceStateBonus(trigUnit, 30, UNIT_BONUS_ARMOR)
+			call UnitSubStateBonus(trigUnit, 30, UNIT_BONUS_ARMOR)
 			call UnitRemoveAbility(trigUnit,'A0I5')
 			call ForGroup(g, function FII)
 			call DeallocateGroup(g)
@@ -50166,7 +49883,7 @@ function F3I takes unit u returns nothing
 	endif
 	call SaveInteger(ObjectHashTable, h, 0, O3O)
 	call TimerStart(t, 20, false, function F2I)
-	call UnitReduceStateBonus(u, O3O, UNIT_BONUS_ATTACK)
+	call UnitSubStateBonus(u, O3O, UNIT_BONUS_ATTACK)
 	call UnitAddAbilityLevel1ToTimed(u,'C018','D018', 20)
 	set d = null
 	set t = null
@@ -50825,8 +50542,8 @@ function GQI takes nothing returns nothing
 		set GTI = GTI * 2
 		set GUI = GUI * 2
 	endif
-	call UnitReduceStateBonus(u, GTI, UNIT_BONUS_ATTACK)
-	call UnitReduceStateBonus(u, GUI, UNIT_BONUS_DAMAGE)
+	call UnitSubStateBonus(u, GTI, UNIT_BONUS_ATTACK)
+	call UnitSubStateBonus(u, GUI, UNIT_BONUS_DAMAGE)
 	call UnitRemoveAbility(u,'A33M')
 	call UnitRemoveAbility(u,'B0GY')
 	call SaveBoolean(ObjectHashTable, GetHandleId(u),'A0LE', false)
@@ -51022,7 +50739,7 @@ function HTI takes nothing returns boolean
 	local unit u =(LoadUnitHandle(HY,(h), 14))
 	local integer c = LoadInteger(HY, h, 1) + 1
 	if GetUnitAbilityLevel(u,'A0WR') == 0 or c > 5 * 14 or GetTriggerEventId() == EVENT_WIDGET_DEATH then
-		call UnitReduceStateBonus(u, LoadInteger(HY, h, 0), UNIT_BONUS_DAMAGE)
+		call UnitSubStateBonus(u, LoadInteger(HY, h, 0), UNIT_BONUS_DAMAGE)
 		//if UnitAlive(u) then
 		call UnitRemoveAbility(u,'A0WR')
 		call UnitRemoveAbility(u,'B01E')
@@ -52684,7 +52401,7 @@ function LYI takes unit u returns nothing
 	set c = LoadInteger(HY, h, 2)
 	if c < 10 then
 		call SaveInteger(HY, h, 2, c + 1)
-		call UnitReduceStateBonus(u, 1, UNIT_BONUS_ARMOR)
+		call UnitSubStateBonus(u, 1, UNIT_BONUS_ARMOR)
 	endif
 	call SaveInteger(HY, h, 1, LoadInteger(HY, h, 1) + 1)
 	set t = null
@@ -53419,13 +53136,13 @@ function PEI takes nothing returns boolean
 				if b or GetUnitAbilityLevel(t,'D006')> 0 then
 					if OG then
 						if damageValue != XG then
-							call UnitReduceStateBonus(t, damageValue, UNIT_BONUS_DAMAGE)
+							call UnitSubStateBonus(t, damageValue, UNIT_BONUS_DAMAGE)
 							call SaveInteger(HY, h, ETX, XG)
 							call UnitAddStateBonus(t, XG, UNIT_BONUS_DAMAGE)
 						endif
 					else
 						call WHV(t,'D006')
-						call UnitReduceStateBonus(t, damageValue, UNIT_BONUS_DAMAGE)
+						call UnitSubStateBonus(t, damageValue, UNIT_BONUS_DAMAGE)
 						call SaveInteger(HY, h, ETX, 0)
 						call SaveBoolean(HY, h, ETX, false)
 					endif
@@ -53439,7 +53156,7 @@ function PEI takes nothing returns boolean
 				endif
 			else
 				if b then
-					call UnitReduceStateBonus(t, damageValue, UNIT_BONUS_DAMAGE)
+					call UnitSubStateBonus(t, damageValue, UNIT_BONUS_DAMAGE)
 					call SaveInteger(HY, h, ETX, 0)
 					call SaveBoolean(HY, h, ETX, false)
 					call WHV(t,'D006')
@@ -53451,12 +53168,12 @@ function PEI takes nothing returns boolean
 					if OG and LoadInteger(HY, GetHandleId(VG), 344692) == 1 then
 						if damageValue != XG then
 							call SaveInteger(HY, h, ETX, XG)
-							call UnitReduceStateBonus(t, damageValue, UNIT_BONUS_DAMAGE)
+							call UnitSubStateBonus(t, damageValue, UNIT_BONUS_DAMAGE)
 							call UnitAddStateBonus(t, XG, UNIT_BONUS_DAMAGE)
 						endif
 					else
 						call WHV(t,'D006')
-						call UnitReduceStateBonus(t, damageValue, UNIT_BONUS_DAMAGE)
+						call UnitSubStateBonus(t, damageValue, UNIT_BONUS_DAMAGE)
 						call SaveInteger(HY, h, ETX, 0)
 						call SaveBoolean(HY, h, ETX, false)
 					endif
@@ -57203,7 +56920,7 @@ endfunction
 function YWI takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer h = GetHandleId(t)
-	call UnitReduceStateBonus(LoadUnitHandle(ObjectHashTable, h, 0), LoadInteger(ObjectHashTable, h, 0), UNIT_BONUS_DAMAGE)
+	call UnitSubStateBonus(LoadUnitHandle(ObjectHashTable, h, 0), LoadInteger(ObjectHashTable, h, 0), UNIT_BONUS_DAMAGE)
 	call RemoveSavedHandle(ObjectHashTable, GetHandleId(LoadUnitHandle(ObjectHashTable, h, 0)),'A0SS')
 	call FlushChildHashtable(ObjectHashTable, h)
 	call DestroyTimer(t)
@@ -58528,7 +58245,7 @@ endfunction
 function VSA takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer h = GetHandleId(t)
-	call UnitReduceStateBonus(LoadUnitHandle(ObjectHashTable, h, 0), LoadInteger(ObjectHashTable, h, 0), UNIT_BONUS_DAMAGE)
+	call UnitSubStateBonus(LoadUnitHandle(ObjectHashTable, h, 0), LoadInteger(ObjectHashTable, h, 0), UNIT_BONUS_DAMAGE)
 	call DestroyTimerAndFlushHT_P(t)
 	set t = null
 endfunction
@@ -59283,7 +59000,7 @@ function EYA takes nothing returns nothing
 	local integer h = GetHandleId(t)
 	local integer i = LoadInteger(ObjectHashTable, h, 1)
 	call UnitAddStateBonus(LoadUnitHandle(ObjectHashTable, h, 1), i, UNIT_BONUS_ATTACK)
-	call UnitReduceStateBonus(LoadUnitHandle(ObjectHashTable, h, 0), i, UNIT_BONUS_DAMAGE)
+	call UnitSubStateBonus(LoadUnitHandle(ObjectHashTable, h, 0), i, UNIT_BONUS_DAMAGE)
 	call DestroyTimerAndFlushHT_P(t)
 	set t = null
 endfunction
@@ -59316,7 +59033,7 @@ function EZA takes nothing returns nothing
 	call SetUnitPosition(dummyUnit, GetUnitX(u2), GetUnitY(u2))
 	set UYX = R2I(LoadInteger(ObjectHashTable, h, 2)* UYX * 1. / 40.)
 	if LoadInteger(ObjectHashTable, h, 1)<= UYX then
-		call UnitReduceStateBonus(u2, UYX -LoadInteger(ObjectHashTable, h, 1), UNIT_BONUS_ATTACK)
+		call UnitSubStateBonus(u2, UYX -LoadInteger(ObjectHashTable, h, 1), UNIT_BONUS_ATTACK)
 		call UnitAddStateBonus(u1, UYX -LoadInteger(ObjectHashTable, h, 1), UNIT_BONUS_DAMAGE)
 		call SaveInteger(ObjectHashTable, h, 1, UYX)
 	endif
@@ -60551,7 +60268,7 @@ function O5A takes nothing returns nothing
 			set V4A = R2I(.03 * GetUnitAbilityLevel(u,'P310')* GetHeroMoveSpeed(u))
 			if O6A != V4A then
 				if O6A > V4A then
-					call UnitReduceStateBonus(u, O6A -V4A, UNIT_BONUS_DAMAGE)
+					call UnitSubStateBonus(u, O6A -V4A, UNIT_BONUS_DAMAGE)
 					call SaveInteger(ObjectHashTable, GetHandleId(u),'P310', V4A)
 				else
 					call UnitAddStateBonus(u, V4A -O6A, UNIT_BONUS_DAMAGE)
@@ -61428,7 +61145,7 @@ function IIA takes nothing returns nothing
 	if IsUnitAlly(targetUnit, TempPlayer) == false then
 		call UnitAddStateBonus(targetUnit, HCR, UNIT_BONUS_ARMOR)
 	else
-		call UnitReduceStateBonus(targetUnit, HCR, UNIT_BONUS_ARMOR)
+		call UnitSubStateBonus(targetUnit, HCR, UNIT_BONUS_ARMOR)
 	endif
 	call SaveInteger(OtherHashTable, GetHandleId(targetUnit), GetHandleId(GetTriggeringTrigger()), 0)
 	set targetUnit = null
@@ -61442,12 +61159,12 @@ function IAA takes nothing returns nothing
 		if IsUnitAlly(targetUnit, TempPlayer) == false then
 			call UnitAddStateBonus(targetUnit, INA, UNIT_BONUS_ARMOR)
 		else
-			call UnitReduceStateBonus(targetUnit, INA, UNIT_BONUS_ARMOR)
+			call UnitSubStateBonus(targetUnit, INA, UNIT_BONUS_ARMOR)
 		endif
 	endif
 	if UnitIsDead(targetUnit) == false then
 		if IsUnitAlly(targetUnit, TempPlayer) == false then
-			call UnitReduceStateBonus(targetUnit, HCR, UNIT_BONUS_ARMOR)
+			call UnitSubStateBonus(targetUnit, HCR, UNIT_BONUS_ARMOR)
 			call SaveInteger(OtherHashTable, GetHandleId(targetUnit), GetHandleId(GetTriggeringTrigger()), HCR)
 		else
 			call UnitAddStateBonus(targetUnit, HCR, UNIT_BONUS_ARMOR)
@@ -61960,7 +61677,7 @@ endfunction
 function I5A takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer h = GetHandleId(t)
-	call UnitReduceStateBonus(LoadUnitHandle(ObjectHashTable, h, 0), LoadInteger(ObjectHashTable, h, 0), UNIT_BONUS_DAMAGE)
+	call UnitSubStateBonus(LoadUnitHandle(ObjectHashTable, h, 0), LoadInteger(ObjectHashTable, h, 0), UNIT_BONUS_DAMAGE)
 	call SaveBoolean(ObjectHashTable, LoadInteger(ObjectHashTable, h, 1),'A1A3', false)
 	call DestroyTimerAndFlushHT_P(t)
 	set t = null
@@ -63176,7 +62893,7 @@ function N3A takes nothing returns boolean
 		endif
 	elseif GetTriggerEventId() == EVENT_UNIT_DAMAGED then
 		if GetEventDamageSource() == whichUnit then
-			call UnitReduceStateBonus(targetUnit, 1, UNIT_BONUS_ARMOR)
+			call UnitSubStateBonus(targetUnit, 1, UNIT_BONUS_ARMOR)
 			call SaveInteger(HY, h, 2, c + 1)
 			call DestroyEffect(AddSpecialEffectTarget("Abilities\\Weapons\\SkeletalMageMissile\\SkeletalMageMissile.mdl", targetUnit, "chest"))
 		endif
@@ -64498,7 +64215,7 @@ function CJA takes nothing returns boolean
 			call SaveInteger(OtherHashTable, GetHandleId(whichUnit), 31, LoadInteger(OtherHashTable, GetHandleId(whichUnit), 31)-agi -str -int)
 			call SetAbilitydataD(whichUnit,'QP1F', LoadInteger(OtherHashTable, GetHandleId(whichUnit), 31))
 			if LoadInteger(HY, h, 0)> 0 then
-				call UnitReduceStateBonus(whichUnit, LoadInteger(HY, h, 0), UNIT_BONUS_DAMAGE)
+				call UnitSubStateBonus(whichUnit, LoadInteger(HY, h, 0), UNIT_BONUS_DAMAGE)
 			endif
 		elseif (LoadBoolean(HY, h, 277)) == false and GetTriggerUnit() == targetUnit then
 			call SaveBoolean(HY, h, 277,(true))
@@ -64513,7 +64230,7 @@ function CJA takes nothing returns boolean
 			call SaveInteger(OtherHashTable, GetHandleId(whichUnit), 31, LoadInteger(OtherHashTable, GetHandleId(whichUnit), 31)-agi -str -int)
 			call SetAbilitydataD(whichUnit,'QP1F', LoadInteger(OtherHashTable, GetHandleId(whichUnit), 31))
 			if LoadInteger(HY, h, 0)> 0 then
-				call UnitReduceStateBonus(whichUnit, LoadInteger(HY, h, 0), UNIT_BONUS_DAMAGE)
+				call UnitSubStateBonus(whichUnit, LoadInteger(HY, h, 0), UNIT_BONUS_DAMAGE)
 			endif
 		endif
 		if (LoadBoolean(HY, h, 277)) == false then
@@ -70850,8 +70567,8 @@ function MMA takes nothing returns boolean
 	local integer uh = GetHandleId(u)
 	call SaveInteger(HY, uh,'A2E4', LoadInteger(HY, uh,'A2E4')-1)
 	if 4 *(GetUnitAbilityLevel(u,'A2E4'))> LoadInteger(HY, uh,'A2E4') then
-		call UnitReduceStateBonus(u, 1, UNIT_BONUS_LIFE_REGEM)
-		call UnitReduceStateBonus(u, 1, UNIT_BONUS_ARMOR)
+		call UnitSubStateBonus(u, 1, UNIT_BONUS_LIFE_REGEM)
+		call UnitSubStateBonus(u, 1, UNIT_BONUS_ARMOR)
 		call SaveInteger(HY, uh,'A2E5', LoadInteger(HY, uh,'A2E5')-1)
 		call SetAbilitydataD(u,'QP1P', LoadInteger(HY, uh,'A2E5'))
 	endif
@@ -71617,7 +71334,7 @@ function PKA takes nothing returns nothing
 				call WHV(u,'D028')
 			endif
 			call SaveInteger(ObjectHashTable, h, ETX, UYX -1)
-			call UnitReduceStateBonus(u, O3O, UNIT_BONUS_ATTACK)
+			call UnitSubStateBonus(u, O3O, UNIT_BONUS_ATTACK)
 			call GroupRemoveUnit(IK, u)
 		endloop
 		call DeallocateGroup(IK)
@@ -71640,7 +71357,7 @@ function PKA takes nothing returns nothing
 			call WHV(u,'D028')
 		endif
 		call SaveInteger(ObjectHashTable, h, ETX, UYX -1)
-		call UnitReduceStateBonus(u, O3O, UNIT_BONUS_ATTACK)
+		call UnitSubStateBonus(u, O3O, UNIT_BONUS_ATTACK)
 		call GroupRemoveUnit(IK, u)
 	endloop
 	loop
@@ -74282,7 +73999,7 @@ function DragonHideAura__Actions takes nothing returns nothing
 			set u2 = FirstOfGroup(AIR)
 		exitwhen u2 == null
 			call GroupRemoveUnit(AIR, u2)
-			call UnitReduceStateBonus(u2, 2, UNIT_BONUS_ARMOR)
+			call UnitSubStateBonus(u2, 2, UNIT_BONUS_ARMOR)
 		endloop
 		call DeallocateGroup(AIR)
 	else
@@ -74296,7 +74013,7 @@ function DragonHideAura__Actions takes nothing returns nothing
 		exitwhen u2 == null
 			if IsUnitInGroup(u2, g) == false then
 				call GroupRemoveUnit(AIR, u2)
-				call UnitReduceStateBonus(u2, 2, UNIT_BONUS_ARMOR)
+				call UnitSubStateBonus(u2, 2, UNIT_BONUS_ARMOR)
 			endif
 			call GroupRemoveUnit(gg, u2)
 		endloop
@@ -75126,7 +74843,7 @@ function YUA takes unit u, item it, integer JOX returns nothing
 	endloop
 	if SQV == it_hyzr or SQV == IEV or SQV == Item_MoonShard or SQV == N1V or SQV == IRV or SQV == IIV or SQV == NZV or SQV == I_V or SQV == I0V or SQV == ROV or SQV == I5V or SQV == RUV or SQV == RWV or SQV == N2V or SQV == RQV or SQV == RJV or SQV == I1V then
 		set YYA = 2
-	elseif SQV == it_mlq or SQV == NGV or SQV == IBV or SQV == ICV or SQV == IDV or SQV == NHV or SQV == NEV or SQV == ANV or SQV == ABV or SQV == NKV or SQV == A8V or SQV == A9V or SQV == NQV or SQV == NSV or SQV == Item_TranquilBoots or SQV == RCV or SQV == ISV or SQV == Item_TheButterfly or SQV == AWV then
+	elseif SQV == Item_DragonLance or SQV == NGV or SQV == IBV or SQV == ICV or SQV == IDV or SQV == NHV or SQV == NEV or SQV == ANV or SQV == ABV or SQV == NKV or SQV == A8V or SQV == A9V or SQV == NQV or SQV == NSV or SQV == Item_TranquilBoots or SQV == RCV or SQV == ISV or SQV == Item_TheButterfly or SQV == AWV then
 		set YYA = 3
 	elseif SQV == NNV or SQV == I7V or SQV == RGV then
 		set YYA = 4
@@ -75144,9 +74861,9 @@ function YUA takes unit u, item it, integer JOX returns nothing
 		elseif SQV == it_hyzr then //回音战刃
 			call TDE(u, ItemRealId[IHV], p, false, 1)
 			call TDE(u, ItemRealId[OAV], p, false, 1)
-		elseif SQV == it_mlq then //魔龙枪
+		elseif SQV == Item_DragonLance then //魔龙枪
 			//call Item_dragonlance(true)
-			if ( GetItemOfTypeFromUnit(u, ItemRealId[it_mlq]) == null ) and ( GetItemOfTypeFromUnit(u, ItemRealId[Item_HurricanePike]) == null ) then
+			if ( GetItemOfTypeFromUnit(u, ItemRealId[Item_DragonLance]) == null ) and ( GetItemOfTypeFromUnit(u, ItemRealId[Item_HurricanePike]) == null ) then
 				//call MCBZZ(GetOwningPlayer(u), 0, u)
 			endif
 			call TDE(u, ItemRealId[OAV], p, false, 1)
@@ -75263,7 +74980,7 @@ function YUA takes unit u, item it, integer JOX returns nothing
 endfunction
 function Bke takes item it returns boolean
 	local integer id = GetItemIndexEx(it)
-	if id == it_hyzr or id == it_mlq or id == IEV or id == IBV or id == ICV or id == IDV or id == Item_MoonShard or id == IRV or id == IIV or id == NGV or id == NHV or id == NEV or id == NZV or id == N1V or id == I_V or id == I0V or id == ANV or id == ABV or id == ROV or id == I5V or id == RUV or id == RWV or id == N2V or id == RGV or id == RQV or id == RJV or id == NKV or id == I1V or id == I7V or id == A8V or id == A9V or id == NNV or id == NQV or id == NSV or id == Item_TranquilBoots or id == RCV or id == ISV or id == Item_TheButterfly or id == AWV then
+	if id == it_hyzr or id == Item_DragonLance or id == IEV or id == IBV or id == ICV or id == IDV or id == Item_MoonShard or id == IRV or id == IIV or id == NGV or id == NHV or id == NEV or id == NZV or id == N1V or id == I_V or id == I0V or id == ANV or id == ABV or id == ROV or id == I5V or id == RUV or id == RWV or id == N2V or id == RGV or id == RQV or id == RJV or id == NKV or id == I1V or id == I7V or id == A8V or id == A9V or id == NNV or id == NQV or id == NSV or id == Item_TranquilBoots or id == RCV or id == ISV or id == Item_TheButterfly or id == AWV then
 		return true
 	endif
 	return false
@@ -76733,8 +76450,8 @@ function Init_ItemsAbilityAndOrder takes nothing returns nothing
 	call SaveStr(AbilityDataHashTable,'A3E9', ItemRealId[A7V], "hex")
 	call SaveInteger(AbilityDataHashTable,'A3E9', ItemRealId[NJV],'A0FD')
 	call SaveStr(AbilityDataHashTable,'A3E9', ItemRealId[NJV], "soulburn")
-	call SaveInteger(AbilityDataHashTable,'A3E9', ItemRealId[it_xj],'A3TP')
-	call SaveStr(AbilityDataHashTable,'A3E9', ItemRealId[it_xj], "soulburn")
+	call SaveInteger(AbilityDataHashTable,'A3E9', ItemRealId[Item_Bloodthorn],'A3TP')
+	call SaveStr(AbilityDataHashTable,'A3E9', ItemRealId[Item_Bloodthorn], "soulburn")
 	call SaveInteger(AbilityDataHashTable,'A3E9', ItemRealId[Item_EulScepterOfDivinity],'A1T7')
 	call SaveStr(AbilityDataHashTable,'A3E9', ItemRealId[Item_EulScepterOfDivinity], "channel")
 	call SaveInteger(AbilityDataHashTable,'A3E9', ItemRealId[NMV],'A19M')

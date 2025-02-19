@@ -120,7 +120,7 @@ scope Kunkka
         call DestroyEffect(LoadEffectHandle(ExtraHT, iHandleId, HTKEY_SKILL_TIDEBRINGER))
         call RemoveSavedHandle(ExtraHT, iHandleId, HTKEY_SKILL_TIDEBRINGER)
 
-        call UnitReduceStateBonus(whichUnit, level * 15+ 5, UNIT_BONUS_DAMAGE)
+        call UnitSubStateBonus(whichUnit, level * 15+ 5, UNIT_BONUS_DAMAGE)
         call UnitRemoveAbility(whichUnit,'A147')
         //call YDWESetUnitAbilityState(whichUnit,'A522', 1, cooldown)
 

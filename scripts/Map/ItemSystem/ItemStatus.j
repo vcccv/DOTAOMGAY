@@ -32,7 +32,7 @@ library ItemStatus requires ItemSystem
         */  or itemIndex == RZV /*
         */  or itemIndex == R9V /*
         */  or itemIndex == IVV /*
-        */  or itemIndex == it_jys
+        */  or itemIndex == Item_DragonLance
     endfunction
     // 充能物品 Charged
     function IsItemChargedByIndex takes integer itemIndex returns boolean
