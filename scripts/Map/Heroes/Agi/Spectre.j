@@ -288,12 +288,12 @@ scope Spectre
     endfunction
     function SpectralPathBuffOnAdd takes nothing returns nothing
         local unit whichUnit = Event.GetTriggerUnit()
-        call UnitAddNoPathingCount(whichUnit)
+        call UnitIncNoPathingCount(whichUnit)
         set whichUnit = null
     endfunction
     function SpectralPathBuffOnRemove takes nothing returns nothing
         local unit whichUnit = Event.GetTriggerUnit()
-        call UnitSubNoPathingCount(whichUnit)
+        call UnitDecNoPathingCount(whichUnit)
         call UnitModifyPostion(whichUnit)
         set whichUnit = null
     endfunction

@@ -38,9 +38,9 @@ scope ShadowDemon
         call DestroyEffect(LoadEffectHandle(HY, h, 32))
         call SaveInteger(HY, GetHandleId(targetUnit), 4293, 2)
 
-        call UnitSubInvulnerableCount(targetUnit)
-        call UnitSubStunCount(targetUnit)
-        call UnitSubHideExCount(targetUnit)
+        call UnitDecInvulnerableCount(targetUnit)
+        call UnitDecStunCount(targetUnit)
+        call UnitDecHideExCount(targetUnit)
 
         call RemoveSavedHandle(HY, GetHandleId(targetUnit), 673)
         call FlushChildHashtable(HY, h)
@@ -84,8 +84,8 @@ scope ShadowDemon
             call UnitApplyTimedLife(dummyCaster,'BTLF', 2.6)
         endif
 
-        call UnitAddInvulnerableCount(targetUnit)
-        call UnitAddHideExCount(targetUnit)
+        call UnitIncInvulnerableCount(targetUnit)
+        call UnitIncHideExCount(targetUnit)
         call UnitAddStunCountSafe(targetUnit)
 
         call SaveEffectHandle(HY, h, 32, AddSpecialEffect("war3mapImported\\WILLTHEALMIGHTY-Void5.mdx", GetUnitX(targetUnit), GetUnitY(targetUnit)))

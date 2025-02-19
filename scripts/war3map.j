@@ -18819,12 +18819,12 @@ endfunction
 
 function PhaseBootsBuffOnAdd takes nothing returns nothing
 	local unit whichUnit = MHEvent_GetUnit()
-	call UnitAddPhasedMovementCount(whichUnit)
+	call UnitIncPhasedMovementCount(whichUnit)
 	set whichUnit = null
 endfunction
 function PhaseBootsBuffOnRemove takes nothing returns nothing
 	local unit whichUnit = MHEvent_GetUnit()
-	call UnitSubPhasedMovementCount(whichUnit)
+	call UnitDecPhasedMovementCount(whichUnit)
 	set whichUnit = null
 endfunction
 

@@ -154,8 +154,8 @@ scope Magnus
             
             if IsUnitInRangeXY(first, targetX, targetY, area) and first != Roshan and UnitAlive(first) and not IsUnitInGroup(first, targGroup) and IsUnitEnemy(whichUnit, GetOwningPlayer(first)) and IsHeroUnitId(GetUnitTypeId(first)) then
                 call GroupAddUnit(targGroup, first)
-                call UnitAddStunCount(first)
-                call UnitAddNoPathingCount(first)
+                call UnitIncStunCount(first)
+                call UnitIncNoPathingCount(first)
             endif
 
         endloop
@@ -181,8 +181,8 @@ scope Magnus
             call SetUnitAnimationByIndex(whichUnit, 0)
             call SetUnitTimeScale(whichUnit, 1.)
             
-            call UnitSubStunCount(whichUnit)
-            call UnitSubNoPathingCount(whichUnit)
+            call UnitDecStunCount(whichUnit)
+            call UnitDecNoPathingCount(whichUnit)
 
             call FlushChildHashtable(HY, h)
             call DestroyTrigger(t)
@@ -192,8 +192,8 @@ scope Magnus
             loop
                 exitwhen i > max
                 set first = MHGroup_GetUnit(targGroup, i)
-                call UnitSubStunCount(first)
-                call UnitSubNoPathingCount(first)
+                call UnitDecStunCount(first)
+                call UnitDecNoPathingCount(first)
                 call UnitDamageTargetEx(whichUnit, first, 1, 70 * level)
                 call UnitAddAbilityToTimed(first, 'A1Q5', 1, 2.5, 'B0CX')
                 call KillTreeByCircle(GetUnitX(first), GetUnitY(first), 300.)
@@ -228,7 +228,7 @@ scope Magnus
         endif
 
         call UnitAddStunCountSafe(whichUnit)
-        call UnitAddNoPathingCount(whichUnit)
+        call UnitIncNoPathingCount(whichUnit)
 
         call SetUnitAnimationByIndex(whichUnit, 3)
         call SetUnitTimeScale(whichUnit, 1.5)

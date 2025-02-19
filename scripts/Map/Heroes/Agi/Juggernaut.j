@@ -27,8 +27,8 @@ scope Juggernaut
             call SaveInteger(HY,(GetHandleId((u))),(4253), 2)
             call SetUnitVertexColorEx(u,-1,-1,-1, 255)
 
-            call UnitSubNoPathingCount(u)
-            call UnitSubInvulnerableCount(u)
+            call UnitDecNoPathingCount(u)
+            call UnitDecInvulnerableCount(u)
         else
             call SaveInteger(HY, h, 28,(S4R + 1))
             call WOR(u)
@@ -43,8 +43,8 @@ scope Juggernaut
                 
                 call SaveInteger(HY,(GetHandleId((u))),(4253), 2)
                 call SetUnitVertexColorEx(u,-1,-1,-1, 255)
-                call UnitSubNoPathingCount(u)
-                call UnitSubInvulnerableCount(u)
+                call UnitDecNoPathingCount(u)
+                call UnitDecInvulnerableCount(u)
             endif
         endif
         set t = null
@@ -87,8 +87,8 @@ scope Juggernaut
             set max = 9
         endif
         call SetUnitVertexColorEx(u,-1,-1,-1, 125)
-        call UnitAddNoPathingCount(u)
-        call UnitAddInvulnerableCount(u)
+        call UnitIncNoPathingCount(u)
+        call UnitIncInvulnerableCount(u)
         call SaveInteger(HY, GetHandleId(u), 4253, 1)
         call SaveUnitHandle(HY, h, 14,(u))
         call SaveUnitHandle(HY, h, 17,(target))

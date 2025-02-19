@@ -65,8 +65,8 @@ scope FacelessVoid
             call SetUnitAnimation(whichUnit, "stand")
 
             call ResetUnitVertexColor(whichUnit)
-            call UnitSubNoPathingCount(whichUnit)
-            call UnitSubInvulnerableCount(whichUnit)
+            call UnitDecNoPathingCount(whichUnit)
+            call UnitDecInvulnerableCount(whichUnit)
 
             call SaveInteger(HY, GetHandleId(whichUnit), 4261, 2)
         endif
@@ -99,8 +99,8 @@ scope FacelessVoid
         call SetUnitAnimationByIndex(whichUnit, 0)
 
         call SetUnitVertexColorEx(whichUnit, 0, 0, 0,-1)
-        call UnitAddNoPathingCount(whichUnit)
-        call UnitAddInvulnerableCount(whichUnit)
+        call UnitIncNoPathingCount(whichUnit)
+        call UnitIncInvulnerableCount(whichUnit)
 
         call SaveInteger(HY, GetHandleId(whichUnit), 4261, 1)
         call SaveReal(HY, h, 66, x2 * 1.)
@@ -168,7 +168,7 @@ scope FacelessVoid
 
                 if not IsUnitInRangeXY(first, tx, ty, area) then
                     call GroupRemoveUnit(g, first)
-                    call UnitSubStunCount(first)
+                    call UnitDecStunCount(first)
                     call SetUnitTimeScale(first, 1.)
                 endif
             endloop
@@ -182,7 +182,7 @@ scope FacelessVoid
                 // 存活，不在单位组，非自己单位，非中立被动单位
                 if IsUnitInRangeXY(first, tx, ty, area) and UnitAlive(first) and not IsUnitCourier(first) and not IsUnitInGroup(first, g) and not IsUnitOwnedByPlayer(first, GetOwningPlayer(whichUnit)) and GetOwningPlayer(first)!= NEUTRAL_PASSIVE_PLAYER then
                     call GroupAddUnit(g, first)
-                    call UnitAddStunCount(first)
+                    call UnitIncStunCount(first)
                     call SetUnitTimeScale(first, 0.)
                 endif
             endloop
@@ -202,7 +202,7 @@ scope FacelessVoid
                     exitwhen first == null
                     call GroupRemoveUnit(g, first)
     
-                    call UnitSubStunCount(first)
+                    call UnitDecStunCount(first)
                     call SetUnitTimeScale(first, 1.)
                 endloop
 

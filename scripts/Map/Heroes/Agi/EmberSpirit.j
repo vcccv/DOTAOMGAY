@@ -131,8 +131,8 @@ scope EmberSpirit
             endif
             call ResetUnitVertexColor(u)
             call SetUnitVertexColorEx(u,-1,-1,-1, 255)
-            call UnitSubNoPathingCount(u)
-            call UnitSubInvulnerableCount(u)
+            call UnitDecNoPathingCount(u)
+            call UnitDecInvulnerableCount(u)
             if GetUnitAbilityLevel(u,'A0MQ')+ GetUnitAbilityLevel(u,'A1B6')> 0 then
                 call SetPlayerAbilityAvailable(GetOwningPlayer(u),'A0MQ', true)
                 call SetPlayerAbilityAvailable(GetOwningPlayer(u),'A1B6', true)
@@ -215,8 +215,8 @@ scope EmberSpirit
 
         //call FixUnitSkillsBug(u)
         call SetUnitVertexColorEx(u, -1, -1, -1, 125)
-        call UnitAddNoPathingCount(u)
-        call UnitAddInvulnerableCount(u)
+        call UnitIncNoPathingCount(u)
+        call UnitIncInvulnerableCount(u)
         call SetUnitTimeScale(u, 3)
         call TriggerRegisterTimerEvent(tt, .2, true)
         call TriggerAddCondition(tt, Condition(function SleightOfFistUpdateAttack))

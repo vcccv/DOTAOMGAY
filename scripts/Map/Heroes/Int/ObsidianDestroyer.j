@@ -14,9 +14,9 @@ scope ObsidianDestroyer
         call SaveInteger(HY,(GetHandleId((targetUnit))),(4303), 2)
         call DestroyEffect((LoadEffectHandle(HY, h, 32)))
 
-        call UnitSubInvulnerableCount(targetUnit)
-        call UnitSubHideExCount(targetUnit)
-        call UnitSubStunCount(targetUnit)
+        call UnitDecInvulnerableCount(targetUnit)
+        call UnitDecHideExCount(targetUnit)
+        call UnitDecStunCount(targetUnit)
 
         call ClearSelectionForPlayer(GetOwningPlayer(targetUnit))
         call SelectUnitAddForPlayer(targetUnit, GetOwningPlayer(targetUnit))
@@ -51,9 +51,9 @@ scope ObsidianDestroyer
             set h = GetHandleId(t)
             //call SelectUnitRemoveForPlayer(targetUnit, GetOwningPlayer(targetUnit))
 
-            call UnitAddInvulnerableCount(targetUnit)
+            call UnitIncInvulnerableCount(targetUnit)
             call UnitAddStunCountSafe(targetUnit)
-            call UnitAddHideExCount(targetUnit)
+            call UnitIncHideExCount(targetUnit)
 
             call SaveEffectHandle(HY, h, 32,(AddSpecialEffect("Abilities\\Spells\\Demon\\DarkConversion\\ZombifyTarget.mdl", GetUnitX(targetUnit), GetUnitY(targetUnit))))
             call SaveUnitHandle(HY, h, 2,(whichUnit))

@@ -77,9 +77,9 @@ scope StormSpirit
             call RemoveUnit(dummyCaster)
             call RemoveUnit(MNR)
 
-            call UnitSubHideByColorCount(whichUnit)
-            call UnitSubNoPathingCount(whichUnit)
-            call UnitSubInvulnerableCount(whichUnit)
+            call UnitDecHideByColorCount(whichUnit)
+            call UnitDecNoPathingCount(whichUnit)
+            call UnitDecInvulnerableCount(whichUnit)
 
             call FlushChildHashtable(HY, h)
             call DestroyTrigger(t)
@@ -137,9 +137,9 @@ scope StormSpirit
             
             call SetUnitVertexColor(MNR, 255, 255, 255, 0)
 
-            call UnitAddHideByColorCount(whichUnit)
-            call UnitAddNoPathingCount(whichUnit)
-            call UnitAddInvulnerableCount(whichUnit)
+            call UnitIncHideByColorCount(whichUnit)
+            call UnitIncNoPathingCount(whichUnit)
+            call UnitIncInvulnerableCount(whichUnit)
 
             call SetUnitPathing(dummyCaster, false)
             call SaveUnitHandle(HY, h, 19,(dummyCaster))
@@ -178,7 +178,7 @@ scope StormSpirit
             call UnitAddAbilityToTimed(GetEnumUnit(),'A3B7', 1, 1.,'B3B7')
             call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Human\\ManaFlare\\ManaFlareBoltImpact.mdl", GetEnumUnit(), "origin"))
         endif
-        call UnitSubNoPathingCount(GetEnumUnit())
+        call UnitDecNoPathingCount(GetEnumUnit())
     endfunction
     function MHR takes nothing returns nothing
         call SetUnitPosition(GetEnumUnit(), GetUnitX(GetEnumUnit())+ 40 * Cos(LA), GetUnitY(GetEnumUnit())+ 40 * Sin(LA))
@@ -253,7 +253,7 @@ scope StormSpirit
 
             if IsUnitType(first, UNIT_TYPE_HERO) and IsUnitInRangeXY(first, x, y, area) and UnitAlive(first) then
                 call GroupAddUnit(g, first)
-                call UnitAddNoPathingCount(first)
+                call UnitIncNoPathingCount(first)
             endif
             
         endloop

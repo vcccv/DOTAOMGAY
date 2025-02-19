@@ -21,12 +21,12 @@ scope Invoker
     //***************************************************************************
     function InvokerOnAddDeafeningBlastBuff takes nothing returns nothing
         local unit whichUnit = Event.GetTriggerUnit()
-        call UnitAddDisableAttackCount(whichUnit)
+        call UnitIncDisableAttackCount(whichUnit)
         set whichUnit = null
     endfunction
     function InvokerOnRemoveDeafeningBlastBuff takes nothing returns nothing
         local unit whichUnit = Event.GetTriggerUnit()
-        call UnitSubDisableAttackCount(whichUnit)
+        call UnitDecDisableAttackCount(whichUnit)
         set whichUnit = null
     endfunction
     function DeafeningOnBlastKnockback takes nothing returns boolean

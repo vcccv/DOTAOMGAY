@@ -67,7 +67,7 @@ scope AntiMage
         local real x = GetUnitX(trigUnit)
         local real y = GetUnitY(trigUnit)
 
-        call UnitAddNoPathingCount(trigUnit)
+        call UnitIncNoPathingCount(trigUnit)
         call UnitAddPermanentAbility(trigUnit,'Aeth') // ???
         set dummyCaster = CreateUnit(GetOwningPlayer(trigUnit),'h06K', GetUnitX(trigUnit), GetUnitY(trigUnit), a)
         call RemoveUnitToTimed(dummyCaster, 5.)
@@ -81,7 +81,7 @@ scope AntiMage
         call SetUnitX(trigUnit, x)
         call SetUnitY(trigUnit, y)
         call SetUnitAnimation(dummyCaster, "Spell Throw")
-        call UnitSubNoPathingCount(trigUnit)
+        call UnitDecNoPathingCount(trigUnit)
         call UnitRemoveAbility(trigUnit, 'Aeth') // ???
         call SaveUnitHandle(HY, h, 293,(dummyCaster))
         set trigUnit = null

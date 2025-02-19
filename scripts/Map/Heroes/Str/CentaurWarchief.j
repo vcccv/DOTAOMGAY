@@ -115,13 +115,13 @@ scope CentaurWarchief
     function CentaurWarchiefStampedeBuffOnAdd takes nothing returns nothing
         local unit whichUnit = Event.GetTriggerUnit()
         call UnitAddMoveSpeedBonusPercent(whichUnit, 1000)
-        call UnitAddNoPathingCount(whichUnit)
+        call UnitIncNoPathingCount(whichUnit)
         set whichUnit = null
     endfunction
     function CentaurWarchiefStampedeBuffOnRemove takes nothing returns nothing
         local unit whichUnit = Event.GetTriggerUnit()
         call UnitReduceMoveSpeedBonusPercent(whichUnit, 1000)
-        call UnitSubNoPathingCount(whichUnit)
+        call UnitDecNoPathingCount(whichUnit)
         set whichUnit = null
     endfunction
 

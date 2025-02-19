@@ -14,7 +14,7 @@ scope Puck
         local integer S4R
         local integer d
         if (GetTriggerEventId() == EVENT_UNIT_ISSUED_ORDER and GetIssuedOrderId()!= 852514) or GetTriggerEventId() == EVENT_UNIT_ISSUED_POINT_ORDER or GetTriggerEventId() == EVENT_UNIT_ISSUED_TARGET_ORDER or GetTriggerEventId() == EVENT_WIDGET_DEATH then
-            call UnitSubInvulnerableCount(trigUnit)
+            call UnitDecInvulnerableCount(trigUnit)
             call UnitRemoveAbility(trigUnit,'A04R')
             call FlushChildHashtable(HY, h)
             call DestroyTrigger(t)
@@ -28,7 +28,7 @@ scope Puck
             call SaveInteger(HY, h, 28,(S4R))
             // 如果受到强制位移>125则会中断相位转移
             if S4R > d or GetDistanceBetween(GetUnitX(trigUnit), GetUnitY(trigUnit),(LoadReal(HY, h, 6)),(LoadReal(HY, h, 7)))> 125 then
-                call UnitSubInvulnerableCount(trigUnit)
+                call UnitDecInvulnerableCount(trigUnit)
                 call UnitRemoveAbility(trigUnit, 'A04R')
                 call FlushChildHashtable(HY, h)
                 call DestroyTrigger(t)
@@ -52,7 +52,7 @@ scope Puck
         call SaveUnitHandle(ObjectHashTable, GetHandleId(time), 0, trigUnit)
         call TimerStart(time, 0, false, function T0R)
 
-        call UnitAddInvulnerableCount(trigUnit)
+        call UnitIncInvulnerableCount(trigUnit)
         call SaveUnitHandle(HY, h, 14,(trigUnit))
         call SaveInteger(HY, h, 5,(GetUnitAbilityLevel(trigUnit,'A0SB')))
         call SaveInteger(HY, h, 28, 0)

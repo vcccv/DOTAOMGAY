@@ -8,12 +8,12 @@ scope Slardar
     //***************************************************************************
     function SlardarSprintBuffOnAdd takes nothing returns nothing
         local unit whichUnit = Event.GetTriggerUnit()
-        call UnitAddPhasedMovementCount(whichUnit)
+        call UnitIncPhasedMovementCount(whichUnit)
         set whichUnit = null
     endfunction
     function SlardarSprintBuffOnRemove takes nothing returns nothing
         local unit whichUnit = Event.GetTriggerUnit()
-        call UnitSubPhasedMovementCount(whichUnit)
+        call UnitDecPhasedMovementCount(whichUnit)
         set whichUnit = null
     endfunction
 

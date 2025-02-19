@@ -242,9 +242,9 @@ library UnitIllusion requires UnitUtils, UnitWeapon, UnitMorph, BuffSystem
                 else
                     set x = MHUnit_ModifyPositionX(whichUnit, x, y)
                     set y = MHUnit_ModifyPositionY(whichUnit, x, y)
-                    call UnitSubInvulnerableCount(whichUnit)
-                    call UnitSubStunCount(whichUnit)
-                    call UnitSubHideExCount(whichUnit)
+                    call UnitDecInvulnerableCount(whichUnit)
+                    call UnitDecStunCount(whichUnit)
+                    call UnitDecHideExCount(whichUnit)
                     call IssueImmediateOrderById(whichUnit, 851972)
                     call SetUnitX(whichUnit, x)
                     call SetUnitY(whichUnit, y)
@@ -363,10 +363,10 @@ library UnitIllusion requires UnitUtils, UnitWeapon, UnitMorph, BuffSystem
         set table[h].string['M'] = missileArt
         set table[h].unit['U'] = whichUnit
 
-        call UnitAddInvulnerableCount(whichUnit)
+        call UnitIncInvulnerableCount(whichUnit)
         call UnitDispelBuffs(whichUnit, false)
         call UnitAddStunCountSafe(whichUnit)
-        call UnitAddHideExCount(whichUnit)
+        call UnitIncHideExCount(whichUnit)
     endfunction
 
 endlibrary

@@ -4,7 +4,7 @@ library UnitLimitation requires Base, UnitModel
     globals
         private constant key UNIT_CANT_SELECT_COUNT
     endglobals
-    function UnitAddCantSelectCount takes unit whichUnit returns nothing
+    function UnitIncCantSelectCount takes unit whichUnit returns nothing
         local integer h     = GetHandleId(whichUnit)
         local integer count = Table[h][UNIT_CANT_SELECT_COUNT] + 1
         set Table[h][UNIT_CANT_SELECT_COUNT] = count
@@ -12,7 +12,7 @@ library UnitLimitation requires Base, UnitModel
             call MHUnit_Flag1Operator(whichUnit, FLAG_OPERATOR_REMOVE, UNIT_FLAG1_CANSELECT)
         endif
     endfunction
-    function UnitSubCantSelectCount takes unit whichUnit returns nothing
+    function UnitDecCantSelectCount takes unit whichUnit returns nothing
         local integer h     = GetHandleId(whichUnit)
         local integer count = Table[h][UNIT_CANT_SELECT_COUNT] - 1
         set Table[h][UNIT_CANT_SELECT_COUNT] = count
@@ -24,7 +24,7 @@ library UnitLimitation requires Base, UnitModel
     globals
         private constant key UNIT_HIDEEX_COUNT
     endglobals
-    function UnitAddHideExCount takes unit whichUnit returns nothing
+    function UnitIncHideExCount takes unit whichUnit returns nothing
         local integer h     = GetHandleId(whichUnit)
         local integer count = Table[h][UNIT_HIDEEX_COUNT] + 1
         set Table[h][UNIT_HIDEEX_COUNT] = count
@@ -34,7 +34,7 @@ library UnitLimitation requires Base, UnitModel
             call MHUnit_Flag1Operator(whichUnit, FLAG_OPERATOR_ADD, UNIT_FLAG1_HIDE)
         endif
     endfunction
-    function UnitSubHideExCount takes unit whichUnit returns nothing
+    function UnitDecHideExCount takes unit whichUnit returns nothing
         local integer h     = GetHandleId(whichUnit)
         local integer count = Table[h][UNIT_HIDEEX_COUNT] - 1
         set Table[h][UNIT_HIDEEX_COUNT] = count
@@ -47,7 +47,7 @@ library UnitLimitation requires Base, UnitModel
     globals
         private constant key UNIT_HIDE_BY_COLOR_COUNT
     endglobals
-    function UnitAddHideByColorCount takes unit whichUnit returns nothing
+    function UnitIncHideByColorCount takes unit whichUnit returns nothing
         local integer h     = GetHandleId(whichUnit)
         local integer count = Table[h][UNIT_HIDE_BY_COLOR_COUNT] + 1
         set Table[h][UNIT_HIDE_BY_COLOR_COUNT] = count
@@ -55,7 +55,7 @@ library UnitLimitation requires Base, UnitModel
             call SetUnitVertexColorEx(whichUnit, -1, -1, -1, 0)
         endif
     endfunction
-    function UnitSubHideByColorCount takes unit whichUnit returns nothing
+    function UnitDecHideByColorCount takes unit whichUnit returns nothing
         local integer h     = GetHandleId(whichUnit)
         local integer count = Table[h][UNIT_HIDE_BY_COLOR_COUNT] - 1
         set Table[h][UNIT_HIDE_BY_COLOR_COUNT] = count
@@ -67,7 +67,7 @@ library UnitLimitation requires Base, UnitModel
     globals
         private constant key UNIT_INVULNERABLE_COUNT
     endglobals
-    function UnitAddInvulnerableCount takes unit whichUnit returns nothing
+    function UnitIncInvulnerableCount takes unit whichUnit returns nothing
         local integer h     = GetHandleId(whichUnit)
         local integer count = Table[h][UNIT_INVULNERABLE_COUNT] + 1
         set Table[h][UNIT_INVULNERABLE_COUNT] = count
@@ -76,7 +76,7 @@ library UnitLimitation requires Base, UnitModel
             call UnitMakeAbilityPermanent(whichUnit, true, 'Avul')
         endif
     endfunction
-    function UnitSubInvulnerableCount takes unit whichUnit returns nothing
+    function UnitDecInvulnerableCount takes unit whichUnit returns nothing
         local integer h     = GetHandleId(whichUnit)
         local integer count = Table[h][UNIT_INVULNERABLE_COUNT] - 1
         set Table[h][UNIT_INVULNERABLE_COUNT] = count
@@ -100,7 +100,7 @@ library UnitLimitation requires Base, UnitModel
         local integer id    = GetUnitTypeId(whichUnit)
         call MHUnit_SetCollisionType(whichUnit, MHUnit_GetDefDataInt(id, UNIT_DEF_DATA_COLLISION_TYPE_TO_OTHER), MHUnit_GetDefDataInt(id, UNIT_DEF_DATA_COLLISION_TYPE_FROM_OTHER))
     endfunction
-    function UnitAddPhasedMovementCount takes unit whichUnit returns nothing
+    function UnitIncPhasedMovementCount takes unit whichUnit returns nothing
         local integer h     = GetHandleId(whichUnit)
         local integer count = Table[h][UNIT_PHASED_MOVEMENT_COUNT] + 1
         set Table[h][UNIT_PHASED_MOVEMENT_COUNT] = count
@@ -108,7 +108,7 @@ library UnitLimitation requires Base, UnitModel
             call UnitEnablePhasedMovement(whichUnit)
         endif
     endfunction
-    function UnitSubPhasedMovementCount takes unit whichUnit returns nothing
+    function UnitDecPhasedMovementCount takes unit whichUnit returns nothing
         local integer h     = GetHandleId(whichUnit)
         local integer count = Table[h][UNIT_PHASED_MOVEMENT_COUNT] - 1
         set Table[h][UNIT_PHASED_MOVEMENT_COUNT] = count
@@ -135,21 +135,21 @@ library UnitLimitation requires Base, UnitModel
             call MHUnit_SetPathType(whichUnit, UNIT_PATH_TYPE_FOOT)
         endif
     endfunction
-    function UnitAddNoPathingCount takes unit whichUnit returns nothing
+    function UnitIncNoPathingCount takes unit whichUnit returns nothing
         local integer h     = GetHandleId(whichUnit)
         local integer count = Table[h][UNIT_NOPATHING_COUNT] + 1
         set Table[h][UNIT_NOPATHING_COUNT] = count
         if count == 1 then
-            call UnitAddPhasedMovementCount(whichUnit)
+            call UnitIncPhasedMovementCount(whichUnit)
             call UnitEnableNoPathing(whichUnit)
         endif
     endfunction
-    function UnitSubNoPathingCount takes unit whichUnit returns nothing
+    function UnitDecNoPathingCount takes unit whichUnit returns nothing
         local integer h     = GetHandleId(whichUnit)
         local integer count = Table[h][UNIT_NOPATHING_COUNT] - 1
         set Table[h][UNIT_NOPATHING_COUNT] = count
         if count == 0 then
-            call UnitSubPhasedMovementCount(whichUnit)
+            call UnitDecPhasedMovementCount(whichUnit)
             call UnitDisableNoPathing(whichUnit)
         endif
     endfunction
@@ -160,7 +160,7 @@ library UnitLimitation requires Base, UnitModel
     globals
         private constant key UNIT_DISABLE_ATTACK_COUNT
     endglobals
-    function UnitAddDisableAttackCount takes unit whichUnit returns nothing
+    function UnitIncDisableAttackCount takes unit whichUnit returns nothing
         local integer h     = GetHandleId(whichUnit)
         local integer count = Table[h][UNIT_DISABLE_ATTACK_COUNT] + 1
         set Table[h][UNIT_DISABLE_ATTACK_COUNT] = count
@@ -168,7 +168,7 @@ library UnitLimitation requires Base, UnitModel
             call MHAbility_Disable(whichUnit, 'Aatk', true, false)
         endif
     endfunction
-    function UnitSubDisableAttackCount takes unit whichUnit returns nothing
+    function UnitDecDisableAttackCount takes unit whichUnit returns nothing
         local integer h     = GetHandleId(whichUnit)
         local integer count = Table[h][UNIT_DISABLE_ATTACK_COUNT] - 1
         set Table[h][UNIT_DISABLE_ATTACK_COUNT] = count
@@ -181,7 +181,7 @@ library UnitLimitation requires Base, UnitModel
         private constant key UNIT_PAUSE_COUNT
     endglobals
   
-    function UnitAddStunCount takes unit whichUnit returns nothing
+    function UnitIncStunCount takes unit whichUnit returns nothing
         local integer h     = GetHandleId(whichUnit)
         local integer count = Table[h][UNIT_PAUSE_COUNT] + 1
         set Table[h][UNIT_PAUSE_COUNT] = count
@@ -189,7 +189,7 @@ library UnitLimitation requires Base, UnitModel
             call MHUnit_Stun(whichUnit, true)
         endif
     endfunction
-    function UnitSubStunCount takes unit whichUnit returns nothing
+    function UnitDecStunCount takes unit whichUnit returns nothing
         local integer h     = GetHandleId(whichUnit)
         local integer count = Table[h][UNIT_PAUSE_COUNT] - 1
         set Table[h][UNIT_PAUSE_COUNT] = count
@@ -200,7 +200,7 @@ library UnitLimitation requires Base, UnitModel
     private function OnAddStunCountSafeEnd takes nothing returns nothing
         local SimpleTick tick      = SimpleTick.GetExpired()
         local unit       whichUnit = SimpleTick.GetTable()[tick].unit['U']
-        call UnitAddStunCount(whichUnit)
+        call UnitIncStunCount(whichUnit)
         call tick.Destroy()
         set whichUnit = null
     endfunction
@@ -211,14 +211,14 @@ library UnitLimitation requires Base, UnitModel
             set SimpleTick.GetTable()[tick].unit['U'] = whichUnit
             call tick.Start(0., false, function OnAddStunCountSafeEnd)
         else
-            call UnitAddStunCount(whichUnit)
+            call UnitIncStunCount(whichUnit)
         endif
     endfunction
     
     globals
         private constant key UNIT_TRUESIGHT_IMMUNITY_COUNT
     endglobals
-    function UnitAddTruesightImmunityCount takes unit whichUnit returns nothing
+    function UnitIncTruesightImmunityCount takes unit whichUnit returns nothing
         local integer h     = GetHandleId(whichUnit)
         local integer count = Table[h][UNIT_TRUESIGHT_IMMUNITY_COUNT] + 1
         set Table[h][UNIT_TRUESIGHT_IMMUNITY_COUNT] = count
@@ -226,7 +226,7 @@ library UnitLimitation requires Base, UnitModel
             call UnitEnableTruesightImmunity(whichUnit)
         endif
     endfunction
-    function UnitSubTruesightImmunityCount takes unit whichUnit returns nothing
+    function UnitDecTruesightImmunityCount takes unit whichUnit returns nothing
         local integer h     = GetHandleId(whichUnit)
         local integer count = Table[h][UNIT_TRUESIGHT_IMMUNITY_COUNT] - 1
         set Table[h][UNIT_TRUESIGHT_IMMUNITY_COUNT] = count
@@ -316,7 +316,7 @@ library UnitLimitation requires Base, UnitModel
         set whichItem = null
     endfunction
 
-    function UnitAddMuteCount takes unit whichUnit returns nothing
+    function UnitIncMuteCount takes unit whichUnit returns nothing
         local integer h     = GetHandleId(whichUnit)
         local integer count = Table[h][UNIT_MUTE_COUNT] + 1
         set Table[h][UNIT_MUTE_COUNT] = count
@@ -324,7 +324,7 @@ library UnitLimitation requires Base, UnitModel
             call UnitEnableMute(whichUnit)
         endif
     endfunction
-    function UnitSubMuteCount takes unit whichUnit returns nothing
+    function UnitDecMuteCount takes unit whichUnit returns nothing
         local integer h     = GetHandleId(whichUnit)
         local integer count = Table[h][UNIT_MUTE_COUNT] - 1
         set Table[h][UNIT_MUTE_COUNT] = count

@@ -46,10 +46,10 @@ scope Broodmother
         call SetUnitVertexColorBJ(webUnit, 100, 100, 100, 85)
         call SetUnitAbilityLevel(webUnit, 'A0BF', level)
         call UnitAddAbility(webUnit, 'Aloc')
-        call UnitAddInvulnerableCount(webUnit)
+        call UnitIncInvulnerableCount(webUnit)
         
         if User.Local != p then
-            call UnitAddCantSelectCount(webUnit)
+            call UnitIncCantSelectCount(webUnit)
         endif
         set webUnit = null
     endfunction
@@ -102,7 +102,7 @@ scope Broodmother
         local SimpleTick tick      = SimpleTick.GetExpired()
         local unit       whichUnit = SimpleTickTable[tick].unit['u']
 
-        call UnitAddNoPathingCount(whichUnit)
+        call UnitIncNoPathingCount(whichUnit)
         call Table[GetHandleId(whichUnit)].remove(SPIN_WEB_TICK)
         //call BJDebugMsg("SpinWebOnDebuffExpired")
         call tick.Destroy()
@@ -118,7 +118,7 @@ scope Broodmother
                 set tick = SimpleTick.CreateEx()
                 set SimpleTickTable[tick].unit['u'] = DETarget
                 set Table[GetHandleId(DETarget)][SPIN_WEB_TICK] = tick
-                call UnitSubNoPathingCount(DETarget)
+                call UnitDecNoPathingCount(DETarget)
                 call UnitModifyPostion(DETarget)
                 call KillTreeByCircle(GetUnitX(DETarget), GetUnitY(DETarget), 150.)
                 //call BJDebugMsg(GetUnitName(DETarget) + "受伤了 失去无视地形状态")
@@ -137,7 +137,7 @@ scope Broodmother
         call UnitAddPermanentAbility(whichUnit, 'A021')
 
         if ( GetUnitLastDamagedTime(whichUnit) + 6. ) < ( GameTimer.GetElapsed() ) then
-            call UnitAddNoPathingCount(whichUnit)
+            call UnitIncNoPathingCount(whichUnit)
             //call BJDebugMsg("没受伤 添加了" + R2S(GetUnitLastDamagedTime(whichUnit)))
         else
             set tick = SimpleTick.CreateEx()
@@ -159,7 +159,7 @@ scope Broodmother
 
         set tick = Table[GetHandleId(whichUnit)][SPIN_WEB_TICK]
         if tick == 0 then
-            call UnitSubNoPathingCount(whichUnit)
+            call UnitDecNoPathingCount(whichUnit)
             call UnitModifyPostion(whichUnit)
             call KillTreeByCircle(GetUnitX(whichUnit), GetUnitY(whichUnit), 150.)
             //call BJDebugMsg("失去buff，移除无视地形状态")

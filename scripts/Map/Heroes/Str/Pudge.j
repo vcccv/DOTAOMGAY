@@ -46,7 +46,7 @@ scope Pudge
             //	call TriggerAddCondition(tt, Condition(function V5A))
             //	set tt = null
             //else
-            	call UnitSubNoPathingCount(u)
+            	call UnitDecNoPathingCount(u)
             //endif
             call FlushChildHashtable(HY, h)
             call DestroyTrigger(t)
@@ -103,7 +103,7 @@ scope Pudge
                 call SaveInteger(HY,(h2), 376,(i))
                 call SaveBoolean(HY,(h2), 377,(true))
                 call SaveUnitHandle(HY,(h2), 17,(target))
-                call UnitAddNoPathingCount(target)
+                call UnitIncNoPathingCount(target)
                 if IsUnitEnemy(target, GetOwningPlayer(u)) then
                     if IsUnitType(target, UNIT_TYPE_HERO) then
                         call SaveInteger(OtherHashTable, hp,'HK_H', LoadInteger(OtherHashTable, hp,'HK_H')+ 1)

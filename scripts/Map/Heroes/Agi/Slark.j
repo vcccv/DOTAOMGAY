@@ -13,7 +13,7 @@ scope Slark
         local unit d = LoadUnitHandle(HY, h, 19)
         if GetUnitAbilityLevel(u,'A1HX') == 0 then
             call KillUnit(d)
-            call UnitSubTruesightImmunityCount(u)
+            call UnitDecTruesightImmunityCount(u)
             call FlushChildHashtable(HY, h)
             call DestroyTrigger(t)
         else
@@ -38,7 +38,7 @@ scope Slark
         endif
         call CXX(u,'A1HW', 1, i)
         call CXX(u,'A1HX', 1, i)
-        call UnitAddTruesightImmunityCount(u)
+        call UnitIncTruesightImmunityCount(u)
         call TriggerRegisterTimerEvent(t, .03, true)
         call TriggerAddCondition(t, Condition(function UpdateShadowDance))
         call SaveUnitHandle(HY, h, 19,(d))

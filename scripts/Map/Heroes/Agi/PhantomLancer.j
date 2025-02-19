@@ -154,7 +154,7 @@ scope PhantomLancer
         call UnitRemoveAbility(u,'B46F')
         if GetUnitAbilityLevel(u,'A46D')> 0 and LoadBoolean(HY, h, 5) then
             call SetUnitNoLimitMoveSpeed(u, 0)
-            call UnitSubPhasedMovementCount(u)
+            call UnitDecPhasedMovementCount(u)
             call BJDebugMsg("不加速了")
         endif
         if GetHandleId(u)> 0 then
@@ -229,7 +229,7 @@ scope PhantomLancer
                         //if GetUnitAbilityLevel(u,'A46D')> 0 then
                         //    call SaveReal(HY, GetHandleId(u),'A46E', GetGameTime())
                         //endif
-                        call UnitAddPhasedMovementCount(u)
+                        call UnitIncPhasedMovementCount(u)
                         call SaveBoolean(HY, h, 5, true)
                         call BJDebugMsg("加速了")
                     endif
