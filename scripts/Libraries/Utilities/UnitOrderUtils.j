@@ -365,7 +365,7 @@
 #define ORDER_useslot6 852013
 #define ORDER_skillmenu 852000
 #define ORDER_stunned 851973
-#define ORDER_instant1 851991        //patrol sub-order
-#define ORDER_instant2 851987        //?
-#define ORDER_instant3 851975        //?
-#define ORDER_instant4 852019        //?
+#define ORDER_instant1 851991        /* patrol sub-order */
+#define ORDER_instant2 851987        /* ?                */
+#define ORDER_instant3 851975        /* ?                */
+#define ORDER_instant4 852019        /* ?                */

@@ -1,4 +1,3 @@
-
-#include "ItemDefine.j"
 #include "ItemSystem.j"
 #include "ItemStatus.j"
+#include "ItemUtils.j"

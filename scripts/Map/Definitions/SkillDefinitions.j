@@ -1,6 +1,6 @@
 
 // 包含了被动和主动技能
-library HeroSkillDefine requires HeroSkillLib
+library HeroSkillDefine requires SkillSystem
 
     // 控制技能列表
     function ControlSkillList_Init takes nothing returns nothing

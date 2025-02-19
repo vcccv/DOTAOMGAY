@@ -1011,13 +1011,13 @@
     endfunction
 
     // 设置队伍颜色
-    // param color：颜色
-    function MHUnit_SetTeamColor takes effect eff, playercolor color returns nothing
+    // @param color：颜色
+    function MHUnit_SetTeamColor takes unit u, playercolor color returns nothing
     endfunction
 
     // 设置队伍光晕
-    // param glow：光晕。填playercolor就行
-    function MHUnit_SetTeamGlow takes effect eff, playercolor glow returns nothing
+    // @param glow：光晕。填playercolor就行
+    function MHUnit_SetTeamGlow takes unit u, playercolor glow returns nothing
     endfunction
 
     // 获取动画进度
@@ -3591,6 +3591,16 @@
     function MHUIData_GetBuildFrameBuildAbility takes nothing returns integer
     endfunction
 
+    // 获取CCommandButton的下标控件
+    // @Tip：实际上是一个CSimpleFrame
+    function MHUIData_GetCommandButtonSubscriptFrame takes integer command_button returns integer
+    endfunction
+
+    // 获取CCommandButton的下标文本
+    // @Tip：实际上是一个CSimpleFontString
+    function MHUIData_GetCommandButtonSubscriptText takes integer command_button returns integer
+    endfunction
+
     // 获取CCommandButton的冷却模型
     // @Tip：实际上是一个CSpriteFrame
     function MHUIData_GetCommandButtonCooldownFrame takes integer command_button returns integer
@@ -3908,6 +3918,7 @@
     endfunction
 
     // 获取随机单位
+    // @Tip：不会选择到无效单位, 会调用随机数, 不要异步使用
     function MHGroup_GetRandomUnit takes group g returns unit
     endfunction
 
@@ -4074,6 +4085,16 @@
 // 基本库
 
 
+
+    // 获取随机整数 (异步)
+    // @Tip：返回值完全异步, 不要用于同步的逻辑
+    function MHMath_GetLocalRandomInt takes integer lower_bound, integer upper_bound returns integer
+    endfunction
+
+    // 获取随机实数 (异步)
+    // @Tip：返回值完全异步, 不要用于同步的逻辑
+    function MHMath_GetLocalRandomReal takes real lower_bound, real upper_bound returns real
+    endfunction
 
     // 包含bit
     // @Tip：flag 包含 bit

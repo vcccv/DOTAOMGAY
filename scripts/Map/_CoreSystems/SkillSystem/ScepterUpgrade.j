@@ -1,5 +1,5 @@
 
-library ScepterUpgradeLib requires HeroSkillLib, ItemSystem
+library ScepterUpgradeSystem requires SkillSystem, ItemSystem
     
     //***************************************************************************
     //*
@@ -107,12 +107,12 @@ library ScepterUpgradeLib requires HeroSkillLib, ItemSystem
 
     function RegisterSkillGetScepterUpgradeMethod takes integer scepterUpgradeIndex, string func returns nothing
         set GetUpgradeMethod[scepterUpgradeIndex] = C2I(MHGame_GetCode(func))
-        call ThrowError(GetUpgradeMethod[scepterUpgradeIndex] == 0, "ScepterUpgradeLib", "RegisterSkillGetScepterUpgradeMethod", "scepterUpgradeIndex", scepterUpgradeIndex, "func == 0")
-        call ThrowError(scepterUpgradeIndex == 0, "ScepterUpgradeLib", "RegisterSkillGetScepterUpgradeMethod", "scepterUpgradeIndex", scepterUpgradeIndex, "scepterUpgradeIndex == 0")
+        call ThrowError(GetUpgradeMethod[scepterUpgradeIndex] == 0, "ScepterUpgradeSystem", "RegisterSkillGetScepterUpgradeMethod", "scepterUpgradeIndex", scepterUpgradeIndex, "func == 0")
+        call ThrowError(scepterUpgradeIndex == 0, "ScepterUpgradeSystem", "RegisterSkillGetScepterUpgradeMethod", "scepterUpgradeIndex", scepterUpgradeIndex, "scepterUpgradeIndex == 0")
     endfunction
     function RegisterSkillLostScepterUpgradeMethod takes integer scepterUpgradeIndex, string func returns nothing
         set LostUpgradeMethod[scepterUpgradeIndex] = C2I(MHGame_GetCode(func))
-        call ThrowError(LostUpgradeMethod[scepterUpgradeIndex] == 0, "ScepterUpgradeLib", "RegisterSkillLostScepterUpgradeMethod", "scepterUpgradeIndex", scepterUpgradeIndex, "func == 0")
+        call ThrowError(LostUpgradeMethod[scepterUpgradeIndex] == 0, "ScepterUpgradeSystem", "RegisterSkillLostScepterUpgradeMethod", "scepterUpgradeIndex", scepterUpgradeIndex, "func == 0")
     endfunction
     
     function RegisterSkillScepterUpgradeMethod takes integer scepterUpgradeIndex, string getMethod, string lostMethod returns nothing

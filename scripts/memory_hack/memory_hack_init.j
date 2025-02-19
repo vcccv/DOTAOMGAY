@@ -24,8 +24,8 @@ library zMHInit
 #endif
 
     globals
-        constant integer    MEMHACK_FLAG_DISABLE_WENHAO    = MEMHACK_DISABLE_WENHAO
-        constant integer    MEMHACK_FLAG_DISABLE_MEMHACK   = MEMHACK_DISABLE_MEMHACK
+        constant integer    MEMHACK_FLAG_DISABLE_WENHAO     = MEMHACK_DISABLE_WENHAO
+        constant integer    MEMHACK_FLAG_DISABLE_MEMHACK    = MEMHACK_DISABLE_MEMHACK
         private boolean     MEMHACK_INITIALIZED             = false
     endglobals
 

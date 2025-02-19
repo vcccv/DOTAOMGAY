@@ -895,27 +895,27 @@ constant integer UNIT_DEF_DATA_REPAIR_TIME			        = 0x3
 // 单位物编整数数据：黄金消耗
 constant integer UNIT_DEF_DATA_GOLD_COST				    = 0x4
 // 单位物编整数数据：木材消耗
-constant integer UNIT_DEF_DATA_LUMBER_COST			        = 0x5	
+constant integer UNIT_DEF_DATA_LUMBER_COST			        = 0x5
 // 单位物编整数数据：黄金奖励 - 骰子数量
-constant integer UNIT_DEF_DATA_GOLD_BOUNTY_DICE		        = 0x6	
+constant integer UNIT_DEF_DATA_GOLD_BOUNTY_DICE		        = 0x6
 // 单位物编整数数据：黄金奖励 - 骰子面数
-constant integer UNIT_DEF_DATA_GOLD_BOUNTY_SIDES		    = 0x7	
+constant integer UNIT_DEF_DATA_GOLD_BOUNTY_SIDES		    = 0x7
 // 单位物编整数数据：黄金奖励 - 基础值
-constant integer UNIT_DEF_DATA_GOLD_BOUNTY_BASE		        = 0x8	
+constant integer UNIT_DEF_DATA_GOLD_BOUNTY_BASE		        = 0x8
 // 单位物编整数数据：木材奖励 - 骰子数量
-constant integer UNIT_DEF_DATA_LUMBER_BOUNTY_DICE		    = 0x9	
+constant integer UNIT_DEF_DATA_LUMBER_BOUNTY_DICE		    = 0x9
 // 单位物编整数数据：木材奖励 - 骰子面数
-constant integer UNIT_DEF_DATA_LUMBER_BOUNTY_SIDES	        = 0xA	
+constant integer UNIT_DEF_DATA_LUMBER_BOUNTY_SIDES	        = 0xA
 // 单位物编整数数据：木材奖励 - 基础值
-constant integer UNIT_DEF_DATA_LUMBER_BOUNTY_BASE		    = 0xB	
+constant integer UNIT_DEF_DATA_LUMBER_BOUNTY_BASE		    = 0xB
 // 单位物编整数数据：最大库存量
-constant integer UNIT_DEF_DATA_STOCK_MAX				    = 0xC	
+constant integer UNIT_DEF_DATA_STOCK_MAX				    = 0xC
 // 单位物编整数数据：运输尺寸
-constant integer UNIT_DEF_DATA_CARGO_SIZE				    = 0xD	
+constant integer UNIT_DEF_DATA_CARGO_SIZE				    = 0xD
 // 单位物编整数数据：等级
-constant integer UNIT_DEF_DATA_LEVEL					    = 0xE	
+constant integer UNIT_DEF_DATA_LEVEL					    = 0xE
 // 单位物编整数数据：生命回复类型
-constant integer UNIT_DEF_DATA_REGEN_TYPE				    = 0xF	
+constant integer UNIT_DEF_DATA_REGEN_TYPE				    = 0xF
 // 单位物编整数数据：护甲类型
 constant integer UNIT_DEF_DATA_DEF_TYPE				        = 0x10
 // 单位物编整数数据：允许攻击模式
@@ -972,187 +972,188 @@ constant integer UNIT_DEF_DATA_TYPE				            = 0x29
 constant integer UNIT_DEF_DATA_COLLISION_TYPE_FROM_OTHER    = 0x2A
 // 单位物编整数数据：碰撞类型 (自己碰撞别人)
 constant integer UNIT_DEF_DATA_COLLISION_TYPE_TO_OTHER	    = 0x2B
+// 单位物编整数数据：占用人口
+constant integer UNIT_DEF_DATA_FOOD_USED			        = 0x2C
+// 单位物编整数数据：提供人口
+constant integer UNIT_DEF_DATA_FOOD_MADE			        = 0x2D
 // 单位物编整数数据：附加值
-constant integer UNIT_DEF_DATA_POINTS			            = 0x2C
+constant integer UNIT_DEF_DATA_POINTS			            = 0x2E
 // 单位物编整数数据：
-constant integer UNIT_DEF_DATA_COLOR				        = 0x2D
+constant integer UNIT_DEF_DATA_COLOR				        = 0x2F
 // 单位物编整数数据：称谓数量
-constant integer UNIT_DEF_DATA_PROPER_NAMES_COUNT           = 0x2E
+constant integer UNIT_DEF_DATA_PROPER_NAMES_COUNT           = 0x30
 // 单位物编整数数据：
-constant integer UNIT_DEF_DATA_LOOPING_SND_FADE_IN	        = 0x2F
+constant integer UNIT_DEF_DATA_LOOPING_SND_FADE_IN	        = 0x31
 // 单位物编整数数据：
-constant integer UNIT_DEF_DATA_LOOPING_SND_FADE_OUT	        = 0x30
+constant integer UNIT_DEF_DATA_LOOPING_SND_FADE_OUT	        = 0x32
 // 单位物编整数数据：按钮位置 (X)
-constant integer UNIT_DEF_DATA_BUTTON_X				        = 0x31
+constant integer UNIT_DEF_DATA_BUTTON_X				        = 0x33
 // 单位物编整数数据：按钮位置 (Y)
-constant integer UNIT_DEF_DATA_BUTTON_Y				        = 0x32
+constant integer UNIT_DEF_DATA_BUTTON_Y				        = 0x34
 // 单位物编整数数据：热键
-constant integer UNIT_DEF_DATA_HOTKEY				        = 0x33
+constant integer UNIT_DEF_DATA_HOTKEY				        = 0x35
 // 单位物编整数数据：
-constant integer UNIT_DEF_DATA_ATTACHED_PROPS		        = 0x34
+constant integer UNIT_DEF_DATA_ATTACHED_PROPS		        = 0x36
+
 // 单位物编实数数据：雇用时间间隔
-constant integer UNIT_DEF_DATA_STOCK_REGEN			        = 0x35
+constant integer UNIT_DEF_DATA_STOCK_REGEN			        = 0x37
 // 单位物编实数数据：雇佣开始时间
-constant integer UNIT_DEF_DATA_STOCK_START			        = 0x36
+constant integer UNIT_DEF_DATA_STOCK_START			        = 0x38
 // 单位物编实数数据：施法前摇
-constant integer UNIT_DEF_DATA_CAST_POINT				    = 0x37
+constant integer UNIT_DEF_DATA_CAST_POINT				    = 0x39
 // 单位物编实数数据：施法后摇
-constant integer UNIT_DEF_DATA_CAST_BACKSWING			    = 0x38
+constant integer UNIT_DEF_DATA_CAST_BACKSWING			    = 0x3A
 // 单位物编实数数据：死亡时间
-constant integer UNIT_DEF_DATA_DEATH_TIME				    = 0x39
+constant integer UNIT_DEF_DATA_DEATH_TIME				    = 0x3B
 // 单位物编实数数据：生命恢复速度
-constant integer UNIT_DEF_DATA_LIFE_REGEN				    = 0x3A
+constant integer UNIT_DEF_DATA_LIFE_REGEN				    = 0x3C
 // 单位物编实数数据：最大生命值
-constant integer UNIT_DEF_DATA_MAX_LIFE				        = 0x3B
+constant integer UNIT_DEF_DATA_MAX_LIFE				        = 0x3D
 // 单位物编实数数据：初始魔法值
-constant integer UNIT_DEF_DATA_INIT_MANA				    = 0x3C
+constant integer UNIT_DEF_DATA_INIT_MANA				    = 0x3E
 // 单位物编实数数据：最大魔法值
-constant integer UNIT_DEF_DATA_MAX_MANA				        = 0x3D
+constant integer UNIT_DEF_DATA_MAX_MANA				        = 0x3F
 // 单位物编实数数据：魔法恢复速度
-constant integer UNIT_DEF_DATA_MANA_REGEN				    = 0x3E
+constant integer UNIT_DEF_DATA_MANA_REGEN				    = 0x40
 // 单位物编实数数据：护甲值
-constant integer UNIT_DEF_DATA_DEF_VALUE				    = 0x3F
+constant integer UNIT_DEF_DATA_DEF_VALUE				    = 0x41
 // 单位物编实数数据：护甲升级奖励
-constant integer UNIT_DEF_DATA_DEF_UP					    = 0x40
+constant integer UNIT_DEF_DATA_DEF_UP					    = 0x42
 // 单位物编实数数据：伤害衰减参数1
-constant integer UNIT_DEF_DATA_DAMAGE_LOSS1			        = 0x41
+constant integer UNIT_DEF_DATA_DAMAGE_LOSS1			        = 0x43
 // 单位物编实数数据：伤害衰减参数2
-constant integer UNIT_DEF_DATA_DAMAGE_LOSS2			        = 0x42
+constant integer UNIT_DEF_DATA_DAMAGE_LOSS2			        = 0x44
 // 单位物编实数数据：穿透伤害距离1
-constant integer UNIT_DEF_DATA_SPILL_DIST1			        = 0x43
+constant integer UNIT_DEF_DATA_SPILL_DIST1			        = 0x45
 // 单位物编实数数据：穿透伤害距离2
-constant integer UNIT_DEF_DATA_SPILL_DIST2			        = 0x44
+constant integer UNIT_DEF_DATA_SPILL_DIST2			        = 0x46
 // 单位物编实数数据：穿透伤害范围1
-constant integer UNIT_DEF_DATA_SPILL_RADIUS1			    = 0x45
+constant integer UNIT_DEF_DATA_SPILL_RADIUS1			    = 0x47
 // 单位物编实数数据：穿透伤害范围2
-constant integer UNIT_DEF_DATA_SPILL_RADIUS2			    = 0x46
+constant integer UNIT_DEF_DATA_SPILL_RADIUS2			    = 0x48
 // 单位物编实数数据：攻击范围1
-constant integer UNIT_DEF_DATA_ATTACK_RANGE1			    = 0x47
+constant integer UNIT_DEF_DATA_ATTACK_RANGE1			    = 0x49
 // 单位物编实数数据：攻击范围2
-constant integer UNIT_DEF_DATA_ATTACK_RANGE2			    = 0x48
+constant integer UNIT_DEF_DATA_ATTACK_RANGE2			    = 0x4A
 // 单位物编实数数据：攻击范围缓冲1
-constant integer UNIT_DEF_DATA_RANGE_BUFFER1			    = 0x49
+constant integer UNIT_DEF_DATA_RANGE_BUFFER1			    = 0x4B
 // 单位物编实数数据：攻击范围缓冲2
-constant integer UNIT_DEF_DATA_RANGE_BUFFER2			    = 0x4A
+constant integer UNIT_DEF_DATA_RANGE_BUFFER2			    = 0x4C
 // 单位物编实数数据：攻击间隔1
-constant integer UNIT_DEF_DATA_BAT1					        = 0x4B
+constant integer UNIT_DEF_DATA_BAT1					        = 0x4D
 // 单位物编实数数据：攻击间隔2
-constant integer UNIT_DEF_DATA_BAT2					        = 0x4C
+constant integer UNIT_DEF_DATA_BAT2					        = 0x4E
 // 单位物编实数数据：攻击前摇1
-constant integer UNIT_DEF_DATA_ATTACK_POINT1			    = 0x4D
+constant integer UNIT_DEF_DATA_ATTACK_POINT1			    = 0x4F
 // 单位物编实数数据：攻击前摇2
-constant integer UNIT_DEF_DATA_ATTACK_POINT2			    = 0x4E
+constant integer UNIT_DEF_DATA_ATTACK_POINT2			    = 0x50
 // 单位物编实数数据：攻击后摇1
-constant integer UNIT_DEF_DATA_ATTACK_BACSWING1		        = 0x4F
+constant integer UNIT_DEF_DATA_ATTACK_BACSWING1		        = 0x51
 // 单位物编实数数据：攻击后摇2
-constant integer UNIT_DEF_DATA_ATTACK_BACSWING2		        = 0x50
+constant integer UNIT_DEF_DATA_ATTACK_BACSWING2		        = 0x52
 // 单位物编实数数据：全伤害范围1
-constant integer UNIT_DEF_DATA_FULL_AREA1				    = 0x51
+constant integer UNIT_DEF_DATA_FULL_AREA1				    = 0x53
 // 单位物编实数数据：全伤害范围2
-constant integer UNIT_DEF_DATA_FULL_AREA2				    = 0x52
+constant integer UNIT_DEF_DATA_FULL_AREA2				    = 0x54
 // 单位物编实数数据：半伤害范围1
-constant integer UNIT_DEF_DATA_HALF_AREA1				    = 0x53
+constant integer UNIT_DEF_DATA_HALF_AREA1				    = 0x55
 // 单位物编实数数据：半伤害范围2
-constant integer UNIT_DEF_DATA_HALF_AREA2				    = 0x54
+constant integer UNIT_DEF_DATA_HALF_AREA2				    = 0x56
 // 单位物编实数数据：小伤害范围1
-constant integer UNIT_DEF_DATA_SMALL_AREA1			        = 0x55
+constant integer UNIT_DEF_DATA_SMALL_AREA1			        = 0x57
 // 单位物编实数数据：小伤害范围2
-constant integer UNIT_DEF_DATA_SMALL_AREA2			        = 0x56
+constant integer UNIT_DEF_DATA_SMALL_AREA2			        = 0x58
 // 单位物编实数数据：半伤害因数1
-constant integer UNIT_DEF_DATA_HALF_FACTOR1			        = 0x57
+constant integer UNIT_DEF_DATA_HALF_FACTOR1			        = 0x59
 // 单位物编实数数据：半伤害因数2
-constant integer UNIT_DEF_DATA_HALF_FACTOR2			        = 0x58
+constant integer UNIT_DEF_DATA_HALF_FACTOR2			        = 0x5A
 // 单位物编实数数据：小伤害因数1
-constant integer UNIT_DEF_DATA_SMALL_FACTOR1			    = 0x59
+constant integer UNIT_DEF_DATA_SMALL_FACTOR1			    = 0x5B
 // 单位物编实数数据：小伤害因数2
-constant integer UNIT_DEF_DATA_SMALL_FACTOR2			    = 0x5A
+constant integer UNIT_DEF_DATA_SMALL_FACTOR2			    = 0x5C
 // 单位物编实数数据：每级提升力量
-constant integer UNIT_DEF_DATA_STR_UP					    = 0x5B
+constant integer UNIT_DEF_DATA_STR_UP					    = 0x5D
 // 单位物编实数数据：每级提升敏捷
-constant integer UNIT_DEF_DATA_AGI_UP					    = 0x5C
+constant integer UNIT_DEF_DATA_AGI_UP					    = 0x5E
 // 单位物编实数数据：每级提升智力
-constant integer UNIT_DEF_DATA_INT_UP					    = 0x5D
+constant integer UNIT_DEF_DATA_INT_UP					    = 0x5F
 // 单位物编实数数据：视野范围 (白天)
-constant integer UNIT_DEF_DATA_SIGHT_DAY				    = 0x5E
+constant integer UNIT_DEF_DATA_SIGHT_DAY				    = 0x60
 // 单位物编实数数据：视野范围 (夜晚)
-constant integer UNIT_DEF_DATA_SIGHT_NIGHT			        = 0x5F
+constant integer UNIT_DEF_DATA_SIGHT_NIGHT			        = 0x61
 // 单位物编实数数据：主动攻击范围
-constant integer UNIT_DEF_DATA_ACQUISION_RANGE		        = 0x60
+constant integer UNIT_DEF_DATA_ACQUISION_RANGE		        = 0x62
 // 单位物编实数数据：最小攻击范围
-constant integer UNIT_DEF_DATA_MIN_RANGE			        = 0x61
+constant integer UNIT_DEF_DATA_MIN_RANGE			        = 0x63
 // 单位物编实数数据：碰撞体积
-constant integer UNIT_DEF_DATA_COLLISION			        = 0x62
+constant integer UNIT_DEF_DATA_COLLISION			        = 0x64
 // 单位物编实数数据：
-constant integer UNIT_DEF_DATA_FOG_RADIUS				    = 0x63
+constant integer UNIT_DEF_DATA_FOG_RADIUS				    = 0x65
 // 单位物编实数数据：
-constant integer UNIT_DEF_DATA_AI_RADIUS			        = 0x64
+constant integer UNIT_DEF_DATA_AI_RADIUS			        = 0x66
 // 单位物编实数数据：移动速度
-constant integer UNIT_DEF_DATA_SPEED				        = 0x65
+constant integer UNIT_DEF_DATA_SPEED				        = 0x67
 // 单位物编实数数据：最小移动速度
-constant integer UNIT_DEF_DATA_MIN_SPEED			        = 0x66
+constant integer UNIT_DEF_DATA_MIN_SPEED			        = 0x68
 // 单位物编实数数据：最大移动速度
-constant integer UNIT_DEF_DATA_MAX_SPEED			        = 0x67
+constant integer UNIT_DEF_DATA_MAX_SPEED			        = 0x69
 // 单位物编实数数据：转身速度
-constant integer UNIT_DEF_DATA_TURN_RATE			        = 0x68
+constant integer UNIT_DEF_DATA_TURN_RATE			        = 0x6A
 // 单位物编实数数据：转向角度
-constant integer UNIT_DEF_DATA_PROP_WIN				        = 0x69
+constant integer UNIT_DEF_DATA_PROP_WIN				        = 0x6B
 // 单位物编实数数据：转向补正
-constant integer UNIT_DEF_DATA_ORIENT_INTERP			    = 0x6A
+constant integer UNIT_DEF_DATA_ORIENT_INTERP			    = 0x6C
 // 单位物编实数数据：闭塞高度
-constant integer UNIT_DEF_DATA_OCCLUSION_HEIGHT		        = 0x6B
+constant integer UNIT_DEF_DATA_OCCLUSION_HEIGHT		        = 0x6D
 // 单位物编实数数据：高度
-constant integer UNIT_DEF_DATA_HEIGHT					    = 0x6C
+constant integer UNIT_DEF_DATA_HEIGHT					    = 0x6E
 // 单位物编实数数据：最小高度
-constant integer UNIT_DEF_DATA_MOVE_FLOOR				    = 0x6D
+constant integer UNIT_DEF_DATA_MOVE_FLOOR				    = 0x6F
 // 单位物编实数数据：射弹偏移 - X
-constant integer UNIT_DEF_DATA_LAUNCH_X				        = 0x6E
+constant integer UNIT_DEF_DATA_LAUNCH_X				        = 0x70
 // 单位物编实数数据：射弹偏移 - Y
-constant integer UNIT_DEF_DATA_LAUNCH_Y				        = 0x6F
+constant integer UNIT_DEF_DATA_LAUNCH_Y				        = 0x71
 // 单位物编实数数据：射弹偏移 - Z
-constant integer UNIT_DEF_DATA_LAUNCH_Z				        = 0x70
+constant integer UNIT_DEF_DATA_LAUNCH_Z				        = 0x72
 // 单位物编实数数据：射弹偏移 - Z (深水)
-constant integer UNIT_DEF_DATA_LAUNCH_Z_SWIM		        = 0x71
+constant integer UNIT_DEF_DATA_LAUNCH_Z_SWIM		        = 0x73
 // 单位物编实数数据：射弹碰撞偏移 - Z
-constant integer UNIT_DEF_DATA_IMPACT_Z				        = 0x72
+constant integer UNIT_DEF_DATA_IMPACT_Z				        = 0x74
 // 单位物编实数数据：射弹碰撞偏移 - Z (深水)
-constant integer UNIT_DEF_DATA_IMPACT_Z_SWIM			    = 0x73
+constant integer UNIT_DEF_DATA_IMPACT_Z_SWIM			    = 0x75
 // 单位物编实数数据：混合时间
-constant integer UNIT_DEF_DATA_BLEND					    = 0x74
+constant integer UNIT_DEF_DATA_BLEND					    = 0x76
 // 单位物编实数数据：行走速度
-constant integer UNIT_DEF_DATA_WALK_SPEED                   = 0x75
+constant integer UNIT_DEF_DATA_WALK_SPEED                   = 0x77
 // 单位物编实数数据：跑步速度
-constant integer UNIT_DEF_DATA_RUN_SPEED				    = 0x76
+constant integer UNIT_DEF_DATA_RUN_SPEED				    = 0x78
 // 单位物编实数数据：选择圈缩放
-constant integer UNIT_DEF_DATA_CIRCLE_SCALE			        = 0x77
+constant integer UNIT_DEF_DATA_CIRCLE_SCALE			        = 0x79
 // 单位物编实数数据：选择圈高度
-constant integer UNIT_DEF_DATA_CIRCLE_Z				        = 0x78
+constant integer UNIT_DEF_DATA_CIRCLE_Z				        = 0x7A
 // 单位物编实数数据：射弹速率1
-constant integer UNIT_DEF_DATA_MISSILE_SPEED1			    = 0x79
+constant integer UNIT_DEF_DATA_MISSILE_SPEED1			    = 0x7B
 // 单位物编实数数据：射弹速率2
-constant integer UNIT_DEF_DATA_MISSILE_SPEED2			    = 0x7A
+constant integer UNIT_DEF_DATA_MISSILE_SPEED2			    = 0x7C
 // 单位物编实数数据：射弹弧度1
-constant integer UNIT_DEF_DATA_MISSILE_ARC1			        = 0x7B
+constant integer UNIT_DEF_DATA_MISSILE_ARC1			        = 0x7D
 // 单位物编实数数据：射弹弧度2
-constant integer UNIT_DEF_DATA_MISSILE_ARC2			        = 0x7C
+constant integer UNIT_DEF_DATA_MISSILE_ARC2			        = 0x7E
 // 单位物编实数数据：阴影图像 - X轴偏移
-constant integer UNIT_DEF_DATA_SHADOW_X				        = 0x7D
+constant integer UNIT_DEF_DATA_SHADOW_X				        = 0x7F
 // 单位物编实数数据：阴影图像 - Y轴偏移
-constant integer UNIT_DEF_DATA_SHADOW_Y				        = 0x7E
+constant integer UNIT_DEF_DATA_SHADOW_Y				        = 0x80
 // 单位物编实数数据：阴影图像 - 宽度
-constant integer UNIT_DEF_DATA_SHADOW_WIDTH			        = 0x7F
+constant integer UNIT_DEF_DATA_SHADOW_WIDTH			        = 0x81
 // 单位物编实数数据：阴影图像 - 高度
-constant integer UNIT_DEF_DATA_SHADOW_HEIGHT			    = 0x80
+constant integer UNIT_DEF_DATA_SHADOW_HEIGHT			    = 0x82
 // 单位物编实数数据：模型缩放
-constant integer UNIT_DEF_DATA_SCALE					    = 0x81
+constant integer UNIT_DEF_DATA_SCALE					    = 0x83
 
 // 单位物编布尔值数据：允许睡眠
-constant integer UNIT_DEF_DATA_CAN_SLEEP				    = 0x82
+constant integer UNIT_DEF_DATA_CAN_SLEEP				    = 0x84
 // 单位物编布尔值数据：可以逃跑
-constant integer UNIT_DEF_DATA_CAN_FLEE				        = 0x83
-// 单位物编布尔值数据：
-constant integer UNIT_DEF_DATA_FOOD_USED			        = 0x84
-// 单位物编布尔值数据：
-constant integer UNIT_DEF_DATA_FOOD_MADE			        = 0x85
+constant integer UNIT_DEF_DATA_CAN_FLEE				        = 0x85
 // 单位物编布尔值数据：显示UI1
 constant integer UNIT_DEF_DATA_SHOW_UI1				        = 0x86
 // 单位物编布尔值数据：显示UI2

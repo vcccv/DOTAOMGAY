@@ -1,5 +1,5 @@
 
-library ScepterUpgradeDefine requires ScepterUpgradeLib
+library ScepterUpgradeDefine requires ScepterUpgradeSystem
 
     // 注册神杖升级
     function HeroSkillsAghanimScepterUpgrade_Init takes nothing returns nothing

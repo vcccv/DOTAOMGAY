@@ -1637,8 +1637,8 @@ native EXExecuteScript takes string script returns string
 #define MEMHACK_DISABLE_MAIN_HOOK 1
 #include "memory_hack\\API\\japi_dev.j"
 #include "memory_hack\\memory_hack_init.j"
-#include "Libraries\\include"
-//#include "UI\\include"
+
+#include "Libraries\\_include"
 
 ///<summary>技能属性 [JAPI]</summary>
 function YDWEGetUnitAbilityState takes unit u, integer abilcode, integer state_type returns real
@@ -77642,9 +77642,7 @@ function InitTaverns takes nothing returns nothing
 	call SetUnitColor(EFV, ConvertPlayerColor(11))
 endfunction
 
-#include "Map\\include"
-#include "base\\GameEnd.j"
-#include "Map\\Structures\\Structures.j"
+#include "Map\\_include"
 
 function AHC takes boolean b returns nothing
 	local real a = 0.0
@@ -78997,9 +78995,7 @@ function BlzFunction_Init takes nothing returns nothing
 	call DetectGameStarted()
 endfunction
 
-#include "Map\\Heroes\\include"
-#include "Map\\Items\\include"
-#include "Map\\DamageSystem.j"
+#include "Map\\Behaviors\\_include"
 
 function main takes nothing returns nothing
 	local weathereffect we
@@ -79137,7 +79133,7 @@ function main takes nothing returns nothing
 	call FlushGameCache(InitGameCache("mapid"))
 	set MapIdCache = InitGameCache("mapid")
 
-	// 30 秒一次
+	// 30 秒一次更新买活价格吧
 	set PN = CreateTrigger()
 	call TriggerAddCondition(PN, Condition(function KUX))
 

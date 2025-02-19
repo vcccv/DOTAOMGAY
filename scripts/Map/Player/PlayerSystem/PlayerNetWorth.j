@@ -1,5 +1,5 @@
 
-library PlayerNetWorthLib requires PlayerUtils2, PlayerStatus, Base
+library PlayerNetWorthLib requires PlayerSystem, PlayerStatus, Base
 
     globals
         private trigger NetWorthUpdateTrig

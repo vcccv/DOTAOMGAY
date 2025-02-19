@@ -1,6 +1,10 @@
 
-library PlayerStatus requires PlayerUtils2
-    
+library PlayerStatus requires PlayerSystem
+
+    // 是ob玩家
+    function IsObserverPlayerEx takes player p returns boolean
+        return GameHasObservers and(ObserverPlayer1 == p or ObserverPlayer2 == p)
+    endfunction
     // 近卫
     function IsPlayerSentinel takes player p returns boolean
         return(p == SentinelPlayers[0]) or(p == SentinelPlayers[1]) or(p == SentinelPlayers[2]) or(p == SentinelPlayers[3]) or(p == SentinelPlayers[4]) or(p == SentinelPlayers[5])

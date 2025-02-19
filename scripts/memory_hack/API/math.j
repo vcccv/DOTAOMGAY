@@ -5,6 +5,12 @@
 
 
 library AMHMath
+    function MHMath_GetLocalRandomInt takes integer lower_bound, integer upper_bound returns integer
+        JapiPlaceHolder 0
+    endfunction
+    function MHMath_GetLocalRandomReal takes real lower_bound, real upper_bound returns real
+        JapiPlaceHolder 0.
+    endfunction
     function MHMath_IsBitSet takes integer flag, integer bit returns boolean
         JapiPlaceHolder false
     endfunction

@@ -1,6 +1,0 @@
-
-scope ItemAbility
-
-    
-
-endscope

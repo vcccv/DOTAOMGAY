@@ -51,6 +51,12 @@ library AMHGameUIData
     function MHUIData_GetBuildFrameBuildAbility takes nothing returns integer
         JapiPlaceHolder 0
     endfunction
+    function MHUIData_GetCommandButtonSubscriptFrame takes integer command_button returns integer
+        JapiPlaceHolder 0
+    endfunction
+    function MHUIData_GetCommandButtonSubscriptText takes integer command_button returns integer
+        JapiPlaceHolder 0
+    endfunction
     function MHUIData_GetCommandButtonCooldownFrame takes integer command_button returns integer
         JapiPlaceHolder 0
     endfunction

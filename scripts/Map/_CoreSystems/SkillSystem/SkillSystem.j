@@ -1,6 +1,6 @@
 
-library HeroSkillLib requires AbilityCustomOrderId, AbilityUtils, UnitAbility
-
+library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
+    
     function SkillOnInitializer takes integer skillIndex returns nothing
         if skillIndex == SKILL_INDEX_STARFALL then
             call ResgiterAbilityMethodSimple(STARFALL_UPGRADE_ABILITY_ID, "StarfallUpgradeAbilityOnAdd", "StarfallUpgradeAbilityOnRemove")

@@ -33,7 +33,7 @@ library DoubleTapAbilityToSelfCast requires Table
         local integer castType
         local integer flag
         static if LIBRARY_PlayerSettingsManager then
-            if not PlayerSettings(User.LocalId).IsDoubleTapAbilityToSelfCastEnabled() then
+            if not PlayerSettings(User.LocalId).IsDoubleTapAbilityToSelfCast() then
                 return false
             endif
         endif
@@ -75,7 +75,7 @@ library DoubleTapAbilityToSelfCast requires Table
     private function OnCallTargetMode takes nothing returns boolean
         local integer abilId
         static if LIBRARY_PlayerSettingsManager then
-            if not PlayerSettings(User.LocalId).IsDoubleTapAbilityToSelfCastEnabled() then
+            if not PlayerSettings(User.LocalId).IsDoubleTapAbilityToSelfCast() then
                 return false
             endif
         endif
@@ -96,7 +96,7 @@ library DoubleTapAbilityToSelfCast requires Table
         return false
     endfunction
 
-    private function RegisterAbilitys takes nothing returns nothing
+    function RegisterDoubleTapAbilitys takes nothing returns nothing
         call RegisterDoubleTapToSelfCastAbilityById('A11N') // X标记
         call RegisterDoubleTapToSelfCastAbilityById('A08V') // 全能魔免
         call RegisterDoubleTapToSelfCastAbilityById('A08N') // 全能加血
@@ -135,9 +135,9 @@ library DoubleTapAbilityToSelfCast requires Table
         call RegisterDoubleTapToSelfCastAbilityById('A06B') // 自爆
         call RegisterDoubleTapToSelfCastAbilityById('A471') // A杖自爆
     endfunction
-
+    
     function DoubleTapAbilityToSelfCast_Init takes nothing returns nothing
-        call RegisterAbilitys()
+        call RegisterDoubleTapAbilitys()
 
         set KeyDownTrig = CreateTrigger()
         call MHMsgKeyDownEvent_Register(KeyDownTrig)

@@ -32,4 +32,10 @@ library AMHDebug
     function MHDebug_ShowLeakMessage takes nothing returns nothing
         JapiPlaceHolder
     endfunction
+    function MHDebug_DumpLeakReport takes nothing returns nothing
+        JapiPlaceHolder
+    endfunction
+    function MHDebug_StartProfiling takes real dur returns nothing
+        JapiPlaceHolder
+    endfunction
 endlibrary
