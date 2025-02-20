@@ -15,9 +15,6 @@ library ItemSystem requires Base, TimerUtils, AbilityUtils
 
         integer       MaxItemCount = 0
 
-        // 按索引记录物品的存在计数
-        integer array ItemCount
-
         private key ITEM_INDEX
         private key ITEM_SELL_DUMMY_INDEX
     endglobals

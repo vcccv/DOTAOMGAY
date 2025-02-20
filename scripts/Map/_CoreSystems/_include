@@ -3,5 +3,7 @@
 #include "SkillSystem\\_include"
 #include "UnitSystem\\_include"
 #include "UtilitiesSystem\\_include"
+#include "InputSystem\\_include"
+#include "UISystem\\_include"
 #include "Base.j"
 #include "EventSystem.j"

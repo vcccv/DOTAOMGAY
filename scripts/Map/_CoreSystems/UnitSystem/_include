@@ -1,3 +1,4 @@
+#include "UnitOrderConstant.j"
 #include "UnitModel.j"
 #include "UnitMove.j"
 #include "UnitUtils.j"

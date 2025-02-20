@@ -1,4 +1,3 @@
-#include "PlayerNetWorth.j"
-#include "PlayerSettings.j"
 #include "PlayerSystem.j"
+#include "PlayerNetWorth.j"
 #include "PlayerStatus.j"

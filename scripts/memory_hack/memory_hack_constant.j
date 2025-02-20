@@ -20,6 +20,15 @@
 #define MHConvertCollisionType(a)                   (a)
 #define MHConvertCastType(a)                        (a)
 #define MHConvertLocalOrderFlag(a)                  (a)
+#define MHConvertAttackType(a)                      ConvertAttackType(a)
+#define MHConvertDamageType(a)                      ConvertDamageType(a)
+#define MHConvertWeaponType(a)                      ConvertWeaponType(a)
+
+#define MHCompareAttackType(lhs, rhs)               ((lhs) == (rhs))
+#define MHCompareDamageType(lhs, rhs)               ((lhs) == (rhs))
+#define MHCompareWeaponType(lhs, rhs)               ((lhs) == (rhs))
+
+
 
 #define FLAG_OPERATOR_ADD                           0x1
 #define FLAG_OPERATOR_REMOVE                        0x0
@@ -88,14 +97,14 @@
 #define SYSTEM_TIME_SECOND	                        0x6
 #define SYSTEM_TIME_MSECOND	                        0x7
 
-#define SLK_TABLE_ABILITY                           "ability"
-#define SLK_TABLE_BUFF                              "buff"
-#define SLK_TABLE_UNIT                              "unit"
-#define SLK_TABLE_ITEM                              "item"
-#define SLK_TABLE_UPGRADE                           "upgrade"
-#define SLK_TABLE_DOODAD                            "doodad"
-#define SLK_TABLE_DESTRUCTABLE                      "destructable"
-#define SLK_TABLE_MISC                              "misc"
+#define SLK_TABLE_ABILITY                           0x0
+#define SLK_TABLE_BUFF                              0x1
+#define SLK_TABLE_UNIT                              0x2
+#define SLK_TABLE_ITEM                              0x3
+#define SLK_TABLE_UPGRADE                           0x4
+#define SLK_TABLE_DOODAD                            0x5
+#define SLK_TABLE_DESTRUCTABLE                      0x6
+#define SLK_TABLE_MISC                              0x7
 
 #define ANIM_TYPE_BIRTH                             0x0
 #define ANIM_TYPE_DEATH                             0x1
@@ -245,37 +254,38 @@
 #define ABILITY_DEF_DATA_BASE_ID					0x0
 #define ABILITY_DEF_DATA_REQ_LEVEL					0x1
 #define ABILITY_DEF_DATA_MAX_LEVEL					0x2
-#define ABILITY_DEF_DATA_PRIORITY					0x3
-#define ABILITY_DEF_DATA_BUTTON_X					0x4
-#define ABILITY_DEF_DATA_BUTTON_Y					0x5
-#define ABILITY_DEF_DATA_UNBUTTON_X				    0x6
-#define ABILITY_DEF_DATA_UNBUTTON_Y				    0x7
-#define ABILITY_DEF_DATA_RESEARCH_BUTTON_X			0x8
-#define ABILITY_DEF_DATA_RESEARCH_BUTTON_Y			0x9
-#define ABILITY_DEF_DATA_HOTKEY						0xA
-#define ABILITY_DEF_DATA_UNHOTKEY					0xB
-#define ABILITY_DEF_DATA_RESEARCH_HOTKEY            0xC
-#define ABILITY_DEF_DATA_CASTER_ART_COUNT			0xD
-#define ABILITY_DEF_DATA_TARGET_ART_COUNT			0xE
-#define ABILITY_DEF_DATA_EFFECT_ART_COUNT			0xF
-#define ABILITY_DEF_DATA_MISSILE_ART_COUNT			0x10
-#define ABILITY_DEF_DATA_SPECIAL_ART_COUNT			0x11
-#define ABILITY_DEF_DATA_LIGHTNING_EFFECT_COUNT		0x12
-#define ABILITY_DEF_DATA_CASTER_ATTACH_COUNT		0x13
-#define ABILITY_DEF_DATA_TARGET_ATTACH_COUNT		0x14
-#define ABILITY_DEF_DATA_MISSILE_SPEED				0x15
-#define ABILITY_DEF_DATA_MISSILE_ARC				0x16
-#define ABILITY_DEF_DATA_MISSILE_HOMING				0x17
-#define ABILITY_DEF_DATA_NAME						0x18
-#define ABILITY_DEF_DATA_ART						0x19
-#define ABILITY_DEF_DATA_UN_ART						0x1A
-#define ABILITY_DEF_DATA_RESEARCH_ART				0x1B
-#define ABILITY_DEF_DATA_RESEARCH_TIP				0x1C
-#define ABILITY_DEF_DATA_RESEARCH_UBERTIP			0x1D
-#define ABILITY_DEF_DATA_EFFECT_SOUND				0x1E
-#define ABILITY_DEF_DATA_EFFECT_SOUND_LOOPED		0x1F
-#define ABILITY_DEF_DATA_GLOBAL_MESSAGE				0x20
-#define ABILITY_DEF_DATA_GLOBAL_SOUND				0x21
+#define ABILITY_DEF_DATA_LEVEL_SKIP					0x3
+#define ABILITY_DEF_DATA_PRIORITY					0x4
+#define ABILITY_DEF_DATA_BUTTON_X					0x5
+#define ABILITY_DEF_DATA_BUTTON_Y					0x6
+#define ABILITY_DEF_DATA_UNBUTTON_X				    0x7
+#define ABILITY_DEF_DATA_UNBUTTON_Y				    0x8
+#define ABILITY_DEF_DATA_RESEARCH_BUTTON_X			0x9
+#define ABILITY_DEF_DATA_RESEARCH_BUTTON_Y			0xA
+#define ABILITY_DEF_DATA_HOTKEY						0xB
+#define ABILITY_DEF_DATA_UNHOTKEY					0xC
+#define ABILITY_DEF_DATA_RESEARCH_HOTKEY            0xD
+#define ABILITY_DEF_DATA_CASTER_ART_COUNT			0xE
+#define ABILITY_DEF_DATA_TARGET_ART_COUNT			0xF
+#define ABILITY_DEF_DATA_EFFECT_ART_COUNT			0x10
+#define ABILITY_DEF_DATA_MISSILE_ART_COUNT			0x11
+#define ABILITY_DEF_DATA_SPECIAL_ART_COUNT			0x12
+#define ABILITY_DEF_DATA_LIGHTNING_EFFECT_COUNT		0x13
+#define ABILITY_DEF_DATA_CASTER_ATTACH_COUNT		0x14
+#define ABILITY_DEF_DATA_TARGET_ATTACH_COUNT		0x15
+#define ABILITY_DEF_DATA_MISSILE_SPEED				0x16
+#define ABILITY_DEF_DATA_MISSILE_ARC				0x17
+#define ABILITY_DEF_DATA_MISSILE_HOMING				0x18
+#define ABILITY_DEF_DATA_NAME						0x19
+#define ABILITY_DEF_DATA_ART						0x1A
+#define ABILITY_DEF_DATA_UN_ART						0x1B
+#define ABILITY_DEF_DATA_RESEARCH_ART				0x1C
+#define ABILITY_DEF_DATA_RESEARCH_TIP				0x1D
+#define ABILITY_DEF_DATA_RESEARCH_UBERTIP			0x1E
+#define ABILITY_DEF_DATA_EFFECT_SOUND				0x1F
+#define ABILITY_DEF_DATA_EFFECT_SOUND_LOOPED		0x20
+#define ABILITY_DEF_DATA_GLOBAL_MESSAGE				0x21
+#define ABILITY_DEF_DATA_GLOBAL_SOUND				0x22
 
 #define ABILITY_LEVEL_DEF_DATA_TARGET_ALLOW			0x0
 #define ABILITY_LEVEL_DEF_DATA_MANA_COST			0x1

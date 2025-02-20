@@ -1,5 +1,12 @@
 library UnitUtils
     
+    function GetUnitGoldCostById takes integer unitId returns integer
+        if IsHeroUnitId(unitId) then
+            return 0
+        endif
+        return MHUnit_GetDefDataInt(unitId, UNIT_DEF_DATA_GOLD_COST)
+    endfunction
+
     function UnitModifyPostion takes unit whichUnit returns nothing
         local real x = GetUnitX(whichUnit)
         local real y = GetUnitY(whichUnit)

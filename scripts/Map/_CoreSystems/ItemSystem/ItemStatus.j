@@ -26,11 +26,11 @@ library ItemStatus requires ItemSystem
         */  or itemIndex == RYV /*
         */  or itemIndex == R_V /*
         */  or itemIndex == Item_AncientTangoOfEssifation /*
-        */  or itemIndex == R2V /*
+        */  or itemIndex == Item_ObserverWard /*
         */  or itemIndex == Item_SentryWard /*
         */  or itemIndex == R4V /*
-        */  or itemIndex == RZV /*
-        */  or itemIndex == R9V /*
+        */  or itemIndex == Item_GhostPotion /*
+        */  or itemIndex == Item_WandOfIllusions /*
         */  or itemIndex == IVV /*
         */  or itemIndex == Item_DragonLance
     endfunction
@@ -57,7 +57,10 @@ library ItemStatus requires ItemSystem
         if Item_AncientTangoOfEssifation == itemIndex then
             return 4
         endif
-        if Item_SentryWard == itemIndex or Item_DustOfAppearance == itemIndex then
+        if Item_SentryWard == itemIndex /*
+            */ or itemIndex == Item_DustOfAppearance /*
+            */ or itemIndex == Item_GhostPotion /*
+            */ or itemIndex == Item_WandOfIllusions then
             return 2
         endif
         return 1

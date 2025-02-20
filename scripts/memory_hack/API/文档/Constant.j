@@ -234,21 +234,21 @@ constant integer SYSTEM_TIME_MSECOND	                    = 0x7
 
 
 // SLK表：技能
-constant string SLK_TABLE_ABILITY                           = "ability"
+constant string SLK_TABLE_ABILITY                           = 0x0
 // SLK表：魔法效果
-constant string SLK_TABLE_BUFF                              = "buff"
+constant string SLK_TABLE_BUFF                              = 0x1
 // SLK表：单位
-constant string SLK_TABLE_UNIT                              = "unit"
+constant string SLK_TABLE_UNIT                              = 0x2
 // SLK表：物品
-constant string SLK_TABLE_ITEM                              = "item"
+constant string SLK_TABLE_ITEM                              = 0x3
 // SLK表：科技
-constant string SLK_TABLE_UPGRADE                           = "upgrade"
+constant string SLK_TABLE_UPGRADE                           = 0x4
 // SLK表：地形装饰物
-constant string SLK_TABLE_DOODAD                            = "doodad"
+constant string SLK_TABLE_DOODAD                            = 0x5
 // SLK表：可破坏物
-constant string SLK_TABLE_DESTRUCTABLE                      = "destructable"
+constant string SLK_TABLE_DESTRUCTABLE                      = 0x6
 // SLK表：杂项
-constant string SLK_TABLE_MISC                              = "misc"
+constant string SLK_TABLE_MISC                              = 0x7
 
 
 
@@ -557,68 +557,70 @@ constant integer ABILITY_DEF_DATA_BASE_ID					= 0x0
 constant integer ABILITY_DEF_DATA_REQ_LEVEL					= 0x1
 // 技能物编整数数据：最大等级
 constant integer ABILITY_DEF_DATA_MAX_LEVEL					= 0x2
+// 技能物编整数数据：跳级要求
+constant integer ABILITY_DEF_DATA_LEVEL_SKIP				= 0x3
 // 技能物编整数数据：魔法偷取优先权
-constant integer ABILITY_DEF_DATA_PRIORITY					= 0x3
+constant integer ABILITY_DEF_DATA_PRIORITY					= 0x4
 // 技能物编整数数据：按钮位置 - 普通(X)
-constant integer ABILITY_DEF_DATA_BUTTON_X					= 0x4
+constant integer ABILITY_DEF_DATA_BUTTON_X					= 0x5
 // 技能物编整数数据：按钮位置 - 普通(Y)
-constant integer ABILITY_DEF_DATA_BUTTON_Y					= 0x5	
+constant integer ABILITY_DEF_DATA_BUTTON_Y					= 0x6
 // 技能物编整数数据：按钮位置 - 关闭(X)
-constant integer ABILITY_DEF_DATA_UNBUTTON_X			    = 0x6	
+constant integer ABILITY_DEF_DATA_UNBUTTON_X			    = 0x7
 // 技能物编整数数据：按钮位置 - 关闭(Y)
-constant integer ABILITY_DEF_DATA_UNBUTTON_Y			    = 0x7	
+constant integer ABILITY_DEF_DATA_UNBUTTON_Y			    = 0x8
 // 技能物编整数数据：按钮位置 - 研究(X)
-constant integer ABILITY_DEF_DATA_RESEARCH_BUTTON_X			= 0x8	
+constant integer ABILITY_DEF_DATA_RESEARCH_BUTTON_X			= 0x9
 // 技能物编整数数据：按钮位置 - 研究(Y)
-constant integer ABILITY_DEF_DATA_RESEARCH_BUTTON_Y			= 0x9	
+constant integer ABILITY_DEF_DATA_RESEARCH_BUTTON_Y			= 0xA
 // 技能物编整数数据：热键 - 普通
-constant integer ABILITY_DEF_DATA_HOTKEY				    = 0xA
+constant integer ABILITY_DEF_DATA_HOTKEY				    = 0xB
 // 技能物编整数数据：热键 - 关闭
-constant integer ABILITY_DEF_DATA_UNHOTKEY					= 0xB
+constant integer ABILITY_DEF_DATA_UNHOTKEY					= 0xC
 // 技能物编整数数据：热键 - 学习
-constant integer ABILITY_DEF_DATA_RESEARCH_HOTKEY           = 0xC	
+constant integer ABILITY_DEF_DATA_RESEARCH_HOTKEY           = 0xD
 // 技能物编整数数据:
-constant integer ABILITY_DEF_DATA_CASTER_ART_COUNT			= 0xD	
+constant integer ABILITY_DEF_DATA_CASTER_ART_COUNT			= 0xE
 // 技能物编整数数据:
-constant integer ABILITY_DEF_DATA_TARGET_ART_COUNT			= 0xE	
+constant integer ABILITY_DEF_DATA_TARGET_ART_COUNT			= 0xF
 // 技能物编整数数据:
-constant integer ABILITY_DEF_DATA_EFFECT_ART_COUNT			= 0xF
+constant integer ABILITY_DEF_DATA_EFFECT_ART_COUNT			= 0x10
 // 技能物编整数数据:
-constant integer ABILITY_DEF_DATA_MISSILE_ART_COUNT			= 0x10
+constant integer ABILITY_DEF_DATA_MISSILE_ART_COUNT			= 0x11
 // 技能物编整数数据:
-constant integer ABILITY_DEF_DATA_SPECIAL_ART_COUNT			= 0x11
+constant integer ABILITY_DEF_DATA_SPECIAL_ART_COUNT			= 0x12
 // 技能物编整数数据:
-constant integer ABILITY_DEF_DATA_LIGHTNING_EFFECT_COUNT    = 0x12
+constant integer ABILITY_DEF_DATA_LIGHTNING_EFFECT_COUNT    = 0x13
 // 技能物编整数数据:
-constant integer ABILITY_DEF_DATA_CASTER_ATTACH_COUNT		= 0x13
+constant integer ABILITY_DEF_DATA_CASTER_ATTACH_COUNT		= 0x14
 // 技能物编整数数据:
-constant integer ABILITY_DEF_DATA_TARGET_ATTACH_COUNT		= 0x14
+constant integer ABILITY_DEF_DATA_TARGET_ATTACH_COUNT		= 0x15
 // 技能物编实数数据：射弹速率
-constant integer ABILITY_DEF_DATA_MISSILE_SPEED				= 0x15
+constant integer ABILITY_DEF_DATA_MISSILE_SPEED				= 0x16
 // 技能物编实数数据：射弹弧度
-constant integer ABILITY_DEF_DATA_MISSILE_ARC				= 0x16
+constant integer ABILITY_DEF_DATA_MISSILE_ARC				= 0x17
 // 技能物编布尔值数据：射弹自导允许
-constant integer ABILITY_DEF_DATA_MISSILE_HOMING		    = 0x17
+constant integer ABILITY_DEF_DATA_MISSILE_HOMING		    = 0x18
 // 技能物编字符串数据：名称
-constant integer ABILITY_DEF_DATA_NAME						= 0x18
+constant integer ABILITY_DEF_DATA_NAME						= 0x19
 // 技能物编字符串数据：图标 - 普通
-constant integer ABILITY_DEF_DATA_ART						= 0x19
+constant integer ABILITY_DEF_DATA_ART						= 0x1A
 // 技能物编字符串数据：图标 - 关闭
-constant integer ABILITY_DEF_DATA_UN_ART				    = 0x1A
+constant integer ABILITY_DEF_DATA_UN_ART				    = 0x1B
 // 技能物编字符串数据：图标 - 学习
-constant integer ABILITY_DEF_DATA_RESEARCH_ART				= 0x1B
+constant integer ABILITY_DEF_DATA_RESEARCH_ART				= 0x1C
 // 技能物编字符串数据：提示工具 - 学习
-constant integer ABILITY_DEF_DATA_RESEARCH_TIP				= 0x1C
+constant integer ABILITY_DEF_DATA_RESEARCH_TIP				= 0x1D
 // 技能物编字符串数据：提示工具 - 学习 - 扩展
-constant integer ABILITY_DEF_DATA_RESEARCH_UBERTIP			= 0x1D
+constant integer ABILITY_DEF_DATA_RESEARCH_UBERTIP			= 0x1E
 // 技能物编字符串数据：音效
-constant integer ABILITY_DEF_DATA_EFFECT_SOUND				= 0x1E
+constant integer ABILITY_DEF_DATA_EFFECT_SOUND				= 0x1F
 // 技能物编字符串数据：音效 (循环)
-constant integer ABILITY_DEF_DATA_EFFECT_SOUND_LOOPED		= 0x1F
+constant integer ABILITY_DEF_DATA_EFFECT_SOUND_LOOPED		= 0x20
 // 技能物编字符串数据：全局提示
-constant integer ABILITY_DEF_DATA_GLOBAL_MESSAGE		    = 0x20
+constant integer ABILITY_DEF_DATA_GLOBAL_MESSAGE		    = 0x21
 // 技能物编字符串数据：全局音效
-constant integer ABILITY_DEF_DATA_GLOBAL_SOUND				= 0x21
+constant integer ABILITY_DEF_DATA_GLOBAL_SOUND				= 0x22
 
 // 技能物编整数等级数据：目标允许
 constant integer ABILITY_LEVEL_DEF_DATA_TARGET_ALLOW	    = 0x0

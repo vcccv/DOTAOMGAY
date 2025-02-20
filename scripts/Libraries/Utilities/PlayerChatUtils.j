@@ -61,16 +61,16 @@ library PlayerChatUtils /*
         endmethod
 
         // 本地使用，发送同步信息给所有玩家
-        static method SendChatToAllPlayers takes string msg, integer channel returns nothing
+        static method SendChatToAllPlayers takes string msg returns nothing
             if not GetSendLimit() then
-                call DzSyncData(PREFIX, msg + "#" + R2S(DEFAULT_TIME) + "#" + I2S(channel) + "#" + I2S(SEND_TYPE_ALL_PLAYERS))
+                call DzSyncData(PREFIX, msg + "#" + R2S(DEFAULT_TIME) + "#" + I2S(CHAT_CHANNEL_ALL) + "#" + I2S(SEND_TYPE_ALL_PLAYERS))
             endif
         endmethod
 
         // 本地使用，发送同步信息给盟友玩家
-        static method SendChatToAlliedPlayers takes string msg, integer channel returns nothing
+        static method SendChatToAlliedPlayers takes string msg returns nothing
             if not GetSendLimit() then
-                call DzSyncData(PREFIX, msg + "#" + R2S(DEFAULT_TIME) + "#" + I2S(channel) + "#" + I2S(SEND_TYPE_ALLIED_PLAYERS))
+                call DzSyncData(PREFIX, msg + "#" + R2S(DEFAULT_TIME) + "#" + I2S(CHAT_CHANNEL_ALLY) + "#" + I2S(SEND_TYPE_ALLIED_PLAYERS))
             endif
         endmethod
 
@@ -80,7 +80,9 @@ library PlayerChatUtils /*
             local string  msg     = MHString_Split(data, "#", 1)
             local real    dur     = S2R(MHString_Split(data, "#", 2))
             local integer channel = S2I(MHString_Split(data, "#", 3))
-            call MHUI_SendPlayerChat(p.handle, msg, dur, channel)
+            if ( ( channel == CHAT_CHANNEL_ALLY and IsPlayerAlly(p.handle, User.Local) ) or channel == CHAT_CHANNEL_ALL ) then
+                call MHUI_SendPlayerChat(p.handle, msg, dur, channel)
+            endif
         endmethod
 
         implement PlayerChatInit
