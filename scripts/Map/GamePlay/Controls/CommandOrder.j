@@ -15,7 +15,6 @@ library CallCommandButton
         local integer pressedKey
 
         if MHUI_IsChatEditBarOn() then
-            call BJDebugMsg("聊天框打开我走了")
             return false
         endif
         

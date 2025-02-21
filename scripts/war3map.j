@@ -637,7 +637,7 @@ globals
 	integer array IS
 	integer array FS
 	boolean GS = false
-	string array PlayerColoerHex
+	string array PlayerColorHex
 	boolean array KS
 	timer array MS
 	timer array PS
@@ -1054,13 +1054,7 @@ globals
 
 	trigger RuneRefreshTrigger
 	integer CXV = 0
-	integer array CombineIndex1
-	integer array CombineIndex2
-	integer array CombineIndex3
-	integer array CombineIndex4
-	integer array CombineIndex5
-	integer array CombinedIndex
-	integer CombineMaxIndex = 0
+
 	integer array CDV
 	integer array PlayerKelenDaggerCount
 	integer array CGV
@@ -4362,7 +4356,7 @@ function YYE takes integer playerIndex, boolean b returns nothing
 		endif
 		if GetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER)>= 10 then
 			if not(RM[playerIndex]) then
-				call DisplayTimedTextToPlayer(LocalPlayer, .0, .0, 10., "|c00FF0000[FF] |r" + "|c006699CC" + "玩家 " + PlayerColoerHex[playerIndex] + PlayersName[playerIndex] + "|r" + "|c006699CC" + " 投票决定快速结束." + "|r")
+				call DisplayTimedTextToPlayer(LocalPlayer, .0, .0, 10., "|c00FF0000[FF] |r" + "|c006699CC" + "玩家 " + PlayerColorHex[playerIndex] + PlayersName[playerIndex] + "|r" + "|c006699CC" + " 投票决定快速结束." + "|r")
 				set RM[playerIndex] = true
 				call YWE()
 			else
@@ -4388,9 +4382,9 @@ function Y0E takes player p returns nothing
 		loop
 			if ((GetPlayerController(Player(ZL[Y1E])) == MAP_CONTROL_USER) and(GetPlayerSlotState(Player(ZL[Y1E])) == PLAYER_SLOT_STATE_PLAYING)) then
 				if RM[ZL[Y1E]] then
-					call DisplayTimedTextToPlayer(p, .0, .0, 10., "|c006699CC[|r" + "|c0066FF66Y|r" + "|c006699CC]|r" + " " + TM + PlayerColoerHex[ZL[Y1E]] + PlayersName[ZL[Y1E]] + "|r")
+					call DisplayTimedTextToPlayer(p, .0, .0, 10., "|c006699CC[|r" + "|c0066FF66Y|r" + "|c006699CC]|r" + " " + TM + PlayerColorHex[ZL[Y1E]] + PlayersName[ZL[Y1E]] + "|r")
 				else
-					call DisplayTimedTextToPlayer(p, .0, .0, 10., "|c006699CC[|r" + "|c00C83264N|r" + "|c006699CC]|r" + " " + TM + PlayerColoerHex[ZL[Y1E]] + PlayersName[ZL[Y1E]] + "|r")
+					call DisplayTimedTextToPlayer(p, .0, .0, 10., "|c006699CC[|r" + "|c00C83264N|r" + "|c006699CC]|r" + " " + TM + PlayerColorHex[ZL[Y1E]] + PlayersName[ZL[Y1E]] + "|r")
 				endif
 			elseif Y1E == 0 then
 				call DisplayTimedTextToPlayer(p, .0, .0, 10., "|c00ff0303近卫军团|r")
@@ -8162,8 +8156,8 @@ function StringReplace takes string str, string old_str, string new_str returns 
 endfunction
 function GetKillHeroDisplayText takes player deadPlayer, player killerPlayer returns string
 	local string s = GetObjectName('n0C8')
-	set s = StringReplace(s, "$dead", PlayerColoerHex[GetPlayerId(deadPlayer)] +(PlayersName[GetPlayerId((deadPlayer))]) + "|r")
-	set s = StringReplace(s, "$killer", PlayerColoerHex[GetPlayerId(killerPlayer)] +(PlayersName[GetPlayerId((killerPlayer))]) + "|r")
+	set s = StringReplace(s, "$dead", PlayerColorHex[GetPlayerId(deadPlayer)] +(PlayersName[GetPlayerId((deadPlayer))]) + "|r")
+	set s = StringReplace(s, "$killer", PlayerColorHex[GetPlayerId(killerPlayer)] +(PlayersName[GetPlayerId((killerPlayer))]) + "|r")
 	return s
 endfunction
 function J5X takes unit u, integer d returns nothing
@@ -8571,18 +8565,18 @@ function K_X takes nothing returns nothing
 	local integer loop_i
 	local integer loop_max
 	local integer i
-	set PlayerColoerHex[GetPlayerId(SentinelPlayers[0])] = "|c00ff0303"
-	set PlayerColoerHex[GetPlayerId(SentinelPlayers[1])] = "|c000042ff"
-	set PlayerColoerHex[GetPlayerId(SentinelPlayers[2])] = "|c001ce6b9"
-	set PlayerColoerHex[GetPlayerId(SentinelPlayers[3])] = "|c00540081"
-	set PlayerColoerHex[GetPlayerId(SentinelPlayers[4])] = "|c00fffc01"
-	set PlayerColoerHex[GetPlayerId(SentinelPlayers[5])] = "|c00ff8000"
-	set PlayerColoerHex[GetPlayerId(ScourgePlayers[0])] = "|c0020c000"
-	set PlayerColoerHex[GetPlayerId(ScourgePlayers[1])] = "|c00e55bb0"
-	set PlayerColoerHex[GetPlayerId(ScourgePlayers[2])] = "|c00959697"
-	set PlayerColoerHex[GetPlayerId(ScourgePlayers[3])] = "|c007ebff1"
-	set PlayerColoerHex[GetPlayerId(ScourgePlayers[4])] = "|c00106246"
-	set PlayerColoerHex[GetPlayerId(ScourgePlayers[5])] = "|c004e2a04"
+	set PlayerColorHex[GetPlayerId(SentinelPlayers[0])] = "|c00ff0303"
+	set PlayerColorHex[GetPlayerId(SentinelPlayers[1])] = "|c000042ff"
+	set PlayerColorHex[GetPlayerId(SentinelPlayers[2])] = "|c001ce6b9"
+	set PlayerColorHex[GetPlayerId(SentinelPlayers[3])] = "|c00540081"
+	set PlayerColorHex[GetPlayerId(SentinelPlayers[4])] = "|c00fffc01"
+	set PlayerColorHex[GetPlayerId(SentinelPlayers[5])] = "|c00ff8000"
+	set PlayerColorHex[GetPlayerId(ScourgePlayers[0])] = "|c0020c000"
+	set PlayerColorHex[GetPlayerId(ScourgePlayers[1])] = "|c00e55bb0"
+	set PlayerColorHex[GetPlayerId(ScourgePlayers[2])] = "|c00959697"
+	set PlayerColorHex[GetPlayerId(ScourgePlayers[3])] = "|c007ebff1"
+	set PlayerColorHex[GetPlayerId(ScourgePlayers[4])] = "|c00106246"
+	set PlayerColorHex[GetPlayerId(ScourgePlayers[5])] = "|c004e2a04"
 	call SetPlayerColor(SentinelPlayers[0], PLAYER_COLOR_RED)
 	call SetPlayerColor(SentinelPlayers[1], PLAYER_COLOR_BLUE)
 	call SetPlayerColor(SentinelPlayers[2], PLAYER_COLOR_CYAN)
@@ -9073,7 +9067,7 @@ function L2X takes nothing returns nothing
 	if not IsGameEnd then
 		set PlayerOnlineStateString[GetPlayerId(GetTriggerPlayer())] = "|c00555555" + KGX + "|r"
 		call YYE(GetPlayerId(GetTriggerPlayer()), true)
-		call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, 25., PlayerColoerHex[GetPlayerId(GetTriggerPlayer())] +(PlayersName[GetPlayerId((GetTriggerPlayer()))]) + " (" + L3X + ")|r|c00ff0303 " + GetObjectName('n02D') + "|r")
+		call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, 25., PlayerColorHex[GetPlayerId(GetTriggerPlayer())] +(PlayersName[GetPlayerId((GetTriggerPlayer()))]) + " (" + L3X + ")|r|c00ff0303 " + GetObjectName('n02D') + "|r")
 		if (IsPlayerSentinel(GetTriggerPlayer())) then
 			set loop_i = 1
 			set loop_max = 5
@@ -9484,7 +9478,7 @@ endfunction
 
 function P7X takes player whichPlayer, string AXX returns nothing
 	if IsPlayerInForce(LocalPlayer, VNX(whichPlayer)) then
-		call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 40, PlayerColoerHex[GetPlayerId(whichPlayer)] +(PlayersName[GetPlayerId((whichPlayer))]) + "|r " + AXX)
+		call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 40, PlayerColorHex[GetPlayerId(whichPlayer)] +(PlayersName[GetPlayerId((whichPlayer))]) + "|r " + AXX)
 	endif
 endfunction
 function P8X takes nothing returns boolean
@@ -9542,7 +9536,7 @@ function QAX takes nothing returns nothing
 		set d = 1
 		loop
 			set mi = MultiboardGetItem(JP, d, i)
-			call MultiboardSetItemValue(mi, TM + PlayerColoerHex[GetPlayerId(SentinelUsers[d])] + PlayersName[GetPlayerId(SentinelUsers[d])] + "|r")
+			call MultiboardSetItemValue(mi, TM + PlayerColorHex[GetPlayerId(SentinelUsers[d])] + PlayersName[GetPlayerId(SentinelUsers[d])] + "|r")
 			call MultiboardReleaseItem(mi)
 			set d = d + 1
 		exitwhen d == SentinelUserCount + 1
@@ -9553,7 +9547,7 @@ function QAX takes nothing returns nothing
 		set d = 2 + SentinelUserCount
 		loop
 			set mi = MultiboardGetItem(JP, d, i)
-			call MultiboardSetItemValue(mi, TM + PlayerColoerHex[GetPlayerId(ScourgeUsers[d -1 -SentinelUserCount])] + PlayersName[GetPlayerId(ScourgeUsers[d -1 -SentinelUserCount])] + "|r")
+			call MultiboardSetItemValue(mi, TM + PlayerColorHex[GetPlayerId(ScourgeUsers[d -1 -SentinelUserCount])] + PlayersName[GetPlayerId(ScourgeUsers[d -1 -SentinelUserCount])] + "|r")
 			set d = d + 1
 			call MultiboardReleaseItem(mi)
 		exitwhen d == SentinelUserCount + ScourgeUserCount + 2
@@ -9610,7 +9604,7 @@ function QBX takes nothing returns nothing
 			if i ==(4 + ExtraSkillsCount) then
 				call MultiboardSetItemStyle(mi, true, false)
 				call MultiboardSetItemWidth(mi, QNX)
-				call MultiboardSetItemValue(mi, TM + PlayerColoerHex[GetPlayerId((SentinelUsers[d]))] + PlayersName[GetPlayerId((SentinelUsers[d]))] + "|r")
+				call MultiboardSetItemValue(mi, TM + PlayerColorHex[GetPlayerId((SentinelUsers[d]))] + PlayersName[GetPlayerId((SentinelUsers[d]))] + "|r")
 			else
 				call MultiboardSetItemStyle(mi, false, true)
 				call MultiboardSetItemIcon(mi, HeroSkill_Icon[0])
@@ -9632,7 +9626,7 @@ function QBX takes nothing returns nothing
 			if i == 4 + ExtraSkillsCount then
 				call MultiboardSetItemStyle(mi, true, false)
 				call MultiboardSetItemWidth(mi, QNX)
-				call MultiboardSetItemValue(mi, TM + PlayerColoerHex[GetPlayerId((ScourgeUsers[d -1 -SentinelUserCount]))] + PlayersName[GetPlayerId((ScourgeUsers[d -1 -SentinelUserCount]))] + "|r")
+				call MultiboardSetItemValue(mi, TM + PlayerColorHex[GetPlayerId((ScourgeUsers[d -1 -SentinelUserCount]))] + PlayersName[GetPlayerId((ScourgeUsers[d -1 -SentinelUserCount]))] + "|r")
 			else
 				call MultiboardSetItemStyle(mi, false, true)
 				call MultiboardSetItemIcon(mi, HeroSkill_Icon[0])
@@ -10345,9 +10339,9 @@ function SCX takes unit SDX, unit SFX returns string
 			set PlayerAssistCount[BOX] = PlayerAssistCount[BOX] + 1
 			call StoreDrCacheData("Assist" + I2S(BOX), SGX)
 			if SKX then
-				set SJX = SJX + "/" + PlayerColoerHex[BOX] +(PlayersName[GetPlayerId((Player(BOX)))]) + "|r"
+				set SJX = SJX + "/" + PlayerColorHex[BOX] +(PlayersName[GetPlayerId((Player(BOX)))]) + "|r"
 			else
-				set SJX = SJX + PlayerColoerHex[BOX] +(PlayersName[GetPlayerId((Player(BOX)))]) + "|r"
+				set SJX = SJX + PlayerColorHex[BOX] +(PlayersName[GetPlayerId((Player(BOX)))]) + "|r"
 			endif
 			set SKX = true
 		endif
@@ -10374,9 +10368,9 @@ function SLX takes unit SDX, unit SFX returns string
 		endif
 		if SHX != BOX and SNX(BOX, SGX) then
 			if SKX then
-				set SJX = SJX + "/" + PlayerColoerHex[BOX] +(PlayersName[GetPlayerId((Player(BOX)))]) + "|r"
+				set SJX = SJX + "/" + PlayerColorHex[BOX] +(PlayersName[GetPlayerId((Player(BOX)))]) + "|r"
 			else
-				set SJX = SJX + PlayerColoerHex[BOX] +(PlayersName[GetPlayerId((Player(BOX)))]) + "|r"
+				set SJX = SJX + PlayerColorHex[BOX] +(PlayersName[GetPlayerId((Player(BOX)))]) + "|r"
 			endif
 			set SKX = true
 		endif
@@ -10736,10 +10730,10 @@ function TTX takes nothing returns boolean
 	exitwhen i > 5
 		if TUX == 0 then
 			set p = SentinelPlayers[i]
-			set TWX = PlayerColoerHex[GetPlayerId(SentinelPlayers[0])] + GetObjectName('n03N') + "|r " + GetObjectName('n03P') + " " + PlayerColoerHex[GetPlayerId(SentinelPlayers[0])] + GetObjectName('n03Q') + "|r"
+			set TWX = PlayerColorHex[GetPlayerId(SentinelPlayers[0])] + GetObjectName('n03N') + "|r " + GetObjectName('n03P') + " " + PlayerColorHex[GetPlayerId(SentinelPlayers[0])] + GetObjectName('n03Q') + "|r"
 		else
 			set p = ScourgePlayers[i]
-			set TWX = PlayerColoerHex[GetPlayerId(ScourgePlayers[0])] + GetObjectName('n03O') + "|r " + GetObjectName('n03P') + " " + PlayerColoerHex[GetPlayerId(ScourgePlayers[0])] + GetObjectName('n03Q') + "|r"
+			set TWX = PlayerColorHex[GetPlayerId(ScourgePlayers[0])] + GetObjectName('n03O') + "|r " + GetObjectName('n03P') + " " + PlayerColorHex[GetPlayerId(ScourgePlayers[0])] + GetObjectName('n03Q') + "|r"
 		endif
 		call DisplayTimedTextToPlayer(p, 0, 0, 10, TWX)
 		call BYX(E1, p)
@@ -11263,7 +11257,7 @@ function U7X takes nothing returns nothing
 		if IsPlayerSentinel(WEX) then
 			set U8X = true
 			if (WEX == WXX) then
-				call DisplayTimedTextToAllPlayer(AllPlayerForce, DisplayTextDuration[LocalPlayerId], PlayerColoerHex[WRX] + PlayersName[WRX] + "|r " + GetObjectName('n03R'))
+				call DisplayTimedTextToAllPlayer(AllPlayerForce, DisplayTextDuration[LocalPlayerId], PlayerColorHex[WRX] + PlayersName[WRX] + "|r " + GetObjectName('n03R'))
 			else
 				call DisplayTimedTextToAllPlayer(AllPlayerForce, DisplayTextDuration[LocalPlayerId], GetKillHeroDisplayText(WXX, WEX))
 			endif
@@ -11282,7 +11276,7 @@ function U7X takes nothing returns nothing
 		if IsPlayerScourge(WEX) then
 			set U8X = true
 			if (WEX == WXX) then
-				call DisplayTimedTextToAllPlayer(AllPlayerForce, DisplayTextDuration[LocalPlayerId], PlayerColoerHex[WRX] +(PlayersName[WRX]) + "|r " + GetObjectName('n03R'))
+				call DisplayTimedTextToAllPlayer(AllPlayerForce, DisplayTextDuration[LocalPlayerId], PlayerColorHex[WRX] +(PlayersName[WRX]) + "|r " + GetObjectName('n03R'))
 			else
 				call DisplayTimedTextToAllPlayer(AllPlayerForce, DisplayTextDuration[LocalPlayerId], GetKillHeroDisplayText(WXX, WEX))
 			endif
@@ -11301,9 +11295,9 @@ function U7X takes nothing returns nothing
 	if WEX == NeutralCreepPlayer then
 		set WNX = false
 		if GetUnitTypeId(WVX)=='n00L' then
-			call DisplayTimedTextToAllPlayer(AllPlayerForce, DisplayTextDuration[LocalPlayerId], PlayerColoerHex[WRX] + PlayersName[WRX] + "|r " + GetObjectName('n03T'))
+			call DisplayTimedTextToAllPlayer(AllPlayerForce, DisplayTextDuration[LocalPlayerId], PlayerColorHex[WRX] + PlayersName[WRX] + "|r " + GetObjectName('n03T'))
 		else
-			call DisplayTimedTextToAllPlayer(AllPlayerForce, DisplayTextDuration[LocalPlayerId], PlayerColoerHex[WRX] + PlayersName[WRX] + "|r " + GetObjectName('n03U'))
+			call DisplayTimedTextToAllPlayer(AllPlayerForce, DisplayTextDuration[LocalPlayerId], PlayerColorHex[WRX] + PlayersName[WRX] + "|r " + GetObjectName('n03U'))
 		endif
 		set U8X = true
 	endif
@@ -11375,8 +11369,8 @@ function U7X takes nothing returns nothing
 	endif
 	if U8X == false then
 		set WIX = WIX + 100 + GetHeroLevel(U9X)* 9
-		set WGX = PlayerColoerHex[WRX] +(PlayersName[GetPlayerId((WXX))]) + "|r"
-		set WHX = PlayerColoerHex[WOX] +(PlayersName[GetPlayerId((WEX))]) + "|r"
+		set WGX = PlayerColorHex[WRX] +(PlayersName[GetPlayerId((WXX))]) + "|r"
+		set WHX = PlayerColorHex[WOX] +(PlayersName[GetPlayerId((WEX))]) + "|r"
 		set WKX = "|c00FFDC00" + I2S(WIX)
 		if LoadInteger(OtherHashTable2,'Assi', GetPlayerId(WEX))> 0 then
 			set WKX = WKX + "(+" + I2S(LoadInteger(OtherHashTable2,'Assi', GetPlayerId(WEX))) + ")"
@@ -11453,25 +11447,25 @@ function U7X takes nothing returns nothing
 			set PlayerDoubleKillCount[WOX] = PlayerDoubleKillCount[WOX] + 1
 			call SaveInteger(HY,'0SND','0PID', WOX)
 			set W0X = GetObjectName('n04S')
-			call T0X(PlayerColoerHex[WOX] +(PlayersName[GetPlayerId((WEX))]) + "|r " + GetObjectName('n04D') + " |c000000ff" + W0X + "|r" + GetObjectName('n049'), 1)
+			call T0X(PlayerColorHex[WOX] +(PlayersName[GetPlayerId((WEX))]) + "|r " + GetObjectName('n04D') + " |c000000ff" + W0X + "|r" + GetObjectName('n049'), 1)
 		endif
 		if IS[WOX]== 3 then
 			set PlayerTripleKillCount[WOX] = PlayerTripleKillCount[WOX] + 1
 			call SaveInteger(HY,'0SND','0PID', WOX)
 			set W0X = GetObjectName('n04E')
-			call T0X(PlayerColoerHex[WOX] +(PlayersName[GetPlayerId((WEX))]) + "|r " + GetObjectName('n04D') + " |c0000ff40" + W0X + "|r" + GetObjectName('n04B'), 2)
+			call T0X(PlayerColorHex[WOX] +(PlayersName[GetPlayerId((WEX))]) + "|r " + GetObjectName('n04D') + " |c0000ff40" + W0X + "|r" + GetObjectName('n04B'), 2)
 		endif
 		if IS[WOX]== 4 then
 			set PlayerTripleKillCount[WOX] = PlayerTripleKillCount[WOX] + 1
 			call SaveInteger(HY,'0SND','0PID', WOX)
 			set W0X = GetObjectName('n0HJ')
-			call T0X(PlayerColoerHex[WOX] +(PlayersName[GetPlayerId((WEX))]) + "|r " + GetObjectName('n04D') + " |c0000FFFF" + W0X + "|r" + GetObjectName('n04B'), 3)
+			call T0X(PlayerColorHex[WOX] +(PlayersName[GetPlayerId((WEX))]) + "|r " + GetObjectName('n04D') + " |c0000FFFF" + W0X + "|r" + GetObjectName('n04B'), 3)
 		endif
 		if IS[WOX]> 4 then
 			set PlayerTripleKillCount[WOX] = PlayerTripleKillCount[WOX] + 1
 			call SaveInteger(HY,'0SND','0PID', WOX)
 			set W0X = GetObjectName('n0HK')
-			call T0X(PlayerColoerHex[WOX] +(PlayersName[GetPlayerId((WEX))]) + "|r " + GetObjectName('n04K') + " |c0000AAFF" + W0X + "|r" + GetObjectName('n04B'), 4)
+			call T0X(PlayerColorHex[WOX] +(PlayersName[GetPlayerId((WEX))]) + "|r " + GetObjectName('n04K') + " |c0000AAFF" + W0X + "|r" + GetObjectName('n04B'), 4)
 		endif
 	endif
 	if (U8X == false) then
@@ -11539,9 +11533,9 @@ function U7X takes nothing returns nothing
 			set XS[WOX] = 0
 			if UnitAlive(WVX) then
 				call KillUnit(WVX)
-				call DisplayTimedTextToAllPlayer(AllPlayerForce, DisplayTextDuration[LocalPlayerId], PlayerColoerHex[WOX] +(PlayersName[GetPlayerId((WEX))]) + "|r 已经 |c00ff8000" + GetObjectName('n03X') + "|r 并自动死亡，其队伍额外增加5条生命值。")
+				call DisplayTimedTextToAllPlayer(AllPlayerForce, DisplayTextDuration[LocalPlayerId], PlayerColorHex[WOX] +(PlayersName[GetPlayerId((WEX))]) + "|r 已经 |c00ff8000" + GetObjectName('n03X') + "|r 并自动死亡，其队伍额外增加5条生命值。")
 			else
-				call DisplayTimedTextToAllPlayer(AllPlayerForce, DisplayTextDuration[LocalPlayerId], PlayerColoerHex[WOX] +(PlayersName[GetPlayerId((WEX))]) + "|r 已经 |c00ff8000" + GetObjectName('n03X') + "|r ，其队伍额外增加5条生命值。")
+				call DisplayTimedTextToAllPlayer(AllPlayerForce, DisplayTextDuration[LocalPlayerId], PlayerColorHex[WOX] +(PlayersName[GetPlayerId((WEX))]) + "|r 已经 |c00ff8000" + GetObjectName('n03X') + "|r ，其队伍额外增加5条生命值。")
 			endif
 		endif
 		if TeamHeroKillsCount[0]== DeathMatch__MaxLives then
@@ -11595,7 +11589,7 @@ function W6X takes unit killingUnit, unit triggerUnit returns nothing
 		endloop
 	else
 		set pid = GetPlayerId(p)
-		set s = PlayerColoerHex[pid] +(PlayersName[pid]) + "|r " + GetObjectName('n04W') + " |c00ff0303" + GetObjectName('n04Y') + GetObjectName('n049') + "|r "
+		set s = PlayerColorHex[pid] +(PlayersName[pid]) + "|r " + GetObjectName('n04W') + " |c00ff0303" + GetObjectName('n04Y') + GetObjectName('n049') + "|r "
 		call SetTopMessageText(s, 8.)
 		set s = s + "(+" + I2S(goldBonus) + " " + GetObjectName('n045') + ")"
 		call B8X(p, goldBonus, PlayerHeroes[pid])
@@ -12185,7 +12179,7 @@ function ZRX takes unit u returns nothing
 	local player p = GetOwningPlayer(u)
 	local integer pid = GetPlayerId(p)
 	if IsUnitCourier(u) and IsUnitIllusion(u) == false then
-		call DisplayTimedTextToAllPlayer(AllPlayerForce, 10., PlayerColoerHex[pid] + PlayersName[pid] + "|r的信使被 |c00ff0000永久地|r 杀死了.它不会再复活.")
+		call DisplayTimedTextToAllPlayer(AllPlayerForce, 10., PlayerColorHex[pid] + PlayersName[pid] + "|r的信使被 |c00ff0000永久地|r 杀死了.它不会再复活.")
 		call PingMinimapEx(GetUnitX(u), GetUnitY(u), 6, 255, 0, 0, false)
 	endif
 endfunction
@@ -12618,7 +12612,7 @@ function Z9X takes nothing returns boolean
 			call UPV(ZSX, "回家")
 		else
 			call ZYX(GetHandleId(t))
-			call UPV(ZSX, "运送给 " + PlayerColoerHex[GetPlayerId(GetOwningPlayer(trigUnit))] + PlayersName[GetPlayerId(GetOwningPlayer(trigUnit))] + "|r")
+			call UPV(ZSX, "运送给 " + PlayerColorHex[GetPlayerId(GetOwningPlayer(trigUnit))] + PlayersName[GetPlayerId(GetOwningPlayer(trigUnit))] + "|r")
 		endif
 	endif
 	set t = null
@@ -12733,7 +12727,7 @@ function VIO takes unit trigUnit returns nothing
 endfunction
 function VAO takes unit u returns string
 	local string s = GetObjectName('n0FO')
-	set s = StringReplace(s, "$hero", PlayerColoerHex[GetPlayerId(GetOwningPlayer(u))] + GetUnitName(u) + "|r")
+	set s = StringReplace(s, "$hero", PlayerColorHex[GetPlayerId(GetOwningPlayer(u))] + GetUnitName(u) + "|r")
 	return s
 endfunction
 function VNO takes unit whichUnit returns boolean
@@ -12841,9 +12835,9 @@ function VFO takes player whichPlayer, unit whichUnit, integer VGO, integer i0, 
 	call EnableTrigger(C3V)
 	if IsPlayerAlly(LocalPlayer, whichPlayer) then
 		if VGO == I4V then
-			call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 4, PlayerColoerHex[GetPlayerId(whichPlayer)] +(PlayersName[GetPlayerId((whichPlayer))]) + "|r |c00ffff00" + GetObjectName('n0LX') + "|r")
+			call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 4, PlayerColorHex[GetPlayerId(whichPlayer)] +(PlayersName[GetPlayerId((whichPlayer))]) + "|r |c00ffff00" + GetObjectName('n0LX') + "|r")
 		elseif VGO == ASV then
-			call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 4, PlayerColoerHex[GetPlayerId(whichPlayer)] +(PlayersName[GetPlayerId((whichPlayer))]) + "|r |c00ffff00" + GetObjectName('n0LY') + "|r")
+			call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 4, PlayerColorHex[GetPlayerId(whichPlayer)] +(PlayersName[GetPlayerId((whichPlayer))]) + "|r |c00ffff00" + GetObjectName('n0LY') + "|r")
 		endif
 	endif
 	set whichItem = null
@@ -13386,7 +13380,8 @@ function XXO takes item it returns boolean
 	local integer id = GetItemIndexEx(it)
 	return id == OQV or id == OTV or id == XPV or id == XQV or id == XTV or id == XWV or id == X6V or id == Item_KelenDagger or id == OXV or id == ODV or id == OFV or id == OHV or id == OJV or id == OLV or id == OMV or id == Item_MagicStick or id == RVV or id == RXV or id == OWV or id == R4V or id == X2V or id == XMV or id == XKV or id == XZV or id == XYV or id == ONV
 endfunction
-function XOO takes unit KKX, integer XRO, player p returns nothing
+// 快速合成
+function UnitOnFastCombine takes unit KKX, integer XRO, player p returns nothing
 	local integer i = 0
 	local item it
 	local integer k = 0
@@ -13613,20 +13608,7 @@ function XOO takes unit KKX, integer XRO, player p returns nothing
 	set it = null
 	set d = null
 endfunction
-// GetCombinedIndexByIndex ?
-function XIO takes integer id, boolean XAO returns integer
-	local integer i = 0
-	// 如果XAO == false 则找到ITDB(快速合成)匹配的对象，返回合成索引
-	// 如果XAO == true  则寻找5个配方是否和id匹配，返回合成索引
-	loop
-		if (XAO == false and CombinedIndex[i]== LoadInteger(HY,'ITDB', id)) or(XAO and(CombineIndex1[i]== id or CombineIndex2[i]== id or CombineIndex3[i]== id or CombineIndex4[i]== id or CombineIndex5[i]== id)) then
-			return i
-		endif
-		set i = i + 1
-	exitwhen i > CombineMaxIndex
-	endloop
-	return -1
-endfunction
+
 function XNO takes nothing returns nothing
 	local unit u = GetSoldUnit()
 	local player p = GetOwningPlayer(u)
@@ -13659,12 +13641,12 @@ function XNO takes nothing returns nothing
 		call HYX(ItemPowerupId[GetItemIndexBySellUnit(u)], x, y, p, true, GetPerishableItemChargesByIndex(GetItemIndexBySellUnit(u)))
 	else
 		call EPO(p, GSX(itemIndex))
-		if ItemRealId[itemIndex]== 0 then
-			set i = XIO(itemIndex, false)
+		if ItemRealId[itemIndex] == 0 then
+			set i = GetCombinedIndexByItemIndex(itemIndex, false)
 			if i == -1 then
 				call InterfaceErrorForPlayer(p, GetObjectName('n02H'))
 			else
-				call XOO(PlayerHeroes[GetPlayerId(p)], i, p)
+				call UnitOnFastCombine(PlayerHeroes[GetPlayerId(p)], i, p)
 			endif
 		else
 			set x = E_O(GetSellingUnit(), u)
@@ -13700,7 +13682,7 @@ function XBO takes nothing returns nothing
 			endif
 		endif
 		call ExecuteFunc("XCO")
-		call DisplayTimedTextToPlayer(LocalPlayer, .0, .0, DisplayTextDuration[LocalPlayerId], PlayerColoerHex[GetPlayerId(GetTriggerPlayer())] + GetPlayerName(GetTriggerPlayer()) + "|r" + " 增加了45秒的选择时间.")
+		call DisplayTimedTextToPlayer(LocalPlayer, .0, .0, DisplayTextDuration[LocalPlayerId], PlayerColorHex[GetPlayerId(GetTriggerPlayer())] + GetPlayerName(GetTriggerPlayer()) + "|r" + " 增加了45秒的选择时间.")
 	endif
 endfunction
 function XDO takes player p returns nothing
@@ -13711,7 +13693,7 @@ function XDO takes player p returns nothing
 			set CK[1] = CK[1]-1
 		endif
 		call ExecuteFunc("XCO")
-		call DisplayTimedTextToPlayer(LocalPlayer, .0, .0, DisplayTextDuration[LocalPlayerId], PlayerColoerHex[GetPlayerId(p)] + GetPlayerName(p) + "|r增加了45秒的选择时间.")
+		call DisplayTimedTextToPlayer(LocalPlayer, .0, .0, DisplayTextDuration[LocalPlayerId], PlayerColorHex[GetPlayerId(p)] + GetPlayerName(p) + "|r增加了45秒的选择时间.")
 	endif
 endfunction
 function XFO takes nothing returns boolean
@@ -13738,30 +13720,30 @@ function XFO takes nothing returns boolean
 		if IsPlayerAlly(p, ETO) or(GameHasObservers and(p == ObserverPlayer1 or p == ObserverPlayer2)) then
 			if unitTypeId == R5V then
 				call PingMinimapEx(GetUnitX(u), GetUnitY(u), 3, 255, 255, 255, false)
-				call DisplayTimedTextToPlayer(p, 0, 0, 20, PlayerColoerHex[pid] +(PlayersName[pid]) + "|r |c00ffff00" + GetObjectName('n0HU') + "|r")
+				call DisplayTimedTextToPlayer(p, 0, 0, 20, PlayerColorHex[pid] +(PlayersName[pid]) + "|r |c00ffff00" + GetObjectName('n0HU') + "|r")
 			elseif unitTypeId == BUV and WN then
 				call PingMinimapEx(GetUnitX(u), GetUnitY(u), 3, 255, 255, 255, false)
-				call DisplayTimedTextToPlayer(p, 0, 0, DisplayTextDuration[LocalPlayerId], PlayerColoerHex[pid] +(PlayersName[pid]) + "|r |c00ffff00" + GetObjectName('n0KG') + "|r")
+				call DisplayTimedTextToPlayer(p, 0, 0, DisplayTextDuration[LocalPlayerId], PlayerColorHex[pid] +(PlayersName[pid]) + "|r |c00ffff00" + GetObjectName('n0KG') + "|r")
 			elseif unitTypeId == Item_DustOfAppearance then
-				call DisplayTimedTextToPlayer(p, 0, 0, 4, PlayerColoerHex[pid] +(PlayersName[pid]) + "|r |c00ffff00" + GetObjectName('n0KO') + "|r")
+				call DisplayTimedTextToPlayer(p, 0, 0, 4, PlayerColorHex[pid] +(PlayersName[pid]) + "|r |c00ffff00" + GetObjectName('n0KO') + "|r")
 			elseif unitTypeId == Item_ObserverWard then
 				call PingMinimapEx(GetUnitX(u), GetUnitY(u), 3, 255, 255, 255, false)
-				call DisplayTimedTextToPlayer(p, 0, 0, 4, PlayerColoerHex[pid] +(PlayersName[pid]) + "|r |c00ffff00" + GetObjectName('n0KP') + "|r")
+				call DisplayTimedTextToPlayer(p, 0, 0, 4, PlayerColorHex[pid] +(PlayersName[pid]) + "|r |c00ffff00" + GetObjectName('n0KP') + "|r")
 			elseif unitTypeId == Item_SentryWard then
 				call PingMinimapEx(GetUnitX(u), GetUnitY(u), 3, 255, 255, 255, false)
-				call DisplayTimedTextToPlayer(p, 0, 0, 4, PlayerColoerHex[pid] +(PlayersName[pid]) + "|r |c00ffff00" + GetObjectName('n0KQ') + "|r")
+				call DisplayTimedTextToPlayer(p, 0, 0, 4, PlayerColorHex[pid] +(PlayersName[pid]) + "|r |c00ffff00" + GetObjectName('n0KQ') + "|r")
 			elseif unitTypeId == B4V then
 				call PingMinimapEx(GetUnitX(u), GetUnitY(u), 3, 255, 255, 255, false)
-				call DisplayTimedTextToPlayer(p, 0, 0, 4, PlayerColoerHex[pid] +(PlayersName[pid]) + "|r |c00ffff00" + GetObjectName('n0KT') + "|r")
+				call DisplayTimedTextToPlayer(p, 0, 0, 4, PlayerColorHex[pid] +(PlayersName[pid]) + "|r |c00ffff00" + GetObjectName('n0KT') + "|r")
 			elseif unitTypeId == ITem_GemOfTrueSight then
 				call PingMinimapEx(GetUnitX(u), GetUnitY(u), 3, 255, 255, 255, false)
-				call DisplayTimedTextToPlayer(p, 0, 0, 4, PlayerColoerHex[pid] +(PlayersName[pid]) + "|r |c00ffff00" + GetObjectName('n0LB') + "|r")
+				call DisplayTimedTextToPlayer(p, 0, 0, 4, PlayerColorHex[pid] +(PlayersName[pid]) + "|r |c00ffff00" + GetObjectName('n0LB') + "|r")
 			elseif unitTypeId == IVV then
 				call PingMinimapEx(GetUnitX(u), GetUnitY(u), 3, 255, 255, 255, false)
-				call DisplayTimedTextToPlayer(p, 0, 0, 4, PlayerColoerHex[pid] +(PlayersName[pid]) + "|r |c00ffff00" + GetObjectName('n0LP') + "|r")
+				call DisplayTimedTextToPlayer(p, 0, 0, 4, PlayerColorHex[pid] +(PlayersName[pid]) + "|r |c00ffff00" + GetObjectName('n0LP') + "|r")
 			elseif unitTypeId == it_jys then
 				call PingMinimapEx(GetUnitX(u), GetUnitY(u), 3, 255, 255, 255, false)
-				call DisplayTimedTextToPlayer(p, 0, 0, 4, PlayerColoerHex[pid] +(PlayersName[pid]) + "|r |c00ffff00购买了知识之书|r")
+				call DisplayTimedTextToPlayer(p, 0, 0, 4, PlayerColorHex[pid] +(PlayersName[pid]) + "|r |c00ffff00购买了知识之书|r")
 			endif
 		endif
 		if unitTypeId == OZV then
@@ -14638,13 +14620,13 @@ function OQO takes unit trigUnit, integer OSO, boolean OTO returns nothing
 		call StoreDrCacheData("Rune" + OWO + "6", GetPlayerId(p))
 	endif
 	if OTO then
-		set s = PlayerColoerHex[GetPlayerId(p)] + GetUnitName(trigUnit) + "|r " + GetObjectName('n0GU') + "|r " + OUO + " " + GetObjectName('n0GW')
+		set s = PlayerColorHex[GetPlayerId(p)] + GetUnitName(trigUnit) + "|r " + GetObjectName('n0GU') + "|r " + OUO + " " + GetObjectName('n0GW')
 		set d = 1
 	else
 		if C2V then
-			set s = PlayerColoerHex[GetPlayerId(p)] + GetUnitName(trigUnit) + "|r " + GetObjectName('n0GV') + "|r " + OUO + " " + GetObjectName('n0GW')
+			set s = PlayerColorHex[GetPlayerId(p)] + GetUnitName(trigUnit) + "|r " + GetObjectName('n0GV') + "|r " + OUO + " " + GetObjectName('n0GW')
 		else
-			set s = PlayerColoerHex[GetPlayerId(p)] + GetUnitName(trigUnit) + "|r " + GetObjectName('n0GT') + "|r " + OUO + " " + GetObjectName('n0GW')
+			set s = PlayerColorHex[GetPlayerId(p)] + GetUnitName(trigUnit) + "|r " + GetObjectName('n0GT') + "|r " + OUO + " " + GetObjectName('n0GW')
 		endif
 	endif
 	if (IsPlayerAlly(LocalPlayer, p) and LocalPlayer!= p) or IsObserverPlayerEx(LocalPlayer) or TEST_MODE then
@@ -16226,7 +16208,7 @@ function MUSetMessengerNotShare takes unit messenger returns nothing
 		set i = 1
 		loop
 			if SentinelPlayers[i] != owner then
-				call DisplayTimedTextToPlayer(SentinelPlayers[i], 0, 0, 10, "|cffffff11你不再能控制" + PlayerColoerHex[GetPlayerId(owner)] + GetPlayerName(owner) + "|cffffff11的信使了|r")
+				call DisplayTimedTextToPlayer(SentinelPlayers[i], 0, 0, 10, "|cffffff11你不再能控制" + PlayerColorHex[GetPlayerId(owner)] + GetPlayerName(owner) + "|cffffff11的信使了|r")
 			endif
 			set i = i + 1
 		exitwhen i > 5
@@ -16235,7 +16217,7 @@ function MUSetMessengerNotShare takes unit messenger returns nothing
 		set i = 1
 		loop
 			if ScourgePlayers[i] != owner then
-				call DisplayTimedTextToPlayer(ScourgePlayers[i], 0, 0, 10, "|cffffff11你不再能控制" + PlayerColoerHex[GetPlayerId(owner)] + GetPlayerName(owner) + "|cffffff11的信使了|r")
+				call DisplayTimedTextToPlayer(ScourgePlayers[i], 0, 0, 10, "|cffffff11你不再能控制" + PlayerColorHex[GetPlayerId(owner)] + GetPlayerName(owner) + "|cffffff11的信使了|r")
 			endif
 			set i = i + 1
 		exitwhen i > 5
@@ -16251,8 +16233,8 @@ function MUInitDummyPlayer takes integer id1, integer id2 returns nothing
 	endif
 	set mu_has_init_dummy_player = true
 	// 颜色
-	set PlayerColoerHex[id1] = PlayerColoerHex[0]
-	set PlayerColoerHex[id2] = PlayerColoerHex[6]
+	set PlayerColorHex[id1] = PlayerColorHex[0]
+	set PlayerColorHex[id2] = PlayerColorHex[6]
 	call SetPlayerColor(Player(id1), GetPlayerColor(SentinelPlayers[0]))
 	call SetPlayerColor(Player(id2), GetPlayerColor(ScourgePlayers[0]))
 	// 名字
@@ -16379,7 +16361,7 @@ function MUSetMessengerShare takes unit messenger returns nothing
 	call UnitSetUsesAltIcon(messenger, true)
 	call SetUnitOwner(messenger, target_player, false)
 	set name = GetPlayerName(target_player)
-	call SetPlayerName(target_player, PlayerColoerHex[GetPlayerId(target_player)] + "动物信使|r")
+	call SetPlayerName(target_player, PlayerColorHex[GetPlayerId(target_player)] + "动物信使|r")
 	if team == 0 then
 		set i = 1
 		loop
@@ -16387,7 +16369,7 @@ function MUSetMessengerShare takes unit messenger returns nothing
 			call UnitShareVision(messenger, SentinelPlayers[i], true)
 			call MUCreateDummyMessenger(messenger, SentinelPlayers[i], owner)
 			if SentinelPlayers[i] != owner then
-				call DisplayTimedTextToPlayer(SentinelPlayers[i], 0, 0, 10, "|cffffff11你可以控制" + PlayerColoerHex[GetPlayerId(owner)] + GetPlayerName(owner) + "|cffffff11的信使了|r")
+				call DisplayTimedTextToPlayer(SentinelPlayers[i], 0, 0, 10, "|cffffff11你可以控制" + PlayerColorHex[GetPlayerId(owner)] + GetPlayerName(owner) + "|cffffff11的信使了|r")
 			endif
 			set i = i + 1
 		exitwhen i > 5
@@ -16399,7 +16381,7 @@ function MUSetMessengerShare takes unit messenger returns nothing
 			call UnitShareVision(messenger, ScourgePlayers[i], true)
 			call MUCreateDummyMessenger(messenger, ScourgePlayers[i], owner)
 			if ScourgePlayers[i] != owner then
-				call DisplayTimedTextToPlayer(ScourgePlayers[i], 0, 0, 10, "|cffffff11你可以控制" + PlayerColoerHex[GetPlayerId(owner)] + GetPlayerName(owner) + "|cffffff11的信使了|r")
+				call DisplayTimedTextToPlayer(ScourgePlayers[i], 0, 0, 10, "|cffffff11你可以控制" + PlayerColorHex[GetPlayerId(owner)] + GetPlayerName(owner) + "|cffffff11的信使了|r")
 			endif
 			set i = i + 1
 		exitwhen i > 5
@@ -17169,9 +17151,9 @@ function NQO takes nothing returns boolean
 		set E8V = true
 		call StoreDrCacheData("AegisOn", GetPlayerId(GetOwningPlayer(trigUnit)))
 		if (IsPlayerSentinel(GetOwningPlayer(trigUnit)) and GN == 0) or(IsPlayerScourge(GetOwningPlayer(trigUnit)) and GN == 1) then
-			call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, DisplayTextDuration[LocalPlayerId], PlayerColoerHex[GetPlayerId(GetOwningPlayer(trigUnit))] + GetUnitName(trigUnit) + "|r " + GetObjectName('n0EQ'))
+			call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, DisplayTextDuration[LocalPlayerId], PlayerColorHex[GetPlayerId(GetOwningPlayer(trigUnit))] + GetUnitName(trigUnit) + "|r " + GetObjectName('n0EQ'))
 		else
-			call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, DisplayTextDuration[LocalPlayerId], PlayerColoerHex[GetPlayerId(GetOwningPlayer(trigUnit))] + GetUnitName(trigUnit) + "|r " + "获得了不朽的守护!")
+			call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, DisplayTextDuration[LocalPlayerId], PlayerColorHex[GetPlayerId(GetOwningPlayer(trigUnit))] + GetUnitName(trigUnit) + "|r " + "获得了不朽的守护!")
 		endif
 	elseif GetItemTypeId(whichItem) == ItemRealId[BUV]and IsUnitGroundCourier(trigUnit) then
 		call NPO(trigUnit, false)
@@ -18796,7 +18778,7 @@ function G8E takes nothing returns nothing
 			set DLV = false
 		endif
 		if (IsPlayerAlly(p, LocalPlayer) or(GameHasObservers and IsObserverPlayerEx(LocalPlayer))) and p != LocalPlayer then
-			call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 5, PlayerColoerHex[GetPlayerId(p)] + PlayersName[GetPlayerId((p))] + "|r 开启了防御符文")
+			call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 5, PlayerColorHex[GetPlayerId(p)] + PlayersName[GetPlayerId((p))] + "|r 开启了防御符文")
 		endif
 	endif
 	set g = null
@@ -20323,7 +20305,7 @@ function F9O takes nothing returns boolean
 	// 	set bj_playerIsCrippled[0] = false
 	endif
 	if VE then
-		call XOO(whichUnit, XIO(GetItemIndexEx(whichItem), true), GetItemPlayer(whichItem))
+		call UnitOnFastCombine(whichUnit, GetCombinedIndexByItemIndex(GetItemIndexEx(whichItem), true), GetItemPlayer(whichItem))
 		set VE = false
 	endif
 	call F0O(itemIndex)
@@ -21372,9 +21354,9 @@ function JIO takes nothing returns nothing
 	call SetMultiboardItemText(MainMultiboard, 5, 3 + SentinelUserCount, "|c00ff0303" + "0|r")
 	call SetMultiboardItemText(MainMultiboard, 6, 3 + SentinelUserCount, "|c000042ff" + "0|r")
 	set pid = GetPlayerId(SentinelPlayers[0])
-	call SetMultiboardItemValueColor(MainMultiboard, 1, 2, X6X(SubString(PlayerColoerHex[pid], 4, 6))/ 255. * 100 , X6X(SubString(PlayerColoerHex[pid], 6, 8))/ 255. * 100 , X6X(SubString(PlayerColoerHex[pid], 8, 10))/ 255. * 100 , 0)
+	call SetMultiboardItemValueColor(MainMultiboard, 1, 2, X6X(SubString(PlayerColorHex[pid], 4, 6))/ 255. * 100 , X6X(SubString(PlayerColorHex[pid], 6, 8))/ 255. * 100 , X6X(SubString(PlayerColorHex[pid], 8, 10))/ 255. * 100 , 0)
 	set pid = GetPlayerId(ScourgePlayers[0])
-	call SetMultiboardItemValueColor(MainMultiboard, 1, 3 + SentinelUserCount, X6X(SubString(PlayerColoerHex[pid], 4, 6))/ 255. * 100 , X6X(SubString(PlayerColoerHex[pid], 6, 8))/ 255. * 100 , X6X(SubString(PlayerColoerHex[pid], 8, 10))/ 255. * 100 , 0)
+	call SetMultiboardItemValueColor(MainMultiboard, 1, 3 + SentinelUserCount, X6X(SubString(PlayerColorHex[pid], 4, 6))/ 255. * 100 , X6X(SubString(PlayerColorHex[pid], 6, 8))/ 255. * 100 , X6X(SubString(PlayerColorHex[pid], 8, 10))/ 255. * 100 , 0)
 	set k = 1
 	set j = 3 + ScourgeUserCount + SentinelUserCount
 	loop
@@ -21423,9 +21405,9 @@ function JIO takes nothing returns nothing
 		set D2V[pid] = k + 2 -1
 		call SetMultiboardItemText(MainMultiboard, 1, k + 2,(PlayersName[pid]))
 		if IsPlayerPlaying(SentinelUsers[k]) then
-			set JAO = SubString(PlayerColoerHex[pid], 4, 6)
-			set JNO = SubString(PlayerColoerHex[pid], 6, 8)
-			set JBO = SubString(PlayerColoerHex[pid], 8, 10)
+			set JAO = SubString(PlayerColorHex[pid], 4, 6)
+			set JNO = SubString(PlayerColorHex[pid], 6, 8)
+			set JBO = SubString(PlayerColorHex[pid], 8, 10)
 			call SetMultiboardItemValueColor(MainMultiboard, 1, k + 2, X6X(JAO)/ 255. * 100 , X6X(JNO)/ 255. * 100 , X6X(JBO)/ 255. * 100 , 0)
 			call SetMultiboardItemValueColor(MainMultiboard, 2, k + 2, X6X(JAO)/ 255. * 100 , X6X(JNO)/ 255. * 100 , X6X(JBO)/ 255. * 100 , 0)
 			call SetMultiboardItemValueColor(MainMultiboard, 3, k + 2, X6X(JAO)/ 255. * 100 , X6X(JNO)/ 255. * 100 , X6X(JBO)/ 255. * 100 , 0)
@@ -21448,9 +21430,9 @@ function JIO takes nothing returns nothing
 		set D2V[pid] = k + 3 + SentinelUserCount -1
 		call SetMultiboardItemText(MainMultiboard, 1, k + 3 + SentinelUserCount,(PlayersName[pid]))
 		if IsPlayerPlaying(ScourgeUsers[k]) then
-			set JAO = SubString(PlayerColoerHex[pid], 4, 6)
-			set JNO = SubString(PlayerColoerHex[pid], 6, 8)
-			set JBO = SubString(PlayerColoerHex[pid], 8, 10)
+			set JAO = SubString(PlayerColorHex[pid], 4, 6)
+			set JNO = SubString(PlayerColorHex[pid], 6, 8)
+			set JBO = SubString(PlayerColorHex[pid], 8, 10)
 			call SetMultiboardItemValueColor(MainMultiboard, 1, k + 3 + SentinelUserCount, X6X(JAO)/ 255. * 100 , X6X(JNO)/ 255. * 100 , X6X(JBO)/ 255. * 100 , 0)
 			call SetMultiboardItemValueColor(MainMultiboard, 2, k + 3 + SentinelUserCount, X6X(JAO)/ 255. * 100 , X6X(JNO)/ 255. * 100 , X6X(JBO)/ 255. * 100 , 0)
 			call SetMultiboardItemValueColor(MainMultiboard, 3, k + 3 + SentinelUserCount, X6X(JAO)/ 255. * 100 , X6X(JNO)/ 255. * 100 , X6X(JBO)/ 255. * 100 , 0)
@@ -21612,15 +21594,15 @@ function UpdateMainMultiboardLoopAction takes nothing returns nothing
 			//set JWO = JWO + JDO(r)
 			if sentinelsReviveCount == 0 then
 				if r < 10 then
-					set sentinelsReviveText = PlayerColoerHex[pid] + "0" + I2S(r) + " |r"
+					set sentinelsReviveText = PlayerColorHex[pid] + "0" + I2S(r) + " |r"
 				else
-					set sentinelsReviveText = PlayerColoerHex[pid] + I2S(r) + " |r"
+					set sentinelsReviveText = PlayerColorHex[pid] + I2S(r) + " |r"
 				endif
 			else
 				if r < 10 then
-					set sentinelsReviveText = sentinelsReviveText + "|c00ffffff" + "| |r" + PlayerColoerHex[pid] + "0" + I2S(r) + " |r"
+					set sentinelsReviveText = sentinelsReviveText + "|c00ffffff" + "| |r" + PlayerColorHex[pid] + "0" + I2S(r) + " |r"
 				else
-					set sentinelsReviveText = sentinelsReviveText + "|c00ffffff" + "| |r" + PlayerColoerHex[pid] + I2S(r) + " |r"
+					set sentinelsReviveText = sentinelsReviveText + "|c00ffffff" + "| |r" + PlayerColorHex[pid] + I2S(r) + " |r"
 				endif
 			endif
 			set sentinelsReviveCount = sentinelsReviveCount + 1
@@ -21643,15 +21625,15 @@ function UpdateMainMultiboardLoopAction takes nothing returns nothing
 			//set JWO = JWO + JDO(r)
 			if scourgesReviveCount == 0 then
 				if r < 10 then
-					set scourgesReviveText = PlayerColoerHex[pid] + "0" + I2S(r) + " |r"
+					set scourgesReviveText = PlayerColorHex[pid] + "0" + I2S(r) + " |r"
 				else
-					set scourgesReviveText = PlayerColoerHex[pid] + I2S(r) + " |r"
+					set scourgesReviveText = PlayerColorHex[pid] + I2S(r) + " |r"
 				endif
 			else
 				if r < 10 then
-					set scourgesReviveText = scourgesReviveText + "|c00ffffff" + "| |r" + PlayerColoerHex[pid] + "0" + I2S(r) + " |r"
+					set scourgesReviveText = scourgesReviveText + "|c00ffffff" + "| |r" + PlayerColorHex[pid] + "0" + I2S(r) + " |r"
 				else
-					set scourgesReviveText = scourgesReviveText + "|c00ffffff" + "| |r" + PlayerColoerHex[pid] + I2S(r) + " |r"
+					set scourgesReviveText = scourgesReviveText + "|c00ffffff" + "| |r" + PlayerColorHex[pid] + I2S(r) + " |r"
 				endif
 			endif
 			set scourgesReviveCount = scourgesReviveCount + 1
@@ -21970,7 +21952,7 @@ function UpdateMainMultiboardLoopAction takes nothing returns nothing
 	endloop
 endfunction
 function K8O takes player p returns string
-	return PlayerColoerHex[GetPlayerId(p)] +(PlayersName[GetPlayerId((p))]) + "|r"
+	return PlayerColorHex[GetPlayerId(p)] +(PlayersName[GetPlayerId((p))]) + "|r"
 endfunction
 function K9O takes player p returns string
 	local integer k = PlayerLastHitTowerCount[GetPlayerId(p)]
@@ -22080,15 +22062,15 @@ function LBO takes nothing returns nothing
 			set JWO = JWO + JDO(r)
 			if sentinelsReviveCount == 0 then
 				if r < 10 then
-					set sentinelsReviveText = PlayerColoerHex[GetPlayerId(SentinelPlayers[i])] + "0" + I2S(r) + " |r"
+					set sentinelsReviveText = PlayerColorHex[GetPlayerId(SentinelPlayers[i])] + "0" + I2S(r) + " |r"
 				else
-					set sentinelsReviveText = PlayerColoerHex[GetPlayerId(SentinelPlayers[i])] + I2S(r) + " |r"
+					set sentinelsReviveText = PlayerColorHex[GetPlayerId(SentinelPlayers[i])] + I2S(r) + " |r"
 				endif
 			else
 				if r < 10 then
-					set sentinelsReviveText = sentinelsReviveText + "|c00ffffff" + "| |r" + PlayerColoerHex[GetPlayerId(SentinelPlayers[i])] + "0" + I2S(r) + " |r"
+					set sentinelsReviveText = sentinelsReviveText + "|c00ffffff" + "| |r" + PlayerColorHex[GetPlayerId(SentinelPlayers[i])] + "0" + I2S(r) + " |r"
 				else
-					set sentinelsReviveText = sentinelsReviveText + "|c00ffffff" + "| |r" + PlayerColoerHex[GetPlayerId(SentinelPlayers[i])] + I2S(r) + " |r"
+					set sentinelsReviveText = sentinelsReviveText + "|c00ffffff" + "| |r" + PlayerColorHex[GetPlayerId(SentinelPlayers[i])] + I2S(r) + " |r"
 				endif
 			endif
 			set sentinelsReviveCount = sentinelsReviveCount + 1
@@ -22106,15 +22088,15 @@ function LBO takes nothing returns nothing
 			set JWO = JWO + JDO(r)
 			if scourgesReviveCount == 0 then
 				if r < 10 then
-					set scourgesReviveText = PlayerColoerHex[GetPlayerId(ScourgePlayers[i])] + "0" + I2S(r) + " |r"
+					set scourgesReviveText = PlayerColorHex[GetPlayerId(ScourgePlayers[i])] + "0" + I2S(r) + " |r"
 				else
-					set scourgesReviveText = PlayerColoerHex[GetPlayerId(ScourgePlayers[i])] + I2S(r) + " |r"
+					set scourgesReviveText = PlayerColorHex[GetPlayerId(ScourgePlayers[i])] + I2S(r) + " |r"
 				endif
 			else
 				if r < 10 then
-					set scourgesReviveText = scourgesReviveText + "|c00ffffff" + "| |r" + PlayerColoerHex[GetPlayerId(ScourgePlayers[i])] + "0" + I2S(r) + " |r"
+					set scourgesReviveText = scourgesReviveText + "|c00ffffff" + "| |r" + PlayerColorHex[GetPlayerId(ScourgePlayers[i])] + "0" + I2S(r) + " |r"
 				else
-					set scourgesReviveText = scourgesReviveText + "|c00ffffff" + "| |r" + PlayerColoerHex[GetPlayerId(ScourgePlayers[i])] + I2S(r) + " |r"
+					set scourgesReviveText = scourgesReviveText + "|c00ffffff" + "| |r" + PlayerColorHex[GetPlayerId(ScourgePlayers[i])] + I2S(r) + " |r"
 				endif
 			endif
 			set scourgesReviveCount = scourgesReviveCount + 1
@@ -24410,7 +24392,7 @@ function ShowSkillsOnSelecting takes nothing returns nothing
 	endif
 	if GetUnitTypeId(GetTriggerUnit())!='hfoo' and IsUnitEnemy(GetTriggerUnit(), p) and IsUnitVisibleToPlayer(GetTriggerUnit(), p) == false then
 		if GetObjectName('TEST') == "L1ch" then
-			call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 10, "|c00ff0303可能的开图点击|r " + PlayerColoerHex[GetPlayerId(p)] + PlayersName[GetPlayerId(p)] + "|r on " + GetUnitName(GetTriggerUnit()))
+			call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 10, "|c00ff0303可能的开图点击|r " + PlayerColorHex[GetPlayerId(p)] + PlayersName[GetPlayerId(p)] + "|r on " + GetUnitName(GetTriggerUnit()))
 		endif
 	endif
 endfunction
@@ -26094,21 +26076,21 @@ function Y7O takes nothing returns nothing
 		set a = GetRandomInt(1, 8)
 	endif
 	if a == 1 then
-		call DisplayTimedTextToAllPlayer(AllPlayerForce, 5, PlayerColoerHex[GetPlayerId(GetTriggerPlayer())] +(PlayersName[GetPlayerId((GetTriggerPlayer()))]) + "|r's never gonna give you up")
+		call DisplayTimedTextToAllPlayer(AllPlayerForce, 5, PlayerColorHex[GetPlayerId(GetTriggerPlayer())] +(PlayersName[GetPlayerId((GetTriggerPlayer()))]) + "|r's never gonna give you up")
 	elseif a == 2 then
-		call DisplayTimedTextToAllPlayer(AllPlayerForce, 5, PlayerColoerHex[GetPlayerId(GetTriggerPlayer())] +(PlayersName[GetPlayerId((GetTriggerPlayer()))]) + "|r's never gonna let you down")
+		call DisplayTimedTextToAllPlayer(AllPlayerForce, 5, PlayerColorHex[GetPlayerId(GetTriggerPlayer())] +(PlayersName[GetPlayerId((GetTriggerPlayer()))]) + "|r's never gonna let you down")
 	elseif a == 3 then
-		call DisplayTimedTextToAllPlayer(AllPlayerForce, 5, PlayerColoerHex[GetPlayerId(GetTriggerPlayer())] +(PlayersName[GetPlayerId((GetTriggerPlayer()))]) + "|r's never gonna run around")
+		call DisplayTimedTextToAllPlayer(AllPlayerForce, 5, PlayerColorHex[GetPlayerId(GetTriggerPlayer())] +(PlayersName[GetPlayerId((GetTriggerPlayer()))]) + "|r's never gonna run around")
 	elseif a == 4 then
-		call DisplayTimedTextToAllPlayer(AllPlayerForce, 5, PlayerColoerHex[GetPlayerId(GetTriggerPlayer())] +(PlayersName[GetPlayerId((GetTriggerPlayer()))]) + "|r's never gonna desert you")
+		call DisplayTimedTextToAllPlayer(AllPlayerForce, 5, PlayerColorHex[GetPlayerId(GetTriggerPlayer())] +(PlayersName[GetPlayerId((GetTriggerPlayer()))]) + "|r's never gonna desert you")
 	elseif a == 5 then
-		call DisplayTimedTextToAllPlayer(AllPlayerForce, 5, PlayerColoerHex[GetPlayerId(GetTriggerPlayer())] +(PlayersName[GetPlayerId((GetTriggerPlayer()))]) + "|r's never gonna make you cry")
+		call DisplayTimedTextToAllPlayer(AllPlayerForce, 5, PlayerColorHex[GetPlayerId(GetTriggerPlayer())] +(PlayersName[GetPlayerId((GetTriggerPlayer()))]) + "|r's never gonna make you cry")
 	elseif a == 6 then
-		call DisplayTimedTextToAllPlayer(AllPlayerForce, 5, PlayerColoerHex[GetPlayerId(GetTriggerPlayer())] +(PlayersName[GetPlayerId((GetTriggerPlayer()))]) + "|r's never gonna say goodbye")
+		call DisplayTimedTextToAllPlayer(AllPlayerForce, 5, PlayerColorHex[GetPlayerId(GetTriggerPlayer())] +(PlayersName[GetPlayerId((GetTriggerPlayer()))]) + "|r's never gonna say goodbye")
 	elseif a == 7 then
-		call DisplayTimedTextToAllPlayer(AllPlayerForce, 5, PlayerColoerHex[GetPlayerId(GetTriggerPlayer())] +(PlayersName[GetPlayerId((GetTriggerPlayer()))]) + "|r's never gonna tell a lie")
+		call DisplayTimedTextToAllPlayer(AllPlayerForce, 5, PlayerColorHex[GetPlayerId(GetTriggerPlayer())] +(PlayersName[GetPlayerId((GetTriggerPlayer()))]) + "|r's never gonna tell a lie")
 	elseif a == 8 then
-		call DisplayTimedTextToAllPlayer(AllPlayerForce, 5, PlayerColoerHex[GetPlayerId(GetTriggerPlayer())] +(PlayersName[GetPlayerId((GetTriggerPlayer()))]) + "|r's never gonna hurt you")
+		call DisplayTimedTextToAllPlayer(AllPlayerForce, 5, PlayerColorHex[GetPlayerId(GetTriggerPlayer())] +(PlayersName[GetPlayerId((GetTriggerPlayer()))]) + "|r's never gonna hurt you")
 	endif
 endfunction
 function ZVO takes nothing returns boolean
@@ -26964,14 +26946,14 @@ function Z4O takes unit u1, unit u2, boolean Z5O, player p1, player p2 returns b
 			return true
 		else
 			call DisplayTimedTextToPlayer(GetOwningPlayer(u2), 0, 0, 30, "  ")
-			call DisplayTimedTextToPlayer(GetOwningPlayer(u2), 0, 0, 30, "						 " + PlayerColoerHex[GetPlayerId(GetOwningPlayer(u1))] + GetUnitName(u1) + "|r |cff99ccff" + GetObjectName('n082') + " " + GetObjectName('n083') + "|r |c00ff0303-swap " + I2S(Z3O(GetOwningPlayer(u1))) + "|r |cff99ccff" + GetObjectName('n081') + "|r")
+			call DisplayTimedTextToPlayer(GetOwningPlayer(u2), 0, 0, 30, "						 " + PlayerColorHex[GetPlayerId(GetOwningPlayer(u1))] + GetUnitName(u1) + "|r |cff99ccff" + GetObjectName('n082') + " " + GetObjectName('n083') + "|r |c00ff0303-swap " + I2S(Z3O(GetOwningPlayer(u1))) + "|r |cff99ccff" + GetObjectName('n081') + "|r")
 			call DisplayTimedTextToPlayer(GetOwningPlayer(u2), 0, 0, 30, "  ")
 			if Mode__SingleDraft or Mode__MirrorDraft then
 				call DisplayTimedTextToPlayer(GetOwningPlayer(u2), 0, 0, 30, "|c00ff0000WARNING:|r 所选模式禁止repick之后交换英雄.")
 			endif
 			if Z5O then
 				call DisplayTimedTextToPlayer(GetOwningPlayer(u1), 0, 0, 30, "  ")
-				call DisplayTimedTextToPlayer(GetOwningPlayer(u1), 0, 0, 30, "|cff99ccff" + GetObjectName('n08C') + " |r" + PlayerColoerHex[GetPlayerId(GetOwningPlayer(u2))] + GetUnitName(u2) + "|r")
+				call DisplayTimedTextToPlayer(GetOwningPlayer(u1), 0, 0, 30, "|cff99ccff" + GetObjectName('n08C') + " |r" + PlayerColorHex[GetPlayerId(GetOwningPlayer(u2))] + GetUnitName(u2) + "|r")
 				call DisplayTimedTextToPlayer(GetOwningPlayer(u1), 0, 0, 30, "  ")
 				if Mode__SingleDraft or Mode__MirrorDraft then
 					call DisplayTimedTextToPlayer(GetOwningPlayer(u1), 0, 0, 30, "|c00ff0000WARNING:|r 所选模式禁止repick之后交换英雄.")
@@ -26985,11 +26967,11 @@ function Z4O takes unit u1, unit u2, boolean Z5O, player p1, player p2 returns b
 			return true
 		else
 			call DisplayTimedTextToPlayer(p2, 0, 0, 30, "  ")
-			call DisplayTimedTextToPlayer(p2, 0, 0, 30, "						 " + PlayerColoerHex[GetPlayerId(p1)] + PlayersName[GetPlayerId(p1)] + "|r |cff99ccff" + GetObjectName('n082') + " " + GetObjectName('n083') + "|r |c00ff0303-swap " + I2S(Z3O(p1)) + "|r |cff99ccff" + GetObjectName('n081') + "|r")
+			call DisplayTimedTextToPlayer(p2, 0, 0, 30, "						 " + PlayerColorHex[GetPlayerId(p1)] + PlayersName[GetPlayerId(p1)] + "|r |cff99ccff" + GetObjectName('n082') + " " + GetObjectName('n083') + "|r |c00ff0303-swap " + I2S(Z3O(p1)) + "|r |cff99ccff" + GetObjectName('n081') + "|r")
 			call DisplayTimedTextToPlayer(p2, 0, 0, 30, "  ")
 			if Z5O then
 				call DisplayTimedTextToPlayer(p1, 0, 0, 30, "  ")
-				call DisplayTimedTextToPlayer(p1, 0, 0, 30, "|cff99ccff" + GetObjectName('n08C') + " |r" + PlayerColoerHex[GetPlayerId(p2)] + PlayersName[GetPlayerId(p2)] + "|r")
+				call DisplayTimedTextToPlayer(p1, 0, 0, 30, "|cff99ccff" + GetObjectName('n08C') + " |r" + PlayerColorHex[GetPlayerId(p2)] + PlayersName[GetPlayerId(p2)] + "|r")
 				call DisplayTimedTextToPlayer(p1, 0, 0, 30, "  ")
 			endif
 		endif
@@ -27070,7 +27052,7 @@ function Z7O takes nothing returns nothing
 			if Z2O(PlayerHeroes[GetPlayerId(GetTriggerPlayer())], u, GetTriggerPlayer(), p) then
 				set s = " |c00ff0303(" + GetObjectName('n085') + ")|r"
 			endif
-			call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 45, PlayerColoerHex[GetPlayerId(p)] + I2S(i) + "|r" + " - " + "|cff99ccff" + GetUnitName(u) + "|r" + s)
+			call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 45, PlayerColorHex[GetPlayerId(p)] + I2S(i) + "|r" + " - " + "|cff99ccff" + GetUnitName(u) + "|r" + s)
 		endif
 		set p = ScourgePlayers[i]
 		set u = PlayerHeroes[GetPlayerId(p)]
@@ -27079,7 +27061,7 @@ function Z7O takes nothing returns nothing
 			if Z2O(PlayerHeroes[GetPlayerId(GetTriggerPlayer())], u, GetTriggerPlayer(), p) then
 				set s = " |c00ff0303(" + GetObjectName('n085') + ")|r"
 			endif
-			call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 45, PlayerColoerHex[GetPlayerId(p)] + I2S(i) + "|r" + " - " + "|cff99ccff" + GetUnitName(u) + "|r" + s)
+			call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 45, PlayerColorHex[GetPlayerId(p)] + I2S(i) + "|r" + " - " + "|cff99ccff" + GetUnitName(u) + "|r" + s)
 		endif
 		set i = i + 1
 	endloop
@@ -27264,7 +27246,7 @@ function VDR takes nothing returns nothing
 		exitwhen loop_i > loop_max
 			set index = GetPlayerId(SentinelPlayers[loop_i])
 			if (PlayerHeroes[index]!= null) then
-				call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 20, PlayerColoerHex[index] +(PlayersName[GetPlayerId((SentinelPlayers[loop_i]))]) + "|r " + GetObjectName('n08M') + " " + GetUnitName(PlayerHeroes[index]) + " (" + GetObjectName('n08L') + " " + I2S(GetUnitLevel(PlayerHeroes[index])) + ")" + VCR(SentinelPlayers[loop_i]))
+				call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 20, PlayerColorHex[index] +(PlayersName[GetPlayerId((SentinelPlayers[loop_i]))]) + "|r " + GetObjectName('n08M') + " " + GetUnitName(PlayerHeroes[index]) + " (" + GetObjectName('n08L') + " " + I2S(GetUnitLevel(PlayerHeroes[index])) + ")" + VCR(SentinelPlayers[loop_i]))
 			endif
 			set loop_i = loop_i + 1
 		endloop
@@ -27273,7 +27255,7 @@ function VDR takes nothing returns nothing
 		exitwhen loop_i > loop_max
 			set index = GetPlayerId(ScourgePlayers[loop_i])
 			if (PlayerHeroes[index]!= null) then
-				call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 20, PlayerColoerHex[index] +(PlayersName[GetPlayerId((ScourgePlayers[loop_i]))]) + "|r " + GetObjectName('n08M') + " " + GetUnitName(PlayerHeroes[index]) + " (" + GetObjectName('n08L') + " " + I2S(GetUnitLevel(PlayerHeroes[index])) + ")" + VCR(ScourgePlayers[loop_i]))
+				call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 20, PlayerColorHex[index] +(PlayersName[GetPlayerId((ScourgePlayers[loop_i]))]) + "|r " + GetObjectName('n08M') + " " + GetUnitName(PlayerHeroes[index]) + " (" + GetObjectName('n08L') + " " + I2S(GetUnitLevel(PlayerHeroes[index])) + ")" + VCR(ScourgePlayers[loop_i]))
 			endif
 			set loop_i = loop_i + 1
 		endloop
@@ -27494,7 +27476,7 @@ function VWR takes nothing returns nothing
 					set V_R = 1
 					set u = LoadUnitHandle(OtherHashTable, GetHandleId(p),'COUR')
 					set V0R = GetPlayerId(GetOwningPlayer(u))
-					set s = s + PlayerColoerHex[V0R] + "信使|r: "
+					set s = s + PlayerColorHex[V0R] + "信使|r: "
 					if UnitIsDead(u) then
 						set s = s + "|c00ff0000死亡|r (" + I2S(R2I(GetGameTime()-LoadReal(HY, GetHandleId(u),'DEAD'))*-1) + "s)"
 					else
@@ -27672,7 +27654,7 @@ function Y2O takes nothing returns nothing
 	if a > 0 and a < 2001 then
 		set TTV = GetRandomInt(1, a)
 		if S3[LocalPlayerId] then
-			call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 5, PlayerColoerHex[index] + PlayersName[index] + "|r " + GetObjectName('n05I') + " " + I2S(TTV) + " " + GetObjectName('n05M') + " " + I2S(a))
+			call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 5, PlayerColorHex[index] + PlayersName[index] + "|r " + GetObjectName('n05I') + " " + I2S(TTV) + " " + GetObjectName('n05M') + " " + I2S(a))
 		endif
 	else
 		call InterfaceErrorForPlayer(GetTriggerPlayer(), GetObjectName('n02Y'))
@@ -27766,12 +27748,12 @@ function EBR takes nothing returns nothing
 		set p = SentinelPlayers[i]
 		if IsPlayerPlaying(p) then
 			set ECR = SQ[GetPlayerId(p)]/(GetGameTime())* 60
-			call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 15., PlayerColoerHex[GetPlayerId(p)] +(PlayersName[GetPlayerId((p))]) + "|r" + " " + GetObjectName('n084') + " " + R2S(ECR))
+			call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 15., PlayerColorHex[GetPlayerId(p)] +(PlayersName[GetPlayerId((p))]) + "|r" + " " + GetObjectName('n084') + " " + R2S(ECR))
 		endif
 		set p = ScourgePlayers[i]
 		if IsPlayerPlaying(p) then
 			set ECR = SQ[GetPlayerId(p)]/(GetGameTime())* 60
-			call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 15., PlayerColoerHex[GetPlayerId(p)] +(PlayersName[GetPlayerId((p))]) + "|r" + " " + GetObjectName('n084') + " " + R2S(ECR))
+			call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 15., PlayerColorHex[GetPlayerId(p)] +(PlayersName[GetPlayerId((p))]) + "|r" + " " + GetObjectName('n084') + " " + R2S(ECR))
 		endif
 		set i = i + 1
 	endloop
@@ -27821,14 +27803,14 @@ function Y3O takes nothing returns nothing
 				set p = SentinelPlayers[i]
 				if IsPlayerPlaying(p) and((GetGameTime())-TQ[GetPlayerId(p)])> 300. and GRV[GetPlayerId(p)]== false and not IsPickingHero then
 					set GRV[GetPlayerId(p)] = true
-					call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 15., PlayerColoerHex[GetPlayerId(p)] +(PlayersName[GetPlayerId((p))]) + "|r" + " " + GetObjectName('n05G') + " " + R2S(((GetGameTime())-TQ[GetPlayerId(p)])/ 60) + " " + GetObjectName('N05F'))
+					call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 15., PlayerColorHex[GetPlayerId(p)] +(PlayersName[GetPlayerId((p))]) + "|r" + " " + GetObjectName('n05G') + " " + R2S(((GetGameTime())-TQ[GetPlayerId(p)])/ 60) + " " + GetObjectName('N05F'))
 					call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 15., GetObjectName('n05O') + " |cff99ccff-kickafk " + I2S(GetPlayerId(p)) + " |r " + GetObjectName('n05P'))
 					call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 15., " ")
 				endif
 				set p = ScourgePlayers[i]
 				if IsPlayerPlaying(p) and((GetGameTime())-TQ[GetPlayerId(p)])> 300. and GRV[GetPlayerId(p)]== false and not IsPickingHero then
 					set GRV[GetPlayerId(p)] = true
-					call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 15., PlayerColoerHex[GetPlayerId(p)] +(PlayersName[GetPlayerId((p))]) + "|r" + " " + GetObjectName('n05G') + " " + R2S(((GetGameTime())-TQ[GetPlayerId(p)])/ 60) + " " + GetObjectName('N05F'))
+					call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 15., PlayerColorHex[GetPlayerId(p)] +(PlayersName[GetPlayerId((p))]) + "|r" + " " + GetObjectName('n05G') + " " + R2S(((GetGameTime())-TQ[GetPlayerId(p)])/ 60) + " " + GetObjectName('N05F'))
 					call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 15., GetObjectName('n05O') + " |cff99ccff-kickafk " + I2S(GetPlayerId(p)) + " |r " + GetObjectName('n05P'))
 					call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 15., " ")
 				endif
@@ -27861,12 +27843,12 @@ function EJR takes nothing returns nothing
 			set p = SentinelPlayers[i]
 			if IsPlayerPlaying(p) and((GetGameTime())-TQ[GetPlayerId(p)])/ 60 > .2 then
 				set x = x + 1
-				call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 15., PlayerColoerHex[GetPlayerId(p)] +(PlayersName[GetPlayerId((p))]) + "|r" + " " + GetObjectName('n05D') + " " + R2S(((GetGameTime())-TQ[GetPlayerId(p)])/ 60) + " " + GetObjectName('N05F'))
+				call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 15., PlayerColorHex[GetPlayerId(p)] +(PlayersName[GetPlayerId((p))]) + "|r" + " " + GetObjectName('n05D') + " " + R2S(((GetGameTime())-TQ[GetPlayerId(p)])/ 60) + " " + GetObjectName('N05F'))
 			endif
 			set p = ScourgePlayers[i]
 			if IsPlayerPlaying(p) and((GetGameTime())-TQ[GetPlayerId(p)])/ 60 > .2 then
 				set x = x + 1
-				call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 15., PlayerColoerHex[GetPlayerId(p)] +(PlayersName[GetPlayerId((p))]) + "|r" + " " + GetObjectName('n05D') + " " + R2S(((GetGameTime())-TQ[GetPlayerId(p)])/ 60) + " " + GetObjectName('N05F'))
+				call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 15., PlayerColorHex[GetPlayerId(p)] +(PlayersName[GetPlayerId((p))]) + "|r" + " " + GetObjectName('n05D') + " " + R2S(((GetGameTime())-TQ[GetPlayerId(p)])/ 60) + " " + GetObjectName('N05F'))
 			endif
 			set i = i + 1
 		endloop
@@ -27911,14 +27893,14 @@ function EKR takes nothing returns boolean
 			set p = SentinelPlayers[i]
 			if IsPlayerPlaying(p) and(KGX -TQ[GetPlayerId(p)])> 300. and GRV[GetPlayerId(p)]== false then
 				set GRV[GetPlayerId(p)] = true
-				call DisplayTimedTextToAllPlayer(SentinelForce, 15, PlayerColoerHex[GetPlayerId(p)] +(PlayersName[GetPlayerId((p))]) + "|r" + " " + GetObjectName('n05G') + " " + R2S((KGX -TQ[GetPlayerId(p)])/ 60) + " " + GetObjectName('N05F'))
+				call DisplayTimedTextToAllPlayer(SentinelForce, 15, PlayerColorHex[GetPlayerId(p)] +(PlayersName[GetPlayerId((p))]) + "|r" + " " + GetObjectName('n05G') + " " + R2S((KGX -TQ[GetPlayerId(p)])/ 60) + " " + GetObjectName('N05F'))
 				call DisplayTimedTextToAllPlayer(SentinelForce, 15, GetObjectName('n05O') + " |cff99ccff-kickafk " + I2S(GetPlayerId(p)) + " |r " + GetObjectName('n05P'))
 				call DisplayTimedTextToAllPlayer(SentinelForce, 15, " ")
 			endif
 			set p = ScourgePlayers[i]
 			if IsPlayerPlaying(p) and(KGX -TQ[GetPlayerId(p)])> 300. and GRV[GetPlayerId(p)]== false then
 				set GRV[GetPlayerId(p)] = true
-				call DisplayTimedTextToAllPlayer(ScourgeForce, 15, PlayerColoerHex[GetPlayerId(p)] +(PlayersName[GetPlayerId((p))]) + "|r" + " " + GetObjectName('n05G') + " " + R2S((KGX -TQ[GetPlayerId(p)])/ 60) + " " + GetObjectName('N05F'))
+				call DisplayTimedTextToAllPlayer(ScourgeForce, 15, PlayerColorHex[GetPlayerId(p)] +(PlayersName[GetPlayerId((p))]) + "|r" + " " + GetObjectName('n05G') + " " + R2S((KGX -TQ[GetPlayerId(p)])/ 60) + " " + GetObjectName('N05F'))
 				call DisplayTimedTextToAllPlayer(ScourgeForce, 15, GetObjectName('n05O') + " |cff99ccff-kickafk " + I2S(GetPlayerId(p)) + " |r " + GetObjectName('n05P'))
 				call DisplayTimedTextToAllPlayer(ScourgeForce, 15, " ")
 			endif
@@ -28210,7 +28192,7 @@ endfunction
 function E5R takes player p1 returns string
 	local string s = GetObjectName('n0GB')
 	set s = StringReplace(s, "$c1", "|c00ff0303")
-	set s = StringReplace(s, "$p1", PlayerColoerHex[GetPlayerId(p1)] +(PlayersName[GetPlayerId((p1))]) + "|r")
+	set s = StringReplace(s, "$p1", PlayerColorHex[GetPlayerId(p1)] +(PlayersName[GetPlayerId((p1))]) + "|r")
 	return s
 endfunction
 function E6R takes nothing returns string
@@ -28252,8 +28234,8 @@ function E8R takes player p1, player p2 returns string
 	set s = StringReplace(s, "$c1", "|c006699CC")
 	set s = StringReplace(s, "$c2", "|c00ff0303")
 	set s = StringReplace(s, "$c2", "|c00ff0303")
-	set s = StringReplace(s, "$p1", PlayerColoerHex[GetPlayerId(p1)] +(PlayersName[GetPlayerId((p1))]) + "|r")
-	set s = StringReplace(s, "$p2", PlayerColoerHex[GetPlayerId(p2)] +(PlayersName[GetPlayerId((p2))]) + "|r")
+	set s = StringReplace(s, "$p1", PlayerColorHex[GetPlayerId(p1)] +(PlayersName[GetPlayerId((p1))]) + "|r")
+	set s = StringReplace(s, "$p2", PlayerColorHex[GetPlayerId(p2)] +(PlayersName[GetPlayerId((p2))]) + "|r")
 	return s
 endfunction
 function E9R takes string XVR, string XER returns string
@@ -28268,7 +28250,7 @@ function E9R takes string XVR, string XER returns string
 endfunction
 function XXR takes player p2 returns string
 	local string s = GetObjectName('n0FS')
-	set s = StringReplace(s, "$p2", PlayerColoerHex[GetPlayerId(p2)] +(PlayersName[GetPlayerId((p2))]) + "|r")
+	set s = StringReplace(s, "$p2", PlayerColorHex[GetPlayerId(p2)] +(PlayersName[GetPlayerId((p2))]) + "|r")
 	set s = StringReplace(s, "$c1", "|c006699CC")
 	return s
 endfunction
@@ -28410,8 +28392,8 @@ function SwitchPlayer takes player p1, player p2 returns nothing
 	local real x2
 	local real y2
 	local player p
-	local string XVR = PlayerColoerHex[GetPlayerId(p1)] +(PlayersName[GetPlayerId((p1))]) + "|r"
-	local string XER = PlayerColoerHex[GetPlayerId(p2)] +(PlayersName[GetPlayerId((p2))]) + "|r"
+	local string XVR = PlayerColorHex[GetPlayerId(p1)] +(PlayersName[GetPlayerId((p1))]) + "|r"
+	local string XER = PlayerColorHex[GetPlayerId(p2)] +(PlayersName[GetPlayerId((p2))]) + "|r"
 	local integer ZZO
 	local integer XFR
 	local integer XGR
@@ -28586,7 +28568,7 @@ function XKR takes nothing returns nothing
 	if HM[GetPlayerId(GetTriggerPlayer())]== false then
 		set HM[GetPlayerId(GetTriggerPlayer())] = true
 		call XHR()
-		call DisplayTimedTextToForce(bj_FORCE_ALL_PLAYERS, 20, PlayerColoerHex[GetPlayerId(GetTriggerPlayer())] +(PlayersName[GetPlayerId((GetTriggerPlayer()))]) + "|r|c006699CC " + GetObjectName('n0FT') + "|r (" + I2S(JM) + "/" + I2S(KM) + ")")
+		call DisplayTimedTextToForce(bj_FORCE_ALL_PLAYERS, 20, PlayerColorHex[GetPlayerId(GetTriggerPlayer())] +(PlayersName[GetPlayerId((GetTriggerPlayer()))]) + "|r|c006699CC " + GetObjectName('n0FT') + "|r (" + I2S(JM) + "/" + I2S(KM) + ")")
 	endif
 	loop
 	exitwhen i > 5
@@ -28638,7 +28620,7 @@ function XQR takes nothing returns nothing
 		if PlayerHeroes[GetPlayerId(XSR)]!= null then
 			set s2 = " (" + GetUnitName(PlayerHeroes[GetPlayerId(XSR)]) + ")"
 		endif
-		call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 15, GetObjectName('n083') + "|c006699CC " + "-switch " + I2S(i) + "|r " + GetObjectName('n0FQ') + " " + PlayerColoerHex[GetPlayerId(XSR)] +(PlayersName[GetPlayerId((XSR))]) + s2 + "|r " + s)
+		call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 15, GetObjectName('n083') + "|c006699CC " + "-switch " + I2S(i) + "|r " + GetObjectName('n0FQ') + " " + PlayerColorHex[GetPlayerId(XSR)] +(PlayersName[GetPlayerId((XSR))]) + s2 + "|r " + s)
 		set i = i + 1
 	endloop
 	set p = null
@@ -29194,7 +29176,7 @@ function OnPlayerPickAbility takes integer abilityIndex, integer playerIndex, bo
 			set YTE = 2
 		endif
 		if XP[YTE * OP + abilityIndex]!= 0 then
-			call DisplayLoDWarningForPlayer(p, OZR, "一个玩家已经选择了这个技能: " + PlayerColoerHex[XP[YTE * OP + abilityIndex]] + PlayersName[XP[YTE * OP + abilityIndex]] + "|r")
+			call DisplayLoDWarningForPlayer(p, OZR, "一个玩家已经选择了这个技能: " + PlayerColorHex[XP[YTE * OP + abilityIndex]] + PlayersName[XP[YTE * OP + abilityIndex]] + "|r")
 			return false
 		endif
 	endif
@@ -30371,10 +30353,10 @@ function IJR takes nothing returns boolean
 		set i = GetRandomInt(1, 2)
 		if i == 1 then
 			set s = "1221122112"
-			call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, PlayerColoerHex[GetPlayerId(SentinelPlayers[0])] + GetObjectName('n065') + "|r 将会以 1-2-2-2-2-1 的顺序选取英雄")
+			call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, PlayerColorHex[GetPlayerId(SentinelPlayers[0])] + GetObjectName('n065') + "|r 将会以 1-2-2-2-2-1 的顺序选取英雄")
 		else
 			set s = "2112211221"
-			call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, PlayerColoerHex[GetPlayerId(ScourgePlayers[0])] + GetObjectName('n06C') + "|r 将会以 1-2-2-2-2-1 的顺序选取英雄")
+			call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, PlayerColorHex[GetPlayerId(ScourgePlayers[0])] + GetObjectName('n06C') + "|r 将会以 1-2-2-2-2-1 的顺序选取英雄")
 		endif
 		call SaveStr(HY, h, 0, s)
 		call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15., " ")
@@ -30398,14 +30380,14 @@ function IJR takes nothing returns boolean
 			if IKR == 1 then
 				call SaveInteger(HY, h, 10, GetPlayerId(SentinelPlayers[IMR]))
 				call SaveInteger(HY, h, 5, IMR)
-				call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, PlayerColoerHex[GetPlayerId(SentinelPlayers[IMR])] + PlayersName[GetPlayerId(SentinelPlayers[IMR])] + "|r " + GetObjectName('n064'))
+				call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, PlayerColorHex[GetPlayerId(SentinelPlayers[IMR])] + PlayersName[GetPlayerId(SentinelPlayers[IMR])] + "|r " + GetObjectName('n064'))
 				if LocalPlayer== SentinelPlayers[IMR] then
 					call IHR(h)
 				endif
 			else
 				call SaveInteger(HY, h, 10, GetPlayerId(ScourgePlayers[ILR]))
 				call SaveInteger(HY, h, 6, ILR)
-				call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, PlayerColoerHex[GetPlayerId(ScourgePlayers[ILR])] + PlayersName[GetPlayerId(ScourgePlayers[ILR])] + "|r " + GetObjectName('n064'))
+				call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, PlayerColorHex[GetPlayerId(ScourgePlayers[ILR])] + PlayersName[GetPlayerId(ScourgePlayers[ILR])] + "|r " + GetObjectName('n064'))
 				if LocalPlayer== ScourgePlayers[ILR] then
 					call IHR(h)
 				endif
@@ -30414,13 +30396,13 @@ function IJR takes nothing returns boolean
 		else
 			if IKR == 1 then
 				call SaveInteger(HY, h, 10, GetPlayerId(SentinelPlayers[IMR]))
-				call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, PlayerColoerHex[GetPlayerId(SentinelPlayers[IMR])] + PlayersName[GetPlayerId(SentinelPlayers[IMR])] + "|r " + GetObjectName('n064'))
+				call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, PlayerColorHex[GetPlayerId(SentinelPlayers[IMR])] + PlayersName[GetPlayerId(SentinelPlayers[IMR])] + "|r " + GetObjectName('n064'))
 				if LocalPlayer== SentinelPlayers[IMR] then
 					call IHR(h)
 				endif
 				if IMR + 1 < 6 then
 					call SaveInteger(HY, h, 11, GetPlayerId(SentinelPlayers[IMR + 1]))
-					call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, PlayerColoerHex[GetPlayerId(SentinelPlayers[IMR + 1])] + PlayersName[GetPlayerId(SentinelPlayers[IMR + 1])] + "|r " + GetObjectName('n064'))
+					call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, PlayerColorHex[GetPlayerId(SentinelPlayers[IMR + 1])] + PlayersName[GetPlayerId(SentinelPlayers[IMR + 1])] + "|r " + GetObjectName('n064'))
 					if LocalPlayer== SentinelPlayers[IMR + 1] then
 						call IHR(h)
 					endif
@@ -30428,13 +30410,13 @@ function IJR takes nothing returns boolean
 				call SaveInteger(HY, h, 5, IMR + 1)
 			else
 				call SaveInteger(HY, h, 10, GetPlayerId(ScourgePlayers[ILR]))
-				call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, PlayerColoerHex[GetPlayerId(ScourgePlayers[ILR])] + PlayersName[GetPlayerId(ScourgePlayers[ILR])] + "|r " + GetObjectName('n064'))
+				call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, PlayerColorHex[GetPlayerId(ScourgePlayers[ILR])] + PlayersName[GetPlayerId(ScourgePlayers[ILR])] + "|r " + GetObjectName('n064'))
 				if LocalPlayer== ScourgePlayers[ILR] then
 					call IHR(h)
 				endif
 				if ILR + 1 < 6 then
 					call SaveInteger(HY, h, 11, GetPlayerId(ScourgePlayers[ILR + 1]))
-					call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, PlayerColoerHex[GetPlayerId(ScourgePlayers[ILR + 1])] + PlayersName[GetPlayerId(ScourgePlayers[ILR + 1])] + "|r " + GetObjectName('n064'))
+					call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, PlayerColorHex[GetPlayerId(ScourgePlayers[ILR + 1])] + PlayersName[GetPlayerId(ScourgePlayers[ILR + 1])] + "|r " + GetObjectName('n064'))
 					if LocalPlayer== ScourgePlayers[ILR + 1] then
 						call IHR(h)
 					endif
@@ -31459,7 +31441,7 @@ function AYR takes string AZR, integer A_R returns nothing
 	endif
 	call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, 20., " ")
 	if A_R == 1 then
-		call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, 20., PlayerColoerHex[GetPlayerId(HostPlayer)] +(PlayersName[GetPlayerId((HostPlayer))]) + "|r" + " 选择了 " + UW)
+		call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, 20., PlayerColorHex[GetPlayerId(HostPlayer)] +(PlayersName[GetPlayerId((HostPlayer))]) + "|r" + " 选择了 " + UW)
 	else
 		call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, 20., "系统将游戏模式默认选择为 " + UW)
 	endif
@@ -75568,7 +75550,7 @@ function ZLA takes nothing returns nothing
 	local integer h = GetHandleId(GetExpiredTimer())
 	local player p = LoadPlayerHandle(HY, h, 0)
 	if GetPlayerSlotState(p) == PLAYER_SLOT_STATE_LEFT then
-		call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 10, PlayerColoerHex[GetPlayerId(p)] + GetPlayerName(p) + "|r: Maphack detected, kicked.")
+		call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 10, PlayerColorHex[GetPlayerId(p)] + GetPlayerName(p) + "|r: Maphack detected, kicked.")
 	endif
 	call FlushChildHashtable(HY, GetHandleId(GetExpiredTimer()))
 	call DestroyTimer(GetExpiredTimer())
@@ -75595,7 +75577,7 @@ function ZPA takes nothing returns nothing
 				if IsUnitVisibleToPlayer(LO, p) == false then
 					set AO[id] = AO[id] + 1
 					if ModuloInteger(AO[id], 30) == 3 then
-						call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 10, PlayerColoerHex[id] + GetPlayerName(p) + "|r: 作弊检测 " + I2S(AO[id]) + " 秒")
+						call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 10, PlayerColorHex[id] + GetPlayerName(p) + "|r: 作弊检测 " + I2S(AO[id]) + " 秒")
 					endif
 					if GV and ModuloInteger(AO[id], 60) == 5 then
 						call StoreDrCacheData("MH" + I2S(id), R2I(GetGameTime()))
@@ -78273,7 +78255,7 @@ function PromptEnemyState takes player p, string s returns nothing
 		return
 	endif
 	set p2 = GetOwningPlayer(u)
-	call EXDisplayChat(p, 1, "敌人" + PlayerColoerHex[GetPlayerId(p2)] + GetPlayerName(p2) + "|r拥有" + UnitLP(u, false) + UnitMP(u))
+	call EXDisplayChat(p, 1, "敌人" + PlayerColorHex[GetPlayerId(p2)] + GetPlayerName(p2) + "|r拥有" + UnitLP(u, false) + UnitMP(u))
 	call PingMinimapByPlayerColor(p, GetUnitX(u), GetUnitY(u))
 	set u = null
 	set p2 = null
@@ -78369,7 +78351,7 @@ function SyncFogClickData takes nothing returns nothing
 	local string time = SubString(data, StringPos(data, "*") +1, StringLength(data))
 
 	if u != null and IsReplayMode then
-		call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 10, "|c00ff0303可能的开图点击|r " + PlayerColoerHex[pid1] + PlayersName[pid1] + "|r 点击了 " + GetUnitName(u) + "于 " + time )
+		call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 10, "|c00ff0303可能的开图点击|r " + PlayerColorHex[pid1] + PlayersName[pid1] + "|r 点击了 " + GetUnitName(u) + "于 " + time )
 		call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 10, "由于此信息可能会在极限视野点击时误报，请自己根据主视野红圈和实际行动鉴别。")
 		if pid2 != 0 and not b then
 			call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 10, "." + I2S(pid2))
@@ -78997,7 +78979,7 @@ function BlzFunction_Init takes nothing returns nothing
 	call DetectGameStarted()
 endfunction
 
-#include "Map\\ObjectBehaviors\\_include"
+#include "Map\\Behaviors\\_include"
 
 function main takes nothing returns nothing
 	local weathereffect we

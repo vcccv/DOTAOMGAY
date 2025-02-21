@@ -60,7 +60,9 @@ library ItemDefine requires ItemSystem, ItemStatus
         set it_fj = RegisterItem('IZPS', 'IZPD', 0, 'IZPE')
         call SaveInteger(HY, 'ITDB', RegisterItem(0, 0, 'n125', 0), it_fj)//否决一键购买
     
+        // 以太之镜卷轴
         set Recipe_AetherLens = RegisterItem('I0V3', 'I0V4', 'n12W', 'I0V5')
+        // 以太之镜
         set Item_AetherLens   = RegisterItem('I0UE', 'I0UF',     0, 'I0UG')
         call RegisterItemMethodSimple(Item_AetherLens, "ItemAetherLensOnPickup", "ItemAetherLensOnDrop")
         
@@ -419,632 +421,632 @@ library ItemDefine requires ItemSystem, ItemStatus
         set ItemSideLaneShopId[RegisterItem('I0MA', 'I0M9', 'h0CN', 'I0MB')] = XKV
         set ItemSideLaneShopId[RegisterItem('I033', 'I047', 'h0D0', 'I0D7')] = XZV
         set ItemSideLaneShopId[RegisterItem('I032', 'I046', 'u025', 'I0CZ')] = XYV
+        
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = OFV
         set CombineIndex2[CombineMaxIndex] = OWV
         set CombinedIndex[CombineMaxIndex] = IEV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = IEV
         set CombineIndex2[CombineMaxIndex] = XZV
         set CombineIndex3[CombineMaxIndex] = RHV
         set CombineIndex4[CombineMaxIndex] = XZV
         set CombinedIndex[CombineMaxIndex] = RGV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = X7V
         set CombineIndex2[CombineMaxIndex] = X7V
         set CombinedIndex[CombineMaxIndex] = Item_MoonShard
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = ONV
         set CombineIndex2[CombineMaxIndex] = XGV
         set CombinedIndex[CombineMaxIndex] = RQV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = N_V
         set CombineIndex2[CombineMaxIndex] = RXV
         set CombinedIndex[CombineMaxIndex] = RJV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = OHV
         set CombineIndex2[CombineMaxIndex] = Item_IronwoodBranch
         set CombineIndex3[CombineMaxIndex] = N3V
         set CombinedIndex[CombineMaxIndex] = IXV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = XZV
         set CombineIndex2[CombineMaxIndex] = Item_IronwoodBranch
         set CombineIndex3[CombineMaxIndex] = N4V
         set CombinedIndex[CombineMaxIndex] = IOV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = OGV
         set CombineIndex2[CombineMaxIndex] = OMV
         set CombinedIndex[CombineMaxIndex] = IIV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = XMV
         set CombineIndex2[CombineMaxIndex] = N5V
         set CombinedIndex[CombineMaxIndex] = IAV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = IAV
         set CombineIndex2[CombineMaxIndex] = N5V
         set CombinedIndex[CombineMaxIndex] = INV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = I3V
         set CombineIndex2[CombineMaxIndex] = OIV
         set CombinedIndex[CombineMaxIndex] = Item_OctarineCore
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = XMV
         set CombineIndex2[CombineMaxIndex] = XQV
         set CombineIndex3[CombineMaxIndex] = XPV
         set CombinedIndex[CombineMaxIndex] = IBV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = XMV
         set CombineIndex2[CombineMaxIndex] = XTV
         set CombineIndex3[CombineMaxIndex] = XPV
         set CombinedIndex[CombineMaxIndex] = ICV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = XMV
         set CombineIndex2[CombineMaxIndex] = OJV
         set CombineIndex3[CombineMaxIndex] = XPV
         set CombinedIndex[CombineMaxIndex] = IDV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = XPV
         set CombineIndex2[CombineMaxIndex] = N6V
         set CombinedIndex[CombineMaxIndex] = IFV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = ODV
         set CombineIndex2[CombineMaxIndex] = OJV
         set CombineIndex3[CombineMaxIndex] = OMV
         set CombinedIndex[CombineMaxIndex] = IHV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = XSV
         set CombineIndex2[CombineMaxIndex] = X3V
         set CombineIndex3[CombineMaxIndex] = N7V
         set CombinedIndex[CombineMaxIndex] = IJV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = XSV
         set CombineIndex2[CombineMaxIndex] = OLV
         set CombineIndex3[CombineMaxIndex] = N8V
         set CombinedIndex[CombineMaxIndex] = IKV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = XSV
         set CombineIndex2[CombineMaxIndex] = OEV
         set CombineIndex3[CombineMaxIndex] = N9V
         set CombinedIndex[CombineMaxIndex] = ILV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = XUV
         set CombineIndex2[CombineMaxIndex] = XQV
         set CombineIndex3[CombineMaxIndex] = BVV
         set CombinedIndex[CombineMaxIndex] = IMV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = OAV
         set CombineIndex2[CombineMaxIndex] = XTV
         set CombineIndex3[CombineMaxIndex] = BEV
         set CombinedIndex[CombineMaxIndex] = IPV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = OYV
         set CombineIndex2[CombineMaxIndex] = XTV
         set CombineIndex3[CombineMaxIndex] = BXV
         set CombinedIndex[CombineMaxIndex] = IQV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = ACV	//大隐刀
         set CombineIndex2[CombineMaxIndex] = IPV
         set CombineIndex3[CombineMaxIndex] = RMV
         set CombinedIndex[CombineMaxIndex] = RLV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = I4V
         set CombineIndex2[CombineMaxIndex] = NZV
         set CombineIndex3[CombineMaxIndex] = RSV
         set CombinedIndex[CombineMaxIndex] = RTV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = XYV
         set CombineIndex2[CombineMaxIndex] = XZV
         set CombineIndex3[CombineMaxIndex] = OJV
         set CombinedIndex[CombineMaxIndex] = ISV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = ORV
         set CombineIndex2[CombineMaxIndex] = XPV
         set CombineIndex3[CombineMaxIndex] = BOV
         set CombinedIndex[CombineMaxIndex] = ITV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = XUV
         set CombineIndex2[CombineMaxIndex] = XUV
         set CombineIndex3[CombineMaxIndex] = OJV
         set CombineIndex4[CombineMaxIndex] = BRV
         set CombinedIndex[CombineMaxIndex] = IUV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = IUV
         set CombineIndex2[CombineMaxIndex] = BRV
         set CombinedIndex[CombineMaxIndex] = IWV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = IYV
         set CombineIndex2[CombineMaxIndex] = BRV
         set CombinedIndex[CombineMaxIndex] = IWV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = X6V
         set CombineIndex2[CombineMaxIndex] = OXV
         set CombinedIndex[CombineMaxIndex] = I_V
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = OXV
         set CombineIndex2[CombineMaxIndex] = ODV
         set CombinedIndex[CombineMaxIndex] = I1V
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = OMV
         set CombineIndex2[CombineMaxIndex] = OPV
         set CombineIndex3[CombineMaxIndex] = OWV
         set CombineIndex4[CombineMaxIndex] = BAV
         set CombinedIndex[CombineMaxIndex] = Item_EulScepterOfDivinity
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = OCV
         set CombineIndex2[CombineMaxIndex] = X2V
         set CombineIndex3[CombineMaxIndex] = OUV
         set CombinedIndex[CombineMaxIndex] = I3V
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = IXV
         set CombineIndex2[CombineMaxIndex] = IOV
         set CombineIndex3[CombineMaxIndex] = BNV
         set CombinedIndex[CombineMaxIndex] = I4V
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = IPV
         set CombineIndex2[CombineMaxIndex] = IMV
         set CombinedIndex[CombineMaxIndex] = I5V
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = ORV
         set CombineIndex2[CombineMaxIndex] = ORV
         set CombineIndex3[CombineMaxIndex] = BCV
         set CombinedIndex[CombineMaxIndex] = I6V
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = IEV
         set CombineIndex2[CombineMaxIndex] = XYV
         set CombineIndex3[CombineMaxIndex] = X_V
         set CombineIndex4[CombineMaxIndex] = RVV
         set CombinedIndex[CombineMaxIndex] = I7V
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = IEV
         set CombineIndex2[CombineMaxIndex] = XYV
         set CombineIndex3[CombineMaxIndex] = X_V
         set CombineIndex4[CombineMaxIndex] = REV
         set CombinedIndex[CombineMaxIndex] = I7V
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = XWV
         set CombineIndex2[CombineMaxIndex] = XYV
         set CombineIndex3[CombineMaxIndex] = BDV
         set CombinedIndex[CombineMaxIndex] = I8V
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = ORV
         set CombineIndex2[CombineMaxIndex] = OAV
         set CombineIndex3[CombineMaxIndex] = BFV
         set CombinedIndex[CombineMaxIndex] = I9V
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = IMV
         set CombineIndex2[CombineMaxIndex] = OTV
         set CombineIndex3[CombineMaxIndex] = BGV
         set CombinedIndex[CombineMaxIndex] = ABV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = XGV
         set CombineIndex2[CombineMaxIndex] = X_V
         set CombinedIndex[CombineMaxIndex] = ACV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = OPV
         set CombineIndex2[CombineMaxIndex] = ILV
         set CombineIndex3[CombineMaxIndex] = BHV
         set CombinedIndex[CombineMaxIndex] = ADV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = ADV
         set CombineIndex2[CombineMaxIndex] = BHV
         set CombinedIndex[CombineMaxIndex] = AFV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = AFV
         set CombineIndex2[CombineMaxIndex] = BHV
         set CombinedIndex[CombineMaxIndex] = AGV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = AGV
         set CombineIndex2[CombineMaxIndex] = BHV
         set CombinedIndex[CombineMaxIndex] = AHV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = AHV
         set CombineIndex2[CombineMaxIndex] = BHV
         set CombinedIndex[CombineMaxIndex] = AJV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = OPV
         set CombineIndex2[CombineMaxIndex] = XTV
         set CombineIndex3[CombineMaxIndex] = BJV
         set CombinedIndex[CombineMaxIndex] = AKV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = AKV
         set CombineIndex2[CombineMaxIndex] = BJV
         set CombinedIndex[CombineMaxIndex] = ALV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = ALV
         set CombineIndex2[CombineMaxIndex] = BJV
         set CombinedIndex[CombineMaxIndex] = AMV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = OTV
         set CombineIndex2[CombineMaxIndex] = IEV
         set CombineIndex3[CombineMaxIndex] = BKV
         set CombinedIndex[CombineMaxIndex] = Item_LinkenSphere
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = X0V
         set CombineIndex2[CombineMaxIndex] = OKV
         set CombinedIndex[CombineMaxIndex] = ASV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = I8V
         set CombineIndex2[CombineMaxIndex] = X0V
         set CombineIndex3[CombineMaxIndex] = BLV
         set CombinedIndex[CombineMaxIndex] = AUV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = X0V
         set CombineIndex2[CombineMaxIndex] = OYV
         set CombineIndex3[CombineMaxIndex] = OYV
         set CombinedIndex[CombineMaxIndex] = AWV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = OKV
         set CombineIndex2[CombineMaxIndex] = BMV
         set CombinedIndex[CombineMaxIndex] = AZV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = OOV
         set CombineIndex2[CombineMaxIndex] = OUV
         set CombineIndex3[CombineMaxIndex] = BPV
         set CombinedIndex[CombineMaxIndex] = Item_HeartOfTarrasque
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = OOV
         set CombineIndex2[CombineMaxIndex] = I_V
         set CombineIndex3[CombineMaxIndex] = BQV
         set CombinedIndex[CombineMaxIndex] = A2V
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = OOV
         set CombineIndex2[CombineMaxIndex] = I0V
         set CombineIndex3[CombineMaxIndex] = BQV
         set CombinedIndex[CombineMaxIndex] = A2V
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = OTV
         set CombineIndex2[CombineMaxIndex] = OTV
         set CombineIndex3[CombineMaxIndex] = OCV
         set CombineIndex4[CombineMaxIndex] = XKV
         set CombinedIndex[CombineMaxIndex] = A3V
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = OTV
         set CombineIndex2[CombineMaxIndex] = OTV
         set CombineIndex3[CombineMaxIndex] = OCV
         set CombineIndex4[CombineMaxIndex] = XLV
         set CombinedIndex[CombineMaxIndex] = A3V
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = XJV
         set CombineIndex2[CombineMaxIndex] = IOV
         set CombineIndex3[CombineMaxIndex] = A8V
         set CombinedIndex[CombineMaxIndex] = XHV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = XJV
         set CombineIndex2[CombineMaxIndex] = IOV
         set CombineIndex3[CombineMaxIndex] = A9V
         set CombinedIndex[CombineMaxIndex] = XHV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = X1V
         set CombineIndex2[CombineMaxIndex] = ODV
         set CombineIndex3[CombineMaxIndex] = RXV
         set CombinedIndex[CombineMaxIndex] = Item_TheButterfly
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = OMV
         set CombineIndex2[CombineMaxIndex] = XZV
         set CombineIndex3[CombineMaxIndex] = B7V
         set CombinedIndex[CombineMaxIndex] = N_V
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = OCV
         set CombineIndex2[CombineMaxIndex] = OAV
         set CombineIndex3[CombineMaxIndex] = XUV
         set CombineIndex4[CombineMaxIndex] = OPV
         set CombinedIndex[CombineMaxIndex] = Item_AghanimScepterBasic
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         // 神杖升级
         set CombineIndex1[CombineMaxIndex] = Recipe_AghanimBlessing
         set CombineIndex2[CombineMaxIndex] = Item_AghanimScepter
         set CombinedIndex[CombineMaxIndex] = Item_AghanimBlessing
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         // 包含没有成功升级的版本
         set CombineIndex1[CombineMaxIndex] = Recipe_AghanimBlessing
         set CombineIndex2[CombineMaxIndex] = Item_AghanimScepterBasic
         set CombinedIndex[CombineMaxIndex] = Item_AghanimBlessing
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = IEV
         set CombineIndex2[CombineMaxIndex] = IEV
         set CombineIndex3[CombineMaxIndex] = BSV
         set CombinedIndex[CombineMaxIndex] = A6V
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = OTV
         set CombineIndex2[CombineMaxIndex] = OIV
         set CombineIndex3[CombineMaxIndex] = OWV
         set CombinedIndex[CombineMaxIndex] = A7V
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = OUV
         set CombineIndex2[CombineMaxIndex] = OFV
         set CombineIndex3[CombineMaxIndex] = OQV
         set CombinedIndex[CombineMaxIndex] = A8V
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = OUV
         set CombineIndex2[CombineMaxIndex] = OFV
         set CombineIndex3[CombineMaxIndex] = OSV
         set CombinedIndex[CombineMaxIndex] = A8V
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = X2V
         set CombineIndex2[CombineMaxIndex] = OGV
         set CombineIndex3[CombineMaxIndex] = Recipe_ArcaneRing
         set CombinedIndex[CombineMaxIndex] = NVV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = X7V
         set CombineIndex2[CombineMaxIndex] = ITV
         set CombineIndex3[CombineMaxIndex] = B3V
         set CombinedIndex[CombineMaxIndex] = NEV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = R5V
         set CombineIndex3[CombineMaxIndex] = BUV
         set CombinedIndex[CombineMaxIndex] = NXV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = IXV
         set CombineIndex2[CombineMaxIndex] = IRV
         set CombineIndex3[CombineMaxIndex] = OXV
         set CombineIndex4[CombineMaxIndex] = BWV
         set CombinedIndex[CombineMaxIndex] = NOV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = IXV
         set CombineIndex2[CombineMaxIndex] = IIV
         set CombineIndex3[CombineMaxIndex] = OXV
         set CombineIndex4[CombineMaxIndex] = BWV
         set CombinedIndex[CombineMaxIndex] = NOV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = X7V
         set CombineIndex2[CombineMaxIndex] = OBV
         set CombineIndex3[CombineMaxIndex] = XZV
         set CombineIndex4[CombineMaxIndex] = BYV
         set CombinedIndex[CombineMaxIndex] = NRV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = I3V
         set CombineIndex2[CombineMaxIndex] = Recipe_Bloodstone
         set CombineIndex3[CombineMaxIndex] = NYV
         set CombinedIndex[CombineMaxIndex] = NIV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = OHV
         set CombineIndex2[CombineMaxIndex] = OHV
         set CombineIndex3[CombineMaxIndex] = OFV
         set CombineIndex4[CombineMaxIndex] = ONV
         set CombinedIndex[CombineMaxIndex] = NNV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = XPV
         set CombineIndex2[CombineMaxIndex] = X6V
         set CombineIndex3[CombineMaxIndex] = XWV
         set CombineIndex4[CombineMaxIndex] = BZV
         set CombinedIndex[CombineMaxIndex] = NFV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = OIV
         set CombineIndex2[CombineMaxIndex] = OBV
         set CombineIndex3[CombineMaxIndex] = B_V
         set CombinedIndex[CombineMaxIndex] = NGV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = IHV
         set CombineIndex2[CombineMaxIndex] = IHV
         set CombineIndex3[CombineMaxIndex] = B9V
         set CombinedIndex[CombineMaxIndex] = NJV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = XMV
         set CombineIndex2[CombineMaxIndex] = XWV
         set CombineIndex3[CombineMaxIndex] = XWV
         set CombinedIndex[CombineMaxIndex] = NKV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = Item_MagicStick
         set CombineIndex2[CombineMaxIndex] = Item_IronwoodBranch
         set CombineIndex3[CombineMaxIndex] = Item_IronwoodBranch
         set CombineIndex4[CombineMaxIndex] = XSV
         set CombinedIndex[CombineMaxIndex] = Item_MagicWand
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = OHV
         set CombineIndex2[CombineMaxIndex] = OPV
         set CombineIndex3[CombineMaxIndex] = B0V
         set CombinedIndex[CombineMaxIndex] = NMV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = NNV
         set CombineIndex2[CombineMaxIndex] = IXV
         set CombineIndex3[CombineMaxIndex] = B1V
         set CombinedIndex[CombineMaxIndex] = NPV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = OQV
         set CombineIndex2[CombineMaxIndex] = OLV
         set CombineIndex3[CombineMaxIndex] = OLV
         set CombinedIndex[CombineMaxIndex] = NQV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = OSV
         set CombineIndex2[CombineMaxIndex] = OLV
         set CombineIndex3[CombineMaxIndex] = OLV
         set CombinedIndex[CombineMaxIndex] = NQV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = OMV
         set CombineIndex2[CombineMaxIndex] = X3V
         set CombineIndex3[CombineMaxIndex] = X3V
         set CombineIndex4[CombineMaxIndex] = B4V
         set CombinedIndex[CombineMaxIndex] = NUV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = OMV
         set CombineIndex2[CombineMaxIndex] = OHV
         set CombineIndex3[CombineMaxIndex] = B5V
         set CombinedIndex[CombineMaxIndex] = NYV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = X1V
         set CombineIndex2[CombineMaxIndex] = NTV
         set CombinedIndex[CombineMaxIndex] = ROV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = XMV
         set CombineIndex2[CombineMaxIndex] = X2V
         set CombinedIndex[CombineMaxIndex] = NZV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = OJV
         set CombineIndex2[CombineMaxIndex] = IJV
         set CombineIndex3[CombineMaxIndex] = B6V
         set CombinedIndex[CombineMaxIndex] = RRV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = RRV
         set CombineIndex2[CombineMaxIndex] = B6V
         set CombinedIndex[CombineMaxIndex] = RRV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = RIV
         set CombineIndex2[CombineMaxIndex] = B6V
         set CombinedIndex[CombineMaxIndex] = RRV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = X6V
         set CombineIndex2[CombineMaxIndex] = ILV
         set CombineIndex3[CombineMaxIndex] = B8V
         set CombinedIndex[CombineMaxIndex] = N0V
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = XMV
         set CombineIndex2[CombineMaxIndex] = OGV
         set CombineIndex3[CombineMaxIndex] = OHV
         set CombinedIndex[CombineMaxIndex] = Item_TranquilBoots
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = OPV
         set CombineIndex2[CombineMaxIndex] = OPV
         set CombineIndex3[CombineMaxIndex] = OUV
         set CombinedIndex[CombineMaxIndex] = RCV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = IPV
         set CombineIndex2[CombineMaxIndex] = RXV
         set CombinedIndex[CombineMaxIndex] = N1V
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = IQV
         set CombineIndex2[CombineMaxIndex] = OKV
         set CombinedIndex[CombineMaxIndex] = N2V
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = IKV
         set CombineIndex2[CombineMaxIndex] = IRV
         set CombinedIndex[CombineMaxIndex] = RUV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = IKV
         set CombineIndex2[CombineMaxIndex] = IIV
         set CombinedIndex[CombineMaxIndex] = RWV
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = OAV
         set CombineIndex2[CombineMaxIndex] = XQV
         set CombineIndex3[CombineMaxIndex] = XQV
         set CombinedIndex[CombineMaxIndex] = Item_DragonLance
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = NJV
         set CombineIndex2[CombineMaxIndex] = I8V
         set CombineIndex3[CombineMaxIndex] = Recipe_Bloodthorn
         set CombinedIndex[CombineMaxIndex] = Item_Bloodthorn
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = OAV
         set CombineIndex2[CombineMaxIndex] = IHV
         set CombinedIndex[CombineMaxIndex] = it_hyzr
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = Item_DragonLance
         set CombineIndex2[CombineMaxIndex] = NMV
         set CombineIndex3[CombineMaxIndex] = Recipe_HurricanePike
         set CombinedIndex[CombineMaxIndex] = Item_HurricanePike
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = X6V
         set CombineIndex2[CombineMaxIndex] = I6V
         set CombinedIndex[CombineMaxIndex] = it_fj 
-    
+        
         set CombineMaxIndex = CombineMaxIndex + 1
-
         set CombineIndex1[CombineMaxIndex] = X2V
         set CombineIndex2[CombineMaxIndex] = OWV
         set CombineIndex3[CombineMaxIndex] = Recipe_AetherLens

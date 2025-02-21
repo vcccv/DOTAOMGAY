@@ -2,21 +2,128 @@
 library ItemSystem requires Base, TimerUtils, AbilityUtils
 
     globals
+        // 可拾取的物品类型
         integer array ItemPowerupId
+        // 真正起作用的有效物品类型
         integer array ItemRealId
-        
+        // 出售的马甲单位类型
         integer array ItemSellDummyId
-
+        // 禁用状态的物品类型
         integer array ItemDisabledId
 
         string  array ItemsIconFilePath
-        // SideLaneShop
+
+        // 边路商店指向的物品索引对象
         integer array ItemSideLaneShopId
 
         integer       MaxItemCount = 0
 
         private key ITEM_INDEX
         private key ITEM_SELL_DUMMY_INDEX
+
+        // 物品合成
+
+        // 合成配方物品索引1~5
+        integer array CombineIndex1
+        integer array CombineIndex2
+        integer array CombineIndex3
+        integer array CombineIndex4
+        integer array CombineIndex5
+        // 合成对象物品索引
+        integer array CombinedIndex
+        // 可合成装备最大数量
+        integer CombineMaxIndex = 0
+
+        /*
+        在此之前，我需要你先了解到我的地图内的物品系统，物品对象是由多个魔兽的item对象集合而成的，分别为可拾取时，单位身上时，出售时，禁用时(捡起别人的物品就会禁用)，因此这里使用ItemIndex也就是物品索引来表达一个物品对象。
+
+        globals
+            // 可拾取的物品类型
+            integer array ItemPowerupId
+            // 真正起作用的有效物品类型
+            integer array ItemRealId
+            // 出售的马甲单位类型
+            integer array ItemSellDummyId
+            // 禁用状态的物品类型
+            integer array ItemDisabledId
+
+            string  array ItemsIconFilePath
+
+            // 边路商店指向的物品索引对象
+            integer array ItemSideLaneShopId
+
+            integer       MaxItemCount = 0
+
+            private key ITEM_INDEX
+            private key ITEM_SELL_DUMMY_INDEX
+        endglobals
+        function RegisterItem takes integer powerupId, integer realId, integer sellDummyId, integer disabledId returns integer
+            set MaxItemCount = MaxItemCount + 1
+
+            set ItemPowerupId[MaxItemCount]   = powerupId
+            set ItemRealId[MaxItemCount]      = realId
+            set ItemSellDummyId[MaxItemCount] = sellDummyId
+            set ItemDisabledId[MaxItemCount]  = disabledId
+            call SaveBoolean(SightDataHashTable, ItemSellDummyId[MaxItemCount], 0, true)
+
+            // 如果有多个物品对象使用的id相同 则只取第一个
+            if not Table[ITEM_INDEX].integer.has(powerupId) then
+                set Table[ITEM_INDEX].integer[powerupId]  = MaxItemCount
+            endif
+            if not Table[ITEM_INDEX].integer.has(realId) then
+                set Table[ITEM_INDEX].integer[realId]     = MaxItemCount
+            endif
+            if not Table[ITEM_INDEX].integer.has(disabledId) then
+                set Table[ITEM_INDEX].integer[disabledId] = MaxItemCount
+            endif
+            if not Table[ITEM_SELL_DUMMY_INDEX].integer.has(sellDummyId) then
+                set Table[ITEM_SELL_DUMMY_INDEX].integer[sellDummyId] = MaxItemCount
+            endif
+
+            if realId > 0 then
+                set ItemsIconFilePath[MaxItemCount] = MHItem_GetDefDataStr(realId, ITEM_DEF_DATA_ART)// GetAbilitySoundById(realId, SOUND_TYPE_EFFECT_LOOPED)
+            endif
+            return MaxItemCount
+        endfunction
+
+        接下来是关于物品定义，也就是注册，注意这里卷轴=配方=Recipe。
+        // 以太之镜卷轴
+        set Recipe_AetherLens = RegisterItem('I0V3', 'I0V4', 'n12W', 'I0V5')
+        // 以太之镜
+        set Item_AetherLens   = RegisterItem('I0UE', 'I0UF',     0, 'I0UG')
+        call RegisterItemMethodSimple(Item_AetherLens, "ItemAetherLensOnPickup", "ItemAetherLensOnDrop")
+
+        
+        现在你了解了我的物品系统，接下来来看我的合成系统，我需要你帮我优化合成系统的一些变量名，使其更清晰易懂。
+        注意：我使用的是vjass，对于多维数组的使用是会有限制的，不要试图改变我的实现，而是给我提供更合适的命名。
+
+        // 合成材料的物品索引 1~5个，即最多5个合成材料。
+        integer array CombineIndex1
+        integer array CombineIndex2
+        integer array CombineIndex3
+        integer array CombineIndex4
+        integer array CombineIndex5
+
+        // 合成对象物品索引(即上面的合成材料满足条件后就会被合成为这一个物品)
+        integer array CombinedIndex
+
+        // 可合成装备最大数量
+        integer CombineMaxIndex = 0
+
+        // 这是物品合成的注册
+        set CombineMaxIndex = CombineMaxIndex + 1
+        set CombineIndex1[CombineMaxIndex] = X6V
+        set CombineIndex2[CombineMaxIndex] = I6V
+        set CombinedIndex[CombineMaxIndex] = it_fj 
+        
+        set CombineMaxIndex = CombineMaxIndex + 1
+        set CombineIndex1[CombineMaxIndex] = X2V
+        set CombineIndex2[CombineMaxIndex] = OWV
+        set CombineIndex3[CombineMaxIndex] = Recipe_AetherLens
+        set CombinedIndex[CombineMaxIndex] = Item_AetherLens
+
+        我认为关于合成系统的变量名不合适，有没有更合理的命名
+        */
     endglobals
 
     // powerup    = Purchasable
@@ -51,8 +158,24 @@ library ItemSystem requires Base, TimerUtils, AbilityUtils
         return MaxItemCount
     endfunction
 
-    function GetItemIndexById takes integer itemId returns integer
-        return Table[ITEM_INDEX].integer[itemId]
+    function GetItemIndexById takes integer id returns integer
+        return Table[ITEM_INDEX].integer[id]
+    endfunction
+
+    // 通过物品索引来得到它的快速合成索引
+    function GetCombinedIndexByItemIndex takes integer id, boolean fromRecipe returns integer
+        local integer i = 0
+        // fromRecipe == fromRecipe 双击卷轴快速合成时需要查找 如果不是就意味着是快速购买 则为unitId
+        // 如果fromRecipe == false 则找到ITDB(快速合成)匹配的对象，返回合成索引
+        // 如果fromRecipe == true  则寻找5个配方是否和id匹配，返回合成索引
+        loop
+            if (fromRecipe == false and CombinedIndex[i]== LoadInteger(HY,'ITDB', id)) or(fromRecipe and(CombineIndex1[i]== id or CombineIndex2[i]== id or CombineIndex3[i]== id or CombineIndex4[i]== id or CombineIndex5[i]== id)) then
+                return i
+            endif
+            set i = i + 1
+        exitwhen i > CombineMaxIndex
+        endloop
+        return -1
     endfunction
 
     function GetItemIndexEx takes item whichItem returns integer
@@ -94,13 +217,23 @@ library ItemSystem requires Base, TimerUtils, AbilityUtils
     function GetItemIndexBySellUnit takes unit whichUnit returns integer
         local integer unitId
         local integer itemIndex
-        local integer i = 0
         if whichUnit == null then
             return -2
         endif
         set unitId    = GetUnitTypeId(whichUnit)
         set itemIndex = Table[ITEM_SELL_DUMMY_INDEX].integer[unitId]
         
+        if itemIndex > 0 then
+            return itemIndex
+        endif
+
+        return -1
+    endfunction
+
+    function GetItemIndexByUnitId takes integer unitId returns integer
+        local integer itemIndex
+
+        set itemIndex = Table[ITEM_SELL_DUMMY_INDEX].integer[unitId]
         if itemIndex > 0 then
             return itemIndex
         endif

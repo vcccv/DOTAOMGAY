@@ -2,7 +2,7 @@
 scope GameEnd
 
     function GetPlayerNameEx takes player p returns string
-        return PlayerColoerHex[GetPlayerId(p)]+ PlayersName[GetPlayerId(p)]+ "|r"
+        return PlayerColorHex[GetPlayerId(p)]+ PlayersName[GetPlayerId(p)]+ "|r"
     endfunction
     function GetPlayerGoldBonusString takes player p returns string
         local string str = I2S(PlayerGoldBonus[GetPlayerId(p)])

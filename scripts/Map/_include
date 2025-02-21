@@ -1,5 +1,5 @@
 #include "_CoreSystems\\_include"
-#include "ObjectDefinitions\\_include"
+#include "Definitions\\_include"
 #include "Player\\_include"
 #include "GamePlay\\_include"
 #include "UI\\_include"

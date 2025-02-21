@@ -53,10 +53,10 @@ scope Towers
         local integer pid = GetPlayerId(p)
         if IsUnitAlly(tower, p) then
             set PlayerDenyTowerCount[pid] = PlayerDenyTowerCount[pid]+ 1
-            call DisplayTimedTextToAllPlayer(AllPlayerForce, DisplayTextDuration[LocalPlayerId], PlayerColoerHex[pid]+ PlayersName[pid]+ "|r " + GetObjectName('n04P')+ ".")
+            call DisplayTimedTextToAllPlayer(AllPlayerForce, DisplayTextDuration[LocalPlayerId], PlayerColorHex[pid]+ PlayersName[pid]+ "|r " + GetObjectName('n04P')+ ".")
         else
             set PlayerLastHitTowerCount[pid] = PlayerLastHitTowerCount[pid]+ 1
-            call DisplayTimedTextToAllPlayer(AllPlayerForce, DisplayTextDuration[LocalPlayerId], PlayerColoerHex[pid]+ PlayersName[pid]+ "|r " + GetObjectName('n0EN')+ ".")
+            call DisplayTimedTextToAllPlayer(AllPlayerForce, DisplayTextDuration[LocalPlayerId], PlayerColorHex[pid]+ PlayersName[pid]+ "|r " + GetObjectName('n0EN')+ ".")
         endif
         if IsLevel1TowerUnit(tower) then
             if GetOwningPlayer(tower) == SentinelPlayers[0] then
