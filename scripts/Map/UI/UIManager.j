@@ -2,15 +2,26 @@
 // 硬件事件先在一起？
 library UIManager /*
     */ requires /*
-    */ optional CommandButtonHelper, /*
-    */ optional CallCommandButton
+    */ UISystem, /*
+    */ optional CommandButtonHelper,    /*
+    */ optional CallCommandButton,      /*
+    */ optional TownPortalScrollFrame,  /*
+    */ optional DisableResourceTrading, /*
+    */
 
     private function OnGameStart takes nothing returns nothing
+        call LoadTOCFile("UI\\FrameDef\\CustomFrameDef.toc")
         static if LIBRARY_CallCommandButton then
             call CallCommandButton_Init()
         endif
         static if LIBRARY_CommandButtonHelper then
             call CommandButtonHelper_Init()
+        endif
+        static if LIBRARY_TownPortalScrollFrame then
+            call TownPortalScrollFrame_Init()
+        endif
+        static if LIBRARY_DisableResourceTrading then
+            call DisableResourceTradingFrame()
         endif
     endfunction
 

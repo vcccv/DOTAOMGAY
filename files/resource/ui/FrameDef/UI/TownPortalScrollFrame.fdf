@@ -1,0 +1,63 @@
+Texture "TownPortalScrollBackground" {
+    Width  0.0266,
+    Height 0.0266,
+    File "ReplaceableTextures\CommandButtons\BTNScrollUber.blp",
+}
+Texture "TownPortalScrollPushedBackground" {
+    Width  0.02527,
+    Height 0.02527,
+    File "ReplaceableTextures\CommandButtons\BTNScrollUber.blp",
+}
+Texture "TownPortalScrollDisabledBackground" {
+    Width  0.0266,
+    Height 0.0266,
+    File "ReplaceableTextures\CommandButtonsDisabled\DISBTNScrollUber.blp",
+}
+
+Frame "SIMPLEFRAME" "TownPortalScrollFrame" 
+{
+    Width  0.0266,
+    Height 0.0266,
+
+    String "TownPortalScrollCooldownString" {
+        FontJustificationH JUSTIFYCENTER,
+        FontJustificationV JUSTIFYMIDDLE,
+        FontShadowOffset 0.001 -0.001,
+        Font "MasterFont", 0.012,
+        SetPoint CENTER, "TownPortalScrollFrame", CENTER, 0, 0,
+        TextLength 3,
+    }
+    
+    Frame "SIMPLEBUTTON" "TownPortalScrollButton"
+    {
+        SetPoint CENTER, "TownPortalScrollFrame", CENTER, 0, 0,
+        Width  0.0266,
+        Height 0.0266,
+        NormalTexture   "TownPortalScrollBackground",
+        PushedTexture   "TownPortalScrollPushedBackground",
+        DisabledTexture "TownPortalScrollDisabledBackground",
+    }
+
+    Frame "SIMPLEFRAME" "TownPortalScrollNumberOverlay" {
+        DecorateFileNames,
+
+        Texture "TownPortalScrollNumberOverlayTexture" {
+            SetPoint BOTTOMRIGHT, "TownPortalScrollBackground", BOTTOMRIGHT, 0, 0,
+            Width  0.0109375,
+			Height 0.0109375,
+            File "CommandButtonNumberOverlay",
+        }
+        String "TownPortalScrollNumberOverlayTextureString" {
+            SetPoint CENTER, "TownPortalScrollNumberOverlayTexture", CENTER, 0, - 0.00042,
+            Font "MasterFont", 0.009,
+			FontJustificationH JUSTIFYCENTER,
+            FontJustificationV JUSTIFYMIDDLE,
+		}
+    }
+}
+
+Frame "SPRITE" "TownPortalScrollCooldownSprite" {
+    LayerStyle "IGNORETRACKEVENTS",
+    BackgroundArt "UI\feedback\cooldown\ui-cooldown-indicator.mdx",
+    SpriteScale 0.7 0.7 0.7,
+}
