@@ -28,7 +28,7 @@ library ItemStatus requires ItemSystem
         */  or itemIndex == Item_AncientTangoOfEssifation /*
         */  or itemIndex == Item_ObserverWard /*
         */  or itemIndex == Item_SentryWard /*
-        */  or itemIndex == R4V /*
+        */  or itemIndex == Item_TownPortalScroll /*
         */  or itemIndex == Item_GhostPotion /*
         */  or itemIndex == Item_WandOfIllusions /*
         */  or itemIndex == IVV /*

@@ -105,13 +105,13 @@ scope Visage
         local unit familiar3 = null
         local trigger t
         local integer h
-        local boolean isUpgrade = false
+        local boolean isUpgraded = false
         local integer i
         call GroupEnumUnitsOfPlayer(g, GetOwningPlayer(whichUnit), Condition(function AKA))
         call DeallocateGroup(g)
         if level == 0 then
             set level = GetUnitAbilityLevel(whichUnit,'A2IG')
-            set isUpgrade = true
+            set isUpgraded = true
         endif
         if level == 1 then
             set familiar1 = CreateUnit(GetOwningPlayer(whichUnit),'u014', x + 75, y + 75, GetUnitFacing(whichUnit))
@@ -150,7 +150,7 @@ scope Visage
         call SaveInteger(HY, h, 28, 0)
         call SaveInteger(HY, h, 194, 7)
         call FamiliarAddAttack(familiar2, 7, level)
-        if isUpgrade then
+        if isUpgraded then
             if level == 1 then
                 set familiar3 = CreateUnit(GetOwningPlayer(whichUnit),'u01R', x + 75, y, GetUnitFacing(whichUnit))
             elseif level == 2 then

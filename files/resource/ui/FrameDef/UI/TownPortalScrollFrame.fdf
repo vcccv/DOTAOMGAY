@@ -6,12 +6,10 @@ Texture "TownPortalScrollBackground" {
 Texture "TownPortalScrollPushedBackground" {
     Width  0.02527,
     Height 0.02527,
-    File "ReplaceableTextures\CommandButtons\BTNScrollUber.blp",
 }
 Texture "TownPortalScrollDisabledBackground" {
     Width  0.0266,
     Height 0.0266,
-    File "ReplaceableTextures\CommandButtonsDisabled\DISBTNScrollUber.blp",
 }
 
 Frame "SIMPLEFRAME" "TownPortalScrollFrame" 
@@ -19,40 +17,41 @@ Frame "SIMPLEFRAME" "TownPortalScrollFrame"
     Width  0.0266,
     Height 0.0266,
 
-    String "TownPortalScrollCooldownString" {
-        FontJustificationH JUSTIFYCENTER,
-        FontJustificationV JUSTIFYMIDDLE,
-        FontShadowOffset 0.001 -0.001,
-        Font "MasterFont", 0.012,
-        SetPoint CENTER, "TownPortalScrollFrame", CENTER, 0, 0,
-        TextLength 3,
-    }
-    
     Frame "SIMPLEBUTTON" "TownPortalScrollButton"
     {
         SetPoint CENTER, "TownPortalScrollFrame", CENTER, 0, 0,
         Width  0.0266,
         Height 0.0266,
         NormalTexture   "TownPortalScrollBackground",
-        PushedTexture   "TownPortalScrollPushedBackground",
-        DisabledTexture "TownPortalScrollDisabledBackground",
+    }
+
+    Frame "SIMPLEFRAME" "TownPortalScrollCooldownIndicator" {
+        DecorateFileNames,
+        
+        String "TownPortalScrollCooldownString" {
+            SetPoint CENTER, "TownPortalScrollFrame", CENTER, 0, 0,
+            FontJustificationH JUSTIFYCENTER,
+            FontJustificationV JUSTIFYMIDDLE,
+            FontShadowOffset 0.001 -0.001,
+            Font "MasterFont", 0.013,
+            TextLength 3,
+        }
     }
 
     Frame "SIMPLEFRAME" "TownPortalScrollNumberOverlay" {
         DecorateFileNames,
 
         Texture "TownPortalScrollNumberOverlayTexture" {
-            SetPoint BOTTOMRIGHT, "TownPortalScrollBackground", BOTTOMRIGHT, 0, 0,
             Width  0.0109375,
-			Height 0.0109375,
-            File "CommandButtonNumberOverlay",
+            Height 0.0109375,
+            File  "CommandButtonNumberOverlay",
         }
-        String "TownPortalScrollNumberOverlayTextureString" {
+        String "TownPortalScrollNumberOverlayString" {
             SetPoint CENTER, "TownPortalScrollNumberOverlayTexture", CENTER, 0, - 0.00042,
-            Font "MasterFont", 0.009,
-			FontJustificationH JUSTIFYCENTER,
+            Font "MasterFont", 0.008,
+            FontJustificationH JUSTIFYCENTER,
             FontJustificationV JUSTIFYMIDDLE,
-		}
+        }
     }
 }
 

@@ -155,7 +155,7 @@ scope TaurenChieftain
         set I5I = y
         set I6I = x
         set I7I = y
-        call A8X(GetOwningPlayer(whichUnit), 4, x, y, 500)
+        call CreateFogModifierTimedForPlayer(GetOwningPlayer(whichUnit), 4, x, y, 500)
         call DestroyEffect(AddSpecialEffect("Abilities\\Weapons\\AncientProtectorMissile\\AncientProtectorMissile.mdl", IWI, IYI))
         call DestroyEffect(AddSpecialEffect("Abilities\\Weapons\\AncientProtectorMissile\\AncientProtectorMissile.mdl", IZI, I_I))
         call DestroyEffect(AddSpecialEffect("Abilities\\Weapons\\AncientProtectorMissile\\AncientProtectorMissile.mdl", I0I, I1I))

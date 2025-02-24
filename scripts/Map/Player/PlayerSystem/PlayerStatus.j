@@ -2,7 +2,7 @@
 library PlayerStatus requires PlayerSystem
 
     // 是ob玩家
-    function IsObserverPlayerEx takes player p returns boolean
+    function IsPlayerObserverEx takes player p returns boolean
         return GameHasObservers and(ObserverPlayer1 == p or ObserverPlayer2 == p)
     endfunction
     // 近卫

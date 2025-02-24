@@ -294,7 +294,7 @@ scope Spectre
     function SpectralPathBuffOnRemove takes nothing returns nothing
         local unit whichUnit = Event.GetTriggerUnit()
         call UnitDecNoPathingCount(whichUnit)
-        call UnitModifyPostion(whichUnit)
+        call UnitModifyPosition(whichUnit)
         set whichUnit = null
     endfunction
     function SpectralDaggerOnSpellEffect takes nothing returns nothing

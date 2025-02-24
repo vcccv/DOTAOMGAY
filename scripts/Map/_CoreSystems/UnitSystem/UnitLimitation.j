@@ -204,7 +204,7 @@ library UnitLimitation requires Base, UnitModel
         call tick.Destroy()
         set whichUnit = null
     endfunction
-    function UnitAddStunCountSafe takes unit whichUnit returns nothing
+    function UnitIncStunCountSafe takes unit whichUnit returns nothing
         local SimpleTick tick
         if GetTriggerEventId() == EVENT_PLAYER_UNIT_SPELL_EFFECT or GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT then
             set tick = SimpleTick.Create(0)

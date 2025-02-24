@@ -59,12 +59,21 @@ library UnitAbility requires AbilityUtils, UnitLimitation
         call SetUnitAbilityLevel(whichUnit, id, level)
     endfunction
     
+    // 当前技能的冷却时间(当前等级)
     function GetAbilityCooldown takes ability whichAbility returns real
         return MHAbility_GetAbilityCustomLevelDataReal(whichAbility, GetAbilityLevel(whichAbility), ABILITY_LEVEL_DEF_DATA_COOLDOWN)
     endfunction
-
     function GetAbilityCooldownRemaining takes ability whichAbility returns real
         return MHAbility_GetAbilityCooldown(whichAbility)
+    endfunction
+
+    // 当前技能的魔法消耗(当前等级)
+    function GetAbilityManaCost takes ability whichAbility returns integer
+        return MHAbility_GetAbilityCustomLevelDataInt(whichAbility, GetAbilityLevel(whichAbility), ABILITY_LEVEL_DEF_DATA_MANA_COST)
+    endfunction
+
+    function GetUnitAbilityCooldown takes unit whichUnit, integer abilId returns real
+        return MHAbility_GetCustomLevelDataReal(whichUnit, abilId, GetUnitAbilityLevel(whichUnit, abilId), ABILITY_LEVEL_DEF_DATA_COOLDOWN)
     endfunction
     function GetUnitAbilityCooldownRemaining takes unit whichUnit, integer abilId returns real
         return MHAbility_GetCooldown(whichUnit, abilId)

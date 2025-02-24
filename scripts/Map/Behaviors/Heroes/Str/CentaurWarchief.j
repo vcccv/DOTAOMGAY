@@ -129,7 +129,7 @@ scope CentaurWarchief
     function StampedeOnSpellEffect takes nothing returns nothing
         local unit    whichUnit = GetRealSpellUnit(GetTriggerUnit())
         local integer level     = GetUnitAbilityLevel(whichUnit, GetSpellAbilityId())
-        local boolean isUpgrade = GetSpellAbilityId() == 'A384'
+        local boolean isUpgraded = GetSpellAbilityId() == 'A384'
 
         local sound   s
         
@@ -144,7 +144,7 @@ scope CentaurWarchief
         local integer buffId = 'B0GB'
 
         // 死亡驱散
-        if isUpgrade then
+        if isUpgraded then
             set buffId = 'B0GH'
         endif
         set trig = CreateTrigger()

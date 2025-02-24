@@ -13,9 +13,25 @@ library UnitStatus
         local integer id = GetUnitTypeId(whichUnit)
         return id =='n004' or id =='n018' or id =='n01C' or id =='n01G'
     endfunction
+    // 泉水
+    function IsUnitFountain takes unit whichUnit returns boolean
+        local integer id = GetUnitTypeId(whichUnit)
+        return id == 'nfoh' or id == 'ndfl'
+    endfunction
 
     // status
-
+    // 商店
+    function IsUnitShop takes unit whichUnit returns boolean
+        return GetUnitAbilityLevel(whichUnit, 'Asud') > 0
+    endfunction
+    // 远古单位
+    function IsUnitAncient takes unit whichUnit returns boolean
+        return IsUnitType(whichUnit, UNIT_TYPE_ANCIENT)
+    endfunction
+    // 存活 遵守格式
+    function IsUnitAlive takes unit whichUnit returns boolean
+        return UnitAlive(whichUnit)
+    endfunction
     // 该单位是否是守卫单位
     function IsUnitWard takes unit whichUnit returns boolean
         return GetUnitAbilityLevel(whichUnit, 'A04R') > 0

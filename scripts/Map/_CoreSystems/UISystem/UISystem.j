@@ -86,7 +86,7 @@ library UISystem requires ErrorMessage
                 call ThrowError(this.ptr == 0, "UISystem", "CreateSimpleFrame", name, createContext, "parent == null")
             endif
             
-            set newFrame = thistype.create(DzCreateSimpleFrame(name, this.ptr, createContext))
+            set newFrame = thistype.create(MHFrame_CreateSimple(name, this.ptr, createContext))
 
             static if DEBUG_MODE then
                 call ThrowError(newFrame == 0, "UISystem", "CreateSimpleFrame", name, createContext, "newFrame == null" + "\nparent:" + I2S(this))
@@ -299,7 +299,7 @@ library UISystem requires ErrorMessage
             call DzFrameSetAnimateOffset(this.ptr, offset)
         endmethod
 
-        method SetTexture takes string texFile, integer flag, boolean blend returns nothing
+        method SetTextureEx takes string texFile, integer flag, boolean blend returns nothing
             if this.ptr == 0 then
                 return
             endif
@@ -310,6 +310,19 @@ library UISystem requires ErrorMessage
             endif
 
             call MHFrame_SetTexture(this.ptr, texFile, flag != 0)
+        endmethod
+
+        method SetTexture takes string texFile returns nothing
+            if this.ptr == 0 then
+                return
+            endif
+
+            set texFile = MHString_Replace(texFile, "/", "\\")
+            if MHString_Find(texFile, ".blp", 0) == - 1 then
+                set texFile = texFile + ".blp"
+            endif
+
+            call MHFrame_SetTexture(this.ptr, texFile, false)
         endmethod
 
         method SetScale takes real scale returns nothing

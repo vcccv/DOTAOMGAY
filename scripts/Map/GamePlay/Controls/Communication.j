@@ -1,5 +1,4 @@
-
-library Communication requires PlayerChatUtils, ItemSystem
+library Communication requires PlayerChatUtils, ItemSystem, UnitAbility
 
     globals
         private trigger SkillTrig
@@ -213,6 +212,7 @@ library Communication requires PlayerChatUtils, ItemSystem
     endfunction
     
     globals
+        constant string ABILITY_SELF_DISABLED         = "$abilityName$（$abilityLevel$级） > 已被禁用"
         constant string ABILITY_SELF_READY            = "$abilityName$（$abilityLevel$级） > 准备就绪"
         constant string ABILITY_SELF_REQUIRE_COOLDOWN = "$abilityName$（$abilityLevel$级） > 冷却中（还剩$cooldown$秒）"
         constant string ABILITY_SELF_REQUIRE_MANA     = "$abilityName$（$abilityLevel$级） > 魔法不足（还需要$manaCost$点）"
@@ -246,6 +246,11 @@ library Communication requires PlayerChatUtils, ItemSystem
             set msg = MHString_Replace(msg, "$abilityName$", GetObjectName(abilId))
             set msg = MHString_Replace(msg, "$abilityLevel$", I2S(abilLevel))
             set msg = MHString_Replace(msg, "$manaCost$", I2S(R2I(manaCost * 1. - GetUnitState(whichUnit, UNIT_STATE_MANA))))
+        elseif IsUnitAbilityDisabled(whichUnit, abilId) then
+            // 被禁用了
+            set msg = msg + ABILITY_SELF_DISABLED
+            set msg = MHString_Replace(msg, "$abilityName$", GetObjectName(abilId))
+            set msg = MHString_Replace(msg, "$abilityLevel$", I2S(abilLevel))
         else
             // 准备就绪
             set msg = msg + ABILITY_SELF_READY
@@ -264,6 +269,9 @@ library Communication requires PlayerChatUtils, ItemSystem
     endfunction
     
     globals
+        constant string TOWN_PORTAL_SCROLL_SELF_DISABLED = "我没带$itemName$"
+        constant string TOWN_PORTAL_SCROLL_ALLY_DISABLED = "没带$itemName$"
+        
         constant string ITEM_SELF_READY            = "$itemName$ > 准备就绪"
         constant string ITEM_SELF_REQUIRE_COOLDOWN = "$itemName$ > 冷却中（还剩$cooldown$秒）"
         constant string ITEM_SELF_REQUIRE_MANA     = "$itemName$ > 魔法不足（还需要$manaCost$点）"
@@ -281,7 +289,6 @@ library Communication requires PlayerChatUtils, ItemSystem
         local string  itemName
         local string  msg              
 
-        call BJDebugMsg("hello!" + I2S(GetHandleId(whichItem)))
         if whichUnit == null or whichItem == null then
             return
         endif
@@ -319,6 +326,68 @@ library Communication requires PlayerChatUtils, ItemSystem
             set msg = msg + ITEM_ENEMY_PING
             set msg = MHString_Replace(msg, "$heroName$", GetUnitNameColored(whichUnit))
             set msg = MHString_Replace(msg, "$itemName$", itemName)
+        endif
+
+        // 技能充能
+        if charges > 0 then
+            set msg = msg + MHString_Replace(ITEM_CHARGES, "$charges$", I2S(charges))
+        endif
+
+        if msg != null then
+            call PlayerChat.SendChatToAlliedPlayers(msg)
+        endif
+    endfunction
+
+    public function OnPingTownPortalScroll takes unit whichUnit, ability whichAbility, integer charges returns nothing
+        local integer abilId            
+        local real    cooldownRemaining
+        local integer manaCost
+        local string  itemName
+        local string  msg              
+
+        if whichUnit == null or whichAbility == null then
+            return
+        endif
+
+        set abilId            = GetAbilityId(whichAbility)
+        set cooldownRemaining = GetAbilityCooldownRemaining(whichAbility)
+        set manaCost          = GetAbilityManaCost(whichAbility)
+        set msg               = null
+
+        if IsUnitAlly(whichUnit, GetLocalPlayer()) then
+            // ping队友时在前面加上
+            if not IsUnitOwnedByPlayer(whichUnit, GetLocalPlayer()) then
+                set msg = MHString_Replace(ITEM_ALLY_PING, "$heroName$", GetUnitNameColored(whichUnit))
+            endif
+
+            if cooldownRemaining > 0. then
+                // 冷却中
+                set msg = msg + ITEM_SELF_REQUIRE_COOLDOWN
+                set msg = MHString_Replace(msg, "$itemName$", GetObjectName(abilId))
+                set msg = MHString_Replace(msg, "$cooldown$", I2S(R2I(cooldownRemaining + 1.)))
+            elseif manaCost > GetUnitState(whichUnit, UNIT_STATE_MANA) then
+                // 魔法不足
+                set msg = msg + ITEM_SELF_REQUIRE_MANA
+                set msg = MHString_Replace(msg, "$itemName$", GetObjectName(abilId))
+                set msg = MHString_Replace(msg, "$manaCost$", I2S(R2I(manaCost * 1. - GetUnitState(whichUnit, UNIT_STATE_MANA))))
+            elseif IsUnitAbilityDisabled(whichUnit, abilId) then
+                if IsUnitOwnedByPlayer(whichUnit, GetLocalPlayer()) then
+                    set msg = msg + TOWN_PORTAL_SCROLL_SELF_DISABLED
+                    set msg = MHString_Replace(msg, "$itemName$", GetObjectName(abilId))
+                else
+                    set msg = msg + TOWN_PORTAL_SCROLL_ALLY_DISABLED
+                    set msg = MHString_Replace(msg, "$itemName$", GetObjectName(abilId))
+                endif
+            else
+                // 准备就绪
+                set msg = msg + ITEM_SELF_READY
+                set msg = MHString_Replace(msg, "$itemName$", GetObjectName(abilId))
+            endif
+        else
+            // ping敌人时
+            set msg = msg + ITEM_ENEMY_PING
+            set msg = MHString_Replace(msg, "$heroName$", GetUnitNameColored(whichUnit))
+            set msg = MHString_Replace(msg, "$itemName$", GetObjectName(abilId))
         endif
 
         // 技能充能
@@ -381,7 +450,7 @@ library Communication requires PlayerChatUtils, ItemSystem
         return false
     endfunction
 
-    function CommandButtonHelper_Init takes nothing returns nothing
+    function Communication_Init takes nothing returns nothing
         local integer slot
         local integer x
         local integer y
@@ -409,4 +478,3 @@ library Communication requires PlayerChatUtils, ItemSystem
     endfunction
 
 endlibrary
-

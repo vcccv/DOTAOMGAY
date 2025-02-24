@@ -5,3 +5,4 @@ war3map.j
 files/*.ai
 files/*.blp
 **/war3map.w3x
+*.w3x

@@ -3095,7 +3095,7 @@ art=ReplaceableTextures\CommandButtons\BTNOwlBear
 name=暴怒的枭兽
 [ntav]
 art=ReplaceableTextures\CommandButtons\BTNTavern
-name="曙光酒馆"
+name="酒馆"
 [nfoh]
 art=ReplaceableTextures\CommandButtons\BTNFountainOfLife
 missileart=Abilities\Weapons\RedDragonBreath\RedDragonMissile.mdl
@@ -32521,11 +32521,10 @@ name="Ethereal Blade MS"
 [A1R5]
 art=ReplaceableTextures\CommandButtons\BTNTornado
 researchart=ReplaceableTextures\CommandButtons\BTNTornado
-buttonpos=,2
-researchbuttonpos=3
-animnames=spell,channel
-name="Scroll of Teleporation (fixed)"
-Tip=龙卷风[|cffffcc00F|r]
+buttonpos=0,-11
+animnames=stand,channel
+name="回城卷轴"
+Tip=回城卷轴
 Ubertip=召唤可以操控的龙卷风对周围150/600范围内的敌方单位造成每秒45/15点伤害，并降低其15/15%的攻击/移动速度。|n|n|cffff0303需要持续施法|r|n|cffff0303减速效果无视魔法免疫|r|n|n|cff99ccff施法距离：|r500|n|cff99ccff持续时间：|r30秒|n|cff99ccff冷却时间：|r120秒
 Hotkey=F
 Researchtip=学习 龙卷风(|cffffcc00F|r)

@@ -52,7 +52,7 @@ scope ObsidianDestroyer
             //call SelectUnitRemoveForPlayer(targetUnit, GetOwningPlayer(targetUnit))
 
             call UnitIncInvulnerableCount(targetUnit)
-            call UnitAddStunCountSafe(targetUnit)
+            call UnitIncStunCountSafe(targetUnit)
             call UnitIncHideExCount(targetUnit)
 
             call SaveEffectHandle(HY, h, 32,(AddSpecialEffect("Abilities\\Spells\\Demon\\DarkConversion\\ZombifyTarget.mdl", GetUnitX(targetUnit), GetUnitY(targetUnit))))

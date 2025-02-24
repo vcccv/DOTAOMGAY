@@ -45,7 +45,7 @@ scope TreantProtector
             endloop
             call SaveInteger(HY, hu,'EinF', LoadInteger(HY, hu,'EinF') -1)
         else
-            call SetUbersplatRenderAlways(LoadUbersplatHandle(HY, h, 3), IsPlayerAlly(LocalPlayer, GetOwningPlayer(u)) or IsObserverPlayerEx(LocalPlayer) or(IsUnitVisibleToPlayer(u, LocalPlayer)))
+            call SetUbersplatRenderAlways(LoadUbersplatHandle(HY, h, 3), IsPlayerAlly(LocalPlayer, GetOwningPlayer(u)) or IsPlayerObserverEx(LocalPlayer) or(IsUnitVisibleToPlayer(u, LocalPlayer)))
         endif
         set t = null
         set u = null

@@ -365,7 +365,7 @@ library UnitIllusion requires UnitUtils, UnitWeapon, UnitMorph, BuffSystem
 
         call UnitIncInvulnerableCount(whichUnit)
         call UnitDispelBuffs(whichUnit, false)
-        call UnitAddStunCountSafe(whichUnit)
+        call UnitIncStunCountSafe(whichUnit)
         call UnitIncHideExCount(whichUnit)
     endfunction
 

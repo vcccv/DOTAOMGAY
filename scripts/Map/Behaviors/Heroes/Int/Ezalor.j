@@ -51,7 +51,7 @@ scope Ezalor
         endif
         call SetUnitScale(u, s, s, s)
         call SaveReal(ObjectHashTable, h, StringHash("scale"), s)
-        call A8X(GetOwningPlayer(O8O), 2.5, x, y, 375)
+        call CreateFogModifierTimedForPlayer(GetOwningPlayer(O8O), 2.5, x, y, 375)
         set Temp__Player = LoadPlayerHandle(ObjectHashTable, h, 2)
         set Temp__ArrayUnit[0] = O8O
         set XK[0] = LoadInteger(ObjectHashTable, h, 1)

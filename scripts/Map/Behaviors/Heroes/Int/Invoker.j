@@ -140,7 +140,7 @@ scope Invoker
         local integer   level     = GetUnitAbilityLevel(whichUnit, GetSpellAbilityId())
         local real      distance  = 1000. + GetUnitCastRangeBonus(whichUnit)
         local real      damage    = 20. + 60. * level
-        local boolean   isUpgrade = GetSpellAbilityId() == 'A3K5'
+        local boolean   isUpgraded = GetSpellAbilityId() == 'A3K5'
         local integer   i
         local integer   max
         local UpgradeDeafeningBlast instance
@@ -157,7 +157,7 @@ scope Invoker
             set angle = RadianBetweenXY(x, y, tx, ty)
         endif
 
-        if not isUpgrade then
+        if not isUpgraded then
             set sw = Shockwave.CreateByDistance(whichUnit, x, y, angle, distance)
             call sw.SetSpeed(1100.)
             call sw.SetModelScale(4.)

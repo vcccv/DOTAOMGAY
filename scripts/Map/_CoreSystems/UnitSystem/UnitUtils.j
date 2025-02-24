@@ -7,9 +7,14 @@ library UnitUtils
         return MHUnit_GetDefDataInt(unitId, UNIT_DEF_DATA_GOLD_COST)
     endfunction
 
-    function UnitModifyPostion takes unit whichUnit returns nothing
+    function UnitModifyPosition takes unit whichUnit returns nothing
         local real x = GetUnitX(whichUnit)
         local real y = GetUnitY(whichUnit)
+        call SetUnitX(whichUnit, MHUnit_ModifyPositionX(whichUnit, x, y))
+        call SetUnitY(whichUnit, MHUnit_ModifyPositionY(whichUnit, x, y))
+    endfunction
+
+    function SetUnitPositionEx takes unit whichUnit, real x, real y returns nothing
         call SetUnitX(whichUnit, MHUnit_ModifyPositionX(whichUnit, x, y))
         call SetUnitY(whichUnit, MHUnit_ModifyPositionY(whichUnit, x, y))
     endfunction

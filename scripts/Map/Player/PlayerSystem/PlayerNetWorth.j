@@ -22,7 +22,7 @@ library PlayerNetWorthLib requires PlayerSystem, PlayerStatus, Base
             call SaveTextTagHandle(HY, hu, 'netw', tt)
         endif
         call SetTextTagText(tt, I2S(networth), .025)
-        call SetTextTagVisibility(tt, IsUnitAlly(circleUnit, LocalPlayer) or IsObserverPlayerEx(LocalPlayer))
+        call SetTextTagVisibility(tt, IsUnitAlly(circleUnit, LocalPlayer) or IsPlayerObserverEx(LocalPlayer))
         // 能否买活
         if GetBuybackGoldCostByLevel(GetHeroLevel(PlayerHeroes[id]))* 50 + 50 > GetPlayerState(GetOwningPlayer(circleUnit), PLAYER_STATE_RESOURCE_GOLD) or UF[id]or W4[id]=='h0D4' then
             call SetTextTagColor(tt, 255, 75, 0, 255)

@@ -29,16 +29,16 @@ scope Magnus
     private struct MShockWave extends array
         
         real    damage
-        boolean isUpgrade
+        boolean isUpgraded
 
         static method OnRemove takes Shockwave sw returns boolean
-            set thistype(sw).isUpgrade = false
+            set thistype(sw).isUpgraded = false
             return true
         endmethod
 
         static method OnFinish takes Shockwave sw returns boolean
             local Shockwave new
-            if not thistype(sw).isUpgrade then
+            if not thistype(sw).isUpgraded then
                 return true
             endif
             
@@ -76,9 +76,9 @@ scope Magnus
 
         local integer level     = GetUnitAbilityLevel(whichUnit, GetSpellAbilityId())
         local real    distance  = 1000. + GetUnitCastRangeBonus(whichUnit)
-        local boolean isUpgrade = GetSpellAbilityId() == 'A3Y8'
+        local boolean isUpgraded = GetSpellAbilityId() == 'A3Y8'
 
-        if isUpgrade then
+        if isUpgraded then
             set distance = distance + 200.
         endif
 
@@ -102,7 +102,7 @@ scope Magnus
         set sw.minRadius = 150.
         set sw.maxRadius = 150.
         set sw.model     = "Abilities\\Spells\\Orc\\Shockwave\\ShockwaveMissile.mdl"
-        set MShockWave(sw).isUpgrade = isUpgrade
+        set MShockWave(sw).isUpgraded = isUpgraded
         set MShockWave(sw).damage = level * 75.
         call MShockWave.Launch(sw)
     endfunction
@@ -227,7 +227,7 @@ scope Magnus
             set ty = CoordinateY75(sy + distance * Sin(a))
         endif
 
-        call UnitAddStunCountSafe(whichUnit)
+        call UnitIncStunCountSafe(whichUnit)
         call UnitIncNoPathingCount(whichUnit)
 
         call SetUnitAnimationByIndex(whichUnit, 3)
@@ -271,7 +271,7 @@ scope Magnus
         local group     g         = AllocationGroup(357)
         local unit      d         = CreateUnit(GetOwningPlayer(u),'e00E', x, y, 0)
         local integer   level     = GetUnitAbilityLevel(u, GetSpellAbilityId())
-        local boolean   isUpgrade = GetSpellAbilityId() == 'A447'
+        local boolean   isUpgraded = GetSpellAbilityId() == 'A447'
         local real      angle     = GetUnitFacing(u) * bj_DEGTORAD
         local unit      first
         local real      area      = 410.
@@ -302,13 +302,13 @@ scope Magnus
         call SetUnitAbilityLevel(d,'A06F', level)
         call IssueImmediateOrderById(d, 852127)
 
-        if isUpgrade then
+        if isUpgraded then
             set sw = Shockwave.CreateByDistance(u, x, y, angle, distance)
             call sw.SetSpeed(1050.)
             set sw.minRadius = 150.
             set sw.maxRadius = 150.
             set sw.model     = "Abilities\\Spells\\Orc\\Shockwave\\ShockwaveMissile.mdl"
-            set MShockWave(sw).isUpgrade = false
+            set MShockWave(sw).isUpgraded = false
             set MShockWave(sw).damage = 175
             call MShockWave.Launch(sw)
 
@@ -317,7 +317,7 @@ scope Magnus
             set sw.minRadius = 150.
             set sw.maxRadius = 150.
             set sw.model     = "Abilities\\Spells\\Orc\\Shockwave\\ShockwaveMissile.mdl"
-            set MShockWave(sw).isUpgrade = false
+            set MShockWave(sw).isUpgraded = false
             set MShockWave(sw).damage = 175
             call MShockWave.Launch(sw)
 
@@ -326,7 +326,7 @@ scope Magnus
             set sw.minRadius = 150.
             set sw.maxRadius = 150.
             set sw.model     = "Abilities\\Spells\\Orc\\Shockwave\\ShockwaveMissile.mdl"
-            set MShockWave(sw).isUpgrade = false
+            set MShockWave(sw).isUpgraded = false
             set MShockWave(sw).damage = 175
             call MShockWave.Launch(sw)
         endif

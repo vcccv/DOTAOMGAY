@@ -1,7 +1,7 @@
 
 // 需求黑市的卷轴合成物品 卷轴是BTNSnazzyScroll 即不能双击快速合成
 // 不需求黑市的卷轴合成物品 卷轴是BTNSnazzyScrollPurple
-library ItemDefine requires ItemSystem, ItemStatus
+library ItemDefinitions requires ItemSystem, ItemStatus
 
     // 用于检查物品是否价格正确
     static if DEBUG_MODE then
@@ -37,7 +37,7 @@ library ItemDefine requires ItemSystem, ItemStatus
         endfunction
     endif
 
-    function ItemDefine_Init takes nothing returns nothing
+    function ItemDefinitions_Init takes nothing returns nothing
         local string s = ""
         call RegisterItem('I0FF', 'I0FG', 0, 0)
 
@@ -148,7 +148,10 @@ library ItemDefine requires ItemSystem, ItemStatus
         set R_V = RegisterItem('I056', 'I05F', 'h029', 'INHS')
         set Item_ObserverWard = RegisterItem('I058', 'I05G', 'h02C', 0)
         set Item_SentryWard = RegisterItem('I059', 'I05H', 'h02D', 0)
-        set R4V = RegisterItem('I05A', 'I05I', 'h02E', 0)
+        // Item_TownPortalScroll
+        set Item_TownPortalScroll = RegisterItem('I05A', 'I05I', 'h02E', 0)
+        call RegisterItemPuckupMethodByIndex(Item_TownPortalScroll, "ItemTownPortalScrollOnPickup")
+        
         set R5V = RegisterItem('I05B', 'I05J', 'h02F', 0)
         set R6V = RegisterItem('I0B0', 'I0B1', 0, 0)
         set R7V = RegisterItem('I0TC', 'I0TD', 0, 0)
@@ -161,7 +164,9 @@ library ItemDefine requires ItemSystem, ItemStatus
         set IOV = RegisterItem('I065', 'I066', 0, 'I01L')
         set IRV = RegisterItem('I068', 'I067', 0, 'I01M')
         set IIV = RegisterItem('I069', 'I06A', 0, 'I0C6')
-        set IAV = RegisterItem('I06C', 'I06B', 0, 'I01P')
+        // Item_BootsOfTravel
+        set Item_BootsOfTravel = RegisterItem('I06C', 'I06B', 0, 'I01P')
+        call RegisterItemMethodSimple(Item_BootsOfTravel, "ItemBootsOfTravelOnPickup", "ItemBootsOfTravelOnDrop")
         set IBV = RegisterItem('I03O', 'I02T', 0, 'I01R')
         set ICV = RegisterItem('I02U', 'I05Y', 0, 'I01Q')
         set IDV = RegisterItem('I060', 'I05Z', 0, 'I01S')
@@ -306,7 +311,9 @@ library ItemDefine requires ItemSystem, ItemStatus
         set RPV = RegisterItem('I0S6', 'I0S7', 'n12A', 'I0S8')
         set RTV = RegisterItem('I0SC', 'I0SD', 0, 'I0SE')
         set RQV = RegisterItem('I0S9', 'I0SA', 0, 'I0SB')
-        set INV = RegisterItem('I0SZ', 'I0T0', 0, 'I0T1')
+        // Item_BootsOfTravelUpgraded
+        set Item_BootsOfTravelUpgraded = RegisterItem('I0SZ', 'I0T0', 0, 'I0T1')
+        call RegisterItemMethodSimple(Item_BootsOfTravelUpgraded, "ItemBootsOfTravelUpgradedOnPickup", "ItemBootsOfTravelUpgradedOnDrop")
         set XGV = RegisterItem('I0P9', 'I0PB', 'h0EI', 'I0PA')
         set N1V = RegisterItem('I0OU', 'I0OV', 0, 'I0OW')
         set N2V = RegisterItem('I0OY', 'I0OX', 0, 'I0OZ')
@@ -415,7 +422,7 @@ library ItemDefine requires ItemSystem, ItemStatus
         set ItemSideLaneShopId[RegisterItem('I0HT', 'I0HR', 'h08F', 'I0HW')] = RVV
         set ItemSideLaneShopId[RegisterItem('I0J7', 'I0J6', 'h08V', 'I0J8')] = RXV
         set ItemSideLaneShopId[RegisterItem('I040', 'I054', 'h08M', 'I0DL')] = OWV
-        set ItemSideLaneShopId[RegisterItem('I05A', 'I05I', 'h08H', 0)]    = R4V
+        set ItemSideLaneShopId[RegisterItem('I05A', 'I05I', 'h08H', 0)]    = Item_TownPortalScroll
         set ItemSideLaneShopId[RegisterItem('I037', 'I04B', 'h093', 'I0CR')] = X2V
         set ItemSideLaneShopId[RegisterItem('I02Q', 'I02O', 'h0BO', 'I00A')] = XMV
         set ItemSideLaneShopId[RegisterItem('I0MA', 'I0M9', 'h0CN', 'I0MB')] = XKV
@@ -470,12 +477,12 @@ library ItemDefine requires ItemSystem, ItemStatus
         set CombineMaxIndex = CombineMaxIndex + 1
         set CombineIndex1[CombineMaxIndex] = XMV
         set CombineIndex2[CombineMaxIndex] = N5V
-        set CombinedIndex[CombineMaxIndex] = IAV
+        set CombinedIndex[CombineMaxIndex] = Item_BootsOfTravel
         
         set CombineMaxIndex = CombineMaxIndex + 1
-        set CombineIndex1[CombineMaxIndex] = IAV
+        set CombineIndex1[CombineMaxIndex] = Item_BootsOfTravel
         set CombineIndex2[CombineMaxIndex] = N5V
-        set CombinedIndex[CombineMaxIndex] = INV
+        set CombinedIndex[CombineMaxIndex] = Item_BootsOfTravelUpgraded
         
         set CombineMaxIndex = CombineMaxIndex + 1
         set CombineIndex1[CombineMaxIndex] = I3V
@@ -1169,7 +1176,7 @@ library ItemDefine requires ItemSystem, ItemStatus
         integer R1V
         integer Item_ObserverWard
         integer Item_SentryWard
-        integer R4V
+        integer Item_TownPortalScroll
         integer R5V
         integer R6V
         integer R7V
@@ -1181,8 +1188,8 @@ library ItemDefine requires ItemSystem, ItemStatus
         integer IOV
         integer IRV
         integer IIV
-        integer IAV
-        integer INV
+        integer Item_BootsOfTravel
+        integer Item_BootsOfTravelUpgraded
         integer IBV
         integer ICV
         integer IDV

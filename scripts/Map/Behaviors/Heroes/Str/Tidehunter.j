@@ -48,11 +48,11 @@ scope Tidehunter
         local Shockwave sw
 
         local integer level     = GetUnitAbilityLevel(whichUnit, GetSpellAbilityId())
-        local boolean isUpgrade = GetSpellAbilityId() == 'A3OH'
+        local boolean isUpgraded = GetSpellAbilityId() == 'A3OH'
         local real    distance  = 1200. + GetUnitCastRangeBonus(whichUnit)
         local real    damage
 
-        if not isUpgrade then
+        if not isUpgraded then
             if not UnitHasSpellShield(targUnit) then
                 call LaunchMissileByUnitDummy(whichUnit, targUnit, 'h0EN', "GushMissileOnHit", 4000, false)
             endif

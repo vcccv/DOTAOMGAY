@@ -10,8 +10,7 @@ library BuffUtils requires Table
 
     // positive为正面负面，polarity以后再说
     function UnitAddBuffByPolarity takes unit source, unit target, integer buffId, integer level, real duration, boolean positive, integer polarity returns buff
-        set Temp = MHBuff_Create(target, buffId, BUFF_TEMPLATE_BNAB, duration)
-        call MHBuff_SetLevel(target, buffId, level)
+        set Temp = MHBuff_CreateEx(target, buffId, BUFF_TEMPLATE_BNAB, level, 0, duration)
         call MHBuff_SetPolarity(target, buffId, BUFF_POLARITY_POSITIVE, positive)
         call MHBuff_SetPolarity(target, buffId, BUFF_POLARITY_NEGATIVE, not positive)
         if polarity == BUFF_LEVEL3 then
@@ -22,8 +21,7 @@ library BuffUtils requires Table
 
     // 添加光环buff
     function UnitAddAreaBuff takes unit source, unit target, integer buffId, integer level, real duration, boolean positive returns buff
-        set Temp = MHBuff_Create(target, buffId, BUFF_TEMPLATE_BNAB, duration)
-        call MHBuff_SetLevel(target, buffId, level)
+        set Temp = MHBuff_CreateEx(target, buffId, BUFF_TEMPLATE_BNAB, level, 0, duration)
         call MHBuff_SetPolarity(target, buffId, BUFF_POLARITY_POSITIVE, positive)
         call MHBuff_SetPolarity(target, buffId, BUFF_POLARITY_NEGATIVE, not positive)
         call MHBuff_SetPolarity(target, buffId, BUFF_POLARITY_AURA, true)

@@ -6,19 +6,29 @@ library UIManager /*
     */ optional CommandButtonHelper,    /*
     */ optional CallCommandButton,      /*
     */ optional TownPortalScrollFrame,  /*
+    */ optional TownPortalScrollHandler /*
     */ optional DisableResourceTrading, /*
     */
 
+    private function OnUdpate takes nothing returns nothing
+        static if LIBRARY_TownPortalScrollFrame then
+            call TownPortalScroll_Update()
+        endif
+    endfunction
+
     private function OnGameStart takes nothing returns nothing
+        call DzFrameSetUpdateCallbackByCode(function OnUdpate)
+
         call LoadTOCFile("UI\\FrameDef\\CustomFrameDef.toc")
-        static if LIBRARY_CallCommandButton then
-            call CallCommandButton_Init()
-        endif
-        static if LIBRARY_CommandButtonHelper then
-            call CommandButtonHelper_Init()
-        endif
+    
         static if LIBRARY_TownPortalScrollFrame then
             call TownPortalScrollFrame_Init()
+        endif
+        static if LIBRARY_CommandOrder then
+            call CallCommandButton_Init()
+        endif
+        static if LIBRARY_Communication then
+            call Communication_Init()
         endif
         static if LIBRARY_DisableResourceTrading then
             call DisableResourceTradingFrame()

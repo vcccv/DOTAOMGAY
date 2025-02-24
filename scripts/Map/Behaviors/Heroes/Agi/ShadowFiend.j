@@ -34,14 +34,14 @@ scope ShadowFiend
     private struct Soulwave extends array
         
         real    damage
-        boolean isUpgrade
+        boolean isUpgraded
 
         static method OnFinish takes Shockwave sw returns boolean
             local real      x
             local real      y
             local real      angle
             local Shockwave new
-            if not thistype(sw).isUpgrade then
+            if not thistype(sw).isUpgraded then
                 return true
             endif
             
@@ -169,7 +169,7 @@ scope ShadowFiend
         local integer   count     = 0
         local integer   offset    = 360 / max
         local integer   level     = GetUnitAbilityLevel(u, GetSpellAbilityId())
-        local boolean   isUpgrade = GetSpellAbilityId() == 'A3OJ'
+        local boolean   isUpgraded = GetSpellAbilityId() == 'A3OJ'
         local Shockwave sw
         local real      distance  = 1000.
         local real      angle       
@@ -187,14 +187,14 @@ scope ShadowFiend
             set sw.minRadius = 125.
             set sw.maxRadius = 425.
             set sw.model = "Objects\\Spawnmodels\\Undead\\UndeadDissipate\\UndeadDissipate.mdl"
-            set Soulwave(sw).isUpgrade = isUpgrade
+            set Soulwave(sw).isUpgraded = isUpgraded
             set Soulwave(sw).damage    = damage
             call Soulwave.Launch(sw)
             set count = count + 1
         endloop
 
         //call RequiemOfSoulsOnAoeSlow(u)
-        //if isUpgrade then
+        //if isUpgraded then
         //    call IYRYI(u, max, level)
         //endif
     endfunction

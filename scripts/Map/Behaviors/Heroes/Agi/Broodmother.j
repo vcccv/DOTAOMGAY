@@ -119,7 +119,7 @@ scope Broodmother
                 set SimpleTickTable[tick].unit['u'] = DETarget
                 set Table[GetHandleId(DETarget)][SPIN_WEB_TICK] = tick
                 call UnitDecNoPathingCount(DETarget)
-                call UnitModifyPostion(DETarget)
+                call UnitModifyPosition(DETarget)
                 call KillTreeByCircle(GetUnitX(DETarget), GetUnitY(DETarget), 150.)
                 //call BJDebugMsg(GetUnitName(DETarget) + "受伤了 失去无视地形状态")
             endif
@@ -160,7 +160,7 @@ scope Broodmother
         set tick = Table[GetHandleId(whichUnit)][SPIN_WEB_TICK]
         if tick == 0 then
             call UnitDecNoPathingCount(whichUnit)
-            call UnitModifyPostion(whichUnit)
+            call UnitModifyPosition(whichUnit)
             call KillTreeByCircle(GetUnitX(whichUnit), GetUnitY(whichUnit), 150.)
             //call BJDebugMsg("失去buff，移除无视地形状态")
         else

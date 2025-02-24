@@ -48,9 +48,9 @@ scope QueenOfPain
         local integer level     = GetUnitAbilityLevel(whichUnit, GetSpellAbilityId())
         local real    distance  = 900. + GetUnitCastRangeBonus(whichUnit)
         local real    damage    = 200. + 90. * level
-        local boolean isUpgrade = GetSpellAbilityId() == 'A28S'
+        local boolean isUpgraded = GetSpellAbilityId() == 'A28S'
 
-        if isUpgrade then
+        if isUpgraded then
             set damage = 325
             if GetUnitAbilityLevel(GetTriggerUnit(), GetSpellAbilityId()) == 3 then
                 set damage = 555

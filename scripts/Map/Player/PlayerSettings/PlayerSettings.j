@@ -21,6 +21,12 @@ library PlayerSettingsLib requires PlayerUtils
             set this.autoSelectSummonedUnits = enable
         endmethod
 
+        // 传送需求Hold/Stop
+        private boolean teleportRequiresHoldOrStop
+        method IsTeleportRequiresHoldOrStop takes nothing returns boolean
+            return true // this.teleportRequiresHoldOrStop
+        endmethod
+
     endstruct
 
 endlibrary

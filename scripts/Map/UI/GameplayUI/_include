@@ -1,2 +1,3 @@
 #include "DisableResourceTrading.j"
 #include "TownPortalScrollFrame.j"
+#include "TownPortalScrollHandler.j"
