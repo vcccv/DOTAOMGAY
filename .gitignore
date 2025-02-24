@@ -1,6 +1,7 @@
 **/logs
 **/backups
 **/temp
+**/scripts/memory_hack
 war3map.j
 files/*.ai
 files/*.blp
