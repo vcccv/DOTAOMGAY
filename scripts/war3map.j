@@ -13013,10 +13013,10 @@ function VHO takes player p, unit whichUnit, integer itemIndex returns boolean
 endfunction
 function ECO takes player whichPlayer, unit whichUnit, integer itemIndex returns boolean
 	local integer i = 1
-	local boolean JVX
+	local boolean result
 	set X3 = false
-	set JVX = VHO(whichPlayer, whichUnit, itemIndex)
-	return JVX
+	set result = VHO(whichPlayer, whichUnit, itemIndex)
+	return result
 endfunction
 function EDO takes nothing returns boolean
 	if IsUnitAlly(GetFilterUnit(), GetOwningPlayer(TempUnit)) and not IsUnitDummy(GetFilterUnit()) and UnitInventorySize(GetFilterUnit())> 1 and GetUnitTypeId(GetFilterUnit())!='ncop' and GetPlayerAlliance(GetOwningPlayer(GetFilterUnit()), GetOwningPlayer(TempUnit), ALLIANCE_SHARED_CONTROL) and GetOwningPlayer(TempUnit) != GetOwningPlayer(GetFilterUnit()) and IsUnitIllusion(GetFilterUnit()) == false and UnitIsDead(GetFilterUnit()) == false then
@@ -13686,7 +13686,7 @@ function XFO takes nothing returns boolean
 				call DisplayTimedTextToPlayer(p, 0, 0, 4, PlayerColorHex[pid] +(PlayersName[pid]) + "|r |c00ffff00购买了知识之书|r")
 			endif
 		endif
-		if unitTypeId == OZV then
+		if unitTypeId == Item_EmptyBottleStore then
 			if XI[pid]== false then
 				call DisplayTimedTextToPlayer(ETO, 0, 0, DisplayTextDuration[LocalPlayerId], "|c00FF0000注意|r: 你可以输入 -orp 指令来恢复旧版魔瓶模式.")
 			endif
@@ -13753,8 +13753,8 @@ function XKO takes unit u, item it returns nothing
 		endif
 	endif
 endfunction
-function XLO takes unit trigUnit, item whichItem returns boolean
-	local unit u = trigUnit
+function XLO takes unit whichUnit, item whichItem returns boolean
+	local unit 	  u = whichUnit
 	local integer H4X = GetUnitTypeId(u)
 	local integer itemIndex = GetItemIndexEx(whichItem)
 	local real x
@@ -13763,23 +13763,23 @@ function XLO takes unit trigUnit, item whichItem returns boolean
 	local boolean XMO = true
 	set x = GetUnitX(u)
 	set y = GetUnitY(u)
-	if itemIndex == OZV then
+	if itemIndex == Item_EmptyBottleStore then
 		call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Undead\\ReplenishMana\\SpiritTouchTarget.mdl", u, "overhead"))
 		call IRX(GetOwningPlayer(u), "Abilities\\Spells\\Human\\Heal\\HealTarget.wav")
 		set TempPlayer = GetItemPlayer(whichItem)
 		call SilentRemoveItem(whichItem)
-		call TDE(trigUnit, ItemRealId[Item_MagicalBottleCharges3], TempPlayer, false, 1)
+		call TDE(whichUnit, ItemRealId[Item_MagicalBottleCharges3], TempPlayer, false, 1)
 		call UnitRemoveAbility(u,'B0GI')
 	endif
 	if (itemIndex) == Item_DiffusalBladeLevel1 and GetItemCharges(whichItem) == 0 then
 		set TempPlayer = GetItemPlayer(whichItem)
 		call SilentRemoveItem(whichItem)
-		call TDE(trigUnit, ItemRealId[IYV], TempPlayer, false, 1)
+		call TDE(whichUnit, ItemRealId[IYV], TempPlayer, false, 1)
 	endif
 	if itemIndex == Item_AncientJanggoOfEndurance and GetItemCharges(whichItem) == 0 then
 		set TempPlayer = GetItemPlayer(whichItem)
 		call SilentRemoveItem(whichItem)
-		call TDE(trigUnit, ItemRealId[RIV], TempPlayer, false, 1)
+		call TDE(whichUnit, ItemRealId[RIV], TempPlayer, false, 1)
 	endif
 	call DisableTrigger(UnitManipulatItemTrig)
 	if (itemIndex == ICV or itemIndex == IBV or itemIndex == IDV) and(GZX(u, ItemRealId[ICV], whichItem) != null or GZX(u, ItemRealId[IBV], whichItem) != null or GZX(u, ItemRealId[IDV], whichItem) != null) then
@@ -13790,7 +13790,7 @@ function XLO takes unit trigUnit, item whichItem returns boolean
 		call SetItemPlayer(TempItem, TempPlayer, false)
 		call SetItemUserData(TempItem, 1)
 	endif
-	if (itemIndex == Item_ArmletOfMordiggian_Inactive or itemIndex == Item_ArmletOfMordiggian_Active or itemIndex == Item_ArmletOfMordiggian_Inactive_CourierEdition or itemIndex == Item_ArmletOfMordiggian_Active_CourierEdition) and(GZX(u, ItemRealId[Item_ArmletOfMordiggian_Inactive], whichItem) != null or GZX(u, ItemRealId[Item_ArmletOfMordiggian_Active], whichItem) != null or GZX(u, ItemRealId[Item_ArmletOfMordiggian_Inactive_CourierEdition], whichItem) != null or GZX(u, ItemRealId[Item_ArmletOfMordiggian_Active_CourierEdition], whichItem) != null) then
+	if (itemIndex == Item_ArmletOfMordiggian_Deactivated or itemIndex == Item_ArmletOfMordiggian_Activated or itemIndex == Item_ArmletOfMordiggian_Deactivated_CourierEdition or itemIndex == Item_ArmletOfMordiggian_Activated_CourierEdition) and(GZX(u, ItemRealId[Item_ArmletOfMordiggian_Deactivated], whichItem) != null or GZX(u, ItemRealId[Item_ArmletOfMordiggian_Activated], whichItem) != null or GZX(u, ItemRealId[Item_ArmletOfMordiggian_Deactivated_CourierEdition], whichItem) != null or GZX(u, ItemRealId[Item_ArmletOfMordiggian_Activated_CourierEdition], whichItem) != null) then
 		call InterfaceErrorForPlayer(GetOwningPlayer(u), GetObjectName('n02C'))
 		set TempPlayer = GetItemPlayer(whichItem)
 		call RemoveItem(whichItem)
@@ -13803,27 +13803,27 @@ function XLO takes unit trigUnit, item whichItem returns boolean
 		if i == 0 and itemIndex != I9V then
 			set TempPlayer = GetItemPlayer(whichItem)
 			call SilentRemoveItem(whichItem)
-			call TDE(trigUnit, ItemRealId[I9V], TempPlayer, false, 1)
+			call TDE(whichUnit, ItemRealId[I9V], TempPlayer, false, 1)
 		elseif i == 9 and itemIndex != AVV then
 			set TempPlayer = GetItemPlayer(whichItem)
 			call SilentRemoveItem(whichItem)
-			call TDE(trigUnit, ItemRealId[AVV], TempPlayer, false, 1)
+			call TDE(whichUnit, ItemRealId[AVV], TempPlayer, false, 1)
 		elseif i == 8 and itemIndex != AEV then
 			set TempPlayer = GetItemPlayer(whichItem)
 			call SilentRemoveItem(whichItem)
-			call TDE(trigUnit, ItemRealId[AEV], TempPlayer, false, 1)
+			call TDE(whichUnit, ItemRealId[AEV], TempPlayer, false, 1)
 		elseif i == 7 and itemIndex != AXV then
 			set TempPlayer = GetItemPlayer(whichItem)
 			call SilentRemoveItem(whichItem)
-			call TDE(trigUnit, ItemRealId[AXV], TempPlayer, false, 1)
+			call TDE(whichUnit, ItemRealId[AXV], TempPlayer, false, 1)
 		elseif i == 6 and itemIndex != AOV then
 			set TempPlayer = GetItemPlayer(whichItem)
 			call SilentRemoveItem(whichItem)
-			call TDE(trigUnit, ItemRealId[AOV], TempPlayer, false, 1)
+			call TDE(whichUnit, ItemRealId[AOV], TempPlayer, false, 1)
 		elseif i == 5 and itemIndex != ARV then
 			set TempPlayer = GetItemPlayer(whichItem)
 			call SilentRemoveItem(whichItem)
-			call TDE(trigUnit, ItemRealId[ARV], TempPlayer, false, 1)
+			call TDE(whichUnit, ItemRealId[ARV], TempPlayer, false, 1)
 		endif
 	endif
 	if (itemIndex == Item_DivineRapier_Original and IsPlayerEnemy(GetItemPlayer(whichItem), GetOwningPlayer(u))) then
@@ -13849,79 +13849,99 @@ function XLO takes unit trigUnit, item whichItem returns boolean
 	endif
 	call EnableTrigger(UnitManipulatItemTrig)
 	if XMO then
-		call XKO(trigUnit, whichItem)
+		call XKO(whichUnit, whichItem)
 	endif
 	set u = null
 	set whichItem = null
 	return false
 endfunction
 
-function XSO takes unit trigUnit, item whichItem returns boolean
-	local integer itemId 	= 0
-	local item 	  tempItem  = whichItem
-	local integer itemIndex = GetItemIndex(tempItem)
-	local integer XTO 		= 0
-	local boolean JVX 		= false
-	local integer XUO 		= GetDisabledItemIndex(tempItem)
-	local boolean XWO 		= false
-	if IsUnitType(trigUnit, UNIT_TYPE_HERO) then
+function XSO takes unit whichUnit, item whichItem returns boolean
+	local integer itemId 		= 0
+	local item 	  tempItem  	= whichItem
+	local integer itemIndex 	= GetItemIndex(tempItem)
+	local integer newIndex  	= 0
+	local boolean result 		= false
+	local integer disabledIndex = GetDisabledItemIndex(tempItem)
+	local boolean disableState 	= false
+	if IsUnitType(whichUnit, UNIT_TYPE_HERO) then
+		// 如果是英雄 则从信使版本转回来
 		if itemIndex == Item_HelmOfTheDominator_CourierEdition then
-			set XTO = Item_HelmOfTheDominator
+			set newIndex = Item_HelmOfTheDominator
 		elseif itemIndex == Item_HandOfMidas_CourierEdition then
-			set XTO = Item_HandOfMidas
-		elseif itemIndex == Item_ArmletOfMordiggian_Active_CourierEdition then
-			set XTO = Item_ArmletOfMordiggian_Active
-		elseif itemIndex == Item_ArmletOfMordiggian_Inactive_CourierEdition then
-			set XTO = Item_ArmletOfMordiggian_Inactive
+			set newIndex = Item_HandOfMidas
+		elseif itemIndex == Item_ArmletOfMordiggian_Activated_CourierEdition then
+			set newIndex = Item_ArmletOfMordiggian_Activated
+		elseif itemIndex == Item_ArmletOfMordiggian_Deactivated_CourierEdition then
+			set newIndex = Item_ArmletOfMordiggian_Deactivated
 		elseif itemIndex == Item_ShivaGuard_CourierEdition then
-			set XTO = Item_ShivaGuard
+			set newIndex = Item_ShivaGuard
 		elseif itemIndex == Item_GemOfTrueSight_CourierEdition then
-			set XTO = Item_GemOfTrueSight
+			set newIndex = Item_GemOfTrueSight
 		endif
-		if XUO == Item_GemOfTrueSight_CourierEdition then
-			set XTO = Item_GemOfTrueSight
-			set XWO = true
+		if disabledIndex == Item_GemOfTrueSight_CourierEdition then
+			set newIndex = Item_GemOfTrueSight
+			set disableState = true
 		endif
-		if XTO != 0 then
+		if newIndex != 0 then
 			set TempPlayer = GetItemPlayer(tempItem)
 			call SilentRemoveItem(tempItem)
-			if XWO then
-				set TempItem = UnitAddItemById(trigUnit, ItemDisabledId[XTO])
+			if disableState then
+				set TempItem = UnitAddItemById(whichUnit, ItemDisabledId[newIndex])
 			else
-				set TempItem = UnitAddItemById(trigUnit, ItemRealId[XTO])
+				set TempItem = UnitAddItemById(whichUnit, ItemRealId[newIndex])
 			endif
 			call SetItemPlayer(TempItem, TempPlayer, false)
 			call SetItemUserData(TempItem, 1)
-			set JVX = true
+			set result = true
 		endif
 	else
-		if itemIndex == Item_GemOfTrueSight then
-			set XTO = Item_GemOfTrueSight_CourierEdition
+		// 如果是信使
+
+		// 不知为何只判了宝石 也许有bug?
+		// if itemIndex == Item_HelmOfTheDominator_CourierEdition then
+		// 	set newIndex = Item_HelmOfTheDominator
+		// elseif itemIndex == Item_HandOfMidas_CourierEdition then
+		// 	set newIndex = Item_HandOfMidas
+		// elseif itemIndex == Item_ArmletOfMordiggian_Activated_CourierEdition then
+		// 	set newIndex = Item_ArmletOfMordiggian_Activated
+		// elseif itemIndex == Item_ArmletOfMordiggian_Deactivated_CourierEdition then
+		// 	set newIndex = Item_ArmletOfMordiggian_Deactivated
+		// elseif itemIndex == Item_ShivaGuard_CourierEdition then
+		// 	set newIndex = Item_ShivaGuard
+		// elseif itemIndex == Item_GemOfTrueSight_CourierEdition then
+		// 	set newIndex = Item_GemOfTrueSight
+		// endif
+
+		// if itemIndex == Item_GemOfTrueSight then
+		// 	set newIndex = Item_GemOfTrueSight_CourierEdition
+		// endif
+		if disabledIndex == Item_GemOfTrueSight then
+			set newIndex = Item_GemOfTrueSight_CourierEdition
+			set disableState = true
 		endif
-		if XUO == Item_GemOfTrueSight then
-			set XTO = Item_GemOfTrueSight_CourierEdition
-			set XWO = true
-		endif
-		if XTO != 0 then
+		call BJDebugMsg(I2S(newIndex))
+		if newIndex != 0 then
 			set TempPlayer = GetItemPlayer(tempItem)
 			call SilentRemoveItem(tempItem)
-			if XWO then
-				set TempItem = UnitAddItemById(trigUnit, ItemDisabledId[XTO])
+			if disableState then
+				set TempItem = UnitAddItemById(whichUnit, ItemDisabledId[newIndex])
 			else
-				set TempItem = UnitAddItemById(trigUnit, ItemRealId[XTO])
+				set TempItem = UnitAddItemById(whichUnit, ItemRealId[newIndex])
 			endif
 			call SetItemPlayer(TempItem, TempPlayer, false)
 			call SetItemUserData(TempItem, 1)
-			set JVX = true
+			set result = true
 		endif
 	endif
 	set tempItem = null
-	return JVX
+	return result
 endfunction
-function XYO takes unit trigUnit, item whichItem returns boolean
+function XYO takes unit whichUnit, item whichItem returns boolean
 	// 是有信使版本物品(可用) 或 真视宝石物品(禁用)
 	if IsItemCourierEditionByIndex(GetItemIndex(whichItem)) or IsItemGemOfTrueSightByIndex(GetDisabledItemIndex(whichItem)) then
-		return XSO(trigUnit, whichItem)
+		call BJDebugMsg("我开始操作了你知道吗？")
+		return XSO(whichUnit, whichItem)
 	endif
 	return false
 endfunction
@@ -14147,7 +14167,10 @@ function ManipulatItemDelayOnExpired takes nothing returns boolean
 			set X4O = ECO(itemOwnerPlayer, whichUnit, 0)
 		endif
 		// 没有更新物品(或合成失败)标志 但是新物品被设置了，并且新物品属于实体类物品
+		
 		if not X4O and X3O != null and not H8X(X3O) then
+			call BJDebugMsg("我想替换")
+			// 替换信使版本
 			set X4O = XYO(whichUnit, X3O)
 		endif
 		if not X4O and X3O != null and not H8X(X3O) then
@@ -14822,7 +14845,7 @@ function RCO takes unit trigUnit, item whichItem returns nothing
 	local integer k
 	local boolean borrowed = false
 	if ZNX(GetItemTypeId(whichItem)) then
-		set it = GetItemOfTypeFromUnit(trigUnit, ItemRealId[Item_EmptyMagicalBottle])
+		set it = GetItemOfTypeFromUnit(trigUnit, ItemRealId[Item_EmptyBottle])
 		if it == null then
 			set it = GetItemOfTypeFromUnit(trigUnit, ItemRealId[Item_MagicalBottleCharges1])
 		endif
@@ -14833,7 +14856,7 @@ function RCO takes unit trigUnit, item whichItem returns nothing
 			set it = GetItemOfTypeFromUnit(trigUnit, ItemRealId[Item_MagicalBottleCharges3])
 		endif
 		if it == null then
-			set it = GetItemOfTypeFromUnit(trigUnit, ItemDisabledId[Item_EmptyMagicalBottle])
+			set it = GetItemOfTypeFromUnit(trigUnit, ItemDisabledId[Item_EmptyBottle])
 		endif
 		if it == null then
 			set it = GetItemOfTypeFromUnit(trigUnit, ItemDisabledId[Item_MagicalBottleCharges1])
@@ -15671,7 +15694,7 @@ function AEO takes nothing returns nothing
 	local unit u = LoadUnitHandle(ObjectHashTable, h, 0)
 	local real AXO = LoadReal(ObjectHashTable, h, 0)
 	if GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
-		if GetItemOfTypeFromUnit(u, ItemRealId[Item_ArmletOfMordiggian_Active]) == null then
+		if GetItemOfTypeFromUnit(u, ItemRealId[Item_ArmletOfMordiggian_Activated]) == null then
 			call SetHeroStr(u, IMaxBJ(GetHeroStr(u, false)-LoadInteger(OtherHashTable, GetHandleId(u),'ARML'), 1), true)
 			call SaveInteger(OtherHashTable, GetHandleId(u),'ARML', 0)
 			if IsTriggerEnabled(t) then
@@ -15704,39 +15727,39 @@ function AOO takes nothing returns nothing
 	local trigger t
 	local real AXO
 	if GetTriggerEventId() == EVENT_PLAYER_UNIT_DROP_ITEM then
-		if GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Inactive or GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Inactive_CourierEdition then
+		if GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Deactivated or GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Deactivated_CourierEdition then
 			call UnitRemoveAbility(u,'A44Q')
-			if GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Inactive then
+			if GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Deactivated then
 				call AVO(u, 0)
 			endif
 		endif
 		if GetItemIndex(GetManipulatedItem()) == A2V then
 			call UnitRemoveAbility(u,'A1BW')
 		endif
-		if GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Active or GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Active_CourierEdition then
+		if GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Activated or GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Activated_CourierEdition then
 			call UnitRemoveAbility(u,'A44Q')
 			call UnitRemoveAbility(u,'A0UK')
 			if HaveSavedHandle(HY, GetHandleId(u),'ARML') then
 				call TriggerEvaluate(LoadTriggerHandle(HY, GetHandleId(u),'ARML'))
 			endif
-			if GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Active then
+			if GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Activated then
 			endif
 		endif
 	endif
 	if GetTriggerEventId() == EVENT_PLAYER_UNIT_PICKUP_ITEM then
-		if GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Inactive or GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Inactive_CourierEdition then
+		if GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Deactivated or GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Deactivated_CourierEdition then
 			call UnitAddPermanentAbility(u,'A44Q')
-			if GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Inactive then
+			if GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Deactivated then
 				call AVO(u, 0)
 			endif
 		endif
 		if GetItemIndex(GetManipulatedItem()) == A2V then
 			call UnitAddPermanentAbility(u,'A1BW')
 		endif
-		if GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Active or GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Active_CourierEdition then
+		if GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Activated or GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Activated_CourierEdition then
 			call UnitAddPermanentAbility(u,'A44Q')
 			call UnitAddPermanentAbility(u,'A0UK')
-			if GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Active then
+			if GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Activated then
 				set t = CreateTrigger()
 				call TriggerRegisterTimerEvent(t, .6 / 25, true)
 				set AXO = GetUnitState(GetTriggerUnit(), UNIT_STATE_MAX_LIFE)-GetWidgetLife(GetTriggerUnit())
@@ -15756,7 +15779,7 @@ function AOO takes nothing returns nothing
 	set u = null
 endfunction
 function ARO takes nothing returns boolean
-	if GetItemType(GetManipulatedItem()) == ITEM_TYPE_PERMANENT and(GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Active or GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Inactive or GetItemIndex(GetManipulatedItem()) == A2V or GetItemIndex(GetManipulatedItem()) == Item_Bloodstone) then
+	if GetItemType(GetManipulatedItem()) == ITEM_TYPE_PERMANENT and(GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Activated or GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Deactivated or GetItemIndex(GetManipulatedItem()) == A2V or GetItemIndex(GetManipulatedItem()) == Item_Bloodstone) then
 		call AOO()
 	endif
 	return false
@@ -15792,19 +15815,19 @@ function AAO takes nothing returns nothing
 	set trigUnit = null
 endfunction
 function ANO takes nothing returns boolean
-	if GetItemType(GetManipulatedItem()) == ITEM_TYPE_PERMANENT and(GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Active or(GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Active_CourierEdition and DRX(GetTriggerUnit()))) then
+	if GetItemType(GetManipulatedItem()) == ITEM_TYPE_PERMANENT and(GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Activated or(GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Activated_CourierEdition and DRX(GetTriggerUnit()))) then
 		call AAO()
 	endif
 	return false
 endfunction
 function ABO takes unit u returns boolean
 	local item ACO = CreateItem('I0KK', GetUnitX(u), GetUnitY(u))
-	local boolean JVX = UnitAddItem(u, ACO)
-	if JVX == false then
+	local boolean result = UnitAddItem(u, ACO)
+	if result == false then
 		call RemoveItem(ACO)
 	endif
 	set ACO = null
-	return JVX
+	return result
 endfunction
 function ADO takes unit trigUnit, item whichItem, integer itemSlot returns item
 	local real x = GetHeroRevivalPointX(trigUnit)
@@ -15974,7 +15997,7 @@ function GLE takes nothing returns boolean
 		set h = GetHandleId(u)
 		call SaveUnitHandle(HY, h,103, null)
 		call SaveInteger(HY, h,104, 0)
-		if (GetItemOfTypeFromUnit(GetTriggerUnit(), ItemRealId[Item_EmptyMagicalBottle]) != null or GetItemOfTypeFromUnit(GetTriggerUnit(), ItemDisabledId[Item_EmptyMagicalBottle]) != null) and(GetUnitTypeId(GetSpellTargetUnit())=='nfoh' or GetUnitTypeId(GetSpellTargetUnit())=='ndfl') then
+		if (GetItemOfTypeFromUnit(GetTriggerUnit(), ItemRealId[Item_EmptyBottle]) != null or GetItemOfTypeFromUnit(GetTriggerUnit(), ItemDisabledId[Item_EmptyBottle]) != null) and(GetUnitTypeId(GetSpellTargetUnit())=='nfoh' or GetUnitTypeId(GetSpellTargetUnit())=='ndfl') then
 			call SaveUnitHandle(HY, h,103, GetSpellTargetUnit())
 		elseif ZNX(GetItemTypeId(GetSpellTargetItem())) then
 			set id = ZAX(GetItemTypeId(GetSpellTargetItem()))
@@ -15996,7 +16019,7 @@ function AKO takes nothing returns nothing
 	local item RIO = null
 	local integer APO
 	local integer id
-	if itemIndex == Item_EmptyMagicalBottle then
+	if itemIndex == Item_EmptyBottle then
 		set itemSlot = GetUnitItemSlot(u, whichItem)
 		set ALO =(LoadUnitHandle(HY,(GetHandleId(u)),103))
 		set AMO =(LoadInteger(HY,(GetHandleId(u)),104))
@@ -16043,7 +16066,7 @@ function AKO takes nothing returns nothing
 		set itemSlot = GetUnitItemSlot(u, whichItem)
 		set TempPlayer = GetItemPlayer(whichItem)
 		call SilentRemoveItem(whichItem)
-		set TempItem = CreateItemToUnitSlotByIndex(u, ItemRealId[Item_EmptyMagicalBottle], itemSlot)
+		set TempItem = CreateItemToUnitSlotByIndex(u, ItemRealId[Item_EmptyBottle], itemSlot)
 		call SetItemPlayer(TempItem, TempPlayer, false)
 		call SetItemUserData(TempItem, 0)
 	elseif IsItemRuneMagicalBottleByIndex(itemIndex) then
@@ -17098,7 +17121,7 @@ function NQO takes nothing returns boolean
 		set DVV[GetPlayerId(GetOwningPlayer(trigUnit))] = GetItemY(whichItem)
 	endif
 	call RCO(trigUnit, whichItem)
-	if (GetItemTypeId(whichItem) == ItemRealId[Item_ArmletOfMordiggian_Active]or GetItemTypeId(whichItem) == ItemRealId[Item_ArmletOfMordiggian_Inactive]) and IsUnitCourier(trigUnit) then
+	if (GetItemTypeId(whichItem) == ItemRealId[Item_ArmletOfMordiggian_Activated]or GetItemTypeId(whichItem) == ItemRealId[Item_ArmletOfMordiggian_Deactivated]) and IsUnitCourier(trigUnit) then
 		call UnitRemoveItem(trigUnit, whichItem)
 	elseif (GetItemTypeId(whichItem)) == ItemRealId[Item_MagicWand]and IsUnitType(trigUnit, UNIT_TYPE_HERO) then
 		// 如果拿了魔杖 还是英雄 设置
@@ -19510,15 +19533,15 @@ function F3O takes integer id returns boolean
 	local real hp
 	local unit u = GetTriggerUnit()
 	local item it = GetManipulatedItem()
-	if id == Item_ArmletOfMordiggian_Inactive then
+	if id == Item_ArmletOfMordiggian_Deactivated then
 		set AXO = GetUnitState(u, UNIT_STATE_MAX_LIFE)-GetWidgetLife(u)
 		set hp = GetWidgetLife(u)
-		call FZO(u, Item_ArmletOfMordiggian_Active, 1, it)
+		call FZO(u, Item_ArmletOfMordiggian_Activated, 1, it)
 		call CDO(u)
 		call EPX(u, 4298, .6)
-	elseif id == Item_ArmletOfMordiggian_Active then
+	elseif id == Item_ArmletOfMordiggian_Activated then
 		set AXO = GetUnitState(u, UNIT_STATE_MAX_LIFE)-GetWidgetLife(u)
-		call FZO(u, Item_ArmletOfMordiggian_Inactive, 1, it)
+		call FZO(u, Item_ArmletOfMordiggian_Deactivated, 1, it)
 		call SaveBoolean(OtherHashTable, GetHandleId(u), 20, false)
 		call SetHeroStr(u, IMaxBJ(GetHeroStr(u, false)-LoadInteger(OtherHashTable, GetHandleId(u),'ARML'), 1), true)
 		call SaveInteger(OtherHashTable, GetHandleId(u),'ARML', 0)
@@ -35531,14 +35554,14 @@ function J2R takes nothing returns nothing
 endfunction
 function J3R takes unit u, integer h returns boolean
 	local unit J4R = JMR(u, h)
-	local boolean JVX = true
+	local boolean result = true
 	if UnitIsDead(J4R) or(LoadInteger(HY,(GetHandleId(J4R)), 156)) == 1 then
-		set JVX = false
+		set result = false
 	endif
 	call SaveInteger(HY,(GetHandleId(J4R)), 156, 1)
 	call SetUnitVertexColor(J4R, 25, 25, 25, 175)
 	set J4R = null
-	return JVX
+	return result
 endfunction
 function J5R takes nothing returns nothing
 	if GetUnitState(GetEnumUnit(), UNIT_STATE_MANA)> 0 and IsUnitInGroup(GetEnumUnit(), DK) == false and((LoadInteger(HY, GetHandleId(GetEnumUnit()), 4260)) == 1) == false and J3R(GetEnumUnit(), HLV) then
@@ -55018,25 +55041,25 @@ function WII takes real r returns string
 	local string c = "||"
 	local string p = " "
 	local string s = c1 + c + "|r"
-	local string JVX
+	local string result
 	if r > 85 then
-		set JVX = s + p + s + p + s + p + s + p + s + p + s + p + s
+		set result = s + p + s + p + s + p + s + p + s + p + s + p + s
 	elseif r > 70 then
-		set JVX = s + p + s + p + s + p + s + p + s + p + s + p + c
+		set result = s + p + s + p + s + p + s + p + s + p + s + p + c
 	elseif r > 55 then
-		set JVX = s + p + s + p + s + p + s + p + s + p + c + p + c
+		set result = s + p + s + p + s + p + s + p + s + p + c + p + c
 	elseif r > 40 then
-		set JVX = s + p + s + p + s + p + s + p + c + p + c + p + c
+		set result = s + p + s + p + s + p + s + p + c + p + c + p + c
 	elseif r > 25 then
-		set JVX = s + p + s + p + s + p + c + p + c + p + c + p + c
+		set result = s + p + s + p + s + p + c + p + c + p + c + p + c
 	elseif r > 10 then
-		set JVX = s + p + s + p + c + p + c + p + c + p + c + p + c
+		set result = s + p + s + p + c + p + c + p + c + p + c + p + c
 	elseif r > 0 then
-		set JVX = s + p + c + p + c + p + c + p + c + p + c + p + c
+		set result = s + p + c + p + c + p + c + p + c + p + c + p + c
 	else
-		set JVX = c + p + c + p + c + p + c + p + c + p + c + p + c
+		set result = c + p + c + p + c + p + c + p + c + p + c + p + c
 	endif
-	return JVX
+	return result
 endfunction
 function WAI takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
@@ -61085,64 +61108,64 @@ function ASA takes unit whichUnit, integer CHO, integer ATA returns nothing
 	local string c = "||"
 	local string p = " "
 	local string s = c1 + "|||r"
-	local string JVX
+	local string result
 	local texttag tt =(LoadTextTagHandle(HY,(GetHandleId(whichUnit)), 451))
 	if CHO == 0 then
-		set JVX = " "
+		set result = " "
 	elseif ATA == 1 then
 		if CHO == 0 then
-			set JVX = c + p + c + p + c
+			set result = c + p + c + p + c
 		elseif CHO == 1 then
-			set JVX = s + p + c + p + c
+			set result = s + p + c + p + c
 		elseif CHO == 2 then
-			set JVX = s + p + s + p + c
+			set result = s + p + s + p + c
 		elseif CHO == 3 then
-			set JVX = s + p + s + p + s
+			set result = s + p + s + p + s
 		endif
 	elseif ATA == 2 then
 		if CHO == 0 then
-			set JVX = c + p + c + p + c + p + c
+			set result = c + p + c + p + c + p + c
 		elseif CHO == 1 then
-			set JVX = s + p + c + p + c + p + c
+			set result = s + p + c + p + c + p + c
 		elseif CHO == 2 then
-			set JVX = s + p + s + p + c + p + c
+			set result = s + p + s + p + c + p + c
 		elseif CHO == 3 then
-			set JVX = s + p + s + p + s + p + c
+			set result = s + p + s + p + s + p + c
 		elseif CHO == 4 then
-			set JVX = s + p + s + p + s + p + s
+			set result = s + p + s + p + s + p + s
 		endif
 	elseif ATA == 3 then
 		if CHO == 0 then
-			set JVX = c + p + c + p + c + p + c + p + c
+			set result = c + p + c + p + c + p + c + p + c
 		elseif CHO == 1 then
-			set JVX = s + p + c + p + c + p + c + p + c
+			set result = s + p + c + p + c + p + c + p + c
 		elseif CHO == 2 then
-			set JVX = s + p + s + p + c + p + c + p + c
+			set result = s + p + s + p + c + p + c + p + c
 		elseif CHO == 3 then
-			set JVX = s + p + s + p + s + p + c + p + c
+			set result = s + p + s + p + s + p + c + p + c
 		elseif CHO == 4 then
-			set JVX = s + p + s + p + s + p + s + p + c
+			set result = s + p + s + p + s + p + s + p + c
 		elseif CHO == 5 then
-			set JVX = s + p + s + p + s + p + s + p + s
+			set result = s + p + s + p + s + p + s + p + s
 		endif
 	elseif ATA == 4 then
 		if CHO == 0 then
-			set JVX = c + p + c + p + c + p + c + p + c + p + c
+			set result = c + p + c + p + c + p + c + p + c + p + c
 		elseif CHO == 1 then
-			set JVX = s + p + c + p + c + p + c + p + c + p + c
+			set result = s + p + c + p + c + p + c + p + c + p + c
 		elseif CHO == 2 then
-			set JVX = s + p + s + p + c + p + c + p + c + p + c
+			set result = s + p + s + p + c + p + c + p + c + p + c
 		elseif CHO == 3 then
-			set JVX = s + p + s + p + s + p + c + p + c + p + c
+			set result = s + p + s + p + s + p + c + p + c + p + c
 		elseif CHO == 4 then
-			set JVX = s + p + s + p + s + p + s + p + c + p + c
+			set result = s + p + s + p + s + p + s + p + c + p + c
 		elseif CHO == 5 then
-			set JVX = s + p + s + p + s + p + s + p + s + p + c
+			set result = s + p + s + p + s + p + s + p + s + p + c
 		elseif CHO == 6 then
-			set JVX = s + p + s + p + s + p + s + p + s + p + s
+			set result = s + p + s + p + s + p + s + p + s + p + s
 		endif
 	endif
-	call SetTextTagText(tt, JVX, .023)
+	call SetTextTagText(tt, result, .023)
 	call SetTextTagPosUnit(tt, whichUnit, 0)
 	call SetTextTagVisibility(tt, GetOwningPlayer(whichUnit) == LocalPlayer and UnitIsDead(whichUnit) == false)
 	call SetTextTagPermanent(tt, true)
@@ -66491,7 +66514,7 @@ function DAE takes nothing returns nothing
 	set l = null
 endfunction
 function HIA takes unit whichUnit, real x, real y returns boolean
-	local boolean JVX = false
+	local boolean result = false
 	local player p = GetOwningPlayer(whichUnit)
 	local unit dummyCaster = CreateUnit(p,'e02Q', GetUnitX(whichUnit), GetUnitY(whichUnit), 0)
 	call UnitAddPermanentAbility(dummyCaster,'A1V4')
@@ -74736,7 +74759,7 @@ function ZTA takes unit u returns nothing
 	exitwhen i > k
 		set it = UnitItemInSlot(u, i)
 		set id = GetItemIndexEx(it)
-		if (id == Item_EmptyMagicalBottle or id == Item_MagicalBottleCharges1 or id == Item_MagicalBottleCharges2) and GetItemUserData(it)> 0 then
+		if (id == Item_EmptyBottle or id == Item_MagicalBottleCharges1 or id == Item_MagicalBottleCharges2) and GetItemUserData(it)> 0 then
 			call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Undead\\ReplenishMana\\SpiritTouchTarget.mdl", u, "overhead"))
 			call IRX(GetOwningPlayer(u), "Abilities\\Spells\\Human\\Heal\\HealTarget.wav")
 			set TempPlayer = GetItemPlayer(it)

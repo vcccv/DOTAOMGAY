@@ -119,9 +119,9 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         set OUV = RegisterItem('I03Z', 'I053', 'h025', 'I0CK')
         set OWV = RegisterItem('I040', 'I054', 'h026', 'I0DL')
         set OYV = RegisterItem('I041', 'I055', 'h027', 'I0D6')
-        set OZV = RegisterItem('I00L', 'I0AV', 'h02B', 0)
 
-        set Item_EmptyMagicalBottle         = RegisterItem('I05E', 'I0AM', 0, 'I0DN')
+        set Item_EmptyBottleStore           = RegisterItem('I00L', 'I0AV', 'h02B', 0)
+        set Item_EmptyBottle                = RegisterItem('I05E', 'I0AM', 0, 'I0DN')
         set Item_MagicalBottleCharges1      = RegisterItem('I0AU', 'I0AN', 0, 'I0DO')
         set Item_MagicalBottleCharges2      = RegisterItem('I0AS', 'I0AO', 0, 'I0DP')
         set Item_MagicalBottleCharges3      = RegisterItem('I0AT', 'I0AP', 0, 'I0DQ')
@@ -284,11 +284,11 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         set Item_Bloodstone = RegisterItem('I0BL', 'I0BK', 0, 'I0C3')
         set NNV = RegisterItem('I0BN', 'I0BM', 0, 'I0C4')
 
-        set Item_ArmletOfMordiggian_Active                  = RegisterItem('I00S', 'I00M', 0, 'I01C')
-        set Item_ArmletOfMordiggian_Inactive                = RegisterItem('I00T', 'I00Q', 0, 'I01E')
-        set Item_ArmletOfMordiggian_Active_CourierEdition   = RegisterItem('I00V', 'I00N', 0, 'I01F')
-        set Item_ArmletOfMordiggian_Inactive_CourierEdition = RegisterItem('I00W', 'I00R', 0, 'I0DE')
-        set Item_ShivaGuard = RegisterItem('I00X', 'I00Z', 0, 'I0CF')
+        set Item_ArmletOfMordiggian_Activated                  = RegisterItem('I00S', 'I00M', 0, 'I01C')
+        set Item_ArmletOfMordiggian_Deactivated                = RegisterItem('I00T', 'I00Q', 0, 'I01E')
+        set Item_ArmletOfMordiggian_Activated_CourierEdition   = RegisterItem('I00V', 'I00N', 0, 'I01F')
+        set Item_ArmletOfMordiggian_Deactivated_CourierEdition = RegisterItem('I00W', 'I00R', 0, 'I0DE')
+        set Item_ShivaGuard                = RegisterItem('I00X', 'I00Z', 0, 'I0CF')
         set Item_ShivaGuard_CourierEdition = RegisterItem('I00Y', 'I010', 0, 'I0DF')
         set NJV = RegisterItem('I013', 'I012', 0, 'I0CB')
         set NKV = RegisterItem('I0GK', 'I0GJ', 0, 'I0GL')
@@ -914,7 +914,7 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         set CombineIndex2[CombineMaxIndex] = X6V
         set CombineIndex3[CombineMaxIndex] = XWV
         set CombineIndex4[CombineMaxIndex] = BZV
-        set CombinedIndex[CombineMaxIndex] = Item_ArmletOfMordiggian_Inactive_CourierEdition
+        set CombinedIndex[CombineMaxIndex] = Item_ArmletOfMordiggian_Deactivated_CourierEdition
         
         set CombineMaxIndex = CombineMaxIndex + 1
         set CombineIndex1[CombineMaxIndex] = OIV
@@ -1151,10 +1151,10 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         integer OUV
         integer OWV
         integer OYV
-        integer OZV
+        integer Item_EmptyBottleStore
 
         // 魔瓶
-        integer Item_EmptyMagicalBottle
+        integer Item_EmptyBottle
         integer Item_MagicalBottleCharges1
         integer Item_MagicalBottleCharges2
         integer Item_MagicalBottleCharges3
@@ -1170,19 +1170,24 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         integer Item_MagicalBottle_Illusion
         // 魔瓶 - 赏金
         integer Item_MagicalBottle_Bounty
-        
+        // 魔棒
         integer Item_MagicStick
         integer RVV
         integer REV
         integer RXV
         integer ROV
+        // 先祖战鼓
         integer Item_AncientJanggoOfEndurance
         integer RIV
+        // 死神之刃
         integer Item_BladeOfTheReaper
+        // 静谧之鞋
         integer Item_TranquilBoots
         integer Item_DisabledTranquilBoots
         integer RCV
+        // 银月之晶
         integer Item_MoonShard
+        // 玲珑心
         integer Item_OctarineCore
         integer RGV
         integer RHV
@@ -1297,11 +1302,11 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         integer Item_Bloodstone
         integer Recipe_Bloodstone
         integer NNV
-        integer Item_ArmletOfMordiggian_Active
-        integer Item_ArmletOfMordiggian_Inactive
+        integer Item_ArmletOfMordiggian_Activated
+        integer Item_ArmletOfMordiggian_Deactivated
         // 臂章(信使)
-        integer Item_ArmletOfMordiggian_Active_CourierEdition
-        integer Item_ArmletOfMordiggian_Inactive_CourierEdition
+        integer Item_ArmletOfMordiggian_Activated_CourierEdition
+        integer Item_ArmletOfMordiggian_Deactivated_CourierEdition
         integer Item_ShivaGuard
         integer Item_ShivaGuard_CourierEdition
         integer NJV

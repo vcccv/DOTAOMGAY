@@ -88,12 +88,12 @@ library ItemStatus requires ItemSystem
 
     function IsItemCourierEditionByIndex takes integer itemIndex returns boolean
         return itemIndex == Item_HelmOfTheDominator_CourierEdition          /*
-        */  or itemIndex == Item_ArmletOfMordiggian_Active_CourierEdition   /*
-        */  or itemIndex == Item_ArmletOfMordiggian_Inactive_CourierEdition /*
+        */  or itemIndex == Item_ArmletOfMordiggian_Activated_CourierEdition   /*
+        */  or itemIndex == Item_ArmletOfMordiggian_Deactivated_CourierEdition /*
         */  or itemIndex == Item_ShivaGuard_CourierEdition                  /*
         */  or itemIndex == Item_HelmOfTheDominator                         /*
-        */  or itemIndex == Item_ArmletOfMordiggian_Active                  /*
-        */  or itemIndex == Item_ArmletOfMordiggian_Inactive                /*
+        */  or itemIndex == Item_ArmletOfMordiggian_Activated                  /*
+        */  or itemIndex == Item_ArmletOfMordiggian_Deactivated                /*
         */  or itemIndex == Item_ShivaGuard                                 /*
         */  or itemIndex == Item_GemOfTrueSight                             /*
         */  or itemIndex == Item_GemOfTrueSight_CourierEdition              /*
