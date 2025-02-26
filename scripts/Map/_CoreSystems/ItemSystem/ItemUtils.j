@@ -3,6 +3,11 @@ library ItemUtils
     
     // unit
 
+    // 使物品没有碰撞
+    function SetItemCollisionType takes item whichItem, boolean flag returns nothing
+        // call MHItem_SetCollisionType()
+    endfunction
+
     // 获取物品在物品栏的格数（指定物品类型）
     // Translates 0-based slot indices to 1-based slot indices.
     function GetInventoryIndexOfItemType takes unit whichUnit, integer itemId returns integer

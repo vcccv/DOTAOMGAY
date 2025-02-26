@@ -36,9 +36,9 @@ library ItemStatus requires ItemSystem
     // 可充能的永久性物品(非消耗品)? 但也包含了肉山盾 或许是不可堆叠消耗品
     function IsItemChargedByIndex takes integer itemIndex returns boolean
         return itemIndex == Item_UrnOfShadows               /*
-        */  or itemIndex == Item_AncientJanggoOfEndurance   /*
-        */  or itemIndex == Item_DiffusalBladeLevel1        /*
-        */  or itemIndex == Item_DiffusalBladeLevel2        /*
+        */  or itemIndex == Item_AncientJanggoOfEnduranceCharged   /*
+        */  or itemIndex == Item_DiffusalBladeLevel1Charged        /*
+        */  or itemIndex == Item_DiffusalBladeLevel2Charged        /*
         */  or itemIndex == Item_Bloodstone                 /*
         */  or itemIndex == Item_AegisOfTheImmortal         /*
         */  or itemIndex == Item_MagicStick                 /*
@@ -88,12 +88,12 @@ library ItemStatus requires ItemSystem
 
     function IsItemCourierEditionByIndex takes integer itemIndex returns boolean
         return itemIndex == Item_HelmOfTheDominator_CourierEdition          /*
-        */  or itemIndex == Item_ArmletOfMordiggian_Activated_CourierEdition   /*
-        */  or itemIndex == Item_ArmletOfMordiggian_Deactivated_CourierEdition /*
+        */  or itemIndex == Item_ArmletOfMordiggianActivated_CourierEdition   /*
+        */  or itemIndex == Item_ArmletOfMordiggianDeactivated_CourierEdition /*
         */  or itemIndex == Item_ShivaGuard_CourierEdition                  /*
         */  or itemIndex == Item_HelmOfTheDominator                         /*
-        */  or itemIndex == Item_ArmletOfMordiggian_Activated                  /*
-        */  or itemIndex == Item_ArmletOfMordiggian_Deactivated                /*
+        */  or itemIndex == Item_ArmletOfMordiggianActivated                  /*
+        */  or itemIndex == Item_ArmletOfMordiggianDeactivated                /*
         */  or itemIndex == Item_ShivaGuard                                 /*
         */  or itemIndex == Item_GemOfTrueSight                             /*
         */  or itemIndex == Item_GemOfTrueSight_CourierEdition              /*

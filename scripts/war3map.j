@@ -5561,7 +5561,7 @@ function HideErrorTipText takes nothing returns nothing
 endfunction
 
 function InterfaceErrorForPlayer takes player p, string str returns nothing
-	if (str != "") and(str != null) then
+	if (str != "") and (str != null) then
 		if (LocalPlayer== p) then
 			call MHUI_SendErrorMessage(str, 10., 0xFFFFCC00)
 			//call ClearTextMessages()
@@ -7531,18 +7531,18 @@ function GYX takes unit u, integer id returns boolean
 endfunction
 function GZX takes unit u, integer id, item it returns item
 	local integer i
-	local item G_X
+	local item 	  whichItem
 	set i = 0
 	loop
 	exitwhen i > 5
-		set G_X = UnitItemInSlot(u, i)
-		if G_X != null and G_X != it and GetItemTypeId(G_X) == id then
-			set G_X = null
+		set whichItem = UnitItemInSlot(u, i)
+		if whichItem != null and whichItem != it and GetItemTypeId(whichItem) == id then
+			set whichItem = null
 			return UnitItemInSlot(u, i)
 		endif
 		set i = i + 1
 	endloop
-	set G_X = null
+	set whichItem = null
 	return null
 endfunction
 
@@ -7848,16 +7848,17 @@ function HMX takes item it, player p returns nothing
 	endif
 	set u = null
 endfunction
+// 可拾取版本
 function DeferredCreateItemOnExpired takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local integer itemId =(LoadInteger(HY, h, 74))
-	local real x =(LoadReal(HY, h, 6))
-	local real y =(LoadReal(HY, h, 7))
-	local player p =(LoadPlayerHandle(HY, h, 54))
-	local boolean charged =(LoadBoolean(HY, h, 75))
-	local integer charges =(LoadInteger(HY, h, 76))
-	local item newItem = CreateItem(itemId, x, y)
+	local trigger t 	  = GetTriggeringTrigger()
+	local integer h 	  = GetHandleId(t)
+	local integer itemId  = (LoadInteger(HY, h, 74))
+	local real	  x 	  = (LoadReal(HY, h, 6))
+	local real	  y 	  = (LoadReal(HY, h, 7))
+	local player  p 	  = (LoadPlayerHandle(HY, h, 54))
+	local boolean charged = (LoadBoolean(HY, h, 75))
+	local integer charges = (LoadInteger(HY, h, 76))
+	local item 	  newItem = CreateItem(itemId, x, y)
 	call SetItemPlayer(newItem, p, true)
 	call SetItemUserData(newItem, 0)
 	if IsItemDeathDrop(newItem) then
@@ -12465,9 +12466,9 @@ function Z3X takes unit Y1X, unit KKX, boolean Z4X, integer Z5X returns nothing
 					set it = LoadItemHandle(HY,'ITEM', i)
 					if CombinedIndex[k]== Item_Bloodstone then
 						call SaveInteger(HY,'ITEM', 300, 8)
-					elseif CombinedIndex[k]== Item_DiffusalBladeLevel1 then
+					elseif CombinedIndex[k]== Item_DiffusalBladeLevel1Charged then
 						call SaveInteger(HY,'ITEM', 300, 12)
-					elseif CombinedIndex[k]== Item_DiffusalBladeLevel2 then
+					elseif CombinedIndex[k]== Item_DiffusalBladeLevel2Charged then
 						call SaveInteger(HY,'ITEM', 300, 12)
 					elseif CombinedIndex[k]== Item_MagicWand then
 						if GetItemIndexEx(it) == Item_MagicStick then
@@ -12486,7 +12487,7 @@ function Z3X takes unit Y1X, unit KKX, boolean Z4X, integer Z5X returns nothing
 		if Z8X == Z7X then
 			if Z4X == false then
 				set it = UnitAddItemById(KKX, ItemRealId[CombinedIndex[k]])
-				if CombinedIndex[k]== Item_Bloodstone or CombinedIndex[k]== Item_MagicWand or CombinedIndex[k]== Item_DiffusalBladeLevel1 or CombinedIndex[k]== Item_DiffusalBladeLevel2 then
+				if CombinedIndex[k]== Item_Bloodstone or CombinedIndex[k]== Item_MagicWand or CombinedIndex[k]== Item_DiffusalBladeLevel1Charged or CombinedIndex[k]== Item_DiffusalBladeLevel2Charged then
 					if HaveSavedInteger(HY,'ITEM', 300) then
 						call SetItemCharges(it, LoadInteger(HY,'ITEM', 300))
 						call RemoveSavedInteger(HY,'ITEM', 300)
@@ -12498,7 +12499,7 @@ function Z3X takes unit Y1X, unit KKX, boolean Z4X, integer Z5X returns nothing
 				set it = null
 			else
 				set it = CreateItem(ItemPowerUpId[CombinedIndex[k]], GetUnitX(KKX), GetUnitY(KKX))
-				if CombinedIndex[k]== Item_Bloodstone or CombinedIndex[k]== Item_MagicWand or CombinedIndex[k]== Item_DiffusalBladeLevel1 or CombinedIndex[k]== Item_DiffusalBladeLevel2 then
+				if CombinedIndex[k]== Item_Bloodstone or CombinedIndex[k]== Item_MagicWand or CombinedIndex[k]== Item_DiffusalBladeLevel1Charged or CombinedIndex[k]== Item_DiffusalBladeLevel2Charged then
 					if HaveSavedInteger(HY,'ITEM', 300) then
 						call SetItemCharges(it, LoadInteger(HY,'ITEM', 300))
 						call RemoveSavedInteger(HY,'ITEM', 300)
@@ -13754,52 +13755,67 @@ function XKO takes unit u, item it returns nothing
 	endif
 endfunction
 function XLO takes unit whichUnit, item whichItem returns boolean
-	local unit 	  u = whichUnit
-	local integer H4X = GetUnitTypeId(u)
+	local unit 	  tempUnit 	= whichUnit
 	local integer itemIndex = GetItemIndexEx(whichItem)
-	local real x
-	local real y
+	local real	  x
+	local real	  y
 	local integer i
 	local boolean XMO = true
-	set x = GetUnitX(u)
-	set y = GetUnitY(u)
+	set x = GetUnitX(tempUnit)
+	set y = GetUnitY(tempUnit)
 	if itemIndex == Item_EmptyBottleStore then
-		call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Undead\\ReplenishMana\\SpiritTouchTarget.mdl", u, "overhead"))
-		call IRX(GetOwningPlayer(u), "Abilities\\Spells\\Human\\Heal\\HealTarget.wav")
+		call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Undead\\ReplenishMana\\SpiritTouchTarget.mdl", tempUnit, "overhead"))
+		call IRX(GetOwningPlayer(tempUnit), "Abilities\\Spells\\Human\\Heal\\HealTarget.wav")
 		set TempPlayer = GetItemPlayer(whichItem)
 		call SilentRemoveItem(whichItem)
 		call TDE(whichUnit, ItemRealId[Item_MagicalBottleCharges3], TempPlayer, false, 1)
-		call UnitRemoveAbility(u,'B0GI')
+		call UnitRemoveAbility(tempUnit,'B0GI')
 	endif
-	if (itemIndex) == Item_DiffusalBladeLevel1 and GetItemCharges(whichItem) == 0 then
+	// 散失充能 没充了就换空的
+	if (itemIndex) == Item_DiffusalBladeLevel1Charged and GetItemCharges(whichItem) == 0 then
 		set TempPlayer = GetItemPlayer(whichItem)
 		call SilentRemoveItem(whichItem)
-		call TDE(whichUnit, ItemRealId[IYV], TempPlayer, false, 1)
+		call TDE(whichUnit, ItemRealId[Item_DiffusalBladeLevel1Empty], TempPlayer, false, 1)
 	endif
-	if itemIndex == Item_AncientJanggoOfEndurance and GetItemCharges(whichItem) == 0 then
+	// 战鼓充能 没充能了就换
+	if itemIndex == Item_AncientJanggoOfEnduranceCharged and GetItemCharges(whichItem) == 0 then
 		set TempPlayer = GetItemPlayer(whichItem)
 		call SilentRemoveItem(whichItem)
-		call TDE(whichUnit, ItemRealId[RIV], TempPlayer, false, 1)
+		call TDE(whichUnit, ItemRealId[Item_AncientJanggoOfEnduranceEmpty], TempPlayer, false, 1)
 	endif
 	call DisableTrigger(UnitManipulatItemTrig)
-	if (itemIndex == ICV or itemIndex == IBV or itemIndex == IDV) and(GZX(u, ItemRealId[ICV], whichItem) != null or GZX(u, ItemRealId[IBV], whichItem) != null or GZX(u, ItemRealId[IDV], whichItem) != null) then
-		call InterfaceErrorForPlayer(GetOwningPlayer(u), GetObjectName('n02L'))
+	// 动力鞋
+	if (itemIndex == ICV or itemIndex == IBV or itemIndex == IDV) and(GZX(tempUnit, ItemRealId[ICV], whichItem) != null or GZX(tempUnit, ItemRealId[IBV], whichItem) != null or GZX(tempUnit, ItemRealId[IDV], whichItem) != null) then
+		call InterfaceErrorForPlayer(GetOwningPlayer(tempUnit), GetObjectName('n02L'))
 		set TempPlayer = GetItemPlayer(whichItem)
 		call RemoveItem(whichItem)
 		set TempItem = CreateItem(ItemPowerUpId[itemIndex], x, y)
 		call SetItemPlayer(TempItem, TempPlayer, false)
 		call SetItemUserData(TempItem, 1)
 	endif
-	if (itemIndex == Item_ArmletOfMordiggian_Deactivated or itemIndex == Item_ArmletOfMordiggian_Activated or itemIndex == Item_ArmletOfMordiggian_Deactivated_CourierEdition or itemIndex == Item_ArmletOfMordiggian_Activated_CourierEdition) and(GZX(u, ItemRealId[Item_ArmletOfMordiggian_Deactivated], whichItem) != null or GZX(u, ItemRealId[Item_ArmletOfMordiggian_Activated], whichItem) != null or GZX(u, ItemRealId[Item_ArmletOfMordiggian_Deactivated_CourierEdition], whichItem) != null or GZX(u, ItemRealId[Item_ArmletOfMordiggian_Activated_CourierEdition], whichItem) != null) then
-		call InterfaceErrorForPlayer(GetOwningPlayer(u), GetObjectName('n02C'))
+	// 臂章
+	if (itemIndex == Item_ArmletOfMordiggianDeactivated /*
+		*/ or itemIndex == Item_ArmletOfMordiggianActivated /*
+		*/ or itemIndex == Item_ArmletOfMordiggianDeactivated_CourierEdition /*
+		*/ or itemIndex == Item_ArmletOfMordiggianActivated_CourierEdition) /*
+		*/ and (GZX(tempUnit, ItemRealId[Item_ArmletOfMordiggianDeactivated], whichItem) != null /*
+		*/ or GZX(tempUnit, ItemRealId[Item_ArmletOfMordiggianActivated], whichItem) != null /*
+		*/ or GZX(tempUnit, ItemRealId[Item_ArmletOfMordiggianDeactivated_CourierEdition], whichItem) != null /*
+		*/ or GZX(tempUnit, ItemRealId[Item_ArmletOfMordiggianActivated_CourierEdition], whichItem) != null) then
+		
+		// 是臂章物品，并且已经有相关物品了。
+		// 只能有一个臂章
+		call BJDebugMsg("提示了啊")
+		call InterfaceErrorForPlayer(GetOwningPlayer(tempUnit), GetObjectName('n02C'))
 		set TempPlayer = GetItemPlayer(whichItem)
 		call RemoveItem(whichItem)
 		set TempItem = CreateItem(ItemPowerUpId[itemIndex], x, y)
 		call SetItemPlayer(TempItem, TempPlayer, false)
 		call SetItemUserData(TempItem, 1)
 	endif
+	// bkb 重设次数
 	if (itemIndex == I9V or itemIndex == AVV or itemIndex == AEV or itemIndex == AXV or itemIndex == AOV or itemIndex == ARV) then
-		set i = LoadInteger(OtherHashTable, GetHandleId(GetOwningPlayer(u)),'0BKB')
+		set i = LoadInteger(OtherHashTable, GetHandleId(GetOwningPlayer(tempUnit)), '0BKB')
 		if i == 0 and itemIndex != I9V then
 			set TempPlayer = GetItemPlayer(whichItem)
 			call SilentRemoveItem(whichItem)
@@ -13826,20 +13842,26 @@ function XLO takes unit whichUnit, item whichItem returns boolean
 			call TDE(whichUnit, ItemRealId[ARV], TempPlayer, false, 1)
 		endif
 	endif
-	if (itemIndex == Item_DivineRapier_Original and IsPlayerEnemy(GetItemPlayer(whichItem), GetOwningPlayer(u))) then
+	// 原始圣剑
+	if (itemIndex == Item_DivineRapier_Original and IsPlayerEnemy(GetItemPlayer(whichItem), GetOwningPlayer(tempUnit))) then
+		// 被敌对玩家拿了就变自由圣剑
 		set TempPlayer = GetItemPlayer(whichItem)
 		call SilentRemoveItem(whichItem)
-		set TempItem = UnitAddItemById(u, ItemRealId[Item_DivineRapier_Free])
+		set TempItem = UnitAddItemById(tempUnit, ItemRealId[Item_DivineRapier_Free])
 		call SetItemPlayer(TempItem, TempPlayer, false)
 		call SetItemUserData(TempItem, 1)
 	endif
-	if (itemIndex == Item_AegisOfTheImmortal) and(IsUnitCourier(u) or IsUnitSpiritBear(u)) then
-		if IsUnitCourier(u) then
-			call InterfaceErrorForPlayer(GetOwningPlayer(u), GetObjectName('n02K'))
+	// 拿盾
+	// 熊灵或信使不给拿盾
+	if (itemIndex == Item_AegisOfTheImmortal) and (IsUnitCourier(tempUnit) or IsUnitSpiritBear(tempUnit)) then
+		// 信使不能拿盾的提示
+		if IsUnitCourier(tempUnit) then
+			call InterfaceErrorForPlayer(GetOwningPlayer(tempUnit), GetObjectName('n02K'))
 		endif
 		set TempPlayer = GetItemPlayer(whichItem)
 		set Q2 = GetItemCharges(whichItem)
 		call RemoveItem(whichItem)
+		// ?
 		if itemIndex == Item_AegisOfTheImmortal then
 			set TempItem = CreateItem(ItemPowerUpId[itemIndex], GetRectCenterX(gg_rct_RoshanSpawn), GetRectCenterY(gg_rct_RoshanSpawn))
 			call SetItemCharges(TempItem, Q2)
@@ -13851,7 +13873,7 @@ function XLO takes unit whichUnit, item whichItem returns boolean
 	if XMO then
 		call XKO(whichUnit, whichItem)
 	endif
-	set u = null
+	set tempUnit = null
 	set whichItem = null
 	return false
 endfunction
@@ -13870,10 +13892,10 @@ function XSO takes unit whichUnit, item whichItem returns boolean
 			set newIndex = Item_HelmOfTheDominator
 		elseif itemIndex == Item_HandOfMidas_CourierEdition then
 			set newIndex = Item_HandOfMidas
-		elseif itemIndex == Item_ArmletOfMordiggian_Activated_CourierEdition then
-			set newIndex = Item_ArmletOfMordiggian_Activated
-		elseif itemIndex == Item_ArmletOfMordiggian_Deactivated_CourierEdition then
-			set newIndex = Item_ArmletOfMordiggian_Deactivated
+		elseif itemIndex == Item_ArmletOfMordiggianActivated_CourierEdition then
+			set newIndex = Item_ArmletOfMordiggianActivated
+		elseif itemIndex == Item_ArmletOfMordiggianDeactivated_CourierEdition then
+			set newIndex = Item_ArmletOfMordiggianDeactivated
 		elseif itemIndex == Item_ShivaGuard_CourierEdition then
 			set newIndex = Item_ShivaGuard
 		elseif itemIndex == Item_GemOfTrueSight_CourierEdition then
@@ -13899,19 +13921,19 @@ function XSO takes unit whichUnit, item whichItem returns boolean
 		// 如果是信使
 
 		// 不知为何只判了宝石 也许有bug?
-		// if itemIndex == Item_HelmOfTheDominator_CourierEdition then
-		// 	set newIndex = Item_HelmOfTheDominator
-		// elseif itemIndex == Item_HandOfMidas_CourierEdition then
-		// 	set newIndex = Item_HandOfMidas
-		// elseif itemIndex == Item_ArmletOfMordiggian_Activated_CourierEdition then
-		// 	set newIndex = Item_ArmletOfMordiggian_Activated
-		// elseif itemIndex == Item_ArmletOfMordiggian_Deactivated_CourierEdition then
-		// 	set newIndex = Item_ArmletOfMordiggian_Deactivated
-		// elseif itemIndex == Item_ShivaGuard_CourierEdition then
-		// 	set newIndex = Item_ShivaGuard
-		// elseif itemIndex == Item_GemOfTrueSight_CourierEdition then
-		// 	set newIndex = Item_GemOfTrueSight
-		// endif
+		if itemIndex == Item_HelmOfTheDominator then
+			set newIndex = Item_HelmOfTheDominator_CourierEdition
+		elseif itemIndex == Item_HandOfMidas then
+			set newIndex = Item_HandOfMidas_CourierEdition
+		elseif itemIndex == Item_ArmletOfMordiggianActivated then
+			set newIndex = Item_ArmletOfMordiggianActivated_CourierEdition
+		elseif itemIndex == Item_ArmletOfMordiggianDeactivated then
+			set newIndex = Item_ArmletOfMordiggianDeactivated_CourierEdition
+		elseif itemIndex == Item_ShivaGuard then
+			set newIndex = Item_ShivaGuard_CourierEdition
+		elseif itemIndex == Item_GemOfTrueSight then
+			set newIndex = Item_GemOfTrueSight_CourierEdition
+		endif
 
 		// if itemIndex == Item_GemOfTrueSight then
 		// 	set newIndex = Item_GemOfTrueSight_CourierEdition
@@ -14403,7 +14425,7 @@ function OnManipulatItem takes nothing returns boolean
 					call EnableAttackEffectByTime(17, 0)
 				endif
 			endif
-			if i == ItemRealId[OXV] or i == ItemRealId[I1V] or i == ItemRealId[Item_HelmOfTheDominator] or i == ItemRealId[A2V]  then
+			if i == ItemRealId[OXV] or i == ItemRealId[I1V] or i == ItemRealId[Item_HelmOfTheDominator] or i == ItemRealId[Item_Satanic]  then
 				call OOZ()
 			endif
 			if i == ItemRealId[OYV] then
@@ -14454,7 +14476,7 @@ function OnManipulatItem takes nothing returns boolean
 				call XHYZR()
 			elseif i == ItemRealId[RVV]or i == ItemRealId[REV] then
 				call X9O()
-			elseif i == ItemRealId[Item_DiffusalBladeLevel1]or i == ItemRealId[Item_DiffusalBladeLevel2]or id == ItemRealId[IYV] then
+			elseif i == ItemRealId[Item_DiffusalBladeLevel1Charged] or i == ItemRealId[Item_DiffusalBladeLevel2Charged]or id == ItemRealId[Item_DiffusalBladeLevel1Empty] then
 				call OEO()
 			elseif i == ItemRealId[A3V]or i == ItemRealId[A4V] then
 				call ONO()
@@ -15022,10 +15044,10 @@ function RJO takes nothing returns boolean
 	return false
 endfunction
 
-function RKO takes player p, integer RLO, integer id, real x, real y returns nothing
+function RKO takes player p, integer itemData, integer id, real x, real y returns nothing
 	local item it = CreateItem(ItemPowerUpId[id], x, y)
 	call SetItemPlayer(it, p, false)
-	call SetItemUserData(it, RLO)
+	call SetItemUserData(it, itemData)
 	set it = null
 endfunction
 function DisassembleItems takes nothing returns nothing
@@ -15694,7 +15716,7 @@ function AEO takes nothing returns nothing
 	local unit u = LoadUnitHandle(ObjectHashTable, h, 0)
 	local real AXO = LoadReal(ObjectHashTable, h, 0)
 	if GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED then
-		if GetItemOfTypeFromUnit(u, ItemRealId[Item_ArmletOfMordiggian_Activated]) == null then
+		if GetItemOfTypeFromUnit(u, ItemRealId[Item_ArmletOfMordiggianActivated]) == null then
 			call SetHeroStr(u, IMaxBJ(GetHeroStr(u, false)-LoadInteger(OtherHashTable, GetHandleId(u),'ARML'), 1), true)
 			call SaveInteger(OtherHashTable, GetHandleId(u),'ARML', 0)
 			if IsTriggerEnabled(t) then
@@ -15727,39 +15749,39 @@ function AOO takes nothing returns nothing
 	local trigger t
 	local real AXO
 	if GetTriggerEventId() == EVENT_PLAYER_UNIT_DROP_ITEM then
-		if GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Deactivated or GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Deactivated_CourierEdition then
+		if GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggianDeactivated or GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggianDeactivated_CourierEdition then
 			call UnitRemoveAbility(u,'A44Q')
-			if GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Deactivated then
+			if GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggianDeactivated then
 				call AVO(u, 0)
 			endif
 		endif
-		if GetItemIndex(GetManipulatedItem()) == A2V then
+		if GetItemIndex(GetManipulatedItem()) == Item_Satanic then
 			call UnitRemoveAbility(u,'A1BW')
 		endif
-		if GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Activated or GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Activated_CourierEdition then
+		if GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggianActivated or GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggianActivated_CourierEdition then
 			call UnitRemoveAbility(u,'A44Q')
 			call UnitRemoveAbility(u,'A0UK')
 			if HaveSavedHandle(HY, GetHandleId(u),'ARML') then
 				call TriggerEvaluate(LoadTriggerHandle(HY, GetHandleId(u),'ARML'))
 			endif
-			if GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Activated then
+			if GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggianActivated then
 			endif
 		endif
 	endif
 	if GetTriggerEventId() == EVENT_PLAYER_UNIT_PICKUP_ITEM then
-		if GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Deactivated or GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Deactivated_CourierEdition then
+		if GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggianDeactivated or GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggianDeactivated_CourierEdition then
 			call UnitAddPermanentAbility(u,'A44Q')
-			if GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Deactivated then
+			if GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggianDeactivated then
 				call AVO(u, 0)
 			endif
 		endif
-		if GetItemIndex(GetManipulatedItem()) == A2V then
+		if GetItemIndex(GetManipulatedItem()) == Item_Satanic then
 			call UnitAddPermanentAbility(u,'A1BW')
 		endif
-		if GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Activated or GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Activated_CourierEdition then
+		if GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggianActivated or GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggianActivated_CourierEdition then
 			call UnitAddPermanentAbility(u,'A44Q')
 			call UnitAddPermanentAbility(u,'A0UK')
-			if GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Activated then
+			if GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggianActivated then
 				set t = CreateTrigger()
 				call TriggerRegisterTimerEvent(t, .6 / 25, true)
 				set AXO = GetUnitState(GetTriggerUnit(), UNIT_STATE_MAX_LIFE)-GetWidgetLife(GetTriggerUnit())
@@ -15779,7 +15801,12 @@ function AOO takes nothing returns nothing
 	set u = null
 endfunction
 function ARO takes nothing returns boolean
-	if GetItemType(GetManipulatedItem()) == ITEM_TYPE_PERMANENT and(GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Activated or GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Deactivated or GetItemIndex(GetManipulatedItem()) == A2V or GetItemIndex(GetManipulatedItem()) == Item_Bloodstone) then
+	local integer itemIndex = GetItemIndex(GetManipulatedItem())
+	if GetItemType(GetManipulatedItem()) == ITEM_TYPE_PERMANENT  	/*
+		*/ and (itemIndex == Item_ArmletOfMordiggianActivated 	 	/*
+		*/ 	 or itemIndex == Item_ArmletOfMordiggianDeactivated 	/*
+		*/ 	 or itemIndex == Item_Satanic 							/*
+		*/ 	 or itemIndex == Item_Bloodstone) then
 		call AOO()
 	endif
 	return false
@@ -15815,7 +15842,7 @@ function AAO takes nothing returns nothing
 	set trigUnit = null
 endfunction
 function ANO takes nothing returns boolean
-	if GetItemType(GetManipulatedItem()) == ITEM_TYPE_PERMANENT and(GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Activated or(GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggian_Activated_CourierEdition and DRX(GetTriggerUnit()))) then
+	if GetItemType(GetManipulatedItem()) == ITEM_TYPE_PERMANENT and(GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggianActivated or(GetItemIndex(GetManipulatedItem()) == Item_ArmletOfMordiggianActivated_CourierEdition and DRX(GetTriggerUnit()))) then
 		call AAO()
 	endif
 	return false
@@ -17121,7 +17148,7 @@ function NQO takes nothing returns boolean
 		set DVV[GetPlayerId(GetOwningPlayer(trigUnit))] = GetItemY(whichItem)
 	endif
 	call RCO(trigUnit, whichItem)
-	if (GetItemTypeId(whichItem) == ItemRealId[Item_ArmletOfMordiggian_Activated]or GetItemTypeId(whichItem) == ItemRealId[Item_ArmletOfMordiggian_Deactivated]) and IsUnitCourier(trigUnit) then
+	if (GetItemTypeId(whichItem) == ItemRealId[Item_ArmletOfMordiggianActivated]or GetItemTypeId(whichItem) == ItemRealId[Item_ArmletOfMordiggianDeactivated]) and IsUnitCourier(trigUnit) then
 		call UnitRemoveItem(trigUnit, whichItem)
 	elseif (GetItemTypeId(whichItem)) == ItemRealId[Item_MagicWand]and IsUnitType(trigUnit, UNIT_TYPE_HERO) then
 		// 如果拿了魔杖 还是英雄 设置
@@ -19444,57 +19471,56 @@ function FYO takes nothing returns nothing
 		call FWO()
 	endif
 endfunction
-function FZO takes unit u, integer id, integer RLO, item F_O returns nothing
+function FZO takes unit u, integer id, integer itemData, item replacedItem returns nothing
 	local item it
-	local integer JOX = GetUnitItemSlot(u, F_O)
-	local player p = GetItemPlayer(F_O)
+	local integer slot = GetUnitItemSlot(u, replacedItem)
+	local player p = GetItemPlayer(replacedItem)
 	call DisableTrigger(UnitManipulatItemTrig)
-	call RemoveItem(F_O)
-	set it = CreateItemToUnitSlotByIndex(u, ItemRealId[id], JOX)
+	call RemoveItem(replacedItem)
+	set it = CreateItemToUnitSlotByIndex(u, ItemRealId[id], slot)
 	call SetItemPlayer(it, p, false)
-	call SetItemUserData(it, RLO)
+	call SetItemUserData(it, itemData)
 	call EnableTrigger(UnitManipulatItemTrig)
 	set it = null
 endfunction
 function F0O takes integer itemIndex returns nothing
-	local unit u = GetTriggerUnit()
-	local item it = GetManipulatedItem()
-	local integer JOX
+	local unit 	 whichUnit 	   = GetTriggerUnit()
+	local item 	 manipulatedItem = GetManipulatedItem()
 	local player p
 	if itemIndex == IRV then
-		call FZO(u, IIV, 1, it)
+		call FZO(whichUnit, IIV, 1, manipulatedItem)
 	elseif itemIndex == IIV then
-		call FZO(u, IRV, 1, it)
+		call FZO(whichUnit, IRV, 1, manipulatedItem)
 	elseif itemIndex == RUV then
-		call FZO(u, RWV, 1, it)
+		call FZO(whichUnit, RWV, 1, manipulatedItem)
 	elseif itemIndex == RWV then
-		call FZO(u, RUV, 1, it)
+		call FZO(whichUnit, RUV, 1, manipulatedItem)
 	elseif itemIndex == AWV then
-		call FZO(u, AYV, 1, it)
+		call FZO(whichUnit, AYV, 1, manipulatedItem)
 	elseif itemIndex == AYV then
-		call FZO(u, AWV, 1, it)
+		call FZO(whichUnit, AWV, 1, manipulatedItem)
 	endif
 	if itemIndex == AZV then
-		call FZO(u, A_V, 1, it)
+		call FZO(whichUnit, A_V, 1, manipulatedItem)
 	elseif itemIndex == A_V then
-		call FZO(u, AZV, 1, it)
+		call FZO(whichUnit, AZV, 1, manipulatedItem)
 	endif
 	if itemIndex == IBV then
-		call FZO(u, ICV, 1, it)
+		call FZO(whichUnit, ICV, 1, manipulatedItem)
 	elseif itemIndex == ICV then
-		call FZO(u, IDV, 1, it)
+		call FZO(whichUnit, IDV, 1, manipulatedItem)
 	elseif itemIndex == IDV then
-		call FZO(u, IBV, 1, it)
+		call FZO(whichUnit, IBV, 1, manipulatedItem)
 	endif
-	if itemIndex == Item_DiffusalBladeLevel1 and GetItemCharges(it) == 0 then
-		call FZO(u, IYV, 1, it)
-	elseif itemIndex == Item_DiffusalBladeLevel2 and GetItemCharges(it) == 0 then
-		call FZO(u, IZV, 1, it)
-	elseif itemIndex == Item_AncientJanggoOfEndurance and GetItemCharges(it) == 0 then
-		call FZO(u, RIV, 1, it)
+	if itemIndex == Item_DiffusalBladeLevel1Charged and GetItemCharges(manipulatedItem) == 0 then
+		call FZO(whichUnit, Item_DiffusalBladeLevel1Empty, 1, manipulatedItem)
+	elseif itemIndex == Item_DiffusalBladeLevel2Charged and GetItemCharges(manipulatedItem) == 0 then
+		call FZO(whichUnit, Item_DiffusalBladeLevel2Empty, 1, manipulatedItem)
+	elseif itemIndex == Item_AncientJanggoOfEnduranceCharged and GetItemCharges(manipulatedItem) == 0 then
+		call FZO(whichUnit, Item_AncientJanggoOfEnduranceEmpty, 1, manipulatedItem)
 	endif
-	set u = null
-	set it = null
+	set whichUnit 		= null
+	set manipulatedItem = null
 endfunction
 function F1O takes integer itemIndex returns nothing
 	local unit u = GetTriggerUnit()
@@ -19533,15 +19559,15 @@ function F3O takes integer id returns boolean
 	local real hp
 	local unit u = GetTriggerUnit()
 	local item it = GetManipulatedItem()
-	if id == Item_ArmletOfMordiggian_Deactivated then
+	if id == Item_ArmletOfMordiggianDeactivated then
 		set AXO = GetUnitState(u, UNIT_STATE_MAX_LIFE)-GetWidgetLife(u)
 		set hp = GetWidgetLife(u)
-		call FZO(u, Item_ArmletOfMordiggian_Activated, 1, it)
+		call FZO(u, Item_ArmletOfMordiggianActivated, 1, it)
 		call CDO(u)
 		call EPX(u, 4298, .6)
-	elseif id == Item_ArmletOfMordiggian_Activated then
+	elseif id == Item_ArmletOfMordiggianActivated then
 		set AXO = GetUnitState(u, UNIT_STATE_MAX_LIFE)-GetWidgetLife(u)
-		call FZO(u, Item_ArmletOfMordiggian_Deactivated, 1, it)
+		call FZO(u, Item_ArmletOfMordiggianDeactivated, 1, it)
 		call SaveBoolean(OtherHashTable, GetHandleId(u), 20, false)
 		call SetHeroStr(u, IMaxBJ(GetHeroStr(u, false)-LoadInteger(OtherHashTable, GetHandleId(u),'ARML'), 1), true)
 		call SaveInteger(OtherHashTable, GetHandleId(u),'ARML', 0)
@@ -75535,10 +75561,10 @@ function Init_ItemsAbilityAndOrder takes nothing returns nothing
 	call SaveStr(AbilityDataHashTable,'A3E9', ItemRealId[N2V], "thunderbolt")
 	call SaveInteger(AbilityDataHashTable,'A3E9', ItemRealId[ROV],'A1QD')
 	call SaveStr(AbilityDataHashTable,'A3E9', ItemRealId[ROV], "creepheal")
-	call SaveInteger(AbilityDataHashTable,'A3E9', ItemRealId[Item_DiffusalBladeLevel1],'AIpg')
-	call SaveStr(AbilityDataHashTable,'A3E9', ItemRealId[Item_DiffusalBladeLevel1], "purge")
-	call SaveInteger(AbilityDataHashTable,'A3E9', ItemRealId[Item_DiffusalBladeLevel2],'AIpg')
-	call SaveStr(AbilityDataHashTable,'A3E9', ItemRealId[Item_DiffusalBladeLevel2], "purge")
+	call SaveInteger(AbilityDataHashTable,'A3E9', ItemRealId[Item_DiffusalBladeLevel1Charged],'AIpg')
+	call SaveStr(AbilityDataHashTable,'A3E9', ItemRealId[Item_DiffusalBladeLevel1Charged], "purge")
+	call SaveInteger(AbilityDataHashTable,'A3E9', ItemRealId[Item_DiffusalBladeLevel2Charged],'AIpg')
+	call SaveStr(AbilityDataHashTable,'A3E9', ItemRealId[Item_DiffusalBladeLevel2Charged], "purge")
 	call SaveInteger(AbilityDataHashTable,'A3E9', ItemRealId[N1V],'A2K4')
 	call SaveStr(AbilityDataHashTable,'A3E9', ItemRealId[N1V], "852609")
 	call SaveBoolean(AbilityDataHashTable,'A3E9', ItemRealId[N1V], true)
@@ -78446,6 +78472,7 @@ function main takes nothing returns nothing
 	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_DROP_ITEM)
 	call TriggerAddCondition(t, Condition(function I7O))
 
+	// 臂章血精石相关 拾取和丢弃
 	set t = CreateTrigger()
 	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_PICKUP_ITEM)
 	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_DROP_ITEM)

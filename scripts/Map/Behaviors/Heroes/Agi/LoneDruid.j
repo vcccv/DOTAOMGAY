@@ -71,8 +71,9 @@ scope LoneDruid
         local integer  level       = GetUnitAbilityLevel(spiritBear, 'A0A5')
         local player   whichPlayer = GetOwningPlayer(spiritBear)
         local unit     itemHolder  
-        local real     x
-        local real     y
+        local real     tx
+        local real     ty
+        local integer  charges
         
         call SetHeroXP(sourceUnit, GetHeroXP(sourceUnit)-(GetHeroXP(sourceUnit)/(125 -(25 * level))), false)
         call UnitDamageTargetEx(killingUnit, sourceUnit, 5, 100. * I2R(level))
@@ -82,13 +83,13 @@ scope LoneDruid
             set itemHolder = GetPlayerSpiritBearItemHolder(whichPlayer)
             if itemHolder == null then
                 if IsPlayerSentinel(GetOwningPlayer(spiritBear)) then
-                    set x = -6390
-                    set y = -5615
+                    set tx = -6390
+                    set ty = -5615
                 else
-                    set x = 5875
-                    set y = 5000
+                    set tx = 5875
+                    set ty = 5000
                 endif
-                set itemHolder = CreateUnit(GetOwningPlayer(GetTriggerUnit()), 'e01F', x, y, 0)
+                set itemHolder = CreateUnit(GetOwningPlayer(GetTriggerUnit()), 'e01F', tx, ty, 0)
                 set Table[GetHandleId(whichPlayer)].unit[PLAYER_SPIRIT_BEAR_ITEM_HOLD] = itemHolder
                 call UnitAddTownPortalScrollAbility(itemHolder)
             endif
@@ -105,8 +106,18 @@ scope LoneDruid
             call RemoveLocation(l)
             call RemoveRect(r)
         else
-            // 死亡竞赛 把银月和tp吐出来
-
+            // 死亡竞赛 tp吐出来
+            if IsPlayerSentinel(GetOwningPlayer(UEDyingUnit)) then
+                set tx = GetRectCenterX(gg_rct_SentinelRevivalPoint)
+                set ty = GetRectCenterY(gg_rct_SentinelRevivalPoint)
+            else
+                set tx = GetRectCenterX(gg_rct_ScourgeRevivalPoint)
+                set ty = GetRectCenterY(gg_rct_ScourgeRevivalPoint)
+            endif
+            set charges = GetUnitTownPortalScrollCharges(spiritBear)
+            if charges > 0 then
+                call DeferredCreateItem(ItemPowerUpId[Item_TownPortalScroll], tx, ty, whichPlayer, true, charges)
+            endif
         endif
 
         set l = null
