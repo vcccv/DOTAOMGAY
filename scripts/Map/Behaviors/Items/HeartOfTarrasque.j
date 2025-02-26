@@ -156,8 +156,8 @@ scope HeartOfTarrasque
         set Table[GetHandleId(whichUnit)].integer[KEY] = Table[GetHandleId(whichUnit)].integer[KEY] + 1
         set HeartOfTarrasqueCount = HeartOfTarrasqueCount + 1
         if HeartOfTarrasqueCount == 1 then
-            set OnDamagedEvent = AnyUnitEvent.CreateEvent(ANY_UNIT_EVENT_DAMAGED, function OnDamaged)
-            set OnEndCooldownEvent = AnyUnitEvent.CreateEvent(ANY_UNIT_EVENT_ABILITY_END_COOLDOWN, function OnEndCooldown)
+            set OnDamagedEvent = AnyUnitEvent.CreateEventByCode(ANY_UNIT_EVENT_DAMAGED, function OnDamaged)
+            set OnEndCooldownEvent = AnyUnitEvent.CreateEventByCode(ANY_UNIT_EVENT_ABILITY_END_COOLDOWN, function OnEndCooldown)
         endif
         set whichItem = null
         set whichUnit = null

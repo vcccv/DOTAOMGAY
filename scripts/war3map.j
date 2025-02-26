@@ -7,6 +7,9 @@
 #define DESource Event.DamageSource[Event.INDEX]
 #define DEDamage Event.EventDamage[Event.INDEX]
 
+#define UEDyingUnit   Event.GetTriggerUnit()
+#define UEKillingUnit Event.KillingUnit[Event.INDEX]
+
 #define C2I(c) MHTool_CodeToInt(c)
 #define I2C(i) MHTool_IntToCode(i)
 
@@ -335,8 +338,7 @@ globals
 	trigger MV = null
 	boolean PV = false
 	boolean QV = false
-	unit SV = null
-	unit TV = null
+	
 	boolean UV = true
 	integer WV = 0
 	// lod的Debug变量
@@ -9979,10 +9981,11 @@ function PlayerChooseHeroUnit takes unit whichUnit returns boolean
 	// call SetPlayerAbilityAvailable(whichPlayer,'A10U', false)
 	// call SetPlayerAbilityAvailable(whichPlayer,'A34C', false)
 	// call SetPlayerAbilityAvailable(whichPlayer,'A344', false)
+
+	call UnitAddTownPortalScrollAbility(whichUnit)
 	if not PlayerTownPortalScrollInitialized[playerId] then
 		set PlayerTownPortalScrollCharges[playerId] = 3
 	endif
-	call UnitAddTownPortalScrollAbility(whichUnit, PlayerTownPortalScrollCharges[playerId])
 	//========================================================================
 	// 似乎是添加工程升级技能 让其可以学习?
 	if MainModeName =="ap" then
@@ -10086,6 +10089,7 @@ function PlayerChooseHeroUnit takes unit whichUnit returns boolean
 
 	// 死亡竞赛的特殊操作
 	if Mode__DeathMatch then
+		
 		call L8X(whichUnit) // 刷新一下单位?
 		// 分开判断两个队伍稳妥点
 		if IsPlayerSentinel(whichPlayer) then // 如果单位复活 那就增加生命值
@@ -26639,10 +26643,11 @@ endfunction
 function VFR takes unit u returns boolean
 	return GetUnitTypeId(u)=='N01O' or GetUnitTypeId(u)=='N013' or GetUnitTypeId(u)=='N014' or GetUnitTypeId(u)=='N015'
 endfunction
-function VGR takes unit u returns unit
-	local integer h = GetHandleId(GetOwningPlayer(u))
-	return(LoadUnitHandle(HY, h, 333))
-endfunction
+// GetUnitSpiritBear
+// function VGR takes unit u returns unit
+// 	local integer h = GetHandleId(GetOwningPlayer(u))
+// 	return(LoadUnitHandle(HY, h, 333))
+// endfunction
 function VHR takes nothing returns nothing
 	local unit u
 	local integer i = 0
@@ -26650,12 +26655,12 @@ function VHR takes nothing returns nothing
 		call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10., GetObjectName('n08A'))
 	else
 		call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10., GetUnitName(PlayerHeroes[GetPlayerId(GetTriggerPlayer())]) + " " + GetObjectName('n08N') + " " + I2S(R2I(.5 + GetHeroMoveSpeed(PlayerHeroes[GetPlayerId(GetTriggerPlayer())]))))
-		if VFR(PlayerHeroes[GetPlayerId(GetTriggerPlayer())]) then
-			set u = VGR(PlayerHeroes[GetPlayerId(GetTriggerPlayer())])
-			if u != null then
-				call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10., GetUnitName(u) + " " + GetObjectName('n08N') + " " + I2S(R2I(.5 + GetHeroMoveSpeed(u))))
-			endif
-		endif
+		// if VFR(PlayerHeroes[GetPlayerId(GetTriggerPlayer())]) then
+		// 	set u = VGR(PlayerHeroes[GetPlayerId(GetTriggerPlayer())])
+		// 	if u != null then
+		// 		call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10., GetUnitName(u) + " " + GetObjectName('n08N') + " " + I2S(R2I(.5 + GetHeroMoveSpeed(u))))
+		// 	endif
+		// endif
 	endif
 	set u = null
 endfunction
@@ -26679,12 +26684,12 @@ function VJR takes nothing returns nothing
 		call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10., GetObjectName('n08A'))
 	else
 		call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10., GetUnitName(PlayerHeroes[GetPlayerId(GetTriggerPlayer())]) + " " + GetObjectName('n08N') + " " + I2S(R2I(.5 + GetHeroMoveSpeed(PlayerHeroes[GetPlayerId(GetTriggerPlayer())]))))
-		if VFR(PlayerHeroes[GetPlayerId(GetTriggerPlayer())]) then
-			set u = VGR(PlayerHeroes[GetPlayerId(GetTriggerPlayer())])
-			if u != null then
-				call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10., GetUnitName(u) + " " + GetObjectName('n08N') + " " + I2S(R2I(.5 + GetHeroMoveSpeed(u))))
-			endif
-		endif
+		// if VFR(PlayerHeroes[GetPlayerId(GetTriggerPlayer())]) then
+		// 	set u = VGR(PlayerHeroes[GetPlayerId(GetTriggerPlayer())])
+		// 	if u != null then
+		// 		call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10., GetUnitName(u) + " " + GetObjectName('n08N') + " " + I2S(R2I(.5 + GetHeroMoveSpeed(u))))
+		// 	endif
+		// endif
 		loop
 		exitwhen i > 16
 			set u = PlayerHeroes[i]
@@ -39619,13 +39624,13 @@ function VRE takes nothing returns nothing
 	set targetUnit = null
 endfunction
 function UNR takes nothing returns nothing
-	if LoadInteger(HY, GetHandleId(SV),'A3JO')> 0 then
-		if IsUnitType(SV, UNIT_TYPE_HERO) then
-			call UnitApplyTimedLife(CreateUnit(Player(LoadInteger(HY, GetHandleId(SV),'A3JO')),'efo2', GetUnitX(SV), GetUnitY(SV), 0),'BEfn', 60)
+	if LoadInteger(HY, GetHandleId(UEDyingUnit),'A3JO')> 0 then
+		if IsUnitType(UEDyingUnit, UNIT_TYPE_HERO) then
+			call UnitApplyTimedLife(CreateUnit(Player(LoadInteger(HY, GetHandleId(UEDyingUnit),'A3JO')),'efo2', GetUnitX(UEDyingUnit), GetUnitY(UEDyingUnit), 0),'BEfn', 60)
 		else
-			call UnitApplyTimedLife(CreateUnit(Player(LoadInteger(HY, GetHandleId(SV),'A3JO')),'efon', GetUnitX(SV), GetUnitY(SV), 0),'BEfn', 60)
+			call UnitApplyTimedLife(CreateUnit(Player(LoadInteger(HY, GetHandleId(UEDyingUnit),'A3JO')),'efon', GetUnitX(UEDyingUnit), GetUnitY(UEDyingUnit), 0),'BEfn', 60)
 		endif
-		call DestroyEffect(AddSpecialEffect("war3mapImported\\NatureExplosion.mdx", GetUnitX(SV), GetUnitY(SV)))
+		call DestroyEffect(AddSpecialEffect("war3mapImported\\NatureExplosion.mdx", GetUnitX(UEDyingUnit), GetUnitY(UEDyingUnit)))
 	endif
 endfunction
 // 自然之怒
@@ -73070,16 +73075,16 @@ function UWA takes unit u, unit t returns nothing	//单位被攻击
 	endif
 endfunction
 function UYA takes nothing returns nothing
-	local integer i = GetUnitAbilityLevel(SV,'A3B8')
-	local real x = GetUnitX(SV)
-	local real y = GetUnitY(SV)
-	local player p = Player(LoadInteger(HY, GetHandleId(SV),'A3B8'))
+	local integer i = GetUnitAbilityLevel(UEDyingUnit,'A3B8')
+	local real x = GetUnitX(UEDyingUnit)
+	local real y = GetUnitY(UEDyingUnit)
+	local player p = Player(LoadInteger(HY, GetHandleId(UEDyingUnit),'A3B8'))
 	local unit u
 	if p == Player(0) then
 		return
 	endif
 	if i == 0 then
-		set i = GetUnitAbilityLevel(PlayerHeroes[LoadInteger(HY, GetHandleId(SV),'A3B8')],'A0BH')
+		set i = GetUnitAbilityLevel(PlayerHeroes[LoadInteger(HY, GetHandleId(UEDyingUnit),'A3B8')],'A0BH')
 	endif
 	if i == 0 then
 		set i = 4
@@ -73092,7 +73097,7 @@ function UYA takes nothing returns nothing
 	endloop
 endfunction
 function UZA takes nothing returns nothing
-	if LoadInteger(HY, GetHandleId(SV),'A3B8')> 0 then
+	if LoadInteger(HY, GetHandleId(UEDyingUnit),'A3B8')> 0 then
 		call UYA()
 	endif
 endfunction
@@ -73263,46 +73268,25 @@ function NYR takes nothing returns nothing
 	call ExecuteFunc("HeroPassiveSkills_Init")
 	set t = null
 endfunction
-function RegisterUnitDeathMethod takes string s returns nothing
-	local integer i = 0
-	loop
-	exitwhen HaveSavedString(AbilityDataHashTable,'DEAD', i) == false
-		if LoadStr(AbilityDataHashTable,'DEAD', i) == s then
-			return
-		endif
-		set i = i + 1
-	endloop
-	call SaveStr(AbilityDataHashTable,'DEAD', i, s)
-endfunction
-function WXA takes nothing returns nothing
-endfunction
-function OnDeath_Rot_SuicideWrapper takes nothing returns nothing
-	call RegisterUnitDeathMethod("WXA")
-endfunction
-function WOA takes nothing returns nothing
-endfunction
-function OnDeath_BH_TrackKillWrapper takes nothing returns nothing
-	call RegisterUnitDeathMethod("WOA")
-endfunction
 function WRA takes nothing returns nothing
-	call OSI(TV, SV)
+	call OSI(UEKillingUnit, UEDyingUnit)
 endfunction
 function WIA takes nothing returns nothing
 	call RegisterUnitDeathMethod("WRA")
 endfunction
 function WAA takes nothing returns nothing
-	call QWR(SV)
+	call QWR(UEDyingUnit)
 endfunction
 function WNA takes nothing returns nothing
 	call RegisterUnitDeathMethod("WAA")
 endfunction
 function WBA takes nothing returns nothing
-	if IsUnitType(SV, UNIT_TYPE_HERO) and GetUnitAbilityLevel(SV,'ACac')> 0 and IsPlayerValid(GetOwningPlayer(TV)) and IsUnitEnemy(TV, GetOwningPlayer(SV)) then
-		if IsUnitType(TV, UNIT_TYPE_HERO) then
-			call BPI(GetUnitAbilityLevel(SV,'ACac'), TV, SV)
+	if IsUnitType(UEDyingUnit, UNIT_TYPE_HERO) and GetUnitAbilityLevel(UEDyingUnit,'ACac')> 0 and IsPlayerValid(GetOwningPlayer(UEKillingUnit)) and IsUnitEnemy(UEKillingUnit, GetOwningPlayer(UEDyingUnit)) then
+		if IsUnitType(UEKillingUnit, UNIT_TYPE_HERO) then
+			call BPI(GetUnitAbilityLevel(UEDyingUnit,'ACac'), UEKillingUnit, UEDyingUnit)
 		else
-			if UnitIsDead(PlayerHeroes[GetPlayerId(GetOwningPlayer(TV))]) == false then
-				call BPI(GetUnitAbilityLevel(SV,'ACac'), PlayerHeroes[GetPlayerId(GetOwningPlayer(TV))], SV)
+			if UnitIsDead(PlayerHeroes[GetPlayerId(GetOwningPlayer(UEKillingUnit))]) == false then
+				call BPI(GetUnitAbilityLevel(UEDyingUnit,'ACac'), PlayerHeroes[GetPlayerId(GetOwningPlayer(UEKillingUnit))], UEDyingUnit)
 			endif
 		endif
 	endif
@@ -73311,25 +73295,25 @@ function WCA takes nothing returns nothing
 	call RegisterUnitDeathMethod("WBA")
 endfunction
 function WDA takes nothing returns nothing
-	call AJI(SV)
+	call AJI(UEDyingUnit)
 endfunction
 function WFA takes nothing returns nothing
 	call RegisterUnitDeathMethod("WDA")
 endfunction
 function WGA takes nothing returns nothing
-	call PIA(SV)
+	call PIA(UEDyingUnit)
 endfunction
 function WHA takes nothing returns nothing
 	call RegisterUnitDeathMethod("WGA")
 endfunction
 function WJA takes nothing returns nothing
-	call B4I(SV)
+	call B4I(UEDyingUnit)
 endfunction
 function WKA takes nothing returns nothing
 	call RegisterUnitDeathMethod("WJA")
 endfunction
 function OnDeath_CourierDeath takes nothing returns nothing
-	call ZRX(SV)
+	call ZRX(UEDyingUnit)
 endfunction
 function WPA takes nothing returns nothing
 	call UZA()
@@ -73341,51 +73325,48 @@ function WSA takes nothing returns nothing
 	call RegisterUnitDeathMethod("UNR")
 endfunction
 function WTA takes nothing returns nothing
-	call FJR(TV, SV)
+	call FJR(UEKillingUnit, UEDyingUnit)
 endfunction
 function WUA takes nothing returns nothing
 	call RegisterUnitDeathMethod("WTA")
 endfunction
 function WWA takes nothing returns nothing
-	call G1I(TV, SV)
+	call G1I(UEKillingUnit, UEDyingUnit)
 endfunction
 function WYA takes nothing returns nothing
 	call RegisterUnitDeathMethod("WWA")
 endfunction
 function WZA takes nothing returns nothing
-	call Y4I(TV, SV)
+	call Y4I(UEKillingUnit, UEDyingUnit)
 endfunction
 function W_A takes nothing returns nothing
 	call RegisterUnitDeathMethod("WZA")
 endfunction
 function W0A takes nothing returns nothing
-	call ZCI(TV, SV)
+	call ZCI(UEKillingUnit, UEDyingUnit)
 endfunction
 function W1A takes nothing returns nothing
 	call RegisterUnitDeathMethod("W0A")
 endfunction
-function W2A takes nothing returns nothing
-	local integer k = 0
-	loop
-	exitwhen HaveSavedString(AbilityDataHashTable,'DEAD', k) == false
-		call ExecuteFunc(LoadStr(AbilityDataHashTable,'DEAD', k))
-		set k = k + 1
-	endloop
-endfunction
-function W3A takes unit killingUnit, unit triggerUnit returns nothing
-	if LoadBoolean(SightDataHashTable, GetUnitTypeId(triggerUnit), 0) or IsUnitIllusion(triggerUnit) then
+
+// 无视野单位和幻象不触发
+function OnPlayerUnitDeath takes unit killingUnit, unit dyingUnit returns nothing
+	if LoadBoolean(SightDataHashTable, GetUnitTypeId(dyingUnit), 0) or IsUnitIllusion(dyingUnit) then
 		return
 	endif
-	set SV = triggerUnit
-	set TV = killingUnit
-	if IsUnitType(triggerUnit, UNIT_TYPE_HERO) and LoadBoolean(HY, GetHandleId(triggerUnit), QR) == false then
+
+	set Event.INDEX = Event.INDEX + 1
+	set UEKillingUnit = killingUnit
+	call AnyUnitEvent.ExecuteEvent(dyingUnit, UNIT_EVENT_DEATH_SIMPLE)
+	set Event.INDEX = Event.INDEX - 1
+
+	if IsUnitType(dyingUnit, UNIT_TYPE_HERO) and LoadBoolean(HY, GetHandleId(dyingUnit), QR) == false then
 	else
-		call SWX(killingUnit, triggerUnit)
-		call ZRX(triggerUnit)
-		call I6O(killingUnit, triggerUnit)
-		call Q6A(killingUnit, triggerUnit)
+		call SWX(killingUnit, dyingUnit)
+		call ZRX(dyingUnit)
+		call I6O(killingUnit, dyingUnit)
+		call Q6A(killingUnit, dyingUnit)
 	endif
-	call W2A()
 endfunction
 function W4A takes unit u, unit t, real d returns nothing
 	if d > 0 then
@@ -73499,7 +73480,7 @@ function W7A takes nothing returns boolean
 		call UUA(GetTriggerUnit(), GetIssuedOrderId(), id)
 	elseif id == EVENT_PLAYER_UNIT_DEATH then
 		// 单位死亡
-		call W3A(GetKillingUnit(), GetTriggerUnit())
+		call OnPlayerUnitDeath(GetKillingUnit(), GetTriggerUnit())
 	elseif id == EVENT_UNIT_SUMMON then
 		// 单位被召唤
 		set u = GetSummoningUnit()

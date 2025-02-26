@@ -5,15 +5,20 @@ library TownPortalScrollHandler requires Communication, TownPortalScrollFrame, U
         private key CHARGES
     endglobals
 
-    // PlayerTownPortalScrollCharges[GetPlayerId(GetOwningPlayer(whichUnit))]
-    function GetUnitTownPortalScrollCharges takes unit whichUnit returns integer
-        return Table[GetHandleId(whichUnit)].integer[CHARGES]
+    function GetUnitTownPortalScrollCooldown takes unit whichUnit returns real
+        return GetUnitAbilityCooldown(whichUnit, TOWN_PORTAL_SCROLL_ABILITY_ID)
+    endfunction
+    function SetUnitTownPortalScrollCooldown takes unit whichUnit, real cooldown returns nothing
+        call SetUnitAbilityCooldown(whichUnit, TOWN_PORTAL_SCROLL_ABILITY_ID, cooldown)
     endfunction
 
     function SetUnitTownPortalScrollLevel takes unit whichUnit, integer level returns nothing
         call SetUnitAbilityLevel(whichUnit, TOWN_PORTAL_SCROLL_ABILITY_ID, level)
     endfunction
 
+    function GetUnitTownPortalScrollCharges takes unit whichUnit returns integer
+        return Table[GetHandleId(whichUnit)].integer[CHARGES]
+    endfunction
     function SetUnitTownPortalScrollCharges takes unit whichUnit, integer charges returns nothing
         local integer oldCharges = GetUnitTownPortalScrollCharges(whichUnit)
 
@@ -25,7 +30,6 @@ library TownPortalScrollHandler requires Communication, TownPortalScrollFrame, U
         
         set Table[GetHandleId(whichUnit)].integer[CHARGES] = charges
     endfunction
-
     function UnitAddTownPortalScrollCharges takes unit whichUnit, integer charges returns nothing
         call SetUnitTownPortalScrollCharges(whichUnit, GetUnitTownPortalScrollCharges(whichUnit) + charges)
     endfunction
@@ -33,22 +37,18 @@ library TownPortalScrollHandler requires Communication, TownPortalScrollFrame, U
         call SetUnitTownPortalScrollCharges(whichUnit, GetUnitTownPortalScrollCharges(whichUnit) - charges)
     endfunction
 
-    function UnitAddTownPortalScrollAbility takes unit whichUnit, integer charges returns nothing
+    function UnitAddTownPortalScrollAbility takes unit whichUnit returns nothing
         local integer pid = GetPlayerId(GetOwningPlayer(whichUnit))
 
         // 英雄，或熊灵
-        set PlayerTownPortalScrollCharges[pid] = charges
         if IsHeroUnitId(GetUnitTypeId(whichUnit)) or IsUnitSpiritBear(whichUnit) then
             if UnitAddPermanentAbility(whichUnit, TOWN_PORTAL_SCROLL_ABILITY_ID) then
                 call MHAbility_FlagOperator(whichUnit, TOWN_PORTAL_SCROLL_ABILITY_ID, FLAG_OPERATOR_ADD, 0x20)
                 call MHAbility_SetCastpoint(whichUnit, TOWN_PORTAL_SCROLL_ABILITY_ID, 0.)
                 call MHAbility_SetBackswing(whichUnit, TOWN_PORTAL_SCROLL_ABILITY_ID, 0.)
-            endif
-            // 如果没有就禁用
-            if charges == 0 then
+                // 开局先禁用
                 call UnitDisableAbility(whichUnit, TOWN_PORTAL_SCROLL_ABILITY_ID, true, false)
             endif
-            set Table[GetHandleId(whichUnit)].integer[CHARGES] = charges
         endif
     endfunction
 

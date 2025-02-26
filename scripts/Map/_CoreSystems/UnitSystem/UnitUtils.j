@@ -1,5 +1,23 @@
-library UnitUtils
+library UnitUtils requires Table
     
+    //***************************************************************************
+    //*
+    //*  单位召唤
+    //*
+    //***************************************************************************
+    globals
+        private key SUMMON_SOURCE
+    endglobals
+    function SummonUnit takes unit summoningUnit, integer unitId, real x, real y, real face returns unit
+        set bj_lastCreatedUnit = CreateUnit(GetOwningPlayer(summoningUnit), unitId, x, y, face)
+        set Table[GetHandleId(bj_lastCreatedUnit)].unit[SUMMON_SOURCE] = summoningUnit
+        return bj_lastCreatedUnit
+    endfunction
+    // 用SummonUnit创建的召唤单位的来源单位
+    function GetSummonedUnitSource takes unit summonedUnit returns unit
+        return Table[GetHandleId(summonedUnit)].unit[SUMMON_SOURCE]
+    endfunction
+
     function GetUnitGoldCostById takes integer unitId returns integer
         if IsHeroUnitId(unitId) then
             return 0

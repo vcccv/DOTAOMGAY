@@ -1,6 +1,7 @@
 **/logs
 **/backups
 **/temp
+**/plugin
 **/scripts/memory_hack
 war3map.j
 files/*.ai

@@ -196,7 +196,7 @@ scope Broodmother
         call RegisterAbilityAddMethod('B01G', "BroodmotherSpinWebBuffOnAdd")
         call RegisterAbilityRemoveMethod('B01G', "BroodmotherSpinWebBuffOnRemove")
 
-        call AnyUnitEvent.CreateEvent(ANY_UNIT_EVENT_DAMAGED, function BroodmotherSpinWebOnDamaged)
+        call AnyUnitEvent.CreateEventByCode(ANY_UNIT_EVENT_DAMAGED, function BroodmotherSpinWebOnDamaged)
     endfunction
     
 endscope

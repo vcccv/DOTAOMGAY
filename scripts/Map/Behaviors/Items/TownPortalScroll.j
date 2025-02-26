@@ -138,6 +138,16 @@ scope TownPortalScroll
     private function GetUnitModel takes unit whichUnit returns string
         return MHUnit_GetDefDataStr(GetUnitTypeId(whichUnit), UNIT_DEF_DATA_MODEL)
     endfunction
+    private function GetTeleportUnitEffect takes unit whichUnit, real tx, real ty returns effect
+        local integer attachment = MHUnit_GetLevelDefDataInt(GetUnitTypeId(whichUnit), UNIT_LEVEL_DATA_ANIM_PROP, 1)
+        set bj_lastCreatedEffect = AddSpecialEffect(GetUnitModel(whichUnit), tx, ty)
+        if attachment == 11 then
+            call MHEffect_SetAnimationByName(bj_lastCreatedEffect, "Stand", "alternate")
+        else
+            call MHEffect_SetAnimationByName(bj_lastCreatedEffect, "Stand", null)
+        endif
+        return bj_lastCreatedEffect
+    endfunction
 
     private function CreateProgressBarEffect takes unit whichUnit, real r returns effect
         set bj_lastCreatedEffect = AddSpecialEffect("Progressbar.mdx", GetUnitX(whichUnit), GetUnitY(whichUnit))
@@ -460,7 +470,7 @@ scope TownPortalScroll
         set teleportEffectUbersplat   = CreateUbersplat(sx, sy, "SCTP", 255, 255, 255, 255, false, false)
         call SetUbersplatRenderAlways(teleportEffectUbersplat, IsUnitVisibleToPlayer(whichUnit, LocalPlayer))
        
-        set teleportUnitEffect        = AddSpecialEffect(GetUnitModel(whichUnit), tx, ty)
+        set teleportUnitEffect = GetTeleportUnitEffect(whichUnit, tx, ty)
         call MHEffect_SetAnimationByName(teleportUnitEffect, "Stand", MHSlk_ReadStr(SLK_TABLE_UNIT, GetUnitTypeId(whichUnit), "attachmentlinkprops"))
         call MHEffect_SetScale(teleportUnitEffect, GetUnitScale(whichUnit))
         call MHEffect_SetZ(teleportUnitEffect, MHEffect_GetZ(teleportUnitEffect) + GetUnitDefaultFlyHeight(whichUnit))
@@ -555,7 +565,7 @@ scope TownPortalScroll
             call PingMinimapEx(tx, ty, 3, 255, 255, 255, false)
         endif
 
-        set teleportUnitEffect = AddSpecialEffect(GetUnitModel(whichUnit), tx, ty)
+        set teleportUnitEffect = GetTeleportUnitEffect(whichUnit, tx, ty)
         call MHEffect_SetAnimationByName(teleportUnitEffect, "Stand", MHSlk_ReadStr(SLK_TABLE_UNIT, GetUnitTypeId(whichUnit), "attachmentlinkprops"))
         call MHEffect_SetScale(teleportUnitEffect, GetUnitScale(whichUnit))
         call MHEffect_SetZ(teleportUnitEffect, GetUnitHPBarHeight(targetUnit) + GetUnitZ(targetUnit) + 25.)

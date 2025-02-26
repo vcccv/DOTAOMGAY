@@ -6,9 +6,17 @@ scope LoneDruid
     //*
     //***************************************************************************
     globals
-        integer array PlayerSpiritBearTownPortalScrollCharges
+        // 熊灵单位
+        private key SPIRIT_BEAR_UNIT
+        // 熊灵单位物品持有者
+        private key PLAYER_SPIRIT_BEAR_ITEM_HOLD
     endglobals
+
+    function GetUnitSummonedSpiritBear takes unit whichUnit returns unit
+        return Table[GetHandleId(whichUnit)].unit[SPIRIT_BEAR_UNIT]
+    endfunction
     
+    // 死亡竞赛，要把身上的tp都给吐出来
     function IVI takes nothing returns nothing
         local location l
         if IsPlayerSentinel(GetOwningPlayer(GetTriggerUnit())) then
@@ -59,13 +67,13 @@ scope LoneDruid
             endif
         endif
     endfunction
-    function IRI takes unit R8X, unit triggerUnit returns nothing
-        local location l = GetUnitLoc(triggerUnit)
+    function IRI takes unit killingUnit, unit dyingUnit returns nothing
+        local location l = GetUnitLoc(dyingUnit)
         local rect r = RectFromCenterSizeBJ(l, 400., 400.)
-        local unit u = PlayerHeroes[GetPlayerId(GetOwningPlayer(triggerUnit))]
+        local unit u = PlayerHeroes[GetPlayerId(GetOwningPlayer(dyingUnit))]
         local integer level = GetUnitAbilityLevel(u,'A0A5')
         call SetHeroXP(u, GetHeroXP(u)-(GetHeroXP(u)/(125 -(25 * level))), false)
-        call UnitDamageTargetEx(R8X, u, 5, 100. * I2R(level))
+        call UnitDamageTargetEx(killingUnit, u, 5, 100. * I2R(level))
         call EnumItemsInRect(r, null, function IOI)
         call RemoveLocation(l)
         call RemoveRect(r)
@@ -73,24 +81,23 @@ scope LoneDruid
         set r = null
         set u = null
     endfunction
-    function III takes unit R8X, unit triggerUnit returns nothing
-        if IsUnitSpiritBear(triggerUnit) then
+    function III takes unit killingUnit, unit dyingUnit returns nothing
+        local unit spiritBear
+        if IsUnitSpiritBear(dyingUnit) then
             // 还需要继承tp冷却时间
-            set PlayerSpiritBearTownPortalScrollCharges[GetPlayerId(GetOwningPlayer(triggerUnit))] = GetUnitTownPortalScrollCharges(triggerUnit)
-            call IRI(R8X, triggerUnit)
-        endif
-    endfunction
-    
-    function R9I takes unit triggerUnit returns nothing
-        local integer pid = GetPlayerId(GetOwningPlayer(triggerUnit))
-        if triggerUnit == PlayerHeroes[pid]and HaveSavedHandle(HY, GetHandleId(GetOwningPlayer(triggerUnit)), 333) and UnitIsDead(LoadUnitHandle(HY, GetHandleId(GetOwningPlayer(triggerUnit)), 333)) == false and IsUnitScepterUpgraded(triggerUnit) == false then
-            call KillUnit(LoadUnitHandle(HY, GetHandleId(GetOwningPlayer(triggerUnit)), 333))
+            call IRI(killingUnit, dyingUnit)
+        elseif GetUnitSummonedSpiritBear(dyingUnit) != null then
+            set spiritBear = GetUnitSummonedSpiritBear(dyingUnit)
+            // 熊灵存活，并且主人没有A杖。
+            if IsUnitAlive(spiritBear) and not IsUnitScepterUpgraded(dyingUnit) then
+                call KillUnit(spiritBear)
+            endif
+            set spiritBear = null
         endif
     endfunction
     
     function SummonSpiritBearOnDeath takes nothing returns nothing
-        call III(TV, SV)
-        call R9I(SV)
+        call III(UEKillingUnit, UEDyingUnit)
     endfunction
     function SummonSpiritBearOnInitializer takes nothing returns nothing
         call RegisterUnitDeathMethod("SummonSpiritBearOnDeath")
@@ -191,38 +198,41 @@ scope LoneDruid
         set u = null
         set RWI = null
     endfunction
-    
-    function R4I takes nothing returns nothing
-        local integer h = GetHandleId(GetOwningPlayer(GetTriggerUnit()))
-        local unit u = LoadUnitHandle(HY, h, 334)
-        local unit WZV = LoadUnitHandle(HY, h, 333)
-        if u != null and not Mode__DeathMatch  then
-            call UnitAddItem(WZV, UnitRemoveItemFromSlot(u, 0))
-            call UnitAddItem(WZV, UnitRemoveItemFromSlot(u, 1))
-            call UnitAddItem(WZV, UnitRemoveItemFromSlot(u, 2))
-            call UnitAddItem(WZV, UnitRemoveItemFromSlot(u, 3))
-            call UnitAddItem(WZV, UnitRemoveItemFromSlot(u, 4))
-            call UnitAddItem(WZV, UnitRemoveItemFromSlot(u, 5))
-            if GetUnitAbilityLevel(u,'A398')> 0 then
-                call UnitAddPermanentAbility(WZV,'A398')
+    // LastSpiritBearInheritItem
+    private function LastSpiritBearInheritItem takes unit spiritBear returns nothing
+        local integer h          = GetHandleId(GetOwningPlayer(spiritBear))
+        local unit    itemHolder = LoadUnitHandle(HY, h, 334)
+        local unit    newUnit    = LoadUnitHandle(HY, h, 333)
+        if itemHolder != null and not Mode__DeathMatch  then
+            call UnitAddItem(newUnit, UnitRemoveItemFromSlot(itemHolder, 0))
+            call UnitAddItem(newUnit, UnitRemoveItemFromSlot(itemHolder, 1))
+            call UnitAddItem(newUnit, UnitRemoveItemFromSlot(itemHolder, 2))
+            call UnitAddItem(newUnit, UnitRemoveItemFromSlot(itemHolder, 3))
+            call UnitAddItem(newUnit, UnitRemoveItemFromSlot(itemHolder, 4))
+            call UnitAddItem(newUnit, UnitRemoveItemFromSlot(itemHolder, 5))
+            if GetUnitAbilityLevel(itemHolder,'A398')> 0 then
+                call UnitAddPermanentAbility(newUnit,'A398')
             endif
+            call SetUnitTownPortalScrollCharges(newUnit, GetUnitTownPortalScrollCharges(itemHolder))
+            call SetUnitTownPortalScrollCooldown(newUnit, GetUnitTownPortalScrollCooldown(itemHolder))
         endif
-        set u = null
-        set WZV = null
+        set itemHolder = null
+        set newUnit    = null
     endfunction
 
     function SummonSpiritBearOnSpellEffectBear takes nothing returns nothing
-        local unit    u     = GetTriggerUnit()
-        local player  p     = GetOwningPlayer(u)
-        local real    x     = GetUnitX(u)
-        local real    y     = GetUnitY(u)
-        local group   g     = AllocationGroup(266)
-        local integer level = GetUnitAbilityLevel(u,'A0A5')
-        local integer h     = GetHandleId(p)
-        local integer id    = 0
+        local unit    whichUnit = GetTriggerUnit()
+        local player  p         = GetOwningPlayer(whichUnit)
+        local real    x         = GetUnitX(whichUnit)
+        local real    y         = GetUnitY(whichUnit)
+        local group   g         
+        local integer level     = GetUnitAbilityLevel(whichUnit,'A0A5')
+        local integer h         = GetHandleId(p)
+        local integer unitId    = 0
         local unit    first
         local unit    lastSpiritBear = null
         
+        set g = AllocationGroup(266)
         call GroupEnumUnitsOfPlayer(g, p, null)
 
         loop
@@ -241,19 +251,20 @@ scope LoneDruid
 
         if lastSpiritBear == null then
             if (level == 1) then
-                set id ='n004'
+                set unitId ='n004'
             elseif (level == 2) then
-                set id ='n018'
+                set unitId ='n018'
             elseif (level == 3) then
-                set id ='n01C'
+                set unitId ='n01C'
             else
-                set id ='n01G'
+                set unitId ='n01G'
             endif
-            set lastSpiritBear = CreateUnit(GetOwningPlayer(u), id, x, y, GetUnitFacing(u))
+            set lastSpiritBear = SummonUnit(whichUnit, unitId, x, y, GetUnitFacing(whichUnit))
+            set Table[GetHandleId(whichUnit)].unit[SPIRIT_BEAR_UNIT] = lastSpiritBear
             call R5I(lastSpiritBear, level -1, p, true)
-            call UnitAddTownPortalScrollAbility(lastSpiritBear, PlayerSpiritBearTownPortalScrollCharges[GetPlayerId(p)])
+            call UnitAddTownPortalScrollAbility(lastSpiritBear)
             call SaveUnitHandle(HY, h, 333, lastSpiritBear)
-            call R4I()
+            call LastSpiritBearInheritItem(lastSpiritBear)
             call AddSpecialEffectTarget("Abilities\\Spells\\Orc\\FeralSpirit\\feralspiritdone.mdl", lastSpiritBear, "chest")
             call RZI(lastSpiritBear)
             call SetUnitAbilityLevel(lastSpiritBear,'A09Y', level)
@@ -261,19 +272,19 @@ scope LoneDruid
         else
             call AddSpecialEffectTarget("Abilities\\Spells\\Orc\\FeralSpirit\\feralspiritdone.mdl", lastSpiritBear, "chest")
             call SetWidgetLife(lastSpiritBear, GetUnitState(lastSpiritBear, UNIT_STATE_MAX_LIFE))
-            call SetUnitPosition(lastSpiritBear, GetUnitX(u), GetUnitY(u))
+            call SetUnitPosition(lastSpiritBear, GetUnitX(whichUnit), GetUnitY(whichUnit))
         endif
         // 协同
-        if GetUnitAbilityLevel(u,'A0A8')> 0 then
-            call SetUnitMoveSpeed(lastSpiritBear, GetUnitDefaultMoveSpeed(lastSpiritBear) + 8 * GetUnitAbilityLevel(u,'A0A8'))
+        if GetUnitAbilityLevel(whichUnit,'A0A8')> 0 then
+            call SetUnitMoveSpeed(lastSpiritBear, GetUnitDefaultMoveSpeed(lastSpiritBear) + 8 * GetUnitAbilityLevel(whichUnit,'A0A8'))
             
             if GetUnitAbilityLevel(lastSpiritBear,'A3IL') == 0 then
                 call UnitAddPermanentAbility(lastSpiritBear,'A3IL')
             endif
-            call SetUnitAbilityLevel(lastSpiritBear,'A3IL', GetUnitAbilityLevel(u,'A0A8'))
+            call SetUnitAbilityLevel(lastSpiritBear,'A3IL', GetUnitAbilityLevel(whichUnit,'A0A8'))
         endif
         set lastSpiritBear = null
-        set u = null
+        set whichUnit = null
         set g = null
     endfunction
 

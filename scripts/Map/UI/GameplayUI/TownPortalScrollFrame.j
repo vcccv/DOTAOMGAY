@@ -58,7 +58,20 @@ library TownPortalScrollFrame requires UISystem
         call TownPortalScrollCooldownSprite.SetVisible(show)
     endfunction
 
+    private function ButtonOnDown takes nothing returns boolean
+        call TownPortalScrollBackground.SetSize(0.02527, 0.02527)
+        return false
+    endfunction
+    private function ButtonOnUp takes nothing returns boolean
+        call TownPortalScrollBackground.SetSize(0.0266, 0.0266)
+        if Frame.GetUnderCursor() == TownPortalScrollButton then
+            call MHGame_ExecuteFunc("TownPortalScrollButtonOnClick")
+        endif
+        return false
+    endfunction
+
     function TownPortalScrollFrame_Init takes nothing returns nothing
+        local trigger trig
         local Frame gameUI     = Frame.GetPtrInstance(MHUI_GetGameUI())
         local Frame commandBar = Frame.GetPtrInstance(MHUI_GetCommandBar())
         //
@@ -85,7 +98,15 @@ library TownPortalScrollFrame requires UISystem
         call TownPortalScrollCooldownSprite.SetSpriteAnimate(0, 0)
         call TownPortalScrollCooldownSprite.SetAnimateOffset(0.5)
         //
-        call TownPortalScrollButton.RegisterLocalScript(FRAMEEVENT_CONTROL_CLICK, "TownPortalScrollButtonOnClick")
+        // call TownPortalScrollButton.RegisterLocalScript(FRAMEEVENT_CONTROL_CLICK, "TownPortalScrollButtonOnClick")
+
+        set trig = CreateTrigger()
+        call TriggerAddCondition(trig, Condition(function ButtonOnDown))
+        call MHFrameEvent_Register(trig, TownPortalScrollButton.GetPtr(), EVENT_ID_FRAME_MOUSE_DOWN)
+
+        set trig = CreateTrigger()
+        call TriggerAddCondition(trig, Condition(function ButtonOnUp))
+        call MHFrameEvent_Register(trig, TownPortalScrollButton.GetPtr(), EVENT_ID_FRAME_MOUSE_UP)
         //
         call ShowTownPortalScrollFrame(false)
     endfunction

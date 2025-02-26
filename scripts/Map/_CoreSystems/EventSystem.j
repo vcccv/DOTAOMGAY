@@ -11,18 +11,22 @@ library EventSystem requires UnitDex
         constant integer UNIT_EVENT_DAMAGING             = 201
         constant integer UNIT_EVENT_PICKUP_REAL_ITEM     = 202
         constant integer UNIT_EVENT_ABILITY_END_COOLDOWN = 203
+
+        // 简单死亡事件 马甲单位和幻象单位不会触发
+        constant integer UNIT_EVENT_DEATH_SIMPLE         = 204
     endglobals
     
     struct Event extends array 
 
         static integer INDEX = 0
 
-        static UnitEvent    array TrigUnitEvent
+        //  UnitEvent    array TrigUnitEvent
         static AnyUnitEvent array TrigAnyUnitEvent
         static integer      array TrigEventId
         static unit         array TrigUnit
 
         static unit         array TriggerUnit
+        static unit         array KillingUnit
         static unit         array DamageSource
         static unit         array DamageTarget
 
@@ -38,9 +42,17 @@ library EventSystem requires UnitDex
         static ability      array TriggerAbility
         static integer      array TriggerIndex
 
+ 
         static method GetTriggerUnit takes nothing returns unit
             return thistype.TrigUnit[thistype.INDEX]
         endmethod
+        static method GetDyingUnit takes nothing returns unit
+            return thistype.GetTriggerUnit()
+        endmethod
+        static method GetKillingUnit takes nothing returns unit
+            return thistype.KillingUnit[thistype.INDEX]
+        endmethod
+
         static method GetManipulatedItem takes nothing returns item
             return thistype.ManipulatedItem[thistype.INDEX]
         endmethod
@@ -59,7 +71,7 @@ library EventSystem requires UnitDex
 
     endstruct
 
-
+    /*
     private keyword UnitEventInit
 
     // 单一事件
@@ -179,6 +191,7 @@ library EventSystem requires UnitDex
         endmethod
 
     endmodule
+    */
 
     struct AnyUnitEvent
 
@@ -241,8 +254,14 @@ library EventSystem requires UnitDex
             call this.deallocate()
         endmethod
 
-        static method CreateEvent takes integer id, code func returns thistype
+        static method CreateEventByCode takes integer id, code func returns thistype
             return thistype.Create(id, func)
+        endmethod
+
+        static method CreateEvent takes integer id, string func returns thistype
+            local code c = MHGame_GetCode(func)
+            call ThrowWarning(c == null, "Event", "AnyUnitEvent.Create", func, id, "code == null")
+            return thistype.Create(id, c)
         endmethod
 
         static method ExecuteEvent takes unit u, integer id returns nothing

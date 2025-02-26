@@ -177,7 +177,7 @@ scope TranquilBoots
         set Table[GetHandleId(whichUnit)].integer[KEY] = Table[GetHandleId(whichUnit)].integer[KEY] + 1
         set TranquilBootsCount = TranquilBootsCount + 1
         if TranquilBootsCount == 1 then
-            set OnEndCooldownEvent = AnyUnitEvent.CreateEvent(ANY_UNIT_EVENT_ABILITY_END_COOLDOWN, function OnEndCooldown)
+            set OnEndCooldownEvent = AnyUnitEvent.CreateEventByCode(ANY_UNIT_EVENT_ABILITY_END_COOLDOWN, function OnEndCooldown)
         endif
         //call BJDebugMsg("+ 1now TranquilBootsCount:" + I2S(TranquilBootsCount))
 
