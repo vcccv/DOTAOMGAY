@@ -52,6 +52,19 @@ library TownPortalScrollHandler requires Communication, TownPortalScrollFrame, U
         endif
     endfunction
 
+    // 没有安全判定的版本，用于给ItemHolder添加
+    function UnitAddTownPortalScrollAbilityUnSafe takes unit whichUnit returns nothing
+        local integer pid = GetPlayerId(GetOwningPlayer(whichUnit))
+
+        if UnitAddPermanentAbility(whichUnit, TOWN_PORTAL_SCROLL_ABILITY_ID) then
+            call MHAbility_FlagOperator(whichUnit, TOWN_PORTAL_SCROLL_ABILITY_ID, FLAG_OPERATOR_ADD, 0x20)
+            call MHAbility_SetCastpoint(whichUnit, TOWN_PORTAL_SCROLL_ABILITY_ID, 0.)
+            call MHAbility_SetBackswing(whichUnit, TOWN_PORTAL_SCROLL_ABILITY_ID, 0.)
+            // 开局先禁用
+            call UnitDisableAbility(whichUnit, TOWN_PORTAL_SCROLL_ABILITY_ID, true, false)
+        endif
+    endfunction
+
     function TownPortalScrollButtonOnClick takes nothing returns nothing
         local unit    selectedUnit      = MHPlayer_GetSelectUnit()
         local integer charges

@@ -1,7 +1,7 @@
+/*
 Texture "TownPortalScrollBackground" {
     Width  0.0266,
     Height 0.0266,
-    File "ReplaceableTextures\CommandButtons\BTNScrollUber.blp",
 }
 Texture "TownPortalScrollPushedBackground" {
     Width  0.02527,
@@ -11,18 +11,28 @@ Texture "TownPortalScrollDisabledBackground" {
     Width  0.0266,
     Height 0.0266,
 }
+*/
 
 Frame "SIMPLEFRAME" "TownPortalScrollFrame" 
 {
     Width  0.0266,
     Height 0.0266,
 
+	Layer "BACKGROUND" {
+		Texture "TownPortalScrollBackground" {
+            Width  0.0266,
+            Height 0.0266,
+		}
+	}
+
     Frame "SIMPLEBUTTON" "TownPortalScrollButton"
     {
         SetPoint CENTER, "TownPortalScrollFrame", CENTER, 0, 0,
         Width  0.0266,
         Height 0.0266,
-        NormalTexture   "TownPortalScrollBackground",
+        // NormalTexture   "TownPortalScrollBackground",
+        // PushedTexture   "TownPortalScrollPushedBackground",
+        // DisabledTexture "TownPortalScrollDisabledBackground",
     }
 
     Frame "SIMPLEFRAME" "TownPortalScrollCooldownIndicator" {
@@ -38,10 +48,11 @@ Frame "SIMPLEFRAME" "TownPortalScrollFrame"
         }
     }
 
-    Frame "SIMPLEFRAME" "TownPortalScrollNumberOverlay" {
+    Frame "SIMPLEFRAME" "TownPortalScrollNumberOverlayFrame" {
         DecorateFileNames,
 
         Texture "TownPortalScrollNumberOverlayTexture" {
+            SetPoint BOTTOMRIGHT, "TownPortalScrollBackground", BOTTOMRIGHT, 0, - 0.0006,
             Width  0.0109375,
             Height 0.0109375,
             File  "CommandButtonNumberOverlay",

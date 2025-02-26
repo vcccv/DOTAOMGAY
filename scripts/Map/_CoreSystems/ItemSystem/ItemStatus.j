@@ -39,7 +39,7 @@ library ItemStatus requires ItemSystem
         return(itemIndex) == NUV /*
         */  or itemIndex == RRV or(itemIndex) == IUV or(itemIndex) == IWV /*
         */  or itemIndex == NIV /*
-        */  or itemIndex == AIV or(itemIndex) == Item_MagicStick or(itemIndex) == Item_MagicWand /*
+        */  or itemIndex == Item_AegisOfTheImmortal or(itemIndex) == Item_MagicStick or(itemIndex) == Item_MagicWand /*
         */  or itemIndex == RAV
     endfunction
 

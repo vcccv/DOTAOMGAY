@@ -34,6 +34,14 @@ library UnitAbility requires AbilityUtils, UnitLimitation
         call EnableTrigger(StartCooldownTrig)
     endfunction
 
+    // 前后摇
+    function SetUnitAbilityCastpoint takes unit whichUnit, integer abilId, real costpoint returns nothing
+        call MHAbility_SetCastpoint(whichUnit, abilId, costpoint)
+    endfunction
+    function SetUnitAbilityBackswing takes unit whichUnit, integer abilId, real backswing returns nothing
+        call MHAbility_SetBackswing(whichUnit, abilId, backswing)
+    endfunction
+
     function UnitDisableAbility takes unit whichUnit, integer abilId, boolean flag, boolean hideUI returns nothing
         if GetAbilityBaseIdById(abilId) == 'AOre' then
             call MHAbility_DisableEx(whichUnit, abilId, flag)

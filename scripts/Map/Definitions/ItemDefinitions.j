@@ -202,7 +202,8 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         set AXV = RegisterItem('I0G5', 'I0FS', 0, 'I02D') // 7
         set AOV = RegisterItem('I0G3', 'I09D', 0, 'I0GB') // 6
         set ARV = RegisterItem('I0G4', 'I0G1', 0, 'I0GA') // 5
-        set AIV = RegisterItem('I0AX', 'I0AW', 0, 0)
+
+        set Item_AegisOfTheImmortal = RegisterItem('I0AX', 'I0AW', 0, 0)
         set AAV = RegisterItem('I0TE', 'I0TF', 0, 0)
         set ANV = RegisterItem('I09G', 'I09F', 0, 'I02E')	// 近战分身斧
         set ABV = RegisterItem('I0MV', 'I0MU', 0, 'I0MW')	// 远程分身斧
@@ -1224,7 +1225,8 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         integer AXV
         integer AOV
         integer ARV
-        integer AIV
+        // 不朽之守护
+        integer Item_AegisOfTheImmortal
         integer AAV
         integer ANV
         integer ABV

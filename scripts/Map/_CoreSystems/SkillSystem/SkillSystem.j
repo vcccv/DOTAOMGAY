@@ -65,7 +65,7 @@ library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
         elseif (heroIndex == 26) then
             call ExecuteFunc("M0X")
         elseif (heroIndex == 10) then
-            call ExecuteFunc("M1X")
+            call ExecuteFunc("LoneDruidSummonSpiritBear_Init")
         elseif (heroIndex == 23) then
             // 地精工程师
             call ExecuteFunc("M2X")

@@ -54,7 +54,7 @@ scope Earthshaker
     
             endloop
     
-            call RemoveDestructableToTimed(CreateDestructable('B000', x, y, GetRandomReal(0, 360), .5, GetRandomInt(0, 2)), 8)
+            call RemoveDestructableTimed(CreateDestructable('B000', x, y, GetRandomReal(0, 360), .5, GetRandomInt(0, 2)), 8)
             call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Other\\Volcano\\VolcanoDeath.mdl", x, y))
         endloop
 

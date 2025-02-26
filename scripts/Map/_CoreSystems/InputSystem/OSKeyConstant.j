@@ -370,3 +370,12 @@ globals
     // 键盘 清理键(OEM 键) 
     constant integer OSKEY_OEM_CLEAR = ($FE) 
 endglobals
+
+globals
+    // 鼠标 左键
+	constant integer MOUSE_BUTTON_TYPE_LEFT   = 1
+	// 鼠标 滚轮
+	constant integer MOUSE_BUTTON_TYPE_MIDDLE = 2
+	// 鼠标 右键
+	constant integer MOUSE_BUTTON_TYPE_RIGHT  = 4
+endglobals

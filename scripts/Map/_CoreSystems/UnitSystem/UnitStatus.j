@@ -28,9 +28,13 @@ library UnitStatus
     function IsUnitAncient takes unit whichUnit returns boolean
         return IsUnitType(whichUnit, UNIT_TYPE_ANCIENT)
     endfunction
-    // 存活 遵守格式
+    // 单位存活 遵守格式
     function IsUnitAlive takes unit whichUnit returns boolean
         return UnitAlive(whichUnit)
+    endfunction
+    // 单位死亡 遵守格式
+    function IsUnitDeath takes unit whichUnit returns boolean
+        return not UnitAlive(whichUnit)
     endfunction
     // 该单位是否是守卫单位
     function IsUnitWard takes unit whichUnit returns boolean

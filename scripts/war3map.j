@@ -1824,7 +1824,7 @@ endfunction
 function S3V takes unit u returns boolean
 	return LoadBoolean(HY, GetHandleId(u),'CHNL')
 endfunction
-function S4V takes nothing returns nothing
+function DelayImmediateOrderByIdOnExpired takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer h = GetHandleId(t)
 	call IssueImmediateOrderById(LoadUnitHandle(HY, h, 0), LoadInteger(HY, h, 0))
@@ -1832,11 +1832,12 @@ function S4V takes nothing returns nothing
 	call DestroyTimer(t)
 	set t = null
 endfunction
-function S5V takes unit u, integer S6V, real S7V returns nothing
+// 延迟调用IssueImmediateOrderById
+function DelayImmediateOrderById takes unit u, integer S6V, real timeout returns nothing
 	local timer t = CreateTimer()
 	call SaveUnitHandle(HY, GetHandleId(t), 0, u)
 	call SaveInteger(HY, GetHandleId(t), 0, S6V)
-	call TimerStart(t, S7V, false, function S4V)
+	call TimerStart(t, timeout, false, function DelayImmediateOrderByIdOnExpired)
 	set t = null
 endfunction
 function S8V takes nothing returns nothing
@@ -1847,11 +1848,11 @@ function S8V takes nothing returns nothing
 	call DestroyTimer(t)
 	set t = null
 endfunction
-function S9V takes unit u, real S7V returns nothing
+function S9V takes unit u, real timeout returns nothing
 	local timer t = CreateTimer()
 	local integer h = GetHandleId(t)
 	call SaveUnitHandle(HY, h, 0, u)
-	call TimerStart(t, S7V, false, function S8V)
+	call TimerStart(t, timeout, false, function S8V)
 	set t = null
 endfunction
 function TVV takes nothing returns nothing
@@ -1862,12 +1863,12 @@ function TVV takes nothing returns nothing
 	call DestroyTimer(t)
 	set t = null
 endfunction
-function TEV takes unit u, integer i, real S7V returns nothing
+function TEV takes unit u, integer i, real timeout returns nothing
 	local timer t = CreateTimer()
 	local integer h = GetHandleId(t)
 	call SaveUnitHandle(HY, h, 0, u)
 	call SaveInteger(HY, h, 0, i)
-	call TimerStart(t, S7V, false, function TVV)
+	call TimerStart(t, timeout, false, function TVV)
 	set t = null
 endfunction
 function TXV takes string S, real TOV, real TRV, real TIV, real TAV, real TNV, boolean Show returns nothing
@@ -3118,7 +3119,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A03U', 1000, "PTE")
 	call SaveStr(ObjectHashTable,'A062', 1000, "L6E")
 	call SaveStr(ObjectHashTable,'A0KX', 1000, "PUE")
-	call SaveStr(ObjectHashTable,'A0A5', 1000, "PYE")
+	call SaveStr(ObjectHashTable,'A0A5', 1000, "SummonSpiritBearOnLearn")
 	call SaveStr(ObjectHashTable,'A27V', 1000, "PEE")
 	call SaveStr(ObjectHashTable,'A28Q', 1000, "PVE")
 	call SaveStr(ObjectHashTable,'A18X', 1000, "M4E")
@@ -3176,7 +3177,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	
 	call SaveStr(ObjectHashTable,'A086', 5, "PNE")
 	call SaveStr(ObjectHashTable,'A08E', 5, "SME")
-	call SaveStr(ObjectHashTable,'A0A5', 5, "PYE")
+	call SaveStr(ObjectHashTable,'A0A5', 5, "SummonSpiritBearOnLearn")
 	call SaveStr(ObjectHashTable,'A0CY', 5, "PQE")
 	call SaveStr(ObjectHashTable,'A19Q', 5, "PPE")
 	call SaveStr(ObjectHashTable,'A0EY', 5, "PDE")
@@ -3224,7 +3225,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	//call SaveStr(ObjectHashTable,'A522',1001, "LearnSkill__Tidebringer")
 	call SaveStr(ObjectHashTable,'A19Q',1001, "SZE")
 	call SaveStr(ObjectHashTable,'A03U',1001, "PTE")
-	call SaveStr(ObjectHashTable,'A0A5',1001, "PYE")
+	call SaveStr(ObjectHashTable,'A0A5',1001, "SummonSpiritBearOnLearn")
 	call SaveStr(ObjectHashTable,'A03E',1001, "PFE")
 	call SaveStr(ObjectHashTable,'A0VX',1001, "P0E")
 	call SaveStr(ObjectHashTable,'A2AI',1001, "P8E")
@@ -5533,14 +5534,14 @@ function IVX takes nothing returns boolean
 	set targetUnit = null
 	return false
 endfunction
-function IOX takes unit whichUnit, unit targetUnit, integer DT, real damage, real S7V returns nothing
+function IOX takes unit whichUnit, unit targetUnit, integer DT, real damage, real timeout returns nothing
 	local trigger t = CreateTrigger()
 	local integer h = GetHandleId(t)
 	call SaveUnitHandle(HY, h, 2, whichUnit)
 	call SaveUnitHandle(HY, h, 30,(targetUnit))
 	call SaveInteger(HY, h, 36, DT)
 	call SaveReal(HY, h, 20, damage * 1.)
-	call TriggerRegisterTimerEvent(t, S7V, false)
+	call TriggerRegisterTimerEvent(t, timeout, false)
 	call TriggerAddCondition(t, Condition(function IVX))
 	set t = null
 endfunction
@@ -6481,10 +6482,10 @@ function BXX takes nothing returns nothing
 	set d = null
 	set t = null
 endfunction
-function RemoveDestructableToTimed takes destructable d, real S7V returns nothing
+function RemoveDestructableTimed takes destructable d, real timeout returns nothing
 	local timer t = CreateTimer()
 	local integer h = GetHandleId(t)
-	call TimerStart(t, S7V, false, function BXX)
+	call TimerStart(t, timeout, false, function BXX)
 	call SaveInteger(HY, h, 55, V5X(d))
 	set t = null
 endfunction
@@ -9419,6 +9420,7 @@ endfunction
 //设置顶部消息
 function SetTopMessageText takes string s, real time returns nothing
 	local integer i = 5
+	return
 	if TopMessageTextTrg[6] != null then
 		call QueuedTopMsgRemoveByIndex(1)
 		call SetTopMessageTextById(s, time, 6)
@@ -9957,7 +9959,6 @@ endfunction
 
 globals
 	boolean array PlayerTownPortalScrollInitialized
-	integer array PlayerTownPortalScrollCharges
 endglobals
 // 选择了一个英雄
 function PlayerChooseHeroUnit takes unit whichUnit returns boolean
@@ -9984,7 +9985,7 @@ function PlayerChooseHeroUnit takes unit whichUnit returns boolean
 
 	call UnitAddTownPortalScrollAbility(whichUnit)
 	if not PlayerTownPortalScrollInitialized[playerId] then
-		set PlayerTownPortalScrollCharges[playerId] = 3
+		call UnitAddTownPortalScrollCharges(whichUnit, 3)
 	endif
 	//========================================================================
 	// 似乎是添加工程升级技能 让其可以学习?
@@ -11628,18 +11629,18 @@ function YXX takes nothing returns nothing
 	loop
 	exitwhen i > 5
 		set u = PlayerHeroes[GetPlayerId(SentinelPlayers[i])]
-		if u != null and GetItemOfTypeFromUnit(u, ItemRealId[AIV])!= null then
+		if u != null and GetItemOfTypeFromUnit(u, ItemRealId[Item_AegisOfTheImmortal])!= null then
 			call DisableTrigger(UnitManipulatItemTrig)
 			call StoreDrCacheData("AegisOff", GetPlayerId(GetOwningPlayer(u)))
-			call RemoveItem(GetItemOfTypeFromUnit(u, ItemRealId[AIV]))
+			call RemoveItem(GetItemOfTypeFromUnit(u, ItemRealId[Item_AegisOfTheImmortal]))
 			call EnableTrigger(UnitManipulatItemTrig)
 			call YEX(u)
 		endif
 		set u = PlayerHeroes[GetPlayerId(ScourgePlayers[i])]
-		if u != null and GetItemOfTypeFromUnit(u, ItemRealId[AIV])!= null then
+		if u != null and GetItemOfTypeFromUnit(u, ItemRealId[Item_AegisOfTheImmortal])!= null then
 			call DisableTrigger(UnitManipulatItemTrig)
 			call StoreDrCacheData("AegisOff", GetPlayerId(GetOwningPlayer(u)))
-			call RemoveItem(GetItemOfTypeFromUnit(u, ItemRealId[AIV]))
+			call RemoveItem(GetItemOfTypeFromUnit(u, ItemRealId[Item_AegisOfTheImmortal]))
 			call EnableTrigger(UnitManipulatItemTrig)
 			call YEX(u)
 		endif
@@ -11816,7 +11817,7 @@ function YSX takes nothing returns nothing
 	endif
 	set FPV = false
 	set E8V = false
-	set it = CreateItem(ItemPowerupId[AIV], GetUnitX(Roshan), GetUnitY(Roshan))
+	set it = CreateItem(ItemPowerupId[Item_AegisOfTheImmortal], GetUnitX(Roshan), GetUnitY(Roshan))
 	call SetItemCharges(it, 1)
 	if GetUnitAbilityLevel(Roshan,'A0Q6') == 1 then
 		set it = CreateItem(ItemPowerupId[R6V], GetUnitX(Roshan), GetUnitY(Roshan))
@@ -12680,7 +12681,7 @@ function VIO takes unit trigUnit returns nothing
 		loop
 		exitwhen i > 5
 			set whichItem = UnitItemInSlot(whichUnit, i)
-			if GUX(GetItemIndexEx(whichItem)) == false and GetItemIndexEx(whichItem)!= AIV then
+			if GUX(GetItemIndexEx(whichItem)) == false and GetItemIndexEx(whichItem)!= Item_AegisOfTheImmortal then
 				call UnitRemoveItemFromSlot(whichUnit, i)
 				if IsUnitInRegion(r, whichUnit) and IsPlayerAlly(GetItemPlayer(whichItem), GetOwningPlayer(whichUnit)) then
 					set id = GetPlayerId(GetItemPlayer(whichItem))
@@ -13267,7 +13268,7 @@ function E4O takes unit u returns nothing
 	loop
 	exitwhen i > 5
 		set it = UnitItemInSlot(u, i)
-		if it != null and GetItemIndexEx(it)!= AIV then
+		if it != null and GetItemIndexEx(it)!= Item_AegisOfTheImmortal then
 			set it = UnitRemoveItemFromSlot(u, i)
 			if b == false then
 				call DisplayTimedTextToPlayer(GetOwningPlayer(u), 0, 0, 8, "|c00ffff00" + GetItemName(it) + "|r 已被放置在你的能量圈中")
@@ -13865,14 +13866,14 @@ function XLO takes unit trigUnit, item whichItem returns boolean
 		call SetItemPlayer(TempItem, TempPlayer, false)
 		call SetItemUserData(TempItem, 1)
 	endif
-	if (itemIndex == AIV) and(IsUnitCourier(u) or IsUnitSpiritBear(u)) then
+	if (itemIndex == Item_AegisOfTheImmortal) and(IsUnitCourier(u) or IsUnitSpiritBear(u)) then
 		if IsUnitCourier(u) then
 			call InterfaceErrorForPlayer(GetOwningPlayer(u), GetObjectName('n02K'))
 		endif
 		set TempPlayer = GetItemPlayer(whichItem)
 		set Q2 = GetItemCharges(whichItem)
 		call RemoveItem(whichItem)
-		if itemIndex == AIV then
+		if itemIndex == Item_AegisOfTheImmortal then
 			set TempItem = CreateItem(ItemPowerupId[itemIndex], GetRectCenterX(gg_rct_RoshanSpawn), GetRectCenterY(gg_rct_RoshanSpawn))
 			call SetItemCharges(TempItem, Q2)
 		endif
@@ -14164,6 +14165,7 @@ function ManipulatItemDelayOnExpired takes nothing returns boolean
 			call XLO(whichUnit, X3O)
 		endif
 	else
+		// drop
 		if GetWidgetLife(whichItem)> 0 then
 			set TempItem = whichItem
 			if IsItemAghanimScepter(whichItem) then
@@ -14173,6 +14175,7 @@ function ManipulatItemDelayOnExpired takes nothing returns boolean
 				call RemoveItem(whichItem)
 			elseif IsItemOwned(whichItem) == false then
 				if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or IsItemChargedByIndex(itemIndex) or itemIndex == R_V or itemIndex == RYV or itemIndex == Item_AncientTangoOfEssifation or itemIndex == it_jys then
+					// 是否有主人？
 					set HTX = true
 				endif
 				call HYX(ItemPowerupId[itemIndex], GetItemX(whichItem), GetItemY(whichItem), X1O, HTX, HUX)
@@ -15123,7 +15126,7 @@ function RPO takes nothing returns boolean
 	return false
 endfunction
 function RQO takes integer itemIndex returns boolean
-	return itemIndex != ASV and itemIndex != NIV and itemIndex != ITem_GemOfTrueSight and itemIndex != AIV
+	return itemIndex != ASV and itemIndex != NIV and itemIndex != ITem_GemOfTrueSight and itemIndex != Item_AegisOfTheImmortal
 endfunction
 function RSO takes nothing returns nothing
 	if GetTriggerEventId() == EVENT_PLAYER_UNIT_PICKUP_ITEM then
@@ -15329,7 +15332,7 @@ function G6E takes nothing returns nothing
 	loop
 	exitwhen i > 5
 		set whichItem = UnitItemInSlot(u, i)
-		if GUX(GetItemIndexEx(whichItem)) == false and GetItemIndexEx(whichItem)!= AIV then
+		if GUX(GetItemIndexEx(whichItem)) == false and GetItemIndexEx(whichItem)!= Item_AegisOfTheImmortal then
 			call UnitRemoveItemFromSlot(u, i)
 			if (GetUnitTypeId(u)=='ncop' or IsUnitInRegion(r, u)) and IsPlayerAlly(GetItemPlayer(whichItem), GetOwningPlayer(u)) then
 				set id = GetPlayerId(GetItemPlayer(whichItem))
@@ -17119,7 +17122,7 @@ function NQO takes nothing returns boolean
 				call SetItemCharges(whichItem, i)
 			endif
 		endif
-	elseif GetItemTypeId(whichItem) == ItemRealId[AIV]and GetUnitTypeId(trigUnit)!='n00L' and E8V == false then
+	elseif GetItemTypeId(whichItem) == ItemRealId[Item_AegisOfTheImmortal]and GetUnitTypeId(trigUnit)!='n00L' and E8V == false then
 		set E7V = trigUnit
 		set E8V = true
 		call StoreDrCacheData("AegisOn", GetPlayerId(GetOwningPlayer(trigUnit)))
@@ -19427,7 +19430,7 @@ function FWO takes nothing returns nothing
 	set u = null
 endfunction
 function FYO takes nothing returns nothing
-	if GetItemIndex(GetManipulatedItem()) == AIV then
+	if GetItemIndex(GetManipulatedItem()) == Item_AegisOfTheImmortal then
 		call FWO()
 	endif
 endfunction
@@ -27702,7 +27705,7 @@ function XIR takes unit u, player p returns nothing
 		loop
 		exitwhen i > 5
 			set whichItem = UnitItemInSlot(u, i)
-			if GetUnitTypeId(u)!='H00J' and whichItem != null and(GetItemPlayer(whichItem)!= GetOwningPlayer(u) and GetItemIndexEx(whichItem)!= ASV and GetItemIndexEx(whichItem)!= ATV) and GetItemTypeId(whichItem)!= ItemRealId[AIV] then
+			if GetUnitTypeId(u)!='H00J' and whichItem != null and(GetItemPlayer(whichItem)!= GetOwningPlayer(u) and GetItemIndexEx(whichItem)!= ASV and GetItemIndexEx(whichItem)!= ATV) and GetItemTypeId(whichItem)!= ItemRealId[Item_AegisOfTheImmortal] then
 				call UnitRemoveItem(u, whichItem)
 			endif
 			set i = i + 1
@@ -29486,7 +29489,7 @@ function IER takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer h = GetHandleId(t)
 	local image im
-	local integer S7V = LoadInteger(HY, h, 0)-1
+	local integer timeout = LoadInteger(HY, h, 0)-1
 	local real x = LoadReal(HY, h, 10)
 	local real y = LoadReal(HY, h, 11)
 	local string s
@@ -29494,15 +29497,15 @@ function IER takes nothing returns nothing
 	call DestroyImage(im)
 	set im = LoadImageHandle(HY, h, 2)
 	call DestroyImage(im)
-	if S7V < 0 then
+	if timeout < 0 then
 		call PauseTimer(t)
 		call DestroyTimer(t)
 		call FlushChildHashtable(HY, h)
 		set t = null
 		return
 	endif
-	set s = I2S(S7V)
-	if S7V < 10 then
+	set s = I2S(timeout)
+	if timeout < 10 then
 		set s = "0" + s
 	endif
 	call TXV("Fonts\\" + SubString(s, 0, 1) + ".blp", 60, 60, x, y, 0, true)
@@ -29511,10 +29514,10 @@ function IER takes nothing returns nothing
 	call TXV("Fonts\\" + SubString(s, 1, 2) + ".blp", 60, 60, x + 40, y, 0, true)
 	call SaveImageHandle(HY, h, 2, R3)
 	call SetImageColor(R3, 255, 255, 255, 255)
-	call SaveInteger(HY, h, 0, S7V)
+	call SaveInteger(HY, h, 0, timeout)
 	set t = null
 endfunction
-function IXR takes real S7V returns nothing
+function IXR takes real timeout returns nothing
 	local integer ht = GetHandleId(GetTriggeringTrigger())
 	local timer IOR = LoadTimerHandle(HY, ht, 5)
 	local integer oh = GetHandleId(IOR)
@@ -29522,7 +29525,7 @@ function IXR takes real S7V returns nothing
 	local integer h = GetHandleId(t)
 	local image IRR
 	local image IIR
-	local string s = I2S(R2I(S7V))
+	local string s = I2S(R2I(timeout))
 	local real x =-7030
 	local real y = 6766
 	if oh > 1 then
@@ -29544,7 +29547,7 @@ function IXR takes real S7V returns nothing
 	call SaveImageHandle(HY, h, 2, R3)
 	call SetImageColor(R3, 255, 255, 255, 255)
 	call TimerStart(t, 1, true, function IER)
-	call SaveInteger(HY, h, 0, R2I(S7V))
+	call SaveInteger(HY, h, 0, R2I(timeout))
 	set IOR = null
 	set t = null
 endfunction
@@ -34942,12 +34945,12 @@ endfunction
 function HZR takes unit u, real x, real y, integer level returns nothing
 	local trigger t = CreateTrigger()
 	local integer h = GetHandleId(t)
-	local integer S7V = 7 -level
+	local integer timeout = 7 -level
 	call SaveUnitHandle(ObjectHashTable, h, 0, u)
 	call UnitAddPermanentAbility(u,'A3KA')
 	call SaveReal(ObjectHashTable, h, 0, x)
 	call SaveReal(ObjectHashTable, h, 1, y)
-	call TriggerRegisterTimerEvent(t, S7V, false)
+	call TriggerRegisterTimerEvent(t, timeout, false)
 	call TriggerAddCondition(t, Condition(function HYR))
 	set t = null
 endfunction
@@ -34980,8 +34983,8 @@ endfunction
 function H3R takes unit H2R, unit targetUnit returns nothing
 	local trigger t = CreateTrigger()
 	local integer h = GetHandleId(t)
-	local integer S7V = 7 -GetUnitAbilityLevel(H2R,'A0LV')
-	call TriggerRegisterTimerEvent(t, S7V, false)
+	local integer timeout = 7 -GetUnitAbilityLevel(H2R,'A0LV')
+	call TriggerRegisterTimerEvent(t, timeout, false)
 	call TriggerRegisterDeathEvent(t, H2R)
 	call TriggerRegisterDeathEvent(t, targetUnit)
 	call TriggerAddCondition(t, Condition(function H1R))
@@ -39492,7 +39495,7 @@ function VEE takes nothing returns nothing
 		set loop_max = 8
 		loop
 		exitwhen loop_i > loop_max
-			call RemoveDestructableToTimed(CreateDestructableLoc('B005', VIX(UVR, 150.,(I2R(loop_i)* 45.)), GetRandomReal(0, 360), 1, 0), 2 + GetUnitAbilityLevel(dummyCaster,'A21E'))
+			call RemoveDestructableTimed(CreateDestructableLoc('B005', VIX(UVR, 150.,(I2R(loop_i)* 45.)), GetRandomReal(0, 360), 1, 0), 2 + GetUnitAbilityLevel(dummyCaster,'A21E'))
 			set loop_i = loop_i + 1
 		endloop
 	endif
@@ -42325,7 +42328,7 @@ function EJI takes nothing returns boolean
 	local boolean b
 	local boolean ESI
 	local trigger tt = null
-	local real S7V
+	local real timeout
 	local group g = null
 	if GetTriggerEvalCount(t)> ELI then
 		call FlushChildHashtable(HY, h)
@@ -42366,9 +42369,9 @@ function EJI takes nothing returns boolean
 					set d = d  -10
 				endloop
 				if id =='A2QT' then
-					set S7V = RMinBJ(GetGameTime()-LoadReal(HY, GetHandleId(u), 358)-(.3 * GetTriggerEvalCount(t)), 3)
+					set timeout = RMinBJ(GetGameTime()-LoadReal(HY, GetHandleId(u), 358)-(.3 * GetTriggerEvalCount(t)), 3)
 					set tt = CreateTrigger()
-					call TriggerRegisterTimerEvent(tt, S7V, false)
+					call TriggerRegisterTimerEvent(tt, timeout, false)
 					call TriggerAddCondition(tt, Condition(function ECI))
 					call SaveUnitHandle(HY, GetHandleId(tt), 0, dummyCaster)
 					set tt = null
@@ -42429,9 +42432,9 @@ function EJI takes nothing returns boolean
 			//	call LaunchWaveSimple(dummyCaster,'h08O', 60 + 50 * lv, 1200, 240, 240, tx, ty, ux, uy, 1500, 1, false, "GushUpgraded_Actions", lv)
 			//endif
 			if id =='A12K' then
-				set S7V = RMinBJ((GetGameTime())-(LoadReal(HY,(GetHandleId(u)), 358))-(.3 * GetTriggerEvalCount(t)), 1.05)
+				set timeout = RMinBJ((GetGameTime())-(LoadReal(HY,(GetHandleId(u)), 358))-(.3 * GetTriggerEvalCount(t)), 1.05)
 				set tt = CreateTrigger()
-				call TriggerRegisterTimerEvent(tt, S7V, false)
+				call TriggerRegisterTimerEvent(tt, timeout, false)
 				call TriggerAddCondition(tt, Condition(function ECI))
 				call SaveUnitHandle(HY, GetHandleId(tt), 0, dummyCaster)
 				set tt = null
@@ -44731,36 +44734,7 @@ function R1I takes unit R8X, unit targetUnit returns nothing
 	endif
 endfunction
 
-function R6I takes nothing returns nothing
-	local timer t = GetExpiredTimer()
-	local integer h = GetHandleId(t)
-	local unit RWI = LoadUnitHandle(HY, h, 0)
-	local unit KKX = LoadUnitHandle(HY, h, 1)
-	if UnitIsDead(RWI) then
-		call PauseTimer(t)
-		call DestroyTimer(t)
-		call FlushChildHashtable(HY, h)
-	else
-		if GetUnitDistanceEx(RWI, KKX)> 1425 and IsUnitScepterUpgraded(KKX) == false then
-			call UnitAddPermanentAbility(RWI,'A44D')
-			call UnitAddPermanentAbility(RWI,'A44E')
-		elseif GetUnitAbilityLevel(RWI,'A44D')> 0 then
-			call UnitRemoveAbility(RWI,'A44D')
-			call UnitRemoveAbility(RWI,'A44E')
-		endif
-	endif
-	set KKX = null
-	set RWI = null
-	set t = null
-endfunction
-function R7I takes unit RWI returns nothing
-	local timer t = CreateTimer()
-	local integer h = GetHandleId(t)
-	call TimerStart(t, .2, true, function R6I)
-	call SaveUnitHandle(HY, h, 0, RWI)
-	call SaveUnitHandle(HY, h, 1, PlayerHeroes[GetPlayerId(GetOwningPlayer(RWI))])
-	set t = null
-endfunction
+
 
 function E0E takes nothing returns nothing
 	local unit u = GetTriggerUnit()
@@ -44801,27 +44775,7 @@ function I4E takes nothing returns nothing
 	set hTriggerUnit = null
 	set d = null
 endfunction
-function R8I takes nothing returns nothing
-	local unit RWI
-	local unit u
-	if GetSpellAbilityId()=='A0A7' then
-		set RWI = GetTriggerUnit()
-		set u = PlayerHeroes[GetPlayerId(GetOwningPlayer(RWI))]
-		call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Human\\MassTeleport\\MassTeleportTarget.mdl", GetUnitX(RWI), GetUnitY(RWI)))
-		call SetUnitX(RWI, GetUnitX(u) + GetRandomReal(25, 50)* Cos(GetRandomReal(0, 360)))
-		call SetUnitY(RWI, GetUnitY(u) + GetRandomReal(25, 50)* Sin(GetRandomReal(0, 360)))
-		call S5V(RWI, 851972, 0)
-	endif
-	set RWI = null
-	set u = null
-endfunction
 
-function M1X takes nothing returns nothing
-	local trigger t = CreateTrigger()
-	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
-	call TriggerAddCondition(t, Condition(function R8I))
-	set t = null
-endfunction
 function IAI takes unit u returns nothing
 	local unit d = CreateUnit(GetOwningPlayer(u),'e00E', GetUnitX(u), GetUnitY(u), 0)
 	call UnitAddAbility(d,'A325')
@@ -58311,7 +58265,7 @@ function E8A takes nothing returns boolean
 	local integer level =(LoadInteger(HY, h, 5))
 	local integer count = GetTriggerEvalCount(t)
 	local integer interval
-	local real S7V
+	local real timeout
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call E_A(h)
 		call FlushChildHashtable(HY, h)
@@ -58322,23 +58276,23 @@ function E8A takes nothing returns boolean
 	else
 		if GetUnitAbilityLevel(whichUnit,'A1UV')> 0 then
 			if level == 1 then
-				set S7V = .6
+				set timeout = .6
 			elseif level == 2 then
-				set S7V = .5
+				set timeout = .5
 			else
-				set S7V = .4
+				set timeout = .4
 			endif
 		else
 			if level == 1 then
-				set S7V = .7
+				set timeout = .7
 			elseif level == 2 then
-				set S7V = .6
+				set timeout = .6
 			else
-				set S7V = .5
+				set timeout = .5
 			endif
 		endif
-		set S7V = S7V / .05
-		if ModuloInteger(count, R2I(S7V)) == 0 or count == 1 then
+		set timeout = timeout / .05
+		if ModuloInteger(count, R2I(timeout)) == 0 or count == 1 then
 			set MLV = h
 			call E7A(whichUnit, dummyCaster, level)
 		endif
@@ -66772,27 +66726,27 @@ function HDA takes unit whichUnit, unit targetUnit, real sx, real sy, real a2 re
 	set HFA = a
 	set x = tx + 200* Cos(HFA * bj_DEGTORAD)
 	set y = ty + 200* Sin(HFA * bj_DEGTORAD)
-	call RemoveDestructableToTimed(CreateDestructable('B006', x, y,-1 * HFA, .6, 1), 7)
+	call RemoveDestructableTimed(CreateDestructable('B006', x, y,-1 * HFA, .6, 1), 7)
 	call KillTreeByCircle(x, y, 300)
 	set HFA = a -40
 	set x = tx + 200* Cos(HFA * bj_DEGTORAD)
 	set y = ty + 200* Sin(HFA * bj_DEGTORAD)
-	call RemoveDestructableToTimed(CreateDestructable('B006', x, y,-1 * HFA, .6, 1), 7)
+	call RemoveDestructableTimed(CreateDestructable('B006', x, y,-1 * HFA, .6, 1), 7)
 	call KillTreeByCircle(x, y, 300)
 	set HFA = a -80
 	set x = tx + 200* Cos(HFA * bj_DEGTORAD)
 	set y = ty + 200* Sin(HFA * bj_DEGTORAD)
-	call RemoveDestructableToTimed(CreateDestructable('B006', x, y,-1 * HFA, .6, 1), 7)
+	call RemoveDestructableTimed(CreateDestructable('B006', x, y,-1 * HFA, .6, 1), 7)
 	call KillTreeByCircle(x, y, 300)
 	set HFA = a + 40
 	set x = tx + 200* Cos(HFA * bj_DEGTORAD)
 	set y = ty + 200* Sin(HFA * bj_DEGTORAD)
-	call RemoveDestructableToTimed(CreateDestructable('B006', x, y,-1 * HFA, .6, 1), 7)
+	call RemoveDestructableTimed(CreateDestructable('B006', x, y,-1 * HFA, .6, 1), 7)
 	call KillTreeByCircle(x, y, 300)
 	set HFA = a + 80
 	set x = tx + 200* Cos(HFA * bj_DEGTORAD)
 	set y = ty + 200* Sin(HFA * bj_DEGTORAD)
-	call RemoveDestructableToTimed(CreateDestructable('B006', x, y,-1 * HFA, .6, 1), 7)
+	call RemoveDestructableTimed(CreateDestructable('B006', x, y,-1 * HFA, .6, 1), 7)
 	call KillTreeByCircle(x, y, 300)
 endfunction
 function HGA takes nothing returns nothing
@@ -70703,7 +70657,7 @@ function YUV takes nothing returns nothing
 	call DisableTrigger(UnitManipulatItemTrig)
 	loop
 	exitwhen i > 5
-		if UnitItemInSlot(whichUnit, i)!= null and GetItemTypeId(UnitItemInSlot(whichUnit, i))!= ItemRealId[AIV]and GetItemTypeId(UnitItemInSlot(whichUnit, i))!= ItemRealId[A6V]and GetItemTypeId(UnitItemInSlot(whichUnit, i))!= ItemRealId[Item_ObserverWard]and GetItemTypeId(UnitItemInSlot(whichUnit, i))!= ItemRealId[Item_SentryWard]and GetItemTypeId(UnitItemInSlot(whichUnit, i))!= ItemRealId[IVV] then
+		if UnitItemInSlot(whichUnit, i)!= null and GetItemTypeId(UnitItemInSlot(whichUnit, i))!= ItemRealId[Item_AegisOfTheImmortal]and GetItemTypeId(UnitItemInSlot(whichUnit, i))!= ItemRealId[A6V]and GetItemTypeId(UnitItemInSlot(whichUnit, i))!= ItemRealId[Item_ObserverWard]and GetItemTypeId(UnitItemInSlot(whichUnit, i))!= ItemRealId[Item_SentryWard]and GetItemTypeId(UnitItemInSlot(whichUnit, i))!= ItemRealId[IVV] then
 			set it = CreateItem(GetItemTypeId(UnitItemInSlot(whichUnit, i)), 0, 0)
 			if GetItemCharges(UnitItemInSlot(whichUnit, i))> 0 then
 				call SetItemCharges(it, GetItemCharges(UnitItemInSlot(whichUnit, i)))

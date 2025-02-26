@@ -14,7 +14,7 @@ library UnitUtils requires Table
         return bj_lastCreatedUnit
     endfunction
     // 用SummonUnit创建的召唤单位的来源单位
-    function GetSummonedUnitSource takes unit summonedUnit returns unit
+    function GetUnitSummonSource takes unit summonedUnit returns unit
         return Table[GetHandleId(summonedUnit)].unit[SUMMON_SOURCE]
     endfunction
 

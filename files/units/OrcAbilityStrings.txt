@@ -30073,7 +30073,7 @@ researchart=ReplaceableTextures\CommandButtons\BTNBlink
 animnames=spell,slam
 name=回归
 Tip=回归[|cffffcc00R|r]
-Ubertip=让熊灵回到德鲁伊身边。
+Ubertip=让熊灵回到德鲁伊身边。|n|n|cff99ccff冷却时间：|r5
 hotkey=R
 [A0A8]
 researchart=ReplaceableTextures\CommandButtons\BTN_SyllaSynergy
@@ -39071,7 +39071,7 @@ casterart=Abilities\Spells\NightElf\BattleRoar\RoarCaster.mdl
 animnames=spell,slam
 Name=战争咆哮
 Tip=战争咆哮[|cffffcc00C|r] - [|cffffcc00等级 1|r],战争咆哮[|cffffcc00C|r] - [|cffffcc00等级 2|r],战争咆哮[|cffffcc00C|r] - [|cffffcc00等级 3|r]
-Ubertip=给予熊德及其熊灵90点攻击和10点护甲，|n持续8秒,给予熊德及其熊灵120点攻击和15点护甲，|n持续8秒,给予熊德及其熊灵150点攻击和20点护甲，|n持续8秒
+Ubertip=给予熊德及其熊灵90点攻击和10点护甲，|n持续8秒|n|n|cff99ccff冷却时间：|r30,给予熊德及其熊灵120点攻击和15点护甲，|n持续8秒|n|n|cff99ccff冷却时间：|r30,给予熊德及其熊灵150点攻击和20点护甲，|n持续8秒|n|n|cff99ccff冷却时间：|r30
 hotkey=C
 [B0H7]
 buffart=ReplaceableTextures\CommandButtons\BTNDeathFraud
