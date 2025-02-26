@@ -1,9 +1,20 @@
 
 library ItemSystem requires Base, TimerUtils, AbilityUtils
 
+/*
+
+class:
+Artifact      = 可堆叠物品，适用于realId。
+Purchasable   = 拾取物品，适用于PowerUpId
+Campaign      = 禁用物品，适用于DisabledId
+Miscellaneous = 应该是古早版本狼人嚎叫马甲物品？ Lycan Damage - xxx
+PowerUp       = 神符类物品
+*/
+
+
     globals
         // 可拾取的物品类型
-        integer array ItemPowerupId
+        integer array ItemPowerUpId
         // 真正起作用的有效物品类型
         integer array ItemRealId
         // 出售的马甲单位类型
@@ -39,7 +50,7 @@ library ItemSystem requires Base, TimerUtils, AbilityUtils
 
         globals
             // 可拾取的物品类型
-            integer array ItemPowerupId
+            integer array ItemPowerUpId
             // 真正起作用的有效物品类型
             integer array ItemRealId
             // 出售的马甲单位类型
@@ -60,7 +71,7 @@ library ItemSystem requires Base, TimerUtils, AbilityUtils
         function RegisterItem takes integer powerupId, integer realId, integer sellDummyId, integer disabledId returns integer
             set MaxItemCount = MaxItemCount + 1
 
-            set ItemPowerupId[MaxItemCount]   = powerupId
+            set ItemPowerUpId[MaxItemCount]   = powerupId
             set ItemRealId[MaxItemCount]      = realId
             set ItemSellDummyId[MaxItemCount] = sellDummyId
             set ItemDisabledId[MaxItemCount]  = disabledId
@@ -132,7 +143,7 @@ library ItemSystem requires Base, TimerUtils, AbilityUtils
     function RegisterItem takes integer powerupId, integer realId, integer sellDummyId, integer disabledId returns integer
         set MaxItemCount = MaxItemCount + 1
 
-        set ItemPowerupId[MaxItemCount]   = powerupId
+        set ItemPowerUpId[MaxItemCount]   = powerupId
         set ItemRealId[MaxItemCount]      = realId
         set ItemSellDummyId[MaxItemCount] = sellDummyId
         set ItemDisabledId[MaxItemCount]  = disabledId
@@ -175,7 +186,7 @@ library ItemSystem requires Base, TimerUtils, AbilityUtils
             set i = i + 1
         exitwhen i > CombineMaxIndex
         endloop
-        return -1
+        return - 1
     endfunction
 
     function GetItemIndexEx takes item whichItem returns integer
@@ -191,7 +202,7 @@ library ItemSystem requires Base, TimerUtils, AbilityUtils
             return itemIndex
         endif
 
-        return -1
+        return - 1
     endfunction
     
     // 获取物品的索引 不包含禁用状态，是禁用状态时会返回-1
@@ -206,12 +217,12 @@ library ItemSystem requires Base, TimerUtils, AbilityUtils
         
         if itemIndex > 0 then
             if ItemDisabledId[itemIndex] == itemId then
-                return -1
+                return - 1
             endif
             return itemIndex
         endif
 
-        return -1
+        return - 1
     endfunction
 
     function GetItemIndexBySellUnit takes unit whichUnit returns integer
@@ -227,7 +238,7 @@ library ItemSystem requires Base, TimerUtils, AbilityUtils
             return itemIndex
         endif
 
-        return -1
+        return - 1
     endfunction
 
     function GetItemIndexByUnitId takes integer unitId returns integer
@@ -238,7 +249,7 @@ library ItemSystem requires Base, TimerUtils, AbilityUtils
             return itemIndex
         endif
 
-        return -1
+        return - 1
     endfunction
 
     // 获取禁用物品的索引
@@ -255,7 +266,7 @@ library ItemSystem requires Base, TimerUtils, AbilityUtils
             return itemIndex
         endif
 
-        return -1
+        return - 1
     endfunction
     // 获取禁用物品的有效物品id
     function GetDisabledItemRealId takes item whichItem returns integer
@@ -272,7 +283,7 @@ library ItemSystem requires Base, TimerUtils, AbilityUtils
             return ItemRealId[itemIndex]
         endif
 
-        return -1
+        return - 1
     endfunction
 
     // RemoveItemNoTrig

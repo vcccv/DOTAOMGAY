@@ -124,12 +124,14 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         set O0V = RegisterItem('I0AU', 'I0AN', 0, 'I0DO')
         set O1V = RegisterItem('I0AS', 'I0AO', 0, 'I0DP')
         set O2V = RegisterItem('I0AT', 'I0AP', 0, 'I0DQ')
-        set O7V = RegisterItem('I0GW', 'I0GY', 0, 'I0H3')
-        set O6V = RegisterItem('I0H2', 'I0GX', 0, 'I0DR')
-        set O5V = RegisterItem('I0GV', 'I0H1', 0, 'I0H4')
-        set O8V = RegisterItem('I0Q8', 'I0Q7', 0, 'I0Q9')
-        set O4V = RegisterItem('I0AR', 'I0H0', 0, 'I0H6')
-        set O3V = RegisterItem('I0AQ', 'I0GZ', 0, 'I0H5')
+
+        set Item_MagicalBottle_Illusion     = RegisterItem('I0GW', 'I0GY', 0, 'I0H3')
+        set Item_MagicalBottle_Regeneration = RegisterItem('I0H2', 'I0GX', 0, 'I0DR')
+        set Item_MagicalBottle_Haste        = RegisterItem('I0GV', 'I0H1', 0, 'I0H4')
+        set Item_MagicalBottle_Bounty       = RegisterItem('I0Q8', 'I0Q7', 0, 'I0Q9')
+        set Item_MagicalBottle_DoubleDamage = RegisterItem('I0AR', 'I0H0', 0, 'I0H6')
+        set Item_MagicalBottle_Invisibility = RegisterItem('I0AQ', 'I0GZ', 0, 'I0H5')
+        
         set Item_MagicStick = RegisterItem('I0GD', 'I0GC', 'h074', 'I0GE')
         set Item_MagicWand = RegisterItem('I0HC', 'I0HB', 0, 'I0HA')
         call SaveInteger(HY, 'ITDB', RegisterItem(0, 0, 'h07S', 0), Item_MagicWand)
@@ -143,11 +145,13 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         set XHV = RegisterItem('I0QI', 'I0QH', 0, 'I0QJ')
         set XJV = RegisterItem('I0QL', 'I0QK', 'ho02', 'I0QM')
         set R1V = RegisterItem('INTD', 'INTG', 0, 0)
-        set RYV = RegisterItem('I042', 'I05D', 'h028', 'INCP')
+        // Item_ClarityPotion 小净化
+        set Item_ClarityPotion = RegisterItem('I042', 'I05D', 'h028', 'INCP')
         set Item_GhostPotion = RegisterItem('I0HO', 'I0HN', 'h07V', 0)
-        set R_V = RegisterItem('I056', 'I05F', 'h029', 'INHS')
+
+        set Item_HealingSalve = RegisterItem('I056', 'I05F', 'h029', 'INHS')
         set Item_ObserverWard = RegisterItem('I058', 'I05G', 'h02C', 0)
-        set Item_SentryWard = RegisterItem('I059', 'I05H', 'h02D', 0)
+        set Item_SentryWard   = RegisterItem('I059', 'I05H', 'h02D', 0)
         // Item_TownPortalScroll
         set Item_TownPortalScroll = RegisterItem('I05A', 'I05I', 'h02E', 0)
         call RegisterItemPuckupMethodByIndex(Item_TownPortalScroll, "ItemTownPortalScrollOnPickup")
@@ -375,7 +379,8 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         call SaveInteger(HY, 'ITDB', RegisterItem(0, 0, 'h03N', 0), A8V)
         // Recipe_ArcaneRing
         set Recipe_ArcaneRing = RegisterItem('I07M', 'I089', 'h03O', 'I0EP')
-        set BUV = RegisterItem('I07P', 'I08A', 'h03Q', 'I0EQ')
+
+        set Recipe_FlyingCourier = RegisterItem('I07P', 'I08A', 'h03Q', 'I0EQ')
         set BWV = RegisterItem('I07Q', 'I08B', 'h03R', 'I0ER')
         set BYV = RegisterItem('I07R', 'I08C', 'h03S', 'I0ES')
         // Recipe_Bloodstone
@@ -856,7 +861,7 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         
         set CombineMaxIndex = CombineMaxIndex + 1
         set CombineIndex1[CombineMaxIndex] = R5V
-        set CombineIndex3[CombineMaxIndex] = BUV
+        set CombineIndex3[CombineMaxIndex] = Recipe_FlyingCourier
         set CombinedIndex[CombineMaxIndex] = NXV
         
         set CombineMaxIndex = CombineMaxIndex + 1
@@ -1139,12 +1144,18 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         integer O0V
         integer O1V
         integer O2V
-        integer O3V
-        integer O4V
-        integer O5V
-        integer O6V
-        integer O7V
-        integer O8V
+        // 魔瓶 - 隐身
+        integer Item_MagicalBottle_Invisibility
+        // 魔瓶 - 双倍伤害
+        integer Item_MagicalBottle_DoubleDamage
+        // 魔瓶 - 急速
+        integer Item_MagicalBottle_Haste
+        // 魔瓶 - 回复
+        integer Item_MagicalBottle_Regeneration
+        // 魔瓶 - 幻象
+        integer Item_MagicalBottle_Illusion
+        // 魔瓶 - 赏金
+        integer Item_MagicalBottle_Bounty
         integer Item_MagicStick
         integer RVV
         integer REV
@@ -1170,9 +1181,11 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         integer RTV
         integer RUV
         integer RWV
-        integer RYV
+        integer Item_ClarityPotion
         integer Item_GhostPotion
-        integer R_V
+        // 治疗药膏
+        integer Item_HealingSalve
+        // 吃树
         integer Item_AncientTangoOfEssifation
         integer R1V
         integer Item_ObserverWard
@@ -1181,6 +1194,7 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         integer R5V
         integer R6V
         integer R7V
+        // 显影之尘
         integer Item_DustOfAppearance
         integer Item_WandOfIllusions
         integer IVV
@@ -1317,7 +1331,8 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         integer BQV
         integer BSV
         integer Recipe_ArcaneRing
-        integer BUV
+        // 飞行信使卷轴
+        integer Recipe_FlyingCourier
         integer BWV
         integer BYV
         integer BZV

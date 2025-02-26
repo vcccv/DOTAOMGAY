@@ -23,8 +23,8 @@ library ItemStatus requires ItemSystem
         */  or itemIndex == R6V /*
         */  /*
         */  or itemIndex == Item_DustOfAppearance /*
-        */  or itemIndex == RYV /*
-        */  or itemIndex == R_V /*
+        */  or itemIndex == Item_ClarityPotion /*
+        */  or itemIndex == Item_HealingSalve /*
         */  or itemIndex == Item_AncientTangoOfEssifation /*
         */  or itemIndex == Item_ObserverWard /*
         */  or itemIndex == Item_SentryWard /*
@@ -66,11 +66,16 @@ library ItemStatus requires ItemSystem
         return 1
     endfunction
 
-    // 
+    // 拾取事件中要删除的物品
     function H8X takes item whichItem returns boolean
         return GetItemType(whichItem) == ITEM_TYPE_POWERUP /*
         */ or GetItemType(whichItem) == ITEM_TYPE_PURCHASABLE /*
         */ or GetItemType(whichItem) == ITEM_TYPE_MISCELLANEOUS
+    endfunction
+
+    // 神符魔瓶物品
+    function IsItemRuneMagicalBottleByIndex takes integer itemIndex returns boolean
+        return itemIndex == Item_MagicalBottle_Illusion or itemIndex == Item_MagicalBottle_Haste or itemIndex == Item_MagicalBottle_DoubleDamage or itemIndex == Item_MagicalBottle_Regeneration or itemIndex == Item_MagicalBottle_Invisibility or itemIndex == Item_MagicalBottle_Bounty
     endfunction
 
 endlibrary

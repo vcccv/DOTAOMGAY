@@ -3339,7 +3339,7 @@ function TVE takes integer id returns integer
 		endif
 		set i = i + 1
 	endloop
-	return -1
+	return - 1
 endfunction
 // 按表索引检查技能
 function CheckAbilityIdFormIndex takes integer abilIndex, integer TOE, string orderStr, string TNE returns boolean
@@ -5818,13 +5818,13 @@ function ABX takes string AIX, real x, real y, real EHX returns nothing
 	set fx = null
 	set t = null
 endfunction
-function ACX takes unit whichUnit, integer UYV returns item
+function ACX takes unit whichUnit, integer itemId returns item
 	local integer index = 0
 	local item AFX
 	loop
 	exitwhen index == 6
 		set AFX = UnitItemInSlot(whichUnit, index)
-		if AFX != null and GetItemTypeId(AFX) == UYV then
+		if AFX != null and GetItemTypeId(AFX) == itemId then
 			return AFX
 		endif
 		set index = index + 1
@@ -6617,7 +6617,7 @@ function GetUnitItemSlot takes unit whichUnit, item whichItem returns integer
 		endif
 		set i = i + 1
 	endloop
-	return -1
+	return - 1
 endfunction
 function B3X takes real n1, real n2 returns integer
 	if n1 / n2 -R2I(n1 / n2)>= .5 then
@@ -7488,31 +7488,30 @@ function GQX takes unit u, integer id, integer GFX returns nothing
 	call SaveInteger(HY, h, 1, GFX)
 	set t = null
 endfunction
-function GSX takes integer itemIndex returns integer
-	if ItemSideLaneShopId[itemIndex]== 0 then
+// 获取真正使用的ItemIndex，将边路商店的ItemIndex修正为实际使用的ItemIndex。
+function GetRealItemIndex takes integer itemIndex returns integer
+	if ItemSideLaneShopId[itemIndex] == 0 then
 		return itemIndex
 	else
 		return ItemSideLaneShopId[itemIndex]
 	endif
 endfunction
-function GUX takes integer id returns boolean
-	return id == O7V or id == O5V or id == O4V or id == O6V or id == O3V or id == O8V
-endfunction
-function GWX takes integer id returns integer
-	if id == O7V then
+
+function GWX takes integer itemIndex returns integer
+	if itemIndex == Item_MagicalBottle_Illusion then
 		return 'I007'
-	elseif id == O5V then
+	elseif itemIndex == Item_MagicalBottle_Haste then
 		return 'I006'
-	elseif id == O4V then
+	elseif itemIndex == Item_MagicalBottle_DoubleDamage then
 		return 'I00K'
-	elseif id == O6V then
+	elseif itemIndex == Item_MagicalBottle_Regeneration then
 		return 'I008'
-	elseif id == O3V then
+	elseif itemIndex == Item_MagicalBottle_Invisibility then
 		return 'I00J'
-	elseif id == O8V then
+	elseif itemIndex == Item_MagicalBottle_Bounty then
 		return 'I0QA'
 	endif
-	return -1
+	return - 1
 endfunction
 function GYX takes unit u, integer id returns boolean
 	local integer i
@@ -7546,6 +7545,8 @@ function GZX takes unit u, integer id, item it returns item
 	set G_X = null
 	return null
 endfunction
+// 似乎是排除掉G_X来寻找其他物品
+// 寻找其他可堆叠物品？ 物品所有者必须是指定玩家，除非是2种眼睛
 function G1X takes player p, unit u, integer itemIndex, item G_X returns item
 	local integer i
 	local item it
@@ -7884,22 +7885,22 @@ endfunction
 function HSX takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
-	local integer UYV =(LoadInteger(HY, h, 74))
+	local integer itemId =(LoadInteger(HY, h, 74))
 	local real x =(LoadReal(HY, h, 6))
 	local real y =(LoadReal(HY, h, 7))
 	local player p =(LoadPlayerHandle(HY, h, 54))
-	local boolean HTX =(LoadBoolean(HY, h, 75))
-	local integer HUX =(LoadInteger(HY, h, 76))
-	local item newItem = CreateItem(UYV, x, y)
+	local boolean charged =(LoadBoolean(HY, h, 75))
+	local integer charges =(LoadInteger(HY, h, 76))
+	local item newItem = CreateItem(itemId, x, y)
 	call SetItemPlayer(newItem, p, true)
 	call SetItemUserData(newItem, 0)
 	if IsItemDeathDrop(newItem) then
 		call SetItemInvulnerable(newItem, true)
 	endif
-	if HTX then
-		call SetItemCharges(newItem, HUX)
+	if charged then
+		call SetItemCharges(newItem, charges)
 	endif
-	if UYV == ItemPowerupId[BUV] then
+	if itemId == ItemPowerUpId[Recipe_FlyingCourier] then
 		call HMX(newItem, p)
 	endif
 	call FlushChildHashtable(HY, h)
@@ -7909,15 +7910,15 @@ function HSX takes nothing returns boolean
 	set newItem = null
 	return false
 endfunction
-function HYX takes integer UYV, real x, real y, player p, boolean HTX, integer HUX returns nothing
+function HYX takes integer itemId, real x, real y, player p, boolean charged, integer charges returns nothing
 	local trigger t = CreateTrigger()
 	local integer h = GetHandleId(t)
-	call SaveInteger(HY, h, 74,(UYV))
+	call SaveInteger(HY, h, 74,(itemId))
 	call SaveReal(HY, h, 6,((x)* 1.))
 	call SaveReal(HY, h, 7,((y)* 1.))
 	call SavePlayerHandle(HY, h, 54,(p))
-	call SaveBoolean(HY, h, 75,(HTX))
-	call SaveInteger(HY, h, 76,(HUX))
+	call SaveBoolean(HY, h, 75,(charged))
+	call SaveInteger(HY, h, 76,(charges))
 	call TriggerAddCondition(t, Condition(function HSX))
 	call TriggerRegisterTimerEvent(t, 0, false)
 	set t = null
@@ -10566,18 +10567,18 @@ function TDX takes nothing returns boolean
 endfunction
 function TFX takes nothing returns boolean
 	local item i
-	local integer HUX
+	local integer charges
 	if E4V == 0 and(IsAliveNotStrucNotWard(GetFilterUnit())) and IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and IsUnitIllusion(GetFilterUnit()) == false and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(E3V)) then
 		set i = GetItemOfTypeFromUnit(GetFilterUnit(), ItemRealId[NUV])
 		if i != null then
 			set E4V = E4V + 1
-			set HUX = GetItemCharges(i)
-			if HUX == 0 then
-				set HUX = 2
+			set charges = GetItemCharges(i)
+			if charges == 0 then
+				set charges = 2
 			else
-				set HUX = HUX + 1
+				set charges = charges + 1
 			endif
-			call SetItemCharges(i, HUX)
+			call SetItemCharges(i, charges)
 		endif
 		set i = null
 	endif
@@ -11817,10 +11818,10 @@ function YSX takes nothing returns nothing
 	endif
 	set FPV = false
 	set E8V = false
-	set it = CreateItem(ItemPowerupId[Item_AegisOfTheImmortal], GetUnitX(Roshan), GetUnitY(Roshan))
+	set it = CreateItem(ItemPowerUpId[Item_AegisOfTheImmortal], GetUnitX(Roshan), GetUnitY(Roshan))
 	call SetItemCharges(it, 1)
 	if GetUnitAbilityLevel(Roshan,'A0Q6') == 1 then
-		set it = CreateItem(ItemPowerupId[R6V], GetUnitX(Roshan), GetUnitY(Roshan))
+		set it = CreateItem(ItemPowerUpId[R6V], GetUnitX(Roshan), GetUnitY(Roshan))
 		call SetItemCharges(it, 1)
 	endif
 	call RemoveItem(UnitRemoveItemFromSlot(Roshan, 0))
@@ -12065,7 +12066,7 @@ function ZEX takes nothing returns nothing
 		if id >=852008 and id <= 852013 then
 			set id = GetItemIndexEx(UnitItemInSlot(GetTriggerUnit(), id -852008))
 			// and not( id == I9V or id == AVV or id == AEV or id == AXV or id == AOV or id == ARV ) 让信使能用BKB
-			if id != R_V and id != RYV and id != RPV and id != IVV then
+			if id != Item_HealingSalve and id != Item_ClarityPotion and id != RPV and id != IVV then
 				call EXStopUnit(GetTriggerUnit())
 			endif
 		elseif id !='h085' and id != 852663 and id != 851973 and id !='h0DE' and id !='h0BV' and id != 852252 and id != 852247 and id != 852246 and id != 852100 and(GetIssuedOrderId()< 852002 or GetIssuedOrderId()>852013) then
@@ -12364,7 +12365,7 @@ function ZTX takes unit ZSX, unit trigUnit returns nothing
 	exitwhen i > 5
 		set whichItem = UnitItemInSlot(ZSX, i)
 		set itemIndex = GetItemIndexEx(whichItem)
-		if whichItem != null and GetItemPlayer(whichItem) == p and(itemIndex != O3V and itemIndex != O4V and itemIndex != O5V and itemIndex != O6V and itemIndex != O7V) then
+		if whichItem != null and GetItemPlayer(whichItem) == p and(itemIndex != Item_MagicalBottle_Invisibility and itemIndex != Item_MagicalBottle_DoubleDamage and itemIndex != Item_MagicalBottle_Haste and itemIndex != Item_MagicalBottle_Regeneration and itemIndex != Item_MagicalBottle_Illusion) then
 			call UnitRemoveItem(ZSX, whichItem)
 			call SetItemPosition(whichItem, x, y)
 		endif
@@ -12530,7 +12531,7 @@ function Z3X takes unit Y1X, unit KKX, boolean Z4X, integer Z5X returns nothing
 				call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Items\\AIem\\AIemTarget.mdl", KKX, "origin"))
 				set it = null
 			else
-				set it = CreateItem(ItemPowerupId[CombinedIndex[k]], GetUnitX(KKX), GetUnitY(KKX))
+				set it = CreateItem(ItemPowerUpId[CombinedIndex[k]], GetUnitX(KKX), GetUnitY(KKX))
 				if CombinedIndex[k]== NIV or CombinedIndex[k]== Item_MagicWand or CombinedIndex[k]== IUV or CombinedIndex[k]== IWV then
 					if HaveSavedInteger(HY,'ITEM', 300) then
 						call SetItemCharges(it, LoadInteger(HY,'ITEM', 300))
@@ -12681,7 +12682,7 @@ function VIO takes unit trigUnit returns nothing
 		loop
 		exitwhen i > 5
 			set whichItem = UnitItemInSlot(whichUnit, i)
-			if GUX(GetItemIndexEx(whichItem)) == false and GetItemIndexEx(whichItem)!= Item_AegisOfTheImmortal then
+			if IsItemRuneMagicalBottleByIndex(GetItemIndexEx(whichItem)) == false and GetItemIndexEx(whichItem)!= Item_AegisOfTheImmortal then
 				call UnitRemoveItemFromSlot(whichUnit, i)
 				if IsUnitInRegion(r, whichUnit) and IsPlayerAlly(GetItemPlayer(whichItem), GetOwningPlayer(whichUnit)) then
 					set id = GetPlayerId(GetItemPlayer(whichItem))
@@ -13092,7 +13093,7 @@ function EGO takes unit whichUnit, integer EHO returns unit
 	set g = null
 	return MissileHitTargetUnit
 endfunction
-function EJO takes player whichPlayer, unit whichUnit, unit EKO, integer itemIndex, real x, real y, integer HUX, integer ELO returns nothing
+function EJO takes player whichPlayer, unit whichUnit, unit EKO, integer itemIndex, real x, real y, integer charges, integer ELO returns nothing
 	local unit EMO = null
 	local item newItem = null
 	set Y2 = EKO
@@ -13107,30 +13108,30 @@ function EJO takes player whichPlayer, unit whichUnit, unit EKO, integer itemInd
 	else
 		set EMO = whichUnit
 	endif
-	if EMO == null or ECO(whichPlayer, EMO, GSX(itemIndex)) == false or X3 == false then
-		if IsItemChargedByIndex(GSX(itemIndex)) then
+	if EMO == null or ECO(whichPlayer, EMO, GetRealItemIndex(itemIndex)) == false or X3 == false then
+		if IsItemChargedByIndex(GetRealItemIndex(itemIndex)) then
 			if GetUnitEmptyInventorySlotCount(EMO) == 0 or EMO == null then
 				if EMO == null then
-					call HYX(ItemPowerupId[itemIndex], x, y, whichPlayer, true, HUX)
+					call HYX(ItemPowerUpId[itemIndex], x, y, whichPlayer, true, charges)
 				else
 					if GetDistanceBetween(GetUnitX(EMO), GetUnitY(EMO), x, y)> 2000 then
 						set x = GetUnitX(EMO)
 						set y = GetUnitY(EMO)
 						call InterfaceErrorForPlayer(whichPlayer, "物品栏满了！")
 					endif
-					call HYX(ItemPowerupId[itemIndex], x, y, whichPlayer, true, HUX)
+					call HYX(ItemPowerUpId[itemIndex], x, y, whichPlayer, true, charges)
 				endif
 			else
 				set newItem = UnitAddItemById(EMO, ItemRealId[itemIndex])
-				call SetItemCharges(newItem, HUX)
+				call SetItemCharges(newItem, charges)
 				call SetItemPlayer(newItem, whichPlayer, true)
 				call SetItemUserData(newItem, ELO)
 			endif
-		elseif IsItemPerishableByIndex(GSX(itemIndex)) then
+		elseif IsItemPerishableByIndex(GetRealItemIndex(itemIndex)) then
 			if EMO == null or(GetUnitEmptyInventorySlotCount(EMO) == 0 and GetItemOfTypeFromUnit(EMO, ItemRealId[itemIndex]) == null) then
-				call HYX(ItemPowerupId[itemIndex], x, y, whichPlayer, true, GetPerishableItemChargesByIndex(itemIndex))
+				call HYX(ItemPowerUpId[itemIndex], x, y, whichPlayer, true, GetPerishableItemChargesByIndex(itemIndex))
 			else
-				set newItem = CreateItem(ItemPowerupId[itemIndex], x, y)
+				set newItem = CreateItem(ItemPowerUpId[itemIndex], x, y)
 				call SetItemPlayer(newItem, whichPlayer, true)
 				call SetItemUserData(newItem, ELO)
 				call SetItemCharges(newItem, GetPerishableItemChargesByIndex(itemIndex))
@@ -13139,14 +13140,14 @@ function EJO takes player whichPlayer, unit whichUnit, unit EKO, integer itemInd
 		else
 			if GetUnitEmptyInventorySlotCount(EMO) == 0 or EMO == null then
 				if EMO == null then
-					call HYX(ItemPowerupId[itemIndex], x, y, whichPlayer, true, 0)
+					call HYX(ItemPowerUpId[itemIndex], x, y, whichPlayer, true, 0)
 				else
 					if GetDistanceBetween(GetUnitX(EMO), GetUnitY(EMO), x, y)> 2000 then
 						set x = GetUnitX(EMO)
 						set y = GetUnitY(EMO)
 						call InterfaceErrorForPlayer(whichPlayer, "物品栏满了！")
 					endif
-					call HYX(ItemPowerupId[itemIndex], x, y, whichPlayer, true, 0)
+					call HYX(ItemPowerUpId[itemIndex], x, y, whichPlayer, true, 0)
 				endif
 			else
 				if itemIndex != NXV then
@@ -13161,7 +13162,7 @@ function EJO takes player whichPlayer, unit whichUnit, unit EKO, integer itemInd
 	else
 		if IsUnitType(EMO, UNIT_TYPE_HERO) then
 			if ELO == 0 then
-				call StoreDrCacheData("PUI_" + I2S(GetPlayerId(GetOwningPlayer(EMO))), ItemRealId[GSX(itemIndex)])
+				call StoreDrCacheData("PUI_" + I2S(GetPlayerId(GetOwningPlayer(EMO))), ItemRealId[GetRealItemIndex(itemIndex)])
 			endif
 		endif
 	endif
@@ -13171,9 +13172,9 @@ endfunction
 // 消耗品计数判定
 function EPO takes player p, integer itemIndex returns nothing
 	local integer i = GetPlayerId(p)
-	if itemIndex == RYV then
+	if itemIndex == Item_ClarityPotion then
 		set PlayerConsumablesCount[i] = PlayerConsumablesCount[i] + 1
-	elseif itemIndex == R_V then
+	elseif itemIndex == Item_HealingSalve then
 		set PlayerConsumablesCount[i] = PlayerConsumablesCount[i] + 1
 	elseif itemIndex == Item_AncientTangoOfEssifation then
 		set PlayerConsumablesCount[i] = PlayerConsumablesCount[i] + 4
@@ -13290,7 +13291,7 @@ function E5O takes unit u, integer id returns nothing
 	local real y
 	set x = GetUnitX(u)
 	set y = GetUnitY(u)
-	call EJO(p, u, GetSellingUnit(), GSX(id), x, y, 0, 0)
+	call EJO(p, u, GetSellingUnit(), GetRealItemIndex(id), x, y, 0, 0)
 	set u = null
 	set p = null
 endfunction
@@ -13611,9 +13612,9 @@ function XNO takes nothing returns nothing
 		endif
 		set x = E2O(GetSellingUnit(), u)
 		set y = E3O(GetSellingUnit(), u)
-		call HYX(ItemPowerupId[GetItemIndexBySellUnit(u)], x, y, p, true, GetPerishableItemChargesByIndex(GetItemIndexBySellUnit(u)))
+		call HYX(ItemPowerUpId[GetItemIndexBySellUnit(u)], x, y, p, true, GetPerishableItemChargesByIndex(GetItemIndexBySellUnit(u)))
 	else
-		call EPO(p, GSX(itemIndex))
+		call EPO(p, GetRealItemIndex(itemIndex))
 		if ItemRealId[itemIndex] == 0 then
 			set i = GetCombinedIndexByItemIndex(itemIndex, false)
 			if i == -1 then
@@ -13625,9 +13626,9 @@ function XNO takes nothing returns nothing
 			set x = E_O(GetSellingUnit(), u)
 			set y = E1O(GetSellingUnit(), u)
 			if itemIndex == Item_DustOfAppearance then
-				call EJO(p, u, GetSellingUnit(), GSX(itemIndex), x, y, 2, 0)
+				call EJO(p, u, GetSellingUnit(), GetRealItemIndex(itemIndex), x, y, 2, 0)
 			else
-				call EJO(p, u, GetSellingUnit(), GSX(itemIndex), x, y, 0, 0)
+				call EJO(p, u, GetSellingUnit(), GetRealItemIndex(itemIndex), x, y, 0, 0)
 			endif
 		endif
 	endif
@@ -13694,7 +13695,7 @@ function XFO takes nothing returns boolean
 			if unitTypeId == R5V then
 				call PingMinimapEx(GetUnitX(u), GetUnitY(u), 3, 255, 255, 255, false)
 				call DisplayTimedTextToPlayer(p, 0, 0, 20, PlayerColorHex[pid] +(PlayersName[pid]) + "|r |c00ffff00" + GetObjectName('n0HU') + "|r")
-			elseif unitTypeId == BUV and WN then
+			elseif unitTypeId == Recipe_FlyingCourier and WN then
 				call PingMinimapEx(GetUnitX(u), GetUnitY(u), 3, 255, 255, 255, false)
 				call DisplayTimedTextToPlayer(p, 0, 0, DisplayTextDuration[LocalPlayerId], PlayerColorHex[pid] +(PlayersName[pid]) + "|r |c00ffff00" + GetObjectName('n0KG') + "|r")
 			elseif unitTypeId == Item_DustOfAppearance then
@@ -13819,7 +13820,7 @@ function XLO takes unit trigUnit, item whichItem returns boolean
 		call InterfaceErrorForPlayer(GetOwningPlayer(u), GetObjectName('n02L'))
 		set TempPlayer = GetItemPlayer(whichItem)
 		call RemoveItem(whichItem)
-		set TempItem = CreateItem(ItemPowerupId[itemIndex], x, y)
+		set TempItem = CreateItem(ItemPowerUpId[itemIndex], x, y)
 		call SetItemPlayer(TempItem, TempPlayer, false)
 		call SetItemUserData(TempItem, 1)
 	endif
@@ -13827,7 +13828,7 @@ function XLO takes unit trigUnit, item whichItem returns boolean
 		call InterfaceErrorForPlayer(GetOwningPlayer(u), GetObjectName('n02C'))
 		set TempPlayer = GetItemPlayer(whichItem)
 		call RemoveItem(whichItem)
-		set TempItem = CreateItem(ItemPowerupId[itemIndex], x, y)
+		set TempItem = CreateItem(ItemPowerUpId[itemIndex], x, y)
 		call SetItemPlayer(TempItem, TempPlayer, false)
 		call SetItemUserData(TempItem, 1)
 	endif
@@ -13874,7 +13875,7 @@ function XLO takes unit trigUnit, item whichItem returns boolean
 		set Q2 = GetItemCharges(whichItem)
 		call RemoveItem(whichItem)
 		if itemIndex == Item_AegisOfTheImmortal then
-			set TempItem = CreateItem(ItemPowerupId[itemIndex], GetRectCenterX(gg_rct_RoshanSpawn), GetRectCenterY(gg_rct_RoshanSpawn))
+			set TempItem = CreateItem(ItemPowerUpId[itemIndex], GetRectCenterX(gg_rct_RoshanSpawn), GetRectCenterY(gg_rct_RoshanSpawn))
 			call SetItemCharges(TempItem, Q2)
 		endif
 		call SetItemPlayer(TempItem, TempPlayer, false)
@@ -13963,24 +13964,26 @@ function XYO takes unit trigUnit, item whichItem returns boolean
 	return false
 endfunction
 function ManipulatItemDelayOnExpired takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit whichUnit =(LoadUnitHandle(HY, h, 26))
-	local integer eventType =(LoadInteger(HY, h, 97))
-	local integer itemIndex =(LoadInteger(HY, h, 93))
-	local boolean X0O =(LoadBoolean(HY, h, 95))
-	local item whichItem
-	local player p = GetOwningPlayer(whichUnit)
-	local player X1O
-	local integer HUX
-	local boolean HTX = false
-	local item newItem
+	local trigger trig 			  = GetTriggeringTrigger()
+	local integer h 			  = GetHandleId(trig)
+	local unit 	  whichUnit 	  = (LoadUnitHandle(HY, h, 26))
+	local integer eventType 	  = (LoadInteger(HY, h, 97))
+	local integer itemIndex 	  = (LoadInteger(HY, h, 93))
+	// 至少代表拾取的物品在拾取事件里已经被删除
+	local boolean itemRemoved 		  = (LoadBoolean(HY, h, 95))
+	local item    whichItem
+	local player  unitOwnerPlayer = GetOwningPlayer(whichUnit)
+	local player  itemOwnerPlayer
+	local integer charges
+	local boolean charged = false
+	local item    newItem
 	//local integer scepter_indexid
 	//local integer scepter_abilityid
 	//local integer scepter_hiddenabilityid
 	local integer newCharges
 	local item X2O
 	local integer targetCount
+	// 新创建的物品？
 	local item X3O
 	local boolean X4O = false
 	local integer i
@@ -13988,145 +13991,146 @@ function ManipulatItemDelayOnExpired takes nothing returns boolean
 	local real tt
 	local boolean scepterWorks
 	call DisableTrigger(C3V)
-	if X0O then
+	if itemRemoved then
 		set X3O = null
-		set X1O =(LoadPlayerHandle(HY, h, 54))
-		set HUX =(LoadInteger(HY, h, 76))
+		set itemOwnerPlayer =(LoadPlayerHandle(HY, h, 54))
+		set charges =(LoadInteger(HY, h, 76))
 	else
 		set whichItem =(LoadItemHandle(HY, h, 96))
 		set X3O = whichItem
-		set X1O = GetItemPlayer(whichItem)
-		set HUX = GetItemCharges(whichItem)
+		set itemOwnerPlayer = GetItemPlayer(whichItem)
+		set charges = GetItemCharges(whichItem)
 	endif
-	if X0O == false and whichItem == null then
+	if not itemRemoved and whichItem == null then
 		call FlushChildHashtable(HY, h)
-		call DestroyTrigger(t)
+		call DestroyTrigger(trig)
 		call EnableTrigger(C3V)
-		set t = null
+		set trig = null
 		set whichUnit = null
-		set p = null
+		set unitOwnerPlayer = null
 		return false
 	endif
 	if eventType == 1 then
-		if p != X1O and GetUnitTypeId(whichUnit)=='ncop' then
-			if IsItemPerishableByIndex(GSX(itemIndex)) or IsItemChargedByIndex(GSX(itemIndex)) then
-				set HTX = true
+		// 拾取者和物品所有者不一致，拾取者是能量圈
+		if unitOwnerPlayer != itemOwnerPlayer and GetUnitTypeId(whichUnit) == 'ncop' then
+			if IsItemPerishableByIndex(GetRealItemIndex(itemIndex)) or IsItemChargedByIndex(GetRealItemIndex(itemIndex)) then
+				set charged = true
 			endif
-			if IsPlayerEnemy(p, X1O) then
-				call HYX(ItemPowerupId[itemIndex], CirclesX[GetPlayerId(p)], CirclesY[GetPlayerId(p)], X1O, HTX, HUX)
+			if IsPlayerEnemy(unitOwnerPlayer, itemOwnerPlayer) then
+				call HYX(ItemPowerUpId[itemIndex], CirclesX[GetPlayerId(unitOwnerPlayer)], CirclesY[GetPlayerId(unitOwnerPlayer)], itemOwnerPlayer, charged, charges)
 			else
-				call HYX(ItemPowerupId[itemIndex], CirclesX[GetPlayerId(X1O)], CirclesY[GetPlayerId(X1O)], X1O, HTX, HUX)
+				call HYX(ItemPowerUpId[itemIndex], CirclesX[GetPlayerId(itemOwnerPlayer)], CirclesY[GetPlayerId(itemOwnerPlayer)], itemOwnerPlayer, charged, charges)
 			endif
-			call InterfaceErrorForPlayer(p, GetObjectName('n0DR'))
-			if X0O == false then
+			call InterfaceErrorForPlayer(unitOwnerPlayer, GetObjectName('n0DR'))
+			if not itemRemoved then
 				set X4O = true
 				call SilentRemoveItem(whichItem)
 			endif
-		elseif Mode__PoolMode == false and X0O == false and GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN and GetDisabledItemRealId(whichItem)!= 0 and(p == X1O or(GetPlayerSlotState(X1O) == PLAYER_SLOT_STATE_LEFT)) then
-			if IsItemChargedByIndex(itemIndex) then
-				set HTX = true
-			else
-				set HTX = false
-			endif
-			if not(GetPlayerSlotState(X1O) == PLAYER_SLOT_STATE_LEFT and GUX(itemIndex)) then
+		elseif not Mode__PoolMode and not itemRemoved 			/*
+			*/ and GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN /*
+			*/ and GetDisabledItemRealId(whichItem) != 0 		/*
+			*/ and (unitOwnerPlayer == itemOwnerPlayer or (GetPlayerSlotState(itemOwnerPlayer) == PLAYER_SLOT_STATE_LEFT)) then
+			// 不是养人模式，拿的是实体物品(被给予或直接购买的)；并且自己就是物品所有者或物品所有者已离线。
+			set charged = IsItemChargedByIndex(itemIndex)
+			// 如果不是(物品所有者已经离线，并且物品是神符类魔瓶)
+			if not (GetPlayerSlotState(itemOwnerPlayer) == PLAYER_SLOT_STATE_LEFT and IsItemRuneMagicalBottleByIndex(itemIndex)) then
 				call SilentRemoveItem(whichItem)
 				set X4O = true
 				set newItem = UnitAddItemById(whichUnit, ItemRealId[itemIndex])
 				set X3O = newItem
-				call SetItemPlayer(newItem, X1O, false)
+				call SetItemPlayer(newItem, itemOwnerPlayer, false)
 				call SetItemUserData(newItem, 0)
-				if HTX or itemIndex == Item_AncientTangoOfEssifation or itemIndex == R_V or itemIndex == RYV then
-					call SetItemCharges(newItem, HUX)
+				if charged or itemIndex == Item_AncientTangoOfEssifation or itemIndex == Item_HealingSalve or itemIndex == Item_ClarityPotion then
+					call SetItemCharges(newItem, charges)
 				endif
 			endif
-		elseif Mode__PoolMode == false and X0O == false and GetItemType(whichItem) == ITEM_TYPE_PERMANENT and p != X1O and ItemDisabledId[GetItemIndexEx(whichItem)]!= 0 and(GetPlayerSlotState(X1O) == PLAYER_SLOT_STATE_LEFT) == false then
-			if IsItemChargedByIndex(itemIndex) then
-				set HTX = true
-			else
-				set HTX = false
-			endif
+		elseif Mode__PoolMode == false and not itemRemoved and GetItemType(whichItem) == ITEM_TYPE_PERMANENT and unitOwnerPlayer != itemOwnerPlayer and ItemDisabledId[GetItemIndexEx(whichItem)]!= 0 and(GetPlayerSlotState(itemOwnerPlayer) == PLAYER_SLOT_STATE_LEFT) == false then
+			set charged = IsItemChargedByIndex(itemIndex)
 			call SilentRemoveItem(whichItem)
 			set X4O = true
 			set newItem = UnitAddItemById(whichUnit, ItemDisabledId[itemIndex])
 			set X3O = newItem
-			call SetItemPlayer(newItem, X1O, false)
+			call SetItemPlayer(newItem, itemOwnerPlayer, false)
 			call SetItemUserData(newItem, 0)
-			if HTX then
-				call SetItemCharges(newItem, HUX)
+			if charged then
+				call SetItemCharges(newItem, charges)
 			endif
-		elseif X0O == false and GetItemType(whichItem) == ITEM_TYPE_PERMANENT and IsItemAghanimScepter(whichItem) and IsUnitType(whichUnit, UNIT_TYPE_HERO) then
+		elseif not itemRemoved and GetItemType(whichItem) == ITEM_TYPE_PERMANENT and IsItemAghanimScepter(whichItem) and IsUnitType(whichUnit, UNIT_TYPE_HERO) then
 			// 好像拦截了合成流程？
 			// 拿神杖物品
 			if GetUnitScepterUpgradeSkillCount(whichUnit) > 0 then // 如果升级成功，则返回true，没有可升级的技能，单位就只会持有Item_AghanimScepterBasic
 				// 拿的是基础神杖或有贪婪被动 并且不是贪婪神杖
-				if ( itemIndex == Item_AghanimScepterBasic or (IsPlayerHasSkill(X1O,(39 -1)* 4 + 3) ) and itemIndex != Item_AghanimScepterGiftable) then
+				if ( itemIndex == Item_AghanimScepterBasic or (IsPlayerHasSkill(itemOwnerPlayer,(39 -1)* 4 + 3) ) and itemIndex != Item_AghanimScepterGiftable) then
 					call SilentRemoveItem(whichItem)
 					// 拥有贪婪
-					if IsPlayerHasSkill(X1O,(39 - 1)* 4 + 3) then
+					if IsPlayerHasSkill(itemOwnerPlayer,(39 - 1)* 4 + 3) then
 						set newItem = UnitAddItemById(whichUnit, ItemRealId[Item_AghanimScepterGiftable])
 					else
 						set newItem = UnitAddItemById(whichUnit, ItemRealId[Item_AghanimScepter])
 						call BJDebugMsg("给了")
 					endif
 					set X3O = newItem
-					call SetItemPlayer(newItem, X1O, false)
+					call SetItemPlayer(newItem, itemOwnerPlayer, false)
 					call SetItemUserData(newItem, 1) // 合成时好像没触发丢弃
-					set X4O = ECO(X1O, whichUnit, 0)
+					set X4O = ECO(itemOwnerPlayer, whichUnit, 0)
 				else
 					call SetItemUserData(whichItem, 1)
-					set X4O = ECO(X1O, whichUnit, 0)
+					set X4O = ECO(itemOwnerPlayer, whichUnit, 0)
 				endif
 			else
 				if itemIndex != Item_AghanimScepterBasic then
 					call SilentRemoveItem(whichItem)
 					set newItem = UnitAddItemById(whichUnit, ItemRealId[Item_AghanimScepterBasic])
 					set X3O = newItem
-					call SetItemPlayer(newItem, X1O, false)
+					call SetItemPlayer(newItem, itemOwnerPlayer, false)
 					call SetItemUserData(newItem, 1)
-					set X4O = ECO(X1O, whichUnit, 0)
+					set X4O = ECO(itemOwnerPlayer, whichUnit, 0)
 				else
 					call SetItemUserData(whichItem, 1)
-					set X4O = ECO(X1O, whichUnit, 0)
+					set X4O = ECO(itemOwnerPlayer, whichUnit, 0)
 				endif
 			endif
-		elseif X0O == false and GetItemType(whichItem) == ITEM_TYPE_ARTIFACT then
-			if (p != X1O and IsPlayerOffline(X1O) == false and(itemIndex == Item_AncientTangoOfEssifation or itemIndex == R_V or itemIndex == RYV)) then
+		elseif not itemRemoved and GetItemType(whichItem) == ITEM_TYPE_ARTIFACT then
+			// 拾取者和物品所有者不一致，并且物品所有者已经不在线，物品类型是吃树大药小净化。
+			if ( unitOwnerPlayer != itemOwnerPlayer and not IsPlayerOffline(itemOwnerPlayer) and /*
+				*/ (itemIndex == Item_AncientTangoOfEssifation or itemIndex == Item_HealingSalve or itemIndex == Item_ClarityPotion)) then
 				call DisableTrigger(UnitManipulatItemTrig)
 				call SilentRemoveItem(whichItem)
 				set newItem = UnitAddItemById(whichUnit, ItemDisabledId[itemIndex])
 				set X3O = newItem
-				call SetItemPlayer(newItem, X1O, false)
+				call SetItemPlayer(newItem, itemOwnerPlayer, false)
 				call SetItemUserData(newItem, 1)
-				call SetItemCharges(newItem, HUX)
+				call SetItemCharges(newItem, charges)
 				call EnableTrigger(UnitManipulatItemTrig)
 			else
+
 				call DisableTrigger(UnitManipulatItemTrig)
-				set X2O = G1X(X1O, whichUnit, itemIndex, whichItem)
+				set X2O = G1X(itemOwnerPlayer, whichUnit, itemIndex, whichItem)
 				if X2O == null then
 				else
-					call SetItemCharges(X2O, HUX + GetItemCharges(X2O))
+					call SetItemCharges(X2O, charges + GetItemCharges(X2O))
 					call SilentRemoveItem(whichItem)
 					set X3O = null
 				endif
 				call EnableTrigger(UnitManipulatItemTrig)
 			endif
-		elseif X0O and IsItemPerishableByIndex(GSX(itemIndex)) then
-			if (p == X1O) then
+		elseif itemRemoved and IsItemPerishableByIndex(GetRealItemIndex(itemIndex)) then
+			if (unitOwnerPlayer == itemOwnerPlayer) then
 				call DisableTrigger(UnitManipulatItemTrig)
-				if GetUnitEmptyInventorySlotCount(whichUnit) == 0 and G2X(X1O, whichUnit, itemIndex) == null then
-					call InterfaceErrorForPlayer(p, GetObjectName('n02O'))
-					call HYX(ItemPowerupId[(itemIndex)],(((LoadReal(HY, h, 6)))* 1.),(((LoadReal(HY, h, 7)))* 1.),(X1O),(true),(HUX))
+				if GetUnitEmptyInventorySlotCount(whichUnit) == 0 and G2X(itemOwnerPlayer, whichUnit, itemIndex) == null then
+					call InterfaceErrorForPlayer(unitOwnerPlayer, GetObjectName('n02O'))
+					call HYX(ItemPowerUpId[(itemIndex)],(((LoadReal(HY, h, 6)))* 1.),(((LoadReal(HY, h, 7)))* 1.),(itemOwnerPlayer),(true),(charges))
 				else
-					set X2O = G2X(X1O, whichUnit, itemIndex)
+					set X2O = G2X(itemOwnerPlayer, whichUnit, itemIndex)
 					if X2O == null then
 						call DisableTrigger(UnitManipulatItemTrig)
 						set newItem = UnitAddItemById(whichUnit, ItemRealId[itemIndex])
 						set X3O = newItem
-						call SetItemPlayer(newItem, X1O, false)
+						call SetItemPlayer(newItem, itemOwnerPlayer, false)
 						call SetItemUserData(newItem, 1)
-						call SetItemCharges(newItem, HUX)
+						call SetItemCharges(newItem, charges)
 					else
-						call SetItemCharges(X2O, HUX + GetItemCharges(X2O))
+						call SetItemCharges(X2O, charges + GetItemCharges(X2O))
 					endif
 				endif
 				call EnableTrigger(UnitManipulatItemTrig)
@@ -14137,26 +14141,26 @@ function ManipulatItemDelayOnExpired takes nothing returns boolean
 					set Q2 = ItemRealId[itemIndex]
 				endif
 				call DisableTrigger(UnitManipulatItemTrig)
-				set X2O = G2X(X1O, whichUnit, itemIndex)
+				set X2O = G2X(itemOwnerPlayer, whichUnit, itemIndex)
 				if X2O == null and GetUnitEmptyInventorySlotCount(whichUnit)!= 0 then
 					set newItem = UnitAddItemById(whichUnit, Q2)
 					set X3O = newItem
-					call SetItemPlayer(newItem, X1O, false)
+					call SetItemPlayer(newItem, itemOwnerPlayer, false)
 					call SetItemUserData(newItem, 1)
-					call SetItemCharges(newItem, HUX)
+					call SetItemCharges(newItem, charges)
 				elseif X2O == null and GetUnitEmptyInventorySlotCount(whichUnit) == 0 then
-					call InterfaceErrorForPlayer(p, GetObjectName('n02O'))
-					call HYX(ItemPowerupId[(itemIndex)],(((LoadReal(HY, h, 6)))* 1.),(((LoadReal(HY, h, 7)))* 1.),(X1O),(true),(HUX))
+					call InterfaceErrorForPlayer(unitOwnerPlayer, GetObjectName('n02O'))
+					call HYX(ItemPowerUpId[(itemIndex)],(((LoadReal(HY, h, 6)))* 1.),(((LoadReal(HY, h, 7)))* 1.),(itemOwnerPlayer),(true),(charges))
 				else
-					call SetItemCharges(X2O, HUX + GetItemCharges(X2O))
+					call SetItemCharges(X2O, charges + GetItemCharges(X2O))
 				endif
 				call EnableTrigger(UnitManipulatItemTrig)
 			endif
-		elseif X0O then
-			call EJO(X1O, whichUnit, null, itemIndex, LoadReal(HY, h, 6), LoadReal(HY, h, 7), HUX, 1)
-		elseif X0O == false and(GetItemType(whichItem) == ITEM_TYPE_PERMANENT or GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN) then
+		elseif itemRemoved then
+			call EJO(itemOwnerPlayer, whichUnit, null, itemIndex, LoadReal(HY, h, 6), LoadReal(HY, h, 7), charges, 1)
+		elseif not itemRemoved and(GetItemType(whichItem) == ITEM_TYPE_PERMANENT or GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN) then
 			call SetItemUserData(whichItem, 1)
-			set X4O = ECO(X1O, whichUnit, 0)
+			set X4O = ECO(itemOwnerPlayer, whichUnit, 0)
 		endif
 		if X4O == false and X3O != null and H8X(X3O) == false then
 			set X4O = XYO(whichUnit, X3O)
@@ -14174,23 +14178,22 @@ function ManipulatItemDelayOnExpired takes nothing returns boolean
 			if GetItemUserData(whichItem)==-500 then
 				call RemoveItem(whichItem)
 			elseif IsItemOwned(whichItem) == false then
-				if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or IsItemChargedByIndex(itemIndex) or itemIndex == R_V or itemIndex == RYV or itemIndex == Item_AncientTangoOfEssifation or itemIndex == it_jys then
-					// 是否有主人？
-					set HTX = true
+				if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or IsItemChargedByIndex(itemIndex) or itemIndex == Item_HealingSalve or itemIndex == Item_ClarityPotion or itemIndex == Item_AncientTangoOfEssifation or itemIndex == it_jys then
+					set charged = true
 				endif
-				call HYX(ItemPowerupId[itemIndex], GetItemX(whichItem), GetItemY(whichItem), X1O, HTX, HUX)
+				call HYX(ItemPowerUpId[itemIndex], GetItemX(whichItem), GetItemY(whichItem), itemOwnerPlayer, charged, charges)
 				call SilentRemoveItem(whichItem)
 			endif
 		endif
 	endif
 	call FlushChildHashtable(HY, h)
-	call DestroyTrigger(t)
+	call DestroyTrigger(trig)
 	call EnableTrigger(C3V)
-	set t = null
+	set trig = null
 	set whichItem = null
 	set whichUnit = null
-	set p = null
-	set X1O = null
+	set unitOwnerPlayer = null
+	set itemOwnerPlayer = null
 	set newItem = null
 	set X2O = null
 	set X3O = null
@@ -14779,7 +14782,7 @@ function RXO takes nothing returns boolean
 	local integer itemSlot
 	local integer id
 	local integer TZE = GetItemIndexEx(whichItem)
-	if whichItem != null and GUX(TZE) and GetHandleId(whichItem) == RRO and UnitAlive(u) and UnitAlive(u) then
+	if whichItem != null and IsItemRuneMagicalBottleByIndex(TZE) and GetHandleId(whichItem) == RRO and UnitAlive(u) and UnitAlive(u) then
 		set id = GWX(TZE)
 		set itemSlot = GetUnitItemSlot(u, whichItem)
 		set TempPlayer = GetItemPlayer(whichItem)
@@ -14810,19 +14813,19 @@ function RAO takes unit u, item RIO returns nothing
 endfunction
 function RNO takes integer itemId returns integer
 	if itemId =='I006' then
-		return O5V
+		return Item_MagicalBottle_Haste
 	elseif itemId =='I008' then
-		return O6V
+		return Item_MagicalBottle_Regeneration
 	elseif itemId =='I00J' then
-		return O3V
+		return Item_MagicalBottle_Invisibility
 	elseif itemId =='I00K' then
-		return O4V
+		return Item_MagicalBottle_DoubleDamage
 	elseif itemId =='I007' then
-		return O7V
+		return Item_MagicalBottle_Illusion
 	elseif itemId =='I0QA' then
-		return O8V
+		return Item_MagicalBottle_Bounty
 	endif
-	return -1
+	return - 1
 endfunction
 function RBO takes unit u returns nothing
 	call UnitAddAbilityToTimed(u,'A3FL', 1, 45,'B01P')
@@ -14999,11 +15002,11 @@ function RJO takes nothing returns boolean
 	if GetItemIndexEx(whichItem)> 0 then
 		if (GetTriggerEventId() == EVENT_PLAYER_UNIT_DROP_ITEM and GetItemType(whichItem)!= ITEM_TYPE_PURCHASABLE) or GetTriggerEventId() == EVENT_PLAYER_UNIT_PAWN_ITEM then
 			call RDO(whichItem, whichUnit, false)
-			call StoreDrCacheData("DRI_" + I2S(GetPlayerId(GetOwningPlayer(whichUnit))), ItemRealId[GSX(GetItemIndexEx(whichItem))])
+			call StoreDrCacheData("DRI_" + I2S(GetPlayerId(GetOwningPlayer(whichUnit))), ItemRealId[GetRealItemIndex(GetItemIndexEx(whichItem))])
 			call RHO(whichUnit)
 		elseif GetTriggerEventId() == EVENT_PLAYER_UNIT_PICKUP_ITEM then
 			call RDO(whichItem, whichUnit, true)
-			call StoreDrCacheData("PUI_" + I2S(GetPlayerId(GetOwningPlayer(whichUnit))), ItemRealId[GSX(GetItemIndexEx(whichItem))])
+			call StoreDrCacheData("PUI_" + I2S(GetPlayerId(GetOwningPlayer(whichUnit))), ItemRealId[GetRealItemIndex(GetItemIndexEx(whichItem))])
 			call RHO(whichUnit)
 		endif
 	endif
@@ -15013,7 +15016,7 @@ function RJO takes nothing returns boolean
 endfunction
 
 function RKO takes player p, integer RLO, integer id, real x, real y returns nothing
-	local item it = CreateItem(ItemPowerupId[id], x, y)
+	local item it = CreateItem(ItemPowerUpId[id], x, y)
 	call SetItemPlayer(it, p, false)
 	call SetItemUserData(it, RLO)
 	set it = null
@@ -15332,7 +15335,7 @@ function G6E takes nothing returns nothing
 	loop
 	exitwhen i > 5
 		set whichItem = UnitItemInSlot(u, i)
-		if GUX(GetItemIndexEx(whichItem)) == false and GetItemIndexEx(whichItem)!= Item_AegisOfTheImmortal then
+		if IsItemRuneMagicalBottleByIndex(GetItemIndexEx(whichItem)) == false and GetItemIndexEx(whichItem)!= Item_AegisOfTheImmortal then
 			call UnitRemoveItemFromSlot(u, i)
 			if (GetUnitTypeId(u)=='ncop' or IsUnitInRegion(r, u)) and IsPlayerAlly(GetItemPlayer(whichItem), GetOwningPlayer(u)) then
 				set id = GetPlayerId(GetItemPlayer(whichItem))
@@ -16059,7 +16062,7 @@ function AKO takes nothing returns nothing
 		set TempItem = CreateItemToUnitSlotByIndex(u, ItemRealId[O_V], itemSlot)
 		call SetItemPlayer(TempItem, TempPlayer, false)
 		call SetItemUserData(TempItem, 0)
-	elseif GUX(itemIndex) then
+	elseif IsItemRuneMagicalBottleByIndex(itemIndex) then
 		set C2V = true
 		set itemSlot = GetUnitItemSlot(u, whichItem)
 		set id = GWX(itemIndex)
@@ -16548,7 +16551,7 @@ function AYO takes nothing returns boolean
 	local unit u = LoadUnitHandle(HY, h,'|')
 	local integer i = 1
 	local integer array AZO
-	local integer array HUX
+	local integer array charges
 	local integer A_O = LoadInteger(HY, h, 125)
 	set AZO[1] = LoadInteger(HY, h,106)
 	set AZO[2] = LoadInteger(HY, h, 107)
@@ -16556,12 +16559,12 @@ function AYO takes nothing returns boolean
 	set AZO[4] = LoadInteger(HY, h,109)
 	set AZO[5] = LoadInteger(HY, h, 110)
 	set AZO[6] = LoadInteger(HY, h,111)
-	set HUX[1] = LoadInteger(HY, h,112)
-	set HUX[2] = LoadInteger(HY, h,'q')
-	set HUX[3] = LoadInteger(HY, h, 114)
-	set HUX[4] = LoadInteger(HY, h, 115)
-	set HUX[5] = LoadInteger(HY, h, 116)
-	set HUX[6] = LoadInteger(HY, h, 117)
+	set charges[1] = LoadInteger(HY, h,112)
+	set charges[2] = LoadInteger(HY, h,'q')
+	set charges[3] = LoadInteger(HY, h, 114)
+	set charges[4] = LoadInteger(HY, h, 115)
+	set charges[5] = LoadInteger(HY, h, 116)
+	set charges[6] = LoadInteger(HY, h, 117)
 	call DisableTrigger(UnitManipulatItemTrig)
 	if GetTriggerEvalCount(t) == 1 then
 		call UnitAddAbility(u, A_O)
@@ -16577,8 +16580,8 @@ function AYO takes nothing returns boolean
 				call UnitAddItem(u, TempItem)
 				call SetItemPlayer(TempItem, LoadPlayerHandle(HY, h, 117+ i), false)
 				call SetItemUserData(TempItem, 1)
-				if HUX[i]> 0 then
-					call SetItemCharges(TempItem, HUX[i])
+				if charges[i]> 0 then
+					call SetItemCharges(TempItem, charges[i])
 				endif
 			endif
 			set i = i + 1
@@ -16600,7 +16603,7 @@ function AYO takes nothing returns boolean
 	return false
 endfunction
 function A0O takes integer id returns boolean
-	return id == Item_AncientTangoOfEssifation or id == R_V or id == RYV
+	return id == Item_AncientTangoOfEssifation or id == Item_HealingSalve or id == Item_ClarityPotion
 endfunction
 function A1O takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
@@ -17059,11 +17062,11 @@ function NLO takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local unit whichUnit =(LoadUnitHandle(HY, h, 2))
-	local item NMO = ACX(whichUnit, ItemRealId[BUV])
+	local item NMO = ACX(whichUnit, ItemRealId[Recipe_FlyingCourier])
 	local boolean Q0X = LoadBoolean(HY, h, 0)
 	if Q0X == false then
 		if NMO == null then
-			set NMO = ACX(whichUnit, ItemDisabledId[BUV])
+			set NMO = ACX(whichUnit, ItemDisabledId[Recipe_FlyingCourier])
 		endif
 	endif
 	if NMO != null or Q0X then
@@ -17131,7 +17134,7 @@ function NQO takes nothing returns boolean
 		else
 			call DisplayTimedTextToAllPlayer(bj_FORCE_ALL_PLAYERS, DisplayTextDuration[LocalPlayerId], PlayerColorHex[GetPlayerId(GetOwningPlayer(trigUnit))] + GetUnitName(trigUnit) + "|r " + "获得了不朽的守护!")
 		endif
-	elseif GetItemTypeId(whichItem) == ItemRealId[BUV]and IsUnitGroundCourier(trigUnit) then
+	elseif GetItemTypeId(whichItem) == ItemRealId[Recipe_FlyingCourier]and IsUnitGroundCourier(trigUnit) then
 		call NPO(trigUnit, false)
 	endif
 	set trigUnit = null
@@ -17198,12 +17201,12 @@ function GSE takes nothing returns nothing
 		endif
 	elseif GetSpellTargetUnit()!= null then
 		if IsUnitAlly(GetTriggerUnit(), GetOwningPlayer(GetSpellTargetUnit())) and(IsUnitType(GetSpellTargetUnit(), UNIT_TYPE_HERO) or IsUnitSpiritBear(GetSpellTargetUnit())) then
-			call UnitAddItemById(GetSpellTargetUnit(), ItemPowerupId[R1V])
+			call UnitAddItemById(GetSpellTargetUnit(), ItemPowerUpId[R1V])
 		elseif IsUnitEnemy(GetTriggerUnit(), GetOwningPlayer(GetSpellTargetUnit())) and(GetUnitTypeId(GetSpellTargetUnit())=='oeye' or GetUnitTypeId(GetSpellTargetUnit())=='o004') then
 			call NTO(230)
 			call IOX(GetTriggerUnit(), GetSpellTargetUnit(), 2, 500, .0)
 		else
-			call CreateItem(ItemPowerupId[R1V], GetUnitX(GetSpellTargetUnit()), GetUnitY(GetSpellTargetUnit()))
+			call CreateItem(ItemPowerUpId[R1V], GetUnitX(GetSpellTargetUnit()), GetUnitY(GetSpellTargetUnit()))
 		endif
 	endif
 endfunction
@@ -17612,9 +17615,9 @@ function B4O takes unit R8X, unit targetUnit returns nothing	//净魂之刃
 endfunction
 function G4E takes nothing returns nothing
 	local unit B5O = GetTriggerUnit()
-	local item NMO = ACX(B5O, ItemRealId[BUV])
+	local item NMO = ACX(B5O, ItemRealId[Recipe_FlyingCourier])
 	if NMO == null then
-		set NMO = ACX(B5O, ItemDisabledId[BUV])
+		set NMO = ACX(B5O, ItemDisabledId[Recipe_FlyingCourier])
 	endif
 	if NMO != null then
 		call SilentRemoveItem(NMO)
@@ -18605,7 +18608,7 @@ function HHE takes nothing returns nothing
 	local integer i = 0
 	local boolean b = false
 	local boolean C3O = false
-	local integer HUX
+	local integer charges
 	if targetUnit == null then
 		set targetUnit = GetTriggerUnit()
 	endif
@@ -18613,10 +18616,10 @@ function HHE takes nothing returns nothing
 	loop
 	exitwhen i > 5 or C3O
 		if GetItemIndex(UnitItemInSlot(whichUnit, i)) == NUV then
-			set HUX = GetItemCharges(UnitItemInSlot(whichUnit, i))
-			if HUX > 0 then
+			set charges = GetItemCharges(UnitItemInSlot(whichUnit, i))
+			if charges > 0 then
 				set b = true
-				set HUX = HUX -1
+				set charges = charges -1
 			else
 				set C3O = true
 				set b = false
@@ -18656,7 +18659,7 @@ function HTE takes nothing returns nothing
 	local integer i = 0
 	local boolean b = false
 	local boolean C3O = false
-	local integer HUX
+	local integer charges
 	local group g = AllocationGroup(36)
 	call GroupEnumUnitsInRange(g, GetUnitX(whichUnit), GetUnitY(whichUnit), 925, Condition(function D0X))
 	call ForGroup(g, function DSO)
@@ -25061,10 +25064,10 @@ function YGO takes unit u, integer s1, integer s2 returns nothing
 	local item YHO = null
 	local item YJO = null
 	call DisableTrigger(UnitManipulatItemTrig)
-	if UnitItemInSlot(u, s2 -1)!= null and GUX(GetItemIndexEx(UnitItemInSlot(u, s2 -1))) == false and GetItemIndex(UnitItemInSlot(u, s2 -1)) == Item_AghanimScepter then
+	if UnitItemInSlot(u, s2 -1)!= null and IsItemRuneMagicalBottleByIndex(GetItemIndexEx(UnitItemInSlot(u, s2 -1))) == false and GetItemIndex(UnitItemInSlot(u, s2 -1)) == Item_AghanimScepter then
 		set YJO = UnitRemoveItemFromSlot(u, s2 -1)
 	endif
-	if UnitItemInSlot(u, s1 -1)!= null and GUX(GetItemIndexEx(UnitItemInSlot(u, s1 -1))) == false and GetItemIndex(UnitItemInSlot(u, s1 -1)) == Item_AghanimScepter then
+	if UnitItemInSlot(u, s1 -1)!= null and IsItemRuneMagicalBottleByIndex(GetItemIndexEx(UnitItemInSlot(u, s1 -1))) == false and GetItemIndex(UnitItemInSlot(u, s1 -1)) == Item_AghanimScepter then
 		set YHO = UnitRemoveItemFromSlot(u, s1 -1)
 	endif
 	call EnableTrigger(UnitManipulatItemTrig)
@@ -26317,7 +26320,7 @@ function Z3O takes player p returns integer
 		endif
 		set i = i + 1
 	endloop
-	return -1
+	return - 1
 endfunction
 function Z4O takes unit u1, unit u2, boolean Z5O, player p1, player p2 returns boolean
 	if u1 != null and u2 != null then
@@ -43427,11 +43430,11 @@ function GetLivingArmorBlock takes nothing returns real
 	local trigger t = LoadTriggerHandle(HY, GetHandleId(DETarget),'A2ML')
 	local integer h = GetHandleId(t)
 	local real damageValue = LoadReal(HY, h, 0)
-	local integer HUX = LoadInteger(HY, h, 0)
+	local integer charges = LoadInteger(HY, h, 0)
 	local real d = DEDamage
 	local real OAI = .0
-	if d > 5 and HUX > 0 then
-		call SaveInteger(HY, h, 0, HUX -1)
+	if d > 5 and charges > 0 then
+		call SaveInteger(HY, h, 0, charges -1)
 		set OAI = RMinBJ(d, damageValue)
 		// debug call SingleDebug(R2S(OAI))
 	endif
@@ -43973,17 +43976,17 @@ function O5I takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local unit u =(LoadUnitHandle(HY,(h), 0))
 	local real time =(LoadReal(HY,(h), 0))
-	local integer HUX = LoadInteger(HY, GetHandleId(u),'A064')
-	if HUX < 3 then
+	local integer charges = LoadInteger(HY, GetHandleId(u),'A064')
+	if charges < 3 then
 		set time = time -0.2
 		if time <= 0.00 then
-			call SaveInteger(HY, GetHandleId(u),'A064', HUX + 1)
+			call SaveInteger(HY, GetHandleId(u),'A064', charges + 1)
 			call SaveReal(HY, h, 0, 40.)
 		else
 			call SaveReal(HY, h, 0, time * 1.)
 		endif
 	endif
-	if HUX == 0 or GetUnitAbilityLevel(u,'A064') == 0 then
+	if charges == 0 or GetUnitAbilityLevel(u,'A064') == 0 then
 		call UnitRemoveAbility(u,'A46B')
 		call UnitRemoveAbility(u,'B46B')
 	elseif GetUnitAbilityLevel(u,'A064')> 0 then
@@ -44273,11 +44276,11 @@ function RII takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local unit u =(LoadUnitHandle(HY,(h), 0))
 	local real time =(LoadReal(HY,(h), 0))
-	local integer HUX =(LoadInteger(HY,(GetHandleId(u)),('A0K9')))
-	if HUX < GetUnitAbilityLevel(u,'A0K9') + 3 then
+	local integer charges =(LoadInteger(HY,(GetHandleId(u)),('A0K9')))
+	if charges < GetUnitAbilityLevel(u,'A0K9') + 3 then
 		set time = time -0.2
 		if time <= 0.00 then
-			call SaveInteger(HY, GetHandleId(u),'A0K9', HUX + 1)
+			call SaveInteger(HY, GetHandleId(u),'A0K9', charges + 1)
 			call SaveReal(HY, h, 0, 35.)
 		else
 			call SaveReal(HY, h, 0, time * 1.)
@@ -44317,22 +44320,22 @@ function RBI takes nothing returns nothing
 	set targetUnit = null
 endfunction
 function ETE takes nothing returns nothing
-	local integer HUX = LoadInteger(HY, GetHandleId(GetTriggerUnit()),'A0K9')
-	call SaveInteger(HY, GetHandleId(GetTriggerUnit()),'A0K9', HUX -1)
+	local integer charges = LoadInteger(HY, GetHandleId(GetTriggerUnit()),'A0K9')
+	call SaveInteger(HY, GetHandleId(GetTriggerUnit()),'A0K9', charges -1)
 	if IsPlayerAlly(GetTriggerPlayer(), GetOwningPlayer(GetSpellTargetUnit())) or not UnitHasSpellShield(GetSpellTargetUnit()) then
 		call RBI()
 	endif
 endfunction
 function KYE takes nothing returns nothing
 	local unit u = GetTriggerUnit()
-	local integer HUX = LoadInteger(HY, GetHandleId(u),'A0K9')
-	if HUX == 0 then
+	local integer charges = LoadInteger(HY, GetHandleId(u),'A0K9')
+	if charges == 0 then
 		if HaveSavedHandle(HY, GetHandleId(u),'A0K9') == false then
 			call RAI(u, u)
-			set HUX = LoadInteger(HY, GetHandleId(u),'A0K9')
+			set charges = LoadInteger(HY, GetHandleId(u),'A0K9')
 		endif
 	endif
-	if HUX <= 0 then
+	if charges <= 0 then
 		call EXStopUnit(u)
 		call InterfaceErrorForPlayer(GetOwningPlayer(u), "能量点数不足")
 	else
@@ -68421,7 +68424,7 @@ function K7A takes integer h, integer K5A returns integer
 		endif
 		set i = i + 1
 	endloop
-	return -1
+	return - 1
 endfunction
 function K8A takes unit whichUnit, integer K9A, real x, real y returns nothing
 	local integer h = GetHandleId(whichUnit)
@@ -74585,8 +74588,8 @@ function ZHA takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	call RemoveItem(CreateItem('I006'+ GetRandomInt(0, 2), GetLocationX(LeftTopRuneLocatio), GetLocationY(LeftTopRuneLocatio)))
 	call RemoveItem(CreateItem('I006'+ GetRandomInt(0, 2), GetLocationX(RightBottomRuneLocatio), GetLocationY(RightBottomRuneLocatio)))
-	call RemoveItem(CreateItem(ItemPowerupId[ASV], GetRandomReal(-6000, 6000), GetRandomReal(-6000, 6000)))
-	call RemoveItem(CreateItem(ItemPowerupId[ITem_GemOfTrueSight], GetRandomReal(-6000, 6000), GetRandomReal(-6000, 6000)))
+	call RemoveItem(CreateItem(ItemPowerUpId[ASV], GetRandomReal(-6000, 6000), GetRandomReal(-6000, 6000)))
+	call RemoveItem(CreateItem(ItemPowerUpId[ITem_GemOfTrueSight], GetRandomReal(-6000, 6000), GetRandomReal(-6000, 6000)))
 	call TimerStart(t, GetRandomReal(1.5, 3), false, function ZHA)
 	set t = null
 endfunction
