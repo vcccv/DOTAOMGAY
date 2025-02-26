@@ -82,8 +82,8 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         set X3V = RegisterItem('I038', 'I04C', 'h01F', 'I0CJ')
 
         // 宝石
-        set ITem_GemOfTrueSight = RegisterItem('I039', 'I04D', 'h01G', 'I0DG')
-        set ITem_GemOfTrueSight_CourierEdition = RegisterItem('I0MS', 'I0MR', 0, 'I0MT')
+        set Item_GemOfTrueSight                = RegisterItem('I039', 'I04D', 'h01G', 'I0DG')
+        set Item_GemOfTrueSight_CourierEdition = RegisterItem('I0MS', 'I0MR', 0, 'I0MT')
 
         set X6V = RegisterItem('I03B', 'I04E', 'h01H', 'I0DA')
         set X7V = RegisterItem('I03C', 'I04F', 'h01I', 'I0CQ')
@@ -120,11 +120,11 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         set OWV = RegisterItem('I040', 'I054', 'h026', 'I0DL')
         set OYV = RegisterItem('I041', 'I055', 'h027', 'I0D6')
         set OZV = RegisterItem('I00L', 'I0AV', 'h02B', 0)
-        set O_V = RegisterItem('I05E', 'I0AM', 0, 'I0DN')
-        set O0V = RegisterItem('I0AU', 'I0AN', 0, 'I0DO')
-        set O1V = RegisterItem('I0AS', 'I0AO', 0, 'I0DP')
-        set O2V = RegisterItem('I0AT', 'I0AP', 0, 'I0DQ')
 
+        set Item_EmptyMagicalBottle         = RegisterItem('I05E', 'I0AM', 0, 'I0DN')
+        set Item_MagicalBottleCharges1      = RegisterItem('I0AU', 'I0AN', 0, 'I0DO')
+        set Item_MagicalBottleCharges2      = RegisterItem('I0AS', 'I0AO', 0, 'I0DP')
+        set Item_MagicalBottleCharges3      = RegisterItem('I0AT', 'I0AP', 0, 'I0DQ')
         set Item_MagicalBottle_Illusion     = RegisterItem('I0GW', 'I0GY', 0, 'I0H3')
         set Item_MagicalBottle_Regeneration = RegisterItem('I0H2', 'I0GX', 0, 'I0DR')
         set Item_MagicalBottle_Haste        = RegisterItem('I0GV', 'I0H1', 0, 'I0H4')
@@ -157,25 +157,28 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         call RegisterItemPuckupMethodByIndex(Item_TownPortalScroll, "ItemTownPortalScrollOnPickup")
         
         set R5V = RegisterItem('I05B', 'I05J', 'h02F', 0)
-        set R6V = RegisterItem('I0B0', 'I0B1', 0, 0)
+        // Item_Cheese
+        set Item_Cheese = RegisterItem('I0B0', 'I0B1', 0, 0)
         set R7V = RegisterItem('I0TC', 'I0TD', 0, 0)
         set Item_DustOfAppearance = RegisterItem('I0GI', 'I0GH', 'h076', 0)
         // Item_WandOfIllusions
         set Item_WandOfIllusions = RegisterItem('I0KT', 'I0KS', 'h0B9', 0)
-        set IVV = RegisterItem('I0NF', 'I0NG', 'h0D3', 0)
+
+        set Item_SmokeOfDeceit = RegisterItem('I0NF', 'I0NG', 'h0D3', 0)
         set IEV = RegisterItem('I061', 'I062', 0, 'I01J')
         set IXV = RegisterItem('I064', 'I063', 0, 'I01K')
         set IOV = RegisterItem('I065', 'I066', 0, 'I01L')
         set IRV = RegisterItem('I068', 'I067', 0, 'I01M')
         set IIV = RegisterItem('I069', 'I06A', 0, 'I0C6')
-        // Item_BootsOfTravel
+
         set Item_BootsOfTravel = RegisterItem('I06C', 'I06B', 0, 'I01P')
         call RegisterItemMethodSimple(Item_BootsOfTravel, "ItemBootsOfTravelOnPickup", "ItemBootsOfTravelOnDrop")
         set IBV = RegisterItem('I03O', 'I02T', 0, 'I01R')
         set ICV = RegisterItem('I02U', 'I05Y', 0, 'I01Q')
         set IDV = RegisterItem('I060', 'I05Z', 0, 'I01S')
-        set IFV = RegisterItem('I06E', 'I06D', 0, 'I01T')
-        set IGV = RegisterItem('I0NO', 'I0NN', 0, 'I0NP')
+
+        set Item_HandOfMidas                = RegisterItem('I06E', 'I06D', 0, 'I01T')
+        set Item_HandOfMidas_CourierEdition = RegisterItem('I0NO', 'I0NN', 0, 'I0NP')
         set IHV = RegisterItem('I06G', 'I06F', 0, 'I01U')
         set IJV = RegisterItem('I06I', 'I06H', 0, 'I01V')
         set IKV = RegisterItem('I06K', 'I06J', 0, 'I01W')
@@ -185,12 +188,14 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         set IQV = RegisterItem('I08J', 'I08K', 0, 'I020')
         set ISV = RegisterItem('I08N', 'I08O', 0, 'I021')
         set ITV = RegisterItem('I08Q', 'I08P', 0, 'I022')
-        set IUV = RegisterItem('I08S', 'I08R', 0, 'I023')
-        set IWV = RegisterItem('I0JB', 'I0J9', 0, 'I0JD')
+
+        set Item_DiffusalBladeLevel1 = RegisterItem('I08S', 'I08R', 0, 'I023')
+        set Item_DiffusalBladeLevel2 = RegisterItem('I0JB', 'I0J9', 0, 'I0JD')
+        
         set IYV = RegisterItem('I0EW', 'I0EV', 0, 'I0EX')
         set IZV = RegisterItem('I0JC', 'I0JA', 0, 'I0JE')
-        set I_V = RegisterItem('I08U', 'I08T', 0, 'I024')
-        set I0V = RegisterItem('I08W', 'I08V', 0, 'I0CO')
+        set Item_HelmOfTheDominator = RegisterItem('I08U', 'I08T', 0, 'I024')
+        set Item_HelmOfTheDominator_CourierEdition = RegisterItem('I08W', 'I08V', 0, 'I0CO')
         set I1V = RegisterItem('I08X', 'I08Y', 0, 'I025')
         set Item_EulScepterOfDivinity = RegisterItem('I090', 'I08Z', 0, 'I026')
         set I3V = RegisterItem('I092', 'I091', 0, 'I027')
@@ -223,10 +228,10 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         set Item_LinkenSphere = RegisterItem('I0A0', 'I09Z', 0, 'I0BO')
         set AQV = RegisterItem('I0HK', 'I0HJ', 0, 'I0HL')
 
-        // 自己的圣剑 Item_DivineRapier
-        set ASV = RegisterItem('I0A2', 'I0A1', 0, 'I0BP')
-        // 被人捡过的圣剑
-        set ATV = RegisterItem('I0LI', 'I0LJ', 0, 'I0LK')
+        // 自己的圣剑 Item_DivineRapier_Original
+        set Item_DivineRapier_Original = RegisterItem('I0A2', 'I0A1', 0, 'I0BP')
+        // 被人捡过的圣剑 Item_DivineRapier_Free
+        set Item_DivineRapier_Free = RegisterItem('I0LI', 'I0LJ', 0, 'I0LK')
 
         set AUV = RegisterItem('I0A4', 'I0A3', 0, 'I0BQ')
         set AWV = RegisterItem('I0A6', 'I0A5', 0, 'I0BR')
@@ -271,33 +276,39 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         set A9V = RegisterItem('I0LE', 'I0LC', 0, 'I0LD')
         set NVV = RegisterItem('I0BC', 'I0BD', 0, 'I00C')
         set NEV = RegisterItem('I0BF', 'I0BE', 0, 'I0C0')
-        set NXV = RegisterItem('I014', 'I01D', 0, 0)
+        // Item_FlyingCourier
+        set Item_FlyingCourier = RegisterItem('I014', 'I01D', 0, 0)
         set NOV = RegisterItem('I0BH', 'I0BG', 0, 'I0C1')
         set NRV = RegisterItem('I0BI', 'I0BJ', 0, 'I0C2')
-        set NIV = RegisterItem('I0BL', 'I0BK', 0, 'I0C3')
+        // Item_Bloodstone
+        set Item_Bloodstone = RegisterItem('I0BL', 'I0BK', 0, 'I0C3')
         set NNV = RegisterItem('I0BN', 'I0BM', 0, 'I0C4')
-        set NBV = RegisterItem('I00S', 'I00M', 0, 'I01C')
-        set NCV = RegisterItem('I00T', 'I00Q', 0, 'I01E')
-        set NDV = RegisterItem('I00V', 'I00N', 0, 'I01F')
-        set NFV = RegisterItem('I00W', 'I00R', 0, 'I0DE')
-        set NGV = RegisterItem('I00X', 'I00Z', 0, 'I0CF')
-        set NHV = RegisterItem('I00Y', 'I010', 0, 'I0DF')
+
+        set Item_ArmletOfMordiggian_Active                  = RegisterItem('I00S', 'I00M', 0, 'I01C')
+        set Item_ArmletOfMordiggian_Inactive                = RegisterItem('I00T', 'I00Q', 0, 'I01E')
+        set Item_ArmletOfMordiggian_Active_CourierEdition   = RegisterItem('I00V', 'I00N', 0, 'I01F')
+        set Item_ArmletOfMordiggian_Inactive_CourierEdition = RegisterItem('I00W', 'I00R', 0, 'I0DE')
+        set Item_ShivaGuard = RegisterItem('I00X', 'I00Z', 0, 'I0CF')
+        set Item_ShivaGuard_CourierEdition = RegisterItem('I00Y', 'I010', 0, 'I0DF')
         set NJV = RegisterItem('I013', 'I012', 0, 'I0CB')
         set NKV = RegisterItem('I0GK', 'I0GJ', 0, 'I0GL')
         set NMV = RegisterItem('I0HG', 'I0HI', 0, 'I0HH')
         set NPV = RegisterItem('I0I0', 'I0K6', 0, 'I0I2')
         set NQV = RegisterItem('I0JG', 'I0JF', 0, 'I0JH')
         set NSV = RegisterItem('I0KD', 'I0KF', 0, 'I0KE')
-        set NUV = RegisterItem('I0KX', 'I0KY', 0, 'I0KZ')
+        // Item_UrnOfShadows
+        set Item_UrnOfShadows = RegisterItem('I0KX', 'I0KY', 0, 'I0KZ')
         set NWV = RegisterItem('I0LG', 'I0LF', 0, 'I0LH')
         set NYV = RegisterItem('I0LP', 'I0LL', 0, 'I0LQ')
         set ROV = RegisterItem('I0LR', 'I0LT', 0, 'I0LS')
         set NZV = RegisterItem('I0MJ', 'I0MI', 0, 'I0MK')
         set N_V = RegisterItem('I0N1', 'I0N0', 0, 'I0N2')
-        set RRV = RegisterItem('I0ND', 'I0NE', 0, 'I0NC')
+        // Item_AncientJanggoOfEndurance
+        set Item_AncientJanggoOfEndurance = RegisterItem('I0ND', 'I0NE', 0, 'I0NC')
         set RIV = RegisterItem('I0NL', 'I0NK', 0, 'I0NM')
         set N0V = RegisterItem('I0O2', 'I0O3', 0, 'I0O4')
-        set RAV = RegisterItem('I0OC', 'I0OE', 0, 'I0OD')
+        // Item_BladeOfTheReaper
+        set Item_BladeOfTheReaper = RegisterItem('I0OC', 'I0OE', 0, 'I0OD')
 
         // 绿鞋
         set Item_TranquilBoots = RegisterItem('I0OF', 'I0OG', 0, 'I0OH')
@@ -348,7 +359,7 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         set BOV = RegisterItem('I06W', 'I06V', 'h02U', 'I0E4')
         set BRV = RegisterItem('I06X', 'I06Y', 'h02V', 'I0E5')
         //	set BIV = RegisterItem('I070', 'I06Z', 'h02X', 'I0E6')
-        call SaveInteger(HY, 'ITDB', RegisterItem(0, 0, 'h02W', 0), I_V)
+        call SaveInteger(HY, 'ITDB', RegisterItem(0, 0, 'h02W', 0), Item_HelmOfTheDominator)
         call SaveInteger(HY, 'ITDB', RegisterItem(0, 0, 'h02X', 0), I1V) //疯脸
         set BAV = RegisterItem('I071', 'I072', 'h02Y', 'I0E7')
         call RegisterItem(0, 0, 'h02Z', 0)
@@ -516,7 +527,7 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         set CombineMaxIndex = CombineMaxIndex + 1
         set CombineIndex1[CombineMaxIndex] = XPV
         set CombineIndex2[CombineMaxIndex] = N6V
-        set CombinedIndex[CombineMaxIndex] = IFV
+        set CombinedIndex[CombineMaxIndex] = Item_HandOfMidas
         
         set CombineMaxIndex = CombineMaxIndex + 1
         set CombineIndex1[CombineMaxIndex] = ODV
@@ -589,22 +600,22 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         set CombineIndex2[CombineMaxIndex] = XUV
         set CombineIndex3[CombineMaxIndex] = OJV
         set CombineIndex4[CombineMaxIndex] = BRV
-        set CombinedIndex[CombineMaxIndex] = IUV
+        set CombinedIndex[CombineMaxIndex] = Item_DiffusalBladeLevel1
         
         set CombineMaxIndex = CombineMaxIndex + 1
-        set CombineIndex1[CombineMaxIndex] = IUV
+        set CombineIndex1[CombineMaxIndex] = Item_DiffusalBladeLevel1
         set CombineIndex2[CombineMaxIndex] = BRV
-        set CombinedIndex[CombineMaxIndex] = IWV
+        set CombinedIndex[CombineMaxIndex] = Item_DiffusalBladeLevel2
         
         set CombineMaxIndex = CombineMaxIndex + 1
         set CombineIndex1[CombineMaxIndex] = IYV
         set CombineIndex2[CombineMaxIndex] = BRV
-        set CombinedIndex[CombineMaxIndex] = IWV
+        set CombinedIndex[CombineMaxIndex] = Item_DiffusalBladeLevel2
         
         set CombineMaxIndex = CombineMaxIndex + 1
         set CombineIndex1[CombineMaxIndex] = X6V
         set CombineIndex2[CombineMaxIndex] = OXV
-        set CombinedIndex[CombineMaxIndex] = I_V
+        set CombinedIndex[CombineMaxIndex] = Item_HelmOfTheDominator
         
         set CombineMaxIndex = CombineMaxIndex + 1
         set CombineIndex1[CombineMaxIndex] = OXV
@@ -729,7 +740,7 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         set CombineMaxIndex = CombineMaxIndex + 1
         set CombineIndex1[CombineMaxIndex] = X0V
         set CombineIndex2[CombineMaxIndex] = OKV
-        set CombinedIndex[CombineMaxIndex] = ASV
+        set CombinedIndex[CombineMaxIndex] = Item_DivineRapier_Original
         
         set CombineMaxIndex = CombineMaxIndex + 1
         set CombineIndex1[CombineMaxIndex] = I8V
@@ -756,13 +767,13 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         
         set CombineMaxIndex = CombineMaxIndex + 1
         set CombineIndex1[CombineMaxIndex] = OOV
-        set CombineIndex2[CombineMaxIndex] = I_V
+        set CombineIndex2[CombineMaxIndex] = Item_HelmOfTheDominator
         set CombineIndex3[CombineMaxIndex] = BQV
         set CombinedIndex[CombineMaxIndex] = A2V
         
         set CombineMaxIndex = CombineMaxIndex + 1
         set CombineIndex1[CombineMaxIndex] = OOV
-        set CombineIndex2[CombineMaxIndex] = I0V
+        set CombineIndex2[CombineMaxIndex] = Item_HelmOfTheDominator_CourierEdition
         set CombineIndex3[CombineMaxIndex] = BQV
         set CombinedIndex[CombineMaxIndex] = A2V
         
@@ -862,7 +873,7 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         set CombineMaxIndex = CombineMaxIndex + 1
         set CombineIndex1[CombineMaxIndex] = R5V
         set CombineIndex3[CombineMaxIndex] = Recipe_FlyingCourier
-        set CombinedIndex[CombineMaxIndex] = NXV
+        set CombinedIndex[CombineMaxIndex] = Item_FlyingCourier
         
         set CombineMaxIndex = CombineMaxIndex + 1
         set CombineIndex1[CombineMaxIndex] = IXV
@@ -889,7 +900,7 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         set CombineIndex1[CombineMaxIndex] = I3V
         set CombineIndex2[CombineMaxIndex] = Recipe_Bloodstone
         set CombineIndex3[CombineMaxIndex] = NYV
-        set CombinedIndex[CombineMaxIndex] = NIV
+        set CombinedIndex[CombineMaxIndex] = Item_Bloodstone
         
         set CombineMaxIndex = CombineMaxIndex + 1
         set CombineIndex1[CombineMaxIndex] = OHV
@@ -903,13 +914,13 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         set CombineIndex2[CombineMaxIndex] = X6V
         set CombineIndex3[CombineMaxIndex] = XWV
         set CombineIndex4[CombineMaxIndex] = BZV
-        set CombinedIndex[CombineMaxIndex] = NFV
+        set CombinedIndex[CombineMaxIndex] = Item_ArmletOfMordiggian_Inactive_CourierEdition
         
         set CombineMaxIndex = CombineMaxIndex + 1
         set CombineIndex1[CombineMaxIndex] = OIV
         set CombineIndex2[CombineMaxIndex] = OBV
         set CombineIndex3[CombineMaxIndex] = B_V
-        set CombinedIndex[CombineMaxIndex] = NGV
+        set CombinedIndex[CombineMaxIndex] = Item_ShivaGuard
         
         set CombineMaxIndex = CombineMaxIndex + 1
         set CombineIndex1[CombineMaxIndex] = IHV
@@ -959,7 +970,7 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         set CombineIndex2[CombineMaxIndex] = X3V
         set CombineIndex3[CombineMaxIndex] = X3V
         set CombineIndex4[CombineMaxIndex] = B4V
-        set CombinedIndex[CombineMaxIndex] = NUV
+        set CombinedIndex[CombineMaxIndex] = Item_UrnOfShadows
         
         set CombineMaxIndex = CombineMaxIndex + 1
         set CombineIndex1[CombineMaxIndex] = OMV
@@ -981,17 +992,17 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         set CombineIndex1[CombineMaxIndex] = OJV
         set CombineIndex2[CombineMaxIndex] = IJV
         set CombineIndex3[CombineMaxIndex] = B6V
-        set CombinedIndex[CombineMaxIndex] = RRV
+        set CombinedIndex[CombineMaxIndex] = Item_AncientJanggoOfEndurance
         
         set CombineMaxIndex = CombineMaxIndex + 1
-        set CombineIndex1[CombineMaxIndex] = RRV
+        set CombineIndex1[CombineMaxIndex] = Item_AncientJanggoOfEndurance
         set CombineIndex2[CombineMaxIndex] = B6V
-        set CombinedIndex[CombineMaxIndex] = RRV
+        set CombinedIndex[CombineMaxIndex] = Item_AncientJanggoOfEndurance
         
         set CombineMaxIndex = CombineMaxIndex + 1
         set CombineIndex1[CombineMaxIndex] = RIV
         set CombineIndex2[CombineMaxIndex] = B6V
-        set CombinedIndex[CombineMaxIndex] = RRV
+        set CombinedIndex[CombineMaxIndex] = Item_AncientJanggoOfEndurance
         
         set CombineMaxIndex = CombineMaxIndex + 1
         set CombineIndex1[CombineMaxIndex] = X6V
@@ -1088,6 +1099,7 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         integer XMV
         integer it_hyzr
         integer it_fj
+        // 魔龙枪
         integer Item_DragonLance
         integer Item_Bloodthorn
         integer Recipe_Bloodthorn
@@ -1108,8 +1120,8 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         integer X1V
         integer X2V
         integer X3V
-        integer ITem_GemOfTrueSight
-        integer ITem_GemOfTrueSight_CourierEdition
+        integer Item_GemOfTrueSight
+        integer Item_GemOfTrueSight_CourierEdition
         integer X6V
         integer X7V
         integer Item_IronwoodBranch
@@ -1140,10 +1152,12 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         integer OWV
         integer OYV
         integer OZV
-        integer O_V
-        integer O0V
-        integer O1V
-        integer O2V
+
+        // 魔瓶
+        integer Item_EmptyMagicalBottle
+        integer Item_MagicalBottleCharges1
+        integer Item_MagicalBottleCharges2
+        integer Item_MagicalBottleCharges3
         // 魔瓶 - 隐身
         integer Item_MagicalBottle_Invisibility
         // 魔瓶 - 双倍伤害
@@ -1156,14 +1170,15 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         integer Item_MagicalBottle_Illusion
         // 魔瓶 - 赏金
         integer Item_MagicalBottle_Bounty
+        
         integer Item_MagicStick
         integer RVV
         integer REV
         integer RXV
         integer ROV
-        integer RRV
+        integer Item_AncientJanggoOfEndurance
         integer RIV
-        integer RAV
+        integer Item_BladeOfTheReaper
         integer Item_TranquilBoots
         integer Item_DisabledTranquilBoots
         integer RCV
@@ -1192,12 +1207,14 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         integer Item_SentryWard
         integer Item_TownPortalScroll
         integer R5V
-        integer R6V
+        integer Item_Cheese
         integer R7V
         // 显影之尘
         integer Item_DustOfAppearance
+        // 幻象权杖
         integer Item_WandOfIllusions
-        integer IVV
+        // 诡计之雾
+        integer Item_SmokeOfDeceit
         integer IEV
         integer IXV
         integer IOV
@@ -1208,8 +1225,8 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         integer IBV
         integer ICV
         integer IDV
-        integer IFV
-        integer IGV
+        integer Item_HandOfMidas
+        integer Item_HandOfMidas_CourierEdition
         integer IHV
         integer IJV
         integer IKV
@@ -1219,12 +1236,12 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         integer IQV
         integer ISV
         integer ITV
-        integer IUV
-        integer IWV
+        integer Item_DiffusalBladeLevel1
+        integer Item_DiffusalBladeLevel2
         integer IYV
         integer IZV
-        integer I_V
-        integer I0V
+        integer Item_HelmOfTheDominator
+        integer Item_HelmOfTheDominator_CourierEdition
         integer I1V
         integer Item_EulScepterOfDivinity
         integer I3V
@@ -1255,8 +1272,8 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         integer AMV
         integer Item_LinkenSphere
         integer AQV
-        integer ASV
-        integer ATV
+        integer Item_DivineRapier_Original
+        integer Item_DivineRapier_Free
         integer AUV
         integer AWV
         integer AYV
@@ -1274,18 +1291,19 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         integer A9V
         integer NVV
         integer NEV
-        integer NXV
+        integer Item_FlyingCourier
         integer NOV
         integer NRV
-        integer NIV
+        integer Item_Bloodstone
         integer Recipe_Bloodstone
         integer NNV
-        integer NBV
-        integer NCV
-        integer NDV
-        integer NFV
-        integer NGV
-        integer NHV
+        integer Item_ArmletOfMordiggian_Active
+        integer Item_ArmletOfMordiggian_Inactive
+        // 臂章(信使)
+        integer Item_ArmletOfMordiggian_Active_CourierEdition
+        integer Item_ArmletOfMordiggian_Inactive_CourierEdition
+        integer Item_ShivaGuard
+        integer Item_ShivaGuard_CourierEdition
         integer NJV
         integer NKV
         integer Item_MagicWand
@@ -1294,7 +1312,7 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         integer NQV
         integer NSV
         integer NTV
-        integer NUV
+        integer Item_UrnOfShadows
         integer NWV
         integer NYV
         integer NZV

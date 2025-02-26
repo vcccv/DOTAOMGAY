@@ -4,7 +4,8 @@ library ItemSystem requires Base, TimerUtils, AbilityUtils
 /*
 
 class:
-Artifact      = 可堆叠物品，适用于realId。
+Permanent     = 可用物品，适用于RealId
+Artifact      = 可堆叠可用物品，适用于realId
 Purchasable   = 拾取物品，适用于PowerUpId
 Campaign      = 禁用物品，适用于DisabledId
 Miscellaneous = 应该是古早版本狼人嚎叫马甲物品？ Lycan Damage - xxx
@@ -314,6 +315,48 @@ PowerUp       = 神符类物品
         endloop
         return n
     endfunction
+
+    // 寻找其他可堆叠目标物品，物品所有者必须是指定玩家，除非是2种眼睛
+    function GetStackingItemTarget takes player whichPlayer, unit whichUnit, integer itemIndex, item stackingItemSource returns item
+        local integer i
+        local item    it
+        set i = 0
+        loop
+        exitwhen i > 5
+            set it = UnitItemInSlot(whichUnit, i)
+            if it != null and it != stackingItemSource and GetItemIndexEx(it) == itemIndex /*
+                */ and (GetItemPlayer(it) == whichPlayer /*
+                */ or itemIndex == Item_ObserverWard /*
+                */ or itemIndex == Item_SentryWard) then
+                set it = null
+                return UnitItemInSlot(whichUnit, i)
+            endif
+            set i = i + 1
+        endloop
+        set it = null
+        return null
+    endfunction
+    // 寻找其他可堆叠目标物品，物品所有者必须是指定玩家，除非是2种眼睛
+    function GetStackingItemTargetByIndex takes player whichPlayer, unit whichUnit, integer itemIndex returns item
+        local integer i
+        local item    it
+        set i = 0
+        loop
+        exitwhen i > 5
+            set it = UnitItemInSlot(whichUnit, i)
+            if it != null and GetItemIndexEx(it) == itemIndex /*
+                */ and (GetItemPlayer(it) == whichPlayer /*
+                */ or itemIndex == Item_ObserverWard /*
+                */ or itemIndex == Item_SentryWard) then
+                set it = null
+                return UnitItemInSlot(whichUnit, i)
+            endif
+            set i = i + 1
+        endloop
+        set it = null
+        return null
+    endfunction
+
 
     // 获取物品图标
     function GetItemIcon takes item whichItem returns string

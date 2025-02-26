@@ -1,7 +1,7 @@
 
 library ItemUtils
     
-      // unit
+    // unit
 
     // 获取物品在物品栏的格数（指定物品类型）
     // Translates 0-based slot indices to 1-based slot indices.
@@ -76,7 +76,7 @@ library ItemUtils
         loop
             if GetItemTypeId(UnitItemInSlot(whichUnit, i)) == id then
                 if GetTriggerEventId() == EVENT_PLAYER_UNIT_DROP_ITEM or GetTriggerEventId() == EVENT_PLAYER_UNIT_PAWN_ITEM then
-                    if UnitItemInSlot(whichUnit, i)!= GetManipulatedItem() then
+                    if UnitItemInSlot(whichUnit, i) != GetManipulatedItem() then
                         set n = n + 1
                     endif
                 else

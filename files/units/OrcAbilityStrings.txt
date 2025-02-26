@@ -12366,10 +12366,10 @@ Name=先祖韧鼓|nAncient Janggo of Endurance
 Ubertip=|cffffcc00属性：|r|n增加9点所有属性|n增加3点攻击力|n|n|cff0033cc耐久光环|r|n提升周围友方单位5/5%攻击/移动速度|n|cffff8000战鼓：|r|n提升周围友方玩家控制的单位25%的攻击速度和13%的移动速度，持续6秒|n|cff99ccff冷却时间：|r60|n|n|c00fffc01再次购买卷轴不可重新充能|r
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNJanggo.blp
 [I0NF]
-Name=诡计之雾
+Name=诡计之雾|nSmoke of Deceit
 [I0NG]
 art=ReplaceableTextures\CommandButtons\BTNSmokePotion
-Name=诡计之雾
+Name=诡计之雾|nSmoke of Deceit
 Ubertip=|cffffcc00属性：|r|n|cffff8000诡计之雾：|r|n使你和周围1200范围内所有友方玩家控制的单位隐形（大地图和小地图），并提升15%的移动速度；进行攻击动作，或者附近950范围内有敌方英雄、防御塔时，均会失效|n|cff99ccff持续时间：|r35|n|cff99ccff冷却时间：|r90
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNSmokePotion.blp
 [I0NH]
@@ -12396,7 +12396,7 @@ Name=先祖韧鼓（空）|nAncient Janggo of Endurance
 Ubertip="|cffff0303这件物品不属于你，它失去了效果|r"
 [I0NN]
 art=ReplaceableTextures\CommandButtons\BTNGoldGloves
-Name=迈达斯之手（信使版本）
+Name=迈达斯之手（信使版本）|nHand of Midas (Courier Edition)
 Ubertip=|cffffcc00属性：|r|n提升30的攻击速度|n|n|cffff8000炼金：|r|n瞬间将敌方非英雄、远古单位转化为190金钱|n|cff99ccff施法距离：|r600|n|cff99ccff冷却时间：|r100|n|n|cffff0303修补匠不能刷新此物品|r|n|n|c00838B8B通过使用一些未知的魔法进行保存，迈达斯之手仍然保留了大部分的力量|r
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNGoldGloves.BLP
 [I0NO]

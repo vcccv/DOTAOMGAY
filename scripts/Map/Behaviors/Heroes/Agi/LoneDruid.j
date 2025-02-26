@@ -145,7 +145,7 @@ scope LoneDruid
             call FlushChildHashtable(HY, h)
             call DestroyTrigger(trig)
         elseif GetTriggerEventId() == EVENT_UNIT_DAMAGED then
-            if GetEventDamage() > 2 and GetEventDamageSource()!= GetTriggerUnit() and IsPlayerValid(GetOwningPlayer(GetEventDamageSource())) then
+            if GetEventDamage() > 2 and GetEventDamageSource() != GetTriggerUnit() and IsPlayerValid(GetOwningPlayer(GetEventDamageSource())) then
                 if GetUnitAbilityCooldownRemaining(spiritBear, 'A0A7') < 3.0 then
                     call SetUnitAbilityCooldownAbsolute(spiritBear, 'A0A7', 3.)
                 endif

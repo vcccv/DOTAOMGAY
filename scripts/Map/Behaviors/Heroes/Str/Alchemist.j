@@ -9,6 +9,9 @@ scope Alchemist
     //*  神杖合成
     //*
     //***************************************************************************
+    globals
+        constant integer SKILL_INDEX_GOBLIN_GREED = GetHeroSKillIndexBySlot(HERO_INDEX_ALCHEMIST, 3)
+    endglobals
     // 不包含地精贪婪版本
     private function IsItemNormalAghanimScepter takes item it returns boolean
         local integer id = GetItemTypeId(it)
