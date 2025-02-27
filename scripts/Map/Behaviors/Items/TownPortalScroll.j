@@ -659,8 +659,10 @@ scope TownPortalScroll
         //set tick = SimpleTick.Create(GetItemCharges(whichItem))
         //call tick.Start(0., false, function DelayAddChargesOnExpired)
         //set SimpleTickTable[tick].unit['u'] = whichUnit
-        call UnitAddTownPortalScrollCharges(whichUnit, GetItemCharges(whichItem))
-        call SilentRemoveItem(whichItem)
+        if IsUnitType(whichUnit, UNIT_TYPE_HERO) or IsUnitSpiritBear(whichUnit) then
+            call UnitAddTownPortalScrollCharges(whichUnit, GetItemCharges(whichItem))
+            call SilentRemoveItem(whichItem)
+        endif
   
         set whichUnit = null
         set whichItem = null

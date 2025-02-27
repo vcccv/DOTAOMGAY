@@ -1,10 +1,16 @@
 scope LoneDruid
 
+    globals
+        constant integer HERO_INDEX_LONE_DRUID = 10
+    endglobals
     //***************************************************************************
     //*
     //*  熊灵伙伴
     //*
     //***************************************************************************
+    globals
+        constant integer SKILL_INDEX_SUMMON_SPIRIT_BEAR = GetHeroSKillIndexBySlot(HERO_INDEX_LONE_DRUID, 1)
+    endglobals
     globals
         // 熊灵单位
         private key SPIRIT_BEAR_UNIT
@@ -94,8 +100,8 @@ scope LoneDruid
                 call UnitAddTownPortalScrollAbility(itemHolder)
             endif
             // 银月
-            if GetUnitAbilityLevel(spiritBear, 'A398') > 0 then
-                call UnitAddPermanentAbility(itemHolder, 'A398')
+            if GetUnitAbilityLevel(spiritBear, MOON_SHARD_CONSUMED_ABILITY_ID) > 0 then
+                call UnitAddPermanentAbility(itemHolder, MOON_SHARD_CONSUMED_ABILITY_ID)
             endif
             // 回城卷轴
             call SetUnitTownPortalScrollCharges(itemHolder, GetUnitTownPortalScrollCharges(spiritBear))
@@ -117,6 +123,9 @@ scope LoneDruid
             set charges = GetUnitTownPortalScrollCharges(spiritBear)
             if charges > 0 then
                 call DeferredCreateItem(ItemPowerUpId[Item_TownPortalScroll], tx, ty, whichPlayer, true, charges)
+            endif
+            if GetUnitAbilityLevel(spiritBear, MOON_SHARD_CONSUMED_ABILITY_ID) > 0 then
+                call DeferredCreateItem(ItemPowerUpId[Item_MoonShard], tx, ty, whichPlayer, false, 0)
             endif
         endif
 
@@ -203,7 +212,7 @@ scope LoneDruid
         set trig = null
     endfunction
 
-    function SetSpiritBearBattleRoarLevel takes unit spiritBear, integer level, player p, boolean registerSpellEffectEvent returns nothing
+    function SetSpiritBearBattleRoarLevel takes unit spiritBear, integer level, player whichPlayer, boolean registerSpellEffectEvent returns nothing
         if level == 0 then
             return
         endif
@@ -247,7 +256,7 @@ scope LoneDruid
     // LastSpiritBearInheritItem
     private function LastSpiritBearInheritItem takes unit spiritBear returns nothing
         local integer h          = GetHandleId(GetOwningPlayer(spiritBear))
-        local unit    itemHolder = LoadUnitHandle(HY, h, 334)
+        local unit    itemHolder = GetPlayerSpiritBearItemHolder(GetOwningPlayer(spiritBear))
         if itemHolder != null and not Mode__DeathMatch  then
             call UnitAddItem(spiritBear, UnitRemoveItemFromSlot(itemHolder, 0))
             call UnitAddItem(spiritBear, UnitRemoveItemFromSlot(itemHolder, 1))
@@ -256,8 +265,8 @@ scope LoneDruid
             call UnitAddItem(spiritBear, UnitRemoveItemFromSlot(itemHolder, 4))
             call UnitAddItem(spiritBear, UnitRemoveItemFromSlot(itemHolder, 5))
             // 银月
-            if GetUnitAbilityLevel(itemHolder, 'A398') > 0 then
-                call UnitAddPermanentAbility(spiritBear, 'A398')
+            if GetUnitAbilityLevel(itemHolder, MOON_SHARD_CONSUMED_ABILITY_ID) > 0 then
+                call UnitAddPermanentAbility(spiritBear, MOON_SHARD_CONSUMED_ABILITY_ID)
             endif
             // 回城卷轴
             call SetUnitTownPortalScrollCharges(spiritBear, GetUnitTownPortalScrollCharges(itemHolder))
@@ -266,11 +275,11 @@ scope LoneDruid
         set itemHolder = null
     endfunction
 
-    function R6I takes nothing returns nothing
-        local timer t = GetExpiredTimer()
-        local integer h = GetHandleId(t)
-        local unit spiritBear = LoadUnitHandle(HY, h, 0)
-        local unit sourceUnit = GetUnitSummonSource(spiritBear)
+    function SpiritBearDisableAttackOnUpdate takes nothing returns nothing
+        local timer   t          = GetExpiredTimer()
+        local integer h          = GetHandleId(t)
+        local unit    spiritBear = LoadUnitHandle(HY, h, 0)
+        local unit    sourceUnit = GetUnitSummonSource(spiritBear)
         if not IsUnitAlive(spiritBear) then
             call PauseTimer(t)
             call DestroyTimer(t)
@@ -294,26 +303,25 @@ scope LoneDruid
     function SpiritBearDisableAttackTrig takes unit spiritBear returns nothing
         local timer t = CreateTimer()
         local integer h = GetHandleId(t)
-        call TimerStart(t, .2, true, function R6I)
+        call TimerStart(t, .2, true, function SpiritBearDisableAttackOnUpdate)
         call SaveUnitHandle(HY, h, 0, spiritBear)
-        call SaveUnitHandle(HY, h, 1, PlayerHeroes[GetPlayerId(GetOwningPlayer(spiritBear))])
         set t = null
     endfunction
 
     function SummonSpiritBearOnSpellEffectBear takes nothing returns nothing
-        local unit    whichUnit = GetTriggerUnit()
-        local player  p         = GetOwningPlayer(whichUnit)
-        local real    x         = GetUnitX(whichUnit)
-        local real    y         = GetUnitY(whichUnit)
-        local group   g         
-        local integer level     = GetUnitAbilityLevel(whichUnit, 'A0A5')
-        local integer h         = GetHandleId(p)
-        local integer unitId    = 0
+        local unit    whichUnit   = GetTriggerUnit()
+        local player  whichPlayer = GetOwningPlayer(whichUnit)
+        local real    x           = GetUnitX(whichUnit)
+        local real    y           = GetUnitY(whichUnit)
+        local group   g           
+        local integer level       = GetUnitAbilityLevel(whichUnit, 'A0A5')
+        local integer h           = GetHandleId(whichPlayer)
+        local integer unitId      = 0
         local unit    first
         local unit    lastSpiritBear = null
         
         set g = AllocationGroup(266)
-        call GroupEnumUnitsOfPlayer(g, p, null)
+        call GroupEnumUnitsOfPlayer(g, whichPlayer, null)
 
         loop
             set first = FirstOfGroup(g)
@@ -341,9 +349,9 @@ scope LoneDruid
             endif
             set lastSpiritBear = SummonUnit(whichUnit, unitId, x, y, GetUnitFacing(whichUnit))
             set Table[GetHandleId(whichUnit)].unit[SPIRIT_BEAR_UNIT] = lastSpiritBear
-            call SetSpiritBearBattleRoarLevel(lastSpiritBear, level -1, p, true)
+            call SetSpiritBearBattleRoarLevel(lastSpiritBear, level -1, whichPlayer, true)
             call UnitAddTownPortalScrollAbility(lastSpiritBear)
-            call SaveUnitHandle(HY, h, 333, lastSpiritBear)
+   
             call LastSpiritBearInheritItem(lastSpiritBear)
             call AddSpecialEffectTarget("Abilities\\Spells\\Orc\\FeralSpirit\\feralspiritdone.mdl", lastSpiritBear, "chest")
             call CreateSpiritBearReturnDisableTrig(lastSpiritBear)
@@ -356,8 +364,7 @@ scope LoneDruid
         endif
         // 协同 
         if GetUnitAbilityLevel(whichUnit, 'A0A8') > 0 then
-            // 是否会覆盖鞋子移速？
-            call SetUnitMoveSpeed(lastSpiritBear, GetUnitDefaultMoveSpeed(lastSpiritBear) + 8 * GetUnitAbilityLevel(whichUnit, 'A0A8'))
+            call SetUnitMoveSpeed(lastSpiritBear, GetUnitDefaultMoveSpeed(lastSpiritBear) + 8 * GetUnitAbilityLevel(whichUnit, 'A0A8') + GetPlayerTechCount(whichPlayer, 'R000', false) * 10)
             
             if GetUnitAbilityLevel(lastSpiritBear, 'A3IL') == 0 then
                 call UnitAddPermanentAbility(lastSpiritBear, 'A3IL')
@@ -367,6 +374,48 @@ scope LoneDruid
         set lastSpiritBear = null
         set whichUnit = null
         set g = null
+    endfunction
+
+    //***************************************************************************
+    //*
+    //*  协同
+    //*
+    //***************************************************************************
+    globals
+        constant integer SKILL_INDEX_SYNERGY = GetHeroSKillIndexBySlot(HERO_INDEX_LONE_DRUID, 3)
+    endglobals
+    function Synergy_OnLearn takes nothing returns nothing
+        local unit    whichUnit   = GetTriggerUnit()
+        local player  whichPlayer = GetOwningPlayer(whichUnit)
+        local integer level 	  = GetUnitAbilityLevel(whichUnit,'A0A8')
+        local group   g = AllocationGroup(264)
+        local unit    spiritBear
+        local unit    u
+        
+        set spiritBear = GetUnitSummonedSpiritBear(whichUnit)
+        if spiritBear != null then	
+            call SetUnitMoveSpeed(spiritBear, GetUnitDefaultMoveSpeed(spiritBear) + 8 * level + GetPlayerTechCount(whichPlayer, 'R000', false) * 10)
+            if GetUnitAbilityLevel(spiritBear, 'A3IL') == 0 then
+                call UnitAddPermanentAbility(spiritBear, 'A3IL')
+            endif
+            call SetUnitAbilityLevel(spiritBear, 'A3IL', level)
+        endif
+        set spiritBear = null
+
+        call GroupEnumUnitsOfPlayer(g, GetOwningPlayer(whichUnit), null)
+        loop
+            set u = FirstOfGroup(g)
+        exitwhen u == null
+            if GetUnitAbilityLevel(u,'A0KO')> 0 then
+                call SetUnitMoveSpeed(u, GetUnitDefaultMoveSpeed(u) + 20 + 10* level)
+            endif
+            if IsUnitFamiliarById(GetUnitTypeId(u)) then
+                call RGX(u, level)
+            endif
+            call GroupRemoveUnit(g, u)
+        endloop
+        call SetPlayerTechResearched(GetOwningPlayer(whichUnit), 'Recb', level)
+        call DeallocateGroup(g)
     endfunction
 
 endscope

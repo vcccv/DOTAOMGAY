@@ -199,4 +199,19 @@ scope Broodmother
         call AnyUnitEvent.CreateEventByCode(ANY_UNIT_EVENT_DAMAGED, function BroodmotherSpinWebOnDamaged)
     endfunction
     
+    function T7X takes nothing returns boolean
+        if GetUnitTypeId(GetFilterUnit())=='o003' then
+            call KillUnit(GetFilterUnit())
+            return true
+        endif
+        return false
+    endfunction
+    // 死亡竞赛失去技能时/ repick时 可以用技能被移除事件代替
+    function T8X takes nothing returns nothing
+        local group g = AllocationGroup(15)
+        call GroupEnumUnitsInRect(g, bj_mapInitialPlayableArea, Condition(function T7X))
+        call DeallocateGroup(g)
+        set g = null
+    endfunction
+
 endscope

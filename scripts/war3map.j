@@ -694,7 +694,8 @@ globals
 	player array SentinelUsers
 	player array ScourgeUsers
 
-	unit array OW
+	// 死亡竞赛的ItemHolder? LastHero?
+	unit array PlayerLastHero
 	// 用于死亡竞赛 玩家的复活次数
 	integer array PlayerHeroReincarnCount
 	force SentinelForce = null
@@ -2907,7 +2908,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	
 	call SaveStr(ObjectHashTable,'AIbk', 7, "ItemKelenDaggerOnSpellChannel")
 
-	call SaveStr(ObjectHashTable,'A397', 12, "Item_SpellEffect_MoonShard")
+	call SaveStr(ObjectHashTable,'A397', 12, "Item_MoonShard_OnSpellEffect")
 	call SaveStr(ObjectHashTable,'AZSZ', 12, "Item_SpellEffect_IronwoodBranch")
 	call SaveStr(ObjectHashTable,'A0FD', 12, "G1E")
 	call SaveStr(ObjectHashTable,'A3TP', 12, "G1E")
@@ -3159,7 +3160,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A2JK', 1000, "SAE")
 	//call SaveStr(ObjectHashTable,'A1C0', 1000, "SNE")
 	call SaveStr(ObjectHashTable,'A440', 1000, "SCE")
-	call SaveStr(ObjectHashTable,'A0A8', 1000, "SLE")
+	call SaveStr(ObjectHashTable,'A0A8', 1000, "Synergy_OnLearn")
 	call SaveStr(ObjectHashTable,'A0K9', 5, "PXE")
 	call SaveStr(ObjectHashTable,'A46E', 5, "POE")
 	call SaveStr(ObjectHashTable,'A43S', 5, "PBE")
@@ -3197,7 +3198,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A32Z', 5, "SWE")
 	call SaveStr(ObjectHashTable,'A331', 5, "SYE")
 	call SaveStr(ObjectHashTable,'A303', 5, "Q2E")
-	call SaveStr(ObjectHashTable,'A0A8', 5, "SLE")
+	call SaveStr(ObjectHashTable,'A0A8', 5, "Synergy_OnLearn")
 	call SaveStr(ObjectHashTable,'A440',1001, "SCE")
 	call SaveStr(ObjectHashTable,'A0K9',1001, "PXE")
 	call SaveStr(ObjectHashTable,'A46E',1001, "POE")
@@ -3232,7 +3233,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A0CY',1001, "PQE")
 	call SaveStr(ObjectHashTable,'A0IF',1001, "P5E")
 	call SaveStr(ObjectHashTable,'A0CL',1001, "Q_E")
-	call SaveStr(ObjectHashTable,'A0A8',1001, "SLE")
+	call SaveStr(ObjectHashTable,'A0A8',1001, "Synergy_OnLearn")
 	call SaveStr(ObjectHashTable,'A01O', 7, "S_E")
 	call SaveStr(ObjectHashTable,'A04P', 7, "S0E")
 	call SaveStr(ObjectHashTable,'A1AU', 7, "S0E")
@@ -9777,9 +9778,9 @@ function AddHeroXPSimple takes unit whichHero, integer xpToAdd, boolean showEyeC
 	call AddHeroXP(whichHero, xpToAdd, showEyeCandy )
 endfunction
 
-function QWX takes nothing returns nothing
-	local timer t = GetExpiredTimer()
-	local unit u = LoadUnitHandle(HY, GetHandleId(t), 0)
+function SetHeroLevelAndXPOnExpired takes nothing returns nothing
+	local timer   t 	= GetExpiredTimer()
+	local unit 	  u 	= LoadUnitHandle(HY, GetHandleId(t), 0)
 	local integer level = LoadInteger(HY, GetHandleId(t), 0)
 	if level > 0 then
 		call SetHeroLevel(u, GetHeroLevel(u) + 1, LoadBoolean(HY, GetHandleId(t), 0))
@@ -9793,13 +9794,13 @@ function QWX takes nothing returns nothing
 endfunction
 
 // 设置到某个等级后还再设置一次经验值
-function SetHeroLevelAndXP takes unit u, integer level, boolean QZX, integer xp returns nothing
+function SetHeroLevelAndXP takes unit u, integer level, boolean showEyeCandy, integer xp returns nothing
 	local timer t = CreateTimer()
-	call TimerStart(t, .01, true, function QWX)
+	call TimerStart(t, .01, true, function SetHeroLevelAndXPOnExpired)
 	call SaveUnitHandle(HY, GetHandleId(t), 0, u)
 	call SaveInteger(HY, GetHandleId(t), 0, level)
 	call SaveInteger(HY, GetHandleId(t), 1, xp)
-	call SaveBoolean(HY, GetHandleId(t), 0, QZX)
+	call SaveBoolean(HY, GetHandleId(t), 0, showEyeCandy)
 	set t = null
 endfunction
 
@@ -10068,15 +10069,33 @@ function PlayerChooseHeroUnit takes unit whichUnit returns boolean
 			set TeamHeroUseLivesCount[1] = TeamHeroUseLivesCount[1] + 1
 		endif
 		set PlayerHeroReincarnCount[playerId] = PlayerHeroReincarnCount[playerId] + 1
-		if PlayerHeroReincarnCount[playerId]> 1 and whichUnit != OW[playerId] then
-			// 似乎是为了同步血精石充能 但没写完
-			call MIX(OW[playerId])
-			// 同步单位等级
-			call SetHeroLevelAndXP(whichUnit, GetHeroLevel(OW[playerId])-1, false, GetHeroXP(OW[playerId]))
-			// 同步英雄物品
-			call SyncHeroItems(OW[playerId], whichUnit)
-			set ZQ[GetUnitPointValue(OW[playerId])] = false
+		if PlayerHeroReincarnCount[playerId] > 1 and whichUnit != PlayerLastHero[playerId] then
+			// 似乎是为了继承血精石充能 但没写完
+			call MIX(PlayerLastHero[playerId])
 
+			// 继承单位等级
+			call SetHeroLevelAndXP(whichUnit, GetHeroLevel(PlayerLastHero[playerId])-1, false, GetHeroXP(PlayerLastHero[playerId]))
+			// 继承物品
+			call SyncHeroItems(PlayerLastHero[playerId], whichUnit)
+
+			// 继承回城卷轴
+			call SetUnitTownPortalScrollCharges(whichUnit, GetUnitTownPortalScrollCharges(PlayerLastHero[playerId]))
+			call SetUnitTownPortalScrollCooldown(whichUnit, GetUnitTownPortalScrollCooldown(PlayerLastHero[playerId]))
+
+			// 阿哈利姆福佑
+			if IsUnitAghanimBlessed(PlayerLastHero[playerId]) then
+				call UnitAddAghanimBlessing(whichUnit)
+			endif
+			// 炼金升级
+			if IsUnitAghanimGifted(PlayerLastHero[playerId]) then
+				call UnitAddAghanimGiftable(whichUnit)
+			endif
+			// 银月
+			if GetUnitAbilityLevel(PlayerLastHero[playerId], MOON_SHARD_CONSUMED_ABILITY_ID) > 0 then
+                call UnitAddPermanentAbility(whichUnit, MOON_SHARD_CONSUMED_ABILITY_ID)
+            endif
+
+			set ZQ[GetUnitPointValue(PlayerLastHero[playerId])] = false
 			// 分开判断两个队伍稳妥点
 			if IsPlayerSentinel(whichPlayer) then
 				call FlushChildHashtable(ObjectHashTable,'SPL0'+ playerId)
@@ -10085,7 +10104,7 @@ function PlayerChooseHeroUnit takes unit whichUnit returns boolean
 				call FlushChildHashtable(ObjectHashTable,'SPLH'+ playerId)
 			endif
 			// 移除上一个英雄
-			call EXRemoveHero(OW[playerId])
+			call EXRemoveHero(PlayerLastHero[playerId])
 		endif
 	endif
 
@@ -10758,19 +10777,7 @@ function T4X takes unit SDX, integer T5X returns nothing
 	call SetPlayerState(T6X, PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(T6X, PLAYER_STATE_RESOURCE_GOLD)-T5X)
 	set T6X = null
 endfunction
-function T7X takes nothing returns boolean
-	if GetUnitTypeId(GetFilterUnit())=='o003' then
-		call KillUnit(GetFilterUnit())
-		return true
-	endif
-	return false
-endfunction
-function T8X takes nothing returns nothing
-	local group g = AllocationGroup(15)
-	call GroupEnumUnitsInRect(g, bj_mapInitialPlayableArea, Condition(function T7X))
-	call DeallocateGroup(g)
-	set g = null
-endfunction
+
 function T9X takes unit SFX, player T6X, player T2X returns boolean
 	return SFX == null or(IsPlayerSentinel(T6X) and IsPlayerSentinel(T2X)) or(IsPlayerScourge(T6X) and IsPlayerScourge(T2X))
 endfunction
@@ -11449,6 +11456,7 @@ function U7X takes nothing returns nothing
 	if not Mode__DeathMatch then
 		call CreateHeroReviveTimer(U9X, WTX)
 	else
+		// 死亡竞赛
 		if IsPlayerSentinel(WXX) then
 			set TeamHeroKillsCount[0] = TeamHeroKillsCount[0] + 1
 		endif
@@ -11456,9 +11464,10 @@ function U7X takes nothing returns nothing
 			set TeamHeroKillsCount[1] = TeamHeroKillsCount[1] + 1
 		endif
 		// debug call SingleDebug( "记录单位 索引" + I2S( WRX ) + GetUnitName(U9X))
-		set OW[WRX] = U9X
+		set PlayerLastHero[WRX] = U9X
 		if GetUnitTypeId(U9X)=='H00J' then
-			set OW[WRX]=(LoadUnitHandle(HY,(GetHandleId(GetOwningPlayer(U9X))), 699))
+			// 如果是米波 找本体
+			set PlayerLastHero[WRX]=(LoadUnitHandle(HY,(GetHandleId(GetOwningPlayer(U9X))), 699))
 		endif
 		if Mode__HolyShitLimit and WFX >= 10 then
 			call SaveBoolean(HY, GetHandleId(U9X),'suic', true)
@@ -11479,10 +11488,10 @@ function U7X takes nothing returns nothing
 				call DisplayTimedTextToAllPlayer(AllPlayerForce, DisplayTextDuration[LocalPlayerId], PlayerColorHex[WOX] +(PlayersName[GetPlayerId((WEX))]) + "|r 已经 |c00ff8000" + GetObjectName('n03X') + "|r ，其队伍额外增加5条生命值。")
 			endif
 		endif
-		if TeamHeroKillsCount[0]== DeathMatch__MaxLives then
+		if TeamHeroKillsCount[0] == DeathMatch__MaxLives then
 			call TriggerExecute(WorldTreeDeathTrig)
 		endif
-		if TeamHeroKillsCount[1]== DeathMatch__MaxLives then
+		if TeamHeroKillsCount[1] == DeathMatch__MaxLives then
 			call TriggerExecute(FrozenThroneDeathTrig)
 		endif
 		if (GetUnitAbilityLevel(U9X,'Z234')> 0) then
@@ -14113,7 +14122,6 @@ function ManipulatItemDelayOnExpired takes nothing returns boolean
 				call SetItemCharges(newItem, charges)
 				call EnableTrigger(UnitManipulatItemTrig)
 			else
-
 				// 检查是否已有其他可堆叠物品，如果有则删除物品并给那个物品加上拾取物品的充能
 				call DisableTrigger(UnitManipulatItemTrig)
 				set stackingItemTarget = GetStackingItemTarget(itemOwnerPlayer, whichUnit, itemIndex, whichItem)
@@ -14129,25 +14137,30 @@ function ManipulatItemDelayOnExpired takes nothing returns boolean
 			if (unitOwnerPlayer == itemOwnerPlayer) then
 				// 是自己的物品
 				call DisableTrigger(UnitManipulatItemTrig)
-				// 满格子，并且没有可堆叠物品
-				if GetUnitEmptyInventorySlotCount(whichUnit) == 0 and GetStackingItemTargetByIndex(itemOwnerPlayer, whichUnit, itemIndex) == null then
-					// 格子满了提示
-					call InterfaceErrorForPlayer(unitOwnerPlayer, GetObjectName('n02O'))
-					call DeferredCreateItem(ItemPowerUpId[(itemIndex)],(((LoadReal(HY, h, 6)))* 1.),(((LoadReal(HY, h, 7)))* 1.),(itemOwnerPlayer),(true),(charges))
+				// tp特殊操作一下下
+				if GetRealItemIndex(itemIndex) == Item_TownPortalScroll and ( IsUnitType(whichUnit, UNIT_TYPE_HERO) or IsUnitSpiritBear(whichUnit) ) then
+					call UnitAddTownPortalScrollCharges(whichUnit, charges)
 				else
-					// 获得可堆叠物品目标
-					set stackingItemTarget = GetStackingItemTargetByIndex(itemOwnerPlayer, whichUnit, itemIndex)
-					if stackingItemTarget == null then
-						// 没有可以堆叠的物品，则直接创建可用物品
-						call DisableTrigger(UnitManipulatItemTrig)
-						set newItem = UnitAddItemById(whichUnit, ItemRealId[itemIndex])
-						set X3O = newItem
-						call SetItemPlayer(newItem, itemOwnerPlayer, false)
-						call SetItemUserData(newItem, 1)
-						call SetItemCharges(newItem, charges)
+					// 满格子，并且没有可堆叠物品
+					if GetUnitEmptyInventorySlotCount(whichUnit) == 0 and GetStackingItemTargetByIndex(itemOwnerPlayer, whichUnit, itemIndex) == null then
+						// 格子满了提示
+						call InterfaceErrorForPlayer(unitOwnerPlayer, GetObjectName('n02O'))
+						call DeferredCreateItem(ItemPowerUpId[(itemIndex)],(((LoadReal(HY, h, 6)))* 1.),(((LoadReal(HY, h, 7)))* 1.),(itemOwnerPlayer),(true),(charges))
 					else
-						// 增加充能
-						call SetItemCharges(stackingItemTarget, charges + GetItemCharges(stackingItemTarget))
+						// 获得可堆叠物品目标
+						set stackingItemTarget = GetStackingItemTargetByIndex(itemOwnerPlayer, whichUnit, itemIndex)
+						if stackingItemTarget == null then
+							// 没有可以堆叠的物品，则直接创建可用物品
+							call DisableTrigger(UnitManipulatItemTrig)
+							set newItem = UnitAddItemById(whichUnit, ItemRealId[itemIndex])
+							set X3O = newItem
+							call SetItemPlayer(newItem, itemOwnerPlayer, false)
+							call SetItemUserData(newItem, 1)
+							call SetItemCharges(newItem, charges)
+						else
+							// 增加充能
+							call SetItemCharges(stackingItemTarget, charges + GetItemCharges(stackingItemTarget))
+						endif
 					endif
 				endif
 				call EnableTrigger(UnitManipulatItemTrig)
@@ -19645,17 +19658,6 @@ function Item_SpellEffect_IronwoodBranch takes nothing returns nothing
 	set d = null
 	set t = null
 endfunction
-function Item_SpellEffect_MoonShard takes nothing returns nothing
-	local unit spellUnit = GetTriggerUnit()
-	local unit targetUnit = GetSpellTargetUnit()
-
-	call UnitAddPermanentAbility(targetUnit,'A398')
-	call DestroyEffect(AddSpecialEffectTarget("effects\\Eclipse.mdx", targetUnit, "origin"))
-	
-	set spellUnit = null
-	set targetUnit = null
-endfunction
-
 
 function F6O takes nothing returns nothing
 	local timer t = GetExpiredTimer()
@@ -19678,7 +19680,6 @@ endfunction
 
 // 实际上，物品换手是可以继承冷却，但如果丢在地上再被其他人捡起来，则物品不会进入cd，因为DOTA把丢在地上的物品删除新建了个可拾取版本的物品。
 // 先禁止物品丢弃，更好的优化方法是将冷却时间结束的时间戳存在被丢弃的可拾取物品上，拿取时再进行判断和设置冷却时间。
-
 
 function F9O takes nothing returns boolean
 	local unit    whichUnit = GetTriggerUnit()
@@ -23796,6 +23797,7 @@ endfunction
 function SLO takes nothing returns nothing
 	call UnitRemoveAbility(GetChangingUnit(),'A44F')
 endfunction
+// ?死循环了
 function SMO takes nothing returns nothing
 	local integer i
 	local integer T0V
@@ -28869,13 +28871,14 @@ function OnPlayerPickAbility takes integer abilityIndex, integer playerIndex, bo
 	endif
 	return true
 endfunction
+// 全部随机
 function Q7X takes nothing returns nothing
 	local unit u = LoadUnitHandle(HY,'hRUT', 1)
 	local integer playerIndex = GetPlayerId(GetOwningPlayer(u))
 	local integer ZKE
 	local integer i = 0
 	local integer te
-	set PlayerSkillIndices[playerIndex * MAX_SKILL_SLOTS + 1] = LoadInteger(HY,'hRUT', 2)
+	set PlayerSkillIndices[playerIndex * MAX_SKILL_SLOTS + 1] = SKILL_INDEX_SUMMON_SPIRIT_BEAR//LoadInteger(HY,'hRUT', 2)
 	set PlayerSkillIndices[playerIndex * MAX_SKILL_SLOTS + 2] = LoadInteger(HY,'hRUT', 3)
 	set PlayerSkillIndices[playerIndex * MAX_SKILL_SLOTS + 3] = LoadInteger(HY,'hRUT', 4)
 	set PlayerSkillIndices[playerIndex * MAX_SKILL_SLOTS + 4] = LoadInteger(HY,'hRUT', 5)
@@ -31048,7 +31051,7 @@ function N0R takes nothing returns boolean
 	if BOX > 10 then
 		call FlushChildHashtable(HY, h)
 		call DestroyTrigger(t)
-		if not Mode__DeathMatch  then
+		if not Mode__DeathMatch then
 			set IY = true
 		endif
 	elseif BOX < 6 then
@@ -44695,40 +44698,6 @@ function EYE takes nothing returns nothing
 	set whichUnit = null
 	set u = null
 	set dummyCaster = null
-endfunction
-function RUI takes nothing returns boolean
-	return IsUnitSpiritBear(GetFilterUnit()) and IsUnitIllusion(GetFilterUnit()) == false and UnitIsDead(GetFilterUnit()) == false
-endfunction
-function SLE takes nothing returns nothing
-	local integer level = GetUnitAbilityLevel(GetTriggerUnit(),'A0A8')
-	local group g = AllocationGroup(264)
-	local unit RWI
-	local unit u
-	call GroupEnumUnitsOfPlayer(g, GetTriggerPlayer(), Condition(function RUI))
-	if FirstOfGroup(g) != null then
-		set RWI = FirstOfGroup(g)
-		
-		call SetUnitMoveSpeed(RWI, GetUnitDefaultMoveSpeed(RWI) + 8 * level)
-		
-		if GetUnitAbilityLevel(RWI,'A3IL') == 0 then
-			call UnitAddPermanentAbility(RWI,'A3IL')
-		endif
-		call SetUnitAbilityLevel(RWI,'A3IL', level)
-	endif
-	call GroupEnumUnitsOfPlayer(g, GetTriggerPlayer(), null)
-	loop
-		set u = FirstOfGroup(g)
-	exitwhen u == null
-		if GetUnitAbilityLevel(u,'A0KO')> 0 then
-			call SetUnitMoveSpeed(u, GetUnitDefaultMoveSpeed(u) + 20 + 10* level)
-		endif
-		if IsUnitFamiliarById(GetUnitTypeId(u)) then
-			call RGX(u, level)
-		endif
-		call GroupRemoveUnit(g, u)
-	endloop
-	call SetPlayerTechResearched(GetTriggerPlayer(),'Recb', level)
-	call DeallocateGroup(g)
 endfunction
 function R_I takes nothing returns nothing
 	local timer t = GetExpiredTimer()
@@ -74439,7 +74408,7 @@ function UnitIssuedItemOrder takes nothing returns nothing // 发布物品命令
 			if IsUnitIllusion(targetUnit) or not ( IsUnitType(targetUnit, UNIT_TYPE_HERO) or IsUnitSpiritBear( targetUnit ) ) then
 				call InterfaceErrorForPlayer( trigPlayer, "不能给目标使用银月之晶")
 				call EXStopUnit(whichUnit)
-			elseif GetUnitAbilityLevel(targetUnit,'A398') == 1 then
+			elseif GetUnitAbilityLevel(targetUnit, MOON_SHARD_CONSUMED_ABILITY_ID) == 1 then
 				call InterfaceErrorForPlayer( trigPlayer, "该单位已经有银月之晶了")
 				call EXStopUnit(whichUnit)
 			endif

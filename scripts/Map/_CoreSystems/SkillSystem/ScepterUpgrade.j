@@ -52,7 +52,7 @@ library ScepterUpgradeSystem requires SkillSystem, ItemSystem
         local item 	  whichItem
         local integer i = 0
         local integer index
-        if GetUnitAbilityLevel(whichUnit, 'A3E7') == 1 then
+        if GetUnitAbilityLevel(whichUnit, AGHANIM_BLESSING_BUFF_ID) == 1 then
             return true
         endif
         loop
@@ -252,12 +252,53 @@ library ScepterUpgradeSystem requires SkillSystem, ItemSystem
         set whichUnit = null
     endfunction
 
+    globals
+        constant integer AGHANIM_GIFTABLE_ABILITY_ID = 'A3E7'
+        constant integer AGHANIM_GIFTABLE_BUFF_ID    = 'B3E7'
+
+        constant integer AGHANIM_BLESSING_ABILITY_ID = 'A3E8'
+        constant integer AGHANIM_BLESSING_BUFF_ID    = 'B3E8'
+    endglobals
+
+    function IsUnitAghanimBlessed takes unit whichUnit returns boolean
+        return GetUnitAbilityLevel(whichUnit, AGHANIM_BLESSING_ABILITY_ID) > 0
+    endfunction
+    function IsUnitAghanimGifted takes unit whichUnit returns boolean
+        return GetUnitAbilityLevel(whichUnit, AGHANIM_GIFTABLE_ABILITY_ID) > 0
+    endfunction
+
+    // 有ga的神杖或福佑就都不加
+    function UnitAddAghanimBlessing takes unit whichUnit returns nothing
+        if IsUnitAghanimBlessed(whichUnit) or IsUnitAghanimGifted(whichUnit) then
+            return
+        endif
+        call UnitAddPermanentAbility(whichUnit, AGHANIM_BLESSING_ABILITY_ID)
+        call UnitAddScepterUpgrade(whichUnit)
+    endfunction
+    function UnitAddAghanimGiftable takes unit whichUnit returns nothing
+        if IsUnitAghanimGifted(whichUnit) then
+            return
+        endif
+        call UnitAddPermanentAbility(whichUnit, AGHANIM_GIFTABLE_ABILITY_ID)
+        if IsUnitAghanimBlessed(whichUnit) then
+            call UnitRemoveAbility(whichUnit, AGHANIM_BLESSING_ABILITY_ID)
+            call UnitRemoveAbility(whichUnit, AGHANIM_BLESSING_BUFF_ID)
+        else
+            call UnitAddScepterUpgrade(whichUnit)
+        endif
+        call SetHeroStr(whichUnit, GetHeroStr(whichUnit, false) + 10, true)
+        call SetHeroInt(whichUnit, GetHeroInt(whichUnit, false) + 10, true)
+        call SetHeroAgi(whichUnit, GetHeroAgi(whichUnit, false) + 10, true)
+        call UnitAddPermanentAbility(whichUnit, 'A3I2')
+        call UnitAddPermanentAbility(whichUnit, 'A3I3')
+    endfunction
+
     function ItemAghanimBlessingOnPickup takes nothing returns nothing
         local unit    whichUnit = Event.GetTriggerUnit()
         local item    whichItem = Event.GetManipulatedItem()
         local integer pid
         call BJDebugMsg("触发了")
-        if whichUnit == null or ( GetUnitAbilityLevel(whichUnit, 'A3E7') > 0 or GetUnitAbilityLevel(whichUnit, 'A3E8') > 0 ) then
+        if whichUnit == null or ( IsUnitAghanimBlessed(whichUnit) or IsUnitAghanimGifted(whichUnit) ) then
             return
         endif
 
@@ -268,8 +309,7 @@ library ScepterUpgradeSystem requires SkillSystem, ItemSystem
         set PlayerExtraNetWorth[pid] = PlayerExtraNetWorth[pid] + GetItemGoldCostById(ItemRealId[Item_AghanimBlessing])
         set PlayerItemTotalGoldCostDirty[pid] = true
         
-        call UnitAddPermanentAbility(whichUnit, 'A3E8')
-        call UnitAddScepterUpgrade(whichUnit)
+        call UnitAddAghanimGiftable(whichUnit)
   
         set whichUnit = null
         set whichItem = null

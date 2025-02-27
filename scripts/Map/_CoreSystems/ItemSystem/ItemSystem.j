@@ -10,6 +10,11 @@ Purchasable   = 拾取物品，适用于PowerUpId
 Campaign      = 禁用物品，适用于DisabledId
 Miscellaneous = 应该是古早版本狼人嚎叫马甲物品？ Lycan Damage - xxx
 PowerUp       = 神符类物品
+
+ItemUserData:
+>0 1是有效
+-2 是卖出的
+
 */
 
 

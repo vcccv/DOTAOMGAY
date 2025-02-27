@@ -31,7 +31,7 @@ scope Alchemist
         local integer goldCost
         local item    it
         //set bj_playerIsCrippled[0] = false
-        if IsUnitType(targetUnit, UNIT_TYPE_HERO) and not IsHeroDummy(targetUnit) and GetUnitAbilityLevel(targetUnit, 'A3E7') == 0 then
+        if IsUnitType(targetUnit, UNIT_TYPE_HERO) and not IsHeroDummy(targetUnit) and not IsUnitAghanimGifted(targetUnit) then
 
             set targetPlayer = GetOwningPlayer(targetUnit)
             set pid = GetPlayerId(targetPlayer)
@@ -52,7 +52,7 @@ scope Alchemist
                     set i = i + 1
                 endloop
                 set it = null
-                if GetUnitAbilityLevel(targetUnit, 'A3E8') > 0 then
+                if IsUnitAghanimBlessed(targetUnit) then
                     // 仅退款
                     set goldCost = GetItemGoldCostById(ItemRealId[Item_AghanimBlessing])
                     set PlayerExtraNetWorth[pid] = PlayerExtraNetWorth[pid] + goldCost
@@ -71,14 +71,7 @@ scope Alchemist
             set PlayerItemTotalGoldCostDirty[pid] = true
             set PlayerItemTotalGoldCostDirty[GetPlayerId(GetOwningPlayer(whichUnit))] = true
 
-            call UnitRemoveAbility(targetUnit, 'A3E8')
-            call UnitAddPermanentAbility(targetUnit, 'A3E7')
-            call SetHeroStr(targetUnit, GetHeroStr(targetUnit, false) + 10, true)
-            call SetHeroInt(targetUnit, GetHeroInt(targetUnit, false) + 10, true)
-            call SetHeroAgi(targetUnit, GetHeroAgi(targetUnit, false) + 10, true)
-            call UnitAddPermanentAbility(targetUnit, 'A3I2')
-            call UnitAddPermanentAbility(targetUnit, 'A3I3')
-            call UnitAddScepterUpgrade(targetUnit)
+
             //set bj_playerIsCrippled[0] = true
         endif
         set whichUnit  = null

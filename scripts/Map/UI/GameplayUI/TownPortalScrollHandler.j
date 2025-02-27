@@ -77,6 +77,7 @@ library TownPortalScrollHandler requires Communication, TownPortalScrollFrame, U
         if MHMsg_IsKeyDown(OSKEY_ALT) then
             call Communication_OnPingTownPortalScroll(selectedUnit, GetUnitAbility(selectedUnit, TOWN_PORTAL_SCROLL_ABILITY_ID), charges)
         elseif charges > 0 then
+            call MHUI_PlayNativeSound("InterfaceClick")
             call MHMsg_CallTargetMode(TOWN_PORTAL_SCROLL_ABILITY_ID, ORDER_tornado, ABILITY_CAST_TYPE_POINT + ABILITY_CAST_TYPE_ALONE)
         endif
         set selectedUnit = null
