@@ -65,33 +65,42 @@ library UnitMove
     endfunction
 
     // 强制性的无上限移速设置
-    function UpdateUnitNoLimitMoveSpeed takes unit whichUnit returns nothing
+    function UnitUpdateNoLimitMoveSpeed takes unit whichUnit returns nothing
         local integer h            = GetHandleId(whichUnit)
-        local integer percentSpeed = Table[h][NO_LIMIT_MOVE_SPEED_PERCENT]
-        local integer moveSpeed    = GetUnitNoLimitMoveSpeed(whichUnit)
-        local real    value        = GetUnitDefaultMoveSpeed(whichUnit) + GetUnitMoveSpeedBonus(whichUnit)
+        local integer percentSpeed = Table[h].integer[NO_LIMIT_MOVE_SPEED_PERCENT]
+        local integer moveSpeed    = GetUnitNoLimitMoveSpeed(whichUnit) // 强制移速限制
+        local real    value        = GetUnitMoveSpeed(whichUnit)
 
         if percentSpeed == 0 and moveSpeed == 0. then
             call MHUnit_ResetMoveSpeedLimit(whichUnit)
-            call SetUnitMoveSpeed(whichUnit, value)
+            call SetUnitMoveSpeed(whichUnit, GetUnitDefaultMoveSpeed(whichUnit))
             return
         endif
 
+        set value = RMinBJ(value, 522.)
+        // 单位实际移速值 * 超限制移速百分比 vs 强制移速限制
+        // 谁大就谁上
         set value = RMaxBJ(value *(100. + percentSpeed)/ 100., moveSpeed * 1.)
 
-        call MHUnit_SetMoveSpeedLimit(whichUnit, value)
-        call SetUnitMoveSpeed(whichUnit, value * 100.)
+        if value > 522. then
+            call MHUnit_SetMoveSpeedLimit(whichUnit, value)
+            call SetUnitMoveSpeed(whichUnit, value * 100.)
+        else
+            call MHUnit_ResetMoveSpeedLimit(whichUnit)    
+            // 低于522则恢复
+            call SetUnitMoveSpeed(whichUnit, GetUnitDefaultMoveSpeed(whichUnit))
+        endif
     endfunction
 
     function SetUnitNoLimitMoveSpeed takes unit whichUnit, integer moveSpeed returns nothing
-        set Table[GetHandleId(whichUnit)][NO_LIMIT_MOVE_SPEED] = moveSpeed
-        call UpdateUnitNoLimitMoveSpeed(whichUnit)
+        set Table[GetHandleId(whichUnit)].integer[NO_LIMIT_MOVE_SPEED] = moveSpeed
+        call UnitUpdateNoLimitMoveSpeed(whichUnit)
     endfunction
 
     // 无视移速上限的百分比速度奖励
     function SetUnitNoLimitMoveSpeedPercentBonus takes unit whichUnit, integer percent returns nothing
-        set Table[GetHandleId(whichUnit)][NO_LIMIT_MOVE_SPEED_PERCENT] = percent
-        call UpdateUnitNoLimitMoveSpeed(whichUnit)
+        set Table[GetHandleId(whichUnit)].integer[NO_LIMIT_MOVE_SPEED_PERCENT] = percent
+        call UnitUpdateNoLimitMoveSpeed(whichUnit)
     endfunction
 
 endlibrary

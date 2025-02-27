@@ -14204,7 +14204,7 @@ function ManipulatItemDelayOnExpired takes nothing returns boolean
 		// 没有更新物品(或合成失败)标志 但是新物品被设置了，并且新物品属于实体类物品
 		
 		if not X4O and X3O != null and not H8X(X3O) then
-			call BJDebugMsg("我想替换")
+			//call BJDebugMsg("我想替换")
 			// 替换信使版本
 			set X4O = XYO(whichUnit, X3O)
 		endif
@@ -15615,9 +15615,9 @@ function I6O takes unit killingUnit, unit triggerUnit returns nothing
 	endif
 endfunction
 function I7O takes nothing returns boolean
-	local unit whichUnit = GetTriggerUnit()
-	local integer level = 1
-	local integer id ='EUL1'
+	local unit 	  whichUnit = GetTriggerUnit()
+	local integer level     = 1
+	local integer id        ='EUL1'
 	if GetItemOfTypeFromUnit(whichUnit, ItemRealId[Item_DisabledTranquilBoots]) != null then
 		set level = 4
 	endif

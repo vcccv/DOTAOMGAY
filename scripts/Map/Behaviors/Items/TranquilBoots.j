@@ -34,24 +34,23 @@ scope TranquilBoots
 
         set isEnabled = ItemSystem_IsManipulateMethodEnabled()
         call ItemSystem_EnableItemManipulateMethod(false)
-        if IsUnitHeroLevel(whichUnit) and ( IsUnitHeroLevel(DESource) or DESource == Roshan ) then
-            loop
-                set whichItem = UnitItemInSlot(whichUnit, i)
-                set itemIndex = GetItemIndex(whichItem)
-                if ( itemIndex == Item_TranquilBoots ) then
-                    set TempPlayer = GetItemPlayer(whichItem)
-                    call RemoveItem(whichItem)
-                    set TempItem = CreateItemToUnitSlotByIndex(whichUnit, ItemRealId[Item_DisabledTranquilBoots], i)
-                    call SetItemPlayer(TempItem, TempPlayer, false)
-                    call SetItemUserData(TempItem, 1)
-                    call StartAbilityCooldownAbsoluteEx(MHItem_GetAbility(TempItem, 1), cooldown)
-                elseif ( itemIndex == Item_DisabledTranquilBoots ) then
-                    call StartAbilityCooldownAbsoluteEx(MHItem_GetAbility(whichItem, 1), cooldown)
-                endif
-                set i = i + 1
-            exitwhen i > 5
-            endloop
-        endif
+        
+        loop
+            set whichItem = UnitItemInSlot(whichUnit, i)
+            set itemIndex = GetItemIndex(whichItem)
+            if ( itemIndex == Item_TranquilBoots ) then
+                set TempPlayer = GetItemPlayer(whichItem)
+                call RemoveItem(whichItem)
+                set TempItem = CreateItemToUnitSlotByIndex(whichUnit, ItemRealId[Item_DisabledTranquilBoots], i)
+                call SetItemPlayer(TempItem, TempPlayer, false)
+                call SetItemUserData(TempItem, 1)
+                call StartAbilityCooldownAbsoluteEx(MHItem_GetAbility(TempItem, 1), cooldown)
+            elseif ( itemIndex == Item_DisabledTranquilBoots ) then
+                call StartAbilityCooldownAbsoluteEx(MHItem_GetAbility(whichItem, 1), cooldown)
+            endif
+            set i = i + 1
+        exitwhen i > 5
+        endloop
 
         if isEnabled then
             call ItemSystem_EnableItemManipulateMethod(true)
@@ -115,6 +114,7 @@ scope TranquilBoots
         if isEnabled then
             call ItemSystem_EnableItemManipulateMethod(true)
         endif
+        call SetUnitMoveSpeed(whichUnit, GetUnitDefaultMoveSpeed(whichUnit))
    
         set whichItem = null
         set whichUnit = null
@@ -154,6 +154,7 @@ scope TranquilBoots
                 call SetItemUserData(TempItem, 1)
             endif
         endif
+        //call SetUnitMoveSpeed(whichUnit, GetUnitMoveSpeed(whichUnit))
 
         call tick.Destroy()
         set whichItem = null
