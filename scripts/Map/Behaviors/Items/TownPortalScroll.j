@@ -249,7 +249,6 @@ scope TownPortalScroll
         local real      angle
         if (GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED) then
             set remaining = duration - ( GetGameTime() - startTime )
-
             set angle = bj_RADTODEG * Atan2(MHEffect_GetVectorY(teleportUnitEffect), MHEffect_GetVectorX(teleportUnitEffect)) + ( 360. / ( duration / 0.02 ) ) * 0.5
             call MHEffect_ResetMatrix(teleportUnitEffect)
             call MHEffect_SetYaw(teleportUnitEffect, angle)
@@ -277,14 +276,17 @@ scope TownPortalScroll
                 call SetTextTagVisibility(bj_lastCreatedTextTag, ( IsUnitAlly(whichUnit, LocalPlayer) or IsPlayerObserverEx(LocalPlayer) ))
             endif
             
-            if remaining <= 0. then
+
+        elseif GetSpellAbilityId() == TOWN_PORTAL_SCROLL_ABILITY_ID then
+
+            call DisableTrigger(trig)
+
+            if GetTriggerEventId() == EVENT_UNIT_SPELL_FINISH then
                 call SetUnitX(whichUnit, tx)
                 call SetUnitY(whichUnit, ty)
-                call UnitIncStunCount(whichUnit)
-                call UnitDecStunCount(whichUnit)
                 call KillTreeByCircle(tx, ty, 240)
             endif
-        elseif GetSpellAbilityId() == TOWN_PORTAL_SCROLL_ABILITY_ID then
+            
             call PlayerSetTeleportRequires(GetOwningPlayer(whichUnit), false)
 
             call UnitSubTownPortalScrollCharges(whichUnit, 1)
@@ -357,19 +359,25 @@ scope TownPortalScroll
                 call SetTextTagVisibility(bj_lastCreatedTextTag, ( IsUnitAlly(whichUnit, LocalPlayer) or IsPlayerObserverEx(LocalPlayer) ))
             endif
             
-            if remaining <=0. then
+
+        elseif GetTriggerEventId() == EVENT_WIDGET_DEATH or GetSpellAbilityId() == TOWN_PORTAL_SCROLL_ABILITY_ID then
+            call DisableTrigger(trig)
+
+            if GetTriggerEventId() == EVENT_UNIT_SPELL_FINISH then
+                set sx = GetUnitX(whichUnit)
+                set sy = GetUnitY(whichUnit)
                 call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Human\\MassTeleport\\MassTeleportTarget.mdl", sx, sy))
 
                 call SetUnitPositionEx(whichUnit, tx, ty)
-                call UnitIncStunCount(whichUnit)
-                call UnitDecStunCount(whichUnit)
-                call KillTreeByCircle(tx, ty, 240)
 
+                set sx = GetUnitX(whichUnit)
+                set sy = GetUnitY(whichUnit)
+                call KillTreeByCircle(sx, sy, 240)
                 call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Human\\MassTeleport\\MassTeleportTarget.mdl", sx, sy))
             endif
-        elseif GetTriggerEventId() == EVENT_WIDGET_DEATH or GetSpellAbilityId() == TOWN_PORTAL_SCROLL_ABILITY_ID then
+
             call PlayerSetTeleportRequires(GetOwningPlayer(whichUnit), false)
-            
+
             call MHEffect_Hide(teleportUnitEffect, true)
             call DestroyEffect(teleportUnitEffect)
             call MHEffect_Hide(progressBarEffect, true)
@@ -490,10 +498,12 @@ scope TownPortalScroll
         endif
 
         // tp 持续施法
+        call SetAbilityANclCastDurationInSpellEffect(GetSpellAbility(), duration)
         call TriggerRegisterTimerEvent(trig, .02, true)
         call TriggerRegisterUnitEvent(trig, whichUnit, EVENT_UNIT_SPELL_ENDCAST)
+        call TriggerRegisterUnitEvent(trig, whichUnit, EVENT_UNIT_SPELL_FINISH)
         call TriggerAddCondition(trig, Condition(function TownPortalScrollOnUpdate))
-    
+
         call SaveEffectHandle(HY, h, 178, teleportUnitEffect)
         call SaveEffectHandle(HY, h, 179, CreateProgressBarEffect(whichUnit, duration))
         call SaveEffectHandle(HY, h, 176,(AddSpecialEffectTarget("Abilities\\Spells\\Human\\MassTeleport\\MassTeleportCaster.mdl", whichUnit, "origin")))
@@ -520,8 +530,8 @@ scope TownPortalScroll
     endfunction
 
     function BootsOfTravelOnSpellEffect takes boolean isUpgraded returns nothing
-        local unit      whichUnit = GetTriggerUnit()
-        local unit      targetUnit = GetSpellTargetUnit()
+        local unit      whichUnit   = GetTriggerUnit()
+        local unit      targetUnit  = GetSpellTargetUnit()
         local player    whichPlayer = GetOwningPlayer(whichUnit)
         local real      sx
         local real      sy
@@ -580,8 +590,11 @@ scope TownPortalScroll
         set duration = 3
         call UnitAddType(targetUnit, UNIT_TYPE_PEON)
         // 飞鞋tp 持续施法 恒定三秒
+        call SetAbilityANclCastDurationInSpellEffect(GetSpellAbility(), duration)
         call TriggerRegisterTimerEvent(trig, .02, true)
+        call TriggerRegisterTimerEvent(trig, duration, false)
         call TriggerRegisterUnitEvent(trig, whichUnit, EVENT_UNIT_SPELL_ENDCAST)
+        call TriggerRegisterUnitEvent(trig, whichUnit, EVENT_UNIT_SPELL_FINISH)
         call TriggerRegisterDeathEvent(trig, targetUnit)
         call TriggerAddCondition(trig, Condition(function BootsOfTravelOnUpdate))
 

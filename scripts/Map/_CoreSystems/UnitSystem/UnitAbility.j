@@ -284,7 +284,7 @@ library UnitAbility requires AbilityUtils, UnitLimitation
     endfunction
 
     // 更新单个技能
-    function UpdateAbilityCooldown takes unit whichUnit, ability whichAbility returns nothing
+    function UnitAbilityUpdateCooldown takes unit whichUnit, ability whichAbility returns nothing
         local integer abilId   = GetAbilityId(whichAbility)
         local integer maxLevel = GetAbilityMaxLevelById(abilId)
         local real    cooldown
@@ -333,9 +333,9 @@ library UnitAbility requires AbilityUtils, UnitLimitation
     endfunction
 
     // 更新单位所有技能
-    function UnitUpdateAbilityCooldown takes unit whichUnit returns nothing
+    function UnitAllAbilityUpdateCooldown takes unit whichUnit returns nothing
         if whichUnit == null then
-            call ThrowWarning(true, "UnitAbility", "UnitUpdateAbilityCooldown", "unit", 0, "whichUnit == null")
+            call ThrowWarning(true, "UnitAbility", "UnitAllAbilityUpdateCooldown", "unit", 0, "whichUnit == null")
             return
         endif
         set TempReduceMultiplier = ( 1. - GetUnitCooldownReduceMultiplier(whichUnit) )
@@ -440,9 +440,9 @@ library UnitAbility requires AbilityUtils, UnitLimitation
 
         // 如果是工程升级，则更新所有技能。
         if GetAbilityBaseIdById(abilId) == 'ANeg' then
-            call UnitUpdateAbilityCooldown(whichUnit)
+            call UnitAllAbilityUpdateCooldown(whichUnit)
         elseif HasOctarineCore and GetUnitAbilityLevel(whichUnit, 'A39S') == 1  then
-            call UpdateAbilityCooldown(whichUnit, whichAbility)
+            call UnitAbilityUpdateCooldown(whichUnit, whichAbility)
         endif
 
         set whichAbility = null
@@ -466,7 +466,7 @@ library UnitAbility requires AbilityUtils, UnitLimitation
 
         // 如果是工程升级，则更新所有技能。
         if GetAbilityBaseIdById(abilId) == 'ANeg' then
-            call UnitUpdateAbilityCooldown(whichUnit)
+            call UnitAllAbilityUpdateCooldown(whichUnit)
         endif
         call Table[GetHandleId(whichAbility)].flush()
         

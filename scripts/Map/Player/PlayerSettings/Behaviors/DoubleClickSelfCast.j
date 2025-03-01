@@ -1,5 +1,5 @@
 
-library DoubleTapAbilityToSelfCast requires Table
+library DoubleTapAbilityToSelfCast requires Table, TownPortalScrollHandler
 
     globals
         // 500ms
@@ -56,7 +56,12 @@ library DoubleTapAbilityToSelfCast requires Table
             */ and ( ( MHGame_GetGameStamp() - DOUBE_TAP_TIME_THRESHOLD ) < LastKeyPressTimestamp[pressedKey] ) then
 
             // 对自己施法
-            call MHFrame_Click(MHUI_GetPortraitButton())
+            if TOWN_PORTAL_SCROLL_ABILITY_ID == abilId then
+                // tp特殊处理，双击时对家里施法
+                call TownPortalScroll_SelfCast(MHPlayer_GetSelectUnit())
+            else
+                call MHFrame_Click(MHUI_GetPortraitButton())
+            endif
             // 按住shift时取消指示器
             if MHMsg_IsKeyDown(0x10) then
                 call MHMsg_CancelIndicator()
@@ -97,6 +102,8 @@ library DoubleTapAbilityToSelfCast requires Table
     endfunction
 
     function RegisterDoubleTapAbilitys takes nothing returns nothing
+        call RegisterDoubleTapToSelfCastAbilityById(TOWN_PORTAL_SCROLL_ABILITY_ID) // TP
+
         call RegisterDoubleTapToSelfCastAbilityById('A11N') // X标记
         call RegisterDoubleTapToSelfCastAbilityById('A08V') // 全能魔免
         call RegisterDoubleTapToSelfCastAbilityById('A08N') // 全能加血

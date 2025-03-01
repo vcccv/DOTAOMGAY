@@ -6,12 +6,8 @@ library TownPortalScrollFrame requires UISystem
 
         private Frame TownPortalScrollButton
         private Frame TownPortalScrollBackground
-        private Frame TownPortalScrollPushedBackground
-        private Frame TownPortalScrollDisabledBackground
 
-        //private Frame TownPortalScrollNumberOverlayFrame
-        private Frame TownPortalScrollNumberOverlayTexture
-        private Frame TownPortalScrollNumberOverlayString
+        private Frame TownPortalScrollChargesString
 
         private Frame TownPortalScrollCooldownSprite
         private Frame TownPortalScrollCooldownString
@@ -39,7 +35,7 @@ library TownPortalScrollFrame requires UISystem
     endfunction
 
     function SetTownPortalScrollCharges takes integer charges returns nothing
-        call TownPortalScrollNumberOverlayString.SetText(I2S(charges))
+        call TownPortalScrollChargesString.SetText(I2S(charges))
     endfunction
 
     function IsTownPortalScrollFrameVisible takes nothing returns boolean
@@ -48,8 +44,9 @@ library TownPortalScrollFrame requires UISystem
 
     function EnableShowTownPortalScrollButton takes boolean enable returns nothing
         // call TownPortalScrollButton.SetEnable(enable)
+        // call TownPortalScrollButton.SetEnable(enable)
         set IsTownPortalScrollButtonEnabled = enable
-        if IsTownPortalScrollButtonEnabled then
+        if enable then
            call TownPortalScrollBackground.SetTexture("ReplaceableTextures\\CommandButtons\\BTNScrollUber.blp")
         else
            call TownPortalScrollBackground.SetTexture("ReplaceableTextures\\CommandButtonsDisabled\\DISBTNScrollUber.blp")
@@ -63,7 +60,6 @@ library TownPortalScrollFrame requires UISystem
     endfunction
 
     private function ButtonOnDown takes nothing returns boolean
-        call BJDebugMsg(I2S(MHEvent_GetKey()))
         if MHEvent_GetKey() != MOUSE_BUTTON_TYPE_LEFT then
             return false
         endif
@@ -96,26 +92,15 @@ library TownPortalScrollFrame requires UISystem
         //
         set TownPortalScrollCooldownString       = Frame.GetFrameByName("TownPortalScrollCooldownString", 0)
         set TownPortalScrollButton               = Frame.GetFrameByName("TownPortalScrollButton", 0)
-        //set TownPortalScrollNumberOverlayFrame   = Frame.GetFrameByName("TownPortalScrollNumberOverlayFrame", 0)
-        set TownPortalScrollNumberOverlayString  = Frame.GetFrameByName("TownPortalScrollNumberOverlayString", 0)
-        set TownPortalScrollNumberOverlayTexture = Frame.GetFrameByName("TownPortalScrollNumberOverlayTexture", 0)
-        set TownPortalScrollBackground           = Frame.GetFrameByName("TownPortalScrollBackground", 0)
         
-        // set TownPortalScrollPushedBackground    = TownPortalScrollButton.GetSimpleButtonTexture(SIMPLEBUTTON_STATE_PUSHED)
-        // set TownPortalScrollDisabledBackground  = TownPortalScrollButton.GetSimpleButtonTexture(SIMPLEBUTTON_STATE_DISABLE)
-        //
+        set TownPortalScrollChargesString        = Frame.GetFrameByName("TownPortalScrollChargesString", 0)
+        set TownPortalScrollBackground           = Frame.GetFrameByName("TownPortalScrollBackground", 0)
 
         call TownPortalScrollBackground.SetTexture("ReplaceableTextures\\CommandButtons\\BTNScrollUber.blp")
-        // call TownPortalScrollPushedBackground.SetTexture("ReplaceableTextures\\CommandButtons\\BTNScrollUber.blp")
-        // call TownPortalScrollDisabledBackground.SetTexture("ReplaceableTextures\\CommandButtonsDisabled\\DISBTNScrollUber.blp")
-        call TownPortalScrollNumberOverlayTexture.ClearAllPoints()
-        call TownPortalScrollNumberOverlayTexture.SetPoint(FRAMEPOINT_BOTTOMRIGHT, TownPortalScrollBackground, FRAMEPOINT_BOTTOMRIGHT, 0., - 0.0006)
 
         call TownPortalScrollCooldownSprite.SetAllPoints(TownPortalScrollFrame)
         call TownPortalScrollCooldownSprite.SetSpriteAnimate(0, 0)
         call TownPortalScrollCooldownSprite.SetAnimateOffset(0.5)
-        //
-        // call TownPortalScrollButton.RegisterLocalScript(FRAMEEVENT_CONTROL_CLICK, "TownPortalScrollButtonOnClick")
         
         set trig = CreateTrigger()
         call TriggerAddCondition(trig, Condition(function ButtonOnDown))

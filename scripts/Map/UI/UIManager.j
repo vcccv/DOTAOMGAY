@@ -14,6 +14,9 @@ library UIManager /*
         static if LIBRARY_TownPortalScrollFrame then
             call TownPortalScroll_Update()
         endif
+        static if LIBRARY_GlyphFrame then
+            call Glyph_Update()
+        endif
     endfunction
 
     private function OnGameStart takes nothing returns nothing
@@ -23,6 +26,9 @@ library UIManager /*
     
         static if LIBRARY_TownPortalScrollFrame then
             call TownPortalScrollFrame_Init()
+        endif
+        static if LIBRARY_GlyphFrame then
+            call GlyphFrame_Init()
         endif
         static if LIBRARY_CommandOrder then
             call CallCommandButton_Init()

@@ -317,6 +317,14 @@ library AbilityCustomOrderId requires Base
 
         // 闪烁(痛苦女王)
         call AllocAbilityOrderId('A0ME')
+
+        //***************************************************************************
+        //*
+        //*  other
+        //*
+        //***************************************************************************
+        // 野性之斧
+        call AllocAbilityOrderId('A0O1')
     endfunction
 
 endlibrary

@@ -1,3 +1,5 @@
 #include "DisableResourceTrading.j"
 #include "TownPortalScrollFrame.j"
 #include "TownPortalScrollHandler.j"
+#include "GlyphFrame.j"
+#include "GlyphHandler.j"

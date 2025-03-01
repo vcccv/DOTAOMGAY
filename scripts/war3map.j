@@ -343,7 +343,7 @@ globals
 	integer WV = 0
 	// lod的Debug变量
 	constant boolean LOD_DEBUGMODE 		  = false
-	constant boolean LOD_DEBUG_ORDER_MODE = true
+	constant boolean LOD_DEBUG_ORDER_MODE = false
 	rect ZV
 	boolean VE = false
 	boolean EE = false
@@ -18136,37 +18136,6 @@ function CWO takes unit u, player p returns nothing
 		endloop
 	endif
 endfunction
-function GlyphCoolDown_Actions takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit u = LoadUnitHandle(HY, h, 1)
-	local real cd
-	set cd = YDWEGetUnitAbilityState(u, 'A141', 1)
-	if IsPlayerAlly(GetOwningPlayer(u), LocalPlayer) then
-		if cd > 10 then
-			call DzFrameSetText(GlyphFrame, I2S(R2I(cd)))
-		elseif cd == 0 then
-			call DzFrameSetText(GlyphFrame, " ")
-		else
-			call DzFrameSetText(GlyphFrame, R2SW(cd, 1, 1))
-		endif
-	endif
-	if cd == 0 then
-		call FlushChildHashtable(HY, h)
-		call DestroyTrigger(t)
-	endif
-	set t = null
-	set u = null
-	return false
-endfunction
-function GlyphCoolDown takes unit u returns nothing
-	local trigger t = CreateTrigger()
-	call TriggerRegisterTimerEvent(t, 0.2, true)
-	call TriggerRegisterTimerEvent(t, 0., false)
-	call TriggerAddCondition(t, Condition(function GlyphCoolDown_Actions))
-	call SaveUnitHandle(HY, GetHandleId(t), 1, u)
-	set t = null
-endfunction
 function G8E takes nothing returns nothing
 	local group g
 	local unit u = GetTriggerUnit()
@@ -18180,12 +18149,10 @@ function G8E takes nothing returns nothing
 		if IsPlayerSentinel(p) then
 			set DKV = true
 			call CWO(u, p)
-			call GlyphCoolDown(u)
 			set DKV = false
 		else
 			set DLV = true
 			call CWO(u, p)
-			call GlyphCoolDown(u)
 			set DLV = false
 		endif
 		if (IsPlayerAlly(p, LocalPlayer) or(GameHasObservers and IsPlayerObserverEx(LocalPlayer))) and p != LocalPlayer then
@@ -78079,6 +78046,10 @@ function main takes nothing returns nothing
 	call SetMapMusic("Music", true, 0)
 
 	call memhack_init()
+	// set bj_lastCreatedUnit = CreateUnit(Player(1), 'H00U', - 7000, -7000, 270.)
+	// call UnitAddItemById(bj_lastCreatedUnit, 'I04H')
+	// call UIManager_Init()
+	// return
 	call MHUI_DrawAttackSpeed(true)
 	call MHUI_DrawMoveSpeed(true)
 	call MHDrawCooldown_Initialize()

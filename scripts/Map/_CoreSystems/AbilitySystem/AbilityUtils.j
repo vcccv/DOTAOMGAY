@@ -10,6 +10,10 @@ library AbilityUtils requires Table, Base
         return MHAbility_GetDefDataInt(abilId, ABILITY_DEF_DATA_BASE_ID)
     endfunction
 
+    function GetAbilityBaseId takes ability whichAbility returns integer
+        return MHAbility_GetDefDataInt(GetAbilityId(whichAbility), ABILITY_DEF_DATA_BASE_ID)
+    endfunction
+
     function GetAbilityReqLevelById takes integer abilId returns integer
         return MHAbility_GetDefDataInt(abilId, ABILITY_DEF_DATA_REQ_LEVEL)
     endfunction
@@ -48,6 +52,19 @@ library AbilityUtils requires Table, Base
 
     function GetAbilityMaxLevelById takes integer abilId returns integer
         return MHAbility_GetDefDataInt(abilId, ABILITY_DEF_DATA_MAX_LEVEL)
+    endfunction
+
+    // SpellEffect事件限定
+    function SetAbilityCooldownInSpellEffect takes ability whichAbility, real cooldown returns nothing
+        
+    endfunction
+
+    // SpellEffect事件限定, ANcl的dataA
+    function SetAbilityANclCastDurationInSpellEffect takes ability whichAbility, real duration returns nothing
+        call BJDebugMsg(Id2String(GetAbilityBaseId(whichAbility)))
+        if GetAbilityBaseId(whichAbility) == 'ANcl' then
+            call MHAbility_SetAbilityCustomLevelDataReal(whichAbility, GetAbilityLevel(whichAbility), ABILITY_LEVEL_DEF_DATA_DATA_A, duration)
+        endif
     endfunction
 
 endlibrary

@@ -65,6 +65,48 @@ library TownPortalScrollHandler requires Communication, TownPortalScrollFrame, U
         endif
     endfunction
 
+    private function GetSelfCastX takes unit trigUnit returns real
+        local real x
+        if IsPlayerSentinel(GetOwningPlayer(trigUnit)) then
+            set x = GetRectCenterX(gg_rct_SentinelRevivalPoint)
+        else
+            set x = GetRectCenterX(gg_rct_ScourgeRevivalPoint)
+        endif
+        return x
+    endfunction
+    private function GetSelfCastY takes unit trigUnit returns real
+        local real y
+        if IsPlayerSentinel(GetOwningPlayer(trigUnit)) then
+            set y = GetRectCenterY(gg_rct_SentinelRevivalPoint)
+        else
+            set y = GetRectCenterY(gg_rct_ScourgeRevivalPoint)
+        endif
+        return y
+    endfunction
+
+    function TownPortalScroll_SelfCast takes unit selectedUnit returns nothing
+        local real    x
+        local real    y
+        local integer flag
+        if selectedUnit == null then
+            return
+        endif
+
+        if GetPlayerAlliance(GetOwningPlayer(selectedUnit), GetLocalPlayer(), ALLIANCE_SHARED_CONTROL) then
+            set x = GetSelfCastX(selectedUnit)
+            set y = GetSelfCastX(selectedUnit)
+            set flag = LOCAL_ORDER_FLAG_ALONE + LOCAL_ORDER_FLAG_ITEM
+            if MHMsg_IsKeyDown(OSKEY_SHIFT) then
+                set flag = flag + LOCAL_ORDER_FLAG_QUEUE
+            endif
+            if GetUnitAbilityLevel(selectedUnit, TOWN_PORTAL_SCROLL_ABILITY_ID) == 1then
+                call MHMsg_SendSelectorOrder(x, y, ORDER_massteleport, flag)
+            else
+                call MHMsg_SendIndicatorOrder(null, x, y, ORDER_massteleport, flag)
+            endif
+        endif
+    endfunction
+
     function TownPortalScrollButtonOnClick takes nothing returns nothing
         local unit    selectedUnit      = MHPlayer_GetSelectUnit()
         local integer charges
@@ -76,9 +118,17 @@ library TownPortalScrollHandler requires Communication, TownPortalScrollFrame, U
         set charges = GetUnitTownPortalScrollCharges(selectedUnit)
         if MHMsg_IsKeyDown(OSKEY_ALT) then
             call Communication_OnPingTownPortalScroll(selectedUnit, GetUnitAbility(selectedUnit, TOWN_PORTAL_SCROLL_ABILITY_ID), charges)
+        elseif MHUIData_GetTargetModeAbility() == TOWN_PORTAL_SCROLL_ABILITY_ID and MHMsg_IsIndicatorOn(INDICATOR_TYPE_TARGET_MODE) then
+            call TownPortalScroll_SelfCast(selectedUnit)
         elseif charges > 0 then
             call MHUI_PlayNativeSound("InterfaceClick")
-            call MHMsg_CallTargetMode(TOWN_PORTAL_SCROLL_ABILITY_ID, ORDER_tornado, ABILITY_CAST_TYPE_POINT + ABILITY_CAST_TYPE_ALONE)
+            if GetUnitAbilityLevel(selectedUnit, TOWN_PORTAL_SCROLL_ABILITY_ID) == 1 then
+                // ABILITY_CAST_TYPE_POINT + ABILITY_CAST_TYPE_ALONE
+                call MHMsg_CallTargetMode(TOWN_PORTAL_SCROLL_ABILITY_ID, ORDER_massteleport, 0x100002)
+            else
+                // ABILITY_CAST_TYPE_POINT + ABILITY_CAST_TYPE_TARGET + ABILITY_CAST_TYPE_ALONE
+                call MHMsg_CallTargetMode(TOWN_PORTAL_SCROLL_ABILITY_ID, ORDER_massteleport, 0x100006)
+            endif
         endif
         set selectedUnit = null
     endfunction

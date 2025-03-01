@@ -9,7 +9,7 @@ scope OctarineCore
     function DelayUnitUpdateAbilityCooldownOnExpired takes nothing returns nothing
         local SimpleTick tick = SimpleTick.GetExpired()
 
-        call UnitUpdateAbilityCooldown(SimpleTickTable[tick].unit['u'])
+        call UnitAllAbilityUpdateCooldown(SimpleTickTable[tick].unit['u'])
 
         call tick.Destroy()
     endfunction
@@ -21,7 +21,7 @@ scope OctarineCore
             return
         endif
 
-        call UnitUpdateAbilityCooldown(whichUnit)
+        call UnitAllAbilityUpdateCooldown(whichUnit)
 
         set whichUnit = null
     endfunction
@@ -37,7 +37,7 @@ scope OctarineCore
         set tick = SimpleTick.CreateEx()
         call tick.Start(0., false, function DelayUnitUpdateAbilityCooldownOnExpired)
         set SimpleTickTable[tick].unit['u'] = whichUnit
-        call UnitUpdateAbilityCooldown(whichUnit)
+        call UnitAllAbilityUpdateCooldown(whichUnit)
 
         set whichUnit = null
     endfunction

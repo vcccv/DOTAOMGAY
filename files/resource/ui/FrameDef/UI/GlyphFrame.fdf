@@ -1,0 +1,38 @@
+Frame "SIMPLEFRAME" "GlyphFrame" 
+{
+    Width  0.0228,
+    Height 0.0228,
+
+	Layer "BACKGROUND" {
+		Texture "GlyphBackground" {
+            Width  0.0228,
+            Height 0.0228,
+		}
+	}
+
+    Frame "SIMPLEBUTTON" "GlyphButton"
+    {
+        SetPoint CENTER, "GlyphFrame", CENTER, 0, 0,
+        Width  0.0228,
+        Height 0.0228,
+    }
+
+    Frame "SIMPLEFRAME" "GlyphCooldownIndicator" {
+        DecorateFileNames,
+        
+        String "GlyphCooldownString" {
+            SetPoint CENTER, "GlyphFrame", CENTER, 0, 0,
+            FontJustificationH JUSTIFYCENTER,
+            FontJustificationV JUSTIFYMIDDLE,
+            FontShadowOffset 0.001 -0.001,
+            Font "MasterFont", 0.011,
+            TextLength 4,
+        }
+    }
+}
+
+Frame "SPRITE" "GlyphCooldownSprite" {
+    LayerStyle "IGNORETRACKEVENTS",
+    BackgroundArt "UI\feedback\cooldown\ui-cooldown-indicator.mdx",
+    SpriteScale 0.6 0.6 0.6,
+}
