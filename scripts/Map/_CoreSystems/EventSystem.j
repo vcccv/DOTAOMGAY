@@ -41,7 +41,6 @@ library EventSystem requires UnitDex
         static integer      array TriggerAbilityId
         static ability      array TriggerAbility
         static integer      array TriggerIndex
-
  
         static method GetTriggerUnit takes nothing returns unit
             return thistype.TrigUnit[thistype.INDEX]

@@ -2,6 +2,98 @@
 // 包含了被动和主动技能
 library HeroSkillDefine requires SkillSystem
 
+    // 技能的初始化
+    function InitSkillInitializerMethod takes nothing returns nothing
+        // 启明
+        call RegisterSkillInitMethodByIndex(SKILL_INDEX_ILLUMINATE, "IlluminateOnInitializer")
+
+        // 高射火炮
+        call RegisterSkillInitMethodByIndex(SKILL_INDEX_FLAKCANNON, "FlakcannonOnInitializer")
+        
+        // 群星坠落
+        call RegisterSkillInitMethodByIndex(SKILL_INDEX_STARFALL  , "StarFallOnInitializer")
+        
+
+        // 601是init
+        call SaveStr(ObjectHashTable,'A060', 601, "W_A")
+        call SaveStr(ObjectHashTable,'A0LE', 601, "WYA")
+        call SaveStr(ObjectHashTable,'A0O3', 601, "WUA")	//地精的贪婪
+        call SaveStr(ObjectHashTable,'A1W8', 601, "WSA")
+        call SaveStr(ObjectHashTable,'A0BH', 601, "WQA")
+        call SaveStr(ObjectHashTable,'A0A5', 601, "SummonSpiritBearOnInitializer")
+        call SaveStr(ObjectHashTable,'A0RP', 601, "WKA")
+        call SaveStr(ObjectHashTable,'A0QV', 601, "WHA")
+        call SaveStr(ObjectHashTable,'A0AK', 601, "WFA")
+        call SaveStr(ObjectHashTable,'P003', 601, "WCA")
+        call SaveStr(ObjectHashTable,'A0LZ', 601, "WIA")
+        call SaveStr(ObjectHashTable,'A2QM', 601, "WNA")
+        call SaveStr(ObjectHashTable,'A2TJ', 601, "WNA")
+        call SaveStr(ObjectHashTable,'A2QI', 601, "WNA")
+        call SaveStr(ObjectHashTable,'A2TI', 601, "WNA")
+        call SaveStr(ObjectHashTable,'A0BR', 601, "W1A")
+        call SaveStr(ObjectHashTable,'Z318', 601, "W1A")
+        // 600?也是Init
+        // 被动技能初始化？
+        call SaveStr(ObjectHashTable,'A022', 600, "F_R")
+        call SaveStr(ObjectHashTable,'A088', 600, "InitMultiCast")
+        call SaveStr(ObjectHashTable,'A0DJ', 600, "EON")
+        call SaveStr(ObjectHashTable,'A0FV', 600, "ERN")
+        call SaveStr(ObjectHashTable,'A1YY', 600, "EIN")
+        call SaveStr(ObjectHashTable,'A33Q', 600, "EAN")
+        call SaveStr(ObjectHashTable,'A02C', 600, "WitchcraftOnLearn")
+        call SaveStr(ObjectHashTable,'A0N5', 600, "EBN")
+        call SaveStr(ObjectHashTable,'A1A3', 600, "Z8A")
+        call SaveStr(ObjectHashTable,'A04E', 600, "Z9A")
+        call SaveStr(ObjectHashTable,'A0RO', 600, "VVN")
+        call SaveStr(ObjectHashTable,'A0C6', 600, "VEN")
+        call SaveStr(ObjectHashTable,'A0DZ', 600, "VXN")
+        call SaveStr(ObjectHashTable,'A332', 600, "VON")
+        call SaveStr(ObjectHashTable,'A01Z', 600, "VRN")
+        call SaveStr(ObjectHashTable,'A08R', 600, "VIN")
+        call SaveStr(ObjectHashTable,'P250', 600, "VAN")
+        //call SaveStr(ObjectHashTable,'A081', 600, "VNN")
+        
+        call SaveStr(ObjectHashTable,'A45B', 600, "VBN")
+        call SaveStr(ObjectHashTable,'A0O0', 600, "VCN")
+        call SaveStr(ObjectHashTable,'A041', 600, "VDN")
+        call SaveStr(ObjectHashTable,'A0N7', 600, "VFN")
+        call SaveStr(ObjectHashTable,'A0QN', 600, "VGN")
+        call SaveStr(ObjectHashTable,'A440', 600, "VHN")
+        call SaveStr(ObjectHashTable,'A0FA', 600, "VJN")
+        call SaveStr(ObjectHashTable,'A0FX', 600, "VKN")
+        call SaveStr(ObjectHashTable,'A0OI', 600, "VLN")
+        call SaveStr(ObjectHashTable,'A0LZ', 600, "VMN")
+        call SaveStr(ObjectHashTable,'A0MG', 600, "VPN")
+        call SaveStr(ObjectHashTable,'A0G5', 600, "VQN")
+        call SaveStr(ObjectHashTable,'A1HR', 600, "VSN")
+        call SaveStr(ObjectHashTable,'A13T', 600, "VTN")
+        call SaveStr(ObjectHashTable,'A00V', 600, "VUN")
+        call SaveStr(ObjectHashTable,'QM00', 600, "VWN")
+        call SaveStr(ObjectHashTable,'A0DL', 600, "VYN")
+        call SaveStr(ObjectHashTable,'A0DY', 600, "VZN")
+        call SaveStr(ObjectHashTable,'A0DB', 600, "V_N")
+        call SaveStr(ObjectHashTable,'A0A5', 600, "V0N")
+        call SaveStr(ObjectHashTable,'P067', 600, "V2N")
+        call SaveStr(ObjectHashTable,'QB0P', 600, "V1N")
+        call SaveStr(ObjectHashTable,'A02Q', 600, "V3N")
+        call SaveStr(ObjectHashTable,'A0SS', 600, "V4N")
+        call SaveStr(ObjectHashTable,'A0MY', 600, "V5N")
+        call SaveStr(ObjectHashTable,'S008', 600, "V6N")
+        call SaveStr(ObjectHashTable,'A2EY', 600, "V7N")
+        call SaveStr(ObjectHashTable,'A2E4', 600, "V8N")
+        call SaveStr(ObjectHashTable,'A03S', 600, "V9N")
+        call SaveStr(ObjectHashTable,'Q0BK', 600, "EVN")
+        call SaveStr(ObjectHashTable,'A0WQ', 600, "EEN")
+        call SaveStr(ObjectHashTable,'A15V', 600, "EXN")
+        call SaveStr(ObjectHashTable,'A09V', 600, "SRA")
+        call SaveStr(ObjectHashTable,'A1HQ', 600, "ECN")
+        call SaveStr(ObjectHashTable,'A03N', 600, "TSA")
+        
+        call SaveStr(ObjectHashTable,'A0JJ', 600, "OPO")	//重击
+        call SaveStr(ObjectHashTable,'A0BE', 600, "OPO")	//狂战士之怒
+        call SaveStr(ObjectHashTable,'A081', 600, "OPO")	//时间锁定
+    endfunction
+
     // 控制技能列表
     function ControlSkillList_Init takes nothing returns nothing
         call AddControlSkillIndex((8   - 1)* 4 + 1)

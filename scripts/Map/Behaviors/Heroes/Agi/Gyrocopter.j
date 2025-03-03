@@ -11,7 +11,7 @@ scope Gyrocopter
     //*
     //***************************************************************************
     globals
-        constant integer SKILL_INDEX_FLAKCANNON = GetHeroSKillIndexBySlot(HERO_INDEX_GRYOCOPTER, 3)
+        constant integer SKILL_INDEX_FLAKCANNON        = GetHeroSKillIndexBySlot(HERO_INDEX_GRYOCOPTER, 3)
         constant integer FLAKCANNON_UPGRADE_ABILITY_ID = 'A3UR'
     endglobals
 
@@ -101,20 +101,20 @@ scope Gyrocopter
         set whichUnit    = null
     endfunction
 
+    function FlakcannonOnInitializer takes nothing returns nothing
+        call ResgiterAbilityMethodSimple(FLAKCANNON_UPGRADE_ABILITY_ID, "FlakCannonUpgradeAbilityOnAdd", "FlakCannonUpgradeAbilityOnRemove")
+    endfunction
+
     function FlakCannonOnGetScepterUpgrade takes nothing returns nothing
         local unit whichUnit = Event.GetTriggerUnit()
-
         if not UnitAddPermanentAbility(whichUnit, FLAKCANNON_UPGRADE_ABILITY_ID) then
             call UnitDisableAbility(whichUnit, FLAKCANNON_UPGRADE_ABILITY_ID, false, true)
         endif
-
         set whichUnit = null
     endfunction
     function FlakCannonOnLostScepterUpgrade takes nothing returns nothing
         local unit whichUnit = Event.GetTriggerUnit()
-
         call UnitDisableAbility(whichUnit, FLAKCANNON_UPGRADE_ABILITY_ID, true, true)
-
         set whichUnit = null
     endfunction
 

@@ -1,15 +1,7 @@
 
 library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
     
-    function SkillOnInitializer takes integer skillIndex returns nothing
-        if skillIndex == SKILL_INDEX_STARFALL then
-            call ResgiterAbilityMethodSimple(STARFALL_UPGRADE_ABILITY_ID, "StarfallUpgradeAbilityOnAdd", "StarfallUpgradeAbilityOnRemove")
-        elseif skillIndex == SKILL_INDEX_FLAKCANNON then
-            call ResgiterAbilityMethodSimple(FLAKCANNON_UPGRADE_ABILITY_ID, "FlakCannonUpgradeAbilityOnAdd", "FlakCannonUpgradeAbilityOnRemove")
-        // ? elseif skillIndex == SKILL_INDEX_MARKSMANSHIP then
-
-        endif
-    endfunction
+   
 
     function HeroOnInitializer takes integer heroIndex returns nothing
         if (heroIndex == 34) then
@@ -320,9 +312,23 @@ library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
         call SetAllPlayerAbilityUnavailable(iSpellBookSkill)
     endfunction
 
+    //***************************************************************************
+    //*
+    //*  Method
+    //*
+    //***************************************************************************
+    globals
+        private integer array InitializerMethod
+        private boolean array SkillIndexInitialized
+    endglobals
+
+    function RegisterSkillInitMethodByIndex takes integer skillIndex, string func returns nothing
+        set InitializerMethod[skillIndex] = C2I(MHGame_GetCode(func))
+        call ThrowWarning(InitializerMethod[skillIndex] == 0, "SkillSystem", "RegisterSkillInitMethodByIndex", I2S(skillIndex), skillIndex, "func == 0")
+    endfunction
+
     globals
 	    boolean array HeroIndexInitialized
-        boolean array SkillIndexInitialized
     endglobals
     // i = skillIndex
     function HeroSkillInitializerByIndex takes integer skillIndex returns nothing
@@ -335,13 +341,20 @@ library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
             set HeroIndexInitialized[heroIndex] = true
         endif
         if not (SkillIndexInitialized[skillIndex]) then
-            call SkillOnInitializer(skillIndex)
+            if InitializerMethod[skillIndex] != 0 then
+                set Event.INDEX = Event.INDEX + 1
+                set Event.TriggerIndex[Event.INDEX] = skillIndex
+                call MHGame_ExecuteCodeEx(InitializerMethod[skillIndex])
+                set Event.INDEX = Event.INDEX - 1
+            endif
             set SkillIndexInitialized[skillIndex] = true
         endif
+        // 技能初始化
         if HaveSavedString(ObjectHashTable, HeroSkill_BaseId[skillIndex], 600) and LoadBoolean(ObjectHashTable, HeroSkill_BaseId[skillIndex], 600) == false then
             call SaveBoolean(ObjectHashTable, HeroSkill_BaseId[skillIndex], 600, true)
             call ExecuteFunc(LoadStr(ObjectHashTable, HeroSkill_BaseId[skillIndex], 600))
         endif
+        // 被动技能初始化
         if HaveSavedString(ObjectHashTable, HeroSkill_BaseId[skillIndex], 601) and LoadBoolean(ObjectHashTable, HeroSkill_BaseId[skillIndex], 601) == false then
             call SaveBoolean(ObjectHashTable, HeroSkill_BaseId[skillIndex], 601, true)
             call ExecuteFunc(LoadStr(ObjectHashTable, HeroSkill_BaseId[skillIndex], 601))

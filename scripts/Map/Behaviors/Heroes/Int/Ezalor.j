@@ -1,11 +1,76 @@
 
 scope Ezalor
 
+    globals
+        constant integer HERO_INDEX_EZALOR = 16
+    endglobals
+
     //***************************************************************************
     //*
     //*  启明
     //*
     //***************************************************************************
+    globals
+        constant integer SKILL_INDEX_ILLUMINATE        = GetHeroSKillIndexBySlot(HERO_INDEX_EZALOR, 1)
+        constant integer ILLUMINATE_ABILITY_ID         = 'A085'
+        constant integer ILLUMINATE_RELEASE_ABILITY_ID = 'A121'
+    endglobals
+
+    function IlluminateOnInitializer takes nothing returns nothing
+        call ResgiterAbilityMethodSimple(ILLUMINATE_ABILITY_ID, "IlluminateAbilityOnAdd", "IlluminateAbilityOnRemove")
+    endfunction
+    function IlluminateAbilityOnAdd takes nothing returns nothing
+        local unit whichUnit = Event.GetTriggerUnit()
+        call UnitAddPermanentAbility(whichUnit, ILLUMINATE_RELEASE_ABILITY_ID)
+        call UnitDisableAbility(whichUnit, ILLUMINATE_RELEASE_ABILITY_ID, true, true)
+        set whichUnit = null
+    endfunction
+    function IlluminateAbilityOnRemove takes nothing returns nothing
+        local unit whichUnit = Event.GetTriggerUnit()
+        call UnitRemoveAbility(whichUnit, ILLUMINATE_RELEASE_ABILITY_ID)
+        set whichUnit = null
+    endfunction
+
+    private struct IlluminateSW extends array
+        
+        real    damage
+        boolean isUpgraded
+
+        static method OnRemove takes Shockwave sw returns boolean
+            set thistype(sw).isUpgraded = false
+            return true
+        endmethod
+
+        static method OnCollide takes Shockwave sw, unit targ returns boolean
+            // 存活 
+            if IsUnitAlive(targ) and not IsUnitWard(targ) and not IsUnitStructure(targ) then
+                if IsUnitEnemy(sw.owner, GetOwningPlayer(targ)) then
+                    call UnitDamageTargetEx(sw.owner, targ, 1, thistype(sw).damage)
+                elseif thistype(sw).isUpgraded then
+                    call UnitRegenLife(sw.owner, targ, thistype(sw).damage)
+                endif
+            endif
+            return false
+        endmethod
+        
+        static method OnPeriod takes Shockwave sw returns boolean
+            local real scale = sw.GetModelScale()
+            if scale < .4 then
+                set scale = scale + .025
+            elseif scale < 1.5 and scale > 0.4 then
+                set scale = scale + .09
+            else
+                set scale = 1.5
+            endif
+            call sw.SetModelScale(scale)
+            // 路上视野
+            call CreateFogModifierTimedForPlayer(GetOwningPlayer(sw.owner), 2.5, sw.x, sw.y, 375)
+            return false
+        endmethod
+        
+        implement ShockwaveStruct
+    endstruct
+    /*
     function W1R takes nothing returns boolean
         local unit u = GetFilterUnit()
         local integer id = GetUnitTypeId(u)
@@ -28,7 +93,10 @@ scope Ezalor
         local real x
         local real y
         local real s = LoadReal(ObjectHashTable, h, StringHash("scale"))
-        local unit O8O = LoadUnitHandle(ObjectHashTable, h, 1)
+        local unit source = LoadUnitHandle(ObjectHashTable, h, 1)
+        local group enumGroup
+        local unit  first
+        local real  area = 400.
         if UYX == 1 then
             call DeallocateGroup(LoadGroupHandle(ObjectHashTable, h, 2))
             call DestroyTimerAndFlushHT_P(t)
@@ -51,91 +119,133 @@ scope Ezalor
         endif
         call SetUnitScale(u, s, s, s)
         call SaveReal(ObjectHashTable, h, StringHash("scale"), s)
-        call CreateFogModifierTimedForPlayer(GetOwningPlayer(O8O), 2.5, x, y, 375)
+        call CreateFogModifierTimedForPlayer(GetOwningPlayer(source), 2.5, x, y, 375)
         set Temp__Player = LoadPlayerHandle(ObjectHashTable, h, 2)
-        set Temp__ArrayUnit[0] = O8O
+        set Temp__ArrayUnit[0] = source
         set XK[0] = LoadInteger(ObjectHashTable, h, 1)
         set Q7V = LoadGroupHandle(ObjectHashTable, h, 3)
-        set X3 = IsUnitScepterUpgraded(u)
+        set X3 = IsUnitScepterUpgraded(source)
         call GroupEnumUnitsInRange(AK, x, y, 375, Condition(function W1R))
-        set O8O = null
+
+        set enumGroup = AllocationGroup(89)
+        call GroupEnumUnitsInRange(enumGroup, x, y, area + MAX_UNIT_COLLISION, Condition(function W1R))
+
+
+        call DeallocateGroup(enumGroup)
+
+        set source = null
         set t = null
         set u = null
     endfunction
-    function W3R takes nothing returns nothing
-        local real s
-        local timer t = GetExpiredTimer()
-        local integer h = GetHandleId(t)
-        local integer UYX = LoadInteger(ObjectHashTable, h, 0)-1
-        local unit u = LoadUnitHandle(ObjectHashTable, h, 0)
-        local unit O8O
-        if UYX == 0 or LoadBoolean(ObjectHashTable, GetHandleId(LoadUnitHandle(ObjectHashTable, h, 1)), 'A085') == false then
-            call KillUnit(u)
-            set O8O = CreateUnit(Player(15), 'h070', LoadReal(ObjectHashTable, h, 0), LoadReal(ObjectHashTable, h, 1), LoadReal(ObjectHashTable, h, 2))
-            call SetUnitScale(O8O, .1, .1, .1)
-            call SaveReal(ObjectHashTable, h, StringHash("scale"), .15)
-            call SaveInteger(ObjectHashTable, h, 0, 61)
-            call SaveInteger(ObjectHashTable, h, 1,(LoadInteger(ObjectHashTable, h, 1)-UYX)* 10)
-            call SaveUnitHandle(ObjectHashTable, h, 0, O8O)
-            call SaveGroupHandle(ObjectHashTable, h, 3, AllocationGroup(209))
-            call TimerStart(t, .025, true, function W2R)
-            call SaveBoolean(ObjectHashTable, GetHandleId(LoadUnitHandle(ObjectHashTable, h, 1)), 'A085', false)
-            call SetPlayerAbilityAvailableEx(LoadPlayerHandle(ObjectHashTable, h, 2), 'A121', false)
-            call SetPlayerAbilityAvailableEx(LoadPlayerHandle(ObjectHashTable, h, 2), 'A085', true)
-            call RemoveUnit(LoadUnitHandle(ObjectHashTable, h, 4))
-            set O8O = null
-            set t = null
-            set u = null
+    */
+
+    function IlluminateReleaseOnSpellEffect takes nothing returns nothing
+        call SaveBoolean(ObjectHashTable, GetHandleId(GetTriggerUnit()),'A085', false)
+    endfunction
+    function IlluminateOnSpellCast takes nothing returns nothing
+        local unit    whichUnit = GetRealSpellUnit(GetTriggerUnit())
+        local integer id        = GetUnitTypeId(whichUnit)
+        if not IsUnitScepterUpgraded(whichUnit) then
+            call SaveBoolean(ObjectHashTable, GetHandleId(whichUnit),'A085', false)
+        endif
+        set whichUnit = null
+    endfunction
+
+    function IlluminateOnUpdate takes nothing returns nothing
+        local SimpleTick tick       = SimpleTick.GetExpired()
+
+        local integer    maxCount   = SimpleTickTable[tick].integer['m']
+        local integer    count      = tick.data - 1
+
+        local unit       orbUnit    = SimpleTickTable[tick].unit['d']
+        local real       scale
+        local unit       whichUnit  = SimpleTickTable[tick].unit['s']
+        local boolean    isUpgraded = SimpleTickTable[tick].boolean['u']
+        local boolean    isRelease  = not LoadBoolean(ObjectHashTable, GetHandleId(whichUnit), 'A085')
+        local real       tx
+        local real       ty
+        local Shockwave  sw
+        local real       distance
+        // 
+        if count == 0 or ( isRelease ) then
+            call KillUnit(orbUnit)
+
+            set distance = 1550. + GetUnitCastRangeBonus(whichUnit)
+
+            set tx = SimpleTickTable[tick].real['x']
+            set ty = SimpleTickTable[tick].real['y']
+            set sw = Shockwave.CreateByDistance(whichUnit, tx, ty, SimpleTickTable[tick].real['a'], distance)
+            call sw.SetModelScale(1.0)
+            call sw.SetSpeed(900.)
+            set sw.minRadius = 400.
+            set sw.maxRadius = 400.
+            set sw.model     = "Abilities\\Spells\\Orc\\Shockwave\\ShockwaveMissile.mdl"
+            set IlluminateSW(sw).isUpgraded = isUpgraded
+            set IlluminateSW(sw).damage = (maxCount-count)* 10
+            call IlluminateSW.Launch(sw)
+
+            call UnitHideAbility(whichUnit, ILLUMINATE_ABILITY_ID, false)
+            call UnitDisableAbility(whichUnit, ILLUMINATE_RELEASE_ABILITY_ID, true, true)
+
+            // 施法马甲
+            call RemoveUnit(SimpleTickTable[tick].unit['u'])
+
+            call tick.Destroy()
+            
+            set orbUnit   = null
+            set whichUnit = null
             return
         endif
-        set s = 1 +(LoadInteger(ObjectHashTable, h, 1)-UYX)* .1
-        call SetUnitScale(u, s, s, s)
-        call SaveInteger(ObjectHashTable, h, 0, UYX)
-        set t = null
-        set u = null
+        set scale = 1 + (maxCount - count) * .1
+        call SetUnitScale(orbUnit, scale, scale, scale)
+        set tick.data = count
+
+        set orbUnit   = null
+        set whichUnit = null
     endfunction
+
     function IlluminateOnSpellEffect takes nothing returns nothing
-        local timer   t = CreateTimer()
-        local unit    u = GetTriggerUnit()
-        local player  p = GetOwningPlayer(u)
-        local real    x = GetWidgetX(u)
-        local real    y = GetWidgetY(u)
-        local real    a = Atan2(GetSpellTargetY()-y, GetSpellTargetX()-x)
-        local real    x1 = x + 150* Cos(a)
-        local real    y1 = y + 150* Sin(a)
-        local integer h = GetHandleId(t)
-        local integer i = GetUnitAbilityLevel(u, 'A085')* 10+ 10
-        call SetPlayerAbilityAvailableEx(p, 'A085', false)
-        call SetPlayerAbilityAvailableEx(p, 'A121', true)
-        call UnitAddPermanentAbility(u, 'A121')
-        call SaveUnitHandle(ObjectHashTable, h, 0, CreateUnit(Player(15), 'u00J', x1, y1, a * bj_RADTODEG))
-        call SavePlayerHandle(ObjectHashTable, h, 2, p)
-        call SaveInteger(ObjectHashTable, h, 0, i)
-        call SaveInteger(ObjectHashTable, h, 1, i)
-        call SaveReal(ObjectHashTable, h, 0, x1)
-        call SaveReal(ObjectHashTable, h, 1, y1)
-        call SaveReal(ObjectHashTable, h, 2, a * bj_RADTODEG)
-        call SaveReal(ObjectHashTable, h, 3, 26.25 * Cos(a))
-        call SaveReal(ObjectHashTable, h, 4, 26.25 * Sin(a))
-        if GetUnitTypeId(u)=='e00E' then
-            call SaveUnitHandle(ObjectHashTable, h, 1, PlayerHeroes[GetPlayerId(p)])
-            call SaveBoolean(ObjectHashTable, GetHandleId(PlayerHeroes[GetPlayerId(p)]), 'A085', true)
-        else
-            call SaveUnitHandle(ObjectHashTable, h, 1, u)
-            call SaveBoolean(ObjectHashTable, GetHandleId(u), 'A085', true)
-            if GetUnitTypeId(u)>='H06W' and GetUnitTypeId(u)<='H06Y' then
-                set u = CreateUnit(p, 'h06Z', x, y, a * bj_RADTODEG)
-                call SetUnitX(u, x)
-                call SetUnitY(u, y)
-                call SetUnitAnimation(u, "spell")
-                call QueueUnitAnimation(u, "spell")
-                call SetUnitVertexColor(u, 255, 255, 255, 75)
-                call SaveUnitHandle(ObjectHashTable, h, 4, u)
-            endif
+        local unit    whichUnit = GetRealSpellUnit(GetTriggerUnit())
+        local player  p         = GetOwningPlayer(whichUnit)
+        local real    startX    = GetWidgetX(whichUnit)
+        local real    startY    = GetWidgetY(whichUnit)
+        local real    angle     = Atan2(GetSpellTargetY()-startX, GetSpellTargetX()-startY)
+        local real    orbX
+        local real    orbY
+        local integer maxCount
+
+        local SimpleTick tick
+
+        set maxCount = GetUnitAbilityLevel(whichUnit, GetSpellAbilityId()) * 10 + 10
+
+        call UnitDisableAbility(whichUnit, ILLUMINATE_RELEASE_ABILITY_ID, false, true)
+        call UnitHideAbility(whichUnit, ILLUMINATE_ABILITY_ID, true)
+        set orbX = startX + MHUnit_GetData(whichUnit, UNIT_DATA_LAUNCH_X) * Cos(angle)
+        set orbY = startY + MHUnit_GetData(whichUnit, UNIT_DATA_LAUNCH_Y) * Sin(angle)
+
+        set tick = SimpleTick.Create(0)
+        call tick.Start(0.1, true, function IlluminateOnUpdate)
+
+        set SimpleTickTable[tick].unit['s']    = whichUnit
+        set SimpleTickTable[tick].unit['d']    = CreateUnit(Player(15), 'u00J', orbX, orbY, angle * bj_RADTODEG)
+        set SimpleTickTable[tick].real['a']    = angle
+        set SimpleTickTable[tick].real['x']    = GetSpellTargetY()
+        set SimpleTickTable[tick].real['y']    = GetSpellTargetX()
+        set SimpleTickTable[tick].integer['m'] = maxCount
+
+        call SaveBoolean(ObjectHashTable, GetHandleId(whichUnit), 'A085', true)
+        if IsUnitScepterUpgraded(whichUnit) then
+            set whichUnit = CreateUnit(p, 'h06Z', startX, startY, angle * bj_RADTODEG)
+            call SetUnitX(whichUnit, startX)
+            call SetUnitY(whichUnit, startY)
+            call SetUnitAnimation(whichUnit, "spell")
+            call QueueUnitAnimation(whichUnit, "spell")
+            call SetUnitVertexColor(whichUnit, 255, 255, 255, 75)
+            set SimpleTickTable[tick].boolean['u'] = true
+            set SimpleTickTable[tick].unit['u'] = whichUnit
         endif
-        call TimerStart(t, .1, true, function W3R)
-        set t = null
-        set u = null
+        
+        set whichUnit = null
     endfunction
 
 endscope

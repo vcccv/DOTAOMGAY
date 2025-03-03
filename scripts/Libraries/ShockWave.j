@@ -122,6 +122,9 @@ library ShockwaveLib /*
             set this.modelScale = modelScale
             call MHEffect_SetScale(this.shockwaveFX, modelScale)
         endmethod
+        method GetModelScale takes nothing returns real
+            return this.modelScale
+        endmethod
 
         // 根据默认动画时间计算需要修正的
         method FixTimeScale takes real time returns nothing
@@ -139,7 +142,7 @@ library ShockwaveLib /*
             call this.ResetMembers()
             set this.owner = owner
             set this.angle = angle
-            set this.x = startX + MHUnit_GetData(owner, UNIT_DATA_LAUNCH_Y) * Cos(angle)
+            set this.x = startX + MHUnit_GetData(owner, UNIT_DATA_LAUNCH_X) * Cos(angle)
             set this.y = startY + MHUnit_GetData(owner, UNIT_DATA_LAUNCH_Y) * Sin(angle)
             set this.targetX = this.x + distance * Cos(angle)
             set this.targetY = this.y + distance * Sin(angle)
