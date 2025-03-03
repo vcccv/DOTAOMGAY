@@ -6518,7 +6518,9 @@ function BNX takes real EHX, boolean BBX, real x, real y, real BCX, real BDX, re
 	set BLX = BCX / BDX
 	call TerrainDeformRipple(x, y, BDX, BFX, R2I(EHX * 1000), 1, BJX, BKX, BLX, BBX)
 endfunction
-function BMX takes player p, unit u, integer g returns nothing
+// 玩家p给单位u提供不可靠金钱
+// 钱加给玩家p 特效创给单位u 其实玩家p变量不太需要只用传个单位就完了
+function PlayerAddUnitUnreliableGold takes player p, unit u, integer g returns nothing
 	local texttag t
 	local string s = ""
 	local boolean b = LocalPlayer== p
@@ -14800,7 +14802,7 @@ function RVO takes unit u returns nothing
 		set g = R2I(g *(GetUnitAbilityLevel(u,'A0O3')* .5 + 2.5))
 	endif
 	call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Items\\ResourceItems\\ResourceEffectTarget.mdl", u, "origin"))
-	call BMX(GetOwningPlayer(u), u, g)
+	call PlayerAddUnitUnreliableGold(GetOwningPlayer(u), u, g)
 	if IsUnitType(u, UNIT_TYPE_HERO) then
 		call AddHeroXPSimple(u, xp, true)
 	endif
@@ -19219,7 +19221,7 @@ function FDO takes nothing returns boolean
 		else
 			call AddHeroXPSimple(PlayerHeroes[GetPlayerId(GetOwningPlayer(whichUnit))], R2I(LoadInteger(SightDataHashTable, GetUnitTypeId(targetUnit), HC)* 2.5), true)
 		endif
-		call BMX(GetOwningPlayer(whichUnit), targetUnit, 190)
+		call PlayerAddUnitUnreliableGold(GetOwningPlayer(whichUnit), targetUnit, 190)
 		set PlayersReliableGold[GetPlayerId(GetOwningPlayer(whichUnit))] = PlayersReliableGold[GetPlayerId(GetOwningPlayer(whichUnit))] + 190
 		call FlushChildHashtable(HY, h)
 		call DestroyTrigger(t)
@@ -55036,7 +55038,7 @@ function WAI takes nothing returns boolean
 	call SetTextTagPosUnit(tt, trigUnit, 0)
 	call SetTextTagVisibility(tt, IsUnitVisibleToPlayer(trigUnit, LocalPlayer) or IsPlayerObserverEx(LocalPlayer))
 	if WNI == 0 then
-		call BMX(GetOwningPlayer(trigUnit), trigUnit, 25 * level)
+		call PlayerAddUnitUnreliableGold(GetOwningPlayer(trigUnit), trigUnit, 25 * level)
 	endif
 	if WNI == 0 or GetTriggerEventId() == EVENT_WIDGET_DEATH then
 		call SetPlayerAbilityAvailableEx(GetOwningPlayer(trigUnit),'A10R', true)
@@ -71575,7 +71577,7 @@ function Q6A takes unit killingUnit, unit Q7A returns nothing
 			endif
 			set goldBonus = GetRandomInt(LoadInteger(SightDataHashTable, i, CC), LoadInteger(SightDataHashTable, i, DC)) + Q8A
 			if goldBonus > 0 then
-				call BMX(p, Q7A, goldBonus)
+				call PlayerAddUnitUnreliableGold(p, Q7A, goldBonus)
 			endif
 		endif
 		set xp = LoadInteger(SightDataHashTable, i, HC)
@@ -78046,10 +78048,7 @@ function main takes nothing returns nothing
 	call SetMapMusic("Music", true, 0)
 
 	call memhack_init()
-	// set bj_lastCreatedUnit = CreateUnit(Player(1), 'H00U', - 7000, -7000, 270.)
-	// call UnitAddItemById(bj_lastCreatedUnit, 'I04H')
-	// call UIManager_Init()
-	// return
+
 	call MHUI_DrawAttackSpeed(true)
 	call MHUI_DrawMoveSpeed(true)
 	call MHDrawCooldown_Initialize()

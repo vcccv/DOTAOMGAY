@@ -170,6 +170,10 @@ library UISystem requires ErrorMessage
             return thistype.GetPtrInstance(MHFrame_GetByName(name, createContext))
         endmethod
 
+        method GetHex takes nothing returns string
+            return "0x" + MHMath_ToHex(this.ptr)
+        endmethod
+
         method GetName takes nothing returns string
             if this.ptr == 0 then
                 return null
@@ -719,9 +723,9 @@ library UISystem requires ErrorMessage
         //*  debug
         //*
         //***************************************************************************
-        method DebugAbsPoint takes nothing returns nothing
+        method DebugAbsPoint takes string name returns nothing
             local integer i
-            local string  s = ""
+            local string  s = name
             local integer c
 
             if this.ptr == 0 then
@@ -743,40 +747,181 @@ library UISystem requires ErrorMessage
             endloop
 
             if c == 0 then
-                set s = "no abs point."
+                set s = s + ":no abs point."
             endif
 
             call BJDebugMsg(s)
         endmethod
 
-        method DebugPoint takes nothing returns nothing
-            local integer i
-            local string  s = ""
-            local integer c
-
+        private static method GetAnchorPointName takes integer index returns string
+            if index == FRAMEPOINT_TOPLEFT then
+                return "TOPLEFT    "
+            elseif index == FRAMEPOINT_TOP then
+                return "TOP        "
+            elseif index == FRAMEPOINT_TOPRIGHT then
+                return "TOPRIGHT   "
+            elseif index == FRAMEPOINT_LEFT then
+                return "LEFT       "
+            elseif index == FRAMEPOINT_CENTER then
+                return "CENTER     "
+            elseif index == FRAMEPOINT_RIGHT then
+                return "RIGHT      "
+            elseif index == FRAMEPOINT_BOTTOMLEFT then
+                return "BOTTOMLEFT "
+            elseif index == FRAMEPOINT_BOTTOM then
+                return "BOTTOM     "
+            elseif index == FRAMEPOINT_BOTTOMRIGHT then
+                return "BOTTOMRIGHT"
+            else
+                return "INVALID    "
+            endif
+        endmethod
+        
+        method GetRelativeFrame takes integer point returns thistype
             if this.ptr == 0 then
+                return 0
+            endif
+            
+            return Frame.GetPtrInstance(MHFrame_GetRelativeFrame(this.ptr, point))
+        endmethod
+
+        method DebugInfo takes string frameName returns nothing
+            local integer  i
+            local string   s
+            local string   absolutePointStr = null
+            local string   relativePointStr = null
+            local real     x
+            local real     y
+            local thistype tempFrame
+            local integer  count
+            // 新增颜色定义
+            local string   COLOR_TITLE   = "|cff00ccff" // 青色标题
+            local string   COLOR_HEADER  = "|cffFF8000" // 橙色表头
+            local string   COLOR_POINT   = "|cff00FF00" // 绿色锚点名
+            local string   COLOR_VALUE   = "|cffAAAAAA" // 灰色数值
+            local string   COLOR_TARGET   = "|cffFF69B4" // 品红用于目标框架
+            local string   COLOR_DIMENSION= "|cffFFD700"
+            local string   COLOR_VISIBLE   = "|cff00FF00" // 绿色可见状态
+            local string   COLOR_HIDDEN    = "|cffFF0000" // 红色隐藏状态
+            local string   COLOR_RESET   = "|r"
+            // 保持原有颜色配置...
+        
+            if this.ptr == 0 then
+                call BJDebugMsg(COLOR_TITLE + "Invalid frame pointer!" + COLOR_RESET)
                 return
             endif
-
-            set s = s + "Parent:" + MHMath_ToHex(MHFrame_GetParent(this.ptr)) + "\n"
-            set i = 0
-            set c = 0
-            loop
-
-                if MHFrame_GetRelativePoint(this.ptr, i) != 9 then
-                    set s = s + "Point:" + I2S(i) + " | X:" + R2S(MHFrame_GetRelativePointX(this.ptr, i))  + " , Y:" + R2S(MHFrame_GetRelativePointY(this.ptr, i))/*
-                    */ + " | TargetPoint" + I2S(MHFrame_GetRelativePoint(this.ptr, i)) + "\n"
-                    set c = c + 1
+        
+            // 框架名称处理（添加隐藏状态）
+            if StringLength(frameName) == 0 then
+                set frameName = this.GetName()
+                if StringLength(frameName) == 0 then
+                    set frameName = "Unnamed"
                 endif
+            endif
+            set s = COLOR_TITLE + "===== Frame: " + COLOR_DIMENSION + frameName + " " + COLOR_RESET + this.GetHex()
+            // 添加当前框架隐藏状态
+            if MHFrame_IsHidden(this.ptr) then
+                set s = s + " " + COLOR_HIDDEN + "[HIDDEN]" + COLOR_RESET
+            else
+                set s = s + " " + COLOR_VISIBLE + "[Visible]"
+            endif
+            set s = s + COLOR_TITLE + " =====" + COLOR_RESET + "\n"
+            
+            // 父框架信息
+            set tempFrame = this.GetParent()
+            if tempFrame != 0 then
+                set s = s + COLOR_HEADER + "Parent: " + COLOR_RESET + tempFrame.GetHex()
+                set frameName = tempFrame.GetName()
+                if StringLength(frameName) > 0 then
+                    set s = s + COLOR_VALUE + " (" + frameName + ")" + COLOR_RESET
+                endif
+                // 父框架隐藏状态
+                if MHFrame_IsHidden(tempFrame.ptr) then
+                    set s = s + " " + COLOR_HIDDEN + "[HIDDEN]" + COLOR_RESET
+                else
+                    set s = s + " " + COLOR_VISIBLE + "[Visible]"
+                endif
+                set s = s + "\n"
+            endif
+            
+            // 尺寸信息
+            set s = s + COLOR_HEADER + "Size: " + COLOR_RESET + COLOR_VALUE + "Width: " + R2SW(this.GetWidth(), 1, 3) + "  Height: " + R2SW(this.GetHeight(), 1, 3) + COLOR_RESET + "\n\n"
+        
+            set i     = 0
+            set count = 0
+        
+            // 绝对锚点检测
+            loop
+                set x = MHFrame_GetAbsolutePointX(this.ptr, i)
+                set y = MHFrame_GetAbsolutePointY(this.ptr, i)
                 
+                if x != 0. or y != 0. then
+                    set absolutePointStr = absolutePointStr +/*
+                    */ COLOR_POINT + "| " + GetAnchorPointName(i) + COLOR_RESET + " | " +/*
+                    */ COLOR_VALUE + "X: " + R2SW(x, 1, 3) + /*
+                    */ "  Y: " + R2SW(y, 1, 3) + COLOR_RESET + " |\n"
+                    set count = count + 1
+                endif
+        
                 exitwhen i == 9
                 set i = i + 1
             endloop
+        
+            // 输出逻辑
+            if count > 0 then
+                set s = s + COLOR_HEADER + "Absolute Anchors: " + COLOR_RESET + "\n"
+                set s = s + COLOR_VALUE + "--------------------------------" + COLOR_RESET + "\n"
+                set s = s + absolutePointStr
+            else
+                // 相对锚点检测
+                set i = 0
+                loop
+                    if MHFrame_GetRelativePoint(this.ptr, i) != 9 then
+                        set tempFrame = this.GetRelativeFrame(i)
+                 
+                        set x = MHFrame_GetRelativePointX(this.ptr, i)
+                        set y = MHFrame_GetRelativePointY(this.ptr, i)
+                        
+                        set relativePointStr = relativePointStr +/*
+                        */ COLOR_POINT + "| " + GetAnchorPointName(i) + COLOR_RESET + "       | " +/*
+                        */ COLOR_VALUE + "Offset: (" + COLOR_DIMENSION + R2SW(x,1,3) + COLOR_VALUE + ", " + COLOR_DIMENSION + R2SW(y,1,3) + COLOR_VALUE + ")" + COLOR_RESET
+                
+                        set relativePointStr = relativePointStr +/*
+                        */ "\n   L " + COLOR_POINT + "| " + GetAnchorPointName(MHFrame_GetRelativePoint(this.ptr, i)) + COLOR_RESET + COLOR_TARGET + "| Target: " + tempFrame.GetHex()
+                        //if StringLength(tempFrame.GetName()) > 0 then
+                        //    set relativePointStr = relativePointStr + COLOR_VALUE + " (" + tempFrame.GetName() + ")" + COLOR_RESET
+                        //endif
+                        if MHFrame_IsHidden(tempFrame.ptr) then
+                            set relativePointStr = relativePointStr + " " + COLOR_HIDDEN + "[HIDDEN]" + COLOR_RESET
+                        else
+                            set relativePointStr = relativePointStr + " " + COLOR_VISIBLE + "[Visible]"
+                        endif
 
-            if c == 0 then
-                set s = "no relative point."
+                        set relativePointStr = relativePointStr +/*
+                        */ COLOR_VALUE + "  w: " + COLOR_DIMENSION + R2SW(tempFrame.GetWidth(),1,3) +/*
+                        */ COLOR_VALUE + "  h: " + COLOR_DIMENSION + R2SW(tempFrame.GetHeight(),1,3) + COLOR_RESET
+             
+                        
+                        set count = count + 1
+                    endif
+                    
+                    exitwhen i == 9
+                    set i = i + 1
+                endloop
+                
+                if count > 0 then
+                    set s = s + COLOR_HEADER + "Relative Anchors: " + COLOR_RESET + "\n"
+                    set s = s + COLOR_VALUE + "--------------------------------" + COLOR_RESET + "\n"
+                    set s = s + relativePointStr
+                endif
             endif
-
+        
+            // 无锚点提示
+            if count == 0 then
+                set s = s + COLOR_HEADER + "No anchors set" + COLOR_RESET
+            endif
+        
+            set s = s + COLOR_TITLE + "\n===================================" + COLOR_RESET
             call BJDebugMsg(s)
         endmethod
 
@@ -786,13 +931,6 @@ library UISystem requires ErrorMessage
             endif
 
             return Frame.GetPtrInstance(MHFrame_GetSimpleButtonTexture(this.ptr, state))
-        endmethod
-        method GetRelativeFrame takes integer point returns thistype
-            if this.ptr == 0 then
-                return 0
-            endif
-            
-            return Frame.GetPtrInstance(MHFrame_GetRelativeFrame(this.ptr, point ))
         endmethod
 
     endstruct

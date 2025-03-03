@@ -69,9 +69,9 @@ scope Ezalor
         local integer UYX = LoadInteger(ObjectHashTable, h, 0)-1
         local unit u = LoadUnitHandle(ObjectHashTable, h, 0)
         local unit O8O
-        if UYX == 0 or LoadBoolean(ObjectHashTable, GetHandleId(LoadUnitHandle(ObjectHashTable, h, 1)),'A085') == false then
+        if UYX == 0 or LoadBoolean(ObjectHashTable, GetHandleId(LoadUnitHandle(ObjectHashTable, h, 1)), 'A085') == false then
             call KillUnit(u)
-            set O8O = CreateUnit(Player(15),'h070', LoadReal(ObjectHashTable, h, 0), LoadReal(ObjectHashTable, h, 1), LoadReal(ObjectHashTable, h, 2))
+            set O8O = CreateUnit(Player(15), 'h070', LoadReal(ObjectHashTable, h, 0), LoadReal(ObjectHashTable, h, 1), LoadReal(ObjectHashTable, h, 2))
             call SetUnitScale(O8O, .1, .1, .1)
             call SaveReal(ObjectHashTable, h, StringHash("scale"), .15)
             call SaveInteger(ObjectHashTable, h, 0, 61)
@@ -79,9 +79,9 @@ scope Ezalor
             call SaveUnitHandle(ObjectHashTable, h, 0, O8O)
             call SaveGroupHandle(ObjectHashTable, h, 3, AllocationGroup(209))
             call TimerStart(t, .025, true, function W2R)
-            call SaveBoolean(ObjectHashTable, GetHandleId(LoadUnitHandle(ObjectHashTable, h, 1)),'A085', false)
-            call SetPlayerAbilityAvailableEx(LoadPlayerHandle(ObjectHashTable, h, 2),'A121', false)
-            call SetPlayerAbilityAvailableEx(LoadPlayerHandle(ObjectHashTable, h, 2),'A085', true)
+            call SaveBoolean(ObjectHashTable, GetHandleId(LoadUnitHandle(ObjectHashTable, h, 1)), 'A085', false)
+            call SetPlayerAbilityAvailableEx(LoadPlayerHandle(ObjectHashTable, h, 2), 'A121', false)
+            call SetPlayerAbilityAvailableEx(LoadPlayerHandle(ObjectHashTable, h, 2), 'A085', true)
             call RemoveUnit(LoadUnitHandle(ObjectHashTable, h, 4))
             set O8O = null
             set t = null
@@ -95,20 +95,20 @@ scope Ezalor
         set u = null
     endfunction
     function IlluminateOnSpellEffect takes nothing returns nothing
-        local timer t = CreateTimer()
-        local unit u = GetTriggerUnit()
-        local player p = GetOwningPlayer(u)
-        local real x = GetWidgetX(u)
-        local real y = GetWidgetY(u)
-        local real a = Atan2(GetSpellTargetY()-y, GetSpellTargetX()-x)
-        local real x1 = x + 150* Cos(a)
-        local real y1 = y + 150* Sin(a)
+        local timer   t = CreateTimer()
+        local unit    u = GetTriggerUnit()
+        local player  p = GetOwningPlayer(u)
+        local real    x = GetWidgetX(u)
+        local real    y = GetWidgetY(u)
+        local real    a = Atan2(GetSpellTargetY()-y, GetSpellTargetX()-x)
+        local real    x1 = x + 150* Cos(a)
+        local real    y1 = y + 150* Sin(a)
         local integer h = GetHandleId(t)
-        local integer i = GetUnitAbilityLevel(u,'A085')* 10+ 10
-        call SetPlayerAbilityAvailableEx(p,'A085', false)
-        call SetPlayerAbilityAvailableEx(p,'A121', true)
-        call UnitAddPermanentAbility(u,'A121')
-        call SaveUnitHandle(ObjectHashTable, h, 0, CreateUnit(Player(15),'u00J', x1, y1, a * bj_RADTODEG))
+        local integer i = GetUnitAbilityLevel(u, 'A085')* 10+ 10
+        call SetPlayerAbilityAvailableEx(p, 'A085', false)
+        call SetPlayerAbilityAvailableEx(p, 'A121', true)
+        call UnitAddPermanentAbility(u, 'A121')
+        call SaveUnitHandle(ObjectHashTable, h, 0, CreateUnit(Player(15), 'u00J', x1, y1, a * bj_RADTODEG))
         call SavePlayerHandle(ObjectHashTable, h, 2, p)
         call SaveInteger(ObjectHashTable, h, 0, i)
         call SaveInteger(ObjectHashTable, h, 1, i)
@@ -119,12 +119,12 @@ scope Ezalor
         call SaveReal(ObjectHashTable, h, 4, 26.25 * Sin(a))
         if GetUnitTypeId(u)=='e00E' then
             call SaveUnitHandle(ObjectHashTable, h, 1, PlayerHeroes[GetPlayerId(p)])
-            call SaveBoolean(ObjectHashTable, GetHandleId(PlayerHeroes[GetPlayerId(p)]),'A085', true)
+            call SaveBoolean(ObjectHashTable, GetHandleId(PlayerHeroes[GetPlayerId(p)]), 'A085', true)
         else
             call SaveUnitHandle(ObjectHashTable, h, 1, u)
-            call SaveBoolean(ObjectHashTable, GetHandleId(u),'A085', true)
+            call SaveBoolean(ObjectHashTable, GetHandleId(u), 'A085', true)
             if GetUnitTypeId(u)>='H06W' and GetUnitTypeId(u)<='H06Y' then
-                set u = CreateUnit(p,'h06Z', x, y, a * bj_RADTODEG)
+                set u = CreateUnit(p, 'h06Z', x, y, a * bj_RADTODEG)
                 call SetUnitX(u, x)
                 call SetUnitY(u, y)
                 call SetUnitAnimation(u, "spell")

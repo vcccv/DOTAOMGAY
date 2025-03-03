@@ -24,8 +24,8 @@ Frame "SIMPLEFRAME" "TownPortalScrollFrame"
             SetPoint CENTER, "TownPortalScrollFrame", CENTER, 0, 0,
             FontJustificationH JUSTIFYCENTER,
             FontJustificationV JUSTIFYMIDDLE,
-            FontShadowOffset 0.001 -0.001,
             Font "MasterFont", 0.013,
+            FontShadowOffset 0.001 -0.001,
             TextLength 3,
         }
     }

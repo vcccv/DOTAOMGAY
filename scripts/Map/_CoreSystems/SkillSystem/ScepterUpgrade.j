@@ -309,7 +309,7 @@ library ScepterUpgradeSystem requires SkillSystem, ItemSystem
         set PlayerExtraNetWorth[pid] = PlayerExtraNetWorth[pid] + GetItemGoldCostById(ItemRealId[Item_AghanimBlessing])
         set PlayerItemTotalGoldCostDirty[pid] = true
         
-        call UnitAddAghanimGiftable(whichUnit)
+        call UnitAddAghanimBlessing(whichUnit)
   
         set whichUnit = null
         set whichItem = null

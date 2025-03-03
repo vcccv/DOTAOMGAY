@@ -47,7 +47,9 @@ scope Alchemist
                         call RemoveItem(it)
                         call DisplayTimedTextToPlayer(targetPlayer, 0, 0, 5, /*
                         */ GetPlayerName(GetOwningPlayer(whichUnit)) + "给予了你阿哈利姆福佑，现在销毁神杖并退还|cfffffa00" + I2S(goldCost)+ "|r 金钱。")
-		                call SetPlayerState(targetPlayer, PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(targetPlayer, PLAYER_STATE_RESOURCE_GOLD) + goldCost)
+		                //call SetPlayerState(targetPlayer, PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(targetPlayer, PLAYER_STATE_RESOURCE_GOLD) + goldCost)
+                        
+                        call PlayerAddUnitUnreliableGold(targetPlayer, targetUnit, goldCost)
                     endif
                     set i = i + 1
                 endloop
@@ -58,9 +60,12 @@ scope Alchemist
                     set PlayerExtraNetWorth[pid] = PlayerExtraNetWorth[pid] + goldCost
                     call DisplayTimedTextToPlayer(targetPlayer, 0, 0, 5, /*
                     */ GetPlayerName(GetOwningPlayer(whichUnit)) + "给予了你阿哈利姆福佑，现在退还之前升级消耗的|cfffffa00" + I2S(goldCost)+ "|r 金钱。")
-                    call SetPlayerState(targetPlayer, PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(targetPlayer, PLAYER_STATE_RESOURCE_GOLD) + goldCost)
+                    
+                    call PlayerAddUnitUnreliableGold(targetPlayer, targetUnit, goldCost)
                 endif
             endif
+
+            call UnitAddAghanimGiftable(targetUnit)
 
             call SilentRemoveItem(GetAbilitySourceItem(GetSpellAbility()))
             // if GetOwningPlayer(targetUnit) != GetOwningPlayer(whichUnit) then
