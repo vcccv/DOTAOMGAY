@@ -90,7 +90,7 @@ scope Morphling
             set targUnit = null
         endif
         set distance = GetDistanceBetween(x, y, tx, ty)
-        set sw = Shockwave.CreateByDistance(whichUnit, x, y, angle, distance)
+        set sw = Shockwave.CreateFromUnit(whichUnit, angle, distance)
         call sw.SetSpeed(1250.)
         set sw.minRadius = 200.
         set sw.maxRadius = 200.

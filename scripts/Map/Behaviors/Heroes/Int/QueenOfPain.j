@@ -67,7 +67,7 @@ scope QueenOfPain
             set angle = RadianBetweenXY(x, y, tx, ty)
         endif
   
-        set sw = Shockwave.CreateByDistance(whichUnit, x, y, angle, distance)
+        set sw = Shockwave.CreateFromUnit(whichUnit, angle, distance)
         call sw.SetSpeed(1200.)
         set sw.minRadius = 100.
         set sw.maxRadius = 450.

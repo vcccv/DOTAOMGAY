@@ -42,7 +42,7 @@ scope Magnus
                 return true
             endif
             
-            set new = Shockwave.CreateByDistance(sw.owner, sw.x, sw.y, sw.angle + 180. * bj_DEGTORAD, sw.distance)
+            set new = Shockwave.Create(sw.owner, sw.x, sw.y, sw.angle + 180. * bj_DEGTORAD, sw.distance)
             call new.SetSpeed(sw.speed)
             call new.SetColor(255, 100, 0, 255)
             set new.minRadius = sw.minRadius
@@ -97,7 +97,7 @@ scope Magnus
             set targUnit = null
         endif
 
-        set sw = Shockwave.CreateByDistance(whichUnit, x, y, angle, distance)
+        set sw = Shockwave.CreateFromUnit(whichUnit, angle, distance)
         call sw.SetSpeed(1050.)
         set sw.minRadius = 150.
         set sw.maxRadius = 150.
@@ -303,7 +303,7 @@ scope Magnus
         call IssueImmediateOrderById(d, 852127)
 
         if isUpgraded then
-            set sw = Shockwave.CreateByDistance(u, x, y, angle, distance)
+            set sw = Shockwave.CreateFromUnit(u, angle, distance)
             call sw.SetSpeed(1050.)
             set sw.minRadius = 150.
             set sw.maxRadius = 150.
@@ -312,7 +312,7 @@ scope Magnus
             set MShockWave(sw).damage = 175
             call MShockWave.Launch(sw)
 
-            set sw = Shockwave.CreateByDistance(u, x, y, angle + 15.* bj_DEGTORAD, distance)
+            set sw = Shockwave.CreateFromUnit(u, angle + 15.* bj_DEGTORAD, distance)
             call sw.SetSpeed(1050.)
             set sw.minRadius = 150.
             set sw.maxRadius = 150.
@@ -321,7 +321,7 @@ scope Magnus
             set MShockWave(sw).damage = 175
             call MShockWave.Launch(sw)
 
-            set sw = Shockwave.CreateByDistance(u, x, y, angle - 15.* bj_DEGTORAD, distance)
+            set sw = Shockwave.CreateFromUnit(u, angle - 15.* bj_DEGTORAD, distance)
             call sw.SetSpeed(1050.)
             set sw.minRadius = 150.
             set sw.maxRadius = 150.

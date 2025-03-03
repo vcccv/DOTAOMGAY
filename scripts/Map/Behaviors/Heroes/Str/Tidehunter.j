@@ -71,7 +71,7 @@ scope Tidehunter
                 endif
                 set targUnit = null
             endif
-            set sw = Shockwave.CreateByDistance(whichUnit, x, y, angle, distance)
+            set sw = Shockwave.CreateFromUnit(whichUnit, angle, distance)
             call sw.SetSpeed(1500.)
             call sw.SetModelScale(2.0)
             set sw.modelScale = 2.0

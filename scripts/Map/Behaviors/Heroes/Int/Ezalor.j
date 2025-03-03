@@ -174,7 +174,7 @@ scope Ezalor
 
             set tx = SimpleTickTable[tick].real['x']
             set ty = SimpleTickTable[tick].real['y']
-            set sw = Shockwave.CreateByDistance(whichUnit, tx, ty, SimpleTickTable[tick].real['a'], distance)
+            set sw = Shockwave.Create(tx, ty, SimpleTickTable[tick].real['a'], distance)
             call sw.SetModelScale(1.0)
             call sw.SetSpeed(900.)
             set sw.minRadius = 400.

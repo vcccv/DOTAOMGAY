@@ -136,14 +136,35 @@ library ShockwaveLib /*
             call MHEffect_SetColorEx(this.shockwaveFX, a, r, g, b)
         endmethod
 
-        static method CreateByDistance takes unit owner, real startX, real startY, real angle, real distance returns thistype
+        // 根据单位位置和单位射弹偏移创建震荡波
+        static method CreateFromUnit takes unit owner, real angle, real distance returns thistype
             local thistype this = allocate()
+            local real startX = GetUnitX(owner)
+            local real startY = GetUnitY(owner)
 
             call this.ResetMembers()
             set this.owner = owner
             set this.angle = angle
             set this.x = startX + MHUnit_GetData(owner, UNIT_DATA_LAUNCH_X) * Cos(angle)
             set this.y = startY + MHUnit_GetData(owner, UNIT_DATA_LAUNCH_Y) * Sin(angle)
+            set this.targetX = this.x + distance * Cos(angle)
+            set this.targetY = this.y + distance * Sin(angle)
+            set this.distance = distance
+            set this.allocated = true
+            set this.shockwaveFX = AddSpecialEffect(null, this.x, this.y)
+
+            return this
+        endmethod
+
+        // 指定坐标创建震荡波
+        static method Create takes unit owner, real startX, real startY, real angle, real distance returns thistype
+            local thistype this = allocate()
+
+            call this.ResetMembers()
+            set this.owner = owner
+            set this.angle = angle
+            set this.x = startX
+            set this.y = startY
             set this.targetX = this.x + distance * Cos(angle)
             set this.targetY = this.y + distance * Sin(angle)
             set this.distance = distance

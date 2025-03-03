@@ -66,7 +66,7 @@ scope DragonKnight
             endif
             set targUnit = null
         endif
-        set sw = Shockwave.CreateByDistance(whichUnit, x, y, angle, distance)
+        set sw = Shockwave.CreateFromUnit(whichUnit, angle, distance)
         call sw.SetSpeed(1050.)
         call sw.FixTimeScale(0.5)
         set sw.minRadius = 150.

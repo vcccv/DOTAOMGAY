@@ -50,7 +50,7 @@ scope Creeps
             set targUnit = null
         endif
 
-        set sw = Shockwave.CreateByDistance(whichUnit, x, y, angle, distance)
+        set sw = Shockwave.CreateFromUnit(whichUnit, angle, distance)
         call sw.SetSpeed(1050.)
         set sw.minRadius = 180.
         set sw.maxRadius = 200.

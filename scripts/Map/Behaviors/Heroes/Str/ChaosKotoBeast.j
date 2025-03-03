@@ -69,8 +69,8 @@ scope ChaosKotoBeast
     function SpitOnSpellEffect takes nothing returns nothing
         local unit      whichUnit = GetRealSpellUnit(GetTriggerUnit())
         local unit      targUnit  = GetSpellTargetUnit()
-        local real      x = GetUnitX(whichUnit)
-        local real      y = GetUnitY(whichUnit)
+        local real      x         = GetUnitX(whichUnit)
+        local real      y         = GetUnitY(whichUnit)
         local real      tx
         local real      ty
         local real      angle
@@ -96,7 +96,7 @@ scope ChaosKotoBeast
             endif
             set targUnit = null
         endif
-        set sw = Shockwave.CreateByDistance(whichUnit, x, y, angle, distance)
+        set sw = Shockwave.CreateFromUnit(whichUnit, angle, distance)
         call sw.SetSpeed(1500.)
         set sw.minRadius = 175.
         set sw.maxRadius = 250.

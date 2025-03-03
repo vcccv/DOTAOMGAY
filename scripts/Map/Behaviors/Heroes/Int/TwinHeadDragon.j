@@ -98,7 +98,7 @@ scope TwinHeadDragon
         local integer   level    = table[tick][1]
 
         local Shockwave sw
-        set sw = Shockwave.CreateByDistance(table[tick].unit[2], x, y, angle, distance)
+        set sw = Shockwave.Create(table[tick].unit[2], x, y, angle, distance)
         call sw.SetSpeed(1050.)
         set sw.minRadius = 200.
         set sw.maxRadius = 250.
@@ -113,8 +113,8 @@ scope TwinHeadDragon
     function DualBreathOnSpellEffect takes nothing returns nothing
         local unit       whichUnit = GetRealSpellUnit(GetTriggerUnit())
         local unit       targUnit  = GetSpellTargetUnit()
-        local real       x = GetUnitX(whichUnit)
-        local real       y = GetUnitY(whichUnit)
+        local real       x         = GetUnitX(whichUnit)
+        local real       y         = GetUnitY(whichUnit)
         local real       tx
         local real       ty
         local real       angle
@@ -141,7 +141,7 @@ scope TwinHeadDragon
             endif
             set targUnit = null
         endif
-        set sw = Shockwave.CreateByDistance(whichUnit, x, y, angle, distance)
+        set sw = Shockwave.CreateFromUnit(whichUnit, angle, distance)
         call sw.SetSpeed(1050.)
         set sw.minRadius = 200.
         set sw.maxRadius = 250.
@@ -154,8 +154,8 @@ scope TwinHeadDragon
         set table = SimpleTick.GetTable()
         set table[tick][1] = level
         set table[tick].unit[2] = whichUnit
-        set table[tick].real['x'] = x
-        set table[tick].real['y'] = y
+        set table[tick].real['x'] = x + MHUnit_GetData(whichUnit, UNIT_DATA_LAUNCH_X) * Cos(angle)
+        set table[tick].real['y'] = y + MHUnit_GetData(whichUnit, UNIT_DATA_LAUNCH_Y) * Sin(angle)
         set table[tick].real['a'] = angle
         set table[tick].real['d'] = distance
 

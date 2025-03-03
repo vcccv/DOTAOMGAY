@@ -158,7 +158,7 @@ scope Invoker
         endif
 
         if not isUpgraded then
-            set sw = Shockwave.CreateByDistance(whichUnit, x, y, angle, distance)
+            set sw = Shockwave.CreateFromUnit(whichUnit, angle, distance)
             call sw.SetSpeed(1100.)
             call sw.SetModelScale(4.)
             set DeafeningBlast(sw).instance = 0
@@ -174,7 +174,7 @@ scope Invoker
             set i   = 0
             set max = 12
             loop
-                set sw = Shockwave.CreateByDistance(whichUnit, x, y, angle + 30. * bj_DEGTORAD * i, distance)
+                set sw = Shockwave.CreateFromUnit(whichUnit, angle + 30. * bj_DEGTORAD * i, distance)
                 call sw.SetSpeed(1100.)
                 call sw.SetModelScale(4.)
                 set DeafeningBlast(sw).instance = instance

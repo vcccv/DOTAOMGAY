@@ -61,7 +61,7 @@ scope DeathProphet
             endif
             set targUnit = null
         endif
-        set sw = Shockwave.CreateByDistance(whichUnit, x, y, angle, distance)
+        set sw = Shockwave.CreateFromUnit(whichUnit, angle, distance)
         call sw.SetSpeed(1100.)
         set sw.minRadius = 110.
         set sw.maxRadius = 300.

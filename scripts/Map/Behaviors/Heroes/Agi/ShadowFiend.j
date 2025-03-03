@@ -48,7 +48,7 @@ scope ShadowFiend
             set x     = GetUnitX(sw.owner) + sw.distance * Cos(sw.angle)
             set y     = GetUnitY(sw.owner) + sw.distance * Sin(sw.angle)
             set angle = sw.angle + 180. * bj_DEGTORAD
-            set new   = Shockwave.CreateByDistance(sw.owner, x, y, angle, sw.distance)
+            set new   = Shockwave.Create(sw.owner, x, y, angle, sw.distance)
             call new.SetSpeed(sw.speed)
             set new.minRadius = sw.maxRadius
             set new.maxRadius = sw.minRadius
@@ -182,7 +182,7 @@ scope ShadowFiend
         exitwhen count > max
             set angle = bj_DEGTORAD * count * offset
             //call IssuePointOrderById(d, 852218, x + 50 * Cos(bj_DEGTORAD * count * offset), y + 50 * Sin(bj_DEGTORAD * count * offset))
-            set sw = Shockwave.CreateByDistance(u, x, y, angle, distance)
+            set sw = Shockwave.CreateFromUnit(u, angle, distance)
             call sw.SetSpeed(700.)
             set sw.minRadius = 125.
             set sw.maxRadius = 425.
