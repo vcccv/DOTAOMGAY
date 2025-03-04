@@ -17,19 +17,6 @@ Frame "SIMPLEFRAME" "TownPortalScrollFrame"
         Height 0.0266,
     }
 
-    Frame "SIMPLEFRAME" "TownPortalScrollCooldownIndicator" {
-        DecorateFileNames,
-        
-        String "TownPortalScrollCooldownString" {
-            SetPoint CENTER, "TownPortalScrollFrame", CENTER, 0, 0,
-            FontJustificationH JUSTIFYCENTER,
-            FontJustificationV JUSTIFYMIDDLE,
-            Font "MasterFont", 0.013,
-            FontShadowOffset 0.001 -0.001,
-            TextLength 3,
-        }
-    }
-
     Frame "SIMPLEFRAME" "TownPortalScrollChargesFrame" {
         DecorateFileNames,
 
@@ -46,10 +33,21 @@ Frame "SIMPLEFRAME" "TownPortalScrollFrame"
             FontJustificationV JUSTIFYMIDDLE,
         }
     }
+   
 }
 
 Frame "SPRITE" "TownPortalScrollCooldownSprite" {
     LayerStyle "IGNORETRACKEVENTS",
     BackgroundArt "UI\feedback\cooldown\ui-cooldown-indicator.mdx",
     SpriteScale 0.7 0.7 0.7,
+
+    Frame "TEXT" "TownPortalScrollCooldownText" {
+        DecorateFileNames,
+        SetPoint CENTER, "TownPortalScrollCooldownSprite", CENTER, 0, 0,
+        FontJustificationH JUSTIFYLEFT,
+        FontJustificationV JUSTIFYMIDDLE,
+        FontFlags "HIGHLIGHTONMOUSEOVER",
+        FrameFont "MasterFont", 0.013, "OUTLINE",
+        FontShadowOffset 0.0013 -0.0013,
+    }
 }

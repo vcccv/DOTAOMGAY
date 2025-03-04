@@ -35,4 +35,14 @@ Frame "SPRITE" "GlyphCooldownSprite" {
     LayerStyle "IGNORETRACKEVENTS",
     BackgroundArt "UI\feedback\cooldown\ui-cooldown-indicator.mdx",
     SpriteScale 0.6 0.6 0.6,
+
+    Frame "TEXT" "GlyphCooldownText" {
+        DecorateFileNames,
+        SetPoint CENTER, "GlyphCooldownSprite", CENTER, 0, 0,
+        FontJustificationH JUSTIFYLEFT,
+        FontJustificationV JUSTIFYMIDDLE,
+        FontFlags "HIGHLIGHTONMOUSEOVER",
+        FrameFont "MasterFont", 0.012, "OUTLINE",
+        FontShadowOffset 0.0012 -0.0012,
+    }
 }

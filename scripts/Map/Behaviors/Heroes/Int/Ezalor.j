@@ -162,8 +162,8 @@ scope Ezalor
         local unit       whichUnit  = SimpleTickTable[tick].unit['s']
         local boolean    isUpgraded = SimpleTickTable[tick].boolean['u']
         local boolean    isRelease  = not LoadBoolean(ObjectHashTable, GetHandleId(whichUnit), 'A085')
-        local real       tx
-        local real       ty
+        local real       sx
+        local real       sy
         local Shockwave  sw
         local real       distance
         // 
@@ -172,9 +172,9 @@ scope Ezalor
 
             set distance = 1550. + GetUnitCastRangeBonus(whichUnit)
 
-            set tx = SimpleTickTable[tick].real['x']
-            set ty = SimpleTickTable[tick].real['y']
-            set sw = Shockwave.Create(tx, ty, SimpleTickTable[tick].real['a'], distance)
+            set sx = SimpleTickTable[tick].real['x']
+            set sy = SimpleTickTable[tick].real['y']
+            set sw = Shockwave.Create(whichUnit, sx, sy, SimpleTickTable[tick].real['a'], distance)
             call sw.SetModelScale(1.0)
             call sw.SetSpeed(900.)
             set sw.minRadius = 400.
@@ -229,8 +229,8 @@ scope Ezalor
         set SimpleTickTable[tick].unit['s']    = whichUnit
         set SimpleTickTable[tick].unit['d']    = CreateUnit(Player(15), 'u00J', orbX, orbY, angle * bj_RADTODEG)
         set SimpleTickTable[tick].real['a']    = angle
-        set SimpleTickTable[tick].real['x']    = GetSpellTargetY()
-        set SimpleTickTable[tick].real['y']    = GetSpellTargetX()
+        set SimpleTickTable[tick].real['x']    = orbX
+        set SimpleTickTable[tick].real['y']    = orbY
         set SimpleTickTable[tick].integer['m'] = maxCount
 
         call SaveBoolean(ObjectHashTable, GetHandleId(whichUnit), 'A085', true)

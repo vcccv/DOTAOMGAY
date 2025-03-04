@@ -32526,7 +32526,6 @@ animnames=stand,channel
 name="回城卷轴"
 Tip=回城卷轴
 Ubertip=召唤可以操控的龙卷风对周围150/600范围内的敌方单位造成每秒45/15点伤害，并降低其15/15%的攻击/移动速度。|n|n|cffff0303需要持续施法|r|n|cffff0303减速效果无视魔法免疫|r|n|n|cff99ccff施法距离：|r500|n|cff99ccff持续时间：|r30秒|n|cff99ccff冷却时间：|r120秒
-Hotkey=F
 Researchtip=学习 龙卷风(|cffffcc00F|r)
 researchubertip="Summons a fierce controllable Tornado that slows enemy units' movement speed, randomly tosses enemy ground units into the air and damages enemy buildings.|nLasts seconds."
 researchhotkey=F

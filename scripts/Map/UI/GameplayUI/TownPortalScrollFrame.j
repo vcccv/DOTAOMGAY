@@ -1,5 +1,5 @@
 
-library TownPortalScrollFrame requires UISystem
+library TownPortalScrollFrame requires UISystem, AbilityUtils
     
     globals
         private Frame TownPortalScrollFrame
@@ -10,9 +10,22 @@ library TownPortalScrollFrame requires UISystem
         private Frame TownPortalScrollChargesString
 
         private Frame TownPortalScrollCooldownSprite
-        private Frame TownPortalScrollCooldownString
+        private Frame TownPortalScrollCooldownText
         private boolean IsTownPortalScrollButtonEnabled = true
+        
+        private SimpleToolTip ToolTip
     endglobals
+
+    function TownPortalScrollFrameUpdateToolTip takes ability whichAbility returns nothing
+        // if Frame.GetUnderCursor() != TownPortalScrollButton then
+        //     return
+        // endif
+        
+        set ToolTip.TipName  = GetAbilityTooltip(whichAbility)
+        set ToolTip.UberTip  = GetAbilityUberTooltip(whichAbility)
+        set ToolTip.ManaCost = GetAbilityManaCost(whichAbility)
+        set ToolTip.Cooldown = GetAbilityCooldown(whichAbility)
+    endfunction
 
     function SetTownPortalScrollCooldownSpriteProgress takes real progress returns nothing
         call TownPortalScrollCooldownSprite.SetAnimateOffset(progress)
@@ -26,12 +39,12 @@ library TownPortalScrollFrame requires UISystem
             set progress = 1 - ( cooldownRemaining / cooldown )
         endif
         if cooldownRemaining < 1. then
-            call TownPortalScrollCooldownString.SetText(R2SW(cooldownRemaining, 7, 2))
+            call TownPortalScrollCooldownText.SetText(R2SW(cooldownRemaining, 7, 2))
         else
-            call TownPortalScrollCooldownString.SetText(I2S(R2I(cooldownRemaining) + 1))
+            call TownPortalScrollCooldownText.SetText(I2S(R2I(cooldownRemaining) + 1))
         endif
         call SetTownPortalScrollCooldownSpriteProgress(progress)
-        call TownPortalScrollCooldownSprite.SetVisible(true)
+        call TownPortalScrollCooldownSprite.SetVisible(progress != 1.)
     endfunction
 
     function SetTownPortalScrollCharges takes integer charges returns nothing
@@ -59,20 +72,6 @@ library TownPortalScrollFrame requires UISystem
         call TownPortalScrollCooldownSprite.SetVisible(show)
     endfunction
 
-    private function ButtonOnDown takes nothing returns boolean
-        if MHEvent_GetKey() != MOUSE_BUTTON_TYPE_LEFT then
-            return false
-        endif
-        call TownPortalScrollBackground.SetSize(0.02527, 0.02527)
-        return false
-    endfunction
-    private function ButtonOnUp takes nothing returns boolean
-        if MHEvent_GetKey() != MOUSE_BUTTON_TYPE_LEFT then
-            return false
-        endif
-        call TownPortalScrollBackground.SetSize(0.0266, 0.0266)
-        return false
-    endfunction
     private function ButtonOnClick takes nothing returns boolean
         if MHEvent_GetKey() != MOUSE_BUTTON_TYPE_LEFT then
             return false
@@ -90,7 +89,7 @@ library TownPortalScrollFrame requires UISystem
         set TownPortalScrollCooldownSprite = gameUI.CreateFrame("TownPortalScrollCooldownSprite", 0, 0)
         call TownPortalScrollFrame.SetAbsPoint(FRAMEPOINT_CENTER, 0.6, 0.1315)
         //
-        set TownPortalScrollCooldownString       = Frame.GetFrameByName("TownPortalScrollCooldownString", 0)
+        set TownPortalScrollCooldownText         = Frame.GetFrameByName("TownPortalScrollCooldownText", 0)
         set TownPortalScrollButton               = Frame.GetFrameByName("TownPortalScrollButton", 0)
         
         set TownPortalScrollChargesString        = Frame.GetFrameByName("TownPortalScrollChargesString", 0)
@@ -101,14 +100,12 @@ library TownPortalScrollFrame requires UISystem
         call TownPortalScrollCooldownSprite.SetAllPoints(TownPortalScrollFrame)
         call TownPortalScrollCooldownSprite.SetSpriteAnimate(0, 0)
         call TownPortalScrollCooldownSprite.SetAnimateOffset(0.5)
-        
-        set trig = CreateTrigger()
-        call TriggerAddCondition(trig, Condition(function ButtonOnDown))
-        call MHFrameEvent_Register(trig, TownPortalScrollButton.GetPtr(), EVENT_ID_FRAME_MOUSE_DOWN)
+        call TownPortalScrollCooldownSprite.SetVisible(false)
 
-        set trig = CreateTrigger()
-        call TriggerAddCondition(trig, Condition(function ButtonOnUp))
-        call MHFrameEvent_Register(trig, TownPortalScrollButton.GetPtr(), EVENT_ID_FRAME_MOUSE_UP)
+
+        set ToolTip = SimpleToolTip.RegisterToolTip(TownPortalScrollButton)
+        
+        call TownPortalScrollButton.SetPushedOffsetTexture(TownPortalScrollBackground, MOUSE_BUTTON_TYPE_LEFT, 0.95)
 
         set trig = CreateTrigger()
         call TriggerAddCondition(trig, Condition(function ButtonOnClick))

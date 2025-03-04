@@ -14,6 +14,29 @@ library AbilityUtils requires Table, Base
         return MHAbility_GetDefDataInt(GetAbilityId(whichAbility), ABILITY_DEF_DATA_BASE_ID)
     endfunction
 
+    function GetAbilityTooltip takes ability whichAbility returns string
+        return MHAbility_GetAbilityCustomLevelDataStr(whichAbility, GetAbilityLevel(whichAbility), ABILITY_LEVEL_DEF_DATA_TIP)
+    endfunction
+    function GetAbilityUberTooltip takes ability whichAbility returns string
+        return MHAbility_GetAbilityCustomLevelDataStr(whichAbility, GetAbilityLevel(whichAbility), ABILITY_LEVEL_DEF_DATA_UBERTIP)
+    endfunction
+    function GetAbilityManaCost takes ability whichAbility returns integer
+        return MHAbility_GetAbilityCustomLevelDataInt(whichAbility, GetAbilityLevel(whichAbility), ABILITY_LEVEL_DEF_DATA_MANA_COST)
+    endfunction
+    function GetAbilityCooldown takes ability whichAbility returns real
+        return MHAbility_GetAbilityCustomLevelDataReal(whichAbility, GetAbilityLevel(whichAbility), ABILITY_LEVEL_DEF_DATA_COOLDOWN)
+    endfunction
+
+    function GetAbilityTooltipById takes integer abilId, integer level returns string
+        return MHAbility_GetLevelDefDataStr(abilId, level, ABILITY_LEVEL_DEF_DATA_TIP)
+    endfunction
+    function GetAbilityUberTooltipById takes integer abilId, integer level returns string
+        return MHAbility_GetLevelDefDataStr(abilId, level, ABILITY_LEVEL_DEF_DATA_UBERTIP)
+    endfunction
+    function GetAbilityCooldownById takes integer abilId, integer level returns real
+        return MHAbility_GetLevelDefDataReal(abilId, level, ABILITY_LEVEL_DEF_DATA_COOLDOWN)
+    endfunction
+
     function GetAbilityReqLevelById takes integer abilId returns integer
         return MHAbility_GetDefDataInt(abilId, ABILITY_DEF_DATA_REQ_LEVEL)
     endfunction

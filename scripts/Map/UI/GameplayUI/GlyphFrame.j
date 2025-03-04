@@ -1,5 +1,5 @@
 
-library GlyphFrame requires UISystem
+library GlyphFrame requires UISystem, AbilityUtils
     
     globals
         private Frame GlyphFrame
@@ -9,7 +9,9 @@ library GlyphFrame requires UISystem
         private Frame GlyphBackground
 
         private Frame GlyphCooldownSprite
-        private Frame GlyphCooldownString
+        private Frame GlyphCooldownText
+
+        private SimpleToolTip ToolTip
     endglobals
 
     function SetGlyphCooldownSpriteProgress takes real progress returns nothing
@@ -24,12 +26,12 @@ library GlyphFrame requires UISystem
             set progress = 1 - ( cooldownRemaining / cooldown )
         endif
         if cooldownRemaining < 1. then
-            call GlyphCooldownString.SetText(R2SW(cooldownRemaining, 7, 2))
+            call GlyphCooldownText.SetText(R2SW(cooldownRemaining, 7, 2))
         else
-            call GlyphCooldownString.SetText(I2S(R2I(cooldownRemaining) + 1))
+            call GlyphCooldownText.SetText(I2S(R2I(cooldownRemaining) + 1))
         endif
         call SetGlyphCooldownSpriteProgress(progress)
-        call GlyphCooldownSprite.SetVisible(true)
+        call GlyphCooldownSprite.SetVisible(progress != 1.)
     endfunction
 
     function IsGlyphFrameVisible takes nothing returns boolean
@@ -51,40 +53,24 @@ library GlyphFrame requires UISystem
         call GlyphCooldownSprite.SetVisible(show)
     endfunction
 
-    private function ButtonOnDown takes nothing returns boolean
-        call BJDebugMsg(I2S(MHEvent_GetKey()))
-        if MHEvent_GetKey() != MOUSE_BUTTON_TYPE_LEFT then
-            return false
-        endif
-        call GlyphBackground.SetSize(0.02166, 0.02166)
-        return false
-    endfunction
-    private function ButtonOnUp takes nothing returns boolean
-        if MHEvent_GetKey() != MOUSE_BUTTON_TYPE_LEFT then
-            return false
-        endif
-        call GlyphBackground.SetSize(0.0228, 0.0228)
-        return false
-    endfunction
     private function ButtonOnClick takes nothing returns boolean
         if MHEvent_GetKey() != MOUSE_BUTTON_TYPE_LEFT then
             return false
         endif
-        call BJDebugMsg("点了")
         call MHGame_ExecuteFunc("GlyphButtonOnClick")
         return false
     endfunction
 
     function GlyphFrame_Init takes nothing returns nothing
         local trigger trig
-        local Frame gameUI     = Frame.GetPtrInstance(MHUI_GetGameUI())
-        local Frame commandBar = Frame.GetPtrInstance(MHUI_GetConsoleUI())
+        local Frame gameUI = Frame.GetPtrInstance(MHUI_GetGameUI())
+        local Frame parent = Frame.GetPtrInstance(MHUI_GetConsoleUI())
         //
-        set GlyphFrame          = commandBar.CreateSimpleFrame("GlyphFrame", 0)
+        set GlyphFrame          = parent.CreateSimpleFrame("GlyphFrame", 0)
         set GlyphCooldownSprite = gameUI.CreateFrame("GlyphCooldownSprite", 0, 0)
         call GlyphFrame.SetAbsPoint(FRAMEPOINT_TOPLEFT, 0.154, 0.028)
         //
-        set GlyphCooldownString       = Frame.GetFrameByName("GlyphCooldownString", 0)
+        set GlyphCooldownText         = Frame.GetFrameByName("GlyphCooldownText", 0)
 
         set GlyphButton               = Frame.GetFrameByName("GlyphButton", 0)
         set GlyphBackground           = Frame.GetFrameByName("GlyphBackground", 0)
@@ -98,14 +84,13 @@ library GlyphFrame requires UISystem
         call GlyphCooldownSprite.SetAllPoints(GlyphFrame)
         call GlyphCooldownSprite.SetSpriteAnimate(0, 0)
         call GlyphCooldownSprite.SetAnimateOffset(0.5)
-        
-        set trig = CreateTrigger()
-        call TriggerAddCondition(trig, Condition(function ButtonOnDown))
-        call MHFrameEvent_Register(trig, GlyphButton.GetPtr(), EVENT_ID_FRAME_MOUSE_DOWN)
 
-        set trig = CreateTrigger()
-        call TriggerAddCondition(trig, Condition(function ButtonOnUp))
-        call MHFrameEvent_Register(trig, GlyphButton.GetPtr(), EVENT_ID_FRAME_MOUSE_UP)
+        set ToolTip = SimpleToolTip.RegisterToolTip(GlyphButton)
+        set ToolTip.TipName  = GetAbilityTooltipById('A141', 1)
+        set ToolTip.UberTip  = GetAbilityUberTooltipById('A141', 1)
+        set ToolTip.Cooldown = GetAbilityCooldownById('A141', 1)
+
+        call GlyphButton.SetPushedOffsetTexture(GlyphBackground, MOUSE_BUTTON_TYPE_LEFT, 0.95)
 
         set trig = CreateTrigger()
         call TriggerAddCondition(trig, Condition(function ButtonOnClick))

@@ -445,7 +445,7 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility
         // call BJDebugMsg("MHUIData_GetCommandButtonItem(itemButton):" + I2S(GetHandleId(MHUIData_GetCommandButtonItem(itemButton))))
         // call BJDebugMsg("name:" + GetItemName(MHUIData_GetCommandButtonItem(itemButton)))
         if MHMsg_IsKeyDown(OSKEY_ALT) and MHEvent_GetKey() == 1 then
-            call OnInventoryPing(MHPlayer_GetSelectUnit(), UnitItemInSlot(MHPlayer_GetSelectUnit(), itemSlot - 1), itemButton)
+            call OnInventoryPing(MHPlayer_GetSelectUnit(), MHUIData_GetCommandButtonItem(itemButton), itemButton)
             call MHEvent_SetKey(-1)
         endif
         /*  MHUIData_GetCommandButtonItem(itemButton)*/ 

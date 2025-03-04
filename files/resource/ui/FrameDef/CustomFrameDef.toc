@@ -1,3 +1,2 @@
 UI\FrameDef\UI\TownPortalScrollFrame.fdf
 UI\FrameDef\UI\GlyphFrame.fdf
-UI\FrameDef\UI\ToolTipFrame.fdf

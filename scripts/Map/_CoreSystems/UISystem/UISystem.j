@@ -95,14 +95,30 @@ library UISystem requires ErrorMessage
             return newFrame
         endmethod
 
-        method CreateFrameByType takes string typeName, string name, string inherits, integer createContext returns thistype
+        method CreateSimpleFontString takes nothing returns thistype
+            static if DEBUG_MODE then
+                call ThrowError(this.ptr == 0, "UISystem", "CreateFrameByType", null, 0, "parent == null")
+            endif
+
+            return thistype.create(MHFrame_CreateSimpleFontString(this.ptr))
+        endmethod
+
+        method CreateSimpleTexture takes nothing returns thistype
+            static if DEBUG_MODE then
+                call ThrowError(this.ptr == 0, "UISystem", "CreateFrameByType", null, 0, "parent == null")
+            endif
+
+            return thistype.create(MHFrame_CreateSimpleTexture(this.ptr))
+        endmethod
+
+        method CreateFrameByType takes string typeName, string name, string inherits, integer priority, integer createContext returns thistype
             local thistype newFrame
 
             static if DEBUG_MODE then
                 call ThrowError(this.ptr == 0, "UISystem", "CreateFrameByType", name, createContext, "parent == null")
             endif
 
-            set newFrame = thistype.create(DzCreateFrameByTagName(typeName, name, this.ptr, inherits, createContext))
+            set newFrame = thistype.create(MHFrame_CreateEx(typeName, name, inherits, this.ptr, priority, createContext))
             debug call BJDebugMsg("CreateFrameByType() error \ntypeName: " + typeName + "\nname:" + name + "\ninherits:" + inherits + "\nowner:" + I2S(this))
             static if DEBUG_MODE then
                 call ThrowError(newFrame == 0, "UISystem", "CreateFrameByType", name, createContext, "newFrame == null" + "\nparent:" + I2S(this) + "\ntypeName:" + typeName + "\ninherits:" + inherits)
@@ -167,6 +183,7 @@ library UISystem requires ErrorMessage
         endmethod
 
         static method GetFrameByName takes string name, integer createContext returns thistype
+            call ThrowError(MHFrame_GetByName(name, createContext) == 0, "UISystem", "GetFrameByName", "name", 0, "no frame")
             return thistype.GetPtrInstance(MHFrame_GetByName(name, createContext))
         endmethod
 
@@ -385,6 +402,13 @@ library UISystem requires ErrorMessage
             call DzFrameSetStepValue(this.ptr, stepSize)
         endmethod
 
+        method SetWidth takes real width returns nothing
+            call MHFrame_SetWidth(this.ptr, width)
+        endmethod
+        method SetHeight takes real height returns nothing
+            call MHFrame_SetHeight(this.ptr, height)
+        endmethod
+
         method SetSize takes real width, real height returns nothing
             if this.ptr == 0 then
                 return
@@ -490,21 +514,39 @@ library UISystem requires ErrorMessage
             return thistype.GetPtrInstanceSafe(MHFrame_GetChild(this.ptr, index))
         endmethod
 
+        private thistype tooltip
+        method SetTooltip takes Frame tooltip returns nothing
+            if this.ptr == 0 or tooltip.ptr == 0 or this.tooltip != 0 then
+                return
+            endif
 
-        private Frame pushedOffsetFrame
-        method IsPushedOffset takes nothing returns boolean
-            return this.pushedOffsetFrame != 0
-        endmethod
-        method SetPushedOffset takes thistype frame returns nothing
-            set this.pushedOffsetFrame = frame
-        endmethod
-        method GetPushedOffsetFrame takes nothing returns thistype
-            return this.pushedOffsetFrame
+            call this.tooltip.ClearAllPoints()
+            call DzFrameSetTooltip(this.ptr, this.tooltip.ptr)
         endmethod
 
         // 获取鼠标指向的Frame
         static method GetUnderCursor takes nothing returns thistype
             return thistype.GetPtrInstanceSafe(MHFrame_GetUnderCursor())
+        endmethod
+
+        private Frame   pushedOffsetTexture
+        private real    pushedOffsetScale
+        private integer pushedOffsetFlag
+        method IsPushedOffset takes nothing returns boolean
+            return this.pushedOffsetTexture != 0
+        endmethod
+        method SetPushedOffsetTexture takes thistype frame, integer flag, real scale returns nothing
+            if this.IsPushedOffset() then
+                return
+            endif
+            set this.pushedOffsetTexture = frame
+            set this.pushedOffsetScale   = scale
+            set this.pushedOffsetFlag    = flag
+            call MHFrameEvent_Register(MainTrigger, this.ptr, EVENT_ID_FRAME_MOUSE_DOWN)
+            call MHFrameEvent_Register(MainTrigger, this.ptr, EVENT_ID_FRAME_MOUSE_UP)
+        endmethod
+        method GetPushedOffsetTexture takes nothing returns thistype
+            return this.pushedOffsetTexture
         endmethod
 
         static method GetTriggerFrame takes nothing returns thistype
@@ -519,122 +561,49 @@ library UISystem requires ErrorMessage
             return TriggerEvent[FrameEventStackTop] 
         endmethod
 
-        //! textmacro MethodEventSetCallBack takes EventName
-            private string $EventName$CodeName
-            static method $EventName$CallBack takes nothing returns nothing
-                local thistype this = thistype.GetPtrInstanceSafe(DzGetTriggerUIEventFrame())
-                
-                if this == 0 then
-                    return
-                endif
-
-                if $EventName$CodeName != null then
-                    set FrameEventStackTop = FrameEventStackTop + 1
-                    set TriggerFrame[FrameEventStackTop]  = this
-                    set TriggerEvent[FrameEventStackTop]  = $EventName$
-                    set TriggerPlayer[FrameEventStackTop] = GetLocalPlayer()
-                    if MHGame_ExecuteCode(MHGame_GetCode(($EventName$CodeName))) == 0 then
-                        set TriggerFrame[FrameEventStackTop]  = 0
-                        set TriggerEvent[FrameEventStackTop]  = 0
-                        set TriggerPlayer[FrameEventStackTop] = null
-                        set FrameEventStackTop = FrameEventStackTop - 1
-                        return
-                    endif
-                    set TriggerFrame[FrameEventStackTop]  = 0
-                    set TriggerEvent[FrameEventStackTop]  = 0
-                    set TriggerPlayer[FrameEventStackTop] = null
-                    set FrameEventStackTop = FrameEventStackTop - 1
-                endif
-
-                if not HaveSavedString(HT, this, $EventName$) then
-                    return
-                endif
-
-                call DzSyncData(FRAME_EVENT_SYNC_PREFIX, I2S($EventName$) + "," + I2S(this))
-            endmethod
-        //! endtextmacro
-
-        //! runtextmacro MethodEventSetCallBack("FRAMEEVENT_CONTROL_CLICK")
-        //! runtextmacro MethodEventSetCallBack("FRAMEEVENT_MOUSE_ENTER")
-        //! runtextmacro MethodEventSetCallBack("FRAMEEVENT_MOUSE_LEAVE")
-        //! runtextmacro MethodEventSetCallBack("FRAMEEVENT_MOUSE_UP")  
-        //! runtextmacro MethodEventSetCallBack("FRAMEEVENT_MOUSE_DOWN")
-        //! runtextmacro MethodEventSetCallBack("FRAMEEVENT_MOUSE_WHEEL")
-        //! runtextmacro MethodEventSetCallBack("FRAMEEVENT_CHECKBOX_CHECKED")
-        //! runtextmacro MethodEventSetCallBack("FRAMEEVENT_CHECKBOX_UNCHECKED")
-        //! runtextmacro MethodEventSetCallBack("FRAMEEVENT_EDITBOX_TEXT_CHANGED")
-        //! runtextmacro MethodEventSetCallBack("FRAMEEVENT_POPUPMENU_ITEM_CHANGED")
-        //! runtextmacro MethodEventSetCallBack("FRAMEEVENT_MOUSE_DOUBLECLICK")
-        //! runtextmacro MethodEventSetCallBack("FRAMEEVENT_SPRITE_ANIM_UPDATE")
-        //! runtextmacro MethodEventSetCallBack("FRAMEEVENT_SLIDER_VALUE_CHANGED")
-
-        //! textmacro RegisterEventSetCallBack takes EventName
-            if eventId == $EventName$ then
-                call DzFrameSetScriptByCode(this.ptr, eventId, function thistype.$EventName$CallBack, false)
-            endif
-        //! endtextmacro
-
-        //! textmacro RegisterEventSetCode takes EventName
-            if eventId == $EventName$ then
-                set $EventName$CodeName = codeName
-                call DzFrameSetScriptByCode(this.ptr, eventId, function thistype.$EventName$CallBack, false)
-            endif
-        //! endtextmacro
-        
+        integer SyncEventHandler
+        integer ASyncEventHandler
+        static trigger MainTrigger = null
         // Frame事件，同步的函数
-        method RegisterEvent takes integer eventId, string codeName returns nothing
+        method RegisterEvent takes integer eventId, string codeName, boolean sync returns nothing
             if this.ptr == 0 or codeName == null then
                 return
             endif
 
-            //! runtextmacro RegisterEventSetCallBack("FRAMEEVENT_CONTROL_CLICK")
-            //! runtextmacro RegisterEventSetCallBack("FRAMEEVENT_MOUSE_ENTER")
-            //! runtextmacro RegisterEventSetCallBack("FRAMEEVENT_MOUSE_LEAVE")
-            //! runtextmacro RegisterEventSetCallBack("FRAMEEVENT_MOUSE_UP")  
-            //! runtextmacro RegisterEventSetCallBack("FRAMEEVENT_MOUSE_DOWN")
-            //! runtextmacro RegisterEventSetCallBack("FRAMEEVENT_MOUSE_WHEEL")
-            //! runtextmacro RegisterEventSetCallBack("FRAMEEVENT_CHECKBOX_CHECKED")
-            //! runtextmacro RegisterEventSetCallBack("FRAMEEVENT_CHECKBOX_UNCHECKED")
-            //! runtextmacro RegisterEventSetCallBack("FRAMEEVENT_EDITBOX_TEXT_CHANGED")
-            //! runtextmacro RegisterEventSetCallBack("FRAMEEVENT_POPUPMENU_ITEM_CHANGED")
-            //! runtextmacro RegisterEventSetCallBack("FRAMEEVENT_MOUSE_DOUBLECLICK")
-            //! runtextmacro RegisterEventSetCallBack("FRAMEEVENT_SPRITE_ANIM_UPDATE")
-            //! runtextmacro RegisterEventSetCallBack("FRAMEEVENT_SLIDER_VALUE_CHANGED")
-            call SaveStr(HT, this, eventId, codeName)
-        endmethod
-
-        // 异步 返回值代表是否会继续同步操作 true会继续同步 false则不发送同步内容
-        method RegisterLocalScript takes integer eventId, string codeName returns nothing
-            if this.ptr == 0 or codeName == null then
-                return
-            endif
+            call ThrowError(MHGame_GetCode(codeName) == null, "UISystem", "RegisterEvent", "codeName", eventId, "code == null")
             
-            //! runtextmacro RegisterEventSetCode("FRAMEEVENT_CONTROL_CLICK")
-            //! runtextmacro RegisterEventSetCode("FRAMEEVENT_MOUSE_ENTER")
-            //! runtextmacro RegisterEventSetCode("FRAMEEVENT_MOUSE_LEAVE")
-            //! runtextmacro RegisterEventSetCode("FRAMEEVENT_MOUSE_UP")  
-            //! runtextmacro RegisterEventSetCode("FRAMEEVENT_MOUSE_DOWN")
-            //! runtextmacro RegisterEventSetCode("FRAMEEVENT_MOUSE_WHEEL")
-            //! runtextmacro RegisterEventSetCode("FRAMEEVENT_CHECKBOX_CHECKED")
-            //! runtextmacro RegisterEventSetCode("FRAMEEVENT_CHECKBOX_UNCHECKED")
-            //! runtextmacro RegisterEventSetCode("FRAMEEVENT_EDITBOX_TEXT_CHANGED")
-            //! runtextmacro RegisterEventSetCode("FRAMEEVENT_POPUPMENU_ITEM_CHANGED")
-            //! runtextmacro RegisterEventSetCode("FRAMEEVENT_MOUSE_DOUBLECLICK")
-            //! runtextmacro RegisterEventSetCode("FRAMEEVENT_SPRITE_ANIM_UPDATE")
-            //! runtextmacro RegisterEventSetCode("FRAMEEVENT_SLIDER_VALUE_CHANGED")
-        endmethod
+            if not HaveSavedBoolean(HT, this, eventId) then
+                call SaveBoolean(HT, this, eventId, true)
+                call MHFrameEvent_Register(MainTrigger, this.ptr, eventId)
+            endif
 
-        private thistype tooltip
-        method SetTooltip takes Frame tooltip returns nothing
-            if this.ptr == 0 or tooltip.ptr == 0 or this.tooltip != 0 then
+            if sync then
+                call SaveInteger(HT, this, eventId, C2I(MHGame_GetCode(codeName)))
+            else
+                call SaveInteger(HT, this + JASS_MAX_ARRAY_SIZE, eventId, C2I(MHGame_GetCode(codeName)))
+            endif
+        endmethod
+        method RegisterEventByCode takes integer eventId, code callback, boolean sync returns nothing
+            if this.ptr == 0 or callback == null then
                 return
             endif
 
-            call this.tooltip.ClearAllPoints()
-            call DzFrameSetTooltip(this.ptr, this.tooltip.ptr)
+            call ThrowError(callback == null, "UISystem", "RegisterEvent", "callback", eventId, "code == null")
+            
+            if not HaveSavedBoolean(HT, this, eventId) then
+                call SaveBoolean(HT, this, eventId, true)
+                call MHFrameEvent_Register(MainTrigger, this.ptr, eventId)
+            endif
+
+            call BJDebugMsg("注册：" + I2S(this))
+            if sync then
+                call SaveInteger(HT, this, eventId, C2I(callback))
+            else
+                call SaveInteger(HT, this + JASS_MAX_ARRAY_SIZE, eventId, C2I(callback))
+            endif
         endmethod
 
-        static method OnFrameEventSynced takes nothing returns nothing
+        static method EventOnSynced takes nothing returns nothing
             local player   p       = DzGetTriggerSyncPlayer()
             local string   data    = DzGetTriggerSyncData()
             local integer  index   = MHString_Find(data, ",", 0)
@@ -646,14 +615,49 @@ library UISystem requires ErrorMessage
             endif
 
             set FrameEventStackTop = FrameEventStackTop + 1
-            set TriggerFrame[FrameEventStackTop] = this
-            set TriggerEvent[FrameEventStackTop] = eventId
+            set TriggerFrame[FrameEventStackTop]  = this
+            set TriggerEvent[FrameEventStackTop]  = eventId
             set TriggerPlayer[FrameEventStackTop] = p
-            call ExecuteFunc(LoadStr(HT, this, eventId))
-            set TriggerFrame[FrameEventStackTop] = 0
-            set TriggerEvent[FrameEventStackTop] = 0
-            set TriggerPlayer[FrameEventStackTop] = null
+            call MHGame_ExecuteCodeEx(LoadInteger(HT, this, eventId))
             set FrameEventStackTop = FrameEventStackTop - 1
+        endmethod
+
+        static method EventOnHandler takes nothing returns boolean
+            local thistype this    = GetPtrInstanceSafe(MHEvent_GetFrame())
+            local integer  eventId = MHEvent_GetId()
+
+            call BJDebugMsg("触发了eventId:" + I2S(eventId) + " this:" + I2S(this))
+            if this == 0 then
+                return false
+            endif
+
+            if this.IsPushedOffset() and MHMath_IsBitSet(this.pushedOffsetFlag, MHEvent_GetKey()) then
+                if eventId == EVENT_ID_FRAME_MOUSE_DOWN then
+                    call this.GetPushedOffsetTexture().SetSize(this.GetWidth() * this.pushedOffsetScale, this.GetHeight() *  this.pushedOffsetScale)
+                elseif eventId == EVENT_ID_FRAME_MOUSE_UP then
+                    call this.GetPushedOffsetTexture().SetSize(this.GetWidth(), this.GetHeight())
+                endif
+            endif
+            
+            if HaveSavedInteger(HT, this + JASS_MAX_ARRAY_SIZE, eventId) then
+                call BJDebugMsg("有事件")
+                set FrameEventStackTop = FrameEventStackTop + 1
+                set TriggerFrame[FrameEventStackTop]  = this
+                set TriggerEvent[FrameEventStackTop]  = eventId
+                set TriggerPlayer[FrameEventStackTop] = GetLocalPlayer()
+                if MHGame_ExecuteCodeEx(LoadInteger(HT, this + JASS_MAX_ARRAY_SIZE, eventId)) > 0 then
+                    if HaveSavedInteger(HT, this, eventId) then
+                        call DzSyncData(FRAME_EVENT_SYNC_PREFIX, I2S(eventId) + "," + I2S(this))
+                    endif
+                endif
+                set FrameEventStackTop = FrameEventStackTop - 1
+            else
+                if HaveSavedInteger(HT, this, eventId) then
+                    call DzSyncData(FRAME_EVENT_SYNC_PREFIX, I2S(eventId) + "," + I2S(this))
+                endif
+            endif
+
+            return false
         endmethod
 
         static method GetOriginFrame takes integer frameType, integer index returns thistype
@@ -845,7 +849,7 @@ library UISystem requires ErrorMessage
             endif
             
             // 尺寸信息
-            set s = s + COLOR_HEADER + "Size: " + COLOR_RESET + COLOR_VALUE + "Width: " + R2SW(this.GetWidth(), 1, 3) + "  Height: " + R2SW(this.GetHeight(), 1, 3) + COLOR_RESET + "\n\n"
+            set s = s + COLOR_HEADER + "Size: " + COLOR_RESET + COLOR_VALUE + "Width: " + R2SW(this.GetWidth(), 1, 7) + "  Height: " + R2SW(this.GetHeight(), 1, 3) + COLOR_RESET + "\n\n"
         
             set i     = 0
             set count = 0
@@ -858,8 +862,8 @@ library UISystem requires ErrorMessage
                 if x != 0. or y != 0. then
                     set absolutePointStr = absolutePointStr +/*
                     */ COLOR_POINT + "| " + GetAnchorPointName(i) + COLOR_RESET + " | " +/*
-                    */ COLOR_VALUE + "X: " + R2SW(x, 1, 3) + /*
-                    */ "  Y: " + R2SW(y, 1, 3) + COLOR_RESET + " |\n"
+                    */ COLOR_VALUE + "X: " + R2SW(x, 1, 7) + /*
+                    */ "  Y: " + R2SW(y, 1, 7) + COLOR_RESET + " |\n"
                     set count = count + 1
                 endif
         
@@ -884,7 +888,7 @@ library UISystem requires ErrorMessage
                         
                         set relativePointStr = relativePointStr +/*
                         */ COLOR_POINT + "| " + GetAnchorPointName(i) + COLOR_RESET + "       | " +/*
-                        */ COLOR_VALUE + "Offset: (" + COLOR_DIMENSION + R2SW(x,1,3) + COLOR_VALUE + ", " + COLOR_DIMENSION + R2SW(y,1,3) + COLOR_VALUE + ")" + COLOR_RESET
+                        */ COLOR_VALUE + "Offset: (" + COLOR_DIMENSION + R2SW(x,1,7) + COLOR_VALUE + ", " + COLOR_DIMENSION + R2SW(y,1,7) + COLOR_VALUE + ")" + COLOR_RESET
                 
                         set relativePointStr = relativePointStr +/*
                         */ "\n   L " + COLOR_POINT + "| " + GetAnchorPointName(MHFrame_GetRelativePoint(this.ptr, i)) + COLOR_RESET + COLOR_TARGET + "| Target: " + tempFrame.GetHex()
@@ -898,8 +902,8 @@ library UISystem requires ErrorMessage
                         endif
 
                         set relativePointStr = relativePointStr +/*
-                        */ COLOR_VALUE + "  w: " + COLOR_DIMENSION + R2SW(tempFrame.GetWidth(),1,3) +/*
-                        */ COLOR_VALUE + "  h: " + COLOR_DIMENSION + R2SW(tempFrame.GetHeight(),1,3) + COLOR_RESET
+                        */ COLOR_VALUE + "  w: " + COLOR_DIMENSION + R2SW(tempFrame.GetWidth(),1,7) +/*
+                        */ COLOR_VALUE + "  h: " + COLOR_DIMENSION + R2SW(tempFrame.GetHeight(),1,7) + COLOR_RESET
              
                         
                         set count = count + 1
@@ -933,25 +937,21 @@ library UISystem requires ErrorMessage
             return Frame.GetPtrInstance(MHFrame_GetSimpleButtonTexture(this.ptr, state))
         endmethod
 
+        static method LoadTOCFile takes string TOCFile returns nothing
+            call MHFrame_LoadTOC(TOCFile)
+        endmethod
+
     endstruct
 
-    function GetOriginFrame takes integer frameType, integer index returns Frame
-        return Frame.GetOriginFrame(frameType, index)
-    endfunction
-
-    function GetFrameId takes Frame frame returns integer
-        return frame
-    endfunction
-
-    function LoadTOCFile takes string TOCFile returns nothing
-        call MHFrame_LoadTOC(TOCFile)
-    endfunction
-
     function FrameSystem_Init takes nothing returns nothing
-        local trigger trig = CreateTrigger()
-
+        local trigger trig
+        
+        set trig = CreateTrigger()
         call DzTriggerRegisterSyncData(trig, FRAME_EVENT_SYNC_PREFIX, false)
-        call TriggerAddCondition(trig, Condition(function Frame.OnFrameEventSynced))
+        call TriggerAddCondition(trig, Condition(function Frame.EventOnSynced))
+
+        set Frame.MainTrigger = CreateTrigger()
+        call TriggerAddCondition(Frame.MainTrigger, Condition(function Frame.EventOnHandler))
     endfunction
 
 endlibrary

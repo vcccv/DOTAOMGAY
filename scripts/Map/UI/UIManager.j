@@ -20,9 +20,14 @@ library UIManager /*
     endfunction
 
     private function OnGameStart takes nothing returns nothing
+        call FrameSystem_Init()
         call DzFrameSetUpdateCallbackByCode(function OnUdpate)
 
-        call LoadTOCFile("UI\\FrameDef\\CustomFrameDef.toc")
+        call Frame.LoadTOCFile("UI\\FrameDef\\CustomFrameDef.toc")
+
+        static if LIBRARY_SimpleToolTipLib then
+            call SimpleToolTip.Init()
+        endif
     
         static if LIBRARY_TownPortalScrollFrame then
             call TownPortalScrollFrame_Init()

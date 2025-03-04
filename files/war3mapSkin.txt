@@ -51,4 +51,3 @@ NoLumberSound=InterfaceError
 SupplyIcon=ReplaceableTextures\WorldEditUI\LocationBrush00.blp
 LumberIcon=UI\Widgets\BattleNet\bnet-tournament-clock
 IdlePeon=ReplaceableTextures\CommandButtons\BTNGargoyle.blp
-CommandButtonCooldown=Interface\CoolDown UI.mdx

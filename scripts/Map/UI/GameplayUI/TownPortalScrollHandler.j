@@ -144,6 +144,7 @@ library TownPortalScrollHandler requires Communication, TownPortalScrollFrame, U
             endif
 
             set townPortalAbility = GetUnitAbility(selectedUnit, TOWN_PORTAL_SCROLL_ABILITY_ID)
+            call TownPortalScrollFrameUpdateToolTip(townPortalAbility)
             call SetTownPortalScrollCooldownRemaining(GetAbilityCooldown(townPortalAbility), GetAbilityCooldownRemaining(townPortalAbility))
             set charges = GetUnitTownPortalScrollCharges(selectedUnit)
             call SetTownPortalScrollCharges(charges)

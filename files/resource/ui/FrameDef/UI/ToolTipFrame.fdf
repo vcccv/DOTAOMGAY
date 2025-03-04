@@ -1,93 +1,43 @@
 Frame "SIMPLEFRAME" "ToolTipFrame" 
 {
-    SetPoint BOTTOMRIGHT, "ConsoleUI", BOTTOMRIGHT, 0., 0.162,
-    Width  0.220,
-    Height 0.059,
+    // UseActiveContext,
+    // DecorateFileNames,
 
-    DecorateFileNames,
+    //Width  0.220,
+    //Height 0.094,
+    //SetPoint BOTTOMRIGHT, "ConsoleUI", BOTTOMRIGHT, 0, 0.1625,
 
-    String "ToolTip" {
-        Width  0.210,
-        SetPoint TOPLEFT, "ToolTipFrame", TOPLEFT, 0.005, - 0.005,
-        FontJustificationH JUSTIFYLEFT,
-        FontJustificationV JUSTIFYTOP ,
-        Font "MasterFont", 0.011,
-        Text "Nmsl",
-    }
+    //Layer "ARTWORK" {
+    //String "ToolTipString" {
+    //    Width 0.210,
+    //    SetPoint TOPLEFT, "ToolTipFrame", TOPLEFT, 0.005, - 0.005,
+    //    FontJustificationH JUSTIFYLEFT,
+    //    FontJustificationV JUSTIFYTOP ,
+    //    Font "MasterFont", 0.011,
+    //}
+    //String "RequireToolTipString" {
+    //    Width 0.210,
+    //    SetPoint TOPLEFT, "ToolTipString", BOTTOMLEFT, 0, - 0.005,
+    //    FontJustificationH JUSTIFYLEFT,
+    //    FontJustificationV JUSTIFYTOP ,
+    //    Font "MasterFont", 0.011,
+    //}
+//
+    //String "UberToolTipString" {
+    //    Width  0.210,
+    //    FontJustificationH JUSTIFYLEFT,
+    //    FontJustificationV JUSTIFYTOP ,
+    //    Font "MasterFont", 0.011,
+    //    Text "?",
+    //}
+    //}
 
-    String "ToolTipRequires" {
-        SetPoint TOPLEFT, "ToolTip", BOTTOMLEFT, 0.000, - 0.0010,
-        FontJustificationH JUSTIFYLEFT,
-        FontJustificationV JUSTIFYTOP ,
-        Font "MasterFont", 0.011,
-        Text "2",
-    }
-
-    Texture "ToolTipTexture1" {
-        SetPoint TOPLEFT, "ToolTip", BOTTOMRIGHT, 0, - 0.004,
-        Width  0.009,
-        Height 0.009,
-    }
-
-    String "TooltipString1" {
-        SetPoint LEFT, "ToolTipTexture1", RIGHT, 0.003, 0.,
-        FontJustificationH JUSTIFYLEFT,
-        FontJustificationV JUSTIFYMIDDLE,
-        Font "MasterFont", 0.011,
-    }
-
-    Texture "ToolTipTexture2" {
-        SetPoint LEFT, "TooltipString1", RIGHT, 0.006,,
-        Width  0.009,
-        Height 0.009,
-    }
-
-    String "TooltipString2" {
-        SetPoint LEFT, "ToolTipTexture2", RIGHT, 0.003, 0.,
-        FontJustificationH JUSTIFYLEFT,
-        FontJustificationV JUSTIFYMIDDLE,
-        Font "MasterFont", 0.011,
-    }
-
-    Texture "ToolTipTexture3" {
-        SetPoint LEFT, "TooltipString2", RIGHT, 0.006,,
-        Width  0.009,
-        Height 0.009,
-    }
-
-    String "TooltipString3" {
-        SetPoint LEFT, "ToolTipTexture3", RIGHT, 0.003, 0.,
-        FontJustificationH JUSTIFYLEFT,
-        FontJustificationV JUSTIFYMIDDLE,
-        Font "MasterFont", 0.011,
-    }
-
-    Texture "ToolTipTexture4" {
-        SetPoint LEFT, "TooltipString3", RIGHT, 0.006,,
-        Width  0.009,
-        Height 0.009,
-    }
-
-    String "TooltipString4" {
-        SetPoint LEFT, "ToolTipTexture4", RIGHT, 0.003, 0.,
-        FontJustificationH JUSTIFYLEFT,
-        FontJustificationV JUSTIFYMIDDLE,
-        Font "MasterFont", 0.011,
-    }
-
-    Layer "ARTWORK_OVERLAY" {
-        Texture "ToolTipHorizontalSeparatorTexture" {
-            SetPoint TOPLEFT, "ToolTip", BOTTOMLEFT, 0.005, - 0.005,
-            Width  0.200, // 0.01640625,
-            Height 0.0008,
-        }
-    }
-
-    String "ToolTipUberTip" {
-        FontJustificationH JUSTIFYLEFT,
-        FontJustificationV JUSTIFYTOP ,
-        Font "MasterFont", 0.011,
-    }
-
+    //Layer "ARTWORK_OVERLAY" {
+    //    Texture "ToolTipHorizontalSeparatorTexture" {
+    //        AlphaMode "ALPHAKEY",
+    //        Width  0.205, // 0.01640625,
+    //        Height 0.0005,
+    //    }
+    //}
 
 }
