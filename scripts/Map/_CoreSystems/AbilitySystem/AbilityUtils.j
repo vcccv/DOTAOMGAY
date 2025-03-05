@@ -1,7 +1,7 @@
 
 // 继续堆屎
 library AbilityUtils requires Table, Base
-    
+
     function GetAbilityId takes ability whichAbility returns integer
         return MHAbility_GetId(whichAbility)
     endfunction

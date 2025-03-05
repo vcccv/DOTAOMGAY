@@ -1,5 +1,5 @@
 
-library SimpleToolTipLib
+library SimpleToolTipLib requires UISystem
     
     struct SimpleToolTip extends array
         
@@ -46,27 +46,27 @@ library SimpleToolTipLib
                 call UberToolTipString.SetVisible(true)
                 call UberToolTipString.SetText(UberTip)
 
+                set height = height + 0.005
                 set height = height + UberToolTipString.GetHeight()
-                call HorizontalSeparatorTexture.ClearAllPoints()
-                call HorizontalSeparatorTexture.SetPoint(FRAMEPOINT_CENTER, ToolTipFrame, FRAMEPOINT_BOTTOM, 0, 0.0025 + height)
-
                 // ToolTip动态锚点修改
                 call UberToolTipString.ClearAllPoints()
                 if hasCost then
-                    call UberToolTipString.SetPoint(FRAMEPOINT_TOPLEFT, CostTexture[1], FRAMEPOINT_BOTTOMLEFT, 0, - 0.015)
+                    call UberToolTipString.SetPoint(FRAMEPOINT_TOPLEFT, CostTexture[1], FRAMEPOINT_BOTTOMLEFT, 0, - 0.0125)
                 elseif StringLength(RequireTip) > 0 then
-                    call UberToolTipString.SetPoint(FRAMEPOINT_TOPLEFT, RequireToolTipString, FRAMEPOINT_BOTTOMLEFT, 0, - 0.015)
+                    call UberToolTipString.SetPoint(FRAMEPOINT_TOPLEFT, RequireToolTipString, FRAMEPOINT_BOTTOMLEFT, 0, - 0.0125)
                 else
-                    call UberToolTipString.SetPoint(FRAMEPOINT_TOPLEFT, ToolTipNameString, FRAMEPOINT_BOTTOMLEFT, 0, - 0.015)
+                    call UberToolTipString.SetPoint(FRAMEPOINT_TOPLEFT, ToolTipNameString, FRAMEPOINT_BOTTOMLEFT, 0, - 0.0125)
                 endif
-                set height = height + 0.010
+                set height = height + 0.00075
+                set height = height + 0.0125
             else
                 call UberToolTipString.SetVisible(false)
             endif
 
             // 各种消耗
             if hasCost then
-                set height = height + 0.013
+                set height = height + 0.004
+                set height = height + 0.009375
 
                 if GoldCost != 0 then
                     set count = count + 1
@@ -99,7 +99,7 @@ library SimpleToolTipLib
                     call CostTexture[count].SetVisible(true)
                     call CostString[count].SetVisible(true)
                 endif
-                call BJDebugMsg("count:" + I2S(count))
+                
                 loop
                     exitwhen count >= 4
                     set count = count + 1
@@ -117,7 +117,7 @@ library SimpleToolTipLib
                 call RequireToolTipString.SetVisible(false)
             endif
 
-            // 需求提示
+            // 工具提示
             if StringLength(TipName) > 0 then
                 call ToolTipNameString.SetText(TipName)
                 call ToolTipNameString.SetVisible(true)
@@ -133,7 +133,6 @@ library SimpleToolTipLib
         private static method OnEnter takes nothing returns nothing
             set FocusFrame = Frame.GetTriggerFrame()
             call Update()
-            call BJDebugMsg("FocusFrame!:" + I2S(FocusFrame))
         endmethod
         private static method OnLeave takes nothing returns nothing
             set FocusFrame = 0
@@ -151,7 +150,7 @@ library SimpleToolTipLib
 
         static method CreateCostString takes nothing returns Frame
             local Frame frame = ToolTipFrame.CreateSimpleFontString()
-            call frame.SetFont("Fonts\\dfst-m3u.ttf", 0.011, 0)
+            call frame.SetFont("Fonts\\arheigb_bd.ttf", 0.011, 0)
             call frame.SetTextColor(0xFFFED312)
             call frame.SetTextAlignment(TEXT_JUSTIFY_MIDDLE, TEXT_JUSTIFY_LEFT)
             return frame
@@ -170,27 +169,30 @@ library SimpleToolTipLib
             call ToolTipFrame.ClearAllPoints()
             call ToolTipFrame.SetSize(0.220, 0.094)
             call ToolTipFrame.SetPoint(FRAMEPOINT_BOTTOMRIGHT, parent, FRAMEPOINT_BOTTOMRIGHT, 0, 0.1625)
+            call ToolTipFrame.AddBorder("UI\\Widgets\\ToolTips\\Human\\human-tooltip-border.blp", /*
+            */ "UI\\Widgets\\ToolTips\\Human\\human-tooltip-background.blp", 0xFF, 0.01, 0.0019, true)
 
             set ToolTipNameString    = ToolTipFrame.CreateSimpleFontString()
             call ToolTipNameString.SetWidth(0.210)
-            call ToolTipNameString.SetFont("Fonts\\dfst-m3u.ttf", 0.011, 0)
+            call ToolTipNameString.SetFont("Fonts\\arheigb_bd.ttf", 0.011, 0)
             call ToolTipNameString.SetTextAlignment(TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
             call ToolTipNameString.SetPoint(FRAMEPOINT_TOPLEFT, ToolTipFrame, FRAMEPOINT_TOPLEFT, 0.005, - 0.005)
 
             set RequireToolTipString = ToolTipFrame.CreateSimpleFontString()
             call RequireToolTipString.SetWidth(0.210)
-            call RequireToolTipString.SetFont("Fonts\\dfst-m3u.ttf", 0.011, 0)
+            call RequireToolTipString.SetFont("Fonts\\arheigb_bd.ttf", 0.011, 0)
             call RequireToolTipString.SetTextAlignment(TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
             call RequireToolTipString.SetPoint(FRAMEPOINT_TOPLEFT, ToolTipNameString, FRAMEPOINT_BOTTOMLEFT, 0, - 0.005)
 
             set UberToolTipString    = ToolTipFrame.CreateSimpleFontString()
             call UberToolTipString.SetWidth(0.210)
-            call UberToolTipString.SetFont("Fonts\\dfst-m3u.ttf", 0.011, 0)
+            call UberToolTipString.SetFont("Fonts\\arheigb_bd.ttf", 0.011, 0)
             call UberToolTipString.SetTextAlignment(TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
             set HorizontalSeparatorTexture = ToolTipFrame.CreateSimpleTexture()
-            call HorizontalSeparatorTexture.SetSize(0.2025, 0.00025)
+            call HorizontalSeparatorTexture.SetSize(0.205, 0.00075)
             call HorizontalSeparatorTexture.SetTexture("UI\\Widgets\\ToolTips\\Human\\HorizontalSeparator.blp")
+            call HorizontalSeparatorTexture.SetPoint(FRAMEPOINT_CENTER, UberToolTipString, FRAMEPOINT_TOP, 0, 0.00625)
 
             set CostTexture[1] = CreateCostTexture()
             set CostString [1] = CreateCostString()

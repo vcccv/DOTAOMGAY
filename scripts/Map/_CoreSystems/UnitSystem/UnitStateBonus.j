@@ -8,6 +8,13 @@ library UnitStateBonus requires UnitUtils, UnitAbility, UnitWeapon
         constant integer UNIT_BONUS_LIFE_REGEM = 'AUlb'
     endglobals
 
+    function GetUnitCastRangeBonus takes unit whichUnit returns real
+        return MHUnit_GetSpellRange(whichUnit)
+    endfunction
+    function UnitAddCastRangeBonus takes unit whichUnit, real bonus returns nothing
+        call MHUnit_AddSpellRange(whichUnit, GetUnitCastRangeBonus(whichUnit) + bonus)	
+    endfunction
+
     function UnitGetStateBonus takes unit whichUnit, integer abilId returns real
         return Table[GetHandleId(whichUnit)].real[abilId]
     endfunction

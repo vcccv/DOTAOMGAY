@@ -15,7 +15,7 @@ library AbilityCustomOrderId requires Base
         set OrderIdBase = OrderIdBase + 1
         call MHAbility_SetHookOrder(abilId, OrderIdBase)
         static if DEBUG_MODE then
-            call ThrowWarning(MHAbility_GetHookOrder(abilId) == 0, "AbilityCustomOrderId", "AllocAbilityOrderId", Id2String(abilId), abilId, "该技能无法被分配命令Id:" + GetObjectName(abilId))
+            call ThrowError(MHAbility_GetHookOrder(abilId) == 0, "AbilityCustomOrderId", "AllocAbilityOrderId", Id2String(abilId), abilId, "该技能无法被分配命令Id:" + GetObjectName(abilId))
             call ThrowError(Table[KEY].has(abilId), "AbilityCustomOrderId", "AllocAbilityOrderId", Id2String(abilId), abilId, "重复的技能被分配命令Id:" + GetObjectName(abilId))
             set Table[KEY][abilId] = OrderIdBase
         endif

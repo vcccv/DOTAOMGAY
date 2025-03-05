@@ -2,18 +2,17 @@
 library TownPortalScrollFrame requires UISystem, AbilityUtils
     
     globals
-        private Frame TownPortalScrollFrame
+        private Frame TownPortalScrollFrame          = 0
 
-        private Frame TownPortalScrollButton
-        private Frame TownPortalScrollBackground
+        private Frame TownPortalScrollButton         = 0
+        private Frame TownPortalScrollBackground     = 0
 
-        private Frame TownPortalScrollChargesString
+        private Frame TownPortalScrollChargesString  = 0
 
-        private Frame TownPortalScrollCooldownSprite
-        private Frame TownPortalScrollCooldownText
-        private boolean IsTownPortalScrollButtonEnabled = true
+        private Frame TownPortalScrollCooldownSprite = 0
+        private Frame TownPortalScrollCooldownText   = 0
         
-        private SimpleToolTip ToolTip
+        private SimpleToolTip ToolTip                = 0
     endglobals
 
     function GetTownPortalScrollButton takes nothing returns Frame
@@ -60,9 +59,7 @@ library TownPortalScrollFrame requires UISystem, AbilityUtils
     endfunction
 
     function EnableShowTownPortalScrollButton takes boolean enable returns nothing
-        // call TownPortalScrollButton.SetEnable(enable)
-        // call TownPortalScrollButton.SetEnable(enable)
-        set IsTownPortalScrollButtonEnabled = enable
+        call TownPortalScrollButton.SetEnableEx(enable)
         if enable then
            call TownPortalScrollBackground.SetTexture("ReplaceableTextures\\CommandButtons\\BTNScrollUber.blp")
         else
@@ -76,16 +73,7 @@ library TownPortalScrollFrame requires UISystem, AbilityUtils
         call TownPortalScrollCooldownSprite.SetVisible(show)
     endfunction
 
-    private function ButtonOnClick takes nothing returns boolean
-        if MHEvent_GetKey() != MOUSE_BUTTON_TYPE_LEFT then
-            return false
-        endif
-        call MHGame_ExecuteFunc("TownPortalScrollButtonOnClick")
-        return false
-    endfunction
-
     function TownPortalScrollFrame_Init takes nothing returns nothing
-        local trigger trig
         local Frame gameUI     = Frame.GetPtrInstance(MHUI_GetGameUI())
         local Frame commandBar = Frame.GetPtrInstance(MHUI_GetCommandBar())
         //
@@ -93,11 +81,11 @@ library TownPortalScrollFrame requires UISystem, AbilityUtils
         set TownPortalScrollCooldownSprite = gameUI.CreateFrame("TownPortalScrollCooldownSprite", 0, 0)
         call TownPortalScrollFrame.SetAbsPoint(FRAMEPOINT_CENTER, 0.6, 0.1315)
         //
-        set TownPortalScrollCooldownText         = Frame.GetFrameByName("TownPortalScrollCooldownText", 0)
-        set TownPortalScrollButton               = Frame.GetFrameByName("TownPortalScrollButton", 0)
+        set TownPortalScrollCooldownText  = Frame.GetFrameByName("TownPortalScrollCooldownText", 0)
+        set TownPortalScrollButton        = Frame.GetFrameByName("TownPortalScrollButton", 0)
         
-        set TownPortalScrollChargesString        = Frame.GetFrameByName("TownPortalScrollChargesString", 0)
-        set TownPortalScrollBackground           = Frame.GetFrameByName("TownPortalScrollBackground", 0)
+        set TownPortalScrollChargesString = Frame.GetFrameByName("TownPortalScrollChargesString", 0)
+        set TownPortalScrollBackground    = Frame.GetFrameByName("TownPortalScrollBackground", 0)
 
         call TownPortalScrollBackground.SetTexture("ReplaceableTextures\\CommandButtons\\BTNScrollUber.blp")
 

@@ -2,16 +2,15 @@
 library GlyphFrame requires UISystem, AbilityUtils
     
     globals
-        private Frame GlyphFrame
+        private Frame GlyphFrame          = 0
 
-        private Frame GlyphButton
+        private Frame GlyphButton         = 0
+        private Frame GlyphBackground     = 0
 
-        private Frame GlyphBackground
+        private Frame GlyphCooldownSprite = 0
+        private Frame GlyphCooldownText   = 0
 
-        private Frame GlyphCooldownSprite
-        private Frame GlyphCooldownText
-
-        private SimpleToolTip ToolTip
+        private SimpleToolTip ToolTip     = 0
     endglobals
 
     function GetGlyphButton takes nothing returns Frame
@@ -38,25 +37,6 @@ library GlyphFrame requires UISystem, AbilityUtils
         call GlyphCooldownSprite.SetVisible(progress != 1.)
     endfunction
 
-    function IsGlyphFrameVisible takes nothing returns boolean
-        return GlyphFrame.IsVisible()
-    endfunction
-
-
-    function ShowGlyphFrame takes boolean show returns nothing
-        //call EnableShowGlyphButton(show)
-        call GlyphFrame.SetVisible(show)
-        call GlyphCooldownSprite.SetVisible(show)
-    endfunction
-
-    private function ButtonOnClick takes nothing returns boolean
-        if MHEvent_GetKey() != MOUSE_BUTTON_TYPE_LEFT then
-            return false
-        endif
-        call MHGame_ExecuteFunc("GlyphButtonOnClick")
-        return false
-    endfunction
-
     function SetGlyphButtonTooltip takes integer abilId returns nothing
         set ToolTip = SimpleToolTip.RegisterToolTip(GlyphButton)
         set ToolTip.TipName  = GetAbilityTooltipById(abilId, 1)
@@ -65,7 +45,6 @@ library GlyphFrame requires UISystem, AbilityUtils
     endfunction
 
     function GlyphFrame_Init takes nothing returns nothing
-        local trigger trig
         local Frame gameUI = Frame.GetPtrInstance(MHUI_GetGameUI())
         local Frame parent = Frame.GetPtrInstance(MHUI_GetConsoleUI())
         //
@@ -73,10 +52,10 @@ library GlyphFrame requires UISystem, AbilityUtils
         set GlyphCooldownSprite = gameUI.CreateFrame("GlyphCooldownSprite", 0, 0)
         call GlyphFrame.SetAbsPoint(FRAMEPOINT_TOPLEFT, 0.154, 0.028)
         //
-        set GlyphCooldownText         = Frame.GetFrameByName("GlyphCooldownText", 0)
+        set GlyphCooldownText = Frame.GetFrameByName("GlyphCooldownText", 0)
 
-        set GlyphButton               = Frame.GetFrameByName("GlyphButton", 0)
-        set GlyphBackground           = Frame.GetFrameByName("GlyphBackground", 0)
+        set GlyphButton       = Frame.GetFrameByName("GlyphButton", 0)
+        set GlyphBackground   = Frame.GetFrameByName("GlyphBackground", 0)
 
         if GetPlayerId(GetLocalPlayer()) <= 5 then
             call GlyphBackground.SetTexture("ReplaceableTextures\\CommandButtons\\BTNGlyph.blp")
@@ -88,13 +67,7 @@ library GlyphFrame requires UISystem, AbilityUtils
         call GlyphCooldownSprite.SetSpriteAnimate(0, 0)
         call GlyphCooldownSprite.SetAnimateOffset(0.5)
 
-
-
         call GlyphButton.SetPushedOffsetTexture(GlyphBackground, MOUSE_BUTTON_TYPE_LEFT, 0.95)
-
-        set trig = CreateTrigger()
-        call TriggerAddCondition(trig, Condition(function ButtonOnClick))
-        call MHFrameEvent_Register(trig, GlyphButton.GetPtr(), EVENT_ID_FRAME_MOUSE_CLICK)
     endfunction
 
 endlibrary

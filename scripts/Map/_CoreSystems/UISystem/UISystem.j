@@ -119,7 +119,7 @@ library UISystem requires ErrorMessage
             endif
 
             set newFrame = thistype.create(MHFrame_CreateEx(typeName, name, inherits, this.ptr, priority, createContext))
-            debug call BJDebugMsg("CreateFrameByType() error \ntypeName: " + typeName + "\nname:" + name + "\ninherits:" + inherits + "\nowner:" + I2S(this))
+            
             static if DEBUG_MODE then
                 call ThrowError(newFrame == 0, "UISystem", "CreateFrameByType", name, createContext, "newFrame == null" + "\nparent:" + I2S(this) + "\ntypeName:" + typeName + "\ninherits:" + inherits)
             endif
@@ -272,12 +272,12 @@ library UISystem requires ErrorMessage
             call MHFrame_SetModel(this.ptr, modelFile, cameraIndex, 0)
         endmethod
 
-        method SetEnable takes boolean enabled returns nothing
+        method SetEnable takes boolean enable returns nothing
             if this.ptr == 0 then
                 return
             endif
 
-            call MHFrame_Disable(this.ptr, not enabled)
+            call MHFrame_Disable(this.ptr, not enable)
         endmethod
 
         method GetEnable takes nothing returns boolean
@@ -548,6 +548,13 @@ library UISystem requires ErrorMessage
         method GetPushedOffsetTexture takes nothing returns thistype
             return this.pushedOffsetTexture
         endmethod
+        boolean disableState
+        method IsEnabledEx takes nothing returns boolean
+            return not this.disableState
+        endmethod
+        method SetEnableEx takes boolean flag returns nothing
+            set this.disableState = not flag
+        endmethod
 
         static method GetTriggerFrame takes nothing returns thistype
             return TriggerFrame[FrameEventStackTop] 
@@ -626,12 +633,11 @@ library UISystem requires ErrorMessage
             local thistype this    = GetPtrInstanceSafe(MHEvent_GetFrame())
             local integer  eventId = MHEvent_GetId()
 
-            call BJDebugMsg("触发了eventId:" + I2S(eventId) + " this:" + I2S(this))
             if this == 0 then
                 return false
             endif
 
-            if this.IsPushedOffset() and MHMath_IsBitSet(this.pushedOffsetFlag, MHEvent_GetKey()) then
+            if this.IsPushedOffset() and MHMath_IsBitSet(this.pushedOffsetFlag, MHEvent_GetKey()) and this.IsEnabledEx() then
                 if eventId == EVENT_ID_FRAME_MOUSE_DOWN then
                     call this.GetPushedOffsetTexture().SetSize(this.GetWidth() * this.pushedOffsetScale, this.GetHeight() *  this.pushedOffsetScale)
                 elseif eventId == EVENT_ID_FRAME_MOUSE_UP then
@@ -640,7 +646,6 @@ library UISystem requires ErrorMessage
             endif
             
             if HaveSavedInteger(HT, this + JASS_MAX_ARRAY_SIZE, eventId) then
-                call BJDebugMsg("有事件")
                 set FrameEventStackTop = FrameEventStackTop + 1
                 set TriggerFrame[FrameEventStackTop]  = this
                 set TriggerEvent[FrameEventStackTop]  = eventId
@@ -935,6 +940,10 @@ library UISystem requires ErrorMessage
             endif
 
             return Frame.GetPtrInstance(MHFrame_GetSimpleButtonTexture(this.ptr, state))
+        endmethod
+
+        method AddBorder takes string border_file, string background_file, integer border_flag, real border_size, real padding, boolean is_tile returns nothing
+            call MHFrame_AddBorder(this.ptr, border_file, background_file, border_flag, border_size, padding, is_tile)
         endmethod
 
         static method LoadTOCFile takes string TOCFile returns nothing

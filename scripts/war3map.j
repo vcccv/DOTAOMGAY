@@ -343,7 +343,7 @@ globals
 	integer WV = 0
 	// lod的Debug变量
 	constant boolean LOD_DEBUGMODE 		  = false
-	constant boolean LOD_DEBUG_ORDER_MODE = false
+	constant boolean LOD_DEBUG_ORDER_MODE = true
 	rect ZV
 	boolean VE = false
 	boolean EE = false
@@ -14349,9 +14349,6 @@ function OLO takes player p, item it returns nothing
 	endif
 endfunction
 
-function GetUnitCastRangeBonus takes unit whichUnit returns real
-	return MHUnit_GetSpellRange(whichUnit)
-endfunction
 
 
 function QTUWW takes unit u, boolean WEWQQ returns nothing
@@ -77976,6 +77973,9 @@ function main takes nothing returns nothing
 
 	call MHDebug_EnableCrashTracer(true)
 
+	call MHTextTag_SetFont("Fonts\\arheigb_bd.ttf", 0)
+	call MHTextTag_SetLimit(200)
+	
 	call MHConst_SetOPLimit(3000000)
 	call MHConst_UnlockBlpSizeLimit(true)
 	// BUFF叠加
