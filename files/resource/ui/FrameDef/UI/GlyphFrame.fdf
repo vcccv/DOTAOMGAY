@@ -17,18 +17,6 @@ Frame "SIMPLEFRAME" "GlyphFrame"
         Height 0.0228,
     }
 
-    Frame "SIMPLEFRAME" "GlyphCooldownIndicator" {
-        DecorateFileNames,
-        
-        String "GlyphCooldownString" {
-            SetPoint CENTER, "GlyphFrame", CENTER, 0, 0,
-            FontJustificationH JUSTIFYCENTER,
-            FontJustificationV JUSTIFYMIDDLE,
-            FontShadowOffset 0.001 -0.001,
-            Font "MasterFont", 0.011,
-            TextLength 4,
-        }
-    }
 }
 
 Frame "SPRITE" "GlyphCooldownSprite" {
@@ -42,7 +30,7 @@ Frame "SPRITE" "GlyphCooldownSprite" {
         FontJustificationH JUSTIFYLEFT,
         FontJustificationV JUSTIFYMIDDLE,
         FontFlags "HIGHLIGHTONMOUSEOVER",
-        FrameFont "MasterFont", 0.012, "OUTLINE",
-        FontShadowOffset 0.0012 -0.0012,
+        FrameFont "MasterFont", 0.011, "OUTLINE",
+        FontShadowOffset 0.0011 -0.0011,
     }
 }

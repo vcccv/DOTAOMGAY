@@ -1,6 +1,11 @@
 
 library Base requires TriggerDestroyQueue, GroupAlloc, ErrorMessage, TimerUtils
     
+    function SendErrorMessage takes string str returns nothing
+        call MHUI_SendErrorMessage(str, 10., 0xFFFFCC00)
+        call MHUI_PlayErrorSound()
+    endfunction
+
     // GetBuybackGoldCostByLevel
     function GetBuybackGoldCostByLevel takes integer level returns integer
         local real    time   = GameTimer.GetElapsed() - PickModeElapsed

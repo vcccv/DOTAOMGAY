@@ -610,7 +610,7 @@ library UISystem requires ErrorMessage
             local integer  eventId = S2I(SubString(data, 0, index))
             local thistype this    = S2I(SubString(data, index + 1, -1))
 
-            if this == 0 or eventId == 0 or not HaveSavedString(HT, this, eventId) then
+            if this == 0 or eventId == 0 or not HaveSavedInteger(HT, this, eventId) then
                 return
             endif
 

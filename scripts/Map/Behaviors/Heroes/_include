@@ -29,6 +29,7 @@
 #include "Int\\Visage.j"
 #include "Int\\Enchantress.j"
 #include "Int\\OgreMagi.j"
+#include "Int\\Lion.j"
 
 #include "Agi\\VengefulSpirit.j"
 #include "Agi\\FacelessVoid.j"

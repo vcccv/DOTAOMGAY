@@ -826,7 +826,7 @@ library HeroSkillDefine requires SkillSystem
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "grabtree"), 'A0MT', 0, 'Y289', "b")
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "banish"), 'A2TD', 0, 'Y290', "c")
         call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "tornado"), 'A09D', 0, 'Y291', "w")
-        call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "drain"), 'A0CC', 'A02Z', 'Y292', "d")
+        call RegisterHeroSkill(i * 4 + 4, GetAbilityOrder('A0CC'), 'A0CC', 'A02Z', 'Y292', "d")
         set HeroSkill_Icon[i * 4 + 4] = "ReplaceableTextures\\CommandButtons\\BTNLifeDrain.blp"
         set i = 74 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A046')), 'A046', 'A3OH', 'Y293', "g")
@@ -1029,7 +1029,7 @@ library HeroSkillDefine requires SkillSystem
         set i = 104 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "freezingbreath"), 'A0X5', 0, 'Y413', "e")
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "hex"), 'A0MN', 0, 'Y414', "d")
-        call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "drain"), 'A02N', 0, 'Y415', "r")
+        call RegisterHeroSkill(i * 4 + 3, GetAbilityOrder('A02N'), 'A02N', 0, 'Y415', "r")
         set HeroSkill_Icon[i * 4 + 3] = "ReplaceableTextures\\CommandButtons\\BTNManaDrain.blp"
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, GetAbilityOrder('A095')), 'A095', 'A09W', 'Y416', "f")
         set i = 105 - 1

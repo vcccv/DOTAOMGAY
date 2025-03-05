@@ -107,7 +107,7 @@ library TownPortalScrollHandler requires Communication, TownPortalScrollFrame, U
         endif
     endfunction
 
-    function TownPortalScrollButtonOnClick takes nothing returns nothing
+    function TownPortalScrollButtonOnClickASync takes nothing returns nothing
         local unit    selectedUnit      = MHPlayer_GetSelectUnit()
         local integer charges
 
@@ -155,6 +155,10 @@ library TownPortalScrollHandler requires Communication, TownPortalScrollFrame, U
         endif
 
         set selectedUnit = null
+    endfunction
+
+    function TownPortalScrollHandler_Init takes nothing returns nothing
+        call GetTownPortalScrollButton().RegisterEventByCode(EVENT_ID_FRAME_MOUSE_CLICK, function TownPortalScrollButtonOnClickASync, false)
     endfunction
 
 endlibrary

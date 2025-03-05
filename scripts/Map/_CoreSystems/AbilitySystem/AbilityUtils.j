@@ -37,6 +37,19 @@ library AbilityUtils requires Table, Base
         return MHAbility_GetLevelDefDataReal(abilId, level, ABILITY_LEVEL_DEF_DATA_COOLDOWN)
     endfunction
 
+    function GetAbilityRealLevelField takes ability whichAbility, integer level, integer filed returns real
+        return MHAbility_GetAbilityCustomLevelDataReal(whichAbility, level, filed)
+    endfunction
+    function SetAbilityRealLevelField takes ability whichAbility, integer level, integer filed, real value returns nothing
+        call MHAbility_SetAbilityCustomLevelDataReal(whichAbility, level, filed, value)
+    endfunction
+    function GetAbilityRealLevelFieldById takes integer abilId, integer level, integer filed returns real
+        return MHAbility_GetLevelDefDataReal(abilId, level, filed)
+    endfunction
+    function SetAbilityRealLevelFieldById takes integer abilId, integer level, integer filed, real value returns nothing
+        call MHAbility_SetLevelDefDataReal(abilId, level, filed, value)
+    endfunction
+
     function GetAbilityReqLevelById takes integer abilId returns integer
         return MHAbility_GetDefDataInt(abilId, ABILITY_DEF_DATA_REQ_LEVEL)
     endfunction

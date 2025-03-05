@@ -16,6 +16,10 @@ library TownPortalScrollFrame requires UISystem, AbilityUtils
         private SimpleToolTip ToolTip
     endglobals
 
+    function GetTownPortalScrollButton takes nothing returns Frame
+        return TownPortalScrollButton
+    endfunction
+
     function TownPortalScrollFrameUpdateToolTip takes ability whichAbility returns nothing
         // if Frame.GetUnderCursor() != TownPortalScrollButton then
         //     return
@@ -102,14 +106,9 @@ library TownPortalScrollFrame requires UISystem, AbilityUtils
         call TownPortalScrollCooldownSprite.SetAnimateOffset(0.5)
         call TownPortalScrollCooldownSprite.SetVisible(false)
 
-
         set ToolTip = SimpleToolTip.RegisterToolTip(TownPortalScrollButton)
         
         call TownPortalScrollButton.SetPushedOffsetTexture(TownPortalScrollBackground, MOUSE_BUTTON_TYPE_LEFT, 0.95)
-
-        set trig = CreateTrigger()
-        call TriggerAddCondition(trig, Condition(function ButtonOnClick))
-        call MHFrameEvent_Register(trig, TownPortalScrollButton.GetPtr(), EVENT_ID_FRAME_MOUSE_CLICK)
         //
         call ShowTownPortalScrollFrame(false)
     endfunction

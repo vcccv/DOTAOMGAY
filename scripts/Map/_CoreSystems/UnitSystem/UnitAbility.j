@@ -34,6 +34,7 @@ library UnitAbility requires AbilityUtils, UnitLimitation
         call EnableTrigger(StartCooldownTrig)
     endfunction
 
+
     // 前后摇
     function SetUnitAbilityCastpoint takes unit whichUnit, integer abilId, real costpoint returns nothing
         call MHAbility_SetCastpoint(whichUnit, abilId, costpoint)

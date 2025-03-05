@@ -14,6 +14,10 @@ library GlyphFrame requires UISystem, AbilityUtils
         private SimpleToolTip ToolTip
     endglobals
 
+    function GetGlyphButton takes nothing returns Frame
+        return GlyphButton
+    endfunction
+
     function SetGlyphCooldownSpriteProgress takes real progress returns nothing
         call GlyphCooldownSprite.SetAnimateOffset(progress)
     endfunction
@@ -38,17 +42,9 @@ library GlyphFrame requires UISystem, AbilityUtils
         return GlyphFrame.IsVisible()
     endfunction
 
-    function EnableShowGlyphButton takes boolean enable returns nothing
-        //call GlyphButton.SetEnable(enable)
-        if enable then
-        //   call GlyphBackground.SetTexture("ReplaceableTextures\\CommandButtons\\BTNScrollUber.blp")
-        else
-        //   call GlyphBackground.SetTexture("ReplaceableTextures\\CommandButtonsDisabled\\DISBTNScrollUber.blp")
-        endif
-    endfunction
 
     function ShowGlyphFrame takes boolean show returns nothing
-        call EnableShowGlyphButton(show)
+        //call EnableShowGlyphButton(show)
         call GlyphFrame.SetVisible(show)
         call GlyphCooldownSprite.SetVisible(show)
     endfunction
@@ -59,6 +55,13 @@ library GlyphFrame requires UISystem, AbilityUtils
         endif
         call MHGame_ExecuteFunc("GlyphButtonOnClick")
         return false
+    endfunction
+
+    function SetGlyphButtonTooltip takes integer abilId returns nothing
+        set ToolTip = SimpleToolTip.RegisterToolTip(GlyphButton)
+        set ToolTip.TipName  = GetAbilityTooltipById(abilId, 1)
+        set ToolTip.UberTip  = GetAbilityUberTooltipById(abilId, 1)
+        set ToolTip.Cooldown = GetAbilityCooldownById(abilId, 1)
     endfunction
 
     function GlyphFrame_Init takes nothing returns nothing
@@ -85,10 +88,7 @@ library GlyphFrame requires UISystem, AbilityUtils
         call GlyphCooldownSprite.SetSpriteAnimate(0, 0)
         call GlyphCooldownSprite.SetAnimateOffset(0.5)
 
-        set ToolTip = SimpleToolTip.RegisterToolTip(GlyphButton)
-        set ToolTip.TipName  = GetAbilityTooltipById('A141', 1)
-        set ToolTip.UberTip  = GetAbilityUberTooltipById('A141', 1)
-        set ToolTip.Cooldown = GetAbilityCooldownById('A141', 1)
+
 
         call GlyphButton.SetPushedOffsetTexture(GlyphBackground, MOUSE_BUTTON_TYPE_LEFT, 0.95)
 

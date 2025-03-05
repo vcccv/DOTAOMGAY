@@ -29,8 +29,6 @@ Frame "SIMPLEFRAME" "TownPortalScrollFrame"
         String "TownPortalScrollChargesString" {
             SetPoint CENTER, "TownPortalScrollChargesTexture", CENTER, 0, - 0.00042,
             Font "MasterFont", 0.008,
-            FontJustificationH JUSTIFYCENTER,
-            FontJustificationV JUSTIFYMIDDLE,
         }
     }
    
@@ -46,7 +44,6 @@ Frame "SPRITE" "TownPortalScrollCooldownSprite" {
         SetPoint CENTER, "TownPortalScrollCooldownSprite", CENTER, 0, 0,
         FontJustificationH JUSTIFYLEFT,
         FontJustificationV JUSTIFYMIDDLE,
-        FontFlags "HIGHLIGHTONMOUSEOVER",
         FrameFont "MasterFont", 0.013, "OUTLINE",
         FontShadowOffset 0.0013 -0.0013,
     }

@@ -189,7 +189,7 @@ library SimpleToolTipLib
             call UberToolTipString.SetTextAlignment(TEXT_JUSTIFY_TOP, TEXT_JUSTIFY_LEFT)
 
             set HorizontalSeparatorTexture = ToolTipFrame.CreateSimpleTexture()
-            call HorizontalSeparatorTexture.SetSize(0.200, 0.0005)
+            call HorizontalSeparatorTexture.SetSize(0.2025, 0.00025)
             call HorizontalSeparatorTexture.SetTexture("UI\\Widgets\\ToolTips\\Human\\HorizontalSeparator.blp")
 
             set CostTexture[1] = CreateCostTexture()
@@ -204,7 +204,7 @@ library SimpleToolTipLib
             call ToolTipNameString.SetText("tooltip missing!")
             call RequireToolTipString.SetText("tooltip missing!")
             call UberToolTipString.SetText("tooltip missing!")
-            
+
             call CostTexture[1].SetPoint(FRAMEPOINT_TOPLEFT, ToolTipNameString, FRAMEPOINT_BOTTOMLEFT, 0., - 0.004)
             call CostString [1].SetPoint(FRAMEPOINT_LEFT, CostTexture[1], FRAMEPOINT_RIGHT, 0.003125, 0.)
 

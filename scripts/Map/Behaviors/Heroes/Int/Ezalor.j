@@ -183,6 +183,7 @@ scope Ezalor
             set IlluminateSW(sw).isUpgraded = isUpgraded
             set IlluminateSW(sw).damage = (maxCount-count)* 10
             call IlluminateSW.Launch(sw)
+            call BJDebugMsg("damage" + R2S(IlluminateSW(sw).damage))
 
             call UnitHideAbility(whichUnit, ILLUMINATE_ABILITY_ID, false)
             call UnitDisableAbility(whichUnit, ILLUMINATE_RELEASE_ABILITY_ID, true, true)
@@ -223,7 +224,7 @@ scope Ezalor
         set orbX = startX + MHUnit_GetData(whichUnit, UNIT_DATA_LAUNCH_X) * Cos(angle)
         set orbY = startY + MHUnit_GetData(whichUnit, UNIT_DATA_LAUNCH_Y) * Sin(angle)
 
-        set tick = SimpleTick.Create(0)
+        set tick = SimpleTick.Create(maxCount)
         call tick.Start(0.1, true, function IlluminateOnUpdate)
 
         set SimpleTickTable[tick].unit['s']    = whichUnit

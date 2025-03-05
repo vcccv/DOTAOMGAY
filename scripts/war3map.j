@@ -2380,6 +2380,9 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A01I', 0, "YVV")
 	call SaveStr(ObjectHashTable,'A1YY', 0, "YEV")
 	call SaveStr(ObjectHashTable,'A0O6', 0, "IcePathOnSpellEffect")
+
+
+
 	call SaveStr(ObjectHashTable,'A0IL', 0, "YOV")
 	call SaveStr(ObjectHashTable,'A1A8', 0, "YRV")
 	call SaveStr(ObjectHashTable,'A21J', 0, "YIV")
@@ -3241,6 +3244,11 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 
 	call SaveStr(ObjectHashTable,'A0ME', 7, "QopBlinkOnSpellChannel")
 	call SaveStr(ObjectHashTable,'AEbl', 7, "BlinkOnSpellChannel")
+
+	call SaveStr(ObjectHashTable,'A02N', 7, "LionManaDrainOnSpellChannel")
+
+	call SaveStr(ObjectHashTable,'A0CC', 7, "PugnaLifeDrainOnSpellChannel")
+	call SaveStr(ObjectHashTable,'A02Z', 7, "PugnaLifeDrainOnSpellChannel")
 	
 	call SaveStr(ObjectHashTable,'A24K', 9, "S2E")
 
@@ -77959,8 +77967,8 @@ function main takes nothing returns nothing
 	call SetAmbientNightSound("FelwoodNight")
 	call SetMapMusic("Music", true, 0)
 
-	call memhack_init()
 
+	call memhack_init()
 	call MHUI_DrawAttackSpeed(true)
 	call MHUI_DrawMoveSpeed(true)
 	call MHDrawCooldown_Initialize()
@@ -77970,7 +77978,6 @@ function main takes nothing returns nothing
 
 	call MHConst_SetOPLimit(3000000)
 	call MHConst_UnlockBlpSizeLimit(true)
-
 	// BUFF叠加
 	call MHBuff_SetOverlay(BUFF_TEMPLATE_BINF, true)
 	call MHBuff_SetOverlay(BUFF_TEMPLATE_BSLO, true)
