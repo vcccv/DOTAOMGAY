@@ -13,7 +13,7 @@ library AbilityUtils requires Table, Base
     function GetAbilityBaseId takes ability whichAbility returns integer
         return MHAbility_GetDefDataInt(GetAbilityId(whichAbility), ABILITY_DEF_DATA_BASE_ID)
     endfunction
-
+    
     function GetAbilityTooltip takes ability whichAbility returns string
         return MHAbility_GetAbilityCustomLevelDataStr(whichAbility, GetAbilityLevel(whichAbility), ABILITY_LEVEL_DEF_DATA_TIP)
     endfunction
@@ -27,6 +27,9 @@ library AbilityUtils requires Table, Base
         return MHAbility_GetAbilityCustomLevelDataReal(whichAbility, GetAbilityLevel(whichAbility), ABILITY_LEVEL_DEF_DATA_COOLDOWN)
     endfunction
 
+    function GetAbilityIconById takes integer abilId returns string
+        return MHAbility_GetDefDataStr(abilId, ABILITY_DEF_DATA_ART)
+    endfunction
     function GetAbilityTooltipById takes integer abilId, integer level returns string
         return MHAbility_GetLevelDefDataStr(abilId, level, ABILITY_LEVEL_DEF_DATA_TIP)
     endfunction

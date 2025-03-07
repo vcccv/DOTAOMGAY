@@ -43,8 +43,8 @@ function wave:do_compile(op)
     local content = file:read("a")
     file:close()
 
-    -- 使用 string.gsub 替换 YDNL 为换行符
-    local content, count = content:gsub("YDNL", "\n")
+    ---- 使用 string.gsub 替换 YDNL 为换行符
+    --local content, count = content:gsub("YDNL", "\n")
 
     -- 重新打开文件以写入修改后的内容
     file = io.open(op.output, "w")

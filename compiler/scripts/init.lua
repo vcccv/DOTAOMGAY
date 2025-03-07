@@ -41,9 +41,35 @@ function has_arg(arg, target)
     return false
 end
 
+function io.load(file_path)
+    local f, e = io.open(file_path, "rb")
+    if f then
+        if f:read(3) ~= '\xEF\xBB\xBF' then
+            f:seek('set')
+        end
+        local content = f:read 'a'
+        f:close()
+        return content
+    else
+        return false, e
+    end
+end
+
+function io.save(file_path, content)
+    local f, e = io.open(file_path, "wb")
+    if f then
+        f:write(content)
+        f:close()
+        return true
+    else
+        return false, e
+    end
+end
+
 package.path = package.path .. ";.\\compiler\\scripts\\?.lua"
-local wave = require "wave"
+local wave       = require "wave"
 local jasshelper = require "jasshelper"
+local template   = require "template"
 
 local function update_script(map_path, input, process_function)
     copy_file(map_path .. '\\war3map.j', input)
@@ -91,10 +117,15 @@ function compiler:compile(map_path)
             end
             compile_t.input = compile_t.output
 
+            compile_t.output = compile_t.log.. "\\3_template.j"
+            if not template:compile(compile_t) then
+                collectgarbage 'collect'
+                return
+            end
             --collectgarbage 'collect'
 
             compile_t.input = compile_t.output
-            compile_t.output = compile_t.log .. "\\3_vjass.j"
+            compile_t.output = compile_t.log .. "\\4_vjass.j"
             if not jasshelper:compile(compile_t) then
                 return
             end

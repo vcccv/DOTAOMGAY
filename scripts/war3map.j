@@ -1,3 +1,6 @@
+#define YDNL <?='\n'?>
+#define C2I(c) MHTool_CodeToInt(c)
+#define I2C(i) MHTool_IntToCode(i)
 
 #define GetHeroSKillIndexBySlot(heroIndex, slot) ( ( heroIndex - 1 ) * 4 ) + slot
 
@@ -10,8 +13,6 @@
 #define UEDyingUnit   Event.GetTriggerUnit()
 #define UEKillingUnit Event.KillingUnit[Event.INDEX]
 
-#define C2I(c) MHTool_CodeToInt(c)
-#define I2C(i) MHTool_IntToCode(i)
 
 globals
 	location ScourgeMidMeleeSpawnLocatio   = null

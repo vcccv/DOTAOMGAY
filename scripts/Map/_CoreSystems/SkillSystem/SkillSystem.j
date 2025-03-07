@@ -266,7 +266,7 @@ library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
     // Id StackLim暂时无用 普通技能 神杖技能 工程升级技能 
     function RegisterHeroSkill takes integer id, string StackLim, integer commonSkill, integer upgradeSkill, integer changeSkill, string sHotKey returns nothing
         if commonSkill > 0 then
-            set HeroSkill_Icon[id] = GetAbilitySoundById(commonSkill, SOUND_TYPE_EFFECT_LOOPED)
+            set HeroSkill_Icon[id] = GetAbilityIconById(id)//GetAbilitySoundById(commonSkill, SOUND_TYPE_EFFECT_LOOPED)
         endif
         set HeroSkill_BaseId[id] = commonSkill
         set HeroSkill_SpecialId[id] = upgradeSkill
