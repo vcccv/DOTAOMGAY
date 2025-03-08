@@ -53,32 +53,24 @@ end
 local template = {}
 
 function template:compile(op)
-	--log.trace("Template compilation start.")
 	local code, err = io.load(op.input)
 	if not code then
 		print("Template read " .. op.input .. ". Error: " .. err)
 		return false
 	end
-	--__map_path__   = op.map_path
-	--local env = require 'compiler.computed.env'
 	local ok, res = do_compile(code)
 	if not ok then
-		--if res then
-		--	gui.error_message(nil, res)
-		--else
-		--	gui.error_message(nil, LNG.UNKNOWN)
-		--end
 		print("Template error processing: " .. tostring(res))
 		return false
 	end
 
+---@diagnostic disable-next-line: redefined-local
 	local ok, err = io.save(op.output, res)
 	if not ok then
 		print("Template write " .. op.output .. ". Error: " .. err)
 		return false
 	end
-	
-	--log.debug("Template compilation succeeded.")
+
 	return true
 end
 

@@ -1,36 +1,80 @@
 local compiler = require "compiler.scripts"
 
-local function init()
-    local folder_path = "temp"
-    if not folder_exists(folder_path) then
-        os.execute("mkdir " .. folder_path)
-    end
-    copy_file("war3map.w3x", "temp\\war3map.w3x")
-
-    compiler:compile("scripts")
-
-    local args      = {}
-
-    args[#args + 1] = ("bin\\YDWEConfig.exe")
-    args[#args + 1] = "-launchwar3"
-    args[#args + 1] = "-loadfile"
-    args[#args + 1] = "temp\\war3map.w3x"
-
-    local command   = ""
+local function execute_cmd(args)
+    local command = ""
+    print("execute_cmd")
     for _, value in ipairs(args) do
         command = command .. value .. " "
     end
-
     print(command)
+    return os.execute(command)
+end
 
-    local file = io.popen(command)
-    if not file then
-        return false
+local function init()
+    compiler:compile("scripts")
+
+    -- 打包地图
+
+    local args
+
+    local source_dir = [["map\\Work"]]
+    local temp_dir   = [["logs\\TempWar3Map"]]
+
+    -- 复制资源文件
+    args = {}
+    args[#args + 1] = ("robocopy ")
+    args[#args + 1] = source_dir
+    args[#args + 1] = temp_dir
+    args[#args + 1] = "/MIR /NFL /NDL /NJH /NJS"
+    print(execute_cmd(args))
+    --if not execute_cmd(args) then
+    --    print("返回了1")
+    --    return
+    --end
+
+    args = {}
+    args[#args + 1] = ("copy")
+    args[#args + 1] = [["logs\\war3map.w3x"]]
+    args[#args + 1] = [["logs\\temp.w3x"]]
+    if not execute_cmd(args) then
+        print("返回了2")
+        return
     end
-    local output = file:read("*a")
-    local suc, exitcode, code = file:close()
 
-    return suc
+    args = {}
+    args[#args + 1] = ("copy")
+    args[#args + 1] = [["logs\\outputwar3map.j"]]
+    args[#args + 1] = [["logs\\TempWar3Map\\war3map.j"]]
+    if not execute_cmd(args) then
+        print("返回了2")
+        return
+    end
+
+    args = {}
+    args[#args + 1] = ("compiler\\mpqeditorhhb\\MPQEditor.exe")
+    args[#args + 1] = "add"
+    args[#args + 1] = [["logs\\temp.w3x"]]
+    args[#args + 1] = temp_dir
+    args[#args + 1] = "/c"
+    args[#args + 1] = "/auto"
+    args[#args + 1] = "/r"
+    if not execute_cmd(args) then
+        print("返回了3")
+        return
+    end
+
+    args = {}
+    args[#args + 1] = ("bin\\YDWEConfig.exe")
+    args[#args + 1] = "-launchwar3"
+    args[#args + 1] = "-loadfile"
+    args[#args + 1] = [["logs\\temp.w3x"]]
+
+    local command = ""
+    for _, value in ipairs(args) do
+        command = command .. value .. " "
+    end
+    print(command)
+    return os.execute(command)
 end
 
 init()

@@ -122,7 +122,6 @@ function compiler:compile(map_path)
                 collectgarbage 'collect'
                 return
             end
-            --collectgarbage 'collect'
 
             compile_t.input = compile_t.output
             compile_t.output = compile_t.log .. "\\4_vjass.j"

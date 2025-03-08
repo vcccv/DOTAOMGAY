@@ -25,11 +25,7 @@ function jasshelper:compile(op)
         args[#args + 1] = "--nopreprocessor"
     end
 
-    if not op.option.enable_jasshelper_no_scriptonly then
-        args[#args + 1] = "--scriptonly"
-    else
-        op.output = "temp\\war3map.w3x"
-    end
+    args[#args + 1] = "--scriptonly"
 
     args[#args + 1] = common_j_path
     args[#args + 1] = blizzard_j_path

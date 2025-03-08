@@ -117,6 +117,10 @@ library TownPortalScrollHandler requires Communication, TownPortalScrollFrame, U
 
         set charges = GetUnitTownPortalScrollCharges(selectedUnit)
         if MHMsg_IsKeyDown(OSKEY_ALT) then
+            // 选中商店时
+            if MHUnit_GetShopTarget(selectedUnit, GetLocalPlayer()) != null then
+                set selectedUnit = MHUnit_GetShopTarget(selectedUnit, GetLocalPlayer())
+            endif
             call Communication_OnPingTownPortalScroll(selectedUnit, GetUnitAbility(selectedUnit, TOWN_PORTAL_SCROLL_ABILITY_ID), charges)
         elseif MHUIData_GetTargetModeAbility() == TOWN_PORTAL_SCROLL_ABILITY_ID and MHMsg_IsIndicatorOn(INDICATOR_TYPE_TARGET_MODE) then
             call TownPortalScroll_SelfCast(selectedUnit)
@@ -135,25 +139,32 @@ library TownPortalScrollHandler requires Communication, TownPortalScrollFrame, U
     
     function TownPortalScroll_Update takes nothing returns nothing
         local unit    selectedUnit      = MHPlayer_GetSelectUnit()
+        local unit    sourceUnit        = null
         local ability townPortalAbility = null
         local integer charges
         
-        if GetUnitAbilityLevel(selectedUnit, TOWN_PORTAL_SCROLL_ABILITY_ID) > 0 then
+        if MHUnit_GetShopTarget(selectedUnit, GetLocalPlayer()) != null then
+            set sourceUnit = MHUnit_GetShopTarget(selectedUnit, GetLocalPlayer())
+        else
+            set sourceUnit = selectedUnit
+        endif
+        if GetUnitAbilityLevel(sourceUnit, TOWN_PORTAL_SCROLL_ABILITY_ID) > 0 then
             if not IsTownPortalScrollFrameVisible() then
                 call ShowTownPortalScrollFrame(true)
             endif
 
-            set townPortalAbility = GetUnitAbility(selectedUnit, TOWN_PORTAL_SCROLL_ABILITY_ID)
+            set townPortalAbility = GetUnitAbility(sourceUnit, TOWN_PORTAL_SCROLL_ABILITY_ID)
             call TownPortalScrollFrameUpdateToolTip(townPortalAbility)
             call SetTownPortalScrollCooldownRemaining(GetAbilityCooldown(townPortalAbility), GetAbilityCooldownRemaining(townPortalAbility))
-            set charges = GetUnitTownPortalScrollCharges(selectedUnit)
+            set charges = GetUnitTownPortalScrollCharges(sourceUnit)
             call SetTownPortalScrollCharges(charges)
-            call EnableShowTownPortalScrollButton(charges > 0)
+            call EnableShowTownPortalScrollButton(charges > 0 and sourceUnit == selectedUnit)
             set townPortalAbility = null
         elseif IsTownPortalScrollFrameVisible() then
             call ShowTownPortalScrollFrame(false)
         endif
 
+        set sourceUnit   = null
         set selectedUnit = null
     endfunction
 

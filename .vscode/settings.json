@@ -1,7 +1,6 @@
 {
     "files.watcherExclude": {
         "**/logs/**": true,
-        "**/files/resource/**": true
     },
     "search.exclude": {
         "**/*.exe": true,
@@ -12,7 +11,7 @@
         "**/bin": true,
         "**/plugin": true,
         "**/save": true,
-        "**/temp": true,
+        "**/resource": true,
         "**/tiara.ai": true,
         "**/tiara.blp": true,
         "**/jasshelper.conf": true,
@@ -27,7 +26,7 @@
         "**/bin": true,
         "**/plugin": true,
         "**/save": true,
-        "**/temp": true,
+        "**/resource": true,
         "**/tiara.ai": true,
         "**/tiara.blp": true,
         "**/jasshelper.conf": true,

@@ -28,7 +28,11 @@ library AbilityUtils requires Table, Base
     endfunction
 
     function GetAbilityIconById takes integer abilId returns string
-        return MHAbility_GetDefDataStr(abilId, ABILITY_DEF_DATA_ART)
+        local string s = MHAbility_GetDefDataStr(abilId, ABILITY_DEF_DATA_ART)
+        if StringLength(s) > 0 and MHString_Find(s, ".blp", 0) == - 1 then
+            return s + ".blp"
+        endif
+        return s
     endfunction
     function GetAbilityTooltipById takes integer abilId, integer level returns string
         return MHAbility_GetLevelDefDataStr(abilId, level, ABILITY_LEVEL_DEF_DATA_TIP)

@@ -1575,7 +1575,7 @@ Tip=噬魂鬼
 Ubertip="|cffdaa520|n基础攻击: 57-67|n护甲: 1.5|n攻击前摇: 0.39|n攻击间隔: 1.7|r|n|cff00ff7f生命回复速度: 0.25|r|n|cff4169e1魔法回复速度: 0.01|r|n|n|c00ff0303力量|r: 25 + 2.4|n|cff0042ff敏捷|r: 18 + 1.9|n|cff0042ff智力|r: 15 + 1.75|n|n攻击距离 128 (近战).|n移动速度 315.|n施法前摇 0.01s."
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNGhoul.blp
 [u00O]
-art=ReplaceableTextures\CommandButtons\BTNbflj
+art=ReplaceableTextures\CommandButtons\BTNIcePath
 missileart=Abilities\Weapons\LocustMissile\LocustMissile.mdl
 missilearc=0.15
 missilespeed=500
@@ -13661,9 +13661,9 @@ Name=嗜血渴望
 Researchhotkey=T
 Researchtip=学习 嗜血渴望[|cffffcc00T|r] - [|cffffcc00等级 %d|r]|n(Strygwyr's Thirst)
 Researchubertip=嗜血狂魔能凭本能察觉血液的流动，当全地图范围内内有低30%生命值的敌方英雄出现时，他能看见该英雄并提升移动速度，同时获得攻击力加成。效果可叠加，激活时移除移动速度上限。|n|n|cffffcc00等级 1|r -提升5%的移动速度，5点攻击力|n|cffffcc00等级 2|r -提升15%的移动速度，15点攻击力|n|cffffcc00等级 3|r -提升25%的移动速度，25点攻击力|n|cffffcc00等级 4|r -提升35%的移动速度，35点攻击力|n|n|cff99ccff作用范围：|r全地图
-effectsoundlooped=ReplaceableTextures\CommandButtons\BTNStrygwyrsThirst.blp
+effectsoundlooped=ReplaceableTextures\PassiveButtons\PASBTNStrygwyrsThirst.blp
 [QP1Z]
-art=ReplaceableTextures\CommandButtons\BTNStrygwyrsThirst
+art=ReplaceableTextures\PassiveButtons\PASBTNStrygwyrsThirst
 buttonpos=2,2
 Name=嗜血渴望
 Tip=嗜血渴望 - [|cffffcc00等级 1|r],嗜血渴望 - [|cffffcc00等级 2|r],嗜血渴望 - [|cffffcc00等级 3|r],嗜血渴望 - [|cffffcc00等级 4|r]
@@ -16361,11 +16361,11 @@ researchbuttonpos=1
 animnames=spell,channel
 unbuttonpos=1
 [A0FL]
-art=ReplaceableTextures\CommandButtons\BTNzj
+art=ReplaceableTextures\CommandButtons\BTNDismember
 buttonpos=3,2
 animnames=channel,looping
-unart=ReplaceableTextures\CommandButtons\BTNzj
-researchart=ReplaceableTextures\CommandButtons\BTNzj
+unart=ReplaceableTextures\CommandButtons\BTNDismember
+researchart=ReplaceableTextures\CommandButtons\BTNDismember
 researchbuttonpos=3
 effectsound=A06FreshMeat
 targetart=Objects\Spawnmodels\Human\HumanBlood\HumanBloodFootman.mdl
@@ -16377,7 +16377,7 @@ Hotkey=D
 Researchhotkey="D"
 Researchtip=学习 肢解[|cffffcc00D|r] - [|cffffcc00等级 %d|r]|n(Dismember)
 Researchubertip=肢解目标单位，使其承受难以言状的痛苦。目标每秒受到|cFF00B9FF魔法伤害|r，并被完全控制。|n|n|cffffcc00等级 1|r - 造成100（100+最高属性*0.75）点/秒的伤害|n|cffffcc00等级 2|r - 造成150（150+最高属性*0.75）点/秒的伤害|n|cffffcc00等级 3|r - 造成200（200+最高属性*0.75）点/秒的伤害|n|n|cffff0303控制效果无视魔法免疫|r|n|cffff0303需要持续施法|r|n|n|cff99ccff施法距离：|r200|n|cff99ccff持续时间：|r3|n|cff99ccff冷却时间：|r30|n|cff99ccff魔法消耗：|r100/130/170|n|n|c00fffc01神杖升级：汲取目标生命，汲取量取决于英雄自身最高属性|r
-effectsoundlooped=ReplaceableTextures\CommandButtons\BTNzj.blp
+effectsoundlooped=ReplaceableTextures\CommandButtons\BTNDismember.blp
 [A0FU]
 researchart=ReplaceableTextures\CommandButtons\BTNRegenerationAura
 researchbuttonpos=2
@@ -17221,10 +17221,10 @@ name="Diffusal Burn Level 2"
 targetart=war3mapImported\NaturalOrderAura.mdx
 name="Natural Order Aura Art"
 [A1CX]
-art=ReplaceableTextures\CommandButtons\BTNzj
+art=ReplaceableTextures\CommandButtons\BTNDismember
 buttonpos=3,2
 animnames=channel,looping
-researchart=ReplaceableTextures\CommandButtons\BTNzj
+researchart=ReplaceableTextures\CommandButtons\BTNDismember
 researchbuttonpos=3
 effectsound=A06FreshMeat
 targetart=Objects\Spawnmodels\Human\HumanBlood\HumanBloodFootman.mdl
@@ -18008,7 +18008,7 @@ buffart=ReplaceableTextures\CommandButtons\BTNDivineIntervention
 bufftip=Can't Touch Dis
 buffubertip="This unit is under a Divine Shield; it is invulnerable."
 [B03I]
-buffart=ReplaceableTextures\CommandButtons\BTNzj
+buffart=ReplaceableTextures\CommandButtons\BTNDismember
 targetart=Objects\Spawnmodels\Orc\Orcblood\BattrollBlood.mdl
 targetattach=chest
 Bufftip=肢解
@@ -21406,9 +21406,9 @@ Researchtip=学习 自然秩序[|cffffcc00N|r] - [|cffffcc00等级 %d|r]|n(Natur
 Researchubertip=通过聚集并使用分散于时序的智慧，牛头人酋能长让一切事物的状态恢复为最初始的等级。移除附近敌方单位的基础魔法抗性和基础物理抗性。|n|n|cffff0303无视魔法免疫|r|n|n|cff99ccff作用范围：|r325|n|n|cffffcc00等级 1|r - 移除40%的基础魔法/物理抗性|n|cffffcc00等级 2|r - 移除60%的基础魔法/物理抗性|n|cffffcc00等级 3|r - 移除80%的基础魔法/物理抗性|n|cffffcc00等级 4|r - 移除100%的基础魔法/物理抗性
 Researchhotkey=N
 hotkey=N
-effectsoundlooped=ReplaceableTextures\CommandButtons\PASBTNNaturalOrder.blp
+effectsoundlooped=ReplaceableTextures\CommandButtons\BTNNaturalOrder.blp
 [QP1I]
-art=ReplaceableTextures\CommandButtons\PASBTNNaturalOrder
+art=ReplaceableTextures\PassiveButtons\PASBTNNaturalOrder
 buttonpos=2,2
 Name=自然秩序
 Tip=自然秩序 -  [|cffffcc00等级 1|r],自然秩序 -  [|cffffcc00等级 2|r],自然秩序 -  [|cffffcc00等级 3|r],自然秩序 -  [|cffffcc00等级 4|r]
@@ -21528,7 +21528,6 @@ researchtip="Learn |cffffcc00F|ran of Knives - [|cffffcc00Level %d|r]"
 researchubertip="The Warden hurls a flurry of knives, damaging nearby enemies.|n|n|cffffcc00Level 1|r - damage per target.|n|cffffcc00Level 2|r - damage per target.|n|cffffcc00Level 3|r - damage per target."
 researchhotkey=F
 [A1HR]
-art=ReplaceableTextures\PassiveButtons\PASBTNEssenceShift.blp
 researchart=ReplaceableTextures\CommandButtons\BTNEssenceShift.blp
 researchbuttonpos=2
 Name=刮痧
@@ -30974,8 +30973,8 @@ Researchtip=学习 死亡守卫[|cffffcc00D|r] - [|cffffcc00等级 %d|r]|n(Death
 Researchubertip=召唤一个致命的守卫来攻击敌方英雄，持续8秒。技能使用时获得一次魔法抵抗效果。守卫是无敌的。|n|n|cffff0303需要持续施法|r|n|n|cff99ccff施法距离：|r600|n|cff99ccff冷却时间：|r80|n|cff99ccff魔法消耗：|r200|n|n|cffffcc00等级 1|r -|n守卫射程700，拥有60点混乱攻击|n|cffffcc00等级 2|r -|n守卫射程700，拥有105点混乱攻击，弹射1次|n|cffffcc00等级 3|r -|n守卫射程700，拥有150点混乱伤害，弹射4次
 researchhotkey="D"
 [A0O6]
-art=ReplaceableTextures\CommandButtons\BTNbflj
-researchart=ReplaceableTextures\CommandButtons\BTNbflj
+art=ReplaceableTextures\CommandButtons\BTNIcePath
+researchart=ReplaceableTextures\CommandButtons\BTNIcePath
 buttonpos=1,2
 researchbuttonpos=1
 missileart=Abilities\Spells\Undead\FreezingBreath\FreezingBreathMissile.mdl
@@ -30988,7 +30987,7 @@ Hotkey=T
 Researchtip=学习 冰封路径[|cffffcc00T|r] - [|cffffcc00等级 %d|r]|n(Ice Path)
 Researchubertip=在双头龙面前创造一条冰封路径（无任何影响）。0.5秒后，路径成型，将任何碰触到路径的敌方单位冻结并造成|cff6495ed魔法伤害|r。被冻结的单位无法移动、攻击、使用技能和物品。|n|n|cff99ccff施法距离：|r1300|n|cff99ccff冷却时间：|r12/11/10/9|n|cff99ccff魔法消耗：|r90|n|n|cffffcc00等级 1|r - 路径成型后持续1秒，造成50点伤害|n|cffffcc00等级 2|r - 路径成型后持续1.4秒，造成50点伤害|n|cffffcc00等级 3|r - 路径成型后持续1.8秒，造成50点伤害|n|cffffcc00等级 4|r - 路径成型后持续2.2秒，造成50点伤害
 researchhotkey="T"
-effectsoundlooped=ReplaceableTextures\CommandButtons\BTNbflj.blp
+effectsoundlooped=ReplaceableTextures\CommandButtons\BTNIcePath.blp
 [A0OA]
 buttonpos=,2
 animnames=spell,slam
@@ -31182,21 +31181,21 @@ Researchtip=学习 混乱之雨[|cffffcc00R|r] - [|cffffcc00等级 %d|r]|n(Rain 
 Researchubertip=从天空召唤两个地狱火，分别对目标区域的敌方单位造成1秒眩晕。地狱火持续60秒，拥有抗性皮肤、永久的献祭和烈焰之拳。|n|n|cffff0303眩晕效果无视魔法免疫|r|n|n|cff99ccff施法距离：|r1200|n|cff99ccff作用范围：|r600|n|cff99ccff冷却时间：|r165|n|cff99ccff魔法消耗：|r200/250/300|n|n|cffffcc00等级 1|r - 召唤具有一般攻击力的地狱火|n|cffffcc00等级 2|r - 召唤具有强大攻击力的地狱火|n|cffffcc00等级 3|r - 召唤具有惊人攻击力的地狱火|n|n|c00fffc01协同升级：提升一倍的燃烧效果，在地狱火死亡的时候将会自爆，对250范围内的敌人造成100/150/200/250点魔法伤害。
 researchhotkey="R"
 [A0IM]
-art=ReplaceableTextures\CommandButtons\BTNFlamingFists
+art=ReplaceableTextures\CommandButtons\PASBTNFlamingFists
 buttonpos=,2
 animnames=slam
 Name=烈焰之拳
 Tip=烈焰之拳
 Ubertip=每次攻击有40%的概率对周围300范围内敌方单位造成80点|cFF00B9FF魔法伤害|r。
 [A0IQ]
-art=ReplaceableTextures\CommandButtons\BTNFlamingFists
+art=ReplaceableTextures\CommandButtons\PASBTNFlamingFists
 buttonpos=,2
 animnames=slam
 Name=烈焰之拳
 Tip=烈焰之拳
 Ubertip=每次攻击有40%的概率对周围300范围内敌方单位造成115点|cFF00B9FF魔法伤害|r。
 [A0IS]
-art=ReplaceableTextures\CommandButtons\BTNFlamingFists
+art=ReplaceableTextures\CommandButtons\PASBTNFlamingFists
 buttonpos=,2
 animnames=slam
 Name=烈焰之拳
@@ -33451,7 +33450,7 @@ targetart=Abilities\Spells\Other\BreathOfFire\BreathOfFireDamage.mdl
 Bufftip=冰火交加
 Buffubertip=该单位遭到冰火交加攻击，将持续受到伤害
 [B06T]
-buffart=ReplaceableTextures\CommandButtons\BTNbflj
+buffart=ReplaceableTextures\CommandButtons\BTNIcePath
 targetart=Abilities\Spells\Other\FrostDamage\FrostDamage.mdl
 Bufftip=冰封路径
 Buffubertip=该单位陷入寒冰之中，他的移动速度和攻击速度暂时被减缓了
@@ -34107,9 +34106,9 @@ Name=潮汐使者
 Researchtip=学习 潮汐使者[|cffffcc00D|r] - [|cffffcc00等级 %d|r]|n(Tidebringer)
 Researchubertip=舰队统帅传奇般的宝剑潮汐使者，被大海灌入了不可思议的力量。类似于涨潮和退潮，每过一定的时间，潮汐使者便被动地给予舰队统帅额外攻击力和分裂攻击效果，持续一次攻击。|n|n|cffffcc00等级 1|r - 增加20点攻击力，冷却时间13秒|n|cffffcc00等级 2|r - 增加35点攻击力，冷却时间10秒|n|cffffcc00等级 3|r - 增加50点攻击力，冷却时间7秒|n|cffffcc00等级 4|r - 增加65点攻击力，冷却时间4秒|n|n|cff006600加强伤害|r|n|n|cff99ccff作用范围：|r500/500/500/600
 researchhotkey="D"
-effectsoundlooped=ReplaceableTextures\PassiveButtons\BTNTidebringer.blp
+effectsoundlooped=ReplaceableTextures\PassiveButtons\PASBTNTidebringer.blp
 [A522]
-art=ReplaceableTextures\PassiveButtons\BTNTidebringer
+art=ReplaceableTextures\PassiveButtons\PASBTNTidebringer
 buttonpos=1,2
 Name=潮汐使者
 Tip=潮汐使者 - [|cffffcc00等级 1|r],潮汐使者 - [|cffffcc00等级 2|r],潮汐使者 - [|cffffcc00等级 3|r],潮汐使者 - [|cffffcc00等级 4|r]
@@ -37352,7 +37351,7 @@ Bufftip=不稳定电流
 Buffubertip=该单位被不稳定电流击中，身上的所有状态被移除，并且移动速度被减缓一小段时间
 [B0BP]
 spelldetail=2
-buffart=ReplaceableTextures\CommandButtons\PASBTNNaturalOrder
+buffart=ReplaceableTextures\CommandButtons\BTNNaturalOrder
 Bufftip=自然秩序
 Buffubertip=该单位的基础护甲和魔抗被降低了
 [B0BQ]

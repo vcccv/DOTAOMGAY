@@ -293,6 +293,10 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility
             return
         endif
 
+        if MHUnit_GetShopTarget(whichUnit, GetLocalPlayer()) != null then
+            set whichUnit = MHUnit_GetShopTarget(whichUnit, GetLocalPlayer())
+        endif
+
         set itemName          = GetItemNameById(GetItemTypeId(whichItem))
         set cooldownRemaining = MHUIData_GetCommandButtonCooldown(skillButton)
         set manaCost          = MHUIData_GetCommandButtonManaCost(skillButton)
@@ -445,7 +449,8 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility
         // call BJDebugMsg("MHUIData_GetCommandButtonItem(itemButton):" + I2S(GetHandleId(MHUIData_GetCommandButtonItem(itemButton))))
         // call BJDebugMsg("name:" + GetItemName(MHUIData_GetCommandButtonItem(itemButton)))
         if MHMsg_IsKeyDown(OSKEY_ALT) and MHEvent_GetKey() == 1 then
-            call OnInventoryPing(MHPlayer_GetSelectUnit(), MHUIData_GetCommandButtonItem(itemButton), itemButton)
+            call OnInventoryPing(MHPlayer_GetSelectUnit(), UnitItemInSlot(MHPlayer_GetSelectUnit(), itemSlot), itemButton)
+            //call OnInventoryPing(MHPlayer_GetSelectUnit(), MHUIData_GetCommandButtonItem(itemButton), itemButton)
             call MHEvent_SetKey(-1)
         endif
         /*  MHUIData_GetCommandButtonItem(itemButton)*/ 
