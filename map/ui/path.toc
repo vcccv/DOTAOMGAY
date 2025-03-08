@@ -1,0 +1,6 @@
+
+UI\MiniMapFrame.fdf
+UI\GlyphButtonTemplate.fdf
+UI\MapSetupTemplate.fdf
+UI\UpdateLogDialog.fdf
+UI\DebugLogDialog.fdf

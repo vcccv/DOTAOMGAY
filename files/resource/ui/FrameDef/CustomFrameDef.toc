@@ -1,2 +1,0 @@
-UI\FrameDef\UI\TownPortalScrollFrame.fdf
-UI\FrameDef\UI\GlyphFrame.fdf
