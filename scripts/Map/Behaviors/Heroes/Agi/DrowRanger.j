@@ -4,6 +4,162 @@ scope DrowRanger
     globals
         constant integer HERO_INDEX_DROW_RANGE = 35
     endglobals
+
+    //***************************************************************************
+    //*
+    //*  阵风
+    //*
+    //***************************************************************************
+    globals
+        constant integer SKILL_INDEX_GUST = GetHeroSKillIndexBySlot(HERO_INDEX_DROW_RANGE, 2)
+    endglobals
+
+    // 击退
+    function PNI takes nothing returns boolean
+        local trigger t = GetTriggeringTrigger()
+        local integer h = GetHandleId(t)
+        local unit whichUnit = LoadUnitHandle(HY, h, 2)
+        local unit targetUnit = LoadUnitHandle(HY, h, 17)
+        local real I3X = LoadReal(HY, h, 13)
+        local real EOX = LoadReal(HY, h, 138)
+        local real O3O = LoadInteger(HY, h, 0)
+        local real PBI = EOX / O3O
+        local real M8R
+        local real M9R
+        local integer c = GetTriggerEvalCount(t)
+        
+        if c > O3O or GetTriggerEventId() == EVENT_WIDGET_DEATH then
+            call KillTreeByCircle(GetUnitX(targetUnit), GetUnitY(targetUnit), 100)
+            call FlushChildHashtable(HY, h)
+            call DestroyTrigger(t)
+        else
+            set M8R = CoordinateX50(GetUnitX(targetUnit) + PBI * Cos(I3X))
+            set M9R = CoordinateY50(GetUnitY(targetUnit) + PBI * Sin(I3X))
+            call SetUnitX(targetUnit, M8R)
+            call SetUnitY(targetUnit, M9R)
+        endif
+        set t = null
+        set whichUnit = null
+        set targetUnit = null
+        return false
+    endfunction
+    function PCI takes unit dummyUnit, unit targetUnit, unit whichUnit, real x, real y returns nothing
+        local trigger t = CreateTrigger()
+        local integer h = GetHandleId(t)
+        local real I3X = Atan2(GetUnitY(targetUnit)-GetUnitY(dummyUnit), GetUnitX(targetUnit)-GetUnitX(dummyUnit))
+        local real EOX = GetDistanceBetween(x, y, GetUnitX(targetUnit), GetUnitY(targetUnit))
+        local real PDI = RMaxBJ(1, 350 *(1 -EOX / 900))
+        call SaveUnitHandle(HY, h, 2, whichUnit)
+        call SaveUnitHandle(HY, h, 17, targetUnit)
+        call SaveReal(HY, h, 13,(I3X * 1.))
+        call SaveReal(HY, h, 138,(PDI * 1.))
+        call SaveInteger(HY, h, 0, 25 + 5 * GetUnitUserData(dummyUnit))
+        call TriggerRegisterTimerEvent(t, .02, true)
+        call TriggerRegisterDeathEvent(t, targetUnit)
+        call TriggerAddCondition(t, Condition(function PNI))
+        set t = null
+    endfunction
+    function PFI takes nothing returns nothing
+        if IsUnitInGroup(GetEnumUnit(), RN) == false and GetEnumUnit() != Roshan then
+            call GroupAddUnit(RN, GetEnumUnit())
+            call PCI(TempUnit, GetEnumUnit(), EN, XN, ON)
+        endif
+    endfunction
+    function PGI takes nothing returns boolean
+        local trigger t = GetTriggeringTrigger()
+        local integer h = GetHandleId(t)
+        local unit whichUnit = LoadUnitHandle(HY, h, 2)
+        local unit dummyUnit = LoadUnitHandle(HY, h, 19)
+        local real I3X = LoadReal(HY, h, 137)
+        local real PXR = LoadReal(HY, h, 64)
+        local real POR = LoadReal(HY, h, 65)
+        local real PRR = LoadReal(HY, h, 66)
+        local real PIR = LoadReal(HY, h, 67)
+        local group g = LoadGroupHandle(HY, h, 22)
+        local real PHI = GetUnitX(dummyUnit)
+        local real PJI = GetUnitY(dummyUnit)
+        local group gg
+        local unit PKI = LoadUnitHandle(HY, h, 0)
+        if GetDistanceBetween(PHI, PJI, PRR, PIR)< 100  then
+            set PHI = PRR
+            set PJI = PIR
+        else
+            set PHI = PHI + 40 * Cos(I3X)
+            set PJI = PJI + 40 * Sin(I3X)
+        endif
+        set PHI = CoordinateX50(PHI)
+        set PJI = CoordinateY50(PJI)
+        call SetUnitX(dummyUnit, PHI)
+        call SetUnitY(dummyUnit, PJI)
+        call SetUnitX(PKI, PHI)
+        call SetUnitY(PKI, PJI)
+        if ModuloInteger(GetTriggerEvalCount(t), 2) == 1 and GetTriggerEvalCount(t)< 20 then
+            call IssuePointOrderById(PKI, 852592, PHI, PJI)
+        endif
+        set gg = AllocationGroup(343)
+        set TempUnit = dummyUnit
+        set EN = whichUnit
+        set XN = PXR
+        set ON = POR
+        set RN = g
+        call GroupEnumUnitsInRange(gg, PHI, PJI, 275, Condition(function DJX))
+        call ForGroup(gg, function PFI)
+        call DeallocateGroup(gg)
+        if (PHI == PRR and PJI == PIR) or GetTriggerEvalCount(t)> 35 then
+            set gg = AllocationGroup(344)
+            set TempUnit = dummyUnit
+            set EN = whichUnit
+            set XN = PXR
+            set ON = POR
+            set RN = g
+            call GroupEnumUnitsInRange(gg, PHI, PJI, 275, Condition(function DJX))
+            call ForGroup(gg, function PFI)
+            call DeallocateGroup(gg)
+            call FlushChildHashtable(HY, h)
+            call DestroyTrigger(t)
+            call KillUnit(dummyUnit)
+            call DeallocateGroup(g)
+        endif
+        set PKI = null
+        set t = null
+        set dummyUnit = null
+        set g = null
+        set gg = null
+        set whichUnit = null
+        return false
+    endfunction
+    function DrowRangerGustOnSpellEffect takes nothing returns nothing
+        local trigger t = CreateTrigger()
+        local integer h = GetHandleId(t)
+        local location l = GetSpellTargetLoc()
+        local unit u = GetTriggerUnit()
+        local real x = GetLocationX(l)
+        local real y = GetLocationY(l)
+        local real I3X = Atan2(y -GetUnitY(u), x -GetUnitX(u))
+        local unit d = CreateUnit(GetOwningPlayer(u),'h02J', GetUnitX(u), GetUnitY(u), I3X * bj_RADTODEG)
+        local unit PKI = CreateUnit(GetOwningPlayer(u),'e00E', GetUnitX(u), GetUnitY(u), 0)
+        call UnitAddAbility(PKI,'A0QB')
+        call SetUnitAbilityLevel(PKI,'A0QB', GetUnitAbilityLevel(u, GetSpellAbilityId()))
+        call TriggerRegisterTimerEvent(t, .02, true)
+        call TriggerAddCondition(t, Condition(function PGI))
+        call SaveUnitHandle(HY, h, 2, u)
+        call SaveUnitHandle(HY, h, 19, d)
+        call SetUnitUserData(d, GetUnitAbilityLevel(u, GetSpellAbilityId()))
+        call SaveUnitHandle(HY, h, 0, PKI)
+        call SaveReal(HY, h, 137,(I3X * 1.))
+        call SaveReal(HY, h, 64, GetUnitX(u))
+        call SaveReal(HY, h, 65, GetUnitY(u))
+        call SaveReal(HY, h, 66, GetUnitX(u) + 900 * Cos(I3X))
+        call SaveReal(HY, h, 67, GetUnitY(u) + 900 * Sin(I3X))
+        call SaveGroupHandle(HY, h, 22, AllocationGroup(345))
+        call RemoveLocation(l)
+        set t = null
+        set PKI = null
+        set l = null
+        set d = null
+        set u = null
+    endfunction
+
     //***************************************************************************
     //*
     //*  射手天赋

@@ -17,20 +17,27 @@ local function init()
 
     local args
 
-    local source_dir = [["map\\Work"]]
-    local temp_dir   = [["logs\\TempWar3Map"]]
+    local resource_dir = [["resource"]]
+    local map_dir      = [["map"]]
+    local temp_dir     = [["logs\\TempWar3Map"]]
 
-    -- 复制资源文件
-    args = {}
-    args[#args + 1] = ("robocopy ")
-    args[#args + 1] = source_dir
-    args[#args + 1] = temp_dir
-    args[#args + 1] = "/MIR /NFL /NDL /NJH /NJS"
-    print(execute_cmd(args))
-    --if not execute_cmd(args) then
-    --    print("返回了1")
-    --    return
-    --end
+    ---- 复制资源文件
+    --args = {}
+    --args[#args + 1] = ("robocopy ")
+    --args[#args + 1] = resource_dir
+    --args[#args + 1] = temp_dir
+    --args[#args + 1] = "/XD"
+    --args[#args + 1] = map_dir
+    --args[#args + 1] = "/E /NFL /NDL /NJH /NJS"
+    --print(execute_cmd(args))
+--
+    ---- 复制脚本/配置文件
+    --args = {}
+    --args[#args + 1] = ("robocopy ")
+    --args[#args + 1] = map_dir
+    --args[#args + 1] = temp_dir
+    --args[#args + 1] = "/E /NFL /NDL /NJH /NJS"
+    --print(execute_cmd(args))
 
     args = {}
     args[#args + 1] = ("copy")
@@ -41,25 +48,46 @@ local function init()
         return
     end
 
-    args = {}
-    args[#args + 1] = ("copy")
-    args[#args + 1] = [["logs\\outputwar3map.j"]]
-    args[#args + 1] = [["logs\\TempWar3Map\\war3map.j"]]
-    if not execute_cmd(args) then
-        print("返回了2")
-        return
-    end
+    --args = {}
+    --args[#args + 1] = ("copy")
+    --args[#args + 1] = [["logs\\outputwar3map.j"]]
+    --args[#args + 1] = [["logs\\war3map.j"]]
+    --if not execute_cmd(args) then
+    --    print("返回了2")
+    --    return
+    --end
 
     args = {}
     args[#args + 1] = ("compiler\\mpqeditorhhb\\MPQEditor.exe")
     args[#args + 1] = "add"
     args[#args + 1] = [["logs\\temp.w3x"]]
-    args[#args + 1] = temp_dir
+    args[#args + 1] = resource_dir
     args[#args + 1] = "/c"
     args[#args + 1] = "/auto"
     args[#args + 1] = "/r"
+
+    args[#args + 1] = "&&"
+
+    args[#args + 1] = ("compiler\\mpqeditorhhb\\MPQEditor.exe")
+    args[#args + 1] = "add"
+    args[#args + 1] = [["logs\\temp.w3x"]]
+    args[#args + 1] = map_dir
+    args[#args + 1] = "/c"
+    args[#args + 1] = "/auto"
+    args[#args + 1] = "/r"
+
+    args[#args + 1] = "&&"
+    args[#args + 1] = ("compiler\\mpqeditorhhb\\MPQEditor.exe")
+    args[#args + 1] = "add"
+    args[#args + 1] = [["logs\\temp.w3x"]]
+    args[#args + 1] = [["logs\\outputwar3map.j"]]
+    args[#args + 1] = [["war3map.j"]]
+    args[#args + 1] = "/c"
+    args[#args + 1] = "/auto"
+    --args[#args + 1] = "/r"
+
     if not execute_cmd(args) then
-        print("返回了3")
+        print("[error] MPQEditor -add")
         return
     end
 

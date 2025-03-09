@@ -538,7 +538,7 @@ library HeroSkillDefine requires SkillSystem
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "thunderbolt"), 'A0E3', 0, 'Y136', "v")
         set i = 35 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "arrows")+ SaveSkillOrder(i * 4 + 1, "range only"), 'A026', 0, 'Y137', "r")
-        call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "silence"), 'A33A', 0, 'Y138', "e")
+        call RegisterHeroSkill(SKILL_INDEX_GUST, SaveSkillOrder(SKILL_INDEX_GUST, "silence"), 'A33A', 0, 'Y138', "e")
         call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "defend"), 'A2O2', 0, 'Y139', "t")
         set HeroSkill_RearmCombosDisabledTips[i * 4 + 3] = "强击光环效果只作用于远程单位，无论你选择的是近战或远程"
         call RegisterHeroSkill(i * 4 + 4, null, 'QF88', 0, 'QY88', null)
