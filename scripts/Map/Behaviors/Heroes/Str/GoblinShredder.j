@@ -263,7 +263,7 @@ scope GoblinShredder
                 call GroupClear(enumGroup)
 
                 // 隐藏收回技能，显示正常技能
-                call UnitShowAbility(whichUnit, abilId, true)
+                call UnitShowAbility(whichUnit, abilId)
                 call UnitDisableAbility(whichUnit, endcastAbilityId, true)
 
                 call UnitRemoveBEimAbility(whichUnit)
@@ -275,11 +275,11 @@ scope GoblinShredder
             // 不处于返回状态时死亡才会进行
             if chakramState != 2 then
                 // 隐藏收回技能，显示正常技能
-                call UnitShowAbility(whichUnit, abilId, true)
+                call UnitShowAbility(whichUnit, abilId)
                 call UnitDisableAbility(whichUnit, endcastAbilityId, true)
             endif
             // 技能结束，启用正常技能
-            call UnitEnableAbility(whichUnit, abilId, true, false)
+            call UnitEnableAbility(whichUnit, abilId, false)
             call UnitDecDisableAttackCount(whichUnit)
             
             call UnitRemoveBEimAbility(whichUnit)
@@ -334,7 +334,7 @@ scope GoblinShredder
                     call GroupClear(enumGroup)
 
                     // 隐藏收回技能，显示正常技能
-                    call UnitShowAbility(whichUnit, abilId, true)
+                    call UnitShowAbility(whichUnit, abilId)
                     call UnitDisableAbility(whichUnit, endcastAbilityId, true)
 
                     call UnitRemoveBEimAbility(whichUnit)
@@ -367,7 +367,7 @@ scope GoblinShredder
                 
                 // 返回成功
                 // 技能结束，启用正常技能
-                call UnitEnableAbility(whichUnit, abilId, true, false)
+                call UnitEnableAbility(whichUnit, abilId, false)
                 call UnitDecDisableAttackCount(whichUnit)
 
             endif
@@ -403,15 +403,13 @@ scope GoblinShredder
         call SaveInteger(HY, h, 2, abilId)
         if abilId == CHAKRAM_ABILITY_ID or abilId == CHAKRAM_UPGRADED_ABILITY_ID then
             set endcastAbilityId = CHAKRAM_RETURN_ABILITY_ID
-            call BJDebugMsg("1!!!" + GetObjectName(endcastAbilityId))
         else
             set endcastAbilityId = SECOND_CHAKRAM_RETURN_ABILITY_ID
-            call BJDebugMsg("2!!!" + GetObjectName(endcastAbilityId))
         endif
         call UnitIncDisableAttackCount(whichUnit)
 
         call UnitDisableAbility(whichUnit, abilId, true)
-        call UnitEnableAbility(whichUnit, endcastAbilityId, true, true)
+        call UnitEnableAbility(whichUnit, endcastAbilityId, true)
         call SaveInteger(HY, h, 4, endcastAbilityId)
 
         set whichUnit = null

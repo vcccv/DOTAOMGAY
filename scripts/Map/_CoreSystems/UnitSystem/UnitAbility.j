@@ -60,11 +60,14 @@ library UnitAbility requires AbilityUtils, UnitLimitation
         call UnitDisableAbilityEx(whichUnit, abilId, false, hideUI)
     endfunction
     
-    function UnitShowAbility takes unit whichUnit, integer abilId, boolean flag returns nothing
-        call MHAbility_Hide(whichUnit, abilId, not flag)
-    endfunction
-    function UnitHideAbility takes unit whichUnit, integer abilId, boolean flag returns nothing
+    function UnitHideAbilityEx takes unit whichUnit, integer abilId, boolean flag returns nothing
         call MHAbility_Hide(whichUnit, abilId, flag)
+    endfunction
+    function UnitShowAbility takes unit whichUnit, integer abilId returns nothing
+        call MHAbility_Hide(whichUnit, abilId, false)
+    endfunction
+    function UnitHideAbility takes unit whichUnit, integer abilId returns nothing
+        call MHAbility_Hide(whichUnit, abilId, true)
     endfunction
 
     function UnitAddPermanentAbility takes unit whichUnit, integer ab returns boolean
