@@ -165,6 +165,8 @@ scope TownPortalScroll
 	    constant real MaxTargetingDistance = 575.
         constant real MinTargetingDistance = 70.
 
+        constant real TeleportPenaltyDuration = 25.
+
         private player array TeleportingPlayers
         private real array TeleportX
         private real array TeleportY
@@ -183,7 +185,7 @@ scope TownPortalScroll
         endif
         loop
         exitwhen i > TeleportCount
-            if (currentTime < TeleportTimestamps[i] + 25) and(GetDistanceBetween(x, y, TeleportX[i], TeleportY[i])< MaxTargetingDistance * 2 + 50) and IsPlayerAlly(Player(id), TeleportingPlayers[i]) then
+            if (GetDistanceBetween(x, y, TeleportX[i], TeleportY[i])< MaxTargetingDistance * 2 + 50) and IsPlayerAlly(Player(id), TeleportingPlayers[i]) then
                 set count = count + 1
             endif
             set i = i + 1
@@ -191,7 +193,23 @@ scope TownPortalScroll
         return count
     endfunction
 
+    private function TeleportMarkOnExpired takes nothing returns nothing
+        local SimpleTick tick = SimpleTick.GetExpired()
+        local integer    tc   = tick.data
+
+        if tc != TeleportCount then
+            set TeleportingPlayers[tc] = TeleportingPlayers[TeleportCount]
+            set TeleportX[tc] = TeleportX[TeleportCount]
+            set TeleportY[tc] = TeleportY[TeleportCount]
+            set TeleportTimestamps[tc] = TeleportTimestamps[TeleportCount]
+        endif
+        set TeleportCount = TeleportCount - 1
+
+        call tick.Destroy()
+    endfunction
+
     private function TeleportMark takes integer id, real x, real y returns nothing
+        local SimpleTick tick
         if IsPointInRegion(FountainOfLifeRegion, x, y) then
             return
         endif
@@ -201,6 +219,8 @@ scope TownPortalScroll
         set TeleportX[TeleportCount] = x
         set TeleportY[TeleportCount] = y
         set TeleportTimestamps[TeleportCount] = (GetGameTime())
+        set tick = SimpleTick.Create(TeleportCount)
+        call tick.Start(TeleportPenaltyDuration, false, function TeleportMarkOnExpired)
     endfunction
 
     // 范围内的友军播放TP提示声音
