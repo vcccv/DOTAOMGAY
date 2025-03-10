@@ -50,3 +50,4 @@
 #include "Agi\\Gyrocopter.j"
 #include "Agi\\DrowRanger.j"
 #include "Agi\\LoneDruid.j"
+#include "Agi\\Razor.j"

@@ -3,6 +3,217 @@ scope Invoker
 
     //***************************************************************************
     //*
+    //*  混沌陨石
+    //*
+    //***************************************************************************
+    function MGI takes unit whichUnit, unit targetUnit, integer level returns nothing
+        local unit dummyCaster = CreateUnit(GetOwningPlayer(targetUnit),'e00E', GetUnitX(targetUnit), GetUnitY(targetUnit), 0)
+        local unit MHI = CreateUnit(GetOwningPlayer(whichUnit),'e00E', GetUnitX(targetUnit), GetUnitY(targetUnit), 0)
+        call UnitAddAbility(dummyCaster,'A0XK')
+        call SetUnitAbilityLevel(dummyCaster,'A0XK', level)
+        call UnitAddAbility(dummyCaster,'A3G2')
+        call SetUnitAbilityLevel(dummyCaster,'A3G2', level)
+        call SaveUnitHandle(HY, GetHandleId(dummyCaster), 0, whichUnit)
+        call FJO(targetUnit, dummyCaster)
+        call IOX(MHI, targetUnit, 1, 60. + level * 60., .8 + .3 * level)
+        set dummyCaster = null
+        set MHI = null
+    endfunction
+    function MJI takes nothing returns nothing
+        if IsUnitInGroup(GetEnumUnit(), DK) == false then
+            call GroupAddUnit(DK, GetEnumUnit())
+            call MGI(TempUnit, GetEnumUnit(), Q2)
+        endif
+    endfunction
+    function MKI takes nothing returns boolean
+        local trigger t = GetTriggeringTrigger()
+        local integer h = GetHandleId(t)
+        local unit dummyCaster =(LoadUnitHandle(HY, h, 19))
+        local real x2 =(LoadReal(HY, h, 66))
+        local real y2 =(LoadReal(HY, h, 67))
+        local real a =(LoadReal(HY, h, 137))
+        local integer level =(LoadInteger(HY, h, 5))
+        local group g =(LoadGroupHandle(HY, h, 22))
+        local real x = GetUnitX(dummyCaster) + 25 * Cos(a)
+        local real y = GetUnitY(dummyCaster) + 25 * Sin(a)
+        local group MLI = AllocationGroup(337)
+        local real GIX = GetDistanceBetween(x, y, x2, y2)
+        if GIX <= 30 then
+            set x = x2
+            set y = y2
+        endif
+        call SetUnitX(dummyCaster, CoordinateX50(x))
+        call SetUnitY(dummyCaster, CoordinateX50(y))
+        set TempUnit = dummyCaster
+        set DK = g
+        set Q2 = level
+        call GroupEnumUnitsInRange(MLI, x, y, 200, Condition(function DHX))
+        call ForGroup(MLI, function MJI)
+        call DeallocateGroup(MLI)
+        if GIX <= 30 or GetTriggerEvalCount(t)> LoadInteger(HY, h, 6) then
+            call DeallocateGroup(g)
+            call KillUnit(dummyCaster)
+            call FlushChildHashtable(HY, h)
+            call DestroyTrigger(t)
+        endif
+        set t = null
+        set dummyCaster = null
+        set g = null
+        set MLI = null
+        return false
+    endfunction
+    function TornadoOnSpellEffecy takes nothing returns nothing
+        local trigger t = CreateTrigger()
+        local integer h = GetHandleId(t)
+        local unit whichUnit = GetTriggerUnit()
+        local integer level = GetUnitAbilityLevel(whichUnit,'Z608')
+        local real x = GetSpellTargetX()
+        local real y = GetSpellTargetY()
+        local real a = Atan2(y -GetUnitY(whichUnit), x -GetUnitX(whichUnit))
+        local unit dummyCaster
+        if GetUnitTypeId(whichUnit)=='e00E' then
+            if GetRandomInt(0, 1) == 1 then
+                set a = a + GetRandomReal(0, bj_PI / 4)
+            else
+                set a = a - GetRandomReal(0, bj_PI / 4)
+            endif
+        endif
+        set x = GetUnitX(whichUnit)
+        set y = GetUnitY(whichUnit)
+        set dummyCaster = CreateUnit(GetOwningPlayer(whichUnit),'n01U', x, y, a * bj_RADTODEG)
+        call TriggerRegisterTimerEvent(t, .025, true)
+        call TriggerAddCondition(t, Condition(function MKI))
+        call SaveUnitHandle(HY, h, 19,(dummyCaster))
+        call SaveReal(HY, h, 66,(x +(750 + 500. * level + GetUnitCastRangeBonus(whichUnit))* Cos(a)))
+        call SaveReal(HY, h, 67,(y +(750 + 500. * level + GetUnitCastRangeBonus(whichUnit))* Sin(a)))
+        call SaveInteger(HY, h, 5,(level))
+        call SaveInteger(HY, h, 6, R2I((750 + 500. * level + GetUnitCastRangeBonus(whichUnit))/ 25))
+        call SaveReal(HY, h, 137,((a)* 1.))
+        call SaveGroupHandle(HY, h, 22,(AllocationGroup(338)))
+        set t = null
+        set whichUnit = null
+        set dummyCaster = null
+    endfunction
+    //***************************************************************************
+    //*
+    //*  混沌陨石
+    //*
+    //***************************************************************************
+    function M3I takes nothing returns boolean
+        local trigger t = GetTriggeringTrigger()
+        local integer h = GetHandleId(t)
+        local unit whichUnit =(LoadUnitHandle(HY, h, 2))
+        local unit targetUnit = LoadUnitHandle(HY, h, 30)
+        local real damage =(LoadReal(HY, h, 20))
+        local effect FX =(LoadEffectHandle(HY, h, 32))
+        local integer count = GetTriggerEvalCount(t)
+        call UnitDamageTargetEx(whichUnit, targetUnit, 1, damage)
+        if GetUnitAbilityLevel(targetUnit,'A42R') == 0 or count == 3 then
+            call SaveInteger(ObjectHashTable, GetHandleId(targetUnit),'A42R', LoadInteger(ObjectHashTable, GetHandleId(targetUnit),'A42R')-1)
+            if LoadInteger(ObjectHashTable, GetHandleId(targetUnit),'A42R')<= 0 then
+                call UnitRemoveAbility(targetUnit,'A42R')
+                call UnitRemoveAbility(targetUnit,'B0HI')
+            endif
+            call FlushChildHashtable(HY, h)
+            call DestroyTrigger(t)
+            call DestroyEffect(FX)
+        endif
+        set t = null
+        set whichUnit = null
+        set targetUnit = null
+        set FX = null
+        return false
+    endfunction
+    function M4I takes unit whichUnit, unit targetUnit, real damage, boolean M5I returns nothing
+        local trigger t = CreateTrigger()
+        local integer h = GetHandleId(t)
+        call SaveUnitHandle(HY, h, 2,(whichUnit))
+        call SaveUnitHandle(HY, h, 30,((targetUnit)))
+        call SaveReal(HY, h, 20,((damage)* 1.))
+        call SaveBoolean(HY, h, 0, M5I)
+        call SaveEffectHandle(HY, h, 32,(AddSpecialEffectTarget("Environment\\SmallBuildingFire\\SmallBuildingFire2.mdl", targetUnit, "chest")))
+        call TriggerRegisterTimerEvent(t, 1, true)
+        call UnitAddPermanentAbility(targetUnit,'A42R')
+        call SaveInteger(ObjectHashTable, GetHandleId(targetUnit),'A42R', LoadInteger(ObjectHashTable, GetHandleId(targetUnit),'A42R') + 1)
+        call TriggerAddCondition(t, Condition(function M3I))
+        set t = null
+    endfunction
+    function M6I takes nothing returns nothing
+        call M4I(TempUnit, GetEnumUnit(), TempReal1 / 5, X3)
+        call UnitDamageTargetEx(TempUnit, GetEnumUnit(), 1, TempReal1)
+    endfunction
+    function M7I takes nothing returns boolean
+        local trigger t = GetTriggeringTrigger()
+        local integer h = GetHandleId(t)
+        local real x =(LoadReal(HY, h, 6))
+        local real y =(LoadReal(HY, h, 7))
+        local real a =(LoadReal(HY, h, 137))
+        local integer level =(LoadInteger(HY, h, 5))
+        local integer count = GetTriggerEvalCount(t)-26
+        local unit whichUnit =(LoadUnitHandle(HY, h, 2))
+        local real targetX
+        local real targetY
+        local unit dummyCaster
+        local group g
+        if count == 1 then
+            set dummyCaster = CreateUnit(GetOwningPlayer(whichUnit),'e01L', x, y, a * bj_RADTODEG)
+            call SaveUnitHandle(HY, h, 19,(dummyCaster))
+        elseif count > 1 then
+            set dummyCaster =(LoadUnitHandle(HY, h, 19))
+        endif
+        if count > 0 then
+            set targetX = CoordinateX50(GetUnitX(dummyCaster) + 15* Cos(a))
+            set targetY = CoordinateY50(GetUnitY(dummyCaster) + 15* Sin(a))
+            call SetUnitX(dummyCaster, targetX)
+            call SetUnitY(dummyCaster, targetY)
+            if (count > 1 and ModuloInteger(count, 10) == 0) or count == 1 then
+                set g = AllocationGroup(341)
+                set TempUnit = whichUnit
+                set TempReal1 = 40 + 20 * level
+                call GroupEnumUnitsInRange(g, targetX, targetY, 300, Condition(function DHX))
+                set X3 = count > LoadInteger(HY, h, 7)
+                call ForGroup(g, function M6I)
+                call DeallocateGroup(g)
+                call DestroyEffect(AddSpecialEffect("Objects\\Spawnmodels\\Other\\NeutralBuildingExplosion\\NeutralBuildingExplosion.mdl", targetX, targetY))
+            endif
+            if count > LoadInteger(HY, h, 7) then
+                call FlushChildHashtable(HY, h)
+                call DestroyTrigger(t)
+                call KillUnit(dummyCaster)
+            endif
+        endif
+        set t = null
+        set g = null
+        set dummyCaster = null
+        set whichUnit = null
+        return false
+    endfunction
+    function ChaosMeteorOnSpellEffect takes nothing returns nothing
+        local trigger t = CreateTrigger()
+        local integer h = GetHandleId(t)
+        local unit whichUnit = GetTriggerUnit()
+        local real x = GetSpellTargetX()
+        local real y = GetSpellTargetY()
+        local real a = Atan2(y -GetUnitY(whichUnit), x -GetUnitX(whichUnit))
+        local unit M8I = CreateUnit(GetOwningPlayer(whichUnit),'e01K', x, y, a * bj_RADTODEG)
+        local integer level = GetUnitAbilityLevel(whichUnit,'Z602')
+        call SetUnitTimeScale(M8I, .58)
+        call UnitApplyTimedLife(M8I,'BTLF', 1.75)
+        call TriggerRegisterTimerEvent(t, .05, true)
+        call TriggerAddCondition(t, Condition(function M7I))
+        call SaveUnitHandle(HY, h, 2,(whichUnit))
+        call SaveReal(HY, h, 6,((x)* 1.))
+        call SaveReal(HY, h, 7,((y)* 1.))
+        call SaveReal(HY, h, 137,((a)* 1.))
+        call SaveInteger(HY, h, 5, level)
+        call SaveInteger(HY, h, 7, R2I((350 + 200* level + GetUnitCastRangeBonus(whichUnit))/ 16.6))
+        set t = null
+        set whichUnit = null
+        set M8I = null
+    endfunction
+
+    //***************************************************************************
+    //*
     //*  灵动迅捷
     //*
     //***************************************************************************
