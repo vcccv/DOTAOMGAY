@@ -487,15 +487,14 @@ scope TownPortalScroll
         call MHEffect_SetTeamColor(teleportUnitEffect, GetPlayerColor(GetOwningPlayer(whichUnit)))
         call MHEffect_SetTeamGlow(teleportUnitEffect, GetPlayerColor(GetOwningPlayer(whichUnit)))
 
-        call NUO(GetPlayerId(GetOwningPlayer(whichUnit)), tx, ty)
         set count = NWO(GetPlayerId(GetOwningPlayer(whichUnit)), tx, ty)
-        
         set duration = 3.
         if count > 0 then
             set duration = 4.5 + .5 * count
         	call SetUnitAnimationByIndex(teleportEffectFromUnit, 2)
         	call SetUnitAnimationByIndex(teleportEffectColoredUnit, 2)
         endif
+        call NUO(GetPlayerId(GetOwningPlayer(whichUnit)), tx, ty)
 
         // tp 持续施法
         call SetAbilityANclCastDurationInSpellEffect(GetSpellAbility(), duration)

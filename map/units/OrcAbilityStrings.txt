@@ -26830,10 +26830,10 @@ researchart=ReplaceableTextures\CommandButtons\BTNSoulSteal
 animnames=spell,channel
 Name=灵魂汲取
 Tip=灵魂汲取[|cffffcc00E|r] - [|cffffcc00等级 1|r],灵魂汲取[|cffffcc00E|r] - [|cffffcc00等级 2|r],灵魂汲取[|cffffcc00E|r] - [|cffffcc00等级 3|r],灵魂汲取[|cffffcc00E|r] - [|cffffcc00等级 4|r]
-Ubertip=从目标单位身上传输25点每秒的生命，可以向队友使用。持续7秒。|n|n|cFF00B9FF魔法伤害|r|n|n|cff99ccff冷却时间：|r12,从目标单位身上传输50点每秒的生命，可以向队友使用。持续7秒。|n|n|cFF00B9FF魔法伤害|r|n|n|cff99ccff冷却时间：|r12,从目标单位身上传输75点每秒的生命，可以向队友使用。持续7秒。|n|n|cFF00B9FF魔法伤害|r|n|n|cff99ccff冷却时间：|r12,从目标单位身上传输100点每秒的生命，可以向队友使用。持续7秒。|n|n|cFF00B9FF魔法伤害|r|n|n|cff99ccff冷却时间：|r12
+Ubertip=从目标单位身上传输25点每秒的生命，可以向队友使用。持续7秒。|n|n|cFF00B9FF魔法伤害|r|n|n|cff99ccff施法距离：|r400|n|cff99ccff最大距离：|r600|n|cff99ccff冷却时间：|r12,从目标单位身上传输50点每秒的生命，可以向队友使用。持续7秒。|n|n|cFF00B9FF魔法伤害|r|n|n|cff99ccff施法距离：|r400|n|cff99ccff最大距离：|r600|n|cff99ccff冷却时间：|r12,从目标单位身上传输75点每秒的生命，可以向队友使用。持续7秒。|n|n|cFF00B9FF魔法伤害|r|n|n|cff99ccff施法距离：|r400|n|cff99ccff最大距离：|r600|n|cff99ccff冷却时间：|r12,从目标单位身上传输100点每秒的生命，可以向队友使用。持续7秒。|n|n|cFF00B9FF魔法伤害|r|n|n|cff99ccff施法距离：|r400|n|cff99ccff最大距离：|r600|n|cff99ccff冷却时间：|r12
 Hotkey=E
 Researchtip=学习 灵魂汲取[|cffffcc00E|r] - [|cffffcc00等级 %d|r]|n(Soul Steal)
-Researchubertip=从目标单位上持续吸取生命，或向队友传输生命值。|n|n|cffffcc00等级 1|r - 每秒汲取20点生命。|n|cffffcc00等级 2|r - 每秒汲取40点生命。|n|cffffcc00等级 3|r - 每秒汲取60点生命。|n|cffffcc00等级 4|r - 每秒汲取80点生命。|n|n|cFF00B9FF魔法伤害|r|n|n|cff99ccff冷却时间：|r16/14/12/10  |n|cff99ccff魔法消耗：|r45
+Researchubertip=从目标单位上持续吸取生命，或向队友传输生命值。|n|n|cffffcc00等级 1|r - 每秒汲取20点生命。|n|cffffcc00等级 2|r - 每秒汲取40点生命。|n|cffffcc00等级 3|r - 每秒汲取60点生命。|n|cffffcc00等级 4|r - 每秒汲取80点生命。|n|n|cFF00B9FF魔法伤害|r|n|n|cff99ccff施法距离：|r400|n|cff99ccff最大距离：|r600|n|cff99ccff冷却时间：|r16/14/12/10  |n|cff99ccff魔法消耗：|r45
 researchhotkey="E"
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNSoulSteal.blp
 [A1QD]
@@ -29950,10 +29950,10 @@ animnames=spell,channel
 lightningeffect=DRAB,DRAL,DRAM
 Name=灵魂汲取
 Tip=灵魂汲取[|cffffcc00E|r] - [|cffffcc00等级 1|r],灵魂汲取[|cffffcc00E|r] - [|cffffcc00等级 2|r],灵魂汲取[|cffffcc00E|r] - [|cffffcc00等级 3|r],灵魂汲取[|cffffcc00E|r] - [|cffffcc00等级 4|r]
-Ubertip=汲取目标的灵魂，每秒吸取20点生命值。持续8秒。|n|n|cFF00B9FF魔法伤害|r|n|cFFF00000需要持续施法|r|n|n|cff99ccff冷却时间：|r12秒。,汲取目标的灵魂，每秒吸取40点生命值。持续8秒。|n|n|cFF00B9FF魔法伤害|r|n|cFFF00000需要持续施法|r|n|n|cff99ccff冷却时间：|r12秒。,汲取目标的灵魂，每秒吸取60点生命值。持续8秒。|n|n|cFF00B9FF魔法伤害|r|n|cFFF00000需要持续施法|r|n|n|cff99ccff冷却时间：|r12秒。,汲取目标的灵魂，每秒吸取80点生命值。持续8秒。|n|n|cFF00B9FF魔法伤害|r|n|cFFF00000需要持续施法|r|n|n|cff99ccff冷却时间：|r12秒。
+Ubertip=汲取目标的灵魂，每秒吸取20点生命值。持续8秒。|n|n|cFF00B9FF魔法伤害|r|n|cFFF00000需要持续施法|r|n|n|cff99ccff施法距离：|r400|n|cff99ccff最大距离：|r600|n|cff99ccff冷却时间：|r12秒。,汲取目标的灵魂，每秒吸取40点生命值。持续8秒。|n|n|cFF00B9FF魔法伤害|r|n|cFFF00000需要持续施法|r|n|n|cff99ccff施法距离：|r400|n|cff99ccff最大距离：|r600|n|cff99ccff冷却时间：|r12秒。,汲取目标的灵魂，每秒吸取60点生命值。持续8秒。|n|n|cFF00B9FF魔法伤害|r|n|cFFF00000需要持续施法|r|n|n|cff99ccff施法距离：|r400|n|cff99ccff最大距离：|r600|n|cff99ccff冷却时间：|r12秒。,汲取目标的灵魂，每秒吸取80点生命值。持续8秒。|n|n|cFF00B9FF魔法伤害|r|n|cFFF00000需要持续施法|r|n|n|cff99ccff施法距离：|r400|n|cff99ccff最大距离：|r600|n|cff99ccff冷却时间：|r12秒。
 Hotkey=E
 Researchtip=学习 灵魂汲取[|cffffcc00E|r] - [|cffffcc00等级 %d|r]|n(Soul Steal)
-Researchubertip=持续地吸取目标单位的生命。|n持续8秒。 |n|n|cffffcc00等级 1|r - 每秒吸取20点生命值。 |n|cffffcc00等级 2|r - 每秒吸取40点生命值。 |n|cffffcc00等级 3|r - 每秒吸取60点生命值。|n|cffffcc00等级 4|r - 每秒吸取80点生命值。 |n|n|cff99ccff冷却时间：|r12秒。
+Researchubertip=持续地吸取目标单位的生命。|n持续8秒。 |n|n|cffffcc00等级 1|r - 每秒吸取20点生命值。 |n|cffffcc00等级 2|r - 每秒吸取40点生命值。 |n|cffffcc00等级 3|r - 每秒吸取60点生命值。|n|cffffcc00等级 4|r - 每秒吸取80点生命值。 |n|n|cff99ccff施法距离：|r400|n|cff99ccff最大距离：|r600|n|n|cff99ccff冷却时间：|r12秒。
 researchhotkey="E"
 [A00L]
 art=ReplaceableTextures\CommandButtons\BTNArcaniteMelee
