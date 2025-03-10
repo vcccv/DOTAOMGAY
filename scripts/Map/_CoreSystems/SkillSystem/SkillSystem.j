@@ -113,7 +113,7 @@ library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
         elseif heroIndex == 46 then
             call ExecuteFunc("PQX")
         elseif heroIndex == 47 then
-            call ExecuteFunc("PSX")
+            //call ExecuteFunc("PSX")
         elseif heroIndex == 96 then
             call ExecuteFunc("PTX")
         elseif heroIndex == 97 then

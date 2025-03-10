@@ -19,6 +19,12 @@ library HeroSkillDefine requires SkillSystem
         // 锯齿飞轮
         call RegisterSkillInitMethodByIndex(SKILL_INDEX_CHAKRAM   , "ChakramOnInitializer")
 
+        // 强力击
+        call RegisterSkillInitMethodByIndex(SKILL_INDEX_POWER_SHOT, "PowerShotOnInitializer")
+
+        // 烈日炙烤
+        call RegisterSkillInitMethodByIndex(SKILL_INDEX_SUN_RAY, "SunRayOnInitializer")
+
         // 601是init
         call SaveStr(ObjectHashTable,'A060', 601, "W_A")
         call SaveStr(ObjectHashTable,'A0LE', 601, "WYA")
@@ -43,7 +49,6 @@ library HeroSkillDefine requires SkillSystem
         call SaveStr(ObjectHashTable,'A088', 600, "InitMultiCast")
         call SaveStr(ObjectHashTable,'A0DJ', 600, "EON")
         call SaveStr(ObjectHashTable,'A0FV', 600, "ERN")
-        call SaveStr(ObjectHashTable,'A1YY', 600, "EIN")
         call SaveStr(ObjectHashTable,'A33Q', 600, "EAN")
         call SaveStr(ObjectHashTable,'A02C', 600, "WitchcraftOnLearn")
         call SaveStr(ObjectHashTable,'A0N5', 600, "EBN")

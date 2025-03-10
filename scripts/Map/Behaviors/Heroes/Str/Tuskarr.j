@@ -1,6 +1,129 @@
 
 scope Tuskarr
 
+    globals
+        constant integer HERO_INDEX_TUSKARR = 50
+    endglobals
+    //***************************************************************************
+    //*
+    //*  寒冰片
+    //*
+    //***************************************************************************
+    globals
+        constant integer SKILL_INDEX_ICE_SHARDS = GetHeroSKillIndexBySlot(HERO_INDEX_PHOENIX, 1)
+    endglobals
+    function HDA takes unit whichUnit, unit targetUnit, real sx, real sy, real a2 returns nothing
+        local integer i = 0
+        local real tx
+        local real ty
+        local real a
+        local real x
+        local real y
+        local real HFA
+        set a = a2
+        set tx = sx + 50 * Cos(a * bj_DEGTORAD)
+        set ty = sy + 50 * Sin(a * bj_DEGTORAD)
+        set HFA = a
+        set x = tx + 200* Cos(HFA * bj_DEGTORAD)
+        set y = ty + 200* Sin(HFA * bj_DEGTORAD)
+        call RemoveDestructableTimed(CreateDestructable('B006', x, y,-1 * HFA, .6, 1), 7)
+        call KillTreeByCircle(x, y, 300)
+        set HFA = a -40
+        set x = tx + 200* Cos(HFA * bj_DEGTORAD)
+        set y = ty + 200* Sin(HFA * bj_DEGTORAD)
+        call RemoveDestructableTimed(CreateDestructable('B006', x, y,-1 * HFA, .6, 1), 7)
+        call KillTreeByCircle(x, y, 300)
+        set HFA = a -80
+        set x = tx + 200* Cos(HFA * bj_DEGTORAD)
+        set y = ty + 200* Sin(HFA * bj_DEGTORAD)
+        call RemoveDestructableTimed(CreateDestructable('B006', x, y,-1 * HFA, .6, 1), 7)
+        call KillTreeByCircle(x, y, 300)
+        set HFA = a + 40
+        set x = tx + 200* Cos(HFA * bj_DEGTORAD)
+        set y = ty + 200* Sin(HFA * bj_DEGTORAD)
+        call RemoveDestructableTimed(CreateDestructable('B006', x, y,-1 * HFA, .6, 1), 7)
+        call KillTreeByCircle(x, y, 300)
+        set HFA = a + 80
+        set x = tx + 200* Cos(HFA * bj_DEGTORAD)
+        set y = ty + 200* Sin(HFA * bj_DEGTORAD)
+        call RemoveDestructableTimed(CreateDestructable('B006', x, y,-1 * HFA, .6, 1), 7)
+        call KillTreeByCircle(x, y, 300)
+    endfunction
+    function HGA takes nothing returns nothing
+        if IsUnitInGroup(GetEnumUnit(), P3V) == false then
+            call GroupAddUnit(P3V, GetEnumUnit())
+            call DestroyEffect(AddSpecialEffectTarget("war3mapImported\\ChainFreeze_F6.mdx", GetEnumUnit(), "chest"))
+            call DestroyEffect(AddSpecialEffectTarget("Abilities\\Weapons\\FrostWyrmMissile\\FrostWyrmMissile.mdl", GetEnumUnit(), "chest"))
+            call UnitDamageTargetEx(P1V, GetEnumUnit(), 1, P2V * 70)
+        endif
+    endfunction
+    function HHA takes nothing returns boolean
+        local trigger t = GetTriggeringTrigger()
+        local integer h = GetHandleId(t)
+        local unit whichUnit = LoadUnitHandle(HY, h, 2)
+        local unit targetUnit = LoadUnitHandle(HY, h, 17)
+        local unit HJA = LoadUnitHandle(HY, h, 45)
+        local real HKA = LoadReal(HY, h, 683)
+        local real HLA = LoadReal(HY, h, 684)
+        local real sx = GetUnitX(HJA)
+        local real sy = GetUnitY(HJA)
+        local real I3X = Atan2(HLA -sy, HKA -sx)
+        local real nx = sx + 22 * Cos(I3X)
+        local real ny = sy + 22 * Sin(I3X)
+        local group gg = LoadGroupHandle(HY, h, 133)
+        local integer level = LoadInteger(HY, h, 0)
+        local group g = AllocationGroup(450)
+        set TempUnit = whichUnit
+        set P1V = whichUnit
+        set P3V = gg
+        set P2V = level
+        call GroupEnumUnitsInRange(g, nx, ny, 225, Condition(function DJX))
+        call ForGroup(g, function HGA)
+        call DeallocateGroup(g)
+        call SetUnitPosition(HJA, nx, ny)
+        if GetDistanceBetween(nx, ny, HKA, HLA)< 40 then
+            call KillUnit(HJA)
+            call SetUnitPathing(HJA, true)
+            call HDA(whichUnit, null, nx, ny, I3X * bj_RADTODEG)
+            call DeallocateGroup(gg)
+            call FlushChildHashtable(HY, h)
+            call DestroyTrigger(t)
+        endif
+        set whichUnit = null
+        set targetUnit = null
+        set t = null
+        set HJA = null
+        set gg = null
+        set g = null
+        return false
+    endfunction
+    function IceShardsOnSpellEffect takes nothing returns nothing
+        local unit whichUnit = GetTriggerUnit()
+        local trigger t = CreateTrigger()
+        local integer h = GetHandleId(t)
+        local unit HJA = CreateUnit(GetOwningPlayer(whichUnit),'h0CS', GetUnitX(whichUnit), GetUnitY(whichUnit), 0)
+        local real sx = GetUnitX(whichUnit)
+        local real sy = GetUnitY(whichUnit)
+        local real tx = GetSpellTargetX()
+        local real ty = GetSpellTargetY()
+        local real I3X = Atan2(ty -sy, tx -sx)
+        local real HKA = CoordinateX50(tx)
+        local real HLA = CoordinateY50(ty)
+        call SetUnitFacing(HJA, I3X * bj_RADTODEG)
+        call SetUnitPathing(HJA, false)
+        call TriggerRegisterTimerEvent(t, .02, true)
+        call TriggerAddCondition(t, Condition(function HHA))
+        call SaveUnitHandle(HY, h, 2, whichUnit)
+        call SaveReal(HY, h, 683, HKA * 1.)
+        call SaveReal(HY, h, 684, HLA * 1.)
+        call SaveReal(HY, h, 13, I3X * 1.)
+        call SaveUnitHandle(HY, h, 45, HJA)
+        call SaveInteger(HY, h, 0, GetUnitAbilityLevel(whichUnit, GetSpellAbilityId()))
+        call SaveGroupHandle(HY, h, 133, AllocationGroup(451))
+        set whichUnit = null
+        set HJA = null
+        set t = null
+    endfunction
     //***************************************************************************
     //*
     //*  海象飞踢

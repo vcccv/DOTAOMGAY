@@ -2374,7 +2374,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A09D', 0, "W8V")
 	call SaveStr(ObjectHashTable,'A1P8', 0, "W9V")
 	call SaveStr(ObjectHashTable,'A01I', 0, "YVV")
-	call SaveStr(ObjectHashTable,'A1YY', 0, "YEV")
+	call SaveStr(ObjectHashTable,'A1YY', 0, "SunRayOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A0O6', 0, "IcePathOnSpellEffect")
 
 
@@ -2563,7 +2563,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A0RV', 0, "XGE")
 	call SaveStr(ObjectHashTable,'A14I', 0, "XHE")
 	call SaveStr(ObjectHashTable,'A12J', 0, "XJE")
-	call SaveStr(ObjectHashTable,'A12K', 0, "XKE")
+	call SaveStr(ObjectHashTable,'A12K', 0, "PowerShotOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A12P', 0, "XLE")
 	call SaveStr(ObjectHashTable,'A1D6', 0, "XLE")
 	call SaveStr(ObjectHashTable,'A29G', 0, "XME")
@@ -2771,7 +2771,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A1TA', 0, "DAE")
 	call SaveStr(ObjectHashTable,'A1TB', 0, "DNE")
 	call SaveStr(ObjectHashTable,'A3FQ', 0, "DNE")
-	call SaveStr(ObjectHashTable,'A1YO', 0, "DBE")
+	call SaveStr(ObjectHashTable,'A1YO', 0, "IceShardsOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A1YQ', 0, "DCE")
 	call SaveStr(ObjectHashTable,'A3DF', 0, "WalrusKickOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A3DE', 0, "DCE")
@@ -3025,7 +3025,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A2TD', 3, "LOE")
 	call SaveStr(ObjectHashTable,'A095', 3, "LRE")
 	call SaveStr(ObjectHashTable,'A09W', 3, "LRE")
-	call SaveStr(ObjectHashTable,'A12K', 3, "LIE")
+	call SaveStr(ObjectHashTable,'A12K', 3, "PowerShotOnSpellCast")
 	call SaveStr(ObjectHashTable,'A1S8', 3, "LNE")
 	call SaveStr(ObjectHashTable,'A1TB', 3, "LBE")
 	call SaveStr(ObjectHashTable,'A3FQ', 3, "LBE")
@@ -47512,142 +47512,6 @@ function C7I takes nothing returns nothing
 	set whichUnit = null
 	set targetUnit = null
 endfunction
-function C9I takes nothing returns nothing
-	if IsUnitInGroup(GetEnumUnit(), KQV) == false and GetUnitAbilityLevel(GetEnumUnit(),'Bcyc') == 0 then
-		call UnitDamageTargetEx((KSV),(GetEnumUnit()), 1,(((KTV)* 1.))* Pow(.9,(KWV))* Pow(.99,(KUV)))
-		call GroupAddUnit(KQV, GetEnumUnit())
-		set KWV = KWV + 1
-	endif
-endfunction
-function DVI takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit missileDummy =(LoadUnitHandle(HY, h, 45))
-	local real tx =(LoadReal(HY, h, 47))
-	local real ty =(LoadReal(HY, h, 48))
-	local real a =(LoadReal(HY, h, 13))
-	local real damage =(LoadReal(HY, h, 20))
-	local integer DEI =(LoadInteger(HY, h, 354))
-	local integer DXI =(LoadInteger(HY, h, 355))
-	local group D7R =(LoadGroupHandle(HY, h, 187))
-	local real x = CoordinateX50(GetUnitX(missileDummy) +(60 * Pow(.9, DXI)* Pow(.99, DEI))* Cos(a))
-	local real y = CoordinateY50(GetUnitY(missileDummy) +(60 * Pow(.9, DXI)* Pow(.99, DEI))* Sin(a))
-	local group g = AllocationGroup(295)
-	local real d
-	if GetTriggerEvalCount(t)> 2 then
-		set d = 150
-	else
-		set d = 75
-	endif
-	call DestroyEffect(AddSpecialEffect("effects\\Tornado.mdx", x, y))
-	set DEI = DEI + KillTreeByCircle(x, y, 75)
-	call SaveInteger(HY, h, 354,(DEI))
-	set KQV = D7R
-	set KSV = missileDummy
-	set KTV = damage
-	set KUV = DEI
-	set KWV = DXI
-	set TempUnit = missileDummy
-	call GroupEnumUnitsInRange(g, x, y, d, Condition(function DJX))
-	call ForGroup(g, function C9I)
-	call DeallocateGroup(g)
-	call SaveInteger(HY, h, 355,(KWV))
-	call SetUnitX(missileDummy, x)
-	call SetUnitY(missileDummy, y)
-	if GetTriggerEvalCount(t)> 43 then
-		call KillUnit(missileDummy)
-		call DeallocateGroup(D7R)
-		call FlushChildHashtable(HY, h)
-		call DestroyTrigger(t)
-	endif
-	set t = null
-	set missileDummy = null
-	set D7R = null
-	set g = null
-	return false
-endfunction
-function DOI takes nothing returns nothing
-	local unit whichUnit = GetTriggerUnit()
-	local real x2 =(LoadReal(HY,(GetHandleId(whichUnit)), 356))
-	local real y2 =(LoadReal(HY,(GetHandleId(whichUnit)), 357))
-	local real DRI = RMinBJ(GetGameTime()-LoadReal(HY, GetHandleId(whichUnit), 358), 1.)
-	local real a = Atan2(y2 -GetUnitY(whichUnit), x2 -GetUnitX(whichUnit))
-	local trigger t
-	local integer h
-	local unit missileDummy
-	local integer level = GetUnitAbilityLevel(whichUnit,'A12K')
-	local real damage =(40 + 80 * level)*(DRI)
-	set t = CreateTrigger()
-	set h = GetHandleId(t)
-	set missileDummy = CreateUnit(GetOwningPlayer(whichUnit),'h078', GetUnitX(whichUnit), GetUnitY(whichUnit), a * bj_RADTODEG)
-	set x2 = GetUnitX(whichUnit) + 2475* Cos(a)
-	set y2 = GetUnitY(whichUnit) + 2475* Sin(a)
-	call SaveUnitHandle(HY, h, 45,(missileDummy))
-	call SaveReal(HY, h, 47,((x2)* 1.))
-	call SaveReal(HY, h, 48,((y2)* 1.))
-	call SaveReal(HY, h, 13,((a)* 1.))
-	call SaveReal(HY, h, 20,((damage)* 1.))
-	call SaveInteger(HY, h, 354, 0)
-	call SaveInteger(HY, h, 355, 0)
-	call SaveGroupHandle(HY, h, 187,(AllocationGroup(296)))
-	call TriggerRegisterTimerEvent(t, .02, true)
-	call TriggerAddCondition(t, Condition(function DVI))
-	set whichUnit = null
-	set t = null
-	set missileDummy = null
-endfunction
-function DII takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit trigUnit =(LoadUnitHandle(HY, h, 14))
-	call SetUnitTimeScale(trigUnit, 1)
-	call FlushChildHashtable(HY, h)
-	call DestroyTrigger(t)
-	set t = null
-	set trigUnit = null
-	return false
-endfunction
-function DAI takes nothing returns nothing
-	local trigger t = CreateTrigger()
-	local integer h = GetHandleId(t)
-	local unit trigUnit = GetTriggerUnit()
-	local location l = GetSpellTargetLoc()
-	local real x = GetLocationX(l)
-	local real y = GetLocationY(l)
-	call RemoveLocation(l)
-	call SaveReal(HY,(GetHandleId(trigUnit)), 356,((x)* 1.))
-	call SaveReal(HY,(GetHandleId(trigUnit)), 357,((y)* 1.))
-	call SaveReal(HY,(GetHandleId(trigUnit)), 358, GetGameTime()-0.3)
-	call SetUnitTimeScale(trigUnit, .75)
-	call SaveUnitHandle(HY, h, 14,(trigUnit))
-	call TriggerRegisterTimerEvent(t, .75, false)
-	call TriggerRegisterDeathEvent(t, trigUnit)
-	call TriggerAddCondition(t, Condition(function DII))
-	set t = null
-	set trigUnit = null
-	set l = null
-endfunction
-function LIE takes nothing returns nothing
-	call SaveBoolean(HY, GetHandleId(GetTriggerUnit()), 360, false)
-	call DAI()
-endfunction
-function DNI takes nothing returns boolean
-	if GetSpellAbilityId()=='A12K' then
-		if (LoadBoolean(HY,(GetHandleId(GetTriggerUnit())), 360)) then
-			call DOI()
-		endif
-	endif
-	return false
-endfunction
-function XKE takes nothing returns nothing
-	call SaveBoolean(HY, GetHandleId(GetTriggerUnit()), 360, true)
-endfunction
-function PSX takes nothing returns nothing
-	local trigger t = CreateTrigger()
-	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SPELL_ENDCAST)
-	call TriggerAddCondition(t, Condition(function DNI))
-	set t = null
-endfunction
 function DBI takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
@@ -63261,250 +63125,6 @@ function DLA takes unit u, timer t, integer h returns nothing
 	call DestroyTimerAndFlushHT_P(t)
 	set p = null
 endfunction
-function DMA takes nothing returns boolean
-	local unit t = GetFilterUnit()
-	if not IsUnitWard(t) and UnitAlive(t) and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and t != Temp__ArrayUnit[0]and(IsUnitType(t, UNIT_TYPE_ANCIENT) == false or DRX(t) != null) then
-		call GroupAddUnit(LoadGroupHandle(ObjectHashTable, XK[0], 1), t)
-	endif
-	set t = null
-	return false
-endfunction
-function DPA takes nothing returns nothing
-	local unit t = GetEnumUnit()
-	local real O3O =(Temp__ArrayReal[0] + Temp__ArrayReal[1]* GetUnitState(t, UNIT_STATE_MAX_LIFE))/ 5.
-	if IsUnitAlly(Temp__ArrayUnit[0], GetOwningPlayer(t)) then
-		call SetWidgetLife(t, GetWidgetLife(t) + O3O * .5)
-	else
-		call UnitDamageTargetEx(Temp__ArrayUnit[0], t, 3, O3O)
-		call DestroyEffect(AddSpecialEffectTarget("war3mapImported\\FireRayTarget.mdx", t, "origin"))
-		call CreateFogModifierTimedForPlayer(GetOwningPlayer(t), 2, GetUnitX(Temp__ArrayUnit[0]), GetUnitY(Temp__ArrayUnit[0]), 500)
-	endif
-	set t = null
-endfunction
-function DQA takes unit u, integer abilId returns nothing
-	if abilId =='A1Z3' or abilId =='A1RK' or abilId =='A43H' or abilId =='A27H' or abilId =='A30J' then
-		call SaveBoolean(ObjectHashTable, GetHandleId(u),'A1YY', true)
-	endif
-endfunction
-function DSA takes unit u, integer S6V returns nothing
-	local integer h
-	local real x2
-	local real y2
-	local real x1
-	local real y1
-	if GetUnitAbilityLevel(u,'A205')> 0 then
-		if S6V == 851983 then
-			call DisableTrigger(UnitEventMainTrig)
-			call EXStopUnit(u)
-			call SetUnitAnimationByIndex(u, LoadInteger(ObjectHashTable, GetUnitTypeId(u),'A1P8'))
-			call EnableTrigger(UnitEventMainTrig)
-			return
-		endif
-		set h = LoadInteger(ObjectHashTable, GetHandleId(u),'A1YY')
-		if S6V == 852177then
-			call SaveBoolean(ObjectHashTable, h, 1, true)
-			call SetUnitAnimationByIndex(u, LoadInteger(ObjectHashTable, GetUnitTypeId(u),'A1P8'))
-		elseif S6V == 852178then
-			call SaveBoolean(ObjectHashTable, h, 1, false)
-			call SetUnitAnimation(u, "stand")
-		endif
-		if S6V ==851971 then
-			set x1 = GetWidgetX(u)
-			set y1 = GetWidgetY(u)
-			if GetTriggerEventId() == EVENT_UNIT_ISSUED_TARGET_ORDER then
-				set x2 = GetWidgetX(GetOrderTargetUnit())
-				set y2 = GetWidgetY(GetOrderTargetUnit())
-			else
-				set x2 = GetOrderPointX()
-				set y2 = GetOrderPointY()
-			endif
-			set x1 = Atan2(y2 -y1, x2 -x1)
-			if 0 > x1 then
-				set x1 = x1 + 6.28318
-			endif
-			call SaveBoolean(ObjectHashTable, h, 0, true)
-			call SaveReal(ObjectHashTable, h, 0, x1)
-			call SaveReal(ObjectHashTable, h, 1, GetUnitFacing(u)* bj_DEGTORAD)
-			call DisableTrigger(UnitEventMainTrig)
-			call EXStopUnit(u)
-			call EnableTrigger(UnitEventMainTrig)
-		endif
-	endif
-endfunction
-//烈日炙烤
-function DTA takes nothing returns nothing
-	local group g = null
-	local lightning l = null
-	local timer t = GetExpiredTimer()
-	local integer DSR
-	local integer abilLevel
-	local integer count = 2
-	local integer h = GetHandleId(t)
-	local integer UYX = LoadInteger(ObjectHashTable, h, 0)
-	local unit u = LoadUnitHandle(ObjectHashTable, h, 0)
-	local boolean active = false
-	local real IMX
-	local real I3X
-	local real DUA
-	local real DWA
-	local real DYA
-	local real DZA
-	local real x2
-	local real y2
-	local real z2
-	local real x1
-	local real y1
-	local real z1
-	if LoadInteger(HY, GetHandleId(u), 704) == -1 then//同等脉冲新星,进行二次判断
-		if not PlayerHaveAbilityByActive(GetOwningPlayer(u), 'A1YY') then
-			set active = true
-		endif
-	endif 
-	set DSR = GetHandleId(u)
-	if IsUnitDeath(u) or C5X(u) or IsUnitSilenced(u) or IsUnitPaused(u) or IsUnitCyclone(u) or active or UYX > 239 or LoadBoolean(ObjectHashTable, DSR,'A1YY') then
-		call DLA(u, t, h)
-		set t = null
-		set u = null
-		return
-	endif
-	set x1 = GetWidgetX(u)
-	set y1 = GetWidgetY(u)
-	set DUA = GetWidgetLife(u)
-	set I3X = GetUnitFacing(u)* bj_DEGTORAD
-	call SetWidgetLife(u, DUA -DUA * .0015)
-	if LoadBoolean(ObjectHashTable, h, 0) then
-		set I3X = LoadReal(ObjectHashTable, h, 0)
-		set DWA = I3X -GetUnitFacing(u)* bj_DEGTORAD
-		set IMX = LoadReal(ObjectHashTable, h, 1)
-		set DUA = I3X -IMX
-		if DUA > 0 then
-			set DYA = bj_DEGTORAD / 2
-		else
-			set DYA =-bj_DEGTORAD / 2
-		endif
-		if  -180* bj_DEGTORAD > DUA or DUA > 180* bj_DEGTORAD then
-			set DYA =-DYA
-		endif
-		set I3X = IMX + DYA
-		call SaveReal(ObjectHashTable, h, 1, I3X)
-		if HaveSavedReal(ObjectHashTable, h, 2) then
-			if 0 > DWA then
-				set DWA =-DWA
-			endif
-			if .02 > DWA then
-				call SaveBoolean(ObjectHashTable, h, 0, false)
-				call RemoveSavedReal(ObjectHashTable, h, 2)
-			endif
-		endif
-		if LoadBoolean(ObjectHashTable, h, 0) then
-			call SaveReal(ObjectHashTable, h, 2, DWA)
-		endif
-		if LoadInteger(HY, DSR, 4301) != 1 then
-			call SetUnitFacing(u, I3X * bj_RADTODEG)
-		endif
-	endif
-	if LoadBoolean(ObjectHashTable, h, 1) then
-		set x1 = CoordinateX50(x1 + 5 * Cos(I3X))
-		set y1 = CoordinateY50(y1 + 5 * Sin(I3X))
-		call KillTreeByCircle(x1, y1, 200)
-		if IsUnitType(u, UNIT_TYPE_HERO) then
-			call SaveBoolean(OtherHashTable, GetHandleId(u), 99, true)
-		endif
-		call SetUnitX(u, x1)
-		call SetUnitY(u, y1)
-	endif
-	if UYX == 1 then
-		call DisableTrigger(UnitEventMainTrig)
-		call EXStopUnit(u)
-		call EnableTrigger(UnitEventMainTrig)
-	endif
-	set DYA = Cos(I3X)
-	set DZA = Sin(I3X)
-	set I3X =(GetUnitFacing(u) + 90)* bj_DEGTORAD
-	set DUA = Cos(I3X)
-	set DWA = Sin(I3X)
-	set x1 = GetWidgetX(u) + 50 * DYA
-	set y1 = GetWidgetY(u) + 50 * DZA
-	call MoveLocation(Temp__Location, x1, y1)
-	set z1 = GetUnitFlyHeight(u)
-	if 50 > z1 then
-		set z1 = 50
-	endif
-	set z1 = z1 + GetLocationZ(Temp__Location)
-	set x2 = x1 + 1150* DYA
-	set y2 = y1 + 1150* DZA
-	call MoveLocation(Temp__Location, x2, y2)
-	set z2 = GetLocationZ(Temp__Location)
-	loop
-	exitwhen count == 7
-		set I3X = 30 *(count / 5)* Pow(-1, count)
-		set IMX = 30 *((8 -count)/ 5)* Pow(-1, count)
-		set l = LoadLightningHandle(ObjectHashTable, h, count)
-		call MoveLightningEx(l, false, x1 + I3X * DUA, y1 + I3X * DWA, z1 + IMX, x2, y2, z2)
-		set count = count + 1
-	endloop
-	call DestroyEffect(AddSpecialEffect("war3mapImported\\FireRayTarget.mdx", x2, y2))
-	call SaveInteger(ObjectHashTable, h, 0, UYX + 1)
-	if UYX / 10== UYX / 10. then
-		set x2 = x1
-		set y2 = y1
-		set count = 0
-		set g = LoadGroupHandle(ObjectHashTable, h, 1)
-		set Temp__ArrayUnit[0] = u
-		set XK[0] = h
-		loop
-		exitwhen count == 26
-			set x2 = x2 + 50 * DYA
-			set y2 = y2 + 50 * DZA
-			call GroupEnumUnitsInRange(AK, x2, y2, 100, Condition(function DMA))
-			if count / 3 == count / 3.then
-				call CreateFogModifierTimedForPlayer(GetOwningPlayer(u), 2, x2, y2, 225)
-			endif
-			set count = count + 1
-		endloop
-		set abilLevel = LoadInteger(ObjectHashTable, h,-1)
-		set I3X = UYX / 239.
-		set IMX = 8 * abilLevel + 8
-		set Temp__ArrayReal[0] = IMX + IMX * I3X
-		set Temp__ArrayReal[1]=(abilLevel * 1.25 + I3X *(abilLevel * 1.25))/ 100 
-		call ForGroup(g, function DPA)
-		call GroupClear(g)
-	endif
-	set g = null
-	set u = null
-	set t = null
-	set l = null
-endfunction
-function YEV takes nothing returns nothing
-	local unit u = GetTriggerUnit()
-	local timer t = CreateTimer()
-	local integer count = 2
-	local integer h = GetHandleId(t)
-	local integer W0V = GetHandleId(u)
-	call UnitAddPermanentAbility(u,'Abun')
-	call UnitAddPermanentAbility(u,'A205')
-	call UnitAddPermanentAbility(u,'A1Z3')
-	call SetPlayerAbilityAvailableEx(GetOwningPlayer(u),'A1YY', false)
-	call SetUnitPathing(u, false)
-	call SaveInteger(ObjectHashTable, W0V,'A1YY', h)
-	call SaveBoolean(ObjectHashTable, W0V,'A1YY', false)
-	call SaveUnitHandle(ObjectHashTable, h, 0, u)
-	call SaveGroupHandle(ObjectHashTable, h, 1, AllocationGroup(435))
-	call SaveBoolean(ObjectHashTable, h, 0, false)
-	call SaveBoolean(ObjectHashTable, h, 1, false)
-	call SaveInteger(ObjectHashTable, h,-1, GetUnitAbilityLevel(u, GetSpellAbilityId()))
-	call StartSound(WF)
-	call SetSoundPosition(WF, GetWidgetX(u), GetWidgetY(u), 100)
-	call SetUnitAnimationByIndex(u, LoadInteger(ObjectHashTable, GetUnitTypeId(u),'A1P8'))
-	loop
-	exitwhen count == 7
-		call SaveLightningHandle(ObjectHashTable, h, count, AddLightning("SRAY", false, 0, 0, 0, 0))
-		set count = count + 1
-	endloop
-	call TimerStart(t, .025, true, function DTA)
-	set u = null
-	set t = null
-endfunction
 function SYE takes nothing returns nothing
 	call UnitAddPermanentAbility(GetTriggerUnit(),'A1YX')
 	call SetUnitAbilityLevel(GetTriggerUnit(),'A1YX', GetUnitAbilityLevel(GetTriggerUnit(),'A331'))
@@ -65847,118 +65467,6 @@ function PZX takes nothing returns nothing
 	set P0V = CreateRegion()
 	call RegionAddRect(P0V, gg_rct_ScourgeBuyArea)
 	call RegionAddRect(P0V, gg_rct_ScourgeFountainOfLifeRange)
-endfunction
-function HDA takes unit whichUnit, unit targetUnit, real sx, real sy, real a2 returns nothing
-	local integer i = 0
-	local real tx
-	local real ty
-	local real a
-	local real x
-	local real y
-	local real HFA
-	set a = a2
-	set tx = sx + 50 * Cos(a * bj_DEGTORAD)
-	set ty = sy + 50 * Sin(a * bj_DEGTORAD)
-	set HFA = a
-	set x = tx + 200* Cos(HFA * bj_DEGTORAD)
-	set y = ty + 200* Sin(HFA * bj_DEGTORAD)
-	call RemoveDestructableTimed(CreateDestructable('B006', x, y,-1 * HFA, .6, 1), 7)
-	call KillTreeByCircle(x, y, 300)
-	set HFA = a -40
-	set x = tx + 200* Cos(HFA * bj_DEGTORAD)
-	set y = ty + 200* Sin(HFA * bj_DEGTORAD)
-	call RemoveDestructableTimed(CreateDestructable('B006', x, y,-1 * HFA, .6, 1), 7)
-	call KillTreeByCircle(x, y, 300)
-	set HFA = a -80
-	set x = tx + 200* Cos(HFA * bj_DEGTORAD)
-	set y = ty + 200* Sin(HFA * bj_DEGTORAD)
-	call RemoveDestructableTimed(CreateDestructable('B006', x, y,-1 * HFA, .6, 1), 7)
-	call KillTreeByCircle(x, y, 300)
-	set HFA = a + 40
-	set x = tx + 200* Cos(HFA * bj_DEGTORAD)
-	set y = ty + 200* Sin(HFA * bj_DEGTORAD)
-	call RemoveDestructableTimed(CreateDestructable('B006', x, y,-1 * HFA, .6, 1), 7)
-	call KillTreeByCircle(x, y, 300)
-	set HFA = a + 80
-	set x = tx + 200* Cos(HFA * bj_DEGTORAD)
-	set y = ty + 200* Sin(HFA * bj_DEGTORAD)
-	call RemoveDestructableTimed(CreateDestructable('B006', x, y,-1 * HFA, .6, 1), 7)
-	call KillTreeByCircle(x, y, 300)
-endfunction
-function HGA takes nothing returns nothing
-	if IsUnitInGroup(GetEnumUnit(), P3V) == false then
-		call GroupAddUnit(P3V, GetEnumUnit())
-		call DestroyEffect(AddSpecialEffectTarget("war3mapImported\\ChainFreeze_F6.mdx", GetEnumUnit(), "chest"))
-		call DestroyEffect(AddSpecialEffectTarget("Abilities\\Weapons\\FrostWyrmMissile\\FrostWyrmMissile.mdl", GetEnumUnit(), "chest"))
-		call UnitDamageTargetEx(P1V, GetEnumUnit(), 1, P2V * 70)
-	endif
-endfunction
-function HHA takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit whichUnit = LoadUnitHandle(HY, h, 2)
-	local unit targetUnit = LoadUnitHandle(HY, h, 17)
-	local unit HJA = LoadUnitHandle(HY, h, 45)
-	local real HKA = LoadReal(HY, h, 683)
-	local real HLA = LoadReal(HY, h, 684)
-	local real sx = GetUnitX(HJA)
-	local real sy = GetUnitY(HJA)
-	local real I3X = Atan2(HLA -sy, HKA -sx)
-	local real nx = sx + 22 * Cos(I3X)
-	local real ny = sy + 22 * Sin(I3X)
-	local group gg = LoadGroupHandle(HY, h, 133)
-	local integer level = LoadInteger(HY, h, 0)
-	local group g = AllocationGroup(450)
-	set TempUnit = whichUnit
-	set P1V = whichUnit
-	set P3V = gg
-	set P2V = level
-	call GroupEnumUnitsInRange(g, nx, ny, 225, Condition(function DJX))
-	call ForGroup(g, function HGA)
-	call DeallocateGroup(g)
-	call SetUnitPosition(HJA, nx, ny)
-	if GetDistanceBetween(nx, ny, HKA, HLA)< 40 then
-		call KillUnit(HJA)
-		call SetUnitPathing(HJA, true)
-		call HDA(whichUnit, null, nx, ny, I3X * bj_RADTODEG)
-		call DeallocateGroup(gg)
-		call FlushChildHashtable(HY, h)
-		call DestroyTrigger(t)
-	endif
-	set whichUnit = null
-	set targetUnit = null
-	set t = null
-	set HJA = null
-	set gg = null
-	set g = null
-	return false
-endfunction
-function DBE takes nothing returns nothing
-	local unit whichUnit = GetTriggerUnit()
-	local trigger t = CreateTrigger()
-	local integer h = GetHandleId(t)
-	local unit HJA = CreateUnit(GetOwningPlayer(whichUnit),'h0CS', GetUnitX(whichUnit), GetUnitY(whichUnit), 0)
-	local real sx = GetUnitX(whichUnit)
-	local real sy = GetUnitY(whichUnit)
-	local real tx = GetSpellTargetX()
-	local real ty = GetSpellTargetY()
-	local real I3X = Atan2(ty -sy, tx -sx)
-	local real HKA = CoordinateX50(tx)
-	local real HLA = CoordinateY50(ty)
-	call SetUnitFacing(HJA, I3X * bj_RADTODEG)
-	call SetUnitPathing(HJA, false)
-	call TriggerRegisterTimerEvent(t, .02, true)
-	call TriggerAddCondition(t, Condition(function HHA))
-	call SaveUnitHandle(HY, h, 2, whichUnit)
-	call SaveReal(HY, h, 683, HKA * 1.)
-	call SaveReal(HY, h, 684, HLA * 1.)
-	call SaveReal(HY, h, 13, I3X * 1.)
-	call SaveUnitHandle(HY, h, 45, HJA)
-	call SaveInteger(HY, h, 0, GetUnitAbilityLevel(whichUnit, GetSpellAbilityId()))
-	call SaveGroupHandle(HY, h, 133, AllocationGroup(451))
-	set whichUnit = null
-	set HJA = null
-	set t = null
 endfunction
 function HMA takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
@@ -71656,9 +71164,6 @@ endfunction
 function UPA takes nothing returns nothing
 	call G3R(GetTriggerUnit(), GetSpellAbilityId())
 endfunction
-function UQA takes nothing returns nothing
-	call DQA(GetTriggerUnit(), GetSpellAbilityId())
-endfunction
 function USA takes nothing returns nothing
 	if GetUnitAbilityLevel(GetTriggerUnit(),'B0H0')> 0 then
 		call QWA(GetTriggerUnit(), GetSpellAbilityId())
@@ -73861,9 +73366,7 @@ function ERN takes nothing returns nothing
 	call RegisterSpellEffectFunc("UPA")
 	call SetAllPlayerAbilityUnavailable('A30P')
 endfunction
-function EIN takes nothing returns nothing
-	call RegisterSpellEffectFunc("UQA")
-endfunction
+
 function EAN takes nothing returns nothing
 	call RegisterSpellEffectFunc("USA")
 endfunction
