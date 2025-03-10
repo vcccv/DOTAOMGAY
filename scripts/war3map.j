@@ -77995,10 +77995,10 @@ function main takes nothing returns nothing
 	call CreateFogModifierTimedForPlayer(Player(10), 5,-6990., 6840., 750)
 	call CreateFogModifierTimedForPlayer(Player(11), 5,-6990., 6840., 750)
 	call CreateFogModifierTimedForPlayer(Player(12), 5,-6990., 6840., 750)
-
-	set DNV = CreateRegion()
-	call RegionAddRect(DNV, Rect(-8192.,-8128.,-5120.,-5536.))
-	call RegionAddRect(DNV, Rect(4608., 4352., 8192., 8192.))
+	// FountainOfLifeRegion
+	set FountainOfLifeRegion = CreateRegion()
+	call RegionAddRect(FountainOfLifeRegion, Rect(-8192.,-8128.,-5120.,-5536.))
+	call RegionAddRect(FountainOfLifeRegion, Rect(4608., 4352., 8192., 8192.))
 
 	set RuneRefreshTrigger = CreateTrigger()
 	call TriggerAddCondition(RuneRefreshTrigger, Condition(function RuneRefresh__CallBack))

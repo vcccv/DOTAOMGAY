@@ -95,14 +95,19 @@ library TownPortalScrollHandler requires Communication, TownPortalScrollFrame, U
         if GetPlayerAlliance(GetOwningPlayer(selectedUnit), GetLocalPlayer(), ALLIANCE_SHARED_CONTROL) then
             set x = GetSelfCastX(selectedUnit)
             set y = GetSelfCastX(selectedUnit)
-            set flag = LOCAL_ORDER_FLAG_ALONE + LOCAL_ORDER_FLAG_ITEM
-            if MHMsg_IsKeyDown(OSKEY_SHIFT) then
-                set flag = flag + LOCAL_ORDER_FLAG_QUEUE
-            endif
-            if GetUnitAbilityLevel(selectedUnit, TOWN_PORTAL_SCROLL_ABILITY_ID) == 1then
-                call MHMsg_SendSelectorOrder(x, y, ORDER_massteleport, flag)
+            // 1500范围内不可双击施法到泉水
+            if not IsUnitInRangeXY(selectedUnit, x, y, 1500.) then
+                set flag = LOCAL_ORDER_FLAG_ALONE + LOCAL_ORDER_FLAG_ITEM
+                if MHMsg_IsKeyDown(OSKEY_SHIFT) then
+                    set flag = flag + LOCAL_ORDER_FLAG_QUEUE
+                endif
+                if GetUnitAbilityLevel(selectedUnit, TOWN_PORTAL_SCROLL_ABILITY_ID) == 1then
+                    call MHMsg_SendSelectorOrder(x, y, ORDER_massteleport, flag)
+                else
+                    call MHMsg_SendIndicatorOrder(null, x, y, ORDER_massteleport, flag)
+                endif
             else
-                call MHMsg_SendIndicatorOrder(null, x, y, ORDER_massteleport, flag)
+                call SendErrorMessage("已经在泉水范围内")
             endif
         endif
     endfunction

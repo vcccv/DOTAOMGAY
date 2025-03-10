@@ -162,29 +162,28 @@ scope TownPortalScroll
 
     
     globals
-        // MaxTargetingDistance
-        // MinTargetingDistance
 	    constant real MaxTargetingDistance = 575.
         constant real MinTargetingDistance = 70.
 
-        player array DEV
-        real array DXV
-        real array DOV
-        real array DRV
-        integer DIV =-1
-        region DNV
+        private player array TeleportingPlayers
+        private real array TeleportX
+        private real array TeleportY
+        private real array TeleportTimestamps
+        private integer TeleportCount =-1
+
+        region FountainOfLifeRegion
     endglobals
 
-    function NWO takes integer id, real x, real y returns integer
-        local real startTime =(GetGameTime())
-        local integer i = 0
+    private function GetTeleportPenaltyCount takes integer id, real x, real y returns integer
+        local real    currentTime = GetGameTime()
+        local integer i     = 0
         local integer count = 0
-        if IsPointInRegion(DNV, x, y) then
+        if IsPointInRegion(FountainOfLifeRegion, x, y) then
             return count
         endif
         loop
-        exitwhen i > DIV
-            if (startTime < DRV[i] + 25) and(GetDistanceBetween(x, y, DXV[i], DOV[i])< MaxTargetingDistance * 2 + 50) and IsPlayerAlly(Player(id), DEV[i]) then
+        exitwhen i > TeleportCount
+            if (currentTime < TeleportTimestamps[i] + 25) and(GetDistanceBetween(x, y, TeleportX[i], TeleportY[i])< MaxTargetingDistance * 2 + 50) and IsPlayerAlly(Player(id), TeleportingPlayers[i]) then
                 set count = count + 1
             endif
             set i = i + 1
@@ -192,14 +191,16 @@ scope TownPortalScroll
         return count
     endfunction
 
-    function NUO takes integer id, real x, real y returns nothing
-        if IsPointInRegion(DNV, x, y) == false then
-            set DIV = DIV + 1
-            set DEV[DIV] = Player(id)
-            set DXV[DIV] = x
-            set DOV[DIV] = y
-            set DRV[DIV]=(GetGameTime())
+    private function TeleportMark takes integer id, real x, real y returns nothing
+        if IsPointInRegion(FountainOfLifeRegion, x, y) then
+            return
         endif
+        
+        set TeleportCount = TeleportCount + 1
+        set TeleportingPlayers[TeleportCount] = Player(id)
+        set TeleportX[TeleportCount] = x
+        set TeleportY[TeleportCount] = y
+        set TeleportTimestamps[TeleportCount] = (GetGameTime())
     endfunction
 
     // 范围内的友军播放TP提示声音
@@ -487,14 +488,14 @@ scope TownPortalScroll
         call MHEffect_SetTeamColor(teleportUnitEffect, GetPlayerColor(GetOwningPlayer(whichUnit)))
         call MHEffect_SetTeamGlow(teleportUnitEffect, GetPlayerColor(GetOwningPlayer(whichUnit)))
 
-        set count = NWO(GetPlayerId(GetOwningPlayer(whichUnit)), tx, ty)
+        set count = GetTeleportPenaltyCount(GetPlayerId(GetOwningPlayer(whichUnit)), tx, ty)
         set duration = 3.
         if count > 0 then
             set duration = 4.5 + .5 * count
         	call SetUnitAnimationByIndex(teleportEffectFromUnit, 2)
         	call SetUnitAnimationByIndex(teleportEffectColoredUnit, 2)
         endif
-        call NUO(GetPlayerId(GetOwningPlayer(whichUnit)), tx, ty)
+        call TeleportMark(GetPlayerId(GetOwningPlayer(whichUnit)), tx, ty)
 
         // tp 持续施法
         call SetAbilityANclCastDurationInSpellEffect(GetSpellAbility(), duration)
