@@ -27,6 +27,20 @@ library BuffUtils requires Table
         call MHBuff_SetPolarity(target, buffId, BUFF_POLARITY_AURA, true)
         return Temp
     endfunction
+    function UnitAddAreaBuffEx takes unit source, unit target, integer buffId, integer level, real duration, real herodur, boolean positive returns buff
+        if herodur == 0. then
+            set herodur = duration
+        endif
+        if IsHeroUnitId(GetUnitTypeId(target)) then
+            set Temp = MHBuff_CreateEx(target, buffId, BUFF_TEMPLATE_BNAB, level, 0, herodur )
+        else
+            set Temp = MHBuff_CreateEx(target, buffId, BUFF_TEMPLATE_BNAB, level, 0, duration)
+        endif
+        call MHBuff_SetPolarity(target, buffId, BUFF_POLARITY_POSITIVE, positive)
+        call MHBuff_SetPolarity(target, buffId, BUFF_POLARITY_NEGATIVE, not positive)
+        call MHBuff_SetPolarity(target, buffId, BUFF_POLARITY_AURA, true)
+        return Temp
+    endfunction
 
     function CreateBuffByTemplate takes unit source, unit target, integer buffId, real duration, integer template returns buff
         return MHBuff_Create(target, buffId, template, duration)

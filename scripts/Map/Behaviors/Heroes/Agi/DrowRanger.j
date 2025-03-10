@@ -12,13 +12,14 @@ scope DrowRanger
     //***************************************************************************
     globals
         constant integer SKILL_INDEX_GUST = GetHeroSKillIndexBySlot(HERO_INDEX_DROW_RANGE, 2)
+        private constant integer GUST_BUFF_ID     = 'B07V'
     endglobals
 
     // 击退
     function PNI takes nothing returns boolean
         local trigger t = GetTriggeringTrigger()
         local integer h = GetHandleId(t)
-        local unit whichUnit = LoadUnitHandle(HY, h, 2)
+        //local unit whichUnit = LoadUnitHandle(HY, h, 2)
         local unit targetUnit = LoadUnitHandle(HY, h, 17)
         local real I3X = LoadReal(HY, h, 13)
         local real EOX = LoadReal(HY, h, 138)
@@ -39,125 +40,111 @@ scope DrowRanger
             call SetUnitY(targetUnit, M9R)
         endif
         set t = null
-        set whichUnit = null
+        //set whichUnit = null
         set targetUnit = null
         return false
     endfunction
-    function PCI takes unit dummyUnit, unit targetUnit, unit whichUnit, real x, real y returns nothing
+    private function GustRepel takes real startX, real startY, unit targetUnit, real x, real y, integer level returns nothing
         local trigger t = CreateTrigger()
         local integer h = GetHandleId(t)
-        local real I3X = Atan2(GetUnitY(targetUnit)-GetUnitY(dummyUnit), GetUnitX(targetUnit)-GetUnitX(dummyUnit))
+        local real I3X = Atan2(GetUnitY(targetUnit)-startY, GetUnitX(targetUnit)-startX)
         local real EOX = GetDistanceBetween(x, y, GetUnitX(targetUnit), GetUnitY(targetUnit))
         local real PDI = RMaxBJ(1, 350 *(1 -EOX / 900))
-        call SaveUnitHandle(HY, h, 2, whichUnit)
+        //call SaveUnitHandle(HY, h, 2, whichUnit)
         call SaveUnitHandle(HY, h, 17, targetUnit)
         call SaveReal(HY, h, 13,(I3X * 1.))
         call SaveReal(HY, h, 138,(PDI * 1.))
-        call SaveInteger(HY, h, 0, 25 + 5 * GetUnitUserData(dummyUnit))
+        call SaveInteger(HY, h, 0, 25 + 5 * level)
         call TriggerRegisterTimerEvent(t, .02, true)
         call TriggerRegisterDeathEvent(t, targetUnit)
         call TriggerAddCondition(t, Condition(function PNI))
         set t = null
     endfunction
-    function PFI takes nothing returns nothing
-        if IsUnitInGroup(GetEnumUnit(), RN) == false and GetEnumUnit() != Roshan then
-            call GroupAddUnit(RN, GetEnumUnit())
-            call PCI(TempUnit, GetEnumUnit(), EN, XN, ON)
-        endif
-    endfunction
-    function PGI takes nothing returns boolean
-        local trigger t = GetTriggeringTrigger()
-        local integer h = GetHandleId(t)
-        local unit whichUnit = LoadUnitHandle(HY, h, 2)
-        local unit dummyUnit = LoadUnitHandle(HY, h, 19)
-        local real I3X = LoadReal(HY, h, 137)
-        local real PXR = LoadReal(HY, h, 64)
-        local real POR = LoadReal(HY, h, 65)
-        local real PRR = LoadReal(HY, h, 66)
-        local real PIR = LoadReal(HY, h, 67)
-        local group g = LoadGroupHandle(HY, h, 22)
-        local real PHI = GetUnitX(dummyUnit)
-        local real PJI = GetUnitY(dummyUnit)
-        local group gg
-        local unit PKI = LoadUnitHandle(HY, h, 0)
-        if GetDistanceBetween(PHI, PJI, PRR, PIR)< 100  then
-            set PHI = PRR
-            set PJI = PIR
-        else
-            set PHI = PHI + 40 * Cos(I3X)
-            set PJI = PJI + 40 * Sin(I3X)
-        endif
-        set PHI = CoordinateX50(PHI)
-        set PJI = CoordinateY50(PJI)
-        call SetUnitX(dummyUnit, PHI)
-        call SetUnitY(dummyUnit, PJI)
-        call SetUnitX(PKI, PHI)
-        call SetUnitY(PKI, PJI)
-        if ModuloInteger(GetTriggerEvalCount(t), 2) == 1 and GetTriggerEvalCount(t)< 20 then
-            call IssuePointOrderById(PKI, 852592, PHI, PJI)
-        endif
-        set gg = AllocationGroup(343)
-        set TempUnit = dummyUnit
-        set EN = whichUnit
-        set XN = PXR
-        set ON = POR
-        set RN = g
-        call GroupEnumUnitsInRange(gg, PHI, PJI, 275, Condition(function DJX))
-        call ForGroup(gg, function PFI)
-        call DeallocateGroup(gg)
-        if (PHI == PRR and PJI == PIR) or GetTriggerEvalCount(t)> 35 then
-            set gg = AllocationGroup(344)
-            set TempUnit = dummyUnit
-            set EN = whichUnit
-            set XN = PXR
-            set ON = POR
-            set RN = g
-            call GroupEnumUnitsInRange(gg, PHI, PJI, 275, Condition(function DJX))
-            call ForGroup(gg, function PFI)
-            call DeallocateGroup(gg)
-            call FlushChildHashtable(HY, h)
-            call DestroyTrigger(t)
-            call KillUnit(dummyUnit)
-            call DeallocateGroup(g)
-        endif
-        set PKI = null
-        set t = null
-        set dummyUnit = null
-        set g = null
-        set gg = null
+
+    private struct GustWave extends array
+
+        static method OnCollide takes Shockwave sw, unit targ returns boolean
+            // 敌对存活非魔免非无敌非守卫非建筑
+            if IsUnitAlive(targ) and IsUnitEnemy(sw.owner, GetOwningPlayer(targ)) and not IsUnitMagicImmune(targ) and not IsUnitInvulnerable(targ) and not IsUnitWard(targ) and not IsUnitStructure(targ) then
+                call UnitAddAreaBuffEx(sw.owner, targ, GUST_BUFF_ID, sw.level, sw.duration, sw.herodur, false)
+                call GustRepel(sw.startX, sw.startY, targ, sw.x, sw.y, sw.level)
+            endif
+            return false
+        endmethod
+        
+        implement ShockwaveStruct
+    endstruct
+
+    // B07V
+    function DrowSilenceBuffOnAdd takes nothing returns nothing
+        local unit whichUnit = Event.GetTriggerUnit()
+        call UnitIncSilenceCount(whichUnit)
         set whichUnit = null
-        return false
     endfunction
+    function DrowSilenceBuffOnRemove takes nothing returns nothing
+        local unit whichUnit = Event.GetTriggerUnit()
+        call UnitDecSilenceCount(whichUnit)
+        set whichUnit = null
+    endfunction
+
+    function DrowRangerGustOnInitializer takes nothing returns nothing
+        call ResgiterAbilityMethodSimple(GUST_BUFF_ID, "DrowSilenceBuffOnAdd", "DrowSilenceBuffOnRemove")
+    endfunction
+
     function DrowRangerGustOnSpellEffect takes nothing returns nothing
-        local trigger t = CreateTrigger()
-        local integer h = GetHandleId(t)
-        local location l = GetSpellTargetLoc()
-        local unit u = GetTriggerUnit()
-        local real x = GetLocationX(l)
-        local real y = GetLocationY(l)
-        local real I3X = Atan2(y -GetUnitY(u), x -GetUnitX(u))
-        local unit d = CreateUnit(GetOwningPlayer(u),'h02J', GetUnitX(u), GetUnitY(u), I3X * bj_RADTODEG)
-        local unit PKI = CreateUnit(GetOwningPlayer(u),'e00E', GetUnitX(u), GetUnitY(u), 0)
-        call UnitAddAbility(PKI,'A0QB')
-        call SetUnitAbilityLevel(PKI,'A0QB', GetUnitAbilityLevel(u, GetSpellAbilityId()))
-        call TriggerRegisterTimerEvent(t, .02, true)
-        call TriggerAddCondition(t, Condition(function PGI))
-        call SaveUnitHandle(HY, h, 2, u)
-        call SaveUnitHandle(HY, h, 19, d)
-        call SetUnitUserData(d, GetUnitAbilityLevel(u, GetSpellAbilityId()))
-        call SaveUnitHandle(HY, h, 0, PKI)
-        call SaveReal(HY, h, 137,(I3X * 1.))
-        call SaveReal(HY, h, 64, GetUnitX(u))
-        call SaveReal(HY, h, 65, GetUnitY(u))
-        call SaveReal(HY, h, 66, GetUnitX(u) + 900 * Cos(I3X))
-        call SaveReal(HY, h, 67, GetUnitY(u) + 900 * Sin(I3X))
-        call SaveGroupHandle(HY, h, 22, AllocationGroup(345))
-        call RemoveLocation(l)
-        set t = null
-        set PKI = null
-        set l = null
-        set d = null
-        set u = null
+        // local trigger  t = CreateTrigger()
+        // local integer  h = GetHandleId(t)
+        // local location l = GetSpellTargetLoc()
+        // local unit u     = GetTriggerUnit()
+        // local real x     = GetLocationX(l)
+        // local real y     = GetLocationY(l)
+        // local real I3X   = Atan2(y -GetUnitY(u), x -GetUnitX(u))
+        // local unit d     = CreateUnit(GetOwningPlayer(u),'h02J', GetUnitX(u), GetUnitY(u), I3X * bj_RADTODEG)
+        // local unit PKI   = CreateUnit(GetOwningPlayer(u),'e00E', GetUnitX(u), GetUnitY(u), 0)
+
+        local unit      whichUnit = GetRealSpellUnit(GetTriggerUnit())
+        local real      sx        = GetUnitX(whichUnit)
+        local real      sy        = GetUnitY(whichUnit)
+        local real      tx        = GetSpellTargetX()
+        local real      ty        = GetSpellTargetY()
+
+        local integer   level    = GetUnitAbilityLevel(whichUnit, GetSpellAbilityId())
+        local Shockwave sw
+        local real      distance = 900. + GetUnitCastRangeBonus(whichUnit)
+        local real      angle
+
+        set angle = RadianBetweenXY(sx, sy, tx, ty)
+        set sw = Shockwave.CreateFromUnit(whichUnit, angle, distance)
+        call sw.SetSpeed(2000.)
+        set sw.minRadius = 250.
+        set sw.maxRadius = 250.
+        set sw.model     = "war3mapImported\\Gust.mdl"
+        set sw.duration  = 2. + level
+        set sw.herodur   = 2. + level
+        set sw.level     = level
+        call GustWave.Launch(sw)
+
+        set whichUnit = null
+        //call UnitAddAbility(PKI,'A0QB')
+        //call SetUnitAbilityLevel(PKI,'A0QB', GetUnitAbilityLevel(u, GetSpellAbilityId()))
+        //call TriggerRegisterTimerEvent(t, .02, true)
+        //call TriggerAddCondition(t, Condition(function PGI))
+        //call SaveUnitHandle(HY, h, 2, u)
+        //call SaveUnitHandle(HY, h, 19, d)
+        //call SetUnitUserData(d, GetUnitAbilityLevel(u, GetSpellAbilityId()))
+        //call SaveUnitHandle(HY, h, 0, PKI)
+        //call SaveReal(HY, h, 137,(I3X * 1.))
+        //call SaveReal(HY, h, 64, GetUnitX(u))
+        //call SaveReal(HY, h, 65, GetUnitY(u))
+        //call SaveReal(HY, h, 66, GetUnitX(u) + 900 * Cos(I3X))
+        //call SaveReal(HY, h, 67, GetUnitY(u) + 900 * Sin(I3X))
+        //call SaveGroupHandle(HY, h, 22, AllocationGroup(345))
+        //call RemoveLocation(l)
+        //set t = null
+        //set PKI = null
+        //set l = null
+        //set d = null
+        //set u = null
     endfunction
 
     //***************************************************************************

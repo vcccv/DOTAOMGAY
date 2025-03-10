@@ -83,12 +83,24 @@ library ShockwaveLib /*
         // 当前距离
         real    dist
 
+        real    startX
+        real    startY
         real    targetX
         real    targetY
 
         boolean allocated
         boolean recycle
         boolean wantDestroy
+
+        // datas
+        real    damage
+        real    dataA
+        real    dataB
+        real    dataC
+        real    duration
+        real    herodur
+        integer level
+        boolean isUpgraded
 
         method Destroy takes nothing returns nothing
             call table[this].flush()
@@ -97,6 +109,15 @@ library ShockwaveLib /*
         endmethod
 
         private method ResetMembers takes nothing returns nothing
+            set this.damage         = 0
+            set this.dataA          = 0.
+            set this.dataB          = 0.
+            set this.dataC          = 0.
+            set this.duration       = 0.
+            set this.herodur        = 0.
+            set this.level          = 0
+            set this.isUpgraded     = false
+
             set this.model          = null
             set this.timeScale      = 1.
             set this.radius         = 0.
@@ -147,6 +168,8 @@ library ShockwaveLib /*
             set this.angle = angle
             set this.x = startX + MHUnit_GetData(owner, UNIT_DATA_LAUNCH_X) * Cos(angle)
             set this.y = startY + MHUnit_GetData(owner, UNIT_DATA_LAUNCH_Y) * Sin(angle)
+            set this.startX  = this.x
+            set this.startY  = this.y
             set this.targetX = this.x + distance * Cos(angle)
             set this.targetY = this.y + distance * Sin(angle)
             set this.distance = distance
@@ -165,6 +188,8 @@ library ShockwaveLib /*
             set this.angle = angle
             set this.x = startX
             set this.y = startY
+            set this.startX  = this.x
+            set this.startY  = this.y
             set this.targetX = this.x + distance * Cos(angle)
             set this.targetY = this.y + distance * Sin(angle)
             set this.distance = distance

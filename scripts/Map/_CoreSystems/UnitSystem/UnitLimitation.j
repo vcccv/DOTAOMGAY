@@ -214,6 +214,28 @@ library UnitLimitation requires Base, UnitModel
             call UnitIncStunCount(whichUnit)
         endif
     endfunction
+
+    // 沉默
+    globals
+        private constant key UNIT_SILENCE_COUNT
+    endglobals
+    function UnitIncSilenceCount takes unit whichUnit returns nothing
+        local integer h     = GetHandleId(whichUnit)
+        local integer count = Table[h][UNIT_SILENCE_COUNT] + 1
+        set Table[h][UNIT_SILENCE_COUNT] = count
+        if count == 1 then
+            call MHUnit_Silence(whichUnit, true)
+        endif
+    endfunction
+    function UnitDecSilenceCount takes unit whichUnit returns nothing
+        local integer h     = GetHandleId(whichUnit)
+        local integer count = Table[h][UNIT_SILENCE_COUNT] - 1
+        set Table[h][UNIT_SILENCE_COUNT] = count
+        if count == 0 then
+            call MHUnit_Silence(whichUnit, false)
+        endif
+    endfunction
+
     
     globals
         private constant key UNIT_TRUESIGHT_IMMUNITY_COUNT

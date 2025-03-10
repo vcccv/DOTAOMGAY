@@ -13,6 +13,8 @@ library HeroSkillDefine requires SkillSystem
         // 群星坠落
         call RegisterSkillInitMethodByIndex(SKILL_INDEX_STARFALL  , "StarFallOnInitializer")
         
+        // 阵风
+        call RegisterSkillInitMethodByIndex(SKILL_INDEX_GUST      , "DrowRangerGustOnInitializer")
 
         // 601是init
         call SaveStr(ObjectHashTable,'A060', 601, "W_A")
