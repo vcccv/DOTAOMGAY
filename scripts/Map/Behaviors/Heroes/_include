@@ -31,6 +31,7 @@
 #include "Int\\Enchantress.j"
 #include "Int\\OgreMagi.j"
 #include "Int\\Lion.j"
+#include "Int\\Windranger.j"
 
 #include "Agi\\VengefulSpirit.j"
 #include "Agi\\FacelessVoid.j"
@@ -52,3 +53,4 @@
 #include "Agi\\DrowRanger.j"
 #include "Agi\\LoneDruid.j"
 #include "Agi\\Razor.j"
+#include "Agi\\Weaver.j"

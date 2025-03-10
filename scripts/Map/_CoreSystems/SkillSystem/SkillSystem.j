@@ -1,7 +1,5 @@
 
 library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
-    
-   
 
     function HeroOnInitializer takes integer heroIndex returns nothing
         if (heroIndex == 34) then
