@@ -217,7 +217,7 @@ scope StormSpirit
         set t = null
     endfunction
     function MKR takes nothing returns boolean
-        return (IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and UnitIsDead(GetFilterUnit()) == false)!= null
+        return (IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and IsUnitDeath(GetFilterUnit()) == false)!= null
     endfunction
     function LightningGrappleOnSpellEffect takes nothing returns nothing
         local unit      whichUnit = GetTriggerUnit()

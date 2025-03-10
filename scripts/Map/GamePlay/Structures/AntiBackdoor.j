@@ -61,7 +61,7 @@ scope AntiBackdoor
         local integer h = GetHandleId(u)
         local real life
         local real realLife
-        if h == 0 or UnitIsDead(u) or GetUnitState(u, UNIT_STATE_MAX_LIFE) == GetWidgetLife(u) then
+        if h == 0 or IsUnitDeath(u) or GetUnitState(u, UNIT_STATE_MAX_LIFE) == GetWidgetLife(u) then
             return
         endif
         set life = GetWidgetLife(u)
@@ -116,7 +116,7 @@ scope AntiBackdoor
         local boolean b         = false
         local player  p         = SentinelPlayers[0]
         local integer i         = 0
-        if UnitIsDead(u) then
+        if IsUnitDeath(u) then
             return
         endif
         set h = GetHandleId(u)

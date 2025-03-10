@@ -97,7 +97,7 @@ scope TaurenChieftain
             call U1V(J1V, 852095, first)
             call UnitDamageTargetEx(whichUnit, first, 1, damage)
             call UnitDamageTargetEx(whichUnit, first, 2, damage)
-            if upgradeLevel > 0 and UnitIsDead(first) == false then
+            if upgradeLevel > 0 and IsUnitDeath(first) == false then
                 call UnitAddAbilityToTimed(first,'A43L', 1, upgradeLevel + 3., 0)
                 call UnitAddAbilityToTimed(first,'A44E', 1, upgradeLevel + 3., 0)
             endif

@@ -126,7 +126,7 @@ scope ObsidianDestroyer
             call CommonTextTag(I2S(R2I(OJO * ratio)), 3, targetUnit, .023, 216, 30, 30, 216)
             call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Human\\Feedback\\SpellBreakerAttack.mdl", targetUnit, "overhead"))
             call SetUnitState(targetUnit, UNIT_STATE_MANA, GetUnitState(targetUnit, UNIT_STATE_MANA)* .6)
-            if UDR and UnitIsDead(targetUnit) == false then
+            if UDR and IsUnitDeath(targetUnit) == false then
                 call JPI(whichUnit, targetUnit, 4, true)
             endif
         endif
@@ -159,7 +159,7 @@ scope ObsidianDestroyer
             call GroupAddUnit(g, JUI)
         endif
         call ForGroup(g, function JQI)
-        if JUI != null and UnitIsDead(JUI) == false then
+        if JUI != null and IsUnitDeath(JUI) == false then
             call SetUnitInvulnerable(JUI, true)
         endif
         call DeallocateGroup(g)

@@ -35,7 +35,7 @@ scope Razor
         local real y2 = GetWidgetY(u2)
         local real x1 = GetWidgetX(u1)
         local real y1 = GetWidgetY(u1)
-        if UYX == 320 or UnitIsDead(u1) or UnitIsDead(u2) or(x1 -x2)*(x1 -x2) +(y1 -y2)*(y1 -y2)> 490000 then
+        if UYX == 320 or IsUnitDeath(u1) or IsUnitDeath(u2) or(x1 -x2)*(x1 -x2) +(y1 -y2)*(y1 -y2)> 490000 then
             call DestroyLightning(LoadLightningHandle(ObjectHashTable, h, 2))
             call UnitAddAbilityLevel1ToTimed(u1,'C023','D023', 18)
             call UnitAddAbilityLevel1ToTimed(u2,'C024','D024', 18)

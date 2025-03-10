@@ -3827,15 +3827,12 @@ endfunction
 function MessengerIsDead takes unit u returns boolean
 	return IsUnitType(u, UNIT_TYPE_DEAD) or 0.405 > GetWidgetLife(u)
 endfunction
-function UnitIsDead takes unit u returns boolean
-	return not UnitAlive( u )
-endfunction
 function WHE takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer h = GetHandleId(t)
 	local unit whichUnit = LoadUnitHandle(HY, h, 0)
 	local unit targetUnit = LoadUnitHandle(HY, h, 1)
-	if UnitIsDead(whichUnit) == false and UnitAlive(targetUnit) then
+	if IsUnitDeath(whichUnit) == false and UnitAlive(targetUnit) then
 		call IssueTargetOrderById(whichUnit, 851983, targetUnit)
 	endif
 	call FlushChildHashtable(HY, h)
@@ -6042,7 +6039,7 @@ function NOX takes nothing returns boolean
 		call SetUnitX(missileDummy, targetX)
 		call SetUnitY(missileDummy, targetY)
 		call EXSetUnitFacing(missileDummy, NNX)
-		if UnitIsDead(targetUnit) then
+		if IsUnitDeath(targetUnit) then
 			call KillUnit(missileDummy)
 			call FlushChildHashtable(HY, h)
 			call DestroyTrigger(t)
@@ -6414,7 +6411,7 @@ function N2X takes nothing returns boolean
 	call SetUnitX(N4X, dx)
 	call SetUnitY(N4X, dy)
 	call SetUnitFacing(N4X, I3X)
-	if UnitIsDead(targetUnit) then
+	if IsUnitDeath(targetUnit) then
 		call KillUnit(N4X)
 		call FlushChildHashtable(HY, h)
 		call DestroyTrigger(t)
@@ -7025,7 +7022,7 @@ function IsNotAncientOrBear takes unit u returns boolean
 	return not IsUnitType(u, UNIT_TYPE_ANCIENT) or DRX(u)
 endfunction
 function DCX takes nothing returns boolean
-	return(IsUnitMagicImmune(GetFilterUnit()) == false and IsUnitEnemy(TempUnit, GetOwningPlayer(GetFilterUnit())) and(not IsUnitWard(GetFilterUnit()) and UnitIsDead(GetFilterUnit()) == false) and IsNotAncientOrBear(GetFilterUnit())) != null
+	return(IsUnitMagicImmune(GetFilterUnit()) == false and IsUnitEnemy(TempUnit, GetOwningPlayer(GetFilterUnit())) and(not IsUnitWard(GetFilterUnit()) and IsUnitDeath(GetFilterUnit()) == false) and IsNotAncientOrBear(GetFilterUnit())) != null
 endfunction
 function DDX takes nothing returns boolean
 	return(IsUnitEnemy(GetTriggerUnit(), GetOwningPlayer(GetFilterUnit())) and(IsAliveNotStrucNotWard(GetFilterUnit())) and IsNotAncientOrBear(GetFilterUnit())) != null
@@ -7065,13 +7062,13 @@ function DUX takes nothing returns boolean
 	return(IsUnitEnemy(TempUnit, GetOwningPlayer(GetFilterUnit())) and(IsAliveNotStrucNotWard(GetFilterUnit()))) != null
 endfunction
 function DWX takes nothing returns boolean
-	return(IsUnitEnemy(TempUnit, GetOwningPlayer(GetFilterUnit())) and(not IsUnitWard(GetFilterUnit()) and UnitIsDead(GetFilterUnit()) == false) and IsNotAncientOrBear(GetFilterUnit())) != null
+	return(IsUnitEnemy(TempUnit, GetOwningPlayer(GetFilterUnit())) and(not IsUnitWard(GetFilterUnit()) and IsUnitDeath(GetFilterUnit()) == false) and IsNotAncientOrBear(GetFilterUnit())) != null
 endfunction
 function DYX takes nothing returns boolean
-	return(((IsUnitEnemy(TempUnit, GetOwningPlayer(GetFilterUnit())) and(not IsUnitWard(GetFilterUnit()) and UnitIsDead(GetFilterUnit()) == false) and IsNotAncientOrBear(GetFilterUnit())) and IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) == false))
+	return(((IsUnitEnemy(TempUnit, GetOwningPlayer(GetFilterUnit())) and(not IsUnitWard(GetFilterUnit()) and IsUnitDeath(GetFilterUnit()) == false) and IsNotAncientOrBear(GetFilterUnit())) and IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) == false))
 endfunction
 function DZX takes nothing returns boolean
-	return(IsUnitMagicImmune(GetFilterUnit()) == false and(IsUnitEnemy(TempUnit, GetOwningPlayer(GetFilterUnit())) and(not IsUnitWard(GetFilterUnit()) and UnitIsDead(GetFilterUnit()) == false) and IsNotAncientOrBear(GetFilterUnit()))) != null
+	return(IsUnitMagicImmune(GetFilterUnit()) == false and(IsUnitEnemy(TempUnit, GetOwningPlayer(GetFilterUnit())) and(not IsUnitWard(GetFilterUnit()) and IsUnitDeath(GetFilterUnit()) == false) and IsNotAncientOrBear(GetFilterUnit()))) != null
 endfunction
 function D_X takes nothing returns boolean
 	return(IsUnitEnemy(GetTriggerUnit(), GetOwningPlayer(GetFilterUnit())) == false and(IsAliveNotStrucNotWard(GetFilterUnit()))) != null
@@ -10508,7 +10505,7 @@ function HeroReviveTimerExpiredAction takes nothing returns nothing
 			set x = GetRectCenterX(gg_rct_SentinelRevivalPoint)
 			set y = GetRectCenterY(gg_rct_SentinelRevivalPoint)
 		endif
-		if not IsGameEnd and UnitIsDead(u) then
+		if not IsGameEnd and IsUnitDeath(u) then
 			call MEX(u, p, x, y, true)
 			call ReviveHero(u, x, y, true)
 			call SetUnitState(u, UNIT_STATE_MANA, 99999)
@@ -11673,7 +11670,7 @@ function YGX takes nothing returns nothing
 	if abilLevel > 4 then
 		set abilLevel = 4
 	endif
-	if UnitIsDead(Roshan) == false and abilLevel > 0 and PickModeElapsed > 0 then
+	if IsUnitDeath(Roshan) == false and abilLevel > 0 and PickModeElapsed > 0 then
 		call UnitAddPermanentAbility(Roshan,'A43T')
 		call UnitAddPermanentAbility(Roshan,'A43U')
 		call SetUnitAbilityLevel(Roshan,'A43T', abilLevel)
@@ -12542,7 +12539,7 @@ function Z9X takes nothing returns boolean
 	local player p = GetOwningPlayer(trigUnit)
 	local item whichItem
 	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
-		if GetTriggerUnit() == trigUnit or UnitIsDead(trigUnit) then
+		if GetTriggerUnit() == trigUnit or IsUnitDeath(trigUnit) then
 			call ZLX(ZSX)
 		endif
 		call FlushChildHashtable(HY, h)
@@ -12560,7 +12557,7 @@ function Z9X takes nothing returns boolean
 		if GetUnitDistanceEx(ZSX, trigUnit)< 350 then
 			call FlushChildHashtable(HY, h)
 			call DestroyTrigger(t)
-			if UnitIsDead(trigUnit) == false then
+			if IsUnitDeath(trigUnit) == false then
 				call Z3X(ZSX, trigUnit, false, 0)
 				call ZTX(ZSX, trigUnit)
 			endif
@@ -12717,7 +12714,7 @@ function VDO takes nothing returns nothing
 	local integer pid = GetPlayerId(p)
 	local real r = 0
 	if GetUnitTypeId(u)=='h085' then
-		if PlayerHeroes[pid]!= null and UnitIsDead(PlayerHeroes[pid]) == false then
+		if PlayerHeroes[pid]!= null and IsUnitDeath(PlayerHeroes[pid]) == false then
 			call VVO(PlayerHeroes[pid], true)
 		endif
 		call KillUnit(u)
@@ -12733,7 +12730,7 @@ function VDO takes nothing returns nothing
 		call KillUnit(u)
 	elseif KDX(GetUnitTypeId(u)) then
 		if PlayerHeroes[pid]!= null then
-			if UnitIsDead(PlayerHeroes[pid]) and p == GetOwningPlayer(GetSellingUnit()) and LoadInteger(HY, GetHandleId(PlayerHeroes[pid]), 4304) != 1 and UF[pid]== false then
+			if IsUnitDeath(PlayerHeroes[pid]) and p == GetOwningPlayer(GetSellingUnit()) and LoadInteger(HY, GetHandleId(PlayerHeroes[pid]), 4304) != 1 and UF[pid]== false then
 				set r = TimerGetRemaining(PS[pid])
 				call SaveReal(OtherHashTable, GetHandleId(p), 25, r + GetGameTime())
 				call SaveReal(OtherHashTable, GetHandleId(p), 26, r * .25)
@@ -13035,7 +13032,7 @@ function ECO takes player whichPlayer, unit whichUnit, integer itemIndex returns
 	return result
 endfunction
 function EDO takes nothing returns boolean
-	if IsUnitAlly(GetFilterUnit(), GetOwningPlayer(TempUnit)) and not IsUnitDummy(GetFilterUnit()) and UnitInventorySize(GetFilterUnit())> 1 and GetUnitTypeId(GetFilterUnit())!='ncop' and GetPlayerAlliance(GetOwningPlayer(GetFilterUnit()), GetOwningPlayer(TempUnit), ALLIANCE_SHARED_CONTROL) and GetOwningPlayer(TempUnit) != GetOwningPlayer(GetFilterUnit()) and IsUnitIllusion(GetFilterUnit()) == false and UnitIsDead(GetFilterUnit()) == false then
+	if IsUnitAlly(GetFilterUnit(), GetOwningPlayer(TempUnit)) and not IsUnitDummy(GetFilterUnit()) and UnitInventorySize(GetFilterUnit())> 1 and GetUnitTypeId(GetFilterUnit())!='ncop' and GetPlayerAlliance(GetOwningPlayer(GetFilterUnit()), GetOwningPlayer(TempUnit), ALLIANCE_SHARED_CONTROL) and GetOwningPlayer(TempUnit) != GetOwningPlayer(GetFilterUnit()) and IsUnitIllusion(GetFilterUnit()) == false and IsUnitDeath(GetFilterUnit()) == false then
 		if IsUnitCourier(GetFilterUnit()) then
 			set Q2 = Q2 + 1
 			set MissileHitTargetUnit = GetFilterUnit()
@@ -13044,7 +13041,7 @@ function EDO takes nothing returns boolean
 	return false
 endfunction
 function EFO takes nothing returns boolean
-	if IsUnitAlly(GetFilterUnit(), GetOwningPlayer(TempUnit)) and not IsUnitDummy(GetFilterUnit()) and UnitInventorySize(GetFilterUnit())> 1 and GetUnitTypeId(GetFilterUnit())!='ncop' and IsUnitIllusion(GetFilterUnit()) == false and UnitIsDead(GetFilterUnit()) == false then
+	if IsUnitAlly(GetFilterUnit(), GetOwningPlayer(TempUnit)) and not IsUnitDummy(GetFilterUnit()) and UnitInventorySize(GetFilterUnit())> 1 and GetUnitTypeId(GetFilterUnit())!='ncop' and IsUnitIllusion(GetFilterUnit()) == false and IsUnitDeath(GetFilterUnit()) == false then
 		if GetOwningPlayer(TempUnit) == GetOwningPlayer(GetFilterUnit()) then
 			if IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) then
 				if not IsUnitWard(GetFilterUnit()) then
@@ -13280,7 +13277,7 @@ endfunction
 function E6O takes unit u returns unit
 	local unit d = null
 	local player p = GetOwningPlayer(u)
-	if HaveSavedHandle(OtherHashTable, GetHandleId(p),'COUR'+ 1) == false or UnitIsDead(LoadUnitHandle(OtherHashTable, GetHandleId(p),'COUR'+ 1)) then
+	if HaveSavedHandle(OtherHashTable, GetHandleId(p),'COUR'+ 1) == false or IsUnitDeath(LoadUnitHandle(OtherHashTable, GetHandleId(p),'COUR'+ 1)) then
 		set d = CreateUnit(p,'e00E', GetUnitX(CirclesUnit[GetPlayerId(p)]), GetUnitY(CirclesUnit[GetPlayerId(p)]), 0)
 		call UnitAddPermanentAbility(d,'AInv')
 		call SaveUnitHandle(OtherHashTable, GetHandleId(p),'COUR'+ 1, d)
@@ -13490,7 +13487,7 @@ function UnitOnFastCombine takes unit KKX, integer XRO, player p returns nothing
 			set y = GetUnitY(d)
 			call SetUnitX(d, GetUnitX(KKX))
 			call SetUnitY(d, GetUnitY(KKX))
-			if UnitIsDead(KKX) == false and IsUnitInRange(KKX, SentinelFountainOfLifeUnit, 1600) or IsUnitInRange(KKX, ScourgeFountainOfLifeUnit, 1600) then
+			if IsUnitDeath(KKX) == false and IsUnitInRange(KKX, SentinelFountainOfLifeUnit, 1600) or IsUnitInRange(KKX, ScourgeFountainOfLifeUnit, 1600) then
 				call Z3X(d, KKX, true, k)
 				if GetUnitEmptyInventorySlotCount(KKX)> 0 then
 					call UnitDropItemTarget(d, UnitItemInSlot(d, 0), KKX)
@@ -13510,7 +13507,7 @@ function UnitOnFastCombine takes unit KKX, integer XRO, player p returns nothing
 				if GetUnitEmptyInventorySlotCount(KKX)> 0 then
 					call UnitDropItemTarget(d, UnitItemInSlot(d, 5), KKX)
 				endif
-			elseif UnitIsDead(KKX) == false and XEO(KKX) then
+			elseif IsUnitDeath(KKX) == false and XEO(KKX) then
 				if XXO(UnitItemInSlot(d, 0)) and GetUnitEmptyInventorySlotCount(KKX)> 0 then
 					call UnitDropItemTarget(d, UnitItemInSlot(d, 0), KKX)
 				endif
@@ -13529,7 +13526,7 @@ function UnitOnFastCombine takes unit KKX, integer XRO, player p returns nothing
 				if XXO(UnitItemInSlot(d, 5)) and GetUnitEmptyInventorySlotCount(KKX)> 0 then
 					call UnitDropItemTarget(d, UnitItemInSlot(d, 5), KKX)
 				endif
-			elseif Y1X != null and UnitIsDead(Y1X) == false and(IsUnitInRangeXY(Y1X, GetRectCenterX(WA), GetRectCenterY(WA), 1600) or IsUnitInRangeXY(Y1X, GetRectCenterX(YA), GetRectCenterY(YA), 1600)) then
+			elseif Y1X != null and IsUnitDeath(Y1X) == false and(IsUnitInRangeXY(Y1X, GetRectCenterX(WA), GetRectCenterY(WA), 1600) or IsUnitInRangeXY(Y1X, GetRectCenterX(YA), GetRectCenterY(YA), 1600)) then
 				call SetUnitX(d, GetUnitX(Y1X))
 				call SetUnitY(d, GetUnitY(Y1X))
 				call Z3X(d, Y1X, true, k)
@@ -13624,14 +13621,14 @@ function XBO takes nothing returns nothing
 	if IsPickingHero and TimerGetRemaining(NK)> 0 and((IsPlayerSentinel(GetTriggerPlayer()) and CK[0]> 0) or(IsPlayerScourge(GetTriggerPlayer()) and CK[1]> 0)) then
 		if IsPlayerSentinel(GetTriggerPlayer()) then
 			set CK[0] = CK[0]-1
-			if UnitIsDead(HR) then
+			if IsUnitDeath(HR) then
 				call KillUnit(JR)
 			else
 				call KillUnit(HR)
 			endif
 		else
 			set CK[1] = CK[1]-1
-			if UnitIsDead(KR) then
+			if IsUnitDeath(KR) then
 				call KillUnit(LR)
 			else
 				call KillUnit(KR)
@@ -15231,12 +15228,12 @@ function R1O takes nothing returns boolean
 		exitwhen i > 5
 			set id = GetPlayerId(SentinelPlayers[i])
 			set trigUnit = PlayerHeroes[id]
-			if CGV[id]> 0 and trigUnit != null and UnitIsDead(trigUnit) == false then
+			if CGV[id]> 0 and trigUnit != null and IsUnitDeath(trigUnit) == false then
 				call R0O(trigUnit)
 			endif
 			set id = GetPlayerId(ScourgePlayers[i])
 			set trigUnit = PlayerHeroes[id]
-			if CGV[id]> 0 and trigUnit != null and UnitIsDead(trigUnit) == false then
+			if CGV[id]> 0 and trigUnit != null and IsUnitDeath(trigUnit) == false then
 				call R0O(trigUnit)
 			endif
 			set i = i + 1
@@ -16691,7 +16688,7 @@ function A1O takes nothing returns boolean
 	local integer i
 	call FlushChildHashtable(HY, h)
 	call DestroyTrigger(t)
-	if A2O == null or UnitIsDead(A2O) then
+	if A2O == null or IsUnitDeath(A2O) then
 		set t = null
 		set A2O = null
 		return false
@@ -18689,7 +18686,7 @@ function DTO takes unit u returns boolean
 	return unitTypeId =='H0B8'
 endfunction
 function DUO takes nothing returns boolean
-	return((IsUnitEnemy(GetFilterUnit(), DQV) and CZX(GetUnitTypeId(GetFilterUnit())) == false and UnitIsDead(GetFilterUnit()) == false and(IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO)) and DTO(GetFilterUnit()) == false))
+	return((IsUnitEnemy(GetFilterUnit(), DQV) and CZX(GetUnitTypeId(GetFilterUnit())) == false and IsUnitDeath(GetFilterUnit()) == false and(IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO)) and DTO(GetFilterUnit()) == false))
 endfunction
 function DWO takes unit whichUnit returns boolean
 	local group g = AllocationGroup(37)
@@ -19763,40 +19760,40 @@ function GDO takes boolean GFO returns nothing
 		set s1 = "stand alternate"
 		set s2 = "stand"
 	endif
-	if UnitIsDead(SentinelTopMeleeRaxUnit) == false then
+	if IsUnitDeath(SentinelTopMeleeRaxUnit) == false then
 		call SetUnitAnimation(SentinelTopMeleeRaxUnit, s1)
 	endif
-	if UnitIsDead(SentinelMidMeleeRaxUnit) == false then
+	if IsUnitDeath(SentinelMidMeleeRaxUnit) == false then
 		call SetUnitAnimation(SentinelMidMeleeRaxUnit, s1)
 	endif
-	if UnitIsDead(SentinelBotMeleeRaxUnit) == false then
+	if IsUnitDeath(SentinelBotMeleeRaxUnit) == false then
 		call SetUnitAnimation(SentinelBotMeleeRaxUnit, s1)
 	endif
-	if UnitIsDead(SentinelTopRangedRaxUnit) == false then
+	if IsUnitDeath(SentinelTopRangedRaxUnit) == false then
 		call SetUnitAnimation(SentinelTopRangedRaxUnit, s1)
 	endif
-	if UnitIsDead(SentinelMidRangedRaxUnit) == false then
+	if IsUnitDeath(SentinelMidRangedRaxUnit) == false then
 		call SetUnitAnimation(SentinelMidRangedRaxUnit, s1)
 	endif
-	if UnitIsDead(SentinelBotRangedRaxUnit) == false then
+	if IsUnitDeath(SentinelBotRangedRaxUnit) == false then
 		call SetUnitAnimation(SentinelBotRangedRaxUnit, s1)
 	endif
-	if UnitIsDead(ScourgeTopMeleeRaxUnit) == false then
+	if IsUnitDeath(ScourgeTopMeleeRaxUnit) == false then
 		call SetUnitAnimation(ScourgeTopMeleeRaxUnit, s2)
 	endif
-	if UnitIsDead(ScourgeMidMeleeRaxUnit) == false then
+	if IsUnitDeath(ScourgeMidMeleeRaxUnit) == false then
 		call SetUnitAnimation(ScourgeMidMeleeRaxUnit, s2)
 	endif
-	if UnitIsDead(ScourgeBotMeleeRaxUnit) == false then
+	if IsUnitDeath(ScourgeBotMeleeRaxUnit) == false then
 		call SetUnitAnimation(ScourgeBotMeleeRaxUnit, s2)
 	endif
-	if UnitIsDead(ScourgeTopRangedRaxUnit) == false then
+	if IsUnitDeath(ScourgeTopRangedRaxUnit) == false then
 		call SetUnitAnimation(ScourgeTopRangedRaxUnit, s2)
 	endif
-	if UnitIsDead(ScourgeMidRangedRaxUnit) == false then
+	if IsUnitDeath(ScourgeMidRangedRaxUnit) == false then
 		call SetUnitAnimation(ScourgeMidRangedRaxUnit, s2)
 	endif
-	if UnitIsDead(ScourgeBotRangedRaxUnit) == false then
+	if IsUnitDeath(ScourgeBotRangedRaxUnit) == false then
 		call SetUnitAnimation(ScourgeBotRangedRaxUnit, s2)
 	endif
 	set u = null
@@ -20483,12 +20480,12 @@ function CreateSentinelAncientCreeps takes real x, real y returns nothing
 	endif
 endfunction
 function H9O takes nothing returns nothing
-	if GetUnitAbilityLevel(GetEnumUnit(),'A0P4') != 0 or GetUnitTypeId(GetEnumUnit())=='o003' or GetUnitTypeId(GetEnumUnit())=='o01X' or UnitIsDead(GetEnumUnit()) or IsUnitCourier(GetEnumUnit()) then
+	if GetUnitAbilityLevel(GetEnumUnit(),'A0P4') != 0 or GetUnitTypeId(GetEnumUnit())=='o003' or GetUnitTypeId(GetEnumUnit())=='o01X' or IsUnitDeath(GetEnumUnit()) or IsUnitCourier(GetEnumUnit()) then
 		call GroupRemoveUnit(LW, GetEnumUnit())
 	endif
 endfunction
 function JVO takes nothing returns boolean
-	return(not(GetUnitAbilityLevel(GetFilterUnit(),'A0P4') != 0 or GetUnitTypeId(GetFilterUnit())=='o003' or GetUnitTypeId(GetFilterUnit())=='o01X' or UnitIsDead(GetFilterUnit()) or IsUnitCourier(GetFilterUnit())))
+	return(not(GetUnitAbilityLevel(GetFilterUnit(),'A0P4') != 0 or GetUnitTypeId(GetFilterUnit())=='o003' or GetUnitTypeId(GetFilterUnit())=='o01X' or IsUnitDeath(GetFilterUnit()) or IsUnitCourier(GetFilterUnit())))
 endfunction
 function GetTempGroup takes nothing returns group
 	return TempGroup
@@ -20501,7 +20498,7 @@ function CheckRectCanRefreshCreeps takes rect r returns boolean
 		set firstUnit = FirstOfGroup(GetTempGroup())
 		exitwhen firstUnit == null
 		call GroupRemoveUnit(GetTempGroup(), firstUnit)
-		if not (GetUnitAbilityLevel(firstUnit,'A0P4') != 0 or GetUnitTypeId(firstUnit) == 'o003' or GetUnitTypeId(firstUnit) == 'o01X' or UnitIsDead(firstUnit) or IsUnitCourier(firstUnit)) then
+		if not (GetUnitAbilityLevel(firstUnit,'A0P4') != 0 or GetUnitTypeId(firstUnit) == 'o003' or GetUnitTypeId(firstUnit) == 'o01X' or IsUnitDeath(firstUnit) or IsUnitCourier(firstUnit)) then
 			set firstUnit = null
 			return false
 		endif
@@ -21360,7 +21357,7 @@ function LEO takes player whichUnit, player targetUnit returns string
 endfunction
 function LXO takes player whichPlayer returns string
 	local string s
-	if UnitIsDead(PlayerHeroes[GetPlayerId(whichPlayer)]) then
+	if IsUnitDeath(PlayerHeroes[GetPlayerId(whichPlayer)]) then
 		set s = I2S(R2I(TimerGetRemaining(PS[GetPlayerId(whichPlayer)])))
 	else
 		set s = " "
@@ -22756,7 +22753,7 @@ function M3O takes nothing returns boolean
 			call FlushChildHashtable(HY, h)
 			call DestroyTrigger(t)
 		endif
-	elseif UnitIsDead(trigUnit) == false then
+	elseif IsUnitDeath(trigUnit) == false then
 		call SetUnitX(trigUnit, x)
 		call SetUnitY(trigUnit, y)
 		call SaveInteger(HY, GetHandleId(trigUnit), 4259, 1)
@@ -23033,7 +23030,7 @@ function P5O takes nothing returns nothing
 	else
 		set S1X = GetRectCenter(gg_rct_SentinelRevivalPoint)
 	endif
-	if IsGameEnd == false and UnitIsDead(SDX) then
+	if IsGameEnd == false and IsUnitDeath(SDX) then
 		call MEX(SDX, T6X, GetLocationX(S1X), GetLocationY(S1X), true)
 		if S_X(SDX) == false or GetUnitAbilityLevel(SDX,'A0MW') == 0 then
 			call ReviveHeroLoc(SDX, S1X, true)
@@ -23311,7 +23308,7 @@ function QTO takes nothing returns boolean
 	local integer id
 	if IsUnitType(targetUnit, UNIT_TYPE_HERO) and IsUnitIllusion(targetUnit) == false and(S6V == 851983 or S6V ==851971) and IsUnitEnemy(targetUnit, GetOwningPlayer(trigUnit)) and IsUnitVisibleToPlayer(trigUnit, GetOwningPlayer(targetUnit)) and EI == false then
 		set id =(LoadInteger(HY,(GetHandleId(targetUnit)), 143))
-		if FSV[id]== null or FSV[id]== targetUnit or UnitIsDead(FSV[id]) then
+		if FSV[id]== null or FSV[id]== targetUnit or IsUnitDeath(FSV[id]) then
 			call QPO(targetUnit, trigUnit)
 		endif
 	endif
@@ -23325,7 +23322,7 @@ function QUO takes nothing returns boolean
 	local integer id
 	if LWO(u) == false and EI == false then
 		set id =(LoadInteger(HY,(GetHandleId(trigUnit)), 143))
-		if FSV[id]== null or FSV[id]== trigUnit or UnitIsDead(FSV[id]) then
+		if FSV[id]== null or FSV[id]== trigUnit or IsUnitDeath(FSV[id]) then
 			call QPO(trigUnit, u)
 		endif
 	endif
@@ -23494,7 +23491,7 @@ function Q5O takes nothing returns nothing
 	local unit Q6O = GetTriggerUnit()
 	local unit targetUnit = FSV[GetUnitUserData(Q6O)]
 	call SetUnitPosition(Q6O, GetUnitX(Q6O), GetUnitY(Q6O))
-	if targetUnit != null and UnitIsDead(targetUnit) == false and IsUnitVisibleToPlayer(targetUnit, GetOwningPlayer(targetUnit)) then
+	if targetUnit != null and IsUnitDeath(targetUnit) == false and IsUnitVisibleToPlayer(targetUnit, GetOwningPlayer(targetUnit)) then
 		call IssueTargetOrderById(Q6O, 851983, targetUnit)
 	else
 		call DisableTrigger(GetTriggeringTrigger())
@@ -23514,7 +23511,7 @@ function Q8O takes nothing returns nothing
 	local unit Q6O = GetTriggerUnit()
 	local unit targetUnit = FSV[GetUnitUserData(Q6O)]
 	call SetUnitPosition(Q6O, GetUnitX(Q6O), GetUnitY(Q6O))
-	if targetUnit != null and UnitIsDead(targetUnit) == false and IsUnitVisibleToPlayer(targetUnit, GetOwningPlayer(targetUnit)) then
+	if targetUnit != null and IsUnitDeath(targetUnit) == false and IsUnitVisibleToPlayer(targetUnit, GetOwningPlayer(targetUnit)) then
 		call IssueTargetOrderById(Q6O, 851983, targetUnit)
 	else
 		call DisableTrigger(GetTriggeringTrigger())
@@ -23689,7 +23686,7 @@ function SDO takes nothing returns boolean
 	loop
 	exitwhen playerIndex > 11
 		set trigUnit = PlayerHeroes[playerIndex]
-		if trigUnit != null and UnitIsDead(trigUnit) == false and GetUnitTypeId(trigUnit) == PlayerHeroTypeId[playerIndex]and IsUnitHexed(trigUnit) == false then
+		if trigUnit != null and IsUnitDeath(trigUnit) == false and GetUnitTypeId(trigUnit) == PlayerHeroTypeId[playerIndex]and IsUnitHexed(trigUnit) == false then
 			loop
 				set i = GetRandomInt(1,108)
 			exitwhen(IsUnitIdType(HeroListTypeId[i], UNIT_TYPE_MELEE_ATTACKER) and IsUnitIdType(PlayerHeroTypeId[playerIndex], UNIT_TYPE_MELEE_ATTACKER)) or(IsUnitIdType(HeroListTypeId[i], UNIT_TYPE_RANGED_ATTACKER) and IsUnitIdType(PlayerHeroTypeId[playerIndex], UNIT_TYPE_RANGED_ATTACKER))
@@ -26570,7 +26567,7 @@ endfunction
 function VAR takes player p returns nothing
 	local unit trigUnit = PlayerHeroes[GetPlayerId(p)]
 	local trigger t
-	if UnitIsDead(trigUnit) == false then
+	if IsUnitDeath(trigUnit) == false then
 		set t = CreateTrigger()
 		call DisplayTimedTextToPlayer(p, 0, 0, 30., GetObjectName('n08K'))
 		call UnitRemoveBuffs(trigUnit, true, false)
@@ -26607,7 +26604,7 @@ function VBR takes nothing returns nothing
 	local player p = GetTriggerPlayer()
 	local unit trigUnit = PlayerHeroes[GetPlayerId(p)]
 	local trigger t
-	if UnitIsDead(trigUnit) == false then
+	if IsUnitDeath(trigUnit) == false then
 		set t = CreateTrigger()
 		call TriggerRegisterTimerEvent(t, 3.5, false)
 		call TriggerRegisterUnitEvent(t, trigUnit, EVENT_UNIT_DAMAGED)
@@ -26862,12 +26859,12 @@ function VWR takes nothing returns nothing
 				if ModuloInteger(c, 2) == 1 then
 					call Y9X(p)
 				endif
-				if HaveSavedHandle(OtherHashTable, GetHandleId(p),'COUR') and(LoadBoolean(OtherHashTable, GetHandleId(p),'UIds') or UnitIsDead(LoadUnitHandle(OtherHashTable, GetHandleId(p),'COUR'))) then
+				if HaveSavedHandle(OtherHashTable, GetHandleId(p),'COUR') and(LoadBoolean(OtherHashTable, GetHandleId(p),'UIds') or IsUnitDeath(LoadUnitHandle(OtherHashTable, GetHandleId(p),'COUR'))) then
 					set V_R = 1
 					set u = LoadUnitHandle(OtherHashTable, GetHandleId(p),'COUR')
 					set V0R = GetPlayerId(GetOwningPlayer(u))
 					set s = s + PlayerColorHex[V0R] + "信使|r: "
-					if UnitIsDead(u) then
+					if IsUnitDeath(u) then
 						set s = s + "|c00ff0000死亡|r (" + I2S(R2I(GetGameTime()-LoadReal(HY, GetHandleId(u),'DEAD'))*-1) + "s)"
 					else
 						set s = s + LoadStr(OtherHashTable, GetHandleId(u),'ORDR')
@@ -32535,7 +32532,7 @@ function B_E takes nothing returns nothing
 	endif
 endfunction
 function C8R takes nothing returns boolean
-	if UnitIsDead(GetFilterUnit()) == false and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(QN)) and not IsUnitWard(GetFilterUnit()) and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and IsUnitMagicImmune(GetFilterUnit()) == false then
+	if IsUnitDeath(GetFilterUnit()) == false and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(QN)) and not IsUnitWard(GetFilterUnit()) and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and IsUnitMagicImmune(GetFilterUnit()) == false then
 		if IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) then
 			set TN = TN + 1
 		endif
@@ -32547,7 +32544,7 @@ function C9R takes nothing returns nothing
 	local integer T0V ='A45Y'
 	local integer level = 1
 	call UnitDamageTargetEx(QN, GetEnumUnit(), 1, SN * 40 + 40)
-	if UnitIsDead(GetEnumUnit()) == false then
+	if IsUnitDeath(GetEnumUnit()) == false then
 		if TN < 2 then
 			set level = TN + 1
 		else
@@ -33585,7 +33582,7 @@ function F0R takes unit u, real x, real y, group CNO, integer level returns noth
 		set u2 = FirstOfGroup(g)
 	exitwhen u2 == null
 		if (IsUnitInGroup(u2, CNO) == false and IsUnitEnemy(u2, GetOwningPlayer(u))) then
-			if (GetUnitAbilityLevel(u2,'A04R') != 1 and UnitIsDead(u2) == false and IsUnitType(u2, UNIT_TYPE_STRUCTURE) == false) then
+			if (GetUnitAbilityLevel(u2,'A04R') != 1 and IsUnitDeath(u2) == false and IsUnitType(u2, UNIT_TYPE_STRUCTURE) == false) then
 				call GroupAddUnit(CNO, u2)
 				call UnitDamageTargetEx(u, u2, 5, 60 + level * 30)
 				call AddSpecialEffectTarget("Objects\\Spawnmodels\\Human\\HumanBlood\\BloodElfSpellThiefBlood.mdl", u2, "overhead")
@@ -34222,7 +34219,7 @@ function GLR takes nothing returns boolean
 	if GetUnitAbilityLevel(trigUnit,'A1IQ')> 0 and GetUnitAbilityLevel(trigUnit,'A1IQ') != level then
 		call SetUnitAbilityLevel(trigUnit,'A1IQ', level)
 	endif
-	if GMR -GPR > 14-level * 2 and GQR == false and IsPlayerHasSkill(GetOwningPlayer(trigUnit), 31 * 4 + 2) and UnitIsDead(trigUnit) == false then
+	if GMR -GPR > 14-level * 2 and GQR == false and IsPlayerHasSkill(GetOwningPlayer(trigUnit), 31 * 4 + 2) and IsUnitDeath(trigUnit) == false then
 		call SaveBoolean(HY, GetHandleId(trigUnit),'A1IQ'+ 183, true)
 		set t = CreateTrigger()
 		set h = GetHandleId(t)
@@ -34964,10 +34961,10 @@ function HZR takes unit u, real x, real y, integer level returns nothing
 	set t = null
 endfunction
 function H_R takes nothing returns boolean
-	return UnitIsDead(GetFilterUnit()) == false and((GetUnitAbilityLevel(GetFilterUnit(),'A0KO') == 1) or(GetUnitAbilityLevel(GetFilterUnit(),'A0KQ') == 1) or(GetUnitAbilityLevel(GetFilterUnit(),'A0KR') == 1) or(GetUnitAbilityLevel(GetFilterUnit(),'A0KP') == 1))
+	return IsUnitDeath(GetFilterUnit()) == false and((GetUnitAbilityLevel(GetFilterUnit(),'A0KO') == 1) or(GetUnitAbilityLevel(GetFilterUnit(),'A0KQ') == 1) or(GetUnitAbilityLevel(GetFilterUnit(),'A0KR') == 1) or(GetUnitAbilityLevel(GetFilterUnit(),'A0KP') == 1))
 endfunction
 function H0R takes nothing returns boolean
-	return UnitIsDead(GetFilterUnit()) == false and not IsUnitDummy(GetFilterUnit()) and not IsUnitWard(GetFilterUnit()) and IsUnitIdType(GetUnitTypeId(GetFilterUnit()), UNIT_TYPE_HERO) == false
+	return IsUnitDeath(GetFilterUnit()) == false and not IsUnitDummy(GetFilterUnit()) and not IsUnitWard(GetFilterUnit()) and IsUnitIdType(GetUnitTypeId(GetFilterUnit()), UNIT_TYPE_HERO) == false
 endfunction
 function H1R takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
@@ -35554,7 +35551,7 @@ endfunction
 function J3R takes unit u, integer h returns boolean
 	local unit J4R = JMR(u, h)
 	local boolean result = true
-	if UnitIsDead(J4R) or(LoadInteger(HY,(GetHandleId(J4R)), 156)) == 1 then
+	if IsUnitDeath(J4R) or(LoadInteger(HY,(GetHandleId(J4R)), 156)) == 1 then
 		set result = false
 	endif
 	call SaveInteger(HY,(GetHandleId(J4R)), 156, 1)
@@ -36373,7 +36370,7 @@ function LDR takes nothing returns boolean
 				if IsUnitDummy(LFR) or IsUnitWard(LFR) or GetUnitTypeId(LFR) == 'e00E'then
 					set LFR = PlayerHeroes[GetPlayerId(GetOwningPlayer(LFR))]
 				endif
-				if UnitIsDead(LFR) == false and IsUnitIllusion(u) == false and u != Roshan and IsUnitType(LFR, UNIT_TYPE_STRUCTURE) == false then
+				if IsUnitDeath(LFR) == false and IsUnitIllusion(u) == false and u != Roshan and IsUnitType(LFR, UNIT_TYPE_STRUCTURE) == false then
 					call DestroyEffect(AddSpecialEffectTarget("Objects\\Spawnmodels\\Human\\HumanBlood\\HeroBloodElfBlood.mdl", LFR, "overhead"))
 					call SetWidgetLife(LFR, GetWidgetLife(LFR) + GetUnitState(u, UNIT_STATE_MAX_LIFE)*(.2))
 				endif
@@ -36458,7 +36455,7 @@ function LKR takes nothing returns nothing
 	local group g
 	local unit u2
 	local real damageValue
-	if UnitIsDead(u) then
+	if IsUnitDeath(u) then
 		call FlushChildHashtable(HY, h)
 		call DestroyTimer(t)
 	else
@@ -37286,7 +37283,7 @@ function M2R takes nothing returns boolean
 	local unit target =(LoadUnitHandle(HY,(h), 17))
 	local real r =(LoadReal(HY,(GetHandleId(target)),'A0O4'))
 	call UnitDamageTargetEx(u, target, 1, 20)
-	if (GetGameTime())>= r or UnitIsDead(target) then
+	if (GetGameTime())>= r or IsUnitDeath(target) then
 		call RemoveSavedReal(HY, GetHandleId(target), 805)
 		call UnitRemoveAbility(target,'A0O4')
 		call UnitRemoveAbility(target,'B0O4')
@@ -37359,7 +37356,7 @@ function M7R takes nothing returns nothing
 endfunction
 function PVR takes nothing returns nothing
 	local unit u = GetEnumUnit()
-	if UnitIsDead(u) or((LoadInteger(HY,(GetHandleId((u))),(4306))) == 1) or GetUnitAbilityLevel(u,'B08V')> 0 or((LoadInteger(HY,(GetHandleId((u))),(4335))) == 1) then
+	if IsUnitDeath(u) or((LoadInteger(HY,(GetHandleId((u))),(4306))) == 1) or GetUnitAbilityLevel(u,'B08V')> 0 or((LoadInteger(HY,(GetHandleId((u))),(4335))) == 1) then
 		call GroupRemoveUnit(NH, u)
 		call SaveInteger(HY,(GetHandleId((u))),(4336), 2)
 		if GetUnitTypeId(u)!='o01X' then
@@ -37509,7 +37506,7 @@ function KHE takes nothing returns nothing
 	set targetUnit = null
 endfunction
 function PFR takes nothing returns boolean
-	return(UnitIsDead(GetFilterUnit()) == false and IsUnitEnemy(LH, GetOwningPlayer(GetFilterUnit())) and not IsUnitWard(GetFilterUnit()) and IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and((LoadInteger(HY,(GetHandleId((GetFilterUnit()))),(809))) == 1)) != null
+	return(IsUnitDeath(GetFilterUnit()) == false and IsUnitEnemy(LH, GetOwningPlayer(GetFilterUnit())) and not IsUnitWard(GetFilterUnit()) and IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and((LoadInteger(HY,(GetHandleId((GetFilterUnit()))),(809))) == 1)) != null
 endfunction
 function PGR takes nothing returns nothing
 	call CNX((GetEnumUnit()),'A2QN', 1, 2,'B0GK')
@@ -37753,7 +37750,7 @@ function P0R takes unit P1R returns nothing
 	loop
 	exitwhen i > P3R
 		set P4R =(LoadUnitHandle(HY, h,( 1400+ i)))
-		if UnitIsDead(P4R) == false then
+		if IsUnitDeath(P4R) == false then
 			call SaveUnitHandle(HY, h,( 1400+ k),(P4R))
 			set k = k + 1
 		endif
@@ -37824,7 +37821,7 @@ function MGX takes nothing returns nothing
 	set t = null
 endfunction
 function P8R takes nothing returns boolean
-	return(UnitIsDead(GetFilterUnit()) == false and IsUnitEnemy(QH, GetOwningPlayer(GetFilterUnit())) and not IsUnitWard(GetFilterUnit()) and IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and((LoadInteger(HY,(GetHandleId((GetFilterUnit()))),(809))) == 1)) != null
+	return(IsUnitDeath(GetFilterUnit()) == false and IsUnitEnemy(QH, GetOwningPlayer(GetFilterUnit())) and not IsUnitWard(GetFilterUnit()) and IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and((LoadInteger(HY,(GetHandleId((GetFilterUnit()))),(809))) == 1)) != null
 endfunction
 function P9R takes nothing returns nothing
 	call CommonUnitAddStun(GetEnumUnit(), .25 + .5 * XJ, false)
@@ -38094,7 +38091,7 @@ function QGR takes nothing returns nothing
 	call ExecuteFunc("QHR")
 endfunction
 function QJR takes nothing returns boolean
-	return UnitIsDead(GetFilterUnit()) == false and GetUnitTypeId(GetFilterUnit())=='o01X' and((LoadInteger(HY,(GetHandleId((GetFilterUnit()))),(4335))) == 1) == false and((LoadInteger(HY,(GetHandleId((GetFilterUnit()))),(4340))) == 1) == false
+	return IsUnitDeath(GetFilterUnit()) == false and GetUnitTypeId(GetFilterUnit())=='o01X' and((LoadInteger(HY,(GetHandleId((GetFilterUnit()))),(4335))) == 1) == false and((LoadInteger(HY,(GetHandleId((GetFilterUnit()))),(4340))) == 1) == false
 endfunction
 function QKR takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
@@ -38115,7 +38112,7 @@ function QKR takes nothing returns boolean
 	call GroupEnumUnitsInRange(g, x, y, 325, Condition(function QJR))
 	call ForGroup(g, function QGR)
 	call DeallocateGroup(g)
-	if (GetGameTime())> QLR or UnitIsDead(triggerUnit) then
+	if (GetGameTime())> QLR or IsUnitDeath(triggerUnit) then
 		call SaveInteger(HY, GetHandleId(triggerUnit), 809, 2)
 		call DestroyEffect(LoadEffectHandle(HY, h, 32))
 		call FlushChildHashtable(HY, h)
@@ -38693,7 +38690,7 @@ function SSR takes nothing returns nothing
 	endif
 endfunction
 function STR takes nothing returns boolean
-	return((not IsUnitWard(GetFilterUnit()) and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(GetTriggerUnit())) and UnitIsDead(GetFilterUnit()) == false))
+	return((not IsUnitWard(GetFilterUnit()) and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(GetTriggerUnit())) and IsUnitDeath(GetFilterUnit()) == false))
 endfunction
 function SUR takes nothing returns nothing
 	call UnitShareVision(GetEnumUnit(), GetOwningPlayer(UI), false)
@@ -39698,7 +39695,7 @@ function UHR takes nothing returns boolean
 		call FlushChildHashtable(HY, h)
 		call DestroyTrigger(t)
 		call SetUnitTimeScale(whichUnit, 1.)
-		if targetUnit != null and UnitIsDead(targetUnit) == false then
+		if targetUnit != null and IsUnitDeath(targetUnit) == false then
 			call IssueTargetOrderById(whichUnit, 851983, targetUnit)
 			call UCR(whichUnit, targetUnit, level, UDR)
 		endif
@@ -39837,7 +39834,7 @@ function UMR takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local unit targetUnit = LoadUnitHandle(HY, h, 30)
 	local unit whichUnit = LoadUnitHandle(HY, h, 2)
-	if GetTriggerEvalCount(t)> 8 or UnitIsDead(targetUnit) then
+	if GetTriggerEvalCount(t)> 8 or IsUnitDeath(targetUnit) then
 		call DestroyEffect(LoadEffectHandle(HY, h, 31))
 		call FlushChildHashtable(HY, h)
 		call DestroyTrigger(t)
@@ -39913,7 +39910,7 @@ function UUR takes nothing returns boolean
 	local boolean UZR = LoadBoolean(HY, h, 319)
 	local integer U_R
 	local integer U2V
-	if IsUnitType(trigUnit, UNIT_TYPE_HERO) and level > 0 and UnitIsDead(trigUnit) == false then
+	if IsUnitType(trigUnit, UNIT_TYPE_HERO) and level > 0 and IsUnitDeath(trigUnit) == false then
 		set UYR = R2I( 100 * UWR / GetUnitState(trigUnit, UNIT_STATE_MAX_LIFE))
 		set i = IMaxBJ(IMinBJ(R2I( 100 -UYR)/ 7, 14), 1)
 		set U2V =(2 + level)* i
@@ -40774,7 +40771,7 @@ function YNR takes nothing returns nothing
 	local unit u = LoadUnitHandle(ObjectHashTable, h, 0)
 	set IK = LoadGroupHandle(ObjectHashTable, h, 1)
 	set XK[0] = LoadInteger(ObjectHashTable, h, 0)
-	if UnitIsDead(u) then
+	if IsUnitDeath(u) then
 		set u = FirstOfGroup(IK)
 		if u != null then
 			loop
@@ -40848,7 +40845,7 @@ endfunction
 function YBR takes nothing returns boolean
 	local unit fu = GetFilterUnit()
 	local real N5X = GetUnitDistanceEx(fu, AL)
-	if fu != AL and IsUnitEnemy(fu, GetOwningPlayer(IL)) and UnitIsDead(fu) == false and IsUnitEthereal(fu) == false and N5X < CL and(not IsUnitWard(fu)) and GetUnitAbilityLevel(fu,'Avul') == 0 and IsUnitVisibleToPlayer(fu, GetOwningPlayer(IL)) and IsUnitInRangeXY(fu, GetUnitX(AL), GetUnitY(AL), 460) then
+	if fu != AL and IsUnitEnemy(fu, GetOwningPlayer(IL)) and IsUnitDeath(fu) == false and IsUnitEthereal(fu) == false and N5X < CL and(not IsUnitWard(fu)) and GetUnitAbilityLevel(fu,'Avul') == 0 and IsUnitVisibleToPlayer(fu, GetOwningPlayer(IL)) and IsUnitInRangeXY(fu, GetUnitX(AL), GetUnitY(AL), 460) then
 		set CL = N5X
 		set NL = fu
 	endif
@@ -41032,7 +41029,7 @@ function YQR takes nothing returns boolean
 		set x = LoadReal(HY, h, 0)
 		set y = LoadReal(HY, h, 1)
 	else
-		set b = UnitIsDead(whichUnit) == false
+		set b = IsUnitDeath(whichUnit) == false
 		set x = GetUnitX(whichUnit)
 		set y = GetUnitY(whichUnit)
 	endif
@@ -41285,7 +41282,7 @@ function EXE takes nothing returns nothing
 	set ZFR = null
 endfunction
 function ZGR takes nothing returns boolean
-	return((IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(GW)) and not IsUnitWard(GetFilterUnit()) and UnitIsDead(GetFilterUnit()) == false and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and not IsUnitDummy(GetFilterUnit())))
+	return((IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(GW)) and not IsUnitWard(GetFilterUnit()) and IsUnitDeath(GetFilterUnit()) == false and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and not IsUnitDummy(GetFilterUnit())))
 endfunction
 function ZHR takes integer ZJR returns real
 	if ZJR <= 1 then
@@ -41495,7 +41492,7 @@ function Z4R takes nothing returns nothing
 	local unit Z5R = LoadUnitHandle(HY, h, 1)
 	local real x = GetUnitX(Z5R)
 	local real y = GetUnitY(Z5R)
-	if UnitIsDead(KKX) == false and UnitIsDead(Z5R) == false then
+	if IsUnitDeath(KKX) == false and IsUnitDeath(Z5R) == false then
 		call DestroyEffect(AddSpecialEffect("Objects\\Spawnmodels\\Naga\\NagaDeath\\NagaDeath.mdl", x, y))
 		call SetUnitPosition(Z5R, GetUnitX(KKX), GetUnitY(KKX))
 		call DestroyEffect(AddSpecialEffect("Objects\\Spawnmodels\\Naga\\NagaDeath\\NagaDeath.mdl", GetUnitX(KKX), GetUnitY(KKX)))
@@ -41587,13 +41584,13 @@ function Z9R takes unit trigUnit, integer VVI, real VEI returns nothing
 	local integer str = GetHeroStr(trigUnit, false)
 	local real mp = GetUnitState(trigUnit, UNIT_STATE_MANA)
 	if VVI == 0 then
-		if mp >= VEI and agi -LoadInteger(OtherHashTable, GetHandleId(trigUnit), 31)> 2 and UnitIsDead(trigUnit) == false and agi > PC then
+		if mp >= VEI and agi -LoadInteger(OtherHashTable, GetHandleId(trigUnit), 31)> 2 and IsUnitDeath(trigUnit) == false and agi > PC then
 			call SetUnitState(trigUnit, UNIT_STATE_MANA, mp -VEI)
 			call SetHeroAgi(trigUnit, agi -2, true)
 			call SetHeroStr(trigUnit, str + 2, true)
 		endif
 	elseif VVI == 1 then
-		if mp >= VEI and str -LoadInteger(OtherHashTable, GetHandleId(trigUnit), 30)-LoadInteger(OtherHashTable, GetHandleId(trigUnit),'ARML')> 4 and UnitIsDead(trigUnit) == false and str > PC then
+		if mp >= VEI and str -LoadInteger(OtherHashTable, GetHandleId(trigUnit), 30)-LoadInteger(OtherHashTable, GetHandleId(trigUnit),'ARML')> 4 and IsUnitDeath(trigUnit) == false and str > PC then
 			call SetUnitState(trigUnit, UNIT_STATE_MANA, mp -VEI)
 			call SetHeroAgi(trigUnit, agi + 2, true)
 			call SetHeroStr(trigUnit, str -2, true)
@@ -41719,7 +41716,7 @@ function VAI takes nothing returns nothing
 	local real BXE
 	if GetUnitTypeId(K4X)!='O00P' then
 		call DisableTrigger(GetTriggeringTrigger())
-	elseif UnitIsDead(K4X) == false and(LoadBoolean(HY,(GetHandleId(K4X)), 225)) == false then
+	elseif IsUnitDeath(K4X) == false and(LoadBoolean(HY,(GetHandleId(K4X)), 225)) == false then
 		set VNI = GetHeroAgi(K4X, true)
 		set VBI = GetHeroStr(K4X, true)
 		set VCI = RMaxBJ(75 + 2 *(VNI -VBI), 35)
@@ -41944,7 +41941,7 @@ function VYI takes nothing returns nothing
 	set whichUnit = null
 endfunction
 function VZI takes nothing returns boolean
-	return IsUnitIllusion(GetFilterUnit()) and UnitIsDead(GetFilterUnit()) == false
+	return IsUnitIllusion(GetFilterUnit()) and IsUnitDeath(GetFilterUnit()) == false
 endfunction
 function EDE takes nothing returns nothing
 	local unit whichUnit = GetTriggerUnit()
@@ -41962,7 +41959,7 @@ function EDE takes nothing returns nothing
 	set g = null
 endfunction
 function V_I takes nothing returns boolean
-	return IsUnitEnemy(ZK, GetOwningPlayer(GetFilterUnit())) and UnitIsDead(GetFilterUnit()) == false and(not IsUnitWard(GetFilterUnit()))
+	return IsUnitEnemy(ZK, GetOwningPlayer(GetFilterUnit())) and IsUnitDeath(GetFilterUnit()) == false and(not IsUnitWard(GetFilterUnit()))
 endfunction
 function V0I takes nothing returns nothing
 	local unit u = GetEnumUnit()
@@ -42743,7 +42740,7 @@ endfunction
 function E_I takes nothing returns boolean
 	local unit f = GetFilterUnit()
 	local unit u = GetTriggerUnit()
-	if IsUnitAlly(f, GetOwningPlayer(u)) and UnitIsDead(f) == false and(IsUnitType(f, UNIT_TYPE_HERO) or((GetOwningPlayer(f) == SentinelPlayers[0]or GetOwningPlayer(f) == ScourgePlayers[0])) or(GetOwningPlayer(f) == GetOwningPlayer(u) and R_X(f) == false)) then
+	if IsUnitAlly(f, GetOwningPlayer(u)) and IsUnitDeath(f) == false and(IsUnitType(f, UNIT_TYPE_HERO) or((GetOwningPlayer(f) == SentinelPlayers[0]or GetOwningPlayer(f) == ScourgePlayers[0])) or(GetOwningPlayer(f) == GetOwningPlayer(u) and R_X(f) == false)) then
 		set f = null
 		set u = null
 		return true
@@ -42978,7 +42975,7 @@ function KWE takes nothing returns nothing
 	set g = null
 endfunction
 function XAI takes nothing returns boolean
-	if (GetUnitAbilityLevel(GetFilterUnit(),'B03B')> 0 or GetUnitAbilityLevel(GetFilterUnit(),'P084')> 0) and UnitIsDead(GetFilterUnit()) == false then
+	if (GetUnitAbilityLevel(GetFilterUnit(),'B03B')> 0 or GetUnitAbilityLevel(GetFilterUnit(),'P084')> 0) and IsUnitDeath(GetFilterUnit()) == false then
 		set Q2 = Q2 + 1
 	endif
 	return false
@@ -43021,7 +43018,7 @@ function POE takes nothing returns boolean
 	return false
 endfunction
 function XMI takes nothing returns boolean
-	return GetOwningPlayer(GetFilterUnit()) == GetOwningPlayer(TempUnit) and IsUnitIllusion(GetFilterUnit()) and UnitIsDead(GetFilterUnit()) == false
+	return GetOwningPlayer(GetFilterUnit()) == GetOwningPlayer(TempUnit) and IsUnitIllusion(GetFilterUnit()) and IsUnitDeath(GetFilterUnit()) == false
 endfunction
 function XPI takes nothing returns nothing
 	local timer t = GetExpiredTimer()
@@ -43299,7 +43296,7 @@ function X8I takes nothing returns nothing
 		set t = null
 		return
 	endif
-	if UYX == 0 or UnitIsDead(u) or b1 or LoadBoolean(ObjectHashTable, GetHandleId(u), StringHash("TreeInvisibility")) == false then
+	if UYX == 0 or IsUnitDeath(u) or b1 or LoadBoolean(ObjectHashTable, GetHandleId(u), StringHash("TreeInvisibility")) == false then
 		// debug call SingleDebug("del2")
 		call SaveBoolean(ObjectHashTable, h, 0, false)
 		call UnitRemoveAbility(u,'B0E9')
@@ -43654,7 +43651,7 @@ function OPI takes nothing returns nothing
 	set triggerUnit = null
 endfunction
 function OQI takes nothing returns boolean
-	return(IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and GetUnitAbilityLevel(GetFilterUnit(),'A0LZ')> 0 and UnitIsDead(GetFilterUnit()) == false and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(TempUnit))) != null
+	return(IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and GetUnitAbilityLevel(GetFilterUnit(),'A0LZ')> 0 and IsUnitDeath(GetFilterUnit()) == false and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(TempUnit))) != null
 endfunction
 function OSI takes unit killingUnit, unit triggerUnit returns nothing
 	local group g
@@ -43667,7 +43664,7 @@ function OSI takes unit killingUnit, unit triggerUnit returns nothing
 	if IsUnitType(killingUnit, UNIT_TYPE_HERO) == false then
 		set killingUnit = PlayerHeroes[GetPlayerId(GetOwningPlayer(killingUnit))]
 	endif
-	if GetUnitAbilityLevel(killingUnit,'A0LZ')> 0 and UnitIsDead(killingUnit) == false and IsUnitEnemy(killingUnit, GetOwningPlayer(triggerUnit)) then
+	if GetUnitAbilityLevel(killingUnit,'A0LZ')> 0 and IsUnitDeath(killingUnit) == false and IsUnitEnemy(killingUnit, GetOwningPlayer(triggerUnit)) then
 		call GroupAddUnit(g, killingUnit)
 	endif
 	if FirstOfGroup(g) != null then
@@ -44413,7 +44410,7 @@ function LTE takes nothing returns nothing
 	set t = null
 endfunction
 function RFI takes nothing returns boolean
-	return(UnitIsDead(GetFilterUnit()) == false and not IsUnitWard(GetFilterUnit()) and IsUnitAlly(LoadUnitHandle(OtherHashTable2,'A2IS','cast'), GetOwningPlayer(GetFilterUnit())) and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and IsUnitIllusion(GetFilterUnit()) == false) != null
+	return(IsUnitDeath(GetFilterUnit()) == false and not IsUnitWard(GetFilterUnit()) and IsUnitAlly(LoadUnitHandle(OtherHashTable2,'A2IS','cast'), GetOwningPlayer(GetFilterUnit())) and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and IsUnitIllusion(GetFilterUnit()) == false) != null
 endfunction
 function RGI takes nothing returns nothing
 	local trigger t = GetTriggeringTrigger()
@@ -44668,7 +44665,7 @@ function R_I takes nothing returns nothing
 	if GetHandleId(RWI) != 0 and(GetUnitAbilityLevel(targetUnit,'B0C1')> 0 or c == 1) then
 		call UnitDamageTargetEx(I_X(RWI), targetUnit, 2, 30)
 	endif
-	if UnitIsDead(targetUnit) or(GetUnitAbilityLevel(targetUnit,'B0C1') == 0 and c > 1) then
+	if IsUnitDeath(targetUnit) or(GetUnitAbilityLevel(targetUnit,'B0C1') == 0 and c > 1) then
 		call PauseTimer(t)
 		call DestroyTimer(t)
 		call FlushChildHashtable(HY, h)
@@ -45041,7 +45038,7 @@ function IPI takes nothing returns boolean
 	endif
 	call GroupRemoveGroup(g, IQI)
 	call ForGroup(IQI, function ILI)
-	if UnitIsDead(whichUnit) == false and not IsUnitBroken(whichUnit) then
+	if IsUnitDeath(whichUnit) == false and not IsUnitBroken(whichUnit) then
 		call ForGroup(g, function IMI)
 	endif
 	call SaveGroupHandle(HY, h, 340, g)
@@ -45375,7 +45372,7 @@ function JQE takes nothing returns nothing
 	call AGI(GetTriggerUnit(), false)
 endfunction
 function ALI takes nothing returns boolean
-	return GetOwningPlayer(GetFilterUnit()) == LoadPlayerHandle(OtherHashTable2,'A0AN', 0) and UnitIsDead(GetFilterUnit()) == false and IsUnitRemoteMines(GetFilterUnit())
+	return GetOwningPlayer(GetFilterUnit()) == LoadPlayerHandle(OtherHashTable2,'A0AN', 0) and IsUnitDeath(GetFilterUnit()) == false and IsUnitRemoteMines(GetFilterUnit())
 endfunction
 function AMI takes nothing returns nothing
 	call IssueImmediateOrderById(GetEnumUnit(), 852556)
@@ -46876,7 +46873,7 @@ function B_I takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer h = GetHandleId(t)
 	local integer UYX = LoadInteger(ObjectHashTable, h, 0)
-	if UYX == 4 or UnitIsDead(LoadUnitHandle(ObjectHashTable, h, 0)) then
+	if UYX == 4 or IsUnitDeath(LoadUnitHandle(ObjectHashTable, h, 0)) then
 		call DestroyTimerAndFlushHT_P(t)
 		set t = null
 		return
@@ -48636,7 +48633,7 @@ function XWE takes nothing returns nothing
 	set trigUnit = null
 endfunction
 function FCI takes nothing returns boolean
-	return((IsUnitEnemy(TempUnit, GetOwningPlayer(GetFilterUnit())) and((not IsUnitWard(GetFilterUnit())) and(IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false) and UnitIsDead(GetFilterUnit()) == false)))
+	return((IsUnitEnemy(TempUnit, GetOwningPlayer(GetFilterUnit())) and((not IsUnitWard(GetFilterUnit())) and(IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false) and IsUnitDeath(GetFilterUnit()) == false)))
 endfunction
 function FDI takes unit trigUnit returns nothing
 	local group g = AllocationGroup(303)
@@ -48862,7 +48859,7 @@ function F0I takes nothing returns boolean
 			call SetUnitState(whichUnit, UNIT_STATE_MANA, GetUnitState(whichUnit, UNIT_STATE_MANA) + W5R)
 			call SetUnitState(targetUnit, UNIT_STATE_MANA, GetUnitState(targetUnit, UNIT_STATE_MANA)-W5R)
 		endif
-		if UnitIsDead(targetUnit) == false and GetUnitAbilityLevel(targetUnit,'Bdet') == 0 then
+		if IsUnitDeath(targetUnit) == false and GetUnitAbilityLevel(targetUnit,'Bdet') == 0 then
 			call FAX(whichUnit, targetUnit)
 		endif
 	endif
@@ -49172,7 +49169,7 @@ function F9I takes nothing returns nothing
 	local integer h = GetHandleId(t)
 	local integer c = LoadInteger(HY, h, 0)
 	local unit u = LoadUnitHandle(HY, h, 1)
-	if c == 1 or UnitIsDead(u) or GetUnitAbilityLevel(u,'A37T') == 0 then
+	if c == 1 or IsUnitDeath(u) or GetUnitAbilityLevel(u,'A37T') == 0 then
 		if GetUnitAbilityLevel(u,'A37T') != 0 then
 			call UnitDamageTargetEx(LoadUnitHandle(HY, h, 0), u, 1, LoadReal(HY, h, 0))
 		endif
@@ -49379,7 +49376,7 @@ function GCI takes nothing returns boolean
 		call GBI(whichUnit, h, count, level)
 		set LEV = false
 	endif
-	if UnitIsDead(whichUnit) == false then
+	if IsUnitDeath(whichUnit) == false then
 		call KillTreeByCircle(x, y, 100)
 	endif
 	set whichUnit = null
@@ -49560,7 +49557,7 @@ function GLI takes unit whichUnit, unit targetUnit, real J0R returns nothing
 	call DestroyEffect(AddSpecialEffectTarget("Objects\\Spawnmodels\\Human\\HumanBlood\\HeroBloodElfBlood.mdl", whichUnit, "overhead"))
 endfunction
 function GMI takes nothing returns boolean
-	if UnitIsDead(GetFilterUnit()) == false and GetUnitAbilityLevel(GetFilterUnit(),'A0LE')> 0 and IsUnitEnemy(LOV, GetOwningPlayer(GetFilterUnit())) then
+	if IsUnitDeath(GetFilterUnit()) == false and GetUnitAbilityLevel(GetFilterUnit(),'A0LE')> 0 and IsUnitEnemy(LOV, GetOwningPlayer(GetFilterUnit())) then
 		call GLI(GetFilterUnit(), LOV, GetUnitAbilityLevel(GetFilterUnit(),'A0LE')* .1 * .5)
 	endif
 	return false
@@ -49687,13 +49684,13 @@ function G2I takes nothing returns boolean
 	if damageValue > 5 then
 		call DestroyEffect(AddSpecialEffectTarget("Objects\\Spawnmodels\\Human\\HumanBlood\\BloodElfSpellThiefBlood.mdl", targetUnit, "origin"))
 	endif
-	if damageValue > 0 and UnitIsDead(targetUnit) == false then
+	if damageValue > 0 and IsUnitDeath(targetUnit) == false then
 		call UnitDamageTargetEx(whichUnit, targetUnit, 7, damageValue)
 	endif
 	call SaveReal(HY, h, 23,((x)* 1.))
 	call SaveReal(HY, h, 24,((y)* 1.))
 	call SaveInteger(HY, h, 25,(G3I + 1))
-	if UnitIsDead(targetUnit) then
+	if IsUnitDeath(targetUnit) then
 		call UnitRemoveAbility(targetUnit,'A0IH')
 		call UnitRemoveAbility(targetUnit,'B08L')
 		call FlushChildHashtable(HY, h)
@@ -52050,7 +52047,7 @@ function PXI takes nothing returns nothing
 	set XG = damageValue
 	set OG = true
 	set PRI = p != EG
-	if UnitIsDead(u) or u == null or GetUnitTypeId(u)< 1 or POI or PRI or IsUnitBroken(u) then
+	if IsUnitDeath(u) or u == null or GetUnitTypeId(u)< 1 or POI or PRI or IsUnitBroken(u) then
 		set XG = 0
 		set OG = false
 	endif
@@ -52665,7 +52662,7 @@ function P8I takes nothing returns boolean
 		call DestroyEffect(LoadEffectHandle(HY, h, 176))
 		call FlushChildHashtable(HY, h)
 		call DestroyTrigger(t)
-		if UnitIsDead(whichUnit) == false then
+		if IsUnitDeath(whichUnit) == false then
 			call SetWidgetLife(whichUnit, RMaxBJ(1, GetWidgetLife(whichUnit)-P9I))
 		endif
 		if UnitAlive(targetUnit) then
@@ -53677,7 +53674,7 @@ function RBE takes nothing returns nothing
 	endif
 endfunction
 function UEI takes nothing returns boolean
-	return IsUnitEnemy(TempUnit, GetOwningPlayer(GetFilterUnit())) and not IsUnitWard(GetFilterUnit()) and UnitIsDead(GetFilterUnit()) == false and GetUnitAbilityLevel(GetFilterUnit(),'Avul') == 0
+	return IsUnitEnemy(TempUnit, GetOwningPlayer(GetFilterUnit())) and not IsUnitWard(GetFilterUnit()) and IsUnitDeath(GetFilterUnit()) == false and GetUnitAbilityLevel(GetFilterUnit(),'Avul') == 0
 endfunction
 function UXI takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
@@ -53849,7 +53846,7 @@ function UAI takes nothing returns boolean
 		call SetUnitX(UNI, x)
 		call SetUnitY(UNI, y)
 	else
-		if UnitIsDead(targetUnit) == false then
+		if IsUnitDeath(targetUnit) == false then
 			if IsUnitMagicImmune(targetUnit) == false then
 				set dummyCaster = CreateUnit(GetOwningPlayer(whichUnit),'e00E', GetUnitX(targetUnit), GetUnitY(targetUnit), 0)
 				call UnitAddPermanentAbility(dummyCaster,'A091')
@@ -54353,7 +54350,7 @@ function U2III takes nothing returns boolean
 	local unit dummyCaster =(LoadUnitHandle(HY, h, 19))
 	local unit whichUnit =(LoadUnitHandle(HY, h, 2))
 	if dummyCaster != null and GetUnitTypeId(dummyCaster)=='e01V' then
-		if UnitIsDead(whichUnit) == false then
+		if IsUnitDeath(whichUnit) == false then
 			call SetUnitX(dummyCaster, GetUnitX(whichUnit))
 			call SetUnitY(dummyCaster, GetUnitY(whichUnit))
 		endif
@@ -54470,7 +54467,7 @@ function U4I takes nothing returns nothing
 	local integer h = GetHandleId(t)
 	local unit U5I = LoadUnitHandle(HY, h, 0)
 	local unit targetUnit = LoadUnitHandle(HY, h, 1)
-	if GetUnitAbilityLevel(targetUnit,'A464') == 0 or UnitIsDead(targetUnit) then
+	if GetUnitAbilityLevel(targetUnit,'A464') == 0 or IsUnitDeath(targetUnit) then
 		call PauseTimer(t)
 		call DestroyTimer(t)
 		call FlushChildHashtable(HY, h)
@@ -54848,7 +54845,7 @@ function WHI takes nothing returns boolean
 	local unit whichUnit = LoadUnitHandle(HY, h, 2)
 	local unit stg_u = LoadUnitHandle(HY, h, 17)
 	local integer time = LoadInteger(HY, h, 34)
-	if GetUnitDistanceEx(whichUnit, stg_u)> 900 or UnitIsDead(whichUnit) then
+	if GetUnitDistanceEx(whichUnit, stg_u)> 900 or IsUnitDeath(whichUnit) then
 		set time = time + 1
 		call SaveInteger(HY, h, 34, time)
 	endif
@@ -54959,7 +54956,7 @@ endfunction
 
 function WWI takes nothing returns boolean
 	local real d
-	if IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and UnitIsDead(GetFilterUnit()) == false and not IsUnitWard(GetFilterUnit()) and IsUnitAlly(GetFilterUnit(), GetOwningPlayer(MEV)) and IsUnitInGroup(GetFilterUnit(), MOV) == false and IsUnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(MXV)) then
+	if IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and IsUnitDeath(GetFilterUnit()) == false and not IsUnitWard(GetFilterUnit()) and IsUnitAlly(GetFilterUnit(), GetOwningPlayer(MEV)) and IsUnitInGroup(GetFilterUnit(), MOV) == false and IsUnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(MXV)) then
 		set d = GetDistanceBetween(GetUnitX(GetFilterUnit()), GetUnitY(GetFilterUnit()), GetUnitX(MEV), GetUnitY(MEV))
 		if d < MRV then
 			set MVV = GetFilterUnit()
@@ -55664,7 +55661,7 @@ function Y2I takes nothing returns nothing
 	local integer h = GetHandleId(t)
 	local unit u = LoadUnitHandle(ObjectHashTable, h, 0)
 	local integer c = LoadInteger(ObjectHashTable, h, 2) + 1
-	if UnitIsDead(u) or c > 6 * 10 then
+	if IsUnitDeath(u) or c > 6 * 10 then
 		call DestroyTimerAndFlushHT_P(t)
 	else
 		call SetWidgetLife(u, GetWidgetLife(u) + LoadInteger(ObjectHashTable, h, 0)* .1)
@@ -56484,7 +56481,7 @@ function VVA takes nothing returns boolean
 	local boolean VEA =(LoadBoolean(HY, h, 674))
 	set count = count + 1
 	call SaveInteger(HY, h, 34,(count))
-	if whichUnit != null and UnitIsDead(whichUnit) == false and GetUnitAbilityLevel(whichUnit,'P239')> 0 then
+	if whichUnit != null and IsUnitDeath(whichUnit) == false and GetUnitAbilityLevel(whichUnit,'P239')> 0 then
 		set TempUnit = whichUnit
 		set g = AllocationGroup(373)
 		if not IsUnitBroken(whichUnit) then
@@ -56650,7 +56647,7 @@ function VDA takes unit u returns nothing
 endfunction
 
 function VFA takes nothing returns boolean
-	return IsUnitAlly(GetFilterUnit(), GetOwningPlayer(TempUnit)) and not IsUnitDummy(GetFilterUnit()) and not IsUnitWard(GetFilterUnit()) and UnitIsDead(GetFilterUnit()) == false and IsPlayerValid(GetOwningPlayer(GetFilterUnit()))
+	return IsUnitAlly(GetFilterUnit(), GetOwningPlayer(TempUnit)) and not IsUnitDummy(GetFilterUnit()) and not IsUnitWard(GetFilterUnit()) and IsUnitDeath(GetFilterUnit()) == false and IsPlayerValid(GetOwningPlayer(GetFilterUnit()))
 endfunction
 
 function VGA takes unit whichUnit, unit targetUnit returns nothing
@@ -56682,7 +56679,7 @@ function VHA takes nothing returns boolean
 	local unit targetUnit =(LoadUnitHandle(HY, h, 17))
 	local player p = GetOwningPlayer(whichUnit)
 	local boolean b = GetSpellAbilityId()=='A2MB'
-	if UnitIsDead(targetUnit) or UnitIsDead(whichUnit) or targetUnit == null or whichUnit == null or b then
+	if IsUnitDeath(targetUnit) or IsUnitDeath(whichUnit) or targetUnit == null or whichUnit == null or b then
 		if b then
 			call VDA(whichUnit)
 		else
@@ -56714,7 +56711,7 @@ endfunction
 
 function VJA takes nothing returns boolean
 	local real d
-	if IsUnitAlly(GetFilterUnit(), GetOwningPlayer(GetTriggerUnit())) == false or IsUnitWard(GetFilterUnit()) or GetOwningPlayer(GetFilterUnit()) == Player(15) or UnitIsDead(GetFilterUnit()) then
+	if IsUnitAlly(GetFilterUnit(), GetOwningPlayer(GetTriggerUnit())) == false or IsUnitWard(GetFilterUnit()) or GetOwningPlayer(GetFilterUnit()) == Player(15) or IsUnitDeath(GetFilterUnit()) then
 		return false
 	endif
 	if IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) or(LWO(GetFilterUnit())) then
@@ -56975,7 +56972,7 @@ endfunction
 function VWA takes nothing returns boolean
 	local unit u = GetTriggerUnit()
 	local integer id = GetUnitTypeId(u)
-	if not IsUnitWard(u) and id !='n0F5' and id !='N0MM' and IsUnitIllusion(u) == false and UnitIsDead(u) then
+	if not IsUnitWard(u) and id !='n0F5' and id !='N0MM' and IsUnitIllusion(u) == false and IsUnitDeath(u) then
 		set Temp__Player = GetOwningPlayer(u)
 		set Temp__ArrayUnit[0] = u
 		call GroupEnumUnitsInRange(AK, GetWidgetX(Temp__ArrayUnit[0]), GetWidgetY(Temp__ArrayUnit[0]), 925, Condition(function VUA))
@@ -57081,7 +57078,7 @@ function W2X takes nothing returns nothing
 	if IsPlayerSentinel(GetOwningPlayer(triggerUnit)) then
 		loop
 			set pid = GetPlayerId(ScourgePlayers[i])
-			if UnitIsDead(PlayerHeroes[pid]) == false and(GetPlayerId(GetOwningPlayer(killingUnit)) == pid or GetUnitDistanceEx(triggerUnit, PlayerHeroes[pid])< 725) then
+			if IsUnitDeath(PlayerHeroes[pid]) == false and(GetPlayerId(GetOwningPlayer(killingUnit)) == pid or GetUnitDistanceEx(triggerUnit, PlayerHeroes[pid])< 725) then
 				set SI[pid] = SI[pid] + 1
 			endif
 			set i = i + 1
@@ -57090,7 +57087,7 @@ function W2X takes nothing returns nothing
 	elseif IsPlayerScourge(GetOwningPlayer(triggerUnit)) then
 		loop
 			set pid = GetPlayerId(SentinelPlayers[i])
-			if UnitIsDead(PlayerHeroes[pid]) == false and(GetPlayerId(GetOwningPlayer(killingUnit)) == pid or GetUnitDistanceEx(triggerUnit, PlayerHeroes[pid])< 725) then
+			if IsUnitDeath(PlayerHeroes[pid]) == false and(GetPlayerId(GetOwningPlayer(killingUnit)) == pid or GetUnitDistanceEx(triggerUnit, PlayerHeroes[pid])< 725) then
 				set SI[pid] = SI[pid] + 1
 			endif
 			set i = i + 1
@@ -57237,7 +57234,7 @@ function dismember_upgraded_effect takes nothing returns boolean
 			endif
 			call SaveInteger(HY, h, 34,(c))
 		endif
-		if UnitIsDead(target) == false and GetUnitAbilityLevel(target,'Bdet')==0 then
+		if IsUnitDeath(target) == false and GetUnitAbilityLevel(target,'Bdet')==0 then
 			call FAX(u,target)
 		endif
 	endif
@@ -57298,7 +57295,7 @@ function dismember_effect takes nothing returns boolean
 			endif
 			call SaveInteger(HY, h, 34,(c))
 		endif
-		if UnitIsDead(target) == false and GetUnitAbilityLevel(target,'Bdet') == 0 then
+		if IsUnitDeath(target) == false and GetUnitAbilityLevel(target,'Bdet') == 0 then
 			call FAX(u, target)
 		endif
 	endif
@@ -57480,7 +57477,7 @@ function EHA takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer h = GetHandleId(t)
 	local unit u = LoadUnitHandle(HY, h, 0)
-	if GetUnitAbilityLevel(u,'B01N') == 0 or UnitIsDead(u) then
+	if GetUnitAbilityLevel(u,'B01N') == 0 or IsUnitDeath(u) then
 		call UnitRemoveAbility(u, LoadInteger(HY, h, 0))
 		call UnitRemoveAbility(u, LoadInteger(HY, h, 1))
 		call UnitRemoveAbility(u,'B0HM')
@@ -57780,7 +57777,7 @@ function E5A takes nothing returns boolean
 	return false
 endfunction
 function E6A takes nothing returns boolean
-	if (IsUnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(TempUnit)) and IsUnitEnemy(TempUnit, GetOwningPlayer(GetFilterUnit())) and(not IsUnitWard(GetFilterUnit()) and UnitIsDead(GetFilterUnit()) == false)) and GetUnitTypeId(GetFilterUnit())!='emow' and GetUnitTypeId(GetFilterUnit())!='uzig' and GetUnitTypeId(GetFilterUnit())!='n00L' then
+	if (IsUnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(TempUnit)) and IsUnitEnemy(TempUnit, GetOwningPlayer(GetFilterUnit())) and(not IsUnitWard(GetFilterUnit()) and IsUnitDeath(GetFilterUnit()) == false)) and GetUnitTypeId(GetFilterUnit())!='emow' and GetUnitTypeId(GetFilterUnit())!='uzig' and GetUnitTypeId(GetFilterUnit())!='n00L' then
 		if GetWidgetLife(GetFilterUnit())< MKV then
 			set MKV = GetWidgetLife(GetFilterUnit())
 			set MJV = GetFilterUnit()
@@ -58009,7 +58006,7 @@ function XIA takes nothing returns boolean
 		call FlushChildHashtable(HY, h)
 		call DestroyTrigger(t)
 	else
-		if trigUnit != null and UnitIsDead(trigUnit) == false then
+		if trigUnit != null and IsUnitDeath(trigUnit) == false then
 			set x = GetUnitX(trigUnit)
 			set y = GetUnitY(trigUnit)
 		endif
@@ -58440,7 +58437,7 @@ function OBA takes nothing returns nothing
 	set trigUnit = null
 endfunction
 function OCA takes nothing returns boolean
-	return((UnitIsDead(GetFilterUnit()) == false and IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(GetTriggerUnit()))))
+	return((IsUnitDeath(GetFilterUnit()) == false and IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(GetTriggerUnit()))))
 endfunction
 function ODA takes nothing returns nothing
 	local trigger trig = GetTriggeringTrigger()
@@ -58794,7 +58791,7 @@ function O3A takes nothing returns nothing
 	local real N3X
 	local real x2
 	local real y2
-	if LoadBoolean(ObjectHashTable, GetHandleId(u),'A1P8') == false or(UnitIsDead(t) and O0A(u, t, h)) then
+	if LoadBoolean(ObjectHashTable, GetHandleId(u),'A1P8') == false or(IsUnitDeath(t) and O0A(u, t, h)) then
 		call O1A(time, u, t, h)
 		set time = null
 		set t = null
@@ -59015,7 +59012,7 @@ function RXA takes nothing returns boolean
 				call O9A(whichUnit, targetUnit)
 			endif
 			call UnitDamageTargetEx(whichUnit, targetUnit, 1, 50 + 100 * level)
-			if GetUnitAbilityLevel(targetUnit,'A3E9') == 1 and UnitIsDead(targetUnit) == false and UnitIsDead(whichUnit) == false then
+			if GetUnitAbilityLevel(targetUnit,'A3E9') == 1 and IsUnitDeath(targetUnit) == false and IsUnitDeath(whichUnit) == false then
 				call SaveUnitHandle(OtherHashTable2,'A3E9', 0, targetUnit)
 				call SaveUnitHandle(OtherHashTable2,'A3E9', 1, whichUnit)
 				call SaveInteger(OtherHashTable2,'A3E9', 0, LoadInteger(HY, h, 4))
@@ -59200,7 +59197,7 @@ function RGA takes nothing returns nothing
 	local integer h = GetHandleId(t)
 	local unit d = LoadUnitHandle(ObjectHashTable, h, 0)
 	local unit u = LoadUnitHandle(ObjectHashTable, h, 1)
-	if UnitIsDead(u) or UnitIsDead(d) then
+	if IsUnitDeath(u) or IsUnitDeath(d) then
 		call DestroyEffect(LoadEffectHandle(ObjectHashTable, h, 2))
 		call KillUnit(d)
 		call DestroyTimerAndFlushHT_P(t)
@@ -59449,7 +59446,7 @@ function R_A takes unit whichUnit, unit targetUnit, real damage returns nothing
 	set g = null
 endfunction
 function R0A takes nothing returns boolean
-	return((IsUnitInGroup(GetFilterUnit(), LW) == false and IsUnitAlly(GetFilterUnit(), GetOwningPlayer(GW)) and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and not IsUnitWard(GetFilterUnit()) and UnitIsDead(GetFilterUnit()) == false and GetFilterUnit() != MUV))
+	return((IsUnitInGroup(GetFilterUnit(), LW) == false and IsUnitAlly(GetFilterUnit(), GetOwningPlayer(GW)) and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and not IsUnitWard(GetFilterUnit()) and IsUnitDeath(GetFilterUnit()) == false and GetFilterUnit() != MUV))
 endfunction
 function R1A takes group R2A, unit R3A, unit whichUnit, unit OriginalTargetreturns returns unit
 	local group g = AllocationGroup(402)
@@ -59661,7 +59658,7 @@ function IAA takes nothing returns nothing
 			call UnitSubStateBonus(targetUnit, INA, UNIT_BONUS_ARMOR)
 		endif
 	endif
-	if UnitIsDead(targetUnit) == false then
+	if IsUnitDeath(targetUnit) == false then
 		if IsUnitAlly(targetUnit, TempPlayer) == false then
 			call UnitSubStateBonus(targetUnit, HCR, UNIT_BONUS_ARMOR)
 			call SaveInteger(OtherHashTable, GetHandleId(targetUnit), GetHandleId(GetTriggeringTrigger()), HCR)
@@ -60058,7 +60055,7 @@ function I0A takes nothing returns nothing
 	local unit triggerUnit = LoadUnitHandle(HY, h, 2)
 	local integer SYV = LoadInteger(HY, h, 0)
 	local unit I1A
-	if UnitIsDead(triggerUnit) or SYV < 1 or GetUnitAbilityLevel(triggerUnit,'A42O') == 0 then
+	if IsUnitDeath(triggerUnit) or SYV < 1 or GetUnitAbilityLevel(triggerUnit,'A42O') == 0 then
 		call RemoveSavedHandle(ObjectHashTable, GetHandleId(triggerUnit),'A0A6')
 		call FlushChildHashtable(HY, h)
 		call PauseTimer(t)
@@ -60068,7 +60065,7 @@ function I0A takes nothing returns nothing
 	else
 		set YTR = LoadUnitHandle(HY, h, 0)
 		set I1A = LoadUnitHandle(HY, h, 1)
-		if UnitIsDead(YTR) and YTR != I1A then
+		if IsUnitDeath(YTR) and YTR != I1A then
 			set YTR = I1A
 		endif
 		call I_A(YTR, triggerUnit, LoadReal(HY, h, 0))
@@ -60296,7 +60293,7 @@ function AEA takes nothing returns nothing
 	local integer h = GetHandleId(t)
 	local unit damageSource = LoadUnitHandle(HY, h, 0)
 	local unit targetUnit = LoadUnitHandle(HY, h, 1)
-	if UnitIsDead(targetUnit) or GetUnitAbilityLevel(targetUnit,'B06D') == 0 then
+	if IsUnitDeath(targetUnit) or GetUnitAbilityLevel(targetUnit,'B06D') == 0 then
 		call RemoveSavedHandle(HY, LoadInteger(HY, h,-1),'A09V')
 		call PauseTimer(t)
 		call DestroyTimer(t)
@@ -60577,7 +60574,7 @@ function ASA takes unit whichUnit, integer CHO, integer ATA returns nothing
 	endif
 	call SetTextTagText(tt, result, .023)
 	call SetTextTagPosUnit(tt, whichUnit, 0)
-	call SetTextTagVisibility(tt, GetOwningPlayer(whichUnit) == LocalPlayer and UnitIsDead(whichUnit) == false)
+	call SetTextTagVisibility(tt, GetOwningPlayer(whichUnit) == LocalPlayer and IsUnitDeath(whichUnit) == false)
 	call SetTextTagPermanent(tt, true)
 	set tt = null
 endfunction
@@ -60951,7 +60948,7 @@ function NFA takes nothing returns nothing
 	set g = null
 endfunction
 function NGA takes nothing returns boolean
-	return((IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(GetTriggerUnit())) and IsUnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(GetTriggerUnit())) and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and not IsUnitWard(GetFilterUnit()) and UnitIsDead(GetFilterUnit()) == false))
+	return((IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(GetTriggerUnit())) and IsUnitVisibleToPlayer(GetFilterUnit(), GetOwningPlayer(GetTriggerUnit())) and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and not IsUnitWard(GetFilterUnit()) and IsUnitDeath(GetFilterUnit()) == false))
 endfunction
 function NHA takes nothing returns nothing
 	set TempReal1 = GetUnitDistanceEx(GetEnumUnit(), TempUnit)
@@ -61873,7 +61870,7 @@ function SIG takes nothing returns boolean
 					set M5V[id] = 0
 					call UnitDamageTargetEx(M4V[id], u, 1, 5 + 10* M6V[id])
 				endif
-			elseif M2V[id]> time and UnitIsDead(u) then
+			elseif M2V[id]> time and IsUnitDeath(u) then
 				set M2V[id] = 0
 				set M3V[id] = 99999
 			endif
@@ -62555,7 +62552,7 @@ function CCA takes nothing returns boolean
 	local real CDA = LoadReal(HY, h, 415)
 	local real CFA = LoadReal(HY, h, 416)
 	local integer ratio
-	if UnitIsDead(whichUnit) then
+	if IsUnitDeath(whichUnit) then
 		set t = null
 		set whichUnit = null
 		return false
@@ -62650,7 +62647,7 @@ function CCA takes nothing returns boolean
 					endif
 				endif
 			endif
-		elseif UnitIsDead(whichUnit) == false then
+		elseif IsUnitDeath(whichUnit) == false then
 			set ratio = 2 + level
 			call SetWidgetLife(whichUnit, GetWidgetLife(whichUnit) + GetUnitState(whichUnit, UNIT_STATE_MAX_LIFE)/ 1000* ratio)
 		endif
@@ -63110,7 +63107,7 @@ function DVA takes nothing returns nothing
 	local integer h = GetHandleId(t)
 	local unit u = LoadUnitHandle(HY, h, 0)
 	local integer c = LoadInteger(HY, h, 0) + 1
-	if IsUnitMagicImmune(u) or c > 20 or UnitIsDead(u) then
+	if IsUnitMagicImmune(u) or c > 20 or IsUnitDeath(u) then
 		call UnitRemoveAbility(u,'A43V')
 		call FlushChildHashtable(HY, h)
 		call PauseTimer(t)
@@ -63645,7 +63642,7 @@ function DTA takes nothing returns nothing
 		endif
 	endif 
 	set DSR = GetHandleId(u)
-	if UnitIsDead(u) or C5X(u) or IsUnitSilenced(u) or IsUnitPaused(u) or IsUnitCyclone(u) or active or UYX > 239 or LoadBoolean(ObjectHashTable, DSR,'A1YY') then
+	if IsUnitDeath(u) or C5X(u) or IsUnitSilenced(u) or IsUnitPaused(u) or IsUnitCyclone(u) or active or UYX > 239 or LoadBoolean(ObjectHashTable, DSR,'A1YY') then
 		call DLA(u, t, h)
 		set t = null
 		set u = null
@@ -63798,7 +63795,7 @@ function D_A takes nothing returns nothing
 	local integer h = GetHandleId(t)
 	local integer UYX = LoadInteger(ObjectHashTable, h, 0)
 	local unit targetUnit = LoadUnitHandle(ObjectHashTable, h, 0)
-	if UYX <= 1 or IsUnitMagicImmune(targetUnit) or UnitIsDead(targetUnit) then
+	if UYX <= 1 or IsUnitMagicImmune(targetUnit) or IsUnitDeath(targetUnit) then
 		call RemoveSavedHandle(ObjectHashTable, GetHandleId(targetUnit),'A1YX')
 		call DestroyEffect(LoadEffectHandle(ObjectHashTable, h, 2))
 		call DestroyTimerAndFlushHT_P(t)
@@ -63968,16 +63965,16 @@ function FVA takes nothing returns boolean
 	set PI = level
 	if GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT then
 		if GetSpellAbilityId()=='A1Z2' then
-			if UnitIsDead(FEA) == false then
+			if IsUnitDeath(FEA) == false then
 				call D9A(whichUnit, FEA, GetSpellTargetUnit(), D8A, dummyCaster)
 				call RemoveSavedHandle(HY, h, 393)
-			elseif UnitIsDead(FXA) == false then
+			elseif IsUnitDeath(FXA) == false then
 				call D9A(whichUnit, FXA, GetSpellTargetUnit(), D8A, dummyCaster)
 				call RemoveSavedHandle(HY, h, 394)
-			elseif UnitIsDead(FOA) == false then
+			elseif IsUnitDeath(FOA) == false then
 				call D9A(whichUnit, FOA, GetSpellTargetUnit(), D8A, dummyCaster)
 				call RemoveSavedHandle(HY, h, 395)
-			elseif UnitIsDead(FRA) == false then
+			elseif IsUnitDeath(FRA) == false then
 				call D9A(whichUnit, FRA, GetSpellTargetUnit(), D8A, dummyCaster)
 				call RemoveSavedHandle(HY, h, 396)
 				call SetPlayerAbilityAvailableEx(GetOwningPlayer(whichUnit),'A1Z2', false)
@@ -63988,16 +63985,16 @@ function FVA takes nothing returns boolean
 				call DestroyTrigger(t)
 			endif
 		elseif GetSpellAbilityId()=='A1RK' or GetSpellAbilityId()=='A43H' then
-			if FEA != null and UnitIsDead(FEA) == false then
+			if FEA != null and IsUnitDeath(FEA) == false then
 				call D9A(whichUnit, FEA, whichUnit, D8A, dummyCaster)
 			endif
-			if FXA != null and UnitIsDead(FXA) == false then
+			if FXA != null and IsUnitDeath(FXA) == false then
 				call D9A(whichUnit, FXA, whichUnit, D8A, dummyCaster)
 			endif
-			if FOA != null and UnitIsDead(FOA) == false then
+			if FOA != null and IsUnitDeath(FOA) == false then
 				call D9A(whichUnit, FOA, whichUnit, D8A, dummyCaster)
 			endif
-			if FRA != null and UnitIsDead(FRA) == false then
+			if FRA != null and IsUnitDeath(FRA) == false then
 				call D9A(whichUnit, FRA, whichUnit, D8A, dummyCaster)
 			endif
 			call SetPlayerAbilityAvailableEx(GetOwningPlayer(whichUnit),'A1Z2', false)
@@ -64010,7 +64007,7 @@ function FVA takes nothing returns boolean
 	else
 		set count = count + 1
 		call SaveInteger(HY, h, 34, count)
-		if FEA != null and UnitIsDead(FEA) == false then
+		if FEA != null and IsUnitDeath(FEA) == false then
 			set IMX = 360 * 4 / 4.
 			set a2 = IMX + VEI * count
 			set x = CoordinateX50(sx + 200* Cos(a2 * bj_DEGTORAD))
@@ -64019,7 +64016,7 @@ function FVA takes nothing returns boolean
 			call SetUnitX(FEA, x)
 			call SetUnitY(FEA, y)
 		endif
-		if FXA != null and UnitIsDead(FXA) == false then
+		if FXA != null and IsUnitDeath(FXA) == false then
 			set IMX = 360 * 3 / 4.
 			set a2 = IMX + VEI * count
 			set x = CoordinateX50(sx + 200* Cos(a2 * bj_DEGTORAD))
@@ -64028,7 +64025,7 @@ function FVA takes nothing returns boolean
 			call SetUnitX(FXA, x)
 			call SetUnitY(FXA, y)
 		endif
-		if FOA != null and UnitIsDead(FOA) == false then
+		if FOA != null and IsUnitDeath(FOA) == false then
 			set IMX = 360 * 2 / 4.
 			set a2 = IMX + VEI * count
 			set x = CoordinateX50(sx + 200* Cos(a2 * bj_DEGTORAD))
@@ -64037,7 +64034,7 @@ function FVA takes nothing returns boolean
 			call SetUnitX(FOA, x)
 			call SetUnitY(FOA, y)
 		endif
-		if FRA != null and UnitIsDead(FRA) == false then
+		if FRA != null and IsUnitDeath(FRA) == false then
 			set IMX = 360 * 1 / 4.
 			set a2 = IMX + VEI * count
 			set x = CoordinateX50(sx + 200* Cos(a2 * bj_DEGTORAD))
@@ -64047,16 +64044,16 @@ function FVA takes nothing returns boolean
 			call SetUnitY(FRA, y)
 		endif
 		if count > 800 or GetTriggerEventId() == EVENT_WIDGET_DEATH then
-			if FEA != null and UnitIsDead(FEA) == false then
+			if FEA != null and IsUnitDeath(FEA) == false then
 				call D9A(whichUnit, FEA, whichUnit, D8A, dummyCaster)
 			endif
-			if FXA != null and UnitIsDead(FXA) == false then
+			if FXA != null and IsUnitDeath(FXA) == false then
 				call D9A(whichUnit, FXA, whichUnit, D8A, dummyCaster)
 			endif
-			if FOA != null and UnitIsDead(FOA) == false then
+			if FOA != null and IsUnitDeath(FOA) == false then
 				call D9A(whichUnit, FOA, whichUnit, D8A, dummyCaster)
 			endif
-			if FRA != null and UnitIsDead(FRA) == false then
+			if FRA != null and IsUnitDeath(FRA) == false then
 				call D9A(whichUnit, FRA, whichUnit, D8A, dummyCaster)
 			endif
 			call SetPlayerAbilityAvailableEx(GetOwningPlayer(whichUnit),'A1Z2', false)
@@ -65090,7 +65087,7 @@ function GXA takes nothing returns boolean
 	call SetUnitY(dummyCaster, GetUnitY(targetUnit))
 	if count == 1 or count == 100  or count == 200 or count == 300 then
 		set g = AllocationGroup(444)
-		if UnitIsDead(targetUnit) then
+		if IsUnitDeath(targetUnit) then
 			set d = CreateUnit(GetOwningPlayer(targetUnit),'e00C', GetUnitX(targetUnit), GetUnitY(targetUnit), 0)
 			call UnitApplyTimedLife(d,'BTLF', .2)
 			call IssueTargetOrderById(dummyCaster, 852119, d)
@@ -65318,19 +65315,19 @@ function GKA takes nothing returns boolean
 	local real time = 2.25
 	local real GUA
 	local integer level = LoadInteger(HY, h, 5)
-	if UnitIsDead(GLA) == false then
+	if IsUnitDeath(GLA) == false then
 		set GTA = GTA + 1
 	endif
-	if UnitIsDead(GMA) == false then
+	if IsUnitDeath(GMA) == false then
 		set GTA = GTA + 1
 	endif
-	if UnitIsDead(GPA) == false then
+	if IsUnitDeath(GPA) == false then
 		set GTA = GTA + 1
 	endif
-	if UnitIsDead(GQA) == false then
+	if IsUnitDeath(GQA) == false then
 		set GTA = GTA + 1
 	endif
-	if UnitIsDead(GSA) == false then
+	if IsUnitDeath(GSA) == false then
 		set GTA = GTA + 1
 	endif
 	if GTA == 5 then
@@ -65395,31 +65392,31 @@ function GKA takes nothing returns boolean
 		set d = RMinBJ(d + 5, 875)
 		call SaveReal(HY, h, 138,((d)* 1.))
 	endif
-	if GetTriggerEventId() == EVENT_WIDGET_DEATH or count == 950 or(UnitIsDead(GLA) and UnitIsDead(GMA) and UnitIsDead(GPA) and UnitIsDead(GQA) and UnitIsDead(GSA)) or(count > 1 and GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT and GetSpellAbilityId()=='A1T8') then
+	if GetTriggerEventId() == EVENT_WIDGET_DEATH or count == 950 or(IsUnitDeath(GLA) and IsUnitDeath(GMA) and IsUnitDeath(GPA) and IsUnitDeath(GQA) and IsUnitDeath(GSA)) or(count > 1 and GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT and GetSpellAbilityId()=='A1T8') then
 		if GetTriggerEventId() != EVENT_UNIT_SPELL_EFFECT then
 			call UnitRemoveAbility(whichUnit,'A24A')
 			call UnitRemoveAbility(whichUnit,'A24B')
 		endif
 		call FlushChildHashtable(HY, h)
 		call DestroyTrigger(t)
-		if UnitIsDead(GLA) == false then
+		if IsUnitDeath(GLA) == false then
 			call GHA(whichUnit, GLA)
 		endif
-		if UnitIsDead(GMA) == false then
+		if IsUnitDeath(GMA) == false then
 			call GHA(whichUnit, GMA)
 		endif
-		if UnitIsDead(GPA) == false then
+		if IsUnitDeath(GPA) == false then
 			call GHA(whichUnit, GPA)
 		endif
-		if UnitIsDead(GQA) == false then
+		if IsUnitDeath(GQA) == false then
 			call GHA(whichUnit, GQA)
 		endif
-		if UnitIsDead(GSA) == false then
+		if IsUnitDeath(GSA) == false then
 			call GHA(whichUnit, GSA)
 		endif
 	else
 		set g = AllocationGroup(447)
-		if UnitIsDead(GLA) == false and(LoadBoolean(HY, h, 511)) then
+		if IsUnitDeath(GLA) == false and(LoadBoolean(HY, h, 511)) then
 			set IMX = 360 * 5 / 5.
 			set a = IMX + GUA
 			set x = CoordinateX50(sx + d * Cos(a * bj_DEGTORAD))
@@ -65439,7 +65436,7 @@ function GKA takes nothing returns boolean
 			call ForGroup(g, function GBA)
 			call GroupClear(g)
 		endif
-		if UnitIsDead(GMA) == false and(LoadBoolean(HY, h, 512)) then
+		if IsUnitDeath(GMA) == false and(LoadBoolean(HY, h, 512)) then
 			set IMX = 360 * 4 / 5.
 			set a = IMX + GUA
 			set x = CoordinateX50(sx + d * Cos(a * bj_DEGTORAD))
@@ -65459,7 +65456,7 @@ function GKA takes nothing returns boolean
 			call ForGroup(g, function GBA)
 			call GroupClear(g)
 		endif
-		if UnitIsDead(GPA) == false and(LoadBoolean(HY, h, 513)) then
+		if IsUnitDeath(GPA) == false and(LoadBoolean(HY, h, 513)) then
 			set IMX = 360 * 3 / 5.
 			set a = IMX + GUA
 			set x = CoordinateX50(sx + d * Cos(a * bj_DEGTORAD))
@@ -65479,7 +65476,7 @@ function GKA takes nothing returns boolean
 			call ForGroup(g, function GBA)
 			call GroupClear(g)
 		endif
-		if UnitIsDead(GQA) == false and(LoadBoolean(HY, h, 514)) then
+		if IsUnitDeath(GQA) == false and(LoadBoolean(HY, h, 514)) then
 			set IMX = 360 * 2 / 5.
 			set a = IMX + GUA
 			set x = CoordinateX50(sx + d * Cos(a * bj_DEGTORAD))
@@ -65499,7 +65496,7 @@ function GKA takes nothing returns boolean
 			call ForGroup(g, function GBA)
 			call GroupClear(g)
 		endif
-		if UnitIsDead(GSA) == false and(LoadBoolean(HY, h, 515)) then
+		if IsUnitDeath(GSA) == false and(LoadBoolean(HY, h, 515)) then
 			set IMX = 360 * 1 / 5.
 			set a = IMX + GUA
 			set x = CoordinateX50(sx + d * Cos(a * bj_DEGTORAD))
@@ -65813,7 +65810,7 @@ function G8A takes nothing returns boolean
 	local real HEA =(LoadReal(HY, h, 667))
 	local real HXA
 	local real HOA
-	if targetUnit == null or whichUnit == null or UnitIsDead(whichUnit) or(count > 600 and G6A(whichUnit, targetUnit) == false and((LoadInteger(HY,(GetHandleId((whichUnit))),(4295))) == 1) == false) or(d > 925 and((LoadInteger(HY,(GetHandleId((whichUnit))),(4295))) != 1)) or GetTriggerEventId() == EVENT_WIDGET_DEATH or(GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT and GetSpellAbilityId()=='A1TU') then
+	if targetUnit == null or whichUnit == null or IsUnitDeath(whichUnit) or(count > 600 and G6A(whichUnit, targetUnit) == false and((LoadInteger(HY,(GetHandleId((whichUnit))),(4295))) == 1) == false) or(d > 925 and((LoadInteger(HY,(GetHandleId((whichUnit))),(4295))) != 1)) or GetTriggerEventId() == EVENT_WIDGET_DEATH or(GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT and GetSpellAbilityId()=='A1TU') then
 		call DeallocateGroup(CNO)
 		call DestroyLightning(APX)
 		call UnitRemoveAbility(targetUnit,'A1TM')
@@ -65957,7 +65954,7 @@ function HNA takes nothing returns boolean
 	local integer h = GetHandleId(t)
 	local unit whichUnit =(LoadUnitHandle(HY, h, 2))
 	local integer count = GetTriggerEvalCount(t)
-	if UnitIsDead(whichUnit) == false and count < 12 then
+	if IsUnitDeath(whichUnit) == false and count < 12 then
 		call HAA(I2S( 12-count), whichUnit)
 	endif
 	if count == 12 then
@@ -65991,33 +65988,33 @@ function HBA takes nothing returns boolean
 		call KillTreeByCircle(sx, sy, 250)
 		set s = "Objects\\Spawnmodels\\NightElf\\NECancelDeath\\NECancelDeath.mdl"
 		if GetTriggerEvalCount(t) == 1 then
-			if UnitIsDead(whichUnit) == false then
+			if IsUnitDeath(whichUnit) == false then
 				call DestroyEffect(AddSpecialEffect(s, GetUnitX(whichUnit), GetUnitY(whichUnit)))
 				call SetUnitPosition(whichUnit, tx, ty)
 				call PanCameraToTimedForPlayer(GetOwningPlayer(whichUnit), tx, ty, 0)
 				call DestroyEffect(AddSpecialEffect(s, GetUnitX(whichUnit), GetUnitY(whichUnit)))
 			endif
-			if targetUnit != null and UnitIsDead(targetUnit) == false and GetOwningPlayer(targetUnit) != SentinelPlayers[0]and GetOwningPlayer(targetUnit) != ScourgePlayers[0]and(LoadBoolean(HY, GetHandleId(GetOwningPlayer(targetUnit)), 139) == false) then
+			if targetUnit != null and IsUnitDeath(targetUnit) == false and GetOwningPlayer(targetUnit) != SentinelPlayers[0]and GetOwningPlayer(targetUnit) != ScourgePlayers[0]and(LoadBoolean(HY, GetHandleId(GetOwningPlayer(targetUnit)), 139) == false) then
 				call DestroyEffect(AddSpecialEffect(s, GetUnitX(targetUnit), GetUnitY(targetUnit)))
 				call EPX(targetUnit, 4402, 1)
 				call SetUnitPosition(targetUnit, tx, ty)
-				if IsUnitType(targetUnit, UNIT_TYPE_HERO) and UnitIsDead(targetUnit) == false then
+				if IsUnitType(targetUnit, UNIT_TYPE_HERO) and IsUnitDeath(targetUnit) == false then
 					call PanCameraToTimedForPlayer(GetOwningPlayer(targetUnit), tx, ty, 0)
 				endif
 				call DestroyEffect(AddSpecialEffect(s, GetUnitX(targetUnit), GetUnitY(targetUnit)))
 			endif
 		else
-			if UnitIsDead(whichUnit) == false then
+			if IsUnitDeath(whichUnit) == false then
 				call DestroyEffect(AddSpecialEffect(s, GetUnitX(whichUnit), GetUnitY(whichUnit)))
 				call SetUnitPosition(whichUnit, sx, sy)
 				call PanCameraToTimedForPlayer(GetOwningPlayer(whichUnit), sx, sy, 0)
 				call DestroyEffect(AddSpecialEffect(s, GetUnitX(whichUnit), GetUnitY(whichUnit)))
 			endif
-			if targetUnit != null and UnitIsDead(targetUnit) == false and GetOwningPlayer(targetUnit) != SentinelPlayers[0]and GetOwningPlayer(targetUnit) != ScourgePlayers[0]and(LoadBoolean(HY, GetHandleId(GetOwningPlayer(targetUnit)), 139) == false) then
+			if targetUnit != null and IsUnitDeath(targetUnit) == false and GetOwningPlayer(targetUnit) != SentinelPlayers[0]and GetOwningPlayer(targetUnit) != ScourgePlayers[0]and(LoadBoolean(HY, GetHandleId(GetOwningPlayer(targetUnit)), 139) == false) then
 				call DestroyEffect(AddSpecialEffect(s, GetUnitX(targetUnit), GetUnitY(targetUnit)))
 				call EPX(targetUnit, 4402, 1)
 				call SetUnitPosition(targetUnit, sx, sy)
-				if IsUnitType(targetUnit, UNIT_TYPE_HERO) and UnitIsDead(targetUnit) == false then
+				if IsUnitType(targetUnit, UNIT_TYPE_HERO) and IsUnitDeath(targetUnit) == false then
 					call PanCameraToTimedForPlayer(GetOwningPlayer(targetUnit), sx, sy, 0)
 				endif
 				call DestroyEffect(AddSpecialEffect(s, GetUnitX(targetUnit), GetUnitY(targetUnit)))
@@ -66044,7 +66041,7 @@ function HCA takes nothing returns boolean
 	local real ty =(LoadReal(HY, h, 48))
 	local fogmodifier fm = null
 	local integer level = GetUnitAbilityLevel(whichUnit,'A1TB') + GetUnitAbilityLevel(whichUnit,'A3FQ')
-	if C5X(whichUnit) or C4X(whichUnit) or UnitIsDead(whichUnit) then
+	if C5X(whichUnit) or C4X(whichUnit) or IsUnitDeath(whichUnit) then
 		call SaveInteger(HY,(GetHandleId((whichUnit))),(4294), 2)
 		call DestroyEffect((LoadEffectHandle(HY, h, 32)))
 		call FlushChildHashtable(HY, h)
@@ -66787,7 +66784,7 @@ function CreatePrimalSplitTrigger takes nothing returns nothing
 	set t = null
 endfunction
 function JFA takes nothing returns boolean
-	if UnitIsDead(GetFilterUnit()) == false and IsAliveNotStrucNotWard(GetFilterUnit()) then
+	if IsUnitDeath(GetFilterUnit()) == false and IsAliveNotStrucNotWard(GetFilterUnit()) then
 		call UnitDispelBuffs(GetFilterUnit(), IsUnitEnemy(GetFilterUnit(), TempPlayer))
 	endif
 	return false
@@ -67469,10 +67466,10 @@ function KAAA takes nothing returns boolean
 	endif
 	set TempUnit = whichUnit
 	set QBV = GetUnitAbilityLevel(whichUnit,'P211')
-	if UnitIsDead(whichUnit) == false then
+	if IsUnitDeath(whichUnit) == false then
 		call GroupEnumUnitsInRange(g, x, y, 925, Condition(function B7O))
 	endif
-	if UnitIsDead(whichUnit) == false and not IsUnitBroken(whichUnit) then
+	if IsUnitDeath(whichUnit) == false and not IsUnitBroken(whichUnit) then
 		call ForGroup(g, function KIAA2)
 	endif
 	call DeallocateGroup(g)
@@ -67499,12 +67496,12 @@ function KAA takes nothing returns boolean
 	endif
 	set TempUnit = whichUnit
 	set QBV = GetUnitAbilityLevel(whichUnit,'P211')
-	if UnitIsDead(whichUnit) == false then
+	if IsUnitDeath(whichUnit) == false then
 		call GroupEnumUnitsInRange(g, x, y, 925, Condition(function B7O))
 	endif
 	call GroupRemoveGroup(g, IQI)
 	call ForGroup(IQI, function KRA)
-	if UnitIsDead(whichUnit) == false and not IsUnitBroken(whichUnit) then
+	if IsUnitDeath(whichUnit) == false and not IsUnitBroken(whichUnit) then
 		call ForGroup(g, function KIA)
 	endif
 	call SaveGroupHandle(HY, h, 340,(g))
@@ -67540,7 +67537,7 @@ function KNA takes nothing returns nothing
 	local unit d = LoadUnitHandle(HY, h, 0)
 	local real KBA = LoadReal(HY, h, 0)
 	local integer c = LoadInteger(HY, h, 0) + 1
-	if UnitIsDead(KKX) and LoadBoolean(HY, h, 0) == false then
+	if IsUnitDeath(KKX) and LoadBoolean(HY, h, 0) == false then
 		call SaveBoolean(HY, h, 0, true)
 	endif
 	if LoadBoolean(HY, h, 0) == false then
@@ -67550,7 +67547,7 @@ function KNA takes nothing returns nothing
 			call SaveReal(HY, h, 0, GetWidgetLife(d))
 		endif
 	endif
-	if c > 50 * 50 or UnitIsDead(KKX) or UnitIsDead(d) then
+	if c > 50 * 50 or IsUnitDeath(KKX) or IsUnitDeath(d) then
 		call PauseTimer(t)
 		call DestroyTimer(t)
 		call FlushChildHashtable(HY, h)
@@ -68026,7 +68023,7 @@ function LDA takes nothing returns boolean
 endfunction
 function LFA takes nothing returns nothing
 	local real GIX = GetDistanceBetween(GetUnitX(GetEnumUnit()), GetUnitY(GetEnumUnit()), QHV, QJV)
-	if GIX > QKV and UnitIsDead(GetEnumUnit()) == false then
+	if GIX > QKV and IsUnitDeath(GetEnumUnit()) == false then
 		set QLV = GetEnumUnit()
 		set QKV = GIX
 	endif
@@ -69561,13 +69558,13 @@ function F2E takes nothing returns nothing
 endfunction
 function PRA takes nothing returns nothing
 	local integer h = GetHandleId(GetTriggeringTrigger())
-	if UnitIsDead(MissileHitTargetUnit) == false then
+	if IsUnitDeath(MissileHitTargetUnit) == false then
 		call SetWidgetLife(MissileHitTargetUnit, GetWidgetLife(MissileHitTargetUnit) + LoadReal(HY, h,'n020')* .2)
 	endif
 endfunction
 function PIA takes unit u returns nothing
 	local trigger t
-	if GetUnitTypeId(u)=='n020' and UnitIsDead(PlayerHeroes[GetPlayerId(GetOwningPlayer(u))]) == false then
+	if GetUnitTypeId(u)=='n020' and IsUnitDeath(PlayerHeroes[GetPlayerId(GetOwningPlayer(u))]) == false then
 		set t = LaunchMissileByUnitDummy(u, PlayerHeroes[GetPlayerId(GetOwningPlayer(u))],'h00W', "PRA", 400, false)
 		call SaveReal(HY, GetHandleId(t),'n020', GetUnitState(u, UNIT_STATE_MAX_LIFE))
 		set t = null
@@ -69598,7 +69595,7 @@ function PAA takes unit R8X, unit targetUnit returns nothing
 	endif
 endfunction
 function PNA takes nothing returns boolean
-	if (GetUnitTypeId(GetFilterUnit())=='u012' or GetUnitTypeId(GetFilterUnit())=='u013') and UnitIsDead(GetFilterUnit()) == false then
+	if (GetUnitTypeId(GetFilterUnit())=='u012' or GetUnitTypeId(GetFilterUnit())=='u013') and IsUnitDeath(GetFilterUnit()) == false then
 		set Q2 = Q2 -1
 		return true
 	endif
@@ -69642,7 +69639,7 @@ function PBA takes unit u returns nothing
 	endif
 endfunction
 function PCA takes nothing returns boolean
-	if GetUnitTypeId(GetFilterUnit())=='ushd' and UnitIsDead(GetFilterUnit()) == false then
+	if GetUnitTypeId(GetFilterUnit())=='ushd' and IsUnitDeath(GetFilterUnit()) == false then
 		set Q2 = Q2 -1
 		return true
 	endif
@@ -69747,7 +69744,7 @@ function PHA takes nothing returns nothing
 	local integer h = GetHandleId(t)
 	local integer UYX = LoadInteger(ObjectHashTable, h, 0)
 	local unit u = LoadUnitHandle(ObjectHashTable, h, 0)
-	if UYX == 120 or UnitIsDead(u) then
+	if UYX == 120 or IsUnitDeath(u) then
 		call DestroyEffect(LoadEffectHandle(ObjectHashTable, h, 2))
 		call DestroyTimerAndFlushHT_P(t)
 		set t = null
@@ -69913,7 +69910,7 @@ function PPA takes nothing returns nothing
 	local real y2
 	local real x1
 	local real y1
-	if UnitIsDead(u2) then
+	if IsUnitDeath(u2) then
 		call KillUnit(u1)
 		call DestroyTimerAndFlushHT_P(t)
 		set u2 = null
@@ -70161,7 +70158,7 @@ function P0A takes nothing returns nothing
 	local integer UYX = LoadInteger(ObjectHashTable, h, 0)
 	local unit u = LoadUnitHandle(ObjectHashTable, h, 0)
 	local real L2O
-	if UYX == 4 or UnitIsDead(u) or P_A(u) == false then
+	if UYX == 4 or IsUnitDeath(u) or P_A(u) == false then
 		call DestroyEffect(LoadEffectHandle(ObjectHashTable, h, 1))
 		call DestroyTimerAndFlushHT_P(t)
 		set t = null
@@ -70357,7 +70354,7 @@ function QOA takes nothing returns nothing
 	local integer h = GetHandleId(t)
 	local integer UYX = LoadInteger(ObjectHashTable, h, 0)
 	local unit u = LoadUnitHandle(ObjectHashTable, h, 0)
-	if UYX == 40 or UnitIsDead(u) or IsUnitHidden(u) or(C5X(u) == false and UYX > 4) then
+	if UYX == 40 or IsUnitDeath(u) or IsUnitHidden(u) or(C5X(u) == false and UYX > 4) then
 		set UYX = 1
 		loop
 		exitwhen UYX == 10
@@ -70464,7 +70461,7 @@ function QBA takes nothing returns boolean
 		call GroupRemoveUnit(gg, targetUnit)
 		call ForGroup(gg, function QNA)
 		call DeallocateGroup(gg)
-		if C2R ==(2.25 + .25 * level)* 20 or UnitIsDead(targetUnit) then
+		if C2R ==(2.25 + .25 * level)* 20 or IsUnitDeath(targetUnit) then
 			call ForGroup(g, function QAA)
 			call UnitRemoveAbility(targetUnit,'A342')
 			call DeallocateGroup(g)
@@ -70529,7 +70526,7 @@ function QDA takes nothing returns nothing
 	local integer h = GetHandleId(t)
 	local integer UYX = LoadInteger(ObjectHashTable, h, 0)
 	local unit u = LoadUnitHandle(ObjectHashTable, h, 0)
-	if UnitIsDead(u) or(GetUnitAbilityLevel(u,'B0G8') == 0 and UYX > LoadInteger(ObjectHashTable, h, 2)) or(LoadBoolean(ObjectHashTable, h, 0) and(LoadReal(ObjectHashTable, h, 0) != GetWidgetX(u) or LoadReal(ObjectHashTable, h, 1) != GetWidgetY(u))) then
+	if IsUnitDeath(u) or(GetUnitAbilityLevel(u,'B0G8') == 0 and UYX > LoadInteger(ObjectHashTable, h, 2)) or(LoadBoolean(ObjectHashTable, h, 0) and(LoadReal(ObjectHashTable, h, 0) != GetWidgetX(u) or LoadReal(ObjectHashTable, h, 1) != GetWidgetY(u))) then
 		call SaveBoolean(ObjectHashTable, GetHandleId(u),'A2N5', false)
 		call UnitRemoveAbility(u,'B0G8')
 		call DestroyTimerAndFlushHT_P(t)
@@ -70594,7 +70591,7 @@ function FSE takes nothing returns nothing
 	set u = null
 endfunction
 function QHA takes nothing returns boolean
-	return(IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and IsUnitAlly(GetFilterUnit(), GetOwningPlayer(TempUnit)) and UnitIsDead(GetFilterUnit()) == false and LoadInteger(HY, GetHandleId(GetFilterUnit()),'CRMS') != 1) != null
+	return(IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and IsUnitAlly(GetFilterUnit(), GetOwningPlayer(TempUnit)) and IsUnitDeath(GetFilterUnit()) == false and LoadInteger(HY, GetHandleId(GetFilterUnit()),'CRMS') != 1) != null
 endfunction
 function QJA takes nothing returns nothing
 	call EPX(GetEnumUnit(),'CRMS', 70)
@@ -70841,7 +70838,7 @@ function QSA takes nothing returns nothing
 	set QTA = null
 endfunction
 function QUA takes nothing returns boolean
-	return(IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and UnitIsDead(GetFilterUnit()) == false and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(GetTriggerUnit())) and GetUnitAbilityLevel(GetFilterUnit(),'A33O')> 0) != null
+	return(IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and IsUnitDeath(GetFilterUnit()) == false and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(GetTriggerUnit())) and GetUnitAbilityLevel(GetFilterUnit(),'A33O')> 0) != null
 endfunction
 function QWA takes unit whichUnit, integer T0V returns nothing
 	local trigger t
@@ -70966,10 +70963,10 @@ function Q5A takes unit u, unit tar, real d returns nothing
 	set t = null
 endfunction
 function CustomUnitBountyAllyFilter takes nothing returns boolean
-	return(IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and IsUnitAlly(GetFilterUnit(), GetOwningPlayer(SB)) and UnitIsDead(GetFilterUnit()) == false and IsUnitHexed(GetFilterUnit()) == false) != null
+	return(IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and IsUnitAlly(GetFilterUnit(), GetOwningPlayer(SB)) and IsUnitDeath(GetFilterUnit()) == false and IsUnitHexed(GetFilterUnit()) == false) != null
 endfunction
 function CustomUnitBountyEnemyFilter takes nothing returns boolean
-	return(IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(SB)) and UnitIsDead(GetFilterUnit()) == false and IsUnitHexed(GetFilterUnit()) == false) != null
+	return(IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(SB)) and IsUnitDeath(GetFilterUnit()) == false and IsUnitHexed(GetFilterUnit()) == false) != null
 endfunction
 function Q6A takes unit killingUnit, unit Q7A returns nothing
 	local integer i = 0
@@ -71095,7 +71092,7 @@ function OGO takes nothing returns nothing	//祭品
 	if GetUnitAbilityLevel(DESource,'B3B5') == 0 then
 		return
 	endif
-	if IsUnitIllusion(DETarget) == false and IsUnitType(DETarget, UNIT_TYPE_STRUCTURE) == false and IsUnitType(DETarget, UNIT_TYPE_MECHANICAL) == false and not IsUnitWard(DETarget) and IsUnitEnemy(DESource, GetOwningPlayer(DETarget)) and UnitIsDead(DESource) == false then
+	if IsUnitIllusion(DETarget) == false and IsUnitType(DETarget, UNIT_TYPE_STRUCTURE) == false and IsUnitType(DETarget, UNIT_TYPE_MECHANICAL) == false and not IsUnitWard(DETarget) and IsUnitEnemy(DESource, GetOwningPlayer(DETarget)) and IsUnitDeath(DESource) == false then
 		if IsUnitType(DESource, UNIT_TYPE_MELEE_ATTACKER) then
 			set i = .15
 		else
@@ -72659,7 +72656,7 @@ function WBA takes nothing returns nothing
 		if IsUnitType(UEKillingUnit, UNIT_TYPE_HERO) then
 			call BPI(GetUnitAbilityLevel(UEDyingUnit,'ACac'), UEKillingUnit, UEDyingUnit)
 		else
-			if UnitIsDead(PlayerHeroes[GetPlayerId(GetOwningPlayer(UEKillingUnit))]) == false then
+			if IsUnitDeath(PlayerHeroes[GetPlayerId(GetOwningPlayer(UEKillingUnit))]) == false then
 				call BPI(GetUnitAbilityLevel(UEDyingUnit,'ACac'), PlayerHeroes[GetPlayerId(GetOwningPlayer(UEKillingUnit))], UEDyingUnit)
 			endif
 		endif
@@ -73059,7 +73056,7 @@ function YNA takes nothing returns nothing
 		elseif GetUnitAbilityLevel(dummyUnit,'A330')> 0 then
 			call UnitRemoveAbility(dummyUnit,'A330')
 		endif
-		if UnitIsDead(KKX) == false and M2[GetPlayerId(GetOwningPlayer(KKX))]== false and(GetUnitAbilityLevel(KKX,'A08E')> 0 or HeroSkill_BaseId[PlayerSkillIndices[GetPlayerId(GetOwningPlayer(KKX))* MAX_SKILL_SLOTS + 5]]=='A08Q') then
+		if IsUnitDeath(KKX) == false and M2[GetPlayerId(GetOwningPlayer(KKX))]== false and(GetUnitAbilityLevel(KKX,'A08E')> 0 or HeroSkill_BaseId[PlayerSkillIndices[GetPlayerId(GetOwningPlayer(KKX))* MAX_SKILL_SLOTS + 5]]=='A08Q') then
 			if O6X() == false then
 				if GetUnitAbilityLevel(KKX,'A08E')> 0 then
 					call sckj(KKX, true)
@@ -73673,7 +73670,7 @@ function Y9A takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer h = GetHandleId(t)
 	local unit u = LoadUnitHandle(HY, h, 0)
-	if GetUnitX(u) != LoadReal(HY, h, 0) or GetUnitY(u) != LoadReal(HY, h, 1) or UnitIsDead(u) then
+	if GetUnitX(u) != LoadReal(HY, h, 0) or GetUnitY(u) != LoadReal(HY, h, 1) or IsUnitDeath(u) then
 		call PauseTimer(t)
 		call DestroyTimer(t)
 		call FlushChildHashtable(HY, h)

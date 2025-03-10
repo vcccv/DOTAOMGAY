@@ -154,7 +154,7 @@ scope Towers
         elseif u == SentinleLeftTowerLevel4 or u == SentinleRightTowerLevel4 then
             call StoreDrCacheData("Tower041", pid)
             call TowerDeathGoldBonus(killingUnit, 4)
-            if (u == SentinleLeftTowerLevel4 and UnitIsDead(SentinleRightTowerLevel4)) or(u == SentinleRightTowerLevel4 and UnitIsDead(SentinleLeftTowerLevel4)) then
+            if (u == SentinleLeftTowerLevel4 and IsUnitDeath(SentinleRightTowerLevel4)) or(u == SentinleRightTowerLevel4 and IsUnitDeath(SentinleLeftTowerLevel4)) then
                 call UnitRemoveAbility(WorldTree,'Avul')
             endif
         endif
@@ -293,7 +293,7 @@ scope Towers
         elseif u == ScourgeLeftTowerLevel4 or u == ScourgeRightTowerLevel4 then
             call StoreDrCacheData("Tower141", pid)
             call TowerDeathGoldBonus(killingUnit, 4)
-            if (u == ScourgeLeftTowerLevel4 and UnitIsDead(ScourgeRightTowerLevel4)) or(u == ScourgeRightTowerLevel4 and UnitIsDead(ScourgeLeftTowerLevel4)) then
+            if (u == ScourgeLeftTowerLevel4 and IsUnitDeath(ScourgeRightTowerLevel4)) or(u == ScourgeRightTowerLevel4 and IsUnitDeath(ScourgeLeftTowerLevel4)) then
                 call UnitRemoveAbility(FrozenThrone, 'Avul')
             endif
         endif

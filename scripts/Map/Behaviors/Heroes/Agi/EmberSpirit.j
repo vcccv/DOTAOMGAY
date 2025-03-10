@@ -95,7 +95,7 @@ scope EmberSpirit
         exitwhen FirstOfGroup(g) == null or b
             set target = FirstOfGroup(g)
             call GroupRemoveUnit(g, target)
-            if UnitIsDead(target) then
+            if IsUnitDeath(target) then
                 call GroupRemoveUnit(g, target)
             elseif IsUnitInGroup(target, targGroup) and target != null then
                 set target = null
@@ -105,7 +105,7 @@ scope EmberSpirit
             endif
         endloop
         call KZA(u)
-        if b == false or(LoadInteger(HY, GetHandleId(u), 4319)) == 1 or UnitIsDead(u) then
+        if b == false or(LoadInteger(HY, GetHandleId(u), 4319)) == 1 or IsUnitDeath(u) then
             call SaveInteger(HY, GetHandleId(u), 4318, 2)
             call KLA(u)
             call UnitRemoveAbility(u,'QF90')

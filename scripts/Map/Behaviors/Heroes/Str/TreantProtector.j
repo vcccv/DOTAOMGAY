@@ -91,7 +91,7 @@ scope TreantProtector
     //*
     //***************************************************************************
     function XZI takes nothing returns boolean
-        return(IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(GetTriggerUnit())) and UnitIsDead(GetFilterUnit()) == false)
+        return(IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(GetTriggerUnit())) and IsUnitDeath(GetFilterUnit()) == false)
     endfunction
     function X_I takes nothing returns nothing
         local unit R3O = GetTriggerUnit()
