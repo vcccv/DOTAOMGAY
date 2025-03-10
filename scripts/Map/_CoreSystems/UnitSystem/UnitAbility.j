@@ -43,7 +43,7 @@ library UnitAbility requires AbilityUtils, UnitLimitation
         call MHAbility_SetBackswing(whichUnit, abilId, backswing)
     endfunction
 
-    function UnitDisableAbility takes unit whichUnit, integer abilId, boolean flag, boolean hideUI returns nothing
+    function UnitDisableAbilityEx takes unit whichUnit, integer abilId, boolean flag, boolean hideUI returns nothing
         if GetAbilityBaseIdById(abilId) == 'AOre' then
             call MHAbility_DisableEx(whichUnit, abilId, flag)
             if hideUI then
@@ -53,9 +53,13 @@ library UnitAbility requires AbilityUtils, UnitLimitation
             call MHAbility_Disable(whichUnit, abilId, flag, hideUI)
         endif
     endfunction
-    function UnitEnableAbility takes unit whichUnit, integer abilId, boolean flag, boolean hideUI returns nothing
-        call UnitDisableAbility(whichUnit, abilId, not flag, hideUI)
+    function UnitDisableAbility takes unit whichUnit, integer abilId, boolean hideUI returns nothing
+        call UnitDisableAbilityEx(whichUnit, abilId, true, hideUI)
     endfunction
+    function UnitEnableAbility takes unit whichUnit, integer abilId, boolean hideUI returns nothing
+        call UnitDisableAbilityEx(whichUnit, abilId, false, hideUI)
+    endfunction
+    
     function UnitShowAbility takes unit whichUnit, integer abilId, boolean flag returns nothing
         call MHAbility_Hide(whichUnit, abilId, not flag)
     endfunction

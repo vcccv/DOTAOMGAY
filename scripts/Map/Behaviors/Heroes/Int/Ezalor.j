@@ -22,7 +22,7 @@ scope Ezalor
     function IlluminateAbilityOnAdd takes nothing returns nothing
         local unit whichUnit = Event.GetTriggerUnit()
         if UnitAddPermanentAbility(whichUnit, ILLUMINATE_RELEASE_ABILITY_ID) then
-            call UnitDisableAbility(whichUnit, ILLUMINATE_RELEASE_ABILITY_ID, true, true)
+            call UnitDisableAbility(whichUnit, ILLUMINATE_RELEASE_ABILITY_ID, true)
         endif
         set whichUnit = null
     endfunction
@@ -185,8 +185,8 @@ scope Ezalor
             set IlluminateSW(sw).damage = (maxCount-count)* 10
             call IlluminateSW.Launch(sw)
 
-            call UnitHideAbility(whichUnit, ILLUMINATE_ABILITY_ID, false)
-            call UnitDisableAbility(whichUnit, ILLUMINATE_RELEASE_ABILITY_ID, true, true)
+            call UnitShowAbility(whichUnit, ILLUMINATE_ABILITY_ID)
+            call UnitDisableAbility(whichUnit, ILLUMINATE_RELEASE_ABILITY_ID, true)
 
             // 施法马甲
             call RemoveUnit(SimpleTickTable[tick].unit['u'])
@@ -219,8 +219,8 @@ scope Ezalor
 
         set maxCount = GetUnitAbilityLevel(whichUnit, GetSpellAbilityId()) * 10 + 10
 
-        call UnitDisableAbility(whichUnit, ILLUMINATE_RELEASE_ABILITY_ID, false, true)
-        call UnitHideAbility(whichUnit, ILLUMINATE_ABILITY_ID, true)
+        call UnitEnableAbility(whichUnit, ILLUMINATE_RELEASE_ABILITY_ID, true)
+        call UnitHideAbility(whichUnit, ILLUMINATE_ABILITY_ID)
         set orbX = startX + MHUnit_GetData(whichUnit, UNIT_DATA_LAUNCH_X) * Cos(angle)
         set orbY = startY + MHUnit_GetData(whichUnit, UNIT_DATA_LAUNCH_Y) * Sin(angle)
 

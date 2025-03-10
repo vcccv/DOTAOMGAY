@@ -108,13 +108,13 @@ scope Gyrocopter
     function FlakCannonOnGetScepterUpgrade takes nothing returns nothing
         local unit whichUnit = Event.GetTriggerUnit()
         if not UnitAddPermanentAbility(whichUnit, FLAKCANNON_UPGRADE_ABILITY_ID) then
-            call UnitDisableAbility(whichUnit, FLAKCANNON_UPGRADE_ABILITY_ID, false, true)
+            call UnitEnableAbility(whichUnit, FLAKCANNON_UPGRADE_ABILITY_ID, true)
         endif
         set whichUnit = null
     endfunction
     function FlakCannonOnLostScepterUpgrade takes nothing returns nothing
         local unit whichUnit = Event.GetTriggerUnit()
-        call UnitDisableAbility(whichUnit, FLAKCANNON_UPGRADE_ABILITY_ID, true, true)
+        call UnitDisableAbility(whichUnit, FLAKCANNON_UPGRADE_ABILITY_ID, true)
         set whichUnit = null
     endfunction
 

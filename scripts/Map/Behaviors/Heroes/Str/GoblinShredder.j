@@ -183,16 +183,16 @@ scope GoblinShredder
         if UnitAddPermanentAbility(whichUnit, SECOND_CHAKRAM_ABILITY_ID) then
             // 得到双飞之轮时，给予“双飞之轮-结束”技能并隐藏
             if UnitAddPermanentAbility(whichUnit, SECOND_CHAKRAM_RETURN_ABILITY_ID) then
-                call UnitDisableAbility(whichUnit, SECOND_CHAKRAM_RETURN_ABILITY_ID, true, true)
+                call UnitDisableAbility(whichUnit, SECOND_CHAKRAM_RETURN_ABILITY_ID, true)
             endif
         else
-            call UnitDisableAbility(whichUnit, SECOND_CHAKRAM_ABILITY_ID, false, true)
+            call UnitEnableAbility(whichUnit, SECOND_CHAKRAM_ABILITY_ID, true)
         endif
         set whichUnit = null
     endfunction
     function ChakramOnLostScepterUpgrade takes nothing returns nothing
         local unit whichUnit = Event.GetTriggerUnit()
-        call UnitDisableAbility(whichUnit, SECOND_CHAKRAM_ABILITY_ID, true, true)
+        call UnitDisableAbility(whichUnit, SECOND_CHAKRAM_ABILITY_ID, true)
         set whichUnit = null
     endfunction
     // 得到锯齿飞轮时，给予“锯齿飞轮-结束”技能并隐藏
@@ -203,7 +203,7 @@ scope GoblinShredder
     function ChakramAbilityOnAdd takes nothing returns nothing
         local unit whichUnit = Event.GetTriggerUnit()
         if UnitAddPermanentAbility(whichUnit, CHAKRAM_RETURN_ABILITY_ID) then
-            call UnitDisableAbility(whichUnit, CHAKRAM_RETURN_ABILITY_ID, true, true)
+            call UnitDisableAbility(whichUnit, CHAKRAM_RETURN_ABILITY_ID, true)
         endif
         set whichUnit = null
     endfunction
@@ -264,7 +264,7 @@ scope GoblinShredder
 
                 // 隐藏收回技能，显示正常技能
                 call UnitShowAbility(whichUnit, abilId, true)
-                call UnitDisableAbility(whichUnit, endcastAbilityId, true, true)
+                call UnitDisableAbility(whichUnit, endcastAbilityId, true)
 
                 call UnitRemoveBEimAbility(whichUnit)
             endif
@@ -276,7 +276,7 @@ scope GoblinShredder
             if chakramState != 2 then
                 // 隐藏收回技能，显示正常技能
                 call UnitShowAbility(whichUnit, abilId, true)
-                call UnitDisableAbility(whichUnit, endcastAbilityId, true, true)
+                call UnitDisableAbility(whichUnit, endcastAbilityId, true)
             endif
             // 技能结束，启用正常技能
             call UnitEnableAbility(whichUnit, abilId, true, false)
@@ -335,7 +335,7 @@ scope GoblinShredder
 
                     // 隐藏收回技能，显示正常技能
                     call UnitShowAbility(whichUnit, abilId, true)
-                    call UnitDisableAbility(whichUnit, endcastAbilityId, true, true)
+                    call UnitDisableAbility(whichUnit, endcastAbilityId, true)
 
                     call UnitRemoveBEimAbility(whichUnit)
                     call UnitRemoveAbility(whichUnit,'BNms')
@@ -410,7 +410,7 @@ scope GoblinShredder
         endif
         call UnitIncDisableAttackCount(whichUnit)
 
-        call UnitDisableAbility(whichUnit, abilId, true, true)
+        call UnitDisableAbility(whichUnit, abilId, true)
         call UnitEnableAbility(whichUnit, endcastAbilityId, true, true)
         call SaveInteger(HY, h, 4, endcastAbilityId)
 

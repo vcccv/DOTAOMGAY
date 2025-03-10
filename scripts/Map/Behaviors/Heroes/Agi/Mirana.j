@@ -249,13 +249,13 @@ scope Mirana
     function StarfallOnGetScepterUpgrade takes nothing returns nothing
         local unit whichUnit = Event.GetTriggerUnit()
         if not UnitAddPermanentAbility(whichUnit, STARFALL_UPGRADE_ABILITY_ID) then
-            call UnitDisableAbility(whichUnit, STARFALL_UPGRADE_ABILITY_ID, false, true)
+            call UnitEnableAbility(whichUnit, STARFALL_UPGRADE_ABILITY_ID, true)
         endif
         set whichUnit = null
     endfunction
     function StarfallOnLostScepterUpgrade takes nothing returns nothing
         local unit whichUnit = Event.GetTriggerUnit()
-        call UnitDisableAbility(whichUnit, STARFALL_UPGRADE_ABILITY_ID, true, true)
+        call UnitDisableAbility(whichUnit, STARFALL_UPGRADE_ABILITY_ID, true)
         set whichUnit = null
     endfunction
 

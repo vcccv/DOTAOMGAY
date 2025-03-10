@@ -22,7 +22,7 @@ scope Tiny
         call UnitAddPermanentAbility(whichUnit, 'A2KK')
         call UnitMakeAbilityPermanent(whichUnit, true, 'A1W0')
         call UnitMakeAbilityPermanent(whichUnit, true, 'A1W4')
-        call UnitHideAbility(whichUnit, 'A2KK', true)
+        call UnitHideAbility(whichUnit, 'A2KK')
 
         if GetUnitTypeId(whichUnit) == 'Ucrl' then
             call AddUnitAnimationProperties(whichUnit, "upgrade", true)

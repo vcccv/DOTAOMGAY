@@ -12,7 +12,7 @@ scope TreantProtector
         local unit whichUnit = Event.GetTriggerUnit()
 
         if not UnitAddPermanentAbility(whichUnit, EYES_IN_THE_FOREST_ABILITY_ID) then
-            call UnitDisableAbility(whichUnit, EYES_IN_THE_FOREST_ABILITY_ID, false, true)
+            call UnitEnableAbility(whichUnit, EYES_IN_THE_FOREST_ABILITY_ID, true)
         endif
 
         set whichUnit = null
@@ -20,7 +20,7 @@ scope TreantProtector
     function OvevgrowthOnLostScepterUpgrade takes nothing returns nothing
         local unit whichUnit = Event.GetTriggerUnit()
 
-        call UnitDisableAbility(whichUnit, EYES_IN_THE_FOREST_ABILITY_ID, true, true)
+        call UnitDisableAbility(whichUnit, EYES_IN_THE_FOREST_ABILITY_ID, true)
 
         set whichUnit = null
     endfunction

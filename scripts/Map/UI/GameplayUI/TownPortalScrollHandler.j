@@ -23,9 +23,9 @@ library TownPortalScrollHandler requires Communication, TownPortalScrollFrame, U
         local integer oldCharges = GetUnitTownPortalScrollCharges(whichUnit)
 
         if oldCharges > 0 and charges == 0 then
-            call UnitDisableAbility(whichUnit, TOWN_PORTAL_SCROLL_ABILITY_ID, true, false)
+            call UnitDisableAbility(whichUnit, TOWN_PORTAL_SCROLL_ABILITY_ID, false)
         elseif oldCharges == 0 and charges > 0 then
-            call UnitDisableAbility(whichUnit, TOWN_PORTAL_SCROLL_ABILITY_ID, false, false)
+            call UnitEnableAbility(whichUnit, TOWN_PORTAL_SCROLL_ABILITY_ID, false)
         endif
         
         set Table[GetHandleId(whichUnit)].integer[CHARGES] = charges
@@ -47,7 +47,7 @@ library TownPortalScrollHandler requires Communication, TownPortalScrollFrame, U
                 call MHAbility_SetCastpoint(whichUnit, TOWN_PORTAL_SCROLL_ABILITY_ID, 0.)
                 call MHAbility_SetBackswing(whichUnit, TOWN_PORTAL_SCROLL_ABILITY_ID, 0.)
                 // 开局先禁用
-                call UnitDisableAbility(whichUnit, TOWN_PORTAL_SCROLL_ABILITY_ID, true, false)
+                call UnitDisableAbility(whichUnit, TOWN_PORTAL_SCROLL_ABILITY_ID, false)
             endif
         endif
     endfunction
@@ -61,7 +61,7 @@ library TownPortalScrollHandler requires Communication, TownPortalScrollFrame, U
             call MHAbility_SetCastpoint(whichUnit, TOWN_PORTAL_SCROLL_ABILITY_ID, 0.)
             call MHAbility_SetBackswing(whichUnit, TOWN_PORTAL_SCROLL_ABILITY_ID, 0.)
             // 开局先禁用
-            call UnitDisableAbility(whichUnit, TOWN_PORTAL_SCROLL_ABILITY_ID, true, false)
+            call UnitDisableAbility(whichUnit, TOWN_PORTAL_SCROLL_ABILITY_ID, false)
         endif
     endfunction
 
