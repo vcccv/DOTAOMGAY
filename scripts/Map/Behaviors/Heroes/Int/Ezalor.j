@@ -21,8 +21,9 @@ scope Ezalor
     endfunction
     function IlluminateAbilityOnAdd takes nothing returns nothing
         local unit whichUnit = Event.GetTriggerUnit()
-        call UnitAddPermanentAbility(whichUnit, ILLUMINATE_RELEASE_ABILITY_ID)
-        call UnitDisableAbility(whichUnit, ILLUMINATE_RELEASE_ABILITY_ID, true, true)
+        if UnitAddPermanentAbility(whichUnit, ILLUMINATE_RELEASE_ABILITY_ID) then
+            call UnitDisableAbility(whichUnit, ILLUMINATE_RELEASE_ABILITY_ID, true, true)
+        endif
         set whichUnit = null
     endfunction
     function IlluminateAbilityOnRemove takes nothing returns nothing
@@ -183,7 +184,6 @@ scope Ezalor
             set IlluminateSW(sw).isUpgraded = isUpgraded
             set IlluminateSW(sw).damage = (maxCount-count)* 10
             call IlluminateSW.Launch(sw)
-            call BJDebugMsg("damage" + R2S(IlluminateSW(sw).damage))
 
             call UnitHideAbility(whichUnit, ILLUMINATE_ABILITY_ID, false)
             call UnitDisableAbility(whichUnit, ILLUMINATE_RELEASE_ABILITY_ID, true, true)

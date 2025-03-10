@@ -27618,9 +27618,9 @@ hotkey=R
 art=ReplaceableTextures\CommandButtons\BTNCancel
 buttonpos=0,2
 unbuttonpos=3
-Name=Chakram End
-Tip=收回飞锯[|cffffcc00R|r]
-Ubertip=收回飞锯
+Name=收回双飞之轮
+Tip=收回双飞之轮[|cffffcc00R|r]
+Ubertip=收回双飞之轮
 hotkey=R
 [A2EA]
 art=ReplaceableTextures\CommandButtons\BTNHealingWard

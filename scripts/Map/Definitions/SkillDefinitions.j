@@ -16,6 +16,9 @@ library HeroSkillDefine requires SkillSystem
         // 阵风
         call RegisterSkillInitMethodByIndex(SKILL_INDEX_GUST      , "DrowRangerGustOnInitializer")
 
+        // 锯齿飞轮
+        call RegisterSkillInitMethodByIndex(SKILL_INDEX_CHAKRAM   , "ChakramOnInitializer")
+
         // 601是init
         call SaveStr(ObjectHashTable,'A060', 601, "W_A")
         call SaveStr(ObjectHashTable,'A0LE', 601, "WYA")

@@ -2454,7 +2454,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A03F', 0, "BreatheFireOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A2QI', 0, "ZPV")
 	call SaveStr(ObjectHashTable,'A2TH', 0, "ZQV")
-	call SaveStr(ObjectHashTable,'A2QM', 0, "ZSV")
+	call SaveStr(ObjectHashTable,'A2QM', 0, "BoulderSmashOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A2QT', 0, "SpellEffect__FortuneEnd")
 	call SaveStr(ObjectHashTable,'A2T5', 0, "SpellEffect__FateEdict")
 	call SaveStr(ObjectHashTable,'A2SG', 0, "ZWV")
@@ -2802,10 +2802,10 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A2HN', 0, "D0E")
 	call SaveStr(ObjectHashTable,'A2IT', 0, "D1E")
 	call SaveStr(ObjectHashTable,'A2FK', 0, "D2E")
-	call SaveStr(ObjectHashTable,'A2E3', 0, "D3E")
-	call SaveStr(ObjectHashTable,'A2E5', 0, "D4E")
-	call SaveStr(ObjectHashTable,'A43Q', 0, "D4E")
-	call SaveStr(ObjectHashTable,'A43S', 0, "D4E")
+	call SaveStr(ObjectHashTable,'A2E3', 0, "TimberChainOnSpellEffect")
+	call SaveStr(ObjectHashTable,'A2E5', 0, "ChakramOnSpellEffect")
+	call SaveStr(ObjectHashTable,'A43Q', 0, "ChakramOnSpellEffect")
+	call SaveStr(ObjectHashTable,'A43S', 0, "ChakramOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A11N', 0, "D5E")
 	call SaveStr(ObjectHashTable,'A300', 0, "D6E")
 	call SaveStr(ObjectHashTable,'A301', 0, "D7E")
@@ -17930,17 +17930,17 @@ function CBO takes nothing returns boolean
 	set g = null
 	return false
 endfunction
-function CCO takes nothing returns nothing
+function UnitRemoveBEimAbilityOnExpired takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	call UnitRemoveAbility(LoadUnitHandle(HY, GetHandleId(t), 0),'BEim')
 	call FlushChildHashtable(HY, GetHandleId(t))
 	call DestroyTimer(t)
 	set t = null
 endfunction
-function CDO takes unit u returns nothing
+function UnitRemoveBEimAbility takes unit u returns nothing
 	local timer t = CreateTimer()
 	call SaveUnitHandle(HY, GetHandleId(t), 0, u)
-	call TimerStart(t, 0, false, function CCO)
+	call TimerStart(t, 0, false, function UnitRemoveBEimAbilityOnExpired)
 	set t = null
 endfunction
 function G3E takes nothing returns nothing
@@ -17959,7 +17959,7 @@ function G3E takes nothing returns nothing
 	call SaveUnitHandle(HY, h, 2,(trigUnit))
 	call TriggerRegisterTimerEvent(t, .06, true)
 	call TriggerAddCondition(t, Condition(function CBO))
-	call CDO(trigUnit)
+	call UnitRemoveBEimAbility(trigUnit)
 	set t = null
 	set CNO = null
 	set dummyCaster = null
@@ -18216,7 +18216,7 @@ function C_O takes unit u returns nothing
 	endif
 endfunction
 function G9E takes nothing returns nothing
-	call CDO(GetTriggerUnit())
+	call UnitRemoveBEimAbility(GetTriggerUnit())
 	if GetUnitAbilityLevel(GetTriggerUnit(),'Bpsh')> 0 then
 		call UnitRemoveAbility(GetTriggerUnit(),'Bpsh')
 	endif
@@ -19543,7 +19543,7 @@ function F3O takes integer id returns boolean
 		set AXO = GetUnitState(u, UNIT_STATE_MAX_LIFE)-GetWidgetLife(u)
 		set hp = GetWidgetLife(u)
 		call FZO(u, Item_ArmletOfMordiggianActivated, 1, it)
-		call CDO(u)
+		call UnitRemoveBEimAbility(u)
 		call EPX(u, 4298, .6)
 	elseif id == Item_ArmletOfMordiggianActivated then
 		set AXO = GetUnitState(u, UNIT_STATE_MAX_LIFE)-GetWidgetLife(u)
@@ -19551,7 +19551,7 @@ function F3O takes integer id returns boolean
 		call SaveBoolean(OtherHashTable, GetHandleId(u), 20, false)
 		call SetHeroStr(u, IMaxBJ(GetHeroStr(u, false)-LoadInteger(OtherHashTable, GetHandleId(u),'ARML'), 1), true)
 		call SaveInteger(OtherHashTable, GetHandleId(u),'ARML', 0)
-		call CDO(u)
+		call UnitRemoveBEimAbility(u)
 	endif
 	set u = null
 	set it = null
@@ -37836,169 +37836,7 @@ function QVR takes unit u returns nothing
 	call DeallocateGroup(g)
 	set g = null
 endfunction
-function QER takes nothing returns nothing
-	if IsUnitInGroup(GetEnumUnit(), ZH) == false then
-		call GroupAddUnit(ZH, GetEnumUnit())
-		call UnitDamageTargetEx(QH, GetEnumUnit(), 1, NJ)
-		if VJ == 1 then
-			call QVR(GetEnumUnit())
-		endif
-		if IsUnitType(GetEnumUnit(), UNIT_TYPE_HERO) and(LoadInteger(HY, GetHandleId(GetEnumUnit()), 809) == 1) then
-			set UH = GetEnumUnit()
-		endif
-	endif
-endfunction
-function QXR takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit whichUnit =(LoadUnitHandle(HY, h, 2))
-	local unit targetUnit =(LoadUnitHandle(HY, h, 17))
-	local real dx =(LoadReal(HY, h, 6))
-	local real dy =(LoadReal(HY, h, 7))
-	local real QOR
-	local real PRR =(LoadReal(HY, h, 23))
-	local real PIR =(LoadReal(HY, h, 24))
-	local real M8R
-	local real M9R
-	local boolean b = false
-	local group g =(LoadGroupHandle(HY, h, 187))
-	local group gg
-	local unit QRR =(LoadUnitHandle(HY, h, 810))
-	if QRR != null then
-		set dx = GetUnitX(QRR)
-		set dy = GetUnitY(QRR)
-	endif
-	set QOR = bj_DEGTORAD * AngleBetweenXY(GetUnitX(targetUnit), GetUnitY(targetUnit), dx, dy)
-	set M8R = PRR + 1200* .03 * Cos(QOR)
-	set M9R = PIR + 1200* .03 * Sin(QOR)
-	if GetDistanceBetween(M8R, M9R, dx, dy)<(5 + 1200* .03) then
-		set M8R = dx
-		set M9R = dy
-		set b = true
-	endif
-	set M8R = CoordinateX50(M8R)
-	set M9R = CoordinateY50(M9R)
-	set ZH = g
-	set QH = whichUnit
-	set XJ = GetUnitAbilityLevel(whichUnit,'A2QM')
-	set NJ = 50 * XJ
-	set UH = null
-	if ((LoadInteger(HY,(GetHandleId(targetUnit)), 4306)) == 1) or GetTriggerEventId() == EVENT_WIDGET_DEATH or GetUnitAbilityLevel(targetUnit,'B08V')> 0 or((LoadInteger(HY,(GetHandleId(targetUnit)), 4336)) == 1) or(QRR == null and GetTriggerEvalCount(t)> 200) then
-		set b = true
-	else
-		call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Human\\FlakCannons\\FlakTarget.mdl", M8R, M9R))
-		if GetUnitTypeId(targetUnit)=='o01X' or GetUnitTypeId(targetUnit)=='o020' then
-			set VJ = 1
-			call SetUnitPosition(targetUnit, M8R, M9R)
-			call SetUnitX(targetUnit, CoordinateX50(M8R))
-			call SetUnitY(targetUnit, CoordinateY50(M9R))
-		else
-			set VJ = 0
-			call SetUnitX(targetUnit, CoordinateX50(M8R))
-			call SetUnitY(targetUnit, CoordinateY50(M9R))
-		endif
-		call KillTreeByCircle(M8R, M9R, 150)
-		call SaveReal(HY, h, 23,((M8R)* 1.))
-		call SaveReal(HY, h, 24,((M9R)* 1.))
-		set gg = AllocationGroup(181)
-		set TempUnit = whichUnit
-		call GroupEnumUnitsInRange(gg, M8R, M9R, 225, Condition(function DJX))
-		call GroupRemoveUnit(gg, targetUnit)
-		call ForGroup(gg, function QER)
-		call DeallocateGroup(gg)
-		if UH != null and VJ == 1 then
-			set gg = AllocationGroup(182)
-			set TH = null
-			set OJ = 9999
-			call GroupEnumUnitsInRange(gg, GetUnitX(UH), GetUnitY(UH), 625, Condition(function P8R))
-			call DeallocateGroup(gg)
-			if TH != null then
-				set QRR = TH
-				call SaveUnitHandle(HY, h, 810,(QRR))
-				set b = false
-			endif
-		endif
-		set gg = null
-	endif
-	if b then
-		if GetUnitTypeId(targetUnit)!='o01X' then
-			call SetUnitPathing(targetUnit, true)
-		endif
-		call FlushChildHashtable(HY, h)
-		call DestroyTrigger(t)
-		call DeallocateGroup(g)
-		call SaveInteger(HY,(GetHandleId((targetUnit))),(4335), 2)
-		if GetTriggerEventId() != EVENT_WIDGET_DEATH then
-			if IsPlayerAlly(GetOwningPlayer(whichUnit), GetOwningPlayer(targetUnit)) == false then
-				call UnitDamageTargetEx(QH, targetUnit, 1, NJ)
-			endif
-		endif
-	endif
-	set targetUnit = null
-	set t = null
-	set g = null
-	set whichUnit = null
-	set QRR = null
-	return false
-endfunction
-function QIR takes nothing returns nothing
-	local unit targetUnit = GetSpellTargetUnit()
-	local unit whichUnit = GetTriggerUnit()
-	local trigger t = CreateTrigger()
-	local integer h = GetHandleId(t)
-	local real I3X
-	local real dx
-	local real dy
-	local real x = GetUnitX(whichUnit)
-	local real y = GetUnitY(whichUnit)
-	local integer i =-1
-	local boolean b = false
-	local real QAR = 400 + 100 * GetUnitAbilityLevel(whichUnit, GetSpellAbilityId())
-	local group g
-	if targetUnit == null then
-		set g = AllocationGroup(183)
-		set TempUnit = whichUnit
-		call GroupEnumUnitsInRange(g, x, y, 225, Condition(function PCR))
-		set targetUnit = GetClosestUnitInGroup(g, x, y)
-		call DeallocateGroup(g)
-		set g = null
-		set I3X = AngleBetweenXY(GetUnitX(targetUnit), GetUnitY(targetUnit), GetSpellTargetX(), GetSpellTargetY())
-	else
-		set I3X = AngleBetweenUnit(whichUnit, targetUnit)
-	endif
-	if targetUnit == null then
-		return
-	endif
-	if GetUnitTypeId(targetUnit)=='o01X' then
-		set QAR = 2000
-	endif
-	loop
-	exitwhen b or i == R2I(QAR / 25)
-		set i = i + 1
-		set dx = CoordinateX50(GetUnitX(targetUnit) +(QAR -i * 25)* Cos(I3X * bj_DEGTORAD))
-		set dy = CoordinateY50(GetUnitY(targetUnit) +(QAR -i * 25)* Sin(I3X * bj_DEGTORAD))
-		if (IsPointInRegion(TerrainCliffRegion,((dx)* 1.),((dy)* 1.))) == false then
-			set b = true
-		endif
-	endloop
-	call SetUnitPathing(targetUnit, false)
-	call TriggerRegisterTimerEvent(t, .03, true)
-	call TriggerRegisterDeathEvent(t, targetUnit)
-	call TriggerAddCondition(t, Condition(function QXR))
-	call SaveUnitHandle(HY, h, 2,(whichUnit))
-	call SaveUnitHandle(HY, h, 17,(targetUnit))
-	call SaveReal(HY, h, 6,((dx)* 1.))
-	call SaveReal(HY, h, 7,((dy)* 1.))
-	call SaveReal(HY, h, 23,((GetUnitX(targetUnit))* 1.))
-	call SaveReal(HY, h, 24,((GetUnitY(targetUnit))* 1.))
-	call SaveInteger(HY, h, 34, 0)
-	call SaveGroupHandle(HY, h, 187,(AllocationGroup(184)))
-	call SaveUnitHandle(HY, h, 810,(null))
-	call SaveInteger(HY,(GetHandleId((targetUnit))),(4335), 1)
-	set targetUnit = null
-	set whichUnit = null
-	set t = null
-endfunction
+
 function QNR takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
@@ -38067,11 +37905,6 @@ endfunction
 function QFR takes nothing returns nothing
 	if GetUnitDistanceEx(GetTriggerUnit(), GetSpellTargetUnit())> 200 then
 		call QCR(GetTriggerUnit(), GetSpellTargetUnit())
-	endif
-endfunction
-function ZSV takes nothing returns nothing
-	if IsUnitAlly(GetSpellTargetUnit(), GetOwningPlayer(GetTriggerUnit())) or not UnitHasSpellShield(GetSpellTargetUnit()) then
-		call QIR()
 	endif
 endfunction
 function J_E takes nothing returns nothing
@@ -55097,7 +54930,7 @@ function ISE takes nothing returns nothing
 	call UnitRemoveAbility(u,'A419')
 	call SetUnitAbilityLevel(u,'A1C0', i)
 	set u = null
-	call CDO(GetTriggerUnit())
+	call UnitRemoveBEimAbility(GetTriggerUnit())
 endfunction
 function IQE takes nothing returns nothing
 	local unit u = GetTriggerUnit()
@@ -55111,7 +54944,7 @@ function IQE takes nothing returns nothing
 	call SetUnitAbilityLevel(u,'A1ER', level)
 	call UnitAddPermanentAbility(u,'A419')
 	set u = null
-	call CDO(GetTriggerUnit())
+	call UnitRemoveBEimAbility(GetTriggerUnit())
 endfunction
 function W2I takes nothing returns nothing
 	local unit u = GetEnumUnit()
@@ -68907,155 +68740,6 @@ function D2E takes nothing returns nothing
 	set whichUnit = null
 	set g = null
 endfunction
-function MFA takes unit whichUnit, unit targetUnit returns nothing
-	local integer level = KI
-	call UnitDamageTargetEx(whichUnit, targetUnit, 3, 60 + 40 * level)
-	call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Other\\Stampede\\StampedeMissileDeath.mdl", targetUnit, "origin"))
-endfunction
-function MGA takes nothing returns nothing
-	if IsUnitInGroup(GetEnumUnit(), DK) == false then
-		call GroupAddUnit(DK, GetEnumUnit())
-		call MFA(TempUnit, GetEnumUnit())
-	endif
-endfunction
-function MHA takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit trigUnit = LoadUnitHandle(HY, h, 14)
-	local unit targetUnit = LoadUnitHandle(HY, h, 17)
-	local integer KFR = LoadInteger(HY, h, 18)
-	local integer count = GetTriggerEvalCount(t)
-	local unit KGR
-	local group KHR = LoadGroupHandle(HY, h, 16)
-	local group g
-	local boolean SKX = LoadBoolean(HY, h, 727)
-	local boolean MJA = LoadBoolean(HY, h, 740)
-	set KI = LoadInteger(HY, h, 0)
-	if C5X(trigUnit) then
-		set MJA = true
-		call SaveBoolean(HY, h, 740, MJA)
-	endif
-	if SKX == false then
-		set KGR = LoadUnitHandle(HY, h, 700 + KFR + 1 -count)
-		call RemoveUnit(KGR)
-	else
-		set KGR = LoadUnitHandle(HY, h, 700 + count)
-		if MJA == false then
-			if IsUnitType(trigUnit, UNIT_TYPE_HERO) then
-				call SaveBoolean(OtherHashTable, GetHandleId(trigUnit), 99, true)
-			endif
-			call SetUnitX(trigUnit, GetUnitX(KGR))
-			call SetUnitY(trigUnit, GetUnitY(KGR))
-		endif
-		call RemoveUnit(KGR)
-		set g = AllocationGroup(474)
-		set TempUnit = trigUnit
-		set DK = KHR
-		call GroupEnumUnitsInRange(g, GetUnitX(trigUnit), GetUnitY(trigUnit), 250, Condition(function DMX))
-		call ForGroup(g, function MGA)
-		call DeallocateGroup(g)
-	endif
-	if count ==(KFR) then
-		call KillTreeByCircle(GetUnitX(trigUnit), GetUnitY(trigUnit), 90)
-		call DeallocateGroup(KHR)
-		call FlushChildHashtable(HY, h)
-		call DestroyTrigger(t)
-	endif
-	set t = null
-	set trigUnit = null
-	set targetUnit = null
-	set KGR = null
-	set KHR = null
-	set g = null
-	return false
-endfunction
-function MKA takes nothing returns nothing
-	if IsTreeDestructable(GetEnumDestructable()) and IsDestructableDeadBJ(GetEnumDestructable()) == false then
-		set QYV = QYV + 1
-	endif
-endfunction
-function MLA takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit trigUnit = LoadUnitHandle(HY, h, 14)
-	local real a = LoadReal(HY, h, 13)
-	local integer KLR = LoadInteger(HY, h, 12)
-	local integer count = GetTriggerEvalCount(t)
-	local real x = LoadReal(HY, h, 6) + count * 50 * Cos(a * bj_DEGTORAD)
-	local real y = LoadReal(HY, h, 7) + count * 50 * Sin(a * bj_DEGTORAD)
-	local boolean KMR = LoadBoolean(HY, h, 15)
-	local unit KPR
-	local trigger KQR = LoadTriggerHandle(HY, h, 11)
-	local integer KSR = GetHandleId(KQR)
-	local integer ID ='u01Q'
-	local real KJR = 250
-	local rect r
-	local real d = 90
-	local integer level = LoadInteger(HY, h, 0)
-	set r = Rect(x -d, y -d, x + d, y + d)
-	set QYV = 0
-	call EnumDestructablesInRect(r, null, function MKA)
-	if QYV > 0 or count == KLR or count ==(KLR -1) or count ==(KLR -2) then
-		set ID ='u01P'
-	endif
-	set KPR = CreateUnit(GetOwningPlayer(trigUnit), ID, x, y, a)
-	call SaveUnitHandle(HY, KSR, 700 + count, KPR)
-	if QYV > 0 then
-		call FlushChildHashtable(HY, h)
-		call DestroyTrigger(t)
-		call TriggerRegisterTimerEvent(KQR, .5 / KLR, true)
-		call TriggerAddCondition(KQR, Condition(function MHA))
-		call SaveInteger(HY, KSR, 18, count)
-		call SaveInteger(HY, KSR, 0, level)
-		call SaveBoolean(HY, KSR, 727, true)
-		call SaveUnitHandle(HY, KSR, 14, trigUnit)
-		call SaveGroupHandle(HY, KSR, 16, AllocationGroup(475))
-		call SaveReal(HY, KSR, 6, x * 1.)
-		call SaveReal(HY, KSR, 7, y * 1.)
-		call SaveBoolean(HY, KSR, 740, false)
-	elseif count > KLR then
-		call FlushChildHashtable(HY, h)
-		call DestroyTrigger(t)
-		call TriggerRegisterTimerEvent(KQR, .5 / KLR, true)
-		call TriggerAddCondition(KQR, Condition(function MHA))
-		call SaveInteger(HY, KSR, 18, count)
-		call SaveInteger(HY, KSR, 0, level)
-		call SaveBoolean(HY, KSR, 727, false)
-		call SaveUnitHandle(HY, KSR, 14, trigUnit)
-		call SaveGroupHandle(HY, KSR, 16, AllocationGroup(476))
-		call SaveBoolean(HY, KSR, 740, false)
-	endif
-	set t = null
-	set trigUnit = null
-	set KPR = null
-	set KQR = null
-	return false
-endfunction
-function D3E takes nothing returns nothing
-	local trigger t = CreateTrigger()
-	local integer h = GetHandleId(t)
-	local unit trigUnit = GetTriggerUnit()
-	local real a = AngleBetweenXY(GetUnitX(trigUnit), GetUnitY(trigUnit), GetSpellTargetX(), GetSpellTargetY())
-	local integer level = GetUnitAbilityLevel(trigUnit,'A2E3')
-	local integer KTR
-	local integer KLR
-	local trigger KUR = CreateTrigger()
-	set KTR = 600 + 200* level
-	set KLR = KTR / 50
-	call SaveUnitHandle(HY, h, 14,(trigUnit))
-	call SaveInteger(HY, h, 5,(level))
-	call SaveReal(HY, h, 13,((a)* 1.))
-	call SaveInteger(HY, h, 12,(KLR))
-	call SaveTriggerHandle(HY, h, 11,(KUR))
-	call SaveReal(HY, h, 6,((GetUnitX(trigUnit))* 1.))
-	call SaveReal(HY, h, 7,((GetUnitY(trigUnit))* 1.))
-	call TriggerRegisterTimerEvent(t, .5 / KLR, true)
-	call TriggerAddCondition(t, Condition(function MLA))
-	call SaveInteger(HY, h, 0, GetUnitAbilityLevel(trigUnit, GetSpellAbilityId()))
-	set t = null
-	set trigUnit = null
-	set KUR = null
-endfunction
 function MMA takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
@@ -69097,19 +68781,6 @@ function MSA takes unit R8X, unit targetUnit returns nothing
 		call MPA(targetUnit)
 	endif
 endfunction
-function MTA takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit whichUnit =(LoadUnitHandle(HY, h, 2))
-	call UnitRemoveAbility(whichUnit,'Bpig')
-	call UnitRemoveAbility(whichUnit,'BEia')
-	call UnitRemoveAbility(whichUnit,'BNms')
-	call FlushChildHashtable(HY, h)
-	call DestroyTrigger(t)
-	set t = null
-	set whichUnit = null
-	return false
-endfunction
 function MUA takes unit t returns unit
 	if HaveSavedHandle(OtherHashTable2,'A3GA', 0) and GetUnitState(LoadUnitHandle(OtherHashTable2,'A3GA', 0), UNIT_STATE_LIFE)> .5 then
 		call SetUnitX(LoadUnitHandle(OtherHashTable2,'A3GA', 0), GetUnitX(t))
@@ -69128,230 +68799,6 @@ function MWA takes unit whichUnit, unit targetUnit returns nothing
 	call IssueTargetOrderById(dummyCaster, 852075, targetUnit)
 	call UnitRemoveAbility(dummyCaster,'A3GA'-1 + level)
 	set dummyCaster = null
-endfunction
-function MZA takes nothing returns nothing
-	if IsGameEnd == false then
-		call UnitDamageTargetEx(Q_V, GetEnumUnit(), 3,(25 + 25 * Q0V)* .5)
-		call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Other\\Stampede\\StampedeMissileDeath.mdl", GetEnumUnit(), "origin"))
-		call MWA(Q_V, GetEnumUnit())
-	endif
-endfunction
-function M_A takes nothing returns nothing
-	if IsUnitInGroup(GetEnumUnit(), QZV) == false then
-		call GroupAddUnit(QZV, GetEnumUnit())
-		call UnitDamageTargetEx(Q_V, GetEnumUnit(), 3, 60 + 40 * Q0V)
-		call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Other\\Stampede\\StampedeMissileDeath.mdl", GetEnumUnit(), "origin"))
-		call MWA(Q_V, GetEnumUnit())
-	endif
-endfunction
-function M0A takes nothing returns nothing
-	local timer t = GetExpiredTimer()
-	local integer h = GetHandleId(t)
-	call UnitRemoveAbility(LoadUnitHandle(HY, h, 0),'A43P')
-	call FlushChildHashtable(HY, h)
-	call PauseTimer(t)
-	call DestroyTimer(t)
-	set t = null
-endfunction
-function M1A takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit whichUnit = LoadUnitHandle(HY, h, 2)
-	local unit missileDummy = LoadUnitHandle(HY, h, 45)
-	local real tx = LoadReal(HY, h, 6)
-	local real ty = LoadReal(HY, h, 7)
-	local real x
-	local real y
-	local real a
-	local integer M2A = LoadInteger(HY, h, 33)
-	local group D7R = LoadGroupHandle(HY, h, 187)
-	local group g
-	local integer count = LoadInteger(HY, h, 34)
-	local real M3A
-	local integer FJI = LoadInteger(HY, h, 2)
-	local integer M4A = LoadInteger(HY, h, 3)
-	local integer M5A = LoadInteger(HY, h, 4)
-	local boolean b = false
-	if LoadInteger(HY, GetHandleId(whichUnit), 704) == -1 then//同等脉冲新星,进行二次判断
-		if not PlayerHaveAbilityByActive(GetOwningPlayer(whichUnit), 'A2E5') then
-			set b = true
-		endif
-	endif
-	call UnitAddPermanentAbility(whichUnit, M4A)
-	if GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT then //释放技能结束
-		if GetSpellAbilityId() == M5A then
-			call SaveInteger(HY, h, 33, 2)
-			call GroupClear(D7R) //
-			call SetPlayerAbilityAvailableEx(GetOwningPlayer(whichUnit), M5A, false)
-			set t = CreateTrigger()
-			set h = GetHandleId(t)
-			call TriggerRegisterTimerEvent(t, 0, false)
-			call TriggerAddCondition(t, Condition(function MTA))
-			call SaveUnitHandle(HY, h, 2,(whichUnit))
-			call TEV(whichUnit, M5A, 0)
-		endif
-	//单位死亡或拉比克大窃取的技能换了
-	elseif GetTriggerEventId() == EVENT_WIDGET_DEATH or b then
-		call TEV(whichUnit, M5A, 0)
-		set b = Rubick_AbilityFilter(whichUnit , 'A2E5')
-		if b or (LoadInteger(HY, GetHandleId(whichUnit), 704)) == FJI then
-			if FJI =='A43Q' then
-				if LoadBoolean(ObjectHashTable, GetHandleId(TempUnit),'A43Q') then
-					call SetPlayerAbilityAvailableEx(GetOwningPlayer(whichUnit), FJI, true)
-				endif
-			else
-				call SetPlayerAbilityAvailableEx(GetOwningPlayer(whichUnit), FJI, true)
-			endif
-		endif
-		call SetPlayerAbilityAvailableEx(GetOwningPlayer(whichUnit), M5A, false)
-		if b and FJI !='A43Q' then
-			call SetPlayerAbilityAvailableEx(GetOwningPlayer(whichUnit),'A2E5', true)
-			call SetPlayerAbilityAvailableEx(GetOwningPlayer(whichUnit),'A43S', true)
-		endif
-		call CDO(whichUnit)
-		call UnitRemoveAbility(whichUnit,'BNms')
-		call KillUnit(missileDummy)
-		call DeallocateGroup(D7R)
-		call FlushChildHashtable(HY, h)
-		call DestroyTrigger(t)
-	elseif M2A == 0 then //前进
-		set a = AngleBetweenXY(GetUnitX(missileDummy), GetUnitY(missileDummy), tx, ty)* bj_DEGTORAD
-		set x = GetUnitX(missileDummy) + 18 * Cos(a)
-		set y = GetUnitY(missileDummy) + 18 * Sin(a)
-		call KillTreeByCircle(x, y, 175)
-		if GetDistanceBetween(x, y, tx, ty)< 40 then
-			set x = tx
-			set y = ty
-		endif
-		call SetUnitX(missileDummy, x)
-		call SetUnitY(missileDummy, y)
-		set TempUnit = whichUnit
-		set Q_V = whichUnit
-		set Q0V = LoadInteger(HY, h, 0)
-		set QZV = D7R
-		set g = AllocationGroup(477)
-		call GroupEnumUnitsInRange(g, x, y, 200+ 25, Condition(function DHX))
-		call ForGroup(g, function M_A)
-		call DeallocateGroup(g)
-		if x == tx and y == ty then
-			call SaveInteger(HY, h, 33, 1)
-			call GroupClear(D7R)
-		endif
-	elseif M2A == 1 then //停留
-		set count = count + 1
-		if count == 25 then
-			set x = GetUnitX(missileDummy)
-			set y = GetUnitY(missileDummy)
-			call KillTreeByCircle(x, y, 175)
-			set count = 0
-			set TempUnit = whichUnit
-			set Q_V = whichUnit
-			set Q0V = LoadInteger(HY, h, 0)
-			set g = AllocationGroup(478)
-			call GroupEnumUnitsInRange(g, x, y, 200+ 25, Condition(function DHX))
-			call ForGroup(g, function MZA)
-			call DeallocateGroup(g)
-			set M3A =( 15+ 5 * Q0V)/ 2
-			if GetUnitState(whichUnit, UNIT_STATE_MANA)< M3A or GetUnitDistanceEx(whichUnit, missileDummy)> 2000 then
-				call SaveInteger(HY, h, 33, 2)
-				call GroupClear(D7R)
-				call UnitRemoveAbility(whichUnit, M5A)
-				call CDO(whichUnit)
-				call UnitRemoveAbility(whichUnit,'BNms')
-			else
-				call SetUnitState(whichUnit, UNIT_STATE_MANA, GetUnitState(whichUnit, UNIT_STATE_MANA)-M3A)
-			endif
-		endif
-		call SaveInteger(HY, h, 34,(count))
-	elseif M2A == 2 then //收回
-		set a = AngleBetweenXY(GetUnitX(missileDummy), GetUnitY(missileDummy), GetUnitX(whichUnit), GetUnitY(whichUnit))* bj_DEGTORAD
-		set x = GetUnitX(missileDummy) + 16 * Cos(a)
-		set y = GetUnitY(missileDummy) + 16 * Sin(a)
-		call KillTreeByCircle(x, y, 175)
-		call SetUnitX(missileDummy, x)
-		call SetUnitY(missileDummy, y)
-		set TempUnit = whichUnit
-		set Q_V = whichUnit
-		set Q0V = LoadInteger(HY, h, 0)
-		set QZV = D7R
-		set g = AllocationGroup(479)
-		call GroupEnumUnitsInRange(g, x, y, 200+ 25, Condition(function DHX))
-		call ForGroup(g, function M_A)
-		call DeallocateGroup(g)
-		if GetDistanceBetween(x, y, GetUnitX(whichUnit), GetUnitY(whichUnit))< 40 then
-			call UnitRemoveAbility(whichUnit, M4A)
-			call KillUnit(missileDummy)
-			call DeallocateGroup(D7R)
-			call FlushChildHashtable(HY, h)
-			call DestroyTrigger(t)
-			if Rubick_AbilityFilter(whichUnit , 'A2E5') or(LoadInteger(HY,(GetHandleId(whichUnit)), 704)) == FJI then
-				if FJI =='A43Q' then
-					//这里判断一下是否选了此技能 没选并且是偷的就可以重新显示
-					if LoadBoolean(ObjectHashTable, GetHandleId(TempUnit),'A43Q') or ( not PlayerHaveAbilityByActive(GetOwningPlayer(whichUnit), 'A2E5') and LoadInteger(HY, GetHandleId(whichUnit), 704) == 'A43Q' ) then
-						call SetPlayerAbilityAvailableEx(GetOwningPlayer(whichUnit), FJI, true)
-					endif
-				else
-					call SetPlayerAbilityAvailableEx(GetOwningPlayer(whichUnit), FJI, true)
-				endif
-			endif
-			call SetPlayerAbilityAvailableEx(GetOwningPlayer(whichUnit), M5A, false)
-			if FJI !='A43Q' then
-				call SetPlayerAbilityAvailableEx(GetOwningPlayer(whichUnit),'A2E5', true)
-				call SetPlayerAbilityAvailableEx(GetOwningPlayer(whichUnit),'A43S', true)
-			endif
-			call UnitRemoveAbility(whichUnit, M5A)
-		endif
-	endif
-	set t = null
-	set whichUnit = null
-	set missileDummy = null
-	set D7R = null
-	set g = null
-	return false
-endfunction
-function D4E takes nothing returns nothing
-	local unit whichUnit = GetTriggerUnit()
-	local real x = GetSpellTargetX()
-	local real y = GetSpellTargetY()
-	local real a = AngleBetweenXY(GetUnitX(whichUnit), GetUnitY(whichUnit), x, y)* bj_DEGTORAD
-	local unit missileDummy = CreateUnit(GetOwningPlayer(whichUnit),'h0DS', GetUnitX(whichUnit), GetUnitY(whichUnit), a * bj_RADTODEG)
-	local trigger t = CreateTrigger()
-	local integer h = GetHandleId(t)
-	local integer M4A
-	local integer M5A
-	local integer FJI = GetSpellAbilityId()
-	call TriggerRegisterTimerEvent(t, .02, true)
-	call TriggerRegisterDeathEvent(t, whichUnit)
-	call TriggerRegisterUnitEvent(t, whichUnit, EVENT_UNIT_SPELL_EFFECT)
-	call TriggerAddCondition(t, Condition(function M1A))
-	call SaveUnitHandle(HY, h, 45, missileDummy)
-	call SaveUnitHandle(HY, h, 2, whichUnit)
-	call SaveReal(HY, h, 6, x * 1.)
-	call SaveReal(HY, h, 7, y * 1.)
-	call SaveInteger(HY, h, 33, 0)
-	call SaveInteger(HY, h, 0, GetUnitAbilityLevel(whichUnit, FJI))
-	call SaveGroupHandle(HY, h, 187, AllocationGroup(480))
-	call SaveInteger(HY, h, 2, FJI)
-	if FJI =='A2E5' or FJI =='A43S' then
-		set M4A ='A43N'
-		set M5A ='A2FX'
-	else
-		set M4A ='A43O'
-		set M5A ='A43P'
-	endif
-	call UnitAddPermanentAbility(whichUnit, M4A)
-	call UnitAddPermanentAbility(whichUnit, M5A)
-	call SetPlayerAbilityAvailableEx(GetOwningPlayer(whichUnit), FJI, false)
-	if FJI !='A43Q' then
-		call SetPlayerAbilityAvailableEx(GetOwningPlayer(whichUnit),'A2E5', false)
-		call SetPlayerAbilityAvailableEx(GetOwningPlayer(whichUnit),'A43S', false)
-	endif
-	call SetPlayerAbilityAvailableEx(GetOwningPlayer(whichUnit), M5A, true)
-	call SaveInteger(HY, h, 3, M4A)
-	call SaveInteger(HY, h, 4, M5A)
-	set whichUnit = null
-	set t = null
-	set missileDummy = null
 endfunction
 function PBE takes nothing returns nothing
 	if GetUnitAbilityLevel(GetTriggerUnit(),'A43Q')> 0 then
@@ -76462,7 +75909,7 @@ function jys_trigger takes nothing returns nothing
 		set team = 1
 	endif
 	set xp = jys_calc(team)
-	call CDO(u)
+	call UnitRemoveBEimAbility(u)
 	if IsUnitType(u, UNIT_TYPE_HERO) and not IsHeroDummy(u) then
 		call AddHeroXPSimple(u, xp, true)
 	endif
