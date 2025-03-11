@@ -1,6 +1,56 @@
 
 library Base requires TriggerDestroyQueue, GroupAlloc, ErrorMessage, TimerUtils
     
+    function B2S takes boolean b returns string
+        if b then
+            return "true"
+        endif
+        return "false"
+    endfunction
+    
+    function PreloadQueueExpireAction takes nothing returns nothing
+        local timer t = GetExpiredTimer()
+        local integer h = GetHandleId(t)
+        local integer id
+        local integer i = LoadInteger(HY, h,-1)
+        local integer max = LoadInteger(HY, h, 0)
+        if i < max then
+            set id = LoadInteger(HY, h, i + 1)
+            call UnitAddAbility(PreloadeHero, id)
+            call UnitRemoveAbility(PreloadeHero, id)
+            call RemoveSavedInteger(HY, h, i + 1)
+            call SaveInteger(HY, h,-1, i + 1)
+        else
+            call PauseTimer(t)
+            call SaveBoolean(HY, GetHandleId(PreloadeHero), 0, false)
+            call SaveInteger(HY, h, 0, 0)
+            call SaveInteger(HY, h,-1, 0)
+        endif
+        set t = null
+    endfunction
+    // 将技能加入预读队列 是有间隔的预读 而不是一下全读了 不然可能导致卡顿
+    function AddAbilityIDToPreloadQueue takes integer id returns nothing
+        local integer hu = GetHandleId(PreloadeHero)
+        local timer t = LoadTimerHandle(HY, hu, 0)
+        local integer h = GetHandleId(t)
+        local integer i
+        if LoadBoolean(HY, hu, 0) then
+            set i = LoadInteger(HY, h, 0) + 1
+        else
+            call TimerStart(t, .1, true, function PreloadQueueExpireAction)
+            call SaveBoolean(HY, hu, 0, true)
+            set i = 1
+        endif
+        call SaveInteger(HY, h, i, id)
+        call SaveInteger(HY, h, 0, i)
+        set t = null
+    endfunction
+    // 直接预读技能
+    function PreloadAbility takes integer id returns nothing
+        call UnitAddAbility(PreloadeHero, id)
+        call UnitRemoveAbility(PreloadeHero, id)
+    endfunction
+
     function SendErrorMessage takes string str returns nothing
         call MHUI_SendErrorMessage(str, 10., 0xFFFFCC00)
         call MHUI_PlayErrorSound()

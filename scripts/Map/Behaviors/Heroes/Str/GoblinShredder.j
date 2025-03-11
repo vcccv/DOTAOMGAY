@@ -180,14 +180,10 @@ scope GoblinShredder
     endglobals
     function ChakramOnGetScepterUpgrade takes nothing returns nothing
         local unit whichUnit = Event.GetTriggerUnit()
-        if UnitAddPermanentAbility(whichUnit, SECOND_CHAKRAM_ABILITY_ID) then
-            // 得到双飞之轮时，给予“双飞之轮-结束”技能并隐藏
-            if UnitAddPermanentAbility(whichUnit, SECOND_CHAKRAM_RETURN_ABILITY_ID) then
-                call UnitDisableAbility(whichUnit, SECOND_CHAKRAM_RETURN_ABILITY_ID, true)
-            endif
-        else
+        if not UnitAddPermanentAbility(whichUnit, SECOND_CHAKRAM_ABILITY_ID) then
             call UnitEnableAbility(whichUnit, SECOND_CHAKRAM_ABILITY_ID, true)
         endif
+        call SetUnitAbilityLevel(whichUnit, SECOND_CHAKRAM_ABILITY_ID, GetUnitAbilityLevel(whichUnit, CHAKRAM_ABILITY_ID))
         set whichUnit = null
     endfunction
     function ChakramOnLostScepterUpgrade takes nothing returns nothing
@@ -195,22 +191,10 @@ scope GoblinShredder
         call UnitDisableAbility(whichUnit, SECOND_CHAKRAM_ABILITY_ID, true)
         set whichUnit = null
     endfunction
-    // 得到锯齿飞轮时，给予“锯齿飞轮-结束”技能并隐藏
+
     function ChakramOnInitializer takes nothing returns nothing
-        call ResgiterAbilityMethodSimple(CHAKRAM_ABILITY_ID         , "ChakramAbilityOnAdd", "ChakramAbilityOnRemove")
-        call ResgiterAbilityMethodSimple(CHAKRAM_UPGRADED_ABILITY_ID, "ChakramAbilityOnAdd", "ChakramAbilityOnRemove")
-    endfunction
-    function ChakramAbilityOnAdd takes nothing returns nothing
-        local unit whichUnit = Event.GetTriggerUnit()
-        if UnitAddPermanentAbility(whichUnit, CHAKRAM_RETURN_ABILITY_ID) then
-            call UnitDisableAbility(whichUnit, CHAKRAM_RETURN_ABILITY_ID, true)
-        endif
-        set whichUnit = null
-    endfunction
-    function ChakramAbilityOnRemove takes nothing returns nothing
-        local unit whichUnit = Event.GetTriggerUnit()
-        call UnitRemoveAbility(whichUnit, CHAKRAM_RETURN_ABILITY_ID)
-        set whichUnit = null
+        //call ResgiterAbilityMethodSimple(CHAKRAM_ABILITY_ID         , "ChakramAbilityOnAdd", "ChakramAbilityOnRemove")
+        //call ResgiterAbilityMethodSimple(CHAKRAM_UPGRADED_ABILITY_ID, "ChakramAbilityOnAdd", "ChakramAbilityOnRemove")
     endfunction
 
     function MZA takes nothing returns nothing
@@ -267,10 +251,6 @@ scope GoblinShredder
                 call SaveInteger(HY, h, 33, 2)
                 call GroupClear(enumGroup)
 
-                // 隐藏收回技能，显示正常技能
-                call UnitShowAbility(whichUnit, abilId)
-                call UnitDisableAbility(whichUnit, endcastAbilityId, true)
-
                 call UnitRemoveBEimAbility(whichUnit)
             endif
         // 单位死亡
@@ -279,12 +259,12 @@ scope GoblinShredder
 
             // 不处于返回状态时死亡才会进行
             if chakramState != 2 then
-                // 隐藏收回技能，显示正常技能
-                call UnitShowAbility(whichUnit, abilId)
-                call UnitDisableAbility(whichUnit, endcastAbilityId, true)
+                // 隐藏切换技能，变回正常情况
+                call ToggleSkill.SetState(whichUnit, abilId, false)
             endif
             // 技能结束，启用正常技能
-            call UnitEnableAbility(whichUnit, abilId, false)
+                     
+            call UnitEnableAbility(whichUnit, ToggleSkill.GetUnitVaildDefaultId(whichUnit, abilId), false)
             call UnitDecDisableAttackCount(whichUnit)
             
             call UnitRemoveBEimAbility(whichUnit)
@@ -338,9 +318,8 @@ scope GoblinShredder
                     call SaveInteger(HY, h, 33, 2)
                     call GroupClear(enumGroup)
 
-                    // 隐藏收回技能，显示正常技能
-                    call UnitShowAbility(whichUnit, abilId)
-                    call UnitDisableAbility(whichUnit, endcastAbilityId, true)
+                    // 隐藏切换技能，变回正常情况
+                    call ToggleSkill.SetState(whichUnit, abilId, false)
 
                     call UnitRemoveBEimAbility(whichUnit)
                     call UnitRemoveAbility(whichUnit,'BNms')
@@ -372,7 +351,7 @@ scope GoblinShredder
                 
                 // 返回成功
                 // 技能结束，启用正常技能
-                call UnitEnableAbility(whichUnit, abilId, false)
+                call UnitEnableAbility(whichUnit, ToggleSkill.GetUnitVaildDefaultId(whichUnit, abilId), false)
                 call UnitDecDisableAttackCount(whichUnit)
 
             endif
@@ -412,9 +391,8 @@ scope GoblinShredder
             set endcastAbilityId = SECOND_CHAKRAM_RETURN_ABILITY_ID
         endif
         call UnitIncDisableAttackCount(whichUnit)
+        call UnitDisableAbility(whichUnit, abilId, false)
 
-        call UnitDisableAbility(whichUnit, abilId, true)
-        call UnitEnableAbility(whichUnit, endcastAbilityId, true)
         call SaveInteger(HY, h, 4, endcastAbilityId)
 
         set whichUnit = null
@@ -422,4 +400,10 @@ scope GoblinShredder
         set missileDummy = null
     endfunction
     
+    function ChakramOnLearn takes nothing returns nothing
+        if GetUnitAbilityLevel(GetTriggerUnit(),'A43Q')> 0 then
+            call SetUnitAbilityLevel(GetTriggerUnit(),'A43Q', GetUnitAbilityLevel(GetTriggerUnit(),'A2E5') + GetUnitAbilityLevel(GetTriggerUnit(),'A43S'))
+        endif
+    endfunction
+
 endscope

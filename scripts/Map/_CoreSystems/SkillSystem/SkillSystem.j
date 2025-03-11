@@ -261,7 +261,7 @@ library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
             endif
         endif
     endfunction
-    // Id StackLim暂时无用 普通技能 神杖技能 工程升级技能 
+    // Id StackLim暂时无用 普通技能 神杖/被动技能 工程升级技能 
     function RegisterHeroSkill takes integer id, string StackLim, integer commonSkill, integer upgradeSkill, integer changeSkill returns nothing
         if commonSkill > 0 then
             set HeroSkill_Icon[id] = GetAbilityIconById(commonSkill)//GetAbilitySoundById(commonSkill, SOUND_TYPE_EFFECT_LOOPED)
@@ -280,6 +280,136 @@ library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
         //endif
         set MaxHeroSkillsNumber = id
     endfunction
+
+    //***************************************************************************
+    //*
+    //*  切换形技能
+    //*
+    //***************************************************************************
+    private keyword ToggleSkillInit
+
+    struct ToggleSkill extends array
+
+        static integer COUNT = 0
+        private static key TOGGLE_SKILL_INDEX
+
+        // 常态
+        integer baseId
+        integer upgradeId
+        // 切换时
+        integer alternateId
+        boolean isAutoToggle
+        static method Register takes integer baseId, integer activeId, boolean isAutoToggle returns nothing
+            local integer skillIndex
+            local thistype this = thistype.COUNT + 1
+            set thistype.COUNT = this
+            set Table[TOGGLE_SKILL_INDEX].integer[baseId] = this
+            set Table[TOGGLE_SKILL_INDEX].integer[activeId] = this
+            call PreloadAbility(baseId)
+            call PreloadAbility(activeId)
+            set this.baseId = baseId
+            set skillIndex = GetSkillIndexByBaseId(baseId)
+            set this.upgradeId = HeroSkill_SpecialId[skillIndex]
+            if this.upgradeId != 0 then
+                set Table[TOGGLE_SKILL_INDEX].integer[this.upgradeId] = this
+            endif
+
+            set this.alternateId  = activeId
+            set this.isAutoToggle = isAutoToggle
+        endmethod
+        static method GetIndexById takes integer abilId returns thistype
+            return Table[TOGGLE_SKILL_INDEX].integer[abilId]
+        endmethod
+        method IsAlternateId takes integer abilId returns boolean
+            return abilId == this.alternateId
+        endmethod
+        method IsDefaultId takes integer abilId returns boolean
+            return abilId == this.baseId or abilId == this.upgradeId
+        endmethod
+        // 获取指定单位的技能可用默认id，因为可能被神杖升级改变
+        static method GetUnitVaildDefaultId takes unit whichUnit, integer skillId returns integer
+            local thistype this = GetIndexById(skillId)
+            call ThrowError(this == 0, "SkillSystem", "GetUnitVaildDefaultId", GetObjectName(skillId), 0, "不是ToggleSkill")
+            if GetUnitAbilityLevel(whichUnit, this.baseId) > 0 then
+                return this.baseId
+            elseif GetUnitAbilityLevel(whichUnit, this.upgradeId) > 0 then
+                return this.upgradeId
+            endif
+            return 0
+        endmethod
+ 
+        // true 启用切换 false禁用切换
+        static method SetState takes unit whichUnit, integer skillId, boolean state returns nothing
+            local thistype this = GetIndexById(skillId)
+            if this == 0 then
+                return
+            endif
+            if state then
+                call UnitDisableAbilitySafe(whichUnit, GetUnitVaildDefaultId(whichUnit, this.baseId), true)
+                call UnitEnableAbility(whichUnit, this.alternateId, true)
+            else
+                call UnitEnableAbility(whichUnit, GetUnitVaildDefaultId(whichUnit, this.baseId), true)
+                call UnitDisableAbilitySafe(whichUnit, this.alternateId, true)
+            endif
+        endmethod
+
+        static method AbilityOnAdd takes nothing returns boolean
+            local unit     whichUnit = MHEvent_GetUnit()
+            local integer  id        = MHEvent_GetAbility()
+            local thistype this      = GetIndexById(id)
+            if this != 0 and this.IsDefaultId(id) and UnitAddPermanentAbility(whichUnit, this.alternateId) then
+                call UnitDisableAbility(whichUnit, this.alternateId, true)
+            endif
+            set whichUnit = null
+            return false
+        endmethod
+        static method AbilityOnRemove takes nothing returns boolean
+            local unit     whichUnit = MHEvent_GetUnit()
+            local integer  id        = MHEvent_GetAbility()
+            local thistype this      = GetIndexById(id)
+            if this != 0 and this.IsDefaultId(id) then
+                call UnitRemoveAbility(whichUnit, this.alternateId)
+            endif
+            set whichUnit = null
+            return false
+        endmethod
+        
+        static method AbilityOnSpellEffect takes nothing returns boolean
+            local unit     whichUnit = GetTriggerUnit()
+            local integer  id        = GetSpellAbilityId()
+            local thistype this      = GetIndexById(id)
+            if this != 0 and this.isAutoToggle then
+                if this.IsDefaultId(id) then
+                    call UnitDisableAbilitySafe(whichUnit, GetUnitVaildDefaultId(whichUnit, this.baseId), true)
+                    call UnitEnableAbility(whichUnit, this.alternateId, true)
+                elseif this.IsAlternateId(id) then
+                    call UnitEnableAbility(whichUnit, GetUnitVaildDefaultId(whichUnit, this.baseId), true)
+                    call UnitDisableAbilitySafe(whichUnit, this.alternateId, true)
+                endif
+            endif
+            set whichUnit = null
+            return false
+        endmethod
+
+        implement ToggleSkillInit
+    endstruct
+
+    private module ToggleSkillInit
+        private static method onInit takes nothing returns nothing
+            local trigger trig
+            set trig = CreateTrigger()
+            call TriggerAddCondition(trig, Condition(function thistype.AbilityOnAdd))
+            call MHAbilityAddEvent_Register(trig)
+
+            set trig = CreateTrigger()
+            call TriggerAddCondition(trig, Condition(function thistype.AbilityOnRemove))
+            call MHAbilityRemoveEvent_Register(trig)
+
+            set trig = CreateTrigger()
+            call TriggerAddCondition(trig, Condition(function thistype.AbilityOnSpellEffect))
+            call TriggerRegisterAnyUnitEvent(trig, EVENT_PLAYER_UNIT_SPELL_EFFECT)
+        endmethod
+    endmodule
 
     //***************************************************************************
     //*

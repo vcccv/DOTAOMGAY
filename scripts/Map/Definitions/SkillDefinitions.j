@@ -17,7 +17,7 @@ library HeroSkillDefine requires SkillSystem
         call RegisterSkillInitMethodByIndex(SKILL_INDEX_GUST      , "DrowRangerGustOnInitializer")
 
         // 锯齿飞轮
-        call RegisterSkillInitMethodByIndex(SKILL_INDEX_CHAKRAM   , "ChakramOnInitializer")
+        //call RegisterSkillInitMethodByIndex(SKILL_INDEX_CHAKRAM   , "ChakramOnInitializer")
 
         // 强力击
         call RegisterSkillInitMethodByIndex(SKILL_INDEX_POWER_SHOT, "PowerShotOnInitializer")
@@ -29,82 +29,82 @@ library HeroSkillDefine requires SkillSystem
         call RegisterSkillInitMethodByIndex(SKILL_INDEX_ILLUSORY_ORB, "IllusoryOryOnInitializer")
 
         // 601是init
-        call SaveStr(ObjectHashTable,'A060', 601, "W_A")
-        call SaveStr(ObjectHashTable,'A0LE', 601, "WYA")
-        call SaveStr(ObjectHashTable,'A0O3', 601, "WUA")	//地精的贪婪
-        call SaveStr(ObjectHashTable,'A1W8', 601, "WSA")
-        call SaveStr(ObjectHashTable,'A0BH', 601, "WQA")
-        call SaveStr(ObjectHashTable,'A0A5', 601, "SummonSpiritBearOnInitializer")
-        call SaveStr(ObjectHashTable,'A0RP', 601, "WKA")
-        call SaveStr(ObjectHashTable,'A0QV', 601, "WHA")
-        call SaveStr(ObjectHashTable,'A0AK', 601, "WFA")
-        call SaveStr(ObjectHashTable,'P003', 601, "WCA")
-        call SaveStr(ObjectHashTable,'A0LZ', 601, "WIA")
-        call SaveStr(ObjectHashTable,'A2QM', 601, "WNA")
-        call SaveStr(ObjectHashTable,'A2TJ', 601, "WNA")
-        call SaveStr(ObjectHashTable,'A2QI', 601, "WNA")
-        call SaveStr(ObjectHashTable,'A2TI', 601, "WNA")
-        call SaveStr(ObjectHashTable,'A0BR', 601, "W1A")
-        call SaveStr(ObjectHashTable,'Z318', 601, "W1A")
+        call SaveStr(ObjectHashTable, 'A060', 601, "W_A")
+        call SaveStr(ObjectHashTable, 'A0LE', 601, "WYA")
+        call SaveStr(ObjectHashTable, 'A0O3', 601, "WUA")	//地精的贪婪
+        call SaveStr(ObjectHashTable, 'A1W8', 601, "WSA")
+        call SaveStr(ObjectHashTable, 'A0BH', 601, "WQA")
+        call SaveStr(ObjectHashTable, 'A0A5', 601, "SummonSpiritBearOnInitializer")
+        call SaveStr(ObjectHashTable, 'A0RP', 601, "WKA")
+        call SaveStr(ObjectHashTable, 'A0QV', 601, "WHA")
+        call SaveStr(ObjectHashTable, 'A0AK', 601, "WFA")
+        call SaveStr(ObjectHashTable, 'P003', 601, "WCA")
+        call SaveStr(ObjectHashTable, 'A0LZ', 601, "WIA")
+        call SaveStr(ObjectHashTable, 'A2QM', 601, "WNA")
+        call SaveStr(ObjectHashTable, 'A2TJ', 601, "WNA")
+        call SaveStr(ObjectHashTable, 'A2QI', 601, "WNA")
+        call SaveStr(ObjectHashTable, 'A2TI', 601, "WNA")
+        call SaveStr(ObjectHashTable, 'A0BR', 601, "W1A")
+        call SaveStr(ObjectHashTable, 'Z318', 601, "W1A")
         // 600?也是Init
         // 被动技能初始化？
-        call SaveStr(ObjectHashTable,'A022', 600, "F_R")
-        call SaveStr(ObjectHashTable,'A088', 600, "InitMultiCast")
-        call SaveStr(ObjectHashTable,'A0DJ', 600, "EON")
-        call SaveStr(ObjectHashTable,'A0FV', 600, "ERN")
-        call SaveStr(ObjectHashTable,'A33Q', 600, "EAN")
-        call SaveStr(ObjectHashTable,'A02C', 600, "WitchcraftOnLearn")
-        call SaveStr(ObjectHashTable,'A0N5', 600, "EBN")
-        call SaveStr(ObjectHashTable,'A1A3', 600, "Z8A")
-        call SaveStr(ObjectHashTable,'A04E', 600, "Z9A")
-        call SaveStr(ObjectHashTable,'A0RO', 600, "VVN")
-        call SaveStr(ObjectHashTable,'A0C6', 600, "VEN")
-        call SaveStr(ObjectHashTable,'A0DZ', 600, "VXN")
-        call SaveStr(ObjectHashTable,'A332', 600, "VON")
-        call SaveStr(ObjectHashTable,'A01Z', 600, "VRN")
-        call SaveStr(ObjectHashTable,'A08R', 600, "VIN")
-        call SaveStr(ObjectHashTable,'P250', 600, "VAN")
-        //call SaveStr(ObjectHashTable,'A081', 600, "VNN")
+        call SaveStr(ObjectHashTable, 'A022', 600, "F_R")
+        call SaveStr(ObjectHashTable, 'A088', 600, "InitMultiCast")
+        call SaveStr(ObjectHashTable, 'A0DJ', 600, "EON")
+        call SaveStr(ObjectHashTable, 'A0FV', 600, "ERN")
+        call SaveStr(ObjectHashTable, 'A33Q', 600, "EAN")
+        call SaveStr(ObjectHashTable, 'A02C', 600, "WitchcraftOnLearn")
+        call SaveStr(ObjectHashTable, 'A0N5', 600, "EBN")
+        call SaveStr(ObjectHashTable, 'A1A3', 600, "Z8A")
+        call SaveStr(ObjectHashTable, 'A04E', 600, "Z9A")
+        call SaveStr(ObjectHashTable, 'A0RO', 600, "VVN")
+        call SaveStr(ObjectHashTable, 'A0C6', 600, "VEN")
+        call SaveStr(ObjectHashTable, 'A0DZ', 600, "VXN")
+        call SaveStr(ObjectHashTable, 'A332', 600, "VON")
+        call SaveStr(ObjectHashTable, 'A01Z', 600, "VRN")
+        call SaveStr(ObjectHashTable, 'A08R', 600, "VIN")
+        call SaveStr(ObjectHashTable, 'P250', 600, "VAN")
+        //call SaveStr(ObjectHashTable, 'A081', 600, "VNN")
         
-        call SaveStr(ObjectHashTable,'A45B', 600, "VBN")
-        call SaveStr(ObjectHashTable,'A0O0', 600, "VCN")
-        call SaveStr(ObjectHashTable,'A041', 600, "VDN")
-        call SaveStr(ObjectHashTable,'A0N7', 600, "VFN")
-        call SaveStr(ObjectHashTable,'A0QN', 600, "VGN")
-        call SaveStr(ObjectHashTable,'A440', 600, "VHN")
-        call SaveStr(ObjectHashTable,'A0FA', 600, "VJN")
-        call SaveStr(ObjectHashTable,'A0FX', 600, "VKN")
-        call SaveStr(ObjectHashTable,'A0OI', 600, "VLN")
-        call SaveStr(ObjectHashTable,'A0LZ', 600, "VMN")
-        call SaveStr(ObjectHashTable,'A0MG', 600, "VPN")
-        call SaveStr(ObjectHashTable,'A0G5', 600, "VQN")
-        call SaveStr(ObjectHashTable,'A1HR', 600, "VSN")
-        call SaveStr(ObjectHashTable,'A13T', 600, "VTN")
-        call SaveStr(ObjectHashTable,'A00V', 600, "VUN")
-        call SaveStr(ObjectHashTable,'QM00', 600, "VWN")
-        call SaveStr(ObjectHashTable,'A0DL', 600, "VYN")
-        call SaveStr(ObjectHashTable,'A0DY', 600, "VZN")
-        call SaveStr(ObjectHashTable,'A0DB', 600, "V_N")
-        call SaveStr(ObjectHashTable,'A0A5', 600, "V0N")
-        call SaveStr(ObjectHashTable,'P067', 600, "V2N")
-        call SaveStr(ObjectHashTable,'QB0P', 600, "V1N")
-        call SaveStr(ObjectHashTable,'A02Q', 600, "V3N")
-        call SaveStr(ObjectHashTable,'A0SS', 600, "V4N")
-        call SaveStr(ObjectHashTable,'A0MY', 600, "V5N")
-        call SaveStr(ObjectHashTable,'S008', 600, "V6N")
-        call SaveStr(ObjectHashTable,'A2EY', 600, "V7N")
-        call SaveStr(ObjectHashTable,'A2E4', 600, "V8N")
-        call SaveStr(ObjectHashTable,'A03S', 600, "V9N")
-        call SaveStr(ObjectHashTable,'Q0BK', 600, "EVN")
-        call SaveStr(ObjectHashTable,'A0WQ', 600, "EEN")
-        call SaveStr(ObjectHashTable,'A15V', 600, "EXN")
-        call SaveStr(ObjectHashTable,'A09V', 600, "SRA")
-        call SaveStr(ObjectHashTable,'A1HQ', 600, "ECN")
-        call SaveStr(ObjectHashTable,'A03N', 600, "TSA")
+        call SaveStr(ObjectHashTable, 'A45B', 600, "VBN")
+        call SaveStr(ObjectHashTable, 'A0O0', 600, "VCN")
+        call SaveStr(ObjectHashTable, 'A041', 600, "VDN")
+        call SaveStr(ObjectHashTable, 'A0N7', 600, "VFN")
+        call SaveStr(ObjectHashTable, 'A0QN', 600, "VGN")
+        call SaveStr(ObjectHashTable, 'A440', 600, "VHN")
+        call SaveStr(ObjectHashTable, 'A0FA', 600, "VJN")
+        call SaveStr(ObjectHashTable, 'A0FX', 600, "VKN")
+        call SaveStr(ObjectHashTable, 'A0OI', 600, "VLN")
+        call SaveStr(ObjectHashTable, 'A0LZ', 600, "VMN")
+        call SaveStr(ObjectHashTable, 'A0MG', 600, "VPN")
+        call SaveStr(ObjectHashTable, 'A0G5', 600, "VQN")
+        call SaveStr(ObjectHashTable, 'A1HR', 600, "VSN")
+        call SaveStr(ObjectHashTable, 'A13T', 600, "VTN")
+        call SaveStr(ObjectHashTable, 'A00V', 600, "VUN")
+        call SaveStr(ObjectHashTable, 'QM00', 600, "VWN")
+        call SaveStr(ObjectHashTable, 'A0DL', 600, "VYN")
+        call SaveStr(ObjectHashTable, 'A0DY', 600, "VZN")
+        call SaveStr(ObjectHashTable, 'A0DB', 600, "V_N")
+        call SaveStr(ObjectHashTable, 'A0A5', 600, "V0N")
+        call SaveStr(ObjectHashTable, 'P067', 600, "V2N")
+        call SaveStr(ObjectHashTable, 'QB0P', 600, "V1N")
+        call SaveStr(ObjectHashTable, 'A02Q', 600, "V3N")
+        call SaveStr(ObjectHashTable, 'A0SS', 600, "V4N")
+        call SaveStr(ObjectHashTable, 'A0MY', 600, "V5N")
+        call SaveStr(ObjectHashTable, 'S008', 600, "V6N")
+        call SaveStr(ObjectHashTable, 'A2EY', 600, "V7N")
+        call SaveStr(ObjectHashTable, 'A2E4', 600, "V8N")
+        call SaveStr(ObjectHashTable, 'A03S', 600, "V9N")
+        call SaveStr(ObjectHashTable, 'Q0BK', 600, "EVN")
+        call SaveStr(ObjectHashTable, 'A0WQ', 600, "EEN")
+        call SaveStr(ObjectHashTable, 'A15V', 600, "EXN")
+        call SaveStr(ObjectHashTable, 'A09V', 600, "SRA")
+        call SaveStr(ObjectHashTable, 'A1HQ', 600, "ECN")
+        call SaveStr(ObjectHashTable, 'A03N', 600, "TSA")
         
-        call SaveStr(ObjectHashTable,'A0JJ', 600, "OPO")	//重击
-        call SaveStr(ObjectHashTable,'A0BE', 600, "OPO")	//狂战士之怒
-        call SaveStr(ObjectHashTable,'A081', 600, "OPO")	//时间锁定
+        call SaveStr(ObjectHashTable, 'A0JJ', 600, "OPO")	//重击
+        call SaveStr(ObjectHashTable, 'A0BE', 600, "OPO")	//狂战士之怒
+        call SaveStr(ObjectHashTable, 'A081', 600, "OPO")	//时间锁定
     endfunction
 
     // 控制技能列表
@@ -165,6 +165,37 @@ library HeroSkillDefine requires SkillSystem
         call AddControlSkillIndex((82  - 1)* 4 + 1)
         call AddControlSkillIndex((109 - 1)* 4 + 4)
         call AddControlSkillIndex((96  - 1)* 4 + 4)
+    endfunction
+    
+    // 使用一次a技能，便会隐藏禁用a技能随后显示启用b技能，使用b技能后又隐藏禁用b技能显示启用a技能
+    function ToggleSkills_Init takes nothing returns nothing
+        call ToggleSkill.Register('A1RJ', 'A20N', true) // 凤凰冲击
+
+        //call ToggleSkill.Register('A1YX', 'A1Z2', true) // 烈火精灵
+
+        call ToggleSkill.Register('A1YY', 'A1Z3', true) // 烈日炙烤
+        
+        call ToggleSkill.Register('Z605', 'QFZZ', true) // 幽灵漫步
+        call ToggleSkill.Register('A27F', 'A27X', true) // 隔空取物
+        call ToggleSkill.Register('A085', 'A121', true) // 启明
+        call ToggleSkill.Register('A11N', 'A13D', true) // X标记
+        call ToggleSkill.Register('A1PH', 'A1RA', true) // 灵魂汲取
+        call ToggleSkill.Register('A1A8', 'A21J', true) // 先祖之魂
+        call ToggleSkill.Register('A1NI', 'A1NH', true) // 不稳定化合物
+        call ToggleSkill.Register('A0SW', 'A0SX', true) // 感染
+        call ToggleSkill.Register('A04Y', 'A2O9', true) // 噩梦
+        call ToggleSkill.Register('A0R0', 'A2MB', true) // 黑暗之门
+        
+        call ToggleSkill.Register('A0G8', 'A0GC', true) // 水人复制
+        
+        call ToggleSkill.Register('A21F', 'A21H', true) // 脉冲新星
+        
+        call ToggleSkill.Register('A1MI', 'A1MN', true) // 冰晶爆轰
+        
+        call ToggleSkill.Register('A2E5', 'A2FX', true) // 锯齿飞轮
+        call ToggleSkill.Register('A43Q', 'A43P', true) // 双飞之轮
+        
+        call ToggleSkill.Register('A07U', 'A24E', true) // 海妖之歌
     endfunction
 
     function HeroPassiveSkills_Init takes nothing returns nothing
@@ -1175,7 +1206,7 @@ library HeroSkillDefine requires SkillSystem
         local integer array s
         local string array R2R
         local string array R3R
-        local string array R4R
+        
         local integer array QSX
         local integer array R5R
         local integer R6R
@@ -1191,16 +1222,16 @@ library HeroSkillDefine requires SkillSystem
         set s[8] = 8
         set s[9] = 9
         set s[10] = 10
-        set R4R[1] = "t"
-        set R4R[2] = "d"
-        set R4R[3] = "f"
-        set R4R[4] = "y"
-        set R4R[5] = "v"
-        set R4R[6] = "g"
-        set R4R[7] = "z"
-        set R4R[8] = "x"
-        set R4R[9] = "c"
-        set R4R[10] = "b"
+        //set R4R[1] = "t"
+        //set R4R[2] = "d"
+        //set R4R[3] = "f"
+        //set R4R[4] = "y"
+        //set R4R[5] = "v"
+        //set R4R[6] = "g"
+        //set R4R[7] = "z"
+        //set R4R[8] = "x"
+        //set R4R[9] = "c"
+        //set R4R[10] = "b"
         loop
         exitwhen(i == 10)
             set k = GetRandomInt(1, 10)
@@ -1231,24 +1262,24 @@ library HeroSkillDefine requires SkillSystem
         set R5R[10]='Y610'
         set R2R[10] = GetAbilitySoundById(QSX[10], SOUND_TYPE_EFFECT_LOOPED)
         set i = 114 -1
-        call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, R3R[s[1]]), QSX[s[1]], 0, R5R[s[1]], R4R[s[1]])
-        call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, R3R[s[2]]), QSX[s[2]], 0, R5R[s[2]], R4R[s[2]])
-        call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, R3R[s[3]]), QSX[s[3]], 0, R5R[s[3]], R4R[s[3]])
+        call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, R3R[s[1]]), QSX[s[1]], 0, R5R[s[1]])
+        call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, R3R[s[2]]), QSX[s[2]], 0, R5R[s[2]])
+        call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, R3R[s[3]]), QSX[s[3]], 0, R5R[s[3]])
         call RegisterHeroSkill(i * 4 + 4, null, 0, 0, 0)
         set HeroSkill_Disabled[i * 4 + 4] = true
         call HeroSkillBalanceSunStrike(i, QSX[s[1]], QSX[s[2]], QSX[s[3]], 0)
         set i = 115 -1
-        call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, R3R[s[4]]), QSX[s[4]], 0, R5R[s[4]], R4R[s[4]])
-        call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, R3R[s[5]]), QSX[s[5]], 0, R5R[s[5]], R4R[s[5]])
-        call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, R3R[s[6]]), QSX[s[6]], 0, R5R[s[6]], R4R[s[6]])
+        call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, R3R[s[4]]), QSX[s[4]], 0, R5R[s[4]])
+        call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, R3R[s[5]]), QSX[s[5]], 0, R5R[s[5]])
+        call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, R3R[s[6]]), QSX[s[6]], 0, R5R[s[6]])
         call RegisterHeroSkill(i * 4 + 4, null, 0, 0, 0)
         set HeroSkill_Disabled[i * 4 + 4] = true
         call HeroSkillBalanceSunStrike(i, QSX[s[4]], QSX[s[5]], QSX[s[6]], 0)
         set i = 116 -1
-        call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, R3R[s[7]]), QSX[s[7]], 0, R5R[s[7]], R4R[s[7]])
-        call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, R3R[s[8]]), QSX[s[8]], 0, R5R[s[8]], R4R[s[8]])
-        call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, R3R[s[9]]), QSX[s[9]], 0, R5R[s[9]], R4R[s[9]])
-        call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, R3R[s[10]]), QSX[s[10]], 0, R5R[s[10]], R4R[s[10]])
+        call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, R3R[s[7]]), QSX[s[7]], 0, R5R[s[7]])
+        call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, R3R[s[8]]), QSX[s[8]], 0, R5R[s[8]])
+        call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, R3R[s[9]]), QSX[s[9]], 0, R5R[s[9]])
+        call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, R3R[s[10]]), QSX[s[10]], 0, R5R[s[10]])
         call HeroSkillBalanceSunStrike(i, QSX[s[7]], QSX[s[8]], QSX[s[9]], QSX[s[10]])
         set i = 114 -1
         loop

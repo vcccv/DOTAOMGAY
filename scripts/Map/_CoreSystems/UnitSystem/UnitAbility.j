@@ -56,6 +56,35 @@ library UnitAbility requires AbilityUtils, UnitLimitation
     function UnitDisableAbility takes unit whichUnit, integer abilId, boolean hideUI returns nothing
         call UnitDisableAbilityEx(whichUnit, abilId, true, hideUI)
     endfunction
+    function UnitDisableAbilityFixOnExpired takes nothing returns nothing
+        local SimpleTick tick           = SimpleTick.GetExpired()
+        local unit       whichUnit
+        local integer    abilId
+        local boolean    hideUI
+        
+        set whichUnit = SimpleTickTable[tick].unit['u']   
+        set abilId    = SimpleTickTable[tick].integer['a']
+        set hideUI    = SimpleTickTable[tick].boolean['b']
+
+        call UnitDisableAbilityEx(whichUnit, abilId, true, hideUI)
+
+        call tick.Destroy()
+
+        set whichUnit = null
+    endfunction
+    // 额外安全性检查，对于施法事件时，延迟0s后再执行
+    function UnitDisableAbilitySafe takes unit whichUnit, integer abilId, boolean hideUI returns nothing
+        local SimpleTick tick
+        if ( GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT or GetTriggerEventId() == EVENT_PLAYER_UNIT_SPELL_EFFECT) and GetSpellAbilityId() == abilId then
+            set tick = SimpleTick.CreateEx()
+            call tick.Start(0., false, function UnitDisableAbilityFixOnExpired)
+            set SimpleTickTable[tick].unit['u'] = whichUnit
+            set SimpleTickTable[tick].integer['a'] = abilId
+            set SimpleTickTable[tick].boolean['b'] = hideUI
+        else
+            call UnitDisableAbilityEx(whichUnit, abilId, true, hideUI)
+        endif
+    endfunction
     function UnitEnableAbility takes unit whichUnit, integer abilId, boolean hideUI returns nothing
         call UnitDisableAbilityEx(whichUnit, abilId, false, hideUI)
     endfunction

@@ -2049,12 +2049,6 @@ endfunction
 function UAV takes nothing returns nothing
 	call DisplayTextToPlayer(GetTriggerPlayer(), 0, 0, "UAV")
 endfunction
-function UNV takes boolean b returns string
-	if b then
-		return "true"
-	endif
-	return "false"
-endfunction
 function UBV takes string c returns integer
 	local integer i = 0
 	local string UCV = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
@@ -2091,48 +2085,7 @@ function UGV takes integer id returns string
 	set t = id / 256
 	return UFV(t) + UFV(id -256 * t) + r
 endfunction
-function PreloadQueueExpireAction takes nothing returns nothing
-	local timer t = GetExpiredTimer()
-	local integer h = GetHandleId(t)
-	local integer id
-	local integer i = LoadInteger(HY, h,-1)
-	local integer max = LoadInteger(HY, h, 0)
-	if i < max then
-		set id = LoadInteger(HY, h, i + 1)
-		call UnitAddAbility(PreloadeHero, id)
-		call UnitRemoveAbility(PreloadeHero, id)
-		call RemoveSavedInteger(HY, h, i + 1)
-		call SaveInteger(HY, h,-1, i + 1)
-	else
-		call PauseTimer(t)
-		call SaveBoolean(HY, GetHandleId(PreloadeHero), 0, false)
-		call SaveInteger(HY, h, 0, 0)
-		call SaveInteger(HY, h,-1, 0)
-	endif
-	set t = null
-endfunction
-// 将技能加入预读队列 是有间隔的预读 而不是一下全读了 不然可能导致卡顿
-function AddAbilityIDToPreloadQueue takes integer id returns nothing
-	local integer hu = GetHandleId(PreloadeHero)
-	local timer t = LoadTimerHandle(HY, hu, 0)
-	local integer h = GetHandleId(t)
-	local integer i
-	if LoadBoolean(HY, hu, 0) then
-		set i = LoadInteger(HY, h, 0) + 1
-	else
-		call TimerStart(t, .1, true, function PreloadQueueExpireAction)
-		call SaveBoolean(HY, hu, 0, true)
-		set i = 1
-	endif
-	call SaveInteger(HY, h, i, id)
-	call SaveInteger(HY, h, 0, i)
-	set t = null
-endfunction
-// 直接预读技能
-function PreloadAbility takes integer id returns nothing
-	call UnitAddAbility(PreloadeHero, id)
-	call UnitRemoveAbility(PreloadeHero, id)
-endfunction
+
 function ThrowLog takes nothing returns nothing
 	local string s = ""
 	local integer i = 1
@@ -3088,7 +3041,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A46E', 1000, "POE")
 	call SaveStr(ObjectHashTable,'A0CG', 1000, "PIE")
 	call SaveStr(ObjectHashTable,'A086', 1000, "PNE")
-	call SaveStr(ObjectHashTable,'A43S', 1000, "PBE")
+	call SaveStr(ObjectHashTable,'A43S', 1000, "ChakramOnLearn")
 	call SaveStr(ObjectHashTable,'A0BR', 1000, "MNE")
 	call SaveStr(ObjectHashTable,'A0EY', 1000, "PDE")
 	call SaveStr(ObjectHashTable,'A03E', 1000, "PFE")
@@ -3161,9 +3114,9 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A0A8', 1000, "Synergy_OnLearn")
 	call SaveStr(ObjectHashTable,'A0K9', 5, "PXE")
 	call SaveStr(ObjectHashTable,'A46E', 5, "POE")
-	call SaveStr(ObjectHashTable,'A43S', 5, "PBE")
+	call SaveStr(ObjectHashTable,'A43S', 5, "ChakramOnLearn")
 	call SaveStr(ObjectHashTable,'A440', 5, "SCE")
-	call SaveStr(ObjectHashTable,'A2E5', 5, "PBE")
+	call SaveStr(ObjectHashTable,'A2E5', 5, "ChakramOnLearn")
 	call SaveStr(ObjectHashTable,'Q0BK', 5, "SXE")
 	call SaveStr(ObjectHashTable,'A2JK', 5, "SAE")
 	//call SaveStr(ObjectHashTable,'A1C0', 5, "SNE")
@@ -3201,7 +3154,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A0K9',1001, "PXE")
 	call SaveStr(ObjectHashTable,'A46E',1001, "POE")
 	call SaveStr(ObjectHashTable,'A0CG',1001, "PIE")
-	call SaveStr(ObjectHashTable,'A2E5',1001, "PBE")
+	call SaveStr(ObjectHashTable,'A2E5',1001, "ChakramOnLearn")
 	//call SaveStr(ObjectHashTable,'A1C0',1001, "SNE")
 	call SaveStr(ObjectHashTable,'A2JK',1001, "SAE")
 	call SaveStr(ObjectHashTable,'A11N',1001, "PZE")
@@ -23091,7 +23044,7 @@ function QVO takes nothing returns boolean
 endfunction
 function QEO takes nothing returns nothing
 	set WTF__Status = not WTF__Status
-	call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 10, "WTF status: " + UNV(WTF__Status))
+	call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 10, "WTF status: " + B2S(WTF__Status))
 endfunction
 function QXO takes nothing returns nothing
 	local player QOO = HostPlayer 
@@ -24856,7 +24809,7 @@ function WAO takes nothing returns nothing
 	set u = FirstOfGroup(g)
 	loop
 	exitwhen u == null
-		// debug call SingleDebug(UNV(IsTerrainPathable(GetUnitX(u), GetUnitY(u), PATHING_TYPE_WALKABILITY) == false))
+		// debug call SingleDebug(B2S(IsTerrainPathable(GetUnitX(u), GetUnitY(u), PATHING_TYPE_WALKABILITY) == false))
 		call GroupRemoveUnit(g, u)
 		set u = FirstOfGroup(g)
 	endloop
@@ -30841,6 +30794,8 @@ function AYR takes string AZR, integer A_R returns nothing
 	call ShowGameStartTopTips()
 	// 初始化技能表
 	call ExecuteFunc("HeroSkills_Init")
+	call ExecuteFunc("ToggleSkills_Init")
+
 	// 初始化技能双击施法
 	call ExecuteFunc("DoubleClickSkill__Init")
 	call INX("A8R", SP)
@@ -68096,19 +68051,14 @@ function MWA takes unit whichUnit, unit targetUnit returns nothing
 	call UnitRemoveAbility(dummyCaster,'A3GA'-1 + level)
 	set dummyCaster = null
 endfunction
-function PBE takes nothing returns nothing
-	if GetUnitAbilityLevel(GetTriggerUnit(),'A43Q')> 0 then
-		call SetUnitAbilityLevel(GetTriggerUnit(),'A43Q', GetUnitAbilityLevel(GetTriggerUnit(),'A2E5') + GetUnitAbilityLevel(GetTriggerUnit(),'A43S'))
-	endif
-endfunction
 
 
-function HEX takes nothing returns nothing
-	call UnitAddPermanentAbility(TempUnit,'A43Q')
-	call SetPlayerAbilityAvailableEx(GetOwningPlayer(TempUnit),'A43Q', GetUnitAbilityLevel(TempUnit,'A43O') == 0)
-	call SaveBoolean(ObjectHashTable, GetHandleId(TempUnit),'A43Q', true)
-	call SetUnitAbilityLevel(TempUnit,'A43Q', GetUnitAbilityLevel(TempUnit,'A2E5') + GetUnitAbilityLevel(TempUnit,'A43S'))
-endfunction
+//function HEX takes nothing returns nothing
+//	call UnitAddPermanentAbility(TempUnit,'A43Q')
+//	call SetPlayerAbilityAvailableEx(GetOwningPlayer(TempUnit),'A43Q', GetUnitAbilityLevel(TempUnit,'A43O') == 0)
+//	call SaveBoolean(ObjectHashTable, GetHandleId(TempUnit),'A43Q', true)
+//	call SetUnitAbilityLevel(TempUnit,'A43Q', GetUnitAbilityLevel(TempUnit,'A2E5') + GetUnitAbilityLevel(TempUnit,'A43S'))
+//endfunction
 function HNX takes nothing returns nothing
 	call SetPlayerAbilityAvailableEx(GetOwningPlayer(TempUnit),'A43Q', false)
 	call SaveBoolean(ObjectHashTable, GetHandleId(TempUnit),'A43Q', false)
@@ -71377,6 +71327,7 @@ function NYR takes nothing returns nothing
 
 	// 初始化被动技能表
 	call ExecuteFunc("HeroPassiveSkills_Init")
+	
 	set t = null
 endfunction
 function WRA takes nothing returns nothing
@@ -74340,42 +74291,6 @@ function Init_UnitsColor takes nothing returns nothing
 	call SaveColorToUnitType('EC57', 150, 200, 255)
 endfunction
 
-function Init_SpecialAbilityId takes nothing returns nothing //储存切换型技能
-	
-	call SaveInteger(ExtraHT, HTKEY_SWITCHING_SKILLS,'A1RJ','A20N') //凤凰冲击
-	call SaveInteger(ExtraHT, HTKEY_SWITCHING_SKILLS,'A1YX','A1Z2') //烈火精灵
-	call SaveInteger(ExtraHT, HTKEY_SWITCHING_SKILLS,'A1YY','A1Z3') //烈日炙烤
-	
-	call SaveInteger(ExtraHT, HTKEY_SWITCHING_SKILLS,'Z605','QFZZ') //幽灵漫步
-	call SaveInteger(ExtraHT, HTKEY_SWITCHING_SKILLS,'A27F','A27X') //隔空取物
-	call SaveInteger(ExtraHT, HTKEY_SWITCHING_SKILLS,'A085','A121') //启明
-	call SaveInteger(ExtraHT, HTKEY_SWITCHING_SKILLS,'A11N','A13D') //X标记
-	call SaveInteger(ExtraHT, HTKEY_SWITCHING_SKILLS,'A1PH','A1RA') //灵魂汲取
-	call SaveInteger(ExtraHT, HTKEY_SWITCHING_SKILLS,'A1A8','A21J') //先祖之魂
-	call SaveInteger(ExtraHT, HTKEY_SWITCHING_SKILLS,'A1NI','A1NH') //不稳定化合物
-	call SaveInteger(ExtraHT, HTKEY_SWITCHING_SKILLS,'A0SW','A0SX') //感染
-	call SaveInteger(ExtraHT, HTKEY_SWITCHING_SKILLS,'A04Y','A2O9') //噩梦
-	call SaveInteger(ExtraHT, HTKEY_SWITCHING_SKILLS,'A0R0','A2MB') //黑暗之门
-	
-	call SaveInteger(ExtraHT, HTKEY_SWITCHING_SKILLS,'A0G8','A0GC') //水人复制
-	
-	call SaveBoolean(ExtraHT, HTKEY_SWITCHING_SKILLS,'A21F', true)
-	call SaveInteger(ExtraHT, HTKEY_SWITCHING_SKILLS,'A21F','A21H') //脉冲新星
-	call SaveInteger(ExtraHT, HTKEY_SWITCHING_SKILLS,'A21G','A21H') //脉冲新星A帐
-	
-	call SaveBoolean(ExtraHT, HTKEY_SWITCHING_SKILLS,'A1MI', true)
-	call SaveInteger(ExtraHT, HTKEY_SWITCHING_SKILLS,'A1MI','A1MN') //冰晶爆轰
-	call SaveInteger(ExtraHT, HTKEY_SWITCHING_SKILLS,'A2QE','A1MN') //冰晶爆轰A帐
-	
-	call SaveBoolean(ExtraHT, HTKEY_SWITCHING_SKILLS,'A2E5', true)
-	call SaveInteger(ExtraHT, HTKEY_SWITCHING_SKILLS,'A2E5','A2FX') //锯齿飞轮
-	
-	call SaveInteger(ExtraHT, HTKEY_SWITCHING_SKILLS,'A43S','A43P') //锯齿飞轮A帐
-	
-	call SaveBoolean(ExtraHT, HTKEY_SWITCHING_SKILLS,'A07U', true)
-	call SaveInteger(ExtraHT, HTKEY_SWITCHING_SKILLS,'A07U','A24E') //海妖之歌
-	call SaveInteger(ExtraHT, HTKEY_SWITCHING_SKILLS,'A38E','A24E') //海妖之歌A帐
-endfunction
 
 function SaveHerosData takes nothing returns nothing
 	call SaveHeroModelData(1,'Hvwd','h03Z','n09U', "stand 4", 1.35)
@@ -76248,9 +76163,9 @@ function main takes nothing returns nothing
 	set PreloadeHero = CreateUnit(Player(15),'H00Y', 0, 0, 0)
 	call ShowUnit(PreloadeHero, false)
 	call PauseUnit(PreloadeHero, true)
-
 	set tt = CreateTimer()
 	call SaveTimerHandle(HY, GetHandleId(PreloadeHero), 0, tt)
+
 	set SentinelForce  = CreateForce()
 	set ScourgeForce   = CreateForce()
 	set AllPlayerForce = CreateForce()
@@ -76895,8 +76810,7 @@ function main takes nothing returns nothing
 	
 	// 一些排行榜
 	call ExecuteFunc("CreateLeaderboards")
-	// 会切换的技能Id
-	call ExecuteFunc("Init_SpecialAbilityId")
+	
 	// 阴间计时器和阴间马甲 idk
 	call ExecuteFunc("SOX")
 	// 初始化常用Buff表
