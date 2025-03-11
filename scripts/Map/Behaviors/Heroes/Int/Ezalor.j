@@ -33,22 +33,14 @@ scope Ezalor
     endfunction
 
     private struct IlluminateSW extends array
-        
-        real    damage
-        boolean isUpgraded
-
-        static method OnRemove takes Shockwave sw returns boolean
-            set thistype(sw).isUpgraded = false
-            return true
-        endmethod
 
         static method OnCollide takes Shockwave sw, unit targ returns boolean
             // 存活 
             if IsUnitAlive(targ) and not IsUnitWard(targ) and not IsUnitStructure(targ) then
                 if IsUnitEnemy(sw.owner, GetOwningPlayer(targ)) then
-                    call UnitDamageTargetEx(sw.owner, targ, 1, thistype(sw).damage)
-                elseif thistype(sw).isUpgraded then
-                    call UnitRegenLife(sw.owner, targ, thistype(sw).damage)
+                    call UnitDamageTargetEx(sw.owner, targ, 1, sw.damage)
+                elseif sw.isUpgraded then
+                    call UnitRegenLife(sw.owner, targ, sw.damage)
                 endif
             endif
             return false
@@ -178,11 +170,11 @@ scope Ezalor
             set sw = Shockwave.Create(whichUnit, sx, sy, SimpleTickTable[tick].real['a'], distance)
             call sw.SetModelScale(1.0)
             call sw.SetSpeed(900.)
-            set sw.minRadius = 400.
-            set sw.maxRadius = 400.
-            set sw.model     = "Abilities\\Spells\\Orc\\Shockwave\\ShockwaveMissile.mdl"
-            set IlluminateSW(sw).isUpgraded = isUpgraded
-            set IlluminateSW(sw).damage = (maxCount-count)* 10
+            set sw.minRadius  = 400.
+            set sw.maxRadius  = 400.
+            set sw.model      = "Abilities\\Spells\\Orc\\Shockwave\\ShockwaveMissile.mdl"
+            set sw.isUpgraded = isUpgraded
+            set sw.damage     = (maxCount-count)* 10
             call IlluminateSW.Launch(sw)
 
             call UnitShowAbility(whichUnit, ILLUMINATE_ABILITY_ID)

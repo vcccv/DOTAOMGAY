@@ -13,10 +13,56 @@ scope Puck
         constant integer SKILL_INDEX_ILLUSORY_ORB  = GetHeroSKillIndexBySlot(HERO_INDEX_PUCK, 1)
         constant integer ETHEREAL_JAUNT_ABILITY_ID = 'A0SA'
 
-        
-	    unit array IllusoryMissileUnit
+        private TableArray IllusoryOrbTable
     endglobals
+
+    private struct IllusoryOrb extends array
+
+        unit MissileUnit
+
+        static method OnRemove takes Shockwave sw returns boolean
+            local integer count
+            local integer h     = GetHandleId(sw.owner)
+            local integer i
+
+            set i = 1
+            set count = IllusoryOrbTable[0].integer[h] - 1
+            set IllusoryOrbTable[0].integer[h] = count
+            loop
+                // 前移
+                set IllusoryOrbTable[i].integer[h] = IllusoryOrbTable[i + 1].integer[h]
+                //call BJDebugMsg(" " + I2S((i+1)) + " -> " + I2S(i))
+                exitwhen i > count
+                set i = i + 1
+            endloop
+            call IllusoryOrbTable[i].integer.remove(h)
+            //call BJDebugMsg(" remove: " + I2S(i))
+
+            call SetUnitScale(thistype(sw).MissileUnit, 2.5, 2.5, 2.5)
+            call KillUnit(thistype(sw).MissileUnit)
+            set thistype(sw).MissileUnit = null
+            return true
+        endmethod
+    
+        static method OnCollide takes Shockwave sw, unit targ returns boolean
+            // 敌对存活非魔免非无敌非守卫非建筑
+            if UnitAlive(targ) and IsUnitEnemy(sw.owner, GetOwningPlayer(targ)) and not IsUnitMagicImmune(targ) and not IsUnitInvulnerable(targ) and not IsUnitWard(targ) and not IsUnitStructure(targ) then
+                call UnitDamageTargetEx(sw.owner, targ, 1, sw.damage)
+            endif
+            return false
+        endmethod
+        
+        static method OnPeriod takes Shockwave sw returns boolean
+            call SetUnitX(thistype(sw).MissileUnit, sw.x)
+            call SetUnitY(thistype(sw).MissileUnit, sw.y)
+            return false
+        endmethod
+        
+        implement ShockwaveStruct
+    endstruct
+
     function IllusoryOryOnInitializer takes nothing returns nothing
+        set IllusoryOrbTable = TableArray[JASS_MAX_ARRAY_SIZE]
         call ResgiterAbilityMethodSimple(HeroSkill_BaseId[SKILL_INDEX_ILLUSORY_ORB], "IllusoryOryOnAdd", "IllusoryOryOnRemove")
     endfunction
     function IllusoryOryOnAdd takes nothing returns nothing
@@ -31,117 +77,58 @@ scope Puck
         call UnitRemoveAbility(whichUnit, ETHEREAL_JAUNT_ABILITY_ID)
         set whichUnit = null
     endfunction
-    function T5R takes nothing returns nothing
-        if IsUnitInGroup(GetEnumUnit(), DK) == false then
-            call GroupAddUnit(DK, GetEnumUnit())
-            call UnitDamageTargetEx(TempUnit, GetEnumUnit(), 1, TempReal1)
-        endif
-    endfunction
     
     function EtherealJauntOnSpellEffect takes nothing returns nothing
-        local integer i = GetPlayerId(GetOwningPlayer(GetTriggerUnit()))
-        if IllusoryMissileUnit[i]== null then
+        local unit      whichUnit = GetTriggerUnit()
+        local integer   h         = GetHandleId(whichUnit)
+        local Shockwave sw
+        if IllusoryOrbTable[1].integer[h] == 0 then
             call InterfaceErrorForPlayer(GetOwningPlayer(GetTriggerUnit()), GetObjectName('n037'))
         else
-            call SetUnitScale(IllusoryMissileUnit[i], 2.5, 2.5, 2.5)
-            call KillUnit(IllusoryMissileUnit[i])
-        endif
-    endfunction
-
-    function T6R takes nothing returns boolean
-        local trigger t = GetTriggeringTrigger()
-        local integer h = GetHandleId(t)
-        local group g =(LoadGroupHandle(HY, h, 22))
-        local unit dummyCaster =(LoadUnitHandle(HY, h, 19))
-        local integer level =(LoadInteger(HY, h, 5))
-        local real a =(LoadReal(HY, h, 13))
-        local unit whichUnit =(LoadUnitHandle(HY, h, 14))
-        local group T7R
-        local real x
-        local real y
-        local real maxDist = LoadReal(HY, h, 30)
-        local real dist    = LoadReal(HY, h, 31)
-        if GetTriggerEventId() == EVENT_WIDGET_DEATH then
-            if GetUnitTypeId(whichUnit)=='e00E' then
-                set whichUnit = PlayerHeroes[GetPlayerId(GetOwningPlayer(whichUnit))]
-            endif
-            
-            set TempUnit = CreateUnit(GetOwningPlayer(dummyCaster),'h06O', GetUnitX(whichUnit), GetUnitY(whichUnit), 0)
-            call SetUnitScale(TempUnit, 2.5, 2.5, 2.5)
-            call KillUnit(TempUnit)
-            call SetUnitPosition(whichUnit, GetUnitX(dummyCaster), GetUnitY(dummyCaster))
+            set sw = IllusoryOrbTable[1].integer[h]
+            call SetUnitPositionEx(whichUnit, (sw.x), (sw.y))
             call ShowUnit(whichUnit, false)
             call ShowUnit(whichUnit, true)
             call SelectUnitAddForPlayer(whichUnit, GetOwningPlayer(whichUnit))
-            set IllusoryMissileUnit[GetPlayerId(GetOwningPlayer(dummyCaster))] = null
-            call UnitDisableAbility(whichUnit, ETHEREAL_JAUNT_ABILITY_ID, false)
-
-            call DeallocateGroup(g)
-            call FlushChildHashtable(HY, h)
-            call DestroyTrigger(t)
-        elseif dist >= maxDist then
-            set IllusoryMissileUnit[GetPlayerId(GetOwningPlayer(dummyCaster))] = null
-            call UnitDisableAbility(whichUnit, ETHEREAL_JAUNT_ABILITY_ID, false)
-
-            call DeallocateGroup(g)
-            call FlushChildHashtable(HY, h)
-            call DestroyTrigger(t)
-            call SetUnitScale(dummyCaster, 2.5, 2.5, 2.5)
-            call KillUnit(dummyCaster)
-        else
-            set x   = GetUnitX(dummyCaster)
-            set y   = GetUnitY(dummyCaster)
-            set T7R = AllocationGroup(199)
-            set DK  = g
-            set TempUnit = dummyCaster
-            set TempReal1 = level * 70
-            call GroupEnumUnitsInRange(T7R, x, y, 250, Condition(function DUX))
-            call ForGroup(T7R, function T5R)
-            call DeallocateGroup(T7R)
-            call SaveReal(HY, h, 31, dist + 16.25)
-            call SetUnitX(dummyCaster, CoordinateX50(x + 16.25 * Cos(a * bj_DEGTORAD)))
-            call SetUnitY(dummyCaster, CoordinateY50(y + 16.25 * Sin(a * bj_DEGTORAD)))
+            call IllusoryOrb.Terminate(sw)
+            //call BJDebugMsg("终止了：" + I2S(sw))
         endif
-        set t = null
-        set g = null
-        set T7R = null
-        set dummyCaster = null
         set whichUnit = null
-        return false
     endfunction
+
     function IllusoryOrbOnSpellEffect takes nothing returns nothing
-        local trigger t = CreateTrigger()
-        local integer h = GetHandleId(t)
-        local group g = AllocationGroup(200)
-        local unit trigUnit = GetRealSpellUnit(GetTriggerUnit())
-        local real x1 = GetUnitX(trigUnit)
-        local real y1 = GetUnitY(trigUnit)
-        local real x2 = GetSpellTargetX()
-        local real y2 = GetSpellTargetY()
-        local real a = AngleBetweenXY(x1, y1, x2, y2)
-        local integer level = GetUnitAbilityLevel(trigUnit,'A0S9')
-        local unit dummyCaster = CreateUnit(GetOwningPlayer(trigUnit),'h06O', x1, y1, a)
-        local real maxDist     = 1800. + GetUnitCastRangeBonus(trigUnit)
-        call A5X(KC, x1, y1)
+        local unit    whichUnit    = GetRealSpellUnit(GetTriggerUnit())
+        local integer h
+        local integer count
+        local real    sx           = GetUnitX(whichUnit)
+        local real    sy           = GetUnitY(whichUnit)
+        local real    tx           = GetSpellTargetX()
+        local real    ty           = GetSpellTargetY()
+        local real    angle        = RadianBetweenXY(sx, sy, tx, ty)
+        local integer level        = GetUnitAbilityLevel(whichUnit,'A0S9')
+        local unit    dummyCaster  = CreateUnit(GetOwningPlayer(whichUnit),'h06O', sx, sy, angle * bj_RADTODEG)
+        local real    distance     = 1800. + GetUnitCastRangeBonus(whichUnit)
+        local Shockwave sw
 
-        call UnitEnableAbility(trigUnit, ETHEREAL_JAUNT_ABILITY_ID, false)
+        call A5X(KC, sx, sy)
 
-        set IllusoryMissileUnit[GetPlayerId(GetOwningPlayer(trigUnit))] = dummyCaster
-        call SetUnitScale(dummyCaster, 3.5, 3.5, 3.5)
-        call SaveUnitHandle(HY, h, 19,(dummyCaster))
-        call SaveInteger(HY, h, 5,(level))
-        call SaveGroupHandle(HY, h, 22,(g))
-        call SaveReal(HY, h, 13,((a)* 1.))
-        call SaveUnitHandle(HY, h, 14,(trigUnit))
-        call SaveReal(HY, h, 30, maxDist)
-        call SaveReal(HY, h, 31, 0.)
-        call TriggerRegisterTimerEvent(t, .025, true)
-        call TriggerRegisterDeathEvent(t, dummyCaster)
-        call TriggerAddCondition(t, Condition(function T6R))
-        set t = null
+        call UnitEnableAbility(whichUnit, ETHEREAL_JAUNT_ABILITY_ID, false)
+
+        set sw = Shockwave.Create(whichUnit, sx, sy, angle, distance)
+        call sw.SetSpeed(650.)
+        set sw.minRadius  = 225.
+        set sw.maxRadius  = 225.
+        set sw.damage     = level * 70
+        set IllusoryOrb(sw).MissileUnit = dummyCaster
+        call IllusoryOrb.Launch(sw)
+
+        set h = GetHandleId(whichUnit)
+        set count = IllusoryOrbTable[0].integer[h] + 1
+        set IllusoryOrbTable[0].integer[h] = count
+        set IllusoryOrbTable[count].integer[h] = sw
+        
+        set whichUnit   = null
         set dummyCaster = null
-        set g = null
-        set trigUnit = null
     endfunction
 
     //***************************************************************************

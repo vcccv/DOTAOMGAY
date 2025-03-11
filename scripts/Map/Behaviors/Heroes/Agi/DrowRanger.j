@@ -61,7 +61,7 @@ scope DrowRanger
         set t = null
     endfunction
 
-    private struct GustWave extends array
+    private struct GustSW extends array
 
         static method OnCollide takes Shockwave sw, unit targ returns boolean
             // 敌对存活非魔免非无敌非守卫非建筑
@@ -122,7 +122,7 @@ scope DrowRanger
         set sw.duration  = 2. + level
         set sw.herodur   = 2. + level
         set sw.level     = level
-        call GustWave.Launch(sw)
+        call GustSW.Launch(sw)
 
         set whichUnit = null
         //call UnitAddAbility(PKI,'A0QB')
