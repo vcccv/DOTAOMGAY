@@ -262,7 +262,7 @@ library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
         endif
     endfunction
     // Id StackLim暂时无用 普通技能 神杖技能 工程升级技能 
-    function RegisterHeroSkill takes integer id, string StackLim, integer commonSkill, integer upgradeSkill, integer changeSkill, string sHotKey returns nothing
+    function RegisterHeroSkill takes integer id, string StackLim, integer commonSkill, integer upgradeSkill, integer changeSkill returns nothing
         if commonSkill > 0 then
             set HeroSkill_Icon[id] = GetAbilityIconById(commonSkill)//GetAbilitySoundById(commonSkill, SOUND_TYPE_EFFECT_LOOPED)
             if StringLength(HeroSkill_Icon[id]) == 0 then
@@ -275,9 +275,9 @@ library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
         set HeroSkill_BaseId[id] = commonSkill
         set HeroSkill_SpecialId[id] = upgradeSkill
         set HeroSkill_Modify[id] = changeSkill
-        if sHotKey != "_" and sHotKey != "" and sHotKey != null then
-            call SaveStr(AbilityDataHashTable, commonSkill, HotKeyStringHash, sHotKey)
-        endif
+        //if sHotKey != "_" and sHotKey != "" and sHotKey != null then
+        //    call SaveStr(AbilityDataHashTable, commonSkill, HotKeyStringHash, sHotKey)
+        //endif
         set MaxHeroSkillsNumber = id
     endfunction
 
