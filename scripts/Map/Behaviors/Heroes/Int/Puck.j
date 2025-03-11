@@ -37,6 +37,7 @@ scope Puck
             endloop
             call IllusoryOrbTable[i].integer.remove(h)
             //call BJDebugMsg(" remove: " + I2S(i))
+            call UnitDisableAbility(sw.owner, ETHEREAL_JAUNT_ABILITY_ID, false)
 
             call SetUnitScale(thistype(sw).MissileUnit, 2.5, 2.5, 2.5)
             call KillUnit(thistype(sw).MissileUnit)
