@@ -1226,7 +1226,6 @@ globals
 	integer H2V
 	real H3V
 	unit H4V
-	unit array H5V
 	real H6V
 	real H7V
 	integer H8V
@@ -2475,7 +2474,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A1QP', 0, "Z8V")
 	call SaveStr(ObjectHashTable,'A0S8', 0, "Z8V")
 	call SaveStr(ObjectHashTable,'A0S9', 0, "IllusoryOrbOnSpellEffect")
-	call SaveStr(ObjectHashTable,'A0SA', 0, "VVE")
+	call SaveStr(ObjectHashTable,'A0SA', 0, "EtherealJauntOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A21E', 0, "VEE")
 	call SaveStr(ObjectHashTable,'A1W8', 0, "VRE")
 	call SaveStr(ObjectHashTable,'A1W9', 0, "VRE")
@@ -39205,15 +39204,6 @@ function Z8V takes nothing returns nothing
 	set trigUnit = null
 endfunction
 
-function VVE takes nothing returns nothing
-	local integer i = GetPlayerId(GetOwningPlayer(GetTriggerUnit()))
-	if H5V[i]== null then
-		call InterfaceErrorForPlayer(GetOwningPlayer(GetTriggerUnit()), GetObjectName('n037'))
-	else
-		call SetUnitScale(H5V[i], 2.5, 2.5, 2.5)
-		call KillUnit(H5V[i])
-	endif
-endfunction
 function T8R takes nothing returns nothing
 	call SetUnitX(GetEnumUnit(), H6V)
 	call SetUnitY(GetEnumUnit(), H7V)

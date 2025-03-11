@@ -10,14 +10,44 @@ scope Puck
     //*
     //***************************************************************************
     globals
-        constant integer SKILL_INDEX_ILLUSORY_ORB = GetHeroSKillIndexBySlot(HERO_INDEX_PUCK, 1)
+        constant integer SKILL_INDEX_ILLUSORY_ORB  = GetHeroSKillIndexBySlot(HERO_INDEX_PUCK, 1)
+        constant integer ETHEREAL_JAUNT_ABILITY_ID = 'A0SA'
+
+        
+	    unit array IllusoryMissileUnit
     endglobals
+    function IllusoryOryOnInitializer takes nothing returns nothing
+        call ResgiterAbilityMethodSimple(HeroSkill_BaseId[SKILL_INDEX_ILLUSORY_ORB], "IllusoryOryOnAdd", "IllusoryOryOnRemove")
+    endfunction
+    function IllusoryOryOnAdd takes nothing returns nothing
+        local unit whichUnit = Event.GetTriggerUnit()
+        if UnitAddPermanentAbility(whichUnit, ETHEREAL_JAUNT_ABILITY_ID) then
+            call UnitDisableAbility(whichUnit, ETHEREAL_JAUNT_ABILITY_ID, false)
+        endif
+        set whichUnit = null
+    endfunction
+    function IllusoryOryOnRemove takes nothing returns nothing
+        local unit whichUnit = Event.GetTriggerUnit()
+        call UnitRemoveAbility(whichUnit, ETHEREAL_JAUNT_ABILITY_ID)
+        set whichUnit = null
+    endfunction
     function T5R takes nothing returns nothing
         if IsUnitInGroup(GetEnumUnit(), DK) == false then
             call GroupAddUnit(DK, GetEnumUnit())
             call UnitDamageTargetEx(TempUnit, GetEnumUnit(), 1, TempReal1)
         endif
     endfunction
+    
+    function EtherealJauntOnSpellEffect takes nothing returns nothing
+        local integer i = GetPlayerId(GetOwningPlayer(GetTriggerUnit()))
+        if IllusoryMissileUnit[i]== null then
+            call InterfaceErrorForPlayer(GetOwningPlayer(GetTriggerUnit()), GetObjectName('n037'))
+        else
+            call SetUnitScale(IllusoryMissileUnit[i], 2.5, 2.5, 2.5)
+            call KillUnit(IllusoryMissileUnit[i])
+        endif
+    endfunction
+
     function T6R takes nothing returns boolean
         local trigger t = GetTriggeringTrigger()
         local integer h = GetHandleId(t)
@@ -35,6 +65,7 @@ scope Puck
             if GetUnitTypeId(whichUnit)=='e00E' then
                 set whichUnit = PlayerHeroes[GetPlayerId(GetOwningPlayer(whichUnit))]
             endif
+            
             set TempUnit = CreateUnit(GetOwningPlayer(dummyCaster),'h06O', GetUnitX(whichUnit), GetUnitY(whichUnit), 0)
             call SetUnitScale(TempUnit, 2.5, 2.5, 2.5)
             call KillUnit(TempUnit)
@@ -42,12 +73,16 @@ scope Puck
             call ShowUnit(whichUnit, false)
             call ShowUnit(whichUnit, true)
             call SelectUnitAddForPlayer(whichUnit, GetOwningPlayer(whichUnit))
-            set H5V[GetPlayerId(GetOwningPlayer(dummyCaster))] = null
+            set IllusoryMissileUnit[GetPlayerId(GetOwningPlayer(dummyCaster))] = null
+            call UnitDisableAbility(whichUnit, ETHEREAL_JAUNT_ABILITY_ID, false)
+
             call DeallocateGroup(g)
             call FlushChildHashtable(HY, h)
             call DestroyTrigger(t)
         elseif dist >= maxDist then
-            set H5V[GetPlayerId(GetOwningPlayer(dummyCaster))] = null
+            set IllusoryMissileUnit[GetPlayerId(GetOwningPlayer(dummyCaster))] = null
+            call UnitDisableAbility(whichUnit, ETHEREAL_JAUNT_ABILITY_ID, false)
+
             call DeallocateGroup(g)
             call FlushChildHashtable(HY, h)
             call DestroyTrigger(t)
@@ -78,7 +113,7 @@ scope Puck
         local trigger t = CreateTrigger()
         local integer h = GetHandleId(t)
         local group g = AllocationGroup(200)
-        local unit trigUnit = GetTriggerUnit()
+        local unit trigUnit = GetRealSpellUnit(GetTriggerUnit())
         local real x1 = GetUnitX(trigUnit)
         local real y1 = GetUnitY(trigUnit)
         local real x2 = GetSpellTargetX()
@@ -88,8 +123,10 @@ scope Puck
         local unit dummyCaster = CreateUnit(GetOwningPlayer(trigUnit),'h06O', x1, y1, a)
         local real maxDist     = 1800. + GetUnitCastRangeBonus(trigUnit)
         call A5X(KC, x1, y1)
-        call UnitAddPermanentAbility(GetTriggerUnit(),'A0SA')
-        set H5V[GetPlayerId(GetOwningPlayer(trigUnit))] = dummyCaster
+
+        call UnitEnableAbility(trigUnit, ETHEREAL_JAUNT_ABILITY_ID, false)
+
+        set IllusoryMissileUnit[GetPlayerId(GetOwningPlayer(trigUnit))] = dummyCaster
         call SetUnitScale(dummyCaster, 3.5, 3.5, 3.5)
         call SaveUnitHandle(HY, h, 19,(dummyCaster))
         call SaveInteger(HY, h, 5,(level))

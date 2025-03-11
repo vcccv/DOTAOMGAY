@@ -27024,7 +27024,7 @@ animnames=Stand Work
 researchart=ReplaceableTextures\CommandButtons\BTNRelocate
 researchbuttonpos=3
 Name=重定位 - 神杖升级
-Tip=重定位[|cffffcc00R|r] - [|cffffcc00等级 1|r],重定位[|cffffcc00R|r] - [|cffffcc00等级 2|r],重定位[|cffffcc00R|r] - [|cffffcc00等级 3|r],幻象法球[|cffffcc00R|r] - [|cffffcc00等级 4|r]
+Tip=重定位[|cffffcc00R|r] - [|cffffcc00等级 1|r],重定位[|cffffcc00R|r] - [|cffffcc00等级 2|r],重定位[|cffffcc00R|r] - [|cffffcc00等级 3|r]
 Ubertip=守护精灵将自身和联结的英雄单位（如果有的话）传送至目的地，经过一段时间后会自动回到原地。|n施法时目的地会出现印记，对敌人可见。|n|n|cff99ccff施法距离：|r全地图|n|cff99ccff施法延迟：|r2.5|n|cff99ccff持续时间：|r12|n|cff99ccff冷却时间：|r45,守护精灵将自身和联结的英雄单位（如果有的话）传送至目的地，经过一段时间后会自动回到原地。|n施法时目的地会出现印记，对敌人可见。|n|n|cff99ccff施法距离：|r全地图|n|cff99ccff施法延迟：|r2.25|n|cff99ccff持续时间：|r12|n|cff99ccff冷却时间：|r40,守护精灵将自身和联结的英雄单位（如果有的话）传送至目的地，经过一段时间后会自动回到原地。|n施法时目的地会出现印记，对敌人可见。|n|n|cff99ccff施法距离：|r全地图|n|cff99ccff施法延迟：|r2|n|cff99ccff持续时间：|r12|n|cff99ccff冷却时间：|r35
 Hotkey=R
 Researchtip=学习 重定位[|cffffcc00R|r] - [|cffffcc00等级 %d|r]|n(Relocate)
@@ -40219,7 +40219,7 @@ Name=你没有足够的金钱选择一个新的英雄
 [n036]
 Name=不能传送至正在使用雷电牵引的单位
 [n037]
-Name=未发现幻像法球
+Name=未发现幻象法球
 [n038]
 Name=该目标拒绝某些友方技能
 [n039]

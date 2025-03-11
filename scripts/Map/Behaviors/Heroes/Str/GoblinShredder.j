@@ -197,14 +197,19 @@ scope GoblinShredder
     endfunction
     // 得到锯齿飞轮时，给予“锯齿飞轮-结束”技能并隐藏
     function ChakramOnInitializer takes nothing returns nothing
-        call RegisterAbilityAddMethod(CHAKRAM_ABILITY_ID         , "ChakramAbilityOnAdd")
-        call RegisterAbilityAddMethod(CHAKRAM_UPGRADED_ABILITY_ID, "ChakramAbilityOnAdd")
+        call ResgiterAbilityMethodSimple(CHAKRAM_ABILITY_ID         , "ChakramAbilityOnAdd", "ChakramAbilityOnRemove")
+        call ResgiterAbilityMethodSimple(CHAKRAM_UPGRADED_ABILITY_ID, "ChakramAbilityOnAdd", "ChakramAbilityOnRemove")
     endfunction
     function ChakramAbilityOnAdd takes nothing returns nothing
         local unit whichUnit = Event.GetTriggerUnit()
         if UnitAddPermanentAbility(whichUnit, CHAKRAM_RETURN_ABILITY_ID) then
             call UnitDisableAbility(whichUnit, CHAKRAM_RETURN_ABILITY_ID, true)
         endif
+        set whichUnit = null
+    endfunction
+    function ChakramAbilityOnRemove takes nothing returns nothing
+        local unit whichUnit = Event.GetTriggerUnit()
+        call UnitRemoveAbility(whichUnit, CHAKRAM_RETURN_ABILITY_ID)
         set whichUnit = null
     endfunction
 
