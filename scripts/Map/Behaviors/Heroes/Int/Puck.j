@@ -111,7 +111,7 @@ scope Puck
         local real    distance     = 1800. + GetUnitCastRangeBonus(whichUnit)
         local Shockwave sw
 
-        call A5X(KC, sx, sy)
+        call PlaySoundAtPosition(MoonWellWhatSound, sx, sy)
 
         call UnitEnableAbility(whichUnit, ETHEREAL_JAUNT_ABILITY_ID, false)
 

@@ -792,7 +792,7 @@ globals
 	sound Q0 = null
 	sound S0 = null
 	sound T0 = null
-	sound KC = null
+	sound MoonWellWhatSound = null
 	sound LC = null
 	sound U0 = null
 	sound NC = null
@@ -5920,7 +5920,7 @@ endfunction
 function A4X takes real x, real y returns boolean
 	return(not(IsTerrainPathable(x, y, PATHING_TYPE_WALKABILITY)))
 endfunction
-function A5X takes sound whichSound, real x, real y returns nothing
+function PlaySoundAtPosition takes sound whichSound, real x, real y returns nothing
 	call SetSoundPosition(whichSound, x, y, 0)
 	call SetSoundVolume(whichSound, 127)
 	set bj_lastPlayedSound = whichSound
@@ -11252,7 +11252,7 @@ function U7X takes nothing returns nothing
 		set U8X = true
 	endif
 	if X4 then
-		call A5X(Q0, GetUnitX(U9X), GetUnitY(U9X))
+		call PlaySoundAtPosition(Q0, GetUnitX(U9X), GetUnitY(U9X))
 	endif
 	call StoreDrCacheData("Hero" + I2S(WRX), WOX)
 	if XS[WOX]> PlayerMaxSuccessionKillCount[WOX] then
@@ -35923,7 +35923,7 @@ function ZDV takes nothing returns nothing
 	local integer h = GetHandleId(t)
 	local integer level
 	local real r = .07
-	call A5X(AC, GetUnitX(trigUnit), GetUnitY(trigUnit))
+	call PlaySoundAtPosition(AC, GetUnitX(trigUnit), GetUnitY(trigUnit))
 	call UnitAddAbility(trigUnit,'A347')
 	if GetSpellAbilityId()=='A03R' then
 		set level = GetUnitAbilityLevel(trigUnit,'A03R')
@@ -36302,7 +36302,7 @@ function LCR takes nothing returns nothing
 	local real y = LoadReal(HY, h, 11)
 	local unit u2
 	local unit d = CreateUnit(GetOwningPlayer(u),'e00E', x, y, 0)
-	call A5X(VX, x, y)
+	call PlaySoundAtPosition(VX, x, y)
 	call UnitAddAbility(d,'A450')
 	call SetUnitAbilityLevel(d,'A450', level)
 	call IssuePointOrderById(d, 852592, x, y)
@@ -36332,7 +36332,7 @@ function FFE takes nothing returns nothing
 	local real y = GetSpellTargetY()
 	local effect fx = AddSpecialEffect("war3mapImported\\Bloodrite.mdx", x, y)
 	call CreateFogModifierTimedForPlayer(GetOwningPlayer(u), 2.5, x, y, 300)
-	call A5X(ZE, x, y)
+	call PlaySoundAtPosition(ZE, x, y)
 	call TimerStart(t, 2.6, false, function LCR)
 	call SaveUnitHandle(HY, h, 0, u)
 	call SaveReal(HY, h, 0, level * 40 + 80)
@@ -44991,7 +44991,7 @@ function AOI takes nothing returns nothing
 		set y = GetOrderPointY()
 	endif
 	if GetDistanceBetween(GetUnitX(GetTriggerUnit()), GetUnitY(GetTriggerUnit()), x, y)< 700 then
-		call A5X(FE, x, y)
+		call PlaySoundAtPosition(FE, x, y)
 	endif
 	set targetUnit = null
 endfunction
@@ -47028,7 +47028,7 @@ function XFE takes nothing returns nothing
 	endif
 	call SaveInteger(HY, h, 0, LoadInteger(HY, h, 0) + 1)
 	call TriggerRegisterTimerEvent(t, 17, false)
-	call A5X(CE, GetUnitX(u), GetUnitY(u))
+	call PlaySoundAtPosition(CE, GetUnitX(u), GetUnitY(u))
 	call UnitAddPermanentAbility(u,'A0RN')
 	call SaveInteger(HY, hu, 352, level)
 	call UnitAddPermanentAbility(u,'A0RF')
@@ -47172,7 +47172,7 @@ function XGE takes nothing returns nothing
 	local trigger t = CreateTrigger()
 	local integer h = GetHandleId(t)
 	call DestroyEffect(AddSpecialEffectTarget("effects\\PurpleAura.mdx", trigUnit, "origin"))
-	call A5X(Y0, GetUnitX(trigUnit), GetUnitY(trigUnit))
+	call PlaySoundAtPosition(Y0, GetUnitX(trigUnit), GetUnitY(trigUnit))
 	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ATTACKED)
 	call TriggerRegisterDeathEvent(t, trigUnit)
 	call TriggerRegisterUnitEvent(t, trigUnit, EVENT_UNIT_SPELL_CAST)
@@ -49915,7 +49915,7 @@ function ODE takes nothing returns nothing
 	local trigger t = CreateTrigger()
 	local integer h = GetHandleId(t)
 	call UnitAddAbilityLevel1ToTimed(targetUnit,'C001','D001', 0)
-	call A5X(LC, GetUnitX(GetSpellTargetUnit()), GetUnitY(GetSpellTargetUnit()))
+	call PlaySoundAtPosition(LC, GetUnitX(GetSpellTargetUnit()), GetUnitY(GetSpellTargetUnit()))
 	call SaveUnitHandle(HY, h, 2, u)
 	call SaveUnitHandle(HY, h, 17, targetUnit)
 	call SaveEffectHandle(HY, h, 31, AddSpecialEffectTarget("war3mapImported\\NewSoulArmor.mdx", GetSpellTargetUnit(), "chest"))
@@ -50008,7 +50008,7 @@ function OFE takes nothing returns nothing
 	local integer lv = GetUnitAbilityLevel(GetTriggerUnit(),'A0QE')
 	local real r = 175 + 100 * lv
 	set TempUnit = GetTriggerUnit()
-	call A5X(CE, x, y)
+	call PlaySoundAtPosition(CE, x, y)
 	call DestroyEffect(AddSpecialEffect("war3mapImported\\Star Aura.mdx", x, y))
 	call GroupEnumUnitsInRange(g, x, y, r, Condition(function DQX))
 	set LFV = x
@@ -50043,7 +50043,7 @@ function TFF takes nothing returns boolean
 endfunction
 function OGE takes nothing returns nothing
 	call UnitAddAbilityToTimed(GetSpellTargetUnit(),'A3KB', 1, 1.5 + 1.5 * GetUnitAbilityLevel(GetTriggerUnit(),'A0R7'),'B07W')
-	call A5X(TD, GetUnitX(GetSpellTargetUnit()), GetUnitY(GetSpellTargetUnit()))
+	call PlaySoundAtPosition(TD, GetUnitX(GetSpellTargetUnit()), GetUnitY(GetSpellTargetUnit()))
 endfunction
 function J0I takes boolean KMR returns boolean
 	local integer h = GetHandleId(GetTriggeringTrigger())
@@ -50196,7 +50196,7 @@ function OHE takes nothing returns nothing
 		set level = GetUnitAbilityLevel(trigUnit,'A21Q')
 	endif
 	call SetUnitAbilityLevel(J8I,'A0QL', level)
-	call A5X(DE, x, y)
+	call PlaySoundAtPosition(DE, x, y)
 	call SaveGroupHandle(HY, h, 257, g1)
 	call SaveGroupHandle(HY, GetHandleId(J8I), 257, g1)
 	call SaveGroupHandle(HY, h, 258, g2)
@@ -50701,7 +50701,7 @@ function OME takes nothing returns nothing
 	if LAR > 0 then
 		call UnitAddPermanentAbility(K3I,'A1AC')
 	endif
-	call A5X(MF, x, y)
+	call PlaySoundAtPosition(MF, x, y)
 	set id = GetPlayerId(GetOwningPlayer(K3I))
 	if LZV[id]== null then
 		set LZV[id] = CreateUnit(GetOwningPlayer(K3I),'e01V', x, y, 0)
@@ -54613,7 +54613,7 @@ function WYI takes nothing returns boolean
 					if GetUnitState(targetUnit, UNIT_STATE_MANA)> 0 then
 						set W5R = RMinBJ(GetUnitState(targetUnit, UNIT_STATE_MANA),(.35 * W_I + 1.)*(5 + 15* level))
 						call SetUnitState(targetUnit, UNIT_STATE_MANA, GetUnitState(targetUnit, UNIT_STATE_MANA)-W5R)
-						call A5X(NE, GetUnitX(targetUnit), GetUnitY(targetUnit))
+						call PlaySoundAtPosition(NE, GetUnitX(targetUnit), GetUnitY(targetUnit))
 						set WZI = WZI + W5R
 						set W_I = W_I + 1
 					endif
@@ -54657,7 +54657,7 @@ function W1I takes unit whichUnit, unit targetUnit, integer level returns nothin
 	local real W5R = 0
 	local real WZI = 0
 	local unit dummyCaster = CreateUnit(GetOwningPlayer(whichUnit),'h090', GetUnitX(whichUnit), GetUnitY(whichUnit), GetUnitFacing(whichUnit))
-	call A5X(ME, GetUnitX(whichUnit), GetUnitY(whichUnit))
+	call PlaySoundAtPosition(ME, GetUnitX(whichUnit), GetUnitY(whichUnit))
 	call TriggerRegisterTimerEvent(t, .03, true)
 	call TriggerAddCondition(t, Condition(function WYI))
 	call SaveGroupHandle(HY, h, 187,(g))
@@ -56197,7 +56197,7 @@ function I8E takes nothing returns nothing
 	local integer h = GetHandleId(t)
 	local group g = AllocationGroup(375)
 	call CreateFogModifierTimedForPlayer(GetOwningPlayer(GetTriggerUnit()), 7, VRA, VIA, 300 + 500)
-	call A5X(BC, VRA, VIA)
+	call PlaySoundAtPosition(BC, VRA, VIA)
 	call TriggerRegisterTimerEvent(t, .1, true)
 	call TriggerAddCondition(t, Condition(function VOA))
 	call SaveGroupHandle(HY, h, 22,(g))
@@ -58858,7 +58858,7 @@ function YAV takes nothing returns nothing
 		call GroupRemoveUnit(g, u)
 	endloop
 	call DeallocateGroup(g)
-	call A5X(EX, GetUnitX(whichUnit), GetUnitY(whichUnit))
+	call PlaySoundAtPosition(EX, GetUnitX(whichUnit), GetUnitY(whichUnit))
 	set whichUnit = null
 	set u = null
 	set d = null
@@ -59556,7 +59556,7 @@ function NLE takes nothing returns nothing
 	local real a = AngleBetweenXY(x1, y1, x2, y2)
 	local integer level = GetUnitAbilityLevel(trigUnit,'A173')
 	local unit dummyCaster = CreateUnit(GetOwningPlayer(trigUnit),'h07K', x1, y1, a)
-	call A5X(GE, x1, y1)
+	call PlaySoundAtPosition(GE, x1, y1)
 	call SaveUnitHandle(HY, h, 19,(dummyCaster))
 	call SaveInteger(HY, h, 5,(level))
 	call SaveGroupHandle(HY, h, 22,(g))
@@ -65416,7 +65416,7 @@ function HPA takes unit whichUnit, unit targetUnit, integer level returns nothin
 	local trigger t = CreateTrigger()
 	local integer h = GetHandleId(t)
 	call CommonTextTag("WALRUS PUNCH !!", 3.5, whichUnit, .03, 255, 0, 0, 255)
-	call A5X(VF, GetUnitX(targetUnit), GetUnitY(targetUnit))
+	call PlaySoundAtPosition(VF, GetUnitX(targetUnit), GetUnitY(targetUnit))
 	call CommonUnitAddStun(targetUnit, 1., false)
 	if IsUnitModelFlying(targetUnit) == false then
 		call UnitAddPermanentAbility(targetUnit,'Amrf')
@@ -66166,7 +66166,7 @@ function JTA takes unit whichUnit, unit targetUnit, integer level returns nothin
 		endif
 	endif
 	call CXX(targetUnit, id, 1, 10)
-	call A5X(SF, GetUnitX(targetUnit), GetUnitY(targetUnit))
+	call PlaySoundAtPosition(SF, GetUnitX(targetUnit), GetUnitY(targetUnit))
 endfunction
 function JUA takes nothing returns nothing
 	local real d
@@ -66219,7 +66219,7 @@ function JYA takes nothing returns nothing
 	local integer h = GetHandleId(t)
 	local group D7R = AllocationGroup(460)
 	local unit dummyCaster = CreateUnit(GetOwningPlayer(whichUnit),'e00E', GetUnitX(whichUnit), GetUnitY(whichUnit), GetUnitFacing(whichUnit))
-	call A5X(SF, GetUnitX(whichUnit), GetUnitY(whichUnit))
+	call PlaySoundAtPosition(SF, GetUnitX(whichUnit), GetUnitY(whichUnit))
 	call UnitAddPermanentAbility(dummyCaster,'A284')
 	call SetUnitAbilityLevel(dummyCaster,'A284', GetUnitAbilityLevel(whichUnit,'A27G'))
 	call IssueTargetOrderById(dummyCaster, 852119, targetUnit)
@@ -66357,7 +66357,7 @@ function J7A takes nothing returns nothing
 	local integer id = GetPlayerId(GetOwningPlayer(u))
 	local boolean J9A = (GetUnitAbilityLevel(u, J2A) == 0) or J2A == LoadInteger(HY,(GetHandleId(u)), 704)
 	local integer i = 1
-	call A5X(LF, GetUnitX(u), GetUnitY(u))
+	call PlaySoundAtPosition(LF, GetUnitX(u), GetUnitY(u))
 	loop
 	exitwhen i > 4 + ExtraSkillsCount or J9A == false
 		if HeroSkill_BaseId[PlayerSkillIndices[id * MAX_SKILL_SLOTS + i]] == J2A then
@@ -66398,7 +66398,7 @@ endfunction
 function KVA takes unit u, unit target, integer id, integer lv returns nothing
 	local trigger t = LaunchMissileByUnitDummy(target, u,'h0DB', "J7A", 900, false)
 	local integer h = GetHandleId(t)
-	call A5X(KF, GetUnitX(target), GetUnitY(target))
+	call PlaySoundAtPosition(KF, GetUnitX(target), GetUnitY(target))
 	call CommonTextTag(GetObjectName(id), 3.75, target, .024, 170, 0, 255, 216)
 	call SaveUnitHandle(HY, h, 2,(u))
 	call SaveUnitHandle(HY, h, 17,(target))
@@ -75716,11 +75716,11 @@ function Init_Sounds takes nothing returns nothing
 	call SetSoundChannel(T0, 0)
 	call SetSoundVolume(T0, 127)
 	call SetSoundPitch(T0, 1.)
-	set KC = CreateSound("Buildings\\NightElf\\MoonWell\\MoonWellWhat1.wav", false, true, true, 10, 10, "DefaultEAXON")
-	call SetSoundParamsFromLabel(KC, "MoonWellWhat")
-	call SetSoundDuration(KC, 2972)
-	call SetSoundDistances(KC, 600., 10000.)
-	call SetSoundDistanceCutoff(KC, 2000.)
+	set MoonWellWhatSound = CreateSound("Buildings\\NightElf\\MoonWell\\MoonWellWhat1.wav", false, true, true, 10, 10, "DefaultEAXON")
+	call SetSoundParamsFromLabel(MoonWellWhatSound, "MoonWellWhat")
+	call SetSoundDuration(MoonWellWhatSound, 2972)
+	call SetSoundDistances(MoonWellWhatSound, 600., 10000.)
+	call SetSoundDistanceCutoff(MoonWellWhatSound, 2000.)
 	set LC = CreateSound("Abilities\\Spells\\Human\\MarkOfChaos\\MarkOfChaos.wav", false, true, true, 10, 10, "SpellsEAX")
 	call SetSoundParamsFromLabel(LC, "MarkOfChaos")
 	call SetSoundDuration(LC, 4000)

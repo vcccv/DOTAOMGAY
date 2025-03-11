@@ -48,7 +48,7 @@ scope ShadowDemon
         if GetTriggerEventId()!= EVENT_WIDGET_DEATH then
             call ClearSelectionForPlayer(GetOwningPlayer(targetUnit))
             call SelectUnitAddForPlayer(targetUnit, GetOwningPlayer(targetUnit))
-            call A5X(AF, GetUnitX(targetUnit), GetUnitY(targetUnit))
+            call PlaySoundAtPosition(AF, GetUnitX(targetUnit), GetUnitY(targetUnit))
             set t = CreateTrigger()
             set h = GetHandleId(t)
             call TriggerRegisterTimerEvent(t, 3, false)
