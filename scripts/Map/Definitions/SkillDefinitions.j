@@ -25,6 +25,9 @@ library HeroSkillDefine requires SkillSystem
         // 烈日炙烤
         call RegisterSkillInitMethodByIndex(SKILL_INDEX_SUN_RAY, "SunRayOnInitializer")
 
+        // 幻象法球
+        call RegisterSkillInitMethodByIndex(SKILL_INDEX_ILLUSORY_ORB, "IllusoryOryOnInitializer")
+
         // 601是init
         call SaveStr(ObjectHashTable,'A060', 601, "W_A")
         call SaveStr(ObjectHashTable,'A0LE', 601, "WYA")

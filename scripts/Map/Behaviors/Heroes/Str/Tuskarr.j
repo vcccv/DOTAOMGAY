@@ -10,7 +10,7 @@ scope Tuskarr
     //*
     //***************************************************************************
     globals
-        constant integer SKILL_INDEX_ICE_SHARDS = GetHeroSKillIndexBySlot(HERO_INDEX_PHOENIX, 1)
+        constant integer SKILL_INDEX_ICE_SHARDS = GetHeroSKillIndexBySlot(HERO_INDEX_TUSKARR, 1)
     endglobals
     function HDA takes unit whichUnit, unit targetUnit, real sx, real sy, real a2 returns nothing
         local integer i = 0

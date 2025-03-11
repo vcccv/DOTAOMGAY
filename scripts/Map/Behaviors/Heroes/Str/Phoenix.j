@@ -47,10 +47,10 @@ scope Phoenix
                 return
             endif
             set h = LoadInteger(ObjectHashTable, GetHandleId(u),'A1YY')
-            if S6V == 852177then
+            if S6V == 852177 then
                 call SaveBoolean(ObjectHashTable, h, 1, true)
                 call SetUnitAnimationByIndex(u, LoadInteger(ObjectHashTable, GetUnitTypeId(u),'A1P8'))
-            elseif S6V == 852178then
+            elseif S6V == 852178 then
                 call SaveBoolean(ObjectHashTable, h, 1, false)
                 call SetUnitAnimation(u, "stand")
             endif

@@ -5654,7 +5654,7 @@ Tip=选择英雄[|cffffcc00E|r]
 Ubertip=点击选择英雄
 [h06O]
 art=ReplaceableTextures\CommandButtons\BTNImprovedStrengthOfTheMoon
-Name=幻像法球
+Name=幻象法球
 [h06P]
 art=ReplaceableTextures\CommandButtons\BTNImprovedStrengthOfTheMoon
 Name=致盲之光
@@ -25557,7 +25557,7 @@ art=ReplaceableTextures\CommandButtons\BTNIllusory
 buttonpos=,2
 animnames=attack
 researchart=ReplaceableTextures\CommandButtons\BTNIllusory
-Name=幻像法球
+Name=幻象法球
 Tip=幻象法球[|cffffcc00R|r] - [|cffffcc00等级 1|r],幻象法球[|cffffcc00R|r] - [|cffffcc00等级 2|r],幻象法球[|cffffcc00R|r] - [|cffffcc00等级 3|r],幻象法球[|cffffcc00R|r] - [|cffffcc00等级 4|r]
 Ubertip=释放一个直线飞行的魔法球，移动过程中对附近200范围内的敌方单位造成70点|cff6495ed魔法伤害|r。仙女龙可以随时传送至魔法球所在的位置。|n|n|cff99ccff施法距离：|r3000|n|cff99ccff最大距离：|r1800|n|cff99ccff冷却时间：|r11,释放一个直线飞行的魔法球，移动过程中对附近200范围内的敌方单位造成140点|cff6495ed魔法伤害|r。仙女龙可以随时传送至魔法球所在的位置。|n|n|cff99ccff施法距离：|r3000|n|cff99ccff最大距离：|r1800|n|cff99ccff冷却时间：|r11,释放一个直线飞行的魔法球，移动过程中对附近200范围内的敌方单位造成210点|cff6495ed魔法伤害|r。仙女龙可以随时传送至魔法球所在的位置。|n|n|cff99ccff施法距离：|r3000|n|cff99ccff最大距离：|r1800|n|cff99ccff冷却时间：|r11,释放一个直线飞行的魔法球，移动过程中对附近200范围内的敌方单位造成280点|cff6495ed魔法伤害|r。仙女龙可以随时传送至魔法球所在的位置。|n|n|cff99ccff施法距离：|r3000|n|cff99ccff最大距离：|r1800|n|cff99ccff冷却时间：|r11
 Hotkey=R
