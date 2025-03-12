@@ -337,6 +337,121 @@ library AbilityCustomOrderId requires Base
         // 野性之斧
         call AllocAbilityOrderId('A0O1')
 
+        //***************************************************************************
+        //*
+        //*  windwalk
+        //*
+        //***************************************************************************
+        // 疾风步 - 赏金猎
+        call AllocAbilityOrderId('A07A')
+        // 跳跃            
+        call AllocAbilityOrderId('A0LN')
+        // 隐匿            
+        call AllocAbilityOrderId('A0RV')
+        // 仇杀            
+        call AllocAbilityOrderId('A09U')
+        // 骨隐步          
+        call AllocAbilityOrderId('QB0A')
+        // 缩地            
+        call AllocAbilityOrderId('A0CA')
+        // 回光返照        
+        call AllocAbilityOrderId('A0NS')
+        // 暗影之舞        
+        call AllocAbilityOrderId('A1IN')
+        // 幽灵漫步        
+        call AllocAbilityOrderId('Z605')
+
+        //***************************************************************************
+        //*
+        //*  thunderbolt
+        //*
+        //***************************************************************************
+        // 魔法箭   
+        call AllocAbilityOrderId('A02A') 
+
+        // 闪电击   
+        call AllocAbilityOrderId('A0JC') 
+
+        // 无敌斩   
+        call AllocAbilityOrderId('A0M1') 
+        call AllocAbilityOrderId('A1AX') 
+
+        // 火焰爆轰 
+        call AllocAbilityOrderId('QB0J') 
+
+        // 暗杀     
+        call AllocAbilityOrderId('A04P') 
+
+        // 投掷飞镖 
+        call AllocAbilityOrderId('A004') 
+
+        // 神龙摆尾 
+        call AllocAbilityOrderId('A0AR') 
+
+        // 法力虚空 
+        call AllocAbilityOrderId('A0E3') 
+
+        // 原始咆哮 
+        call AllocAbilityOrderId('A0O2') 
+        call AllocAbilityOrderId('A289')
+
+        // 虚空     
+        call AllocAbilityOrderId('A02H') 
+
+        // 冥火爆击 
+        call AllocAbilityOrderId('QB0H') 
+
+        // 吞噬 - 投掷巨石
+        call AllocAbilityOrderId('A36K') 
+
+        // 死神镰刀 
+        call AllocAbilityOrderId('A067') 
+        call AllocAbilityOrderId('A08P') 
+
+        // 剧毒之触 
+        call AllocAbilityOrderId('A0NQ') 
+        // 连环霜冻 
+        call AllocAbilityOrderId('A05T') 
+        call AllocAbilityOrderId('A08H') 
+
+        //***************************************************************************
+        //*
+        //*  stomp
+        //*
+        //***************************************************************************
+        // 马蹄践踏        
+        call AllocAbilityOrderId('A00S')
+        // 吞噬 - 战争践踏 
+        call AllocAbilityOrderId('A1P0')
+        // 火焰重踏        
+        call AllocAbilityOrderId('A454')
+        
+        //***************************************************************************
+        //*
+        //*  animatedead
+        //*
+        //***************************************************************************
+        // 烈日炙烤  - 停止
+        call AllocAbilityOrderId('A1Z3')
+        // 神行百变
+        call AllocAbilityOrderId('A46H')
+        // 吞噬
+        call AllocAbilityOrderId('A10R')
+        //***************************************************************************
+        //*
+        //*  ANcl
+        //*
+        //***************************************************************************
+        // 锯齿飞轮
+        call AllocAbilityOrderId('A2E5')
+        call AllocAbilityOrderId('A43Q')
+        // 双飞之轮
+        call AllocAbilityOrderId('A43S')
+
+        // 锯齿飞轮 - 收回
+        call AllocAbilityOrderId('A2FX')
+        // 双飞之轮 - 收回
+        call AllocAbilityOrderId('A43P')
 
     endfunction
 

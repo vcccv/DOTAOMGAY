@@ -16,6 +16,7 @@
 #include "Str\\Alchemist.j"
 #include "Str\\EarthSpirit.j"
 #include "Str\\Phoenix.j"
+#include "Str\\SkeletonKing.j"
 
 #include "Int\\TwinHeadDragon.j"
 #include "Int\\Ezalor.j"

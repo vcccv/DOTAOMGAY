@@ -14,7 +14,10 @@ library AbilityCustomCastType requires ErrorMessage
     endfunction
 
     function AbilityCustomCastType_Init takes nothing returns nothing
-        
+        // 锯齿飞轮 - 收回
+        call SetAbilityCastType('A2FX', BERSERKER_CAST_TYPE)
+        // 双飞之轮 - 收回
+        call SetAbilityCastType('A43P', BERSERKER_CAST_TYPE)
     endfunction
 
 endlibrary

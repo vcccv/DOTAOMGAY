@@ -262,21 +262,23 @@ library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
         endif
     endfunction
     // Id StackLim暂时无用 普通技能 神杖/被动技能 工程升级技能 
-    function RegisterHeroSkill takes integer id, string StackLim, integer commonSkill, integer upgradeSkill, integer changeSkill returns nothing
-        if commonSkill > 0 then
-            set HeroSkill_Icon[id] = GetAbilityIconById(commonSkill)//GetAbilitySoundById(commonSkill, SOUND_TYPE_EFFECT_LOOPED)
+    function RegisterHeroSkill takes integer id, string StackLim, integer baseId, integer specialId, integer changeSkill returns nothing
+        if baseId > 0 then
+            set HeroSkill_Icon[id] = GetAbilityIconById(baseId)//GetAbilitySoundById(baseId, SOUND_TYPE_EFFECT_LOOPED)
             if StringLength(HeroSkill_Icon[id]) == 0 then
                 // 等合并slk再说吧
-                set HeroSkill_Icon[id] = GetAbilitySoundById(commonSkill, SOUND_TYPE_EFFECT_LOOPED)
-                // GetAbilityIconById(upgradeSkill)
-                //call ThrowWarning(StringLength(HeroSkill_Icon[id]) == 0, "SkillSystem", "RegisterHeroSkill", GetObjectName(commonSkill), 0, "no art icon")
+                set HeroSkill_Icon[id] = GetAbilitySoundById(baseId, SOUND_TYPE_EFFECT_LOOPED)
+                // GetAbilityIconById(specialId)
+                //call ThrowWarning(StringLength(HeroSkill_Icon[id]) == 0, "SkillSystem", "RegisterHeroSkill", GetObjectName(baseId), 0, "no art icon")
             endif
         endif
-        set HeroSkill_BaseId[id] = commonSkill
-        set HeroSkill_SpecialId[id] = upgradeSkill
+        call SaveSkillOrder(id, GetAbilityOrder(baseId))
+
+        set HeroSkill_BaseId[id] = baseId
+        set HeroSkill_SpecialId[id] = specialId
         set HeroSkill_Modify[id] = changeSkill
         //if sHotKey != "_" and sHotKey != "" and sHotKey != null then
-        //    call SaveStr(AbilityDataHashTable, commonSkill, HotKeyStringHash, sHotKey)
+        //    call SaveStr(AbilityDataHashTable, baseId, HotKeyStringHash, sHotKey)
         //endif
         set MaxHeroSkillsNumber = id
     endfunction
@@ -292,6 +294,7 @@ library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
 
         static integer COUNT = 0
         private static key TOGGLE_SKILL_INDEX
+        static TableArray ToggleSkillStateTable
 
         // 常态
         integer baseId
@@ -326,6 +329,13 @@ library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
         method IsDefaultId takes integer abilId returns boolean
             return abilId == this.baseId or abilId == this.upgradeId
         endmethod
+        static method IsUnitAbilityAlternated takes unit whichUnit, integer id returns boolean
+            local thistype this = thistype.GetIndexById(id)
+            if this == 0 then
+                return false
+            endif
+            return ToggleSkillStateTable[this].boolean[GetHandleId(whichUnit)]
+        endmethod
         // 获取指定单位的技能可用默认id，因为可能被神杖升级改变
         static method GetUnitVaildDefaultId takes unit whichUnit, integer skillId returns integer
             local thistype this = GetIndexById(skillId)
@@ -347,9 +357,11 @@ library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
             if state then
                 call UnitDisableAbilitySafe(whichUnit, GetUnitVaildDefaultId(whichUnit, this.baseId), true)
                 call UnitEnableAbility(whichUnit, this.alternateId, true)
+                set ToggleSkillStateTable[this].boolean[GetHandleId(whichUnit)] = true
             else
                 call UnitEnableAbility(whichUnit, GetUnitVaildDefaultId(whichUnit, this.baseId), true)
                 call UnitDisableAbilitySafe(whichUnit, this.alternateId, true)
+                set ToggleSkillStateTable[this].boolean[GetHandleId(whichUnit)] = false
             endif
         endmethod
 
@@ -359,6 +371,7 @@ library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
             local thistype this      = GetIndexById(id)
             if this != 0 and this.IsDefaultId(id) and UnitAddPermanentAbility(whichUnit, this.alternateId) then
                 call UnitDisableAbility(whichUnit, this.alternateId, true)
+                set ToggleSkillStateTable[this].boolean[GetHandleId(whichUnit)] = false
             endif
             set whichUnit = null
             return false
@@ -368,6 +381,7 @@ library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
             local integer  id        = MHEvent_GetAbility()
             local thistype this      = GetIndexById(id)
             if this != 0 and this.IsDefaultId(id) then
+                call ToggleSkillStateTable[this].boolean.remove(GetHandleId(whichUnit))
                 call UnitRemoveAbility(whichUnit, this.alternateId)
             endif
             set whichUnit = null
@@ -382,9 +396,11 @@ library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
                 if this.IsDefaultId(id) then
                     call UnitDisableAbilitySafe(whichUnit, GetUnitVaildDefaultId(whichUnit, this.baseId), true)
                     call UnitEnableAbility(whichUnit, this.alternateId, true)
+                    set ToggleSkillStateTable[this].boolean[GetHandleId(whichUnit)] = true
                 elseif this.IsAlternateId(id) then
                     call UnitEnableAbility(whichUnit, GetUnitVaildDefaultId(whichUnit, this.baseId), true)
                     call UnitDisableAbilitySafe(whichUnit, this.alternateId, true)
+                    set ToggleSkillStateTable[this].boolean[GetHandleId(whichUnit)] = false
                 endif
             endif
             set whichUnit = null
@@ -408,6 +424,8 @@ library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
             set trig = CreateTrigger()
             call TriggerAddCondition(trig, Condition(function thistype.AbilityOnSpellEffect))
             call TriggerRegisterAnyUnitEvent(trig, EVENT_PLAYER_UNIT_SPELL_EFFECT)
+
+            set ToggleSkillStateTable = TableArray[JASS_MAX_ARRAY_SIZE]
         endmethod
     endmodule
 
