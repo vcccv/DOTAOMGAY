@@ -56,3 +56,4 @@
 #include "Agi\\LoneDruid.j"
 #include "Agi\\Razor.j"
 #include "Agi\\Weaver.j"
+#include "Agi\\Venomancer.j"
