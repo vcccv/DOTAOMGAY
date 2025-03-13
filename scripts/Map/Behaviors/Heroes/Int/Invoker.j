@@ -3,6 +3,76 @@ scope Invoker
 
     //***************************************************************************
     //*
+    //*  幽灵漫步
+    //*
+    //***************************************************************************
+    function MYI takes nothing returns boolean
+        local trigger t = GetTriggeringTrigger()
+        local unit u = LoadUnitHandle(HY, GetHandleId(t), 0)
+        if UnitAlive(u) then
+            call UnitRemoveAbility(u,'QFZZ')
+            if GetUnitAbilityLevel(u,'QFZZ') == 0 then
+                call FlushChildHashtable(HY, GetHandleId(t))
+                call DestroyTrigger(t)
+            endif
+        endif
+        set t = null
+        set u = null
+        return false
+    endfunction
+    function MZI takes nothing returns boolean
+        local trigger t = GetTriggeringTrigger()
+        local integer h = GetHandleId(t)
+        local unit dummyCaster =(LoadUnitHandle(HY, h, 19))
+        local unit trigUnit =(LoadUnitHandle(HY, h, 14))
+        local trigger tt
+        if GetUnitAbilityLevel(trigUnit,'B08X') == 0 then
+            // call SetPlayerAbilityAvailableEx(GetOwningPlayer(trigUnit),'Z605', true)
+            // call UnitRemoveAbility(trigUnit,'QFZZ')
+            // if GetUnitAbilityLevel(trigUnit,'QFZZ')> 0 then
+            //     set tt = CreateTrigger()
+            //     call TriggerRegisterTimerEvent(tt, 1, true)
+            //     call TriggerAddCondition(tt, Condition(function MYI))
+            //     call SaveUnitHandle(HY, GetHandleId(tt), 0, trigUnit)
+            //     set tt = null
+            // endif
+            call ToggleSkill.SetState(trigUnit, 'Z605', false)
+            call KillUnit(dummyCaster)
+            call FlushChildHashtable(HY, h)
+            call DestroyTrigger(t)
+        else
+            call SetUnitX(dummyCaster, GetUnitX(trigUnit))
+            call SetUnitY(dummyCaster, GetUnitY(trigUnit))
+        endif
+        set t = null
+        set dummyCaster = null
+        set trigUnit = null
+        return false
+    endfunction
+    function GhostWalkOnSpellEffect takes nothing returns nothing
+        local trigger t = CreateTrigger()
+        local integer h = GetHandleId(t)
+        local unit trigUnit = GetTriggerUnit()
+        local unit dummyCaster = CreateUnit(GetOwningPlayer(trigUnit),'e01V', GetUnitX(trigUnit), GetUnitY(trigUnit), 0)
+        local integer level = GetUnitAbilityLevel(trigUnit,'Z605')
+        call UnitAddPermanentAbility(dummyCaster,'QH50')
+        call SetUnitAbilityLevel(dummyCaster,'QH50', level)
+        call TriggerRegisterTimerEvent(t, .05, true)
+        call TriggerAddCondition(t, Condition(function MZI))
+        call SaveUnitHandle(HY, h, 19,(dummyCaster))
+        call SaveUnitHandle(HY, h, 14,(trigUnit))
+
+        call ToggleSkill.SetState(trigUnit, 'Z605', true)
+        // call SetPlayerAbilityAvailableEx(GetOwningPlayer(trigUnit),'Z605', false)
+        // call UnitAddAbility(trigUnit,'QFZZ')
+        // call SetUnitAbilityLevel(trigUnit,'QFZZ', 1)
+        set t = null
+        set trigUnit = null
+        set dummyCaster = null
+    endfunction
+
+    //***************************************************************************
+    //*
     //*  混沌陨石
     //*
     //***************************************************************************

@@ -34,6 +34,7 @@
 #include "Int\\OgreMagi.j"
 #include "Int\\Lion.j"
 #include "Int\\Windranger.j"
+#include "Int\\Rubick.j"
 
 #include "Agi\\VengefulSpirit.j"
 #include "Agi\\FacelessVoid.j"

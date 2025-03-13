@@ -172,14 +172,14 @@ library HeroSkillDefine requires SkillSystem
     
     // 使用一次a技能，便会隐藏禁用a技能随后显示启用b技能，使用b技能后又隐藏禁用b技能显示启用a技能
     function ToggleSkills_Init takes nothing returns nothing
-        call ToggleSkill.Register('A1RJ', 'A20N', true) // 凤凰冲击
+        call ToggleSkill.Register('A1RJ', 'A20N', false) // 凤凰冲击
         
-        //call ToggleSkill.Register('A1YX', 'A1Z2', true) // 烈火精灵
+        call ToggleSkill.Register('A1YX', 'A1Z2', false) // 烈火精灵
         
-        call ToggleSkill.Register('A1YY', 'A1Z3', true) // 烈日炙烤
+        call ToggleSkill.Register('A1YY', 'A1Z3', false) // 烈日炙烤
         
-        call ToggleSkill.Register('Z605', 'QFZZ', true) // 幽灵漫步
-        call ToggleSkill.Register('A27F', 'A27X', true) // 隔空取物
+        call ToggleSkill.Register('Z605', 'QFZZ', false) // 幽灵漫步
+        call ToggleSkill.Register('A27F', 'A27X', false) // 隔空取物
         call ToggleSkill.Register('A085', 'A121', true) // 启明
         call ToggleSkill.Register('A11N', 'A13D', true) // X标记
         call ToggleSkill.Register('A1PH', 'A1RA', true) // 灵魂汲取
