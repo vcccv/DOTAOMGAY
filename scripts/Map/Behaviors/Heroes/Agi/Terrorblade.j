@@ -15,6 +15,11 @@ scope Terrorblade
         local integer level =(LoadInteger(HY, h, 5))
         local real range = 600. + GetUnitCastRangeBonus(whichUnit)
         if GetTriggerEventId() == EVENT_WIDGET_DEATH or GetTriggerEvalCount(t)> 28 or IsUnitSilenced(whichUnit) or GetUnitDistanceEx(whichUnit, targetUnit)> range or IsUnitVisibleToPlayer(targetUnit, GetOwningPlayer(whichUnit)) == false then
+           
+            if not IsUnitEnemy(whichUnit, GetOwningPlayer(targetUnit)) then
+                call ToggleSkill.SetState(whichUnit, 'A1RA', false)
+            endif
+            
             call FlushChildHashtable(HY, h)
             call DestroyTrigger(t)
             call KillUnit(d)
@@ -22,7 +27,9 @@ scope Terrorblade
             if GetTriggerEvalCount(t)> 1 and GetSpellAbilityId()=='A1RA' then
                 call FlushChildHashtable(HY, h)
                 call DestroyTrigger(t)
-                call UnitRemoveAbility(whichUnit,'A1RA')
+
+                call ToggleSkill.SetState(whichUnit, 'A1RA', false)
+
                 call KillUnit(d)
             endif
         else
@@ -47,16 +54,18 @@ scope Terrorblade
         local unit d =(LoadUnitHandle(HY, h, 19))
         local boolean b = HaveSavedHandle(HY, h, 21)
         if GetTriggerEventId() == EVENT_WIDGET_DEATH then
-            call UnitRemoveAbility(whichUnit,'A1RA')
+            //if not IsUnitEnemy(whichUnit, GetOwningPlayer(targetUnit)) then
+            //    call ToggleSkill.SetState(whichUnit, 'A1RA', false)
+            //endif
             if b then
                 call RemoveUnit(LoadUnitHandle(HY, h, 21))
             endif
             call FlushChildHashtable(HY, h)
             call DestroyTrigger(t)
         else
-            if GetTriggerEvalCount(t) == 1 then
-                call IssueImmediateOrderById(whichUnit, 851993)
-            endif
+           // if GetTriggerEvalCount(t) == 1 then // ORDER_holdposition ?
+           //     call IssueImmediateOrderById(whichUnit, 851993)
+           // endif
             if IsUnitEnemy(whichUnit, GetOwningPlayer(targetUnit)) then
                 call SetUnitX(d, GetUnitX(whichUnit))
                 call SetUnitY(d, GetUnitY(whichUnit))
@@ -95,7 +104,8 @@ scope Terrorblade
             call SetUnitY(d, GetUnitY(whichUnit))
             call IssueTargetOrderById(d, 852487, targetUnit)
         else
-            call UnitAddPermanentAbility(whichUnit,'A1RA')
+            call ToggleSkill.SetState(whichUnit, 'A1RA', true)
+
             set d = CreateUnit(NeutralCreepPlayer,'u01G', 0, 0, 0)
             call SetUnitUserData(d, GetPlayerId(GetOwningPlayer(whichUnit)))
             call UnitAddAbility(d,'A04L')

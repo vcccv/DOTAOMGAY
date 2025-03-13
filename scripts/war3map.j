@@ -2758,7 +2758,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A2E5', 0, "ChakramOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A43Q', 0, "ChakramOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A43S', 0, "ChakramOnSpellEffect")
-	call SaveStr(ObjectHashTable,'A11N', 0, "D5E")
+	call SaveStr(ObjectHashTable,'A11N', 0, "XMarksTheSpotOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A300', 0, "D6E")
 	call SaveStr(ObjectHashTable,'A301', 0, "D7E")
 	call SaveStr(ObjectHashTable,'A07F', 0, "D8E")
@@ -2937,7 +2937,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A1AA', 3, "KVE")	//回音重踏 前摇
 	call SaveStr(ObjectHashTable,'A3DM', 3, "KXE")	//时光倒流
 	call SaveStr(ObjectHashTable,'A2LK', 3, "KVE")
-	call SaveStr(ObjectHashTable,'A11N', 3, "KOE")
+	call SaveStr(ObjectHashTable,'A11N', 3, "XMarksTheSpotOnSpellCast")
 	call SaveStr(ObjectHashTable,'AEbl', 3, "BlinkOnSpellCast")
 	call SaveStr(ObjectHashTable,'QB08', 3, "BlinkOnSpellCast")
 	
@@ -3121,7 +3121,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A2JK', 5, "SAE")
 	//call SaveStr(ObjectHashTable,'A1C0', 5, "SNE")
 	call SaveStr(ObjectHashTable,'A2S0', 5, "P9E")
-	call SaveStr(ObjectHashTable,'A11N', 5, "PZE")
+	//call SaveStr(ObjectHashTable,'A11N', 5, "PZE")
 	call SaveStr(ObjectHashTable,'A2AI', 5, "P8E")
 	call SaveStr(ObjectHashTable,'A03E', 5, "PFE")
 	call SaveStr(ObjectHashTable,'A0VX', 5, "P0E")
@@ -3157,7 +3157,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A2E5',1001, "ChakramOnLearn")
 	//call SaveStr(ObjectHashTable,'A1C0',1001, "SNE")
 	call SaveStr(ObjectHashTable,'A2JK',1001, "SAE")
-	call SaveStr(ObjectHashTable,'A11N',1001, "PZE")
+	//call SaveStr(ObjectHashTable,'A11N',1001, "PZE")
 	call SaveStr(ObjectHashTable,'A086',1001, "PNE")
 	call SaveStr(ObjectHashTable,'A0EY',1001, "PDE")
 	call SaveStr(ObjectHashTable,'A331',1001, "FireSpiritsOnLearn")
@@ -31896,6 +31896,7 @@ function BWR takes unit u, integer GFX, real SYV returns nothing
 	set t = null
 endfunction
 function BYR takes unit u returns nothing //拉比克额外技能删除,和omg不兼容,不应该使用
+	return
 	call UnitRemoveAbility(u,'A13D')
 	call UnitRemoveAbility(u,'A21J')
 	call UnitRemoveAbility(u,'A1QV')
@@ -32747,100 +32748,7 @@ function Rubick_AbilityFilter takes unit u, integer abid returns boolean
 	return PlayerHaveAbilityByActive(GetOwningPlayer(u), abid)
 endfunction
 
-function DWR takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit target = LoadUnitHandle(HY, h, 30)
-	local image i = LoadImageHandle(HY, h, 185)
-	local real x = LoadReal(HY, h, 6)
-	local real y = LoadReal(HY, h, 7)
-	local unit u = LoadUnitHandle(HY, h, 2)
-	if GetTriggerEventId() != EVENT_UNIT_SPELL_EFFECT or(GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT and GetSpellAbilityId()=='A13D') then
-		if GetTriggerEventId() != EVENT_WIDGET_DEATH and(IsUnitMagicImmune(target) == false or IsUnitAlly(target, GetOwningPlayer(u))) then
-			if IsUnitHidden(target) then
-				call SetUnitX(target, x)
-				call SetUnitY(target, y)
-			else
-				call SetUnitPosition(target, x, y)
-			endif
-		endif
-		call SetPlayerAbilityAvailableEx(GetOwningPlayer(u),'A13D', false)
-		if Rubick_AbilityFilter(u, 'A11N') then
-			call SetPlayerAbilityAvailableEx(GetOwningPlayer(u),'A11N', true)
-		endif
-		call DestroyEffect(LoadEffectHandle(HY, h, 32))
-		call ShowImage(i, false)
-		call DestroyImage(i)
-		call FlushChildHashtable(HY, h)
-		call DestroyTrigger(t)
-	endif
-	set t = null
-	set target = null
-	set i = null
-	set u = null
-	return false
-endfunction
-function DYR takes nothing returns nothing
-	local unit u = GetTriggerUnit()
-	local unit target = GetSpellTargetUnit()
-	local real x = GetUnitX(target)
-	local real y = GetUnitY(target)
-	local real WBO = 90
-	local image i = CreateImage("Fonts\\X.blp", WBO, WBO, 0, x -WBO / 2, y -WBO / 2, 0, 0, 0, 0, 2)
-	local trigger t = CreateTrigger()
-	local integer h = GetHandleId(t)
-	local string fx = ""
-	//local integer level = GetUnitAbilityLevel(u,'A11N')
-	local real dur = 4.
-	if IsPlayerAlly(GetOwningPlayer(u), GetOwningPlayer(target)) then
-		set dur = dur * 2
-	endif
-	call EPX(target, 4401, 5)
-	call UnitAddPermanentAbility(u,'A13D')
-	call SetPlayerAbilityAvailableEx(GetOwningPlayer(u),'A13D', true)
-	call SetPlayerAbilityAvailableEx(GetOwningPlayer(u),'A11N', false)
-	call SetImageRenderAlways(i, true)
-	if IsUnitAlly(u, GetOwningPlayer(target)) == false or IsUnitAlly(target, LocalPlayer) or IsPlayerObserverEx(LocalPlayer) then
-		set fx = "effects\\BlackTide.mdx"
-		call ShowImage(i, true)
-	else
-		call ShowImage(i, false)
-	endif
-	call SetImageColor(i, 255, 0, 0, 255)
-	call UnitApplyTimedLife(CreateUnit(GetOwningPlayer(u),'o00G', x, y, 0),'BTLF', 5)
-	call TriggerRegisterTimerEvent(t, dur, false)
-	call TriggerRegisterDeathEvent(t, target)
-	call TriggerRegisterUnitEvent(t, u, EVENT_UNIT_SPELL_EFFECT)
-	call TriggerAddCondition(t, Condition(function DWR))
-	call SaveImageHandle(HY, h, 185, i)
-	call SaveUnitHandle(HY, h, 30,(target))
-	call SaveReal(HY, h, 6, x * 1.)
-	call SaveReal(HY, h, 7, y * 1.)
-	call SaveEffectHandle(HY, h, 32, AddSpecialEffectTarget(fx, target, "overhead"))
-	call SaveUnitHandle(HY, h, 2, u)
-	set u = null
-	set target = null
-	set i = null
-	set t = null
-endfunction
-function PZE takes nothing returns nothing
-	call SetPlayerAbilityAvailableEx(GetOwningPlayer(GetTriggerUnit()),'A13D', false)
-	call UnitAddPermanentAbility(GetTriggerUnit(),'A13D')
-endfunction
-function D5E takes nothing returns nothing
-	if IsUnitAlly(GetSpellTargetUnit(), GetOwningPlayer(GetTriggerUnit())) or not UnitHasSpellShield(GetSpellTargetUnit()) then
-		call DYR()
-	endif
-endfunction
-function KOE takes nothing returns nothing
-	if (LoadBoolean(HY,(GetHandleId(GetOwningPlayer(GetSpellTargetUnit()))), 139)) and IsUnitAlly(GetSpellTargetUnit(), GetOwningPlayer(GetTriggerUnit())) then
-		call EXStopUnit(GetTriggerUnit())
-		call InterfaceErrorForPlayer(GetOwningPlayer(GetTriggerUnit()), GetObjectName('n038'))
-	elseif IsUnitMagicImmune(GetSpellTargetUnit()) and IsUnitEnemy(GetSpellTargetUnit(), GetOwningPlayer(GetTriggerUnit())) then
-		call EXStopUnit(GetTriggerUnit())
-		call InterfaceErrorForPlayer(GetOwningPlayer(GetTriggerUnit()), "无法作用于魔免的敌人")
-	endif
-endfunction
+
 function DZR takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
@@ -72190,7 +72098,9 @@ function InitItemAbilitys takes nothing returns nothing
 
 	call SetItemAbilityId('A1R5')
 
+	// ? 灵魂汲取取消
 	call SetItemAbilityId('A1RA')
+
 	call SetItemAbilityId('A1T7')
 	call SetItemAbilityId('A1WA')
 	call SetItemAbilityId('A1WB')

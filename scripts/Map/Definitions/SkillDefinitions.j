@@ -180,20 +180,20 @@ library HeroSkillDefine requires SkillSystem
         
         call ToggleSkill.Register('Z605', 'QFZZ', false) // 幽灵漫步
         call ToggleSkill.Register('A27F', 'A27X', false) // 隔空取物
-        call ToggleSkill.Register('A085', 'A121', true) // 启明
-        call ToggleSkill.Register('A11N', 'A13D', true) // X标记
-        call ToggleSkill.Register('A1PH', 'A1RA', true) // 灵魂汲取
-        call ToggleSkill.Register('A1A8', 'A21J', true) // 先祖之魂
-        call ToggleSkill.Register('A1NI', 'A1NH', true) // 不稳定化合物
-        call ToggleSkill.Register('A0SW', 'A0SX', true) // 感染
-        call ToggleSkill.Register('A04Y', 'A2O9', true) // 噩梦
-        call ToggleSkill.Register('A0R0', 'A2MB', true) // 黑暗之门
+        call ToggleSkill.Register('A085', 'A121', false) // 启明
+        call ToggleSkill.Register('A11N', 'A13D', false) // X标记
+        call ToggleSkill.Register('A1PH', 'A1RA', false) // 灵魂汲取
+        call ToggleSkill.Register('A1A8', 'A21J', false) // 先祖之魂
+        call ToggleSkill.Register('A1NI', 'A1NH', false) // 不稳定化合物
+        call ToggleSkill.Register('A0SW', 'A0SX', false) // 感染
+        call ToggleSkill.Register('A04Y', 'A2O9', false) // 噩梦
+        call ToggleSkill.Register('A0R0', 'A2MB', false) // 黑暗之门
         
-        call ToggleSkill.Register('A0G8', 'A0GC', true) // 水人复制
+        call ToggleSkill.Register('A0G8', 'A0GC', false) // 水人复制
         
-        call ToggleSkill.Register('A21F', 'A21H', true) // 脉冲新星
+        call ToggleSkill.Register('A21F', 'A21H', false) // 脉冲新星
         
-        call ToggleSkill.Register('A1MI', 'A1MN', true) // 冰晶爆轰
+        call ToggleSkill.Register('A1MI', 'A1MN', false) // 冰晶爆轰
         
         call ToggleSkill.Register('A2E5', 'A2FX', true) // 锯齿飞轮
         call ToggleSkill.Register('A43Q', 'A43P', true) // 双飞之轮

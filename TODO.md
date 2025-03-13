@@ -104,9 +104,9 @@
     - [x] 烈日炙烤
     - [x] 幽灵漫步
     - [x] 隔空取物
-    - [ ] 启明
-    - [ ] X标记
-    - [ ] 灵魂汲取
+    - [x] 启明
+    - [x] X标记
+    - [x] 灵魂汲取
     - [ ] 先祖之魂
     - [ ] 不稳定化合物
     - [ ] 感染
@@ -118,6 +118,8 @@
     - [ ] 锯齿飞轮
     - [ ] 双飞之轮
     - [ ] 海妖之歌
+- [ ] X标记
+    - [ ] 目标单位处于无敌或隐藏状态时，X标记将不再返回改单位。 
 - [x] 烈日炙烤
     - [ ] 
 - [x] 幻象法球
@@ -513,8 +515,8 @@
 - [ ] 玲珑心支持充能技能，刷新球支持充能技能。
 - [ ] 佣兽固定攻击力
 - [ ] 彻底干死所有二进制属性系统
-- [ ] 分离HeroSkill(HeroSkill, HeroSkillDefine, HeroPassiveSkill, HeroAghanimScepterUpgrade)和ItemSys(ItemSys, ItemDefine, Item合成)
-- [ ] 修改AddAbility和RemoveAbility
+- [x] 分离HeroSkill(HeroSkill, HeroSkillDefine, HeroPassiveSkill, HeroAghanimScepterUpgrade)和ItemSys(ItemSys, ItemDefine, Item合成)
+- [x] 修改AddAbility和RemoveAbility
 - [ ] 锯齿飞轮神杖升级失去时自动收回
 - [ ] 做个脚本可以自动输出可用id
 - [ ] 工具提示显示可靠金钱和不可靠金钱
@@ -526,3 +528,4 @@
 - [ ] 优化闪避相关的问题
 - [ ] -mc指令对熊灵暂时无效了
 - [ ] 相位鞋对远程有问题
+- [ ] X标记添加虚线

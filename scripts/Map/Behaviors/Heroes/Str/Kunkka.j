@@ -1,11 +1,17 @@
 
 scope Kunkka
 
+    globals
+        constant integer HERO_INDEX_KUNKKA = 46
+    endglobals
     //***************************************************************************
     //*
     //*  潮汐使者
     //*
     //***************************************************************************
+    globals
+        constant integer SKILL_INDEX_TIDEBRINGER = GetHeroSKillIndexBySlot(HERO_INDEX_KUNKKA, 2)
+    endglobals
     // 2022/1/12 A13T 和 A522 数据互换 不必使用魔法护盾来实现技能cd 重生已经可以
     function Fix_Tidebringer_Add takes nothing returns boolean
         local trigger t = GetTriggeringTrigger()
@@ -165,6 +171,110 @@ scope Kunkka
     function S5A takes nothing returns nothing
         if SpellDamageCount < 1 and DEDamage > 40 or IsUnitType(DETarget, UNIT_TYPE_STRUCTURE) then
             call Tidebringer_Actions(DESource, DETarget, DEDamage)
+        endif
+    endfunction
+
+    //***************************************************************************
+    //*
+    //*  X标记
+    //*
+    //***************************************************************************
+    globals
+        constant integer SKILL_INDEX_X_MARKS_THE_SPOT = GetHeroSKillIndexBySlot(HERO_INDEX_KUNKKA, 3)
+    endglobals
+    function DWR takes nothing returns boolean
+        local trigger t = GetTriggeringTrigger()
+        local integer h = GetHandleId(t)
+        local unit target = LoadUnitHandle(HY, h, 30)
+        local image i = LoadImageHandle(HY, h, 185)
+        local real x = LoadReal(HY, h, 6)
+        local real y = LoadReal(HY, h, 7)
+        local unit u = LoadUnitHandle(HY, h, 2)
+        if GetTriggerEventId() != EVENT_UNIT_SPELL_EFFECT or(GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT and GetSpellAbilityId()=='A13D') then
+            if GetTriggerEventId() != EVENT_WIDGET_DEATH and(IsUnitMagicImmune(target) == false or IsUnitAlly(target, GetOwningPlayer(u))) then
+                if not IsUnitHidden(target) and not IsUnitInvulnerable(target) then
+                    call SetUnitPosition(target, x, y)
+                endif
+            endif
+            // call SetPlayerAbilityAvailableEx(GetOwningPlayer(u),'A13D', false)
+            // if Rubick_AbilityFilter(u, 'A11N') then
+            //     call SetPlayerAbilityAvailableEx(GetOwningPlayer(u),'A11N', true)
+            // endif
+            call ToggleSkill.SetState(u, 'A11N', false)
+
+            call DestroyEffect(LoadEffectHandle(HY, h, 32))
+            call ShowImage(i, false)
+            call DestroyImage(i)
+            call FlushChildHashtable(HY, h)
+            call DestroyTrigger(t)
+        endif
+        set t = null
+        set target = null
+        set i = null
+        set u = null
+        return false
+    endfunction
+    function DYR takes nothing returns nothing
+        local unit u = GetTriggerUnit()
+        local unit target = GetSpellTargetUnit()
+        local real x = GetUnitX(target)
+        local real y = GetUnitY(target)
+        local real WBO = 90
+        local image i = CreateImage("Fonts\\X.blp", WBO, WBO, 0, x -WBO / 2, y -WBO / 2, 0, 0, 0, 0, 2)
+        local trigger t = CreateTrigger()
+        local integer h = GetHandleId(t)
+        local string fx = ""
+        //local integer level = GetUnitAbilityLevel(u,'A11N')
+        local real dur = 4.
+        if IsPlayerAlly(GetOwningPlayer(u), GetOwningPlayer(target)) then
+            set dur = dur * 2
+        endif
+
+        call ToggleSkill.SetState(u, 'A11N', true)
+
+        call EPX(target, 4401, 5)
+
+        // call UnitAddPermanentAbility(u,'A13D')
+        // call SetPlayerAbilityAvailableEx(GetOwningPlayer(u),'A13D', true)
+        // call SetPlayerAbilityAvailableEx(GetOwningPlayer(u),'A11N', false)
+
+        call SetImageRenderAlways(i, true)
+        if IsUnitAlly(u, GetOwningPlayer(target)) == false or IsUnitAlly(target, LocalPlayer) or IsPlayerObserverEx(LocalPlayer) then
+            set fx = "effects\\BlackTide.mdx"
+            call ShowImage(i, true)
+        else
+            call ShowImage(i, false)
+        endif
+        call SetImageColor(i, 255, 0, 0, 255)
+        call UnitApplyTimedLife(CreateUnit(GetOwningPlayer(u),'o00G', x, y, 0),'BTLF', 5)
+        call TriggerRegisterTimerEvent(t, dur, false)
+        call TriggerRegisterDeathEvent(t, target)
+        call TriggerRegisterUnitEvent(t, u, EVENT_UNIT_SPELL_EFFECT)
+        call TriggerAddCondition(t, Condition(function DWR))
+        call SaveImageHandle(HY, h, 185, i)
+        call SaveUnitHandle(HY, h, 30,(target))
+        call SaveReal(HY, h, 6, x * 1.)
+        call SaveReal(HY, h, 7, y * 1.)
+        call SaveEffectHandle(HY, h, 32, AddSpecialEffectTarget(fx, target, "overhead"))
+        call SaveUnitHandle(HY, h, 2, u)
+        set u = null
+        set target = null
+        set i = null
+        set t = null
+    endfunction
+    function XMarksTheSpotOnSpellEffect takes nothing returns nothing
+        if IsUnitAlly(GetSpellTargetUnit(), GetOwningPlayer(GetTriggerUnit())) or not UnitHasSpellShield(GetSpellTargetUnit()) then
+            call DYR()
+        endif
+    endfunction
+
+    function XMarksTheSpotOnSpellCast takes nothing returns nothing
+        if (LoadBoolean(HY,(GetHandleId(GetOwningPlayer(GetSpellTargetUnit()))), 139)) and IsUnitAlly(GetSpellTargetUnit(), GetOwningPlayer(GetTriggerUnit())) then
+            call EXStopUnit(GetTriggerUnit())
+            call InterfaceErrorForPlayer(GetOwningPlayer(GetTriggerUnit()), GetObjectName('n038'))
+        elseif IsUnitMagicImmune(GetSpellTargetUnit()) and IsUnitEnemy(GetSpellTargetUnit(), GetOwningPlayer(GetTriggerUnit())) then
+            call EXStopUnit(GetTriggerUnit())
+            call InterfaceErrorForPlayer(GetOwningPlayer(GetTriggerUnit()), "无法作用于魔免的敌人")
         endif
     endfunction
 

@@ -164,6 +164,8 @@ scope Ezalor
             set sw.isUpgraded = isUpgraded
             set sw.damage     = (maxCount-count)* 10
             call IlluminateSW.Launch(sw)
+            
+            call ToggleSkill.SetState(whichUnit, ILLUMINATE_ABILITY_ID, false)
 
             // 施法马甲
             call RemoveUnit(SimpleTickTable[tick].unit['u'])
@@ -208,6 +210,8 @@ scope Ezalor
         set SimpleTickTable[tick].real['x']    = orbX
         set SimpleTickTable[tick].real['y']    = orbY
         set SimpleTickTable[tick].integer['m'] = maxCount
+
+        call ToggleSkill.SetState(whichUnit, ILLUMINATE_ABILITY_ID, true)
 
         call SaveBoolean(ObjectHashTable, GetHandleId(whichUnit), 'A085', true)
         if IsUnitScepterUpgraded(whichUnit) then

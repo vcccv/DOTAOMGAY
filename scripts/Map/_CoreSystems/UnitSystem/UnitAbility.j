@@ -43,7 +43,7 @@ library UnitAbility requires AbilityUtils, UnitLimitation
         call MHAbility_SetBackswing(whichUnit, abilId, backswing)
     endfunction
 
-    function UnitDisableAbilityEx takes unit whichUnit, integer abilId, boolean flag, boolean hideUI returns nothing
+    private function DisableAbility takes unit whichUnit, integer abilId, boolean flag, boolean hideUI returns nothing
         if GetAbilityBaseIdById(abilId) == 'AOre' then
             call MHAbility_DisableEx(whichUnit, abilId, flag)
             if hideUI then
@@ -54,7 +54,7 @@ library UnitAbility requires AbilityUtils, UnitLimitation
         endif
     endfunction
     function UnitDisableAbility takes unit whichUnit, integer abilId, boolean hideUI returns nothing
-        call UnitDisableAbilityEx(whichUnit, abilId, true, hideUI)
+        call DisableAbility(whichUnit, abilId, true, hideUI)
     endfunction
     function UnitDisableAbilityFixOnExpired takes nothing returns nothing
         local SimpleTick tick           = SimpleTick.GetExpired()
@@ -66,7 +66,7 @@ library UnitAbility requires AbilityUtils, UnitLimitation
         set abilId    = SimpleTickTable[tick].integer['a']
         set hideUI    = SimpleTickTable[tick].boolean['b']
 
-        call UnitDisableAbilityEx(whichUnit, abilId, true, hideUI)
+        call DisableAbility(whichUnit, abilId, true, hideUI)
 
         call tick.Destroy()
 
@@ -82,14 +82,14 @@ library UnitAbility requires AbilityUtils, UnitLimitation
             set SimpleTickTable[tick].integer['a'] = abilId
             set SimpleTickTable[tick].boolean['b'] = hideUI
         else
-            call UnitDisableAbilityEx(whichUnit, abilId, true, hideUI)
+            call DisableAbility(whichUnit, abilId, true, hideUI)
         endif
     endfunction
     function UnitEnableAbility takes unit whichUnit, integer abilId, boolean hideUI returns nothing
-        call UnitDisableAbilityEx(whichUnit, abilId, false, hideUI)
+        call DisableAbility(whichUnit, abilId, false, hideUI)
     endfunction
     
-    function UnitHideAbilityEx takes unit whichUnit, integer abilId, boolean flag returns nothing
+    private function HideAbility takes unit whichUnit, integer abilId, boolean flag returns nothing
         call MHAbility_Hide(whichUnit, abilId, flag)
     endfunction
     function UnitShowAbility takes unit whichUnit, integer abilId returns nothing
@@ -97,6 +97,20 @@ library UnitAbility requires AbilityUtils, UnitLimitation
     endfunction
     function UnitHideAbility takes unit whichUnit, integer abilId returns nothing
         call MHAbility_Hide(whichUnit, abilId, true)
+    endfunction
+
+    // 只是禁用命令发动 但不影响当前施法
+    function UnitEnableAbilityEx takes unit whichUnit, integer abilId, boolean hideUI returns nothing
+        call MHAbility_DisableEx(whichUnit, abilId, false)
+        if hideUI then
+            call HideAbility(whichUnit, abilId, false)
+        endif
+    endfunction
+    function UnitDisableAbilityEx takes unit whichUnit, integer abilId, boolean hideUI returns nothing
+        call MHAbility_DisableEx(whichUnit, abilId, true)
+        if hideUI then
+            call HideAbility(whichUnit, abilId, true)
+        endif
     endfunction
 
     function UnitAddPermanentAbility takes unit whichUnit, integer ab returns boolean

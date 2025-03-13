@@ -355,12 +355,12 @@ library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
                 return
             endif
             if state then
-                call UnitDisableAbilitySafe(whichUnit, GetUnitVaildDefaultId(whichUnit, this.baseId), true)
-                call UnitEnableAbility(whichUnit, this.alternateId, true)
+                call UnitDisableAbilityEx(whichUnit, GetUnitVaildDefaultId(whichUnit, this.baseId), true)
+                call UnitEnableAbilityEx(whichUnit, this.alternateId, true)
                 set ToggleSkillStateTable[this].boolean[GetHandleId(whichUnit)] = true
             else
-                call UnitEnableAbility(whichUnit, GetUnitVaildDefaultId(whichUnit, this.baseId), true)
-                call UnitDisableAbilitySafe(whichUnit, this.alternateId, true)
+                call UnitEnableAbilityEx(whichUnit, GetUnitVaildDefaultId(whichUnit, this.baseId), true)
+                call UnitDisableAbilityEx(whichUnit, this.alternateId, true)
                 set ToggleSkillStateTable[this].boolean[GetHandleId(whichUnit)] = false
             endif
         endmethod
@@ -370,7 +370,7 @@ library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
             local integer  id        = MHEvent_GetAbility()
             local thistype this      = GetIndexById(id)
             if this != 0 and this.IsDefaultId(id) and UnitAddPermanentAbility(whichUnit, this.alternateId) then
-                call UnitDisableAbility(whichUnit, this.alternateId, true)
+                call UnitDisableAbilityEx(whichUnit, this.alternateId, true)
                 set ToggleSkillStateTable[this].boolean[GetHandleId(whichUnit)] = false
             endif
             set whichUnit = null
@@ -394,12 +394,12 @@ library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
             local thistype this      = GetIndexById(id)
             if this != 0 and this.isAutoToggle then
                 if this.IsDefaultId(id) then
-                    call UnitDisableAbilitySafe(whichUnit, GetUnitVaildDefaultId(whichUnit, this.baseId), true)
-                    call UnitEnableAbility(whichUnit, this.alternateId, true)
+                    call UnitDisableAbilityEx(whichUnit, GetUnitVaildDefaultId(whichUnit, this.baseId), true)
+                    call UnitEnableAbilityEx(whichUnit, this.alternateId, true)
                     set ToggleSkillStateTable[this].boolean[GetHandleId(whichUnit)] = true
                 elseif this.IsAlternateId(id) then
-                    call UnitEnableAbility(whichUnit, GetUnitVaildDefaultId(whichUnit, this.baseId), true)
-                    call UnitDisableAbilitySafe(whichUnit, this.alternateId, true)
+                    call UnitEnableAbilityEx(whichUnit, GetUnitVaildDefaultId(whichUnit, this.baseId), true)
+                    call UnitDisableAbilityEx(whichUnit, this.alternateId, true)
                     set ToggleSkillStateTable[this].boolean[GetHandleId(whichUnit)] = false
                 endif
             endif
