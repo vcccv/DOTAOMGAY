@@ -18,6 +18,27 @@ library AbilityCustomCastType requires ErrorMessage
         call SetAbilityCastType('A2FX', BERSERKER_CAST_TYPE)
         // 双飞之轮 - 收回
         call SetAbilityCastType('A43P', BERSERKER_CAST_TYPE)
+        // 先祖之魂 - 收回
+        call SetAbilityCastType('A21J', BERSERKER_CAST_TYPE)
+
+        // 噩梦 - 结束
+        call SetAbilityCastType('A2O9', BERSERKER_CAST_TYPE)
+
+        // 黑暗之门 - 结束
+        call SetAbilityCastType('A2MB', BERSERKER_CAST_TYPE)
+
+        // 复制 - 替换
+        call SetAbilityCastType('A0GC', BERSERKER_CAST_TYPE)
+
+        // 脉冲新星
+        call SetAbilityCastType('A21F', BERSERKER_CAST_TYPE)
+        call SetAbilityCastType('A21G', BERSERKER_CAST_TYPE)
+        // 关闭
+        call SetAbilityCastType('A21H', BERSERKER_CAST_TYPE)
+
+        // 冰晶爆轰 - 关闭
+        call SetAbilityCastType('A1MN', BERSERKER_CAST_TYPE)
+        
     endfunction
 
 endlibrary

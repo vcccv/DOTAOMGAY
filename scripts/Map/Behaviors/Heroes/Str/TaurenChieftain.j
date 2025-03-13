@@ -1,6 +1,193 @@
 
 scope TaurenChieftain
 
+    globals
+        constant integer HERO_INDEX_TAUREN_CHIEFTAIN = 15
+    endglobals
+    //***************************************************************************
+    //*
+    //*  先祖之魂
+    //*
+    //***************************************************************************
+    globals
+        constant integer SKILL_INDEX_ANCESTRAL_SPIRIT = GetHeroSKillIndexBySlot(HERO_INDEX_TAUREN_CHIEFTAIN, 2)
+    endglobals
+    function I8I takes nothing returns nothing
+        local timer t = GetExpiredTimer()
+        local integer h = GetHandleId(t)
+        local unit u = LoadUnitHandle(ObjectHashTable, h, 0)
+        call UnitSubStateBonus(u, LoadInteger(ObjectHashTable, h, 3), UNIT_BONUS_DAMAGE)
+        call J8X(u, R2I(LoadReal(ObjectHashTable, h, 0)))
+        call DestroyTimerAndFlushHT_P(t)
+        set t = null
+        set u = null
+    endfunction
+    function I9I takes nothing returns boolean
+        local unit t = GetFilterUnit()
+        local group g = LoadGroupHandle(ObjectHashTable, XK[0], 2)
+        if UnitAlive(t) and IsUnitEnemy(Temp__ArrayUnit[0], GetOwningPlayer(t)) and not IsUnitWard(t) and IsUnitInGroup(t, g) == false and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false then
+            if IsUnitType(t, UNIT_TYPE_HERO) then
+                call SaveInteger(ObjectHashTable, XK[0], 4, LoadInteger(ObjectHashTable, XK[0], 4) + 1)
+            else
+                call SaveInteger(ObjectHashTable, XK[0], 3, LoadInteger(ObjectHashTable, XK[0], 3) + 1)
+            endif
+            call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Undead\\AbsorbMana\\AbsorbManaBirthMissile.mdl", t, "chest"))
+            call UnitDamageTargetEx(Temp__ArrayUnit[0], t, 1, XK[1])
+            call GroupAddUnit(g, t)
+        endif
+        set g = null
+        set t = null
+        return false
+    endfunction
+    function AVI takes nothing returns nothing
+        local timer t = GetExpiredTimer()
+        local integer h = GetHandleId(t)
+        local integer i3
+        local integer i2
+        local integer i1
+        local unit u = LoadUnitHandle(ObjectHashTable, h, 0)
+        local unit d = LoadUnitHandle(ObjectHashTable, h, 1)
+        local real x2 = GetWidgetX(u)
+        local real y2 = GetWidgetY(u)
+        local real x1 = GetWidgetX(d)
+        local real y1 = GetWidgetY(d)
+        local real I3X = Atan2(y2 -y1, x2 -x1)
+        if LoadBoolean(ObjectHashTable, GetHandleId(d),'A1AA') then
+            set d = null
+            set u = null
+            set t = null
+            return
+        endif
+        set x1 = x1 + 15* Cos(I3X)
+        set y1 = y1 + 15* Sin(I3X)
+        call SetUnitX(d, x1)
+        call SetUnitY(d, y1)
+        call SetUnitFacing(d, I3X * bj_RADTODEG)
+        set Temp__ArrayUnit[0] = u
+        set XK[0] = h
+        set XK[1] = LoadInteger(ObjectHashTable, h, 2)
+        call GroupEnumUnitsInRange(AK, x1, y1, 300, Condition(function I9I))
+        if  100 > SquareRoot((x1 -x2)*(x1 -x2) +(y1 -y2)*(y1 -y2)) then
+            set i3 = LoadInteger(ObjectHashTable, h, 1)
+            set i2 = LoadInteger(ObjectHashTable, h, 3)
+            set i1 = LoadInteger(ObjectHashTable, h, 4)
+            if i1 + i2 > 0 then
+                set x1 =(i2 + i1 * 5)
+                set i3 = i2 *(3 * i3 + 3) + i1 * 10* i3
+                call UnitAddAbilityLevel1ToTimed(u,'C015','C015', 9)
+                call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Undead\\AbsorbMana\\AbsorbManaBirthMissile.mdl", u, "chest"))
+                call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Undead\\AbsorbMana\\AbsorbManaBirthMissile.mdl", u, "origin"))
+                call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Undead\\AbsorbMana\\AbsorbManaBirthMissile.mdl", u, "hand,left"))
+                call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Undead\\AbsorbMana\\AbsorbManaBirthMissile.mdl", u, "hand,right"))
+                call SaveInteger(ObjectHashTable, h, 3, i3)
+                call SaveReal(ObjectHashTable, h, 0, x1)
+                call J6X(u, R2I(x1))
+                call UnitAddStateBonus(u, i3, UNIT_BONUS_DAMAGE)
+                call TimerStart(t, 9, false, function I8I)
+            else
+                call DestroyTimerAndFlushHT_P(t)
+            endif
+            set h = GetHandleId(u)
+            set i1 = LoadInteger(ObjectHashTable, h,'A1A8')
+            call SaveInteger(ObjectHashTable, h,'A1A8', i1 -1)
+            if i1 == 1 then
+                call ToggleSkill.SetState(u, 'A1A8', false)
+            endif
+            call FlushChildHashtable(ObjectHashTable, GetHandleId(d))
+            call RemoveUnit(d)
+        endif
+        set d = null
+        set u = null
+        set t = null
+    endfunction
+    function AEI takes nothing returns nothing
+        local timer t = GetExpiredTimer()
+        local integer h = GetHandleId(t)
+        local integer UYX = LoadInteger(ObjectHashTable, h, 0)
+        local unit u = LoadUnitHandle(ObjectHashTable, h, 0)
+        local unit d = LoadUnitHandle(ObjectHashTable, h, 1)
+        local real x = GetWidgetX(d)
+        local real y = GetWidgetY(d)
+        set Temp__ArrayUnit[0] = u
+        set XK[0] = h
+        set XK[1] = LoadInteger(ObjectHashTable, h, 2)
+        call GroupEnumUnitsInRange(AK, x, y, 300, Condition(function I9I))
+        // 'A1A8' == 发动返回技能
+        if UYX == 80 or LoadBoolean(ObjectHashTable, GetHandleId(u),'A1A8') or LoadBoolean(ObjectHashTable, GetHandleId(d),'A1A8') then
+            
+            call UnitAddAbility(d,'Aloc')
+            call SetUnitAnimationByIndex(d, 1)
+            call IssueImmediateOrderById(d, 851972)
+            call SaveBoolean(ObjectHashTable, h, 0, true)
+            call TimerStart(t, .025, true, function AVI)
+            set d = null
+            set u = null
+            set t = null
+            return
+        endif
+        call SetUnitMoveSpeed(d, GetHeroMoveSpeed(u))
+        call SaveInteger(ObjectHashTable, h, 0, UYX + 1)
+        set d = null
+        set u = null
+        set t = null
+    endfunction
+    
+    function AncestralSpiritReturnOnSpellEffect takes nothing returns nothing
+        local timer t = CreateTimer()
+        local unit  u = GetTriggerUnit()
+        call SaveUnitHandle(ObjectHashTable, GetHandleId(t), 0, u)
+        call SaveBoolean(ObjectHashTable, GetHandleId(u),'A1A8', true)
+        
+        set t = null
+        set u = null
+    endfunction
+    function AncestralSpiritOnSpellEffect takes nothing returns nothing
+        local timer t = CreateTimer()
+        local unit u = GetTriggerUnit()
+        local player p = GetOwningPlayer(u)
+        local unit d = CreateUnit(p,'h07U', GetSpellTargetX(), GetSpellTargetY(), GetUnitFacing(u) -180)
+        local integer h = GetHandleId(t)
+        local integer abilLevel = GetUnitAbilityLevel(u,'A1A8')
+        local integer id
+        call UnitAddAbility(d,'Aloc')
+        call UnitRemoveAbility(d,'Aloc')
+        call ShowUnit(d, false)
+        call ShowUnit(d, true)
+        call SaveBoolean(ObjectHashTable, h, 0, false)
+        call SaveUnitHandle(ObjectHashTable, h, 0, u)
+        call SaveUnitHandle(ObjectHashTable, h, 1, d)
+        call SaveGroupHandle(ObjectHashTable, h, 2, AllocationGroup(273))
+        call SaveInteger(ObjectHashTable, h, 0, 0)
+        call SaveInteger(ObjectHashTable, h, 1, abilLevel)
+        call SaveInteger(ObjectHashTable, h, 2, 20 + 40 * abilLevel)
+        call SaveInteger(ObjectHashTable, h, 3, 0)
+        call SaveInteger(ObjectHashTable, h, 4, 0)
+        set h = GetHandleId(u)
+        call SaveBoolean(ObjectHashTable, h,'A1A8', false)
+        call SaveInteger(ObjectHashTable, h,'A1A8', LoadInteger(ObjectHashTable, h,'A1A8') + 1)
+        call SaveUnitHandle(ObjectHashTable, h,'A1A8', d)
+
+        call ToggleSkill.SetState(u, 'A1A8', true)
+        
+        call TriggerRegisterUnitEvent(UnitEventMainTrig, d, EVENT_UNIT_SPELL_EFFECT)
+        call TriggerRegisterUnitEvent(UnitEventMainTrig, d, EVENT_UNIT_SPELL_CAST)
+
+        // 同步先祖之魂技能
+        call UnitAddAbility(d,'A21J')
+        call UnitAddAbility(d,'Aetl')
+        if GetUnitAbilityLevel(u,'A1AA')> 0 then
+            call UnitAddAbility(d,'A2LK')
+        endif
+        if GetUnitAbilityLevel(u,'A1CD')> 0 then
+            call UnitAddPermanentAbility(d,'A1CQ')
+        endif
+        call SaveUnitHandle(ObjectHashTable, GetHandleId(d),'A1A8', u)
+        call TimerStart(t, .1, true, function AEI)
+        set d = null
+        set u = null
+        set t = null
+        set p = null
+    endfunction
     //***************************************************************************
     //*
     //*  裂地者

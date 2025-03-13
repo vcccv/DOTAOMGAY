@@ -40,7 +40,7 @@ library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
         elseif (heroIndex == 4) then
             // 变体精灵的变颜色
             // call ExecuteFunc("MSX")
-            call ExecuteFunc("MTX")
+            //call ExecuteFunc("MTX")
         elseif (heroIndex == 18) then
             call ExecuteFunc("MUX")
             call ExecuteFunc("MWX")
@@ -61,7 +61,7 @@ library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
             call ExecuteFunc("M2X")
             call ExecuteFunc("M3X")
         elseif (heroIndex == 75) then
-            call ExecuteFunc("M4X")
+            //call ExecuteFunc("M4X")
         elseif (heroIndex == 59) then
             //call ExecuteFunc("M5X")
             // 蜘蛛网
@@ -355,10 +355,14 @@ library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
                 return
             endif
             if state then
+                debug call ThrowWarning(ToggleSkillStateTable[this].boolean[GetHandleId(whichUnit)], /*
+                */ "SkillSys", "SetState", "ToggleSkill", skillId, Id2String(skillId) + "已经激活了")
                 call UnitDisableAbilityEx(whichUnit, GetUnitVaildDefaultId(whichUnit, this.baseId), true)
                 call UnitEnableAbilityEx(whichUnit, this.alternateId, true)
                 set ToggleSkillStateTable[this].boolean[GetHandleId(whichUnit)] = true
             else
+                debug call ThrowWarning(not ToggleSkillStateTable[this].boolean[GetHandleId(whichUnit)], /*
+                */ "SkillSys", "SetState", "ToggleSkill", skillId, Id2String(skillId) + "已经被关闭了")
                 call UnitEnableAbilityEx(whichUnit, GetUnitVaildDefaultId(whichUnit, this.baseId), true)
                 call UnitDisableAbilityEx(whichUnit, this.alternateId, true)
                 set ToggleSkillStateTable[this].boolean[GetHandleId(whichUnit)] = false

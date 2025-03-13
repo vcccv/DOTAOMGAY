@@ -15,11 +15,26 @@ library AbilityCustomOrderId requires Base
         set OrderIdBase = OrderIdBase + 1
         call MHAbility_SetHookOrder(abilId, OrderIdBase)
         static if DEBUG_MODE then
-            call ThrowError(MHAbility_GetHookOrder(abilId) == 0, "AbilityCustomOrderId", "AllocAbilityOrderId", Id2String(abilId), abilId, "该技能无法被分配命令Id:" + GetObjectName(abilId))
-            call ThrowError(Table[KEY].has(abilId), "AbilityCustomOrderId", "AllocAbilityOrderId", Id2String(abilId), abilId, "重复的技能被分配命令Id:" + GetObjectName(abilId))
+            call ThrowWarning(MHAbility_GetHookOrder(abilId) == 0, "AbilityCustomOrderId", "AllocAbilityOrderId", Id2String(abilId), abilId, "该技能无法被分配命令Id:" + GetObjectName(abilId))
+            call ThrowWarning(Table[KEY].has(abilId), "AbilityCustomOrderId", "AllocAbilityOrderId", Id2String(abilId), abilId, "重复的技能被分配命令Id:" + GetObjectName(abilId))
             set Table[KEY][abilId] = OrderIdBase
         endif
         return OrderIdBase
+    endfunction
+
+    // 对于施法类型一致的神杖升级效果，使用此函数分配为2个技能同一个命令id
+    function AllocAbilityOrderIdEx takes integer baseId, integer upgradedId returns nothing
+        set OrderIdBase = OrderIdBase + 1
+        call MHAbility_SetHookOrder(baseId    , OrderIdBase)
+        call MHAbility_SetHookOrder(upgradedId, OrderIdBase)
+        static if DEBUG_MODE then
+            call ThrowWarning(MHAbility_GetHookOrder(baseId) == 0, "AbilityCustomOrderId", "baseId", Id2String(baseId), baseId, "该技能无法被分配命令Id:" + GetObjectName(baseId))
+            call ThrowWarning(MHAbility_GetHookOrder(upgradedId) == 0, "AbilityCustomOrderId", "upgradedId", Id2String(upgradedId), upgradedId, "该技能无法被分配命令Id:" + GetObjectName(upgradedId))
+            call ThrowWarning(Table[KEY].has(baseId), "AbilityCustomOrderId", "baseId", Id2String(baseId), baseId, "重复的技能被分配命令Id:" + GetObjectName(baseId))
+            call ThrowWarning(Table[KEY].has(upgradedId), "AbilityCustomOrderId", "upgradedId", Id2String(upgradedId), upgradedId, "重复的技能被分配命令Id:" + GetObjectName(upgradedId))
+            set Table[KEY][baseId] = OrderIdBase
+            set Table[KEY][upgradedId] = OrderIdBase
+        endif
     endfunction
 
     function GetAbilityOrder takes integer abilId returns string
@@ -44,14 +59,13 @@ library AbilityCustomOrderId requires Base
         call AllocAbilityOrderId('A020')
 
         // 神灭斩
-        call AllocAbilityOrderId('A01P')
-        call AllocAbilityOrderId('A09Z')
-
+        call AllocAbilityOrderIdEx('A01P', 'A09Z')
         // 联结
         call AllocAbilityOrderId('A1TA')
 
         // 电子涡流
         call AllocAbilityOrderId('A14R')
+        // 无目标
         call AllocAbilityOrderId('A3WT')
 
         // 束缚击
@@ -79,8 +93,7 @@ library AbilityCustomOrderId requires Base
         call AllocAbilityOrderId('A0GK')
 
         // 淘汰之刃
-        call AllocAbilityOrderId('A0E2')
-        call AllocAbilityOrderId('A1MR')
+        call AllocAbilityOrderIdEx('A0E2', 'A1MR')
 
         // 无光之盾
         call AllocAbilityOrderId('A0MF')
@@ -92,8 +105,7 @@ library AbilityCustomOrderId requires Base
         call AllocAbilityOrderId('A0OJ')
 
         // 燃烧枷锁
-        call AllocAbilityOrderId('A19O')
-        call AllocAbilityOrderId('A1MV')
+        call AllocAbilityOrderIdEx('A19O', 'A1MV')
 
         // 灵魂隔断
         call AllocAbilityOrderId('A07Q')
@@ -105,8 +117,7 @@ library AbilityCustomOrderId requires Base
         call AllocAbilityOrderId('A1S8')
 
         // 死亡一指
-        call AllocAbilityOrderId('A095')
-        call AllocAbilityOrderId('A09W')
+        call AllocAbilityOrderIdEx('A095', 'A09W')
 
         // 命运敕令
         call AllocAbilityOrderId('A2T5')
@@ -123,8 +134,7 @@ library AbilityCustomOrderId requires Base
         call AllocAbilityOrderId('A2KU')
 
         // 回音击
-        call AllocAbilityOrderId('A0DH')
-        call AllocAbilityOrderId('A1OB')
+        call AllocAbilityOrderIdEx('A0DH', 'A1OB')
 
         // 狂猛
         call AllocAbilityOrderId('A1EG')
@@ -142,11 +152,12 @@ library AbilityCustomOrderId requires Base
         call AllocAbilityOrderId('A1T8')
         
         // 奔袭冲撞
-        call AllocAbilityOrderId('A2O6')
-        call AllocAbilityOrderId('A384')
+        call AllocAbilityOrderIdEx('A2O6', 'A384')
 
         // 不稳定化合物
         call AllocAbilityOrderId('A1NI')
+        // 取消
+        call AllocAbilityOrderId('A1NH')
 
         // 残影
         call AllocAbilityOrderId('A14P')
@@ -216,8 +227,7 @@ library AbilityCustomOrderId requires Base
         call AllocAbilityOrderId('A078')
 
         // 震荡波
-        call AllocAbilityOrderId('A02S')
-        call AllocAbilityOrderId('A3Y8')
+        call AllocAbilityOrderIdEx('A02S', 'A3Y8')
         
         // 龙破斩
         call AllocAbilityOrderId('A01F')
@@ -261,12 +271,10 @@ library AbilityCustomOrderId requires Base
         //*
         //***************************************************************************
         // 超声冲击波
-        call AllocAbilityOrderId('A28R')
-        call AllocAbilityOrderId('A28S')
+        call AllocAbilityOrderIdEx('A28R', 'A28S')
 
         // 烈火焚身
-        call AllocAbilityOrderId('A0O5')
-        call AllocAbilityOrderId('A1B1')
+        call AllocAbilityOrderIdEx('A0O5', 'A1B1')
 
         // 吞噬 - 冲击波
         call AllocAbilityOrderId('A1OV')
@@ -344,18 +352,25 @@ library AbilityCustomOrderId requires Base
         //***************************************************************************
         // 疾风步 - 赏金猎
         call AllocAbilityOrderId('A07A')
+
         // 跳跃            
         call AllocAbilityOrderId('A0LN')
+
         // 隐匿            
         call AllocAbilityOrderId('A0RV')
+
         // 仇杀            
         call AllocAbilityOrderId('A09U')
+
         // 骨隐步          
         call AllocAbilityOrderId('QB0A')
+
         // 缩地            
         call AllocAbilityOrderId('A0CA')
+
         // 回光返照        
-        call AllocAbilityOrderId('A0NS')
+        call AllocAbilityOrderIdEx('A0NS', 'A1DA')
+
         // 暗影之舞        
         call AllocAbilityOrderId('A1IN')
         // 幽灵漫步        
@@ -453,6 +468,35 @@ library AbilityCustomOrderId requires Base
         // 双飞之轮 - 收回
         call AllocAbilityOrderId('A43P')
 
+        // 先祖之魂 - 收回
+        call AllocAbilityOrderId('A21J')
+
+        // 噩梦 - 结束
+        call AllocAbilityOrderId('A2O9')
+
+        // 黑暗之门 - 结束
+        call AllocAbilityOrderId('A2MB')
+
+        // 复制 - 替换
+        call AllocAbilityOrderId('A0GC')
+        
+        // 脉冲新星
+        call AllocAbilityOrderIdEx('A21F', 'A21G')
+        // 关闭
+        call AllocAbilityOrderId('A21H')
+
+        // 冰晶爆轰
+        call AllocAbilityOrderIdEx('A1MI', 'A2QE')
+        // 关闭
+        call AllocAbilityOrderId('A1MN')
+
+        // 涤罪之焰
+        call AllocAbilityOrderId('A2SG')
+        
+        // 海妖之歌
+        call AllocAbilityOrderIdEx('A07U', 'A38E')
+        // 关闭
+        call AllocAbilityOrderId('A24E')
     endfunction
 
 endlibrary

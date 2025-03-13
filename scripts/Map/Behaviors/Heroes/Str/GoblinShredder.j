@@ -250,6 +250,7 @@ scope GoblinShredder
                 // 如果是收回
                 call SaveInteger(HY, h, 33, 2)
                 call GroupClear(enumGroup)
+                call ToggleSkill.SetState(whichUnit, abilId, false)
 
                 call UnitRemoveBEimAbility(whichUnit)
             endif
@@ -390,6 +391,9 @@ scope GoblinShredder
         else
             set endcastAbilityId = SECOND_CHAKRAM_RETURN_ABILITY_ID
         endif
+        call ToggleSkill.SetState(whichUnit, abilId, true)
+
+
         call UnitIncDisableAttackCount(whichUnit)
         call UnitDisableAbility(whichUnit, abilId, false)
 
