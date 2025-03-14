@@ -1,11 +1,17 @@
 
 scope ChaosKotoBeast
 
+    globals
+        constant integer HERO_INDEX_CHAOS_KOTO_BEAST = 94
+    endglobals
     //***************************************************************************
     //*
     //*  酸液
     //*
     //***************************************************************************
+    globals
+        constant integer SKILL_INDEX_SPIT = GetHeroSKillIndexBySlot(HERO_INDEX_CHAOS_KOTO_BEAST, 1)
+    endglobals
     function SpitDeBuffEnd takes nothing returns nothing
         local trigger t = GetTriggeringTrigger()
         local integer h = GetHandleId(t)
@@ -104,6 +110,132 @@ scope ChaosKotoBeast
         set Spit(sw).level = level
         call Spit.Launch(sw)
 
+        set whichUnit = null
+    endfunction
+    //***************************************************************************
+    //*
+    //*  消化
+    //*
+    //***************************************************************************
+    globals
+        constant integer SKILL_INDEX_KOTO_DIGEST      = GetHeroSKillIndexBySlot(HERO_INDEX_CHAOS_KOTO_BEAST, 3)
+        constant integer KOTO_DIGEST_THROW_ABILITY_ID = 'A32D'
+        constant key KOTO_DIGEST_CHAGRES
+    endglobals
+
+    function CHR takes nothing returns nothing
+        local unit whichUnit = TempUnit
+        local unit targetUnit = MissileHitTargetUnit
+        local integer level = GetUnitAbilityLevel(whichUnit,'A32E')
+        local real CJR = level * 40 + 40
+        call UnitDamageTargetEx(whichUnit, targetUnit, 1, CJR)
+        call CNX(targetUnit,'A32F', 1, 4,'B32F')
+        set whichUnit = null
+        set targetUnit = null
+    endfunction
+    function CKR takes nothing returns nothing
+        local trigger t = LaunchMissileByUnitDummy(GetTriggerUnit(), GetSpellTargetUnit(),'hKOD', "CHR", 1000, true)
+        set t = null
+    endfunction
+    function DigestThrowOnSpellEffect takes nothing returns nothing
+        local unit    whichUnit = GetRealSpellUnit(GetTriggerUnit())
+        local integer count     = Table[GetHandleId(whichUnit)].integer[KOTO_DIGEST_CHAGRES]
+
+        if count > 0 then
+            set count = count - 1
+            set Table[GetHandleId(whichUnit)].integer[KOTO_DIGEST_CHAGRES] = count
+            call SetUnitAbilityCharges(whichUnit, KOTO_DIGEST_THROW_ABILITY_ID, count)
+            if count == 0 then
+                call UnitDisableAbility(whichUnit, KOTO_DIGEST_THROW_ABILITY_ID, false)
+            endif
+        endif
+
+        if not UnitHasSpellShield(GetSpellTargetUnit()) then
+            call CKR()
+        endif
+        set whichUnit = null
+        // call SaveInteger(ObjectHashTable, GetHandleId(GetTriggerUnit()), KOTO_DIGEST_THROW_ABILITY_ID, i)
+        // if i < 1 then
+        //     call SaveBoolean(ObjectHashTable, GetHandleId(GetTriggerUnit()), KOTO_DIGEST_THROW_ABILITY_ID, false)
+        //     call SetPlayerAbilityAvailable(GetOwningPlayer(GetTriggerUnit()), KOTO_DIGEST_THROW_ABILITY_ID, false)
+        //endif
+    endfunction
+    function DigestThrowOnSpellCast takes nothing returns nothing
+        local unit    whichUnit = GetRealSpellUnit(GetTriggerUnit())
+        local integer count     = Table[GetHandleId(whichUnit)].integer[KOTO_DIGEST_CHAGRES]
+        if count <= 0 then
+            call EXStopUnit(whichUnit)
+            call InterfaceErrorForPlayer(GetOwningPlayer(whichUnit), "没有树木可使用")
+            // call SaveBoolean(ObjectHashTable, GetHandleId(u), KOTO_DIGEST_THROW_ABILITY_ID, false)
+            // call SetPlayerAbilityAvailable(GetOwningPlayer(u), KOTO_DIGEST_THROW_ABILITY_ID, false)
+        endif
+        set whichUnit = null
+    endfunction
+
+    // 间接的给哨兵技能
+    function KotoDigestOnLearn takes nothing returns nothing
+        call UnitAddPermanentAbility(GetTriggerUnit(),'A32E')
+        call SetUnitAbilityLevel(GetTriggerUnit(),'A32E', GetUnitAbilityLevel(GetTriggerUnit(),'A32Y'))
+    endfunction
+    
+    function CLR takes nothing returns nothing
+        local timer t = GetExpiredTimer()
+        local destructable d = LoadDestructableHandle(HY, GetHandleId(t), 0)
+        local unit u = CreateUnit(Player(15),'e00E', GetDestructableX(d), GetDestructableY(d), 0)
+        call UnitAddAbility(u,'A1FD')
+        call IssueTargetOrderById(u, 852146, d)
+        call FlushChildHashtable(HY, GetHandleId(t))
+        call PauseTimer(t)
+        call DestroyTimer(t)
+        set u = null
+        set t = null
+    endfunction
+    function CMR takes destructable d returns nothing
+        local timer t = CreateTimer()
+        call TimerStart(t, .3, false, function CLR)
+        call SaveDestructableHandle(HY, GetHandleId(t), 0, d)
+        set t = null
+    endfunction
+    function KotoDigestOnSpellEffect takes nothing returns nothing
+        local unit    whichUnit = GetTriggerUnit()
+        local integer level     = GetUnitAbilityLevel(whichUnit, GetSpellAbilityId())
+        local integer count     = Table[GetHandleId(whichUnit)].integer[KOTO_DIGEST_CHAGRES]
+
+        if count == 0 then
+            call UnitEnableAbility(whichUnit, KOTO_DIGEST_THROW_ABILITY_ID, false)
+        endif
+        set count = count + 1
+        set Table[GetHandleId(whichUnit)].integer[KOTO_DIGEST_CHAGRES] = count
+
+        call SetUnitAbilityCharges(whichUnit, KOTO_DIGEST_THROW_ABILITY_ID, count)
+        // call UnitAddPermanentAbility(whichUnit, KOTO_DIGEST_THROW_ABILITY_ID)
+        // call SaveBoolean(ObjectHashTable, GetHandleId(whichUnit), KOTO_DIGEST_THROW_ABILITY_ID, true)
+        // call SetPlayerAbilityAvailable(GetOwningPlayer(whichUnit), KOTO_DIGEST_THROW_ABILITY_ID, true)
+        // call SaveInteger(ObjectHashTable, GetHandleId(whichUnit), KOTO_DIGEST_THROW_ABILITY_ID, LoadInteger(ObjectHashTable, GetHandleId(whichUnit), KOTO_DIGEST_THROW_ABILITY_ID) + 1)
+        call CMR(GetSpellTargetDestructable())
+        set whichUnit = null
+    endfunction
+    function KotoDigestOnAdd takes nothing returns nothing
+        local unit whichUnit = Event.GetTriggerUnit()
+        if not IsUnitType(whichUnit, UNIT_TYPE_HERO) then
+            set whichUnit = null
+            return
+        endif
+        if UnitAddPermanentAbility(whichUnit, KOTO_DIGEST_THROW_ABILITY_ID) then
+            call SetUnitAbilityCharges(whichUnit, KOTO_DIGEST_THROW_ABILITY_ID, Table[GetHandleId(whichUnit)].integer[KOTO_DIGEST_CHAGRES])
+            if Table[GetHandleId(whichUnit)].integer[KOTO_DIGEST_CHAGRES] == 0 then
+                call UnitDisableAbility(whichUnit, KOTO_DIGEST_THROW_ABILITY_ID, false)
+            endif
+        endif
+        set whichUnit = null
+    endfunction
+    function KotoDigestOnRemove takes nothing returns nothing
+        local unit whichUnit = Event.GetTriggerUnit()
+        if not IsUnitType(whichUnit, UNIT_TYPE_HERO) then
+            set whichUnit = null
+            return
+        endif
+        call UnitRemoveAbility(whichUnit, KOTO_DIGEST_THROW_ABILITY_ID)
         set whichUnit = null
     endfunction
 

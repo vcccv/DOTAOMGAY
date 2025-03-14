@@ -14,6 +14,12 @@ library HeroSkillDefine requires SkillSystem
         call ResgiterAbilityMethodSimpleByIndex(SKILL_INDEX_REMOTE_MINES , "RemoteMinesOnAdd", "RemoteMinesOnRemove")
         call RegisterSkillInitMethodByIndex(SKILL_INDEX_REMOTE_MINES, "RemoteMinesOnInitializer")
 
+        // 科多 - 消化
+        call ResgiterAbilityMethodSimpleByIndex(SKILL_INDEX_KOTO_DIGEST, "KotoDigestOnAdd", "KotoDigestOnRemove")
+
+        // 火之余烬
+        call ResgiterAbilityMethodSimpleByIndex(SKILL_INDEX_FIRE_REMNANT, "FireRemnantOnAdd", "FireRemnantOnRemove")
+
         // 巨石
         call ResgiterAbilityMethodSimpleByIndex(SKILL_INDEX_BOULDER_SMASH    , "EarthSpiritAbilityOnAdd", "EarthSpiritAbilityOnRemove")
         call ResgiterAbilityMethodSimpleByIndex(SKILL_INDEX_ROLLING_BOULDER  , "EarthSpiritAbilityOnAdd", "EarthSpiritAbilityOnRemove")
@@ -757,7 +763,7 @@ library HeroSkillDefine requires SkillSystem
             set s = SaveSkillOrder(i * 4 + 2, "HXLianji")//+ SaveSkillOrder(i * 4 + 2, "melee morph")
         endif
         call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "darksummoning")+ SaveSkillOrder(i * 4 + 2, "r27"), 'A2HS', 0, 'Y215')
-        call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "ancestralspirit")+ SaveSkillOrder(i * 4 + 4, "acolyteharvest"), 'A2JR', 'A2JL', 'Y216')
+        call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "ancestralspirit")+ SaveSkillOrder(i * 4 + 4, "acolyteharvest"), 'A2JK', 0, 'Y216')
         set HeroSkill_HasMultipleAbilities[i * 4 + 4] = true
         //	set HeroSkill_Disabled[i * 4 + 4] = true
         set i = 55 - 1
@@ -1038,7 +1044,7 @@ library HeroSkillDefine requires SkillSystem
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "tranquility"), 'A32A', 0, 'A32T')
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "curse"), 'A32C', 0, 'A32U')
         call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "eattree")+ SaveSkillOrder(i * 4 + 3, "controlmagic"), 'A32E', 0, 'A32V')
-        set HeroSkill_HasMultipleAbilities[i * 4 + 3] = true
+        // set HeroSkill_HasMultipleAbilities[i * 4 + 3] = true
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, GetAbilityOrder('A32G')), 'A32G', 0, 'A32W')
         set i = 95 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "townbellon"), 'A0I7', 0, 'Y377')

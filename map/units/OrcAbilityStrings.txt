@@ -27749,10 +27749,13 @@ animnames=attack
 researchart=ReplaceableTextures\CommandButtons\BTNFireRemnant
 researchbuttonpos=3
 Name=火之余烬
+Tip=火之余烬[|cffffcc00F|r] - [|cffffcc00等级 1|r],火之余烬[|cffffcc00F|r] - [|cffffcc00等级 2|r],火之余烬[|cffffcc00F|r] - [|cffffcc00等级 3|r],
 Hotkey=F
+Ubertip="新为自身充能，每隔35秒可以创造出一个火之余烬，最多拥有3个。释放能量时，会指使一个火之余烬奔向目标地点（速度为移动速度的2.5倍）。新可以通过他的副技能冲出去依次引爆火之余烬，对周围450范围内敌人造成100点|cFF00B9FF魔法伤害|r，并到达最后指定的那个火之余烬的地点。火之余烬最多存活45秒。放置火之余烬的技能基于你的充能点数，并非冷却时间或魔法消耗。|n|n|cff99ccff施法距离：|r1500","新为自身充能，每隔35秒可以创造出一个火之余烬，最多拥有3个。释放能量时，会指使一个火之余烬奔向目标地点（速度为移动速度的2.5倍）。新可以通过他的副技能冲出去依次引爆火之余烬，对周围450范围内敌人造成150点|cFF00B9FF魔法伤害|r，并到达最后指定的那个火之余烬的地点。火之余烬最多存活45秒。放置火之余烬的技能基于你的充能点数，并非冷却时间或魔法消耗。|n|n|cff99ccff施法距离：|r1500","新为自身充能，每隔35秒可以创造出一个火之余烬，最多拥有3个。释放能量时，会指使一个火之余烬奔向目标地点（速度为移动速度的2.5倍）。新可以通过他的副技能冲出去依次引爆火之余烬，对周围450范围内敌人造成200点|cFF00B9FF魔法伤害|r，并到达最后指定的那个火之余烬的地点。火之余烬最多存活45秒。放置火之余烬的技能基于你的充能点数，并非冷却时间或魔法消耗。|n|n|cff99ccff施法距离：|r1500"
+Hotkey=F
+Researchhotkey=F
 Researchtip=学习 火之余烬[|cffffcc00F|r] - [|cffffcc00等级 %d|r]|n(Fire Remnat)
 Researchubertip=新为自身充能，每隔35秒可以创造出一个火之余烬，最多拥有3个。释放能量时，会指使一个火之余烬奔向目标地点（速度为你移动速度的2.5倍）。新可以通过他的副技能冲出去依次引爆火之余烬，对周围450范围内敌人造成|cFF00B9FF魔法伤害|r，并到达最后指定的那个火之余烬的地点。火之余烬最多存活45秒。放置火之余烬的技能基于你的充能点数，并非冷却时间或魔法消耗。|n|n|cff99ccff施法距离：|r1500|n|cff99ccff激活魔法消耗：|r100|n|n|cffffcc00等级 1|r - 造成100点范围伤害|n|cffffcc00等级 2|r - 造成150点范围伤害|n|cffffcc00等级 3|r - 造成200点范围伤害
-Researchhotkey=F
 [A2JL]
 art=ReplaceableTextures\CommandButtons\BTNFireRemnantTarget
 buttonpos=2,1

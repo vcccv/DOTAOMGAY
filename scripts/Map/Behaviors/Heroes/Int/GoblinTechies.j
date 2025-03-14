@@ -37,7 +37,7 @@ scope GoblinTechies
             set whichUnit = null
             return
         endif
-        call UnitAddAbility(whichUnit, GOBLIN_TECHIES_FOCUSED_DETONATE_ABILITY_ID)
+        call UnitAddPermanentAbility(whichUnit, GOBLIN_TECHIES_FOCUSED_DETONATE_ABILITY_ID)
         set whichUnit = null
     endfunction
     function RemoteMinesOnRemove takes nothing returns nothing

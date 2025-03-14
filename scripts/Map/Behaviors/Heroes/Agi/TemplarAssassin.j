@@ -19,7 +19,7 @@ scope TemplarAssassin
             set whichUnit = null
             return
         endif
-        call UnitAddAbility(whichUnit, TEMPLAR_ASSASSIN_TRAP_ABILITY_ID)
+        call UnitAddPermanentAbility(whichUnit, TEMPLAR_ASSASSIN_TRAP_ABILITY_ID)
         set whichUnit = null
     endfunction
     function PsionicTrapOnRemove takes nothing returns nothing

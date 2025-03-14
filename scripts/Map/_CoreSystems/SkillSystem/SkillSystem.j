@@ -133,7 +133,7 @@ library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
             call ExecuteFunc("P2X")
         elseif heroIndex == 54 then
             //	call ExecuteFunc("P3X")
-            call ExecuteFunc("P4X")
+            // call ExecuteFunc("P4X")
         elseif heroIndex == 55 then
         elseif heroIndex == 56 then
             call ExecuteFunc("P5X")
@@ -282,6 +282,23 @@ library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
         //endif
         set MaxHeroSkillsNumber = id
     endfunction
+
+    //***************************************************************************
+    //*
+    //*  额外的附加技能(多图标技能 或 神杖给予的额外技能)
+    //*
+    //***************************************************************************
+
+    // 附加技能以索引分布 1 2 3
+    // 例如吞噬给予的技能最大可能同时出现2种主动
+    // 一般的主动技能为1 吞巨魔给的网为1 召骷髅为2
+
+    // 影魔z为原来的技能 x为1 y为2
+    // 因此在判断快捷键时对多图标技能遍历所拥有的所有附加技能
+
+    globals
+        TableArray 
+    endglobals
 
     //***************************************************************************
     //*

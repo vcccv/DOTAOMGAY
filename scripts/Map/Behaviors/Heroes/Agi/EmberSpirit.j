@@ -1,11 +1,17 @@
 
 scope EmberSpirit
 
+    globals
+        constant integer HERO_INDEX_EMBER_SPIRIT = 54
+    endglobals
     //***************************************************************************
     //*
     //*  无影拳
     //*
     //***************************************************************************
+    globals
+        constant integer SKILL_INDEX_SLEIGHT_OF_FIST = GetHeroSKillIndexBySlot(HERO_INDEX_CHAOS_KOTO_BEAST, 2)
+    endglobals
     function KUA takes nothing returns nothing
         local trigger t = GetTriggeringTrigger()
         local integer h = GetHandleId(t)
@@ -253,6 +259,424 @@ scope EmberSpirit
         call TimerStart(t, 0, false, function SleightOfFistDelay)
         set t = null
         set u = null
+    endfunction
+
+    //***************************************************************************
+    //*
+    //*  火之余烬
+    //*
+    //***************************************************************************
+    globals
+        constant integer SKILL_INDEX_FIRE_REMNANT         = GetHeroSKillIndexBySlot(HERO_INDEX_EMBER_SPIRIT, 4)
+        constant integer ACTIVATE_FIRE_REMNANT_ABILITY_ID = 'A2JL'
+        constant key FIRE_REMNANT_KEY
+
+	    integer array FireRemnantDummyAbilitys
+    endglobals
+
+    function FireRemnantOnUpdateChagres takes nothing returns boolean
+        local trigger t                = GetTriggeringTrigger()
+        local integer h                = GetHandleId(t)
+        local unit    whichUnit        = (LoadUnitHandle(HY, h, 2))
+        local integer fireRemnantCount = GetUnitAbilityCharges(whichUnit, HeroSkill_BaseId[SKILL_INDEX_FIRE_REMNANT])
+        local integer cooldownCount    = (LoadInteger(HY, h, 34))
+        if fireRemnantCount < 3 then
+            set cooldownCount = cooldownCount -1
+            call SaveInteger(HY, h, 34, (cooldownCount))
+            if cooldownCount == 0 then
+                if fireRemnantCount == 0 then
+                    call UnitEnableAbility(whichUnit, HeroSkill_BaseId[SKILL_INDEX_FIRE_REMNANT], false)
+                endif
+                set fireRemnantCount = fireRemnantCount + 1
+                call SetUnitAbilityCharges(whichUnit, HeroSkill_BaseId[SKILL_INDEX_FIRE_REMNANT], fireRemnantCount)
+                set cooldownCount = 35
+                call SaveInteger(HY, h, 34,(cooldownCount))
+            endif
+        endif
+        set t = null
+        set whichUnit = null
+        return false
+    endfunction
+    // function P4X takes nothing returns nothing
+    //     set FireRemnantDummyAbilitys[0]='A2JO'
+    //     set FireRemnantDummyAbilitys[1]='A2JQ'
+    //     set FireRemnantDummyAbilitys[2]='A2JP'
+    //     set FireRemnantDummyAbilitys[3]='A2JR'
+    // endfunction
+    // function LPA takes nothing returns nothing
+    //     local unit whichUnit = GetTriggerUnit()
+    //     local trigger t = CreateTrigger()
+    //     local integer h = GetHandleId(t)
+    //     call SaveInteger(HY,(GetHandleId(whichUnit)), 747, 3)
+    //     call UnitAddPermanentAbility(whichUnit, FireRemnantDummyAbilitys[3])
+    //     call TriggerRegisterTimerEvent(t, 1, true)
+    //     call TriggerAddCondition(t, Condition(function FireRemnantOnUpdateChagres))
+    //     call SaveUnitHandle(HY, h, 2,(whichUnit))
+    //     call SaveInteger(HY, h, 34, 30)
+    //     set whichUnit = null
+    //     set t = null
+    // endfunction
+    
+    function FireRemnantOnAdd takes nothing returns nothing
+        local unit    whichUnit = Event.GetTriggerUnit()
+        local trigger trig
+        local integer h
+        if not IsUnitType(whichUnit, UNIT_TYPE_HERO) then
+            set whichUnit = null
+            return
+        endif
+
+        set trig = CreateTrigger()
+        set h    = GetHandleId(trig)
+        call TriggerRegisterTimerEvent(trig, 1, true)
+        call TriggerAddCondition(trig, Condition(function FireRemnantOnUpdateChagres))
+        call SaveUnitHandle(HY, h, 2,(whichUnit))
+        call SaveInteger(HY, h, 34, 35)
+        set Table[GetHandleId(whichUnit)].trigger[FIRE_REMNANT_KEY] = trig
+        set trig = null
+        
+        call UnitAddPermanentAbility(whichUnit, ACTIVATE_FIRE_REMNANT_ABILITY_ID)
+        call SetUnitAbilityCharges(whichUnit, HeroSkill_BaseId[SKILL_INDEX_FIRE_REMNANT], 3)
+
+        set whichUnit = null
+    endfunction
+    function FireRemnantOnRemove takes nothing returns nothing
+        local unit    whichUnit = Event.GetTriggerUnit()
+        local trigger trig
+        if not IsUnitType(whichUnit, UNIT_TYPE_HERO) then
+            set whichUnit = null
+            return
+        endif
+
+        set trig = Table[GetHandleId(whichUnit)].trigger[FIRE_REMNANT_KEY]
+        call FlushChildHashtable(HY, GetHandleId(trig))
+        call DestroyTrigger(trig)
+        set trig = null
+
+        call UnitRemoveAbility(whichUnit, ACTIVATE_FIRE_REMNANT_ABILITY_ID)
+        set whichUnit = null
+    endfunction
+
+    function K4A takes nothing returns boolean
+        local unit whichUnit =(LoadUnitHandle(HY,(GetHandleId(GetTriggeringTrigger())), 2))
+        local integer h = GetHandleId(whichUnit)
+        local integer i = 0
+        local real ECX =(GetGameTime())
+        local integer K5A =(LoadInteger(HY, h, 749))
+        local real x
+        local real y
+        local real t
+        loop
+        exitwhen i > K5A
+            set t =(LoadReal(HY, h,( 10000+ i)))
+            if t + 10> ECX then
+                set x =(LoadReal(HY, h,( 11000+ i)))
+                set y =(LoadReal(HY, h,( 12000+ i)))
+            endif
+            set i = i + 1
+        endloop
+        set whichUnit = null
+        return false
+    endfunction
+    function LEA takes nothing returns nothing
+        local unit whichUnit = GetTriggerUnit()
+        local trigger t = CreateTrigger()
+        local integer h = GetHandleId(t)
+        call TriggerRegisterTimerEvent(t, .5, true)
+        call TriggerAddCondition(t, Condition(function K4A))
+        call SaveUnitHandle(HY, h, 2,(whichUnit))
+        set whichUnit = null
+        set t = null
+    endfunction
+
+    function FireRemnantOnLearn takes nothing returns nothing
+        // call UnitAddPermanentAbility(GetTriggerUnit(),'A2JL')
+        call SetUnitAbilityLevel(GetTriggerUnit(),'A2JL', GetUnitAbilityLevel(GetTriggerUnit(),'A2JK'))
+        // if GetUnitAbilityLevel(GetTriggerUnit(),'A2JK') == 1 then
+        //     call LPA()
+        //     call LEA()
+        // endif
+    endfunction
+    
+    function LBA takes nothing returns boolean
+        local trigger t = GetTriggeringTrigger()
+        local integer h = GetHandleId(t)
+        local unit whichUnit =(LoadUnitHandle(HY, h, 2))
+        local unit L3R =(LoadUnitHandle(HY, h, 19))
+        local real GRR = GetUnitX(L3R)
+        local real GIR = GetUnitY(L3R)
+        local real tx =(LoadReal(HY, h, 47))
+        local real ty =(LoadReal(HY, h, 48))
+        local real a = AngleBetweenXY(GRR, GIR, tx, ty)* bj_DEGTORAD
+        local real targetX
+        local real targetY
+        local real d = GetDistanceBetween(GRR, GIR, tx, ty)
+        local real VEI = GetHeroMoveSpeed(whichUnit)* 2.5 * .02
+        if GetTriggerEventId() == EVENT_WIDGET_DEATH then
+            call LRA(whichUnit, L3R)
+            
+            call DestroyTextTag(LoadTextTagHandle(HY, GetHandleId(L3R), 'time'))
+            
+            call DestroyEffect((LoadEffectHandle(HY, h, 175)))
+            call DestroyEffect((LoadEffectHandle(HY, h, 176)))
+            call DestroyEffect((LoadEffectHandle(HY, h, 177)))
+            call FlushChildHashtable(HY, h)
+            call DestroyTrigger(t)
+        elseif d < 2 then
+            call FireRemnantTimeText(L3R , 45 - GetTriggerEvalCount(t) * .02)
+            call SetUnitAnimationByIndex(L3R, 1)
+        else
+            if d < VEI then
+                set targetX = tx
+                set targetY = ty
+            else
+                set targetX = GRR + VEI * Cos(a)
+                set targetY = GIR + VEI * Sin(a)
+            endif
+            call SetUnitX(L3R, targetX)
+            call SetUnitY(L3R, targetY)
+        endif
+        set t = null
+        set whichUnit = null
+        set L3R = null
+        return false
+    endfunction
+    function LCA takes nothing returns nothing
+        local unit whichUnit = GetTriggerUnit()
+        local real a = AngleBetweenXY(GetUnitX(whichUnit), GetUnitY(whichUnit), GetSpellTargetX(), GetSpellTargetY())* bj_DEGTORAD
+        local integer h = GetHandleId(whichUnit)
+        local integer LAA =(LoadInteger(HY, h, 746))
+        local integer level = GetUnitAbilityLevel(whichUnit,'A2JK')
+        local unit d = CreateUnit(GetOwningPlayer(whichUnit),'h0E8', GetUnitX(whichUnit), GetUnitY(whichUnit), a * bj_RADTODEG)
+        local trigger t
+        local integer i = 1
+        set LAA = LAA + 1
+        call SaveUnitHandle(HY, h,( 1450+ LAA),(d))
+        call SaveInteger(HY, h, 746,(LAA))
+        set t = CreateTrigger()
+        set h = GetHandleId(t)
+        call SetUnitVertexColor(d, 255, 255, 255, 75)
+        call SetUnitTimeScale(d, 2)
+        call SetUnitAnimationByIndex(d, 0)
+        call TriggerRegisterTimerEvent(t, .02, true)
+        call TriggerAddCondition(t, Condition(function LBA))
+        call TriggerRegisterDeathEvent(t, d)
+        call UnitApplyTimedLife(d,'BTLF', 45)
+        
+        call SaveTextTagHandle(HY, GetHandleId(d), 'time', CreateTextTag())
+        
+        call SaveEffectHandle(HY, h, 175,(AddSpecialEffectTarget("war3mapImported\\Phoenix_Missile_smaller.mdx", d, "hand right alternate")))
+        call SaveEffectHandle(HY, h, 176,(AddSpecialEffectTarget("war3mapImported\\Phoenix_Missile_smaller.mdx", d, "hand left alternate")))
+        call SaveEffectHandle(HY, h, 177,(AddSpecialEffectTarget("war3mapImported\\FlameDash_Ground.mdx", d, "origin")))
+        call SaveUnitHandle(HY, h, 2,(whichUnit))
+        call SaveUnitHandle(HY, h, 19,(d))
+        call SaveReal(HY, h, 47, CoordinateX50((GetSpellTargetX())* 1.))
+        call SaveReal(HY, h, 48, CoordinateY50((GetSpellTargetY())* 1.))
+        set whichUnit = null
+        set t = null
+        set d = null
+    endfunction
+    function FireRemnantOnSpellEffect takes nothing returns nothing
+        local unit    whichUnit = GetTriggerUnit()
+        local integer count     = GetUnitAbilityCharges(whichUnit, HeroSkill_BaseId[SKILL_INDEX_FIRE_REMNANT])
+        if count > 0 then
+            call LCA()
+            set count = count - 1
+            call SetUnitAbilityCharges(whichUnit, HeroSkill_BaseId[SKILL_INDEX_FIRE_REMNANT], count)
+            if count == 0 then
+                call UnitDisableAbility(whichUnit, HeroSkill_BaseId[SKILL_INDEX_FIRE_REMNANT], false)
+            endif
+            // call UnitRemoveAbility(whichUnit, FireRemnantDummyAbilitys[fireRemnantCount])
+            // set fireRemnantCount = fireRemnantCount -1
+            // call SaveInteger(HY,(GetHandleId(whichUnit)), 747,(fireRemnantCount))
+            // call UnitAddPermanentAbility(whichUnit, FireRemnantDummyAbilitys[fireRemnantCount])
+        else
+            call InterfaceErrorForPlayer(GetOwningPlayer(GetTriggerUnit()), "充能点数不足")
+        endif
+        set whichUnit = null
+    endfunction
+    function LDA takes nothing returns boolean
+        return GetUnitTypeId(GetFilterUnit())=='h0E8'
+    endfunction
+    function LFA takes nothing returns nothing
+        local real GIX = GetDistanceBetween(GetUnitX(GetEnumUnit()), GetUnitY(GetEnumUnit()), QHV, QJV)
+        if GIX > QKV and IsUnitDeath(GetEnumUnit()) == false then
+            set QLV = GetEnumUnit()
+            set QKV = GIX
+        endif
+    endfunction
+    function LGA takes unit whichUnit, real x, real y returns unit
+        local group g = AllocationGroup(469)
+        set QLV = null
+        set QKV =-1
+        set QHV = x
+        set QJV = y
+        call GroupEnumUnitsOfPlayer(g, GetOwningPlayer(whichUnit), Condition(function LDA))
+        call ForGroup(g, function LFA)
+        call DeallocateGroup(g)
+        set g = null
+        return QLV
+    endfunction
+    function LHA takes unit u1, unit u2 returns real
+        local real LJA = GetUnitDistanceEx(u1, u2)
+        local real time = LJA / 1300.
+        if time > .4 then
+            return LJA / .4
+        endif
+        return 1300.
+    endfunction
+    function LKA takes nothing returns boolean
+        local trigger t = GetTriggeringTrigger()
+        local integer h = GetHandleId(t)
+        local unit whichUnit =(LoadUnitHandle(HY, h, 2))
+        local real XVA =(LoadReal(HY, h, 47))
+        local real XEA =(LoadReal(HY, h, 48))
+        local unit L3R =(LoadUnitHandle(HY, h, 19))
+        local real GRR = GetUnitX(whichUnit)
+        local real GIR = GetUnitY(whichUnit)
+        local real tx =(LoadReal(HY, h, 6))
+        local real ty =(LoadReal(HY, h, 7))
+        local real a
+        local real targetX
+        local real targetY
+        local real d
+        local real speed =(LoadReal(HY, h, 44))
+        local real VEI = speed * .02
+        local group g
+        local integer count =(LoadInteger(HY, h, 34))
+        if L3R != null then
+            set tx = GetUnitX(L3R)
+            set ty = GetUnitY(L3R)
+            call SaveReal(HY, h, 6,((tx)* 1.))
+            call SaveReal(HY, h, 7,((ty)* 1.))
+        endif
+        set a = AngleBetweenXY(GRR, GIR, tx, ty)* bj_DEGTORAD
+        set d = GetDistanceBetween(GRR, GIR, tx, ty)
+        if GetTriggerEventId() == EVENT_WIDGET_DEATH then
+            call SaveInteger(HY, GetHandleId(whichUnit), 4319, 2)
+            call ResetUnitVertexColor(whichUnit)
+            call SetUnitVertexColorEx(whichUnit,-1,-1,-1, 255)
+            call SetUnitTimeScale(whichUnit, 1)
+            call SetUnitAnimationByIndex(whichUnit, 0)
+            
+            call UnitDecNoPathingCount(whichUnit)
+            call UnitDecInvulnerableCount(whichUnit)
+            // call SetUnitPathing(whichUnit, true)
+            // call SetUnitInvulnerable(whichUnit, false)
+            call UnitRemoveAbility(whichUnit,'A04R')
+            call DestroyEffect((LoadEffectHandle(HY, h, 175)))
+            call DestroyEffect((LoadEffectHandle(HY, h, 176)))
+            call DestroyEffect((LoadEffectHandle(HY, h, 177)))
+            call FlushChildHashtable(HY, h)
+            call DestroyTrigger(t)
+        elseif d < VEI then
+            call SetUnitX(whichUnit, tx)
+            call SetUnitY(whichUnit,(ty))
+            call KillTreeByCircle(tx, ty, 100)
+            call SaveBoolean(OtherHashTable, GetHandleId(whichUnit), 99, true)
+            call LOA(whichUnit, L3R, tx, ty)
+            set L3R = LGA(whichUnit, XVA, XEA)
+            if L3R == null then
+                call SaveInteger(HY, GetHandleId(whichUnit), 4319, 2)
+                call ResetUnitVertexColor(whichUnit)
+                call SetUnitVertexColorEx(whichUnit,-1,-1,-1, 255)
+                call SetUnitTimeScale(whichUnit, 1)
+                call SetUnitAnimationByIndex(whichUnit, 1)
+
+                call UnitDecNoPathingCount(whichUnit)
+                call UnitDecInvulnerableCount(whichUnit)
+                // call SetUnitPathing(whichUnit, true)
+                // call SetUnitInvulnerable(whichUnit, false)
+
+                call UnitRemoveAbility(whichUnit,'A04R')
+                call DestroyEffect((LoadEffectHandle(HY, h, 175)))
+                call DestroyEffect((LoadEffectHandle(HY, h, 176)))
+                call DestroyEffect((LoadEffectHandle(HY, h, 177)))
+                call FlushChildHashtable(HY, h)
+                call DestroyTrigger(t)
+            else
+                call SaveInteger(HY, h, 34,(count + 1))
+                call SaveUnitHandle(HY, h, 19,(L3R))
+                call SaveReal(HY, h, 44,((LHA(whichUnit, L3R))* 1.))
+                call SaveReal(HY, h, 6,((GetUnitX(L3R))* 1.))
+                call SaveReal(HY, h, 7,((GetUnitY(L3R))* 1.))
+            endif
+        else
+            call SetUnitAnimationByIndex(whichUnit, 0)
+            //call SetUnitPathing(whichUnit, false)
+            set targetX = GRR + VEI * Cos(a)
+            set targetY = GIR + VEI * Sin(a)
+            if IsUnitType(whichUnit, UNIT_TYPE_HERO) then
+                call SaveBoolean(OtherHashTable, GetHandleId(whichUnit), 99, true)
+            endif
+            call SetUnitX(whichUnit,(targetX))
+            call SetUnitY(whichUnit, targetY)
+            call SaveBoolean(OtherHashTable, GetHandleId(whichUnit), 99, true)
+            call KillTreeByCircle(targetX, targetY, 100)
+            call SetUnitFacing(whichUnit, a * bj_RADTODEG)
+        endif
+        call K8A(whichUnit, count, GetUnitX(whichUnit), GetUnitY(whichUnit))
+        set t = null
+        set whichUnit = null
+        set L3R = null
+        set g = null
+        return false
+    endfunction
+    function LLA takes nothing returns boolean
+        local trigger t = GetTriggeringTrigger()
+        local integer h = GetHandleId(t)
+        local unit whichUnit =(LoadUnitHandle(HY, h, 2))
+        call SetUnitState(whichUnit, UNIT_STATE_MANA, GetUnitState(whichUnit, UNIT_STATE_MANA) + 100)
+        call FlushChildHashtable(HY, h)
+        call DestroyTrigger(t)
+        set t = null
+        set whichUnit = null
+        return false
+    endfunction
+    function ActivateFireRemnantOnSpellEffect takes nothing returns nothing
+        local unit whichUnit = GetTriggerUnit()
+        local trigger t
+        local integer h = GetHandleId(whichUnit)
+        local integer LAA =(LoadInteger(HY, h, 746))
+        local unit L3R
+        if LAA > 0 and LoadInteger(HY, GetHandleId(whichUnit), 4319) != 1 then
+            set t = CreateTrigger()
+            set h = GetHandleId(t)
+            call SetUnitVertexColorEx(whichUnit, 255, 0, 0, 75)
+            call SetUnitTimeScale(whichUnit, 2)
+            call SetUnitAnimationByIndex(whichUnit, 0)
+
+            call UnitIncNoPathingCount(whichUnit)
+            call UnitIncInvulnerableCount(whichUnit)
+
+            call UnitAddPermanentAbility(whichUnit,'A04R')
+            
+            call SaveInteger(HY, GetHandleId(whichUnit), 4319, 1)
+            call TriggerRegisterTimerEvent(t, .02, true)
+            call TriggerAddCondition(t, Condition(function LKA))
+            call TriggerRegisterDeathEvent(t, whichUnit)
+            call SaveEffectHandle(HY, h, 175,(AddSpecialEffectTarget("war3mapImported\\Phoenix_Missile_smaller.mdx", whichUnit, "hand right alternate")))
+            call SaveEffectHandle(HY, h, 176,(AddSpecialEffectTarget("war3mapImported\\Phoenix_Missile_smaller.mdx", whichUnit, "hand left alternate")))
+            call SaveEffectHandle(HY, h, 177,(AddSpecialEffectTarget("war3mapImported\\FlameDash_Ground.mdx", whichUnit, "origin")))
+            call SaveUnitHandle(HY, h, 2,(whichUnit))
+            call SaveReal(HY, h, 47,((GetSpellTargetX())* 1.))
+            call SaveReal(HY, h, 48,((GetSpellTargetY())* 1.))
+            set L3R = LGA(whichUnit, GetSpellTargetX(), GetSpellTargetY())
+            call SaveUnitHandle(HY, h, 19,(L3R))
+            call SaveReal(HY, h, 44,((LHA(whichUnit, L3R))* 1.))
+            call SaveReal(HY, h, 6,((GetUnitX(L3R))* 1.))
+            call SaveReal(HY, h, 7,((GetUnitY(L3R))* 1.))
+            call SaveInteger(HY, h, 34, 1)
+        else
+            set t = CreateTrigger()
+            set h = GetHandleId(t)
+            call TriggerRegisterTimerEvent(t, .0, false)
+            call TriggerAddCondition(t, Condition(function LLA))
+            call SaveUnitHandle(HY, h, 2,(whichUnit))
+        endif
+        set t = null
+        set whichUnit = null
+        set L3R = null
     endfunction
 
 endscope
