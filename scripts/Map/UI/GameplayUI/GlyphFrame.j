@@ -40,7 +40,7 @@ library GlyphFrame requires UISystem, AbilityUtils
     function SetGlyphButtonTooltip takes integer abilId returns nothing
         set ToolTip = SimpleToolTip.RegisterToolTip(GlyphButton)
         set ToolTip.TipName  = GetAbilityTooltipById(abilId, 1)
-        set ToolTip.UberTip  = GetAbilityUberTooltipById(abilId, 1)
+        set ToolTip.UberTip  = GetAbilityExtendedTooltipById(abilId, 1)
         set ToolTip.Cooldown = GetAbilityCooldownById(abilId, 1)
     endfunction
 

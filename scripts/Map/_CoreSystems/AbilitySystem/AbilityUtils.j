@@ -27,6 +27,23 @@ library AbilityUtils requires Table, Base
         return MHAbility_GetAbilityCustomLevelDataReal(whichAbility, GetAbilityLevel(whichAbility), ABILITY_LEVEL_DEF_DATA_COOLDOWN)
     endfunction
 
+    function SetAbilityIconById takes integer abilId, string art returns nothing
+        if StringLength(art) > 0 and MHString_Find(art, ".blp", 0) == - 1 then
+            set art = art + ".blp"
+        endif
+        call MHAbility_SetDefDataStr(abilId, ABILITY_DEF_DATA_ART, art)
+    endfunction
+    function SetAbilityTooltipById takes integer abilId, integer level, string tooltip returns nothing
+        call MHAbility_SetLevelDefDataStr(abilId, level, ABILITY_LEVEL_DEF_DATA_TIP, tooltip)
+    endfunction
+    function SetAbilityExtendedTooltipyId takes integer abilId, integer level, string extendedTooltip returns nothing
+        call MHAbility_SetLevelDefDataStr(abilId, level, ABILITY_LEVEL_DEF_DATA_UBERTIP, extendedTooltip)
+    endfunction
+
+    function GetAbilityHotkeyById takes integer abilId returns integer
+        return MHAbility_GetDefDataInt(abilId, ABILITY_DEF_DATA_HOTKEY)
+    endfunction
+    
     function GetAbilityIconById takes integer abilId returns string
         local string s = MHAbility_GetDefDataStr(abilId, ABILITY_DEF_DATA_ART)
         if StringLength(s) > 0 and MHString_Find(s, ".blp", 0) == - 1 then
@@ -34,10 +51,14 @@ library AbilityUtils requires Table, Base
         endif
         return s
     endfunction
+    function GetAbilityResearchExtendedTooltipyId takes integer abilId returns string
+        return MHAbility_GetDefDataStr(abilId, ABILITY_DEF_DATA_RESEARCH_UBERTIP)
+    endfunction
+    
     function GetAbilityTooltipById takes integer abilId, integer level returns string
         return MHAbility_GetLevelDefDataStr(abilId, level, ABILITY_LEVEL_DEF_DATA_TIP)
     endfunction
-    function GetAbilityUberTooltipById takes integer abilId, integer level returns string
+    function GetAbilityExtendedTooltipById takes integer abilId, integer level returns string
         return MHAbility_GetLevelDefDataStr(abilId, level, ABILITY_LEVEL_DEF_DATA_UBERTIP)
     endfunction
     function GetAbilityCooldownById takes integer abilId, integer level returns real

@@ -58,7 +58,7 @@ library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
             call ExecuteFunc("LoneDruidSummonSpiritBear_Init")
         elseif (heroIndex == 23) then
             // 地精工程师
-            call ExecuteFunc("M2X")
+            // call ExecuteFunc("M2X")
             call ExecuteFunc("M3X")
         elseif (heroIndex == 75) then
             //call ExecuteFunc("M4X")
@@ -301,8 +301,8 @@ library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
         integer upgradeId
         // 切换时
         integer alternateId
-        boolean isAutoToggle
-        static method Register takes integer baseId, integer activeId, boolean isAutoToggle returns nothing
+        boolean isAutoDisable
+        static method Register takes integer baseId, integer activeId, boolean isAutoDisable returns nothing
             local integer skillIndex
             local thistype this = thistype.COUNT + 1
             set thistype.COUNT = this
@@ -317,8 +317,8 @@ library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
                 set Table[TOGGLE_SKILL_INDEX].integer[this.upgradeId] = this
             endif
 
-            set this.alternateId  = activeId
-            set this.isAutoToggle = isAutoToggle
+            set this.alternateId   = activeId
+            set this.isAutoDisable = isAutoDisable
         endmethod
         static method GetIndexById takes integer abilId returns thistype
             return Table[TOGGLE_SKILL_INDEX].integer[abilId]
@@ -373,7 +373,7 @@ library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
             local unit     whichUnit = MHEvent_GetUnit()
             local integer  id        = MHEvent_GetAbility()
             local thistype this      = GetIndexById(id)
-            if this != 0 and this.IsDefaultId(id) and UnitAddPermanentAbility(whichUnit, this.alternateId) then
+            if this != 0 and this.IsDefaultId(id) and UnitAddPermanentAbility(whichUnit, this.alternateId) and this.isAutoDisable then
                 call UnitDisableAbilityEx(whichUnit, this.alternateId, true)
                 set ToggleSkillStateTable[this].boolean[GetHandleId(whichUnit)] = false
             endif
@@ -392,24 +392,24 @@ library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
             return false
         endmethod
         
-        static method AbilityOnSpellEffect takes nothing returns boolean
-            local unit     whichUnit = GetTriggerUnit()
-            local integer  id        = GetSpellAbilityId()
-            local thistype this      = GetIndexById(id)
-            if this != 0 and this.isAutoToggle then
-                if this.IsDefaultId(id) then
-                    call UnitDisableAbilityEx(whichUnit, GetUnitVaildDefaultId(whichUnit, this.baseId), true)
-                    call UnitEnableAbilityEx(whichUnit, this.alternateId, true)
-                    set ToggleSkillStateTable[this].boolean[GetHandleId(whichUnit)] = true
-                elseif this.IsAlternateId(id) then
-                    call UnitEnableAbilityEx(whichUnit, GetUnitVaildDefaultId(whichUnit, this.baseId), true)
-                    call UnitDisableAbilityEx(whichUnit, this.alternateId, true)
-                    set ToggleSkillStateTable[this].boolean[GetHandleId(whichUnit)] = false
-                endif
-            endif
-            set whichUnit = null
-            return false
-        endmethod
+        // static method AbilityOnSpellEffect takes nothing returns boolean
+        //     local unit     whichUnit = GetTriggerUnit()
+        //     local integer  id        = GetSpellAbilityId()
+        //     local thistype this      = GetIndexById(id)
+        //     if this != 0 and this.isAutoToggle then
+        //         if this.IsDefaultId(id) then
+        //             call UnitDisableAbilityEx(whichUnit, GetUnitVaildDefaultId(whichUnit, this.baseId), true)
+        //             call UnitEnableAbilityEx(whichUnit, this.alternateId, true)
+        //             set ToggleSkillStateTable[this].boolean[GetHandleId(whichUnit)] = true
+        //         elseif this.IsAlternateId(id) then
+        //             call UnitEnableAbilityEx(whichUnit, GetUnitVaildDefaultId(whichUnit, this.baseId), true)
+        //             call UnitDisableAbilityEx(whichUnit, this.alternateId, true)
+        //             set ToggleSkillStateTable[this].boolean[GetHandleId(whichUnit)] = false
+        //         endif
+        //     endif
+        //     set whichUnit = null
+        //     return false
+        // endmethod
 
         implement ToggleSkillInit
     endstruct
@@ -425,9 +425,9 @@ library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
             call TriggerAddCondition(trig, Condition(function thistype.AbilityOnRemove))
             call MHAbilityRemoveEvent_Register(trig)
 
-            set trig = CreateTrigger()
-            call TriggerAddCondition(trig, Condition(function thistype.AbilityOnSpellEffect))
-            call TriggerRegisterAnyUnitEvent(trig, EVENT_PLAYER_UNIT_SPELL_EFFECT)
+            // set trig = CreateTrigger()
+            // call TriggerAddCondition(trig, Condition(function thistype.AbilityOnSpellEffect))
+            // call TriggerRegisterAnyUnitEvent(trig, EVENT_PLAYER_UNIT_SPELL_EFFECT)
 
             set ToggleSkillStateTable = TableArray[JASS_MAX_ARRAY_SIZE]
         endmethod

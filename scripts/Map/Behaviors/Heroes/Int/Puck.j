@@ -64,10 +64,13 @@ scope Puck
 
     function IllusoryOryOnInitializer takes nothing returns nothing
         set IllusoryOrbTable = TableArray[JASS_MAX_ARRAY_SIZE]
-        call ResgiterAbilityMethodSimple(HeroSkill_BaseId[SKILL_INDEX_ILLUSORY_ORB], "IllusoryOryOnAdd", "IllusoryOryOnRemove")
     endfunction
     function IllusoryOryOnAdd takes nothing returns nothing
         local unit whichUnit = Event.GetTriggerUnit()
+        if not IsUnitType(whichUnit, UNIT_TYPE_HERO) then
+            set whichUnit = null
+            return
+        endif
         if UnitAddPermanentAbility(whichUnit, ETHEREAL_JAUNT_ABILITY_ID) then
             call UnitDisableAbility(whichUnit, ETHEREAL_JAUNT_ABILITY_ID, false)
         endif
@@ -75,6 +78,10 @@ scope Puck
     endfunction
     function IllusoryOryOnRemove takes nothing returns nothing
         local unit whichUnit = Event.GetTriggerUnit()
+        if not IsUnitType(whichUnit, UNIT_TYPE_HERO) then
+            set whichUnit = null
+            return
+        endif
         call UnitRemoveAbility(whichUnit, ETHEREAL_JAUNT_ABILITY_ID)
         set whichUnit = null
     endfunction

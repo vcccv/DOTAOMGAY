@@ -120,6 +120,141 @@ scope Morphling
 
     //***************************************************************************
     //*
+    //*  敏捷转换
+    //*
+    //***************************************************************************
+    globals
+        constant integer SKILL_INDEX_MORPH = GetHeroSKillIndexBySlot(HERO_INDEX_MORPHLING, 3)
+    endglobals
+    function Z9R takes unit trigUnit, integer VVI, real VEI returns nothing
+        local integer agi = GetHeroAgi(trigUnit, false)
+        local integer str = GetHeroStr(trigUnit, false)
+        local real mp = GetUnitState(trigUnit, UNIT_STATE_MANA)
+        if VVI == 0 then
+            if mp >= VEI and agi -LoadInteger(OtherHashTable, GetHandleId(trigUnit), 31)> 2 and IsUnitDeath(trigUnit) == false and agi > PC then
+                call SetUnitState(trigUnit, UNIT_STATE_MANA, mp -VEI)
+                call SetHeroAgi(trigUnit, agi -2, true)
+                call SetHeroStr(trigUnit, str + 2, true)
+            endif
+        elseif VVI == 1 then
+            if mp >= VEI and str -LoadInteger(OtherHashTable, GetHandleId(trigUnit), 30)-LoadInteger(OtherHashTable, GetHandleId(trigUnit),'ARML')> 4 and IsUnitDeath(trigUnit) == false and str > PC then
+                call SetUnitState(trigUnit, UNIT_STATE_MANA, mp -VEI)
+                call SetHeroAgi(trigUnit, agi + 2, true)
+                call SetHeroStr(trigUnit, str -2, true)
+            endif
+        endif
+    endfunction
+    function VXI takes nothing returns boolean
+        local trigger t = GetTriggeringTrigger()
+        local integer h = GetHandleId(t)
+        local unit trigUnit =(LoadUnitHandle(HY, h, 14))
+        local integer level = GetUnitAbilityLevel(trigUnit,'A0KX')
+        call Z9R(trigUnit, 1, 30. / level)
+        set t = null
+        set trigUnit = null
+        return false
+    endfunction
+    function VOI takes nothing returns boolean
+        local trigger t = GetTriggeringTrigger()
+        local integer h = GetHandleId(t)
+        local unit trigUnit =(LoadUnitHandle(HY, h, 14))
+        local integer level = GetUnitAbilityLevel(trigUnit,'A0KX')
+        call Z9R(trigUnit, 0, 30. / level)
+        set t = null
+        set trigUnit = null
+        return false
+    endfunction
+    function VRI takes nothing returns boolean
+        local trigger t = GetTriggeringTrigger()
+        local integer h = GetHandleId(t)
+        local unit u = GetTriggerUnit()
+        local trigger VII =(LoadTriggerHandle(HY, h, 226))
+        local integer level = GetUnitAbilityLevel(u,'A0KX')
+        local integer lastorder =(LoadInteger(HY, h, 227))
+        local real VEI = 1. / level
+        if VEI == .25 then
+            set VEI = .2
+        endif
+        if GetIssuedOrderId() == 852549 then
+            if VII != null then
+                call FlushChildHashtable(HY,(GetHandleId(VII)))
+                call DestroyTrigger(VII)
+            endif
+            set VII = CreateTrigger()
+            call TriggerRegisterTimerEvent(VII, VEI, true)
+            call TriggerAddCondition(VII, Condition(function VXI))
+            call SaveUnitHandle(HY,(GetHandleId(VII)), 14,(u))
+            call SaveTriggerHandle(HY, h, 226,(VII))
+            call SaveInteger(HY, h, 227,(GetIssuedOrderId()))
+            call UnitAddAbility(u,'A22L')
+            call UnitRemoveAbility(u,'A22T')
+        elseif GetIssuedOrderId() == 852546 then
+            if VII != null then
+                call FlushChildHashtable(HY,(GetHandleId(VII)))
+                call DestroyTrigger(VII)
+            endif
+            set VII = CreateTrigger()
+            call TriggerRegisterTimerEvent(VII, VEI, true)
+            call TriggerAddCondition(VII, Condition(function VOI))
+            call SaveUnitHandle(HY,(GetHandleId(VII)), 14,(u))
+            call SaveTriggerHandle(HY, h, 226,(VII))
+            call SaveInteger(HY, h, 227,(GetIssuedOrderId()))
+            call UnitAddAbility(u,'A22T')
+            call UnitRemoveAbility(u,'A22L')
+        elseif GetIssuedOrderId()== 852550 then
+            if VII != null then
+                call FlushChildHashtable(HY,(GetHandleId(VII)))
+                call DestroyTrigger(VII)
+            endif
+            call SaveTriggerHandle(HY, h, 226,(null))
+            call SaveInteger(HY, h, 227,(GetIssuedOrderId()))
+            call UnitRemoveAbility(u,'A22L')
+            call UnitRemoveAbility(u,'A22T')
+        elseif GetIssuedOrderId()== 852547 then
+            if VII != null then
+                call FlushChildHashtable(HY,(GetHandleId(VII)))
+                call DestroyTrigger(VII)
+            endif
+            call SaveTriggerHandle(HY, h, 226,(null))
+            call SaveInteger(HY, h, 227,(GetIssuedOrderId()))
+            call UnitRemoveAbility(u,'A22L')
+            call UnitRemoveAbility(u,'A22T')
+        elseif GetIssuedOrderId()== 852548 then
+            if IssueImmediateOrderById(u, 852549) == false then
+                call IssueImmediateOrderById(u, 852550)
+            endif
+        elseif GetIssuedOrderId()== 852545 then
+            if IssueImmediateOrderById(u, 852546) == false then
+                call IssueImmediateOrderById(u, 852547)
+            endif
+        endif
+        set t = null
+        set u = null
+        set VII = null
+        return false
+    endfunction
+    function MorphOnLearn takes nothing returns nothing
+        local unit trigUnit = GetTriggerUnit()
+        local trigger t
+        local integer h
+        local integer level = GetUnitAbilityLevel(trigUnit,'A0KX')
+        if level == 1 then
+            set t = CreateTrigger()
+            set h = GetHandleId(t)
+            call UnitAddPermanentAbility(trigUnit, 'A0KW')
+            call TriggerRegisterUnitEvent(t, trigUnit, EVENT_UNIT_ISSUED_ORDER)
+            call TriggerAddCondition(t, Condition(function VRI))
+            call SaveTriggerHandle(HY, h, 226,(null))
+            set t = null
+        else
+            call SetUnitAbilityLevel(trigUnit, 'A0KW', level)
+        endif
+        set trigUnit = null
+        set t = null
+    endfunction
+
+    //***************************************************************************
+    //*
     //*  复制
     //*
     //***************************************************************************

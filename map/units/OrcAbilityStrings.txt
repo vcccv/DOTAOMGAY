@@ -23197,6 +23197,30 @@ bufftip=Arctic Burn
 buffart=ReplaceableTextures\CommandButtons\BTNImmolationOn
 bufftip=Immolation
 buffubertip=Enemy units arround Knight Davion will take damage.
+[ZT00]
+art=ReplaceableTextures\CommandButtons\BTNStatUp
+buttonpos=0,2
+name=Default String
+tip=Tooltip Missing!
+ubertip=Tooltip Missing!
+[ZT01]
+art=ReplaceableTextures\CommandButtons\BTNStatUp
+buttonpos=1,2
+name=Default String
+tip=Tooltip Missing!
+ubertip=Tooltip Missing!
+[ZT02]
+art=ReplaceableTextures\CommandButtons\BTNStatUp
+buttonpos=2,2
+name=Default String
+tip=Tooltip Missing!
+ubertip=Tooltip Missing!
+[ZT03]
+art=ReplaceableTextures\CommandButtons\BTNStatUp
+buttonpos=3,2
+name=Default String
+tip=Tooltip Missing!
+ubertip=Tooltip Missing!
 [Z000]
 art=ReplaceableTextures\CommandButtons\BTNStatUp
 buttonpos=0,1
@@ -26067,7 +26091,7 @@ Ubertip=为了能使他的军队迅速集合，舰队统帅为一个英雄在地
 Hotkey=X
 Researchhotkey=X
 Researchtip=学习 X标记[|cffffcc00X|r] - [|cffffcc00等级 %d|r]|n(X Marks The Spot)
-Researchubertip=为了能使他的军队迅速集合，舰队统帅为一个英雄在地上标记其当前的位置。4秒（友军为8秒）之后，被标记的英雄会立刻返回标记位置。|n|n|cff99ccff冷却时间：|r14/12/10/8|n|cff99ccff魔法消耗：|r50|n|n|cffffcc00等级 1|r – 400施法距离|n|cffffcc00等级 2|r - 600施法距离|n|cffffcc00等级 3|r - 800施法距离|n|cffffcc00等级 4|r - 1000施法距离
+Researchubertip=为了能使他的军队迅速集合，舰队统帅为一个英雄在地上标记其当前的位置。4秒（友军为8秒）之后，被标记的英雄会立刻返回标记位置。|n|n|cff99ccff冷却时间：|r14/12/10/8|n|cff99ccff魔法消耗：|r50|n|n|cffffcc00等级 1|r - 400施法距离|n|cffffcc00等级 2|r - 600施法距离|n|cffffcc00等级 3|r - 800施法距离|n|cffffcc00等级 4|r - 1000施法距离
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNSpy.blp
 [A121]
 art=ReplaceableTextures\CommandButtons\BTNCancel
@@ -27152,8 +27176,8 @@ animnames=spell,chain
 researchart=ReplaceableTextures\CommandButtons\BTNTreeOfEternity
 researchbuttonpos=1
 Name=定点爆破
-Tip=定点爆破[|cffffcc00F|r] - [|cffffcc00等级 1|r]
-Ubertip=立刻引爆选定地点周围700范围内所有的遥控炸弹。（可使用 -show 指令隐藏该图标）
+Tip=定点爆破[|cffffcc00F|r]
+Ubertip=立刻引爆选定地点周围700范围内所有的遥控炸弹。
 hotkey=F
 [A1WI]
 art=ReplaceableTextures\CommandButtons\BTNGlyphScourge
@@ -38274,11 +38298,9 @@ art=ReplaceableTextures\CommandButtons\BTNManaStone
 unart=ReplaceableTextures\CommandButtons\BTNManaStone
 buttonpos=1,1
 animnames=spell
-researchbuttonpos=1
-researchart=ReplaceableTextures\CommandButtons\BTNWeb
 Name=召唤巨石
 Tip=召唤巨石[|cffffcc00E|r]
-Ubertip=考林从地渊召唤巨石到地表帮助其战斗。每召唤一个巨石就消耗一点巨石能量，巨石能量每35秒恢复一点。巨石持续2分钟，最多可同时召唤6个。巨石不具有视野。|n|n|cff99ccff施法距离：|r1400|n|cff99ccff冷却时间：|r0
+Ubertip=考林从地渊召唤巨石到地表帮助其战斗。每召唤一个巨石就消耗一点巨石能量，巨石能量每25秒恢复一点。巨石持续2分钟，最多可同时召唤6个。巨石不具有视野。|n|n|cff99ccff施法距离：|r1400|n|cff99ccff冷却时间：|r0
 hotkey=E
 [A2QT]
 art=ReplaceableTextures\CommandButtons\BTNFortunesEnd

@@ -2342,8 +2342,8 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A1DA', 0, "BorrowedTimeOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A1DP', 0, "StaticLinkOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A2IS', 0, "YGV")
-	call SaveStr(ObjectHashTable,'A0RP', 0, "YHV")
-	call SaveStr(ObjectHashTable,'A449', 0, "YHV")
+	call SaveStr(ObjectHashTable,'A0RP', 0, "PsionicTrapOnSpellEffect")
+	call SaveStr(ObjectHashTable,'A449', 0, "PsionicTrapOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A0RT', 0, "YJV")
 	call SaveStr(ObjectHashTable,'A0RQ', 0, "YJV")
 	call SaveStr(ObjectHashTable,'A2ML', 0, "YKV")
@@ -2404,8 +2404,8 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A03G', 0, "ZLV")
 	call SaveStr(ObjectHashTable,'QM00', 0, "ZLV")
 	call SaveStr(ObjectHashTable,'A03F', 0, "BreatheFireOnSpellEffect")
-	call SaveStr(ObjectHashTable,'A2QI', 0, "ZPV")
-	call SaveStr(ObjectHashTable,'A2TH', 0, "ZQV")
+	call SaveStr(ObjectHashTable,'A2QI', 0, "GeomagneticGripOnSpellEffect")
+	call SaveStr(ObjectHashTable,'A2TH', 0, "StoneRemnantOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A2QM', 0, "BoulderSmashOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A2QT', 0, "SpellEffect__FortuneEnd")
 	call SaveStr(ObjectHashTable,'A2T5', 0, "SpellEffect__FateEdict")
@@ -2802,7 +2802,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A40L', 0, "F2E")
 	call SaveStr(ObjectHashTable,'A40M', 0, "F2E")
 	call SaveStr(ObjectHashTable,'A40N', 0, "F2E")
-	call SaveStr(ObjectHashTable,'A2TI', 0, "F3E")
+	call SaveStr(ObjectHashTable,'A2TI', 0, "MagnetrizeOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A29J', 0, "RequiemOfSoulsOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A3OJ', 0, "RequiemOfSoulsOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A02A', 0, "F5E")
@@ -2921,16 +2921,16 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A065', 2, "JHE")
 	call SaveStr(ObjectHashTable,'A0BE', 2, "E8E")
 	call SaveStr(ObjectHashTable,'A064', 3, "JPE")
-	call SaveStr(ObjectHashTable,'A0AM', 3, "JQE")
-	call SaveStr(ObjectHashTable,'A0A3', 3, "JQE")
-	call SaveStr(ObjectHashTable,'A0A4', 3, "JQE")
-	call SaveStr(ObjectHashTable,'A1FZ', 3, "JQE")
-	call SaveStr(ObjectHashTable,'A1WF', 3, "JTE")
+	call SaveStr(ObjectHashTable,'A0AM', 3, "PinpointDetonateOnSpellEffect")
+	call SaveStr(ObjectHashTable,'A0A3', 3, "PinpointDetonateOnSpellEffect")
+	call SaveStr(ObjectHashTable,'A0A4', 3, "PinpointDetonateOnSpellEffect")
+	call SaveStr(ObjectHashTable,'A1FZ', 3, "PinpointDetonateOnSpellEffect")
+	call SaveStr(ObjectHashTable,'A1WF', 3, "FocusedDetonateOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A451', 3, "JUE")
 	call SaveStr(ObjectHashTable,'A0AS', 3, "JWE")
 	call SaveStr(ObjectHashTable,'A0SW', 3, "JYE")
 	call SaveStr(ObjectHashTable,'A0EC', 3, "JZE")
-	call SaveStr(ObjectHashTable,'A2QM', 3, "J_E")
+	call SaveStr(ObjectHashTable,'A2QM', 3, "BoulderSmashOnCast")
 	call SaveStr(ObjectHashTable,'A04Y', 3, "J4E")
 	call SaveStr(ObjectHashTable,'A34A', 3, "J7E")
 	call SaveStr(ObjectHashTable,'A34J', 3, "demonic_purge_charges0") //无充能邪恶净化
@@ -2946,7 +2946,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A361', 3, "KCE")
 	call SaveStr(ObjectHashTable,'A14O', 3, "KDE")
 	call SaveStr(ObjectHashTable,'A3FJ', 3, "KDE")
-	call SaveStr(ObjectHashTable,'A2QI', 3, "KHE")
+	call SaveStr(ObjectHashTable,'A2QI', 3, "GeomagneticGripOnCast")
 	call SaveStr(ObjectHashTable,'A2QT', 3, "KJE")
 	call SaveStr(ObjectHashTable,'A180', 3, "KLE")
 	call SaveStr(ObjectHashTable,'A1BX', 3, "KME")
@@ -2989,8 +2989,8 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A21L', 4, "LLE")
 	call SaveStr(ObjectHashTable,'A0I8', 4, "StrygwyrThirstOnLearn")
 	call SaveStr(ObjectHashTable,'A0CZ', 4, "LPE")
-	call SaveStr(ObjectHashTable,'A0AK', 4, "LQE")
-	call SaveStr(ObjectHashTable,'A1FY', 4, "LQE")
+	// call SaveStr(ObjectHashTable,'A0AK', 4, "RemoteMinesOnLearn")
+	// call SaveStr(ObjectHashTable,'A1FY', 4, "RemoteMinesOnLearn")
 	call SaveStr(ObjectHashTable,'A0S1', 4, "LSE")
 	call SaveStr(ObjectHashTable,'A0MB', 4, "LTE")
 	call SaveStr(ObjectHashTable,'A0MX', 4, "LearnSkill__DrunkenBrawler")
@@ -3001,8 +3001,9 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A1DA', 4, "LearnSkill__BorrowedTime")
 	call SaveStr(ObjectHashTable,'A517', 4, "LearnSkill__BorrowedTime")
 	call SaveStr(ObjectHashTable,'A518', 4, "LearnSkill__BorrowedTime")
-	call SaveStr(ObjectHashTable,'A0RP', 4, "L2E")
-	call SaveStr(ObjectHashTable,'A449', 4, "L2E")
+	// call SaveStr(ObjectHashTable,'A0RP', 4, "PsionicTrapOnLearn")
+	// call SaveStr(ObjectHashTable,'A449', 4, "PsionicTrapOnLearn")
+
 	call SaveStr(ObjectHashTable,'A34A', 4, "L3E")
 	call SaveStr(ObjectHashTable,'A2O2', 4, "L4E")
 	call SaveStr(ObjectHashTable,'QF88', 4, "L5E")
@@ -3055,8 +3056,9 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A0MB', 1000, "LTE")
 	call SaveStr(ObjectHashTable,'P019', 1000, "PHE")
 	call SaveStr(ObjectHashTable,'A1P8', 1000, "LKE")
-	call SaveStr(ObjectHashTable,'A0RP', 1000, "L2E")
-	call SaveStr(ObjectHashTable,'A449', 1000, "L2E")
+	// call SaveStr(ObjectHashTable,'A0RP', 1000, "PsionicTrapOnLearn")
+	// call SaveStr(ObjectHashTable,'A449', 1000, "PsionicTrapOnLearn")
+
 	call SaveStr(ObjectHashTable,'AIcd', 1000, "L0E")
 	call SaveStr(ObjectHashTable,'A0VC', 1000, "L5E")
 	call SaveStr(ObjectHashTable,'QF88', 1000, "L5E")
@@ -3070,7 +3072,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A0M3', 1000, "PSE")
 	call SaveStr(ObjectHashTable,'A03U', 1000, "PTE")
 	call SaveStr(ObjectHashTable,'A062', 1000, "L6E")
-	call SaveStr(ObjectHashTable,'A0KX', 1000, "PUE")
+	call SaveStr(ObjectHashTable,'A0KX', 1000, "MorphOnLearn")
 	call SaveStr(ObjectHashTable,'A0A5', 1000, "SummonSpiritBearOnLearn")
 	call SaveStr(ObjectHashTable,'A27V', 1000, "PEE")
 	call SaveStr(ObjectHashTable,'A28Q', 1000, "PVE")
@@ -3097,7 +3099,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A0IF', 1000, "P5E")
 	call SaveStr(ObjectHashTable,'A1EA', 1000, "M_E")
 	call SaveStr(ObjectHashTable,'QB03', 1000, "M_E")
-	call SaveStr(ObjectHashTable,'A0AK', 1000, "LQE")
+	//call SaveStr(ObjectHashTable,'A0AK', 1000, "RemoteMinesOnLearn")
 	call SaveStr(ObjectHashTable,'A0LV', 1000, "P7E")
 	call SaveStr(ObjectHashTable,'A2AI', 1000, "P8E")
 	call SaveStr(ObjectHashTable,'A0CZ', 1000, "LPE")
@@ -3133,7 +3135,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A0CY', 5, "PQE")
 	call SaveStr(ObjectHashTable,'A19Q', 5, "PPE")
 	call SaveStr(ObjectHashTable,'A0EY', 5, "PDE")
-	call SaveStr(ObjectHashTable,'A0KX', 5, "PUE")
+	call SaveStr(ObjectHashTable,'A0KX', 5, "MorphOnLearn")
 	call SaveStr(ObjectHashTable,'A0CG', 5, "PIE")
 	call SaveStr(ObjectHashTable,'A0OO', 5, "Q1E")
 	call SaveStr(ObjectHashTable,'A03U', 5, "PTE")
@@ -3164,7 +3166,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A40B',1001, "PGE")
 	call SaveStr(ObjectHashTable,'A0H4',1001, "Q5E")
 	call SaveStr(ObjectHashTable,'A32Z',1001, "SWE")
-	call SaveStr(ObjectHashTable,'A0KX',1001, "PUE")
+	call SaveStr(ObjectHashTable,'A0KX',1001, "MorphOnLearn")
 	call SaveStr(ObjectHashTable,'A32Y',1001, "SQE")
 	call SaveStr(ObjectHashTable,'Q0BK',1001, "SXE")
 	call SaveStr(ObjectHashTable,'A303',1001, "Q2E")
@@ -3264,7 +3266,9 @@ function S6E takes nothing returns nothing
 	set CK[0] = 2
 	set CK[1] = 2
 	call UIV() // 玩家退出
+
 	call InitAbilityCastMethodTable() // 初始化大部分技能
+
 	call S5E()
 	call W3V() // 再装填和潮汐使者
 	call SetAllPlayerAbilityUnavailable('A509')
@@ -3274,7 +3278,6 @@ function S6E takes nothing returns nothing
 	call SetAllPlayerAbilityUnavailable('A228')
 	call SetAllPlayerAbilityUnavailable('A0B8')
 	call SetAllPlayerAbilityUnavailable('A1WE')
-	call ExecuteFunc("InitSkillInitializerMethod")
 	loop
 		set p = Player(count)
 		call TriggerRegisterPlayerUnitEvent(UnitEventMainTrig, p, EVENT_PLAYER_UNIT_ATTACKED, null)
@@ -9585,6 +9588,7 @@ function QGX takes integer id returns integer
 	endif
 	return id
 endfunction
+
 function QHX takes integer i returns string
 	if i == 1 then
 		return "|c000042FFblue"
@@ -9620,6 +9624,55 @@ function SetAbilityStringByMode takes unit u, integer id returns nothing
 			call MHAbility_SetDefDataStr('A088', ABILITY_DEF_DATA_RESEARCH_UBERTIP, "狗运让菊花能更快更有效地使用技能。|n|n|cffffcc00等级 1|r - 25%概率x2|n|cffffcc00等级 2|r - 40%概率x2，20%概率x3|n|cffffcc00等级 3|r - 50%概率x2，25%概率x3，12%概率x4|n|n输入|c00ff0505-mc|r 以查看自身能触发狗运的技能|n|n|c00fffc01神杖升级：让你另一个脑袋施放火焰爆轰。")
 		endif
 	endif
+endfunction
+
+//快捷键整数转字符串
+function Key2Str takes integer key returns string
+    local string s = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    local integer i = key - 65
+    if key > 64 and key < 91 then
+        return SubString(s, i , i + 1)
+ 	endif
+  	return null
+endfunction
+
+//快捷键字符串转整数
+function Str2Key takes string key returns integer
+    local string s = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    local integer i = 65
+	local integer b = 0
+	set key = StringCase(key , true)
+	loop
+	exitwhen i > 90
+		if key == SubString(s, b , b + 1) then
+			return i
+		endif
+		set i = i + 1
+		set b = b + 1
+	endloop
+  	return 0
+endfunction
+
+function SetShowSkillDatas takes integer showSkillId, integer skillIndex returns nothing
+	local integer k
+	local integer tempAbilityId = HeroSkill_BaseId[skillIndex]
+	local integer hotkey
+	set k = WBE(tempAbilityId)
+	if k > 0 and PassiveSkill_Learned[k]> 0 then
+		set tempAbilityId = PassiveSkill_Learned[k]
+	endif
+	set hotkey = GetAbilityHotkeyById(tempAbilityId)
+	if PassiveSkill_Learned[k]> 0 then
+		call SetAbilityIconById(showSkillId, GetAbilityIconById(PassiveSkill_Show[k]))
+	else
+		call SetAbilityIconById(showSkillId, GetAbilityIconById(tempAbilityId))
+	endif
+	if hotkey == 0 then
+		call SetAbilityTooltipById(showSkillId, 1, GetObjectName(tempAbilityId))
+	else
+		call SetAbilityTooltipById(showSkillId, 1, GetObjectName(tempAbilityId) + "[|cffffcc00" + Key2Str(hotkey) + "|r]")
+	endif
+	call SetAbilityExtendedTooltipyId(showSkillId, 1, GetAbilityResearchExtendedTooltipyId(tempAbilityId))
 endfunction
 
 function PlayerPickHero takes unit u, integer playerId, unit QKX returns nothing//酒馆英雄添加技能时
@@ -9666,18 +9719,27 @@ function PlayerPickHero takes unit u, integer playerId, unit QKX returns nothing
 	endif
 	set xx = 1
 	loop
-		if HeroSkill_Disabled[heroIndex + xx]== false then
+		if HeroSkill_Disabled[heroIndex + xx] == false then
 			set tempAbilityId = HeroSkill_BaseId[heroIndex + xx]
-			set tempAbilityId = QGX(tempAbilityId)
-			call UnitAddAbility(KP[playerId], tempAbilityId)
-			if not HeroSkill_IsPassive[heroIndex + xx] and HeroSkill_SpecialId[heroIndex + xx] != 0 then
-				// 预读神杖技能
-				call UnitAddAbility(KP[playerId], HeroSkill_SpecialId[heroIndex + xx])
-				call UnitRemoveAbility(KP[playerId], HeroSkill_SpecialId[heroIndex + xx])
-				//call SingleDebug( "预读 " + I2S(xx) + " 号神杖升级技能 " + GetObjectName( HeroSkill_SpecialId[heroIndex + xx] ) )
-			endif
-			//if not Mode__RearmCombos then
+			// set tempAbilityId = QGX(tempAbilityId)
+
+		
 			call SetAbilityStringByMode(KP[playerId], tempAbilityId) 	//根据模式更改技能文本
+
+			if GetLocalPlayer() == Player(playerId) then
+				call SetShowSkillDatas('ZT00'+ xx -1, heroIndex + xx)
+			endif
+			
+			call UnitAddAbility(KP[playerId], 'ZT00'+ xx -1)
+
+			//call UnitAddAbility(KP[playerId], tempAbilityId)
+			// if not HeroSkill_IsPassive[heroIndex + xx] and HeroSkill_SpecialId[heroIndex + xx] != 0 then
+			// 	// 预读神杖技能
+			// 	call UnitAddAbility(KP[playerId], HeroSkill_SpecialId[heroIndex + xx])
+			// 	call UnitRemoveAbility(KP[playerId], HeroSkill_SpecialId[heroIndex + xx])
+			// 	//call SingleDebug( "预读 " + I2S(xx) + " 号神杖升级技能 " + GetObjectName( HeroSkill_SpecialId[heroIndex + xx] ) )
+			// endif
+			//if not Mode__RearmCombos then
 			//endif
 			call SetUnitAbilityLevel(KP[playerId], tempAbilityId, 4)
 			if CheckAbilityIdFormIndex(heroIndex + xx,-1, "melee only", null) then
@@ -24337,16 +24399,16 @@ function T6O takes nothing returns nothing
 		call GetSetupText("显示伤害值", EnableMapSetup__ShowDamageTextTag[GetPlayerId(p)])
 	endif
 endfunction
-function T7O takes nothing returns nothing
-	local integer pid = GetPlayerId(GetTriggerPlayer())
-	if GetUnitAbilityLevel(PlayerHeroes[pid],'A0AK')> 0 or GetUnitAbilityLevel(PlayerHeroes[pid],'A1FY')> 0 then
-		if GetUnitAbilityLevel(PlayerHeroes[pid],'A1WF') == 0 then
-			call UnitAddPermanentAbility(PlayerHeroes[pid],'A1WF')
-		else
-			call UnitRemoveAbility(PlayerHeroes[pid],'A1WF')
-		endif
-	endif
-endfunction
+// function T7O takes nothing returns nothing
+// 	local integer pid = GetPlayerId(GetTriggerPlayer())
+// 	if GetUnitAbilityLevel(PlayerHeroes[pid],'A0AK')> 0 or GetUnitAbilityLevel(PlayerHeroes[pid],'A1FY')> 0 then
+// 		if GetUnitAbilityLevel(PlayerHeroes[pid],'A1WF') == 0 then
+// 			call UnitAddPermanentAbility(PlayerHeroes[pid],'A1WF')
+// 		else
+// 			call UnitRemoveAbility(PlayerHeroes[pid],'A1WF')
+// 		endif
+// 	endif
+// endfunction
 function T8O takes nothing returns nothing
 	local player p = GetTriggerPlayer()
 	local boolean CD = LoadBoolean(ObjectHashTable, GetHandleId(p), 4)
@@ -25068,32 +25130,6 @@ function GetUnitAbilityTip takes integer id, string s returns string
 	return GetObjectName(id) + "[|cffffcc00" + s + "|r]"
 endfunction
 
-//快捷键整数转字符串
-function Key2Str takes integer key returns string
-    local string s = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    local integer i = key - 65
-    if key > 64 and key < 91 then
-        return SubString(s, i , i + 1)
- 	endif
-  	return null
-endfunction
-
-//快捷键字符串转整数
-function Str2Key takes string key returns integer
-    local string s = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    local integer i = 65
-	local integer b = 0
-	set key = StringCase(key , true)
-	loop
-	exitwhen i > 90
-		if key == SubString(s, b , b + 1) then
-			return i
-		endif
-		set i = i + 1
-		set b = b + 1
-	endloop
-  	return 0
-endfunction
 
 function SetAbilityHotKey takes unit u, integer id, integer hotkey, player p returns nothing
 	local integer a = 1
@@ -30795,6 +30831,8 @@ function AYR takes string AZR, integer A_R returns nothing
 	// 初始化技能表
 	call ExecuteFunc("HeroSkills_Init")
 	call ExecuteFunc("ToggleSkills_Init")
+	// 技能初始化定义
+	call ExecuteFunc("InitSkillInitializerMethod")
 
 	// 初始化技能双击施法
 	call ExecuteFunc("DoubleClickSkill__Init")
@@ -36981,200 +37019,8 @@ function M3R takes unit R8X, unit targetUnit returns nothing
 	call SaveReal(HY,(GetHandleId(targetUnit)),'A0O4',(((GetGameTime()) + 5)* 1.))
 	set t = null
 endfunction
-function M4R takes nothing returns nothing
-	local unit u = GetEnumUnit()
-	if GetUnitTypeId(u)!='o01X' then
-		call SetUnitPathing(u, true)
-	endif
-	call SaveInteger(HY,(GetHandleId((u))),(4336), 2)
-	set u = null
-endfunction
-function M5R takes unit targetUnit returns nothing
-	local unit d = CreateUnit(GetOwningPlayer(targetUnit),'e00E', GetUnitX(targetUnit), GetUnitY(targetUnit), 0)
-	call UnitAddAbility(d,'A2TG')
-	call SetUnitAbilityLevel(d,'A2TG', EH)
-	call IssueTargetOrderById(d, 852668, targetUnit)
-	set d = null
-endfunction
-function M6R takes nothing returns nothing
-	if IsUnitInGroup(GetEnumUnit(), NH) == false then
-		call GroupAddUnit(NH, GetEnumUnit())
-		call M5R(GetEnumUnit())
-		if XH == 1 then
-			call UnitDamageTargetEx(RH, GetEnumUnit(), 1, 50 * EH)
-		endif
-	endif
-endfunction
-function M7R takes nothing returns nothing
-	local unit u = GetEnumUnit()
-	local real I3X =(LoadReal(HY,(GetHandleId(u)), 801))
-	local real N3X =(LoadReal(HY,(GetHandleId(u)), 802))
-	local real M8R = BH + N3X * Cos(I3X)
-	local real M9R = CH + N3X * Sin(I3X)
-	call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Human\\FlakCannons\\FlakTarget.mdl", M8R, M9R))
-	if GetUnitTypeId(u)=='o01X' or GetUnitTypeId(u)=='o020' then
-		set XH = 1
-		call SetUnitPosition(u, M8R, M9R)
-		call SetUnitX(u, M8R)
-		call SetUnitY(u, M9R)
-	else
-		call SetUnitX(u, M8R)
-		call SetUnitY(u, M9R)
-		call KillTreeByCircle(M8R, M9R, 100)
-	endif
-	set u = null
-endfunction
-function PVR takes nothing returns nothing
-	local unit u = GetEnumUnit()
-	if IsUnitDeath(u) or((LoadInteger(HY,(GetHandleId((u))),(4306))) == 1) or GetUnitAbilityLevel(u,'B08V')> 0 or((LoadInteger(HY,(GetHandleId((u))),(4335))) == 1) then
-		call GroupRemoveUnit(NH, u)
-		call SaveInteger(HY,(GetHandleId((u))),(4336), 2)
-		if GetUnitTypeId(u)!='o01X' then
-			call SetUnitPathing(u, true)
-		endif
-	endif
-	set u = null
-endfunction
-function PER takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit whichUnit =(LoadUnitHandle(HY, h, 2))
-	local group g =(LoadGroupHandle(HY, h, 803))
-	local real PXR =(LoadReal(HY, h, 6))
-	local real POR =(LoadReal(HY, h, 7))
-	local real PRR =(LoadReal(HY, h, 23))
-	local real PIR =(LoadReal(HY, h, 24))
-	local real I3X = bj_DEGTORAD * AngleBetweenXY(PRR, PIR, PXR, POR)
-	local real PAR
-	local real PNR
-	local boolean b = false
-	local group gg =(LoadGroupHandle(HY, h, 187))
-	local group PBR
-	set XH = 0
-	set NH = g
-	call ForGroup(g, function PVR)
-	if GetTriggerEvalCount(t)> 200 or FirstOfGroup(g) == null then
-		set b = true
-	else
-		set PAR = PRR + 1000* .03 * Cos(I3X)
-		set PNR = PIR + 1000* .03 * Sin(I3X)
-		if GetDistanceBetween(PAR, PNR, PXR, POR)< 30 then
-			set PAR = PXR
-			set PNR = POR
-			set b = true
-		endif
-		set PAR = CoordinateX50(PAR)
-		set PNR = CoordinateY50(PNR)
-		set NH = g
-		set BH = PAR
-		set CH = PNR
-		call ForGroup(g, function M7R)
-		call SaveReal(HY, h, 23,((PAR)* 1.))
-		call SaveReal(HY, h, 24,((PNR)* 1.))
-		set PBR = AllocationGroup(170)
-		set TempUnit = whichUnit
-		set NH = gg
-		set RH = whichUnit
-		set EH = GetUnitAbilityLevel(whichUnit,'A2QI')
-		call GroupEnumUnitsInRange(PBR, PAR, PNR, 205, Condition(function DJX))
-		call ForGroup(PBR, function M6R)
-		call DeallocateGroup(PBR)
-		set PBR = null
-	endif
-	if b then
-		call ForGroup(g, function M4R)
-		call DestroyEffect((LoadEffectHandle(HY, h, 32)))
-		call FlushChildHashtable(HY, h)
-		call DestroyTrigger(t)
-		call DeallocateGroup(gg)
-		call DeallocateGroup(g)
-	endif
-	set whichUnit = null
-	set t = null
-	set gg = null
-	set g = null
-	return false
-endfunction
-function PCR takes nothing returns boolean
-	return GetUnitTypeId(GetFilterUnit())=='o01X' and GetOwningPlayer(GetFilterUnit()) == GetOwningPlayer(TempUnit)
-endfunction
-function PDR takes nothing returns nothing
-	local unit u = GetEnumUnit()
-	call SetUnitPathing(u, false)
-	call SaveInteger(HY,(GetHandleId((u))),(4336), 1)
-	call SaveReal(HY,(GetHandleId(u)), 801,((bj_DEGTORAD * AngleBetweenXY(BH, CH, GetUnitX(u), GetUnitY(u)))* 1.))
-	call SaveReal(HY,(GetHandleId(u)), 802,((GetDistanceBetween(BH, CH, GetUnitX(u), GetUnitY(u)))* 1.))
-	set u = null
-endfunction
-function ZPV takes nothing returns nothing
-	local unit whichUnit = GetTriggerUnit()
-	local trigger t
-	local integer h
-	local real PRR = GetUnitX(GetSpellTargetUnit())
-	local real PIR = GetUnitY(GetSpellTargetUnit())
-	local real PXR = GetUnitX(whichUnit)
-	local real POR = GetUnitY(whichUnit)
-	local real I3X = AngleBetweenXY(PXR, POR, PRR, PIR)
-	local unit targetUnit = GetSpellTargetUnit()
-	local group g
-	if targetUnit == null then
-		set g = AllocationGroup(171)
-		set TempUnit = whichUnit
-		call GroupEnumUnitsInRange(g, GetSpellTargetX(), GetSpellTargetY(), 265, Condition(function PCR))
-		if FirstOfGroup(g) == null then
-			call DeallocateGroup(g)
-			set whichUnit = null
-			set g = null
-			return
-		endif
-		set targetUnit = FirstOfGroup(g)
-		call DeallocateGroup(g)
-	endif
-	set g = AllocationGroup(172)
-	call GroupAddUnit(g, targetUnit)
-	set PRR = GetUnitX(targetUnit)
-	set PIR = GetUnitY(targetUnit)
-	set I3X = AngleBetweenXY(PXR, POR, PRR, PIR)
-	set t = CreateTrigger()
-	set h = GetHandleId(t)
-	set BH = PRR
-	set CH = PIR
-	call ForGroup(g, function PDR)
-	set PXR = PXR + 100 * Cos(I3X * bj_DEGTORAD)
-	set POR = POR + 100 * Sin(I3X * bj_DEGTORAD)
-	call TriggerRegisterTimerEvent(t, .03, true)
-	call TriggerAddCondition(t, Condition(function PER))
-	call SaveUnitHandle(HY, h, 2,(whichUnit))
-	call SaveReal(HY, h, 6,((PXR)* 1.))
-	call SaveReal(HY, h, 7,((POR)* 1.))
-	call SaveReal(HY, h, 23,((PRR)* 1.))
-	call SaveReal(HY, h, 24,((PIR)* 1.))
-	call SaveGroupHandle(HY, h, 187,(AllocationGroup(173)))
-	call SaveGroupHandle(HY, h, 803,(g))
-	call SaveEffectHandle(HY, h, 32,(AddSpecialEffectTarget("war3mapImported\\MagneticGripTarget.mdx", targetUnit, "chest")))
-	set whichUnit = null
-	set t = null
-	set g = null
-	set targetUnit = null
-endfunction
-function KHE takes nothing returns nothing
-	local unit targetUnit = GetSpellTargetUnit()
-	local group g
-	if targetUnit == null then
-		set g = AllocationGroup(174)
-		set TempUnit = GetTriggerUnit()
-		call GroupEnumUnitsInRange(g, GetSpellTargetX(), GetSpellTargetY(), 265, Condition(function PCR))
-		if FirstOfGroup(g) == null then
-			call EXStopUnit(GetTriggerUnit())
-			if IsUnitType(GetTriggerUnit(), UNIT_TYPE_HERO) then
-				call InterfaceErrorForPlayer(GetOwningPlayer(GetTriggerUnit()), "附近没有发现岩石")
-			endif
-		endif
-		call DeallocateGroup(g)
-	endif
-	set g = null
-	set targetUnit = null
-endfunction
+
+
 function PFR takes nothing returns boolean
 	return(IsUnitDeath(GetFilterUnit()) == false and IsUnitEnemy(LH, GetOwningPlayer(GetFilterUnit())) and not IsUnitWard(GetFilterUnit()) and IsUnitType(GetFilterUnit(), UNIT_TYPE_HERO) and((LoadInteger(HY,(GetHandleId((GetFilterUnit()))),(809))) == 1)) != null
 endfunction
@@ -37215,200 +37061,7 @@ function PJR takes nothing returns nothing
 		endif
 	endif
 endfunction
-function PKR takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit whichUnit =(LoadUnitHandle(HY, h, 2))
-	local group g =(LoadGroupHandle(HY, h, 187))
-	local group gg
-	local unit dummyUnit =(LoadUnitHandle(HY, h, 19))
-	local real x =(LoadReal(HY, h, 6))
-	local real y =(LoadReal(HY, h, 7))
-	local real PLR = GetUnitX(whichUnit)
-	local real PMR = GetUnitY(whichUnit)
-	local real PPR = GetDistanceBetween(x, y, PLR, PMR)
-	local real M8R
-	local real M9R
-	local real PQR =(LoadReal(HY, h, 137))
-	local real N3X = 800
-	local integer PSR =(LoadInteger(HY, h, 34))
-	local real PTR =(LoadReal(HY, h, 138))
-	local boolean b = false
-	local unit targetUnit =(LoadUnitHandle(HY, h, 810))
-	local integer c = GetTriggerEvalCount(t)
-	set FH = false
-	call SetUnitTimeScale(whichUnit, 3)
-	call SetUnitFacing(whichUnit, PQR)
-	call SetUnitAnimationByIndex(whichUnit, 0)
-	if c > 30 then
-		if PSR == 0 then
-			set gg = AllocationGroup(176)
-			set TempUnit = whichUnit
-			call GroupEnumUnitsInRange(gg, PLR, PMR, 175, Condition(function PCR))
-			if FirstOfGroup(gg) != null then
-				call KillUnit(FirstOfGroup(gg))
-				set PSR = 1
-				call SaveInteger(HY, h, 34,(PSR))
-			endif
-			call DeallocateGroup(gg)
-		endif
-		if PSR == 1 then
-			set N3X = N3X * 2
-		endif
-		if targetUnit != null then
-			set PQR = AngleBetweenUnit(whichUnit, targetUnit)
-			call SaveReal(HY, h, 137,((PQR)* 1.))
-		endif
-		set M8R = x + .02 * N3X * Cos(PQR * bj_DEGTORAD)
-		set M9R = y + .02 * N3X * Sin(PQR * bj_DEGTORAD)
-		if IsUnitType(whichUnit, UNIT_TYPE_HERO) then
-			call SaveBoolean(OtherHashTable, GetHandleId(whichUnit), 99, true)
-		endif
-		call SetUnitX(whichUnit, CoordinateX50(M8R))
-		call SetUnitY(whichUnit, CoordinateY50(M9R))
-		call SaveReal(HY, h, 6,((GetUnitX(whichUnit))* 1.))
-		call SaveReal(HY, h, 7,((GetUnitY(whichUnit))* 1.))
-		call SetUnitX(dummyUnit, GetUnitX(whichUnit))
-		call SetUnitY(dummyUnit, GetUnitY(whichUnit))
-		call KillTreeByCircle(GetUnitX(whichUnit), GetUnitY(whichUnit), 100)
-		set PPR = GetDistanceBetween(x, y, GetUnitX(whichUnit), GetUnitY(whichUnit))
-		set PTR = PTR + PPR
-		call SaveReal(HY, h, 138,((PTR)* 1.))
-		set gg = AllocationGroup(177)
-		set TempUnit = whichUnit
-		set LH = whichUnit
-		set KH = g
-		set DH = GetUnitAbilityLevel(whichUnit,'A2TJ')
-		set MH = null
-		set HH = 60 + 30 * DH
-		set GH = PSR
-		set PH = null
-		if c < 40 then
-			if c < 35 then
-				call GroupEnumUnitsInRange(gg, GetUnitX(whichUnit), GetUnitY(whichUnit), RMinBJ( 100 ,(c -30)* 25), Condition(function DJX))
-			else
-				call GroupEnumUnitsInRange(gg, GetUnitX(whichUnit), GetUnitY(whichUnit), 125, Condition(function DJX))
-			endif
-		else
-			call GroupEnumUnitsInRange(gg, GetUnitX(whichUnit), GetUnitY(whichUnit), 175, Condition(function DJX))
-		endif
-		call GroupEnumUnitsInRange(gg, GetUnitX(whichUnit), GetUnitY(whichUnit), 175, Condition(function DJX))
-		call ForGroup(gg, function PJR)
-		call DeallocateGroup(gg)
-		if PH != null then
-			set gg = AllocationGroup(178)
-			set MH = null
-			set OJ = 9999
-			call GroupEnumUnitsInRange(gg, GetUnitX(PH), GetUnitY(PH), 625, Condition(function PFR))
-			call DeallocateGroup(gg)
-			if MH == null then
-				set b = true
-				set MH = PH
-			else
-				set targetUnit = MH
-				call SaveUnitHandle(HY, h, 810,(targetUnit))
-			endif
-		endif
-	else
-		if IsUnitType(whichUnit, UNIT_TYPE_HERO) then
-			call SaveBoolean(OtherHashTable, GetHandleId(whichUnit), 99, true)
-		endif
-		call SetUnitX(whichUnit, x)
-		call SetUnitY(whichUnit, y)
-	endif
-	if C5X(whichUnit) or GetTriggerEventId() == EVENT_WIDGET_DEATH or b or(targetUnit == null and(c > 130 or FH or(PSR == 0 and PTR > 800) or(PSR == 1 and PTR > 1600))) then
-		call KillUnit(dummyUnit)
-		call DeallocateGroup(g)
-		call DestroyEffect(LoadEffectHandle(HY, h, 5))
-		call FlushChildHashtable(HY, h)
-		call DestroyTrigger(t)
-		call SetUnitTimeScale(whichUnit, 1)
-		if FH then
-			set M8R = GetUnitX(MH) + 50 * Cos(PQR * bj_DEGTORAD)
-			set M9R = GetUnitY(MH) + 50 * Sin(PQR * bj_DEGTORAD)
-			if IsUnitType(whichUnit, UNIT_TYPE_HERO) then
-				call SaveBoolean(OtherHashTable, GetHandleId(whichUnit), 99, true)
-			endif
-			call SetUnitX(whichUnit, CoordinateX50(M8R))
-			call SetUnitY(whichUnit, CoordinateY50(M9R))
-			call IssueTargetOrderById(whichUnit, 851983, MH)
-		endif
-	endif
-	set whichUnit = null
-	set t = null
-	set gg = null
-	set g = null
-	set dummyUnit = null
-	set targetUnit = null
-	return false
-endfunction
-function PUR takes unit whichUnit, unit targetUnit returns nothing
-	local trigger t = CreateTrigger()
-	local integer h = GetHandleId(t)
-	local unit d = CreateUnit(GetOwningPlayer(whichUnit),'o01P', GetUnitX(whichUnit), GetUnitY(whichUnit), 0)
-	local real I3X = AngleBetweenXY(GetUnitX(whichUnit), GetUnitY(whichUnit), GetSpellTargetX(), GetSpellTargetY())
-	call SaveEffectHandle(HY, h, 5, AddSpecialEffectTarget("war3mapImported\\RollingBoulder.mdx", whichUnit, "origin"))
-	call SetUnitTimeScale(whichUnit, 3)
-	call TriggerRegisterDeathEvent(t, whichUnit)
-	call TriggerRegisterTimerEvent(t, .02, true)
-	call TriggerAddCondition(t, Condition(function PKR))
-	call SaveUnitHandle(HY, h, 2,(whichUnit))
-	call SaveGroupHandle(HY, h, 187,(AllocationGroup(179)))
-	call SaveUnitHandle(HY, h, 19,(d))
-	call SaveReal(HY, h, 6,((GetUnitX(whichUnit))* 1.))
-	call SaveReal(HY, h, 7,((GetUnitY(whichUnit))* 1.))
-	call SaveReal(HY, h, 137,((I3X)* 1.))
-	call SaveInteger(HY, h, 34, 0)
-	call SaveReal(HY, h, 138,(0 * 1.))
-	call SaveUnitHandle(HY, h, 810,(null))
-	if targetUnit != null and GetUnitTypeId(targetUnit)=='o01X' then
-		call KillUnit(targetUnit)
-	endif
-	set t = null
-	set d = null
-endfunction
-function PWR takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit whichUnit =(LoadUnitHandle(HY, h, 2))
-	local real PYR =(LoadReal(HY, h, 442))
-	local integer PZR =(LoadInteger(HY,(GetHandleId(whichUnit)), 800))
-	if GetTriggerEventId() == EVENT_UNIT_SPELL_CAST then
-		if (GetSpellAbilityId()=='A2TH') and PZR <= 0 then
-			call InterfaceErrorForPlayer(GetOwningPlayer(whichUnit), "没有足够的巨石了")
-			call EXStopUnit(whichUnit)
-		endif
-	elseif GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT then
-		if GetSpellAbilityId()=='A2TH' or GetSpellAbilityId()=='A2TJ' then
-			if GetSpellAbilityId()=='A2TJ' then
-				call PUR(whichUnit, null)
-			endif
-		endif
-	elseif PZR < 6 then
-		set PYR = PYR -0.2
-		call SaveReal(HY, h, 442,((PYR)* 1.))
-		if PYR <= 0.00 then
-			set PZR = PZR + 1
-			call SaveInteger(HY,(GetHandleId(whichUnit)), 800,(PZR))
-			call SaveReal(HY, h, 442,(25 * 1.))
-		endif
-	endif
-	set whichUnit = null
-	set t = null
-	return false
-endfunction
-function P_R takes unit u returns nothing
-	local trigger t = CreateTrigger()
-	local integer h = GetHandleId(t)
-	call TriggerRegisterTimerEvent(t, .2, true)
-	call TriggerRegisterUnitEvent(t, u, EVENT_UNIT_SPELL_CAST)
-	call TriggerRegisterUnitEvent(t, u, EVENT_UNIT_SPELL_EFFECT)
-	call TriggerAddCondition(t, Condition(function PWR))
-	call SaveUnitHandle(HY, h, 2,(u))
-	call SaveReal(HY, h, 442, 30.)
-	call SaveInteger(HY,(GetHandleId(u)), 800, 6)
-	set t = null
-endfunction
+
 function P0R takes unit P1R returns nothing
 	local unit P2R = PlayerHeroes[GetPlayerId(GetOwningPlayer(P1R))]
 	local integer h = GetHandleId(P2R)
@@ -37437,53 +37090,13 @@ function P5R takes nothing returns boolean
 	endif
 	return false
 endfunction
-function ZQV takes nothing returns nothing
-	local unit P6R
-	local unit whichUnit = GetTriggerUnit()
-	local integer h = GetHandleId(whichUnit)
-	local integer level = GetUnitAbilityLevel(whichUnit,'A2TH')
-	local integer P3R =(LoadInteger(HY, h, 279))
-	local unit P7R =(LoadUnitHandle(HY, h, 1401))
-	local real x
-	local real y
-	local integer PZR =(LoadInteger(HY,(GetHandleId(whichUnit)), 800))
-	if PZR > 0 then
-		set PZR = IMaxBJ(0, PZR -1)
-		if PZR < 2 then
-			call DisplayTimedTextToPlayer(GetOwningPlayer(whichUnit), 0, 0, 10, I2S(PZR) + " 剩余巨石")
-		endif
-		call SaveInteger(HY,(GetHandleId(whichUnit)), 800,(PZR))
-		if GetSpellTargetUnit() == null then
-			set x = GetSpellTargetX()
-			set y = GetSpellTargetY()
-		else
-			set x = GetUnitX(GetSpellTargetUnit())
-			set y = GetUnitY(GetSpellTargetUnit())
-		endif
-		set P6R = CreateUnit(GetOwningPlayer(whichUnit),'o01X', x, y, 0)
-		call SaveInteger(HY, GetHandleId(P6R), 4335, 0)
-		call SaveInteger(HY, GetHandleId(P6R), 4340, 0)
-		call UnitApplyTimedLife(P6R,'BTLF', 120)
-		call SetUnitPathing(P6R, false)
-		set P3R = P3R + 1
-		call SaveUnitHandle(HY, h,( 1400+ P3R),(P6R))
-		call SaveInteger(HY, h, 279,(P3R))
-		if (P3R > 6) then
-			call KillUnit(P7R)
-		endif
-	else
-		call InterfaceErrorForPlayer(GetOwningPlayer(whichUnit), "没有可用的石头")
-	endif
-	set P6R = null
-	set whichUnit = null
-	set P7R = null
-endfunction
-function Kaolin_Stones_Summon takes nothing returns boolean
-	if GetSpellAbilityId()=='A2TH' then
-		call ZQV()
-	endif
-	return false
-endfunction
+
+// function Kaolin_Stones_Summon takes nothing returns boolean
+// 	if GetSpellAbilityId()=='A2TH' then
+// 		call StoneRemnantOnSpellEffect()
+// 	endif
+// 	return false
+// endfunction
 function MGX takes nothing returns nothing
 	local trigger t = CreateTrigger()
 	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_DEATH)
@@ -37555,126 +37168,7 @@ function QCR takes unit u, unit targetUnit returns nothing
 	call SaveInteger(HY, h, 0, 851986)
 	set t = null
 endfunction
-function QDR takes nothing returns nothing
-	local unit u = GetTriggerUnit()
-	local unit targetUnit = GetSpellTargetUnit()
-	local group g = AllocationGroup(185)
-	set TempUnit = u
-	call GroupEnumUnitsInRange(g, GetUnitX(u), GetUnitY(u), 205, Condition(function PCR))
-	if FirstOfGroup(g) == null then
-		call EXStopUnit(u)
-		if IsUnitType(u, UNIT_TYPE_HERO) then
-			call InterfaceErrorForPlayer(GetOwningPlayer(u), "无效目标")
-		endif
-	endif
-	call DeallocateGroup(g)
-	set u = null
-	set targetUnit = null
-	set g = null
-endfunction
-function QFR takes nothing returns nothing
-	if GetUnitDistanceEx(GetTriggerUnit(), GetSpellTargetUnit())> 200 then
-		call QCR(GetTriggerUnit(), GetSpellTargetUnit())
-	endif
-endfunction
-function J_E takes nothing returns nothing
-	if GetSpellTargetUnit() == null then
-		call QDR()
-	elseif (GetUnitDistanceEx(GetTriggerUnit(), GetSpellTargetUnit())> 170 and GetUnitTypeId(GetSpellTargetUnit())!='n00L') then
-		call QFR()
-	elseif GetUnitTypeId(GetSpellTargetUnit())=='n00L' then
-		call EXStopUnit(GetTriggerUnit())
-		if IsUnitType(GetTriggerUnit(), UNIT_TYPE_HERO) then
-			call InterfaceErrorForPlayer(GetOwningPlayer(GetTriggerUnit()), "无效目标")
-		endif
-	endif
-endfunction
-function QGR takes nothing returns nothing
-	set YH = GetEnumUnit()
-	call ExecuteFunc("QHR")
-endfunction
-function QJR takes nothing returns boolean
-	return IsUnitDeath(GetFilterUnit()) == false and GetUnitTypeId(GetFilterUnit())=='o01X' and((LoadInteger(HY,(GetHandleId((GetFilterUnit()))),(4335))) == 1) == false and((LoadInteger(HY,(GetHandleId((GetFilterUnit()))),(4340))) == 1) == false
-endfunction
-function QKR takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit whichUnit = LoadUnitHandle(HY, h, 2)
-	local unit triggerUnit = LoadUnitHandle(HY, h, 17)
-	local real x = GetUnitX(triggerUnit)
-	local real y = GetUnitY(triggerUnit)
-	local group g = AllocationGroup(186)
-	local integer C2R = GetTriggerEvalCount(t)
-	local integer level = GetUnitAbilityLevel(whichUnit,'A2TI')
-	local real QLR =(LoadReal(HY,(GetHandleId(triggerUnit)), 807))
-	if ModuloInteger(C2R, 5) == 0 then
-		call UnitDamageTargetEx(whichUnit, triggerUnit, 1,(25 + 25 * level)/ 2)
-	endif
-	set WH = whichUnit
-	set TempUnit = whichUnit
-	call GroupEnumUnitsInRange(g, x, y, 325, Condition(function QJR))
-	call ForGroup(g, function QGR)
-	call DeallocateGroup(g)
-	if (GetGameTime())> QLR or IsUnitDeath(triggerUnit) then
-		call SaveInteger(HY, GetHandleId(triggerUnit), 809, 2)
-		call DestroyEffect(LoadEffectHandle(HY, h, 32))
-		call FlushChildHashtable(HY, h)
-		call DestroyTrigger(t)
-	endif
-	set t = null
-	set whichUnit = null
-	set triggerUnit = null
-	set g = null
-	return false
-endfunction
-function QMR takes unit u, unit triggerUnit returns nothing
-	local trigger t
-	local integer h
-	local real QPR = LoadReal(HY, GetHandleId(triggerUnit), 807)
-	call SaveReal(HY,(GetHandleId(triggerUnit)), 807,(((GetGameTime()) + 6)* 1.))
-	if QPR <(GetGameTime()) then
-		call SaveInteger(HY,(GetHandleId((triggerUnit))), 809, 1)
-		set t = CreateTrigger()
-		set h = GetHandleId(t)
-		call SaveUnitHandle(HY, h, 2,(u))
-		call SaveUnitHandle(HY, h, 17,(triggerUnit))
-		call SaveEffectHandle(HY, h, 32,(AddSpecialEffectTarget("war3mapImported\\MagnetizeTargetOverhead.mdx", triggerUnit, "origin")))
-		call TriggerRegisterTimerEvent(t, .1, true)
-		call TriggerAddCondition(t, Condition(function QKR))
-	endif
-	set t = null
-endfunction
-function QQR takes nothing returns nothing
-	call QMR(WH, GetEnumUnit())
-endfunction
-function QSR takes unit u, unit targetUnit returns nothing
-	local group g = AllocationGroup(187)
-	local real x = GetUnitX(targetUnit)
-	local real y = GetUnitY(targetUnit)
-	local real QTR = 300
-	if GetUnitTypeId(targetUnit)=='o01X' then
-		call DestroyEffect(AddSpecialEffect("Abilities\\Weapons\\DemolisherMissile\\DemolisherMissile.mdx", GetUnitX(targetUnit), GetUnitY(targetUnit)))
-		call UnitApplyTimedLife(targetUnit,'BTLF', 5)
-		call SaveInteger(HY,(GetHandleId((targetUnit))),(4340), 1)
-		call SetUnitVertexColor(targetUnit, 0, 0, 0, 100)
-		set QTR = 600
-	else
-		call DestroyEffect(AddSpecialEffect("war3mapImported\\MagnetizeCastAoE.mdx", GetUnitX(targetUnit), GetUnitY(targetUnit)))
-	endif
-	set TempUnit = u
-	set WH = u
-	set YH = targetUnit
-	call GroupEnumUnitsInRange(g, x, y, QTR + 25, Condition(function DJX))
-	call ForGroup(g, function QQR)
-	call DeallocateGroup(g)
-	set g = null
-endfunction
-function QHR takes nothing returns nothing
-	call QSR(WH, YH)
-endfunction
-function F3E takes nothing returns nothing
-	call QSR(GetTriggerUnit(), GetTriggerUnit())
-endfunction
+
 function QUR takes nothing returns boolean
 	if GetUnitTypeId(GetFilterUnit())=='o01X' then
 		call KillUnit(GetFilterUnit())
@@ -40835,132 +40329,8 @@ function ZYR takes nothing returns boolean
 	set ZZR = null
 	return false
 endfunction
-function Z9R takes unit trigUnit, integer VVI, real VEI returns nothing
-	local integer agi = GetHeroAgi(trigUnit, false)
-	local integer str = GetHeroStr(trigUnit, false)
-	local real mp = GetUnitState(trigUnit, UNIT_STATE_MANA)
-	if VVI == 0 then
-		if mp >= VEI and agi -LoadInteger(OtherHashTable, GetHandleId(trigUnit), 31)> 2 and IsUnitDeath(trigUnit) == false and agi > PC then
-			call SetUnitState(trigUnit, UNIT_STATE_MANA, mp -VEI)
-			call SetHeroAgi(trigUnit, agi -2, true)
-			call SetHeroStr(trigUnit, str + 2, true)
-		endif
-	elseif VVI == 1 then
-		if mp >= VEI and str -LoadInteger(OtherHashTable, GetHandleId(trigUnit), 30)-LoadInteger(OtherHashTable, GetHandleId(trigUnit),'ARML')> 4 and IsUnitDeath(trigUnit) == false and str > PC then
-			call SetUnitState(trigUnit, UNIT_STATE_MANA, mp -VEI)
-			call SetHeroAgi(trigUnit, agi + 2, true)
-			call SetHeroStr(trigUnit, str -2, true)
-		endif
-	endif
-endfunction
-function VXI takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit trigUnit =(LoadUnitHandle(HY, h, 14))
-	local integer level = GetUnitAbilityLevel(trigUnit,'A0KX')
-	call Z9R(trigUnit, 1, 30. / level)
-	set t = null
-	set trigUnit = null
-	return false
-endfunction
-function VOI takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit trigUnit =(LoadUnitHandle(HY, h, 14))
-	local integer level = GetUnitAbilityLevel(trigUnit,'A0KX')
-	call Z9R(trigUnit, 0, 30. / level)
-	set t = null
-	set trigUnit = null
-	return false
-endfunction
-function VRI takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit u = GetTriggerUnit()
-	local trigger VII =(LoadTriggerHandle(HY, h, 226))
-	local integer level = GetUnitAbilityLevel(u,'A0KX')
-	local integer lastorder =(LoadInteger(HY, h, 227))
-	local real VEI = 1. / level
-	if VEI == .25 then
-		set VEI = .2
-	endif
-	if GetIssuedOrderId()== 852549 then
-		if VII != null then
-			call FlushChildHashtable(HY,(GetHandleId(VII)))
-			call DestroyTrigger(VII)
-		endif
-		set VII = CreateTrigger()
-		call TriggerRegisterTimerEvent(VII, VEI, true)
-		call TriggerAddCondition(VII, Condition(function VXI))
-		call SaveUnitHandle(HY,(GetHandleId(VII)), 14,(u))
-		call SaveTriggerHandle(HY, h, 226,(VII))
-		call SaveInteger(HY, h, 227,(GetIssuedOrderId()))
-		call UnitAddAbility(u,'A22L')
-		call UnitRemoveAbility(u,'A22T')
-	elseif GetIssuedOrderId()== 852546 then
-		if VII != null then
-			call FlushChildHashtable(HY,(GetHandleId(VII)))
-			call DestroyTrigger(VII)
-		endif
-		set VII = CreateTrigger()
-		call TriggerRegisterTimerEvent(VII, VEI, true)
-		call TriggerAddCondition(VII, Condition(function VOI))
-		call SaveUnitHandle(HY,(GetHandleId(VII)), 14,(u))
-		call SaveTriggerHandle(HY, h, 226,(VII))
-		call SaveInteger(HY, h, 227,(GetIssuedOrderId()))
-		call UnitAddAbility(u,'A22T')
-		call UnitRemoveAbility(u,'A22L')
-	elseif GetIssuedOrderId()== 852550 then
-		if VII != null then
-			call FlushChildHashtable(HY,(GetHandleId(VII)))
-			call DestroyTrigger(VII)
-		endif
-		call SaveTriggerHandle(HY, h, 226,(null))
-		call SaveInteger(HY, h, 227,(GetIssuedOrderId()))
-		call UnitRemoveAbility(u,'A22L')
-		call UnitRemoveAbility(u,'A22T')
-	elseif GetIssuedOrderId()== 852547 then
-		if VII != null then
-			call FlushChildHashtable(HY,(GetHandleId(VII)))
-			call DestroyTrigger(VII)
-		endif
-		call SaveTriggerHandle(HY, h, 226,(null))
-		call SaveInteger(HY, h, 227,(GetIssuedOrderId()))
-		call UnitRemoveAbility(u,'A22L')
-		call UnitRemoveAbility(u,'A22T')
-	elseif GetIssuedOrderId()== 852548 then
-		if IssueImmediateOrderById(u, 852549) == false then
-			call IssueImmediateOrderById(u, 852550)
-		endif
-	elseif GetIssuedOrderId()== 852545 then
-		if IssueImmediateOrderById(u, 852546) == false then
-			call IssueImmediateOrderById(u, 852547)
-		endif
-	endif
-	set t = null
-	set u = null
-	set VII = null
-	return false
-endfunction
-function PUE takes nothing returns nothing
-	local unit trigUnit = GetTriggerUnit()
-	local trigger t
-	local integer h
-	local integer level = GetUnitAbilityLevel(trigUnit,'A0KX')
-	if level == 1 then
-		set t = CreateTrigger()
-		set h = GetHandleId(t)
-		call UnitAddPermanentAbility(trigUnit,'A0KW')
-		call TriggerRegisterUnitEvent(t, trigUnit, EVENT_UNIT_ISSUED_ORDER)
-		call TriggerAddCondition(t, Condition(function VRI))
-		call SaveTriggerHandle(HY, h, 226,(null))
-		set t = null
-	else
-		call SetUnitAbilityLevel(trigUnit,'A0KW', level)
-	endif
-	set trigUnit = null
-	set t = null
-endfunction
+
+
 function VAI takes nothing returns nothing
 	local unit K4X =(LoadUnitHandle(HY,(GetHandleId(GetTriggeringTrigger())), 326))
 	local real r
@@ -44300,84 +43670,6 @@ function W3X takes nothing returns nothing
 	call DestroyEffect(AddSpecialEffect("Objects\\Spawnmodels\\Other\\NeutralBuildingExplosion\\NeutralBuildingExplosion.mdl", GetUnitX(TempUnit), GetUnitY(TempUnit)))
 	call AAI(TempUnit)
 endfunction
-function LQE takes nothing returns nothing
-	call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10, "你可以使用 -show 命令将技能遥控炸弹切换至其副技能集中引爆")
-	if (GetUnitAbilityLevel(GetTriggerUnit(),'A0AK') == 1 or GetUnitAbilityLevel(GetTriggerUnit(),'A1FY') == 1) then
-		call UnitAddPermanentAbility(GetTriggerUnit(),'A1WF')
-	endif
-endfunction
-function ADI takes nothing returns boolean
-	return(IsUnitEnemy(GetFilterUnit(), LoadPlayerHandle(OtherHashTable2,'A0AM', 1)) and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and not IsUnitWard(GetFilterUnit())) != null
-endfunction
-function AFI takes nothing returns nothing
-	call UnitDamageTargetEx(LoadUnitHandle(OtherHashTable2,'A0AM', 0), GetEnumUnit(), 1, LoadReal(OtherHashTable2,'A0AM', 0))
-endfunction
-function AGI takes unit u, boolean AHI returns nothing
-	local real damageValue = .0
-	local integer unitTypeId = GetUnitTypeId(u)
-	local group g
-	local real x = GetUnitX(u)
-	local real y = GetUnitY(u)
-	if unitTypeId =='o018' then
-		set damageValue = 300.
-	elseif unitTypeId =='o002'then
-		set damageValue = 450.
-	elseif unitTypeId =='o00B'then
-		set damageValue = 600.
-	elseif unitTypeId =='o01B' then
-		set damageValue = 750.
-	endif
-	set g = AllocationGroup(275)
-	call SaveUnitHandle(OtherHashTable2,'A0AM', 0, u)
-	call SavePlayerHandle(OtherHashTable2,'A0AM', 1, GetOwningPlayer(u))
-	call GroupEnumUnitsInRange(g, x, y, 450, Condition(function ADI))
-	call ABX("Abilities\\Spells\\Human\\FlameStrike\\FlameStrike1.mdl", x, y, 5)
-	call CreateFogModifierTimedForPlayer(GetOwningPlayer(u), 3, x, y, 500)
-	call SaveReal(OtherHashTable2,'A0AM', 0, damageValue)
-	set X4 = AHI == false
-	call ForGroup(g, function AFI)
-	set X4 = false
-	call FlushChildHashtable(OtherHashTable2,'A0AM')
-	call RemoveUnit(u)
-	call DeallocateGroup(g)
-	set g = null
-endfunction
-function AJI takes unit AKI returns nothing
-	if IsUnitRemoteMines(AKI) then
-	endif
-endfunction
-function JQE takes nothing returns nothing
-	call AGI(GetTriggerUnit(), false)
-endfunction
-function ALI takes nothing returns boolean
-	return GetOwningPlayer(GetFilterUnit()) == LoadPlayerHandle(OtherHashTable2,'A0AN', 0) and IsUnitDeath(GetFilterUnit()) == false and IsUnitRemoteMines(GetFilterUnit())
-endfunction
-function AMI takes nothing returns nothing
-	call IssueImmediateOrderById(GetEnumUnit(), 852556)
-endfunction
-function JTE takes nothing returns nothing
-	local group g = AllocationGroup(276)
-	local real x = GetSpellTargetX()
-	local real y = GetSpellTargetY()
-	call SavePlayerHandle(OtherHashTable2,'A0AN', 0, GetOwningPlayer(GetTriggerUnit()))
-	call GroupEnumUnitsInRange(g, x, y, 716, Condition(function ALI))
-	call ForGroup(g, function AMI)
-	call FlushChildHashtable(OtherHashTable2,'A0AN')
-	call DeallocateGroup(g)
-	set g = null
-endfunction
-function API takes nothing returns nothing
-	if IsUnitRemoteMines(GetSummonedUnit()) then
-		call TriggerRegisterUnitEvent(UnitEventMainTrig, GetSummonedUnit(), EVENT_UNIT_SPELL_CAST)
-	endif
-endfunction
-function M2X takes nothing returns nothing
-	local trigger t = CreateTrigger()
-	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SUMMON)
-	call TriggerAddCondition(t, Condition(function API))
-	call CJX("Units\\Creeps\\GoblinSapper\\GoblinSapperYesAttack1.wav")
-	set t = null
-endfunction
 function AQI takes nothing returns boolean
 	return IsUnitGoblinLandMine(GetTriggerUnit())
 endfunction
@@ -45862,134 +45154,7 @@ function B_I takes nothing returns nothing
 	call SaveInteger(ObjectHashTable, LoadInteger(ObjectHashTable, h, 1), 1, UYX)
 	set t = null
 endfunction
-function B0I takes nothing returns boolean
-	local unit t = GetFilterUnit()
-	if UnitAlive(t) and IsUnitEnemy(Temp__ArrayUnit[0], GetOwningPlayer(t)) and not IsUnitWard(t) and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and(IsUnitType(t, UNIT_TYPE_ANCIENT) == false or DRX(t)) then
-		call UnitAddAbilityLevel1ToTimed(t, XK[0],'B08M', 5)
-		call UnitDamageTargetEx(TempUnit, t, 3, 75)
-	endif
-	set t = null
-	return false
-endfunction
-function B1I takes nothing returns boolean
-	local unit t = GetFilterUnit()
-	local real d
-	local real x
-	local real y
-	if GetUnitTypeId(t)=='e020' and GetWidgetLife(t)> .405 then
-		set x = GetWidgetX(t)-Temp__ArrayReal[1]
-		set y = GetWidgetY(t)-Temp__ArrayReal[2]
-		set d = SquareRoot(x * x + y * y)
-		if Temp__ArrayReal[0]> d then
-			set Temp__ArrayUnit[0] = t
-			set Temp__ArrayReal[0] = d
-		endif
-	endif
-	set t = null
-	return false
-endfunction
-function B2Izi takes nothing returns boolean
-	local unit t = GetFilterUnit()
-	local integer i
-	if GetUnitTypeId(t)=='e020' and GetWidgetLife(t)> .405 then
-		set i = LoadInteger(ObjectHashTable, GetHandleId(t), 2)
-		if XK[0]== 0 or XK[1]> i then
-			set XK[1] = i
-			set Temp__ArrayUnit[0] = t
-		endif
-		set XK[0] = XK[0] + 1
-	endif
-	set t = null
-	return false
-endfunction
-function B3I takes player p, integer WOV returns nothing
-	set XK[0] = 0
-	call GroupEnumUnitsOfPlayer(AK, p, Condition(function B2Izi))
-	if XK[0]> WOV then
-		call RemoveUnit(Temp__ArrayUnit[0])
-	endif
-endfunction
-function YJV takes nothing returns nothing
-	local unit u = GetTriggerUnit()
-	local player p = GetOwningPlayer(u)
-	local integer hu = GetHandleId(u)
-	local integer UYX = LoadInteger(ObjectHashTable, hu,'A0RP')
-	local real x
-	local real y
-	if GetUnitTypeId(u)=='e020'then
-		set Temp__ArrayUnit[0] = u
-		set XK[0] = LoadInteger(ObjectHashTable, hu, 1) +'A510'
-		set u = LoadUnitHandle(ObjectHashTable, hu, 0)
-		set hu = GetHandleId(u)
-		set UYX = LoadInteger(ObjectHashTable, hu,'A0RP')
-	else
-		set Temp__ArrayUnit[0] = null
-		set Temp__ArrayReal[0] = 99999
-		set Temp__ArrayReal[1] = GetWidgetX(u)
-		set Temp__ArrayReal[2] = GetWidgetY(u)
-		call GroupEnumUnitsOfPlayer(AK, p, Condition(function B1I))
-		if Temp__ArrayUnit[0]== null then
-			set u = null
-			return
-		endif
-		set XK[0] = LoadInteger(ObjectHashTable, GetHandleId(Temp__ArrayUnit[0]), 1) +'A510'
-	endif
-	set x = GetWidgetX(Temp__ArrayUnit[0])
-	set y = GetWidgetY(Temp__ArrayUnit[0])
-	set TempUnit = PlayerHeroes[GetPlayerId(GetOwningPlayer(u))]
-	call GroupEnumUnitsInRange(AK, x, y, 400, Condition(function B0I))
-	call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Items\\TomeOfRetraining\\TomeOfRetrainingCaster.mdl", x, y))
-	call RemoveUnit(LoadUnitHandle(ObjectHashTable, GetHandleId(Temp__ArrayUnit[0]), 1))
-	call RemoveUnit(Temp__ArrayUnit[0])
-	set p = null
-	set u = null
-endfunction
-function B4I takes unit u returns nothing
-	if GetUnitTypeId(u)=='e020'then
-		call YJV()
-	endif
-endfunction
-function YHV takes nothing returns nothing
-	local timer t
-	local unit u = GetTriggerUnit()
-	local player p = GetOwningPlayer(u)
-	local unit d = CreateUnit(p,'e020', GetSpellTargetX(), GetSpellTargetY(), 0)
-	local integer hu = GetHandleId(u)
-	local integer h = LoadInteger(ObjectHashTable, hu,'A0RP')
-	local integer WOV = 2 + 3 *(GetUnitAbilityLevel(u,'A0RP') + GetUnitAbilityLevel(u,'A449'))
-	local boolean b = GetUnitAbilityLevel(u,'A449')> 0
-	local unit du
-	call SaveInteger(ObjectHashTable, hu,'A0RP', h + 1)
-	set hu = GetHandleId(d)
-	call SaveUnitHandle(ObjectHashTable, hu, 0, u)
-	call SaveInteger(ObjectHashTable, hu, 0, 0)
-	call SaveInteger(ObjectHashTable, hu, 1, 0)
-	call SaveInteger(ObjectHashTable, hu, 2, h)
-	call TriggerRegisterUnitEvent(UnitEventMainTrig, d, EVENT_UNIT_SPELL_EFFECT)
-	call B3I(p, WOV)
-	call W1E(d)
-	if b then
-		call SaveInteger(ObjectHashTable, hu, 1, 4)
-		set du = CreateUnit(p,'e01V', GetSpellTargetX(), GetSpellTargetY(), 0)
-		call UnitAddAbility(du,'A44B')
-		call SaveUnitHandle(ObjectHashTable, hu, 1, du)
-		set du = null
-	else
-		set t = CreateTimer()
-		set h = GetHandleId(t)
-		call SaveInteger(ObjectHashTable, h, 0, 0)
-		call SaveInteger(ObjectHashTable, h, 1, hu)
-		call SaveUnitHandle(ObjectHashTable, h, 0, d)
-		call TimerStart(t, 1, true, function B_I)
-	endif
-	set d = null
-	set p = null
-	set u = null
-	set t = null
-endfunction
-function L2E takes nothing returns nothing
-	call UnitAddAbility(GetTriggerUnit(),'A0RT')
-endfunction
+
 function B5I takes real xc, real xt, real x, real yc, real yt, real y returns boolean
 	return((y -yc)*(xt -xc)-(x -xc)*(yt -yc)> 0)
 endfunction
@@ -67859,26 +67024,6 @@ function RegisterHeroVisionAndState takes unit u returns nothing
 	set t = null
 endfunction
 
-// 土猫的四个技能
-// AddEarthSpiritManaStone
-function AddEarthSpiritManaStone takes unit whichUnit returns nothing
-	local integer iPlayerId = GetPlayerId(GetOwningPlayer(whichUnit))
-	local integer loop_Index = 1
-	local boolean b = false
-	loop
-		if PlayerSkillIndices[iPlayerId * MAX_SKILL_SLOTS + loop_Index]>= 441 and PlayerSkillIndices[iPlayerId * MAX_SKILL_SLOTS + loop_Index]<= 444 then
-			set b = true
-		endif
-		set loop_Index = loop_Index + 1
-	exitwhen b or loop_Index > 4 + ExtraSkillsCount
-	endloop
-	if not LoadBoolean(HY, GetHandleId(whichUnit), StringHash("rolling stones")) and b then
-		call UnitAddPermanentAbility(whichUnit,'A2TH')
-		call P_R(whichUnit)
-		call SaveBoolean(HY, GetHandleId(whichUnit), StringHash("rolling stones"), true)
-	endif
-endfunction
-
 function RegisterOtherEvent takes unit whichUnit returns nothing
 	local integer level
 	local trigger trig
@@ -68028,7 +67173,7 @@ function RegisterHeroEventWait0sFilter takes nothing returns boolean
 		// 视野和状态记录
 		call RegisterHeroVisionAndState(whichUnit)
 		// 土猫的召唤巨石
-		call AddEarthSpiritManaStone(whichUnit)
+		// call AddEarthSpiritManaStone(whichUnit)
 
 		// 从别的触发器合并来的
 		// 修正重生事件的触发器
@@ -68715,23 +67860,11 @@ endfunction
 function WCA takes nothing returns nothing
 	call RegisterUnitDeathMethod("WBA")
 endfunction
-function WDA takes nothing returns nothing
-	call AJI(UEDyingUnit)
-endfunction
-function WFA takes nothing returns nothing
-	call RegisterUnitDeathMethod("WDA")
-endfunction
 function WGA takes nothing returns nothing
 	call PIA(UEDyingUnit)
 endfunction
 function WHA takes nothing returns nothing
 	call RegisterUnitDeathMethod("WGA")
-endfunction
-function WJA takes nothing returns nothing
-	call B4I(UEDyingUnit)
-endfunction
-function WKA takes nothing returns nothing
-	call RegisterUnitDeathMethod("WJA")
 endfunction
 function OnDeath_CourierDeath takes nothing returns nothing
 	call ZRX(UEDyingUnit)
@@ -70672,7 +69805,7 @@ function Init_Instructions takes nothing returns nothing
 	call SaveStr(ChatCommandHashTable, StringHash("-st"), 0, "E4R")
 	call SaveStr(ChatCommandHashTable, StringHash("-sp"), 0, "S6O")
 	call SaveStr(ChatCommandHashTable, StringHash("-spcd"), 0, "S6OCD")
-	call SaveStr(ChatCommandHashTable, StringHash("-show"), 0, "T7O")
+	//call SaveStr(ChatCommandHashTable, StringHash("-show"), 0, "T7O")
 	call SaveStr(ChatCommandHashTable, StringHash("-cooldown"), 0, "T8O")
 	call SaveStr(ChatCommandHashTable, StringHash("-fix"), 0, "NXX")
 	call SaveStr(ChatCommandHashTable, StringHash("-reset"), 0, "RAR")
@@ -73402,7 +72535,9 @@ endfunction
 
 #include "Map\\Behaviors\\_include"
 
-function main takes nothing returns nothing
+
+
+//! inject main
 	local weathereffect we
 	local integer i
 	local player p
@@ -73451,6 +72586,7 @@ function main takes nothing returns nothing
 	// call MHBuff_SetOverlay(BUFF_TEMPLATE_BROA, true)
 	// call MHBuff_SetOverlay(BUFF_TEMPLATE_BNHT, true)
 	// call MHBuff_SetOverlay(BUFF_TEMPLATE_BNSO, true)
+	//! dovjassinit
 	
 	call ExecuteFunc("AbilityCustomOrderId_Init")
 	call ExecuteFunc("AbilityCustomCastType_Init")
@@ -74195,6 +73331,9 @@ function main takes nothing returns nothing
 	set tt = CreateTimer()
 	call TimerStart(tt, 0.00, false, function Init_ExtraTriggers)
 	set tt = null
+//! endinject
+
+function main takes nothing returns nothing
 endfunction
 function InitCustomTeams takes nothing returns nothing
 	call SetPlayerTeam(Player(1), 0)

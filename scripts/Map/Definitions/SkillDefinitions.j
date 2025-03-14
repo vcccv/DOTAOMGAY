@@ -4,20 +4,31 @@ library HeroSkillDefine requires SkillSystem
 
     // 技能的初始化
     function InitSkillInitializerMethod takes nothing returns nothing
-        // 启明
-        //call RegisterSkillInitMethodByIndex(SKILL_INDEX_ILLUMINATE, "IlluminateOnInitializer")
+        // 不动态注册的技能Add/Remove 没啥用
 
+        // 灵能陷阱
+        call ResgiterAbilityMethodSimpleByIndex(SKILL_INDEX_PSIONIC_TRAP, "PsionicTrapOnAdd", "PsionicTrapOnRemove")
+        call RegisterSkillInitMethodByIndex(SKILL_INDEX_PSIONIC_TRAP, "PsionicTrapOnInitializer")
+
+        // 遥控炸弹
+        call ResgiterAbilityMethodSimpleByIndex(SKILL_INDEX_REMOTE_MINES , "RemoteMinesOnAdd", "RemoteMinesOnRemove")
+        call RegisterSkillInitMethodByIndex(SKILL_INDEX_REMOTE_MINES, "RemoteMinesOnInitializer")
+
+        // 巨石
+        call ResgiterAbilityMethodSimpleByIndex(SKILL_INDEX_BOULDER_SMASH    , "EarthSpiritAbilityOnAdd", "EarthSpiritAbilityOnRemove")
+        call ResgiterAbilityMethodSimpleByIndex(SKILL_INDEX_ROLLING_BOULDER  , "EarthSpiritAbilityOnAdd", "EarthSpiritAbilityOnRemove")
+        call ResgiterAbilityMethodSimpleByIndex(SKILL_INDEX_GEOMAGNETIC_GRIP , "EarthSpiritAbilityOnAdd", "EarthSpiritAbilityOnRemove")
+        call ResgiterAbilityMethodSimpleByIndex(SKILL_INDEX_MAGNETRIZE       , "EarthSpiritAbilityOnAdd", "EarthSpiritAbilityOnRemove")
+        call ResgiterAbilityMethodSimple(EARTH_SPIRIT_STONE_REMNANT, "StoneRemnantOnAdd", "StoneRemnantOnRemove")
+        
         // 高射火炮
-        call RegisterSkillInitMethodByIndex(SKILL_INDEX_FLAKCANNON, "FlakcannonOnInitializer")
+        call ResgiterAbilityMethodSimple(FLAKCANNON_UPGRADE_ABILITY_ID, "FlakCannonUpgradeAbilityOnAdd", "FlakCannonUpgradeAbilityOnRemove")
         
         // 群星坠落
-        call RegisterSkillInitMethodByIndex(SKILL_INDEX_STARFALL  , "StarFallOnInitializer")
+        call ResgiterAbilityMethodSimple(STARFALL_UPGRADE_ABILITY_ID, "StarfallUpgradeAbilityOnAdd", "StarfallUpgradeAbilityOnRemove")
         
         // 阵风
-        call RegisterSkillInitMethodByIndex(SKILL_INDEX_GUST      , "DrowRangerGustOnInitializer")
-
-        // 锯齿飞轮
-        //call RegisterSkillInitMethodByIndex(SKILL_INDEX_CHAKRAM   , "ChakramOnInitializer")
+        call ResgiterAbilityMethodSimple(DROW_RANGER_GUST_BUFF_ID, "DrowSilenceBuffOnAdd", "DrowSilenceBuffOnRemove")
 
         // 强力击
         call RegisterSkillInitMethodByIndex(SKILL_INDEX_POWER_SHOT, "PowerShotOnInitializer")
@@ -27,15 +38,18 @@ library HeroSkillDefine requires SkillSystem
 
         // 幻象法球
         call RegisterSkillInitMethodByIndex(SKILL_INDEX_ILLUSORY_ORB, "IllusoryOryOnInitializer")
+        call ResgiterAbilityMethodSimple(HeroSkill_BaseId[SKILL_INDEX_ILLUSORY_ORB], "IllusoryOryOnAdd", "IllusoryOryOnRemove")
 
         // 暗影剧毒
-        call RegisterSkillInitMethodByIndex(SKILL_INDEX_SHADOW_POISON, "ShadowPoisonOnInitializer")
+        call ResgiterAbilityMethodSimple(HeroSkill_BaseId[SKILL_INDEX_SHADOW_POISON], "ShadowPoisonOnAdd", "ShadowPoisonOnRemove")
 
         // 噩梦
         call RegisterSkillInitMethodByIndex(SKILL_INDEX_NIGHTMARE, "NightmareOnInitializer")
         
         // 复制
         call RegisterSkillInitMethodByIndex(SKILL_INDEX_REPLICATE, "ReplicateOnInitializer")
+
+        
         // 601是init
         call SaveStr(ObjectHashTable, 'A060', 601, "W_A")
         call SaveStr(ObjectHashTable, 'A0LE', 601, "WYA")
@@ -43,9 +57,9 @@ library HeroSkillDefine requires SkillSystem
         call SaveStr(ObjectHashTable, 'A1W8', 601, "WSA")
         call SaveStr(ObjectHashTable, 'A0BH', 601, "WQA")
         call SaveStr(ObjectHashTable, 'A0A5', 601, "SummonSpiritBearOnInitializer")
-        call SaveStr(ObjectHashTable, 'A0RP', 601, "WKA")
+        //call SaveStr(ObjectHashTable, 'A0RP', 601, "WKA")
         call SaveStr(ObjectHashTable, 'A0QV', 601, "WHA")
-        call SaveStr(ObjectHashTable, 'A0AK', 601, "WFA")
+        //call SaveStr(ObjectHashTable, 'A0AK', 601, "WFA")
         call SaveStr(ObjectHashTable, 'P003', 601, "WCA")
         call SaveStr(ObjectHashTable, 'A0LZ', 601, "WIA")
         call SaveStr(ObjectHashTable, 'A2QM', 601, "WNA")
@@ -177,34 +191,34 @@ library HeroSkillDefine requires SkillSystem
     
     // 使用一次a技能，便会隐藏禁用a技能随后显示启用b技能，使用b技能后又隐藏禁用b技能显示启用a技能
     function ToggleSkills_Init takes nothing returns nothing
-        call ToggleSkill.Register('A1RJ', 'A20N', false) // 凤凰冲击
+        call ToggleSkill.Register('A1RJ', 'A20N', true) // 凤凰冲击
         
-        call ToggleSkill.Register('A1YX', 'A1Z2', false) // 烈火精灵
+        call ToggleSkill.Register('A1YX', 'A1Z2', true) // 烈火精灵
         
-        call ToggleSkill.Register('A1YY', 'A1Z3', false) // 烈日炙烤
+        call ToggleSkill.Register('A1YY', 'A1Z3', true) // 烈日炙烤
         
-        call ToggleSkill.Register('Z605', 'QFZZ', false) // 幽灵漫步
-        call ToggleSkill.Register('A27F', 'A27X', false) // 隔空取物
-        call ToggleSkill.Register('A085', 'A121', false) // 启明
-        call ToggleSkill.Register('A11N', 'A13D', false) // X标记
-        call ToggleSkill.Register('A1PH', 'A1RA', false) // 灵魂汲取
-        call ToggleSkill.Register('A1A8', 'A21J', false) // 先祖之魂
-        call ToggleSkill.Register('A1NI', 'A1NH', false) // 不稳定化合物
-        //call ToggleSkill.Register('A0SW', 'A0SX', false) // 感染
+        call ToggleSkill.Register('Z605', 'QFZZ', true) // 幽灵漫步
+        call ToggleSkill.Register('A27F', 'A27X', true) // 隔空取物
+        call ToggleSkill.Register('A085', 'A121', true) // 启明
+        call ToggleSkill.Register('A11N', 'A13D', true) // X标记
+        call ToggleSkill.Register('A1PH', 'A1RA', true) // 灵魂汲取
+        call ToggleSkill.Register('A1A8', 'A21J', true) // 先祖之魂
+        call ToggleSkill.Register('A1NI', 'A1NH', true) // 不稳定化合物
+        //call ToggleSkill.Register('A0SW', 'A0SX', true) // 感染
 
-        call ToggleSkill.Register('A04Y', 'A2O9', false) // 噩梦
-        call ToggleSkill.Register('A0R0', 'A2MB', false) // 黑暗之门
+        call ToggleSkill.Register('A04Y', 'A2O9', true) // 噩梦
+        call ToggleSkill.Register('A0R0', 'A2MB', true) // 黑暗之门
         
-        call ToggleSkill.Register('A0G8', 'A0GC', false) // 水人复制
+        call ToggleSkill.Register('A0G8', 'A0GC', true) // 水人复制
         
-        call ToggleSkill.Register('A21F', 'A21H', false) // 脉冲新星
+        call ToggleSkill.Register('A21F', 'A21H', true) // 脉冲新星
         
-        call ToggleSkill.Register('A1MI', 'A1MN', false) // 冰晶爆轰
+        call ToggleSkill.Register('A1MI', 'A1MN', true) // 冰晶爆轰
         
-        call ToggleSkill.Register('A2E5', 'A2FX', false) // 锯齿飞轮
-        call ToggleSkill.Register('A43Q', 'A43P', false) // 双飞之轮
+        call ToggleSkill.Register('A2E5', 'A2FX', true) // 锯齿飞轮
+        call ToggleSkill.Register('A43Q', 'A43P', true) // 双飞之轮
         
-        call ToggleSkill.Register('A07U', 'A24E', false) // 海妖之歌
+        call ToggleSkill.Register('A07U', 'A24E', true) // 海妖之歌
     endfunction
 
     function HeroPassiveSkills_Init takes nothing returns nothing
@@ -683,7 +697,7 @@ library HeroSkillDefine requires SkillSystem
         call SaveSkillOrderInBalanceOffDisabled(i * 4 + 2, "Tide-Drunken")
         call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "incineratearrow")+ SaveSkillOrder(i * 4 + 3, "incineratearrowoff"), 'A11N', 0, 'Y183')
         call SaveSkillOrderInBalanceOffDisabled(i * 4 + 3, "r29")
-        set HeroSkill_HasMultipleAbilities[i * 4 + 3] = true
+        // set HeroSkill_HasMultipleAbilities[i * 4 + 3] = true
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "spiritofvengeance"), 'A11K', 'Z31K', 'Y184')
         set i = 47 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A12J')), 'A12J', 0, 'Y185')
@@ -1097,7 +1111,7 @@ library HeroSkillDefine requires SkillSystem
         call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "blackarrowon"), 'A1RD', 0, 'Y423')
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "roar"), 'A29L', 'A447', 'Y424')
         set i = 107 - 1
-        call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "cripple"), 'A08X', 0, 'Y425')
+        call RegisterHeroSkill(i * 4 + 1, "", 'A08X', 0, 'Y425')
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "creepheal"), 'A1NA', 0, 'Y426')
         set HeroSkill_HasMultipleAbilities[i * 4 + 2] = true
         call RegisterHeroSkill(i * 4 + 3, null, 'A0VX', 'QP23', 'Y427')
@@ -1124,13 +1138,13 @@ library HeroSkillDefine requires SkillSystem
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "metamorphosis")+ SaveSkillOrder(i * 4 + 4, "summongrizzly"), 'A2M0', 0, 'Y436')
         set HeroSkill_Disabled[i * 4 + 4] = true
         set i = 111 - 1
-        call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "cripple"), 'A2QM', 0, 'Y443')
+        call RegisterHeroSkill(i * 4 + 1, "", 'A2QM', 0, 'Y443')
         set HeroSkill_HasMultipleAbilities[i * 4 + 1] = true
-        call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "unsubmerge"), 'A2TJ', 0, 'Y444')
+        call RegisterHeroSkill(i * 4 + 2, "", 'A2TJ', 0, 'Y444')
         set HeroSkill_HasMultipleAbilities[i * 4 + 2] = true
-        call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "unflamingarrows"), 'A2QI', 0, 'Y445')
+        call RegisterHeroSkill(i * 4 + 3, "", 'A2QI', 0, 'Y445')
         set HeroSkill_HasMultipleAbilities[i * 4 + 3] = true
-        call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "summonwareagle"), 'A2TI', 0, 'Y446')
+        call RegisterHeroSkill(i * 4 + 4, "", 'A2TI', 0, 'Y446')
         set HeroSkill_HasMultipleAbilities[i * 4 + 4] = true
         set i = 112 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "webon"), 'A2QT', 0, 'Y453')

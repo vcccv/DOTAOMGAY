@@ -37,6 +37,10 @@ library AbilityCustomOrderId requires Base
         endif
     endfunction
 
+    //function AllocAbilityOrderIdByIndex takes integer skillIndex returns integer 
+//
+    //endfunction
+
     function GetAbilityOrder takes integer abilId returns string
         local integer id = MHAbility_GetHookOrder(abilId)
         if id == 0 then
@@ -497,6 +501,16 @@ library AbilityCustomOrderId requires Base
         call AllocAbilityOrderIdEx('A07U', 'A38E')
         // 关闭
         call AllocAbilityOrderId('A24E')
+
+        // 大地之灵
+        call AllocAbilityOrderId(EARTH_SPIRIT_STONE_REMNANT)
+        call AllocAbilityOrderId('A2QM')
+        call AllocAbilityOrderId('A2TJ')
+        call AllocAbilityOrderId('A2QI')
+        call AllocAbilityOrderId('A2TI')
+
+        // 遥控炸弹 引爆
+        // call AllocAbilityOrderId('A1WF')
     endfunction
 
 endlibrary

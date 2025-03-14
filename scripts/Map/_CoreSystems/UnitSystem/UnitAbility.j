@@ -34,6 +34,12 @@ library UnitAbility requires AbilityUtils, UnitLimitation
         call EnableTrigger(StartCooldownTrig)
     endfunction
 
+    function SetUnitAbilityCharges takes unit u, integer aid, integer value returns nothing
+        call MHAbility_SetChargeCount(u, aid, value)
+    endfunction
+    function GetUnitAbilityCharges takes unit u, integer aid returns integer
+        return MHAbility_GetChargeCount(u, aid)
+    endfunction
 
     // 前后摇
     function SetUnitAbilityCastpoint takes unit whichUnit, integer abilId, real costpoint returns nothing
@@ -470,6 +476,14 @@ library UnitAbility requires AbilityUtils, UnitLimitation
     function ResgiterAbilityMethodSimple takes integer abilId, string addMethod, string removeMethod returns nothing
         call RegisterAbilityAddMethod(abilId, addMethod)
         call RegisterAbilityRemoveMethod(abilId, removeMethod)
+    endfunction
+    function ResgiterAbilityMethodSimpleByIndex takes integer skillIndex, string addMethod, string removeMethod returns nothing
+        call RegisterAbilityAddMethod   (HeroSkill_BaseId[skillIndex], addMethod)
+        call RegisterAbilityRemoveMethod(HeroSkill_BaseId[skillIndex], removeMethod)
+        if HeroSkill_SpecialId[skillIndex] != 0 then
+            call RegisterAbilityAddMethod   (HeroSkill_SpecialId[skillIndex], addMethod)
+            call RegisterAbilityRemoveMethod(HeroSkill_SpecialId[skillIndex], removeMethod)
+        endif
     endfunction
 
     private function OnAbilityAdd takes nothing returns boolean

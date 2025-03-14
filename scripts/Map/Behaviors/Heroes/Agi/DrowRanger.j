@@ -12,7 +12,7 @@ scope DrowRanger
     //***************************************************************************
     globals
         constant integer SKILL_INDEX_GUST = GetHeroSKillIndexBySlot(HERO_INDEX_DROW_RANGE, 2)
-        private constant integer GUST_BUFF_ID     = 'B07V'
+        constant integer DROW_RANGER_GUST_BUFF_ID     = 'B07V'
     endglobals
 
     // 击退
@@ -66,7 +66,7 @@ scope DrowRanger
         static method OnCollide takes Shockwave sw, unit targ returns boolean
             // 敌对存活非魔免非无敌非守卫非建筑
             if IsUnitAlive(targ) and IsUnitEnemy(sw.owner, GetOwningPlayer(targ)) and not IsUnitMagicImmune(targ) and not IsUnitInvulnerable(targ) and not IsUnitWard(targ) and not IsUnitStructure(targ) then
-                call UnitAddAreaBuffEx(sw.owner, targ, GUST_BUFF_ID, sw.level, sw.duration, sw.herodur, false)
+                call UnitAddAreaBuffEx(sw.owner, targ, DROW_RANGER_GUST_BUFF_ID, sw.level, sw.duration, sw.herodur, false)
                 call GustRepel(sw.startX, sw.startY, targ, sw.x, sw.y, sw.level)
             endif
             return false
@@ -85,10 +85,6 @@ scope DrowRanger
         local unit whichUnit = Event.GetTriggerUnit()
         call UnitDecSilenceCount(whichUnit)
         set whichUnit = null
-    endfunction
-
-    function DrowRangerGustOnInitializer takes nothing returns nothing
-        call ResgiterAbilityMethodSimple(GUST_BUFF_ID, "DrowSilenceBuffOnAdd", "DrowSilenceBuffOnRemove")
     endfunction
 
     function DrowRangerGustOnSpellEffect takes nothing returns nothing

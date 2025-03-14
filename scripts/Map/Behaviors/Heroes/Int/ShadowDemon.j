@@ -125,16 +125,22 @@ scope ShadowDemon
 
         constant integer SHADOW_POISON_RELEASE_ABILITY_ID = 'A1S9'
     endglobals
-    function ShadowPoisonOnInitializer takes nothing returns nothing
-        call ResgiterAbilityMethodSimple(HeroSkill_BaseId[SKILL_INDEX_SHADOW_POISON], "ShadowPoisonOnAdd", "ShadowPoisonOnRemove")
-    endfunction
+    
     function ShadowPoisonOnAdd takes nothing returns nothing
         local unit whichUnit = Event.GetTriggerUnit()
+        if not IsUnitType(whichUnit, UNIT_TYPE_HERO) then
+            set whichUnit = null
+            return
+        endif
         call UnitAddPermanentAbility(whichUnit, SHADOW_POISON_RELEASE_ABILITY_ID)
         set whichUnit = null
     endfunction
     function ShadowPoisonOnRemove takes nothing returns nothing
         local unit whichUnit = Event.GetTriggerUnit()
+        if not IsUnitType(whichUnit, UNIT_TYPE_HERO) then
+            set whichUnit = null
+            return
+        endif
         call UnitRemoveAbility(whichUnit, SHADOW_POISON_RELEASE_ABILITY_ID)
         set whichUnit = null
     endfunction

@@ -101,10 +101,6 @@ scope Gyrocopter
         set whichUnit    = null
     endfunction
 
-    function FlakcannonOnInitializer takes nothing returns nothing
-        call ResgiterAbilityMethodSimple(FLAKCANNON_UPGRADE_ABILITY_ID, "FlakCannonUpgradeAbilityOnAdd", "FlakCannonUpgradeAbilityOnRemove")
-    endfunction
-
     function FlakCannonOnGetScepterUpgrade takes nothing returns nothing
         local unit whichUnit = Event.GetTriggerUnit()
         if not UnitAddPermanentAbility(whichUnit, FLAKCANNON_UPGRADE_ABILITY_ID) then

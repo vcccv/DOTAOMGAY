@@ -16,10 +16,6 @@ scope Ezalor
         constant integer ILLUMINATE_RELEASE_ABILITY_ID = 'A121'
     endglobals
 
-    function IlluminateOnInitializer takes nothing returns nothing
-        
-    endfunction
-  
     private struct IlluminateSW extends array
 
         static method OnCollide takes Shockwave sw, unit targ returns boolean
