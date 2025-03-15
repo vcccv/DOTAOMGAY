@@ -7,6 +7,49 @@ library Base requires TriggerDestroyQueue, GroupAlloc, ErrorMessage, TimerUtils
         endif
         return "false"
     endfunction
+
+    function PlayerInterfaceErrorSoundForPlayer takes player p, boolean b returns nothing
+        if b and User.Local == p then
+            call MHUI_PlayErrorSound()
+        endif
+        //local sound s = CreateSoundFromLabel("InterfaceError", false, false, false, 10, 10)
+        //if b then
+        //	if (LocalPlayer== p) then
+        //		call StartSound(s)
+        //	endif
+        //endif
+        //call KillSoundWhenDone(s)
+        //set s = null
+    endfunction
+    // 会清空信息
+    function DisplayLoDWarningForPlayerEx takes player p, boolean expression, string message returns nothing
+        if not (expression) then
+            return
+        endif
+        if (LocalPlayer== p) then
+            if (message != "") and(message != null) then
+                call ClearTextMessages()
+                call DisplayTimedTextToPlayer(p, 0, 0, 5, "|c00FF0000[LoD]|r|c006699CC" + " " + message + "|r")
+            endif
+        endif
+    endfunction
+    function DisplayLoDWarningForPlayer takes player p, boolean expression, string message returns nothing
+        if not (expression) then
+            return
+        endif
+        if (LocalPlayer== p) then
+            if (message != "") and(message != null) then
+                call DisplayTimedTextToPlayer(p, 0, 0, 5, "|c00FF0000[LoD]|r|c006699CC" + " " + message + "|r")
+            endif
+        endif
+    endfunction
+    function DisplayLoDErrorForPlayer takes player p, boolean expression, string message returns nothing
+        if not(expression) then
+            return
+        endif
+        call PlayerInterfaceErrorSoundForPlayer(p, expression)
+        call DisplayLoDWarningForPlayerEx(p, expression, message)
+    endfunction
     
     function PreloadQueueExpireAction takes nothing returns nothing
         local timer t = GetExpiredTimer()

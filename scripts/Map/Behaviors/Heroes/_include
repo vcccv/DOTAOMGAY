@@ -18,6 +18,7 @@
 #include "Str\\Phoenix.j"
 #include "Str\\SkeletonKing.j"
 #include "Str\\PitLord.j"
+#include "Str\\GuardianWisp.j"
 
 #include "Int\\TwinHeadDragon.j"
 #include "Int\\Ezalor.j"
@@ -64,3 +65,4 @@
 #include "Agi\\Weaver.j"
 #include "Agi\\Venomancer.j"
 #include "Agi\\TemplarAssassin.j"
+#include "Agi\\TrollWarlord.j"

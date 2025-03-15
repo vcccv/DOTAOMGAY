@@ -387,7 +387,7 @@ scope LoneDruid
     function Synergy_OnLearn takes nothing returns nothing
         local unit    whichUnit   = GetTriggerUnit()
         local player  whichPlayer = GetOwningPlayer(whichUnit)
-        local integer level 	  = GetUnitAbilityLevel(whichUnit,'A0A8')
+        local integer level 	  = GetUnitAbilityLevel(whichUnit, 'A0A8')
         local group   g = AllocationGroup(264)
         local unit    spiritBear
         local unit    u
@@ -406,7 +406,7 @@ scope LoneDruid
         loop
             set u = FirstOfGroup(g)
         exitwhen u == null
-            if GetUnitAbilityLevel(u,'A0KO')> 0 then
+            if GetUnitAbilityLevel(u, 'A0KO')> 0 then
                 call SetUnitMoveSpeed(u, GetUnitDefaultMoveSpeed(u) + 20 + 10* level)
             endif
             if IsUnitFamiliarById(GetUnitTypeId(u)) then
@@ -416,6 +416,29 @@ scope LoneDruid
         endloop
         call SetPlayerTechResearched(GetOwningPlayer(whichUnit), 'Recb', level)
         call DeallocateGroup(g)
+    endfunction
+
+    //***************************************************************************
+    //*
+    //*  熊形态
+    //*
+    //***************************************************************************
+    globals
+        constant integer SKILL_INDEX_TRUE_FORM = GetHeroSKillIndexBySlot(HERO_INDEX_LONE_DRUID, 4)
+        constant integer BATTLE_CRY_ABILITY_ID = 'A344'
+    endglobals
+    
+    function TrueFormOnSpellEffect takes nothing returns nothing
+        local unit    u = GetTriggerUnit()
+        local integer i = GetUnitTypeId(u)
+        call SetPlayerTechResearched(GetOwningPlayer(u), 'R001',(GetUnitAbilityLevel(u, GetSpellAbilityId()) + 1))
+        if i !='N015' and i !='N014' and i !='N013' then
+            call SetPlayerAbilityAvailable(GetOwningPlayer(u), BATTLE_CRY_ABILITY_ID, true)
+        else
+            call SetPlayerAbilityAvailable(GetOwningPlayer(u), BATTLE_CRY_ABILITY_ID, false)
+        endif
+        call SetUnitAbilityLevel(u, BATTLE_CRY_ABILITY_ID, GetUnitAbilityLevel(u, GetSpellAbilityId()))
+        set u = null
     endfunction
 
 endscope

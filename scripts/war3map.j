@@ -2442,11 +2442,11 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A1AX', 0, "OmnislashOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A05G', 0, "VLE")
 	call SaveStr(ObjectHashTable,'A2S8', 0, "VPE")
-	call SaveStr(ObjectHashTable,'A10U', 0, "VSE")
+	call SaveStr(ObjectHashTable,SPIRIT_FORM_RECALL_ABILITY_ID, 0, "SpiritFormReCallOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A10X', 0, "SpellEffect__ManaLeak")
 	call SaveStr(ObjectHashTable,'A112', 0, "V_E")
-	call SaveStr(ObjectHashTable,'QM01', 0, "V0E")
-	call SaveStr(ObjectHashTable,'A11X', 0, "V1E")
+	call SaveStr(ObjectHashTable,'QM01', 0, "SpiritFormOnSpellEffect")
+	call SaveStr(ObjectHashTable, SPIRIT_FORM_BLINDING_LIGHT_ABILITY_ID, 0, "SpiritFormBlindingLightOnSpellEffect")
 	call SaveStr(ObjectHashTable,'QB0E', 0, "V2E")
 	call SaveStr(ObjectHashTable,'A01F', 0, "DragonSlaveOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A09Z', 0, "V5E")
@@ -2487,7 +2487,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A190', 0, "EWE")
 	call SaveStr(ObjectHashTable,'A1EG', 0, "EYE")
 	call SaveStr(ObjectHashTable,'A0A5', 0, "SummonSpiritBearOnSpellEffectBear")
-	call SaveStr(ObjectHashTable,'A0AG', 0, "E0E")
+	call SaveStr(ObjectHashTable,'A0AG', 0, "TrueFormOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A1A1', 0, "EarthSplitterOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A43J', 0, "EarthSplitterOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A0BQ', 0, "E2E")
@@ -2499,8 +2499,8 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A0LL', 0, "E6E")
 	call SaveStr(ObjectHashTable,'A1EJ', 0, "E7E")
 	call SaveStr(ObjectHashTable,'A0BE', 0, "E8E")
-	call SaveStr(ObjectHashTable,'A21M', 0, "XVE")
-	call SaveStr(ObjectHashTable,'A21N', 0, "XEE")
+	call SaveStr(ObjectHashTable, WHIRLING_AXES_RANGED_ABILITY_ID, 0, "WhirlingAxesRangedOnSpellEfffect")
+	call SaveStr(ObjectHashTable, WHIRLING_AXES_MELEE_ABILITY_ID , 0, "WhirlingAxesMeleeOnSpellEfffect")
 	call SaveStr(ObjectHashTable,'A1N4', 0, "XOE")
 	call SaveStr(ObjectHashTable,'QB0P', 0, "XOE")
 	call SaveStr(ObjectHashTable,'A03Y', 0, "XRE")
@@ -2618,9 +2618,9 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A1H5', 0, "I1E")
 	call SaveStr(ObjectHashTable,'A2KO', 0, "I2E")
 	
-	call SaveStr(ObjectHashTable,'A0FH', 0, "I3E")
-	call SaveStr(ObjectHashTable,'A0F0', 0, "I3E")
-	call SaveStr(ObjectHashTable,'A0EY', 0, "I3E")
+	call SaveStr(ObjectHashTable, SHADOWRAZE_X_ABILITY_ID, 0, "ShadowrazeOnSpellEffect")
+	call SaveStr(ObjectHashTable, SHADOWRAZE_C_ABILITY_ID, 0, "ShadowrazeOnSpellEffect")
+	call SaveStr(ObjectHashTable, SHADOWRAZE_Z_ABILITY_ID, 0, "ShadowrazeOnSpellEffect")
 	
 	call SaveStr(ObjectHashTable,'A344', 0, "I4E")
 	call SaveStr(ObjectHashTable,'A34C', 0, "I4E")
@@ -2718,7 +2718,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A30N', 0, "DXE")
 	call SaveStr(ObjectHashTable,'A2KQ', 0, "DOE")
 	call SaveStr(ObjectHashTable,'A1PH', 0, "SoulStealOnSpellEffect")
-	call SaveStr(ObjectHashTable,'A1T8', 0, "DIE")
+	call SaveStr(ObjectHashTable,'A1T8', 0, "SpiritsOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A1TA', 0, "DAE")
 	call SaveStr(ObjectHashTable,'A1TB', 0, "DNE")
 	call SaveStr(ObjectHashTable,'A3FQ', 0, "DNE")
@@ -2956,7 +2956,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A21E', 3, "KPE")
 	call SaveStr(ObjectHashTable,'A0M1', 3, "KQE")
 	call SaveStr(ObjectHashTable,'A1AX', 3, "KQE")
-	call SaveStr(ObjectHashTable,'A10U', 3, "KSE")
+	call SaveStr(ObjectHashTable,SPIRIT_FORM_RECALL_ABILITY_ID, 3, "KSE")
 	call SaveStr(ObjectHashTable,'A01P', 3, "KTE")
 	call SaveStr(ObjectHashTable,'A24D', 3, "KUE")
 	call SaveStr(ObjectHashTable,'A10D', 3, "KWE")
@@ -2988,7 +2988,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A0B1', 3, "LFE")
 	call SaveStr(ObjectHashTable,'A064', 4, "LHE")
 	call SaveStr(ObjectHashTable,'A1P8', 4, "LKE")
-	call SaveStr(ObjectHashTable,'A21L', 4, "LLE")
+	call SaveStr(ObjectHashTable,'A21L', 4, "WhirlingAxesOnLearn")
 	call SaveStr(ObjectHashTable,'A0I8', 4, "StrygwyrThirstOnLearn")
 	call SaveStr(ObjectHashTable,'A0CZ', 4, "LPE")
 	// call SaveStr(ObjectHashTable,'A0AK', 4, "RemoteMinesOnLearn")
@@ -3046,11 +3046,11 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A086', 1000, "PNE")
 	call SaveStr(ObjectHashTable,'A43S', 1000, "ChakramOnLearn")
 	call SaveStr(ObjectHashTable,'A0BR', 1000, "MNE")
-	call SaveStr(ObjectHashTable,'A0EY', 1000, "PDE")
+	call SaveStr(ObjectHashTable, SHADOWRAZE_Z_ABILITY_ID, 1000, "ShadowrazeOnLearn")
 	call SaveStr(ObjectHashTable,'A03E', 1000, "PFE")
 	call SaveStr(ObjectHashTable,'A32G', 1000, "L_E")
 	call SaveStr(ObjectHashTable,'A0MX', 1000, "LearnSkill__DrunkenBrawler")
-	call SaveStr(ObjectHashTable,'A21M', 1000, "LLE")
+	call SaveStr(ObjectHashTable, WHIRLING_AXES_RANGED_ABILITY_ID, 1000, "WhirlingAxesOnLearn")
 	call SaveStr(ObjectHashTable,'A34A', 1000, "L3E")
 	call SaveStr(ObjectHashTable,'A40B', 1000, "PGE")
 	call SaveStr(ObjectHashTable,'A2O2', 1000, "L4E")
@@ -3074,7 +3074,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A0M3', 1000, "PSE")
 	call SaveStr(ObjectHashTable,'A03U', 1000, "PTE")
 	call SaveStr(ObjectHashTable,'A062', 1000, "L6E")
-	call SaveStr(ObjectHashTable,'A0KX', 1000, "MorphOnLearn")
+	call SaveStr(ObjectHashTable,ATTRIBUTESHIFT_AGILITY_GAIN_ABILITY_ID, 1000, "MorphOnLearn")
 	call SaveStr(ObjectHashTable,'A0A5', 1000, "SummonSpiritBearOnLearn")
 	call SaveStr(ObjectHashTable,'A27V', 1000, "PEE")
 	call SaveStr(ObjectHashTable,'A28Q', 1000, "PVE")
@@ -3136,8 +3136,8 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A0A5', 5, "SummonSpiritBearOnLearn")
 	call SaveStr(ObjectHashTable,'A0CY', 5, "PQE")
 	call SaveStr(ObjectHashTable,'A19Q', 5, "PPE")
-	call SaveStr(ObjectHashTable,'A0EY', 5, "PDE")
-	call SaveStr(ObjectHashTable,'A0KX', 5, "MorphOnLearn")
+	call SaveStr(ObjectHashTable, SHADOWRAZE_Z_ABILITY_ID, 5, "ShadowrazeOnLearn")
+	call SaveStr(ObjectHashTable,ATTRIBUTESHIFT_AGILITY_GAIN_ABILITY_ID, 5, "MorphOnLearn")
 	call SaveStr(ObjectHashTable,'A0CG', 5, "PIE")
 	call SaveStr(ObjectHashTable,'A0OO', 5, "Q1E")
 	call SaveStr(ObjectHashTable,'A03U', 5, "PTE")
@@ -3163,12 +3163,12 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A2JK',1001, "FireRemnantOnLearn")
 	//call SaveStr(ObjectHashTable,'A11N',1001, "PZE")
 	call SaveStr(ObjectHashTable,'A086',1001, "PNE")
-	call SaveStr(ObjectHashTable,'A0EY',1001, "PDE")
+	call SaveStr(ObjectHashTable, SHADOWRAZE_Z_ABILITY_ID,1001, "ShadowrazeOnLearn")
 	call SaveStr(ObjectHashTable,'A331',1001, "FireSpiritsOnLearn")
 	call SaveStr(ObjectHashTable,'A40B',1001, "PGE")
 	call SaveStr(ObjectHashTable,'A0H4',1001, "Q5E")
 	call SaveStr(ObjectHashTable,'A32Z',1001, "SWE")
-	call SaveStr(ObjectHashTable,'A0KX',1001, "MorphOnLearn")
+	call SaveStr(ObjectHashTable,ATTRIBUTESHIFT_AGILITY_GAIN_ABILITY_ID,1001, "MorphOnLearn")
 	call SaveStr(ObjectHashTable,'A32Y',1001, "KotoDigestOnLearn")
 	call SaveStr(ObjectHashTable,'Q0BK',1001, "SXE")
 	call SaveStr(ObjectHashTable,'A303',1001, "Q2E")
@@ -3303,60 +3303,6 @@ function TVE takes integer id returns integer
 	endloop
 	return - 1
 endfunction
-// 按表索引检查技能
-function CheckAbilityIdFormIndex takes integer abilIndex, integer TOE, string orderStr, string TNE returns boolean
-	local integer i
-	local integer k
-	local string array s1
-	local string array s2
-	local integer j
-	local integer o
-	if TOE >-1 then
-		if HaveSavedString(AbilityDataHashTable, abilIndex, 0) == false or HaveSavedString(AbilityDataHashTable, TOE, 0) == false then
-			return false
-		endif
-		set i = 0
-		loop
-		exitwhen HaveSavedString(AbilityDataHashTable, abilIndex, i) == false
-			set s1[i] = LoadStr(AbilityDataHashTable, abilIndex, i)
-			set i = i + 1
-		endloop
-		set k = 0
-		loop
-		exitwhen HaveSavedString(AbilityDataHashTable, TOE, k) == false
-			set s2[k] = LoadStr(AbilityDataHashTable, TOE, k)
-			set k = k + 1
-		endloop
-		if i == 0 or k == 0 then
-			return false
-		endif
-		set j = 0
-		loop
-			set o = 0
-		exitwhen j >= i
-			loop
-			exitwhen o >= k
-				if s1[j]== s2[o]and s1[j]!= TNE then
-					return true
-				endif
-				set o = o + 1
-			endloop
-			set j = j + 1
-		endloop
-		return false
-	else
-		set i = 0
-		loop
-		exitwhen HaveSavedString(AbilityDataHashTable, abilIndex, i) == false
-			if LoadStr(AbilityDataHashTable, abilIndex, i) == orderStr then
-				return true
-			endif
-			set i = i + 1
-		endloop
-		return false
-	endif
-	return true
-endfunction
 
 function TDE takes unit u, integer id, player p, boolean b, integer i returns nothing
 	local item it = UnitAddItemById(u, id)
@@ -3457,47 +3403,6 @@ function T6E takes integer playerIndex returns boolean
 		return true
 	endif
 	return((GetPlayerController(Player(playerIndex)) == MAP_CONTROL_USER) and(GetPlayerSlotState(Player(playerIndex)) == PLAYER_SLOT_STATE_PLAYING))
-endfunction
-function PlayerInterfaceErrorSoundForPlayer takes player p, boolean b returns nothing
-	if b and User.Local == p then
-		call MHUI_PlayErrorSound()
-	endif
-	//local sound s = CreateSoundFromLabel("InterfaceError", false, false, false, 10, 10)
-	//if b then
-	//	if (LocalPlayer== p) then
-	//		call StartSound(s)
-	//	endif
-	//endif
-	//call KillSoundWhenDone(s)
-	//set s = null
-endfunction
-function DisplayLoDTipForPlayer takes player p, boolean b, string s returns nothing
-	if not(b) then
-		return
-	endif
-	if (LocalPlayer== p) then
-		if (s != "") and(s != null) then
-			call ClearTextMessages()
-			call DisplayTimedTextToPlayer(p, 0, 0, 5, "|c00FF0000[LoD]|r|c006699CC" + " " + s + "|r")
-		endif
-	endif
-endfunction
-function UVE takes player p, boolean expression, string s returns nothing
-	if not(expression) then
-		return
-	endif
-	if (LocalPlayer== p) then
-		if (s != "") and(s != null) then
-			call DisplayTimedTextToPlayer(p, 0, 0, 5, "|c00FF0000[LoD]|r|c006699CC" + " " + s + "|r")
-		endif
-	endif
-endfunction
-function DisplayLoDWarningForPlayer takes player p, boolean expression, string s returns nothing
-	if not(expression) then
-		return
-	endif
-	call PlayerInterfaceErrorSoundForPlayer(p, expression)
-	call DisplayLoDTipForPlayer(p, expression, s)
 endfunction
 function UIE takes integer UDE returns integer
 	return UDE
@@ -3770,17 +3675,6 @@ function EvasionStacking takes nothing returns nothing
 		endif
 	endif
 endfunction
-function WBE takes integer WDE returns integer
-	local integer i = 1
-	loop
-		if WDE == PassiveSkill_Learned[i] then
-			return i
-		endif
-		set i = i + 1
-	exitwhen i > PassiveAbilityMaxCount
-	endloop
-	return 0
-endfunction
 function MessengerIsDead takes unit u returns boolean
 	return IsUnitType(u, UNIT_TYPE_DEAD) or 0.405 > GetWidgetLife(u)
 endfunction
@@ -3879,7 +3773,7 @@ endfunction
 function W4E takes integer id returns nothing
 	local unit u = GetTriggerUnit()
 	local player p = GetOwningPlayer(u)
-	local integer k = WBE(id)
+	local integer k = GetPassiveSkillIndexByLearnedId(id)
 	local integer level
 	if k > 0 then
 		set level = GetUnitAbilityLevel(u, PassiveSkill_Learned[k])
@@ -3907,7 +3801,7 @@ function W5E takes nothing returns nothing
 	local integer id = GetLearnedSkill()
 	local unit u = GetTriggerUnit()
 	local player p = GetOwningPlayer(u)
-	local integer k = WBE(id)
+	local integer k = GetPassiveSkillIndexByLearnedId(id)
 	local integer level
 	if k > 0 then
 		set level = GetUnitAbilityLevel(u, PassiveSkill_Learned[k])
@@ -3961,7 +3855,7 @@ function W7E takes integer id returns integer
 	if id =='Z318' then
 		return 'A0BR'
 	elseif id =='QF87' then
-		return 'A0KX'
+		return ATTRIBUTESHIFT_AGILITY_GAIN_ABILITY_ID
 	elseif id =='P247' then
 		return 'A086'
 	endif
@@ -4368,23 +4262,9 @@ function GetDistanceBetween takes real x1, real y1, real x2, real y2 returns rea
 	return SquareRoot((x1 -x2) * (x1 -x2) + (y1 -y2) * (y1 -y2))
 endfunction
 
-// 判断玩家是否拥有指定索引的技能
-function IsPlayerHasSkill takes player p, integer index returns boolean
-	local integer playerIndex = GetPlayerId(p)
-	local integer xx = 1
-	loop
-		if (PlayerSkillIndices[playerIndex * MAX_SKILL_SLOTS + xx]== index) then
-			return true
-		endif
-		set xx = xx + 1
-	exitwhen xx > 4 + ExtraSkillsCount
-	endloop
-	return false
-endfunction
-
 // 有再装填
 function IsUnitHaveRearmAbility takes unit u returns boolean
-	return GetUnitAbilityLevel(u,'Y076') == 1 or GetUnitAbilityLevel(u,'A065')> 0 or GetUnitAbilityLevel(u,'A527')> 0 or GetUnitAbilityLevel(u,'A528')> 0 or IsPlayerHasSkill(GetOwningPlayer(u), 76)
+	return GetUnitAbilityLevel(u,'Y076') == 1 or GetUnitAbilityLevel(u,'A065')> 0 or GetUnitAbilityLevel(u,'A527')> 0 or GetUnitAbilityLevel(u,'A528')> 0 or IsPlayerSkillPickedByIndex(GetOwningPlayer(u), 76)
 endfunction
 function ZME takes integer playerIndex, integer ZSE returns integer
 	local integer xx = 1
@@ -5461,11 +5341,11 @@ function TWE takes unit u, boolean TYE returns nothing
 		if abilId =='A0OO' then
 			call EndUnitAbilityCooldown(u,'A300')
 			call EndUnitAbilityCooldown(u,'A301')
-		elseif abilId =='A0EY'then
-			call EndUnitAbilityCooldown(u,'A0F0')
-			call EndUnitAbilityCooldown(u,'A0FH')
-		elseif abilId =='A21M'then
-			call EndUnitAbilityCooldown(u,'A21N')
+		elseif abilId == SHADOWRAZE_Z_ABILITY_ID then
+			call EndUnitAbilityCooldown(u, SHADOWRAZE_C_ABILITY_ID)
+			call EndUnitAbilityCooldown(u, SHADOWRAZE_X_ABILITY_ID)
+		elseif abilId == WHIRLING_AXES_RANGED_ABILITY_ID then
+			call EndUnitAbilityCooldown(u, WHIRLING_AXES_MELEE_ABILITY_ID)
 		elseif abilId =='A088'then
 			call EndUnitAbilityCooldown(u,'A2KQ')
 		endif
@@ -8850,7 +8730,7 @@ function InitObserverPlayer takes nothing returns nothing	//OB是否存在 MW来
 	set LAX = null
 endfunction
 function LNX takes integer id returns boolean
-	return id =='A0ES' or id =='A43P' or id =='A0QN' or id =='A2TH' or id =='A21F' or id =='A21G' or id =='A21H' or id =='A1S9' or id =='A24A' or id =='A24B' or id =='A1S9' or id =='A06K' or id =='A1VG' or id =='A28Q' or id =='A1WF' or id =='A0T8' or id =='A0T7' or id =='A20N' or id =='A1Z2' or id =='A1Z3' or id =='A205' or id =='A14A' or id =='A269' or id =='A2KG' or id =='A21J' or id =='A27X' or id =='A28Y' or id =='A24E' or id =='A1ZH' or id =='A1WO' or id =='A1FQ' or id =='A0TE' or id =='A2JO' or id =='A2FX' or id =='A0MP' or id =='A2KE' or id =='A2KH' or id =='A2K9' or id =='A2JL' or id =='A2O2' or id =='A2MB' or id =='A21J' or id =='A2MC' or id =='A1NH' or id =='A2LI' or id =='A2TK' or id =='A1MO' or id =='A527' or id =='A528'
+	return id =='A0ES' or id =='A43P' or id =='A0QN' or id =='A2TH' or id =='A21F' or id =='A21G' or id =='A21H' or id =='A1S9' or id ==SPIRITS_IN_ABILITY_ID or id ==SPIRITS_OUT_ABILITY_ID or id =='A1S9' or id =='A06K' or id =='A1VG' or id =='A28Q' or id =='A1WF' or id =='A0T8' or id =='A0T7' or id =='A20N' or id =='A1Z2' or id =='A1Z3' or id =='A205' or id =='A14A' or id =='A269' or id =='A2KG' or id =='A21J' or id =='A27X' or id =='A28Y' or id =='A24E' or id =='A1ZH' or id =='A1WO' or id =='A1FQ' or id =='A0TE' or id =='A2JO' or id =='A2FX' or id =='A0MP' or id =='A2KE' or id =='A2KH' or id =='A2K9' or id =='A2JL' or id =='A2O2' or id =='A2MB' or id =='A21J' or id =='A2MC' or id =='A1NH' or id =='A2LI' or id =='A2TK' or id =='A1MO' or id =='A527' or id =='A528'
 endfunction
 function LBX takes nothing returns nothing
 	call CreateQuestBJ(0, "TRIGSTR_50004", "TRIGSTR_50005", "ReplaceableTextures\\CommandButtons\\BTNSpy.blp")
@@ -9025,8 +8905,8 @@ endfunction
 function L8X takes unit u returns nothing
 	local integer h = GetHandleId(u)
 	call L7X(u)
-	call SetPlayerAbilityAvailable(GetOwningPlayer(u),'A11X', false)
-	call SetPlayerAbilityAvailable(GetOwningPlayer(u),'A10U', false)
+	call SetPlayerAbilityAvailable(GetOwningPlayer(u),SPIRIT_FORM_BLINDING_LIGHT_ABILITY_ID, false)
+	call SetPlayerAbilityAvailable(GetOwningPlayer(u),SPIRIT_FORM_RECALL_ABILITY_ID, false)
 	call SetPlayerAbilityAvailable(GetOwningPlayer(u),'A344', false)
 	if GetOwningPlayer(u) == LocalPlayer then
 		call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 1, " ")
@@ -9567,7 +9447,7 @@ function QGX takes integer id returns integer
 	if id =='A0FU' then
 		return 'QF00'
 	endif
-	if id =='A0KX' then
+	if id ==ATTRIBUTESHIFT_AGILITY_GAIN_ABILITY_ID then
 		return 'QF87'
 	endif
 	if id =='A0OO' then
@@ -9585,204 +9465,13 @@ function QGX takes integer id returns integer
 	if id =='A46E' then
 		return 'A46D'
 	endif
-	set k = WBE(id)
+	set k = GetPassiveSkillIndexByLearnedId(id)
 	if k > 0 and PassiveSkill_Show[k]> 0 then
 		return PassiveSkill_Show[k]
 	endif
 	return id
 endfunction
 
-function QHX takes integer i returns string
-	if i == 1 then
-		return "|c000042FFblue"
-	elseif i == 2 then
-		return "|c001ce6b9teal"
-	elseif i == 3 then
-		return "|c00540081purple"
-	elseif i == 4 then
-		return "|c00fffc01yellow"
-	elseif i == 5 then
-		return "|c00ff8000orange"
-	elseif i == 7 then
-		return "|c00e55bb0pink"
-	elseif i == 8 then
-		return "|c00959697gray"
-	elseif i == 9 then
-		return "|c007ebff1lightblue"
-	elseif i == 10 then
-		return "|c00106246darkgreen"
-	elseif i == 11 then
-		return "|c004e2a04brown"
-	endif
-	return ""
-endfunction
-
-function SetAbilityStringByMode takes unit u, integer id returns nothing
-	if id == 'QP24' then
-		if Mode__BalanceOff then
-			call UnitAddAbility(u, id)
-			call MHAbility_SetLevelDefDataStr('QP24', 1, ABILITY_LEVEL_DEF_DATA_UBERTIP, "有25%的概率连续施展两次法术|n|n输入|c00ff0505-mc|r 以查看自身能触发狗运的技能|n|n|c00fffc01神杖升级：让你另一个脑袋施放火焰爆轰。")
-			call MHAbility_SetLevelDefDataStr('QP24', 2, ABILITY_LEVEL_DEF_DATA_UBERTIP, "有40%的概率连续施展两次法术；有20%的概率连续施展三次法术|n|n输入|c00ff0505-mc|r 以查看自身能触发狗运的技能|n|n|c00fffc01神杖升级：让你另一个脑袋施放火焰爆轰。")
-			call MHAbility_SetLevelDefDataStr('QP24', 3, ABILITY_LEVEL_DEF_DATA_UBERTIP, "有50%的概率连续施展两次法术；有25%的概率连续施展三次法术；有12%的概率连续施展四次法术|n|n输入|c00ff0505-mc|r 以查看自身能触发狗运的技能|n|n|c00fffc01神杖升级：让你另一个脑袋施放火焰爆轰。")
-			call MHAbility_SetDefDataStr('A088', ABILITY_DEF_DATA_RESEARCH_UBERTIP, "狗运让菊花能更快更有效地使用技能。|n|n|cffffcc00等级 1|r - 25%概率x2|n|cffffcc00等级 2|r - 40%概率x2，20%概率x3|n|cffffcc00等级 3|r - 50%概率x2，25%概率x3，12%概率x4|n|n输入|c00ff0505-mc|r 以查看自身能触发狗运的技能|n|n|c00fffc01神杖升级：让你另一个脑袋施放火焰爆轰。")
-		endif
-	endif
-endfunction
-
-//快捷键整数转字符串
-function Key2Str takes integer key returns string
-    local string s = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    local integer i = key - 65
-    if key > 64 and key < 91 then
-        return SubString(s, i , i + 1)
- 	endif
-  	return null
-endfunction
-
-//快捷键字符串转整数
-function Str2Key takes string key returns integer
-    local string s = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    local integer i = 65
-	local integer b = 0
-	set key = StringCase(key , true)
-	loop
-	exitwhen i > 90
-		if key == SubString(s, b , b + 1) then
-			return i
-		endif
-		set i = i + 1
-		set b = b + 1
-	endloop
-  	return 0
-endfunction
-
-function SetShowSkillDatas takes integer showSkillId, integer skillIndex returns nothing
-	local integer k
-	local integer tempAbilityId = HeroSkill_BaseId[skillIndex]
-	local integer hotkey
-	set k = WBE(tempAbilityId)
-	if k > 0 and PassiveSkill_Learned[k]> 0 then
-		set tempAbilityId = PassiveSkill_Learned[k]
-	endif
-	set hotkey = GetAbilityHotkeyById(tempAbilityId)
-	if PassiveSkill_Learned[k]> 0 then
-		call SetAbilityIconById(showSkillId, GetAbilityIconById(PassiveSkill_Show[k]))
-	else
-		call SetAbilityIconById(showSkillId, GetAbilityIconById(tempAbilityId))
-	endif
-	if hotkey == 0 then
-		call SetAbilityTooltipById(showSkillId, 1, GetObjectName(tempAbilityId))
-	else
-		call SetAbilityTooltipById(showSkillId, 1, GetObjectName(tempAbilityId) + "[|cffffcc00" + Key2Str(hotkey) + "|r]")
-	endif
-	call SetAbilityExtendedTooltipyId(showSkillId, 1, GetAbilityResearchExtendedTooltipyId(tempAbilityId))
-endfunction
-
-function PlayerPickHero takes unit u, integer playerId, unit QKX returns nothing//酒馆英雄添加技能时
-	local integer heroIndex =(GetUnitPointValue(u)* 4)-4
-	local integer xx = 0
-	local integer teamId
-	local integer TXE = heroIndex + 1
-	local integer TOE = heroIndex + 2
-	local integer QMX = heroIndex + 3
-	local integer QPX = heroIndex + 4
-	local integer tempAbilityId = 0
-	local integer array QSX
-	local boolean QTX = true
-	local integer unitTypeId = GetUnitTypeId(u)
-	local player whichPlayer = Player(playerId)
-	set QSX[1] = heroIndex + 1
-	set QSX[2] = heroIndex + 2
-	set QSX[3] = heroIndex + 3
-	set QSX[4] = heroIndex + 4
-	set PlayerNowPackedHeroIndex[playerId] = GetUnitPointValue(u)
-	call RemoveUnit(u)
-	call SetPlayerState( whichPlayer , PLAYER_STATE_RESOURCE_GOLD, GetPlayerState( whichPlayer , PLAYER_STATE_RESOURCE_GOLD) + 250 )
-	if Mode__SingleDraft or Mode__MirrorDraft then
-		set QTX = LoadBoolean(HY, GetHandleId( whichPlayer ), unitTypeId)
-		if not QTX then
-			call UVE( whichPlayer , true, "这些是你友军的技能，你无法选择他们。你的技能在 " + QHX(playerId) + "|c006699CC 酒馆|r")
-		endif
-	endif
-	call FlushChildHashtable(HY, GetHandleId(KP[playerId]))
-	call RemoveUnit(KP[playerId])
-	set KP[playerId] = CreateUnit( whichPlayer ,'hfoo', GetRectMaxX(bj_mapInitialPlayableArea), GetRectMinY(bj_mapInitialPlayableArea), .0)
-	call SaveUnitHandle(HY, GetHandleId(KP[playerId]), 0, QKX)
-	if LOD_DEBUGMODE then
-		call DisplayTimedTextToPlayer(LocalPlayer, .0, .0, 20., "Hero Number: " + I2S(GetUnitPointValue(u)))
-		call DisplayTimedTextToPlayer(LocalPlayer, .0, .0, 20., "Skill #1 number: " + I2S(TXE))
-		call DisplayTimedTextToPlayer(LocalPlayer, .0, .0, 20., "Skill #2 number: " + I2S(TOE))
-		call DisplayTimedTextToPlayer(LocalPlayer, .0, .0, 20., "Skill #3 number: " + I2S(QMX))
-		call DisplayTimedTextToPlayer(LocalPlayer, .0, .0, 20., "Skill #4 number: " + I2S(QPX))
-	endif
-	if IsPlayerSentinel( whichPlayer ) then
-		set teamId = 1
-	else
-		set teamId = 2
-	endif
-	set xx = 1
-	loop
-		if HeroSkill_Disabled[heroIndex + xx] == false then
-			set tempAbilityId = HeroSkill_BaseId[heroIndex + xx]
-			// set tempAbilityId = QGX(tempAbilityId)
-
-		
-			call SetAbilityStringByMode(KP[playerId], tempAbilityId) 	//根据模式更改技能文本
-
-			if GetLocalPlayer() == Player(playerId) then
-				call SetShowSkillDatas('ZT00'+ xx -1, heroIndex + xx)
-			endif
-			
-			call UnitAddAbility(KP[playerId], 'ZT00'+ xx -1)
-
-			//call UnitAddAbility(KP[playerId], tempAbilityId)
-			// if not HeroSkill_IsPassive[heroIndex + xx] and HeroSkill_SpecialId[heroIndex + xx] != 0 then
-			// 	// 预读神杖技能
-			// 	call UnitAddAbility(KP[playerId], HeroSkill_SpecialId[heroIndex + xx])
-			// 	call UnitRemoveAbility(KP[playerId], HeroSkill_SpecialId[heroIndex + xx])
-			// 	//call SingleDebug( "预读 " + I2S(xx) + " 号神杖升级技能 " + GetObjectName( HeroSkill_SpecialId[heroIndex + xx] ) )
-			// endif
-			//if not Mode__RearmCombos then
-			//endif
-			call SetUnitAbilityLevel(KP[playerId], tempAbilityId, 4)
-			if CheckAbilityIdFormIndex(heroIndex + xx,-1, "melee only", null) then
-				call UnitAddAbility(KP[playerId],'Z020'+ xx -1)
-			elseif CheckAbilityIdFormIndex(heroIndex + xx,-1, "range only", null) then
-				call UnitAddAbility(KP[playerId],'Z024'+ xx -1)
-			elseif CheckAbilityIdFormIndex(heroIndex + xx,-1, "melee morph", null) then
-				call UnitAddAbility(KP[playerId],'Z030'+ xx -1)
-			elseif CheckAbilityIdFormIndex(heroIndex + xx,-1, "range morph", null) then
-				call UnitAddAbility(KP[playerId],'Z034'+ xx -1)
-			endif
-			if QTX then
-				if ( not IsPlayerHasSkill( whichPlayer , QSX[xx]) ) then
-					if Mode__OneSkill then
-						if XP[teamId * OP + QSX[xx]]== 0 then
-							call UnitAddAbility(KP[playerId],'Z000'+ xx -1)
-						else
-							call UnitAddAbility(KP[playerId],'Z010'+ xx -1)
-						endif
-					else
-						call UnitAddAbility(KP[playerId],'Z000'+ xx -1)
-					endif
-				else
-					call UnitAddAbility(KP[playerId],'Z004'+ xx -1)
-				endif
-			else
-				call UnitAddAbility(KP[playerId],'Z01A'+ xx -1)
-			endif
-		else
-			if QTX then
-				call UnitRemoveAbility(KP[playerId],'Z000'-1 + xx)
-				call UnitAddAbility(KP[playerId],'Z014'-1 + xx)
-			endif
-		endif
-		set xx = xx + 1
-	exitwhen xx > 4
-	endloop
-	call ClearSelectionForPlayer( whichPlayer )
-	call SelectUnitAddForPlayer(KP[playerId],  whichPlayer )
-endfunction
 function QUX takes nothing returns nothing
 	call MultiboardDisplay(MainMultiboard, false)
 	call QBX()
@@ -9967,8 +9656,8 @@ function PlayerChooseHeroUnit takes unit whichUnit returns boolean
 	endif
 	// debug call SingleDebug( GetUnitName( whichUnit ) + " 已入场" )
 	// 禁用两个光法的技能和战争咆哮
-	// call SetPlayerAbilityAvailable(whichPlayer,'A11X', false)
-	// call SetPlayerAbilityAvailable(whichPlayer,'A10U', false)
+	// call SetPlayerAbilityAvailable(whichPlayer,SPIRIT_FORM_BLINDING_LIGHT_ABILITY_ID, false)
+	// call SetPlayerAbilityAvailable(whichPlayer,SPIRIT_FORM_RECALL_ABILITY_ID, false)
 	// call SetPlayerAbilityAvailable(whichPlayer,'A34C', false)
 	// call SetPlayerAbilityAvailable(whichPlayer,'A344', false)
 
@@ -10153,7 +9842,7 @@ function PlayerChooseHeroUnit takes unit whichUnit returns boolean
 	endif
 
 	// 被动晕眩技能提示
-	if IsPlayerHasSkill(whichPlayer, 311) or IsPlayerHasSkill(whichPlayer, 263) or IsPlayerHasSkill(whichPlayer, 275) then
+	if IsPlayerSkillPickedByIndex(whichPlayer, 311) or IsPlayerSkillPickedByIndex(whichPlayer, 263) or IsPlayerSkillPickedByIndex(whichPlayer, 275) then
 		call DisplayTimedTextToPlayer(whichPlayer, 0, 0, 10., " ")
 		call DisplayTimedTextToPlayer(whichPlayer, 0, 0, 10., "|c00ff0303" + GetObjectName('n0G3') + "|r")
 	endif
@@ -14097,10 +13786,10 @@ function ManipulatItemDelayOnExpired takes nothing returns boolean
 			// 拿到实体物品，并且是可用物品，是神杖物品，拾取者是英雄
 			if GetUnitScepterUpgradeSkillCount(whichUnit) > 0 then // 如果升级成功，则返回true，没有可升级的技能，单位就只会持有Item_AghanimScepterBasic
 				// 拿的是基础神杖或有贪婪被动 并且不是贪婪神杖
-				if ( itemIndex == Item_AghanimScepterBasic or (IsPlayerHasSkill(itemOwnerPlayer,(39 -1)* 4 + 3) ) and itemIndex != Item_AghanimScepterGiftable) then
+				if ( itemIndex == Item_AghanimScepterBasic or (IsPlayerSkillPickedByIndex(itemOwnerPlayer,(39 -1)* 4 + 3) ) and itemIndex != Item_AghanimScepterGiftable) then
 					call SilentRemoveItem(whichItem)
 					// 拥有贪婪
-					if IsPlayerHasSkill(itemOwnerPlayer, SKILL_INDEX_GOBLIN_GREED) then
+					if IsPlayerSkillPickedByIndex(itemOwnerPlayer, SKILL_INDEX_GOBLIN_GREED) then
 						set newItem = UnitAddItemById(whichUnit, ItemRealId[Item_AghanimScepterGiftable])
 					else
 						set newItem = UnitAddItemById(whichUnit, ItemRealId[Item_AghanimScepter])
@@ -24258,9 +23947,9 @@ function TUO takes nothing returns nothing
 	local integer pid = GetPlayerId(GetTriggerPlayer())
 	local unit u = PlayerHeroes[pid]
 	if (u != null and UnitAlive(u)) then
-		if GetUnitAbilityLevel(u,'A0KW')> 0 then
-			call SetPlayerAbilityAvailable(Player(pid),'A0KW', XA[pid])
-			call SetPlayerAbilityAvailable(Player(pid),'A0KX', XA[pid])
+		if GetUnitAbilityLevel(u,ATTRIBUTESHIFT_STRENGTH_GAIN_ABILITY_ID)> 0 then
+			call SetPlayerAbilityAvailable(Player(pid),ATTRIBUTESHIFT_STRENGTH_GAIN_ABILITY_ID, XA[pid])
+			call SetPlayerAbilityAvailable(Player(pid),ATTRIBUTESHIFT_AGILITY_GAIN_ABILITY_ID, XA[pid])
 			set XA[pid] = not XA[pid]
 		else
 			call InterfaceErrorForPlayer(GetTriggerPlayer(), "你没有属性转换")
@@ -24309,10 +23998,10 @@ function T_O takes nothing returns nothing
 		set DisplayTextDuration[pid] = 1.
 	endif
 endfunction
-function T0O takes nothing returns nothing
-	call SaveBoolean(OtherHashTable, GetHandleId(GetTriggerPlayer()),'NSHK', true)
-	call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10, "|c00aeae00 无相同热键|r 模式关闭 - 你可以选择任意热键冲突的技能")
-endfunction
+// function T0O takes nothing returns nothing
+// 	call SaveBoolean(OtherHashTable, GetHandleId(GetTriggerPlayer()),'NSHK', true)
+// 	call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 10, "|c00aeae00 无相同热键|r 模式关闭 - 你可以选择任意热键冲突的技能")
+// endfunction
 function T1O takes nothing returns nothing
 	local group g = AllocationGroup(84)
 	local unit u
@@ -27517,7 +27206,7 @@ function E2R takes player p returns nothing
 		set E3R = 36
 	endif
 	set i = IMaxBJ(IMinBJ(i, E3R), 0)
-	if IsPlayerHasSkill(p, 318) and i > 0 then
+	if IsPlayerSkillPickedByIndex(p, 318) and i > 0 then
 		call DisplayTimedTextToPlayer(p, 0, 0, 10., GetObjectName('n0KE') + " " + I2S(i) + "/" + I2S(E3R))
 	endif
 	set trigUnit = null
@@ -28214,9 +27903,9 @@ function X9R takes integer playerIndex, integer abilityId returns boolean
 	set SQV = ZME(playerIndex, abilityId)
 	if SQV != 0 then
 		// 如果是变身 或者 灼热之箭类技能 就返回
-		if CheckAbilityIdFormIndex(SQV,-1, "metamorphosis", null) then
+		if CheckSkillOrderIdByIndex(SQV,-1, "metamorphosis", null) then
 			return false
-		elseif CheckAbilityIdFormIndex(SQV,-1, "arrows", null) then
+		elseif CheckSkillOrderIdByIndex(SQV,-1, "arrows", null) then
 			return false
 		endif
 	endif
@@ -28427,409 +28116,7 @@ function SQO takes nothing returns nothing
 	set OLR = null
 	call OOR()
 endfunction
-function OMR takes integer pid, integer sn, integer T0V returns nothing
-	local multiboarditem mi
-	local string s = HeroSkill_Icon[T0V]
-	if LOD_DEBUGMODE then
-		if IsPlayerScourge(Player(pid)) then
-			set mi = MultiboardGetItem(JP,(pid + 2)-1, sn -1)
-		else
-			set mi = MultiboardGetItem(JP,(pid + 1)-1, sn -1)
-		endif
-	else
-		set mi = MultiboardGetItem(JP, D2V[pid]-1, sn -1)
-	endif
-	if IsPlayerSentinel(Player(pid)) and Mode__SeeSkills == false then
-		if IsPlayerScourge(LocalPlayer) then
-			if T0V == 0 then
-				set s = HeroSkill_Icon[0]
-			else
-				set s = "ReplaceableTextures\\CommandButtons\\BTNQuestion.blp"
-			endif
-		endif
-	elseif IsPlayerScourge(Player(pid)) and Mode__SeeSkills == false then
-		if IsPlayerSentinel(LocalPlayer) then
-			if T0V == 0 then
-				set s = HeroSkill_Icon[0]
-			else
-				set s = "ReplaceableTextures\\CommandButtons\\BTNQuestion.blp"
-			endif
-		endif
-	endif
-	call MultiboardSetItemIcon(mi, s)
-	call MultiboardReleaseItem(mi)
-	set mi = null
-endfunction
-function OPR takes integer pid returns integer
-	local integer k = 0
-	local integer c = 0
-	// 遍历RB表，如果玩家已经有已选择的某个技能在RB表内 则计数器+1 获得计数器
-	loop
-		if CONTROL_SKILL_INDEX_LIST[k]!= 0 then
-			if PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 1]== CONTROL_SKILL_INDEX_LIST[k]or PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 2]== CONTROL_SKILL_INDEX_LIST[k]or PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 3]== CONTROL_SKILL_INDEX_LIST[k]or PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 4]== CONTROL_SKILL_INDEX_LIST[k]or(ExtraSkillsCount >= 1 and PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 5]== CONTROL_SKILL_INDEX_LIST[k]) or(ExtraSkillsCount >= 2 and PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 6]== CONTROL_SKILL_INDEX_LIST[k]) then
-				set c = c + 1
-			endif
-		endif
-		set k = k + 1
-	exitwhen k > CONTROL_SKILL_INDEX_LIST_SIZE
-	endloop
-	return c
-endfunction
-function OQR takes integer pid returns boolean
-	local integer id = 34 * 4 + 3
-	local integer d = pid * MAX_SKILL_SLOTS
-	if PlayerSkillIndices[d + 1]== id or PlayerSkillIndices[d + 2]== id or PlayerSkillIndices[d + 3]== id or PlayerSkillIndices[d + 4]== id or(ExtraSkillsCount >= 1 and PlayerSkillIndices[d + 5]== id) or(ExtraSkillsCount >= 2 and PlayerSkillIndices[d + 6]== id) then
-		return true
-	endif
-	return false
-endfunction
-function OSR takes integer OTR returns boolean
-	local integer k = 0
-	local boolean b = false
-	loop
-		if OTR == CONTROL_SKILL_INDEX_LIST[k] then
-			set b = true
-		endif
-		set k = k + 1
-	exitwhen b or k > CONTROL_SKILL_INDEX_LIST_SIZE
-	endloop
-	return b
-endfunction
-function OUR takes integer XQX returns boolean
-	local integer i = 1
-	loop
-		if HeroListTypeId[XQX]== MeleeHeroList[i] then
-			return true
-		endif
-		set i = i + 1
-	exitwhen i > MeleeHeroMax
-	endloop
-	return false
-endfunction
-function OnPlayerPickAbility takes integer abilityIndex, integer playerIndex, boolean OZR returns boolean
-	local boolean O_R = I2R(abilityIndex / 4) == I2R(abilityIndex)/ 4.
-	local boolean pr = true
-	local integer ns = 0
-	local integer O0R = 0
-	local integer O1R = 0
-	local integer xx = 0
-	local integer YTE = 0
-	local integer O2R = 0
-	local integer O3R = 0
-	local string O4R = ""
-	local integer O5R = 0
-	local integer O6R = 0
-	local boolean O7R = false
-	local boolean O8R = false
-	local player p = Player(playerIndex)
-	local boolean O9R
-	local boolean RVR
-	local boolean RER
-	local boolean RXR
-	local integer ROR = playerIndex * MAX_SKILL_SLOTS
-	local integer RRR
-	local unit u
-	if PlayerSkillIndices[ROR + 1]== abilityIndex or PlayerSkillIndices[ROR + 2]== abilityIndex or PlayerSkillIndices[ROR + 3]== abilityIndex or PlayerSkillIndices[ROR + 4]== abilityIndex or PlayerSkillIndices[ROR + 5]== abilityIndex or PlayerSkillIndices[ROR + 6]== abilityIndex then
-		return false
-	endif
-	if abilityIndex ==(116 -1)* 4 + 4 or abilityIndex ==(115 -1)* 4 + 4 or abilityIndex ==(114 -1)* 4 + 4 then
-		set O_R = false
-	endif
-	if FP[playerIndex] then
-		call DisplayLoDWarningForPlayer(p, OZR, "你已经准备好了")
-		return false
-	endif
-	if HeroSkill_Disabled[abilityIndex] then
-		call DisplayLoDWarningForPlayer(p, OZR, "该技能无法被选择 :(")
-		return false
-	endif
-	if Mode__DeathMatch or MainModeName =="ar" then
-		if HeroSkill_IsDisabledInDeathMatch[abilityIndex] then
-			return false
-		endif
-	endif
-	if Mode__OneSkill then
-		if IsPlayerSentinel(p) then
-			set YTE = 1
-		else
-			set YTE = 2
-		endif
-		if XP[YTE * OP + abilityIndex]!= 0 then
-			call DisplayLoDWarningForPlayer(p, OZR, "一个玩家已经选择了这个技能: " + PlayerColorHex[XP[YTE * OP + abilityIndex]] + PlayersName[XP[YTE * OP + abilityIndex]] + "|r")
-			return false
-		endif
-	endif
-	set xx = 1
-	loop
-		if O_R then
-			if xx == 4 or xx == 6 then
-				if PlayerSkillIndices[ROR + xx]== 0 then
-					set O3R = xx
-				exitwhen true
-				endif
-			endif
-		else
-			if not(xx == 4 or xx == 6) then
-				if PlayerSkillIndices[ROR + xx]== 0 then
-					set O2R = xx
-				exitwhen true
-				endif
-			endif
-		endif
-		set xx = xx + 1
-	exitwhen xx > 4 + ExtraSkillsCount
-	endloop
-	if O3R == 0 and O_R then
-		call DisplayLoDWarningForPlayer(p, OZR, "你必须选择一个小技能（非最终技能）.")
-		return false
-	endif
-	if O2R == 0 and not(O_R) then
-		call DisplayLoDWarningForPlayer(p, OZR, "你必须选择一个最终技能.")
-		return false
-	endif
-	if Mode__RandomExtraAbilities then
-		if PlayerSkillIndices[ROR + 5]== 0 and ExtraSkillsCount >= 1 then
-			set O2R = 5
-		endif
-		if PlayerSkillIndices[ROR + 6]== 0 and ExtraSkillsCount >= 2 then
-			set O3R = 6
-		endif
-	endif
-	set RER = CheckAbilityIdFormIndex(abilityIndex,-1, "melee only", null)
-	set O9R = CheckAbilityIdFormIndex(abilityIndex,-1, "melee morph", null)
-	set RXR = CheckAbilityIdFormIndex(abilityIndex,-1, "range only", null)
-	set RVR = CheckAbilityIdFormIndex(abilityIndex,-1, "range morph", null)
-	if playerIndex == 0 then
-		set u = LoadUnitHandle(HY,'0REA','000U')
-		if u != null then
-			if OUR(GetUnitUserData(u)) then
-				if RXR then
-					set u = null
-					return false
-				endif
-			else
-				if RER then
-					set u = null
-					return false
-				endif
-			endif
-		endif
-	endif
-	if RER or O9R then
-		set xx = 1
-		loop
-			if CheckAbilityIdFormIndex(PlayerSkillIndices[ROR + xx],-1, "range only", null) or CheckAbilityIdFormIndex(PlayerSkillIndices[ROR + xx],-1, "range morph", null) then
-				set ns = xx
-				if O9R then
-					set O4R = "你不能选择一个近战变身技能"
-				else
-					set O4R = "你不能选择一个近战限定技能"
-				endif
-			exitwhen true
-			endif
-			set xx = xx + 1
-		exitwhen xx > 4 + ExtraSkillsCount
-		endloop
-		set xx = 1
-		loop
-			if CheckAbilityIdFormIndex(PlayerSkillIndices[ROR + xx], abilityIndex, null, "melee only") then
-				set ns = xx
-				set O4R = "buggy/orderids"
-			exitwhen true
-			endif
-			set xx = xx + 1
-		exitwhen xx > 4 + ExtraSkillsCount
-		endloop
-	elseif RXR or RVR then
-		set xx = 1
-		loop
-			if CheckAbilityIdFormIndex(PlayerSkillIndices[ROR + xx],-1, "melee only", null) or CheckAbilityIdFormIndex(PlayerSkillIndices[ROR + xx],-1, "melee morph", null) then
-				set ns = xx
-				if RVR then
-					set O4R = "你不能选择一个远程变身技能"
-				else
-					set O4R = "你不能选择一个远程限定技能"
-				endif
-			exitwhen true
-			endif
-			set xx = xx + 1
-		exitwhen xx > 4 + ExtraSkillsCount
-		endloop
-		set xx = 1
-		loop
-			if CheckAbilityIdFormIndex(PlayerSkillIndices[ROR + xx], abilityIndex, null, "range only") then
-				set ns = xx
-				set O4R = "buggy/orderids"
-			exitwhen true
-			endif
-			set xx = xx + 1
-		exitwhen xx > 4 + ExtraSkillsCount
-		endloop
-	else
-		set xx = 1
-		loop
-			if CheckAbilityIdFormIndex(PlayerSkillIndices[ROR + xx], abilityIndex, null, null) then
-				set ns = xx
-				set O4R = "buggy/orderids"
-			exitwhen true
-			endif
-			set xx = xx + 1
-		exitwhen xx > 4 + ExtraSkillsCount
-		endloop
-	endif
-	if HeroSkill_HasMultipleAbilities[abilityIndex]and(Mode__FiveSkills or Mode__SixSkills) then
-		call DisplayLoDTipForPlayer(p, OZR, "注意：该技能是多图标技能。建议用命令改键来修改额外技能快捷键。")
-	endif
-	if abilityIndex ==(35 -1)* 4 + 3 then
-		if IsPlayerSentinel(p) then
-			if OQR(GetPlayerId(SentinelPlayers[1])) or OQR(GetPlayerId(SentinelPlayers[2])) or OQR(GetPlayerId(SentinelPlayers[3])) or OQR(GetPlayerId(SentinelPlayers[4])) or OQR(GetPlayerId(SentinelPlayers[5])) then
-				call DisplayLoDWarningForPlayer(p, OZR, "你的队友已经选择了这个技能，不能再选择一个了。")
-				return false
-			endif
-		else
-			if OQR(GetPlayerId(ScourgePlayers[1])) or OQR(GetPlayerId(ScourgePlayers[2])) or OQR(GetPlayerId(ScourgePlayers[3])) or OQR(GetPlayerId(ScourgePlayers[4])) or OQR(GetPlayerId(ScourgePlayers[5])) then
-				call DisplayLoDWarningForPlayer(p, OZR, "你的队友已经选择了这个技能，不能再选择一个了。")
-				return false
-			endif
-		endif
-	endif
-	if Mode__BalanceOff == false then
-		set RRR = 1
-	else
-		set RRR = 2
-	endif
-	// 是允许限制的技能
-	if OSR(abilityIndex) then
-		set O7R = OPR(playerIndex)>= RRR
-		if O7R == false then
-			if IsPlayerSentinel(p) then
-				set O7R =(OPR(GetPlayerId(SentinelPlayers[1])) + OPR(GetPlayerId(SentinelPlayers[2])) + OPR(GetPlayerId(SentinelPlayers[3])) + OPR(GetPlayerId(SentinelPlayers[4])) + OPR(GetPlayerId(SentinelPlayers[5])))>= 7
-			else
-				set O7R =(OPR(GetPlayerId(ScourgePlayers[1])) + OPR(GetPlayerId(ScourgePlayers[2])) + OPR(GetPlayerId(ScourgePlayers[3])) + OPR(GetPlayerId(ScourgePlayers[4])) + OPR(GetPlayerId(ScourgePlayers[5])))>= 7
-			endif
-			set O8R = O7R
-		endif
-	endif
-	if ns == 0 then
-		if (Mode__LimitSkills) then
-			if O7R == false then
-				set O0R = 0
-				set O1R = 0
-				set O5R =(abilityIndex -1)/ 4
-				set xx = 1
-				loop
-					if PlayerSkillIndices[ROR + xx]!= 0 then
-						set O6R =(PlayerSkillIndices[ROR + xx]-1)/ 4
-						if (O6R == O5R) then
-							if O0R == 0 then
-								set O0R = xx
-							elseif Mode__LimitSkills3 then
-								if O1R == 0 then
-									set O1R = xx
-								else
-									set ns = xx
-									set O4R = "同一个英雄的技能不能超过3个"
-								exitwhen true
-								endif
-							else
-								set ns = xx
-								set O4R = "同一个英雄的技能不能超过2个"
-							exitwhen true
-							endif
-						endif
-					endif
-					set xx = xx + 1
-				exitwhen(xx > 4 + ExtraSkillsCount) or(xx > 4 and Mode__RandomExtraAbilities)
-				endloop
-			endif
-		endif
-	endif
-	if ns != 0 then
-		if O4R != "" then
-			if O1R != 0 then
-				call DisplayLoDWarningForPlayer(p, OZR, "不兼容 : " + GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[ROR + ns]]) + "/" + GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[ROR + O0R]]) + "/" + GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[ROR + O1R]]) + " (" + O4R + ")")
-			elseif O0R != 0 then
-				call DisplayLoDWarningForPlayer(p, OZR, "不兼容 : " + GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[ROR + ns]]) + "/" + GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[ROR + O0R]]) + " (" + O4R + ")")
-			else
-				call DisplayLoDWarningForPlayer(p, OZR, "不兼容 : " + GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[ROR + ns]]) + " (" + O4R + ")")
-			endif
-		else
-			call DisplayLoDWarningForPlayer(p, OZR, "不兼容 : " + GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[ROR + ns]]))
-		endif
-		return false
-	endif
-	if O7R then
-		if O8R == false then
-			if RRR == 2 then
-				call DisplayLoDWarningForPlayer(p, OZR, "不能选择该技能，你已经有2个控制技能了！")
-			else
-				call DisplayLoDWarningForPlayer(p, OZR, "不能选择该技能，你已经有1个控制技能了！")
-			endif
-		else
-			call DisplayLoDWarningForPlayer(p, OZR, "不能选择该技能，你的队伍已经选择7个控制技能了！")
-		endif
-		return false
-	endif
-	if HaveSavedString(AbilityDataHashTable, HeroSkill_BaseId[abilityIndex], HotKeyStringHash) then
-		set xx = 1
-		loop
-			if PlayerSkillIndices[ROR + xx]> 0 and HaveSavedString(AbilityDataHashTable, HeroSkill_BaseId[PlayerSkillIndices[ROR + xx]], HotKeyStringHash) then
-				if LoadStr(AbilityDataHashTable, HeroSkill_BaseId[abilityIndex], HotKeyStringHash) == LoadStr(AbilityDataHashTable, HeroSkill_BaseId[PlayerSkillIndices[ROR + xx]], HotKeyStringHash) then
-					call DisplayLoDWarningForPlayer(p, OZR, "快捷键冲突 : " + GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[ROR + xx]]))
-					if HaveSavedBoolean(OtherHashTable, GetHandleId(Player(playerIndex)),'NSHK') and Mode__AllRandom then
-						return false
-					endif
-				endif
-			endif
-			set xx = xx + 1
-		exitwhen(xx > 4 + ExtraSkillsCount)
-		endloop
-	endif
-	if O_R then
-		set PlayerSkillIndices[ROR + O3R] = abilityIndex
-		call OMR(playerIndex, O3R, abilityIndex)
-	else
-		set PlayerSkillIndices[ROR + O2R] = abilityIndex
-		call OMR(playerIndex, O2R, abilityIndex)
-	endif
-	if Mode__OneSkill then
-		if XP[YTE * OP + abilityIndex]== 0 then
-			set XP[YTE * OP + abilityIndex] = playerIndex
-		endif
-	endif
-	set xx = 1
-	loop
-		if PlayerSkillIndices[ROR + xx]== 0 then
-			set pr = false
-		exitwhen true
-		endif
-		set xx = xx + 1
-	exitwhen xx > 4 + ExtraSkillsCount
-	endloop
-	set FP[playerIndex] = pr
-	if RER then
-		set PP[playerIndex] = 1
-		call UVE(p, OZR, "注意：该技能是近战限定技能.")
-	elseif RXR then
-		set PP[playerIndex] = 2
-		call UVE(p, OZR, "注意：该技能是远程限定技能.")
-	endif
-	if O9R then
-		call UVE(p, OZR, "注意：该技能是近战变身技能.")
-	elseif RVR then
-		call UVE(p, OZR, "注意：该技能是远程变身技能.")
-	endif
-	if ( not Mode__BalanceOff and HeroSkill_BalanceOffDisabledTips[abilityIndex]!= null ) then
-		call UVE(p, OZR, "平衡改动(BO)：" + HeroSkill_BalanceOffDisabledTips[abilityIndex]) // BalanceOff
-	endif
-	if ( not Mode__RearmCombos and HeroSkill_RearmCombosDisabledTips[abilityIndex]!= null ) then
-		call UVE(p, OZR, "平衡改动(RC)：" + HeroSkill_RearmCombosDisabledTips[abilityIndex]) // RearmCombos
-	endif
-	if HeroSkill_Tips[abilityIndex]!= null then
-		call UVE(p, OZR, "注意：" + HeroSkill_Tips[abilityIndex])
-	endif
-	return true
-endfunction
+
 // 全部随机
 function Q7X takes nothing returns nothing
 	local unit u = LoadUnitHandle(HY,'hRUT', 1)
@@ -28848,14 +28135,14 @@ function Q7X takes nothing returns nothing
 	loop
 		set ZKE =(GetRandomInt(1, MAX_HERO_INDEX * 4))
 		if IsUnitType(u, UNIT_TYPE_MELEE_ATTACKER) then
-			if not CheckAbilityIdFormIndex(ZKE,-1, "range only", null) then
+			if not CheckSkillOrderIdByIndex(ZKE,-1, "range only", null) then
 				call SaveInteger(HY,'0REA','0PID', playerIndex)
 				call SaveInteger(HY,'0REA','0SID', ZKE)
 				call SaveBoolean(HY,'0REA','000B', false)
 				call ExecuteFunc("SPO")
 			endif
 		else
-			if not CheckAbilityIdFormIndex(ZKE,-1, "melee only", null) then
+			if not CheckSkillOrderIdByIndex(ZKE,-1, "melee only", null) then
 				call SaveInteger(HY,'0REA','0PID', playerIndex)
 				call SaveInteger(HY,'0REA','0SID', ZKE)
 				call SaveBoolean(HY,'0REA','000B', false)
@@ -28931,11 +28218,11 @@ function RIR takes integer pid, integer skillIndex returns boolean
 	set sn = skillIndex -((sn -1)* 4)
 	if Mode__RandomExtraAbilities then
 		if PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 5]== skillIndex and ExtraSkillsCount >= 1 then
-			call DisplayLoDWarningForPlayer(Player(pid), true, "你不能在\"额外随机技能\"模式下移除该技能.")
+			call DisplayLoDErrorForPlayer(Player(pid), true, "你不能在\"额外随机技能\"模式下移除该技能.")
 			return false
 		endif
 		if PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 6]== skillIndex and ExtraSkillsCount >= 2 then
-			call DisplayLoDWarningForPlayer(Player(pid), true, "你不能在\"额外随机技能\"模式下移除该技能.")
+			call DisplayLoDErrorForPlayer(Player(pid), true, "你不能在\"额外随机技能\"模式下移除该技能.")
 			return false
 		endif
 	endif
@@ -28952,10 +28239,10 @@ function RIR takes integer pid, integer skillIndex returns boolean
 	set PP[pid] = 0
 	set xx = 1
 	loop
-		if CheckAbilityIdFormIndex(PlayerSkillIndices[pid * MAX_SKILL_SLOTS + xx],-1, "melee only", null) then
+		if CheckSkillOrderIdByIndex(PlayerSkillIndices[pid * MAX_SKILL_SLOTS + xx],-1, "melee only", null) then
 			set PP[pid] = 1
 		exitwhen true
-		elseif CheckAbilityIdFormIndex(PlayerSkillIndices[pid * MAX_SKILL_SLOTS + xx],-1, "range only", null) then
+		elseif CheckSkillOrderIdByIndex(PlayerSkillIndices[pid * MAX_SKILL_SLOTS + xx],-1, "range only", null) then
 			set PP[pid] = 2
 		exitwhen true
 		endif
@@ -29083,57 +28370,7 @@ function RCR takes nothing returns nothing
 		set FP[playerIndex] = false
 	endif
 endfunction
-function RDR takes nothing returns nothing
-	local integer pid = GetPlayerId(GetOwningPlayer(GetSpellAbilityUnit()))
-	local integer index = (PlayerNowPackedHeroIndex[pid]* 4)-4
-	local integer sn
-	local integer xx
-	local integer RFR
-	if not((GetSpellAbilityId()>='Z000' and GetSpellAbilityId()<='Z003') or(GetSpellAbilityId()>='Z010' and GetSpellAbilityId()<='Z013')) then
-		return
-	endif
-	if GetSpellAbilityId()=='Z000' or GetSpellAbilityId()=='Z010' then
-		set index = index + 1
-		set sn = 1
-	elseif GetSpellAbilityId()=='Z001' or GetSpellAbilityId()=='Z011' then
-		set index = index + 2
-		set sn = 2
-	elseif GetSpellAbilityId()=='Z002' or GetSpellAbilityId()=='Z012' then
-		set index = index + 3
-		set sn = 3
-	elseif GetSpellAbilityId()=='Z003' or GetSpellAbilityId()=='Z013' then
-		set index = index + 4
-		set sn = 4
-	else
-		return
-	endif
-	if not OnPlayerPickAbility(index, pid, true) then
-		return
-	endif
-	if IsPlayerHasSkill(Player(pid), index) then
-		call UnitRemoveAbility(KP[pid],('Z000'-1) + sn)
-		call UnitAddAbility(KP[pid],('Z004'-1) + sn)
-		if Mode__OneSkill then
-			set xx = 1
-			loop
-				if IsPlayerSentinel(Player(pid)) then
-					set RFR = GetPlayerId(SentinelPlayers[xx])
-				else
-					set RFR = GetPlayerId(ScourgePlayers[xx])
-				endif
-				if GetUnitAbilityLevel(KP[RFR], HeroSkill_BaseId[index])> 0 and pid != RFR and GetUnitAbilityLevel(KP[RFR],'Z000'-1 + sn)> 0 then
-					call UnitRemoveAbility(KP[RFR],('Z000'-1) + sn)
-					call UnitAddAbility(KP[RFR],('Z010'-1) + sn)
-				endif
-				set xx = xx + 1
-			exitwhen xx > 5
-			endloop
-		endif
-	endif
-	if FP[pid] then
-		call SQO()
-	endif
-endfunction
+
 // 创建酒馆和添加英雄
 function RGR takes player p, integer iHeroTypeId, integer i2 returns nothing
 	local integer h = GetHandleId(p)
@@ -29421,7 +28658,7 @@ function SPO takes nothing returns nothing
 	local integer playerIndex = LoadInteger(HY,'0REA','0PID')
 	local integer ZKE = LoadInteger(HY,'0REA','0SID')
 	local boolean expression = LoadBoolean(HY,'0REA','000B')
-	call OnPlayerPickAbility(ZKE, playerIndex, expression)
+	call SkillDraftOnPlayerPickSkill(ZKE, playerIndex, expression)
 endfunction
 function IVR takes nothing returns nothing
 	local integer playerIndex = 0
@@ -31943,8 +31180,8 @@ function BYR takes unit u returns nothing //拉比克额外技能删除,和omg�
 	call UnitRemoveAbility(u,'A21J')
 	call UnitRemoveAbility(u,'A1QV')
 	call UnitRemoveAbility(u,'A1TU')
-	call UnitRemoveAbility(u,'A24A')
-	call UnitRemoveAbility(u,'A24B')
+	call UnitRemoveAbility(u,SPIRITS_IN_ABILITY_ID)
+	call UnitRemoveAbility(u,SPIRITS_OUT_ABILITY_ID)
 	call UnitRemoveAbility(u,'A1NH')
 	call UnitRemoveAbility(u,'A20N')
 	call UnitRemoveAbility(u,'A1Z2')
@@ -33865,7 +33102,7 @@ function GLR takes nothing returns boolean
 	if GetUnitAbilityLevel(trigUnit,'A1IQ')> 0 and GetUnitAbilityLevel(trigUnit,'A1IQ') != level then
 		call SetUnitAbilityLevel(trigUnit,'A1IQ', level)
 	endif
-	if GMR -GPR > 14-level * 2 and GQR == false and IsPlayerHasSkill(GetOwningPlayer(trigUnit), 31 * 4 + 2) and IsUnitDeath(trigUnit) == false then
+	if GMR -GPR > 14-level * 2 and GQR == false and IsPlayerSkillPickedByIndex(GetOwningPlayer(trigUnit), 31 * 4 + 2) and IsUnitDeath(trigUnit) == false then
 		call SaveBoolean(HY, GetHandleId(trigUnit),'A1IQ'+ 183, true)
 		set t = CreateTrigger()
 		set h = GetHandleId(t)
@@ -39084,88 +38321,6 @@ function MQX takes nothing returns nothing
 	call TriggerAddAction(t, function WLR)
 	set t = null
 endfunction
-function WMR takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit whichUnit =(LoadUnitHandle(HY, h, 2))
-	local unit targetUnit =(LoadUnitHandle(HY, h, 17))
-	local real x1
-	local real y1
-	local real x2
-	local real y2
-	if GetTriggerEventId() == EVENT_WIDGET_DEATH or(GetTriggerEventId() == EVENT_UNIT_DAMAGED and GetEventDamage()> 2 and IsPlayerValid(GetOwningPlayer(GetEventDamageSource()))) then
-		call DestroyEffect((LoadEffectHandle(HY, h, 175)))
-		call DestroyEffect((LoadEffectHandle(HY, h, 176)))
-		call FlushChildHashtable(HY, h)
-		call DestroyTrigger(t)
-	elseif GetTriggerEventId() != EVENT_UNIT_DAMAGED and GetTriggerEventId() != EVENT_WIDGET_DEATH then
-		set x1 = GetUnitX(whichUnit)
-		set y1 = GetUnitY(whichUnit)
-		set x2 = GetUnitX(targetUnit)
-		set y2 = GetUnitY(targetUnit)
-		call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Human\\MassTeleport\\MassTeleportCaster.mdl", x1, y1))
-		call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Human\\MassTeleport\\MassTeleportTarget.mdl", x2, y2))
-		call EPX(targetUnit, 4410, 1)
-		call SetUnitPosition(targetUnit, GetUnitX(whichUnit), GetUnitY(whichUnit))
-		call DestroyEffect(LoadEffectHandle(HY, h, 175))
-		call DestroyEffect(LoadEffectHandle(HY, h, 176))
-		call FlushChildHashtable(HY, h)
-		call DestroyTrigger(t)
-	endif
-	set t = null
-	set whichUnit = null
-	set targetUnit = null
-	return false
-endfunction
-function WPR takes nothing returns nothing
-	local unit targetUnit = GetEnumUnit()
-	local real d = GetDistanceBetween(GetUnitX(targetUnit), GetUnitY(targetUnit), JDV, JFV)
-	if d < JCV and LoadBoolean(HY, GetHandleId(GetOwningPlayer(targetUnit)), 139) == false then
-		set JBV = targetUnit
-		set JCV = d
-	endif
-	set targetUnit = null
-endfunction
-function VSE takes nothing returns nothing
-	local unit targetUnit = GetSpellTargetUnit()
-	local unit whichUnit = GetTriggerUnit()
-	local trigger t
-	local integer h
-	local real N5O
-	local group g = null
-	local integer level = GetUnitAbilityLevel(whichUnit,'A10U')
-	if targetUnit == null then
-		set JBV = null
-		set JCV = 999999
-		set JDV = GetSpellTargetX()
-		set JFV = GetSpellTargetY()
-		set TempUnit = whichUnit
-		set g = AllocationGroup(208)
-		call GroupEnumUnitsInRange(g, 0, 0, 9999, Condition(function D4X))
-		call GroupRemoveUnit(g, whichUnit)
-		call ForGroup(g, function WPR)
-		call DeallocateGroup(g)
-		set targetUnit = JBV
-		set g = null
-	endif
-	if targetUnit != null then
-		set t = CreateTrigger()
-		set h = GetHandleId(t)
-		call TriggerRegisterDeathEvent(t, targetUnit)
-		call TriggerRegisterDeathEvent(t, whichUnit)
-		call TriggerRegisterUnitEvent(t, targetUnit, EVENT_UNIT_DAMAGED)
-		call TriggerRegisterTimerEvent(t, 6 -level, false)
-		call TriggerAddCondition(t, Condition(function WMR))
-		call SaveUnitHandle(HY, h, 2,(whichUnit))
-		call SaveUnitHandle(HY, h, 17,(targetUnit))
-		call SaveEffectHandle(HY, h, 175,(AddSpecialEffectTarget("Abilities\\Spells\\Human\\MassTeleport\\MassTeleportTo.mdl", whichUnit, "origin")))
-		call SaveEffectHandle(HY, h, 176,(AddSpecialEffectTarget("Abilities\\Spells\\Human\\MassTeleport\\MassTeleportTo.mdl", targetUnit, "origin")))
-	endif
-	set targetUnit = null
-	set whichUnit = null
-	set t = null
-endfunction
-
 function KSE takes nothing returns nothing
 	if GetSpellTargetUnit() != null and LoadBoolean(HY, GetHandleId(GetOwningPlayer(GetSpellTargetUnit())), 139) then
 		call EXStopUnit(GetTriggerUnit())
@@ -39268,51 +38423,7 @@ function SpellEffect__ManaLeak takes nothing returns nothing
 		call ManaLeak_CallBack()
 	endif
 endfunction
-function WZR takes nothing returns nothing
-	local integer h = GetHandleId(GetExpiredTimer())
-	local unit u = LoadUnitHandle(HY, h, 0)
-	local unit d = LoadUnitHandle(HY, h, 1)
-	if GetUnitTypeId(u)=='H06X' and UnitAlive(u) and GetWidgetLife(u)> 0 and IsUnitHidden(u) == false then
-		if IsUnitHidden(d) then
-			call ShowUnit(d, true)
-			call UnitRemoveAbility(d, 'Aloc')
-			call UnitAddAbility(d, 'Aloc')
-		endif
-		call SetUnitPosition(d, GetUnitX(u), GetUnitY(u))
-	else
-		if IsUnitHidden(d) == false then
-			call ShowUnit(d, false)
-		endif
-	endif
-	set u = null
-	set d = null
-endfunction
-function W_R takes unit u returns nothing
-	local unit d = CreateUnit(GetOwningPlayer(u),'hSPR', GetUnitX(u), GetUnitY(u), 0)
-	local timer t = CreateTimer()
-	call TimerStart(t, .25, true, function WZR)
-	call SaveUnitHandle(HY, GetHandleId(t), 0, u)
-	call SaveUnitHandle(HY, GetHandleId(t), 1, d)
-	call SaveBoolean(ObjectHashTable, GetHandleId(u),'SPRT', true)
-	set t = null
-	set d = null
-endfunction
-function V0E takes nothing returns nothing
-	local unit u = GetTriggerUnit()
-	local integer level = GetUnitAbilityLevel(u,'QM01')
-	local player p = GetOwningPlayer(u)
-	local boolean W0R = GetUnitTypeId(u)!='H06X'
-	call SetPlayerAbilityAvailable(p,'A11X', W0R)
-	call SetPlayerAbilityAvailable(p,'A10U', W0R)
-	call SetUnitAbilityLevel(u,'A11X', level)
-	call SetUnitAbilityLevel(u,'A10U', level)
-	if W0R then
-		if LoadBoolean(ObjectHashTable, GetHandleId(u),'SPRT') != true then
-			call W_R(u)
-		endif
-	endif
-	set u = null
-endfunction
+
 function W4R takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
@@ -39341,92 +38452,7 @@ function V_E takes nothing returns nothing
 	set trigUnit = null
 	set targetUnit = null
 endfunction
-function W6R takes nothing returns nothing
-	local unit targetUnit = GetEnumUnit()
-	local real x = GetUnitX(targetUnit)
-	local real y = GetUnitY(targetUnit)
-	local real a = Atan2(y -JJV, x -JHV)
-	set x = CoordinateX50(x + 40 * Cos(a))
-	set y = CoordinateY50(y + 40 * Sin(a))
-	call KillTreeByCircle(x, y, 150)
-	call SetUnitX(targetUnit, x)
-	call SetUnitY(targetUnit, y)
-	set targetUnit = null
-endfunction
-function W7R takes nothing returns nothing
-	call UnitAddAbilityToTimed(GetEnumUnit(),'A3PZ', 1, 3 + JGV,'B09K')
-endfunction
-function W8R takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local player p =(LoadPlayerHandle(HY, h, 54))
-	local real sx =(LoadReal(HY, h, 189))
-	local real sy =(LoadReal(HY, h, 190))
-	local integer CVX =(LoadInteger(HY, h, 59))
-	local group g =(LoadGroupHandle(HY, h, 22))
-	local integer count = GetTriggerEvalCount(t)
-	set JHV = sx
-	set JJV = sy
-	call ForGroup(g, function W6R)
-	if count == 10 then
-		set JGV = CVX
-		set TempPlayer = p
-		call ForGroup(g, function W7R)
-		call DeallocateGroup(g)
-		call FlushChildHashtable(HY, h)
-		call DestroyTrigger(t)
-	endif
-	set t = null
-	set p = null
-	set g = null
-	return false
-endfunction
-function W9R takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local player p =(LoadPlayerHandle(HY, h, 54))
-	local real sx =(LoadReal(HY, h, 189))
-	local real sy =(LoadReal(HY, h, 190))
-	local integer CVX =(LoadInteger(HY, h, 59))
-	local group g =(LoadGroupHandle(HY, h, 22))
-	call FlushChildHashtable(HY, h)
-	call DestroyTrigger(t)
-	set t = CreateTrigger()
-	set h = GetHandleId(t)
-	call TriggerRegisterTimerEvent(t, .04, true)
-	call TriggerAddCondition(t, Condition(function W8R))
-	call SavePlayerHandle(HY, h, 54,(p))
-	call SaveReal(HY, h, 189,((sx)* 1.))
-	call SaveReal(HY, h, 190,((sy)* 1.))
-	call SaveGroupHandle(HY, h, 22,(g))
-	call SaveInteger(HY, h, 59,(CVX))
-	set t = null
-	set p = null
-	set g = null
-	return false
-endfunction
-function V1E takes nothing returns nothing
-	local trigger t = CreateTrigger()
-	local integer h = GetHandleId(t)
-	local group g = AllocationGroup(210)
-	local unit whichUnit = GetTriggerUnit()
-	local real x = GetSpellTargetX()
-	local real y = GetSpellTargetY()
-	call KillUnit(CreateUnit(GetOwningPlayer(whichUnit),'h06P', x, y, 0))
-	set TempUnit = whichUnit
-	call GroupEnumUnitsInRange(g, x, y, 700, Condition(function DQX))
-	call TriggerRegisterTimerEvent(t, .4, false)
-	call TriggerAddCondition(t, Condition(function W9R))
-	call SavePlayerHandle(HY, h, 54,(GetOwningPlayer(whichUnit)))
-	call SaveReal(HY, h, 189,((x)* 1.))
-	call SaveReal(HY, h, 190,((y)* 1.))
-	call SaveGroupHandle(HY, h, 22,(g))
-	call SaveInteger(HY, h, 59, GetUnitAbilityLevel(whichUnit, GetSpellAbilityId()))
-	call EnableAttackEffectByTime(I, 8)
-	set t = null
-	set g = null
-	set whichUnit = null
-endfunction
+
 function YVR takes nothing returns nothing
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
@@ -41102,9 +40128,9 @@ function InitMultiCast takes nothing returns nothing
 	call SetAbilityCanNotMultiCast('A0A5')
 	call SetAbilityCanNotMultiCast('A1EG')
 	call SetAbilityCanNotMultiCast('A0AG')
-	call SetAbilityCanNotMultiCast('A0KX')
+	call SetAbilityCanNotMultiCast(ATTRIBUTESHIFT_AGILITY_GAIN_ABILITY_ID)
 	call SetAbilityCanNotMultiCast('A0G8')
-	call SetAbilityCanNotMultiCast('A0KW')
+	call SetAbilityCanNotMultiCast(ATTRIBUTESHIFT_STRENGTH_GAIN_ABILITY_ID)
 	call SetAbilityCanNotMultiCast('A063')
 	call SetAbilityCanNotMultiCast('A07U')
 	call SetAbilityCanNotMultiCast('A38E')
@@ -41425,7 +40451,7 @@ function VPE takes nothing returns nothing
 	set t = null
 endfunction
 function XII takes nothing returns boolean
-	if IsUnitIllusion(GetFilterUnit()) and IsPlayerHasSkill(GetOwningPlayer(GetFilterUnit()), 83) and GetOwningPlayer(GetFilterUnit()) == GetOwningPlayer(GetTriggerUnit()) then
+	if IsUnitIllusion(GetFilterUnit()) and IsPlayerSkillPickedByIndex(GetOwningPlayer(GetFilterUnit()), 83) and GetOwningPlayer(GetFilterUnit()) == GetOwningPlayer(GetTriggerUnit()) then
 		call SetUnitFacing(GetFilterUnit(), TempReal1)
 		call SetUnitAnimation(GetFilterUnit(), "spell")
 	endif
@@ -43163,18 +42189,6 @@ endfunction
 
 
 
-function E0E takes nothing returns nothing
-	local unit u = GetTriggerUnit()
-	local integer i = GetUnitTypeId(u)
-	call SetPlayerTechResearched(GetOwningPlayer(u),'R001',(GetUnitAbilityLevel(u, GetSpellAbilityId()) + 1))
-	if i !='N015' and i !='N014' and i !='N013' then
-		call SetPlayerAbilityAvailable(GetOwningPlayer(u),'A344', true)
-	else
-		call SetPlayerAbilityAvailable(GetOwningPlayer(u),'A344', false)
-	endif
-	call SetUnitAbilityLevel(u,'A344', GetUnitAbilityLevel(u, GetSpellAbilityId()))
-	set u = null
-endfunction
 // 熊灵的战争咆哮
 function I4E takes nothing returns nothing
 	local unit hTriggerUnit = GetTriggerUnit()
@@ -44440,254 +43454,8 @@ function N2I takes unit R8X, unit targetUnit returns nothing
 		call N_I(R8X, targetUnit)
 	endif
 endfunction
-function N3I takes unit whichUnit, unit targetUnit, unit dummyCaster, integer level returns nothing
-	call SetUnitOwner(dummyCaster, GetOwningPlayer(targetUnit), false)
-	call SetUnitAbilityLevel(dummyCaster,'A21O', level)
-	call IssueTargetOrderById(dummyCaster,852190, targetUnit)
-	call UnitDamageTargetEx(whichUnit, targetUnit, 1, 50 + 50 * level)
-	call DestroyEffect(AddSpecialEffectTarget("Objects\\Spawnmodels\\Human\\HumanBlood\\BloodElfSpellThiefBlood.mdl", targetUnit, "overhead"))
-endfunction
-function N4I takes nothing returns nothing
-	if IsUnitInGroup(GetEnumUnit(), KNV) == false then
-		call GroupAddUnit(KNV, GetEnumUnit())
-		call N3I(KIV, GetEnumUnit(), KAV, KBV)
-	endif
-endfunction
-function N5I takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit whichUnit =(LoadUnitHandle(HY, h, 2))
-	local unit dummyCaster =(LoadUnitHandle(HY, h, 19))
-	local real x = GetUnitX(whichUnit)
-	local real y = GetUnitY(whichUnit)
-	local unit N6I =(LoadUnitHandle(HY, h, 675))
-	local unit N7I =(LoadUnitHandle(HY, h, 676))
-	local real a =(LoadReal(HY, h, 13))
-	local real d =(LoadReal(HY, h, 433))
-	local integer level =(LoadInteger(HY, h, 5))
-	local group D7R =(LoadGroupHandle(HY, h, 187))
-	local group g = AllocationGroup(288)
-	if GetTriggerEvalCount(t)<= 50 then
-		set a = a + 20
-		set d = d + 7
-		call SaveReal(HY, h, 13,((a)* 1.))
-		call SaveReal(HY, h, 433,((d)* 1.))
-	elseif GetTriggerEvalCount(t)<= 100  then
-		set a = a + 20
-		set d = d -7
-		call SaveReal(HY, h, 13,((a)* 1.))
-		call SaveReal(HY, h, 433,((d)* 1.))
-	endif
-	call SetUnitX(N6I, CoordinateX50(x + d * Cos(a * bj_DEGTORAD)))
-	call SetUnitY(N6I, CoordinateY50(y + d * Sin(a * bj_DEGTORAD)))
-	set a = a + 180
-	call SetUnitX(N7I, CoordinateX50(x + d * Cos(a * bj_DEGTORAD)))
-	call SetUnitY(N7I, CoordinateY50(y + d * Sin(a * bj_DEGTORAD)))
-	set TempUnit = whichUnit
-	set KIV = whichUnit
-	set KAV = dummyCaster
-	set KNV = D7R
-	set KBV = level
-	call GroupEnumUnitsInRange(g, GetUnitX(N6I), GetUnitY(N6I), 125, Condition(function DHX))
-	call ForGroup(g, function N4I)
-	set TempUnit = whichUnit
-	call GroupEnumUnitsInRange(g, GetUnitX(N7I), GetUnitY(N7I), 125, Condition(function DHX))
-	call ForGroup(g, function N4I)
-	call DeallocateGroup(g)
-	if GetTriggerEvalCount(t)> 100  then
-		call KillUnit(N6I)
-		call KillUnit(N7I)
-		call KillUnit(dummyCaster)
-		call DeallocateGroup(D7R)
-		call FlushChildHashtable(HY, h)
-		call DestroyTrigger(t)
-	endif
-	set t = null
-	set whichUnit = null
-	set N6I = null
-	set N7I = null
-	set dummyCaster = null
-	set D7R = null
-	set g = null
-	return false
-endfunction
-function XEE takes nothing returns nothing
-	local unit whichUnit = GetTriggerUnit()
-	local real x = GetUnitX(whichUnit)
-	local real y = GetUnitY(whichUnit)
-	local unit N6I = CreateUnit(GetOwningPlayer(whichUnit),'e02Y', x, y, 0)
-	local unit N7I = CreateUnit(GetOwningPlayer(whichUnit),'e02Y', x, y, 0)
-	local trigger t = CreateTrigger()
-	local integer h = GetHandleId(t)
-	local unit dummyCaster = CreateUnit(GetOwningPlayer(whichUnit),'e00E', x, y, 0)
-	call UnitAddAbility(dummyCaster,'A21O')
-	call SaveUnitHandle(HY, h, 2,(whichUnit))
-	call SaveUnitHandle(HY, h, 19,(dummyCaster))
-	call SaveUnitHandle(HY, h, 675,(N6I))
-	call SaveUnitHandle(HY, h, 676,(N7I))
-	call SaveReal(HY, h, 13,(0 * 1.))
-	call SaveReal(HY, h, 433,(0 * 1.))
-	call SaveInteger(HY, h, 5,(GetUnitAbilityLevel(whichUnit,'A21N')))
-	call SaveGroupHandle(HY, h, 187,(AllocationGroup(289)))
-	call TriggerRegisterTimerEvent(t, .03, true)
-	call TriggerAddCondition(t, Condition(function N5I))
-	call EnableAttackEffectByTime(16, 12.)
-	set whichUnit = null
-	set N6I = null
-	set N7I = null
-	set t = null
-	set dummyCaster = null
-endfunction
-function N8I takes unit whichUnit, unit targetUnit, unit dummyCaster, integer level returns nothing
-	call SetUnitOwner(dummyCaster, GetOwningPlayer(targetUnit), false)
-	call SetUnitAbilityLevel(dummyCaster,'A21P', level)
-	call IssueTargetOrderById(dummyCaster, 852075, targetUnit)
-	call UnitDamageTargetEx(whichUnit, targetUnit, 1, 75)
-	call DestroyEffect(AddSpecialEffectTarget("Objects\\Spawnmodels\\Human\\HumanBlood\\BloodElfSpellThiefBlood.mdl", targetUnit, "overhead"))
-endfunction
-function N9I takes nothing returns nothing
-	if IsUnitInGroup(GetEnumUnit(), KNV) == false then
-		call GroupAddUnit(KNV, GetEnumUnit())
-		call N8I(KIV, GetEnumUnit(), KAV, KBV)
-	endif
-endfunction
-function BVI takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit whichUnit = LoadUnitHandle(HY, h, 2)
-	local real x = LoadReal(HY, h, 6)
-	local real y = LoadReal(HY, h, 7)
-	local unit BEI = LoadUnitHandle(HY, h, 393)
-	local unit BXI = LoadUnitHandle(HY, h, 394)
-	local unit BOI = LoadUnitHandle(HY, h, 395)
-	local unit BRI = LoadUnitHandle(HY, h, 396)
-	local unit BII = LoadUnitHandle(HY, h, 397)
-	local real a = LoadReal(HY, h, 13)-12.5
-	local real d = LoadReal(HY, h, 433)
-	local integer level = LoadInteger(HY, h, 5)
-	local unit u
-	local group g
-	local group D7R = LoadGroupHandle(HY, h, 187)
-	local unit dummyUnit = LoadUnitHandle(HY, h, 19)
-	local integer i = 0
-	// 非匀速
-	set d = d + 900 / 20.
-	call SaveReal(HY, h, 433, d * 1.)
-	set KIV = whichUnit
-	set KAV = dummyUnit
-	set KNV = D7R
-	set KBV = level
-	set g = AllocationGroup(290)
-	loop
-	exitwhen HaveSavedHandle(HY, h, 393 + i) == false
-		set u = LoadUnitHandle(HY, h, 393 + i)
-		if u != null and UnitAlive(u) then
-			call SetUnitX(u, CoordinateX50(LoadReal(HY, h, 6) + d * Cos(a * bj_DEGTORAD)))
-			call SetUnitY(u, CoordinateY50(LoadReal(HY, h, 7) + d * Sin(a * bj_DEGTORAD)))
-			set x = GetUnitX(u)
-			set y = GetUnitY(u)
-			set TempUnit = whichUnit
-			call GroupEnumUnitsInRange(g, x, y, 125, Condition(function DJX))
-			call ForGroup(g, function N9I)
-			call GroupClear(g)
-		endif
-		set a = a + 6.25
-		set i = i + 1
-	endloop
-	call DeallocateGroup(g)
-	if GetTriggerEvalCount(t)> 20 then
-		call KillUnit(BEI)
-		call KillUnit(BXI)
-		call KillUnit(BOI)
-		call KillUnit(BRI)
-		call KillUnit(BII)
-		call KillUnit(dummyUnit)
-		call DeallocateGroup(D7R)
-		call FlushChildHashtable(HY, h)
-		call DestroyTrigger(t)
-	endif
-	set t = null
-	set whichUnit = null
-	set BEI = null
-	set BXI = null
-	set BOI = null
-	set BRI = null
-	set BII = null
-	set dummyUnit = null
-	set u = null
-	set D7R = null
-	set g = null
-	return false
-endfunction
-function XVE takes nothing returns nothing
-	local unit whichUnit = GetTriggerUnit()
-	local real x0 = GetUnitX(whichUnit)
-	local real y0 = GetUnitY(whichUnit)
-	local real x1 = GetSpellTargetX()
-	local real y1 = GetSpellTargetY()
-	local real a = AngleBetweenXY(x0, y0, x1, y1)
-	local unit BEI = CreateUnit(GetOwningPlayer(whichUnit),'e02Z', x0, y0, a -12.5)
-	local unit BXI = CreateUnit(GetOwningPlayer(whichUnit),'e02Z', x0, y0, a -6.25)
-	local unit BOI = CreateUnit(GetOwningPlayer(whichUnit),'e02Z', x0, y0, a)
-	local unit BRI = CreateUnit(GetOwningPlayer(whichUnit),'e02Z', x0, y0, a + 6.25)
-	local unit BII = CreateUnit(GetOwningPlayer(whichUnit),'e02Z', x0, y0, a + 12.5)
-	local trigger t = CreateTrigger()
-	local integer h = GetHandleId(t)
-	local unit d = CreateUnit(GetOwningPlayer(whichUnit),'e00E', x0, y0, 0)
-	call UnitAddAbility(d,'A21P')
-	call SaveUnitHandle(HY, h, 2, whichUnit)
-	call SaveUnitHandle(HY, h, 19, d)
-	call SaveUnitHandle(HY, h, 393, BEI)
-	call SaveUnitHandle(HY, h, 394, BXI)
-	call SaveUnitHandle(HY, h, 395, BOI)
-	call SaveUnitHandle(HY, h, 396, BRI)
-	call SaveUnitHandle(HY, h, 397, BII)
-	call SaveReal(HY, h, 6, x0 * 1.)
-	call SaveReal(HY, h, 7, y0 * 1.)
-	call SaveReal(HY, h, 433, 0 * 1.)
-	call SaveReal(HY, h, 13, a * 1.)
-	call SaveGroupHandle(HY, h, 187, AllocationGroup(291))
-	call SaveInteger(HY, h, 5, GetUnitAbilityLevel(whichUnit,'A21M'))
-	call TriggerRegisterTimerEvent(t, .03, true)
-	call TriggerAddCondition(t, Condition(function BVI))
-	set whichUnit = null
-	set BEI = null
-	set BXI = null
-	set BOI = null
-	set BRI = null
-	set BII = null
-	set t = null
-	set d = null
-endfunction
-function BAI takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit whichUnit =(LoadUnitHandle(HY, h, 2))
-	local integer level = GetUnitAbilityLevel(whichUnit,'A21L')
-	if level == 0 then
-		set level = GetUnitAbilityLevel(whichUnit,'A21M')
-	endif
-	call SetUnitAbilityLevel(whichUnit,'A21N', level)
-	call SetUnitAbilityLevel(whichUnit,'A21M', level)
-	set t = null
-	set whichUnit = null
-	return false
-endfunction
-function LLE takes nothing returns nothing
-	local trigger t = CreateTrigger()
-	local integer h = GetHandleId(t)
-	local unit whichUnit = GetTriggerUnit()
-	call UnitAddPermanentAbility(whichUnit,'A21N')
-	call UnitAddPermanentAbility(whichUnit,'A21M')
-	call SaveInteger(HY,(GetHandleId((whichUnit))),(4416), 2)
-	call SaveInteger(HY,(GetHandleId((whichUnit))),(4417), 2)
-	call TriggerRegisterTimerEvent(t, .05, true)
-	call TriggerAddCondition(t, Condition(function BAI))
-	call SaveUnitHandle(HY, h, 2,(whichUnit))
-	call SavePlayerHandle(HY, h, 54,(GetOwningPlayer(whichUnit)))
-	set t = null
-	set whichUnit = null
-endfunction
+
+
 function KMF takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
@@ -49338,9 +48106,9 @@ function L1I takes unit whichUnit returns nothing
 endfunction
 function L2I takes nothing returns boolean
 	if not IsPickingHero then
-		if (IsPlayerHasSkill(GetOwningPlayer(GetTriggerUnit()), 316) or IsPlayerHasSkill(GetOwningPlayer(GetTriggerUnit()), 212)) and IsUnitIllusion(GetTriggerUnit()) == false then
+		if (IsPlayerSkillPickedByIndex(GetOwningPlayer(GetTriggerUnit()), 316) or IsPlayerSkillPickedByIndex(GetOwningPlayer(GetTriggerUnit()), 212)) and IsUnitIllusion(GetTriggerUnit()) == false then
 			set TempUnit = GetTriggerUnit()
-		elseif IsPlayerHasSkill(GetOwningPlayer(GetTriggerUnit()), 356) and IsUnitIllusion(GetTriggerUnit()) == false and GetUnitTypeId(GetTriggerUnit())!='H00J' then
+		elseif IsPlayerSkillPickedByIndex(GetOwningPlayer(GetTriggerUnit()), 356) and IsUnitIllusion(GetTriggerUnit()) == false and GetUnitTypeId(GetTriggerUnit())!='H00J' then
 			set TempUnit = GetTriggerUnit()
 			call ExecuteFunc("L3I")
 		endif
@@ -53687,56 +52455,9 @@ function ZCI takes unit killingUnit, unit triggerUnit returns nothing
 		call ZBI()
 	endif
 endfunction
-function ZDI takes nothing returns boolean
-	return(IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and IsUnitEnemy(GetTriggerUnit(), GetOwningPlayer(GetFilterUnit())) and not IsUnitWard(GetFilterUnit())) != null
-endfunction
-function ZFI takes nothing returns nothing
-	call UnitDamageTargetEx(TK, GetEnumUnit(), 1, 25 + 75 * UK)
-endfunction
-function I3E takes nothing returns boolean
-	local unit trigUnit = GetTriggerUnit()
-	local real ZRO
-	local real a
-	local real x
-	local real y
-	local group g = AllocationGroup(369)
-	if IsUnitWard(trigUnit) then
-		set trigUnit = PlayerHeroes[GetPlayerId(GetOwningPlayer(trigUnit))]
-	endif
-	if GetSpellAbilityId()=='A0EY'then
-		set ZRO = 200
-	elseif GetSpellAbilityId()=='A0FH'then
-		set ZRO = 450
-	elseif GetSpellAbilityId()=='A0F0'then
-		set ZRO = 700
-	endif
-	set a = GetUnitFacing(trigUnit)
-	set x = GetWidgetX(trigUnit) + ZRO * Cos(a * bj_DEGTORAD)
-	set y = GetWidgetY(trigUnit) + ZRO * Sin(a * bj_DEGTORAD)
-	set TK = trigUnit
-	set UK = GetUnitAbilityLevel(trigUnit, GetSpellAbilityId())
-	call UnitApplyTimedLife(CreateUnit(GetOwningPlayer(trigUnit),'e006', x, y, 0),'BTLF', 2)
-	call GroupEnumUnitsInRange(g, x, y, 275, Condition(function ZDI))
-	call ForGroup(g, function ZFI)
-	call DeallocateGroup(g)
-	set trigUnit = null
-	set g = null
-	return false
-endfunction
+
 function MNE takes nothing returns nothing
 	call UnitAddPermanentAbility(GetTriggerUnit(),'A0CQ')
-endfunction
-function PDE takes nothing returns nothing
-	local unit u = GetTriggerUnit()
-	local integer abilLevel = GetUnitAbilityLevel(u,'A0EY')
-	if abilLevel == 1 then
-		call UnitAddPermanentAbility(u,'A0F0')
-		call UnitAddPermanentAbility(u,'A0FH')
-	else
-		call SetUnitAbilityLevel(u,'A0F0', abilLevel)
-		call SetUnitAbilityLevel(u,'A0FH', abilLevel)
-	endif
-	set u = null
 endfunction
 
 function I5E takes nothing returns nothing
@@ -61357,342 +60078,8 @@ function DXE takes nothing returns nothing
 	set dummyCaster = null
 	set missileDummy = null
 endfunction
-function GBA takes nothing returns nothing
-	local integer GCA = PWV
-	local unit targetUnit = GetEnumUnit()
-	local integer GDA = 662 -1 + GCA
-	local real GFA =(LoadReal(HY,(GetHandleId(targetUnit)),(GDA)))
-	local real ECX =(GetGameTime())
-	if GFA < ECX then
-		call SaveReal(HY,(GetHandleId(targetUnit)),(GDA),((ECX + 2)* 1.))
-		if IsUnitType(GetEnumUnit(), UNIT_TYPE_STRUCTURE) == false then
-			call UnitDamageTargetEx(PQV, targetUnit, 1, 2 + 6 * PUV)
-		endif
-	endif
-	set targetUnit = null
-endfunction
-function GGA takes nothing returns nothing
-	if IsUnitType(GetEnumUnit(), UNIT_TYPE_STRUCTURE) == false then
-		call UnitDamageTargetEx(PQV, GetEnumUnit(), 1, PSV)
-		if IsUnitMagicImmune(GetEnumUnit()) == false then
-			call CNX(GetEnumUnit(),'A437', 3, 1,'B0DI')
-			call GQX(GetEnumUnit(),'A437','B0DI')
-		endif
-	endif
-endfunction
-function GHA takes unit whichUnit, unit GJA returns nothing
-	local group g = AllocationGroup(446)
-	set TempUnit = whichUnit
-	set PSV = 25 * PUV
-	set PQV = whichUnit
-	call GroupEnumUnitsInRange(g, GetUnitX(GJA), GetUnitY(GJA), 325, Condition(function DZX))
-	call ForGroup(g, function GGA)
-	call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Undead\\FreezingBreath\\FreezingBreathMissile.mdl", GetUnitX(GJA), GetUnitY(GJA)))
-	call KillUnit(GJA)
-	call DeallocateGroup(g)
-	call UnitApplyTimedLife(CreateUnit(GetOwningPlayer(whichUnit),'o00Q', GetUnitX(GJA), GetUnitY(GJA), 0),'BTLF', 2)
-	set g = null
-endfunction
-function GKA takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit whichUnit =(LoadUnitHandle(HY, h, 2))
-	local unit GLA =(LoadUnitHandle(HY, h, 393))
-	local unit GMA =(LoadUnitHandle(HY, h, 394))
-	local unit GPA =(LoadUnitHandle(HY, h, 395))
-	local unit GQA =(LoadUnitHandle(HY, h, 396))
-	local unit GSA =(LoadUnitHandle(HY, h, 397))
-	local real x
-	local real y
-	local real a
-	local real d =(LoadReal(HY, h, 138))
-	local real sx = GetUnitX(whichUnit)
-	local real sy = GetUnitY(whichUnit)
-	local real VEI
-	local integer count = GetTriggerEvalCount(t)
-	local real IMX
-	local group g
-	local integer GTA = 0
-	local real time = 2.25
-	local real GUA
-	local integer level = LoadInteger(HY, h, 5)
-	if IsUnitDeath(GLA) == false then
-		set GTA = GTA + 1
-	endif
-	if IsUnitDeath(GMA) == false then
-		set GTA = GTA + 1
-	endif
-	if IsUnitDeath(GPA) == false then
-		set GTA = GTA + 1
-	endif
-	if IsUnitDeath(GQA) == false then
-		set GTA = GTA + 1
-	endif
-	if IsUnitDeath(GSA) == false then
-		set GTA = GTA + 1
-	endif
-	if GTA == 5 then
-		set time = 2.25
-	elseif GTA == 4 then
-		set time = 2.1
-	elseif GTA == 3 then
-		set time = 1.95
-	elseif GTA == 2 then
-		set time = 1.8
-	elseif GTA == 1 then
-		set time = 1.65
-	endif
-	set VEI =-1 * 360 * .02 / time
-	set GUA =(LoadReal(HY, h, 137)) + VEI
-	call SaveReal(HY, h, 137,((GUA)* 1.))
-	set PUV = level
-	set PQV = whichUnit
-	if count == 50 then
-		call ShowUnit(GMA, true)
-		call SaveBoolean(HY, h, 512,(true))
-		call UnitAddPermanentAbility(GMA,'Aloc')
-	endif
-	if count == 100  then
-		call ShowUnit(GPA, true)
-		call SaveBoolean(HY, h, 513,(true))
-		call UnitAddPermanentAbility(GPA,'Aloc')
-	endif
-	if count == 150 then
-		call ShowUnit(GQA, true)
-		call SaveBoolean(HY, h, 514,(true))
-		call UnitAddPermanentAbility(GQA,'Aloc')
-	endif
-	if count == 200 then
-		call ShowUnit(GSA, true)
-		call SaveBoolean(HY, h, 515,(true))
-		call UnitAddPermanentAbility(GSA,'Aloc')
-	endif
-	if GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT then
-		if GetSpellAbilityId()=='A24A' then
-			if (LoadBoolean(HY, h, 655)) then
-				call SaveBoolean(HY, h, 655,(false))
-				call SaveBoolean(HY, h, 656,(false))
-			else
-				call SaveBoolean(HY, h, 655,(true))
-				call SaveBoolean(HY, h, 656,(false))
-			endif
-		elseif GetSpellAbilityId()=='A24B' then
-			if (LoadBoolean(HY, h, 656)) then
-				call SaveBoolean(HY, h, 655,(false))
-				call SaveBoolean(HY, h, 656,(false))
-			else
-				call SaveBoolean(HY, h, 655,(false))
-				call SaveBoolean(HY, h, 656,(true))
-			endif
-		endif
-	endif
-	if (LoadBoolean(HY, h, 655)) then
-		set d = RMaxBJ(d -5, 100)
-		call SaveReal(HY, h, 138,((d)* 1.))
-	elseif (LoadBoolean(HY, h, 656)) then
-		set d = RMinBJ(d + 5, 875)
-		call SaveReal(HY, h, 138,((d)* 1.))
-	endif
-	if GetTriggerEventId() == EVENT_WIDGET_DEATH or count == 950 or(IsUnitDeath(GLA) and IsUnitDeath(GMA) and IsUnitDeath(GPA) and IsUnitDeath(GQA) and IsUnitDeath(GSA)) or(count > 1 and GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT and GetSpellAbilityId()=='A1T8') then
-		if GetTriggerEventId() != EVENT_UNIT_SPELL_EFFECT then
-			call UnitRemoveAbility(whichUnit,'A24A')
-			call UnitRemoveAbility(whichUnit,'A24B')
-		endif
-		call FlushChildHashtable(HY, h)
-		call DestroyTrigger(t)
-		if IsUnitDeath(GLA) == false then
-			call GHA(whichUnit, GLA)
-		endif
-		if IsUnitDeath(GMA) == false then
-			call GHA(whichUnit, GMA)
-		endif
-		if IsUnitDeath(GPA) == false then
-			call GHA(whichUnit, GPA)
-		endif
-		if IsUnitDeath(GQA) == false then
-			call GHA(whichUnit, GQA)
-		endif
-		if IsUnitDeath(GSA) == false then
-			call GHA(whichUnit, GSA)
-		endif
-	else
-		set g = AllocationGroup(447)
-		if IsUnitDeath(GLA) == false and(LoadBoolean(HY, h, 511)) then
-			set IMX = 360 * 5 / 5.
-			set a = IMX + GUA
-			set x = CoordinateX50(sx + d * Cos(a * bj_DEGTORAD))
-			set y = CoordinateY50(sy + d * Sin(a * bj_DEGTORAD))
-			call SetUnitX(GLA, x)
-			call SetUnitY(GLA, y)
-			set TempUnit = whichUnit
-			call GroupEnumUnitsInRange(g, x, y, 95, Condition(function D8X))
-			if FirstOfGroup(g) != null then
-				call GHA(whichUnit, GLA)
-			endif
-			call GroupClear(g)
-			set PTV = GLA
-			set PWV = 1
-			set PQV = whichUnit
-			call GroupEnumUnitsInRange(g, x, y, 175, Condition(function DYX))
-			call ForGroup(g, function GBA)
-			call GroupClear(g)
-		endif
-		if IsUnitDeath(GMA) == false and(LoadBoolean(HY, h, 512)) then
-			set IMX = 360 * 4 / 5.
-			set a = IMX + GUA
-			set x = CoordinateX50(sx + d * Cos(a * bj_DEGTORAD))
-			set y = CoordinateY50(sy + d * Sin(a * bj_DEGTORAD))
-			call SetUnitX(GMA, x)
-			call SetUnitY(GMA, y)
-			set TempUnit = whichUnit
-			call GroupEnumUnitsInRange(g, x, y, 95, Condition(function D8X))
-			if FirstOfGroup(g) != null then
-				call GHA(whichUnit, GMA)
-			endif
-			call GroupClear(g)
-			set PTV = GMA
-			set PWV = 2
-			set PQV = whichUnit
-			call GroupEnumUnitsInRange(g, x, y, 175, Condition(function DYX))
-			call ForGroup(g, function GBA)
-			call GroupClear(g)
-		endif
-		if IsUnitDeath(GPA) == false and(LoadBoolean(HY, h, 513)) then
-			set IMX = 360 * 3 / 5.
-			set a = IMX + GUA
-			set x = CoordinateX50(sx + d * Cos(a * bj_DEGTORAD))
-			set y = CoordinateY50(sy + d * Sin(a * bj_DEGTORAD))
-			call SetUnitX(GPA, x)
-			call SetUnitY(GPA, y)
-			set TempUnit = whichUnit
-			call GroupEnumUnitsInRange(g, x, y, 95, Condition(function D8X))
-			if FirstOfGroup(g) != null then
-				call GHA(whichUnit, GPA)
-			endif
-			call GroupClear(g)
-			set PTV = GPA
-			set PWV = 3
-			set PQV = whichUnit
-			call GroupEnumUnitsInRange(g, x, y, 175, Condition(function DYX))
-			call ForGroup(g, function GBA)
-			call GroupClear(g)
-		endif
-		if IsUnitDeath(GQA) == false and(LoadBoolean(HY, h, 514)) then
-			set IMX = 360 * 2 / 5.
-			set a = IMX + GUA
-			set x = CoordinateX50(sx + d * Cos(a * bj_DEGTORAD))
-			set y = CoordinateY50(sy + d * Sin(a * bj_DEGTORAD))
-			call SetUnitX(GQA, x)
-			call SetUnitY(GQA, y)
-			set TempUnit = whichUnit
-			call GroupEnumUnitsInRange(g, x, y, 95, Condition(function D8X))
-			if FirstOfGroup(g) != null then
-				call GHA(whichUnit, GQA)
-			endif
-			call GroupClear(g)
-			set PTV = GQA
-			set PWV = 4
-			set PQV = whichUnit
-			call GroupEnumUnitsInRange(g, x, y, 175, Condition(function DYX))
-			call ForGroup(g, function GBA)
-			call GroupClear(g)
-		endif
-		if IsUnitDeath(GSA) == false and(LoadBoolean(HY, h, 515)) then
-			set IMX = 360 * 1 / 5.
-			set a = IMX + GUA
-			set x = CoordinateX50(sx + d * Cos(a * bj_DEGTORAD))
-			set y = CoordinateY50(sy + d * Sin(a * bj_DEGTORAD))
-			call SetUnitX(GSA, x)
-			call SetUnitY(GSA, y)
-			set TempUnit = whichUnit
-			call GroupEnumUnitsInRange(g, x, y, 95, Condition(function D8X))
-			if FirstOfGroup(g) != null then
-				call GHA(whichUnit, GSA)
-			endif
-			call GroupClear(g)
-			set PTV = GSA
-			set PWV = 5
-			set PQV = whichUnit
-			call GroupEnumUnitsInRange(g, x, y, 175, Condition(function DYX))
-			call ForGroup(g, function GBA)
-			call GroupClear(g)
-		endif
-		call DeallocateGroup(g)
-	endif
-	set t = null
-	set whichUnit = null
-	set GLA = null
-	set GMA = null
-	set GPA = null
-	set GQA = null
-	set GSA = null
-	set g = null
-	return false
-endfunction
-function DIE takes nothing returns nothing
-	local unit whichUnit = GetTriggerUnit()
-	local trigger t = CreateTrigger()
-	local integer h = GetHandleId(t)
-	local unit GLA
-	local unit GMA
-	local unit GPA
-	local unit GQA
-	local unit GSA
-	local real x
-	local real y
-	set x = GetUnitX(whichUnit) + 250* Cos(bj_DEGTORAD * 360 * 5 / 5. *-1.)
-	set y = GetUnitY(whichUnit) + 250* Sin(bj_DEGTORAD * 360 * 5 / 5. *-1.)
-	set GLA = CreateUnit(GetOwningPlayer(whichUnit),'h0CJ', x, y, 360 * 5 / 5. *-1.)
-	call UnitAddPermanentAbility(GLA,'Aloc')
-	set x = GetUnitX(whichUnit) + 250* Cos(bj_DEGTORAD * 360 * 4 / 5. *-1.)
-	set y = GetUnitY(whichUnit) + 250* Sin(bj_DEGTORAD * 360 * 4 / 5. *-1.)
-	set GMA = CreateUnit(GetOwningPlayer(whichUnit),'h0CJ', x, y, 360 * 4 / 5. *-1.)
-	call ShowUnit(GMA, false)
-	call SetUnitInvulnerable(GMA, true)
-	set x = GetUnitX(whichUnit) + 250* Cos(bj_DEGTORAD * 360 * 3 / 5. *-1.)
-	set y = GetUnitY(whichUnit) + 250* Sin(bj_DEGTORAD * 360 * 3 / 5. *-1.)
-	set GPA = CreateUnit(GetOwningPlayer(whichUnit),'h0CJ', x, y, 360 * 3 / 5. *-1.)
-	call ShowUnit(GPA, false)
-	call SetUnitInvulnerable(GMA, true)
-	set x = GetUnitX(whichUnit) + 250* Cos(bj_DEGTORAD * 360 * 2 / 5. *-1.)
-	set y = GetUnitY(whichUnit) + 250* Sin(bj_DEGTORAD * 360 * 2 / 5. *-1.)
-	set GQA = CreateUnit(GetOwningPlayer(whichUnit),'h0CJ', x, y, 360 * 2 / 5. *-1.)
-	call ShowUnit(GQA, false)
-	call SetUnitInvulnerable(GQA, true)
-	set x = GetUnitX(whichUnit) + 250* Cos(bj_DEGTORAD * 360 * 1 / 5. *-1.)
-	set y = GetUnitY(whichUnit) + 250* Sin(bj_DEGTORAD * 360 * 1 / 5. *-1.)
-	set GSA = CreateUnit(GetOwningPlayer(whichUnit),'h0CJ', x, y, 360 * 1 / 5. *-1.)
-	call ShowUnit(GSA, false)
-	call SetUnitInvulnerable(GSA, true)
-	call SaveUnitHandle(HY, h, 2,(whichUnit))
-	call SaveUnitHandle(HY, h, 393,(GLA))
-	call SaveUnitHandle(HY, h, 394,(GMA))
-	call SaveUnitHandle(HY, h, 395,(GPA))
-	call SaveUnitHandle(HY, h, 396,(GQA))
-	call SaveUnitHandle(HY, h, 397,(GSA))
-	call SaveBoolean(HY, h, 511,(true))
-	call SaveBoolean(HY, h, 512,(false))
-	call SaveBoolean(HY, h, 513,(false))
-	call SaveBoolean(HY, h, 514,(false))
-	call SaveBoolean(HY, h, 515,(false))
-	call SaveBoolean(HY, h, 655,(false))
-	call SaveBoolean(HY, h, 656,(false))
-	call SaveReal(HY, h, 138,( 150* 1.))
-	call SaveInteger(HY, h, 5, GetUnitAbilityLevel(whichUnit,'A1T8'))
-	call UnitAddPermanentAbility(whichUnit,'A24B')
-	call UnitAddPermanentAbility(whichUnit,'A24A')
-	call TriggerRegisterTimerEvent(t, .02, true)
-	call TriggerRegisterDeathEvent(t, whichUnit)
-	call TriggerRegisterUnitEvent(t, whichUnit, EVENT_UNIT_SPELL_EFFECT)
-	call TriggerAddCondition(t, Condition(function GKA))
-	set whichUnit = null
-	set t = null
-	set GLA = null
-	set GMA = null
-	set GPA = null
-	set GQA = null
-	set GSA = null
-endfunction
+
+
 function GWA takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
@@ -64222,7 +62609,7 @@ function M9A takes unit u, integer TPE, integer PVA, integer level returns nothi
 	call SaveInteger(ObjectHashTable, GetHandleId(u),'A40K'+ PVA, HeroSkill_BaseId[PlayerSkillIndices[TPE]])
 	call SaveInteger(HY, h, 1, PVA)
 	call SaveInteger(HY, h, 2, level)
-	if CheckAbilityIdFormIndex(GetSkillIndexByBaseId(TPE),-1, "metamorphosis", null) then
+	if CheckSkillOrderIdByIndex(GetSkillIndexByBaseId(TPE),-1, "metamorphosis", null) then
 		call SaveBoolean(ObjectHashTable, GetHandleId(u),'A40K'+ PVA, true)
 	endif
 	if PVA == 3 then
@@ -64243,18 +62630,18 @@ function PEA takes unit u, integer abilId, integer PXA returns boolean
 	if IsFormlessHeroSkill(abilId) or IsAutocastOrb(abilId) or LNX(abilId) then
 		return false
 	endif
-	if abilId =='A3FQ' or abilId =='A3FJ' or abilId =='A0KX' or abilId =='A0G8' or abilId =='A07U' or abilId =='A38E' or abilId =='A0A5' or abilId =='A0AG' or abilId =='QM01' or abilId =='A0BE' or abilId =='A0EY' or abilId =='A0NS' or abilId =='A0H9' or abilId =='A0NE' or abilId =='A32E' or abilId =='A21F' or abilId =='A1S4' or abilId =='A1NA' or abilId =='A2QM' or abilId =='A2TJ' or abilId =='A2QI' or abilId =='A2TI' or abilId =='A06K' or abilId =='A1T8' or abilId =='A28Q' or abilId =='A1TB' or abilId =='A0MQ' or abilId =='A2O2' or abilId =='A0OO' or abilId =='A14O' or abilId =='A1EA' or abilId =='QB03' or abilId =='A27H' or abilId =='A2JR' or abilId =='Z234' or abilId =='A0WQ' or abilId =='A1C0' or abilId =='A0MP' or abilId =='A01Y' or abilId =='A32Z' or abilId =='A0SW' or abilId =='A0LV' or abilId =='A21M' or abilId =='A40B' or abilId =='A418' or abilId =='A0ES' then
+	if abilId =='A3FQ' or abilId =='A3FJ' or abilId ==ATTRIBUTESHIFT_AGILITY_GAIN_ABILITY_ID or abilId =='A0G8' or abilId =='A07U' or abilId =='A38E' or abilId =='A0A5' or abilId =='A0AG' or abilId =='QM01' or abilId =='A0BE' or abilId == SHADOWRAZE_Z_ABILITY_ID or abilId =='A0NS' or abilId =='A0H9' or abilId =='A0NE' or abilId =='A32E' or abilId =='A21F' or abilId =='A1S4' or abilId =='A1NA' or abilId =='A2QM' or abilId =='A2TJ' or abilId =='A2QI' or abilId =='A2TI' or abilId =='A06K' or abilId =='A1T8' or abilId =='A28Q' or abilId =='A1TB' or abilId =='A0MQ' or abilId =='A2O2' or abilId =='A0OO' or abilId =='A14O' or abilId =='A1EA' or abilId =='QB03' or abilId =='A27H' or abilId =='A2JR' or abilId =='Z234' or abilId =='A0WQ' or abilId =='A1C0' or abilId =='A0MP' or abilId =='A01Y' or abilId =='A32Z' or abilId =='A0SW' or abilId =='A0LV' or abilId == WHIRLING_AXES_RANGED_ABILITY_ID or abilId =='A40B' or abilId =='A418' or abilId =='A0ES' then
 		return false
 	endif
 	set xx = 1
 	loop
-		if HeroSkill_BaseId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + xx]]== abilId or CheckAbilityIdFormIndex(PXA, PlayerSkillIndices[i * MAX_SKILL_SLOTS + xx], null, null) then
+		if HeroSkill_BaseId[PlayerSkillIndices[i * MAX_SKILL_SLOTS + xx]]== abilId or CheckSkillOrderIdByIndex(PXA, PlayerSkillIndices[i * MAX_SKILL_SLOTS + xx], null, null) then
 			return false
 		endif
 		set xx = xx + 1
 	exitwhen xx > 6
 	endloop
-	if CheckAbilityIdFormIndex(PXA,-1, "metamorphosis", null) and(IsUnitMetamorphosis(u) or LoadBoolean(ObjectHashTable, GetHandleId(u),'A40K') or LoadBoolean(ObjectHashTable, GetHandleId(u),'A40K'+ 1) or LoadBoolean(ObjectHashTable, GetHandleId(u),'A40K'+ 2) or LoadBoolean(ObjectHashTable, GetHandleId(u),'A40K'+ 3)) then
+	if CheckSkillOrderIdByIndex(PXA,-1, "metamorphosis", null) and(IsUnitMetamorphosis(u) or LoadBoolean(ObjectHashTable, GetHandleId(u),'A40K') or LoadBoolean(ObjectHashTable, GetHandleId(u),'A40K'+ 1) or LoadBoolean(ObjectHashTable, GetHandleId(u),'A40K'+ 2) or LoadBoolean(ObjectHashTable, GetHandleId(u),'A40K'+ 3)) then
 		return false
 	endif
 	if (LoadInteger(ObjectHashTable, GetHandleId(u),'A40K') == abilId or LoadInteger(ObjectHashTable, GetHandleId(u),'A40K'+ 1) == abilId or LoadInteger(ObjectHashTable, GetHandleId(u),'A40K'+ 2) == abilId or LoadInteger(ObjectHashTable, GetHandleId(u),'A40K'+ 3) == abilId) then
@@ -67525,7 +65912,7 @@ function W5A takes nothing returns boolean
 	local unit u = CreateUnit(GetOwningPlayer(whichUnit),'e00E', GetUnitX(whichUnit), GetUnitY(whichUnit), 0)
 	local integer id ='QFZX'
 	call UnitRemoveAbility(whichUnit,'Broa')
-	if Mode__BalanceOff == false and((GetUnitAbilityLevel(whichUnit,'A0CG')> 0 and IsUnitType(whichUnit, UNIT_TYPE_MELEE_ATTACKER)) or GetUnitAbilityLevel(whichUnit,'A1IQ')> 0 or GetUnitAbilityLevel(whichUnit,'A13T')> 0 or GetUnitAbilityLevel(whichUnit,'A1YQ')> 0 or GetUnitAbilityLevel(whichUnit,'A3DE')> 0 or GetUnitAbilityLevel(whichUnit,'A2H0')> 0 or GetUnitAbilityLevel(whichUnit,'QB0L')> 0 or GetUnitAbilityLevel(whichUnit,'A0KX')> 0) then
+	if Mode__BalanceOff == false and((GetUnitAbilityLevel(whichUnit,'A0CG')> 0 and IsUnitType(whichUnit, UNIT_TYPE_MELEE_ATTACKER)) or GetUnitAbilityLevel(whichUnit,'A1IQ')> 0 or GetUnitAbilityLevel(whichUnit,'A13T')> 0 or GetUnitAbilityLevel(whichUnit,'A1YQ')> 0 or GetUnitAbilityLevel(whichUnit,'A3DE')> 0 or GetUnitAbilityLevel(whichUnit,'A2H0')> 0 or GetUnitAbilityLevel(whichUnit,'QB0L')> 0 or GetUnitAbilityLevel(whichUnit,ATTRIBUTESHIFT_AGILITY_GAIN_ABILITY_ID)> 0) then
 		set id ='QFZY'
 	endif
 	call UnitAddAbility(u, id)
@@ -69335,7 +67722,7 @@ function Init_Instructions takes nothing returns nothing
 	call SaveStr(ChatCommandHashTable, StringHash("-ma"), 0, "VDR")
 	call SaveStr(ChatCommandHashTable, StringHash("-movespeed"), 0, "VHR")
 	call SaveStr(ChatCommandHashTable, StringHash("-ms"), 0, "VHR")
-	call SaveStr(ChatCommandHashTable, StringHash("-nh"), 0, "T0O")
+	//call SaveStr(ChatCommandHashTable, StringHash("-nh"), 0, "T0O")
 	call SaveStr(ChatCommandHashTable, StringHash("-mc"), 0, "ERI")
 
 	call SaveStr(ChatCommandHashTable, StringHash("-debug"), 0, "GetGroupList")
@@ -69489,8 +67876,8 @@ function InitItemAbilitys takes nothing returns nothing
 	call SetItemAbilityId('A0K0')
 	//	call SetItemAbilityId('A0K5')
 	call SetItemAbilityId('A0K7')
-	call SetItemAbilityId('A0KW')
-	call SetItemAbilityId('A0KX')
+	call SetItemAbilityId(ATTRIBUTESHIFT_STRENGTH_GAIN_ABILITY_ID)
+	call SetItemAbilityId(ATTRIBUTESHIFT_AGILITY_GAIN_ABILITY_ID)
 	call SetItemAbilityId('A0LZ')
 	call SetItemAbilityId('A0MP')
 	call SetItemAbilityId('A0OI')
@@ -70793,9 +69180,9 @@ endfunction
 
 function PreloadAbilityLockPos takes nothing returns nothing
 
-	call PreloadAbility('A0EY') // 毁灭阴影Z
-	call PreloadAbility('A0FH') // 毁灭阴影X
-	call PreloadAbility('A0F0') // 毁灭阴影C
+	call PreloadAbility(SHADOWRAZE_Z_ABILITY_ID) // 毁灭阴影Z
+	call PreloadAbility(SHADOWRAZE_X_ABILITY_ID) // 毁灭阴影X
+	call PreloadAbility(SHADOWRAZE_C_ABILITY_ID) // 毁灭阴影C
 	 
 	call PreloadAbility('A08Q') // 伤残恐惧夜晚
 	call PreloadAbility('A08c') // 伤残恐惧白天

@@ -125,6 +125,8 @@ scope Morphling
     //***************************************************************************
     globals
         constant integer SKILL_INDEX_MORPH = GetHeroSKillIndexBySlot(HERO_INDEX_MORPHLING, 3)
+        constant integer ATTRIBUTESHIFT_STRENGTH_GAIN_ABILITY_ID = 'A0KW'
+        constant integer ATTRIBUTESHIFT_AGILITY_GAIN_ABILITY_ID  = 'A0KX'
     endglobals
     function Z9R takes unit trigUnit, integer VVI, real VEI returns nothing
         local integer agi = GetHeroAgi(trigUnit, false)
@@ -148,7 +150,7 @@ scope Morphling
         local trigger t = GetTriggeringTrigger()
         local integer h = GetHandleId(t)
         local unit trigUnit =(LoadUnitHandle(HY, h, 14))
-        local integer level = GetUnitAbilityLevel(trigUnit,'A0KX')
+        local integer level = GetUnitAbilityLevel(trigUnit, ATTRIBUTESHIFT_AGILITY_GAIN_ABILITY_ID)
         call Z9R(trigUnit, 1, 30. / level)
         set t = null
         set trigUnit = null
@@ -158,7 +160,7 @@ scope Morphling
         local trigger t = GetTriggeringTrigger()
         local integer h = GetHandleId(t)
         local unit trigUnit =(LoadUnitHandle(HY, h, 14))
-        local integer level = GetUnitAbilityLevel(trigUnit,'A0KX')
+        local integer level = GetUnitAbilityLevel(trigUnit, ATTRIBUTESHIFT_AGILITY_GAIN_ABILITY_ID)
         call Z9R(trigUnit, 0, 30. / level)
         set t = null
         set trigUnit = null
@@ -169,7 +171,7 @@ scope Morphling
         local integer h = GetHandleId(t)
         local unit u = GetTriggerUnit()
         local trigger VII =(LoadTriggerHandle(HY, h, 226))
-        local integer level = GetUnitAbilityLevel(u,'A0KX')
+        local integer level = GetUnitAbilityLevel(u, ATTRIBUTESHIFT_AGILITY_GAIN_ABILITY_ID)
         local integer lastorder =(LoadInteger(HY, h, 227))
         local real VEI = 1. / level
         if VEI == .25 then
@@ -237,17 +239,17 @@ scope Morphling
         local unit trigUnit = GetTriggerUnit()
         local trigger t
         local integer h
-        local integer level = GetUnitAbilityLevel(trigUnit,'A0KX')
+        local integer level = GetUnitAbilityLevel(trigUnit, ATTRIBUTESHIFT_AGILITY_GAIN_ABILITY_ID)
         if level == 1 then
             set t = CreateTrigger()
             set h = GetHandleId(t)
-            call UnitAddPermanentAbility(trigUnit, 'A0KW')
+            call UnitAddPermanentAbility(trigUnit, ATTRIBUTESHIFT_STRENGTH_GAIN_ABILITY_ID)
             call TriggerRegisterUnitEvent(t, trigUnit, EVENT_UNIT_ISSUED_ORDER)
             call TriggerAddCondition(t, Condition(function VRI))
             call SaveTriggerHandle(HY, h, 226,(null))
             set t = null
         else
-            call SetUnitAbilityLevel(trigUnit, 'A0KW', level)
+            call SetUnitAbilityLevel(trigUnit, ATTRIBUTESHIFT_STRENGTH_GAIN_ABILITY_ID, level)
         endif
         set trigUnit = null
         set t = null

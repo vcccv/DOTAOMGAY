@@ -121,7 +121,7 @@ scope PhantomLancer
         set missileDummy = null
     endfunction
     function XRI takes nothing returns boolean
-        if IsUnitIllusion(GetFilterUnit()) and IsPlayerHasSkill(GetOwningPlayer(GetFilterUnit()), 83) and GetOwningPlayer(GetFilterUnit()) == GetOwningPlayer(GetTriggerUnit()) then
+        if IsUnitIllusion(GetFilterUnit()) and IsPlayerSkillPickedByIndex(GetOwningPlayer(GetFilterUnit()), 83) and GetOwningPlayer(GetFilterUnit()) == GetOwningPlayer(GetTriggerUnit()) then
             call UnitLaunchSpiritLance(GetFilterUnit(), 3, GetSpellTargetUnit(), false)
         endif
         return false

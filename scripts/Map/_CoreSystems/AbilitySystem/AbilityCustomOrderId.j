@@ -301,10 +301,10 @@ library AbilityCustomOrderId requires Base
         //***************************************************************************
         // 刷逼之力
         call AllocAbilityOrderId('A32G')
-
-        // 召唤巨石
-        call AllocAbilityOrderId('A2TH')
         
+        // 召唤巨石
+        call AllocAbilityOrderId(EARTH_SPIRIT_STONE_REMNANT)
+
         //***************************************************************************
         //*
         //*  mirrorimage
@@ -440,8 +440,10 @@ library AbilityCustomOrderId requires Base
         //***************************************************************************
         // 马蹄践踏        
         call AllocAbilityOrderId('A00S')
+
         // 吞噬 - 战争践踏 
         call AllocAbilityOrderId('A1P0')
+
         // 火焰重踏        
         call AllocAbilityOrderId('A454')
         
@@ -452,10 +454,81 @@ library AbilityCustomOrderId requires Base
         //***************************************************************************
         // 烈日炙烤  - 停止
         call AllocAbilityOrderId('A1Z3')
+
         // 神行百变
         call AllocAbilityOrderId('A46H')
+
         // 吞噬
         call AllocAbilityOrderId('A10R')
+
+        //***************************************************************************
+        //*
+        //*  creepheal
+        //*
+        //***************************************************************************
+        // 召回
+        call AllocAbilityOrderId(SPIRIT_FORM_RECALL_ABILITY_ID)
+
+        // 强攻     
+        call AllocAbilityOrderId('A2J2')
+
+        // 法力燃烧 
+        call AllocAbilityOrderId('A1H5')
+
+        // 幽冥一击 
+        call AllocAbilityOrderIdEx('A0G4', 'A1D8')
+
+        // 战斗饥渴 
+        call AllocAbilityOrderId('A0S1')
+
+        // 血之祭祀 
+        call AllocAbilityOrderId('A44Z')
+
+        // 暗言术   
+        call AllocAbilityOrderId('A0AS')
+
+        // 灵魂超度 
+        call AllocAbilityOrderId('A1NA')
+        
+        //***************************************************************************
+        //*
+        //*  roar
+        //*
+        //***************************************************************************
+        // 雷神之怒      
+        call AllocAbilityOrderIdEx('A29G', 'A29H')
+
+        // 神之力量      
+        call AllocAbilityOrderIdEx('A0WP', 'A43D')
+
+        // 强化图腾      
+        call AllocAbilityOrderId('A0DL')
+
+        // 幽魂 - 散开   
+        call AllocAbilityOrderId(SPIRITS_OUT_ABILITY_ID)
+
+        // 极度饥渴      
+        call AllocAbilityOrderId('A0WQ')
+
+        // 鱼人碎击      
+        call AllocAbilityOrderId('A29K')
+
+        // 锚击          
+        call AllocAbilityOrderId('A226')
+
+        // 毁灭阴影 - Z  
+        call AllocAbilityOrderId('A0EY')
+
+        // 两级反转      
+        call AllocAbilityOrderIdEx('A29L', 'A447')
+
+        //***************************************************************************
+        //*
+        //*  battleroar
+        //*
+        //***************************************************************************
+        
+
         //***************************************************************************
         //*
         //*  ANcl
@@ -464,6 +537,7 @@ library AbilityCustomOrderId requires Base
         // 锯齿飞轮
         call AllocAbilityOrderId('A2E5')
         call AllocAbilityOrderId('A43Q')
+
         // 双飞之轮
         call AllocAbilityOrderId('A43S')
 
@@ -491,8 +565,6 @@ library AbilityCustomOrderId requires Base
 
         // 冰晶爆轰
         call AllocAbilityOrderIdEx('A1MI', 'A2QE')
-        // 关闭
-        call AllocAbilityOrderId('A1MN')
 
         // 涤罪之焰
         call AllocAbilityOrderId('A2SG')
@@ -503,7 +575,6 @@ library AbilityCustomOrderId requires Base
         call AllocAbilityOrderId('A24E')
 
         // 大地之灵
-        call AllocAbilityOrderId(EARTH_SPIRIT_STONE_REMNANT)
         call AllocAbilityOrderId('A2QM')
         call AllocAbilityOrderId('A2TJ')
         call AllocAbilityOrderId('A2QI')

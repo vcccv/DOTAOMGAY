@@ -1,3 +1,4 @@
 #include "GameEnd.j"
 #include "Structures\\_include"
 #include "Controls\\_include"
+#include "SkillDraft\\_include"

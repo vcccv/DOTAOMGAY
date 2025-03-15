@@ -1,6 +1,69 @@
 
 scope ShadowFiend
 
+    globals
+        constant integer HERO_INDEX_SHADOW_FIEND = 80
+    endglobals
+    //***************************************************************************
+    //*
+    //*  毁灭阴影
+    //*
+    //***************************************************************************
+    globals
+        constant integer SKILL_INDEX_SHADOWRAZE  = GetHeroSKillIndexBySlot(HERO_INDEX_SHADOW_FIEND, 1)
+        constant integer SHADOWRAZE_Z_ABILITY_ID = 'A0EY'
+        constant integer SHADOWRAZE_X_ABILITY_ID = 'A0FH'
+        constant integer SHADOWRAZE_C_ABILITY_ID = 'A0F0'
+    endglobals
+
+    function ZDI takes nothing returns boolean
+        return(IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and IsUnitEnemy(GetTriggerUnit(), GetOwningPlayer(GetFilterUnit())) and not IsUnitWard(GetFilterUnit())) != null
+    endfunction
+    function ZFI takes nothing returns nothing
+        call UnitDamageTargetEx(TK, GetEnumUnit(), 1, 25 + 75 * UK)
+    endfunction
+    function ShadowrazeOnSpellEffect takes nothing returns boolean
+        local unit trigUnit = GetTriggerUnit()
+        local real ZRO
+        local real a
+        local real x
+        local real y
+        local group g = AllocationGroup(369)
+        if IsUnitWard(trigUnit) then
+            set trigUnit = PlayerHeroes[GetPlayerId(GetOwningPlayer(trigUnit))]
+        endif
+        if GetSpellAbilityId()== SHADOWRAZE_Z_ABILITY_ID then
+            set ZRO = 200
+        elseif GetSpellAbilityId()== SHADOWRAZE_X_ABILITY_ID then
+            set ZRO = 450
+        elseif GetSpellAbilityId()== SHADOWRAZE_C_ABILITY_ID then
+            set ZRO = 700
+        endif
+        set a = GetUnitFacing(trigUnit)
+        set x = GetWidgetX(trigUnit) + ZRO * Cos(a * bj_DEGTORAD)
+        set y = GetWidgetY(trigUnit) + ZRO * Sin(a * bj_DEGTORAD)
+        set TK = trigUnit
+        set UK = GetUnitAbilityLevel(trigUnit, GetSpellAbilityId())
+        call UnitApplyTimedLife(CreateUnit(GetOwningPlayer(trigUnit),'e006', x, y, 0),'BTLF', 2)
+        call GroupEnumUnitsInRange(g, x, y, 275, Condition(function ZDI))
+        call ForGroup(g, function ZFI)
+        call DeallocateGroup(g)
+        set trigUnit = null
+        set g = null
+        return false
+    endfunction
+    function ShadowrazeOnLearn takes nothing returns nothing
+        local unit u = GetTriggerUnit()
+        local integer abilLevel = GetUnitAbilityLevel(u, SHADOWRAZE_Z_ABILITY_ID)
+        if abilLevel == 1 then
+            call UnitAddPermanentAbility(u, SHADOWRAZE_C_ABILITY_ID)
+            call UnitAddPermanentAbility(u, SHADOWRAZE_X_ABILITY_ID)
+        else
+            call SetUnitAbilityLevel(u, SHADOWRAZE_C_ABILITY_ID, abilLevel)
+            call SetUnitAbilityLevel(u, SHADOWRAZE_X_ABILITY_ID, abilLevel)
+        endif
+        set u = null
+    endfunction
     //***************************************************************************
     //*
     //*  魂之挽歌

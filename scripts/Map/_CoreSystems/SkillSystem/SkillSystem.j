@@ -186,6 +186,7 @@ library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
         integer array HeroSkill_BaseId
         integer array HeroSkill_SpecialId
         integer array HeroSkill_Modify
+
         boolean array HeroSkill_IsPassive
         
         string  array HeroSkill_BalanceOffDisabledTips
@@ -208,6 +209,36 @@ library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
         set CONTROL_SKILL_INDEX_LIST_SIZE = CONTROL_SKILL_INDEX_LIST_SIZE + 1
     endfunction
 
+    // 根据玩家id获得他的控制技能计数
+    function GetControlSkillCountByPlayerId takes integer pid returns integer
+        local integer k = 0
+        local integer c = 0
+        // 如果玩家已经有已选择的某个技能属于控制技能 则计数器+1
+        loop
+            if CONTROL_SKILL_INDEX_LIST[k]!= 0 then
+                if PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 1]== CONTROL_SKILL_INDEX_LIST[k]or PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 2]== CONTROL_SKILL_INDEX_LIST[k]or PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 3]== CONTROL_SKILL_INDEX_LIST[k]or PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 4]== CONTROL_SKILL_INDEX_LIST[k]or(ExtraSkillsCount >= 1 and PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 5]== CONTROL_SKILL_INDEX_LIST[k]) or(ExtraSkillsCount >= 2 and PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 6]== CONTROL_SKILL_INDEX_LIST[k]) then
+                    set c = c + 1
+                endif
+            endif
+            set k = k + 1
+        exitwhen k > CONTROL_SKILL_INDEX_LIST_SIZE
+        endloop
+        return c
+    endfunction
+    // 该技能索引是否属于控制技能
+    function IsControlSkillByIndex takes integer skillIndex returns boolean
+        local integer k = 0
+        local boolean b = false
+        loop
+            if skillIndex == CONTROL_SKILL_INDEX_LIST[k] then
+                set b = true
+            endif
+            set k = k + 1
+        exitwhen b or k > CONTROL_SKILL_INDEX_LIST_SIZE
+        endloop
+        return b
+    endfunction
+
     function SaveSkillOrder takes integer id, string s returns string
         local integer i = 0
         if s == null or s == "" then
@@ -224,6 +255,88 @@ library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
         if not Mode__BalanceOff then
             call SaveSkillOrder(id, order)
         endif
+    endfunction
+
+    // 判断玩家是否拥有指定索引的技能
+    // IsPlayerSkillPickedByIndex
+    function IsPlayerSkillPickedByIndex takes player p, integer index returns boolean
+        local integer playerIndex = GetPlayerId(p)
+        local integer xx = 1
+        loop
+            if (PlayerSkillIndices[playerIndex * MAX_SKILL_SLOTS + xx]== index) then
+                return true
+            endif
+            set xx = xx + 1
+        exitwhen xx > 4 + ExtraSkillsCount
+        endloop
+        return false
+    endfunction
+
+    // 检查命令冲突
+    // CheckSkillOrderIdByIndex
+    function CheckSkillOrderIdByIndex takes integer skillIndex1, integer skillIndex2, string targetOrder, string unknownOrder returns boolean
+        local integer i
+        local integer k
+        // 技能1命令id列表
+        local string array s1
+        // 技能2命令id列表
+        local string array s2
+        local integer j
+        local integer o
+        if skillIndex2 >-1 then
+            // 如果任意技能没有指定命令id，则返回false
+            if not HaveSavedString(AbilityDataHashTable, skillIndex1, 0) or not HaveSavedString(AbilityDataHashTable, skillIndex2, 0) then
+                return false
+            endif
+
+            set i = 0
+            loop
+            exitwhen not HaveSavedString(AbilityDataHashTable, skillIndex1, i)
+                set s1[i] = LoadStr(AbilityDataHashTable, skillIndex1, i)
+                set i = i + 1
+            endloop
+
+            set k = 0
+            loop
+            exitwhen not HaveSavedString(AbilityDataHashTable, skillIndex2, k)
+                set s2[k] = LoadStr(AbilityDataHashTable, skillIndex2, k)
+                set k = k + 1
+            endloop
+
+            // 如果任意技能没有指定命令id，则返回false
+            if i == 0 or k == 0 then
+                return false
+            endif
+
+            // 嵌套循环
+            set j = 0
+            loop
+                set o = 0
+            exitwhen j >= i
+                loop
+                exitwhen o >= k
+                    // 如果s1的任意命令和s2匹配，则返回，并且s1的命令必须!=unknownOrder 意味着unknownOrder可能代表豁免命令，即便匹配了这个命令也不会返回true
+                    if s1[j] == s2[o] and s1[j] != unknownOrder then
+                        return true
+                    endif
+                    set o = o + 1
+                endloop
+                set j = j + 1
+            endloop
+            return false
+        else
+            // 如果没有技能2，则使技能1去匹配targetOrder
+            set i = 0
+            loop
+            exitwhen HaveSavedString(AbilityDataHashTable, skillIndex1, i) == false
+                if LoadStr(AbilityDataHashTable, skillIndex1, i) == targetOrder then
+                    return true
+                endif
+                set i = i + 1
+            endloop
+            return false
+        endif
+        return true
     endfunction
     
     function GetSkillIndexByBaseId takes integer id returns integer
@@ -297,8 +410,57 @@ library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
     // 因此在判断快捷键时对多图标技能遍历所拥有的所有附加技能
 
     globals
-        TableArray 
+        TableArray SubAbilitiesTable
     endglobals
+
+    private keyword SubAbilityInit
+    struct SubAbility extends array
+        
+        // 对于子技能有多种形态(吞噬)的个例，使用单向链表
+        thistype next
+        integer  abilityId
+        private static key KEY
+
+        static integer COUNT = 0
+
+        static method AllocSubAbility takes integer subAbilityId returns thistype
+            local thistype this = COUNT + 1
+            set COUNT = this
+            set this.abilityId = subAbilityId
+            return this
+        endmethod
+
+        // 追加子技能(吞噬)
+        method AddSubAbility takes integer subAbilityId returns thistype
+            local thistype new = AllocSubAbility(subAbilityId)
+            set this.next = new
+            return new
+        endmethod
+
+        implement SubAbilityInit
+    endstruct
+
+    private module SubAbilityInit
+        private static method onInit takes nothing returns nothing
+            set SubAbilitiesTable = TableArray[JASS_MAX_ARRAY_SIZE]
+        endmethod
+    endmodule
+
+    function GetSkillSubAbilityCountByIndex takes integer skillIndex returns integer
+        return SubAbilitiesTable[skillIndex].integer[0]
+    endfunction
+    function GetSkillSubAbilityByIndex takes integer skillIndex, integer subAbilityIndex returns SubAbility
+        return SubAbilitiesTable[skillIndex].integer[subAbilityIndex]
+    endfunction
+
+    // 基于英雄技能索引添加子技能
+    function HeroSkillAddSubAbilitiesById takes integer skillIndex, integer subAbilityId returns SubAbility
+        local SubAbility sb              = SubAbility.AllocSubAbility(subAbilityId)
+        local integer    subAbilityIndex = SubAbilitiesTable[skillIndex].integer[0] + 1
+        set SubAbilitiesTable[skillIndex].integer[0] = subAbilityIndex
+        set SubAbilitiesTable[skillIndex].integer[subAbilityIndex] = sb
+        return sb
+    endfunction
 
     //***************************************************************************
     //*
@@ -483,6 +645,19 @@ library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
         set PassiveSkill_Show[PassiveAbilityMaxCount] = iShowSkill
         set PassiveSkill_Illusion[PassiveAbilityMaxCount] = iillusionUnitSkill
         call SetAllPlayerAbilityUnavailable(iSpellBookSkill)
+    endfunction
+    
+    // 根据被动技能的学习id找到被动技能索引
+    function GetPassiveSkillIndexByLearnedId takes integer learnedId returns integer
+        local integer i = 1
+        loop
+            if learnedId == PassiveSkill_Learned[i] then
+                return i
+            endif
+            set i = i + 1
+        exitwhen i > PassiveAbilityMaxCount
+        endloop
+        return 0
     endfunction
 
     //***************************************************************************

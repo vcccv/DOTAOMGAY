@@ -4,7 +4,6 @@ scope Ezalor
     globals
         constant integer HERO_INDEX_EZALOR = 16
     endglobals
-
     //***************************************************************************
     //*
     //*  启明
@@ -223,5 +222,245 @@ scope Ezalor
         
         set whichUnit = null
     endfunction
+
+    //***************************************************************************
+    //*
+    //*  灵魂形态
+    //*
+    //***************************************************************************
+    globals
+        constant integer SKILL_INDEX_SPIRIT_FORM               = GetHeroSKillIndexBySlot(HERO_INDEX_EZALOR, 4)
+    endglobals
+
+    function WZR takes nothing returns nothing
+        local integer h = GetHandleId(GetExpiredTimer())
+        local unit u = LoadUnitHandle(HY, h, 0)
+        local unit d = LoadUnitHandle(HY, h, 1)
+        if GetUnitTypeId(u)=='H06X' and UnitAlive(u) and GetWidgetLife(u)> 0 and IsUnitHidden(u) == false then
+            if IsUnitHidden(d) then
+                call ShowUnit(d, true)
+                call UnitRemoveAbility(d, 'Aloc')
+                call UnitAddAbility(d, 'Aloc')
+            endif
+            call SetUnitPosition(d, GetUnitX(u), GetUnitY(u))
+        else
+            if IsUnitHidden(d) == false then
+                call ShowUnit(d, false)
+            endif
+        endif
+        set u = null
+        set d = null
+    endfunction
+    function W_R takes unit u returns nothing
+        local unit d = CreateUnit(GetOwningPlayer(u),'hSPR', GetUnitX(u), GetUnitY(u), 0)
+        local timer t = CreateTimer()
+        call TimerStart(t, .25, true, function WZR)
+        call SaveUnitHandle(HY, GetHandleId(t), 0, u)
+        call SaveUnitHandle(HY, GetHandleId(t), 1, d)
+        call SaveBoolean(ObjectHashTable, GetHandleId(u),'SPRT', true)
+        set t = null
+        set d = null
+    endfunction
+    function SpiritFormOnSpellEffect takes nothing returns nothing
+        local unit u = GetTriggerUnit()
+        local integer level = GetUnitAbilityLevel(u,'QM01')
+        local player p = GetOwningPlayer(u)
+        local boolean W0R = GetUnitTypeId(u)!='H06X'
+        call SetPlayerAbilityAvailable(p,SPIRIT_FORM_BLINDING_LIGHT_ABILITY_ID, W0R)
+        call SetPlayerAbilityAvailable(p,SPIRIT_FORM_RECALL_ABILITY_ID, W0R)
+        call SetUnitAbilityLevel(u,SPIRIT_FORM_BLINDING_LIGHT_ABILITY_ID, level)
+        call SetUnitAbilityLevel(u,SPIRIT_FORM_RECALL_ABILITY_ID, level)
+        if W0R then
+            if LoadBoolean(ObjectHashTable, GetHandleId(u),'SPRT') != true then
+                call W_R(u)
+            endif
+        endif
+        set u = null
+    endfunction
+
+    //***************************************************************************
+    //*
+    //*  致盲之光
+    //*
+    //***************************************************************************
+    globals
+        constant integer SPIRIT_FORM_BLINDING_LIGHT_ABILITY_ID = 'A11X'
+    endglobals
+    function W6R takes nothing returns nothing
+        local unit targetUnit = GetEnumUnit()
+        local real x = GetUnitX(targetUnit)
+        local real y = GetUnitY(targetUnit)
+        local real a = Atan2(y -JJV, x -JHV)
+        set x = CoordinateX50(x + 40 * Cos(a))
+        set y = CoordinateY50(y + 40 * Sin(a))
+        call KillTreeByCircle(x, y, 150)
+        call SetUnitX(targetUnit, x)
+        call SetUnitY(targetUnit, y)
+        set targetUnit = null
+    endfunction
+    function W7R takes nothing returns nothing
+        call UnitAddAbilityToTimed(GetEnumUnit(),'A3PZ', 1, 3 + JGV,'B09K')
+    endfunction
+    function W8R takes nothing returns boolean
+        local trigger t = GetTriggeringTrigger()
+        local integer h = GetHandleId(t)
+        local player p =(LoadPlayerHandle(HY, h, 54))
+        local real sx =(LoadReal(HY, h, 189))
+        local real sy =(LoadReal(HY, h, 190))
+        local integer CVX =(LoadInteger(HY, h, 59))
+        local group g =(LoadGroupHandle(HY, h, 22))
+        local integer count = GetTriggerEvalCount(t)
+        set JHV = sx
+        set JJV = sy
+        call ForGroup(g, function W6R)
+        if count == 10 then
+            set JGV = CVX
+            set TempPlayer = p
+            call ForGroup(g, function W7R)
+            call DeallocateGroup(g)
+            call FlushChildHashtable(HY, h)
+            call DestroyTrigger(t)
+        endif
+        set t = null
+        set p = null
+        set g = null
+        return false
+    endfunction
+    function W9R takes nothing returns boolean
+        local trigger t = GetTriggeringTrigger()
+        local integer h = GetHandleId(t)
+        local player p =(LoadPlayerHandle(HY, h, 54))
+        local real sx =(LoadReal(HY, h, 189))
+        local real sy =(LoadReal(HY, h, 190))
+        local integer CVX =(LoadInteger(HY, h, 59))
+        local group g =(LoadGroupHandle(HY, h, 22))
+        call FlushChildHashtable(HY, h)
+        call DestroyTrigger(t)
+        set t = CreateTrigger()
+        set h = GetHandleId(t)
+        call TriggerRegisterTimerEvent(t, .04, true)
+        call TriggerAddCondition(t, Condition(function W8R))
+        call SavePlayerHandle(HY, h, 54,(p))
+        call SaveReal(HY, h, 189,((sx)* 1.))
+        call SaveReal(HY, h, 190,((sy)* 1.))
+        call SaveGroupHandle(HY, h, 22,(g))
+        call SaveInteger(HY, h, 59,(CVX))
+        set t = null
+        set p = null
+        set g = null
+        return false
+    endfunction
+    function SpiritFormBlindingLightOnSpellEffect takes nothing returns nothing
+        local trigger t = CreateTrigger()
+        local integer h = GetHandleId(t)
+        local group g = AllocationGroup(210)
+        local unit whichUnit = GetTriggerUnit()
+        local real x = GetSpellTargetX()
+        local real y = GetSpellTargetY()
+        call KillUnit(CreateUnit(GetOwningPlayer(whichUnit),'h06P', x, y, 0))
+        set TempUnit = whichUnit
+        call GroupEnumUnitsInRange(g, x, y, 700, Condition(function DQX))
+        call TriggerRegisterTimerEvent(t, .4, false)
+        call TriggerAddCondition(t, Condition(function W9R))
+        call SavePlayerHandle(HY, h, 54,(GetOwningPlayer(whichUnit)))
+        call SaveReal(HY, h, 189,((x)* 1.))
+        call SaveReal(HY, h, 190,((y)* 1.))
+        call SaveGroupHandle(HY, h, 22,(g))
+        call SaveInteger(HY, h, 59, GetUnitAbilityLevel(whichUnit, GetSpellAbilityId()))
+        call EnableAttackEffectByTime(I, 8)
+        set t = null
+        set g = null
+        set whichUnit = null
+    endfunction
+    //***************************************************************************
+    //*
+    //*  召回
+    //*
+    //***************************************************************************
+    globals
+        constant integer SPIRIT_FORM_RECALL_ABILITY_ID         = 'A10U'
+    endglobals
+    function WMR takes nothing returns boolean
+        local trigger t = GetTriggeringTrigger()
+        local integer h = GetHandleId(t)
+        local unit whichUnit =(LoadUnitHandle(HY, h, 2))
+        local unit targetUnit =(LoadUnitHandle(HY, h, 17))
+        local real x1
+        local real y1
+        local real x2
+        local real y2
+        if GetTriggerEventId() == EVENT_WIDGET_DEATH or(GetTriggerEventId() == EVENT_UNIT_DAMAGED and GetEventDamage()> 2 and IsPlayerValid(GetOwningPlayer(GetEventDamageSource()))) then
+            call DestroyEffect((LoadEffectHandle(HY, h, 175)))
+            call DestroyEffect((LoadEffectHandle(HY, h, 176)))
+            call FlushChildHashtable(HY, h)
+            call DestroyTrigger(t)
+        elseif GetTriggerEventId() != EVENT_UNIT_DAMAGED and GetTriggerEventId() != EVENT_WIDGET_DEATH then
+            set x1 = GetUnitX(whichUnit)
+            set y1 = GetUnitY(whichUnit)
+            set x2 = GetUnitX(targetUnit)
+            set y2 = GetUnitY(targetUnit)
+            call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Human\\MassTeleport\\MassTeleportCaster.mdl", x1, y1))
+            call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Human\\MassTeleport\\MassTeleportTarget.mdl", x2, y2))
+            call EPX(targetUnit, 4410, 1)
+            call SetUnitPosition(targetUnit, GetUnitX(whichUnit), GetUnitY(whichUnit))
+            call DestroyEffect(LoadEffectHandle(HY, h, 175))
+            call DestroyEffect(LoadEffectHandle(HY, h, 176))
+            call FlushChildHashtable(HY, h)
+            call DestroyTrigger(t)
+        endif
+        set t = null
+        set whichUnit = null
+        set targetUnit = null
+        return false
+    endfunction
+    function WPR takes nothing returns nothing
+        local unit targetUnit = GetEnumUnit()
+        local real d = GetDistanceBetween(GetUnitX(targetUnit), GetUnitY(targetUnit), JDV, JFV)
+        if d < JCV and LoadBoolean(HY, GetHandleId(GetOwningPlayer(targetUnit)), 139) == false then
+            set JBV = targetUnit
+            set JCV = d
+        endif
+        set targetUnit = null
+    endfunction
+    function SpiritFormReCallOnSpellEffect takes nothing returns nothing
+        local unit targetUnit = GetSpellTargetUnit()
+        local unit whichUnit = GetTriggerUnit()
+        local trigger t
+        local integer h
+        local real N5O
+        local group g = null
+        local integer level = GetUnitAbilityLevel(whichUnit,SPIRIT_FORM_RECALL_ABILITY_ID)
+        if targetUnit == null then
+            set JBV = null
+            set JCV = 999999
+            set JDV = GetSpellTargetX()
+            set JFV = GetSpellTargetY()
+            set TempUnit = whichUnit
+            set g = AllocationGroup(208)
+            call GroupEnumUnitsInRange(g, 0, 0, 9999, Condition(function D4X))
+            call GroupRemoveUnit(g, whichUnit)
+            call ForGroup(g, function WPR)
+            call DeallocateGroup(g)
+            set targetUnit = JBV
+            set g = null
+        endif
+        if targetUnit != null then
+            set t = CreateTrigger()
+            set h = GetHandleId(t)
+            call TriggerRegisterDeathEvent(t, targetUnit)
+            call TriggerRegisterDeathEvent(t, whichUnit)
+            call TriggerRegisterUnitEvent(t, targetUnit, EVENT_UNIT_DAMAGED)
+            call TriggerRegisterTimerEvent(t, 6 -level, false)
+            call TriggerAddCondition(t, Condition(function WMR))
+            call SaveUnitHandle(HY, h, 2,(whichUnit))
+            call SaveUnitHandle(HY, h, 17,(targetUnit))
+            call SaveEffectHandle(HY, h, 175,(AddSpecialEffectTarget("Abilities\\Spells\\Human\\MassTeleport\\MassTeleportTo.mdl", whichUnit, "origin")))
+            call SaveEffectHandle(HY, h, 176,(AddSpecialEffectTarget("Abilities\\Spells\\Human\\MassTeleport\\MassTeleportTo.mdl", targetUnit, "origin")))
+        endif
+        set targetUnit = null
+        set whichUnit = null
+        set t = null
+    endfunction
+
 
 endscope

@@ -39,6 +39,10 @@ library AbilityCustomCastType requires ErrorMessage
         // 冰晶爆轰 - 关闭
         call SetAbilityCastType('A1MN', BERSERKER_CAST_TYPE)
         
+        // 幽魂
+        call SetAbilityCastType(SPIRITS_IN_ABILITY_ID , BERSERKER_CAST_TYPE)
+        call SetAbilityCastType(SPIRITS_OUT_ABILITY_ID, BERSERKER_CAST_TYPE)
+        
         // 力量/敏捷转换
         // call SetAbilityCastType('A0KX', BERSERKER_CAST_TYPE)
         // call SetAbilityCastType('A0KW', BERSERKER_CAST_TYPE)
