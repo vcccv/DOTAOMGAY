@@ -19,6 +19,9 @@
 #include "Str\\SkeletonKing.j"
 #include "Str\\PitLord.j"
 #include "Str\\GuardianWisp.j"
+#include "Str\\Beastmaster.j"
+#include "Str\\Banehallow.j"
+#include "Str\\Doom.j"
 
 #include "Int\\TwinHeadDragon.j"
 #include "Int\\Ezalor.j"

@@ -95,7 +95,7 @@ library SkillDraft requires SkillSystem
             if PlayerSkillIndices[baseSlot + currentSlot] > 0 then
                 set hotkey2 = GetSkillHotkeyByIndex(PlayerSkillIndices[baseSlot + currentSlot])
                 if hotkey2 == hotkey1 then
-                    set message = message + "\n    " + GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[baseSlot + currentSlot]]) + "[" + Key2Str(hotkey2) + "]"
+                    set message = message + "\n         " + GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[baseSlot + currentSlot]]) + "[" + Key2Str(hotkey2) + "]"
                 endif
                 // 对比完了正常技能后，对比子技能
                 set subAbilityCount = GetSkillSubAbilityCountByIndex(PlayerSkillIndices[baseSlot + currentSlot])
@@ -108,10 +108,11 @@ library SkillDraft requires SkillSystem
                         set skillName2 = GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[baseSlot + currentSlot]]) + "[" + Key2Str(hotkey2) + "]"
                         loop
                             set hotkey2 = GetAbilityHotkeyById(sb.abilityId)
+                            call BJDebugMsg("对比的技能：" + GetObjectName(sb.abilityId) + " " + Id2String(sb.abilityId) + " 热键： " + Key2Str(hotkey2))
                             if hotkey2 == hotkey1 then
-                                set message = message + "\n    " + skillName2 + " 第" + I2S(i + 1) + "号技能：" + GetObjectName(sb.abilityId) + "[" + Key2Str(hotkey2) + "]"
+                                set message = message + "\n             " + skillName2 + " 第" + I2S(i + 1) + "号技能 - " + GetObjectName(sb.abilityId) + "[" + Key2Str(hotkey2) + "]"
                                 
-                                //call DisplayLoDErrorForPlayer(whichPlayer, true, "快捷键冲突 : " + /*
+                                //call DisplayLoDWarningForPlayer(whichPlayer, true, "快捷键冲突 : " + /*
                                 //*/ skillName + "/" + /*
                                 //*/ GetObjectName(sb.abilityId) + "[" + Key2Str(hotkey2) + "]")
                             endif
@@ -126,7 +127,7 @@ library SkillDraft requires SkillSystem
         exitwhen (currentSlot > 4 + ExtraSkillsCount)
         endloop
         if StringLength(message) > 0 then
-            call DisplayLoDErrorForPlayer(whichPlayer, true, skillName + "快捷键冲突 : " + message)
+            call DisplayLoDWarningForPlayer(whichPlayer, true, skillName + "快捷键冲突 : " + message)
         endif
     endfunction
 
@@ -155,7 +156,7 @@ library SkillDraft requires SkillSystem
                     set hotkey1 = GetAbilityHotkeyById(sb.abilityId)
                     if hotkey1 > 0 then
                         call CheckAbility(whichPlayer, sb.abilityId, hotkey1, /*
-                        */ skillName + " 第" + I2S(i + 1) + "号技能：" + GetObjectName(sb.abilityId) + "[" + Key2Str(hotkey1) + "]")
+                        */ skillName + " 第" + I2S(i + 1) + "号技能 - " + GetObjectName(sb.abilityId) + "[" + Key2Str(hotkey1) + "]")
                     endif
                     set i = i + 1
                     set sb = sb.next
@@ -171,7 +172,7 @@ library SkillDraft requires SkillSystem
         //if GetSkillSubAbilityCountByIndex(skillIndex) > 0 then
         //    GetSkillSubAbilityByIndex(skillIndex, 1)
         //endif
-        // call DisplayLoDErrorForPlayer(whichPlayer, throwMessage, "快捷键冲突 : " + GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[baseSlot + xx]]))
+        // call DisplayLoDWarningForPlayer(whichPlayer, throwMessage, "快捷键冲突 : " + GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[baseSlot + xx]]))
     endfunction
     
     function SetShowSkillDatas takes integer showSkillId, integer skillIndex returns nothing
@@ -188,6 +189,7 @@ library SkillDraft requires SkillSystem
         else
             call SetAbilityIconById(showSkillId, GetAbilityIconById(tempAbilityId))
         endif
+        call SetAbilityStringFieldById(showSkillId, ABILITY_DEF_DATA_NAME, GetObjectName(tempAbilityId))
         if hotkey == 0 then
             call SetAbilityTooltipById(showSkillId, 1, GetObjectName(tempAbilityId))
         else
@@ -219,7 +221,7 @@ library SkillDraft requires SkillSystem
         if Mode__SingleDraft or Mode__MirrorDraft then
             set QTX = LoadBoolean(HY, GetHandleId( whichPlayer ), unitTypeId)
             if not QTX then
-                call DisplayLoDWarningForPlayer(whichPlayer, true, "这些是你友军的技能，你无法选择他们。你的技能在 " + QHX(playerId) + "|c006699CC 酒馆|r")
+                call DisplayLoDTipForPlayer(whichPlayer, true, "这些是你友军的技能，你无法选择他们。你的技能在 " + QHX(playerId) + "|c006699CC 酒馆|r")
             endif
         endif
         call FlushChildHashtable(HY, GetHandleId(KP[playerId]))
@@ -392,11 +394,11 @@ library SkillDraft requires SkillSystem
         endif
 
         if FP[playerIndex] then
-            call DisplayLoDErrorForPlayer(whichPlayer, throwMessage, "你已经准备好了")
+            call DisplayLoDWarningForPlayer(whichPlayer, throwMessage, "你已经准备好了")
             return false
         endif
         if HeroSkill_Disabled[skillIndex] then
-            call DisplayLoDErrorForPlayer(whichPlayer, throwMessage, "该技能无法被选择 :(")
+            call DisplayLoDWarningForPlayer(whichPlayer, throwMessage, "该技能无法被选择 :(")
             return false
         endif
         if Mode__DeathMatch or MainModeName =="ar" then
@@ -411,7 +413,7 @@ library SkillDraft requires SkillSystem
                 set teamId = 2
             endif
             if XP[teamId * OP + skillIndex] != 0 then
-                call DisplayLoDErrorForPlayer(whichPlayer, throwMessage, "一个玩家已经选择了这个技能: " + PlayerColorHex[XP[teamId * OP + skillIndex]] + PlayersName[XP[teamId * OP + skillIndex]] + "|r")
+                call DisplayLoDWarningForPlayer(whichPlayer, throwMessage, "一个玩家已经选择了这个技能: " + PlayerColorHex[XP[teamId * OP + skillIndex]] + PlayersName[XP[teamId * OP + skillIndex]] + "|r")
                 return false
             endif
         endif
@@ -436,11 +438,11 @@ library SkillDraft requires SkillSystem
         exitwhen xx > 4 + ExtraSkillsCount
         endloop
         if ultimateEmptySlot == 0 and isUltimate then
-            call DisplayLoDErrorForPlayer(whichPlayer, throwMessage, "你必须选择一个小技能（非最终技能）。")
+            call DisplayLoDWarningForPlayer(whichPlayer, throwMessage, "你必须选择一个小技能（非最终技能）。")
             return false
         endif
         if emptySlot == 0 and not(isUltimate) then
-            call DisplayLoDErrorForPlayer(whichPlayer, throwMessage, "你必须选择一个最终技能。")
+            call DisplayLoDWarningForPlayer(whichPlayer, throwMessage, "你必须选择一个最终技能。")
             return false
         endif
         if Mode__RandomExtraAbilities then
@@ -534,17 +536,17 @@ library SkillDraft requires SkillSystem
             endloop
         endif
         if HeroSkill_HasMultipleAbilities[skillIndex]and(Mode__FiveSkills or Mode__SixSkills) then
-            call DisplayLoDWarningForPlayerEx(whichPlayer, throwMessage, "注意：该技能是多图标技能。建议用命令改键来修改额外技能快捷键。")
+            call DisplayLoDTipForPlayerEx(whichPlayer, throwMessage, "注意：该技能是多图标技能。建议用命令改键来修改额外技能快捷键。")
         endif
         if skillIndex == (35 -1)* 4 + 3 then
             if IsPlayerSentinel(whichPlayer) then
                 if OQR(GetPlayerId(SentinelPlayers[1])) or OQR(GetPlayerId(SentinelPlayers[2])) or OQR(GetPlayerId(SentinelPlayers[3])) or OQR(GetPlayerId(SentinelPlayers[4])) or OQR(GetPlayerId(SentinelPlayers[5])) then
-                    call DisplayLoDErrorForPlayer(whichPlayer, throwMessage, "你的队友已经选择了这个技能，不能再选择一个了。")
+                    call DisplayLoDWarningForPlayer(whichPlayer, throwMessage, "你的队友已经选择了这个技能，不能再选择一个了。")
                     return false
                 endif
             else
                 if OQR(GetPlayerId(ScourgePlayers[1])) or OQR(GetPlayerId(ScourgePlayers[2])) or OQR(GetPlayerId(ScourgePlayers[3])) or OQR(GetPlayerId(ScourgePlayers[4])) or OQR(GetPlayerId(ScourgePlayers[5])) then
-                    call DisplayLoDErrorForPlayer(whichPlayer, throwMessage, "你的队友已经选择了这个技能，不能再选择一个了。")
+                    call DisplayLoDWarningForPlayer(whichPlayer, throwMessage, "你的队友已经选择了这个技能，不能再选择一个了。")
                     return false
                 endif
             endif
@@ -603,26 +605,26 @@ library SkillDraft requires SkillSystem
         if noStackSlot != 0 then
             if notStackMessage != "" then
                 if skillLimit2Slot != 0 then
-                    call DisplayLoDErrorForPlayer(whichPlayer, throwMessage, "不兼容 : " + GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[baseSlot + noStackSlot]]) + "/" + GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[baseSlot + skillLimit1Slot]]) + "/" + GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[baseSlot + skillLimit2Slot]]) + " (" + notStackMessage + ")")
+                    call DisplayLoDWarningForPlayer(whichPlayer, throwMessage, "不兼容 : " + GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[baseSlot + noStackSlot]]) + "/" + GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[baseSlot + skillLimit1Slot]]) + "/" + GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[baseSlot + skillLimit2Slot]]) + " (" + notStackMessage + ")")
                 elseif skillLimit1Slot != 0 then
-                    call DisplayLoDErrorForPlayer(whichPlayer, throwMessage, "不兼容 : " + GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[baseSlot + noStackSlot]]) + "/" + GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[baseSlot + skillLimit1Slot]]) + " (" + notStackMessage + ")")
+                    call DisplayLoDWarningForPlayer(whichPlayer, throwMessage, "不兼容 : " + GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[baseSlot + noStackSlot]]) + "/" + GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[baseSlot + skillLimit1Slot]]) + " (" + notStackMessage + ")")
                 else
-                    call DisplayLoDErrorForPlayer(whichPlayer, throwMessage, "不兼容 : " + GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[baseSlot + noStackSlot]]) + " (" + notStackMessage + ")")
+                    call DisplayLoDWarningForPlayer(whichPlayer, throwMessage, "不兼容 : " + GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[baseSlot + noStackSlot]]) + " (" + notStackMessage + ")")
                 endif
             else
-                call DisplayLoDErrorForPlayer(whichPlayer, throwMessage, "不兼容 : " + GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[baseSlot + noStackSlot]]))
+                call DisplayLoDWarningForPlayer(whichPlayer, throwMessage, "不兼容 : " + GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[baseSlot + noStackSlot]]))
             endif
             return false
         endif
         if isPlayerReachedSkillLimit then
             if not isTeamReachedSkillLimit then
                 if maxCountLimit == 2 then
-                    call DisplayLoDErrorForPlayer(whichPlayer, throwMessage, "不能选择该技能，你已经有2个控制技能了！")
+                    call DisplayLoDWarningForPlayer(whichPlayer, throwMessage, "不能选择该技能，你已经有2个控制技能了！")
                 else
-                    call DisplayLoDErrorForPlayer(whichPlayer, throwMessage, "不能选择该技能，你已经有1个控制技能了！")
+                    call DisplayLoDWarningForPlayer(whichPlayer, throwMessage, "不能选择该技能，你已经有1个控制技能了！")
                 endif
             else
-                call DisplayLoDErrorForPlayer(whichPlayer, throwMessage, "不能选择该技能，你的队伍已经选择7个控制技能了！")
+                call DisplayLoDWarningForPlayer(whichPlayer, throwMessage, "不能选择该技能，你的队伍已经选择7个控制技能了！")
             endif
             return false
         endif
@@ -639,7 +641,7 @@ library SkillDraft requires SkillSystem
         //     loop
         //         if PlayerSkillIndices[baseSlot + xx]> 0 and HaveSavedString(AbilityDataHashTable, HeroSkill_BaseId[PlayerSkillIndices[baseSlot + xx]], HotKeyStringHash) then
         //             if LoadStr(AbilityDataHashTable, HeroSkill_BaseId[skillIndex], HotKeyStringHash) == LoadStr(AbilityDataHashTable, HeroSkill_BaseId[PlayerSkillIndices[baseSlot + xx]], HotKeyStringHash) then
-        //                 call DisplayLoDErrorForPlayer(whichPlayer, throwMessage, "快捷键冲突 : " + GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[baseSlot + xx]]))
+        //                 call DisplayLoDWarningForPlayer(whichPlayer, throwMessage, "快捷键冲突 : " + GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[baseSlot + xx]]))
         //             endif
         //         endif
         //         set xx = xx + 1
@@ -670,24 +672,24 @@ library SkillDraft requires SkillSystem
         set FP[playerIndex] = isPlayerReadying
         if isMeleeOnly then
             set PP[playerIndex] = 1
-            call DisplayLoDWarningForPlayer(whichPlayer, throwMessage, "注意：该技能是近战限定技能.")
+            call DisplayLoDTipForPlayer(whichPlayer, throwMessage, "注意：该技能是近战限定技能.")
         elseif isRangeOnly then
             set PP[playerIndex] = 2
-            call DisplayLoDWarningForPlayer(whichPlayer, throwMessage, "注意：该技能是远程限定技能.")
+            call DisplayLoDTipForPlayer(whichPlayer, throwMessage, "注意：该技能是远程限定技能.")
         endif
         if isMeleeMorph then
-            call DisplayLoDWarningForPlayer(whichPlayer, throwMessage, "注意：该技能是近战变身技能.")
+            call DisplayLoDTipForPlayer(whichPlayer, throwMessage, "注意：该技能是近战变身技能.")
         elseif isRangeMorph then
-            call DisplayLoDWarningForPlayer(whichPlayer, throwMessage, "注意：该技能是远程变身技能.")
+            call DisplayLoDTipForPlayer(whichPlayer, throwMessage, "注意：该技能是远程变身技能.")
         endif
         if ( not Mode__BalanceOff and HeroSkill_BalanceOffDisabledTips[skillIndex] != null ) then
-            call DisplayLoDWarningForPlayer(whichPlayer, throwMessage, "平衡改动(BO)：" + HeroSkill_BalanceOffDisabledTips[skillIndex]) // BalanceOff
+            call DisplayLoDTipForPlayer(whichPlayer, throwMessage, "平衡改动(BO)：" + HeroSkill_BalanceOffDisabledTips[skillIndex]) // BalanceOff
         endif
         if ( not Mode__RearmCombos and HeroSkill_RearmCombosDisabledTips[skillIndex] != null ) then
-            call DisplayLoDWarningForPlayer(whichPlayer, throwMessage, "平衡改动(RC)：" + HeroSkill_RearmCombosDisabledTips[skillIndex]) // RearmCombos
+            call DisplayLoDTipForPlayer(whichPlayer, throwMessage, "平衡改动(RC)：" + HeroSkill_RearmCombosDisabledTips[skillIndex]) // RearmCombos
         endif
         if HeroSkill_Tips[skillIndex] != null then
-            call DisplayLoDWarningForPlayer(whichPlayer, throwMessage, "注意：" + HeroSkill_Tips[skillIndex])
+            call DisplayLoDTipForPlayer(whichPlayer, throwMessage, "注意：" + HeroSkill_Tips[skillIndex])
         endif
         return true
     endfunction

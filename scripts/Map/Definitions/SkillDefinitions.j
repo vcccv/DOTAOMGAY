@@ -1,6 +1,6 @@
 
 // 包含了被动和主动技能
-library HeroSkillDefine requires SkillSystem
+library HeroSkillDefine requires SkillSystem, AbilityCustomOrderId
 
     // 技能的初始化
     function InitSkillInitializerMethod takes nothing returns nothing
@@ -371,7 +371,7 @@ library HeroSkillDefine requires SkillSystem
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "melee only"), 'A01K', 'QP06', 'Y022')
         set HeroSkill_IsPassive[i * 4 + 2] = true
         call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, GetAbilityOrder('A2IS')), 'A2IS', 0, 'Y023')
-        call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "roar"), 'A0WP', 'A43D', 'Y024')
+        call RegisterHeroSkill(i * 4 + 4, "", 'A0WP', 'A43D', 'Y024')
         set i = 7 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A063')), 'A063', 0, 'Y025')
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "unavatar"), 'A24D', 0, 'Y026')
@@ -379,7 +379,7 @@ library HeroSkillDefine requires SkillSystem
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "r2"), 'A07U', 'A38E', 'Y028')
         set i = 8 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "barkskinoff"), 'A0SK', 0, 'Y029')
-        call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "roar"), 'A0DL', 0, 'Y030')
+        call RegisterHeroSkill(i * 4 + 2, "", 'A0DL', 0, 'Y030')
         set HeroSkill_BalanceOffDisabledTips[i * 4 + 2] = "图腾在与水刀、连击、海象挥击、忍术、转属性和无影拳的时候只会 +100/140/180/220% 的攻击力"
         call SaveSkillOrderInBalanceOffDisabled(i * 4 + 2, "ET-Drunken")
         call SaveSkillOrderInBalanceOffDisabled(i * 4 + 2, "bgdmg1")
@@ -407,7 +407,7 @@ library HeroSkillDefine requires SkillSystem
         if Mode__SixSkills and(not Mode__RearmCombos) then
             set HeroSkill_Disabled[i * 4 + 3] = true
         endif
-        call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "bearform")+ SaveSkillOrder(i * 4 + 4, "unbearform")+ SaveSkillOrder(i * 4 + 4, "battleroar")+ SaveSkillOrder(i * 4 + 4, "metamorphosis")+ SaveSkillOrder(i * 4 + 4, "melee morph"), 'A0AG', 0, 'Y040')
+        call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "bearform")+ SaveSkillOrder(i * 4 + 4, "unbearform")+ SaveSkillOrder(i * 4 + 4, "metamorphosis")+ SaveSkillOrder(i * 4 + 4, "melee morph"), 'A0AG', 0, 'Y040')
         call HeroSkillAddSubAbilitiesById(SKILL_INDEX_TRUE_FORM, BATTLE_CRY_ABILITY_ID)
         set HeroSkill_HasMultipleAbilities[i * 4 + 4] = true
 
@@ -419,7 +419,7 @@ library HeroSkillDefine requires SkillSystem
         set HeroSkill_RearmCombosDisabledTips[i * 4 + 3] = "冷却时间3秒及以下的技能每施放2次才会触发1次炽魂"
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, GetAbilityOrder('A01P')), 'A01P', 'A09Z', 'Y044')
         set i = 12 - 1
-        call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "whirlwind"), 'A05G', 0, 'Y045')
+        call RegisterHeroSkill(i * 4 + 1, "", 'A05G', 0, 'Y045')
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "healingward"), 'A047', 0, 'Y046')
         call RegisterHeroSkill(i * 4 + 3, null, 'A00K', 'QP09', 'Y047')
         set HeroSkill_IsPassive[i * 4 + 3] = true
@@ -432,11 +432,11 @@ library HeroSkillDefine requires SkillSystem
         set i = 14 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "invisibility"), 'A01Z', 0, 'Y053')
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "unavengerform"), 'A26N', 0, 'Y054')
-        call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "spiritlink"), 'A2ML', 0, 'Y055')
+        call RegisterHeroSkill(i * 4 + 3, "", 'A2ML', 0, 'Y055')
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "blight"), 'A07Z', 'A44S', 'Y056')
         set i = 15 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "Locustswarm"), 'A1AA', 0, 'Y057')
-        call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "loadcorpse")+ SaveSkillOrder(i * 4 + 2, "whirlwind"), 'A1A8', 0, 'Y058')
+        call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "loadcorpse"), 'A1A8', 0, 'Y058')
         call RegisterHeroSkill(i * 4 + 3, null, 'A1CD', 'QP1I', 'Y059')
         set HeroSkill_IsPassive[i * 4 + 3] = true
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "board"), 'A1A1', 'A43J', 'Y060')
@@ -451,7 +451,7 @@ library HeroSkillDefine requires SkillSystem
         call HeroSkillAddSubAbilitiesById(SKILL_INDEX_SPIRIT_FORM, SPIRIT_FORM_RECALL_ABILITY_ID        )
         
         set i = 17 - 1
-        call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "thunderclap"), 'A03Y', 0, 'Y065')
+        call RegisterHeroSkill(i * 4 + 1, "", 'A03Y', 0, 'Y065')
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('QB0P')), 'QB0P', 0, 'QY0P')
         call RegisterHeroSkill(i * 4 + 3, null, 'P067', 'QP0A', 'Y067')
         set HeroSkill_IsPassive[i * 4 + 3] = true
@@ -495,7 +495,7 @@ library HeroSkillDefine requires SkillSystem
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "stampede")+ SaveSkillOrder(i * 4 + 4, "r55"), 'A1W8', 'A1W9', 'Y080')
         set i = 21 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "spellstealoff"), 'A10D', 0, 'Y081')
-        call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "animatedead"), 'A46H', 0, 'Y082')
+        call RegisterHeroSkill(i * 4 + 2, "", 'A46H', 0, 'Y082')
         call RegisterHeroSkill(i * 4 + 3, null, 'A46E', 'A46D', 'Y084')
         set HeroSkill_IsPassive[i * 4 + 3] = true
         call RegisterHeroSkill(i * 4 + 4, null, 'A0DB', 'QP0B', 'Y083')
@@ -522,8 +522,8 @@ library HeroSkillDefine requires SkillSystem
         //endif
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "stasistrap"), 'A06H', 0, 'Y090')
         call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "selfdestruct"), 'A06B', 'A471', 'Y091')
-        call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "ward"), 'A0AK', 'A1FY', 'Y092')
-        set HeroSkill_HasMultipleAbilities[i * 4 + 4] = true
+        call RegisterHeroSkill(SKILL_INDEX_REMOTE_MINES, "", 'A0AK', 'A1FY', 'Y092')
+        set HeroSkill_HasMultipleAbilities[SKILL_INDEX_REMOTE_MINES] = true
         call HeroSkillAddSubAbilitiesById(SKILL_INDEX_REMOTE_MINES, GOBLIN_TECHIES_FOCUSED_DETONATE_ABILITY_ID)
         
         set i = 24 - 1
@@ -552,9 +552,9 @@ library HeroSkillDefine requires SkillSystem
         call RegisterHeroSkill(i * 4 + 4, "", 'A04P', 'A1AU', 'Y104')
         set i = 27 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "metamorphosis")+ SaveSkillOrder(i * 4 + 1, "bearform")+ SaveSkillOrder(i * 4 + 1, "unbearform")+ SaveSkillOrder(i * 4 + 1, "melee morph")+ SaveSkillOrder(i * 4 + 1, "bash")+ SaveSkillOrder(i * 4 + 1, "yongjiu2"), 'A0BE', 0, 'Y105')
-        call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "autodispel")+ SaveSkillOrder(i * 4 + 2, "loadarcher"), 'A21M', 'A21N', 'Y106')
-        set HeroSkill_HasMultipleAbilities[i * 4 + 2] = true
+        call RegisterHeroSkill(SKILL_INDEX_WHIRLING_AXES, "", 'A21M', 0, 'Y106')
         call HeroSkillAddSubAbilitiesById(SKILL_INDEX_WHIRLING_AXES, WHIRLING_AXES_MELEE_ABILITY_ID)
+        set HeroSkill_HasMultipleAbilities[SKILL_INDEX_WHIRLING_AXES] = true
 
         call RegisterHeroSkill(i * 4 + 3, null, 'A0O0', 'QP0G', 'Y107')
         set HeroSkill_IsPassive[i * 4 + 3] = true
@@ -563,17 +563,17 @@ library HeroSkillDefine requires SkillSystem
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "forkedlightning"), 'A010', 0, 'Y109')
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "hex"), 'A0RX', 0, 'Y110')
         call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "magicleash"), 'A00P', 0, 'Y111')
-        call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "ward")+ SaveSkillOrder(i * 4 + 4, "r7"), 'A00H', 'A0A1', 'Y112')
+        call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "r7"), 'A00H', 'A0A1', 'Y112')
         if ExtraSkillsCount == 2 then
             set HeroSkill_Tips[i * 4 + 4] = "该技能在此模式下会减少对建筑25%伤害"
         endif
         set i = 29 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A1TA'))+ SaveSkillOrder(i * 4 + 1, "frenzyoff"), 'A1TA', 0, 'Y113')
         //set HeroSkill_Disabled[i * 4 + 1] = true
-        call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A1T8'))+ SaveSkillOrder(i * 4 + 2, "battleroar")+ SaveSkillOrder(i * 4 + 2, "roar"), 'A1T8', 0, 'Y114')
+        call RegisterHeroSkill(SKILL_INDEX_SPRIITS, "", 'A1T8', 0, 'Y114')
         call HeroSkillAddSubAbilitiesById(SKILL_INDEX_SPRIITS, SPIRITS_IN_ABILITY_ID )
         call HeroSkillAddSubAbilitiesById(SKILL_INDEX_SPRIITS, SPIRITS_OUT_ABILITY_ID)
-        set HeroSkill_HasMultipleAbilities[i * 4 + 2] = true
+        set HeroSkill_HasMultipleAbilities[SKILL_INDEX_SPRIITS] = true
 
         call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "manashieldon")+ SaveSkillOrder(i * 4 + 3, "manashieldoff"), 'A28Q', 0, 'Y115')
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "spellstealon"), 'A1TB', 'A3FQ', 'Y116')
@@ -582,7 +582,7 @@ library HeroSkillDefine requires SkillSystem
         endif
         call SaveSkillOrderInBalanceOffDisabled(i * 4 + 4, "r30")
         set i = 30 - 1
-        call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "thunderclap"), 'A06M', 0, 'Y117')
+        call RegisterHeroSkill(i * 4 + 1, "", 'A06M', 0, 'Y117')
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "drunkenhaze"), 'Acdh', 0, 'Y118')
         call RegisterHeroSkill(i * 4 + 3, null, 'A0MX', 'QP0H', 'Y119')
         set HeroSkill_IsPassive[i * 4 + 3] = true
@@ -635,15 +635,18 @@ library HeroSkillDefine requires SkillSystem
         call RegisterHeroSkill(i * 4 + 4, null, 'QF88', 0, 'QY88')
         set HeroSkill_IsPassive[i * 4 + 4] = true
         set i = 36 - 1
-        call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "channel"), 'A08N', 0, 'Y141')
+        call RegisterHeroSkill(i * 4 + 1, "", 'A08N', 0, 'Y141')
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "antimagicshell"), 'A08V', 0, 'Y142')
         call RegisterHeroSkill(i * 4 + 3, null, 'A06A', 'QP0M', 'Y143')
         set HeroSkill_IsPassive[i * 4 + 3] = true
-        call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "battleroar"), 'A0ER', 'A2S8', 'Y144')
+        call RegisterHeroSkill(i * 4 + 4, "", 'A0ER', 'A2S8', 'Y144')
         set i = 37 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "massteleport"), 'A0O1', 0, 'Y145')
-        call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "awaken")+ SaveSkillOrder(i * 4 + 2, "unsummon"), 'A0OO', 0, 'Y146')
-        set HeroSkill_HasMultipleAbilities[i * 4 + 2] = true
+        call RegisterHeroSkill(SKILL_INDEX_CALL_OF_THE_WILD, "" , 'A0OO', 0, 'Y146')
+        call HeroSkillAddSubAbilitiesById(SKILL_INDEX_CALL_OF_THE_WILD, CALL_OF_THE_WILD_HAWK_ABILITY_ID)
+        call HeroSkillAddSubAbilitiesById(SKILL_INDEX_CALL_OF_THE_WILD, CALL_OF_THE_WILD_BOAR_ABILITY_ID)
+        set HeroSkill_HasMultipleAbilities[SKILL_INDEX_CALL_OF_THE_WILD] = true
+
         call RegisterHeroSkill(i * 4 + 3, null, 'A0BD', 'QP0N', 'Y147')
         set HeroSkill_IsPassive[i * 4 + 3] = true
         call RegisterHeroSkill(i * 4 + 4, "", 'A0O2', 'A289', 'Y148')
@@ -670,7 +673,7 @@ library HeroSkillDefine requires SkillSystem
         call RegisterHeroSkill(i * 4 + 3, null, 'A0QW', 'QP1V', 'Y163')
         set HeroSkill_IsPassive[i * 4 + 3] = true
         set HeroSkill_RearmCombosDisabledTips[i * 4 + 3] = "冷却时间3秒及以下的技能每施放2次才会触发1次超负荷（球形闪电除外）"
-        call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "channel"), 'A14O', 'A3FJ', 'Y164')
+        call RegisterHeroSkill(i * 4 + 4, "", 'A14O', 'A3FJ', 'Y164')
         set s = SaveSkillOrder(i * 4 + 4, "HXLongqilanmao")
         if (not Mode__RearmCombos) then
             set s = SaveSkillOrder(i * 4 + 4, "HXballl")
@@ -690,19 +693,21 @@ library HeroSkillDefine requires SkillSystem
         call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "range only"), 'A0RO', 'QP1S', 'Y171')
         set HeroSkill_IsPassive[i * 4 + 3] = true
         //set HeroSkill_IsDisabledInDeathMatch[i * 4 + 3] = true
-        call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "curse")+ SaveSkillOrder(i * 4 + 4, "spiritwolf"), 'A0RP', 'A449', 'Y172')
-        //	set HeroSkill_Disabled[i*4+4]=true
-        set HeroSkill_HasMultipleAbilities[i * 4 + 4] = true
+        call RegisterHeroSkill(SKILL_INDEX_PSIONIC_TRAP, "", 'A0RP', 'A449', 'Y172')
+        call HeroSkillAddSubAbilitiesById(SKILL_INDEX_PSIONIC_TRAP, TEMPLAR_ASSASSIN_TRAP_ABILITY_ID)
+        set HeroSkill_HasMultipleAbilities[SKILL_INDEX_PSIONIC_TRAP] = true
         set i = 44 - 1
-        call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "spiritlink")+ SaveSkillOrder(i * 4 + 1, "coupletarget"), 'A0S9', 0, 'Y173')
-        set HeroSkill_HasMultipleAbilities[i * 4 + 1] = true
+        call RegisterHeroSkill(SKILL_INDEX_ILLUSORY_ORB, "", 'A0S9', 0, 'Y173')
+        call HeroSkillAddSubAbilitiesById(SKILL_INDEX_PSIONIC_TRAP, ETHEREAL_JAUNT_ABILITY_ID)
+        set HeroSkill_HasMultipleAbilities[SKILL_INDEX_ILLUSORY_ORB] = true
+
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "creepanimatedead"), 'A0SC', 0, 'Y174')
         call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "phaseshift"), 'A0SB', 0, 'Y175')
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "rainofchaos"), 'A0S8', 'A1QP', 'Y176')
         set i = 45 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "creepdevour"), 'A0Z4', 0, 'Y177')
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "neutraldetectaoe"), 'A0Z5', 0, 'Y178')
-        call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "blizzard"), 'A0Z6', 0, 'Y179')
+        call RegisterHeroSkill(i * 4 + 3, "", 'A0Z6', 0, 'Y179')
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "clusterrockets"), 'A0Z8', 'A1CV', 'Y180')
         set i = 46 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "rejuvination"), 'A136', 0, 'Y181')
@@ -721,7 +726,6 @@ library HeroSkillDefine requires SkillSystem
         call SaveSkillOrderInBalanceOffDisabled(i * 4 + 2, "Tide-Drunken")
         call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "incineratearrow")+ SaveSkillOrder(i * 4 + 3, "incineratearrowoff"), 'A11N', 0, 'Y183')
         call SaveSkillOrderInBalanceOffDisabled(i * 4 + 3, "r29")
-        // set HeroSkill_HasMultipleAbilities[i * 4 + 3] = true
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "spiritofvengeance"), 'A11K', 'Z31K', 'Y184')
         set i = 47 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A12J')), 'A12J', 0, 'Y185')
@@ -734,7 +738,7 @@ library HeroSkillDefine requires SkillSystem
         call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "orb effect")+ SaveSkillOrder(i * 4 + 3, "range only")+ SaveSkillOrder(i * 4 + 3, GetAbilityOrder('A229'))+ SaveSkillOrder(i * 4 + 3, "multi-attack"), 'A229', 0, 'Y191')
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "silence"), 'A1T5', 'A235', 'Y192')
         set i = 49 - 1
-        call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "autodispel"), 'A1TV', 0, 'Y193')
+        call RegisterHeroSkill(i * 4 + 1, "", 'A1TV', 0, 'Y193')
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A1SW')), 'A1SW', 0, 'Y194')
         call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "rechargeoff"), 'A1SU', 0, 'Y195')
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "deathpact"), 'A1U6', 'A30N', 'Y196')
@@ -756,7 +760,7 @@ library HeroSkillDefine requires SkillSystem
         set i = 51 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "creepthunderclap"), 'A1RJ', 0, 'Y201')
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "gold2lumber")+ SaveSkillOrder(i * 4 + 2, "harvest"), 'A1YX', 0, 'Y202')
-        call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "charm")+ SaveSkillOrder(i * 4 + 3, "immolation")+ SaveSkillOrder(i * 4 + 3, "unimmolation")+ SaveSkillOrder(i * 4 + 3, "animatedead"), 'A1YY', 0, 'Y203')
+        call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "charm")+ SaveSkillOrder(i * 4 + 3, "immolation")+ SaveSkillOrder(i * 4 + 3, "unimmolation"), 'A1YY', 0, 'Y203')
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "rechargeon")+ SaveSkillOrder(i * 4 + 4, "r123")+ SaveSkillOrder(i * 4 + 4, "locust"), 'A1RK', 'A43H', 'Y204')
         set i = 52 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "darkritual"), 'A0FW', 'A3OD', 'Y205')
@@ -773,6 +777,7 @@ library HeroSkillDefine requires SkillSystem
         call RegisterHeroSkill(i * 4 + 3, null, 'A27V', 'QP0P', 'Y211')
         set HeroSkill_IsPassive[i * 4 + 3] = true
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "transmute")+ SaveSkillOrder(i * 4 + 4, "shbug"), 'A27H', 'A30J', 'Y212')
+        // 偷技能直接特殊处理
         set HeroSkill_HasMultipleAbilities[i * 4 + 4] = true
         set i = 54 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A2H3')), 'A2H3', 0, 'Y213')
@@ -781,8 +786,10 @@ library HeroSkillDefine requires SkillSystem
             set s = SaveSkillOrder(i * 4 + 2, "HXLianji")//+ SaveSkillOrder(i * 4 + 2, "melee morph")
         endif
         call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "darksummoning")+ SaveSkillOrder(i * 4 + 2, "r27"), 'A2HS', 0, 'Y215')
-        call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "ancestralspirit")+ SaveSkillOrder(i * 4 + 4, "acolyteharvest"), 'A2JK', 0, 'Y216')
-        set HeroSkill_HasMultipleAbilities[i * 4 + 4] = true
+        call RegisterHeroSkill(SKILL_INDEX_FIRE_REMNANT, SaveSkillOrder(i * 4 + 4, "ancestralspirit"), 'A2JK', 0, 'Y216')
+        call HeroSkillAddSubAbilitiesById(SKILL_INDEX_FIRE_REMNANT, ACTIVATE_FIRE_REMNANT_ABILITY_ID)
+        set HeroSkill_HasMultipleAbilities[SKILL_INDEX_FIRE_REMNANT] = true
+
         //	set HeroSkill_Disabled[i * 4 + 4] = true
         set i = 55 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "steal"), 'A2JB', 0, 'Y217')
@@ -802,7 +809,7 @@ library HeroSkillDefine requires SkillSystem
         set HeroSkill_IsPassive[i * 4 + 3] = true
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "immolation")+ SaveSkillOrder(i * 4 + 4, "unimmolation")+ ""+ SaveSkillOrder(i * 4 + 4, "auraunholy"), 'A2E5', 'A43S', 'Y228')
         set i = 58 - 1
-        call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "spiritwolf"), 'A03D', 0, 'Y229')
+        call RegisterHeroSkill(i * 4 + 1, "", 'A03D', 0, 'Y229')
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "deathcoil"), 'A0ZF', 0, 'Y230')
         call RegisterHeroSkill(i * 4 + 3, null, 'A03E', 'QP0Q', 'Y231')
         set HeroSkill_IsPassive[i * 4 + 3] = true
@@ -819,7 +826,7 @@ library HeroSkillDefine requires SkillSystem
         set HeroSkill_Disabled[i * 4 + 3] = true
         set HeroSkill_IsPassive[i * 4 + 3] = true
 
-        call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "bash")+ SaveSkillOrder(i * 4 + 4, "roar"), 'A0WQ', 0, 'Y236')
+        call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "bash")+ "", 'A0WQ', 0, 'Y236')
         set i = 60 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "summonphoenix"), 'A0YM', 0, 'Y237')
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "deathcoil"), 'A0PL', 0, 'Y238')
@@ -851,9 +858,21 @@ library HeroSkillDefine requires SkillSystem
         endif
         set HeroSkill_IsPassive[i * 4 + 4] = true
         set i = 64 - 1
-        call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "channel")+ SaveSkillOrder(i * 4 + 1, "animatedead")+ ""+ SaveSkillOrder(i * 4 + 1, "tornado")+ SaveSkillOrder(i * 4 + 1, "ensnare")+ SaveSkillOrder(i * 4 + 1, "thunderclap")+ SaveSkillOrder(i * 4 + 1, "purge"), 'A10R', 'A32Z', 'Y253')
-        set s = SaveSkillOrder(i * 4 + 1, "frostarmor")+ SaveSkillOrder(i * 4 + 1, "manaburn")+ SaveSkillOrder(i * 4 + 1, "heal")+ SaveSkillOrder(i * 4 + 1, "raisedead")+ ""
+        call RegisterHeroSkill(i * 4 + 1, "" , 'A10R', 'A32Z', 'Y253')
+        set sb = HeroSkillAddSubAbilitiesById(SKILL_INDEX_DEVOUR, CREEPS_CHAIN_LIGHTNING_ABILITY_ID)
+        set sb = sb.AddSubAbility(CREEPS_ICE_ARMOR_ABILITY_ID   )
+        set sb = sb.AddSubAbility(CREEPS_THUNDER_CLAP_ABILITY_ID)
+        set sb = sb.AddSubAbility(CREEPS_MANA_BURN_ABILITY_ID   )
+        set sb = sb.AddSubAbility(CREEPS_PURGE_ABILITY_ID       )
+        set sb = sb.AddSubAbility(CREEPS_SHOCKWAVE_ABILITY_ID   )
+        set sb = sb.AddSubAbility(CREEPS_HEAL_ABILITY_ID        )
+        set sb = sb.AddSubAbility(CREEPS_WAR_STOMP_ABILITY_ID   )
+        set sb = sb.AddSubAbility(CREEPS_HURRICANE_ABILITY_ID   )
+        set sb = sb.AddSubAbility(CREEPS_ENSNARE_ABILITY_ID     )
+        set sb = sb.AddSubAbility(CREEPS_HURL_BOULDER_ABILITY_ID)
+        set sb = HeroSkillAddSubAbilitiesById(SKILL_INDEX_DEVOUR, CREEPS_RAISE_DEAD_ABILITY_ID)
         set HeroSkill_HasMultipleAbilities[i * 4 + 1] = true
+
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A1OP')), 'A1OP', 0, 'Y254')
         call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "firebolt"), 'A094', 0, 'Y255')
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "doom"), 'A0MU', 'A0A2', 'Y256')
@@ -864,7 +883,7 @@ library HeroSkillDefine requires SkillSystem
         call RegisterHeroSkill(i * 4 + 4, "", 'A09U', 0, 'Y260')
         set i = 66 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "berserk"), 'A05C', 0, 'Y261')
-        call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "roar"), 'A29K', 0, 'Y262')
+        call RegisterHeroSkill(i * 4 + 2, "", 'A29K', 0, 'Y262')
         call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "bash"), 'A0JJ', 0, 'Y263')
         set HeroSkill_IsPassive[i * 4 + 3] = true
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "faeriefire"), 'QB0C', 0, 'QY0C')
@@ -916,15 +935,15 @@ library HeroSkillDefine requires SkillSystem
         set i = 73 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "grabtree"), 'A0MT', 0, 'Y289')
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "banish"), 'A2TD', 0, 'Y290')
-        call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "tornado"), 'A09D', 0, 'Y291')
+        call RegisterHeroSkill(i * 4 + 3, "", 'A09D', 0, 'Y291')
         call RegisterHeroSkill(i * 4 + 4, GetAbilityOrder('A0CC'), 'A0CC', 'A02Z', 'Y292')
         set HeroSkill_Icon[i * 4 + 4] = "ReplaceableTextures\\CommandButtons\\BTNLifeDrain.blp"
         set i = 74 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A046')), 'A046', 'A3OH', 'Y293')
         call RegisterHeroSkill(i * 4 + 2, null, 'A04E', 'QP10', 'Y294')
         set HeroSkill_IsPassive[i * 4 + 2] = true
-        call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "roar"), 'A226', 0, 'Y295')
-        call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "howlofterror"), 'A29I', 0, 'Y296')
+        call RegisterHeroSkill(i * 4 + 3, "", 'A226', 0, 'Y295')
+        call RegisterHeroSkill(i * 4 + 4, "", 'A29I', 0, 'Y296')
         set i = 75 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "innerfire"), 'A04V', 0, 'Y297')
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A0GK')), 'A0GK', 0, 'Y298')
@@ -963,11 +982,11 @@ library HeroSkillDefine requires SkillSystem
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "disassociate"), 'A0CT', 'A3DM', 'Y316')
         call SaveSkillOrderInBalanceOffDisabled(i * 4 + 4, "r31")
         set i = 80 - 1
-        call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "roar")+ SaveSkillOrder(i * 4 + 1, "howlofterror")+ SaveSkillOrder(i * 4 + 1, "battleroar"), 'A0EY', 0, 'Y317')
+        call RegisterHeroSkill(i * 4 + 1, "", 'A0EY', 0, 'Y317')
         call HeroSkillAddSubAbilitiesById(SKILL_INDEX_SHADOWRAZE, SHADOWRAZE_X_ABILITY_ID)
         call HeroSkillAddSubAbilitiesById(SKILL_INDEX_SHADOWRAZE, SHADOWRAZE_C_ABILITY_ID)
         set HeroSkill_HasMultipleAbilities[i * 4 + 1] = true
-        
+
         call RegisterHeroSkill(i * 4 + 2, null, 'Z318', 'A0BR', 'Y318')
         set HeroSkill_IsPassive[i * 4 + 2] = true
         call RegisterHeroSkill(i * 4 + 3, null, 'A0FU', 'QP15', 'Y319')
@@ -1016,18 +1035,18 @@ library HeroSkillDefine requires SkillSystem
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A0NM')), 'A0NM', 0, 'Y341')
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "unimmolation"), 'A0NE', 0, 'Y342')
         call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "renew"), 'A0NO', 0, 'Y343')
-        call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "tornado"), 'A0NT', 'A0NX', 'Y344')
+        call RegisterHeroSkill(i * 4 + 4, "", 'A0NT', 'A0NX', 'Y344')
         set i = 87 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "arrows")+ SaveSkillOrder(i * 4 + 1, "range only"), 'A0OI', 0, 'Y345')
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A0OJ')), 'A0OJ', 0, 'Y346')
         call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "r19"), 'A0IF', 'QP1A', 'Y347')
         set HeroSkill_IsPassive[i * 4 + 3] = true
         set HeroSkill_RearmCombosDisabledTips[i * 4 + 3] = "若同时学习了球状闪电，则精气光环触发时只恢复8/10/12/14%的最大魔法"
-        call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "blizzard"), 'A0OK', 'A1VW', 'Y348')
+        call RegisterHeroSkill(i * 4 + 4, "", 'A0OK', 'A1VW', 'Y348')
         set i = 88 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "autodispelon"), 'A0J5', 0, 'Y349')
         call RegisterHeroSkill(i * 4 + 2, "", 'A0AS', 0, 'Y350')
-        call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "blizzard"), 'A06P', 0, 'Y351')
+        call RegisterHeroSkill(i * 4 + 3, "", 'A06P', 0, 'Y351')
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "inferno")+ SaveSkillOrder(i * 4 + 4, "r20"), 'S008', 'S00U', 'Y352')
         set i = 89 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "renewon"), 'A0NB', 0, 'Y353')
@@ -1063,7 +1082,7 @@ library HeroSkillDefine requires SkillSystem
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "manaflareon"), 'A0QK', 'A21Q', 'Y372')
         set i = 94 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "tranquility"), 'A32A', 0, 'A32T')
-        call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "curse"), 'A32C', 0, 'A32U')
+        call RegisterHeroSkill(i * 4 + 2, "", 'A32C', 0, 'A32U')
         call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "eattree")+ SaveSkillOrder(i * 4 + 3, "controlmagic"), 'A32E', 0, 'A32V')
         // set HeroSkill_HasMultipleAbilities[i * 4 + 3] = true
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, GetAbilityOrder('A32G')), 'A32G', 0, 'A32W')
@@ -1084,7 +1103,7 @@ library HeroSkillDefine requires SkillSystem
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "r22"), 'A1MI', 'A2QE', 'Y388')
         set i = 98 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A1IM')), 'A1IM', 0, 'Y389')
-        call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "whirlwind"), 'A1J7', 0, 'Y390')
+        call RegisterHeroSkill(i * 4 + 2, "", 'A1J7', 0, 'Y390')
         call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "abuz agi") , 'A1HR', 'QP1F', 'Y391')
         set HeroSkill_IsPassive[i * 4 + 3] = true
         set HeroSkill_BalanceOffDisabledTips[i * 4 + 3] = "远程模型使用能量转移只有2/3的效果"
@@ -1107,7 +1126,7 @@ library HeroSkillDefine requires SkillSystem
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "blizzard"), 'A343', 'A34J', 'Y404')
         set i = 102 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "frostnova"), 'A07F', 0, 'Y405')
-        call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "frostarmor"), 'A08R', 0, 'Y406')
+        call RegisterHeroSkill(i * 4 + 2, "", 'A08R', 0, 'Y406')
         call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "innerfire"), 'A053', 0, 'Y407')
         call RegisterHeroSkill(i * 4 + 4, "", 'A05T', 'A08H', 'Y408')
         set i = 103 - 1
@@ -1130,13 +1149,13 @@ library HeroSkillDefine requires SkillSystem
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "magicdefense"), 'A173', 0, 'Y417')
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "buff placer"), 'A0MY', 'QP1D', 'Y418')
         set HeroSkill_IsPassive[i * 4 + 2] = true
-        call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "ward"), 'A0MS', 0, 'Y419')
+        call RegisterHeroSkill(i * 4 + 3, "", 'A0MS', 0, 'Y419')
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "summongrizzly"), 'A013', 'A0A6', 'Y420')
         set i = 106 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A02S')), 'A02S', 'A3Y8', 'Y421')
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "innerfire"), 'A037', 0, 'Y422')
         call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "blackarrowon"), 'A1RD', 0, 'Y423')
-        call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "roar"), 'A29L', 'A447', 'Y424')
+        call RegisterHeroSkill(i * 4 + 4, "", 'A29L', 'A447', 'Y424')
         set i = 107 - 1
         call RegisterHeroSkill(i * 4 + 1, "", 'A08X', 0, 'Y425')
         call RegisterHeroSkill(i * 4 + 2, "", 'A1NA', 0, 'Y426')
@@ -1238,7 +1257,7 @@ library HeroSkillDefine requires SkillSystem
         set HeroSkill_IsPassive[i * 4 + 3] = true
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, GetAbilityOrder('A456')), 'A456', 0, 'Y61F')
         set i = 121 - 1
-        call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "curse"), 'A45W', 0, 'Y61G')
+        call RegisterHeroSkill(i * 4 + 1, "", 'A45W', 0, 'Y61G')
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "volcano"), 'A45X', 0, 'Y61H')
         call RegisterHeroSkill(i * 4 + 3, null, 'A460', 'QP27', 'Y61I')
         set HeroSkill_IsPassive[i * 4 + 3] = true

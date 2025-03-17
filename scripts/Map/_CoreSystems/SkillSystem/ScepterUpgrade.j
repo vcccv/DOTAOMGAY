@@ -13,6 +13,8 @@ library ScepterUpgradeSystem requires SkillSystem, ItemSystem
         integer array ScepterUpgrade_UpgradedId
         integer array ScepterUpgrade_UnknownId
         integer ScepterUpgradeMaxCount = 0
+
+        private key INDEX_KEY
     endglobals
 
     // 获得技能的阿哈利姆神杖升级索引 没有神杖升级就是返回 0 
@@ -28,17 +30,43 @@ library ScepterUpgradeSystem requires SkillSystem, ItemSystem
         return 0
     endfunction
 
+    // 根据技能id来查找神杖升级索引
+    function GetScepterUpgradeIndexById takes integer abilId returns integer
+        return Table[INDEX_KEY].integer[abilId]
+    endfunction
+
     // 根据基础Id来找神杖升级
-    function GetScepterUpgradeIndexByBaseId takes integer id returns integer
-        local integer i = 1
-        loop
-            if ScepterUpgrade_BaseId[i] == id then
-                return i
-            endif
-            set i = i + 1
-        exitwhen i > ScepterUpgradeMaxCount
-        endloop
-        return -1
+    function GetScepterUpgradeIndexByBaseId takes integer baseId returns integer
+        local integer scepterUpgradeIndex = GetScepterUpgradeIndexById(baseId)
+        if scepterUpgradeIndex == 0 or ScepterUpgrade_BaseId[scepterUpgradeIndex] != baseId then
+            return 0
+        endif
+        return scepterUpgradeIndex
+    endfunction
+
+    // 注册A杖升级 normalId modifyId upgradeId ScepterUpgradeMaxCount
+    // 通过GetSkillScepterUpgradeIndexById来获得技能的神杖升级索引
+    function RegisterScepterUpgrade takes integer normalId, integer modifyId, integer upgradeId, integer whichInteger returns integer
+        // 获取原本技能的索引()
+        local integer id = GetSkillIndexByBaseId(normalId)
+        set ScepterUpgradeMaxCount = ScepterUpgradeMaxCount + 1
+        // 基础技能
+        set ScepterUpgrade_BaseId[ScepterUpgradeMaxCount] = normalId
+        // 神杖升级的工程升级技能
+        set ScepterUpgrade_ModifyId[ScepterUpgradeMaxCount] = modifyId
+        call SetAllPlayerAbilityUnavailable(modifyId)
+        // 神杖升级后的技能
+        set ScepterUpgrade_UpgradedId[ScepterUpgradeMaxCount] = upgradeId
+        // 未引用 参数都是0
+        set ScepterUpgrade_UnknownId[ScepterUpgradeMaxCount] = whichInteger
+
+        set Table[INDEX_KEY].integer[normalId ] = ScepterUpgradeMaxCount
+        set Table[INDEX_KEY].integer[upgradeId] = ScepterUpgradeMaxCount
+
+        if id > 0 and HeroSkill_SpecialId[id] == 0 then
+            set HeroSkill_SpecialId[id] = upgradeId
+        endif
+        return ScepterUpgradeMaxCount
     endfunction
 
     globals
@@ -72,27 +100,6 @@ library ScepterUpgradeSystem requires SkillSystem, ItemSystem
         */
     endfunction
     
-    // 注册A杖升级 normalId modifyId upgradeId ScepterUpgradeMaxCount
-    // 通过GetSkillScepterUpgradeIndexById来获得技能的神杖升级索引
-    function RegisterScepterUpgrade takes integer normalId, integer modifyId, integer upgradeId, integer whichInteger returns integer
-        // 获取原本技能的索引()
-        local integer id = GetSkillIndexByBaseId(normalId)
-        set ScepterUpgradeMaxCount = ScepterUpgradeMaxCount + 1
-        // 基础技能
-        set ScepterUpgrade_BaseId[ScepterUpgradeMaxCount] = normalId
-        // 神杖升级的工程升级技能
-        set ScepterUpgrade_ModifyId[ScepterUpgradeMaxCount] = modifyId
-        call SetAllPlayerAbilityUnavailable(modifyId)
-        // 神杖升级后的技能
-        set ScepterUpgrade_UpgradedId[ScepterUpgradeMaxCount] = upgradeId
-        // 未引用 参数都是0
-        set ScepterUpgrade_UnknownId[ScepterUpgradeMaxCount] = whichInteger
-        if id > 0 and HeroSkill_SpecialId[id] == 0 then
-            set HeroSkill_SpecialId[id] = upgradeId
-        endif
-        return ScepterUpgradeMaxCount
-    endfunction
-
     //***************************************************************************
     //*
     //*  Method

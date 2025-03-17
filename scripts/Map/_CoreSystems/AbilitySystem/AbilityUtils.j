@@ -27,6 +27,15 @@ library AbilityUtils requires Table, Base
         return MHAbility_GetAbilityCustomLevelDataReal(whichAbility, GetAbilityLevel(whichAbility), ABILITY_LEVEL_DEF_DATA_COOLDOWN)
     endfunction
 
+    function SetAbilityStringFieldById takes integer abilId, integer whichField, string value returns nothing
+        call MHAbility_SetDefDataStr(abilId, whichField, value)
+    endfunction
+    function GetAbilityStringFieldById takes integer abilId, integer whichField returns string
+        return MHAbility_GetDefDataStr(abilId, whichField)
+    endfunction
+    function GetAbilityIntegerFieldById takes integer abilId, integer whichField returns integer
+        return MHAbility_GetDefDataInt(abilId, whichField)
+    endfunction
     function SetAbilityIconById takes integer abilId, string art returns nothing
         if StringLength(art) > 0 and MHString_Find(art, ".blp", 0) == - 1 then
             set art = art + ".blp"

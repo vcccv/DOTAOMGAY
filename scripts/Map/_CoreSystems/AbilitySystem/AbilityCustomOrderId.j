@@ -1,4 +1,4 @@
-library AbilityCustomOrderId requires Base
+library AbilityCustomOrderId requires Base, SkillSystem, ScepterUpgradeSystem
 
     globals
         private integer OrderIdBase = 950000
@@ -37,9 +37,14 @@ library AbilityCustomOrderId requires Base
         endif
     endfunction
 
-    //function AllocAbilityOrderIdByIndex takes integer skillIndex returns integer 
-//
-    //endfunction
+    function AllocAbilityOrderIdByIndex takes integer skillIndex returns nothing
+        local integer scepterUpgradeIndex = GetScepterUpgradeIndexById(HeroSkill_BaseId[skillIndex])
+        if scepterUpgradeIndex > 0 then
+            call AllocAbilityOrderIdEx(ScepterUpgrade_BaseId[scepterUpgradeIndex], ScepterUpgrade_UpgradedId[scepterUpgradeIndex])
+        else
+            call AllocAbilityOrderId(HeroSkill_BaseId[skillIndex])
+        endif
+    endfunction
 
     function GetAbilityOrder takes integer abilId returns string
         local integer id = MHAbility_GetHookOrder(abilId)
@@ -517,7 +522,7 @@ library AbilityCustomOrderId requires Base
         call AllocAbilityOrderId('A226')
 
         // 毁灭阴影 - Z  
-        call AllocAbilityOrderId('A0EY')
+        call AllocAbilityOrderId(SHADOWRAZE_Z_ABILITY_ID)
 
         // 两级反转      
         call AllocAbilityOrderIdEx('A29L', 'A447')
@@ -527,13 +532,171 @@ library AbilityCustomOrderId requires Base
         //*  battleroar
         //*
         //***************************************************************************
-        
+        // 战斗咆哮 - 熊形态
+        call AllocAbilityOrderId(BATTLE_CRY_ABILITY_ID)
 
+        // 幽魂 - 拉进
+        call AllocAbilityOrderId(SPIRITS_IN_ABILITY_ID)
+
+        // 守护天使
+        call AllocAbilityOrderIdEx('A0ER', 'A2S8')
+
+        // 毁灭阴影 - X
+        call AllocAbilityOrderId(SHADOWRAZE_X_ABILITY_ID)
+        
+        //***************************************************************************
+        //*
+        //*  howlofterror
+        //*
+        //***************************************************************************
+        // 毁灭阴影 - C  
+        call AllocAbilityOrderId(SHADOWRAZE_C_ABILITY_ID)
+    
+        // 毁灭 - 潮汐猎人
+        call AllocAbilityOrderId('A29I')
+
+        //***************************************************************************
+        //*
+        //*  curse
+        //*
+        //***************************************************************************
+        // 践踏
+        call AllocAbilityOrderId('A32C')
+
+        // 致命射击
+        call AllocAbilityOrderId('A45W')
+
+        // 灵能陷阱
+        call AllocAbilityOrderIdEx('A0RP', 'A449')
+
+        //***************************************************************************
+        //*
+        //*  autodispel
+        //*
+        //***************************************************************************
+        // 雷霆之击
+        call AllocAbilityOrderId('A1TV')
+
+        // 旋风飞斧
+        call AllocAbilityOrderId(WHIRLING_AXES_MELEE_ABILITY_ID)
+        call AllocAbilityOrderId(WHIRLING_AXES_RANGED_ABILITY_ID)
+
+        //***************************************************************************
+        //*
+        //*  ward
+        //*
+        //***************************************************************************
+        // 遥控炸弹
+        call AllocAbilityOrderIdByIndex(SKILL_INDEX_REMOTE_MINES)
+        call AllocAbilityOrderId(GOBLIN_TECHIES_FOCUSED_DETONATE_ABILITY_ID)
+
+        // 群蛇守卫 
+        call AllocAbilityOrderIdEx('A00H', 'A0A1')
+        
+        // 瘟疫守卫 
+        call AllocAbilityOrderId('A0MS')
+
+        //***************************************************************************
+        //*
+        //*  spiritlink
+        //*
+        //***************************************************************************
+        // 幻象法球 
+        call AllocAbilityOrderId('A0S9')
+        call AllocAbilityOrderId(ETHEREAL_JAUNT_ABILITY_ID)
+        
+        // 活体护甲 
+        call AllocAbilityOrderId('A2ML')
+
+        //***************************************************************************
+        //*
+        //*  whirlwind
+        //*
+        //***************************************************************************
+        // 剑刃风暴 
+        call AllocAbilityOrderId('A05G')
+
+        // 先祖之魂 
+        call AllocAbilityOrderId('A1A8')
+
+        // 突袭     
+        call AllocAbilityOrderId('A1J7')
+
+        //***************************************************************************
+        //*
+        //*  spiritwolf
+        //*
+        //***************************************************************************
+        call AllocAbilityOrderId(TEMPLAR_ASSASSIN_TRAP_ABILITY_ID)
+
+        
+        //***************************************************************************
+        //*
+        //*  tornado
+        //*
+        //***************************************************************************
+        // 幽冥守卫 
+        call AllocAbilityOrderId('A09D')
+
+        // 死亡守卫
+        call AllocAbilityOrderIdEx('A0NT', 'A0NX')
+        
+        call AllocAbilityOrderId(CREEPS_HURRICANE_ABILITY_ID      )
+
+        //***************************************************************************
+        //*
+        //*  thunderclap
+        //*
+        //***************************************************************************
+        // 震撼大地 
+        call AllocAbilityOrderId('A03Y')
+
+        // 雷霆一击 
+        call AllocAbilityOrderId('A06M')
+        
+        call AllocAbilityOrderId(CREEPS_THUNDER_CLAP_ABILITY_ID   )
+
+        //***************************************************************************
+        //*
+        //*  frostarmor
+        //*
+        //***************************************************************************
+        call AllocAbilityOrderId('A08R')
+        call AllocAbilityOrderId(CREEPS_ICE_ARMOR_ABILITY_ID      )
+
+
+        //***************************************************************************
+        //*
+        //*  blizzard
+        //*
+        //***************************************************************************
+        // 照明火箭 
+        call AllocAbilityOrderId('A0Z6')
+
+        // 神智之蚀 
+        call AllocAbilityOrderIdEx('A0OK', 'A1VW')
+
+        // 剧变     
+        call AllocAbilityOrderId('A06P')
+
+        // 邪恶净化 
+        call AllocAbilityOrderIdEx('A343', 'A34J')
+        
         //***************************************************************************
         //*
         //*  ANcl
         //*
         //***************************************************************************
+        // 洗礼
+        call AllocAbilityOrderId('A0OO')
+
+        // 球状闪电
+        call AllocAbilityOrderIdEx('A14O', 'A3FJ')
+
+        // 野性呼唤
+        call AllocAbilityOrderId('A0OO')
+        call AllocAbilityOrderId('A300')
+
         // 锯齿飞轮
         call AllocAbilityOrderId('A2E5')
         call AllocAbilityOrderId('A43Q')
@@ -574,14 +737,29 @@ library AbilityCustomOrderId requires Base
         // 关闭
         call AllocAbilityOrderId('A24E')
 
+        // 火之余烬
+        call AllocAbilityOrderId('A2JK')
+        call AllocAbilityOrderId(ACTIVATE_FIRE_REMNANT_ABILITY_ID)
+
+        
+        // 吞噬
+        call AllocAbilityOrderId(CREEPS_CHAIN_LIGHTNING_ABILITY_ID)
+        call AllocAbilityOrderId(CREEPS_ICE_ARMOR_ABILITY_ID      )
+        call AllocAbilityOrderId(CREEPS_MANA_BURN_ABILITY_ID      )
+        call AllocAbilityOrderId(CREEPS_PURGE_ABILITY_ID          )
+        call AllocAbilityOrderId(CREEPS_SHOCKWAVE_ABILITY_ID      )
+        call AllocAbilityOrderId(CREEPS_HEAL_ABILITY_ID           )
+        call AllocAbilityOrderId(CREEPS_WAR_STOMP_ABILITY_ID      )
+        call AllocAbilityOrderId(CREEPS_RAISE_DEAD_ABILITY_ID     )
+        call AllocAbilityOrderId(CREEPS_ENSNARE_ABILITY_ID        )
+        call AllocAbilityOrderId(CREEPS_HURL_BOULDER_ABILITY_ID   )
+
         // 大地之灵
         call AllocAbilityOrderId('A2QM')
         call AllocAbilityOrderId('A2TJ')
         call AllocAbilityOrderId('A2QI')
         call AllocAbilityOrderId('A2TI')
 
-        // 遥控炸弹 引爆
-        // call AllocAbilityOrderId('A1WF')
     endfunction
 
 endlibrary

@@ -22,7 +22,7 @@ library Base requires TriggerDestroyQueue, GroupAlloc, ErrorMessage, TimerUtils
         //set s = null
     endfunction
     // 会清空信息
-    function DisplayLoDWarningForPlayerEx takes player p, boolean expression, string message returns nothing
+    function DisplayLoDTipForPlayerEx takes player p, boolean expression, string message returns nothing
         if not (expression) then
             return
         endif
@@ -33,7 +33,7 @@ library Base requires TriggerDestroyQueue, GroupAlloc, ErrorMessage, TimerUtils
             endif
         endif
     endfunction
-    function DisplayLoDWarningForPlayer takes player p, boolean expression, string message returns nothing
+    function DisplayLoDTipForPlayer takes player p, boolean expression, string message returns nothing
         if not (expression) then
             return
         endif
@@ -43,12 +43,12 @@ library Base requires TriggerDestroyQueue, GroupAlloc, ErrorMessage, TimerUtils
             endif
         endif
     endfunction
-    function DisplayLoDErrorForPlayer takes player p, boolean expression, string message returns nothing
+    function DisplayLoDWarningForPlayer takes player p, boolean expression, string message returns nothing
         if not(expression) then
             return
         endif
         call PlayerInterfaceErrorSoundForPlayer(p, expression)
-        call DisplayLoDWarningForPlayerEx(p, expression, message)
+        call DisplayLoDTipForPlayerEx(p, expression, message)
     endfunction
     
     function PreloadQueueExpireAction takes nothing returns nothing

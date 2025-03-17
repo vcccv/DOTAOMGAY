@@ -239,6 +239,7 @@ scope Rubick
         set u = null
         return false
     endfunction
+    // 开计时器 多少秒后删除技能
     function J4A takes unit u, integer id, real r returns nothing
         local trigger t = CreateTrigger()
         local integer h = GetHandleId(t)
@@ -251,13 +252,14 @@ scope Rubick
         set t = null
     endfunction
     function J5A takes nothing returns boolean
-        local trigger t = GetTriggeringTrigger()
-        local integer h = GetHandleId(t)
-        local unit u =(LoadUnitHandle(HY, h, 2))
-        local integer id =(LoadInteger(HY, h, 704))
-        local integer c =(LoadInteger(HY, h, 34))
-        local real r =(LoadReal(HY, h, 411))
+        local trigger t  = GetTriggeringTrigger()
+        local integer h  = GetHandleId(t)
+        local unit    u  = (LoadUnitHandle(HY, h, 2))
+        local integer id = (LoadInteger(HY, h, 704))
+        local integer c  = (LoadInteger(HY, h, 34))
+        local real    r  = (LoadReal(HY, h, 411))
         if GetTriggerEventId() != EVENT_UNIT_SPELL_EFFECT and GetTriggerEventId() != EVENT_WIDGET_DEATH then
+            // 警告
             if c == 0 then
                 call SaveInteger(HY, h, 34, 1)
                 call DisplayTimedTextToPlayer(GetOwningPlayer(u), 0, 0, 10, "|c00ff0303" + GetObjectName('n0LW') + "|r")
@@ -269,6 +271,7 @@ scope Rubick
                 call J4A(u, id, r)
             endif
         elseif GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT then
+            // 施法窃取时
             if (GetSpellAbilityId()=='A27H' or GetSpellAbilityId()=='A30J') then
                 if LoadInteger(HY,(GetHandleId(GetSpellTargetUnit())), 705) != id then
                     call SetPlayerAbilityAvailableEx(GetOwningPlayer(u), id, false)
@@ -292,52 +295,56 @@ scope Rubick
         return false
     endfunction
     function J6A takes unit u, integer id, integer level returns nothing
-        if id =='A2O2'then
+        if id == 'A2O2' then
             set TempUnit = u
             call ExecuteFunc("PAI")
         endif
     endfunction
-    function J7A takes nothing returns nothing
+    function SpellStealMissileOnHit takes nothing returns nothing
         local trigger t = GetTriggeringTrigger()
         local integer h = GetHandleId(t)
-        local unit u =(LoadUnitHandle(HY, h, 2))
-        local unit target =(LoadUnitHandle(HY, h, 17))
-        local integer J2A =(LoadInteger(HY, h, 704))
-        local integer lv =(LoadInteger(HY, h, 5))
-        local real J8A = 60 *(2 + IMaxBJ(GetUnitAbilityLevel(u,'A27H'), GetUnitAbilityLevel(u,'A30J')))
-        local integer id = GetPlayerId(GetOwningPlayer(u))
-        local boolean J9A = (GetUnitAbilityLevel(u, J2A) == 0) or J2A == LoadInteger(HY,(GetHandleId(u)), 704)
+        local unit    u        = (LoadUnitHandle(HY, h, 2))
+        local unit    target   = (LoadUnitHandle(HY, h, 17))
+        local integer targetId = (LoadInteger(HY, h, 704))
+        local integer lv       = (LoadInteger(HY, h, 5))
+        local real    duration = 60 *(2 + IMaxBJ(GetUnitAbilityLevel(u,'A27H'), GetUnitAbilityLevel(u,'A30J')))
+        local integer id       = GetPlayerId(GetOwningPlayer(u))
+        local boolean success  = (GetUnitAbilityLevel(u, targetId) == 0) or targetId == LoadInteger(HY,(GetHandleId(u)), 704)
         local integer i = 1
-        call PlaySoundAtPosition(LF, GetUnitX(u), GetUnitY(u))
+        call PlaySoundAtPosition(SpellStealTargetSound, GetUnitX(u), GetUnitY(u))
+        // 如果自己已经有这个技能，则偷窃失败。
+        // 另外，如果此技能是子技能，要根据子技能去溯源得到原始技能，如果自己选过原始技能，则同样会窃取失败
         loop
-        exitwhen i > 4 + ExtraSkillsCount or J9A == false
-            if HeroSkill_BaseId[PlayerSkillIndices[id * MAX_SKILL_SLOTS + i]] == J2A then
-                set J9A = false
+        exitwhen i > 4 + ExtraSkillsCount or success == false
+            if HeroSkill_BaseId[PlayerSkillIndices[id * MAX_SKILL_SLOTS + i]] == targetId then
+                set success = false
             endif
-            if HeroSkill_SpecialId[PlayerSkillIndices[id * MAX_SKILL_SLOTS + i]] == J2A then
-                set J9A = false
+            if HeroSkill_SpecialId[PlayerSkillIndices[id * MAX_SKILL_SLOTS + i]] == targetId then
+                set success = false
             endif
             set i = i + 1
         endloop
-        if J9A then
-            if (LoadInteger(HY,(GetHandleId(target)), 710))> 0 then
+        if success then
+            if (LoadInteger(HY,(GetHandleId(target)), 710)) > 0 then
                 call SaveInteger(HY,(GetHandleId(u)), 710,((LoadInteger(HY,(GetHandleId(target)), 710))))
             endif
-            call CommonTextTag(GetObjectName(J2A), 3.5, u, .024, 170, 0, 255, 216)
-            call SaveInteger(HY,(GetHandleId(u)), 704,(J2A))
-            call SetPlayerAbilityAvailableEx(GetOwningPlayer(u), J2A, true)
-            call UnitAddPermanentAbility(u, J2A)
-            call SetUnitAbilityLevel(u, J2A, lv)
-            call J6A(u, J2A, lv)
+
+            call CommonTextTag(GetObjectName(targetId), 3.5, u, .024, 170, 0, 255, 216)
+            call SaveInteger(HY,(GetHandleId(u)), 704,(targetId))
+            // 启用技能
+            call SetPlayerAbilityAvailableEx(GetOwningPlayer(u), targetId, true)
+            call UnitAddPermanentAbility(u, targetId)
+            call SetUnitAbilityLevel(u, targetId, lv)
+            call J6A(u, targetId, lv)
             set t = CreateTrigger()
             set h = GetHandleId(t)
             call SaveUnitHandle(HY, h, 2,(u))
             call SaveInteger(HY, h, 34, 0)
-            call SaveInteger(HY, h, 704,(J2A))
+            call SaveInteger(HY, h, 704,(targetId))
             call TriggerRegisterUnitEvent(t, u, EVENT_UNIT_SPELL_EFFECT)
-            call TriggerRegisterTimerEvent(t, J8A, false)
+            call TriggerRegisterTimerEvent(t, duration, false)
             call TriggerRegisterDeathEvent(t, u)
-            call TriggerRegisterTimerEvent(t, J8A -20, false)
+            call TriggerRegisterTimerEvent(t, duration -20, false)
             call TriggerAddCondition(t, Condition(function J5A))
         else
             call CommonTextTag("窃取失败 ;(", 3.5, u, .024, 170, 0, 255, 216)
@@ -346,10 +353,10 @@ scope Rubick
         set u = null
         set target = null
     endfunction
-    function KVA takes unit u, unit target, integer id, integer lv returns nothing
-        local trigger t = LaunchMissileByUnitDummy(target, u,'h0DB', "J7A", 900, false)
+    function SpellStealMissileLaunch takes unit u, unit target, integer id, integer lv returns nothing
+        local trigger t = LaunchMissileByUnitDummy(target, u,'h0DB', "SpellStealMissileOnHit", 900, false)
         local integer h = GetHandleId(t)
-        call PlaySoundAtPosition(KF, GetUnitX(target), GetUnitY(target))
+        call PlaySoundAtPosition(SpellStealMissileLaunchSound, GetUnitX(target), GetUnitY(target))
         call CommonTextTag(GetObjectName(id), 3.75, target, .024, 170, 0, 255, 216)
         call SaveUnitHandle(HY, h, 2,(u))
         call SaveUnitHandle(HY, h, 17,(target))
@@ -357,32 +364,34 @@ scope Rubick
         call SaveInteger(HY, h, 5,(lv))
         set t = null
     endfunction
-    function KXA takes nothing returns nothing
-        local unit u = GetTriggerUnit()
-        local unit t = GetSpellTargetUnit()
-        local integer id = LoadInteger(HY,(GetHandleId(t)), 705)
-        local boolean b = GetSpellAbilityId()=='A30J'
-        local integer key = 0
+
+    function SpellStealOnSpellEffectAS takes nothing returns nothing
+        local unit u     = GetTriggerUnit()
+        local unit t     = GetSpellTargetUnit()
+        local integer id = LoadInteger(HY,(GetHandleId(t)), 705) // last_spell_ability_id
+        local boolean b  = GetSpellAbilityId() =='A30J'
+        local integer skillIndex = 0
         if id != 0 then
-            set key = GetSkillScepterUpgradeIndexById(id)
+            // 根据施法者自身的神杖升级修正
+            set skillIndex = GetSkillScepterUpgradeIndexById(id)
             if b then
-                if key> 0 and ScepterUpgrade_UpgradedId[key]> 0 then
-                    set id = ScepterUpgrade_UpgradedId[key]
+                if skillIndex > 0 and ScepterUpgrade_UpgradedId[skillIndex] > 0 then
+                    set id = ScepterUpgrade_UpgradedId[skillIndex]
                 endif
             else
-                if key> 0 and ScepterUpgrade_BaseId[key]> 0 then
-                    set id = ScepterUpgrade_BaseId[key]
+                if skillIndex > 0 and ScepterUpgrade_BaseId[skillIndex] > 0 then
+                    set id = ScepterUpgrade_BaseId[skillIndex]
                 endif
             endif
             call DestroyEffect(AddSpecialEffectTarget("war3mapImported\\Nebula.mdx", t, "origin"))
-            call KVA(u, t, id, LoadInteger(HY, GetHandleId(t), 712))
+            call SpellStealMissileLaunch(u, t, id, LoadInteger(HY, GetHandleId(t), 712))
         endif
         set u = null
         set t = null
     endfunction
     function SpellStealOnSpellEffect takes nothing returns nothing
         if not UnitHasSpellShield(GetSpellTargetUnit()) then
-            call KXA()
+            call SpellStealOnSpellEffectAS()
         endif
     endfunction
     

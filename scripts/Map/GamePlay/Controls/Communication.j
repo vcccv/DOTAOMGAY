@@ -81,9 +81,9 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility
 
         set abilLevel    = GetUnitAbilityLevel(whichUnit, abilId) + 1
         set requireLevel = GetAbilityRequireLevelByLevel(abilId, abilLevel) - GetHeroLevel(whichUnit)
-        call BJDebugMsg("LevelSkip:" + I2S(GetAbiiltyLevelSkip(abilId))/*
-        */ + " RequireLevel:" + I2S(GetAbilityRequireLevel(abilId))/*
-        */ + " heroLevel:" + I2S(GetHeroLevel(whichUnit)))
+        //call BJDebugMsg("LevelSkip:" + I2S(GetAbiiltyLevelSkip(abilId))/*
+        //*/ + " RequireLevel:" + I2S(GetAbilityRequireLevel(abilId))/*
+        //*/ + " heroLevel:" + I2S(GetHeroLevel(whichUnit)))
 
         // ping自己
         if IsUnitOwnedByPlayer(whichUnit, GetLocalPlayer()) then
@@ -182,8 +182,8 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility
         local string  itemName
         local string  msg               = null
 
-        call BJDebugMsg("当前id：" + Id2String(id) + " GetCommandButtonCharges:" + I2S(charges)/*
-        */ + " cooldown:" + R2S(cooldownRemaining))
+        // call BJDebugMsg("当前id：" + Id2String(id) + " GetCommandButtonCharges:" + I2S(charges)/*
+        // */ + " cooldown:" + R2S(cooldownRemaining))
 
         set itemName = GetItemNameById(id)
         if cooldownRemaining > 0. and charges == 0 then
@@ -212,10 +212,15 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility
     endfunction
     
     globals
-        constant string ABILITY_SELF_DISABLED         = "$abilityName$（$abilityLevel$级） > 已被禁用"
-        constant string ABILITY_SELF_READY            = "$abilityName$（$abilityLevel$级） > 准备就绪"
-        constant string ABILITY_SELF_REQUIRE_COOLDOWN = "$abilityName$（$abilityLevel$级） > 冷却中（还剩$cooldown$秒）"
-        constant string ABILITY_SELF_REQUIRE_MANA     = "$abilityName$（$abilityLevel$级） > 魔法不足（还需要$manaCost$点）"
+        constant string LEVEL_ABILITY_SELF_DISABLED         = "$abilityName$（$abilityLevel$级） > 已被禁用"
+        constant string LEVEL_ABILITY_SELF_READY            = "$abilityName$（$abilityLevel$级） > 准备就绪"
+        constant string LEVEL_ABILITY_SELF_REQUIRE_COOLDOWN = "$abilityName$（$abilityLevel$级） > 冷却中（还剩$cooldown$秒）"
+        constant string LEVEL_ABILITY_SELF_REQUIRE_MANA     = "$abilityName$（$abilityLevel$级） > 魔法不足（还需要$manaCost$点）"
+
+        constant string ABILITY_SELF_DISABLED               = "$abilityName$ > 已被禁用"
+        constant string ABILITY_SELF_READY                  = "$abilityName$ > 准备就绪"
+        constant string ABILITY_SELF_REQUIRE_COOLDOWN       = "$abilityName$ > 冷却中（还剩$cooldown$秒）"
+        constant string ABILITY_SELF_REQUIRE_MANA           = "$abilityName$ > 魔法不足（还需要$manaCost$点）"
 
         constant string ABILITY_ALLY_PING             = "队友$heroName$ > "
         constant string ABILITY_CHARGES               = " > 能量点数：$charges$"
@@ -236,25 +241,41 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility
 
         if cooldownRemaining > 0. then
             // 冷却中
-            set msg = msg + ABILITY_SELF_REQUIRE_COOLDOWN
-            set msg = MHString_Replace(msg, "$abilityName$", GetObjectName(abilId))
+            if GetAbilityIntegerFieldById(abilId, ABILITY_DEF_DATA_MAX_LEVEL) > 1 then
+                set msg = msg + LEVEL_ABILITY_SELF_REQUIRE_COOLDOWN
+            else
+                set msg = msg + ABILITY_SELF_REQUIRE_COOLDOWN
+            endif
+            set msg = MHString_Replace(msg, "$abilityName$", GetAbilityStringFieldById(abilId, ABILITY_DEF_DATA_NAME))
             set msg = MHString_Replace(msg, "$abilityLevel$", I2S(abilLevel))
             set msg = MHString_Replace(msg, "$cooldown$", I2S(R2I(cooldownRemaining + 1.)))
         elseif manaCost > GetUnitState(whichUnit, UNIT_STATE_MANA) then
             // 魔法不足
-            set msg = msg + ABILITY_SELF_REQUIRE_MANA
-            set msg = MHString_Replace(msg, "$abilityName$", GetObjectName(abilId))
+            if GetAbilityIntegerFieldById(abilId, ABILITY_DEF_DATA_MAX_LEVEL) > 1 then
+                set msg = msg + LEVEL_ABILITY_SELF_REQUIRE_MANA
+            else
+                set msg = msg + ABILITY_SELF_REQUIRE_MANA
+            endif
+            set msg = MHString_Replace(msg, "$abilityName$", GetAbilityStringFieldById(abilId, ABILITY_DEF_DATA_NAME))
             set msg = MHString_Replace(msg, "$abilityLevel$", I2S(abilLevel))
             set msg = MHString_Replace(msg, "$manaCost$", I2S(R2I(manaCost * 1. - GetUnitState(whichUnit, UNIT_STATE_MANA))))
         elseif IsUnitAbilityDisabled(whichUnit, abilId) then
             // 被禁用了
-            set msg = msg + ABILITY_SELF_DISABLED
-            set msg = MHString_Replace(msg, "$abilityName$", GetObjectName(abilId))
+            if GetAbilityIntegerFieldById(abilId, ABILITY_DEF_DATA_MAX_LEVEL) > 1 then
+                set msg = msg + LEVEL_ABILITY_SELF_DISABLED
+            else
+                set msg = msg + ABILITY_SELF_DISABLED
+            endif
+            set msg = MHString_Replace(msg, "$abilityName$", GetAbilityStringFieldById(abilId, ABILITY_DEF_DATA_NAME))
             set msg = MHString_Replace(msg, "$abilityLevel$", I2S(abilLevel))
         else
             // 准备就绪
-            set msg = msg + ABILITY_SELF_READY
-            set msg = MHString_Replace(msg, "$abilityName$", GetObjectName(abilId))
+            if GetAbilityIntegerFieldById(abilId, ABILITY_DEF_DATA_MAX_LEVEL) > 1 then
+                set msg = msg + LEVEL_ABILITY_SELF_READY
+            else
+                set msg = msg + ABILITY_SELF_READY
+            endif
+            set msg = MHString_Replace(msg, "$abilityName$", GetAbilityStringFieldById(abilId, ABILITY_DEF_DATA_NAME))
             set msg = MHString_Replace(msg, "$abilityLevel$", I2S(abilLevel))
         endif
 
@@ -303,7 +324,7 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility
         set charges           = GetCommandButtonCharges(skillButton)
         set msg               = null
 
-        call BJDebugMsg(I2S(GetHandleId(whichItem)) + " : " + itemName)
+        // call BJDebugMsg(I2S(GetHandleId(whichItem)) + " : " + itemName)
         if IsUnitAlly(whichUnit, GetLocalPlayer()) then
             // ping队友时在前面加上
             if not IsUnitOwnedByPlayer(whichUnit, GetLocalPlayer()) then

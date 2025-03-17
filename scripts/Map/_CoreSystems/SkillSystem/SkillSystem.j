@@ -1,5 +1,5 @@
 
-library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
+library SkillSystem requires AbilityUtils, UnitAbility
 
     function HeroOnInitializer takes integer heroIndex returns nothing
         if (heroIndex == 34) then
@@ -385,11 +385,11 @@ library SkillSystem requires AbilityCustomOrderId, AbilityUtils, UnitAbility
                 //call ThrowWarning(StringLength(HeroSkill_Icon[id]) == 0, "SkillSystem", "RegisterHeroSkill", GetObjectName(baseId), 0, "no art icon")
             endif
         endif
-        call SaveSkillOrder(id, GetAbilityOrder(baseId))
+        //call SaveSkillOrder(id, GetAbilityOrder(baseId))
 
-        set HeroSkill_BaseId[id] = baseId
+        set HeroSkill_BaseId[id]    = baseId
         set HeroSkill_SpecialId[id] = specialId
-        set HeroSkill_Modify[id] = changeSkill
+        set HeroSkill_Modify[id]    = changeSkill
         //if sHotKey != "_" and sHotKey != "" and sHotKey != null then
         //    call SaveStr(AbilityDataHashTable, baseId, HotKeyStringHash, sHotKey)
         //endif
