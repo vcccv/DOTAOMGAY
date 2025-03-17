@@ -92,9 +92,6 @@ library AbilityCustomOrderId requires Base, SkillSystem, ScepterUpgradeSystem
         // 秘术异蛇
         call AllocAbilityOrderId('A0G2')
 
-        // 吞噬 - 连环闪电
-        call AllocAbilityOrderId('A1OQ')
-
         // 撕裂伤口
         call AllocAbilityOrderId('A194')
 
@@ -285,8 +282,6 @@ library AbilityCustomOrderId requires Base, SkillSystem, ScepterUpgradeSystem
         // 烈火焚身
         call AllocAbilityOrderIdEx('A0O5', 'A1B1')
 
-        // 吞噬 - 冲击波
-        call AllocAbilityOrderId('A1OV')
 
         //***************************************************************************
         //*
@@ -425,8 +420,6 @@ library AbilityCustomOrderId requires Base, SkillSystem, ScepterUpgradeSystem
         // 冥火爆击 
         call AllocAbilityOrderId('QB0H') 
 
-        // 吞噬 - 投掷巨石
-        call AllocAbilityOrderId('A36K') 
 
         // 死神镰刀 
         call AllocAbilityOrderId('A067') 
@@ -446,8 +439,6 @@ library AbilityCustomOrderId requires Base, SkillSystem, ScepterUpgradeSystem
         // 马蹄践踏        
         call AllocAbilityOrderId('A00S')
 
-        // 吞噬 - 战争践踏 
-        call AllocAbilityOrderId('A1P0')
 
         // 火焰重踏        
         call AllocAbilityOrderId('A454')
@@ -641,7 +632,6 @@ library AbilityCustomOrderId requires Base, SkillSystem, ScepterUpgradeSystem
         // 死亡守卫
         call AllocAbilityOrderIdEx('A0NT', 'A0NX')
         
-        call AllocAbilityOrderId(CREEPS_HURRICANE_ABILITY_ID      )
 
         //***************************************************************************
         //*
@@ -653,8 +643,6 @@ library AbilityCustomOrderId requires Base, SkillSystem, ScepterUpgradeSystem
 
         // 雷霆一击 
         call AllocAbilityOrderId('A06M')
-        
-        call AllocAbilityOrderId(CREEPS_THUNDER_CLAP_ABILITY_ID   )
 
         //***************************************************************************
         //*
@@ -662,7 +650,6 @@ library AbilityCustomOrderId requires Base, SkillSystem, ScepterUpgradeSystem
         //*
         //***************************************************************************
         call AllocAbilityOrderId('A08R')
-        call AllocAbilityOrderId(CREEPS_ICE_ARMOR_ABILITY_ID      )
 
 
         //***************************************************************************
@@ -688,7 +675,7 @@ library AbilityCustomOrderId requires Base, SkillSystem, ScepterUpgradeSystem
         //*
         //***************************************************************************
         // 洗礼
-        call AllocAbilityOrderId('A0OO')
+        call AllocAbilityOrderId('A08N')
 
         // 球状闪电
         call AllocAbilityOrderIdEx('A14O', 'A3FJ')
@@ -740,25 +727,41 @@ library AbilityCustomOrderId requires Base, SkillSystem, ScepterUpgradeSystem
         // 火之余烬
         call AllocAbilityOrderId('A2JK')
         call AllocAbilityOrderId(ACTIVATE_FIRE_REMNANT_ABILITY_ID)
-
         
         // 吞噬
-        call AllocAbilityOrderId(CREEPS_CHAIN_LIGHTNING_ABILITY_ID)
-        call AllocAbilityOrderId(CREEPS_ICE_ARMOR_ABILITY_ID      )
         call AllocAbilityOrderId(CREEPS_MANA_BURN_ABILITY_ID      )
         call AllocAbilityOrderId(CREEPS_PURGE_ABILITY_ID          )
         call AllocAbilityOrderId(CREEPS_SHOCKWAVE_ABILITY_ID      )
         call AllocAbilityOrderId(CREEPS_HEAL_ABILITY_ID           )
-        call AllocAbilityOrderId(CREEPS_WAR_STOMP_ABILITY_ID      )
         call AllocAbilityOrderId(CREEPS_RAISE_DEAD_ABILITY_ID     )
         call AllocAbilityOrderId(CREEPS_ENSNARE_ABILITY_ID        )
+        // 吞噬 - 连环闪电
+        call AllocAbilityOrderId(CREEPS_CHAIN_LIGHTNING_ABILITY_ID)
+        // 吞噬 - 战争践踏 
+        call AllocAbilityOrderId(CREEPS_WAR_STOMP_ABILITY_ID      )
+        // 吞噬 - 投掷巨石
         call AllocAbilityOrderId(CREEPS_HURL_BOULDER_ABILITY_ID   )
+        call AllocAbilityOrderId(CREEPS_HURRICANE_ABILITY_ID      )
+        call AllocAbilityOrderId(CREEPS_THUNDER_CLAP_ABILITY_ID   )
+        call AllocAbilityOrderId(CREEPS_ICE_ARMOR_ABILITY_ID      )
 
         // 大地之灵
         call AllocAbilityOrderId('A2QM')
         call AllocAbilityOrderId('A2TJ')
         call AllocAbilityOrderId('A2QI')
         call AllocAbilityOrderId('A2TI')
+
+        // 幽鬼
+        call AllocAbilityOrderIdByIndex(SKILL_INDEX_HAUNT )     
+        call AllocAbilityOrderId(HAUNT_REALITY_ABILITY_ID ) 
+
+        // 消化
+        call AllocAbilityOrderIdByIndex(SKILL_INDEX_KOTO_DIGEST )     
+        call AllocAbilityOrderId(KOTO_DIGEST_THROW_ABILITY_ID   ) 
+
+        // 暗影剧毒
+        call AllocAbilityOrderIdByIndex(SKILL_INDEX_SHADOW_POISON )     
+        call AllocAbilityOrderId(SHADOW_POISON_RELEASE_ABILITY_ID ) 
 
     endfunction
 

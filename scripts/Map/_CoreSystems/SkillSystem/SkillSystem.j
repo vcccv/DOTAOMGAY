@@ -83,7 +83,7 @@ library SkillSystem requires AbilityUtils, UnitAbility
             call ExecuteFunc("PRX")
         elseif (heroIndex == 85) then
             call ExecuteFunc("SpectralDagger_Init")
-            call ExecuteFunc("PAX")
+            call ExecuteFunc("HauntOnInitialize")
         elseif (heroIndex == 86) then
             call ExecuteFunc("PNX")
         elseif (heroIndex == 33) then

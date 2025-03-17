@@ -44,6 +44,7 @@
 #include "Int\\Leshrac.j"
 #include "Int\\AncientApparition.j"
 #include "Int\\GoblinTechies.j"
+#include "Int\\Chen.j"
 
 #include "Agi\\VengefulSpirit.j"
 #include "Agi\\FacelessVoid.j"

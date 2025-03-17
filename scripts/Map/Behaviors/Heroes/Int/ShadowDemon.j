@@ -121,8 +121,7 @@ scope ShadowDemon
     //***************************************************************************
     
     globals
-        constant integer SKILL_INDEX_SHADOW_POISON = GetHeroSKillIndexBySlot(HERO_INDEX_SHADOW_DEMON, 3)
-
+        constant integer SKILL_INDEX_SHADOW_POISON        = GetHeroSKillIndexBySlot(HERO_INDEX_SHADOW_DEMON, 3)
         constant integer SHADOW_POISON_RELEASE_ABILITY_ID = 'A1S9'
     endglobals
     
