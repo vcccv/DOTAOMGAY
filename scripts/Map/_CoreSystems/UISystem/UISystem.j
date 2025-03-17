@@ -595,14 +595,14 @@ library UISystem requires ErrorMessage
                 return
             endif
 
-            call ThrowError(callback == null, "UISystem", "RegisterEvent", "callback", eventId, "code == null")
+            debug call ThrowError(callback == null, "UISystem", "RegisterEvent", "callback", eventId, "code == null")
             
             if not HaveSavedBoolean(HT, this, eventId) then
                 call SaveBoolean(HT, this, eventId, true)
                 call MHFrameEvent_Register(MainTrigger, this.ptr, eventId)
             endif
 
-            call BJDebugMsg("注册：" + I2S(this))
+            //call BJDebugMsg("注册：" + I2S(this))
             if sync then
                 call SaveInteger(HT, this, eventId, C2I(callback))
             else

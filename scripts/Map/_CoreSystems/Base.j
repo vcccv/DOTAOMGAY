@@ -7,6 +7,39 @@ library Base requires TriggerDestroyQueue, GroupAlloc, ErrorMessage, TimerUtils
         endif
         return "false"
     endfunction
+    
+    //快捷键整数转字符串
+    function Key2Str takes integer key returns string
+        local string s = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        local integer i = key - 65
+        if key > 64 and key < 91 then
+            return SubString(s, i , i + 1)
+         endif
+          return null
+    endfunction
+    
+    //快捷键字符串转整数
+    function Str2Key takes string key returns integer
+        local string s = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        local integer i = 65
+        local integer b = 0
+        set key = StringCase(key , true)
+        loop
+        exitwhen i > 90
+            if key == SubString(s, b , b + 1) then
+                return i
+            endif
+            set i = i + 1
+            set b = b + 1
+        endloop
+          return 0
+    endfunction
+    
+    function ExecuteFunctionConditionally takes string f, boolean b returns nothing
+        if b and f != "" and f != null then
+            call ExecuteFunc(f)
+        endif
+    endfunction
 
     function PlayerInterfaceErrorSoundForPlayer takes player p, boolean b returns nothing
         if b and User.Local == p then

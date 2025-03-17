@@ -27,15 +27,8 @@ library AbilityUtils requires Table, Base
         return MHAbility_GetAbilityCustomLevelDataReal(whichAbility, GetAbilityLevel(whichAbility), ABILITY_LEVEL_DEF_DATA_COOLDOWN)
     endfunction
 
-    function SetAbilityStringFieldById takes integer abilId, integer whichField, string value returns nothing
-        call MHAbility_SetDefDataStr(abilId, whichField, value)
-    endfunction
-    function GetAbilityStringFieldById takes integer abilId, integer whichField returns string
-        return MHAbility_GetDefDataStr(abilId, whichField)
-    endfunction
-    function GetAbilityIntegerFieldById takes integer abilId, integer whichField returns integer
-        return MHAbility_GetDefDataInt(abilId, whichField)
-    endfunction
+
+
     function SetAbilityIconById takes integer abilId, string art returns nothing
         if StringLength(art) > 0 and MHString_Find(art, ".blp", 0) == - 1 then
             set art = art + ".blp"
@@ -48,6 +41,8 @@ library AbilityUtils requires Table, Base
     function SetAbilityExtendedTooltipyId takes integer abilId, integer level, string extendedTooltip returns nothing
         call MHAbility_SetLevelDefDataStr(abilId, level, ABILITY_LEVEL_DEF_DATA_UBERTIP, extendedTooltip)
     endfunction
+
+
 
     function GetAbilityHotkeyById takes integer abilId returns integer
         return MHAbility_GetDefDataInt(abilId, ABILITY_DEF_DATA_HOTKEY)
@@ -74,17 +69,82 @@ library AbilityUtils requires Table, Base
         return MHAbility_GetLevelDefDataReal(abilId, level, ABILITY_LEVEL_DEF_DATA_COOLDOWN)
     endfunction
 
+    function GetAbilityStringFieldById takes integer abilId, integer whichField returns string
+        return MHAbility_GetDefDataStr(abilId, whichField)
+    endfunction
+    function SetAbilityStringFieldById takes integer abilId, integer whichField, string value returns nothing
+        call MHAbility_SetDefDataStr(abilId, whichField, value)
+    endfunction
+    function GetAbilityIntegerFieldById takes integer abilId, integer whichField returns integer
+        return MHAbility_GetDefDataInt(abilId, whichField)
+    endfunction
+    function SetAbilityIntegerFieldById takes integer abilId, integer whichField, integer value returns nothing
+        call MHAbility_SetDefDataInt(abilId, whichField, value)
+    endfunction
+
+    function GetAbilityStringLevelField takes ability whichAbility, integer level, integer filed returns string
+        return MHAbility_GetAbilityCustomLevelDataStr(whichAbility, level, filed)
+    endfunction
+    function SetAbilityStringLevelField takes ability whichAbility, integer level, integer filed, string value returns nothing
+        call MHAbility_SetAbilityCustomLevelDataStr(whichAbility, level, filed, value)
+    endfunction
     function GetAbilityRealLevelField takes ability whichAbility, integer level, integer filed returns real
         return MHAbility_GetAbilityCustomLevelDataReal(whichAbility, level, filed)
     endfunction
     function SetAbilityRealLevelField takes ability whichAbility, integer level, integer filed, real value returns nothing
         call MHAbility_SetAbilityCustomLevelDataReal(whichAbility, level, filed, value)
     endfunction
+
+    function GetAbilityStringLevelFieldById takes integer abilId, integer level, integer filed returns string
+        return MHAbility_GetLevelDefDataStr(abilId, level, filed)
+    endfunction
+    function SetAbilityStringLevelFieldById takes integer abilId, integer level, integer filed, string value returns nothing
+        call MHAbility_SetLevelDefDataStr(abilId, level, filed, value)
+    endfunction
     function GetAbilityRealLevelFieldById takes integer abilId, integer level, integer filed returns real
         return MHAbility_GetLevelDefDataReal(abilId, level, filed)
     endfunction
     function SetAbilityRealLevelFieldById takes integer abilId, integer level, integer filed, real value returns nothing
         call MHAbility_SetLevelDefDataReal(abilId, level, filed, value)
+    endfunction
+    function GetAbilityIntegerLevelFieldById takes integer abilId, integer level, integer filed returns integer
+        return MHAbility_GetLevelDefDataInt(abilId, level, filed)
+    endfunction
+    function SetAbilityIntegerLevelFieldById takes integer abilId, integer level, integer filed, integer value returns nothing
+        call MHAbility_SetLevelDefDataInt(abilId, level, filed, value)
+    endfunction
+
+    function SetAbilityHotkeyById takes integer abilId, integer hotkey returns nothing
+        local string  name
+        local integer maxLevel
+        local integer pos
+        local integer i
+
+        if hotkey < 'A' or hotkey > 'Z' then
+            return
+        endif
+
+        // 拿到实际名字
+        set name = GetAbilityStringFieldById(abilId, ABILITY_LEVEL_DEF_DATA_TIP)
+        set pos  = MHString_Find(name, "[", 0)
+        if pos != -1 then
+            set name = MHString_Sub(name, 0, pos)
+        endif
+
+        set maxLevel = GetAbilityIntegerFieldById(abilId, ABILITY_DEF_DATA_MAX_LEVEL)
+        call SetAbilityIntegerFieldById(abilId, ABILITY_DEF_DATA_HOTKEY         , hotkey)
+        call SetAbilityIntegerFieldById(abilId, ABILITY_DEF_DATA_RESEARCH_HOTKEY, hotkey)
+        if maxLevel == 1 then
+            call SetAbilityStringLevelFieldById(abilId, 1, ABILITY_LEVEL_DEF_DATA_TIP, name + "[|cffffcc00" + Key2Str(hotkey) + "|r]")
+        else
+            set i = 1
+            loop
+                exitwhen i > maxLevel
+                call SetAbilityStringLevelFieldById(abilId, i, ABILITY_LEVEL_DEF_DATA_TIP, name + "[|cffffcc00" + Key2Str(hotkey) + "|r] - [|cffffcc00等级 " + I2S(i) + "|r]")
+                set i = i + 1
+            endloop
+            call SetAbilityStringFieldById(abilId, ABILITY_DEF_DATA_RESEARCH_TIP, "学习" + name + "[|cffffcc00" + Key2Str(hotkey) + "|r] - [|cffffcc00等级 %d|r]")
+        endif
     endfunction
 
     function GetAbilityReqLevelById takes integer abilId returns integer

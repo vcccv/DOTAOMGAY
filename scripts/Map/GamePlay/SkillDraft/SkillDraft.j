@@ -38,32 +38,6 @@ library SkillDraft requires SkillSystem
         endif
     endfunction
     
-    //快捷键整数转字符串
-    function Key2Str takes integer key returns string
-        local string s = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        local integer i = key - 65
-        if key > 64 and key < 91 then
-            return SubString(s, i , i + 1)
-         endif
-          return null
-    endfunction
-    
-    //快捷键字符串转整数
-    function Str2Key takes string key returns integer
-        local string s = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        local integer i = 65
-        local integer b = 0
-        set key = StringCase(key , true)
-        loop
-        exitwhen i > 90
-            if key == SubString(s, b , b + 1) then
-                return i
-            endif
-            set i = i + 1
-            set b = b + 1
-        endloop
-          return 0
-    endfunction
 
     function GetSkillHotkeyByIndex takes integer skillIndex returns integer
         local integer id           = HeroSkill_BaseId[skillIndex]
@@ -99,7 +73,7 @@ library SkillDraft requires SkillSystem
                 endif
                 // 对比完了正常技能后，对比子技能
                 set subAbilityCount = GetSkillSubAbilityCountByIndex(PlayerSkillIndices[baseSlot + currentSlot])
-                call BJDebugMsg("subAbilityCount:" + I2S(subAbilityCount))
+               // call BJDebugMsg("subAbilityCount:" + I2S(subAbilityCount))
                 if subAbilityCount > 0 then
                     set i = 1
                     loop
@@ -108,7 +82,7 @@ library SkillDraft requires SkillSystem
                         set skillName2 = GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[baseSlot + currentSlot]]) + "[" + Key2Str(hotkey2) + "]"
                         loop
                             set hotkey2 = GetAbilityHotkeyById(sb.abilityId)
-                            call BJDebugMsg("对比的技能：" + GetObjectName(sb.abilityId) + " " + Id2String(sb.abilityId) + " 热键： " + Key2Str(hotkey2))
+                           // call BJDebugMsg("对比的技能：" + GetObjectName(sb.abilityId) + " " + Id2String(sb.abilityId) + " 热键： " + Key2Str(hotkey2))
                             if hotkey2 == hotkey1 then
                                 set message = message + "\n             " + skillName2 + " 第" + I2S(i + 1) + "号技能 - " + GetObjectName(sb.abilityId) + "[" + Key2Str(hotkey2) + "]"
                                 

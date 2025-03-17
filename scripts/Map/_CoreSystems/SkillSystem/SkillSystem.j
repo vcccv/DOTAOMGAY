@@ -272,6 +272,13 @@ library SkillSystem requires AbilityUtils, UnitAbility
         return false
     endfunction
 
+    // 根据1~6的槽位来获取技能
+    function GetPlayerSkillIndexBySolt takes player p, integer slot returns integer
+        local integer playerIndex = GetPlayerId(p)
+        debug call ThrowWarning(slot <=0 or slot >= 7, "System", "GetPlayerSkillIndexBySolt", "", slot, "Index Out of Bounds")
+        return PlayerSkillIndices[playerIndex * MAX_SKILL_SLOTS + slot]
+    endfunction
+
     // 检查命令冲突
     // CheckSkillOrderIdByIndex
     function CheckSkillOrderIdByIndex takes integer skillIndex1, integer skillIndex2, string targetOrder, string unknownOrder returns boolean
@@ -386,7 +393,7 @@ library SkillSystem requires AbilityUtils, UnitAbility
             endif
         endif
         //call SaveSkillOrder(id, GetAbilityOrder(baseId))
-
+        debug call ThrowError(HeroSkill_BaseId[id] != 0, "SkillSystem", "RegisterHeroSkill", GetObjectName(baseId), id, "重复注册了")
         set HeroSkill_BaseId[id]    = baseId
         set HeroSkill_SpecialId[id] = specialId
         set HeroSkill_Modify[id]    = changeSkill
@@ -419,6 +426,9 @@ library SkillSystem requires AbilityUtils, UnitAbility
         // 对于子技能有多种形态(吞噬)的个例，使用单向链表
         thistype next
         integer  abilityId
+        // 子技能主技能的索引
+        integer  ownerIndex
+
         private static key KEY
 
         static integer COUNT = 0
@@ -502,6 +512,9 @@ library SkillSystem requires AbilityUtils, UnitAbility
         static method GetIndexById takes integer abilId returns thistype
             return Table[TOGGLE_SKILL_INDEX].integer[abilId]
         endmethod
+        method GetAlternateId takes nothing returns integer
+            return this.alternateId
+        endmethod
         method IsAlternateId takes integer abilId returns boolean
             return abilId == this.alternateId
         endmethod
@@ -518,7 +531,7 @@ library SkillSystem requires AbilityUtils, UnitAbility
         // 获取指定单位的技能可用默认id，因为可能被神杖升级改变
         static method GetUnitVaildDefaultId takes unit whichUnit, integer skillId returns integer
             local thistype this = GetIndexById(skillId)
-            call ThrowError(this == 0, "SkillSystem", "GetUnitVaildDefaultId", GetObjectName(skillId), 0, "不是ToggleSkill")
+            debug call ThrowError(this == 0, "SkillSystem", "GetUnitVaildDefaultId", GetObjectName(skillId), 0, "不是ToggleSkill")
             if GetUnitAbilityLevel(whichUnit, this.baseId) > 0 then
                 return this.baseId
             elseif GetUnitAbilityLevel(whichUnit, this.upgradeId) > 0 then

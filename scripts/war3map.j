@@ -254,7 +254,6 @@ globals
 	hashtable ItemGoldHashTable      = InitHashtable()
 	
 	hashtable ItemCooldownHashTable  = InitHashtable()
-	hashtable ChatCommandHashTable   = InitHashtable()
 	hashtable OtherHashTable2 	     = InitHashtable()
 	// 额外哈希表
 	hashtable ExtraHT = InitHashtable()
@@ -5411,11 +5410,6 @@ function InterfaceErrorForPlayer takes player p, string str returns nothing
 	// debug call SingleDebug("ErrorTip" + "|cffffcc00" + str + "|r")
 	if (LocalPlayer== p) then
 		call MHUI_PlayErrorSound()
-	endif
-endfunction
-function INX takes string f, boolean b returns nothing
-	if b and f != "" and f != null then
-		call ExecuteFunc(f)
 	endif
 endfunction
 //========================================坐标修正
@@ -24673,101 +24667,6 @@ function DebugIllusionUnitData takes nothing returns nothing
 	set u = null
 endfunction
 
-function WCO takes string s returns nothing
-	local boolean WDO = SubString(s, 0, 4) == "-aa "
-	local boolean WFO = SubString(s, 0, 4) == "-au "
-	local boolean WGO = SubString(s, 0, 4) == "-sa "
-	local boolean WHO = SubString(s, 0, 4) == "-at "
-	local boolean WJO = SubString(s, 0, 4) == "-ra "
-	local boolean WKO = s == "-r"
-	local boolean WLO = SubString(s, 0, 4) == "-ga "
-	local boolean WMO = SubString(s, 0, 4) == "-ha "
-	local boolean WPO = SubString(s, 0, 4) == "-ai "
-	local boolean WQO = SubString(s, 0, 3) == "-o "
-	local boolean WSO = SubString(s, 0, 4) == "-et "
-	local boolean WTO = SubString(s, 0, 4) == "-ep "
-	local boolean WUO = SubString(s, 0, 7) == "-setms "
-	local boolean WWO = SubString(s, 0, 6) == "-anim "
-	local boolean WYO = SubString(s, 0, 4) == "-hp "
-	local boolean WZO = s == "-hp"
-	local boolean W_O = SubString(s, 0, 4) == "-mp "
-	local boolean W0O = SubString(s, 0, 4) == "-ar "
-	local boolean W1O = SubString(s, 0, 4) == "-ip "
-	local boolean W2O = s == "-nerf"
-	local boolean W3O = SubString(s, 0, 4) == "-or "
-	local boolean W4O = SubString(s, 0, 7) == "-mytry "
-	local boolean W5O = s == "-cc"
-	local boolean W6O = s == "-b"
-	local boolean W7O = s == "-control" or s == "-c"
-	local boolean W8O = s == "-xy"
-	local boolean gi = s == "-gi"
-	local boolean W9O = SubString(s, 0, 5) == "-sxy "
-	local boolean YVO = SubString(s, 0, 6) == "-tint "
-	local boolean YEO = s == "-ms "
-	local boolean YXO = s == "-path"
-	local boolean YOO = s == "-k"
-	local boolean YRO = s == "-br"
-	local boolean YIO = s == "-path on"
-	local boolean YAO = s == "-path off"
-	local boolean YNO = s == "-path"
-	local boolean YBO = SubString(s, 0, 7) == "-souls "
-	local boolean YCO = SubString(s, 0, 7) == "-scale "
-	local boolean YDO = s == "-fog"
-	local boolean getId = s == "-all"
-	local boolean testEfficiency = s == "-效率"
-	local boolean gct = s == "-gct"
-	local boolean img = s == "-img"
-	if YDO then
-		call Cheat("iseedeadpeople")
-	endif
-
-	call INX("DebugIllusionUnitData", img)
-	call INX("DebugUnitCollisionType", gct)
-	call INX("EXGetUnitAllAbilityId", getId)
-	call INX("TestEfficiency", testEfficiency)
-
-	call INX("WNO", YCO)
-	call INX("WNO", YCO)
-	call INX("WRO", YBO)
-	call INX("WAO", YNO)
-	call INX("WXO", YIO)
-	call INX("WOO", YAO)
-	call INX("UYO", W6O)
-	call INX("WEO", YRO)
-	call INX("WEO", YRO)
-	call INX("WVO", YXO)
-	call INX("YFO", YEO)
-	call INX("U9O", W9O)
-	call INX("U2O", WTO)
-	call INX("U3O", WSO)
-	call INX("SKO", W7O)
-	call INX("TLO", W8O)
-	call INX("T1O", gi)
-	call INX("UYO", W6O)
-	call INX("U0O", YVO)
-	call INX("UWO", W5O)
-	call INX("UTO", W3O)
-	call INX("ULO", W4O)
-	call INX("UQO", WKO)
-	call INX("UJO", W2O)
-	call INX("UGO", WFO)
-	call INX("UFO", WGO)
-	call INX("TAO", WYO)
-	call INX("TBO", WZO)
-	call INX("TDO", YOO)
-	call INX("TJO", W0O)
-	call INX("TGO", W_O)
-	call INX("TRO", WWO)
-	call INX("TOO", WHO)
-	call INX("S9O", WUO)
-	call INX("TEO", W1O)
-	call INX("STO", WDO)
-	call INX("SYO", WJO)
-	call INX("S_O", WLO)
-	call INX("S1O", WMO)
-	call INX("S5O", WQO)
-	call INX("S3O", WPO)
-endfunction
 function YGO takes unit u, integer s1, integer s2 returns nothing
 	local item YHO = null
 	local item YJO = null
@@ -25084,52 +24983,6 @@ function IKY takes nothing returns nothing
 	call Ike_Sht(p, i, hotkey)
 endfunction
 
-function YLO takes string s returns nothing
-	local string s5 = SubString(s, 0, 5)
-	local boolean YMO = SubString(s, 0, 5) == "-swap"
-	local boolean YPO = SubString(s, 0, 5) == "-roll"
-	local boolean YQO = SubString(s, 0, 8) == "-kickafk"
-	local boolean YSO = SubString(s, 0, 6) == "-music"
-	local boolean YTO = SubString(s, 0, 6) == "-water"
-	local boolean YUO = SubString(s, 0, 9) == "-rickroll"
-	local boolean YWO = SubString(s, 0, 7) == "-switch"
-	local boolean YYO = SubString(s, 0, 18) == "-removeiteminslot "
-	local boolean YZO = SubString(s, 0, 2) == "-r" and(SubString(s, 2, 3) == " " or S2I(SubString(s, 2, 3))> 0)
-	local boolean Y_O = SubString(s, 0, 4) == "-cam"
-	local boolean Y0O = SubString(s, 0, 9) == "-itemswap"
-	if s5 == "-ikey" then
-		call ExecuteFunc("IKY")
-	elseif s5 == "-hkey" then
-		call ExecuteFunc("HKY")
-	endif
-	call INX("TMO", Y_O)
-	call INX("Y1O", YMO)
-	call INX("Y2O", YPO)
-	call INX("Y3O", YQO)
-	call INX("Y4O", YZO)
-	call INX("S7O", YYO)
-	call INX("Y5O", YSO)
-	call INX("Y6O", YTO)
-	call INX("Y7O", YUO)
-	call INX("Y8O", YWO)
-	call INX("YKO", Y0O)
-	if (bj_isSinglePlayer) then
-		call WCO(s)
-	endif
-endfunction
-function Y9O takes nothing returns nothing
-	local string s = StringCase(GetEventPlayerChatString(), false)
-	local integer h = StringHash(s)
-	if HaveSavedString(ChatCommandHashTable, h, 0) then
-		call ExecuteFunc(LoadStr(ChatCommandHashTable, h, 0))
-		if (s != "-c") then
-			return
-		endif
-	endif
-	if (SubString(s, 0, 1) == "-") then
-		call YLO(s)
-	endif
-endfunction
 function Y7O takes nothing returns nothing
 	local integer a = S2I(SubString(GetEventPlayerChatString(), 10, StringLength(GetEventPlayerChatString())))
 	local integer pid = GetPlayerId(GetTriggerPlayer())
@@ -25222,23 +25075,23 @@ function ZNO takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local player p =(LoadPlayerHandle(HY, h, 54))
-	local string ZBO =(LoadStr(HY, h, 146))
+	local string chatString =(LoadStr(HY, h, 146))
 	set ZW = p
 	if ZVO() then
 		set FT[GetPlayerId(p)] = true
-		if ZBO == "-random int"then
+		if chatString == "-random int"then
 			call OFX(p, 1)
 			call SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD) -150)
-		elseif ZBO == "-random str"then
+		elseif chatString == "-random str"then
 			call OFX(p, 3)
 			call SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD) -150)
-		elseif ZBO == "-random agi"then
+		elseif chatString == "-random agi"then
 			call OFX(p, 2)
 			call SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD) -150)
-		elseif ZBO == "-random melee"then
+		elseif chatString == "-random melee"then
 			call OHX(p, 1)
 			call SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD) -150)
-		elseif ZBO == "-random range"then
+		elseif chatString == "-random range"then
 			call OHX(p, 2)
 			call SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD) -150)
 		else
@@ -26205,7 +26058,7 @@ function VER takes nothing returns boolean
 endfunction
 function VOR takes nothing returns nothing
 	local unit trigUnit = PlayerHeroes[GetPlayerId(GetTriggerPlayer())]
-	call UnitAddAbility(trigUnit,'A0FI')
+	call UnitAddAbility(trigUnit, 'A0FI')
 	call IssueImmediateOrderById(trigUnit, 852663)
 	call DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 120., "|c00ff0303" + GetObjectName('n08I') + " " + GetHeroName(GetEnumUnit()) + ". " + GetObjectName('n08J') + "|r")
 	set trigUnit = null
@@ -29415,10 +29268,10 @@ function UnitAddGraniteAura takes unit u returns nothing
 	call SaveGroupHandle(HY, h, 1, AllocationGroup(115))
 	set t = null
 endfunction
-function ADR takes string ZBO returns boolean
-	if ZBO == "-ma"or ZBO == "-ms"or ZBO == "-cs"or ZBO == "-cson"or ZBO == "-disablehelp"or ZBO == "-enablehelp"or ZBO == "-unstuck"or ZBO == "-recreate"then
+function IsChatCommands takes string chatString returns boolean
+	if chatString == "-ma"or chatString == "-ms"or chatString == "-cs"or chatString == "-cson"or chatString == "-disablehelp"or chatString == "-enablehelp"or chatString == "-unstuck"or chatString == "-recreate"then
 		return true
-	elseif ZBO == "-swaphero"or ZBO == "-showmsg"or ZBO == "-hidemsg"or ZBO == "-showdeny"or ZBO == "-hidedeny"or ZBO == "-weather rain"or ZBO == "-weather snow"or ZBO == "-weather moonlight"or ZBO == "-weather wind"or ZBO == "-weather random"or ZBO == "-weather off"or ZBO == "-denyinfo"or ZBO == "-di"or ZBO == "-deathon"or ZBO == "-don"or ZBO == "-deathoff"or ZBO == "-doff"or ZBO == "-roll"or ZBO == "-hideheronames"or ZBO == "-hhn"or ZBO == "-test"or ZBO == "-mute"or ZBO == "-wtf"or ZBO == "-fleshstr"or ZBO == "-fs"or ZBO == "-switchon"then
+	elseif chatString == "-swaphero"or chatString == "-showmsg"or chatString == "-hidemsg"or chatString == "-showdeny"or chatString == "-hidedeny"or chatString == "-weather rain"or chatString == "-weather snow"or chatString == "-weather moonlight"or chatString == "-weather wind"or chatString == "-weather random"or chatString == "-weather off"or chatString == "-denyinfo"or chatString == "-di"or chatString == "-deathon"or chatString == "-don"or chatString == "-deathoff"or chatString == "-doff"or chatString == "-roll"or chatString == "-hideheronames"or chatString == "-hhn"or chatString == "-test"or chatString == "-mute"or chatString == "-wtf"or chatString == "-fleshstr"or chatString == "-fs"or chatString == "-switchon"then
 		return true
 	endif
 	return false
@@ -29672,7 +29525,7 @@ function AYR takes string AZR, integer A_R returns nothing
 	set M1 = A1R[53]
 	set MM2 = A1R[54]
 	set MM5 = A1R[55]
-	if EVR != ""or ADR(AZR) then
+	if EVR != ""or IsChatCommands(AZR) then
 		return
 	endif
 	if A3R and LS then
@@ -30071,32 +29924,32 @@ function AYR takes string AZR, integer A_R returns nothing
 	// 初始化技能双击施法
 	call ExecuteFunc("DoubleClickSkill__Init")
 
-	call INX("A8R", SP)
-	call INX("A9R", DM)
-	call INX("NVR", SH)
-	call INX("NER", AA)
-	call INX("NXR", AI)
-	call INX("NOR", AS)
-	call INX("NRR", RO)
-	call INX("NIR", MO)
-	call INX("NAR", DU)
-	call INX("NNR", AR)
-	call INX("NBR", AP)
-	call INX("NCR", ID)
-	call INX("NDR", NP)
-	call INX("NFR", SC)
-	call INX("NGR", EM)
-	call INX("PickMode_OnlyMid", OM)
-	call INX("PickMode_NotBot" , NB)
-	call INX("PickMode_NotTop" , NT)
-	call INX("PickMode_NoMid"  , NM)
-	call INX("NMR", NS)
-	call INX("NPR", NR)
-	call INX("NQR", PM)
-	call INX("NSR", OI)
-	call INX("NTR", FR)
-	call INX("NUR", ZM)
-	call INX("NWR", AH)
+	call ExecuteFunctionConditionally("A8R", SP)
+	call ExecuteFunctionConditionally("A9R", DM)
+	call ExecuteFunctionConditionally("NVR", SH)
+	call ExecuteFunctionConditionally("NER", AA)
+	call ExecuteFunctionConditionally("NXR", AI)
+	call ExecuteFunctionConditionally("NOR", AS)
+	call ExecuteFunctionConditionally("NRR", RO)
+	call ExecuteFunctionConditionally("NIR", MO)
+	call ExecuteFunctionConditionally("NAR", DU)
+	call ExecuteFunctionConditionally("NNR", AR)
+	call ExecuteFunctionConditionally("NBR", AP)
+	call ExecuteFunctionConditionally("NCR", ID)
+	call ExecuteFunctionConditionally("NDR", NP)
+	call ExecuteFunctionConditionally("NFR", SC)
+	call ExecuteFunctionConditionally("NGR", EM)
+	call ExecuteFunctionConditionally("PickMode_OnlyMid", OM)
+	call ExecuteFunctionConditionally("PickMode_NotBot" , NB)
+	call ExecuteFunctionConditionally("PickMode_NotTop" , NT)
+	call ExecuteFunctionConditionally("PickMode_NoMid"  , NM)
+	call ExecuteFunctionConditionally("NMR", NS)
+	call ExecuteFunctionConditionally("NPR", NR)
+	call ExecuteFunctionConditionally("NQR", PM)
+	call ExecuteFunctionConditionally("NSR", OI)
+	call ExecuteFunctionConditionally("NTR", FR)
+	call ExecuteFunctionConditionally("NUR", ZM)
+	call ExecuteFunctionConditionally("NWR", AH)
 	call ExecuteFunc("NYR")
 	// 初始化主模式
 	call ExecuteFunc("ISR")
@@ -67161,112 +67014,6 @@ function EDN takes nothing returns nothing
 		set G = not G
 	endif
 endfunction
-function Init_Instructions takes nothing returns nothing
-	call SaveStr(ChatCommandHashTable, StringHash("-gameinfo"), 0, "DisplayGameInfo")
-	call SaveStr(ChatCommandHashTable, StringHash("-recreate"), 0, "VRR")
-	call SaveStr(ChatCommandHashTable, StringHash("-unstuck"), 0, "VBR")
-	call SaveStr(ChatCommandHashTable, StringHash("-matchup"), 0, "VDR")
-	call SaveStr(ChatCommandHashTable, StringHash("-ma"), 0, "VDR")
-	call SaveStr(ChatCommandHashTable, StringHash("-movespeed"), 0, "VHR")
-	call SaveStr(ChatCommandHashTable, StringHash("-ms"), 0, "VHR")
-	//call SaveStr(ChatCommandHashTable, StringHash("-nh"), 0, "T0O")
-	call SaveStr(ChatCommandHashTable, StringHash("-mc"), 0, "ERI")
-
-	call SaveStr(ChatCommandHashTable, StringHash("-debug"), 0, "GetGroupList")
-
-	//call SaveStr(ChatCommandHashTable, StringHash("-ocrl"), 0, "Ocrl")
-	call SaveStr(ChatCommandHashTable, StringHash("-msa"), 0, "VJR")
-	call SaveStr(ChatCommandHashTable, StringHash("-disablehelp"), 0, "VKR")
-	call SaveStr(ChatCommandHashTable, StringHash("-enablehelp"), 0, "VLR")
-	call SaveStr(ChatCommandHashTable, StringHash("-creepstats"), 0, "VMR")
-	call SaveStr(ChatCommandHashTable, StringHash("-cs"), 0, "VMR")
-	call SaveStr(ChatCommandHashTable, StringHash("-cson"), 0, "VPR")
-	call SaveStr(ChatCommandHashTable, StringHash("-csoff"), 0, "VPR")
-	call SaveStr(ChatCommandHashTable, StringHash("-hidemsg"), 0, "V5R")
-	call SaveStr(ChatCommandHashTable, StringHash("-showmsg"), 0, "V6R")
-	call SaveStr(ChatCommandHashTable, StringHash("-weather snow"), 0, "V9R")
-	call SaveStr(ChatCommandHashTable, StringHash("-weather rain"), 0, "V9R")
-	call SaveStr(ChatCommandHashTable, StringHash("-weather off"), 0, "V9R")
-	call SaveStr(ChatCommandHashTable, StringHash("-weather random"), 0, "V9R")
-	call SaveStr(ChatCommandHashTable, StringHash("-weather wind"), 0, "V9R")
-	call SaveStr(ChatCommandHashTable, StringHash("-weather moonlight"), 0, "V9R")
-	call SaveStr(ChatCommandHashTable, StringHash("-showdeny"), 0, "V3R")
-	call SaveStr(ChatCommandHashTable, StringHash("-hidedeny"), 0, "V3R")
-	call SaveStr(ChatCommandHashTable, StringHash("-denyinfo"), 0, "V4R")
-	call SaveStr(ChatCommandHashTable, StringHash("-di"), 0, "V4R")
-	call SaveStr(ChatCommandHashTable, StringHash("-don"), 0, "V2R")
-	call SaveStr(ChatCommandHashTable, StringHash("-deathon"), 0, "V2R")
-	call SaveStr(ChatCommandHashTable, StringHash("-doff"), 0, "V2R")
-	call SaveStr(ChatCommandHashTable, StringHash("-deathoff"), 0, "V2R")
-	call SaveStr(ChatCommandHashTable, StringHash("-hhn"), 0, "ERR")
-	call SaveStr(ChatCommandHashTable, StringHash("-ui"), 0, "TZO")
-	call SaveStr(ChatCommandHashTable, StringHash("-charges"), 0, "T2O")
-	call SaveStr(ChatCommandHashTable, StringHash("-dch"), 0, "SetupDoubleClickSpell")
-	call SaveStr(ChatCommandHashTable, StringHash("-hideheronames"), 0, "ERR")
-	call SaveStr(ChatCommandHashTable, StringHash("-mute"), 0, "EIR")
-	call SaveStr(ChatCommandHashTable, StringHash("-afk"), 0, "EJR")
-	call SaveStr(ChatCommandHashTable, StringHash("-apm"), 0, "EBR")
-	call SaveStr(ChatCommandHashTable, StringHash("-clear"), 0, "EDR")
-	call SaveStr(ChatCommandHashTable, StringHash("-c"), 0, "EDR")
-	call SaveStr(ChatCommandHashTable, StringHash("-fc"), 0, "T_O")
-	call SaveStr(ChatCommandHashTable, StringHash("-courier"), 0, "EPR")
-	call SaveStr(ChatCommandHashTable, StringHash("-rolloff"), 0, "EXR")
-	call SaveStr(ChatCommandHashTable, StringHash("-rollon"), 0, "EOR")
-	call SaveStr(ChatCommandHashTable, StringHash("-bonus"), 0, "E1R")
-	call SaveStr(ChatCommandHashTable, StringHash("-rollhero"), 0, "EER")
-	call SaveStr(ChatCommandHashTable, StringHash("-rh"), 0, "EER")
-	call SaveStr(ChatCommandHashTable, StringHash("-ii"), 0, "ENR")
-	call SaveStr(ChatCommandHashTable, StringHash("-iteminfo"), 0, "ENR")
-	call SaveStr(ChatCommandHashTable, StringHash("-si"), 0, "EAR")
-	call SaveStr(ChatCommandHashTable, StringHash("-skillinfo"), 0, "EAR")
-	call SaveStr(ChatCommandHashTable, StringHash("-spellinfo"), 0, "EAR")
-	call SaveStr(ChatCommandHashTable, StringHash("-ss"), 0, "T5O")
-	call SaveStr(ChatCommandHashTable, StringHash("-disableselection"), 0, "VQR")
-	call SaveStr(ChatCommandHashTable, StringHash("-ds"), 0, "VQR")
-	call SaveStr(ChatCommandHashTable, StringHash("-enableselection"), 0, "VSR")
-	call SaveStr(ChatCommandHashTable, StringHash("-unlock"), 0, "VTR")
-	call SaveStr(ChatCommandHashTable, StringHash("-es"), 0, "VSR")
-	call SaveStr(ChatCommandHashTable, StringHash("-sleep"), 0, "XWR")
-	call SaveStr(ChatCommandHashTable, StringHash("-calm"), 0, "XYR")
-	call SaveStr(ChatCommandHashTable, StringHash("-st"), 0, "E4R")
-	call SaveStr(ChatCommandHashTable, StringHash("-sp"), 0, "S6O")
-	call SaveStr(ChatCommandHashTable, StringHash("-spcd"), 0, "S6OCD")
-	//call SaveStr(ChatCommandHashTable, StringHash("-show"), 0, "T7O")
-	call SaveStr(ChatCommandHashTable, StringHash("-cooldown"), 0, "T8O")
-	call SaveStr(ChatCommandHashTable, StringHash("-fix"), 0, "NXX")
-	call SaveStr(ChatCommandHashTable, StringHash("-reset"), 0, "RAR")
-	call SaveStr(ChatCommandHashTable, StringHash("-remove"), 0, "TQO")
-	call SaveStr(ChatCommandHashTable, StringHash("-morph"), 0, "TUO")
-	call SaveStr(ChatCommandHashTable, StringHash("-hud"), 0, "TWO")
-	call SaveStr(ChatCommandHashTable, StringHash("-sddon"), 0, "T6O")
-	call SaveStr(ChatCommandHashTable, StringHash("-sddoff"), 0, "T6O")
-	call SaveStr(ChatCommandHashTable, StringHash("-ff"), 0, "T9O")
-	call SaveStr(ChatCommandHashTable, StringHash("-id"),0,"EDN")
-	call SaveStr(ChatCommandHashTable, StringHash("!ff"), 0, "UCO")
-	call SaveStr(ChatCommandHashTable, StringHash("-wff"), 0, "UVO")
-	call SaveStr(ChatCommandHashTable, StringHash("-addtime"), 0, "XBO")
-	call SaveStr(ChatCommandHashTable, StringHash("-ready"), 0, "UOO")
-	call SaveStr(ChatCommandHashTable, StringHash("-lolwtf"), 0, "URO")
-	call SaveStr(ChatCommandHashTable, StringHash("-random"), 0, "UIO")
-	call SaveStr(ChatCommandHashTable, StringHash("-random int"), 0, "UIO")
-	call SaveStr(ChatCommandHashTable, StringHash("-random agi"), 0, "UIO")
-	call SaveStr(ChatCommandHashTable, StringHash("-random str"), 0, "UIO")
-	call SaveStr(ChatCommandHashTable, StringHash("-random melee"), 0, "UIO")
-	call SaveStr(ChatCommandHashTable, StringHash("-random range"), 0, "UIO")
-	call SaveStr(ChatCommandHashTable, StringHash("-repick"), 0, "UNO")
-	call SaveStr(ChatCommandHashTable, StringHash("-ok"), 0, "Y8O")
-	call SaveStr(ChatCommandHashTable, StringHash("-no"), 0, "Y8O")
-	call SaveStr(ChatCommandHashTable, StringHash("-nw"), 0, "TYO")
-	call SaveStr(ChatCommandHashTable, StringHash("-orp"), 0, "T4O")
-	call SaveStr(ChatCommandHashTable, StringHash("-shaking"), 0, "T3O")
-	call SaveStr(ChatCommandHashTable, StringHash("-Mi1231Kalen#Fun*zx15926kl"), 0, "LZSB")
-	
-	call SaveStr(ChatCommandHashTable, StringHash("help"), 0, "JUHUANIUBI")
-	call SaveStr(ChatCommandHashTable, StringHash("站住"), 0, "JUHUAZHANZU")
-	call SaveStr(ChatCommandHashTable, StringHash("谁遭得住啊"), 0, "ZHESHUIZAODEZHUA")
-	call SaveStr(ChatCommandHashTable, StringHash("-更新"), 0, "GENGXINGRIZHI")
-	call SaveStr(ChatCommandHashTable, StringHash("-bujin"), 0, "BUJIN")
-endfunction
 function EGN takes integer id returns nothing
 	set EHV = EHV + 1
 	set EGV[EHV] = id
@@ -70024,7 +69771,6 @@ endfunction
 	call ExecuteFunc("UnitMorph_Init")
 
 
-
 	// ui和硬件系统初始化
 	call ExecuteFunc("UIManager_Init")
 
@@ -70150,6 +69896,9 @@ endfunction
 	set CreepNextWaypoint[4] = AttackToBotLocation
 	set CreepNextWaypoint[5] = AttackToScourgeLocation
 
+
+    call ChatCommands_Init()
+    call CommandDefinitions_Init()
 
 	set ScourgeMidMeleeSpawnLocatio   = GetRectCenter( gg_rct_ScourgeMidMeleeSpawn   )
 	set ScourgeTopMeleeSpawnLocatio   = GetRectCenter( gg_rct_ScourgeTopMeleeSpawn   )
@@ -70562,18 +70311,9 @@ endfunction
 	set KK = CreateRegion()
 	call RegionAddRect(KK, gg_rct_SentinelBuyArea)
 	call RegionAddRect(KK, gg_rct_ScourgeBuyArea)
-	set t = CreateTrigger()
-	call TriggerRegisterPlayerChatEvent(t, SentinelPlayers[1], "", false)
-	call TriggerRegisterPlayerChatEvent(t, SentinelPlayers[2], "", false)
-	call TriggerRegisterPlayerChatEvent(t, SentinelPlayers[3], "", false)
-	call TriggerRegisterPlayerChatEvent(t, SentinelPlayers[4], "", false)
-	call TriggerRegisterPlayerChatEvent(t, SentinelPlayers[5], "", false)
-	call TriggerRegisterPlayerChatEvent(t, ScourgePlayers[1], "", false)
-	call TriggerRegisterPlayerChatEvent(t, ScourgePlayers[2], "", false)
-	call TriggerRegisterPlayerChatEvent(t, ScourgePlayers[3], "", false)
-	call TriggerRegisterPlayerChatEvent(t, ScourgePlayers[4], "", false)
-	call TriggerRegisterPlayerChatEvent(t, ScourgePlayers[5], "", false)
-	call TriggerAddAction(t, function Y9O)
+
+
+
 	set i = 0
 	loop
 		set PlayerShowKDA[i] = true
@@ -70723,8 +70463,7 @@ endfunction
 	call ExecuteFunc("Init_ItemsAbilityAndOrder")
 	// 初始化单位视野表
 	call ExecuteFunc("Init_UnitsTypeSightData")
-	// 大部分命令
-	call ExecuteFunc("Init_Instructions")
+	
 	// 创建了一只羊 还有1秒计时器
 	call ExecuteFunc("TCX")
 
