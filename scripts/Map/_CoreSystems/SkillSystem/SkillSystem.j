@@ -384,10 +384,10 @@ library SkillSystem requires AbilityUtils, UnitAbility
     // Id StackLim暂时无用 普通技能 神杖/被动技能 工程升级技能 
     function RegisterHeroSkill takes integer id, string StackLim, integer baseId, integer specialId, integer changeSkill returns nothing
         if baseId > 0 then
-            set HeroSkill_Icon[id] = GetAbilityIconById(baseId)//GetAbilitySoundById(baseId, SOUND_TYPE_EFFECT_LOOPED)
+            set HeroSkill_Icon[id] = GetAbilitySoundById(baseId, SOUND_TYPE_EFFECT_LOOPED)
             if StringLength(HeroSkill_Icon[id]) == 0 then
                 // 等合并slk再说吧
-                set HeroSkill_Icon[id] = GetAbilitySoundById(baseId, SOUND_TYPE_EFFECT_LOOPED)
+                set HeroSkill_Icon[id] = GetAbilityIconById(baseId)
                 // GetAbilityIconById(specialId)
                 //call ThrowWarning(StringLength(HeroSkill_Icon[id]) == 0, "SkillSystem", "RegisterHeroSkill", GetObjectName(baseId), 0, "no art icon")
             endif
@@ -429,22 +429,32 @@ library SkillSystem requires AbilityUtils, UnitAbility
         // 子技能主技能的索引
         integer  ownerIndex
 
+        // 属于第几号子技能
+        integer  index
+
         private static key KEY
 
         static integer COUNT = 0
 
-        static method AllocSubAbility takes integer subAbilityId returns thistype
+        // ownerIndex = 主技能索引
+        static method AllocSubAbility takes integer subAbilityId, integer ownerIndex returns thistype
             local thistype this = COUNT + 1
             set COUNT = this
-            set this.abilityId = subAbilityId
+            set this.abilityId  = subAbilityId
+            set this.ownerIndex = ownerIndex
+            set SubAbilitiesTable[0].integer[subAbilityId] = this
             return this
         endmethod
 
         // 追加子技能(吞噬)
         method AddSubAbility takes integer subAbilityId returns thistype
-            local thistype new = AllocSubAbility(subAbilityId)
+            local thistype new = AllocSubAbility(subAbilityId, this.ownerIndex)
             set this.next = new
             return new
+        endmethod
+        
+        static method GetIndexById takes integer abilityId returns thistype
+            return SubAbilitiesTable[0].integer[abilityId]
         endmethod
 
         implement SubAbilityInit
@@ -465,10 +475,11 @@ library SkillSystem requires AbilityUtils, UnitAbility
 
     // 基于英雄技能索引添加子技能
     function HeroSkillAddSubAbilitiesById takes integer skillIndex, integer subAbilityId returns SubAbility
-        local SubAbility sb              = SubAbility.AllocSubAbility(subAbilityId)
+        local SubAbility sb              = SubAbility.AllocSubAbility(subAbilityId, skillIndex)
         local integer    subAbilityIndex = SubAbilitiesTable[skillIndex].integer[0] + 1
         set SubAbilitiesTable[skillIndex].integer[0] = subAbilityIndex
         set SubAbilitiesTable[skillIndex].integer[subAbilityIndex] = sb
+        set sb.index = subAbilityIndex
         return sb
     endfunction
 
@@ -649,15 +660,15 @@ library SkillSystem requires AbilityUtils, UnitAbility
     // 第六个参数为幻象出生时添加的技能
     // PassiveAbilityMaxCount为最大被动数量
     // 实际上应该优化 但没事还是别改
-    function RegisterPassiveSkill takes integer iRealSkill, integer iSpellBookSkill, integer iLearnedSkill, integer iSkillBuff, integer iShowSkill, integer iillusionUnitSkill returns nothing
+    function RegisterPassiveSkill takes integer realId, integer spellBookId, integer learnedId, integer buffId, integer showId, integer iillusionId returns nothing
         set PassiveAbilityMaxCount = PassiveAbilityMaxCount + 1
-        set PassiveSkill_Real[PassiveAbilityMaxCount] = iRealSkill
-        set PassiveSkill_SpellBook[PassiveAbilityMaxCount] = iSpellBookSkill
-        set PassiveSkill_Learned[PassiveAbilityMaxCount] = iLearnedSkill
-        set PassiveSkill_Buff[PassiveAbilityMaxCount] = iSkillBuff
-        set PassiveSkill_Show[PassiveAbilityMaxCount] = iShowSkill
-        set PassiveSkill_Illusion[PassiveAbilityMaxCount] = iillusionUnitSkill
-        call SetAllPlayerAbilityUnavailable(iSpellBookSkill)
+        set PassiveSkill_Real[PassiveAbilityMaxCount] = realId
+        set PassiveSkill_SpellBook[PassiveAbilityMaxCount] = spellBookId
+        set PassiveSkill_Learned[PassiveAbilityMaxCount] = learnedId
+        set PassiveSkill_Buff[PassiveAbilityMaxCount] = buffId
+        set PassiveSkill_Show[PassiveAbilityMaxCount] = showId
+        set PassiveSkill_Illusion[PassiveAbilityMaxCount] = iillusionId
+        call SetAllPlayerAbilityUnavailable(spellBookId)
     endfunction
     
     // 根据被动技能的学习id找到被动技能索引

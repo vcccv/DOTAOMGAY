@@ -3,7 +3,9 @@ library ChatCommands requires Table, Base
     
     globals
         private constant key CHAT_COMMANDS_KEY
-        private string ChatString = ""
+        private constant key CHAT_OPTION_KEY
+        private string ChatString   = ""
+        private string OptionString = ""
     endglobals
 
     // debug指令
@@ -139,22 +141,32 @@ library ChatCommands requires Table, Base
     endfunction
 
     function GetChatCommandArgAt takes integer index returns string
+        local string cmdHead
+        local string paramStr
+
         if StringLength(ChatString) == 0 then
+            return ""
+        endif
+        if MHString_GetCount(ChatString, " ") < index then
             return ""
         endif
         return MHString_Split(ChatString, " ", index + 1)
     endfunction
     function GetChatCommandArgsCount takes nothing returns integer
-        return 0
+        return MHString_GetCount(ChatString, " ")
     endfunction
 
     private function OnPlayerCaht takes nothing returns nothing
         local string  s
         local integer h
-        set ChatString = GetEventPlayerChatString()
+
+        // 连续的空格替换为单一空格，并去掉右边空格
+        set ChatString = MHString_RegexReplace(MHString_RTrim(GetEventPlayerChatString()), " +", " ")
+
         set s = StringCase(ChatString, false)
         set h = StringHash(s)
         if Table[CHAT_COMMANDS_KEY].string.has(h) then
+            set OptionString = Table[CHAT_OPTION_KEY].string[h]
             call ExecuteFunc(Table[CHAT_COMMANDS_KEY].string[h])
 
             if (s != "-c") then
@@ -166,11 +178,10 @@ library ChatCommands requires Table, Base
             call YLO(s)
         endif
 
-        // call BJDebugMsg(MHString_Split(s, " ", 1) + "E")
-        // call BJDebugMsg(Table[CHAT_COMMANDS_KEY].string[h] + "E")
         set s = MHString_Split(s, " ", 1)
         set h = StringHash(s)
         if Table[CHAT_COMMANDS_KEY].string.has(h) then
+            set OptionString = Table[CHAT_OPTION_KEY].string[h]
             call ExecuteFunc(Table[CHAT_COMMANDS_KEY].string[h])
             return
         endif
@@ -178,10 +189,12 @@ library ChatCommands requires Table, Base
 
     // 无参数的指令
     function ResgiterSimpleCommand takes string cmd, string handler returns nothing
+        set Table[CHAT_OPTION_KEY  ].string[StringHash(cmd)] = cmd
         set Table[CHAT_COMMANDS_KEY].string[StringHash(cmd)] = handler
     endfunction
     // 带参数的指令 如果不检查参数数量则写-1
     function RegisterParamCommand takes string cmd, string handler, integer paramCount returns nothing
+        set Table[CHAT_OPTION_KEY  ].string [StringHash(cmd)] = cmd
         set Table[CHAT_COMMANDS_KEY].string [StringHash(cmd)] = handler
         set Table[CHAT_COMMANDS_KEY].integer[StringHash(cmd)] = paramCount
     endfunction

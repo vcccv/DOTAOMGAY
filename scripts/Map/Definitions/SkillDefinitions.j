@@ -4,8 +4,6 @@ library HeroSkillDefine requires SkillSystem, AbilityCustomOrderId
 
     // 技能的初始化
     function InitSkillInitializerMethod takes nothing returns nothing
-        // 不动态注册的技能Add/Remove 没啥用
-
         // 灵能陷阱
         call ResgiterAbilityMethodSimpleByIndex(SKILL_INDEX_PSIONIC_TRAP, "PsionicTrapOnAdd", "PsionicTrapOnRemove")
         call RegisterSkillInitMethodByIndex(SKILL_INDEX_PSIONIC_TRAP, "PsionicTrapOnInitializer")

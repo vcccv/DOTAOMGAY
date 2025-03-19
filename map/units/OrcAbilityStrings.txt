@@ -20872,15 +20872,15 @@ Researchubertip=仙女龙短时间内改变自己所处的维度，暂时不受�
 researchhotkey="F"
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNPhaseShift.blp
 [A0SS]
-researchart=ReplaceableTextures\CommandButtons\BTNCannibalize
+researchart=ReplaceableTextures\CommandButtons\PASBTNCannibalize
 researchbuttonpos=1
 Name=盛宴
 Researchtip=学习 盛宴[|cffffcc00F|r] - [|cffffcc00等级 %d|r]|n(Feast)
 Researchubertip=攻击造成相当于目标当前生命值一定百分比的伤害，同时自身回复相应的生命值。|n|n|cffff0303伤害无视魔法免疫|r|n|cFF00DC00物理伤害|r|n|n|cffffcc00等级 1|r - 造成目标当前生命值4%的伤害，同时自身回复相应的生命值|n|cffffcc00等级 2|r - 造成目标当前生命值5%的伤害，同时自身回复相应的生命值|n|cffffcc00等级 3|r - 造成目标当前生命值6%的伤害，同时自身回复相应的生命值|n|cffffcc00等级 4|r - 造成目标当前生命值7%的伤害，同时自身回复相应的生命值
 researchhotkey="F"
-effectsoundlooped=ReplaceableTextures\PassiveButtons\BTNCannibalize.blp
+effectsoundlooped=ReplaceableTextures\PassiveButtons\PASBTNCannibalize.blp
 [QP1W]
-art=ReplaceableTextures\PassiveButtons\BTNCannibalize
+art=ReplaceableTextures\PassiveButtons\PASBTNCannibalize
 buttonpos=1,2
 Name=盛宴
 Tip=盛宴 - [|cffffcc00等级 1|r],盛宴 - [|cffffcc00等级 2|r],盛宴 - [|cffffcc00等级 3|r],盛宴 - [|cffffcc00等级 4|r]

@@ -1,9 +1,12 @@
 library CommandDefinitions requires ChatCommands
     
     function CommandDefinitions_Init takes nothing returns nothing
-        call RegisterParamCommand("-ikey", "ChatCommand_SetAbilityHotkeyBySlot", 1)
+        call RegisterParamCommand("-ikey", "ChatCommand_SetAbilityHotkeyBySlot", -1)
         call RegisterParamCommand("-hkey", "ChatCommand_SetSkillHotkeyByIndex" , -1)
     
+        call RegisterParamCommand("-ik", "ChatCommand_SetAbilityHotkeyBySlot", -1)
+        call RegisterParamCommand("-hk", "ChatCommand_SetSkillHotkeyByIndex" , -1)
+
         call ResgiterSimpleCommand("-gameinfo", "DisplayGameInfo")
         call ResgiterSimpleCommand("-recreate", "VRR")
         call ResgiterSimpleCommand("-unstuck", "VBR")

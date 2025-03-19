@@ -32,15 +32,13 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility
         return 0
     endfunction
 
-    globals
-        constant string LEARN_SKILL_SELF_READY         = "我准备学习技能 > $abilityName$（$abilityLevel$级）"
-        constant string LEARN_SKILL_SELF_REQUIRE_EXP   = "我还需要|cFFFFFF00$requireExp$|r点经验才能学习 > $abilityName$（$abilityLevel$级）"
-        constant string LEARN_SKILL_SELF_REQUIRE_LEVEL = "我还需要升$requireLevel$级才能学习 > $abilityName$（$abilityLevel$级）"
-
-        constant string LEARN_SKILL_ALLY_READY         = "队友$heroName$ > 可以学习技能 > $abilityName$（$abilityLevel$级）"
-        constant string LEARN_SKILL_ALLY_REQUIRE_EXP   = "队友$heroName$ > 还需要|cFFFFFF00$requireExp$|r点经验才能学习 > $abilityName$（$abilityLevel$级）"
-        constant string LEARN_SKILL_ALLY_REQUIRE_LEVEL = "队友$heroName$ > 还需要升$requireLevel$级才能学习 > $abilityName$（$abilityLevel$级）"
-    endglobals
+    private function GetCommandButtonCharges takes integer commandButton returns integer
+        local integer commandButtonSubscriptText = MHUIData_GetCommandButtonSubscriptText(commandButton)
+        if MHFrame_IsHidden(MHUIData_GetCommandButtonSubscriptFrame(commandButton)) then
+            return 0
+        endif
+        return S2I(MHFrame_GetText(commandButtonSubscriptText))
+    endfunction
 
     private function GetAbiiltyLevelSkip takes integer abilId returns integer
         local integer levelSkip = MHAbility_GetDefDataInt(abilId, ABILITY_DEF_DATA_LEVEL_SKIP) // MHSlk_ReadInt(SLK_TABLE_ABILITY, abilId, "levelSkip")
@@ -67,6 +65,17 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility
         return PlayerColorHex[GetPlayerId(GetOwningPlayer(whichUnit))] + GetObjectName(GetUnitTypeId(whichUnit)) + "|r"
     endfunction
 
+
+    globals
+        constant string LEARN_SKILL_SELF_READY         = "我准备学习技能 > $abilityName$（$abilityLevel$级）"
+        constant string LEARN_SKILL_SELF_REQUIRE_EXP   = "我还需要|cFFFFFF00$requireExp$|r点经验才能学习 > $abilityName$（$abilityLevel$级）"
+        constant string LEARN_SKILL_SELF_REQUIRE_LEVEL = "我还需要升$requireLevel$级才能学习 > $abilityName$（$abilityLevel$级）"
+
+        constant string LEARN_SKILL_ALLY_READY         = "队友$heroName$ > 可以学习技能 > $abilityName$（$abilityLevel$级）"
+        constant string LEARN_SKILL_ALLY_REQUIRE_EXP   = "队友$heroName$ > 还需要|cFFFFFF00$requireExp$|r点经验才能学习 > $abilityName$（$abilityLevel$级）"
+        constant string LEARN_SKILL_ALLY_REQUIRE_LEVEL = "队友$heroName$ > 还需要升$requireLevel$级才能学习 > $abilityName$（$abilityLevel$级）"
+    endglobals
+
     // ping学习技能
     private function OnLearnSkillPing takes unit whichUnit, integer skillButton returns nothing
         local integer abilId       = MHUIData_GetCommandButtonOrderId(skillButton)
@@ -74,6 +83,7 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility
         local integer requireLevel
         local integer requireExp
         local string  msg          = null
+        local integer skillPoints
         // 目标是敌人
         if IsUnitEnemy(whichUnit, GetLocalPlayer()) then
             return
@@ -84,15 +94,17 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility
         //call BJDebugMsg("LevelSkip:" + I2S(GetAbiiltyLevelSkip(abilId))/*
         //*/ + " RequireLevel:" + I2S(GetAbilityRequireLevel(abilId))/*
         //*/ + " heroLevel:" + I2S(GetHeroLevel(whichUnit)))
+        // call BJDebugMsg("abilId:" + Id2String(abilId))
 
         // ping自己
         if IsUnitOwnedByPlayer(whichUnit, GetLocalPlayer()) then
-            if requireLevel <= 0 and GetHeroSkillPoints(whichUnit) > 0 then
+            set skillPoints = GetHeroSkillPoints(whichUnit)
+            if requireLevel <= 0 and skillPoints > 0 then
                 set msg = LEARN_SKILL_SELF_READY
                 set msg = MHString_Replace(msg, "$abilityName$", GetObjectName(abilId))
                 set msg = MHString_Replace(msg, "$abilityLevel$", I2S(abilLevel))
             elseif requireLevel <= 1 then
-                set requireExp = MHHero_GetNeededExp(whichUnit, GetHeroLevel(whichUnit)) // ?
+                set requireExp = MHHero_GetNeededExp(whichUnit, GetHeroLevel(whichUnit))
                 set msg = LEARN_SKILL_SELF_REQUIRE_EXP
                 set msg = MHString_Replace(msg, "$abilityName$", GetObjectName(abilId))
                 set msg = MHString_Replace(msg, "$abilityLevel$", I2S(abilLevel))
@@ -132,14 +144,6 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility
         if msg != null then
             call PlayerChat.SendChatToAlliedPlayers(msg)
         endif
-    endfunction
-
-    private function GetCommandButtonCharges takes integer commandButton returns integer
-        local integer commandButtonSubscriptText = MHUIData_GetCommandButtonSubscriptText(commandButton)
-        if MHFrame_IsHidden(MHUIData_GetCommandButtonSubscriptFrame(commandButton)) then
-            return 0
-        endif
-        return S2I(MHFrame_GetText(commandButtonSubscriptText))
     endfunction
 
     globals
@@ -206,6 +210,42 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility
             endif
         endif
 
+        if msg != null then
+            call PlayerChat.SendChatToAlliedPlayers(msg)
+        endif
+    endfunction
+
+    globals
+        constant string SKILL_POINTS_SELF_REDAY        = "我还有$skillPoints$技能点未使用"
+        constant string SKILL_POINTS_SELF_REQUIRE_EXP  = "我没有技能点了，|cFFFFFF00$requireExp$|r点经验才能升到下一级"
+
+        constant string SKILL_POINTS_ALLY_REDAY        = "队友$heroName$ > 还有$skillPoints$技能点未使用"
+        constant string SKILL_POINTS_ALLY_REQUIRE_EXP  = "队友$heroName$ > 没有技能点了，|cFFFFFF00$requireExp$|r点经验才能升到下一级"
+    endglobals
+
+    private function OnSkillPointsPing takes unit whichUnit returns nothing
+        local string  msg               = null
+        local integer skillPoints
+        set skillPoints = GetHeroSkillPoints(whichUnit)
+        if IsUnitOwnedByPlayer(whichUnit, GetLocalPlayer()) then
+            if skillPoints > 0 then
+                set msg = SKILL_POINTS_SELF_REDAY
+                set msg = MHString_Replace(msg, "$skillPoints$", I2S(skillPoints))
+            else
+                set msg = SKILL_POINTS_SELF_REQUIRE_EXP
+                set msg = MHString_Replace(msg, "$requireExp$", I2S(MHHero_GetNeededExp(whichUnit, GetHeroLevel(whichUnit))))
+            endif
+        else
+            if skillPoints > 0 then
+                set msg = SKILL_POINTS_ALLY_REDAY
+                set msg = MHString_Replace(msg, "$heroName$", GetUnitNameColored(whichUnit))
+                set msg = MHString_Replace(msg, "$skillPoints$", I2S(skillPoints))
+            else
+                set msg = SKILL_POINTS_ALLY_REQUIRE_EXP
+                set msg = MHString_Replace(msg, "$heroName$", GetUnitNameColored(whichUnit))
+                set msg = MHString_Replace(msg, "$requireExp$", I2S(MHHero_GetNeededExp(whichUnit, GetHeroLevel(whichUnit))))
+            endif
+        endif
         if msg != null then
             call PlayerChat.SendChatToAlliedPlayers(msg)
         endif
@@ -439,7 +479,11 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility
         // MHUIData_GetCommandButtonCooldown
         
         if abilId == 'AHer' then
-            call OnLearnSkillPing(whichUnit, skillButton)
+            if orderId == ORDER_skillmenu then
+                call OnSkillPointsPing(whichUnit)
+            else
+                call OnLearnSkillPing(whichUnit, skillButton)
+            endif
         elseif abilId == 'Asud' or abilId == 'Asel' then // Asud是触发器添加的
             call OnPurchasePing(whichUnit, skillButton)
         else

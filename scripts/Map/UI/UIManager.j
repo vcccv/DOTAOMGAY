@@ -20,6 +20,11 @@ library UIManager /*
     endfunction
 
     private function OnGameStart takes nothing returns nothing
+        static if DEBUG_MODE then
+            call BJDebugMsg(MHGame_GetGameVersion())
+            call BJDebugMsg(MHGame_GetPluginVersion())
+        endif
+
         call FrameSystem_Init()
         call DzFrameSetUpdateCallbackByCode(function OnUdpate)
 

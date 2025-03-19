@@ -37,88 +37,103 @@ library SkillDraft requires SkillSystem
             endif
         endif
     endfunction
-    
 
-    function GetSkillHotkeyByIndex takes integer skillIndex returns integer
-        local integer id           = HeroSkill_BaseId[skillIndex]
-        local integer passiveIndex = GetPassiveSkillIndexByLearnedId(id)
-        if passiveIndex > 0 and PassiveSkill_Learned[passiveIndex]> 0 then
-            set id = PassiveSkill_Learned[passiveIndex]
-        endif
-        return GetAbilityHotkeyById(id)
-    endfunction
-
-    private function CheckAbility takes player whichPlayer, integer id, integer hotkey1, string skillName returns nothing
+    // 异步函数 内有多层嵌套循环 小心字节码上限
+    // 根据技能id检查是否有快捷键冲突的技能，并对玩家弹出提示
+    function CheckAbilityHotkeyConflictsById takes integer abilityId returns nothing
         local SubAbility sb
-        local SubAbility sb2
-        local integer    hotkey2
+        local integer    hotkey
+        local integer    tempHotkey
 
         local integer    j
         local integer    i
         local integer    k
 
-        local integer    baseSlot = GetPlayerId(whichPlayer) * MAX_SKILL_SLOTS
+        local integer    baseSlot        = GetPlayerId(GetLocalPlayer()) * MAX_SKILL_SLOTS
         local integer    currentSlot
+
+        local integer    tempId
+
         local integer    subAbilityCount
-        local string     skillName2
+        local string     skillName
+        local string     conflictTip
+
         local string     message = ""
+
+        set hotkey = GetAbilityHotkeyById(abilityId)
+        // 检查自身是否是子技能，如果是则有不同的头部提示
+        set sb = SubAbility.GetIndexById(abilityId)
+        if sb != 0 then
+            set skillName = GetObjectName(HeroSkill_BaseId[sb.ownerIndex]) + " 第" + I2S(sb.index + 1) + "号技能 - " + GetObjectName(abilityId) + "[" + Key2Str(hotkey) + "]"
+        else
+            set skillName = GetObjectName(abilityId) + "[" + Key2Str(hotkey) + "]"
+        endif
 
         // 先匹配自身
         set currentSlot = 1
         loop
             if PlayerSkillIndices[baseSlot + currentSlot] > 0 then
-                set hotkey2 = GetSkillHotkeyByIndex(PlayerSkillIndices[baseSlot + currentSlot])
-                if hotkey2 == hotkey1 then
-                    set message = message + "\n         " + GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[baseSlot + currentSlot]]) + "[" + Key2Str(hotkey2) + "]"
-                endif
-                // 对比完了正常技能后，对比子技能
-                set subAbilityCount = GetSkillSubAbilityCountByIndex(PlayerSkillIndices[baseSlot + currentSlot])
-               // call BJDebugMsg("subAbilityCount:" + I2S(subAbilityCount))
-                if subAbilityCount > 0 then
-                    set i = 1
-                    loop
-                        exitwhen i > subAbilityCount
-                        set sb = GetSkillSubAbilityByIndex(PlayerSkillIndices[baseSlot + currentSlot], i)
-                        set skillName2 = GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[baseSlot + currentSlot]]) + "[" + Key2Str(hotkey2) + "]"
+                set tempId     = HeroSkill_BaseId[PlayerSkillIndices[baseSlot + currentSlot]]
+                set tempHotkey = GetAbilityHotkeyById(tempId)
+
+                if tempId != abilityId then
+
+                    if tempHotkey == hotkey then
+                        set message = message + "\n         " + GetObjectName(tempId) + "[" + Key2Str(tempHotkey) + "]"
+                    endif
+
+                    // 对比完了正常技能后，对比子技能
+                    set subAbilityCount = GetSkillSubAbilityCountByIndex(PlayerSkillIndices[baseSlot + currentSlot])
+                    if subAbilityCount > 0 then
+                        set i = 1
                         loop
-                            set hotkey2 = GetAbilityHotkeyById(sb.abilityId)
-                           // call BJDebugMsg("对比的技能：" + GetObjectName(sb.abilityId) + " " + Id2String(sb.abilityId) + " 热键： " + Key2Str(hotkey2))
-                            if hotkey2 == hotkey1 then
-                                set message = message + "\n             " + skillName2 + " 第" + I2S(i + 1) + "号技能 - " + GetObjectName(sb.abilityId) + "[" + Key2Str(hotkey2) + "]"
-                                
-                                //call DisplayLoDWarningForPlayer(whichPlayer, true, "快捷键冲突 : " + /*
-                                //*/ skillName + "/" + /*
-                                //*/ GetObjectName(sb.abilityId) + "[" + Key2Str(hotkey2) + "]")
-                            endif
-                            set sb = sb.next
-                            exitwhen sb == 0
+                            exitwhen i > subAbilityCount
+                            set sb = GetSkillSubAbilityByIndex(PlayerSkillIndices[baseSlot + currentSlot], i)
+                            set conflictTip = GetObjectName(tempId) + "[" + Key2Str(tempHotkey) + "]"
+                            loop
+                                set tempHotkey = GetAbilityHotkeyById(sb.abilityId)
+                                if tempHotkey == hotkey then
+                                    set message = message + "\n             " + conflictTip + " 第" + I2S(i + 1) + "号技能 - " + GetObjectName(sb.abilityId) + "[" + Key2Str(tempHotkey) + "]"
+                                endif
+
+                                set sb = sb.next
+                                exitwhen sb == 0
+                            endloop
+                            set i = i + 1
                         endloop
-                        set i = i + 1
-                    endloop
+                    endif
+
                 endif
+
             endif
             set currentSlot = currentSlot + 1
         exitwhen (currentSlot > 4 + ExtraSkillsCount)
         endloop
+
         if StringLength(message) > 0 then
-            call DisplayLoDWarningForPlayer(whichPlayer, true, skillName + "快捷键冲突 : " + message)
+            set message = skillName + "快捷键冲突 : " + message
+            call PlayInterfaceErrorSoundForPlayer(GetLocalPlayer(), true)
+            call DisplayLoDTipForPlayer(GetLocalPlayer(), true, message)
         endif
     endfunction
 
-    private function ThrowSkillHotkeyWarning takes player whichPlayer, integer skillIndex returns nothing
-        local integer hotkey1
-        local integer subAbilityCount
-        local integer i
+    // 异步函数 内有多层嵌套循环 小心字节码上限
+    // 根据SkillIndex检查是否有快捷键冲突的技能，并对玩家弹出提示
+    function CheckAbilityHotkeyConflictsByIndex takes integer skillIndex returns nothing
+        local integer    hotkey
+        local integer    subAbilityCount
+        local integer    i
         local string     skillName
         local SubAbility sb
-        set hotkey1 = GetSkillHotkeyByIndex(skillIndex)
-        if hotkey1 > 0 then
-            set skillName = GetObjectName(HeroSkill_BaseId[skillIndex]) + "[" + Key2Str(hotkey1) + "]"
-            call CheckAbility(whichPlayer, HeroSkill_BaseId[skillIndex], hotkey1, skillName)
-        else
-            set skillName = GetObjectName(HeroSkill_BaseId[skillIndex])
-        endif
+        local integer    abilityId
         
+        set abilityId    = HeroSkill_BaseId[skillIndex]
+
+        set hotkey = GetAbilityHotkeyById(abilityId)
+        if hotkey != 0 then
+            call CheckAbilityHotkeyConflictsById(abilityId)
+        endif
+
         // 检查自身是否拥有子技能 如果有子技能，则去继续匹配
         set subAbilityCount = GetSkillSubAbilityCountByIndex(skillIndex)
         if subAbilityCount > 0 then
@@ -127,10 +142,9 @@ library SkillDraft requires SkillSystem
                 exitwhen i > subAbilityCount
                 set sb = GetSkillSubAbilityByIndex(skillIndex, i)
                 loop
-                    set hotkey1 = GetAbilityHotkeyById(sb.abilityId)
-                    if hotkey1 > 0 then
-                        call CheckAbility(whichPlayer, sb.abilityId, hotkey1, /*
-                        */ skillName + " 第" + I2S(i + 1) + "号技能 - " + GetObjectName(sb.abilityId) + "[" + Key2Str(hotkey1) + "]")
+                    set hotkey = GetAbilityHotkeyById(sb.abilityId)
+                    if hotkey > 0 then
+                        call CheckAbilityHotkeyConflictsById(sb.abilityId)
                     endif
                     set i = i + 1
                     set sb = sb.next
@@ -138,15 +152,6 @@ library SkillDraft requires SkillSystem
                 endloop
             endloop
         endif
-        // set hotkey
-
-        // if  then
-        // endif
-
-        //if GetSkillSubAbilityCountByIndex(skillIndex) > 0 then
-        //    GetSkillSubAbilityByIndex(skillIndex, 1)
-        //endif
-        // call DisplayLoDWarningForPlayer(whichPlayer, throwMessage, "快捷键冲突 : " + GetObjectName(HeroSkill_BaseId[PlayerSkillIndices[baseSlot + xx]]))
     endfunction
     
     function SetShowSkillDatas takes integer showSkillId, integer skillIndex returns nothing
@@ -277,9 +282,9 @@ library SkillDraft requires SkillSystem
         call SelectUnitAddForPlayer(KP[playerId],  whichPlayer )
     endfunction
     
-    function OMR takes integer pid, integer slot, integer T0V returns nothing
+    function OMR takes integer pid, integer slot, integer skillIndex returns nothing
         local multiboarditem mi
-        local string s = HeroSkill_Icon[T0V]
+        local string s = HeroSkill_Icon[skillIndex]
         if LOD_DEBUGMODE then
             if IsPlayerScourge(Player(pid)) then
                 set mi = MultiboardGetItem(JP,(pid + 2)-1, slot -1)
@@ -291,7 +296,7 @@ library SkillDraft requires SkillSystem
         endif
         if IsPlayerSentinel(Player(pid)) and Mode__SeeSkills == false then
             if IsPlayerScourge(LocalPlayer) then
-                if T0V == 0 then
+                if skillIndex == 0 then
                     set s = HeroSkill_Icon[0]
                 else
                     set s = "ReplaceableTextures\\CommandButtons\\BTNQuestion.blp"
@@ -299,7 +304,7 @@ library SkillDraft requires SkillSystem
             endif
         elseif IsPlayerScourge(Player(pid)) and Mode__SeeSkills == false then
             if IsPlayerSentinel(LocalPlayer) then
-                if T0V == 0 then
+                if skillIndex == 0 then
                     set s = HeroSkill_Icon[0]
                 else
                     set s = "ReplaceableTextures\\CommandButtons\\BTNQuestion.blp"
@@ -605,9 +610,11 @@ library SkillDraft requires SkillSystem
 
         if throwMessage /*and GetAbilityHotkeyById(HeroSkill_BaseId[skillIndex]) > 0*/ then
             
-            call ThrowSkillHotkeyWarning(whichPlayer, skillIndex)
-
-
+            if whichPlayer == GetLocalPlayer() then
+                // 异步检查快捷键并抛出错误 小心嵌套循环
+                call CheckAbilityHotkeyConflictsByIndex(skillIndex)
+            endif
+            
         endif
 
         // if HaveSavedString(AbilityDataHashTable, HeroSkill_BaseId[skillIndex], HotKeyStringHash) then

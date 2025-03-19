@@ -58,9 +58,9 @@ library GlyphFrame requires UISystem, AbilityUtils
         set GlyphBackground   = Frame.GetFrameByName("GlyphBackground", 0)
 
         if GetPlayerId(GetLocalPlayer()) <= 5 then
-            call GlyphBackground.SetTexture("ReplaceableTextures\\CommandButtons\\BTNGlyph.blp")
+            call GlyphBackground.SetTexture("UI\\Widgets\\Console\\minimap_glyph.blp")
         else
-            call GlyphBackground.SetTexture("ReplaceableTextures\\CommandButtons\\BTNGlyphScourge.blp")
+            call GlyphBackground.SetTexture("UI\\Widgets\\Console\\minimap_glyph_scourge.blp")
         endif
 
         call GlyphCooldownSprite.SetAllPoints(GlyphFrame)

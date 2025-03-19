@@ -41,19 +41,15 @@ library Base requires TriggerDestroyQueue, GroupAlloc, ErrorMessage, TimerUtils
         endif
     endfunction
 
-    function PlayerInterfaceErrorSoundForPlayer takes player p, boolean b returns nothing
+    function PlayInterfaceErrorSoundForPlayer takes player p, boolean b returns nothing
         if b and User.Local == p then
             call MHUI_PlayErrorSound()
         endif
-        //local sound s = CreateSoundFromLabel("InterfaceError", false, false, false, 10, 10)
-        //if b then
-        //	if (LocalPlayer== p) then
-        //		call StartSound(s)
-        //	endif
-        //endif
-        //call KillSoundWhenDone(s)
-        //set s = null
     endfunction
+    function PlayInterfaceErrorSound takes nothing returns nothing
+        call MHUI_PlayErrorSound()
+    endfunction
+
     // 会清空信息
     function DisplayLoDTipForPlayerEx takes player p, boolean expression, string message returns nothing
         if not (expression) then
@@ -80,7 +76,7 @@ library Base requires TriggerDestroyQueue, GroupAlloc, ErrorMessage, TimerUtils
         if not(expression) then
             return
         endif
-        call PlayerInterfaceErrorSoundForPlayer(p, expression)
+        call PlayInterfaceErrorSoundForPlayer(p, expression)
         call DisplayLoDTipForPlayerEx(p, expression, message)
     endfunction
     
