@@ -111,12 +111,12 @@ scope Kunkka
     endfunction
 
     function IsUnitTidebringerAvailable takes unit whichUnit returns boolean
-        return (YDWEGetUnitAbilityState(whichUnit, 'A522', 1) == 0)
+        return (YDWEGetUnitAbilityState(whichUnit, HeroSkill_BaseId[SKILL_INDEX_TIDEBRINGER], 1) == 0)
     endfunction
 
     function Tidebringer_Actions takes unit whichUnit, unit targetUnit, real attackDmg returns nothing
         local integer iHandleId = GetHandleId(whichUnit)
-        local integer level = GetUnitAbilityLevel(whichUnit,'A522')
+        local integer level = GetUnitAbilityLevel(whichUnit,HeroSkill_BaseId[SKILL_INDEX_TIDEBRINGER])
         local real cooldown = 16 - 3 * level
         local integer timerHandleId = TimerStartSingle( cooldown, function Tidebringer_Add )
         call SaveUnitHandle(HY, timerHandleId, 0, whichUnit)
@@ -128,9 +128,9 @@ scope Kunkka
 
         call UnitSubStateBonus(whichUnit, level * 15+ 5, UNIT_BONUS_DAMAGE)
         call UnitRemoveAbility(whichUnit,'A147')
-        //call YDWESetUnitAbilityState(whichUnit,'A522', 1, cooldown)
-
-        call StartUnitAbilityCooldown(whichUnit, 'A522')
+        //call YDWESetUnitAbilityState(whichUnit,HeroSkill_BaseId[SKILL_INDEX_TIDEBRINGER], 1, cooldown)
+        
+        call StartUnitAbilityCooldown(whichUnit, HeroSkill_BaseId[SKILL_INDEX_TIDEBRINGER])
 
         if IsUnitType(whichUnit, UNIT_TYPE_RANGED_ATTACKER) then
             call Tidebringer_Ranged(whichUnit, targetUnit, attackDmg, level) // 远程
@@ -144,22 +144,22 @@ scope Kunkka
         endif
     endfunction
     
-    function LearnSkill__Tidebringer takes nothing returns nothing
-        local unit u = GetTriggerUnit()
+    function TidebringerOnLearn takes nothing returns nothing
+        local unit    u = GetTriggerUnit()
         local integer h = GetHandleId(u)
-        local boolean isDestroyEffect = IsUnitBroken(u) // 破坏效果
+        local boolean isBroken = IsUnitBroken(u) // 破坏效果
         // 如果有水刀 而且不是禁用技能状态 + 15 攻击力
-        if LoadBoolean(ExtraHT, h, HTKEY_SKILL_TIDEBRINGER) and not isDestroyEffect then
+        if LoadBoolean(ExtraHT, h, HTKEY_SKILL_TIDEBRINGER) and not isBroken then
             call UnitAddStateBonus(u, 15, UNIT_BONUS_DAMAGE)
-        elseif GetUnitAbilityLevel(u,'A13T') == 1 then
-            if not isDestroyEffect then
+        elseif GetUnitAbilityLevel(u, 'A13T') == 1 then
+            if not isBroken then
                 call UnitAddStateBonus(u, 15 + 5, UNIT_BONUS_DAMAGE)
                 call SaveEffectHandle(ExtraHT, h, HTKEY_SKILL_TIDEBRINGER, AddSpecialEffectTarget("effects\\WaterHands.mdx", u, GetHeroWeaponAttachPointName(u)))
             endif
             call SaveBoolean(ExtraHT, h, HTKEY_SKILL_TIDEBRINGER, true)
-            if not isDestroyEffect then
+            if not isBroken then
                 if IsUnitType(u, UNIT_TYPE_MELEE_ATTACKER) then // 如果是近战 就加分裂技能
-                    call UnitAddPermanentAbility(u,'A147')
+                    call UnitAddPermanentAbility(u, 'A147')
                     call UnitMakeAbilityPermanent(u, true,'A146')
                 endif
             endif
@@ -197,10 +197,10 @@ scope Kunkka
                 endif
             endif
             // call SetPlayerAbilityAvailableEx(GetOwningPlayer(u),'A13D', false)
-            // if Rubick_AbilityFilter(u, 'A11N') then
-            //     call SetPlayerAbilityAvailableEx(GetOwningPlayer(u),'A11N', true)
+            // if Rubick_AbilityFilter(u, HeroSkill_BaseId[SKILL_INDEX_X_MARKS_THE_SPOT]) then
+            //     call SetPlayerAbilityAvailableEx(GetOwningPlayer(u),HeroSkill_BaseId[SKILL_INDEX_X_MARKS_THE_SPOT], true)
             // endif
-            call ToggleSkill.SetState(u, 'A11N', false)
+            call ToggleSkill.SetState(u, HeroSkill_BaseId[SKILL_INDEX_X_MARKS_THE_SPOT], false)
 
             call DestroyEffect(LoadEffectHandle(HY, h, 32))
             call ShowImage(i, false)
@@ -215,28 +215,22 @@ scope Kunkka
         return false
     endfunction
     function DYR takes nothing returns nothing
-        local unit u = GetTriggerUnit()
-        local unit target = GetSpellTargetUnit()
-        local real x = GetUnitX(target)
-        local real y = GetUnitY(target)
-        local real WBO = 90
-        local image i = CreateImage("Fonts\\X.blp", WBO, WBO, 0, x -WBO / 2, y -WBO / 2, 0, 0, 0, 0, 2)
+        local unit    u = GetTriggerUnit()
+        local unit    target = GetSpellTargetUnit()
+        local real    x = GetUnitX(target)
+        local real    y = GetUnitY(target)
+        local real    size = 90
+        local image   i = CreateImage("Fonts\\X.blp", size, size, 0, x -size / 2, y -size / 2, 0, 0, 0, 0, 2)
         local trigger t = CreateTrigger()
         local integer h = GetHandleId(t)
-        local string fx = ""
-        //local integer level = GetUnitAbilityLevel(u,'A11N')
+        local string  fx = ""
+        //local integer level = GetUnitAbilityLevel(u,HeroSkill_BaseId[SKILL_INDEX_X_MARKS_THE_SPOT])
         local real dur = 4.
         if IsPlayerAlly(GetOwningPlayer(u), GetOwningPlayer(target)) then
             set dur = dur * 2
         endif
 
-        call ToggleSkill.SetState(u, 'A11N', true)
-
-        call EPX(target, 4401, 5)
-
-        // call UnitAddPermanentAbility(u,'A13D')
-        // call SetPlayerAbilityAvailableEx(GetOwningPlayer(u),'A13D', true)
-        // call SetPlayerAbilityAvailableEx(GetOwningPlayer(u),'A11N', false)
+        call ToggleSkill.SetState(u, HeroSkill_BaseId[SKILL_INDEX_X_MARKS_THE_SPOT], true)
 
         call SetImageRenderAlways(i, true)
         if IsUnitAlly(u, GetOwningPlayer(target)) == false or IsUnitAlly(target, LocalPlayer) or IsPlayerObserverEx(LocalPlayer) then

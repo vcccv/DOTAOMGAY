@@ -15,6 +15,9 @@ library HeroSkillDefine requires SkillSystem, AbilityCustomOrderId
         // 科多 - 消化
         call ResgiterAbilityMethodSimpleByIndex(SKILL_INDEX_KOTO_DIGEST, "KotoDigestOnAdd", "KotoDigestOnRemove")
 
+        // 潮汐使者
+        call ResgiterAbilityMethodSimpleByIndex(SKILL_INDEX_FIRE_REMNANT, "FireRemnantOnAdd", "FireRemnantOnRemove")
+
         // 火之余烬
         call ResgiterAbilityMethodSimpleByIndex(SKILL_INDEX_FIRE_REMNANT, "FireRemnantOnAdd", "FireRemnantOnRemove")
 
@@ -53,6 +56,9 @@ library HeroSkillDefine requires SkillSystem, AbilityCustomOrderId
         // 复制
         call RegisterSkillInitMethodByIndex(SKILL_INDEX_REPLICATE, "ReplicateOnInitializer")
 
+        // 余震
+        call RegisterSkillInitMethodByIndex(SKILL_INDEX_AFTERSHOCK, "AftershockOnInitializer")
+
         
         // 601是init
         call SaveStr(ObjectHashTable, 'A060', 601, "W_A")
@@ -76,7 +82,7 @@ library HeroSkillDefine requires SkillSystem, AbilityCustomOrderId
         // 被动技能初始化？
         call SaveStr(ObjectHashTable, 'A022', 600, "F_R")
         call SaveStr(ObjectHashTable, 'A088', 600, "InitMultiCast")
-        call SaveStr(ObjectHashTable, 'A0DJ', 600, "EON")
+        //call SaveStr(ObjectHashTable, 'A0DJ', 600, "EON")
         call SaveStr(ObjectHashTable, 'A0FV', 600, "ERN")
         call SaveStr(ObjectHashTable, 'A33Q', 600, "EAN")
         call SaveStr(ObjectHashTable, 'A02C', 600, "WitchcraftOnLearn")
@@ -292,7 +298,7 @@ library HeroSkillDefine requires SkillSystem, AbilityCustomOrderId
         call RegisterPassiveSkill(0, 0, 'A0M3', 0, 'QP1M', 0)
         call RegisterPassiveSkill(0, 0, 'A0FV', 0, 'QP1N', 0)
         call RegisterPassiveSkill(0, 0, 'A2EY', 0, 'QP1O', 0)
-        call RegisterPassiveSkill(0, 0, 'A13T', 0, 'A522', 0)
+        // call RegisterPassiveSkill(0, 0, 'A13T', 0, 'A522', 0)
         call RegisterPassiveSkill(0, 0, 'A2E4', 0, 'QP1P', 0)
         call RegisterPassiveSkill(0, 0, 'A03U', 0, 'QP1Q', 0)
         call RegisterPassiveSkill(0, 0, 'A0RO', 0, 'QP1S', 0)
@@ -376,20 +382,20 @@ library HeroSkillDefine requires SkillSystem, AbilityCustomOrderId
         call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, GetAbilityOrder('A2KU')), 'A2KU', 0, 'Y027')
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "r2"), 'A07U', 'A38E', 'Y028')
         set i = 8 - 1
-        call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "barkskinoff"), 'A0SK', 0, 'Y029')
+        call RegisterHeroSkill(SKILL_INDEX_FISSURE, SaveSkillOrder(i * 4 + 1, "barkskinoff"), 'A0SK', 0, 'Y029')
         call RegisterHeroSkill(i * 4 + 2, "", 'A0DL', 0, 'Y030')
         set HeroSkill_BalanceOffDisabledTips[i * 4 + 2] = "图腾在与水刀、连击、海象挥击、忍术、转属性和无影拳的时候只会 +100/140/180/220% 的攻击力"
         call SaveSkillOrderInBalanceOffDisabled(i * 4 + 2, "ET-Drunken")
         call SaveSkillOrderInBalanceOffDisabled(i * 4 + 2, "bgdmg1")
         call SaveSkillOrderInBalanceOffDisabled(i * 4 + 2, "bgdmg2")
-        call RegisterHeroSkill(i * 4 + 3, null, 'A0DJ', 'QP1G', 'Y031')
-        set HeroSkill_Tips[i * 4 + 3] = "余震有6/4.5/3.0/1.5秒的冷却时间"
-        set HeroSkill_IsPassive[i * 4 + 3] = true
+        call RegisterHeroSkill(SKILL_INDEX_AFTERSHOCK, null, 'A0DJ', 'QP1G', 'Y031')
+        set HeroSkill_Tips[SKILL_INDEX_AFTERSHOCK] = "余震有6/4.5/3.0/1.5秒的冷却时间"
+        set HeroSkill_IsPassive[SKILL_INDEX_AFTERSHOCK] = true
         if Mode__SixSkills and(not Mode__RearmCombos) then
             //	set HeroSkill_Disabled[i * 4 + 3] = true
             set HeroSkill_Disabled[i * 4 + 2] = true
         endif
-        call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, GetAbilityOrder('A0DH')), 'A0DH', 'A1OB', 'Y032')
+        call RegisterHeroSkill(SKILL_INDEX_ECHO_SLAM, "", 'A0DH', 'A1OB', 'Y032')
         set i = 9 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "neutralinteract"), 'A0RG', 0, 'Y033')
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "inv bug 1")+ SaveSkillOrder(i * 4 + 2, "ibug")+ SaveSkillOrder(i * 4 + 2, "yongjiu1")+ SaveSkillOrder(i * 4 + 2, "yongjiu2")+ SaveSkillOrder(i * 4 + 2, "yongjiu3"), 'A0MB', 'QP08', 'Y036')
@@ -494,8 +500,8 @@ library HeroSkillDefine requires SkillSystem, AbilityCustomOrderId
         set i = 21 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "spellstealoff"), 'A10D', 0, 'Y081')
         call RegisterHeroSkill(i * 4 + 2, "", 'A46H', 0, 'Y082')
-        call RegisterHeroSkill(i * 4 + 3, null, 'A46E', 'A46D', 'Y084')
-        set HeroSkill_IsPassive[i * 4 + 3] = true
+        call RegisterHeroSkill(SKILL_INDEX_PHANTOM_RUSH, null, 'A46E', 'A46D', 'Y084')
+        set HeroSkill_IsPassive[SKILL_INDEX_PHANTOM_RUSH] = true
         call RegisterHeroSkill(i * 4 + 4, null, 'A0DB', 'QP0B', 'Y083')
         set HeroSkill_IsPassive[i * 4 + 4] = true
         set i = 22 - 1
@@ -717,13 +723,13 @@ library HeroSkillDefine requires SkillSystem, AbilityCustomOrderId
         if (not Mode__RearmCombos) then
             set s = SaveSkillOrder(i * 4 + 2, "HXshuidaorenshu")
         endif
-        set HeroSkill_IsPassive[i * 4 + 2] = true
-        set HeroSkill_RearmCombosDisabledTips[i * 4 + 2] = "远程模型使用水刀只造成80%的范围伤害"
-        call SaveSkillOrderInBalanceOffDisabled(i * 4 + 2, "bgdmg2")
-        call SaveSkillOrderInBalanceOffDisabled(i * 4 + 2, "Tide-Jinada")
-        call SaveSkillOrderInBalanceOffDisabled(i * 4 + 2, "Tide-Drunken")
-        call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "incineratearrow")+ SaveSkillOrder(i * 4 + 3, "incineratearrowoff"), 'A11N', 0, 'Y183')
-        call SaveSkillOrderInBalanceOffDisabled(i * 4 + 3, "r29")
+        set HeroSkill_IsPassive[SKILL_INDEX_TIDEBRINGER] = true
+        set HeroSkill_RearmCombosDisabledTips[SKILL_INDEX_TIDEBRINGER] = "远程英雄使用潮汐使者只造成80%的范围伤害"
+        call SaveSkillOrderInBalanceOffDisabled(SKILL_INDEX_TIDEBRINGER, "bgdmg2")
+        call SaveSkillOrderInBalanceOffDisabled(SKILL_INDEX_TIDEBRINGER, "Tide-Jinada")
+        call SaveSkillOrderInBalanceOffDisabled(SKILL_INDEX_TIDEBRINGER, "Tide-Drunken")
+        call RegisterHeroSkill(SKILL_INDEX_X_MARKS_THE_SPOT, SaveSkillOrder(i * 4 + 3, "incineratearrow")+ SaveSkillOrder(i * 4 + 3, "incineratearrowoff"), 'A11N', 0, 'Y183')
+        call SaveSkillOrderInBalanceOffDisabled(SKILL_INDEX_X_MARKS_THE_SPOT, "r29")
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "spiritofvengeance"), 'A11K', 'Z31K', 'Y184')
         set i = 47 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A12J')), 'A12J', 0, 'Y185')

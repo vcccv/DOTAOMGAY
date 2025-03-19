@@ -358,6 +358,32 @@ library UnitLimitation requires Base, UnitModel
         return Table[GetHandleId(whichUnit)][UNIT_MUTE_COUNT] > 0
     endfunction
 
+    globals
+        private constant key UNIT_BROKEN_COUNT
+    endglobals
+    function UnitEnableBreak takes unit whichUnit returns nothing
+        
+    endfunction
+    function UnitDisableBreak takes unit whichUnit returns nothing
+        
+    endfunction
+    function UnitIncBreakCount takes unit whichUnit returns nothing
+        local integer h     = GetHandleId(whichUnit)
+        local integer count = Table[h][UNIT_BROKEN_COUNT] + 1
+        set Table[h][UNIT_BROKEN_COUNT] = count
+        if count == 1 then
+            call UnitEnableBreak(whichUnit)
+        endif
+    endfunction
+    function UnitDecBreakCount takes unit whichUnit returns nothing
+        local integer h     = GetHandleId(whichUnit)
+        local integer count = Table[h][UNIT_BROKEN_COUNT] - 1
+        set Table[h][UNIT_BROKEN_COUNT] = count
+        if count == 0 then
+            call UnitDisableBreak(whichUnit)
+        endif
+    endfunction
+
     // 通常在变身后刷新
     function UpdateUnitLimitation takes unit whichUnit returns nothing
         // 相位移动

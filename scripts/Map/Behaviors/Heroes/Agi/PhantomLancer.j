@@ -1,11 +1,17 @@
 
 scope PhantomLancer
 
+    globals
+        constant integer HERO_INDEX_PHANTOM_LANCER = 21
+    endglobals
     //***************************************************************************
     //*
     //*  灵魂之矛
     //*
     //***************************************************************************
+    globals
+        constant integer SKILL_INDEX_SPIRIT_LANCE = GetHeroSKillIndexBySlot(HERO_INDEX_PHANTOM_LANCER, 1)
+    endglobals
     function CreateSpiritLanceIllusion takes player p, unit whichUnit, unit targetUnit, integer lv returns nothing
         local real    damageDealt = 0.2
         local real    damageTaken = 4.0
@@ -148,6 +154,9 @@ scope PhantomLancer
     //*  幻影冲锋
     //*
     //***************************************************************************
+    globals
+        constant integer SKILL_INDEX_PHANTOM_RUSH = GetHeroSKillIndexBySlot(HERO_INDEX_PHANTOM_LANCER, 3)
+    endglobals
     function PhantomRushEnd takes unit u, integer hu, trigger t returns nothing
         local integer h = GetHandleId(t)
         call UnitRemoveAbility(u,'A46F')

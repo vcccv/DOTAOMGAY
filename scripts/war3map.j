@@ -413,7 +413,6 @@ globals
 	integer array RI
 	rect NI
 	unit BI
-	trigger CI
 	integer array DI
 	rect FI
 	group GI
@@ -1220,7 +1219,6 @@ globals
 	integer HYV
 	unit HZV
 	real H_V
-	unit array H0V
 	integer H1V
 	integer H2V
 	real H3V
@@ -2411,8 +2409,8 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A2TF', 0, "SpellEffect__FalsePromise")
 	call SaveStr(ObjectHashTable,'QB11', 0, "SpellEffect__FalsePromise")
 	call SaveStr(ObjectHashTable,'A0SK', 0, "FissureOnSpellEffect")
-	call SaveStr(ObjectHashTable,'A0DH', 0, "Z_V")
-	call SaveStr(ObjectHashTable,'A1OB', 0, "Z_V")
+	call SaveStr(ObjectHashTable,'A0DH', 0, "EchoSlamOnSpellEffect")
+	call SaveStr(ObjectHashTable,'A1OB', 0, "EchoSlamOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A01B', 0, "Z0V")
 	call SaveStr(ObjectHashTable,'A0DX', 0, "Z1V")
 	call SaveStr(ObjectHashTable,'A0B1', 0, "Z2V")
@@ -3064,8 +3062,8 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A0VC', 1000, "L5E")
 	call SaveStr(ObjectHashTable,'QF88', 1000, "L5E")
 	call SaveStr(ObjectHashTable,'A1IN', 1000, "M9E")
-	call SaveStr(ObjectHashTable,'A13T', 1000, "LearnSkill__Tidebringer")
-	//call SaveStr(ObjectHashTable,'A522', 1000, "LearnSkill__Tidebringer")
+	call SaveStr(ObjectHashTable,'A13T', 1000, "TidebringerOnLearn")
+	//call SaveStr(ObjectHashTable,'A522', 1000, "TidebringerOnLearn")
 	call SaveStr(ObjectHashTable,'A19Q', 1000, "PPE")
 	call SaveStr(ObjectHashTable,'A0CY', 1000, "PQE")
 	call SaveStr(ObjectHashTable,'A1CD', 1000, "M8E")
@@ -3073,7 +3071,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A0M3', 1000, "PSE")
 	call SaveStr(ObjectHashTable,'A03U', 1000, "PTE")
 	call SaveStr(ObjectHashTable,'A062', 1000, "L6E")
-	call SaveStr(ObjectHashTable,ATTRIBUTESHIFT_AGILITY_GAIN_ABILITY_ID, 1000, "MorphOnLearn")
+	call SaveStr(ObjectHashTable, ATTRIBUTESHIFT_AGILITY_GAIN_ABILITY_ID, 1000, "MorphOnLearn")
 	call SaveStr(ObjectHashTable,'A0A5', 1000, "SummonSpiritBearOnLearn")
 	call SaveStr(ObjectHashTable,'A27V', 1000, "PEE")
 	call SaveStr(ObjectHashTable,'A28Q', 1000, "PVE")
@@ -3145,8 +3143,8 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A0CL', 5, "Q_E")
 	call SaveStr(ObjectHashTable,'A0RO', 5, "P_E")
 	call SaveStr(ObjectHashTable,'A40B', 5, "PGE")
-	call SaveStr(ObjectHashTable,'A13T', 5, "LearnSkill__Tidebringer")
-	//call SaveStr(ObjectHashTable,'A522', 5, "LearnSkill__Tidebringer")
+	call SaveStr(ObjectHashTable,'A13T', 5, "TidebringerOnLearn")
+	//call SaveStr(ObjectHashTable,'A522', 5, "TidebringerOnLearn")
 	call SaveStr(ObjectHashTable,'A0LV', 5, "P7E")
 	call SaveStr(ObjectHashTable,'A32Y', 5, "KotoDigestOnLearn")
 	call SaveStr(ObjectHashTable,'A32Z', 5, "DoomDevourOnLearn")
@@ -3176,8 +3174,8 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A2S0',1001, "P9E")
 	call SaveStr(ObjectHashTable,'A0LV',1001, "P7E")
 	call SaveStr(ObjectHashTable,'A0RO',1001, "P_E")
-	call SaveStr(ObjectHashTable,'A13T',1001, "LearnSkill__Tidebringer")
-	//call SaveStr(ObjectHashTable,'A522',1001, "LearnSkill__Tidebringer")
+	call SaveStr(ObjectHashTable,'A13T',1001, "TidebringerOnLearn")
+	//call SaveStr(ObjectHashTable,'A522',1001, "TidebringerOnLearn")
 	call SaveStr(ObjectHashTable,'A19Q',1001, "SZE")
 	call SaveStr(ObjectHashTable,'A03U',1001, "PTE")
 	call SaveStr(ObjectHashTable,'A0A5',1001, "SummonSpiritBearOnLearn")
@@ -8723,6 +8721,7 @@ function InitObserverPlayer takes nothing returns nothing	//OB是否存在 MW来
 	set LIX = null
 	set LAX = null
 endfunction
+// 激活的开关类技能
 function LNX takes integer id returns boolean
 	return id =='A0ES' or id =='A43P' or id =='A0QN' or id =='A2TH' or id =='A21F' or id =='A21G' or id =='A21H' or id =='A1S9' or id ==SPIRITS_IN_ABILITY_ID or id ==SPIRITS_OUT_ABILITY_ID or id =='A1S9' or id =='A06K' or id =='A1VG' or id =='A28Q' or id =='A1WF' or id =='A0T8' or id =='A0T7' or id =='A20N' or id =='A1Z2' or id =='A1Z3' or id =='A205' or id =='A14A' or id =='A269' or id =='A2KG' or id =='A21J' or id =='A27X' or id =='A28Y' or id =='A24E' or id =='A1ZH' or id =='A1WO' or id =='A1FQ' or id =='A0TE' or id =='A2JO' or id =='A2FX' or id =='A0MP' or id =='A2KE' or id =='A2KH' or id =='A2K9' or id =='A2JL' or id =='A2O2' or id =='A2MB' or id =='A21J' or id =='A2MC' or id =='A1NH' or id =='A2LI' or id =='A2TK' or id =='A1MO' or id =='A527' or id =='A528'
 endfunction
@@ -27735,6 +27734,7 @@ endfunction
 function X5R takes integer x returns boolean
 	return x =='A3FJ' or x =='QM01' or x =='A0JT' or x =='A2TH' or x =='A0DI' or x =='A231' or x =='A1ZH' or x =='A1ZI' or x =='A1ZW' or x =='A28D' or x =='A2KG' or x =='A2K3' or x =='A2EA' or x =='A2K1' or x =='A2K4' or x =='A2K7' or x =='A06X' or x =='A0AQ' or x =='A14O' or x =='A0NE' or x =='A1C0' or x =='A418' or x =='A0K7' or x =='A1AC' or x =='A1QD' or x =='A0JL' or x =='AIpg' or x =='A11F' or x =='A0T9' or x =='A1T7' or x =='AIcy' or x =='A19M' or x =='A02O' or x =='A0FD' or x =='AChx' or x =='A1EW' or x =='A332' or x =='A2N1' or x =='A590' or x =='A591' or x =='A592' or x =='A593' or x =='A02Z' or x =='A0GC' or x =='A3UH' or x =='A3W8'
 endfunction
+// 无形技能
 function IsFormlessHeroSkill takes integer id returns boolean
 	return id =='A40K' or id =='A40L' or id =='A40M' or id =='A40N' or id =='A590' or id =='A591' or id =='A592' or id =='A593'
 endfunction
@@ -27768,6 +27768,7 @@ endfunction
 function OVR takes integer id returns boolean
 	return id =='A2T5' or id =='A2TJ' or id =='A2QI' or id =='A43J' or id =='A1A1' or id =='A1B3' or id =='A0QR' or id =='A1DP' or id =='A461' or id =='A46H' or id =='A46J'
 endfunction
+// 可以触发特效的技能id
 function OER takes integer abilId returns boolean
 	return IsAutocastOrb(abilId) == false and X5R(abilId) == false and LNX(abilId) == false and IsNotItemAbility(abilId) and IsFormlessHeroSkill(abilId) == false
 endfunction
@@ -29915,6 +29916,7 @@ function AYR takes string AZR, integer A_R returns nothing
 	call ShowGameStartTopTips()
 	// 初始化技能表
 	call ExecuteFunc("HeroSkills_Init")
+	call ExecuteFunc("HeroPassiveSkills_Init")
 	call ExecuteFunc("HeroSkillsAghanimScepterUpgrade_Init")
 
 	call ExecuteFunc("AbilityCustomOrderId_Init")
@@ -36452,84 +36454,6 @@ function SpellEffect__FalsePromise takes nothing returns nothing
 	set targetUnit = null
 	set t = null
 endfunction
-function SCR takes nothing returns nothing
-	call TriggerRegisterUnitEvent(CI, GetEnumUnit(), EVENT_UNIT_DAMAGED)
-	call SaveInteger(HY, GetHandleId(CI), 0, LoadInteger(HY, GetHandleId(CI), 0) + 1)
-endfunction
-function SDR takes unit u returns nothing
-	local group g = AllocationGroup(190)
-	call GroupEnumUnitsInRange(g, GetUnitX(u), GetUnitY(u), 500, null)
-	call ForGroup(g, function SCR)
-	call DeallocateGroup(g)
-	set g = null
-endfunction
-function SFR takes nothing returns nothing
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local integer c
-	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
-		if GetEventDamageSource() == LoadUnitHandle(HY, h, 0) then
-			call CommonUnitAddStun(GetTriggerUnit(), LoadReal(HY, h, 0), false)
-			call UnitDamageTargetEx(LoadUnitHandle(HY, h, 1), GetTriggerUnit(), 1, LoadReal(HY, h, 1))
-			set c = LoadInteger(HY, h, 0)
-			if c == 1 then
-				call FlushChildHashtable(HY, h)
-				call DestroyTrigger(t)
-				set CI = null
-			else
-				call SaveInteger(HY, h, 0, c -1)
-			endif
-		endif
-	else
-		call FlushChildHashtable(HY, h)
-		call DestroyTrigger(t)
-		set CI = null
-	endif
-	set t = null
-endfunction
-
-function SGR takes unit u, integer level returns nothing
-	local trigger t
-	local integer h
-	local unit d
-	local real SYV
-	local real damageValue
-	if IsUnitBroken(u) then
-		return
-	endif
-	if GetUnitAbilityLevel(u,'A0DJ') + GetUnitAbilityLevel(u,'QP1G') > 0 then
-		//call YDWESetUnitAbilityState(u,'QP1G', 1, 7.5 - level * 1.5)
-		call StartUnitAbilityCooldown(u, 'QP1G')
-	endif
-	set d = CreateUnit(GetOwningPlayer(u),'e00E', GetUnitX(u), GetUnitY(u), 0)
-	call UnitAddAbility(d,'A42H')
-	set CI = CreateTrigger()
-	set h = GetHandleId(CI)
-	call SDR(d)
-	call TriggerRegisterTimerEvent(CI, .02, false)
-	call TriggerAddCondition(CI, Condition(function SFR))
-	call SaveUnitHandle(HY, h, 0, d)
-	set SYV = .3 + .3 * level
-	set damageValue = 50 + 25 * level
-	call SetUnitState(u, UNIT_STATE_MANA, GetUnitState(u, UNIT_STATE_MANA)* .96)
-	call SaveReal(HY, h, 0, SYV)
-	call SaveReal(HY, h, 1, damageValue)
-	call SaveUnitHandle(HY, h, 1, u)
-	set t = null
-	call IssueImmediateOrderById(d, 852127)
-	call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Orc\\WarStomp\\WarStompCaster.mdl", GetUnitX(d), GetUnitY(d)))
-	set d = null
-endfunction
-
-function SHR takes unit u, integer abilId returns nothing
-	local integer abilLevel = GetUnitAbilityLevel(u,'A0DJ') + GetUnitAbilityLevel(u,'QF85')
-	if abilLevel > 0 then
-		if OER(abilId) and(YDWEGetUnitAbilityState(u, 'QP1G', 1) == 0) then
-			call SGR(u, abilLevel)
-		endif
-	endif
-endfunction
-
 function SJR takes nothing returns nothing
 	call UnitDamageTargetEx(GetTriggerUnit(), GetEnumUnit(), 1, TempReal1)
 	call CommonUnitAddStun(GetEnumUnit(), Q2 * .25 + .75, false)
@@ -36580,86 +36504,8 @@ function SPR takes nothing returns nothing
 	call SaveUnitHandle(HY, GetHandleId(t), 0, DESource)
 	set t = null
 endfunction
-function SQR takes nothing returns nothing
-	local real x = GetUnitX(GetEnumUnit())
-	local real y = GetUnitY(GetEnumUnit())
-	local integer id = GetPlayerId(GetOwningPlayer(GetTriggerUnit()))
-	call SetUnitX(H0V[id], x)
-	call SetUnitY(H0V[id], y)
-	call IssueImmediateOrderById(H0V[id], 852526)
-endfunction
-function SSR takes nothing returns nothing
-	local real x = GetUnitX(GetEnumUnit())
-	local real y = GetUnitY(GetEnumUnit())
-	local integer id = GetPlayerId(GetOwningPlayer(GetTriggerUnit()))
-	if IsUnitType(GetEnumUnit(), UNIT_TYPE_HERO) or IsUnitIllusion(GetEnumUnit()) then
-		call SetUnitX(H0V[id], x)
-		call SetUnitY(H0V[id], y)
-		call IssueImmediateOrderById(H0V[id], 852526)
-	endif
-endfunction
-function STR takes nothing returns boolean
-	return((not IsUnitWard(GetFilterUnit()) and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(GetTriggerUnit())) and IsUnitDeath(GetFilterUnit()) == false))
-endfunction
-function SUR takes nothing returns nothing
-	call UnitShareVision(GetEnumUnit(), GetOwningPlayer(UI), false)
-endfunction
-function SWR takes nothing returns nothing
-	call UnitShareVision(GetEnumUnit(), GetOwningPlayer(UI), true)
-endfunction
-function SYR takes nothing returns nothing
-	local timer t = GetExpiredTimer()
-	local integer h = GetHandleId(t)
-	local group g = LoadGroupHandle(HY, h, 0)
-	set UI = LoadUnitHandle(HY, h, 1)
-	call ForGroup(g, function SUR)
-	call DeallocateGroup(g)
-	call DestroyTimerAndFlushHT_HY(t)
-	set g = null
-	set t = null
-endfunction
-function SZR takes group g, unit u returns nothing
-	local group gg = AllocationGroup(193)
-	local timer t = CreateTimer()
-	call TimerStart(t, 0, false, function SYR)
-	call GroupAddGroup(g, gg)
-	call SaveGroupHandle(HY, GetHandleId(t), 0, gg)
-	call SaveUnitHandle(HY, GetHandleId(t), 1, u)
-	set gg = null
-	set t = null
-endfunction
-function Z_V takes nothing returns nothing
-	local unit whichUnit = GetTriggerUnit()
-	local real x = GetUnitX(whichUnit)
-	local real y = GetUnitY(whichUnit)
-	local group g = AllocationGroup(194)
-	local integer pid = GetPlayerId(GetOwningPlayer(whichUnit))
-	local integer level = GetUnitAbilityLevel(whichUnit,'A0DH')
-	call SGR(whichUnit, 4)
-	if level == 0 then
-		set level = GetUnitAbilityLevel(whichUnit,'A1OB')
-	endif
-	set H0V[pid] = CreateUnit(GetOwningPlayer(whichUnit),'e00E', x, y, 0)
-	call UnitAddAbility(H0V[pid],'A3L6')
-	call SetUnitAbilityLevel(H0V[pid],'A3L6', level)
-	call IssueImmediateOrderById(H0V[pid], 852526)
-	call UnitRemoveAbility(H0V[pid],'A3L6')
-	call SetUnitScale(H0V[pid], .25, .25, .25)
-	call UnitAddPermanentAbility(H0V[pid],'A0DM')
-	call SetUnitAbilityLevel(H0V[pid],'A0DM', level)
-	set UI = whichUnit
-	call GroupEnumUnitsInRange(g, x, y, 1200, Condition(function STR))
-	call ForGroup(g, function SWR)
-	call SZR(g, whichUnit)
-	call GroupEnumUnitsInRange(g, x, y, 600, Condition(function STR))
-	call ForGroup(g, function SQR)
-	if GetUnitAbilityLevel(whichUnit,'A1OB')> 0 then
-		call ForGroup(g, function SSR)
-	endif
-	call DeallocateGroup(g)
-	set whichUnit = null
-	set g = null
-endfunction
+
+
 function MKX takes nothing returns nothing
 	call AddAbilityIDToPreloadQueue('A0DM')
 	call AddAbilityIDToPreloadQueue('A0SJ')
@@ -55747,6 +55593,7 @@ function N_E takes nothing returns nothing
 		call AOA()
 	endif
 endfunction
+
 function ARA takes unit whichUnit, integer level, integer AIA returns nothing
 	call UnitRemoveAbility(whichUnit,'A1KR')
 	call UnitRemoveAbility(whichUnit,'A1KS')
@@ -64400,7 +64247,7 @@ function HeroReincarnationEvent takes nothing returns boolean
 	local real duration = .0
 	local integer reincarnationLevel = GetUnitAbilityLevel(whichUnit,'A01Y') + GetUnitAbilityLevel(whichUnit,'A1AZ')
 	
-	call DisableUnitSpecialPassiveAbility(whichUnit)
+	// call DisableUnitSpecialPassiveAbility(whichUnit)
 	// debug call SingleDebug("英雄单位死亡 包括重生U6A" + GetUnitName( whichUnit ) + YDWEId2S(GetUnitTypeId( whichUnit )) )
 	// 清除一些buff
 	call GBX(whichUnit) // 死亡驱散
@@ -64746,9 +64593,6 @@ function RegisterSpellEffectFunc takes string s returns nothing
 endfunction
 function ULA takes nothing returns nothing
 	call DKI(GetTriggerUnit(), GetSpellAbilityId())
-endfunction
-function UMA takes nothing returns nothing
-	call SHR(GetTriggerUnit(), GetSpellAbilityId())
 endfunction
 function UPA takes nothing returns nothing
 	call G3R(GetTriggerUnit(), GetSpellAbilityId())
@@ -65109,8 +64953,6 @@ function NYR takes nothing returns nothing
 	//call TriggerAddCondition(t, Condition(function AVR))
 	call TriggerAddCondition(t, Condition(function U8A))
 
-	// 初始化被动技能表
-	call ExecuteFunc("HeroPassiveSkills_Init")
 	
 	set t = null
 endfunction
@@ -66983,9 +66825,6 @@ function EEN takes nothing returns nothing
 endfunction
 function EXN takes nothing returns nothing
 	call RegisterUnitAttackFunc("SEA", 0)
-endfunction
-function EON takes nothing returns nothing
-	call RegisterSpellEffectFunc("UMA")
 endfunction
 function ERN takes nothing returns nothing
 	call RegisterSpellEffectFunc("UPA")
@@ -69762,7 +69601,7 @@ endfunction
 	// call MHBuff_SetOverlay(BUFF_TEMPLATE_BNSO, true)
 	//! dovjassinit
 	
-	call ExecuteFunc("SpecialPassiveAbility_Init")
+	// call ExecuteFunc("SpecialPassiveAbility_Init")
 	call ExecuteFunc("UnitWindWalk_Init")
 	call ExecuteFunc("DoubleTapAbilityToSelfCast_Init")
 

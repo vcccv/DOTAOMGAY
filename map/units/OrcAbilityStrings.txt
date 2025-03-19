@@ -34153,20 +34153,20 @@ Researchtip=学习 幽冥剧毒[|cffffcc00R|r] - [|cffffcc00等级 %d|r]|n(Nethe
 Researchubertip=在攻击中附加强烈毒素，被攻击目标当前生命值越低，受到的伤害就越多。|n伤害值为技能等级*伤害系数，生命百分比每下降20%，伤害系数翻倍，初始伤害系数为2.5。|n对非英雄单位造成一半的伤害。|n|n|cffff0303无视魔法免疫|n对建筑物有效|r|n|n|cffffcc00等级 1|r - 最多造成40点额外伤害|n|cffffcc00等级 2|r - 最多造成80点额外伤害|n|cffffcc00等级 3|r - 最多造成120点额外伤害|n|cffffcc00等级 4|r - 最多造成160点额外伤害
 researchhotkey="R"
 [A13T]
+requires=e00L
+art=ReplaceableTextures\PassiveButtons\PASBTNTidebringer
+buttonpos=1,2
 researchart=ReplaceableTextures\CommandButtons\BTNTidebringer
 researchbuttonpos=1
 Name=潮汐使者
+Tip=潮汐使者 - [|cffffcc00等级 1|r],潮汐使者 - [|cffffcc00等级 2|r],潮汐使者 - [|cffffcc00等级 3|r],潮汐使者 - [|cffffcc00等级 4|r]
+Ubertip=舰队统帅传奇般的宝剑潮汐使者，被大海灌入了不可思议的力量。类似于涨潮和退潮，每过13秒，潮汐使者便被动地给予舰队统帅20点攻击力和分裂攻击效果，持续一次攻击。 |n|n|cff00ee00加强伤害|r|n|n|cff99ccff作用范围：|r500,舰队统帅传奇般的宝剑潮汐使者，被大海灌入了不可思议的力量。类似于涨潮和退潮，每过10秒，潮汐使者便被动地给予舰队统帅35点攻击力和分裂攻击效果，持续一次攻击。 |n|n|cff00ee00加强伤害|r|n|n|cff99ccff作用范围：|r500,舰队统帅传奇般的宝剑潮汐使者，被大海灌入了不可思议的力量。类似于涨潮和退潮，每过7秒，潮汐使者便被动地给予舰队统帅50点攻击力和分裂攻击效果，持续一次攻击。 |n|n|cff00ee00加强伤害|r|n|n|cff99ccff作用范围：|r500,舰队统帅传奇般的宝剑潮汐使者，被大海灌入了不可思议的力量。类似于涨潮和退潮，每过4秒，潮汐使者便被动地给予舰队统帅65点攻击力和分裂攻击效果，持续一次攻击。 |n|n|cff00ee00加强伤害|r|n|n|cff99ccff作用范围：|r600
 Researchtip=学习 潮汐使者[|cffffcc00D|r] - [|cffffcc00等级 %d|r]|n(Tidebringer)
 Researchubertip=舰队统帅传奇般的宝剑潮汐使者，被大海灌入了不可思议的力量。类似于涨潮和退潮，每过一定的时间，潮汐使者便被动地给予舰队统帅额外攻击力和分裂攻击效果，持续一次攻击。|n|n|cffffcc00等级 1|r - 增加20点攻击力，冷却时间13秒|n|cffffcc00等级 2|r - 增加35点攻击力，冷却时间10秒|n|cffffcc00等级 3|r - 增加50点攻击力，冷却时间7秒|n|cffffcc00等级 4|r - 增加65点攻击力，冷却时间4秒|n|n|cff006600加强伤害|r|n|n|cff99ccff作用范围：|r500/500/500/600
 researchhotkey="D"
 effectsoundlooped=ReplaceableTextures\PassiveButtons\PASBTNTidebringer.blp
 [A522]
-art=ReplaceableTextures\PassiveButtons\PASBTNTidebringer
-buttonpos=1,2
-Name=潮汐使者
-Tip=潮汐使者 - [|cffffcc00等级 1|r],潮汐使者 - [|cffffcc00等级 2|r],潮汐使者 - [|cffffcc00等级 3|r],潮汐使者 - [|cffffcc00等级 4|r]
-Ubertip=舰队统帅传奇般的宝剑潮汐使者，被大海灌入了不可思议的力量。类似于涨潮和退潮，每过13秒，潮汐使者便被动地给予舰队统帅20点攻击力和分裂攻击效果，持续一次攻击。 |n|n|cff00ee00加强伤害|r|n|n|cff99ccff作用范围：|r500,舰队统帅传奇般的宝剑潮汐使者，被大海灌入了不可思议的力量。类似于涨潮和退潮，每过10秒，潮汐使者便被动地给予舰队统帅35点攻击力和分裂攻击效果，持续一次攻击。 |n|n|cff00ee00加强伤害|r|n|n|cff99ccff作用范围：|r500,舰队统帅传奇般的宝剑潮汐使者，被大海灌入了不可思议的力量。类似于涨潮和退潮，每过7秒，潮汐使者便被动地给予舰队统帅50点攻击力和分裂攻击效果，持续一次攻击。 |n|n|cff00ee00加强伤害|r|n|n|cff99ccff作用范围：|r500,舰队统帅传奇般的宝剑潮汐使者，被大海灌入了不可思议的力量。类似于涨潮和退潮，每过4秒，潮汐使者便被动地给予舰队统帅65点攻击力和分裂攻击效果，持续一次攻击。 |n|n|cff00ee00加强伤害|r|n|n|cff99ccff作用范围：|r600
-requires=e00L
+
 [A524]
 researchart=ReplaceableTextures\CommandButtons\BTNJinada
 researchbuttonpos=1

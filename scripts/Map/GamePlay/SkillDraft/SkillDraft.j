@@ -187,9 +187,10 @@ library SkillDraft requires SkillSystem
 
     private function SetSkillExtraTipByIndex takes player whichPlayer, integer skillSlot, integer skillIndex returns boolean
         local integer showSkillId
-        local string  value
+        local string  value   = ""
         local boolean success = false
         set showSkillId = 'ZT10' + skillSlot -1
+
         if CheckSkillOrderIdByIndex(skillIndex, -1, "melee only", null) then
             call SetAbilityIconById(showSkillId, "ReplaceableTextures\\PassiveButtons\\PASBTNCleavingAttack.blp")
             
@@ -228,6 +229,31 @@ library SkillDraft requires SkillSystem
             call SetAbilityExtendedTooltipyId(showSkillId, 1, value)
             set success = true
 
+        endif
+
+        if ( not Mode__BalanceOff and HeroSkill_BalanceOffDisabledTips[skillIndex] != null ) then
+            if value != "" then
+                set value = value + "\n\n"
+            endif
+            set value = value + "平衡改动(BO)：" + HeroSkill_BalanceOffDisabledTips[skillIndex]
+            call SetAbilityExtendedTooltipyId(showSkillId, 1, value)
+            set success = true
+        endif
+        if ( not Mode__RearmCombos and HeroSkill_RearmCombosDisabledTips[skillIndex] != null ) then
+            if value != "" then
+                set value = value + "\n\n"
+            endif
+            set value = value + "平衡改动(RC)：" + HeroSkill_RearmCombosDisabledTips[skillIndex]
+            call SetAbilityExtendedTooltipyId(showSkillId, 1, value)
+            set success = true
+        endif
+        if HeroSkill_Tips[skillIndex] != null then
+            if value != "" then
+                set value = value + "\n\n"
+            endif
+            set value = value + "注意：" + HeroSkill_Tips[skillIndex]
+            call SetAbilityExtendedTooltipyId(showSkillId, 1, value)
+            set success = true
         endif
 
         return success
@@ -340,7 +366,7 @@ library SkillDraft requires SkillSystem
                     call SetShowSkillDatas(currentSlot, startIndex + currentSlot)
                 endif
 
-                call SetAbilityIconById('ZT10' + currentSlot -1, "ReplaceableTextures\\CommandButtons\\BTNPolymorph.blp")
+                call SetAbilityIconById('ZT10' + currentSlot -1, "ReplaceableTextures\\CommandButtons\\BTNManual2.blp")
                 call SetAbilityExtendedTooltipyId('ZT10' + currentSlot -1, 1, "")
 
                 call UnitAddAbility(PickSkillDummyUnit[playerId], 'ZT00' + currentSlot -1)

@@ -4,7 +4,9 @@
     "excludes": [
         "logs/1_war3map.j",
         "logs/2_wave.j",
-        "logs/3_vjass.j",
+        "logs/3_template.j",
+        "logs/4_vjass.j",
+        "logs/war3map.j",
         "logs/currentmapscript.j",
         "logs/inputwar3map.j",
         "logs/outputwar3map.j",

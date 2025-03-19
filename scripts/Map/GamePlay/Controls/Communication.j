@@ -486,6 +486,8 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility
             endif
         elseif abilId == 'Asud' or abilId == 'Asel' then // Asud是触发器添加的
             call OnPurchasePing(whichUnit, skillButton)
+        elseif abilId == 'Aatk' then
+            // 代办 显示缴械信息和攻击力
         else
             call OnAbilitiesPing(whichUnit, skillButton)
         endif
