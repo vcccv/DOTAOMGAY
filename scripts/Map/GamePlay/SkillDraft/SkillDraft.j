@@ -74,6 +74,7 @@ library SkillDraft requires SkillSystem
                 set tempId     = HeroSkill_BaseId[PlayerSkillIndices[baseSlot + currentSlot]]
                 set tempHotkey = GetAbilityHotkeyById(tempId)
 
+                // 和目标同id时不计算
                 if tempHotkey == hotkey and tempId != abilityId then
                     set message = message + "\n         " + GetObjectName(tempId) + "[" + Key2Str(tempHotkey) + "]"
                 endif
@@ -85,7 +86,7 @@ library SkillDraft requires SkillSystem
                     loop
                         exitwhen i > subAbilityCount
                         set tempsb = GetSkillSubAbilityByIndex(PlayerSkillIndices[baseSlot + currentSlot], i)
-                        // 同来源时同索引不计算
+                        // 同来源时同索引不计算 和目标同id时不计算
                         if not ( tempsb.ownerIndex == sb.ownerIndex and tempsb.index == sb.ownerIndex ) and sb.abilityId != abilityId then
                             set conflictTip = GetObjectName(tempId) + "[" + Key2Str(tempHotkey) + "]"
                             loop
@@ -157,13 +158,12 @@ library SkillDraft requires SkillSystem
         local integer tempAbilityId = HeroSkill_BaseId[skillIndex]
         local integer hotkey
         local integer showSkillId
+        
         set showSkillId = 'ZT00' + skillSlot -1
         set k = GetPassiveSkillIndexByLearnedId(tempAbilityId)
-        if k > 0 and PassiveSkill_Learned[k]> 0 then
-            set tempAbilityId = PassiveSkill_Learned[k]
-        endif
-        set hotkey = GetAbilityHotkeyById(tempAbilityId)
-        if PassiveSkill_Learned[k]> 0 then
+
+        set hotkey = GetAbilityIntegerFieldById(tempAbilityId, ABILITY_DEF_DATA_RESEARCH_HOTKEY)
+        if PassiveSkill_Learned[k] > 0 then
             call SetAbilityIconById(showSkillId, GetAbilityIconById(PassiveSkill_Show[k]))
         else
             call SetAbilityIconById(showSkillId, GetAbilityIconById(tempAbilityId))
@@ -175,6 +175,14 @@ library SkillDraft requires SkillSystem
             call SetAbilityTooltipById(showSkillId, 1, GetObjectName(tempAbilityId) + "[|cffffcc00" + Key2Str(hotkey) + "|r]")
         endif
         call SetAbilityExtendedTooltipyId(showSkillId, 1, GetAbilityResearchExtendedTooltipyId(tempAbilityId))
+
+        set showSkillId = 'ZT10' + skillSlot -1
+        if hotkey == 0 then
+            call SetAbilityTooltipById(showSkillId, 1, GetObjectName(tempAbilityId) + " - 额外信息")
+        else
+            call SetAbilityTooltipById(showSkillId, 1, GetObjectName(tempAbilityId) + "[|cffffcc00" + Key2Str(hotkey) + "|r]" + " - 额外信息")
+        endif
+        call SetAbilityStringFieldById(showSkillId, ABILITY_DEF_DATA_NAME, GetObjectName(tempAbilityId) + " - 额外信息")
     endfunction
 
     private function SetSkillExtraTipByIndex takes player whichPlayer, integer skillSlot, integer skillIndex returns boolean
@@ -239,7 +247,7 @@ library SkillDraft requires SkillSystem
         endif
         set abilityId = 'ZT10' + skillSlot -1
 
-        set value = GetAbilityResearchExtendedTooltipyId(abilityId)
+        set value = GetAbilityExtendedTooltipById(abilityId, 1)
         if value == "" then
             set value = "子技能："
         else
@@ -255,7 +263,7 @@ library SkillDraft requires SkillSystem
                 loop
                     set hotkey = GetAbilityHotkeyById(sb.abilityId)
                     if hotkey != 0 then
-                        set value = value + "\n第" + I2S(sb.index + 1) + "号子技能 - " + GetObjectName(sb.abilityId) + "[" + Key2Str(hotkey) + "]"
+                        set value = value + "\n第" + I2S(sb.index + 1) + "号子技能 - " + GetObjectName(sb.abilityId) + "[|cffffcc00" + Key2Str(hotkey) + "|r]"
                     else
                         set value = value + "\n第" + I2S(sb.index + 1) + "号子技能 - " + GetObjectName(sb.abilityId)
                     endif
