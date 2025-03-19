@@ -601,7 +601,7 @@ globals
 	boolean array FP
 	boolean GP = false
 	multiboard JP = null
-	unit array KP
+	unit array PickSkillDummyUnit
 	integer array PlayerNowPackedHeroIndex
 	integer array PP
 	integer array QP
@@ -9860,21 +9860,22 @@ function PlayerChooseHeroUnit takes unit whichUnit returns boolean
 endfunction
 
 function Q8X takes nothing returns boolean
-	return((IsUnitType(GetSoldUnit(), UNIT_TYPE_HERO)))
+	return ((IsUnitType(GetSoldUnit(), UNIT_TYPE_HERO)))
 endfunction
 
 function Q9X takes nothing returns nothing
-	local unit trigUnit = GetSoldUnit()
-	local unit QKX = GetSellingUnit()
-	local player p = GetOwningPlayer(trigUnit)
+	local unit heroUnit   = GetSoldUnit()
+	local unit tavernUnit = GetSellingUnit()
+	local player p = GetOwningPlayer(heroUnit)
 	if IsPickingHero then
-		call PlayerPickHero(trigUnit, GetPlayerId(p), QKX)
+		call PlayerPickHero(heroUnit, GetPlayerId(p), tavernUnit)
 		return
 	endif
 	call XUX(p)
-	set trigUnit = null
-	set QKX = null
+	set heroUnit = null
+	set tavernUnit = null
 endfunction
+
 function AddGoldForIntervalActions takes nothing returns boolean
 	local integer gold = 1
 	if Mode__EasyMode then
@@ -27931,8 +27932,8 @@ function SQO takes nothing returns nothing
 		if bj_isSinglePlayer == false then
 			call OKR(playerIndex)
 		endif
-		call FlushChildHashtable(HY, GetHandleId(KP[playerIndex]))
-		call RemoveUnit(KP[playerIndex])
+		call FlushChildHashtable(HY, GetHandleId(PickSkillDummyUnit[playerIndex]))
+		call RemoveUnit(PickSkillDummyUnit[playerIndex])
 		set playerIndex = playerIndex + 1
 	exitwhen playerIndex > 12
 	endloop
@@ -28102,9 +28103,9 @@ function RIR takes integer pid, integer skillIndex returns boolean
 		set xx = xx + 1
 	exitwhen xx > 4 + ExtraSkillsCount
 	endloop
-	if GetUnitAbilityLevel(KP[pid],'Z004'-1 + sn)> 0 then
-		call UnitRemoveAbility(KP[pid],('Z004'-1) + sn)
-		call UnitAddAbility(KP[pid],('Z000'-1) + sn)
+	if GetUnitAbilityLevel(PickSkillDummyUnit[pid],'Z004'-1 + sn)> 0 then
+		call UnitRemoveAbility(PickSkillDummyUnit[pid],('Z004'-1) + sn)
+		call UnitAddAbility(PickSkillDummyUnit[pid],('Z000'-1) + sn)
 	endif
 	if Mode__OneSkill then
 		set xx = 0
@@ -28115,9 +28116,9 @@ function RIR takes integer pid, integer skillIndex returns boolean
 				set V0R = GetPlayerId(ScourgePlayers[xx])
 			endif
 			if LoadBoolean(HY, GetHandleId(Player(V0R)), unitTypeId) then
-				if GetUnitAbilityLevel(KP[V0R], HeroSkill_BaseId[skillIndex])> 0 then
-					call UnitRemoveAbility(KP[V0R],('Z010'-1) + sn)
-					call UnitAddAbility(KP[V0R],('Z000'-1) + sn)
+				if GetUnitAbilityLevel(PickSkillDummyUnit[V0R], HeroSkill_BaseId[skillIndex])> 0 then
+					call UnitRemoveAbility(PickSkillDummyUnit[V0R],('Z010'-1) + sn)
+					call UnitAddAbility(PickSkillDummyUnit[V0R],('Z000'-1) + sn)
 				endif
 			endif
 			set xx = xx + 1

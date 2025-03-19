@@ -42,12 +42,10 @@ library SkillDraft requires SkillSystem
     // 根据技能id检查是否有快捷键冲突的技能，并对玩家弹出提示
     function CheckAbilityHotkeyConflictsById takes integer abilityId returns nothing
         local SubAbility sb
+        local SubAbility tempsb
         local integer    hotkey
         local integer    tempHotkey
-
-        local integer    j
         local integer    i
-        local integer    k
 
         local integer    baseSlot        = GetPlayerId(GetLocalPlayer()) * MAX_SKILL_SLOTS
         local integer    currentSlot
@@ -76,33 +74,32 @@ library SkillDraft requires SkillSystem
                 set tempId     = HeroSkill_BaseId[PlayerSkillIndices[baseSlot + currentSlot]]
                 set tempHotkey = GetAbilityHotkeyById(tempId)
 
-                if tempId != abilityId then
+                if tempHotkey == hotkey and tempId != abilityId then
+                    set message = message + "\n         " + GetObjectName(tempId) + "[" + Key2Str(tempHotkey) + "]"
+                endif
 
-                    if tempHotkey == hotkey then
-                        set message = message + "\n         " + GetObjectName(tempId) + "[" + Key2Str(tempHotkey) + "]"
-                    endif
-
-                    // 对比完了正常技能后，对比子技能
-                    set subAbilityCount = GetSkillSubAbilityCountByIndex(PlayerSkillIndices[baseSlot + currentSlot])
-                    if subAbilityCount > 0 then
-                        set i = 1
-                        loop
-                            exitwhen i > subAbilityCount
-                            set sb = GetSkillSubAbilityByIndex(PlayerSkillIndices[baseSlot + currentSlot], i)
+                // 对比完了正常技能后，对比子技能
+                set subAbilityCount = GetSkillSubAbilityCountByIndex(PlayerSkillIndices[baseSlot + currentSlot])
+                if subAbilityCount > 0 then
+                    set i = 1
+                    loop
+                        exitwhen i > subAbilityCount
+                        set tempsb = GetSkillSubAbilityByIndex(PlayerSkillIndices[baseSlot + currentSlot], i)
+                        // 同来源时同索引不计算
+                        if not ( tempsb.ownerIndex == sb.ownerIndex and tempsb.index == sb.ownerIndex ) and sb.abilityId != abilityId then
                             set conflictTip = GetObjectName(tempId) + "[" + Key2Str(tempHotkey) + "]"
                             loop
-                                set tempHotkey = GetAbilityHotkeyById(sb.abilityId)
+                                set tempHotkey = GetAbilityHotkeyById(tempsb.abilityId)
                                 if tempHotkey == hotkey then
-                                    set message = message + "\n             " + conflictTip + " 第" + I2S(i + 1) + "号技能 - " + GetObjectName(sb.abilityId) + "[" + Key2Str(tempHotkey) + "]"
+                                    set message = message + "\n             " + conflictTip + " 第" + I2S(i + 1) + "号技能 - " + GetObjectName(tempsb.abilityId) + "[" + Key2Str(tempHotkey) + "]"
                                 endif
 
-                                set sb = sb.next
-                                exitwhen sb == 0
+                                set tempsb = tempsb.next
+                                exitwhen tempsb == 0
                             endloop
-                            set i = i + 1
-                        endloop
-                    endif
-
+                        endif
+                        set i = i + 1
+                    endloop
                 endif
 
             endif
@@ -127,7 +124,7 @@ library SkillDraft requires SkillSystem
         local SubAbility sb
         local integer    abilityId
         
-        set abilityId    = HeroSkill_BaseId[skillIndex]
+        set abilityId = HeroSkill_BaseId[skillIndex]
 
         set hotkey = GetAbilityHotkeyById(abilityId)
         if hotkey != 0 then
@@ -146,18 +143,21 @@ library SkillDraft requires SkillSystem
                     if hotkey > 0 then
                         call CheckAbilityHotkeyConflictsById(sb.abilityId)
                     endif
-                    set i = i + 1
                     set sb = sb.next
                     exitwhen sb == 0
                 endloop
+                
+                set i = i + 1
             endloop
         endif
     endfunction
     
-    function SetShowSkillDatas takes integer showSkillId, integer skillIndex returns nothing
+    private function SetShowSkillDatas takes integer skillSlot, integer skillIndex returns nothing
         local integer k
         local integer tempAbilityId = HeroSkill_BaseId[skillIndex]
         local integer hotkey
+        local integer showSkillId
+        set showSkillId = 'ZT00' + skillSlot -1
         set k = GetPassiveSkillIndexByLearnedId(tempAbilityId)
         if k > 0 and PassiveSkill_Learned[k]> 0 then
             set tempAbilityId = PassiveSkill_Learned[k]
@@ -176,110 +176,202 @@ library SkillDraft requires SkillSystem
         endif
         call SetAbilityExtendedTooltipyId(showSkillId, 1, GetAbilityResearchExtendedTooltipyId(tempAbilityId))
     endfunction
+
+    private function SetSkillExtraTipByIndex takes player whichPlayer, integer skillSlot, integer skillIndex returns boolean
+        local integer showSkillId
+        local string  value
+        local boolean success = false
+        set showSkillId = 'ZT10' + skillSlot -1
+        if CheckSkillOrderIdByIndex(skillIndex, -1, "melee only", null) then
+            call SetAbilityIconById(showSkillId, "ReplaceableTextures\\PassiveButtons\\PASBTNCleavingAttack.blp")
+            
+            set value = "|c00FF8080近战限定|r\n"
+            set value = value + "选择这个技能的话你将无法选择|c0080FF80远程限定|r和|c00FFFF00远程变身|r类技能。|n|n|c00FF0000你将只能选择近战英雄模型。|r"
+            
+            call SetAbilityExtendedTooltipyId(showSkillId, 1, value)
+            set success = true
+
+        elseif CheckSkillOrderIdByIndex(skillIndex, -1, "range only", null) then
+            call SetAbilityIconById(showSkillId, "ReplaceableTextures\\PassiveButtons\\PASBTNImpalingBolt.blp")
+            
+            set value = "|c00FF8080远程限定|r\n"
+            set value = value + "选择这个技能的话你将无法选择|c00FF8080近战限定|r和|c00FF8000近战变身|r类技能。|n|n|c00FF0000你将只能选择远程英雄模型。|r"
+            
+            call SetAbilityExtendedTooltipyId(showSkillId, 1, value)
+            set success = true
+
+
+        elseif CheckSkillOrderIdByIndex(skillIndex, -1, "melee morph", null) then
+            call SetAbilityIconById(showSkillId, "ReplaceableTextures\\PassiveButtons\\PASBTNBash.blp")
+            
+            set value = "|c00FF8000近战变身|r\n"
+            set value = value + "选择这个技能的话你将无法选择|c0080FF80远程限定|r和|c00FFFF00远程变身|r类技能。"
+            
+            call SetAbilityExtendedTooltipyId(showSkillId, 1, value)
+            set success = true
+
+
+        elseif CheckSkillOrderIdByIndex(skillIndex, -1, "range morph", null) then
+            call SetAbilityIconById(showSkillId, "ReplaceableTextures\\PassiveButtons\\PASBTNFlakCannons.blp")
+            
+            set value = "|c00FF8000远程变身|r\n"
+            set value = value + "选择这个技能的话你将无法选择|c00FF8080近战限定|r和|c00FF8000近战变身|r类技能。"
+            
+            call SetAbilityExtendedTooltipyId(showSkillId, 1, value)
+            set success = true
+
+        endif
+
+        return success
+    endfunction
+
+    function SetSkillSubAbilityExtraTip takes player whichPlayer, integer skillSlot, integer skillIndex returns boolean
+        local SubAbility sb
+        local string     value
+        local integer    abilityId
+        local integer    subAbilityCount
+        local integer    i
+        local integer    hotkey
+
+        set sb = GetSkillSubAbilityCountByIndex(skillIndex)
+        if sb == 0 then
+            return false
+        endif
+        set abilityId = 'ZT10' + skillSlot -1
+
+        set value = GetAbilityResearchExtendedTooltipyId(abilityId)
+        if value == "" then
+            set value = "子技能："
+        else
+            set value = value + "\n\n子技能："
+        endif
+
+        set subAbilityCount = GetSkillSubAbilityCountByIndex(skillIndex)
+        if subAbilityCount > 0 then
+            set i = 1
+            loop
+                exitwhen i > subAbilityCount
+                set sb = GetSkillSubAbilityByIndex(skillIndex, i)
+                loop
+                    set hotkey = GetAbilityHotkeyById(sb.abilityId)
+                    if hotkey != 0 then
+                        set value = value + "\n第" + I2S(sb.index + 1) + "号子技能 - " + GetObjectName(sb.abilityId) + "[" + Key2Str(hotkey) + "]"
+                    else
+                        set value = value + "\n第" + I2S(sb.index + 1) + "号子技能 - " + GetObjectName(sb.abilityId)
+                    endif
+                    set sb = sb.next
+                    exitwhen sb == 0
+                endloop
+                
+                set i = i + 1
+            endloop
+        endif
+        
+        call SetAbilityExtendedTooltipyId(abilityId, 1, value)
+
+        return true
+    endfunction
     
-    function PlayerPickHero takes unit u, integer playerId, unit QKX returns nothing//酒馆英雄添加技能时
-        local integer heroIndex = (GetUnitPointValue(u)* 4)-4
-        local integer xx = 0
-        local integer teamId
-        local integer TXE = heroIndex + 1
-        local integer TOE = heroIndex + 2
-        local integer QMX = heroIndex + 3
-        local integer QPX = heroIndex + 4
-        local integer tempAbilityId = 0
-        local integer array QSX
-        local boolean QTX = true
-        local integer unitTypeId = GetUnitTypeId(u)
-        local player whichPlayer = Player(playerId)
-        set QSX[1] = heroIndex + 1
-        set QSX[2] = heroIndex + 2
-        set QSX[3] = heroIndex + 3
-        set QSX[4] = heroIndex + 4
-        set PlayerNowPackedHeroIndex[playerId] = GetUnitPointValue(u)
-        call RemoveUnit(u)
+    globals
+        private integer array TempSkillIndices
+    endglobals
+
+    function PlayerPickHero takes unit heroUnit, integer playerId, unit tavernUnit returns nothing//酒馆英雄添加技能时
+        local integer    startIndex = (GetUnitPointValue(heroUnit)* 4)-4
+        local integer    currentSlot = 0
+        local integer    teamId
+        local integer    skillIndex1 = startIndex + 1
+        local integer    skillIndex2 = startIndex + 2
+        local integer    skillIndex3 = startIndex + 3
+        local integer    skillIndex4 = startIndex + 4
+        local integer    tempAbilityId = 0
+        // 玩家是否拥有这个英雄
+        local boolean    hasHero = true
+        local integer    unitTypeId = GetUnitTypeId(heroUnit)
+        local player     whichPlayer = Player(playerId)
+        local SubAbility sb
+        set TempSkillIndices[1] = startIndex + 1
+        set TempSkillIndices[2] = startIndex + 2
+        set TempSkillIndices[3] = startIndex + 3
+        set TempSkillIndices[4] = startIndex + 4
+        set PlayerNowPackedHeroIndex[playerId] = GetUnitPointValue(heroUnit)
+        call RemoveUnit(heroUnit)
         call SetPlayerState( whichPlayer , PLAYER_STATE_RESOURCE_GOLD, GetPlayerState( whichPlayer , PLAYER_STATE_RESOURCE_GOLD) + 250 )
+        
         if Mode__SingleDraft or Mode__MirrorDraft then
-            set QTX = LoadBoolean(HY, GetHandleId( whichPlayer ), unitTypeId)
-            if not QTX then
+            set hasHero = LoadBoolean(HY, GetHandleId(whichPlayer), unitTypeId)
+            if not hasHero then
                 call DisplayLoDTipForPlayer(whichPlayer, true, "这些是你友军的技能，你无法选择他们。你的技能在 " + QHX(playerId) + "|c006699CC 酒馆|r")
             endif
         endif
-        call FlushChildHashtable(HY, GetHandleId(KP[playerId]))
-        call RemoveUnit(KP[playerId])
-        set KP[playerId] = CreateUnit( whichPlayer ,'hfoo', GetRectMaxX(bj_mapInitialPlayableArea), GetRectMinY(bj_mapInitialPlayableArea), .0)
-        call SaveUnitHandle(HY, GetHandleId(KP[playerId]), 0, QKX)
+
+        call FlushChildHashtable(HY, GetHandleId(PickSkillDummyUnit[playerId]))
+        call RemoveUnit(PickSkillDummyUnit[playerId])
+        set PickSkillDummyUnit[playerId] = CreateUnit(whichPlayer , 'hfoo', GetRectMaxX(bj_mapInitialPlayableArea), GetRectMinY(bj_mapInitialPlayableArea), .0)
+        call SaveUnitHandle(HY, GetHandleId(PickSkillDummyUnit[playerId]), 0, tavernUnit)
         if LOD_DEBUGMODE then
-            call DisplayTimedTextToPlayer(LocalPlayer, .0, .0, 20., "Hero Number: " + I2S(GetUnitPointValue(u)))
-            call DisplayTimedTextToPlayer(LocalPlayer, .0, .0, 20., "Skill #1 number: " + I2S(TXE))
-            call DisplayTimedTextToPlayer(LocalPlayer, .0, .0, 20., "Skill #2 number: " + I2S(TOE))
-            call DisplayTimedTextToPlayer(LocalPlayer, .0, .0, 20., "Skill #3 number: " + I2S(QMX))
-            call DisplayTimedTextToPlayer(LocalPlayer, .0, .0, 20., "Skill #4 number: " + I2S(QPX))
+            call DisplayTimedTextToPlayer(LocalPlayer, .0, .0, 20., "Hero Number: " + I2S(GetUnitPointValue(heroUnit)))
+            call DisplayTimedTextToPlayer(LocalPlayer, .0, .0, 20., "Skill #1 number: " + I2S(skillIndex1))
+            call DisplayTimedTextToPlayer(LocalPlayer, .0, .0, 20., "Skill #2 number: " + I2S(skillIndex2))
+            call DisplayTimedTextToPlayer(LocalPlayer, .0, .0, 20., "Skill #3 number: " + I2S(skillIndex3))
+            call DisplayTimedTextToPlayer(LocalPlayer, .0, .0, 20., "Skill #4 number: " + I2S(skillIndex4))
         endif
         if IsPlayerSentinel( whichPlayer ) then
             set teamId = 1
         else
             set teamId = 2
         endif
-        set xx = 1
+        set currentSlot = 1
         loop
-            if HeroSkill_Disabled[heroIndex + xx] == false then
-                set tempAbilityId = HeroSkill_BaseId[heroIndex + xx]
+            if not HeroSkill_Disabled[startIndex + currentSlot] then
+                set tempAbilityId = HeroSkill_BaseId[startIndex + currentSlot]
                 // set tempAbilityId = QGX(tempAbilityId)
             
-                call SetAbilityStringByMode(KP[playerId], tempAbilityId) 	//根据模式更改技能文本
-    
+                call SetAbilityStringByMode(PickSkillDummyUnit[playerId], tempAbilityId) 	//根据模式更改技能文本
                 if GetLocalPlayer() == Player(playerId) then
-                    call SetShowSkillDatas('ZT00'+ xx -1, heroIndex + xx)
+                    call SetShowSkillDatas(currentSlot, startIndex + currentSlot)
+                endif
+
+                call SetAbilityIconById('ZT10' + currentSlot -1, "ReplaceableTextures\\CommandButtons\\BTNPolymorph.blp")
+                call SetAbilityExtendedTooltipyId('ZT10' + currentSlot -1, 1, "")
+
+                call UnitAddAbility(PickSkillDummyUnit[playerId], 'ZT00' + currentSlot -1)
+                if SetSkillExtraTipByIndex(whichPlayer, currentSlot, startIndex + currentSlot) then
+                    call UnitAddAbility(PickSkillDummyUnit[playerId], 'ZT10' + currentSlot -1)
                 endif
                 
-                call UnitAddAbility(KP[playerId], 'ZT00'+ xx -1)
-    
-                //call UnitAddAbility(KP[playerId], tempAbilityId)
-                // if not HeroSkill_IsPassive[heroIndex + xx] and HeroSkill_SpecialId[heroIndex + xx] != 0 then
-                // 	// 预读神杖技能
-                // 	call UnitAddAbility(KP[playerId], HeroSkill_SpecialId[heroIndex + xx])
-                // 	call UnitRemoveAbility(KP[playerId], HeroSkill_SpecialId[heroIndex + xx])
-                // 	//call SingleDebug( "预读 " + I2S(xx) + " 号神杖升级技能 " + GetObjectName( HeroSkill_SpecialId[heroIndex + xx] ) )
-                // endif
-                //if not Mode__RearmCombos then
-                //endif
-                call SetUnitAbilityLevel(KP[playerId], tempAbilityId, 4)
-                if CheckSkillOrderIdByIndex(heroIndex + xx, -1, "melee only", null) then
-                    call UnitAddAbility(KP[playerId],'Z020'+ xx -1)
-                elseif CheckSkillOrderIdByIndex(heroIndex + xx, -1, "range only", null) then
-                    call UnitAddAbility(KP[playerId],'Z024'+ xx -1)
-                elseif CheckSkillOrderIdByIndex(heroIndex + xx, -1, "melee morph", null) then
-                    call UnitAddAbility(KP[playerId],'Z030'+ xx -1)
-                elseif CheckSkillOrderIdByIndex(heroIndex + xx, -1, "range morph", null) then
-                    call UnitAddAbility(KP[playerId],'Z034'+ xx -1)
+                if SetSkillSubAbilityExtraTip(whichPlayer, currentSlot, startIndex + currentSlot) then
+                    call UnitAddAbility(PickSkillDummyUnit[playerId], 'ZT10' + currentSlot -1)
                 endif
-                if QTX then
-                    if ( not IsPlayerSkillPickedByIndex( whichPlayer , QSX[xx]) ) then
+                
+                if hasHero then
+                    if ( not IsPlayerSkillPickedByIndex( whichPlayer , TempSkillIndices[currentSlot]) ) then
                         if Mode__OneSkill then
-                            if XP[teamId * OP + QSX[xx]] == 0 then
-                                call UnitAddAbility(KP[playerId],'Z000'+ xx -1)
+                            if XP[teamId * OP + TempSkillIndices[currentSlot]] == 0 then
+                                call UnitAddAbility(PickSkillDummyUnit[playerId], 'Z000' + currentSlot -1)
                             else
-                                call UnitAddAbility(KP[playerId],'Z010'+ xx -1)
+                                call UnitAddAbility(PickSkillDummyUnit[playerId], 'Z010' + currentSlot -1)
                             endif
                         else
-                            call UnitAddAbility(KP[playerId],'Z000'+ xx -1)
+                            call UnitAddAbility(PickSkillDummyUnit[playerId], 'Z000' + currentSlot -1)
                         endif
                     else
-                        call UnitAddAbility(KP[playerId],'Z004'+ xx -1)
+                        call UnitAddAbility(PickSkillDummyUnit[playerId], 'Z004' + currentSlot -1)
                     endif
                 else
-                    call UnitAddAbility(KP[playerId],'Z01A'+ xx -1)
+                    call UnitAddAbility(PickSkillDummyUnit[playerId], 'Z01A' + currentSlot -1)
                 endif
             else
-                if QTX then
-                    call UnitRemoveAbility(KP[playerId],'Z000'-1 + xx)
-                    call UnitAddAbility(KP[playerId],'Z014'-1 + xx)
+                if hasHero then
+                    call UnitRemoveAbility(PickSkillDummyUnit[playerId], 'Z000'-1 + currentSlot)
+                    call UnitAddAbility(PickSkillDummyUnit[playerId], 'Z014'-1 + currentSlot)
                 endif
             endif
-            set xx = xx + 1
-        exitwhen xx > 4
+            set currentSlot = currentSlot + 1
+        exitwhen currentSlot > 4
         endloop
         call ClearSelectionForPlayer( whichPlayer )
-        call SelectUnitAddForPlayer(KP[playerId],  whichPlayer )
+        call SelectUnitAddForPlayer(PickSkillDummyUnit[playerId],  whichPlayer )
     endfunction
     
     function OMR takes integer pid, integer slot, integer skillIndex returns nothing
@@ -351,7 +443,7 @@ library SkillDraft requires SkillSystem
         local integer ultimateEmptySlot         = 0
         local string  notStackMessage           = ""
         local integer targetSkillHeroIndex      = 0
-        local integer heroIndex                 = 0
+        local integer startIndex                 = 0
         local boolean isPlayerReachedSkillLimit = false
         local boolean isTeamReachedSkillLimit   = false
         local player  whichPlayer               = Player(playerIndex)
@@ -437,7 +529,7 @@ library SkillDraft requires SkillSystem
         set isRangeOnly  = CheckSkillOrderIdByIndex(skillIndex, -1, "range only", null)
         set isRangeMorph = CheckSkillOrderIdByIndex(skillIndex, -1, "range morph", null)
         if playerIndex == 0 then
-            set u = LoadUnitHandle(HY,'0REA','000U')
+            set u = LoadUnitHandle(HY, '0REA', '000U')
             if u != null then
                 if OUR(GetUnitUserData(u)) then
                     if isRangeOnly then
@@ -556,8 +648,8 @@ library SkillDraft requires SkillSystem
                     set xx = 1
                     loop
                         if PlayerSkillIndices[baseSlot + xx] != 0 then
-                            set heroIndex = (PlayerSkillIndices[baseSlot + xx]-1) / 4
-                            if (heroIndex == targetSkillHeroIndex) then
+                            set startIndex = (PlayerSkillIndices[baseSlot + xx]-1) / 4
+                            if (startIndex == targetSkillHeroIndex) then
                                 if skillLimit1Slot == 0 then
                                     set skillLimit1Slot = xx
                                 elseif Mode__LimitSkills3 then
@@ -703,8 +795,8 @@ library SkillDraft requires SkillSystem
             return
         endif
         if IsPlayerSkillPickedByIndex(Player(pid), index) then
-            call UnitRemoveAbility(KP[pid],('Z000'-1) + slot)
-            call UnitAddAbility(KP[pid],('Z004'-1) + slot)
+            call UnitRemoveAbility(PickSkillDummyUnit[pid],('Z000'-1) + slot)
+            call UnitAddAbility(PickSkillDummyUnit[pid],('Z004'-1) + slot)
             if Mode__OneSkill then
                 set xx = 1
                 loop
@@ -713,9 +805,9 @@ library SkillDraft requires SkillSystem
                     else
                         set RFR = GetPlayerId(ScourgePlayers[xx])
                     endif
-                    if GetUnitAbilityLevel(KP[RFR], HeroSkill_BaseId[index])> 0 and pid != RFR and GetUnitAbilityLevel(KP[RFR],'Z000'-1 + slot)> 0 then
-                        call UnitRemoveAbility(KP[RFR],('Z000'-1) + slot)
-                        call UnitAddAbility(KP[RFR],('Z010'-1) + slot)
+                    if GetUnitAbilityLevel(PickSkillDummyUnit[RFR], HeroSkill_BaseId[index])> 0 and pid != RFR and GetUnitAbilityLevel(PickSkillDummyUnit[RFR], 'Z000'-1 + slot)> 0 then
+                        call UnitRemoveAbility(PickSkillDummyUnit[RFR],('Z000'-1) + slot)
+                        call UnitAddAbility(PickSkillDummyUnit[RFR],('Z010'-1) + slot)
                     endif
                     set xx = xx + 1
                 exitwhen xx > 5

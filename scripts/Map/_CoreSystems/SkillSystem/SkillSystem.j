@@ -450,6 +450,7 @@ library SkillSystem requires AbilityUtils, UnitAbility
         method AddSubAbility takes integer subAbilityId returns thistype
             local thistype new = AllocSubAbility(subAbilityId, this.ownerIndex)
             set this.next = new
+            set new.index = this.index
             return new
         endmethod
         

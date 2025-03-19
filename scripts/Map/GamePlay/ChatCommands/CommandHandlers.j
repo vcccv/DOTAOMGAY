@@ -24,10 +24,10 @@ scope CommandHandlers
         endif
         // 重新检查快捷键冲突
         if success then
-            call CheckAbilityHotkeyConflictsById(HeroSkill_BaseId[skillIndex])
             if toggleSkillIndex > 0 then
                 call SetAbilityHotkeyByIdEx(toggleSkillIndex.GetAlternateId(), hotkey)
             endif
+            call CheckAbilityHotkeyConflictsById(HeroSkill_BaseId[skillIndex])
         endif
     endfunction
 
@@ -37,6 +37,7 @@ scope CommandHandlers
         local integer    count
         local integer    hotkey
         local string     arg
+        local integer    id = 0
         
         set arg = GetChatCommandArgAt(2)
         if arg != "#" then
@@ -66,9 +67,14 @@ scope CommandHandlers
                 if hotkey < 'A' or hotkey > 'Z' then
                     call InterfaceErrorForPlayer(GetLocalPlayer(), "错误的快捷键参数，快捷键的取值必须为26英文字母。")
                 else
+                    set id = 0
                     loop
-                        call SetAbilityHotkeyByIdEx(sb.abilityId, hotkey)
-                        
+                        if SetAbilityHotkeyByIdEx(sb.abilityId, hotkey) then
+                            if id == 0 then
+                                set id = sb.abilityId
+                                call CheckAbilityHotkeyConflictsById(id)
+                            endif
+                        endif
                         set sb = sb.next
                         exitwhen sb == 0
                     endloop
@@ -127,13 +133,18 @@ scope CommandHandlers
 
             set skillButton = MHUI_GetSkillBarButtonEx(y, x)
             set id          = MHUIData_GetCommandButtonAbility(skillButton)
+            // 如果改的酒馆马甲技能，则直接按索引接管
+            if id >= 'ZT00' or id <= 'ZT03' then
+                call SetAbilityHotkeyBySlot((PlayerNowPackedHeroIndex[GetPlayerId(whichPlayer)]* 4)-4 + (id - 'ZT00' + 1))
+                return
+            endif
             if id == 0 then
                 call InterfaceErrorForPlayer(whichPlayer, "|cffffcc00没有该技能，技能按钮的位置为\n9 10 11 12\n5   6   7   8\n1   2   3   4\n|r")
                 return
             endif
             set skillIndex  = GetSkillIndexById(id)
             // 如果有SkillIndex，则按hkey的规格进行改键
-            if skillIndex != 0 then
+            if skillIndex != -1 then
                 call SetAbilityHotkeyBySlot(skillIndex)
             else
                 // 否则只是单纯改键

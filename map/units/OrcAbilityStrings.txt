@@ -23221,6 +23221,32 @@ buttonpos=3,2
 name=Default String
 tip=Tooltip Missing!
 ubertip=Tooltip Missing!
+
+[ZT10]
+art=ReplaceableTextures\CommandButtons\BTNStatUp
+buttonpos=0,0
+name=额外提示
+tip=额外提示
+ubertip=Tooltip Missing!
+[ZT11]
+art=ReplaceableTextures\CommandButtons\BTNStatUp
+buttonpos=1,0
+name=额外提示
+tip=额外提示
+ubertip=Tooltip Missing!
+[ZT12]
+art=ReplaceableTextures\CommandButtons\BTNStatUp
+buttonpos=2,0
+name=额外提示
+tip=额外提示
+ubertip=Tooltip Missing!
+[ZT13]
+art=ReplaceableTextures\CommandButtons\BTNStatUp
+buttonpos=3,0
+name=额外提示
+tip=额外提示
+ubertip=Tooltip Missing!
+
 [Z000]
 art=ReplaceableTextures\CommandButtons\BTNStatUp
 buttonpos=0,1
