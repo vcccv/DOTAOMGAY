@@ -65,6 +65,8 @@ library HeroSkillDefine requires SkillSystem, AbilityCustomOrderId
         // 勇气之霎
         call RegisterSkillInitMethodByIndex(SKILL_INDEX_MOMENT_OF_COURAGE, "MomentOfCourageOnInitializer")
 
+        // 海象挥击
+        call RegisterSkillInitMethodByIndex(SKILL_INDEX_WALRUS_PUNCH, "WalrusPunchOnInitializer")
 
         // 601是init
         call SaveStr(ObjectHashTable, 'A060', 601, "W_A")
@@ -608,6 +610,7 @@ library HeroSkillDefine requires SkillSystem, AbilityCustomOrderId
         set i = 32 - 1
         call RegisterHeroSkill(i * 4 + 1, "", 'A004', 0, 'Y125')
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "nagabuild")+ SaveSkillOrder(i * 4 + 2, "r9"), 'A1IQ', 0, 'Y126')
+        call SaveSkillOrder(i * 4 + 2, "NMSLSB")
         if (not Mode__RearmCombos) then
             set s = SaveSkillOrder(i * 4 + 2, "HXshuidaorenshu")
         endif
@@ -708,7 +711,7 @@ library HeroSkillDefine requires SkillSystem, AbilityCustomOrderId
         set HeroSkill_HasMultipleAbilities[SKILL_INDEX_PSIONIC_TRAP] = true
         set i = 44 - 1
         call RegisterHeroSkill(SKILL_INDEX_ILLUSORY_ORB, "", 'A0S9', 0, 'Y173')
-        call HeroSkillAddSubAbilitiesById(SKILL_INDEX_PSIONIC_TRAP, ETHEREAL_JAUNT_ABILITY_ID)
+        call HeroSkillAddSubAbilitiesById(SKILL_INDEX_ILLUSORY_ORB, ETHEREAL_JAUNT_ABILITY_ID)
         set HeroSkill_HasMultipleAbilities[SKILL_INDEX_ILLUSORY_ORB] = true
 
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "creepanimatedead"), 'A0SC', 0, 'Y174')
@@ -756,17 +759,18 @@ library HeroSkillDefine requires SkillSystem, AbilityCustomOrderId
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "standdown"), 'A1YO', 0, 'Y197')
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "frenzyon"), 'A1S7', 0, 'Y198')
         call RegisterHeroSkill(i * 4 + 3, SaveSkillOrder(i * 4 + 3, "summongrizzly"), 'A1YR', 0, 'Y199')
-        call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, GetAbilityOrder('A1YQ'))+ SaveSkillOrder(i * 4 + 4, "autoharvestlumber"), 'A1YQ', 'A3DE', 'Y200')
+        call RegisterHeroSkill(SKILL_INDEX_WALRUS_PUNCH, SaveSkillOrder(i * 4 + 4, GetAbilityOrder('A1YQ'))+ SaveSkillOrder(i * 4 + 4, "autoharvestlumber"), 'A1YQ', 'A3DE', 'Y200')
+        set HeroSkill_BalanceOffDisabledTips[SKILL_INDEX_WALRUS_PUNCH] = "和强化图腾一起选择时，暴击只会造成2倍伤害。"
         if (not Mode__RearmCombos) then
-            set s = SaveSkillOrder(i * 4 + 4, "HXzhangdahaimin")
+            set s = SaveSkillOrder(SKILL_INDEX_WALRUS_PUNCH, "HXzhangdahaimin")
         endif
         if (not Mode__RearmCombos) then
-            set s = SaveSkillOrder(i * 4 + 4, "HXrenshuhaimin")
+            set s = SaveSkillOrder(SKILL_INDEX_WALRUS_PUNCH, "HXrenshuhaimin")
         endif
         if (not Mode__RearmCombos) then
-            set s = SaveSkillOrder(i * 4 + 4, "HXshuidaohaimin")
+            set s = SaveSkillOrder(SKILL_INDEX_WALRUS_PUNCH, "HXshuidaohaimin")
         endif
-        call SaveSkillOrderInBalanceOffDisabled(i * 4 + 4, "bgdmg2")
+        call SaveSkillOrderInBalanceOffDisabled(SKILL_INDEX_WALRUS_PUNCH, "bgdmg2")
         set i = 51 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "creepthunderclap"), 'A1RJ', 0, 'Y201')
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "gold2lumber")+ SaveSkillOrder(i * 4 + 2, "harvest"), 'A1YX', 0, 'Y202')
@@ -838,7 +842,8 @@ library HeroSkillDefine requires SkillSystem, AbilityCustomOrderId
 
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "bash")+ "", 'A0WQ', 0, 'Y236')
         set i = 60 - 1
-        call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "summonphoenix"), 'A0YM', 0, 'Y237')
+        call SaveSkillOrder(SKILL_INDEX_STIFLING_DAGGER, "NMSLSB")
+        call RegisterHeroSkill(SKILL_INDEX_STIFLING_DAGGER, SaveSkillOrder(i * 4 + 1, "summonphoenix"), 'A0YM', 0, 'Y237')
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "deathcoil"), 'A0PL', 0, 'Y238')
         call RegisterHeroSkill(i * 4 + 3, null, 'A03P', 'QP0R', 'Y239')
         set HeroSkill_IsPassive[i * 4 + 3] = true

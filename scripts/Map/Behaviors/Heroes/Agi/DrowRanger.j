@@ -378,11 +378,11 @@ scope DrowRanger
     endfunction
 
     function MarksmanshipOnGetScepterUpgrade takes nothing returns nothing
-        call BJDebugMsg("射手天赋神杖升级")
+        //call BJDebugMsg("射手天赋神杖升级")
 	    call RegisterUnitAttackFunc("MarksmanshipUpgradeOnDamaged", 0)
     endfunction
     function MarksmanshipOnLostScepterUpgrade takes nothing returns nothing
-        call BJDebugMsg("射手天赋神杖升级 丢了")
+        //call BJDebugMsg("射手天赋神杖升级 丢了")
     endfunction
 
 endscope

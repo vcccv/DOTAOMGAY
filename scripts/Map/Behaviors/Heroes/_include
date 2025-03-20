@@ -72,3 +72,4 @@
 #include "Agi\\Venomancer.j"
 #include "Agi\\TemplarAssassin.j"
 #include "Agi\\TrollWarlord.j"
+#include "Agi\\PhantomAssassin.j"

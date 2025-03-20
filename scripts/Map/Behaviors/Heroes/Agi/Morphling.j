@@ -372,7 +372,7 @@ scope Morphling
         //     call UnitAddPermanentAbility(u,'A0GC')
         // endif
 
-        call BJDebugMsg("targetUnit:" + GetUnitName(targetUnit))
+       // call BJDebugMsg("targetUnit:" + GetUnitName(targetUnit))
         call ToggleSkill.SetState(targetUnit, 'A0G8', true)
 
         call SetUnitColor(Z3R, GetPlayerColor(GetOwningPlayer(targetUnit)))

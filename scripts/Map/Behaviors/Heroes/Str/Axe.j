@@ -46,9 +46,6 @@ scope Axe
         call BAX(trigUnit, .6)
     endfunction
     function CounterHelixOnAttackedFilter takes unit sourceUnit, unit targetUnit returns nothing
-        if GetUnitAbilityLevel(targetUnit, HeroSkill_BaseId[SKILL_INDEX_COUNTER_HELIX]) > 1 then
-            call BJDebugMsg(R2S(GetUnitAbilityCooldownRemaining(targetUnit, HeroSkill_BaseId[SKILL_INDEX_COUNTER_HELIX])))
-        endif
         if GetUnitAbilityLevel(targetUnit,'B03P')> 0 and not IsUnitType(sourceUnit, UNIT_TYPE_STRUCTURE) /*
             */ and not (IsUnitType(sourceUnit, UNIT_TYPE_MECHANICAL) and not IsUnitWard(sourceUnit) or IsUnitDefenseTypeFort(sourceUnit)) /*
             */ and IsUnitEnemy(sourceUnit, GetOwningPlayer(targetUnit)) and GetUnitAbilityLevel(targetUnit,'A1HX') == 0 /*

@@ -173,7 +173,7 @@ scope BaneElemental
         local unit u = GetTriggerUnit()
         if GetIssuedOrderId() == GetAbilityOrderId('A2O9') and GetUnitAbilityLevel(u,'A2O9')> 0 then
 
-            call BJDebugMsg("激活了")
+            //call BJDebugMsg("激活了")
             set t = CreateTimer()
             call TimerStart(t, 0, false, function FYI)
             call SaveUnitHandle(ObjectHashTable, GetHandleId(t), 0, u)

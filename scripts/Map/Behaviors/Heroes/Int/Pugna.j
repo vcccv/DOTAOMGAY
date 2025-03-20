@@ -19,8 +19,6 @@ scope Pugna
         local integer level     = GetUnitAbilityLevel(whichUnit, GetSpellAbilityId())
         local real    value     = GetAbilityRealLevelFieldById(GetSpellAbilityId(), level, ABILITY_LEVEL_DEF_DATA_AREA)
         call SetAbilityRealLevelField(GetSpellAbility(), level, ABILITY_LEVEL_DEF_DATA_AREA, value + GetUnitCastRangeBonus(whichUnit))
-        call BJDebugMsg("施法距离奖励：" + R2S(GetUnitCastRangeBonus(whichUnit)))
-        call BJDebugMsg("最终距离" + R2S(value + GetUnitCastRangeBonus(whichUnit)))
         set whichUnit = null
     endfunction
 

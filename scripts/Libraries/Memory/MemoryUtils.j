@@ -71,6 +71,42 @@ library MemoryUtils initializer Init
         return 0
     endfunction
 
+    function GetAbilityTargetAllow takes ability whichAbility returns integer
+        local integer pData = ConvertHandle(whichAbility)
+
+        if pData != 0 then
+            return ReadRealMemory(pData + 0x4C)
+        endif
+
+        return 0
+    endfunction
+
+    function AbilityAdd0x20Flag takes ability whichAbility, integer bit returns nothing
+        local integer pData = ConvertHandle(whichAbility)
+
+        if pData > 0 then
+            set pData = pData + 0x20
+            
+            if pData > 0 then
+                call BJDebugMsg("改之前"+MHMath_ToHex(ReadRealMemory(pData)))
+                call WriteRealMemory(pData, MHMath_AddBit(ReadRealMemory(pData), bit))
+                call BJDebugMsg("改之后"+MHMath_ToHex(ReadRealMemory(pData)))
+            endif
+        endif
+    endfunction
+    function AbilityRemove0x20Flag takes ability whichAbility, integer bit returns nothing
+        local integer pData = ConvertHandle(whichAbility)
+
+        if pData > 0 then
+            set pData = pData + 0x20
+            
+            if pData > 0 then
+                call WriteRealMemory(pData, MHMath_RemoveBit(ReadRealMemory(pData), bit))
+            endif
+        endif
+    endfunction
+
+
     function UnitAdd0x60Flag takes unit whichUnit, integer bit returns nothing
         local integer pData = ConvertHandle(whichUnit)
 
@@ -79,7 +115,7 @@ library MemoryUtils initializer Init
             
             if pData > 0 then
                 //call BJDebugMsg("改之前"+MHMath_ToHex(ReadRealMemory(pData)))
-                call ThrowWarning(MHMath_IsBitSet(ReadRealMemory(pData), bit), "MemoryUtils", "UnitAdd0x60Flag", "unit", GetHandleId(whichUnit), "has flag " + MHMath_ToHex(bit))
+                debug call ThrowWarning(MHMath_IsBitSet(ReadRealMemory(pData), bit), "MemoryUtils", "UnitAdd0x60Flag", "unit", GetHandleId(whichUnit), "has flag " + MHMath_ToHex(bit))
                 call WriteRealMemory(pData, MHMath_AddBit(ReadRealMemory(pData), bit))
                 //call BJDebugMsg("改之后"+MHMath_ToHex(ReadRealMemory(pData)))
             endif
@@ -93,7 +129,7 @@ library MemoryUtils initializer Init
             
             if pData > 0 then
                 //call BJDebugMsg("改之前"+MHMath_ToHex(ReadRealMemory(pData)))
-                call ThrowWarning(not MHMath_IsBitSet(ReadRealMemory(pData), bit), "MemoryUtils", "UnitRemove0x60Flag", "unit", GetHandleId(whichUnit), "not flag " + MHMath_ToHex(bit))
+                debug call ThrowWarning(not MHMath_IsBitSet(ReadRealMemory(pData), bit), "MemoryUtils", "UnitRemove0x60Flag", "unit", GetHandleId(whichUnit), "not flag " + MHMath_ToHex(bit))
                 call WriteRealMemory(pData, MHMath_RemoveBit(ReadRealMemory(pData), bit))
                 //call BJDebugMsg("改之后"+MHMath_ToHex(ReadRealMemory(pData)))
             endif

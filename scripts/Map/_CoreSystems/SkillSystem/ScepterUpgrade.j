@@ -237,7 +237,7 @@ library ScepterUpgradeSystem requires SkillSystem, ItemSystem
             return
         endif
 
-        call BJDebugMsg("AghanimScepter拿了")
+        //call BJDebugMsg("AghanimScepter拿了")
         call UnitAddScepterUpgrade(whichUnit)
 
         set whichUnit = null
@@ -249,7 +249,7 @@ library ScepterUpgradeSystem requires SkillSystem, ItemSystem
             return
         endif
 
-        call BJDebugMsg("AghanimScepter丢了")
+        //call BJDebugMsg("AghanimScepter丢了")
         set count = Table[GetHandleId(whichUnit)].integer[UNIT_SCEPTER_COUNT] - 1
         set Table[GetHandleId(whichUnit)].integer[UNIT_SCEPTER_COUNT] = count
         if count == 0 then
@@ -304,12 +304,12 @@ library ScepterUpgradeSystem requires SkillSystem, ItemSystem
         local unit    whichUnit = Event.GetTriggerUnit()
         local item    whichItem = Event.GetManipulatedItem()
         local integer pid
-        call BJDebugMsg("触发了")
+        //call BJDebugMsg("触发了")
         if whichUnit == null or ( IsUnitAghanimBlessed(whichUnit) or IsUnitAghanimGifted(whichUnit) ) then
             return
         endif
 
-        call BJDebugMsg("我要删啊啊啊啊")
+        //call BJDebugMsg("我要删啊啊啊啊")
         call SilentRemoveItem(whichItem)
 
         set pid = GetPlayerId(GetOwningPlayer(whichUnit))

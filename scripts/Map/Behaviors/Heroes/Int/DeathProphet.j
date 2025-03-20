@@ -110,7 +110,7 @@ scope DeathProphet
         local ability whichAbility = GetSpellAbility()
         local integer level    	   = GetUnitAbilityLevel(whichUnit, 'A02C')   
         local integer id 	 	   = GetSpellAbilityId()	  
-        call BJDebugMsg("cooldown:"+R2S(MHAbility_GetAbilityCustomLevelDataReal(whichAbility, GetUnitAbilityLevel(whichUnit, id), ABILITY_LEVEL_DEF_DATA_COOLDOWN)))
+        //call BJDebugMsg("cooldown:"+R2S(MHAbility_GetAbilityCustomLevelDataReal(whichAbility, GetUnitAbilityLevel(whichUnit, id), ABILITY_LEVEL_DEF_DATA_COOLDOWN)))
         if level != 0 and MHAbility_GetAbilityCustomLevelDataReal(whichAbility, GetUnitAbilityLevel(whichUnit, id), ABILITY_LEVEL_DEF_DATA_COOLDOWN) > 0.5 then
             if IsUltimateSkill(id) then
                 set probability = level * 5 - 5

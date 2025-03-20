@@ -164,7 +164,7 @@ scope PhantomLancer
         if GetUnitAbilityLevel(u,'A46D')> 0 and LoadBoolean(HY, h, 5) then
             call SetUnitNoLimitMoveSpeed(u, 0)
             call UnitDecPhasedMovementCount(u)
-            call BJDebugMsg("不加速了")
+            //call BJDebugMsg("不加速了")
         endif
         if GetHandleId(u)> 0 then
             call RemoveSavedHandle(HY, GetHandleId(u),'A46E')
@@ -240,7 +240,7 @@ scope PhantomLancer
                         //endif
                         call UnitIncPhasedMovementCount(u)
                         call SaveBoolean(HY, h, 5, true)
-                        call BJDebugMsg("加速了")
+                        //call BJDebugMsg("加速了")
                     endif
                 elseif GetDistanceBetween(GetUnitX(u), GetUnitY(u), LoadReal(HY, h, 10), LoadReal(HY, h, 11))<= 100 then
                     call PhantomRushEnd(u, hu, t)

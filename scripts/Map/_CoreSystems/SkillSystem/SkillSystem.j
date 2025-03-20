@@ -476,8 +476,11 @@ library SkillSystem requires AbilityUtils, UnitAbility
 
     // 基于英雄技能索引添加子技能
     function HeroSkillAddSubAbilitiesById takes integer skillIndex, integer subAbilityId returns SubAbility
-        local SubAbility sb              = SubAbility.AllocSubAbility(subAbilityId, skillIndex)
-        local integer    subAbilityIndex = SubAbilitiesTable[skillIndex].integer[0] + 1
+        local SubAbility sb             
+        local integer    subAbilityIndex
+        //debug call ThrowError(SubAbility.GetIndexById(subAbilityId) != 0, "SkillSystem", "HeroSkillAddSubAbilitiesById", GetObjectName(subAbilityId), 0, "重复添加")
+        set sb = SubAbility.AllocSubAbility(subAbilityId, skillIndex)
+        set subAbilityIndex = SubAbilitiesTable[skillIndex].integer[0] + 1
         set SubAbilitiesTable[skillIndex].integer[0] = subAbilityIndex
         set SubAbilitiesTable[skillIndex].integer[subAbilityIndex] = sb
         set sb.index = subAbilityIndex
@@ -509,8 +512,8 @@ library SkillSystem requires AbilityUtils, UnitAbility
             set thistype.COUNT = this
             set Table[TOGGLE_SKILL_INDEX].integer[baseId] = this
             set Table[TOGGLE_SKILL_INDEX].integer[activeId] = this
-            call PreloadAbility(baseId)
-            call PreloadAbility(activeId)
+            call PreloadAbilityById(baseId)
+            call PreloadAbilityById(activeId)
             set this.baseId = baseId
             set skillIndex = GetSkillIndexByBaseId(baseId)
             set this.upgradeId = HeroSkill_SpecialId[skillIndex]

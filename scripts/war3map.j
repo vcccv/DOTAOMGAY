@@ -338,7 +338,7 @@ globals
 	integer WV = 0
 	// lod的Debug变量
 	constant boolean LOD_DEBUGMODE 		  = false
-	constant boolean LOD_DEBUG_ORDER_MODE = true
+	constant boolean LOD_DEBUG_ORDER_MODE = false
 	rect ZV
 	boolean VE = false
 	boolean EE = false
@@ -2720,9 +2720,9 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A1TB', 0, "DNE")
 	call SaveStr(ObjectHashTable,'A3FQ', 0, "DNE")
 	call SaveStr(ObjectHashTable,'A1YO', 0, "IceShardsOnSpellEffect")
-	call SaveStr(ObjectHashTable,'A1YQ', 0, "DCE")
+	call SaveStr(ObjectHashTable,'A1YQ', 0, "WalrusPunchOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A3DF', 0, "WalrusKickOnSpellEffect")
-	call SaveStr(ObjectHashTable,'A3DE', 0, "DCE")
+	call SaveStr(ObjectHashTable,'A3DE', 0, "WalrusPunchOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A1S7', 0, "DFE")
 	call SaveStr(ObjectHashTable,'A27F', 0, "TelekinesisOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A27G', 0, "DHE")
@@ -9434,7 +9434,7 @@ endfunction
 function QGX takes integer id returns integer
 	local integer k
 	if id =='A343' then
-		call PreloadAbility('A0Z6')
+		call PreloadAbilityById('A0Z6')
 	endif
 	if id =='A40B' then
 		return 'A083'
@@ -9573,15 +9573,15 @@ function Q_X takes player p, boolean isOrder returns nothing
 		set i = i + 1
 	exitwhen i > PassiveAbilityMaxCount
 	endloop
-	if SPCDB[GetPlayerId(p)] then
-		call SetPlayerAbilityAvailable(p,'QP1O', false)
-		call SetPlayerAbilityAvailable(p,'QP17', false)
-		call SetPlayerAbilityAvailable(p,'QP1G', false)
-	else
-		call SetPlayerAbilityAvailable(p,'QP1O', true)
-		call SetPlayerAbilityAvailable(p,'QP17', true)
-		call SetPlayerAbilityAvailable(p,'QP1G', true)
-	endif
+	// if SPCDB[GetPlayerId(p)] then
+	// 	call SetPlayerAbilityAvailable(p,'QP1O', false)
+	// 	call SetPlayerAbilityAvailable(p,'QP17', false)
+	// 	call SetPlayerAbilityAvailable(p,'QP1G', false)
+	// else
+	// 	call SetPlayerAbilityAvailable(p,'QP1O', true)
+	// 	call SetPlayerAbilityAvailable(p,'QP17', true)
+	// 	call SetPlayerAbilityAvailable(p,'QP1G', true)
+	// endif
 	
 	//	call SetPlayerAbilityAvailable(p,'A10S', b)
 	
@@ -27780,34 +27780,78 @@ function OXR takes integer si returns boolean
 	return OVR(si) == false and X5R(si) == false and LNX(si) == false and IsNotItemAbility(si) and si !='A2M0' and si !='A32G' and si !='A32E' and si !='A32C' and si !='A32A' and si !='A0ZF'
 endfunction
 function OOR takes nothing returns nothing
-	local integer playerIndex
-	local integer hn
-	local integer xx
-	local integer id
+	local integer     playerIndex
+	local integer     hn
+	local integer     xx
+	local integer     skillIndex
+	local integer     passiveIndex
+	local integer     scepterUpgradeIndex
+	local SubAbility  sb
+	local integer     count
+	local integer     i
+	local ToggleSkill toggleSkillIndex
+
 	set playerIndex = 0
-	if IsPlayerObserverEx(LocalPlayer) == false then
+	if not IsPlayerObserverEx(LocalPlayer) then
 		call ClearSelection()
 	endif
 	loop
-		if IsPlayerObserverEx(Player(playerIndex)) == false then
-			call ShowAbilityCd_Actions(Player(playerIndex), true)
+		if not IsPlayerObserverEx(Player(playerIndex)) then
+			// call ShowAbilityCd_Actions(Player(playerIndex), true)
 			call Q_X(Player(playerIndex), true)
 			call B4X(Player(playerIndex))
 			call DisplayTimedTextToPlayer(Player(playerIndex), 0, 0, 15, "|cff99ccff" + " " + "你的技能:" + "|r")
 			set xx = 1
 			loop
-				set id = PlayerSkillIndices[playerIndex * MAX_SKILL_SLOTS + xx]
-				if id > 600 then
-					call DisplayTimedTextToPlayer(Player(playerIndex), 0, 0, 15, "	" + GetObjectName(HeroSkill_BaseId[id]) + "|cffffcc00" + " (" + "Invoker" + ")" + "|r")
-				else
-					if xx == 4 or xx == 6 then
-						call DisplayTimedTextToPlayer(Player(playerIndex), 0, 0, 15, "	" + "|c00ff0303" + GetObjectName(HeroSkill_BaseId[id]) + "|r" + "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(id + 3)/ 4]) + ")" + "|r")
+				set skillIndex = PlayerSkillIndices[playerIndex * MAX_SKILL_SLOTS + xx]
+
+				if skillIndex != 0 then
+					// 直接在此预读技能
+					call PreloadAbilityById(HeroSkill_BaseId[skillIndex])
+					// 神杖
+					set scepterUpgradeIndex = GetScepterUpgradeIndexById(HeroSkill_BaseId[skillIndex])
+					if scepterUpgradeIndex > 0 then
+						call PreloadAbilityById(ScepterUpgrade_UpgradedId[scepterUpgradeIndex])
+					endif
+					// 被动技能
+					set passiveIndex = GetPassiveSkillIndexByLearnedId(HeroSkill_BaseId[skillIndex])
+					if passiveIndex > 0 then
+						call PreloadAbilityById(PassiveSkill_Show[passiveIndex])
+					endif
+					// 切换形技能
+					set toggleSkillIndex = ToggleSkill.GetIndexById(HeroSkill_BaseId[skillIndex])
+					if toggleSkillIndex > 0 then
+						call PreloadAbilityById(toggleSkillIndex.GetAlternateId())
+					endif
+					// 子技能
+					set count = GetSkillSubAbilityCountByIndex(skillIndex)
+					if count > 0 then
+						set i = 1
+						loop
+							exitwhen i > count
+							set sb  = GetSkillSubAbilityByIndex(skillIndex, i)
+							loop
+								call PreloadAbilityById(sb.abilityId)
+								set sb = sb.next
+								exitwhen sb == 0
+							endloop
+							set i = i + 1
+						endloop
+					endif
+
+					if skillIndex > 600 then
+						call DisplayTimedTextToPlayer(Player(playerIndex), 0, 0, 15, "	" + GetObjectName(HeroSkill_BaseId[skillIndex]) + "|cffffcc00" + " (" + "Invoker" + ")" + "|r")
 					else
-						call DisplayTimedTextToPlayer(Player(playerIndex), 0, 0, 15, "	" + GetObjectName(HeroSkill_BaseId[id]) + "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(id + 3)/ 4]) + ")" + "|r")
+						if xx == 4 or xx == 6 then
+							call DisplayTimedTextToPlayer(Player(playerIndex), 0, 0, 15, "	" + "|c00ff0303" + GetObjectName(HeroSkill_BaseId[skillIndex]) + "|r" + "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(skillIndex + 3)/ 4]) + ")" + "|r")
+						else
+							call DisplayTimedTextToPlayer(Player(playerIndex), 0, 0, 15, "	" + GetObjectName(HeroSkill_BaseId[skillIndex]) + "|cffffcc00" + " (" + GetObjectName(HeroListTypeId[(skillIndex + 3)/ 4]) + ")" + "|r")
+						endif
 					endif
 				endif
+
 				set xx = xx + 1
-			exitwhen xx > 4 + ExtraSkillsCount
+				exitwhen xx > 4 + ExtraSkillsCount
 			endloop
 			if PP[playerIndex]== 1 then
 				call DisplayTimedTextToPlayer(Player(playerIndex), 0, 0, 15, " ")
@@ -27972,7 +28016,7 @@ function SQO takes nothing returns nothing
 	endif
 	call EnableTrigger(hChooseHeroTrigger)
 	set OLR = null
-	call OOR()
+	call ExecuteFunc("OOR")
 endfunction
 
 // 全部随机
@@ -51881,103 +51925,6 @@ function YSV takes nothing returns nothing
 	set u = null
 endfunction
 
-globals
-	unit AttackReadySource
-	unit AttackReadyTarget
-endglobals
-
-function UnitLaunchAttack takes unit source, unit target returns nothing
-	set AttackReadySource = source
-	set AttackReadyTarget = target
-	call MHGame_ExecuteFunc("ExecteAttackReady")
-	call UnitAddAttackRangeBonus(source, 99999)
-	call MHUnit_LaunchAttack(source, 1, target)
-	call UnitAddAttackRangeBonus(source, - 99999)
-endfunction
-// 窒息之刃
-function StiflingDaggerOnMissileHit takes nothing returns nothing
-	local integer h           = GetHandleId(GetTriggeringTrigger())
-	local unit    whichUnit  = TempUnit
-	local unit    targetUnit  = MissileHitTargetUnit
-	local integer level       = (LoadInteger(HY, h, 5))
-	local real    damage      = level * 40 + 20
-	local unit    dummyCaster = CreateUnit(GetOwningPlayer(whichUnit),'e00E', GetUnitX(targetUnit), GetUnitY(targetUnit), 0)
-	local boolean b 		  = LoadBoolean(HY, h, 6)
-	if b then
-		set damage = damage * LoadReal(HY, h, 6)
-	endif
-	call UnitAddPermanentAbility(dummyCaster,'A0YL')
-	call SetUnitAbilityLevel(dummyCaster,'A0YL', level)
-	call IssueTargetOrderById(dummyCaster, 852075, targetUnit)
-	if IsUnitType(targetUnit, UNIT_TYPE_HERO) then
-		set damage = damage / 2
-	endif
-	
-	if UnitAlive(targetUnit) and LoadBoolean(HY, h, 0) then
-		call UnitLaunchAttack(whichUnit, targetUnit)
-	endif
-
-	call UnitDamageTargetEx(whichUnit, targetUnit, 3, damage)
-
-	if b then
-		call CommonTextTag(I2S(R2I(damage)) + "!", 3, targetUnit, .02, 255, 0, 0, 255)
-	endif
-	
-	set b = false
-	if IsUnitDummy(whichUnit) and HaveSavedHandle(HY, GetHandleId(whichUnit), 0) then
-		set whichUnit = LoadUnitHandle(HY, GetHandleId(whichUnit), 0)
-		set b = true
-	endif
-	// 回音护盾？
-	if b == false and GetUnitAbilityLevel(targetUnit,'A3E9') == 1 and IsUnitMagicImmune(whichUnit) == false then
-		set Q2 = level
-		set TempUnit = whichUnit
-		set MissileHitTargetUnit = targetUnit
-		call ExecuteFunc("Z3I")
-	endif
-	set whichUnit = null
-	set targetUnit = null
-	set dummyCaster = null
-endfunction
-function StiflingDaggerOnMissileLaunch takes unit trigUnit, unit targetUnit, integer level returns nothing
-	local trigger t 
-	local integer h
-	local unit u
-	if IsUnitDummy(trigUnit) then
-		set trigUnit = PlayerHeroes[GetPlayerId(GetOwningPlayer(trigUnit))]
-	endif
-	set t = LaunchMissileByUnitDummy(trigUnit, targetUnit,'h010', "StiflingDaggerOnMissileHit", 1200, false)
-	set h = GetHandleId(t)
-	set u = LoadUnitHandle(HY, GetHandleId(t), 45)
-	
-	if IsUnitType(trigUnit, UNIT_TYPE_MELEE_ATTACKER) then
-		call SaveBoolean(HY, h, 0, true)
-	else
-		call UnitLaunchAttack(trigUnit, targetUnit)
-	endif
-
-	call SaveInteger(HY, h, 5, level)
-	call SaveInteger(HY, h, 6, level -1)
-	if level > 1 and GetUnitPseudoRandom(trigUnit,'P240', 15) then
-		call SaveBoolean(HY, h, 6, true)
-		call SaveReal(HY, h, 6, .5 + level * 1.)
-		call SetUnitScale(u, 2.5, 0, 0)
-		call SetUnitVertexColor(u, 255, 50, 50, 255)
-	endif
-	set t = null
-	set u = null
-endfunction
-function Z3I takes nothing returns nothing
-	call T4V(MissileHitTargetUnit)
-	if UnitHasSpellShield(TempUnit) == false then
-		call StiflingDaggerOnMissileLaunch(MissileHitTargetUnit, TempUnit, Q2)
-	endif
-endfunction
-function StiflingDaggerOnSpellEffect takes nothing returns nothing
-	if not UnitHasSpellShield(GetSpellTargetUnit()) then
-		call StiflingDaggerOnMissileLaunch(GetTriggerUnit(), GetSpellTargetUnit(), GetUnitAbilityLevel(GetTriggerUnit(),'A0YM'))
-	endif
-endfunction
 function Z5I takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
@@ -59732,72 +59679,6 @@ function PZX takes nothing returns nothing
 	call RegionAddRect(P0V, gg_rct_ScourgeBuyArea)
 	call RegionAddRect(P0V, gg_rct_ScourgeFountainOfLifeRange)
 endfunction
-function HMA takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit whichUnit = LoadUnitHandle(HY, h, 2)
-	local unit targetUnit = LoadUnitHandle(HY, h, 17)
-	local integer level = LoadInteger(HY, h, 0)
-	local integer count = GetTriggerEvalCount(t)
-	local real y =(count -50)*(count -50)/ 4.3
-	local real damage
-	if level == 1 then
-		set damage = 75
-	elseif level == 2 then
-		set damage = 150
-	else
-		set damage = 225
-	endif
-	if count == 1 then
-		call IssueTargetOrderById(whichUnit, 851983, targetUnit)
-	endif
-	if count < 50 then
-		if IsUnitModelFlying(targetUnit) == false then
-			call SetUnitFlyHeight(targetUnit, 700 * count / 50, 0)
-		endif
-	elseif count < 100  then
-		if IsUnitModelFlying(targetUnit) == false then
-			call SetUnitFlyHeight(targetUnit, 700 -700 *(count -50)/ 50, 0)
-		endif
-	else
-		if IsUnitModelFlying(targetUnit) == false then
-			call SetUnitFlyHeight(targetUnit, GetUnitDefaultFlyHeight(targetUnit), 0)
-		endif
-		call DestroyEffect(LoadEffectHandle(HY, h, 175))
-		call FlushChildHashtable(HY, h)
-		call DestroyTrigger(t)
-		call CNX(targetUnit,'A204', 1, 1 + level,'B0DY')
-		call SetPlayerAbilityAvailableEx(GetOwningPlayer(targetUnit),'A204', false)
-	endif
-	set t = null
-	set whichUnit = null
-	set targetUnit = null
-	return false
-endfunction
-function HPA takes unit whichUnit, unit targetUnit, integer level returns nothing
-	local trigger t = CreateTrigger()
-	local integer h = GetHandleId(t)
-	call CommonTextTag("WALRUS PUNCH !!", 3.5, whichUnit, .03, 255, 0, 0, 255)
-	call PlaySoundAtPosition(VF, GetUnitX(targetUnit), GetUnitY(targetUnit))
-	call CommonUnitAddStun(targetUnit, 1., false)
-	if IsUnitModelFlying(targetUnit) == false then
-		call UnitAddPermanentAbility(targetUnit,'Amrf')
-		call UnitRemoveAbility(targetUnit,'Amrf')
-	endif
-	call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Other\\FrostBolt\\FrostBoltMissile.mdl", targetUnit, "overhead"))
-	call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Other\\FrostBolt\\FrostBoltMissile.mdl", targetUnit, "head"))
-	call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Other\\FrostBolt\\FrostBoltMissile.mdl", targetUnit, "left,hand"))
-	call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Other\\FrostBolt\\FrostBoltMissile.mdl", targetUnit, "right,hand"))
-	call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Other\\FrostBolt\\FrostBoltMissile.mdl", targetUnit, "chest"))
-	call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Other\\FrostBolt\\FrostBoltMissile.mdl", targetUnit, "origin"))
-	call TriggerRegisterTimerEvent(t, .01, true)
-	call TriggerAddCondition(t, Condition(function HMA))
-	call SaveUnitHandle(HY, h, 2, whichUnit)
-	call SaveUnitHandle(HY, h, 17, targetUnit)
-	call SaveInteger(HY, h, 0, level)
-	call SaveEffectHandle(HY, h, 175, AddSpecialEffectTarget("Abilities\\Spells\\Undead\\FreezingBreath\\FreezingBreathMissile.mdl", targetUnit, "chest"))
-	set t = null
-endfunction
 function HQA takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local unit u = LoadUnitHandle(HY, GetHandleId(t), 0)
@@ -59806,102 +59687,6 @@ function HQA takes nothing returns nothing
 	call DestroyTimer(t)
 	set u = null
 	set t = null
-endfunction
-function HSA takes nothing returns boolean
-	local trigger t2 = GetTriggeringTrigger()
-	local integer h2 = GetHandleId(t2)
-	local unit u = LoadUnitHandle(HY, h2, 2)
-	local unit target = LoadUnitHandle(HY, h2, 17)
-	local effect eff = LoadEffectHandle(HY, h2, 32)
-	local trigger t = LoadTriggerHandle(HY, h2, 35)
-	local integer h = LoadInteger(HY, h2, 375)
-	if GetTriggerEvalCount(t2) == 1 then
-		call IssueTargetOrderById(u, 851983, target)
-	else
-		if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
-			if GetEventDamageSource() == u and EXGetEventDamageData(1) != 0 and FK then
-				call CXX(u,'A1UH', 1, .1)
-				call DestroyEffect(eff)
-				call DestroyTrigger(t2)
-				call FlushChildHashtable(HY, h2)
-				call DestroyTrigger(t)
-				call FlushChildHashtable(HY, h)
-				call HPA(u, target, LoadInteger(HY, h2, 0))
-			endif
-		elseif GetTriggerEventId() == EVENT_PLAYER_UNIT_ATTACKED then
-			if GetAttacker() == u and GetTriggerUnit() != target then
-				call FlushChildHashtable(HY, h2)
-				call DestroyTrigger(t2)
-			endif
-		else
-			call UnitRemoveAbility(u,'A1UH')
-			call RemoveSavedHandle(HY, h, 17)
-			call FlushChildHashtable(HY, h2)
-			call DestroyTrigger(t2)
-		endif
-	endif
-	set t2 = null
-	set t = null
-	set u = null
-	set target = null
-	set eff = null
-	return false
-endfunction
-function HUA takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit u = LoadUnitHandle(HY, h, 2)
-	local unit target
-	local effect eff = LoadEffectHandle(HY, h, 32)
-	local trigger t2
-	local integer h2
-	if GetTriggerEventId() != EVENT_PLAYER_UNIT_ATTACKED then
-		call DestroyEffect(eff)
-		call UnitRemoveAbility(u,'A1UH')
-		call FlushChildHashtable(HY, h)
-		call DestroyTrigger(t)
-	elseif GetAttacker() == u and GetTriggerUnit()!=(LoadUnitHandle(HY, h, 17)) and IsUnitAlly(GetTriggerUnit(), GetOwningPlayer(u)) == false and IsUnitType(GetTriggerUnit(), UNIT_TYPE_STRUCTURE) == false and GetUnitTypeId(u)!='N0MH' then
-		set target = GetTriggerUnit()
-		call SaveUnitHandle(HY, h, 17, target)
-		set t2 = CreateTrigger()
-		set h2 = GetHandleId(t2)
-		call TriggerRegisterTimerEvent(t2, 0, false)
-		call TriggerRegisterTimerEvent(t2, 2, false)
-		call TriggerRegisterUnitEvent(t2, target, EVENT_UNIT_DAMAGED)
-		call TriggerRegisterAnyUnitEvent(t2, EVENT_PLAYER_UNIT_ATTACKED)
-		call TriggerAddCondition(t2, Condition(function HSA))
-		call SaveUnitHandle(HY, h2, 2, u)
-		call SaveUnitHandle(HY, h2, 17, target)
-		call SaveEffectHandle(HY, h2, 32, eff)
-		call SaveInteger(HY, h2, 375, h)
-		call SaveTriggerHandle(HY, h2, 35, t)
-		call SaveInteger(HY, h2, 0, LoadInteger(HY, h, 0))
-	endif
-	set t = null
-	set u = null
-	set target = null
-	set eff = null
-	set t2 = null
-	return false
-endfunction
-function DCE takes nothing returns nothing
-	local unit u = GetTriggerUnit()
-	local trigger t = CreateTrigger()
-	local integer h = GetHandleId(t)
-	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ATTACKED)
-	call TriggerRegisterTimerEvent(t, 10, false)
-	call TriggerAddCondition(t, Condition(function HUA))
-	call SaveUnitHandle(HY, h, 2, u)
-	call SaveUnitHandle(HY, h, 17, null)
-	call SaveEffectHandle(HY, h, 32, AddSpecialEffectTarget("war3mapImported\\WalrusPunchWeaponFX.mdx", u, GetHeroWeaponAttachPointName(u)))
-	call UnitAddPermanentAbility(u,'A1UH')
-	call SaveInteger(HY, h, 0, GetUnitAbilityLevel(u, GetSpellAbilityId()))
-	if (GetUnitAbilityLevel(u,'A0DL')> 0) then
-		call SetUnitAbilityLevel(u,'A1UL', 2)
-	endif
-	call UnitMakeAbilityPermanent(u, true,'A1UL')
-	set t = null
-	set u = null
 endfunction
 
 function KNE takes nothing returns nothing
@@ -63821,9 +63606,7 @@ function TZA takes unit attackerUnit, unit targetUnit, boolean isAbility returns
 	set t = null
 endfunction
 
-function ExecteAttackReady takes nothing returns nothing
-	call TZA(AttackReadySource, AttackReadyTarget, false)
-endfunction
+
 
 function T4A takes unit sourceUnit, unit targetUnit, real damageValue returns nothing
 	local integer hu = GetHandleId(targetUnit)
@@ -68060,73 +67843,72 @@ endfunction
 // endfunction
 
 function PreloadAbilityLockPos takes nothing returns nothing
-
-	call PreloadAbility(SHADOWRAZE_Z_ABILITY_ID) // 毁灭阴影Z
-	call PreloadAbility(SHADOWRAZE_X_ABILITY_ID) // 毁灭阴影X
-	call PreloadAbility(SHADOWRAZE_C_ABILITY_ID) // 毁灭阴影C
+	call PreloadAbilityById(SHADOWRAZE_Z_ABILITY_ID) // 毁灭阴影Z
+	call PreloadAbilityById(SHADOWRAZE_X_ABILITY_ID) // 毁灭阴影X
+	call PreloadAbilityById(SHADOWRAZE_C_ABILITY_ID) // 毁灭阴影C
 	 
-	call PreloadAbility('A08Q') // 伤残恐惧夜晚
-	call PreloadAbility('A08c') // 伤残恐惧白天
+	call PreloadAbilityById('A08Q') // 伤残恐惧夜晚
+	call PreloadAbilityById('A08c') // 伤残恐惧白天
 	 
-	call PreloadAbility('A1C0') // 分裂箭开启
-	call PreloadAbility('A418') // 分裂箭关闭
+	call PreloadAbilityById('A1C0') // 分裂箭开启
+	call PreloadAbilityById('A418') // 分裂箭关闭
 	 
-	call PreloadAbility('A10R') // 吞噬
-	call PreloadAbility('A10S') // 吞噬-消化
+	call PreloadAbilityById('A10R') // 吞噬
+	call PreloadAbilityById('A10S') // 吞噬-消化
 	 
-	call PreloadAbility('A11N') // 船长X标记
-	call PreloadAbility('A13D') // 返回X标记
+	call PreloadAbilityById('A11N') // 船长X标记
+	call PreloadAbilityById('A13D') // 返回X标记
 	 
-	call PreloadAbility('A1A8') // 先祖之魂
-	call PreloadAbility('A21J') // 先祖之魂 - 取消
+	call PreloadAbilityById('A1A8') // 先祖之魂
+	call PreloadAbilityById('A21J') // 先祖之魂 - 取消
 	 
-	call PreloadAbility('A1NI') // 不稳定化合物
-	call PreloadAbility('A1NH') // 不稳定化合物 - 取消
+	call PreloadAbilityById('A1NI') // 不稳定化合物
+	call PreloadAbilityById('A1NH') // 不稳定化合物 - 取消
 	 
-	call PreloadAbility('A1RJ') // 凤凰冲击
-	call PreloadAbility('A20N') // 凤凰冲击 - 取消
+	call PreloadAbilityById('A1RJ') // 凤凰冲击
+	call PreloadAbilityById('A20N') // 凤凰冲击 - 取消
 	 
-	call PreloadAbility('A1YX') // 烈火精灵
-	call PreloadAbility('A1Z2') // 烈火精灵 - 额外
+	call PreloadAbilityById('A1YX') // 烈火精灵
+	call PreloadAbilityById('A1Z2') // 烈火精灵 - 额外
 	 
-	call PreloadAbility('A2E5') // 锯齿飞轮
-	call PreloadAbility('A43S') // 锯齿飞轮 - A
-	call PreloadAbility('A2FX') // 锯齿飞轮 - 关闭
-	call PreloadAbility('A2E6') // 锯齿飞轮 - 关闭
+	call PreloadAbilityById('A2E5') // 锯齿飞轮
+	call PreloadAbilityById('A43S') // 锯齿飞轮 - A
+	call PreloadAbilityById('A2FX') // 锯齿飞轮 - 关闭
+	call PreloadAbilityById('A2E6') // 锯齿飞轮 - 关闭
 	 
-	call PreloadAbility('A0R0') // 黑暗之门
-	call PreloadAbility('A2MB') // 黑暗之门 - 取消
+	call PreloadAbilityById('A0R0') // 黑暗之门
+	call PreloadAbilityById('A2MB') // 黑暗之门 - 取消
 	 
-	call PreloadAbility('A0G8') // 水人复制
-	call PreloadAbility('A0GC') // 水人复制 - 替换
+	call PreloadAbilityById('A0G8') // 水人复制
+	call PreloadAbilityById('A0GC') // 水人复制 - 替换
 	 
-	call PreloadAbility('A07U') // 海妖之歌
-	call PreloadAbility('A38E') // 海妖之歌 - A
-	call PreloadAbility('A24E') // 海妖之歌 - 关闭
+	call PreloadAbilityById('A07U') // 海妖之歌
+	call PreloadAbilityById('A38E') // 海妖之歌 - A
+	call PreloadAbilityById('A24E') // 海妖之歌 - 关闭
 	 
-	call PreloadAbility('A1RA') // 灵魂汲取 - 取消
-	call PreloadAbility('A1PH') // 灵魂汲取
+	call PreloadAbilityById('A1RA') // 灵魂汲取 - 取消
+	call PreloadAbilityById('A1PH') // 灵魂汲取
 	 
-	call PreloadAbility('A085') // 启明
-	call PreloadAbility('A121') // 启明 - 发射
+	call PreloadAbilityById('A085') // 启明
+	call PreloadAbilityById('A121') // 启明 - 发射
 	 
-	call PreloadAbility('A04Y') // 噩梦
-	call PreloadAbility('A2O9') // 噩梦 - 关闭
+	call PreloadAbilityById('A04Y') // 噩梦
+	call PreloadAbilityById('A2O9') // 噩梦 - 关闭
 	 
-	call PreloadAbility('A21F') // 脉冲新星
-	call PreloadAbility('A21G') // 脉冲新星 - A
-	call PreloadAbility('A21H') // 脉冲新星 - 关闭
+	call PreloadAbilityById('A21F') // 脉冲新星
+	call PreloadAbilityById('A21G') // 脉冲新星 - A
+	call PreloadAbilityById('A21H') // 脉冲新星 - 关闭
 	 
-	call PreloadAbility('A1MI') // 冰晶爆轰
-	call PreloadAbility('A2QE') // 冰晶爆轰 - A
-	call PreloadAbility('A1MN') // 冰晶爆轰 - 激活
+	call PreloadAbilityById('A1MI') // 冰晶爆轰
+	call PreloadAbilityById('A2QE') // 冰晶爆轰 - A
+	call PreloadAbilityById('A1MN') // 冰晶爆轰 - 激活
 	 
 	 
-	call PreloadAbility('A2JO') // 火之余烬 - 0-3
-	call PreloadAbility('A2JQ') // 火之余烬 - 1-3
-	call PreloadAbility('A2JP') // 火之余烬 - 2-3
-	call PreloadAbility('A2JR') // 火之余烬 - 3-3
-	call PreloadAbility('A2JL') // 火烬冲击 - 额外技能
+	call PreloadAbilityById('A2JO') // 火之余烬 - 0-3
+	call PreloadAbilityById('A2JQ') // 火之余烬 - 1-3
+	call PreloadAbilityById('A2JP') // 火之余烬 - 2-3
+	call PreloadAbilityById('A2JR') // 火之余烬 - 3-3
+	call PreloadAbilityById('A2JL') // 火烬冲击 - 额外技能
 endfunction
 // 预读部分技能
 function Init_PreloadAbilitys takes nothing returns nothing
@@ -68487,17 +68269,17 @@ function fj_trigger takes nothing returns nothing
 endfunction
 
 function PreloadKael_Ability takes nothing returns nothing
-	call PreloadAbility('Z601') // 阳炎冲击
-	call PreloadAbility('Z602') // 混沌陨石
-	call PreloadAbility('Z603') // 熔炉精灵
-	call PreloadAbility('Z604') // 急速冷却
-	call PreloadAbility('Z605') // 幽灵漫步
-	call PreloadAbility('QFZZ') // 幽灵漫步-退出
-	call PreloadAbility('Z606') // 寒冰之墙
-	call PreloadAbility('Z607') // 灵动迅捷
-	call PreloadAbility('Z608') // 强袭飓风
-	call PreloadAbility('Z609') // 电磁脉冲
-	call PreloadAbility('Z610') // 超震声波
+	call PreloadAbilityById('Z601') // 阳炎冲击
+	call PreloadAbilityById('Z602') // 混沌陨石
+	call PreloadAbilityById('Z603') // 熔炉精灵
+	call PreloadAbilityById('Z604') // 急速冷却
+	call PreloadAbilityById('Z605') // 幽灵漫步
+	call PreloadAbilityById('QFZZ') // 幽灵漫步-退出
+	call PreloadAbilityById('Z606') // 寒冰之墙
+	call PreloadAbilityById('Z607') // 灵动迅捷
+	call PreloadAbilityById('Z608') // 强袭飓风
+	call PreloadAbilityById('Z609') // 电磁脉冲
+	call PreloadAbilityById('Z610') // 超震声波
 endfunction
 
 function GetSeGlyphCd takes integer i returns real
@@ -69607,6 +69389,7 @@ endfunction
 	call YDWETriggerRegisterEnterRectSimpleNull(t, GetWorldBounds())
 	call TriggerAddCondition(t, Condition(function AnyUnitEventRegisterFilter))	//原本的全图单位受伤害捕捉
 	call DamageSystem_Init()
+	call AttackLaunchSystem_Init()
 
 	call SetAltMinimapIcon("war3mapImported\\black.blp")
 	call RegisterUnitAttackFunc("SetUnitMiss",-1)

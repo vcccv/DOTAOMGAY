@@ -27,8 +27,8 @@ library UIManager /*
 
     private function OnGameStart takes nothing returns nothing
         static if DEBUG_MODE then
-            call BJDebugMsg(MHGame_GetGameVersion())
-            call BJDebugMsg(MHGame_GetPluginVersion())
+            call BJDebugMsg("游戏版本：" + MHGame_GetGameVersion())
+            call BJDebugMsg("插件版本：" + MHGame_GetPluginVersion())
         endif
 
         call FrameSystem_Init()

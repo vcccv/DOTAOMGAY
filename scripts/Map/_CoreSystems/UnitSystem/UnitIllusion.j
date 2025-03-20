@@ -121,6 +121,7 @@ library UnitIllusion requires UnitUtils, UnitWeapon, UnitMorph, BuffSystem
         local integer pid    = GetPlayerId(ownerPlayer)
         local integer typeId
         local real    hp
+        local integer slot
 
         // 判一下类型
         set typeId = GetUnitTypeId(sourceUnit)
@@ -166,6 +167,14 @@ library UnitIllusion requires UnitUtils, UnitWeapon, UnitMorph, BuffSystem
         if IsPlayerAutoSelectSummoned[pid] then
             call SelectUnitAddForPlayer(illusionUnit, ownerPlayer)
         endif
+        // 引用装备handle
+        set slot = 0
+        loop
+            exitwhen slot > 5
+            set bj_lastCreatedItem = UnitItemInSlot(illusionUnit, slot)
+            set slot = slot + 1
+        endloop
+
         return false
     endfunction
 

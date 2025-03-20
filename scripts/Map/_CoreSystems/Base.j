@@ -118,7 +118,7 @@ library Base requires TriggerDestroyQueue, GroupAlloc, ErrorMessage, TimerUtils
         set t = null
     endfunction
     // 直接预读技能
-    function PreloadAbility takes integer id returns nothing
+    function PreloadAbilityById takes integer id returns nothing
         call UnitAddAbility(PreloadeHero, id)
         call UnitRemoveAbility(PreloadeHero, id)
     endfunction
