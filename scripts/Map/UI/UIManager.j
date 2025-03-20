@@ -17,6 +17,12 @@ library UIManager /*
         static if LIBRARY_GlyphFrame then
             call Glyph_Update()
         endif
+        static if LIBRARY_TowerAttackRange then
+            call TowerAttackRangeUpdate()
+        endif
+        static if LIBRARY_NeutralSpawnboxes then
+            call NeutralSpawnboxesUpdate()
+        endif
     endfunction
 
     private function OnGameStart takes nothing returns nothing

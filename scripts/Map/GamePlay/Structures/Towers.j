@@ -5,43 +5,6 @@ scope Towers
         return GetUnitTypeId(tower)=='e00R' or GetUnitTypeId(tower)=='u00M'
     endfunction
 
-    globals
-        effect array TowerAttackRangeIndicatorEffect
-        integer TowerAttackRangeIndicatorMaxNumber = 0
-    endglobals
-    
-    function CreateTowerAttackRangeIndicator takes unit u returns nothing
-        local effect eff = AddSpecialEffect("tower_range.mdx", GetUnitX(u), GetUnitY(u))
-        set TowerAttackRangeIndicatorEffect[TowerAttackRangeIndicatorMaxNumber] = eff
-        
-        call SaveInteger(ExtraHT, GetHandleId(u), HTKEY_TOWER_ATTACK_RANGE_EFFECT, TowerAttackRangeIndicatorMaxNumber)
-        call EXSetEffectSize(TowerAttackRangeIndicatorEffect[TowerAttackRangeIndicatorMaxNumber], 0.01)
-
-        set TowerAttackRangeIndicatorMaxNumber = TowerAttackRangeIndicatorMaxNumber + 1
-        set eff = null
-    endfunction
-    function DestroyTowerRangeIndicator takes unit tower returns nothing
-        local integer indicatorIndex = LoadInteger(ExtraHT, GetHandleId(tower), HTKEY_TOWER_ATTACK_RANGE_EFFECT )
-        call DestroyEffect(TowerAttackRangeIndicatorEffect[indicatorIndex])
-        set TowerAttackRangeIndicatorEffect[indicatorIndex] = null
-    endfunction
-
-    function SetTowerRangeIndicatorState takes boolean b returns nothing
-        local integer i = 0
-        local real    size
-        if b then
-            set size = 1.
-        else
-            set size = 0.01
-        endif
-        loop
-            if TowerAttackRangeIndicatorEffect[i] != null then
-                call EXSetEffectSize(TowerAttackRangeIndicatorEffect[i], size)
-            endif
-            set i = i + 1
-        exitwhen i > TowerAttackRangeIndicatorMaxNumber
-        endloop
-    endfunction
 
     globals
         integer array PlayerDenyTowerCount

@@ -3,3 +3,4 @@
 #include "Controls\\_include"
 #include "SkillDraft\\_include"
 #include "ChatCommands\\_include"
+#include "Interface\\_include"

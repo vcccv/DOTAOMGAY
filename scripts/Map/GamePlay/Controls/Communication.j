@@ -23,7 +23,7 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility
     private function GetItemButtonIndex takes integer itemButton returns integer
         local integer i = 1
         loop
-            exitwhen i > 12
+            exitwhen i > 6
             if itemButton == ItemButton[i] then
                 return i
             endif
@@ -33,11 +33,15 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility
     endfunction
 
     private function GetCommandButtonCharges takes integer commandButton returns integer
-        local integer commandButtonSubscriptText = MHUIData_GetCommandButtonSubscriptText(commandButton)
-        if MHFrame_IsHidden(MHUIData_GetCommandButtonSubscriptFrame(commandButton)) then
+        local integer pCommandButtonData = ReadRealMemory(commandButton + 0x190)
+        if pCommandButtonData == 0 then
             return 0
         endif
-        return S2I(MHFrame_GetText(commandButtonSubscriptText))
+        // local integer commandButtonSubscriptText = MHUIData_GetCommandButtonSubscriptText(commandButton)
+        // if MHFrame_IsHidden(MHUIData_GetCommandButtonSubscriptFrame(commandButton)) then
+        //     return 0
+        // endif
+        return ReadRealMemory(pCommandButtonData + 0x5C0) //(MHFrame_GetText(commandButtonSubscriptText))
     endfunction
 
     private function GetAbiiltyLevelSkip takes integer abilId returns integer
@@ -403,7 +407,7 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility
         endif
     endfunction
 
-    public function OnPingTownPortalScroll takes unit whichUnit, ability whichAbility, integer charges returns nothing
+    public function OnTownPortalScrollPing takes unit whichUnit, ability whichAbility, integer charges returns nothing
         local integer abilId            
         local real    cooldownRemaining
         local integer manaCost
@@ -464,6 +468,25 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility
             call PlayerChat.SendChatToAlliedPlayers(msg)
         endif
     endfunction
+    
+    globals
+        constant string GLYPH_READY               = "防御符文 > 准备就绪"
+        constant string GLYPH_REQUIRE_COOLDOWN    = "防御符文 > 冷却中（还剩$cooldown$秒）"
+    endglobals
+
+    public function OnGlyphPing takes real cooldownRemaining returns nothing
+        local string  msg     
+        if cooldownRemaining == 0. then
+            set msg = GLYPH_READY
+        else
+            set msg = GLYPH_REQUIRE_COOLDOWN
+            set msg = MHString_Replace(msg, "$cooldown$", I2S(R2I(cooldownRemaining + 1.)))
+        endif
+
+        if msg != null then
+            call PlayerChat.SendChatToAlliedPlayers(msg)
+        endif
+    endfunction
 
     private function OnSkillButtonPing takes integer skillButton returns nothing
         local unit    whichUnit = MHPlayer_GetSelectUnit()
@@ -516,8 +539,8 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility
         // call BJDebugMsg("MHUIData_GetCommandButtonItem(itemButton):" + I2S(GetHandleId(MHUIData_GetCommandButtonItem(itemButton))))
         // call BJDebugMsg("name:" + GetItemName(MHUIData_GetCommandButtonItem(itemButton)))
         if MHMsg_IsKeyDown(OSKEY_ALT) and MHEvent_GetKey() == 1 then
-            call OnInventoryPing(MHPlayer_GetSelectUnit(), UnitItemInSlot(MHPlayer_GetSelectUnit(), itemSlot), itemButton)
-            //call OnInventoryPing(MHPlayer_GetSelectUnit(), MHUIData_GetCommandButtonItem(itemButton), itemButton)
+            //call OnInventoryPing(MHPlayer_GetSelectUnit(), UnitItemInSlot(MHPlayer_GetSelectUnit(), itemSlot), itemButton)
+            call OnInventoryPing(MHPlayer_GetSelectUnit(), MHUIData_GetCommandButtonItem(itemButton), itemButton)
             call MHEvent_SetKey(-1)
         endif
         /*  MHUIData_GetCommandButtonItem(itemButton)*/ 
@@ -536,7 +559,11 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility
         loop
             exitwhen i > 12
             set SkillButton[i] = MHUI_GetSkillBarButton(i)
+            //call MHUIData_GetCommandButtonSubscriptText(SkillButton[i])
             call MHFrameEvent_Register(SkillTrig, SkillButton[i], EVENT_ID_FRAME_MOUSE_CLICK)
+
+            call MHFrame_SetFont(MHDrawCooldown_GetText(i), "Fonts\\arheigb_bd.ttf", 0.016, 0)
+            call MHFrame_SetTextShadowOff(MHDrawCooldown_GetText(i), 0.0016, - 0.0016)
             set i = i + 1
         endloop
 
@@ -546,6 +573,11 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility
         loop
             exitwhen i > 6
             set ItemButton[i] = MHUI_GetItemBarButton(i)
+            
+            call MHFrame_SetFont(MHDrawCooldown_GetText(i + 12), "Fonts\\arheigb_bd.ttf", 0.013, 0)
+            call MHFrame_SetTextShadowOff(MHDrawCooldown_GetText(i + 12), 0.0013, - 0.0013)
+
+            //call MHUIData_GetCommandButtonSubscriptText(ItemButton[i])
             call MHFrameEvent_Register(ItemTrig, ItemButton[i], EVENT_ID_FRAME_MOUSE_CLICK)
             set i = i + 1
         endloop

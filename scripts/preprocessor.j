@@ -8,7 +8,7 @@
 #define GroupPickRandomUnit(whichGroup) MHGroup_GetRandomUnit(whichGroup)
 
 #define init_group_variable() <?l_init_group_variable()?>
-#define start_groupEnum(x, y, area) <?l_start_groupEnum(#x, #y, #area)?>
+#define start_group_enum(x, y, area) <?l_start_group_enum(#x, #y, #area)?>
 #define end_group_enum() <?l_end_group_enum()?>
 
 <?
@@ -33,7 +33,7 @@ function l_init_group_variable()
     local unit  first
     ]])
 end
-function l_start_groupEnum(x, y, area)
+function l_start_group_enum(x, y, area)
     group_count = group_count + 1
     call_jass(string.format([[
     set g = AllocationGroup(%s) 

@@ -10,6 +10,10 @@ library GlyphHandler requires Communication, UnitAbility, GlyphFrame
     endfunction
     function GlyphButtonOnClickASync takes nothing returns integer
         local integer id = GetPlayerId(GetLocalPlayer())
+        if MHMsg_IsKeyDown(OSKEY_ALT) then
+            call Communication_OnGlyphPing(GetUnitAbilityCooldownRemaining(CirclesUnit[id], GLYPH_ABILITY_ID))
+            return 0
+        endif
         if GetUnitAbilityCooldownRemaining(CirclesUnit[id], GLYPH_ABILITY_ID) > 0. then
 			call SendErrorMessage(GetLocalizedString("魔法尚未恢复。"))
             return 0

@@ -288,7 +288,7 @@ library UnitAbility requires AbilityUtils, UnitLimitation
         if whichAbility == null then
             return
         endif
-        call MHAbility_SetAbilityCustomLevelDataReal(whichAbility, GetAbilityLevel(whichAbility), ABILITY_LEVEL_DEF_DATA_COOLDOWN, cooldown)
+        // call MHAbility_SetAbilityCustomLevelDataReal(whichAbility, GetAbilityLevel(whichAbility), ABILITY_LEVEL_DEF_DATA_COOLDOWN, cooldown)
         call SetAbilityCooldownAbsolute(whichAbility, cooldown)
     endfunction
 

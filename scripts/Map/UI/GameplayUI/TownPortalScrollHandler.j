@@ -113,9 +113,14 @@ library TownPortalScrollHandler requires Communication, TownPortalScrollFrame, U
     endfunction
 
     function TownPortalScrollButtonOnClickASync takes nothing returns nothing
-        local unit    selectedUnit      = MHPlayer_GetSelectUnit()
+        local unit    selectedUnit
         local integer charges
 
+        if MHEvent_GetKey() != MOUSE_BUTTON_TYPE_LEFT then
+            return
+        endif
+
+        set selectedUnit = MHPlayer_GetSelectUnit()
         if selectedUnit == null then
             return
         endif
@@ -126,7 +131,7 @@ library TownPortalScrollHandler requires Communication, TownPortalScrollFrame, U
             if MHUnit_GetShopTarget(selectedUnit, GetLocalPlayer()) != null then
                 set selectedUnit = MHUnit_GetShopTarget(selectedUnit, GetLocalPlayer())
             endif
-            call Communication_OnPingTownPortalScroll(selectedUnit, GetUnitAbility(selectedUnit, TOWN_PORTAL_SCROLL_ABILITY_ID), charges)
+            call Communication_OnTownPortalScrollPing(selectedUnit, GetUnitAbility(selectedUnit, TOWN_PORTAL_SCROLL_ABILITY_ID), charges)
         elseif MHUIData_GetTargetModeAbility() == TOWN_PORTAL_SCROLL_ABILITY_ID and MHMsg_IsIndicatorOn(INDICATOR_TYPE_TARGET_MODE) then
             call TownPortalScroll_SelfCast(selectedUnit)
         elseif charges > 0 then
@@ -147,6 +152,8 @@ library TownPortalScrollHandler requires Communication, TownPortalScrollFrame, U
         local unit    sourceUnit        = null
         local ability townPortalAbility = null
         local integer charges
+        local integer manaCost
+        local boolean control
         
         if MHUnit_GetShopTarget(selectedUnit, GetLocalPlayer()) != null then
             set sourceUnit = MHUnit_GetShopTarget(selectedUnit, GetLocalPlayer())
@@ -158,12 +165,21 @@ library TownPortalScrollHandler requires Communication, TownPortalScrollFrame, U
                 call ShowTownPortalScrollFrame(true)
             endif
 
+            set control = GetPlayerAlliance(GetOwningPlayer(sourceUnit), GetLocalPlayer(), ALLIANCE_SHARED_CONTROL)  
+
             set townPortalAbility = GetUnitAbility(sourceUnit, TOWN_PORTAL_SCROLL_ABILITY_ID)
+            set manaCost = GetAbilityManaCost(townPortalAbility)
+            set charges  = GetUnitTownPortalScrollCharges(sourceUnit)
             call TownPortalScrollFrameUpdateToolTip(townPortalAbility)
-            call SetTownPortalScrollCooldownRemaining(GetAbilityCooldown(townPortalAbility), GetAbilityCooldownRemaining(townPortalAbility))
-            set charges = GetUnitTownPortalScrollCharges(sourceUnit)
+            call EnableShowTownPortalScrollButton(control and charges > 0 and sourceUnit == selectedUnit)
+            if control then
+                call SetTownPortalScrollCooldownRemaining(GetAbilityCooldown(townPortalAbility), GetAbilityCooldownRemaining(townPortalAbility))
+                call SetTownPortalScrollButtonRequireManaState(GetUnitState(sourceUnit, UNIT_STATE_MANA) < manaCost)
+            else
+                call SetTownPortalScrollCooldownRemaining(0, 0)
+                call SetTownPortalScrollButtonRequireManaState(false)
+            endif
             call SetTownPortalScrollCharges(charges)
-            call EnableShowTownPortalScrollButton(charges > 0 and sourceUnit == selectedUnit)
             set townPortalAbility = null
         elseif IsTownPortalScrollFrameVisible() then
             call ShowTownPortalScrollFrame(false)

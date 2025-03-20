@@ -57,6 +57,14 @@ library TownPortalScrollFrame requires UISystem, AbilityUtils
     function IsTownPortalScrollFrameVisible takes nothing returns boolean
         return TownPortalScrollFrame.IsVisible()
     endfunction
+    
+    function SetTownPortalScrollButtonRequireManaState takes boolean state returns nothing
+        if state then
+            call TownPortalScrollBackground.SetTextColor(0xFF4040FF)
+        else
+            call TownPortalScrollBackground.SetTextColor(0xFFFFFFFF)
+        endif
+    endfunction
 
     function EnableShowTownPortalScrollButton takes boolean enable returns nothing
         call TownPortalScrollButton.SetEnableEx(enable)

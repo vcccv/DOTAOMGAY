@@ -44,26 +44,25 @@ library SpecialPassiveAbility requires TimerUtils
     endfunction
 
     function SpecialPassiveAbility_Init takes nothing returns nothing
-        // 潮汐使者
-        call RegisterSpecialPassiveAbilityById('A522')
+       // // 潮汐使者
+       // call RegisterSpecialPassiveAbilityById('A522')
 
-        // 余震
-        call RegisterSpecialPassiveAbilityById('QP1G')
+       // // 余震
+       // call RegisterSpecialPassiveAbilityById('QP1G')
 
-        // 反击螺旋
-        call RegisterSpecialPassiveAbilityById('QP17')
+       // // 反击螺旋
+       // call RegisterSpecialPassiveAbilityById('QP17')
 
-        // 勇气之霎
-        call RegisterSpecialPassiveAbilityById('QP1O')
+       // // 勇气之霎
+       // call RegisterSpecialPassiveAbilityById('QP1O')
 
-        // 幻影冲锋
-        call RegisterSpecialPassiveAbilityById('A46D')
+       // // 幻影冲锋
+       // call RegisterSpecialPassiveAbilityById('A46D')
 
         // 侧面机枪
         call RegisterSpecialPassiveAbilityById('A3UR')
         
         // 天幕坠落
-        call RegisterSpecialPassiveAbilityById('ANXL')
     endfunction
 
 endlibrary

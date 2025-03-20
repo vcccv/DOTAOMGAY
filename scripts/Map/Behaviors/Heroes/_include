@@ -22,6 +22,8 @@
 #include "Str\\Beastmaster.j"
 #include "Str\\Banehallow.j"
 #include "Str\\Doom.j"
+#include "Str\\Axe.j"
+#include "Str\\LegionCommander.j"
 
 #include "Int\\TwinHeadDragon.j"
 #include "Int\\Ezalor.j"

@@ -53,20 +53,26 @@ library UnitIllusion requires UnitUtils, UnitWeapon, UnitMorph, BuffSystem
             if lv > 0 then
                 if PassiveSkill_SpellBook[i]> 0 or PassiveSkill_Real[i]> 0 then
                     call UnitAddPermanentAbility(illusionUnit, PassiveSkill_SpellBook[i])
+
                     call UnitMakeAbilityPermanent(illusionUnit, true, PassiveSkill_Real[i])
+                    call UnitEnableAbility(illusionUnit, PassiveSkill_Real[i], true)
+
                     call UnitAddPermanentAbility(illusionUnit, PassiveSkill_Show[i])
-                    if PassiveSkill_Illusion[i]> 0 then
-                        call UnitAddPermanentAbility(illusionUnit, PassiveSkill_Illusion[i])
-                        call SetUnitAbilityLevel(illusionUnit, PassiveSkill_Illusion[i], lv)
-                    endif
+                    call UnitEnableAbility(illusionUnit, PassiveSkill_Show[i], true)
+
                     call SetUnitAbilityLevel(illusionUnit, PassiveSkill_Real[i], lv)
-                    call MHAbility_Disable(illusionUnit, PassiveSkill_Real[i], false, false)
                     if PassiveSkill_SpellBook[i] == 'A23F' then
-                        call SetUnitAbilityLevel(illusionUnit,'A1ER', lv)
-                        call UnitAddPermanentAbility(illusionUnit,'A1ER')
-                        call SetUnitAbilityLevel(illusionUnit,'A1ER', lv)
-                        call MHAbility_Disable(illusionUnit, 'A1ER', false, false)
+                        call SetUnitAbilityLevel(illusionUnit, 'A1ER', lv)
+                        call UnitAddPermanentAbility(illusionUnit, 'A1ER')
+                        call SetUnitAbilityLevel(illusionUnit, 'A1ER', lv)
+                        call UnitEnableAbility(illusionUnit, 'A1ER', false)
                     endif
+                endif
+
+                if PassiveSkill_Illusion[i]> 0 then
+                    call UnitAddPermanentAbility(illusionUnit, PassiveSkill_Illusion[i])
+                    call UnitEnableAbility(illusionUnit, PassiveSkill_Illusion[i], true)
+                    call SetUnitAbilityLevel(illusionUnit, PassiveSkill_Illusion[i], lv)
                 endif
                 // 瞄准
                 if PassiveSkill_Learned[i] == 'A03U' then
@@ -130,27 +136,27 @@ library UnitIllusion requires UnitUtils, UnitWeapon, UnitMorph, BuffSystem
         call SyncIllusionUnitSkills(illusionUnit, sourceUnit)
         // 同步射手天赋给幻象
         if GetUnitAbilityLevel(sourceUnit, 'A0VC')> 0 then
-            call SaveUnitHandle(OtherHashTable2,'ILLU', 0, illusionUnit)
-            call SaveUnitHandle(OtherHashTable2,'ILLU', 1, sourceUnit)
+            call SaveUnitHandle(OtherHashTable2, 'ILLU', 0, illusionUnit)
+            call SaveUnitHandle(OtherHashTable2, 'ILLU', 1, sourceUnit)
             call ExecuteFunc("I8R")
         endif
         // 幻象的协同升级
-        if GetUnitAbilityLevel(PlayerHeroes[pid],'A0A8')> 0 then
-            call UnitAddPermanentAbilitySetLevel(illusionUnit, 'A3L3', GetUnitAbilityLevel(PlayerHeroes[pid],'A0A8'))
+        if GetUnitAbilityLevel(PlayerHeroes[pid], 'A0A8')> 0 then
+            call UnitAddPermanentAbilitySetLevel(illusionUnit, 'A3L3', GetUnitAbilityLevel(PlayerHeroes[pid], 'A0A8'))
             call MHAbility_Disable(illusionUnit, 'A3L3', false, false)
         endif
         // 同步长大技能
-        if IsUnitScepterUpgraded(sourceUnit) and GetUnitTypeId(illusionUnit) == 'Ucrl' and GetUnitAbilityLevel(sourceUnit,'A2KK') > 0 then
+        if IsUnitScepterUpgraded(sourceUnit) and GetUnitTypeId(illusionUnit) == 'Ucrl' and GetUnitAbilityLevel(sourceUnit, 'A2KK') > 0 then
             // 小小模型有A就拿棒子
             call AddUnitAnimationProperties(illusionUnit, "upgrade", true)
         endif
         // 长大等级
-        if GetUnitAbilityLevel(sourceUnit,'A0CY')> 0 then
+        if GetUnitAbilityLevel(sourceUnit, 'A0CY')> 0 then
             //call SetUnitCurrentScaleEx(illusionUnit, GetUnitCurrentScale(sourceUnit))
             set Temp__Int = CreateTimerEventTrigger( .0, false, function Wait0sSetUnitScale ) 
             call SaveUnitHandle( HY, Temp__Int, 0, illusionUnit )
-            //call SaveReal( HY, Temp__Int, 1, 1 + .25 *  GetUnitAbilityLevel(sourceUnit,'A0CY') )
-            call SaveReal( ExtraHT, GetHandleId(illusionUnit), HTKEY_UNIT_CURRENT_ADDSCALE, GetUnitAbilityLevel(sourceUnit,'A0CY') * 0.25 )
+            //call SaveReal( HY, Temp__Int, 1, 1 + .25 *  GetUnitAbilityLevel(sourceUnit, 'A0CY') )
+            call SaveReal( ExtraHT, GetHandleId(illusionUnit), HTKEY_UNIT_CURRENT_ADDSCALE, GetUnitAbilityLevel(sourceUnit, 'A0CY') * 0.25 )
             // 模型缩放
             // call SetUnitCurrentScaleEx(illusionUnit, )
         endif

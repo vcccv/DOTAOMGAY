@@ -27,6 +27,27 @@ library PlayerSettingsLib requires PlayerUtils
             return true // this.teleportRequiresHoldOrStop
         endmethod
 
+        //***************************************************************************
+        //*
+        //*  界面 Interface
+        //*
+        //***************************************************************************
+        private boolean holdingALTShowsNeutralSpawnboxes
+        method IsHoldingALTShowsNeutralSpawnboxes takes nothing returns boolean
+            return true//this.holdingALTShowsNeutralSpawnboxes
+        endmethod
+        method EnableHoldingALTShowsNeutralSpawnboxes takes boolean enable returns nothing
+            set this.holdingALTShowsNeutralSpawnboxes = enable
+        endmethod
+
+        private boolean holdingALTShowsTowerAttackRange
+        method IsHoldingALTShowsTowerAttackRange takes nothing returns boolean
+            return true//this.holdingALTShowsTowerAttackRange
+        endmethod
+        method EnableHoldingALTShowsTowerAttackRange takes boolean enable returns nothing
+            set this.holdingALTShowsTowerAttackRange = enable
+        endmethod
+
     endstruct
 
 endlibrary

@@ -111,7 +111,7 @@ scope Earthshaker
         set duration    = .3 + .3 * level
         set damageValue = 50 + 25 * level
 
-        start_groupEnum(x, y, area)
+        start_group_enum(x, y, area)
 
         // 存活，敌对，非魔免，非无敌，非守卫，非建筑
         if IsUnitAlive(first) and IsUnitEnemy(u, GetOwningPlayer(first)) /*

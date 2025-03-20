@@ -59,7 +59,13 @@ library HeroSkillDefine requires SkillSystem, AbilityCustomOrderId
         // 余震
         call RegisterSkillInitMethodByIndex(SKILL_INDEX_AFTERSHOCK, "AftershockOnInitializer")
 
+        // 反击螺旋
+        call RegisterSkillInitMethodByIndex(SKILL_INDEX_COUNTER_HELIX, "CounterHelixOnInitializer")
         
+        // 勇气之霎
+        call RegisterSkillInitMethodByIndex(SKILL_INDEX_MOMENT_OF_COURAGE, "MomentOfCourageOnInitializer")
+
+
         // 601是init
         call SaveStr(ObjectHashTable, 'A060', 601, "W_A")
         call SaveStr(ObjectHashTable, 'A0LE', 601, "WYA")
@@ -90,7 +96,7 @@ library HeroSkillDefine requires SkillSystem, AbilityCustomOrderId
         call SaveStr(ObjectHashTable, 'A1A3', 600, "Z8A")
         call SaveStr(ObjectHashTable, 'A04E', 600, "Z9A")
         call SaveStr(ObjectHashTable, 'A0RO', 600, "VVN")
-        call SaveStr(ObjectHashTable, 'A0C6', 600, "VEN")
+        //call SaveStr(ObjectHashTable, 'A0C6', 600, "VEN")
         call SaveStr(ObjectHashTable, 'A0DZ', 600, "VXN")
         call SaveStr(ObjectHashTable, 'A332', 600, "VON")
         call SaveStr(ObjectHashTable, 'A01Z', 600, "VRN")
@@ -124,7 +130,7 @@ library HeroSkillDefine requires SkillSystem, AbilityCustomOrderId
         call SaveStr(ObjectHashTable, 'A0SS', 600, "V4N")
         call SaveStr(ObjectHashTable, 'A0MY', 600, "V5N")
         call SaveStr(ObjectHashTable, 'S008', 600, "V6N")
-        call SaveStr(ObjectHashTable, 'A2EY', 600, "V7N")
+        // call SaveStr(ObjectHashTable, 'A2EY', 600, "V7N")
         call SaveStr(ObjectHashTable, 'A2E4', 600, "V8N")
         call SaveStr(ObjectHashTable, 'A03S', 600, "V9N")
         call SaveStr(ObjectHashTable, 'Q0BK', 600, "EVN")
@@ -280,7 +286,7 @@ library HeroSkillDefine requires SkillSystem, AbilityCustomOrderId
         call RegisterPassiveSkill('P310', 'Q310', 'A0ES', 'B03Y', 'QP14', 'QP14')
         call RegisterPassiveSkill('P319', 'Q319', 'A0FU', 0, 'QP15', 'QP15')
         call RegisterPassiveSkill(0, 0, 'A0FA', 0, 'QP16', 'QP16')
-        call RegisterPassiveSkill('P327', 'Q327', 'A0C6', 'B03P', 'QP17', 'QP17')
+        call RegisterPassiveSkill('P327', 'Q327', 'A0C6', 'B03P', 0, 'A0C6')
         call RegisterPassiveSkill(0, 0, 'A0MG', 0, 'QP18', 0)
         call RegisterPassiveSkill('P338', 'Q338', 'A0FX', 0, 'QP19', 'QP19')
         call RegisterPassiveSkill('P347', 'Q347', 'A0IF', 'B06X', 'QP1A', 0)
@@ -297,7 +303,7 @@ library HeroSkillDefine requires SkillSystem, AbilityCustomOrderId
         call RegisterPassiveSkill(0, 0, 'A0QQ', 0, 'QP1L', 0)
         call RegisterPassiveSkill(0, 0, 'A0M3', 0, 'QP1M', 0)
         call RegisterPassiveSkill(0, 0, 'A0FV', 0, 'QP1N', 0)
-        call RegisterPassiveSkill(0, 0, 'A2EY', 0, 'QP1O', 0)
+        call RegisterPassiveSkill(0, 0, 'A2EY', 0, 0, 'A2EY')
         // call RegisterPassiveSkill(0, 0, 'A13T', 0, 'A522', 0)
         call RegisterPassiveSkill(0, 0, 'A2E4', 0, 'QP1P', 0)
         call RegisterPassiveSkill(0, 0, 'A03U', 0, 'QP1Q', 0)
@@ -798,8 +804,8 @@ library HeroSkillDefine requires SkillSystem, AbilityCustomOrderId
         set i = 55 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "steal"), 'A2JB', 0, 'Y217')
         call RegisterHeroSkill(i * 4 + 2, "", 'A2J2', 0, 'Y218')
-        call RegisterHeroSkill(i * 4 + 3, null, 'A2EY', 'QP1O', 'Y219')
-        set HeroSkill_IsPassive[i * 4 + 3] = true
+        call RegisterHeroSkill(SKILL_INDEX_MOMENT_OF_COURAGE, null, 'A2EY', 0, 'Y219')
+        set HeroSkill_IsPassive[SKILL_INDEX_MOMENT_OF_COURAGE] = true
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "autodispeloff"), 'A2CI', 'A38C', 'Y220')
         set i = 56 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, GetAbilityOrder('A2BE')), 'A2BE', 0, 'Y221')
@@ -1007,8 +1013,8 @@ library HeroSkillDefine requires SkillSystem, AbilityCustomOrderId
         set i = 82 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "dismount"), 'A0I6', 0, 'Y325')
         call RegisterHeroSkill(i * 4 + 2, "", 'A0S1', 0, 'Y326')
-        call RegisterHeroSkill(i * 4 + 3, null, 'A0C6', 'QP17', 'Y327')
-        set HeroSkill_IsPassive[i * 4 + 3] = true
+        call RegisterHeroSkill(SKILL_INDEX_COUNTER_HELIX, null, 'A0C6', 0, 'Y327')
+        set HeroSkill_IsPassive[SKILL_INDEX_COUNTER_HELIX] = true
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, GetAbilityOrder('A0E2')), 'A0E2', 'A1MR', 'Y328')
         set i = 83 - 1
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "farsight"), 'A44X', 0, 'Y61A')

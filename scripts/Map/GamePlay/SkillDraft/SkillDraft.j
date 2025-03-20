@@ -163,7 +163,7 @@ library SkillDraft requires SkillSystem
         set k = GetPassiveSkillIndexByLearnedId(tempAbilityId)
 
         set hotkey = GetAbilityIntegerFieldById(tempAbilityId, ABILITY_DEF_DATA_RESEARCH_HOTKEY)
-        if PassiveSkill_Learned[k] > 0 then
+        if PassiveSkill_Show[k] > 0 then
             call SetAbilityIconById(showSkillId, GetAbilityIconById(PassiveSkill_Show[k]))
         else
             call SetAbilityIconById(showSkillId, GetAbilityIconById(tempAbilityId))
@@ -192,67 +192,86 @@ library SkillDraft requires SkillSystem
         set showSkillId = 'ZT10' + skillSlot -1
 
         if CheckSkillOrderIdByIndex(skillIndex, -1, "melee only", null) then
-            call SetAbilityIconById(showSkillId, "ReplaceableTextures\\PassiveButtons\\PASBTNCleavingAttack.blp")
-            
-            set value = "|c00FF8080近战限定|r\n"
-            set value = value + "选择这个技能的话你将无法选择|c0080FF80远程限定|r和|c00FFFF00远程变身|r类技能。|n|n|c00FF0000你将只能选择近战英雄模型。|r"
-            
-            call SetAbilityExtendedTooltipyId(showSkillId, 1, value)
-            set success = true
 
+            if whichPlayer == GetLocalPlayer() then
+                call SetAbilityIconById(showSkillId, "ReplaceableTextures\\PassiveButtons\\PASBTNCleavingAttack.blp")
+                
+                set value = "|c00FF8080近战限定|r\n"
+                set value = value + "选择这个技能的话你将无法选择|c0080FF80远程限定|r和|c00FFFF00远程变身|r类技能。|n|n|c00FF0000你将只能选择近战英雄模型。|r"
+                
+                call SetAbilityExtendedTooltipyId(showSkillId, 1, value)
+            endif
+            
+            set success = true
         elseif CheckSkillOrderIdByIndex(skillIndex, -1, "range only", null) then
-            call SetAbilityIconById(showSkillId, "ReplaceableTextures\\PassiveButtons\\PASBTNImpalingBolt.blp")
-            
-            set value = "|c00FF8080远程限定|r\n"
-            set value = value + "选择这个技能的话你将无法选择|c00FF8080近战限定|r和|c00FF8000近战变身|r类技能。|n|n|c00FF0000你将只能选择远程英雄模型。|r"
-            
-            call SetAbilityExtendedTooltipyId(showSkillId, 1, value)
+
+            if whichPlayer == GetLocalPlayer() then
+                call SetAbilityIconById(showSkillId, "ReplaceableTextures\\PassiveButtons\\PASBTNImpalingBolt.blp")
+                
+                set value = "|c00FF8080远程限定|r\n"
+                set value = value + "选择这个技能的话你将无法选择|c00FF8080近战限定|r和|c00FF8000近战变身|r类技能。|n|n|c00FF0000你将只能选择远程英雄模型。|r"
+                
+                call SetAbilityExtendedTooltipyId(showSkillId, 1, value)
+            endif
+
             set success = true
-
-
         elseif CheckSkillOrderIdByIndex(skillIndex, -1, "melee morph", null) then
-            call SetAbilityIconById(showSkillId, "ReplaceableTextures\\PassiveButtons\\PASBTNBash.blp")
+
+            if whichPlayer == GetLocalPlayer() then
+                call SetAbilityIconById(showSkillId, "ReplaceableTextures\\PassiveButtons\\PASBTNBash.blp")
             
-            set value = "|c00FF8000近战变身|r\n"
-            set value = value + "选择这个技能的话你将无法选择|c0080FF80远程限定|r和|c00FFFF00远程变身|r类技能。"
-            
-            call SetAbilityExtendedTooltipyId(showSkillId, 1, value)
+                set value = "|c00FF8000近战变身|r\n"
+                set value = value + "选择这个技能的话你将无法选择|c0080FF80远程限定|r和|c00FFFF00远程变身|r类技能。"
+                
+                call SetAbilityExtendedTooltipyId(showSkillId, 1, value)
+            endif
+
             set success = true
-
-
         elseif CheckSkillOrderIdByIndex(skillIndex, -1, "range morph", null) then
-            call SetAbilityIconById(showSkillId, "ReplaceableTextures\\PassiveButtons\\PASBTNFlakCannons.blp")
-            
-            set value = "|c00FF8000远程变身|r\n"
-            set value = value + "选择这个技能的话你将无法选择|c00FF8080近战限定|r和|c00FF8000近战变身|r类技能。"
-            
-            call SetAbilityExtendedTooltipyId(showSkillId, 1, value)
-            set success = true
 
+            if whichPlayer == GetLocalPlayer() then
+                call SetAbilityIconById(showSkillId, "ReplaceableTextures\\PassiveButtons\\PASBTNFlakCannons.blp")
+            
+                set value = "|c00FF8000远程变身|r\n"
+                set value = value + "选择这个技能的话你将无法选择|c00FF8080近战限定|r和|c00FF8000近战变身|r类技能。"
+                
+                call SetAbilityExtendedTooltipyId(showSkillId, 1, value)
+            endif
+
+            set success = true
         endif
 
         if ( not Mode__BalanceOff and HeroSkill_BalanceOffDisabledTips[skillIndex] != null ) then
-            if value != "" then
-                set value = value + "\n\n"
+            if whichPlayer == GetLocalPlayer() then
+                if value != "" then
+                    set value = value + "\n\n"
+                endif
+                set value = value + "平衡改动(BO)：" + HeroSkill_BalanceOffDisabledTips[skillIndex]
+                call SetAbilityExtendedTooltipyId(showSkillId, 1, value)
             endif
-            set value = value + "平衡改动(BO)：" + HeroSkill_BalanceOffDisabledTips[skillIndex]
-            call SetAbilityExtendedTooltipyId(showSkillId, 1, value)
+            
             set success = true
         endif
         if ( not Mode__RearmCombos and HeroSkill_RearmCombosDisabledTips[skillIndex] != null ) then
-            if value != "" then
-                set value = value + "\n\n"
+            if whichPlayer == GetLocalPlayer() then
+                if value != "" then
+                    set value = value + "\n\n"
+                endif
+                set value = value + "平衡改动(RC)：" + HeroSkill_RearmCombosDisabledTips[skillIndex]
+                call SetAbilityExtendedTooltipyId(showSkillId, 1, value)
             endif
-            set value = value + "平衡改动(RC)：" + HeroSkill_RearmCombosDisabledTips[skillIndex]
-            call SetAbilityExtendedTooltipyId(showSkillId, 1, value)
+            
             set success = true
         endif
         if HeroSkill_Tips[skillIndex] != null then
-            if value != "" then
-                set value = value + "\n\n"
+            if whichPlayer == GetLocalPlayer() then
+                if value != "" then
+                    set value = value + "\n\n"
+                endif
+                set value = value + "注意：" + HeroSkill_Tips[skillIndex]
+                call SetAbilityExtendedTooltipyId(showSkillId, 1, value)
             endif
-            set value = value + "注意：" + HeroSkill_Tips[skillIndex]
-            call SetAbilityExtendedTooltipyId(showSkillId, 1, value)
+
             set success = true
         endif
 
@@ -271,37 +290,40 @@ library SkillDraft requires SkillSystem
         if sb == 0 then
             return false
         endif
-        set abilityId = 'ZT10' + skillSlot -1
 
-        set value = GetAbilityExtendedTooltipById(abilityId, 1)
-        if value == "" then
-            set value = "子技能："
-        else
-            set value = value + "\n\n子技能："
-        endif
+        if whichPlayer == GetLocalPlayer() then
+            set abilityId = 'ZT10' + skillSlot -1
 
-        set subAbilityCount = GetSkillSubAbilityCountByIndex(skillIndex)
-        if subAbilityCount > 0 then
-            set i = 1
-            loop
-                exitwhen i > subAbilityCount
-                set sb = GetSkillSubAbilityByIndex(skillIndex, i)
+            set value = GetAbilityExtendedTooltipById(abilityId, 1)
+            if value == "" then
+                set value = "子技能："
+            else
+                set value = value + "\n\n子技能："
+            endif
+
+            set subAbilityCount = GetSkillSubAbilityCountByIndex(skillIndex)
+            if subAbilityCount > 0 then
+                set i = 1
                 loop
-                    set hotkey = GetAbilityHotkeyById(sb.abilityId)
-                    if hotkey != 0 then
-                        set value = value + "\n第" + I2S(sb.index + 1) + "号子技能 - " + GetObjectName(sb.abilityId) + "[|cffffcc00" + Key2Str(hotkey) + "|r]"
-                    else
-                        set value = value + "\n第" + I2S(sb.index + 1) + "号子技能 - " + GetObjectName(sb.abilityId)
-                    endif
-                    set sb = sb.next
-                    exitwhen sb == 0
+                    exitwhen i > subAbilityCount
+                    set sb = GetSkillSubAbilityByIndex(skillIndex, i)
+                    loop
+                        set hotkey = GetAbilityHotkeyById(sb.abilityId)
+                        if hotkey != 0 then
+                            set value = value + "\n第" + I2S(sb.index + 1) + "号子技能 - " + GetObjectName(sb.abilityId) + "[|cffffcc00" + Key2Str(hotkey) + "|r]"
+                        else
+                            set value = value + "\n第" + I2S(sb.index + 1) + "号子技能 - " + GetObjectName(sb.abilityId)
+                        endif
+                        set sb = sb.next
+                        exitwhen sb == 0
+                    endloop
+                    
+                    set i = i + 1
                 endloop
-                
-                set i = i + 1
-            endloop
+            endif
+            
+            call SetAbilityExtendedTooltipyId(abilityId, 1, value)
         endif
-        
-        call SetAbilityExtendedTooltipyId(abilityId, 1, value)
 
         return true
     endfunction
@@ -364,10 +386,10 @@ library SkillDraft requires SkillSystem
                 call SetAbilityStringByMode(PickSkillDummyUnit[playerId], tempAbilityId) 	//根据模式更改技能文本
                 if GetLocalPlayer() == Player(playerId) then
                     call SetShowSkillDatas(currentSlot, startIndex + currentSlot)
+                    call SetAbilityIconById('ZT10' + currentSlot -1, "ReplaceableTextures\\CommandButtons\\BTNManual2.blp")
+                    call SetAbilityExtendedTooltipyId('ZT10' + currentSlot -1, 1, "")
                 endif
 
-                call SetAbilityIconById('ZT10' + currentSlot -1, "ReplaceableTextures\\CommandButtons\\BTNManual2.blp")
-                call SetAbilityExtendedTooltipyId('ZT10' + currentSlot -1, 1, "")
 
                 call UnitAddAbility(PickSkillDummyUnit[playerId], 'ZT00' + currentSlot -1)
                 if SetSkillExtraTipByIndex(whichPlayer, currentSlot, startIndex + currentSlot) then

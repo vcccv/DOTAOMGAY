@@ -9,7 +9,7 @@ library AbilityCustomCastType requires Base, SkillSystem, ScepterUpgradeSystem
     // 0 = 被动
     function SetAbilityCastType takes integer abilId, integer castType returns nothing
         static if DEBUG_MODE then
-            call ThrowError(not MHAbility_SetCastTypeEx(abilId, castType), "AbilityCustomCastType", "SetAbilityCastType", GetObjectName(abilId), abilId, "castType:" + I2S(castType) )
+            call ThrowError(not MHAbility_SetCastTypeEx(abilId, castType), "AbilityCustomCastType", "SetAbilityCastType", GetObjectName(abilId) + " " + Id2String(abilId), abilId, "castType:" + I2S(castType) )
         else
             call MHAbility_SetCastTypeEx(abilId, castType)
         endif
@@ -21,12 +21,10 @@ library AbilityCustomCastType requires Base, SkillSystem, ScepterUpgradeSystem
         local integer scepterUpgradeIndex
         
         set passiveIndex = GetPassiveSkillIndexByLearnedId(abilityId)
-        if passiveIndex != 0 then
-            call BJDebugMsg("!" + Id2String(PassiveSkill_Show[passiveIndex]) + GetObjectName(PassiveSkill_Show[passiveIndex]))
+        if passiveIndex != 0 and PassiveSkill_Show[passiveIndex] > 0 then
             call SetAbilityCastType(PassiveSkill_Show[passiveIndex], castType)
             return
         endif
-        call BJDebugMsg("2" + Id2String(abilityId) + GetObjectName(abilityId))
         set scepterUpgradeIndex = GetScepterUpgradeIndexById(abilityId)
         if scepterUpgradeIndex > 0 then
             call SetAbilityCastType(ScepterUpgrade_BaseId[scepterUpgradeIndex], castType)
@@ -69,10 +67,16 @@ library AbilityCustomCastType requires Base, SkillSystem, ScepterUpgradeSystem
         call SetAbilityCastType(SPIRITS_IN_ABILITY_ID , BERSERKER_CAST_TYPE)
         call SetAbilityCastType(SPIRITS_OUT_ABILITY_ID, BERSERKER_CAST_TYPE)
 
-        call SetAbilityCastTypeByIndex(SKILL_INDEX_TIDEBRINGER , PASSIVE_CAST_TYPE)
-        call SetAbilityCastTypeByIndex(SKILL_INDEX_PHANTOM_RUSH, PASSIVE_CAST_TYPE)
-        call SetAbilityCastTypeByIndex(SKILL_INDEX_AFTERSHOCK, PASSIVE_CAST_TYPE)
-
+        call SetAbilityCastTypeByIndex(SKILL_INDEX_TIDEBRINGER      , PASSIVE_CAST_TYPE)
+        call SetAbilityCastTypeByIndex(SKILL_INDEX_PHANTOM_RUSH     , PASSIVE_CAST_TYPE)
+        call SetAbilityCastTypeByIndex(SKILL_INDEX_AFTERSHOCK       , PASSIVE_CAST_TYPE)
+        call SetAbilityCastTypeByIndex(SKILL_INDEX_COUNTER_HELIX    , PASSIVE_CAST_TYPE)
+        call SetAbilityCastTypeByIndex(SKILL_INDEX_MOMENT_OF_COURAGE, PASSIVE_CAST_TYPE)
+        
+        call SetAbilityCastType(FLAKCANNON_UPGRADE_ABILITY_ID, PASSIVE_CAST_TYPE)
+        call SetAbilityCastType(STARFALL_UPGRADE_ABILITY_ID  , PASSIVE_CAST_TYPE)
+        
+        
         // 力量/敏捷转换
         // call SetAbilityCastType('A0KX', BERSERKER_CAST_TYPE)
         // call SetAbilityCastType('A0KW', BERSERKER_CAST_TYPE)

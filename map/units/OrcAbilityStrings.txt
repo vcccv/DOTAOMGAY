@@ -16160,7 +16160,9 @@ Tip=并列 - [|cffffcc00等级 1|r],并列 - [|cffffcc00等级 2|r],并列 - [|c
 ubertip=英雄攻击时有40%几率分裂出自己的幻象，幻象拥有8%的概率再次分裂。幻象持续8秒, 由幻象制造的幻象持续4秒。幻象拥有22%攻击并承受400%伤害。|n|n最多制造5个幻象|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,英雄攻击时有45%几率分裂出自己的幻象，幻象拥有8%的概率再次分裂。幻象持续8秒，由幻象制造的幻象持续4秒。幻象拥有22%攻击并承受400%伤害。|n|n最多制造7个幻象|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r,英雄攻击时有50%几率分裂出自己的幻象，幻象拥有8%的概率再次分裂。幻象持续8秒, 由幻象制造的幻象持续4秒。幻象拥有22%攻击并承受400%伤害。|n|n最多制造9个幻象|n|n|c00fffc01协同升级：根据协同的等级，提升幻象10/15/20/25%的魔法抗性|r
 requires=e00L
 [A0C6]
-art=ReplaceableTextures\CommandButtons\BTNfjlx
+requires=e00L
+buttonpos=2,2
+art=ReplaceableTextures\PassiveButtons\PASBTNfjlx
 researchart=ReplaceableTextures\CommandButtons\BTNfjlx
 researchbuttonpos=2,0
 targetart=Abilities\Spells\Orc\CommandAura\CommandAuraTarget.mdl 
@@ -16171,13 +16173,6 @@ Researchtip=学习 反击螺旋[|cffffcc00X|r] - [|cffffcc00等级 %d|r]|n(Count
 Researchubertip=在受到攻击时，斧王有20%的概率反手一击，对附近所有敌方单位造成伤害。|n|n|cffffcc00等级 1|r - 反击螺旋造成100点伤害，有0.45秒的最低间隔时间|n|cffffcc00等级 2|r - 反击螺旋造成135点伤害，有0.4秒的最低间隔时间|n|cffffcc00等级 3|r - 反击螺旋造成170点伤害，有0.35秒的最低间隔时间|n|cffffcc00等级 4|r - 反击螺旋造成205点伤害，有0.3秒的最低间隔时间|n|n|cFF00DC00物理伤害|r|n|n|cff99ccff作用范围：|r275
 Researchhotkey=X
 effectsoundlooped=ReplaceableTextures\PassiveButtons\PASBTNfjlx.blp
-[QP17]
-art=ReplaceableTextures\PassiveButtons\PASBTNfjlx
-buttonpos=2,2
-Name=反击螺旋
-Tip=反击螺旋 - [|cffffcc00等级 1|r],反击螺旋 - [|cffffcc00等级 2|r],反击螺旋 - [|cffffcc00等级 3|r],反击螺旋 - [|cffffcc00等级 4|r]
-Ubertip=受到攻击时有20%的概率对周围的敌军单位造成100点额外伤害。最多每0.45秒触发一次。|n|n|cFF00DC00物理伤害|r|n|n|cff99ccff作用范围：|r275,受到攻击时有20%的概率对周围的敌军单位造成135点额外伤害。最多每0.4秒触发一次。|n|n|cFF00DC00物理伤害|r|n|n|cff99ccff作用范围：|r275,受到攻击时有20%的概率对周围的敌军单位造成170点额外伤害。最多每0.35秒触发一次。|n|n|cFF00DC00物理伤害|r|n|n|cff99ccff作用范围：|r275,受到攻击时有20%的概率对周围的敌军单位造成205点额外伤害。最多每0.3秒触发一次。|n|n|cFF00DC00物理伤害|r|n|n|cff99ccff作用范围：|r275
-requires=e00L
 [A0C7]
 art=ReplaceableTextures\CommandButtons\BTN_BerserkerCall
 researchart=ReplaceableTextures\CommandButtons\BTN_BerserkerCall
@@ -22531,11 +22526,13 @@ requires=e00L
 [A2EY]
 art=ReplaceableTextures\PassiveButtons\BTNMomentOfCourage
 researchart=ReplaceableTextures\CommandButtons\BTNMomentOfCourage
+requires=e00L
+buttonpos=2,2
 researchbuttonpos=2
 Name=勇气之霎
 Tip=勇气之霎 - [|cffffcc00等级 1|r],勇气之霎 - [|cffffcc00等级 2|r],勇气之霎 - [|cffffcc00等级 3|r],勇气之霎 - [|cffffcc00等级 4|r]
 Ubertip=每当英雄遭到攻击时，他都有25%概率立即作出反击，并吸取此次攻击55%的生命。被英雄攻击时触发几率提升至35%。2.7秒内置冷却时间。,每当英雄遭到攻击时，他都有25%概率立即作出反击，并吸取此次攻击65%的生命。被英雄攻击时触发几率提升至35%。2.1秒内置冷却时间。,每当英雄遭到攻击时，他都有25%概率立即作出反击，并吸取此次攻击75%的生命。被英雄攻击时触发几率提升至35%。1.5秒内置冷却时间。,每当英雄遭到攻击时，他都有25%概率立即作出反击，并吸取此次攻击85%的生命。被英雄攻击时触发几率提升至35%。0.9秒内置冷却时间。
-Researchtip=学习 勇气之霎[|cffffcc00D|r] - [|cffffcc00等级 %d|r]|n(勇气之霎)
+Researchtip=学习 勇气之霎[|cffffcc00D|r] - [|cffffcc00等级 %d|r]|n|n(Moment of Courage)
 Researchubertip=每当英雄遭到攻击时，他都有25%概率立即作出反击（该攻击有额外的吸血效果）。被英雄攻击时触发几率提升至35%。|n|n|cffffcc00等级 1|r - 获得55%吸血，2.7秒内置冷却时间|n|cffffcc00等级 2|r - 获得65%吸血，2.1秒内置冷却时间|n|cffffcc00等级 3|r - 获得75%吸血，1.5秒内置冷却时间|n|cffffcc00等级 4|r - 获得85%吸血，0.9秒内置冷却时间
 researchhotkey=E
 effectsoundlooped=ReplaceableTextures\PassiveButtons\BTNMomentOfCourage.blp
@@ -25265,12 +25262,6 @@ tip="侧面机枪"
 ubertip="由阿哈利姆神杖提供。侧面机枪能在固定的时间间隔内发动随机性的即时攻击。它的攻击不影响正常攻击，不用瞄准目标，不会干扰英雄的其他操作，并能无视英雄的眩晕、控制、施法等状态。侧面机枪能触发任意的攻击效果。如果英雄被致盲了，侧面机枪也会被致盲，除非它拥有克敌机先效果，它的攻击也会被闪避效果所躲避。侧面机枪在英雄隐身时，或被破坏效果禁用后不会攻击。侧面机枪不会攻击守卫或信使，但能攻击建筑，且只会攻击英雄视野范围内的目标。|n|n|cff99ccff作用范围：|r700"
 buttonpos=1,0
 art=ReplaceableTextures\PassiveButtons\PASBTNFragmentationBombs
-[ANXL]
-art=ReplaceableTextures\PassiveButtons\BTNStarfall
-name="Starfall (aghanim)"
-tip="天幕坠落 - 神杖升级"
-ubertip="每12秒自动施放一次同等级的群星坠落，英雄隐身时不会触发"
-buttonpos=1,0
 [A0L0]
 art=ReplaceableTextures\CommandButtons\BTNAdvancedStrengthOfTheWild
 buttonpos=2,2
@@ -32576,11 +32567,8 @@ researchart=ReplaceableTextures\CommandButtons\BTNTornado
 buttonpos=0,-11
 animnames=stand,channel
 name="回城卷轴"
-Tip=回城卷轴
-Ubertip=召唤可以操控的龙卷风对周围150/600范围内的敌方单位造成每秒45/15点伤害，并降低其15/15%的攻击/移动速度。|n|n|cffff0303需要持续施法|r|n|cffff0303减速效果无视魔法免疫|r|n|n|cff99ccff施法距离：|r500|n|cff99ccff持续时间：|r30秒|n|cff99ccff冷却时间：|r120秒
-Researchtip=学习 龙卷风(|cffffcc00F|r)
-researchubertip="Summons a fierce controllable Tornado that slows enemy units' movement speed, randomly tosses enemy ground units into the air and damages enemy buildings.|nLasts seconds."
-researchhotkey=F
+Tip=回城卷轴,回城卷轴,回城卷轴
+Ubertip=经过3秒持续施法后传送到一个指定的友方建筑。|n|n双击将直接传送至己方泉水。|n|n|cffff0303需要持续施法|r|n|n|cff99ccff施法距离：|r全地图|n|cff99ccff冷却时间：|r70秒|n|cff99ccff第二次施法时间增加：|r2秒|n|cff99ccff之后施法时间增加：|r0.5秒,经过3秒持续施法后传送至除英雄及自有单位以外的任意友方单位或者建筑。|n|n双击将直接传送至己方泉水。|n|n|cffff0303需要持续施法|r|n|n|cff99ccff施法距离：|r全地图|n|cff99ccff冷却时间：|r45秒,经过3秒持续施法后传送至友方单位或英雄身边。|n|n双击将直接传送至己方泉水。|n|n|cffff0303需要持续施法|r|n|n|cff99ccff施法距离：|r全地图|n|cff99ccff冷却时间：|r45秒
 [A1RI]
 art=ReplaceableTextures\CommandButtons\BTNMetamorphosis
 researchart=ReplaceableTextures\CommandButtons\BTNMetamorphosis
