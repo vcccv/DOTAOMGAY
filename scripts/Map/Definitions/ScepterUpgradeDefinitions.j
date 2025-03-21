@@ -121,7 +121,7 @@ library ScepterUpgradeDefine requires ScepterUpgradeSystem
         set scepterUpgradeIndex = RegisterScepterUpgrade('A088', 0, 0, 0)
         call RegisterSkillScepterUpgradeMethod(scepterUpgradeIndex, "MultiCastOnGetScepterUpgrade", "MultiCastOnLostScepterUpgrade")
         
-        set scepterUpgradeIndex = RegisterScepterUpgrade('A085', 0, 0, 0)
+        // set scepterUpgradeIndex = RegisterScepterUpgrade('A085', 0, 0, 0)
         
         // 射手天赋
         set scepterUpgradeIndex = RegisterScepterUpgrade('QF88', 0, 0, 0)

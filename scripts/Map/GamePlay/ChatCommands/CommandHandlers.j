@@ -2,6 +2,9 @@ scope CommandHandlers
 
     // 封装一层，以便显示改键信息
     private function SetAbilityHotkeyByIdEx takes integer abilId, integer hotkey returns boolean
+        if abilId == 0 then
+            return false
+        endif
         if SetAbilityHotkeyById(abilId, hotkey) then
             call DisplayTextToPlayer(LocalPlayer, 0, 0, "|cff6699CC修改技能|r|cffffa500\"" + GetObjectName(abilId) + "\"|r|cff6699CC的快捷键为|r" + "[|cffffcc00" + Key2Str(hotkey) + "|r]")
             return true
