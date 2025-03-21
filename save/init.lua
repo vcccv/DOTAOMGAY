@@ -41,7 +41,7 @@ local function init()
 
     args = {}
     args[#args + 1] = ("copy")
-    args[#args + 1] = [["logs\\war3map.w3x"]]
+    args[#args + 1] = [["war3map.w3x"]]
     args[#args + 1] = [["logs\\temp.w3x"]]
     if not execute_cmd(args) then
         print("返回了2")
