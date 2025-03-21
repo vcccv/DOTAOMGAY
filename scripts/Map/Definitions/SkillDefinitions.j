@@ -781,7 +781,7 @@ library HeroSkillDefine requires SkillSystem, AbilityCustomOrderId
         call RegisterHeroSkill(i * 4 + 1, SaveSkillOrder(i * 4 + 1, "darkritual"), 'A0FW', 'A3OD', 'Y205')
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, GetAbilityOrder('A0GP')), 'A0GP', 0, 'Y206')
         call RegisterHeroSkill(i * 4 + 3, null, 'A0M3', 'QP1M', 'Y207')
-        //set HeroSkill_Disabled[i*4+3]=true
+        set HeroSkill_Disabled[i*4+3]=true
         set HeroSkill_IsPassive[i * 4 + 3] = true
         call RegisterHeroSkill(i * 4 + 4, null, 'A0FV', 'QP1N', 'Y208')
         set HeroSkill_IsPassive[i * 4 + 4] = true
