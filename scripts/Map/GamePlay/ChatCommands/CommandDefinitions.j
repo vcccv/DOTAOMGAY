@@ -17,7 +17,7 @@ library CommandDefinitions requires ChatCommands
         //call ResgiterSimpleCommand("-nh", "T0O")
         call ResgiterSimpleCommand("-mc", "ERI")
     
-        call ResgiterSimpleCommand("-debug", "GetGroupList")
+       // call ResgiterSimpleCommand("-debug", "GetGroupList")
     
         //call ResgiterSimpleCommand("-ocrl", "Ocrl")
     

@@ -23699,8 +23699,10 @@ function GENGXINGRIZHI takes nothing returns nothing
 		call PlaySoundBJ(WEIGOUCHILE)
 		set t = CreateTimer()
 		call TimerStart(t, 80.00, false, function BEJUHUACHILE)
+		call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, "更新日志真的喂狗吃了")
 	endif
 	set t = null
+	return
 	if GetTriggerPlayer() == LocalPlayer and not IsReplayMode then
 		set UpdateLogIsShow = true
 		call DzFrameShow(UIFrame__UpdateLog, true)
