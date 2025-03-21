@@ -15,18 +15,23 @@ library UnitWeapon requires Base, UnitUtils, UnitStateBonus
 
         // 暴击则看情况激活
         if baseId == 'AOcr' or baseId == 'ANdb' then
-            
-           // call BJDebugMsg("目标允许：" + MHMath_ToHex(GetAbilityTargetAllow(whichAbility)))
-            if MHUnit_CheckTargetAllow(AttackReadySource, AttackReadyTarget, GetAbilityTargetAllow(whichAbility)) then
+            // 手动排列允许的暴击，等到完全重构暴击实现再说
+            if (      abilId == 'P047'   /* 剑舞
+                */ or abilId == 'P240'   /* 恩赐解脱
+                */ or abilId == 'P119'   /* 醉拳
+                */ or abilId == 'A1OY'   /* 头狼暴击
+                */ or abilId == 'AOcr'   /* 致命一击(骷髅王) 
+                */ or abilId == 'A09O'   /* 暴雪弩炮
+                */ or abilId == 'A207' ) /* 水晶剑
+                
+                */ and MHUnit_CheckTargetAllow(AttackReadySource, AttackReadyTarget, GetAbilityTargetAllow(whichAbility)) then
                 set probability = R2I(GetAbilityRealLevelFieldById(abilId, GetAbilityLevel(whichAbility), ABILITY_LEVEL_DEF_DATA_DATA_A))
-             //   call BJDebugMsg("目标允许过了,probability:" + I2S(probability))
+
                 if GetUnitPseudoRandom(AttackReadySource, abilId, probability) then
-              //      call BJDebugMsg("加了")
                     call AbilityAdd0x20Flag(whichAbility, 0x200)
-                else
-               //     call BJDebugMsg("没了")
-                    call AbilityRemove0x20Flag(whichAbility, 0x200)
                 endif
+            else
+                call AbilityRemove0x20Flag(whichAbility, 0x200)
             endif
 
         endif

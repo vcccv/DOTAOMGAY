@@ -597,6 +597,7 @@ library HeroSkillDefine requires SkillSystem, AbilityCustomOrderId
         call RegisterHeroSkill(i * 4 + 1, "", 'A06M', 0, 'Y117')
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "drunkenhaze"), 'Acdh', 0, 'Y118')
         call RegisterHeroSkill(i * 4 + 3, null, 'A0MX', 'QP0H', 'Y119')
+  
         set HeroSkill_IsPassive[i * 4 + 3] = true
         call SaveSkillOrderInBalanceOffDisabled(i * 4 + 3, "ET-Drunken")
         call SaveSkillOrderInBalanceOffDisabled(i * 4 + 3, "Tide-Drunken")
@@ -610,7 +611,7 @@ library HeroSkillDefine requires SkillSystem, AbilityCustomOrderId
         set i = 32 - 1
         call RegisterHeroSkill(i * 4 + 1, "", 'A004', 0, 'Y125')
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "nagabuild")+ SaveSkillOrder(i * 4 + 2, "r9"), 'A1IQ', 0, 'Y126')
-        call SaveSkillOrder(i * 4 + 2, "NMSLSB")
+  
         if (not Mode__RearmCombos) then
             set s = SaveSkillOrder(i * 4 + 2, "HXshuidaorenshu")
         endif
@@ -842,7 +843,7 @@ library HeroSkillDefine requires SkillSystem, AbilityCustomOrderId
 
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 4, "bash")+ "", 'A0WQ', 0, 'Y236')
         set i = 60 - 1
-        call SaveSkillOrder(SKILL_INDEX_STIFLING_DAGGER, "NMSLSB")
+        
         call RegisterHeroSkill(SKILL_INDEX_STIFLING_DAGGER, SaveSkillOrder(i * 4 + 1, "summonphoenix"), 'A0YM', 0, 'Y237')
         call RegisterHeroSkill(i * 4 + 2, SaveSkillOrder(i * 4 + 2, "deathcoil"), 'A0PL', 0, 'Y238')
         call RegisterHeroSkill(i * 4 + 3, null, 'A03P', 'QP0R', 'Y239')
@@ -1211,7 +1212,7 @@ library HeroSkillDefine requires SkillSystem, AbilityCustomOrderId
         set HeroSkill_HasMultipleAbilities[SKILL_INDEX_ROLLING_BOULDER] = true
 
         call RegisterHeroSkill(SKILL_INDEX_GEOMAGNETIC_GRIP, "", 'A2QI', 0, 'Y445')
-        call HeroSkillAddSubAbilitiesById(SKILL_INDEX_ROLLING_BOULDER, EARTH_SPIRIT_STONE_REMNANT)
+        call HeroSkillAddSubAbilitiesById(SKILL_INDEX_GEOMAGNETIC_GRIP, EARTH_SPIRIT_STONE_REMNANT)
         set HeroSkill_HasMultipleAbilities[SKILL_INDEX_GEOMAGNETIC_GRIP] = true
 
         call RegisterHeroSkill(SKILL_INDEX_MAGNETRIZE, "", 'A2TI', 0, 'Y446')

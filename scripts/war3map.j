@@ -967,7 +967,7 @@ globals
 	trigger PN
 	integer array U4
 	integer array W4
-	integer array Y4
+	integer array BuyBackRequireGoldList
 	weathereffect Z4 = null
 	weathereffect V5 = null
 	weathereffect E5 = null
@@ -2986,7 +2986,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A064', 4, "LHE")
 	call SaveStr(ObjectHashTable,'A1P8', 4, "LKE")
 	call SaveStr(ObjectHashTable,'A21L', 4, "WhirlingAxesOnLearn")
-	call SaveStr(ObjectHashTable,'A0I8', 4, "StrygwyrThirstOnLearn")
+	call SaveStr(ObjectHashTable,'A0I8', 4, "StrygwyrThirstOnGet")
 	call SaveStr(ObjectHashTable,'A0CZ', 4, "LPE")
 	// call SaveStr(ObjectHashTable,'A0AK', 4, "RemoteMinesOnLearn")
 	// call SaveStr(ObjectHashTable,'A1FY', 4, "RemoteMinesOnLearn")
@@ -3012,7 +3012,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A0M3', 4, "MXE")
 	call SaveStr(ObjectHashTable,'A06B', 4, "MOE")
 	call SaveStr(ObjectHashTable,'A471', 4, "MOE")
-	call SaveStr(ObjectHashTable,'A01N', 4, "HeartstopperAuraOnLearn")
+	call SaveStr(ObjectHashTable,'A01N', 4, "HeartstopperAuraOnGet")
 	call SaveStr(ObjectHashTable,'A0BR', 4, "MNE")
 	call SaveStr(ObjectHashTable,'A03P', 4, "MBE")
 	call SaveStr(ObjectHashTable,'A06D', 4, "MCE")
@@ -3090,8 +3090,8 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A04E', 1000, "MDE")
 	call SaveStr(ObjectHashTable,'A06D', 1000, "MCE")
 	call SaveStr(ObjectHashTable,'A03P', 1000, "MBE")
-	call SaveStr(ObjectHashTable,'A01N', 1000, "HeartstopperAuraOnLearn")
-	call SaveStr(ObjectHashTable,'A0I8', 1000, "StrygwyrThirstOnLearn")
+	call SaveStr(ObjectHashTable,'A01N', 1000, "HeartstopperAuraOnGet")
+	call SaveStr(ObjectHashTable,'A0I8', 1000, "StrygwyrThirstOnGet")
 	call SaveStr(ObjectHashTable,'A06B', 1000, "MOE")
 	call SaveStr(ObjectHashTable,'A1IQ', 1000, "P4E")
 	call SaveStr(ObjectHashTable,'A524', 1000, "P4E")
@@ -9222,9 +9222,11 @@ function QueuedTopMsgRemoveByIndex takes integer i returns nothing
 	set newtrg = null
 endfunction
 
-//设置顶部消息
+// 设置顶部消息
 function SetTopMessageText takes string s, real time returns nothing
 	local integer i = 5
+	// ui系统重构之前的权宜之计
+	call DisplayTimedTextToAllPlayer(AllPlayerForce, time, s)
 	return
 	if TopMessageTextTrg[6] != null then
 		call QueuedTopMsgRemoveByIndex(1)
@@ -11060,6 +11062,7 @@ function U7X takes nothing returns nothing
 			call DisplayTimedTextToAllPlayer(AllPlayerForce, DisplayTextDuration[LocalPlayerId], WHX + WCX)
 		endif
 		set PlayersReliableGold[WOX] = PlayersReliableGold[WOX] + WIX
+		// 击杀钱奖励
 		call B8X(WEX, WIX, U9X)
 		set PlayerKillHeroBonus[WOX] = PlayerKillHeroBonus[WOX] + WIX
 		if FS[1]> 4 then
@@ -11069,12 +11072,13 @@ function U7X takes nothing returns nothing
 			call TYX(1)
 		endif
 	endif
-	set WAX = GetHeroLevel(U9X)* 30
 	if GetItemOfTypeFromUnit(U9X, ItemRealId[Item_Bloodstone]) != null then
 		if GetItemCharges(GetItemOfTypeFromUnit(U9X, ItemRealId[Item_Bloodstone]))> 0 then
 			set WQX =-1 *(3 * GetItemCharges(GetItemOfTypeFromUnit(U9X, ItemRealId[Item_Bloodstone])))
 		endif
 	endif
+	// 死亡会掉英雄等级*30的钱 但不会掉超出可靠金钱的部分
+	set WAX = GetHeroLevel(U9X)* 30
 	if WAX > WYX then
 		set WAX = WYX
 	endif
@@ -12441,10 +12445,11 @@ function VDO takes nothing returns nothing
 				call ReviveHero(PlayerHeroes[pid], GetUnitX(u), GetUnitY(u), true)
 				call VCO(PlayerHeroes[pid], r)
 				call SetUnitState(PlayerHeroes[pid], UNIT_STATE_MANA, 10000)
-				set PlayersReliableGold[pid] = IMaxBJ(0, PlayersReliableGold[pid]-Y4[GetBuybackGoldCostByLevel(GetHeroLevel(PlayerHeroes[GetPlayerId(GetOwningPlayer(GetSellingUnit()))]))])
+				// 扣掉可靠金钱
+				set PlayersReliableGold[pid] = IMaxBJ(0, PlayersReliableGold[pid]-BuyBackRequireGoldList[GetBuybackGoldCostByLevel(GetHeroLevel(PlayerHeroes[GetPlayerId(GetOwningPlayer(GetSellingUnit()))]))])
 				call KYX(p)
 			else
-				call SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD) + Y4[GetBuybackGoldCostByLevel(GetHeroLevel(PlayerHeroes[GetPlayerId(GetOwningPlayer(GetSellingUnit()))]))])
+				call SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD) + BuyBackRequireGoldList[GetBuybackGoldCostByLevel(GetHeroLevel(PlayerHeroes[GetPlayerId(GetOwningPlayer(GetSellingUnit()))]))])
 				if UF[pid] then
 					call InterfaceErrorForPlayer(p, "因死神镰刀的诅咒无法买活")
 				endif
@@ -13520,7 +13525,7 @@ function XLO takes unit whichUnit, item whichItem returns boolean
 		
 		// 是臂章物品，并且已经有相关物品了。
 		// 只能有一个臂章
-		call BJDebugMsg("提示了啊")
+		//call BJDebugMsg("提示了啊")
 		call InterfaceErrorForPlayer(GetOwningPlayer(tempUnit), GetObjectName('n02C'))
 		set TempPlayer = GetItemPlayer(whichItem)
 		call RemoveItem(whichItem)
@@ -13657,7 +13662,7 @@ function XSO takes unit whichUnit, item whichItem returns boolean
 			set newIndex = Item_GemOfTrueSight_CourierEdition
 			set disableState = true
 		endif
-		call BJDebugMsg(I2S(newIndex))
+		//call BJDebugMsg(I2S(newIndex))
 		if newIndex != 0 then
 			set TempPlayer = GetItemPlayer(tempItem)
 			call SilentRemoveItem(tempItem)
@@ -13677,7 +13682,7 @@ endfunction
 function XYO takes unit whichUnit, item whichItem returns boolean
 	// 是有信使版本物品(可用) 或 真视宝石物品(禁用)
 	if IsItemCourierEditionByIndex(GetItemIndex(whichItem)) or IsItemGemOfTrueSightByIndex(GetDisabledItemIndex(whichItem)) then
-		call BJDebugMsg("我开始操作了你知道吗？")
+		//call BJDebugMsg("我开始操作了你知道吗？")
 		return XSO(whichUnit, whichItem)
 	endif
 	return false
@@ -21431,7 +21436,7 @@ function LBO takes nothing returns nothing
 		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemValueColor(mbt, LFO, LGO, LHO, LJO)
 		call MultiboardSetItemStyle(mbt, true, false)
-		call MultiboardSetItemValue(mbt,(I2S(Y4[GetBuybackGoldCostByLevel(GetHeroLevel(PlayerHeroes[GetPlayerId((K0O[i]))]))])))
+		call MultiboardSetItemValue(mbt,(I2S(BuyBackRequireGoldList[GetBuybackGoldCostByLevel(GetHeroLevel(PlayerHeroes[GetPlayerId((K0O[i]))]))])))
 		call MultiboardSetItemWidth(mbt, .07)
 		call MultiboardReleaseItem(mbt)
 		set i = i + 1
@@ -21443,7 +21448,7 @@ function LBO takes nothing returns nothing
 		set mbt = MultiboardGetItem(ObserverMultiboard, K2O, K3O)
 		call MultiboardSetItemValueColor(mbt, LFO, LGO, LHO, LJO)
 		call MultiboardSetItemStyle(mbt, true, false)
-		call MultiboardSetItemValue(mbt,(I2S(Y4[GetBuybackGoldCostByLevel(GetHeroLevel(PlayerHeroes[GetPlayerId(K1O[i])]))])))
+		call MultiboardSetItemValue(mbt,(I2S(BuyBackRequireGoldList[GetBuybackGoldCostByLevel(GetHeroLevel(PlayerHeroes[GetPlayerId(K1O[i])]))])))
 		call MultiboardSetItemWidth(mbt, .07)
 		call MultiboardReleaseItem(mbt)
 		set i = i + 1
@@ -63439,12 +63444,14 @@ function OPO takes nothing returns nothing
 	call RegisterUnitAttackFunc("TPA", 2)
 endfunction
 function TTA takes unit u, unit target, real damage returns nothing
+	set Event.INDEX = Event.INDEX + 1
 	set DESource = u
 	set DETarget = target
 	set DEDamage = damage
 	set EO = GetHandleId(GetTriggeringTrigger())
 	call ExecuteAttackEvent(0)
 	if not LoadBoolean(HY, EO, 10) then	//攻击者非英雄，非熊灵则返回
+		set Event.INDEX = Event.INDEX - 1
 		return
 	endif
 	call ExecuteAttackEvent(1)	
@@ -63458,6 +63465,7 @@ function TTA takes unit u, unit target, real damage returns nothing
 			endif
 		endif
 	endif
+	set Event.INDEX = Event.INDEX - 1
 endfunction
 // 大部分的攻击特效遍历在这
 function TUA takes nothing returns nothing
@@ -63544,6 +63552,7 @@ function TZA takes unit attackerUnit, unit targetUnit, boolean isAbility returns
 	local trigger t
 	local integer h
 	local timer tt
+	set Event.INDEX = Event.INDEX + 1
 	set DESource = attackerUnit
 	set DETarget = targetUnit
 	set PV = isAbility
@@ -63551,6 +63560,7 @@ function TZA takes unit attackerUnit, unit targetUnit, boolean isAbility returns
 	call ExecuteAttackEvent(-1)
 	// 是玩家单位 或者 有吸血光环 则继续 否则返回
 	if not(IsPlayerValid(GetOwningPlayer(attackerUnit)) or IsPlayerValid(GetOwningPlayer(targetUnit)) or(EE and(GetUnitAbilityLevel(attackerUnit,'BVA1') == 1 or GetUnitAbilityLevel(attackerUnit,'BVA2') == 1 or GetUnitAbilityLevel(attackerUnit,'BVA3') == 1 or GetUnitAbilityLevel(attackerUnit,'BVA4') == 1)) or(EV and GetUnitAbilityLevel(attackerUnit,'B07O') == 1)) then
+		set Event.INDEX = Event.INDEX - 1
 		return
 	endif
 	if HaveSavedHandle(ObjectHashTable, GetHandleId(attackerUnit), GetHandleId(targetUnit)) then
@@ -63600,6 +63610,7 @@ function TZA takes unit attackerUnit, unit targetUnit, boolean isAbility returns
 	if IsUnitType(attackerUnit, UNIT_TYPE_HERO) then
 		call ExecuteAttackEvent(-2)
 	endif
+	set Event.INDEX = Event.INDEX - 1
 	call TimerStart(tt, 4, false, null)
 	call SaveBoolean(HY, h, 0, isAbility)
 	set tt = null
@@ -66250,7 +66261,7 @@ endfunction
 function Z1A takes integer id returns nothing
 	set SR = SR + 1
 	set U4[SR] = id
-	set Y4[SR] = 50 * SR + 50
+	set BuyBackRequireGoldList[SR] = 50 * SR + 50
 endfunction
 function InitBuyBack takes nothing returns nothing
 	call Z1A('h09G')

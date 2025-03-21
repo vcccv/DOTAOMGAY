@@ -50,10 +50,10 @@ library UnitIllusion requires UnitUtils, UnitWeapon, UnitMorph, BuffSystem
             if PassiveSkill_Real[i]=='P084' then
                 set lv = GetUnitAbilityLevel(sourceUnit, 'A0DB')
             endif
+            
             if lv > 0 then
                 if PassiveSkill_SpellBook[i]> 0 or PassiveSkill_Real[i]> 0 then
                     call UnitAddPermanentAbility(illusionUnit, PassiveSkill_SpellBook[i])
-
                     call UnitMakeAbilityPermanent(illusionUnit, true, PassiveSkill_Real[i])
                     call UnitEnableAbility(illusionUnit, PassiveSkill_Real[i], true)
 

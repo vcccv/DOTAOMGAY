@@ -88,9 +88,9 @@ library MemoryUtils initializer Init
             set pData = pData + 0x20
             
             if pData > 0 then
-                call BJDebugMsg("改之前"+MHMath_ToHex(ReadRealMemory(pData)))
+                //call BJDebugMsg("改之前"+MHMath_ToHex(ReadRealMemory(pData)))
                 call WriteRealMemory(pData, MHMath_AddBit(ReadRealMemory(pData), bit))
-                call BJDebugMsg("改之后"+MHMath_ToHex(ReadRealMemory(pData)))
+                //call BJDebugMsg("改之后"+MHMath_ToHex(ReadRealMemory(pData)))
             endif
         endif
     endfunction

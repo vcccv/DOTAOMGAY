@@ -24264,11 +24264,11 @@ animnames=spell,channel
 researchart=ReplaceableTextures\CommandButtons\BTNOrbOfLightning
 Name=启明
 Tip=启明[|cffffcc00T|r] - [|cffffcc00等级 1|r],启明[|cffffcc00T|r] - [|cffffcc00等级 2|r],启明[|cffffcc00T|r] - [|cffffcc00等级 3|r],启明[|cffffcc00T|r] - [|cffffcc00等级 4|r]
-Ubertip=将正相魔法积聚成球，每秒向其中凝聚100点|cff6495ed魔法伤害|r。最大凝聚时间2秒。释放时对一条直线上的所有敌人造成伤害，同时回复友军75%技能伤害的生命。|n|n|cff99ccff作用范围：|r350|n|cff99ccff施法距离：|r2000|n|cff99ccff冷却时间：|r10,将正相魔法积聚成球，每秒向其中凝聚100点|cff6495ed魔法伤害|r。最大凝聚时间3秒。释放时对一条直线上的所有敌人造成伤害。|n|n|cff99ccff作用范围：|r350|n|cff99ccff施法距离：|r2000|n|cff99ccff冷却时间：|r10,将正相魔法积聚成球，每秒向其中凝聚100点|cff6495ed魔法伤害|r。最大凝聚时间4秒。释放时对一条直线上的所有敌人造成伤害。|n|n|cff99ccff作用范围：|r350|n|cff99ccff施法距离：|r2000|n|cff99ccff冷却时间：|r10,将正相魔法积聚成球，每秒向其中凝聚100点|cff6495ed魔法伤害|r。最大凝聚时间5秒。释放时对一条直线上的所有敌人造成伤害。|n|n|cff99ccff作用范围：|r350|n|cff99ccff施法距离：|r2000|n|cff99ccff冷却时间：|r10
+Ubertip=将正相魔法积聚成球，每秒向其中凝聚100点|cff6495ed魔法伤害|r。最大凝聚时间2秒。释放时对一条直线上的所有敌人造成伤害。|n|n|cff99ccff作用范围：|r350|n|cff99ccff施法距离：|r2000|n|cff99ccff冷却时间：|r10|n|n|c00fffc01神杖升级：启明会治疗友军，治疗的值同等于伤害值。|r,将正相魔法积聚成球，每秒向其中凝聚100点|cff6495ed魔法伤害|r。最大凝聚时间3秒。释放时对一条直线上的所有敌人造成伤害。|n|n|cff99ccff作用范围：|r350|n|cff99ccff施法距离：|r2000|n|cff99ccff冷却时间：|r10|n|n|c00fffc01神杖升级：启明会治疗友军，治疗的值同等于伤害值。|r,将正相魔法积聚成球，每秒向其中凝聚100点|cff6495ed魔法伤害|r。最大凝聚时间4秒。释放时对一条直线上的所有敌人造成伤害。|n|n|cff99ccff作用范围：|r350|n|cff99ccff施法距离：|r2000|n|cff99ccff冷却时间：|r10|n|n|c00fffc01神杖升级：启明会治疗友军，治疗的值同等于伤害值。|r,将正相魔法积聚成球，每秒向其中凝聚100点|cff6495ed魔法伤害|r。最大凝聚时间5秒。释放时对一条直线上的所有敌人造成伤害。|n|n|cff99ccff作用范围：|r350|n|cff99ccff施法距离：|r2000|n|cff99ccff冷却时间：|r10|n|n|c00fffc01神杖升级：启明会治疗友军，治疗的值同等于伤害值。|r
 Hotkey=T
 Researchhotkey=T
 Researchtip=学习 启明[|cffffcc00T|r] - [|cffffcc00等级 %d|r]|n(Illuminate)
-Researchubertip=将正相魔法积聚成球，每秒向其中凝聚100点|cff6495ed魔法伤害|r。释放时对一条直线上的所有敌人造成伤害。|n|n|cff99ccff作用范围：|r350|n|cff99ccff施法距离：|r2000|n|cff99ccff冷却时间：|r10|n|cff99ccff魔法消耗：|r150/160/170/180|n|n|cffffcc00等级 1|r - 最大凝聚时间2秒|n|cffffcc00等级 2|r - 最大凝聚时间3秒|n|cffffcc00等级 3|r - 最大凝聚时间4秒|n|cffffcc00等级 4|r - 最大凝聚时间5秒
+Researchubertip=将正相魔法积聚成球，每秒向其中凝聚100点|cff6495ed魔法伤害|r。释放时对一条直线上的所有敌人造成伤害。|n|n|cff99ccff作用范围：|r350|n|cff99ccff施法距离：|r2000|n|cff99ccff冷却时间：|r10|n|cff99ccff魔法消耗：|r150/160/170/180|n|n|cffffcc00等级 1|r - 最大凝聚时间2秒|n|cffffcc00等级 2|r - 最大凝聚时间3秒|n|cffffcc00等级 3|r - 最大凝聚时间4秒|n|cffffcc00等级 4|r - 最大凝聚时间5秒|n|n|c00fffc01神杖升级：启明会治疗友军，治疗的值同等于伤害值。|r
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNOrbOfLightning.blp
 [A089]
 art=ReplaceableTextures\CommandButtons\BTNhybh

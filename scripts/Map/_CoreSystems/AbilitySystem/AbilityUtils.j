@@ -209,7 +209,7 @@ library AbilityUtils requires Table, Base
 
     // SpellEffect事件限定, ANcl的dataA
     function SetAbilityANclCastDurationInSpellEffect takes ability whichAbility, real duration returns nothing
-        call BJDebugMsg(Id2String(GetAbilityBaseId(whichAbility)))
+        // call BJDebugMsg(Id2String(GetAbilityBaseId(whichAbility)))
         if GetAbilityBaseId(whichAbility) == 'ANcl' then
             call MHAbility_SetAbilityCustomLevelDataReal(whichAbility, GetAbilityLevel(whichAbility), ABILITY_LEVEL_DEF_DATA_DATA_A, duration)
         endif

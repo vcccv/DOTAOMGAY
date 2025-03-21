@@ -3,6 +3,7 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility
     globals
         private trigger SkillTrig
         private trigger ItemTrig
+        private trigger BuyBackTrig
 
         private integer array ItemButton
         private integer array SkillButton
@@ -488,6 +489,42 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility
         endif
     endfunction
 
+    globals
+        constant string BUYBACK_READY        = "买活 > 准备就绪"
+        constant string BUYBACK_REQUIRE_GOLD = "买活 > 钱不够（还需要$requireGold$黄金）"
+    endglobals
+    private function OnBuyBackPing takes nothing returns nothing
+        local string  msg     
+        local integer heroLevel
+        local integer canLostGold        
+        local integer deathLostGold
+        local integer requireGold
+        local integer gold
+
+        set heroLevel   = GetHeroLevel(PlayerHeroes[User.LocalId])
+        set canLostGold = GetPlayerState(User.Local, PLAYER_STATE_RESOURCE_GOLD) - PlayersReliableGold[User.LocalId]
+
+        set deathLostGold = heroLevel * 30
+        if deathLostGold > canLostGold then
+            set deathLostGold = canLostGold
+        endif
+
+        set requireGold = BuyBackRequireGoldList[GetBuybackGoldCostByLevel(heroLevel)]
+
+        set gold = ( GetPlayerState(User.Local, PLAYER_STATE_RESOURCE_GOLD) - deathLostGold ) - requireGold
+
+        if gold >= 0 then
+            set msg = BUYBACK_READY
+        else
+            set msg = BUYBACK_REQUIRE_GOLD
+            set msg = MHString_Replace(msg, "$requireGold$", I2S(IAbsBJ(gold)))
+        endif
+
+        if msg != null then
+            call PlayerChat.SendChatToAlliedPlayers(msg)
+        endif
+    endfunction
+
     private function OnSkillButtonPing takes integer skillButton returns nothing
         local unit    whichUnit = MHPlayer_GetSelectUnit()
         local integer abilId 
@@ -531,7 +568,6 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility
         return false
     endfunction
     
-
     private function OnClickItemButton takes nothing returns boolean
         local integer itemButton = MHEvent_GetFrame()
         local integer itemSlot   = GetItemButtonIndex(itemButton)
@@ -544,6 +580,14 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility
             call MHEvent_SetKey(-1)
         endif
         /*  MHUIData_GetCommandButtonItem(itemButton)*/ 
+        return false
+    endfunction
+
+    private function OnClickGoldCover takes nothing returns boolean
+        if MHMsg_IsKeyDown(OSKEY_ALT) and MHEvent_GetKey() == 1 then
+            call OnBuyBackPing()
+            call MHEvent_SetKey(-1)
+        endif
         return false
     endfunction
 
@@ -581,6 +625,10 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility
             call MHFrameEvent_Register(ItemTrig, ItemButton[i], EVENT_ID_FRAME_MOUSE_CLICK)
             set i = i + 1
         endloop
+
+        set BuyBackTrig = CreateTrigger()
+        call TriggerAddCondition(BuyBackTrig, Condition(function OnClickGoldCover))
+        call MHFrameEvent_Register(BuyBackTrig, MHUI_GetResourceBarCover(1), EVENT_ID_FRAME_MOUSE_CLICK)
     endfunction
 
 endlibrary

@@ -43,7 +43,7 @@ scope Necrolyte
         set g = null
         set whichUnit = null
     endfunction
-    function HeartstopperAuraOnLearn takes nothing returns nothing
+    function HeartstopperAuraOnGet takes nothing returns nothing
         local timer t = CreateTimer()
         call TimerStart(t, .5, true, function HeartstopperAuraOnUpdate)
         call SaveUnitHandle(HY, GetHandleId(t), 'A01N', GetTriggerUnit())

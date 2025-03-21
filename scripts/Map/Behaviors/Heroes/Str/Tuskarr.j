@@ -255,7 +255,7 @@ scope Tuskarr
             call TriggerRegisterTimerEvent(t, 3, false)
             call SaveBoolean(HY, h, 110, true)
 
-            call BJDebugMsg("那再等等吧")
+            //call BJDebugMsg("那再等等吧")
             set t = null
             set u = null
             set eff = null
@@ -273,7 +273,7 @@ scope Tuskarr
         call FlushChildHashtable(HY, h)
         call DestroyTrigger(t)
         
-        call BJDebugMsg("删除了啊")
+        //call BJDebugMsg("删除了啊")
 
         set t = null
         set u = null
@@ -307,14 +307,12 @@ scope Tuskarr
 
     function WalrusPunchOnLaunch takes nothing returns nothing
         local trigger trig
-        call BJDebugMsg("Launch!!!!")
         if GetUnitAbilityLevel(DESource, 'A1UL') > 0 and MHAbility_IsFlag(DESource, 'A1UL', 0x200) then
             set trig = Table[GetHandleId(DESource)].trigger[WALRUS_PUNCH_KEY]
             if trig != null then
-                call BJDebugMsg("Launch????")
                 call SaveUnitHandle(HY, GetHandleId(trig), 17, DETarget)
-                call UnitRemoveAbility(DESource, 'A1UL')
-                //call CXX(DESource, 'A1UH', GetUnitAbilityLevel(DESource, 'A1UH'), .1)
+                //call UnitRemoveAbility(DESource, 'A1UL')
+                call CXX(DESource, 'A1UH', GetUnitAbilityLevel(DESource, 'A1UH'), .1)
                 set trig = null
             endif
         endif
@@ -325,7 +323,6 @@ scope Tuskarr
         if Table[GetHandleId(DESource)].trigger.has(WALRUS_PUNCH_KEY) then
             set trig = Table[GetHandleId(DESource)].trigger[WALRUS_PUNCH_KEY]
             if LoadUnitHandle(HY, GetHandleId(trig), 17) == DETarget then
-                call BJDebugMsg("Damaged????")
                 // 运行触发器 直接触发
                 call TriggerEvaluate(trig)
             endif

@@ -299,7 +299,7 @@ ItemUserData:
         call DisableTrigger(UnitManipulatItemTrig)
         if GetWidgetLife(whichItem) <= 0.405 then
             call SetWidgetLife(whichItem, 1.)
-            call BJDebugMsg("删不掉啊")
+            call BJDebugMsg("删不掉啊 怎么回事呢 怎么回事呢")
         endif
         call RemoveItem(whichItem)
         if isEnabled then

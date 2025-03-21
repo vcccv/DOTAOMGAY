@@ -143,7 +143,7 @@ scope Bloodseeker
         return false
     endfunction
 
-    function StrygwyrThirstOnLearn takes nothing returns nothing
+    function StrygwyrThirstOnGet takes nothing returns nothing
         local trigger t = CreateTrigger()
         local integer h = GetHandleId(t)
         local unit whichUnit = GetTriggerUnit()
