@@ -7801,7 +7801,7 @@ art=ReplaceableTextures\CommandButtons\BTNSolarCrest
 buttonpos=,1
 name=炎阳纹章
 tip=炎阳纹章|nSolar Crest
-ubertip=|cffffcc00属性：|r|n+10 护甲|n+25%闪避|n+75%魔法恢复速率|n|n|cffff8000日耀：|r|n暂时失去炎阳纹章的护甲和闪避加成。对队友施放可以提供10点护甲和30%的闪避，对敌人施放将降低其10点护甲，使其物理攻击有25%的几率丢失，持续7秒。还能在3秒使其被动技能无效化。|n|n|cffffcc00需要：|r|n闪避护符 - 1800|n勇气勋章 - 1000|n|n|c00838B8B总价： 2800|r
+ubertip=|cffffcc00属性：|r|n+10 护甲|n+25%闪避|n+75%魔法恢复速率|n|n|cffff8000日耀：|r|n暂时失去炎阳纹章的护甲和闪避加成。对队友施放可以提供10点护甲和30%的闪避，对敌人施放将降低其10点护甲，使其物理攻击有25%的几率丢失，持续7秒。还能在2.5秒使其被动技能无效化。|n|n|cffffcc00需要：|r|n闪避护符 - 1800|n勇气勋章 - 1000|n|n|c00838B8B总价： 2800|r
 [n12F]
 art=ReplaceableTextures\CommandButtons\BTNOctarineCore
 buttonpos=1,1
@@ -40084,7 +40084,7 @@ Ubertip=|c00ff0303该物品不属于你，它失去了效果.|r
 [I0SS]
 art=ReplaceableTextures\CommandButtons\BTNSolarCrest
 name=炎阳纹章 Solar Crest
-ubertip=|cffffcc00属性：|r|n增加10点护甲|n增加25%闪避|n提升75%魔法恢复速率|n|cffff8000日耀：|r|n暂时失去炎阳纹章的加成效果。对队友施放可以提供10点护甲和25%的闪避；对敌人施放将降低其10点护甲并使其物理攻击有25%的几率丢失，持续7秒。对敌人使用时还能附加3秒的破碎效果。|n|cff99ccff冷却时间：|r20|n|cff99ccff施法距离：|r1200|n|cffff0303无视魔法免疫|r
+ubertip=|cffffcc00属性：|r|n增加10点护甲|n增加25%闪避|n提升75%魔法恢复速率|n|cffff8000日耀：|r|n暂时失去炎阳纹章的加成效果。对队友施放可以提供10点护甲和25%的闪避；对敌人施放将降低其10点护甲并使其物理攻击有25%的几率丢失，持续7秒。对敌人使用时还能附加2.5秒的破碎效果。|n|cff99ccff冷却时间：|r20|n|cff99ccff施法距离：|r1000|n|cffff0303无视魔法免疫|r
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNSolarCrest.blp
 [I0ST]
 art=ReplaceableTextures\CommandButtons\BTNSolarCrest

@@ -62773,9 +62773,9 @@ function GCE takes nothing returns nothing
 		call UnitAddAbilityToTimed(targetUnit,'A39F', 1, 7,'A39F')
 		call UnitAddAbilityToTimed(whichUnit,'A39F', 1, 7,'A39F')
 		call UnitAddAbilityToTimed(targetUnit,'A39I', 1, 7,'B39I')
-		call UnitAddAbilityToTimed(targetUnit,'A39D', 1, 3,'B39D')
+		call UnitAddAbilityToTimed(targetUnit,'A39D', 1, 2.5,'B39D')
+		call CIO(targetUnit, 2.5)
 		call EnableAttackEffectByTime(D, 8.)
-		call CIO(targetUnit, 3.)
 		if targetUnit == Roshan then
 			call SetUnitAbilityLevel(targetUnit,'A39F', 2)
 		endif
