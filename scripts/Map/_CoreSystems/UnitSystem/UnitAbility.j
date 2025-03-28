@@ -141,6 +141,10 @@ library UnitAbility requires AbilityUtils, UnitLimitation
         return MHAbility_GetCooldown(whichUnit, abilId)
     endfunction
 
+    function GetUnitAbilityManaCost takes unit whichUnit, integer abilId returns integer
+        return MHAbility_GetCustomLevelDataInt(whichUnit, abilId, GetUnitAbilityLevel(whichUnit, abilId), ABILITY_LEVEL_DEF_DATA_MANA_COST)
+    endfunction
+
     function EndUnitAbilityCooldown takes unit whichUnit, integer abilId returns nothing
         call MHAbility_SetCooldown(whichUnit, abilId, 0.)
     endfunction

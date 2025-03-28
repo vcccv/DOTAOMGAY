@@ -7457,7 +7457,7 @@ function OnUnitAddAbilityScepterUpgrade takes integer k, unit u, integer G8X ret
 		call ExecuteFunc("HOX")
 	elseif ScepterUpgrade_BaseId[k]=='A01Y' then
 		set TempUnit = u
-		call ExecuteFunc("HRX")
+		call ExecuteFunc("ReincarnationOnGetScepterUpgrad")
 	elseif ScepterUpgrade_BaseId[k]=='A0DY' then
 		// 推进
 		if LoadBoolean(HY, GetHandleId(GetOwningPlayer(u)),'R00J') == false then
@@ -48415,196 +48415,6 @@ function K6E takes nothing returns nothing
 	call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Items\\AIfb\\AIfbSpecialArt.mdl", GetTriggerUnit(), GetHeroWeaponAttachPointName(GetTriggerUnit())))
 endfunction
 
-function AhalimReincarnation_Actions takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit u = GetTriggerUnit()
-	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
-		if GetUnitAbilityLevel(u,'A3DA') == 1 then
-			call UnitRemoveAbility(u,'A3DA')
-			call UnitRemoveAbility(u,'B3DA')
-			call FlushChildHashtable(HY, h)
-			call DestroyTrigger(t)
-			call ResetUnitVertexColor(u)
-			call BZR(u)
-		elseif GetUnitAbilityLevel(u,'A3D9') == 1 then
-			// 如果有盾或者自杀就倒闭
-			if LoadBoolean(HY, GetHandleId(u),'suic') or GetUnitAbilityLevel(u,'AIrc') == 1 then
-				call UnitRemoveAbility(u,'A3DK')
-				call UnitRemoveAbility(u,'B3I9')
-				call FlushChildHashtable(HY, h)
-				call DestroyTrigger(t)
-			else
-				// 正常死亡 0 0.1 4 秒计时器
-				call TriggerRegisterTimerEvent(t, 0, false)
-				call TriggerRegisterTimerEvent(t, .1, false)
-				call TriggerRegisterTimerEvent(t, 4, false)
-				call SaveUnitHandle(HY, h, 0, u)
-				call SaveReal(HY, h, 10, GetUnitState(u, UNIT_STATE_MANA))
-			endif
-		else
-			call FlushChildHashtable(HY, h)
-			call DestroyTrigger(t)
-		endif
-		call RemoveSavedHandle(HY, GetHandleId(u),'Leor')
-	else
-		//============================================
-		// 计时器到期事件	
-		set u = LoadUnitHandle(HY, h, 0)
-		if LoadInteger(HY, h, 0) == 0 then // 0秒 复活了
-			call UnitRemoveAbility(u,'A3DK')
-			call UnitRemoveAbility(u,'B3I9')
-			call UnitAddPermanentAbility(u,'A3DA')
-			call SaveInteger(HY, h, 0, 1)
-			call SetUnitVertexColor(u, 140, 120, 100, 70)
-			call DisableUnitBloodstone(u)
-			if LoadInteger(HY, GetHandleId(u), 4333) == 1 then
-				call EPX(u, 4334, 4.01)
-			endif
-			if LoadInteger(HY, GetHandleId(u), 4418) == 1 then
-				call EPX(u, 4419, 4.01)
-			endif
-		elseif LoadInteger(HY, h, 0) == 1 then
-			call SaveInteger(HY, h, 0, 2)
-			call SelectUnitAddForPlayer(u, GetOwningPlayer(u))
-			call SetUnitState(u, UNIT_STATE_MANA, LoadReal(HY, h, 10))
-		else
-			call UnitRemoveAbility(u,'A3DA')
-			call UnitRemoveAbility(u,'B3DA')
-			call ResetUnitVertexColor(u)
-			call UnitRemoveAbility(u,'Avul')
-			call SetUnitInvulnerable(u, false)
-			if not IsUnitType(u, UNIT_TYPE_SUMMONED) then
-				call UnitRemoveBuffs(u, true, true)
-			endif
-			call UnitRemoveAbility(u,'Aetl')
-			call SetWidgetLife(u, 1)
-			if LoadUnitHandle(HY, GetHandleId(u),'lstd') != null then
-				call UnitDamageTargetEx(LoadUnitHandle(HY, GetHandleId(u),'lstd'), u, 1, 99999999)
-				call UnitDamageTargetEx(LoadUnitHandle(HY, GetHandleId(u),'lstd'), u, 2, 99999999)
-				call UnitDamageTargetEx(LoadUnitHandle(HY, GetHandleId(u),'lstd'), u, 3, 99999999)
-				call UnitDamageTargetEx(LoadUnitHandle(HY, GetHandleId(u),'lstd'), u, 7, 99999999)
-				call UnitDamageTargetEx(LoadUnitHandle(HY, GetHandleId(u),'lstd'), u, 10, 99999999)
-				if UnitAlive(u) then
-					if GetHandleId(LoadUnitHandle(HY, GetHandleId(u),'lstd')) == 0 then
-						call KillUnit(u)
-					else
-						if GetUnitAbilityLevel(u,'A0MQ')> 0 or GetUnitAbilityLevel(u,'A1B6')> 0 then
-							call P0I(LoadUnitHandle(HY, GetHandleId(u),'lstd'), u)
-						endif
-					endif
-				endif
-			else
-				call KillUnit(u)
-			endif
-			call BZR(u)
-			if not UnitAlive(u) then
-				call FlushChildHashtable(HY, h)
-				call DestroyTrigger(t)
-			else
-				call TriggerRegisterTimerEvent(t, .02, true)
-			endif
-		endif
-	endif
-	set t = null
-	set u = null
-	return false
-endfunction
-
-// 给单位添加效果
-function register_AhalimReincarnation takes unit whichUnit returns nothing
-	local trigger t
-	local integer h
-	local integer hu = GetHandleId(whichUnit)
-	if not HaveSavedHandle(HY, hu,'Leor') and GetUnitAbilityLevel(whichUnit,'A3DA') == 0 then
-		set t = CreateTrigger()
-		set h = GetHandleId(t)
-		call SaveTriggerHandle(HY, hu,'Leor', t)
-		call TriggerRegisterDeathEvent(t, whichUnit)
-		call TriggerAddCondition(t, Condition(function AhalimReincarnation_Actions))
-	endif
-	set t = null
-endfunction
-// 绿翔光环 0.3秒粘滞时间
-function EnumAddBuff_Reincarnation takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit skeletonKing = LoadUnitHandle(HY, h, 0)
-	local group auraGroup = LoadGroupHandle(HY, h, 1)
-	local group enumGroup
-	local unit firstUnit
-	// 单位死亡并且在重生 或者单位失去技能了
-	if ( not UnitAlive(skeletonKing) and LoadInteger(HY, GetHandleId(skeletonKing),'A1AZ') != 1) or GetUnitAbilityLevel(skeletonKing,'A1AZ') == 0 then
-		loop
-			set firstUnit = FirstOfGroup(auraGroup)
-		exitwhen firstUnit == null
-			call UnitRemoveAbility(firstUnit,'A3DK')
-			call UnitRemoveAbility(firstUnit,'B3I9')
-			call GroupRemoveUnit(auraGroup, firstUnit)
-		endloop
-	else
-		set TempUnit = skeletonKing
-		set enumGroup = AllocationGroup(348)
-		call GroupEnumUnitsInRange(enumGroup, GetUnitX(skeletonKing), GetUnitY(skeletonKing), 1225, null)
-		//=======================================
-		// remove
-		loop
-			set firstUnit = FirstOfGroup(auraGroup)
-		exitwhen firstUnit == null
-			if not IsUnitInGroup(firstUnit, enumGroup) then
-				call UnitRemoveAbility(firstUnit,'A3DK')
-				call UnitRemoveAbility(firstUnit,'B3I9')
-			endif
-			call GroupRemoveUnit(auraGroup, firstUnit)
-		endloop
-		//=======================================
-		// add
-		loop
-			set firstUnit = FirstOfGroup(enumGroup)
-		exitwhen firstUnit == null
-			call GroupRemoveUnit(enumGroup, firstUnit)
-			// 友军 存活 非建筑 非守卫 英雄 并且没有绿翔光环
-			if IsUnitAlly(TempUnit, GetOwningPlayer(firstUnit)) and IsAliveNotStrucNotWard(firstUnit) and IsUnitType(firstUnit, UNIT_TYPE_HERO) and GetUnitAbilityLevel(firstUnit,'A3DA') == 0 then
-				call GroupAddUnit(auraGroup, firstUnit)
-				if GetUnitAbilityLevel(firstUnit,'A3DK') == 0 then
-					call UnitAddPermanentAbility(firstUnit,'A3DK')
-					call UnitMakeAbilityPermanent(firstUnit, true,'A3D9')
-					call UnitMakeAbilityPermanent(firstUnit, true,'A3I9')
-				endif
-				call register_AhalimReincarnation(firstUnit)
-			endif
-		endloop
-		call DeallocateGroup(enumGroup)
-		//=======================================
-	endif
-	set t = null
-	set skeletonKing = null
-	set auraGroup = null
-	set enumGroup = null
-	set firstUnit = null
-	return false
-endfunction
-
-function P4I takes unit u returns nothing
-	local trigger t
-	local integer h
-	local integer hu = GetHandleId(u)
-	if HaveSavedHandle(HY, hu,'LeoR') == false then
-		set t = CreateTrigger()
-		set h = GetHandleId(t)
-		call SaveTriggerHandle(HY, hu,'LeoR', t)
-		call TriggerRegisterTimerEvent(t, .3, true)
-		call SaveUnitHandle(HY, h, 0, u)
-		call SaveGroupHandle(HY, h, 1, AllocationGroup(349))
-		call TriggerAddCondition(t, Condition(function EnumAddBuff_Reincarnation))
-	endif
-	call SetAllPlayerAbilityUnavailable('A3DK')
-	set t = null
-endfunction
-
-function HRX takes nothing returns nothing
-	call P4I(TempUnit)
-endfunction
 
 function P5I takes unit u, unit t returns nothing	//吸血光环
 	local integer lv
@@ -48672,23 +48482,12 @@ function ReincarnationActions takes nothing returns boolean
 		set id = 'A1AZ'
 	endif
 	
-	if YDWEGetUnitAbilityState(u, id, 1) == 0 and GetUnitState(u, UNIT_STATE_MANA)>= 120 + 40 * lv then
+	if GetUnitAbilityCooldownRemaining(u, id) == 0. and GetUnitState(u, UNIT_STATE_MANA)>= GetUnitAbilityManaCost(u, id) then
 		if HeroSkill_BaseId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 4]]=='A01Y' or HeroSkill_BaseId[PlayerSkillIndices[pid * MAX_SKILL_SLOTS + 6]]=='A01Y'  then
 			set isReincarnation = true
-			//if GetUnitAbilityLevel(u,'A39S') == 1 then
-			//	if GetUnitAbilityLevel(u,'A01Y')> 0 then
-			//		set cd = YDWEGetUnitAbilityDataReal(u, 'A01Y', lv, 105)
-			//		call Japi_ReduceUnitAbilityCoolDown(u,'A01Y', cd * 0.25)
-			//	else
-			//		set cd = YDWEGetUnitAbilityDataReal(u, 'A1AZ', lv, 105)
-			//		call Japi_ReduceUnitAbilityCoolDown(u,'A1AZ', cd * 0.25)
-			//	endif
-			//	call TimerStart(tim, (280 -lv * 60)*(1. -25 * 1. / 100.), false, null)
-			//else
-			//	call TimerStart(tim, (280 -lv * 60), false, null)
-			//endif
 		endif
 	endif
+	
 	if isReincarnation then
 		// 绿魂
 		if GetUnitAbilityLevel(u,'A3DK') != 0 then

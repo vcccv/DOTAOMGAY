@@ -85,7 +85,10 @@ library ScepterUpgradeDefine requires ScepterUpgradeSystem
         call RegisterSkillScepterUpgradeMethod(scepterUpgradeIndex, "WalrusPunchOnGetScepterUpgrade", "WalrusPunchOnLostScepterUpgrade")
 
         set scepterUpgradeIndex = RegisterScepterUpgrade('A0CT', 'A3DN', 'A3DM', 0)
+        
         set scepterUpgradeIndex = RegisterScepterUpgrade('A01Y', 'A1BP', 'A1AZ', 0)
+        call RegisterSkillGetScepterUpgradeMethod(scepterUpgradeIndex, "ReincarnationOnGetScepterUpgrad")
+
         set scepterUpgradeIndex = RegisterScepterUpgrade('A14O', 'A3FP', 'A3FJ', 0)
         set scepterUpgradeIndex = RegisterScepterUpgrade('A19O', 'A1MW', 'A1MV', 0)
         set scepterUpgradeIndex = RegisterScepterUpgrade('A06B', 'A472', 'A471', 0)
