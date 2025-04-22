@@ -69019,8 +69019,6 @@ endfunction
 	call memhack_init()
 	call MHUI_DrawAttackSpeed(true)
 	call MHUI_DrawMoveSpeed(true)
-	call MHDrawCooldown_Initialize()
-	call MHDrawCooldown_SetDivide(1.)
 
 	call MHDebug_EnableCrashTracer(true)
 
@@ -69029,6 +69027,10 @@ endfunction
 	
 	call MHConst_SetOPLimit(3000000)
 	call MHConst_UnlockBlpSizeLimit(true)
+	call MHUI_EnableDrawAbilsCooldown(true)
+	call MHUI_EnableDrawItemsCooldown(true)
+	call MHUI_EnableDrawAbilsHotkey(true)
+	call MHUI_SetCooldownDivide(0)
 	// BUFF叠加
 	// call MHBuff_SetOverlay(BUFF_TEMPLATE_BINF, true)
 	// call MHBuff_SetOverlay(BUFF_TEMPLATE_BSLO, true)

@@ -606,8 +606,6 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility
             //call MHUIData_GetCommandButtonSubscriptText(SkillButton[i])
             call MHFrameEvent_Register(SkillTrig, SkillButton[i], EVENT_ID_FRAME_MOUSE_CLICK)
 
-            call MHFrame_SetFont(MHDrawCooldown_GetText(i), "Fonts\\arheigb_bd.ttf", 0.016, 0)
-            call MHFrame_SetTextShadowOff(MHDrawCooldown_GetText(i), 0.0016, - 0.0016)
             set i = i + 1
         endloop
 
@@ -618,9 +616,6 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility
             exitwhen i > 6
             set ItemButton[i] = MHUI_GetItemBarButton(i)
             
-            call MHFrame_SetFont(MHDrawCooldown_GetText(i + 12), "Fonts\\arheigb_bd.ttf", 0.013, 0)
-            call MHFrame_SetTextShadowOff(MHDrawCooldown_GetText(i + 12), 0.0013, - 0.0013)
-
             //call MHUIData_GetCommandButtonSubscriptText(ItemButton[i])
             call MHFrameEvent_Register(ItemTrig, ItemButton[i], EVENT_ID_FRAME_MOUSE_CLICK)
             set i = i + 1
