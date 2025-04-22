@@ -41,6 +41,9 @@ library AMHUnit
     function MHUnit_GetAbilityByIndex takes unit u, integer index returns integer
         JapiPlaceHolder 0
     endfunction
+    function MHUnit_GetAbilityHandleByIndex takes unit u, integer index returns ability
+        JapiPlaceHolder null
+    endfunction
     function MHUnit_EnumAbility takes unit u, code callback returns boolean
         JapiPlaceHolder false
     endfunction
@@ -305,6 +308,9 @@ library AMHUnit
     function MHUnit_SetTeamGlow takes unit u, playercolor glow returns nothing
         JapiPlaceHolder
     endfunction
+    function MHUnit_SetAnimationByType takes unit u, integer anim, boolean is_loop returns boolean
+        JapiPlaceHolder false
+    endfunction
     function MHUnit_GetAnimationProgress takes unit u returns real
         JapiPlaceHolder 0.
     endfunction
@@ -442,7 +448,7 @@ library AMHUnitHook
     function MHUnit_IsEnableViewSkill takes unit u, player p returns boolean
         JapiPlaceHolder false
     endfunction
-    function MHUnit_SetInfoName takes unit u, string name returns nothing
+    function MHUnit_SetInfoName takes unit u, string info_name returns nothing
         JapiPlaceHolder
     endfunction
     function MHUnit_GetInfoName takes unit u returns string
@@ -451,7 +457,7 @@ library AMHUnitHook
     function MHUnit_RestoreInfoName takes unit u returns nothing
         JapiPlaceHolder
     endfunction
-    function MHUnit_SetInfoClass takes unit u, string class returns nothing
+    function MHUnit_SetInfoClass takes unit u, string info_class returns nothing
         JapiPlaceHolder
     endfunction
     function MHUnit_GetInfoClass takes unit u returns string

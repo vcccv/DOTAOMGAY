@@ -387,12 +387,6 @@
 
 
 
-    // 获取文本Frame
-    // @Tip：指代冷却绘制系统中创建的CTextFrame。不可删除
-    // @param index：1~12 = 技能栏文本; 13~18 = 按钮栏文本
-    function MHDrawCooldown_GetText takes integer index returns integer
-    endfunction
-
     // 设置小数显示间隔
     // @Tip：指技能冷却到多少以下时，文本会显示小数。默认为1
     function MHDrawCooldown_SetDivide takes real divide returns nothing
@@ -1258,7 +1252,7 @@
 
     // 设置单位名称信息
     // @Tip：仅有显示作用，不会影响 GetUnitName 等相关函数的返回值
-    function MHUnit_SetInfoName takes unit u, string name returns nothing
+    function MHUnit_SetInfoName takes unit u, string info_name returns nothing
     endfunction
 
     // 获取单位名称信息
@@ -1274,7 +1268,7 @@
     // 设置单位种类信息
     // @Tip：仅有显示作用，不会影响单位的实际种类
     // 能让不显示种类信息的单位强制显示
-    function MHUnit_SetInfoClass takes unit u, string class returns nothing
+    function MHUnit_SetInfoClass takes unit u, string info_class returns nothing
     endfunction
 
     // 获取单位种类信息
@@ -1588,19 +1582,19 @@
     // 添加Buff
     // @param u：添加buff的单位
     // @param bid：buff的真实id
-    // @param template：BUFF_TEMPLATE。buff的模板
+    // @param template_buff：BUFF_TEMPLATE。buff的模板
     // @param dur：持续时间
-    function MHBuff_Create takes unit u, integer bid, integer template, real dur returns buff
+    function MHBuff_Create takes unit u, integer bid, integer template_buff, real dur returns buff
     endfunction
 
     // 添加BuffEx
     // @param u：添加buff的单位
     // @param bid：buff的真实id
-    // @param template：BUFF_TEMPLATE。buff的模板
+    // @param template_buff：BUFF_TEMPLATE。buff的模板
     // @param level：buff等级
     // @param priority：魔法偷取优先级
     // @param dur：持续时间
-    function MHBuff_CreateEx takes unit u, integer bid, integer template, integer level, integer priority, real dur returns buff
+    function MHBuff_CreateEx takes unit u, integer bid, integer template_buff, integer level, integer priority, real dur returns buff
     endfunction
 
     // 获取Buff等级
@@ -3583,8 +3577,10 @@
 
 
 
-    // 允许绘制蓝条
-    // @param is_enable：true - 允许; false - 禁止
+    // 开启蓝条显示
+    // @Tip：重置版的蓝条样式
+    // 字体资源路径为"_MEMHACK_ASSETS\\font.ttf"但只有ascii字符
+    // 背景资源路径为"_MEMHACK_ASSETS\\mpbar_overlay.blp"
     function MHUI_EnableDrawMPBar takes boolean is_enable returns nothing
     endfunction
 
@@ -3596,6 +3592,59 @@
     // 绘制英雄等级
     // @param is_draw：true - 绘制英雄等级; false - 不绘制英雄等级
     function MHUI_MPBarDrawHeroLevel takes boolean is_draw returns nothing
+    endfunction
+
+    // 开启技能冷却显示
+    // @Tip：重置版样式的冷却, 包括冷却模型
+    // 字体资源路径为"_MEMHACK_ASSETS\\font.ttf"但只有ascii字符
+    // 冷却模型资源路径为"_MEMHACK_ASSETS\\cooldown.mdx"
+    // 可获取冷却模型ui并设置模型为"UI\\Feedback\\Cooldown\\UI-Cooldown-Indicator.mdx"来换回原生的冷却模型
+    function MHUI_EnableDrawAbilsCooldown takes boolean is_enable returns nothing
+    endfunction
+    
+    // 开启物品冷却显示
+    // @Tip：重置版样式的冷却, 包括冷却模型
+    // 字体资源路径为"_MEMHACK_ASSETS\\font.ttf"但只有ascii字符
+    // 冷却模型资源路径为"_MEMHACK_ASSETS\\cooldown.mdx"
+    // 可获取冷却模型ui并设置模型为"UI\\Feedback\\Cooldown\\UI-Cooldown-Indicator.mdx"来换回原生的冷却模型
+    function MHUI_EnableDrawItemsCooldown takes boolean is_enable returns nothing
+    endfunction
+    
+    // 开启技能热键显示
+    // @Tip：重置版样式的热键
+    // 字体资源路径为"_MEMHACK_ASSETS\\font.ttf"但只有ascii字符
+    // 背景资源路径为"_MEMHACK_ASSETS\\hotkey_overlay.blp"
+    function MHUI_EnableDrawAbilsHotkey takes boolean is_enable returns nothing
+    endfunction
+    
+    // 开启物品热键显示
+    // @Tip：重置版样式的热键
+    // 字体资源路径为"_MEMHACK_ASSETS\\font.ttf"但只有ascii字符
+    // 背景资源路径为"_MEMHACK_ASSETS\\hotkey_overlay.blp"
+    function MHUI_EnableDrawItemsHotkey takes boolean is_enable returns nothing
+    endfunction
+    
+    // 设置冷却显示小数点间隔
+    // @param divide：当冷却时间低于该数字时会开始显示小数
+    function MHUI_SetCooldownDivide takes real divide returns nothing
+    endfunction
+    
+    // 获取冷却显示文本
+    // @Tip：返回一个CTextFrame
+    // @param index：序号1~12代表技能栏, 13~18代表物品栏
+    function MHUI_GetCooldownText takes integer index returns integer
+    endfunction
+    
+    // 获取热键显示文本
+    // @Tip：返回一个CSimpleFontString
+    // @param index：序号1~12代表技能栏, 13~18代表物品栏
+    function MHUI_GetHotkeyOverlay takes integer index returns integer
+    endfunction
+    
+    // 获取热键显示背景
+    // @Tip：返回一个CSimpleTexture
+    // @param index：序号1~12代表技能栏, 13~18代表物品栏
+    function MHUI_GetHotkeyText takes integer index returns integer
     endfunction
 
     // 修复叠字

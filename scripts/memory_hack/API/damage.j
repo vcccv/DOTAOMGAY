@@ -138,6 +138,7 @@ library AMHDamageEvent
 
 
 
+#if MEMHACK_DISABLE_JAPI_DAMAGE
     #define YDWEIsEventPhysicalDamage() MHNativeDamageEvent_IsPhysical()
     #define YDWEIsEventAttackDamage()   MHMath_IsBitSet(MHNativeDamageEvent_GetFlag(), 0x100)
     #define YDWEIsEventRangedDamage()   MHMath_IsBitSet(MHNativeDamageEvent_GetFlag(), 0x1)
@@ -145,4 +146,5 @@ library AMHDamageEvent
     #define YDWEIsEventWeaponType(a)    (MHNativeDamageEvent_GetWeapType() == a)
     #define YDWEIsEventAttackType(a)    (MHNativeDamageEvent_GetAtkType() == a)
     #define YDWESetEventDamage(a)       MHNativeDamageEvent_SetDamage(a)
+#endif
 endlibrary

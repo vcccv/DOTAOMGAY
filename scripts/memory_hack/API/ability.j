@@ -240,15 +240,6 @@ endlibrary
 
 
 library AMHAbilitySystem
-    function MHDrawCooldown_GetText takes integer index returns integer
-        JapiPlaceHolder 0
-    endfunction
-    function MHDrawCooldown_SetDivide takes real divide returns nothing
-        JapiPlaceHolder
-    endfunction
-    function MHDrawCooldown_Initialize takes nothing returns nothing
-        JapiPlaceHolder
-    endfunction
     function MHAbility_GetCustomDataInt takes unit u, integer aid, integer flag returns integer
         JapiPlaceHolder 0
     endfunction

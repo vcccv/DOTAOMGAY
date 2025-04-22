@@ -59,6 +59,9 @@ library AMHFrame
     function MHFrame_GetName takes integer frame returns string
         JapiPlaceHolder null
     endfunction
+    function MHFrame_SetLayoutLayer takes integer frame, integer layer returns nothing
+        JapiPlaceHolder
+    endfunction
     function MHFrame_Hide takes integer frame, boolean is_hide returns nothing
         JapiPlaceHolder
     endfunction

@@ -20,6 +20,12 @@ library AMHMessage
     function MHMsg_GetClientHeight takes nothing returns integer
         JapiPlaceHolder 0
     endfunction
+    function MHMsg_GetResolutionWidth takes nothing returns integer
+        JapiPlaceHolder 0
+    endfunction
+    function MHMsg_GetResolutionHeight takes nothing returns integer
+        JapiPlaceHolder 0
+    endfunction
     function MHMsg_GetCursorX takes nothing returns real
         JapiPlaceHolder 0.
     endfunction

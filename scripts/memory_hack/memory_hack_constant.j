@@ -24,6 +24,7 @@
 #define MHConvertCollisionType(a)                   (a)
 #define MHConvertCastType(a)                        (a)
 #define MHConvertLocalOrderFlag(a)                  (a)
+#define MHConvertLayerStyle(a)                      (a)
 #define MHConvertTextFlag(a)                        (a)
 #define MHConvertTextStyle(a)                       (a)
 #define MHConvertBorderFlag(a)                      (a)
@@ -270,6 +271,11 @@
 
 #define LAYER_STYLE_VIEW_PORT                       0x1
 #define LAYER_STYLE_IGNORE_TRACK_EVENT              0x2
+
+#define LAYOUT_LAYER_BACKGROUND                     0x0
+#define LAYOUT_LAYER_CASE                           0x1
+#define LAYOUT_LAYER_ARTWORK                        0x2
+#define LAYOUT_LAYER_ARTWORK_OVERLAY                0x3
 
 #define SIMPLEBUTTON_STATE_DISABLE                  0x0
 #define SIMPLEBUTTON_STATE_ENABLE                   0x1

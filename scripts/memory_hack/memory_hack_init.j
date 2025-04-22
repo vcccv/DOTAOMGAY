@@ -10,6 +10,9 @@ library zMHInit
 #ifndef MEMHACK_DISABLE_MEMHACK
 #define MEMHACK_DISABLE_MEMHACK 0
 #endif
+#ifndef MEMHACK_DISABLE_JAPI_DAMAGE
+#define MEMHACK_DISABLE_JAPI_DAMAGE 1
+#endif
 
 #ifndef MEMHACK_MAIN_HOOK_ON_START
 #define MEMHACK_MAIN_HOOK_ON_START call DoNothing()
@@ -24,9 +27,10 @@ library zMHInit
 #endif
 
     globals
-        constant integer    MEMHACK_FLAG_DISABLE_WENHAO     = MEMHACK_DISABLE_WENHAO
-        constant integer    MEMHACK_FLAG_DISABLE_MEMHACK    = MEMHACK_DISABLE_MEMHACK
-        private boolean     MEMHACK_INITIALIZED             = false
+        constant integer    MEMHACK_FLAG_DISABLE_WENHAO         = MEMHACK_DISABLE_WENHAO
+        constant integer    MEMHACK_FLAG_DISABLE_MEMHACK        = MEMHACK_DISABLE_MEMHACK
+        constant integer    MEMHACK_FLAG_DISABLE_JAPI_DAMAGE    = MEMHACK_DISABLE_JAPI_DAMAGE
+        private boolean     MEMHACK_INITIALIZED                 = false
     endglobals
 
     function memhack_init takes nothing returns nothing
@@ -40,7 +44,7 @@ library zMHInit
         call ExecuteFunc("DoNothing")
 
         MEMHACK_MAIN_HOOK_ON_FINISH
-        call I2R(MEMHACK_FLAG_DISABLE_WENHAO + MEMHACK_FLAG_DISABLE_MEMHACK)
+        call I2R(MEMHACK_FLAG_DISABLE_WENHAO + MEMHACK_FLAG_DISABLE_MEMHACK + MEMHACK_FLAG_DISABLE_JAPI_DAMAGE)
     endfunction
 
 #ifndef MEMHACK_DISABLE_MAIN_HOOK

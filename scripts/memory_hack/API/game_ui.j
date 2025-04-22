@@ -243,7 +243,28 @@ library AMHGameUISystem
     function MHUI_MPBarDrawHeroLevel takes boolean is_draw returns nothing
         JapiPlaceHolder
     endfunction
-    function MHUI_GetMPBarCount takes nothing returns integer
+    function MHUI_EnableDrawAbilsCooldown takes boolean is_enable returns nothing
+        JapiPlaceHolder
+    endfunction
+    function MHUI_EnableDrawItemsCooldown takes boolean is_enable returns nothing
+        JapiPlaceHolder
+    endfunction
+    function MHUI_EnableDrawAbilsHotkey takes boolean is_enable returns nothing
+        JapiPlaceHolder
+    endfunction
+    function MHUI_EnableDrawItemsHotkey takes boolean is_enable returns nothing
+        JapiPlaceHolder
+    endfunction
+    function MHUI_SetCooldownDivide takes real divide returns nothing
+        JapiPlaceHolder
+    endfunction
+    function MHUI_GetCooldownText takes integer index returns integer
+        JapiPlaceHolder 0
+    endfunction
+    function MHUI_GetHotkeyOverlay takes integer index returns integer
+        JapiPlaceHolder 0
+    endfunction
+    function MHUI_GetHotkeyText takes integer index returns integer
         JapiPlaceHolder 0
     endfunction
     function MHUI_FixGarbled takes boolean is_enable returns nothing

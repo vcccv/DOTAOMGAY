@@ -5,6 +5,12 @@
 
 
 library AMHItem
+    function MHItem_EnumInRange takes real x, real y, real range, code callback returns nothing
+        JapiPlaceHolder
+    endfunction
+    function MHItem_GetEnumItem takes nothing returns item
+        JapiPlaceHolder null
+    endfunction
     function MHItem_GetOwner takes item it returns unit
         JapiPlaceHolder null
     endfunction

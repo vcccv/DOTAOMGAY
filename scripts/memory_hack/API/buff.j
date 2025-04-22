@@ -5,10 +5,10 @@
 
 
 library AMHBuff
-    function MHBuff_Create takes unit u, integer bid, integer template, real dur returns buff
+    function MHBuff_Create takes unit u, integer bid, integer template_buff, real dur returns buff
         JapiPlaceHolder null
     endfunction
-    function MHBuff_CreateEx takes unit u, integer bid, integer template, integer level, integer priority, real dur returns buff
+    function MHBuff_CreateEx takes unit u, integer bid, integer template_buff, integer level, integer priority, real dur returns buff
         JapiPlaceHolder null
     endfunction
     function MHBuff_GetLevel takes unit u, integer bid returns integer
