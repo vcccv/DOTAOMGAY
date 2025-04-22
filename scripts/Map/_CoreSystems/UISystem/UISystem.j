@@ -591,7 +591,7 @@ library UISystem requires ErrorMessage, Table
 
             call ThrowError(MHGame_GetCode(codeName) == null, "UISystem", "RegisterEvent", "codeName", eventId, "code == null")
             
-            if FrameEventTable[this].boolean.has(eventId) then
+            if not FrameEventTable[this].boolean.has(eventId) then
                 set FrameEventTable[this].boolean[eventId] = true
                 call MHFrameEvent_Register(MainTrigger, this.ptr, eventId)
             endif
@@ -609,7 +609,7 @@ library UISystem requires ErrorMessage, Table
 
             debug call ThrowError(callback == null, "UISystem", "RegisterEventByCode", "callback", eventId, "code == null")
             
-            if FrameEventTable[this].boolean.has(eventId) then
+            if not FrameEventTable[this].boolean.has(eventId) then
                 set FrameEventTable[this].boolean[eventId] = true
                 call MHFrameEvent_Register(MainTrigger, this.ptr, eventId)
             endif
@@ -643,7 +643,7 @@ library UISystem requires ErrorMessage, Table
         static method EventOnHandler takes nothing returns boolean
             local thistype this    = GetPtrInstanceSafe(MHEvent_GetFrame())
             local integer  eventId = MHEvent_GetId()
-            call BJDebugMsg("EventOnHandler|this:" + I2S(this))
+            
             if this == 0 then
                 return false
             endif
@@ -657,7 +657,6 @@ library UISystem requires ErrorMessage, Table
             endif
             
             if FrameASyncEventTable[this].integer.has(eventId) then
-                call BJDebugMsg("has")
                 set FrameEventStackTop = FrameEventStackTop + 1
                 set TriggerFrame[FrameEventStackTop]  = this
                 set TriggerEvent[FrameEventStackTop]  = eventId
