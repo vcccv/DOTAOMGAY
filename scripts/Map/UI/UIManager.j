@@ -29,8 +29,7 @@ library UIManager /*
         static if DEBUG_MODE then
             call BJDebugMsg("插件版本：" + MHGame_GetPluginVersion())
         endif
-
-        call FrameSystem_Init()
+        
         call DzFrameSetUpdateCallbackByCode(function OnUdpate)
 
         call Frame.LoadTOCFile("UI\\FrameDef\\CustomFrameDef.toc")

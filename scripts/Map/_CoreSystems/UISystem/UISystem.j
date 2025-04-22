@@ -1,17 +1,22 @@
 
-library UISystem requires ErrorMessage
+library UISystem requires ErrorMessage, Table
     
     globals
-        private hashtable         HT                      = InitHashtable()
+        
         private string            FRAME_EVENT_SYNC_PREFIX = "FRAMEEVENT"
-        private key               FRAME_NAME_CREATE_CONTEXT
+        
+        private key               FRAME_INSTANCE_KEY
 
+        private TableArray        FrameASyncEventTable
+        private TableArray        FrameEventTable
         // 事件信息
         private integer           FrameEventStackTop      = 0
         private Frame       array TriggerFrame
         private integer     array TriggerEvent
         private player      array TriggerPlayer
     endglobals
+
+    private keyword UISystemInit
 
     struct Frame
         
@@ -26,7 +31,7 @@ library UISystem requires ErrorMessage
             
             set this = thistype.allocate()
             set this.ptr = ptr
-            call SaveInteger(HT, ptr, 0, this)
+            set Table[FRAME_INSTANCE_KEY].integer[ptr] = this
 
             return this
         endmethod
@@ -41,7 +46,7 @@ library UISystem requires ErrorMessage
             endif
             
             set this.ptr = ptr
-            call SaveInteger(HT, ptr, 0, this)
+            set Table[FRAME_INSTANCE_KEY].integer[ptr] = this
         endmethod
 
         method GetPtr takes nothing returns integer
@@ -49,7 +54,7 @@ library UISystem requires ErrorMessage
         endmethod
 
         static method GetPtrInstance takes integer ptr returns thistype
-            local thistype this = LoadInteger(HT, ptr, 0)
+            local thistype this = Table[FRAME_INSTANCE_KEY].integer[ptr]
 
             if this == 0 and ptr != 0 then
                 set this = thistype.create(ptr)
@@ -60,7 +65,7 @@ library UISystem requires ErrorMessage
 
         // 如果是没有被创建过实例的frame，则返回0，在异步情况下没有把握就用这个
         static method GetPtrInstanceSafe takes integer ptr returns thistype
-            return LoadInteger(HT, ptr, 0)
+            return Table[FRAME_INSTANCE_KEY].integer[ptr]
         endmethod
 
         method CreateFrame takes string name, integer priority, integer createContext returns thistype
@@ -128,9 +133,16 @@ library UISystem requires ErrorMessage
         endmethod
 
         method Destroy takes nothing returns nothing
+            if this.ptr == 0 then
+                return
+            endif
+
             call MHFrame_Destroy(this.ptr)
-            call RemoveSavedInteger(HT, this.ptr, 0)
-            call FlushChildHashtable(HT, this)
+            
+            call Table[FRAME_INSTANCE_KEY].integer.remove(ptr)
+            call FrameEventTable[this].flush()
+            call FrameASyncEventTable[this].flush()
+
             set this.ptr = 0
         endmethod
 
@@ -579,15 +591,15 @@ library UISystem requires ErrorMessage
 
             call ThrowError(MHGame_GetCode(codeName) == null, "UISystem", "RegisterEvent", "codeName", eventId, "code == null")
             
-            if not HaveSavedBoolean(HT, this, eventId) then
-                call SaveBoolean(HT, this, eventId, true)
+            if FrameEventTable[this].boolean.has(eventId) then
+                set FrameEventTable[this].boolean[eventId] = true
                 call MHFrameEvent_Register(MainTrigger, this.ptr, eventId)
             endif
 
             if sync then
-                call SaveInteger(HT, this, eventId, C2I(MHGame_GetCode(codeName)))
+                set FrameEventTable[this].integer[eventId] = C2I(MHGame_GetCode(codeName))
             else
-                call SaveInteger(HT, this + JASS_MAX_ARRAY_SIZE, eventId, C2I(MHGame_GetCode(codeName)))
+                set FrameASyncEventTable[this].integer[eventId] = C2I(MHGame_GetCode(codeName))
             endif
         endmethod
         method RegisterEventByCode takes integer eventId, code callback, boolean sync returns nothing
@@ -595,18 +607,17 @@ library UISystem requires ErrorMessage
                 return
             endif
 
-            debug call ThrowError(callback == null, "UISystem", "RegisterEvent", "callback", eventId, "code == null")
+            debug call ThrowError(callback == null, "UISystem", "RegisterEventByCode", "callback", eventId, "code == null")
             
-            if not HaveSavedBoolean(HT, this, eventId) then
-                call SaveBoolean(HT, this, eventId, true)
+            if FrameEventTable[this].boolean.has(eventId) then
+                set FrameEventTable[this].boolean[eventId] = true
                 call MHFrameEvent_Register(MainTrigger, this.ptr, eventId)
             endif
 
-            //call BJDebugMsg("注册：" + I2S(this))
             if sync then
-                call SaveInteger(HT, this, eventId, C2I(callback))
+                set FrameEventTable[this].integer[eventId] = C2I(callback)
             else
-                call SaveInteger(HT, this + JASS_MAX_ARRAY_SIZE, eventId, C2I(callback))
+                set FrameASyncEventTable[this].integer[eventId] = C2I(callback)
             endif
         endmethod
 
@@ -617,7 +628,7 @@ library UISystem requires ErrorMessage
             local integer  eventId = S2I(SubString(data, 0, index))
             local thistype this    = S2I(SubString(data, index + 1, -1))
 
-            if this == 0 or eventId == 0 or not HaveSavedInteger(HT, this, eventId) then
+            if this == 0 or eventId == 0 or not FrameEventTable[this].integer.has(eventId) then
                 return
             endif
 
@@ -625,14 +636,14 @@ library UISystem requires ErrorMessage
             set TriggerFrame[FrameEventStackTop]  = this
             set TriggerEvent[FrameEventStackTop]  = eventId
             set TriggerPlayer[FrameEventStackTop] = p
-            call MHGame_ExecuteCodeEx(LoadInteger(HT, this, eventId))
+            call MHGame_ExecuteCodeEx(FrameEventTable[this].integer[eventId])
             set FrameEventStackTop = FrameEventStackTop - 1
         endmethod
 
         static method EventOnHandler takes nothing returns boolean
             local thistype this    = GetPtrInstanceSafe(MHEvent_GetFrame())
             local integer  eventId = MHEvent_GetId()
-
+            call BJDebugMsg("EventOnHandler|this:" + I2S(this))
             if this == 0 then
                 return false
             endif
@@ -645,19 +656,20 @@ library UISystem requires ErrorMessage
                 endif
             endif
             
-            if HaveSavedInteger(HT, this + JASS_MAX_ARRAY_SIZE, eventId) then
+            if FrameASyncEventTable[this].integer.has(eventId) then
+                call BJDebugMsg("has")
                 set FrameEventStackTop = FrameEventStackTop + 1
                 set TriggerFrame[FrameEventStackTop]  = this
                 set TriggerEvent[FrameEventStackTop]  = eventId
                 set TriggerPlayer[FrameEventStackTop] = GetLocalPlayer()
-                if MHGame_ExecuteCodeEx(LoadInteger(HT, this + JASS_MAX_ARRAY_SIZE, eventId)) > 0 then
-                    if HaveSavedInteger(HT, this, eventId) then
+                if MHGame_ExecuteCodeEx(FrameASyncEventTable[this].integer[eventId]) > 0 then
+                    if FrameEventTable[this].integer.has(eventId) then
                         call DzSyncData(FRAME_EVENT_SYNC_PREFIX, I2S(eventId) + "," + I2S(this))
                     endif
                 endif
                 set FrameEventStackTop = FrameEventStackTop - 1
             else
-                if HaveSavedInteger(HT, this, eventId) then
+                if FrameEventTable[this].integer.has(eventId) then
                     call DzSyncData(FRAME_EVENT_SYNC_PREFIX, I2S(eventId) + "," + I2S(this))
                 endif
             endif
@@ -950,17 +962,24 @@ library UISystem requires ErrorMessage
             call MHFrame_LoadTOC(TOCFile)
         endmethod
 
+        implement UISystemInit
+
     endstruct
 
-    function FrameSystem_Init takes nothing returns nothing
-        local trigger trig
-        
-        set trig = CreateTrigger()
-        call DzTriggerRegisterSyncData(trig, FRAME_EVENT_SYNC_PREFIX, false)
-        call TriggerAddCondition(trig, Condition(function Frame.EventOnSynced))
+    private module UISystemInit
+        private static method onInit takes nothing returns nothing
+            local trigger trig
+            
+            set trig = CreateTrigger()
+            call DzTriggerRegisterSyncData(trig, FRAME_EVENT_SYNC_PREFIX, false)
+            call TriggerAddCondition(trig, Condition(function thistype.EventOnSynced))
 
-        set Frame.MainTrigger = CreateTrigger()
-        call TriggerAddCondition(Frame.MainTrigger, Condition(function Frame.EventOnHandler))
-    endfunction
+            set thistype.MainTrigger = CreateTrigger()
+            call TriggerAddCondition(thistype.MainTrigger, Condition(function thistype.EventOnHandler))
+
+            set FrameEventTable      = TableArray[JASS_MAX_ARRAY_SIZE]
+            set FrameASyncEventTable = TableArray[JASS_MAX_ARRAY_SIZE]
+        endmethod
+    endmodule
 
 endlibrary
