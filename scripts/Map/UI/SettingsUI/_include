@@ -1,0 +1,6 @@
+
+#include "SettingsPanelFrame.j"
+#include "HotkeysPanelFrame.j"
+#include "HotkeysPanelHandler.j"
+#include "OptionsPanelFrame.j"
+#include "SettingsPanelHandler.j"

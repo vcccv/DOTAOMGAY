@@ -3,7 +3,16 @@ library TownPortalScrollHandler requires Communication, TownPortalScrollFrame, U
     globals
         constant integer TOWN_PORTAL_SCROLL_ABILITY_ID = 'A1R5'
         private key CHARGES
+
+        private integer TownPortalScrollHotkey = - 1
     endglobals
+
+    function TownPortalScrollHandler_SetHotkey takes integer hotkey returns nothing
+        set TownPortalScrollHotkey = hotkey
+    endfunction
+    function TownPortalScrollHandler_GetHotkey takes nothing returns integer
+        return TownPortalScrollHotkey
+    endfunction
 
     function GetUnitTownPortalScrollCooldown takes unit whichUnit returns real
         return GetUnitAbilityCooldown(whichUnit, TOWN_PORTAL_SCROLL_ABILITY_ID)
@@ -110,6 +119,35 @@ library TownPortalScrollHandler requires Communication, TownPortalScrollFrame, U
                 call SendErrorMessage("已经在泉水范围内")
             endif
         endif
+    endfunction
+
+    function TownPortalScrollHandler_OnKeyDownASync takes integer pressedKey returns boolean
+        local unit    selectedUnit
+        local integer charges
+
+        if pressedKey != TownPortalScrollHotkey or TownPortalScrollHotkey == - 1 then
+            return false
+        endif
+
+        set selectedUnit = MHPlayer_GetSelectUnit()
+        if selectedUnit == null then
+            return false
+        endif
+
+        set charges = GetUnitTownPortalScrollCharges(selectedUnit)
+        if charges > 0 then
+            call MHUI_PlayNativeSound("InterfaceClick")
+            if GetUnitAbilityLevel(selectedUnit, TOWN_PORTAL_SCROLL_ABILITY_ID) == 1 then
+                // ABILITY_CAST_TYPE_POINT + ABILITY_CAST_TYPE_ALONE
+                call MHMsg_CallTargetMode(TOWN_PORTAL_SCROLL_ABILITY_ID, ORDER_massteleport, 0x100002)
+            else
+                // ABILITY_CAST_TYPE_POINT + ABILITY_CAST_TYPE_TARGET + ABILITY_CAST_TYPE_ALONE
+                call MHMsg_CallTargetMode(TOWN_PORTAL_SCROLL_ABILITY_ID, ORDER_massteleport, 0x100006)
+            endif
+        endif
+        
+        set selectedUnit = null
+        return true
     endfunction
 
     function TownPortalScrollButtonOnClickASync takes nothing returns nothing

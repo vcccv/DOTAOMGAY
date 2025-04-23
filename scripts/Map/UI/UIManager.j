@@ -38,6 +38,22 @@ library UIManager /*
             call SimpleToolTip.Init()
         endif
     
+        static if LIBRARY_SettingsPanelFrame then
+            call SettingsPanelFrame_Init()
+            static if LIBRARY_HotkeysPanelFrame then
+                call HotkeysPanelFrame_Init()
+            endif
+            static if LIBRARY_HotkeysPanelHandler then
+                call HotkeysPanelHandler_Init()
+            endif
+            
+            static if LIBRARY_OptionsPanelFrame then
+                call OptionsPanelFrame_Init()
+            endif
+            static if LIBRARY_SettingsPanelHandler then
+                call SettingsPanelHandler_Init()
+            endif
+        endif
         static if LIBRARY_TownPortalScrollFrame then
             call TownPortalScrollFrame_Init()
             call TownPortalScrollHandler_Init()

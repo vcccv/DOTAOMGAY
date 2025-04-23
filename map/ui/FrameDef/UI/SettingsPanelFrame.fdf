@@ -1,0 +1,26 @@
+
+// -- INCLUDE FILES ---------------------------------------------------------
+
+IncludeFile "UI\FrameDef\UI\EscMenuTemplates.fdf",
+IncludeFile "UI\FrameDef\UI\EscMenuMainPanel.fdf",
+
+// -- LOCAL TEMPLATES -------------------------------------------------------
+
+// -- FRAMES ----------------------------------------------------------------
+
+Frame "FRAME" "SettingsPanelFrame" {
+    Width  0.475,
+	Height 0.3750,
+
+    Frame "GLUETEXTBUTTON" "SettingsPanelReturnButton" INHERITS WITHCHILDREN "EscMenuButtonTemplate" {
+        SetPoint TOPRIGHT, "SettingsPanelFrame", TOPRIGHT, -0.035, -0.035,
+        Width 0.18,
+        //TabFocusDefault,
+        ControlShortcutKey "R",
+
+        ButtonText "SettingsPanelReturnButtonText",
+        Frame "TEXT" "SettingsPanelReturnButtonText" INHERITS "EscMenuButtonTextTemplate" {
+            Text "KEY_RETURN_TO_GAME",
+        }
+    }
+}

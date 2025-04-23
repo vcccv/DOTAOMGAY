@@ -1,2 +1,3 @@
 #include "UIManager.j"
 #include "GameplayUI\\_include"
+#include "SettingsUI\\_include"

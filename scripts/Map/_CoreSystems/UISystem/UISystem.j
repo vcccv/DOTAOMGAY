@@ -118,13 +118,18 @@ library UISystem requires ErrorMessage, Table
 
         method CreateFrameByType takes string typeName, string name, string inherits, integer priority, integer createContext returns thistype
             local thistype newFrame
+            local integer  ptr
 
             static if DEBUG_MODE then
                 call ThrowError(this.ptr == 0, "UISystem", "CreateFrameByType", name, createContext, "parent == null")
             endif
 
-            set newFrame = thistype.create(MHFrame_CreateEx(typeName, name, inherits, this.ptr, priority, createContext))
-            
+            set ptr = MHFrame_CreateEx(typeName, name, inherits, this.ptr, priority, createContext)
+            if ptr == 0 then
+                set ptr = DzCreateFrameByTagName(typeName, name, this.ptr, inherits, createContext)
+            endif
+            set newFrame = thistype.create(ptr)
+
             static if DEBUG_MODE then
                 call ThrowError(newFrame == 0, "UISystem", "CreateFrameByType", name, createContext, "newFrame == null" + "\nparent:" + I2S(this) + "\ntypeName:" + typeName + "\ninherits:" + inherits)
             endif
@@ -955,6 +960,18 @@ library UISystem requires ErrorMessage, Table
 
         method AddBorder takes string border_file, string background_file, integer border_flag, real border_size, real padding, boolean is_tile returns nothing
             call MHFrame_AddBorder(this.ptr, border_file, background_file, border_flag, border_size, padding, is_tile)
+        endmethod
+
+        method SetIgnoreTrackEvents takes boolean enable returns nothing
+            if this.ptr == 0 then
+                return
+            endif
+
+            if enable then
+                call MHFrame_SetLayerStyle(this.ptr, MHMath_AddBit(MHFrame_GetLayerStyle(this.ptr), LAYER_STYLE_IGNORE_TRACK_EVENT))
+            else
+                call MHFrame_SetLayerStyle(this.ptr, MHMath_RemoveBit(MHFrame_GetLayerStyle(this.ptr), LAYER_STYLE_IGNORE_TRACK_EVENT))
+            endif
         endmethod
 
         static method LoadTOCFile takes string TOCFile returns nothing

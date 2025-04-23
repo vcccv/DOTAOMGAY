@@ -1,4 +1,4 @@
-library CommandOrder
+library CommandOrder requires optional TownPortalScrollHandler
 
     globals
         private trigger KeyDownTrig
@@ -17,8 +17,13 @@ library CommandOrder
         if MHUI_IsChatEditBarOn() then
             return false
         endif
-        
+
         set pressedKey = MHEvent_GetKey()
+        static if LIBRARY_TownPortalScrollHandler then
+            if TownPortalScrollHandler_OnKeyDownASync(pressedKey) then
+                return false
+            endif
+        endif
         if pressedKey == OSKEY_M /*
             */ and not IsKeyPressed(OSKEY_ALT) and not IsKeyPressed(OSKEY_CONTROL) /*
             */ and GetUnitAbilityLevel(GetSelectedUnit(), 'Amov') > 0 then
@@ -48,6 +53,7 @@ library CommandOrder
                 call MHMsg_SendImmediateOrder(851993, LOCAL_ORDER_FLAG_NORMAL)
             endif
         endif
+
         return false
     endfunction
     
