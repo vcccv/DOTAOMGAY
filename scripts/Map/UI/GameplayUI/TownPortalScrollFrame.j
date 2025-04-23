@@ -9,6 +9,8 @@ library TownPortalScrollFrame requires UISystem, AbilityUtils
 
         private Frame TownPortalScrollChargesString  = 0
 
+        private Frame TownPortalScrollHotkeyString   = 0
+
         private Frame TownPortalScrollCooldownSprite = 0
         private Frame TownPortalScrollCooldownText   = 0
         
@@ -17,6 +19,10 @@ library TownPortalScrollFrame requires UISystem, AbilityUtils
 
     function GetTownPortalScrollButton takes nothing returns Frame
         return TownPortalScrollButton
+    endfunction
+
+    function GetTownPortalScrollHotkeyString takes nothing returns Frame
+        return TownPortalScrollHotkeyString
     endfunction
 
     function TownPortalScrollFrameUpdateToolTip takes ability whichAbility returns nothing
@@ -84,6 +90,7 @@ library TownPortalScrollFrame requires UISystem, AbilityUtils
     function TownPortalScrollFrame_Init takes nothing returns nothing
         local Frame gameUI     = Frame.GetPtrInstance(MHUI_GetGameUI())
         local Frame commandBar = Frame.GetPtrInstance(MHUI_GetCommandBar())
+        local Frame frame
         //
         set TownPortalScrollFrame          = commandBar.CreateSimpleFrame("TownPortalScrollFrame", 0)
         set TownPortalScrollCooldownSprite = gameUI.CreateFrame("TownPortalScrollCooldownSprite", 0, 0)
@@ -93,8 +100,17 @@ library TownPortalScrollFrame requires UISystem, AbilityUtils
         set TownPortalScrollButton        = Frame.GetFrameByName("TownPortalScrollButton", 0)
         
         set TownPortalScrollChargesString = Frame.GetFrameByName("TownPortalScrollChargesString", 0)
-        set TownPortalScrollBackground    = Frame.GetFrameByName("TownPortalScrollBackground", 0)
+        set TownPortalScrollHotkeyString  = Frame.GetFrameByName("TownPortalScrollHotkeyString", 0)
 
+        //set frame = Frame.GetFrameByName("TownPortalScrollHotkeyTexture", 0)
+        //call frame.ClearAllPoints()
+        //call frame.SetPoint(FRAMEPOINT_TOPLEFT, TownPortalScrollFrame, FRAMEPOINT_TOPLEFT, -0.0006, 0.0006)
+        
+        //set frame = Frame.GetFrameByName("TownPortalScrollChargesTexture", 0)
+        //call frame.ClearAllPoints()
+        //call frame.SetPoint(FRAMEPOINT_BOTTOMRIGHT, TownPortalScrollFrame, FRAMEPOINT_BOTTOMRIGHT, 0.0006, -0.0006)
+
+        set TownPortalScrollBackground    = Frame.GetFrameByName("TownPortalScrollBackground", 0)
         call TownPortalScrollBackground.SetTexture("ReplaceableTextures\\CommandButtons\\BTNScrollUber.blp")
 
         call TownPortalScrollCooldownSprite.SetAllPoints(TownPortalScrollFrame)

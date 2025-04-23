@@ -9,6 +9,7 @@ library TownPortalScrollHandler requires Communication, TownPortalScrollFrame, U
 
     function TownPortalScrollHandler_SetHotkey takes integer hotkey returns nothing
         set TownPortalScrollHotkey = hotkey
+        call GetTownPortalScrollHotkeyString().SetText(StringCase(Key2Str(hotkey), true))
     endfunction
     function TownPortalScrollHandler_GetHotkey takes nothing returns integer
         return TownPortalScrollHotkey
@@ -147,6 +148,8 @@ library TownPortalScrollHandler requires Communication, TownPortalScrollFrame, U
         endif
         
         set selectedUnit = null
+        
+        call MHEvent_SetKey(-1)
         return true
     endfunction
 
