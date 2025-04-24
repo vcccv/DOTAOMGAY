@@ -69053,6 +69053,8 @@ endfunction
 	call ExecuteFunc("UnitAbility_Init")
 	call ExecuteFunc("UnitMorph_Init")
 
+	// dz存档初始化
+	call ExecuteFunc("PlayerSettingsLib_Init")
 
 	// ui和硬件系统初始化
 	call ExecuteFunc("UIManager_Init")

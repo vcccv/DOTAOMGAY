@@ -8,6 +8,7 @@ library UIManager /*
     */ optional TownPortalScrollFrame,  /*
     */ optional TownPortalScrollHandler /*
     */ optional DisableResourceTrading, /*
+    */ optional SettingsPanelHandler  , /*
     */
 
     private function OnUdpate takes nothing returns nothing

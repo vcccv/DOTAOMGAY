@@ -2,7 +2,7 @@
 library HotkeysPanelFrame requires SettingsPanelFrame
     
     globals
-        private constant real BUTTON_SIZE = 0.035
+        private constant real BUTTON_SIZE     = 0.035
         private constant real BUTTON_OFFSET_X =   0.03
         private constant real BUTTON_OFFSET_Y = - 0.03
 
@@ -70,7 +70,6 @@ library HotkeysPanelFrame requires SettingsPanelFrame
             call TownPortalScrollHotkeyText.SetText(StringCase(Key2Str(hotkey), true))
         endif
     endfunction
-
 
     function HotkeysPanelFrame_Init takes nothing returns nothing
         local integer i

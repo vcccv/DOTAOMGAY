@@ -7,7 +7,6 @@ library HotkeysPanelHandler requires HotkeysPanelFrame, TownPortalScrollHandler,
         private constant integer CHANGE_STATE_LEARN_HOTKEY              = 2
         private constant integer CHANGE_STATE_TOWN_PORTAL_SCROLL_HOTKEY = 3
 
-        private trigger KeyDownTrig = null
 
         private integer ChangeHotKeyState = CHANGE_STATE_NONE
         private Frame   FoucsFrame
@@ -36,6 +35,7 @@ library HotkeysPanelHandler requires HotkeysPanelFrame, TownPortalScrollHandler,
         local Frame   frame = Frame.GetTriggerFrame()
 
         call EnableAllHotkeyButton(false)
+        call MHUI_PlayNativeSound("GlueScreenClick")
 
         set ChangeHotKeyState = CHANGE_STATE_HOTKEY
         set FoucsFrame        = frame
@@ -45,6 +45,7 @@ library HotkeysPanelHandler requires HotkeysPanelFrame, TownPortalScrollHandler,
         local Frame   frame = Frame.GetTriggerFrame()
 
         call EnableAllHotkeyButton(false)
+        call MHUI_PlayNativeSound("GlueScreenClick")
 
         set ChangeHotKeyState = CHANGE_STATE_LEARN_HOTKEY
         set FoucsFrame        = frame
@@ -128,11 +129,9 @@ library HotkeysPanelHandler requires HotkeysPanelFrame, TownPortalScrollHandler,
         set ChangeHotKeyState = CHANGE_STATE_NONE
     endfunction
 
-    private function OnKeyDownASync takes nothing returns boolean
-        local integer pressedKey = MHEvent_GetKey()
-
+    public function OnKeyDownASync takes integer pressedKey returns boolean
         if ChangeHotKeyState == CHANGE_STATE_NONE then
-            return false
+            return true
         endif
 
         call MHEvent_SetKey(-1)
@@ -158,26 +157,25 @@ library HotkeysPanelHandler requires HotkeysPanelFrame, TownPortalScrollHandler,
         local Frame   frame
 
         set i = 1
-
         loop
             exitwhen i > 12
             
             set frame = GetSettingsPanelHotkeyButton(i, false)
             set FrameIndex[frame] = i
             call frame.RegisterEventByCode(EVENT_ID_FRAME_MOUSE_CLICK, function HotkeysPanelButtonOnClickASync, false)
+            call frame.SetText(StringCase(Key2Str(PlayerSettings.GetHotkey(i)), true))
 
             set frame = GetSettingsPanelHotkeyButton(i, true )
-            call frame.RegisterEventByCode(EVENT_ID_FRAME_MOUSE_CLICK, function HotkeysPanelLearnButtonOnClickASync, false)
             set FrameIndex[frame] = i
+            call frame.RegisterEventByCode(EVENT_ID_FRAME_MOUSE_CLICK, function HotkeysPanelLearnButtonOnClickASync, false)
+            call frame.SetText(StringCase(Key2Str(PlayerSettings.GetLearnHotkey(i)), true))
 
             set i = i + 1
         endloop
 
         call GetSettingsPanelTownPortalScrollHotkeyButton().RegisterEventByCode(EVENT_ID_FRAME_MOUSE_CLICK, function HotkeysPanelTownPortalScrollHotkeyOnClickASync, false)
-
-        set KeyDownTrig = CreateTrigger()
-        call MHMsgKeyDownEvent_Register(KeyDownTrig)
-        call TriggerAddCondition(KeyDownTrig, Condition(function OnKeyDownASync))
+        // 设置面板内的快捷键显示
+        call SetTownPortalScrollHotkeyButtonState(true, PlayerSettings.GetTownPortalScrollHotkey())
     endfunction
 
 endlibrary
