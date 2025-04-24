@@ -1,7 +1,9 @@
 
-library SettingsPanelHandler requires SettingsPanelFrame
+library SettingsPanelHandler requires SettingsPanelFrame, HotkeysPanelHandler
 
     globals
+        private trigger KeyDownTrig = null
+
         private constant integer SETTINGS_PANEL_STATE_NONE    = 0
         private constant integer SETTINGS_PANEL_STATE_HOTKEYS = 1
         private constant integer SETTINGS_PANEL_STATE_OPTIONS = 2
@@ -33,9 +35,32 @@ library SettingsPanelHandler requires SettingsPanelFrame
     endfunction
 
     function SettingsPanelSimpleButtonOnClickASync takes nothing returns nothing
+        if GetSettingsPanelFrame().IsVisible() then
+            return
+        endif
+
         call GetSettingsPanelFrame().SetVisible(true)
         //call GetSettingsPanelSimpleButton().SetEnable(false)
+
+        call MHUI_PlayNativeSound("QuestLogModified")
     endfunction
+
+    public function OnKeyDownASync takes nothing returns boolean
+        local integer pressedKey = MHEvent_GetKey()
+
+        if not HotkeysPanelHandler_OnKeyDownASync(pressedKey) then
+            return false
+        endif
+        
+        // esc并且ui可见则隐藏
+        if pressedKey == OSKEY_ESCAPE and GetSettingsPanelFrame().IsVisible() then
+            call SettingsPanelReturnButtonOnClickASync()
+            return false
+        endif
+
+        return false
+    endfunction
+
 
     function SettingsPanelHandler_Init takes nothing returns nothing
         call BJDebugMsg("init")
@@ -45,12 +70,16 @@ library SettingsPanelHandler requires SettingsPanelFrame
     
         call GetSettingsPanelSimpleButton().RegisterEventByCode(EVENT_ID_FRAME_MOUSE_CLICK, function SettingsPanelSimpleButtonOnClickASync, false)
         
-        // 对于GLUEBUTTON特殊操作
+        // 对于有快捷键的GLUEBUTTON特殊操作
         // call GetSettingsPanelFrameReturnButton().RegisterEventByCode(EVENT_ID_FRAME_MOUSE_CLICK, function SettingsPanelReturnButtonOnClickASync, false)
         call DzFrameSetScriptByCode(GetSettingsPanelFrameReturnButton().GetPtr(), FRAMEEVENT_CONTROL_CLICK, function SettingsPanelReturnButtonOnClickASync, false)
 
         // 默认焦点快捷键
         call SettingsPanel_SetFocusHotkeysPanel()
+
+        set KeyDownTrig = CreateTrigger()
+        call MHMsgKeyDownEvent_Register(KeyDownTrig)
+        call TriggerAddCondition(KeyDownTrig, Condition(function OnKeyDownASync))
     endfunction
 
 endlibrary
