@@ -10,6 +10,8 @@ library SettingsPanelFrame requires UISystem
         private constant real PANEL_CONTROL_BACKDROP_OFFSET_TOP    = - PANEL_BUTTON_HEIGHT * 2
         private constant real PANEL_CONTROL_BACKDROP_OFFSET_BOTTOM =   0.035
 
+        private Frame PenalSimpleButton
+
         private Frame PanelFrame
         private Frame PanelBackdrop
         private Frame PanelReturnButton

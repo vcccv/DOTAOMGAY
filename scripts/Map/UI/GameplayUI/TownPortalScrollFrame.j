@@ -102,10 +102,12 @@ library TownPortalScrollFrame requires UISystem, AbilityUtils
         set TownPortalScrollChargesString = Frame.GetFrameByName("TownPortalScrollChargesString", 0)
         set TownPortalScrollHotkeyString  = Frame.GetFrameByName("TownPortalScrollHotkeyString", 0)
 
+        set frame = Frame.GetFrameByName("TownPortalScrollHotkeyTexture", 0)
+        call frame.SetTexture("UI\\Widgets\\Console\\Human\\CommandButton\\human-button-hotkeys-overlay.blp")
         //set frame = Frame.GetFrameByName("TownPortalScrollHotkeyTexture", 0)
         //call frame.ClearAllPoints()
         //call frame.SetPoint(FRAMEPOINT_TOPLEFT, TownPortalScrollFrame, FRAMEPOINT_TOPLEFT, -0.0006, 0.0006)
-        
+
         //set frame = Frame.GetFrameByName("TownPortalScrollChargesTexture", 0)
         //call frame.ClearAllPoints()
         //call frame.SetPoint(FRAMEPOINT_BOTTOMRIGHT, TownPortalScrollFrame, FRAMEPOINT_BOTTOMRIGHT, 0.0006, -0.0006)
