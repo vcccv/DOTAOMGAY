@@ -104,43 +104,80 @@ library DoubleTapAbilityToSelfCast requires Table, TownPortalScrollHandler
     function RegisterDoubleTapAbilitys takes nothing returns nothing
         call RegisterDoubleTapToSelfCastAbilityById(TOWN_PORTAL_SCROLL_ABILITY_ID) // TP
 
-        call RegisterDoubleTapToSelfCastAbilityById('A11N') // X标记
-        call RegisterDoubleTapToSelfCastAbilityById('A08V') // 全能魔免
-        call RegisterDoubleTapToSelfCastAbilityById('A08N') // 全能加血
-        call RegisterDoubleTapToSelfCastAbilityById('A2ML') // 大树护甲
-        call RegisterDoubleTapToSelfCastAbilityById('A0QP') // 神灵活血术
-        call RegisterDoubleTapToSelfCastAbilityById('A2J2') // 军团加血
-        call RegisterDoubleTapToSelfCastAbilityById('A0MF') // 死骑套子
-        call RegisterDoubleTapToSelfCastAbilityById('A037') // 猛犸授予力量
-        call RegisterDoubleTapToSelfCastAbilityById('A047') // 剑圣棒子
-        call RegisterDoubleTapToSelfCastAbilityById('A44X') // 血魔d
-        call RegisterDoubleTapToSelfCastAbilityById('A3DM') // A杖蚂蚁大
-        call RegisterDoubleTapToSelfCastAbilityById('A0N8') // 地卜师忽悠
-        call RegisterDoubleTapToSelfCastAbilityById('A112') // 光法加魔
-        call RegisterDoubleTapToSelfCastAbilityById('A21E') // 先知发芽
-        call RegisterDoubleTapToSelfCastAbilityById('A0QG') // 兔子套子
-        call RegisterDoubleTapToSelfCastAbilityById('A0R7') // 兔子加速
-        call RegisterDoubleTapToSelfCastAbilityById('A08R') // 巫妖冰甲
-        call RegisterDoubleTapToSelfCastAbilityById('A2TD') // 骨法虚无
-        call RegisterDoubleTapToSelfCastAbilityById('A0OJ') // 黑鸟t
-        call RegisterDoubleTapToSelfCastAbilityById('A0AS') // 术士暗言术
-        call RegisterDoubleTapToSelfCastAbilityById('A1S8') // 毒狗关人
-        call RegisterDoubleTapToSelfCastAbilityById('A10L') // 薄葬
-        call RegisterDoubleTapToSelfCastAbilityById('A0OR') // 暗牧加血
-        call RegisterDoubleTapToSelfCastAbilityById('Z607') // 灵动迅捷
-        call RegisterDoubleTapToSelfCastAbilityById('A2LB') // 冰龙加血
-        call RegisterDoubleTapToSelfCastAbilityById('A01Z') // 大自然的掩护
-        call RegisterDoubleTapToSelfCastAbilityById('A0AS') // 暗言术
-        call RegisterDoubleTapToSelfCastAbilityById('A2T5') // 命运敕令
-        call RegisterDoubleTapToSelfCastAbilityById('A2SG') // 涤罪之焰
-        call RegisterDoubleTapToSelfCastAbilityById('A2TF') // 虚妄诺言
-        call RegisterDoubleTapToSelfCastAbilityById('A0G8') // 复制
-        call RegisterDoubleTapToSelfCastAbilityById('A04Y') // 噩梦
-        call RegisterDoubleTapToSelfCastAbilityById('A00U') // 月蚀
-        call RegisterDoubleTapToSelfCastAbilityById('A43H') // 超新星
-        call RegisterDoubleTapToSelfCastAbilityById('A083') // 嗜血术
-        call RegisterDoubleTapToSelfCastAbilityById('A06B') // 自爆
-        call RegisterDoubleTapToSelfCastAbilityById('A471') // A杖自爆
+        // X标记
+        call RegisterDoubleTapToSelfCastAbilityById('A11N') 
+        // 全能魔免
+        call RegisterDoubleTapToSelfCastAbilityById('A08V') 
+        // 全能加血
+        call RegisterDoubleTapToSelfCastAbilityById('A08N') 
+        // 大树护甲
+        call RegisterDoubleTapToSelfCastAbilityById('A2ML') 
+        // 神灵活血术
+        call RegisterDoubleTapToSelfCastAbilityById('A0QP') 
+        // 军团加血
+        call RegisterDoubleTapToSelfCastAbilityById('A2J2') 
+        // 死骑套子
+        call RegisterDoubleTapToSelfCastAbilityById('A0MF') 
+        // 猛犸授予力量
+        call RegisterDoubleTapToSelfCastAbilityById('A037') 
+        // 剑圣棒子
+        call RegisterDoubleTapToSelfCastAbilityById('A047') 
+        // 血魔d
+        call RegisterDoubleTapToSelfCastAbilityById('A44X') 
+        // A杖蚂蚁大
+        call RegisterDoubleTapToSelfCastAbilityById('A3DM') 
+        // 地卜师忽悠
+        call RegisterDoubleTapToSelfCastAbilityById('A0N8') 
+        // 光法加魔
+        call RegisterDoubleTapToSelfCastAbilityById('A112') 
+        // 先知发芽
+        call RegisterDoubleTapToSelfCastAbilityById('A21E') 
+        // 兔子套子
+        call RegisterDoubleTapToSelfCastAbilityById('A0QG') 
+        // 兔子加速
+        call RegisterDoubleTapToSelfCastAbilityById('A0R7') 
+        // 巫妖冰甲
+        call RegisterDoubleTapToSelfCastAbilityById('A08R') 
+        // 骨法虚无
+        call RegisterDoubleTapToSelfCastAbilityById('A2TD') 
+        // 黑鸟t
+        call RegisterDoubleTapToSelfCastAbilityById('A0OJ') 
+        // 术士暗言术
+        call RegisterDoubleTapToSelfCastAbilityById('A0AS') 
+        // 毒狗关人
+        call RegisterDoubleTapToSelfCastAbilityById('A1S8') 
+        // 薄葬
+        call RegisterDoubleTapToSelfCastAbilityById('A10L') 
+        // 暗牧加血
+        call RegisterDoubleTapToSelfCastAbilityById('A0OR') 
+        // 灵动迅捷
+        call RegisterDoubleTapToSelfCastAbilityById('Z607') 
+        // 冰龙加血
+        call RegisterDoubleTapToSelfCastAbilityById('A2LB') 
+        // 大自然的掩护
+        call RegisterDoubleTapToSelfCastAbilityById('A01Z') 
+        // 暗言术
+        call RegisterDoubleTapToSelfCastAbilityById('A0AS') 
+        // 命运敕令
+        call RegisterDoubleTapToSelfCastAbilityById('A2T5') 
+        // 涤罪之焰
+        call RegisterDoubleTapToSelfCastAbilityById('A2SG') 
+        // 虚妄诺言
+        call RegisterDoubleTapToSelfCastAbilityById('A2TF') 
+        // 复制
+        call RegisterDoubleTapToSelfCastAbilityById('A0G8') 
+        // 噩梦
+        call RegisterDoubleTapToSelfCastAbilityById('A04Y') 
+        // 月蚀
+        call RegisterDoubleTapToSelfCastAbilityById('A00U') 
+        // 超新星
+        call RegisterDoubleTapToSelfCastAbilityById('A43H') 
+        // 嗜血术
+        call RegisterDoubleTapToSelfCastAbilityById('A083') 
+        // 自爆
+        call RegisterDoubleTapToSelfCastAbilityById('A06B') 
+        // A杖自爆
+        call RegisterDoubleTapToSelfCastAbilityById('A471') 
     endfunction
     
     function DoubleTapAbilityToSelfCast_Init takes nothing returns nothing
