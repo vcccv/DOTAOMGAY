@@ -28,16 +28,27 @@ library SettingsPanelHandler requires SettingsPanelFrame
     endfunction
 
     function SettingsPanelReturnButtonOnClickASync takes nothing returns nothing
-        call BJDebugMsg("show！！")
         call GetSettingsPanelFrame().SetVisible(false)
+        //call GetSettingsPanelSimpleButton().SetEnable(true)
+    endfunction
+
+    function SettingsPanelSimpleButtonOnClickASync takes nothing returns nothing
+        call GetSettingsPanelFrame().SetVisible(true)
+        //call GetSettingsPanelSimpleButton().SetEnable(false)
     endfunction
 
     function SettingsPanelHandler_Init takes nothing returns nothing
         call BJDebugMsg("init")
-        call GetSettingsPanelFrameReturnButton().RegisterEventByCode(EVENT_ID_FRAME_MOUSE_CLICK, function SettingsPanelReturnButtonOnClickASync, false)
+
 
         call GetSettinsPanelButtonByIndex(1).RegisterEventByCode(EVENT_ID_FRAME_MOUSE_CLICK, function SettingsPanelHotkeysButtonOnClickASync, false)
     
+        call GetSettingsPanelSimpleButton().RegisterEventByCode(EVENT_ID_FRAME_MOUSE_CLICK, function SettingsPanelSimpleButtonOnClickASync, false)
+        
+        // 对于GLUEBUTTON特殊操作
+        // call GetSettingsPanelFrameReturnButton().RegisterEventByCode(EVENT_ID_FRAME_MOUSE_CLICK, function SettingsPanelReturnButtonOnClickASync, false)
+        call DzFrameSetScriptByCode(GetSettingsPanelFrameReturnButton().GetPtr(), FRAMEEVENT_CONTROL_CLICK, function SettingsPanelReturnButtonOnClickASync, false)
+
         // 默认焦点快捷键
         call SettingsPanel_SetFocusHotkeysPanel()
     endfunction

@@ -3,20 +3,71 @@
 
 IncludeFile "UI\FrameDef\UI\EscMenuTemplates.fdf",
 IncludeFile "UI\FrameDef\UI\EscMenuMainPanel.fdf",
+IncludeFile "UI\FrameDef\UI\UpperButtonBar.fdf",
 
 // -- LOCAL TEMPLATES -------------------------------------------------------
 
 // -- FRAMES ----------------------------------------------------------------
 
+Texture "SettingsMenuButtonBackground" {
+    File "UpperMenuButtonTexture",
+    TexCoord 0.0, 0.6640625, 0.0, 0.171875,
+}
+Texture "SettingsMenuButtonPushedBackground" {
+    File "UpperMenuButtonTexture",
+    TexCoord 0.0, 0.6640625, 0.25, 0.421875,
+}
+Texture "SettingsMenuButtonDisabledBackground" {
+    File "UpperMenuButtonTexture",
+    TexCoord 0.0, 0.6640625, 0.5, 0.671875,
+}
+Texture "SettingsMenuButtonHighlight" {
+    File "UpperMenuButtonTexture",
+    TexCoord 0.0, 0.6640625, 0.75, 0.921875,
+    AlphaMode "ADD",
+}
+
+Frame "SIMPLEBUTTON" "SettingsBarButtonTemplate" {
+    DecorateFileNames,
+    Width 0.0425,
+    Height 0.022,
+    ButtonPushedTextOffset 0.001 -0.001,
+    NormalTexture "SettingsMenuButtonBackground",
+    PushedTexture "SettingsMenuButtonPushedBackground",
+    DisabledTexture "SettingsMenuButtonDisabledBackground",
+    UseHighlight "SettingsMenuButtonHighlight",
+}
+
+String "SettingsBarButtonTextTemplate" {
+    Font "MasterFont",0.01,
+    FontColor 1.0 1.0 1.0,
+}
+
+String "SettingsBarButtonDisabledTextTemplate" INHERITS "SettingsBarButtonTextTemplate" {
+    FontColor 0.4 0.4 0.4,
+}
+
+String "SettingsBarButtonHighlightTextTemplate" INHERITS "SettingsBarButtonTextTemplate" {
+    FontColor 1.0 0.83 0.07,
+}
+
+Frame "SIMPLEBUTTON" "SettingsBarButton" INHERITS "SettingsBarButtonTemplate" {
+    SetPoint TOPLEFT,"UpperButtonBarFrame",TOPLEFT,0.042,-0.022,
+    NormalText "SettingsBarButtonTextTemplate" "地图设置",
+    DisabledText "SettingsBarButtonDisabledTextTemplate" "地图设置",
+    HighlightText "SettingsBarButtonHighlightTextTemplate" "地图设置",
+}
+
 Frame "FRAME" "SettingsPanelFrame" {
     Width  0.475,
 	Height 0.3750,
+    TabFocusPush,
 
     Frame "GLUETEXTBUTTON" "SettingsPanelReturnButton" INHERITS WITHCHILDREN "EscMenuButtonTemplate" {
         SetPoint TOPRIGHT, "SettingsPanelFrame", TOPRIGHT, -0.035, -0.035,
         Width 0.18,
-        //TabFocusDefault,
         ControlShortcutKey "R",
+        TabFocusDefault,
 
         ButtonText "SettingsPanelReturnButtonText",
         Frame "TEXT" "SettingsPanelReturnButtonText" INHERITS "EscMenuButtonTextTemplate" {

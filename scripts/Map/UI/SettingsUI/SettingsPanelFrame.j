@@ -30,6 +30,10 @@ library SettingsPanelFrame requires UISystem
         private Frame PanelControlBackdrop
     endglobals
 
+    function GetSettingsPanelSimpleButton takes nothing returns Frame
+        return PenalSimpleButton
+    endfunction
+
     function GetSettingsPanelFrame takes nothing returns Frame
         return PanelFrame
     endfunction
@@ -62,6 +66,8 @@ library SettingsPanelFrame requires UISystem
     endfunction
 
     function SettingsPanelFrame_Init takes nothing returns nothing
+        set PenalSimpleButton = Frame.GetFrameByName("UpperButtonBarFrame", 0).CreateSimpleFrame("SettingsBarButton", 0)
+        
         set PanelFrame = Frame.GetOriginFrame(ORIGIN_FRAME_GAME_UI, 0).CreateFrame("SettingsPanelFrame", 0, 0)
         
         set PanelBackdrop = PanelFrame.CreateFrameByType("BACKDROP", "SettingsPanelBackdrop", "EscMenuBackdrop", -1, 0)
@@ -127,9 +133,10 @@ library SettingsPanelFrame requires UISystem
 
         call OptionsPanelButtonHighlight.SetVisible(false)
 
-        // call PanelFrame.SetVisible(false)
         call PanelFrame.SetVisible(false)
         call PanelFrame.SetVisible(true)
+        
+        call PanelFrame.SetVisible(false)
     endfunction
     
 endlibrary
