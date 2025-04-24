@@ -35,7 +35,7 @@ library TowerAttackRange requires Base, PlayerSettingsLib
 
     function TowerAttackRangeUpdate takes nothing returns nothing
         local integer i
-        local boolean showSetting = PlayerSettings(User.LocalId).IsHoldingALTShowsTowerAttackRange()
+        local boolean showSetting = PlayerSettings[User.LocalId].IsSettingEnable(PlayerSettings.HOLDING_ALT_SHOWS_TOWER_ATTACK_RANGE)
         local boolean currentAlt  = MHMsg_IsKeyDown(OSKEY_ALT)
 
         if showSetting != prevShow or (showSetting and currentAlt != prevAlt) then

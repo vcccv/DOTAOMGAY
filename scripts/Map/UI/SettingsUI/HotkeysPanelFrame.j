@@ -18,15 +18,20 @@ library HotkeysPanelFrame requires SettingsPanelFrame
         private constant real LEARN_HOTKEY_BUTTON_TEXT_START_OFFSET_X =   LEARN_HOTKEY_BUTTON_START_OFFSET_X + BUTTON_OFFSET_X * 2
         private constant real LEARN_HOTKEY_BUTTON_TEXT_START_OFFSET_Y = - 0.030
 
+        private constant real CHECKBOX_START_OFFSET_X                 = 0.0255
+        private constant real CHECKBOX_START_OFFSET_Y                 = 0.0875
 
-        // 
+        private constant real CHECKBOX_OFFSET_X                       = 0.1255
+        private constant real CHECKBOX_OFFSET_Y                       = 0.0245
+
+        
+
+        // 复选框常量 
+        constant integer HOTKEY_PANEL_ENABLE_HOTKEY_SYSTEM            = 1
+        constant integer HOTKEY_PANEL_HIDE_COMMAND_BUTTON             = 2
+        constant integer HOTKEY_PANEL_DOUBLE_TAP_ABILITY_TO_SELF_CAST = 3
 
         private Frame PanelFrame
-
-        // 组合式复选框
-        private Frame array CheckBoxButton
-        private Frame array CheckBoxBackdrop
-        private Frame array CheckBoxHighLight
 
         private Frame HotkeyTitleText
         private Frame LearnHotkeyTitleText
@@ -39,11 +44,6 @@ library HotkeysPanelFrame requires SettingsPanelFrame
         private Frame TownPortalScrollHotkeyText
     endglobals
 
-    /*
-    简化命令按钮
-    双击对己施法
-    改键仅限英雄
-    */
     function GetSettingsPanelHotkeysPanelFrame takes nothing returns Frame
         return PanelFrame
     endfunction
@@ -71,15 +71,17 @@ library HotkeysPanelFrame requires SettingsPanelFrame
         endif
     endfunction
 
+
     function HotkeysPanelFrame_Init takes nothing returns nothing
         local integer i
 
-        local real xOffSet = 0.03
-        local real yOffSet = - 0.03
-        local integer row = 0
-        local integer column = 0
+        local real    xOffSet = 0.03
+        local real    yOffSet = - 0.03
+        local integer row     = 0
+        local integer column  = 0
 
-        local Frame controlBackdrop = GetSettingsPanelFrameControlBackdrop()
+        local Frame   controlBackdrop = GetSettingsPanelFrameControlBackdrop()
+        local Frame   frame
 
         set PanelFrame = GetSettingsPanelFrame().CreateFrameByType("FRAME", "HotkeysPanelFrame", "", 0, 0)
         call PanelFrame.SetAllPoints(GetSettingsPanelFrame())
@@ -87,7 +89,7 @@ library HotkeysPanelFrame requires SettingsPanelFrame
         set HotkeyTitleText = PanelFrame.CreateFrameByType("TEXT", "HotkeyTitleText", "TeamLabelTextTemplate", 2, 0)
         call HotkeyTitleText.SetFont("Fonts\\dfst-m3u.ttf", 0.0150, 0)
         call HotkeyTitleText.SetSize(0.1000, 0.0000)
-        call HotkeyTitleText.SetText("技能热键")
+        call HotkeyTitleText.SetText("热键")
         call HotkeyTitleText.SetPoint(FRAMEPOINT_CENTER, controlBackdrop, FRAMEPOINT_TOPLEFT, HOTKEY_BUTTON_TEXT_START_OFFSET_X, HOTKEY_BUTTON_TEXT_START_OFFSET_Y)
         call HotkeyTitleText.SetTextAlignment(TEXT_JUSTIFY_MIDDLE, TEXT_JUSTIFY_CENTER)
 
@@ -123,11 +125,11 @@ library HotkeysPanelFrame requires SettingsPanelFrame
             */ HOTKEY_BUTTON_START_OFFSET_X + BUTTON_OFFSET_X * row, /*
             */ HOTKEY_BUTTON_START_OFFSET_Y + BUTTON_OFFSET_Y * column)
 
-            if ModuloInteger(i, 4) == 0 then
-                set column = column + 1
-                set row = 0
-            else
+            if ModuloInteger(i, 3) == 0 then
                 set row = row + 1
+                set column = 0
+            else
+                set column = column + 1
             endif
 
             set i = i + 1
@@ -145,15 +147,35 @@ library HotkeysPanelFrame requires SettingsPanelFrame
             */ LEARN_HOTKEY_BUTTON_START_OFFSET_X + BUTTON_OFFSET_X * row, /*
             */ LEARN_HOTKEY_BUTTON_START_OFFSET_Y + BUTTON_OFFSET_Y * column)
 
-            if ModuloInteger(i, 4) == 0 then
-                set column = column + 1
-                set row = 0
-            else
+            if ModuloInteger(i, 3) == 0 then
                 set row = row + 1
+                set column = 0
+            else
+                set column = column + 1
             endif
 
             set i = i + 1
         endloop
+
+        /*
+        启用改键系统
+        简化命令按钮
+        双击对己施法
+        改键仅限英雄
+        */
+        
+        set frame = SettingsPanelCreateCheckBox(PanelFrame, PlayerSettings.ENABLE_HOTKEY_SYSTEM)
+        call frame.SetPoint(FRAMEPOINT_BOTTOMLEFT, controlBackdrop, FRAMEPOINT_BOTTOMLEFT, CHECKBOX_START_OFFSET_X, CHECKBOX_START_OFFSET_Y)
+
+        set frame = SettingsPanelCreateCheckBox(PanelFrame, PlayerSettings.HIDE_COMMAND_BUTTON)
+        call frame.SetPoint(FRAMEPOINT_BOTTOMLEFT, controlBackdrop, FRAMEPOINT_BOTTOMLEFT, /*
+        */ CHECKBOX_START_OFFSET_X, CHECKBOX_START_OFFSET_Y - CHECKBOX_OFFSET_Y)
+
+        set frame = SettingsPanelCreateCheckBox(PanelFrame, PlayerSettings.DOUBLE_TAP_ABILITY_TO_SELF_CAST)
+        call frame.SetPoint(FRAMEPOINT_BOTTOMLEFT, controlBackdrop, FRAMEPOINT_BOTTOMLEFT, /*
+        */ CHECKBOX_START_OFFSET_X, CHECKBOX_START_OFFSET_Y - CHECKBOX_OFFSET_Y * 2)
+
+        // 复选框
 
         call PanelFrame.SetVisible(false)
     endfunction

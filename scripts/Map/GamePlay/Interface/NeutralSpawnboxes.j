@@ -28,7 +28,7 @@ library NeutralSpawnboxes requires Base, PlayerSettingsLib
 
     function NeutralSpawnboxesUpdate takes nothing returns nothing
         local integer i
-        local boolean showSetting = PlayerSettings(User.LocalId).IsHoldingALTShowsNeutralSpawnboxes()
+        local boolean showSetting = PlayerSettings[User.LocalId].IsSettingEnable(PlayerSettings.HOLDING_ALT_SHOWS_NEUTRAL_SPAWNBOXES)
         local boolean currentAlt  = MHMsg_IsKeyDown(OSKEY_ALT)
         local real    alpha       
         

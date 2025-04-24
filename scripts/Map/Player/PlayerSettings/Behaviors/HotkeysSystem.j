@@ -1,7 +1,116 @@
 
-library HotkeysSystem requires PlayerSettingsLib
-    private function init_function takes nothing returns nothing
-        
-    endfunction
-endlibrary
+library HotkeysSystem requires PlayerSettingsLib, AbilityUtils
 
+    globals
+        private real UPDATE_TIME_OUT = 1.
+
+        private integer array SkillBarButton
+
+        private key BASE_COMMAND_ORDER
+    endglobals
+
+    private function IsBaseCommandOrder takes integer order returns boolean
+        return Table[BASE_COMMAND_ORDER].boolean[order]
+    endfunction
+    private function SaveBaseCommandOrder takes integer order returns nothing
+        set Table[BASE_COMMAND_ORDER].boolean[order] = true
+    endfunction
+    
+    private function SetUnitHotekeyById takes integer unitId, integer hotkey returns nothing
+        call MHUnit_SetDefDataInt(unitId, UNIT_DEF_DATA_HOTKEY, hotkey)
+    endfunction
+
+    private function UpdateCommandBarHotkey takes nothing returns nothing
+        local integer i
+        local integer abilId
+        local integer orderId
+
+        if not PlayerSettings[User.LocalId].IsSettingEnable(PlayerSettings.ENABLE_HOTKEY_SYSTEM) then
+            return
+        endif
+
+        if PlayerSettings[User.LocalId].IsSettingEnable(PlayerSettings.CHANGE_KEY_ONLY_HERO) and not IsUnitType(MHPlayer_GetSelectUnit(), UNIT_TYPE_HERO) then
+            return
+        endif
+
+        set i = 1
+        loop
+            exitwhen i > 12
+            
+            set abilId  = MHUIData_GetCommandButtonAbility(SkillBarButton[i])
+            set orderId = MHUIData_GetCommandButtonOrderId(SkillBarButton[i])
+            // 学习技能
+            if abilId == 'AHer' and orderId != 0 then
+                call SetAbilityResearchHotkeyById(orderId, PlayerSettings.GetLearnHotkey(i))
+            elseif abilId == 'Asel' then
+                // 购买单位 对于买物品时的表现
+                call SetUnitHotekeyById(orderId, PlayerSettings.GetHotkey(i))
+            elseif orderId != 0 and not IsBaseCommandOrder(orderId) then
+                // 是否需要判断技能有效性?
+                call SetAbilityHotkeyByIdSimple(abilId, PlayerSettings.GetHotkey(i))
+            endif
+            
+            set i = i + 1
+        endloop
+
+        call MHUnit_UpdateInfoBar(MHPlayer_GetSelectUnit())
+    endfunction
+
+    public function OnUpdate takes nothing returns nothing
+        if MHPlayer_GetSelectUnit() == null then
+            return
+        endif
+
+        call UpdateCommandBarHotkey()
+    endfunction
+
+    // 
+    private function OnSelection takes nothing returns boolean
+        local unit selectedUnitSync  = GetTriggerUnit()
+        local unit selectedUnitASync = MHPlayer_GetSelectUnit()
+
+        // 如果不是秒切 就尝试更新快捷键
+        if selectedUnitSync == selectedUnitASync then
+            call UpdateCommandBarHotkey()
+        endif
+
+        set selectedUnitSync  = null
+        set selectedUnitASync = null
+        return false
+    endfunction
+
+    function HotkeysSystem_Init takes nothing returns nothing
+        local trigger    trig = CreateTrigger()
+        local integer    i
+
+        call SimpleTick.CreateEx().Start(UPDATE_TIME_OUT, true, function OnUpdate)
+
+        // 移动
+        call SaveBaseCommandOrder(ORDER_move)
+        // 停止
+        call SaveBaseCommandOrder(ORDER_stop)
+        // 保持原位
+        call SaveBaseCommandOrder(ORDER_holdposition)
+        // 攻击
+        call SaveBaseCommandOrder(ORDER_attack)
+        // 巡逻
+        call SaveBaseCommandOrder(ORDER_patrol)
+        
+        set i = 1
+        loop
+            exitwhen i > 12
+            set SkillBarButton[i] = MHUI_GetSkillBarButton(i)
+            set i = i + 1
+        endloop
+
+        set i = 1
+        loop
+            exitwhen i > 15
+            call TriggerRegisterPlayerSelectionEventBJ(trig, Player(i), true)
+            set i = i + 1
+        endloop
+
+        call TriggerAddCondition(trig, Condition(function OnSelection))
+    endfunction
+
+endlibrary

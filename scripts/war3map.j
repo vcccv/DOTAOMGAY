@@ -69046,7 +69046,7 @@ endfunction
 	
 	// call ExecuteFunc("SpecialPassiveAbility_Init")
 	call ExecuteFunc("UnitWindWalk_Init")
-	call ExecuteFunc("DoubleTapAbilityToSelfCast_Init")
+	
 
 	call ExecuteFunc("ItemSystem_Init")
 	call ExecuteFunc("UnitRemove_Init")

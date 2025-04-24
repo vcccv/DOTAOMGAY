@@ -244,7 +244,7 @@ scope TownPortalScroll
 
     function PlayerSetTeleportRequires takes player whichPlayer, boolean flag returns nothing
         local integer pid = GetPlayerId(whichPlayer)
-        if PlayerSettings(pid).IsTeleportRequiresHoldOrStop() and whichPlayer == LocalPlayer then
+        if PlayerSettings[pid].IsSettingEnable(PlayerSettings.TELEPORT_REQUIRES_HOLD_OR_STOP) and whichPlayer == LocalPlayer then
             call SelectUnit(CirclesUnit[pid], flag)
         endif
     endfunction

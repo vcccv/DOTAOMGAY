@@ -10,7 +10,10 @@ library SettingsPanelHandler requires SettingsPanelFrame, HotkeysPanelHandler
 
 
         private integer SettingsPanelState = SETTINGS_PANEL_STATE_NONE
+
+        private integer CheckBoxCount = 0
     endglobals
+
     
     function SettingsPanel_SetFocusHotkeysPanel takes nothing returns nothing
         if SettingsPanelState == SETTINGS_PANEL_STATE_HOTKEYS then
@@ -61,10 +64,7 @@ library SettingsPanelHandler requires SettingsPanelFrame, HotkeysPanelHandler
         return false
     endfunction
 
-
     function SettingsPanelHandler_Init takes nothing returns nothing
-        call BJDebugMsg("init")
-
 
         call GetSettinsPanelButtonByIndex(1).RegisterEventByCode(EVENT_ID_FRAME_MOUSE_CLICK, function SettingsPanelHotkeysButtonOnClickASync, false)
     

@@ -3,12 +3,10 @@ library TownPortalScrollHandler requires Communication, TownPortalScrollFrame, U
     globals
         constant integer TOWN_PORTAL_SCROLL_ABILITY_ID = 'A1R5'
         private key CHARGES
-
-        private integer TownPortalScrollHotkey = - 1
     endglobals
 
     function TownPortalScrollHandler_SetHotkey takes integer hotkey returns nothing
-        set TownPortalScrollHotkey = hotkey
+        call PlayerSettings.SetTownPortalScrollHotkey(hotkey)
         call GetTownPortalScrollHotkeyString().SetText(StringCase(Key2Str(hotkey), true))
     endfunction
     private function GetHotkey takes nothing returns integer

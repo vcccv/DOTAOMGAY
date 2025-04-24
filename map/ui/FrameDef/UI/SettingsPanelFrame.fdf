@@ -58,6 +58,98 @@ Frame "SIMPLEBUTTON" "SettingsBarButton" INHERITS "SettingsBarButtonTemplate" {
     HighlightText "SettingsBarButtonHighlightTextTemplate" "地图设置",
 }
 
+Frame "HIGHLIGHT" "SettingsCheckBoxHighLight" {
+    SetAllPoints,
+    DecorateFileNames,
+    HighlightType "FILETEXTURE",
+    HighlightAlphaFile "EscMenuCheckBoxCheckHighlight",
+    HighlightAlphaMode "BLEND",
+}
+
+Frame "GLUECHECKBOX" "SettingsCheckBox" {
+    Width  0.024,
+    Height 0.024,
+
+    ControlBackdrop "SettingsCheckBoxBackdrop",
+    Frame "BACKDROP" "SettingsCheckBoxBackdrop" {
+        DecorateFileNames,
+        BackdropBlendAll,
+        BackdropBackground  "EscMenuCheckBoxBackground",
+    }
+
+    ControlDisabledBackdrop "SettingsDisabledCheckBoxBackdrop",
+    Frame "BACKDROP" "SettingsDisabledCheckBoxBackdrop" {
+        DecorateFileNames,
+        BackdropBlendAll,
+        BackdropBackground  "EscMenuDisabledCheckBoxBackground",
+    }
+
+    ControlPushedBackdrop "SettingsCheckBoxPushedBackdrop",
+    Frame "BACKDROP" "SettingsCheckBoxPushedBackdrop" {
+        DecorateFileNames,
+        BackdropBlendAll,
+        BackdropBackground  "EscMenuCheckBoxPushedBackground",
+    }
+
+    //CheckBoxCheckHighlight "SettingsCheckHighlightTemplate",
+    //Frame "HIGHLIGHT" "SettingsCheckHighlightTemplate" {
+    //    DecorateFileNames,
+    //    HighlightType "FILETEXTURE",
+    //    HighlightAlphaFile "EscMenuCheckBoxCheckHighlight",
+    //    HighlightAlphaMode "BLEND",
+    //}
+
+    //CheckBoxDisabledCheckHighlight "SettingsDisabledCheckHighlightTemplate",
+    //Frame "HIGHLIGHT" "SettingsDisabledCheckHighlightTemplate" {
+    //    DecorateFileNames,
+    //    HighlightType "FILETEXTURE",
+    //    HighlightAlphaFile "EscMenuDisabledCheckHighlight",
+    //    HighlightAlphaMode "BLEND",
+    //}
+}
+
+
+
+Frame "FRAME" "SettingsPanelTooltipFrame" {
+    Width  0.135,
+
+    Frame "BACKDROP" "SettingsPanelTooltipBackdrop" 
+    {
+        UseActiveContext,
+        SetAllPoints,
+        DecorateFileNames,
+        BackdropTileBackground,
+        BackdropBackground "ToolTipBackground",
+        BackdropEdgeFile "ToolTipBorder",
+        BackdropCornerFlags "UL|UR|BL|BR|T|L|B|R",
+        BackdropCornerSize 0.01,
+        BackdropBackgroundInsets 0.0019 0.0019 0.0019 0.0019,
+        BackdropBlendAll,
+    }
+
+    Frame "TEXT" "SettingsPanelTooltipText"
+    {
+        UseActiveContext,
+        LayerStyle "IGNORETRACKEVENTS",
+        Width 0.125,
+        SetPoint TOPLEFT, "SettingsPanelTooltipFrame", TOPLEFT, 0.005, -0.005,
+        DecorateFileNames,
+        FrameFont "MasterFont", 0.011, "",
+        Text "tooltip missing!",
+    }
+
+    Frame "TEXT" "SettingsPanelTooltipExtendedText"
+    {
+        UseActiveContext,
+        LayerStyle "IGNORETRACKEVENTS",
+        Width 0.125,
+        SetPoint TOPLEFT, "SettingsPanelTooltipText", BOTTOMLEFT, 0.0, -0.005,
+        DecorateFileNames,
+        FrameFont "MasterFont", 0.011, "",
+        Text "tooltip missing!",
+    }
+}
+
 Frame "FRAME" "SettingsPanelFrame" {
     Width  0.475,
 	Height 0.3750,

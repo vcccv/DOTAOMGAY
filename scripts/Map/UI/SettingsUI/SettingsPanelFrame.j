@@ -1,5 +1,5 @@
 
-library SettingsPanelFrame requires UISystem
+library SettingsPanelFrame requires UISystem, SimpleToolTipLib
    
     globals
         private constant real PANEL_BUTTON_WIDTH  = 0.075
@@ -28,7 +28,117 @@ library SettingsPanelFrame requires UISystem
 
         // 里面的背景
         private Frame PanelControlBackdrop
+
+        private constant real CHECKBOX_TEXT_OFFSET_X                  = 0.000
+
+        // 组合式复选框
+        private Frame array CheckBox
+        private Frame array CheckBoxHighLight
+        private Frame array CheckBoxText
+
+        private Frame array CheckBoxToolTipFrame
+        private Frame array CheckBoxToolTipText
+        private Frame array CheckBoxToolTipExtendedText
+        
+        private integer array CheckBoxIndex
     endglobals
+
+    function GetSettingsPanelCheckBoxIndex takes Frame checkBox returns integer
+        return CheckBoxIndex[checkBox]
+    endfunction
+
+    function SettingsPanelCheckBoxSetActivationByIndex takes integer index, boolean activation returns nothing
+        if CheckBoxHighLight[index] <= 0 then
+            return
+        endif
+        call CheckBoxHighLight[index].SetVisible(activation)
+    endfunction
+
+    function SettingsPanelCheckBoxSetEnableByIndex takes integer index, boolean enable returns nothing
+        if CheckBox[index] <= 0 then
+            return
+        endif
+        call CheckBox[index].SetEnable(enable)
+    endfunction
+    function SettingsPanelCheckBoxSetTextByIndex takes integer index, string value returns nothing
+        if CheckBoxText[index] <= 0 then
+            return
+        endif
+        call CheckBoxText[index].SetText(value)
+    endfunction
+    function SettingsPanelCheckBoxSetTooltipByIndex takes integer index, string tip, string ubertip returns nothing
+        local Frame frame
+        local real  height = 0.005 * 3
+        if CheckBoxToolTipFrame[index] <= 0 then
+            return
+        endif
+        
+        call CheckBoxToolTipText[index].SetText(tip)
+        call CheckBoxToolTipExtendedText[index].SetText(ubertip)
+
+        set height = height + CheckBoxToolTipText[index].GetHeight()
+        set height = height + CheckBoxToolTipExtendedText[index].GetHeight()
+        call CheckBoxToolTipFrame[index].SetHeight(height)
+    endfunction
+
+    private function CheckBoxOnClickASync takes nothing returns nothing
+        local Frame   frame = Frame.GetTriggerFrame()
+        local integer index = CheckBoxIndex[frame]
+
+       // call PlayerSettings[User.LocalId].EnableSetting(index, not PlayerSettings[User.LocalId].IsSettingEnable(index))
+       call CheckBoxHighLight[index].SetVisible(not CheckBoxHighLight[index].IsVisible())
+    endfunction
+
+    private function CheckBoxOnEnterASync takes nothing returns nothing
+        local Frame   frame = Frame.GetTriggerFrame()
+        local integer index = CheckBoxIndex[frame]
+        local real    height = 0.005 * 3
+
+        call CheckBoxToolTipFrame[index].SetVisible(true)
+
+        // 更新高度
+        set height = height + CheckBoxToolTipText[index].GetHeight()
+        set height = height + CheckBoxToolTipExtendedText[index].GetHeight()
+        call CheckBoxToolTipFrame[index].SetHeight(height)
+    endfunction
+
+    private function CheckBoxOnLeaveASync takes nothing returns nothing
+        local Frame   frame = Frame.GetTriggerFrame()
+        local integer index = CheckBoxIndex[frame]
+        call CheckBoxToolTipFrame[index].SetVisible(false)
+    endfunction
+
+    private function CreateCheckBoxTooltipFrame takes integer index returns nothing
+        set CheckBoxToolTipFrame[index] = CheckBox[index].CreateFrame("SettingsPanelTooltipFrame", 1, index)
+        call CheckBoxToolTipFrame[index].SetPoint(FRAMEPOINT_BOTTOMLEFT, CheckBox[index], FRAMEPOINT_TOPRIGHT, 0., 0.)
+        call CheckBoxToolTipFrame[index].SetVisible(false)
+
+        set CheckBoxToolTipText[index]         = Frame.GetFrameByName("SettingsPanelTooltipText", index)
+        set CheckBoxToolTipExtendedText[index] = Frame.GetFrameByName("SettingsPanelTooltipExtendedText", index)
+
+        call CheckBox[index].RegisterEventByCode(EVENT_ID_FRAME_MOUSE_ENTER, function CheckBoxOnEnterASync, false)
+        call CheckBox[index].RegisterEventByCode(EVENT_ID_FRAME_MOUSE_LEAVE, function CheckBoxOnLeaveASync, false)
+    endfunction
+    
+    function SettingsPanelCreateCheckBox takes Frame parent, integer index returns Frame
+        set CheckBox[index]          = parent.CreateFrameByType("GLUECHECKBOX", "", "SettingsCheckBox", 0, index)
+        set CheckBoxHighLight[index] = CheckBox[index].CreateFrameByType("HIGHLIGHT", "", "SettingsCheckBoxHighLight", 0, index)
+        set CheckBoxText[index]      = CheckBox[index].CreateFrameByType("TEXT", "", "EscMenuMainPanelDialogTextTemplate", 0, index)
+        call CheckBoxHighLight[index].SetVisible(false)
+        call CheckBoxText[index].SetPoint(FRAMEPOINT_LEFT, CheckBox[index], FRAMEPOINT_RIGHT, CHECKBOX_TEXT_OFFSET_X, 0.)
+        set CheckBoxIndex[CheckBox[index]] = index
+
+        // TODO: 添加同步事件，在同步事件内设置Setting
+        call CheckBox[index].RegisterEventByCode(EVENT_ID_FRAME_MOUSE_CLICK, function CheckBoxOnClickASync, false)
+        //set CheckBoxToolTipFrame[index] = SimpleToolTip.RegisterToolTip(CheckBox[index])
+
+
+        call CreateCheckBoxTooltipFrame(index)
+
+        call Frame.GetFrameByName("SettingsPanelTooltipText", index).SetText("11111114514")
+
+        return CheckBox[index]
+    endfunction
 
     function GetSettingsPanelSimpleButton takes nothing returns Frame
         return PenalSimpleButton

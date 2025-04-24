@@ -64,6 +64,14 @@ library HotkeysPanelHandler requires HotkeysPanelFrame, TownPortalScrollHandler,
         call EnableAllHotkeyButton(true)
     
         call FoucsFrame.SetText("")
+        if ChangeHotKeyState == CHANGE_STATE_HOTKEY then
+            call PlayerSettings.SetHotkey(FrameIndex[FoucsFrame], -1)
+        elseif ChangeHotKeyState == CHANGE_STATE_LEARN_HOTKEY then
+            call PlayerSettings.SetLearnHotkey(FrameIndex[FoucsFrame], -1)
+        elseif ChangeHotKeyState == CHANGE_STATE_TOWN_PORTAL_SCROLL_HOTKEY then
+            call PlayerSettings.SetTownPortalScrollHotkey(-1)
+        endif
+ 
         set FoucsFrame        = 0
         set ChangeHotKeyState = CHANGE_STATE_NONE
     endfunction
@@ -152,6 +160,12 @@ library HotkeysPanelHandler requires HotkeysPanelFrame, TownPortalScrollHandler,
         return false
     endfunction
 
+    private function SetCheckBoxData takes integer index, string tip, string ubertip returns nothing
+        call SettingsPanelCheckBoxSetTextByIndex(index, tip)
+        call SettingsPanelCheckBoxSetActivationByIndex(index, PlayerSettings[User.LocalId].IsSettingEnable(index))
+        call SettingsPanelCheckBoxSetTooltipByIndex(index, tip, ubertip)
+    endfunction
+
     function HotkeysPanelHandler_Init takes nothing returns nothing
         local integer i
         local Frame   frame
@@ -176,6 +190,15 @@ library HotkeysPanelHandler requires HotkeysPanelFrame, TownPortalScrollHandler,
         call GetSettingsPanelTownPortalScrollHotkeyButton().RegisterEventByCode(EVENT_ID_FRAME_MOUSE_CLICK, function HotkeysPanelTownPortalScrollHotkeyOnClickASync, false)
         // 设置面板内的快捷键显示
         call SetTownPortalScrollHotkeyButtonState(true, PlayerSettings.GetTownPortalScrollHotkey())
+
+
+        // 复选框
+        call SetCheckBoxData(PlayerSettings.ENABLE_HOTKEY_SYSTEM           , "启用热键系统", /*
+        */ "开启后，会修改命令栏快捷键，如果没有填写热键，则没有快捷键。")
+        call SetCheckBoxData(PlayerSettings.HIDE_COMMAND_BUTTON            , "简化命令按钮", /*
+        */ "隐藏除了攻击以外的基础命令按钮，增加可用的命令按钮数量。")
+        call SetCheckBoxData(PlayerSettings.DOUBLE_TAP_ABILITY_TO_SELF_CAST, "双击对己施法", /*
+        */ "开启后快速双击技能快捷键将对自己释放技能。")
     endfunction
 
 endlibrary

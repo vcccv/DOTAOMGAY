@@ -33,7 +33,7 @@ library DoubleTapAbilityToSelfCast requires Table, TownPortalScrollHandler, Play
         local integer castType
         local integer flag
         static if LIBRARY_PlayerSettingsManager then
-            if not PlayerSettings(User.LocalId).IsDoubleTapAbilityToSelfCast() then
+            if not PlayerSettings[User.LocalId].IsSettingEnable(PlayerSettings.DOUBLE_TAP_ABILITY_TO_SELF_CAST) then
                 return false
             endif
         endif
@@ -80,7 +80,7 @@ library DoubleTapAbilityToSelfCast requires Table, TownPortalScrollHandler, Play
     private function OnCallTargetMode takes nothing returns boolean
         local integer abilId
         static if LIBRARY_PlayerSettingsManager then
-            if not PlayerSettings(User.LocalId).IsDoubleTapAbilityToSelfCast() then
+            if not PlayerSettings[User.LocalId].IsSettingEnable(PlayerSettings.DOUBLE_TAP_ABILITY_TO_SELF_CAST) then
                 return false
             endif
         endif
