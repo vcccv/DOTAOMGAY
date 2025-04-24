@@ -114,11 +114,72 @@ library AbilityUtils requires Table, Base
         call MHAbility_SetLevelDefDataInt(abilId, level, filed, value)
     endfunction
 
+    // 仅限快捷键 不包括学习快捷键
+    function SetAbilityHotkeyByIdSimple takes integer abilId, integer hotkey returns boolean
+        local string  value
+        local integer oldHotkey
+        local integer maxLevel
+        local integer i
+        local boolean success = false
+
+        if hotkey < 'A' or hotkey > 'Z' then
+            return false
+        endif
+
+        set maxLevel = GetAbilityIntegerFieldById(abilId, ABILITY_DEF_DATA_MAX_LEVEL)
+
+        // 仅替换指定格式的快捷键 [|cffffcc00?|r]
+        set oldHotkey = GetAbilityIntegerFieldById(abilId, ABILITY_DEF_DATA_HOTKEY)
+        if oldHotkey != 0 and oldHotkey != hotkey then
+            if maxLevel == 1 then
+                set value = GetAbilityStringLevelFieldById(abilId, 1, ABILITY_LEVEL_DEF_DATA_TIP)
+                set value = MHString_Replace(value, ("[|cffffcc00" + Key2Str(oldHotkey) + "|r]"), "[|cffffcc00" + Key2Str(hotkey) + "|r]")
+                call SetAbilityStringLevelFieldById(abilId, 1, ABILITY_LEVEL_DEF_DATA_TIP, value)
+            else
+                set i = 1
+                loop
+                    exitwhen i > maxLevel
+                    set value = GetAbilityStringLevelFieldById(abilId, i, ABILITY_LEVEL_DEF_DATA_TIP)
+                    set value = MHString_Replace(value, ("[|cffffcc00" + Key2Str(oldHotkey) + "|r]"), "[|cffffcc00" + Key2Str(hotkey) + "|r]")
+                    call SetAbilityStringLevelFieldById(abilId, i, ABILITY_LEVEL_DEF_DATA_TIP, value)
+                    set i = i + 1
+                endloop
+            endif
+            call SetAbilityIntegerFieldById(abilId, ABILITY_DEF_DATA_HOTKEY, hotkey)
+            set success = true
+        endif
+
+        return success
+    endfunction
+
+    // 仅限学习快捷键
+    function SetAbilityResearchHotkeyById takes integer abilId, integer hotkey returns boolean
+        local string  value
+        local integer oldHotkey
+        local boolean success = false
+
+        if hotkey < 'A' or hotkey > 'Z' then
+            return false
+        endif
+
+        set oldHotkey = GetAbilityIntegerFieldById(abilId, ABILITY_DEF_DATA_RESEARCH_HOTKEY)
+        if oldHotkey != 0 and oldHotkey != hotkey then
+            // 学习提示
+            set value = GetAbilityStringFieldById(abilId, ABILITY_DEF_DATA_RESEARCH_TIP)
+            set value = MHString_Replace(value, ("[|cffffcc00" + Key2Str(oldHotkey) + "|r]"), "[|cffffcc00" + Key2Str(hotkey) + "|r]")
+            call SetAbilityStringFieldById(abilId, ABILITY_DEF_DATA_RESEARCH_TIP, value)
+            call SetAbilityIntegerFieldById(abilId, ABILITY_DEF_DATA_RESEARCH_HOTKEY, hotkey)
+            set success = true
+        endif
+
+        return success
+    endfunction
+
+    // 同时修改快捷键和学习快捷键
     function SetAbilityHotkeyById takes integer abilId, integer hotkey returns boolean
         local string  value
         local integer oldHotkey
         local integer maxLevel
-        local integer pos
         local integer i
         local boolean success = false
 
