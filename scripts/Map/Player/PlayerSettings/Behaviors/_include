@@ -1,1 +1,2 @@
 #include "DoubleClickSelfCast.j"
+#include "HotkeysSystem.j"

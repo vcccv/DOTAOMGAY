@@ -1,5 +1,5 @@
 
-library HotkeysPanelHandler requires HotkeysPanelFrame, TownPortalScrollHandler
+library HotkeysPanelHandler requires HotkeysPanelFrame, TownPortalScrollHandler, PlayerSettingsLib
 
     globals
         private constant integer CHANGE_STATE_NONE                      = 0
@@ -67,40 +67,38 @@ library HotkeysPanelHandler requires HotkeysPanelFrame, TownPortalScrollHandler
         set ChangeHotKeyState = CHANGE_STATE_NONE
     endfunction
 
-    private function SetHotkey takes integer hotkey returns nothing
+    private function OnSetHotkey takes integer hotkey returns nothing
         local integer i
         set i = 1
         loop
             exitwhen i > 12
-
-            if HotkeyList[i] == hotkey then
+            
+            if PlayerSettings.GetHotkey(i) == hotkey then
                 call GetSettingsPanelHotkeyButton(i, false).SetText("")
-                set HotkeyList[i] = - 1
+                call PlayerSettings.SetHotkey(i, -1)
             endif
 
             set i = i + 1
         endloop
 
         // 查找重复快捷键，并移除重复的快捷键
-        
-
         call EnableAllHotkeyButton(true)
 
         call FoucsFrame.SetText(StringCase(Key2Str(hotkey), true))
-        set HotkeyList[FrameIndex[FoucsFrame]] = hotkey
+        call PlayerSettings.SetHotkey(FrameIndex[FoucsFrame], hotkey)
 
         set FoucsFrame        = 0
         set ChangeHotKeyState = CHANGE_STATE_NONE
     endfunction
-    private function SetLearnHotkey takes integer hotkey returns nothing
+    private function OnSetLearnHotkey takes integer hotkey returns nothing
         local integer i
         set i = 1
         loop
             exitwhen i > 12
 
-            if LearnHotkeyList[i] == hotkey then
+            if PlayerSettings.GetLearnHotkey(i) == hotkey then
                 call GetSettingsPanelHotkeyButton(i, true).SetText("")
-                set LearnHotkeyList[i] = - 1
+                call PlayerSettings.SetLearnHotkey(i, -1)
             endif
 
             set i = i + 1
@@ -112,14 +110,14 @@ library HotkeysPanelHandler requires HotkeysPanelFrame, TownPortalScrollHandler
         call EnableAllHotkeyButton(true)
 
         call FoucsFrame.SetText(StringCase(Key2Str(hotkey), true))
-        set LearnHotkeyList[FrameIndex[FoucsFrame]] = hotkey
+        call PlayerSettings.SetLearnHotkey(FrameIndex[FoucsFrame], hotkey)
 
         set FoucsFrame        = 0
         set ChangeHotKeyState = CHANGE_STATE_NONE
 
     endfunction
 
-    private function SetTownPortalScrollHotkey takes integer hotkey returns nothing
+    private function OnSetTownPortalScrollHotkey takes integer hotkey returns nothing
         call EnableAllHotkeyButton(true)
         
         //call FoucsFrame.SetText(StringCase(Key2Str(hotkey), true))
@@ -145,11 +143,11 @@ library HotkeysPanelHandler requires HotkeysPanelFrame, TownPortalScrollHandler
         endif
 
         if ChangeHotKeyState == CHANGE_STATE_HOTKEY then
-            call SetHotkey(pressedKey)
+            call OnSetHotkey(pressedKey)
         elseif ChangeHotKeyState == CHANGE_STATE_LEARN_HOTKEY then
-            call SetLearnHotkey(pressedKey)
+            call OnSetLearnHotkey(pressedKey)
         elseif ChangeHotKeyState == CHANGE_STATE_TOWN_PORTAL_SCROLL_HOTKEY then
-            call SetTownPortalScrollHotkey(pressedKey)
+            call OnSetTownPortalScrollHotkey(pressedKey)
         endif
 
         return false

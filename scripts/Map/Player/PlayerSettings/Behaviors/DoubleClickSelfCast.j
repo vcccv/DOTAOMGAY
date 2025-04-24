@@ -1,5 +1,5 @@
 
-library DoubleTapAbilityToSelfCast requires Table, TownPortalScrollHandler
+library DoubleTapAbilityToSelfCast requires Table, TownPortalScrollHandler, PlayerSettingsLib
 
     globals
         // 500ms

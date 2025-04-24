@@ -11,8 +11,8 @@ library TownPortalScrollHandler requires Communication, TownPortalScrollFrame, U
         set TownPortalScrollHotkey = hotkey
         call GetTownPortalScrollHotkeyString().SetText(StringCase(Key2Str(hotkey), true))
     endfunction
-    function TownPortalScrollHandler_GetHotkey takes nothing returns integer
-        return TownPortalScrollHotkey
+    private function GetHotkey takes nothing returns integer
+        return PlayerSettings.GetTownPortalScrollHotkey()
     endfunction
 
     function GetUnitTownPortalScrollCooldown takes unit whichUnit returns real
@@ -126,7 +126,7 @@ library TownPortalScrollHandler requires Communication, TownPortalScrollFrame, U
         local unit    selectedUnit
         local integer charges
 
-        if pressedKey != TownPortalScrollHotkey or TownPortalScrollHotkey == - 1 then
+        if pressedKey != GetHotkey() or GetHotkey() == - 1 then
             return false
         endif
 
