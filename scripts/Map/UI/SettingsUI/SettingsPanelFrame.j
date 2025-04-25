@@ -179,6 +179,9 @@ library SettingsPanelFrame requires UISystem, SimpleToolTipLib
 
     function SettingsPanelFrame_Init takes nothing returns nothing
         set PenalSimpleButton = Frame.GetFrameByName("UpperButtonBarFrame", 0).CreateSimpleFrame("SettingsBarButton", 0)
+        if IsPlayerObserver(GetLocalPlayer()) then
+            call PenalSimpleButton.SetVisible(false)
+        endif
         
         set PanelFrame = Frame.GetOriginFrame(ORIGIN_FRAME_GAME_UI, 0).CreateFrame("SettingsPanelFrame", 0, 0)
         
