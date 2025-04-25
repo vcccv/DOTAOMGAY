@@ -36,7 +36,9 @@ library NeutralSpawnboxes requires Base, PlayerSettingsLib
 
             if showSetting and currentAlt then
                 set alpha = 0.7
+                call BJDebugMsg("显示")
             else
+                call BJDebugMsg("隐藏")
                 set alpha = 0.0
             endif
 
@@ -49,9 +51,11 @@ library NeutralSpawnboxes requires Base, PlayerSettingsLib
                 call SetLightningColor(Lightnings[i * 4 + 3], 0.211, 0.87, 0, alpha)
                 set i = i + 1
             endloop
+            
+            set prevShow = showSetting
+            set prevAlt = currentAlt
         endif
     endfunction
-    
 
 endlibrary
 
