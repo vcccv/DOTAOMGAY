@@ -6,6 +6,7 @@ library HotkeysPanelHandler requires HotkeysPanelFrame, TownPortalScrollHandler,
         private constant integer CHANGE_STATE_HOTKEY                    = 1
         private constant integer CHANGE_STATE_LEARN_HOTKEY              = 2
         private constant integer CHANGE_STATE_TOWN_PORTAL_SCROLL_HOTKEY = 3
+        private constant integer CHANGE_STATE_GLYPH_HOTKEY              = 4
 
 
         private integer ChangeHotKeyState = CHANGE_STATE_NONE
@@ -16,6 +17,20 @@ library HotkeysPanelHandler requires HotkeysPanelFrame, TownPortalScrollHandler,
         private integer array HotkeyList
         private integer array LearnHotkeyList
     endglobals
+
+    function SetTownPortalScrollHotkey takes integer hotkey returns nothing
+        // 设置面板中的按钮快捷键显示
+        call SetSettingsPanelTownPortalScrollHotkeyButtonHotkey(hotkey)
+        // 设置HUD中的按钮快捷键显示
+        call SetTownPortalScrollButtonHotkey(hotkey)
+        call PlayerSettings.SetTownPortalScrollHotkey(hotkey)
+    endfunction
+
+    function SetGlyphHotkey takes integer hotkey returns nothing
+        call SetSettingsPanelGlyphHotkeyButtonHotkey(hotkey)
+        call SetGlyphButtonHotkey(hotkey)
+        call PlayerSettings.SetGlyphHotkey(hotkey)
+    endfunction
 
     private function EnableAllHotkeyButton takes boolean enable returns nothing
         local integer i
@@ -28,7 +43,8 @@ library HotkeysPanelHandler requires HotkeysPanelFrame, TownPortalScrollHandler,
             set i = i + 1
         endloop
 
-        call SetTownPortalScrollHotkeyButtonState(enable, -1)
+        call SetSettingsPanelTownPortalScrollHotkeyButtonState(enable)
+        call SetSettingsPanelGlyphHotkeyButtonState(enable)
     endfunction
 
     function HotkeysPanelButtonOnClickASync takes nothing returns nothing
@@ -59,6 +75,15 @@ library HotkeysPanelHandler requires HotkeysPanelFrame, TownPortalScrollHandler,
         set ChangeHotKeyState = CHANGE_STATE_TOWN_PORTAL_SCROLL_HOTKEY
         set FoucsFrame        = frame
     endfunction
+    
+    function HotkeysPanelGlyphHotkeyOnClickASync takes nothing returns nothing
+        local Frame   frame = Frame.GetTriggerFrame()
+
+        call EnableAllHotkeyButton(false)
+
+        set ChangeHotKeyState = CHANGE_STATE_GLYPH_HOTKEY
+        set FoucsFrame        = frame
+    endfunction
 
     private function CancelChangeHotKey takes nothing returns nothing
         call EnableAllHotkeyButton(true)
@@ -70,6 +95,8 @@ library HotkeysPanelHandler requires HotkeysPanelFrame, TownPortalScrollHandler,
             call PlayerSettings.SetLearnHotkey(FrameIndex[FoucsFrame], -1)
         elseif ChangeHotKeyState == CHANGE_STATE_TOWN_PORTAL_SCROLL_HOTKEY then
             call PlayerSettings.SetTownPortalScrollHotkey(-1)
+        elseif ChangeHotKeyState == CHANGE_STATE_GLYPH_HOTKEY then
+            call PlayerSettings.SetGlyphHotkey(-1)
         endif
  
         set FoucsFrame        = 0
@@ -128,10 +155,21 @@ library HotkeysPanelHandler requires HotkeysPanelFrame, TownPortalScrollHandler,
 
     private function OnSetTownPortalScrollHotkey takes integer hotkey returns nothing
         call EnableAllHotkeyButton(true)
-        
-        //call FoucsFrame.SetText(StringCase(Key2Str(hotkey), true))
-        call SetTownPortalScrollHotkeyButtonState(true, hotkey)
-        call TownPortalScrollHandler_SetHotkey(hotkey)
+        call SetSettingsPanelTownPortalScrollHotkeyButtonState(true)
+        call SetSettingsPanelGlyphHotkeyButtonState(true)
+
+        call SetTownPortalScrollHotkey(hotkey)
+
+        set FoucsFrame        = 0
+        set ChangeHotKeyState = CHANGE_STATE_NONE
+    endfunction
+
+    private function OnSetGlyphHotkey takes integer hotkey returns nothing
+        call EnableAllHotkeyButton(true)
+        call SetSettingsPanelTownPortalScrollHotkeyButtonState(true)
+        call SetSettingsPanelGlyphHotkeyButtonState(true)
+
+        call SetGlyphHotkey(hotkey)
 
         set FoucsFrame        = 0
         set ChangeHotKeyState = CHANGE_STATE_NONE
@@ -155,17 +193,52 @@ library HotkeysPanelHandler requires HotkeysPanelFrame, TownPortalScrollHandler,
             call OnSetLearnHotkey(pressedKey)
         elseif ChangeHotKeyState == CHANGE_STATE_TOWN_PORTAL_SCROLL_HOTKEY then
             call OnSetTownPortalScrollHotkey(pressedKey)
+        elseif ChangeHotKeyState == CHANGE_STATE_GLYPH_HOTKEY then
+            call OnSetGlyphHotkey(pressedKey)
         endif
 
         return false
     endfunction
 
-    private function SetCheckBoxData takes integer index, string tip, string ubertip returns nothing
-        call SettingsPanelCheckBoxSetTextByIndex(index, tip)
-        call SettingsPanelCheckBoxSetActivationByIndex(index, PlayerSettings[User.LocalId].IsSettingEnable(index))
-        call SettingsPanelCheckBoxSetTooltipByIndex(index, tip, ubertip)
+    // 同步事件
+    private function CheckBoxOnClickSync takes nothing returns nothing
+        local Frame   frame = Frame.GetTriggerFrame()
+        local integer index = GetSettingsPanelCheckBoxIndex(frame)
+        local User    pid   = User[Frame.GetTriggerPlayer()]
+
+        local Frame   highlight = GetSettingsPanelCheckBoxHighLightByIndex(index)
+
+        call PlayerSettings[pid].EnableSetting(index, not PlayerSettings[pid].IsSettingEnable(index))
+        if pid == User.LocalId then
+            call highlight.SetVisible(PlayerSettings[pid].IsSettingEnable(index))
+        endif
+
+        if index == PlayerSettings.SHOW_COMMAND_BUTTON_HOTKEY then
+            call MHUI_EnableDrawAbilsHotkey(PlayerSettings[pid].IsSettingEnable(index))
+        endif
     endfunction
 
+    // 异步事件
+    private function CheckBoxOnClickASync takes nothing returns boolean
+        local Frame   frame = Frame.GetTriggerFrame()
+        local integer index = GetSettingsPanelCheckBoxIndex(frame)
+
+        local Frame   highlight = GetSettingsPanelCheckBoxHighLightByIndex(index)
+
+
+        call highlight.SetVisible(not highlight.IsVisible())
+        return true
+    endfunction
+
+    private function SetCheckBoxData takes integer index, string tip, string ubertip returns nothing
+        call SettingsPanelCheckBoxSetTextByIndex(index, tip)
+        call SettingsPanelCheckBoxSetActivatByIndex(index, PlayerSettings[User.LocalId].IsSettingEnable(index))
+        call SettingsPanelCheckBoxSetTooltipByIndex(index, tip, ubertip)
+        
+        call GetSettingsPanelCheckBoxByIndex(index).RegisterEventByCode(EVENT_ID_FRAME_MOUSE_CLICK, function CheckBoxOnClickASync, false)
+        call GetSettingsPanelCheckBoxByIndex(index).RegisterEventByCode(EVENT_ID_FRAME_MOUSE_CLICK, function CheckBoxOnClickSync , true)
+    endfunction
+    
     function HotkeysPanelHandler_Init takes nothing returns nothing
         local integer i
         local Frame   frame
@@ -188,17 +261,32 @@ library HotkeysPanelHandler requires HotkeysPanelFrame, TownPortalScrollHandler,
         endloop
 
         call GetSettingsPanelTownPortalScrollHotkeyButton().RegisterEventByCode(EVENT_ID_FRAME_MOUSE_CLICK, function HotkeysPanelTownPortalScrollHotkeyOnClickASync, false)
-        // 设置面板内的快捷键显示
-        call SetTownPortalScrollHotkeyButtonState(true, PlayerSettings.GetTownPortalScrollHotkey())
+        call GetSettingsPanelGlyphHotkeyButton().RegisterEventByCode(EVENT_ID_FRAME_MOUSE_CLICK, function HotkeysPanelGlyphHotkeyOnClickASync, false)
+
+        call SetSettingsPanelTownPortalScrollHotkeyButtonHotkey(PlayerSettings.GetTownPortalScrollHotkey())
+        call SetTownPortalScrollButtonHotkey(PlayerSettings.GetTownPortalScrollHotkey())
+
+        call SetSettingsPanelGlyphHotkeyButtonHotkey(PlayerSettings.GetGlyphHotkey())
+        call SetGlyphButtonHotkey(PlayerSettings.GetGlyphHotkey())
+
 
 
         // 复选框
-        call SetCheckBoxData(PlayerSettings.ENABLE_HOTKEY_SYSTEM           , "启用热键系统", /*
+        call SetCheckBoxData(PlayerSettings.ENABLE_HOTKEY_SYSTEM           , "启用改键系统", /*
         */ "开启后，会修改命令栏快捷键，如果没有填写热键，则没有快捷键。")
+
         call SetCheckBoxData(PlayerSettings.HIDE_COMMAND_BUTTON            , "简化命令按钮", /*
         */ "隐藏除了攻击以外的基础命令按钮，增加可用的命令按钮数量。")
-        call SetCheckBoxData(PlayerSettings.DOUBLE_TAP_ABILITY_TO_SELF_CAST, "双击对己施法", /*
-        */ "开启后快速双击技能快捷键将对自己释放技能。")
+
+        //call SetCheckBoxData(PlayerSettings.DOUBLE_TAP_ABILITY_TO_SELF_CAST, "双击对己施法", /*
+        //*/ "开启后快速双击技能快捷键将对自己释放技能。")
+
+        call SetCheckBoxData(PlayerSettings.CHANGE_KEY_ONLY_HERO           , "改键仅限英雄", /*
+        */ "开启后改键系统仅对英雄单位生效。")
+        
+        call SetCheckBoxData(PlayerSettings.SHOW_COMMAND_BUTTON_HOTKEY     , "显示按钮热键", /*
+        */ "开启后显示命令按钮热键在按钮左上方。")
+        
     endfunction
 
 endlibrary

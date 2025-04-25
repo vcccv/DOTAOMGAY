@@ -3,4 +3,5 @@
 #include "HotkeysPanelFrame.j"
 #include "HotkeysPanelHandler.j"
 #include "OptionsPanelFrame.j"
+#include "OptionsPanelHandler.j"
 #include "SettingsPanelHandler.j"

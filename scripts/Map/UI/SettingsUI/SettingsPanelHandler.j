@@ -20,16 +20,32 @@ library SettingsPanelHandler requires SettingsPanelFrame, HotkeysPanelHandler
             return
         endif
         
-        call ShowSettinsPanelButtonHighLightByIndex(1, true)
+        call ShowSettinsPanelButtonHighLightByIndex(1, true )
         call ShowSettinsPanelButtonHighLightByIndex(2, false)
-        call GetSettingsPanelHotkeysPanelFrame().SetVisible(true)
+        call GetSettingsPanelHotkeysPanelFrame().SetVisible(true )
         call GetSettingsPanelOptionsPanelFrame().SetVisible(false)
 
         set SettingsPanelState = SETTINGS_PANEL_STATE_HOTKEYS
     endfunction
 
+    function SettingsPanel_SetFocusOptionsPanel takes nothing returns nothing
+        if SettingsPanelState == SETTINGS_PANEL_STATE_OPTIONS then
+            return
+        endif
+        
+        call ShowSettinsPanelButtonHighLightByIndex(1, false)
+        call ShowSettinsPanelButtonHighLightByIndex(2, true )
+        call GetSettingsPanelHotkeysPanelFrame().SetVisible(false)
+        call GetSettingsPanelOptionsPanelFrame().SetVisible(true )
+
+        set SettingsPanelState = SETTINGS_PANEL_STATE_OPTIONS
+    endfunction
+
     function SettingsPanelHotkeysButtonOnClickASync takes nothing returns nothing
         call SettingsPanel_SetFocusHotkeysPanel()
+    endfunction
+    function SettingsPanelOptionsButtonOnClickASync takes nothing returns nothing
+        call SettingsPanel_SetFocusOptionsPanel()
     endfunction
 
     function SettingsPanelReturnButtonOnClickASync takes nothing returns nothing
@@ -67,7 +83,8 @@ library SettingsPanelHandler requires SettingsPanelFrame, HotkeysPanelHandler
     function SettingsPanelHandler_Init takes nothing returns nothing
 
         call GetSettinsPanelButtonByIndex(1).RegisterEventByCode(EVENT_ID_FRAME_MOUSE_CLICK, function SettingsPanelHotkeysButtonOnClickASync, false)
-    
+        call GetSettinsPanelButtonByIndex(2).RegisterEventByCode(EVENT_ID_FRAME_MOUSE_CLICK, function SettingsPanelOptionsButtonOnClickASync, false)
+
         call GetSettingsPanelSimpleButton().RegisterEventByCode(EVENT_ID_FRAME_MOUSE_CLICK, function SettingsPanelSimpleButtonOnClickASync, false)
         
         // 对于有快捷键的GLUEBUTTON特殊操作

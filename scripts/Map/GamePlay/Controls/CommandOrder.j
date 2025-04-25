@@ -24,6 +24,18 @@ library CommandOrder requires optional TownPortalScrollHandler
                 return false
             endif
         endif
+
+        static if LIBRARY_GlyphHandler then
+            if GlyphHandler_OnKeyDownASync(pressedKey) then
+                return false
+            endif
+        endif
+        
+        // 未开启隐藏基础命令按钮时不处理，使用原生流程
+        if not PlayerSettings[User.LocalId].IsSettingEnable(PlayerSettings.HIDE_COMMAND_BUTTON) then
+            return false
+        endif
+
         if pressedKey == OSKEY_M /*
             */ and not IsKeyPressed(OSKEY_ALT) and not IsKeyPressed(OSKEY_CONTROL) /*
             */ and GetUnitAbilityLevel(GetSelectedUnit(), 'Amov') > 0 then

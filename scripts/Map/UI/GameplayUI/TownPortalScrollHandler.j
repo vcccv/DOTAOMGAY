@@ -5,10 +5,6 @@ library TownPortalScrollHandler requires Communication, TownPortalScrollFrame, U
         private key CHARGES
     endglobals
 
-    function TownPortalScrollHandler_SetHotkey takes integer hotkey returns nothing
-        call PlayerSettings.SetTownPortalScrollHotkey(hotkey)
-        call GetTownPortalScrollHotkeyString().SetText(StringCase(Key2Str(hotkey), true))
-    endfunction
     private function GetHotkey takes nothing returns integer
         return PlayerSettings.GetTownPortalScrollHotkey()
     endfunction
@@ -123,7 +119,7 @@ library TownPortalScrollHandler requires Communication, TownPortalScrollFrame, U
     function TownPortalScrollHandler_OnKeyDownASync takes integer pressedKey returns boolean
         local unit    selectedUnit
         local integer charges
-
+        
         if pressedKey != GetHotkey() or GetHotkey() == - 1 then
             return false
         endif

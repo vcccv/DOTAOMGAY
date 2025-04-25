@@ -17,6 +17,22 @@ Frame "SIMPLEFRAME" "GlyphFrame"
         Height 0.0228,
     }
 
+    Frame "SIMPLEFRAME" "GlyphHotkeyFrame" {
+        DecorateFileNames,
+
+        Texture "GlyphHotkeyTexture" {
+            SetPoint TOPLEFT, "GlyphFrame", TOPLEFT, -0.0006, 0.0006,
+            Width  0.0109375,
+            Height 0.0109375,
+            File  "CommandButtonNumberOverlay",
+        }
+        String "GlyphHotkeyString" {
+            SetPoint CENTER, "GlyphHotkeyTexture", CENTER, 0, -0.00042,
+            Font "MasterFont", 0.008,
+            Text "",
+        }
+    }
+
 }
 
 Frame "SPRITE" "GlyphCooldownSprite" {

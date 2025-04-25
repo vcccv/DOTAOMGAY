@@ -9,6 +9,7 @@ library TownPortalScrollFrame requires UISystem, AbilityUtils
 
         private Frame TownPortalScrollChargesString  = 0
 
+        private Frame TownPortalScrollHotkeyFrame    = 0
         private Frame TownPortalScrollHotkeyString   = 0
 
         private Frame TownPortalScrollCooldownSprite = 0
@@ -23,6 +24,15 @@ library TownPortalScrollFrame requires UISystem, AbilityUtils
 
     function GetTownPortalScrollHotkeyString takes nothing returns Frame
         return TownPortalScrollHotkeyString
+    endfunction
+
+    function SetTownPortalScrollButtonHotkey takes integer hotkey returns nothing
+        if hotkey == -1 then
+            call TownPortalScrollHotkeyFrame.SetVisible(false)
+        else
+            call TownPortalScrollHotkeyFrame.SetVisible(true)
+            call TownPortalScrollHotkeyString.SetText(StringCase(Key2Str(hotkey), true))
+        endif
     endfunction
 
     function TownPortalScrollFrameUpdateToolTip takes ability whichAbility returns nothing
@@ -100,9 +110,9 @@ library TownPortalScrollFrame requires UISystem, AbilityUtils
         set TownPortalScrollButton        = Frame.GetFrameByName("TownPortalScrollButton", 0)
         
         set TownPortalScrollChargesString = Frame.GetFrameByName("TownPortalScrollChargesString", 0)
+        set TownPortalScrollHotkeyFrame   = Frame.GetFrameByName("TownPortalScrollHotkeyFrame", 0)
         set TownPortalScrollHotkeyString  = Frame.GetFrameByName("TownPortalScrollHotkeyString", 0)
         
-        call TownPortalScrollHotkeyString.SetText(StringCase(Key2Str(PlayerSettings.GetTownPortalScrollHotkey()), true))
 
         set frame = Frame.GetFrameByName("TownPortalScrollHotkeyTexture", 0)
         call frame.SetTexture("UI\\Widgets\\Console\\Human\\CommandButton\\human-button-hotkeys-overlay.blp")

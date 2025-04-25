@@ -57,26 +57,43 @@ library PlayerSettingsLib requires PlayerUtils
             return thistype.learnHotkeyList[index]
         endmethod
 
+        private static method StoreOtherHotkey takes nothing returns nothing
+            local string value = ""
+            set value = value + I2S(thistype.townPortalScrollHotkey) + "#"
+            set value = value + I2S(thistype.glyphHotkey           ) + "#"
+            call DzAPI_Map_SaveServerValue(GetLocalPlayer(), "SOtherHotkey", value)
+        endmethod
+
         // 回城卷轴热键
         private static integer townPortalScrollHotkey = 'T'
         static method SetTownPortalScrollHotkey takes integer hotkey returns nothing
             set thistype.townPortalScrollHotkey = hotkey
-            call DzAPI_Map_SaveServerValue(GetLocalPlayer(), "SItemHotkey", I2S(hotkey))
+            call thistype.StoreOtherHotkey()
         endmethod
         static method GetTownPortalScrollHotkey takes nothing returns integer
             return thistype.townPortalScrollHotkey
+        endmethod
+
+        // 防御符文热键
+        private static integer glyphHotkey = 'G'
+        static method SetGlyphHotkey takes integer hotkey returns nothing
+            set thistype.glyphHotkey = hotkey
+            call thistype.StoreOtherHotkey()
+        endmethod
+        static method GetGlyphHotkey takes nothing returns integer
+            return thistype.glyphHotkey
         endmethod
         
         static method AnalysisHotkey takes nothing returns nothing
             local string  hotkeyValue
             local string  learnHotkeyValue
-            local string  itemHotkeyValue
+            local string  otherHotkeyValue
             local integer i
             local integer hotkey
 
             set hotkeyValue      = DzAPI_Map_GetServerValue(GetLocalPlayer(), "SHotkey")
             set learnHotkeyValue = DzAPI_Map_GetServerValue(GetLocalPlayer(), "SLearnHotkey")
-            set itemHotkeyValue  = DzAPI_Map_GetServerValue(GetLocalPlayer(), "SItemHotkey")
+            set otherHotkeyValue = DzAPI_Map_GetServerValue(GetLocalPlayer(), "SOtherHotkey")
 
             // 重新计算存档
             set i     = 1
@@ -103,11 +120,18 @@ library PlayerSettingsLib requires PlayerUtils
             endloop
 
             // tp热键(物品)
-            set hotkey = S2I(itemHotkeyValue)
+            set hotkey = S2I(MHString_Split(otherHotkeyValue, "#", 1))
             if hotkey > 0 then
                 set thistype.townPortalScrollHotkey = hotkey             
             else
                 set thistype.townPortalScrollHotkey = -1
+            endif
+
+            set hotkey = S2I(MHString_Split(otherHotkeyValue, "#", 2))
+            if hotkey > 0 then
+                set thistype.glyphHotkey = hotkey             
+            else
+                set thistype.glyphHotkey = -1
             endif
         endmethod
 
@@ -115,7 +139,7 @@ library PlayerSettingsLib requires PlayerUtils
 
         static integer OPTIONS_MAX_COUNT = 8
 
-        // 启用热键系统
+        // 启用改键系统
         static integer ENABLE_HOTKEY_SYSTEM                 = 1
         // 简化命令按钮
         static integer HIDE_COMMAND_BUTTON                  = 2
@@ -131,7 +155,8 @@ library PlayerSettingsLib requires PlayerUtils
         static integer HOLDING_ALT_SHOWS_NEUTRAL_SPAWNBOXES = 7
         // Alt显示防御塔攻击范围
         static integer HOLDING_ALT_SHOWS_TOWER_ATTACK_RANGE = 8
-
+        // 显示按钮热键
+        static integer SHOW_COMMAND_BUTTON_HOTKEY           = 9
 
         private static boolean array Options [16][500]
 
@@ -150,10 +175,11 @@ library PlayerSettingsLib requires PlayerUtils
             loop
                 exitwhen i > OPTIONS_MAX_COUNT
                 if thistype.Options[this][i] then
-                    set value = value + "1#"
+                    set value = value + "1"
                 else
-                    set value = value + "0#"
+                    set value = value + "0"
                 endif
+                set i = i + 1
             endloop
 
             call DzAPI_Map_SaveServerValue(GetLocalPlayer(), "SOptions", value)
@@ -187,13 +213,14 @@ library PlayerSettingsLib requires PlayerUtils
                 call PlayerSettings[i].EnableSettingNotStore(PlayerSettings.TELEPORT_REQUIRES_HOLD_OR_STOP,       true)
                 call PlayerSettings[i].EnableSettingNotStore(PlayerSettings.HOLDING_ALT_SHOWS_NEUTRAL_SPAWNBOXES, true)
                 call PlayerSettings[i].EnableSettingNotStore(PlayerSettings.HOLDING_ALT_SHOWS_TOWER_ATTACK_RANGE, true)
+                call PlayerSettings[i].EnableSettingNotStore(PlayerSettings.SHOW_COMMAND_BUTTON_HOTKEY          , true)
 
                 set value = DzAPI_Map_GetServerValue(Player(i), "SOptions")
                 if StringLength(value) > 0 then
                     set j = 1
                     loop
                         exitwhen j > PlayerSettings.OPTIONS_MAX_COUNT
-                        if S2I(MHString_Split(value, "#", j)) == 1 then
+                        if S2I(SubString(value, j - 1, j)) == 1 then
                             call PlayerSettings[i].EnableSettingNotStore(j, true)
                         else
                             call PlayerSettings[i].EnableSettingNotStore(j, false)

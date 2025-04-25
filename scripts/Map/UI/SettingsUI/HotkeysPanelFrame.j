@@ -24,13 +24,6 @@ library HotkeysPanelFrame requires SettingsPanelFrame
         private constant real CHECKBOX_OFFSET_X                       = 0.1255
         private constant real CHECKBOX_OFFSET_Y                       = 0.0245
 
-        
-
-        // 复选框常量 
-        constant integer HOTKEY_PANEL_ENABLE_HOTKEY_SYSTEM            = 1
-        constant integer HOTKEY_PANEL_HIDE_COMMAND_BUTTON             = 2
-        constant integer HOTKEY_PANEL_DOUBLE_TAP_ABILITY_TO_SELF_CAST = 3
-
         private Frame PanelFrame
 
         private Frame HotkeyTitleText
@@ -42,6 +35,10 @@ library HotkeysPanelFrame requires SettingsPanelFrame
         private Frame TownPortalScrollHotkeyButton
         private Frame TownPortalScrollHotkeyBackdrop
         private Frame TownPortalScrollHotkeyText
+
+        private Frame GlyphHotkeyButton
+        private Frame GlyphHotkeyBackdrop
+        private Frame GlyphHotkeyText
     endglobals
 
     function GetSettingsPanelHotkeysPanelFrame takes nothing returns Frame
@@ -59,18 +56,40 @@ library HotkeysPanelFrame requires SettingsPanelFrame
         return TownPortalScrollHotkeyButton
     endfunction
 
-    function SetTownPortalScrollHotkeyButtonState takes boolean enable, integer hotkey returns nothing
+    function SetSettingsPanelTownPortalScrollHotkeyButtonState takes boolean enable returns nothing
         if enable then
             call TownPortalScrollHotkeyBackdrop.SetTexture("ReplaceableTextures\\CommandButtons\\BTNScrollUber.blp")
-         else
+        else
             call TownPortalScrollHotkeyBackdrop.SetTexture("ReplaceableTextures\\CommandButtonsDisabled\\DISBTNScrollUber.blp")
-         endif
-        call TownPortalScrollHotkeyButton.SetEnable(enable)
-        if hotkey != -1 then
-            call TownPortalScrollHotkeyText.SetText(StringCase(Key2Str(hotkey), true))
         endif
+        call TownPortalScrollHotkeyButton.SetEnable(enable)
+    endfunction
+    function SetSettingsPanelTownPortalScrollHotkeyButtonHotkey takes integer hotkey returns nothing
+        call TownPortalScrollHotkeyText.SetText(StringCase(Key2Str(hotkey), true))
     endfunction
 
+    function GetSettingsPanelGlyphHotkeyButton takes nothing returns Frame
+        return GlyphHotkeyButton
+    endfunction
+    function SetSettingsPanelGlyphHotkeyButtonState takes boolean enable returns nothing
+        if enable then
+            if GetPlayerId(GetLocalPlayer()) <= 5 then
+                call GlyphHotkeyBackdrop.SetTexture("ReplaceableTextures\\CommandButtons\\BTNGlyph.blp")
+            else
+                call GlyphHotkeyBackdrop.SetTexture("ReplaceableTextures\\CommandButtons\\BTNGlyphScourge.blp")
+            endif
+        else
+            if GetPlayerId(GetLocalPlayer()) <= 5 then
+                call GlyphHotkeyBackdrop.SetTexture("ReplaceableTextures\\CommandButtonsDisabled\\DISBTNGlyph.blp")
+            else
+                call GlyphHotkeyBackdrop.SetTexture("ReplaceableTextures\\CommandButtonsDisabled\\DISBTNGlyphScourge.blp")
+            endif
+        endif
+        call GlyphHotkeyButton.SetEnable(enable)
+    endfunction
+    function SetSettingsPanelGlyphHotkeyButtonHotkey takes integer hotkey returns nothing
+        call GlyphHotkeyText.SetText(StringCase(Key2Str(hotkey), true))
+    endfunction
 
     function HotkeysPanelFrame_Init takes nothing returns nothing
         local integer i
@@ -100,6 +119,7 @@ library HotkeysPanelFrame requires SettingsPanelFrame
         call LearnHotkeyTitleText.SetPoint(FRAMEPOINT_CENTER, controlBackdrop, FRAMEPOINT_TOPLEFT, LEARN_HOTKEY_BUTTON_TEXT_START_OFFSET_X, LEARN_HOTKEY_BUTTON_TEXT_START_OFFSET_Y)
         call LearnHotkeyTitleText.SetTextAlignment(TEXT_JUSTIFY_MIDDLE, TEXT_JUSTIFY_CENTER)
         
+        // 回城卷轴
         set TownPortalScrollHotkeyButton = PanelFrame.CreateFrameByType("BUTTON", "TownPortalScrollHotkeyButton", "", 2, 0)
         call TownPortalScrollHotkeyButton.SetSize(BUTTON_SIZE, BUTTON_SIZE)
         call TownPortalScrollHotkeyButton.SetPoint(FRAMEPOINT_TOPRIGHT, controlBackdrop, FRAMEPOINT_TOPRIGHT, - BUTTON_OFFSET_X * 2, HOTKEY_BUTTON_START_OFFSET_Y)
@@ -114,6 +134,22 @@ library HotkeysPanelFrame requires SettingsPanelFrame
 
         call TownPortalScrollHotkeyBackdrop.SetAlpha(191)
         call TownPortalScrollHotkeyButton.SetPushedOffsetTexture(TownPortalScrollHotkeyBackdrop, MOUSE_BUTTON_TYPE_LEFT, 0.95)
+
+        // 防御符文
+        set GlyphHotkeyButton = PanelFrame.CreateFrameByType("BUTTON", "GlyphHotkeyButton", "", 2, 0)
+        call GlyphHotkeyButton.SetSize(BUTTON_SIZE, BUTTON_SIZE)
+        call GlyphHotkeyButton.SetPoint(FRAMEPOINT_TOPRIGHT, controlBackdrop, FRAMEPOINT_TOPRIGHT, - BUTTON_OFFSET_X * 2, HOTKEY_BUTTON_START_OFFSET_Y + BUTTON_OFFSET_Y * 1.5)
+
+        set GlyphHotkeyBackdrop = GlyphHotkeyButton.CreateFrameByType("BACKDROP", "GlyphHotkeyBackdrop", "", 2, 0)
+        call GlyphHotkeyBackdrop.SetAllPoints(GlyphHotkeyButton)
+        call GlyphHotkeyBackdrop.SetTexture("ReplaceableTextures\\CommandButtons\\BTNGlyph.blp")
+
+        set GlyphHotkeyText = GlyphHotkeyButton.CreateFrameByType("TEXT", "GlyphHotkeyText", "EscMenuButtonTextTemplate", 2, 0)
+        call GlyphHotkeyText.SetAllPoints(GlyphHotkeyButton)
+        call GlyphHotkeyText.SetIgnoreTrackEvents(true)
+
+        call GlyphHotkeyBackdrop.SetAlpha(191)
+        call GlyphHotkeyButton.SetPushedOffsetTexture(GlyphHotkeyBackdrop, MOUSE_BUTTON_TYPE_LEFT, 0.95)
 
         // GetSettingsPanelFrameControlBackdrop()
         set i = 1
@@ -164,6 +200,8 @@ library HotkeysPanelFrame requires SettingsPanelFrame
         改键仅限英雄
         */
         
+        // 复选框
+
         set frame = SettingsPanelCreateCheckBox(PanelFrame, PlayerSettings.ENABLE_HOTKEY_SYSTEM)
         call frame.SetPoint(FRAMEPOINT_BOTTOMLEFT, controlBackdrop, FRAMEPOINT_BOTTOMLEFT, CHECKBOX_START_OFFSET_X, CHECKBOX_START_OFFSET_Y)
 
@@ -171,11 +209,18 @@ library HotkeysPanelFrame requires SettingsPanelFrame
         call frame.SetPoint(FRAMEPOINT_BOTTOMLEFT, controlBackdrop, FRAMEPOINT_BOTTOMLEFT, /*
         */ CHECKBOX_START_OFFSET_X, CHECKBOX_START_OFFSET_Y - CHECKBOX_OFFSET_Y)
 
-        set frame = SettingsPanelCreateCheckBox(PanelFrame, PlayerSettings.DOUBLE_TAP_ABILITY_TO_SELF_CAST)
-        call frame.SetPoint(FRAMEPOINT_BOTTOMLEFT, controlBackdrop, FRAMEPOINT_BOTTOMLEFT, /*
-        */ CHECKBOX_START_OFFSET_X, CHECKBOX_START_OFFSET_Y - CHECKBOX_OFFSET_Y * 2)
+        //set frame = SettingsPanelCreateCheckBox(PanelFrame, PlayerSettings.DOUBLE_TAP_ABILITY_TO_SELF_CAST)
+        //call frame.SetPoint(FRAMEPOINT_BOTTOMLEFT, controlBackdrop, FRAMEPOINT_BOTTOMLEFT, /*
+        //*/ CHECKBOX_START_OFFSET_X, CHECKBOX_START_OFFSET_Y - CHECKBOX_OFFSET_Y * 2)
 
-        // 复选框
+        set frame = SettingsPanelCreateCheckBox(PanelFrame, PlayerSettings.CHANGE_KEY_ONLY_HERO)
+        call frame.SetPoint(FRAMEPOINT_BOTTOMLEFT, controlBackdrop, FRAMEPOINT_BOTTOMLEFT, /*
+        */ CHECKBOX_START_OFFSET_X + CHECKBOX_OFFSET_X, CHECKBOX_START_OFFSET_Y)
+
+        set frame = SettingsPanelCreateCheckBox(PanelFrame, PlayerSettings.SHOW_COMMAND_BUTTON_HOTKEY)
+        call frame.SetPoint(FRAMEPOINT_BOTTOMLEFT, controlBackdrop, FRAMEPOINT_BOTTOMLEFT, /*
+        */ CHECKBOX_START_OFFSET_X + CHECKBOX_OFFSET_X, CHECKBOX_START_OFFSET_Y - CHECKBOX_OFFSET_Y)
+        
 
         call PanelFrame.SetVisible(false)
     endfunction

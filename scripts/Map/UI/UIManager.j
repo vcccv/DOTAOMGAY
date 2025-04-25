@@ -51,6 +51,9 @@ library UIManager /*
             static if LIBRARY_OptionsPanelFrame then
                 call OptionsPanelFrame_Init()
             endif
+            static if LIBRARY_OptionsPanelHandler then
+                call OptionsPanelHandler_Init()
+            endif
             static if LIBRARY_SettingsPanelHandler then
                 call SettingsPanelHandler_Init()
             endif

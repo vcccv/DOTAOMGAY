@@ -7,6 +7,9 @@ library GlyphFrame requires UISystem, AbilityUtils
         private Frame GlyphButton         = 0
         private Frame GlyphBackground     = 0
 
+        private Frame GlyphHotkeyFrame    = 0
+        private Frame GlyphHotkeyString   = 0
+
         private Frame GlyphCooldownSprite = 0
         private Frame GlyphCooldownText   = 0
 
@@ -15,6 +18,18 @@ library GlyphFrame requires UISystem, AbilityUtils
 
     function GetGlyphButton takes nothing returns Frame
         return GlyphButton
+    endfunction
+    function GetGlyphHotkeyString takes nothing returns Frame
+        return GlyphHotkeyString
+    endfunction
+
+    function SetGlyphButtonHotkey takes integer hotkey returns nothing
+        if hotkey == -1 then
+            call GlyphHotkeyFrame.SetVisible(false)
+        else
+            call GlyphHotkeyFrame.SetVisible(true)
+            call GlyphHotkeyString.SetText(StringCase(Key2Str(hotkey), true))
+        endif
     endfunction
 
     function SetGlyphCooldownSpriteProgress takes real progress returns nothing
@@ -56,6 +71,11 @@ library GlyphFrame requires UISystem, AbilityUtils
 
         set GlyphButton       = Frame.GetFrameByName("GlyphButton", 0)
         set GlyphBackground   = Frame.GetFrameByName("GlyphBackground", 0)
+
+        set GlyphHotkeyFrame  = Frame.GetFrameByName("GlyphHotkeyFrame", 0)
+
+        set GlyphHotkeyString = Frame.GetFrameByName("GlyphHotkeyString", 0)
+        call GlyphHotkeyString.SetText(StringCase(Key2Str(PlayerSettings.GetGlyphHotkey()), true))
 
         if GetPlayerId(GetLocalPlayer()) <= 5 then
             call GlyphBackground.SetTexture("UI\\Widgets\\Console\\minimap_glyph.blp")

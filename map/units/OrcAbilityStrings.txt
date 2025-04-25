@@ -4891,6 +4891,7 @@ Ubertip=|cffffcc00属性：|r|n|cffff8000召唤信使：|r|n制造一个小巧�
 [h02G]
 art=ReplaceableTextures\CommandButtons\BTNOrbOfFire
 buttonpos=2,1
+Hotkey=""
 Name=坚韧球|nPerseverance
 Tip=坚韧球|nPerseverance
 Ubertip=|cffffcc00属性：|r|n增加10点攻击力|n提高5点/秒的生命恢复速率|n提高125%的魔法恢复速率|n|n|cffffcc00需要：|r|n医疗指环 - 850|n虚无宝石 - 850|n|n|c00838B8B总价：1700|r 
