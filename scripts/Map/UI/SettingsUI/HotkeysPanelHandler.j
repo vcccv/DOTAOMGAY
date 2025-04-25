@@ -19,9 +19,7 @@ library HotkeysPanelHandler requires HotkeysPanelFrame, TownPortalScrollHandler,
     endglobals
 
     function SetTownPortalScrollHotkey takes integer hotkey returns nothing
-        // 设置面板中的按钮快捷键显示
         call SetSettingsPanelTownPortalScrollHotkeyButtonHotkey(hotkey)
-        // 设置HUD中的按钮快捷键显示
         call SetTownPortalScrollButtonHotkey(hotkey)
         call PlayerSettings.SetTownPortalScrollHotkey(hotkey)
     endfunction
@@ -88,15 +86,16 @@ library HotkeysPanelHandler requires HotkeysPanelFrame, TownPortalScrollHandler,
     private function CancelChangeHotKey takes nothing returns nothing
         call EnableAllHotkeyButton(true)
     
-        call FoucsFrame.SetText("")
         if ChangeHotKeyState == CHANGE_STATE_HOTKEY then
             call PlayerSettings.SetHotkey(FrameIndex[FoucsFrame], -1)
+            call FoucsFrame.SetText("")
         elseif ChangeHotKeyState == CHANGE_STATE_LEARN_HOTKEY then
             call PlayerSettings.SetLearnHotkey(FrameIndex[FoucsFrame], -1)
+            call FoucsFrame.SetText("")
         elseif ChangeHotKeyState == CHANGE_STATE_TOWN_PORTAL_SCROLL_HOTKEY then
-            call PlayerSettings.SetTownPortalScrollHotkey(-1)
+            call SetTownPortalScrollHotkey(-1)
         elseif ChangeHotKeyState == CHANGE_STATE_GLYPH_HOTKEY then
-            call PlayerSettings.SetGlyphHotkey(-1)
+            call SetGlyphHotkey(-1)
         endif
  
         set FoucsFrame        = 0
@@ -142,7 +141,6 @@ library HotkeysPanelHandler requires HotkeysPanelFrame, TownPortalScrollHandler,
 
         // 查找重复快捷键，并移除重复的快捷键
 
-
         call EnableAllHotkeyButton(true)
 
         call FoucsFrame.SetText(StringCase(Key2Str(hotkey), true))
@@ -150,7 +148,6 @@ library HotkeysPanelHandler requires HotkeysPanelFrame, TownPortalScrollHandler,
 
         set FoucsFrame        = 0
         set ChangeHotKeyState = CHANGE_STATE_NONE
-
     endfunction
 
     private function OnSetTownPortalScrollHotkey takes integer hotkey returns nothing
@@ -185,6 +182,10 @@ library HotkeysPanelHandler requires HotkeysPanelFrame, TownPortalScrollHandler,
         if pressedKey == OSKEY_ESCAPE then
             call CancelChangeHotKey()
             return false
+        endif
+
+        if pressedKey < 'A' or pressedKey > 'Z' then
+            set pressedKey = - 1
         endif
 
         if ChangeHotKeyState == CHANGE_STATE_HOTKEY then
@@ -268,8 +269,6 @@ library HotkeysPanelHandler requires HotkeysPanelFrame, TownPortalScrollHandler,
 
         call SetSettingsPanelGlyphHotkeyButtonHotkey(PlayerSettings.GetGlyphHotkey())
         call SetGlyphButtonHotkey(PlayerSettings.GetGlyphHotkey())
-
-
 
         // 复选框
         call SetCheckBoxData(PlayerSettings.ENABLE_HOTKEY_SYSTEM           , "启用改键系统", /*

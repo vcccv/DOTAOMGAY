@@ -29,6 +29,7 @@ library TownPortalScrollFrame requires UISystem, AbilityUtils
     function SetTownPortalScrollButtonHotkey takes integer hotkey returns nothing
         if hotkey == -1 then
             call TownPortalScrollHotkeyFrame.SetVisible(false)
+            call TownPortalScrollHotkeyString.SetText("")
         else
             call TownPortalScrollHotkeyFrame.SetVisible(true)
             call TownPortalScrollHotkeyString.SetText(StringCase(Key2Str(hotkey), true))
@@ -95,6 +96,8 @@ library TownPortalScrollFrame requires UISystem, AbilityUtils
         call EnableShowTownPortalScrollButton(show)
         call TownPortalScrollFrame.SetVisible(show)
         call TownPortalScrollCooldownSprite.SetVisible(show)
+
+        call TownPortalScrollHotkeyFrame.SetVisible(TownPortalScrollHotkeyString.GetText() != "")
     endfunction
 
     function TownPortalScrollFrame_Init takes nothing returns nothing

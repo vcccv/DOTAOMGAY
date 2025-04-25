@@ -39,6 +39,24 @@ library UIManager /*
             call SimpleToolTip.Init()
         endif
     
+        static if LIBRARY_TownPortalScrollFrame then
+            call TownPortalScrollFrame_Init()
+            call TownPortalScrollHandler_Init()
+        endif
+        static if LIBRARY_GlyphFrame then
+            call GlyphFrame_Init()
+            call GlyphButtonHandler_Init()
+        endif
+        static if LIBRARY_CommandOrder then
+            call CallCommandButton_Init()
+        endif
+        static if LIBRARY_Communication then
+            call Communication_Init()
+        endif
+        static if LIBRARY_DisableResourceTrading then
+            call DisableResourceTradingFrame()
+        endif
+
         static if LIBRARY_SettingsPanelFrame then
             call SettingsPanelFrame_Init()
             static if LIBRARY_HotkeysPanelFrame then
@@ -57,23 +75,6 @@ library UIManager /*
             static if LIBRARY_SettingsPanelHandler then
                 call SettingsPanelHandler_Init()
             endif
-        endif
-        static if LIBRARY_TownPortalScrollFrame then
-            call TownPortalScrollFrame_Init()
-            call TownPortalScrollHandler_Init()
-        endif
-        static if LIBRARY_GlyphFrame then
-            call GlyphFrame_Init()
-            call GlyphButtonHandler_Init()
-        endif
-        static if LIBRARY_CommandOrder then
-            call CallCommandButton_Init()
-        endif
-        static if LIBRARY_Communication then
-            call Communication_Init()
-        endif
-        static if LIBRARY_DisableResourceTrading then
-            call DisableResourceTradingFrame()
         endif
     endfunction
 

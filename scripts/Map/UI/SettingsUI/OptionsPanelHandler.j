@@ -1,6 +1,5 @@
 
 library OptionsPanelHandler requires OptionsPanelFrame, PlayerSettingsLib
-
     
     // 同步事件
     private function CheckBoxOnClickSync takes nothing returns nothing
