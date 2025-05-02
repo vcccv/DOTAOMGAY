@@ -129,7 +129,179 @@ library SimpleToolTipLib requires UISystem
             call ToolTipFrame.SetHeight(height)
             call ToolTipFrame.SetVisible(true)
         endmethod
+        
+        static method UpdateByCommandButton takes integer commandbutton returns boolean
+            local integer abilId     = MHUIData_GetCommandButtonAbility(commandbutton)
+            local integer orderId    = MHUIData_GetCommandButtonOrderId(commandbutton)
+            local integer level
 
+            local integer goldCost   = 0
+            local integer lumberCost = 0
+            local integer manaCost   = 0
+            local real    cooldown   = 0.
+            local string  tipName    = ""
+            local string  requireTip = ""
+            local string  uberTip    = "\n"
+
+            local boolean hasCost    = false
+            local integer count      = 0
+            local real    height     = 0.
+
+            set goldCost   = MHUIData_GetCommandButtonGoldCost(commandbutton)
+            //set lumberCost = MHUIData_GetCommandButtonLumberCost(commandbutton)
+            //set manaCost   = MHUIData_GetCommandButtonManaCost(commandbutton)
+            //set cooldown   = MHUIData_GetCommandButtonCooldown(commandbutton)
+            set tipName    = MHUIData_GetCommandButtonTip(commandbutton)
+            set requireTip = UIData_GetCommandButtonRequireTip(commandbutton)
+            set uberTip    = MHUIData_GetCommandButtonUbertip(commandbutton)
+            //set hasCost    = goldCost != 0 or lumberCost != 0 or manaCost != 0 or cooldown != 0. and StringLength(requireTip) == 0
+
+            if abilId == 'AHer' then
+                //set tipName    = MHAbility_GetCustomDataStr(MHPlayer_GetSelectUnit(), abilId, ABILITY_DEF_DATA_RESEARCH_TIP)
+                //set uberTip    = MHAbility_GetCustomDataStr(MHPlayer_GetSelectUnit(), abilId, ABILITY_DEF_DATA_RESEARCH_UBERTIP)
+            elseif abilId == 'Asel' or abilId == 'Asud' then
+                // 购买单位
+                //set tipName    = MHUnit_GetDefDataStr(orderId, UNIT_DEF_DATA_TIP    )
+                //set uberTip    = MHUnit_GetDefDataStr(orderId, UNIT_DEF_DATA_UBERTIP)
+                //if not IsUnitIdType(orderId, UNIT_TYPE_HERO) then
+                //    set goldCost   = MHUnit_GetDefDataInt(orderId, UNIT_DEF_DATA_GOLD_COST  )
+                //    set lumberCost = MHUnit_GetDefDataInt(orderId, UNIT_DEF_DATA_LUMBER_COST)
+                //endif
+                set cooldown   = MHUnit_GetDefDataReal(orderId, UNIT_DEF_DATA_STOCK_REGEN)
+                set hasCost    = goldCost != 0 or lumberCost != 0 or manaCost != 0 or cooldown != 0. and StringLength(requireTip) == 0
+            elseif abilId == 'Asei' or abilId == 'Amai' then
+                // 购买物品
+                //set tipName    = MHItem_GetDefDataStr(orderId, ITEM_DEF_DATA_TIP        )
+                set uberTip    = MHItem_GetDefDataStr(orderId, ITEM_DEF_DATA_UBERTIP    )
+                //set goldCost   = MHItem_GetDefDataInt(orderId, ITEM_DEF_DATA_GOLD_COST  )
+                //set lumberCost = MHItem_GetDefDataInt(orderId, ITEM_DEF_DATA_LUMBER_COST)
+                set hasCost    = goldCost != 0 or lumberCost != 0 or manaCost != 0 or cooldown != 0. and StringLength(requireTip) == 0
+            else
+                set level = GetUnitAbilityLevel(MHPlayer_GetSelectUnit(), abilId)
+                // 技能
+                //set tipName    = MHAbility_GetCustomLevelDataStr(MHPlayer_GetSelectUnit(), abilId, level, ABILITY_LEVEL_DEF_DATA_TIP)
+                //set uberTip    = MHAbility_GetCustomLevelDataStr(MHPlayer_GetSelectUnit(), abilId, level, ABILITY_LEVEL_DEF_DATA_UBERTIP)
+                set manaCost   = MHAbility_GetCustomLevelDataInt(MHPlayer_GetSelectUnit(), abilId, level, ABILITY_LEVEL_DEF_DATA_MANA_COST)
+                set cooldown   = MHAbility_GetCustomLevelDataReal(MHPlayer_GetSelectUnit(), abilId, level, ABILITY_LEVEL_DEF_DATA_COOLDOWN)
+                set hasCost    = goldCost != 0 or lumberCost != 0 or manaCost != 0 or cooldown != 0. and StringLength(requireTip) == 0
+            endif
+            
+            if hasCost and StringLength(uberTip) == 0 then
+                set uberTip = "\n"
+            endif
+
+            if StringLength(uberTip) > 0 then
+                call UberToolTipString.SetVisible(true)
+                call UberToolTipString.SetText(uberTip)
+
+                set height = height + 0.005
+                set height = height + UberToolTipString.GetHeight()
+                // ToolTip动态锚点修改
+                call UberToolTipString.ClearAllPoints()
+                if hasCost then
+                    call UberToolTipString.SetPoint(FRAMEPOINT_TOPLEFT, CostTexture[1], FRAMEPOINT_BOTTOMLEFT, 0, - 0.0125)
+                elseif StringLength(requireTip) > 0 then
+                    call UberToolTipString.SetPoint(FRAMEPOINT_TOPLEFT, RequireToolTipString, FRAMEPOINT_BOTTOMLEFT, 0, - 0.0125)
+                else
+                    call UberToolTipString.SetPoint(FRAMEPOINT_TOPLEFT, ToolTipNameString, FRAMEPOINT_BOTTOMLEFT, 0, - 0.0125)
+                endif
+                set height = height + 0.00075
+                set height = height + 0.0125
+            else
+                call UberToolTipString.SetVisible(false)
+            endif
+
+            // 各种消耗
+            if hasCost then
+                set height = height + 0.004
+                set height = height + 0.009375
+
+                if goldCost != 0 then
+                    set count = count + 1
+                    call CostTexture[count].SetTexture("UI\\Widgets\\ToolTips\\Human\\ToolTipGoldIcon.blp")
+                    call CostString[count].SetText(I2S(goldCost))
+                    call CostTexture[count].SetVisible(true)
+                    call CostString[count].SetVisible(true)
+                endif
+
+                if lumberCost != 0 then
+                    set count = count + 1
+                    call CostTexture[count].SetTexture("UI\\Widgets\\ToolTips\\Human\\ToolTipLumberIcon.blp")
+                    call CostString[count].SetText(I2S(lumberCost))
+                    call CostTexture[count].SetVisible(true)
+                    call CostString[count].SetVisible(true)
+                endif
+
+                if manaCost != 0 then
+                    set count = count + 1
+                    call CostTexture[count].SetTexture("UI\\Widgets\\ToolTips\\Human\\ToolTipManaIcon.blp")
+                    call CostString[count].SetText(I2S(manaCost))
+                    call CostTexture[count].SetVisible(true)
+                    call CostString[count].SetVisible(true)
+                endif
+
+                if cooldown != 0 then
+                    set count = count + 1
+                    call CostTexture[count].SetTexture("UI\\Widgets\\ToolTips\\Human\\ToolTipCooldownIcon.blp")
+                    call CostString[count].SetText(GetCooldown(cooldown))
+                    call CostTexture[count].SetVisible(true)
+                    call CostString[count].SetVisible(true)
+                endif
+                
+            endif
+
+            loop
+                exitwhen count >= 4
+                set count = count + 1
+                call CostTexture[count].SetVisible(false)
+                call CostString[count].SetVisible(false)
+            endloop
+
+            // 需求提示
+            if StringLength(requireTip) > 0 then
+                call RequireToolTipString.SetText(requireTip)
+                call RequireToolTipString.SetVisible(true)
+                set height = height + RequireToolTipString.GetHeight() + 0.005
+            else
+                call RequireToolTipString.SetVisible(false)
+            endif
+
+            // 工具提示
+            if StringLength(tipName) > 0 then
+                call ToolTipNameString.SetText(tipName)
+                call ToolTipNameString.SetVisible(true)
+                set height = height + ToolTipNameString.GetHeight() + 0.005
+            else
+                call ToolTipNameString.SetVisible(false)
+            endif
+
+            call ToolTipFrame.SetHeight(height)
+            call ToolTipFrame.SetVisible(true)
+
+            return true
+        endmethod
+
+        static method EnterCommandButton takes integer commandbutton returns nothing
+            if commandbutton == 0 or MHPlayer_GetSelectUnit() == null then
+                return
+            endif
+          
+            if thistype.UpdateByCommandButton(commandbutton) then
+                set FocusFrame = 0
+                call MHFrame_ClearAllPoints(MHUI_GetUberToolTip())
+                call MHFrame_SetRelativePoint(MHUI_GetUberToolTip(), FRAMEPOINT_BOTTOMRIGHT, MHUI_GetConsoleUI(), FRAMEPOINT_BOTTOMRIGHT, 1, 1)
+            endif
+        endmethod
+
+        static method LeaveCommandButton takes integer commandbutton returns nothing
+            set FocusFrame = 0
+
+            call MHFrame_ClearAllPoints(MHUI_GetUberToolTip())
+            call MHFrame_SetRelativePoint(MHUI_GetUberToolTip(), FRAMEPOINT_BOTTOMRIGHT, MHUI_GetConsoleUI(), FRAMEPOINT_BOTTOMRIGHT, 0., 0.1625)
+
+            call ToolTipFrame.SetVisible(false)
+        endmethod
+        
         private static method OnEnter takes nothing returns nothing
             set FocusFrame = Frame.GetTriggerFrame()
             call Update()

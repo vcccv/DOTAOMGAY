@@ -180,4 +180,13 @@ library MemoryUtils initializer Init
         return 0
     endfunction
 
+    function UIData_GetCommandButtonRequireTip takes integer commandbutton returns string
+        local integer commandButtonData = ReadRealMemory(commandbutton + 0x190)
+        if commandButtonData != 0 then
+            return MHTool_ReadStr(commandButtonData + 0x8C)
+        endif
+
+        return ""
+    endfunction
+
 endlibrary

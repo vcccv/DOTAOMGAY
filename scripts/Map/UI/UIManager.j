@@ -24,6 +24,9 @@ library UIManager /*
         static if LIBRARY_NeutralSpawnboxes then
             call NeutralSpawnboxesUpdate()
         endif
+        static if LIBRARY_UnitInfoUpdate then
+            call UnitInfoUpdate_OnUpdate()
+        endif
     endfunction
 
     private function OnGameStart takes nothing returns nothing
@@ -55,6 +58,10 @@ library UIManager /*
         endif
         static if LIBRARY_DisableResourceTrading then
             call DisableResourceTradingFrame()
+        endif
+
+        static if LIBRARY_CommandButtonSimpleTooltip then
+            //call CommandButtonSimpleTooltip_Init()
         endif
 
         static if LIBRARY_SettingsPanelFrame then
