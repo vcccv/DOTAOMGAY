@@ -6,6 +6,10 @@ library UnitInfoUpdate requires PlayerSettingsLib, AbilityUtils
         private real UPDATE_TIME_OUT = 1.
 
         private integer array SkillBarButton
+        private integer array ItemButton
+
+        private Frame   array SkillBarCooldownText
+        private Frame   array ItemBarCooldownText
 
         private key BASE_COMMAND_ORDER
 
@@ -156,7 +160,7 @@ library UnitInfoUpdate requires PlayerSettingsLib, AbilityUtils
         call MHUnit_UpdateInfoBar(MHPlayer_GetSelectUnit())
     endfunction
 
-    public function OnUpdate takes nothing returns nothing
+    public function OnTickExpired takes nothing returns nothing
         if MHPlayer_GetSelectUnit() == null then
             return
         endif
@@ -165,6 +169,28 @@ library UnitInfoUpdate requires PlayerSettingsLib, AbilityUtils
         call UpdateCommandBarHideState()
     endfunction
 
+    // 技能栏加物品栏冷却时间
+    function UnitInfoUpdate_OnUpdate takes nothing returns nothing
+        local integer i
+
+        set i = 1
+        loop
+            exitwhen i > 12
+            if SkillBarCooldownText[i].IsVisible() then
+                call SkillBarCooldownText[i].SetText(I2S(R2I(MHUIData_GetCommandButtonCooldown(SkillBarButton[i])) + 1))
+            endif
+            set i = i + 1
+        endloop
+        
+        set i = 1
+        loop
+            exitwhen i > 6
+            if ItemBarCooldownText[i].IsVisible() then
+                call ItemBarCooldownText[i].SetText(I2S(R2I(MHUIData_GetCommandButtonCooldown(ItemButton[i])) + 1))
+            endif
+            set i = i + 1
+        endloop
+    endfunction
     // 
     private function OnSelection takes nothing returns boolean
         local unit selectedUnitSync  = GetTriggerUnit()
@@ -184,7 +210,7 @@ library UnitInfoUpdate requires PlayerSettingsLib, AbilityUtils
         local trigger    trig = CreateTrigger()
         local integer    i
 
-        call SimpleTick.CreateEx().Start(UPDATE_TIME_OUT, true, function OnUpdate)
+        call SimpleTick.CreateEx().Start(UPDATE_TIME_OUT, true, function OnTickExpired)
 
         // 移动
         call SaveBaseCommandOrder(ORDER_move)
@@ -201,6 +227,31 @@ library UnitInfoUpdate requires PlayerSettingsLib, AbilityUtils
         loop
             exitwhen i > 12
             set SkillBarButton[i] = MHUI_GetSkillBarButton(i)
+
+            set SkillBarCooldownText[i] = Frame.GetPtrInstance(MHUIData_GetCommandButtonCooldownFrame(SkillBarButton[i])).CreateFrameByType(/*
+            */ "TEXT", "SkillBarCooldownText" + I2S(i), "", 10, i)
+            call SkillBarCooldownText[i].SetTextShadowOff(0.0016, 0.0016)
+            call SkillBarCooldownText[i].SetFont("Fonts\\arheigb_bd.ttf", 0.016, 0)
+            call SkillBarCooldownText[i].SetTextAlignment(TEXT_JUSTIFY_MIDDLE, TEXT_JUSTIFY_CENTER)
+            call MHFrame_SetAllPoints(SkillBarCooldownText[i].GetPtr(), MHUIData_GetCommandButtonCooldownFrame(SkillBarButton[i]))
+            call MHFrame_Hide(MHUIData_GetCommandButtonCooldownFrame(SkillBarButton[i]), true)
+
+            set i = i + 1
+        endloop
+
+        set i = 1
+        loop
+            exitwhen i > 6
+            set ItemButton[i] = MHUI_GetItemBarButton(i)
+
+            set ItemBarCooldownText[i] = Frame.GetPtrInstance(MHUIData_GetCommandButtonCooldownFrame(ItemButton[i])).CreateFrameByType(/*
+            */ "TEXT", "ItemBarCooldownText" + I2S(i), "", 10, i)
+            call ItemBarCooldownText[i].SetTextShadowOff(0.0016, 0.0016)
+            call ItemBarCooldownText[i].SetFont("Fonts\\arheigb_bd.ttf", 0.016, 0)
+            call ItemBarCooldownText[i].SetTextAlignment(TEXT_JUSTIFY_MIDDLE, TEXT_JUSTIFY_CENTER)
+            call MHFrame_SetAllPoints(ItemBarCooldownText[i].GetPtr(), MHUIData_GetCommandButtonCooldownFrame(ItemButton[i]))
+            call MHFrame_Hide(MHUIData_GetCommandButtonCooldownFrame(ItemButton[i]), true)
+            
             set i = i + 1
         endloop
 
