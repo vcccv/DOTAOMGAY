@@ -47,8 +47,11 @@ library OptionsPanelHandler requires OptionsPanelFrame, PlayerSettingsLib
         call SetCheckBoxData(PlayerSettings.DOUBLE_TAP_ABILITY_TO_SELF_CAST, "双击对己施法", /*
         */ "开启后快速双击技能快捷键将对自己释放技能。")
 
-       call SetCheckBoxData(PlayerSettings.TELEPORT_REQUIRES_HOLD_OR_STOP, "传送时选中能量圈", /*
+        call SetCheckBoxData(PlayerSettings.TELEPORT_REQUIRES_HOLD_OR_STOP, "传送时选中能量圈", /*
         */ "开启后使用回城卷轴时会额外选中自己的能量圈，防止右键点击取消传送。")
+
+        call SetCheckBoxData(PlayerSettings.SHOW_COMMAND_BUTTON_COOLDOWN  , "显示冷却时间", /*
+        */ "开启后会显示物品和技能栏的剩余冷却时间。")
 
         call SetCheckBoxData(PlayerSettings.HOLDING_ALT_SHOWS_NEUTRAL_SPAWNBOXES, "按住ALT键显示野怪刷新范围", /*
         */ "按住ALT键会显示中立生物的刷新范围。")

@@ -3,3 +3,4 @@
 #include "TownPortalScrollHandler.j"
 #include "GlyphFrame.j"
 #include "GlyphHandler.j"
+#include "CommandButtonSimpleTooltip.j"

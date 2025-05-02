@@ -34,6 +34,10 @@ library OptionsPanelFrame requires SettingsPanelFrame
         set frame = SettingsPanelCreateCheckBox(PanelFrame, PlayerSettings.TELEPORT_REQUIRES_HOLD_OR_STOP)
         call SetCheckBoxPoint(frame, 1, 3)
 
+        set frame = SettingsPanelCreateCheckBox(PanelFrame, PlayerSettings.SHOW_COMMAND_BUTTON_COOLDOWN)
+        call SetCheckBoxPoint(frame, 1, 4)
+        
+
         set frame = SettingsPanelCreateCheckBox(PanelFrame, PlayerSettings.HOLDING_ALT_SHOWS_NEUTRAL_SPAWNBOXES)
         call SetCheckBoxPoint(frame, 2, 1)
 

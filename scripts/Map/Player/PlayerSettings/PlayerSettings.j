@@ -157,6 +157,8 @@ library PlayerSettingsLib requires PlayerUtils
         static integer HOLDING_ALT_SHOWS_TOWER_ATTACK_RANGE = 8
         // 显示按钮热键
         static integer SHOW_COMMAND_BUTTON_HOTKEY           = 9
+        // 显示冷却时间
+        static integer SHOW_COMMAND_BUTTON_COOLDOWN         = 10
 
         private static boolean array Options [16][500]
 

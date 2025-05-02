@@ -60,6 +60,8 @@ library UISystem requires ErrorMessage, Table
                 set this = thistype.create(ptr)
             endif
 
+            debug call ThrowError(this == 0, "UISystem", "GetPtrInstance", "", 0, "ptr == null")
+
             return this
         endmethod
 
@@ -529,6 +531,10 @@ library UISystem requires ErrorMessage, Table
             endif
 
             return thistype.GetPtrInstanceSafe(MHFrame_GetChild(this.ptr, index))
+        endmethod
+
+        method SetTextShadowOff takes real x, real y returns nothing
+            call MHFrame_SetTextShadowOff(this.ptr, x, y)
         endmethod
 
         private thistype tooltip
