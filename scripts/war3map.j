@@ -837,7 +837,7 @@ globals
 	sound RE = null
 	sound PE = null
 	sound B1 = null
-	sound QE = null
+	sound BansheeDeathSound = null
 	sound IF = null
 	sound OF = null
 	sound AF = null
@@ -2684,7 +2684,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A1IM', 0, "BJE")
 	call SaveStr(ObjectHashTable,'A1IN', 0, "ShadowDanceOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A1J7', 0, "BLE")
-	call SaveStr(ObjectHashTable,'A04A', 0, "BPE")
+	call SaveStr(ObjectHashTable,'A04A', 0, "ScreamOfPainOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A28R', 0, "SonicWaveOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A28S', 0, "SonicWaveOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A45W', 0, "B_E")
@@ -18558,7 +18558,7 @@ function ItemRodOfAtosOnMissileLaunch takes nothing returns nothing
 	local unit whichUnit  = GetTriggerUnit()
 	local unit targetUnit  = GetSpellTargetUnit()
 	local integer h
-	set h = GetHandleId(LaunchMissileByUnitDummy(whichUnit, targetUnit, 'h999', "ItemRodOfAtosOnMissileHit", 1900, true))
+	set h = GetHandleId(LaunchMissileByUnitDummy(whichUnit, targetUnit, 'h999', "ItemRodOfAtosOnMissileHit", 1500, true))
 	if h > 0 then
 		set whichUnit = LoadUnitHandle(HY, h, 45)
 		call MHUnit_SetModel(whichUnit, "Abilities\\Spells\\Undead\\DevourMagic\\DevourMagicBirthMissile.mdl", false)
@@ -57542,47 +57542,6 @@ function BLE takes nothing returns nothing
 	set u = null
 	set t = null
 endfunction
-function CWA takes nothing returns nothing
-	local integer h = GetHandleId(GetTriggeringTrigger())
-	local unit whichUnit = TempUnit
-	local unit targetUnit = MissileHitTargetUnit
-	local real damage = LoadReal(HY, h, 20)
-	call UnitDamageTargetEx(whichUnit, targetUnit, 1, damage)
-	set whichUnit = null
-	set targetUnit = null
-endfunction
-function CYA takes nothing returns nothing
-	local unit whichUnit = GetTriggerUnit()
-	local unit targetUnit = GetEnumUnit()
-	local trigger t = LaunchMissileByUnitDummy(whichUnit, targetUnit,'h0BP', "CWA", 700, false)
-	local integer h = GetHandleId(t)
-	local integer level = GetUnitAbilityLevel(whichUnit,'A04A')
-	local real damage
-	if level == 1 then
-		set damage = 135
-	elseif level == 2 then
-		set damage = 215
-	elseif level == 3 then
-		set damage = 275
-	elseif level == 4 then
-		set damage = 350
-	endif
-	call SaveReal(HY, h, 20,((damage)* 1.))
-	set whichUnit = null
-	set targetUnit = null
-	set t = null
-endfunction
-function BPE takes nothing returns nothing
-	local unit whichUnit = GetTriggerUnit()
-	local group g = AllocationGroup(429)
-	local integer level = GetUnitAbilityLevel(whichUnit,'A04A')
-	call GroupEnumUnitsInRange(g, GetUnitX(whichUnit), GetUnitY(whichUnit), 500, Condition(function DDX))
-	call ForGroup(g, function CYA)
-	call DeallocateGroup(g)
-	call PlaySoundOnUnitBJ(QE, 100, whichUnit)
-	set whichUnit = null
-	set g = null
-endfunction
 
 
 function C7A takes nothing returns boolean
@@ -68690,9 +68649,9 @@ function Init_Sounds takes nothing returns nothing
 	set B1 = CreateSound("Units\\Orc\\BatTroll\\TrollbatriderPissed4.wav", false, true, true, 10, 10, "DefaultEAXON")
 	call SetSoundParamsFromLabel(B1, "TrollbatriderPissed")
 	call SetSoundDuration(B1, 2659)
-	set QE = CreateSound("Units\\Undead\\Banshee\\BansheeDeath.wav", false, true, true, 10, 10, "DefaultEAXON")
-	call SetSoundParamsFromLabel(QE, "BansheeDeath")
-	call SetSoundDuration(QE, 2380)
+	set BansheeDeathSound = CreateSound("Units\\Undead\\Banshee\\BansheeDeath.wav", false, true, true, 10, 10, "DefaultEAXON")
+	call SetSoundParamsFromLabel(BansheeDeathSound, "BansheeDeath")
+	call SetSoundDuration(BansheeDeathSound, 2380)
 	set IF = CreateSound("Abilities\\Spells\\Other\\Volcano\\VolcanoLoop.wav", false, false, false, 10, 10, "DefaultEAXON")
 	call SetSoundParamsFromLabel(IF, "VolcanoLoop")
 	call SetSoundDuration(IF, 7616)
