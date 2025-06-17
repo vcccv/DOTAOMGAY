@@ -171,11 +171,38 @@ library UnitInfoUpdate requires PlayerSettingsLib, AbilityUtils
         call UpdateCommandBarHideState()
     endfunction
 
+    globals
+        private boolean CooldownPrevShow = true
+    endglobals
+
     // 技能栏加物品栏冷却时间
     function UnitInfoUpdate_OnUpdate takes nothing returns nothing
         local integer i
-
+        local boolean showSetting
         if IsReplayMode then
+            return
+        endif
+
+        set showSetting = PlayerSettings[User.LocalId].IsSettingEnable(PlayerSettings.SHOW_COMMAND_BUTTON_COOLDOWN)
+        if showSetting != CooldownPrevShow then
+            set i = 1
+            loop
+                exitwhen i > 12
+                call MHFrame_Hide(SkillBarCooldownText[i], not showSetting)
+                set i = i + 1
+            endloop
+
+            set i = 1
+            loop
+                exitwhen i > 6
+                call MHFrame_Hide(ItemBarCooldownText[i], not showSetting)
+                set i = i + 1
+            endloop
+
+            set CooldownPrevShow = showSetting
+        endif
+
+        if not CooldownPrevShow then
             return
         endif
 
@@ -246,8 +273,6 @@ library UnitInfoUpdate requires PlayerSettingsLib, AbilityUtils
             call MHFrame_SetTextAlign(SkillBarCooldownText[i], TEXT_VERTEX_ALIGN_CENTER, TEXT_HORIZON_ALIGN_CENTER)
             call MHFrame_SetAllPoints(SkillBarCooldownText[i], framePtr)
             call MHFrame_Hide(framePtr, true)
-
-            call BJDebugMsg("framePtr:" + I2S(framePtr))
 
             set i = i + 1
         endloop

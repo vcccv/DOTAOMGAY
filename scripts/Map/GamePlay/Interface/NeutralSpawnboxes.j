@@ -36,9 +36,7 @@ library NeutralSpawnboxes requires Base, PlayerSettingsLib
 
             if showSetting and currentAlt then
                 set alpha = 0.7
-                call BJDebugMsg("显示")
             else
-                call BJDebugMsg("隐藏")
                 set alpha = 0.0
             endif
 

@@ -216,6 +216,7 @@ library PlayerSettingsLib requires PlayerUtils
                 call PlayerSettings[i].EnableSettingNotStore(PlayerSettings.HOLDING_ALT_SHOWS_NEUTRAL_SPAWNBOXES, true)
                 call PlayerSettings[i].EnableSettingNotStore(PlayerSettings.HOLDING_ALT_SHOWS_TOWER_ATTACK_RANGE, true)
                 call PlayerSettings[i].EnableSettingNotStore(PlayerSettings.SHOW_COMMAND_BUTTON_HOTKEY          , true)
+                call PlayerSettings[i].EnableSettingNotStore(PlayerSettings.SHOW_COMMAND_BUTTON_COOLDOWN        , true)
 
                 set value = DzAPI_Map_GetServerValue(Player(i), "SOptions")
                 if StringLength(value) > 0 then
