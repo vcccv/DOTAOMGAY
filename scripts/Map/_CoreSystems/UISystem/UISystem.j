@@ -65,6 +65,19 @@ library UISystem requires ErrorMessage, Table
             return this
         endmethod
 
+        // 一定会返回一个实例，即便ptr是空值，用于转换录像没有的UI
+        static method GetPtrInstanceUnSafe takes integer ptr returns thistype
+            local thistype this = Table[FRAME_INSTANCE_KEY].integer[ptr]
+
+            if this == 0 and ptr != 0 then
+                set this = thistype.create(ptr)
+            else
+                return thistype.allocate()
+            endif
+
+            return this
+        endmethod
+
         // 如果是没有被创建过实例的frame，则返回0，在异步情况下没有把握就用这个
         static method GetPtrInstanceSafe takes integer ptr returns thistype
             return Table[FRAME_INSTANCE_KEY].integer[ptr]
