@@ -319,6 +319,9 @@ library UnitAbility requires AbilityUtils, UnitLimitation
         endif
         return 0.
     endfunction
+    function GetUnitManaCostReduceMultiplier takes unit whichUnit returns real
+        return 0.
+    endfunction
 
     function SetUnitAbilityLevelCooldown takes unit whichUnit, ability whichAbility, integer level, real cooldown returns nothing
         local real multiplier
@@ -342,12 +345,19 @@ library UnitAbility requires AbilityUtils, UnitLimitation
     endfunction
 
     // 更新单个技能
-    function UnitAbilityUpdateCooldown takes unit whichUnit, ability whichAbility returns nothing
+    function UnitAbilityUpdateData takes unit whichUnit, ability whichAbility returns nothing
         local integer abilId   = GetAbilityId(whichAbility)
         local integer maxLevel = GetAbilityMaxLevelById(abilId)
         local real    cooldown
+        local integer manaCost
         local integer i
-        local real    multiplier = ( 1. - GetUnitCooldownReduceMultiplier(whichUnit) )
+        local real    cooldownMultiplier = ( 1. - GetUnitCooldownReduceMultiplier(whichUnit) )
+        local real    manaCostMultiplier = ( 1. - GetUnitManaCostReduceMultiplier(whichUnit) )
+
+        // 如果没有数值，则无需更新
+        if cooldownMultiplier == 1. and manaCostMultiplier == 1. then
+            return
+        endif
 
         set i = 1
         loop
@@ -355,24 +365,28 @@ library UnitAbility requires AbilityUtils, UnitLimitation
 
             set cooldown = MHAbility_GetLevelDefDataReal(abilId, i, ABILITY_LEVEL_DEF_DATA_COOLDOWN)
             if cooldown > 0. then
-                call MHAbility_SetAbilityCustomLevelDataReal(whichAbility, i, ABILITY_LEVEL_DEF_DATA_COOLDOWN, cooldown * multiplier)
+                call MHAbility_SetAbilityCustomLevelDataReal(whichAbility, i, ABILITY_LEVEL_DEF_DATA_COOLDOWN, cooldown * cooldownMultiplier)
+            endif
+
+            set manaCost = MHAbility_GetLevelDefDataInt(abilId, i, ABILITY_LEVEL_DEF_DATA_MANA_COST)
+            if manaCost != 0 then
+                call MHAbility_SetAbilityCustomLevelDataInt(whichAbility, i, ABILITY_LEVEL_DEF_DATA_MANA_COST, R2I(manaCost * manaCostMultiplier))
             endif
 
             set i = i + 1
         endloop
     endfunction
 
-    globals
-        real TempReduceMultiplier = 0.
-    endglobals
-
-    private function UpdateCooldownOnEnum takes nothing returns nothing
+    private function UpdateDataOnEnum takes nothing returns nothing
+        local unit    whichUnit   = MHUnit_GetEnumUnit()
         local ability enumAbility = MHUnit_GetEnumAbility()
         local integer abilId      = GetAbilityId(enumAbility)
         local integer maxLevel    = GetAbilityMaxLevelById(abilId)
         local real    cooldown
+        local integer manaCost
         local integer i
-        local real    multiplier  = TempReduceMultiplier
+        local real    cooldownMultiplier = ( 1. - GetUnitCooldownReduceMultiplier(whichUnit) )
+        local real    manaCostMultiplier = ( 1. - GetUnitManaCostReduceMultiplier(whichUnit) )
 
         set i = 1
         loop
@@ -380,24 +394,38 @@ library UnitAbility requires AbilityUtils, UnitLimitation
 
             set cooldown = MHAbility_GetLevelDefDataReal(abilId, i, ABILITY_LEVEL_DEF_DATA_COOLDOWN)
             if cooldown > 0. then
-                call MHAbility_SetAbilityCustomLevelDataReal(enumAbility, i, ABILITY_LEVEL_DEF_DATA_COOLDOWN, cooldown * multiplier)
+                call MHAbility_SetAbilityCustomLevelDataReal(enumAbility, i, ABILITY_LEVEL_DEF_DATA_COOLDOWN, cooldown * cooldownMultiplier)
                 //call BJDebugMsg("|cffffff00 技能[" + Id2String(abilId) + "] " +  "(" + I2S(i) + ")"  +  " " + GetObjectName(abilId) + " cooldown:" + R2S(cooldown) + " new cooldown:" + R2S(cooldown * multiplier))
+            endif
+
+            set manaCost = MHAbility_GetLevelDefDataInt(abilId, i, ABILITY_LEVEL_DEF_DATA_MANA_COST)
+            if manaCost != 0 then
+                call MHAbility_SetAbilityCustomLevelDataInt(enumAbility, i, ABILITY_LEVEL_DEF_DATA_MANA_COST, R2I(manaCost * manaCostMultiplier))
             endif
 
             set i = i + 1
         endloop
 
         set enumAbility = null
+        set whichUnit   = null
     endfunction
 
     // 更新单位所有技能
-    function UnitAllAbilityUpdateCooldown takes unit whichUnit returns nothing
+    function UnitAllAbilityUpdateData takes unit whichUnit returns nothing
+        local real    cooldownMultiplier = ( 1. - GetUnitCooldownReduceMultiplier(whichUnit) )
+        local real    manaCostMultiplier = ( 1. - GetUnitManaCostReduceMultiplier(whichUnit) )
+
         if whichUnit == null then
-            call ThrowWarning(true, "UnitAbility", "UnitAllAbilityUpdateCooldown", "unit", 0, "whichUnit == null")
+            call ThrowWarning(true, "UnitAbility", "UnitAllAbilityUpdateData", "unit", 0, "whichUnit == null")
             return
         endif
-        set TempReduceMultiplier = ( 1. - GetUnitCooldownReduceMultiplier(whichUnit) )
-        call MHUnit_EnumAbility(whichUnit, function UpdateCooldownOnEnum)
+
+        // 如果没有数值，则无需更新
+        if cooldownMultiplier == 1. and manaCostMultiplier == 1. then
+            return
+        endif
+
+        call MHUnit_EnumAbility(whichUnit, function UpdateDataOnEnum)
     endfunction
 
     private function OnEndCooldown takes nothing returns boolean
@@ -506,9 +534,9 @@ library UnitAbility requires AbilityUtils, UnitLimitation
 
         // 如果是工程升级，则更新所有技能。
         if GetAbilityBaseIdById(abilId) == 'ANeg' then
-            call UnitAllAbilityUpdateCooldown(whichUnit)
+            call UnitAllAbilityUpdateData(whichUnit)
         elseif HasOctarineCore and GetUnitAbilityLevel(whichUnit, 'A39S') == 1  then
-            call UnitAbilityUpdateCooldown(whichUnit, whichAbility)
+            call UnitAbilityUpdateData(whichUnit, whichAbility)
         endif
 
         set whichAbility = null
@@ -532,7 +560,7 @@ library UnitAbility requires AbilityUtils, UnitLimitation
 
         // 如果是工程升级，则更新所有技能。
         if GetAbilityBaseIdById(abilId) == 'ANeg' then
-            call UnitAllAbilityUpdateCooldown(whichUnit)
+            call UnitAllAbilityUpdateData(whichUnit)
         endif
         call Table[GetHandleId(whichAbility)].flush()
         
