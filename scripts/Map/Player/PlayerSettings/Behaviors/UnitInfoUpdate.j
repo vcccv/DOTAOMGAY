@@ -8,8 +8,8 @@ library UnitInfoUpdate requires PlayerSettingsLib, AbilityUtils
         private integer array SkillBarButton
         private integer array ItemButton
 
-        private Frame   array SkillBarCooldownText
-        private Frame   array ItemBarCooldownText
+        private integer array SkillBarCooldownText
+        private integer array ItemBarCooldownText
 
         private key BASE_COMMAND_ORDER
 
@@ -19,6 +19,8 @@ library UnitInfoUpdate requires PlayerSettingsLib, AbilityUtils
         private integer MaxBaseCommandButtonData = 0
 
         private constant integer MAX_HIDE_BASE_COMMAND_BUTTON_COUNT = 4
+
+        private boolean IsReplayMode = false
     endglobals
 
     private function IsBaseCommandOrder takes integer order returns boolean
@@ -173,11 +175,15 @@ library UnitInfoUpdate requires PlayerSettingsLib, AbilityUtils
     function UnitInfoUpdate_OnUpdate takes nothing returns nothing
         local integer i
 
+        if IsReplayMode then
+            return
+        endif
+
         set i = 1
         loop
             exitwhen i > 12
-            if SkillBarCooldownText[i].IsVisible() then
-                call SkillBarCooldownText[i].SetText(I2S(R2I(MHUIData_GetCommandButtonCooldown(SkillBarButton[i])) + 1))
+            if not MHFrame_IsHidden(SkillBarCooldownText[i]) then
+                call MHFrame_SetText(SkillBarCooldownText[i], I2S(R2I(MHUIData_GetCommandButtonCooldown(SkillBarButton[i])) + 1))
             endif
             set i = i + 1
         endloop
@@ -185,8 +191,8 @@ library UnitInfoUpdate requires PlayerSettingsLib, AbilityUtils
         set i = 1
         loop
             exitwhen i > 6
-            if ItemBarCooldownText[i].IsVisible() then
-                call ItemBarCooldownText[i].SetText(I2S(R2I(MHUIData_GetCommandButtonCooldown(ItemButton[i])) + 1))
+            if not MHFrame_IsHidden(ItemBarCooldownText[i]) then
+                call MHFrame_SetText(ItemBarCooldownText[i], I2S(R2I(MHUIData_GetCommandButtonCooldown(ItemButton[i])) + 1))
             endif
             set i = i + 1
         endloop
@@ -210,7 +216,11 @@ library UnitInfoUpdate requires PlayerSettingsLib, AbilityUtils
         local trigger    trig = CreateTrigger()
         local integer    i
 
+        local integer framePtr
+
         call SimpleTick.CreateEx().Start(UPDATE_TIME_OUT, true, function OnTickExpired)
+
+        set IsReplayMode = MHGame_IsReplay()
 
         // 移动
         call SaveBaseCommandOrder(ORDER_move)
@@ -228,13 +238,16 @@ library UnitInfoUpdate requires PlayerSettingsLib, AbilityUtils
             exitwhen i > 12
             set SkillBarButton[i] = MHUI_GetSkillBarButton(i)
 
-            set SkillBarCooldownText[i] = Frame.GetPtrInstance(MHUIData_GetCommandButtonCooldownFrame(SkillBarButton[i])).CreateFrameByType(/*
-            */ "TEXT", "SkillBarCooldownText" + I2S(i), "", 10, i)
-            call SkillBarCooldownText[i].SetTextShadowOff(0.0016, 0.0016)
-            call SkillBarCooldownText[i].SetFont("Fonts\\arheigb_bd.ttf", 0.016, 0)
-            call SkillBarCooldownText[i].SetTextAlignment(TEXT_JUSTIFY_MIDDLE, TEXT_JUSTIFY_CENTER)
-            call MHFrame_SetAllPoints(SkillBarCooldownText[i].GetPtr(), MHUIData_GetCommandButtonCooldownFrame(SkillBarButton[i]))
-            call MHFrame_Hide(MHUIData_GetCommandButtonCooldownFrame(SkillBarButton[i]), true)
+            set framePtr = MHUIData_GetCommandButtonCooldownFrame(SkillBarButton[i])
+            
+            set SkillBarCooldownText[i] = MHFrame_CreateEx("TEXT", "SkillBarCooldownText" + I2S(i), "", framePtr, 10, i)
+            call MHFrame_SetTextShadowOff(SkillBarCooldownText[i], 0.0016, 0.0016)
+            call MHFrame_SetFont(SkillBarCooldownText[i], "Fonts\\arheigb_bd.ttf", 0.016, 0)
+            call MHFrame_SetTextAlign(SkillBarCooldownText[i], TEXT_VERTEX_ALIGN_CENTER, TEXT_HORIZON_ALIGN_CENTER)
+            call MHFrame_SetAllPoints(SkillBarCooldownText[i], framePtr)
+            call MHFrame_Hide(framePtr, true)
+
+            call BJDebugMsg("framePtr:" + I2S(framePtr))
 
             set i = i + 1
         endloop
@@ -244,13 +257,14 @@ library UnitInfoUpdate requires PlayerSettingsLib, AbilityUtils
             exitwhen i > 6
             set ItemButton[i] = MHUI_GetItemBarButton(i)
 
-            set ItemBarCooldownText[i] = Frame.GetPtrInstance(MHUIData_GetCommandButtonCooldownFrame(ItemButton[i])).CreateFrameByType(/*
-            */ "TEXT", "ItemBarCooldownText" + I2S(i), "", 10, i)
-            call ItemBarCooldownText[i].SetTextShadowOff(0.0016, 0.0016)
-            call ItemBarCooldownText[i].SetFont("Fonts\\arheigb_bd.ttf", 0.016, 0)
-            call ItemBarCooldownText[i].SetTextAlignment(TEXT_JUSTIFY_MIDDLE, TEXT_JUSTIFY_CENTER)
-            call MHFrame_SetAllPoints(ItemBarCooldownText[i].GetPtr(), MHUIData_GetCommandButtonCooldownFrame(ItemButton[i]))
-            call MHFrame_Hide(MHUIData_GetCommandButtonCooldownFrame(ItemButton[i]), true)
+            set framePtr = MHUIData_GetCommandButtonCooldownFrame(ItemButton[i])
+            
+            set ItemBarCooldownText[i] = MHFrame_CreateEx("TEXT", "ItemBarCooldownText" + I2S(i), "", framePtr, 10, i)
+            call MHFrame_SetTextShadowOff(ItemBarCooldownText[i], 0.0016, 0.0016)
+            call MHFrame_SetFont(ItemBarCooldownText[i], "Fonts\\arheigb_bd.ttf", 0.016, 0)
+            call MHFrame_SetTextAlign(ItemBarCooldownText[i], TEXT_VERTEX_ALIGN_CENTER, TEXT_HORIZON_ALIGN_CENTER)
+            call MHFrame_SetAllPoints(ItemBarCooldownText[i], framePtr)
+            call MHFrame_Hide(framePtr, true)
             
             set i = i + 1
         endloop
