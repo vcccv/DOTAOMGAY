@@ -56,7 +56,7 @@ library UnitInfoUpdate requires PlayerSettingsLib, AbilityUtils
         loop
             exitwhen i > 12
             set orderId = MHUIData_GetCommandButtonOrderId(SkillBarButton[i])
-            if IsBaseCommandOrder(orderId) and orderId !=  ORDER_attack and not HaveSavedBaseCommandOrderButtonData(orderId) then
+            if IsBaseCommandOrder(orderId) and orderId != ORDER_attack and not HaveSavedBaseCommandOrderButtonData(orderId) then
                 call SaveBaseCommandOrderButtonData(orderId, ReadRealMemory(SkillBarButton[i] + 0x190))
             endif
             
@@ -102,7 +102,10 @@ library UnitInfoUpdate requires PlayerSettingsLib, AbilityUtils
                 set i = i + 1
             endloop
 
-            set prevHide = hideSetting
+            // 如果成功获取了所有的命令按钮，才会更新上一次状态
+            if MaxBaseCommandButtonData >= MAX_HIDE_BASE_COMMAND_BUTTON_COUNT then
+                set prevHide = hideSetting
+            endif
             call MHUnit_UpdateInfoBar(MHPlayer_GetSelectUnit())
         endif
     
