@@ -1,29 +1,5 @@
 
-library MemoryUtils initializer Init
-    
-    globals
-        integer pGameDLL = 0
-    endglobals
-
-    private function Init takes nothing returns nothing
-        set pGameDLL = MHGame_GetGameDLL()
-    endfunction
-
-    function BitwiseAnd takes integer op1, integer op2 returns integer
-        return MHMath_BitwiseAnd(op1, op2)
-    endfunction
-
-    function ReadRealMemory takes integer addr returns integer
-        return MHTool_ReadInt(addr)
-    endfunction
-
-    function WriteRealMemory takes integer addr, integer value returns nothing
-        call MHTool_WriteInt(addr, value)
-    endfunction
-
-    function ConvertHandle takes handle h returns integer
-        return MHTool_ToObject(h)
-    endfunction
+library MemoryUtils
 
     function GetTempestThread takes nothing returns integer
         return pGameDLL + 0xBE40A8
@@ -189,4 +165,53 @@ library MemoryUtils initializer Init
         return ""
     endfunction
 
+    function UnitShareInvisVision takes unit whichUnit, player whichPlayer, integer shareType returns integer
+        local integer addr     = pGameDLL + 0x66B260
+        local integer pUnit    = ConvertHandle(whichUnit)
+        local integer playerId = GetPlayerId(whichPlayer)
+
+        if pUnit == 0 or whichPlayer == null then
+            return 0
+        endif
+
+        return this_call_3(addr, pUnit, playerId, shareType)
+    endfunction
+
+    function UnitUnShareInvisVision takes unit whichUnit, player whichPlayer, integer shareType returns integer
+        local integer addr     = pGameDLL + 0x65AA20
+        local integer pUnit    = ConvertHandle(whichUnit)
+        local integer playerId = GetPlayerId(whichPlayer)
+
+        if pUnit == 0 or whichPlayer == null then
+            return 0
+        endif
+
+        return this_call_3(addr, pUnit, playerId, shareType)
+    endfunction
+
+    // 0x66B470
+    function UnitShareVisionEx takes unit whichUnit, player whichPlayer returns integer
+        local integer addr     = pGameDLL + 0x66B470
+        local integer pUnit    = ConvertHandle(whichUnit)
+        local integer playerId = GetPlayerId(whichPlayer)
+
+        if pUnit == 0 or whichPlayer == null then
+            return 0
+        endif
+
+        return this_call_2(addr, pUnit, playerId)
+    endfunction
+    // 0x65AB10
+    function UnitUnShareVisionEx takes unit whichUnit, player whichPlayer returns integer
+        local integer addr     = pGameDLL + 0x65AB10
+        local integer pUnit    = ConvertHandle(whichUnit)
+        local integer playerId = GetPlayerId(whichPlayer)
+
+        if pUnit == 0 or whichPlayer == null then
+            return 0
+        endif
+
+        return this_call_2(addr, pUnit, playerId)
+    endfunction
+    
 endlibrary

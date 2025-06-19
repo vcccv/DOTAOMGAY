@@ -1,5 +1,5 @@
 
-library UnitLimitation requires Base, UnitModel
+library UnitLimitation requires Base, UnitModel, MemoryUtils
 
     globals
         private constant key UNIT_CANT_SELECT_COUNT
@@ -238,6 +238,47 @@ library UnitLimitation requires Base, UnitModel
 
     
     globals
+        constant integer AMPLIFY_DAMAGE_BUFF     = 'B00T'
+        constant integer TRACK_BUFF              = 'B00L'
+        constant integer DUST_OF_APPEARANCE_BUFF = 'Bdet'
+    endglobals
+    
+    // 精灵火同理
+    // + 0xCC = 来源玩家id
+    // + 0xD0 = 侦察类型
+    function ImmunityBuffTruesight takes unit whichUnit, integer id, boolean flag returns nothing
+        local ability a     = MHUnit_GetAbility(whichUnit, id, false)
+        local integer pBuff
+        local integer playerId
+        local integer shareVisionType
+        if a == null then
+            return
+        endif
+
+        set pBuff = ConvertHandle(a)
+        if pBuff > 0 then
+            set playerId        = ReadRealMemory(pBuff + 0xCC)
+            set shareVisionType = ReadRealMemory(pBuff + 0xD0)
+
+            call BJDebugMsg("ImmunityBuffTruesight: pid:" + I2S(playerId) + " shareVisionType:" + I2S(shareVisionType) + " b:" + B2S(flag))
+
+            if flag then
+                if ( id == TRACK_BUFF or id == DUST_OF_APPEARANCE_BUFF ) then
+                    call UnitUnShareVisionEx(whichUnit, Player(playerId))
+                endif
+                call UnitUnShareInvisVision(whichUnit, Player(playerId), shareVisionType)
+            else
+                if ( id == TRACK_BUFF or id == DUST_OF_APPEARANCE_BUFF ) then
+                    call UnitShareVisionEx(whichUnit, Player(playerId))
+                endif
+                call UnitShareInvisVision(whichUnit, Player(playerId), shareVisionType)
+            endif
+        endif
+
+        set a = null
+    endfunction
+
+    globals
         private constant key UNIT_TRUESIGHT_IMMUNITY_COUNT
     endglobals
     function UnitIncTruesightImmunityCount takes unit whichUnit returns nothing
@@ -246,6 +287,9 @@ library UnitLimitation requires Base, UnitModel
         set Table[h][UNIT_TRUESIGHT_IMMUNITY_COUNT] = count
         if count == 1 then
             call UnitEnableTruesightImmunity(whichUnit)
+            call ImmunityBuffTruesight(whichUnit, AMPLIFY_DAMAGE_BUFF    , true)
+            call ImmunityBuffTruesight(whichUnit, TRACK_BUFF             , true)
+            call ImmunityBuffTruesight(whichUnit, DUST_OF_APPEARANCE_BUFF, true)
         endif
     endfunction
     function UnitDecTruesightImmunityCount takes unit whichUnit returns nothing
@@ -254,7 +298,34 @@ library UnitLimitation requires Base, UnitModel
         set Table[h][UNIT_TRUESIGHT_IMMUNITY_COUNT] = count
         if count == 0 then
             call UnitDisableTruesightImmunity(whichUnit)
+            call ImmunityBuffTruesight(whichUnit, AMPLIFY_DAMAGE_BUFF    , false)
+            call ImmunityBuffTruesight(whichUnit, TRACK_BUFF             , false)
+            call ImmunityBuffTruesight(whichUnit, DUST_OF_APPEARANCE_BUFF, false)
         endif
+    endfunction
+    function IsUnitTruesightImmunity takes unit whichUnit returns boolean
+        return Table[GetHandleId(whichUnit)][UNIT_TRUESIGHT_IMMUNITY_COUNT] > 0
+    endfunction
+
+    function SharedVisionBuffOnAdd takes nothing returns nothing
+        local unit    whichUnit = Event.GetTriggerUnit()
+        local integer id        = Event.GetTriggerAbilityId()
+
+        if IsUnitTruesightImmunity(whichUnit) then
+            call ImmunityBuffTruesight(whichUnit, id, true)
+        endif
+
+        set whichUnit = null
+    endfunction
+    function SharedVisionBuffOnRemove takes nothing returns nothing
+        local unit    whichUnit = Event.GetTriggerUnit()
+        local integer id        = Event.GetTriggerAbilityId()
+
+        if IsUnitTruesightImmunity(whichUnit) then
+            call ImmunityBuffTruesight(whichUnit, id, false)
+        endif
+
+        set whichUnit = null
     endfunction
 
     // 物品沉默
