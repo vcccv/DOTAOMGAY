@@ -47,6 +47,7 @@
 #include "Int\\AncientApparition.j"
 #include "Int\\GoblinTechies.j"
 #include "Int\\Chen.j"
+#include "Int\\Zeus.j"
 
 #include "Agi\\VengefulSpirit.j"
 #include "Agi\\FacelessVoid.j"

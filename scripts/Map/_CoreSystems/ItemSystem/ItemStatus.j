@@ -60,9 +60,10 @@ library ItemStatus requires ItemSystem
         if Item_AncientTangoOfEssifation == itemIndex then
             return 4
         endif
-        if Item_SentryWard == itemIndex              /*
-            */ or itemIndex == Item_DustOfAppearance /*
-            */ or itemIndex == Item_GhostPotion      /*
+        /* 真眼和粉不在是2堆叠物品
+Item_SentryWard == itemIndex or itemIndex == Item_DustOfAppearance or 
+        */
+        if itemIndex == Item_GhostPotion      /*
             */ or itemIndex == Item_WandOfIllusions then
             return 2
         endif

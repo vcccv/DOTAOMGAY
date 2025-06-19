@@ -204,6 +204,27 @@ library UnitStatus
         return IsUnitType(whichUnit, UNIT_TYPE_SUMMONED) and not IsUnitType(whichUnit, UNIT_TYPE_MELEE_ATTACKER) and not IsUnitType(whichUnit, UNIT_TYPE_RANGED_ATTACKER)
     endfunction
 
+    // 大地
+    function IsUnitEarthElementById takes integer i returns boolean
+        return i =='npn3' or i =='npn6' or i =='n010' or i =='n0GZ'
+    endfunction
+    // 风暴
+    function IsUnitStormElementById takes integer i returns boolean
+        return i =='npn2' or i =='npn5' or i =='n012' or i =='n0H1'
+    endfunction
+    // 火焰
+    function IsUnitFireElementById takes integer i returns boolean
+        return i =='npn1' or i =='npn4' or i =='n011' or i =='n0H0'
+    endfunction
+    function IsUnitBrewmasterElement takes unit whichUnit returns boolean
+        local integer id = GetUnitTypeId(whichUnit)
+        return IsUnitFireElementById(id) or IsUnitStormElementById(id) or IsUnitEarthElementById(id)
+    endfunction
+    // 熊猫的元素分离
+    function IsUnitBrewmasterElementById takes integer i returns boolean
+        return IsUnitFireElementById(i) or IsUnitStormElementById(i) or IsUnitEarthElementById(i)
+    endfunction
+
     // 吹风
     function IsUnitCyclone takes unit whichUnit returns boolean
         return GetUnitAbilityLevel(whichUnit,'Bcyc')> 0 or GetUnitAbilityLevel(whichUnit,'Bcy2')> 0

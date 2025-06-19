@@ -4866,14 +4866,14 @@ buttonpos=,1
 Name=侦察守卫
 Hotkey=O
 Tip=侦察守卫(|cffffcc00O|r)|nObserver Wards
-Ubertip=|cffffcc00属性：|r|n|cffff8000侦察守卫：|r|n放置一个侦察守卫来监视一片的区域，侦察守卫不具有真视能力|n|n可以使用|cffff03034|r次|n商店最大存储量：4|n|cff99ccff持续时间：|r7分钟|n|cff99ccff再生时间：|r6分钟
+Ubertip=|cffffcc00属性：|r|n|cffff8000侦察守卫：|r|n放置一个侦察守卫来监视一片的区域，侦察守卫不具有真视能力|n|n|cff99ccff视野范围：|r1600|n|cff99ccff持续时间：|r7分钟|n|cff99ccff商店最大存储量：|r4|n|cff99ccff商店刷新时间：|r6分钟
 [h02D]
 art=ReplaceableTextures\CommandButtons\BTNBlueSentryWard
 buttonpos=1,1
 Name=岗哨守卫
 Hotkey=W
 Tip=岗哨守卫(|cffffcc00W|r)|nSentry Ward
-Ubertip=|cffffcc00属性：|r|n|cffff8000岗哨守卫：|r|n放置一个具有真视能力的岗哨守卫，能侦测周围的隐形单位；它本身的视野非常之小|n|n可以使用|cffff03032|r次|n|n|cff99ccff持续时间：|r4分钟
+Ubertip=|cffffcc00属性：|r|n|cffff8000岗哨守卫：|r|n放置一个具有真视能力的岗哨守卫，能侦测周围的隐形单位；它本身的视野非常之小|n|n|cff99ccff视野范围：|r100|n|cff99ccff真视范围：|r1000|n|cff99ccff持续时间：|r4分钟
 [h02E]
 art=ReplaceableTextures\CommandButtons\BTNScrollUber
 buttonpos=,2
@@ -5739,7 +5739,7 @@ buttonpos=2,1
 Name=显影之尘|nDust of Appearance
 Hotkey=D
 Tip=显影之尘(|cffffcc00D|r)|nDust of Appearance
-Ubertip=|cffffcc00属性：|r|n|cffff8000显影：|r|n立刻显示使用者周围的隐形单位；减缓受影响单位20%的移动速度|n|n可以使用|cffff03032|r次|n|cff99ccff作用范围：|r1050|n|cff99ccff持续时间：|r12|n|cff99ccff冷却时间：|r60|n|n|c00838B8B离开这里，前往幻想境界|r
+Ubertip=|cffffcc00属性：|r|n|cffff8000显影：|r|n立刻显示使用者周围的隐形单位；减缓受影响单位20%的移动速度|n|n|cff99ccff作用范围：|r1050|n|cff99ccff持续时间：|r12|n|cff99ccff冷却时间：|r60|n|n|c00838B8B离开这里，前往幻想境界|r
 [h077]
 art=ReplaceableTextures\CommandButtons\BTNImprovedStrengthOfTheMoon
 name="Shackleshot Arrow"
@@ -6773,7 +6773,7 @@ buttonpos=1,2
 Name=诡计之雾
 Hotkey=K
 Tip=诡计之雾
-Ubertip=|cffffcc00属性：|r|n|cffff8000诡计之雾：|r|n使你和周围1200范围内所有友方玩家控制的单位隐形（大地图和小地图），并提升15%的移动速度；进行攻击动作，或者附近1050范围内有敌方英雄、防御塔时，均会失效|n|cff99ccff持续时间：|r35|n|cff99ccff冷却时间：|r90|n|cff99ccff商店最大储量：|r3|n|cff99ccff商店刷新时间：|r12分钟
+Ubertip=|cffffcc00属性：|r|n|cffff8000诡计之雾：|r|n使你和周围1200范围内所有友方玩家控制的单位隐形（大地图和小地图）隐身不会受到真实视域影响，并提升15%的移动速度；进行攻击动作，或者附近1050范围内有敌方英雄、防御塔时，均会失效|n|cff99ccff持续时间：|r35|n|cff99ccff冷却时间：|r90|n|cff99ccff商店最大储量：|r3|n|cff99ccff商店刷新时间：|r7分钟
 [h0D4]
 art=ReplaceableTextures\CommandButtons\BTNLesserRejuvScroll
 Name=复活英雄 - 冷却时间 
@@ -10104,6 +10104,10 @@ Name=艾西菲的远古祭祀|nAncient Tango of Essifation
 Name=侦察守卫
 [I059]
 Name=岗哨守卫
+[I0UH]
+Name=侦察-岗哨守卫
+[I0UK]
+Name=侦察-岗哨守卫
 [I05A]
 Name=回城卷轴|nScroll of Town Portal
 [I05B]
@@ -10141,13 +10145,25 @@ Ubertip="|c00ff0303该物品不属于你，它失去了效果.|r"
 [I05G]
 art=ReplaceableTextures\CommandButtons\BTNSentryWard
 Name=侦察守卫
-Ubertip=|cffffcc00属性：|r|n|cffff8000侦察守卫：|r|n放置一个侦察守卫来监视一片的区域，侦查守卫不具有真视能力|n|cff99ccff持续时间：|r7分钟
+Ubertip=|cffffcc00属性：|r|n|cffff8000侦察守卫：|r|n放置一个侦察守卫来监视一片的区域，侦查守卫不具有真视能力|n|n|cff99ccff视野范围：|r1600|n|cff99ccff持续时间：|r7分钟
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNSentryWard.blp
 [I05H]
 art=ReplaceableTextures\CommandButtons\BTNBlueSentryWard
 Name=岗哨守卫
-Ubertip=|cffffcc00属性：|r|n|cffff8000岗哨守卫：|r|n放置一个具有真视能力的岗哨守卫，能侦测周围的隐形单位；它本身的视野非常之小|n|cff99ccff持续时间：|r4分钟
+Ubertip=|cffffcc00属性：|r|n|cffff8000岗哨守卫：|r|n放置一个具有真视能力的岗哨守卫，能侦测周围的隐形单位；它本身的视野非常之小|n|n|cff99ccff视野范围：|r100|n|cff99ccff真视范围：|r1000|n|cff99ccff持续时间：|r4分钟
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNBlueSentryWard.blp
+
+[I0UI]
+art=ReplaceableTextures\CommandButtons\BTNObserverWardStackable
+Name=侦察-岗哨守卫
+Ubertip=|cffffcc00属性：|r|n|cffff8000放置守卫：|r|n放置当前可用的守卫，双击守卫切换当前可用的守卫|n|n侦察守卫视野范围：1600|n|cff99ccff侦察守卫持续时间：|r7分钟|n岗哨守卫视野范围：100|n岗哨守卫真视范围：1000|n|cff99ccff岗哨守卫持续时间：4分钟|r
+effectsoundlooped=ReplaceableTextures\CommandButtons\BTNObserverWardStackable.blp
+[I0UL]
+art=ReplaceableTextures\CommandButtons\BTNSentryWardStackable
+Name=侦察-岗哨守卫
+Ubertip=|cffffcc00属性：|r|n|cffff8000放置守卫：|r|n放置当前可用的守卫，双击守卫切换当前可用的守卫|n|n侦察守卫视野范围：1600|n|cff99ccff侦察守卫持续时间：|r7分钟|n岗哨守卫视野范围：100|n岗哨守卫真视范围：1000|n|cff99ccff岗哨守卫持续时间：4分钟|r
+effectsoundlooped=ReplaceableTextures\CommandButtons\BTNSentryWardStackable.blp
+
 [I05I]
 art=ReplaceableTextures\CommandButtons\BTNScrollUber
 Name=回城卷轴|nScroll of Town Portal
@@ -11756,7 +11772,7 @@ name="Poison Powder"
 [I0GH]
 art=ReplaceableTextures\CommandButtons\BTNDustOfAppearance
 Name=显影之尘|nDust of Appearance
-Ubertip=|cffffcc00属性：|r|n|cffff8000显影：|r|n立刻显示使用者周围的隐形单位，并使隐身单位减速20%|n|n可以使用|cffff03032|r次|n|cff99ccff作用范围：|r1050|n|cff99ccff持续时间：|r12|n|cff99ccff冷却时间：|r30|n|n|c00838B8B离开这里，前往幻想境界|r
+Ubertip=|cffffcc00属性：|r|n|cffff8000显影：|r|n立刻显示使用者周围的隐形单位，并使隐身单位减速20%|n|n|cff99ccff作用范围：|r1050|n|cff99ccff持续时间：|r12|n|cff99ccff冷却时间：|r30|n|n|c00838B8B离开这里，前往幻想境界|r
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNDustOfAppearance.blp
 [I0GI]
 Name=显影之尘|nDust of Appearance
@@ -12371,7 +12387,7 @@ Name=诡计之雾|nSmoke of Deceit
 [I0NG]
 art=ReplaceableTextures\CommandButtons\BTNSmokePotion
 Name=诡计之雾|nSmoke of Deceit
-Ubertip=|cffffcc00属性：|r|n|cffff8000诡计之雾：|r|n使你和周围1200范围内所有友方玩家控制的单位隐形（大地图和小地图），并提升15%的移动速度；进行攻击动作，或者附近950范围内有敌方英雄、防御塔时，均会失效|n|cff99ccff持续时间：|r35|n|cff99ccff冷却时间：|r90
+Ubertip=|cffffcc00属性：|r|n|cffff8000诡计之雾：|r|n使你和周围1200范围内所有友方玩家控制的单位隐形（大地图和小地图）隐身不会受到真实视域影响，并提升15%的移动速度；进行攻击动作，或者附近1050范围内有敌方英雄、防御塔时，均会失效|n|cff99ccff持续时间：|r35|n|cff99ccff冷却时间：|r90
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNSmokePotion.blp
 [I0NH]
 Name=勇气勋章|nMedallion of Courage
@@ -20249,7 +20265,7 @@ Untip=|cffc3dbff右键单击以激活自动施放|r
 Unubertip=|cffc3dbff右键单击以关闭自动施放|r
 Hotkey=R
 Unhotkey=R
-Researchubertip=追踪一个敌方英雄30秒或直到他死去。期间得到其视野，并可以在多面板查看他的当前金钱；同时该目标周围900范围内的所有友方单位，均提升20%的移动速度。如果该目标在期间内死亡，你和其附近的友军将获得额外的金钱。|n|n|cffffcc00等级 1|r -你和其附近的友军额外获得150/40金钱|n|cffffcc00等级 2|r - 你和其附近的友军额外获得200/80金钱|n|cffffcc00等级 3|r - 你和其附近的友军额外获得250/120金钱|n|n|cffff0303无视魔法免疫|r|n|n|cff99ccff施法距离：|r1200|n|cff99ccff冷却时间：|r4|n|cff99ccff魔法消耗：|r50
+Researchubertip=追踪一个敌方英雄30秒或直到他死去。期间得到其视野，并可以在多面板查看他的当前金钱；同时该目标周围900范围内的所有友方单位，均提升20%的移动速度。如果该目标在期间内死亡，你和其附近的友军将获得额外的金钱。|n|n|cffffcc00等级 1|r - 你和其附近的友军额外获得150/40金钱|n|cffffcc00等级 2|r - 你和其附近的友军额外获得200/80金钱|n|cffffcc00等级 3|r - 你和其附近的友军额外获得250/120金钱|n|n|cffff0303无视魔法免疫|r|n|n|cff99ccff施法距离：|r1200|n|cff99ccff冷却时间：|r4|n|cff99ccff魔法消耗：|r50
 Researchtip=学习 追踪术[|cffffcc00R|r] - [|cffffcc00等级 %d|r]|n(Track)
 researchhotkey="R"
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNTrack.blp
@@ -33864,7 +33880,7 @@ Buffubertip=该单位向前飘动
 [B0E2]
 buffart=ReplaceableTextures\CommandButtons\BTNSmokePotion
 Bufftip=诡计之雾
-Buffubertip=该单位的移动速度得到提升，并且对敌方单位不可见
+Buffubertip=该单位的移动速度得到提升，并且对敌方单位不可见，能免疫真视视野
 [B0E4]
 buffart=ReplaceableTextures\CommandButtons\BTNThirst
 targetart=Abilities\Spells\Orc\TrollBerserk\HeadhunterWEAPONSLeft.mdl
@@ -37221,6 +37237,10 @@ Buffubertip=狼人和他控制的单位的攻击力得到了提升
 buffart=ReplaceableTextures\CommandButtons\BTNAuraofDarkness
 Bufftip=鱼人夜行者
 buffubertip="This unit is invisible, moves faster, and applies damage over time to nearby units."
+[B09Y]
+buffart=ReplaceableTextures\CommandButtons\BTNPhaseBoots
+Bufftip=相位行走
+Buffubertip=该单位在移动时能够能够穿透其他单位，同时移动速度也有所提升
 [B0A5]
 buffart=ReplaceableTextures\CommandButtons\BTNWindWalkOn
 Bufftip=隐身

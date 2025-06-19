@@ -41,31 +41,6 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         local string s = ""
         call RegisterItem('I0FF', 'I0FG', 0, 0)
 
-        // 魔龙枪
-        // Item_DragonLance
-        set Item_DragonLance = RegisterItem('I0UB', 'I0UC', 0, 'I0UD')
-        set Recipe_HurricanePike = RegisterItem('I0VX', 'I0VY', 'n138', 'I0VZ')
-        set Item_HurricanePike = RegisterItem('I0W0', 'I0W1', 0, 'I0W2')
-        call ResgiterAbilityMethodSimple('A3SH', "DragonReachOnAdd", "DragonReachOnRemove")
-        
-        call SaveInteger(HY, 'ITDB', RegisterItem(0, 0, 'n12V', 0), Item_DragonLance)
-
-        set Item_Bloodthorn = RegisterItem('I0VJ', 'I0VK', 0, 'I0VL')
-        set Recipe_Bloodthorn = RegisterItem('I0VG', 'I0VH', 'h0EU', 'I0VI')
-
-        set it_hyzr = RegisterItem('I0VM', 'I0VN', 0, 'I0VO')
-        call SaveInteger(HY, 'ITDB', RegisterItem(0, 0, 'n134', 0), it_hyzr)
-        // it_jys
-        set it_jys = RegisterItem('I0RC', 'I0RD', 'n139', 0)
-        set it_fj = RegisterItem('IZPS', 'IZPD', 0, 'IZPE')
-        call SaveInteger(HY, 'ITDB', RegisterItem(0, 0, 'n125', 0), it_fj)//否决一键购买
-    
-        // 以太之镜卷轴
-        set Recipe_AetherLens = RegisterItem('I0V3', 'I0V4', 'n12W', 'I0V5')
-        // 以太之镜
-        set Item_AetherLens   = RegisterItem('I0UE', 'I0UF',     0, 'I0UG')
-        call RegisterItemMethodSimple(Item_AetherLens, "ItemAetherLensOnPickup", "ItemAetherLensOnDrop")
-        
         set XMV = RegisterItem('I02Q', 'I02O', 'h011', 'I00A')
         set XPV = RegisterItem('I02S', 'I02P', 'h012', 'I0CA')
         set XQV = RegisterItem('I02N', 'I02R', 'h013', 'I0CS')
@@ -149,9 +124,10 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         set Item_ClarityPotion = RegisterItem('I042', 'I05D', 'h028', 'INCP')
         set Item_GhostPotion = RegisterItem('I0HO', 'I0HN', 'h07V', 0)
 
-        set Item_HealingSalve = RegisterItem('I056', 'I05F', 'h029', 'INHS')
-        set Item_ObserverWard = RegisterItem('I058', 'I05G', 'h02C', 0)
-        set Item_SentryWard   = RegisterItem('I059', 'I05H', 'h02D', 0)
+        set Item_HealingSalve  = RegisterItem('I056', 'I05F', 'h029', 'INHS')
+
+
+
         // Item_TownPortalScroll
         set Item_TownPortalScroll = RegisterItem('I05A', 'I05I', 'h02E', 0)
         call RegisterItemPuckupMethodByIndex(Item_TownPortalScroll, "ItemTownPortalScrollOnPickup")
@@ -165,6 +141,9 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         set Item_WandOfIllusions = RegisterItem('I0KT', 'I0KS', 'h0B9', 0)
 
         set Item_SmokeOfDeceit = RegisterItem('I0NF', 'I0NG', 'h0D3', 0)
+        // 诡计之雾无视真视效果
+        call ResgiterAbilityMethodSimple('A20L', "SmokeOfDeceitBuffOnAdd", "SmokeOfDeceitBuffOnRemove")
+        
         set IEV = RegisterItem('I061', 'I062', 0, 'I01J')
         set IXV = RegisterItem('I064', 'I063', 0, 'I01K')
         set IOV = RegisterItem('I065', 'I066', 0, 'I01L')
@@ -418,6 +397,42 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         // 依赖黑市?
         call RegisterItem(0, 0, 'h0EA', 0)
         call SaveInteger(HY, 'ITDB', RegisterItem(0, 0, 'h0EC', 0), RWV)
+
+        
+        // 魔龙枪
+        // Item_DragonLance
+        set Item_DragonLance = RegisterItem('I0UB', 'I0UC', 0, 'I0UD')
+        set Recipe_HurricanePike = RegisterItem('I0VX', 'I0VY', 'n138', 'I0VZ')
+        set Item_HurricanePike = RegisterItem('I0W0', 'I0W1', 0, 'I0W2')
+        call ResgiterAbilityMethodSimple('A3SH', "DragonReachOnAdd", "DragonReachOnRemove")
+        
+        call SaveInteger(HY, 'ITDB', RegisterItem(0, 0, 'n12V', 0), Item_DragonLance)
+
+        set Item_Bloodthorn = RegisterItem('I0VJ', 'I0VK', 0, 'I0VL')
+        set Recipe_Bloodthorn = RegisterItem('I0VG', 'I0VH', 'h0EU', 'I0VI')
+
+        set it_hyzr = RegisterItem('I0VM', 'I0VN', 0, 'I0VO')
+        call SaveInteger(HY, 'ITDB', RegisterItem(0, 0, 'n134', 0), it_hyzr)
+        // it_jys
+        set it_jys = RegisterItem('I0RC', 'I0RD', 'n139', 0)
+        set it_fj = RegisterItem('IZPS', 'IZPD', 0, 'IZPE')
+        call SaveInteger(HY, 'ITDB', RegisterItem(0, 0, 'n125', 0), it_fj)//否决一键购买
+    
+        // 以太之镜卷轴
+        set Recipe_AetherLens = RegisterItem('I0V3', 'I0V4', 'n12W', 'I0V5')
+        // 以太之镜
+        set Item_AetherLens    = RegisterItem('I0UE', 'I0UF',     0, 'I0UG')
+        call RegisterItemMethodSimple(Item_AetherLens, "ItemAetherLensOnPickup", "ItemAetherLensOnDrop")
+    
+        
+        set Item_ObserverWard  = RegisterItem('I058', 'I05G', 'h02C', 0)
+        set Item_SentryWard    = RegisterItem('I059', 'I05H', 'h02D', 0)
+        
+        call RegisterItemPuckupMethodByIndex(Item_ObserverWard, "ItemObserverWardOnPickup")
+        call RegisterItemPuckupMethodByIndex(Item_SentryWard  , "ItemSentryWardOnPickup"  )
+
+        set Item_ObserverWardStackable = RegisterItem('I0UH', 'I0UI', 0, 0)
+        set Item_SentryWardStackable   = RegisterItem('I0UK', 'I0UL', 0, 0)
 
         // 边路野店卖的版本
         set ItemSideLaneShopId[RegisterItem('I03A', 'I051', 'h08K', 'I0D9')] = OQV
@@ -1105,6 +1120,10 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         integer Recipe_Bloodthorn
         integer Recipe_AetherLens
         integer Item_AetherLens
+
+        integer Item_ObserverWardStackable
+        integer Item_SentryWardStackable  
+
         integer Item_HurricanePike
         integer Recipe_HurricanePike
         integer XPV

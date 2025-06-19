@@ -528,7 +528,8 @@ library UnitAbility requires AbilityUtils, UnitLimitation
             set Event.TrigUnit[Event.INDEX] = whichUnit
             set Event.TriggerAbilityId[Event.INDEX] = abilId
             set Event.TriggerAbility[Event.INDEX] = whichAbility
-            call MHGame_ExecuteFunc(Table[ABILITY_ADD_KEY].string[abilId])
+            //call MHGame_ExecuteFunc(Table[ABILITY_ADD_KEY].string[abilId])
+            call ExecuteFunc(Table[ABILITY_ADD_KEY].string[abilId])
             set Event.INDEX = Event.INDEX - 1
         endif
 
@@ -554,7 +555,8 @@ library UnitAbility requires AbilityUtils, UnitLimitation
             set Event.TrigUnit[Event.INDEX] = whichUnit
             set Event.TriggerAbilityId[Event.INDEX] = abilId
             set Event.TriggerAbility[Event.INDEX] = whichAbility
-            call MHGame_ExecuteFunc(Table[ABILITY_REMOVE_KEY].string[abilId])
+            //call MHGame_ExecuteFunc(Table[ABILITY_REMOVE_KEY].string[abilId])
+            call ExecuteFunc(Table[ABILITY_REMOVE_KEY].string[abilId])
             set Event.INDEX = Event.INDEX - 1
         endif
 

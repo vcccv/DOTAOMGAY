@@ -17,5 +17,6 @@
 
 #include "ShockWave.j"
 
+#include "Memory\\MemoryBase.j"
 #include "Memory\\MemoryUtils.j"
 

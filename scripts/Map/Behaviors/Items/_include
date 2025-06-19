@@ -8,3 +8,5 @@
 #include "ForceStaff.j"
 #include "HurricanePike.j"
 #include "MoonShard.j"
+#include "ObserverSentryWard.j"
+#include "SmokeOfDeceit.j"
