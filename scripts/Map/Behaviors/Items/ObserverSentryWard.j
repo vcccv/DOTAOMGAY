@@ -1,12 +1,136 @@
 
 scope ObserverSentryWard
 
+    globals
+        key OBSERVER_WARD_STACK
+        key SENTRY_WARD_STACK
+    endglobals
+
+    private function GetWardCharges takes item whichItem returns integer
+        if GetItemUserData(whichItem) == 0 then
+            return 1
+        endif
+        return GetItemCharges(whichItem)
+    endfunction
+
+    function AddObserverWardStack takes item wardStackable, integer observerStack returns nothing
+        local integer h     = GetHandleId(wardStackable)
+        local integer stack = Table[h].integer[OBSERVER_WARD_STACK] + observerStack
+        set Table[h].integer[OBSERVER_WARD_STACK] = stack
+        // 如果堆叠目标是观察守卫形态，则更新物品堆叠
+        if GetItemTypeId(wardStackable) == ItemRealId[Item_ObserverWardStackable] then
+            call SetItemCharges(wardStackable, stack)
+        endif
+    endfunction
+
+    function AddSentryWardStack takes item wardStackable, integer sentryStack returns nothing
+        local integer h     = GetHandleId(wardStackable)
+        local integer stack = Table[h].integer[SENTRY_WARD_STACK] + sentryStack
+        set Table[h].integer[SENTRY_WARD_STACK] = stack
+        // 如果堆叠目标是岗哨守卫形态，则更新物品堆叠
+        if GetItemTypeId(wardStackable) == ItemRealId[Item_SentryWardStackable] then
+            call SetItemCharges(wardStackable, stack)
+        endif
+    endfunction
+
     function ItemObserverWardOnPickup takes nothing returns nothing
-        
+        local unit       whichUnit = Event.GetTriggerUnit()
+        local item       whichItem = Event.GetManipulatedItem()
+        local item       wardItem
+        local integer    observerStack
+        local integer    sentryStack
+
+        set wardItem = GetItemOfTypeFromUnit(whichUnit, ItemRealId[Item_ObserverWardStackable])
+        if wardItem != null then
+            call AddObserverWardStack(wardItem, GetWardCharges(whichItem))
+            call SilentRemoveItem(whichItem)
+        endif
+
+        set wardItem = GetItemOfTypeFromUnit(whichUnit, ItemRealId[Item_SentryWardStackable])
+        if wardItem != null then
+            call AddObserverWardStack(wardItem, GetWardCharges(whichItem))
+            call SilentRemoveItem(whichItem)
+        endif
+
+        // 如果没堆叠版本，但是有岗哨守卫，则创建堆叠版本(侦察守卫)
+        set wardItem = GetItemOfTypeFromUnit(whichUnit, ItemRealId[Item_SentryWard])
+        if wardItem != null then
+            set observerStack = GetWardCharges(whichItem)
+            set sentryStack   = GetWardCharges(wardItem)
+            set TempPlayer = GetItemPlayer(whichItem)
+            call RemoveItem(whichItem)
+            call RemoveItem(wardItem)
+            set TempItem = UnitAddItemById(whichUnit, ItemRealId[Item_ObserverWardStackable])
+            call SetItemPlayer(TempItem, TempPlayer, false)
+            call SetItemUserData(TempItem, 1)
+
+            call AddObserverWardStack(TempItem, observerStack)
+            call AddSentryWardStack(TempItem, sentryStack)
+        endif
+
+        set whichItem = null
+        set whichUnit = null
     endfunction
 
     function ItemSentryWardOnPickup takes nothing returns nothing
-        
+        local unit       whichUnit = Event.GetTriggerUnit()
+        local item       whichItem = Event.GetManipulatedItem()
+        local item       wardItem
+        local integer    observerStack
+        local integer    sentryStack
+
+        set wardItem = GetItemOfTypeFromUnit(whichUnit, ItemRealId[Item_ObserverWardStackable])
+        if wardItem != null then
+            call AddSentryWardStack(wardItem, GetWardCharges(whichItem))
+            call SilentRemoveItem(whichItem)
+        endif
+
+        set wardItem = GetItemOfTypeFromUnit(whichUnit, ItemRealId[Item_SentryWardStackable])
+        if wardItem != null then
+            call AddSentryWardStack(wardItem, GetWardCharges(whichItem))
+            call SilentRemoveItem(whichItem)
+        endif
+
+        // 如果没堆叠版本，但是有侦察守卫，则创建堆叠版本(侦察守卫)
+        set wardItem = GetItemOfTypeFromUnit(whichUnit, ItemRealId[Item_ObserverWard])
+        if wardItem != null then
+            set observerStack = GetWardCharges(whichItem)
+            set sentryStack   = GetWardCharges(wardItem)
+            set TempPlayer = GetItemPlayer(whichItem)
+            call RemoveItem(whichItem)
+            call RemoveItem(wardItem)
+            set TempItem = UnitAddItemById(whichUnit, ItemRealId[Item_ObserverWardStackable])
+            call SetItemPlayer(TempItem, TempPlayer, false)
+            call SetItemUserData(TempItem, 1)
+
+            call BJDebugMsg("observerStack:" + I2S(observerStack))
+            call BJDebugMsg("sentryStack:" + I2S(sentryStack))
+            call AddObserverWardStack(TempItem, observerStack)
+            call AddSentryWardStack(TempItem, sentryStack)
+        endif
+
+        set whichItem = null
+        set whichUnit = null
+    endfunction
+
+    private function SwitchWardItemStateOnExpried takes nothing returns nothing
+        local SimpleTick tick      = SimpleTick.GetExpired()
+        local unit       whichUnit = SimpleTickTable[tick].unit['u']
+        local item       whichItem = SimpleTickTable[tick].item['i']
+
+        if GetItemTypeId(whichItem) != 0 then
+
+        endif
+
+        set whichUnit = null
+        set whichItem = null
+    endfunction
+
+    private function SwitchWardItemState takes unit whichUnit, item whichItem returns nothing
+        local SimpleTick tick = SimpleTick.CreateEx()
+        set SimpleTickTable[tick].unit['u'] = whichUnit
+        set SimpleTickTable[tick].item['i'] = whichItem
+        call tick.Start(0., false, function SwitchWardItemStateOnExpried)
     endfunction
 
     function HeroReimburseWard takes unit whichUnit, integer unitTypeId returns nothing
@@ -58,7 +182,10 @@ scope ObserverSentryWard
             set whichUnit = GetTriggerUnit()
             set x = GetSpellTargetX()
             set y = GetSpellTargetY()
-            if GetSpellTargetUnit() == null then
+            // 对自己使用时
+            if GetSpellTargetItem() == GetAbilitySourceItem(GetSpellAbility()) then
+                call SwitchWardItemState(whichUnit, GetSpellTargetItem())
+            elseif GetSpellTargetUnit() == null then
                 if IsPointInRegion(FLV, x, y) then
                     call HeroReimburseWard(whichUnit, unitTypeId)
                 else

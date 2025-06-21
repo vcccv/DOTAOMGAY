@@ -105,6 +105,7 @@ scope SmokeOfDeceit
         call UnitAddPermanentAbility(whichUnit, 'A20L')
         call UnitMakeAbilityPermanent(whichUnit, true,'A20L')
         
+        // true
         if not DVX(whichUnit) then
             call UnitAddPermanentAbility(whichUnit,'A20S')
             call UnitMakeAbilityPermanent(whichUnit, true,'A20S')

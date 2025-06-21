@@ -14862,6 +14862,7 @@ function RPO takes nothing returns boolean
 	endif
 	return false
 endfunction
+// 不可出售的物品索引?
 function RQO takes integer itemIndex returns boolean
 	return itemIndex != Item_DivineRapier_Original and itemIndex != Item_Bloodstone and itemIndex != Item_GemOfTrueSight and itemIndex != Item_AegisOfTheImmortal
 endfunction

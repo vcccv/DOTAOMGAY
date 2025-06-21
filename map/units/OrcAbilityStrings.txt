@@ -10156,12 +10156,12 @@ effectsoundlooped=ReplaceableTextures\CommandButtons\BTNBlueSentryWard.blp
 [I0UI]
 art=ReplaceableTextures\CommandButtons\BTNObserverWardStackable
 Name=侦察-岗哨守卫
-Ubertip=|cffffcc00属性：|r|n|cffff8000放置守卫：|r|n放置当前可用的守卫，双击守卫切换当前可用的守卫|n|n侦察守卫视野范围：1600|n|cff99ccff侦察守卫持续时间：|r7分钟|n岗哨守卫视野范围：100|n岗哨守卫真视范围：1000|n|cff99ccff岗哨守卫持续时间：4分钟|r
+Ubertip=|cffffcc00属性：|r|n|cffff8000放置守卫：|r|n放置当前可用的守卫，双击守卫切换当前可用的守卫|n|n|cff99ccff侦察守卫视野范围：|r1600|n|cff99ccff侦察守卫持续时间：|r7分钟|n|cff99ccff岗哨守卫视野范围：|r100|n|cff99ccff岗哨守卫真视范围：|r1000|n|cff99ccff岗哨守卫持续时间：|r4分钟
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNObserverWardStackable.blp
 [I0UL]
 art=ReplaceableTextures\CommandButtons\BTNSentryWardStackable
 Name=侦察-岗哨守卫
-Ubertip=|cffffcc00属性：|r|n|cffff8000放置守卫：|r|n放置当前可用的守卫，双击守卫切换当前可用的守卫|n|n侦察守卫视野范围：1600|n|cff99ccff侦察守卫持续时间：|r7分钟|n岗哨守卫视野范围：100|n岗哨守卫真视范围：1000|n|cff99ccff岗哨守卫持续时间：4分钟|r
+Ubertip=|cffffcc00属性：|r|n|cffff8000放置守卫：|r|n放置当前可用的守卫，双击守卫切换当前可用的守卫|n|n|cff99ccff侦察守卫视野范围：|r1600|n|cff99ccff侦察守卫持续时间：|r7分钟|n|cff99ccff岗哨守卫视野范围：|r100|n|cff99ccff岗哨守卫真视范围：|r1000|n|cff99ccff岗哨守卫持续时间：|r4分钟
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNSentryWardStackable.blp
 
 [I05I]
