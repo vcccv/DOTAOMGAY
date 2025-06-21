@@ -34,7 +34,6 @@ scope HeartOfTarrasque
         local item       whichItem         
         local integer    itemIndex
         local SimpleTick tick
-        local boolean    isEnabled
         local real       cooldown
         if Table[GetHandleId(DETarget)].integer[KEY] <= 0 then
             return
@@ -42,7 +41,6 @@ scope HeartOfTarrasque
 
         set cooldown = GetUnitHeartOfTarrasqueCooldownRemaining(DETarget)
 
-        set isEnabled = ItemSystem_IsManipulateMethodEnabled()
         call ItemSystem_EnableItemManipulateMethod(false)
         if IsUnitHeroLevel(DETarget) and ( IsUnitHeroLevel(DESource) or DESource == Roshan ) then
             loop
@@ -63,9 +61,7 @@ scope HeartOfTarrasque
             endloop
         endif
 
-        if isEnabled then
-            call ItemSystem_EnableItemManipulateMethod(true)
-        endif
+        call ItemSystem_EnableItemManipulateMethod(true)
 
         set whichItem = null
     endfunction
@@ -77,7 +73,6 @@ scope HeartOfTarrasque
         local SimpleTick tick
         local unit       whichUnit = Event.GetTriggerUnit()
         local integer    id        = Event.GetTriggerAbilityId()
-        local boolean    isEnabled
 
         if Table[GetHandleId(whichUnit)].integer[KEY] <= 0 or not IsUnitHeroLevel(whichUnit) or id != 'A473' then
             set whichUnit = null
@@ -86,7 +81,6 @@ scope HeartOfTarrasque
 
         set Table[GetHandleId(whichUnit)].real[KEY] = 0.
 
-        set isEnabled = ItemSystem_IsManipulateMethodEnabled()
         call ItemSystem_EnableItemManipulateMethod(false)
         loop
             set whichItem = UnitItemInSlot(whichUnit, i)
@@ -103,9 +97,7 @@ scope HeartOfTarrasque
             set i = i + 1
         exitwhen i > 5
         endloop
-        if isEnabled then
-            call ItemSystem_EnableItemManipulateMethod(true)
-        endif
+        call ItemSystem_EnableItemManipulateMethod(true)
    
         set whichItem = null
         set whichUnit = null

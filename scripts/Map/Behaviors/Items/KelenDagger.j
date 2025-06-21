@@ -36,7 +36,6 @@ scope KelenDagger
         local item       whichItem
         local integer    itemIndex
         local SimpleTick tick
-        local boolean    isEnabled
         local real       cooldown
 
         if Table[GetHandleId(DETarget)].integer[KEY] <= 0 then
@@ -45,7 +44,6 @@ scope KelenDagger
 
         set cooldown = GetUnitKelenDaggerCooldownRemaining(DETarget)
 
-        set isEnabled = ItemSystem_IsManipulateMethodEnabled()
         call ItemSystem_EnableItemManipulateMethod(false)
         if IsUnitHeroLevel(DETarget) and ( IsUnitHeroLevel(DESource) or DESource == Roshan ) then
             loop
@@ -66,9 +64,7 @@ scope KelenDagger
             endloop
         endif
 
-        if isEnabled then
-            call ItemSystem_EnableItemManipulateMethod(true)
-        endif
+        call ItemSystem_EnableItemManipulateMethod(true)
 
         set whichItem = null
     endfunction
@@ -80,7 +76,6 @@ scope KelenDagger
         local SimpleTick tick
         local unit       whichUnit = Event.GetTriggerUnit()
         local integer    id        = Event.GetTriggerAbilityId()
-        local boolean    isEnabled
 
        // call BJDebugMsg("触发冷却结束")
         if Table[GetHandleId(whichUnit)].integer[KEY] <= 0 or not IsUnitHeroLevel(whichUnit) or id != 'A445' then
@@ -90,7 +85,6 @@ scope KelenDagger
 
         set Table[GetHandleId(whichUnit)].real[KEY] = 0.
 
-        set isEnabled = ItemSystem_IsManipulateMethodEnabled()
         call ItemSystem_EnableItemManipulateMethod(false)
         loop
             set whichItem = UnitItemInSlot(whichUnit, i)
@@ -109,9 +103,7 @@ scope KelenDagger
             set i = i + 1
         exitwhen i > 5
         endloop
-        if isEnabled then
-            call ItemSystem_EnableItemManipulateMethod(true)
-        endif
+        call ItemSystem_EnableItemManipulateMethod(true)
    
         set whichItem = null
         set whichUnit = null

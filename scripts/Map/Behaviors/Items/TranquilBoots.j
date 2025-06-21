@@ -27,12 +27,10 @@ scope TranquilBoots
         local item       whichItem         
         local integer    itemIndex
         local SimpleTick tick
-        local boolean    isEnabled
         local real       cooldown
 
         set cooldown = GetUnitTranquilBootsCooldownRemaining(whichUnit)
 
-        set isEnabled = ItemSystem_IsManipulateMethodEnabled()
         call ItemSystem_EnableItemManipulateMethod(false)
         
         loop
@@ -52,9 +50,7 @@ scope TranquilBoots
         exitwhen i > 5
         endloop
 
-        if isEnabled then
-            call ItemSystem_EnableItemManipulateMethod(true)
-        endif
+        call ItemSystem_EnableItemManipulateMethod(true)
 
         set whichItem = null
     endfunction
@@ -85,7 +81,6 @@ scope TranquilBoots
         local SimpleTick tick
         local unit       whichUnit = Event.GetTriggerUnit()
         local integer    id        = Event.GetTriggerAbilityId()
-        local boolean    isEnabled
 
         if Table[GetHandleId(whichUnit)].integer[KEY] <= 0 or not IsUnitHeroLevel(whichUnit) or id != 'A474' then
             set whichUnit = null
@@ -94,7 +89,6 @@ scope TranquilBoots
 
         set Table[GetHandleId(whichUnit)].real[KEY] = 0.
 
-        set isEnabled = ItemSystem_IsManipulateMethodEnabled()
         call ItemSystem_EnableItemManipulateMethod(false)
         loop
             set whichItem = UnitItemInSlot(whichUnit, i)
@@ -111,9 +105,8 @@ scope TranquilBoots
             set i = i + 1
         exitwhen i > 5
         endloop
-        if isEnabled then
-            call ItemSystem_EnableItemManipulateMethod(true)
-        endif
+        call ItemSystem_EnableItemManipulateMethod(true)
+
         call SetUnitMoveSpeed(whichUnit, GetUnitDefaultMoveSpeed(whichUnit))
    
         set whichItem = null

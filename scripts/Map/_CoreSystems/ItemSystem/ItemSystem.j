@@ -307,16 +307,20 @@ ItemUserData:
     endfunction
 
     globals
-        private boolean EnableManipulateMethod = true
+        private integer EnableManipulateMethodCount = 0
     endglobals
 
     // 允许触发操作物品方法
     function ItemSystem_EnableItemManipulateMethod takes boolean enable returns nothing
-        set EnableManipulateMethod = enable
+        if enable then
+            set EnableManipulateMethodCount = EnableManipulateMethodCount + 1
+        else
+            set EnableManipulateMethodCount = EnableManipulateMethodCount - 1
+        endif
     endfunction
 
     function ItemSystem_IsManipulateMethodEnabled takes nothing returns boolean
-        return EnableManipulateMethod
+        return EnableManipulateMethodCount >= 0
     endfunction
 
     function ExecutePickupItem takes unit whichUnit, item whichItem returns nothing
