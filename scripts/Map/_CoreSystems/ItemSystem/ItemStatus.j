@@ -70,7 +70,7 @@ Item_SentryWard == itemIndex or itemIndex == Item_DustOfAppearance or
         return 1
     endfunction
 
-    // 拾取事件中要删除的物品
+    // 拾取事件中要删除的物品，那么什么物品不需要删除呢？idk
     function H8X takes item whichItem returns boolean
         return GetItemType(whichItem) == ITEM_TYPE_POWERUP       /*
         */  or GetItemType(whichItem) == ITEM_TYPE_PURCHASABLE   /*

@@ -2833,6 +2833,10 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A0AE', 12, "SpellEffect__Rabid")
 	call SaveStr(ObjectHashTable,'A02X', 12, "ItemWardOnSpellEffect")
 	call SaveStr(ObjectHashTable,'AIsw', 12, "ItemWardOnSpellEffect")
+
+	call SaveStr(ObjectHashTable,'AA00', 12, "ItemWardOnSpellEffect")
+	call SaveStr(ObjectHashTable,'AA01', 12, "ItemWardOnSpellEffect")
+	
 	call SaveStr(ObjectHashTable,'A0H6', 12, "GLE")
 	call SaveStr(ObjectHashTable,'A0B6', 12, "GME")
 	call SaveStr(ObjectHashTable,'A0JT', 12, "GPE")
@@ -7711,6 +7715,25 @@ function DeferredCreateItem takes integer itemId, real x, real y, player p, bool
 	set t = null
 endfunction
 
+function CreatePickableItem takes integer itemId, real x, real y, player p, boolean charged, integer charges returns item
+	local item newItem
+	set newItem = CreateItem(itemId, x, y)
+	call SetItemPlayer(newItem, p, true)
+	call SetItemUserData(newItem, 0)
+	if IsItemDeathDrop(newItem) then
+		call SetItemInvulnerable(newItem, true)
+	endif
+	if charged then
+		call SetItemCharges(newItem, charges)
+	endif
+	if itemId == ItemPowerUpId[Recipe_FlyingCourier] then
+		call HMX(newItem, p)
+	endif
+	set bj_lastCreatedItem = newItem
+	set newItem = null
+	return bj_lastCreatedItem
+endfunction
+
 function GetHeroRevivalPointX takes unit trigUnit returns real
 	local real x
 	if IsPlayerSentinel(GetOwningPlayer(trigUnit)) then
@@ -7737,8 +7760,8 @@ function AddItemToUnitSlot takes unit trigUnit, item whichItem, integer itemSlot
 	local integer i = 0
 	local boolean array b
 	local item dummyItem
-	local boolean isEnabled = IsTriggerEnabled(UnitManipulatItemTrig)
-	call DisableTrigger(UnitManipulatItemTrig)
+	
+	call DisableUnitManipulatItemTrig()
 	loop
 	exitwhen i >(UnitInventorySize(trigUnit)-1)
 		if UnitItemInSlot(trigUnit, i) == null and i != itemSlot then
@@ -7749,13 +7772,7 @@ function AddItemToUnitSlot takes unit trigUnit, item whichItem, integer itemSlot
 			set b[i] = false
 		endif
 		if i == itemSlot then
-			if isEnabled then 
-				call EnableTrigger(UnitManipulatItemTrig)
-				call UnitAddItem(trigUnit, whichItem)
-				call DisableTrigger(UnitManipulatItemTrig)
-			else
-				call UnitAddItem(trigUnit, whichItem)
-			endif
+			call UnitAddItem(trigUnit, whichItem)
 		endif
 		set i = i + 1
 	endloop
@@ -7767,9 +7784,8 @@ function AddItemToUnitSlot takes unit trigUnit, item whichItem, integer itemSlot
 		endif
 		set i = i + 1
 	endloop
-	if isEnabled then 
-		call EnableTrigger(UnitManipulatItemTrig)
-	endif
+	call EnableUnitManipulatItemTrig()
+
 	set TempItem  = whichItem
 	set whichItem = null
 	set dummyItem = null
@@ -7783,8 +7799,7 @@ function CreateItemToUnitSlotByIndex takes unit trigUnit, integer itemId, intege
 	local integer i = 0
 	local boolean array hasDummyItem
 	local item dummyItem
-	local boolean isEnabled = IsTriggerEnabled(UnitManipulatItemTrig)
-	call DisableTrigger(UnitManipulatItemTrig)
+	call DisableUnitManipulatItemTrig()
 	// 如果位置上没有物品 则用空物品挤占
 	if itemId > 0 then
 		loop
@@ -7797,13 +7812,7 @@ function CreateItemToUnitSlotByIndex takes unit trigUnit, integer itemId, intege
 				set hasDummyItem[i] = false
 			endif
 			if i == itemSlot then
-				if isEnabled then
-					call EnableTrigger(UnitManipulatItemTrig)
-					call UnitAddItem(trigUnit, whichItem)
-					call DisableTrigger(UnitManipulatItemTrig)
-				else
-					call UnitAddItem(trigUnit, whichItem)
-				endif
+				call UnitAddItem(trigUnit, whichItem)
 			endif
 			set i = i + 1
 		endloop
@@ -7816,9 +7825,8 @@ function CreateItemToUnitSlotByIndex takes unit trigUnit, integer itemId, intege
 			set i = i + 1
 		endloop
 	endif
-	if isEnabled then
-		call EnableTrigger(UnitManipulatItemTrig)
-	endif
+	call EnableUnitManipulatItemTrig()
+
 	set TempItem = whichItem
 	set whichItem = null
 	set dummyItem = null
@@ -12806,6 +12814,8 @@ function EJO takes player whichPlayer, unit whichUnit, unit EKO, integer itemInd
 				call SetItemPlayer(newItem, whichPlayer, true)
 				call SetItemUserData(newItem, ELO)
 				call SetItemCharges(newItem, GetPerishableItemChargesByIndex(itemIndex))
+				call BJDebugMsg("NewItem:" + GetItemName(newItem) + ":" + I2S(GetItemCharges(newItem))+ " handle:" + I2S(GetHandleId(newItem)))
+				call BJDebugMsg("EMO:" + GetUnitName(EMO))
 				call UnitAddItem(EMO, newItem)
 			endif
 		else
@@ -13685,8 +13695,10 @@ function ManipulatItemDelayOnExpired takes nothing returns boolean
 	local integer charges
 	local boolean charged = false
 	local item    newItem
-	local integer newCharges
+	local integer charges2
 	local item    stackingItemTarget
+	local real    x
+	local real    y
 	// 新创建的物品？
 	local item 	  X3O
 	local boolean X4O = false
@@ -13808,30 +13820,33 @@ function ManipulatItemDelayOnExpired takes nothing returns boolean
 				// 拾取者和物品所有者不一致，并且物品所有者已经不在线，物品类型是吃喝三件套。
 				
 				// 替换成禁用版本给拾取者
-				call DisableTrigger(UnitManipulatItemTrig)
+				call DisableUnitManipulatItemTrig()
 				call SilentRemoveItem(whichItem)
-				set newItem = UnitAddItemById(whichUnit, ItemDisabledId[itemIndex])
+				//set newItem = UnitAddItemById(whichUnit, ItemDisabledId[itemIndex])
+				set newItem = CreateItem(ItemDisabledId[itemIndex], GetUnitX(whichUnit), GetUnitY(whichUnit))
 				set X3O = newItem
 				call SetItemPlayer(newItem, itemOwnerPlayer, false)
 				call SetItemUserData(newItem, 1)
 				call SetItemCharges(newItem, charges)
-				call EnableTrigger(UnitManipulatItemTrig)
+				call UnitAddItem(whichUnit, newItem)
+				call EnableUnitManipulatItemTrig()
 			else
 				// 检查是否已有其他可堆叠物品，如果有则删除物品并给那个物品加上拾取物品的充能
-				call DisableTrigger(UnitManipulatItemTrig)
+				call DisableUnitManipulatItemTrig()
 				set stackingItemTarget = GetStackingItemTarget(itemOwnerPlayer, whichUnit, itemIndex, whichItem)
 				if stackingItemTarget != null then
 					call SetItemCharges(stackingItemTarget, charges + GetItemCharges(stackingItemTarget))
 					call SilentRemoveItem(whichItem)
 					set X3O = null
 				endif
-				call EnableTrigger(UnitManipulatItemTrig)
+				call EnableUnitManipulatItemTrig()
 			endif
 		elseif itemRemoved and IsItemPerishableByIndex(GetRealItemIndex(itemIndex)) then
+			call BJDebugMsg("拾取了非实体，并且是消耗品")
 			// 拾取了非实体，并且是消耗品
 			if (unitOwnerPlayer == itemOwnerPlayer) then
 				// 是自己的物品
-				call DisableTrigger(UnitManipulatItemTrig)
+				call DisableUnitManipulatItemTrig()
 				// tp特殊操作一下下
 				if GetRealItemIndex(itemIndex) == Item_TownPortalScroll and ( IsUnitType(whichUnit, UNIT_TYPE_HERO) or IsUnitSpiritBear(whichUnit) ) then
 					call UnitAddTownPortalScrollCharges(whichUnit, charges)
@@ -13846,19 +13861,20 @@ function ManipulatItemDelayOnExpired takes nothing returns boolean
 						set stackingItemTarget = GetStackingItemTargetByIndex(itemOwnerPlayer, whichUnit, itemIndex)
 						if stackingItemTarget == null then
 							// 没有可以堆叠的物品，则直接创建可用物品
-							call DisableTrigger(UnitManipulatItemTrig)
-							set newItem = UnitAddItemById(whichUnit, ItemRealId[itemIndex])
+							//set newItem = UnitAddItemById(whichUnit, ItemRealId[itemIndex])
+							set newItem = CreateItem(ItemRealId[itemIndex], GetUnitX(whichUnit), GetUnitY(whichUnit))
 							set X3O = newItem
 							call SetItemPlayer(newItem, itemOwnerPlayer, false)
 							call SetItemUserData(newItem, 1)
 							call SetItemCharges(newItem, charges)
+							call UnitAddItem(whichUnit, newItem)
 						else
 							// 增加充能
 							call SetItemCharges(stackingItemTarget, charges + GetItemCharges(stackingItemTarget))
 						endif
 					endif
 				endif
-				call EnableTrigger(UnitManipulatItemTrig)
+				call EnableUnitManipulatItemTrig()
 			else
 				// 不是自己的物品
 				// 如果有禁用版本则使用禁用物品Id，没有禁用版本使用可用物品Id
@@ -13867,15 +13883,17 @@ function ManipulatItemDelayOnExpired takes nothing returns boolean
 				else
 					set Q2 = ItemRealId[itemIndex]
 				endif
-				call DisableTrigger(UnitManipulatItemTrig)
+				call DisableUnitManipulatItemTrig()
 				set stackingItemTarget = GetStackingItemTargetByIndex(itemOwnerPlayer, whichUnit, itemIndex)
 				if stackingItemTarget == null and GetUnitEmptyInventorySlotCount(whichUnit) != 0 then
 					// 没有可堆叠物品并且有剩余格子，则给对应版本的
-					set newItem = UnitAddItemById(whichUnit, Q2)
+					//set newItem = UnitAddItemById(whichUnit, Q2)
+					set newItem = CreateItem(Q2, GetUnitX(whichUnit), GetUnitY(whichUnit))
 					set X3O = newItem
 					call SetItemPlayer(newItem, itemOwnerPlayer, false)
 					call SetItemUserData(newItem, 1)
 					call SetItemCharges(newItem, charges)
+					call UnitAddItem(whichUnit, newItem)
 				elseif stackingItemTarget == null and GetUnitEmptyInventorySlotCount(whichUnit) == 0 then
 					// 没有可堆叠物品并且没剩余格子，格子满了提示
 					call InterfaceErrorForPlayer(unitOwnerPlayer, GetObjectName('n02O'))
@@ -13884,11 +13902,29 @@ function ManipulatItemDelayOnExpired takes nothing returns boolean
 					// 充能增加
 					call SetItemCharges(stackingItemTarget, charges + GetItemCharges(stackingItemTarget))
 				endif
-				call EnableTrigger(UnitManipulatItemTrig)
+				call EnableUnitManipulatItemTrig()
 			endif
 		elseif itemRemoved then
-			// 拾取了非实体，应该是某种预先合成
-			call EJO(itemOwnerPlayer, whichUnit, null, itemIndex, LoadReal(HY, h, 6), LoadReal(HY, h, 7), charges, 1)
+			if itemIndex == Item_ObserverWardStackable or itemIndex == Item_SentryWardStackable then
+				// 拿堆叠真假眼时
+				call DisableUnitManipulatItemTrig()
+				set charges  = LoadInteger(HY, h, 'O')
+				set charges2 = LoadInteger(HY, h, 'S')
+				set newItem = CreateItem(ItemRealId[itemIndex], GetUnitX(whichUnit), GetUnitY(whichUnit))
+				set X3O = newItem
+				call SetItemPlayer(newItem, itemOwnerPlayer, false)
+				call SetItemUserData(newItem, 1)
+				//call SilentRemoveItem(whichItem)
+				
+				call AddObserverWardStack(newItem, charges, true)
+				call AddSentryWardStack(newItem, charges2, true)
+				call UnitAddItem(whichUnit, newItem)
+				// call BJDebugMsg("我捡起来了handle:" + I2S(GetHandleId(newItem)) + "" + " charges" + I2S(charges) + " charges2:" + I2S(charges2))
+				call EnableUnitManipulatItemTrig()
+			else
+				// 拾取了非实体，应该是某种预先合成
+				call EJO(itemOwnerPlayer, whichUnit, null, itemIndex, LoadReal(HY, h, 6), LoadReal(HY, h, 7), charges, 1)
+			endif
 		elseif not itemRemoved and /*
 			*/ (GetItemType(whichItem) == ITEM_TYPE_PERMANENT or GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN) then
 			// 拾取了实体，可用物品或禁用物品
@@ -13915,12 +13951,28 @@ function ManipulatItemDelayOnExpired takes nothing returns boolean
 			endif
 			if GetItemUserData(whichItem)==-500 then
 				call RemoveItem(whichItem)
-			elseif IsItemOwned(whichItem) == false then
+			elseif not IsItemOwned(whichItem) then
 				if GetItemType(whichItem) == ITEM_TYPE_ARTIFACT or IsItemChargedByIndex(itemIndex) or itemIndex == Item_HealingSalve or itemIndex == Item_ClarityPotion or itemIndex == Item_AncientTangoOfEssifation or itemIndex == it_jys then
 					set charged = true
 				endif
-				call DeferredCreateItem(ItemPowerUpId[itemIndex], GetItemX(whichItem), GetItemY(whichItem), itemOwnerPlayer, charged, charges)
+
+				if itemIndex == Item_ObserverWardStackable or itemIndex == Item_SentryWardStackable then
+					set charges  = GetObserverWardStack(whichItem)
+					set charges2 = GetSentryWardStack(whichItem)
+					//call BJDebugMsg("丢地上之后：handle:" + I2S(GetHandleId(whichItem)) + "GetObserverWardStack" + I2S(GetObserverWardStack(whichItem)) + "GetSentryWardStack:" + I2S(GetSentryWardStack(whichItem)))
+				endif
+				call MHItem_SetCollisionType(whichItem, UNIT_COLLISION_TYPE_NONE, UNIT_COLLISION_TYPE_NONE)
+				set x = GetItemX(whichItem)
+				set y = GetItemY(whichItem)
 				call SilentRemoveItem(whichItem)
+
+				set newItem = CreatePickableItem(ItemPowerUpId[itemIndex], x, y, itemOwnerPlayer, charged, charges)
+				if itemIndex == Item_ObserverWardStackable or itemIndex == Item_SentryWardStackable then
+					call AddObserverWardStack(newItem, charges, true)
+					call AddSentryWardStack(newItem, charges2, true)
+					//call BJDebugMsg("添加了: handle:" + I2S(GetHandleId(newItem)) + " charges" + I2S(charges) + " charges2:" + I2S(charges2))
+				endif
+
 			endif
 		endif
 	endif
@@ -14111,6 +14163,7 @@ function OnManipulatItem takes nothing returns boolean
 	local integer id
 	local item it
 	local integer i = GetItemTypeId(GetManipulatedItem())
+	local integer itemIndex
 	set PlayerItemTotalGoldCostDirty[GetPlayerId(GetOwningPlayer(u))] = true
 	set id = GetPlayerId(GetOwningPlayer(u))
 	// 非镜像 英雄或者熊灵
@@ -14277,11 +14330,20 @@ function OnManipulatItem takes nothing returns boolean
 			endif
 			set t = CreateTrigger()
 			set h = GetHandleId(t)
-			call TriggerRegisterTimerEvent(t, 0, false)
+			call TriggerRegisterTimerEvent(t, 0., false)
 			call TriggerAddCondition(t, Condition(function ManipulatItemDelayOnExpired))
+
+			// 储存真假眼信息
+			set itemIndex = GetItemIndexEx(whichItem)
+			if (eventType == 1) and (itemIndex == Item_ObserverWardStackable or itemIndex == Item_SentryWardStackable) then
+				call BJDebugMsg("捡起来之前handle:" + I2S(GetHandleId(whichItem)) + "：GetObserverWardStack" + I2S(GetObserverWardStack(whichItem)) + "GetSentryWardStack(whichItem):" + I2S(GetSentryWardStack(whichItem)))
+				call SaveInteger(HY, h, 'O', GetObserverWardStack(whichItem))
+				call SaveInteger(HY, h, 'S', GetSentryWardStack(whichItem)  )
+			endif
+
 			call SaveUnitHandle(HY, h, 26,(u))
 			call SaveInteger(HY, h, 97,(eventType))
-			call SaveInteger(HY, h, 93,(GetItemIndexEx(whichItem)))
+			call SaveInteger(HY, h, 93,(itemIndex))
 			call SaveItemHandle(HY, h, 0, whichItem)
 			if H8X(whichItem) then
 				call SaveBoolean(HY, h, 95,(true))

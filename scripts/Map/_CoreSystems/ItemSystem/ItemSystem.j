@@ -203,19 +203,33 @@ ItemUserData:
         return - 1
     endfunction
 
+    globals
+        private integer UnitManipulatItemTrigDisableCount = 0
+    endglobals
+
+    function DisableUnitManipulatItemTrig takes nothing returns nothing
+        set UnitManipulatItemTrigDisableCount = UnitManipulatItemTrigDisableCount + 1
+        if UnitManipulatItemTrigDisableCount == 1 then
+            call DisableTrigger(UnitManipulatItemTrig)
+        endif
+    endfunction
+    function EnableUnitManipulatItemTrig takes nothing returns nothing
+        set UnitManipulatItemTrigDisableCount = UnitManipulatItemTrigDisableCount - 1
+        if UnitManipulatItemTrigDisableCount == 0 then
+            call EnableTrigger(UnitManipulatItemTrig)
+        endif
+    endfunction
+    
     // RemoveItemNoTrig
     function SilentRemoveItem takes item whichItem returns nothing
-        local boolean isEnabled = IsTriggerEnabled(UnitManipulatItemTrig)
         // 可能没删掉
-        call DisableTrigger(UnitManipulatItemTrig)
+        call DisableUnitManipulatItemTrig()
         if GetWidgetLife(whichItem) <= 0.405 then
             call SetWidgetLife(whichItem, 1.)
             call BJDebugMsg("删不掉啊 怎么回事呢 怎么回事呢")
         endif
         call RemoveItem(whichItem)
-        if isEnabled then
-            call EnableTrigger(UnitManipulatItemTrig)
-        endif
+        call EnableUnitManipulatItemTrig()
     endfunction
     // 获取剩余格子 GetUnitEmptyInventorySlotCount
     function GetUnitEmptyInventorySlotCount takes unit whichUnit returns integer
@@ -373,6 +387,9 @@ ItemUserData:
     globals
         private trigger PuckupItemTrig
         private trigger DropItemTrig
+
+        private trigger ItemCreateTrig
+        private trigger ItemRemoveTrig
     endglobals
 
     /*
@@ -380,7 +397,17 @@ ItemUserData:
 	call TriggerRegisterAnyUnitEvent(UnitManipulatItemTrig, EVENT_PLAYER_UNIT_DROP_ITEM)
 	call TriggerRegisterAnyUnitEvent(UnitManipulatItemTrig, EVENT_PLAYER_UNIT_PAWN_ITEM)
     */
-
+    private function OnCreate takes nothing returns nothing
+        
+    endfunction
+    private function OnRemove takes nothing returns nothing
+        local item it = MHEvent_GetItem()
+        if GetHandleId(it) > 0 then
+            call Table[GetHandleId(it)].flush()
+        endif
+        call BJDebugMsg("flush:"+I2S(GetHandleId(it)))
+        set it = null
+    endfunction
     // 合成物品时移除物品不走地图内的操作物品事件，因此自己写一个
     function ItemSystem_Init takes nothing returns nothing
         set PuckupItemTrig = CreateTrigger()
@@ -390,6 +417,13 @@ ItemUserData:
         call TriggerAddCondition(DropItemTrig, Condition(function OnDropItem))
         call TriggerRegisterAnyUnitEvent(PuckupItemTrig, EVENT_PLAYER_UNIT_PICKUP_ITEM)
         call TriggerRegisterAnyUnitEvent(DropItemTrig, EVENT_PLAYER_UNIT_DROP_ITEM)
+
+        set ItemCreateTrig = CreateTrigger()
+        set ItemRemoveTrig = CreateTrigger()
+        call MHItemCreateEvent_Register(ItemCreateTrig)
+        call MHItemRemoveEvent_Register(ItemRemoveTrig)
+        call TriggerAddCondition(ItemCreateTrig, Condition(function OnCreate))
+        call TriggerAddCondition(ItemRemoveTrig, Condition(function OnRemove))
     endfunction
     
 endlibrary

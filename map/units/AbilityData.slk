@@ -3606,7 +3606,7 @@ C;X23;K150
 C;Y321;X1;K"AIsw"
 C;X2;K"ANcl"
 C;X11;K1
-C;X15;K"air,friend,ground,hero,item"
+C;X15;K"air,friend,ground,hero"
 C;X19;K0.5
 C;X22;K500
 C;X24;K3
@@ -10831,7 +10831,7 @@ C;X73;K"BPSE"
 C;Y696;X1;K"A02X"
 C;X2;K"ANcl"
 C;X11;K1
-C;X15;K"air,friend,ground,hero,item"
+C;X15;K"air,friend,ground,hero"
 C;X19;K0.5
 C;X22;K500
 C;X24;K3
@@ -59205,5 +59205,25 @@ C;X11;K1
 C;Y7245;X1;K"ZT13"
 C;X2;K"AEev"
 C;X11;K1
+C;Y7246;X1;K"AA00"
+C;X2;K"ANcl"
+C;X11;K1
+C;X15;K"air,friend,ground,hero,item"
+C;X19;K0.5
+C;X22;K500
+C;X24;K3
+C;X25;K1
+C;X26;K.5
+C;X28;K"tankloadpilot"
+C;Y7247;X1;K"AA01"
+C;X2;K"ANcl"
+C;X11;K1
+C;X15;K"air,friend,ground,hero,item"
+C;X19;K0.5
+C;X22;K500
+C;X24;K3
+C;X25;K1
+C;X26;K.5
+C;X28;K"tankloadpilot"
 
 E
