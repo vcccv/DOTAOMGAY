@@ -1,6 +1,6 @@
 
 // 包含了HotkeySystem和HideCommandButton
-library UnitInfoUpdate requires PlayerSettingsLib, AbilityUtils
+library UnitInfoUpdate requires PlayerSettingsLib, AbilityUtils, ObserverSentryWard
 
     globals
         private real UPDATE_TIME_OUT = 1.
@@ -10,6 +10,12 @@ library UnitInfoUpdate requires PlayerSettingsLib, AbilityUtils
 
         private integer array SkillBarCooldownText
         private integer array ItemBarCooldownText
+
+        private integer array ItemBarLeftChargesFrame
+        private integer array ItemBarLeftChargesString
+        private integer array ItemBarLeftChargesTexture
+
+        private boolean array IsLeftChargesVisible
 
         private key BASE_COMMAND_ORDER
 
@@ -178,13 +184,68 @@ library UnitInfoUpdate requires PlayerSettingsLib, AbilityUtils
         private boolean CooldownPrevShow = true
     endglobals
 
+    private function CreateNewChargesFrame takes integer i returns nothing
+        if ItemBarLeftChargesFrame[i] != 0 then
+            return
+        endif
+        set ItemBarLeftChargesFrame[i]  = MHFrame_CreateSimple("NewChargesFrame", ItemButton[i], i)
+        set ItemBarLeftChargesString[i] = MHFrame_GetByName("NewChargesString", i)
+        set ItemBarLeftChargesTexture[i] = MHFrame_GetByName("NewChargesTexture", i)
+        call MHFrame_Hide(ItemBarLeftChargesFrame[i], false)
+        call MHFrame_Hide(ItemBarLeftChargesFrame[i], true)
+        //call MHFrame_SetLayoutLayer(ItemBarLeftChargesFrame[i], LAYOUT_LAYER_ARTWORK_OVERLAY)
+        call MHFrame_ClearAllPoints(MHFrame_GetByName("NewChargesTexture", i))
+        call MHFrame_SetRelativePoint(MHFrame_GetByName("NewChargesTexture", i), FRAMEPOINT_BOTTOMLEFT, ItemButton[i], FRAMEPOINT_BOTTOMLEFT, 0.0006, -0.0006)
+    endfunction
+        
     // 技能栏加物品栏冷却时间
     function UnitInfoUpdate_OnUpdate takes nothing returns nothing
         local integer i
         local boolean showSetting
+        local integer itemTypeId
+        local item    whichItem
+        local unit    whichUnit
         if IsReplayMode then
             return
         endif
+
+        // 更新物品栏第二充能UI
+        set i = 1
+        loop
+            exitwhen i > 6
+            set whichItem  = MHUIData_GetCommandButtonItem(ItemButton[i])
+            set itemTypeId = GetItemTypeId(whichItem)
+            
+            //call BJDebugMsg(I2S(i) + "号是了itemTypeId：" + I2S(itemTypeId) + "handle:" + I2S(GetHandleId(whichItem)))
+            if itemTypeId == ItemRealId[Item_ObserverWardStackable] then
+                if not IsLeftChargesVisible[i] then
+                    call MHFrame_Hide(ItemBarLeftChargesTexture[i], false)
+                    call MHFrame_Hide(ItemBarLeftChargesString[i] , false)
+                    call MHFrame_Hide(ItemBarLeftChargesFrame[i]  , false)
+                    set IsLeftChargesVisible[i] = true
+                endif
+                call MHFrame_SetText(ItemBarLeftChargesString[i], I2S(GetSentryWardStack(whichItem)))
+                //call BJDebugMsg(I2S(i) + "号是了Item_ObserverWardStackable" + I2S(GetSentryWardStack(whichItem)))
+            elseif itemTypeId == ItemRealId[Item_SentryWardStackable] then
+                if not IsLeftChargesVisible[i] then
+                    call MHFrame_Hide(ItemBarLeftChargesTexture[i], false)
+                    call MHFrame_Hide(ItemBarLeftChargesString[i] , false)
+                    call MHFrame_Hide(ItemBarLeftChargesFrame[i]  , false)
+                    set IsLeftChargesVisible[i] = true
+                endif
+                call MHFrame_SetText(ItemBarLeftChargesString[i], I2S(GetObserverWardStack(whichItem)))
+                //call BJDebugMsg(I2S(i) + "号是了Item_SentryWardStackable" + I2S(GetObserverWardStack(whichItem)))
+            else
+                if IsLeftChargesVisible[i] then
+                    call MHFrame_Hide(ItemBarLeftChargesTexture[i], true)
+                    call MHFrame_Hide(ItemBarLeftChargesString[i] , true)
+                    call MHFrame_Hide(ItemBarLeftChargesFrame[i]  , true)
+                    set IsLeftChargesVisible[i] = false
+                endif
+            endif
+            set i = i + 1
+        endloop
+        set whichItem = null
 
         set showSetting = PlayerSettings[User.LocalId].IsSettingEnable(PlayerSettings.SHOW_COMMAND_BUTTON_COOLDOWN)
         if showSetting != CooldownPrevShow then
@@ -242,26 +303,10 @@ library UnitInfoUpdate requires PlayerSettingsLib, AbilityUtils
         return false
     endfunction
 
-    function HotkeysSystem_Init takes nothing returns nothing
-        local trigger    trig = CreateTrigger()
+    function UnitInfoUpdateFrame_Init takes nothing returns nothing
         local integer    i
 
         local integer framePtr
-
-        call SimpleTick.CreateEx().Start(UPDATE_TIME_OUT, true, function OnTickExpired)
-
-        set IsReplayMode = MHGame_IsReplay()
-
-        // 移动
-        call SaveBaseCommandOrder(ORDER_move)
-        // 停止
-        call SaveBaseCommandOrder(ORDER_stop)
-        // 保持原位
-        call SaveBaseCommandOrder(ORDER_holdposition)
-        // 攻击
-        call SaveBaseCommandOrder(ORDER_attack)
-        // 巡逻
-        call SaveBaseCommandOrder(ORDER_patrol)
         
         set i = 1
         loop
@@ -285,8 +330,22 @@ library UnitInfoUpdate requires PlayerSettingsLib, AbilityUtils
             exitwhen i > 6
             set ItemButton[i] = MHUI_GetItemBarButton(i)
 
-            set framePtr = MHUIData_GetCommandButtonCooldownFrame(ItemButton[i])
+            set ItemBarLeftChargesFrame[i]   = MHFrame_CreateSimple("NewChargesFrame", ItemButton[i], i)
+            set ItemBarLeftChargesTexture[i] = MHFrame_GetByName("NewChargesTexture", i)
+            set ItemBarLeftChargesString[i]  = MHFrame_GetByName("NewChargesString", i)
+            call MHFrame_ClearAllPoints(ItemBarLeftChargesTexture[i])
+            call MHFrame_SetRelativePoint(ItemBarLeftChargesTexture[i], FRAMEPOINT_BOTTOMLEFT, ItemButton[i], FRAMEPOINT_BOTTOMLEFT, 0.0006, 0.0006)
+
+            call MHFrame_ClearAllPoints(ItemBarLeftChargesString[i])
+            call MHFrame_SetRelativePoint(ItemBarLeftChargesString[i], FRAMEPOINT_CENTER, ItemBarLeftChargesTexture[i], FRAMEPOINT_CENTER, 0, -0.00042)
+
+            call MHFrame_Hide(ItemBarLeftChargesTexture[i], true)
+            call MHFrame_Hide(ItemBarLeftChargesString[i] , true)
+            call MHFrame_Hide(ItemBarLeftChargesFrame[i]  , true)
+            set IsLeftChargesVisible[i] = false
             
+            set framePtr = MHUIData_GetCommandButtonCooldownFrame(ItemButton[i])
+
             set ItemBarCooldownText[i] = MHFrame_CreateEx("TEXT", "ItemBarCooldownText" + I2S(i), "", framePtr, 10, i)
             call MHFrame_SetTextShadowOff(ItemBarCooldownText[i], 0.0016, 0.0016)
             call MHFrame_SetFont(ItemBarCooldownText[i], "Fonts\\arheigb_bd.ttf", 0.016, 0)
@@ -296,15 +355,34 @@ library UnitInfoUpdate requires PlayerSettingsLib, AbilityUtils
             
             set i = i + 1
         endloop
+    endfunction
 
+    function HotkeysSystem_Init takes nothing returns nothing
+        local trigger    trig = CreateTrigger()
+        local integer    i
+
+        call SimpleTick.CreateEx().Start(UPDATE_TIME_OUT, true, function OnTickExpired)
+
+        set IsReplayMode = MHGame_IsReplay()
+
+        // 移动
+        call SaveBaseCommandOrder(ORDER_move)
+        // 停止
+        call SaveBaseCommandOrder(ORDER_stop)
+        // 保持原位
+        call SaveBaseCommandOrder(ORDER_holdposition)
+        // 攻击
+        call SaveBaseCommandOrder(ORDER_attack)
+        // 巡逻
+        call SaveBaseCommandOrder(ORDER_patrol)
+        call TriggerAddCondition(trig, Condition(function OnSelection))
+        
         set i = 1
         loop
             exitwhen i > 15
             call TriggerRegisterPlayerSelectionEventBJ(trig, Player(i), true)
             set i = i + 1
         endloop
-
-        call TriggerAddCondition(trig, Condition(function OnSelection))
     endfunction
 
 endlibrary

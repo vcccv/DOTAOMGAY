@@ -898,7 +898,7 @@ globals
 	real TempReal3
 	unit TempUnit
 	unit MissileHitTargetUnit
-	unit Y2
+	unit TempSellingUnit
 	item TempItem = null
 	trigger V3
 	group DK
@@ -12758,12 +12758,12 @@ function EGO takes unit whichUnit, integer EHO returns unit
 	local group g = AllocationGroup(18)
 	set TempUnit = whichUnit
 	set MissileHitTargetUnit = null
-	call GroupEnumUnitsInRange(g, GetUnitX(Y2), GetUnitY(Y2), 1300+ EHO, Condition(function EFO))
+	call GroupEnumUnitsInRange(g, GetUnitX(TempSellingUnit), GetUnitY(TempSellingUnit), 1300+ EHO, Condition(function EFO))
 	if MissileHitTargetUnit == null then
 		set Q2 = 0
 		call DeallocateGroup(g)
 		set g = AllocationGroup(19)
-		call GroupEnumUnitsInRange(g, GetUnitX(Y2), GetUnitY(Y2), 1100+ EHO, Condition(function EDO))
+		call GroupEnumUnitsInRange(g, GetUnitX(TempSellingUnit), GetUnitY(TempSellingUnit), 1100+ EHO, Condition(function EDO))
 		if Q2 > 1 then
 			set MissileHitTargetUnit = null
 		endif
@@ -12772,14 +12772,16 @@ function EGO takes unit whichUnit, integer EHO returns unit
 	set g = null
 	return MissileHitTargetUnit
 endfunction
-function EJO takes player whichPlayer, unit whichUnit, unit EKO, integer itemIndex, real x, real y, integer charges, integer ELO returns nothing
-	local unit EMO = null
-	local item newItem = null
-	set Y2 = EKO
+// 购买物品流程 或者捡起一些非实体物品也会触发
+function EJO takes player whichPlayer, unit whichUnit, unit sellingUnit, integer itemIndex, real x, real y, integer charges, integer data returns nothing
+	local unit 	  EMO = null
+	local item 	  newItem = null
+	local integer charges2
+	set TempSellingUnit = sellingUnit
 	if itemIndex < 0 then
 		return
 	endif
-	if GetUnitPointValue(whichUnit)== 200 then
+	if GetUnitPointValue(whichUnit) == 200 then
 		set EMO = EGO(whichUnit, 0)
 		if EMO == null then
 			set EMO = EGO(whichUnit, 300)
@@ -12788,6 +12790,7 @@ function EJO takes player whichPlayer, unit whichUnit, unit EKO, integer itemInd
 		set EMO = whichUnit
 	endif
 	if EMO == null or ECO(whichPlayer, EMO, GetRealItemIndex(itemIndex)) == false or X3 == false then
+		// 如果合成不了
 		if IsItemChargedByIndex(GetRealItemIndex(itemIndex)) then
 			if GetUnitEmptyInventorySlotCount(EMO) == 0 or EMO == null then
 				if EMO == null then
@@ -12804,18 +12807,25 @@ function EJO takes player whichPlayer, unit whichUnit, unit EKO, integer itemInd
 				set newItem = UnitAddItemById(EMO, ItemRealId[itemIndex])
 				call SetItemCharges(newItem, charges)
 				call SetItemPlayer(newItem, whichPlayer, true)
-				call SetItemUserData(newItem, ELO)
+				call SetItemUserData(newItem, data)
 			endif
 		elseif IsItemPerishableByIndex(GetRealItemIndex(itemIndex)) then
-			if EMO == null or(GetUnitEmptyInventorySlotCount(EMO) == 0 and GetItemOfTypeFromUnit(EMO, ItemRealId[itemIndex]) == null) then
+			// 真假眼特殊操作
+			if EMO != null and ( itemIndex == Item_ObserverWard or itemIndex == Item_SentryWard ) and GetStackingItemTargetByStackableWard(EMO) != null then
+				// 捡取真假眼时，如果身上已有堆叠真假眼则增加充能
+				set newItem = GetStackingItemTargetByStackableWard(EMO)
+				if itemIndex == Item_ObserverWard then
+					call AddObserverWardStack(newItem, GetPerishableItemChargesByIndex(itemIndex), true)
+				elseif itemIndex == Item_SentryWard then
+					call AddSentryWardStack(newItem, GetPerishableItemChargesByIndex(itemIndex), true)
+				endif
+			elseif EMO == null or(GetUnitEmptyInventorySlotCount(EMO) == 0 and GetItemOfTypeFromUnit(EMO, ItemRealId[itemIndex]) == null) then
 				call DeferredCreateItem(ItemPowerUpId[itemIndex], x, y, whichPlayer, true, GetPerishableItemChargesByIndex(itemIndex))
 			else
 				set newItem = CreateItem(ItemPowerUpId[itemIndex], x, y)
 				call SetItemPlayer(newItem, whichPlayer, true)
-				call SetItemUserData(newItem, ELO)
+				call SetItemUserData(newItem, data)
 				call SetItemCharges(newItem, GetPerishableItemChargesByIndex(itemIndex))
-				call BJDebugMsg("NewItem:" + GetItemName(newItem) + ":" + I2S(GetItemCharges(newItem))+ " handle:" + I2S(GetHandleId(newItem)))
-				call BJDebugMsg("EMO:" + GetUnitName(EMO))
 				call UnitAddItem(EMO, newItem)
 			endif
 		else
@@ -12842,7 +12852,7 @@ function EJO takes player whichPlayer, unit whichUnit, unit EKO, integer itemInd
 		endif
 	else
 		if IsUnitType(EMO, UNIT_TYPE_HERO) then
-			if ELO == 0 then
+			if data == 0 then
 				call StoreDrCacheData("PUI_" + I2S(GetPlayerId(GetOwningPlayer(EMO))), ItemRealId[GetRealItemIndex(itemIndex)])
 			endif
 		endif
@@ -13842,7 +13852,6 @@ function ManipulatItemDelayOnExpired takes nothing returns boolean
 				call EnableUnitManipulatItemTrig()
 			endif
 		elseif itemRemoved and IsItemPerishableByIndex(GetRealItemIndex(itemIndex)) then
-			call BJDebugMsg("拾取了非实体，并且是消耗品")
 			// 拾取了非实体，并且是消耗品
 			if (unitOwnerPlayer == itemOwnerPlayer) then
 				// 是自己的物品
@@ -13851,11 +13860,92 @@ function ManipulatItemDelayOnExpired takes nothing returns boolean
 				if GetRealItemIndex(itemIndex) == Item_TownPortalScroll and ( IsUnitType(whichUnit, UNIT_TYPE_HERO) or IsUnitSpiritBear(whichUnit) ) then
 					call UnitAddTownPortalScrollCharges(whichUnit, charges)
 				else
-					// 满格子，并且没有可堆叠物品
-					if GetUnitEmptyInventorySlotCount(whichUnit) == 0 and GetStackingItemTargetByIndex(itemOwnerPlayer, whichUnit, itemIndex) == null then
-						// 格子满了提示
-						call InterfaceErrorForPlayer(unitOwnerPlayer, GetObjectName('n02O'))
-						call DeferredCreateItem(ItemPowerUpId[(itemIndex)],(((LoadReal(HY, h, 6)))* 1.),(((LoadReal(HY, h, 7)))* 1.),(itemOwnerPlayer),(true),(charges))
+					if itemIndex == Item_ObserverWardStackable or itemIndex == Item_SentryWardStackable then
+						// 没格子时
+						if GetUnitEmptyInventorySlotCount(whichUnit) == 0 then
+							set newItem = GetStackingItemTargetByStackableWard(whichUnit)
+							set charges  = LoadInteger(HY, h, 'O')
+							set charges2 = LoadInteger(HY, h, 'S')
+							if newItem != null then
+								// 叠加真假眼
+								call AddObserverWardStack(newItem, charges, true)
+								call AddSentryWardStack(newItem, charges2, true)
+							else
+								// 身上没可堆叠版本真假眼 但假如有独立包装真假眼 则叠加计算
+								// 叠加不了就创建到地上，然后重新设置物品叠加次数
+								set TempItem = GetItemOfTypeFromUnit(whichUnit, ItemRealId[Item_ObserverWard])
+								if TempItem != null then
+									set charges = charges + GetItemCharges(TempItem)
+									call SilentRemoveItem(TempItem)
+								endif
+								set charges2 = LoadInteger(HY, h, 'S')
+								set TempItem = GetItemOfTypeFromUnit(whichUnit, ItemRealId[Item_SentryWard])
+								if TempItem != null then
+									set charges2 = charges2 + GetItemCharges(TempItem)
+									call SilentRemoveItem(TempItem)
+								endif
+								
+								// 如果还有格子(独立包装物品已被删除)的话，则创建新的堆叠版本给予目标
+								if GetUnitEmptyInventorySlotCount(whichUnit) != 0 then
+									set newItem = CreateItem(ItemRealId[Item_ObserverWardStackable], GetUnitX(whichUnit), GetUnitY(whichUnit))
+									call SetItemPlayer(newItem, itemOwnerPlayer, false)
+									call SetItemUserData(newItem, 1)
+									
+									call AddObserverWardStack(newItem, charges, true)
+									call AddSentryWardStack(newItem, charges2, true)
+									call UnitAddItem(whichUnit, newItem)
+								else
+									call InterfaceErrorForPlayer(unitOwnerPlayer, GetObjectName('n02O'))
+									set newItem = CreateItem(ItemPowerUpId[itemIndex], (((LoadReal(HY, h, 6)))* 1.),(((LoadReal(HY, h, 7)))* 1.))
+									call SetItemPlayer(newItem, itemOwnerPlayer, false)
+									call SetItemUserData(newItem, 1)
+									
+									call AddObserverWardStack(newItem, charges, true)
+									call AddSentryWardStack(newItem, charges2, true)
+								endif
+							endif
+						else
+							// 有格子拿堆叠真假眼时
+							call DisableUnitManipulatItemTrig()
+							// 计算堆叠时顺带把身上的独立包装真假眼并入计算(如果有的话)
+							set charges  = LoadInteger(HY, h, 'O')
+							set TempItem = GetItemOfTypeFromUnit(whichUnit, ItemRealId[Item_ObserverWard])
+							if TempItem != null then
+								set charges = charges + GetItemCharges(TempItem)
+								call SilentRemoveItem(TempItem)
+							endif
+							set charges2 = LoadInteger(HY, h, 'S')
+							set TempItem = GetItemOfTypeFromUnit(whichUnit, ItemRealId[Item_SentryWard])
+							if TempItem != null then
+								set charges2 = charges2 + GetItemCharges(TempItem)
+								call SilentRemoveItem(TempItem)
+							endif
+
+							set newItem = CreateItem(ItemRealId[itemIndex], GetUnitX(whichUnit), GetUnitY(whichUnit))
+							call SetItemPlayer(newItem, itemOwnerPlayer, false)
+							call SetItemUserData(newItem, 1)
+							
+							call AddObserverWardStack(newItem, charges, true)
+							call AddSentryWardStack(newItem, charges2, true)
+							call UnitAddItem(whichUnit, newItem)
+							// call BJDebugMsg("我捡起来了handle:" + I2S(GetHandleId(newItem)) + "" + " charges" + I2S(charges) + " charges2:" + I2S(charges2))
+							call EnableUnitManipulatItemTrig()
+						endif
+						// 满格子，并且没有可堆叠物品
+					elseif GetUnitEmptyInventorySlotCount(whichUnit) == 0 and GetStackingItemTargetByIndex(itemOwnerPlayer, whichUnit, itemIndex) == null then
+						if ( itemIndex == Item_ObserverWard or itemIndex == Item_SentryWard ) and GetStackingItemTargetByStackableWard(whichUnit) != null then
+							// 捡取真假眼时，如果身上已有堆叠真假眼则增加充能
+							set stackingItemTarget = GetStackingItemTargetByStackableWard(whichUnit)
+							if itemIndex == Item_ObserverWard then
+								call AddObserverWardStack(stackingItemTarget, charges, true)
+							elseif itemIndex == Item_SentryWard then
+								call AddSentryWardStack(stackingItemTarget, charges, true)
+							endif
+						else
+							// 格子满了提示
+							call InterfaceErrorForPlayer(unitOwnerPlayer, GetObjectName('n02O'))
+							call DeferredCreateItem(ItemPowerUpId[(itemIndex)],(((LoadReal(HY, h, 6)))* 1.),(((LoadReal(HY, h, 7)))* 1.),(itemOwnerPlayer),(true),(charges))
+						endif
 					else
 						// 获得可堆叠物品目标
 						set stackingItemTarget = GetStackingItemTargetByIndex(itemOwnerPlayer, whichUnit, itemIndex)
@@ -13905,26 +13995,8 @@ function ManipulatItemDelayOnExpired takes nothing returns boolean
 				call EnableUnitManipulatItemTrig()
 			endif
 		elseif itemRemoved then
-			if itemIndex == Item_ObserverWardStackable or itemIndex == Item_SentryWardStackable then
-				// 拿堆叠真假眼时
-				call DisableUnitManipulatItemTrig()
-				set charges  = LoadInteger(HY, h, 'O')
-				set charges2 = LoadInteger(HY, h, 'S')
-				set newItem = CreateItem(ItemRealId[itemIndex], GetUnitX(whichUnit), GetUnitY(whichUnit))
-				set X3O = newItem
-				call SetItemPlayer(newItem, itemOwnerPlayer, false)
-				call SetItemUserData(newItem, 1)
-				//call SilentRemoveItem(whichItem)
-				
-				call AddObserverWardStack(newItem, charges, true)
-				call AddSentryWardStack(newItem, charges2, true)
-				call UnitAddItem(whichUnit, newItem)
-				// call BJDebugMsg("我捡起来了handle:" + I2S(GetHandleId(newItem)) + "" + " charges" + I2S(charges) + " charges2:" + I2S(charges2))
-				call EnableUnitManipulatItemTrig()
-			else
-				// 拾取了非实体，应该是某种预先合成
-				call EJO(itemOwnerPlayer, whichUnit, null, itemIndex, LoadReal(HY, h, 6), LoadReal(HY, h, 7), charges, 1)
-			endif
+			// 拾取了非实体，应该是某种预先合成
+			call EJO(itemOwnerPlayer, whichUnit, null, itemIndex, LoadReal(HY, h, 6), LoadReal(HY, h, 7), charges, 1)
 		elseif not itemRemoved and /*
 			*/ (GetItemType(whichItem) == ITEM_TYPE_PERMANENT or GetItemType(whichItem) == ITEM_TYPE_CAMPAIGN) then
 			// 拾取了实体，可用物品或禁用物品
@@ -14336,7 +14408,7 @@ function OnManipulatItem takes nothing returns boolean
 			// 储存真假眼信息
 			set itemIndex = GetItemIndexEx(whichItem)
 			if (eventType == 1) and (itemIndex == Item_ObserverWardStackable or itemIndex == Item_SentryWardStackable) then
-				call BJDebugMsg("捡起来之前handle:" + I2S(GetHandleId(whichItem)) + "：GetObserverWardStack" + I2S(GetObserverWardStack(whichItem)) + "GetSentryWardStack(whichItem):" + I2S(GetSentryWardStack(whichItem)))
+				//call BJDebugMsg("捡起来之前handle:" + I2S(GetHandleId(whichItem)) + "：GetObserverWardStack" + I2S(GetObserverWardStack(whichItem)) + "GetSentryWardStack(whichItem):" + I2S(GetSentryWardStack(whichItem)))
 				call SaveInteger(HY, h, 'O', GetObserverWardStack(whichItem))
 				call SaveInteger(HY, h, 'S', GetSentryWardStack(whichItem)  )
 			endif
@@ -68873,13 +68945,13 @@ endfunction
 	
  	// call Cheat("exec-lua:scripts.war3map")
 	// 按当前月份改世界树模型 
-	if CurrentMonth > 11 or CurrentMonth < 2 then
-		// 模型路径
-		call EXSetUnitString('etol', UNIT_STRING_MODEL_PATH, "war3mapImported\\TreeOfLifeNewYear.mdx")
-		call EXSetUnitString('etol', UNIT_STRING_MODEL_PORTRAIT_PATH, "war3mapImported\\TreeOfLifeNewYear_portrait.mdx")
-		// 模型缩放
-		call EXSetUnitReal('etol', UNIT_REAL_MODEL_SCALE, 5.)
-	endif
+	//if CurrentMonth > 11 or CurrentMonth < 2 then
+	//	// 模型路径
+	//	call EXSetUnitString('etol', UNIT_STRING_MODEL_PATH, "war3mapImported\\TreeOfLifeNewYear.mdx")
+	//	call EXSetUnitString('etol', UNIT_STRING_MODEL_PORTRAIT_PATH, "war3mapImported\\TreeOfLifeNewYear_portrait.mdx")
+	//	// 模型缩放
+	//	call EXSetUnitReal('etol', UNIT_REAL_MODEL_SCALE, 5.)
+	//endif
 	
 	call Init_Sounds()
 	call Init_RectsAndRegions()

@@ -287,6 +287,25 @@ ItemUserData:
         return null
     endfunction
 
+    function GetStackingItemTargetByStackableWard takes unit whichUnit returns item
+        local integer i
+        local item    it
+        local integer itemIndex
+        set i = 0
+        loop
+        exitwhen i > 5
+            set it = UnitItemInSlot(whichUnit, i)
+            set itemIndex = GetItemIndexEx(it)
+            if it != null and ( itemIndex == Item_ObserverWardStackable or itemIndex == Item_SentryWardStackable ) then
+                set it = null
+                return UnitItemInSlot(whichUnit, i)
+            endif
+            set i = i + 1
+        endloop
+        set it = null
+        return null
+    endfunction
+
 
     // 获取物品图标
     function GetItemIcon takes item whichItem returns string

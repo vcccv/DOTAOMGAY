@@ -1,4 +1,5 @@
 UI\FrameDef\UI\EscMenuTemplates.fdf
 UI\FrameDef\UI\TownPortalScrollFrame.fdf
 UI\FrameDef\UI\GlyphFrame.fdf
+UI\FrameDef\UI\NewChargesFrame.fdf
 UI\FrameDef\UI\SettingsPanelFrame.fdf

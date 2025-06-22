@@ -1,4 +1,4 @@
-library Communication requires PlayerChatUtils, ItemSystem, UnitAbility
+library Communication requires PlayerChatUtils, ItemSystem, UnitAbility, ObserverSentryWard
 
     globals
         private trigger SkillTrig
@@ -345,6 +345,8 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility
         constant string ITEM_ALLY_PING             = "队友$heroName$ > "
         constant string ITEM_ENEMY_PING            = "敌人$heroName$身上有 > $itemName$"
         constant string ITEM_CHARGES               = " > 能量点数：$charges$"
+
+        constant string ITEM_WARD_STACKABLE_CHARGES = "侦察（x$charges1$）和岗哨（x$charges2$）"
     endglobals
     // Inventory INVENTORY
     private function OnInventoryPing takes unit whichUnit, item whichItem, integer skillButton returns nothing
@@ -354,6 +356,7 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility
         local integer charges          
         local string  itemName
         local string  msg              
+        local integer itemTypeId
 
         if whichUnit == null or whichItem == null then
             return
@@ -363,6 +366,7 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility
             set whichUnit = MHUnit_GetShopTarget(whichUnit, GetLocalPlayer())
         endif
 
+        set itemTypeId        = GetItemTypeId(whichItem)
         set itemName          = GetItemNameById(GetItemTypeId(whichItem))
         set cooldownRemaining = MHUIData_GetCommandButtonCooldown(skillButton)
         set manaCost          = MHUIData_GetCommandButtonManaCost(skillButton)
@@ -376,6 +380,11 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility
                 set msg = MHString_Replace(ITEM_ALLY_PING, "$heroName$", GetUnitNameColored(whichUnit))
             endif
 
+            // 堆叠真假眼特殊操作
+            if itemTypeId == ItemRealId[Item_ObserverWardStackable] or itemTypeId == ItemRealId[Item_SentryWardStackable] then
+                set itemName = MHString_Replace(ITEM_WARD_STACKABLE_CHARGES, "$charges1$", I2S(GetObserverWardStack(whichItem)))
+                set itemName = MHString_Replace(itemName, "$charges2$", I2S(GetSentryWardStack(whichItem)))
+            endif
             if cooldownRemaining > 0. then
                 // 冷却中
                 set msg = msg + ITEM_SELF_REQUIRE_COOLDOWN

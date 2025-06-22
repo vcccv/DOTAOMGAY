@@ -41,6 +41,10 @@ library UIManager /*
         static if LIBRARY_SimpleToolTipLib then
             call SimpleToolTip.Init()
         endif
+
+        static if LIBRARY_UnitInfoUpdate then
+            call UnitInfoUpdateFrame_Init()
+        endif
     
         static if LIBRARY_TownPortalScrollFrame then
             call TownPortalScrollFrame_Init()
