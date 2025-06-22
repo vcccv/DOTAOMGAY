@@ -139,11 +139,11 @@ library TownPortalScrollHandler requires Communication, TownPortalScrollFrame, U
                 // ABILITY_CAST_TYPE_POINT + ABILITY_CAST_TYPE_TARGET + ABILITY_CAST_TYPE_ALONE
                 call MHMsg_CallTargetMode(TOWN_PORTAL_SCROLL_ABILITY_ID, ORDER_massteleport, 0x100006)
             endif
+            call MHEvent_SetKey(-1)
         endif
         
         set selectedUnit = null
         
-        call MHEvent_SetKey(-1)
         return true
     endfunction
 
