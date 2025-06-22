@@ -398,14 +398,14 @@ ItemUserData:
 	call TriggerRegisterAnyUnitEvent(UnitManipulatItemTrig, EVENT_PLAYER_UNIT_PAWN_ITEM)
     */
     private function OnCreate takes nothing returns nothing
-        
+        local item it = MHEvent_GetItem()
+        set it = null
     endfunction
     private function OnRemove takes nothing returns nothing
         local item it = MHEvent_GetItem()
         if GetHandleId(it) > 0 then
             call Table[GetHandleId(it)].flush()
         endif
-        call BJDebugMsg("flush:"+I2S(GetHandleId(it)))
         set it = null
     endfunction
     // 合成物品时移除物品不走地图内的操作物品事件，因此自己写一个
