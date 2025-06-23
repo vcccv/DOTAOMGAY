@@ -7326,7 +7326,7 @@ attachmentanimprops=medium
 name="幽灵狼 1"
 [o004]
 art=ReplaceableTextures\CommandButtons\BTNSentryWard
-name="侦查守卫"
+name="侦察守卫"
 [o018]
 art=ReplaceableTextures\CommandButtons\BTNRemote
 name="遥控炸弹 1"

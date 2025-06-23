@@ -3,12 +3,19 @@ library NeutralSpawnboxes requires Base, PlayerSettingsLib
     globals
         private lightning array Lightnings
         private integer Count = 0
+        region NeutralSpawnRegion = null
     endglobals
     function CreateNeutralSpawnbox takes rect r, boolean high returns nothing
         local integer h = 896
         if high then
             set h = 1024
         endif
+
+        if NeutralSpawnRegion == null then
+            set NeutralSpawnRegion = CreateRegion()
+        endif
+        call RegionAddRect(NeutralSpawnRegion, r)
+
         set Count = Count + 1
         set Lightnings[Count * 4 + 0] = AddLightningEx("BRDR", false, GetRectMinX(r), GetRectMinY(r), h, GetRectMaxX(r), GetRectMinY(r), h)
         set Lightnings[Count * 4 + 1] = AddLightningEx("BRDR", false, GetRectMinX(r), GetRectMaxY(r), h, GetRectMaxX(r), GetRectMaxY(r), h)

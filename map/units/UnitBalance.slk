@@ -792,7 +792,7 @@ C;Y45;X1;K"oeye"
 C;X7;K"Ward"
 C;X20;K3
 C;X21;K30
-C;X23;K200
+C;X23;K100
 C;X26;K"none"
 C;X32;K2
 C;X34;K"medium"
@@ -4754,7 +4754,7 @@ C;Y275;X1;K"o004"
 C;X7;K"Ward"
 C;X20;K2
 C;X21;K30
-C;X23;K200
+C;X23;K100
 C;X26;K"none"
 C;X32;K2
 C;X34;K"medium"

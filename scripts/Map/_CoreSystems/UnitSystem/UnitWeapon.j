@@ -44,7 +44,7 @@ library UnitWeapon requires Base, UnitUtils, UnitStateBonus
         set AttackReadyTarget = target
         call MHUnit_EnumAbility(source, function ActivatePassive)
 
-        call MHGame_ExecuteFunc("ExecteAttackReady")
+        call ExecuteFunc("ExecteAttackReady")
         call UnitAddAttackRangeBonus(source, 99999)
         call MHUnit_LaunchAttack(source, 1, target)
         call UnitAddAttackRangeBonus(source, - 99999)

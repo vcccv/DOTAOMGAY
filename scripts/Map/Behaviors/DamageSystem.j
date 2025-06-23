@@ -331,6 +331,20 @@ scope DamageSystem
                     endif
                 endif
                 set DEDamage = DEDamage - reducedDamage
+
+                // 如果攻击守卫单位
+                if IsObserverSentryWardsById(GetUnitTypeId(DETarget)) then
+                    // 敌对玩家的英雄总是打50
+                    if IsUnitEnemy(DESource, GetOwningPlayer(DETarget)) and IsUnitType(DESource, UNIT_TYPE_HERO) then
+                        set DEDamage = 50
+                    elseif IsUnitAlly(DESource, GetOwningPlayer(DETarget)) and IsUnitCanDeny(DETarget, 50) then
+                        // 友军必须得在反补血线才能打50
+                        set DEDamage = 50
+                    else
+                        set DEDamage = 10
+                    endif
+                    call MHDamageEvent_SetDamage(DEDamage)
+                endif
                 //call MHDamageEvent_SetDamage(DEDamage)
                 // 数值减少
                 // 如果减伤减完了就直接返回

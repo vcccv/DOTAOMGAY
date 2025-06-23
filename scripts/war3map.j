@@ -22342,21 +22342,64 @@ function L4X takes nothing returns nothing
 	set p = null
 endfunction
 
-function M_O takes real value returns boolean
-	return( 100 * GetWidgetLife(GetTriggerUnit())/ GetUnitState(GetTriggerUnit(), UNIT_STATE_MAX_LIFE))< value
+function IsUnitCanDeny takes unit whichUnit, real value returns boolean
+	return( 100 * GetWidgetLife(whichUnit)/ GetUnitState(whichUnit, UNIT_STATE_MAX_LIFE))<= value
 endfunction
-function M0O takes unit u returns boolean
+function IsUnitHasDotBuff takes unit u returns boolean
 	return GetUnitAbilityLevel(u,'A464')> 0 or GetUnitAbilityLevel(u,'BNdo')> 0 or GetUnitAbilityLevel(u,'BEsh')> 0 or GetUnitAbilityLevel(u,'B001')> 0 or GetUnitAbilityLevel(u,'B0AQ')> 0 or GetUnitAbilityLevel(u,'B0AP')> 0
 endfunction
-function M1O takes nothing returns nothing
-	if not((M_O(10) and IsUnitType(GetTriggerUnit(), UNIT_TYPE_STRUCTURE) and GetUnitTypeId(GetTriggerUnit())!='etol' and GetUnitTypeId(GetTriggerUnit())!='unpl') or(M_O(25) and M0O(GetTriggerUnit())) or(M_O(50) and IsUnitIdType(GetUnitTypeId(GetTriggerUnit()), UNIT_TYPE_HERO) == false and(IsUnitType(GetTriggerUnit(), UNIT_TYPE_STRUCTURE) == false)) or(GetUnitTypeId(GetTriggerUnit())=='u00S') or(LoadInteger(HY, GetHandleId(GetAttacker()), 4328) == 1)) then
-		call IssueImmediateOrderById(GetAttacker(), 851972)
+function OnAllyUnitAttacked takes nothing returns nothing 
+	local unit attackedUnit = GetTriggerUnit()
+	local unit attackerUnit = null
+
+	// 返回即代表允许反补
+
+	// 反补建筑 不能反补基地 10%血
+	if (IsUnitCanDeny(attackedUnit, 10) and IsUnitType(attackedUnit, UNIT_TYPE_STRUCTURE) and GetUnitTypeId(attackedUnit) != 'etol' and GetUnitTypeId(attackedUnit) != 'unpl') then
+		set attackedUnit = null
+		return
 	endif
+
+	// 反补英雄 中了DOT 25%血
+	if IsUnitCanDeny(attackedUnit, 25) and IsUnitHasDotBuff(attackedUnit) then
+		set attackedUnit = null
+		return
+	endif
+
+	// 反补兵 非建筑非英雄 50%
+	if IsUnitCanDeny(attackedUnit, 50) and not IsUnitIdType(GetUnitTypeId(attackedUnit), UNIT_TYPE_HERO) and not IsUnitType(attackedUnit, UNIT_TYPE_STRUCTURE) then
+		set attackedUnit = null
+		return
+	endif
+
+	set attackerUnit = GetAttacker()
+
+	// 真假眼反补相关 自己可以反补真眼
+	// 非自己的真假眼时，在野怪刷新区域也可以反补
+	if IsObserverSentryWardsById(GetUnitTypeId(attackedUnit)) /*
+		*/ and (IsUnitInRegion(NeutralSpawnRegion, attackedUnit) or IsUnitOwnedByPlayer(attackedUnit, GetOwningPlayer(attackerUnit))) then
+		set attackedUnit = null
+		set attackerUnit = null
+		return
+	endif
+	
+	// 能量齿轮 或 寒冬诅咒
+	if GetUnitTypeId(attackedUnit) == 'u00S' or LoadInteger(HY, GetHandleId(attackerUnit), 4328) == 1 then
+		set attackedUnit = null
+		set attackerUnit = null
+		return
+	endif
+
+	call IssueImmediateOrderById(attackerUnit, 851972) 
+
+	set attackedUnit = null
+	set attackerUnit = null
 endfunction
-function M2O takes nothing returns boolean
+function OnUnitAttacked takes nothing returns boolean
 	local boolean b
+	// 阻止攻击友军
 	if IsUnitAlly(GetTriggerUnit(), GetOwningPlayer(GetAttacker())) then
-		call M1O()
+		call OnAllyUnitAttacked()
 	elseif IsUnitType(GetAttacker(), UNIT_TYPE_HERO) or IsUnitSpiritBear(GetAttacker()) then
 		set b = IsUnitType(GetTriggerUnit(), UNIT_TYPE_STRUCTURE) == false and IsUnitIllusion(GetAttacker()) == false
 		set FGV = GetPlayerId(GetOwningPlayer(GetAttacker()))
@@ -26777,11 +26820,11 @@ function EKR takes nothing returns boolean
 	set p = null
 	return false
 endfunction
-function ELR takes nothing returns boolean
-	local unit u = GetTriggerUnit()
-	local player p = GetOwningPlayer(u)
+function OnUnitOrderAttackItemDenied takes nothing returns boolean
+	local unit    u = GetTriggerUnit()
+	local player  p = GetOwningPlayer(u)
 	local integer id = GetIssuedOrderId()
-	local player p2
+	local player  p2
 	if p != SentinelPlayers[0]and p != ScourgePlayers[0] then
 		set SQ[GetPlayerId(p)] = SQ[GetPlayerId(p)] + 1
 		if id != 851983 then
@@ -63617,6 +63660,8 @@ function RegisterHeroUnitCommonEvent takes unit whichUnit returns nothing
 	if LoadBoolean(ObjectHashTable, GetHandleId(whichUnit), 2) then
 		return
 	endif
+	
+	call TriggerRegisterUnitEvent(UnitEventMainTrig, whichUnit, EVENT_UNIT_ACQUIRED_TARGET)
 	call TriggerRegisterUnitEvent(UnitEventMainTrig, whichUnit, EVENT_UNIT_HERO_SKILL)
 	call TriggerRegisterUnitEvent(UnitEventMainTrig, whichUnit, EVENT_UNIT_SPELL_CAST)
 	call TriggerRegisterUnitEvent(UnitEventMainTrig, whichUnit, EVENT_UNIT_SPELL_EFFECT)
@@ -64423,6 +64468,23 @@ function W6A takes unit u returns nothing
 	endif
 endfunction
 
+globals
+	key IS_MELEE_ATTACKING_WARD_KEY
+	constant integer MELEE_ATTACK_WARD_RANGE_BONUS = 150
+endglobals
+// 
+function UnitAcquiredObserverSentryWard takes unit whichUnit, unit targetUnit returns nothing
+	if IsObserverSentryWardsById(GetUnitTypeId(targetUnit)) and IsUnitType(whichUnit, UNIT_TYPE_MELEE_ATTACKER) then
+		if not Table[GetHandleId(whichUnit)].boolean[IS_MELEE_ATTACKING_WARD_KEY] then
+			call UnitAddAttackRangeBonus(whichUnit, MELEE_ATTACK_WARD_RANGE_BONUS)
+			set Table[GetHandleId(whichUnit)].boolean[IS_MELEE_ATTACKING_WARD_KEY] = true
+		endif
+	elseif Table[GetHandleId(whichUnit)].boolean[IS_MELEE_ATTACKING_WARD_KEY] then
+		call UnitAddAttackRangeBonus(whichUnit, - MELEE_ATTACK_WARD_RANGE_BONUS)
+		set Table[GetHandleId(whichUnit)].boolean[IS_MELEE_ATTACKING_WARD_KEY] = false
+	endif
+endfunction
+
 // 应该是多用于英雄的
 function W7A takes nothing returns boolean
 	local unit u = null
@@ -64485,11 +64547,13 @@ function W7A takes nothing returns boolean
 			endif
 		endif
 		set u = null
-
 	elseif id == EVENT_PLAYER_UNIT_ATTACKED then
 		// 单位被攻击
 		call UWA(GetAttacker(), GetTriggerUnit())
+	elseif id == EVENT_UNIT_ACQUIRED_TARGET then
+		call UnitAcquiredObserverSentryWard(GetTriggerUnit(),GetEventTargetUnit())
 	elseif id == EVENT_UNIT_ISSUED_ORDER or id == EVENT_UNIT_ISSUED_POINT_ORDER or id == EVENT_UNIT_ISSUED_TARGET_ORDER then
+		call UnitAcquiredObserverSentryWard(GetTriggerUnit(),GetOrderTargetUnit())
 		// 发布无目标 指定点目标 指定单位目标
 		call UUA(GetTriggerUnit(), GetIssuedOrderId(), id)
 	elseif id == EVENT_PLAYER_UNIT_DEATH then
@@ -65472,7 +65536,7 @@ function UnitIssuedItemOrder takes nothing returns nothing // 发布物品命令
 	endif
 
  	// 放置真假眼
-	if id == Item_ObserverWard or id == Item_SentryWard then
+	if id == Item_ObserverWard or id == Item_SentryWard or id == Item_ObserverWardStackable or id == Item_SentryWardStackable then
 		if targetUnit != null then
 			// 如果目标是英雄 或者不是熊灵
 			if (IsUnitType(targetUnit, UNIT_TYPE_HERO) or not IsUnitSpiritBear(targetUnit)) then
@@ -65532,6 +65596,7 @@ function ZOA takes nothing returns nothing
 		endif
 	endif
 	set h = GetHandleId(u)
+	// ORDER_holdposition
 	if id == 851993 then
 		if LoadBoolean(HY, h,'ACQR') == false then
 			if LoadInteger(HY, h,'ACQR') != 1 then
@@ -69406,7 +69471,7 @@ endfunction
 	call DestroyFogModifier(CreateFogModifierRect(ScourgePlayers[0], FOG_OF_WAR_VISIBLE, bj_mapInitialPlayableArea, true, true))
 	set t = CreateTrigger()
 	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_ATTACKED)
-	call TriggerAddCondition(t, Condition(function M2O))
+	call TriggerAddCondition(t, Condition(function OnUnitAttacked))
 	set t = CreateTrigger()
 	call TriggerRegisterAnyUnitEvent(t, EVENT_PLAYER_UNIT_SPELL_EFFECT)
 	call TriggerAddCondition(t, Condition(function M6O))
@@ -69495,7 +69560,7 @@ endfunction
 	call TriggerRegisterUserUnitEvent(t, EVENT_PLAYER_UNIT_ISSUED_ORDER)
 	call TriggerRegisterUserUnitEvent(t, EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER)
 	call TriggerRegisterUserUnitEvent(t, EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER)
-	call TriggerAddCondition(t, Condition(function ELR))
+	call TriggerAddCondition(t, Condition(function OnUnitOrderAttackItemDenied))
 	set t = CreateTrigger()
 	call TriggerRegisterUserUnitEvent(t, EVENT_PLAYER_UNIT_ISSUED_ORDER)
 	call TriggerRegisterUserUnitEvent(t, EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER)

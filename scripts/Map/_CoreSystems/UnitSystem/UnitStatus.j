@@ -101,6 +101,10 @@ library UnitStatus
         return IsUnitFlyingCourierById(GetUnitTypeId(whichUnit))
     endfunction
 
+    function IsObserverSentryWardsById takes integer i returns boolean 
+        return i == 'oeye' or i == 'o004' 
+    endfunction 
+
     // 是信使单位
     function IsUnitCourier takes unit whichUnit returns boolean
         return IsUnitGroundCourier(whichUnit) or IsUnitFlyingCourier(whichUnit)
