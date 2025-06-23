@@ -730,13 +730,6 @@ library MemoryBase initializer Init
     function this_call_12 takes integer pfuncaddr, integer arg1, integer arg2, integer arg3, integer arg4, integer arg5, integer arg6, integer arg7, integer arg8, integer arg9, integer arg10, integer arg11, integer arg12 returns integer
         return fast_call_13( pfuncaddr, arg1, 0, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12 )
     endfunction
-    
-    private function TestO takes nothing returns nothing
-        call BJDebugMsg(MHMath_ToHex(s__MemoryBlock_pHead))
-        call BJDebugMsg(MHMath_ToHex(MHTool_ReadInt((s__MemoryBlock_pHead))))
-
-        call BJDebugMsg(MHMath_ToHex(MHTool_VirtualProtect(s__MemoryBlock_pHead, s__MemoryBlock_size, 0x40)))
-    endfunction
 
     function AllocFunctionFastCall takes integer index, integer size returns nothing
         local integer i = 0
@@ -777,8 +770,6 @@ library MemoryBase initializer Init
         call AllocFunctionFastCall(11, 0x6C)
         call AllocFunctionFastCall(12, 0x74)
         call AllocFunctionFastCall(13, 0x7C)
-        
-        call TimerStart(CreateTimer(), 2., false, function TestO)
     endfunction
 
 endlibrary
