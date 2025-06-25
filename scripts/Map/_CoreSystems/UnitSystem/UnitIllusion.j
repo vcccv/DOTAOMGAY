@@ -217,6 +217,8 @@ library UnitIllusion requires UnitUtils, UnitWeapon, UnitMorph, BuffSystem
         local real       dist
         local real       angle
         local real       rng
+        local real       sx
+        local real       sy
         local real       x
         local real       y
         local unit       whichUnit
@@ -227,11 +229,10 @@ library UnitIllusion requires UnitUtils, UnitWeapon, UnitMorph, BuffSystem
         local real       dur 
         local integer    ownerIndex
 
-        set rng  = table[h][4]
-        set vel  = table[h][5]
-        set dist = table[h][6] + vel
-        set max  = table[h]['M'] + 1
-        set i = 1
+        set rng  = table[h].real[4]
+        set vel  = table[h].real[5]
+        set dist = table[h].real[6] + vel
+        set max  = table[h].integer['M'] + 1
         set angle = 360. / ( max * 1. )
         if dist >= rng then
             set whichUnit   = table[h].unit['U']
@@ -239,19 +240,24 @@ library UnitIllusion requires UnitUtils, UnitWeapon, UnitMorph, BuffSystem
             set damageDealt = table[h].real[1]
             set damageTaken = table[h].real[2]
             set dur         = table[h].real[3]
-            set buffId      = table[h]['B']
+            set buffId      = table[h].integer['B']
             set ownerIndex  = GetRandomInt(1, max)
 
+            set sx = table[h].real['x']
+            set sy = table[h].real['y']
+
             call DestroyFogModifier(table[h].fogmodifier['F'])
+            set i = 1
             loop
                 exitwhen i > max
                 set missileEffect = table[h].effect[-i]
-                set x = GetUnitX(whichUnit) + rng * Cos(angle * i * bj_DEGTORAD)
-                set y = GetUnitY(whichUnit) + rng * Sin(angle * i * bj_DEGTORAD)
+                set x = sx + rng * Cos(angle * i * bj_DEGTORAD)
+                set y = sy + rng * Sin(angle * i * bj_DEGTORAD)
+
                 call MHEffect_SetPosition(missileEffect, x, y, MHGame_GetAxisZ(x, y))
-                call MHEffect_Hide(missileEffect, true)
                 call DestroyEffect(missileEffect)
-                //call BJDebugMsg(R2S(damageDealt) + ":damageDealt")
+                call MHEffect_Hide(missileEffect, true)
+
                 if i != ownerIndex then
                     call CreateIllusion(whichPlayer, whichUnit, damageDealt, damageTaken, x, y, buffId, dur)
                 else
@@ -270,6 +276,7 @@ library UnitIllusion requires UnitUtils, UnitWeapon, UnitMorph, BuffSystem
             call tick.Destroy()
             set whichUnit = null
         else
+            set i = 1
             loop
                 exitwhen i > max
                 set missileEffect = table[h].effect[-i]
@@ -299,7 +306,7 @@ library UnitIllusion requires UnitUtils, UnitWeapon, UnitMorph, BuffSystem
         call DestroyEffect(table[h].effect['E'])
         set whichUnit = table[h].unit['U']
         set missileArt = table[h].string['M']
-        set max   = table[h]['M'] + 1
+        set max   = table[h].integer['M'] + 1
         set scale = GetUnitCurrentScale(whichUnit)
         
         set x = GetUnitX(whichUnit)
@@ -371,9 +378,11 @@ library UnitIllusion requires UnitUtils, UnitWeapon, UnitMorph, BuffSystem
         set table[h].real[3] = dur
         set table[h].real[4] = rng
         set table[h].real[5] = missileSpeed * MIRROR_IMAGE_FRAME
+        set table[h].real['x'] = x
+        set table[h].real['y'] = y
 
-        set table[h]['M'] = max
-        set table[h]['B'] = buffId
+        set table[h].integer['M'] = max
+        set table[h].integer['B'] = buffId
         set table[h].string['S'] = specialArt
         set table[h].string['M'] = missileArt
         set table[h].unit['U'] = whichUnit
