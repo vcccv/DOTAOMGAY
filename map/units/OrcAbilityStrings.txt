@@ -20826,7 +20826,7 @@ researchart=ReplaceableTextures\CommandButtons\BTNPsiBlades
 researchbuttonpos=2
 Name=灵能之刃
 Researchtip=学习 灵能之刃[|cffffcc00B|r] - [|cffffcc00等级 %d|r]|n(Psi Blades)
-Researchubertip=运用她的心灵异能，圣堂刺客提升了自身的攻击距离，同时将伤害范围扩展至被攻击目标身后的区域。|n|n|cffff8000纯粹伤害|r|n|n|cffffcc00等级 1|r - 提升60的攻击距离，伤害范围扩大590|n|cffffcc00等级 2|r - 提升120的攻击距离，伤害范围扩大630|n|cffffcc00等级 3|r - 提升180的攻击距离，伤害范围扩大670|n|cffffcc00等级 4|r - 提升240的攻击距离，伤害范围扩大710
+Researchubertip=运用她的心灵异能，圣堂刺客提升了自身的攻击距离，同时将伤害范围扩展至被攻击目标身后的区域。|n|n|cFFF01414神圣伤害|r|n|n|cffffcc00等级 1|r - 提升60的攻击距离，伤害范围扩大590|n|cffffcc00等级 2|r - 提升120的攻击距离，伤害范围扩大630|n|cffffcc00等级 3|r - 提升180的攻击距离，伤害范围扩大670|n|cffffcc00等级 4|r - 提升240的攻击距离，伤害范围扩大710
 researchhotkey="B"
 hotkey=B
 effectsoundlooped=ReplaceableTextures\PassiveButtons\BTNPsiBlades.blp
@@ -20835,7 +20835,7 @@ art=ReplaceableTextures\PassiveButtons\BTNPsiBlades
 buttonpos=2,2
 Name=灵能之刃
 Tip=灵能之刃 - [|cffffcc00等级 1|r],灵能之刃 - [|cffffcc00等级 2|r],灵能之刃 - [|cffffcc00等级 3|r],灵能之刃 - [|cffffcc00等级 4|r]
-Ubertip=运用她的心灵异能，圣堂刺客使自己的攻击距离提升60，攻击时同时伤害被攻击目标身后590范围内的敌方单位。|n|n|cffff8000纯粹伤害|r,运用她的心灵异能，圣堂刺客使自身的攻击距离提升120，攻击时同时伤害被攻击目标身后630范围内的敌方单位。|n|n|cffff8000纯粹伤害|r,运用她的心灵异能，圣堂刺客使自身的攻击距离提升180，攻击时同时伤害被攻击目标身后670范围内的敌方单位。|n|n|cffff8000纯粹伤害|r,运用她的心灵异能，圣堂刺客使自身的攻击距离提升240，攻击时同时伤害被攻击目标身后710范围内的敌方单位。|n|n|cffff8000纯粹伤害|r
+Ubertip=运用她的心灵异能，圣堂刺客使自己的攻击距离提升60，攻击时同时伤害被攻击目标身后590范围内的敌方单位。|n|n|cFFF01414神圣伤害|r,运用她的心灵异能，圣堂刺客使自身的攻击距离提升120，攻击时同时伤害被攻击目标身后630范围内的敌方单位。|n|n|cFFF01414神圣伤害|r,运用她的心灵异能，圣堂刺客使自身的攻击距离提升180，攻击时同时伤害被攻击目标身后670范围内的敌方单位。|n|n|cFFF01414神圣伤害|r,运用她的心灵异能，圣堂刺客使自身的攻击距离提升240，攻击时同时伤害被攻击目标身后710范围内的敌方单位。|n|n|cFFF01414神圣伤害|r
 requires=e00L
 [A0RB]
 art=ReplaceableTextures\CommandButtons\BTNShadowStrike

@@ -43560,10 +43560,11 @@ function CNI takes player p returns nothing
 	set l = null
 	set t = null
 endfunction
-function CBI takes unit u, real ZRO, real I3X, real CJR, real x, real y returns nothing
+/*
+function CBI takes unit u, real spillLength, real angle, real damage, real x, real y returns nothing
 	local player p = GetOwningPlayer(u)
-	local real a1 = I3X + bj_PI / 2
-	local real a2 = I3X -bj_PI / 2
+	local real a1 = angle + bj_PI / 2
+	local real a2 = angle -bj_PI / 2
 	local real B7I = x + 55 * Cos(a1)
 	local real CEI = y + 55 * Sin(a1)
 	local real B9I = x + 55 * Cos(a2)
@@ -43572,8 +43573,8 @@ function CBI takes unit u, real ZRO, real I3X, real CJR, real x, real y returns 
 	local real CXI
 	local real CVI
 	local real CRI
-	set a1 = ZRO * Cos(I3X)
-	set a2 = ZRO * Sin(I3X)
+	set a1 = spillLength * Cos(angle)
+	set a2 = spillLength * Sin(angle)
 	set B8I = B7I + a1
 	set CXI = CEI + a2
 	set CVI = B9I + a1
@@ -43587,7 +43588,7 @@ function CBI takes unit u, real ZRO, real I3X, real CJR, real x, real y returns 
 	set Temp__ArrayReal[5] = CXI
 	set Temp__ArrayReal[6] = COI
 	set Temp__ArrayReal[7] = CRI
-	set Temp__ArrayReal[8] = CJR
+	set Temp__ArrayReal[8] = damage
 	if LoadBoolean(ObjectHashTable, GetHandleId(p),'A0RO') then
 		call CNI(p)
 	endif
@@ -43629,7 +43630,7 @@ function CDI takes nothing returns nothing
 	call DestroyTimerAndFlushHT_P(t)
 	set t = null
 endfunction
-//function CFI takes unit u, unit t, integer abilLevel returns nothing
+//function PsiBladesOnDamagedActions takes unit u, unit t, integer abilLevel returns nothing
 //	local timer time = CreateTimer()
 //	local trigger trig = CreateTrigger()
 //	local integer h = GetHandleId(trig)
@@ -43646,15 +43647,89 @@ endfunction
 //	set time = null
 //	set trig = null
 //endfunction
-function CFI takes unit u , unit t, real damage returns nothing
-	local real x = GetWidgetX(t)
-	local real y = GetWidgetY(t)
-	call CBI(u, 575 +(GetUnitAbilityLevel(u,'A0RO'))* 40, Atan2(y -GetWidgetY(u), x -GetWidgetX(u)), damage, x, y)
+*/
+function PsiBladesOnDamagedActions takes unit u, unit t, real damage returns nothing
+	local real    sx
+	local real    sy
+	local real 	  tx 		  = GetWidgetX(t)
+	local real 	  ty 		  = GetWidgetY(t)
+	local integer level		  = GetUnitAbilityLevel(u, 'A0RO')
+	local real    spillLength = 550. + level * 40.
+
+	local real    areaWidth   = 110
+
+	local real    angle       = Atan2(ty -GetWidgetY(u), tx -GetWidgetX(u))
+
+	local player  owner       = GetOwningPlayer(u)
+
+	local real 	  leftAngle   = angle + bj_PI / 2
+	local real 	  rightAngle  = angle - bj_PI / 2
+
+	local real 	  startLeftX  = tx + 55 * Cos(leftAngle)
+	local real 	  startLeftY  = ty + 55 * Sin(leftAngle)
+	local real 	  startRightX = tx + 55 * Cos(rightAngle)
+	local real 	  startRightY = ty + 55 * Sin(rightAngle)
+
+	local real 	  endLeftX
+	local real 	  endLeftY
+	local real 	  endRightX
+	local real 	  endRightY
+
+	local real    offsetX = spillLength * Cos(angle)
+	local real    offsetY = spillLength * Sin(angle)
+
+	local unit    first
+	local group   g
+
+	set endLeftX  = startLeftX  + offsetX
+	set endLeftY  = startLeftY  + offsetY
+	set endRightX = startRightX + offsetX
+	set endRightY = startRightY + offsetY
+
+	set Temp__ArrayUnit[0] = u
+	set Temp__ArrayReal[0] = startLeftX
+	set Temp__ArrayReal[1] = endLeftX
+	set Temp__ArrayReal[2] = startRightX
+	set Temp__ArrayReal[3] = endRightX
+	set Temp__ArrayReal[4] = startLeftY
+	set Temp__ArrayReal[5] = endLeftY
+	set Temp__ArrayReal[6] = startRightY
+	set Temp__ArrayReal[7] = endRightY
+	set Temp__ArrayReal[8] = damage
+
+	if LoadBoolean(ObjectHashTable, GetHandleId(owner), 'A0RO') then
+		call CNI(owner)
+	endif
+
+	set sx = GetUnitX(t)
+	set sy = GetUnitY(t)
+	set tx = sx + spillLength * Cos(angle)
+	set ty = sy + spillLength * Sin(angle)
+	
+	set g = AllocationGroup(601)
+	call LineSegment.EnumUnitsEx(g, sx, sy, tx, ty, 110., true, null)
+	call GroupRemoveUnit(g, t)
+	loop	
+		set first = FirstOfGroup(g)
+		exitwhen first == null
+		call GroupRemoveUnit(g, first)
+
+		if IsUnitEnemy(u, GetOwningPlayer(first)) and IsUnitAlive(first) and not IsUnitWard(first) and not IsUnitStructure(first) then
+			call UnitDamageTargetEx(u, first, 7, damage)
+			call DestroyEffect(AddSpecialEffectTarget("Abilities\\Weapons\\PriestMissile\\PriestMissile.mdl", first, "chest"))
+		endif
+
+	endloop
+
+	call DeallocateGroup(g)
 endfunction
 
-function CGI takes unit u, unit t, real damage returns nothing
-	if damage > 1 and GetUnitAbilityLevel(u,'A0RO') > 0 and not IsUnitBroken(u) and LoadBoolean(ObjectHashTable, GetHandleId(u),'A0RO') and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false and IsUnitIllusion(t) == false then
-		call CFI(u, t, damage)
+function PsiBladesOnDamagedCondition takes unit u, unit t, real damage returns nothing
+	if damage > 1 and GetUnitAbilityLevel(u,'A0RO') > 0 and not IsUnitBroken(u) and LoadBoolean(ObjectHashTable, GetHandleId(u),'A0RO') and not IsUnitStructure(t) then
+		if IsUnitIllusion(t) then
+			set damage = damage / MHUnit_GetIllusionDamageReceive(t)
+		endif
+		call PsiBladesOnDamagedActions(u, t, damage)
 	endif
 endfunction
 function S3E takes nothing returns nothing
@@ -62881,8 +62956,8 @@ endfunction
 function S4A takes nothing returns nothing
 	call LUI(DESource, DETarget)
 endfunction
-function S7A takes nothing returns nothing
-	call CGI(DESource, DETarget, DEDamage)	//灵能之刃
+function PsiBladesOnDamaged takes nothing returns nothing
+	call PsiBladesOnDamagedCondition(DESource, DETarget, DEDamage)	//灵能之刃
 endfunction
 function S8A takes nothing returns nothing
 	call P4A(DESource, DETarget)
@@ -65984,7 +66059,7 @@ function Z9A takes nothing returns nothing
 	call RegisterUnitAttackFunc("TAA",-1)	//海妖外壳
 endfunction
 function VVN takes nothing returns nothing
-	call RegisterUnitAttackFunc("S7A", 1)	//灵能之刃
+	call RegisterUnitAttackFunc("PsiBladesOnDamaged", 1)	//灵能之刃
 endfunction
 function VXN takes nothing returns nothing
 	call RegisterUnitAttackFunc("TEA",-1)
@@ -66208,6 +66283,10 @@ function InitItemAbilitys takes nothing returns nothing
 	call SetItemAbilityId('A02T')
 	call SetItemAbilityId('A02W')
 	call SetItemAbilityId('A02X')
+
+	call SetItemAbilityId('AA00')
+	call SetItemAbilityId('AA01')
+
 	call SetItemAbilityId('A026')
 	call SetItemAbilityId('A05Y')
 	call SetItemAbilityId('A06K')
