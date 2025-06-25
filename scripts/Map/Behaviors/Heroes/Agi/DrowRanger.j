@@ -145,6 +145,141 @@ scope DrowRanger
 
     //***************************************************************************
     //*
+    //*  强击光环
+    //*
+    //***************************************************************************
+    globals
+        constant integer SKILL_INDEX_TRUE_SHOT = GetHeroSKillIndexBySlot(HERO_INDEX_DROW_RANGE, 3)
+    endglobals
+    function PEI takes nothing returns boolean
+        local unit t = GetFilterUnit()
+        local integer damageValue = 0
+        local integer h = GetHandleId(t)
+        local integer ETX = 344691
+        local boolean b = false
+        if IsUnitAlly(t, EG) and not IsUnitWard(t) and UnitAlive(t) then
+            if LoadBoolean(HY, h, ETX) then
+                set damageValue = LoadInteger(HY, h, ETX)
+                set b = true
+            endif
+            if IsUnitIdType(GetUnitTypeId(t), UNIT_TYPE_HERO) then
+                if IsUnitType(t, UNIT_TYPE_RANGED_ATTACKER) == IsUnitType(VG, UNIT_TYPE_RANGED_ATTACKER) and IsUnitType(t, UNIT_TYPE_MELEE_ATTACKER) == IsUnitType(VG, UNIT_TYPE_MELEE_ATTACKER) then
+                    if b or GetUnitAbilityLevel(t,'D006')> 0 then
+                        if OG then
+                            if damageValue != XG then
+                                call UnitSubStateBonus(t, damageValue, UNIT_BONUS_DAMAGE)
+                                call SaveInteger(HY, h, ETX, XG)
+                                call UnitAddStateBonus(t, XG, UNIT_BONUS_DAMAGE)
+                            endif
+                        else
+                            call WHV(t,'D006')
+                            call UnitSubStateBonus(t, damageValue, UNIT_BONUS_DAMAGE)
+                            call SaveInteger(HY, h, ETX, 0)
+                            call SaveBoolean(HY, h, ETX, false)
+                        endif
+                    else
+                        if OG then
+                            call SaveInteger(HY, h, ETX, XG)
+                            call SaveBoolean(HY, h, ETX, true)
+                            call UnitAddStateBonus(t, XG, UNIT_BONUS_DAMAGE)
+                            call UnitAddAbilityLevel1ToTimed(t,'C006','D006',-1)
+                        endif
+                    endif
+                else
+                    if b then
+                        call UnitSubStateBonus(t, damageValue, UNIT_BONUS_DAMAGE)
+                        call SaveInteger(HY, h, ETX, 0)
+                        call SaveBoolean(HY, h, ETX, false)
+                        call WHV(t,'D006')
+                    endif
+                endif
+            else
+                if IsUnitType(t, UNIT_TYPE_RANGED_ATTACKER) and IsUnitType(t, UNIT_TYPE_STRUCTURE) == false then
+                    if b then
+                        if OG and LoadInteger(HY, GetHandleId(VG), 344692) == 1 then
+                            if damageValue != XG then
+                                call SaveInteger(HY, h, ETX, XG)
+                                call UnitSubStateBonus(t, damageValue, UNIT_BONUS_DAMAGE)
+                                call UnitAddStateBonus(t, XG, UNIT_BONUS_DAMAGE)
+                            endif
+                        else
+                            call WHV(t,'D006')
+                            call UnitSubStateBonus(t, damageValue, UNIT_BONUS_DAMAGE)
+                            call SaveInteger(HY, h, ETX, 0)
+                            call SaveBoolean(HY, h, ETX, false)
+                        endif
+                    else
+                        if OG and LoadInteger(HY, GetHandleId(VG), 344692) == 1 then
+                            call SaveInteger(HY, h, ETX, XG)
+                            call SaveBoolean(HY, h, ETX, true)
+                            call UnitAddStateBonus(t, XG, UNIT_BONUS_DAMAGE)
+                            call UnitAddAbilityLevel1ToTimed(t,'C006','D006',-1)
+                        endif
+                    endif
+                endif
+            endif
+        endif
+        set t = null
+        return false
+    endfunction
+    function PXI takes nothing returns nothing
+        local timer t = GetExpiredTimer()
+        local integer h = GetHandleId(t)
+        local unit u = LoadUnitHandle(HY, h, 0)
+        local integer level = GetUnitAbilityLevel(u,'A2O2')
+        local real DRO = GetHeroMaxAttributeValue(u)* 1.
+        local integer damageValue = R2I(( 12+ 6 * level)* DRO / 100.)
+        local boolean POI = LoadBoolean(HY, h, 10) and LoadInteger(HY,(GetHandleId(u)), 704)!='A2O2'
+        local player p = LoadPlayerHandle(HY, h, 10)
+        local boolean PRI
+        set VG = u
+        set EG = GetOwningPlayer(u)
+        set XG = damageValue
+        set OG = true
+        set PRI = p != EG
+        if IsUnitDeath(u) or u == null or GetUnitTypeId(u)< 1 or POI or PRI or IsUnitBroken(u) then
+            set XG = 0
+            set OG = false
+        endif
+        if PRI then
+            set EG = p
+        endif
+        call GroupEnumUnitsInRange(YF, 0, 0, 12000, Condition(function PEI))
+        if PRI then
+            call SavePlayerHandle(HY, h, 10, GetOwningPlayer(u))
+        endif
+        if POI then
+            call RemoveSavedHandle(HY, GetHandleId(u),'TSHT')
+            call FlushChildHashtable(HY, h)
+            call PauseTimer(t)
+            call DestroyTimer(t)
+        endif
+        set t = null
+        set u = null
+    endfunction
+    function PII takes unit u returns nothing
+        local timer t = null
+        local integer h
+        if HaveSavedHandle(HY, GetHandleId(u),'TSHT') == false then
+            set t = CreateTimer()
+            set h = GetHandleId(t)
+            call TimerStart(t, .5, true, function PXI)
+            call SaveUnitHandle(HY, h, 0, u)
+            call SaveTimerHandle(HY, GetHandleId(u),'TSHT', t)
+            call SaveBoolean(HY, h, 10, LoadInteger(HY,(GetHandleId(u)), 704)=='A2O2')
+            call SavePlayerHandle(HY, h, 10, GetOwningPlayer(u))
+            set t = null
+        endif
+    endfunction
+    function L4E takes nothing returns nothing
+        call PII(GetTriggerUnit())
+    endfunction
+    function PAI takes nothing returns nothing
+        call PII(TempUnit)
+    endfunction
+
+    //***************************************************************************
+    //*
     //*  射手天赋
     //*
     //***************************************************************************

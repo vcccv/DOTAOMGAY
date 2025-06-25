@@ -345,6 +345,14 @@ scope DamageSystem
                     endif
                     call MHDamageEvent_SetDamage(DEDamage)
                 endif
+
+                // 垃圾实现 待优化
+                if ( IsPlayerValid(GetOwningPlayer(DESource)) or DESource == Roshan ) and DEDamage >= 20 then
+                    call UnitRemoveAbility(DETarget, 'B02Z')
+                    call UnitRemoveAbility(DETarget, 'B04A')
+                    call UnitRemoveAbility(DETarget, 'BIrm')
+                endif
+                
                 //call MHDamageEvent_SetDamage(DEDamage)
                 // 数值减少
                 // 如果减伤减完了就直接返回

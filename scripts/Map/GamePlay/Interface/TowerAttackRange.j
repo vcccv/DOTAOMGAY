@@ -28,6 +28,7 @@ library TowerAttackRange requires Base, PlayerSettingsLib
         set TowerAttackRangeIndicatorCount = TowerAttackRangeIndicatorCount - 1
     endfunction
 
+    /*
     globals
         private boolean prevAlt  = false
         private boolean prevShow = false
@@ -48,6 +49,45 @@ library TowerAttackRange requires Base, PlayerSettingsLib
             
             set prevAlt  = currentAlt
             set prevShow = showSetting
+        endif
+    endfunction
+    */
+    private function IsWardAbilityById takes integer abilId returns boolean
+        return false
+    endfunction
+
+    globals
+        private boolean prevVisible = false
+    endglobals
+
+    function TowerAttackRangeUpdate takes nothing returns nothing
+        local boolean isWardAbility
+        local boolean showSetting
+        local boolean currentAlt
+        local boolean shouldShow
+        local integer i
+
+        // 优先处理守卫技能
+        set isWardAbility = IsWardAbilityById(0)
+
+        if isWardAbility then
+            set shouldShow = true
+        else
+            set showSetting = PlayerSettings[User.LocalId].IsSettingEnable(PlayerSettings.HOLDING_ALT_SHOWS_TOWER_ATTACK_RANGE)
+            set currentAlt  = MHMsg_IsKeyDown(OSKEY_ALT)
+            set shouldShow  = showSetting and currentAlt
+        endif
+
+        // 状态变更时才刷新
+        if shouldShow != prevVisible then
+            set i = 1
+            loop
+                exitwhen i > TowerAttackRangeIndicatorCount
+                call MHEffect_Hide(TowerAttackRangeIndicator[i], not shouldShow)
+                set i = i + 1
+            endloop
+
+            set prevVisible = shouldShow
         endif
     endfunction
 

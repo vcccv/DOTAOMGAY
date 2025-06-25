@@ -4838,7 +4838,7 @@ art=ReplaceableTextures\CommandButtons\BTNLesserClarityPotion
 Name=净化药水|nClarity Potion
 Hotkey=C
 Tip=净化药水(|cffffcc00C|r)|nClarity Potion
-Ubertip=|cffffcc00属性：|r|n|cffff8000魔法回复：|r|n在45秒内恢复170点魔法，受到攻击即失去效果|n|n|c00838B8B每瓶药水中都困着一个鲜活的小精灵|r
+Ubertip=|cffffcc00属性：|r|n|cffff8000魔法回复：|r|n在30秒内恢复170点魔法，受到攻击即失去效果|n|n|c00838B8B每瓶药水中都困着一个鲜活的小精灵|r
 [h029]
 art=ReplaceableTextures\CommandButtons\BTNHealingSalve
 buttonpos=1
@@ -9368,10 +9368,10 @@ buttonpos=,2
 missilespeed=1100
 Name=发芽
 Tip=发芽[|cffffcc00T|r] - [|cffffcc00等级 1|r],发芽[|cffffcc00T|r] - [|cffffcc00等级 2|r],发芽[|cffffcc00T|r] - [|cffffcc00等级 3|r],发芽[|cffffcc00T|r] - [|cffffcc00等级 4|r]
-Ubertip=使目标单位或地点周围的树木发芽生长，将他围在中央，持续3秒。|n|n|cff99ccff施法距离：|r625|n|cff99ccff冷却时间：|r11,使目标单位或地点周围的树木发芽生长，将他围在中央，持续4秒。|n|n|cff99ccff施法距离：|r700|n|cff99ccff冷却时间：|r10,使目标单位或地点周围的树木发芽生长，将他围在中央，持续5秒。|n|n|cff99ccff施法距离：|r775|n|cff99ccff冷却时间：|r9,使目标单位或地点周围的树木发芽生长，将他围在中央，持续6秒。|n|n|cff99ccff施法距离：|r850|n|cff99ccff冷却时间：|r8
+Ubertip=使目标单位或地点周围的树木发芽生长，将他围在中央，持续3秒。使用艾西菲的远古祭祀食用发芽生产的树木会获得双倍恢复效果。|n|n|cff99ccff施法距离：|r625|n|cff99ccff冷却时间：|r11,使目标单位或地点周围的树木发芽生长，将他围在中央，持续4秒。使用艾西菲的远古祭祀食用发芽生产的树木会获得双倍恢复效果。|n|n|cff99ccff施法距离：|r700|n|cff99ccff冷却时间：|r10,使目标单位或地点周围的树木发芽生长，将他围在中央，持续5秒。使用艾西菲的远古祭祀食用发芽生产的树木会获得双倍恢复效果。|n|n|cff99ccff施法距离：|r775|n|cff99ccff冷却时间：|r9,使目标单位或地点周围的树木发芽生长，将他围在中央，持续6秒。使用艾西菲的远古祭祀食用发芽生产的树木会获得双倍恢复效果。|n|n|cff99ccff施法距离：|r850|n|cff99ccff冷却时间：|r8
 Hotkey=T
 Researchtip=学习 发芽[|cffffcc00T|r] - [|cffffcc00等级 %d|r]|n(Sprout)
-Researchubertip=使目标单位或地点周围的树木发芽生长，将其围在中央。|n|n|cff99ccff施法距离：|r625/700/775/850|n|cff99ccff冷却时间：|r11/10/9/8|n|cff99ccff魔法消耗：|r100|n|n|cffffcc00等级 1|r - 持续3秒|n|cffffcc00等级 2|r - 持续3.75秒|n|cffffcc00等级 3|r - 持续4.5秒|n|cffffcc00等级 4|r - 持续5.25秒
+Researchubertip=使目标单位或地点周围的树木发芽生长，将其围在中央。使用艾西菲的远古祭祀食用发芽生产的树木会获得双倍恢复效果。|n|n|cff99ccff施法距离：|r625/700/775/850|n|cff99ccff冷却时间：|r11/10/9/8|n|cff99ccff魔法消耗：|r100|n|n|cffffcc00等级 1|r - 持续3秒|n|cffffcc00等级 2|r - 持续3.75秒|n|cffffcc00等级 3|r - 持续4.5秒|n|cffffcc00等级 4|r - 持续5.25秒
 Researchhotkey=T
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNEatTree.blp
 [A21O]
@@ -10127,7 +10127,7 @@ effectsoundlooped=ReplaceableTextures\CommandButtons\BTNAncientOfTheEarth.blp
 [I05D]
 art=ReplaceableTextures\CommandButtons\BTNLesserClarityPotion
 Name=净化药水|nClarity Potion
-Ubertip=|cffffcc00属性：|r|n|cffff8000魔法回复：|r|n在45秒内恢复170点魔法，受到攻击即失去效果|n|n|c00838B8B每瓶药水中都困着一个鲜活的小精灵|r
+Ubertip=|cffffcc00属性：|r|n|cffff8000魔法回复：|r|n在30秒内恢复170点魔法，受到攻击即失去效果|n|n|c00838B8B每瓶药水中都困着一个鲜活的小精灵|r
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNLesserClarityPotion.blp
 [INCP]
 art=ReplaceableTextures\CommandButtons\BTNLesserClarityPotion

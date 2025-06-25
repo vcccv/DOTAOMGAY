@@ -107,19 +107,19 @@ library ScepterUpgradeSystem requires SkillSystem, ItemSystem
     //***************************************************************************
     globals
         // 神杖升级
-        private integer array GetUpgradeMethod
+        private string array GetUpgradeMethod
         // 失去神杖升级
-        private integer array LostUpgradeMethod
+        private string array LostUpgradeMethod
     endglobals
 
     function RegisterSkillGetScepterUpgradeMethod takes integer scepterUpgradeIndex, string func returns nothing
-        set GetUpgradeMethod[scepterUpgradeIndex] = C2I(MHGame_GetCode(func))
-        call ThrowError(GetUpgradeMethod[scepterUpgradeIndex] == 0, "ScepterUpgradeSystem", "RegisterSkillGetScepterUpgradeMethod", "scepterUpgradeIndex", scepterUpgradeIndex, "func == 0")
+        set GetUpgradeMethod[scepterUpgradeIndex] = func // C2I(MHGame_GetCode(func))
+        call ThrowError(GetUpgradeMethod[scepterUpgradeIndex] == null, "ScepterUpgradeSystem", "RegisterSkillGetScepterUpgradeMethod", "scepterUpgradeIndex", scepterUpgradeIndex, "func == 0")
         call ThrowError(scepterUpgradeIndex == 0, "ScepterUpgradeSystem", "RegisterSkillGetScepterUpgradeMethod", "scepterUpgradeIndex", scepterUpgradeIndex, "scepterUpgradeIndex == 0")
     endfunction
     function RegisterSkillLostScepterUpgradeMethod takes integer scepterUpgradeIndex, string func returns nothing
-        set LostUpgradeMethod[scepterUpgradeIndex] = C2I(MHGame_GetCode(func))
-        call ThrowError(LostUpgradeMethod[scepterUpgradeIndex] == 0, "ScepterUpgradeSystem", "RegisterSkillLostScepterUpgradeMethod", "scepterUpgradeIndex", scepterUpgradeIndex, "func == 0")
+        set LostUpgradeMethod[scepterUpgradeIndex] = func // C2I(MHGame_GetCode(func))
+        call ThrowError(LostUpgradeMethod[scepterUpgradeIndex] == null, "ScepterUpgradeSystem", "RegisterSkillLostScepterUpgradeMethod", "scepterUpgradeIndex", scepterUpgradeIndex, "func == 0")
     endfunction
     
     function RegisterSkillScepterUpgradeMethod takes integer scepterUpgradeIndex, string getMethod, string lostMethod returns nothing
@@ -170,11 +170,11 @@ library ScepterUpgradeSystem requires SkillSystem, ItemSystem
                     call UnitAddPermanentAbility(whichUnit, ScepterUpgrade_ModifyId[scepterUpgradeIndex])
                     call UnitMakeAbilityPermanent(whichUnit, true, ScepterUpgrade_UpgradedId[scepterUpgradeIndex])
                 endif
-                if GetUpgradeMethod[scepterUpgradeIndex] != 0 then
+                if GetUpgradeMethod[scepterUpgradeIndex] != null then
                     set Event.INDEX = Event.INDEX + 1
                     set Event.TrigUnit[Event.INDEX] = whichUnit
                     set Event.TriggerIndex[Event.INDEX] = scepterUpgradeIndex
-                    call MHGame_ExecuteCodeEx(GetUpgradeMethod[scepterUpgradeIndex])
+                    call ExecuteFunc(GetUpgradeMethod[scepterUpgradeIndex])
                     set Event.INDEX = Event.INDEX - 1
                 endif
             endif
@@ -203,11 +203,11 @@ library ScepterUpgradeSystem requires SkillSystem, ItemSystem
                     call UnitRemoveAbility(whichUnit, ScepterUpgrade_UpgradedId[scepterUpgradeIndex])
                 endif
 
-                if LostUpgradeMethod[scepterUpgradeIndex] != 0 then
+                if LostUpgradeMethod[scepterUpgradeIndex] != null then
                     set Event.INDEX = Event.INDEX + 1
                     set Event.TrigUnit[Event.INDEX] = whichUnit
                     set Event.TriggerIndex[Event.INDEX] = scepterUpgradeIndex
-                    call MHGame_ExecuteCodeEx(LostUpgradeMethod[scepterUpgradeIndex])
+                    call ExecuteFunc(LostUpgradeMethod[scepterUpgradeIndex])
                     set Event.INDEX = Event.INDEX - 1
                 endif
             endif

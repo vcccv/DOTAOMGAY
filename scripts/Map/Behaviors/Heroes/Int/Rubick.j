@@ -257,7 +257,11 @@ scope Rubick
         local unit    u  = (LoadUnitHandle(HY, h, 2))
         local integer id = (LoadInteger(HY, h, 704))
         local integer c  = (LoadInteger(HY, h, 34))
-        local real    r  = (LoadReal(HY, h, 411))
+        local real    lastCastStolenAbilityTime = (LoadReal(HY, h, 411))
+
+                 if GetUnitAbilityLevel(u, 'BIrm') > 0 then
+                    call BJDebugMsg(MHMath_ToHex(MHTool_ToObject(GetUnitAbility(u, 'BIrm'))))
+                endif
         if GetTriggerEventId() != EVENT_UNIT_SPELL_EFFECT and GetTriggerEventId() != EVENT_WIDGET_DEATH then
             // 警告
             if c == 0 then
@@ -268,14 +272,15 @@ scope Rubick
                 call SetPlayerAbilityAvailableEx(GetOwningPlayer(u), id, false)
                 call FlushChildHashtable(HY, h)
                 call DestroyTrigger(t)
-                call J4A(u, id, r)
+                call J4A(u, id, lastCastStolenAbilityTime)
             endif
         elseif GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT then
             // 施法窃取时
             if (GetSpellAbilityId()=='A27H' or GetSpellAbilityId()=='A30J') then
                 if LoadInteger(HY,(GetHandleId(GetSpellTargetUnit())), 705) != id then
+                    // 如果偷了不同技能，则隐藏原来的技能。
                     call SetPlayerAbilityAvailableEx(GetOwningPlayer(u), id, false)
-                    call J4A(u, id, r)
+                    call J4A(u, id, lastCastStolenAbilityTime)
                 endif
                 call FlushChildHashtable(HY, h)
                 call DestroyTrigger(t)
@@ -286,9 +291,9 @@ scope Rubick
         elseif GetTriggerEventId() == EVENT_WIDGET_DEATH then
             //call BYR(u)
             call SetPlayerAbilityAvailableEx(GetOwningPlayer(u), id, false)
+            call J4A(u, id, lastCastStolenAbilityTime)
             call FlushChildHashtable(HY, h)
             call DestroyTrigger(t)
-            call J4A(u, id, r)
         endif
         set t = null
         set u = null
@@ -301,27 +306,36 @@ scope Rubick
         endif
     endfunction
     function SpellStealMissileOnHit takes nothing returns nothing
-        local trigger t = GetTriggeringTrigger()
-        local integer h = GetHandleId(t)
-        local unit    u        = (LoadUnitHandle(HY, h, 2))
-        local unit    target   = (LoadUnitHandle(HY, h, 17))
-        local integer targetId = (LoadInteger(HY, h, 704))
-        local integer lv       = (LoadInteger(HY, h, 5))
-        local real    duration = 60 *(2 + IMaxBJ(GetUnitAbilityLevel(u,'A27H'), GetUnitAbilityLevel(u,'A30J')))
-        local integer id       = GetPlayerId(GetOwningPlayer(u))
-        local boolean success  = (GetUnitAbilityLevel(u, targetId) == 0) or targetId == LoadInteger(HY,(GetHandleId(u)), 704)
-        local integer i = 1
+        local trigger    t = GetTriggeringTrigger()
+        local integer    h = GetHandleId(t)
+        local unit       u        = (LoadUnitHandle(HY, h, 2))
+        local unit       target   = (LoadUnitHandle(HY, h, 17))
+        // 窃取的技能I   d
+        local integer    stealId  = (LoadInteger(HY, h, 704))
+        local integer    lv       = (LoadInteger(HY, h, 5))
+        local real       duration = 60 *(2 + IMaxBJ(GetUnitAbilityLevel(u,'A27H'), GetUnitAbilityLevel(u,'A30J')))
+        local integer    id       = GetPlayerId(GetOwningPlayer(u))
+        local boolean    success  = (GetUnitAbilityLevel(u, stealId) == 0) or stealId == LoadInteger(HY,(GetHandleId(u)), 704)
+        local integer    i = 1
+        local integer    subAbilityOwnerIndex
+
         call PlaySoundAtPosition(SpellStealTargetSound, GetUnitX(u), GetUnitY(u))
+        set subAbilityOwnerIndex = SubAbility(SubAbility.GetIndexById(stealId)).ownerIndex
         // 如果自己已经有这个技能，则偷窃失败。
         // 另外，如果此技能是子技能，要根据子技能去溯源得到原始技能，如果自己选过原始技能，则同样会窃取失败
         loop
-        exitwhen i > 4 + ExtraSkillsCount or success == false
-            if HeroSkill_BaseId[PlayerSkillIndices[id * MAX_SKILL_SLOTS + i]] == targetId then
+        exitwhen i > 4 + ExtraSkillsCount or not success
+            if HeroSkill_BaseId[PlayerSkillIndices[id * MAX_SKILL_SLOTS + i]] == stealId then
                 set success = false
             endif
-            if HeroSkill_SpecialId[PlayerSkillIndices[id * MAX_SKILL_SLOTS + i]] == targetId then
+            if HeroSkill_SpecialId[PlayerSkillIndices[id * MAX_SKILL_SLOTS + i]] == stealId then
                 set success = false
             endif
+            // 子技能的所有者如果相当于自己选择的技能，则不窃取。
+            if subAbilityOwnerIndex == PlayerSkillIndices[id * MAX_SKILL_SLOTS + i] then
+                set success = false
+            endif
+
             set i = i + 1
         endloop
         if success then
@@ -329,18 +343,19 @@ scope Rubick
                 call SaveInteger(HY,(GetHandleId(u)), 710,((LoadInteger(HY,(GetHandleId(target)), 710))))
             endif
 
-            call CommonTextTag(GetObjectName(targetId), 3.5, u, .024, 170, 0, 255, 216)
-            call SaveInteger(HY,(GetHandleId(u)), 704,(targetId))
+            call CommonTextTag(GetObjectName(stealId), 3.5, u, .024, 170, 0, 255, 216)
+            call SaveInteger(HY,(GetHandleId(u)), 704,(stealId))
             // 启用技能
-            call SetPlayerAbilityAvailableEx(GetOwningPlayer(u), targetId, true)
-            call UnitAddPermanentAbility(u, targetId)
-            call SetUnitAbilityLevel(u, targetId, lv)
-            call J6A(u, targetId, lv)
+            call SetPlayerAbilityAvailableEx(GetOwningPlayer(u), stealId, true)
+            call UnitAddPermanentAbility(u, stealId)
+            call SetUnitAbilityLevel(u, stealId, lv)
+            call J6A(u, stealId, lv)
+
             set t = CreateTrigger()
             set h = GetHandleId(t)
             call SaveUnitHandle(HY, h, 2,(u))
             call SaveInteger(HY, h, 34, 0)
-            call SaveInteger(HY, h, 704,(targetId))
+            call SaveInteger(HY, h, 704,(stealId))
             call TriggerRegisterUnitEvent(t, u, EVENT_UNIT_SPELL_EFFECT)
             call TriggerRegisterTimerEvent(t, duration, false)
             call TriggerRegisterDeathEvent(t, u)
