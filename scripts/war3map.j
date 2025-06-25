@@ -36170,7 +36170,7 @@ function Q_R takes nothing returns nothing
 	call ARX("war3mapImported\\FortunesEndTarget.mdx", GetEnumUnit(), "origin", 3)
 	call IssueTargetOrderById(IG, 852111, GetEnumUnit())
 	call UnitRemoveAbility(GetEnumUnit(),'A2T4')
-	call UnitDamageTargetEx(RG, GetEnumUnit(), 1, 60 + 30 * BG)
+	call UnitDamageTargetEx(RG, GetEnumUnit(), 1, 40 + 60 * BG)
 endfunction
 function Q0R takes nothing returns nothing
 	local unit whichUnit = GetTriggerUnit()
@@ -36196,7 +36196,7 @@ function Q0R takes nothing returns nothing
 		set IG = dummyUnit
 		set BG = level
 		set g = AllocationGroup(189)
-		call GroupEnumUnitsInRange(g, GetUnitX(targetUnit), GetUnitY(targetUnit), 325, Condition(function DHX))
+		call GroupEnumUnitsInRange(g, GetUnitX(targetUnit), GetUnitY(targetUnit), 350, Condition(function DHX))
 		call ForGroup(g, function Q_R)
 		if GetUnitAbilityLevel(targetUnit,'A3E9') == 1 and IsUnitMagicImmune(whichUnit) == false then
 			if UnitHasSpellShield(whichUnit) == false then
@@ -36207,7 +36207,7 @@ function Q0R takes nothing returns nothing
 				set RG = targetUnit
 				set IG = dummyUnit
 				set BG = level
-				call GroupEnumUnitsInRange(g, GetUnitX(whichUnit), GetUnitY(whichUnit), 325, Condition(function DHX))
+				call GroupEnumUnitsInRange(g, GetUnitX(whichUnit), GetUnitY(whichUnit), 350, Condition(function DHX))
 				call ForGroup(g, function Q_R)
 			else
 				call UnitRemoveSpellShield(whichUnit)
@@ -45304,7 +45304,7 @@ function F8I takes nothing returns boolean
 		call DestroyEffect((LoadEffectHandle(HY, h, 32)))
 		call FlushChildHashtable(HY, h)
 		call DestroyTrigger(t)
-	else
+	elseif targetUnit != Roshan then
 		set x2 = x1 + d * Cos(a)
 		set y2 = y1 + d * Sin(a)
 		if (IsPointInRegion(TerrainCliffRegion,((x2)* 1.),((y2)* 1.))) == false then

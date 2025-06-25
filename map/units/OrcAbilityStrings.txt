@@ -10127,7 +10127,7 @@ effectsoundlooped=ReplaceableTextures\CommandButtons\BTNAncientOfTheEarth.blp
 [I05D]
 art=ReplaceableTextures\CommandButtons\BTNLesserClarityPotion
 Name=净化药水|nClarity Potion
-Ubertip=|cffffcc00属性：|r|n|cffff8000魔法回复：|r|n在30秒内恢复170点魔法，受到攻击即失去效果|n|n|c00838B8B每瓶药水中都困着一个鲜活的小精灵|r
+Ubertip=|cffffcc00属性：|r|n|cffff8000魔法回复：|r|n在30秒内恢复150点魔法，受到攻击即失去效果|n|n|c00838B8B每瓶药水中都困着一个鲜活的小精灵|r
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNLesserClarityPotion.blp
 [INCP]
 art=ReplaceableTextures\CommandButtons\BTNLesserClarityPotion
@@ -38347,10 +38347,10 @@ animnames=attack
 researchart=ReplaceableTextures\CommandButtons\BTNFortunesEnd
 Name=气运之末
 Tip=气运之末[|cffffcc00T|r] - [|cffffcc00等级 1|r],气运之末[|cffffcc00T|r] - [|cffffcc00等级 2|r],气运之末[|cffffcc00T|r] - [|cffffcc00等级 3|r],气运之末[|cffffcc00T|r] - [|cffffcc00等级 4|r]
-Ubertip=将神谕者的力量引导为一股精炼后的能量并释放这股能量来打击敌方目标，造成90点|cFF00B9FF魔法伤害|r，并净化其身边215范围的区域，净化持续时间和引导时间相同。|n|n|c00ff0303需要持续施法|r |n|n|cff99ccff施法距离：|r650|n|cff99ccff最大施法延迟：|r3|n|cff99ccff冷却时间：|r15|n|cff99ccff魔法消耗：|r130,将神谕者的力量引导为一股精炼后的能量并释放这股能量来打击敌方目标，造成120点|cFF00B9FF魔法伤害|r，并净化其身边215范围的区域，净化持续时间和引导时间相同。|n|n|c00ff0303需要持续施法|r |n|n|cff99ccff施法距离：|r650|n|cff99ccff最大施法延迟：|r3|n|cff99ccff冷却时间：|r12|n|cff99ccff魔法消耗：|r130,将神谕者的力量引导为一股精炼后的能量并释放这股能量来打击敌方目标，造成150点|cFF00B9FF魔法伤害|r，并净化其身边215范围的区域，净化持续时间和引导时间相同。|n|n|c00ff0303需要持续施法|r |n|n|cff99ccff施法距离：|r650|n|cff99ccff最大施法延迟：|r3|n|cff99ccff冷却时间：|r9|n|cff99ccff魔法消耗：|r130,将神谕者的力量引导为一股精炼后的能量并释放这股能量来打击敌方目标，造成180点|cFF00B9FF魔法伤害|r，并净化其身边215范围的区域，净化持续时间和引导时间相同。|n|n|c00ff0303需要持续施法|r |n|n|cff99ccff施法距离：|r650|n|cff99ccff最大施法延迟：|r3|n|cff99ccff冷却时间：|r6|n|cff99ccff魔法消耗：|r130
+Ubertip=将神谕者的力量引导为一股精炼后的能量并释放这股能量来打击敌方目标，造成90点|cFF00B9FF魔法伤害|r，并净化其身边350范围的区域，净化持续时间和引导时间相同。|n|n|c00ff0303需要持续施法|r |n|n|cff99ccff施法距离：|r650|n|cff99ccff最大施法延迟：|r3|n|cff99ccff冷却时间：|r15|n|cff99ccff魔法消耗：|r100,将神谕者的力量引导为一股精炼后的能量并释放这股能量来打击敌方目标，造成120点|cFF00B9FF魔法伤害|r，并净化其身边350范围的区域，净化持续时间和引导时间相同。|n|n|c00ff0303需要持续施法|r |n|n|cff99ccff施法距离：|r650|n|cff99ccff最大施法延迟：|r3|n|cff99ccff冷却时间：|r12|n|cff99ccff魔法消耗：|r100,将神谕者的力量引导为一股精炼后的能量并释放这股能量来打击敌方目标，造成150点|cFF00B9FF魔法伤害|r，并净化其身边350范围的区域，净化持续时间和引导时间相同。|n|n|c00ff0303需要持续施法|r |n|n|cff99ccff施法距离：|r650|n|cff99ccff最大施法延迟：|r3|n|cff99ccff冷却时间：|r9|n|cff99ccff魔法消耗：|r100,将神谕者的力量引导为一股精炼后的能量并释放这股能量来打击敌方目标，造成180点|cFF00B9FF魔法伤害|r，并净化其身边350范围的区域，净化持续时间和引导时间相同。|n|n|c00ff0303需要持续施法|r |n|n|cff99ccff施法距离：|r650|n|cff99ccff最大施法延迟：|r3|n|cff99ccff冷却时间：|r6|n|cff99ccff魔法消耗：|r100
 Hotkey=T
 Researchtip=学习 气运之末[|cffffcc00T|r] - [|cffffcc00等级 %d|r]|n(Fortune's End)
-Researchubertip=将神谕者的力量引导为一股精炼后的能量并释放这股能量来打击敌方目标，造成|cFF00B9FF魔法伤害|r，并净化其身边215范围的区域，净化持续时间和引导时间相同。|n|n|c00ff0303需要持续施法|r |n|n|cff99ccff施法距离：|r650|n|cff99ccff最大施法延迟：|r3|n|cff99ccff冷却时间：|r15/12/9/6|n|cff99ccff魔法消耗：|r130|n|n|cffffcc00等级 1|r - 造成90点伤害|n|cffffcc00等级 2|r - 造成120点伤害|n|cffffcc00等级 3|r - 造成150点伤害|n|cffffcc00等级 4|r - 造成180点伤害
+Researchubertip=将神谕者的力量引导为一股精炼后的能量并释放这股能量来打击敌方目标，造成|cFF00B9FF魔法伤害|r，并净化其身边350范围的区域，净化持续时间和引导时间相同。|n|n|c00ff0303需要持续施法|r |n|n|cff99ccff施法距离：|r650|n|cff99ccff最大施法延迟：|r3|n|cff99ccff冷却时间：|r15/12/9/6|n|cff99ccff魔法消耗：|r100|n|n|cffffcc00等级 1|r - 造成90点伤害|n|cffffcc00等级 2|r - 造成120点伤害|n|cffffcc00等级 3|r - 造成150点伤害|n|cffffcc00等级 4|r - 造成180点伤害
 researchhotkey="T"
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNFortunesEnd.blp
 [A2T5]
@@ -38375,10 +38375,10 @@ researchbuttonpos=2
 researchart=ReplaceableTextures\CommandButtons\BTNPurifyingFlames
 Name=涤罪之焰
 Tip=涤罪之焰[|cffffcc00E|r] - [|cffffcc00等级 1|r],涤罪之焰[|cffffcc00E|r] - [|cffffcc00等级 2|r],涤罪之焰[|cffffcc00E|r] - [|cffffcc00等级 3|r],涤罪之焰[|cffffcc00E|r] - [|cffffcc00等级 4|r]
-Ubertip=将目标身上一切不洁之物净化，对其造成90点|cFF00B9FF魔法伤害|r，并使其在接下来的9秒内每秒恢复11点生命值。可对友军施放|n|n|cff99ccff施法距离：|r750|n|cff99ccff冷却时间：|r2.25,将目标身上一切不洁之物净化，对其造成180点|cFF00B9FF魔法伤害|r，并使其在接下来的9秒内每秒恢复22点生命值。可对友军施放|n|n|cff99ccff施法距离：|r750|n|cff99ccff冷却时间：|r2.25,将目标身上一切不洁之物净化，对其造成270点|cFF00B9FF魔法伤害|r，并使其在接下来的9秒内每秒恢复33点生命值。可对友军施放|n|n|cff99ccff施法距离：|r750|n|cff99ccff冷却时间：|r2.25,将目标身上一切不洁之物净化，对其造成360点|cFF00B9FF魔法伤害|r，并使其在接下来的9秒内每秒恢复44点生命值。可对友军施放|n|n|cff99ccff施法距离：|r750|n|cff99ccff冷却时间：|r2.25
+Ubertip=将目标身上一切不洁之物净化，对其造成90点|cFF00B9FF魔法伤害|r，并使其在接下来的9秒内每秒恢复11点生命值。可对友军施放|n|n|cff99ccff施法距离：|r900|n|cff99ccff冷却时间：|r2.25,将目标身上一切不洁之物净化，对其造成180点|cFF00B9FF魔法伤害|r，并使其在接下来的9秒内每秒恢复22点生命值。可对友军施放|n|n|cff99ccff施法距离：|r900|n|cff99ccff冷却时间：|r2.25,将目标身上一切不洁之物净化，对其造成270点|cFF00B9FF魔法伤害|r，并使其在接下来的9秒内每秒恢复33点生命值。可对友军施放|n|n|cff99ccff施法距离：|r900|n|cff99ccff冷却时间：|r2.25,将目标身上一切不洁之物净化，对其造成360点|cFF00B9FF魔法伤害|r，并使其在接下来的9秒内每秒恢复44点生命值。可对友军施放|n|n|cff99ccff施法距离：|r900|n|cff99ccff冷却时间：|r2.25
 Hotkey=E
 Researchtip=学习 涤罪之焰[|cffffcc00E|r] - [|cffffcc00等级 %d|r]|n(Purifying Flame)
-Researchubertip=将目标身上一切不洁之物净化，对其造成|cFF00B9FF魔法伤害|r，并使其在接下来的9秒内每秒恢复若干点生命值。可对友军施放。|n|n|cff99ccff施法距离：|r750|n|cff99ccff冷却时间：|r2.25|n|cff99ccff魔法消耗：|r50/60/70/80|n|n|cffffcc00等级 1|r - 造成90点伤害，每秒恢复11点生命值|n|cffffcc00等级 2|r - 造成180点伤害，每秒恢复22点生命值|n|cffffcc00等级 3|r - 造成270点伤害，每秒恢复33点生命值|n|cffffcc00等级 4|r - 造成360点伤害，每秒恢复44点生命值
+Researchubertip=将目标身上一切不洁之物净化，对其造成|cFF00B9FF魔法伤害|r，并使其在接下来的9秒内每秒恢复若干点生命值。可对友军施放。|n|n|cff99ccff施法距离：|r900|n|cff99ccff冷却时间：|r2.25|n|cff99ccff魔法消耗：|r50/60/70/70|n|n|cffffcc00等级 1|r - 造成90点伤害，每秒恢复11点生命值|n|cffffcc00等级 2|r - 造成180点伤害，每秒恢复22点生命值|n|cffffcc00等级 3|r - 造成270点伤害，每秒恢复33点生命值|n|cffffcc00等级 4|r - 造成360点伤害，每秒恢复44点生命值
 researchhotkey="E"
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNPurifyingFlames.blp
 [A2TF]
