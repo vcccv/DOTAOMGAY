@@ -58,11 +58,11 @@ library TownPortalScrollFrame requires UISystem, AbilityUtils
         else
             set progress = 1 - ( cooldownRemaining / cooldown )
         endif
-        if cooldownRemaining < 1. then
-            call TownPortalScrollCooldownText.SetText(R2SW(cooldownRemaining, 7, 2))
-        else
+        //if cooldownRemaining < 1. then
+        //    call TownPortalScrollCooldownText.SetText(R2SW(cooldownRemaining, 7, 2))
+        //else
             call TownPortalScrollCooldownText.SetText(I2S(R2I(cooldownRemaining) + 1))
-        endif
+        //endif
         call SetTownPortalScrollCooldownSpriteProgress(progress)
         call TownPortalScrollCooldownSprite.SetVisible(progress != 1.)
     endfunction
