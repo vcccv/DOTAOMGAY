@@ -4838,7 +4838,7 @@ art=ReplaceableTextures\CommandButtons\BTNLesserClarityPotion
 Name=净化药水|nClarity Potion
 Hotkey=C
 Tip=净化药水(|cffffcc00C|r)|nClarity Potion
-Ubertip=|cffffcc00属性：|r|n|cffff8000魔法回复：|r|n在30秒内恢复170点魔法，受到攻击即失去效果|n|n|c00838B8B每瓶药水中都困着一个鲜活的小精灵|r
+Ubertip=|cffffcc00属性：|r|n|cffff8000魔法回复：|r|n在30秒内恢复150点魔法，受到攻击即失去效果|n|n|c00838B8B每瓶药水中都困着一个鲜活的小精灵|r
 [h029]
 art=ReplaceableTextures\CommandButtons\BTNHealingSalve
 buttonpos=1
@@ -12957,6 +12957,15 @@ Name=治疗药膏|nHealing Salve
 [AIpr]
 art=ReplaceableTextures\CommandButtons\BTNPotionBlueBig
 name="Sapphire Water"
+[AA02]
+art=ReplaceableTextures\CommandButtons\BTNPotionBlueBig
+name="治疗药膏|nHealing Salve"
+[AA03]
+art=ReplaceableTextures\CommandButtons\BTNLesserClarityPotion
+name="净化药水|nClarity Potion"
+[AA04]
+art=ReplaceableTextures\CommandButtons\BTNBottle3
+name="魔瓶|nBottle Regen"
 [AIpl]
 art=ReplaceableTextures\CommandButtons\BTNLesserClarityPotion
 casterart=Abilities\Spells\Items\AIma\AImaTarget.mdl

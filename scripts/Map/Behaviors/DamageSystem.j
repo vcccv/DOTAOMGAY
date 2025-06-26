@@ -351,6 +351,8 @@ scope DamageSystem
                     call UnitRemoveAbility(DETarget, 'B02Z')
                     call UnitRemoveAbility(DETarget, 'B04A')
                     call UnitRemoveAbility(DETarget, 'BIrm')
+                    call UnitRemoveAbility(DETarget, 'B01S')
+                    call UnitRemoveAbility(DETarget, 'B0CG')
                 endif
                 
                 //call MHDamageEvent_SetDamage(DEDamage)

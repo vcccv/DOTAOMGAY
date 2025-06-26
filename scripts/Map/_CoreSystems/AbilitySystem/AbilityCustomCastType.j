@@ -76,6 +76,12 @@ library AbilityCustomCastType requires Base, SkillSystem, ScepterUpgradeSystem
         call SetAbilityCastType(FLAKCANNON_UPGRADE_ABILITY_ID, PASSIVE_CAST_TYPE)
         call SetAbilityCastType(STARFALL_UPGRADE_ABILITY_ID  , PASSIVE_CAST_TYPE)
         
+        // 药膏
+        call SetAbilityCastType('AA02', ABILITY_CAST_TYPE_TARGET + ABILITY_CAST_TYPE_ALONE + ABILITY_CAST_TYPE_RESTORE)
+        // 小净化
+        call SetAbilityCastType('AA03', ABILITY_CAST_TYPE_TARGET + ABILITY_CAST_TYPE_ALONE + ABILITY_CAST_TYPE_RESTORE)
+        // 魔瓶
+        call SetAbilityCastType('AA04', ABILITY_CAST_TYPE_NONTARGET + ABILITY_CAST_TYPE_ALONE + ABILITY_CAST_TYPE_RESTORE)
         
         // 力量/敏捷转换
         // call SetAbilityCastType('A0KX', BERSERKER_CAST_TYPE)

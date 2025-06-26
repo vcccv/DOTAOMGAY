@@ -125,9 +125,15 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         set Item_GhostPotion = RegisterItem('I0HO', 'I0HN', 'h07V', 0)
 
         set Item_HealingSalve  = RegisterItem('I056', 'I05F', 'h029', 'INHS')
-        call RegisterAbilityAddMethod('B02Z', "RegenConsumableBuffOnAdd")
-        call RegisterAbilityAddMethod('BIrm', "RegenConsumableBuffOnAdd")
-        call RegisterAbilityAddMethod('B04A', "RegenConsumableBuffOnAdd")
+        call ResgiterAbilityMethodSimple('B02Z', "HealingSalveBuffOnAdd" , "HealingSalveBuffOnRemove" )
+        call ResgiterAbilityMethodSimple('BIrm', "ClarityPotionBuffOnAdd", "ClarityPotionBuffOnRemove")
+        call ResgiterAbilityMethodSimple('B04A', "BottleRegenBuffOnAdd"  , "BottleRegenBuffOnRemove"  )
+        call ResgiterAbilityMethodSimple('B01S', "RuneRegenerationBuffOnAdd"  , "RuneRegenerationBuffOnRemove"  )
+        call ResgiterAbilityMethodSimple('B0CG', "UrnOfShadowsBuffOnAdd"  , "UrnOfShadowsBuffOnRemove"  )
+        
+
+        // call RegisterAbilityAddMethod('B02Z', "RegenConsumableBuffOnAdd")
+        // call RegisterAbilityAddMethod('B04A', "RegenConsumableBuffOnAdd")
 
         // Item_TownPortalScroll
         set Item_TownPortalScroll = RegisterItem('I05A', 'I05I', 'h02E', 0)

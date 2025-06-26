@@ -30,6 +30,8 @@ library EventSystem requires UnitDex
         static unit         array DamageSource
         static unit         array DamageTarget
 
+        static unit         array BuffSource
+
         static real         array EventDamage
         static damagetype   array DamageType
 
@@ -50,6 +52,10 @@ library EventSystem requires UnitDex
         endmethod
         static method GetKillingUnit takes nothing returns unit
             return thistype.KillingUnit[thistype.INDEX]
+        endmethod
+
+        static method GetBuffSourceUnit takes nothing returns unit
+            return thistype.BuffSource[thistype.INDEX]
         endmethod
 
         static method GetManipulatedItem takes nothing returns item

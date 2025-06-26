@@ -10,3 +10,8 @@
 #include "MoonShard.j"
 #include "ObserverSentryWard.j"
 #include "SmokeOfDeceit.j"
+#include "HealingSalve.j"
+#include "ClarityPotion.j"
+#include "Bottle.j"
+#include "RuneRegeneration.j"
+#include "UrnOfShadows.j"

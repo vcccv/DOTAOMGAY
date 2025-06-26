@@ -226,4 +226,11 @@ library UnitStateBonus requires UnitUtils, UnitAbility
         call UnitUpdateAttackRangeBonus(whichUnit)
     endfunction
 
+    function UnitAddLifeRegen takes unit whichUnit, real addLifeRegen returns nothing
+        call MHUnit_SetData(whichUnit, UNIT_DATA_LIFE_REGEN, MHUnit_GetData(whichUnit, UNIT_DATA_LIFE_REGEN) + addLifeRegen)
+    endfunction
+    function UnitAddManaRegen takes unit whichUnit, real addManaRegen returns nothing
+        call MHUnit_SetData(whichUnit, UNIT_DATA_MANA_REGEN, MHUnit_GetData(whichUnit, UNIT_DATA_MANA_REGEN) + addManaRegen)
+    endfunction
+
 endlibrary
