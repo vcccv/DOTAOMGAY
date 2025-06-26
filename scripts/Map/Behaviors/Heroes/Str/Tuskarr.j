@@ -251,16 +251,16 @@ scope Tuskarr
         local unit    u = LoadUnitHandle(HY, h, 2)
         local effect  eff = LoadEffectHandle(HY, h, 32)
 
-        if GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED and LoadUnitHandle(HY, h, 17) != null and not LoadBoolean(HY, h, 110) then
-            call TriggerRegisterTimerEvent(t, 3, false)
-            call SaveBoolean(HY, h, 110, true)
-
-            //call BJDebugMsg("那再等等吧")
-            set t = null
-            set u = null
-            set eff = null
-            return false
-        endif
+        //if GetTriggerEventId() == EVENT_GAME_TIMER_EXPIRED and LoadUnitHandle(HY, h, 17) != null and not LoadBoolean(HY, h, 110) then
+        //    call TriggerRegisterTimerEvent(t, 3, false)
+        //    call SaveBoolean(HY, h, 110, true)
+//
+        //    //call BJDebugMsg("那再等等吧")
+        //    set t = null
+        //    set u = null
+        //    set eff = null
+        //    return false
+        //endif
 
         if GetTriggerEventId() != EVENT_GAME_TIMER_EXPIRED and LoadUnitHandle(HY, h, 17) != null then
             // call CXX(u,'A1UH', 1, .1)
