@@ -1,7 +1,7 @@
 
 scope AetherLens
 
-    #define AETHER_LENS_CAST_RANGE_BONUS 150.
+    #define AETHER_LENS_CAST_RANGE_BONUS 200.
     globals
         private key KEY
     endglobals

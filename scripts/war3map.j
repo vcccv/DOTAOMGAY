@@ -54337,17 +54337,17 @@ function NNE takes nothing returns nothing
 	local real damage
 	local real dur
 	local integer lv = GetUnitAbilityLevel(u,'A29I')
-	local group g = AllocationGroup(399)
-	local real r = 725 + lv * 100
+	local group   g  = AllocationGroup(399)
+	local real 	  r  = 1025
 	if lv == 1 then
-		set dur = 1.5
-		set damage = 200
+		set dur = 2
+		set damage = 225
 	elseif lv == 2 then
-		set dur = 1.8
-		set damage = 290
-	elseif lv == 3 then
 		set dur = 2.25
-		set damage = 380
+		set damage = 325
+	elseif lv == 3 then
+		set dur = 2.5
+		set damage = 425
 	endif
 	loop
 	exitwhen i > 16
