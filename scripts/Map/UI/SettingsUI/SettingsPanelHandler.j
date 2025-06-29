@@ -54,7 +54,7 @@ library SettingsPanelHandler requires SettingsPanelFrame, HotkeysPanelHandler
     endfunction
 
     function SettingsPanelSimpleButtonOnClickASync takes nothing returns nothing
-        if GetSettingsPanelFrame().IsVisible() then
+        if GetSettingsPanelFrame().IsVisible() or MHGame_IsReplay() then
             return
         endif
 
