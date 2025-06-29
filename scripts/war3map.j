@@ -18877,14 +18877,6 @@ function FRO takes nothing returns nothing
 	endif
 endfunction
 
-// 调整
-function RegenConsumableBuffOnAdd takes nothing returns nothing
-	local unit whichUnit
-	call MHAbility_FlagOperator(MHEvent_GetUnit(), MHEvent_GetAbility(), FLAG_OPERATOR_REMOVE, 0x201) 
-	call BJDebugMsg(MHMath_ToHex(MHAbility_GetFlag(MHEvent_GetUnit(), MHEvent_GetAbility())))
-	set whichUnit = null
-endfunction
-
 function FDO takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
