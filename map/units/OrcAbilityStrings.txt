@@ -23954,7 +23954,7 @@ Tip=虚空[|cffffcc00V|r] - [|cffffcc00等级 1|r],虚空[|cffffcc00V|r] - [|cff
 Ubertip=创造一个伤害性的虚空，对目标造成90点|cFF00B9FF魔法伤害|r，晕眩0.01秒。如果在夜晚（白天）使用，同时降低目标35/50%的攻击/移动速度，持续4（2）秒。|n|n|cff99ccff施法距离：|r525|n|cff99ccff冷却时间：|r8,创造一个伤害性的虚空，对目标造成160点|cFF00B9FF魔法伤害|r，晕眩0.01秒。如果在夜晚/白天使用，同时降低目标35/50%的攻击/移动速度，持续4（2）秒。|n|n|cff99ccff施法距离：|r525|n|cff99ccff冷却时间：|r8,创造一个伤害性的虚空，对目标造成255点|cFF00B9FF魔法伤害|r，晕眩0.01秒。如果在夜晚/白天使用，同时降低目标35/50%的攻击/移动速度，持续4（2）秒。|n|n|cff99ccff施法距离：|r525|n|cff99ccff冷却时间：|r8,创造一个伤害性的虚空，对目标造成335点|cFF00B9FF魔法伤害|r，晕眩0.01秒。如果在夜晚/白天使用，同时降低目标35/50%的攻击/移动速度，持续4（2）秒。|n|n|cff99ccff施法距离：|r525|n|cff99ccff冷却时间：|r8
 Hotkey=V
 Researchtip=学习 虚空[|cffffcc00V|r] - [|cffffcc00等级 %d|r]|n(Void)
-Researchubertip=创造一个伤害性虚的空，对目标造成|cFF00B9FF魔法伤害|r并使其晕眩0.01秒。如果在夜晚（白天）使用，同时降低目标35/50%的攻击/移动速度，持续4（2）秒。|n|n|cff99ccff施法距离：|r525|n|cff99ccff冷却时间：|r8|n|cff99ccff魔法消耗：|r80/90/100/110|n|n|cffffcc00等级 1|r - 造成90点伤害|n|cffffcc00等级 2|r - 造成160点伤害|n|cffffcc00等级 3|r - 造成255点伤害|n|cffffcc00等级 4|r - 造成335点伤害
+Researchubertip=创造一个伤害性的虚空，对目标造成|cFF00B9FF魔法伤害|r并使其晕眩0.01秒。如果在夜晚（白天）使用，同时降低目标35/50%的攻击/移动速度，持续4（2）秒。|n|n|cff99ccff施法距离：|r525|n|cff99ccff冷却时间：|r8|n|cff99ccff魔法消耗：|r80/90/100/110|n|n|cffffcc00等级 1|r - 造成90点伤害|n|cffffcc00等级 2|r - 造成160点伤害|n|cffffcc00等级 3|r - 造成255点伤害|n|cffffcc00等级 4|r - 造成335点伤害
 researchhotkey="V"
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNVoid.blp
 [A03F]
@@ -23967,7 +23967,7 @@ Tip=火焰气息[|cffffcc00F|r] - [|cffffcc00等级 1|r],火焰气息[|cffffcc00
 Ubertip=吐出一道火焰，对敌方单位造成90点|cff6495ed魔法伤害|r。在11秒内减少敌军20%的基础攻击。|n|n|cff99ccff施法距离：|r500|n|cff99ccff前进距离：|r650|n|cff99ccff冷却时间：|r9,吐出一道火焰，对敌方单位造成170点|cff6495ed魔法伤害|r。在11秒内减少敌军25%的基础攻击。|n|n|cff99ccff施法距离：|r500|n|cff99ccff前进距离：|r650|n|cff99ccff冷却时间：|r9,吐出一道火焰，对敌方单位造成240点|cff6495ed魔法伤害|r。在11秒内减少敌军30%的基础攻击。|n|n|cff99ccff施法距离：|r500|n|cff99ccff前进距离：|r650|n|cff99ccff冷却时间：|r9,向面前锥形范围吐出一道火焰，对敌方单位造成300点|cff6495ed魔法伤害|r。在11秒内减少敌军35%的基础攻击。|n|n|cff99ccff施法距离：|r500|n|cff99ccff前进距离：|r650|n|cff99ccff冷却时间：|r9
 Hotkey=F
 Researchtip=学习 火焰气息[|cffffcc00F|r] - [|cffffcc00等级 %d|r]|n(Breathe Fire)
-Researchubertip=向面前锥形范围吐出一道火焰，对敌方单位造成|cff6495ed魔法伤害|r。在11秒内减少敌军一定的基础攻击。|n|n|cff99ccff施法距离：|r500|n|cff99ccff前进距离：|r650|n|cff99ccff冷却时间：|r9|n|cff99ccff魔法消耗：|r/90100/110/120|n|n|cffffcc00等级 1|r - 造成90点伤害，减少20%的基础攻击|n|cffffcc00等级 2|r - 造成170点伤害，减少25%的基础攻击|n|cffffcc00等级 3|r - 造成240点伤害，减少30%的基础攻击|n|cffffcc00等级 4|r - 造成300点伤害，减少35%的基础攻击
+Researchubertip=向面前锥形范围吐出一道火焰，对敌方单位造成|cff6495ed魔法伤害|r。在11秒内减少敌军一定的基础攻击。|n|n|cff99ccff施法距离：|r500|n|cff99ccff前进距离：|r650|n|cff99ccff冷却时间：|r9|n|cff99ccff魔法消耗：|r90/100/110/120|n|n|cffffcc00等级 1|r - 造成90点伤害，减少20%的基础攻击|n|cffffcc00等级 2|r - 造成170点伤害，减少25%的基础攻击|n|cffffcc00等级 3|r - 造成240点伤害，减少30%的基础攻击|n|cffffcc00等级 4|r - 造成300点伤害，减少35%的基础攻击
 researchhotkey=F
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNDKBreatheFire.blp
 [A04U]
