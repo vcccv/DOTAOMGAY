@@ -28,7 +28,7 @@ scope Axe
 
         start_group_enum(x, y, area)
 
-        if IsUnitAlive(first) and IsUnitEnemy(trigUnit, GetOwningPlayer(first)) /*
+        if IsUnitInRangeXY(first, x, y, area) and IsUnitAlive(first) and IsUnitEnemy(trigUnit, GetOwningPlayer(first)) /*
             */ and not IsUnitWard(first) and not IsUnitStructure(first) then
 
             call DestroyEffect(AddSpecialEffectTarget("Abilities\\Spells\\Other\\Stampede\\StampedeMissileDeath.mdl", first, "origin"))

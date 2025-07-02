@@ -17,7 +17,7 @@ scope SmokeOfDeceit
         start_group_enum(x, y, area)
 
         // 存活，敌对，非元素(可能无意义)，非英雄单位且不是冰晶爆轰，或是防御塔
-        if IsUnitAlive(whichUnit) and IsUnitEnemy(whichUnit, GetOwningPlayer(first)) /*
+        if IsUnitInRangeXY(first, x, y, area) and IsUnitAlive(whichUnit) and IsUnitEnemy(whichUnit, GetOwningPlayer(first)) /*
             */ and not IsUnitBrewmasterElement(first) and /*
             */ ( ( IsUnitType(first, UNIT_TYPE_HERO) and not IsUnitIceBlast(first) ) or GetTowerLevel(first) > 0 ) then
             set result = true
@@ -135,7 +135,7 @@ scope SmokeOfDeceit
         start_group_enum(x, y, area)
 
         // 友军，存活，非建筑，非守卫
-        if IsUnitAlly(whichUnit, GetOwningPlayer(first)) and IsAliveNotStrucNotWard(first) /*
+        if IsUnitInRangeXY(first, x, y, area) and IsUnitAlly(whichUnit, GetOwningPlayer(first)) and IsAliveNotStrucNotWard(first) /*
             */ and IsPlayerValid(GetOwningPlayer(first)) and not IsEnemyPlayerUnitInRange(first, 1050) then
             call UnitAddSmokeOfDeceitEffect(first)
         endif

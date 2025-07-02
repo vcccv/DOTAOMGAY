@@ -114,7 +114,7 @@ scope Earthshaker
         start_group_enum(x, y, area)
 
         // 存活，敌对，非魔免，非无敌，非守卫，非建筑
-        if IsUnitAlive(first) and IsUnitEnemy(u, GetOwningPlayer(first)) /*
+        if IsUnitInRangeXY(first, x, y, area) and IsUnitAlive(first) and IsUnitEnemy(u, GetOwningPlayer(first)) /*
             */ and not IsUnitMagicImmune(first) and not IsUnitInvulnerable(first) /*
             */ and not IsUnitWard(first) and not IsUnitStructure(first) then
             call CommonUnitAddStun(first, duration, false)

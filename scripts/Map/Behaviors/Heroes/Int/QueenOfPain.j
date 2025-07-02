@@ -66,7 +66,7 @@ scope QueenOfPain
         start_group_enum(x, y, area)
 
         // 敌对 存活非建筑非守卫
-        if IsUnitEnemy(whichUnit, GetOwningPlayer(first)) and(IsAliveNotStrucNotWard(first)) /*and IsNotAncientOrBear(first)*/ then
+        if IsUnitInRangeXY(first, x, y, area) and IsUnitEnemy(whichUnit, GetOwningPlayer(first)) and (IsAliveNotStrucNotWard(first)) then
             call ScreamOfPainLaunchMissimle(whichUnit, first)
         endif
 
