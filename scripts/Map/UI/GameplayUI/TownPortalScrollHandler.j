@@ -105,7 +105,7 @@ library TownPortalScrollHandler requires Communication, TownPortalScrollFrame, U
                 if MHMsg_IsKeyDown(OSKEY_SHIFT) then
                     set flag = flag + LOCAL_ORDER_FLAG_QUEUE
                 endif
-                if GetUnitAbilityLevel(selectedUnit, TOWN_PORTAL_SCROLL_ABILITY_ID) == 1then
+                if GetUnitAbilityLevel(selectedUnit, TOWN_PORTAL_SCROLL_ABILITY_ID) == 1 then
                     call MHMsg_SendSelectorOrder(x, y, ORDER_massteleport, flag)
                 else
                     call MHMsg_SendIndicatorOrder(null, x, y, ORDER_massteleport, flag)
@@ -119,7 +119,10 @@ library TownPortalScrollHandler requires Communication, TownPortalScrollFrame, U
     function TownPortalScrollHandler_OnKeyDownASync takes integer pressedKey returns boolean
         local unit    selectedUnit
         local integer charges
-        
+        local real    x
+        local real    y
+        local integer flag
+
         if pressedKey != GetHotkey() or GetHotkey() == - 1 then
             return false
         endif
@@ -128,11 +131,29 @@ library TownPortalScrollHandler requires Communication, TownPortalScrollFrame, U
         if selectedUnit == null then
             return false
         endif
-
+        
         set charges = GetUnitTownPortalScrollCharges(selectedUnit)
         if charges > 0 then
             call MHUI_PlayNativeSound("InterfaceClick")
-            if GetUnitAbilityLevel(selectedUnit, TOWN_PORTAL_SCROLL_ABILITY_ID) == 1 then
+            
+            if MHMsg_IsIndicatorOn(INDICATOR_TYPE_TARGET_MODE) and MHUIData_GetTargetModeAbility() == TOWN_PORTAL_SCROLL_ABILITY_ID then
+                set x = GetSelfCastX(selectedUnit)
+                set y = GetSelfCastX(selectedUnit)
+                // 1500范围内不可双击施法到泉水
+                if not IsUnitInRangeXY(selectedUnit, x, y, 1500.) then
+                    set flag = LOCAL_ORDER_FLAG_ALONE + LOCAL_ORDER_FLAG_ITEM
+                    if MHMsg_IsKeyDown(OSKEY_SHIFT) then
+                        set flag = flag + LOCAL_ORDER_FLAG_QUEUE
+                    endif
+                    if GetUnitAbilityLevel(selectedUnit, TOWN_PORTAL_SCROLL_ABILITY_ID) == 1 then
+                        call MHMsg_SendSelectorOrder(x, y, ORDER_massteleport, flag)
+                    else
+                        call MHMsg_SendIndicatorOrder(null, x, y, ORDER_massteleport, flag)
+                    endif
+                else
+                    call SendErrorMessage("已经在泉水范围内")
+                endif
+            elseif GetUnitAbilityLevel(selectedUnit, TOWN_PORTAL_SCROLL_ABILITY_ID) == 1 then
                 // ABILITY_CAST_TYPE_POINT + ABILITY_CAST_TYPE_ALONE
                 call MHMsg_CallTargetMode(TOWN_PORTAL_SCROLL_ABILITY_ID, ORDER_massteleport, 0x100002)
             else
@@ -143,7 +164,6 @@ library TownPortalScrollHandler requires Communication, TownPortalScrollFrame, U
         endif
         
         set selectedUnit = null
-        
         return true
     endfunction
 
