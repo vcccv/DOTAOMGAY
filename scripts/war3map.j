@@ -2404,7 +2404,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A2TH', 0, "StoneRemnantOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A2QM', 0, "BoulderSmashOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A2QT', 0, "FortuneEndOnSpellEffect")
-	call SaveStr(ObjectHashTable,'A2T5', 0, "SpellEffect__FateEdict")
+	call SaveStr(ObjectHashTable,'A2T5', 0, "FateEdictOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A2SG', 0, "ZWV")
 	call SaveStr(ObjectHashTable,'A2TF', 0, "SpellEffect__FalsePromise")
 	call SaveStr(ObjectHashTable,'QB11', 0, "SpellEffect__FalsePromise")
@@ -27956,7 +27956,10 @@ function OCR takes nothing returns nothing
 	call DisplayTimedTextToPlayer(LocalPlayer, 0, 0, 15, "|c006699CCtieba.baidu.com/omgay|r")
 	call TimerStart(CreateTimer(), 20 +180, false, function OAR)
 endfunction
-function ODR takes nothing returns nothing
+function InitShopItemCooldown takes nothing returns nothing
+	// 游戏开始时添加经验书
+	call StartSellUnitCooldown(SentinelPigKing, ItemSellDummyId[it_jys], -1000. + 60 * 10. + GetGameTime())
+	call StartSellUnitCooldown(ScourgePigKing , ItemSellDummyId[it_jys], -1000. + 60 * 10. + GetGameTime())
 endfunction
 function OFR takes nothing returns boolean
 	return GetUnitTypeId(GetFilterUnit())=='n00C' or GetUnitTypeId(GetFilterUnit())=='ntav'
@@ -28030,14 +28033,14 @@ function SQO takes nothing returns nothing
 	call RemoveUnit(KR)
 	call RemoveUnit(LR)
 	call RemoveUnit(IR)
-	call ODR()
+
 	call DestroyMultiboard(JP)
 	call MultiboardDisplay(MainMultiboard, true)
 	set BJ_Multiboard = MainMultiboard
 	call AddUnitToStock(ScourgeTombOfRelics,'h02C', 2, 4)	//游戏开始时添加贩卖
 	call AddUnitToStock(SentinelAncientOfWonders,'h02C', 2, 4)
-	call AddUnitToStock(SentinelPigKing,'n139', 0, 3) 		//游戏开始时添加经验书
-	call AddUnitToStock(ScourgePigKing,'n139', 0, 3)
+
+	call InitShopItemCooldown()
 	call ClearSelection()
 	set IsPickingHero = false
 	call DestroyTimer(NK)
@@ -28883,8 +28886,8 @@ function IJR takes nothing returns boolean
 		set BJ_Multiboard = MainMultiboard
 		call AddUnitToStock(ScourgeTombOfRelics,'h02C', 2, 4) 		//游戏开始时添加贩卖
 		call AddUnitToStock(SentinelAncientOfWonders,'h02C', 2, 4)
-		call AddUnitToStock(SentinelPigKing,'n139', 0, 3) 		//游戏开始时添加经验书
-		call AddUnitToStock(ScourgePigKing,'n139', 0, 3)
+		
+		call InitShopItemCooldown()
 		loop
 			set u = LoadUnitHandle(HY, h, 50 + i)
 			call FlushChildHashtable(HY, GetHandleId(u))
@@ -29142,9 +29145,8 @@ function ISR takes nothing returns nothing
 		// 游戏开始时添加贩卖经验书和假眼
 		call AddUnitToStock(ScourgeTombOfRelics,'h02C', 2, 4)	
 		call AddUnitToStock(SentinelAncientOfWonders,'h02C', 2, 4)
-		call AddUnitToStock(SentinelPigKing,'n139', 0, 3) 		
-		call AddUnitToStock(ScourgePigKing,'n139', 0, 3)
-		call ODR()
+		
+		call InitShopItemCooldown()
 		set OLR = CreateTimer()
 		call TimerStart(OLR, 70, false, function OCR)
 		set OLR = null
@@ -36210,77 +36212,6 @@ function QZR takes nothing returns nothing
 	set u = null
 endfunction
 
-
-function Q5R takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit targetUnit =(LoadUnitHandle(HY, h, 17))
-	local integer level = LoadInteger(HY, h, 5)
-	local integer c = LoadInteger(HY, h, 0)
-	if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
-		if LoadBoolean(HY, h, 0) == false then
-			call SaveBoolean(HY, h, 0, true)
-			call UnitDamageTargetEx(GetEventDamageSource(), GetTriggerUnit(), 3, GetEventDamage()* .5)
-			call SaveBoolean(HY, h, 0, false)
-		endif
-	elseif GetTriggerEventId() == EVENT_WIDGET_DEATH then
-		call FlushChildHashtable(HY, h)
-		call DestroyTrigger(t)
-		call UnitRemoveAbility(targetUnit,'A2T4')
-		call UnitRemoveAbility(targetUnit,'A3KE')
-		call UnitRemoveAbility(targetUnit,'B3KE')
-		call UnitRemoveAbility(targetUnit,'A3KD')
-		call RemoveSavedHandle(HY, GetHandleId(targetUnit),'A2T5')
-	elseif c >(level + 2)* 10 or GetUnitAbilityLevel(targetUnit,'A2T4') == 0 then
-		call FlushChildHashtable(HY, h)
-		call DestroyTrigger(t)
-		call UnitRemoveAbility(targetUnit,'A2T4')
-		call UnitRemoveAbility(targetUnit,'A3KE')
-		call UnitRemoveAbility(targetUnit,'B3KE')
-		call UnitRemoveAbility(targetUnit,'A3KD')
-		call RemoveSavedHandle(HY, GetHandleId(targetUnit),'A2T5')
-	else
-		set c = c + 1
-		call SaveInteger(HY, h, 0, c)
-	endif
-	set t = null
-	set targetUnit = null
-	return false
-endfunction
-function Q6R takes nothing returns nothing
-	local unit whichUnit = GetTriggerUnit()
-	local unit targetUnit = GetSpellTargetUnit()
-	local integer level = GetUnitAbilityLevel(whichUnit,'A2T5')
-	local trigger t
-	local integer h
-	if HaveSavedHandle(HY, GetHandleId(targetUnit),'A2T5') then
-		set t = LoadTriggerHandle(HY, GetHandleId(targetUnit),'A2T5')
-		set h = GetHandleId(t)
-	else
-		set t = CreateTrigger()
-		set h = GetHandleId(t)
-		call SaveTriggerHandle(HY, GetHandleId(targetUnit),'A2T5', t)
-		call TriggerRegisterTimerEvent(t, .1, true)
-		call TriggerRegisterUnitEvent(t, targetUnit, EVENT_UNIT_DAMAGED)
-		call TriggerRegisterDeathEvent(t, targetUnit)
-		call TriggerAddCondition(t, Condition(function Q5R))
-		call SaveUnitHandle(HY, h, 17,(targetUnit))
-		call SetPlayerAbilityAvailable(GetOwningPlayer(targetUnit),'A2T4', false)
-	endif
-	call UnitAddPermanentAbility(targetUnit,'A3KE')
-	call UnitAddPermanentAbility(targetUnit,'A3KD')
-	call UnitAddPermanentAbility(targetUnit,'A2T4')
-	call SaveInteger(HY, h, 0, 0)
-	call SaveInteger(HY, h, 5, level)
-	set whichUnit = null
-	set targetUnit = null
-	set t = null
-endfunction
-function SpellEffect__FateEdict takes nothing returns nothing
-	if IsUnitAlly(GetSpellTargetUnit(), GetOwningPlayer(GetTriggerUnit())) or not UnitHasSpellShield(GetSpellTargetUnit()) then
-		call Q6R()
-	endif
-endfunction
 function Q7R takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
@@ -67893,12 +67824,6 @@ function jys_changeDesc takes integer team returns nothing
 	if (team == 0 and IsPlayerSentinel(LocalPlayer)) or(team == 1 and IsPlayerScourge(LocalPlayer)) then
 		set s = StringReplace(s, "%d", I2S(jys_calc(team)))
 		call YDWESetItemDataString(ItemRealId[it_jys], 3, s)
-		//set s = j5j(K1V[it_jys], 2)
-		//set s = huh(s, jys_calc(team))
-		//call ovk(K1V[it_jys], s)
-		//set s = j5j(K2V[it_jys], 2)
-		//set s = huh(s, jys_calc(team))
-		//call ovk(K2V[it_jys], s)
 	endif
 endfunction
 

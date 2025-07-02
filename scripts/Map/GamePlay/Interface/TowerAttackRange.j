@@ -53,7 +53,8 @@ library TowerAttackRange requires Base, PlayerSettingsLib
     endfunction
     */
     private function IsWardAbilityById takes integer abilId returns boolean
-        return false
+        //call BJDebugMsg("MHUIData_GetTargetModeOrder:" + I2S(abilId))
+        return abilId =='A02X' or abilId =='AIsw' or abilId == 'AA00' or abilId == 'AA01'
     endfunction
 
     globals
@@ -68,10 +69,11 @@ library TowerAttackRange requires Base, PlayerSettingsLib
         local integer i
 
         // 优先处理守卫技能
-        set isWardAbility = IsWardAbilityById(0)
+        set isWardAbility = false//MHMsg_IsIndicatorOn(INDICATOR_TYPE_TARGET_MODE) and IsWardAbilityById(MHUIData_GetTargetModeOrder())
 
         if isWardAbility then
             set shouldShow = true
+            call BJDebugMsg("显示")
         else
             set showSetting = PlayerSettings[User.LocalId].IsSettingEnable(PlayerSettings.HOLDING_ALT_SHOWS_TOWER_ATTACK_RANGE)
             set currentAlt  = MHMsg_IsKeyDown(OSKEY_ALT)

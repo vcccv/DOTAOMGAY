@@ -76,6 +76,8 @@ library HeroSkillDefine requires SkillSystem, AbilityCustomOrderId
 
         // 气运之末
         call RegisterSkillInitMethodByIndex(SKILL_INDEX_FORTUNE_END, "FortuneEndOnInitializer")
+        // 命运赦令
+        call RegisterSkillInitMethodByIndex(SKILL_INDEX_FATE_EDICT, "FateEdictOnInitializer")
 
         // 601是init
         call SaveStr(ObjectHashTable, 'A060', 601, "W_A")

@@ -6,11 +6,11 @@ library MemoryUtils
     endfunction
 
     function GetCObjectFromHash takes integer pHash1, integer pHash2 returns integer // Jass Variant of sub_6F03FA30 (126a)
-        local integer addr  = GetTempestThread()
+        local integer addr = GetTempestThread()
         local integer pOff1 = 0x2C
 
         if addr != 0 then
-            if BitwiseAnd(pHash1, pHash2) == -1 then
+            if BitwiseAnd(pHash1, pHash2) == - 1 then
                 return 0
             endif
 
@@ -18,16 +18,16 @@ library MemoryUtils
                 set pOff1 = 0xC
             endif
 
-            set pOff1 = ReadRealMemory( addr ) + pOff1
-            set pOff1 = ReadRealMemory( pOff1 )
+            set pOff1 = ReadRealMemory(addr) + pOff1
+            set pOff1 = ReadRealMemory(pOff1 )
 
             if pOff1 == 0 then
                 return 0
             endif
 
-            set pOff1 = ReadRealMemory( pOff1 + 0x8 * pHash1 + 0x4 )
+            set pOff1 = ReadRealMemory(pOff1 + 0x8 * pHash1 + 0x4 )
 
-            if pOff1 == 0 or ReadRealMemory( pOff1 + 0x18 ) != pHash2 then
+            if pOff1 == 0 or ReadRealMemory(pOff1 + 0x18) != pHash2 then
                 return 0
             endif
 
@@ -38,10 +38,10 @@ library MemoryUtils
     endfunction
 
     function GetAddressLocustFlags takes integer pHash1, integer pHash2 returns integer
-        local integer pObj = GetCObjectFromHash( pHash1, pHash2 )
+        local integer pObj = GetCObjectFromHash(pHash1, pHash2 )
 
         if pObj > 0 then
-            return ReadRealMemory( pObj + 0x94 )
+            return ReadRealMemory(pObj + 0x94 )
         endif
 
         return 0
@@ -113,27 +113,27 @@ library MemoryUtils
     endfunction
     
     function UnitEnableTruesightImmunity takes unit u returns nothing
-        local integer pData = ConvertHandle( u )
+        local integer pData = ConvertHandle(u )
 
         if pData > 0 then
             set pData = pData + 0x16C
-            set pData = GetAddressLocustFlags( ReadRealMemory( pData ), ReadRealMemory( pData + 4 ) )
+            set pData = GetAddressLocustFlags(ReadRealMemory(pData), ReadRealMemory(pData + 4) )
 
             if pData > 0 then
-                call WriteRealMemory( pData + 0x34, MHMath_AddBit(ReadRealMemory( pData + 0x34 ), 0x08000000) )
+                call WriteRealMemory(pData + 0x34, MHMath_AddBit(ReadRealMemory(pData + 0x34), 0x08000000) )
             endif
         endif
     endfunction
 
     function UnitDisableTruesightImmunity takes unit u returns nothing
-        local integer pData = ConvertHandle( u )
+        local integer pData = ConvertHandle(u )
 
         if pData > 0 then
             set pData = pData + 0x16C
-            set pData = GetAddressLocustFlags( ReadRealMemory( pData ), ReadRealMemory( pData + 4 ) )
+            set pData = GetAddressLocustFlags(ReadRealMemory(pData), ReadRealMemory(pData + 4) )
 
             if pData > 0 then
-                call WriteRealMemory( pData + 0x34, MHMath_RemoveBit(ReadRealMemory( pData + 0x34 ), 0x08000000) )
+                call WriteRealMemory(pData + 0x34, MHMath_RemoveBit(ReadRealMemory(pData + 0x34), 0x08000000) )
             endif
         endif
     endfunction
@@ -151,7 +151,7 @@ library MemoryUtils
     function GetAbilityLevel takes ability whichAbility returns integer
         local integer pAbility = ConvertHandle(whichAbility)
         if pAbility > 0 then
-            return (ReadRealMemory(pAbility + 0x50) + 1)
+            return(ReadRealMemory(pAbility + 0x50) + 1)
         endif
         return 0
     endfunction
@@ -166,8 +166,8 @@ library MemoryUtils
     endfunction
 
     function UnitShareInvisVision takes unit whichUnit, player whichPlayer, integer shareType returns integer
-        local integer addr     = pGameDLL + 0x66B260
-        local integer pUnit    = ConvertHandle(whichUnit)
+        local integer addr = pGameDLL + 0x66B260
+        local integer pUnit = ConvertHandle(whichUnit)
         local integer playerId = GetPlayerId(whichPlayer)
 
         if pUnit == 0 or whichPlayer == null then
@@ -178,8 +178,8 @@ library MemoryUtils
     endfunction
 
     function UnitUnShareInvisVision takes unit whichUnit, player whichPlayer, integer shareType returns integer
-        local integer addr     = pGameDLL + 0x65AA20
-        local integer pUnit    = ConvertHandle(whichUnit)
+        local integer addr = pGameDLL + 0x65AA20
+        local integer pUnit = ConvertHandle(whichUnit)
         local integer playerId = GetPlayerId(whichPlayer)
 
         if pUnit == 0 or whichPlayer == null then
@@ -191,8 +191,8 @@ library MemoryUtils
 
     // 0x66B470
     function UnitShareVisionEx takes unit whichUnit, player whichPlayer returns integer
-        local integer addr     = pGameDLL + 0x66B470
-        local integer pUnit    = ConvertHandle(whichUnit)
+        local integer addr = pGameDLL + 0x66B470
+        local integer pUnit = ConvertHandle(whichUnit)
         local integer playerId = GetPlayerId(whichPlayer)
 
         if pUnit == 0 or whichPlayer == null then
@@ -203,8 +203,8 @@ library MemoryUtils
     endfunction
     // 0x65AB10
     function UnitUnShareVisionEx takes unit whichUnit, player whichPlayer returns integer
-        local integer addr     = pGameDLL + 0x65AB10
-        local integer pUnit    = ConvertHandle(whichUnit)
+        local integer addr = pGameDLL + 0x65AB10
+        local integer pUnit = ConvertHandle(whichUnit)
         local integer playerId = GetPlayerId(whichPlayer)
 
         if pUnit == 0 or whichPlayer == null then
@@ -212,6 +212,38 @@ library MemoryUtils
         endif
 
         return this_call_2(addr, pUnit, playerId)
+    endfunction
+
+    //循环遍历商店u的物品id
+    function StartSellUnitCooldown takes unit shopUnit, integer unitTypeId, real cooldown returns boolean
+        local integer pAbility = ConvertHandle(MHUnit_GetAbility(shopUnit, 'Asel', false))
+        local integer k
+        local integer offset = 0xCC
+        local integer i = 0
+        local real    r
+        if pAbility > 0 then
+            loop
+                set k = ReadRealMemory(pAbility + offset)
+                if k != 0 then
+                    if k == unitTypeId then
+                        set k = ReadRealMemory(pAbility + 0x324 + 0x1C * i)
+                        if k > 0 then
+                            if k > 0 then
+                                set r = ReadRealFloat(k + 0x4) + cooldown
+                                call WriteRealFloat(k + 0x4, r)
+                                return true
+                            endif
+                        else
+                            return false
+                        endif
+                    endif
+                endif
+                set offset = offset + 4
+                set i = i + 1
+                exitwhen offset > 0xF8
+            endloop
+        endif
+        return false
     endfunction
     
 endlibrary

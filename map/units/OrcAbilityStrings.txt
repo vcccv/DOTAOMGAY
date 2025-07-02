@@ -15859,10 +15859,10 @@ casterattach=origin
 animnames=spell,slam
 Name=雷霆一击
 Tip=雷霆一击[|cffffcc00C|r] - [|cffffcc00等级 1|r],雷霆一击[|cffffcc00C|r] - [|cffffcc00等级 2|r],雷霆一击[|cffffcc00C|r] - [|cffffcc00等级 3|r],雷霆一击[|cffffcc00C|r] - [|cffffcc00等级 4|r]
-Ubertip=重击地面，对周围的敌方地面单位造成100点|cFF00B9FF魔法伤害|r，降低其25/25%的攻击/移动速度，持续4.25（8）秒。|n|n|cff99ccff作用范围：|r400|n|cff99ccff冷却时间：|r12,重击地面，对周围的敌方地面单位造成175点|cFF00B9FF魔法伤害|r，降低其35/35%的攻击/移动速度，持续4.25（8）秒。|n|n|cff99ccff作用范围：|r400|n|cff99ccff冷却时间：|r12,重击地面，对周围的敌方地面单位造成250点|cFF00B9FF魔法伤害|r，降低其45/45%的攻击/移动速度，持续4.25（8）秒。|n|n|cff99ccff作用范围：|r400|n|cff99ccff冷却时间：|r12,重击地面，对周围的敌方地面单位造成300点|cFF00B9FF魔法伤害|r，降低其55/55%的攻击/移动速度，持续4.25（8）秒。|n|n|cff99ccff作用范围：|r400|n|cff99ccff冷却时间：|r12
+Ubertip=重击地面，对周围的敌方地面单位造成100点|cFF00B9FF魔法伤害|r，降低其20/20%的攻击/移动速度，持续4.25（8）秒。|n|n|cff99ccff作用范围：|r400|n|cff99ccff冷却时间：|r10,重击地面，对周围的敌方地面单位造成175点|cFF00B9FF魔法伤害|r，降低其35/35%的攻击/移动速度，持续4.25（8）秒。|n|n|cff99ccff作用范围：|r400|n|cff99ccff冷却时间：|r9,重击地面，对周围的敌方地面单位造成250点|cFF00B9FF魔法伤害|r，降低其50/50%的攻击/移动速度，持续4.25（8）秒。|n|n|cff99ccff作用范围：|r400|n|cff99ccff冷却时间：|r8,重击地面，对周围的敌方地面单位造成300点|cFF00B9FF魔法伤害|r，降低其65/65%的攻击/移动速度，持续4.25（8）秒。|n|n|cff99ccff作用范围：|r400|n|cff99ccff冷却时间：|r7
 Hotkey=C
 Researchtip=学习 雷霆一击[|cffffcc00C|r] - [|cffffcc00等级 %d|r]|n(Thunder Clap)
-Researchubertip=重击地面，对周围的敌方地面单位造成|cFF00B9FF魔法伤害|r，降低其攻击速度和移动速度，持续4.25（8）秒。|n|n|cff99ccff作用范围：|r400|n|cff99ccff冷却时间：|r12|n|cff99ccff魔法消耗：|r90/105/130/150|n|n|cffffcc00等级 1|r - 造成100点伤害，降低25/25%的攻击/移动速度|n|cffffcc00等级 2|r - 造成175点伤害，降低35/35%的攻击/移动速度|n|cffffcc00等级 3|r - 造成250点伤害，降低45/45%的攻击/移动速度|n|cffffcc00等级 4|r - 造成300点伤害，降低55/55%的攻击/移动速度
+Researchubertip=重击地面，对周围的敌方地面单位造成|cFF00B9FF魔法伤害|r，降低其攻击速度和移动速度，持续4.25（8）秒。|n|n|cff99ccff作用范围：|r400|n|cff99ccff冷却时间：|r10/9/8/7|n|cff99ccff魔法消耗：|r75/85/95/105|n|n|cffffcc00等级 1|r - 造成100点伤害，降低20/20%的攻击/移动速度|n|cffffcc00等级 2|r - 造成175点伤害，降低35/35%的攻击/移动速度|n|cffffcc00等级 3|r - 造成250点伤害，降低50/50%的攻击/移动速度|n|cffffcc00等级 4|r - 造成300点伤害，降低65/65%的攻击/移动速度
 Researchhotkey=C
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNThunderClapPanda.blp
 [A07C]
@@ -21230,7 +21230,7 @@ buffubertip="该单位被回音战刃减速了"
 buffart=ReplaceableTextures\CommandButtons\BTNEchoSaber
 [n999]
 art=ReplaceableTextures\CommandButtons\BTNMerchant
-sellunits=n134,h0EU,n138,n12V,n125,n12W,h0EQ
+sellunits=n134,h0EU,n138,n12V,n125,n12W,h0EQ,n139
 name=Pig King
 [AU02]
 Name=共享信使
