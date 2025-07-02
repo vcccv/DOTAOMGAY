@@ -254,5 +254,107 @@ scope Oracle
         call Q4R()
     endfunction
 
+    //***************************************************************************
+    //*
+    //*  命运赦令
+    //*
+    //***************************************************************************
+    globals
+        constant integer SKILL_INDEX_FATE_EDICT = GetHeroSKillIndexBySlot(HERO_INDEX_ORACLE, 2)
+
+        constant integer FATE_EDICT_TARGET_BUFF_ID = 'B3KE'
+    endglobals
+
+    function FateEdictOnInitializer takes nothing returns nothing
+        call ResgiterAbilityMethodSimple(FATE_EDICT_TARGET_BUFF_ID, "FateEdictBuffOnAdd", "FateEdictBuffOnRemove")
+    endfunction
+    
+    function FateEdictBuffOnAdd takes nothing returns nothing
+        local unit whichUnit = Event.GetTriggerUnit()
+        
+        call UnitIncDisableAttackCount(whichUnit)
+
+        set whichUnit = null
+    endfunction
+
+    function FateEdictBuffOnRemove takes nothing returns nothing
+        local unit whichUnit = Event.GetTriggerUnit()
+        
+        call UnitDecDisableAttackCount(whichUnit)
+
+        set whichUnit = null
+    endfunction
+    
+    function Q5R takes nothing returns boolean
+        local trigger t = GetTriggeringTrigger()
+        local integer h = GetHandleId(t)
+        local unit targetUnit =(LoadUnitHandle(HY, h, 17))
+        local integer level = LoadInteger(HY, h, 5)
+        local integer c = LoadInteger(HY, h, 0)
+        if GetTriggerEventId() == EVENT_UNIT_DAMAGED then
+            if LoadBoolean(HY, h, 0) == false then
+                call SaveBoolean(HY, h, 0, true)
+                call UnitDamageTargetEx(GetEventDamageSource(), GetTriggerUnit(), 3, GetEventDamage()* .5)
+                call SaveBoolean(HY, h, 0, false)
+            endif
+        elseif GetTriggerEventId() == EVENT_WIDGET_DEATH then
+            call FlushChildHashtable(HY, h)
+            call DestroyTrigger(t)
+            call UnitRemoveAbility(targetUnit,'A2T4')
+            call UnitRemoveAbility(targetUnit,'A3KE')
+            call UnitRemoveAbility(targetUnit,'B3KE')
+            //call UnitRemoveAbility(targetUnit,'A3KD')
+            call RemoveSavedHandle(HY, GetHandleId(targetUnit),'A2T5')
+        elseif c >(level + 2)* 10 or GetUnitAbilityLevel(targetUnit,'A2T4') == 0 then
+            call FlushChildHashtable(HY, h)
+            call DestroyTrigger(t)
+            call UnitRemoveAbility(targetUnit,'A2T4')
+            call UnitRemoveAbility(targetUnit,'A3KE')
+            call UnitRemoveAbility(targetUnit,'B3KE')
+            //call UnitRemoveAbility(targetUnit,'A3KD')
+            call RemoveSavedHandle(HY, GetHandleId(targetUnit),'A2T5')
+        else
+            set c = c + 1
+            call SaveInteger(HY, h, 0, c)
+        endif
+        set t = null
+        set targetUnit = null
+        return false
+    endfunction
+    function Q6R takes nothing returns nothing
+        local unit whichUnit = GetTriggerUnit()
+        local unit targetUnit = GetSpellTargetUnit()
+        local integer level = GetUnitAbilityLevel(whichUnit,'A2T5')
+        local trigger t
+        local integer h
+        if HaveSavedHandle(HY, GetHandleId(targetUnit),'A2T5') then
+            set t = LoadTriggerHandle(HY, GetHandleId(targetUnit),'A2T5')
+            set h = GetHandleId(t)
+        else
+            set t = CreateTrigger()
+            set h = GetHandleId(t)
+            call SaveTriggerHandle(HY, GetHandleId(targetUnit),'A2T5', t)
+            call TriggerRegisterTimerEvent(t, .1, true)
+            call TriggerRegisterUnitEvent(t, targetUnit, EVENT_UNIT_DAMAGED)
+            call TriggerRegisterDeathEvent(t, targetUnit)
+            call TriggerAddCondition(t, Condition(function Q5R))
+            call SaveUnitHandle(HY, h, 17,(targetUnit))
+            call SetPlayerAbilityAvailable(GetOwningPlayer(targetUnit),'A2T4', false)
+        endif
+        call UnitAddPermanentAbility(targetUnit,'A3KE')
+        //call UnitAddPermanentAbility(targetUnit,'A3KD')
+        call UnitAddPermanentAbility(targetUnit,'A2T4')
+        call SaveInteger(HY, h, 0, 0)
+        call SaveInteger(HY, h, 5, level)
+        set whichUnit = null
+        set targetUnit = null
+        set t = null
+    endfunction
+    function FateEdictOnSpellEffect takes nothing returns nothing
+        if IsUnitAlly(GetSpellTargetUnit(), GetOwningPlayer(GetTriggerUnit())) or not UnitHasSpellShield(GetSpellTargetUnit()) then
+            call Q6R()
+        endif
+    endfunction
+
 endscope
 
