@@ -39,8 +39,16 @@ library MemoryBase initializer Init
         return MHTool_ReadInt(addr)
     endfunction
 
+    function ReadRealFloat takes integer addr returns real
+        return MHTool_ReadReal(addr)
+    endfunction
+
     function WriteRealMemory takes integer addr, integer value returns nothing
         call MHTool_WriteInt(addr, value)
+    endfunction
+
+    function WriteRealFloat takes integer addr, real value returns nothing
+        call MHTool_WriteReal(addr, value)
     endfunction
 
     function ConvertHandle takes handle h returns integer
