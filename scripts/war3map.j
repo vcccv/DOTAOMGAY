@@ -1129,7 +1129,7 @@ globals
 	integer FHV ='A0HU'
 	integer FJV ='A0HX'
 	trigger FKV
-	region FLV
+	region RoshanAllowedAttackRect
 	boolean IsDisableSpawn = false
 	boolean FPV = false
 	boolean FQV = false
@@ -22572,7 +22572,7 @@ endfunction
 
 function RoshanAttackedTrig takes nothing returns boolean
 	if GetUnitTypeId(GetTriggerUnit())=='n00L' then
-		if IsUnitInRegion(FLV, GetAttacker()) == false or RectContainsUnit(ZV, GetAttacker()) then
+		if IsUnitInRegion(RoshanAllowedAttackRect, GetAttacker()) == false or RectContainsUnit(ZV, GetAttacker()) then
 			call InterfaceErrorForPlayer(GetOwningPlayer(GetAttacker()), GetObjectName('n035'))
 			call IssueImmediateOrderById(GetAttacker(), 851972)
 		endif
@@ -65399,7 +65399,7 @@ function UnitIssuedItemOrder takes nothing returns nothing // 发布物品命令
 			elseif RectContainsCoords(WA, GetOrderPointX(), GetOrderPointY()) or RectContainsCoords(YA, GetOrderPointX(), GetOrderPointY()) then
 				call EXStopUnit(whichUnit)
 				call InterfaceErrorForPlayer(trigPlayer, GetObjectName('TX18'))
-			elseif IsPointInRegion(FLV, GetOrderPointX(), GetOrderPointY()) then
+			elseif IsPointInRegion(RoshanAllowedAttackRect, GetOrderPointX(), GetOrderPointY()) then
 				call EXStopUnit(whichUnit)
 				call InterfaceErrorForPlayer(trigPlayer, GetObjectName('TX17'))
 			endif
@@ -69322,8 +69322,11 @@ endfunction
 	set t = CreateTrigger()
 	call TriggerRegisterPlayerUnitEvent(t, NeutralCreepPlayer, EVENT_PLAYER_UNIT_ATTACKED, null)
 	call TriggerAddCondition(t, Condition(function RoshanAttackedTrig))
-	set FLV = CreateRegion()
-	call RegionAddRect(FLV, Rect( 3456, -2016, 4448, -2624))
+	set RoshanAllowedAttackRect = CreateRegion()
+	//call RegionAddRect(RoshanAllowedAttackRect, Rect( 3456, -2016, 4448, -2624))
+
+	call RegionAddRect(RoshanAllowedAttackRect, Rect( 3456, -2016, 4384, -2624))
+	
 	set ZV = Rect( 3456-64, -2016+ 64, 3456+ 128, -2016 -128)
 	set Y1 = CreateTrigger()
 	call YDWETriggerRegisterEnterRectSimpleNull(Y1, GetWorldBounds())

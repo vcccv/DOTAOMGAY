@@ -261,7 +261,7 @@ library ObserverSentryWard requires ItemUtils, EventSystem, ItemSystem
                 // 对自己使用时
                 call SwitchWardItemState(GetTriggerUnit(), GetSpellTargetItem())
             elseif GetSpellTargetUnit() == null then
-                if IsPointInRegion(FLV, x, y) then
+                if IsPointInRegion(RoshanAllowedAttackRect, x, y) then
                     // 如果是堆叠版本，直接保持原有堆叠数量即可
                     if (id == 'AA00' or id == 'AA01') then
                         call SetItemCharges(sourceItem, GetItemCharges(sourceItem) + 1)
