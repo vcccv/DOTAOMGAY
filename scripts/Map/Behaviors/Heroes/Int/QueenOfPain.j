@@ -38,7 +38,7 @@ scope QueenOfPain
         set targetUnit = null
     endfunction
     function ScreamOfPainLaunchMissimle takes unit whichUnit, unit targetUnit returns nothing
-        local trigger t = LaunchMissileDummyById(whichUnit, targetUnit,'h0BP', "CWA", 900, false)
+        local trigger t = LaunchMissileDummyById(whichUnit, targetUnit,'h0BP', "CWA", 900, false, true)
         local integer h = GetHandleId(t)
         local integer level = GetUnitAbilityLevel(whichUnit,'A04A')
         local real damage

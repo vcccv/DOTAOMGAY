@@ -63,7 +63,7 @@ scope PhantomAssassin
         if IsUnitDummy(trigUnit) then
             set trigUnit = PlayerHeroes[GetPlayerId(GetOwningPlayer(trigUnit))]
         endif
-        set t = LaunchMissileDummyById(trigUnit, targetUnit,'h010', "StiflingDaggerOnMissileHit", 1200, false)
+        set t = LaunchMissileDummyById(trigUnit, targetUnit,'h010', "StiflingDaggerOnMissileHit", 1200, false, true)
         set h = GetHandleId(t)
         set u = LoadUnitHandle(HY, GetHandleId(t), 45)
         

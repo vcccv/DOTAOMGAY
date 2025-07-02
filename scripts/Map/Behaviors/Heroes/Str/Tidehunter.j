@@ -54,7 +54,7 @@ scope Tidehunter
 
         if not isUpgraded then
             if not UnitHasSpellShield(targUnit) then
-                call LaunchMissileDummyById(whichUnit, targUnit, 'h0EN', "GushMissileOnHit", 4000, false)
+                call LaunchMissileDummyById(whichUnit, targUnit, 'h0EN', "GushMissileOnHit", 4000, false, true)
             endif
         else
             if targUnit == null then
