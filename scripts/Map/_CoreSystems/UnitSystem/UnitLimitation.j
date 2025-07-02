@@ -236,6 +236,26 @@ library UnitLimitation requires Base, UnitModel, MemoryUtils
         endif
     endfunction
 
+    // 缠绕
+    globals
+        private constant key UNIT_ROOT_COUNT
+    endglobals
+    function UnitIncRootCount takes unit whichUnit returns nothing
+        local integer h     = GetHandleId(whichUnit)
+        local integer count = Table[h][UNIT_ROOT_COUNT] + 1
+        set Table[h][UNIT_ROOT_COUNT] = count
+        if count == 1 then
+            call MHUnit_DisableMove(whichUnit, true)
+        endif
+    endfunction
+    function UnitDecRootCount takes unit whichUnit returns nothing
+        local integer h     = GetHandleId(whichUnit)
+        local integer count = Table[h][UNIT_ROOT_COUNT] - 1
+        set Table[h][UNIT_ROOT_COUNT] = count
+        if count == 0 then
+            call MHUnit_DisableMove(whichUnit, false)
+        endif
+    endfunction
     
     globals
         constant integer AMPLIFY_DAMAGE_BUFF     = 'B00T'
@@ -260,7 +280,7 @@ library UnitLimitation requires Base, UnitModel, MemoryUtils
             set playerId        = ReadRealMemory(pBuff + 0xCC)
             set shareVisionType = ReadRealMemory(pBuff + 0xD0)
 
-            call BJDebugMsg("ImmunityBuffTruesight: pid:" + I2S(playerId) + " shareVisionType:" + I2S(shareVisionType) + " b:" + B2S(flag))
+            //call BJDebugMsg("ImmunityBuffTruesight: pid:" + I2S(playerId) + " shareVisionType:" + I2S(shareVisionType) + " b:" + B2S(flag))
 
             if flag then
                 if ( id == TRACK_BUFF or id == DUST_OF_APPEARANCE_BUFF ) then

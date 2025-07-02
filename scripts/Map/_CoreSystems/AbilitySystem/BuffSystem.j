@@ -59,11 +59,17 @@ library BuffSystem requires Base
     endfunction
 
     globals
+        // 禁止移动类buff
         constant integer DISABLE_MOVE_BUFF_KEY = 'PRGN'
+        // 缴械类buff
         constant integer DISARM_BUFF_KEY 	   = 'PRGH'
+        // 沉默类buff
         constant integer SILENCE_BUFF_KEY 	   = 'PRGI'
+        // 减速类buff
         constant integer SLOW_BUFF_KEY		   = 'PRGS'
+        // 正面buff
         constant integer POSITIVE_BUFF_KEY     = 'PRGA'
+        // 负面buff
         constant integer NEGATIVE_BUFF_KEY     = 'PRGE'
     endglobals
 
@@ -285,7 +291,7 @@ library BuffSystem requires Base
         call SetBuffAbilityId('A296', SLOW_BUFF_KEY)
         call SetBuffAbilityId('A297', SLOW_BUFF_KEY)
         call SetBuffAbilityId('B05Q', SLOW_BUFF_KEY)
-        call SetBuffAbilityId('B0GT', SLOW_BUFF_KEY)
+        //call SetBuffAbilityId('B0GT', SLOW_BUFF_KEY)
         call SetBuffAbilityId('QH00', SLOW_BUFF_KEY)
         call SetBuffAbilityId('A1W2', SLOW_BUFF_KEY)
         call SetBuffAbilityId('B0DO', SLOW_BUFF_KEY)
@@ -375,7 +381,8 @@ library BuffSystem requires Base
         call SetBuffAbilityId('B0FN', DISABLE_MOVE_BUFF_KEY)
         call SetBuffAbilityId('Bena', DISABLE_MOVE_BUFF_KEY)
         call SetBuffAbilityId('Beng', DISABLE_MOVE_BUFF_KEY)
-        
+        // 气运之末
+        call SetBuffAbilityId('B0GT', DISABLE_MOVE_BUFF_KEY)
     
         call SetBuffAbilityId('B031', SILENCE_BUFF_KEY)
         // 血棘 - 灵魂撕裂

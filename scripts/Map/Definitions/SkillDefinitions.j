@@ -74,6 +74,9 @@ library HeroSkillDefine requires SkillSystem, AbilityCustomOrderId
         // 海象挥击
         call RegisterSkillInitMethodByIndex(SKILL_INDEX_WALRUS_PUNCH, "WalrusPunchOnInitializer")
 
+        // 气运之末
+        call RegisterSkillInitMethodByIndex(SKILL_INDEX_FORTUNE_END, "FortuneEndOnInitializer")
+
         // 601是init
         call SaveStr(ObjectHashTable, 'A060', 601, "W_A")
         call SaveStr(ObjectHashTable, 'A0LE', 601, "WYA")
