@@ -134,7 +134,6 @@ library TownPortalScrollHandler requires Communication, TownPortalScrollFrame, U
         
         set charges = GetUnitTownPortalScrollCharges(selectedUnit)
         if charges > 0 then
-            call MHUI_PlayNativeSound("InterfaceClick")
             
             if MHMsg_IsIndicatorOn(INDICATOR_TYPE_TARGET_MODE) and MHUIData_GetTargetModeAbility() == TOWN_PORTAL_SCROLL_ABILITY_ID then
                 set x = GetSelfCastX(selectedUnit)
@@ -150,15 +149,18 @@ library TownPortalScrollHandler requires Communication, TownPortalScrollFrame, U
                     else
                         call MHMsg_SendIndicatorOrder(null, x, y, ORDER_massteleport, flag)
                     endif
+                    call MHUI_PlayNativeSound("InterfaceClick")
                 else
                     call SendErrorMessage("已经在泉水范围内")
                 endif
             elseif GetUnitAbilityLevel(selectedUnit, TOWN_PORTAL_SCROLL_ABILITY_ID) == 1 then
                 // ABILITY_CAST_TYPE_POINT + ABILITY_CAST_TYPE_ALONE
                 call MHMsg_CallTargetMode(TOWN_PORTAL_SCROLL_ABILITY_ID, ORDER_massteleport, 0x100002)
+                call MHUI_PlayNativeSound("InterfaceClick")
             else
                 // ABILITY_CAST_TYPE_POINT + ABILITY_CAST_TYPE_TARGET + ABILITY_CAST_TYPE_ALONE
                 call MHMsg_CallTargetMode(TOWN_PORTAL_SCROLL_ABILITY_ID, ORDER_massteleport, 0x100006)
+                call MHUI_PlayNativeSound("InterfaceClick")
             endif
             call MHEvent_SetKey(-1)
         endif
