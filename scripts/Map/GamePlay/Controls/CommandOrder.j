@@ -40,16 +40,19 @@ library CommandOrder requires optional TownPortalScrollHandler
             */ and not IsKeyPressed(OSKEY_ALT) and not IsKeyPressed(OSKEY_CONTROL) /*
             */ and GetUnitAbilityLevel(GetSelectedUnit(), 'Amov') > 0 then
 
+            call MHUI_PlayNativeSound("InterfaceClick")
             call MHMsg_CallTargetMode(0, 851986, ABILITY_CAST_TYPE_POINT + ABILITY_CAST_TYPE_TARGET)
         elseif pressedKey == OSKEY_P /*
             */ and not IsKeyPressed(OSKEY_ALT) and not IsKeyPressed(OSKEY_CONTROL) /*
             */ and GetUnitAbilityLevel(GetSelectedUnit(), 'Amov') > 0 then
 
+            call MHUI_PlayNativeSound("InterfaceClick")
             call MHMsg_CallTargetMode(0, 851990, ABILITY_CAST_TYPE_POINT + ABILITY_CAST_TYPE_TARGET)
         elseif pressedKey == OSKEY_S /*
             */ and not IsKeyPressed(OSKEY_ALT) and not IsKeyPressed(OSKEY_CONTROL) /*
             */ and GetUnitAbilityLevel(GetSelectedUnit(), 'Aatk') > 0 then
 
+            call MHUI_PlayNativeSound("InterfaceClick")
             if IsKeyPressed(OSKEY_SHIFT) then
                 call MHMsg_SendImmediateOrder(851972, LOCAL_ORDER_FLAG_QUEUE)
             else
@@ -59,6 +62,7 @@ library CommandOrder requires optional TownPortalScrollHandler
             */ and not IsKeyPressed(OSKEY_ALT) and not IsKeyPressed(OSKEY_CONTROL) /*
             */ and GetUnitAbilityLevel(GetSelectedUnit(), 'Aatk') > 0 and GetUnitAbilityLevel(GetSelectedUnit(), 'Amov') > 0 then
 
+            call MHUI_PlayNativeSound("InterfaceClick")
             if IsKeyPressed(OSKEY_SHIFT) then
                 call MHMsg_SendImmediateOrder(851993, LOCAL_ORDER_FLAG_QUEUE)
             else
