@@ -900,7 +900,7 @@ globals
 	unit MissileHitTargetUnit
 	unit TempSellingUnit
 	item TempItem = null
-	trigger V3
+	trigger TempTrigger
 	group DK
 	group EK
 	player TempPlayer
@@ -2403,7 +2403,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A2QI', 0, "GeomagneticGripOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A2TH', 0, "StoneRemnantOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A2QM', 0, "BoulderSmashOnSpellEffect")
-	call SaveStr(ObjectHashTable,'A2QT', 0, "SpellEffect__FortuneEnd")
+	call SaveStr(ObjectHashTable,'A2QT', 0, "FortuneEndOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A2T5', 0, "SpellEffect__FateEdict")
 	call SaveStr(ObjectHashTable,'A2SG', 0, "ZWV")
 	call SaveStr(ObjectHashTable,'A2TF', 0, "SpellEffect__FalsePromise")
@@ -2924,7 +2924,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'Acdh', 0, "JOE")
 	call SaveStr(ObjectHashTable,'A1P8', 1, "JRE")
 	call SaveStr(ObjectHashTable,'A085', 1, "IlluminateOnSpellCast")
-	call SaveStr(ObjectHashTable,'A2QT', 1, "JFE")
+	call SaveStr(ObjectHashTable,'A2QT', 1, "FortuneEndOnEndCast")
 	call SaveStr(ObjectHashTable,'A1AA', 2, "JGE")	//回音重踏1
 	call SaveStr(ObjectHashTable,'A2LK', 2, "JGE")
 	call SaveStr(ObjectHashTable,'A065', 2, "JHE")
@@ -2956,7 +2956,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A14O', 3, "KDE")
 	call SaveStr(ObjectHashTable,'A3FJ', 3, "KDE")
 	call SaveStr(ObjectHashTable,'A2QI', 3, "GeomagneticGripOnCast")
-	call SaveStr(ObjectHashTable,'A2QT', 3, "KJE")
+	call SaveStr(ObjectHashTable,'A2QT', 3, "FortuneEndOnSpellCast")
 	call SaveStr(ObjectHashTable,'A180', 3, "KLE")
 	call SaveStr(ObjectHashTable,'A1BX', 3, "KME")
 	call SaveStr(ObjectHashTable,'A30L', 3, "KME")
@@ -4860,7 +4860,7 @@ endfunction
 function IsAutocastOrb takes integer id returns boolean
 	return id =='A0DY' or id =='A1WB' or id =='A026' or id =='A09V' or id =='AHfa' or id =='A0LZ' or id =='A0OI'
 endfunction
-function OXX takes integer id returns boolean
+function IsDodgeableAbilityId takes integer id returns boolean
 	return id =='A0ME' or id =='AEbl' or id =='AIbk' or id =='QB08' or id =='A3FJ' or id =='A01O' or id =='A0FN' or id =='A14O'
 endfunction
 function GivePlayerGoldBonus takes player whichPlayer, integer goldBonus returns nothing
@@ -5835,7 +5835,7 @@ endfunction
 
 
 
-function NOX takes nothing returns boolean
+function LaunchMissileByUnitDummyOnUpdate takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
 	local unit targetUnit
@@ -5846,15 +5846,15 @@ function NOX takes nothing returns boolean
 	local real y
 	local real tx
 	local real ty
-	local real NAX
-	local real NNX
+	local real vel
+	local real angle
 	local real targetX
 	local real targetY
 	local boolean NDX
 	local real NFX
 	local real NGX
 	if GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT then
-		if OXX(GetSpellAbilityId()) then
+		if IsDodgeableAbilityId(GetSpellAbilityId()) then
 			call SaveBoolean(HY, h,-1, true)
 			call SaveReal(HY, h,-1, GetUnitX(GetTriggerUnit()))
 			call SaveReal(HY, h,-2, GetUnitY(GetTriggerUnit()))
@@ -5868,22 +5868,22 @@ function NOX takes nothing returns boolean
 		set y = GetUnitY(missileDummy)
 		set tx = GetUnitX(targetUnit)
 		set ty = GetUnitY(targetUnit)
-		set NAX = speed * .03
+		set vel = speed * .03
 		if (LoadBoolean(HY, h,-1)) then
 			set tx = LoadReal(HY, h,-1)
 			set ty = LoadReal(HY, h,-2)
 		endif
-		set NNX = AngleBetweenXY(x, y, tx, ty)
-		set targetX = x + NAX * Cos(NNX * bj_DEGTORAD)
-		set targetY = y + NAX * Sin(NNX * bj_DEGTORAD)
+		set angle = AngleBetweenXY(x, y, tx, ty)
+		set targetX = x + vel * Cos(angle * bj_DEGTORAD)
+		set targetY = y + vel * Sin(angle * bj_DEGTORAD)
 		call SetUnitX(missileDummy, targetX)
 		call SetUnitY(missileDummy, targetY)
-		call EXSetUnitFacing(missileDummy, NNX)
+		call EXSetUnitFacing(missileDummy, angle)
 		if IsUnitDeath(targetUnit) then
 			call KillUnit(missileDummy)
 			call FlushChildHashtable(HY, h)
 			call DestroyTrigger(t)
-		elseif GetDistanceBetween(tx, ty, targetX, targetY)<= NAX then
+		elseif GetDistanceBetween(tx, ty, targetX, targetY)<= vel then
 			call KillUnit(missileDummy)
 			set TempUnit = whichUnit
 			set MissileHitTargetUnit = targetUnit
@@ -5903,14 +5903,14 @@ function NOX takes nothing returns boolean
 	return false
 endfunction
 
-function LaunchMissileByUnitDummy takes unit whichUnit, unit targetUnit, integer unitTypeId, string callback, real speed, boolean canDodge returns trigger
+function LaunchMissileDummyById takes unit whichUnit, unit targetUnit, integer unitTypeId, string callback, real speed, boolean canDodge returns trigger
 	local trigger t   = CreateTrigger()
 	local integer h   = GetHandleId(t)
 	local real    sx  = GetUnitX(whichUnit)
 	local real    sy  = GetUnitY(whichUnit)
 	local real    facing = GetUnitFacing(whichUnit)
 	call TriggerRegisterTimerEvent(t, .03, true)
-	call TriggerAddCondition(t, Condition(function NOX))
+	call TriggerAddCondition(t, Condition(function LaunchMissileByUnitDummyOnUpdate))
 	call SaveReal(HY, h, 44,((speed)* 1.))
 	call SaveUnitHandle(HY, h, 30,((targetUnit)))
 	call SaveStr(HY, h, 46,(callback))
@@ -5926,9 +5926,13 @@ function LaunchMissileByUnitDummy takes unit whichUnit, unit targetUnit, integer
 	else
 		call SaveUnitHandle(HY, h, 45,(CreateUnit(GetOwningPlayer(targetUnit), unitTypeId, sx, sy, facing)))
 	endif
-	set V3 = t
+	set TempTrigger = t
 	set t = null
-	return V3
+	return TempTrigger
+endfunction
+
+function LaunchMissileDummyByUnit takes unit whichUnit, unit targetUnit, unit missileUnit, string callback, real speed, boolean canDodge, boolean checkAlive returns nothing
+	
 endfunction
 
 // 暂不考虑抛物线 仅做平面位移
@@ -18195,7 +18199,7 @@ function DXO takes boolean b, unit targetUnit returns nothing
 	local integer DOO
 	local integer DRO
 	local real O3O
-	set t2 = LaunchMissileByUnitDummy(whichUnit, targetUnit,'h0BS', "DEO", 1200, false)
+	set t2 = LaunchMissileDummyById(whichUnit, targetUnit,'h0BS', "DEO", 1200, false)
 	set DOO = GetHandleId(t2)
 	set DRO = GetHeroMainAttributesType(whichUnit)
 	if b then
@@ -18598,7 +18602,7 @@ function ItemRodOfAtosOnMissileLaunch takes nothing returns nothing
 	local unit whichUnit  = GetTriggerUnit()
 	local unit targetUnit  = GetSpellTargetUnit()
 	local integer h
-	set h = GetHandleId(LaunchMissileByUnitDummy(whichUnit, targetUnit, 'h999', "ItemRodOfAtosOnMissileHit", 1500, true))
+	set h = GetHandleId(LaunchMissileDummyById(whichUnit, targetUnit, 'h999', "ItemRodOfAtosOnMissileHit", 1500, true))
 	if h > 0 then
 		set whichUnit = LoadUnitHandle(HY, h, 45)
 		call MHUnit_SetModel(whichUnit, "Abilities\\Spells\\Undead\\DevourMagic\\DevourMagicBirthMissile.mdl", false)
@@ -24558,7 +24562,7 @@ function WRO takes nothing returns nothing
 			loop
 			exitwhen k == i
 				set k = k + 1
-				call LaunchMissileByUnitDummy(CreateUnit(GetOwningPlayer(u),'e00E', GetUnitX(u) + GetRandomReal(50, 300)* Cos(GetRandomReal(0, 6.14)), GetUnitY(u) + GetRandomReal(50, 300)* Sin(GetRandomReal(0, 6.14)), 0), u,'h0CR', "WIO", 3000, false)
+				call LaunchMissileDummyById(CreateUnit(GetOwningPlayer(u),'e00E', GetUnitX(u) + GetRandomReal(50, 300)* Cos(GetRandomReal(0, 6.14)), GetUnitY(u) + GetRandomReal(50, 300)* Sin(GetRandomReal(0, 6.14)), 0), u,'h0CR', "WIO", 3000, false)
 			endloop
 			call GroupRemoveUnit(g, u)
 			set u = FirstOfGroup(g)
@@ -31603,7 +31607,7 @@ function B_E takes nothing returns nothing
 	local trigger t = null
 	local unit d = null
 	if not UnitHasSpellShield(GetSpellTargetUnit()) then
-		set t = LaunchMissileByUnitDummy(GetTriggerUnit(), GetSpellTargetUnit(),'h077', "C7R", 1500, true)
+		set t = LaunchMissileDummyById(GetTriggerUnit(), GetSpellTargetUnit(),'h077', "C7R", 1500, true)
 		set d = LoadUnitHandle(HY, GetHandleId(t), 45)
 		call SaveEffectHandle(HY, GetHandleId(t),'00fx', AddSpecialEffectTarget("Abilities\\Spells\\Undead\\DeathCoil\\DeathCoilMissile.mdl", d, "origin"))
 		set t = null
@@ -33184,7 +33188,7 @@ function GWR takes nothing returns nothing
 		call GroupRemoveGroup(g, tg)
 		set u = FirstOfGroup(tg)
 		if u != null then
-			call LaunchMissileByUnitDummy(targetUnit, u,'h02K', "GWR", 1000, true)
+			call LaunchMissileDummyById(targetUnit, u,'h02K', "GWR", 1000, true)
 			call SaveUnitHandle(ObjectHashTable, GetHandleId(targetUnit),'A004'+ 1, whichUnit)
 			call SaveInteger(ObjectHashTable, h,'A004', GYR -1)
 		else
@@ -33215,7 +33219,7 @@ function G_R takes nothing returns nothing
 	local integer level = LoadInteger(OtherHashTable2,'A3E9', 0)
 	call T4V(whichUnit)
 	if UnitHasSpellShield(targetUnit) == false then
-		call LaunchMissileByUnitDummy(whichUnit, targetUnit,'h02K', "GWR", 1000, true)
+		call LaunchMissileDummyById(whichUnit, targetUnit,'h02K', "GWR", 1000, true)
 		call SaveInteger(ObjectHashTable, GetHandleId(whichUnit),'A004', level -1)
 		call SaveInteger(ObjectHashTable, GetHandleId(whichUnit),'A005', level)
 		call SaveGroupHandle(ObjectHashTable, GetHandleId(whichUnit),'A004', AllocationGroup(135))
@@ -33229,7 +33233,7 @@ function G_R takes nothing returns nothing
 endfunction
 function FIE takes nothing returns nothing
 	if not UnitHasSpellShield(GetSpellTargetUnit()) then
-		call LaunchMissileByUnitDummy(GetTriggerUnit(), GetSpellTargetUnit(),'h02K', "GWR", 1000, true)
+		call LaunchMissileDummyById(GetTriggerUnit(), GetSpellTargetUnit(),'h02K', "GWR", 1000, true)
 		call SaveInteger(ObjectHashTable, GetHandleId(GetTriggerUnit()),'A004', GetUnitAbilityLevel(GetTriggerUnit(),'A004')-1)
 		call SaveGroupHandle(ObjectHashTable, GetHandleId(GetTriggerUnit()),'A004', AllocationGroup(136))
 		call SaveInteger(ObjectHashTable, GetHandleId(GetTriggerUnit()),'A005', GetUnitAbilityLevel(GetTriggerUnit(),'A004'))
@@ -33517,7 +33521,7 @@ function HBR takes nothing returns nothing
 	endif
 	if GetUnitAbilityLevel(targetUnit,'A3E9') == 1 and IsUnitMagicImmune(whichUnit) and HGR == false then
 		if UnitHasSpellShield(whichUnit) == false then
-			call LaunchMissileByUnitDummy(targetUnit, whichUnit,'h01K', "HBR", 1000, true)
+			call LaunchMissileDummyById(targetUnit, whichUnit,'h01K', "HBR", 1000, true)
 		else
 			call UnitRemoveSpellShield(whichUnit)
 		endif
@@ -33528,7 +33532,7 @@ function HBR takes nothing returns nothing
 endfunction
 function Y7V takes nothing returns nothing
 	if not UnitHasSpellShield(GetSpellTargetUnit()) then
-		call LaunchMissileByUnitDummy(GetTriggerUnit(), GetSpellTargetUnit(),'h01K', "HBR", 1000, true)
+		call LaunchMissileDummyById(GetTriggerUnit(), GetSpellTargetUnit(),'h01K', "HBR", 1000, true)
 	endif
 endfunction
 function a_gangbei takes nothing returns nothing
@@ -33539,7 +33543,7 @@ function a_gangbei takes nothing returns nothing
 	loop
 		set u = FirstOfGroup(g)
 	exitwhen u == null
-		call LaunchMissileByUnitDummy(GetTriggerUnit(), u,'h01K', "HBR", 1000, true)
+		call LaunchMissileDummyById(GetTriggerUnit(), u,'h01K', "HBR", 1000, true)
 		call GroupRemoveUnit(g, u)
 	endloop
 	call DeallocateGroup(g)
@@ -36186,106 +36190,8 @@ function QZR takes nothing returns nothing
 	endif
 	set u = null
 endfunction
-function Q_R takes nothing returns nothing
-	call ARX("war3mapImported\\FortunesEndTarget.mdx", GetEnumUnit(), "origin", 3)
-	call IssueTargetOrderById(IG, 852111, GetEnumUnit())
-	call UnitRemoveAbility(GetEnumUnit(),'A2T4')
-	call UnitDamageTargetEx(RG, GetEnumUnit(), 1, 40 + 60 * BG)
-endfunction
-function Q0R takes nothing returns nothing
-	local unit whichUnit = GetTriggerUnit()
-	local unit targetUnit =(LoadUnitHandle(HY,(GetHandleId(whichUnit)), 796))
-	local real time = RMinBJ((GetGameTime())-(LoadReal(HY,(GetHandleId(whichUnit)), 358)), 3)
-	local integer level = GetUnitAbilityLevel(whichUnit,'A2QT')
-	local integer Q1R = R2I(2. * time)
-	local unit dummyUnit = CreateUnit(GetOwningPlayer(whichUnit),'e00E', GetUnitX(whichUnit), GetUnitY(whichUnit), GetUnitFacing(whichUnit))
-	local unit Q2R
-	local group g
-	local integer T0V ='A594'
-	if Q1R > 3 then
-		set T0V ='A595'
-		set Q1R = Q1R -3
-	endif
-	if targetUnit != null then
-		set Q2R = CreateUnit(GetOwningPlayer(whichUnit),'o00Z', GetUnitX(targetUnit), GetUnitY(targetUnit), 0)
-		call UnitApplyTimedLife(Q2R,'BTLF', .5)
-		call UnitAddAbility(dummyUnit, T0V)
-		call SetUnitAbilityLevel(dummyUnit, T0V, Q1R)
-		set TempUnit = whichUnit
-		set RG = whichUnit
-		set IG = dummyUnit
-		set BG = level
-		set g = AllocationGroup(189)
-		call GroupEnumUnitsInRange(g, GetUnitX(targetUnit), GetUnitY(targetUnit), 350, Condition(function DHX))
-		call ForGroup(g, function Q_R)
-		if GetUnitAbilityLevel(targetUnit,'A3E9') == 1 and IsUnitMagicImmune(whichUnit) == false then
-			if UnitHasSpellShield(whichUnit) == false then
-				call SetUnitOwner(dummyUnit, GetOwningPlayer(targetUnit), true)
-				call SetUnitX(dummyUnit, GetUnitX(whichUnit))
-				call SetUnitY(dummyUnit, GetUnitY(whichUnit))
-				set TempUnit = targetUnit
-				set RG = targetUnit
-				set IG = dummyUnit
-				set BG = level
-				call GroupEnumUnitsInRange(g, GetUnitX(whichUnit), GetUnitY(whichUnit), 350, Condition(function DHX))
-				call ForGroup(g, function Q_R)
-			else
-				call UnitRemoveSpellShield(whichUnit)
-			endif
-		endif
-		call DeallocateGroup(g)
-	endif
-	set whichUnit = null
-	set targetUnit = null
-	set dummyUnit = null
-	set Q2R = null
-	set g = null
-endfunction
-function Q3R takes nothing returns boolean
-	local trigger t = GetTriggeringTrigger()
-	local integer h = GetHandleId(t)
-	local unit whichUnit =(LoadUnitHandle(HY, h, 14))
-	local unit targetUnit =(LoadUnitHandle(HY, h, 17))
-	if GetTriggerEventId() == EVENT_WIDGET_DEATH then
-		call SaveReal(HY,(GetHandleId(whichUnit)), 356,((GetUnitX(targetUnit))* 1.))
-		call SaveReal(HY,(GetHandleId(whichUnit)), 357,((GetUnitY(targetUnit))* 1.))
-	endif
-	call FlushChildHashtable(HY, h)
-	call DestroyTrigger(t)
-	set t = null
-	set whichUnit = null
-	set targetUnit = null
-	return false
-endfunction
-function Q4R takes nothing returns nothing
-	local trigger t = CreateTrigger()
-	local integer h = GetHandleId(t)
-	local unit whichUnit = GetTriggerUnit()
-	call SaveReal(HY,(GetHandleId(whichUnit)), 358,(((GetGameTime()))* 1.))
-	call SaveUnitHandle(HY,(GetHandleId(whichUnit)), 796,(GetSpellTargetUnit()))
-	call DestroyEffect(AddSpecialEffect("war3mapImported\\CleanseTargetArea.mdx", GetUnitX(GetSpellTargetUnit()), GetUnitY(GetSpellTargetUnit())))
-	call SaveUnitHandle(HY, h, 14,(whichUnit))
-	call SaveUnitHandle(HY, h, 17,(GetSpellTargetUnit()))
-	call TriggerRegisterTimerEvent(t, 10, false)
-	call TriggerRegisterDeathEvent(t, GetSpellTargetUnit())
-	call TriggerAddCondition(t, Condition(function Q3R))
-	set t = null
-	set whichUnit = null
-endfunction
-function SpellEffect__FortuneEnd takes nothing returns nothing
-	if not UnitHasSpellShield(GetSpellTargetUnit()) then
-		call SaveBoolean(HY,(GetHandleId(GetTriggerUnit())), 360,(true))
-	endif
-endfunction
-function JFE takes nothing returns nothing
-	if LoadBoolean(HY, GetHandleId(GetTriggerUnit()), 360) then
-		call Q0R()
-	endif
-endfunction
-function KJE takes nothing returns nothing
-	call SaveBoolean(HY,(GetHandleId(GetTriggerUnit())), 360,(false))
-	call Q4R()
-endfunction
+
+
 function Q5R takes nothing returns boolean
 	local trigger t = GetTriggeringTrigger()
 	local integer h = GetHandleId(t)
@@ -38433,7 +38339,7 @@ function MoonGlaiveOnMissileHit takes nothing returns nothing
 		endif
 
 		if newTarget != null then
-			set t = LaunchMissileByUnitDummy(target, newTarget,'h999', "MoonGlaiveOnMissileHit", 880, true)
+			set t = LaunchMissileDummyById(target, newTarget,'h999', "MoonGlaiveOnMissileHit", 880, true)
 			set ht = GetHandleId(t)
 			set hu = GetHandleId(LoadUnitHandle(HY, ht, 45))
 			call SaveInteger(HY, hu, 0, count)
@@ -38468,7 +38374,7 @@ function MoonGlaiveOnMissileLaunch takes unit u, unit target, real d returns not
 	set newTarget = MoonGlaivePickTargetUnit(u, target, range, targGroup)
 
 	if newTarget != null then
-		set t = LaunchMissileByUnitDummy(target, newTarget, 'h999', "MoonGlaiveOnMissileHit", 880, true)
+		set t = LaunchMissileDummyById(target, newTarget, 'h999', "MoonGlaiveOnMissileHit", 880, true)
 		set ht = GetHandleId(t)
 		set hu = GetHandleId(LoadUnitHandle(HY, ht, 45))
 		call SaveInteger(HY, hu, 0, GetUnitAbilityLevel(u,'P098'))
@@ -40629,7 +40535,7 @@ function OBI takes nothing returns nothing
 	set targetUnit = null
 endfunction
 function ODI takes nothing returns nothing
-	local trigger t = LaunchMissileByUnitDummy(JWV, GetEnumUnit(),'h0D8', "OBI", 400, false)
+	local trigger t = LaunchMissileDummyById(JWV, GetEnumUnit(),'h0D8', "OBI", 400, false)
 	call SaveReal(HY, GetHandleId(t), 21, JYV * 1.)
 	set t = null
 endfunction
@@ -40784,7 +40690,7 @@ function OPI takes nothing returns nothing
 	set JZV[GetPlayerId(GetOwningPlayer(whichUnit))] = JZV[GetPlayerId(GetOwningPlayer(whichUnit))] + 2
 	call CommonTextTag("-2 " + GetObjectName('n0JP'), 3, triggerUnit, .023, 255, 0, 0, 230)
 	call SetHeroInt(triggerUnit, GetHeroInt(triggerUnit, false)-2, true)
-	call LaunchMissileByUnitDummy(triggerUnit, whichUnit,'h0CP', "OMI", 2400, false)
+	call LaunchMissileDummyById(triggerUnit, whichUnit,'h0CP', "OMI", 2400, false)
 	set whichUnit = null
 	set triggerUnit = null
 endfunction
@@ -41182,7 +41088,7 @@ endfunction
 function F8E takes nothing returns nothing
 	local unit whichUnit = GetTriggerUnit()
 	local unit targetUnit = GetSpellTargetUnit()
-	local trigger t = LaunchMissileByUnitDummy(whichUnit, targetUnit,'n07D', "O8I", 2500, false)
+	local trigger t = LaunchMissileDummyById(whichUnit, targetUnit,'n07D', "O8I", 2500, false)
 	local integer h = GetHandleId(t)
 	local unit d = LoadUnitHandle(HY, h, 45)
 	local effect fx = AddSpecialEffectTarget("Abilities\\Weapons\\CannonTowerMissile\\CannonTowerMissile.mdl", d, "origin")
@@ -41684,13 +41590,13 @@ function RPI takes nothing returns boolean
 	local boolean RQI
 	local real NFX
 	local real NGX
-	local real NAX
-	local real NNX
+	local real vel
+	local real angle
 	local real targetX
 	local real targetY
 	local boolean I1O
 	if GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT then
-		if OXX(GetSpellAbilityId()) then
+		if IsDodgeableAbilityId(GetSpellAbilityId()) then
 			call SaveBoolean(HY, h, 0, true)
 			call SaveReal(HY, h, 0, GetUnitX(GetTriggerUnit()))
 			call SaveReal(HY, h, 1, GetUnitY(GetTriggerUnit()))
@@ -41707,19 +41613,19 @@ function RPI takes nothing returns boolean
 		set RQI = LoadBoolean(HY, h, 0)
 		set NFX = LoadReal(HY, h, 0)
 		set NGX = LoadReal(HY, h, 1)
-		set NAX = 1000* .035
+		set vel = 1000* .035
 		if RQI then
 			set tx = NFX
 			set ty = NGX
 		endif
-		set NNX = AngleBetweenXY(x, y, tx, ty)
-		set targetX = x + NAX * Cos(NNX * bj_DEGTORAD)
-		set targetY = y + NAX * Sin(NNX * bj_DEGTORAD)
+		set angle = AngleBetweenXY(x, y, tx, ty)
+		set targetX = x + vel * Cos(angle * bj_DEGTORAD)
+		set targetY = y + vel * Sin(angle * bj_DEGTORAD)
 		set I1O =(LoadBoolean(HY, h, 249))
 		call SetUnitX(missileDummy, targetX)
 		call SetUnitY(missileDummy, targetY)
-		call SetUnitFacing(missileDummy, NNX)
-		if GetDistanceBetween(tx, ty, targetX, targetY)<= NAX then
+		call SetUnitFacing(missileDummy, angle)
+		if GetDistanceBetween(tx, ty, targetX, targetY)<= vel then
 			if RQI == false and I1O then
 				call RLI(LoadUnitHandle(HY, h, 31), p, targetUnit, level)
 			endif
@@ -42641,7 +42547,7 @@ function E4E takes nothing returns nothing
 			call NEI(whichUnit, g)
 			set targetUnit = TempUnit
 			if targetUnit != null then
-				set t = LaunchMissileByUnitDummy(whichUnit, targetUnit,'hTKR', "NVI", 900, true)
+				set t = LaunchMissileDummyById(whichUnit, targetUnit,'hTKR', "NVI", 900, true)
 				call SaveInteger(HY, GetHandleId(t), 0, GetUnitAbilityLevel(whichUnit, GetSpellAbilityId()))
 				set k = k + 1
 			endif
@@ -46116,7 +46022,7 @@ function HZI takes nothing returns boolean
 		if GetUnitAbilityLevel(target,'A3E9') == 1 and IsUnitType(u, UNIT_TYPE_HERO) and HGR == false and IsUnitMagicImmune(u) == false then
 			if UnitHasSpellShield(u) == false then
 				call T4V(target)
-				call LaunchMissileByUnitDummy(target, u,'h07V', "HZI", 1200, true)
+				call LaunchMissileDummyById(target, u,'h07V', "HZI", 1200, true)
 			else
 				call UnitRemoveSpellShield(u)
 			endif
@@ -46129,7 +46035,7 @@ endfunction
 function H_I takes nothing returns nothing
 	local timer t = GetExpiredTimer()
 	local integer h = GetHandleId(t)
-	call LaunchMissileByUnitDummy(LoadUnitHandle(HY, h, 0), LoadUnitHandle(HY, h, 1),'h07V', "HZI", 1200, true)
+	call LaunchMissileDummyById(LoadUnitHandle(HY, h, 0), LoadUnitHandle(HY, h, 1),'h07V', "HZI", 1200, true)
 	call FlushChildHashtable(HY, h)
 	call DestroyTimer(t)
 	set t = null
@@ -47528,7 +47434,7 @@ function LII takes nothing returns boolean
 	elseif GetTriggerEventId() == EVENT_UNIT_DAMAGED then
 	elseif GetTriggerEventId() == EVENT_UNIT_DEATH then
 		if IsUnitIllusion(GetDyingUnit()) == false then
-			call LaunchMissileByUnitDummy(GetDyingUnit(), whichUnit,'h07Y', "K9I", 9999, false)
+			call LaunchMissileDummyById(GetDyingUnit(), whichUnit,'h07Y', "K9I", 9999, false)
 		endif
 	endif
 	set t2 = null
@@ -50800,7 +50706,7 @@ function YHI takes nothing returns nothing
 	local unit whichUnit = MIV
 	local unit targetUnit = GetEnumUnit()
 	local integer level = MAV
-	local trigger t = LaunchMissileByUnitDummy(whichUnit, targetUnit,'h0DF', "YJI", 600, false)
+	local trigger t = LaunchMissileDummyById(whichUnit, targetUnit,'h0DF', "YJI", 600, false)
 	local integer h = GetHandleId(t)
 	call SaveReal(HY, h, 20,((level * 125 + 25)* 1.))
 	set whichUnit = null
@@ -51158,7 +51064,7 @@ function YJI takes nothing returns nothing
 	set targetUnit = null
 endfunction
 function Y5I takes nothing returns nothing
-	local trigger t = LaunchMissileByUnitDummy(TempUnit, GetEnumUnit(),'h00W', "YJI", 400, false)
+	local trigger t = LaunchMissileDummyById(TempUnit, GetEnumUnit(),'h00W', "YJI", 400, false)
 	local integer h = GetHandleId(t)
 	call SaveReal(HY, h, 20,((TempReal1)* 1.))
 	call SaveReal(HY, h, 21,((TempReal2)* 1.))
@@ -51436,7 +51342,7 @@ function ZNI takes nothing returns nothing
 	set level = GetUnitAbilityLevel(whichUnit,'A0BR')
 	set ZAI = 8 + 7 * level
 	if ZII <= ZAI then
-		set t = LaunchMissileByUnitDummy(GetTriggerUnit(), whichUnit,'h0CR', "WIO", 3000, false)
+		set t = LaunchMissileDummyById(GetTriggerUnit(), whichUnit,'h0CR', "WIO", 3000, false)
 		set h = GetHandleId(t)
 		set t = null
 		call DestroyEffect(AddSpecialEffect("Abilities\\Weapons\\ZigguratMissile\\ZigguratMissile.mdl", GetUnitX(GetTriggerUnit()), GetUnitY(GetTriggerUnit())))
@@ -54576,7 +54482,7 @@ function IXA takes nothing returns nothing
 	set t = null
 endfunction
 function IRA takes unit whichUnit, unit targetUnit, integer level, boolean FAR returns nothing
-	local trigger t = LaunchMissileByUnitDummy(whichUnit, targetUnit,'e00E', "IXA", 1300, true)
+	local trigger t = LaunchMissileDummyById(whichUnit, targetUnit,'e00E', "IXA", 1300, true)
 	call SaveInteger(HY, GetHandleId(t), 5, level)
 	call SaveBoolean(HY, GetHandleId(t), 0, FAR)
 	set t = null
@@ -55681,7 +55587,7 @@ function A1A takes nothing returns boolean
 	return false
 endfunction
 function A2A takes unit whichUnit, unit targetUnit, integer level, boolean FAR returns nothing
-	local trigger t = LaunchMissileByUnitDummy(whichUnit, targetUnit,'h0BE', "A_A", 1000, false)
+	local trigger t = LaunchMissileDummyById(whichUnit, targetUnit,'h0BE', "A_A", 1000, false)
 	local integer h = GetHandleId(t)
 	call SaveReal(HY, h, 20,((20 + level * 65)* 1.))
 	call SaveInteger(HY, h, 20, level)
@@ -60251,15 +60157,15 @@ function DQE takes nothing returns nothing
 	endloop
 	call DeallocateGroup(g)
 	if u1 != null then
-		set t = LaunchMissileByUnitDummy(whichUnit, u1,'h0E0', "K3A", 9000, false)
+		set t = LaunchMissileDummyById(whichUnit, u1,'h0E0', "K3A", 9000, false)
 		call SaveInteger(HY, GetHandleId(t), 0, GetUnitAbilityLevel(whichUnit, GetSpellAbilityId()))
 	endif
 	if u2 != null then
-		set t = LaunchMissileByUnitDummy(whichUnit, u2,'h0E0', "K3A", 9000, false)
+		set t = LaunchMissileDummyById(whichUnit, u2,'h0E0', "K3A", 9000, false)
 		call SaveInteger(HY, GetHandleId(t), 0, GetUnitAbilityLevel(whichUnit, GetSpellAbilityId()))
 	endif
 	if u3 != null then
-		set t = LaunchMissileByUnitDummy(whichUnit, u3,'h0E0', "K3A", 9000, false)
+		set t = LaunchMissileDummyById(whichUnit, u3,'h0E0', "K3A", 9000, false)
 		call SaveInteger(HY, GetHandleId(t), 0, GetUnitAbilityLevel(whichUnit, GetSpellAbilityId()))
 	endif
 	set g = null
@@ -60779,7 +60685,7 @@ function L7A takes nothing returns nothing
 	set targetUnit = null
 endfunction
 function L9A takes unit whichUnit, unit targetUnit, integer level returns nothing
-	call SaveInteger(HY, GetHandleId(LaunchMissileByUnitDummy(whichUnit, targetUnit,'h0DQ', "L7A", 500, false)), 0, level)
+	call SaveInteger(HY, GetHandleId(LaunchMissileDummyById(whichUnit, targetUnit,'h0DQ', "L7A", 500, false)), 0, level)
 endfunction
 function L8A takes nothing returns nothing
 	call T4V(LoadUnitHandle(OtherHashTable2,'A3E9', 0))
@@ -60877,7 +60783,7 @@ function D1E takes nothing returns nothing
 	set targetUnit = MOA(whichUnit, g)
 	call DeallocateGroup(g)
 	if targetUnit != null then
-		set t = LaunchMissileByUnitDummy(whichUnit, targetUnit,'h0E6', "MXA", 800, false)
+		set t = LaunchMissileDummyById(whichUnit, targetUnit,'h0E6', "MXA", 800, false)
 		call SaveInteger(HY, GetHandleId(t), 0, GetUnitAbilityLevel(whichUnit, GetSpellAbilityId()))
 		set t = null
 	endif
@@ -61237,7 +61143,7 @@ endfunction
 function PIA takes unit u returns nothing
 	local trigger t
 	if GetUnitTypeId(u)=='n020' and IsUnitDeath(PlayerHeroes[GetPlayerId(GetOwningPlayer(u))]) == false then
-		set t = LaunchMissileByUnitDummy(u, PlayerHeroes[GetPlayerId(GetOwningPlayer(u))],'h00W', "PRA", 400, false)
+		set t = LaunchMissileDummyById(u, PlayerHeroes[GetPlayerId(GetOwningPlayer(u))],'h00W', "PRA", 400, false)
 		call SaveReal(HY, GetHandleId(t),'n020', GetUnitState(u, UNIT_STATE_MAX_LIFE))
 		set t = null
 	endif
@@ -63352,7 +63258,7 @@ function SplitShot takes unit u returns nothing
 		set t = GetClosestUnitInGroup(g, GetUnitX(u), GetUnitY(u))
 	exitwhen t == null
 		call GroupRemoveUnit(g, t)
-		set trg = LaunchMissileByUnitDummy(u, t,'h30C', "SplitShot_A", 900, true)
+		set trg = LaunchMissileDummyById(u, t,'h30C', "SplitShot_A", 900, true)
 		set h = GetHandleId(trg)
 		call SaveReal(HY, h, 0, d)
 		set i = i + 1
@@ -68000,7 +67906,7 @@ endfunction
 function fj_trigger takes nothing returns nothing
 	local unit u = GetTriggerUnit()
 	local unit u2 = GetSpellTargetUnit()
-	call LaunchMissileByUnitDummy(u, u2,'h0EO', "fj_exec", 5000, true)
+	call LaunchMissileDummyById(u, u2,'h0EO', "fj_exec", 5000, true)
 	set u = null
 	set u2 = null
 endfunction

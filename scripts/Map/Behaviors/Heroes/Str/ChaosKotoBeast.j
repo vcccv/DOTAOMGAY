@@ -134,7 +134,7 @@ scope ChaosKotoBeast
         set targetUnit = null
     endfunction
     function CKR takes nothing returns nothing
-        local trigger t = LaunchMissileByUnitDummy(GetTriggerUnit(), GetSpellTargetUnit(),'hKOD', "CHR", 1000, true)
+        local trigger t = LaunchMissileDummyById(GetTriggerUnit(), GetSpellTargetUnit(),'hKOD', "CHR", 1000, true)
         set t = null
     endfunction
     function DigestThrowOnSpellEffect takes nothing returns nothing

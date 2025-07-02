@@ -429,7 +429,7 @@ scope DrowRanger
     endfunction
 
     function MarksmanshipUpgradeLaunch takes unit u, unit u2, unit target, real damage returns nothing
-        local trigger t = LaunchMissileByUnitDummy(u2, target,'h30C', "MarksmanshipUpgradeMissileOnHit", 900, true)
+        local trigger t = LaunchMissileDummyById(u2, target,'h30C', "MarksmanshipUpgradeMissileOnHit", 900, true)
         local integer h = GetHandleId(t)
         
         call SaveReal(HY, h,'xhts', damage)

@@ -369,7 +369,7 @@ scope Rubick
         set target = null
     endfunction
     function SpellStealMissileLaunch takes unit u, unit target, integer id, integer lv returns nothing
-        local trigger t = LaunchMissileByUnitDummy(target, u,'h0DB', "SpellStealMissileOnHit", 900, false)
+        local trigger t = LaunchMissileDummyById(target, u,'h0DB', "SpellStealMissileOnHit", 900, false)
         local integer h = GetHandleId(t)
         call PlaySoundAtPosition(SpellStealMissileLaunchSound, GetUnitX(target), GetUnitY(target))
         call CommonTextTag(GetObjectName(id), 3.75, target, .024, 170, 0, 255, 216)

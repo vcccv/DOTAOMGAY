@@ -66,7 +66,7 @@ scope PhantomLancer
         local real NFX
         local real NGX
         if GetTriggerEventId() == EVENT_UNIT_SPELL_EFFECT then
-            if OXX(GetSpellAbilityId()) then
+            if IsDodgeableAbilityId(GetSpellAbilityId()) then
                 call SaveBoolean(HY, h, 0, true)
                 call SaveReal(HY, h, 0, GetUnitX(GetTriggerUnit()))
                 call SaveReal(HY, h, 1, GetUnitY(GetTriggerUnit()))
