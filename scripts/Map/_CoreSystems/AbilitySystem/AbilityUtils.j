@@ -11,7 +11,7 @@ library AbilityUtils requires Table, Base
     endfunction
 
     function GetAbilityBaseId takes ability whichAbility returns integer
-        return MHAbility_GetDefDataInt(GetAbilityId(whichAbility), ABILITY_DEF_DATA_BASE_ID)
+        return MHTool_GetHandleType(whichAbility)
     endfunction
     
     function GetAbilityTooltip takes ability whichAbility returns string

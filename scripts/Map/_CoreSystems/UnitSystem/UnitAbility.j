@@ -522,6 +522,7 @@ library UnitAbility requires AbilityUtils, UnitLimitation
         local unit    whichUnit    = MHEvent_GetUnit()
         local ability whichAbility = MHEvent_GetAbilityHandle()
         local integer abilId       = MHEvent_GetAbility()
+        local integer baseId       = MHTool_GetHandleType(whichAbility)
 
         if Table[ABILITY_ADD_KEY].string.has(abilId) then
             set Event.INDEX = Event.INDEX + 1
@@ -534,8 +535,10 @@ library UnitAbility requires AbilityUtils, UnitLimitation
         endif
 
         // 如果是工程升级，则更新所有技能。
-        if GetAbilityBaseIdById(abilId) == 'ANeg' then
+        if baseId == 'ANeg' then
             call UnitAllAbilityUpdateData(whichUnit)
+        elseif MHGame_CheckInherit(baseId, 'buff') and IsUnitTruesightImmunity(whichUnit) and ( IsTrueImmunityBuffBaseId(baseId) ) then
+            call TruesightImmunityOnAddBuff(whichUnit, whichAbility)
         elseif HasOctarineCore and GetUnitAbilityLevel(whichUnit, 'A39S') == 1  then
             call UnitAbilityUpdateData(whichUnit, whichAbility)
         endif
@@ -549,7 +552,8 @@ library UnitAbility requires AbilityUtils, UnitLimitation
         local unit    whichUnit    = MHEvent_GetUnit()
         local ability whichAbility = MHEvent_GetAbilityHandle()
         local integer abilId       = MHEvent_GetAbility()
-        
+        local integer baseId       = MHTool_GetHandleType(whichAbility)
+
         if Table[ABILITY_REMOVE_KEY].string.has(abilId) then
             set Event.INDEX = Event.INDEX + 1
             set Event.TrigUnit[Event.INDEX] = whichUnit
@@ -563,6 +567,8 @@ library UnitAbility requires AbilityUtils, UnitLimitation
         // 如果是工程升级，则更新所有技能。
         if GetAbilityBaseIdById(abilId) == 'ANeg' then
             call UnitAllAbilityUpdateData(whichUnit)
+        elseif MHGame_CheckInherit(baseId, 'buff') and IsUnitTruesightImmunity(whichUnit) and ( IsTrueImmunityBuffBaseId(baseId) ) then
+            call TruesightImmunityOnRemoveBuff(whichUnit, whichAbility)
         endif
         call Table[GetHandleId(whichAbility)].flush()
         

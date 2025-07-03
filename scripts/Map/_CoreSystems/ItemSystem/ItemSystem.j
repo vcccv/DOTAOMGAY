@@ -1,5 +1,5 @@
 
-library ItemSystem requires Base, TimerUtils, AbilityUtils
+library ItemSystem requires Base, TimerUtils, AbilityUtils, UnitStatus
 
 /*
 

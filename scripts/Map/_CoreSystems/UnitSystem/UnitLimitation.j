@@ -258,46 +258,74 @@ library UnitLimitation requires Base, UnitModel, MemoryUtils
     endfunction
     
     globals
-        constant integer AMPLIFY_DAMAGE_BUFF     = 'B00T'
-        constant integer TRACK_BUFF              = 'B00L'
-        constant integer DUST_OF_APPEARANCE_BUFF = 'Bdet'
+        constant integer DUST_OF_APPEARANCE_BUFF_ID   = 'Bdet'
+        constant integer WAND_OF_SHADOW_SIGHT_BUFF_ID = 'Bshs'
+        constant integer FAERIE_FIRE_BUFF_ID          = 'Bfae'
     endglobals
     
+    function IsTrueImmunityBuffBaseId takes integer buffBaseId returns boolean
+        return buffBaseId == DUST_OF_APPEARANCE_BUFF_ID or buffBaseId == FAERIE_FIRE_BUFF_ID or buffBaseId == WAND_OF_SHADOW_SIGHT_BUFF_ID
+    endfunction
+
     // 精灵火同理
     // + 0xCC = 来源玩家id
     // + 0xD0 = 侦察类型
-    function ImmunityBuffTruesight takes unit whichUnit, integer id, boolean flag returns nothing
-        local ability a     = MHUnit_GetAbility(whichUnit, id, false)
+
+    function TruesightImmunityOnAddBuff takes unit whichUnit, ability whichAbility returns nothing
+        local integer baseId = MHTool_GetHandleType(whichAbility)
         local integer pBuff
         local integer playerId
         local integer shareVisionType
-        if a == null then
-            return
-        endif
 
-        set pBuff = ConvertHandle(a)
+        set pBuff = ConvertHandle(whichAbility)
         if pBuff > 0 then
             set playerId        = ReadRealMemory(pBuff + 0xCC)
             set shareVisionType = ReadRealMemory(pBuff + 0xD0)
 
-            //call BJDebugMsg("ImmunityBuffTruesight: pid:" + I2S(playerId) + " shareVisionType:" + I2S(shareVisionType) + " b:" + B2S(flag))
-
-            if flag then
-                if ( id == TRACK_BUFF or id == DUST_OF_APPEARANCE_BUFF ) then
-                    call UnitUnShareVisionEx(whichUnit, Player(playerId))
-                endif
-                call UnitUnShareInvisVision(whichUnit, Player(playerId), shareVisionType)
-            else
-                if ( id == TRACK_BUFF or id == DUST_OF_APPEARANCE_BUFF ) then
-                    call UnitShareVisionEx(whichUnit, Player(playerId))
-                endif
-                call UnitShareInvisVision(whichUnit, Player(playerId), shareVisionType)
+            if baseId == FAERIE_FIRE_BUFF_ID or baseId == WAND_OF_SHADOW_SIGHT_BUFF_ID then
+                call UnitUnShareVisionEx(whichUnit, Player(playerId))
             endif
+            call UnitUnShareInvisVision(whichUnit, Player(playerId), shareVisionType)
         endif
-
-        set a = null
     endfunction
 
+    function TruesightImmunityOnRemoveBuff takes unit whichUnit, ability whichAbility returns nothing
+        local integer baseId = MHTool_GetHandleType(whichAbility)
+        local integer pBuff
+        local integer playerId
+        local integer shareVisionType
+
+        set pBuff = ConvertHandle(whichAbility)
+        if pBuff > 0 then
+            set playerId        = ReadRealMemory(pBuff + 0xCC)
+            set shareVisionType = ReadRealMemory(pBuff + 0xD0)
+
+            if baseId == FAERIE_FIRE_BUFF_ID or baseId == WAND_OF_SHADOW_SIGHT_BUFF_ID then
+                call UnitShareVisionEx(whichUnit, Player(playerId))
+            endif
+            call UnitShareInvisVision(whichUnit, Player(playerId), shareVisionType)
+        endif
+    endfunction
+
+    function EnableTruesightImmunityEnumUnitAbility takes nothing returns nothing
+        local ability enumAbility = MHUnit_GetEnumAbility()
+        local integer baseId      = MHTool_GetHandleType(enumAbility)
+        
+        if IsTrueImmunityBuffBaseId(baseId) then
+            call TruesightImmunityOnAddBuff(MHUnit_GetEnumUnit(), enumAbility)
+        endif
+        set enumAbility = null
+    endfunction
+
+    function DisableTruesightImmunityEnumUnitAbility takes nothing returns nothing
+        local ability enumAbility = MHUnit_GetEnumAbility()
+        local integer baseId      = MHTool_GetHandleType(enumAbility)
+        
+        if IsTrueImmunityBuffBaseId(baseId) then
+            call TruesightImmunityOnRemoveBuff(MHUnit_GetEnumUnit(), enumAbility)
+        endif
+        set enumAbility = null
+    endfunction
     globals
         private constant key UNIT_TRUESIGHT_IMMUNITY_COUNT
     endglobals
@@ -307,9 +335,7 @@ library UnitLimitation requires Base, UnitModel, MemoryUtils
         set Table[h][UNIT_TRUESIGHT_IMMUNITY_COUNT] = count
         if count == 1 then
             call UnitEnableTruesightImmunity(whichUnit)
-            call ImmunityBuffTruesight(whichUnit, AMPLIFY_DAMAGE_BUFF    , true)
-            call ImmunityBuffTruesight(whichUnit, TRACK_BUFF             , true)
-            call ImmunityBuffTruesight(whichUnit, DUST_OF_APPEARANCE_BUFF, true)
+            call MHUnit_EnumAbility(whichUnit, function EnableTruesightImmunityEnumUnitAbility)
         endif
     endfunction
     function UnitDecTruesightImmunityCount takes unit whichUnit returns nothing
@@ -318,34 +344,11 @@ library UnitLimitation requires Base, UnitModel, MemoryUtils
         set Table[h][UNIT_TRUESIGHT_IMMUNITY_COUNT] = count
         if count == 0 then
             call UnitDisableTruesightImmunity(whichUnit)
-            call ImmunityBuffTruesight(whichUnit, AMPLIFY_DAMAGE_BUFF    , false)
-            call ImmunityBuffTruesight(whichUnit, TRACK_BUFF             , false)
-            call ImmunityBuffTruesight(whichUnit, DUST_OF_APPEARANCE_BUFF, false)
+            call MHUnit_EnumAbility(whichUnit, function DisableTruesightImmunityEnumUnitAbility)
         endif
     endfunction
     function IsUnitTruesightImmunity takes unit whichUnit returns boolean
         return Table[GetHandleId(whichUnit)][UNIT_TRUESIGHT_IMMUNITY_COUNT] > 0
-    endfunction
-
-    function SharedVisionBuffOnAdd takes nothing returns nothing
-        local unit    whichUnit = Event.GetTriggerUnit()
-        local integer id        = Event.GetTriggerAbilityId()
-
-        if IsUnitTruesightImmunity(whichUnit) then
-            call ImmunityBuffTruesight(whichUnit, id, true)
-        endif
-
-        set whichUnit = null
-    endfunction
-    function SharedVisionBuffOnRemove takes nothing returns nothing
-        local unit    whichUnit = Event.GetTriggerUnit()
-        local integer id        = Event.GetTriggerAbilityId()
-
-        if IsUnitTruesightImmunity(whichUnit) then
-            call ImmunityBuffTruesight(whichUnit, id, false)
-        endif
-
-        set whichUnit = null
     endfunction
 
     // 物品沉默

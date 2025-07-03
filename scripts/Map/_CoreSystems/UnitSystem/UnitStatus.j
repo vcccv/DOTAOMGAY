@@ -1,6 +1,10 @@
 
-library UnitStatus
-    
+library UnitStatus requires UnitLimitation
+
+    function IsUnitVisibleToPlayer takes unit u, player p returns boolean
+        return IsUnitVisible(u, p) and(not IsUnitTruesightImmunity(u) or IsUnitAlly(u, p))
+    endfunction
+
     // types
 
     // 亡灵巫师

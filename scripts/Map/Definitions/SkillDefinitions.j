@@ -4,12 +4,6 @@ library HeroSkillDefine requires SkillSystem, AbilityCustomOrderId
 
     // 技能的初始化
     function InitSkillInitializerMethod takes nothing returns nothing
-        // 精灵之火类buff
-        call ResgiterAbilityMethodSimple(AMPLIFY_DAMAGE_BUFF    , "SharedVisionBuffOnAdd", "SharedVisionBuffOnRemove")
-        call ResgiterAbilityMethodSimple(TRACK_BUFF             , "SharedVisionBuffOnAdd", "SharedVisionBuffOnRemove")
-        call ResgiterAbilityMethodSimple(DUST_OF_APPEARANCE_BUFF, "SharedVisionBuffOnAdd", "SharedVisionBuffOnRemove")
-
-
         // 灵能陷阱
         call ResgiterAbilityMethodSimpleByIndex(SKILL_INDEX_PSIONIC_TRAP, "PsionicTrapOnAdd", "PsionicTrapOnRemove")
         call RegisterSkillInitMethodByIndex(SKILL_INDEX_PSIONIC_TRAP, "PsionicTrapOnInitializer")
