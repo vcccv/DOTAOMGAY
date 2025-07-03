@@ -25055,9 +25055,9 @@ buttonpos=1,1
 researchbuttonpos=0,1
 Name=属性附加
 Tip=属性附加 - [|cffffcc00等级 1|r],属性附加 - [|cffffcc00等级 2|r],属性附加 - [|cffffcc00等级 3|r],属性附加 - [|cffffcc00等级 4|r],属性附加 - [|cffffcc00等级 5|r],属性附加 - [|cffffcc00等级 6|r],属性附加 - [|cffffcc00等级 7|r],属性附加 - [|cffffcc00等级 8|r],属性附加 - [|cffffcc00等级 9|r],属性附加 - [|cffffcc00等级 10|r],Attribute Bonus - [|cffffcc00Level 11|r],Attribute Bonus - [|cffffcc00Level 12|r],Attribute Bonus - [|cffffcc00Level 13|r]
-Ubertip=永久增加英雄3/6/9/14/17/20点敏捷、智力和力量。|n|n|c00ff0303图标不显示|r
+Ubertip=永久增加英雄2/5/8/10/13/15/17/20点敏捷、智力和力量。|n|n|c00ff0303图标不显示|r
 Researchtip=学习 属性附加[|cffffcc00U|r] - [|cffffcc00等级 %d|r]|n(Attribute Bonus)
-Researchubertip=永久增加英雄3/6/9/14/17/20点敏捷、智力和力量。|n|n|c00ff0303图标不显示|r
+Researchubertip=永久增加英雄2/5/8/10/13/15/17/20点敏捷、智力和力量。|n|n|c00ff0303图标不显示|r
 Researchhotkey=U
 [A0H4]
 art=ReplaceableTextures\CommandButtons\BTNConjure

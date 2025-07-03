@@ -214,7 +214,7 @@ library MemoryUtils
         return this_call_2(addr, pUnit, playerId)
     endfunction
 
-    //循环遍历商店u的物品id
+    // 循环遍历商店u的物品id
     function StartSellUnitCooldown takes unit shopUnit, integer unitTypeId, real cooldown returns boolean
         local integer pAbility = ConvertHandle(MHUnit_GetAbility(shopUnit, 'Asel', false))
         local integer k

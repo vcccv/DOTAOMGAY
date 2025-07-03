@@ -29395,7 +29395,7 @@ function ShowGameStartTopTips takes nothing returns nothing
 	local integer randomTipIndex = GetRandomInt(1, 3)
 	set tipList[1] = " |CFFFF8000 能量圈有改键指令的提示 |R  "
 	set tipList[2] = " |CFFFF8000 输入 \"-更新\" 来查看更新日志 |R "
-	set tipList[3] = " |CFFFF0000 F10菜单栏地图设置内可以进行游戏设置|R "
+	set tipList[3] = " |CFFFF0000 左上角地图设置内可以进行游戏设置|R "
 
 	call SetTopMessageText(tipList[randomTipIndex], 10)
 endfunction
@@ -68859,7 +68859,8 @@ endfunction
 	//	// 模型缩放
 	//	call EXSetUnitReal('etol', UNIT_REAL_MODEL_SCALE, 5.)
 	//endif
-	
+
+
 	call Init_Sounds()
 	call Init_RectsAndRegions()
 

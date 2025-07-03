@@ -586,6 +586,12 @@ library UnitAbility requires AbilityUtils, UnitLimitation
         set whichAbility = null
     endfunction
 
+    function SetStatUpDefData takes integer level, real data returns nothing
+        call MHAbility_SetLevelDefDataReal('A0NR', level, ABILITY_LEVEL_DEF_DATA_DATA_A, data)
+        call MHAbility_SetLevelDefDataReal('A0NR', level, ABILITY_LEVEL_DEF_DATA_DATA_B, data)
+        call MHAbility_SetLevelDefDataReal('A0NR', level, ABILITY_LEVEL_DEF_DATA_DATA_C, data)
+    endfunction
+
     function UnitAbility_Init takes nothing returns nothing
         set SpellEffectTrig = CreateTrigger()
         call TriggerRegisterAnyUnitEvent(SpellEffectTrig, EVENT_PLAYER_UNIT_SPELL_EFFECT)
@@ -607,6 +613,17 @@ library UnitAbility requires AbilityUtils, UnitLimitation
         call MHAbilityStartCooldownEvent_Register(StartCooldownTrig)
         call TriggerAddCondition(StartCooldownTrig, Condition(function OnStartCooldown))
 
+        // 黄点初始化
+        call MHAbility_SetDefDataInt('A0NR', ABILITY_DEF_DATA_MAX_LEVEL , 8)
+        call MHAbility_SetDefDataInt('A0NR', ABILITY_DEF_DATA_LEVEL_SKIP, 2)
+        call SetStatUpDefData(1, 2 )
+        call SetStatUpDefData(2, 5 )
+        call SetStatUpDefData(3, 8 )
+        call SetStatUpDefData(4, 10)
+        call SetStatUpDefData(5, 13)
+        call SetStatUpDefData(6, 15)
+        call SetStatUpDefData(7, 17)
+        call SetStatUpDefData(8, 20)
     endfunction
 
 endlibrary
