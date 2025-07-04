@@ -258,13 +258,24 @@ library UnitLimitation requires Base, UnitModel, MemoryUtils
     endfunction
     
     globals
+        
+        constant integer WAND_OF_SHADOW_SIGHT_ABILITY_ID = 'Ashs'
+        constant integer FAERIE_FIRE_ABILITY_ID          = 'Afae'
+
         constant integer DUST_OF_APPEARANCE_BUFF_ID   = 'Bdet'
+
         constant integer WAND_OF_SHADOW_SIGHT_BUFF_ID = 'Bshs'
         constant integer FAERIE_FIRE_BUFF_ID          = 'Bfae'
+
+        constant integer ROOTS_BUFF_ID                = 'BEer'
+        constant integer ENSNARE_BUFF_FLY_BUFF_ID     = 'Bena'
+        constant integer ENSNARE_BUFF_GROUND_BUFF_ID  = 'Beng' 
     endglobals
     
     function IsTrueImmunityBuffBaseId takes integer buffBaseId returns boolean
-        return buffBaseId == DUST_OF_APPEARANCE_BUFF_ID or buffBaseId == FAERIE_FIRE_BUFF_ID or buffBaseId == WAND_OF_SHADOW_SIGHT_BUFF_ID
+        return buffBaseId == DUST_OF_APPEARANCE_BUFF_ID or buffBaseId == FAERIE_FIRE_BUFF_ID /*
+        */ or buffBaseId == WAND_OF_SHADOW_SIGHT_BUFF_ID or buffBaseId == ROOTS_BUFF_ID /*
+        */ or buffBaseId == ENSNARE_BUFF_FLY_BUFF_ID or buffBaseId == ENSNARE_BUFF_GROUND_BUFF_ID
     endfunction
 
     // 精灵火同理
@@ -281,8 +292,13 @@ library UnitLimitation requires Base, UnitModel, MemoryUtils
         if pBuff > 0 then
             set playerId        = ReadRealMemory(pBuff + 0xCC)
             set shareVisionType = ReadRealMemory(pBuff + 0xD0)
+            
+            if baseId == ROOTS_BUFF_ID then
+                set playerId        = ReadRealMemory(pBuff + 0x104) 
+                set shareVisionType = -1
+            endif
 
-            if baseId == FAERIE_FIRE_BUFF_ID or baseId == WAND_OF_SHADOW_SIGHT_BUFF_ID then
+            if baseId == FAERIE_FIRE_BUFF_ID or baseId == WAND_OF_SHADOW_SIGHT_BUFF_ID or baseId == ENSNARE_BUFF_FLY_BUFF_ID or baseId == ENSNARE_BUFF_GROUND_BUFF_ID then
                 call UnitUnShareVisionEx(whichUnit, Player(playerId))
             endif
             call UnitUnShareInvisVision(whichUnit, Player(playerId), shareVisionType)
@@ -300,7 +316,12 @@ library UnitLimitation requires Base, UnitModel, MemoryUtils
             set playerId        = ReadRealMemory(pBuff + 0xCC)
             set shareVisionType = ReadRealMemory(pBuff + 0xD0)
 
-            if baseId == FAERIE_FIRE_BUFF_ID or baseId == WAND_OF_SHADOW_SIGHT_BUFF_ID then
+            if baseId == ROOTS_BUFF_ID then
+                set playerId        = ReadRealMemory(pBuff + 0x104) 
+                set shareVisionType = -1
+            endif
+
+            if baseId == FAERIE_FIRE_BUFF_ID or baseId == WAND_OF_SHADOW_SIGHT_BUFF_ID or baseId == ENSNARE_BUFF_FLY_BUFF_ID or baseId == ENSNARE_BUFF_GROUND_BUFF_ID then
                 call UnitShareVisionEx(whichUnit, Player(playerId))
             endif
             call UnitShareInvisVision(whichUnit, Player(playerId), shareVisionType)

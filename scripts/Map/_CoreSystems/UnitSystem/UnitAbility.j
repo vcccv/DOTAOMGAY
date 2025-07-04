@@ -470,27 +470,6 @@ library UnitAbility requires AbilityUtils, UnitLimitation
         return false
     endfunction
 
-    // 对于主动技能？
-    private function OnSpellEffect takes nothing returns boolean
-        //local unit    whichUnit    = GetTriggerUnit()
-        //local ability whichAbility = GetSpellAbility()
-        //local integer level        = GetUnitAbilityLevel(whichUnit, GetSpellAbilityId())
-        //local real    cooldown     = MHAbility_GetAbilityCustomLevelDataReal(whichAbility, level, ABILITY_LEVEL_DEF_DATA_COOLDOWN)
-        //local boolean isChanged    = false
-        //
-        //if HasOctarineCore and GetUnitAbilityLevel(whichUnit, 'A39S') == 1  then
-        //    set cooldown = cooldown * 0.75
-        //    set isChanged = true
-        //endif
-        //if isChanged then
-        //    call BJDebugMsg("冷却真的改了啊不骗你现在是：" + R2S(cooldown))
-        //    call MHAbility_SetAbilityCustomLevelDataReal(whichAbility, level, ABILITY_LEVEL_DEF_DATA_COOLDOWN, cooldown)
-        //endif
-//
-        //set whichAbility = null
-        //set whichUnit    = null
-        return false
-    endfunction
 
     globals
         private key ABILITY_ADD_KEY
@@ -516,6 +495,22 @@ library UnitAbility requires AbilityUtils, UnitLimitation
             call RegisterAbilityAddMethod   (HeroSkill_SpecialId[skillIndex], addMethod)
             call RegisterAbilityRemoveMethod(HeroSkill_SpecialId[skillIndex], removeMethod)
         endif
+    endfunction
+
+    // 发动技能效果
+    private function OnSpellEffect takes nothing returns boolean
+        local unit    whichUnit    = GetTriggerUnit()
+        local ability whichAbility = GetSpellAbility()
+        local integer baseId       = MHTool_GetHandleType(whichAbility)
+        
+        call BJDebugMsg("OnSpellEffect:" + MHString_FromId(baseId))
+        if baseId == WAND_OF_SHADOW_SIGHT_ABILITY_ID or baseId == FAERIE_FIRE_ABILITY_ID then
+            call BJDebugMsg("对面的技能等级：" + I2S(GetUnitAbilityLevel(GetSpellTargetUnit(), 'B00T')))
+        endif
+
+        set whichAbility = null
+        set whichUnit    = null
+        return false
     endfunction
 
     private function OnAbilityAdd takes nothing returns boolean
@@ -564,6 +559,7 @@ library UnitAbility requires AbilityUtils, UnitLimitation
             set Event.INDEX = Event.INDEX - 1
         endif
 
+        call BJDebugMsg("BaseId:" + Id2String(baseId))
         // 如果是工程升级，则更新所有技能。
         if GetAbilityBaseIdById(abilId) == 'ANeg' then
             call UnitAllAbilityUpdateData(whichUnit)
