@@ -20,6 +20,8 @@ library EventSystem requires UnitDex
 
         static integer INDEX = 0
 
+        static integer BUFF_INDEX = 0
+
         //  UnitEvent    array TrigUnitEvent
         static AnyUnitEvent array TrigAnyUnitEvent
         static integer      array TrigEventId
@@ -55,7 +57,7 @@ library EventSystem requires UnitDex
         endmethod
 
         static method GetBuffSourceUnit takes nothing returns unit
-            return thistype.BuffSource[thistype.INDEX]
+            return thistype.BuffSource[thistype.BUFF_INDEX]
         endmethod
 
         static method GetManipulatedItem takes nothing returns item

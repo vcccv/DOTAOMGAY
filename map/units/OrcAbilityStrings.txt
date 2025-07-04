@@ -38408,7 +38408,7 @@ effectsoundlooped=ReplaceableTextures\CommandButtons\BTNFalsePromise.blp
 code=Bprg
 buffart=ReplaceableTextures\CommandButtons\BTNFortunesEnd
 Bufftip=气运之末
-Buffubertip=这个单位被气运之末击中，所有增益都被移除，短时间内被减速
+Buffubertip=这个单位被气运之末击中，所有增益都被移除，短时间内被缠绕
 researchhotkey=R
 [QP0C]
 art=ReplaceableTextures\PassiveButtons\BTNPhantomEdge

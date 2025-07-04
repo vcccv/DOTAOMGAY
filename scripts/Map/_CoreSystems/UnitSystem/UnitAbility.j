@@ -503,10 +503,7 @@ library UnitAbility requires AbilityUtils, UnitLimitation
         local ability whichAbility = GetSpellAbility()
         local integer baseId       = MHTool_GetHandleType(whichAbility)
         
-        call BJDebugMsg("OnSpellEffect:" + MHString_FromId(baseId))
-        if baseId == WAND_OF_SHADOW_SIGHT_ABILITY_ID or baseId == FAERIE_FIRE_ABILITY_ID then
-            call BJDebugMsg("对面的技能等级：" + I2S(GetUnitAbilityLevel(GetSpellTargetUnit(), 'B00T')))
-        endif
+        //call BJDebugMsg("OnSpellEffect:" + MHString_FromId(baseId))
 
         set whichAbility = null
         set whichUnit    = null
@@ -559,7 +556,6 @@ library UnitAbility requires AbilityUtils, UnitLimitation
             set Event.INDEX = Event.INDEX - 1
         endif
 
-        call BJDebugMsg("BaseId:" + Id2String(baseId))
         // 如果是工程升级，则更新所有技能。
         if GetAbilityBaseIdById(abilId) == 'ANeg' then
             call UnitAllAbilityUpdateData(whichUnit)

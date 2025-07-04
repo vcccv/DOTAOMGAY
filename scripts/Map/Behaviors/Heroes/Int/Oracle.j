@@ -21,18 +21,34 @@ scope Oracle
     endfunction
 
     function FortuneEndBuffOnAdd takes nothing returns nothing
-        local unit whichUnit = Event.GetTriggerUnit()
+        local unit    whichUnit    = Event.GetTriggerUnit()
+        local unit    sourceUnit   = Event.GetBuffSourceUnit()
+        local ability whichAbility = Event.GetTriggerAbility()
         
         call UnitIncRootCount(whichUnit)
+        set Table[GetHandleId(whichAbility)].boolean[ROOT_BUFF_KEY] = true
+        if not IsUnitTruesightImmunity(whichUnit) then
+            call UnitShareInvisVision(whichUnit, GetOwningPlayer(sourceUnit), -1)
+        endif
 
-        set whichUnit = null
+        set whichAbility = null
+        set sourceUnit   = null
+        set whichUnit    = null
     endfunction
     function FortuneEndBuffOnRemove takes nothing returns nothing
-        local unit whichUnit = Event.GetTriggerUnit()
-        
-        call UnitDecRootCount(whichUnit)
+        local unit    whichUnit    = Event.GetTriggerUnit()
+        local ability whichAbility = Event.GetTriggerAbility()
+        local unit    sourceUnit   = GetBuffSource(whichAbility)
 
-        set whichUnit = null
+        call UnitDecRootCount(whichUnit)
+        call Table[GetHandleId(whichAbility)].boolean.remove(ROOT_BUFF_KEY)
+        if not IsUnitTruesightImmunity(whichUnit) then
+            call UnitUnShareInvisVision(whichUnit, GetOwningPlayer(sourceUnit), -1)
+        endif
+
+        set whichAbility = null
+        set sourceUnit   = null
+        set whichUnit    = null
     endfunction
 
     function FortuneEndOnInitializer takes nothing returns nothing

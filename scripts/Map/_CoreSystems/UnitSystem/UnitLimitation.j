@@ -270,6 +270,8 @@ library UnitLimitation requires Base, UnitModel, MemoryUtils
         constant integer ROOTS_BUFF_ID                = 'BEer'
         constant integer ENSNARE_BUFF_FLY_BUFF_ID     = 'Bena'
         constant integer ENSNARE_BUFF_GROUND_BUFF_ID  = 'Beng' 
+        
+        constant key ROOT_BUFF_KEY
     endglobals
     
     function IsTrueImmunityBuffBaseId takes integer buffBaseId returns boolean
@@ -334,6 +336,9 @@ library UnitLimitation requires Base, UnitModel, MemoryUtils
         
         if IsTrueImmunityBuffBaseId(baseId) then
             call TruesightImmunityOnAddBuff(MHUnit_GetEnumUnit(), enumAbility)
+        elseif Table[GetHandleId(enumAbility)].boolean[ROOT_BUFF_KEY] then
+            // 对于自定义缠绕Buff也同样操作
+            call UnitUnShareInvisVision(MHUnit_GetEnumUnit(), GetOwningPlayer(Table[GetHandleId(enumAbility)].unit[BUFF_SOURCE_KEY]), -1)
         endif
         set enumAbility = null
     endfunction
@@ -344,6 +349,9 @@ library UnitLimitation requires Base, UnitModel, MemoryUtils
         
         if IsTrueImmunityBuffBaseId(baseId) then
             call TruesightImmunityOnRemoveBuff(MHUnit_GetEnumUnit(), enumAbility)
+        elseif Table[GetHandleId(enumAbility)].boolean[ROOT_BUFF_KEY] then
+            // 对于自定义缠绕Buff也同样操作
+            call UnitShareInvisVision(MHUnit_GetEnumUnit(), GetOwningPlayer(Table[GetHandleId(enumAbility)].unit[BUFF_SOURCE_KEY]), -1)
         endif
         set enumAbility = null
     endfunction
