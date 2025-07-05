@@ -13313,7 +13313,7 @@ targetart=Abilities\Spells\Items\AIil\AIilTarget.mdl
 name="JuxtaposeIllusions"
 [A0BR]
 art=ReplaceableTextures\CommandButtons\BTNSacrificialSkull.blp
-researchart=ReplaceableTextures\CommandButtons\BTNzpsl
+researchart=ReplaceableTextures\CommandButtons\BTNSacrificialSkull.blp
 buttonpos=1,1
 researchbuttonpos=1
 Name=支配死灵
@@ -39787,12 +39787,13 @@ buffart=ReplaceableTextures\CommandButtons\BTNFragmentationBombs
 Bufftip=榴霰弹
 buffubertip=This unit has Shrapnel charge(s)
 [A46E]
+art=ReplaceableTextures\PassiveButtons\PASBTNPLRush
 researchart=ReplaceableTextures\CommandButtons\BTNPLRush
 researchbuttonpos=2
 name=幻影冲锋
 hotkey=R
 Researchtip=学习 幻影冲锋[|cffffcc00R|r] - [|cffffcc00等级 %d|r]|(Phantom Rush)
-researchubertip=对目标发动攻击后，幻影长矛手将快速向其冲去。幻影长矛手的幻象也将继承此技能，最小距离200,。学习该技能会增加5点敏捷。|n冲锋速度 800|n|n|cffffcc00等级 1|r - 最大冲锋距离600|n|cffffcc00等级 2|r - 最大冲锋距离700|n|cffffcc00等级 3|r - 最大冲锋距离800|n|cffffcc00等级 4|r - 最大冲锋距离900|n|n|cff99ccff冷却时间：|r16/12/8/4
+researchubertip=对目标发动攻击后，幻影长矛手将快速向其冲去。幻影长矛手的幻象也将继承此技能，最小距离200。学习该技能会增加5点敏捷。|n冲锋速度 800|n|n|cffffcc00等级 1|r - 最大冲锋距离600|n|cffffcc00等级 2|r - 最大冲锋距离700|n|cffffcc00等级 3|r - 最大冲锋距离800|n|cffffcc00等级 4|r - 最大冲锋距离900|n|n|cff99ccff冷却时间：|r16/12/8/4
 researchhotkey="R"
 effectsoundlooped=ReplaceableTextures\PassiveButtons\PASBTNPLRush.blp
 [A46D]
@@ -39800,6 +39801,8 @@ art=ReplaceableTextures\PassiveButtons\PASBTNPLRush
 buttonpos=2,2
 name=幻影冲锋
 tip="幻影冲锋 - [|cffffcc00等级 1|r]","幻影冲锋 - [|cffffcc00等级 2|r]","幻影冲锋 - [|cffffcc00等级 3|r]","幻影冲锋 - [|cffffcc00等级 4|r]"
+Researchtip=学习 幻影冲锋[|cffffcc00R|r] - [|cffffcc00等级 %d|r]|(Phantom Rush)
+researchubertip=对目标发动攻击后，幻影长矛手将快速向其冲去。幻影长矛手的幻象也将继承此技能，最小距离200。学习该技能会增加5点敏捷。|n冲锋速度 800|n|n|cffffcc00等级 1|r - 最大冲锋距离600|n|cffffcc00等级 2|r - 最大冲锋距离700|n|cffffcc00等级 3|r - 最大冲锋距离800|n|cffffcc00等级 4|r - 最大冲锋距离900|n|n|cff99ccff冷却时间：|r16/12/8/4
 ubertip=对目标发动攻击后，幻影长矛手将快速向其冲去。冲锋距离200-600。幻象也将继承此技能。增加5点敏捷。|n|n|cff99ccff冷却时间：|r16,对目标发动攻击后，幻影长矛手将快速向其冲去。冲锋距离200-700。幻象也将继承此技能。增加10点敏捷。|n|n|cff99ccff冷却时间：|r12,对目标发动攻击后，幻影长矛手将快速向其冲去。冲锋距离200-800。幻象也将继承此技能。增加15点敏捷。|n|n|cff99ccff冷却时间：|r8,对目标发动攻击后，幻影长矛手将快速向其冲去。冲锋距离200-900。幻象也将继承此技能。增加20点敏捷。|n|n|cff99ccff冷却时间：|r4
 [A46F]
 targetart=war3mapImported\PLRush.mdx

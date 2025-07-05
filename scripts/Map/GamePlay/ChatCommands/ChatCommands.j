@@ -9,7 +9,7 @@ library ChatCommands requires Table, Base
     endglobals
 
     // debug指令
-    function WCO takes string s returns nothing
+    function DebugChat takes string s returns nothing
         local boolean WDO = SubString(s, 0, 4) == "-aa "
         local boolean WFO = SubString(s, 0, 4) == "-au "
         local boolean WGO = SubString(s, 0, 4) == "-sa "
@@ -136,7 +136,7 @@ library ChatCommands requires Table, Base
         call ExecuteFunctionConditionally("Y8O", YWO)
         call ExecuteFunctionConditionally("YKO", Y0O)
         if (bj_isSinglePlayer) then
-            call WCO(s)
+            call DebugChat(s)
         endif
     endfunction
 

@@ -3,6 +3,8 @@
 
 ## 游戏
 
+- [下载地址](https://moonglaive.com/maps/dota_omg_test_map/)
+
 #### 其他
   - 现在默认指令为-sdd3s6fnabborcdusculsp
   - 修复天灾下路远程兵营被拆后 近卫上路也会刷新高级投刃车的bug。

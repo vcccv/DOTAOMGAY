@@ -165,8 +165,10 @@ library SkillDraft requires SkillSystem
         set hotkey = GetAbilityIntegerFieldById(tempAbilityId, ABILITY_DEF_DATA_RESEARCH_HOTKEY)
         if PassiveSkill_Show[k] > 0 then
             call SetAbilityIconById(showSkillId, GetAbilityIconById(PassiveSkill_Show[k]))
+            call BJDebugMsg("PassiveSkill_Show[k]:" + Id2String(PassiveSkill_Show[k]) + GetObjectName(PassiveSkill_Show[k]))
         else
             call SetAbilityIconById(showSkillId, GetAbilityIconById(tempAbilityId))
+            call BJDebugMsg("tempAbilityId:" + Id2String(tempAbilityId) + GetObjectName(tempAbilityId))
         endif
         call SetAbilityStringFieldById(showSkillId, ABILITY_DEF_DATA_NAME, GetObjectName(tempAbilityId))
         if hotkey == 0 then

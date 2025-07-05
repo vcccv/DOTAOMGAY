@@ -226,7 +226,7 @@ ItemUserData:
         call DisableUnitManipulatItemTrig()
         if GetWidgetLife(whichItem) <= 0.405 then
             call SetWidgetLife(whichItem, 1.)
-            call BJDebugMsg("无法删除物品：" + MHString_FromId(GetItemTypeId(whichItem)) + " 所有者:" + GetPlayerName(GetItemPlayer(whichItem)))
+            debug call BJDebugMsg("无法删除物品：" + MHString_FromId(GetItemTypeId(whichItem)) + " 所有者:" + GetPlayerName(GetItemPlayer(whichItem)))
         endif
         call RemoveItem(whichItem)
         call EnableUnitManipulatItemTrig()
