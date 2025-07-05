@@ -73,7 +73,6 @@ library TowerAttackRange requires Base, PlayerSettingsLib
 
         if isWardAbility then
             set shouldShow = true
-            call BJDebugMsg("显示")
         else
             set showSetting = PlayerSettings[User.LocalId].IsSettingEnable(PlayerSettings.HOLDING_ALT_SHOWS_TOWER_ATTACK_RANGE)
             set currentAlt  = MHMsg_IsKeyDown(OSKEY_ALT)
