@@ -74,7 +74,7 @@ library AbilityCustomCastType requires Base, SkillSystem, ScepterUpgradeSystem
         call SetAbilityCastTypeByIndex(SKILL_INDEX_MOMENT_OF_COURAGE, PASSIVE_CAST_TYPE)
 
         // 幻影冲锋
-        call SetAbilityCastTypeByIndex('A46D', PASSIVE_CAST_TYPE)
+        call SetAbilityCastType('A46D', PASSIVE_CAST_TYPE)
         
         call SetAbilityCastType(FLAKCANNON_UPGRADE_ABILITY_ID, PASSIVE_CAST_TYPE)
         call SetAbilityCastType(STARFALL_UPGRADE_ABILITY_ID  , PASSIVE_CAST_TYPE)
