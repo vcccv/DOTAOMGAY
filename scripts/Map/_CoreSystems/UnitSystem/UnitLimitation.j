@@ -242,19 +242,22 @@ library UnitLimitation requires Base, UnitModel, MemoryUtils
     endglobals
     function UnitIncRootCount takes unit whichUnit returns nothing
         local integer h     = GetHandleId(whichUnit)
-        local integer count = Table[h][UNIT_ROOT_COUNT] + 1
-        set Table[h][UNIT_ROOT_COUNT] = count
+        local integer count = Table[h].integer[UNIT_ROOT_COUNT] + 1
+        set Table[h].integer[UNIT_ROOT_COUNT] = count
         if count == 1 then
             call MHUnit_DisableMove(whichUnit, true)
         endif
     endfunction
     function UnitDecRootCount takes unit whichUnit returns nothing
         local integer h     = GetHandleId(whichUnit)
-        local integer count = Table[h][UNIT_ROOT_COUNT] - 1
-        set Table[h][UNIT_ROOT_COUNT] = count
+        local integer count = Table[h].integer[UNIT_ROOT_COUNT] - 1
+        set Table[h].integer[UNIT_ROOT_COUNT] = count
         if count == 0 then
             call MHUnit_DisableMove(whichUnit, false)
         endif
+    endfunction
+    function IsUnitRooted takes unit whichUnit returns boolean
+        return Table[GetHandleId(whichUnit)].integer[UNIT_ROOT_COUNT] > 0 or IsUnitType(whichUnit, UNIT_TYPE_SNARED)
     endfunction
     
     globals

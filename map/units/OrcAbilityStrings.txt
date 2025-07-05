@@ -16132,15 +16132,14 @@ effectsoundlooped=ReplaceableTextures\CommandButtons\BTNCurse.blp
 art=ReplaceableTextures\CommandButtons\BTNursastomp
 researchart=ReplaceableTextures\CommandButtons\BTNursastomp
 buttonpos=,2
-casterart=Abilities\Spells\Orc\WarStomp\WarStompCaster.mdl
 casterattach=origin
 animnames=spell,slam
 Name=震撼大地
 Tip=震撼大地[|cffffcc00C|r] - [|cffffcc00等级 1|r],震撼大地[|cffffcc00C|r] - [|cffffcc00等级 2|r],震撼大地[|cffffcc00C|r] - [|cffffcc00等级 3|r],震撼大地[|cffffcc00C|r] - [|cffffcc00等级 4|r]
-Ubertip=猛击地面，对周围的敌方单位造成100点|cFF00B9FF魔法伤害|r，并降低其25%的移动速度，持续4秒。|n|n|cff99ccff作用范围：|r385|n|cff99ccff冷却时间：|r5,猛击地面，对周围的敌方单位造成160点|cFF00B9FF魔法伤害|r，并降低其35%的移动速度，持续4秒。|n|n|cff99ccff作用范围：|r385|n|cff99ccff冷却时间：|r5,猛击地面，对周围的敌方单位造成220点|cFF00B9FF魔法伤害|r，并降低其45%的移动速度，持续4秒。|n|n|cff99ccff作用范围：|r385|n|cff99ccff冷却时间：|r5,猛击地面，对周围的敌方单位造成280点|cFF00B9FF魔法伤害|r，并降低其55%的移动速度，持续4秒。|n|n|cff99ccff作用范围：|r385|n|cff99ccff冷却时间：|r5
+Ubertip=向前跃起并猛击地面，对周围的敌方单位造成100点|cFF00B9FF魔法伤害|r，并降低其25%的移动速度，持续4秒。|n|n|cffff0303单位被缠绕时不进行跳跃|r|n|n|cff99ccff作用范围：|r385|n|cff99ccff跳跃距离：|r250|n|cff99ccff跳跃持续时间：|r0.25|n|cff99ccff冷却时间：|r5,向前跃起并猛击地面，对周围的敌方单位造成160点|cFF00B9FF魔法伤害|r，并降低其35%的移动速度，持续4秒。|n|n|cffff0303单位被缠绕时不进行跳跃|r|n|n|cff99ccff作用范围：|r385|n|cff99ccff跳跃距离：|r250|n|cff99ccff跳跃持续时间：|r0.25|n|cff99ccff冷却时间：|r5,向前跃起并猛击地面，对周围的敌方单位造成220点|cFF00B9FF魔法伤害|r，并降低其45%的移动速度，持续4秒。|n|n|cffff0303单位被缠绕时不进行跳跃|r|n|n|cff99ccff作用范围：|r385|n|cff99ccff跳跃距离：|r250|n|cff99ccff跳跃持续时间：|r0.25|n|cff99ccff冷却时间：|r5,向前跃起并猛击地面，对周围的敌方单位造成280点|cFF00B9FF魔法伤害|r，并降低其55%的移动速度，持续4秒。|n|n|cffff0303单位被缠绕时不进行跳跃|r|n|n|cff99ccff作用范围：|r385|n|cff99ccff跳跃距离：|r250|n|cff99ccff跳跃持续时间：|r0.25|n|cff99ccff冷却时间：|r5
 Hotkey=C
 Researchtip=学习 震撼大地[|cffffcc00C|r] - [|cffffcc00等级 %d|r]|n(Earthshock)
-Researchubertip=猛击地面，对周围的敌方单位造成|cFF00B9FF魔法伤害|r，并降低其移动速度，持续4秒。|n|n|cff99ccff作用范围：|r385|n|cff99ccff冷却时间：|r5|n|cff99ccff魔法消耗：|r75|n|n|cffffcc00等级 1|r - 造成100点伤害，降低25%的移动速度|n|cffffcc00等级 2|r - 造成160点伤害，降低35%的移动速度|n|cffffcc00等级 3|r - 造成220点伤害，降低45%的移动速度|n|cffffcc00等级 4|r - 造成280点伤害，降低55%的移动速度
+Researchubertip=向前跃起并猛击地面，对周围的敌方单位造成|cFF00B9FF魔法伤害|r，并降低其移动速度，持续4秒。|n|n|cffff0303单位被缠绕时不进行跳跃|r|n|n|cff99ccff作用范围：|r385|n|cff99ccff跳跃距离：|r250|n|cff99ccff跳跃持续时间：|r0.25|n|cff99ccff冷却时间：|r5|n|cff99ccff魔法消耗：|r75|n|n|cffffcc00等级 1|r - 造成100点伤害，降低25%的移动速度|n|cffffcc00等级 2|r - 造成160点伤害，降低35%的移动速度|n|cffffcc00等级 3|r - 造成220点伤害，降低45%的移动速度|n|cffffcc00等级 4|r - 造成280点伤害，降低55%的移动速度
 Researchhotkey=C
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNursastomp.blp
 [A060]

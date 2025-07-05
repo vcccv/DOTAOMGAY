@@ -24,6 +24,7 @@
 #include "Str\\Doom.j"
 #include "Str\\Axe.j"
 #include "Str\\LegionCommander.j"
+#include "Str\\Ursa.j"
 
 #include "Int\\TwinHeadDragon.j"
 #include "Int\\Ezalor.j"

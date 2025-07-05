@@ -1609,6 +1609,18 @@ native EXEffectMatScale takes effect e, real x, real y, real z returns nothing
 native EXEffectMatReset takes effect e returns nothing
 native EXSetEffectSpeed takes effect e, real speed returns nothing
 native EXExecuteScript takes string script returns string
+native DzAPI_Map_HasMallItem takes player whichPlayer, string key returns boolean
+
+native DzAPI_Map_GetMapLevel takes player whichPlayer returns integer
+// native DzAPI_Map_GetGuildName takes player whichPlayer returns string
+native RequestExtraIntegerData          takes integer dataType, player whichPlayer, string param1, string param2, boolean param3, integer param4, integer param5, integer param6 returns integer
+native RequestExtraBooleanData          takes integer dataType, player whichPlayer, string param1, string param2, boolean param3, integer param4, integer param5, integer param6 returns boolean
+native RequestExtraStringData           takes integer dataType, player whichPlayer, string param1, string param2, boolean param3, integer param4, integer param5, integer param6 returns string
+native RequestExtraRealData             takes integer dataType, player whichPlayer, string param1, string param2, boolean param3, integer param4, integer param5, integer param6 returns real
+
+function DzAPI_Map_GetMatchType takes nothing returns integer
+	return RequestExtraIntegerData(13, null, null, null, false, 0, 0, 0)
+endfunction
 // yd japi ==================================================================
 // 技能----------------------------------------------------
 
@@ -2452,7 +2464,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'A0KV', 0, "StarfallOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A3UG', 0, "StarfallOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A0KU', 0, "EEE")
-	call SaveStr(ObjectHashTable,'A0LN', 0, "EXE")
+	call SaveStr(ObjectHashTable,'A0LN', 0, "MiranaLeapOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A0L8', 0, "EOE")
 	call SaveStr(ObjectHashTable,'A33U', 0, "LightningGrappleOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A0FN', 0, "WaveformOnSpellEffect")
@@ -2498,7 +2510,7 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable, WHIRLING_AXES_MELEE_ABILITY_ID , 0, "WhirlingAxesMeleeOnSpellEfffect")
 	call SaveStr(ObjectHashTable,'A1N4', 0, "XOE")
 	call SaveStr(ObjectHashTable,'QB0P', 0, "XOE")
-	call SaveStr(ObjectHashTable,'A03Y', 0, "XRE")
+	call SaveStr(ObjectHashTable,'A03Y', 0, "EarthshockOnSpellEffect")
 	call SaveStr(ObjectHashTable,'A0LC', 0, "XIE")
 	call SaveStr(ObjectHashTable,'A443', 0, "XIE")
 	call SaveStr(ObjectHashTable,'A17O', 0, "WaveOfTerrorOnSpellEffect")
@@ -30137,6 +30149,21 @@ function N_R takes nothing returns boolean
 	elseif G2 == "ib4" then
 		set G2 = "mds6d4fnffulosab"
 	endif
+	// 强制开局指令-ars6fromdmnnnpulrcbo
+
+	// fn快速刷野，ab防偷塔，bo关闭平衡，rc无限制，du复选，sc超级士兵，ul无限等级，sp洗牌
+
+	// 无限制洗牌6技能3酒馆 sdd3s6fnabborcdusculsp
+	if DzAPI_Map_GetMatchType() == 1000 then
+		set G2 = "sdd3s6fnabborcdusculsp"
+	elseif DzAPI_Map_GetMatchType() == 10000 then 
+		set G2 = "-ars6fromdmnnnpulrcbosp"
+	elseif DzAPI_Map_GetMatchType() == 5000 then
+		set G2 = "-sdd2s6abborcdu"
+	elseif DzAPI_Map_GetMatchType() == 2000 then 
+		set G2 = "mdd3s6fnabborcdusculsp"
+	endif
+
 	if (G2) != ""and A3 == false then
 		set GGV = true
 		call AYR("-" +(G2), 2)
@@ -35740,7 +35767,7 @@ function KDE takes nothing returns nothing
 	if mp < MFR then
 		call EXStopUnit(u)
 		call InterfaceErrorForPlayer(GetOwningPlayer(u), GetObjectName('n0G8'))
-	elseif IsUnitType(u, UNIT_TYPE_SNARED) then
+	elseif IsUnitRooted(u) then
 		call EXStopUnit(u)
 		call InterfaceErrorForPlayer(GetOwningPlayer(u), GetObjectName('n0ZD'))
 	endif
@@ -38566,85 +38593,6 @@ function ZER takes unit trigUnit returns nothing
 	set targetUnit = null
 	set t = null
 endfunction
-function ZAR takes nothing returns nothing
-	local timer t = GetExpiredTimer()
-	local integer h = GetHandleId(t)
-	local unit trigUnit = LoadUnitHandle(HY, h, 14)
-	local real ZNR = LoadReal(HY, h, 212)
-	local real ZBR = LoadReal(HY, h, 213)
-	local real a = LoadReal(HY, h, 13)
-	local real targetX = GetUnitX(trigUnit) + 30 * Cos(a * bj_DEGTORAD)
-	local real targetY = GetUnitY(trigUnit) + 30 * Sin(a * bj_DEGTORAD)
-	local real ZCR = 200
-	local real ZDR =(1 -ZNR / ZBR)* ZCR * 2
-	if ZDR > ZCR then
-		set ZDR = ZCR * 2 -ZDR
-	endif
-	if IsUnitModelFlying(trigUnit) == false then
-		call SetUnitFlyHeight(trigUnit, GetUnitDefaultFlyHeight(trigUnit) + RMaxBJ(ZDR, 0), 0)
-	endif
-	if IsUnitType(trigUnit, UNIT_TYPE_HERO) then
-		call SaveBoolean(OtherHashTable, GetHandleId(trigUnit), 99, true)
-	endif
-	call SetUnitX(trigUnit, CoordinateX50(targetX))
-	call SetUnitY(trigUnit, CoordinateY50(targetY))
-	call SetUnitFacing(trigUnit, a)
-	call SaveReal(HY, h, 212,(ZNR -20)* 1.)
-	if ZDR < 1 and ZNR -ZBR != 0 then
-		call SaveBoolean(HY, GetHandleId(trigUnit), 214, false)
-		call SetUnitFacing(trigUnit, a)
-		call SetUnitAnimation(trigUnit, "stand")
-		call SetUnitPathing(trigUnit, true)
-		//call ZER(trigUnit) 也许想让单位恢复动作
-		if IsUnitModelFlying(trigUnit) == false then
-			call SetUnitFlyHeight(trigUnit, GetUnitDefaultFlyHeight(trigUnit), 0)
-		endif
-		call PauseTimer(t)
-		call FlushChildHashtable(HY, h)
-		call DestroyTimer(t)
-	endif
-	set t = null
-	set trigUnit = null
-endfunction
-function EXE takes nothing returns nothing
-	local unit trigUnit = GetTriggerUnit()
-	local integer level = GetUnitAbilityLevel(trigUnit,('A0LN'))
-	local real GIX = 350 + 50 * level
-	local real a = GetUnitFacing(trigUnit)
-	local real sx = GetUnitX(trigUnit)
-	local real sy = GetUnitY(trigUnit)
-	local real tx = CoordinateX50(sx + GIX * Cos(a * bj_DEGTORAD))
-	local real ty = CoordinateY50(sy + GIX * Sin(a * bj_DEGTORAD))
-	local timer t = CreateTimer()
-	local integer h = GetHandleId(t)
-	local trigger ZFR = LoadTriggerHandle(HY, GetHandleId(trigUnit), 204)
-	set GIX = SquareRoot((sx -tx)*(sx -tx) +(sy -ty)*(sy -ty))
-	call ShowUnit(trigUnit, false)
-	call ShowUnit(trigUnit, true)
-	if LocalPlayer== GetOwningPlayer(trigUnit) then
-		call ClearSelection()
-		call SelectUnit(trigUnit, true)
-	endif
-	if GIX > 100  then
-		call UnitAddPermanentAbility(trigUnit,'Amrf')
-		call UnitRemoveAbility(trigUnit,'Amrf')
-		call SetUnitPathing(trigUnit, false)
-		call DisableTrigger(ZFR)
-		call IssueImmediateOrderById(trigUnit, 851972)
-		call EnableTrigger(ZFR)
-		call SaveReal(HY, h, 212, GIX * 1.)
-		call SaveReal(HY, h, 213, GIX * 1.)
-		call SaveReal(HY, h, 13, a * 1.)
-		call SaveUnitHandle(HY, h, 14, trigUnit)
-		call TimerStart(t, .025, true, function ZAR)
-		call SaveBoolean(HY, GetHandleId(trigUnit), 214, true)
-		call SaveBoolean(HY, GetHandleId(trigUnit), 208, false)
-		call ZVR(trigUnit, level)
-	endif
-	set trigUnit = null
-	set t = null
-	set ZFR = null
-endfunction
 function ZGR takes nothing returns boolean
 	return((IsUnitEnemy(GetFilterUnit(), GetOwningPlayer(GW)) and not IsUnitWard(GetFilterUnit()) and IsUnitDeath(GetFilterUnit()) == false and IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == false and not IsUnitDummy(GetFilterUnit())))
 endfunction
@@ -39020,7 +38968,7 @@ function V3I takes nothing returns boolean
 	return false
 endfunction
 function V4I takes nothing returns boolean
-	if IsUnitIllusion(GetFilterUnit()) and GetOwningPlayer(GetFilterUnit()) == GetOwningPlayer(GetTriggerUnit()) then
+	if IsUnitAlive(GetFilterUnit()) and IsUnitIllusion(GetFilterUnit()) and GetOwningPlayer(GetFilterUnit()) == GetOwningPlayer(GetTriggerUnit()) then
 		call SetUnitFacing(GetFilterUnit(), TempReal1)
 		call SetUnitAnimation(GetFilterUnit(), "spell")
 	endif
@@ -39029,6 +38977,7 @@ endfunction
 function KUE takes nothing returns nothing
 	local unit trigUnit = GetTriggerUnit()
 	local group g = AllocationGroup(233)
+	set JUV = GetSpellTargetUnit()
 	set TempReal1 = AngleBetweenXY(GetUnitX(trigUnit), GetUnitY(trigUnit), GetUnitX(JUV), GetUnitY(JUV))
 	call GroupEnumUnitsInRange(g, GetUnitX(trigUnit), GetUnitY(trigUnit), 700, Condition(function V4I))
 	call DeallocateGroup(g)
@@ -39951,7 +39900,7 @@ function VPE takes nothing returns nothing
 	set t = null
 endfunction
 function XII takes nothing returns boolean
-	if IsUnitIllusion(GetFilterUnit()) and IsPlayerSkillPickedByIndex(GetOwningPlayer(GetFilterUnit()), 83) and GetOwningPlayer(GetFilterUnit()) == GetOwningPlayer(GetTriggerUnit()) then
+	if IsUnitAlive(GetFilterUnit()) and IsUnitIllusion(GetFilterUnit()) and IsPlayerSkillPickedByIndex(GetOwningPlayer(GetFilterUnit()), 83) and GetOwningPlayer(GetFilterUnit()) == GetOwningPlayer(GetTriggerUnit()) then
 		call SetUnitFacing(GetFilterUnit(), TempReal1)
 		call SetUnitAnimation(GetFilterUnit(), "spell")
 	endif
@@ -43018,13 +42967,6 @@ function XOE takes nothing returns nothing
 	call SaveInteger(HY, GetHandleId(u),'A1N7'+ 1, 2 + level)
 	set t = null
 	set u = null
-endfunction
-function XRE takes nothing returns nothing
-	local unit d = CreateUnit(GetOwningPlayer(GetTriggerUnit()),'e00E', GetUnitX(GetTriggerUnit()), GetUnitY(GetTriggerUnit()), 0)
-	call UnitAddAbility(d,'A3IC')
-	call SetUnitAbilityLevel(d,'A3IC', GetUnitAbilityLevel(GetTriggerUnit(),'A03Y'))
-	call IssueImmediateOrderById(d, 852096)
-	set d = null
 endfunction
 function BBI takes unit u, real d returns nothing
 	local real r = 0
@@ -57202,7 +57144,7 @@ function CUA takes nothing returns boolean
 		call SetUnitFacing(whichUnit, a)
 		call SetUnitTimeScale(whichUnit, 1)
 		call SetUnitAnimation(whichUnit, "stand")
-		call SetUnitPathing(whichUnit, true)
+		call UnitDecNoPathingCount(whichUnit)
 		call UnitRemoveAbility(whichUnit,'A1J6')
 		call KillTreeByCircle(GetUnitX(whichUnit), GetUnitY(whichUnit), 100)
 		if targetUnit != null and IsUnitMagicImmune(targetUnit) == false then
@@ -57239,7 +57181,7 @@ function BLE takes nothing returns nothing
 	set ty = CoordinateY50(sy + GIX * Sin(a * bj_DEGTORAD))
 	call UnitAddAbility(u,'Amrf')
 	call UnitRemoveAbility(u,'Amrf')
-	call SetUnitPathing(u, false)
+	call UnitIncNoPathingCount(u)
 	call UnitAddPermanentAbility(u,'A1J6')
 	call TriggerRegisterTimerEvent(t, .03, true)
 	call TriggerAddCondition(t, Condition(function CUA))

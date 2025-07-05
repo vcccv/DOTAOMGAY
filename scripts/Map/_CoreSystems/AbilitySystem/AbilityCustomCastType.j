@@ -59,7 +59,7 @@ library AbilityCustomCastType requires Base, SkillSystem, ScepterUpgradeSystem
 
         // 冰晶爆轰 - 关闭
         call SetAbilityCastType('A1MN', BERSERKER_CAST_TYPE)
-        
+
         // 灵能陷阱 - 触发陷阱
         call SetAbilityCastType(TEMPLAR_ASSASSIN_TRAP_ABILITY_ID, BERSERKER_CAST_TYPE)
 
@@ -86,6 +86,9 @@ library AbilityCustomCastType requires Base, SkillSystem, ScepterUpgradeSystem
         // 力量/敏捷转换
         // call SetAbilityCastType('A0KX', BERSERKER_CAST_TYPE)
         // call SetAbilityCastType('A0KW', BERSERKER_CAST_TYPE)
+
+        // 震撼大地
+        call SetAbilityCastTypeByIndex(SKILL_INDEX_EARTHSOCK, BERSERKER_CAST_TYPE)
     endfunction
 
 endlibrary
