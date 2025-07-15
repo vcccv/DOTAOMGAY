@@ -41,6 +41,9 @@ library GlyphHandler requires Communication, UnitAbility, GlyphFrame
             call Communication_OnGlyphPing(GetUnitAbilityCooldownRemaining(CirclesUnit[id], GLYPH_ABILITY_ID))
             return 0
         endif
+        if GetSettingsPanelFrame().IsVisible() then
+            return 0
+        endif
         if GetUnitAbilityCooldownRemaining(CirclesUnit[id], GLYPH_ABILITY_ID) > 0. then
 			call SendErrorMessage("防御符文冷却中。")
             return 0

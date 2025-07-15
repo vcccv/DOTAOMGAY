@@ -177,6 +177,10 @@ library TownPortalScrollHandler requires Communication, TownPortalScrollFrame, U
             return
         endif
 
+        if GetSettingsPanelFrame().IsVisible() then
+            return
+        endif
+
         set selectedUnit = MHPlayer_GetSelectUnit()
         if selectedUnit == null then
             return
