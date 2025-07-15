@@ -64,6 +64,163 @@ scope ShadowFiend
         endif
         set u = null
     endfunction
+    
+    //***************************************************************************
+    //*
+    //*  支配死灵
+    //*
+    //***************************************************************************
+    globals
+        constant integer SKILL_INDEX_NECROMASTERY  = GetHeroSKillIndexBySlot(HERO_INDEX_SHADOW_FIEND, 2)
+        constant integer NECROMASTERY_ABILITY_ID   = 'A0BR'
+        private key NECROMASTERY_KEY
+    endglobals
+
+    
+    function MNE takes nothing returns nothing
+        // call UnitAddPermanentAbility(GetTriggerUnit(),'A0CQ')
+
+        call MHAbility_SetChargeCount(GetTriggerUnit(), NECROMASTERY_ABILITY_ID, 0)
+    endfunction
+
+    function UpdateUnitNecromasteryAbilityUberTip takes unit whichUnit returns nothing
+        local integer level   = GetUnitAbilityLevel(whichUnit, NECROMASTERY_ABILITY_ID)
+        local string  uberTip = GetAbilityExtendedTooltipById(NECROMASTERY_ABILITY_ID, level)
+
+        set uberTip = MHString_Replace(uberTip, "$attack$", I2S(R2I(Table[GetHandleId(whichUnit)].real[NECROMASTERY_KEY])))
+        call MHAbility_SetCustomLevelDataStr(whichUnit, NECROMASTERY_ABILITY_ID, level, ABILITY_LEVEL_DEF_DATA_UBERTIP, uberTip)
+    endfunction
+
+    function NecromasteryMissileOnHit takes nothing returns nothing
+        local integer h          = GetHandleId(GetTriggeringTrigger())
+        local unit    whichUnit  = MissileHitTargetUnit
+        local unit    targetUnit = TempUnit
+        local real    oldValue
+        local integer stack
+        local integer maxStack
+        local integer level
+
+        // 获取真实来源
+        set whichUnit = GetRealSpellUnit(whichUnit)
+
+        set oldValue = Table[GetHandleId(whichUnit)].real[NECROMASTERY_KEY]
+        set stack    = Table[GetHandleId(whichUnit)].integer[NECROMASTERY_KEY]
+        
+        set level    = GetUnitAbilityLevel(whichUnit, NECROMASTERY_ABILITY_ID)
+        set maxStack = 20
+
+        if not IsUnitType(targetUnit, UNIT_TYPE_HERO) then
+            set stack = stack + 1
+        else
+            set stack = stack + 3
+        endif
+
+        set stack = IMinBJ(maxStack, stack)
+        call UnitAddStateBonus(whichUnit, - oldValue, UNIT_BONUS_DAMAGE)
+        call UnitAddStateBonus(whichUnit, stack * level, UNIT_BONUS_DAMAGE)
+
+        set Table[GetHandleId(whichUnit)].integer[NECROMASTERY_KEY] = stack
+        set Table[GetHandleId(whichUnit)].real[NECROMASTERY_KEY]    = stack * level
+
+        call MHAbility_SetChargeCount(whichUnit, NECROMASTERY_ABILITY_ID, stack)
+        call UpdateUnitNecromasteryAbilityUberTip(whichUnit)
+
+        set whichUnit = null
+        set targetUnit = null
+    endfunction
+
+    function NecromasteryOnFirstLearn takes nothing returns nothing
+        call UpdateUnitNecromasteryAbilityUberTip(GetTriggerUnit())
+    endfunction
+
+    function NecromasteryOnLevelUpgrade takes nothing returns nothing
+        local unit    whichUnit = GetTriggerUnit()
+        local integer stack     = Table[GetHandleId(whichUnit)].integer[NECROMASTERY_KEY]
+        local integer level    
+        local real    oldValue 
+
+        set level = GetUnitAbilityLevel(whichUnit, NECROMASTERY_ABILITY_ID)
+
+        set oldValue = Table[GetHandleId(whichUnit)].real[NECROMASTERY_KEY]
+
+        call UnitAddStateBonus(whichUnit, - oldValue, UNIT_BONUS_DAMAGE)
+        call UnitAddStateBonus(whichUnit, stack * level, UNIT_BONUS_DAMAGE)
+
+        set Table[GetHandleId(whichUnit)].integer[NECROMASTERY_KEY] = stack
+        set Table[GetHandleId(whichUnit)].real[NECROMASTERY_KEY]    = stack * level
+
+        call MHAbility_SetChargeCount(whichUnit, NECROMASTERY_ABILITY_ID, stack)
+        call UpdateUnitNecromasteryAbilityUberTip(whichUnit)
+
+        set whichUnit = null
+    endfunction
+
+    function NecromasteryOnKillUnit takes nothing returns nothing
+        local integer stack
+        local integer level
+        local integer maxStack = 20
+        local trigger t
+        local integer h
+        local unit whichUnit = GetKillingUnit()
+        if GetUnitTypeId(whichUnit)=='e00E' then
+            set whichUnit = PlayerHeroes[GetPlayerId(GetOwningPlayer(GetKillingUnit()))]
+        endif
+        set stack = Table[GetHandleId(whichUnit)].integer[NECROMASTERY_KEY]
+        set level = GetUnitAbilityLevel(whichUnit, NECROMASTERY_ABILITY_ID)
+        //set maxStack = 8 + 7 * level
+        if stack <= maxStack then
+            set t = LaunchMissileDummyById(GetTriggerUnit(), whichUnit,'h0CR', "NecromasteryMissileOnHit", 3000, false, true)
+            set h = GetHandleId(t)
+            set t = null
+            call DestroyEffect(AddSpecialEffect("Abilities\\Weapons\\ZigguratMissile\\ZigguratMissile.mdl", GetUnitX(GetTriggerUnit()), GetUnitY(GetTriggerUnit())))
+        endif
+        set whichUnit = null
+    endfunction
+    function NecromasteryOnOwnerDeath takes nothing returns nothing
+        local unit    whichUnit = GetTriggerUnit()
+        local integer stack     = Table[GetHandleId(whichUnit)].integer[NECROMASTERY_KEY]
+        local integer level    
+        local real    oldValue 
+
+        set level = GetUnitAbilityLevel(whichUnit, NECROMASTERY_ABILITY_ID)
+
+        set oldValue = Table[GetHandleId(whichUnit)].real[NECROMASTERY_KEY]
+        set stack = R2I(stack * .7)
+
+        call UnitAddStateBonus(whichUnit, - oldValue, UNIT_BONUS_DAMAGE)
+        call UnitAddStateBonus(whichUnit, stack * level, UNIT_BONUS_DAMAGE)
+
+        set Table[GetHandleId(whichUnit)].integer[NECROMASTERY_KEY] = stack
+        set Table[GetHandleId(whichUnit)].real[NECROMASTERY_KEY]    = stack * level
+
+        call MHAbility_SetChargeCount(whichUnit, NECROMASTERY_ABILITY_ID, stack)
+        call UpdateUnitNecromasteryAbilityUberTip(whichUnit)
+
+        set whichUnit = null
+    endfunction
+    function NecromasteryOnUnitDeath takes unit killingUnit, unit triggerUnit returns nothing
+        if IsUnitIllusion(triggerUnit) then
+            return
+        endif
+        if IsUnitType(killingUnit, UNIT_TYPE_HERO) == false then
+            set killingUnit = PlayerHeroes[GetPlayerId(GetOwningPlayer(killingUnit))]
+        endif
+        // 击杀
+        if GetUnitAbilityLevel(killingUnit, NECROMASTERY_ABILITY_ID)> 0 then
+            call NecromasteryOnKillUnit()
+        endif
+        // 死亡
+        if GetUnitAbilityLevel(triggerUnit, NECROMASTERY_ABILITY_ID)> 0 then
+            call NecromasteryOnOwnerDeath()
+        endif
+    endfunction
+    function W0A takes nothing returns nothing
+        call NecromasteryOnUnitDeath(UEKillingUnit, UEDyingUnit)
+    endfunction
+    function NecromasteryOnInitializer takes nothing returns nothing
+        call RegisterUnitDeathMethod("W0A")
+    endfunction
+
     //***************************************************************************
     //*
     //*  魂之挽歌

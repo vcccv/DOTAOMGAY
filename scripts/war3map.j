@@ -3003,6 +3003,13 @@ function InitAbilityCastMethodTable takes nothing returns nothing
 	call SaveStr(ObjectHashTable,'QB0L', 3, "LCE")
 	call SaveStr(ObjectHashTable,'A2H0', 3, "LCE")
 	call SaveStr(ObjectHashTable,'A0B1', 3, "LFE")
+
+	call SaveStr(ObjectHashTable, NECROMASTERY_ABILITY_ID, 5   , "NecromasteryOnLevelUpgrade")
+	call SaveStr(ObjectHashTable, NECROMASTERY_ABILITY_ID, 1001, "NecromasteryOnLevelUpgrade")
+
+	call SaveStr(ObjectHashTable, NECROMASTERY_ABILITY_ID, 4   , "NecromasteryOnFirstLearn")
+	call SaveStr(ObjectHashTable, NECROMASTERY_ABILITY_ID, 1000, "NecromasteryOnFirstLearn")
+
 	call SaveStr(ObjectHashTable,'A064', 4, "LHE")
 	call SaveStr(ObjectHashTable,'A1P8', 4, "LKE")
 	call SaveStr(ObjectHashTable,'A21L', 4, "WhirlingAxesOnLearn")
@@ -3869,9 +3876,11 @@ function W7E takes integer id returns integer
 	//if id =='A2JR' then
 	//	return 'A2JK'
 	//else
-	if id =='Z318' then
-		return 'A0BR'
-	elseif id =='QF87' then
+	//if id =='Z318' then
+	//	return 'A0BR'
+	//else
+		
+	if id =='QF87' then
 		return ATTRIBUTESHIFT_AGILITY_GAIN_ABILITY_ID
 	elseif id =='P247' then
 		return 'A086'
@@ -30153,14 +30162,18 @@ function N_R takes nothing returns boolean
 
 	// fn快速刷野，ab防偷塔，bo关闭平衡，rc无限制，du复选，sc超级士兵，ul无限等级，sp洗牌
 
-	// 无限制洗牌6技能3酒馆 sdd3s6fnabborcdusculsp
+	
 	if DzAPI_Map_GetMatchType() == 1000 then
+		// 无限制洗牌六技能三酒馆(306)
 		set G2 = "sdd3s6fnabborcdusculsp"
 	elseif DzAPI_Map_GetMatchType() == 10000 then 
-		set G2 = "-ars6fromdmnnnpulrcbosp"
+		// 洗牌中路死亡随机
+		set G2 = "ars6fromdmnnnpulrcbosp"
 	elseif DzAPI_Map_GetMatchType() == 5000 then
-		set G2 = "-sdd2s6abborcdu"
+		// 有平衡限制洗牌六技能二酒馆(206)
+		set G2 = "sdd2s6abborcdusp"
 	elseif DzAPI_Map_GetMatchType() == 2000 then 
+		// 镜像无限制洗牌六技能三酒馆(306)
 		set G2 = "mdd3s6fnabborcdusculsp"
 	endif
 
@@ -51111,86 +51124,8 @@ function I2E takes nothing returns nothing
 	set t = null
 endfunction
 
-function WIO takes nothing returns nothing
-	local integer h = GetHandleId(GetTriggeringTrigger())
-	local unit whichUnit = MissileHitTargetUnit
-	local unit targetUnit = TempUnit
-	local integer ZII
-	local integer ZAI
-	local integer level
-	if GetUnitAbilityLevel(whichUnit,'A04R') != 0 then
-		set whichUnit = PlayerHeroes[GetPlayerId(GetOwningPlayer(whichUnit))]
-	endif
-	set ZII = GetUnitAbilityLevel(whichUnit,'A0CQ')
-	set level = GetUnitAbilityLevel(whichUnit,'A0BR')
-	if level == 1 then
-		set ZAI = 12
-	elseif level == 2 then
-		set ZAI = 20
-	elseif level == 3 then
-		set ZAI = 28
-	else
-		set ZAI = 36
-	endif
-	set ZAI = ZAI + 1
-	if IsUnitType(targetUnit, UNIT_TYPE_HERO) == false then
-		set ZII = ZII + 1
-	else
-		set ZII = ZII + 12
-	endif
-	set ZII = IMinBJ(ZAI, ZII)
-	call SetUnitAbilityLevel(whichUnit,'A0CQ', ZII)
-	call SaveInteger(HY,(GetHandleId(whichUnit)), 710,(ZII))
-	set whichUnit = null
-	set targetUnit = null
-endfunction
-function ZNI takes nothing returns nothing
-	local integer ZII
-	local integer level
-	local integer ZAI
-	local trigger t
-	local integer h
-	local unit whichUnit = GetKillingUnit()
-	if GetUnitTypeId(whichUnit)=='e00E' then
-		set whichUnit = PlayerHeroes[GetPlayerId(GetOwningPlayer(GetKillingUnit()))]
-	endif
-	set ZII = GetUnitAbilityLevel(whichUnit,'A0CQ')
-	set level = GetUnitAbilityLevel(whichUnit,'A0BR')
-	set ZAI = 8 + 7 * level
-	if ZII <= ZAI then
-		set t = LaunchMissileDummyById(GetTriggerUnit(), whichUnit,'h0CR', "WIO", 3000, false, true)
-		set h = GetHandleId(t)
-		set t = null
-		call DestroyEffect(AddSpecialEffect("Abilities\\Weapons\\ZigguratMissile\\ZigguratMissile.mdl", GetUnitX(GetTriggerUnit()), GetUnitY(GetTriggerUnit())))
-	endif
-	set whichUnit = null
-endfunction
-function ZBI takes nothing returns nothing
-	local integer i = R2I(GetUnitAbilityLevel(GetTriggerUnit(),'A0CQ')* .5) + 1
-	call SaveInteger(HY, GetHandleId(GetTriggerUnit()), 710, R2I(GetUnitAbilityLevel(GetTriggerUnit(),'A0CQ')* .5) + 1)
-	call UnitRemoveAbility(GetTriggerUnit(), 'A0CQ')
-	call UnitAddAbility(GetTriggerUnit(), 'A0CQ')
-	call UnitMakeAbilityPermanent(GetTriggerUnit(), true, 'A0CQ')
-	call SetUnitAbilityLevel(GetTriggerUnit(),'A0CQ', i)
-endfunction
-function ZCI takes unit killingUnit, unit triggerUnit returns nothing
-	if IsUnitIllusion(triggerUnit) then
-		return
-	endif
-	if IsUnitType(killingUnit, UNIT_TYPE_HERO) == false then
-		set killingUnit = PlayerHeroes[GetPlayerId(GetOwningPlayer(killingUnit))]
-	endif
-	if GetUnitAbilityLevel(killingUnit,'A0BR')> 0 then
-		call ZNI()
-	endif
-	if GetUnitAbilityLevel(triggerUnit,'A0BR')> 0 then
-		call ZBI()
-	endif
-endfunction
 
-function MNE takes nothing returns nothing
-	call UnitAddPermanentAbility(GetTriggerUnit(),'A0CQ')
-endfunction
+
 
 function I5E takes nothing returns nothing
 	local unit dummyCaster
@@ -64100,12 +64035,6 @@ function WZA takes nothing returns nothing
 endfunction
 function W_A takes nothing returns nothing
 	call RegisterUnitDeathMethod("WZA")
-endfunction
-function W0A takes nothing returns nothing
-	call ZCI(UEKillingUnit, UEDyingUnit)
-endfunction
-function W1A takes nothing returns nothing
-	call RegisterUnitDeathMethod("W0A")
 endfunction
 
 // 无视野单位和幻象不触发

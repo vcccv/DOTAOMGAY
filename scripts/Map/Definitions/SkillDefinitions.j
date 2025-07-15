@@ -89,8 +89,8 @@ library HeroSkillDefine requires SkillSystem, AbilityCustomOrderId
         call SaveStr(ObjectHashTable, 'A2TJ', 601, "WNA")
         call SaveStr(ObjectHashTable, 'A2QI', 601, "WNA")
         call SaveStr(ObjectHashTable, 'A2TI', 601, "WNA")
-        call SaveStr(ObjectHashTable, 'A0BR', 601, "W1A")
-        call SaveStr(ObjectHashTable, 'Z318', 601, "W1A")
+        call SaveStr(ObjectHashTable, 'A0BR', 601, "NecromasteryOnInitializer")
+        //call SaveStr(ObjectHashTable, 'Z318', 601, "NecromasteryOnInitializer")
         // 600?也是Init
         // 被动技能初始化？
         call SaveStr(ObjectHashTable, 'A022', 600, "F_R")
@@ -1008,8 +1008,11 @@ library HeroSkillDefine requires SkillSystem, AbilityCustomOrderId
         call HeroSkillAddSubAbilitiesById(SKILL_INDEX_SHADOWRAZE, SHADOWRAZE_C_ABILITY_ID)
         set HeroSkill_HasMultipleAbilities[SKILL_INDEX_SHADOWRAZE] = true
 
-        call RegisterHeroSkill(i * 4 + 2, null, 'Z318', 'A0BR', 'Y318')
+        // call RegisterHeroSkill(i * 4 + 2, null, 'Z318', 'A0BR', 'Y318')
+
+        call RegisterHeroSkill(i * 4 + 2, null, 'A0BR', 0, 'Y318')
         set HeroSkill_IsPassive[i * 4 + 2] = true
+
         call RegisterHeroSkill(i * 4 + 3, null, 'A0FU', 'QP15', 'Y319')
         set HeroSkill_IsPassive[i * 4 + 3] = true
         call RegisterHeroSkill(i * 4 + 4, SaveSkillOrder(i * 4 + 1, "852273"), 'A29J', 'A3OJ', 'Y320')

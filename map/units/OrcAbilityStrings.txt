@@ -13312,14 +13312,16 @@ art=ReplaceableTextures\CommandButtons\BTNWand
 targetart=Abilities\Spells\Items\AIil\AIilTarget.mdl
 name="JuxtaposeIllusions"
 [A0BR]
-art=ReplaceableTextures\CommandButtons\BTNSacrificialSkull.blp
-researchart=ReplaceableTextures\CommandButtons\BTNSacrificialSkull.blp
+art=ReplaceableTextures\PassiveButtons\PASBTNSacrificialSkull
+researchart=ReplaceableTextures\CommandButtons\BTNSacrificialSkull
 buttonpos=1,1
 researchbuttonpos=1
+Tip=支配死灵 - [|cffffcc00等级 1|r],支配死灵 - [|cffffcc00等级 2|r],支配死灵 - [|cffffcc00等级 3|r],支配死灵 - [|cffffcc00等级 4|r]
 Name=支配死灵
 Researchhotkey=N
 Researchtip=学习 支配死灵[|cffffcc00N|r] - [|cffffcc00等级 %d|r]|n(Necromastery)
-Researchubertip=每当影魔杀死一个生物，他就将这个可怜的灵魂储存在体内。每个灵魂会提供2点额外的攻击力。不过当影魔死亡时，有50%的灵魂会逃逸出去。|n|n|cffffcc00等级 1|r - 上限24点攻击力|n|cffffcc00等级 2|r - 上限40点攻击力|n|cffffcc00等级 3|r - 上限56点攻击力|n|cffffcc00等级 4|r - 上限72点攻击力
+Researchubertip=每当影魔杀死一个生物，他就将这个可怜的灵魂储存在体内，击杀英雄获得3个灵魂。最多储存20个灵魂。每个灵魂会提供额外的攻击力。不过当影魔死亡时，有30%的灵魂会逃逸出去。|n|n|cffffcc00等级 1|r - 每个灵魂提供1点攻击力|n|cffffcc00等级 2|r - 每个灵魂提供2点攻击力|n|cffffcc00等级 3|r - 每个灵魂提供3点攻击力|n|cffffcc00等级 4|r - 每个灵魂提供4点攻击力
+Ubertip=将灵魂储存在影魔的体内，置于他的控制之下，每个灵魂提供1点攻击力。影魔死亡时，将有30%的灵魂逃逸出去。|n增加$attack$点攻击力。,将灵魂储存在影魔的体内，置于他的控制之下，每个灵魂提供2点攻击力。影魔死亡时，将有30%的灵魂逃逸出去。|n增加$attack$点攻击力。,将灵魂储存在影魔的体内，置于他的控制之下，每个灵魂提供3点攻击力。影魔死亡时，将有30%的灵魂逃逸出去。|n增加$attack$点攻击力。,将灵魂储存在影魔的体内，置于他的控制之下，每个灵魂提供4点攻击力。影魔死亡时，将有30%的灵魂逃逸出去。|n增加$attack$点攻击力。
 [A0C2]
 art=ReplaceableTextures\CommandButtons\BTNGlove
 name="Grow! speed"
@@ -30697,7 +30699,7 @@ Untip=|cffff0303覆盖其他法球效果|r
 Unubertip=|cffff0303覆盖其他法球效果|r
 [A0CQ]
 art=ReplaceableTextures\PassiveButtons\PASBTNSacrificialSkull
-researchart=ReplaceableTextures\PassiveButtons\PASBTNSacrificialSkull
+researchart=ReplaceableTextures\CommandButtons\BTNSacrificialSkull
 buttonpos=1,1
 researchbuttonpos=2
 name="Necromastery Effect"
