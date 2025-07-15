@@ -642,6 +642,7 @@ scope TownPortalScroll
     endfunction
     function ItemTownPortalScrollOnSpellEffect takes nothing returns nothing
         local integer level = GetAbilityLevel(GetSpellAbility())
+        call SetUnitAnimation(GetTriggerUnit(), "stand")
         if level == 1 and not IsUnitCourier(GetTriggerUnit()) then
             call TownPortalScrollOnSpellEffect()
         elseif level > 1 then
