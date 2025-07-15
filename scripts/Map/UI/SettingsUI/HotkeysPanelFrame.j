@@ -161,11 +161,11 @@ library HotkeysPanelFrame requires SettingsPanelFrame
             */ HOTKEY_BUTTON_START_OFFSET_X + BUTTON_OFFSET_X * row, /*
             */ HOTKEY_BUTTON_START_OFFSET_Y + BUTTON_OFFSET_Y * column)
 
-            if ModuloInteger(i, 3) == 0 then
-                set row = row + 1
-                set column = 0
-            else
+            if ModuloInteger(i, 4) == 0 then
                 set column = column + 1
+                set row = 0
+            else
+                set row = row + 1
             endif
 
             set i = i + 1
@@ -183,11 +183,11 @@ library HotkeysPanelFrame requires SettingsPanelFrame
             */ LEARN_HOTKEY_BUTTON_START_OFFSET_X + BUTTON_OFFSET_X * row, /*
             */ LEARN_HOTKEY_BUTTON_START_OFFSET_Y + BUTTON_OFFSET_Y * column)
 
-            if ModuloInteger(i, 3) == 0 then
-                set row = row + 1
-                set column = 0
-            else
+            if ModuloInteger(i, 4) == 0 then
                 set column = column + 1
+                set row = 0
+            else
+                set row = row + 1
             endif
 
             set i = i + 1
