@@ -178,6 +178,8 @@ library DoubleTapAbilityToSelfCast requires Table, TownPortalScrollHandler, Play
         call RegisterDoubleTapToSelfCastAbilityById('A06B') 
         // A杖自爆
         call RegisterDoubleTapToSelfCastAbilityById('A471') 
+        // 气运之末
+        call RegisterDoubleTapToSelfCastAbilityById('A2QT') 
     endfunction
     
     function DoubleTapAbilityToSelfCast_Init takes nothing returns nothing
