@@ -26746,11 +26746,11 @@ animnames=spell
 researchart=ReplaceableTextures\CommandButtons\BTNBigBadVoodooSpell
 name="Dark Pact"
 [A1HQ]
-art=ReplaceableTextures\CommandButtons\BTNChillingTouch
+art=ReplaceableTextures\CommandButtons\BTNArcticWinds
 buttonpos=2,2
 animnames=spell
 researchbuttonpos=2
-researchart=ReplaceableTextures\CommandButtons\BTNChillingTouch
+researchart=ReplaceableTextures\CommandButtons\BTNArcticWinds
 Name=寒冰之触
 Tip=寒冰之触[|cffffcc00G|r] - [|cffffcc00等级 1|r],寒冰之触[|cffffcc00G|r] - [|cffffcc00等级 2|r],寒冰之触[|cffffcc00G|r] - [|cffffcc00等级 3|r],寒冰之触[|cffffcc00G|r] - [|cffffcc00等级 4|r]
 Ubertip=释放一阵寒风席卷目标区域，受到影响的友方英雄能力大增，攻击时会附加50点|cFF00B9FF魔法伤害|r，持续3次攻击或30秒，但同时攻击速度也会降低15。|n|n|cff99ccff作用范围：|r525|n|cff99ccff施法距离：|r800|n|cff99ccff冷却时间：|r50,释放一阵寒风席吹过标区域，受到影响的友方英雄能力大增，攻击时会附加60点|cFF00B9FF魔法伤害|r，持续4次攻击或30秒，但同时攻击速度也会降低15。|n|n|cff99ccff作用范围：|r525|n|cff99ccff施法距离：|r800|n|cff99ccff冷却时间：|r42,释放一阵寒风席吹过标区域，受到影响的友方英雄能力大增，攻击时会附加70点|cFF00B9FF魔法伤害|r，持续5次攻击或30秒，但同时攻击速度也会降低15。|n|n|cff99ccff作用范围：|r525|n|cff99ccff施法距离：|r800|n|cff99ccff冷却时间：|r34,释放一阵寒风席吹过标区域，受到影响的友方英雄能力大增，攻击时会附加80点|cFF00B9FF魔法伤害|r，持续6次攻击或30秒，但同时攻击速度也会降低15。|n|n|cff99ccff作用范围：|r525|n|cff99ccff施法距离：|r800|n|cff99ccff冷却时间：|r26
@@ -26758,7 +26758,7 @@ Hotkey=G
 Researchhotkey=G
 Researchtip=学习 寒冰之触[|cffffcc00G|r] - [|cffffcc00等级 %d|r]|n(Chilling Touch)
 Researchubertip=释放一阵寒风吹过目标区域，受到影响的友方英雄能力大增，攻击时会附加|cFF00B9FF魔法伤害|r，持续数次攻击或30秒，但同时攻击速度也会降低15。远古冰魄不在作用范围内也能获得增益|n|n|cffffcc00等级 1|r - 附加50点魔法伤害，持续3次攻击|n|cffffcc00等级 2|r - 附加60点魔法伤害，持续4次攻击|n|cffffcc00等级 3|r - 附加70点魔法伤害，持续5次攻击|n|cffffcc00等级 4|r - 附加80点魔法伤害，持续6次攻击|n|n|cff99ccff作用范围：|r525|n|cff99ccff施法距离：|r800|n|cff99ccff冷却时间：|r50/42/34/26|n|cff99ccff魔法消耗：|r110/120/130/140
-effectsoundlooped=ReplaceableTextures\CommandButtons\BTNChillingTouch.blp
+effectsoundlooped=ReplaceableTextures\CommandButtons\BTNArcticWinds.blp
 [A1IO]
 art=ReplaceableTextures\CommandButtons\BTNDeathPact
 buttonpos=2
