@@ -165,6 +165,100 @@ library MemoryUtils
         return ""
     endfunction
 
+    function GetBuffIndicatorId takes integer buffIndicator returns integer
+        local integer pAbility
+        if buffIndicator != 0 then
+            set pAbility = ReadRealMemory(buffIndicator + 0x978)
+            if pAbility != 0 then
+                return ReadRealMemory(pAbility + 0x34)
+            endif
+        endif
+        return 0
+    endfunction
+
+    // 返回是否有效而不是定义
+    //function GetBuffUIDataById takes integer buffId returns integer
+    //    local integer addr = pGameDLL + 0x39C560
+    //    return this_call_1(addr, buffId)
+    //endfunction
+
+    //------------------------------------------------------------------------------
+    // 从全局表里查找并返回对应 buffID 的 BuffUIDef 指针
+    // 如果查不到或出错，返回 0
+    // 参数：
+    //    flags   = ReadRealMemory(pGameDLL + 0xBE6DBC) 的值
+    //    buffID  = 你想找的 buff 标识
+    // 返回值：
+    //    BuffUIDef 指针（整数形式），没找到或错误时返回 0
+    //------------------------------------------------------------------------------
+
+    function GetBuffUIDataById takes integer buffID returns integer
+        local integer eax = ReadRealMemory(pGameDLL + 0xBE6DBC)
+        local integer edx = buffID
+        local integer ecx
+        local integer baseAddr
+        local integer tableEntryPtr
+        local integer buffDef
+        local integer altListBase
+
+        // ——— 步骤 1：读 flags，如果是 -1，直接返回 0 ———
+        if eax == -1 then
+            return 0
+        endif
+
+        // flags & buffID
+        set eax = BitwiseAnd(eax, edx)
+
+        // ecx = eax * 3  （对应 lea ecx,[eax+eax*2]）
+        set ecx = eax
+        set ecx = ecx + eax * 2
+
+        // ——— 步骤 2：从全局表 baseAddr = ReadRealMemory(0x79996DB4)  
+        set baseAddr = ReadRealMemory(pGameDLL + 0xBE6DB4)
+
+        // tableEntryPtr = baseAddr + ecx*4
+        set tableEntryPtr = baseAddr + ecx * 4
+
+        // buffDef = [tableEntryPtr + 0x8]
+        set buffDef = ReadRealMemory(tableEntryPtr + 0x8)
+
+        // 如果首选项 <= 0，直接返回 0
+        if buffDef <= 0 then
+            return 0
+        endif
+
+        // 如果 buffDef->id == buffID，则直接返回 buffDef
+        if ReadRealMemory(buffDef) == edx then
+            return buffDef
+        endif
+
+        // ——— 步骤 3：从二级链表里再找一次 ———
+        // altListBase = [tableEntryPtr + 0x0]
+        set altListBase = ReadRealMemory(tableEntryPtr)
+
+        // 从 altListBase + buffDef + 4 开始遍历
+        set buffDef = ReadRealMemory(altListBase + buffDef + 4)
+        // 循环：只要 buffDef>0 且 id!=buffID，就继续
+        loop
+            exitwhen buffDef <= 0
+            if ReadRealMemory(buffDef) == edx then
+                return buffDef
+            endif
+            set buffDef = ReadRealMemory(altListBase + buffDef + 4)
+        endloop
+
+        // 找不到，返回 0
+        return 0
+    endfunction
+
+    function GetBuffTipById takes integer buffId returns string
+        local integer buffUIData = GetBuffUIDataById(buffId)
+        if buffUIData != 0 then
+            return MHTool_ReadStr(buffUIData + 0x11C)
+        endif
+        return ""
+    endfunction
+
     function UnitShareInvisVision takes unit whichUnit, player whichPlayer, integer shareType returns integer
         local integer addr = pGameDLL + 0x66B260
         local integer pUnit = ConvertHandle(whichUnit)

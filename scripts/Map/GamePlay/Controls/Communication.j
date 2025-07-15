@@ -4,9 +4,12 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility, Observe
         private trigger SkillTrig
         private trigger ItemTrig
         private trigger BuyBackTrig
+        private trigger HeroLevelBarTrig
+        private trigger BuffTrig
 
         private integer array ItemButton
         private integer array SkillButton
+        private integer array BuffButton
     endglobals
 
     private function GetSkillButtonIndex takes integer skillButton returns integer
@@ -159,6 +162,11 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility, Observe
         constant string PURCHASE_SELF_REQUIRE_GOLD = "我打算购买物品 > $itemName$ (|cFFFFFF00$goldCost$|r) > 还需要$requireGold$黄金"
     endglobals
 
+    // 去掉|n后面的内容
+    private function FixString takes string str returns string
+        local integer pos = MHString_Find(str, "|n", 0)
+        return MHString_Sub(str, 0, pos)
+    endfunction
     // 去掉|n后面的内容
     private function GetItemNameById takes integer itemId returns string
         local string  name = GetObjectName(itemId)
@@ -417,6 +425,38 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility, Observe
         endif
     endfunction
 
+    globals
+        constant string BUFF_SELF_PING             = "正处于|cFFFFFF00$buffName$|r的作用下"
+        constant string BUFF_ALLY_PING             = "队友$heroName$处于：|cFFFFFF00$buffName$|r作用下"
+        constant string BUFF_ENEMY_PING            = "敌人$heroName$处于：|cFFFFFF00$buffName$|r作用下"
+    endglobals
+
+    private function OnBuffPing takes unit whichUnit, integer buffId returns nothing
+        local string msg
+        local string buffName = FixString(GetBuffTipById(buffId))
+        if IsUnitAlly(whichUnit, GetLocalPlayer()) then
+            // ping队友时
+            if not IsUnitOwnedByPlayer(whichUnit, GetLocalPlayer()) then
+                set msg = BUFF_SELF_PING
+                set msg = MHString_Replace(msg, "$heroName$", GetUnitNameColored(whichUnit))
+            else
+                // ping自己
+                set msg = BUFF_SELF_PING
+                set msg = MHString_Replace(msg, "$heroName$", GetUnitNameColored(whichUnit))
+                set msg = MHString_Replace(msg, "$buffName$", buffName)
+            endif
+        else
+            // ping敌人时
+            set msg = BUFF_ENEMY_PING
+            set msg = MHString_Replace(msg, "$heroName$", GetUnitNameColored(whichUnit))
+            set msg = MHString_Replace(msg, "$buffName$", buffName)
+        endif
+
+        if msg != null then
+            call PlayerChat.SendChatToAlliedPlayers(msg)
+        endif
+    endfunction
+
     public function OnTownPortalScrollPing takes unit whichUnit, ability whichAbility, integer charges returns nothing
         local integer abilId            
         local real    cooldownRemaining
@@ -533,6 +573,14 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility, Observe
             call PlayerChat.SendChatToAlliedPlayers(msg)
         endif
     endfunction
+    
+    globals
+        constant string NEED_EXP = "我还需要%requireExp% 升到%nextLevel%级"
+
+    endglobals
+    private function OnExpPing takes nothing returns nothing
+        //call BJDebugMsg("多少级了")
+    endfunction
 
     private function OnSkillButtonPing takes integer skillButton returns nothing
         local unit    whichUnit = MHPlayer_GetSelectUnit()
@@ -600,6 +648,22 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility, Observe
         return false
     endfunction
 
+    private function OnClickBuffButton takes nothing returns boolean
+        if MHMsg_IsKeyDown(OSKEY_ALT) and MHEvent_GetKey() == 1 then
+            call OnBuffPing(MHPlayer_GetSelectUnit(), GetBuffIndicatorId(MHEvent_GetFrame()))
+            call MHEvent_SetKey(-1)
+        endif
+        return false
+    endfunction
+
+    private function OnClickHeroLevelBar takes nothing returns boolean
+        if MHMsg_IsKeyDown(OSKEY_ALT) and MHEvent_GetKey() == 1 then
+            call OnExpPing()
+            call MHEvent_SetKey(-1)
+        endif
+        return false
+    endfunction
+
     function Communication_Init takes nothing returns nothing
         local integer slot
         local integer x
@@ -630,9 +694,23 @@ library Communication requires PlayerChatUtils, ItemSystem, UnitAbility, Observe
             set i = i + 1
         endloop
 
+        set BuffTrig = CreateTrigger()
+        call TriggerAddCondition(BuffTrig, Condition(function OnClickBuffButton))
+        set i = 1
+        loop
+            exitwhen i > 6
+            set BuffButton[i] = MHUI_GetBuffIndicator(i)
+            call MHFrameEvent_Register(BuffTrig, BuffButton[i], EVENT_ID_FRAME_MOUSE_CLICK)
+            set i = i + 1
+        endloop
+
         set BuyBackTrig = CreateTrigger()
         call TriggerAddCondition(BuyBackTrig, Condition(function OnClickGoldCover))
         call MHFrameEvent_Register(BuyBackTrig, MHUI_GetResourceBarCover(1), EVENT_ID_FRAME_MOUSE_CLICK)
+
+        set HeroLevelBarTrig = CreateTrigger()
+        call TriggerAddCondition(HeroLevelBarTrig, Condition(function OnClickHeroLevelBar))
+        call MHFrameEvent_Register(HeroLevelBarTrig, MHFrame_GetByName("SimpleClassValue", 0), EVENT_ID_FRAME_MOUSE_CLICK)
     endfunction
 
 endlibrary
