@@ -50,7 +50,7 @@ library OptionsPanelHandler requires OptionsPanelFrame, PlayerSettingsLib
         call SetCheckBoxData(PlayerSettings.TELEPORT_REQUIRES_HOLD_OR_STOP, "传送时选中能量圈", /*
         */ "开启后使用回城卷轴时会额外选中自己的能量圈，防止右键点击取消传送。")
 
-        call SetCheckBoxData(PlayerSettings.SHOW_COMMAND_BUTTON_COOLDOWN  , "显示冷却时间", /*
+        call SetCheckBoxData(PlayerSettings.SHOW_COMMAND_BUTTON_COOLDOWN  , "显示技能冷却时间", /*
         */ "开启后会显示物品和技能栏的剩余冷却时间。")
 
         call SetCheckBoxData(PlayerSettings.HOLDING_ALT_SHOWS_NEUTRAL_SPAWNBOXES, "按住ALT键显示野怪刷新范围", /*

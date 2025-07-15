@@ -91,7 +91,7 @@ scope Oracle
 
                     call ARX("war3mapImported\\FortunesEndTarget.mdx", first, "origin", 3)
                     if not IsUnitMagicImmune(first) then
-                        call UnitDispelBuffs(first, false)
+                        call UnitDispelBuffs(first, true)
                         call UnitRemoveAbility(first, 'A2T4')
                         call UnitDamageTargetEx(whichUnit, first, 1, damage)
                         call UnitAddBuffByPolarity(whichUnit, first, FORTUNE_END_TARGET_BUFF_ID, level, time, true, BUFF_LEVEL1)
