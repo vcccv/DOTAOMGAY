@@ -244,6 +244,7 @@ library ItemDefinitions requires ItemSystem, ItemStatus
         call RegisterItemMethodSimple(Item_AghanimScepter, "ItemAghanimScepterOnPickup", "ItemAghanimScepterOnDrop")
         // 炼金的 Item_AghanimScepterGiftable
         set Item_AghanimScepterGiftable = RegisterItem('I0QT', 'I0TB', 0, 'I0QU')
+        call RegisterItemMethodSimple(Item_AghanimScepterGiftable, "ItemAghanimScepterOnPickup", "ItemAghanimScepterOnDrop")
 
         // FastCombine_AghanimScepterBasic
         set FastCombine_AghanimScepterBasic = RegisterItem(0, 0, 'h03K', 0)
