@@ -159,7 +159,7 @@ library TownPortalScrollHandler requires Communication, TownPortalScrollFrame, U
                 call MHUI_PlayNativeSound("InterfaceClick")
             else
                 // ABILITY_CAST_TYPE_POINT + ABILITY_CAST_TYPE_TARGET + ABILITY_CAST_TYPE_ALONE
-                call MHMsg_CallTargetMode(TOWN_PORTAL_SCROLL_ABILITY_ID, ORDER_massteleport, 0x100006)
+                call MHMsg_CallTargetMode(TOWN_PORTAL_SCROLL_ABILITY_ID, ORDER_massteleport, 0x100002)// 0x100006)
                 call MHUI_PlayNativeSound("InterfaceClick")
             endif
             call MHEvent_SetKey(-1)

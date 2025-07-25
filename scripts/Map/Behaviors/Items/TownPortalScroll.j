@@ -500,7 +500,8 @@ scope TownPortalScroll
         call SetUbersplatRenderAlways(teleportEffectUbersplat, IsUnitVisibleToPlayer(whichUnit, LocalPlayer))
        
         set teleportUnitEffect = GetTeleportUnitEffect(whichUnit, tx, ty)
-        call MHEffect_SetAnimationByName(teleportUnitEffect, "Stand", MHSlk_ReadStr(SLK_TABLE_UNIT, GetUnitTypeId(whichUnit), "attachmentlinkprops"))
+        //call MHEffect_SetAnimationByName(teleportUnitEffect, "Stand", MHSlk_ReadStr(SLK_TABLE_UNIT, GetUnitTypeId(whichUnit), "attachmentlinkprops"))
+
         call MHEffect_SetScale(teleportUnitEffect, GetUnitScale(whichUnit))
         call MHEffect_SetZ(teleportUnitEffect, MHEffect_GetZ(teleportUnitEffect) + GetUnitDefaultFlyHeight(whichUnit))
         call MHEffect_SetYaw(teleportUnitEffect, bj_RADTODEG * Atan2(ty - sy, tx - sx))
@@ -596,7 +597,7 @@ scope TownPortalScroll
         endif
 
         set teleportUnitEffect = GetTeleportUnitEffect(whichUnit, tx, ty)
-        call MHEffect_SetAnimationByName(teleportUnitEffect, "Stand", MHSlk_ReadStr(SLK_TABLE_UNIT, GetUnitTypeId(whichUnit), "attachmentlinkprops"))
+        //call MHEffect_SetAnimationByName(teleportUnitEffect, "Stand", MHSlk_ReadStr(SLK_TABLE_UNIT, GetUnitTypeId(whichUnit), "attachmentlinkprops"))
         call MHEffect_SetScale(teleportUnitEffect, GetUnitScale(whichUnit))
         call MHEffect_SetZ(teleportUnitEffect, GetUnitHPBarHeight(targetUnit) + GetUnitZ(targetUnit) + 25.)
         call MHEffect_SetYaw(teleportUnitEffect, bj_RADTODEG * Atan2(ty - sy, tx - sx))
