@@ -222,6 +222,9 @@ ItemUserData:
     
     // RemoveItemNoTrig
     function SilentRemoveItem takes item whichItem returns nothing
+        if whichItem == null then
+            return
+        endif
         // 可能没删掉
         call DisableUnitManipulatItemTrig()
         if GetWidgetLife(whichItem) <= 0.405 then
