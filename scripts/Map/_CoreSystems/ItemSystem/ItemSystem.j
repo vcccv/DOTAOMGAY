@@ -212,12 +212,14 @@ ItemUserData:
         if UnitManipulatItemTrigDisableCount == 1 then
             call DisableTrigger(UnitManipulatItemTrig)
         endif
+        //call BJDebugMsg("UnitManipulatItemTrigDisableCount:" + I2S(UnitManipulatItemTrigDisableCount))
     endfunction
     function EnableUnitManipulatItemTrig takes nothing returns nothing
         set UnitManipulatItemTrigDisableCount = UnitManipulatItemTrigDisableCount - 1
         if UnitManipulatItemTrigDisableCount == 0 then
             call EnableTrigger(UnitManipulatItemTrig)
         endif
+        //call BJDebugMsg("UnitManipulatItemTrigDisableCount:" + I2S(UnitManipulatItemTrigDisableCount))
     endfunction
     
     // RemoveItemNoTrig

@@ -16002,8 +16002,10 @@ function AKO takes nothing returns nothing
 		call SilentRemoveItem(whichItem)
 		set TempItem = CreateItemToUnitSlotByIndex(u, ItemRealId[Item_EmptyBottle], itemSlot)
 		call SetItemPlayer(TempItem, TempPlayer, false)
-		call SetItemUserData(TempItem, 0)
+		//call SetItemUserData(TempItem, 0) // 我实在不知道这里为什么原来是0，可能依赖于某种bug实现？
+		call SetItemUserData(TempItem, 1)
 	elseif IsItemRuneMagicalBottleByIndex(itemIndex) then
+		// 如果是神符版本的魔瓶 则变为充能3
 		set C2V = true
 		set itemSlot = GetUnitItemSlot(u, whichItem)
 		set id = GWX(itemIndex)
@@ -19388,6 +19390,8 @@ function F9O takes nothing returns boolean
 		set VE = false
 	endif
 	call F0O(itemIndex)
+
+	// 使用魔瓶时
 	call AKO()
 	call FYO()
 	call F3O(itemIndex)
@@ -65499,6 +65503,7 @@ function ZTA takes unit u returns nothing
 	local item it
 	local integer id
 	local integer k = UnitInventorySize(u)
+	// 遍历物品栏找到所有魔瓶
 	loop
 	exitwhen i > k
 		set it = UnitItemInSlot(u, i)
@@ -65541,6 +65546,7 @@ function ZUA takes nothing returns nothing
 				call UnitRemoveAbility(u,'A35Z')
 			endif
 		endif
+		// 对于魔瓶的更新
 		if HaveSavedReal(HY, hu,'FnLv') == false and UnitInventorySize(u)> 0 and ModuloInteger(GetTriggerEvalCount(GetTriggeringTrigger()), 2) == 1 then
 			call ZTA(u)
 		endif
@@ -69274,9 +69280,12 @@ endfunction
 	call RegionAddRect(HX, WA)
 	set JX = CreateRegion()
 	call RegionAddRect(JX, YA)
+
+	// 中心计时器和进出区域
 	set t = CreateTrigger()
 	call TriggerAddCondition(t, Condition(function Z_A))
 	call TriggerRegisterTimerEvent(t, .1, true)
+	// 进出泉水区域
 	call TriggerRegisterLeaveRegion(t, HX, Condition(function ZZA))
 	call TriggerRegisterLeaveRegion(t, JX, Condition(function ZZA))
 

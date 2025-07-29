@@ -59217,19 +59217,23 @@ C;X15;K"air,friend,ground,invulnerable,item,neutral,organic,self,vulnerable"
 C;X22;K250
 C;X24;K1
 C;X25;K21
+C;X28;K"channel"
 C;Y7250;X1;K"AA04"
 C;X2;K"ANcl"
+C;X7;K1
 C;X11;K1
 C;X15;K"air,friend,ground,invulnerable,item,neutral,organic,self,vulnerable"
-C;X22;K250
+C;X19;K.5
 C;X24;K0
-C;X25;K17
+C;X25;K21
+C;X28;K"852609"
 C;Y7251;X1;K"AA05"
 C;X2;K"ANcl"
 C;X11;K1
 C;X15;K"air,friend,ground,invulnerable,item,neutral,organic,self,vulnerable"
 C;X22;K250
 C;X24;K0
-C;X25;K17
+C;X25;K21
+C;X28;K"channel"
 
 E
