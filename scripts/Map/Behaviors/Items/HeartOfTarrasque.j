@@ -9,15 +9,15 @@ scope HeartOfTarrasque
     globals
         private AnyUnitEvent OnDamagedEvent     = 0
         private AnyUnitEvent OnEndCooldownEvent = 0
-        private key KEY
+        key HEART_OF_TARRASQUE_COOLDOWN_KEY
     endglobals
 
     function IsUnitHeartOfTarrasqueDisabled takes unit whichUnit returns boolean
-        return Table[GetHandleId(whichUnit)].real[KEY] > GameTimer.GetElapsed()
+        return Table[GetHandleId(whichUnit)].real[HEART_OF_TARRASQUE_COOLDOWN_KEY] > GameTimer.GetElapsed()
     endfunction
 
     function GetUnitHeartOfTarrasqueCooldownRemaining takes unit whichUnit returns real
-        return RMaxBJ(Table[GetHandleId(whichUnit)].real[KEY] - GameTimer.GetElapsed(), 0.)
+        return RMaxBJ(Table[GetHandleId(whichUnit)].real[HEART_OF_TARRASQUE_COOLDOWN_KEY] - GameTimer.GetElapsed(), 0.)
     endfunction
     function UpdateUnitHeartOfTarrasqueDamagedCooldown takes unit whichUnit returns nothing
         local real cooldown
@@ -26,7 +26,7 @@ scope HeartOfTarrasque
         else
             set cooldown = 6.
         endif
-        set Table[GetHandleId(whichUnit)].real[KEY] = GameTimer.GetElapsed() + cooldown
+        set Table[GetHandleId(whichUnit)].real[HEART_OF_TARRASQUE_COOLDOWN_KEY] = GameTimer.GetElapsed() + cooldown
     endfunction
 
     private function OnDamaged takes nothing returns nothing
@@ -35,7 +35,7 @@ scope HeartOfTarrasque
         local integer    itemIndex
         local SimpleTick tick
         local real       cooldown
-        if Table[GetHandleId(DETarget)].integer[KEY] <= 0 then
+        if Table[GetHandleId(DETarget)].integer[HEART_OF_TARRASQUE_COOLDOWN_KEY] <= 0 then
             return
         endif
 
@@ -74,12 +74,17 @@ scope HeartOfTarrasque
         local unit       whichUnit = Event.GetTriggerUnit()
         local integer    id        = Event.GetTriggerAbilityId()
 
-        if Table[GetHandleId(whichUnit)].integer[KEY] <= 0 or not IsUnitHeroLevel(whichUnit) or id != 'A473' then
+        if Table[GetHandleId(whichUnit)].integer[HEART_OF_TARRASQUE_COOLDOWN_KEY] <= 0 or not IsUnitHeroLevel(whichUnit) or id != 'A473' then
             set whichUnit = null
             return
         endif
 
-        set Table[GetHandleId(whichUnit)].real[KEY] = 0.
+        set Table[GetHandleId(whichUnit)].real[HEART_OF_TARRASQUE_COOLDOWN_KEY] = 0.
+
+        if not IsUnitAlive(whichUnit) then
+            set whichUnit = null
+            return
+        endif
 
         call ItemSystem_EnableItemManipulateMethod(false)
         loop
@@ -145,7 +150,7 @@ scope HeartOfTarrasque
         set SimpleTickTable[tick].unit['u'] = whichUnit
         set SimpleTickTable[tick].item['i'] = whichItem
         
-        set Table[GetHandleId(whichUnit)].integer[KEY] = Table[GetHandleId(whichUnit)].integer[KEY] + 1
+        set Table[GetHandleId(whichUnit)].integer[HEART_OF_TARRASQUE_COOLDOWN_KEY] = Table[GetHandleId(whichUnit)].integer[HEART_OF_TARRASQUE_COOLDOWN_KEY] + 1
         set HeartOfTarrasqueCount = HeartOfTarrasqueCount + 1
         if HeartOfTarrasqueCount == 1 then
             set OnDamagedEvent = AnyUnitEvent.CreateEventByCode(ANY_UNIT_EVENT_DAMAGED, function OnDamaged)
@@ -161,7 +166,7 @@ scope HeartOfTarrasque
             set whichUnit = null
             return
         endif
-        set Table[GetHandleId(whichUnit)].integer[KEY] = Table[GetHandleId(whichUnit)].integer[KEY] - 1
+        set Table[GetHandleId(whichUnit)].integer[HEART_OF_TARRASQUE_COOLDOWN_KEY] = Table[GetHandleId(whichUnit)].integer[HEART_OF_TARRASQUE_COOLDOWN_KEY] - 1
         set whichUnit = null
 
         set HeartOfTarrasqueCount = HeartOfTarrasqueCount - 1

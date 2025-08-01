@@ -124,6 +124,7 @@ scope LoneDruid
             if charges > 0 then
                 call DeferredCreateItem(ItemPowerUpId[Item_TownPortalScroll], tx, ty, whichPlayer, true, charges)
             endif
+            // 银月吐出来
             if GetUnitAbilityLevel(spiritBear, MOON_SHARD_CONSUMED_ABILITY_ID) > 0 then
                 call DeferredCreateItem(ItemPowerUpId[Item_MoonShard], tx, ty, whichPlayer, false, 0)
             endif
@@ -272,6 +273,8 @@ scope LoneDruid
             call SetUnitTownPortalScrollCharges(spiritBear, GetUnitTownPortalScrollCharges(itemHolder))
             call SetUnitTownPortalScrollCooldown(spiritBear, GetUnitTownPortalScrollCooldown(itemHolder))
         endif
+        // 继承物品后直接更新全部的破损物品为正常版本(可能有平衡性影响)
+        call UnitUpdateDamagedItems(spiritBear, true)
         set itemHolder = null
     endfunction
 

@@ -8,18 +8,18 @@ scope TranquilBoots
     //***************************************************************************
     globals
         private AnyUnitEvent OnEndCooldownEvent = 0
-        private key KEY
+        key TRANQUIL_BOOTS_COOLDOWN_KEY
     endglobals
 
     function IsUnitTranquilBootsDisabled takes unit whichUnit returns boolean
-        return Table[GetHandleId(whichUnit)].real[KEY] > GameTimer.GetElapsed()
+        return Table[GetHandleId(whichUnit)].real[TRANQUIL_BOOTS_COOLDOWN_KEY] > GameTimer.GetElapsed()
     endfunction
 
     function GetUnitTranquilBootsCooldownRemaining takes unit whichUnit returns real
-        return RMaxBJ(Table[GetHandleId(whichUnit)].real[KEY] - GameTimer.GetElapsed(), 0.)
+        return RMaxBJ(Table[GetHandleId(whichUnit)].real[TRANQUIL_BOOTS_COOLDOWN_KEY] - GameTimer.GetElapsed(), 0.)
     endfunction
     function UpdateUnitTranquilBootsDamagedCooldown takes unit whichUnit returns nothing
-        set Table[GetHandleId(whichUnit)].real[KEY] = GameTimer.GetElapsed() + 13.
+        set Table[GetHandleId(whichUnit)].real[TRANQUIL_BOOTS_COOLDOWN_KEY] = GameTimer.GetElapsed() + 13.
     endfunction
 
     private function UnitDisableTranquilBoots takes unit whichUnit returns nothing
@@ -60,14 +60,14 @@ scope TranquilBoots
             // 被攻击就中断
             if not IsUnitIllusion(DETarget) and IsUnitHeroLevel(DETarget) then
                 call UpdateUnitTranquilBootsDamagedCooldown(DETarget)
-                if Table[GetHandleId(DETarget)].integer[KEY] > 0 then
+                if Table[GetHandleId(DETarget)].integer[TRANQUIL_BOOTS_COOLDOWN_KEY] > 0 then
                     call UnitDisableTranquilBoots(DETarget)
                 endif
             endif
             // 攻击英雄时才会中断(不是英雄级单位)
             if not IsUnitIllusion(DESource) and IsHeroUnitId(GetUnitTypeId(DETarget)) and IsPlayerValid(GetOwningPlayer(DETarget)) then
                 call UpdateUnitTranquilBootsDamagedCooldown(DESource)
-                if Table[GetHandleId(DESource)].integer[KEY] > 0 then
+                if Table[GetHandleId(DESource)].integer[TRANQUIL_BOOTS_COOLDOWN_KEY] > 0 then
                     call UnitDisableTranquilBoots(DESource)
                 endif
             endif
@@ -82,13 +82,18 @@ scope TranquilBoots
         local unit       whichUnit = Event.GetTriggerUnit()
         local integer    id        = Event.GetTriggerAbilityId()
 
-        if Table[GetHandleId(whichUnit)].integer[KEY] <= 0 or not IsUnitHeroLevel(whichUnit) or id != 'A474' then
+        if Table[GetHandleId(whichUnit)].integer[TRANQUIL_BOOTS_COOLDOWN_KEY] <= 0 or not IsUnitHeroLevel(whichUnit) or id != 'A474' then
             set whichUnit = null
             return
         endif
 
-        set Table[GetHandleId(whichUnit)].real[KEY] = 0.
+        set Table[GetHandleId(whichUnit)].real[TRANQUIL_BOOTS_COOLDOWN_KEY] = 0.
 
+        if not IsUnitAlive(whichUnit) then
+            set whichUnit = null
+            return
+        endif
+        
         call ItemSystem_EnableItemManipulateMethod(false)
         loop
             set whichItem = UnitItemInSlot(whichUnit, i)
@@ -168,7 +173,7 @@ scope TranquilBoots
         set SimpleTickTable[tick].unit['u'] = whichUnit
         set SimpleTickTable[tick].item['i'] = whichItem
 
-        set Table[GetHandleId(whichUnit)].integer[KEY] = Table[GetHandleId(whichUnit)].integer[KEY] + 1
+        set Table[GetHandleId(whichUnit)].integer[TRANQUIL_BOOTS_COOLDOWN_KEY] = Table[GetHandleId(whichUnit)].integer[TRANQUIL_BOOTS_COOLDOWN_KEY] + 1
         set TranquilBootsCount = TranquilBootsCount + 1
         if TranquilBootsCount == 1 then
             set OnEndCooldownEvent = AnyUnitEvent.CreateEventByCode(ANY_UNIT_EVENT_ABILITY_END_COOLDOWN, function OnEndCooldown)
@@ -186,7 +191,7 @@ scope TranquilBoots
             return
         endif
 
-        set Table[GetHandleId(whichUnit)].integer[KEY] = Table[GetHandleId(whichUnit)].integer[KEY] - 1
+        set Table[GetHandleId(whichUnit)].integer[TRANQUIL_BOOTS_COOLDOWN_KEY] = Table[GetHandleId(whichUnit)].integer[TRANQUIL_BOOTS_COOLDOWN_KEY] - 1
         set whichUnit = null
 
         set TranquilBootsCount = TranquilBootsCount - 1

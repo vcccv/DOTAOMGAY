@@ -7848,6 +7848,9 @@ function CreateItemToUnitSlotByIndex takes unit trigUnit, integer itemId, intege
 	local boolean array hasDummyItem
 	local item dummyItem
 	call DisableUnitManipulatItemTrig()
+
+	// 如果目标已经死亡，并且是英雄/熊灵，则将物品给予临时马甲ItemHolder
+
 	// 如果位置上没有物品 则用空物品挤占
 	if itemId > 0 then
 		loop
@@ -7880,6 +7883,82 @@ function CreateItemToUnitSlotByIndex takes unit trigUnit, integer itemId, intege
 	set dummyItem = null
 	return TempItem
 endfunction
+
+// 设置新物品所有者和自定义值并返回新物品
+function UnitReplaceItemSimple takes unit whichUnit, item whichItem, integer itemSlot, integer newItemId returns item
+	set TempPlayer = GetItemPlayer(whichItem)
+	call RemoveItem(whichItem)
+	set TempItem = CreateItemToUnitSlotByIndex(whichUnit, newItemId, itemSlot)
+	call SetItemPlayer(TempItem, TempPlayer, false)
+	call SetItemUserData(TempItem, 1)
+	return TempItem
+endfunction
+
+// 跳刀 龙心 绿鞋
+// 对于死亡竞赛，需要特殊处理，在新的英雄创建时，将所有破碎版本更新。
+// forceEnableItem 立即将所有破碎版本更新为正常版本
+function UnitUpdateDamagedItems takes unit whichUnit, boolean forceEnableItem returns nothing
+	local real heartOfTarrasqueCooldown = 0.
+	local real kelenDaggerCooldown		= 0.
+	local real tranquilBootsCooldown    = 0.
+
+	local integer    i
+	local item       whichItem         
+	local integer    itemIndex
+
+	if not IsUnitAlive(whichUnit) then
+		return
+	endif
+
+	call ItemSystem_EnableItemManipulateMethod(false)
+	call DisableStartCooldownTrigger()
+
+	if not forceEnableItem then
+		set heartOfTarrasqueCooldown = RMaxBJ(Table[GetHandleId(whichUnit)].real[HEART_OF_TARRASQUE_COOLDOWN_KEY] - GameTimer.GetElapsed(), 0.)
+		set kelenDaggerCooldown		 = RMaxBJ(Table[GetHandleId(whichUnit)].real[KELEN_DAGGER_COOLDOWN_KEY] - GameTimer.GetElapsed(), 0.)
+		set tranquilBootsCooldown    = RMaxBJ(Table[GetHandleId(whichUnit)].real[TRANQUIL_BOOTS_COOLDOWN_KEY] - GameTimer.GetElapsed(), 0.)
+	endif
+
+	set i = 0
+	loop
+		set whichItem = UnitItemInSlot(whichUnit, i)
+		set itemIndex = GetItemIndex(whichItem)
+
+		// 龙心 常态→破损
+		if ( itemIndex == Item_HeartOfTarrasque ) and ( heartOfTarrasqueCooldown != 0. ) then
+			set TempItem = UnitReplaceItemSimple(whichUnit, whichItem, i, ItemRealId[Item_DisabledHeartOfTarrasque])
+			call StartAbilityCooldownAbsoluteEx(MHItem_GetAbility(TempItem, 1), heartOfTarrasqueCooldown)
+		elseif ( itemIndex == Item_DisabledHeartOfTarrasque ) and ( heartOfTarrasqueCooldown == 0. ) then
+			// 龙心 破损 → 常态
+			set TempItem = UnitReplaceItemSimple(whichUnit, whichItem, i, ItemRealId[Item_HeartOfTarrasque])
+		endif
+
+		// 跳刀 常态→破损
+		if ( itemIndex == Item_KelenDagger ) and ( kelenDaggerCooldown != 0. ) then
+			set TempItem = UnitReplaceItemSimple(whichUnit, whichItem, i, ItemRealId[Item_DisabledKelenDagger])
+			call StartAbilityCooldownAbsoluteEx(MHItem_GetAbility(TempItem, 1), kelenDaggerCooldown)
+		elseif ( itemIndex == Item_DisabledKelenDagger ) and ( kelenDaggerCooldown == 0. )  then
+			// 跳刀 破损 → 常态
+			set TempItem = UnitReplaceItemSimple(whichUnit, whichItem, i, ItemRealId[Item_KelenDagger])
+		endif
+
+		// 绿鞋 常态→破损
+		if ( itemIndex == Item_TranquilBoots ) and ( tranquilBootsCooldown != 0. ) then
+			set TempItem = UnitReplaceItemSimple(whichUnit, whichItem, i, ItemRealId[Item_DisabledTranquilBoots])
+			call StartAbilityCooldownAbsoluteEx(MHItem_GetAbility(TempItem, 1), tranquilBootsCooldown)
+		elseif ( itemIndex == Item_DisabledTranquilBoots ) and ( tranquilBootsCooldown == 0. )  then
+			// 绿鞋 破损 → 常态
+			set TempItem = UnitReplaceItemSimple(whichUnit, whichItem, i, ItemRealId[Item_TranquilBoots])
+		endif
+
+		set i = i + 1
+	exitwhen i > 5
+	endloop
+	
+	call EnableStartCooldownTrigger()
+	call ItemSystem_EnableItemManipulateMethod(true)
+endfunction
+
 // 储存单位的RGB
 function JDX takes integer unitTypeId, integer r, integer g, integer b returns nothing
 	set J4 = J4 + 1
@@ -8954,6 +9033,9 @@ function L8X takes unit u returns nothing
 	call BYX(XE, GetOwningPlayer(u))
 	call SetUnitState(u, UNIT_STATE_MANA, 999999)
 
+	// 复活时更新破损物品
+	call UnitUpdateDamagedItems(u, false)
+
 	if IsUnitScepterUpgraded(u) then
 		call SetUnitAghanimScepterUpgradeState(u, false)
 	endif
@@ -9823,6 +9905,8 @@ function PlayerChooseHeroUnit takes unit whichUnit returns boolean
 			call SetHeroLevelAndXP(whichUnit, GetHeroLevel(PlayerLastHero[playerId])-1, false, GetHeroXP(PlayerLastHero[playerId]))
 			// 继承物品
 			call SyncHeroItems(PlayerLastHero[playerId], whichUnit)
+			// 继承物品后立即更新破碎物品
+			call UnitUpdateDamagedItems(whichUnit, true)
 
 			// 继承回城卷轴
 			call SetUnitTownPortalScrollCharges(whichUnit, GetUnitTownPortalScrollCharges(PlayerLastHero[playerId]))
@@ -63258,6 +63342,20 @@ endfunction
 //	call SaveUnitHandle(HY, h, 0, whichUnit)
 //endfunction
 
+function UnitUpdateDamagedItemsToTimedOnExpired takes nothing returns nothing
+	local SimpleTick tick = SimpleTick.GetExpired()
+
+	call UnitUpdateDamagedItems(SimpleTickTable[tick].unit['u'], false)
+
+	call tick.Destroy()
+endfunction
+
+function UnitUpdateDamagedItemsToTimed takes unit whichUnit, real timeout returns nothing
+	local SimpleTick tick = SimpleTick.CreateEx()
+	call tick.Start(timeout, false, function UnitUpdateDamagedItemsToTimedOnExpired)
+	set SimpleTickTable[tick].unit['u'] = whichUnit
+endfunction
+
 // 英雄单位死亡
 function HeroReincarnationEvent takes nothing returns boolean
 	local unit whichUnit = GetTriggerUnit()
@@ -63275,7 +63373,7 @@ function HeroReincarnationEvent takes nothing returns boolean
 	if reincarnationLevel > 0 or GetUnitAbilityLevel(whichUnit,'AIrc') == 1 or GetUnitAbilityLevel(whichUnit,'A3DK')> 0 or GetUnitAbilityLevel(whichUnit,'A46S') == 1 or GetUnitAbilityLevel(whichUnit,'A14K') == 1 then
 		if GetUnitAbilityLevel(whichUnit,'AIrc') == 1 then
 			set duration = 5.01
-		elseif reincarnationLevel > 0 and GetUnitState(whichUnit, UNIT_STATE_MANA) >= 120 + 40 * reincarnationLevel and ( GetUnitAbilityCooldown(whichUnit, 'A01Y') + GetUnitAbilityCooldown(whichUnit, 'A1AZ') ) == 0 then
+		elseif reincarnationLevel > 0 and GetUnitState(whichUnit, UNIT_STATE_MANA) >= 120 + 40 * reincarnationLevel and ( GetUnitAbilityCooldownRemaining(whichUnit, 'A01Y') + GetUnitAbilityCooldownRemaining(whichUnit, 'A1AZ') ) == 0 then
 			set duration = 3.01
 		// 骷髅王绿魂 秒活
 		elseif GetUnitAbilityLevel(whichUnit,'A3DK')> 0 then
@@ -63283,6 +63381,11 @@ function HeroReincarnationEvent takes nothing returns boolean
 		endif
 		// 等待一段时间后修正单位的技能
 		//call WaitToFixUnitSkills(whichUnit, duration)
+		// 复活后更新破碎物品状态
+		if duration != 0. then
+			call UnitUpdateDamagedItemsToTimed(whichUnit, duration)
+		endif
+
 		set x = GetUnitX(whichUnit)
 		set y = GetUnitY(whichUnit)
 		// 视野马甲修正

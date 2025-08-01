@@ -17,18 +17,18 @@ scope KelenDagger
     globals
         private AnyUnitEvent OnDamagedEvent     = 0
         private AnyUnitEvent OnEndCooldownEvent = 0
-        private key KEY
+        key KELEN_DAGGER_COOLDOWN_KEY
     endglobals
     
     function IsUnitKelenDaggerDisabled takes unit whichUnit returns boolean
-        return Table[GetHandleId(whichUnit)].real[KEY] > GameTimer.GetElapsed()
+        return Table[GetHandleId(whichUnit)].real[KELEN_DAGGER_COOLDOWN_KEY] > GameTimer.GetElapsed()
     endfunction
 
     function GetUnitKelenDaggerCooldownRemaining takes unit whichUnit returns real
-        return RMaxBJ(Table[GetHandleId(whichUnit)].real[KEY] - GameTimer.GetElapsed(), 0.)
+        return RMaxBJ(Table[GetHandleId(whichUnit)].real[KELEN_DAGGER_COOLDOWN_KEY] - GameTimer.GetElapsed(), 0.)
     endfunction
     function UpdateUnitKelenDaggerDamagedCooldown takes unit whichUnit returns nothing
-        set Table[GetHandleId(whichUnit)].real[KEY] = GameTimer.GetElapsed() + 3.
+        set Table[GetHandleId(whichUnit)].real[KELEN_DAGGER_COOLDOWN_KEY] = GameTimer.GetElapsed() + 3.
     endfunction
 
     private function OnDamaged takes nothing returns nothing
@@ -38,7 +38,7 @@ scope KelenDagger
         local SimpleTick tick
         local real       cooldown
 
-        if Table[GetHandleId(DETarget)].integer[KEY] <= 0 then
+        if Table[GetHandleId(DETarget)].integer[KELEN_DAGGER_COOLDOWN_KEY] <= 0 then
             return
         endif
 
@@ -78,12 +78,16 @@ scope KelenDagger
         local integer    id        = Event.GetTriggerAbilityId()
 
        // call BJDebugMsg("触发冷却结束")
-        if Table[GetHandleId(whichUnit)].integer[KEY] <= 0 or not IsUnitHeroLevel(whichUnit) or id != 'A445' then
+        if Table[GetHandleId(whichUnit)].integer[KELEN_DAGGER_COOLDOWN_KEY] <= 0 or not IsUnitHeroLevel(whichUnit) or id != 'A445' then
             set whichUnit = null
             return
         endif
 
-        set Table[GetHandleId(whichUnit)].real[KEY] = 0.
+        if not IsUnitAlive(whichUnit) then
+            set whichUnit = null
+            return
+        endif
+        set Table[GetHandleId(whichUnit)].real[KELEN_DAGGER_COOLDOWN_KEY] = 0.
 
         call ItemSystem_EnableItemManipulateMethod(false)
         loop
@@ -152,7 +156,7 @@ scope KelenDagger
         set SimpleTickTable[tick].unit['u'] = whichUnit
         set SimpleTickTable[tick].item['i'] = whichItem
 
-        set Table[GetHandleId(whichUnit)].integer[KEY] = Table[GetHandleId(whichUnit)].integer[KEY] + 1
+        set Table[GetHandleId(whichUnit)].integer[KELEN_DAGGER_COOLDOWN_KEY] = Table[GetHandleId(whichUnit)].integer[KELEN_DAGGER_COOLDOWN_KEY] + 1
         set KelenDaggerCount = KelenDaggerCount + 1
         if KelenDaggerCount == 1 then
             set OnDamagedEvent = AnyUnitEvent.CreateEventByCode(ANY_UNIT_EVENT_DAMAGED, function OnDamaged)
@@ -170,7 +174,7 @@ scope KelenDagger
             return
         endif
 
-        set Table[GetHandleId(whichUnit)].integer[KEY] = Table[GetHandleId(whichUnit)].integer[KEY] - 1
+        set Table[GetHandleId(whichUnit)].integer[KELEN_DAGGER_COOLDOWN_KEY] = Table[GetHandleId(whichUnit)].integer[KELEN_DAGGER_COOLDOWN_KEY] - 1
         set whichUnit = null
 
         set KelenDaggerCount = KelenDaggerCount - 1
