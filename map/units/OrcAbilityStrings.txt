@@ -20894,7 +20894,7 @@ Researchubertip=仙女龙短时间内改变自己所处的维度，暂时不受�
 researchhotkey="F"
 effectsoundlooped=ReplaceableTextures\CommandButtons\BTNPhaseShift.blp
 [A0SS]
-researchart=ReplaceableTextures\CommandButtons\PASBTNCannibalize
+researchart=ReplaceableTextures\CommandButtons\BTNCannibalize
 researchbuttonpos=1
 Name=盛宴
 Researchtip=学习 盛宴[|cffffcc00F|r] - [|cffffcc00等级 %d|r]|n(Feast)
